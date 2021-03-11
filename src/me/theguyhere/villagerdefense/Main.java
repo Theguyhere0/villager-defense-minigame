@@ -35,7 +35,7 @@ public class Main extends JavaPlugin {
 	private final Commands commands = new Commands(this, inventories, game);
 	private DataManager data;
 
-	//	Runs when enabling plugin
+	// Runs when enabling plugin
 	@Override
 	public void onEnable() {
 		saveDefaultConfig();
@@ -44,7 +44,11 @@ public class Main extends JavaPlugin {
 		PluginManager pm = getServer().getPluginManager();
 		data = new DataManager(this);
 
+		// Set up commands and tab complete
 		getCommand("vd").setExecutor(commands);
+		getCommand("vd").setTabCompleter(new CommandTab());
+
+		// Register event listeners
 		pm.registerEvents(new InventoryEvents(this, inventories, npc, reader), this);
 		pm.registerEvents(new Join(npc, reader, game), this);
 		pm.registerEvents(new Death(npc, reader), this);
@@ -61,16 +65,19 @@ public class Main extends JavaPlugin {
 			getData().getConfigurationSection("data.portal").getKeys(false).forEach(this::spawnHolo);
 		}
 
+		// Check config version
 		if (getConfig().getDouble("version") < 0.1)
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "Your config.yml is outdated! "
 					+ "Please update to the latest version to ensure compatibility.");
 
+		// Check if data.yml is outdated
 		if (getConfig().getDouble("compatible") < 0.1)
 			getServer().getConsoleSender().sendMessage(ChatColor.RED +
 					"Your data.yml is no longer supported with this version! " +
 					"Please manually transfer arena data. " +
 					"Please do not update your config.yml until your data.yml has been updated.");
 
+		// Notify successful load
 		getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "Villager Defense has been loaded and enabled!");
 	}
 
@@ -88,7 +95,7 @@ public class Main extends JavaPlugin {
 		getServer().getConsoleSender().sendMessage(ChatColor.RED + "Villager Defense has been unloaded and disabled!");
 	}
 
-//	Returns data.yml dat
+//	Returns data.yml data
 	public FileConfiguration getData() {
 		return data.getConfig();
 	}
