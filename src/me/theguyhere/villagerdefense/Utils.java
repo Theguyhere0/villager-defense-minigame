@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+@SuppressWarnings("SpellCheckingInspection")
 public class Utils {
     //	Formats chat text
     public static String format(String msg) {
@@ -37,10 +38,10 @@ public class Utils {
         return item;
     }
 
-    // Creates an ItemStack using only material, name, and lore
+    // Creates an ItemStack using material, name, enchants, flags, and lore
     public static ItemStack createItem(Material matID,
                                        String dispName,
-                                       boolean enchantToggle,
+                                       boolean[] flags,
                                        HashMap<Enchantment, Integer> enchants,
                                        String ... lores) {
         // Create ItemStack
@@ -48,9 +49,14 @@ public class Utils {
         ItemMeta meta = item.getItemMeta();
 
         // Set enchants
-        enchants.forEach((k, v) -> meta.addEnchant(k, v, false));
-        if (enchantToggle)
+        if (!(enchants == null))
+            enchants.forEach((k, v) -> meta.addEnchant(k, v, false));
+        if (flags[0])
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+
+        // Set attribute flag
+        if (flags[1])
+            meta.addItemFlags(ItemFlag.values());
         item.setItemMeta(meta);
 
         return item;

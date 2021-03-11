@@ -38,10 +38,10 @@ public class Main extends JavaPlugin {
 	//	Runs when enabling plugin
 	@Override
 	public void onEnable() {
-		this.saveDefaultConfig();
+		saveDefaultConfig();
 
 		reader = new PacketReader(npc);
-		PluginManager pm = this.getServer().getPluginManager();
+		PluginManager pm = getServer().getPluginManager();
 		data = new DataManager(this);
 
 		getCommand("vd").setExecutor(commands);
@@ -60,7 +60,17 @@ public class Main extends JavaPlugin {
 			loadNPC();
 			getData().getConfigurationSection("data.portal").getKeys(false).forEach(this::spawnHolo);
 		}
-		
+
+		if (getConfig().getDouble("version") < 0.1)
+			getServer().getConsoleSender().sendMessage(ChatColor.RED + "Your config.yml is outdated! "
+					+ "Please update to the latest version to ensure compatibility.");
+
+		if (getConfig().getDouble("compatible") < 0.1)
+			getServer().getConsoleSender().sendMessage(ChatColor.RED +
+					"Your data.yml is no longer supported with this version! " +
+					"Please manually transfer arena data. " +
+					"Please do not update your config.yml until your data.yml has been updated.");
+
 		getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "Villager Defense has been loaded and enabled!");
 	}
 
@@ -118,7 +128,8 @@ public class Main extends JavaPlugin {
 		holo.setGravity(false);
 
 		location = new Location(Bukkit.getWorld(getData().getString("data.portal." + portal + ".world")),
-				getData().getDouble("data.portal." + portal + ".x"), getData().getDouble("data.portal." + portal + ".y") + .5,
+				getData().getDouble("data.portal." + portal + ".x"),
+				getData().getDouble("data.portal." + portal + ".y") + .5,
 				getData().getDouble("data.portal." + portal + ".z"));
 
 		ArmorStand holo2 = (ArmorStand) Bukkit.getWorld(getData().getString("data.portal." + portal + ".world")).spawnEntity(location, EntityType.ARMOR_STAND);
@@ -130,9 +141,15 @@ public class Main extends JavaPlugin {
 
 //	Remove holograms
 	public void removeHolo(String portal) {
-		Location location = new Location(Bukkit.getWorld(getData().getString("data.portal." + portal + ".world")),
-				getData().getDouble("data.portal." + portal + ".x"), getData().getDouble("data.portal." + portal + ".y"),
-				getData().getDouble("data.portal." + portal + ".z"));
+		Location location;
+		try {
+			location = new Location(Bukkit.getWorld(getData().getString("data.portal." + portal + ".world")),
+					getData().getDouble("data.portal." + portal + ".x"),
+					getData().getDouble("data.portal." + portal + ".y"),
+					getData().getDouble("data.portal." + portal + ".z"));
+		} catch (Exception e) {
+			return;
+		}
 
 		for (Entity holo : Bukkit.getWorld(getData().getString("data.portal." + portal + ".world")).getNearbyEntities(location, 1, 2, 1)) {
 			if (holo.getType().equals(EntityType.ARMOR_STAND)) {

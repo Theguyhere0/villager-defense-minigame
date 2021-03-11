@@ -276,3 +276,11 @@ waves:
     hgln: 0
     rvgr: 0
     wthr: 0
+
+# This is the config version for reference.
+# DO NOT EDIT VALUE.
+version: 0.1
+
+# This is the last compatible plugin version before the data.yml structure breaks.
+# DO NOT EDIT VALUE.
+compatible: 0.1

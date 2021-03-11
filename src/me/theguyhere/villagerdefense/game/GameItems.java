@@ -20,9 +20,10 @@ public class GameItems {
 //	Shop
 	public ItemStack shop() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
+		boolean[] flags = {true, false};
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		return Utils.createItem(Material.GOLD_INGOT, Utils.format("&2&lItem Shop"), true, enchants, "", Utils.format("&7&oResets every 10 rounds"));
+		return Utils.createItem(Material.GOLD_INGOT, Utils.format("&2&lItem Shop"), flags, enchants, "", Utils.format("&7&oResets every 10 rounds"));
 	}
 
 //	Swords
@@ -31,27 +32,31 @@ public class GameItems {
 	}
 	public ItemStack wSwordK2() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
+		boolean[] flags = {false, false};
 		enchants.put(Enchantment.KNOCKBACK, 2);
 		
-		return Utils.createItem(Material.WOODEN_SWORD, null, false, enchants, Utils.format("&2Gems: &a 110"));
+		return Utils.createItem(Material.WOODEN_SWORD, null, flags, enchants, Utils.format("&2Gems: &a 110"));
 	}
 	public ItemStack wSwordU2() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 2);
+		boolean[] flags = {false, false};
 
-		return Utils.createItem(Material.WOODEN_SWORD, null, false, enchants, Utils.format("&2Gems: &a 100"));
+		return Utils.createItem(Material.WOODEN_SWORD, null, flags, enchants, Utils.format("&2Gems: &a 100"));
 	}
 	public ItemStack wSwordSh2() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DAMAGE_ALL, 2);
+		boolean[] flags = {false, false};
 
-		return Utils.createItem(Material.WOODEN_SWORD, null, false, enchants, Utils.format("&2Gems: &a 200"));
+		return Utils.createItem(Material.WOODEN_SWORD, null, flags, enchants, Utils.format("&2Gems: &a 200"));
 	}
 	public ItemStack wSwordSm2() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DAMAGE_UNDEAD, 2);
+		boolean[] flags = {false, false};
 
-		return Utils.createItem(Material.WOODEN_SWORD, null, false, enchants, Utils.format("&2Gems: &a 170"));
+		return Utils.createItem(Material.WOODEN_SWORD, null, flags, enchants, Utils.format("&2Gems: &a 170"));
 	}
 	public ItemStack sSword() {
 		return Utils.createItem(Material.STONE_SWORD, null, Utils.format("&2Gems: &a 120"));

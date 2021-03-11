@@ -1,6 +1,6 @@
 main: me.theguyhere.villagerdefense.Main
 name: VillagerDefense
-version: 1.0
+version: 0.1.0
 author: Theguyhere
 api-version: 1.16
 
@@ -12,5 +12,6 @@ commands:
     help:
       description: Redirects players to the Villager Defense wiki
       usage: /vd help
-      permission:
-    
+    leave:
+      description: Removes players from arenas and teleports them to the lobby
+      usage: /vd leave
