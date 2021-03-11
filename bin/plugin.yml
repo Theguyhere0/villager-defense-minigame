@@ -1,0 +1,16 @@
+main: me.theguyhere.villagerdefense.Main
+name: VillagerDefense
+version: 1.0
+author: Theguyhere
+api-version: 1.16
+
+commands:
+  vd:
+    description: Opens up the admin panel for Villager Defense
+    usage: /vd
+    permission: vd.use
+    help:
+      description: Redirects players to the Villager Defense wiki
+      usage: /vd help
+      permission:
+    
