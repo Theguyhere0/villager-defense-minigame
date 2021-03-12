@@ -279,8 +279,8 @@ waves:
 
 # This is the config version for reference.
 # DO NOT EDIT VALUE.
-version: 0.1
+version: 1
 
-# This is the last compatible plugin version before the data.yml structure breaks.
+# This is the data.yml structure version for reference.
 # DO NOT EDIT VALUE.
-compatible: 0.1
+data: 1

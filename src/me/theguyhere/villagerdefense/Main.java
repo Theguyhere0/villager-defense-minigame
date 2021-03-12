@@ -66,12 +66,12 @@ public class Main extends JavaPlugin {
 		}
 
 		// Check config version
-		if (getConfig().getDouble("version") < 0.1)
+		if (getConfig().getInt("version") < 1)
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "Your config.yml is outdated! "
 					+ "Please update to the latest version to ensure compatibility.");
 
 		// Check if data.yml is outdated
-		if (getConfig().getDouble("compatible") < 0.1)
+		if (getConfig().getInt("data") < 1)
 			getServer().getConsoleSender().sendMessage(ChatColor.RED +
 					"Your data.yml is no longer supported with this version! " +
 					"Please manually transfer arena data. " +

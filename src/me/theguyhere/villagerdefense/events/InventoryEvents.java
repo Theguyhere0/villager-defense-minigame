@@ -125,6 +125,7 @@ public class InventoryEvents implements Listener {
 			// Close inventory
 			else if (buttonName.contains("EXIT"))
 				player.closeInventory();
+
 			arena = slot;
 			old = plugin.getData().getString("data.a" + arena + ".name");
 		}
@@ -176,6 +177,7 @@ public class InventoryEvents implements Listener {
 //			Save
 			else if (buttonName.contains("SAVE") && name.length() > 0) {
 				openInv(player, inv.createArenasInventory());
+				old = plugin.getData().getString("data.a" + arena + ".name");
 				// Recreate portal if it exists
 				if (plugin.getData().contains("data.portal." + arena)) {
 					plugin.removeHolo(Integer.toString(arena));
@@ -638,6 +640,7 @@ public class InventoryEvents implements Listener {
 		// Ignore if safe close toggle is on
 		if (close)
 			return;
+
 		// Close safely for the inventory of concern
 		if (e.getView().getTitle().contains("Arena")) {
 			plugin.getData().set("data.a" + arena + ".name", old);
