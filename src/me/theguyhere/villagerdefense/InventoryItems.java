@@ -21,7 +21,7 @@ public class InventoryItems {
 
     //	"Remove x" button
     public ItemStack remove(String x) {
-        return Utils.createItem(Material.LAVA_BUCKET, Utils.format(Inventories.REMOVE + x));
+        return Utils.createItem(Material.LAVA_BUCKET, Utils.format("&4&lREMOVE " + x));
     }
 
     //	"Teleport to x" button

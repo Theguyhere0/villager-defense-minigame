@@ -41,7 +41,7 @@ public class Commands implements CommandExecutor {
 			
 //			No arguments
 			if (args.length == 0) {
-				player.openInventory(inv.createArenaInventory());
+				player.openInventory(inv.createArenasInventory());
 				return true;
 			}
 			

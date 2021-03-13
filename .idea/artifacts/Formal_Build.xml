@@ -3,7 +3,6 @@
     <output-path>$PROJECT_DIR$</output-path>
     <root id="archive" name="villager-defense-minigame.jar">
       <element id="module-output" name="villager-defense-minigame" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../../Minecraft Dev/Spigot/Spigot 1.16.5/spigot-1.16.5.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

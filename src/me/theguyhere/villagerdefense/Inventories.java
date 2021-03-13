@@ -1,14 +1,13 @@
 package me.theguyhere.villagerdefense;
 
-import java.util.Random;
-
+import me.theguyhere.villagerdefense.game.GameItems;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import me.theguyhere.villagerdefense.game.GameItems;
+import java.util.Random;
 
 public class Inventories {
 	private final Main plugin;
@@ -22,7 +21,7 @@ public class Inventories {
 	}
 
 	// Easily get alphabet
-	public final char[] NAMES = {
+	public static final char[] NAMES = {
 		'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
 		's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 		'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
@@ -30,51 +29,37 @@ public class Inventories {
 		' '
 	};
 
-	// Inventory name constants
-	public static final String ARENAINV = "&2&lVillager Defense Arenas";
-	public static final String LOBBYCONFIRMINV = "&4&lRemove Lobby?";
-	public static final String ARENA = "&2&lArena ";
-	public static final String EDIT1 = "&2&lEdit ";
-	public static final String EDIT2 = "&6&lEdit ";
-	public static final String CREATE = "&a&lCreate ";
-	public static final String REMOVE = "&4&lRemove ";
+	// Easily alternate between black and white wool
+	public static final Material[] KEYMATS = {Material.BLACK_CONCRETE, Material.WHITE_WOOL};
+	public static final Material[] MONSTERMATS = {Material.SKELETON_SKULL, Material.ZOMBIE_HEAD};
 
-//	Menu of all the arenas
-	public Inventory createArenaInventory() {
+	// Temporary constants for buttons that don't work yet
+	final String CONSTRUCTION = "&fComing Soon!";
+	final boolean[] FLAGS = {true, true};
+
+	//	Menu of all the arenas
+	public Inventory createArenasInventory() {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 54,  Utils.format("&k") +
-				Utils.format(ARENAINV));
+				Utils.format("&2&lVillager Defense Arenas"));
 
 		// Prepare for items and metas
 		ItemStack item;
-		ItemMeta meta;
 
 		// Options to interact with all 45 possible arenas
 		for (int i = 0; i < 45; i++) {
-			// Check if arena exists
+			// Check if arena exists, set button accordingly
 			if (plugin.getData().getString("data.a" + (i) + ".name") == null ||
-					plugin.getData().getString("data.a" + (i) + ".name").length() == 0) {
-				item = new ItemStack(Material.RED_CONCRETE);
-				meta = item.getItemMeta();
-				meta.setDisplayName(Utils.format("&c&lCreate Arena " + (i + 1)));
-			} else {
-				item = new ItemStack(Material.LIME_CONCRETE);
-				meta = item.getItemMeta();
-				meta.setDisplayName(Utils.format("&a&lEdit " +
-						plugin.getData().getString("data.a" + (i) + ".name")));
-			}
-
-			// Set item in inventory
-			item.setItemMeta(meta);
-			inv.setItem(i, item);
+					plugin.getData().getString("data.a" + (i) + ".name").length() == 0)
+				inv.setItem(i,
+						Utils.createItem(Material.RED_CONCRETE, Utils.format("&c&lCreate Arena " + (i + 1))));
+			else
+				inv.setItem(i, Utils.createItem(Material.LIME_CONCRETE,
+						Utils.format("&a&lEdit " + plugin.getData().getString("data.a" + (i) + ".name"))));
 		}
 
 		// Option to set lobby location
-		item = new ItemStack(Material.BELL);
-		meta = item.getItemMeta();
-		meta.setDisplayName(Utils.format("&a&lSet Lobby"));
-		item.setItemMeta(meta);
-		inv.setItem(45, item);
+		inv.setItem(45, Utils.createItem(Material.BELL, Utils.format("&a&lSet Lobby")));
 
 		// Option to teleport lobby location
 		inv.setItem(46, ii.teleport("Lobby"));
@@ -88,10 +73,10 @@ public class Inventories {
 		return inv;
 	}
 	
-//	Confirmation menu for removing lobby
+	// Confirmation menu for removing lobby
 	public Inventory createLobbyConfirmInventory() {
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format(LOBBYCONFIRMINV));
+				Utils.format("&4&lRemove Lobby?"));
 
 		// "No" option
 		inv.setItem(0, ii.no());
@@ -102,18 +87,8 @@ public class Inventories {
 		return inv;
 	}
 
-//	Menu for naming an arena
+	// Menu for naming an arena
 	public Inventory createNamingInventory(int num) {
-		// Prepare for items and metas
-		ItemStack item;
-		ItemMeta meta;
-
-		// Easily alternate between black and white wool
-		ItemStack[] items = {
-			new ItemStack(Material.BLACK_CONCRETE),
-			new ItemStack(Material.WHITE_WOOL)
-		};
-
 		// Gather arena name and caps lock state
 		String name = plugin.getData().getString("data.a" + num + ".name");
 		if (name == null)
@@ -122,150 +97,79 @@ public class Inventories {
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 54, Utils.format("&k") +
-				Utils.format(ARENA + (num + 1) + " Name: &8&l" + name));
+				Utils.format("&2&lArena " + (num + 1) + " Name: &8&l" + name));
 
 		// Letter and number inputs
 		for (int i = 0; i < 36; i++) {
-			// Get alternating wool color
-			item = items[i % 2];
-			meta = item.getItemMeta();
-
-			// Set name depending on caps lock state
 			if (caps)
-				meta.setDisplayName(Utils.format("&f&l" + NAMES[i + 36]));
-			else meta.setDisplayName(Utils.format("&f&l" + NAMES[i]));
-
-			// Set item in inventory
-			item.setItemMeta(meta);
-			inv.setItem(i, item);
+				inv.setItem(i, Utils.createItem(KEYMATS[i % 2], Utils.format("&f&l" + NAMES[i + 36])));
+			else inv.setItem(i, Utils.createItem(KEYMATS[i % 2], Utils.format("&f&l" + NAMES[i])));
 		}
 
 		// Space inputs
-		for (int i = 36; i < 45; i++) {
-			// Create item
-			item = new ItemStack(Material.GRAY_CONCRETE);
-			meta = item.getItemMeta();
-
-			// Set name to Space
-			meta.setDisplayName(Utils.format("&f&lSpace"));
-
-			// Set item in inventory
-			item.setItemMeta(meta);
-			inv.setItem(i, item);
-		}
+		for (int i = 36; i < 45; i++)
+			inv.setItem(i, Utils.createItem(Material.GRAY_CONCRETE, Utils.format("&f&lSpace")));
 
 		// Caps lock toggle
-		if (caps) {
-			// Create item
-			item = new ItemStack(Material.SPECTRAL_ARROW);
-			meta = item.getItemMeta();
-
-			// Set name
-			meta.setDisplayName(Utils.format("&2&lCAPS LOCK: ON"));
-
-			// Set item in inventory
-			item.setItemMeta(meta);
-			inv.setItem(45, item);
-		} else {
-			// Create item
-			item = new ItemStack(Material.ARROW);
-			meta = item.getItemMeta();
-
-			// Set name
-			meta.setDisplayName(Utils.format("&4&lCAPS LOCK: OFF"));
-
-			// Set item in inventory
-			item.setItemMeta(meta);
-			inv.setItem(45, item);
-		}
+		if (caps)
+			inv.setItem(45, Utils.createItem(Material.SPECTRAL_ARROW, Utils.format("&2&lCAPS LOCK: ON")));
+		else inv.setItem(45, Utils.createItem(Material.ARROW, Utils.format("&4&lCAPS LOCK: OFF")));
 
 		// Backspace input
-		item = new ItemStack(Material.RED_CONCRETE);
-		meta = item.getItemMeta();
-		meta.setDisplayName(Utils.format("&c&lBackspace"));
-		item.setItemMeta(meta);
-		inv.setItem(46, item);
+		inv.setItem(46, Utils.createItem(Material.RED_CONCRETE, Utils.format("&c&lBackspace")));
 
 		// Save option
-		item = new ItemStack(Material.LIME_CONCRETE);
-		meta = item.getItemMeta();
-		meta.setDisplayName(Utils.format("&a&lSAVE"));
-		item.setItemMeta(meta);
-		inv.setItem(52, item);
+		inv.setItem(52, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&a&lSAVE")));
 
 		// Cancel option
-		item = new ItemStack(Material.BARRIER);
-		meta = item.getItemMeta();
-		meta.setDisplayName(Utils.format("&c&lCANCEL"));
-		item.setItemMeta(meta);
-		inv.setItem(53, item);
+		inv.setItem(53, Utils.createItem(Material.BARRIER, Utils.format("&c&lCANCEL")));
 
 		return inv;
 	}
 
-//	Menu for editing an arena
-	public Inventory createEditInventory(int num) {
+	// Menu for editing an arena
+	public Inventory createArenaInventory(int num) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format(EDIT1 + plugin.getData().getString("data.a" + num + ".name")));
+				Utils.format("&2&lEdit " + plugin.getData().getString("data.a" + num + ".name")));
 
 		// Option to edit name
-		ItemStack item = new ItemStack(Material.NAME_TAG);
-		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(Utils.format(EDIT2 + "Name"));
-		item.setItemMeta(meta);
-		inv.setItem(0, item);
+		inv.setItem(0, Utils.createItem(Material.NAME_TAG, Utils.format("&6&lEdit Name")));
 
 		// Option to edit game portal
-		item = new ItemStack(Material.END_PORTAL_FRAME);
-		meta = item.getItemMeta();
-		meta.setDisplayName(Utils.format("&5&lGame Portal"));
-		item.setItemMeta(meta);
-		inv.setItem(1, item);
+		inv.setItem(1, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&5&lGame Portal")));
 
-		// Option to edit player spawn
-		item = new ItemStack(Material.PLAYER_HEAD);
-		meta = item.getItemMeta();
-		meta.setDisplayName(Utils.format("&d&lPlayer Spawn"));
-		item.setItemMeta(meta);
-		inv.setItem(2, item);
+		// Option to edit player settings
+		inv.setItem(2, Utils.createItem(Material.PLAYER_HEAD, Utils.format("&d&lPlayer Settings")));
 
-		// Option to edit mob spawns
-		item = new ItemStack(Material.ZOMBIE_HEAD);
-		meta = item.getItemMeta();
-		meta.setDisplayName(Utils.format("&2&lMob Spawns"));
-		item.setItemMeta(meta);
-		inv.setItem(3, item);
+		// Option to edit mob settings
+		inv.setItem(3, Utils.createItem(Material.ZOMBIE_SPAWN_EGG, Utils.format("&2&lMob Settings")));
 
-		// Option to edit villager spawns
-		item = new ItemStack(Material.POPPY);
-		meta = item.getItemMeta();
-		meta.setDisplayName(Utils.format("&e&lVillager Spawns"));
-		item.setItemMeta(meta);
-		inv.setItem(4, item);
+		// Option to edit shop settings
+		inv.setItem(4, Utils.createItem(Material.GOLD_BLOCK, Utils.format("&e&lShop Settings")));
 
 		// Option to edit miscellaneous game settings
-		item = new ItemStack(Material.REDSTONE);
-		meta = item.getItemMeta();
-		meta.setDisplayName(Utils.format("&7&lGame Settings"));
-		item.setItemMeta(meta);
-		inv.setItem(5, item);
+		inv.setItem(5, Utils.createItem(Material.REDSTONE, Utils.format("&7&lGame Settings")));
+
+		// Option to close the arena
+		inv.setItem(6, Utils.createItem(Material.NETHER_BRICK_FENCE,
+				Utils.format("&9&lClose Arena"),
+				Utils.format(CONSTRUCTION)));
 
 		// Option to remove arena
 		inv.setItem(7, ii.remove("ARENA"));
 
 		// Option to exit
-		item = ii.exit();
-		inv.setItem(8, item);
+		inv.setItem(8, ii.exit());
 
 		return inv;
 	}
 
-//	Confirmation menu for removing an arena
-	public Inventory createConfirmInventory(int num) {
+	// Confirmation menu for removing an arena
+	public Inventory createArenaConfirmInventory(int num) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format(REMOVE + plugin.getData().getString("data.a" + num + ".name") + '?'));
+				Utils.format("&4&lRemove " + plugin.getData().getString("data.a" + num + ".name") + '?'));
 
 		// "No" option
 		inv.setItem(0, ii.no());
@@ -276,18 +180,14 @@ public class Inventories {
 		return inv;
 	}
 
-//	Menu for editing the portal of an arena
+	// Menu for editing the portal of an arena
 	public Inventory createPortalInventory(int num) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&5&lPortal: " + plugin.getData().getString("data.a" + num + ".name") + ""));
+				Utils.format("&5&lPortal: " + plugin.getData().getString("data.a" + num + ".name")));
 
 		// Option to create the portal
-		ItemStack item = new ItemStack(Material.END_PORTAL_FRAME);
-		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(Utils.format("&2&lCreate Portal"));
-		item.setItemMeta(meta);
-		inv.setItem(0, item);
+		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Portal")));
 
 		// Option to teleport to the portal
 		inv.setItem(1, ii.teleport("Portal"));
@@ -301,7 +201,7 @@ public class Inventories {
 		return inv;
 	}
 
-//	Confirmation menu for removing the arena portal
+	// Confirmation menu for removing the arena portal
 	public Inventory createPortalConfirmInventory() {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
@@ -316,19 +216,46 @@ public class Inventories {
 		return inv;
 	}
 
-//	Menu for editing the player spawn of an arena
+	//	Menu for editing the player settings of an arena
+	public Inventory createPlayersInventory(int num) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&d&lPlayer Settings: " + plugin.getData().getString("data.a" + num + ".name")));
+
+		// Option to edit player spawn
+		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&5&lPlayer Spawn")));
+
+		// Option to toggle player spawn particles
+		inv.setItem(1, Utils.createItem(Material.FIREWORK_ROCKET,
+				Utils.format("&b&lToggle Spawn Particles"),
+				Utils.format(CONSTRUCTION)));
+
+		// Option to edit max players
+		inv.setItem(2, Utils.createItem(Material.NETHERITE_HELMET,
+				Utils.format("&4&lMaximum Players"),
+				FLAGS,
+				null));
+
+		// Option to edit min players
+		inv.setItem(3, Utils.createItem(Material.NETHERITE_BOOTS,
+				Utils.format("&2&lMinimum Players"),
+				FLAGS,
+				null));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	//	Menu for editing the player spawn of an arena
 	public Inventory createPlayerSpawnInventory(int num) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&d&lPlayer Spawn: " +
-						plugin.getData().getString("data.a" + num + ".name") + ""));
+				Utils.format("&d&lPlayer Spawn: " + plugin.getData().getString("data.a" + num + ".name")));
 
 		// Option to create player spawn
-		ItemStack item = new ItemStack(Material.PLAYER_HEAD);
-		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(Utils.format("&2&lCreate Spawn"));
-		item.setItemMeta(meta);
-		inv.setItem(0, item);
+		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Spawn")));
 
 		// Option to teleport to player spawn
 		inv.setItem(1, ii.teleport("Spawn"));
@@ -342,7 +269,47 @@ public class Inventories {
 		return inv;
 	}
 
-//	Confirmation menu for removing player spawn
+	//	Menu for changing max players in an arena
+	public Inventory createMaxPlayerInventory(int num) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&4&lMaximum Players: " + plugin.getData().getInt("data.a" + num + ".max")));
+
+		// Option to decrease
+		for (int i = 0; i < 4; i++)
+			inv.setItem(i, Utils.createItem(Material.RED_CONCRETE, Utils.format("&4&lDecrease")));
+
+		// Option to increase
+		for (int i = 4; i < 8; i++)
+			inv.setItem(i, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&2&lIncrease")));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	//	Menu for changing min players in an arena
+	public Inventory createMinPlayerInventory(int num) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&2&lMinimum Players: " + plugin.getData().getInt("data.a" + num + ".min")));
+
+		// Option to decrease
+		for (int i = 0; i < 4; i++)
+			inv.setItem(i, Utils.createItem(Material.RED_CONCRETE, Utils.format("&4&lDecrease")));
+
+		// Option to increase
+		for (int i = 4; i < 8; i++)
+			inv.setItem(i, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&2&lIncrease")));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	//	Confirmation menu for removing player spawn
 	public Inventory createSpawnConfirmInventory() {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
@@ -357,31 +324,69 @@ public class Inventories {
 		return inv;
 	}
 
-//	Menu for editing the mob spawns of an arena
-	public Inventory createMobSpawnInventory(int num) {
+	//	Menu for editing the mob settings of an arena
+	public Inventory createMobsInventory(int num) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&2&lMob Spawns: " +
-						plugin.getData().getString("data.a" + num + ".name") + ""));
+				Utils.format("&2&lMob Settings: " + plugin.getData().getString("data.a" + num + ".name")));
 
-		// Prepare for items and metas
-		ItemStack item;
-		ItemMeta meta;
+		// Option to edit monster spawns
+		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&2&lMonster Spawns")));
+
+		// Option to toggle monster spawn particles
+		inv.setItem(1, Utils.createItem(Material.FIREWORK_ROCKET,
+				Utils.format("&a&lToggle Monster Spawn Particles"),
+				Utils.format(CONSTRUCTION)));
+
+		// Option to edit villager spawns
+		inv.setItem(2, Utils.createItem(Material.END_PORTAL_FRAME,
+				Utils.format("&5&lVillager Spawns"),
+				Utils.format(CONSTRUCTION)));
+
+		// Option to toggle villager spawn particles
+		inv.setItem(3, Utils.createItem(Material.FIREWORK_ROCKET,
+				Utils.format("&d&lToggle Villager Spawn Particles"),
+				Utils.format(CONSTRUCTION)));
+
+		// Option to edit monsters allowed
+		inv.setItem(4, Utils.createItem(Material.DRAGON_HEAD,
+				Utils.format("&3&lMonsters Allowed"),
+				Utils.format(CONSTRUCTION)));
+
+		// Option to toggle dynamic monster count
+		inv.setItem(5, Utils.createItem(Material.SLIME_BALL,
+				Utils.format("&e&lToggle Dynamic Monster Count"),
+				Utils.format(CONSTRUCTION)));
+
+		// Option to toggle dynamic difficulty
+		inv.setItem(6, Utils.createItem(Material.MAGMA_CREAM,
+				Utils.format("&6&lToggle Dynamic Difficulty"),
+				Utils.format(CONSTRUCTION)));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	//	Menu for editing the monster spawns of an arena
+	public Inventory createMonsterSpawnInventory(int num) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&2&lMonster Spawns: " + plugin.getData().getString("data.a" + num + ".name")));
+
+		// Prepare for material indexing
+		int index;
 
 		// Options to interact with all 8 possible mob spawns
 		for (int i = 0; i < 8; i++) {
 			// Check if the spawn exists
 			if (plugin.getData().getString("data.a" + (num) + ".mob." + i + ".x") == null)
-				item = new ItemStack(Material.SKELETON_SKULL);
-			else item = new ItemStack(Material.ZOMBIE_HEAD);
+				index = 0;
+			else index = 1;
 
-			// Set name
-			meta = item.getItemMeta();
-			meta.setDisplayName(Utils.format("&2&lMob Spawn " + (i + 1)));
-
-			// Set item in inventory
-			item.setItemMeta(meta);
-			inv.setItem(i, item);
+			// Create and set item
+			inv.setItem(i, Utils.createItem(MONSTERMATS[index], Utils.format("&2&lMob Spawn " + (i + 1))));
 		}
 
 		// Option to exit
@@ -390,24 +395,20 @@ public class Inventories {
 		return inv;
 	}
 
-//	Menu for editing a specific mob spawn of an arena
-	public Inventory createMobSpawnMenu(int num, int slot) {
+	// Menu for editing a specific monster spawn of an arena
+	public Inventory createMonsterSpawnMenu(int num, int slot) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&2&lMob Spawn " + slot + ": " +
+				Utils.format("&2&lMonster Spawn " + slot + ": " +
 				plugin.getData().getString("data.a" + num + ".name")));
 
-		// Option to create mob spawn
-		ItemStack item = new ItemStack(Material.ZOMBIE_HEAD);
-		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(Utils.format("&2&lCreate Spawn"));
-		item.setItemMeta(meta);
-		inv.setItem(0, item);
+		// Option to create monster spawn
+		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Spawn")));
 
-		// Option to teleport to mob spawn
+		// Option to teleport to monster spawn
 		inv.setItem(1, ii.teleport("Spawn"));
 
-		// Option to remove mob spawn
+		// Option to remove monster spawn
 		inv.setItem(7, ii.remove("SPAWN"));
 
 		// Option to exit
@@ -416,11 +417,11 @@ public class Inventories {
 		return inv;
 	}
 
-//	Confirmation menu for removing mob spawns
-	public Inventory createMobSpawnConfirmInventory() {
+	// Confirmation menu for removing mob spawns
+	public Inventory createMonsterSpawnConfirmInventory() {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&4&lRemove Mob Spawn?"));
+				Utils.format("&4&lRemove Monster Spawn?"));
 
 		// "No" option
 		inv.setItem(0, ii.no());
@@ -431,18 +432,81 @@ public class Inventories {
 		return inv;
 	}
 
-//	Menu for editing the mob spawns of an arena
-	public Inventory createArenaSettingsInventory(int num) {
+	// Menu for editing the shop settings of an arena
+	public Inventory createShopsInventory(int num) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&e&lShop Settings: " + plugin.getData().getString("data.a" + num + ".name")));
+
+		// Option to create a custom shop
+		inv.setItem(0, Utils.createItem(Material.EMERALD,
+				Utils.format("&a&lCreate Custom Shop"),
+				Utils.format(CONSTRUCTION)));
+
+		// Option to toggle default shop
+		inv.setItem(1, Utils.createItem(Material.GOLD_BLOCK,
+				Utils.format("&6&lToggle Default Shop"),
+				Utils.format(CONSTRUCTION)));
+
+		// Option to toggle custom shop
+		inv.setItem(2, Utils.createItem(Material.EMERALD_BLOCK,
+				Utils.format("&2&lToggle Custom Shop"),
+				Utils.format(CONSTRUCTION)));
+
+		// Option to toggle dynamic prices
+		inv.setItem(3, Utils.createItem(Material.NETHER_STAR,
+				Utils.format("&b&lToggle Dynamic Prices"),
+				Utils.format(CONSTRUCTION)));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	// Menu for editing the game settings of an arena
+	public Inventory createGameSettingsInventory(int num) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&8&lGame Settings: " + plugin.getData().getString("data.a" + num + ".name")));
 
-		// Option to change max players
-		ItemStack item = new ItemStack(Material.PLAYER_HEAD);
-		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(Utils.format("&e&lMax Players"));
-		item.setItemMeta(meta);
-		inv.setItem(0, item);
+		// Option to change max rounds
+		inv.setItem(0, Utils.createItem(Material.NETHERITE_SWORD,
+				Utils.format("&3&lMax Rounds"),
+				FLAGS,
+				null,
+				Utils.format(CONSTRUCTION)));
+
+		// Option to round time limit
+		inv.setItem(1, Utils.createItem(Material.CLOCK,
+				Utils.format("&2&lRound Time Limit"),
+				Utils.format(CONSTRUCTION)));
+
+		// Option to edit allowed kits
+		inv.setItem(2, Utils.createItem(Material.ENDER_CHEST,
+				Utils.format("&9&lAllowed Kits"),
+				Utils.format(CONSTRUCTION)));
+
+		// Option to edit persistent rewards
+		inv.setItem(3, Utils.createItem(Material.EMERALD,
+				Utils.format("&a&lPersistent Rewards"),
+				Utils.format(CONSTRUCTION)));
+
+		// Option to edit sounds
+		inv.setItem(4, Utils.createItem(Material.MUSIC_DISC_13,
+				Utils.format("&d&lSounds"),
+				FLAGS,
+				null));
+
+		// Option to copy game settings from another arena
+		inv.setItem(5, Utils.createItem(Material.FEATHER,
+				Utils.format("&7&lCopy Game Settings"),
+				Utils.format(CONSTRUCTION)));
+
+		// Option to copy arena settings from another arena
+		inv.setItem(6, Utils.createItem(Material.WRITABLE_BOOK,
+				Utils.format("&8&lCopy Arena Settings"),
+				Utils.format(CONSTRUCTION)));
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
@@ -450,29 +514,46 @@ public class Inventories {
 		return inv;
 	}
 
-//	Menu for changing max players in an arena
-	public Inventory createMaxPlayerInventory(int num) {
+	// Menu for editing the sounds of an arena
+	public Inventory createSoundsInventory(int num) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&e&lMax Players: " + plugin.getData().getInt("data.a" + num + ".max")));
+				Utils.format("&d&lSounds: " + plugin.getData().getString("data.a" + num + ".name")));
 
-		// Option to decrease
-		ItemStack item = new ItemStack(Material.RED_CONCRETE);
-		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(Utils.format("&4&lDecrease"));
-		for (int i = 0; i < 4; i++) {
-			item.setItemMeta(meta);
-			inv.setItem(i, item);
-		}
+		// Option to edit win sound
+		inv.setItem(0, Utils.createItem(Material.MUSIC_DISC_PIGSTEP,
+				Utils.format("&a&lWin"),
+				FLAGS,
+				null,
+				Utils.format(CONSTRUCTION)));
 
-		// Option to increase
-		item = new ItemStack(Material.LIME_CONCRETE);
-		meta = item.getItemMeta();
-		meta.setDisplayName(Utils.format("&2&lIncrease"));
-		for (int i = 4; i < 8; i++) {
-			item.setItemMeta(meta);
-			inv.setItem(i, item);
-		}
+		// Option to edit lose sound
+		inv.setItem(1, Utils.createItem(Material.MUSIC_DISC_11,
+				Utils.format("&e&lLose"),
+				FLAGS,
+				null,
+				Utils.format(CONSTRUCTION)));
+
+		// Option to edit round start sound
+		inv.setItem(2, Utils.createItem(Material.MUSIC_DISC_CAT,
+				Utils.format("&2&lRound Start"),
+				FLAGS,
+				null,
+				Utils.format(CONSTRUCTION)));
+
+		// Option to edit round finish sound
+		inv.setItem(3, Utils.createItem(Material.MUSIC_DISC_BLOCKS,
+				Utils.format("&4&lRound Finish"),
+				FLAGS,
+				null,
+				Utils.format(CONSTRUCTION)));
+
+		// Option to edit waiting music
+		inv.setItem(4, Utils.createItem(Material.MUSIC_DISC_MELLOHI,
+				Utils.format("&6&lWaiting Music"),
+				FLAGS,
+				null,
+				Utils.format(CONSTRUCTION)));
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
@@ -480,7 +561,7 @@ public class Inventories {
 		return inv;
 	}
 
-//	Generate the shop menu
+	// Generate the shop menu
 	public Inventory createShop(int num) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 36, Utils.format("&k") +

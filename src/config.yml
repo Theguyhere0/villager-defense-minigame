@@ -276,3 +276,11 @@ waves:
     hgln: 0
     rvgr: 0
     wthr: 0
+
+# This is the config version for reference.
+# DO NOT EDIT VALUE.
+version: 1
+
+# This is the data.yml structure version for reference.
+# DO NOT EDIT VALUE.
+data: 1
