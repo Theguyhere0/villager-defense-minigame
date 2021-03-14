@@ -25,14 +25,14 @@ public class ClickNPC implements Listener {
 		Location location;
 		Player player = event.getPlayer();
 		try {
-			location = new Location(Bukkit.getWorld(plugin.getData().getString("data.a" + name + ".spawn.world")),
-					plugin.getData().getDouble("data.a" + name + ".spawn.x"), plugin.getData().getDouble("data.a" + name + ".spawn.y"),
-					plugin.getData().getDouble("data.a" + name + ".spawn.z"));
+			location = new Location(Bukkit.getWorld(plugin.getData().getString("a" + name + ".spawn.world")),
+					plugin.getData().getDouble("a" + name + ".spawn.x"), plugin.getData().getDouble("a" + name + ".spawn.y"),
+					plugin.getData().getDouble("a" + name + ".spawn.z"));
 		} catch (Exception e) {
 			player.sendMessage(Utils.format("&cError: Arena not set up."));
 			return;
 		}
-		if (plugin.getData().contains("data.a" + name + ".mob"))
+		if (plugin.getData().contains("a" + name + ".mob"))
 			game.join(player, name, location);
 		else player.sendMessage(Utils.format("&cError: Arena not set up."));
 	}

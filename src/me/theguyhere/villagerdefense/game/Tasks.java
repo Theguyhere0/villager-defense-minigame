@@ -126,12 +126,12 @@ public class Tasks extends BukkitRunnable {
 			game.breaks.add(arena);
 			
 //			Increment wave
-			plugin.getData().set("data.a" + arena + ".currentWave", plugin.getData().getInt("data.a" + arena + ".currentWave") + 1);
+			plugin.getData().set("a" + arena + ".currentWave", plugin.getData().getInt("a" + arena + ".currentWave") + 1);
 			plugin.saveData();
 			
 //			Regenerate shops and notify players of it
-			if (plugin.getData().getInt("data.a" + arena + ".currentWave") % 10 == 0) {
-				int shopNum = (int) Math.floor(plugin.getData().getInt("data.a" + arena + ".currentWave") / 10);
+			if (plugin.getData().getInt("a" + arena + ".currentWave") % 10 == 0) {
+				int shopNum = (int) Math.floor(plugin.getData().getInt("a" + arena + ".currentWave") / 10);
 				if (shopNum > 5)
 					shopNum = 5;
 				game.shops.put(arena, inv.createShop(shopNum));
@@ -146,9 +146,9 @@ public class Tasks extends BukkitRunnable {
 			game.playing.forEach((player, num) -> {
 				if (arena.equals(num)) {
 					if (Bukkit.getServer().getPlayer(player).getGameMode().equals(GameMode.SPECTATOR)) {
-						Location location = new Location(Bukkit.getWorld(plugin.getData().getString("data.a" + arena + ".spawn.world")),
-								plugin.getData().getDouble("data.a" + arena + ".spawn.x"), plugin.getData().getDouble("data.a" + arena + ".spawn.y"),
-								plugin.getData().getDouble("data.a" + arena + ".spawn.z"));
+						Location location = new Location(Bukkit.getWorld(plugin.getData().getString("a" + arena + ".spawn.world")),
+								plugin.getData().getDouble("a" + arena + ".spawn.x"), plugin.getData().getDouble("a" + arena + ".spawn.y"),
+								plugin.getData().getDouble("a" + arena + ".spawn.z"));
 						Bukkit.getServer().getPlayer(player).teleport(location);
 						Bukkit.getServer().getPlayer(player).setGameMode(GameMode.ADVENTURE);
 						Bukkit.getServer().getPlayer(player).getInventory().addItem(new ItemStack(Material.WOODEN_SWORD));
@@ -159,7 +159,7 @@ public class Tasks extends BukkitRunnable {
 						Bukkit.getServer().getPlayer(player).setSaturation(20);
 						Bukkit.getServer().getPlayer(player).setLevel(0);
 					}
-					int wave = plugin.getData().getInt("data.a" + arena + ".currentWave");
+					int wave = plugin.getData().getInt("a" + arena + ".currentWave");
 					Bukkit.getServer().getPlayer(player).sendTitle(Utils.format("&6Wave " + wave), Utils.format("&7Starting in 15 seconds"), 10 , 70, 20);
 					game.gems.put(player, game.gems.get(player) + wave * 10 - 10);
 					if (wave > 1)
@@ -172,7 +172,7 @@ public class Tasks extends BukkitRunnable {
 
 				@Override
 				public void run() {
-					spawn(arena, plugin.getData().getInt("data.a" + arena + ".currentWave"), spawns);
+					spawn(arena, plugin.getData().getInt("a" + arena + ".currentWave"), spawns);
 					game.breaks.remove(arena);
 
 				}
@@ -196,7 +196,7 @@ public class Tasks extends BukkitRunnable {
 			});
 			
 //			Start the waves tasks and set arena to active
-			plugin.getData().set("data.a" + arena + ".active", true);
+			plugin.getData().set("a" + arena + ".active", true);
 			plugin.saveData();
 			
 //			Create the initial shop inventory
@@ -217,13 +217,13 @@ public class Tasks extends BukkitRunnable {
 						}
 					});
 //					Game end situations
-					if (game.villagers.get(arena) == 0 && !(plugin.getData().getInt("data.a" + arena + ".currentWave") == 0) &&
+					if (game.villagers.get(arena) == 0 && !(plugin.getData().getInt("a" + arena + ".currentWave") == 0) &&
 							!game.breaks.contains(arena) || players[0] - ghosts[0] == 0) {
 						cancel();
 						game.endGame(arena);
 					}
 //					TEMPORARY win condition
-					else if (plugin.getData().getInt("data.a" + arena + ".currentWave") == 7) {
+					else if (plugin.getData().getInt("a" + arena + ".currentWave") == 7) {
 						cancel();
 						game.endGame(arena);
 					}
@@ -239,16 +239,16 @@ public class Tasks extends BukkitRunnable {
 	
 	@Override
 	public void run() {
-		plugin.getData().getConfigurationSection("data.a" + arena + ".mob").getKeys(false).forEach(num -> {
-			spawns.add(new Location(Bukkit.getWorld(plugin.getData().getString("data.a" + arena + ".mob." + num + ".world")),
-					plugin.getData().getDouble("data.a" + arena + ".mob." + num + ".x"), plugin.getData().getDouble("data.a" + arena + ".mob." + num + ".y"),
-					plugin.getData().getDouble("data.a" + arena + ".mob." + num + ".z")));
+		plugin.getData().getConfigurationSection("a" + arena + ".mob").getKeys(false).forEach(num -> {
+			spawns.add(new Location(Bukkit.getWorld(plugin.getData().getString("a" + arena + ".mob." + num + ".world")),
+					plugin.getData().getDouble("a" + arena + ".mob." + num + ".x"), plugin.getData().getDouble("a" + arena + ".mob." + num + ".y"),
+					plugin.getData().getDouble("a" + arena + ".mob." + num + ".z")));
 		});
 //		Clear the arena
-		Location location = new Location(Bukkit.getWorld(plugin.getData().getString("data.a" + arena + ".spawn.world")),
-				plugin.getData().getDouble("data.a" + arena + ".spawn.x"), plugin.getData().getDouble("data.a" + arena + ".spawn.y"),
-				plugin.getData().getDouble("data.a" + arena + ".spawn.z"));
-		Collection<Entity> ents = Bukkit.getWorld(plugin.getData().getString("data.a" + arena + ".spawn.world")).getNearbyEntities(location, 100, 100, 50);
+		Location location = new Location(Bukkit.getWorld(plugin.getData().getString("a" + arena + ".spawn.world")),
+				plugin.getData().getDouble("a" + arena + ".spawn.x"), plugin.getData().getDouble("a" + arena + ".spawn.y"),
+				plugin.getData().getDouble("a" + arena + ".spawn.z"));
+		Collection<Entity> ents = Bukkit.getWorld(plugin.getData().getString("a" + arena + ".spawn.world")).getNearbyEntities(location, 100, 100, 50);
 		ents.forEach(ent -> {
 			if (ent instanceof LivingEntity && !(ent instanceof Player)) {
 				if (ent.getName().contains("VD")) {
@@ -283,7 +283,7 @@ public class Tasks extends BukkitRunnable {
 					}
 				});
 
-				if (Integer.toString(players[0]).equals(plugin.getData().getString("data.a" + arena + ".max"))) {
+				if (Integer.toString(players[0]).equals(plugin.getData().getString("a" + arena + ".max"))) {
 					
 					Bukkit.getScheduler().cancelTask(min1ID);
 					Bukkit.getScheduler().cancelTask(sec30ID);
@@ -296,7 +296,7 @@ public class Tasks extends BukkitRunnable {
 					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, start, 200);
 					cancel();
 				}
-				else if (plugin.getData().getInt("data.a" + arena + ".currentWave") > 0) {
+				else if (plugin.getData().getInt("a" + arena + ".currentWave") > 0) {
 					cancel();
 				}
 			}

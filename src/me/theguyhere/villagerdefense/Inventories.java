@@ -49,13 +49,13 @@ public class Inventories {
 		// Options to interact with all 45 possible arenas
 		for (int i = 0; i < 45; i++) {
 			// Check if arena exists, set button accordingly
-			if (plugin.getData().getString("data.a" + (i) + ".name") == null ||
-					plugin.getData().getString("data.a" + (i) + ".name").length() == 0)
+			if (plugin.getData().getString("a" + (i) + ".name") == null ||
+					plugin.getData().getString("a" + (i) + ".name").length() == 0)
 				inv.setItem(i,
 						Utils.createItem(Material.RED_CONCRETE, Utils.format("&c&lCreate Arena " + (i + 1))));
 			else
 				inv.setItem(i, Utils.createItem(Material.LIME_CONCRETE,
-						Utils.format("&a&lEdit " + plugin.getData().getString("data.a" + (i) + ".name"))));
+						Utils.format("&a&lEdit " + plugin.getData().getString("a" + (i) + ".name"))));
 		}
 
 		// Option to set lobby location
@@ -90,10 +90,10 @@ public class Inventories {
 	// Menu for naming an arena
 	public Inventory createNamingInventory(int num) {
 		// Gather arena name and caps lock state
-		String name = plugin.getData().getString("data.a" + num + ".name");
+		String name = plugin.getData().getString("a" + num + ".name");
 		if (name == null)
 			name = "";
-		boolean caps = plugin.getData().getBoolean("data.a" + num + ".caps");
+		boolean caps = plugin.getData().getBoolean("a" + num + ".caps");
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 54, Utils.format("&k") +
@@ -131,7 +131,7 @@ public class Inventories {
 	public Inventory createArenaInventory(int num) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&2&lEdit " + plugin.getData().getString("data.a" + num + ".name")));
+				Utils.format("&2&lEdit " + plugin.getData().getString("a" + num + ".name")));
 
 		// Option to edit name
 		inv.setItem(0, Utils.createItem(Material.NAME_TAG, Utils.format("&6&lEdit Name")));
@@ -169,7 +169,7 @@ public class Inventories {
 	public Inventory createArenaConfirmInventory(int num) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&4&lRemove " + plugin.getData().getString("data.a" + num + ".name") + '?'));
+				Utils.format("&4&lRemove " + plugin.getData().getString("a" + num + ".name") + '?'));
 
 		// "No" option
 		inv.setItem(0, ii.no());
@@ -184,7 +184,7 @@ public class Inventories {
 	public Inventory createPortalInventory(int num) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&5&lPortal: " + plugin.getData().getString("data.a" + num + ".name")));
+				Utils.format("&5&lPortal: " + plugin.getData().getString("a" + num + ".name")));
 
 		// Option to create the portal
 		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Portal")));
@@ -220,7 +220,7 @@ public class Inventories {
 	public Inventory createPlayersInventory(int num) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&d&lPlayer Settings: " + plugin.getData().getString("data.a" + num + ".name")));
+				Utils.format("&d&lPlayer Settings: " + plugin.getData().getString("a" + num + ".name")));
 
 		// Option to edit player spawn
 		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&5&lPlayer Spawn")));
@@ -252,7 +252,7 @@ public class Inventories {
 	public Inventory createPlayerSpawnInventory(int num) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&d&lPlayer Spawn: " + plugin.getData().getString("data.a" + num + ".name")));
+				Utils.format("&d&lPlayer Spawn: " + plugin.getData().getString("a" + num + ".name")));
 
 		// Option to create player spawn
 		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Spawn")));
@@ -273,7 +273,7 @@ public class Inventories {
 	public Inventory createMaxPlayerInventory(int num) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&4&lMaximum Players: " + plugin.getData().getInt("data.a" + num + ".max")));
+				Utils.format("&4&lMaximum Players: " + plugin.getData().getInt("a" + num + ".max")));
 
 		// Option to decrease
 		for (int i = 0; i < 4; i++)
@@ -293,7 +293,7 @@ public class Inventories {
 	public Inventory createMinPlayerInventory(int num) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&2&lMinimum Players: " + plugin.getData().getInt("data.a" + num + ".min")));
+				Utils.format("&2&lMinimum Players: " + plugin.getData().getInt("a" + num + ".min")));
 
 		// Option to decrease
 		for (int i = 0; i < 4; i++)
@@ -328,7 +328,7 @@ public class Inventories {
 	public Inventory createMobsInventory(int num) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&2&lMob Settings: " + plugin.getData().getString("data.a" + num + ".name")));
+				Utils.format("&2&lMob Settings: " + plugin.getData().getString("a" + num + ".name")));
 
 		// Option to edit monster spawns
 		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&2&lMonster Spawns")));
@@ -373,7 +373,7 @@ public class Inventories {
 	public Inventory createMonsterSpawnInventory(int num) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&2&lMonster Spawns: " + plugin.getData().getString("data.a" + num + ".name")));
+				Utils.format("&2&lMonster Spawns: " + plugin.getData().getString("a" + num + ".name")));
 
 		// Prepare for material indexing
 		int index;
@@ -381,7 +381,7 @@ public class Inventories {
 		// Options to interact with all 8 possible mob spawns
 		for (int i = 0; i < 8; i++) {
 			// Check if the spawn exists
-			if (plugin.getData().getString("data.a" + (num) + ".mob." + i + ".x") == null)
+			if (plugin.getData().getString("a" + (num) + ".mob." + i + ".x") == null)
 				index = 0;
 			else index = 1;
 
@@ -400,7 +400,7 @@ public class Inventories {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&2&lMonster Spawn " + slot + ": " +
-				plugin.getData().getString("data.a" + num + ".name")));
+				plugin.getData().getString("a" + num + ".name")));
 
 		// Option to create monster spawn
 		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Spawn")));
@@ -436,7 +436,7 @@ public class Inventories {
 	public Inventory createShopsInventory(int num) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&e&lShop Settings: " + plugin.getData().getString("data.a" + num + ".name")));
+				Utils.format("&e&lShop Settings: " + plugin.getData().getString("a" + num + ".name")));
 
 		// Option to create a custom shop
 		inv.setItem(0, Utils.createItem(Material.EMERALD,
@@ -468,7 +468,7 @@ public class Inventories {
 	public Inventory createGameSettingsInventory(int num) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&8&lGame Settings: " + plugin.getData().getString("data.a" + num + ".name")));
+				Utils.format("&8&lGame Settings: " + plugin.getData().getString("a" + num + ".name")));
 
 		// Option to change max rounds
 		inv.setItem(0, Utils.createItem(Material.NETHERITE_SWORD,
@@ -518,7 +518,7 @@ public class Inventories {
 	public Inventory createSoundsInventory(int num) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&d&lSounds: " + plugin.getData().getString("data.a" + num + ".name")));
+				Utils.format("&d&lSounds: " + plugin.getData().getString("a" + num + ".name")));
 
 		// Option to edit win sound
 		inv.setItem(0, Utils.createItem(Material.MUSIC_DISC_PIGSTEP,

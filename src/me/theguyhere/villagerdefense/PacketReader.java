@@ -4,7 +4,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import me.theguyhere.villagerdefense.events.RightClickNPC;
-import net.minecraft.server.v1_16_R3.EntityPlayer;
+import net.minecraft.server.v1_16_R3.EntityVillager;
 import net.minecraft.server.v1_16_R3.Packet;
 import net.minecraft.server.v1_16_R3.PacketPlayInUseEntity;
 import org.bukkit.Bukkit;
@@ -65,7 +65,7 @@ public class PacketReader {
 			
 			int id = (int) getValue(packet, "a");
 			if (getValue(packet, "action").toString().equalsIgnoreCase("INTERACT")) {
-				for (EntityPlayer npc : NPC.getNPCs()) {
+				for (EntityVillager npc : NPC.getNPCs()) {
 					if (npc.getId() == id) {
 						Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
 								Bukkit.getPluginManager().callEvent(new RightClickNPC(player, npc)), 0);

@@ -1,10 +1,12 @@
 package me.theguyhere.villagerdefense.events;
 
 import me.theguyhere.villagerdefense.*;
-import net.minecraft.server.v1_16_R3.EntityPlayer;
+import net.minecraft.server.v1_16_R3.EntityArmorStand;
+import net.minecraft.server.v1_16_R3.EntityVillager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,22 +18,23 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 public class InventoryEvents implements Listener {
 	private final Main plugin;
 	private final Inventories inv;
 	private final PacketReader reader;
 	private final NPC npc;
+	private final DynamicHolo holo;
 	private int arena = 0; // Keeps track of which arena for many of the menus
 	private int oldSlot = 0;
 	private String old = ""; // Old name to revert name back if cancelled during naming
 	private Boolean close = false; // Safe close toggle initialized to off
 	
-	public InventoryEvents (Main plugin, Inventories inv, NPC npc, PacketReader reader) {
+	public InventoryEvents (Main plugin, Inventories inv, NPC npc, DynamicHolo holo, PacketReader reader) {
 		this.plugin = plugin;
 		this.inv = inv;
 		this.npc = npc;
+		this.holo = holo;
 		this.reader = reader;
 	}
 
@@ -92,11 +95,11 @@ public class InventoryEvents implements Listener {
 
 			// Set new lobby
 			else if (buttonName.contains("Set")) {
-				if (!plugin.getData().contains("data.lobby")) {
-					plugin.getData().set("data.lobby.x", player.getLocation().getX());
-					plugin.getData().set("data.lobby.y", player.getLocation().getY());
-					plugin.getData().set("data.lobby.z", player.getLocation().getZ());
-					plugin.getData().set("data.lobby.world", player.getLocation().getWorld().getName());
+				if (!plugin.getData().contains("lobby")) {
+					plugin.getData().set("lobby.x", player.getLocation().getX());
+					plugin.getData().set("lobby.y", player.getLocation().getY());
+					plugin.getData().set("lobby.z", player.getLocation().getZ());
+					plugin.getData().set("lobby.world", player.getLocation().getWorld().getName());
 					plugin.saveData();
 					player.sendMessage(Utils.format("&aLobby set!"));
 					player.closeInventory();
@@ -107,10 +110,10 @@ public class InventoryEvents implements Listener {
 			else if (buttonName.contains("Teleport")) {
 				Location location;
 				try {
-					location = new Location(Bukkit.getWorld(plugin.getData().getString("data.lobby.world")),
-							plugin.getData().getDouble("data.lobby.x"),
-							plugin.getData().getDouble("data.lobby.y"),
-							plugin.getData().getDouble("data.lobby.z"));
+					location = new Location(Bukkit.getWorld(plugin.getData().getString("lobby.world")),
+							plugin.getData().getDouble("lobby.x"),
+							plugin.getData().getDouble("lobby.y"),
+							plugin.getData().getDouble("lobby.z"));
 				} catch (Exception err) {
 					return;
 				}
@@ -127,40 +130,40 @@ public class InventoryEvents implements Listener {
 				player.closeInventory();
 
 			arena = slot;
-			old = plugin.getData().getString("data.a" + arena + ".name");
+			old = plugin.getData().getString("a" + arena + ".name");
 		}
 		
 //		Naming inventory
 		else if (title.contains("Arena")) {
 			// Get name of arena
-			String name = plugin.getData().getString("data.a" + arena + ".name");
+			String name = plugin.getData().getString("a" + arena + ".name");
 
 			// If no name exists, set to nothing
 			if (name == null)
 				name = "";
 
 			// Check for caps lock toggle
-			boolean caps = plugin.getData().getBoolean("data.a" + arena + ".caps");
+			boolean caps = plugin.getData().getBoolean("a" + arena + ".caps");
 			if (caps)
 				num += 36;
 			
 //			Letters and numbers
 			if (Arrays.asList(Inventories.KEYMATS).contains(buttonType)){
-				plugin.getData().set("data.a" + arena + ".name", name + Inventories.NAMES[num]);
+				plugin.getData().set("a" + arena + ".name", name + Inventories.NAMES[num]);
 				plugin.saveData();
 				openInv(player, inv.createNamingInventory(arena));
 			}
 
 //			Spaces
 			else if (buttonName.contains("Space")){
-				plugin.getData().set("data.a" + arena + ".name", name + Inventories.NAMES[72]);
+				plugin.getData().set("a" + arena + ".name", name + Inventories.NAMES[72]);
 				plugin.saveData();
 				openInv(player, inv.createNamingInventory(arena));
 			}
 
 //			Caps lock
 			else if (buttonName.contains("CAPS LOCK")) {
-				plugin.getData().set("data.a" + arena + ".caps", !caps);
+				plugin.getData().set("a" + arena + ".caps", !caps);
 				plugin.saveData();
 				openInv(player, inv.createNamingInventory(arena));
 			}
@@ -169,7 +172,7 @@ public class InventoryEvents implements Listener {
 			else if (buttonName.contains("Backspace")) {
 				if (name.length() == 0)
 					return;
-				plugin.getData().set("data.a" + arena + ".name", name.substring(0, name.length() - 1));
+				plugin.getData().set("a" + arena + ".name", name.substring(0, name.length() - 1));
 				plugin.saveData();
 				openInv(player, inv.createNamingInventory(arena));
 			}
@@ -177,22 +180,23 @@ public class InventoryEvents implements Listener {
 //			Save
 			else if (buttonName.contains("SAVE") && name.length() > 0) {
 				openInv(player, inv.createArenasInventory());
-				old = plugin.getData().getString("data.a" + arena + ".name");
+				old = plugin.getData().getString("a" + arena + ".name");
 				// Recreate portal if it exists
-				if (plugin.getData().contains("data.portal." + arena)) {
-					plugin.removeHolo(Integer.toString(arena));
-					plugin.spawnHolo(Integer.toString(arena));
+				if (plugin.getData().contains("portal." + arena)) {
+					for (EntityArmorStand oldHolo : holo.getHolos().keySet())
+						if (holo.getHolos().get(oldHolo) == arena)
+							holo.refreshHolo(player, oldHolo);
 				}
 
 				// Set default max players to 12 if it doesn't exist
-				if (!plugin.getData().contains("data.a" + arena + ".max")) {
-					plugin.getData().set("data.a" + arena + ".max", 12);
+				if (!plugin.getData().contains("a" + arena + ".max")) {
+					plugin.getData().set("a" + arena + ".max", 12);
 					plugin.saveData();
 				}
 
 				// Set default min players to 1 if it doesn't exist
-				if (!plugin.getData().contains("data.a" + arena + ".min")) {
-					plugin.getData().set("data.a" + arena + ".min", 1);
+				if (!plugin.getData().contains("a" + arena + ".min")) {
+					plugin.getData().set("a" + arena + ".min", 1);
 					plugin.saveData();
 				}
 
@@ -200,7 +204,7 @@ public class InventoryEvents implements Listener {
 
 //			Cancel
 			else if (buttonName.contains("CANCEL")) {
-				plugin.getData().set("data.a" + arena + ".name", old);
+				plugin.getData().set("a" + arena + ".name", old);
 				openInv(player, inv.createArenasInventory());
 			}
 		}
@@ -253,15 +257,15 @@ public class InventoryEvents implements Listener {
 					openInv(player, inv.createPortalInventory(arena));
 
 				// Remove the portal, then return to previous menu
-				else if (buttonName.contains("YES") && plugin.getData().contains("data.portal." + arena)) {
+				else if (buttonName.contains("YES") && plugin.getData().contains("portal." + arena)) {
 					// Remove data
-					plugin.removeHolo(Integer.toString(arena));
 					for (Player p : Bukkit.getOnlinePlayers()) {
 						reader.uninject(p);
-						for (EntityPlayer NPC : npc.getNPCs())
+						for (EntityVillager NPC : npc.getNPCs())
 							npc.removeNPC(p, NPC);
+						holo.getHolos().forEach((k, v) -> holo.removeHolo(p, k));
 					}
-					plugin.getData().set("data.portal." + arena, null);
+					plugin.getData().set("portal." + arena, null);
 					plugin.saveData();
 
 					// Confirm and return
@@ -277,8 +281,8 @@ public class InventoryEvents implements Listener {
 					openInv(player, inv.createPlayerSpawnInventory(arena));
 
 				// Remove spawn, then return to previous menu
-				else if (buttonName.contains("YES") && plugin.getData().contains("data.a" + arena + ".spawn")) {
-					plugin.getData().set("data.a" + arena + ".spawn", null);
+				else if (buttonName.contains("YES") && plugin.getData().contains("a" + arena + ".spawn")) {
+					plugin.getData().set("a" + arena + ".spawn", null);
 					plugin.saveData();
 					player.sendMessage(Utils.format("&aSpawn removed!"));
 					openInv(player, inv.createPlayerSpawnInventory(arena));
@@ -292,8 +296,8 @@ public class InventoryEvents implements Listener {
 					openInv(player, inv.createMonsterSpawnMenu(arena, oldSlot));
 
 				// Remove the mob spawn, then return to previous menu
-				else if (buttonName.contains("YES") && plugin.getData().contains("data.a" + arena + ".mob." + oldSlot)) {
-					plugin.getData().set("data.a" + arena + ".mob." + oldSlot, null);
+				else if (buttonName.contains("YES") && plugin.getData().contains("a" + arena + ".mob." + oldSlot)) {
+					plugin.getData().set("a" + arena + ".mob." + oldSlot, null);
 					plugin.saveData();
 					player.sendMessage(Utils.format("&aMob spawn removed!"));
 					openInv(player, inv.createMonsterSpawnMenu(arena, oldSlot));
@@ -307,8 +311,8 @@ public class InventoryEvents implements Listener {
 					openInv(player, inv.createArenasInventory());
 
 				// Remove the lobby, then return to previous menu
-				else if (buttonName.contains("YES") && plugin.getData().contains("data.lobby")) {
-					plugin.getData().set("data.lobby", null);
+				else if (buttonName.contains("YES") && plugin.getData().contains("lobby")) {
+					plugin.getData().set("lobby", null);
 					plugin.saveData();
 					player.sendMessage(Utils.format("&aLobby removed!"));
 					openInv(player, inv.createArenasInventory());
@@ -324,14 +328,14 @@ public class InventoryEvents implements Listener {
 				// Remove arena data, then return to previous menu
 				else if (buttonName.contains("YES")) {
 					// Remove data
-					plugin.getData().set("data.a" + arena, null);
-					plugin.getData().set("data.portal." + arena, null);
+					plugin.getData().set("a" + arena, null);
+					plugin.getData().set("portal." + arena, null);
 					plugin.saveData();
-					plugin.removeHolo(Integer.toString(arena));
 					for (Player p : Bukkit.getOnlinePlayers()) {
 						reader.uninject(p);
-						for (EntityPlayer NPC : npc.getNPCs())
+						for (EntityVillager NPC : npc.getNPCs())
 							npc.removeNPC(p, NPC);
+						holo.getHolos().forEach((k, v) -> holo.removeHolo(p, k));
 					}
 
 					// Confirm and return
@@ -345,9 +349,9 @@ public class InventoryEvents implements Listener {
 		else if (title.contains("Portal:")) {
 //			Create portal, then return to previous menu
 			if (buttonName.contains("Create Portal")) {
-				if (!plugin.getData().contains("data.portal." + arena)) {
+				if (!plugin.getData().contains("portal." + arena)) {
 					npc.createNPC(player, arena);
-					plugin.spawnHolo(Integer.toString(arena));
+					holo.createNameHolo(player, arena);
 					player.sendMessage(Utils.format("&aPortal set!"));
 					openInv(player, inv.createArenaInventory(arena));
 				}
@@ -358,10 +362,10 @@ public class InventoryEvents implements Listener {
 				Location location;
 				try {
 					location = new Location(
-							Bukkit.getWorld(plugin.getData().getString("data.portal." + arena + ".world")),
-							plugin.getData().getDouble("data.portal." + arena + ".x"),
-							plugin.getData().getDouble("data.portal." + arena + ".y"),
-							plugin.getData().getDouble("data.portal." + arena + ".z"));
+							Bukkit.getWorld(plugin.getData().getString("portal." + arena + ".world")),
+							plugin.getData().getDouble("portal." + arena + ".x"),
+							plugin.getData().getDouble("portal." + arena + ".y"),
+							plugin.getData().getDouble("portal." + arena + ".z"));
 				} catch (Exception err) {
 					return;
 				}
@@ -404,10 +408,10 @@ public class InventoryEvents implements Listener {
 		else if (title.contains("Player Spawn:")) {
 //			Create spawn, then return to previous menu
 			if (buttonName.contains("Create Spawn")) {
-				plugin.getData().set("data.a" + arena + ".spawn.x", player.getLocation().getX());
-				plugin.getData().set("data.a" + arena + ".spawn.y", player.getLocation().getY());
-				plugin.getData().set("data.a" + arena + ".spawn.z", player.getLocation().getZ());
-				plugin.getData().set("data.a" + arena + ".spawn.world", player.getLocation().getWorld().getName());
+				plugin.getData().set("a" + arena + ".spawn.x", player.getLocation().getX());
+				plugin.getData().set("a" + arena + ".spawn.y", player.getLocation().getY());
+				plugin.getData().set("a" + arena + ".spawn.z", player.getLocation().getZ());
+				plugin.getData().set("a" + arena + ".spawn.world", player.getLocation().getWorld().getName());
 				plugin.saveData();
 				player.sendMessage(Utils.format("&aSpawn set!"));
 				openInv(player, inv.createPlayersInventory(arena));
@@ -417,10 +421,10 @@ public class InventoryEvents implements Listener {
 			else if (buttonName.contains("Teleport")) {
 				Location location;
 				try {
-					location = new Location(Bukkit.getWorld(plugin.getData().getString("data.a" + arena + ".spawn.world")),
-							plugin.getData().getDouble("data.a" + arena + ".spawn.x"),
-							plugin.getData().getDouble("data.a" + arena + ".spawn.y"),
-							plugin.getData().getDouble("data.a" + arena + ".spawn.z"));
+					location = new Location(Bukkit.getWorld(plugin.getData().getString("a" + arena + ".spawn.world")),
+							plugin.getData().getDouble("a" + arena + ".spawn.x"),
+							plugin.getData().getDouble("a" + arena + ".spawn.y"),
+							plugin.getData().getDouble("a" + arena + ".spawn.z"));
 				} catch (Exception err) {
 					return;
 				}
@@ -440,15 +444,15 @@ public class InventoryEvents implements Listener {
 		// Max player menu for an arena
 		else if (title.contains("Maximum Players:")) {
 //			Decrease max players
-			if (buttonName.contains("Decrease") && plugin.getData().getInt("data.a" + arena + ".max") > 1) {
-				plugin.getData().set("data.a" + arena + ".max", plugin.getData().getInt("data.a" + arena + ".max") - 1);
+			if (buttonName.contains("Decrease") && plugin.getData().getInt("a" + arena + ".max") > 1) {
+				plugin.getData().set("a" + arena + ".max", plugin.getData().getInt("a" + arena + ".max") - 1);
 				plugin.saveData();
 				openInv(player, inv.createMaxPlayerInventory(arena));
 			}
 
 //			Increase max players
 			else if (buttonName.contains("Increase")) {
-				plugin.getData().set("data.a" + arena + ".max", plugin.getData().getInt("data.a" + arena + ".max") + 1);
+				plugin.getData().set("a" + arena + ".max", plugin.getData().getInt("a" + arena + ".max") + 1);
 				plugin.saveData();
 				openInv(player, inv.createMaxPlayerInventory(arena));
 			}
@@ -462,15 +466,15 @@ public class InventoryEvents implements Listener {
 		// Max player menu for an arena
 		else if (title.contains("Minimum Players:")) {
 //			Decrease max players
-			if (buttonName.contains("Decrease") && plugin.getData().getInt("data.a" + arena + ".min") > 1) {
-				plugin.getData().set("data.a" + arena + ".min", plugin.getData().getInt("data.a" + arena + ".min") - 1);
+			if (buttonName.contains("Decrease") && plugin.getData().getInt("a" + arena + ".min") > 1) {
+				plugin.getData().set("a" + arena + ".min", plugin.getData().getInt("a" + arena + ".min") - 1);
 				plugin.saveData();
 				openInv(player, inv.createMinPlayerInventory(arena));
 			}
 
 //			Increase max players
 			else if (buttonName.contains("Increase")) {
-				plugin.getData().set("data.a" + arena + ".min", plugin.getData().getInt("data.a" + arena + ".min") + 1);
+				plugin.getData().set("a" + arena + ".min", plugin.getData().getInt("a" + arena + ".min") + 1);
 				plugin.saveData();
 				openInv(player, inv.createMinPlayerInventory(arena));
 			}
@@ -528,10 +532,10 @@ public class InventoryEvents implements Listener {
 		else if (title.contains("Monster Spawn ")) {
 //			Create spawn
 			if (buttonName.contains("Create Spawn")) {
-				plugin.getData().set("data.a" + arena + ".mob." + oldSlot + ".x", player.getLocation().getX());
-				plugin.getData().set("data.a" + arena + ".mob." + oldSlot + ".y", player.getLocation().getY());
-				plugin.getData().set("data.a" + arena + ".mob." + oldSlot + ".z", player.getLocation().getZ());
-				plugin.getData().set("data.a" + arena + ".mob." + oldSlot + ".world", player.getLocation().getWorld().getName());
+				plugin.getData().set("a" + arena + ".mob." + oldSlot + ".x", player.getLocation().getX());
+				plugin.getData().set("a" + arena + ".mob." + oldSlot + ".y", player.getLocation().getY());
+				plugin.getData().set("a" + arena + ".mob." + oldSlot + ".z", player.getLocation().getZ());
+				plugin.getData().set("a" + arena + ".mob." + oldSlot + ".world", player.getLocation().getWorld().getName());
 				plugin.saveData();
 				player.sendMessage(Utils.format("&aMonster spawn set!"));
 				openInv(player, inv.createMonsterSpawnInventory(arena));
@@ -541,9 +545,9 @@ public class InventoryEvents implements Listener {
 			else if (buttonName.contains("Teleport")) {
 				Location location;
 				try {
-					location = new Location(Bukkit.getWorld(plugin.getData().getString("data.a" + arena + ".mob." + oldSlot + ".world")),
-							plugin.getData().getDouble("data.a" + arena + ".mob." + oldSlot + ".x"), plugin.getData().getDouble("data.a" + arena + ".mob." + oldSlot + ".y"),
-							plugin.getData().getDouble("data.a" + arena + ".mob." + oldSlot + ".z"));
+					location = new Location(Bukkit.getWorld(plugin.getData().getString("a" + arena + ".mob." + oldSlot + ".world")),
+							plugin.getData().getDouble("a" + arena + ".mob." + oldSlot + ".x"), plugin.getData().getDouble("a" + arena + ".mob." + oldSlot + ".y"),
+							plugin.getData().getDouble("a" + arena + ".mob." + oldSlot + ".z"));
 				} catch (Exception err) {
 					return;
 				}
@@ -643,7 +647,7 @@ public class InventoryEvents implements Listener {
 
 		// Close safely for the inventory of concern
 		if (e.getView().getTitle().contains("Arena")) {
-			plugin.getData().set("data.a" + arena + ".name", old);
+			plugin.getData().set("a" + arena + ".name", old);
 			plugin.saveData();
 		}
 	}

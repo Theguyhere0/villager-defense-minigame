@@ -75,7 +75,7 @@ public class Game {
 			});
 		}
 //		Prepares player to enter the arena if it doesn't exceed max capacity
-		if (players[0] < plugin.getData().getInt("data.a" + arena + ".max") && !plugin.getData().getBoolean("data.a" + arena + ".active")) {
+		if (players[0] < plugin.getData().getInt("a" + arena + ".max") && !plugin.getData().getBoolean("a" + arena + ".active")) {
 			player.getActivePotionEffects().clear();
 			player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
 			player.setFoodLevel(20);
@@ -118,15 +118,15 @@ public class Game {
 //			Sets them up for teleport
 			player.getInventory().clear();
 			player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
-			if (plugin.getData().contains("data.lobby")) {
+			if (plugin.getData().contains("lobby")) {
 				player.getActivePotionEffects().clear();
 				player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
 				player.setFoodLevel(20);
 				player.setSaturation(20);
 				player.setLevel(0);
-				Location location = new Location(Bukkit.getWorld(plugin.getData().getString("data.lobby.world")),
-						plugin.getData().getDouble("data.lobby.x"), plugin.getData().getDouble("data.lobby.y"),
-						plugin.getData().getDouble("data.lobby.z"));
+				Location location = new Location(Bukkit.getWorld(plugin.getData().getString("lobby.world")),
+						plugin.getData().getDouble("lobby.x"), plugin.getData().getDouble("lobby.y"),
+						plugin.getData().getDouble("lobby.z"));
 				player.teleport(location);
 			}
 			else {
@@ -148,7 +148,7 @@ public class Game {
 		if (playing.containsValue(arena)) {
 			playing.forEach((gamer, num) -> {
 				if (num.equals(arena)) {
-					Bukkit.getServer().getPlayer(gamer).sendMessage(Utils.format("&6You made it to round &b" + plugin.getData().getInt("data.a" + arena + ".currentWave")
+					Bukkit.getServer().getPlayer(gamer).sendMessage(Utils.format("&6You made it to round &b" + plugin.getData().getInt("a" + arena + ".currentWave")
 							+ "&6! Ending in 10 seconds."));
 				}
 			});
@@ -158,8 +158,8 @@ public class Game {
 
 			@Override
 			public void run() {
-				plugin.getData().set("data.a" + arena + ".active", false);
-				plugin.getData().set("data.a" + arena + ".currentWave", 0);
+				plugin.getData().set("a" + arena + ".active", false);
+				plugin.getData().set("a" + arena + ".currentWave", 0);
 				plugin.saveData();
 				List<String> gamers = new ArrayList<String>();
 //				Remove from lists
@@ -174,10 +174,10 @@ public class Game {
 					leave(Bukkit.getServer().getPlayer(gamer));
 				}
 //				Clear the arena
-				Location location = new Location(Bukkit.getWorld(plugin.getData().getString("data.a" + arena + ".spawn.world")),
-						plugin.getData().getDouble("data.a" + arena + ".spawn.x"), plugin.getData().getDouble("data.a" + arena + ".spawn.y"),
-						plugin.getData().getDouble("data.a" + arena + ".spawn.z"));
-				Collection<Entity> ents = Bukkit.getWorld(plugin.getData().getString("data.a" + arena + ".spawn.world")).getNearbyEntities(location, 100, 100, 50);
+				Location location = new Location(Bukkit.getWorld(plugin.getData().getString("a" + arena + ".spawn.world")),
+						plugin.getData().getDouble("a" + arena + ".spawn.x"), plugin.getData().getDouble("a" + arena + ".spawn.y"),
+						plugin.getData().getDouble("a" + arena + ".spawn.z"));
+				Collection<Entity> ents = Bukkit.getWorld(plugin.getData().getString("a" + arena + ".spawn.world")).getNearbyEntities(location, 100, 100, 50);
 				ents.forEach(ent -> {
 					if (ent instanceof LivingEntity && !(ent instanceof Player)) {
 						if (ent.getName().contains("VD")) {
@@ -225,9 +225,9 @@ public class Game {
 					ghosts[0]++;
 			}
 		});
-		Objective obj = board.registerNewObjective("VillagerDefense", "dummy", Utils.format("&2&l" + plugin.getData().getString("data.a" + arena + ".name")));
+		Objective obj = board.registerNewObjective("VillagerDefense", "dummy", Utils.format("&2&l" + plugin.getData().getString("a" + arena + ".name")));
 		obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-		Score score = obj.getScore(Utils.format("&6Wave: " + plugin.getData().getInt("data.a" + arena + ".currentWave")));
+		Score score = obj.getScore(Utils.format("&6Wave: " + plugin.getData().getInt("a" + arena + ".currentWave")));
 		score.setScore(6);
 		Score score2 = obj.getScore(Utils.format("&2Gems: " + gems.get(player.getName())));
 		score2.setScore(5);
