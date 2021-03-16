@@ -18,10 +18,10 @@ import java.util.Map;
 import java.util.UUID;
 
 public class PacketReader {
-	private final NPC NPC;
+	private final Portal Portal;
 	
-	public PacketReader(NPC NPC) {
-		this.NPC = NPC;
+	public PacketReader(Portal Portal) {
+		this.Portal = Portal;
 	}
 	
 	Channel channel;
@@ -65,7 +65,7 @@ public class PacketReader {
 			
 			int id = (int) getValue(packet, "a");
 			if (getValue(packet, "action").toString().equalsIgnoreCase("INTERACT")) {
-				for (EntityVillager npc : NPC.getNPCs()) {
+				for (EntityVillager npc : Portal.getNPCs()) {
 					if (npc.getId() == id) {
 						Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
 								Bukkit.getPluginManager().callEvent(new RightClickNPC(player, npc)), 0);

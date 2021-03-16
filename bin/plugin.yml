@@ -3,6 +3,7 @@ name: VillagerDefense
 version: 0.1.0
 author: Theguyhere
 api-version: 1.16
+depend: [HolographicDisplays]
 
 commands:
   vd:

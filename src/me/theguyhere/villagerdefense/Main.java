@@ -7,15 +7,10 @@ import me.theguyhere.villagerdefense.events.Join;
 import me.theguyhere.villagerdefense.game.Game;
 import me.theguyhere.villagerdefense.game.GameEvents;
 import me.theguyhere.villagerdefense.game.GameItems;
-import net.minecraft.server.v1_16_R3.EntityArmorStand;
-import net.minecraft.server.v1_16_R3.EntityVillager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,8 +19,7 @@ public class Main extends JavaPlugin {
 	private final GameItems gi = new GameItems();
 	private final InventoryItems ii = new InventoryItems();
 	private final Inventories inventories = new Inventories(this, gi, ii);
-	private final NPC npc = new NPC(this);
-	private final DynamicHolo holo = new DynamicHolo(this);
+	private final Portal portal = new Portal(this);
 	private PacketReader reader;
 	private final Game game = new Game(this, gi, inventories);
 	private final Commands commands = new Commands(this, inventories, game);
@@ -36,7 +30,14 @@ public class Main extends JavaPlugin {
 	public void onEnable() {
 		saveDefaultConfig();
 
-		reader = new PacketReader(npc);
+		if (!Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
+			getLogger().severe("*** HolographicDisplays is not installed or not enabled. ***");
+			getLogger().severe("*** This plugin will be disabled. ***");
+			this.setEnabled(false);
+			return;
+		}
+
+		reader = new PacketReader(portal);
 		PluginManager pm = getServer().getPluginManager();
 		data = new DataManager(this);
 
@@ -45,9 +46,9 @@ public class Main extends JavaPlugin {
 		getCommand("vd").setTabCompleter(new CommandTab());
 
 		// Register event listeners
-		pm.registerEvents(new InventoryEvents(this, inventories, npc, holo, reader), this);
-		pm.registerEvents(new Join(npc, holo, reader, game), this);
-		pm.registerEvents(new Death(npc, reader), this);
+		pm.registerEvents(new InventoryEvents(this, inventories, portal, reader), this);
+		pm.registerEvents(new Join(portal, reader, game), this);
+		pm.registerEvents(new Death(portal, reader), this);
 		pm.registerEvents(new ClickNPC(this, game), this);
 		pm.registerEvents(new GameEvents(this, game, gi), this);
 
@@ -79,13 +80,13 @@ public class Main extends JavaPlugin {
 //	Runs when disabling plugin
 	@Override
 	public void onDisable() {
-		// Remove portals
-		for (Player player : Bukkit.getOnlinePlayers()) {
+		// Remove uninject players
+		for (Player player : Bukkit.getOnlinePlayers())
 			reader.uninject(player);
-			for (EntityVillager NPC : npc.getNPCs())
-				npc.removeNPC(player, NPC);
-			holo.getHolos().forEach((k, v) -> holo.removeHolo(player, k));
-		}
+
+		// Remove portals
+		portal.removeAll();
+
 		getServer().getConsoleSender().sendMessage(ChatColor.RED + "Villager Defense has been unloaded and disabled!");
 	}
 
@@ -109,8 +110,7 @@ public class Main extends JavaPlugin {
 						getData().getDouble("portal." + portal + ".z"));
 				location.setYaw((float) getData().getDouble("portal." + portal + ".yaw"));
 
-				npc.LoadNPC(location);
-				holo.LoadHolo(location, Integer.parseInt(portal));
+				this.portal.loadPortal(location, Integer.parseInt(portal));
 			} catch (Exception ignored) {
 			}
 		});

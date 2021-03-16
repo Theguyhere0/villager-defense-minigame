@@ -1,12 +1,10 @@
 package me.theguyhere.villagerdefense.events;
 
 import me.theguyhere.villagerdefense.*;
-import net.minecraft.server.v1_16_R3.EntityArmorStand;
 import net.minecraft.server.v1_16_R3.EntityVillager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,18 +21,16 @@ public class InventoryEvents implements Listener {
 	private final Main plugin;
 	private final Inventories inv;
 	private final PacketReader reader;
-	private final NPC npc;
-	private final DynamicHolo holo;
+	private final Portal portal;
 	private int arena = 0; // Keeps track of which arena for many of the menus
 	private int oldSlot = 0;
 	private String old = ""; // Old name to revert name back if cancelled during naming
 	private Boolean close = false; // Safe close toggle initialized to off
 	
-	public InventoryEvents (Main plugin, Inventories inv, NPC npc, DynamicHolo holo, PacketReader reader) {
+	public InventoryEvents (Main plugin, Inventories inv, Portal portal, PacketReader reader) {
 		this.plugin = plugin;
 		this.inv = inv;
-		this.npc = npc;
-		this.holo = holo;
+		this.portal = portal;
 		this.reader = reader;
 	}
 
@@ -182,11 +178,8 @@ public class InventoryEvents implements Listener {
 				openInv(player, inv.createArenasInventory());
 				old = plugin.getData().getString("a" + arena + ".name");
 				// Recreate portal if it exists
-				if (plugin.getData().contains("portal." + arena)) {
-					for (EntityArmorStand oldHolo : holo.getHolos().keySet())
-						if (holo.getHolos().get(oldHolo) == arena)
-							holo.refreshHolo(player, oldHolo);
-				}
+				if (plugin.getData().contains("portal." + arena))
+					portal.refreshHolo(arena);
 
 				// Set default max players to 12 if it doesn't exist
 				if (!plugin.getData().contains("a" + arena + ".max")) {
@@ -258,15 +251,12 @@ public class InventoryEvents implements Listener {
 
 				// Remove the portal, then return to previous menu
 				else if (buttonName.contains("YES") && plugin.getData().contains("portal." + arena)) {
-					// Remove data
-					for (Player p : Bukkit.getOnlinePlayers()) {
-						reader.uninject(p);
-						for (EntityVillager NPC : npc.getNPCs())
-							npc.removeNPC(p, NPC);
-						holo.getHolos().forEach((k, v) -> holo.removeHolo(p, k));
-					}
+					// Remove portal data
 					plugin.getData().set("portal." + arena, null);
 					plugin.saveData();
+
+					// Remove Portal
+					portal.removePortalAll(arena);
 
 					// Confirm and return
 					player.sendMessage(Utils.format("&aPortal removed!"));
@@ -331,16 +321,14 @@ public class InventoryEvents implements Listener {
 					plugin.getData().set("a" + arena, null);
 					plugin.getData().set("portal." + arena, null);
 					plugin.saveData();
-					for (Player p : Bukkit.getOnlinePlayers()) {
-						reader.uninject(p);
-						for (EntityVillager NPC : npc.getNPCs())
-							npc.removeNPC(p, NPC);
-						holo.getHolos().forEach((k, v) -> holo.removeHolo(p, k));
-					}
+
+					// Remove portal
+					portal.removePortalAll(arena);
 
 					// Confirm and return
 					player.sendMessage(Utils.format("&aArena removed!"));
 					openInv(player, inv.createArenasInventory());
+					close = true;
 				}
 			}
 		}
@@ -350,8 +338,7 @@ public class InventoryEvents implements Listener {
 //			Create portal, then return to previous menu
 			if (buttonName.contains("Create Portal")) {
 				if (!plugin.getData().contains("portal." + arena)) {
-					npc.createNPC(player, arena);
-					holo.createNameHolo(player, arena);
+					portal.createPortal(player, arena);
 					player.sendMessage(Utils.format("&aPortal set!"));
 					openInv(player, inv.createArenaInventory(arena));
 				}

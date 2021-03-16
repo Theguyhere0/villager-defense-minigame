@@ -14,6 +14,7 @@
     </content>
     <orderEntry type="jdk" jdkName="JavaSE-1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="HolographicDisplays" level="project" />
     <orderEntry type="library" name="spigot-1.16.5" level="project" />
   </component>
 </module>

@@ -5,15 +5,15 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
-import me.theguyhere.villagerdefense.NPC;
+import me.theguyhere.villagerdefense.Portal;
 import me.theguyhere.villagerdefense.PacketReader;
 
 public class Death implements Listener {
-	private final NPC NPC;
+	private final Portal portal;
 	private final PacketReader reader;
 	
-	public Death(NPC NPC, PacketReader reader) {
-		this.NPC = NPC;
+	public Death(Portal portal, PacketReader reader) {
+		this.portal = portal;
 		this.reader = reader;
 	}
 
@@ -24,11 +24,9 @@ public class Death implements Listener {
 	
 	@EventHandler
 	public void onRespawn(PlayerRespawnEvent event) {
-		if (NPC.getNPCs() == null)
+		if (portal.getNPCs() == null)
 			return;
-		if (NPC.getNPCs().isEmpty())
-			return;
-		NPC.addJoinPacket(event.getPlayer());
+		portal.addJoinPacket(event.getPlayer());
 		
 		reader.inject(event.getPlayer());
 	}
