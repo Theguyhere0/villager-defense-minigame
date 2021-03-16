@@ -1,6 +1,8 @@
 package me.theguyhere.villagerdefense.events;
 
-import me.theguyhere.villagerdefense.Utils;
+import me.theguyhere.villagerdefense.Portal;
+import me.theguyhere.villagerdefense.tools.Utils;
+import net.minecraft.server.v1_16_R3.PacketPlayOutEntityMetadata;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -10,30 +12,42 @@ import org.bukkit.event.Listener;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.game.Game;
 
+import javax.sound.sampled.Port;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public class ClickNPC implements Listener {
-	Main plugin;
-	Game game;
+	private final Main plugin;
+	private final Game game;
+	private final Portal portal;
 	
-	public ClickNPC(Main plugin, Game game) {
+	public ClickNPC(Main plugin, Game game, Portal portal) {
 		this.plugin = plugin;
 		this.game = game;
+		this.portal = portal;
 	}
 	
 	@EventHandler
 	public void onclick(RightClickNPC event) {
-		String name = event.getNPC().getName();
-		Location location;
-		Player player = event.getPlayer();
+		int arena;
+
+		// Try to get arena from npc
 		try {
-			location = new Location(Bukkit.getWorld(plugin.getData().getString("a" + name + ".spawn.world")),
-					plugin.getData().getDouble("a" + name + ".spawn.x"), plugin.getData().getDouble("a" + name + ".spawn.y"),
-					plugin.getData().getDouble("a" + name + ".spawn.z"));
+			arena = Arrays.stream(portal.getNPCs()).collect(Collectors.toList()).indexOf(event.getNPC());
 		} catch (Exception e) {
-			player.sendMessage(Utils.format("&cError: Arena not set up."));
+			e.printStackTrace();
 			return;
 		}
-		if (plugin.getData().contains("a" + name + ".mob"))
-			game.join(player, name, location);
-		else player.sendMessage(Utils.format("&cError: Arena not set up."));
+
+		Player player = event.getPlayer();
+
+		// Initiate player join if arena isn't closed
+		if (!plugin.getData().getBoolean("a" + arena + ".closed"))
+			game.join(player, Integer.toString(arena), new Location(
+					Bukkit.getWorld(plugin.getData().getString("a" + arena + ".spawn.world")),
+					plugin.getData().getDouble("a" + arena + ".spawn.x"),
+					plugin.getData().getDouble("a" + arena + ".spawn.y"),
+					plugin.getData().getDouble("a" + arena + ".spawn.z")));
+		else player.sendMessage(Utils.format("&cArena is closed."));
 	}
 }

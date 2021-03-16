@@ -8,7 +8,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import me.theguyhere.villagerdefense.Portal;
-import me.theguyhere.villagerdefense.PacketReader;
+import me.theguyhere.villagerdefense.tools.PacketReader;
 import me.theguyhere.villagerdefense.game.Game;
 
 public class Join implements Listener {

@@ -1,4 +1,4 @@
-package me.theguyhere.villagerdefense;
+package me.theguyhere.villagerdefense.tools;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.logging.Level;
 
+import me.theguyhere.villagerdefense.Main;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 

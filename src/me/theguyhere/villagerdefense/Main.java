@@ -7,6 +7,8 @@ import me.theguyhere.villagerdefense.events.Join;
 import me.theguyhere.villagerdefense.game.Game;
 import me.theguyhere.villagerdefense.game.GameEvents;
 import me.theguyhere.villagerdefense.game.GameItems;
+import me.theguyhere.villagerdefense.tools.DataManager;
+import me.theguyhere.villagerdefense.tools.PacketReader;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -16,12 +18,12 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
+	private final Portal portal = new Portal(this);
 	private final GameItems gi = new GameItems();
 	private final InventoryItems ii = new InventoryItems();
 	private final Inventories inventories = new Inventories(this, gi, ii);
-	private final Portal portal = new Portal(this);
 	private PacketReader reader;
-	private final Game game = new Game(this, gi, inventories);
+	private final Game game = new Game(this, gi, inventories, portal);
 	private final Commands commands = new Commands(this, inventories, game);
 	private DataManager data;
 
@@ -46,10 +48,10 @@ public class Main extends JavaPlugin {
 		getCommand("vd").setTabCompleter(new CommandTab());
 
 		// Register event listeners
-		pm.registerEvents(new InventoryEvents(this, inventories, portal, reader), this);
+		pm.registerEvents(new InventoryEvents(this, inventories, portal), this);
 		pm.registerEvents(new Join(portal, reader, game), this);
 		pm.registerEvents(new Death(portal, reader), this);
-		pm.registerEvents(new ClickNPC(this, game), this);
+		pm.registerEvents(new ClickNPC(this, game, portal), this);
 		pm.registerEvents(new GameEvents(this, game, gi), this);
 
 		if (!Bukkit.getOnlinePlayers().isEmpty())
@@ -61,16 +63,18 @@ public class Main extends JavaPlugin {
 		if (getData().contains("portal"))
 			loadPortals();
 
+		int currentCVersion = 2;
+		int currentDVersion = 2;
 		// Check config version
-		if (getConfig().getInt("version") < 1)
+		if (getConfig().getInt("version") < currentCVersion)
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "Your config.yml is outdated! "
-					+ "Please update to the latest version to ensure compatibility.");
+					+ "Please update to the latest version (" + currentCVersion + ") to ensure compatibility.");
 
 		// Check if data.yml is outdated
-		if (getConfig().getInt("data") < 1)
+		if (getConfig().getInt("data") < currentDVersion)
 			getServer().getConsoleSender().sendMessage(ChatColor.RED +
 					"Your data.yml is no longer supported with this version! " +
-					"Please manually transfer arena data. " +
+					"Please manually transfer arena data to version " + currentDVersion + ". " +
 					"Please do not update your config.yml until your data.yml has been updated.");
 
 		// Notify successful load

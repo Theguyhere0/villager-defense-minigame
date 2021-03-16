@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
-import me.theguyhere.villagerdefense.Utils;
+import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;

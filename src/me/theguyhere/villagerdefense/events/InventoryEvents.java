@@ -1,7 +1,9 @@
 package me.theguyhere.villagerdefense.events;
 
-import me.theguyhere.villagerdefense.*;
-import net.minecraft.server.v1_16_R3.EntityVillager;
+import me.theguyhere.villagerdefense.Inventories;
+import me.theguyhere.villagerdefense.Main;
+import me.theguyhere.villagerdefense.Portal;
+import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,18 +22,16 @@ import java.util.Arrays;
 public class InventoryEvents implements Listener {
 	private final Main plugin;
 	private final Inventories inv;
-	private final PacketReader reader;
 	private final Portal portal;
 	private int arena = 0; // Keeps track of which arena for many of the menus
 	private int oldSlot = 0;
 	private String old = ""; // Old name to revert name back if cancelled during naming
 	private Boolean close = false; // Safe close toggle initialized to off
 	
-	public InventoryEvents (Main plugin, Inventories inv, Portal portal, PacketReader reader) {
+	public InventoryEvents (Main plugin, Inventories inv, Portal portal) {
 		this.plugin = plugin;
 		this.inv = inv;
 		this.portal = portal;
-		this.reader = reader;
 	}
 
 	// Prevent losing items by drag clicking in custom inventory
@@ -229,8 +229,31 @@ public class InventoryEvents implements Listener {
 			else if (buttonName.contains("Game Settings"))
 				openInv(player, inv.createGameSettingsInventory(arena));
 
-			// Close arena
-//			else if (buttonName.contains("Close"))
+			// Toggle arena close
+			else if (buttonName.contains("Close")) {
+				// Arena currently closed
+				if (plugin.getData().getBoolean("a" + arena + ".closed")) {
+					// No arena portal
+					if (!plugin.getData().contains("portal." + arena))
+						return;
+
+					// No player spawn
+					if (!plugin.getData().contains("a" + arena + ".spawn"))
+						return;
+
+					// No mob spawn
+					if (!plugin.getData().contains("a" + arena + ".mob"))
+						return;
+
+					// Open arena
+					plugin.getData().set("a" + arena + ".closed", false);
+				}
+
+				// Arena currently open
+				else plugin.getData().set("a" + arena + ".closed", true);
+				plugin.saveData();
+				openInv(player, inv.createArenaInventory(arena));
+			}
 
 			// Open arena remove confirmation menu
 			else if (buttonName.contains("REMOVE"))
@@ -251,8 +274,9 @@ public class InventoryEvents implements Listener {
 
 				// Remove the portal, then return to previous menu
 				else if (buttonName.contains("YES") && plugin.getData().contains("portal." + arena)) {
-					// Remove portal data
+					// Remove portal data, close arena
 					plugin.getData().set("portal." + arena, null);
+					plugin.getData().set("a" + arena + ".closed", true);
 					plugin.saveData();
 
 					// Remove Portal
@@ -273,6 +297,7 @@ public class InventoryEvents implements Listener {
 				// Remove spawn, then return to previous menu
 				else if (buttonName.contains("YES") && plugin.getData().contains("a" + arena + ".spawn")) {
 					plugin.getData().set("a" + arena + ".spawn", null);
+					plugin.getData().set("a" + arena + ".closed", true);
 					plugin.saveData();
 					player.sendMessage(Utils.format("&aSpawn removed!"));
 					openInv(player, inv.createPlayerSpawnInventory(arena));
@@ -288,6 +313,8 @@ public class InventoryEvents implements Listener {
 				// Remove the mob spawn, then return to previous menu
 				else if (buttonName.contains("YES") && plugin.getData().contains("a" + arena + ".mob." + oldSlot)) {
 					plugin.getData().set("a" + arena + ".mob." + oldSlot, null);
+					if (!plugin.getData().contains("a" + arena + ".mob"))
+						plugin.getData().set("a" + arena + ".closed", true);
 					plugin.saveData();
 					player.sendMessage(Utils.format("&aMob spawn removed!"));
 					openInv(player, inv.createMonsterSpawnMenu(arena, oldSlot));
@@ -456,6 +483,7 @@ public class InventoryEvents implements Listener {
 			if (buttonName.contains("Decrease") && plugin.getData().getInt("a" + arena + ".min") > 1) {
 				plugin.getData().set("a" + arena + ".min", plugin.getData().getInt("a" + arena + ".min") - 1);
 				plugin.saveData();
+				portal.refreshHolo(arena);
 				openInv(player, inv.createMinPlayerInventory(arena));
 			}
 
@@ -463,6 +491,7 @@ public class InventoryEvents implements Listener {
 			else if (buttonName.contains("Increase")) {
 				plugin.getData().set("a" + arena + ".min", plugin.getData().getInt("a" + arena + ".min") + 1);
 				plugin.saveData();
+				portal.refreshHolo(arena);
 				openInv(player, inv.createMinPlayerInventory(arena));
 			}
 

@@ -1,11 +1,11 @@
 package me.theguyhere.villagerdefense;
 
 import me.theguyhere.villagerdefense.game.GameItems;
+import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Random;
 
@@ -88,18 +88,18 @@ public class Inventories {
 	}
 
 	// Menu for naming an arena
-	public Inventory createNamingInventory(int num) {
+	public Inventory createNamingInventory(int arena) {
 		// Gather arena name and caps lock state
-		String name = plugin.getData().getString("a" + num + ".name");
+		String name = plugin.getData().getString("a" + arena + ".name");
 		if (name == null)
 			name = "";
-		boolean caps = plugin.getData().getBoolean("a" + num + ".caps");
+		boolean caps = plugin.getData().getBoolean("a" + arena + ".caps");
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 54, Utils.format("&k") +
-				Utils.format("&2&lArena " + (num + 1) + " Name: &8&l" + name));
+				Utils.format("&2&lArena " + (arena + 1) + " Name: &8&l" + name));
 
-		// Letter and number inputs
+		// Letter and arenaber inputs
 		for (int i = 0; i < 36; i++) {
 			if (caps)
 				inv.setItem(i, Utils.createItem(KEYMATS[i % 2], Utils.format("&f&l" + NAMES[i + 36])));
@@ -128,10 +128,10 @@ public class Inventories {
 	}
 
 	// Menu for editing an arena
-	public Inventory createArenaInventory(int num) {
+	public Inventory createArenaInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&2&lEdit " + plugin.getData().getString("a" + num + ".name")));
+				Utils.format("&2&lEdit " + plugin.getData().getString("a" + arena + ".name")));
 
 		// Option to edit name
 		inv.setItem(0, Utils.createItem(Material.NAME_TAG, Utils.format("&6&lEdit Name")));
@@ -152,9 +152,11 @@ public class Inventories {
 		inv.setItem(5, Utils.createItem(Material.REDSTONE, Utils.format("&7&lGame Settings")));
 
 		// Option to close the arena
-		inv.setItem(6, Utils.createItem(Material.NETHER_BRICK_FENCE,
-				Utils.format("&9&lClose Arena"),
-				Utils.format(CONSTRUCTION)));
+		String closed;
+		if (plugin.getData().getBoolean("a" + arena + ".closed"))
+			closed = "&c&lCLOSED";
+		else closed = "&a&lOPEN";
+		inv.setItem(6, Utils.createItem(Material.NETHER_BRICK_FENCE, Utils.format("&9&lClose Arena: " + closed)));
 
 		// Option to remove arena
 		inv.setItem(7, ii.remove("ARENA"));
@@ -166,10 +168,10 @@ public class Inventories {
 	}
 
 	// Confirmation menu for removing an arena
-	public Inventory createArenaConfirmInventory(int num) {
+	public Inventory createArenaConfirmInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&4&lRemove " + plugin.getData().getString("a" + num + ".name") + '?'));
+				Utils.format("&4&lRemove " + plugin.getData().getString("a" + arena + ".name") + '?'));
 
 		// "No" option
 		inv.setItem(0, ii.no());
@@ -181,10 +183,10 @@ public class Inventories {
 	}
 
 	// Menu for editing the portal of an arena
-	public Inventory createPortalInventory(int num) {
+	public Inventory createPortalInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&5&lPortal: " + plugin.getData().getString("a" + num + ".name")));
+				Utils.format("&5&lPortal: " + plugin.getData().getString("a" + arena + ".name")));
 
 		// Option to create the portal
 		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Portal")));
@@ -217,10 +219,10 @@ public class Inventories {
 	}
 
 	//	Menu for editing the player settings of an arena
-	public Inventory createPlayersInventory(int num) {
+	public Inventory createPlayersInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&d&lPlayer Settings: " + plugin.getData().getString("a" + num + ".name")));
+				Utils.format("&d&lPlayer Settings: " + plugin.getData().getString("a" + arena + ".name")));
 
 		// Option to edit player spawn
 		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&5&lPlayer Spawn")));
@@ -249,10 +251,10 @@ public class Inventories {
 	}
 
 	//	Menu for editing the player spawn of an arena
-	public Inventory createPlayerSpawnInventory(int num) {
+	public Inventory createPlayerSpawnInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&d&lPlayer Spawn: " + plugin.getData().getString("a" + num + ".name")));
+				Utils.format("&d&lPlayer Spawn: " + plugin.getData().getString("a" + arena + ".name")));
 
 		// Option to create player spawn
 		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Spawn")));
@@ -270,10 +272,10 @@ public class Inventories {
 	}
 
 	//	Menu for changing max players in an arena
-	public Inventory createMaxPlayerInventory(int num) {
+	public Inventory createMaxPlayerInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&4&lMaximum Players: " + plugin.getData().getInt("a" + num + ".max")));
+				Utils.format("&4&lMaximum Players: " + plugin.getData().getInt("a" + arena + ".max")));
 
 		// Option to decrease
 		for (int i = 0; i < 4; i++)
@@ -290,10 +292,10 @@ public class Inventories {
 	}
 
 	//	Menu for changing min players in an arena
-	public Inventory createMinPlayerInventory(int num) {
+	public Inventory createMinPlayerInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&2&lMinimum Players: " + plugin.getData().getInt("a" + num + ".min")));
+				Utils.format("&2&lMinimum Players: " + plugin.getData().getInt("a" + arena + ".min")));
 
 		// Option to decrease
 		for (int i = 0; i < 4; i++)
@@ -325,10 +327,10 @@ public class Inventories {
 	}
 
 	//	Menu for editing the mob settings of an arena
-	public Inventory createMobsInventory(int num) {
+	public Inventory createMobsInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&2&lMob Settings: " + plugin.getData().getString("a" + num + ".name")));
+				Utils.format("&2&lMob Settings: " + plugin.getData().getString("a" + arena + ".name")));
 
 		// Option to edit monster spawns
 		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&2&lMonster Spawns")));
@@ -370,10 +372,10 @@ public class Inventories {
 	}
 
 	//	Menu for editing the monster spawns of an arena
-	public Inventory createMonsterSpawnInventory(int num) {
+	public Inventory createMonsterSpawnInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&2&lMonster Spawns: " + plugin.getData().getString("a" + num + ".name")));
+				Utils.format("&2&lMonster Spawns: " + plugin.getData().getString("a" + arena + ".name")));
 
 		// Prepare for material indexing
 		int index;
@@ -381,7 +383,7 @@ public class Inventories {
 		// Options to interact with all 8 possible mob spawns
 		for (int i = 0; i < 8; i++) {
 			// Check if the spawn exists
-			if (plugin.getData().getString("a" + (num) + ".mob." + i + ".x") == null)
+			if (plugin.getData().getString("a" + (arena) + ".mob." + i + ".x") == null)
 				index = 0;
 			else index = 1;
 
@@ -396,11 +398,11 @@ public class Inventories {
 	}
 
 	// Menu for editing a specific monster spawn of an arena
-	public Inventory createMonsterSpawnMenu(int num, int slot) {
+	public Inventory createMonsterSpawnMenu(int arena, int slot) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&2&lMonster Spawn " + slot + ": " +
-				plugin.getData().getString("a" + num + ".name")));
+				plugin.getData().getString("a" + arena + ".name")));
 
 		// Option to create monster spawn
 		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Spawn")));
@@ -433,10 +435,10 @@ public class Inventories {
 	}
 
 	// Menu for editing the shop settings of an arena
-	public Inventory createShopsInventory(int num) {
+	public Inventory createShopsInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&e&lShop Settings: " + plugin.getData().getString("a" + num + ".name")));
+				Utils.format("&e&lShop Settings: " + plugin.getData().getString("a" + arena + ".name")));
 
 		// Option to create a custom shop
 		inv.setItem(0, Utils.createItem(Material.EMERALD,
@@ -465,10 +467,10 @@ public class Inventories {
 	}
 
 	// Menu for editing the game settings of an arena
-	public Inventory createGameSettingsInventory(int num) {
+	public Inventory createGameSettingsInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&8&lGame Settings: " + plugin.getData().getString("a" + num + ".name")));
+				Utils.format("&8&lGame Settings: " + plugin.getData().getString("a" + arena + ".name")));
 
 		// Option to change max rounds
 		inv.setItem(0, Utils.createItem(Material.NETHERITE_SWORD,
@@ -515,10 +517,10 @@ public class Inventories {
 	}
 
 	// Menu for editing the sounds of an arena
-	public Inventory createSoundsInventory(int num) {
+	public Inventory createSoundsInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&d&lSounds: " + plugin.getData().getString("a" + num + ".name")));
+				Utils.format("&d&lSounds: " + plugin.getData().getString("a" + arena + ".name")));
 
 		// Option to edit win sound
 		inv.setItem(0, Utils.createItem(Material.MUSIC_DISC_PIGSTEP,
@@ -562,7 +564,7 @@ public class Inventories {
 	}
 
 	// Generate the shop menu
-	public Inventory createShop(int num) {
+	public Inventory createShop(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 36, Utils.format("&k") +
 				Utils.format("&2&lItem Shop"));
@@ -570,17 +572,17 @@ public class Inventories {
 
 		// Fill in armor
 		for (int i = 0; i < 18; i++) {
-			inv.setItem(i, gi.armor[num][r.nextInt(gi.armor[num].length)]);
+			inv.setItem(i, gi.armor[arena][r.nextInt(gi.armor[arena].length)]);
 		}
 
 		// Fill in weapons
 		for (int i = 18; i < 27; i++) {
-			inv.setItem(i, gi.weapon[num][r.nextInt(gi.weapon[num].length)]);
+			inv.setItem(i, gi.weapon[arena][r.nextInt(gi.weapon[arena].length)]);
 		}
 
 		// Fill in consumables
 		for (int i = 27; i < 36; i++) {
-			inv.setItem(i, gi.consume[num][r.nextInt(gi.consume[num].length)]);
+			inv.setItem(i, gi.consume[arena][r.nextInt(gi.consume[arena].length)]);
 		}
 
 		return inv;

@@ -279,8 +279,8 @@ waves:
 
 # This is the config version for reference.
 # DO NOT EDIT VALUE.
-version: 1
+version: 2
 
 # This is the data.yml structure version for reference.
-# DO NOT EDIT VALUE.
-data: 1
+# ONLY EDIT ONCE DATA FILE HAS BEEN UPDATED.
+data: 2

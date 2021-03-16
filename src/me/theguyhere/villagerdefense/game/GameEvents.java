@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import me.theguyhere.villagerdefense.Utils;
+import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -23,7 +23,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import me.theguyhere.villagerdefense.Inventories;
 import me.theguyhere.villagerdefense.Main;
 
 public class GameEvents implements Listener {

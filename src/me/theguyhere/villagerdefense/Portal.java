@@ -2,6 +2,7 @@ package me.theguyhere.villagerdefense;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import me.theguyhere.villagerdefense.tools.Utils;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -105,7 +106,7 @@ public class Portal {
 	private void addHolo(Location location, int arena, String[] text) {
 		// Create hologram
 		Location newLocation = location.clone();
-		newLocation.setY(newLocation.getY() + 2.5);
+		newLocation.setY(newLocation.getY() + 3);
 		Hologram holo = HologramsAPI.createHologram(plugin, newLocation);
 		holo.insertTextLine(0, text[0]);
 		for (int i = 1; i < text.length; i++)
@@ -138,6 +139,9 @@ public class Portal {
 	}
 
 	private String[] getHoloText(int arena) {
-		return new String[]{Utils.format("&6&l" + plugin.getData().getString("a" + arena + ".name"))};
+		return new String[]{Utils.format("&6&l" + plugin.getData().getString("a" + arena + ".name")),
+		Utils.format("&bPlayers: " + plugin.getData().getInt("a" + arena + ".players.playing") + '/' +
+				plugin.getData().getInt("a" + arena + ".max")),
+		Utils.format("&7Spectators: " + plugin.getData().getInt("a" + arena + ".players.spectating"))};
 	}
 }
