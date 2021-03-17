@@ -184,15 +184,19 @@ public class InventoryEvents implements Listener {
 				// Set default max players to 12 if it doesn't exist
 				if (!plugin.getData().contains("a" + arena + ".max")) {
 					plugin.getData().set("a" + arena + ".max", 12);
-					plugin.saveData();
 				}
 
 				// Set default min players to 1 if it doesn't exist
 				if (!plugin.getData().contains("a" + arena + ".min")) {
 					plugin.getData().set("a" + arena + ".min", 1);
-					plugin.saveData();
 				}
 
+				// Set default to closed if arena closed doesn't exist
+				if (!plugin.getData().contains("a" + arena + ".closed")) {
+					plugin.getData().set("a" + arena + ".closed", true);
+				}
+
+				plugin.saveData();
 			}
 
 //			Cancel

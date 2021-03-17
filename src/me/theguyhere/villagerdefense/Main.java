@@ -33,8 +33,10 @@ public class Main extends JavaPlugin {
 		saveDefaultConfig();
 
 		if (!Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
-			getLogger().severe("*** HolographicDisplays is not installed or not enabled. ***");
-			getLogger().severe("*** This plugin will be disabled. ***");
+			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
+					"HolographicDisplays is not installed or not enabled.");
+			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
+					"This plugin will be disabled.");
 			this.setEnabled(false);
 			return;
 		}
@@ -66,19 +68,22 @@ public class Main extends JavaPlugin {
 		int currentCVersion = 2;
 		int currentDVersion = 2;
 		// Check config version
-		if (getConfig().getInt("version") < currentCVersion)
-			getServer().getConsoleSender().sendMessage(ChatColor.RED + "Your config.yml is outdated! "
-					+ "Please update to the latest version (" + currentCVersion + ") to ensure compatibility.");
+		if (getConfig().getInt("version") < currentCVersion) {
+			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
+					"Your config.yml is outdated!");
+			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
+					"Please update to the latest version (" + currentCVersion + ") to ensure compatibility.");
+		}
 
 		// Check if data.yml is outdated
-		if (getConfig().getInt("data") < currentDVersion)
-			getServer().getConsoleSender().sendMessage(ChatColor.RED +
-					"Your data.yml is no longer supported with this version! " +
-					"Please manually transfer arena data to version " + currentDVersion + ". " +
+		if (getConfig().getInt("data") < currentDVersion) {
+			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
+					"Your data.yml is no longer supported with this version!");
+			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
+					"Please manually transfer arena data to version " + currentDVersion + ".");
+			getServer().getConsoleSender().sendMessage(ChatColor.RED +  "[VillagerDefense] " +
 					"Please do not update your config.yml until your data.yml has been updated.");
-
-		// Notify successful load
-		getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "Villager Defense has been loaded and enabled!");
+		}
 	}
 
 //	Runs when disabling plugin
@@ -90,8 +95,6 @@ public class Main extends JavaPlugin {
 
 		// Remove portals
 		portal.removeAll();
-
-		getServer().getConsoleSender().sendMessage(ChatColor.RED + "Villager Defense has been unloaded and disabled!");
 	}
 
 //	Returns data.yml data

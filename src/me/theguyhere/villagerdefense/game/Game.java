@@ -1,11 +1,7 @@
 package me.theguyhere.villagerdefense.game;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import me.theguyhere.villagerdefense.Inventories;
+import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.Portal;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
@@ -18,16 +14,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
+import org.bukkit.scoreboard.*;
 
-import me.theguyhere.villagerdefense.Inventories;
-import me.theguyhere.villagerdefense.Main;
-
-import javax.sound.sampled.Port;
+import java.util.*;
 
 public class Game {
 	private final Main plugin;
@@ -57,7 +46,7 @@ public class Game {
 		int players = plugin.getData().getInt("a" + arena + ".players.playing");
 //		Starts the game
 		if (players == 0) {
-			int ID = new Tasks(plugin, this, arena, gi, inv).runTask(plugin).getTaskId();
+			int ID = new Tasks(plugin, this, arena, gi, inv, portal).runTask(plugin).getTaskId();
 			actives.put(arena, ID);
 			villagers.put(arena, 0);
 			enemies.put(arena, 0);
@@ -199,6 +188,9 @@ public class Game {
 //				Remove from active
 				actives.remove(arena);
 				shops.remove(arena);
+
+				//Refresh portal
+				portal.refreshHolo(Integer.parseInt(arena));
 			}
 			
 		}.runTaskLater(plugin, 200);

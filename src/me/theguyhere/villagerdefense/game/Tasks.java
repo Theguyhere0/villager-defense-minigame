@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
+import me.theguyhere.villagerdefense.Portal;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -46,18 +47,20 @@ import me.theguyhere.villagerdefense.Inventories;
 import me.theguyhere.villagerdefense.Main;
 
 public class Tasks extends BukkitRunnable {
-	Main plugin;
-	Game game;
-	String arena;
-	GameItems gi;
-	Inventories inv;
+	private final Main plugin;
+	private final Game game;
+	private final String arena;
+	private final GameItems gi;
+	private final Inventories inv;
+	private final Portal portal;
 	
-	public Tasks(Main plugin, Game game, String arena, GameItems gi, Inventories inv) {
+	public Tasks(Main plugin, Game game, String arena, GameItems gi, Inventories inv, Portal portal) {
 		this.plugin = plugin;
 		this.game = game;
 		this.arena = arena;
 		this.gi = gi;
 		this.inv = inv;
+		this.portal = portal;
 	}
 	
 	List<Location> spawns = new ArrayList<Location>();
@@ -128,10 +131,13 @@ public class Tasks extends BukkitRunnable {
 //			Increment wave
 			plugin.getData().set("a" + arena + ".currentWave", plugin.getData().getInt("a" + arena + ".currentWave") + 1);
 			plugin.saveData();
-			
+
+			// Refresh the portal hologram
+			portal.refreshHolo(Integer.parseInt(arena));
+
 //			Regenerate shops and notify players of it
 			if (plugin.getData().getInt("a" + arena + ".currentWave") % 10 == 0) {
-				int shopNum = (int) Math.floor(plugin.getData().getInt("a" + arena + ".currentWave") / 10);
+				int shopNum = plugin.getData().getInt("a" + arena + ".currentWave") / 10;
 				if (shopNum > 5)
 					shopNum = 5;
 				game.shops.put(arena, inv.createShop(shopNum));
@@ -198,6 +204,9 @@ public class Tasks extends BukkitRunnable {
 //			Start the waves tasks and set arena to active
 			plugin.getData().set("a" + arena + ".active", true);
 			plugin.saveData();
+
+			// Refresh the portal hologram
+			portal.refreshHolo(Integer.parseInt(arena));
 			
 //			Create the initial shop inventory
 			game.shops.put(arena, inv.createShop(0));
@@ -223,7 +232,7 @@ public class Tasks extends BukkitRunnable {
 						game.endGame(arena);
 					}
 //					TEMPORARY win condition
-					else if (plugin.getData().getInt("a" + arena + ".currentWave") == 7) {
+					else if (plugin.getData().getInt("a" + arena + ".currentWave") == 12) {
 						cancel();
 						game.endGame(arena);
 					}

@@ -139,9 +139,16 @@ public class Portal {
 	}
 
 	private String[] getHoloText(int arena) {
+		String status;
+		if (plugin.getData().getBoolean("a" + arena + ".closed"))
+			status = "&4&lClosed";
+		else if (!plugin.getData().getBoolean("a" + arena + ".active"))
+			status = "&5&lWaiting";
+		else status = "&a&lRound: " + plugin.getData().getInt("a" + arena + ".currentWave");
 		return new String[]{Utils.format("&6&l" + plugin.getData().getString("a" + arena + ".name")),
 		Utils.format("&bPlayers: " + plugin.getData().getInt("a" + arena + ".players.playing") + '/' +
 				plugin.getData().getInt("a" + arena + ".max")),
-		Utils.format("&7Spectators: " + plugin.getData().getInt("a" + arena + ".players.spectating"))};
+		Utils.format("&7Spectators: " + plugin.getData().getInt("a" + arena + ".players.spectating")),
+		Utils.format(status)};
 	}
 }
