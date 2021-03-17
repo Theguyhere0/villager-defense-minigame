@@ -245,8 +245,12 @@ public class InventoryEvents implements Listener {
 					if (!plugin.getData().contains("a" + arena + ".spawn"))
 						return;
 
-					// No mob spawn
-					if (!plugin.getData().contains("a" + arena + ".mob"))
+					// No monster spawn
+					if (!plugin.getData().contains("a" + arena + ".monster"))
+						return;
+
+					// No villager spawn
+					if (!plugin.getData().contains("a" + arena + ".villager"))
 						return;
 
 					// Open arena
@@ -308,20 +312,37 @@ public class InventoryEvents implements Listener {
 				}
 			}
 
-//			Confirm to remove mob spawn
+			// Confirm to remove monster spawn
 			else if (title.contains("Remove Monster Spawn?")) {
 				// Return to previous menu
 				if (buttonName.contains("NO"))
 					openInv(player, inv.createMonsterSpawnMenu(arena, oldSlot));
 
-				// Remove the mob spawn, then return to previous menu
-				else if (buttonName.contains("YES") && plugin.getData().contains("a" + arena + ".mob." + oldSlot)) {
-					plugin.getData().set("a" + arena + ".mob." + oldSlot, null);
-					if (!plugin.getData().contains("a" + arena + ".mob"))
+				// Remove the monster spawn, then return to previous menu
+				else if (buttonName.contains("YES") && plugin.getData().contains("a" + arena + ".monster." + oldSlot)) {
+					plugin.getData().set("a" + arena + ".monster." + oldSlot, null);
+					if (!plugin.getData().contains("a" + arena + ".monster"))
 						plugin.getData().set("a" + arena + ".closed", true);
 					plugin.saveData();
 					player.sendMessage(Utils.format("&aMob spawn removed!"));
 					openInv(player, inv.createMonsterSpawnMenu(arena, oldSlot));
+				}
+			}
+
+			// Confirm to remove villager spawn
+			else if (title.contains("Remove Villager Spawn?")) {
+				// Return to previous menu
+				if (buttonName.contains("NO"))
+					openInv(player, inv.createVillagerSpawnMenu(arena, oldSlot));
+
+					// Remove the villager spawn, then return to previous menu
+				else if (buttonName.contains("YES") && plugin.getData().contains("a" + arena + ".villager." + oldSlot)) {
+					plugin.getData().set("a" + arena + ".villager." + oldSlot, null);
+					if (!plugin.getData().contains("a" + arena + ".villager"))
+						plugin.getData().set("a" + arena + ".closed", true);
+					plugin.saveData();
+					player.sendMessage(Utils.format("&aMob spawn removed!"));
+					openInv(player, inv.createVillagerSpawnMenu(arena, oldSlot));
 				}
 			}
 
@@ -515,7 +536,8 @@ public class InventoryEvents implements Listener {
 //			else if (buttonName.contains("Toggle Monster"))
 
 			// Open villager spawns editor
-//			else if (buttonName.contains("Villager Spawns"))
+			else if (buttonName.contains("Villager Spawns"))
+				openInv(player, inv.createVillagerSpawnInventory(arena));
 
 			// Toggle villager spawn particles
 //			else if (buttonName.contains("Toggle Villager"))
@@ -552,10 +574,11 @@ public class InventoryEvents implements Listener {
 		else if (title.contains("Monster Spawn ")) {
 //			Create spawn
 			if (buttonName.contains("Create Spawn")) {
-				plugin.getData().set("a" + arena + ".mob." + oldSlot + ".x", player.getLocation().getX());
-				plugin.getData().set("a" + arena + ".mob." + oldSlot + ".y", player.getLocation().getY());
-				plugin.getData().set("a" + arena + ".mob." + oldSlot + ".z", player.getLocation().getZ());
-				plugin.getData().set("a" + arena + ".mob." + oldSlot + ".world", player.getLocation().getWorld().getName());
+				plugin.getData().set("a" + arena + ".monster." + oldSlot + ".x", player.getLocation().getX());
+				plugin.getData().set("a" + arena + ".monster." + oldSlot + ".y", player.getLocation().getY());
+				plugin.getData().set("a" + arena + ".monster." + oldSlot + ".z", player.getLocation().getZ());
+				plugin.getData().set("a" + arena + ".monster." + oldSlot + ".world",
+						player.getLocation().getWorld().getName());
 				plugin.saveData();
 				player.sendMessage(Utils.format("&aMonster spawn set!"));
 				openInv(player, inv.createMonsterSpawnInventory(arena));
@@ -565,9 +588,11 @@ public class InventoryEvents implements Listener {
 			else if (buttonName.contains("Teleport")) {
 				Location location;
 				try {
-					location = new Location(Bukkit.getWorld(plugin.getData().getString("a" + arena + ".mob." + oldSlot + ".world")),
-							plugin.getData().getDouble("a" + arena + ".mob." + oldSlot + ".x"), plugin.getData().getDouble("a" + arena + ".mob." + oldSlot + ".y"),
-							plugin.getData().getDouble("a" + arena + ".mob." + oldSlot + ".z"));
+					location = new Location(Bukkit.getWorld(
+							plugin.getData().getString("a" + arena + ".monster." + oldSlot + ".world")),
+							plugin.getData().getDouble("a" + arena + ".monster." + oldSlot + ".x"),
+							plugin.getData().getDouble("a" + arena + ".monster." + oldSlot + ".y"),
+							plugin.getData().getDouble("a" + arena + ".monster." + oldSlot + ".z"));
 				} catch (Exception err) {
 					return;
 				}
@@ -582,6 +607,60 @@ public class InventoryEvents implements Listener {
 //			Exit menu
 			else if (buttonName.contains("EXIT"))
 				openInv(player, inv.createMonsterSpawnInventory(arena));
+		}
+
+
+		// Villager spawn menu for an arena
+		else if (title.contains("Villager Spawns:")) {
+//			Create spawn
+			if (Arrays.asList(Inventories.VILLAGERMATS).contains(buttonType)) {
+				openInv(player, inv.createVillagerSpawnMenu(arena, slot));
+				oldSlot = slot;
+			}
+
+//			Exit menu
+			else if (buttonName.contains("EXIT")) {
+				openInv(player, inv.createMobsInventory(arena));
+			}
+		}
+
+		// Villager spawn menu for a specific spawn
+		else if (title.contains("Villager Spawn ")) {
+//			Create spawn
+			if (buttonName.contains("Create Spawn")) {
+				plugin.getData().set("a" + arena + ".villager." + oldSlot + ".x", player.getLocation().getX());
+				plugin.getData().set("a" + arena + ".villager." + oldSlot + ".y", player.getLocation().getY());
+				plugin.getData().set("a" + arena + ".villager." + oldSlot + ".z", player.getLocation().getZ());
+				plugin.getData().set("a" + arena + ".villager." + oldSlot + ".world",
+						player.getLocation().getWorld().getName());
+				plugin.saveData();
+				player.sendMessage(Utils.format("&aVillager spawn set!"));
+				openInv(player, inv.createVillagerSpawnInventory(arena));
+			}
+
+//			Teleport player to spawn
+			else if (buttonName.contains("Teleport")) {
+				Location location;
+				try {
+					location = new Location(Bukkit.getWorld(
+							plugin.getData().getString("a" + arena + ".villager." + oldSlot + ".world")),
+							plugin.getData().getDouble("a" + arena + ".villager." + oldSlot + ".x"),
+							plugin.getData().getDouble("a" + arena + ".villager." + oldSlot + ".y"),
+							plugin.getData().getDouble("a" + arena + ".villager." + oldSlot + ".z"));
+				} catch (Exception err) {
+					return;
+				}
+				player.teleport(location);
+				player.closeInventory();
+			}
+
+			// Remove spawn
+			else if (buttonName.contains("REMOVE"))
+				openInv(player, inv.createVillagerSpawnConfirmInventory());
+
+//			Exit menu
+			else if (buttonName.contains("EXIT"))
+				openInv(player, inv.createVillagerSpawnInventory(arena));
 		}
 
 		// Shop settings menu for an arena

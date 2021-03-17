@@ -32,6 +32,7 @@ public class Inventories {
 	// Easily alternate between black and white wool
 	public static final Material[] KEYMATS = {Material.BLACK_CONCRETE, Material.WHITE_WOOL};
 	public static final Material[] MONSTERMATS = {Material.SKELETON_SKULL, Material.ZOMBIE_HEAD};
+	public static final Material[] VILLAGERMATS = {Material.WITHER_ROSE, Material.POPPY};
 
 	// Temporary constants for buttons that don't work yet
 	final String CONSTRUCTION = "&fComing Soon!";
@@ -342,8 +343,7 @@ public class Inventories {
 
 		// Option to edit villager spawns
 		inv.setItem(2, Utils.createItem(Material.END_PORTAL_FRAME,
-				Utils.format("&5&lVillager Spawns"),
-				Utils.format(CONSTRUCTION)));
+				Utils.format("&5&lVillager Spawns")));
 
 		// Option to toggle villager spawn particles
 		inv.setItem(3, Utils.createItem(Material.FIREWORK_ROCKET,
@@ -383,7 +383,7 @@ public class Inventories {
 		// Options to interact with all 8 possible mob spawns
 		for (int i = 0; i < 8; i++) {
 			// Check if the spawn exists
-			if (plugin.getData().getString("a" + (arena) + ".mob." + i + ".x") == null)
+			if (plugin.getData().getString("a" + (arena) + ".monster." + i + ".x") == null)
 				index = 0;
 			else index = 1;
 
@@ -419,7 +419,7 @@ public class Inventories {
 		return inv;
 	}
 
-	// Confirmation menu for removing mob spawns
+	// Confirmation menu for removing monster spawns
 	public Inventory createMonsterSpawnConfirmInventory() {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
@@ -433,6 +433,70 @@ public class Inventories {
 
 		return inv;
 	}
+
+	//	Menu for editing the villager spawns of an arena
+	public Inventory createVillagerSpawnInventory(int arena) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&5&lVillager Spawns: " + plugin.getData().getString("a" + arena + ".name")));
+
+		// Prepare for material indexing
+		int index;
+
+		// Options to interact with all 8 possible villager spawns
+		for (int i = 0; i < 8; i++) {
+			// Check if the spawn exists
+			if (plugin.getData().getString("a" + (arena) + ".villager." + i + ".x") == null)
+				index = 0;
+			else index = 1;
+
+			// Create and set item
+			inv.setItem(i, Utils.createItem(VILLAGERMATS[index], Utils.format("&5&lVillager Spawn " + (i + 1))));
+		}
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	// Menu for editing a specific villager spawn of an arena
+	public Inventory createVillagerSpawnMenu(int arena, int slot) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&5&lVillager Spawn " + slot + ": " +
+						plugin.getData().getString("a" + arena + ".name")));
+
+		// Option to create monster spawn
+		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Spawn")));
+
+		// Option to teleport to monster spawn
+		inv.setItem(1, ii.teleport("Spawn"));
+
+		// Option to remove monster spawn
+		inv.setItem(7, ii.remove("SPAWN"));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	// Confirmation menu for removing mob spawns
+	public Inventory createVillagerSpawnConfirmInventory() {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&4&lRemove Villager Spawn?"));
+
+		// "No" option
+		inv.setItem(0, ii.no());
+
+		// "Yes" option
+		inv.setItem(8, ii.yes());
+
+		return inv;
+	}
+
 
 	// Menu for editing the shop settings of an arena
 	public Inventory createShopsInventory(int arena) {

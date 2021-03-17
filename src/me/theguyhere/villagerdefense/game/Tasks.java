@@ -63,9 +63,10 @@ public class Tasks extends BukkitRunnable {
 		this.portal = portal;
 	}
 	
-	List<Location> spawns = new ArrayList<Location>();
-	
-//	1 minute warning
+	List<Location> monsterSpawns = new ArrayList<Location>();
+	List<Location> villagerSpawns = new ArrayList<Location>();
+
+	//	1 minute warning
 	Runnable min1 = new BukkitRunnable() {
 
 		@Override
@@ -178,7 +179,8 @@ public class Tasks extends BukkitRunnable {
 
 				@Override
 				public void run() {
-					spawn(arena, plugin.getData().getInt("a" + arena + ".currentWave"), spawns);
+					spawnMonsters(arena, plugin.getData().getInt("a" + arena + ".currentWave"), monsterSpawns);
+					spawnVillagers(arena, plugin.getData().getInt("a" + arena + ".currentWave"), villagerSpawns);
 					game.breaks.remove(arena);
 
 				}
@@ -216,8 +218,8 @@ public class Tasks extends BukkitRunnable {
 				
 				@Override
 				public void run() {
-					Integer[] players = {0};
-					Integer[] ghosts = {0};
+					int[] players = {0};
+					int[] ghosts = {0};
 					game.playing.forEach((gamer, num) -> {
 						if (num.equals(arena)) {
 							players[0]++;
@@ -243,15 +245,24 @@ public class Tasks extends BukkitRunnable {
 				
 			}.runTaskTimer(plugin, 0, 20);
 		}
-		
 	};
 	
 	@Override
 	public void run() {
-		plugin.getData().getConfigurationSection("a" + arena + ".mob").getKeys(false).forEach(num -> {
-			spawns.add(new Location(Bukkit.getWorld(plugin.getData().getString("a" + arena + ".mob." + num + ".world")),
-					plugin.getData().getDouble("a" + arena + ".mob." + num + ".x"), plugin.getData().getDouble("a" + arena + ".mob." + num + ".y"),
-					plugin.getData().getDouble("a" + arena + ".mob." + num + ".z")));
+		// Add the spawns locally
+		plugin.getData().getConfigurationSection("a" + arena + ".monster").getKeys(false).forEach(num -> {
+			monsterSpawns.add(new Location(
+					Bukkit.getWorld(plugin.getData().getString("a" + arena + ".monster." + num + ".world")),
+					plugin.getData().getDouble("a" + arena + ".monster." + num + ".x"),
+					plugin.getData().getDouble("a" + arena + ".monster." + num + ".y"),
+					plugin.getData().getDouble("a" + arena + ".monster." + num + ".z")));
+		});
+		plugin.getData().getConfigurationSection("a" + arena + ".villager").getKeys(false).forEach(num -> {
+			villagerSpawns.add(new Location(
+					Bukkit.getWorld(plugin.getData().getString("a" + arena + ".villager." + num + ".world")),
+					plugin.getData().getDouble("a" + arena + ".villager." + num + ".x"),
+					plugin.getData().getDouble("a" + arena + ".villager." + num + ".y"),
+					plugin.getData().getDouble("a" + arena + ".villager." + num + ".z")));
 		});
 //		Clear the arena
 		Location location = new Location(Bukkit.getWorld(plugin.getData().getString("a" + arena + ".spawn.world")),
@@ -312,12 +323,11 @@ public class Tasks extends BukkitRunnable {
 			
 		}.runTaskTimer(plugin, 0, 5);
 	}
-	
-//	Spawns mobs by mob spawn randomly
-	private void spawn(String arena, Integer round, List<Location> spawns) {
+
+	private void spawnVillagers(String arena, int round, List<Location> spawns) {
 		Random r = new Random();
-		for (Integer i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".vlgr"); i++) {
-			Integer num = r.nextInt(spawns.size());
+		for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".vlgr"); i++) {
+			int num = r.nextInt(spawns.size());
 			new BukkitRunnable() {
 
 				@Override
@@ -326,11 +336,16 @@ public class Tasks extends BukkitRunnable {
 					n.setCustomName(Utils.format("&aVD" + arena +": Villager"));
 					game.villagers.put(arena, game.villagers.get(arena) + 1);
 				}
-				
+
 			}.runTaskLater(plugin, 0);
 		}
-		for (Integer i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".zomb"); i++) {
-			Integer num = r.nextInt(spawns.size());
+	}
+	
+//	Spawns monsters randomly
+	private void spawnMonsters(String arena, int round, List<Location> spawns) {
+		Random r = new Random();
+		for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".zomb"); i++) {
+			int num = r.nextInt(spawns.size());
 			new BukkitRunnable() {
 
 				@Override
@@ -344,8 +359,8 @@ public class Tasks extends BukkitRunnable {
 				
 			}.runTaskLater(plugin, 1);
 		}
-		for (Integer i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".husk"); i++) {
-			Integer num = r.nextInt(spawns.size());
+		for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".husk"); i++) {
+			int num = r.nextInt(spawns.size());
 			new BukkitRunnable() {
 
 				@Override
@@ -359,8 +374,8 @@ public class Tasks extends BukkitRunnable {
 				
 			}.runTaskLater(plugin, 2);
 		}
-		for (Integer i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".wskl"); i++) {
-			Integer num = r.nextInt(spawns.size());
+		for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".wskl"); i++) {
+			int num = r.nextInt(spawns.size());
 			new BukkitRunnable() {
 
 				@Override
@@ -373,8 +388,8 @@ public class Tasks extends BukkitRunnable {
 				
 			}.runTaskLater(plugin, 3);
 		}
-		for (Integer i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".brut"); i++) {
-			Integer num = r.nextInt(spawns.size());
+		for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".brut"); i++) {
+			int num = r.nextInt(spawns.size());
 			new BukkitRunnable() {
 
 				@Override
@@ -387,8 +402,8 @@ public class Tasks extends BukkitRunnable {
 				
 			}.runTaskLater(plugin, 4);
 		}
-		for (Integer i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".vind"); i++) {
-			Integer num = r.nextInt(spawns.size());
+		for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".vind"); i++) {
+			int num = r.nextInt(spawns.size());
 			new BukkitRunnable() {
 
 				@Override
@@ -401,8 +416,8 @@ public class Tasks extends BukkitRunnable {
 				
 			}.runTaskLater(plugin, 5);
 		}
-		for (Integer i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".spid"); i++) {
-			Integer num = r.nextInt(spawns.size());
+		for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".spid"); i++) {
+			int num = r.nextInt(spawns.size());
 			new BukkitRunnable() {
 
 				@Override
@@ -414,8 +429,8 @@ public class Tasks extends BukkitRunnable {
 				
 			}.runTaskLater(plugin, 6);
 		}
-		for (Integer i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".cspd"); i++) {
-			Integer num = r.nextInt(spawns.size());
+		for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".cspd"); i++) {
+			int num = r.nextInt(spawns.size());
 			new BukkitRunnable() {
 
 				@Override
@@ -427,8 +442,8 @@ public class Tasks extends BukkitRunnable {
 				
 			}.runTaskLater(plugin, 7);
 		}
-		for (Integer i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".wtch"); i++) {
-			Integer num = r.nextInt(spawns.size());
+		for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".wtch"); i++) {
+			int num = r.nextInt(spawns.size());
 			new BukkitRunnable() {
 
 				@Override
@@ -440,8 +455,8 @@ public class Tasks extends BukkitRunnable {
 				
 			}.runTaskLater(plugin, 8);
 		}
-		for (Integer i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".skel"); i++) {
-			Integer num = r.nextInt(spawns.size());
+		for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".skel"); i++) {
+			int num = r.nextInt(spawns.size());
 			new BukkitRunnable() {
 
 				@Override
@@ -455,8 +470,8 @@ public class Tasks extends BukkitRunnable {
 				
 			}.runTaskLater(plugin, 9);
 		}
-		for (Integer i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".stry"); i++) {
-			Integer num = r.nextInt(spawns.size());
+		for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".stry"); i++) {
+			int num = r.nextInt(spawns.size());
 			new BukkitRunnable() {
 
 				@Override
@@ -470,8 +485,8 @@ public class Tasks extends BukkitRunnable {
 				
 			}.runTaskLater(plugin, 10);
 		}
-		for (Integer i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".blze"); i++) {
-			Integer num = r.nextInt(spawns.size());
+		for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".blze"); i++) {
+			int num = r.nextInt(spawns.size());
 			new BukkitRunnable() {
 
 				@Override
@@ -483,8 +498,8 @@ public class Tasks extends BukkitRunnable {
 				
 			}.runTaskLater(plugin, 11);
 		}
-		for (Integer i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".ghst"); i++) {
-			Integer num = r.nextInt(spawns.size());
+		for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".ghst"); i++) {
+			int num = r.nextInt(spawns.size());
 			new BukkitRunnable() {
 
 				@Override
@@ -496,8 +511,8 @@ public class Tasks extends BukkitRunnable {
 				
 			}.runTaskLater(plugin, 12);
 		}
-		for (Integer i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".pill"); i++) {
-			Integer num = r.nextInt(spawns.size());
+		for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".pill"); i++) {
+			int num = r.nextInt(spawns.size());
 			new BukkitRunnable() {
 
 				@Override
@@ -509,8 +524,8 @@ public class Tasks extends BukkitRunnable {
 				
 			}.runTaskLater(plugin, 13);
 		}
-		for (Integer i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".slim"); i++) {
-			Integer num = r.nextInt(spawns.size());
+		for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".slim"); i++) {
+			int num = r.nextInt(spawns.size());
 			new BukkitRunnable() {
 
 				@Override
@@ -522,8 +537,8 @@ public class Tasks extends BukkitRunnable {
 				
 			}.runTaskLater(plugin, 14);
 		}
-		for (Integer i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".mslm"); i++) {
-			Integer num = r.nextInt(spawns.size());
+		for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".mslm"); i++) {
+			int num = r.nextInt(spawns.size());
 			new BukkitRunnable() {
 
 				@Override
@@ -535,8 +550,8 @@ public class Tasks extends BukkitRunnable {
 				
 			}.runTaskLater(plugin, 15);
 		}
-		for (Integer i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".crpr"); i++) {
-			Integer num = r.nextInt(spawns.size());
+		for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".crpr"); i++) {
+			int num = r.nextInt(spawns.size());
 			new BukkitRunnable() {
 
 				@Override
@@ -548,8 +563,8 @@ public class Tasks extends BukkitRunnable {
 				
 			}.runTaskLater(plugin, 16);
 		}
-		for (Integer i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".phtm"); i++) {
-			Integer num = r.nextInt(spawns.size());
+		for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".phtm"); i++) {
+			int num = r.nextInt(spawns.size());
 			new BukkitRunnable() {
 
 				@Override
@@ -561,8 +576,8 @@ public class Tasks extends BukkitRunnable {
 				
 			}.runTaskLater(plugin, 17);
 		}
-		for (Integer i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".evok"); i++) {
-			Integer num = r.nextInt(spawns.size());
+		for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".evok"); i++) {
+			int num = r.nextInt(spawns.size());
 			new BukkitRunnable() {
 
 				@Override
@@ -574,8 +589,8 @@ public class Tasks extends BukkitRunnable {
 				
 			}.runTaskLater(plugin, 18);
 		}
-		for (Integer i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".hgln"); i++) {
-			Integer num = r.nextInt(spawns.size());
+		for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".hgln"); i++) {
+			int num = r.nextInt(spawns.size());
 			new BukkitRunnable() {
 
 				@Override
@@ -587,8 +602,8 @@ public class Tasks extends BukkitRunnable {
 				
 			}.runTaskLater(plugin, 19);
 		}
-		for (Integer i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".rvgr"); i++) {
-			Integer num = r.nextInt(spawns.size());
+		for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".rvgr"); i++) {
+			int num = r.nextInt(spawns.size());
 			new BukkitRunnable() {
 
 				@Override
@@ -600,8 +615,8 @@ public class Tasks extends BukkitRunnable {
 				
 			}.runTaskLater(plugin, 20);
 		}
-		for (Integer i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".wthr"); i++) {
-			Integer num = r.nextInt(spawns.size());
+		for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".wthr"); i++) {
+			int num = r.nextInt(spawns.size());
 			new BukkitRunnable() {
 
 				@Override

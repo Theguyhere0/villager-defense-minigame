@@ -66,7 +66,7 @@ public class Main extends JavaPlugin {
 			loadPortals();
 
 		int currentCVersion = 2;
-		int currentDVersion = 2;
+		int currentDVersion = 3;
 		// Check config version
 		if (getConfig().getInt("version") < currentCVersion) {
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
