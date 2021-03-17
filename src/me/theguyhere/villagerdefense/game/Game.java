@@ -1,12 +1,9 @@
 package me.theguyhere.villagerdefense.game;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import me.theguyhere.villagerdefense.Utils;
+import me.theguyhere.villagerdefense.Inventories;
+import me.theguyhere.villagerdefense.Main;
+import me.theguyhere.villagerdefense.Portal;
+import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -17,28 +14,25 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
+import org.bukkit.scoreboard.*;
 
-import me.theguyhere.villagerdefense.Inventories;
-import me.theguyhere.villagerdefense.Main;
+import java.util.*;
 
 public class Game {
 	private final Main plugin;
 	private final GameItems gi;
 	private final Inventories inv;
+	private final Portal portal;
 	
-	public Game(Main plugin, GameItems gi, Inventories inv) {
+	public Game(Main plugin, GameItems gi, Inventories inv, Portal portal) {
 		this.plugin = plugin;
 		this.gi = gi;
 		this.inv = inv;
+		this.portal = portal;
 	}
 
 	public Map<String, String> playing = new HashMap<>();
-	private Map<String, Integer> actives = new HashMap<>();
+	public Map<String, Integer> actives = new HashMap<>();
 	public Map<String, Integer> gems = new HashMap<>();
 	public Map<String, Integer> villagers = new HashMap<>();
 	public Map<String, Integer> enemies = new HashMap<>();
@@ -49,15 +43,10 @@ public class Game {
 	
 //	Handles players attempting to join a game
 	public void join(Player player, String arena, Location location) {
-		Integer[] players = {0};
-		playing.forEach((gamer, num) -> {
-			if (num.equals(arena)) {
-				players[0]++;
-			}
-		});
+		int players = plugin.getData().getInt("a" + arena + ".players.playing");
 //		Starts the game
-		if (players[0] == 0) {
-			int ID = new Tasks(plugin, this, arena, gi, inv).runTask(plugin).getTaskId();
+		if (players == 0) {
+			int ID = new Tasks(plugin, this, arena, gi, inv, portal).runTask(plugin).getTaskId();
 			actives.put(arena, ID);
 			villagers.put(arena, 0);
 			enemies.put(arena, 0);
@@ -74,8 +63,9 @@ public class Game {
 				}
 			});
 		}
+
 //		Prepares player to enter the arena if it doesn't exceed max capacity
-		if (players[0] < plugin.getData().getInt("data.a" + arena + ".max") && !plugin.getData().getBoolean("data.a" + arena + ".active")) {
+		if (players < plugin.getData().getInt("a" + arena + ".max") && !plugin.getData().getBoolean("a" + arena + ".active")) {
 			player.getActivePotionEffects().clear();
 			player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
 			player.setFoodLevel(20);
@@ -84,15 +74,18 @@ public class Game {
 			player.setGameMode(GameMode.ADVENTURE);
 			player.teleport(location);
 			playing.put(player.getName(), arena);
+			plugin.getData().set("a" + arena + ".players.playing",
+					plugin.getData().getInt("a" + arena + ".players.playing") + 1);
+			plugin.saveData();
 			gems.put(player.getName(), 0);
 			kills.put(player.getName(), 0);
 			createBoard(player, arena);
 			start(player, arena);
 			playing.forEach((gamer, num) -> {
-				if (num.equals(arena)) {
+				if (num.equals(arena))
 					Bukkit.getServer().getPlayer(gamer).sendMessage(Utils.format("&a" + player.getName() + " joined the arena."));
-				}
 			});
+			portal.refreshHolo(Integer.parseInt(arena));
 		}
 	}
 	
@@ -107,6 +100,9 @@ public class Game {
 				board.stop();
 //			Remove player from lists
 			playing.remove(player.getName());
+			plugin.getData().set("a" + arena + ".players.playing",
+					plugin.getData().getInt("a" + arena + ".players.playing") - 1);
+			plugin.saveData();
 			gems.remove(player.getName());
 			kills.remove(player.getName());
 //			Notify people in arena player left
@@ -118,15 +114,15 @@ public class Game {
 //			Sets them up for teleport
 			player.getInventory().clear();
 			player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
-			if (plugin.getData().contains("data.lobby")) {
+			if (plugin.getData().contains("lobby")) {
 				player.getActivePotionEffects().clear();
 				player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
 				player.setFoodLevel(20);
 				player.setSaturation(20);
 				player.setLevel(0);
-				Location location = new Location(Bukkit.getWorld(plugin.getData().getString("data.lobby.world")),
-						plugin.getData().getDouble("data.lobby.x"), plugin.getData().getDouble("data.lobby.y"),
-						plugin.getData().getDouble("data.lobby.z"));
+				Location location = new Location(Bukkit.getWorld(plugin.getData().getString("lobby.world")),
+						plugin.getData().getDouble("lobby.x"), plugin.getData().getDouble("lobby.y"),
+						plugin.getData().getDouble("lobby.z"));
 				player.teleport(location);
 			}
 			else {
@@ -137,6 +133,7 @@ public class Game {
 				endGame(arena);
 			}
 			player.setGameMode(GameMode.ADVENTURE);
+			portal.refreshHolo(Integer.parseInt(arena));
 		}
 		else {
 			player.sendMessage(Utils.format("&cYou are not in a game!"));
@@ -148,7 +145,7 @@ public class Game {
 		if (playing.containsValue(arena)) {
 			playing.forEach((gamer, num) -> {
 				if (num.equals(arena)) {
-					Bukkit.getServer().getPlayer(gamer).sendMessage(Utils.format("&6You made it to round &b" + plugin.getData().getInt("data.a" + arena + ".currentWave")
+					Bukkit.getServer().getPlayer(gamer).sendMessage(Utils.format("&6You made it to round &b" + plugin.getData().getInt("a" + arena + ".currentWave")
 							+ "&6! Ending in 10 seconds."));
 				}
 			});
@@ -158,8 +155,8 @@ public class Game {
 
 			@Override
 			public void run() {
-				plugin.getData().set("data.a" + arena + ".active", false);
-				plugin.getData().set("data.a" + arena + ".currentWave", 0);
+				plugin.getData().set("a" + arena + ".active", false);
+				plugin.getData().set("a" + arena + ".currentWave", 0);
 				plugin.saveData();
 				List<String> gamers = new ArrayList<String>();
 //				Remove from lists
@@ -174,10 +171,10 @@ public class Game {
 					leave(Bukkit.getServer().getPlayer(gamer));
 				}
 //				Clear the arena
-				Location location = new Location(Bukkit.getWorld(plugin.getData().getString("data.a" + arena + ".spawn.world")),
-						plugin.getData().getDouble("data.a" + arena + ".spawn.x"), plugin.getData().getDouble("data.a" + arena + ".spawn.y"),
-						plugin.getData().getDouble("data.a" + arena + ".spawn.z"));
-				Collection<Entity> ents = Bukkit.getWorld(plugin.getData().getString("data.a" + arena + ".spawn.world")).getNearbyEntities(location, 100, 100, 50);
+				Location location = new Location(Bukkit.getWorld(plugin.getData().getString("a" + arena + ".spawn.world")),
+						plugin.getData().getDouble("a" + arena + ".spawn.x"), plugin.getData().getDouble("a" + arena + ".spawn.y"),
+						plugin.getData().getDouble("a" + arena + ".spawn.z"));
+				Collection<Entity> ents = Bukkit.getWorld(plugin.getData().getString("a" + arena + ".spawn.world")).getNearbyEntities(location, 100, 100, 50);
 				ents.forEach(ent -> {
 					if (ent instanceof LivingEntity && !(ent instanceof Player)) {
 						if (ent.getName().contains("VD")) {
@@ -191,6 +188,9 @@ public class Game {
 //				Remove from active
 				actives.remove(arena);
 				shops.remove(arena);
+
+				//Refresh portal
+				portal.refreshHolo(Integer.parseInt(arena));
 			}
 			
 		}.runTaskLater(plugin, 200);
@@ -200,7 +200,7 @@ public class Game {
 	public void start(Player player, String arena) {
 		taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
 
-			GameBoard board = new GameBoard(player.getUniqueId());
+			final GameBoard board = new GameBoard(player.getUniqueId());
 			
 			@Override
 			public void run() {
@@ -211,7 +211,7 @@ public class Game {
 			
 		}, 0, 10);
 	}
-	
+
 //	Creates a scoreboard for the player
 	public void createBoard(Player player, String arena) {
 		ScoreboardManager manager = Bukkit.getScoreboardManager();
@@ -225,9 +225,9 @@ public class Game {
 					ghosts[0]++;
 			}
 		});
-		Objective obj = board.registerNewObjective("VillagerDefense", "dummy", Utils.format("&2&l" + plugin.getData().getString("data.a" + arena + ".name")));
+		Objective obj = board.registerNewObjective("VillagerDefense", "dummy", Utils.format("&2&l" + plugin.getData().getString("a" + arena + ".name")));
 		obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-		Score score = obj.getScore(Utils.format("&6Wave: " + plugin.getData().getInt("data.a" + arena + ".currentWave")));
+		Score score = obj.getScore(Utils.format("&6Wave: " + plugin.getData().getInt("a" + arena + ".currentWave")));
 		score.setScore(6);
 		Score score2 = obj.getScore(Utils.format("&2Gems: " + gems.get(player.getName())));
 		score2.setScore(5);

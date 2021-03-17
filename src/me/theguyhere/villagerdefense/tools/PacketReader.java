@@ -1,10 +1,12 @@
-package me.theguyhere.villagerdefense;
+package me.theguyhere.villagerdefense.tools;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
+import me.theguyhere.villagerdefense.Main;
+import me.theguyhere.villagerdefense.Portal;
 import me.theguyhere.villagerdefense.events.RightClickNPC;
-import net.minecraft.server.v1_16_R3.EntityPlayer;
+import net.minecraft.server.v1_16_R3.EntityVillager;
 import net.minecraft.server.v1_16_R3.Packet;
 import net.minecraft.server.v1_16_R3.PacketPlayInUseEntity;
 import org.bukkit.Bukkit;
@@ -18,10 +20,10 @@ import java.util.Map;
 import java.util.UUID;
 
 public class PacketReader {
-	private final NPC NPC;
+	private final Portal portal;
 	
-	public PacketReader(NPC NPC) {
-		this.NPC = NPC;
+	public PacketReader(Portal portal) {
+		this.portal = portal;
 	}
 	
 	Channel channel;
@@ -65,8 +67,8 @@ public class PacketReader {
 			
 			int id = (int) getValue(packet, "a");
 			if (getValue(packet, "action").toString().equalsIgnoreCase("INTERACT")) {
-				for (EntityPlayer npc : NPC.getNPCs()) {
-					if (npc.getId() == id) {
+				for (EntityVillager npc : portal.getNPCs()) {
+					if (npc != null && npc.getId() == id) {
 						Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
 								Bukkit.getPluginManager().callEvent(new RightClickNPC(player, npc)), 0);
 					}

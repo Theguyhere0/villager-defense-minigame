@@ -7,44 +7,39 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import me.theguyhere.villagerdefense.NPC;
-import me.theguyhere.villagerdefense.PacketReader;
+import me.theguyhere.villagerdefense.Portal;
+import me.theguyhere.villagerdefense.tools.PacketReader;
 import me.theguyhere.villagerdefense.game.Game;
 
 public class Join implements Listener {
-	private final NPC NPC;
+	private final Portal portal;
 	private final PacketReader reader;
 	private final Game game;
 	
-	public Join(NPC NPC, PacketReader reader, Game game) {
-		this.NPC = NPC;
+	public Join(Portal portal, PacketReader reader, Game game) {
+		this.portal = portal;
 		this.reader = reader;
 		this.game = game;
 	}
 
 	@EventHandler
-	public void onJoin(PlayerJoinEvent event) {
-		if (NPC.getNPCs() == null)
+	public void onJoin(PlayerJoinEvent e) {
+		if (portal.getNPCs() == null)
 			return;
-		if (NPC.getNPCs().isEmpty())
-			return;
-		NPC.addJoinPacket(event.getPlayer());
-		
-		reader.inject(event.getPlayer());
+		portal.addJoinPacket(e.getPlayer());
+		reader.inject(e.getPlayer());
 	}
 	
 	@EventHandler
-	public void onPortal(PlayerChangedWorldEvent event) {
-		if (NPC.getNPCs() == null)
+	public void onPortal(PlayerChangedWorldEvent e) {
+		if (portal.getNPCs() == null)
 			return;
-		if (NPC.getNPCs().isEmpty())
-			return;
-		NPC.addJoinPacket(event.getPlayer());
+		portal.addJoinPacket(e.getPlayer());
 	}
 	
 	@EventHandler
-	public void onQuit(PlayerQuitEvent event) {
-		Player player = event.getPlayer();
+	public void onQuit(PlayerQuitEvent e) {
+		Player player = e.getPlayer();
 		reader.uninject(player);
 		game.leave(player);
 	}

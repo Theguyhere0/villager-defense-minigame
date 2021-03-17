@@ -1,4 +1,4 @@
-package me.theguyhere.villagerdefense;
+package me.theguyhere.villagerdefense.tools;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

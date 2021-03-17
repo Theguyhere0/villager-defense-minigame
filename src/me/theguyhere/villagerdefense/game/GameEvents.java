@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import me.theguyhere.villagerdefense.Utils;
+import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -23,7 +23,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import me.theguyhere.villagerdefense.Inventories;
 import me.theguyhere.villagerdefense.Main;
 
 public class GameEvents implements Listener {
@@ -128,7 +127,7 @@ public class GameEvents implements Listener {
 		int stack = e.getItem().getItemStack().getAmount();
 		if (game.gems.containsKey(player.getName())) {
 			String arena = e.getItem().getItemStack().getItemMeta().getDisplayName();
-			int wave = plugin.getData().getInt("data.a" + arena + ".currentWave");
+			int wave = plugin.getData().getInt("a" + arena + ".currentWave");
 			Random r = new Random();
 			Integer num = r.nextInt(Math.toIntExact(Math.round(40 * Math.pow(wave, 1 / (2 + Math.pow(Math.E, -wave + 3))))));
 			e.setCancelled(true);
