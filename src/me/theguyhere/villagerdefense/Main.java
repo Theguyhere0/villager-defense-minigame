@@ -65,7 +65,7 @@ public class Main extends JavaPlugin {
 		if (getData().contains("portal"))
 			loadPortals();
 
-		int currentCVersion = 2;
+		int currentCVersion = 3;
 		int currentDVersion = 3;
 		// Check config version
 		if (getConfig().getInt("version") < currentCVersion) {

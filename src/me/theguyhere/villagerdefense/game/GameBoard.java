@@ -7,7 +7,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 
 public class GameBoard {
-	private static Map<UUID, Integer> TASKS = new HashMap<UUID, Integer>();
+	private static Map<UUID, Integer> TASKS = new HashMap<>();
 	private final UUID uuid;
 	
 	public GameBoard(UUID uuid) {
@@ -23,9 +23,7 @@ public class GameBoard {
 	}
 	
 	public boolean hasID() {
-		if (TASKS.containsKey(uuid))
-			return true;
-		return false;
+		return TASKS.containsKey(uuid);
 	}
 	
 	public void stop() {

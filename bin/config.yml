@@ -24,7 +24,7 @@ waves:
     rvgr: 0
     wthr: 0
   wave2:
-    vlgr: 1
+    vlgr: 3
     zomb: 9
     husk: 0
     wskl: 0
@@ -47,7 +47,7 @@ waves:
     rvgr: 0
     wthr: 0
   wave3:
-    vlgr: 1
+    vlgr: 3
     zomb: 15
     husk: 0
     wskl: 0
@@ -70,7 +70,7 @@ waves:
     rvgr: 0
     wthr: 0
   wave4:
-    vlgr: 2
+    vlgr: 4
     zomb: 10
     husk: 0
     wskl: 0
@@ -93,7 +93,7 @@ waves:
     rvgr: 0
     wthr: 0
   wave5:
-    vlgr: 2
+    vlgr: 5
     zomb: 15
     husk: 0
     wskl: 0
@@ -116,7 +116,7 @@ waves:
     rvgr: 0
     wthr: 0
   wave6:
-    vlgr: 2
+    vlgr: 7
     zomb: 18
     husk: 0
     wskl: 0
@@ -139,7 +139,7 @@ waves:
     rvgr: 0
     wthr: 0
   wave7:
-    vlgr: 2
+    vlgr: 9
     zomb: 15
     husk: 5
     wskl: 0
@@ -162,7 +162,7 @@ waves:
     rvgr: 0
     wthr: 0
   wave8:
-    vlgr: 2
+    vlgr: 12
     zomb: 10
     husk: 10
     wskl: 0
@@ -185,7 +185,7 @@ waves:
     rvgr: 0
     wthr: 0
   wave9:
-    vlgr: 2
+    vlgr: 14
     zomb: 5
     husk: 15
     wskl: 0
@@ -208,7 +208,7 @@ waves:
     rvgr: 0
     wthr: 0
   wave10:
-    vlgr: 3
+    vlgr: 16
     zomb: 0
     husk: 20
     wskl: 0
@@ -231,7 +231,7 @@ waves:
     rvgr: 0
     wthr: 0
   wave11:
-    vlgr: 3
+    vlgr: 18
     zomb: 0
     husk: 20
     wskl: 0
@@ -254,7 +254,7 @@ waves:
     rvgr: 0
     wthr: 0
   wave12:
-    vlgr: 3
+    vlgr: 20
     zomb: 0
     husk: 20
     wskl: 0

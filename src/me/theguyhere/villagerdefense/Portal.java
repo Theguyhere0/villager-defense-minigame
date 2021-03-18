@@ -126,10 +126,6 @@ public class Portal {
 		addHolo(location, arena, getHoloText(arena));
 	}
 
-	public Hologram[] getHolos() {
-		return holos;
-	}
-
 	public void removeAll() {
 		for (int i = 0; i < 45; i++)
 			removeNPCAll(i);

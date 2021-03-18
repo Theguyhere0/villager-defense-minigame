@@ -1,10 +1,7 @@
 package me.theguyhere.villagerdefense.game;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
-
+import me.theguyhere.villagerdefense.Inventories;
+import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.Portal;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
@@ -12,39 +9,14 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Blaze;
-import org.bukkit.entity.CaveSpider;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Evoker;
-import org.bukkit.entity.Ghast;
-import org.bukkit.entity.Hoglin;
-import org.bukkit.entity.Husk;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.MagmaCube;
-import org.bukkit.entity.Phantom;
-import org.bukkit.entity.PiglinBrute;
-import org.bukkit.entity.Pillager;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Ravager;
-import org.bukkit.entity.Skeleton;
-import org.bukkit.entity.Slime;
-import org.bukkit.entity.Spider;
-import org.bukkit.entity.Stray;
-import org.bukkit.entity.Villager;
-import org.bukkit.entity.Vindicator;
-import org.bukkit.entity.Witch;
-import org.bukkit.entity.Wither;
-import org.bukkit.entity.WitherSkeleton;
-import org.bukkit.entity.Zombie;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.theguyhere.villagerdefense.Inventories;
-import me.theguyhere.villagerdefense.Main;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 public class Tasks extends BukkitRunnable {
 	private final Main plugin;
@@ -63,118 +35,149 @@ public class Tasks extends BukkitRunnable {
 		this.portal = portal;
 	}
 	
-	List<Location> monsterSpawns = new ArrayList<Location>();
-	List<Location> villagerSpawns = new ArrayList<Location>();
+	List<Location> monsterSpawns = new ArrayList<>();
+	List<Location> villagerSpawns = new ArrayList<>();
 
-	//	1 minute warning
+	// 1 minute warning
 	Runnable min1 = new BukkitRunnable() {
 
 		@Override
 		public void run() {
 			game.playing.forEach((player, num) -> {
-				if (arena.equals(num)) {
-					Bukkit.getServer().getPlayer(player).sendMessage(Utils.format("&c1 &6minute until the game starts!"));
-				}
+				if (arena.equals(num))
+					Bukkit.getServer().getPlayer(player)
+							.sendMessage(Utils.format("&c1 &6minute until the game starts!"));
+			});
+			game.spectating.forEach((player, num) -> {
+				if (arena.equals(num))
+					Bukkit.getServer().getPlayer(player)
+							.sendMessage(Utils.format("&c1 &6minute until the game starts!"));
 			});
 		}
 		
 	};
 
-//	30 second warning
+	// 30 second warning
 	Runnable sec30 = new BukkitRunnable() {
 
 		@Override
 		public void run() {
 			game.playing.forEach((player, num) -> {
-				if (arena.equals(num)) {
-					Bukkit.getServer().getPlayer(player).sendMessage(Utils.format("&c30 &6seconds until the game starts!"));
-				}
+				if (arena.equals(num))
+					Bukkit.getServer().getPlayer(player)
+							.sendMessage(Utils.format("&c30 &6seconds until the game starts!"));
+			});
+			game.spectating.forEach((player, num) -> {
+				if (arena.equals(num))
+					Bukkit.getServer().getPlayer(player)
+							.sendMessage(Utils.format("&c30 &6seconds until the game starts!"));
 			});
 		}
 	};
 
-//	10 second warning
+	// 10 second warning
 	Runnable sec10 = new BukkitRunnable() {
 
 		@Override
 		public void run() {
 			game.playing.forEach((player, num) -> {
-				if (arena.equals(num)) {
-					Bukkit.getServer().getPlayer(player).sendMessage(Utils.format("&c10 &6seconds until the game starts!"));
-				}
+				if (arena.equals(num))
+					Bukkit.getServer().getPlayer(player)
+							.sendMessage(Utils.format("&c10 &6seconds until the game starts!"));
+			});
+			game.spectating.forEach((player, num) -> {
+				if (arena.equals(num))
+					Bukkit.getServer().getPlayer(player)
+							.sendMessage(Utils.format("&c10 &6seconds until the game starts!"));
 			});
 		}
 		
 	};
 
-//	5 second warning
+	// 5 second warning
 	Runnable sec5 = new BukkitRunnable() {
 
 		@Override
 		public void run() {
 			game.playing.forEach((player, num) -> {
-				if (arena.equals(num)) {
-					Bukkit.getServer().getPlayer(player).sendMessage(Utils.format("&c5 &6seconds until the game starts!"));
-				}
+				if (arena.equals(num))
+					Bukkit.getServer().getPlayer(player)
+							.sendMessage(Utils.format("&c5 &6seconds until the game starts!"));
+			});
+			game.spectating.forEach((player, num) -> {
+				if (arena.equals(num))
+					Bukkit.getServer().getPlayer(player)
+							.sendMessage(Utils.format("&c5 &6seconds until the game starts!"));
 			});
 		}
 		
 	};
 
-//	Start a wave
+	// Start a wave
 	Runnable wave = new BukkitRunnable() {
 
 		@Override
 		public void run() {
-//			Sets this arena on break
+			// Sets this arena on break
 			game.breaks.add(arena);
 			
-//			Increment wave
-			plugin.getData().set("a" + arena + ".currentWave", plugin.getData().getInt("a" + arena + ".currentWave") + 1);
+			// Increment wave
+			plugin.getData().set("a" + arena + ".currentWave",
+					plugin.getData().getInt("a" + arena + ".currentWave") + 1);
 			plugin.saveData();
 
 			// Refresh the portal hologram
 			portal.refreshHolo(Integer.parseInt(arena));
 
-//			Regenerate shops and notify players of it
+			// Regenerate shops when time and notify players of it
 			if (plugin.getData().getInt("a" + arena + ".currentWave") % 10 == 0) {
 				int shopNum = plugin.getData().getInt("a" + arena + ".currentWave") / 10;
-				if (shopNum > 5)
-					shopNum = 5;
+				if (shopNum > 5) shopNum = 5;
 				game.shops.put(arena, inv.createShop(shopNum));
 				game.playing.forEach((player, num) -> {
-					if (arena.equals(num)) {
+					if (arena.equals(num))
 						Bukkit.getServer().getPlayer(player).sendMessage(Utils.format("&6Shops have reset!"));
-					}
 				});
 			}
 			
-//			Send notifications to players about wave starting
+			// Send notifications to players about wave starting
 			game.playing.forEach((player, num) -> {
+				Player gamer = Bukkit.getServer().getPlayer(player);
 				if (arena.equals(num)) {
-					if (Bukkit.getServer().getPlayer(player).getGameMode().equals(GameMode.SPECTATOR)) {
+					// Revive dead players
+					if (gamer.getGameMode().equals(GameMode.SPECTATOR)) {
+						Utils.prepTeleAdventure(gamer);
 						Location location = new Location(Bukkit.getWorld(plugin.getData().getString("a" + arena + ".spawn.world")),
 								plugin.getData().getDouble("a" + arena + ".spawn.x"), plugin.getData().getDouble("a" + arena + ".spawn.y"),
 								plugin.getData().getDouble("a" + arena + ".spawn.z"));
-						Bukkit.getServer().getPlayer(player).teleport(location);
-						Bukkit.getServer().getPlayer(player).setGameMode(GameMode.ADVENTURE);
-						Bukkit.getServer().getPlayer(player).getInventory().addItem(new ItemStack(Material.WOODEN_SWORD));
-						Bukkit.getServer().getPlayer(player).getInventory().addItem(gi.shop());
-						Bukkit.getServer().getPlayer(player).getActivePotionEffects().clear();
-						Bukkit.getServer().getPlayer(player).setHealth(Bukkit.getServer().getPlayer(player).getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-						Bukkit.getServer().getPlayer(player).setFoodLevel(20);
-						Bukkit.getServer().getPlayer(player).setSaturation(20);
-						Bukkit.getServer().getPlayer(player).setLevel(0);
+						gamer.teleport(location);
+						gamer.getInventory().addItem(new ItemStack(Material.WOODEN_SWORD));
+						gamer.getInventory().addItem(gi.shop());
 					}
+
+					// Notify of upcoming wave
 					int wave = plugin.getData().getInt("a" + arena + ".currentWave");
-					Bukkit.getServer().getPlayer(player).sendTitle(Utils.format("&6Wave " + wave), Utils.format("&7Starting in 15 seconds"), 10 , 70, 20);
+					gamer.sendTitle(Utils.format("&6Wave " + wave),
+							Utils.format("&7Starting in 15 seconds"), 10 , 70, 20);
+
+					// Give players gem rewards
 					game.gems.put(player, game.gems.get(player) + wave * 10 - 10);
 					if (wave > 1)
-						Bukkit.getServer().getPlayer(player).sendMessage(Utils.format("&fYou have received &a" + (wave * 10 - 10) + " &fgems!"));
+						gamer
+								.sendMessage(Utils.format("&fYou have received &a" + (wave * 10 - 10) +
+										" &fgems!"));
 				}
 			});
+
+			// Send notifications to spectators about wave starting
+			game.spectating.forEach((player, num) -> {
+				// Notify of upcoming wave
+				Bukkit.getServer().getPlayer(player).sendTitle(Utils.format("&6Wave " +
+						plugin.getData().getInt("a" + arena + ".currentWave")),
+						Utils.format("&7Starting in 15 seconds"), 10 , 70, 20);
+			});
 			
-//			Spawns mobs after 15 seconds
+			// Spawns mobs after 15 seconds
 			new BukkitRunnable() {
 
 				@Override
@@ -182,7 +185,6 @@ public class Tasks extends BukkitRunnable {
 					spawnMonsters(arena, plugin.getData().getInt("a" + arena + ".currentWave"), monsterSpawns);
 					spawnVillagers(arena, plugin.getData().getInt("a" + arena + ".currentWave"), villagerSpawns);
 					game.breaks.remove(arena);
-
 				}
 				
 			}.runTaskLater(plugin, 300);
@@ -190,12 +192,12 @@ public class Tasks extends BukkitRunnable {
 		
 	};
 	
-//	Start actual game
+	// Start actual game
 	Runnable start = new BukkitRunnable() {
 
 		@Override
 		public void run() {
-//			Give all wooden sword
+			// Give all players a wooden sword and a shop
 			game.playing.forEach((player, num) -> {
 				if (arena.equals(num)) {
 					Bukkit.getServer().getPlayer(player).getInventory().addItem(new ItemStack(Material.WOODEN_SWORD));
@@ -203,44 +205,48 @@ public class Tasks extends BukkitRunnable {
 				}
 			});
 			
-//			Start the waves tasks and set arena to active
+			// Set arena to active
 			plugin.getData().set("a" + arena + ".active", true);
 			plugin.saveData();
 
 			// Refresh the portal hologram
 			portal.refreshHolo(Integer.parseInt(arena));
 			
-//			Create the initial shop inventory
+			// Create the initial shop inventory
 			game.shops.put(arena, inv.createShop(0));
 			
-//			Keep running waves until game end conditions are met
+			// Keep running waves until game end conditions are met
 			new BukkitRunnable() {
 				
 				@Override
 				public void run() {
+					// Count players alive
 					int[] players = {0};
-					int[] ghosts = {0};
 					game.playing.forEach((gamer, num) -> {
 						if (num.equals(arena)) {
 							players[0]++;
 							if (Bukkit.getServer().getPlayer(gamer).getGameMode().equals(GameMode.SPECTATOR))
-								ghosts[0]++;
+								players[0]--;
 						}
 					});
-//					Game end situations
-					if (game.villagers.get(arena) == 0 && !(plugin.getData().getInt("a" + arena + ".currentWave") == 0) &&
-							!game.breaks.contains(arena) || players[0] - ghosts[0] == 0) {
+
+					// Lose condition
+					if (game.villagers.get(arena) == 0 &&
+							!(plugin.getData().getInt("a" + arena + ".currentWave") == 0) &&
+							!game.breaks.contains(arena) || players[0] == 0) {
 						cancel();
 						game.endGame(arena);
 					}
-//					TEMPORARY win condition
+
+					// TEMPORARY win condition
 					else if (plugin.getData().getInt("a" + arena + ".currentWave") == 12) {
 						cancel();
 						game.endGame(arena);
 					}
-					else if (!game.breaks.contains(arena) && game.enemies.get(arena) == 0) {
+
+					// Round win condition
+					else if (!game.breaks.contains(arena) && game.enemies.get(arena) == 0)
 						Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, wave);
-					}
 				}
 				
 			}.runTaskTimer(plugin, 0, 20);
@@ -264,26 +270,12 @@ public class Tasks extends BukkitRunnable {
 					plugin.getData().getDouble("a" + arena + ".villager." + num + ".y"),
 					plugin.getData().getDouble("a" + arena + ".villager." + num + ".z")));
 		});
-//		Clear the arena
-		Location location = new Location(Bukkit.getWorld(plugin.getData().getString("a" + arena + ".spawn.world")),
-				plugin.getData().getDouble("a" + arena + ".spawn.x"), plugin.getData().getDouble("a" + arena + ".spawn.y"),
-				plugin.getData().getDouble("a" + arena + ".spawn.z"));
-		Collection<Entity> ents = Bukkit.getWorld(plugin.getData().getString("a" + arena + ".spawn.world")).getNearbyEntities(location, 100, 100, 50);
-		ents.forEach(ent -> {
-			if (ent instanceof LivingEntity && !(ent instanceof Player)) {
-				if (ent.getName().contains("VD")) {
-					((LivingEntity) ent).setHealth(0);
-				}
-			}
-			else if (ent instanceof Item && !(ent instanceof ArmorStand)) {
-				ent.remove();
-			}
-		});
-//		2 minute warning
+
+		// Send 2 minute warning
 		game.playing.forEach((player, num) -> {
-			if (arena.equals(num)) {
-				Bukkit.getServer().getPlayer(player).sendMessage(Utils.format("&c2 &6minutes until the game starts!"));
-			}
+			if (arena.equals(num))
+				Bukkit.getServer().getPlayer(player)
+						.sendMessage(Utils.format("&c2 &6minutes until the game starts!"));
 		});
 		int min1ID = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, min1, 1200);
 		int sec30ID = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, sec30, 1800);
@@ -298,9 +290,8 @@ public class Tasks extends BukkitRunnable {
 			public void run() {
 				int[] players = {0};
 				game.playing.forEach((player, num) -> {
-					if (arena.equals(num)) {
+					if (arena.equals(num))
 						players[0]++;
-					}
 				});
 
 				if (Integer.toString(players[0]).equals(plugin.getData().getString("a" + arena + ".max"))) {
@@ -324,16 +315,21 @@ public class Tasks extends BukkitRunnable {
 		}.runTaskTimer(plugin, 0, 5);
 	}
 
+	// Spawns villagers randomly
 	private void spawnVillagers(String arena, int round, List<Location> spawns) {
 		Random r = new Random();
-		for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + round + ".vlgr"); i++) {
+		for (int i = 0;
+			 i < plugin.getConfig().getInt("waves.wave" + round + ".vlgr") - game.villagers.get(arena);
+			 i++) {
 			int num = r.nextInt(spawns.size());
 			new BukkitRunnable() {
 
 				@Override
 				public void run() {
-					Villager n = (Villager) Bukkit.getWorld(spawns.get(num).getWorld().getName()).spawnEntity(spawns.get(num), EntityType.VILLAGER);
+					Villager n = (Villager) Bukkit.getWorld(spawns.get(num).getWorld().getName())
+							.spawnEntity(spawns.get(num), EntityType.VILLAGER);
 					n.setCustomName(Utils.format("&aVD" + arena +": Villager"));
+					n.setCustomNameVisible(false);
 					game.villagers.put(arena, game.villagers.get(arena) + 1);
 				}
 
