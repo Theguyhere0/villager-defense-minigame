@@ -56,7 +56,7 @@ public class Tasks {
 		public void run() {
 			game.playing.forEach(player -> {
 				if (player.getArena() == arena)
-					player.getPlayer().sendMessage(Utils.format("&Waiting for more players to start the game."));
+					player.getPlayer().sendMessage(Utils.format("&6Waiting for more players to start the game."));
 			});
 		}
 	};

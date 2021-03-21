@@ -35,6 +35,12 @@ public class ArenaEvents implements Listener {
         int arena = e.getArena();
         BukkitScheduler scheduler = Bukkit.getScheduler();
 
+        // Ignore if player is already in a game somehow
+        if (game.playing.stream().anyMatch(p -> p.getPlayer().equals(player))) {
+            e.setCancelled(true);
+            return;
+        }
+
         // Check if arena is closed
         if (plugin.getData().getBoolean("a" + arena + ".closed")) {
             player.sendMessage(Utils.format("&cArena is closed."));
