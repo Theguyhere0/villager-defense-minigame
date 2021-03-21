@@ -210,8 +210,6 @@ public class Tasks {
 				public void run() {
 					spawnMonsters(arena, plugin.getData().getInt("a" + arena + ".currentWave"), monsterSpawns);
 					spawnVillagers(arena, plugin.getData().getInt("a" + arena + ".currentWave"), villagerSpawns);
-					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
-							Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)));
 				}
 				
 			}.runTaskLater(plugin, 300);
@@ -328,6 +326,8 @@ public class Tasks {
 
 			}.runTaskLater(plugin, 0);
 		}
+		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+				Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)));
 	}
 	
 	// Spawns monsters randomly
@@ -640,5 +640,7 @@ public class Tasks {
 				
 			}.runTaskLater(plugin, 21);
 		}
+		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+				Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)), 22);
 	}
 }

@@ -186,6 +186,13 @@ public class ArenaEvents implements Listener {
     @EventHandler
     public void onLeave(LeaveArenaEvent e) {
         Player player = e.getPlayer();
+
+        // Check if the player is playing in a game
+        if (game.playing.stream().noneMatch(p -> p.getPlayer().equals(player))) {
+            e.setCancelled(true);
+            return;
+        }
+
         VDPlayer gamer = game.playing.stream().filter(p -> p.getPlayer().equals(player)).collect(Collectors.toList())
                 .get(0);
 
