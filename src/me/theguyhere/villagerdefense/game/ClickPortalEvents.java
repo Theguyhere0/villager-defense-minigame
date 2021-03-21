@@ -1,0 +1,37 @@
+package me.theguyhere.villagerdefense.game;
+
+import me.theguyhere.villagerdefense.customEvents.JoinArenaEvent;
+import me.theguyhere.villagerdefense.customEvents.RightClickNPCEvent;
+import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+
+import me.theguyhere.villagerdefense.Main;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
+public class ClickPortalEvents implements Listener {
+	private final Portal portal;
+	
+	public ClickPortalEvents(Portal portal) {
+		this.portal = portal;
+	}
+	
+	@EventHandler
+	public void onclick(RightClickNPCEvent event) {
+		int arena;
+
+		// Try to get arena from npc
+		try {
+			arena = Arrays.stream(portal.getNPCs()).collect(Collectors.toList()).indexOf(event.getNPC());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+
+		// Send out event of player joining
+		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
+				Bukkit.getPluginManager().callEvent(new JoinArenaEvent(event.getPlayer(), arena)), 0);
+	}
+}

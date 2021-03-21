@@ -4,8 +4,8 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.Portal;
-import me.theguyhere.villagerdefense.events.RightClickNPC;
+import me.theguyhere.villagerdefense.game.Portal;
+import me.theguyhere.villagerdefense.customEvents.RightClickNPCEvent;
 import net.minecraft.server.v1_16_R3.EntityVillager;
 import net.minecraft.server.v1_16_R3.Packet;
 import net.minecraft.server.v1_16_R3.PacketPlayInUseEntity;
@@ -70,7 +70,7 @@ public class PacketReader {
 				for (EntityVillager npc : portal.getNPCs()) {
 					if (npc != null && npc.getId() == id) {
 						Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
-								Bukkit.getPluginManager().callEvent(new RightClickNPC(player, npc)), 0);
+								Bukkit.getPluginManager().callEvent(new RightClickNPCEvent(player, npc)), 0);
 					}
 				}
 			}

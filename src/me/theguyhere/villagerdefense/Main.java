@@ -1,12 +1,13 @@
 package me.theguyhere.villagerdefense;
 
-import me.theguyhere.villagerdefense.events.ClickNPC;
-import me.theguyhere.villagerdefense.events.Death;
-import me.theguyhere.villagerdefense.events.InventoryEvents;
-import me.theguyhere.villagerdefense.events.Join;
-import me.theguyhere.villagerdefense.game.Game;
-import me.theguyhere.villagerdefense.game.GameEvents;
-import me.theguyhere.villagerdefense.game.GameItems;
+import me.theguyhere.villagerdefense.GUI.Inventories;
+import me.theguyhere.villagerdefense.GUI.InventoryEvents;
+import me.theguyhere.villagerdefense.GUI.InventoryItems;
+import me.theguyhere.villagerdefense.game.*;
+import me.theguyhere.villagerdefense.genListeners.CommandTab;
+import me.theguyhere.villagerdefense.genListeners.Commands;
+import me.theguyhere.villagerdefense.genListeners.Death;
+import me.theguyhere.villagerdefense.genListeners.Join;
 import me.theguyhere.villagerdefense.tools.DataManager;
 import me.theguyhere.villagerdefense.tools.PacketReader;
 import org.bukkit.Bukkit;
@@ -19,11 +20,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
 	private final Portal portal = new Portal(this);
-	private final GameItems gi = new GameItems();
 	private final InventoryItems ii = new InventoryItems();
-	private final Inventories inventories = new Inventories(this, gi, ii);
+	private final Inventories inventories = new Inventories(this, ii);
 	private PacketReader reader;
-	private final Game game = new Game(this, gi, inventories, portal);
+	private final Game game = new Game(this);
 	private final Commands commands = new Commands(this, inventories, game);
 	private DataManager data;
 
@@ -51,10 +51,11 @@ public class Main extends JavaPlugin {
 
 		// Register event listeners
 		pm.registerEvents(new InventoryEvents(this, inventories, portal), this);
-		pm.registerEvents(new Join(portal, reader, game), this);
+		pm.registerEvents(new Join(this, portal, reader), this);
 		pm.registerEvents(new Death(portal, reader), this);
-		pm.registerEvents(new ClickNPC(this, game, portal), this);
-		pm.registerEvents(new GameEvents(this, game, gi), this);
+		pm.registerEvents(new ClickPortalEvents(portal), this);
+		pm.registerEvents(new GameEvents(this, game), this);
+		pm.registerEvents(new ArenaEvents(this, game, portal), this);
 
 		if (!Bukkit.getOnlinePlayers().isEmpty())
 			for (Player player : Bukkit.getOnlinePlayers()) {
