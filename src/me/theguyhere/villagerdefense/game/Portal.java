@@ -12,7 +12,8 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public class Portal {
-	private final me.theguyhere.villagerdefense.Main plugin;
+	private final Main plugin;
+	private Arena arena;
 
 	public Portal(Main plugin) {
 		this.plugin = plugin;
@@ -22,7 +23,9 @@ public class Portal {
 	private final EntityVillager[] NPC = new EntityVillager[45];
 	private final Hologram[] holos = new Hologram[45];
 
-	public void createPortal(Player player, int num) {
+	public void createPortal(Player player, int num, Game game) {
+		this.arena = game.arenas.get(num);
+
 		// Get NMS versions of world
 		WorldServer nmsWorld = ((CraftWorld) player.getWorld()).getHandle();
 
@@ -39,7 +42,7 @@ public class Portal {
 		NPC[num] = npc;
 
 		// Create hologram
-		addHolo(player.getLocation(), num, getHoloText(num));
+		addHolo(player.getLocation(), num, getHoloText());
 
 		// Save data about the NPC
 		plugin.getData().set("portal." + num + ".x", player.getLocation().getX());
@@ -50,7 +53,9 @@ public class Portal {
 		plugin.saveData();
 	}
 
-	public void loadPortal(Location location, int arena) {
+	public void loadPortal(Location location, int arena, Game game) {
+		this.arena = game.arenas.get(arena);
+
 		// Create portal NPC
 		WorldServer world = ((CraftWorld) Bukkit.getWorld(location.getWorld().getName())).getHandle();
 		EntityVillager npc = new EntityVillager(EntityTypes.VILLAGER, world);
@@ -61,7 +66,7 @@ public class Portal {
 		NPC[arena] = npc;
 
 		// Create hologram
-		addHolo(location, arena, getHoloText(arena));
+		addHolo(location, arena, getHoloText());
 	}
 
 	public void removePortalAll(int arena) {
@@ -117,14 +122,12 @@ public class Portal {
 		holos[arena] = holo;
 	}
 
-	public void refreshHolo(int arena) {
+	public void refreshHolo(int arena, Game game) {
+		this.arena = game.arenas.get(arena);
 		holos[arena].delete();
-		Location location = new Location(Bukkit.getWorld(plugin.getData().getString("portal." + arena + ".world")),
-				plugin.getData().getDouble("portal." + arena + ".x"),
-				plugin.getData().getDouble("portal." + arena + ".y"),
-				plugin.getData().getDouble("portal." + arena + ".z"));
+		Location location = new Utils(plugin).getConfigLocation("portal." + arena);
 		location.setYaw((float) plugin.getData().getDouble("portal." + arena + ".yaw"));
-		addHolo(location, arena, getHoloText(arena));
+		addHolo(location, arena, getHoloText());
 	}
 
 	public void removeAll() {
@@ -135,17 +138,18 @@ public class Portal {
 				holo.delete();
 	}
 
-	private String[] getHoloText(int arena) {
+	private String[] getHoloText() {
 		String status;
-		if (plugin.getData().getBoolean("a" + arena + ".closed"))
+		if (arena.isClosed())
 			status = "&4&lClosed";
-		else if (!plugin.getData().getBoolean("a" + arena + ".active"))
+		else if (arena.isEnding())
+			status = "&c&lEnding";
+		else if (!arena.isActive())
 			status = "&5&lWaiting";
-		else status = "&a&lRound: " + plugin.getData().getInt("a" + arena + ".currentWave");
-		return new String[]{Utils.format("&6&l" + plugin.getData().getString("a" + arena + ".name")),
-		Utils.format("&bPlayers: " + plugin.getData().getInt("a" + arena + ".players.playing") + '/' +
-				plugin.getData().getInt("a" + arena + ".max")),
-		Utils.format("&7Spectators: " + plugin.getData().getInt("a" + arena + ".players.spectating")),
+		else status = "&a&lRound: " + arena.getCurrentWave();
+		return new String[]{Utils.format("&6&l" + arena.getName()),
+		Utils.format("&bPlayers: " + arena.getActiveCount() + '/' + arena.getMaxPlayers()),
+		Utils.format("&7Spectators: " + arena.getSpectatorCount()),
 		Utils.format(status)};
 	}
 }

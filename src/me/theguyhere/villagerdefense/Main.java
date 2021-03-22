@@ -19,13 +19,13 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
+	private final DataManager data = new DataManager(this);
 	private final Portal portal = new Portal(this);
 	private final InventoryItems ii = new InventoryItems();
-	private final Inventories inventories = new Inventories(this, ii);
 	private PacketReader reader;
-	private final Game game = new Game(this);
+	private final Game game = new Game(this, portal);
+	private final Inventories inventories = new Inventories(game, ii);
 	private final Commands commands = new Commands(this, inventories, game);
-	private DataManager data;
 
 	// Runs when enabling plugin
 	@Override
@@ -43,17 +43,16 @@ public class Main extends JavaPlugin {
 
 		reader = new PacketReader(portal);
 		PluginManager pm = getServer().getPluginManager();
-		data = new DataManager(this);
 
 		// Set up commands and tab complete
 		getCommand("vd").setExecutor(commands);
 		getCommand("vd").setTabCompleter(new CommandTab());
 
 		// Register event listeners
-		pm.registerEvents(new InventoryEvents(this, inventories, portal), this);
+		pm.registerEvents(new InventoryEvents(this, game, inventories, portal), this);
 		pm.registerEvents(new Join(this, portal, reader), this);
 		pm.registerEvents(new Death(portal, reader), this);
-		pm.registerEvents(new ClickPortalEvents(portal), this);
+		pm.registerEvents(new ClickPortalEvents(game, portal), this);
 		pm.registerEvents(new GameEvents(this, game), this);
 		pm.registerEvents(new ArenaEvents(this, game, portal), this);
 
@@ -87,7 +86,7 @@ public class Main extends JavaPlugin {
 		}
 	}
 
-//	Runs when disabling plugin
+	// Runs when disabling plugin
 	@Override
 	public void onDisable() {
 		// Remove uninject players
@@ -98,17 +97,17 @@ public class Main extends JavaPlugin {
 		portal.removeAll();
 	}
 
-//	Returns data.yml data
+	// Returns data.yml data
 	public FileConfiguration getData() {
 		return data.getConfig();
 	}
 
-//	Saves data.yml changes
+	// Saves data.yml changes
 	public void saveData() {
 		data.saveConfig();
 	}
 
-//	Load saved NPCs
+	// Load saved NPCs
 	public void loadPortals() {
 		getData().getConfigurationSection("portal").getKeys(false).forEach(portal -> {
 			try {
@@ -118,7 +117,7 @@ public class Main extends JavaPlugin {
 						getData().getDouble("portal." + portal + ".z"));
 				location.setYaw((float) getData().getDouble("portal." + portal + ".yaw"));
 
-				this.portal.loadPortal(location, Integer.parseInt(portal));
+				this.portal.loadPortal(location, Integer.parseInt(portal), game);
 			} catch (Exception ignored) {
 			}
 		});

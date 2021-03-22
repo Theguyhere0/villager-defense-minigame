@@ -1,22 +1,28 @@
 package me.theguyhere.villagerdefense.tools;
 
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
+import me.theguyhere.villagerdefense.Main;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffect;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class Utils {
+    private final Main plugin;
+
+    public Utils(Main plugin) {
+        this.plugin = plugin;
+    }
+
     //	Formats chat text
     public static String format(String msg) {
         return ChatColor.translateAlternateColorCodes('&', msg);
@@ -66,7 +72,8 @@ public class Utils {
     }
 
     public static void prepTeleAdventure(Player player) {
-        player.getActivePotionEffects().clear();
+        Collection<PotionEffect> potionEffects = player.getActivePotionEffects();
+        potionEffects.forEach(effect -> player.removePotionEffect(effect.getType()));
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         player.setFoodLevel(20);
         player.setSaturation(20);
@@ -76,12 +83,56 @@ public class Utils {
     }
 
     public static void prepTeleSpectator(Player player) {
-        player.getActivePotionEffects().clear();
+        Collection<PotionEffect> potionEffects = player.getActivePotionEffects();
+        potionEffects.forEach(effect -> player.removePotionEffect(effect.getType()));
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         player.setFoodLevel(20);
         player.setSaturation(20);
         player.setLevel(0);
         player.getInventory().clear();
         player.setGameMode(GameMode.SPECTATOR);
+    }
+
+    public Location getConfigLocation(String path) {
+        try {
+            return new Location(Bukkit.getWorld(plugin.getData().getString(path + ".world")),
+                    plugin.getData().getDouble(path + ".x"), plugin.getData().getDouble(path + ".y"),
+                    plugin.getData().getDouble(path + ".z"));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public List<Location> getConfigLocationList(String path) {
+        List<Location> locations = new ArrayList<>();
+        if (plugin.getData().getConfigurationSection(path) == null)
+            return null;
+        plugin.getData().getConfigurationSection(path).getKeys(false).forEach(num -> {
+            try {
+                locations.add(new Location(
+                        Bukkit.getWorld(plugin.getData().getString(path + "." + num + ".world")),
+                        plugin.getData().getDouble(path + "." + num + ".x"),
+                        plugin.getData().getDouble(path + "." + num + ".y"),
+                        plugin.getData().getDouble(path + "." + num + ".z")));
+            } catch (Exception ignored) {
+            }
+        });
+        return locations;
+    }
+
+    public static void clear(Location location) {
+        // Get all entities near spawn
+        Collection<Entity> ents = location.getWorld().getNearbyEntities(location, 200, 200, 100);
+
+        // Clear the arena for living entities
+        ents.forEach(ent -> {
+            if (ent instanceof LivingEntity && !(ent instanceof Player))
+                if (ent.getName().contains("VD")) ((LivingEntity) ent).setHealth(0);
+        });
+
+        // Clear the arena for items
+        ents.forEach(ent -> {
+            if (ent instanceof Item) ent.remove();
+        });
     }
 }

@@ -2,19 +2,17 @@ package me.theguyhere.villagerdefense.genListeners;
 
 import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.customEvents.ArenaResetEvent;
 import me.theguyhere.villagerdefense.customEvents.LeaveArenaEvent;
+import me.theguyhere.villagerdefense.game.Game;
 import me.theguyhere.villagerdefense.tools.Utils;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import me.theguyhere.villagerdefense.game.Game;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 
 public class Commands implements CommandExecutor {
 	Main plugin;

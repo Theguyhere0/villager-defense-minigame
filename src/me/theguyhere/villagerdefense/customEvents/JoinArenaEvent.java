@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.customEvents;
 
+import me.theguyhere.villagerdefense.game.Arena;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -7,11 +8,11 @@ import org.bukkit.event.HandlerList;
 
 public class JoinArenaEvent extends Event implements Cancellable {
     private final Player player;
-    private final int arena;
+    private final Arena arena;
     private boolean isCancelled;
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public JoinArenaEvent(Player player, int arena) {
+    public JoinArenaEvent(Player player, Arena arena) {
         this.player = player;
         this.arena = arena;
     }
@@ -29,7 +30,7 @@ public class JoinArenaEvent extends Event implements Cancellable {
         return player;
     }
 
-    public int getArena() {
+    public Arena getArena() {
         return arena;
     }
 

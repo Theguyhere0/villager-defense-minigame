@@ -12,9 +12,11 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class ClickPortalEvents implements Listener {
+	private final Game game;
 	private final Portal portal;
 	
-	public ClickPortalEvents(Portal portal) {
+	public ClickPortalEvents(Game game, Portal portal) {
+		this.game = game;
 		this.portal = portal;
 	}
 	
@@ -32,6 +34,6 @@ public class ClickPortalEvents implements Listener {
 
 		// Send out event of player joining
 		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
-				Bukkit.getPluginManager().callEvent(new JoinArenaEvent(event.getPlayer(), arena)), 0);
+				Bukkit.getPluginManager().callEvent(new JoinArenaEvent(event.getPlayer(), game.arenas.get(arena))));
 	}
 }

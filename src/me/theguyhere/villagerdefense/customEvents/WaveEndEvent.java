@@ -1,15 +1,16 @@
 package me.theguyhere.villagerdefense.customEvents;
 
+import me.theguyhere.villagerdefense.game.Arena;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 public class WaveEndEvent extends Event implements Cancellable {
-    private final int arena;
+    private final Arena arena;
     private boolean isCancelled;
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public WaveEndEvent(int arena) {
+    public WaveEndEvent(Arena arena) {
         this.arena = arena;
     }
 
@@ -22,7 +23,7 @@ public class WaveEndEvent extends Event implements Cancellable {
         return HANDLERS;
     }
 
-    public int getArena() {
+    public Arena getArena() {
         return arena;
     }
 

@@ -5,17 +5,14 @@ import me.theguyhere.villagerdefense.customEvents.*;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.DisplaySlot;
 
-import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ArenaEvents implements Listener {
@@ -32,68 +29,58 @@ public class ArenaEvents implements Listener {
     @EventHandler
     public void onJoin(JoinArenaEvent e) {
         Player player = e.getPlayer();
-        int arena = e.getArena();
         BukkitScheduler scheduler = Bukkit.getScheduler();
 
         // Ignore if player is already in a game somehow
-        if (game.playing.stream().anyMatch(p -> p.getPlayer().equals(player))) {
+        if (game.arenas.stream().filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player))) {
             e.setCancelled(true);
             return;
         }
 
+        Arena arena = e.getArena();
+        Location location;
+
+        // Try to get player spawn
+        try {
+            location = arena.getPlayerSpawn();
+        } catch (Exception err) {
+            err.printStackTrace();
+            player.sendMessage(Utils.format("&cSomething went wrong"));
+            return;
+        }
+
         // Check if arena is closed
-        if (plugin.getData().getBoolean("a" + arena + ".closed")) {
+        if (arena.isClosed()) {
             player.sendMessage(Utils.format("&cArena is closed."));
             e.setCancelled(true);
             return;
         }
 
-        Location location = new Location(
-					Bukkit.getWorld(plugin.getData().getString("a" + arena + ".spawn.world")),
-					plugin.getData().getDouble("a" + arena + ".spawn.x"),
-					plugin.getData().getDouble("a" + arena + ".spawn.y"),
-					plugin.getData().getDouble("a" + arena + ".spawn.z"));
-        int players = plugin.getData().getInt("a" + arena + ".players.playing");
-        int min = plugin.getData().getInt("a" + arena + ".min");
-        int max = plugin.getData().getInt("a" + arena + ".max");
+        int players = arena.getActiveCount();
 
         // First player joining the arena
         if (players == 0) {
             // Get all nearby entities in the arena and clear them out
-            if (location.getWorld() == null) {
-                System.out.println("Error: Location's world is null for join method");
-                player.sendMessage(Utils.format("&cSomething went wrong"));
-                return;
-            }
-            clearArena(location);
-
-            // Initialize arena data
-            game.actives.add(new Arena(arena, new Tasks(plugin, game, arena, portal)));
+            Utils.clear(location);
         }
 
         // Prepares player to enter arena if it doesn't exceed max capacity or if the arena hasn't already started
-        if (players < max && !plugin.getData().getBoolean("a" + arena + ".active")) {
+        if (players < arena.getMaxPlayers() && !arena.isActive()) {
             // Teleport to arena
             Utils.prepTeleAdventure(player);
             player.teleport(location);
 
             // Update player tracking and in-game stats
-            VDPlayer fighter = new VDPlayer(player, arena, false);
-            game.playing.add(fighter);
-            plugin.getData().set("a" + arena + ".players.playing",
-                    plugin.getData().getInt("a" + arena + ".players.playing") + 1);
-            plugin.saveData();
-            players = plugin.getData().getInt("a" + arena + ".players.playing");
-            portal.refreshHolo(arena);
+            VDPlayer fighter = new VDPlayer(player, false);
+            arena.getPlayers().add(fighter);
+            portal.refreshHolo(game.arenas.indexOf(arena), game);
 
             // Give them a game board
             game.createBoard(fighter);
 
             // Notify everyone in the arena
-            game.playing.forEach(gamer -> {
-                if (gamer.getArena() == arena)
-                    gamer.getPlayer().sendMessage(Utils.format("&a" + player.getName() + " joined the arena."));
-            });
+            arena.getPlayers().forEach(gamer ->
+                    gamer.getPlayer().sendMessage(Utils.format("&a" + player.getName() + " joined the arena.")));
         }
 
         // Join players as spectators if arena is full or game already started
@@ -103,24 +90,22 @@ public class ArenaEvents implements Listener {
             player.teleport(location);
 
             // Update player tracking and in-game stats
-            game.playing.add(new VDPlayer(player, arena, true));
-            plugin.getData().set("a" + arena + ".players.spectating",
-                    plugin.getData().getInt("a" + arena + ".players.spectating") + 1);
-            plugin.saveData();
-            portal.refreshHolo(arena);
+            arena.getPlayers().add(new VDPlayer(player, true));
+            portal.refreshHolo(game.arenas.indexOf(arena), game);
 
             // Don't touch task updating
             return;
         }
 
+        players = arena.getActiveCount();
+
         // Get task object and mapping of active runnables to ids
-        Arena arenaInstance = game.actives.stream()
-                .filter(r -> r.getArena() == arena).collect(Collectors.toList()).get(0);
-        Tasks task = arenaInstance.getTask();
+        Tasks task = arena.getTask();
         Map<Runnable, Integer> tasks = task.getTasks();
 
         // Waiting condition
-        if (players < min && (tasks.isEmpty() || !scheduler.isCurrentlyRunning(tasks.get(task.waiting))) &&
+        if (players < arena.getMinPlayers() &&
+                (tasks.isEmpty() || !scheduler.isCurrentlyRunning(tasks.get(task.waiting))) &&
                 !tasks.containsKey(task.full10)) {
             // Remove other tasks that's not the waiting task
             tasks.forEach((runnable, id) -> {
@@ -135,7 +120,8 @@ public class ArenaEvents implements Listener {
         }
 
         // Can start condition
-        else if (players < max && !tasks.containsKey(task.full10) && !tasks.containsKey(task.min1)) {
+        else if (players < arena.getMaxPlayers() && !tasks.containsKey(task.full10) &&
+                !tasks.containsKey(task.min1)) {
             // Remove the waiting task if it exists
             if (tasks.containsKey(task.waiting)) {
                 scheduler.cancelTask(tasks.get(task.waiting));
@@ -169,8 +155,7 @@ public class ArenaEvents implements Listener {
 
     @EventHandler
     public void onWaveEnd(WaveEndEvent e) {
-        Arena arena = game.actives.stream().filter(r -> r.getArena() == e.getArena()).collect(Collectors.toList())
-                .get(0);
+        Arena arena = e.getArena();
 
         // Don't continue if the arena is ending
         if (arena.isEnding()) {
@@ -179,14 +164,12 @@ public class ArenaEvents implements Listener {
         }
 
         // TEMPORARY win condition
-        if (plugin.getData().getInt("a" + arena + ".currentWave") == 12) {
-            arena.flipEnding();
+        if (arena.getCurrentWave() == 12)
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
-                    Bukkit.getPluginManager().callEvent(new GameEndEvent(e.getArena())));
-        }
+                    Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 
         // Start the next wave
-        arena.getTask().wave.run();
+        else arena.getTask().wave.run();
     }
 
     @EventHandler
@@ -194,44 +177,30 @@ public class ArenaEvents implements Listener {
         Player player = e.getPlayer();
 
         // Check if the player is playing in a game
-        if (game.playing.stream().noneMatch(p -> p.getPlayer().equals(player))) {
+        if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player))) {
             e.setCancelled(true);
-            return;
-        }
-
-        VDPlayer gamer = game.playing.stream().filter(p -> p.getPlayer().equals(player)).collect(Collectors.toList())
-                .get(0);
-
-        // Check if player is playing
-        if (gamer == null) {
             player.sendMessage(Utils.format("&cYou are not in a game!"));
             return;
         }
 
-        int arena = gamer.getArena();
+        Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+                .collect(Collectors.toList()).get(0);
+        VDPlayer gamer = arena.getPlayer(player);
 
         // Not spectating
         if (!gamer.isSpectating()) {
-            // Update player tracking and in-game data
-            game.playing.remove(gamer);
-            plugin.getData().set("a" + arena + ".players.playing",
-                    plugin.getData().getInt("a" + arena + ".players.playing") - 1);
-            plugin.saveData();
+            // Remove the player from the arena
+            arena.getPlayers().remove(gamer);
 
             // Notify people in arena player left
-            game.playing.forEach(fighter -> {
-                if (fighter.getArena() == arena)
-                    fighter.getPlayer().sendMessage(Utils.format("&c" + player.getName() + " left the arena."));
-            });
+            arena.getPlayers().forEach(fighter ->
+                    fighter.getPlayer().sendMessage(Utils.format("&c" + player.getName() + " left the arena.")));
 
             // Sets them up for teleport to lobby
             player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
-            if (plugin.getData().contains("lobby")) {
+            if (game.getLobby() != null) {
                 Utils.prepTeleAdventure(player);
-                Location location = new Location(Bukkit.getWorld(plugin.getData().getString("lobby.world")),
-                        plugin.getData().getDouble("lobby.x"), plugin.getData().getDouble("lobby.y"),
-                        plugin.getData().getDouble("lobby.z"));
-                player.teleport(location);
+                player.teleport(game.getLobby());
             }
 
             // Kill them to leave the game
@@ -241,30 +210,48 @@ public class ArenaEvents implements Listener {
             }
 
             // Checks if the game has ended because no players are left
-            if (game.playing.stream().filter(p -> p.getPlayer().equals(player)).collect(Collectors.toList())
-                    .toArray().length == 0)
+            if (arena.getAlive() == 0 && arena.isActive())
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
-                        Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)), 0);
+                        Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 
             // Refresh the game portal
-            portal.refreshHolo(arena);
+            portal.refreshHolo(game.arenas.indexOf(arena), game);
+        }
+
+        // Spectating
+        else {
+            // Remove the player from the arena
+            arena.getPlayers().remove(gamer);
+
+            // Sets them up for teleport to lobby
+            if (game.getLobby() != null) {
+                Utils.prepTeleAdventure(player);
+                player.teleport(game.getLobby());
+            }
+
+            // Kill them to leave the game
+            else {
+                player.getInventory().clear();
+                player.setHealth(0);
+            }
+
+            // Refresh the game portal
+            portal.refreshHolo(game.arenas.indexOf(arena), game);
         }
     }
 
     @EventHandler
     public void onGameEnd(GameEndEvent e) {
-        int arena = e.getArena();
+        Arena arena = e.getArena();
 
         // Set the arena to ending
-        game.actives.stream().filter(r -> r.getArena() == e.getArena()).collect(Collectors.toList())
-                .get(0).flipEnding();
+        arena.flipEnding();
+        portal.refreshHolo(game.arenas.indexOf(arena), game);
 
         // Notify players that the game has ended
-        game.playing.forEach(player -> {
-            if (player.getArena() == arena)
-                player.getPlayer().sendMessage(Utils.format("&6You made it to round &b" +
-                        plugin.getData().getInt("a" + arena + ".currentWave") + "&6! Ending in 10 seconds."));
-        });
+        arena.getPlayers().forEach(player ->
+            player.getPlayer().sendMessage(Utils.format("&6You made it to round &b" +
+                    arena.getCurrentWave() + "&6! Ending in 10 seconds.")));
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
                 Bukkit.getPluginManager().callEvent(new ArenaResetEvent(arena)), 200);
@@ -272,29 +259,11 @@ public class ArenaEvents implements Listener {
 
     @EventHandler
     public void onArenaReset(ArenaResetEvent e) {
-        game.actives.stream().filter(r -> r.getArena() == e.getArena()).collect(Collectors.toList()).get(0)
-                .getTask().reset.run();
+        e.getArena().getTask().reset.run();
     }
 
     @EventHandler
     public void onBoardReload(ReloadBoardsEvent e) {
-        game.actives.stream().filter(r -> r.getArena() == e.getArena()).collect(Collectors.toList())
-                .get(0).getTask().updateBoards.run();
-    }
-
-    private void clearArena(Location location) {
-        // Get all entities near spawn
-        Collection<Entity> ents = location.getWorld().getNearbyEntities(location, 200, 200, 100);
-
-        // Clear the arena for living entities
-        ents.forEach(ent -> {
-            if (ent instanceof LivingEntity && !(ent instanceof Player))
-                if (ent.getName().contains("VD")) ((LivingEntity) ent).setHealth(0);
-        });
-
-        // Clear the arena for items
-        ents.forEach(ent -> {
-            if (ent instanceof Item) ent.remove();
-        });
+        e.getArena().getTask().updateBoards.run();
     }
 }
