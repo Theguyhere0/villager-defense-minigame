@@ -105,9 +105,7 @@ public class Utils {
 
     public List<Location> getConfigLocationList(String path) {
         List<Location> locations = new ArrayList<>();
-        if (plugin.getData().getConfigurationSection(path) == null)
-            return null;
-        plugin.getData().getConfigurationSection(path).getKeys(false).forEach(num -> {
+        for (int num = 0; num < 9; num++) {
             try {
                 locations.add(new Location(
                         Bukkit.getWorld(plugin.getData().getString(path + "." + num + ".world")),
@@ -115,8 +113,9 @@ public class Utils {
                         plugin.getData().getDouble(path + "." + num + ".y"),
                         plugin.getData().getDouble(path + "." + num + ".z")));
             } catch (Exception ignored) {
+                locations.add(null);
             }
-        });
+        }
         return locations;
     }
 

@@ -87,7 +87,7 @@ public class InventoryEvents implements Listener {
 		if (title.contains("Villager Defense Arenas")) {
 			// Create new arena with naming inventory
 			if (buttonType == Material.RED_CONCRETE) {
-				game.arenas.set(arena, new Arena(plugin, arena, new Tasks(plugin, game, arena, portal)));
+				game.arenas.set(slot, new Arena(plugin, slot, new Tasks(plugin, game, slot, portal)));
 				openInv(player, inv.createNamingInventory(slot));
 			}
 
@@ -212,6 +212,9 @@ public class InventoryEvents implements Listener {
 			// Cancel
 			else if (buttonName.contains("CANCEL")) {
 				plugin.getData().set("a" + arena + ".name", old);
+				plugin.saveData();
+				if (old == null)
+					game.arenas.set(arena, null);
 				openInv(player, inv.createArenasInventory());
 			}
 		}
@@ -320,6 +323,7 @@ public class InventoryEvents implements Listener {
 					plugin.getData().set("a" + arena + ".spawn", null);
 					plugin.getData().set("a" + arena + ".closed", true);
 					plugin.saveData();
+					game.arenas.get(arena).updateArena();
 					player.sendMessage(Utils.format("&aSpawn removed!"));
 					openInv(player, inv.createPlayerSpawnInventory(arena));
 					portal.refreshHolo(arena, game);
@@ -338,6 +342,7 @@ public class InventoryEvents implements Listener {
 					if (!plugin.getData().contains("a" + arena + ".monster"))
 						plugin.getData().set("a" + arena + ".closed", true);
 					plugin.saveData();
+					game.arenas.get(arena).updateArena();
 					player.sendMessage(Utils.format("&aMob spawn removed!"));
 					openInv(player, inv.createMonsterSpawnMenu(arena, oldSlot));
 					portal.refreshHolo(arena, game);
@@ -350,12 +355,13 @@ public class InventoryEvents implements Listener {
 				if (buttonName.contains("NO"))
 					openInv(player, inv.createVillagerSpawnMenu(arena, oldSlot));
 
-					// Remove the villager spawn, then return to previous menu
+				// Remove the villager spawn, then return to previous menu
 				else if (buttonName.contains("YES") && plugin.getData().contains("a" + arena + ".villager." + oldSlot)) {
 					plugin.getData().set("a" + arena + ".villager." + oldSlot, null);
 					if (!plugin.getData().contains("a" + arena + ".villager"))
 						plugin.getData().set("a" + arena + ".closed", true);
 					plugin.saveData();
+					game.arenas.get(arena).updateArena();
 					player.sendMessage(Utils.format("&aMob spawn removed!"));
 					openInv(player, inv.createVillagerSpawnMenu(arena, oldSlot));
 					portal.refreshHolo(arena, game);
@@ -390,6 +396,7 @@ public class InventoryEvents implements Listener {
 					plugin.getData().set("a" + arena, null);
 					plugin.getData().set("portal." + arena, null);
 					plugin.saveData();
+					game.arenas.set(arena, null);
 
 					// Remove portal
 					portal.removePortalAll(arena);
@@ -780,6 +787,8 @@ public class InventoryEvents implements Listener {
 		if (title.contains("Arena ")) {
 			plugin.getData().set("a" + arena + ".name", old);
 			plugin.saveData();
+			if (old == null)
+				game.arenas.set(arena, null);
 		}
 	}
 	
