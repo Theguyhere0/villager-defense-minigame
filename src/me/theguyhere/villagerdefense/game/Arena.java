@@ -9,6 +9,7 @@ import org.bukkit.inventory.Inventory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Arena {
@@ -209,8 +210,10 @@ public class Arena {
         maxPlayers = plugin.getData().getInt("a" + arena + ".max");
         minPlayers = plugin.getData().getInt("a" + arena + ".min");
         playerSpawn = utils.getConfigLocation("a" + arena + ".spawn");
-        monsterSpawns = utils.getConfigLocationList("a" + arena + ".monster");
-        villagerSpawns = utils.getConfigLocationList("a" + arena + ".villager");
+        monsterSpawns = utils.getConfigLocationList("a" + arena + ".monster").stream()
+                .filter(Objects::nonNull).collect(Collectors.toList());
+        villagerSpawns = utils.getConfigLocationList("a" + arena + ".villager").stream()
+                .filter(Objects::nonNull).collect(Collectors.toList());
         closed = plugin.getData().getBoolean("a" + arena + ".closed");
     }
 }

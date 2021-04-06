@@ -173,6 +173,13 @@ public class GameEvents implements Listener {
 	public void onFriendlyFire(EntityDamageByEntityEvent e) {
 		Entity ent = e.getEntity();
 
+		// Cancel damage to each other if they are in a game
+		if (ent instanceof Player && e.getDamager() instanceof Player) {
+			Player player = (Player) ent;
+			if (game.arenas.stream().filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player)))
+				e.setCancelled(true);
+		}
+
 		// Check for special mobs
 		if (!ent.getName().contains("VD"))
 			return;
@@ -180,12 +187,72 @@ public class GameEvents implements Listener {
 		// Cancel damage to villager
 		if (ent instanceof Villager && e.getDamager() instanceof Player)
 				e.setCancelled(true);
+	}
 
-		// Cancel damage to each other if they are in a game
-		if (ent instanceof Player && e.getDamager() instanceof Player) {
-			Player player = (Player) ent;
-			if (game.arenas.stream().filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player)))
-				e.setCancelled(true);
+	// Prevents players from taking damage before the game starts
+	@EventHandler
+	public void onDamage(EntityDamageEvent e) {
+		// Check for player taking damage
+		if (!(e.getEntity() instanceof Player)) return;
+
+		Player player = (Player) e.getEntity();
+
+		// Ignore void damage
+		if (e.getCause().equals(EntityDamageEvent.DamageCause.VOID)) return;
+
+		// Check if player is in a game
+		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player))) return;
+
+		// Check if game has started yet
+		if (!game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+				.collect(Collectors.toList()).get(0).isActive()) e.setCancelled(true);
+	}
+
+	// Handles players falling into the void
+	@EventHandler
+	public void onVoidDamage(EntityDamageEvent e) {
+		// Check for player taking damage
+		if (!(e.getEntity() instanceof Player)) return;
+
+		Player player = (Player) e.getEntity();
+
+		// Check for fall damage
+		if (!e.getCause().equals(EntityDamageEvent.DamageCause.VOID)) return;
+
+		// Check if player is in a game
+		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player))) return;
+
+		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+				.collect(Collectors.toList()).get(0);
+
+		// Check if game has started yet
+		if (!arena.isActive()) {
+			// Cancel void damage
+			e.setCancelled(true);
+
+			// Teleport player back to player spawn
+			player.teleport(arena.getPlayerSpawn());
+		} else {
+			// Set them to spectator mode instead of dying
+			e.setCancelled(true);
+			player.setGameMode(GameMode.SPECTATOR);
+			player.getInventory().clear();
+
+			// Teleport player back to player spawn
+			player.teleport(arena.getPlayerSpawn());
+
+			// Notify everyone of player death
+			arena.getPlayers().forEach(gamer ->
+					gamer.getPlayer().sendMessage(Utils.format("&c" + player.getName() + " has died and will " +
+							"respawn next round.")));
+
+			// Update scoreboards
+			arena.getTask().updateBoards.run();
+
+			// Check for game end condition
+			if (arena.getAlive() == 0)
+				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+						Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 		}
 	}
 	
@@ -230,26 +297,31 @@ public class GameEvents implements Listener {
 	@EventHandler
 	public void onPlayerDeath(EntityDamageEvent e) {
 		// Check for player
-		if (!(e.getEntity() instanceof Player))
-			return;
+		if (!(e.getEntity() instanceof Player)) return;
 
 		Player player = (Player) e.getEntity();
 
 		// See if the player is in a game
-		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
-			return;
+		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player))) return;
 
 		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0);
 
+		// Check if arena is active
+		if (!arena.isActive()) return;
+
 		// Check if player is about to die
-		if (e.getFinalDamage() < player.getHealth())
-			return;
+		if (e.getFinalDamage() < player.getHealth()) return;
 
 		// Set them to spectator mode instead of dying
 		e.setCancelled(true);
 		player.setGameMode(GameMode.SPECTATOR);
 		player.getInventory().clear();
+
+		// Notify everyone of player death
+		arena.getPlayers().forEach(gamer ->
+				gamer.getPlayer().sendMessage(Utils.format("&c" + player.getName() + " has died and will " +
+						"respawn next round.")));
 
 		// Update scoreboards
 		arena.getTask().updateBoards.run();

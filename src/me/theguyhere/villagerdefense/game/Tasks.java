@@ -21,7 +21,8 @@ public class Tasks {
 	private final Game game;
 	private final int arena;
 	private final Portal portal;
-	private final Map<Runnable, Integer> tasks = new HashMap<>(); // Maps runnables to ID of the currently running runnable
+	// Maps runnables to ID of the currently running runnable
+	private final Map<Runnable, Integer> tasks = new HashMap<>();
 
 	public Tasks(Main plugin, Game game, int arena, Portal portal) {
 		this.plugin = plugin;
@@ -178,10 +179,12 @@ public class Tasks {
 		public void run() {
 			Arena arenaInstance = game.arenas.get(arena);
 
-			// Give all players a wooden sword and a shop
+			// Give all players a wooden sword and a shop while removing pre-game protection
 			arenaInstance.getActives().forEach(player -> {
 				player.getPlayer().getInventory().addItem(new ItemStack(Material.WOODEN_SWORD));
 				player.getPlayer().getInventory().addItem(GameItems.shop());
+				player.getPlayer().getActivePotionEffects()
+						.forEach(effect -> player.getPlayer().removePotionEffect(effect.getType()));
 			});
 			
 			// Set arena to active and reset villager and enemy count
@@ -241,7 +244,7 @@ public class Tasks {
 
 				@Override
 				public void run() {
-					Villager n = (Villager) Bukkit.getWorld(spawns.get(num).getWorld().getName())
+					Villager n = (Villager) spawns.get(num).getWorld()
 							.spawnEntity(spawns.get(num), EntityType.VILLAGER);
 					n.setCustomName(Utils.format("&aVD" + arena +": Villager"));
 					game.arenas.get(arena).incrementVillagers();

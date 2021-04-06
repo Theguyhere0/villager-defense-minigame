@@ -72,8 +72,7 @@ public class Utils {
     }
 
     public static void prepTeleAdventure(Player player) {
-        Collection<PotionEffect> potionEffects = player.getActivePotionEffects();
-        potionEffects.forEach(effect -> player.removePotionEffect(effect.getType()));
+        player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         player.setFoodLevel(20);
         player.setSaturation(20);
@@ -83,8 +82,7 @@ public class Utils {
     }
 
     public static void prepTeleSpectator(Player player) {
-        Collection<PotionEffect> potionEffects = player.getActivePotionEffects();
-        potionEffects.forEach(effect -> player.removePotionEffect(effect.getType()));
+        player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         player.setFoodLevel(20);
         player.setSaturation(20);
@@ -120,9 +118,13 @@ public class Utils {
     }
 
     public static void clear(Location location) {
-        // Get all entities near spawn
-        Collection<Entity> ents = location.getWorld().getNearbyEntities(location, 200, 200, 100);
-
+        Collection<Entity> ents;
+        try {
+            // Get all entities near spawn
+            ents = location.getWorld().getNearbyEntities(location, 200, 200, 100);
+        } catch (Exception e) {
+            return;
+        }
         // Clear the arena for living entities
         ents.forEach(ent -> {
             if (ent instanceof LivingEntity && !(ent instanceof Player))

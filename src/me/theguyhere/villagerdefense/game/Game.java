@@ -14,7 +14,8 @@ import java.util.stream.Collectors;
 
 public class Game {
 	private final Utils utils;
-	public List<Arena> arenas = new ArrayList<>(Collections.nCopies(45, null)); // Tracks active arenas and their related stats
+	// Tracks active arenas and their related stats
+	public List<Arena> arenas = new ArrayList<>(Collections.nCopies(45, null));
 	private Location lobby;
 
 	public Game(Main plugin, Portal portal) {

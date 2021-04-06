@@ -8,9 +8,13 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.DisplaySlot;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -78,6 +82,9 @@ public class ArenaEvents implements Listener {
             // Give them a game board
             game.createBoard(fighter);
 
+            // Makes sure players have full saturation when the game starts
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 99999, 0));
+
             // Notify everyone in the arena
             arena.getPlayers().forEach(gamer ->
                     gamer.getPlayer().sendMessage(Utils.format("&a" + player.getName() + " joined the arena.")));
@@ -98,21 +105,22 @@ public class ArenaEvents implements Listener {
         }
 
         players = arena.getActiveCount();
-
-        // Get task object and mapping of active runnables to ids
         Tasks task = arena.getTask();
         Map<Runnable, Integer> tasks = task.getTasks();
+        List<Runnable> toRemove = new ArrayList<>();
 
         // Waiting condition
         if (players < arena.getMinPlayers() &&
                 (tasks.isEmpty() || !scheduler.isCurrentlyRunning(tasks.get(task.waiting))) &&
                 !tasks.containsKey(task.full10)) {
+
             // Remove other tasks that's not the waiting task
             tasks.forEach((runnable, id) -> {
-                if (!runnable.equals(task.waiting)) {
-                    scheduler.cancelTask(id);
-                    tasks.remove(runnable);
-                }
+                if (!runnable.equals(task.waiting)) toRemove.add(runnable);
+            });
+            toRemove.forEach(r -> {
+                scheduler.cancelTask(tasks.get(r));
+                tasks.remove(r);
             });
 
             // Schedule and record the waiting task
@@ -140,10 +148,8 @@ public class ArenaEvents implements Listener {
         // Quick start condition
         else if (tasks.isEmpty() || scheduler.isCurrentlyRunning(tasks.get(task.sec10))) {
             // Remove all tasks
-            tasks.forEach((runnable, id) -> {
-                scheduler.cancelTask(id);
-                tasks.remove(runnable);
-            });
+            tasks.forEach((runnable, id) -> scheduler.cancelTask(id));
+            tasks.clear();
 
             // Schedule accelerated countdown tasks
             task.full10.run();
@@ -209,6 +215,28 @@ public class ArenaEvents implements Listener {
                 player.setHealth(0);
             }
 
+            Tasks task = arena.getTask();
+            Map<Runnable, Integer> tasks = task.getTasks();
+            BukkitScheduler scheduler = Bukkit.getScheduler();
+            List<Runnable> toRemove = new ArrayList<>();
+            int actives = arena.getActiveCount();
+
+            // Check if arena can no longer start
+            if (actives < arena.getMinPlayers() && !arena.isActive()) {
+                // Remove other tasks that's not the waiting task
+                tasks.forEach((runnable, id) -> {
+                    if (actives == 0 || !runnable.equals(task.waiting)) toRemove.add(runnable);
+                });
+                toRemove.forEach(r -> {
+                    scheduler.cancelTask(tasks.get(r));
+                    tasks.remove(r);
+                });
+
+                // Schedule and record the waiting task if appropriate
+                if (actives != 0)
+                    tasks.put(task.waiting, scheduler.scheduleSyncRepeatingTask(plugin, task.waiting, 0, 1200));
+            }
+
             // Checks if the game has ended because no players are left
             if (arena.getAlive() == 0 && arena.isActive())
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
@@ -253,6 +281,7 @@ public class ArenaEvents implements Listener {
             player.getPlayer().sendMessage(Utils.format("&6You made it to round &b" +
                     arena.getCurrentWave() + "&6! Ending in 10 seconds.")));
 
+        // Reset the arena
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
                 Bukkit.getPluginManager().callEvent(new ArenaResetEvent(arena)), 200);
     }

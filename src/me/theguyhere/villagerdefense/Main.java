@@ -23,14 +23,16 @@ public class Main extends JavaPlugin {
 	private final Portal portal = new Portal(this);
 	private final InventoryItems ii = new InventoryItems();
 	private PacketReader reader;
-	private final Game game = new Game(this, portal);
-	private final Inventories inventories = new Inventories(game, ii);
-	private final Commands commands = new Commands(this, inventories, game);
+	private Game game;
 
 	// Runs when enabling plugin
 	@Override
 	public void onEnable() {
 		saveDefaultConfig();
+
+		game = new Game(this, portal);
+		Inventories inventories = new Inventories(game, ii);
+		Commands commands = new Commands(this, inventories, game);
 
 		if (!Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
@@ -56,6 +58,7 @@ public class Main extends JavaPlugin {
 		pm.registerEvents(new GameEvents(this, game), this);
 		pm.registerEvents(new ArenaEvents(this, game, portal), this);
 
+		// Inject online players into packet reader
 		if (!Bukkit.getOnlinePlayers().isEmpty())
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				reader.inject(player);
@@ -67,6 +70,7 @@ public class Main extends JavaPlugin {
 
 		int currentCVersion = 3;
 		int currentDVersion = 3;
+
 		// Check config version
 		if (getConfig().getInt("version") < currentCVersion) {
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
