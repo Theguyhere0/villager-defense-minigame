@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.potion.PotionEffect;
 
 import java.util.*;
 
@@ -73,6 +72,7 @@ public class Utils {
 
     public static void prepTeleAdventure(Player player) {
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
+        player.setFireTicks(0);
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         player.setFoodLevel(20);
         player.setSaturation(20);
@@ -83,6 +83,7 @@ public class Utils {
 
     public static void prepTeleSpectator(Player player) {
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
+        player.setFireTicks(0);
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         player.setFoodLevel(20);
         player.setSaturation(20);

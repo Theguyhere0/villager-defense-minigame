@@ -72,6 +72,7 @@ public class ArenaEvents implements Listener {
         if (players < arena.getMaxPlayers() && !arena.isActive()) {
             // Teleport to arena
             Utils.prepTeleAdventure(player);
+            player.setInvulnerable(true);
             player.teleport(location);
 
             // Update player tracking and in-game stats

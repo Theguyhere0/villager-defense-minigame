@@ -45,24 +45,28 @@ public class Game {
 
 		// Create score board
 		Objective obj = board.registerNewObjective("VillagerDefense", "dummy",
-				Utils.format("&2&l" + arena.getName()));
+				Utils.format("&6&l  " + arena.getName() + "  "));
 		obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-		Score score = obj.getScore(Utils.format("&6Wave: " + arena.getCurrentWave()));
-		score.setScore(7);
-		Score score2 = obj.getScore(Utils.format("&2Gems: " + player.getGems()));
-		score2.setScore(6);
-		Score score3 = obj.getScore(Utils.format("&dPlayers: " + arena.getAlive()));
-		score3.setScore(5);
-		Score score4 = obj.getScore(Utils.format("&8Ghosts: " + arena.getGhostCount()));
+		Score score9 = obj.getScore(Utils.format("&eWave: " + arena.getCurrentWave()));
+		score9.setScore(9);
+		Score score8 = obj.getScore(Utils.format("&2Gems: " + player.getGems()));
+		score8.setScore(8);
+		Score score7 = obj.getScore("");
+		score7.setScore(7);
+		Score score6 = obj.getScore(Utils.format("&aPlayers: " + arena.getAlive()));
+		score6.setScore(6);
+		Score score5 = obj.getScore(Utils.format("&2Ghosts: " + arena.getGhostCount()));
+		score5.setScore(5);
+		Score score4 = obj.getScore(Utils.format("&7Spectators: " + arena.getSpectatorCount()));
 		score4.setScore(4);
-		Score score5 = obj.getScore(Utils.format("&7Spectators: " + arena.getSpectatorCount()));
-		score5.setScore(3);
-		Score score6 = obj.getScore(Utils.format("&aVillagers: " + arena.getVillagers()));
-		score6.setScore(2);
-		Score score7 = obj.getScore(Utils.format("&cEnemies: " + arena.getEnemies()));
-		score7.setScore(1);
-		Score score8 = obj.getScore(Utils.format("&4Kills: " + player.getKills()));
-		score8.setScore(0);
+		Score score3 = obj.getScore(" ");
+		score3.setScore(3);
+		Score score2 = obj.getScore(Utils.format("&aVillagers: " + arena.getVillagers()));
+		score2.setScore(2);
+		Score score1 = obj.getScore(Utils.format("&cEnemies: " + arena.getEnemies()));
+		score1.setScore(1);
+		Score score = obj.getScore(Utils.format("&4Kills: " + player.getKills()));
+		score.setScore(0);
 
 		player.getPlayer().setScoreboard(board);
 	}

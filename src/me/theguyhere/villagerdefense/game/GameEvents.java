@@ -189,25 +189,6 @@ public class GameEvents implements Listener {
 				e.setCancelled(true);
 	}
 
-	// Prevents players from taking damage before the game starts
-	@EventHandler
-	public void onDamage(EntityDamageEvent e) {
-		// Check for player taking damage
-		if (!(e.getEntity() instanceof Player)) return;
-
-		Player player = (Player) e.getEntity();
-
-		// Ignore void damage
-		if (e.getCause().equals(EntityDamageEvent.DamageCause.VOID)) return;
-
-		// Check if player is in a game
-		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player))) return;
-
-		// Check if game has started yet
-		if (!game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
-				.collect(Collectors.toList()).get(0).isActive()) e.setCancelled(true);
-	}
-
 	// Handles players falling into the void
 	@EventHandler
 	public void onVoidDamage(EntityDamageEvent e) {

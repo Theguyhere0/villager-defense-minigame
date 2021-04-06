@@ -185,6 +185,8 @@ public class Tasks {
 				player.getPlayer().getInventory().addItem(GameItems.shop());
 				player.getPlayer().getActivePotionEffects()
 						.forEach(effect -> player.getPlayer().removePotionEffect(effect.getType()));
+				player.getPlayer().setFireTicks(0);
+				player.getPlayer().setInvulnerable(false);
 			});
 			
 			// Set arena to active and reset villager and enemy count
