@@ -48,6 +48,10 @@ public class Arena {
         updateArena();
     }
 
+    public int getArena() {
+        return arena;
+    }
+
     public String getName() {
         return name;
     }

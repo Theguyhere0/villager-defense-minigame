@@ -18,6 +18,8 @@ import java.util.*;
 public class Utils {
     private final Main plugin;
 
+    private static int SECONDS_TO_TICKS = 20;
+
     public Utils(Main plugin) {
         this.plugin = plugin;
     }
@@ -136,5 +138,13 @@ public class Utils {
         ents.forEach(ent -> {
             if (ent instanceof Item) ent.remove();
         });
+    }
+
+    public static int secondsToTicks(int seconds) {
+        return seconds * SECONDS_TO_TICKS;
+    }
+
+    public static int secondsToTicks(double seconds) {
+        return (int) seconds * SECONDS_TO_TICKS;
     }
 }
