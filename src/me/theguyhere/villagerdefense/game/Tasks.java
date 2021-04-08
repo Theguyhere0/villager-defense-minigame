@@ -38,7 +38,7 @@ public class Tasks {
 		@Override
 		public void run() {
 			game.arenas.get(arena).getPlayers().forEach(player -> 
-				player.getPlayer().sendMessage(Utils.format("&6Waiting for more players to start the game.")));
+				player.getPlayer().sendMessage(Utils.notify("&6Waiting for more players to start the game.")));
 		}
 	};
 
@@ -48,7 +48,7 @@ public class Tasks {
 		@Override
 		public void run() {
 			game.arenas.get(arena).getPlayers().forEach(player ->
-					player.getPlayer().sendMessage(Utils.format("&c2 &6minutes until the game starts!")));
+					player.getPlayer().sendMessage(Utils.notify("&b2 &6minutes until the game starts!")));
 		}
 
 	};
@@ -59,7 +59,7 @@ public class Tasks {
 		@Override
 		public void run() {
 			game.arenas.get(arena).getPlayers().forEach(player ->
-					player.getPlayer().sendMessage(Utils.format("&c1 &6minutes until the game starts!")));
+					player.getPlayer().sendMessage(Utils.notify("&b1 &6minutes until the game starts!")));
 		}
 		
 	};
@@ -70,7 +70,7 @@ public class Tasks {
 		@Override
 		public void run() {
 			game.arenas.get(arena).getPlayers().forEach(player ->
-					player.getPlayer().sendMessage(Utils.format("&c30 &6seconds until the game starts!")));
+					player.getPlayer().sendMessage(Utils.notify("&b30 &6seconds until the game starts!")));
 		}
 	};
 
@@ -80,7 +80,7 @@ public class Tasks {
 		@Override
 		public void run() {
 			game.arenas.get(arena).getPlayers().forEach(player ->
-					player.getPlayer().sendMessage(Utils.format("&c10 &6seconds until the game starts!")));
+					player.getPlayer().sendMessage(Utils.notify("&b10 &6seconds until the game starts!")));
 		}
 		
 	};
@@ -91,8 +91,8 @@ public class Tasks {
 		@Override
 		public void run() {
 			game.arenas.get(arena).getPlayers().forEach(player -> {
-					player.getPlayer().sendMessage(Utils.format("&6Arena has reached max player capacity."));
-					player.getPlayer().sendMessage(Utils.format("&c10 &6seconds until the game starts!"));
+					player.getPlayer().sendMessage(Utils.notify("&6Arena has reached max player capacity."));
+					player.getPlayer().sendMessage(Utils.notify("&b10 &6seconds until the game starts!"));
 			});
 		}
 
@@ -104,7 +104,7 @@ public class Tasks {
 		@Override
 		public void run() {
 			game.arenas.get(arena).getPlayers().forEach(player ->
-					player.getPlayer().sendMessage(Utils.format("&c5 &6seconds until the game starts!")));
+					player.getPlayer().sendMessage(Utils.notify("&b5 &6seconds until the game starts!")));
 		}
 		
 	};
@@ -129,7 +129,7 @@ public class Tasks {
 				arenaInstance.setShop(Inventories.createShop(shopNum));
 				if (currentWave != 1)
 					arenaInstance.getActives().forEach(player ->
-						player.getPlayer().sendMessage(Utils.format("&6Shops have reset!")));
+						player.getPlayer().sendMessage(Utils.notify("&6Shops have reset!")));
 			}
 
 			// Revive dead players
@@ -150,7 +150,7 @@ public class Tasks {
 				// Give players gem rewards
 				p.addGems(reward);
 				if (currentWave > 1)
-					p.getPlayer().sendMessage(Utils.format("&fYou have received &a" + reward + " &fgems!"));
+					p.getPlayer().sendMessage(Utils.notify("You have received &a" + reward + " &fgems!"));
 			});
 
 			arenaInstance.getSpectators().forEach(p ->

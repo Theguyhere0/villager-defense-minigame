@@ -49,13 +49,13 @@ public class ArenaEvents implements Listener {
             location = arena.getPlayerSpawn();
         } catch (Exception err) {
             err.printStackTrace();
-            player.sendMessage(Utils.format("&cSomething went wrong"));
+            player.sendMessage(Utils.notify("&cSomething went wrong"));
             return;
         }
 
         // Check if arena is closed
         if (arena.isClosed()) {
-            player.sendMessage(Utils.format("&cArena is closed."));
+            player.sendMessage(Utils.notify("&cArena is closed."));
             e.setCancelled(true);
             return;
         }
@@ -88,7 +88,7 @@ public class ArenaEvents implements Listener {
 
             // Notify everyone in the arena
             arena.getPlayers().forEach(gamer ->
-                    gamer.getPlayer().sendMessage(Utils.format("&a" + player.getName() + " joined the arena.")));
+                    gamer.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&a joined the arena.")));
         }
 
         // Join players as spectators if arena is full or game already started
@@ -190,6 +190,7 @@ public class ArenaEvents implements Listener {
             return;
         }
 
+        // Spawn mobs
         spawnVillagers(arena);
         spawnMonsters(arena);
     }
@@ -201,7 +202,7 @@ public class ArenaEvents implements Listener {
         // Check if the player is playing in a game
         if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player))) {
             e.setCancelled(true);
-            player.sendMessage(Utils.format("&cYou are not in a game!"));
+            player.sendMessage(Utils.notify("&cYou are not in a game!"));
             return;
         }
 
@@ -216,7 +217,7 @@ public class ArenaEvents implements Listener {
 
             // Notify people in arena player left
             arena.getPlayers().forEach(fighter ->
-                    fighter.getPlayer().sendMessage(Utils.format("&c" + player.getName() + " left the arena.")));
+                    fighter.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&c left the arena.")));
 
             // Sets them up for teleport to lobby
             player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
@@ -295,7 +296,7 @@ public class ArenaEvents implements Listener {
 
         // Notify players that the game has ended
         arena.getPlayers().forEach(player ->
-            player.getPlayer().sendMessage(Utils.format("&6You made it to arena.getCurrentWave() &b" +
+            player.getPlayer().sendMessage(Utils.notify("&6You made it to wave &b" +
                     arena.getCurrentWave() + "&6! Ending in 10 seconds.")));
 
         // Reset the arena
@@ -316,329 +317,322 @@ public class ArenaEvents implements Listener {
     // Spawns villagers randomly
     private void spawnVillagers(Arena arena) {
         Random r = new Random();
-        for (int i = 0;
-             i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".vlgr") - arena.getVillagers();
-             i++) {
-            int num = r.nextInt(arena.getVillagerSpawns().size());
-            Villager n = (Villager) arena.getVillagerSpawns().get(num).getWorld()
-                    .spawnEntity(arena.getVillagerSpawns().get(num), EntityType.VILLAGER);
-            n.setCustomName(Utils.format("&aVD" + arena.getArena() +": Villager"));
-            arena.incrementVillagers();
+        int delay = 0;
+        int toSpawn = plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".vlgr")
+                - arena.getVillagers();
+        List<Location> spawns = arena.getVillagerSpawns();
+
+        for (int i = 0; i < toSpawn; i++) {
+            delay += r.nextInt(spawnDelay(i));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                Location spawn = spawns.get(r.nextInt(spawns.size()));
+                Villager n = (Villager) spawn.getWorld().spawnEntity(spawn, EntityType.VILLAGER);
+                n.setCustomName(Utils.format("&aVD" + arena.getArena() +": Villager"));
+                n.setCustomNameVisible(true);
+                arena.incrementVillagers();
+                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
+            }, delay);
         }
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
-                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)));
     }
 
     // Spawns monsters randomly
     private void spawnMonsters(Arena arena) {
         Random r = new Random();
+        int delay = 0;
+        List<Location> spawns = arena.getMonsterSpawns();
 
         for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".zomb"); i++) {
-            int num = r.nextInt(arena.getMonsterSpawns().size());
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    Zombie n = (Zombie) Bukkit.getWorld(arena.getMonsterSpawns().get(num).getWorld().getName())
-                            .spawnEntity(arena.getMonsterSpawns().get(num), EntityType.ZOMBIE);
-                    n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Zombie"));
-                    n.setCanPickupItems(false);
-                    n.getEquipment().setItemInMainHand(null);
-                    arena.incrementEnemies();
-                }
-
-            }.runTaskLater(plugin, 1);
+            delay += r.nextInt(spawnDelay(i));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                Location spawn = spawns.get(r.nextInt(spawns.size()));
+                Zombie n = (Zombie) spawn.getWorld().spawnEntity(spawn, EntityType.ZOMBIE);
+                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Zombie"));
+                n.setCustomNameVisible(true);
+                n.setCanPickupItems(false);
+                n.getEquipment().setItemInMainHand(null);
+                arena.incrementEnemies();
+                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
+            }, delay);
         }
+        delay = 0;
+
         for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".husk"); i++) {
-            int num = r.nextInt(arena.getMonsterSpawns().size());
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    Husk n = (Husk) Bukkit.getWorld(arena.getMonsterSpawns().get(num).getWorld().getName())
-                            .spawnEntity(arena.getMonsterSpawns().get(num), EntityType.HUSK);
-                    n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Husk"));
-                    n.setCanPickupItems(false);
-                    n.getEquipment().setItemInMainHand(null);
-                    arena.incrementEnemies();
-                }
-
-            }.runTaskLater(plugin, 2);
+            delay += r.nextInt(spawnDelay(i));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                Location spawn = spawns.get(r.nextInt(spawns.size()));
+                Husk n = (Husk) spawn.getWorld().spawnEntity(spawn, EntityType.HUSK);
+                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Husk"));
+                n.setCustomNameVisible(true);
+                n.setCanPickupItems(false);
+                n.getEquipment().setItemInMainHand(null);
+                arena.incrementEnemies();
+                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
+            }, delay);
         }
+        delay = 0;
+
         for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".wskl"); i++) {
-            int num = r.nextInt(arena.getMonsterSpawns().size());
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    WitherSkeleton n = (WitherSkeleton) Bukkit.getWorld(arena.getMonsterSpawns().get(num).getWorld().getName())
-                            .spawnEntity(arena.getMonsterSpawns().get(num), EntityType.WITHER_SKELETON);
-                    n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Wither Skeleton"));
-                    n.setCanPickupItems(false);
-                    arena.incrementEnemies();
-                }
-
-            }.runTaskLater(plugin, 3);
+            delay += r.nextInt(spawnDelay(i));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                Location spawn = spawns.get(r.nextInt(spawns.size()));
+                WitherSkeleton n = (WitherSkeleton) spawn.getWorld().spawnEntity(spawn, EntityType.WITHER_SKELETON);
+                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Wither Skeleton"));
+                n.setCustomNameVisible(true);
+                n.setCanPickupItems(false);
+                n.getEquipment().setItemInMainHand(null);
+                arena.incrementEnemies();
+                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
+            }, delay);
         }
+        delay = 0;
+
         for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".brut"); i++) {
-            int num = r.nextInt(arena.getMonsterSpawns().size());
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    PiglinBrute n = (PiglinBrute) Bukkit.getWorld(arena.getMonsterSpawns().get(num).getWorld().getName())
-                            .spawnEntity(arena.getMonsterSpawns().get(num), EntityType.PIGLIN_BRUTE);
-                    n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Piglin Brute"));
-                    n.setCanPickupItems(false);
-                    arena.incrementEnemies();
-                }
-
-            }.runTaskLater(plugin, 4);
+            delay += r.nextInt(spawnDelay(i));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                Location spawn = spawns.get(r.nextInt(spawns.size()));
+                PiglinBrute n = (PiglinBrute) spawn.getWorld().spawnEntity(spawn, EntityType.PIGLIN_BRUTE);
+                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Piglin Brute"));
+                n.setCustomNameVisible(true);
+                n.setCanPickupItems(false);
+                n.getEquipment().setItemInMainHand(null);
+                arena.incrementEnemies();
+                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
+            }, delay);
         }
+        delay = 0;
+
         for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".vind"); i++) {
-            int num = r.nextInt(arena.getMonsterSpawns().size());
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    Vindicator n = (Vindicator) Bukkit.getWorld(arena.getMonsterSpawns().get(num).getWorld().getName())
-                            .spawnEntity(arena.getMonsterSpawns().get(num), EntityType.VINDICATOR);
-                    n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Vindicator"));
-                    n.setCanPickupItems(false);
-                    arena.incrementEnemies();
-                }
-
-            }.runTaskLater(plugin, 5);
+            delay += r.nextInt(spawnDelay(i));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                Location spawn = spawns.get(r.nextInt(spawns.size()));
+                Vindicator n = (Vindicator) spawn.getWorld().spawnEntity(spawn, EntityType.VINDICATOR);
+                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Vindicator"));
+                n.setCustomNameVisible(true);
+                n.setCanPickupItems(false);
+                n.getEquipment().setItemInMainHand(null);
+                arena.incrementEnemies();
+                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
+            }, delay);
         }
+        delay = 0;
+
         for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".spid"); i++) {
-            int num = r.nextInt(arena.getMonsterSpawns().size());
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    Spider n = (Spider) Bukkit.getWorld(arena.getMonsterSpawns().get(num).getWorld().getName())
-                            .spawnEntity(arena.getMonsterSpawns().get(num), EntityType.SPIDER);
-                    n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Spider"));
-                    arena.incrementEnemies();
-                }
-
-            }.runTaskLater(plugin, 6);
+            delay += r.nextInt(spawnDelay(i));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                Location spawn = spawns.get(r.nextInt(spawns.size()));
+                Spider n = (Spider) spawn.getWorld().spawnEntity(spawn, EntityType.SPIDER);
+                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Spider"));
+                n.setCustomNameVisible(true);
+                arena.incrementEnemies();
+                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
+            }, delay);
         }
+        delay = 0;
+
         for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".cspd"); i++) {
-            int num = r.nextInt(arena.getMonsterSpawns().size());
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    CaveSpider n = (CaveSpider) Bukkit.getWorld(arena.getMonsterSpawns().get(num).getWorld().getName())
-                            .spawnEntity(arena.getMonsterSpawns().get(num), EntityType.CAVE_SPIDER);
-                    n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Cave Spider"));
-                    arena.incrementEnemies();
-                }
-
-            }.runTaskLater(plugin, 7);
+            delay += r.nextInt(spawnDelay(i));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                Location spawn = spawns.get(r.nextInt(spawns.size()));
+                CaveSpider n = (CaveSpider) spawn.getWorld().spawnEntity(spawn, EntityType.CAVE_SPIDER);
+                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Cave Spider"));
+                n.setCustomNameVisible(true);
+                arena.incrementEnemies();
+                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
+            }, delay);
         }
+        delay = 0;
+
         for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".wtch"); i++) {
-            int num = r.nextInt(arena.getMonsterSpawns().size());
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    Witch n = (Witch) Bukkit.getWorld(arena.getMonsterSpawns().get(num).getWorld().getName())
-                            .spawnEntity(arena.getMonsterSpawns().get(num), EntityType.WITCH);
-                    n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Witch"));
-                    arena.incrementEnemies();
-                }
-
-            }.runTaskLater(plugin, 8);
+            delay += r.nextInt(spawnDelay(i));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                Location spawn = spawns.get(r.nextInt(spawns.size()));
+                Witch n = (Witch) spawn.getWorld().spawnEntity(spawn, EntityType.WITCH);
+                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Witch"));
+                n.setCustomNameVisible(true);
+                arena.incrementEnemies();
+                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
+            }, delay);
         }
+        delay = 0;
+
         for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".skel"); i++) {
-            int num = r.nextInt(arena.getMonsterSpawns().size());
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    Skeleton n = (Skeleton) Bukkit.getWorld(arena.getMonsterSpawns().get(num).getWorld().getName())
-                            .spawnEntity(arena.getMonsterSpawns().get(num), EntityType.SKELETON);
-                    n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Skeleton"));
-                    n.getEquipment().setItemInMainHand(new ItemStack(Material.BOW));
-                    n.getEquipment().setItemInMainHandDropChance(0);
-                    arena.incrementEnemies();
-                }
-
-            }.runTaskLater(plugin, 9);
+            delay += r.nextInt(spawnDelay(i));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                Location spawn = spawns.get(r.nextInt(spawns.size()));
+                Skeleton n = (Skeleton) spawn.getWorld().spawnEntity(spawn, EntityType.SKELETON);
+                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Skeleton"));
+                n.setCustomNameVisible(true);
+                n.setCanPickupItems(false);
+                n.getEquipment().setItemInMainHand(null);
+                arena.incrementEnemies();
+                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
+            }, delay);
         }
+        delay = 0;
+
         for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".stry"); i++) {
-            int num = r.nextInt(arena.getMonsterSpawns().size());
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    Stray n = (Stray) Bukkit.getWorld(arena.getMonsterSpawns().get(num).getWorld().getName())
-                            .spawnEntity(arena.getMonsterSpawns().get(num), EntityType.STRAY);
-                    n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Stray"));
-                    n.getEquipment().setItemInMainHand(new ItemStack(Material.BOW));
-                    n.getEquipment().setItemInMainHandDropChance(0);
-                    arena.incrementEnemies();
-                }
-
-            }.runTaskLater(plugin, 10);
+            delay += r.nextInt(spawnDelay(i));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                Location spawn = spawns.get(r.nextInt(spawns.size()));
+                Stray n = (Stray) spawn.getWorld().spawnEntity(spawn, EntityType.STRAY);
+                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Stray"));
+                n.setCustomNameVisible(true);
+                n.setCanPickupItems(false);
+                n.getEquipment().setItemInMainHand(null);
+                arena.incrementEnemies();
+                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
+            }, delay);
         }
+        delay = 0;
+
         for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".blze"); i++) {
-            int num = r.nextInt(arena.getMonsterSpawns().size());
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    Blaze n = (Blaze) Bukkit.getWorld(arena.getMonsterSpawns().get(num).getWorld().getName())
-                            .spawnEntity(arena.getMonsterSpawns().get(num), EntityType.BLAZE);
-                    n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Blaze"));
-                    arena.incrementEnemies();
-                }
-
-            }.runTaskLater(plugin, 11);
+            delay += r.nextInt(spawnDelay(i));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                Location spawn = spawns.get(r.nextInt(spawns.size()));
+                Blaze n = (Blaze) spawn.getWorld().spawnEntity(spawn, EntityType.BLAZE);
+                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Blaze"));
+                n.setCustomNameVisible(true);
+                arena.incrementEnemies();
+                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
+            }, delay);
         }
+        delay = 0;
+
         for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".ghst"); i++) {
-            int num = r.nextInt(arena.getMonsterSpawns().size());
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    Ghast n = (Ghast) Bukkit.getWorld(arena.getMonsterSpawns().get(num).getWorld().getName())
-                            .spawnEntity(arena.getMonsterSpawns().get(num), EntityType.GHAST);
-                    n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Ghast"));
-                    arena.incrementEnemies();
-                }
-
-            }.runTaskLater(plugin, 12);
+            delay += r.nextInt(spawnDelay(i));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                Location spawn = spawns.get(r.nextInt(spawns.size()));
+                Ghast n = (Ghast) spawn.getWorld().spawnEntity(spawn, EntityType.GHAST);
+                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Ghast"));
+                n.setCustomNameVisible(true);
+                arena.incrementEnemies();
+                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
+            }, delay);
         }
+        delay = 0;
+
         for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".pill"); i++) {
-            int num = r.nextInt(arena.getMonsterSpawns().size());
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    Pillager n = (Pillager) Bukkit.getWorld(arena.getMonsterSpawns().get(num).getWorld().getName())
-                            .spawnEntity(arena.getMonsterSpawns().get(num), EntityType.PILLAGER);
-                    n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Pillager"));
-                    arena.incrementEnemies();
-                }
-
-            }.runTaskLater(plugin, 13);
+            delay += r.nextInt(spawnDelay(i));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                Location spawn = spawns.get(r.nextInt(spawns.size()));
+                Pillager n = (Pillager) spawn.getWorld().spawnEntity(spawn, EntityType.PILLAGER);
+                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Pillager"));
+                n.setCustomNameVisible(true);
+                n.setCanPickupItems(false);
+                n.getEquipment().setItemInMainHand(null);
+                arena.incrementEnemies();
+                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
+            }, delay);
         }
+        delay = 0;
+
         for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".slim"); i++) {
-            int num = r.nextInt(arena.getMonsterSpawns().size());
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    Slime n = (Slime) Bukkit.getWorld(arena.getMonsterSpawns().get(num).getWorld().getName())
-                            .spawnEntity(arena.getMonsterSpawns().get(num), EntityType.SLIME);
-                    n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Slime"));
-                    arena.incrementEnemies();
-                }
-
-            }.runTaskLater(plugin, 14);
+            delay += r.nextInt(spawnDelay(i));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                Location spawn = spawns.get(r.nextInt(spawns.size()));
+                Slime n = (Slime) spawn.getWorld().spawnEntity(spawn, EntityType.SLIME);
+                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Slime"));
+                n.setCustomNameVisible(true);
+                arena.incrementEnemies();
+                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
+            }, delay);
         }
+        delay = 0;
+
         for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".mslm"); i++) {
-            int num = r.nextInt(arena.getMonsterSpawns().size());
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    MagmaCube n = (MagmaCube) Bukkit.getWorld(arena.getMonsterSpawns().get(num).getWorld().getName())
-                            .spawnEntity(arena.getMonsterSpawns().get(num), EntityType.MAGMA_CUBE);
-                    n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Magma Cube"));
-                    arena.incrementEnemies();
-                }
-
-            }.runTaskLater(plugin, 15);
+            delay += r.nextInt(spawnDelay(i));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                Location spawn = spawns.get(r.nextInt(spawns.size()));
+                MagmaCube n = (MagmaCube) spawn.getWorld().spawnEntity(spawn, EntityType.MAGMA_CUBE);
+                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Magma Cube"));
+                n.setCustomNameVisible(true);
+                arena.incrementEnemies();
+                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
+            }, delay);
         }
+        delay = 0;
+
         for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".crpr"); i++) {
-            int num = r.nextInt(arena.getMonsterSpawns().size());
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    Creeper n = (Creeper) Bukkit.getWorld(arena.getMonsterSpawns().get(num).getWorld().getName())
-                            .spawnEntity(arena.getMonsterSpawns().get(num), EntityType.CREEPER);
-                    n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Creeper"));
-                    arena.incrementEnemies();
-                }
-
-            }.runTaskLater(plugin, 16);
+            delay += r.nextInt(spawnDelay(i));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                Location spawn = spawns.get(r.nextInt(spawns.size()));
+                Creeper n = (Creeper) spawn.getWorld().spawnEntity(spawn, EntityType.CREEPER);
+                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Creeper"));
+                n.setCustomNameVisible(true);
+                arena.incrementEnemies();
+                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
+            }, delay);
         }
+        delay = 0;
+
         for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".phtm"); i++) {
-            int num = r.nextInt(arena.getMonsterSpawns().size());
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    Phantom n = (Phantom) Bukkit.getWorld(arena.getMonsterSpawns().get(num).getWorld().getName())
-                            .spawnEntity(arena.getMonsterSpawns().get(num), EntityType.PHANTOM);
-                    n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Phantom"));
-                    arena.incrementEnemies();
-                }
-
-            }.runTaskLater(plugin, 17);
+            delay += r.nextInt(spawnDelay(i));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                Location spawn = spawns.get(r.nextInt(spawns.size()));
+                Phantom n = (Phantom) spawn.getWorld().spawnEntity(spawn, EntityType.PHANTOM);
+                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Phantom"));
+                n.setCustomNameVisible(true);
+                arena.incrementEnemies();
+                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
+            }, delay);
         }
+        delay = 0;
+
         for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".evok"); i++) {
-            int num = r.nextInt(arena.getMonsterSpawns().size());
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    Evoker n = (Evoker) Bukkit.getWorld(arena.getMonsterSpawns().get(num).getWorld().getName())
-                            .spawnEntity(arena.getMonsterSpawns().get(num), EntityType.EVOKER);
-                    n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Evoker"));
-                    arena.incrementEnemies();
-                }
-
-            }.runTaskLater(plugin, 18);
+            delay += r.nextInt(spawnDelay(i));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                Location spawn = spawns.get(r.nextInt(spawns.size()));
+                Evoker n = (Evoker) spawn.getWorld().spawnEntity(spawn, EntityType.EVOKER);
+                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Evoker"));
+                n.setCustomNameVisible(true);
+                arena.incrementEnemies();
+                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
+            }, delay);
         }
+        delay = 0;
+
         for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".hgln"); i++) {
-            int num = r.nextInt(arena.getMonsterSpawns().size());
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    Hoglin n = (Hoglin) Bukkit.getWorld(arena.getMonsterSpawns().get(num).getWorld().getName())
-                            .spawnEntity(arena.getMonsterSpawns().get(num), EntityType.HOGLIN);
-                    n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Hoglin"));
-                    arena.incrementEnemies();
-                }
-
-            }.runTaskLater(plugin, 19);
+            delay += r.nextInt(spawnDelay(i));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                Location spawn = spawns.get(r.nextInt(spawns.size()));
+                Hoglin n = (Hoglin) spawn.getWorld().spawnEntity(spawn, EntityType.HOGLIN);
+                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Hoglin"));
+                n.setCustomNameVisible(true);
+                arena.incrementEnemies();
+                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
+            }, delay);
         }
+        delay = 0;
+
         for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".rvgr"); i++) {
-            int num = r.nextInt(arena.getMonsterSpawns().size());
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    Ravager n = (Ravager) Bukkit.getWorld(arena.getMonsterSpawns().get(num).getWorld().getName())
-                            .spawnEntity(arena.getMonsterSpawns().get(num), EntityType.RAVAGER);
-                    n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Ravager"));
-                    arena.incrementEnemies();
-                }
-
-            }.runTaskLater(plugin, 20);
+            delay += r.nextInt(spawnDelay(i));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                Location spawn = spawns.get(r.nextInt(spawns.size()));
+                Ravager n = (Ravager) spawn.getWorld().spawnEntity(spawn, EntityType.RAVAGER);
+                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Ravager"));
+                n.setCustomNameVisible(true);
+                arena.incrementEnemies();
+                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
+            }, delay);
         }
+        delay = 0;
+
         for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".wthr"); i++) {
-            int num = r.nextInt(arena.getMonsterSpawns().size());
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    Wither n = (Wither) Bukkit.getWorld(arena.getMonsterSpawns().get(num).getWorld().getName())
-                            .spawnEntity(arena.getMonsterSpawns().get(num), EntityType.WITHER);
-                    n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Wither"));
-                    arena.incrementEnemies();
-                }
-
-            }.runTaskLater(plugin, 21);
+            delay += r.nextInt(spawnDelay(i));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                Location spawn = spawns.get(r.nextInt(spawns.size()));
+                Wither n = (Wither) spawn.getWorld().spawnEntity(spawn, EntityType.WITHER);
+                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Wither"));
+                n.setCustomNameVisible(true);
+                arena.incrementEnemies();
+                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
+            }, delay);
         }
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
-                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)), 22);
+    }
+
+    // Function for spawn delay
+    private int spawnDelay(int index) {
+        int result = (int) (40 * Math.pow(Math.E, - index / 10D));
+        return result == 0 ? 1 : result;
     }
 }

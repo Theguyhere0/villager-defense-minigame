@@ -18,15 +18,20 @@ import java.util.*;
 public class Utils {
     private final Main plugin;
 
-    private static int SECONDS_TO_TICKS = 20;
+    private static final int SECONDS_TO_TICKS = 20;
 
     public Utils(Main plugin) {
         this.plugin = plugin;
     }
 
-    //	Formats chat text
+    // Formats chat text
     public static String format(String msg) {
         return ChatColor.translateAlternateColorCodes('&', msg);
+    }
+
+    // Formats plugin notifications
+    public static String notify(String msg) {
+        return format("&2VD: &f" + msg);
     }
 
     // Creates an ItemStack using only material, name, and lore

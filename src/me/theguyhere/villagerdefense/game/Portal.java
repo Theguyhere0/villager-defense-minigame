@@ -146,7 +146,7 @@ public class Portal {
 			status = "&c&lEnding";
 		else if (!arena.isActive())
 			status = "&5&lWaiting";
-		else status = "&a&lRound: " + arena.getCurrentWave();
+		else status = "&a&lWave: " + arena.getCurrentWave();
 		return new String[]{Utils.format("&6&l" + arena.getName()),
 		Utils.format("&bPlayers: " + arena.getActiveCount() + '/' + arena.getMaxPlayers()),
 		Utils.format("&7Spectators: " + arena.getSpectatorCount()),

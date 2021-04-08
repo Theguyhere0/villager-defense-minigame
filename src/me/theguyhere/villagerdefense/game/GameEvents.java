@@ -224,7 +224,7 @@ public class GameEvents implements Listener {
 
 			// Notify everyone of player death
 			arena.getPlayers().forEach(gamer ->
-					gamer.getPlayer().sendMessage(Utils.format("&c" + player.getName() + " has died and will " +
+					gamer.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&c has died and will " +
 							"respawn next round.")));
 
 			// Update scoreboards
@@ -268,7 +268,7 @@ public class GameEvents implements Listener {
 		// Cancel picking up of emeralds and notify player
 		e.setCancelled(true);
 		e.getItem().remove();
-		player.sendMessage(Utils.format("&fYou found &a" + (num * stack) + "&f gem(s)!"));
+		player.sendMessage(Utils.notify("&fYou found &a" + (num * stack) + "&f gem(s)!"));
 
 		// Update scoreboard
 		game.createBoard(gamer);
@@ -301,7 +301,7 @@ public class GameEvents implements Listener {
 
 		// Notify everyone of player death
 		arena.getPlayers().forEach(gamer ->
-				gamer.getPlayer().sendMessage(Utils.format("&c" + player.getName() + " has died and will " +
+				gamer.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&c has died and will " +
 						"respawn next round.")));
 
 		// Update scoreboards
