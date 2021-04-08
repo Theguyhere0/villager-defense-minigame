@@ -766,7 +766,7 @@ public class InventoryEvents implements Listener {
 			// Exit menu
 //			else if (buttonName.contains("EXIT"))
 			if (buttonName.contains("EXIT"))
-				openInv(player, inv.createArenaInventory(arena));
+				openInv(player, inv.createGameSettingsInventory(arena));
 		}
 	}
 	

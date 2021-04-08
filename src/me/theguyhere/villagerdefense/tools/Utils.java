@@ -77,6 +77,7 @@ public class Utils {
         return item;
     }
 
+    // Prepares a player to teleport into adventure mode
     public static void prepTeleAdventure(Player player) {
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
         player.setFireTicks(0);
@@ -88,6 +89,7 @@ public class Utils {
         player.setGameMode(GameMode.ADVENTURE);
     }
 
+    // Prepares a player to teleport into spectator mode
     public static void prepTeleSpectator(Player player) {
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
         player.setFireTicks(0);
@@ -99,6 +101,7 @@ public class Utils {
         player.setGameMode(GameMode.SPECTATOR);
     }
 
+    // Gets location data from a configuration path
     public Location getConfigLocation(String path) {
         try {
             return new Location(Bukkit.getWorld(plugin.getData().getString(path + ".world")),
@@ -109,6 +112,7 @@ public class Utils {
         }
     }
 
+    // Gets a list of locations from a configuration path
     public List<Location> getConfigLocationList(String path) {
         List<Location> locations = new ArrayList<>();
         for (int num = 0; num < 9; num++) {
@@ -125,6 +129,7 @@ public class Utils {
         return locations;
     }
 
+    // Clears the arena
     public static void clear(Location location) {
         Collection<Entity> ents;
         try {
@@ -136,7 +141,7 @@ public class Utils {
         // Clear the arena for living entities
         ents.forEach(ent -> {
             if (ent instanceof LivingEntity && !(ent instanceof Player))
-                if (ent.getName().contains("VD")) ((LivingEntity) ent).setHealth(0);
+                if (ent.hasMetadata("VD")) ((LivingEntity) ent).setHealth(0);
         });
 
         // Clear the arena for items
@@ -145,11 +150,30 @@ public class Utils {
         });
     }
 
+    // Converts integer seconds to ticks
     public static int secondsToTicks(int seconds) {
         return seconds * SECONDS_TO_TICKS;
     }
 
+    // Converts double seconds to ticks
     public static int secondsToTicks(double seconds) {
         return (int) seconds * SECONDS_TO_TICKS;
+    }
+
+    // Returns a formatted health bar
+    public static String healthBar(double max, double remaining, int size) {
+        String toFormat;
+        double healthLeft = remaining / max;
+        int healthBars = (int) (healthLeft * size + .99);
+
+        if (healthLeft > .5)
+            toFormat = "&a";
+        else if (healthLeft > .25)
+            toFormat = "&e";
+        else toFormat = "&c";
+
+        return format(toFormat +
+                new String(new char[healthBars]).replace("\0", "\u2592") +
+                new String(new char[size - healthBars]).replace("\0", "  "));
     }
 }

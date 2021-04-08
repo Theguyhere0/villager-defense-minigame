@@ -7,10 +7,8 @@ import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
@@ -40,10 +38,10 @@ public class GameEvents implements Listener {
 		Entity ent = e.getEntity();
 
 		// Check for arena enemies
-		if (!ent.getName().contains("VD"))
+		if (!ent.hasMetadata("VD"))
 			return;
 
-		Arena arena = game.arenas.get(Integer.parseInt(ent.getName().substring(4, 5)));
+		Arena arena = game.arenas.get(ent.getMetadata("VD").get(0).asInt());
 
 		// Arena enemies not part of an active arena
 		if (!arena.isActive())
@@ -90,10 +88,10 @@ public class GameEvents implements Listener {
 		Entity ent = e.getEntity();
 
 		// Check for arena enemies
-		if (!ent.getName().contains("VD"))
+		if (!ent.hasMetadata("VD"))
 			return;
 
-		Arena arena = game.arenas.get(Integer.parseInt(ent.getName().substring(4, 5)));
+		Arena arena = game.arenas.get(ent.getMetadata("VD").get(0).asInt());
 
 		// Arena enemies not part of an active arena
 		if (!arena.isActive())
@@ -110,6 +108,38 @@ public class GameEvents implements Listener {
 
 		// Update scoreboards
 		arena.getTask().updateBoards.run();
+	}
+
+	// Update health bar when damage is dealt
+	@EventHandler
+	public void onHurt(EntityDamageEvent e) {
+		Entity ent = e.getEntity();
+
+		// Check for arena enemies
+		if (!ent.hasMetadata("VD"))
+			return;
+
+		LivingEntity n = (LivingEntity) ent;
+
+		// Update health bar
+		ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
+				n.getHealth() - e.getFinalDamage(), 5));
+	}
+
+	// Update health bar when healed
+	@EventHandler
+	public void onHeal(EntityRegainHealthEvent e) {
+		Entity ent = e.getEntity();
+
+		// Check for arena enemies
+		if (!ent.hasMetadata("VD"))
+			return;
+
+		LivingEntity n = (LivingEntity) ent;
+
+		// Update health bar
+		ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
+				n.getHealth() + e.getAmount(), 5));
 	}
 	
 	// Open shop
@@ -128,7 +158,8 @@ public class GameEvents implements Listener {
 		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0);
 
-		// Open shop inventory
+		// Open shop inventory and cancel interaction
+		e.setCancelled(true);
 		player.openInventory(arena.getShop());
 	}
 	
@@ -181,7 +212,7 @@ public class GameEvents implements Listener {
 		}
 
 		// Check for special mobs
-		if (!ent.getName().contains("VD"))
+		if (!ent.hasMetadata("VD"))
 			return;
 
 		// Cancel damage to villager
@@ -321,7 +352,7 @@ public class GameEvents implements Listener {
 			return;
 
 		// Check damage was done to monster
-		if (!(e.getEntity() instanceof Monster))
+		if (!(e.getEntity().hasMetadata("VD")))
 			return;
 
 		// Check that a player caused the damage
@@ -347,7 +378,7 @@ public class GameEvents implements Listener {
 	@EventHandler
 	public void onSplit(SlimeSplitEvent e) {
 		Entity ent = e.getEntity();
-		if (!ent.getName().contains("VD"))
+		if (!ent.hasMetadata("VD"))
 			return;
 		e.setCancelled(true);
 	}

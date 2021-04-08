@@ -10,6 +10,7 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -327,8 +328,9 @@ public class ArenaEvents implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 Location spawn = spawns.get(r.nextInt(spawns.size()));
                 Villager n = (Villager) spawn.getWorld().spawnEntity(spawn, EntityType.VILLAGER);
-                n.setCustomName(Utils.format("&aVD" + arena.getArena() +": Villager"));
+                n.setCustomName(Utils.healthBar(1, 1, 5));
                 n.setCustomNameVisible(true);
+                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
                 arena.incrementVillagers();
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
             }, delay);
@@ -346,10 +348,12 @@ public class ArenaEvents implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 Location spawn = spawns.get(r.nextInt(spawns.size()));
                 Zombie n = (Zombie) spawn.getWorld().spawnEntity(spawn, EntityType.ZOMBIE);
-                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Zombie"));
+                n.setCustomName(Utils.healthBar(1, 1, 5));
                 n.setCustomNameVisible(true);
+                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
                 n.setCanPickupItems(false);
                 n.getEquipment().setItemInMainHand(null);
+                n.setRemoveWhenFarAway(false);
                 arena.incrementEnemies();
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
             }, delay);
@@ -361,10 +365,12 @@ public class ArenaEvents implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 Location spawn = spawns.get(r.nextInt(spawns.size()));
                 Husk n = (Husk) spawn.getWorld().spawnEntity(spawn, EntityType.HUSK);
-                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Husk"));
+                n.setCustomName(Utils.healthBar(1, 1, 5));
                 n.setCustomNameVisible(true);
+                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
                 n.setCanPickupItems(false);
                 n.getEquipment().setItemInMainHand(null);
+                n.setRemoveWhenFarAway(false);
                 arena.incrementEnemies();
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
             }, delay);
@@ -376,10 +382,12 @@ public class ArenaEvents implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 Location spawn = spawns.get(r.nextInt(spawns.size()));
                 WitherSkeleton n = (WitherSkeleton) spawn.getWorld().spawnEntity(spawn, EntityType.WITHER_SKELETON);
-                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Wither Skeleton"));
+                n.setCustomName(Utils.healthBar(1, 1, 5));
                 n.setCustomNameVisible(true);
+                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
                 n.setCanPickupItems(false);
                 n.getEquipment().setItemInMainHand(null);
+                n.setRemoveWhenFarAway(false);
                 arena.incrementEnemies();
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
             }, delay);
@@ -391,10 +399,12 @@ public class ArenaEvents implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 Location spawn = spawns.get(r.nextInt(spawns.size()));
                 PiglinBrute n = (PiglinBrute) spawn.getWorld().spawnEntity(spawn, EntityType.PIGLIN_BRUTE);
-                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Piglin Brute"));
+                n.setCustomName(Utils.healthBar(1, 1, 5));
                 n.setCustomNameVisible(true);
+                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
                 n.setCanPickupItems(false);
                 n.getEquipment().setItemInMainHand(null);
+                n.setRemoveWhenFarAway(false);
                 arena.incrementEnemies();
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
             }, delay);
@@ -406,10 +416,12 @@ public class ArenaEvents implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 Location spawn = spawns.get(r.nextInt(spawns.size()));
                 Vindicator n = (Vindicator) spawn.getWorld().spawnEntity(spawn, EntityType.VINDICATOR);
-                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Vindicator"));
+                n.setCustomName(Utils.healthBar(1, 1, 5));
                 n.setCustomNameVisible(true);
+                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
                 n.setCanPickupItems(false);
                 n.getEquipment().setItemInMainHand(null);
+                n.setRemoveWhenFarAway(false);
                 arena.incrementEnemies();
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
             }, delay);
@@ -421,8 +433,10 @@ public class ArenaEvents implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 Location spawn = spawns.get(r.nextInt(spawns.size()));
                 Spider n = (Spider) spawn.getWorld().spawnEntity(spawn, EntityType.SPIDER);
-                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Spider"));
+                n.setCustomName(Utils.healthBar(1, 1, 5));
                 n.setCustomNameVisible(true);
+                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
+                n.setRemoveWhenFarAway(false);
                 arena.incrementEnemies();
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
             }, delay);
@@ -434,8 +448,10 @@ public class ArenaEvents implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 Location spawn = spawns.get(r.nextInt(spawns.size()));
                 CaveSpider n = (CaveSpider) spawn.getWorld().spawnEntity(spawn, EntityType.CAVE_SPIDER);
-                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Cave Spider"));
+                n.setCustomName(Utils.healthBar(1, 1, 5));
                 n.setCustomNameVisible(true);
+                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
+                n.setRemoveWhenFarAway(false);
                 arena.incrementEnemies();
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
             }, delay);
@@ -447,8 +463,10 @@ public class ArenaEvents implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 Location spawn = spawns.get(r.nextInt(spawns.size()));
                 Witch n = (Witch) spawn.getWorld().spawnEntity(spawn, EntityType.WITCH);
-                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Witch"));
+                n.setCustomName(Utils.healthBar(1, 1, 5));
                 n.setCustomNameVisible(true);
+                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
+                n.setRemoveWhenFarAway(false);
                 arena.incrementEnemies();
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
             }, delay);
@@ -460,10 +478,11 @@ public class ArenaEvents implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 Location spawn = spawns.get(r.nextInt(spawns.size()));
                 Skeleton n = (Skeleton) spawn.getWorld().spawnEntity(spawn, EntityType.SKELETON);
-                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Skeleton"));
+                n.setCustomName(Utils.healthBar(1, 1, 5));
                 n.setCustomNameVisible(true);
+                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
                 n.setCanPickupItems(false);
-                n.getEquipment().setItemInMainHand(null);
+                n.setRemoveWhenFarAway(false);
                 arena.incrementEnemies();
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
             }, delay);
@@ -475,10 +494,11 @@ public class ArenaEvents implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 Location spawn = spawns.get(r.nextInt(spawns.size()));
                 Stray n = (Stray) spawn.getWorld().spawnEntity(spawn, EntityType.STRAY);
-                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Stray"));
+                n.setCustomName(Utils.healthBar(1, 1, 5));
                 n.setCustomNameVisible(true);
+                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
                 n.setCanPickupItems(false);
-                n.getEquipment().setItemInMainHand(null);
+                n.setRemoveWhenFarAway(false);
                 arena.incrementEnemies();
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
             }, delay);
@@ -490,8 +510,10 @@ public class ArenaEvents implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 Location spawn = spawns.get(r.nextInt(spawns.size()));
                 Blaze n = (Blaze) spawn.getWorld().spawnEntity(spawn, EntityType.BLAZE);
-                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Blaze"));
+                n.setCustomName(Utils.healthBar(1, 1, 5));
                 n.setCustomNameVisible(true);
+                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
+                n.setRemoveWhenFarAway(false);
                 arena.incrementEnemies();
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
             }, delay);
@@ -503,8 +525,10 @@ public class ArenaEvents implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 Location spawn = spawns.get(r.nextInt(spawns.size()));
                 Ghast n = (Ghast) spawn.getWorld().spawnEntity(spawn, EntityType.GHAST);
-                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Ghast"));
+                n.setCustomName(Utils.healthBar(1, 1, 5));
                 n.setCustomNameVisible(true);
+                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
+                n.setRemoveWhenFarAway(false);
                 arena.incrementEnemies();
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
             }, delay);
@@ -516,10 +540,12 @@ public class ArenaEvents implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 Location spawn = spawns.get(r.nextInt(spawns.size()));
                 Pillager n = (Pillager) spawn.getWorld().spawnEntity(spawn, EntityType.PILLAGER);
-                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Pillager"));
+                n.setCustomName(Utils.healthBar(1, 1, 5));
                 n.setCustomNameVisible(true);
+                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
                 n.setCanPickupItems(false);
                 n.getEquipment().setItemInMainHand(null);
+                n.setRemoveWhenFarAway(false);
                 arena.incrementEnemies();
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
             }, delay);
@@ -531,8 +557,10 @@ public class ArenaEvents implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 Location spawn = spawns.get(r.nextInt(spawns.size()));
                 Slime n = (Slime) spawn.getWorld().spawnEntity(spawn, EntityType.SLIME);
-                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Slime"));
+                n.setCustomName(Utils.healthBar(1, 1, 5));
                 n.setCustomNameVisible(true);
+                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
+                n.setRemoveWhenFarAway(false);
                 arena.incrementEnemies();
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
             }, delay);
@@ -544,8 +572,10 @@ public class ArenaEvents implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 Location spawn = spawns.get(r.nextInt(spawns.size()));
                 MagmaCube n = (MagmaCube) spawn.getWorld().spawnEntity(spawn, EntityType.MAGMA_CUBE);
-                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Magma Cube"));
+                n.setCustomName(Utils.healthBar(1, 1, 5));
                 n.setCustomNameVisible(true);
+                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
+                n.setRemoveWhenFarAway(false);
                 arena.incrementEnemies();
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
             }, delay);
@@ -557,8 +587,10 @@ public class ArenaEvents implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 Location spawn = spawns.get(r.nextInt(spawns.size()));
                 Creeper n = (Creeper) spawn.getWorld().spawnEntity(spawn, EntityType.CREEPER);
-                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Creeper"));
+                n.setCustomName(Utils.healthBar(1, 1, 5));
                 n.setCustomNameVisible(true);
+                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
+                n.setRemoveWhenFarAway(false);
                 arena.incrementEnemies();
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
             }, delay);
@@ -570,8 +602,10 @@ public class ArenaEvents implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 Location spawn = spawns.get(r.nextInt(spawns.size()));
                 Phantom n = (Phantom) spawn.getWorld().spawnEntity(spawn, EntityType.PHANTOM);
-                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Phantom"));
+                n.setCustomName(Utils.healthBar(1, 1, 5));
                 n.setCustomNameVisible(true);
+                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
+                n.setRemoveWhenFarAway(false);
                 arena.incrementEnemies();
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
             }, delay);
@@ -583,8 +617,10 @@ public class ArenaEvents implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 Location spawn = spawns.get(r.nextInt(spawns.size()));
                 Evoker n = (Evoker) spawn.getWorld().spawnEntity(spawn, EntityType.EVOKER);
-                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Evoker"));
+                n.setCustomName(Utils.healthBar(1, 1, 5));
                 n.setCustomNameVisible(true);
+                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
+                n.setRemoveWhenFarAway(false);
                 arena.incrementEnemies();
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
             }, delay);
@@ -596,8 +632,10 @@ public class ArenaEvents implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 Location spawn = spawns.get(r.nextInt(spawns.size()));
                 Hoglin n = (Hoglin) spawn.getWorld().spawnEntity(spawn, EntityType.HOGLIN);
-                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Hoglin"));
+                n.setCustomName(Utils.healthBar(1, 1, 5));
                 n.setCustomNameVisible(true);
+                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
+                n.setRemoveWhenFarAway(false);
                 arena.incrementEnemies();
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
             }, delay);
@@ -609,8 +647,10 @@ public class ArenaEvents implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 Location spawn = spawns.get(r.nextInt(spawns.size()));
                 Ravager n = (Ravager) spawn.getWorld().spawnEntity(spawn, EntityType.RAVAGER);
-                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Ravager"));
+                n.setCustomName(Utils.healthBar(1, 1, 5));
                 n.setCustomNameVisible(true);
+                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
+                n.setRemoveWhenFarAway(false);
                 arena.incrementEnemies();
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
             }, delay);
@@ -622,8 +662,10 @@ public class ArenaEvents implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 Location spawn = spawns.get(r.nextInt(spawns.size()));
                 Wither n = (Wither) spawn.getWorld().spawnEntity(spawn, EntityType.WITHER);
-                n.setCustomName(Utils.format("&cVD" + arena.getArena() + ": Wither"));
+                n.setCustomName(Utils.healthBar(1, 1, 5));
                 n.setCustomNameVisible(true);
+                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
+                n.setRemoveWhenFarAway(false);
                 arena.incrementEnemies();
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
             }, delay);
