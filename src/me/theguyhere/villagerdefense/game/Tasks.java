@@ -173,6 +173,18 @@ public class Tasks {
 		public void run() {
 			Arena arenaInstance = game.arenas.get(arena);
 
+			// Teleport players to arena if waiting room exists
+			if (arenaInstance.getWaitingRoom() != null) {
+				arenaInstance.getActives().forEach(player -> {
+					Utils.prepTeleAdventure(player.getPlayer());
+					player.getPlayer().teleport(arenaInstance.getPlayerSpawn());
+				});
+				arenaInstance.getSpectators().forEach(player -> {
+					Utils.prepTeleSpectator(player.getPlayer());
+					player.getPlayer().teleport(arenaInstance.getPlayerSpawn());
+				});
+			}
+
 			// Give all players a wooden sword and a shop while removing pre-game protection
 			arenaInstance.getActives().forEach(player -> {
 				player.getPlayer().getInventory().addItem(new ItemStack(Material.WOODEN_SWORD));

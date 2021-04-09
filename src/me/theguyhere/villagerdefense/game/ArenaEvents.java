@@ -5,15 +5,12 @@ import me.theguyhere.villagerdefense.customEvents.*;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.DisplaySlot;
 
@@ -39,20 +36,29 @@ public class ArenaEvents implements Listener {
         // Ignore if player is already in a game somehow
         if (game.arenas.stream().filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player))) {
             e.setCancelled(true);
+            player.sendMessage(Utils.notify("&cYou're already in a game???"));
             return;
         }
 
         Arena arena = e.getArena();
         Location location;
 
-        // Try to get player spawn
+        // Try to get waiting room
         try {
-            location = arena.getPlayerSpawn();
+            location = arena.getWaitingRoom();
         } catch (Exception err) {
-            err.printStackTrace();
-            player.sendMessage(Utils.notify("&cSomething went wrong"));
-            return;
+            location = null;
         }
+
+        // Try to get player spawn
+        if (location == null)
+            try {
+                location = arena.getPlayerSpawn();
+            } catch (Exception err) {
+                err.printStackTrace();
+                player.sendMessage(Utils.notify("&cSomething went wrong"));
+                return;
+            }
 
         // Check if arena is closed
         if (arena.isClosed()) {
@@ -71,7 +77,7 @@ public class ArenaEvents implements Listener {
 
         // Prepares player to enter arena if it doesn't exceed max capacity or if the arena hasn't already started
         if (players < arena.getMaxPlayers() && !arena.isActive()) {
-            // Teleport to arena
+            // Teleport to arena or waiting room
             Utils.prepTeleAdventure(player);
             player.setInvulnerable(true);
             player.teleport(location);
@@ -94,7 +100,7 @@ public class ArenaEvents implements Listener {
 
         // Join players as spectators if arena is full or game already started
         else {
-            // Teleport to arena
+            // Teleport to arena or waiting room
             Utils.prepTeleSpectator(player);
             player.teleport(location);
 
@@ -222,16 +228,8 @@ public class ArenaEvents implements Listener {
 
             // Sets them up for teleport to lobby
             player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
-            if (game.getLobby() != null) {
-                Utils.prepTeleAdventure(player);
-                player.teleport(game.getLobby());
-            }
-
-            // Kill them to leave the game
-            else {
-                player.getInventory().clear();
-                player.setHealth(0);
-            }
+            Utils.prepTeleAdventure(player);
+            player.teleport(game.getLobby());
 
             Tasks task = arena.getTask();
             Map<Runnable, Integer> tasks = task.getTasks();
@@ -271,16 +269,8 @@ public class ArenaEvents implements Listener {
             arena.getPlayers().remove(gamer);
 
             // Sets them up for teleport to lobby
-            if (game.getLobby() != null) {
-                Utils.prepTeleAdventure(player);
-                player.teleport(game.getLobby());
-            }
-
-            // Kill them to leave the game
-            else {
-                player.getInventory().clear();
-                player.setHealth(0);
-            }
+            Utils.prepTeleAdventure(player);
+            player.teleport(game.getLobby());
 
             // Refresh the game portal
             portal.refreshHolo(game.arenas.indexOf(arena), game);
@@ -327,12 +317,8 @@ public class ArenaEvents implements Listener {
             delay += r.nextInt(spawnDelay(i));
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 Location spawn = spawns.get(r.nextInt(spawns.size()));
-                Villager n = (Villager) spawn.getWorld().spawnEntity(spawn, EntityType.VILLAGER);
-                n.setCustomName(Utils.healthBar(1, 1, 5));
-                n.setCustomNameVisible(true);
-                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
-                arena.incrementVillagers();
-                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
+                Mobs.setVillager(plugin, arena,
+                        (Villager) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.VILLAGER));
             }, delay);
         }
     }

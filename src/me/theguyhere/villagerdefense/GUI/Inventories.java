@@ -8,15 +8,16 @@ import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.Random;
 
 public class Inventories {
+	private final Main plugin;
 	private final Game game;
 	private final InventoryItems ii;
 
-	public Inventories (Game game, InventoryItems ii) {
+	public Inventories (Main plugin, Game game, InventoryItems ii) {
+		this.plugin = plugin;
 		this.game = game;
 		this.ii = ii;
 	}
@@ -49,28 +50,54 @@ public class Inventories {
 		for (int i = 0; i < 45; i++) {
 			// Check if arena exists, set button accordingly
 			if (game.arenas.get(i) == null)
-				inv.setItem(i,
-						Utils.createItem(Material.RED_CONCRETE, Utils.format("&c&lCreate Arena " + (i + 1))));
+				inv.setItem(i, Utils.createItem(Material.RED_CONCRETE,
+						Utils.format("&c&lCreate Arena " + (i + 1))));
 			else
 				inv.setItem(i, Utils.createItem(Material.LIME_CONCRETE,
 						Utils.format("&a&lEdit " + game.arenas.get(i).getName())));
 		}
 
 		// Option to set lobby location
-		inv.setItem(45, Utils.createItem(Material.BELL, Utils.format("&a&lSet Lobby")));
+		inv.setItem(45, Utils.createItem(Material.BELL, Utils.format("&2&lLobby")));
 
-		// Option to teleport lobby location
-		inv.setItem(46, ii.teleport("Lobby"));
+		// Option to set info hologram
+		inv.setItem(46, Utils.createItem(Material.OAK_SIGN, Utils.format("&6&lInfo Holograms"),
+				Utils.format(CONSTRUCTION)));
 
-		// Option to remove lobby location
-		inv.setItem(52, ii.remove("LOBBY"));
+		// Option to set leaderboard hologram
+		inv.setItem(47, Utils.createItem(Material.GOLDEN_HELMET, Utils.format("&e&lLeaderboards"),
+				FLAGS, null, Utils.format(CONSTRUCTION)));
 
 		// Option to exit
 		inv.setItem(53, ii.exit());
 		
 		return inv;
 	}
-	
+
+	// Menu for lobby
+	public Inventory createLobbyInventory() {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&2&lLobby"));
+
+		// Option to create the lobby
+		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Lobby")));
+
+		// Option to teleport to the lobby
+		inv.setItem(1, ii.teleport("Lobby"));
+
+		// Option to center the lobby
+		inv.setItem(2, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Lobby")));
+
+		// Option to remove the portal
+		inv.setItem(7, ii.remove("LOBBY"));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
 	// Confirmation menu for removing lobby
 	public Inventory createLobbyConfirmInventory() {
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
@@ -195,6 +222,9 @@ public class Inventories {
 		// Option to teleport to the portal
 		inv.setItem(1, ii.teleport("Portal"));
 
+		// Option to center the portal
+		inv.setItem(2, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Portal")));
+
 		// Option to remove the portal
 		inv.setItem(7, ii.remove("PORTAL"));
 
@@ -230,17 +260,20 @@ public class Inventories {
 
 		// Option to toggle player spawn particles
 		inv.setItem(1, Utils.createItem(Material.FIREWORK_ROCKET,
-				Utils.format("&b&lToggle Spawn Particles"),
+				Utils.format("&d&lToggle Spawn Particles"),
 				Utils.format(CONSTRUCTION)));
 
+		// Option to edit waiting room
+		inv.setItem(2, Utils.createItem(Material.CLOCK, Utils.format("&b&lWaiting Room")));
+
 		// Option to edit max players
-		inv.setItem(2, Utils.createItem(Material.NETHERITE_HELMET,
+		inv.setItem(3, Utils.createItem(Material.NETHERITE_HELMET,
 				Utils.format("&4&lMaximum Players"),
 				FLAGS,
 				null));
 
 		// Option to edit min players
-		inv.setItem(3, Utils.createItem(Material.NETHERITE_BOOTS,
+		inv.setItem(4, Utils.createItem(Material.NETHERITE_BOOTS,
 				Utils.format("&2&lMinimum Players"),
 				FLAGS,
 				null));
@@ -263,11 +296,68 @@ public class Inventories {
 		// Option to teleport to player spawn
 		inv.setItem(1, ii.teleport("Spawn"));
 
+		// Option to center the player spawn
+		inv.setItem(2, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Spawn")));
+
 		// Option to remove player spawn
 		inv.setItem(7, ii.remove("SPAWN"));
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	//	Confirmation menu for removing player spawn
+	public Inventory createSpawnConfirmInventory() {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&4&lRemove Spawn?"));
+
+		// "No" option
+		inv.setItem(0, ii.no());
+
+		// "Yes" option
+		inv.setItem(8, ii.yes());
+
+		return inv;
+	}
+
+	//	Menu for editing the waiting room of an arena
+	public Inventory createWaitingRoomInventory(int arena) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&b&lWaiting Room: " + game.arenas.get(arena).getName()));
+
+		// Option to create waiting room
+		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Waiting Room")));
+
+		// Option to teleport to waiting room
+		inv.setItem(1, ii.teleport("Waiting Room"));
+
+		// Option to center the waiting room
+		inv.setItem(2, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Waiting Room")));
+
+		// Option to remove waiting room
+		inv.setItem(7, ii.remove("WAITING ROOM"));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	//	Confirmation menu for removing waiting room
+	public Inventory createWaitingConfirmInventory() {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&4&lRemove Waiting Room?"));
+
+		// "No" option
+		inv.setItem(0, ii.no());
+
+		// "Yes" option
+		inv.setItem(8, ii.yes());
 
 		return inv;
 	}
@@ -308,21 +398,6 @@ public class Inventories {
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
-
-		return inv;
-	}
-
-	//	Confirmation menu for removing player spawn
-	public Inventory createSpawnConfirmInventory() {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&4&lRemove Spawn?"));
-
-		// "No" option
-		inv.setItem(0, ii.no());
-
-		// "Yes" option
-		inv.setItem(8, ii.yes());
 
 		return inv;
 	}
@@ -385,7 +460,7 @@ public class Inventories {
 		// Options to interact with all 8 possible mob spawns
 		for (int i = 0; i < 8; i++) {
 			// Check if the spawn exists
-			if (arenaInstance.getMonsterSpawns().get(i) == null)
+			if (!plugin.getData().contains("a" + arena + ".monster." + i))
 				index = 0;
 			else index = 1;
 
@@ -410,6 +485,9 @@ public class Inventories {
 
 		// Option to teleport to monster spawn
 		inv.setItem(1, ii.teleport("Spawn"));
+
+		// Option to center the monster spawn
+		inv.setItem(2, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Spawn")));
 
 		// Option to remove monster spawn
 		inv.setItem(7, ii.remove("SPAWN"));
@@ -449,7 +527,7 @@ public class Inventories {
 		// Options to interact with all 8 possible villager spawns
 		for (int i = 0; i < 8; i++) {
 			// Check if the spawn exists
-			if (arenaInstance.getVillagerSpawns().get(i) == null)
+			if (!plugin.getData().contains("a" + arena + ".villager." + i))
 				index = 0;
 			else index = 1;
 
@@ -469,13 +547,16 @@ public class Inventories {
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&5&lVillager Spawn " + slot + ": " + game.arenas.get(arena).getName()));
 
-		// Option to create monster spawn
+		// Option to create villager spawn
 		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Spawn")));
 
-		// Option to teleport to monster spawn
+		// Option to teleport to villager spawn
 		inv.setItem(1, ii.teleport("Spawn"));
 
-		// Option to remove monster spawn
+		// Option to center the villager spawn
+		inv.setItem(2, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Spawn")));
+
+		// Option to remove villager spawn
 		inv.setItem(7, ii.remove("SPAWN"));
 
 		// Option to exit

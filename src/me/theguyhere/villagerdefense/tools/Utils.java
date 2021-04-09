@@ -101,31 +101,77 @@ public class Utils {
         player.setGameMode(GameMode.SPECTATOR);
     }
 
+    // Sets the location data to a configuration path
+    public void setConfigurationLocation(String path, Location location) {
+        plugin.getData().set(path + ".world", location.getWorld().getName());
+        plugin.getData().set(path + ".x", location.getX());
+        plugin.getData().set(path + ".y", location.getY());
+        plugin.getData().set(path + ".z", location.getZ());
+        plugin.getData().set(path + ".pitch", location.getPitch());
+        plugin.getData().set(path + ".yaw", location.getYaw());
+        plugin.saveData();
+    }
+
     // Gets location data from a configuration path
     public Location getConfigLocation(String path) {
         try {
-            return new Location(Bukkit.getWorld(plugin.getData().getString(path + ".world")),
-                    plugin.getData().getDouble(path + ".x"), plugin.getData().getDouble(path + ".y"),
-                    plugin.getData().getDouble(path + ".z"));
+            return new Location(
+                Bukkit.getWorld(plugin.getData().getString(path + ".world")),
+                plugin.getData().getDouble(path + ".x"),
+                plugin.getData().getDouble(path + ".y"),
+                plugin.getData().getDouble(path + ".z"),
+                Float.parseFloat(plugin.getData().get(path + ".yaw").toString()),
+                Float.parseFloat(plugin.getData().get(path + ".pitch").toString())
+            );
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    // Gets location data without pitch or yaw
+    public Location getConfigLocationNoRotation(String path) {
+        try {
+            Location location = getConfigLocation(path);
+            location.setPitch(0);
+            location.setYaw(0);
+            return location;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    // Gets location data without pitch
+    public Location getConfigLocationNoPitch(String path) {
+        try {
+            Location location = getConfigLocation(path);
+            location.setPitch(0);
+            return location;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    // Centers location data
+    public void centerConfigLocation(String path) {
+        try {
+            Location location = getConfigLocation(path);
+            if (location.getX() > 0)
+                location.setX(((int) location.getX()) + .5);
+            else location.setX(((int) location.getX()) - .5);
+            if (location.getZ() > 0)
+                location.setZ(((int) location.getZ()) + .5);
+            else location.setZ(((int) location.getZ()) - .5);
+            setConfigurationLocation(path, location);
+            plugin.saveData();
+        } catch (Exception ignored) {
         }
     }
 
     // Gets a list of locations from a configuration path
     public List<Location> getConfigLocationList(String path) {
         List<Location> locations = new ArrayList<>();
-        for (int num = 0; num < 9; num++) {
-            try {
-                locations.add(new Location(
-                        Bukkit.getWorld(plugin.getData().getString(path + "." + num + ".world")),
-                        plugin.getData().getDouble(path + "." + num + ".x"),
-                        plugin.getData().getDouble(path + "." + num + ".y"),
-                        plugin.getData().getDouble(path + "." + num + ".z")));
-            } catch (Exception ignored) {
-                locations.add(null);
-            }
-        }
+        for (int num = 0; num < 9; num++)
+            locations.add(getConfigLocationNoRotation(path + "." + num));
         return locations;
     }
 

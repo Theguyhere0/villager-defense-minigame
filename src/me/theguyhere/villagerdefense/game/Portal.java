@@ -14,9 +14,11 @@ import org.bukkit.entity.Player;
 public class Portal {
 	private final Main plugin;
 	private Arena arena;
+	private Utils utils;
 
 	public Portal(Main plugin) {
 		this.plugin = plugin;
+		utils = new Utils(plugin);
 	}
 
 	// Lists to store NPCs and holograms
@@ -45,11 +47,7 @@ public class Portal {
 		addHolo(player.getLocation(), num, getHoloText());
 
 		// Save data about the NPC
-		plugin.getData().set("portal." + num + ".x", player.getLocation().getX());
-		plugin.getData().set("portal." + num + ".y", player.getLocation().getY());
-		plugin.getData().set("portal." + num + ".z", player.getLocation().getZ());
-		plugin.getData().set("portal." + num + ".yaw", player.getLocation().getYaw());
-		plugin.getData().set("portal." + num + ".world", player.getWorld().getName());
+		utils.setConfigurationLocation("portal." + num, player.getLocation());
 		plugin.saveData();
 	}
 
@@ -125,8 +123,7 @@ public class Portal {
 	public void refreshHolo(int arena, Game game) {
 		this.arena = game.arenas.get(arena);
 		holos[arena].delete();
-		Location location = new Utils(plugin).getConfigLocation("portal." + arena);
-		location.setYaw((float) plugin.getData().getDouble("portal." + arena + ".yaw"));
+		Location location = utils.getConfigLocationNoPitch("portal." + arena);
 		addHolo(location, arena, getHoloText());
 	}
 

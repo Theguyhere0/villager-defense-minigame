@@ -22,6 +22,7 @@ public class Arena {
     private int maxPlayers; // Maximum players in an arena
     private int minPlayers; // Minimum players in an arena
     private Location playerSpawn; // Location of player spawn
+    private Location waitingRoom; // Location of waiting room
     private List<Location> monsterSpawns = new ArrayList<>(); // List of monster spawn locations
     private List<Location> villagerSpawns = new ArrayList<>(); // List of villager spawn locations
     private boolean closed; // Indicates whether the arena is closed
@@ -70,6 +71,10 @@ public class Arena {
 
     public Location getPlayerSpawn() {
         return playerSpawn;
+    }
+
+    public Location getWaitingRoom() {
+        return waitingRoom;
     }
 
     public List<Location> getMonsterSpawns() {
@@ -213,7 +218,8 @@ public class Arena {
         name = plugin.getData().getString("a" + arena + ".name");
         maxPlayers = plugin.getData().getInt("a" + arena + ".max");
         minPlayers = plugin.getData().getInt("a" + arena + ".min");
-        playerSpawn = utils.getConfigLocation("a" + arena + ".spawn");
+        playerSpawn = utils.getConfigLocationNoRotation("a" + arena + ".spawn");
+        waitingRoom = utils.getConfigLocationNoRotation("a" + arena + ".waiting");
         monsterSpawns = utils.getConfigLocationList("a" + arena + ".monster").stream()
                 .filter(Objects::nonNull).collect(Collectors.toList());
         villagerSpawns = utils.getConfigLocationList("a" + arena + ".villager").stream()
