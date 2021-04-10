@@ -66,15 +66,30 @@ public class Utils {
         // Set enchants
         if (!(enchants == null))
             enchants.forEach((k, v) -> meta.addEnchant(k, v, false));
-        if (flags[0])
+        if (flags != null && flags[0])
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
         // Set attribute flag
-        if (flags[1])
+        if (flags != null && flags[1])
             meta.addItemFlags(ItemFlag.values());
         item.setItemMeta(meta);
 
         return item;
+    }
+
+    // Gives item to player if possible, otherwise drops at feet
+    public static void giveItem(Player player, ItemStack item) {
+        if (player.getInventory().firstEmpty() == -1 && (player.getInventory().first(item.getType()) == -1 ||
+                (player.getInventory().all(new ItemStack(item.getType(), item.getMaxStackSize())).size() ==
+                        player.getInventory().all(item.getType()).size()) &&
+                        player.getInventory().all(item.getType()).size() != 0)) {
+
+            // Inventory is full
+            player.getWorld().dropItemNaturally(player.getLocation(), item);
+            player.sendMessage(notify("&cYour inventory is full!"));
+        } else {
+            player.getInventory().addItem(item);
+        }
     }
 
     // Prepares a player to teleport into adventure mode
@@ -85,6 +100,7 @@ public class Utils {
         player.setFoodLevel(20);
         player.setSaturation(20);
         player.setLevel(0);
+        player.setFallDistance(0);
         player.getInventory().clear();
         player.setGameMode(GameMode.ADVENTURE);
     }

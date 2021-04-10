@@ -102,7 +102,7 @@ public class ArenaEvents implements Listener {
         else {
             // Teleport to arena or waiting room
             Utils.prepTeleSpectator(player);
-            player.teleport(location);
+            player.teleport(arena.getPlayerSpawn());
 
             // Update player tracking and in-game stats
             arena.getPlayers().add(new VDPlayer(player, true));
@@ -192,7 +192,7 @@ public class ArenaEvents implements Listener {
         Arena arena = e.getArena();
 
         // Don't continue if the arena is ending
-        if (arena.isEnding()) {
+        if (arena.isEnding() || arena.getCurrentWave() == 0) {
             e.setCancelled(true);
             return;
         }
@@ -504,7 +504,7 @@ public class ArenaEvents implements Listener {
 
     // Function for spawn delay
     private int spawnDelay(int index) {
-        int result = (int) (40 * Math.pow(Math.E, - index / 10D));
+        int result = (int) (60 * Math.pow(Math.E, - index / 10D));
         return result == 0 ? 1 : result;
     }
 }

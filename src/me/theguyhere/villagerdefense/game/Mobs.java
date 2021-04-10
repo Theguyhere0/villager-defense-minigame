@@ -830,6 +830,8 @@ public class Mobs {
     public static void setPillager(Main plugin, Arena arena, Pillager pillager) {
         setMinion(plugin, arena, pillager);
         setCrossbow(arena, pillager);
+        pillager.setPatrolLeader(false);
+        pillager.setCanJoinRaid(false);
     }
 
     public static void setSlime(Main plugin, Arena arena, Slime slime) {

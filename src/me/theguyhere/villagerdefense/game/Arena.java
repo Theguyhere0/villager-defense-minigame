@@ -122,7 +122,7 @@ public class Arena {
     }
 
     public double getCurrentDifficulty() {
-        return Math.pow(Math.E, Math.pow(currentWave - 1, .6) / 5);
+        return Math.pow(Math.E, Math.pow(currentWave - 1, .6) / 4);
     }
 
     public void incrementCurrentWave() {
