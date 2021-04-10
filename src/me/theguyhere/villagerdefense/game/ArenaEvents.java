@@ -309,17 +309,17 @@ public class ArenaEvents implements Listener {
     private void spawnVillagers(Arena arena) {
         Random r = new Random();
         int delay = 0;
-        int toSpawn = plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".vlgr")
+        int toSpawn = plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".count.v")
                 - arena.getVillagers();
         List<Location> spawns = arena.getVillagerSpawns();
 
         for (int i = 0; i < toSpawn; i++) {
+            Location spawn = spawns.get(r.nextInt(spawns.size()));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setVillager(plugin,
+                    arena,
+                    (Villager) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.VILLAGER)
+            ), delay);
             delay += r.nextInt(spawnDelay(i));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                Location spawn = spawns.get(r.nextInt(spawns.size()));
-                Mobs.setVillager(plugin, arena,
-                        (Villager) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.VILLAGER));
-            }, delay);
         }
     }
 
@@ -327,334 +327,178 @@ public class ArenaEvents implements Listener {
     private void spawnMonsters(Arena arena) {
         Random r = new Random();
         int delay = 0;
+        int wave = arena.getCurrentWave();
+        String path = "waves.wave" + wave + ".mtypes";
         List<Location> spawns = arena.getMonsterSpawns();
+        List<String> typeRatio = new ArrayList<>();
 
-        for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".zomb"); i++) {
-            delay += r.nextInt(spawnDelay(i));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                Location spawn = spawns.get(r.nextInt(spawns.size()));
-                Zombie n = (Zombie) spawn.getWorld().spawnEntity(spawn, EntityType.ZOMBIE);
-                n.setCustomName(Utils.healthBar(1, 1, 5));
-                n.setCustomNameVisible(true);
-                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
-                n.setCanPickupItems(false);
-                n.getEquipment().setItemInMainHand(null);
-                n.setRemoveWhenFarAway(false);
-                arena.incrementEnemies();
-                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
-            }, delay);
-        }
-        delay = 0;
+        // Get monster type ratio
+        plugin.getConfig().getConfigurationSection(path).getKeys(false)
+                .forEach(type -> {
+            for (int i = 0; i < plugin.getConfig().getInt(path + "." + type); i++)
+                typeRatio.add(type);
+        });
 
-        for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".husk"); i++) {
-            delay += r.nextInt(spawnDelay(i));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                Location spawn = spawns.get(r.nextInt(spawns.size()));
-                Husk n = (Husk) spawn.getWorld().spawnEntity(spawn, EntityType.HUSK);
-                n.setCustomName(Utils.healthBar(1, 1, 5));
-                n.setCustomNameVisible(true);
-                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
-                n.setCanPickupItems(false);
-                n.getEquipment().setItemInMainHand(null);
-                n.setRemoveWhenFarAway(false);
-                arena.incrementEnemies();
-                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
-            }, delay);
-        }
-        delay = 0;
+        // Spawn monsters
+        for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + wave + ".count.m"); i++) {
+            Location spawn = spawns.get(r.nextInt(spawns.size()));
 
-        for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".wskl"); i++) {
+            // Update delay
             delay += r.nextInt(spawnDelay(i));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                Location spawn = spawns.get(r.nextInt(spawns.size()));
-                WitherSkeleton n = (WitherSkeleton) spawn.getWorld().spawnEntity(spawn, EntityType.WITHER_SKELETON);
-                n.setCustomName(Utils.healthBar(1, 1, 5));
-                n.setCustomNameVisible(true);
-                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
-                n.setCanPickupItems(false);
-                n.getEquipment().setItemInMainHand(null);
-                n.setRemoveWhenFarAway(false);
-                arena.incrementEnemies();
-                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
-            }, delay);
-        }
-        delay = 0;
 
-        for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".brut"); i++) {
-            delay += r.nextInt(spawnDelay(i));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                Location spawn = spawns.get(r.nextInt(spawns.size()));
-                PiglinBrute n = (PiglinBrute) spawn.getWorld().spawnEntity(spawn, EntityType.PIGLIN_BRUTE);
-                n.setCustomName(Utils.healthBar(1, 1, 5));
-                n.setCustomNameVisible(true);
-                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
-                n.setCanPickupItems(false);
-                n.getEquipment().setItemInMainHand(null);
-                n.setRemoveWhenFarAway(false);
-                arena.incrementEnemies();
-                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
-            }, delay);
-        }
-        delay = 0;
-
-        for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".vind"); i++) {
-            delay += r.nextInt(spawnDelay(i));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                Location spawn = spawns.get(r.nextInt(spawns.size()));
-                Vindicator n = (Vindicator) spawn.getWorld().spawnEntity(spawn, EntityType.VINDICATOR);
-                n.setCustomName(Utils.healthBar(1, 1, 5));
-                n.setCustomNameVisible(true);
-                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
-                n.setCanPickupItems(false);
-                n.getEquipment().setItemInMainHand(null);
-                n.setRemoveWhenFarAway(false);
-                arena.incrementEnemies();
-                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
-            }, delay);
-        }
-        delay = 0;
-
-        for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".spid"); i++) {
-            delay += r.nextInt(spawnDelay(i));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                Location spawn = spawns.get(r.nextInt(spawns.size()));
-                Spider n = (Spider) spawn.getWorld().spawnEntity(spawn, EntityType.SPIDER);
-                n.setCustomName(Utils.healthBar(1, 1, 5));
-                n.setCustomNameVisible(true);
-                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
-                n.setRemoveWhenFarAway(false);
-                arena.incrementEnemies();
-                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
-            }, delay);
-        }
-        delay = 0;
-
-        for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".cspd"); i++) {
-            delay += r.nextInt(spawnDelay(i));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                Location spawn = spawns.get(r.nextInt(spawns.size()));
-                CaveSpider n = (CaveSpider) spawn.getWorld().spawnEntity(spawn, EntityType.CAVE_SPIDER);
-                n.setCustomName(Utils.healthBar(1, 1, 5));
-                n.setCustomNameVisible(true);
-                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
-                n.setRemoveWhenFarAway(false);
-                arena.incrementEnemies();
-                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
-            }, delay);
-        }
-        delay = 0;
-
-        for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".wtch"); i++) {
-            delay += r.nextInt(spawnDelay(i));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                Location spawn = spawns.get(r.nextInt(spawns.size()));
-                Witch n = (Witch) spawn.getWorld().spawnEntity(spawn, EntityType.WITCH);
-                n.setCustomName(Utils.healthBar(1, 1, 5));
-                n.setCustomNameVisible(true);
-                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
-                n.setRemoveWhenFarAway(false);
-                arena.incrementEnemies();
-                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
-            }, delay);
-        }
-        delay = 0;
-
-        for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".skel"); i++) {
-            delay += r.nextInt(spawnDelay(i));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                Location spawn = spawns.get(r.nextInt(spawns.size()));
-                Skeleton n = (Skeleton) spawn.getWorld().spawnEntity(spawn, EntityType.SKELETON);
-                n.setCustomName(Utils.healthBar(1, 1, 5));
-                n.setCustomNameVisible(true);
-                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
-                n.setCanPickupItems(false);
-                n.setRemoveWhenFarAway(false);
-                arena.incrementEnemies();
-                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
-            }, delay);
-        }
-        delay = 0;
-
-        for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".stry"); i++) {
-            delay += r.nextInt(spawnDelay(i));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                Location spawn = spawns.get(r.nextInt(spawns.size()));
-                Stray n = (Stray) spawn.getWorld().spawnEntity(spawn, EntityType.STRAY);
-                n.setCustomName(Utils.healthBar(1, 1, 5));
-                n.setCustomNameVisible(true);
-                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
-                n.setCanPickupItems(false);
-                n.setRemoveWhenFarAway(false);
-                arena.incrementEnemies();
-                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
-            }, delay);
-        }
-        delay = 0;
-
-        for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".blze"); i++) {
-            delay += r.nextInt(spawnDelay(i));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                Location spawn = spawns.get(r.nextInt(spawns.size()));
-                Blaze n = (Blaze) spawn.getWorld().spawnEntity(spawn, EntityType.BLAZE);
-                n.setCustomName(Utils.healthBar(1, 1, 5));
-                n.setCustomNameVisible(true);
-                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
-                n.setRemoveWhenFarAway(false);
-                arena.incrementEnemies();
-                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
-            }, delay);
-        }
-        delay = 0;
-
-        for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".ghst"); i++) {
-            delay += r.nextInt(spawnDelay(i));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                Location spawn = spawns.get(r.nextInt(spawns.size()));
-                Ghast n = (Ghast) spawn.getWorld().spawnEntity(spawn, EntityType.GHAST);
-                n.setCustomName(Utils.healthBar(1, 1, 5));
-                n.setCustomNameVisible(true);
-                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
-                n.setRemoveWhenFarAway(false);
-                arena.incrementEnemies();
-                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
-            }, delay);
-        }
-        delay = 0;
-
-        for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".pill"); i++) {
-            delay += r.nextInt(spawnDelay(i));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                Location spawn = spawns.get(r.nextInt(spawns.size()));
-                Pillager n = (Pillager) spawn.getWorld().spawnEntity(spawn, EntityType.PILLAGER);
-                n.setCustomName(Utils.healthBar(1, 1, 5));
-                n.setCustomNameVisible(true);
-                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
-                n.setCanPickupItems(false);
-                n.getEquipment().setItemInMainHand(null);
-                n.setRemoveWhenFarAway(false);
-                arena.incrementEnemies();
-                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
-            }, delay);
-        }
-        delay = 0;
-
-        for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".slim"); i++) {
-            delay += r.nextInt(spawnDelay(i));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                Location spawn = spawns.get(r.nextInt(spawns.size()));
-                Slime n = (Slime) spawn.getWorld().spawnEntity(spawn, EntityType.SLIME);
-                n.setCustomName(Utils.healthBar(1, 1, 5));
-                n.setCustomNameVisible(true);
-                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
-                n.setRemoveWhenFarAway(false);
-                arena.incrementEnemies();
-                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
-            }, delay);
-        }
-        delay = 0;
-
-        for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".mslm"); i++) {
-            delay += r.nextInt(spawnDelay(i));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                Location spawn = spawns.get(r.nextInt(spawns.size()));
-                MagmaCube n = (MagmaCube) spawn.getWorld().spawnEntity(spawn, EntityType.MAGMA_CUBE);
-                n.setCustomName(Utils.healthBar(1, 1, 5));
-                n.setCustomNameVisible(true);
-                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
-                n.setRemoveWhenFarAway(false);
-                arena.incrementEnemies();
-                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
-            }, delay);
-        }
-        delay = 0;
-
-        for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".crpr"); i++) {
-            delay += r.nextInt(spawnDelay(i));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                Location spawn = spawns.get(r.nextInt(spawns.size()));
-                Creeper n = (Creeper) spawn.getWorld().spawnEntity(spawn, EntityType.CREEPER);
-                n.setCustomName(Utils.healthBar(1, 1, 5));
-                n.setCustomNameVisible(true);
-                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
-                n.setRemoveWhenFarAway(false);
-                arena.incrementEnemies();
-                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
-            }, delay);
-        }
-        delay = 0;
-
-        for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".phtm"); i++) {
-            delay += r.nextInt(spawnDelay(i));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                Location spawn = spawns.get(r.nextInt(spawns.size()));
-                Phantom n = (Phantom) spawn.getWorld().spawnEntity(spawn, EntityType.PHANTOM);
-                n.setCustomName(Utils.healthBar(1, 1, 5));
-                n.setCustomNameVisible(true);
-                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
-                n.setRemoveWhenFarAway(false);
-                arena.incrementEnemies();
-                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
-            }, delay);
-        }
-        delay = 0;
-
-        for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".evok"); i++) {
-            delay += r.nextInt(spawnDelay(i));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                Location spawn = spawns.get(r.nextInt(spawns.size()));
-                Evoker n = (Evoker) spawn.getWorld().spawnEntity(spawn, EntityType.EVOKER);
-                n.setCustomName(Utils.healthBar(1, 1, 5));
-                n.setCustomNameVisible(true);
-                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
-                n.setRemoveWhenFarAway(false);
-                arena.incrementEnemies();
-                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
-            }, delay);
-        }
-        delay = 0;
-
-        for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".hgln"); i++) {
-            delay += r.nextInt(spawnDelay(i));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                Location spawn = spawns.get(r.nextInt(spawns.size()));
-                Hoglin n = (Hoglin) spawn.getWorld().spawnEntity(spawn, EntityType.HOGLIN);
-                n.setCustomName(Utils.healthBar(1, 1, 5));
-                n.setCustomNameVisible(true);
-                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
-                n.setRemoveWhenFarAway(false);
-                arena.incrementEnemies();
-                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
-            }, delay);
-        }
-        delay = 0;
-
-        for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".rvgr"); i++) {
-            delay += r.nextInt(spawnDelay(i));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                Location spawn = spawns.get(r.nextInt(spawns.size()));
-                Ravager n = (Ravager) spawn.getWorld().spawnEntity(spawn, EntityType.RAVAGER);
-                n.setCustomName(Utils.healthBar(1, 1, 5));
-                n.setCustomNameVisible(true);
-                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
-                n.setRemoveWhenFarAway(false);
-                arena.incrementEnemies();
-                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
-            }, delay);
-        }
-        delay = 0;
-
-        for (int i = 0; i < plugin.getConfig().getInt("waves.wave" + arena.getCurrentWave() + ".wthr"); i++) {
-            delay += r.nextInt(spawnDelay(i));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                Location spawn = spawns.get(r.nextInt(spawns.size()));
-                Wither n = (Wither) spawn.getWorld().spawnEntity(spawn, EntityType.WITHER);
-                n.setCustomName(Utils.healthBar(1, 1, 5));
-                n.setCustomNameVisible(true);
-                n.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
-                n.setRemoveWhenFarAway(false);
-                arena.incrementEnemies();
-                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
-            }, delay);
+            switch (typeRatio.get(r.nextInt(typeRatio.size()))) {
+                case "zomb":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setZombie(
+                            plugin,
+                            arena,
+                            (Zombie) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.ZOMBIE)
+                    ), delay);
+                    break;
+                case "husk":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setHusk(
+                            plugin,
+                            arena,
+                            (Husk) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.HUSK)
+                    ), delay);
+                    break;
+                case "wskl":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setWitherSkeleton(
+                            plugin,
+                            arena,
+                            (WitherSkeleton) Objects.requireNonNull(spawn.getWorld())
+                                    .spawnEntity(spawn, EntityType.WITHER_SKELETON)
+                    ), delay);
+                    break;
+                case "brut":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setBrute(
+                            plugin,
+                            arena,
+                            (PiglinBrute) Objects.requireNonNull(spawn.getWorld())
+                                    .spawnEntity(spawn, EntityType.PIGLIN_BRUTE)
+                    ), delay);
+                    break;
+                case "vind":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setVindicator(
+                            plugin,
+                            arena,
+                            (Vindicator) Objects.requireNonNull(spawn.getWorld())
+                                    .spawnEntity(spawn, EntityType.VINDICATOR)
+                    ), delay);
+                    break;
+                case "spid":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setSpider(
+                            plugin,
+                            arena,
+                            (Spider) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.SPIDER)
+                    ), delay);
+                    break;
+                case "cspd":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setCaveSpider(
+                            plugin,
+                            arena,
+                            (CaveSpider) Objects.requireNonNull(spawn.getWorld())
+                                    .spawnEntity(spawn, EntityType.CAVE_SPIDER)
+                    ), delay);
+                    break;
+                case "wtch":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setWitch(
+                            plugin,
+                            arena,
+                            (Witch) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.WITCH)
+                    ), delay);
+                    break;
+                case "skel":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setSkeleton(
+                            plugin,
+                            arena,
+                            (Skeleton) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.SKELETON)
+                    ), delay);
+                    break;
+                case "stry":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setStray(
+                            plugin,
+                            arena,
+                            (Stray) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.STRAY)
+                    ), delay);
+                    break;
+                case "blze":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setBlaze(
+                            plugin,
+                            arena,
+                            (Blaze) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.BLAZE)
+                    ), delay);
+                    break;
+                case "ghst":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setGhast(
+                            plugin,
+                            arena,
+                            (Ghast) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.GHAST)
+                    ), delay);
+                    break;
+                case "pill":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setPillager(
+                            plugin,
+                            arena,
+                            (Pillager) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.PILLAGER)
+                    ), delay);
+                    break;
+                case "slim":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setSlime(
+                            plugin,
+                            arena,
+                            (Slime) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.SLIME)
+                    ), delay);
+                    break;
+                case "mslm":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setMagmaCube(
+                            plugin,
+                            arena,
+                            (MagmaCube) Objects.requireNonNull(spawn.getWorld())
+                                    .spawnEntity(spawn, EntityType.MAGMA_CUBE)
+                    ), delay);
+                    break;
+                case "crpr":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setCreeper(
+                            plugin,
+                            arena,
+                            (Creeper) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.CREEPER)
+                    ), delay);
+                    break;
+                case "phtm":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setPhantom(
+                            plugin,
+                            arena,
+                            (Phantom) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.PHANTOM)
+                    ), delay);
+                    break;
+                case "evok":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setEvoker(
+                            plugin,
+                            arena,
+                            (Evoker) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.EVOKER)
+                    ), delay);
+                    break;
+                case "hgln":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setHoglin(
+                            plugin,
+                            arena,
+                            (Hoglin) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.HOGLIN)
+                    ), delay);
+                    break;
+                case "rvgr":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setRavager(
+                            plugin,
+                            arena,
+                            (Ravager) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.RAVAGER)
+                    ), delay);
+                    break;
+                case "wthr":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setWither(
+                            plugin,
+                            arena,
+                            (Wither) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.WITHER)
+                    ), delay);
+            }
         }
     }
 

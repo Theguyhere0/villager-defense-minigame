@@ -211,6 +211,7 @@ public class Utils {
         String toFormat;
         double healthLeft = remaining / max;
         int healthBars = (int) (healthLeft * size + .99);
+        if (healthBars < 0) healthBars = 0;
 
         if (healthLeft > .5)
             toFormat = "&a";
