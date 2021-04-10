@@ -124,8 +124,7 @@ public class Tasks {
 
 			// Regenerate shops when time and notify players of it
 			if (currentWave % 10 == 0 || currentWave == 1) {
-				int shopNum = currentWave / 10;
-				if (shopNum > 5) shopNum = 5;
+				int shopNum = currentWave / 10 + 1;
 				arenaInstance.setShop(Inventories.createShop(shopNum));
 				if (currentWave != 1)
 					arenaInstance.getActives().forEach(player ->

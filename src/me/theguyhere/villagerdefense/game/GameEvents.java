@@ -61,8 +61,10 @@ public class GameEvents implements Listener {
 		Arena arena = game.arenas.get(ent.getMetadata("VD").get(0).asInt());
 
 		// Arena enemies not part of an active arena
-		if (!arena.isActive())
+		if (!arena.isActive()) {
+			e.getDrops().clear();
 			return;
+		}
 
 		// Update villager count
 		if (ent instanceof Villager) {
@@ -79,11 +81,7 @@ public class GameEvents implements Listener {
 			e.getDrops().clear();
 
 			// Set drop to emerald
-			ItemStack gem = new ItemStack(Material.EMERALD);
-			ItemMeta meta = gem.getItemMeta();
-			meta.setDisplayName(Integer.toString(game.arenas.indexOf(arena)));
-			gem.setItemMeta(meta);
-			e.getDrops().add(gem);
+			e.getDrops().add(Utils.createItem(Material.EMERALD, null, Integer.toString(arena.getArena())));
 
 			// Decrement enemy count
 			arena.decrementEnemies();
@@ -114,6 +112,7 @@ public class GameEvents implements Listener {
 		if (!arena.isActive())
 			return;
 
+		System.out.println("reached");
 		// Decrement enemy count
 		arena.decrementEnemies();
 
@@ -238,11 +237,13 @@ public class GameEvents implements Listener {
 
 			ItemStack buy = e.getClickedInventory().getItem(e.getSlot()).clone();
 			ItemMeta meta = buy.getItemMeta();
-			int cost = Integer.parseInt(meta.getLore().get(0).substring(meta.getLore().get(0).length() - 4).trim());
+			int cost = Integer.parseInt(meta.getLore().get(0).substring(10));
 
 			// Check if they can afford the item
-			if (!gamer.canAfford(cost))
+			if (!gamer.canAfford(cost)) {
+				player.sendMessage(Utils.notify("&cYou can't afford this!"));
 				return;
+			}
 
 			meta.setLore(new ArrayList<>());
 			buy.setItemMeta(meta);
@@ -256,21 +257,23 @@ public class GameEvents implements Listener {
 			// Equip armor if possible, otherwise put in inventory, otherwise drop at feet
 			if (Arrays.stream(HELMETS).anyMatch(mat -> mat == buy.getType()) && equipment.getHelmet() == null) {
 				equipment.setHelmet(buy);
-				player.sendMessage(Utils.notify("&6Helmet Equipped!"));
+				player.sendMessage(Utils.notify("&aHelmet equipped!"));
 			} else if (Arrays.stream(CHESTPLATES).anyMatch(mat -> mat == buy.getType()) &&
 					equipment.getChestplate() == null) {
 				equipment.setChestplate(buy);
-				player.sendMessage(Utils.notify("&6Chestplate Equipped!"));
+				player.sendMessage(Utils.notify("&aChestplate equipped!"));
 			} else if (Arrays.stream(LEGGINGS).anyMatch(mat -> mat == buy.getType()) &&
 					equipment.getLeggings() == null) {
 				equipment.setLeggings(buy);
-				player.sendMessage(Utils.notify("&6Leggings Equipped!"));
+				player.sendMessage(Utils.notify("&aLeggings equipped!"));
 			} else if (Arrays.stream(BOOTS).anyMatch(mat -> mat == buy.getType()) && equipment.getBoots() == null) {
 				equipment.setBoots(buy);
-				player.sendMessage(Utils.notify("&6Boots Equipped!"));
-			} else Utils.giveItem(player, buy);
+				player.sendMessage(Utils.notify("&aBoots equipped!"));
+			} else {
+				Utils.giveItem(player, buy);
+				player.sendMessage(Utils.notify("&aItem purchased!"));
+			}
 		}
-
 	}
 	
 	// Stops players from hurting villagers and other players
@@ -442,24 +445,23 @@ public class GameEvents implements Listener {
 	// Update player kill counter
 	@EventHandler
 	public void onMobKillByPlayer(EntityDamageByEntityEvent e) {
+		// Check for living entity
+		if (!(e.getEntity() instanceof LivingEntity)) return;
+
 		// Check for fatal damage
-		if (((LivingEntity) e.getEntity()).getHealth() > e.getFinalDamage())
-			return;
+		if (((LivingEntity) e.getEntity()).getHealth() > e.getFinalDamage()) return;
 
 		// Check damage was done to monster
-		if (!(e.getEntity().hasMetadata("VD")))
-			return;
+		if (!(e.getEntity().hasMetadata("VD"))) return;
 
 		// Check that a player caused the damage
-		if (!(e.getDamager() instanceof Player))
-			return;
+		if (!(e.getDamager() instanceof Player)) return;
 
 		Player player = (Player) e.getDamager();
 
 		// Check for player in an arena
 		if (game.arenas.stream().filter(Objects::nonNull)
-				.noneMatch(a -> a.getPlayers().stream().anyMatch(p -> p.getPlayer().equals(player))))
-			return;
+				.noneMatch(a -> a.getPlayers().stream().anyMatch(p -> p.getPlayer().equals(player)))) return;
 
 		VDPlayer gamer = game.arenas.stream().filter(Objects::nonNull)
 				.filter(a -> a.getPlayers().stream().anyMatch(p -> p.getPlayer().equals(player)))

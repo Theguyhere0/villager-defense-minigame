@@ -107,7 +107,7 @@ waves:
   wave5:
     count:
       v: 5
-      m: 27
+      m: 23
     mtypes:
       zomb: 15
       husk: 0
@@ -133,7 +133,7 @@ waves:
   wave6:
     count:
       v: 7
-      m: 35
+      m: 28
     mtypes:
       zomb: 18
       husk: 0
@@ -159,7 +159,7 @@ waves:
   wave7:
     count:
       v: 9
-      m: 45
+      m: 30
     mtypes:
       zomb: 3
       husk: 1
@@ -185,7 +185,7 @@ waves:
   wave8:
     count:
       v: 12
-      m: 51
+      m: 34
     mtypes:
       zomb: 10
       husk: 10
@@ -211,7 +211,7 @@ waves:
   wave9:
     count:
       v: 14
-      m: 59
+      m: 37
     mtypes:
       zomb: 5
       husk: 15
@@ -237,7 +237,7 @@ waves:
   wave10:
     count:
       v: 16
-      m: 65
+      m: 40
     mtypes:
       zomb: 0
       husk: 20
@@ -263,7 +263,7 @@ waves:
   wave11:
     count:
       v: 18
-      m: 65
+      m: 42
     mtypes:
       zomb: 0
       husk: 4
@@ -289,7 +289,7 @@ waves:
   wave12:
     count:
       v: 20
-      m: 70
+      m: 44
     mtypes:
       zomb: 0
       husk: 4

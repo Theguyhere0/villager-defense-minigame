@@ -11,6 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionData;
 
 import java.util.*;
 
@@ -72,6 +74,75 @@ public class Utils {
         // Set attribute flag
         if (flags != null && flags[1])
             meta.addItemFlags(ItemFlag.values());
+        item.setItemMeta(meta);
+
+        return item;
+    }
+
+    // Creates an ItemStack that has potion meta
+    public static ItemStack createPotionItem(Material matID, PotionData potionData, String dispName, String ... lores) {
+        // Create ItemStack
+        ItemStack item = new ItemStack(matID);
+        ItemMeta meta = item.getItemMeta();
+        PotionMeta pot = (PotionMeta) meta;
+
+        // Set name
+        if (!(dispName == null))
+            meta.setDisplayName(dispName);
+
+        // Set lore
+        List<String> lore = new ArrayList<>();
+        Collections.addAll(lore, lores);
+        meta.setLore(lore);
+
+        // Set potion data
+        pot.setBasePotionData(potionData);
+        item.setItemMeta(meta);
+
+        return item;
+    }
+
+    // Creates an ItemStack using material, amount, name, and lore
+    public static ItemStack createItems(Material matID, int amount, String dispName, String ... lores) {
+        // Create ItemStack
+        ItemStack item = new ItemStack(matID, amount);
+        ItemMeta meta = item.getItemMeta();
+
+        // Set name
+        if (!(dispName == null))
+            meta.setDisplayName(dispName);
+
+        // Set lore
+        List<String> lore = new ArrayList<>();
+        Collections.addAll(lore, lores);
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+
+        return item;
+    }
+
+    // Creates an ItemStack of multiple items that has potion meta
+    public static ItemStack createPotionItems(Material matID,
+                                              PotionData potionData,
+                                              int amount,
+                                              String dispName,
+                                              String ... lores) {
+        // Create ItemStack
+        ItemStack item = new ItemStack(matID, amount);
+        ItemMeta meta = item.getItemMeta();
+        PotionMeta pot = (PotionMeta) meta;
+
+        // Set name
+        if (!(dispName == null))
+            meta.setDisplayName(dispName);
+
+        // Set lore
+        List<String> lore = new ArrayList<>();
+        Collections.addAll(lore, lores);
+        meta.setLore(lore);
+
+        // Set potion data
+        pot.setBasePotionData(potionData);
         item.setItemMeta(meta);
 
         return item;
