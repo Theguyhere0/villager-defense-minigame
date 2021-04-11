@@ -40,7 +40,7 @@ public class Inventories {
 	final String CONSTRUCTION = "&fComing Soon!";
 	final boolean[] FLAGS = {true, true};
 
-	//	Menu of all the arenas
+	// Menu of all the arenas
 	public Inventory createArenasInventory() {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 54,  Utils.format("&k") +
@@ -249,7 +249,7 @@ public class Inventories {
 		return inv;
 	}
 
-	//	Menu for editing the player settings of an arena
+	// Menu for editing the player settings of an arena
 	public Inventory createPlayersInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
@@ -284,7 +284,7 @@ public class Inventories {
 		return inv;
 	}
 
-	//	Menu for editing the player spawn of an arena
+	// Menu for editing the player spawn of an arena
 	public Inventory createPlayerSpawnInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
@@ -308,7 +308,7 @@ public class Inventories {
 		return inv;
 	}
 
-	//	Confirmation menu for removing player spawn
+	// Confirmation menu for removing player spawn
 	public Inventory createSpawnConfirmInventory() {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
@@ -323,7 +323,7 @@ public class Inventories {
 		return inv;
 	}
 
-	//	Menu for editing the waiting room of an arena
+	// Menu for editing the waiting room of an arena
 	public Inventory createWaitingRoomInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
@@ -347,7 +347,7 @@ public class Inventories {
 		return inv;
 	}
 
-	//	Confirmation menu for removing waiting room
+	// Confirmation menu for removing waiting room
 	public Inventory createWaitingConfirmInventory() {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
@@ -362,7 +362,7 @@ public class Inventories {
 		return inv;
 	}
 
-	//	Menu for changing max players in an arena
+	// Menu for changing max players in an arena
 	public Inventory createMaxPlayerInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
@@ -382,7 +382,7 @@ public class Inventories {
 		return inv;
 	}
 
-	//	Menu for changing min players in an arena
+	// Menu for changing min players in an arena
 	public Inventory createMinPlayerInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
@@ -402,7 +402,7 @@ public class Inventories {
 		return inv;
 	}
 
-	//	Menu for editing the mob settings of an arena
+	// Menu for editing the mob settings of an arena
 	public Inventory createMobsInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
@@ -446,7 +446,7 @@ public class Inventories {
 		return inv;
 	}
 
-	//	Menu for editing the monster spawns of an arena
+	// Menu for editing the monster spawns of an arena
 	public Inventory createMonsterSpawnInventory(int arena) {
 		Arena arenaInstance = game.arenas.get(arena);
 
@@ -513,7 +513,7 @@ public class Inventories {
 		return inv;
 	}
 
-	//	Menu for editing the villager spawns of an arena
+	// Menu for editing the villager spawns of an arena
 	public Inventory createVillagerSpawnInventory(int arena) {
 		Arena arenaInstance = game.arenas.get(arena);
 
@@ -618,17 +618,14 @@ public class Inventories {
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&8&lGame Settings: " + game.arenas.get(arena).getName()));
 
-		// Option to change max rounds
+		// Option to change max waves
 		inv.setItem(0, Utils.createItem(Material.NETHERITE_SWORD,
-				Utils.format("&3&lMax Rounds"),
+				Utils.format("&3&lMax Waves"),
 				FLAGS,
-				null,
-				Utils.format(CONSTRUCTION)));
+				null));
 
-		// Option to round time limit
-		inv.setItem(1, Utils.createItem(Material.CLOCK,
-				Utils.format("&2&lRound Time Limit"),
-				Utils.format(CONSTRUCTION)));
+		// Option to wave time limit
+		inv.setItem(1, Utils.createItem(Material.CLOCK, Utils.format("&2&lWave Time Limit")));
 
 		// Option to edit allowed kits
 		inv.setItem(2, Utils.createItem(Material.ENDER_CHEST,
@@ -662,6 +659,68 @@ public class Inventories {
 		return inv;
 	}
 
+	// Menu for changing max waves of an arena
+	public Inventory createMaxWaveInventory(int arena) {
+		Inventory inv;
+
+		// Create inventory
+		if (game.arenas.get(arena).getMaxWaves() < 0)
+			inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+					Utils.format("&3&lMaximum Waves: Unlimited"));
+		else inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&3&lMaximum Waves: " + game.arenas.get(arena).getMaxWaves()));
+
+		// Option to decrease
+		for (int i = 0; i < 3; i++)
+			inv.setItem(i, Utils.createItem(Material.RED_CONCRETE, Utils.format("&4&lDecrease")));
+
+		// Option to set to unlimited
+		inv.setItem(3, Utils.createItem(Material.ORANGE_CONCRETE, Utils.format("&6&lUnlimited")));
+
+		// Option to reset to 1
+		inv.setItem(4, Utils.createItem(Material.LIGHT_BLUE_CONCRETE, Utils.format("&3&lReset to 1")));
+
+		// Option to increase
+		for (int i = 5; i < 8; i++)
+			inv.setItem(i, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&2&lIncrease")));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	// Menu for changing wave time limit of an arena
+	public Inventory createWaveTimeLimitInventory(int arena) {
+		Inventory inv;
+
+		// Create inventory
+		if (game.arenas.get(arena).getWaveTimeLimit() < 0)
+			inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+					Utils.format("&2&lWave Time Limit: Unlimited"));
+		else inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&2&lWave Time Limit: " + game.arenas.get(arena).getWaveTimeLimit()));
+
+		// Option to decrease
+		for (int i = 0; i < 3; i++)
+			inv.setItem(i, Utils.createItem(Material.RED_CONCRETE, Utils.format("&4&lDecrease")));
+
+		// Option to set to unlimited
+		inv.setItem(3, Utils.createItem(Material.ORANGE_CONCRETE, Utils.format("&6&lUnlimited")));
+
+		// Option to reset to 1
+		inv.setItem(4, Utils.createItem(Material.LIGHT_BLUE_CONCRETE, Utils.format("&3&lReset to 1")));
+
+		// Option to increase
+		for (int i = 5; i < 8; i++)
+			inv.setItem(i, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&2&lIncrease")));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
 	// Menu for editing the sounds of an arena
 	public Inventory createSoundsInventory(int arena) {
 		// Create inventory
@@ -682,16 +741,16 @@ public class Inventories {
 				null,
 				Utils.format(CONSTRUCTION)));
 
-		// Option to edit round start sound
+		// Option to edit wave start sound
 		inv.setItem(2, Utils.createItem(Material.MUSIC_DISC_CAT,
-				Utils.format("&2&lRound Start"),
+				Utils.format("&2&lWave Start"),
 				FLAGS,
 				null,
 				Utils.format(CONSTRUCTION)));
 
-		// Option to edit round finish sound
+		// Option to edit wave finish sound
 		inv.setItem(3, Utils.createItem(Material.MUSIC_DISC_BLOCKS,
-				Utils.format("&4&lRound Finish"),
+				Utils.format("&4&lWave Finish"),
 				FLAGS,
 				null,
 				Utils.format(CONSTRUCTION)));
@@ -740,18 +799,18 @@ public class Inventories {
 			double chance = r.nextDouble();
 			switch (level) {
 				case 1:
-					if (chance < .35)
+					if (chance < .4)
 						inv.setItem(i, GameItems.sword(level));
-					else if (chance < .7)
+					else if (chance < .75)
 						inv.setItem(i, GameItems.axe(level));
 					else if (chance < .9)
 						inv.setItem(i, GameItems.bow(level));
 					else inv.setItem(i, GameItems.arrows());
 					break;
 				case 2:
-					if (chance < .3)
+					if (chance < .35)
 						inv.setItem(i, GameItems.sword(level));
-					else if (chance < .65)
+					else if (chance < .7)
 						inv.setItem(i, GameItems.axe(level));
 					else if (chance < .8)
 						inv.setItem(i, GameItems.shield(level));
@@ -764,9 +823,9 @@ public class Inventories {
 					else inv.setItem(i, GameItems.arrowsP());
 					break;
 				case 3:
-					if (chance < .25)
+					if (chance < .3)
 						inv.setItem(i, GameItems.sword(level));
-					else if (chance < .55)
+					else if (chance < .6)
 						inv.setItem(i, GameItems.axe(level));
 					else if (chance < .7)
 						inv.setItem(i, GameItems.bow(level));
@@ -783,7 +842,7 @@ public class Inventories {
 					else inv.setItem(i, GameItems.arrowsW());
 					break;
 				case 4:
-					if (chance < .25)
+					if (chance < .3)
 						inv.setItem(i, GameItems.sword(level));
 					else if (chance < .55)
 						inv.setItem(i, GameItems.axe(level));

@@ -78,9 +78,8 @@ public class ArenaEvents implements Listener {
         // Prepares player to enter arena if it doesn't exceed max capacity or if the arena hasn't already started
         if (players < arena.getMaxPlayers() && !arena.isActive()) {
             // Teleport to arena or waiting room
-            Utils.prepTeleAdventure(player);
+            Utils.teleAdventure(player, location);
             player.setInvulnerable(true);
-            player.teleport(location);
 
             // Update player tracking and in-game stats
             VDPlayer fighter = new VDPlayer(player, false);
@@ -101,8 +100,7 @@ public class ArenaEvents implements Listener {
         // Join players as spectators if arena is full or game already started
         else {
             // Teleport to arena or waiting room
-            Utils.prepTeleSpectator(player);
-            player.teleport(arena.getPlayerSpawn());
+            Utils.teleSpectator(player, arena.getPlayerSpawn());
 
             // Update player tracking and in-game stats
             arena.getPlayers().add(new VDPlayer(player, true));
@@ -133,7 +131,7 @@ public class ArenaEvents implements Listener {
 
             // Schedule and record the waiting task
             tasks.put(task.waiting, scheduler.scheduleSyncRepeatingTask(plugin, task.waiting, 0,
-                    Utils.secondsToTicks(60)));
+                    Utils.secondsToTicks(Utils.minutesToSeconds(1))));
         }
 
         // Can start condition
@@ -147,11 +145,16 @@ public class ArenaEvents implements Listener {
 
             // Schedule all the countdown tasks
             task.min2.run();
-            tasks.put(task.min1, scheduler.scheduleSyncDelayedTask(plugin, task.min1, Utils.secondsToTicks(60)));
-            tasks.put(task.sec30, scheduler.scheduleSyncDelayedTask(plugin, task.sec30, Utils.secondsToTicks(90)));
-            tasks.put(task.sec10, scheduler.scheduleSyncDelayedTask(plugin, task.sec10, Utils.secondsToTicks(110)));
-            tasks.put(task.sec5, scheduler.scheduleSyncDelayedTask(plugin, task.sec5, Utils.secondsToTicks(115)));
-            tasks.put(task.start, scheduler.scheduleSyncDelayedTask(plugin, task.start, Utils.secondsToTicks(120)));
+            tasks.put(task.min1, scheduler.scheduleSyncDelayedTask(plugin, task.min1,
+                    Utils.secondsToTicks(Utils.minutesToSeconds(1))));
+            tasks.put(task.sec30, scheduler.scheduleSyncDelayedTask(plugin, task.sec30,
+                    Utils.secondsToTicks(Utils.minutesToSeconds(1) - 30)));
+            tasks.put(task.sec10, scheduler.scheduleSyncDelayedTask(plugin, task.sec10,
+                    Utils.secondsToTicks(Utils.minutesToSeconds(1) - 10)));
+            tasks.put(task.sec5, scheduler.scheduleSyncDelayedTask(plugin, task.sec5,
+                    Utils.secondsToTicks(Utils.minutesToSeconds(1) - 5)));
+            tasks.put(task.start, scheduler.scheduleSyncDelayedTask(plugin, task.start,
+                    Utils.secondsToTicks(Utils.minutesToSeconds(2))));
         }
 
         // Quick start condition
@@ -178,8 +181,18 @@ public class ArenaEvents implements Listener {
             return;
         }
 
-        // TEMPORARY win condition
-        if (arena.getCurrentWave() == 12)
+        Tasks task = arena.getTask();
+        Map<Runnable, Integer> tasks = task.getTasks();
+
+        // Remove time limit bar
+        if (tasks.containsKey(task.updateBar)) {
+            Bukkit.getScheduler().cancelTask(tasks.get(task.updateBar));
+            tasks.remove(task.updateBar);
+            arena.removeTimeLimitBar();
+        }
+
+        // Win and TEMPORARY condition
+        if (arena.getCurrentDifficulty() == arena.getMaxWaves() || arena.getCurrentWave() == 12)
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
                     Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 
@@ -196,6 +209,13 @@ public class ArenaEvents implements Listener {
             e.setCancelled(true);
             return;
         }
+
+        Tasks task = arena.getTask();
+
+        // Start wave count down
+        if (arena.getWaveTimeLimit() != -1)
+            task.getTasks().put(task.updateBar,
+                Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, task.updateBar, 0, Utils.secondsToTicks(1)));
 
         // Spawn mobs
         spawnVillagers(arena);
@@ -219,8 +239,10 @@ public class ArenaEvents implements Listener {
 
         // Not spectating
         if (!gamer.isSpectating()) {
-            // Remove the player from the arena
+            // Remove the player from the arena and time limit bar if exists
             arena.getPlayers().remove(gamer);
+            if (arena.getTimeLimitBar() != null)
+                arena.removePlayerFromTimeLimitBar(gamer.getPlayer());
 
             // Notify people in arena player left
             arena.getPlayers().forEach(fighter ->
@@ -228,8 +250,7 @@ public class ArenaEvents implements Listener {
 
             // Sets them up for teleport to lobby
             player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
-            Utils.prepTeleAdventure(player);
-            player.teleport(game.getLobby());
+            Utils.teleAdventure(player, game.getLobby());
 
             Tasks task = arena.getTask();
             Map<Runnable, Integer> tasks = task.getTasks();
@@ -269,8 +290,7 @@ public class ArenaEvents implements Listener {
             arena.getPlayers().remove(gamer);
 
             // Sets them up for teleport to lobby
-            Utils.prepTeleAdventure(player);
-            player.teleport(game.getLobby());
+            Utils.teleAdventure(player, game.getLobby());
 
             // Refresh the game portal
             portal.refreshHolo(game.arenas.indexOf(arena), game);
@@ -290,7 +310,15 @@ public class ArenaEvents implements Listener {
             player.getPlayer().sendMessage(Utils.notify("&6You made it to wave &b" +
                     arena.getCurrentWave() + "&6! Ending in 10 seconds.")));
 
+        Tasks task = arena.getTask();
+        Map<Runnable, Integer> tasks = task.getTasks();
+
         // Reset the arena
+        if (tasks.containsKey(task.updateBar)) {
+            Bukkit.getScheduler().cancelTask(tasks.get(task.updateBar));
+            tasks.remove(task.updateBar);
+            arena.removeTimeLimitBar();
+        }
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
                 Bukkit.getPluginManager().callEvent(new ArenaResetEvent(arena)), Utils.secondsToTicks(10));
     }

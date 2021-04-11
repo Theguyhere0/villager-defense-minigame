@@ -52,7 +52,7 @@ public class InventoryEvents implements Listener {
 		e.setCancelled(true);
 	}
 	
-//	All click events in the inventories
+	// All click events in the inventories
 	@EventHandler
 	public void onClick(InventoryClickEvent e) {
 		String title = e.getView().getTitle();
@@ -223,6 +223,11 @@ public class InventoryEvents implements Listener {
 				// Set default min players to 1 if it doesn't exist
 				if (!plugin.getData().contains("a" + arena + ".min")) {
 					plugin.getData().set("a" + arena + ".min", 1);
+				}
+
+				// Set default max waves to -1 if it doesn't exist
+				if (!plugin.getData().contains("a" + arena + ".maxWaves")) {
+					plugin.getData().set("a" + arena + ".maxWaves", -1);
 				}
 
 				// Set default to closed if arena closed doesn't exist
@@ -676,11 +681,11 @@ public class InventoryEvents implements Listener {
 			}
 		}
 
-		// Max player menu for an arena
+		// Min player menu for an arena
 		else if (title.contains("Minimum Players:")) {
 			int current = plugin.getData().getInt("a" + arena + ".min");
 
-			// Decrease max players
+			// Decrease min players
 			if (buttonName.contains("Decrease")) {
 				// Check if min players is greater than 1
 				if (current <= 1) {
@@ -695,7 +700,7 @@ public class InventoryEvents implements Listener {
 				portal.refreshHolo(arena, game);
 			}
 
-			// Increase max players
+			// Increase min players
 			else if (buttonName.contains("Increase")) {
 				// Check if min players is less than max players
 				if (current >= plugin.getData().getInt("a" + arena + ".max")) {
@@ -882,11 +887,13 @@ public class InventoryEvents implements Listener {
 
 		// Game settings menu for an arena
 		else if (title.contains("Game Settings:")) {
-			// Change max rounds
-//			if (buttonName.contains("Max Rounds"))
+			// Change max waves
+			if (buttonName.contains("Max Waves"))
+				openInv(player, inv.createMaxWaveInventory(arena));
 
-			// Change round time limit
-//			else if (buttonName.contains("Round Time Limit"))
+			// Change wave time limit
+			else if (buttonName.contains("Wave Time Limit"))
+				openInv(player, inv.createWaveTimeLimitInventory(arena));
 
 			// Edit allowed kits
 //			else if (buttonName.contains("Allowed Kits"))
@@ -895,8 +902,7 @@ public class InventoryEvents implements Listener {
 //			else if (buttonName.contains("Persistent Rewards"))
 
 			// Edit sounds
-//			else if (buttonName.contains("Sounds"))
-			if (buttonName.contains("Sounds"))
+			else if (buttonName.contains("Sounds"))
 				openInv(player, inv.createSoundsInventory(arena));
 
 			// Copy game settings from another arena
@@ -910,6 +916,124 @@ public class InventoryEvents implements Listener {
 				openInv(player, inv.createArenaInventory(arena));
 		}
 
+		// Max wave menu for an arena
+		else if (title.contains("Maximum Waves:")) {
+			int current = plugin.getData().getInt("a" + arena + ".maxWaves");
+
+			// Decrease max waves
+			if (buttonName.contains("Decrease")) {
+				// Check if max waves is unlimited
+				if (current == -1)
+					plugin.getData().set("a" + arena + ".maxWaves", 1);
+
+				// Check if max waves is greater than 1
+				else if (current <= 1) {
+					player.sendMessage(Utils.notify("&cMax waves cannot be less than 1!"));
+					return;
+				} else plugin.getData().set("a" + arena + ".maxWaves", current - 1);
+
+				plugin.saveData();
+				game.arenas.get(arena).updateArena();
+				openInv(player, inv.createMaxWaveInventory(arena));
+				portal.refreshHolo(arena, game);
+			}
+
+			// Set max waves to unlimited
+			if (buttonName.contains("Unlimited")) {
+				plugin.getData().set("a" + arena + ".maxWaves", -1);
+				plugin.saveData();
+				game.arenas.get(arena).updateArena();
+				openInv(player, inv.createMaxWaveInventory(arena));
+				portal.refreshHolo(arena, game);
+			}
+
+			// Reset max waves to 1
+			if (buttonName.contains("Reset")) {
+				plugin.getData().set("a" + arena + ".maxWaves", 1);
+				plugin.saveData();
+				game.arenas.get(arena).updateArena();
+				openInv(player, inv.createMaxWaveInventory(arena));
+				portal.refreshHolo(arena, game);
+			}
+
+			// Increase max waves
+			else if (buttonName.contains("Increase")) {
+				// Check if max waves is unlimited
+				if (current == -1)
+					plugin.getData().set("a" + arena + ".maxWaves", 1);
+				else plugin.getData().set("a" + arena + ".maxWaves", current + 1);
+
+				plugin.saveData();
+				game.arenas.get(arena).updateArena();
+				openInv(player, inv.createMaxWaveInventory(arena));
+				portal.refreshHolo(arena, game);
+			}
+
+			// Exit menu
+			else if (slot == 8) {
+				openInv(player, inv.createGameSettingsInventory(arena));
+			}
+		}
+
+		// Wave time limit menu for an arena
+		else if (title.contains("Wave Time Limit:")) {
+			int current = plugin.getData().getInt("a" + arena + ".waveTimeLimit");
+
+			// Decrease wave time limit
+			if (buttonName.contains("Decrease")) {
+				// Check if wave time limit is unlimited
+				if (current == -1)
+					plugin.getData().set("a" + arena + ".waveTimeLimit", 1);
+
+				// Check if wave time limit is greater than 1
+				else if (current <= 1) {
+					player.sendMessage(Utils.notify("&cWave time limit cannot be less than 1!"));
+					return;
+				} else plugin.getData().set("a" + arena + ".waveTimeLimit", current - 1);
+
+				plugin.saveData();
+				game.arenas.get(arena).updateArena();
+				openInv(player, inv.createWaveTimeLimitInventory(arena));
+				portal.refreshHolo(arena, game);
+			}
+
+			// Set wave time limit to unlimited
+			if (buttonName.contains("Unlimited")) {
+				plugin.getData().set("a" + arena + ".waveTimeLimit", -1);
+				plugin.saveData();
+				game.arenas.get(arena).updateArena();
+				openInv(player, inv.createWaveTimeLimitInventory(arena));
+				portal.refreshHolo(arena, game);
+			}
+
+			// Reset wave time limit to 1
+			if (buttonName.contains("Reset")) {
+				plugin.getData().set("a" + arena + ".waveTimeLimit", 1);
+				plugin.saveData();
+				game.arenas.get(arena).updateArena();
+				openInv(player, inv.createWaveTimeLimitInventory(arena));
+				portal.refreshHolo(arena, game);
+			}
+
+			// Increase wave time limit
+			else if (buttonName.contains("Increase")) {
+				// Check if wave time limit is unlimited
+				if (current == -1)
+					plugin.getData().set("a" + arena + ".waveTimeLimit", 1);
+				else plugin.getData().set("a" + arena + ".waveTimeLimit", current + 1);
+
+				plugin.saveData();
+				game.arenas.get(arena).updateArena();
+				openInv(player, inv.createWaveTimeLimitInventory(arena));
+				portal.refreshHolo(arena, game);
+			}
+
+			// Exit menu
+			else if (slot == 8) {
+				openInv(player, inv.createGameSettingsInventory(arena));
+			}
+		}
+
 		// Sound settings menu for an arena
 		else if (title.contains("Sounds:")) {
 			// Edit win sound
@@ -918,10 +1042,10 @@ public class InventoryEvents implements Listener {
 			// Edit lose sound
 //			else if (buttonName.contains("Lose"))
 
-			// Edit round start sound
+			// Edit wave start sound
 //			else if (buttonName.contains("Start"))
 
-			// Edit round finish sound
+			// Edit wave finish sound
 //			else if (buttonName.contains("Finish"))
 
 			// Edit waiting music

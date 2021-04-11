@@ -2,12 +2,14 @@ package me.theguyhere.villagerdefense.game;
 
 import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.Main;
+import me.theguyhere.villagerdefense.customEvents.GameEndEvent;
 import me.theguyhere.villagerdefense.customEvents.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.customEvents.WaveEndEvent;
 import me.theguyhere.villagerdefense.customEvents.WaveStartEvent;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.boss.BarColor;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -115,6 +117,7 @@ public class Tasks {
 		@Override
 		public void run() {
 			Arena arenaInstance = game.arenas.get(arena);
+
 			// Increment wave
 			arenaInstance.incrementCurrentWave();
 			int currentWave = arenaInstance.getCurrentWave();
@@ -133,8 +136,7 @@ public class Tasks {
 
 			// Revive dead players
 			arenaInstance.getGhosts().forEach(p -> {
-				Utils.prepTeleAdventure(p.getPlayer());
-				p.getPlayer().teleport(arenaInstance.getPlayerSpawn());
+				Utils.teleAdventure(p.getPlayer(), arenaInstance.getPlayerSpawn());
 				p.getPlayer().getInventory().addItem(new ItemStack(Material.WOODEN_SWORD));
 				p.getPlayer().getInventory().addItem(GameItems.shop());
 			});
@@ -152,6 +154,7 @@ public class Tasks {
 					p.getPlayer().sendMessage(Utils.notify("You have received &a" + reward + " &fgems!"));
 			});
 
+			// Notify spectators of upcoming wave
 			arenaInstance.getSpectators().forEach(p ->
 				p.getPlayer().sendTitle(Utils.format("&6Wave " + currentWave),
 						Utils.format("&7Starting in 15 seconds"), Utils.secondsToTicks(.5) ,
@@ -161,6 +164,8 @@ public class Tasks {
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 					Bukkit.getPluginManager().callEvent(new WaveStartEvent(arenaInstance)),
 					Utils.secondsToTicks(15));
+
+			//
 		}
 		
 	};
@@ -174,14 +179,10 @@ public class Tasks {
 
 			// Teleport players to arena if waiting room exists
 			if (arenaInstance.getWaitingRoom() != null) {
-				arenaInstance.getActives().forEach(player -> {
-					Utils.prepTeleAdventure(player.getPlayer());
-					player.getPlayer().teleport(arenaInstance.getPlayerSpawn());
-				});
-				arenaInstance.getSpectators().forEach(player -> {
-					Utils.prepTeleSpectator(player.getPlayer());
-					player.getPlayer().teleport(arenaInstance.getPlayerSpawn());
-				});
+				arenaInstance.getActives().forEach(player ->
+						Utils.teleAdventure(player.getPlayer(), arenaInstance.getPlayerSpawn()));
+				arenaInstance.getSpectators().forEach(player ->
+						Utils.teleSpectator(player.getPlayer(), arenaInstance.getPlayerSpawn()));
 			}
 
 			// Give all players a wooden sword and a shop while removing pre-game protection
@@ -237,6 +238,44 @@ public class Tasks {
 		@Override
 		public void run() {
 			game.arenas.get(arena).getActives().forEach(game::createBoard);
+		}
+	};
+
+	// Update time limit bar
+	public final Runnable updateBar = new Runnable() {
+		double progress = 1;
+		double time;
+
+		@Override
+		public void run() {
+			Arena arenaInstance = game.arenas.get(arena);
+
+			// Add time limit bar if it doesn't exist
+			if (arenaInstance.getTimeLimitBar() == null) {
+				progress = 1;
+				arenaInstance.startTimeLimitBar();
+				arenaInstance.getPlayers().forEach(vdPlayer ->
+						arenaInstance.addPlayerToTimeLimitBar(vdPlayer.getPlayer()));
+				time = 1d / Utils.minutesToSeconds(arenaInstance.getWaveTimeLimit());
+			}
+
+			else {
+				// Trigger wave end event
+				if (progress <= 0) {
+					progress = 0;
+					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+							Bukkit.getPluginManager().callEvent(new GameEndEvent(arenaInstance)));
+				}
+
+				// Decrement time limit bar
+				else {
+					if (progress <= time * Utils.minutesToSeconds(1))
+						arenaInstance.updateTimeLimitBar(BarColor.RED, progress);
+					else arenaInstance.updateTimeLimitBar(progress);
+					progress -= time;
+				}
+			}
+
 		}
 	};
 }

@@ -21,6 +21,7 @@ public class Utils {
     private final Main plugin;
 
     private static final int SECONDS_TO_TICKS = 20;
+    private static final int MINUTES_TO_SECONDS = 60;
 
     public Utils(Main plugin) {
         this.plugin = plugin;
@@ -163,8 +164,8 @@ public class Utils {
         }
     }
 
-    // Prepares a player to teleport into adventure mode
-    public static void prepTeleAdventure(Player player) {
+    // Prepares and teleports a player into adventure mode
+    public static void teleAdventure(Player player, Location location) {
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
         player.setFireTicks(0);
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
@@ -173,11 +174,12 @@ public class Utils {
         player.setLevel(0);
         player.setFallDistance(0);
         player.getInventory().clear();
+        player.teleport(location);
         player.setGameMode(GameMode.ADVENTURE);
     }
 
-    // Prepares a player to teleport into spectator mode
-    public static void prepTeleSpectator(Player player) {
+    // Prepares and teleports a player into spectator mode
+    public static void teleSpectator(Player player, Location location) {
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
         player.setFireTicks(0);
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
@@ -185,6 +187,7 @@ public class Utils {
         player.setSaturation(20);
         player.setLevel(0);
         player.getInventory().clear();
+        player.teleport(location);
         player.setGameMode(GameMode.SPECTATOR);
     }
 
@@ -283,14 +286,14 @@ public class Utils {
         });
     }
 
-    // Converts integer seconds to ticks
-    public static int secondsToTicks(int seconds) {
-        return seconds * SECONDS_TO_TICKS;
+    // Converts seconds to ticks
+    public static int secondsToTicks(double seconds) {
+        return (int) (seconds * SECONDS_TO_TICKS);
     }
 
-    // Converts double seconds to ticks
-    public static int secondsToTicks(double seconds) {
-        return (int) seconds * SECONDS_TO_TICKS;
+    // Converts minutes to seconds
+    public static int minutesToSeconds(double minutes) {
+        return (int) (minutes * MINUTES_TO_SECONDS);
     }
 
     // Returns a formatted health bar

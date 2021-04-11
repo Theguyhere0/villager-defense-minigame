@@ -14,7 +14,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -97,9 +99,17 @@ public class GameEvents implements Listener {
 		arena.getTask().updateBoards.run();
 	}
 
+	// Stop automatic game mode switching between worlds
+	@EventHandler
+	public void onGameModeSwitch(PlayerGameModeChangeEvent e) {
+		if (game.arenas.stream().filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(e.getPlayer())) &&
+				e.getNewGameMode() == GameMode.SURVIVAL) e.setCancelled(true);
+	}
+
 	// Handle creeper explosions
 	@EventHandler
-	public void onExplode(EntityExplodeEvent e) {
+	public void onExplode(ExplosionPrimeEvent e) {
+
 		Entity ent = e.getEntity();
 
 		// Check for arena enemies
@@ -112,7 +122,6 @@ public class GameEvents implements Listener {
 		if (!arena.isActive())
 			return;
 
-		System.out.println("reached");
 		// Decrement enemy count
 		arena.decrementEnemies();
 
@@ -231,7 +240,7 @@ public class GameEvents implements Listener {
 				return;
 
 			// Ignore clicks in player's own inventory
-			if (e.getClickedInventory().getType() == InventoryType.PLAYER)
+			if (e.getClickedInventory() != null && e.getClickedInventory().getType() == InventoryType.PLAYER)
 				return;
 			e.setCancelled(true);
 
@@ -390,8 +399,7 @@ public class GameEvents implements Listener {
 		int wave = arena.getCurrentWave();
 		int earned = 0;
 		for (int i = 0; i < stack; i++)
-			earned += r.nextInt(Math.toIntExact(
-					Math.round(40 * Math.pow(wave, 1 / (2 + Math.pow(Math.E, -wave + 3))))));
+			earned += r.nextInt((int) (40 * Math.pow(wave, .15)));
 		gamer.addGems(earned);
 
 		// Cancel picking up of emeralds and notify player

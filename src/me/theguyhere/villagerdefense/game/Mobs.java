@@ -110,9 +110,8 @@ public class Mobs {
         // Set material
         switch ((int) difficulty) {
             case 1:
-                return null;
             case 2:
-                if (r.nextDouble() < difficulty - 2)
+                if (r.nextDouble() < (difficulty - 1) / 2)
                     mat = Material.WOODEN_SWORD;
                 else return null;
                 break;
@@ -271,9 +270,8 @@ public class Mobs {
         // Set material
         switch ((int) difficulty) {
             case 1:
-                return null;
             case 2:
-                if (r.nextDouble() < difficulty - 2)
+                if (r.nextDouble() < (difficulty - 1) / 2)
                     mat = Material.WOODEN_AXE;
                 else return null;
                 break;
@@ -604,9 +602,8 @@ public class Mobs {
 
         switch ((int) difficulty) {
             case 1:
-                return null;
             case 2:
-                if (r.nextDouble() < difficulty - 2)
+                if (r.nextDouble() < (difficulty - 1) / 2)
                     return new ItemStack(Material.LEATHER_HELMET);
                 else return null;
             case 3:
@@ -644,9 +641,8 @@ public class Mobs {
 
         switch ((int) difficulty) {
             case 1:
-                return null;
             case 2:
-                if (r.nextDouble() < difficulty - 2)
+                if (r.nextDouble() < (difficulty - 1) / 2)
                     return new ItemStack(Material.LEATHER_CHESTPLATE);
                 else return null;
             case 3:
@@ -684,9 +680,8 @@ public class Mobs {
 
         switch ((int) difficulty) {
             case 1:
-                return null;
             case 2:
-                if (r.nextDouble() < difficulty - 2)
+                if (r.nextDouble() < (difficulty - 1) / 2)
                     return new ItemStack(Material.LEATHER_LEGGINGS);
                 else return null;
             case 3:
@@ -724,9 +719,8 @@ public class Mobs {
 
         switch ((int) difficulty) {
             case 1:
-                return null;
             case 2:
-                if (r.nextDouble() < difficulty - 2)
+                if (r.nextDouble() < (difficulty - 1) / 2)
                     return new ItemStack(Material.LEATHER_BOOTS);
                 else return null;
             case 3:
