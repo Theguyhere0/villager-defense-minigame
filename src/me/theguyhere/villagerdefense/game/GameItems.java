@@ -3105,7 +3105,7 @@ public class GameItems {
 					price += 320;
 				} else {
 					mat = Material.IRON_CHESTPLATE;
-					price += 429;
+					price += 420;
 				}
 				break;
 			case 2:

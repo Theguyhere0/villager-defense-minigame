@@ -81,6 +81,7 @@ public class GameEvents implements Listener {
 		else {
 			// Clear normal drops
 			e.getDrops().clear();
+			e.setDroppedExp(0);
 
 			// Set drop to emerald
 			e.getDrops().add(Utils.createItem(Material.EMERALD, null, Integer.toString(arena.getArena())));

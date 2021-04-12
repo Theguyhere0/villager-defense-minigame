@@ -1,11 +1,13 @@
 package me.theguyhere.villagerdefense.GUI;
 
 import me.theguyhere.villagerdefense.Main;
+import me.theguyhere.villagerdefense.customEvents.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.game.Arena;
 import me.theguyhere.villagerdefense.game.Game;
 import me.theguyhere.villagerdefense.game.Portal;
 import me.theguyhere.villagerdefense.game.Tasks;
 import me.theguyhere.villagerdefense.tools.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -99,6 +101,12 @@ public class InventoryEvents implements Listener {
 			// Open lobby menu
 			else if (buttonName.contains("Lobby"))
 				openInv(player, inv.createLobbyInventory());
+
+			// Open info holograms menu
+//			else if (buttonName.contains("Info Holograms"))
+
+			// Open leaderboards menu
+//			else if (buttonName.contains("Leaderboards"))
 
 			// Close inventory
 			else if (buttonName.contains("EXIT"))
@@ -254,8 +262,11 @@ public class InventoryEvents implements Listener {
 		else if (title.contains(Utils.format("&2&lEdit "))) {
 
 			// Open name editor
-			if (buttonName.contains("Edit Name"))
-				openInv(player, inv.createNamingInventory(arena));
+			if (buttonName.contains("Edit Name")) {
+				if (plugin.getData().getBoolean("a" + arena + ".closed"))
+					openInv(player, inv.createNamingInventory(arena));
+				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+			}
 
 			// Open portal menu
 			else if (buttonName.contains("Game Portal"))
@@ -316,7 +327,12 @@ public class InventoryEvents implements Listener {
 				}
 
 				// Arena currently open
-				else plugin.getData().set("a" + arena + ".closed", true);
+				else {
+					plugin.getData().set("a" + arena + ".closed", true);
+					game.arenas.get(arena).getPlayers().forEach(vdPlayer ->
+							Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+									Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(vdPlayer.getPlayer()))));
+				}
 				plugin.saveData();
 				game.arenas.get(arena).updateArena();
 				openInv(player, inv.createArenaInventory(arena));
@@ -324,8 +340,11 @@ public class InventoryEvents implements Listener {
 			}
 
 			// Open arena remove confirmation menu
-			else if (buttonName.contains("REMOVE"))
-				openInv(player, inv.createArenaConfirmInventory(arena));
+			else if (buttonName.contains("REMOVE")) {
+				if (plugin.getData().getBoolean("a" + arena + ".closed"))
+					openInv(player, inv.createArenaConfirmInventory(arena));
+				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+			}
 
 			// Return to arenas menu
 			else if (buttonName.contains("EXIT"))
@@ -490,12 +509,15 @@ public class InventoryEvents implements Listener {
 			String path = "portal." + arena;
 
 			// Create portal, then return to previous menu
-			if (buttonName.contains("Create Portal"))
-				if (!plugin.getData().contains(path)) {
-					portal.createPortal(player, arena, game);
-					player.sendMessage(Utils.notify("&aPortal set!"));
-					openInv(player, inv.createArenaInventory(arena));
-				} else player.sendMessage(Utils.notify("&cPortal already exists!"));
+			if (buttonName.contains("Create Portal")) {
+				if (plugin.getData().getBoolean("a" + arena + ".closed")) {
+					if (!plugin.getData().contains(path)) {
+						portal.createPortal(player, arena, game);
+						player.sendMessage(Utils.notify("&aPortal set!"));
+						openInv(player, inv.createArenaInventory(arena));
+					} else player.sendMessage(Utils.notify("&cPortal already exists!"));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+			}
 
 			// Teleport player to portal
 			else if (buttonName.contains("Teleport")) {
@@ -510,19 +532,24 @@ public class InventoryEvents implements Listener {
 
 			// Center portal
 			else if (buttonName.contains("Center")) {
-				if (utils.getConfigLocationNoPitch(path) == null) {
-					player.sendMessage(Utils.notify("&cNo portal to center!"));
-					return;
-				}
-				utils.centerConfigLocation(path);
-				portal.removePortalAll(arena);
-				portal.loadPortal(utils.getConfigLocationNoPitch(path), arena, game);
-				player.sendMessage(Utils.notify("&aPortal centered!"));
+				if (plugin.getData().getBoolean("a" + arena + ".closed")) {
+					if (utils.getConfigLocationNoPitch(path) == null) {
+						player.sendMessage(Utils.notify("&cNo portal to center!"));
+						return;
+					}
+					utils.centerConfigLocation(path);
+					portal.removePortalAll(arena);
+					portal.loadPortal(utils.getConfigLocationNoPitch(path), arena, game);
+					player.sendMessage(Utils.notify("&aPortal centered!"));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 			}
 
 			// Remove portal
-			else if (buttonName.contains("REMOVE"))
-				openInv(player, inv.createPortalConfirmInventory());
+			else if (buttonName.contains("REMOVE")) {
+				if (plugin.getData().getBoolean("a" + arena + ".closed"))
+					openInv(player, inv.createPortalConfirmInventory());
+				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+			}
 
 			// Exit menu
 			else if (buttonName.contains("EXIT"))
@@ -543,12 +570,18 @@ public class InventoryEvents implements Listener {
 				openInv(player, inv.createWaitingRoomInventory(arena));
 
 			// Edit max players
-			else if (buttonName.contains("Maximum"))
-				openInv(player, inv.createMaxPlayerInventory(arena));
+			else if (buttonName.contains("Maximum")) {
+				if (plugin.getData().getBoolean("a" + arena + ".closed"))
+					openInv(player, inv.createMaxPlayerInventory(arena));
+				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+			}
 
 			// Edit min players
-			else if (buttonName.contains("Minimum"))
-				openInv(player, inv.createMinPlayerInventory(arena));
+			else if (buttonName.contains("Minimum")) {
+				if (plugin.getData().getBoolean("a" + arena + ".closed"))
+					openInv(player, inv.createMinPlayerInventory(arena));
+				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+			}
 
 			// Exit menu
 			else if (buttonName.contains("EXIT"))
@@ -560,13 +593,16 @@ public class InventoryEvents implements Listener {
 			String path = "a" + arena + ".spawn";
 
 			// Create spawn, then return to previous menu
-			if (buttonName.contains("Create"))
-				if (!plugin.getData().contains(path)) {
-					utils.setConfigurationLocation(path, player.getLocation());
-					game.arenas.get(arena).updateArena();
-					player.sendMessage(Utils.notify("&aSpawn set!"));
-					openInv(player, inv.createPlayersInventory(arena));
-				} else player.sendMessage(Utils.notify("&cPlayer spawn already exists!"));
+			if (buttonName.contains("Create")) {
+				if (plugin.getData().getBoolean("a" + arena + ".closed")) {
+					if (!plugin.getData().contains(path)) {
+						utils.setConfigurationLocation(path, player.getLocation());
+						game.arenas.get(arena).updateArena();
+						player.sendMessage(Utils.notify("&aSpawn set!"));
+						openInv(player, inv.createPlayersInventory(arena));
+					} else player.sendMessage(Utils.notify("&cPlayer spawn already exists!"));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+			}
 
 			// Teleport player to spawn
 			else if (buttonName.contains("Teleport")) {
@@ -581,17 +617,22 @@ public class InventoryEvents implements Listener {
 
 			// Center player spawn
 			else if (buttonName.contains("Center")) {
-				if (utils.getConfigLocationNoRotation(path) == null) {
-					player.sendMessage(Utils.notify("&cNo player spawn to center!"));
-					return;
-				}
-				utils.centerConfigLocation(path);
-				player.sendMessage(Utils.notify("&aSpawn centered!"));
+				if (plugin.getData().getBoolean("a" + arena + ".closed")) {
+					if (utils.getConfigLocationNoRotation(path) == null) {
+						player.sendMessage(Utils.notify("&cNo player spawn to center!"));
+						return;
+					}
+					utils.centerConfigLocation(path);
+					player.sendMessage(Utils.notify("&aSpawn centered!"));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 			}
 
 			// Remove spawn
-			else if (buttonName.contains("REMOVE"))
-				openInv(player, inv.createSpawnConfirmInventory());
+			else if (buttonName.contains("REMOVE")) {
+				if (plugin.getData().getBoolean("a" + arena + ".closed"))
+					openInv(player, inv.createSpawnConfirmInventory());
+				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+			}
 
 			// Exit menu
 			else if (buttonName.contains("EXIT"))
@@ -603,13 +644,16 @@ public class InventoryEvents implements Listener {
 			String path = "a" + arena + ".waiting";
 
 			// Create waiting room, then return to previous menu
-			if (buttonName.contains("Create"))
-				if (!plugin.getData().contains(path)) {
-					utils.setConfigurationLocation(path, player.getLocation());
-					game.arenas.get(arena).updateArena();
-					player.sendMessage(Utils.notify("&aWaiting room set!"));
-					openInv(player, inv.createPlayersInventory(arena));
-				} else player.sendMessage(Utils.notify("&cWaiting room already exists!"));
+			if (buttonName.contains("Create")) {
+				if (plugin.getData().getBoolean("a" + arena + ".closed")) {
+					if (!plugin.getData().contains(path)) {
+						utils.setConfigurationLocation(path, player.getLocation());
+						game.arenas.get(arena).updateArena();
+						player.sendMessage(Utils.notify("&aWaiting room set!"));
+						openInv(player, inv.createPlayersInventory(arena));
+					} else player.sendMessage(Utils.notify("&cWaiting room already exists!"));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+			}
 
 			// Teleport player to waiting room
 			else if (buttonName.contains("Teleport")) {
@@ -624,17 +668,22 @@ public class InventoryEvents implements Listener {
 
 			// Center waiting room
 			else if (buttonName.contains("Center")) {
-				if (utils.getConfigLocationNoRotation(path) == null) {
-					player.sendMessage(Utils.notify("&cNo waiting room to center!"));
-					return;
-				}
-				utils.centerConfigLocation(path);
-				player.sendMessage(Utils.notify("&aWaiting room centered!"));
+				if (plugin.getData().getBoolean("a" + arena + ".closed")) {
+					if (utils.getConfigLocationNoRotation(path) == null) {
+						player.sendMessage(Utils.notify("&cNo waiting room to center!"));
+						return;
+					}
+					utils.centerConfigLocation(path);
+					player.sendMessage(Utils.notify("&aWaiting room centered!"));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 			}
 
 			// Remove waiting room
-			else if (buttonName.contains("REMOVE"))
-				openInv(player, inv.createWaitingConfirmInventory());
+			else if (buttonName.contains("REMOVE")) {
+				if (plugin.getData().getBoolean("a" + arena + ".closed"))
+					openInv(player, inv.createWaitingConfirmInventory());
+				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+			}
 
 			// Exit menu
 			else if (buttonName.contains("EXIT"))
@@ -770,13 +819,16 @@ public class InventoryEvents implements Listener {
 			String path = "a" + arena + ".monster." + oldSlot;
 
 			// Create spawn
-			if (buttonName.contains("Create Spawn"))
-				if (!plugin.getData().contains(path)) {
-					utils.setConfigurationLocation(path, player.getLocation());
-					game.arenas.get(arena).updateArena();
-					player.sendMessage(Utils.notify("&aMonster spawn set!"));
-					openInv(player, inv.createMonsterSpawnInventory(arena));
-				} else player.sendMessage(Utils.notify("&cMonster spawn already exists!"));
+			if (buttonName.contains("Create Spawn")) {
+				if (plugin.getData().getBoolean("a" + arena + ".closed")) {
+					if (!plugin.getData().contains(path)) {
+						utils.setConfigurationLocation(path, player.getLocation());
+						game.arenas.get(arena).updateArena();
+						player.sendMessage(Utils.notify("&aMonster spawn set!"));
+						openInv(player, inv.createMonsterSpawnInventory(arena));
+					} else player.sendMessage(Utils.notify("&cMonster spawn already exists!"));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+			}
 
 			// Teleport player to spawn
 			else if (buttonName.contains("Teleport")) {
@@ -789,19 +841,25 @@ public class InventoryEvents implements Listener {
 				player.closeInventory();
 			}
 
-			// Center villager spawn
+			// Center monster spawn
 			else if (buttonName.contains("Center")) {
-				if (utils.getConfigLocationNoRotation(path) == null) {
-					player.sendMessage(Utils.notify("&cNo monster spawn to center!"));
-					return;
-				}
-				utils.centerConfigLocation(path);
-				player.sendMessage(Utils.notify("&aMonster spawn centered!"));
+				if (plugin.getData().getBoolean("a" + arena + ".closed")) {
+					if (utils.getConfigLocationNoRotation(path) == null) {
+						player.sendMessage(Utils.notify("&cNo monster spawn to center!"));
+						return;
+					}
+					utils.centerConfigLocation(path);
+					player.sendMessage(Utils.notify("&aMonster spawn centered!"));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 			}
 
 			// Remove spawn
-			else if (buttonName.contains("REMOVE"))
-				openInv(player, inv.createMonsterSpawnConfirmInventory());
+			else if (buttonName.contains("REMOVE")) {
+				if (plugin.getData().getBoolean("a" + arena + ".closed"))
+					openInv(player, inv.createMonsterSpawnConfirmInventory());
+				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+			}
+
 
 			// Exit menu
 			else if (buttonName.contains("EXIT"))
@@ -827,13 +885,16 @@ public class InventoryEvents implements Listener {
 			String path = "a" + arena + ".villager." + oldSlot;
 
 			// Create spawn
-			if (buttonName.contains("Create Spawn"))
-				if (!plugin.getData().contains(path)) {
-					utils.setConfigurationLocation(path, player.getLocation());
-					game.arenas.get(arena).updateArena();
-					player.sendMessage(Utils.notify("&aVillager spawn set!"));
-					openInv(player, inv.createVillagerSpawnInventory(arena));
-				} else player.sendMessage(Utils.notify("&cVillager spawn already exists!"));
+			if (buttonName.contains("Create Spawn")) {
+				if (plugin.getData().getBoolean("a" + arena + ".closed")) {
+					if (!plugin.getData().contains(path)) {
+						utils.setConfigurationLocation(path, player.getLocation());
+						game.arenas.get(arena).updateArena();
+						player.sendMessage(Utils.notify("&aVillager spawn set!"));
+						openInv(player, inv.createVillagerSpawnInventory(arena));
+					} else player.sendMessage(Utils.notify("&cVillager spawn already exists!"));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+			}
 
 			// Teleport player to spawn
 			else if (buttonName.contains("Teleport")) {
@@ -848,17 +909,22 @@ public class InventoryEvents implements Listener {
 
 			// Center villager spawn
 			else if (buttonName.contains("Center")) {
-				if (utils.getConfigLocationNoRotation(path) == null) {
-					player.sendMessage(Utils.notify("&cNo villager spawn to center!"));
-					return;
-				}
-				utils.centerConfigLocation(path);
-				player.sendMessage(Utils.notify("&aVillager spawn centered!"));
+				if (plugin.getData().getBoolean("a" + arena + ".closed")) {
+					if (utils.getConfigLocationNoRotation(path) == null) {
+						player.sendMessage(Utils.notify("&cNo villager spawn to center!"));
+						return;
+					}
+					utils.centerConfigLocation(path);
+					player.sendMessage(Utils.notify("&aVillager spawn centered!"));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 			}
 
 			// Remove spawn
-			else if (buttonName.contains("REMOVE"))
-				openInv(player, inv.createVillagerSpawnConfirmInventory());
+			else if (buttonName.contains("REMOVE")) {
+				if (plugin.getData().getBoolean("a" + arena + ".closed"))
+					openInv(player, inv.createVillagerSpawnConfirmInventory());
+				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+			}
 
 			// Exit menu
 			else if (buttonName.contains("EXIT"))
@@ -888,12 +954,18 @@ public class InventoryEvents implements Listener {
 		// Game settings menu for an arena
 		else if (title.contains("Game Settings:")) {
 			// Change max waves
-			if (buttonName.contains("Max Waves"))
-				openInv(player, inv.createMaxWaveInventory(arena));
+			if (buttonName.contains("Max Waves")) {
+				if (plugin.getData().getBoolean("a" + arena + ".closed"))
+					openInv(player, inv.createMaxWaveInventory(arena));
+				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+			}
 
 			// Change wave time limit
-			else if (buttonName.contains("Wave Time Limit"))
-				openInv(player, inv.createWaveTimeLimitInventory(arena));
+			else if (buttonName.contains("Wave Time Limit")) {
+				if (plugin.getData().getBoolean("a" + arena + ".closed"))
+					openInv(player, inv.createWaveTimeLimitInventory(arena));
+				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+			}
 
 			// Edit allowed kits
 //			else if (buttonName.contains("Allowed Kits"))
@@ -902,8 +974,11 @@ public class InventoryEvents implements Listener {
 //			else if (buttonName.contains("Persistent Rewards"))
 
 			// Edit sounds
-			else if (buttonName.contains("Sounds"))
-				openInv(player, inv.createSoundsInventory(arena));
+			else if (buttonName.contains("Sounds")) {
+				if (plugin.getData().getBoolean("a" + arena + ".closed"))
+					openInv(player, inv.createSoundsInventory(arena));
+				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+			}
 
 			// Copy game settings from another arena
 //			else if (buttonName.contains("Copy Game Settings"))
