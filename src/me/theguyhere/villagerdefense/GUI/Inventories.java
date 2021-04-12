@@ -627,29 +627,34 @@ public class Inventories {
 		// Option to wave time limit
 		inv.setItem(1, Utils.createItem(Material.CLOCK, Utils.format("&2&lWave Time Limit")));
 
+		// Option to toggle dynamic wave time limit
+		inv.setItem(2, Utils.createItem(Material.SNOWBALL,
+				Utils.format("&a&lToggle Dynamic Time Limit"),
+				Utils.format(CONSTRUCTION)));
+
 		// Option to edit allowed kits
-		inv.setItem(2, Utils.createItem(Material.ENDER_CHEST,
+		inv.setItem(3, Utils.createItem(Material.ENDER_CHEST,
 				Utils.format("&9&lAllowed Kits"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to edit persistent rewards
-		inv.setItem(3, Utils.createItem(Material.EMERALD,
-				Utils.format("&a&lPersistent Rewards"),
+		inv.setItem(4, Utils.createItem(Material.EMERALD,
+				Utils.format("&b&lPersistent Rewards"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to edit sounds
-		inv.setItem(4, Utils.createItem(Material.MUSIC_DISC_13,
+		inv.setItem(5, Utils.createItem(Material.MUSIC_DISC_13,
 				Utils.format("&d&lSounds"),
 				FLAGS,
 				null));
 
 		// Option to copy game settings from another arena
-		inv.setItem(5, Utils.createItem(Material.FEATHER,
+		inv.setItem(6, Utils.createItem(Material.FEATHER,
 				Utils.format("&7&lCopy Game Settings"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to copy arena settings from another arena
-		inv.setItem(6, Utils.createItem(Material.WRITABLE_BOOK,
+		inv.setItem(7, Utils.createItem(Material.WRITABLE_BOOK,
 				Utils.format("&8&lCopy Arena Settings"),
 				Utils.format(CONSTRUCTION)));
 

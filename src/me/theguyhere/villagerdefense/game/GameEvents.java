@@ -181,6 +181,8 @@ public class GameEvents implements Listener {
 
 		// Don't handle entity on entity damage
 		if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK ||
+				e.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK||
+				e.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION||
 				e.getCause() == EntityDamageEvent.DamageCause.PROJECTILE)
 			return;
 
@@ -251,7 +253,7 @@ public class GameEvents implements Listener {
 
 			// Check if they can afford the item
 			if (!gamer.canAfford(cost)) {
-				player.sendMessage(Utils.notify("&cYou can't afford this!"));
+				player.sendMessage(Utils.notify("&cYou can't afford this item!"));
 				return;
 			}
 
@@ -286,7 +288,7 @@ public class GameEvents implements Listener {
 		}
 	}
 	
-	// Stops players from hurting villagers and other players
+	// Stops players from hurting villagers and other players, and monsters from hurting each other
 	@EventHandler
 	public void onFriendlyFire(EntityDamageByEntityEvent e) {
 		Entity ent = e.getEntity();

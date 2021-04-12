@@ -967,6 +967,9 @@ public class InventoryEvents implements Listener {
 				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 			}
 
+			// Toggle dynamic wave time limit
+//			else if (buttonName.contains("Toggle Dynamic Time Limit"))
+
 			// Edit allowed kits
 //			else if (buttonName.contains("Allowed Kits"))
 
