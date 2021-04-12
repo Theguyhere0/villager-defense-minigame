@@ -10,6 +10,7 @@ import me.theguyhere.villagerdefense.genListeners.Death;
 import me.theguyhere.villagerdefense.genListeners.Join;
 import me.theguyhere.villagerdefense.tools.DataManager;
 import me.theguyhere.villagerdefense.tools.PacketReader;
+import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -22,6 +23,7 @@ public class Main extends JavaPlugin {
 	private final DataManager data = new DataManager(this);
 	private final Portal portal = new Portal(this);
 	private final InventoryItems ii = new InventoryItems();
+	private final Utils utils = new Utils(this);
 	private PacketReader reader;
 	private Game game;
 
@@ -31,7 +33,7 @@ public class Main extends JavaPlugin {
 		saveDefaultConfig();
 
 		game = new Game(this, portal);
-		Inventories inventories = new Inventories(game, ii);
+		Inventories inventories = new Inventories(this, game, ii);
 		Commands commands = new Commands(this, inventories, game);
 
 		if (!Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
@@ -52,7 +54,7 @@ public class Main extends JavaPlugin {
 
 		// Register event listeners
 		pm.registerEvents(new InventoryEvents(this, game, inventories, portal), this);
-		pm.registerEvents(new Join(this, portal, reader), this);
+		pm.registerEvents(new Join(this, portal, reader, game), this);
 		pm.registerEvents(new Death(portal, reader), this);
 		pm.registerEvents(new ClickPortalEvents(game, portal), this);
 		pm.registerEvents(new GameEvents(this, game), this);
@@ -68,8 +70,8 @@ public class Main extends JavaPlugin {
 		if (getData().contains("portal"))
 			loadPortals();
 
-		int currentCVersion = 3;
-		int currentDVersion = 3;
+		int currentCVersion = 4;
+		int currentDVersion = 4;
 
 		// Check config version
 		if (getConfig().getInt("version") < currentCVersion) {
@@ -114,16 +116,9 @@ public class Main extends JavaPlugin {
 	// Load saved NPCs
 	public void loadPortals() {
 		getData().getConfigurationSection("portal").getKeys(false).forEach(portal -> {
-			try {
-				Location location = new Location(Bukkit.getWorld(getData().getString("portal." + portal + ".world")),
-						getData().getDouble("portal." + portal + ".x"),
-						getData().getDouble("portal." + portal + ".y"),
-						getData().getDouble("portal." + portal + ".z"));
-				location.setYaw((float) getData().getDouble("portal." + portal + ".yaw"));
-
+			Location location = utils.getConfigLocationNoPitch("portal." + portal);
+			if (location != null)
 				this.portal.loadPortal(location, Integer.parseInt(portal), game);
-			} catch (Exception ignored) {
-			}
 		});
 	}
 }

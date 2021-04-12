@@ -2,8 +2,12 @@ package me.theguyhere.villagerdefense.game;
 
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.tools.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
@@ -21,7 +25,10 @@ public class Arena {
     private String name; // Name of the arena
     private int maxPlayers; // Maximum players in an arena
     private int minPlayers; // Minimum players in an arena
+    private int maxWaves; // Maximum waves in an arena
+    private int waveTimeLimit; // Base wave time limit
     private Location playerSpawn; // Location of player spawn
+    private Location waitingRoom; // Location of waiting room
     private List<Location> monsterSpawns = new ArrayList<>(); // List of monster spawn locations
     private List<Location> villagerSpawns = new ArrayList<>(); // List of villager spawn locations
     private boolean closed; // Indicates whether the arena is closed
@@ -36,6 +43,7 @@ public class Arena {
     private int enemies; // Enemy count
     private final List<VDPlayer> players = new ArrayList<>(); // Tracks players playing and their other related stats
     private Inventory shop; // Shop inventory
+    private BossBar timeLimitBar; // Time limit bar
 
     public Arena(Main plugin, int arena, Tasks task) {
         this.plugin = plugin;
@@ -46,6 +54,10 @@ public class Arena {
         villagers = 0;
         enemies = 0;
         updateArena();
+    }
+
+    public int getArena() {
+        return arena;
     }
 
     public String getName() {
@@ -64,8 +76,20 @@ public class Arena {
         return minPlayers;
     }
 
+    public int getMaxWaves() {
+        return maxWaves;
+    }
+
+    public int getWaveTimeLimit() {
+        return waveTimeLimit;
+    }
+
     public Location getPlayerSpawn() {
         return playerSpawn;
+    }
+
+    public Location getWaitingRoom() {
+        return waitingRoom;
     }
 
     public List<Location> getMonsterSpawns() {
@@ -110,6 +134,10 @@ public class Arena {
 
     public int getCurrentWave() {
         return currentWave;
+    }
+
+    public double getCurrentDifficulty() {
+        return Math.pow(Math.E, Math.pow(currentWave - 1, .6) / 5);
     }
 
     public void incrementCurrentWave() {
@@ -205,11 +233,45 @@ public class Arena {
         this.shop = shop;
     }
 
+    public BossBar getTimeLimitBar() {
+        return timeLimitBar;
+    }
+
+    public void startTimeLimitBar() {
+        timeLimitBar = Bukkit.createBossBar(Utils.format("&eWave " + getCurrentWave() + " Time Limit"),
+                BarColor.YELLOW, BarStyle.SOLID);
+    }
+
+    public void updateTimeLimitBar(double progress) {
+        timeLimitBar.setProgress(progress);
+    }
+
+    public void updateTimeLimitBar(BarColor color, double progress) {
+        timeLimitBar.setColor(color);
+        timeLimitBar.setProgress(progress);
+    }
+
+    public void removeTimeLimitBar() {
+        players.forEach(vdPlayer -> timeLimitBar.removePlayer(vdPlayer.getPlayer()));
+        timeLimitBar = null;
+    }
+
+    public void addPlayerToTimeLimitBar(Player player) {
+        timeLimitBar.addPlayer(player);
+    }
+
+    public void removePlayerFromTimeLimitBar(Player player) {
+        timeLimitBar.removePlayer(player);
+    }
+
     public void updateArena() {
         name = plugin.getData().getString("a" + arena + ".name");
         maxPlayers = plugin.getData().getInt("a" + arena + ".max");
         minPlayers = plugin.getData().getInt("a" + arena + ".min");
-        playerSpawn = utils.getConfigLocation("a" + arena + ".spawn");
+        maxWaves = plugin.getData().getInt("a" + arena + ".maxWaves");
+        waveTimeLimit = plugin.getData().getInt("a" + arena + ".waveTimeLimit");
+        playerSpawn = utils.getConfigLocationNoRotation("a" + arena + ".spawn");
+        waitingRoom = utils.getConfigLocationNoRotation("a" + arena + ".waiting");
         monsterSpawns = utils.getConfigLocationList("a" + arena + ".monster").stream()
                 .filter(Objects::nonNull).collect(Collectors.toList());
         villagerSpawns = utils.getConfigLocationList("a" + arena + ".villager").stream()

@@ -25,7 +25,7 @@ public class Game {
 				arenas.set(Integer.parseInt(path.substring(1)), new Arena(plugin, Integer.parseInt(path.substring(1)),
 						new Tasks(plugin, this, Integer.parseInt(path.substring(1)), portal)));
 		});
-		lobby = utils.getConfigLocation("lobby");
+		lobby = utils.getConfigLocationNoRotation("lobby");
 	}
 
 	public Location getLobby() {
@@ -33,7 +33,7 @@ public class Game {
 	}
 
 	public void reloadLobby() {
-		lobby = utils.getConfigLocation("lobby");
+		lobby = utils.getConfigLocationNoRotation("lobby");
 	}
 
 	// Creates a game board for the player
@@ -45,17 +45,17 @@ public class Game {
 
 		// Create score board
 		Objective obj = board.registerNewObjective("VillagerDefense", "dummy",
-				Utils.format("&6&l  " + arena.getName() + "  "));
+				Utils.format("&6&l   " + arena.getName() + "  "));
 		obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 		Score score9 = obj.getScore(Utils.format("&eWave: " + arena.getCurrentWave()));
 		score9.setScore(9);
-		Score score8 = obj.getScore(Utils.format("&2Gems: " + player.getGems()));
+		Score score8 = obj.getScore(Utils.format("&aGems: " + player.getGems()));
 		score8.setScore(8);
 		Score score7 = obj.getScore("");
 		score7.setScore(7);
-		Score score6 = obj.getScore(Utils.format("&aPlayers: " + arena.getAlive()));
+		Score score6 = obj.getScore(Utils.format("&dPlayers: " + arena.getAlive()));
 		score6.setScore(6);
-		Score score5 = obj.getScore(Utils.format("&2Ghosts: " + arena.getGhostCount()));
+		Score score5 = obj.getScore("Ghosts: " + arena.getGhostCount());
 		score5.setScore(5);
 		Score score4 = obj.getScore(Utils.format("&7Spectators: " + arena.getSpectatorCount()));
 		score4.setScore(4);

@@ -7,20 +7,22 @@ import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -28,6 +30,21 @@ import java.util.stream.Collectors;
 public class GameEvents implements Listener {
 	private final Main plugin;
 	private final Game game;
+
+	// Constants for armor types
+	private final Material[] HELMETS = {Material.LEATHER_HELMET, Material.GOLDEN_HELMET, Material.CHAINMAIL_HELMET,
+			Material.IRON_HELMET, Material.DIAMOND_HELMET, Material.NETHERITE_HELMET, Material.TURTLE_HELMET
+	};
+	private final Material[] CHESTPLATES = {Material.LEATHER_CHESTPLATE, Material.GOLDEN_CHESTPLATE,
+			Material.CHAINMAIL_CHESTPLATE, Material.IRON_CHESTPLATE, Material.DIAMOND_CHESTPLATE,
+			Material.NETHERITE_HELMET
+	};
+	private final Material[] LEGGINGS = {Material.LEATHER_LEGGINGS, Material.GOLDEN_LEGGINGS,
+			Material.CHAINMAIL_LEGGINGS, Material.IRON_LEGGINGS, Material.DIAMOND_LEGGINGS, Material.NETHERITE_LEGGINGS
+	};
+	private final Material[] BOOTS = {Material.LEATHER_BOOTS, Material.GOLDEN_BOOTS, Material.CHAINMAIL_BOOTS,
+			Material.IRON_BOOTS, Material.DIAMOND_BOOTS, Material.NETHERITE_BOOTS
+	};
 
 	public GameEvents (Main plugin, Game game) {
 		this.plugin = plugin;
@@ -40,14 +57,16 @@ public class GameEvents implements Listener {
 		Entity ent = e.getEntity();
 
 		// Check for arena enemies
-		if (!ent.getName().contains("VD"))
+		if (!ent.hasMetadata("VD"))
 			return;
 
-		Arena arena = game.arenas.get(Integer.parseInt(ent.getName().substring(4, 5)));
+		Arena arena = game.arenas.get(ent.getMetadata("VD").get(0).asInt());
 
 		// Arena enemies not part of an active arena
-		if (!arena.isActive())
+		if (!arena.isActive()) {
+			e.getDrops().clear();
 			return;
+		}
 
 		// Update villager count
 		if (ent instanceof Villager) {
@@ -62,13 +81,10 @@ public class GameEvents implements Listener {
 		else {
 			// Clear normal drops
 			e.getDrops().clear();
+			e.setDroppedExp(0);
 
 			// Set drop to emerald
-			ItemStack gem = new ItemStack(Material.EMERALD);
-			ItemMeta meta = gem.getItemMeta();
-			meta.setDisplayName(Integer.toString(game.arenas.indexOf(arena)));
-			gem.setItemMeta(meta);
-			e.getDrops().add(gem);
+			e.getDrops().add(Utils.createItem(Material.EMERALD, null, Integer.toString(arena.getArena())));
 
 			// Decrement enemy count
 			arena.decrementEnemies();
@@ -84,16 +100,24 @@ public class GameEvents implements Listener {
 		arena.getTask().updateBoards.run();
 	}
 
+	// Stop automatic game mode switching between worlds
+	@EventHandler
+	public void onGameModeSwitch(PlayerGameModeChangeEvent e) {
+		if (game.arenas.stream().filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(e.getPlayer())) &&
+				e.getNewGameMode() == GameMode.SURVIVAL) e.setCancelled(true);
+	}
+
 	// Handle creeper explosions
 	@EventHandler
-	public void onExplode(EntityExplodeEvent e) {
+	public void onExplode(ExplosionPrimeEvent e) {
+
 		Entity ent = e.getEntity();
 
 		// Check for arena enemies
-		if (!ent.getName().contains("VD"))
+		if (!ent.hasMetadata("VD"))
 			return;
 
-		Arena arena = game.arenas.get(Integer.parseInt(ent.getName().substring(4, 5)));
+		Arena arena = game.arenas.get(ent.getMetadata("VD").get(0).asInt());
 
 		// Arena enemies not part of an active arena
 		if (!arena.isActive())
@@ -110,6 +134,79 @@ public class GameEvents implements Listener {
 
 		// Update scoreboards
 		arena.getTask().updateBoards.run();
+	}
+
+	// Update health bar when damage is dealt by entity
+	@EventHandler
+	public void onHurt(EntityDamageByEntityEvent e) {
+		Entity ent = e.getEntity();
+
+		// Check for arena enemies
+		if (!ent.hasMetadata("VD"))
+			return;
+
+		Entity damager = e.getDamager();
+
+		// Ignore phantom damage to villager
+		if (ent instanceof Villager && damager instanceof Player)
+			return;
+
+		// Ignore phantom damage to monsters
+		if (ent instanceof Monster && damager instanceof Monster)
+			return;
+
+		// Check for projectile damage
+		if (damager instanceof Projectile) {
+			if (ent instanceof Villager && ((Projectile) damager).getShooter() instanceof Player)
+				return;
+			if (ent instanceof Monster && ((Projectile) damager).getShooter() instanceof Monster)
+				return;
+		}
+
+		LivingEntity n = (LivingEntity) ent;
+
+		// Update health bar
+		ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
+				n.getHealth() - e.getFinalDamage(), 5));
+	}
+
+	// Update health bar when damage is dealt not by another entity
+	@EventHandler
+	public void onHurt(EntityDamageEvent e) {
+		Entity ent = e.getEntity();
+
+		// Check for arena enemies
+		if (!ent.hasMetadata("VD"))
+			return;
+
+		// Don't handle entity on entity damage
+		if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK ||
+				e.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK||
+				e.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION||
+				e.getCause() == EntityDamageEvent.DamageCause.PROJECTILE)
+			return;
+
+		LivingEntity n = (LivingEntity) ent;
+
+		// Update health bar
+		ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
+				n.getHealth() - e.getFinalDamage(), 5));
+	}
+
+	// Update health bar when healed
+	@EventHandler
+	public void onHeal(EntityRegainHealthEvent e) {
+		Entity ent = e.getEntity();
+
+		// Check for arena enemies
+		if (!ent.hasMetadata("VD"))
+			return;
+
+		LivingEntity n = (LivingEntity) ent;
+
+		// Update health bar
+		ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
+				n.getHealth(), 5));
 	}
 	
 	// Open shop
@@ -128,7 +225,8 @@ public class GameEvents implements Listener {
 		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0);
 
-		// Open shop inventory
+		// Open shop inventory and cancel interaction
+		e.setCancelled(true);
 		player.openInventory(arena.getShop());
 	}
 	
@@ -145,17 +243,19 @@ public class GameEvents implements Listener {
 				return;
 
 			// Ignore clicks in player's own inventory
-			if (e.getClickedInventory().getType() == InventoryType.PLAYER)
+			if (e.getClickedInventory() != null && e.getClickedInventory().getType() == InventoryType.PLAYER)
 				return;
 			e.setCancelled(true);
 
 			ItemStack buy = e.getClickedInventory().getItem(e.getSlot()).clone();
 			ItemMeta meta = buy.getItemMeta();
-			int cost = Integer.parseInt(meta.getLore().get(0).substring(meta.getLore().get(0).length() - 4).trim());
+			int cost = Integer.parseInt(meta.getLore().get(0).substring(10));
 
 			// Check if they can afford the item
-			if (!gamer.canAfford(cost))
+			if (!gamer.canAfford(cost)) {
+				player.sendMessage(Utils.notify("&cYou can't afford this item!"));
 				return;
+			}
 
 			meta.setLore(new ArrayList<>());
 			buy.setItemMeta(meta);
@@ -163,30 +263,68 @@ public class GameEvents implements Listener {
 			// Subtract from balance, update scoreboard, give item
 			gamer.addGems(-cost);
 			game.createBoard(gamer);
-			player.getInventory().addItem(buy);
-		}
 
+			EntityEquipment equipment = player.getPlayer().getEquipment();
+
+			// Equip armor if possible, otherwise put in inventory, otherwise drop at feet
+			if (Arrays.stream(HELMETS).anyMatch(mat -> mat == buy.getType()) && equipment.getHelmet() == null) {
+				equipment.setHelmet(buy);
+				player.sendMessage(Utils.notify("&aHelmet equipped!"));
+			} else if (Arrays.stream(CHESTPLATES).anyMatch(mat -> mat == buy.getType()) &&
+					equipment.getChestplate() == null) {
+				equipment.setChestplate(buy);
+				player.sendMessage(Utils.notify("&aChestplate equipped!"));
+			} else if (Arrays.stream(LEGGINGS).anyMatch(mat -> mat == buy.getType()) &&
+					equipment.getLeggings() == null) {
+				equipment.setLeggings(buy);
+				player.sendMessage(Utils.notify("&aLeggings equipped!"));
+			} else if (Arrays.stream(BOOTS).anyMatch(mat -> mat == buy.getType()) && equipment.getBoots() == null) {
+				equipment.setBoots(buy);
+				player.sendMessage(Utils.notify("&aBoots equipped!"));
+			} else {
+				Utils.giveItem(player, buy);
+				player.sendMessage(Utils.notify("&aItem purchased!"));
+			}
+		}
 	}
 	
-	// Stops players from hurting villagers and other players
+	// Stops players from hurting villagers and other players, and monsters from hurting each other
 	@EventHandler
 	public void onFriendlyFire(EntityDamageByEntityEvent e) {
 		Entity ent = e.getEntity();
+		Entity damager = e.getDamager();
 
 		// Cancel damage to each other if they are in a game
-		if (ent instanceof Player && e.getDamager() instanceof Player) {
+		if (ent instanceof Player && damager instanceof Player) {
 			Player player = (Player) ent;
 			if (game.arenas.stream().filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player)))
 				e.setCancelled(true);
 		}
 
 		// Check for special mobs
-		if (!ent.getName().contains("VD"))
+		if (!ent.hasMetadata("VD"))
 			return;
 
 		// Cancel damage to villager
-		if (ent instanceof Villager && e.getDamager() instanceof Player)
+		if (ent instanceof Villager && damager instanceof Player)
+			e.setCancelled(true);
+
+		// Cancel monster friendly fire damage
+		else if (ent instanceof Monster && damager instanceof Monster)
+			e.setCancelled(true);
+
+		// Check for projectile damage
+		else if (damager instanceof Projectile) {
+			if (ent instanceof Player && ((Projectile) damager).getShooter() instanceof Player) {
+				Player player = (Player) ent;
+				if (game.arenas.stream().filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player)))
+					e.setCancelled(true);
+			}
+			if (ent instanceof Villager && ((Projectile) damager).getShooter() instanceof Player)
 				e.setCancelled(true);
+			else if (ent instanceof Monster && ((Projectile) damager).getShooter() instanceof Monster)
+				e.setCancelled(true);
+		}
 	}
 
 	// Handles players falling into the void
@@ -224,7 +362,7 @@ public class GameEvents implements Listener {
 
 			// Notify everyone of player death
 			arena.getPlayers().forEach(gamer ->
-					gamer.getPlayer().sendMessage(Utils.format("&c" + player.getName() + " has died and will " +
+					gamer.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&c has died and will " +
 							"respawn next round.")));
 
 			// Update scoreboards
@@ -262,13 +400,15 @@ public class GameEvents implements Listener {
 		int stack = e.getItem().getItemStack().getAmount();
 		Random r = new Random();
 		int wave = arena.getCurrentWave();
-		int num = r.nextInt(Math.toIntExact(Math.round(40 * Math.pow(wave, 1 / (2 + Math.pow(Math.E, -wave + 3))))));
-		gamer.addGems(num * stack);
+		int earned = 0;
+		for (int i = 0; i < stack; i++)
+			earned += r.nextInt((int) (40 * Math.pow(wave, .15)));
+		gamer.addGems(earned);
 
 		// Cancel picking up of emeralds and notify player
 		e.setCancelled(true);
 		e.getItem().remove();
-		player.sendMessage(Utils.format("&fYou found &a" + (num * stack) + "&f gem(s)!"));
+		player.sendMessage(Utils.notify("&fYou found &a" + (earned) + "&f gem(s)!"));
 
 		// Update scoreboard
 		game.createBoard(gamer);
@@ -301,7 +441,7 @@ public class GameEvents implements Listener {
 
 		// Notify everyone of player death
 		arena.getPlayers().forEach(gamer ->
-				gamer.getPlayer().sendMessage(Utils.format("&c" + player.getName() + " has died and will " +
+				gamer.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&c has died and will " +
 						"respawn next round.")));
 
 		// Update scoreboards
@@ -316,24 +456,23 @@ public class GameEvents implements Listener {
 	// Update player kill counter
 	@EventHandler
 	public void onMobKillByPlayer(EntityDamageByEntityEvent e) {
+		// Check for living entity
+		if (!(e.getEntity() instanceof LivingEntity)) return;
+
 		// Check for fatal damage
-		if (!e.getEntity().isDead())
-			return;
+		if (((LivingEntity) e.getEntity()).getHealth() > e.getFinalDamage()) return;
 
 		// Check damage was done to monster
-		if (!(e.getEntity() instanceof Monster))
-			return;
+		if (!(e.getEntity().hasMetadata("VD"))) return;
 
 		// Check that a player caused the damage
-		if (!(e.getDamager() instanceof Player))
-			return;
+		if (!(e.getDamager() instanceof Player)) return;
 
 		Player player = (Player) e.getDamager();
 
 		// Check for player in an arena
 		if (game.arenas.stream().filter(Objects::nonNull)
-				.noneMatch(a -> a.getPlayers().stream().anyMatch(p -> p.getPlayer().equals(player))))
-			return;
+				.noneMatch(a -> a.getPlayers().stream().anyMatch(p -> p.getPlayer().equals(player)))) return;
 
 		VDPlayer gamer = game.arenas.stream().filter(Objects::nonNull)
 				.filter(a -> a.getPlayers().stream().anyMatch(p -> p.getPlayer().equals(player)))
@@ -347,7 +486,7 @@ public class GameEvents implements Listener {
 	@EventHandler
 	public void onSplit(SlimeSplitEvent e) {
 		Entity ent = e.getEntity();
-		if (!ent.getName().contains("VD"))
+		if (!ent.hasMetadata("VD"))
 			return;
 		e.setCancelled(true);
 	}
