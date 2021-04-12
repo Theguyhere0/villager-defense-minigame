@@ -20,7 +20,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
-	private final DataManager data = new DataManager(this);
+	private final DataManager arenaData = new DataManager(this, "arenaData.yml");
+	private final DataManager playerData = new DataManager(this, "playerData.yml");
 	private final Portal portal = new Portal(this);
 	private final InventoryItems ii = new InventoryItems();
 	private final Utils utils = new Utils(this);
@@ -67,28 +68,39 @@ public class Main extends JavaPlugin {
 			}
 
 		// Spawn in portals
-		if (getData().contains("portal"))
+		if (getArenaData().contains("portal"))
 			loadPortals();
 
-		int currentCVersion = 4;
-		int currentDVersion = 4;
+		int configVersion = 5;
+		int arenaDataVersion = 1;
+		int playerDataVersion = 1;
 
 		// Check config version
-		if (getConfig().getInt("version") < currentCVersion) {
+		if (getConfig().getInt("version") < configVersion) {
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
 					"Your config.yml is outdated!");
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
-					"Please update to the latest version (" + currentCVersion + ") to ensure compatibility.");
+					"Please update to the latest version (" + configVersion + ") to ensure compatibility.");
 		}
 
-		// Check if data.yml is outdated
-		if (getConfig().getInt("data") < currentDVersion) {
+		// Check if arenaData.yml is outdated
+		if (getConfig().getInt("arenaData") < arenaDataVersion) {
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
-					"Your data.yml is no longer supported with this version!");
+					"Your arenaData.yml is no longer supported with this version!");
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
-					"Please manually transfer arena data to version " + currentDVersion + ".");
+					"Please manually transfer arena data to version " + arenaDataVersion + ".");
 			getServer().getConsoleSender().sendMessage(ChatColor.RED +  "[VillagerDefense] " +
-					"Please do not update your config.yml until your data.yml has been updated.");
+					"Please do not update your config.yml until your arenaData.yml has been updated.");
+		}
+
+		// Check if playerData.yml is outdated
+		if (getConfig().getInt("playerData") < playerDataVersion) {
+			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
+					"Your playerData.yml is no longer supported with this version!");
+			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
+					"Please manually transfer player data to version " + playerDataVersion + ".");
+			getServer().getConsoleSender().sendMessage(ChatColor.RED +  "[VillagerDefense] " +
+					"Please do not update your config.yml until your playerData.yml has been updated.");
 		}
 	}
 
@@ -103,19 +115,29 @@ public class Main extends JavaPlugin {
 		portal.removeAll();
 	}
 
-	// Returns data.yml data
-	public FileConfiguration getData() {
-		return data.getConfig();
+	// Returns arena data
+	public FileConfiguration getArenaData() {
+		return arenaData.getConfig();
 	}
 
-	// Saves data.yml changes
-	public void saveData() {
-		data.saveConfig();
+	// Saves arena data changes
+	public void saveArenaData() {
+		arenaData.saveConfig();
+	}
+
+	// Returns player data
+	public FileConfiguration getPlayerData() {
+		return playerData.getConfig();
+	}
+
+	// Saves arena data changes
+	public void savePlayerData() {
+		playerData.saveConfig();
 	}
 
 	// Load saved NPCs
 	public void loadPortals() {
-		getData().getConfigurationSection("portal").getKeys(false).forEach(portal -> {
+		getArenaData().getConfigurationSection("portal").getKeys(false).forEach(portal -> {
 			Location location = utils.getConfigLocationNoPitch("portal." + portal);
 			if (location != null)
 				this.portal.loadPortal(location, Integer.parseInt(portal), game);

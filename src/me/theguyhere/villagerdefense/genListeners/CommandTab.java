@@ -1,24 +1,20 @@
 package me.theguyhere.villagerdefense.genListeners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.HumanEntity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CommandTab implements TabCompleter {
 
-    private final List<String> arguments = new ArrayList<>();
+    private final String[] arguments = {"help", "leave", "stats"};
 
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String label, String[] args) {
-        // Arguments after "vd"
-        if (arguments.isEmpty()) {
-            arguments.add("help");
-            arguments.add("leave");
-        }
-
         // Complete as characters are added
         List<String> result = new ArrayList<>();
         if (args.length == 1) {
@@ -26,6 +22,11 @@ public class CommandTab implements TabCompleter {
                 if (a.toLowerCase().startsWith(args[0].toLowerCase()))
                     result.add(a);
             return result;
+        } else if (args[0].equalsIgnoreCase("stats") && args.length == 2) {
+            Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).forEach(name -> {
+                if (name.toLowerCase().startsWith(args[1].toLowerCase()))
+                    result.add(name);
+            });
         }
 
         return null;

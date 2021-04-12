@@ -20,7 +20,7 @@ public class Game {
 
 	public Game(Main plugin, Portal portal) {
 		utils = new Utils(plugin);
-		plugin.getData().getConfigurationSection("").getKeys(false).forEach(path -> {
+		plugin.getArenaData().getConfigurationSection("").getKeys(false).forEach(path -> {
 			if (path.charAt(0) == 'a')
 				arenas.set(Integer.parseInt(path.substring(1)), new Arena(plugin, Integer.parseInt(path.substring(1)),
 						new Tasks(plugin, this, Integer.parseInt(path.substring(1)), portal)));

@@ -39,14 +39,13 @@ public class Join implements Listener {
 		reader.inject(player);
 
 		// Get list of loggers from data file
-		List<String> loggers = plugin.getData().getStringList("loggers");
+		List<String> loggers = plugin.getPlayerData().getStringList("loggers");
 
 		if (loggers.contains(player.getName())) {
-			System.out.println("Reached");
 			Utils.teleAdventure(player, game.getLobby());
 			loggers.remove(player.getName());
-			plugin.getData().set("loggers", loggers);
-			plugin.saveData();
+			plugin.getPlayerData().set("loggers", loggers);
+			plugin.savePlayerData();
 		}
 	}
 	
@@ -67,13 +66,13 @@ public class Join implements Listener {
 				Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player)));
 
 		// Get list of loggers from data file and add player to it
-		List<String> loggers = plugin.getData().getStringList("loggers");
+		List<String> loggers = plugin.getPlayerData().getStringList("loggers");
 		loggers.add(player.getName());
 
 		// Add to list of loggers if in a game
 		if (game.arenas.stream().filter(Objects::nonNull).anyMatch(arena -> arena.hasPlayer(player))) {
-			plugin.getData().set("loggers", loggers);
-			plugin.saveData();
+			plugin.getPlayerData().set("loggers", loggers);
+			plugin.savePlayerData();
 		}
 	}
 }

@@ -171,7 +171,7 @@ public class Utils {
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         player.setFoodLevel(20);
         player.setSaturation(20);
-        player.setLevel(0);
+        player.setExp(0);
         player.setFallDistance(0);
         player.getInventory().clear();
         player.teleport(location);
@@ -185,7 +185,7 @@ public class Utils {
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         player.setFoodLevel(20);
         player.setSaturation(20);
-        player.setLevel(0);
+        player.setExp(0);
         player.getInventory().clear();
         player.teleport(location);
         player.setGameMode(GameMode.SPECTATOR);
@@ -193,25 +193,25 @@ public class Utils {
 
     // Sets the location data to a configuration path
     public void setConfigurationLocation(String path, Location location) {
-        plugin.getData().set(path + ".world", location.getWorld().getName());
-        plugin.getData().set(path + ".x", location.getX());
-        plugin.getData().set(path + ".y", location.getY());
-        plugin.getData().set(path + ".z", location.getZ());
-        plugin.getData().set(path + ".pitch", location.getPitch());
-        plugin.getData().set(path + ".yaw", location.getYaw());
-        plugin.saveData();
+        plugin.getArenaData().set(path + ".world", location.getWorld().getName());
+        plugin.getArenaData().set(path + ".x", location.getX());
+        plugin.getArenaData().set(path + ".y", location.getY());
+        plugin.getArenaData().set(path + ".z", location.getZ());
+        plugin.getArenaData().set(path + ".pitch", location.getPitch());
+        plugin.getArenaData().set(path + ".yaw", location.getYaw());
+        plugin.saveArenaData();
     }
 
     // Gets location data from a configuration path
     public Location getConfigLocation(String path) {
         try {
             return new Location(
-                Bukkit.getWorld(plugin.getData().getString(path + ".world")),
-                plugin.getData().getDouble(path + ".x"),
-                plugin.getData().getDouble(path + ".y"),
-                plugin.getData().getDouble(path + ".z"),
-                Float.parseFloat(plugin.getData().get(path + ".yaw").toString()),
-                Float.parseFloat(plugin.getData().get(path + ".pitch").toString())
+                Bukkit.getWorld(plugin.getArenaData().getString(path + ".world")),
+                plugin.getArenaData().getDouble(path + ".x"),
+                plugin.getArenaData().getDouble(path + ".y"),
+                plugin.getArenaData().getDouble(path + ".z"),
+                Float.parseFloat(plugin.getArenaData().get(path + ".yaw").toString()),
+                Float.parseFloat(plugin.getArenaData().get(path + ".pitch").toString())
             );
         } catch (Exception e) {
             return null;
@@ -252,7 +252,7 @@ public class Utils {
                 location.setZ(((int) location.getZ()) + .5);
             else location.setZ(((int) location.getZ()) - .5);
             setConfigurationLocation(path, location);
-            plugin.saveData();
+            plugin.saveArenaData();
         } catch (Exception ignored) {
         }
     }

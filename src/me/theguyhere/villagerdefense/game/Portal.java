@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 public class Portal {
 	private final Main plugin;
 	private Arena arena;
-	private Utils utils;
+	private final Utils utils;
 
 	public Portal(Main plugin) {
 		this.plugin = plugin;
@@ -48,7 +48,7 @@ public class Portal {
 
 		// Save data about the NPC
 		utils.setConfigurationLocation("portal." + num, player.getLocation());
-		plugin.saveData();
+		plugin.saveArenaData();
 	}
 
 	public void loadPortal(Location location, int arena, Game game) {

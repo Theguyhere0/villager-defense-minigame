@@ -5,6 +5,7 @@ import me.theguyhere.villagerdefense.customEvents.*;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -190,8 +191,16 @@ public class ArenaEvents implements Listener {
             arena.removeTimeLimitBar();
         }
 
+        FileConfiguration playerData = plugin.getPlayerData();
+
+        // Update player stats
+        for (VDPlayer active : arena.getActives())
+            if (playerData.getInt(active.getPlayer().getName() + ".topWave") < arena.getCurrentWave())
+                playerData.set(active.getPlayer().getName() + ".topWave", arena.getCurrentWave());
+        plugin.savePlayerData();
+
         // Win and TEMPORARY condition
-        if (arena.getCurrentDifficulty() == arena.getMaxWaves() || arena.getCurrentWave() == 12)
+        if (arena.getCurrentWave() == arena.getMaxWaves() || arena.getCurrentWave() == 12)
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
                     Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 
@@ -238,6 +247,15 @@ public class ArenaEvents implements Listener {
 
         // Not spectating
         if (!gamer.isSpectating()) {
+            FileConfiguration playerData = plugin.getPlayerData();
+
+            // Update player stats
+            playerData.set(player.getName() + ".totalKills",
+                    playerData.getInt(player.getName() + ".totalKills") + gamer.getKills());
+            if (playerData.getInt(player.getName() + ".topKills") < gamer.getKills())
+                playerData.set(player.getName() + ".topKills", gamer.getKills());
+            plugin.savePlayerData();
+
             // Remove the player from the arena and time limit bar if exists
             arena.getPlayers().remove(gamer);
             if (arena.getTimeLimitBar() != null)
@@ -278,9 +296,6 @@ public class ArenaEvents implements Listener {
             if (arena.getAlive() == 0 && arena.isActive())
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
                         Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
-
-            // Refresh the game portal
-            portal.refreshHolo(game.arenas.indexOf(arena), game);
         }
 
         // Spectating
@@ -290,10 +305,10 @@ public class ArenaEvents implements Listener {
 
             // Sets them up for teleport to lobby
             Utils.teleAdventure(player, game.getLobby());
-
-            // Refresh the game portal
-            portal.refreshHolo(game.arenas.indexOf(arena), game);
         }
+
+        // Refresh the game portal
+        portal.refreshHolo(game.arenas.indexOf(arena), game);
     }
 
     @EventHandler

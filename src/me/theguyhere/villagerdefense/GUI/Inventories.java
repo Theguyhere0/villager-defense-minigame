@@ -7,6 +7,8 @@ import me.theguyhere.villagerdefense.game.GameItems;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import java.util.Random;
@@ -460,7 +462,7 @@ public class Inventories {
 		// Options to interact with all 8 possible mob spawns
 		for (int i = 0; i < 8; i++) {
 			// Check if the spawn exists
-			if (!plugin.getData().contains("a" + arena + ".monster." + i))
+			if (!plugin.getArenaData().contains("a" + arena + ".monster." + i))
 				index = 0;
 			else index = 1;
 
@@ -527,7 +529,7 @@ public class Inventories {
 		// Options to interact with all 8 possible villager spawns
 		for (int i = 0; i < 8; i++) {
 			// Check if the spawn exists
-			if (!plugin.getData().contains("a" + arena + ".villager." + i))
+			if (!plugin.getArenaData().contains("a" + arena + ".villager." + i))
 				index = 0;
 			else index = 1;
 
@@ -993,6 +995,41 @@ public class Inventories {
 					else inv.setItem(i, GameItems.totem());
 			}
 		}
+
+		return inv;
+	}
+
+	// Display player stats
+	public Inventory createPlayerStatsInventory(String name) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&2&l" + name + "'s Stats"));
+
+		FileConfiguration playerData = plugin.getPlayerData();
+
+		// Total kills
+		inv.setItem(0, Utils.createItem(Material.DRAGON_HEAD, Utils.format("&4&lTotal Kills: &4" +
+				playerData.getInt(name + ".totalKills"))));
+
+		// Top kills
+		inv.setItem(1, Utils.createItem(Material.ZOMBIE_HEAD, Utils.format("&c&lTop Kills: &c" +
+				playerData.getInt(name + ".topKills"))));
+
+		// Total gems
+		inv.setItem(2, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&2&lTotal Gems: &2" +
+				playerData.getInt(name + ".totalGems"))));
+
+		// Top balance
+		inv.setItem(3, Utils.createItem(Material.EMERALD, Utils.format("&a&lTop Balance: &a" +
+				playerData.getInt(name + ".topBalance"))));
+
+		// Top wave
+		inv.setItem(4, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&9&lTop Wave: &9" +
+				playerData.getInt(name + ".topWave")), FLAGS, null));
+
+		// Crystal balance
+		inv.setItem(8, Utils.createItem(Material.DIAMOND, Utils.format("&b&lCrystal Balance: &b" +
+				playerData.getInt(name + ".crystalBalance"))));
 
 		return inv;
 	}

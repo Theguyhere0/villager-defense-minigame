@@ -8,7 +8,6 @@ import me.theguyhere.villagerdefense.tools.Utils;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -27,7 +26,7 @@ public class Commands implements CommandExecutor {
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		
-//		Open arena inventory
+		// Open arena inventory
 		if (label.equalsIgnoreCase("vd")) {
 			// Check for player executing command
 			if (!(sender instanceof Player)) {
@@ -37,22 +36,22 @@ public class Commands implements CommandExecutor {
 			
 			Player player = (Player) sender;
 			
-//			Check for permission to use the command
+			// Check for permission to use the command
 			if (!player.hasPermission("vd.use")) {
-				player.sendMessage(ChatColor.RED + "You do not have permission!");
+				player.sendMessage(Utils.notify("&cYou do not have permission!"));
 				return true;
 			}
 			
-//			No arguments
+			// No arguments
 			if (args.length == 0) {
 				player.openInventory(inv.createArenasInventory());
 				return true;
 			}
 			
-//			Redirects to wiki for help
-//			NOT FINALIZED
+			// Redirects to wiki for help
+			// NOT FINALIZED
 			if (args[0].equalsIgnoreCase("help")) {
-				player.sendMessage(Utils.format("&6For more information, click below to visit the wiki!"));
+				player.sendMessage(Utils.notify("&6For more information, click below to visit the wiki!"));
 				TextComponent message = new TextComponent("Visit the wiki!");
 				message.setBold(true);
 				message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,
@@ -61,15 +60,25 @@ public class Commands implements CommandExecutor {
 				return true;
 			}
 			
-//			Player leaves a game
+			// Player leaves a game
 			if (args[0].equalsIgnoreCase("leave")) {
 				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 						Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player)));
 				return true;
 			}
-			
-//			No valid command sent
-			player.sendMessage(Utils.format("&cInvalid command. Use /vd help for more info."));
+
+			// Player checks stats
+			if (args[0].equalsIgnoreCase("stats")) {
+				if (args.length == 1)
+					player.openInventory(inv.createPlayerStatsInventory(player.getName()));
+				else if (plugin.getPlayerData().contains(args[1]))
+					player.openInventory(inv.createPlayerStatsInventory(args[1]));
+				else player.sendMessage(Utils.notify("&c" + args[1] + " does not have stats."));
+				return true;
+			}
+
+			// No valid command sent
+			player.sendMessage(Utils.notify("&cInvalid command. Use /vd help for more info."));
 			return true;
 		}
 		return false;

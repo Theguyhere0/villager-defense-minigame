@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -409,6 +410,15 @@ public class GameEvents implements Listener {
 		e.setCancelled(true);
 		e.getItem().remove();
 		player.sendMessage(Utils.notify("&fYou found &a" + (earned) + "&f gem(s)!"));
+
+		FileConfiguration playerData = plugin.getPlayerData();
+
+		// Update player stats
+		playerData.set(player.getName() + ".totalGems",
+				playerData.getInt(player.getName() + ".totalGems") + earned);
+		if (playerData.getInt(player.getName() + ".topBalance") < gamer.getGems())
+			playerData.set(player.getName() + ".topBalance", gamer.getGems());
+		plugin.savePlayerData();
 
 		// Update scoreboard
 		game.createBoard(gamer);

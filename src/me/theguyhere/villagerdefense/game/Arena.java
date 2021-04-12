@@ -265,17 +265,17 @@ public class Arena {
     }
 
     public void updateArena() {
-        name = plugin.getData().getString("a" + arena + ".name");
-        maxPlayers = plugin.getData().getInt("a" + arena + ".max");
-        minPlayers = plugin.getData().getInt("a" + arena + ".min");
-        maxWaves = plugin.getData().getInt("a" + arena + ".maxWaves");
-        waveTimeLimit = plugin.getData().getInt("a" + arena + ".waveTimeLimit");
+        name = plugin.getArenaData().getString("a" + arena + ".name");
+        maxPlayers = plugin.getArenaData().getInt("a" + arena + ".max");
+        minPlayers = plugin.getArenaData().getInt("a" + arena + ".min");
+        maxWaves = plugin.getArenaData().getInt("a" + arena + ".maxWaves");
+        waveTimeLimit = plugin.getArenaData().getInt("a" + arena + ".waveTimeLimit");
         playerSpawn = utils.getConfigLocationNoRotation("a" + arena + ".spawn");
         waitingRoom = utils.getConfigLocationNoRotation("a" + arena + ".waiting");
         monsterSpawns = utils.getConfigLocationList("a" + arena + ".monster").stream()
                 .filter(Objects::nonNull).collect(Collectors.toList());
         villagerSpawns = utils.getConfigLocationList("a" + arena + ".villager").stream()
                 .filter(Objects::nonNull).collect(Collectors.toList());
-        closed = plugin.getData().getBoolean("a" + arena + ".closed");
+        closed = plugin.getArenaData().getBoolean("a" + arena + ".closed");
     }
 }

@@ -164,8 +164,6 @@ public class Tasks {
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 					Bukkit.getPluginManager().callEvent(new WaveStartEvent(arenaInstance)),
 					Utils.secondsToTicks(15));
-
-			//
 		}
 		
 	};
