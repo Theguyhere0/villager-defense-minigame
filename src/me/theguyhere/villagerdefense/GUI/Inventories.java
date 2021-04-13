@@ -68,7 +68,7 @@ public class Inventories {
 
 		// Option to set leaderboard hologram
 		inv.setItem(47, Utils.createItem(Material.GOLDEN_HELMET, Utils.format("&e&lLeaderboards"),
-				FLAGS, null, Utils.format(CONSTRUCTION)));
+				FLAGS, null));
 
 		// Option to exit
 		inv.setItem(53, ii.exit());
@@ -86,13 +86,13 @@ public class Inventories {
 		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Lobby")));
 
 		// Option to teleport to the lobby
-		inv.setItem(1, ii.teleport("Lobby"));
+		inv.setItem(2, ii.teleport("Lobby"));
 
 		// Option to center the lobby
-		inv.setItem(2, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Lobby")));
+		inv.setItem(4, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Lobby")));
 
 		// Option to remove the portal
-		inv.setItem(7, ii.remove("LOBBY"));
+		inv.setItem(6, ii.remove("LOBBY"));
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
@@ -104,6 +104,224 @@ public class Inventories {
 	public Inventory createLobbyConfirmInventory() {
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Lobby?"));
+
+		// "No" option
+		inv.setItem(0, ii.no());
+
+		// "Yes" option
+		inv.setItem(8, ii.yes());
+
+		return inv;
+	}
+
+	// Menu for leaderboards
+	public Inventory createLeaderboardInventory() {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&e&lLeaderboards"));
+
+		// Option to modify total kills leaderboard
+		inv.setItem(0, Utils.createItem(Material.DRAGON_HEAD, Utils.format("&4&lTotal Kills Leaderboard")));
+
+		// Option to modify top kills leaderboard
+		inv.setItem(1, Utils.createItem(Material.ZOMBIE_HEAD, Utils.format("&c&lTop Kills Leaderboard")));
+
+		// Option to modify total gems leaderboard
+		inv.setItem(2, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&2&lTotal Gems Leaderboard")));
+
+		// Option to modify top balance leaderboard
+		inv.setItem(3, Utils.createItem(Material.EMERALD, Utils.format("&a&lTop Balance Leaderboard")));
+
+		// Option to modify top wave leaderboard
+		inv.setItem(4, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&9&lTop Wave Leaderboard"),
+				FLAGS, null));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	// Menu for editing the total kills leaderboard
+	public Inventory createTotalKillsLeaderboardInventory() {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&4&lTotal Kills Leaderboard"));
+
+		// Option to create the leaderboard
+		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Leaderboard")));
+
+		// Option to teleport to the leaderboard
+		inv.setItem(2, ii.teleport("Leaderboard"));
+
+		// Option to center the leaderboard
+		inv.setItem(4, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Leaderboard")));
+
+		// Option to remove the leaderboard
+		inv.setItem(6, ii.remove("LEADERBOARD"));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	// Menu for editing the top kills leaderboard
+	public Inventory createTopKillsLeaderboardInventory() {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&c&lTop Kills Leaderboard"));
+
+		// Option to create the leaderboard
+		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Leaderboard")));
+
+		// Option to teleport to the leaderboard
+		inv.setItem(2, ii.teleport("Leaderboard"));
+
+		// Option to center the leaderboard
+		inv.setItem(4, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Leaderboard")));
+
+		// Option to remove the leaderboard
+		inv.setItem(6, ii.remove("LEADERBOARD"));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	// Menu for editing the total gems leaderboard
+	public Inventory createTotalGemsLeaderboardInventory() {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&2&lTotal Gems Leaderboard"));
+
+		// Option to create the leaderboard
+		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Leaderboard")));
+
+		// Option to teleport to the leaderboard
+		inv.setItem(2, ii.teleport("Leaderboard"));
+
+		// Option to center the leaderboard
+		inv.setItem(4, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Leaderboard")));
+
+		// Option to remove the leaderboard
+		inv.setItem(6, ii.remove("LEADERBOARD"));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	// Menu for editing the top balance leaderboard
+	public Inventory createTopBalanceLeaderboardInventory() {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&a&lTop Balance Leaderboard"));
+
+		// Option to create the leaderboard
+		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Leaderboard")));
+
+		// Option to teleport to the leaderboard
+		inv.setItem(2, ii.teleport("Leaderboard"));
+
+		// Option to center the leaderboard
+		inv.setItem(4, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Leaderboard")));
+
+		// Option to remove the leaderboard
+		inv.setItem(6, ii.remove("LEADERBOARD"));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	// Menu for editing the top wave leaderboard
+	public Inventory createTopWaveLeaderboardInventory() {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&9&lTop Wave Leaderboard"));
+
+		// Option to create the leaderboard
+		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Leaderboard")));
+
+		// Option to teleport to the leaderboard
+		inv.setItem(2, ii.teleport("Leaderboard"));
+
+		// Option to center the leaderboard
+		inv.setItem(4, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Leaderboard")));
+
+		// Option to remove the leaderboard
+		inv.setItem(6, ii.remove("LEADERBOARD"));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	// Confirmation menu for total kills leaderboard
+	public Inventory createTotalKillsConfirmInventory() {
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&4&lRemove Total Kills Leaderboard?"));
+
+		// "No" option
+		inv.setItem(0, ii.no());
+
+		// "Yes" option
+		inv.setItem(8, ii.yes());
+
+		return inv;
+	}
+
+	// Confirmation menu for top kills leaderboard
+	public Inventory createTopKillsConfirmInventory() {
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&4&lRemove Top Kills Leaderboard?"));
+
+		// "No" option
+		inv.setItem(0, ii.no());
+
+		// "Yes" option
+		inv.setItem(8, ii.yes());
+
+		return inv;
+	}
+
+	// Confirmation menu for total gems leaderboard
+	public Inventory createTotalGemsConfirmInventory() {
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&4&lRemove Total Gems Leaderboard?"));
+
+		// "No" option
+		inv.setItem(0, ii.no());
+
+		// "Yes" option
+		inv.setItem(8, ii.yes());
+
+		return inv;
+	}
+
+	// Confirmation menu for top balance leaderboard
+	public Inventory createTopBalanceConfirmInventory() {
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&4&lRemove Top Balance Leaderboard?"));
+
+		// "No" option
+		inv.setItem(0, ii.no());
+
+		// "Yes" option
+		inv.setItem(8, ii.yes());
+
+		return inv;
+	}
+
+	// Confirmation menu for top wave leaderboard
+	public Inventory createTopWaveConfirmInventory() {
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&4&lRemove Top Wave Leaderboard?"));
 
 		// "No" option
 		inv.setItem(0, ii.no());
@@ -222,13 +440,13 @@ public class Inventories {
 		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Portal")));
 
 		// Option to teleport to the portal
-		inv.setItem(1, ii.teleport("Portal"));
+		inv.setItem(2, ii.teleport("Portal"));
 
 		// Option to center the portal
-		inv.setItem(2, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Portal")));
+		inv.setItem(4, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Portal")));
 
 		// Option to remove the portal
-		inv.setItem(7, ii.remove("PORTAL"));
+		inv.setItem(6, ii.remove("PORTAL"));
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
@@ -296,13 +514,13 @@ public class Inventories {
 		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Spawn")));
 
 		// Option to teleport to player spawn
-		inv.setItem(1, ii.teleport("Spawn"));
+		inv.setItem(2, ii.teleport("Spawn"));
 
 		// Option to center the player spawn
-		inv.setItem(2, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Spawn")));
+		inv.setItem(4, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Spawn")));
 
 		// Option to remove player spawn
-		inv.setItem(7, ii.remove("SPAWN"));
+		inv.setItem(6, ii.remove("SPAWN"));
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
@@ -769,6 +987,13 @@ public class Inventories {
 				null,
 				Utils.format(CONSTRUCTION)));
 
+		// Option to edit gem pickup sound
+		inv.setItem(5, Utils.createItem(Material.MUSIC_DISC_FAR,
+				Utils.format("&b&lGem Pickup Music"),
+				FLAGS,
+				null,
+				Utils.format(CONSTRUCTION)));
+
 		// Option to exit
 		inv.setItem(8, ii.exit());
 
@@ -1009,23 +1234,23 @@ public class Inventories {
 
 		// Total kills
 		inv.setItem(0, Utils.createItem(Material.DRAGON_HEAD, Utils.format("&4&lTotal Kills: &4" +
-				playerData.getInt(name + ".totalKills"))));
+				playerData.getInt(name + ".totalKills")), "Lifetime kill count"));
 
 		// Top kills
 		inv.setItem(1, Utils.createItem(Material.ZOMBIE_HEAD, Utils.format("&c&lTop Kills: &c" +
-				playerData.getInt(name + ".topKills"))));
+				playerData.getInt(name + ".topKills")), "Most kills in a game"));
 
 		// Total gems
 		inv.setItem(2, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&2&lTotal Gems: &2" +
-				playerData.getInt(name + ".totalGems"))));
+				playerData.getInt(name + ".totalGems")), "Lifetime gems collected"));
 
 		// Top balance
 		inv.setItem(3, Utils.createItem(Material.EMERALD, Utils.format("&a&lTop Balance: &a" +
-				playerData.getInt(name + ".topBalance"))));
+				playerData.getInt(name + ".topBalance")), "Highest gem balance in a game"));
 
 		// Top wave
 		inv.setItem(4, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&9&lTop Wave: &9" +
-				playerData.getInt(name + ".topWave")), FLAGS, null));
+				playerData.getInt(name + ".topWave")), FLAGS, null, "Highest completed wave"));
 
 		// Crystal balance
 		inv.setItem(8, Utils.createItem(Material.DIAMOND, Utils.format("&b&lCrystal Balance: &b" +

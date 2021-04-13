@@ -21,11 +21,13 @@ public class ArenaEvents implements Listener {
     private final Main plugin;
     private final Game game;
     private final Portal portal;
+    private final Leaderboard leaderboard;
 
-    public ArenaEvents(Main plugin, Game game, Portal portal) {
+    public ArenaEvents(Main plugin, Game game, Portal portal, Leaderboard leaderboard) {
         this.plugin = plugin;
         this.game = game;
         this.portal = portal;
+        this.leaderboard = leaderboard;
     }
 
     @EventHandler
@@ -255,6 +257,9 @@ public class ArenaEvents implements Listener {
             if (playerData.getInt(player.getName() + ".topKills") < gamer.getKills())
                 playerData.set(player.getName() + ".topKills", gamer.getKills());
             plugin.savePlayerData();
+
+            // Refresh leaderboards
+            leaderboard.refreshLeaderboards();
 
             // Remove the player from the arena and time limit bar if exists
             arena.getPlayers().remove(gamer);

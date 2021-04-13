@@ -23,6 +23,7 @@ public class Main extends JavaPlugin {
 	private final DataManager arenaData = new DataManager(this, "arenaData.yml");
 	private final DataManager playerData = new DataManager(this, "playerData.yml");
 	private final Portal portal = new Portal(this);
+	private final Leaderboard leaderboard = new Leaderboard(this);
 	private final InventoryItems ii = new InventoryItems();
 	private final Utils utils = new Utils(this);
 	private PacketReader reader;
@@ -54,12 +55,12 @@ public class Main extends JavaPlugin {
 		getCommand("vd").setTabCompleter(new CommandTab());
 
 		// Register event listeners
-		pm.registerEvents(new InventoryEvents(this, game, inventories, portal), this);
+		pm.registerEvents(new InventoryEvents(this, game, inventories, portal, leaderboard), this);
 		pm.registerEvents(new Join(this, portal, reader, game), this);
 		pm.registerEvents(new Death(portal, reader), this);
 		pm.registerEvents(new ClickPortalEvents(game, portal), this);
 		pm.registerEvents(new GameEvents(this, game), this);
-		pm.registerEvents(new ArenaEvents(this, game, portal), this);
+		pm.registerEvents(new ArenaEvents(this, game, portal, leaderboard), this);
 
 		// Inject online players into packet reader
 		if (!Bukkit.getOnlinePlayers().isEmpty())
@@ -70,6 +71,10 @@ public class Main extends JavaPlugin {
 		// Spawn in portals
 		if (getArenaData().contains("portal"))
 			loadPortals();
+
+		// Spawn in leaderboards
+		if (getArenaData().contains("leaderboard"))
+			loadLeaderboards();
 
 		int configVersion = 5;
 		int arenaDataVersion = 1;
@@ -135,12 +140,21 @@ public class Main extends JavaPlugin {
 		playerData.saveConfig();
 	}
 
-	// Load saved NPCs
+	// Load portals
 	public void loadPortals() {
 		getArenaData().getConfigurationSection("portal").getKeys(false).forEach(portal -> {
 			Location location = utils.getConfigLocationNoPitch("portal." + portal);
 			if (location != null)
 				this.portal.loadPortal(location, Integer.parseInt(portal), game);
+		});
+	}
+
+	// Load leaderboards
+	public void loadLeaderboards() {
+		getArenaData().getConfigurationSection("leaderboard").getKeys(false).forEach(board -> {
+			Location location = utils.getConfigLocationNoPitch("leaderboard." + board);
+			if (location != null)
+				this.leaderboard.addHolo(location, board);
 		});
 	}
 }

@@ -18,4 +18,4 @@ commands:
       usage: /vd leave
     stats:
       description: Displays stats of the player
-        usage: /vd stats
+      usage: /vd stats
