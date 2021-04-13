@@ -25,8 +25,18 @@ public class InventoryItems {
         return Utils.createItem(Material.LAVA_BUCKET, Utils.format("&4&lREMOVE " + x));
     }
 
+    //	"Create x" button
+    public ItemStack create(String x) {
+        return Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate " + x));
+    }
+
     //	"Teleport to x" button
     public ItemStack teleport(String x) {
         return Utils.createItem(Material.ENDER_PEARL, Utils.format("&9&lTeleport to " + x));
+    }
+
+    //	"Center x" button
+    public ItemStack center(String x) {
+        return Utils.createItem(Material.TARGET, Utils.format("&f&lCenter " + x));
     }
 }

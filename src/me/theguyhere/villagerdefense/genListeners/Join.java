@@ -2,8 +2,8 @@ package me.theguyhere.villagerdefense.genListeners;
 
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.customEvents.LeaveArenaEvent;
-import me.theguyhere.villagerdefense.game.Game;
-import me.theguyhere.villagerdefense.game.Portal;
+import me.theguyhere.villagerdefense.game.models.Game;
+import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.tools.PacketReader;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;

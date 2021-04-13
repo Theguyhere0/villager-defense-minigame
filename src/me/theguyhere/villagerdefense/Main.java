@@ -3,7 +3,13 @@ package me.theguyhere.villagerdefense;
 import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.GUI.InventoryEvents;
 import me.theguyhere.villagerdefense.GUI.InventoryItems;
-import me.theguyhere.villagerdefense.game.*;
+import me.theguyhere.villagerdefense.game.displays.InfoBoard;
+import me.theguyhere.villagerdefense.game.displays.Leaderboard;
+import me.theguyhere.villagerdefense.game.displays.Portal;
+import me.theguyhere.villagerdefense.game.listeners.ArenaEvents;
+import me.theguyhere.villagerdefense.game.listeners.ClickPortalEvents;
+import me.theguyhere.villagerdefense.game.listeners.GameEvents;
+import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.genListeners.CommandTab;
 import me.theguyhere.villagerdefense.genListeners.Commands;
 import me.theguyhere.villagerdefense.genListeners.Death;
@@ -24,6 +30,7 @@ public class Main extends JavaPlugin {
 	private final DataManager playerData = new DataManager(this, "playerData.yml");
 	private final Portal portal = new Portal(this);
 	private final Leaderboard leaderboard = new Leaderboard(this);
+	private final InfoBoard infoBoard = new InfoBoard(this);
 	private final InventoryItems ii = new InventoryItems();
 	private final Utils utils = new Utils(this);
 	private PacketReader reader;
@@ -55,7 +62,8 @@ public class Main extends JavaPlugin {
 		getCommand("vd").setTabCompleter(new CommandTab());
 
 		// Register event listeners
-		pm.registerEvents(new InventoryEvents(this, game, inventories, portal, leaderboard), this);
+		pm.registerEvents(new InventoryEvents(this, game, inventories, portal, leaderboard, infoBoard),
+				this);
 		pm.registerEvents(new Join(this, portal, reader, game), this);
 		pm.registerEvents(new Death(portal, reader), this);
 		pm.registerEvents(new ClickPortalEvents(game, portal), this);
@@ -71,10 +79,8 @@ public class Main extends JavaPlugin {
 		// Spawn in portals
 		if (getArenaData().contains("portal"))
 			loadPortals();
-
-		// Spawn in leaderboards
-		if (getArenaData().contains("leaderboard"))
-			loadLeaderboards();
+		leaderboard.loadLeaderboards();
+		infoBoard.loadInfoBoards();
 
 		int configVersion = 5;
 		int arenaDataVersion = 1;
@@ -146,15 +152,6 @@ public class Main extends JavaPlugin {
 			Location location = utils.getConfigLocationNoPitch("portal." + portal);
 			if (location != null)
 				this.portal.loadPortal(location, Integer.parseInt(portal), game);
-		});
-	}
-
-	// Load leaderboards
-	public void loadLeaderboards() {
-		getArenaData().getConfigurationSection("leaderboard").getKeys(false).forEach(board -> {
-			Location location = utils.getConfigLocationNoPitch("leaderboard." + board);
-			if (location != null)
-				this.leaderboard.addHolo(location, board);
 		});
 	}
 }

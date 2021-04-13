@@ -1,7 +1,9 @@
-package me.theguyhere.villagerdefense.game;
+package me.theguyhere.villagerdefense.game.listeners;
 
 import me.theguyhere.villagerdefense.customEvents.JoinArenaEvent;
 import me.theguyhere.villagerdefense.customEvents.RightClickNPCEvent;
+import me.theguyhere.villagerdefense.game.models.Game;
+import me.theguyhere.villagerdefense.game.displays.Portal;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

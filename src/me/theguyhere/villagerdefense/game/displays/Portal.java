@@ -1,8 +1,10 @@
-package me.theguyhere.villagerdefense.game;
+package me.theguyhere.villagerdefense.game.displays;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import me.theguyhere.villagerdefense.Main;
+import me.theguyhere.villagerdefense.game.models.Arena;
+import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.tools.Utils;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Bukkit;

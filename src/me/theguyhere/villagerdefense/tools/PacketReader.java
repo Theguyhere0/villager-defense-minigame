@@ -4,7 +4,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.game.Portal;
+import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.customEvents.RightClickNPCEvent;
 import net.minecraft.server.v1_16_R3.EntityVillager;
 import net.minecraft.server.v1_16_R3.Packet;

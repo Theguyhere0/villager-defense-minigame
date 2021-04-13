@@ -3,6 +3,11 @@ package me.theguyhere.villagerdefense.GUI;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.customEvents.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.game.*;
+import me.theguyhere.villagerdefense.game.displays.InfoBoard;
+import me.theguyhere.villagerdefense.game.displays.Leaderboard;
+import me.theguyhere.villagerdefense.game.displays.Portal;
+import me.theguyhere.villagerdefense.game.models.Arena;
+import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -25,18 +30,25 @@ public class InventoryEvents implements Listener {
 	private final Inventories inv;
 	private final Portal portal;
 	private final Leaderboard leaderboard;
+	private final InfoBoard infoBoard;
 	private final Utils utils;
 	private int arena = 0; // Keeps track of which arena for many of the menus
 	private int oldSlot = 0;
 	private String old = ""; // Old name to revert name back if cancelled during naming
 	private boolean close; // Safe close toggle initialized to off
 	
-	public InventoryEvents (Main plugin, Game game, Inventories inv, Portal portal, Leaderboard leaderboard) {
+	public InventoryEvents (Main plugin,
+			Game game,
+			Inventories inv,
+			Portal portal,
+			Leaderboard leaderboard,
+			InfoBoard infoBoard) {
 		this.plugin = plugin;
 		this.game = game;
 		this.inv = inv;
 		this.portal = portal;
 		this.leaderboard = leaderboard;
+		this.infoBoard = infoBoard;
 		utils = new Utils(plugin);
 	}
 
@@ -101,8 +113,9 @@ public class InventoryEvents implements Listener {
 			else if (buttonName.contains("Lobby"))
 				openInv(player, inv.createLobbyInventory());
 
-			// Open info holograms menu
-//			else if (buttonName.contains("Info Holograms"))
+			// Open info boards menu
+			else if (buttonName.contains("Info Boards"))
+				openInv(player, inv.createInfoBoardInventory());
 
 			// Open leaderboards menu
 			else if (buttonName.contains("Leaderboards"))
@@ -163,6 +176,67 @@ public class InventoryEvents implements Listener {
 				openInv(player, inv.createArenasInventory());
 		}
 
+		// Info board menu
+		else if (title.contains("Info Boards")) {
+			// Edit board
+			if (Arrays.asList(Inventories.INFO_BOARD_MATS).contains(buttonType)) {
+				openInv(player, inv.createInfoBoardMenu(slot));
+				oldSlot = slot;
+			}
+
+			// Exit menu
+			else if (buttonName.contains("EXIT")) {
+				openInv(player, inv.createArenasInventory());
+			}
+		}
+
+		// Info board menu for a specific board
+		else if (title.contains("Info Board ")) {
+			String path = "infoBoard." + oldSlot;
+
+			// Create board
+			if (buttonName.contains("Create"))
+				if (!plugin.getArenaData().contains(path)) {
+					infoBoard.createInfoBoard(player, oldSlot);
+					player.sendMessage(Utils.notify("&aInfo board set!"));
+					openInv(player, inv.createInfoBoardInventory());
+				} else player.sendMessage(Utils.notify("&cInfo board already exists!"));
+
+
+			// Teleport player to info board
+			else if (buttonName.contains("Teleport")) {
+				Location location = utils.getConfigLocationNoRotation(path);
+				if (location == null) {
+					player.sendMessage(Utils.notify("&cNo info board to teleport to!"));
+					return;
+				}
+				player.teleport(location);
+				player.closeInventory();
+			}
+
+			// Center info board
+			else if (buttonName.contains("Center")) {
+				Location location = utils.getConfigLocationNoRotation(path);
+				if (location == null) {
+					player.sendMessage(Utils.notify("&cNo info board to center!"));
+					return;
+				}
+				utils.centerConfigLocation(path);
+				infoBoard.refreshInfoBoard(oldSlot);
+				player.sendMessage(Utils.notify("&aInfo board centered!"));
+			}
+
+			// Remove info board
+			else if (buttonName.contains("REMOVE"))
+				if (plugin.getArenaData().contains(path))
+					openInv(player, inv.createInfoBoardConfirmInventory());
+				else player.sendMessage(Utils.notify("&cNo info board to remove!"));
+
+			// Exit menu
+			else if (buttonName.contains("EXIT"))
+				openInv(player, inv.createInfoBoardInventory());
+		}
+
 		// Leaderboard menu
 		else if (title.contains("Leaderboards")) {
 			if (buttonName.contains("Total Kills Leaderboard"))
@@ -192,7 +266,6 @@ public class InventoryEvents implements Listener {
 			// Create leaderboard, then return to previous menu
 			if (buttonName.contains("Create")) {
 				if (!plugin.getArenaData().contains(path)) {
-					utils.setConfigurationLocation(path, player.getLocation());
 					leaderboard.createLeaderboard(player, "totalKills");
 					player.sendMessage(Utils.notify("&aLeaderboard set!"));
 					openInv(player, inv.createLeaderboardInventory());
@@ -218,6 +291,7 @@ public class InventoryEvents implements Listener {
 					return;
 				}
 				utils.centerConfigLocation(path);
+				leaderboard.refreshLeaderboard("totalKills");
 				player.sendMessage(Utils.notify("&aLeaderboard centered!"));
 			}
 
@@ -239,7 +313,6 @@ public class InventoryEvents implements Listener {
 			// Create leaderboard, then return to previous menu
 			if (buttonName.contains("Create")) {
 				if (!plugin.getArenaData().contains(path)) {
-					utils.setConfigurationLocation(path, player.getLocation());
 					leaderboard.createLeaderboard(player, "topKills");
 					player.sendMessage(Utils.notify("&aLeaderboard set!"));
 					openInv(player, inv.createLeaderboardInventory());
@@ -265,6 +338,7 @@ public class InventoryEvents implements Listener {
 					return;
 				}
 				utils.centerConfigLocation(path);
+				leaderboard.refreshLeaderboard("topKills");
 				player.sendMessage(Utils.notify("&aLeaderboard centered!"));
 			}
 
@@ -286,7 +360,6 @@ public class InventoryEvents implements Listener {
 			// Create leaderboard, then return to previous menu
 			if (buttonName.contains("Create")) {
 				if (!plugin.getArenaData().contains(path)) {
-					utils.setConfigurationLocation(path, player.getLocation());
 					leaderboard.createLeaderboard(player, "totalGems");
 					player.sendMessage(Utils.notify("&aLeaderboard set!"));
 					openInv(player, inv.createLeaderboardInventory());
@@ -312,6 +385,7 @@ public class InventoryEvents implements Listener {
 					return;
 				}
 				utils.centerConfigLocation(path);
+				leaderboard.refreshLeaderboard("totalGems");
 				player.sendMessage(Utils.notify("&aLeaderboard centered!"));
 			}
 
@@ -333,7 +407,6 @@ public class InventoryEvents implements Listener {
 			// Create leaderboard, then return to previous menu
 			if (buttonName.contains("Create")) {
 				if (!plugin.getArenaData().contains(path)) {
-					utils.setConfigurationLocation(path, player.getLocation());
 					leaderboard.createLeaderboard(player, "topBalance");
 					player.sendMessage(Utils.notify("&aLeaderboard set!"));
 					openInv(player, inv.createLeaderboardInventory());
@@ -359,6 +432,7 @@ public class InventoryEvents implements Listener {
 					return;
 				}
 				utils.centerConfigLocation(path);
+				leaderboard.refreshLeaderboard("topBalance");
 				player.sendMessage(Utils.notify("&aLeaderboard centered!"));
 			}
 
@@ -380,7 +454,6 @@ public class InventoryEvents implements Listener {
 			// Create leaderboard, then return to previous menu
 			if (buttonName.contains("Create")) {
 				if (!plugin.getArenaData().contains(path)) {
-					utils.setConfigurationLocation(path, player.getLocation());
 					leaderboard.createLeaderboard(player, "topWave");
 					player.sendMessage(Utils.notify("&aLeaderboard set!"));
 					openInv(player, inv.createLeaderboardInventory());
@@ -406,6 +479,7 @@ public class InventoryEvents implements Listener {
 					return;
 				}
 				utils.centerConfigLocation(path);
+				leaderboard.refreshLeaderboard("topWave");
 				player.sendMessage(Utils.notify("&aLeaderboard centered!"));
 			}
 
@@ -436,7 +510,7 @@ public class InventoryEvents implements Listener {
 				num += 36;
 
 			// Letters and numbers
-			if (Arrays.asList(Inventories.KEYMATS).contains(buttonType)){
+			if (Arrays.asList(Inventories.KEY_MATS).contains(buttonType)){
 				plugin.getArenaData().set("a" + arena + ".name", name + Inventories.NAMES[num]);
 				plugin.saveArenaData();
 				game.arenas.get(arena).updateArena();
@@ -730,6 +804,29 @@ public class InventoryEvents implements Listener {
 					game.reloadLobby();
 					player.sendMessage(Utils.notify("&aLobby removed!"));
 					openInv(player, inv.createLobbyInventory());
+				}
+			}
+
+			// Confirm to remove info board
+			else if (title.contains("Remove Info Board?")) {
+				String path = "infoBoard." + oldSlot;
+
+				// Return to previous menu
+				if (buttonName.contains("NO"))
+					openInv(player, inv.createInfoBoardMenu(oldSlot));
+
+				// Remove the info board, then return to previous menu
+				else if (buttonName.contains("YES")) {
+					// Remove info board data
+					plugin.getArenaData().set(path, null);
+					plugin.saveArenaData();
+
+					// Remove info board
+					infoBoard.removeInfoBoard(oldSlot);
+
+					// Confirm and return
+					player.sendMessage(Utils.notify("&aInfo board removed!"));
+					openInv(player, inv.createInfoBoardMenu(oldSlot));
 				}
 			}
 
@@ -1172,8 +1269,8 @@ public class InventoryEvents implements Listener {
 
 		// Monster spawn menu for an arena
 		else if (title.contains("Monster Spawns:")) {
-			// Create spawn
-			if (Arrays.asList(Inventories.MONSTERMATS).contains(buttonType)) {
+			// Edit spawn
+			if (Arrays.asList(Inventories.MONSTER_MATS).contains(buttonType)) {
 				openInv(player, inv.createMonsterSpawnMenu(arena, slot));
 				oldSlot = slot;
 			}
@@ -1238,8 +1335,8 @@ public class InventoryEvents implements Listener {
 
 		// Villager spawn menu for an arena
 		else if (title.contains("Villager Spawns:")) {
-			// Create spawn
-			if (Arrays.asList(Inventories.VILLAGERMATS).contains(buttonType)) {
+			// Edit spawn
+			if (Arrays.asList(Inventories.VILLAGER_MATS).contains(buttonType)) {
 				openInv(player, inv.createVillagerSpawnMenu(arena, slot));
 				oldSlot = slot;
 			}

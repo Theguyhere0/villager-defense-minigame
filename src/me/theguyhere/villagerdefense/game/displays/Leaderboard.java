@@ -1,4 +1,4 @@
-package me.theguyhere.villagerdefense.game;
+package me.theguyhere.villagerdefense.game.displays;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
@@ -29,14 +29,16 @@ public class Leaderboard {
 	}
 
 	public void refreshLeaderboards() {
-		for (String type : leaderboards.keySet()) {
-			leaderboards.remove(type);
-			Location location = utils.getConfigLocationNoPitch("leaderboard." + type);
-			addHolo(location, type);
-		}
+		leaderboards.keySet().forEach(this::refreshLeaderboard);
+	}
+
+	public void refreshLeaderboard(String type) {
+		leaderboards.get(type).delete();
+		addHolo(utils.getConfigLocationNoPitch("leaderboard." + type), type);
 	}
 
 	public void removeLeaderboard(String type) {
+		leaderboards.get(type).delete();
 		leaderboards.remove(type);
 	}
 
@@ -51,8 +53,17 @@ public class Leaderboard {
 		for (int i = 1; i < getHoloText(type).length; i++)
 			holo.appendTextLine(getHoloText(type)[i]);
 
-		// Save hologram in array
+		// Save hologram in map
 		leaderboards.put(type, holo);
+	}
+
+	public void loadLeaderboards() {
+		if (plugin.getArenaData().contains("leaderboard"))
+			plugin.getArenaData().getConfigurationSection("leaderboard").getKeys(false).forEach(board -> {
+				Location location = utils.getConfigLocationNoPitch("leaderboard." + board);
+				if (location != null)
+					addHolo(location, board);
+			});
 	}
 
 	private String[] getHoloText(String type) {

@@ -1,14 +1,13 @@
 package me.theguyhere.villagerdefense.GUI;
 
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.game.Arena;
-import me.theguyhere.villagerdefense.game.Game;
+import me.theguyhere.villagerdefense.game.models.Arena;
+import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.game.GameItems;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import java.util.Random;
@@ -34,9 +33,10 @@ public class Inventories {
 	};
 
 	// Easily alternate between black and white wool
-	public static final Material[] KEYMATS = {Material.BLACK_CONCRETE, Material.WHITE_WOOL};
-	public static final Material[] MONSTERMATS = {Material.SKELETON_SKULL, Material.ZOMBIE_HEAD};
-	public static final Material[] VILLAGERMATS = {Material.WITHER_ROSE, Material.POPPY};
+	public static final Material[] KEY_MATS = {Material.BLACK_CONCRETE, Material.WHITE_WOOL};
+	public static final Material[] INFO_BOARD_MATS = {Material.DARK_OAK_SIGN, Material.BIRCH_SIGN};
+	public static final Material[] MONSTER_MATS = {Material.SKELETON_SKULL, Material.ZOMBIE_HEAD};
+	public static final Material[] VILLAGER_MATS = {Material.WITHER_ROSE, Material.POPPY};
 
 	// Temporary constants for buttons that don't work yet
 	final String CONSTRUCTION = "&fComing Soon!";
@@ -63,8 +63,7 @@ public class Inventories {
 		inv.setItem(45, Utils.createItem(Material.BELL, Utils.format("&2&lLobby")));
 
 		// Option to set info hologram
-		inv.setItem(46, Utils.createItem(Material.OAK_SIGN, Utils.format("&6&lInfo Holograms"),
-				Utils.format(CONSTRUCTION)));
+		inv.setItem(46, Utils.createItem(Material.OAK_SIGN, Utils.format("&6&lInfo Boards")));
 
 		// Option to set leaderboard hologram
 		inv.setItem(47, Utils.createItem(Material.GOLDEN_HELMET, Utils.format("&e&lLeaderboards"),
@@ -83,15 +82,15 @@ public class Inventories {
 				Utils.format("&2&lLobby"));
 
 		// Option to create the lobby
-		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Lobby")));
+		inv.setItem(0, ii.create("Lobby"));
 
 		// Option to teleport to the lobby
 		inv.setItem(2, ii.teleport("Lobby"));
 
 		// Option to center the lobby
-		inv.setItem(4, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Lobby")));
+		inv.setItem(4, ii.create("Lobby"));
 
-		// Option to remove the portal
+		// Option to remove the lobby
 		inv.setItem(6, ii.remove("LOBBY"));
 
 		// Option to exit
@@ -104,6 +103,71 @@ public class Inventories {
 	public Inventory createLobbyConfirmInventory() {
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Lobby?"));
+
+		// "No" option
+		inv.setItem(0, ii.no());
+
+		// "Yes" option
+		inv.setItem(8, ii.yes());
+
+		return inv;
+	}
+
+	// Menu for editing info boards
+	public Inventory createInfoBoardInventory() {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&6&lInfo Boards"));
+
+		// Prepare for material indexing
+		int index;
+
+		// Options to interact with all 8 possible info boards
+		for (int i = 0; i < 8; i++) {
+			// Check if the info board exists
+			if (!plugin.getArenaData().contains("infoBoard." + i))
+				index = 0;
+			else index = 1;
+
+			// Create and set item
+			inv.setItem(i, Utils.createItem(INFO_BOARD_MATS[index], Utils.format("&6&lInfo Board " + (i + 1))));
+		}
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	// Menu for editing a specific info board
+	public Inventory createInfoBoardMenu(int slot) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&6&lInfo Board " + slot));
+
+		// Option to create info board
+		inv.setItem(0, ii.create("Info Board"));
+
+		// Option to teleport to info board
+		inv.setItem(2, ii.teleport("Info Board"));
+
+		// Option to center the info board
+		inv.setItem(4, ii.center("Info Board"));
+
+		// Option to remove info board
+		inv.setItem(6, ii.remove("INFO BOARD"));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	// Confirmation menu for removing info boards
+	public Inventory createInfoBoardConfirmInventory() {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&4&lRemove Info Board?"));
 
 		// "No" option
 		inv.setItem(0, ii.no());
@@ -149,13 +213,13 @@ public class Inventories {
 				Utils.format("&4&lTotal Kills Leaderboard"));
 
 		// Option to create the leaderboard
-		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Leaderboard")));
+		inv.setItem(0, ii.create("Leaderboard"));
 
 		// Option to teleport to the leaderboard
 		inv.setItem(2, ii.teleport("Leaderboard"));
 
 		// Option to center the leaderboard
-		inv.setItem(4, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Leaderboard")));
+		inv.setItem(4, ii.center("Leaderboard"));
 
 		// Option to remove the leaderboard
 		inv.setItem(6, ii.remove("LEADERBOARD"));
@@ -173,13 +237,13 @@ public class Inventories {
 				Utils.format("&c&lTop Kills Leaderboard"));
 
 		// Option to create the leaderboard
-		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Leaderboard")));
+		inv.setItem(0, ii.create("Leaderboard"));
 
 		// Option to teleport to the leaderboard
 		inv.setItem(2, ii.teleport("Leaderboard"));
 
 		// Option to center the leaderboard
-		inv.setItem(4, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Leaderboard")));
+		inv.setItem(4, ii.center("Leaderboard"));
 
 		// Option to remove the leaderboard
 		inv.setItem(6, ii.remove("LEADERBOARD"));
@@ -197,13 +261,13 @@ public class Inventories {
 				Utils.format("&2&lTotal Gems Leaderboard"));
 
 		// Option to create the leaderboard
-		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Leaderboard")));
+		inv.setItem(0, ii.create("Leaderboard"));
 
 		// Option to teleport to the leaderboard
 		inv.setItem(2, ii.teleport("Leaderboard"));
 
 		// Option to center the leaderboard
-		inv.setItem(4, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Leaderboard")));
+		inv.setItem(4, ii.center("Leaderboard"));
 
 		// Option to remove the leaderboard
 		inv.setItem(6, ii.remove("LEADERBOARD"));
@@ -221,13 +285,13 @@ public class Inventories {
 				Utils.format("&a&lTop Balance Leaderboard"));
 
 		// Option to create the leaderboard
-		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Leaderboard")));
+		inv.setItem(0, ii.create("Leaderboard"));
 
 		// Option to teleport to the leaderboard
 		inv.setItem(2, ii.teleport("Leaderboard"));
 
 		// Option to center the leaderboard
-		inv.setItem(4, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Leaderboard")));
+		inv.setItem(4, ii.center("Leaderboard"));
 
 		// Option to remove the leaderboard
 		inv.setItem(6, ii.remove("LEADERBOARD"));
@@ -245,13 +309,13 @@ public class Inventories {
 				Utils.format("&9&lTop Wave Leaderboard"));
 
 		// Option to create the leaderboard
-		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Leaderboard")));
+		inv.setItem(0, ii.create("Leaderboard"));
 
 		// Option to teleport to the leaderboard
 		inv.setItem(2, ii.teleport("Leaderboard"));
 
 		// Option to center the leaderboard
-		inv.setItem(4, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Leaderboard")));
+		inv.setItem(4, ii.center("Leaderboard"));
 
 		// Option to remove the leaderboard
 		inv.setItem(6, ii.remove("LEADERBOARD"));
@@ -349,8 +413,8 @@ public class Inventories {
 		// Letter and number inputs
 		for (int i = 0; i < 36; i++) {
 			if (caps)
-				inv.setItem(i, Utils.createItem(KEYMATS[i % 2], Utils.format("&f&l" + NAMES[i + 36])));
-			else inv.setItem(i, Utils.createItem(KEYMATS[i % 2], Utils.format("&f&l" + NAMES[i])));
+				inv.setItem(i, Utils.createItem(KEY_MATS[i % 2], Utils.format("&f&l" + NAMES[i + 36])));
+			else inv.setItem(i, Utils.createItem(KEY_MATS[i % 2], Utils.format("&f&l" + NAMES[i])));
 		}
 
 		// Space inputs
@@ -437,13 +501,13 @@ public class Inventories {
 				Utils.format("&5&lPortal: " + game.arenas.get(arena).getName()));
 
 		// Option to create the portal
-		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Portal")));
+		inv.setItem(0, ii.create("Portal"));
 
 		// Option to teleport to the portal
 		inv.setItem(2, ii.teleport("Portal"));
 
 		// Option to center the portal
-		inv.setItem(4, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Portal")));
+		inv.setItem(4, ii.center("Portal"));
 
 		// Option to remove the portal
 		inv.setItem(6, ii.remove("PORTAL"));
@@ -511,13 +575,13 @@ public class Inventories {
 				Utils.format("&d&lPlayer Spawn: " + game.arenas.get(arena).getName()));
 
 		// Option to create player spawn
-		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Spawn")));
+		inv.setItem(0, ii.create("Spawn"));
 
 		// Option to teleport to player spawn
 		inv.setItem(2, ii.teleport("Spawn"));
 
 		// Option to center the player spawn
-		inv.setItem(4, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Spawn")));
+		inv.setItem(4, ii.center("Spawn"));
 
 		// Option to remove player spawn
 		inv.setItem(6, ii.remove("SPAWN"));
@@ -550,16 +614,16 @@ public class Inventories {
 				Utils.format("&b&lWaiting Room: " + game.arenas.get(arena).getName()));
 
 		// Option to create waiting room
-		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Waiting Room")));
+		inv.setItem(0, ii.create("Waiting Room"));
 
 		// Option to teleport to waiting room
-		inv.setItem(1, ii.teleport("Waiting Room"));
+		inv.setItem(2, ii.teleport("Waiting Room"));
 
 		// Option to center the waiting room
-		inv.setItem(2, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Waiting Room")));
+		inv.setItem(4, ii.center("Waiting Room"));
 
 		// Option to remove waiting room
-		inv.setItem(7, ii.remove("WAITING ROOM"));
+		inv.setItem(6, ii.remove("WAITING ROOM"));
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
@@ -685,7 +749,7 @@ public class Inventories {
 			else index = 1;
 
 			// Create and set item
-			inv.setItem(i, Utils.createItem(MONSTERMATS[index], Utils.format("&2&lMob Spawn " + (i + 1))));
+			inv.setItem(i, Utils.createItem(MONSTER_MATS[index], Utils.format("&2&lMob Spawn " + (i + 1))));
 		}
 
 		// Option to exit
@@ -701,16 +765,16 @@ public class Inventories {
 				Utils.format("&2&lMonster Spawn " + slot + ": " + game.arenas.get(arena).getName()));
 
 		// Option to create monster spawn
-		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Spawn")));
+		inv.setItem(0, ii.create("Spawn"));
 
 		// Option to teleport to monster spawn
-		inv.setItem(1, ii.teleport("Spawn"));
+		inv.setItem(2, ii.teleport("Spawn"));
 
 		// Option to center the monster spawn
-		inv.setItem(2, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Spawn")));
+		inv.setItem(4, ii.center("Spawn"));
 
 		// Option to remove monster spawn
-		inv.setItem(7, ii.remove("SPAWN"));
+		inv.setItem(6, ii.remove("SPAWN"));
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
@@ -752,7 +816,7 @@ public class Inventories {
 			else index = 1;
 
 			// Create and set item
-			inv.setItem(i, Utils.createItem(VILLAGERMATS[index], Utils.format("&5&lVillager Spawn " + (i + 1))));
+			inv.setItem(i, Utils.createItem(VILLAGER_MATS[index], Utils.format("&5&lVillager Spawn " + (i + 1))));
 		}
 
 		// Option to exit
@@ -768,16 +832,16 @@ public class Inventories {
 				Utils.format("&5&lVillager Spawn " + slot + ": " + game.arenas.get(arena).getName()));
 
 		// Option to create villager spawn
-		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Spawn")));
+		inv.setItem(0, ii.create("Spawn"));
 
 		// Option to teleport to villager spawn
-		inv.setItem(1, ii.teleport("Spawn"));
+		inv.setItem(2, ii.teleport("Spawn"));
 
 		// Option to center the villager spawn
-		inv.setItem(2, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Spawn")));
+		inv.setItem(4, ii.center("Spawn"));
 
 		// Option to remove villager spawn
-		inv.setItem(7, ii.remove("SPAWN"));
+		inv.setItem(6, ii.remove("SPAWN"));
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
@@ -812,17 +876,17 @@ public class Inventories {
 				Utils.format(CONSTRUCTION)));
 
 		// Option to toggle default shop
-		inv.setItem(1, Utils.createItem(Material.GOLD_BLOCK,
+		inv.setItem(2, Utils.createItem(Material.GOLD_BLOCK,
 				Utils.format("&6&lToggle Default Shop"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to toggle custom shop
-		inv.setItem(2, Utils.createItem(Material.EMERALD_BLOCK,
+		inv.setItem(4, Utils.createItem(Material.EMERALD_BLOCK,
 				Utils.format("&2&lToggle Custom Shop"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to toggle dynamic prices
-		inv.setItem(3, Utils.createItem(Material.NETHER_STAR,
+		inv.setItem(6, Utils.createItem(Material.NETHER_STAR,
 				Utils.format("&b&lToggle Dynamic Prices"),
 				Utils.format(CONSTRUCTION)));
 
@@ -1234,23 +1298,25 @@ public class Inventories {
 
 		// Total kills
 		inv.setItem(0, Utils.createItem(Material.DRAGON_HEAD, Utils.format("&4&lTotal Kills: &4" +
-				playerData.getInt(name + ".totalKills")), "Lifetime kill count"));
+				playerData.getInt(name + ".totalKills")), Utils.format("&7Lifetime kill count")));
 
 		// Top kills
 		inv.setItem(1, Utils.createItem(Material.ZOMBIE_HEAD, Utils.format("&c&lTop Kills: &c" +
-				playerData.getInt(name + ".topKills")), "Most kills in a game"));
+				playerData.getInt(name + ".topKills")), Utils.format("&7Most kills in a game")));
 
 		// Total gems
 		inv.setItem(2, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&2&lTotal Gems: &2" +
-				playerData.getInt(name + ".totalGems")), "Lifetime gems collected"));
+				playerData.getInt(name + ".totalGems")), Utils.format("&7Lifetime gems collected")));
 
 		// Top balance
 		inv.setItem(3, Utils.createItem(Material.EMERALD, Utils.format("&a&lTop Balance: &a" +
-				playerData.getInt(name + ".topBalance")), "Highest gem balance in a game"));
+				playerData.getInt(name + ".topBalance")),
+				Utils.format("&7Highest gem balance in a game")));
 
 		// Top wave
 		inv.setItem(4, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&9&lTop Wave: &9" +
-				playerData.getInt(name + ".topWave")), FLAGS, null, "Highest completed wave"));
+				playerData.getInt(name + ".topWave")), FLAGS, null,
+				Utils.format("&7Highest completed wave")));
 
 		// Crystal balance
 		inv.setItem(8, Utils.createItem(Material.DIAMOND, Utils.format("&b&lCrystal Balance: &b" +

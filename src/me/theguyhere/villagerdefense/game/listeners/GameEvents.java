@@ -1,8 +1,12 @@
-package me.theguyhere.villagerdefense.game;
+package me.theguyhere.villagerdefense.game.listeners;
 
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.customEvents.GameEndEvent;
 import me.theguyhere.villagerdefense.customEvents.WaveEndEvent;
+import me.theguyhere.villagerdefense.game.models.Arena;
+import me.theguyhere.villagerdefense.game.models.Game;
+import me.theguyhere.villagerdefense.game.GameItems;
+import me.theguyhere.villagerdefense.game.models.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -16,8 +20,8 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -57,7 +61,7 @@ public class GameEvents implements Listener {
 	public void onMobKill(EntityDeathEvent e) {
 		Entity ent = e.getEntity();
 
-		// Check for arena enemies
+		// Check for arena mobs
 		if (!ent.hasMetadata("VD"))
 			return;
 
@@ -499,5 +503,19 @@ public class GameEvents implements Listener {
 		if (!ent.hasMetadata("VD"))
 			return;
 		e.setCancelled(true);
+	}
+
+	// Stop interactions with villagers in game
+	@EventHandler
+	public void onTrade(PlayerInteractEntityEvent e) {
+		Entity ent = e.getRightClicked();
+
+		// Check for villager
+		if (!(ent instanceof Villager))
+			return;
+
+		// Check for arena mobs
+		if (ent.hasMetadata("VD"))
+			e.setCancelled(true);
 	}
 }

@@ -6,6 +6,9 @@ import me.theguyhere.villagerdefense.customEvents.GameEndEvent;
 import me.theguyhere.villagerdefense.customEvents.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.customEvents.WaveEndEvent;
 import me.theguyhere.villagerdefense.customEvents.WaveStartEvent;
+import me.theguyhere.villagerdefense.game.displays.Portal;
+import me.theguyhere.villagerdefense.game.models.Arena;
+import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -122,8 +125,9 @@ public class Tasks {
 			arenaInstance.incrementCurrentWave();
 			int currentWave = arenaInstance.getCurrentWave();
 
-			// Refresh the portal hologram
+			// Refresh the portal hologram and scoreboards
 			portal.refreshHolo(arena, game);
+			updateBoards.run();
 
 			// Regenerate shops when time and notify players of it
 			if (currentWave % 10 == 0 || currentWave == 1) {
@@ -143,7 +147,7 @@ public class Tasks {
 
 			arenaInstance.getActives().forEach(p -> {
 				// Notify of upcoming wave
-				int reward = currentWave * 10 - 10;
+				int reward = (currentWave - 1) * 5;
 				p.getPlayer().sendTitle(Utils.format("&6Wave " + currentWave),
 						Utils.format("&7Starting in 15 seconds"), Utils.secondsToTicks(.5) ,
 						Utils.secondsToTicks(3.5), Utils.secondsToTicks(1));
