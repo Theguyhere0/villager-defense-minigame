@@ -132,7 +132,9 @@ public class Tasks {
 			// Regenerate shops when time and notify players of it
 			if (currentWave % 10 == 0 || currentWave == 1) {
 				int shopNum = currentWave / 10 + 1;
-				arenaInstance.setShop(Inventories.createShop(shopNum));
+				arenaInstance.setWeaponShop(Inventories.createWeaponShop(shopNum));
+				arenaInstance.setArmorShop(Inventories.createArmorShop(shopNum));
+				arenaInstance.setConsumeShop(Inventories.createConsumablesShop(shopNum));
 				if (currentWave != 1)
 					arenaInstance.getActives().forEach(player ->
 						player.getPlayer().sendMessage(Utils.notify("&6Shops have reset!")));

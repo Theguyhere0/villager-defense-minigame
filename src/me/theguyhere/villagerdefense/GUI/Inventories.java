@@ -39,8 +39,8 @@ public class Inventories {
 	public static final Material[] VILLAGER_MATS = {Material.WITHER_ROSE, Material.POPPY};
 
 	// Temporary constants for buttons that don't work yet
-	final String CONSTRUCTION = "&fComing Soon!";
-	final boolean[] FLAGS = {true, true};
+	final static String CONSTRUCTION = "&fComing Soon!";
+	final static boolean[] FLAGS = {true, true};
 
 	// Menu of all the arenas
 	public Inventory createArenasInventory() {
@@ -60,14 +60,16 @@ public class Inventories {
 		}
 
 		// Option to set lobby location
-		inv.setItem(45, Utils.createItem(Material.BELL, Utils.format("&2&lLobby")));
+		inv.setItem(45, Utils.createItem(Material.BELL, Utils.format("&2&lLobby"),
+				Utils.format("&7Manage minigame lobby")));
 
 		// Option to set info hologram
-		inv.setItem(46, Utils.createItem(Material.OAK_SIGN, Utils.format("&6&lInfo Boards")));
+		inv.setItem(46, Utils.createItem(Material.OAK_SIGN, Utils.format("&6&lInfo Boards"),
+				Utils.format("&7Manage info boards")));
 
 		// Option to set leaderboard hologram
 		inv.setItem(47, Utils.createItem(Material.GOLDEN_HELMET, Utils.format("&e&lLeaderboards"),
-				FLAGS, null));
+				FLAGS, null, Utils.format("&7Manage leaderboards")));
 
 		// Option to exit
 		inv.setItem(53, ii.exit());
@@ -88,7 +90,7 @@ public class Inventories {
 		inv.setItem(2, ii.teleport("Lobby"));
 
 		// Option to center the lobby
-		inv.setItem(4, ii.create("Lobby"));
+		inv.setItem(4, ii.center("Lobby"));
 
 		// Option to remove the lobby
 		inv.setItem(6, ii.remove("LOBBY"));
@@ -545,22 +547,27 @@ public class Inventories {
 		// Option to toggle player spawn particles
 		inv.setItem(1, Utils.createItem(Material.FIREWORK_ROCKET,
 				Utils.format("&d&lToggle Spawn Particles"),
+				Utils.format("&7Particles showing where the spawn is"),
+				Utils.format("&7(Visible in-game)"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to edit waiting room
-		inv.setItem(2, Utils.createItem(Material.CLOCK, Utils.format("&b&lWaiting Room")));
+		inv.setItem(2, Utils.createItem(Material.CLOCK, Utils.format("&b&lWaiting Room"),
+				Utils.format("&7An optional room to wait in before"), Utils.format("&7the game starts")));
 
 		// Option to edit max players
 		inv.setItem(3, Utils.createItem(Material.NETHERITE_HELMET,
 				Utils.format("&4&lMaximum Players"),
 				FLAGS,
-				null));
+				null,
+				Utils.format("&7Maximum players the game will have")));
 
 		// Option to edit min players
 		inv.setItem(4, Utils.createItem(Material.NETHERITE_BOOTS,
 				Utils.format("&2&lMinimum Players"),
 				FLAGS,
-				null));
+				null,
+				Utils.format("&7Minimum players needed for game to start")));
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
@@ -698,6 +705,8 @@ public class Inventories {
 		// Option to toggle monster spawn particles
 		inv.setItem(1, Utils.createItem(Material.FIREWORK_ROCKET,
 				Utils.format("&a&lToggle Monster Spawn Particles"),
+				Utils.format("&7Particles showing where the spawns are"),
+				Utils.format("&7(Visible in-game)"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to edit villager spawns
@@ -707,6 +716,8 @@ public class Inventories {
 		// Option to toggle villager spawn particles
 		inv.setItem(3, Utils.createItem(Material.FIREWORK_ROCKET,
 				Utils.format("&d&lToggle Villager Spawn Particles"),
+				Utils.format("&7Particles showing where the spawns are"),
+				Utils.format("&7(Visible in-game)"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to edit monsters allowed
@@ -717,11 +728,13 @@ public class Inventories {
 		// Option to toggle dynamic monster count
 		inv.setItem(5, Utils.createItem(Material.SLIME_BALL,
 				Utils.format("&e&lToggle Dynamic Monster Count"),
+				Utils.format("&7Monster count adjusts based on number of players"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to toggle dynamic difficulty
 		inv.setItem(6, Utils.createItem(Material.MAGMA_CREAM,
 				Utils.format("&6&lToggle Dynamic Difficulty"),
+				Utils.format("&7Difficulty adjusts based on number of players"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to exit
@@ -878,16 +891,20 @@ public class Inventories {
 		// Option to toggle default shop
 		inv.setItem(2, Utils.createItem(Material.GOLD_BLOCK,
 				Utils.format("&6&lToggle Default Shop"),
+				Utils.format("&7Turn default shop on and off"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to toggle custom shop
 		inv.setItem(4, Utils.createItem(Material.EMERALD_BLOCK,
 				Utils.format("&2&lToggle Custom Shop"),
+				Utils.format("&7Turn custom shop on and off"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to toggle dynamic prices
 		inv.setItem(6, Utils.createItem(Material.NETHER_STAR,
 				Utils.format("&b&lToggle Dynamic Prices"),
+				Utils.format("&7Prices adjusting based on number of"),
+				Utils.format("&7players in the game"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to exit
@@ -914,6 +931,8 @@ public class Inventories {
 		// Option to toggle dynamic wave time limit
 		inv.setItem(2, Utils.createItem(Material.SNOWBALL,
 				Utils.format("&a&lToggle Dynamic Time Limit"),
+				Utils.format("&7Wave time limit adjusts based on"),
+				Utils.format("&7in-game difficulty"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to edit allowed kits
@@ -932,14 +951,18 @@ public class Inventories {
 				FLAGS,
 				null));
 
-		// Option to copy game settings from another arena
-		inv.setItem(6, Utils.createItem(Material.FEATHER,
-				Utils.format("&7&lCopy Game Settings"),
+		// Option to adjust overall difficulty multiplier
+		inv.setItem(6, Utils.createItem(Material.TURTLE_HELMET,
+				Utils.format("&4&lDifficulty Multiplier"),
+				FLAGS,
+				null,
 				Utils.format(CONSTRUCTION)));
 
-		// Option to copy arena settings from another arena
+		// Option to copy game settings from another arena
 		inv.setItem(7, Utils.createItem(Material.WRITABLE_BOOK,
-				Utils.format("&8&lCopy Arena Settings"),
+				Utils.format("&7&lCopy Game Settings"),
+				Utils.format("&7Copy settings of another arena excluding"),
+				Utils.format("&7location data, arena name, and closed status"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to exit
@@ -1021,6 +1044,7 @@ public class Inventories {
 				Utils.format("&a&lWin"),
 				FLAGS,
 				null,
+				Utils.format("&7Played when game ends and players win"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to edit lose sound
@@ -1028,6 +1052,7 @@ public class Inventories {
 				Utils.format("&e&lLose"),
 				FLAGS,
 				null,
+				Utils.format("&7Played when game ends and players lose"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to edit wave start sound
@@ -1035,6 +1060,7 @@ public class Inventories {
 				Utils.format("&2&lWave Start"),
 				FLAGS,
 				null,
+				Utils.format("&7Played when a wave starts"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to edit wave finish sound
@@ -1042,6 +1068,7 @@ public class Inventories {
 				Utils.format("&4&lWave Finish"),
 				FLAGS,
 				null,
+				Utils.format("&7Played when a wave ends"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to edit waiting music
@@ -1049,6 +1076,7 @@ public class Inventories {
 				Utils.format("&6&lWaiting Music"),
 				FLAGS,
 				null,
+				Utils.format("&7Played while players wait for game to start"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to edit gem pickup sound
@@ -1056,6 +1084,7 @@ public class Inventories {
 				Utils.format("&b&lGem Pickup Music"),
 				FLAGS,
 				null,
+				Utils.format("&7Played when players pick up gems"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to exit
@@ -1065,33 +1094,35 @@ public class Inventories {
 	}
 
 	// Generate the shop menu
-	public static Inventory createShop(int level) {
+	public static Inventory createShop() {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&2&lItem Shop"));
+
+		inv.setItem(1, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&4&lWeapon Shop"),
+				FLAGS, null));
+
+		inv.setItem(3, Utils.createItem(Material.GOLDEN_CHESTPLATE, Utils.format("&5&lArmor Shop"),
+				FLAGS, null));
+
+		inv.setItem(5, Utils.createItem(Material.GOLDEN_APPLE, Utils.format("&3&lConsumables Shop")));
+
+		inv.setItem(7, Utils.createItem(Material.QUARTZ, Utils.format("&6&lCustom Shop"),
+				Utils.format(CONSTRUCTION)));
+
+		return inv;
+	}
+
+	// Generate the weapon shop
+	public static Inventory createWeaponShop(int level) {
 		Random r = new Random();
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 36, Utils.format("&k") +
-				Utils.format("&2&lItem Shop"));
-
-		// Fill in armor
-		for (int i = 0; i < 18; i++) {
-			int chance = r.nextInt(4);
-			switch (chance) {
-				case 0:
-					inv.setItem(i, GameItems.helmet(level));
-					break;
-				case 1:
-					inv.setItem(i, GameItems.chestplate(level));
-					break;
-				case 2:
-					inv.setItem(i, GameItems.leggings(level));
-					break;
-				case 3:
-					inv.setItem(i, GameItems.boots(level));
-			}
-		}
+		Inventory inv = Bukkit.createInventory(null, 18, Utils.format("&k") +
+				Utils.format("&4&lWeapon Shop"));
 
 		// Fill in weapons
-		for (int i = 18; i < 27; i++) {
+		for (int i = 0; i < 9; i++) {
 			double chance = r.nextDouble();
 			switch (level) {
 				case 1:
@@ -1189,8 +1220,54 @@ public class Inventories {
 			}
 		}
 
+		// Return option
+		inv.setItem(13, Utils.createItem(Material.BARRIER, Utils.format("&c&lRETURN")));
+
+		return inv;
+	}
+
+	// Generate the armor shop
+	public static Inventory createArmorShop(int level) {
+		Random r = new Random();
+
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 27, Utils.format("&k") +
+				Utils.format("&5&lArmor Shop"));
+
+		// Fill in armor
+		for (int i = 0; i < 18; i++) {
+			int chance = r.nextInt(4);
+			switch (chance) {
+				case 0:
+					inv.setItem(i, GameItems.helmet(level));
+					break;
+				case 1:
+					inv.setItem(i, GameItems.chestplate(level));
+					break;
+				case 2:
+					inv.setItem(i, GameItems.leggings(level));
+					break;
+				case 3:
+					inv.setItem(i, GameItems.boots(level));
+			}
+		}
+
+		// Return option
+		inv.setItem(22, Utils.createItem(Material.BARRIER, Utils.format("&c&lRETURN")));
+
+		return inv;
+	}
+
+	// Generate the consumables shop
+	public static Inventory createConsumablesShop(int level) {
+		Random r = new Random();
+
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 18, Utils.format("&k") +
+				Utils.format("&3&lConsumables Shop"));
+
 		// Fill in consumables
-		for (int i = 27; i < 36; i++) {
+		for (int i = 0; i < 9; i++) {
 			double chance = r.nextDouble();
 			switch (level) {
 				case 1:
@@ -1285,6 +1362,9 @@ public class Inventories {
 			}
 		}
 
+		// Return option
+		inv.setItem(13, Utils.createItem(Material.BARRIER, Utils.format("&c&lRETURN")));
+
 		return inv;
 	}
 
@@ -1321,6 +1401,35 @@ public class Inventories {
 		// Crystal balance
 		inv.setItem(8, Utils.createItem(Material.DIAMOND, Utils.format("&b&lCrystal Balance: &b" +
 				playerData.getInt(name + ".crystalBalance"))));
+
+		return inv;
+	}
+
+	// Display arena information
+	public Inventory createArenaInfoInventory(Arena arena) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&6&l" + arena.getName() + " Info"));
+
+		// Maximum players
+		inv.setItem(1, Utils.createItem(Material.NETHERITE_HELMET,
+				Utils.format("&4&lMaximum players: &4" + arena.getMaxPlayers()), FLAGS, null,
+				Utils.format("&7The most players an arena can have")));
+
+		// Minimum players
+		inv.setItem(3, Utils.createItem(Material.NETHERITE_BOOTS,
+				Utils.format("&2&lMinimum players: &2" + arena.getMinPlayers()), FLAGS, null,
+				Utils.format("&7The least players an arena can have to start")));
+
+		// Max waves
+		inv.setItem(5, Utils.createItem(Material.GOLDEN_SWORD,
+				Utils.format("&3&lMax waves: &3" + arena.getMaxWaves()), FLAGS, null,
+				Utils.format("&7The highest wave the arena will go to")));
+
+		// Wave time limit
+		inv.setItem(7, Utils.createItem(Material.CLOCK,
+				Utils.format("&9&lWave time limit: &9" + arena.getWaveTimeLimit() + " minute(s)"),
+				Utils.format("&7The time limit for each wave before"), Utils.format("&7the game ends")));
 
 		return inv;
 	}

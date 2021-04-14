@@ -66,7 +66,7 @@ public class Main extends JavaPlugin {
 				this);
 		pm.registerEvents(new Join(this, portal, reader, game), this);
 		pm.registerEvents(new Death(portal, reader), this);
-		pm.registerEvents(new ClickPortalEvents(game, portal), this);
+		pm.registerEvents(new ClickPortalEvents(game, portal, inventories), this);
 		pm.registerEvents(new GameEvents(this, game), this);
 		pm.registerEvents(new ArenaEvents(this, game, portal, leaderboard), this);
 

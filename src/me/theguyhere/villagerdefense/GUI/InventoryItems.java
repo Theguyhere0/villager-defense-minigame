@@ -37,6 +37,7 @@ public class InventoryItems {
 
     //	"Center x" button
     public ItemStack center(String x) {
-        return Utils.createItem(Material.TARGET, Utils.format("&f&lCenter " + x));
+        return Utils.createItem(Material.TARGET, Utils.format("&f&lCenter " + x),
+                Utils.format("&7Center the x and z coordinates"));
     }
 }

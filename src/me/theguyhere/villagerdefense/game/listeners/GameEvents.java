@@ -1,11 +1,12 @@
 package me.theguyhere.villagerdefense.game.listeners;
 
+import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.customEvents.GameEndEvent;
 import me.theguyhere.villagerdefense.customEvents.WaveEndEvent;
+import me.theguyhere.villagerdefense.game.GameItems;
 import me.theguyhere.villagerdefense.game.models.Arena;
 import me.theguyhere.villagerdefense.game.models.Game;
-import me.theguyhere.villagerdefense.game.GameItems;
 import me.theguyhere.villagerdefense.game.models.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
@@ -17,17 +18,10 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -35,21 +29,6 @@ import java.util.stream.Collectors;
 public class GameEvents implements Listener {
 	private final Main plugin;
 	private final Game game;
-
-	// Constants for armor types
-	private final Material[] HELMETS = {Material.LEATHER_HELMET, Material.GOLDEN_HELMET, Material.CHAINMAIL_HELMET,
-			Material.IRON_HELMET, Material.DIAMOND_HELMET, Material.NETHERITE_HELMET, Material.TURTLE_HELMET
-	};
-	private final Material[] CHESTPLATES = {Material.LEATHER_CHESTPLATE, Material.GOLDEN_CHESTPLATE,
-			Material.CHAINMAIL_CHESTPLATE, Material.IRON_CHESTPLATE, Material.DIAMOND_CHESTPLATE,
-			Material.NETHERITE_HELMET
-	};
-	private final Material[] LEGGINGS = {Material.LEATHER_LEGGINGS, Material.GOLDEN_LEGGINGS,
-			Material.CHAINMAIL_LEGGINGS, Material.IRON_LEGGINGS, Material.DIAMOND_LEGGINGS, Material.NETHERITE_LEGGINGS
-	};
-	private final Material[] BOOTS = {Material.LEATHER_BOOTS, Material.GOLDEN_BOOTS, Material.CHAINMAIL_BOOTS,
-			Material.IRON_BOOTS, Material.DIAMOND_BOOTS, Material.NETHERITE_BOOTS
-	};
 
 	public GameEvents (Main plugin, Game game) {
 		this.plugin = plugin;
@@ -227,72 +206,15 @@ public class GameEvents implements Listener {
 		if (!player.getEquipment().getItemInMainHand().equals(GameItems.shop()))
 			return;
 
-		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
-				.collect(Collectors.toList()).get(0);
+		// Ignore if already in shop
+		if (player.getOpenInventory().getTitle().contains(Utils.format("&k")))
+			return;
 
 		// Open shop inventory and cancel interaction
 		e.setCancelled(true);
-		player.openInventory(arena.getShop());
+		player.openInventory(Inventories.createShop());
 	}
-	
-	// Purchase items
-	@EventHandler
-	public void onClick(InventoryClickEvent e) {
-		if (e.getView().getTitle().contains(Utils.format("&2&lItem Shop"))) {
-			Player player = (Player) e.getWhoClicked();
-			VDPlayer gamer = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
-					.collect(Collectors.toList()).get(0).getPlayer(player);
 
-			// See if the player is in a game
-			if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
-				return;
-
-			// Ignore clicks in player's own inventory
-			if (e.getClickedInventory() != null && e.getClickedInventory().getType() == InventoryType.PLAYER)
-				return;
-			e.setCancelled(true);
-
-			ItemStack buy = e.getClickedInventory().getItem(e.getSlot()).clone();
-			ItemMeta meta = buy.getItemMeta();
-			int cost = Integer.parseInt(meta.getLore().get(0).substring(10));
-
-			// Check if they can afford the item
-			if (!gamer.canAfford(cost)) {
-				player.sendMessage(Utils.notify("&cYou can't afford this item!"));
-				return;
-			}
-
-			meta.setLore(new ArrayList<>());
-			buy.setItemMeta(meta);
-
-			// Subtract from balance, update scoreboard, give item
-			gamer.addGems(-cost);
-			game.createBoard(gamer);
-
-			EntityEquipment equipment = player.getPlayer().getEquipment();
-
-			// Equip armor if possible, otherwise put in inventory, otherwise drop at feet
-			if (Arrays.stream(HELMETS).anyMatch(mat -> mat == buy.getType()) && equipment.getHelmet() == null) {
-				equipment.setHelmet(buy);
-				player.sendMessage(Utils.notify("&aHelmet equipped!"));
-			} else if (Arrays.stream(CHESTPLATES).anyMatch(mat -> mat == buy.getType()) &&
-					equipment.getChestplate() == null) {
-				equipment.setChestplate(buy);
-				player.sendMessage(Utils.notify("&aChestplate equipped!"));
-			} else if (Arrays.stream(LEGGINGS).anyMatch(mat -> mat == buy.getType()) &&
-					equipment.getLeggings() == null) {
-				equipment.setLeggings(buy);
-				player.sendMessage(Utils.notify("&aLeggings equipped!"));
-			} else if (Arrays.stream(BOOTS).anyMatch(mat -> mat == buy.getType()) && equipment.getBoots() == null) {
-				equipment.setBoots(buy);
-				player.sendMessage(Utils.notify("&aBoots equipped!"));
-			} else {
-				Utils.giveItem(player, buy);
-				player.sendMessage(Utils.notify("&aItem purchased!"));
-			}
-		}
-	}
-	
 	// Stops players from hurting villagers and other players, and monsters from hurting each other
 	@EventHandler
 	public void onFriendlyFire(EntityDamageByEntityEvent e) {

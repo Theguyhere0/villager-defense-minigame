@@ -16,6 +16,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -77,6 +78,13 @@ public class ArenaEvents implements Listener {
         }
 
         int players = arena.getActiveCount();
+
+        // Save player exp and items before going into arena
+        plugin.getPlayerData().set(player.getName() + ".level", player.getLevel());
+        plugin.getPlayerData().set(player.getName() + ".exp", (double) player.getExp());
+        for (int i = 0; i < player.getInventory().getContents().length; i++)
+            plugin.getPlayerData().set(player.getName() + ".inventory." + i, player.getInventory().getContents()[i]);
+        plugin.savePlayerData();
 
         // First player joining the arena
         if (players == 0) {
@@ -317,6 +325,21 @@ public class ArenaEvents implements Listener {
 
             // Sets them up for teleport to lobby
             Utils.teleAdventure(player, game.getLobby());
+        }
+
+        // Return player exp and items
+        if (player.isOnline()) {
+            if (plugin.getPlayerData().contains(player.getName() + ".level"))
+                player.setLevel(plugin.getPlayerData().getInt(player.getName() + ".level"));
+            plugin.getPlayerData().set(player.getName() + ".level", null);
+            if (plugin.getPlayerData().contains(player.getName() + ".exp"))
+                player.setExp((float) plugin.getPlayerData().getDouble(player.getName() + ".exp"));
+            plugin.getPlayerData().set(player.getName() + ".exp", null);
+            plugin.getPlayerData().getConfigurationSection(player.getName() + ".inventory").getKeys(false)
+                    .forEach(num -> player.getInventory().setItem(Integer.parseInt(num),
+                            (ItemStack) plugin.getPlayerData().get(player.getName() + ".inventory." + num)));
+            plugin.getPlayerData().set(player.getName() + ".inventory", null);
+            plugin.savePlayerData();
         }
 
         // Refresh the game portal

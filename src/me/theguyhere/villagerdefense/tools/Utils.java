@@ -172,6 +172,7 @@ public class Utils {
         player.setFoodLevel(20);
         player.setSaturation(20);
         player.setExp(0);
+        player.setLevel(0);
         player.setFallDistance(0);
         player.getInventory().clear();
         player.teleport(location);
@@ -186,6 +187,7 @@ public class Utils {
         player.setFoodLevel(20);
         player.setSaturation(20);
         player.setExp(0);
+        player.setLevel(0);
         player.getInventory().clear();
         player.teleport(location);
         player.setGameMode(GameMode.SPECTATOR);

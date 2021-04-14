@@ -43,7 +43,10 @@ public class Arena {
     private int villagers; // Villager count
     private int enemies; // Enemy count
     private final List<VDPlayer> players = new ArrayList<>(); // Tracks players playing and their other related stats
-    private Inventory shop; // Shop inventory
+    private Inventory weaponShop; // Weapon shop inventory
+    private Inventory armorShop; // Armor shop inventory
+    private Inventory consumeShop; // Consumables shop inventory
+    private Inventory customShop; // Custom shop inventory
     private BossBar timeLimitBar; // Time limit bar
 
     public Arena(Main plugin, int arena, Tasks task) {
@@ -226,12 +229,36 @@ public class Arena {
         return getSpectators().size();
     }
 
-    public Inventory getShop() {
-        return shop;
+    public Inventory getWeaponShop() {
+        return weaponShop;
     }
 
-    public void setShop(Inventory shop) {
-        this.shop = shop;
+    public void setWeaponShop(Inventory weaponShop) {
+        this.weaponShop = weaponShop;
+    }
+
+    public Inventory getArmorShop() {
+        return armorShop;
+    }
+
+    public void setArmorShop(Inventory armorShop) {
+        this.armorShop = armorShop;
+    }
+
+    public Inventory getConsumeShop() {
+        return consumeShop;
+    }
+
+    public void setConsumeShop(Inventory consumeShop) {
+        this.consumeShop = consumeShop;
+    }
+
+    public Inventory getCustomShop() {
+        return customShop;
+    }
+
+    public void setCustomShop(Inventory customShop) {
+        this.customShop = customShop;
     }
 
     public BossBar getTimeLimitBar() {

@@ -8,6 +8,7 @@ import me.theguyhere.villagerdefense.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.game.models.Arena;
 import me.theguyhere.villagerdefense.game.models.Game;
+import me.theguyhere.villagerdefense.game.models.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -19,10 +20,15 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class InventoryEvents implements Listener {
 	private final Main plugin;
@@ -36,7 +42,22 @@ public class InventoryEvents implements Listener {
 	private int oldSlot = 0;
 	private String old = ""; // Old name to revert name back if cancelled during naming
 	private boolean close; // Safe close toggle initialized to off
-	
+
+	// Constants for armor types
+	private final Material[] HELMETS = {Material.LEATHER_HELMET, Material.GOLDEN_HELMET, Material.CHAINMAIL_HELMET,
+			Material.IRON_HELMET, Material.DIAMOND_HELMET, Material.NETHERITE_HELMET, Material.TURTLE_HELMET
+	};
+	private final Material[] CHESTPLATES = {Material.LEATHER_CHESTPLATE, Material.GOLDEN_CHESTPLATE,
+			Material.CHAINMAIL_CHESTPLATE, Material.IRON_CHESTPLATE, Material.DIAMOND_CHESTPLATE,
+			Material.NETHERITE_HELMET
+	};
+	private final Material[] LEGGINGS = {Material.LEATHER_LEGGINGS, Material.GOLDEN_LEGGINGS,
+			Material.CHAINMAIL_LEGGINGS, Material.IRON_LEGGINGS, Material.DIAMOND_LEGGINGS, Material.NETHERITE_LEGGINGS
+	};
+	private final Material[] BOOTS = {Material.LEATHER_BOOTS, Material.GOLDEN_BOOTS, Material.CHAINMAIL_BOOTS,
+			Material.IRON_BOOTS, Material.DIAMOND_BOOTS, Material.NETHERITE_BOOTS
+	};
+
 	public InventoryEvents (Main plugin,
 			Game game,
 			Inventories inv,
@@ -59,6 +80,10 @@ public class InventoryEvents implements Listener {
 
 		// Ignore non-plugin inventories
 		if (!title.contains(Utils.format("&k")))
+			return;
+
+		// Ignore clicks in player inventory
+		if (e.getInventory().getType() == InventoryType.PLAYER)
 			return;
 
 		// Cancel the event
@@ -88,7 +113,7 @@ public class InventoryEvents implements Listener {
 		ItemStack button = e.getCurrentItem();
 
 		// Ignore clicks on nothing and remove NullPointerExceptions
-		if (button == null || !button.hasItemMeta() || !button.getItemMeta().hasDisplayName())
+		if (button == null)
 			return;
 
 		Material buttonType = button.getType();
@@ -1451,11 +1476,11 @@ public class InventoryEvents implements Listener {
 				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 			}
 
+			// Edit overall difficulty multiplier
+//			else if (buttonName.contains("Difficulty Multiplier"))
+
 			// Copy game settings from another arena
 //			else if (buttonName.contains("Copy Game Settings"))
-
-			// Copy arena settings from another arena
-//			else if (buttonName.contains("Copy Arena Settings"))
 
 			// Exit menu
 			else if (buttonName.contains("EXIT"))
@@ -1601,6 +1626,87 @@ public class InventoryEvents implements Listener {
 //			else if (buttonName.contains("EXIT"))
 			if (buttonName.contains("EXIT"))
 				openInv(player, inv.createGameSettingsInventory(arena));
+		}
+
+		// In-game item shop menu
+		else if (title.contains("Item Shop")) {
+			// See if the player is in a game
+			if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+				return;
+
+			Arena arenaInstance = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+					.collect(Collectors.toList()).get(0);
+
+			// Open weapon shop
+			if (buttonName.contains("Weapon Shop"))
+				openInv(player, arenaInstance.getWeaponShop());
+
+			// Open armor shop
+			else if (buttonName.contains("Armor Shop"))
+				openInv(player, arenaInstance.getArmorShop());
+
+			// Open consumables shop
+			else if (buttonName.contains("Consumables Shop"))
+				openInv(player, arenaInstance.getConsumeShop());
+
+			// Open custom shop
+//			else if (buttonName.contains("Custom Shop"))
+
+		}
+
+		// In-game shops
+		else if (title.contains("Weapon Shop") || title.contains("Armor Shop") || title.contains("Consumables Shop") ||
+				title.contains("Custom Shop")) {
+			// See if the player is in a game
+			if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+				return;
+
+			VDPlayer gamer = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+					.collect(Collectors.toList()).get(0).getPlayer(player);
+
+			if (buttonName.contains("RETURN")) {
+				player.openInventory(Inventories.createShop());
+				return;
+			}
+
+			ItemStack buy = e.getClickedInventory().getItem(e.getSlot()).clone();
+			ItemMeta meta = buy.getItemMeta();
+			int cost = Integer.parseInt(meta.getLore().get(0).substring(10));
+
+			// Check if they can afford the item
+			if (!gamer.canAfford(cost)) {
+				player.sendMessage(Utils.notify("&cYou can't afford this item!"));
+				return;
+			}
+
+			meta.setLore(new ArrayList<>());
+			buy.setItemMeta(meta);
+
+			// Subtract from balance, update scoreboard, give item
+			gamer.addGems(-cost);
+			game.createBoard(gamer);
+
+			EntityEquipment equipment = player.getPlayer().getEquipment();
+
+			// Equip armor if possible, otherwise put in inventory, otherwise drop at feet
+			if (Arrays.stream(HELMETS).anyMatch(mat -> mat == buy.getType()) && equipment.getHelmet() == null) {
+				equipment.setHelmet(buy);
+				player.sendMessage(Utils.notify("&aHelmet equipped!"));
+			} else if (Arrays.stream(CHESTPLATES).anyMatch(mat -> mat == buy.getType()) &&
+					equipment.getChestplate() == null) {
+				equipment.setChestplate(buy);
+				player.sendMessage(Utils.notify("&aChestplate equipped!"));
+			} else if (Arrays.stream(LEGGINGS).anyMatch(mat -> mat == buy.getType()) &&
+					equipment.getLeggings() == null) {
+				equipment.setLeggings(buy);
+				player.sendMessage(Utils.notify("&aLeggings equipped!"));
+			} else if (Arrays.stream(BOOTS).anyMatch(mat -> mat == buy.getType()) && equipment.getBoots() == null) {
+				equipment.setBoots(buy);
+				player.sendMessage(Utils.notify("&aBoots equipped!"));
+			} else {
+				Utils.giveItem(player, buy);
+				player.sendMessage(Utils.notify("&aItem purchased!"));
+			}
 		}
 	}
 	
