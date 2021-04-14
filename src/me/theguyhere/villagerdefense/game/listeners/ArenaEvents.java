@@ -106,9 +106,6 @@ public class ArenaEvents implements Listener {
             // Give them a game board
             game.createBoard(fighter);
 
-            // Makes sure players have full saturation when the game starts
-            player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, Utils.secondsToTicks(9999), 0));
-
             // Notify everyone in the arena
             arena.getPlayers().forEach(gamer ->
                     gamer.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&a joined the arena.")));

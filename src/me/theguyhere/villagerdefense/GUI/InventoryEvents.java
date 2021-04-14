@@ -27,6 +27,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -1661,17 +1662,19 @@ public class InventoryEvents implements Listener {
 			if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
 				return;
 
-			VDPlayer gamer = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
-					.collect(Collectors.toList()).get(0).getPlayer(player);
+			Arena arenaInstance = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+					.collect(Collectors.toList()).get(0);
+			VDPlayer gamer = arenaInstance.getPlayer(player);
 
 			if (buttonName.contains("RETURN")) {
-				player.openInventory(Inventories.createShop());
+				player.openInventory(Inventories.createShop(arenaInstance.getCurrentWave() / 10 + 1));
 				return;
 			}
 
 			ItemStack buy = e.getClickedInventory().getItem(e.getSlot()).clone();
 			ItemMeta meta = buy.getItemMeta();
-			int cost = Integer.parseInt(meta.getLore().get(0).substring(10));
+			List<String> lore = meta.getLore();
+			int cost = Integer.parseInt(lore.get(lore.size() - 1).substring(10));
 
 			// Check if they can afford the item
 			if (!gamer.canAfford(cost)) {
@@ -1679,7 +1682,8 @@ public class InventoryEvents implements Listener {
 				return;
 			}
 
-			meta.setLore(new ArrayList<>());
+			// Remove cost meta
+			lore.remove(lore.size() - 1);
 			buy.setItemMeta(meta);
 
 			// Subtract from balance, update scoreboard, give item

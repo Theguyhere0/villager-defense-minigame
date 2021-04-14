@@ -1094,18 +1094,19 @@ public class Inventories {
 	}
 
 	// Generate the shop menu
-	public static Inventory createShop() {
+	public static Inventory createShop(int level) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&2&lItem Shop"));
+				Utils.format("&2&lLevel &9&l" + level + " &2&lItem Shop"));
 
-		inv.setItem(1, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&4&lWeapon Shop"),
-				FLAGS, null));
+		inv.setItem(1, Utils.createItem(Material.GOLDEN_SWORD,
+				Utils.format("&4&lLevel &9&l" + level + " &4&lWeapon Shop"), FLAGS, null));
 
-		inv.setItem(3, Utils.createItem(Material.GOLDEN_CHESTPLATE, Utils.format("&5&lArmor Shop"),
-				FLAGS, null));
+		inv.setItem(3, Utils.createItem(Material.GOLDEN_CHESTPLATE,
+				Utils.format("&5&lLevel &9&l" + level + " &5&lArmor Shop"), FLAGS, null));
 
-		inv.setItem(5, Utils.createItem(Material.GOLDEN_APPLE, Utils.format("&3&lConsumables Shop")));
+		inv.setItem(5, Utils.createItem(Material.GOLDEN_APPLE,
+				Utils.format("&3&lLevel &9&l" + level + " &3&lConsumables Shop")));
 
 		inv.setItem(7, Utils.createItem(Material.QUARTZ, Utils.format("&6&lCustom Shop"),
 				Utils.format(CONSTRUCTION)));
@@ -1115,142 +1116,29 @@ public class Inventories {
 
 	// Generate the weapon shop
 	public static Inventory createWeaponShop(int level) {
-		Random r = new Random();
-
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 18, Utils.format("&k") +
-				Utils.format("&4&lWeapon Shop"));
+		Inventory inv = Bukkit.createInventory(null, 27, Utils.format("&k") +
+				Utils.format("&4&lLevel &9&l" + level + " &4&lWeapon Shop"));
 
 		// Fill in weapons
-		for (int i = 0; i < 9; i++) {
-			double chance = r.nextDouble();
-			switch (level) {
-				case 1:
-					if (chance < .4)
-						inv.setItem(i, GameItems.sword(level));
-					else if (chance < .75)
-						inv.setItem(i, GameItems.axe(level));
-					else if (chance < .9)
-						inv.setItem(i, GameItems.bow(level));
-					else inv.setItem(i, GameItems.arrows());
-					break;
-				case 2:
-					if (chance < .35)
-						inv.setItem(i, GameItems.sword(level));
-					else if (chance < .7)
-						inv.setItem(i, GameItems.axe(level));
-					else if (chance < .8)
-						inv.setItem(i, GameItems.shield(level));
-					else if (chance < .9)
-						inv.setItem(i, GameItems.bow(level));
-					else if (chance < .94)
-						inv.setItem(i, GameItems.arrows());
-					else if (chance < .97)
-						inv.setItem(i, GameItems.arrowsS());
-					else inv.setItem(i, GameItems.arrowsP());
-					break;
-				case 3:
-					if (chance < .3)
-						inv.setItem(i, GameItems.sword(level));
-					else if (chance < .6)
-						inv.setItem(i, GameItems.axe(level));
-					else if (chance < .7)
-						inv.setItem(i, GameItems.bow(level));
-					else if (chance < .8)
-						inv.setItem(i, GameItems.shield(level));
-					else if (chance < .9)
-						inv.setItem(i, GameItems.crossbow(level));
-					else if (chance < .93)
-						inv.setItem(i, GameItems.arrows());
-					else if (chance < .96)
-						inv.setItem(i, GameItems.arrowsS());
-					else if (chance < .98)
-						inv.setItem(i, GameItems.arrowsP());
-					else inv.setItem(i, GameItems.arrowsW());
-					break;
-				case 4:
-					if (chance < .3)
-						inv.setItem(i, GameItems.sword(level));
-					else if (chance < .55)
-						inv.setItem(i, GameItems.axe(level));
-					else if (chance < .65)
-						inv.setItem(i, GameItems.bow(level));
-					else if (chance < .75)
-						inv.setItem(i, GameItems.shield(level));
-					else if (chance < .85)
-						inv.setItem(i, GameItems.crossbow(level));
-					else if (chance < .88)
-						inv.setItem(i, GameItems.arrows());
-					else if (chance < .91)
-						inv.setItem(i, GameItems.arrowsS());
-					else if (chance < .94)
-						inv.setItem(i, GameItems.arrowsP());
-					else if (chance < .96)
-						inv.setItem(i, GameItems.arrowsW());
-					else if (chance < .98)
-						inv.setItem(i, GameItems.arrowsD());
-					else inv.setItem(i, GameItems.rockets());
-					break;
-				default:
-					if (chance < .2)
-						inv.setItem(i, GameItems.sword(level));
-					else if (chance < .4)
-						inv.setItem(i, GameItems.axe(level));
-					else if (chance < .5)
-						inv.setItem(i, GameItems.shield(level));
-					else if (chance < .6)
-						inv.setItem(i, GameItems.bow(level));
-					else if (chance < .7)
-						inv.setItem(i, GameItems.crossbow(level));
-					else if (chance < .8)
-						inv.setItem(i, GameItems.trident(level));
-					else if (chance < .84)
-						inv.setItem(i, GameItems.arrows());
-					else if (chance < .88)
-						inv.setItem(i, GameItems.arrowsS());
-					else if (chance < .91)
-						inv.setItem(i, GameItems.arrowsP());
-					else if (chance < .94)
-						inv.setItem(i, GameItems.arrowsW());
-					else if (chance < .96)
-						inv.setItem(i, GameItems.arrowsD());
-					else if (chance < .98)
-						inv.setItem(i, GameItems.rockets());
-					else inv.setItem(i, GameItems.rocketsPlus());
-			}
-		}
+		for (int i = 0; i < 18; i++)
+			inv.setItem(i, GameItems.randWeapon(level));
 
 		// Return option
-		inv.setItem(13, Utils.createItem(Material.BARRIER, Utils.format("&c&lRETURN")));
+		inv.setItem(22, Utils.createItem(Material.BARRIER, Utils.format("&c&lRETURN")));
 
 		return inv;
 	}
 
 	// Generate the armor shop
 	public static Inventory createArmorShop(int level) {
-		Random r = new Random();
-
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 27, Utils.format("&k") +
-				Utils.format("&5&lArmor Shop"));
+				Utils.format("&5&lLevel &9&l" + level + " &5&lArmor Shop"));
 
 		// Fill in armor
-		for (int i = 0; i < 18; i++) {
-			int chance = r.nextInt(4);
-			switch (chance) {
-				case 0:
-					inv.setItem(i, GameItems.helmet(level));
-					break;
-				case 1:
-					inv.setItem(i, GameItems.chestplate(level));
-					break;
-				case 2:
-					inv.setItem(i, GameItems.leggings(level));
-					break;
-				case 3:
-					inv.setItem(i, GameItems.boots(level));
-			}
-		}
+		for (int i = 0; i < 18; i++)
+			inv.setItem(i, GameItems.randArmor(level));
 
 		// Return option
 		inv.setItem(22, Utils.createItem(Material.BARRIER, Utils.format("&c&lRETURN")));
@@ -1260,107 +1148,13 @@ public class Inventories {
 
 	// Generate the consumables shop
 	public static Inventory createConsumablesShop(int level) {
-		Random r = new Random();
-
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 18, Utils.format("&k") +
-				Utils.format("&3&lConsumables Shop"));
+				Utils.format("&3&lLevel &9&l" + level + " &3&lConsumables Shop"));
 
 		// Fill in consumables
-		for (int i = 0; i < 9; i++) {
-			double chance = r.nextDouble();
-			switch (level) {
-				case 1:
-					if (chance < .3)
-						inv.setItem(i, GameItems.beetroot());
-					else if (chance < .6)
-						inv.setItem(i, GameItems.carrot());
-					else if (chance < .75)
-						inv.setItem(i, GameItems.bread());
-					else if (chance < .9)
-						inv.setItem(i, GameItems.health());
-					else inv.setItem(i, GameItems.speed());
-					break;
-				case 2:
-					if (chance < .1)
-						inv.setItem(i, GameItems.beetroot());
-					else if (chance < .3)
-						inv.setItem(i, GameItems.carrot());
-					else if (chance < .5)
-						inv.setItem(i, GameItems.bread());
-					else if (chance < .65)
-						inv.setItem(i, GameItems.steak());
-					else if (chance < .8)
-						inv.setItem(i, GameItems.health());
-					else if (chance < .9)
-						inv.setItem(i, GameItems.speed());
-					else inv.setItem(i, GameItems.strength());
-					break;
-				case 3:
-					if (chance < .1)
-						inv.setItem(i, GameItems.carrot());
-					else if (chance < .3)
-						inv.setItem(i, GameItems.bread());
-					else if (chance < .5)
-						inv.setItem(i, GameItems.steak());
-					else if (chance < .7)
-						inv.setItem(i, GameItems.health());
-					else if (chance < .85)
-						inv.setItem(i, GameItems.speed());
-					else if (chance < .95)
-						inv.setItem(i, GameItems.strength());
-					else inv.setItem(i, GameItems.gcarrot());
-					break;
-				case 4:
-					if (chance < .1)
-						inv.setItem(i, GameItems.bread());
-					else if (chance < .3)
-						inv.setItem(i, GameItems.steak());
-					else if (chance < .5)
-						inv.setItem(i, GameItems.health());
-					else if (chance < .7)
-						inv.setItem(i, GameItems.speed());
-					else if (chance < .85)
-						inv.setItem(i, GameItems.strength());
-					else if (chance < .95)
-						inv.setItem(i, GameItems.gcarrot());
-					else inv.setItem(i, GameItems.gapple());
-					break;
-				case 5:
-					if (chance < .15)
-						inv.setItem(i, GameItems.steak());
-					else if (chance < .35)
-						inv.setItem(i, GameItems.health());
-					else if (chance < .5)
-						inv.setItem(i, GameItems.speed());
-					else if (chance < .65)
-						inv.setItem(i, GameItems.strength());
-					else if (chance < .75)
-						inv.setItem(i, GameItems.gcarrot());
-					else if (chance < .85)
-						inv.setItem(i, GameItems.gapple());
-					else if (chance < .95)
-						inv.setItem(i, GameItems.egapple());
-					else inv.setItem(i, GameItems.totem());
-					break;
-				default:
-					if (chance < .1)
-						inv.setItem(i, GameItems.steak());
-					else if (chance < .3)
-						inv.setItem(i, GameItems.health());
-					else if (chance < .5)
-						inv.setItem(i, GameItems.speed());
-					else if (chance < .6)
-						inv.setItem(i, GameItems.strength());
-					else if (chance < .7)
-						inv.setItem(i, GameItems.gcarrot());
-					else if (chance < .8)
-						inv.setItem(i, GameItems.gapple());
-					else if (chance < .9)
-						inv.setItem(i, GameItems.egapple());
-					else inv.setItem(i, GameItems.totem());
-			}
-		}
+		for (int i = 0; i < 9; i++)
+			inv.setItem(i, GameItems.randConsumable(level));
 
 		// Return option
 		inv.setItem(13, Utils.createItem(Material.BARRIER, Utils.format("&c&lRETURN")));

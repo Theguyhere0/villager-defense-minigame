@@ -11,6 +11,7 @@ import me.theguyhere.villagerdefense.game.models.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -21,6 +22,8 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.Objects;
 import java.util.Random;
@@ -67,11 +70,13 @@ public class GameEvents implements Listener {
 			e.getDrops().clear();
 			e.setDroppedExp(0);
 
-			// Set drop to emerald
-			e.getDrops().add(Utils.createItem(Material.EMERALD, null, Integer.toString(arena.getArena())));
+			if (ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin) {
+				// Set drop to emerald
+				e.getDrops().add(Utils.createItem(Material.EMERALD, null, Integer.toString(arena.getArena())));
 
-			// Decrement enemy count
-			arena.decrementEnemies();
+				// Decrement enemy count
+				arena.decrementEnemies();
+			}
 
 			// Check for wave end condition
 			if (arena.getEnemies() == 0 && !arena.isEnding()) {
@@ -131,17 +136,22 @@ public class GameEvents implements Listener {
 
 		Entity damager = e.getDamager();
 
+		// Ignore wolves
+		if (ent instanceof Wolf)
+			return;
+
 		// Ignore phantom damage to villager
-		if (ent instanceof Villager && damager instanceof Player)
+		if ((ent instanceof Villager || ent instanceof IronGolem) && damager instanceof Player)
 			return;
 
 		// Ignore phantom damage to monsters
 		if (ent instanceof Monster && damager instanceof Monster)
 			return;
 
-		// Check for projectile damage
+		// Check for phantom projectile damage
 		if (damager instanceof Projectile) {
-			if (ent instanceof Villager && ((Projectile) damager).getShooter() instanceof Player)
+			if ((ent instanceof Villager || ent instanceof IronGolem) &&
+					((Projectile) damager).getShooter() instanceof Player)
 				return;
 			if (ent instanceof Monster && ((Projectile) damager).getShooter() instanceof Monster)
 				return;
@@ -150,7 +160,10 @@ public class GameEvents implements Listener {
 		LivingEntity n = (LivingEntity) ent;
 
 		// Update health bar
-		ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
+		if (ent instanceof IronGolem)
+			ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
+					n.getHealth() - e.getFinalDamage(), 10));
+		else ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
 				n.getHealth() - e.getFinalDamage(), 5));
 	}
 
@@ -163,6 +176,10 @@ public class GameEvents implements Listener {
 		if (!ent.hasMetadata("VD"))
 			return;
 
+		// Ignore wolves
+		if (ent instanceof Wolf)
+			return;
+
 		// Don't handle entity on entity damage
 		if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK ||
 				e.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK||
@@ -173,8 +190,28 @@ public class GameEvents implements Listener {
 		LivingEntity n = (LivingEntity) ent;
 
 		// Update health bar
-		ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
+		if (ent instanceof IronGolem)
+			ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
+					n.getHealth() - e.getFinalDamage(), 10));
+		else ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
 				n.getHealth() - e.getFinalDamage(), 5));
+	}
+
+	// Prevent players from going hungry while waiting for an arena to start
+	@EventHandler
+	public void onHunger(FoodLevelChangeEvent e) {
+		Player player = (Player) e.getEntity();
+
+		// See if the player is in a game
+		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+			return;
+
+		// See if game is already in progress
+		if (game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+				.collect(Collectors.toList()).get(0).getCurrentWave() != 0)
+			return;
+
+		e.setCancelled(true);
 	}
 
 	// Update health bar when healed
@@ -186,13 +223,20 @@ public class GameEvents implements Listener {
 		if (!ent.hasMetadata("VD"))
 			return;
 
+		// Ignore wolves
+		if (ent instanceof Wolf)
+			return;
+
 		LivingEntity n = (LivingEntity) ent;
 
 		// Update health bar
-		ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
+		if (ent instanceof IronGolem)
+			ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
+					n.getHealth(), 10));
+		else ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
 				n.getHealth(), 5));
 	}
-	
+
 	// Open shop
 	@EventHandler
 	public void onShop(PlayerInteractEvent e) {
@@ -201,6 +245,9 @@ public class GameEvents implements Listener {
 		// See if the player is in a game
 		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
 			return;
+
+		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+				.collect(Collectors.toList()).get(0);
 
 		// Check for the shop item
 		if (!player.getEquipment().getItemInMainHand().equals(GameItems.shop()))
@@ -212,7 +259,7 @@ public class GameEvents implements Listener {
 
 		// Open shop inventory and cancel interaction
 		e.setCancelled(true);
-		player.openInventory(Inventories.createShop());
+		player.openInventory(Inventories.createShop(arena.getCurrentWave() / 10 + 1));
 	}
 
 	// Stops players from hurting villagers and other players, and monsters from hurting each other
@@ -233,7 +280,7 @@ public class GameEvents implements Listener {
 			return;
 
 		// Cancel damage to villager
-		if (ent instanceof Villager && damager instanceof Player)
+		if ((ent instanceof Villager || ent instanceof Wolf || ent instanceof IronGolem) && damager instanceof Player)
 			e.setCancelled(true);
 
 		// Cancel monster friendly fire damage
@@ -247,7 +294,8 @@ public class GameEvents implements Listener {
 				if (game.arenas.stream().filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player)))
 					e.setCancelled(true);
 			}
-			if (ent instanceof Villager && ((Projectile) damager).getShooter() instanceof Player)
+			if ((ent instanceof Villager || ent instanceof Wolf || ent instanceof IronGolem) &&
+					((Projectile) damager).getShooter() instanceof Player)
 				e.setCancelled(true);
 			else if (ent instanceof Monster && ((Projectile) damager).getShooter() instanceof Monster)
 				e.setCancelled(true);
@@ -439,5 +487,147 @@ public class GameEvents implements Listener {
 		// Check for arena mobs
 		if (ent.hasMetadata("VD"))
 			e.setCancelled(true);
+	}
+
+	// Manage spawning pets and care packages
+	@EventHandler
+	public void onConsume(PlayerInteractEvent e) {
+		Player player = e.getPlayer();
+		ItemStack item = player.getInventory().getItemInMainHand();
+
+		// See if the player is in a game
+		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player))) return;
+
+		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+				.collect(Collectors.toList()).get(0);
+
+		// Wolf spawn
+		if (item.getType() == Material.WOLF_SPAWN_EGG) {
+			// Cancel normal spawn
+			e.setCancelled(true);
+
+			// Remove an item
+			if (item.getAmount() > 1)
+				item.setAmount(item.getAmount() - 1);
+			else player.getInventory().setItemInMainHand(null);
+
+			Location location = e.getClickedBlock().getLocation();
+			location.setY(location.getY() + 1);
+
+			// Spawn and tame the wolf
+			Wolf wolf = (Wolf) player.getWorld().spawnEntity(location, EntityType.WOLF);
+			wolf.setAdult();
+			wolf.setOwner(player);
+			wolf.setBreed(false);
+			wolf.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
+			wolf.setCustomName(player.getName() + "'s Wolf");
+			wolf.setCustomNameVisible(true);
+
+			return;
+		}
+
+		// Ignore other vanilla items
+		if (item.getItemMeta() == null)
+			return;
+
+		// Iron golem spawn
+		if (item.getItemMeta().getDisplayName().contains("Iron Golem Spawn Egg")) {
+			// Cancel normal spawn
+			e.setCancelled(true);
+
+			// Remove an item
+			if (item.getAmount() > 1)
+				item.setAmount(item.getAmount() - 1);
+			else player.getInventory().setItemInMainHand(null);
+
+			Location location = e.getClickedBlock().getLocation();
+			location.setY(location.getY() + 1);
+
+			// Spawn iron golem
+			IronGolem ironGolem = (IronGolem) player.getWorld()
+					.spawnEntity(location, EntityType.IRON_GOLEM);
+			ironGolem.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
+			ironGolem.setCustomName(Utils.healthBar(1, 1, 10));
+			ironGolem.setCustomNameVisible(true);
+		}
+
+		// Small care package
+		if (item.getItemMeta().getDisplayName().contains("Small Care Package")) {
+			// Remove an item
+			if (item.getAmount() > 1)
+				item.setAmount(item.getAmount() - 1);
+			else player.getInventory().setItemInMainHand(null);
+
+			// Give items and notify
+			Utils.giveItem(player, GameItems.randWeapon(1));
+			Utils.giveItem(player, GameItems.randArmor(1));
+			player.sendMessage(Utils.notify("&aCare package delivered!"));
+		}
+
+		// Medium care package
+		if (item.getItemMeta().getDisplayName().contains("Medium Care Package")) {
+			// Remove an item
+			if (item.getAmount() > 1)
+				item.setAmount(item.getAmount() - 1);
+			else player.getInventory().setItemInMainHand(null);
+
+			// Give items and notify
+			Utils.giveItem(player, GameItems.randWeapon(2));
+			Utils.giveItem(player, GameItems.randArmor(2));
+			Utils.giveItem(player, GameItems.randConsumable(2));
+			player.sendMessage(Utils.notify("&aCare package delivered!"));
+		}
+
+		// Large care package
+		if (item.getItemMeta().getDisplayName().contains("Large Care Package")) {
+			// Remove an item
+			if (item.getAmount() > 1)
+				item.setAmount(item.getAmount() - 1);
+			else player.getInventory().setItemInMainHand(null);
+
+			// Give items and notify
+			Utils.giveItem(player, GameItems.randWeapon(4));
+			Utils.giveItem(player, GameItems.randArmor(3));
+			Utils.giveItem(player, GameItems.randArmor(3));
+			Utils.giveItem(player, GameItems.randConsumable(3));
+			player.sendMessage(Utils.notify("&aCare package delivered!"));
+		}
+
+		// Extra large care package
+		if (item.getItemMeta().getDisplayName().contains("Extra large Care Package")) {
+			// Remove an item
+			if (item.getAmount() > 1)
+				item.setAmount(item.getAmount() - 1);
+			else player.getInventory().setItemInMainHand(null);
+
+			// Give items and notify
+			Utils.giveItem(player, GameItems.randWeapon(5));
+			Utils.giveItem(player, GameItems.randWeapon(4));
+			Utils.giveItem(player, GameItems.randArmor(5));
+			Utils.giveItem(player, GameItems.randArmor(4));
+			Utils.giveItem(player, GameItems.randConsumable(4));
+			Utils.giveItem(player, GameItems.randConsumable(4));
+			player.sendMessage(Utils.notify("&aCare package delivered!"));
+		}
+	}
+
+	// Prevent wolves from teleporting
+	@EventHandler
+	public void onTeleport(EntityTeleportEvent e) {
+		Entity ent = e.getEntity();
+
+		// Check for wolf
+		if (!(ent instanceof Wolf))
+			return;
+
+		// Check for special mob
+		if (!ent.hasMetadata("VD"))
+			return;
+
+		// Check if player is playing in an arena
+		if (game.arenas.stream().filter(Objects::nonNull).anyMatch(a -> a.hasPlayer((Player) ((Wolf) ent).getOwner())))
+			return;
+
+		e.setCancelled(true);
 	}
 }

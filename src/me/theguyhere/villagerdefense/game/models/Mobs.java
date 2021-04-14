@@ -89,6 +89,13 @@ public class Mobs {
         equipment.setItemInOffHand(null);
     }
 
+    private static void setTrident(Arena arena, Monster monster) {
+        EntityEquipment equipment = monster.getEquipment();
+        equipment.setItemInMainHand(getTrident(arena), true);
+        equipment.setItemInMainHandDropChance(0);
+        equipment.setItemInOffHand(null);
+    }
+
     private static void setArmor(Arena arena, Monster monster) {
         EntityEquipment equipment = monster.getEquipment();
         equipment.setHelmet(getHelmet(arena), true);
@@ -596,6 +603,128 @@ public class Mobs {
         return Utils.createItem(Material.CROSSBOW, null, null, enchants);
     }
 
+    private static ItemStack getTrident(Arena arena) {
+        Random r = new Random();
+        HashMap<Enchantment, Integer> enchants = new HashMap<>();
+        double difficulty = arena.getCurrentDifficulty();
+
+        // Set sharpness
+        switch ((int) difficulty) {
+            case 1:
+            case 2:
+                break;
+            case 3:
+            case 4:
+                if (r.nextDouble() < (difficulty - 3) / 2)
+                    enchants.put(Enchantment.DAMAGE_ALL, 1);
+                break;
+            case 5:
+            case 6:
+                if (r.nextDouble() < (difficulty - 5) / 2)
+                    enchants.put(Enchantment.DAMAGE_ALL, 2);
+                else enchants.put(Enchantment.DAMAGE_ALL, 1);
+                break;
+            case 7:
+            case 8:
+                if (r.nextDouble() < (difficulty - 7) / 2)
+                    enchants.put(Enchantment.DAMAGE_ALL, 3);
+                else enchants.put(Enchantment.DAMAGE_ALL, 2);
+                break;
+            case 9:
+            case 10:
+                if (r.nextDouble() < (difficulty - 9) / 2)
+                    enchants.put(Enchantment.DAMAGE_ALL, 4);
+                else enchants.put(Enchantment.DAMAGE_ALL, 3);
+                break;
+            case 11:
+            case 12:
+                if (r.nextDouble() < (difficulty - 11) / 2)
+                    enchants.put(Enchantment.DAMAGE_ALL, 5);
+                else enchants.put(Enchantment.DAMAGE_ALL, 4);
+                break;
+            default:
+                enchants.put(Enchantment.DAMAGE_ALL, 5);
+        }
+
+        // Set knockback
+        switch ((int) difficulty) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+                break;
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+                if (r.nextDouble() < (difficulty - 5) / 4)
+                    enchants.put(Enchantment.KNOCKBACK, 1);
+                break;
+            case 9:
+            case 10:
+            case 11:
+            case 12:
+                if (r.nextDouble() < (difficulty - 9) / 4)
+                    enchants.put(Enchantment.KNOCKBACK, 2);
+                else enchants.put(Enchantment.KNOCKBACK, 1);
+                break;
+            case 13:
+            case 14:
+            case 15:
+            case 16:
+            case 17:
+                if (r.nextDouble() < (difficulty - 13) / 5)
+                    enchants.put(Enchantment.KNOCKBACK, 3);
+                else enchants.put(Enchantment.KNOCKBACK, 2);
+                break;
+            default:
+                enchants.put(Enchantment.KNOCKBACK, 3);
+        }
+
+        // Set fire aspect
+        switch ((int) difficulty) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+                break;
+            case 6:
+            case 7:
+            case 8:
+            case 9:
+                if (r.nextDouble() < (difficulty - 6) / 4)
+                    enchants.put(Enchantment.FIRE_ASPECT, 1);
+                break;
+            case 10:
+            case 11:
+            case 12:
+            case 13:
+            case 14:
+                if (r.nextDouble() < (difficulty - 10) / 5)
+                    enchants.put(Enchantment.FIRE_ASPECT, 2);
+                else enchants.put(Enchantment.FIRE_ASPECT, 1);
+                break;
+            case 15:
+            case 16:
+            case 17:
+            case 18:
+            case 19:
+                if (r.nextDouble() < (difficulty - 15) / 5)
+                    enchants.put(Enchantment.FIRE_ASPECT, 3);
+                else enchants.put(Enchantment.FIRE_ASPECT, 2);
+                break;
+            default:
+                enchants.put(Enchantment.FIRE_ASPECT, 3);
+        }
+
+        // Check if no enchants
+        if (enchants.isEmpty())
+            enchants = null;
+
+        return Utils.createItem(Material.TRIDENT, null, null, enchants);
+    }
+
     private static ItemStack getHelmet(Arena arena) {
         Random r = new Random();
         double difficulty = arena.getCurrentDifficulty();
@@ -787,6 +916,8 @@ public class Mobs {
     public static void setVindicator(Main plugin, Arena arena, Vindicator vindicator) {
         setMinion(plugin, arena, vindicator);
         setAxe(arena, vindicator);
+        vindicator.setPatrolLeader(false);
+        vindicator.setCanJoinRaid(false);
     }
 
     public static void setSpider(Main plugin, Arena arena, Spider spider) {
@@ -811,6 +942,12 @@ public class Mobs {
         setMinion(plugin, arena, stray);
         setBow(arena, stray);
         setArmor(arena, stray);
+    }
+
+    public static void setDrowned(Main plugin, Arena arena, Drowned drowned) {
+        setMinion(plugin, arena, drowned);
+        setTrident(arena, drowned);
+        setArmor(arena, drowned);
     }
 
     public static void setBlaze(Main plugin, Arena arena, Blaze blaze) {
@@ -869,6 +1006,8 @@ public class Mobs {
 
     public static void setEvoker(Main plugin, Arena arena, Evoker evoker) {
         setMinion(plugin, arena, evoker);
+        evoker.setCanJoinRaid(false);
+        evoker.setPatrolLeader(false);
     }
 
     public static void setHoglin(Main plugin, Arena arena, Hoglin hoglin) {

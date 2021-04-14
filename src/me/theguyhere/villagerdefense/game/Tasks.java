@@ -131,10 +131,10 @@ public class Tasks {
 
 			// Regenerate shops when time and notify players of it
 			if (currentWave % 10 == 0 || currentWave == 1) {
-				int shopNum = currentWave / 10 + 1;
-				arenaInstance.setWeaponShop(Inventories.createWeaponShop(shopNum));
-				arenaInstance.setArmorShop(Inventories.createArmorShop(shopNum));
-				arenaInstance.setConsumeShop(Inventories.createConsumablesShop(shopNum));
+				int level = currentWave / 10 + 1;
+				arenaInstance.setWeaponShop(Inventories.createWeaponShop(level));
+				arenaInstance.setArmorShop(Inventories.createArmorShop(level));
+				arenaInstance.setConsumeShop(Inventories.createConsumablesShop(level));
 				if (currentWave != 1)
 					arenaInstance.getActives().forEach(player ->
 						player.getPlayer().sendMessage(Utils.notify("&6Shops have reset!")));
@@ -193,8 +193,6 @@ public class Tasks {
 			arenaInstance.getActives().forEach(player -> {
 				player.getPlayer().getInventory().addItem(new ItemStack(Material.WOODEN_SWORD));
 				player.getPlayer().getInventory().addItem(GameItems.shop());
-				player.getPlayer().getActivePotionEffects()
-						.forEach(effect -> player.getPlayer().removePotionEffect(effect.getType()));
 				player.getPlayer().setFireTicks(0);
 				player.getPlayer().setInvulnerable(false);
 			});

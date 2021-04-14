@@ -62,7 +62,7 @@ public class Join implements Listener {
 								(ItemStack) plugin.getPlayerData().get(player.getName() + ".inventory." + num)));
 				plugin.getPlayerData().set(player.getName() + ".inventory", null);
 			}
-			
+
 			plugin.savePlayerData();
 		}
 	}
