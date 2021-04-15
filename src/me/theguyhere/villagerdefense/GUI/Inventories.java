@@ -804,7 +804,7 @@ public class Inventories {
 	public Inventory createMonsterSpawnMenu(int arena, int slot) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&2&lMonster Spawn " + slot + ": " + game.arenas.get(arena).getName()));
+				Utils.format("&2&lMonster Spawn " + (slot + 1) + ": " + game.arenas.get(arena).getName()));
 
 		// Option to create monster spawn
 		inv.setItem(0, ii.create("Spawn"));
@@ -871,7 +871,7 @@ public class Inventories {
 	public Inventory createVillagerSpawnMenu(int arena, int slot) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&5&lVillager Spawn " + slot + ": " + game.arenas.get(arena).getName()));
+				Utils.format("&5&lVillager Spawn " + (slot + 1) + ": " + game.arenas.get(arena).getName()));
 
 		// Option to create villager spawn
 		inv.setItem(0, ii.create("Spawn"));

@@ -77,7 +77,7 @@ public class ArenaBoard {
 		info.add(Utils.format("&6&l" + arena.getName() + " Records"));
 		if (!arena.getSortedDescendingRecords().isEmpty())
 			arena.getSortedDescendingRecords().stream().forEachOrdered(record -> {
-				StringBuilder firstLine = new StringBuilder("&fWave &b" + record.getWave() + " -&7");
+				StringBuilder firstLine = new StringBuilder("&fWave &b" + record.getWave() + " &f-&7");
 				StringBuilder secondLine = new StringBuilder("&7");
 				if (record.getPlayers().size() > 6) {
 					for (int i = 0; i < record.getPlayers().size() / 2; i++)

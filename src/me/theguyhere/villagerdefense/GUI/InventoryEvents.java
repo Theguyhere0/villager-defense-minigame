@@ -581,24 +581,24 @@ public class InventoryEvents implements Listener {
 					portal.refreshHolo(arena, game);
 
 				// Set default max players to 12 if it doesn't exist
-				if (!plugin.getArenaData().contains("a" + arena + ".max")) {
+				if (!plugin.getArenaData().contains("a" + arena + ".max"))
 					plugin.getArenaData().set("a" + arena + ".max", 12);
-				}
 
 				// Set default min players to 1 if it doesn't exist
-				if (!plugin.getArenaData().contains("a" + arena + ".min")) {
+				if (!plugin.getArenaData().contains("a" + arena + ".min"))
 					plugin.getArenaData().set("a" + arena + ".min", 1);
-				}
 
 				// Set default max waves to -1 if it doesn't exist
-				if (!plugin.getArenaData().contains("a" + arena + ".maxWaves")) {
+				if (!plugin.getArenaData().contains("a" + arena + ".maxWaves"))
 					plugin.getArenaData().set("a" + arena + ".maxWaves", -1);
-				}
+
+				// Set default wave time limit to -1 if it doesn't exist
+				if (!plugin.getArenaData().contains("a" + arena + ".waveTimeLimit"))
+					plugin.getArenaData().set("a" + arena + ".waveTimeLimit", -1);
 
 				// Set default to closed if arena closed doesn't exist
-				if (!plugin.getArenaData().contains("a" + arena + ".closed")) {
+				if (!plugin.getArenaData().contains("a" + arena + ".closed"))
 					plugin.getArenaData().set("a" + arena + ".closed", true);
-				}
 
 				plugin.saveArenaData();
 				game.arenas.get(arena).updateArena();
