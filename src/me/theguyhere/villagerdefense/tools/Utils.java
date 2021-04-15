@@ -56,12 +56,53 @@ public class Utils {
         return item;
     }
 
+    // Creates an ItemStack using only material, name, and lore list
+    public static ItemStack createItem(Material matID, String dispName, List<String> lores) {
+        // Create ItemStack
+        ItemStack item = new ItemStack(matID);
+        ItemMeta meta = item.getItemMeta();
+
+        // Set name
+        if (!(dispName == null))
+            meta.setDisplayName(dispName);
+
+        // Set lore
+        meta.setLore(lores);
+        item.setItemMeta(meta);
+
+        return item;
+    }
+
     // Creates an ItemStack using material, name, enchants, flags, and lore
     public static ItemStack createItem(Material matID,
                                        String dispName,
                                        boolean[] flags,
                                        HashMap<Enchantment, Integer> enchants,
                                        String ... lores) {
+        // Create ItemStack
+        ItemStack item = createItem(matID, dispName, lores);
+        ItemMeta meta = item.getItemMeta();
+
+        // Set enchants
+        if (!(enchants == null))
+            enchants.forEach((k, v) -> meta.addEnchant(k, v, false));
+        if (flags != null && flags[0])
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+
+        // Set attribute flag
+        if (flags != null && flags[1])
+            meta.addItemFlags(ItemFlag.values());
+        item.setItemMeta(meta);
+
+        return item;
+    }
+
+    // Creates an ItemStack using material, name, enchants, flags, and lore list
+    public static ItemStack createItem(Material matID,
+                                       String dispName,
+                                       boolean[] flags,
+                                       HashMap<Enchantment, Integer> enchants,
+                                       List<String> lores) {
         // Create ItemStack
         ItemStack item = createItem(matID, dispName, lores);
         ItemMeta meta = item.getItemMeta();

@@ -1,16 +1,17 @@
 package me.theguyhere.villagerdefense.GUI;
 
 import me.theguyhere.villagerdefense.Main;
+import me.theguyhere.villagerdefense.game.GameItems;
 import me.theguyhere.villagerdefense.game.models.Arena;
 import me.theguyhere.villagerdefense.game.models.Game;
-import me.theguyhere.villagerdefense.game.GameItems;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.Inventory;
 
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Inventories {
 	private final Main plugin;
@@ -450,8 +451,9 @@ public class Inventories {
 		// Option to edit name
 		inv.setItem(0, Utils.createItem(Material.NAME_TAG, Utils.format("&6&lEdit Name")));
 
-		// Option to edit game portal
-		inv.setItem(1, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&5&lGame Portal")));
+		// Option to edit game portal and leaderboard
+		inv.setItem(1, Utils.createItem(Material.END_PORTAL_FRAME,
+				Utils.format("&5&lPortal and Leaderboard")));
 
 		// Option to edit player settings
 		inv.setItem(2, Utils.createItem(Material.PLAYER_HEAD, Utils.format("&d&lPlayer Settings")));
@@ -496,23 +498,35 @@ public class Inventories {
 		return inv;
 	}
 
-	// Menu for editing the portal of an arena
+	// Menu for editing the portal and leaderboard of an arena
 	public Inventory createPortalInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&5&lPortal: " + game.arenas.get(arena).getName()));
+				Utils.format("&5&lPortal/LBoard: " + game.arenas.get(arena).getName()));
 
 		// Option to create the portal
 		inv.setItem(0, ii.create("Portal"));
 
 		// Option to teleport to the portal
-		inv.setItem(2, ii.teleport("Portal"));
+		inv.setItem(1, ii.teleport("Portal"));
 
 		// Option to center the portal
-		inv.setItem(4, ii.center("Portal"));
+		inv.setItem(2, ii.center("Portal"));
 
 		// Option to remove the portal
-		inv.setItem(6, ii.remove("PORTAL"));
+		inv.setItem(3, ii.remove("PORTAL"));
+
+		// Option to create the leaderboard
+		inv.setItem(4, ii.create("Leaderboard"));
+
+		// Option to teleport to the leaderboard
+		inv.setItem(5, ii.teleport("Leaderboard"));
+
+		// Option to center the leaderboard
+		inv.setItem(6, ii.center("Leaderboard"));
+
+		// Option to remove the leaderboard
+		inv.setItem(7, ii.remove("LEADERBOARD"));
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
@@ -525,6 +539,21 @@ public class Inventories {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Portal?"));
+
+		// "No" option
+		inv.setItem(0, ii.no());
+
+		// "Yes" option
+		inv.setItem(8, ii.yes());
+
+		return inv;
+	}
+
+	// Confirmation menu for removing the arena leaderboard
+	public Inventory createArenaBoardConfirmInventory() {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&4&lRemove Leaderboard?"));
 
 		// "No" option
 		inv.setItem(0, ii.no());
@@ -1206,24 +1235,35 @@ public class Inventories {
 				Utils.format("&6&l" + arena.getName() + " Info"));
 
 		// Maximum players
-		inv.setItem(1, Utils.createItem(Material.NETHERITE_HELMET,
+		inv.setItem(0, Utils.createItem(Material.NETHERITE_HELMET,
 				Utils.format("&4&lMaximum players: &4" + arena.getMaxPlayers()), FLAGS, null,
 				Utils.format("&7The most players an arena can have")));
 
 		// Minimum players
-		inv.setItem(3, Utils.createItem(Material.NETHERITE_BOOTS,
+		inv.setItem(2, Utils.createItem(Material.NETHERITE_BOOTS,
 				Utils.format("&2&lMinimum players: &2" + arena.getMinPlayers()), FLAGS, null,
 				Utils.format("&7The least players an arena can have to start")));
 
 		// Max waves
-		inv.setItem(5, Utils.createItem(Material.GOLDEN_SWORD,
+		inv.setItem(4, Utils.createItem(Material.GOLDEN_SWORD,
 				Utils.format("&3&lMax waves: &3" + arena.getMaxWaves()), FLAGS, null,
 				Utils.format("&7The highest wave the arena will go to")));
 
 		// Wave time limit
-		inv.setItem(7, Utils.createItem(Material.CLOCK,
+		inv.setItem(6, Utils.createItem(Material.CLOCK,
 				Utils.format("&9&lWave time limit: &9" + arena.getWaveTimeLimit() + " minute(s)"),
 				Utils.format("&7The time limit for each wave before"), Utils.format("&7the game ends")));
+
+		// Arena records
+		List<String> records = new ArrayList<>();
+		arena.getSortedDescendingRecords().forEach(arenaRecord -> {
+			records.add(Utils.format("&fWave " + arenaRecord.getWave()));
+			StringBuilder players = new StringBuilder();
+			arenaRecord.getPlayers().forEach(player -> players.append(player).append(", "));
+			records.add(Utils.format("&7" + players.substring(0, players.length() - 2)));
+		});
+		inv.setItem(8, Utils.createItem(Material.GOLDEN_HELMET, Utils.format("&e&lArena Records"), FLAGS,
+				null, records));
 
 		return inv;
 	}

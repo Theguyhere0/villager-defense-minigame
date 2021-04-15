@@ -3,6 +3,7 @@ package me.theguyhere.villagerdefense;
 import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.GUI.InventoryEvents;
 import me.theguyhere.villagerdefense.GUI.InventoryItems;
+import me.theguyhere.villagerdefense.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.game.displays.InfoBoard;
 import me.theguyhere.villagerdefense.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.game.displays.Portal;
@@ -44,6 +45,7 @@ public class Main extends JavaPlugin {
 		game = new Game(this, portal);
 		Inventories inventories = new Inventories(this, game, ii);
 		Commands commands = new Commands(this, inventories, game);
+		ArenaBoard arenaBoard = new ArenaBoard(this, game);
 
 		if (!Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
@@ -62,13 +64,13 @@ public class Main extends JavaPlugin {
 		getCommand("vd").setTabCompleter(new CommandTab());
 
 		// Register event listeners
-		pm.registerEvents(new InventoryEvents(this, game, inventories, portal, leaderboard, infoBoard),
-				this);
+		pm.registerEvents(new InventoryEvents(this, game, inventories, portal, leaderboard, infoBoard,
+				arenaBoard), this);
 		pm.registerEvents(new Join(this, portal, reader, game), this);
 		pm.registerEvents(new Death(portal, reader), this);
 		pm.registerEvents(new ClickPortalEvents(game, portal, inventories), this);
 		pm.registerEvents(new GameEvents(this, game), this);
-		pm.registerEvents(new ArenaEvents(this, game, portal, leaderboard), this);
+		pm.registerEvents(new ArenaEvents(this, game, portal, leaderboard, arenaBoard), this);
 
 		// Inject online players into packet reader
 		if (!Bukkit.getOnlinePlayers().isEmpty())
@@ -81,6 +83,7 @@ public class Main extends JavaPlugin {
 			loadPortals();
 		leaderboard.loadLeaderboards();
 		infoBoard.loadInfoBoards();
+		arenaBoard.loadArenaBoards();
 
 		int configVersion = 5;
 		int arenaDataVersion = 1;

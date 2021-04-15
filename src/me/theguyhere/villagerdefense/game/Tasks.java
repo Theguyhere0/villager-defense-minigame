@@ -129,17 +129,6 @@ public class Tasks {
 			portal.refreshHolo(arena, game);
 			updateBoards.run();
 
-			// Regenerate shops when time and notify players of it
-			if (currentWave % 10 == 0 || currentWave == 1) {
-				int level = currentWave / 10 + 1;
-				arenaInstance.setWeaponShop(Inventories.createWeaponShop(level));
-				arenaInstance.setArmorShop(Inventories.createArmorShop(level));
-				arenaInstance.setConsumeShop(Inventories.createConsumablesShop(level));
-				if (currentWave != 1)
-					arenaInstance.getActives().forEach(player ->
-						player.getPlayer().sendMessage(Utils.notify("&6Shops have reset!")));
-			}
-
 			// Revive dead players
 			arenaInstance.getGhosts().forEach(p -> {
 				Utils.teleAdventure(p.getPlayer(), arenaInstance.getPlayerSpawn());
@@ -151,8 +140,8 @@ public class Tasks {
 				// Notify of upcoming wave
 				int reward = (currentWave - 1) * 5;
 				p.getPlayer().sendTitle(Utils.format("&6Wave " + currentWave),
-						Utils.format("&7Starting in 15 seconds"), Utils.secondsToTicks(.5) ,
-						Utils.secondsToTicks(3.5), Utils.secondsToTicks(1));
+						Utils.format("&7Starting in 15 seconds"), Utils.secondsToTicks(.5),
+						Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
 
 				// Give players gem rewards
 				p.addGems(reward);
@@ -165,6 +154,21 @@ public class Tasks {
 				p.getPlayer().sendTitle(Utils.format("&6Wave " + currentWave),
 						Utils.format("&7Starting in 15 seconds"), Utils.secondsToTicks(.5) ,
 						Utils.secondsToTicks(3.5), Utils.secondsToTicks(1)));
+
+			// Regenerate shops when time and notify players of it
+			if (currentWave % 10 == 0 || currentWave == 1) {
+				int level = currentWave / 10 + 1;
+				arenaInstance.setWeaponShop(Inventories.createWeaponShop(level));
+				arenaInstance.setArmorShop(Inventories.createArmorShop(level));
+				arenaInstance.setConsumeShop(Inventories.createConsumablesShop(level));
+				if (currentWave != 1)
+					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+							arenaInstance.getActives().forEach(player ->
+									player.getPlayer().sendTitle(Utils.format("&6Shops upgraded!"),
+											Utils.format("&7Shops upgrade every 10 rounds"),
+											Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5),
+											Utils.secondsToTicks(1))), Utils.secondsToTicks(4));
+			}
 
 			// Spawns mobs after 15 seconds
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
@@ -247,6 +251,7 @@ public class Tasks {
 	public final Runnable updateBar = new Runnable() {
 		double progress = 1;
 		double time;
+		boolean messageSent;
 
 		@Override
 		public void run() {
@@ -259,6 +264,7 @@ public class Tasks {
 				arenaInstance.getPlayers().forEach(vdPlayer ->
 						arenaInstance.addPlayerToTimeLimitBar(vdPlayer.getPlayer()));
 				time = 1d / Utils.minutesToSeconds(arenaInstance.getWaveTimeLimit());
+				messageSent = false;
 			}
 
 			else {
@@ -271,9 +277,17 @@ public class Tasks {
 
 				// Decrement time limit bar
 				else {
-					if (progress <= time * Utils.minutesToSeconds(1))
+					if (progress <= time * Utils.minutesToSeconds(1)) {
 						arenaInstance.updateTimeLimitBar(BarColor.RED, progress);
-					else arenaInstance.updateTimeLimitBar(progress);
+						if (!messageSent) {
+							arenaInstance.getActives().forEach(player ->
+									player.getPlayer().sendTitle(Utils.format("&c1 minute left!"),
+											null,
+											Utils.secondsToTicks(.5), Utils.secondsToTicks(1.5),
+											Utils.secondsToTicks(.5)));
+							messageSent = true;
+						}
+					} else arenaInstance.updateTimeLimitBar(progress);
 					progress -= time;
 				}
 			}

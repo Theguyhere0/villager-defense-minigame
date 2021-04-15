@@ -3,6 +3,7 @@ package me.theguyhere.villagerdefense.GUI;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.customEvents.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.game.*;
+import me.theguyhere.villagerdefense.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.game.displays.InfoBoard;
 import me.theguyhere.villagerdefense.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.game.displays.Portal;
@@ -38,6 +39,7 @@ public class InventoryEvents implements Listener {
 	private final Portal portal;
 	private final Leaderboard leaderboard;
 	private final InfoBoard infoBoard;
+	private final ArenaBoard arenaBoard;
 	private final Utils utils;
 	private int arena = 0; // Keeps track of which arena for many of the menus
 	private int oldSlot = 0;
@@ -64,13 +66,15 @@ public class InventoryEvents implements Listener {
 			Inventories inv,
 			Portal portal,
 			Leaderboard leaderboard,
-			InfoBoard infoBoard) {
+			InfoBoard infoBoard,
+			ArenaBoard arenaBoard) {
 		this.plugin = plugin;
 		this.game = game;
 		this.inv = inv;
 		this.portal = portal;
 		this.leaderboard = leaderboard;
 		this.infoBoard = infoBoard;
+		this.arenaBoard = arenaBoard;
 		utils = new Utils(plugin);
 	}
 
@@ -159,13 +163,12 @@ public class InventoryEvents implements Listener {
 		else if (title.contains(Utils.format("&2&lLobby"))) {
 			String path = "lobby";
 
-			// Create lobby, then return to previous menu
+			// Create lobby
 			if (buttonName.contains("Create Lobby")) {
 				if (!plugin.getArenaData().contains(path)) {
 					utils.setConfigurationLocation(path, player.getLocation());
 					game.reloadLobby();
 					player.sendMessage(Utils.notify("&aLobby set!"));
-					openInv(player, inv.createArenasInventory());
 				} else player.sendMessage(Utils.notify("&cLobby already exists!"));
 			}
 
@@ -225,7 +228,6 @@ public class InventoryEvents implements Listener {
 				if (!plugin.getArenaData().contains(path)) {
 					infoBoard.createInfoBoard(player, oldSlot);
 					player.sendMessage(Utils.notify("&aInfo board set!"));
-					openInv(player, inv.createInfoBoardInventory());
 				} else player.sendMessage(Utils.notify("&cInfo board already exists!"));
 
 
@@ -289,12 +291,11 @@ public class InventoryEvents implements Listener {
 		else if (title.contains(Utils.format("&4&lTotal Kills Leaderboard"))) {
 			String path = "leaderboard.totalKills";
 
-			// Create leaderboard, then return to previous menu
+			// Create leaderboard
 			if (buttonName.contains("Create")) {
 				if (!plugin.getArenaData().contains(path)) {
 					leaderboard.createLeaderboard(player, "totalKills");
 					player.sendMessage(Utils.notify("&aLeaderboard set!"));
-					openInv(player, inv.createLeaderboardInventory());
 				} else player.sendMessage(Utils.notify("&cLeaderboard already exists!"));
 			}
 
@@ -336,12 +337,11 @@ public class InventoryEvents implements Listener {
 		else if (title.contains(Utils.format("&c&lTop Kills Leaderboard"))) {
 			String path = "leaderboard.topKills";
 
-			// Create leaderboard, then return to previous menu
+			// Create leaderboard
 			if (buttonName.contains("Create")) {
 				if (!plugin.getArenaData().contains(path)) {
 					leaderboard.createLeaderboard(player, "topKills");
 					player.sendMessage(Utils.notify("&aLeaderboard set!"));
-					openInv(player, inv.createLeaderboardInventory());
 				} else player.sendMessage(Utils.notify("&cLeaderboard already exists!"));
 			}
 
@@ -383,12 +383,11 @@ public class InventoryEvents implements Listener {
 		else if (title.contains(Utils.format("&2&lTotal Gems Leaderboard"))) {
 			String path = "leaderboard.totalGems";
 
-			// Create leaderboard, then return to previous menu
+			// Create leaderboard
 			if (buttonName.contains("Create")) {
 				if (!plugin.getArenaData().contains(path)) {
 					leaderboard.createLeaderboard(player, "totalGems");
 					player.sendMessage(Utils.notify("&aLeaderboard set!"));
-					openInv(player, inv.createLeaderboardInventory());
 				} else player.sendMessage(Utils.notify("&cLeaderboard already exists!"));
 			}
 
@@ -430,12 +429,11 @@ public class InventoryEvents implements Listener {
 		else if (title.contains(Utils.format("&a&lTop Balance Leaderboard"))) {
 			String path = "leaderboard.topBalance";
 
-			// Create leaderboard, then return to previous menu
+			// Create leaderboard
 			if (buttonName.contains("Create")) {
 				if (!plugin.getArenaData().contains(path)) {
 					leaderboard.createLeaderboard(player, "topBalance");
 					player.sendMessage(Utils.notify("&aLeaderboard set!"));
-					openInv(player, inv.createLeaderboardInventory());
 				} else player.sendMessage(Utils.notify("&cLeaderboard already exists!"));
 			}
 
@@ -477,12 +475,11 @@ public class InventoryEvents implements Listener {
 		else if (title.contains(Utils.format("&9&lTop Wave Leaderboard"))) {
 			String path = "leaderboard.topWave";
 
-			// Create leaderboard, then return to previous menu
+			// Create leaderboard
 			if (buttonName.contains("Create")) {
 				if (!plugin.getArenaData().contains(path)) {
 					leaderboard.createLeaderboard(player, "topWave");
 					player.sendMessage(Utils.notify("&aLeaderboard set!"));
-					openInv(player, inv.createLeaderboardInventory());
 				} else player.sendMessage(Utils.notify("&cLeaderboard already exists!"));
 			}
 
@@ -629,7 +626,7 @@ public class InventoryEvents implements Listener {
 			}
 
 			// Open portal menu
-			else if (buttonName.contains("Game Portal"))
+			else if (buttonName.contains("Portal and Leaderboard"))
 				openInv(player, inv.createPortalInventory(arena));
 
 			// Open player menu
@@ -729,11 +726,35 @@ public class InventoryEvents implements Listener {
 					plugin.saveArenaData();
 					game.arenas.get(arena).updateArena();
 
-					// Remove Portal
+					// Remove portal
 					portal.removePortalAll(arena);
 
 					// Confirm and return
 					player.sendMessage(Utils.notify("&aPortal removed!"));
+					openInv(player, inv.createPortalInventory(arena));
+				}
+			}
+
+			// Confirm to remove leaderboard
+			if (title.contains("Remove Leaderboard?")) {
+				String path = "arenaBoard." + arena;
+
+				// Return to previous menu
+				if (buttonName.contains("NO"))
+					openInv(player, inv.createPortalInventory(arena));
+
+				// Remove the leaderboard, then return to previous menu
+				else if (buttonName.contains("YES")) {
+					// Remove leaderboard data, close arena
+					plugin.getArenaData().set(path, null);
+					plugin.saveArenaData();
+					game.arenas.get(arena).updateArena();
+
+					// Remove Portal
+					arenaBoard.removeArenaBoard(arena);
+
+					// Confirm and return
+					player.sendMessage(Utils.notify("&aLeaderboard removed!"));
 					openInv(player, inv.createPortalInventory(arena));
 				}
 			}
@@ -996,23 +1017,24 @@ public class InventoryEvents implements Listener {
 			}
 		}
 
-		// Portal menu for an arena
-		else if (title.contains("Portal:")) {
+		// Portal and leaderboard menu for an arena
+		else if (title.contains("Portal/LBoard:")) {
 			String path = "portal." + arena;
+			String path2 = "arenaBoard." + arena;
+			Arena arenaInstance = game.arenas.get(arena);
 
-			// Create portal, then return to previous menu
+			// Create portal
 			if (buttonName.contains("Create Portal")) {
 				if (plugin.getArenaData().getBoolean("a" + arena + ".closed")) {
 					if (!plugin.getArenaData().contains(path)) {
 						portal.createPortal(player, arena, game);
 						player.sendMessage(Utils.notify("&aPortal set!"));
-						openInv(player, inv.createArenaInventory(arena));
 					} else player.sendMessage(Utils.notify("&cPortal already exists!"));
 				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 			}
 
 			// Teleport player to portal
-			else if (buttonName.contains("Teleport")) {
+			else if (buttonName.contains("Teleport to Portal")) {
 				Location location = utils.getConfigLocationNoRotation(path);
 				if (location == null) {
 					player.sendMessage(Utils.notify("&cNo portal to teleport to!"));
@@ -1023,7 +1045,7 @@ public class InventoryEvents implements Listener {
 			}
 
 			// Center portal
-			else if (buttonName.contains("Center")) {
+			else if (buttonName.contains("Center Portal")) {
 				if (plugin.getArenaData().getBoolean("a" + arena + ".closed")) {
 					if (utils.getConfigLocationNoPitch(path) == null) {
 						player.sendMessage(Utils.notify("&cNo portal to center!"));
@@ -1037,12 +1059,48 @@ public class InventoryEvents implements Listener {
 			}
 
 			// Remove portal
-			else if (buttonName.contains("REMOVE"))
+			else if (buttonName.contains("REMOVE PORTAL"))
 				if (plugin.getArenaData().contains(path))
 					if (plugin.getArenaData().getBoolean("a" + arena + ".closed"))
 						openInv(player, inv.createPortalConfirmInventory());
 					else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 				else player.sendMessage(Utils.notify("&cNo portal to remove!"));
+
+			// Create leaderboard
+			if (buttonName.contains("Create Leaderboard")) {
+				if (!plugin.getArenaData().contains(path2)) {
+					arenaBoard.createArenaBoard(player, arenaInstance);
+					player.sendMessage(Utils.notify("&aLeaderboard set!"));
+				} else player.sendMessage(Utils.notify("&cLeaderboard already exists!"));
+			}
+
+			// Teleport player to leaderboard
+			else if (buttonName.contains("Teleport to Leaderboard")) {
+				Location location = utils.getConfigLocationNoRotation(path2);
+				if (location == null) {
+					player.sendMessage(Utils.notify("&cNo leaderboard to teleport to!"));
+					return;
+				}
+				player.teleport(location);
+				player.closeInventory();
+			}
+
+			// Center leaderboard
+			else if (buttonName.contains("Center Leaderboard")) {
+				if (utils.getConfigLocationNoPitch(path2) == null) {
+					player.sendMessage(Utils.notify("&cNo leaderboard to center!"));
+					return;
+				}
+				utils.centerConfigLocation(path2);
+				arenaBoard.refreshArenaBoard(arena);
+				player.sendMessage(Utils.notify("&aLeaderboard centered!"));
+			}
+
+			// Remove leaderboard
+			else if (buttonName.contains("REMOVE LEADERBOARD"))
+				if (plugin.getArenaData().contains(path2))
+					openInv(player, inv.createArenaBoardConfirmInventory());
+				else player.sendMessage(Utils.notify("&cNo leaderboard to remove!"));
 
 			// Exit menu
 			else if (buttonName.contains("EXIT"))
@@ -1085,14 +1143,13 @@ public class InventoryEvents implements Listener {
 		else if (title.contains("Player Spawn:")) {
 			String path = "a" + arena + ".spawn";
 
-			// Create spawn, then return to previous menu
+			// Create spawn
 			if (buttonName.contains("Create"))
 				if (plugin.getArenaData().getBoolean("a" + arena + ".closed"))
 					if (!plugin.getArenaData().contains(path)) {
 						utils.setConfigurationLocation(path, player.getLocation());
 						game.arenas.get(arena).updateArena();
 						player.sendMessage(Utils.notify("&aSpawn set!"));
-						openInv(player, inv.createPlayersInventory(arena));
 					} else player.sendMessage(Utils.notify("&cPlayer spawn already exists!"));
 				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
@@ -1136,14 +1193,13 @@ public class InventoryEvents implements Listener {
 		else if (title.contains("Waiting Room:")) {
 			String path = "a" + arena + ".waiting";
 
-			// Create waiting room, then return to previous menu
+			// Create waiting room
 			if (buttonName.contains("Create")) {
 				if (plugin.getArenaData().getBoolean("a" + arena + ".closed")) {
 					if (!plugin.getArenaData().contains(path)) {
 						utils.setConfigurationLocation(path, player.getLocation());
 						game.arenas.get(arena).updateArena();
 						player.sendMessage(Utils.notify("&aWaiting room set!"));
-						openInv(player, inv.createPlayersInventory(arena));
 					} else player.sendMessage(Utils.notify("&cWaiting room already exists!"));
 				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 			}
@@ -1318,7 +1374,6 @@ public class InventoryEvents implements Listener {
 						utils.setConfigurationLocation(path, player.getLocation());
 						game.arenas.get(arena).updateArena();
 						player.sendMessage(Utils.notify("&aMonster spawn set!"));
-						openInv(player, inv.createMonsterSpawnInventory(arena));
 					} else player.sendMessage(Utils.notify("&cMonster spawn already exists!"));
 				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 			}
@@ -1384,7 +1439,6 @@ public class InventoryEvents implements Listener {
 						utils.setConfigurationLocation(path, player.getLocation());
 						game.arenas.get(arena).updateArena();
 						player.sendMessage(Utils.notify("&aVillager spawn set!"));
-						openInv(player, inv.createVillagerSpawnInventory(arena));
 					} else player.sendMessage(Utils.notify("&cVillager spawn already exists!"));
 				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 			}
@@ -1684,6 +1738,7 @@ public class InventoryEvents implements Listener {
 
 			// Remove cost meta
 			lore.remove(lore.size() - 1);
+			meta.setLore(lore);
 			buy.setItemMeta(meta);
 
 			// Subtract from balance, update scoreboard, give item

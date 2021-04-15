@@ -611,6 +611,22 @@ public class GameEvents implements Listener {
 		}
 	}
 
+	// Prevent wolves from targeting villagers
+	@EventHandler
+	public void onTarget(EntityTargetLivingEntityEvent e) {
+		// Check for wolf
+		if (!(e.getEntity() instanceof Wolf))
+			return;
+
+		// Check for villager target
+		if (!(e.getTarget() instanceof Villager))
+			return;
+
+		// Cancel if special wolf
+		if (e.getEntity().hasMetadata("VD"))
+			e.setCancelled(true);
+	}
+
 	// Prevent wolves from teleporting
 	@EventHandler
 	public void onTeleport(EntityTeleportEvent e) {

@@ -5118,10 +5118,10 @@ public class GameItems {
 	}
 	public static ItemStack golem() {
 		return Utils.createItem(Material.GHAST_SPAWN_EGG, Utils.format("&fIron Golem Spawn Egg"),
-				Utils.format("&2Gems: &a300"));
+				Utils.format("&2Gems: &a500"));
 	}
 	public static ItemStack wolf() {
-		return Utils.createItem(Material.WOLF_SPAWN_EGG, null, Utils.format("&2Gems: &a100"));
+		return Utils.createItem(Material.WOLF_SPAWN_EGG, null, Utils.format("&2Gems: &a200"));
 	}
 	public static ItemStack smallCare() {
 		return Utils.createItem(Material.COAL_BLOCK, Utils.format("&2Small Care Package"),

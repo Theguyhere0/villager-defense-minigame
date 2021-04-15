@@ -3,12 +3,10 @@ package me.theguyhere.villagerdefense.game.listeners;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.customEvents.*;
 import me.theguyhere.villagerdefense.game.*;
+import me.theguyhere.villagerdefense.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.game.displays.Portal;
-import me.theguyhere.villagerdefense.game.models.Arena;
-import me.theguyhere.villagerdefense.game.models.Game;
-import me.theguyhere.villagerdefense.game.models.Mobs;
-import me.theguyhere.villagerdefense.game.models.VDPlayer;
+import me.theguyhere.villagerdefense.game.models.*;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -30,12 +28,14 @@ public class ArenaEvents implements Listener {
     private final Game game;
     private final Portal portal;
     private final Leaderboard leaderboard;
+    private final ArenaBoard arenaBoard;
 
-    public ArenaEvents(Main plugin, Game game, Portal portal, Leaderboard leaderboard) {
+    public ArenaEvents(Main plugin, Game game, Portal portal, Leaderboard leaderboard, ArenaBoard arenaBoard) {
         this.plugin = plugin;
         this.game = game;
         this.portal = portal;
         this.leaderboard = leaderboard;
+        this.arenaBoard = arenaBoard;
     }
 
     @EventHandler
@@ -214,9 +214,11 @@ public class ArenaEvents implements Listener {
         plugin.savePlayerData();
 
         // Win and TEMPORARY condition
-        if (arena.getCurrentWave() == arena.getMaxWaves() || arena.getCurrentWave() == 12)
+        if (arena.getCurrentWave() == arena.getMaxWaves() || arena.getCurrentWave() == 12) {
+            arena.incrementCurrentWave();
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
                     Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
+        }
 
         // Start the next wave
         else arena.getTask().wave.run();
@@ -332,9 +334,10 @@ public class ArenaEvents implements Listener {
             if (plugin.getPlayerData().contains(player.getName() + ".exp"))
                 player.setExp((float) plugin.getPlayerData().getDouble(player.getName() + ".exp"));
             plugin.getPlayerData().set(player.getName() + ".exp", null);
-            plugin.getPlayerData().getConfigurationSection(player.getName() + ".inventory").getKeys(false)
-                    .forEach(num -> player.getInventory().setItem(Integer.parseInt(num),
-                            (ItemStack) plugin.getPlayerData().get(player.getName() + ".inventory." + num)));
+            if (plugin.getPlayerData().contains(player.getName() + ".inventory"))
+                plugin.getPlayerData().getConfigurationSection(player.getName() + ".inventory").getKeys(false)
+                        .forEach(num -> player.getInventory().setItem(Integer.parseInt(num),
+                                (ItemStack) plugin.getPlayerData().get(player.getName() + ".inventory." + num)));
             plugin.getPlayerData().set(player.getName() + ".inventory", null);
             plugin.savePlayerData();
         }
@@ -353,8 +356,18 @@ public class ArenaEvents implements Listener {
 
         // Notify players that the game has ended
         arena.getPlayers().forEach(player ->
-            player.getPlayer().sendMessage(Utils.notify("&6You made it to wave &b" +
-                    arena.getCurrentWave() + "&6! Ending in 10 seconds.")));
+            player.getPlayer().sendMessage(Utils.notify("&6You defeated up to wave &b" +
+                    (arena.getCurrentWave() - 1) + "&6! Ending in 10 seconds.")));
+
+        // Check for record
+        if (arena.getActiveCount() > 0)
+            if (arena.checkNewRecord(new ArenaRecord(arena.getCurrentWave() - 1, arena.getActives().stream()
+                    .map(vdPlayer -> vdPlayer.getPlayer().getName()).collect(Collectors.toList())))) {
+                arena.getPlayers().forEach(player -> player.getPlayer().sendTitle(
+                        Utils.format("&6New arena record!"), null, Utils.secondsToTicks(.5),
+                        Utils.secondsToTicks(3.5), Utils.secondsToTicks(1)));
+                arenaBoard.refreshArenaBoard(arena.getArena());
+            }
 
         Tasks task = arena.getTask();
         Map<Runnable, Integer> tasks = task.getTasks();
