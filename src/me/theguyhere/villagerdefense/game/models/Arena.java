@@ -1,6 +1,7 @@
-package me.theguyhere.villagerdefense.game;
+package me.theguyhere.villagerdefense.game.models;
 
 import me.theguyhere.villagerdefense.Main;
+import me.theguyhere.villagerdefense.game.Tasks;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -11,9 +12,7 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Arena {
@@ -32,6 +31,7 @@ public class Arena {
     private List<Location> monsterSpawns = new ArrayList<>(); // List of monster spawn locations
     private List<Location> villagerSpawns = new ArrayList<>(); // List of villager spawn locations
     private boolean closed; // Indicates whether the arena is closed
+    private final List<ArenaRecord> arenaRecords = new ArrayList<>(); // List of top arena records
 
     // Temporary data
     private final Tasks task; // The tasks object for the arena
@@ -42,7 +42,10 @@ public class Arena {
     private int villagers; // Villager count
     private int enemies; // Enemy count
     private final List<VDPlayer> players = new ArrayList<>(); // Tracks players playing and their other related stats
-    private Inventory shop; // Shop inventory
+    private Inventory weaponShop; // Weapon shop inventory
+    private Inventory armorShop; // Armor shop inventory
+    private Inventory consumeShop; // Consumables shop inventory
+    private Inventory customShop; // Custom shop inventory
     private BossBar timeLimitBar; // Time limit bar
 
     public Arena(Main plugin, int arena, Tasks task) {
@@ -102,6 +105,35 @@ public class Arena {
 
     public boolean isClosed() {
         return closed;
+    }
+
+    public boolean checkNewRecord(ArenaRecord record) {
+        // Automatic record
+        if (arenaRecords.size() < 4) {
+            arenaRecords.add(record);
+        }
+
+        // New record
+        else if (arenaRecords.stream().anyMatch(arenaRecord -> arenaRecord.getWave() < record.getWave())) {
+            arenaRecords.sort(Comparator.comparingInt(ArenaRecord::getWave));
+            arenaRecords.set(0, record);
+        }
+
+        // No record
+        else return false;
+
+        // Save data
+        for (int i = 0; i < arenaRecords.size(); i++) {
+            plugin.getArenaData().set("a" + arena + ".records." + i + ".wave", arenaRecords.get(i).getWave());
+            plugin.getArenaData().set("a" + arena + ".records." + i + ".players", arenaRecords.get(i).getPlayers());
+        }
+        plugin.saveArenaData();
+        return true;
+    }
+
+    public List<ArenaRecord> getSortedDescendingRecords() {
+        return arenaRecords.stream().sorted(Comparator.comparingInt(ArenaRecord::getWave).reversed())
+                .collect(Collectors.toList());
     }
 
     public Tasks getTask() {
@@ -225,12 +257,36 @@ public class Arena {
         return getSpectators().size();
     }
 
-    public Inventory getShop() {
-        return shop;
+    public Inventory getWeaponShop() {
+        return weaponShop;
     }
 
-    public void setShop(Inventory shop) {
-        this.shop = shop;
+    public void setWeaponShop(Inventory weaponShop) {
+        this.weaponShop = weaponShop;
+    }
+
+    public Inventory getArmorShop() {
+        return armorShop;
+    }
+
+    public void setArmorShop(Inventory armorShop) {
+        this.armorShop = armorShop;
+    }
+
+    public Inventory getConsumeShop() {
+        return consumeShop;
+    }
+
+    public void setConsumeShop(Inventory consumeShop) {
+        this.consumeShop = consumeShop;
+    }
+
+    public Inventory getCustomShop() {
+        return customShop;
+    }
+
+    public void setCustomShop(Inventory customShop) {
+        this.customShop = customShop;
     }
 
     public BossBar getTimeLimitBar() {
@@ -265,17 +321,23 @@ public class Arena {
     }
 
     public void updateArena() {
-        name = plugin.getData().getString("a" + arena + ".name");
-        maxPlayers = plugin.getData().getInt("a" + arena + ".max");
-        minPlayers = plugin.getData().getInt("a" + arena + ".min");
-        maxWaves = plugin.getData().getInt("a" + arena + ".maxWaves");
-        waveTimeLimit = plugin.getData().getInt("a" + arena + ".waveTimeLimit");
+        name = plugin.getArenaData().getString("a" + arena + ".name");
+        maxPlayers = plugin.getArenaData().getInt("a" + arena + ".max");
+        minPlayers = plugin.getArenaData().getInt("a" + arena + ".min");
+        maxWaves = plugin.getArenaData().getInt("a" + arena + ".maxWaves");
+        waveTimeLimit = plugin.getArenaData().getInt("a" + arena + ".waveTimeLimit");
         playerSpawn = utils.getConfigLocationNoRotation("a" + arena + ".spawn");
         waitingRoom = utils.getConfigLocationNoRotation("a" + arena + ".waiting");
         monsterSpawns = utils.getConfigLocationList("a" + arena + ".monster").stream()
                 .filter(Objects::nonNull).collect(Collectors.toList());
         villagerSpawns = utils.getConfigLocationList("a" + arena + ".villager").stream()
                 .filter(Objects::nonNull).collect(Collectors.toList());
-        closed = plugin.getData().getBoolean("a" + arena + ".closed");
+        closed = plugin.getArenaData().getBoolean("a" + arena + ".closed");
+        if (plugin.getArenaData().contains("a" + arena + ".records"))
+            plugin.getArenaData().getConfigurationSection("a" + arena + ".records").getKeys(false)
+                    .forEach(index -> arenaRecords.add(new ArenaRecord(
+                            plugin.getArenaData().getInt("a" + arena + ".records." + index + ".wave"),
+                            plugin.getArenaData().getStringList("a" + arena + ".records." + index + ".players")
+                    )));
     }
 }

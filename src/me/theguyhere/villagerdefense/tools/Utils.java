@@ -56,12 +56,53 @@ public class Utils {
         return item;
     }
 
+    // Creates an ItemStack using only material, name, and lore list
+    public static ItemStack createItem(Material matID, String dispName, List<String> lores) {
+        // Create ItemStack
+        ItemStack item = new ItemStack(matID);
+        ItemMeta meta = item.getItemMeta();
+
+        // Set name
+        if (!(dispName == null))
+            meta.setDisplayName(dispName);
+
+        // Set lore
+        meta.setLore(lores);
+        item.setItemMeta(meta);
+
+        return item;
+    }
+
     // Creates an ItemStack using material, name, enchants, flags, and lore
     public static ItemStack createItem(Material matID,
                                        String dispName,
                                        boolean[] flags,
                                        HashMap<Enchantment, Integer> enchants,
                                        String ... lores) {
+        // Create ItemStack
+        ItemStack item = createItem(matID, dispName, lores);
+        ItemMeta meta = item.getItemMeta();
+
+        // Set enchants
+        if (!(enchants == null))
+            enchants.forEach((k, v) -> meta.addEnchant(k, v, false));
+        if (flags != null && flags[0])
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+
+        // Set attribute flag
+        if (flags != null && flags[1])
+            meta.addItemFlags(ItemFlag.values());
+        item.setItemMeta(meta);
+
+        return item;
+    }
+
+    // Creates an ItemStack using material, name, enchants, flags, and lore list
+    public static ItemStack createItem(Material matID,
+                                       String dispName,
+                                       boolean[] flags,
+                                       HashMap<Enchantment, Integer> enchants,
+                                       List<String> lores) {
         // Create ItemStack
         ItemStack item = createItem(matID, dispName, lores);
         ItemMeta meta = item.getItemMeta();
@@ -171,6 +212,7 @@ public class Utils {
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         player.setFoodLevel(20);
         player.setSaturation(20);
+        player.setExp(0);
         player.setLevel(0);
         player.setFallDistance(0);
         player.getInventory().clear();
@@ -185,6 +227,7 @@ public class Utils {
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         player.setFoodLevel(20);
         player.setSaturation(20);
+        player.setExp(0);
         player.setLevel(0);
         player.getInventory().clear();
         player.teleport(location);
@@ -193,25 +236,25 @@ public class Utils {
 
     // Sets the location data to a configuration path
     public void setConfigurationLocation(String path, Location location) {
-        plugin.getData().set(path + ".world", location.getWorld().getName());
-        plugin.getData().set(path + ".x", location.getX());
-        plugin.getData().set(path + ".y", location.getY());
-        plugin.getData().set(path + ".z", location.getZ());
-        plugin.getData().set(path + ".pitch", location.getPitch());
-        plugin.getData().set(path + ".yaw", location.getYaw());
-        plugin.saveData();
+        plugin.getArenaData().set(path + ".world", location.getWorld().getName());
+        plugin.getArenaData().set(path + ".x", location.getX());
+        plugin.getArenaData().set(path + ".y", location.getY());
+        plugin.getArenaData().set(path + ".z", location.getZ());
+        plugin.getArenaData().set(path + ".pitch", location.getPitch());
+        plugin.getArenaData().set(path + ".yaw", location.getYaw());
+        plugin.saveArenaData();
     }
 
     // Gets location data from a configuration path
     public Location getConfigLocation(String path) {
         try {
             return new Location(
-                Bukkit.getWorld(plugin.getData().getString(path + ".world")),
-                plugin.getData().getDouble(path + ".x"),
-                plugin.getData().getDouble(path + ".y"),
-                plugin.getData().getDouble(path + ".z"),
-                Float.parseFloat(plugin.getData().get(path + ".yaw").toString()),
-                Float.parseFloat(plugin.getData().get(path + ".pitch").toString())
+                Bukkit.getWorld(plugin.getArenaData().getString(path + ".world")),
+                plugin.getArenaData().getDouble(path + ".x"),
+                plugin.getArenaData().getDouble(path + ".y"),
+                plugin.getArenaData().getDouble(path + ".z"),
+                Float.parseFloat(plugin.getArenaData().get(path + ".yaw").toString()),
+                Float.parseFloat(plugin.getArenaData().get(path + ".pitch").toString())
             );
         } catch (Exception e) {
             return null;
@@ -252,7 +295,7 @@ public class Utils {
                 location.setZ(((int) location.getZ()) + .5);
             else location.setZ(((int) location.getZ()) - .5);
             setConfigurationLocation(path, location);
-            plugin.saveData();
+            plugin.saveArenaData();
         } catch (Exception ignored) {
         }
     }

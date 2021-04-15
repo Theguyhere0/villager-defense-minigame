@@ -4,7 +4,8 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.game.Portal;
+import me.theguyhere.villagerdefense.customEvents.LeftClickNPCEvent;
+import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.customEvents.RightClickNPCEvent;
 import net.minecraft.server.v1_16_R3.EntityVillager;
 import net.minecraft.server.v1_16_R3.Packet;
@@ -58,25 +59,27 @@ public class PacketReader {
 	public void readPacket(Player player, Packet<?> packet) {
 				
 		if (packet.getClass().getSimpleName().equalsIgnoreCase("PacketPlayInUseEntity")) {
-			if (getValue(packet, "action").toString().equalsIgnoreCase("ATTACK"))
+			int id = (int) getValue(packet, "a");
+
+			if (getValue(packet, "action").toString().equalsIgnoreCase("ATTACK")) {
+				for (EntityVillager npc : portal.getNPCs())
+					if (npc != null && npc.getId() == id)
+						Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
+								Bukkit.getPluginManager().callEvent(new LeftClickNPCEvent(player, npc)));
 				return;
+			}
 			if (getValue(packet, "d").toString().equalsIgnoreCase("OFF_HAND"))
 				return;
 			if (getValue(packet, "action").toString().equalsIgnoreCase("INTERACT_AT"))
 				return;
-			
-			int id = (int) getValue(packet, "a");
-			if (getValue(packet, "action").toString().equalsIgnoreCase("INTERACT")) {
-				for (EntityVillager npc : portal.getNPCs()) {
-					if (npc != null && npc.getId() == id) {
+			if (getValue(packet, "action").toString().equalsIgnoreCase("INTERACT"))
+				for (EntityVillager npc : portal.getNPCs())
+					if (npc != null && npc.getId() == id)
 						Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
 								Bukkit.getPluginManager().callEvent(new RightClickNPCEvent(player, npc)), 0);
-					}
-				}
-			}
 		}
 	}
-		
+
 	private Object getValue(Object instance, String name) {
 		Object result = null;
 		

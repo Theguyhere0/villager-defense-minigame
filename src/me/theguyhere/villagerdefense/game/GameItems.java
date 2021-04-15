@@ -26,7 +26,7 @@ public class GameItems {
 		boolean[] flags = {true, false};
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		return Utils.createItem(Material.GOLD_INGOT, Utils.format("&2&lItem Shop"), flags, enchants, "",
+		return Utils.createItem(Material.EMERALD, Utils.format("&2&lItem Shop"), flags, enchants, "",
 				Utils.format("&7&oResets every 10 rounds"));
 	}
 
@@ -2387,8 +2387,12 @@ public class GameItems {
 	public static ItemStack arrows() {
 		return Utils.createItems(Material.ARROW, 16, null, Utils.format("&2Gems: &a45"));
 	}
-	public static ItemStack arrowsS() {
+	public static ItemStack arrowsSpectral() {
 		return Utils.createItems(Material.SPECTRAL_ARROW, 8, null, Utils.format("&2Gems: &a30"));
+	}
+	public static ItemStack arrowsS() {
+		return Utils.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.SLOWNESS), 8,
+				null, Utils.format("&2Gems: &a50"));
 	}
 	public static ItemStack arrowsD() {
 		return Utils.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.INSTANT_DAMAGE), 8,
@@ -2401,6 +2405,26 @@ public class GameItems {
 	public static ItemStack arrowsP() {
 		return Utils.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.POISON), 8,
 				null, Utils.format("&2Gems: &a40"));
+	}
+	public static ItemStack arrowsSPlus() {
+		return Utils.createPotionItems(Material.TIPPED_ARROW,
+				new PotionData(PotionType.SLOWNESS, true, true), 8, null,
+				Utils.format("&2Gems: &a125"));
+	}
+	public static ItemStack arrowsDPlus() {
+		return Utils.createPotionItems(Material.TIPPED_ARROW,
+				new PotionData(PotionType.INSTANT_DAMAGE, false, true), 8, null,
+				Utils.format("&2Gems: &a175"));
+	}
+	public static ItemStack arrowsWPlus() {
+		return Utils.createPotionItems(Material.TIPPED_ARROW,
+				new PotionData(PotionType.WEAKNESS, true ,true), 8, null,
+				Utils.format("&2Gems: &a125"));
+	}
+	public static ItemStack arrowsPPlus() {
+		return Utils.createPotionItems(Material.TIPPED_ARROW,
+				new PotionData(PotionType.POISON, true, true), 8, null,
+				Utils.format("&2Gems: &a100"));
 	}
 	public static ItemStack rockets() {
 		ItemStack item = new ItemStack(Material.FIREWORK_ROCKET, 4);
@@ -5034,16 +5058,19 @@ public class GameItems {
 		return Utils.createItem(Material.TOTEM_OF_UNDYING, null, Utils.format("&2Gems: &a1000"));
 	}
 	public static ItemStack gapple() {
-		return Utils.createItem(Material.GOLDEN_APPLE, null, Utils.format("&2Gems: &a75"));
+		return Utils.createItem(Material.GOLDEN_APPLE, null, Utils.format("&2Gems: &a100"));
 	}
 	public static ItemStack egapple() {
-		return Utils.createItem(Material.ENCHANTED_GOLDEN_APPLE, null, Utils.format("&2Gems: &a175"));
+		return Utils.createItem(Material.ENCHANTED_GOLDEN_APPLE, null, Utils.format("&2Gems: &a300"));
 	}
 	public static ItemStack gcarrot() {
-		return Utils.createItem(Material.GOLDEN_CARROT, null, Utils.format("&2Gems: &a60"));
+		return Utils.createItem(Material.GOLDEN_CARROT, null, Utils.format("&2Gems: &a75"));
 	}
 	public static ItemStack steak() {
-		return Utils.createItem(Material.COOKED_BEEF, null, Utils.format("&2Gems: &a30"));
+		return Utils.createItems(Material.COOKED_BEEF, 2, null, Utils.format("&2Gems: &a60"));
+	}
+	public static ItemStack mutton() {
+		return Utils.createItems(Material.COOKED_MUTTON, 2, null, Utils.format("&2Gems: &a40"));
 	}
 	public static ItemStack bread() {
 		return Utils.createItems(Material.BREAD, 3, null, Utils.format("&2Gems: &a45"));
@@ -5058,12 +5085,355 @@ public class GameItems {
 		return Utils.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.INSTANT_HEAL), null,
 				Utils.format("&2Gems: &a50"));
 	}
+	public static ItemStack health2() {
+		return Utils.createPotionItem(Material.SPLASH_POTION,
+				new PotionData(PotionType.INSTANT_HEAL, false, true), null,
+				Utils.format("&2Gems: &a120"));
+	}
 	public static ItemStack strength() {
 		return Utils.createPotionItem(Material.POTION, new PotionData(PotionType.STRENGTH), null,
 				Utils.format("&2Gems: &a100"));
 	}
+	public static ItemStack strength2() {
+		return Utils.createPotionItem(Material.POTION,
+				new PotionData(PotionType.STRENGTH, true , true), null,
+				Utils.format("&2Gems: &a275"));
+	}
+	public static ItemStack regen() {
+		return Utils.createPotionItem(Material.POTION, new PotionData(PotionType.REGEN), null,
+				Utils.format("&2Gems: &a120"));
+	}
+	public static ItemStack regen2() {
+		return Utils.createPotionItem(Material.POTION,
+				new PotionData(PotionType.REGEN, true , true), null,
+				Utils.format("&2Gems: &a300"));
+	}
 	public static ItemStack speed() {
 		return Utils.createPotionItem(Material.POTION, new PotionData(PotionType.SPEED), null,
 				Utils.format("&2Gems: &a75"));
+	}
+	public static ItemStack speed2() {
+		return Utils.createPotionItem(Material.POTION, new PotionData(PotionType.SPEED, true, true),
+				null, Utils.format("&2Gems: &a200"));
+	}
+	public static ItemStack golem() {
+		return Utils.createItem(Material.GHAST_SPAWN_EGG, Utils.format("&fIron Golem Spawn Egg"),
+				Utils.format("&2Gems: &a500"));
+	}
+	public static ItemStack wolf() {
+		return Utils.createItem(Material.WOLF_SPAWN_EGG, null, Utils.format("&2Gems: &a200"));
+	}
+	public static ItemStack smallCare() {
+		return Utils.createItem(Material.COAL_BLOCK, Utils.format("&2Small Care Package"),
+				Utils.format("&7Gives 1 lvl 1 weapon and 1 lvl 1 armor"), Utils.format("&2Gems: &a300"));
+	}
+	public static ItemStack mediumCare() {
+		return Utils.createItem(Material.IRON_BLOCK, Utils.format("&3Medium Care Package"),
+				Utils.format("&7Gives 1 lvl 2 weapon, 1 lvl 2 armor,"),
+				Utils.format("&7and 1 lvl 1 consumable"), Utils.format("&2Gems: &a750"));
+	}
+	public static ItemStack largeCare() {
+		return Utils.createItem(Material.DIAMOND_BLOCK, Utils.format("&9Large Care Package"),
+				Utils.format("&7Gives 1 lvl 4 weapon, 2 lvl 3 armor,"),
+				Utils.format("&7and 1 lvl 3 consumable"), Utils.format("&2Gems: &a1500"));
+	}
+	public static ItemStack extraCare() {
+		return Utils.createItem(Material.BEACON, Utils.format("&bExtra Large Care Package"),
+				Utils.format("&7Gives 1 lvl 5 weapon, 1 lvl 4 weapon,"),
+				Utils.format("&71 lvl 5 armor, 1 lvl 4 armor,"), Utils.format("&7and 2 lvl 4 consumables"),
+				Utils.format("&2Gems: &a3000"));
+	}
+
+	// Random generation of items
+	public static ItemStack randWeapon(int level) {
+		Random r = new Random();
+		double chance = r.nextDouble();
+		switch (level) {
+			case 1:
+				if (chance < .4)
+					return sword(level);
+				else if (chance < .75)
+					return axe(level);
+				else if (chance < .9)
+					return bow(level);
+				else return arrows();
+			case 2:
+				if (chance < .35)
+					return sword(level);
+				else if (chance < .7)
+					return axe(level);
+				else if (chance < .8)
+					return shield(level);
+				else if (chance < .9)
+					return bow(level);
+				else if (chance < .94)
+					return arrows();
+				else if (chance < .97)
+					return arrowsSpectral();
+				else return arrowsP();
+			case 3:
+				if (chance < .3)
+					return sword(level);
+				else if (chance < .6)
+					return axe(level);
+				else if (chance < .7)
+					return bow(level);
+				else if (chance < .8)
+					return shield(level);
+				else if (chance < .9)
+					return crossbow(level);
+				else if (chance < .92)
+					return arrows();
+				else if (chance < .94)
+					return arrowsSpectral();
+				else if (chance < .96)
+					return arrowsP();
+				else if (chance < .98)
+					return arrowsS();
+				else if (chance < .99)
+					return arrowsW();
+				else return arrowsD();
+			case 4:
+				if (chance < .3)
+					return sword(level);
+				else if (chance < .55)
+					return axe(level);
+				else if (chance < .65)
+					return bow(level);
+				else if (chance < .75)
+					return shield(level);
+				else if (chance < .85)
+					return crossbow(level);
+				else if (chance < .88)
+					return arrows();
+				else if (chance < .91)
+					return arrowsSpectral();
+				else if (chance < .93)
+					return arrowsPPlus();
+				else if (chance < .95)
+					return arrowsS();
+				else if (chance < .97)
+					return arrowsW();
+				else if (chance < .99)
+					return arrowsD();
+				else return rockets();
+			case 5:
+				if (chance < .2)
+					return sword(level);
+				else if (chance < .4)
+					return axe(level);
+				else if (chance < .5)
+					return shield(level);
+				else if (chance < .6)
+					return bow(level);
+				else if (chance < .7)
+					return crossbow(level);
+				else if (chance < .8)
+					return trident(level);
+				else if (chance < .83)
+					return arrows();
+				else if (chance < .86)
+					return arrowsSpectral();
+				else if (chance < .89)
+					return arrowsPPlus();
+				else if (chance < .92)
+					return arrowsSPlus();
+				else if (chance < .94)
+					return arrowsWPlus();
+				else if (chance < .96)
+					return arrowsD();
+				else if (chance < .98)
+					return rockets();
+				else return rocketsPlus();
+			default:
+				if (chance < .2)
+					return sword(level);
+				else if (chance < .4)
+					return axe(level);
+				else if (chance < .5)
+					return shield(level);
+				else if (chance < .6)
+					return bow(level);
+				else if (chance < .7)
+					return crossbow(level);
+				else if (chance < .8)
+					return trident(level);
+				else if (chance < .83)
+					return arrows();
+				else if (chance < .86)
+					return arrowsSpectral();
+				else if (chance < .89)
+					return arrowsPPlus();
+				else if (chance < .92)
+					return arrowsSPlus();
+				else if (chance < .95)
+					return arrowsWPlus();
+				else if (chance < .98)
+					return arrowsDPlus();
+				else return rocketsPlus();
+		}
+	}
+	public static ItemStack randArmor(int level) {
+		Random r = new Random();
+		int chance = r.nextInt(4);
+		switch (chance) {
+			case 0:
+				return helmet(level);
+			case 1:
+				return chestplate(level);
+			case 2:
+				return leggings(level);
+			default:
+				return boots(level);
+		}
+
+	}
+	public static ItemStack randConsumable(int level) {
+		Random r = new Random();
+		double chance = r.nextDouble();
+		switch (level) {
+			case 1:
+				if (chance < .25)
+					return beetroot();
+				else if (chance < .5)
+					return carrot();
+				else if (chance < .65)
+					return bread();
+				else if (chance < .75)
+					return health();
+				else if (chance < .85)
+					return speed();
+				else if (chance < .95)
+					return wolf();
+				else return smallCare();
+			case 2:
+				if (chance < .15)
+					return carrot();
+				else if (chance < .3)
+					return bread();
+				else if (chance < .4)
+					return mutton();
+				else if (chance < .475)
+					return steak();
+				else if (chance < .55)
+					return health();
+				else if (chance < .625)
+					return speed();
+				else if (chance < .7)
+					return strength();
+				else if (chance < .775)
+					return regen();
+				else if (chance < .85)
+					return wolf();
+				else if (chance < .95)
+					return smallCare();
+				else return mediumCare();
+			case 3:
+				if (chance < .1)
+					return bread();
+				else if (chance < .2)
+					return mutton();
+				else if (chance < .3)
+					return steak();
+				else if (chance < .4)
+					return gcarrot();
+				else if (chance < .475)
+					return health2();
+				else if (chance < .55)
+					return speed2();
+				else if (chance < .625)
+					return strength();
+				else if (chance < .7)
+					return regen();
+				else if (chance < .775)
+					return wolf();
+				else if (chance < .825)
+					return golem();
+				else if (chance < .85)
+					return smallCare();
+				else if (chance < .925)
+					return mediumCare();
+				else return largeCare();
+			case 4:
+				if (chance < .1)
+					return mutton();
+				else if (chance < .2)
+					return steak();
+				else if (chance < .3)
+					return gcarrot();
+				else if (chance < .4)
+					return gapple();
+				else if (chance < .475)
+					return health2();
+				else if (chance < .55)
+					return speed2();
+				else if (chance < .625)
+					return strength2();
+				else if (chance < .7)
+					return regen2();
+				else if (chance < .75)
+					return wolf();
+				else if (chance < .825)
+					return golem();
+				else if (chance < .85)
+					return mediumCare();
+				else if (chance < .925)
+					return largeCare();
+				else return extraCare();
+			case 5:
+				if (chance < .05)
+					return mutton();
+				else if (chance < .15)
+					return steak();
+				else if (chance < .25)
+					return gcarrot();
+				else if (chance < .35)
+					return gapple();
+				else if (chance < .4)
+					return egapple();
+				else if (chance < .45)
+					return totem();
+				else if (chance < .525)
+					return health2();
+				else if (chance < .6)
+					return speed2();
+				else if (chance < .675)
+					return strength2();
+				else if (chance < .75)
+					return regen2();
+				else if (chance < .8)
+					return wolf();
+				else if (chance < .875)
+					return golem();
+				else if (chance < .925)
+					return largeCare();
+				else return extraCare();
+			default:
+				if (chance < .05)
+					return steak();
+				else if (chance < .2)
+					return gcarrot();
+				else if (chance < .3)
+					return gapple();
+				else if (chance < .4)
+					return egapple();
+				else if (chance < .45)
+					return totem();
+				else if (chance < .525)
+					return health2();
+				else if (chance < .6)
+					return speed2();
+				else if (chance < .675)
+					return strength2();
+				else if (chance < .75)
+					return regen2();
+				else if (chance < .8)
+					return wolf();
+				else if (chance < .875)
+					return golem();
+				else if (chance < .9)
+					return largeCare();
+				else return extraCare();
+		}
 	}
 }

@@ -1,6 +1,6 @@
 package me.theguyhere.villagerdefense.customEvents;
 
-import me.theguyhere.villagerdefense.game.Arena;
+import me.theguyhere.villagerdefense.game.models.Arena;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;

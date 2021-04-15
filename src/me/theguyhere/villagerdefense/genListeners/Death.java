@@ -5,7 +5,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
-import me.theguyhere.villagerdefense.game.Portal;
+import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.tools.PacketReader;
 
 public class Death implements Listener {

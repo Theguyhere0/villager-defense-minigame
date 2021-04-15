@@ -15,20 +15,22 @@ public class DataManager {
 	private final Main plugin;
 	private FileConfiguration dataConfig = null;
 	private File configFile = null;
+	private final String fileName;
 	
-	public DataManager(Main plugin) {
+	public DataManager(Main plugin, String fileName) {
 		this.plugin = plugin;
+		this.fileName = fileName;
 		// Saves/initializes the config
 		saveDefaultConfig();
 	}
 	
 	public void reloadConfig() {
 		if (this.configFile == null)
-			this.configFile = new File(this.plugin.getDataFolder(), "data.yml");
+			this.configFile = new File(this.plugin.getDataFolder(), fileName);
 		
 		this.dataConfig = YamlConfiguration.loadConfiguration(this.configFile);
 		
-		InputStream defaultStream = this.plugin.getResource("data.yml");
+		InputStream defaultStream = this.plugin.getResource(fileName);
 		if (defaultStream != null) {
 			YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defaultStream));
 			this.dataConfig.setDefaults(defaultConfig);
@@ -54,10 +56,10 @@ public class DataManager {
 	
 	public void saveDefaultConfig() {
 		if (this.configFile == null)
-			this.configFile = new File(this.plugin.getDataFolder(), "data.yml");
+			this.configFile = new File(this.plugin.getDataFolder(), fileName);
 		
 		if (!this.configFile.exists()) {
-			this.plugin.saveResource("data.yml", false);
+			this.plugin.saveResource(fileName, false);
 		}
 	}
 }

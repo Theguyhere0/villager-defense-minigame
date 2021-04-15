@@ -1,15 +1,17 @@
 package me.theguyhere.villagerdefense.GUI;
 
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.game.Arena;
-import me.theguyhere.villagerdefense.game.Game;
 import me.theguyhere.villagerdefense.game.GameItems;
+import me.theguyhere.villagerdefense.game.models.Arena;
+import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.Inventory;
 
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Inventories {
 	private final Main plugin;
@@ -32,13 +34,14 @@ public class Inventories {
 	};
 
 	// Easily alternate between black and white wool
-	public static final Material[] KEYMATS = {Material.BLACK_CONCRETE, Material.WHITE_WOOL};
-	public static final Material[] MONSTERMATS = {Material.SKELETON_SKULL, Material.ZOMBIE_HEAD};
-	public static final Material[] VILLAGERMATS = {Material.WITHER_ROSE, Material.POPPY};
+	public static final Material[] KEY_MATS = {Material.BLACK_CONCRETE, Material.WHITE_WOOL};
+	public static final Material[] INFO_BOARD_MATS = {Material.DARK_OAK_SIGN, Material.BIRCH_SIGN};
+	public static final Material[] MONSTER_MATS = {Material.SKELETON_SKULL, Material.ZOMBIE_HEAD};
+	public static final Material[] VILLAGER_MATS = {Material.WITHER_ROSE, Material.POPPY};
 
 	// Temporary constants for buttons that don't work yet
-	final String CONSTRUCTION = "&fComing Soon!";
-	final boolean[] FLAGS = {true, true};
+	final static String CONSTRUCTION = "&fComing Soon!";
+	final static boolean[] FLAGS = {true, true};
 
 	// Menu of all the arenas
 	public Inventory createArenasInventory() {
@@ -58,15 +61,16 @@ public class Inventories {
 		}
 
 		// Option to set lobby location
-		inv.setItem(45, Utils.createItem(Material.BELL, Utils.format("&2&lLobby")));
+		inv.setItem(45, Utils.createItem(Material.BELL, Utils.format("&2&lLobby"),
+				Utils.format("&7Manage minigame lobby")));
 
 		// Option to set info hologram
-		inv.setItem(46, Utils.createItem(Material.OAK_SIGN, Utils.format("&6&lInfo Holograms"),
-				Utils.format(CONSTRUCTION)));
+		inv.setItem(46, Utils.createItem(Material.OAK_SIGN, Utils.format("&6&lInfo Boards"),
+				Utils.format("&7Manage info boards")));
 
 		// Option to set leaderboard hologram
 		inv.setItem(47, Utils.createItem(Material.GOLDEN_HELMET, Utils.format("&e&lLeaderboards"),
-				FLAGS, null, Utils.format(CONSTRUCTION)));
+				FLAGS, null, Utils.format("&7Manage leaderboards")));
 
 		// Option to exit
 		inv.setItem(53, ii.exit());
@@ -81,16 +85,16 @@ public class Inventories {
 				Utils.format("&2&lLobby"));
 
 		// Option to create the lobby
-		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Lobby")));
+		inv.setItem(0, ii.create("Lobby"));
 
 		// Option to teleport to the lobby
-		inv.setItem(1, ii.teleport("Lobby"));
+		inv.setItem(2, ii.teleport("Lobby"));
 
 		// Option to center the lobby
-		inv.setItem(2, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Lobby")));
+		inv.setItem(4, ii.center("Lobby"));
 
-		// Option to remove the portal
-		inv.setItem(7, ii.remove("LOBBY"));
+		// Option to remove the lobby
+		inv.setItem(6, ii.remove("LOBBY"));
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
@@ -102,6 +106,289 @@ public class Inventories {
 	public Inventory createLobbyConfirmInventory() {
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Lobby?"));
+
+		// "No" option
+		inv.setItem(0, ii.no());
+
+		// "Yes" option
+		inv.setItem(8, ii.yes());
+
+		return inv;
+	}
+
+	// Menu for editing info boards
+	public Inventory createInfoBoardInventory() {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&6&lInfo Boards"));
+
+		// Prepare for material indexing
+		int index;
+
+		// Options to interact with all 8 possible info boards
+		for (int i = 0; i < 8; i++) {
+			// Check if the info board exists
+			if (!plugin.getArenaData().contains("infoBoard." + i))
+				index = 0;
+			else index = 1;
+
+			// Create and set item
+			inv.setItem(i, Utils.createItem(INFO_BOARD_MATS[index], Utils.format("&6&lInfo Board " + (i + 1))));
+		}
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	// Menu for editing a specific info board
+	public Inventory createInfoBoardMenu(int slot) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&6&lInfo Board " + slot));
+
+		// Option to create info board
+		inv.setItem(0, ii.create("Info Board"));
+
+		// Option to teleport to info board
+		inv.setItem(2, ii.teleport("Info Board"));
+
+		// Option to center the info board
+		inv.setItem(4, ii.center("Info Board"));
+
+		// Option to remove info board
+		inv.setItem(6, ii.remove("INFO BOARD"));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	// Confirmation menu for removing info boards
+	public Inventory createInfoBoardConfirmInventory() {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&4&lRemove Info Board?"));
+
+		// "No" option
+		inv.setItem(0, ii.no());
+
+		// "Yes" option
+		inv.setItem(8, ii.yes());
+
+		return inv;
+	}
+
+	// Menu for leaderboards
+	public Inventory createLeaderboardInventory() {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&e&lLeaderboards"));
+
+		// Option to modify total kills leaderboard
+		inv.setItem(0, Utils.createItem(Material.DRAGON_HEAD, Utils.format("&4&lTotal Kills Leaderboard")));
+
+		// Option to modify top kills leaderboard
+		inv.setItem(1, Utils.createItem(Material.ZOMBIE_HEAD, Utils.format("&c&lTop Kills Leaderboard")));
+
+		// Option to modify total gems leaderboard
+		inv.setItem(2, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&2&lTotal Gems Leaderboard")));
+
+		// Option to modify top balance leaderboard
+		inv.setItem(3, Utils.createItem(Material.EMERALD, Utils.format("&a&lTop Balance Leaderboard")));
+
+		// Option to modify top wave leaderboard
+		inv.setItem(4, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&9&lTop Wave Leaderboard"),
+				FLAGS, null));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	// Menu for editing the total kills leaderboard
+	public Inventory createTotalKillsLeaderboardInventory() {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&4&lTotal Kills Leaderboard"));
+
+		// Option to create the leaderboard
+		inv.setItem(0, ii.create("Leaderboard"));
+
+		// Option to teleport to the leaderboard
+		inv.setItem(2, ii.teleport("Leaderboard"));
+
+		// Option to center the leaderboard
+		inv.setItem(4, ii.center("Leaderboard"));
+
+		// Option to remove the leaderboard
+		inv.setItem(6, ii.remove("LEADERBOARD"));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	// Menu for editing the top kills leaderboard
+	public Inventory createTopKillsLeaderboardInventory() {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&c&lTop Kills Leaderboard"));
+
+		// Option to create the leaderboard
+		inv.setItem(0, ii.create("Leaderboard"));
+
+		// Option to teleport to the leaderboard
+		inv.setItem(2, ii.teleport("Leaderboard"));
+
+		// Option to center the leaderboard
+		inv.setItem(4, ii.center("Leaderboard"));
+
+		// Option to remove the leaderboard
+		inv.setItem(6, ii.remove("LEADERBOARD"));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	// Menu for editing the total gems leaderboard
+	public Inventory createTotalGemsLeaderboardInventory() {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&2&lTotal Gems Leaderboard"));
+
+		// Option to create the leaderboard
+		inv.setItem(0, ii.create("Leaderboard"));
+
+		// Option to teleport to the leaderboard
+		inv.setItem(2, ii.teleport("Leaderboard"));
+
+		// Option to center the leaderboard
+		inv.setItem(4, ii.center("Leaderboard"));
+
+		// Option to remove the leaderboard
+		inv.setItem(6, ii.remove("LEADERBOARD"));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	// Menu for editing the top balance leaderboard
+	public Inventory createTopBalanceLeaderboardInventory() {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&a&lTop Balance Leaderboard"));
+
+		// Option to create the leaderboard
+		inv.setItem(0, ii.create("Leaderboard"));
+
+		// Option to teleport to the leaderboard
+		inv.setItem(2, ii.teleport("Leaderboard"));
+
+		// Option to center the leaderboard
+		inv.setItem(4, ii.center("Leaderboard"));
+
+		// Option to remove the leaderboard
+		inv.setItem(6, ii.remove("LEADERBOARD"));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	// Menu for editing the top wave leaderboard
+	public Inventory createTopWaveLeaderboardInventory() {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&9&lTop Wave Leaderboard"));
+
+		// Option to create the leaderboard
+		inv.setItem(0, ii.create("Leaderboard"));
+
+		// Option to teleport to the leaderboard
+		inv.setItem(2, ii.teleport("Leaderboard"));
+
+		// Option to center the leaderboard
+		inv.setItem(4, ii.center("Leaderboard"));
+
+		// Option to remove the leaderboard
+		inv.setItem(6, ii.remove("LEADERBOARD"));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	// Confirmation menu for total kills leaderboard
+	public Inventory createTotalKillsConfirmInventory() {
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&4&lRemove Total Kills Leaderboard?"));
+
+		// "No" option
+		inv.setItem(0, ii.no());
+
+		// "Yes" option
+		inv.setItem(8, ii.yes());
+
+		return inv;
+	}
+
+	// Confirmation menu for top kills leaderboard
+	public Inventory createTopKillsConfirmInventory() {
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&4&lRemove Top Kills Leaderboard?"));
+
+		// "No" option
+		inv.setItem(0, ii.no());
+
+		// "Yes" option
+		inv.setItem(8, ii.yes());
+
+		return inv;
+	}
+
+	// Confirmation menu for total gems leaderboard
+	public Inventory createTotalGemsConfirmInventory() {
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&4&lRemove Total Gems Leaderboard?"));
+
+		// "No" option
+		inv.setItem(0, ii.no());
+
+		// "Yes" option
+		inv.setItem(8, ii.yes());
+
+		return inv;
+	}
+
+	// Confirmation menu for top balance leaderboard
+	public Inventory createTopBalanceConfirmInventory() {
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&4&lRemove Top Balance Leaderboard?"));
+
+		// "No" option
+		inv.setItem(0, ii.no());
+
+		// "Yes" option
+		inv.setItem(8, ii.yes());
+
+		return inv;
+	}
+
+	// Confirmation menu for top wave leaderboard
+	public Inventory createTopWaveConfirmInventory() {
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&4&lRemove Top Wave Leaderboard?"));
 
 		// "No" option
 		inv.setItem(0, ii.no());
@@ -129,8 +416,8 @@ public class Inventories {
 		// Letter and number inputs
 		for (int i = 0; i < 36; i++) {
 			if (caps)
-				inv.setItem(i, Utils.createItem(KEYMATS[i % 2], Utils.format("&f&l" + NAMES[i + 36])));
-			else inv.setItem(i, Utils.createItem(KEYMATS[i % 2], Utils.format("&f&l" + NAMES[i])));
+				inv.setItem(i, Utils.createItem(KEY_MATS[i % 2], Utils.format("&f&l" + NAMES[i + 36])));
+			else inv.setItem(i, Utils.createItem(KEY_MATS[i % 2], Utils.format("&f&l" + NAMES[i])));
 		}
 
 		// Space inputs
@@ -164,8 +451,9 @@ public class Inventories {
 		// Option to edit name
 		inv.setItem(0, Utils.createItem(Material.NAME_TAG, Utils.format("&6&lEdit Name")));
 
-		// Option to edit game portal
-		inv.setItem(1, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&5&lGame Portal")));
+		// Option to edit game portal and leaderboard
+		inv.setItem(1, Utils.createItem(Material.END_PORTAL_FRAME,
+				Utils.format("&5&lPortal and Leaderboard")));
 
 		// Option to edit player settings
 		inv.setItem(2, Utils.createItem(Material.PLAYER_HEAD, Utils.format("&d&lPlayer Settings")));
@@ -210,23 +498,35 @@ public class Inventories {
 		return inv;
 	}
 
-	// Menu for editing the portal of an arena
+	// Menu for editing the portal and leaderboard of an arena
 	public Inventory createPortalInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&5&lPortal: " + game.arenas.get(arena).getName()));
+				Utils.format("&5&lPortal/LBoard: " + game.arenas.get(arena).getName()));
 
 		// Option to create the portal
-		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Portal")));
+		inv.setItem(0, ii.create("Portal"));
 
 		// Option to teleport to the portal
 		inv.setItem(1, ii.teleport("Portal"));
 
 		// Option to center the portal
-		inv.setItem(2, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Portal")));
+		inv.setItem(2, ii.center("Portal"));
 
 		// Option to remove the portal
-		inv.setItem(7, ii.remove("PORTAL"));
+		inv.setItem(3, ii.remove("PORTAL"));
+
+		// Option to create the leaderboard
+		inv.setItem(4, ii.create("Leaderboard"));
+
+		// Option to teleport to the leaderboard
+		inv.setItem(5, ii.teleport("Leaderboard"));
+
+		// Option to center the leaderboard
+		inv.setItem(6, ii.center("Leaderboard"));
+
+		// Option to remove the leaderboard
+		inv.setItem(7, ii.remove("LEADERBOARD"));
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
@@ -249,6 +549,21 @@ public class Inventories {
 		return inv;
 	}
 
+	// Confirmation menu for removing the arena leaderboard
+	public Inventory createArenaBoardConfirmInventory() {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&4&lRemove Leaderboard?"));
+
+		// "No" option
+		inv.setItem(0, ii.no());
+
+		// "Yes" option
+		inv.setItem(8, ii.yes());
+
+		return inv;
+	}
+
 	// Menu for editing the player settings of an arena
 	public Inventory createPlayersInventory(int arena) {
 		// Create inventory
@@ -261,22 +576,27 @@ public class Inventories {
 		// Option to toggle player spawn particles
 		inv.setItem(1, Utils.createItem(Material.FIREWORK_ROCKET,
 				Utils.format("&d&lToggle Spawn Particles"),
+				Utils.format("&7Particles showing where the spawn is"),
+				Utils.format("&7(Visible in-game)"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to edit waiting room
-		inv.setItem(2, Utils.createItem(Material.CLOCK, Utils.format("&b&lWaiting Room")));
+		inv.setItem(2, Utils.createItem(Material.CLOCK, Utils.format("&b&lWaiting Room"),
+				Utils.format("&7An optional room to wait in before"), Utils.format("&7the game starts")));
 
 		// Option to edit max players
 		inv.setItem(3, Utils.createItem(Material.NETHERITE_HELMET,
 				Utils.format("&4&lMaximum Players"),
 				FLAGS,
-				null));
+				null,
+				Utils.format("&7Maximum players the game will have")));
 
 		// Option to edit min players
 		inv.setItem(4, Utils.createItem(Material.NETHERITE_BOOTS,
 				Utils.format("&2&lMinimum Players"),
 				FLAGS,
-				null));
+				null,
+				Utils.format("&7Minimum players needed for game to start")));
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
@@ -291,16 +611,16 @@ public class Inventories {
 				Utils.format("&d&lPlayer Spawn: " + game.arenas.get(arena).getName()));
 
 		// Option to create player spawn
-		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Spawn")));
+		inv.setItem(0, ii.create("Spawn"));
 
 		// Option to teleport to player spawn
-		inv.setItem(1, ii.teleport("Spawn"));
+		inv.setItem(2, ii.teleport("Spawn"));
 
 		// Option to center the player spawn
-		inv.setItem(2, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Spawn")));
+		inv.setItem(4, ii.center("Spawn"));
 
 		// Option to remove player spawn
-		inv.setItem(7, ii.remove("SPAWN"));
+		inv.setItem(6, ii.remove("SPAWN"));
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
@@ -330,16 +650,16 @@ public class Inventories {
 				Utils.format("&b&lWaiting Room: " + game.arenas.get(arena).getName()));
 
 		// Option to create waiting room
-		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Waiting Room")));
+		inv.setItem(0, ii.create("Waiting Room"));
 
 		// Option to teleport to waiting room
-		inv.setItem(1, ii.teleport("Waiting Room"));
+		inv.setItem(2, ii.teleport("Waiting Room"));
 
 		// Option to center the waiting room
-		inv.setItem(2, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Waiting Room")));
+		inv.setItem(4, ii.center("Waiting Room"));
 
 		// Option to remove waiting room
-		inv.setItem(7, ii.remove("WAITING ROOM"));
+		inv.setItem(6, ii.remove("WAITING ROOM"));
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
@@ -414,6 +734,8 @@ public class Inventories {
 		// Option to toggle monster spawn particles
 		inv.setItem(1, Utils.createItem(Material.FIREWORK_ROCKET,
 				Utils.format("&a&lToggle Monster Spawn Particles"),
+				Utils.format("&7Particles showing where the spawns are"),
+				Utils.format("&7(Visible in-game)"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to edit villager spawns
@@ -423,6 +745,8 @@ public class Inventories {
 		// Option to toggle villager spawn particles
 		inv.setItem(3, Utils.createItem(Material.FIREWORK_ROCKET,
 				Utils.format("&d&lToggle Villager Spawn Particles"),
+				Utils.format("&7Particles showing where the spawns are"),
+				Utils.format("&7(Visible in-game)"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to edit monsters allowed
@@ -433,11 +757,13 @@ public class Inventories {
 		// Option to toggle dynamic monster count
 		inv.setItem(5, Utils.createItem(Material.SLIME_BALL,
 				Utils.format("&e&lToggle Dynamic Monster Count"),
+				Utils.format("&7Monster count adjusts based on number of players"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to toggle dynamic difficulty
 		inv.setItem(6, Utils.createItem(Material.MAGMA_CREAM,
 				Utils.format("&6&lToggle Dynamic Difficulty"),
+				Utils.format("&7Difficulty adjusts based on number of players"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to exit
@@ -460,12 +786,12 @@ public class Inventories {
 		// Options to interact with all 8 possible mob spawns
 		for (int i = 0; i < 8; i++) {
 			// Check if the spawn exists
-			if (!plugin.getData().contains("a" + arena + ".monster." + i))
+			if (!plugin.getArenaData().contains("a" + arena + ".monster." + i))
 				index = 0;
 			else index = 1;
 
 			// Create and set item
-			inv.setItem(i, Utils.createItem(MONSTERMATS[index], Utils.format("&2&lMob Spawn " + (i + 1))));
+			inv.setItem(i, Utils.createItem(MONSTER_MATS[index], Utils.format("&2&lMob Spawn " + (i + 1))));
 		}
 
 		// Option to exit
@@ -478,19 +804,19 @@ public class Inventories {
 	public Inventory createMonsterSpawnMenu(int arena, int slot) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&2&lMonster Spawn " + slot + ": " + game.arenas.get(arena).getName()));
+				Utils.format("&2&lMonster Spawn " + (slot + 1) + ": " + game.arenas.get(arena).getName()));
 
 		// Option to create monster spawn
-		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Spawn")));
+		inv.setItem(0, ii.create("Spawn"));
 
 		// Option to teleport to monster spawn
-		inv.setItem(1, ii.teleport("Spawn"));
+		inv.setItem(2, ii.teleport("Spawn"));
 
 		// Option to center the monster spawn
-		inv.setItem(2, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Spawn")));
+		inv.setItem(4, ii.center("Spawn"));
 
 		// Option to remove monster spawn
-		inv.setItem(7, ii.remove("SPAWN"));
+		inv.setItem(6, ii.remove("SPAWN"));
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
@@ -527,12 +853,12 @@ public class Inventories {
 		// Options to interact with all 8 possible villager spawns
 		for (int i = 0; i < 8; i++) {
 			// Check if the spawn exists
-			if (!plugin.getData().contains("a" + arena + ".villager." + i))
+			if (!plugin.getArenaData().contains("a" + arena + ".villager." + i))
 				index = 0;
 			else index = 1;
 
 			// Create and set item
-			inv.setItem(i, Utils.createItem(VILLAGERMATS[index], Utils.format("&5&lVillager Spawn " + (i + 1))));
+			inv.setItem(i, Utils.createItem(VILLAGER_MATS[index], Utils.format("&5&lVillager Spawn " + (i + 1))));
 		}
 
 		// Option to exit
@@ -545,19 +871,19 @@ public class Inventories {
 	public Inventory createVillagerSpawnMenu(int arena, int slot) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&5&lVillager Spawn " + slot + ": " + game.arenas.get(arena).getName()));
+				Utils.format("&5&lVillager Spawn " + (slot + 1) + ": " + game.arenas.get(arena).getName()));
 
 		// Option to create villager spawn
-		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate Spawn")));
+		inv.setItem(0, ii.create("Spawn"));
 
 		// Option to teleport to villager spawn
-		inv.setItem(1, ii.teleport("Spawn"));
+		inv.setItem(2, ii.teleport("Spawn"));
 
 		// Option to center the villager spawn
-		inv.setItem(2, Utils.createItem(Material.TARGET, Utils.format("&f&lCenter Spawn")));
+		inv.setItem(4, ii.center("Spawn"));
 
 		// Option to remove villager spawn
-		inv.setItem(7, ii.remove("SPAWN"));
+		inv.setItem(6, ii.remove("SPAWN"));
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
@@ -592,18 +918,22 @@ public class Inventories {
 				Utils.format(CONSTRUCTION)));
 
 		// Option to toggle default shop
-		inv.setItem(1, Utils.createItem(Material.GOLD_BLOCK,
+		inv.setItem(2, Utils.createItem(Material.GOLD_BLOCK,
 				Utils.format("&6&lToggle Default Shop"),
+				Utils.format("&7Turn default shop on and off"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to toggle custom shop
-		inv.setItem(2, Utils.createItem(Material.EMERALD_BLOCK,
+		inv.setItem(4, Utils.createItem(Material.EMERALD_BLOCK,
 				Utils.format("&2&lToggle Custom Shop"),
+				Utils.format("&7Turn custom shop on and off"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to toggle dynamic prices
-		inv.setItem(3, Utils.createItem(Material.NETHER_STAR,
+		inv.setItem(6, Utils.createItem(Material.NETHER_STAR,
 				Utils.format("&b&lToggle Dynamic Prices"),
+				Utils.format("&7Prices adjusting based on number of"),
+				Utils.format("&7players in the game"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to exit
@@ -630,6 +960,8 @@ public class Inventories {
 		// Option to toggle dynamic wave time limit
 		inv.setItem(2, Utils.createItem(Material.SNOWBALL,
 				Utils.format("&a&lToggle Dynamic Time Limit"),
+				Utils.format("&7Wave time limit adjusts based on"),
+				Utils.format("&7in-game difficulty"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to edit allowed kits
@@ -648,14 +980,18 @@ public class Inventories {
 				FLAGS,
 				null));
 
-		// Option to copy game settings from another arena
-		inv.setItem(6, Utils.createItem(Material.FEATHER,
-				Utils.format("&7&lCopy Game Settings"),
+		// Option to adjust overall difficulty multiplier
+		inv.setItem(6, Utils.createItem(Material.TURTLE_HELMET,
+				Utils.format("&4&lDifficulty Multiplier"),
+				FLAGS,
+				null,
 				Utils.format(CONSTRUCTION)));
 
-		// Option to copy arena settings from another arena
+		// Option to copy game settings from another arena
 		inv.setItem(7, Utils.createItem(Material.WRITABLE_BOOK,
-				Utils.format("&8&lCopy Arena Settings"),
+				Utils.format("&7&lCopy Game Settings"),
+				Utils.format("&7Copy settings of another arena excluding"),
+				Utils.format("&7location data, arena name, and closed status"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to exit
@@ -737,6 +1073,7 @@ public class Inventories {
 				Utils.format("&a&lWin"),
 				FLAGS,
 				null,
+				Utils.format("&7Played when game ends and players win"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to edit lose sound
@@ -744,6 +1081,7 @@ public class Inventories {
 				Utils.format("&e&lLose"),
 				FLAGS,
 				null,
+				Utils.format("&7Played when game ends and players lose"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to edit wave start sound
@@ -751,6 +1089,7 @@ public class Inventories {
 				Utils.format("&2&lWave Start"),
 				FLAGS,
 				null,
+				Utils.format("&7Played when a wave starts"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to edit wave finish sound
@@ -758,6 +1097,7 @@ public class Inventories {
 				Utils.format("&4&lWave Finish"),
 				FLAGS,
 				null,
+				Utils.format("&7Played when a wave ends"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to edit waiting music
@@ -765,6 +1105,15 @@ public class Inventories {
 				Utils.format("&6&lWaiting Music"),
 				FLAGS,
 				null,
+				Utils.format("&7Played while players wait for game to start"),
+				Utils.format(CONSTRUCTION)));
+
+		// Option to edit gem pickup sound
+		inv.setItem(5, Utils.createItem(Material.MUSIC_DISC_FAR,
+				Utils.format("&b&lGem Pickup Music"),
+				FLAGS,
+				null,
+				Utils.format("&7Played when players pick up gems"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to exit
@@ -775,224 +1124,146 @@ public class Inventories {
 
 	// Generate the shop menu
 	public static Inventory createShop(int level) {
-		Random r = new Random();
-
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 36, Utils.format("&k") +
-				Utils.format("&2&lItem Shop"));
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&2&lLevel &9&l" + level + " &2&lItem Shop"));
 
-		// Fill in armor
-		for (int i = 0; i < 18; i++) {
-			int chance = r.nextInt(4);
-			switch (chance) {
-				case 0:
-					inv.setItem(i, GameItems.helmet(level));
-					break;
-				case 1:
-					inv.setItem(i, GameItems.chestplate(level));
-					break;
-				case 2:
-					inv.setItem(i, GameItems.leggings(level));
-					break;
-				case 3:
-					inv.setItem(i, GameItems.boots(level));
-			}
-		}
+		inv.setItem(1, Utils.createItem(Material.GOLDEN_SWORD,
+				Utils.format("&4&lLevel &9&l" + level + " &4&lWeapon Shop"), FLAGS, null));
+
+		inv.setItem(3, Utils.createItem(Material.GOLDEN_CHESTPLATE,
+				Utils.format("&5&lLevel &9&l" + level + " &5&lArmor Shop"), FLAGS, null));
+
+		inv.setItem(5, Utils.createItem(Material.GOLDEN_APPLE,
+				Utils.format("&3&lLevel &9&l" + level + " &3&lConsumables Shop")));
+
+		inv.setItem(7, Utils.createItem(Material.QUARTZ, Utils.format("&6&lCustom Shop"),
+				Utils.format(CONSTRUCTION)));
+
+		return inv;
+	}
+
+	// Generate the weapon shop
+	public static Inventory createWeaponShop(int level) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 27, Utils.format("&k") +
+				Utils.format("&4&lLevel &9&l" + level + " &4&lWeapon Shop"));
 
 		// Fill in weapons
-		for (int i = 18; i < 27; i++) {
-			double chance = r.nextDouble();
-			switch (level) {
-				case 1:
-					if (chance < .4)
-						inv.setItem(i, GameItems.sword(level));
-					else if (chance < .75)
-						inv.setItem(i, GameItems.axe(level));
-					else if (chance < .9)
-						inv.setItem(i, GameItems.bow(level));
-					else inv.setItem(i, GameItems.arrows());
-					break;
-				case 2:
-					if (chance < .35)
-						inv.setItem(i, GameItems.sword(level));
-					else if (chance < .7)
-						inv.setItem(i, GameItems.axe(level));
-					else if (chance < .8)
-						inv.setItem(i, GameItems.shield(level));
-					else if (chance < .9)
-						inv.setItem(i, GameItems.bow(level));
-					else if (chance < .94)
-						inv.setItem(i, GameItems.arrows());
-					else if (chance < .97)
-						inv.setItem(i, GameItems.arrowsS());
-					else inv.setItem(i, GameItems.arrowsP());
-					break;
-				case 3:
-					if (chance < .3)
-						inv.setItem(i, GameItems.sword(level));
-					else if (chance < .6)
-						inv.setItem(i, GameItems.axe(level));
-					else if (chance < .7)
-						inv.setItem(i, GameItems.bow(level));
-					else if (chance < .8)
-						inv.setItem(i, GameItems.shield(level));
-					else if (chance < .9)
-						inv.setItem(i, GameItems.crossbow(level));
-					else if (chance < .93)
-						inv.setItem(i, GameItems.arrows());
-					else if (chance < .96)
-						inv.setItem(i, GameItems.arrowsS());
-					else if (chance < .98)
-						inv.setItem(i, GameItems.arrowsP());
-					else inv.setItem(i, GameItems.arrowsW());
-					break;
-				case 4:
-					if (chance < .3)
-						inv.setItem(i, GameItems.sword(level));
-					else if (chance < .55)
-						inv.setItem(i, GameItems.axe(level));
-					else if (chance < .65)
-						inv.setItem(i, GameItems.bow(level));
-					else if (chance < .75)
-						inv.setItem(i, GameItems.shield(level));
-					else if (chance < .85)
-						inv.setItem(i, GameItems.crossbow(level));
-					else if (chance < .88)
-						inv.setItem(i, GameItems.arrows());
-					else if (chance < .91)
-						inv.setItem(i, GameItems.arrowsS());
-					else if (chance < .94)
-						inv.setItem(i, GameItems.arrowsP());
-					else if (chance < .96)
-						inv.setItem(i, GameItems.arrowsW());
-					else if (chance < .98)
-						inv.setItem(i, GameItems.arrowsD());
-					else inv.setItem(i, GameItems.rockets());
-					break;
-				default:
-					if (chance < .2)
-						inv.setItem(i, GameItems.sword(level));
-					else if (chance < .4)
-						inv.setItem(i, GameItems.axe(level));
-					else if (chance < .5)
-						inv.setItem(i, GameItems.shield(level));
-					else if (chance < .6)
-						inv.setItem(i, GameItems.bow(level));
-					else if (chance < .7)
-						inv.setItem(i, GameItems.crossbow(level));
-					else if (chance < .8)
-						inv.setItem(i, GameItems.trident(level));
-					else if (chance < .84)
-						inv.setItem(i, GameItems.arrows());
-					else if (chance < .88)
-						inv.setItem(i, GameItems.arrowsS());
-					else if (chance < .91)
-						inv.setItem(i, GameItems.arrowsP());
-					else if (chance < .94)
-						inv.setItem(i, GameItems.arrowsW());
-					else if (chance < .96)
-						inv.setItem(i, GameItems.arrowsD());
-					else if (chance < .98)
-						inv.setItem(i, GameItems.rockets());
-					else inv.setItem(i, GameItems.rocketsPlus());
-			}
-		}
+		for (int i = 0; i < 18; i++)
+			inv.setItem(i, GameItems.randWeapon(level));
+
+		// Return option
+		inv.setItem(22, Utils.createItem(Material.BARRIER, Utils.format("&c&lRETURN")));
+
+		return inv;
+	}
+
+	// Generate the armor shop
+	public static Inventory createArmorShop(int level) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 27, Utils.format("&k") +
+				Utils.format("&5&lLevel &9&l" + level + " &5&lArmor Shop"));
+
+		// Fill in armor
+		for (int i = 0; i < 18; i++)
+			inv.setItem(i, GameItems.randArmor(level));
+
+		// Return option
+		inv.setItem(22, Utils.createItem(Material.BARRIER, Utils.format("&c&lRETURN")));
+
+		return inv;
+	}
+
+	// Generate the consumables shop
+	public static Inventory createConsumablesShop(int level) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 18, Utils.format("&k") +
+				Utils.format("&3&lLevel &9&l" + level + " &3&lConsumables Shop"));
 
 		// Fill in consumables
-		for (int i = 27; i < 36; i++) {
-			double chance = r.nextDouble();
-			switch (level) {
-				case 1:
-					if (chance < .3)
-						inv.setItem(i, GameItems.beetroot());
-					else if (chance < .6)
-						inv.setItem(i, GameItems.carrot());
-					else if (chance < .75)
-						inv.setItem(i, GameItems.bread());
-					else if (chance < .9)
-						inv.setItem(i, GameItems.health());
-					else inv.setItem(i, GameItems.speed());
-					break;
-				case 2:
-					if (chance < .1)
-						inv.setItem(i, GameItems.beetroot());
-					else if (chance < .3)
-						inv.setItem(i, GameItems.carrot());
-					else if (chance < .5)
-						inv.setItem(i, GameItems.bread());
-					else if (chance < .65)
-						inv.setItem(i, GameItems.steak());
-					else if (chance < .8)
-						inv.setItem(i, GameItems.health());
-					else if (chance < .9)
-						inv.setItem(i, GameItems.speed());
-					else inv.setItem(i, GameItems.strength());
-					break;
-				case 3:
-					if (chance < .1)
-						inv.setItem(i, GameItems.carrot());
-					else if (chance < .3)
-						inv.setItem(i, GameItems.bread());
-					else if (chance < .5)
-						inv.setItem(i, GameItems.steak());
-					else if (chance < .7)
-						inv.setItem(i, GameItems.health());
-					else if (chance < .85)
-						inv.setItem(i, GameItems.speed());
-					else if (chance < .95)
-						inv.setItem(i, GameItems.strength());
-					else inv.setItem(i, GameItems.gcarrot());
-					break;
-				case 4:
-					if (chance < .1)
-						inv.setItem(i, GameItems.bread());
-					else if (chance < .3)
-						inv.setItem(i, GameItems.steak());
-					else if (chance < .5)
-						inv.setItem(i, GameItems.health());
-					else if (chance < .7)
-						inv.setItem(i, GameItems.speed());
-					else if (chance < .85)
-						inv.setItem(i, GameItems.strength());
-					else if (chance < .95)
-						inv.setItem(i, GameItems.gcarrot());
-					else inv.setItem(i, GameItems.gapple());
-					break;
-				case 5:
-					if (chance < .15)
-						inv.setItem(i, GameItems.steak());
-					else if (chance < .35)
-						inv.setItem(i, GameItems.health());
-					else if (chance < .5)
-						inv.setItem(i, GameItems.speed());
-					else if (chance < .65)
-						inv.setItem(i, GameItems.strength());
-					else if (chance < .75)
-						inv.setItem(i, GameItems.gcarrot());
-					else if (chance < .85)
-						inv.setItem(i, GameItems.gapple());
-					else if (chance < .95)
-						inv.setItem(i, GameItems.egapple());
-					else inv.setItem(i, GameItems.totem());
-					break;
-				default:
-					if (chance < .1)
-						inv.setItem(i, GameItems.steak());
-					else if (chance < .3)
-						inv.setItem(i, GameItems.health());
-					else if (chance < .5)
-						inv.setItem(i, GameItems.speed());
-					else if (chance < .6)
-						inv.setItem(i, GameItems.strength());
-					else if (chance < .7)
-						inv.setItem(i, GameItems.gcarrot());
-					else if (chance < .8)
-						inv.setItem(i, GameItems.gapple());
-					else if (chance < .9)
-						inv.setItem(i, GameItems.egapple());
-					else inv.setItem(i, GameItems.totem());
-			}
-		}
+		for (int i = 0; i < 9; i++)
+			inv.setItem(i, GameItems.randConsumable(level));
+
+		// Return option
+		inv.setItem(13, Utils.createItem(Material.BARRIER, Utils.format("&c&lRETURN")));
+
+		return inv;
+	}
+
+	// Display player stats
+	public Inventory createPlayerStatsInventory(String name) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&2&l" + name + "'s Stats"));
+
+		FileConfiguration playerData = plugin.getPlayerData();
+
+		// Total kills
+		inv.setItem(0, Utils.createItem(Material.DRAGON_HEAD, Utils.format("&4&lTotal Kills: &4" +
+				playerData.getInt(name + ".totalKills")), Utils.format("&7Lifetime kill count")));
+
+		// Top kills
+		inv.setItem(1, Utils.createItem(Material.ZOMBIE_HEAD, Utils.format("&c&lTop Kills: &c" +
+				playerData.getInt(name + ".topKills")), Utils.format("&7Most kills in a game")));
+
+		// Total gems
+		inv.setItem(2, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&2&lTotal Gems: &2" +
+				playerData.getInt(name + ".totalGems")), Utils.format("&7Lifetime gems collected")));
+
+		// Top balance
+		inv.setItem(3, Utils.createItem(Material.EMERALD, Utils.format("&a&lTop Balance: &a" +
+				playerData.getInt(name + ".topBalance")),
+				Utils.format("&7Highest gem balance in a game")));
+
+		// Top wave
+		inv.setItem(4, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&9&lTop Wave: &9" +
+				playerData.getInt(name + ".topWave")), FLAGS, null,
+				Utils.format("&7Highest completed wave")));
+
+		// Crystal balance
+		inv.setItem(8, Utils.createItem(Material.DIAMOND, Utils.format("&b&lCrystal Balance: &b" +
+				playerData.getInt(name + ".crystalBalance"))));
+
+		return inv;
+	}
+
+	// Display arena information
+	public Inventory createArenaInfoInventory(Arena arena) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&6&l" + arena.getName() + " Info"));
+
+		// Maximum players
+		inv.setItem(0, Utils.createItem(Material.NETHERITE_HELMET,
+				Utils.format("&4&lMaximum players: &4" + arena.getMaxPlayers()), FLAGS, null,
+				Utils.format("&7The most players an arena can have")));
+
+		// Minimum players
+		inv.setItem(2, Utils.createItem(Material.NETHERITE_BOOTS,
+				Utils.format("&2&lMinimum players: &2" + arena.getMinPlayers()), FLAGS, null,
+				Utils.format("&7The least players an arena can have to start")));
+
+		// Max waves
+		inv.setItem(4, Utils.createItem(Material.GOLDEN_SWORD,
+				Utils.format("&3&lMax waves: &3" + arena.getMaxWaves()), FLAGS, null,
+				Utils.format("&7The highest wave the arena will go to")));
+
+		// Wave time limit
+		inv.setItem(6, Utils.createItem(Material.CLOCK,
+				Utils.format("&9&lWave time limit: &9" + arena.getWaveTimeLimit() + " minute(s)"),
+				Utils.format("&7The time limit for each wave before"), Utils.format("&7the game ends")));
+
+		// Arena records
+		List<String> records = new ArrayList<>();
+		arena.getSortedDescendingRecords().forEach(arenaRecord -> {
+			records.add(Utils.format("&fWave " + arenaRecord.getWave()));
+			StringBuilder players = new StringBuilder();
+			arenaRecord.getPlayers().forEach(player -> players.append(player).append(", "));
+			records.add(Utils.format("&7" + players.substring(0, players.length() - 2)));
+		});
+		inv.setItem(8, Utils.createItem(Material.GOLDEN_HELMET, Utils.format("&e&lArena Records"), FLAGS,
+				null, records));
 
 		return inv;
 	}

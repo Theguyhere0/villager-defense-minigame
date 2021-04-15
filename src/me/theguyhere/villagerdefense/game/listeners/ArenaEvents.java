@@ -1,13 +1,20 @@
-package me.theguyhere.villagerdefense.game;
+package me.theguyhere.villagerdefense.game.listeners;
 
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.customEvents.*;
+import me.theguyhere.villagerdefense.game.*;
+import me.theguyhere.villagerdefense.game.displays.ArenaBoard;
+import me.theguyhere.villagerdefense.game.displays.Leaderboard;
+import me.theguyhere.villagerdefense.game.displays.Portal;
+import me.theguyhere.villagerdefense.game.models.*;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -20,11 +27,15 @@ public class ArenaEvents implements Listener {
     private final Main plugin;
     private final Game game;
     private final Portal portal;
+    private final Leaderboard leaderboard;
+    private final ArenaBoard arenaBoard;
 
-    public ArenaEvents(Main plugin, Game game, Portal portal) {
+    public ArenaEvents(Main plugin, Game game, Portal portal, Leaderboard leaderboard, ArenaBoard arenaBoard) {
         this.plugin = plugin;
         this.game = game;
         this.portal = portal;
+        this.leaderboard = leaderboard;
+        this.arenaBoard = arenaBoard;
     }
 
     @EventHandler
@@ -68,6 +79,13 @@ public class ArenaEvents implements Listener {
 
         int players = arena.getActiveCount();
 
+        // Save player exp and items before going into arena
+        plugin.getPlayerData().set(player.getName() + ".level", player.getLevel());
+        plugin.getPlayerData().set(player.getName() + ".exp", (double) player.getExp());
+        for (int i = 0; i < player.getInventory().getContents().length; i++)
+            plugin.getPlayerData().set(player.getName() + ".inventory." + i, player.getInventory().getContents()[i]);
+        plugin.savePlayerData();
+
         // First player joining the arena
         if (players == 0) {
             // Get all nearby entities in the arena and clear them out
@@ -87,9 +105,6 @@ public class ArenaEvents implements Listener {
 
             // Give them a game board
             game.createBoard(fighter);
-
-            // Makes sure players have full saturation when the game starts
-            player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, Utils.secondsToTicks(9999), 0));
 
             // Notify everyone in the arena
             arena.getPlayers().forEach(gamer ->
@@ -190,10 +205,20 @@ public class ArenaEvents implements Listener {
             arena.removeTimeLimitBar();
         }
 
+        FileConfiguration playerData = plugin.getPlayerData();
+
+        // Update player stats
+        for (VDPlayer active : arena.getActives())
+            if (playerData.getInt(active.getPlayer().getName() + ".topWave") < arena.getCurrentWave())
+                playerData.set(active.getPlayer().getName() + ".topWave", arena.getCurrentWave());
+        plugin.savePlayerData();
+
         // Win and TEMPORARY condition
-        if (arena.getCurrentDifficulty() == arena.getMaxWaves() || arena.getCurrentWave() == 12)
+        if (arena.getCurrentWave() == arena.getMaxWaves() || arena.getCurrentWave() == 12) {
+            arena.incrementCurrentWave();
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
                     Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
+        }
 
         // Start the next wave
         else arena.getTask().wave.run();
@@ -238,6 +263,18 @@ public class ArenaEvents implements Listener {
 
         // Not spectating
         if (!gamer.isSpectating()) {
+            FileConfiguration playerData = plugin.getPlayerData();
+
+            // Update player stats
+            playerData.set(player.getName() + ".totalKills",
+                    playerData.getInt(player.getName() + ".totalKills") + gamer.getKills());
+            if (playerData.getInt(player.getName() + ".topKills") < gamer.getKills())
+                playerData.set(player.getName() + ".topKills", gamer.getKills());
+            plugin.savePlayerData();
+
+            // Refresh leaderboards
+            leaderboard.refreshLeaderboards();
+
             // Remove the player from the arena and time limit bar if exists
             arena.getPlayers().remove(gamer);
             if (arena.getTimeLimitBar() != null)
@@ -278,9 +315,6 @@ public class ArenaEvents implements Listener {
             if (arena.getAlive() == 0 && arena.isActive())
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
                         Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
-
-            // Refresh the game portal
-            portal.refreshHolo(game.arenas.indexOf(arena), game);
         }
 
         // Spectating
@@ -290,10 +324,26 @@ public class ArenaEvents implements Listener {
 
             // Sets them up for teleport to lobby
             Utils.teleAdventure(player, game.getLobby());
-
-            // Refresh the game portal
-            portal.refreshHolo(game.arenas.indexOf(arena), game);
         }
+
+        // Return player exp and items
+        if (player.isOnline()) {
+            if (plugin.getPlayerData().contains(player.getName() + ".level"))
+                player.setLevel(plugin.getPlayerData().getInt(player.getName() + ".level"));
+            plugin.getPlayerData().set(player.getName() + ".level", null);
+            if (plugin.getPlayerData().contains(player.getName() + ".exp"))
+                player.setExp((float) plugin.getPlayerData().getDouble(player.getName() + ".exp"));
+            plugin.getPlayerData().set(player.getName() + ".exp", null);
+            if (plugin.getPlayerData().contains(player.getName() + ".inventory"))
+                plugin.getPlayerData().getConfigurationSection(player.getName() + ".inventory").getKeys(false)
+                        .forEach(num -> player.getInventory().setItem(Integer.parseInt(num),
+                                (ItemStack) plugin.getPlayerData().get(player.getName() + ".inventory." + num)));
+            plugin.getPlayerData().set(player.getName() + ".inventory", null);
+            plugin.savePlayerData();
+        }
+
+        // Refresh the game portal
+        portal.refreshHolo(game.arenas.indexOf(arena), game);
     }
 
     @EventHandler
@@ -306,8 +356,18 @@ public class ArenaEvents implements Listener {
 
         // Notify players that the game has ended
         arena.getPlayers().forEach(player ->
-            player.getPlayer().sendMessage(Utils.notify("&6You made it to wave &b" +
-                    arena.getCurrentWave() + "&6! Ending in 10 seconds.")));
+            player.getPlayer().sendMessage(Utils.notify("&6You defeated up to wave &b" +
+                    (arena.getCurrentWave() - 1) + "&6! Ending in 10 seconds.")));
+
+        // Check for record
+        if (arena.getActiveCount() > 0)
+            if (arena.checkNewRecord(new ArenaRecord(arena.getCurrentWave() - 1, arena.getActives().stream()
+                    .map(vdPlayer -> vdPlayer.getPlayer().getName()).collect(Collectors.toList())))) {
+                arena.getPlayers().forEach(player -> player.getPlayer().sendTitle(
+                        Utils.format("&6New arena record!"), null, Utils.secondsToTicks(.5),
+                        Utils.secondsToTicks(3.5), Utils.secondsToTicks(1)));
+                arenaBoard.refreshArenaBoard(arena.getArena());
+            }
 
         Tasks task = arena.getTask();
         Map<Runnable, Integer> tasks = task.getTasks();

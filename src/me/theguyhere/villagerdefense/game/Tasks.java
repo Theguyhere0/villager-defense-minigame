@@ -6,6 +6,9 @@ import me.theguyhere.villagerdefense.customEvents.GameEndEvent;
 import me.theguyhere.villagerdefense.customEvents.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.customEvents.WaveEndEvent;
 import me.theguyhere.villagerdefense.customEvents.WaveStartEvent;
+import me.theguyhere.villagerdefense.game.displays.Portal;
+import me.theguyhere.villagerdefense.game.models.Arena;
+import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -122,17 +125,9 @@ public class Tasks {
 			arenaInstance.incrementCurrentWave();
 			int currentWave = arenaInstance.getCurrentWave();
 
-			// Refresh the portal hologram
+			// Refresh the portal hologram and scoreboards
 			portal.refreshHolo(arena, game);
-
-			// Regenerate shops when time and notify players of it
-			if (currentWave % 10 == 0 || currentWave == 1) {
-				int shopNum = currentWave / 10 + 1;
-				arenaInstance.setShop(Inventories.createShop(shopNum));
-				if (currentWave != 1)
-					arenaInstance.getActives().forEach(player ->
-						player.getPlayer().sendMessage(Utils.notify("&6Shops have reset!")));
-			}
+			updateBoards.run();
 
 			// Revive dead players
 			arenaInstance.getGhosts().forEach(p -> {
@@ -143,10 +138,10 @@ public class Tasks {
 
 			arenaInstance.getActives().forEach(p -> {
 				// Notify of upcoming wave
-				int reward = currentWave * 10 - 10;
+				int reward = (currentWave - 1) * 5;
 				p.getPlayer().sendTitle(Utils.format("&6Wave " + currentWave),
-						Utils.format("&7Starting in 15 seconds"), Utils.secondsToTicks(.5) ,
-						Utils.secondsToTicks(3.5), Utils.secondsToTicks(1));
+						Utils.format("&7Starting in 15 seconds"), Utils.secondsToTicks(.5),
+						Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
 
 				// Give players gem rewards
 				p.addGems(reward);
@@ -160,12 +155,25 @@ public class Tasks {
 						Utils.format("&7Starting in 15 seconds"), Utils.secondsToTicks(.5) ,
 						Utils.secondsToTicks(3.5), Utils.secondsToTicks(1)));
 
+			// Regenerate shops when time and notify players of it
+			if (currentWave % 10 == 0 || currentWave == 1) {
+				int level = currentWave / 10 + 1;
+				arenaInstance.setWeaponShop(Inventories.createWeaponShop(level));
+				arenaInstance.setArmorShop(Inventories.createArmorShop(level));
+				arenaInstance.setConsumeShop(Inventories.createConsumablesShop(level));
+				if (currentWave != 1)
+					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+							arenaInstance.getActives().forEach(player ->
+									player.getPlayer().sendTitle(Utils.format("&6Shops upgraded!"),
+											Utils.format("&7Shops upgrade every 10 rounds"),
+											Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5),
+											Utils.secondsToTicks(1))), Utils.secondsToTicks(4));
+			}
+
 			// Spawns mobs after 15 seconds
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 					Bukkit.getPluginManager().callEvent(new WaveStartEvent(arenaInstance)),
 					Utils.secondsToTicks(15));
-
-			//
 		}
 		
 	};
@@ -189,8 +197,6 @@ public class Tasks {
 			arenaInstance.getActives().forEach(player -> {
 				player.getPlayer().getInventory().addItem(new ItemStack(Material.WOODEN_SWORD));
 				player.getPlayer().getInventory().addItem(GameItems.shop());
-				player.getPlayer().getActivePotionEffects()
-						.forEach(effect -> player.getPlayer().removePotionEffect(effect.getType()));
 				player.getPlayer().setFireTicks(0);
 				player.getPlayer().setInvulnerable(false);
 			});
@@ -245,6 +251,7 @@ public class Tasks {
 	public final Runnable updateBar = new Runnable() {
 		double progress = 1;
 		double time;
+		boolean messageSent;
 
 		@Override
 		public void run() {
@@ -257,6 +264,7 @@ public class Tasks {
 				arenaInstance.getPlayers().forEach(vdPlayer ->
 						arenaInstance.addPlayerToTimeLimitBar(vdPlayer.getPlayer()));
 				time = 1d / Utils.minutesToSeconds(arenaInstance.getWaveTimeLimit());
+				messageSent = false;
 			}
 
 			else {
@@ -269,9 +277,17 @@ public class Tasks {
 
 				// Decrement time limit bar
 				else {
-					if (progress <= time * Utils.minutesToSeconds(1))
+					if (progress <= time * Utils.minutesToSeconds(1)) {
 						arenaInstance.updateTimeLimitBar(BarColor.RED, progress);
-					else arenaInstance.updateTimeLimitBar(progress);
+						if (!messageSent) {
+							arenaInstance.getActives().forEach(player ->
+									player.getPlayer().sendTitle(Utils.format("&c1 minute left!"),
+											null,
+											Utils.secondsToTicks(.5), Utils.secondsToTicks(1.5),
+											Utils.secondsToTicks(.5)));
+							messageSent = true;
+						}
+					} else arenaInstance.updateTimeLimitBar(progress);
 					progress -= time;
 				}
 			}

@@ -1,8 +1,10 @@
-package me.theguyhere.villagerdefense.game;
+package me.theguyhere.villagerdefense.game.displays;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import me.theguyhere.villagerdefense.Main;
+import me.theguyhere.villagerdefense.game.models.Arena;
+import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.tools.Utils;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Bukkit;
@@ -13,8 +15,7 @@ import org.bukkit.entity.Player;
 
 public class Portal {
 	private final Main plugin;
-	private Arena arena;
-	private Utils utils;
+	private final Utils utils;
 
 	public Portal(Main plugin) {
 		this.plugin = plugin;
@@ -26,7 +27,7 @@ public class Portal {
 	private final Hologram[] holos = new Hologram[45];
 
 	public void createPortal(Player player, int num, Game game) {
-		this.arena = game.arenas.get(num);
+		Arena arena = game.arenas.get(num);
 
 		// Get NMS versions of world
 		WorldServer nmsWorld = ((CraftWorld) player.getWorld()).getHandle();
@@ -44,15 +45,15 @@ public class Portal {
 		NPC[num] = npc;
 
 		// Create hologram
-		addHolo(player.getLocation(), num, getHoloText());
+		addHolo(player.getLocation(), num, getHoloText(arena));
 
 		// Save data about the NPC
 		utils.setConfigurationLocation("portal." + num, player.getLocation());
-		plugin.saveData();
+		plugin.saveArenaData();
 	}
 
 	public void loadPortal(Location location, int arena, Game game) {
-		this.arena = game.arenas.get(arena);
+		Arena arenaInstance = game.arenas.get(arena);
 
 		// Create portal NPC
 		WorldServer world = ((CraftWorld) Bukkit.getWorld(location.getWorld().getName())).getHandle();
@@ -64,7 +65,7 @@ public class Portal {
 		NPC[arena] = npc;
 
 		// Create hologram
-		addHolo(location, arena, getHoloText());
+		addHolo(location, arena, getHoloText(arenaInstance));
 	}
 
 	public void removePortalAll(int arena) {
@@ -74,7 +75,7 @@ public class Portal {
 	}
 	
 	private void addNPC(Player player, EntityVillager npc) {
-		if (npc != null) {
+		if (npc != null && npc.getWorld().getWorld().equals(player.getWorld())) {
 			PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
 			connection.sendPacket(new PacketPlayOutSpawnEntityLiving(npc));
 			connection.sendPacket(new PacketPlayOutEntityHeadRotation(npc, (byte) (npc.yaw * 256 / 360)));
@@ -121,10 +122,10 @@ public class Portal {
 	}
 
 	public void refreshHolo(int arena, Game game) {
-		this.arena = game.arenas.get(arena);
+		Arena arenaInstance = game.arenas.get(arena);
 		holos[arena].delete();
 		Location location = utils.getConfigLocationNoPitch("portal." + arena);
-		addHolo(location, arena, getHoloText());
+		addHolo(location, arena, getHoloText(arenaInstance));
 	}
 
 	public void removeAll() {
@@ -135,7 +136,7 @@ public class Portal {
 				holo.delete();
 	}
 
-	private String[] getHoloText() {
+	private String[] getHoloText(Arena arena) {
 		String status;
 		if (arena.isClosed())
 			status = "&4&lClosed";

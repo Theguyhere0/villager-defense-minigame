@@ -1,4 +1,4 @@
-package me.theguyhere.villagerdefense.game;
+package me.theguyhere.villagerdefense.game.models;
 
 import org.bukkit.entity.Player;
 
