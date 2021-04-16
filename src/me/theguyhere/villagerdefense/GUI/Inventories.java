@@ -33,13 +33,13 @@ public class Inventories {
 		' '
 	};
 
-	// Easily alternate between black and white wool
+	// Easily alternate between different materials
 	public static final Material[] KEY_MATS = {Material.BLACK_CONCRETE, Material.WHITE_WOOL};
 	public static final Material[] INFO_BOARD_MATS = {Material.DARK_OAK_SIGN, Material.BIRCH_SIGN};
 	public static final Material[] MONSTER_MATS = {Material.SKELETON_SKULL, Material.ZOMBIE_HEAD};
 	public static final Material[] VILLAGER_MATS = {Material.WITHER_ROSE, Material.POPPY};
 
-	// Temporary constants for buttons that don't work yet
+	// Button creation constants
 	final static String CONSTRUCTION = "&fComing Soon!";
 	final static boolean[] FLAGS = {true, true};
 
@@ -751,7 +751,7 @@ public class Inventories {
 
 		// Option to edit monsters allowed
 		inv.setItem(4, Utils.createItem(Material.DRAGON_HEAD,
-				Utils.format("&3&lMonsters Allowed"),
+				Utils.format("&3&lSpawn Table"),
 				Utils.format(CONSTRUCTION)));
 
 		// Option to toggle dynamic monster count
@@ -902,6 +902,19 @@ public class Inventories {
 
 		// "Yes" option
 		inv.setItem(8, ii.yes());
+
+		return inv;
+	}
+
+	// Spawn table menu for an arena
+	public Inventory createSpawnTableInventory(int arena) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&3&lSpawn Table: " + game.arenas.get(arena).getName()));
+
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
 
 		return inv;
 	}

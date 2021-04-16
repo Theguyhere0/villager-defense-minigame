@@ -16,50 +16,54 @@ public class DataManager {
 	private FileConfiguration dataConfig = null;
 	private File configFile = null;
 	private final String fileName;
-	
+
 	public DataManager(Main plugin, String fileName) {
 		this.plugin = plugin;
 		this.fileName = fileName;
+
 		// Saves/initializes the config
 		saveDefaultConfig();
 	}
-	
+
 	public void reloadConfig() {
-		if (this.configFile == null)
-			this.configFile = new File(this.plugin.getDataFolder(), fileName);
-		
-		this.dataConfig = YamlConfiguration.loadConfiguration(this.configFile);
-		
-		InputStream defaultStream = this.plugin.getResource(fileName);
+		// Create config file object
+		if (configFile == null)
+			configFile = new File(plugin.getDataFolder().getPath(), fileName);
+
+		// Refresh file configuration object
+		dataConfig = YamlConfiguration.loadConfiguration(configFile);
+
+		InputStream defaultStream = plugin.getResource(fileName);
 		if (defaultStream != null) {
 			YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defaultStream));
-			this.dataConfig.setDefaults(defaultConfig);
+			dataConfig.setDefaults(defaultConfig);
 		}
 	}
 	
 	public FileConfiguration getConfig() {
-		if (this.dataConfig == null)
+		if (dataConfig == null)
 			reloadConfig();
-		return this.dataConfig;
+		return dataConfig;
 	}
 	
 	public void saveConfig() {
-		if (this.dataConfig == null || this.configFile == null)
+		if (dataConfig == null || configFile == null)
 			return;
 		
 		try {
-			this.getConfig().save(this.configFile);
+			getConfig().save(configFile);
 		} catch (IOException e) {
-			plugin.getLogger().log(Level.SEVERE, "Could not save config to " + this.configFile, e);
+			plugin.getLogger().log(Level.SEVERE, "Could not save config to " + configFile, e);
 		}
 	}
 	
-	public void saveDefaultConfig() {
-		if (this.configFile == null)
-			this.configFile = new File(this.plugin.getDataFolder(), fileName);
-		
-		if (!this.configFile.exists()) {
-			this.plugin.saveResource(fileName, false);
-		}
+	private void saveDefaultConfig() {
+		// Create config file object
+		if (configFile == null)
+			configFile = new File(plugin.getDataFolder().getPath(), fileName);
+
+		// Save default if file doesn't exist
+		if (!configFile.exists())
+			plugin.saveResource(fileName, false);
 	}
 }

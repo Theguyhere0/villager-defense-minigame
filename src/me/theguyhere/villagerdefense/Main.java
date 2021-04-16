@@ -85,9 +85,10 @@ public class Main extends JavaPlugin {
 		infoBoard.loadInfoBoards();
 		arenaBoard.loadArenaBoards();
 
-		int configVersion = 5;
+		int configVersion = 6;
 		int arenaDataVersion = 1;
 		int playerDataVersion = 1;
+		int spawnTableVersion = 1;
 
 		// Check config version
 		if (getConfig().getInt("version") < configVersion) {
@@ -116,6 +117,17 @@ public class Main extends JavaPlugin {
 			getServer().getConsoleSender().sendMessage(ChatColor.RED +  "[VillagerDefense] " +
 					"Please do not update your config.yml until your playerData.yml has been updated.");
 		}
+
+		// Check if spawn tables are outdated
+		if (getConfig().getInt("spawnTable") < spawnTableVersion) {
+			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
+					"Your spawn tables are no longer supported with this version!");
+			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
+					"Please manually transfer spawn table data to version " + spawnTableVersion + ".");
+			getServer().getConsoleSender().sendMessage(ChatColor.RED +  "[VillagerDefense] " +
+					"Please do not update your config.yml until your spawn tables have been updated.");
+		}
+
 	}
 
 	// Runs when disabling plugin

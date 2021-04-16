@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.GUI;
 
 import me.theguyhere.villagerdefense.Main;
+import me.theguyhere.villagerdefense.customEvents.ArenaResetEvent;
 import me.theguyhere.villagerdefense.customEvents.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.game.*;
 import me.theguyhere.villagerdefense.game.displays.ArenaBoard;
@@ -685,11 +686,16 @@ public class InventoryEvents implements Listener {
 
 				// Arena currently open
 				else {
+					// Set to closed
 					plugin.getArenaData().set("a" + arena + ".closed", true);
+
+					// Kick players
 					game.arenas.get(arena).getPlayers().forEach(vdPlayer ->
 							Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 									Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(vdPlayer.getPlayer()))));
 				}
+
+				// Save perm data and update portal
 				plugin.saveArenaData();
 				game.arenas.get(arena).updateArena();
 				openInv(player, inv.createArenaInventory(arena));

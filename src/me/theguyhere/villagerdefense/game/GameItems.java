@@ -5058,16 +5058,16 @@ public class GameItems {
 		return Utils.createItem(Material.TOTEM_OF_UNDYING, null, Utils.format("&2Gems: &a1000"));
 	}
 	public static ItemStack gapple() {
-		return Utils.createItem(Material.GOLDEN_APPLE, null, Utils.format("&2Gems: &a100"));
+		return Utils.createItem(Material.GOLDEN_APPLE, null, Utils.format("&2Gems: &a120"));
 	}
 	public static ItemStack egapple() {
 		return Utils.createItem(Material.ENCHANTED_GOLDEN_APPLE, null, Utils.format("&2Gems: &a300"));
 	}
 	public static ItemStack gcarrot() {
-		return Utils.createItem(Material.GOLDEN_CARROT, null, Utils.format("&2Gems: &a75"));
+		return Utils.createItem(Material.GOLDEN_CARROT, null, Utils.format("&2Gems: &a80"));
 	}
 	public static ItemStack steak() {
-		return Utils.createItems(Material.COOKED_BEEF, 2, null, Utils.format("&2Gems: &a60"));
+		return Utils.createItem(Material.COOKED_BEEF, null, Utils.format("&2Gems: &a50"));
 	}
 	public static ItemStack mutton() {
 		return Utils.createItems(Material.COOKED_MUTTON, 2, null, Utils.format("&2Gems: &a40"));

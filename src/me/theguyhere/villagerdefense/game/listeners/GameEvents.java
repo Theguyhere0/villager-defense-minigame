@@ -145,7 +145,8 @@ public class GameEvents implements Listener {
 			return;
 
 		// Ignore phantom damage to monsters
-		if (ent instanceof Monster && damager instanceof Monster)
+		else if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin) &&
+				(damager instanceof Monster || damager instanceof Slime || ent instanceof Hoglin))
 			return;
 
 		// Check for phantom projectile damage
@@ -153,7 +154,8 @@ public class GameEvents implements Listener {
 			if ((ent instanceof Villager || ent instanceof IronGolem) &&
 					((Projectile) damager).getShooter() instanceof Player)
 				return;
-			if (ent instanceof Monster && ((Projectile) damager).getShooter() instanceof Monster)
+			if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin) &&
+					((Projectile) damager).getShooter() instanceof Monster)
 				return;
 		}
 
@@ -284,7 +286,8 @@ public class GameEvents implements Listener {
 			e.setCancelled(true);
 
 		// Cancel monster friendly fire damage
-		else if (ent instanceof Monster && damager instanceof Monster)
+		else if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin) &&
+				(damager instanceof Monster || damager instanceof Slime || ent instanceof Hoglin))
 			e.setCancelled(true);
 
 		// Check for projectile damage
@@ -297,7 +300,8 @@ public class GameEvents implements Listener {
 			if ((ent instanceof Villager || ent instanceof Wolf || ent instanceof IronGolem) &&
 					((Projectile) damager).getShooter() instanceof Player)
 				e.setCancelled(true);
-			else if (ent instanceof Monster && ((Projectile) damager).getShooter() instanceof Monster)
+			else if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin) &&
+					((Projectile) damager).getShooter() instanceof Monster)
 				e.setCancelled(true);
 		}
 	}
@@ -450,9 +454,16 @@ public class GameEvents implements Listener {
 		if (!(e.getEntity().hasMetadata("VD"))) return;
 
 		// Check that a player caused the damage
-		if (!(e.getDamager() instanceof Player)) return;
+		if (!(e.getDamager() instanceof Player || e.getDamager() instanceof Projectile)) return;
 
-		Player player = (Player) e.getDamager();
+		Player player;
+
+		// Check if projectile came from player, then set player
+		if (e.getDamager() instanceof Projectile) {
+			if (((Projectile) e.getDamager()).getShooter() instanceof Player)
+				player = (Player) ((Projectile) e.getDamager()).getShooter();
+			else return;
+		} else player = (Player) e.getDamager();
 
 		// Check for player in an arena
 		if (game.arenas.stream().filter(Objects::nonNull)
