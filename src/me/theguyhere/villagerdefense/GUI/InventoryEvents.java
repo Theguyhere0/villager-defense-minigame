@@ -15,6 +15,7 @@ import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -27,6 +28,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -521,8 +523,10 @@ public class InventoryEvents implements Listener {
 		// Naming inventory
 		else if (title.contains("Arena ")) {
 			Arena arenaInstance = game.arenas.get(arena);
+			FileConfiguration config = plugin.getArenaData();
+
 			// Get name of arena
-			String name = plugin.getArenaData().getString("a" + arena + ".name");
+			String name = config.getString("a" + arena + ".name");
 
 			// If no name exists, set to nothing
 			if (name == null)
@@ -535,7 +539,7 @@ public class InventoryEvents implements Listener {
 
 			// Letters and numbers
 			if (Arrays.asList(Inventories.KEY_MATS).contains(buttonType)){
-				plugin.getArenaData().set("a" + arena + ".name", name + Inventories.NAMES[num]);
+				config.set("a" + arena + ".name", name + Inventories.NAMES[num]);
 				plugin.saveArenaData();
 				game.arenas.get(arena).updateArena();
 				openInv(player, inv.createNamingInventory(arena));
@@ -543,7 +547,7 @@ public class InventoryEvents implements Listener {
 
 			// Spaces
 			else if (buttonName.contains("Space")){
-				plugin.getArenaData().set("a" + arena + ".name", name + Inventories.NAMES[72]);
+				config.set("a" + arena + ".name", name + Inventories.NAMES[72]);
 				plugin.saveArenaData();
 				game.arenas.get(arena).updateArena();
 				openInv(player, inv.createNamingInventory(arena));
@@ -559,7 +563,7 @@ public class InventoryEvents implements Listener {
 			else if (buttonName.contains("Backspace")) {
 				if (name.length() == 0)
 					return;
-				plugin.getArenaData().set("a" + arena + ".name", name.substring(0, name.length() - 1));
+				config.set("a" + arena + ".name", name.substring(0, name.length() - 1));
 				plugin.saveArenaData();
 				game.arenas.get(arena).updateArena();
 				openInv(player, inv.createNamingInventory(arena));
@@ -574,32 +578,36 @@ public class InventoryEvents implements Listener {
 				}
 
 				openInv(player, inv.createArenasInventory());
-				old = plugin.getArenaData().getString("a" + arena + ".name");
+				old = config.getString("a" + arena + ".name");
 				game.arenas.get(arena).setName(old);
 
 				// Recreate portal if it exists
-				if (plugin.getArenaData().contains("portal." + arena))
+				if (config.contains("portal." + arena))
 					portal.refreshHolo(arena, game);
 
 				// Set default max players to 12 if it doesn't exist
-				if (!plugin.getArenaData().contains("a" + arena + ".max"))
-					plugin.getArenaData().set("a" + arena + ".max", 12);
+				if (!config.contains("a" + arena + ".max"))
+					config.set("a" + arena + ".max", 12);
 
 				// Set default min players to 1 if it doesn't exist
-				if (!plugin.getArenaData().contains("a" + arena + ".min"))
-					plugin.getArenaData().set("a" + arena + ".min", 1);
+				if (!config.contains("a" + arena + ".min"))
+					config.set("a" + arena + ".min", 1);
+
+				// Set default spawn table to default
+				if (!config.contains("a" + arena + ".spawnTable"))
+					config.set("a" + arena + ".spawnTable", "default");
 
 				// Set default max waves to -1 if it doesn't exist
-				if (!plugin.getArenaData().contains("a" + arena + ".maxWaves"))
-					plugin.getArenaData().set("a" + arena + ".maxWaves", -1);
+				if (!config.contains("a" + arena + ".maxWaves"))
+					config.set("a" + arena + ".maxWaves", -1);
 
 				// Set default wave time limit to -1 if it doesn't exist
-				if (!plugin.getArenaData().contains("a" + arena + ".waveTimeLimit"))
-					plugin.getArenaData().set("a" + arena + ".waveTimeLimit", -1);
+				if (!config.contains("a" + arena + ".waveTimeLimit"))
+					config.set("a" + arena + ".waveTimeLimit", -1);
 
 				// Set default to closed if arena closed doesn't exist
-				if (!plugin.getArenaData().contains("a" + arena + ".closed"))
-					plugin.getArenaData().set("a" + arena + ".closed", true);
+				if (!config.contains("a" + arena + ".closed"))
+					config.set("a" + arena + ".closed", true);
 
 				plugin.saveArenaData();
 				game.arenas.get(arena).updateArena();
@@ -608,7 +616,7 @@ public class InventoryEvents implements Listener {
 
 			// Cancel
 			else if (buttonName.contains("CANCEL")) {
-				plugin.getArenaData().set("a" + arena + ".name", old);
+				config.set("a" + arena + ".name", old);
 				plugin.saveArenaData();
 				if (old == null)
 					game.arenas.set(arena, null);
@@ -1341,8 +1349,11 @@ public class InventoryEvents implements Listener {
 			// Toggle villager spawn particles
 //			else if (buttonName.contains("Toggle Villager"))
 
-			// Edit monsters allowed
-//			else if (buttonName.contains("Monsters Allowed")
+			// Edit spawn table
+			else if (buttonName.contains("Spawn Table"))
+				if (plugin.getArenaData().getBoolean("a" + arena + ".closed"))
+					openInv(player, inv.createSpawnTableInventory(arena));
+				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
 			// Toggle dynamic monster count
 //			else if (buttonName.contains("Toggle Dynamic Monster"))
@@ -1364,9 +1375,8 @@ public class InventoryEvents implements Listener {
 			}
 
 			// Exit menu
-			else if (buttonName.contains("EXIT")) {
+			else if (buttonName.contains("EXIT"))
 				openInv(player, inv.createMobsInventory(arena));
-			}
 		}
 
 		// Monster spawn menu for a specific spawn
@@ -1429,9 +1439,8 @@ public class InventoryEvents implements Listener {
 			}
 
 			// Exit menu
-			else if (buttonName.contains("EXIT")) {
+			else if (buttonName.contains("EXIT"))
 				openInv(player, inv.createMobsInventory(arena));
-			}
 		}
 
 		// Villager spawn menu for a specific spawn
@@ -1483,6 +1492,70 @@ public class InventoryEvents implements Listener {
 			// Exit menu
 			else if (buttonName.contains("EXIT"))
 				openInv(player, inv.createVillagerSpawnInventory(arena));
+		}
+
+		// Spawn table menu for an arena
+		else if (title.contains("Spawn Table:")) {
+			FileConfiguration config = plugin.getArenaData();
+
+			// Default
+			if (buttonName.contains("Default"))
+				if (new File(plugin.getDataFolder() + "/spawnTables/default.yml").exists())
+					config.set("a" + arena + ".spawnTable", "default");
+				else player.sendMessage(Utils.notify("&cFile doesn't exist!"));
+
+			// Option 1
+			else if (buttonName.contains("Option 1"))
+				if (new File(plugin.getDataFolder() + "/spawnTables/option1.yml").exists())
+					config.set("a" + arena + ".spawnTable", "option1");
+				else player.sendMessage(Utils.notify("&cFile doesn't exist!"));
+
+			// Option 2
+			else if (buttonName.contains("Option 2"))
+				if (new File(plugin.getDataFolder() + "/spawnTables/option2.yml").exists())
+					config.set("a" + arena + ".spawnTable", "option2");
+				else player.sendMessage(Utils.notify("&cFile doesn't exist!"));
+
+			// Option 3
+			else if (buttonName.contains("Option 3"))
+				if (new File(plugin.getDataFolder() + "/spawnTables/option3.yml").exists())
+					config.set("a" + arena + ".spawnTable", "option3");
+				else player.sendMessage(Utils.notify("&cFile doesn't exist!"));
+
+			// Option 4
+			else if (buttonName.contains("Option 4"))
+				if (new File(plugin.getDataFolder() + "/spawnTables/option4.yml").exists())
+					config.set("a" + arena + ".spawnTable", "option4");
+				else player.sendMessage(Utils.notify("&cFile doesn't exist!"));
+
+			// Option 5
+			else if (buttonName.contains("Option 5"))
+				if (new File(plugin.getDataFolder() + "/spawnTables/option5.yml").exists())
+					config.set("a" + arena + ".spawnTable", "option5");
+				else player.sendMessage(Utils.notify("&cFile doesn't exist!"));
+
+			// Option 6
+			else if (buttonName.contains("Option 6"))
+				if (new File(plugin.getDataFolder() + "/spawnTables/option6.yml").exists())
+					config.set("a" + arena + ".spawnTable", "option6");
+				else player.sendMessage(Utils.notify("&cFile doesn't exist!"));
+
+			// Custom
+			else if (buttonName.contains("Custom"))
+				if (new File(plugin.getDataFolder() + "/spawnTables/a" + arena + ".yml").exists())
+					config.set("a" + arena + ".spawnTable", "custom");
+				else player.sendMessage(Utils.notify("&cFile doesn't exist!"));
+
+			// Exit menu
+			else if (buttonName.contains("EXIT")) {
+				openInv(player, inv.createMobsInventory(arena));
+				return;
+			}
+
+			// Save data and reload inventory
+			plugin.saveArenaData();
+			game.arenas.get(arena).updateArena();
+			openInv(player, inv.createSpawnTableInventory(arena));
 		}
 
 		// Shop settings menu for an arena

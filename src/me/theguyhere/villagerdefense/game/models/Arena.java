@@ -30,6 +30,7 @@ public class Arena {
     private Location waitingRoom; // Location of waiting room
     private List<Location> monsterSpawns = new ArrayList<>(); // List of monster spawn locations
     private List<Location> villagerSpawns = new ArrayList<>(); // List of villager spawn locations
+    private String spawnTableFile; // File name of the spawn table
     private boolean closed; // Indicates whether the arena is closed
     private final List<ArenaRecord> arenaRecords = new ArrayList<>(); // List of top arena records
 
@@ -101,6 +102,10 @@ public class Arena {
 
     public List<Location> getVillagerSpawns() {
         return villagerSpawns;
+    }
+
+    public String getSpawnTableFile() {
+        return spawnTableFile;
     }
 
     public boolean isClosed() {
@@ -332,6 +337,7 @@ public class Arena {
                 .filter(Objects::nonNull).collect(Collectors.toList());
         villagerSpawns = utils.getConfigLocationList("a" + arena + ".villager").stream()
                 .filter(Objects::nonNull).collect(Collectors.toList());
+        spawnTableFile = plugin.getArenaData().getString("a" + arena + ".spawnTable");
         closed = plugin.getArenaData().getBoolean("a" + arena + ".closed");
         if (plugin.getArenaData().contains("a" + arena + ".records"))
             plugin.getArenaData().getConfigurationSection("a" + arena + ".records").getKeys(false)

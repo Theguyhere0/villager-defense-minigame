@@ -395,7 +395,10 @@ public class ArenaEvents implements Listener {
 
     // Spawns villagers randomly
     private void spawnVillagers(Arena arena) {
-        DataManager data = new DataManager(plugin, "spawnTables/default.yml");
+        DataManager data;
+        if (arena.getSpawnTableFile().equals("custom"))
+            data = new DataManager(plugin, "spawnTables/a" + arena.getArena() + ".yml");
+        else data = new DataManager(plugin, "spawnTables/" + arena.getSpawnTableFile() + ".yml");
         Random r = new Random();
         int delay = 0;
         int toSpawn = data.getConfig().getInt(arena.getCurrentWave() + ".count.v") - arena.getVillagers();
@@ -412,7 +415,10 @@ public class ArenaEvents implements Listener {
 
     // Spawns monsters randomly
     private void spawnMonsters(Arena arena) {
-        DataManager data = new DataManager(plugin, "spawnTables/default.yml");
+        DataManager data;
+        if (arena.getSpawnTableFile().equals("custom"))
+            data = new DataManager(plugin, "spawnTables/a" + arena.getArena() + ".yml");
+        else data = new DataManager(plugin, "spawnTables/" + arena.getSpawnTableFile() + ".yml");
         Random r = new Random();
         int delay = 0;
         int wave = arena.getCurrentWave();

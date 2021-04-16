@@ -749,10 +749,8 @@ public class Inventories {
 				Utils.format("&7(Visible in-game)"),
 				Utils.format(CONSTRUCTION)));
 
-		// Option to edit monsters allowed
-		inv.setItem(4, Utils.createItem(Material.DRAGON_HEAD,
-				Utils.format("&3&lSpawn Table"),
-				Utils.format(CONSTRUCTION)));
+		// Option to edit spawn table
+		inv.setItem(4, Utils.createItem(Material.DRAGON_HEAD, Utils.format("&3&lSpawn Table")));
 
 		// Option to toggle dynamic monster count
 		inv.setItem(5, Utils.createItem(Material.SLIME_BALL,
@@ -908,10 +906,48 @@ public class Inventories {
 
 	// Spawn table menu for an arena
 	public Inventory createSpawnTableInventory(int arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&3&lSpawn Table: " + game.arenas.get(arena).getName()));
+		Arena arenaInstance = game.arenas.get(arena);
+		Inventory inv;
 
+		// Create inventory
+		if (arenaInstance.getSpawnTableFile().equals("custom"))
+			 inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+					Utils.format("&3&lSpawn Table: a" + arena + ".yml"));
+		else inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&3&lSpawn Table: " + arenaInstance.getSpawnTableFile() + ".yml"));
+
+		// Option to set spawn table to default
+		inv.setItem(0, Utils.createItem(Material.OAK_WOOD, Utils.format("&4&lDefault"),
+				Utils.format("&7Sets spawn table to default.yml")));
+
+		// Option to set spawn table to global option 1
+		inv.setItem(1, Utils.createItem(Material.RED_CONCRETE, Utils.format("&6&lOption 1"),
+				Utils.format("&7Sets spawn table to option1.yml")));
+
+		// Option to set spawn table to global option 2
+		inv.setItem(2, Utils.createItem(Material.ORANGE_CONCRETE, Utils.format("&6&lOption 2"),
+				Utils.format("&7Sets spawn table to option2.yml")));
+
+		// Option to set spawn table to global option 3
+		inv.setItem(3, Utils.createItem(Material.YELLOW_CONCRETE, Utils.format("&6&lOption 3"),
+				Utils.format("&7Sets spawn table to option3.yml")));
+
+		// Option to set spawn table to global option 4
+		inv.setItem(4, Utils.createItem(Material.BROWN_CONCRETE, Utils.format("&6&lOption 4"),
+				Utils.format("&7Sets spawn table to option4.yml")));
+
+		// Option to set spawn table to global option 5
+		inv.setItem(5, Utils.createItem(Material.LIGHT_GRAY_CONCRETE, Utils.format("&6&lOption 5"),
+				Utils.format("&7Sets spawn table to option5.yml")));
+
+		// Option to set spawn table to global option 6
+		inv.setItem(6, Utils.createItem(Material.WHITE_CONCRETE, Utils.format("&6&lOption 6"),
+				Utils.format("&7Sets spawn table to option6.yml")));
+
+		// Option to set spawn table to custom option
+		inv.setItem(7, Utils.createItem(Material.BIRCH_WOOD, Utils.format("&e&lCustom"),
+				Utils.format("&7Sets spawn table to a[arena number].yml"),
+				Utils.format("&7(Check the arena number in arenaData.yml)")));
 
 		// Option to exit
 		inv.setItem(8, ii.exit());

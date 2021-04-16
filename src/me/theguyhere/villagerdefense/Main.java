@@ -86,7 +86,7 @@ public class Main extends JavaPlugin {
 		arenaBoard.loadArenaBoards();
 
 		int configVersion = 6;
-		int arenaDataVersion = 1;
+		int arenaDataVersion = 2;
 		int playerDataVersion = 1;
 		int spawnTableVersion = 1;
 

@@ -4,7 +4,7 @@ version: 6
 
 # This is the arenaData.yml structure version for reference.
 # ONLY EDIT ONCE FILE HAS BEEN UPDATED.
-arenaData: 1
+arenaData: 2
 
 # This is the playerData.yml structure version for reference.
 # ONLY EDIT ONCE FILE HAS BEEN UPDATED.
