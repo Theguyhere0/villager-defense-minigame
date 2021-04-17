@@ -1022,10 +1022,8 @@ public class Inventories {
 				Utils.format("&9&lAllowed Kits"),
 				Utils.format(CONSTRUCTION)));
 
-		// Option to edit persistent rewards
-		inv.setItem(4, Utils.createItem(Material.EMERALD,
-				Utils.format("&b&lPersistent Rewards"),
-				Utils.format(CONSTRUCTION)));
+		// Option to edit difficulty label
+		inv.setItem(4, Utils.createItem(Material.NAME_TAG, Utils.format("&6&lDifficulty Label")));
 
 		// Option to edit sounds
 		inv.setItem(5, Utils.createItem(Material.MUSIC_DISC_13,
@@ -1040,12 +1038,11 @@ public class Inventories {
 				null,
 				Utils.format("&7Determines difficulty increase rate")));
 
-		// Option to copy game settings from another arena
+		// Option to copy game settings from another arena or a preset
 		inv.setItem(7, Utils.createItem(Material.WRITABLE_BOOK,
-				Utils.format("&7&lCopy Game Settings"),
-				Utils.format("&7Copy settings of another arena excluding"),
-				Utils.format("&7location data, arena name, and closed status"),
-				Utils.format(CONSTRUCTION)));
+				Utils.format("&f&lCopy Game Settings"),
+				Utils.format("&7Copy settings of another arena or"),
+				Utils.format("&7choose from a menu of presets")));
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
@@ -1115,6 +1112,37 @@ public class Inventories {
 		return inv;
 	}
 
+	// Menu for changing the difficulty label of an arena
+	public Inventory createDifficultyLabelInventory(int arena) {
+		String label = game.arenas.get(arena).getDifficultyLabel();
+		if (label == null)
+			label = "";
+
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&6&lDifficulty Label: " + label));
+
+		// "Easy" option
+		inv.setItem(0, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&a&lEasy")));
+
+		// "Medium" option
+		inv.setItem(1, Utils.createItem(Material.YELLOW_CONCRETE, Utils.format("&e&lMedium")));
+
+		// "Hard" option
+		inv.setItem(2, Utils.createItem(Material.RED_CONCRETE, Utils.format("&c&lHard")));
+
+		// "Insane" option
+		inv.setItem(3, Utils.createItem(Material.MAGENTA_CONCRETE, Utils.format("&d&lInsane")));
+
+		// "None" option
+		inv.setItem(4, Utils.createItem(Material.LIGHT_GRAY_CONCRETE, Utils.format("&7&lNone")));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
 	// Menu for changing the difficulty multiplier of an arena
 	public Inventory createDifficultyMultiplierInventory(int arena) {
 		// Create inventory
@@ -1135,6 +1163,44 @@ public class Inventories {
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	// Menu to copy game settings
+	public Inventory createCopySettingsInventory(int arena) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 54,  Utils.format("&k") +
+				Utils.format("&8&lCopy Game Settings"));
+
+		// Options to choose any of the 45 possible arenas
+		for (int i = 0; i < 45; i++) {
+			// Check if arena exists, set button accordingly
+			if (game.arenas.get(i) == null)
+				inv.setItem(i, Utils.createItem(Material.BLACK_CONCRETE,
+						Utils.format("&c&lArena " + (i + 1) + " not available")));
+			else if (i == arena)
+				inv.setItem(i, Utils.createItem(Material.GRAY_GLAZED_TERRACOTTA,
+						Utils.format("&6&l" + game.arenas.get(i).getName())));
+			else
+				inv.setItem(i, Utils.createItem(Material.WHITE_CONCRETE,
+						Utils.format("&a&lCopy " + game.arenas.get(i).getName())));
+		}
+
+		// Easy preset
+		inv.setItem(45, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&a&lEasy Preset")));
+
+		// Medium preset
+		inv.setItem(47, Utils.createItem(Material.YELLOW_CONCRETE, Utils.format("&e&lMedium Preset")));
+
+		// Hard preset
+		inv.setItem(49, Utils.createItem(Material.RED_CONCRETE, Utils.format("&c&lHard Preset")));
+
+		// Insane preset
+		inv.setItem(51, Utils.createItem(Material.MAGENTA_CONCRETE, Utils.format("&d&lInsane Preset")));
+
+		// Option to exit
+		inv.setItem(53, ii.exit());
 
 		return inv;
 	}

@@ -12,4 +12,8 @@ playerData: 1
 
 # This is the spawn table structure version for reference.
 # ONLY EDIT ONCE SPAWN TABLE FILES HAVE BEEN UPDATED.
-spawnTable: 1
+spawnTableStructure: 1
+
+# This is the default.yml version for reference.
+# ONLY EDIT ONCE THE DEFAULT SPAWN TABLE HAS BEEN UPDATED.
+spawnTableDefault: 1

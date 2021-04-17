@@ -123,9 +123,11 @@ public class Portal {
 
 	public void refreshHolo(int arena, Game game) {
 		Arena arenaInstance = game.arenas.get(arena);
-		holos[arena].delete();
+		if (holos[arena] != null)
+			holos[arena].delete();
 		Location location = utils.getConfigLocationNoPitch("portal." + arena);
-		addHolo(location, arena, getHoloText(arenaInstance));
+		if (location != null)
+			addHolo(location, arena, getHoloText(arenaInstance));
 	}
 
 	public void removeAll() {
@@ -138,6 +140,29 @@ public class Portal {
 
 	private String[] getHoloText(Arena arena) {
 		String status;
+
+		// Get difficulty
+		String difficulty = arena.getDifficultyLabel();
+		if (difficulty != null)
+			switch (difficulty) {
+				case "Easy":
+					difficulty = " &a&l[" + difficulty + "]";
+					break;
+				case "Medium":
+					difficulty = " &e&l[" + difficulty + "]";
+					break;
+				case "Hard":
+					difficulty = " &c&l[" + difficulty + "]";
+					break;
+				case "Insane":
+					difficulty = " &d&l[" + difficulty + "]";
+					break;
+				default:
+					difficulty = "";
+			}
+		else difficulty = "";
+
+		// Get status
 		if (arena.isClosed())
 			status = "&4&lClosed";
 		else if (arena.isEnding())
@@ -145,7 +170,8 @@ public class Portal {
 		else if (!arena.isActive())
 			status = "&5&lWaiting";
 		else status = "&a&lWave: " + arena.getCurrentWave();
-		return new String[]{Utils.format("&6&l" + arena.getName()),
+
+		return new String[]{Utils.format("&6&l" + arena.getName() + difficulty),
 		Utils.format("&bPlayers: " + arena.getActiveCount() + '/' + arena.getMaxPlayers()),
 		Utils.format("&7Spectators: " + arena.getSpectatorCount()),
 		Utils.format(status)};

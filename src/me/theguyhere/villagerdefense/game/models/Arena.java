@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
@@ -22,6 +23,8 @@ public class Arena {
     // Persistent data
     private final int arena; // Arena number
     private String name; // Name of the arena
+    private String spawnTableFile; // File name of the spawn table
+    private String difficultyLabel; // Labeled difficulty of the arena
     private int maxPlayers; // Maximum players in an arena
     private int minPlayers; // Minimum players in an arena
     private int maxWaves; // Maximum waves in an arena
@@ -31,7 +34,6 @@ public class Arena {
     private Location waitingRoom; // Location of waiting room
     private List<Location> monsterSpawns = new ArrayList<>(); // List of monster spawn locations
     private List<Location> villagerSpawns = new ArrayList<>(); // List of villager spawn locations
-    private String spawnTableFile; // File name of the spawn table
     private boolean dynamicCount; // Toggle for dynamic mob count
     private boolean dynamicDifficulty; // Toggle for dynamic difficulty
     private boolean dynamicPrices; // Toggle for dynamic prices
@@ -43,6 +45,7 @@ public class Arena {
     private final Tasks task; // The tasks object for the arena
     private boolean caps; // Indicates whether the naming inventory has caps lock on
     private boolean active; // Indicates whether the arena has a game ongoing
+    private boolean spawning; // Indicates whether the arena is in the process of spawning mobs
     private boolean ending; // Indicates whether the arena is about to end
     private int currentWave; // Current game wave
     private int villagers; // Villager count
@@ -75,6 +78,10 @@ public class Arena {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDifficultyLabel() {
+        return difficultyLabel;
     }
 
     public int getMaxPlayers() {
@@ -184,6 +191,14 @@ public class Arena {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public boolean isSpawning() {
+        return spawning;
+    }
+
+    public void setSpawning(boolean spawning) {
+        this.spawning = spawning;
     }
 
     public boolean isEnding() {
@@ -354,29 +369,35 @@ public class Arena {
     }
 
     public void updateArena() {
-        name = plugin.getArenaData().getString("a" + arena + ".name");
-        maxPlayers = plugin.getArenaData().getInt("a" + arena + ".max");
-        minPlayers = plugin.getArenaData().getInt("a" + arena + ".min");
-        maxWaves = plugin.getArenaData().getInt("a" + arena + ".maxWaves");
-        waveTimeLimit = plugin.getArenaData().getInt("a" + arena + ".waveTimeLimit");
-        difficultyMultiplier = plugin.getArenaData().getInt("a" + arena + ".difficulty");
-        playerSpawn = utils.getConfigLocationNoRotation("a" + arena + ".spawn");
-        waitingRoom = utils.getConfigLocationNoRotation("a" + arena + ".waiting");
-        monsterSpawns = utils.getConfigLocationList("a" + arena + ".monster").stream()
+        FileConfiguration config = plugin.getArenaData();
+        String path = "a" + arena;
+
+        name = config.getString(path + ".name");
+        if (config.contains(path + ".difficultyLabel"))
+            difficultyLabel = config.getString(path + ".difficultyLabel");
+        else difficultyLabel = null;
+        maxPlayers = config.getInt(path + ".max");
+        minPlayers = config.getInt(path + ".min");
+        maxWaves = config.getInt(path + ".maxWaves");
+        waveTimeLimit = config.getInt(path + ".waveTimeLimit");
+        difficultyMultiplier = config.getInt(path + ".difficulty");
+        playerSpawn = utils.getConfigLocationNoRotation(path + ".spawn");
+        waitingRoom = utils.getConfigLocationNoRotation(path + ".waiting");
+        monsterSpawns = utils.getConfigLocationList(path + ".monster").stream()
                 .filter(Objects::nonNull).collect(Collectors.toList());
-        villagerSpawns = utils.getConfigLocationList("a" + arena + ".villager").stream()
+        villagerSpawns = utils.getConfigLocationList(path + ".villager").stream()
                 .filter(Objects::nonNull).collect(Collectors.toList());
-        spawnTableFile = plugin.getArenaData().getString("a" + arena + ".spawnTable");
-        dynamicCount = plugin.getArenaData().getBoolean("a" + arena + ".dynamicCount");
-        dynamicDifficulty = plugin.getArenaData().getBoolean("a" + arena + ".dynamicDifficulty");
-        dynamicPrices = plugin.getArenaData().getBoolean("a" + arena + ".dynamicPrices");
-        dynamicLimit = plugin.getArenaData().getBoolean("a" + arena + ".dynamicLimit");
-        closed = plugin.getArenaData().getBoolean("a" + arena + ".closed");
-        if (plugin.getArenaData().contains("a" + arena + ".records"))
-            plugin.getArenaData().getConfigurationSection("a" + arena + ".records").getKeys(false)
+        spawnTableFile = config.getString(path + ".spawnTable");
+        dynamicCount = config.getBoolean(path + ".dynamicCount");
+        dynamicDifficulty = config.getBoolean(path + ".dynamicDifficulty");
+        dynamicPrices = config.getBoolean(path + ".dynamicPrices");
+        dynamicLimit = config.getBoolean(path + ".dynamicLimit");
+        closed = config.getBoolean(path + ".closed");
+        if (config.contains(path + ".records"))
+            config.getConfigurationSection(path + ".records").getKeys(false)
                     .forEach(index -> arenaRecords.add(new ArenaRecord(
-                            plugin.getArenaData().getInt("a" + arena + ".records." + index + ".wave"),
-                            plugin.getArenaData().getStringList("a" + arena + ".records." + index + ".players")
+                            config.getInt(path + ".records." + index + ".wave"),
+                            config.getStringList(path + ".records." + index + ".players")
                     )));
     }
 }

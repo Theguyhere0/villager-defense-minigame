@@ -360,8 +360,8 @@ public class ArenaEvents implements Listener {
             player.getPlayer().sendMessage(Utils.notify("&6You defeated up to wave &b" +
                     (arena.getCurrentWave() - 1) + "&6! Ending in 10 seconds.")));
 
-        // Check for record
-        if (arena.getActiveCount() > 0)
+        if (arena.getActiveCount() > 0) {
+            // Check for record
             if (arena.checkNewRecord(new ArenaRecord(arena.getCurrentWave() - 1, arena.getActives().stream()
                     .map(vdPlayer -> vdPlayer.getPlayer().getName()).collect(Collectors.toList())))) {
                 arena.getPlayers().forEach(player -> player.getPlayer().sendTitle(
@@ -369,6 +369,20 @@ public class ArenaEvents implements Listener {
                         Utils.secondsToTicks(3.5), Utils.secondsToTicks(1)));
                 arenaBoard.refreshArenaBoard(arena.getArena());
             }
+
+            // Give persistent rewards
+            arena.getActives().forEach(vdPlayer -> {
+                // Calculate reward from difficulty multiplier, wave, kills, and gem balance
+                int reward = (10 + 5 * arena.getDifficultyMultiplier()) * (arena.getCurrentWave() - 1);
+                reward += vdPlayer.getKills();
+                reward += (vdPlayer.getGems() + 5) / 10;
+
+                // Give rewards and notify
+                plugin.getPlayerData().set(vdPlayer.getPlayer().getName() + ".crystalBalance",
+                        plugin.getPlayerData().getInt(vdPlayer.getPlayer().getName() + ".crystalBalance") + reward);
+                vdPlayer.getPlayer().sendMessage(Utils.notify("&6You earned &b" + reward + " crystals &6this game!"));
+            });
+        }
 
         Tasks task = arena.getTask();
         Map<Runnable, Integer> tasks = task.getTasks();
@@ -396,14 +410,23 @@ public class ArenaEvents implements Listener {
     // Spawns villagers randomly
     private void spawnVillagers(Arena arena) {
         DataManager data;
+
+        // Put arena in spawning state
+        arena.setSpawning(true);
+
+        // Get spawn table
         if (arena.getSpawnTableFile().equals("custom"))
             data = new DataManager(plugin, "spawnTables/a" + arena.getArena() + ".yml");
         else data = new DataManager(plugin, "spawnTables/" + arena.getSpawnTableFile() + ".yml");
+
         Random r = new Random();
         int delay = 0;
+
+        // Get count multiplier
         double countMultiplier = Math.log((arena.getActiveCount() + 7) / 10d) + 1;
         if (!arena.isDynamicCount())
             countMultiplier = 1;
+
         int toSpawn = (int) (data.getConfig().getInt(arena.getCurrentWave() + ".count.v") * countMultiplier)
                 - arena.getVillagers();
         List<Location> spawns = arena.getVillagerSpawns();
@@ -420,15 +443,24 @@ public class ArenaEvents implements Listener {
     // Spawns monsters randomly
     private void spawnMonsters(Arena arena) {
         DataManager data;
+
+        // Put the arena in spawning state
+        arena.setSpawning(true);
+
+        // Get spawn table
         if (arena.getSpawnTableFile().equals("custom"))
             data = new DataManager(plugin, "spawnTables/a" + arena.getArena() + ".yml");
         else data = new DataManager(plugin, "spawnTables/" + arena.getSpawnTableFile() + ".yml");
+
         Random r = new Random();
         int delay = 0;
         int wave = arena.getCurrentWave();
+
+        // Calculate count multiplier
         double countMultiplier = Math.log((arena.getActiveCount() + 7) / 10d) + 1;
         if (!arena.isDynamicCount())
             countMultiplier = 1;
+
         String path = wave + ".mtypes";
         List<Location> spawns = arena.getMonsterSpawns();
         List<String> typeRatio = new ArrayList<>();
@@ -563,6 +595,10 @@ public class ArenaEvents implements Listener {
                             (Wither) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.WITHER)
                     ), delay);
             }
+
+            // Bring arena out of spawning state
+            if (i + 1 >= (int) (data.getConfig().getInt(wave + ".count.m") * countMultiplier))
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawning(false), delay);
         }
     }
 

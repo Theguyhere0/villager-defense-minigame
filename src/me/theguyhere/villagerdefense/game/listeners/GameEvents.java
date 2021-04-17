@@ -60,7 +60,7 @@ public class GameEvents implements Listener {
 		// Update villager count
 		if (ent instanceof Villager) {
 			arena.decrementVillagers();
-			if (arena.getVillagers() == 0) {
+			if (arena.getVillagers() == 0 && !arena.isSpawning()) {
 				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 						Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 			}
@@ -81,7 +81,7 @@ public class GameEvents implements Listener {
 			}
 
 			// Check for wave end condition
-			if (arena.getEnemies() == 0 && !arena.isEnding()) {
+			if (arena.getEnemies() == 0 && !arena.isEnding() && !arena.isSpawning()) {
 				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 						Bukkit.getPluginManager().callEvent(new WaveEndEvent(arena)));
 			}
