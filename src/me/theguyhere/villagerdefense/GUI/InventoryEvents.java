@@ -605,6 +605,10 @@ public class InventoryEvents implements Listener {
 				if (!config.contains("a" + arena + ".waveTimeLimit"))
 					config.set("a" + arena + ".waveTimeLimit", -1);
 
+				// Set default difficulty multiplier to 1 if it doesn't exist
+				if (!config.contains("a" + arena + ".difficulty"))
+					config.set("a" + arena + ".difficulty", 1);
+
 				// Set default to closed if arena closed doesn't exist
 				if (!config.contains("a" + arena + ".closed"))
 					config.set("a" + arena + ".closed", true);
@@ -1355,11 +1359,25 @@ public class InventoryEvents implements Listener {
 					openInv(player, inv.createSpawnTableInventory(arena));
 				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
-			// Toggle dynamic monster count
-//			else if (buttonName.contains("Toggle Dynamic Monster"))
+			// Toggle dynamic mob count
+			else if (buttonName.contains("Dynamic Mob Count:"))
+				if (plugin.getArenaData().getBoolean("a" + arena + ".closed")) {
+					plugin.getArenaData().set("a" + arena +".dynamicCount",
+							!plugin.getArenaData().getBoolean("a" + arena +".dynamicCount"));
+					plugin.saveArenaData();
+					game.arenas.get(arena).updateArena();
+					openInv(player, inv.createMobsInventory(arena));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
 			// Toggle dynamic difficulty
-//			else if (buttonName.contains("Toggle Dynamic Difficulty"))
+			else if (buttonName.contains("Dynamic Difficulty:"))
+				if (plugin.getArenaData().getBoolean("a" + arena + ".closed")) {
+					plugin.getArenaData().set("a" + arena +".dynamicDifficulty",
+							!plugin.getArenaData().getBoolean("a" + arena +".dynamicDifficulty"));
+					plugin.saveArenaData();
+					game.arenas.get(arena).updateArena();
+					openInv(player, inv.createMobsInventory(arena));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
 			// Exit menu
 			else if (buttonName.contains("EXIT"))
@@ -1570,11 +1588,19 @@ public class InventoryEvents implements Listener {
 //			else if (buttonName.contains("Toggle Custom Shop"))
 
 			// Toggle dynamic prices
-//			else if (buttonName.contains("Toggle Dynamic"))
+//			else if (buttonName.contains("Dynamic Prices:"))
+			if (buttonName.contains("Dynamic Prices:")) {
+				if (plugin.getArenaData().getBoolean("a" + arena + ".closed")) {
+					plugin.getArenaData().set("a" + arena + ".dynamicPrices",
+							!plugin.getArenaData().getBoolean("a" + arena + ".dynamicPrices"));
+					plugin.saveArenaData();
+					game.arenas.get(arena).updateArena();
+					openInv(player, inv.createShopsInventory(arena));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+			}
 
 			// Exit menu
-//			else if (buttonName.contains("EXIT"))
-			if (buttonName.contains("EXIT"))
+			else if (buttonName.contains("EXIT"))
 				openInv(player, inv.createArenaInventory(arena));
 		}
 
@@ -1595,7 +1621,14 @@ public class InventoryEvents implements Listener {
 			}
 
 			// Toggle dynamic wave time limit
-//			else if (buttonName.contains("Toggle Dynamic Time Limit"))
+			else if (buttonName.contains("Dynamic Time Limit:"))
+				if (plugin.getArenaData().getBoolean("a" + arena + ".closed")) {
+					plugin.getArenaData().set("a" + arena +".dynamicLimit",
+							!plugin.getArenaData().getBoolean("a" + arena +".dynamicLimit"));
+					plugin.saveArenaData();
+					game.arenas.get(arena).updateArena();
+					openInv(player, inv.createGameSettingsInventory(arena));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
 			// Edit allowed kits
 //			else if (buttonName.contains("Allowed Kits"))
@@ -1604,14 +1637,16 @@ public class InventoryEvents implements Listener {
 //			else if (buttonName.contains("Persistent Rewards"))
 
 			// Edit sounds
-			else if (buttonName.contains("Sounds")) {
+			else if (buttonName.contains("Sounds"))
 				if (plugin.getArenaData().getBoolean("a" + arena + ".closed"))
 					openInv(player, inv.createSoundsInventory(arena));
 				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
-			}
 
 			// Edit overall difficulty multiplier
-//			else if (buttonName.contains("Difficulty Multiplier"))
+			else if (buttonName.contains("Difficulty Multiplier"))
+				if (plugin.getArenaData().getBoolean("a" + arena + ".closed"))
+					openInv(player, inv.createDifficultyMultiplierInventory(arena));
+				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
 			// Copy game settings from another arena
 //			else if (buttonName.contains("Copy Game Settings"))
@@ -1739,6 +1774,52 @@ public class InventoryEvents implements Listener {
 			}
 		}
 
+		// Difficulty multiplier menu for an arena
+		else if (title.contains("Difficulty Multiplier:")) {
+			int current = plugin.getArenaData().getInt("a" + arena + ".difficulty");
+
+			// Set to 1
+			if (buttonName.contains("1")) {
+				plugin.getArenaData().set("a" + arena + ".difficulty", 1);
+				plugin.saveArenaData();
+				game.arenas.get(arena).updateArena();
+				openInv(player, inv.createDifficultyMultiplierInventory(arena));
+				portal.refreshHolo(arena, game);
+			}
+
+			// Set to 2
+			if (buttonName.contains("2")) {
+				plugin.getArenaData().set("a" + arena + ".difficulty", 2);
+				plugin.saveArenaData();
+				game.arenas.get(arena).updateArena();
+				openInv(player, inv.createDifficultyMultiplierInventory(arena));
+				portal.refreshHolo(arena, game);
+			}
+
+			// Set to 3
+			if (buttonName.contains("3")) {
+				plugin.getArenaData().set("a" + arena + ".difficulty", 3);
+				plugin.saveArenaData();
+				game.arenas.get(arena).updateArena();
+				openInv(player, inv.createDifficultyMultiplierInventory(arena));
+				portal.refreshHolo(arena, game);
+			}
+
+			// Set to 4
+			if (buttonName.contains("4")) {
+				plugin.getArenaData().set("a" + arena + ".difficulty", 4);
+				plugin.saveArenaData();
+				game.arenas.get(arena).updateArena();
+				openInv(player, inv.createDifficultyMultiplierInventory(arena));
+				portal.refreshHolo(arena, game);
+			}
+
+			// Exit menu
+			else if (slot == 8) {
+				openInv(player, inv.createGameSettingsInventory(arena));
+			}
+		}
+
 		// Sound settings menu for an arena
 		else if (title.contains("Sounds:")) {
 			// Edit win sound
@@ -1799,14 +1880,15 @@ public class InventoryEvents implements Listener {
 					.collect(Collectors.toList()).get(0);
 			VDPlayer gamer = arenaInstance.getPlayer(player);
 
+			// Return to main shop menu
 			if (buttonName.contains("RETURN")) {
 				player.openInventory(Inventories.createShop(arenaInstance.getCurrentWave() / 10 + 1));
 				return;
 			}
 
 			ItemStack buy = e.getClickedInventory().getItem(e.getSlot()).clone();
-			ItemMeta meta = buy.getItemMeta();
-			List<String> lore = meta.getLore();
+			Material buyType = buy.getType();
+			List<String> lore = buy.getItemMeta().getLore();
 			int cost = Integer.parseInt(lore.get(lore.size() - 1).substring(10));
 
 			// Check if they can afford the item
@@ -1816,9 +1898,7 @@ public class InventoryEvents implements Listener {
 			}
 
 			// Remove cost meta
-			lore.remove(lore.size() - 1);
-			meta.setLore(lore);
-			buy.setItemMeta(meta);
+			buy = Utils.removeLastLore(buy);
 
 			// Subtract from balance, update scoreboard, give item
 			gamer.addGems(-cost);
@@ -1827,18 +1907,18 @@ public class InventoryEvents implements Listener {
 			EntityEquipment equipment = player.getPlayer().getEquipment();
 
 			// Equip armor if possible, otherwise put in inventory, otherwise drop at feet
-			if (Arrays.stream(HELMETS).anyMatch(mat -> mat == buy.getType()) && equipment.getHelmet() == null) {
+			if (Arrays.stream(HELMETS).anyMatch(mat -> mat == buyType) && equipment.getHelmet() == null) {
 				equipment.setHelmet(buy);
 				player.sendMessage(Utils.notify("&aHelmet equipped!"));
-			} else if (Arrays.stream(CHESTPLATES).anyMatch(mat -> mat == buy.getType()) &&
+			} else if (Arrays.stream(CHESTPLATES).anyMatch(mat -> mat == buyType) &&
 					equipment.getChestplate() == null) {
 				equipment.setChestplate(buy);
 				player.sendMessage(Utils.notify("&aChestplate equipped!"));
-			} else if (Arrays.stream(LEGGINGS).anyMatch(mat -> mat == buy.getType()) &&
+			} else if (Arrays.stream(LEGGINGS).anyMatch(mat -> mat == buyType) &&
 					equipment.getLeggings() == null) {
 				equipment.setLeggings(buy);
 				player.sendMessage(Utils.notify("&aLeggings equipped!"));
-			} else if (Arrays.stream(BOOTS).anyMatch(mat -> mat == buy.getType()) && equipment.getBoots() == null) {
+			} else if (Arrays.stream(BOOTS).anyMatch(mat -> mat == buyType) && equipment.getBoots() == null) {
 				equipment.setBoots(buy);
 				player.sendMessage(Utils.notify("&aBoots equipped!"));
 			} else {

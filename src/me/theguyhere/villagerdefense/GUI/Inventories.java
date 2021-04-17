@@ -9,6 +9,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -724,9 +726,11 @@ public class Inventories {
 
 	// Menu for editing the mob settings of an arena
 	public Inventory createMobsInventory(int arena) {
+		Arena arenaInstance = game.arenas.get(arena);
+
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&2&lMob Settings: " + game.arenas.get(arena).getName()));
+				Utils.format("&2&lMob Settings: " + arenaInstance.getName()));
 
 		// Option to edit monster spawns
 		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&2&lMonster Spawns")));
@@ -752,17 +756,15 @@ public class Inventories {
 		// Option to edit spawn table
 		inv.setItem(4, Utils.createItem(Material.DRAGON_HEAD, Utils.format("&3&lSpawn Table")));
 
-		// Option to toggle dynamic monster count
+		// Option to toggle dynamic mob count
 		inv.setItem(5, Utils.createItem(Material.SLIME_BALL,
-				Utils.format("&e&lToggle Dynamic Monster Count"),
-				Utils.format("&7Monster count adjusts based on number of players"),
-				Utils.format(CONSTRUCTION)));
+				Utils.format("&e&lDynamic Mob Count: " + getToggleStatus(arenaInstance.isDynamicCount())),
+				Utils.format("&7Mob count adjusting based on"), Utils.format("&7number of players")));
 
 		// Option to toggle dynamic difficulty
 		inv.setItem(6, Utils.createItem(Material.MAGMA_CREAM,
-				Utils.format("&6&lToggle Dynamic Difficulty"),
-				Utils.format("&7Difficulty adjusts based on number of players"),
-				Utils.format(CONSTRUCTION)));
+				Utils.format("&6&lDynamic Difficulty: " + getToggleStatus(arenaInstance.isDynamicDifficulty())),
+				Utils.format("&7Difficulty adjusting based on"), Utils.format("&7number of players")));
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
@@ -957,9 +959,11 @@ public class Inventories {
 
 	// Menu for editing the shop settings of an arena
 	public Inventory createShopsInventory(int arena) {
+		Arena arenaInstance = game.arenas.get(arena);
+
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&e&lShop Settings: " + game.arenas.get(arena).getName()));
+				Utils.format("&e&lShop Settings: " + arenaInstance.getName()));
 
 		// Option to create a custom shop
 		inv.setItem(0, Utils.createItem(Material.EMERALD,
@@ -980,10 +984,9 @@ public class Inventories {
 
 		// Option to toggle dynamic prices
 		inv.setItem(6, Utils.createItem(Material.NETHER_STAR,
-				Utils.format("&b&lToggle Dynamic Prices"),
+				Utils.format("&b&lDynamic Prices: " + getToggleStatus(arenaInstance.isDynamicPrices())),
 				Utils.format("&7Prices adjusting based on number of"),
-				Utils.format("&7players in the game"),
-				Utils.format(CONSTRUCTION)));
+				Utils.format("&7players in the game")));
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
@@ -993,9 +996,11 @@ public class Inventories {
 
 	// Menu for editing the game settings of an arena
 	public Inventory createGameSettingsInventory(int arena) {
+		Arena arenaInstance = game.arenas.get(arena);
+
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&8&lGame Settings: " + game.arenas.get(arena).getName()));
+				Utils.format("&8&lGame Settings: " + arenaInstance.getName()));
 
 		// Option to change max waves
 		inv.setItem(0, Utils.createItem(Material.NETHERITE_SWORD,
@@ -1008,10 +1013,9 @@ public class Inventories {
 
 		// Option to toggle dynamic wave time limit
 		inv.setItem(2, Utils.createItem(Material.SNOWBALL,
-				Utils.format("&a&lToggle Dynamic Time Limit"),
-				Utils.format("&7Wave time limit adjusts based on"),
-				Utils.format("&7in-game difficulty"),
-				Utils.format(CONSTRUCTION)));
+				Utils.format("&a&lDynamic Time Limit: " + getToggleStatus(arenaInstance.isDynamicLimit())),
+				Utils.format("&7Wave time limit adjusting based on"),
+				Utils.format("&7in-game difficulty")));
 
 		// Option to edit allowed kits
 		inv.setItem(3, Utils.createItem(Material.ENDER_CHEST,
@@ -1034,7 +1038,7 @@ public class Inventories {
 				Utils.format("&4&lDifficulty Multiplier"),
 				FLAGS,
 				null,
-				Utils.format(CONSTRUCTION)));
+				Utils.format("&7Determines difficulty increase rate")));
 
 		// Option to copy game settings from another arena
 		inv.setItem(7, Utils.createItem(Material.WRITABLE_BOOK,
@@ -1104,6 +1108,30 @@ public class Inventories {
 		// Option to increase
 		for (int i = 5; i < 8; i++)
 			inv.setItem(i, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&2&lIncrease")));
+
+		// Option to exit
+		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	// Menu for changing the difficulty multiplier of an arena
+	public Inventory createDifficultyMultiplierInventory(int arena) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&4&lDifficulty Multiplier: " + game.arenas.get(arena).getDifficultyMultiplier()));
+
+		// "1" option
+		inv.setItem(0, Utils.createItem(Material.LIGHT_BLUE_CONCRETE, Utils.format("&b&l1")));
+
+		// "2" option
+		inv.setItem(2, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&a&l2")));
+
+		// "3" option
+		inv.setItem(4, Utils.createItem(Material.YELLOW_CONCRETE, Utils.format("&6&l3")));
+
+		// "4" option
+		inv.setItem(6, Utils.createItem(Material.RED_CONCRETE, Utils.format("&4&l4")));
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
@@ -1193,14 +1221,19 @@ public class Inventories {
 	}
 
 	// Generate the weapon shop
-	public static Inventory createWeaponShop(int level) {
+	public static Inventory createWeaponShop(int level, Arena arena) {
+		// Set price modifier
+		double modifier = Math.pow(arena.getActiveCount() - 4, 2) / 200 + 1;
+		if (!arena.isDynamicPrices())
+			modifier = 1;
+
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 27, Utils.format("&k") +
 				Utils.format("&4&lLevel &9&l" + level + " &4&lWeapon Shop"));
 
 		// Fill in weapons
 		for (int i = 0; i < 18; i++)
-			inv.setItem(i, GameItems.randWeapon(level));
+			inv.setItem(i, modifyPrice(GameItems.randWeapon(level), modifier));
 
 		// Return option
 		inv.setItem(22, Utils.createItem(Material.BARRIER, Utils.format("&c&lRETURN")));
@@ -1209,14 +1242,19 @@ public class Inventories {
 	}
 
 	// Generate the armor shop
-	public static Inventory createArmorShop(int level) {
+	public static Inventory createArmorShop(int level, Arena arena) {
+		// Set price modifier
+		double modifier = Math.pow(arena.getActiveCount() - 4, 2) / 200 + 1;
+		if (!arena.isDynamicPrices())
+			modifier = 1;
+
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 27, Utils.format("&k") +
 				Utils.format("&5&lLevel &9&l" + level + " &5&lArmor Shop"));
 
 		// Fill in armor
 		for (int i = 0; i < 18; i++)
-			inv.setItem(i, GameItems.randArmor(level));
+			inv.setItem(i, modifyPrice(GameItems.randArmor(level), modifier));
 
 		// Return option
 		inv.setItem(22, Utils.createItem(Material.BARRIER, Utils.format("&c&lRETURN")));
@@ -1225,14 +1263,19 @@ public class Inventories {
 	}
 
 	// Generate the consumables shop
-	public static Inventory createConsumablesShop(int level) {
+	public static Inventory createConsumablesShop(int level, Arena arena) {
+		// Set price modifier
+		double modifier = Math.pow(arena.getActiveCount() - 4, 2) / 200 + 1;
+		if (!arena.isDynamicPrices())
+			modifier = 1;
+
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 18, Utils.format("&k") +
 				Utils.format("&3&lLevel &9&l" + level + " &3&lConsumables Shop"));
 
 		// Fill in consumables
 		for (int i = 0; i < 9; i++)
-			inv.setItem(i, GameItems.randConsumable(level));
+			inv.setItem(i, modifyPrice(GameItems.randConsumable(level), modifier));
 
 		// Return option
 		inv.setItem(13, Utils.createItem(Material.BARRIER, Utils.format("&c&lRETURN")));
@@ -1280,7 +1323,7 @@ public class Inventories {
 	// Display arena information
 	public Inventory createArenaInfoInventory(Arena arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(null, 18, Utils.format("&k") +
 				Utils.format("&6&l" + arena.getName() + " Info"));
 
 		// Maximum players
@@ -1289,19 +1332,56 @@ public class Inventories {
 				Utils.format("&7The most players an arena can have")));
 
 		// Minimum players
-		inv.setItem(2, Utils.createItem(Material.NETHERITE_BOOTS,
+		inv.setItem(1, Utils.createItem(Material.NETHERITE_BOOTS,
 				Utils.format("&2&lMinimum players: &2" + arena.getMinPlayers()), FLAGS, null,
 				Utils.format("&7The least players an arena can have to start")));
 
 		// Max waves
-		inv.setItem(4, Utils.createItem(Material.GOLDEN_SWORD,
-				Utils.format("&3&lMax waves: &3" + arena.getMaxWaves()), FLAGS, null,
+		String waves;
+		if (arena.getMaxWaves() < 0)
+			waves = "Unlimited";
+		else waves = Integer.toString(arena.getMaxWaves());
+		inv.setItem(2, Utils.createItem(Material.GOLDEN_SWORD,
+				Utils.format("&3&lMax waves: &3" + waves), FLAGS, null,
 				Utils.format("&7The highest wave the arena will go to")));
 
 		// Wave time limit
-		inv.setItem(6, Utils.createItem(Material.CLOCK,
-				Utils.format("&9&lWave time limit: &9" + arena.getWaveTimeLimit() + " minute(s)"),
+		String limit;
+		if (arena.getWaveTimeLimit() < 0)
+			limit = "Unlimited";
+		else limit = arena.getWaveTimeLimit() + " minute(s)";
+		inv.setItem(3, Utils.createItem(Material.CLOCK,
+				Utils.format("&9&lWave time limit: &9" + limit),
 				Utils.format("&7The time limit for each wave before"), Utils.format("&7the game ends")));
+
+		// Dynamic mob count
+		inv.setItem(4, Utils.createItem(Material.SLIME_BALL,
+				Utils.format("&e&lDynamic Mob Count: &e" + getToggleStatus(arena.isDynamicCount())),
+				Utils.format("&7Mob count adjusting based on"), Utils.format("&7number of players")));
+
+		// Dynamic difficulty
+		inv.setItem(5, Utils.createItem(Material.MAGMA_CREAM,
+				Utils.format("&6&lDynamic Difficulty: &6" + getToggleStatus(arena.isDynamicDifficulty())),
+				Utils.format("&7Difficulty adjusting based on"), Utils.format("&7number of players")));
+
+		// Dynamic prices
+		inv.setItem(6, Utils.createItem(Material.NETHER_STAR,
+				Utils.format("&b&lDynamic Prices: &b" + getToggleStatus(arena.isDynamicPrices())),
+				Utils.format("&7Prices adjusting based on number of"),
+				Utils.format("&7players in the game")));
+
+		// Dynamic time limit
+		inv.setItem(7, Utils.createItem(Material.SNOWBALL,
+				Utils.format("&a&lDynamic Time Limit: &a" + getToggleStatus(arena.isDynamicLimit())),
+				Utils.format("&7Wave time limit adjusting based on"),
+				Utils.format("&7in-game difficulty")));
+
+		// Difficulty multiplier
+		inv.setItem(8, Utils.createItem(Material.TURTLE_HELMET,
+				Utils.format("&4&lDifficulty Multiplier: &4" + arena.getDifficultyMultiplier()),
+				FLAGS,
+				null,
+				Utils.format("&7Determines difficulty increase rate")));
 
 		// Arena records
 		List<String> records = new ArrayList<>();
@@ -1311,9 +1391,30 @@ public class Inventories {
 			arenaRecord.getPlayers().forEach(player -> players.append(player).append(", "));
 			records.add(Utils.format("&7" + players.substring(0, players.length() - 2)));
 		});
-		inv.setItem(8, Utils.createItem(Material.GOLDEN_HELMET, Utils.format("&e&lArena Records"), FLAGS,
+		inv.setItem(13, Utils.createItem(Material.GOLDEN_HELMET, Utils.format("&e&lArena Records"), FLAGS,
 				null, records));
 
 		return inv;
+	}
+
+	// Easy way to get a string for a toggle status
+	private String getToggleStatus(boolean status) {
+		String toggle;
+		if (status)
+			toggle = "&a&lON";
+		else toggle = "&c&lOFF";
+		return toggle;
+	}
+
+	// Modify the price of an item
+	private static ItemStack modifyPrice(ItemStack itemStack, double modifier) {
+		ItemStack item = itemStack.clone();
+		ItemMeta meta = item.getItemMeta();
+		List<String> lore = meta.getLore();
+		int price = (int) Math.round(Integer.parseInt(lore.get(lore.size() - 1).substring(10)) * modifier / 5) * 5;
+		lore.set(lore.size() - 1, Utils.format("&2Gems: &a" + price));
+		meta.setLore(lore);
+		item.setItemMeta(meta);
+		return item;
 	}
 }

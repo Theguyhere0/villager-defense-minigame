@@ -23,8 +23,10 @@ import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -570,8 +572,8 @@ public class GameEvents implements Listener {
 			else player.getInventory().setItemInMainHand(null);
 
 			// Give items and notify
-			Utils.giveItem(player, GameItems.randWeapon(1));
-			Utils.giveItem(player, GameItems.randArmor(1));
+			Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(1)));
+			Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(1)));
 			player.sendMessage(Utils.notify("&aCare package delivered!"));
 		}
 
@@ -583,9 +585,9 @@ public class GameEvents implements Listener {
 			else player.getInventory().setItemInMainHand(null);
 
 			// Give items and notify
-			Utils.giveItem(player, GameItems.randWeapon(2));
-			Utils.giveItem(player, GameItems.randArmor(2));
-			Utils.giveItem(player, GameItems.randConsumable(2));
+			Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(2)));
+			Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(2)));
+			Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(2)));
 			player.sendMessage(Utils.notify("&aCare package delivered!"));
 		}
 
@@ -597,10 +599,10 @@ public class GameEvents implements Listener {
 			else player.getInventory().setItemInMainHand(null);
 
 			// Give items and notify
-			Utils.giveItem(player, GameItems.randWeapon(4));
-			Utils.giveItem(player, GameItems.randArmor(3));
-			Utils.giveItem(player, GameItems.randArmor(3));
-			Utils.giveItem(player, GameItems.randConsumable(3));
+			Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(4)));
+			Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(3)));
+			Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(3)));
+			Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(3)));
 			player.sendMessage(Utils.notify("&aCare package delivered!"));
 		}
 
@@ -612,12 +614,12 @@ public class GameEvents implements Listener {
 			else player.getInventory().setItemInMainHand(null);
 
 			// Give items and notify
-			Utils.giveItem(player, GameItems.randWeapon(5));
-			Utils.giveItem(player, GameItems.randWeapon(4));
-			Utils.giveItem(player, GameItems.randArmor(5));
-			Utils.giveItem(player, GameItems.randArmor(4));
-			Utils.giveItem(player, GameItems.randConsumable(4));
-			Utils.giveItem(player, GameItems.randConsumable(4));
+			Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(5)));
+			Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(4)));
+			Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(5)));
+			Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(4)));
+			Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(4)));
+			Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(4)));
 			player.sendMessage(Utils.notify("&aCare package delivered!"));
 		}
 	}

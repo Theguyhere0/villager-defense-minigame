@@ -190,6 +190,24 @@ public class Utils {
         return item;
     }
 
+    // Remove last lore on the list
+    public static ItemStack removeLastLore(ItemStack itemStack) {
+        ItemStack item = itemStack.clone();
+
+        // Check for lore
+        if (!item.hasItemMeta() || !item.getItemMeta().hasLore())
+            return item;
+
+        // Remove last lore and return
+        ItemMeta meta = item.getItemMeta();
+        List<String> lore = meta.getLore();
+        lore.remove(lore.size() - 1);
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+
+        return item;
+    }
+
     // Gives item to player if possible, otherwise drops at feet
     public static void giveItem(Player player, ItemStack item) {
         if (player.getInventory().firstEmpty() == -1 && (player.getInventory().first(item.getType()) == -1 ||

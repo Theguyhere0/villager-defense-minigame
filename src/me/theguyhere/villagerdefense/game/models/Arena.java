@@ -26,11 +26,16 @@ public class Arena {
     private int minPlayers; // Minimum players in an arena
     private int maxWaves; // Maximum waves in an arena
     private int waveTimeLimit; // Base wave time limit
+    private int difficultyMultiplier;
     private Location playerSpawn; // Location of player spawn
     private Location waitingRoom; // Location of waiting room
     private List<Location> monsterSpawns = new ArrayList<>(); // List of monster spawn locations
     private List<Location> villagerSpawns = new ArrayList<>(); // List of villager spawn locations
     private String spawnTableFile; // File name of the spawn table
+    private boolean dynamicCount; // Toggle for dynamic mob count
+    private boolean dynamicDifficulty; // Toggle for dynamic difficulty
+    private boolean dynamicPrices; // Toggle for dynamic prices
+    private boolean dynamicLimit; // Toggle for dynamic wave time limit
     private boolean closed; // Indicates whether the arena is closed
     private final List<ArenaRecord> arenaRecords = new ArrayList<>(); // List of top arena records
 
@@ -88,6 +93,10 @@ public class Arena {
         return waveTimeLimit;
     }
 
+    public int getDifficultyMultiplier() {
+        return difficultyMultiplier;
+    }
+
     public Location getPlayerSpawn() {
         return playerSpawn;
     }
@@ -106,6 +115,22 @@ public class Arena {
 
     public String getSpawnTableFile() {
         return spawnTableFile;
+    }
+
+    public boolean isDynamicCount() {
+        return dynamicCount;
+    }
+
+    public boolean isDynamicDifficulty() {
+        return dynamicDifficulty;
+    }
+
+    public boolean isDynamicPrices() {
+        return dynamicPrices;
+    }
+
+    public boolean isDynamicLimit() {
+        return dynamicLimit;
     }
 
     public boolean isClosed() {
@@ -174,7 +199,10 @@ public class Arena {
     }
 
     public double getCurrentDifficulty() {
-        return Math.pow(Math.E, Math.pow(currentWave - 1, .6) / 5);
+        double difficulty = Math.pow(Math.E, Math.pow(currentWave - 1, .6) / (5 - difficultyMultiplier / 2d));
+        if (dynamicDifficulty)
+            difficulty *= .1 * getActiveCount() + .6;
+        return difficulty;
     }
 
     public void incrementCurrentWave() {
@@ -331,6 +359,7 @@ public class Arena {
         minPlayers = plugin.getArenaData().getInt("a" + arena + ".min");
         maxWaves = plugin.getArenaData().getInt("a" + arena + ".maxWaves");
         waveTimeLimit = plugin.getArenaData().getInt("a" + arena + ".waveTimeLimit");
+        difficultyMultiplier = plugin.getArenaData().getInt("a" + arena + ".difficulty");
         playerSpawn = utils.getConfigLocationNoRotation("a" + arena + ".spawn");
         waitingRoom = utils.getConfigLocationNoRotation("a" + arena + ".waiting");
         monsterSpawns = utils.getConfigLocationList("a" + arena + ".monster").stream()
@@ -338,6 +367,10 @@ public class Arena {
         villagerSpawns = utils.getConfigLocationList("a" + arena + ".villager").stream()
                 .filter(Objects::nonNull).collect(Collectors.toList());
         spawnTableFile = plugin.getArenaData().getString("a" + arena + ".spawnTable");
+        dynamicCount = plugin.getArenaData().getBoolean("a" + arena + ".dynamicCount");
+        dynamicDifficulty = plugin.getArenaData().getBoolean("a" + arena + ".dynamicDifficulty");
+        dynamicPrices = plugin.getArenaData().getBoolean("a" + arena + ".dynamicPrices");
+        dynamicLimit = plugin.getArenaData().getBoolean("a" + arena + ".dynamicLimit");
         closed = plugin.getArenaData().getBoolean("a" + arena + ".closed");
         if (plugin.getArenaData().contains("a" + arena + ".records"))
             plugin.getArenaData().getConfigurationSection("a" + arena + ".records").getKeys(false)

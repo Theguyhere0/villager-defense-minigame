@@ -401,7 +401,11 @@ public class ArenaEvents implements Listener {
         else data = new DataManager(plugin, "spawnTables/" + arena.getSpawnTableFile() + ".yml");
         Random r = new Random();
         int delay = 0;
-        int toSpawn = data.getConfig().getInt(arena.getCurrentWave() + ".count.v") - arena.getVillagers();
+        double countMultiplier = Math.log((arena.getActiveCount() + 7) / 10d) + 1;
+        if (!arena.isDynamicCount())
+            countMultiplier = 1;
+        int toSpawn = (int) (data.getConfig().getInt(arena.getCurrentWave() + ".count.v") * countMultiplier)
+                - arena.getVillagers();
         List<Location> spawns = arena.getVillagerSpawns();
 
         for (int i = 0; i < toSpawn; i++) {
@@ -422,6 +426,9 @@ public class ArenaEvents implements Listener {
         Random r = new Random();
         int delay = 0;
         int wave = arena.getCurrentWave();
+        double countMultiplier = Math.log((arena.getActiveCount() + 7) / 10d) + 1;
+        if (!arena.isDynamicCount())
+            countMultiplier = 1;
         String path = wave + ".mtypes";
         List<Location> spawns = arena.getMonsterSpawns();
         List<String> typeRatio = new ArrayList<>();
@@ -434,7 +441,7 @@ public class ArenaEvents implements Listener {
         });
 
         // Spawn monsters
-        for (int i = 0; i < data.getConfig().getInt(wave + ".count.m"); i++) {
+        for (int i = 0; i < (int) (data.getConfig().getInt(wave + ".count.m") * countMultiplier); i++) {
             Location spawn = spawns.get(r.nextInt(spawns.size()));
 
             // Update delay

@@ -158,9 +158,9 @@ public class Tasks {
 			// Regenerate shops when time and notify players of it
 			if (currentWave % 10 == 0 || currentWave == 1) {
 				int level = currentWave / 10 + 1;
-				arenaInstance.setWeaponShop(Inventories.createWeaponShop(level));
-				arenaInstance.setArmorShop(Inventories.createArmorShop(level));
-				arenaInstance.setConsumeShop(Inventories.createConsumablesShop(level));
+				arenaInstance.setWeaponShop(Inventories.createWeaponShop(level, arenaInstance));
+				arenaInstance.setArmorShop(Inventories.createArmorShop(level, arenaInstance));
+				arenaInstance.setConsumeShop(Inventories.createConsumablesShop(level, arenaInstance));
 				if (currentWave != 1)
 					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 							arenaInstance.getActives().forEach(player ->
@@ -256,6 +256,9 @@ public class Tasks {
 		@Override
 		public void run() {
 			Arena arenaInstance = game.arenas.get(arena);
+			double multiplier = 1 + .2 * ((int) arenaInstance.getCurrentDifficulty() - 1);
+			if (!arenaInstance.isDynamicLimit())
+				multiplier = 1;
 
 			// Add time limit bar if it doesn't exist
 			if (arenaInstance.getTimeLimitBar() == null) {
@@ -263,7 +266,7 @@ public class Tasks {
 				arenaInstance.startTimeLimitBar();
 				arenaInstance.getPlayers().forEach(vdPlayer ->
 						arenaInstance.addPlayerToTimeLimitBar(vdPlayer.getPlayer()));
-				time = 1d / Utils.minutesToSeconds(arenaInstance.getWaveTimeLimit());
+				time = 1d / Utils.minutesToSeconds(arenaInstance.getWaveTimeLimit() * multiplier);
 				messageSent = false;
 			}
 

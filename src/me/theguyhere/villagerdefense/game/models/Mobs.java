@@ -116,6 +116,7 @@ public class Mobs {
 
         // Set material
         switch ((int) difficulty) {
+            case 0:
             case 1:
             case 2:
                 if (r.nextDouble() < (difficulty - 1) / 2)
@@ -153,6 +154,7 @@ public class Mobs {
 
         // Set sharpness
         switch ((int) difficulty) {
+            case 0:
             case 1:
             case 2:
                 break;
@@ -191,6 +193,7 @@ public class Mobs {
 
         // Set knockback
         switch ((int) difficulty) {
+            case 0:
             case 1:
             case 2:
             case 3:
@@ -226,6 +229,7 @@ public class Mobs {
 
         // Set fire aspect
         switch ((int) difficulty) {
+            case 0:
             case 1:
             case 2:
             case 3:
@@ -276,6 +280,7 @@ public class Mobs {
 
         // Set material
         switch ((int) difficulty) {
+            case 0:
             case 1:
             case 2:
                 if (r.nextDouble() < (difficulty - 1) / 2)
@@ -313,6 +318,7 @@ public class Mobs {
 
         // Set sharpness
         switch ((int) difficulty) {
+            case 0:
             case 1:
             case 2:
                 break;
@@ -351,6 +357,7 @@ public class Mobs {
 
         // Set fire aspect
         switch ((int) difficulty) {
+            case 0:
             case 1:
             case 2:
             case 3:
@@ -400,6 +407,7 @@ public class Mobs {
 
         // Set power
         switch ((int) difficulty) {
+            case 0:
             case 1:
             case 2:
                 break;
@@ -438,6 +446,7 @@ public class Mobs {
 
         // Set punch
         switch ((int) difficulty) {
+            case 0:
             case 1:
             case 2:
             case 3:
@@ -473,6 +482,7 @@ public class Mobs {
 
         // Set flame
         switch ((int) difficulty) {
+            case 0:
             case 1:
             case 2:
             case 3:
@@ -505,6 +515,7 @@ public class Mobs {
 
         // Set piercing
         switch ((int) difficulty) {
+            case 0:
             case 1:
             case 2:
                 break;
@@ -543,6 +554,7 @@ public class Mobs {
 
         // Set quick charge
         switch ((int) difficulty) {
+            case 0:
             case 1:
             case 2:
             case 3:
@@ -610,6 +622,7 @@ public class Mobs {
 
         // Set sharpness
         switch ((int) difficulty) {
+            case 0:
             case 1:
             case 2:
                 break;
@@ -648,6 +661,7 @@ public class Mobs {
 
         // Set knockback
         switch ((int) difficulty) {
+            case 0:
             case 1:
             case 2:
             case 3:
@@ -683,6 +697,7 @@ public class Mobs {
 
         // Set fire aspect
         switch ((int) difficulty) {
+            case 0:
             case 1:
             case 2:
             case 3:
@@ -730,6 +745,7 @@ public class Mobs {
         double difficulty = arena.getCurrentDifficulty();
 
         switch ((int) difficulty) {
+            case 0:
             case 1:
             case 2:
                 if (r.nextDouble() < (difficulty - 1) / 2)
@@ -769,6 +785,7 @@ public class Mobs {
         double difficulty = arena.getCurrentDifficulty();
 
         switch ((int) difficulty) {
+            case 0:
             case 1:
             case 2:
                 if (r.nextDouble() < (difficulty - 1) / 2)
@@ -808,6 +825,7 @@ public class Mobs {
         double difficulty = arena.getCurrentDifficulty();
 
         switch ((int) difficulty) {
+            case 0:
             case 1:
             case 2:
                 if (r.nextDouble() < (difficulty - 1) / 2)
@@ -847,6 +865,7 @@ public class Mobs {
         double difficulty = arena.getCurrentDifficulty();
 
         switch ((int) difficulty) {
+            case 0:
             case 1:
             case 2:
                 if (r.nextDouble() < (difficulty - 1) / 2)
