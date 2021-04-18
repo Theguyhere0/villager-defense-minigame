@@ -72,7 +72,7 @@ public class Main extends JavaPlugin {
 		pm.registerEvents(new ClickPortalEvents(game, portal, inventories), this);
 		pm.registerEvents(new GameEvents(this, game), this);
 		pm.registerEvents(new ArenaEvents(this, game, portal, leaderboard, arenaBoard, inventories), this);
-		pm.registerEvents(new AbilityEvents(this, game), this);
+		pm.registerEvents(new AbilityEvents(game), this);
 
 		// Inject online players into packet reader
 		if (!Bukkit.getOnlinePlayers().isEmpty())

@@ -309,7 +309,7 @@ public class Tasks {
 	};
 
 	// Gives items on spawn or respawn based on kit selected
-	private void giveItems(VDPlayer player) {
+	public static void giveItems(VDPlayer player) {
 		switch (player.getKit()) {
 			case "Orc":
 				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));

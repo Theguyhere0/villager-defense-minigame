@@ -4,9 +4,9 @@ import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.customEvents.GameEndEvent;
 import me.theguyhere.villagerdefense.customEvents.WaveEndEvent;
-import me.theguyhere.villagerdefense.game.models.GameItems;
 import me.theguyhere.villagerdefense.game.models.Arena;
 import me.theguyhere.villagerdefense.game.models.Game;
+import me.theguyhere.villagerdefense.game.models.GameItems;
 import me.theguyhere.villagerdefense.game.models.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
@@ -18,6 +18,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -126,68 +127,21 @@ public class GameEvents implements Listener {
 		arena.getTask().updateBoards.run();
 	}
 
-	// Update health bar when damage is dealt by entity
-	@EventHandler
-	public void onHurt(EntityDamageByEntityEvent e) {
-		Entity ent = e.getEntity();
-
-		// Check for arena enemies
-		if (!ent.hasMetadata("VD"))
-			return;
-
-		Entity damager = e.getDamager();
-
-		// Ignore wolves
-		if (ent instanceof Wolf)
-			return;
-
-		// Ignore phantom damage to villager
-		if ((ent instanceof Villager || ent instanceof IronGolem) && damager instanceof Player)
-			return;
-
-		// Ignore phantom damage to monsters
-		else if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin) &&
-				(damager instanceof Monster || damager instanceof Slime || ent instanceof Hoglin))
-			return;
-
-		// Check for phantom projectile damage
-		if (damager instanceof Projectile) {
-			if ((ent instanceof Villager || ent instanceof IronGolem) &&
-					((Projectile) damager).getShooter() instanceof Player)
-				return;
-			if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin) &&
-					((Projectile) damager).getShooter() instanceof Monster)
-				return;
-		}
-
-		LivingEntity n = (LivingEntity) ent;
-
-		// Update health bar
-		if (ent instanceof IronGolem)
-			ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
-					n.getHealth() - e.getFinalDamage(), 10));
-		else ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
-				n.getHealth() - e.getFinalDamage(), 5));
-	}
-
-	// Update health bar when damage is dealt not by another entity
+	// Update health bar when damage is dealt
 	@EventHandler
 	public void onHurt(EntityDamageEvent e) {
+		// Ignore cancelled events
+		if (e.isCancelled())
+			return;
+
 		Entity ent = e.getEntity();
 
 		// Check for arena enemies
 		if (!ent.hasMetadata("VD"))
 			return;
 
-		// Ignore wolves
-		if (ent instanceof Wolf)
-			return;
-
-		// Don't handle entity on entity damage
-		if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK ||
-				e.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK||
-				e.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION||
-				e.getCause() == EntityDamageEvent.DamageCause.PROJECTILE)
+		// Ignore wolves and players
+		if (ent instanceof Wolf || ent instanceof Player)
 			return;
 
 		LivingEntity n = (LivingEntity) ent;
@@ -226,8 +180,8 @@ public class GameEvents implements Listener {
 		if (!ent.hasMetadata("VD"))
 			return;
 
-		// Ignore wolves
-		if (ent instanceof Wolf)
+		// Ignore wolves and players
+		if (ent instanceof Wolf || ent instanceof Player)
 			return;
 
 		LivingEntity n = (LivingEntity) ent;
@@ -243,6 +197,10 @@ public class GameEvents implements Listener {
 	// Open shop
 	@EventHandler
 	public void onShop(PlayerInteractEvent e) {
+		// Check for right click
+		if (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK)
+			return;
+
 		Player player = e.getPlayer();
 
 		// See if the player is in a game
@@ -279,7 +237,7 @@ public class GameEvents implements Listener {
 		}
 
 		// Check for special mobs
-		if (!ent.hasMetadata("VD"))
+		if (!ent.hasMetadata("VD") && !(ent instanceof Player))
 			return;
 
 		// Cancel damage to villager
@@ -354,7 +312,7 @@ public class GameEvents implements Listener {
 						Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 		}
 	}
-	
+
 	// Give gems
 	@EventHandler
 	public void onGemPickup(EntityPickupItemEvent e) {
@@ -406,6 +364,10 @@ public class GameEvents implements Listener {
 	// Handle player death
 	@EventHandler
 	public void onPlayerDeath(EntityDamageEvent e) {
+		// Ignore if cancelled
+		if (e.isCancelled())
+			return;
+
 		// Check for player
 		if (!(e.getEntity() instanceof Player)) return;
 

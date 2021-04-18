@@ -4,10 +4,7 @@ import me.theguyhere.villagerdefense.Main;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -15,6 +12,7 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class Utils {
@@ -22,6 +20,7 @@ public class Utils {
 
     private static final int SECONDS_TO_TICKS = 20;
     private static final int MINUTES_TO_SECONDS = 60;
+    private static final int SECONDS_TO_MILLIS = 1000;
 
     public Utils(Main plugin) {
         this.plugin = plugin;
@@ -386,6 +385,16 @@ public class Utils {
         return (int) (minutes * MINUTES_TO_SECONDS);
     }
 
+    // Converts seconds to milliseconds
+    public static int secondsToMillis(double seconds) {
+        return (int) (seconds * SECONDS_TO_MILLIS);
+    }
+
+    // Converts milliseconds to seconds
+    public static double millisToSeconds(double millis) {
+        return millis / SECONDS_TO_MILLIS;
+    }
+
     // Returns a formatted health bar
     public static String healthBar(double max, double remaining, int size) {
         String toFormat;
@@ -402,5 +411,18 @@ public class Utils {
         return format(toFormat +
                 new String(new char[healthBars]).replace("\0", "\u2592") +
                 new String(new char[size - healthBars]).replace("\0", "  "));
+    }
+
+    // Get nearby players
+    public static List<Player> getNearbyPlayers(Player player, double range) {
+        return player.getNearbyEntities(range, range, range).stream().filter(ent -> ent instanceof Player)
+                .map(ent -> (Player) ent).collect(Collectors.toList());
+    }
+
+    // Get nearby monsters
+    public static List<LivingEntity> getNearbyMonsters(Player player, double range) {
+        return player.getNearbyEntities(range, range, range).stream().filter(ent -> ent instanceof Monster ||
+                ent instanceof Slime || ent instanceof Hoglin).map(ent -> (LivingEntity) ent)
+                .collect(Collectors.toList());
     }
 }

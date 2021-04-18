@@ -2185,6 +2185,15 @@ public class InventoryEvents implements Listener {
 			String kit = buttonName.substring(4);
 			String path = player.getName() + ".kits.";
 
+			// Check for useful phantom selection
+			if (gamer.isSpectating() && playerData.getBoolean(path + "Phantom") &&
+					kit.equals("Phantom")) {
+				Utils.teleAdventure(player, arenaInstance.getPlayerSpawn());
+				gamer.flipSpectating();
+				Tasks.giveItems(gamer);
+				return;
+			}
+
 			// Single tier kits
 			if (kit.equals("Orc") || kit.equals("Farmer") || kit.equals("Soldier") || kit.equals("Tailor") ||
 					kit.equals("Alchemist") || kit.equals("Trader") || kit.equals("Phantom") || kit.equals("Blacksmith")

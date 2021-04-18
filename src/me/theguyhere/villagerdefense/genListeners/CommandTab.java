@@ -11,7 +11,7 @@ import java.util.List;
 
 public class CommandTab implements TabCompleter {
 
-    private final String[] arguments = {"help", "leave", "stats", "kits", "select"};
+    private final String[] arguments = {"help", "leave", "stats", "kits", "select", "crystals"};
 
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String label, String[] args) {
@@ -22,7 +22,8 @@ public class CommandTab implements TabCompleter {
                 if (a.toLowerCase().startsWith(args[0].toLowerCase()))
                     result.add(a);
             return result;
-        } else if (args[0].equalsIgnoreCase("stats") && args.length == 2) {
+        } else if (args[0].equalsIgnoreCase("stats") || args[0].equalsIgnoreCase("crystals")
+                && args.length == 2) {
             Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).forEach(name -> {
                 if (name.toLowerCase().startsWith(args[1].toLowerCase()))
                     result.add(name);

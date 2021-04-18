@@ -20,22 +20,22 @@ public class Kits {
         kitPrices.put("Tailor", new Integer[]{300});
         kitPrices.put("Alchemist", new Integer[]{400});
         kitPrices.put("Trader", new Integer[]{500});
-        kitPrices.put("Summoner", new Integer[]{750, 1750, 4000});
+        kitPrices.put("Summoner", new Integer[]{750, 1750, 4500});
         kitPrices.put("Reaper", new Integer[]{1000, 2500, 6000});
         kitPrices.put("Phantom", new Integer[]{6000});
-        kitPrices.put("Mage", new Integer[]{5000, 8000, 10500});
+        kitPrices.put("Mage", new Integer[]{5000, 8000, 11000});
         kitPrices.put("Ninja", new Integer[]{4000, 7500, 10000});
         kitPrices.put("Templar", new Integer[]{4500, 8500, 11000});
         kitPrices.put("Warrior", new Integer[]{5000, 8500, 11000});
         kitPrices.put("Knight", new Integer[]{6000, 9000, 12000});
         kitPrices.put("Priest", new Integer[]{6000, 9000, 12000});
         kitPrices.put("Siren", new Integer[]{5500, 8000, 12000});
-        kitPrices.put("Monk", new Integer[]{4000, 7000, 10000});
+        kitPrices.put("Monk", new Integer[]{3500, 6500, 10000});
         kitPrices.put("Messenger", new Integer[]{4500, 8000, 11000});
         kitPrices.put("Blacksmith", new Integer[]{2500});
         kitPrices.put("Witch", new Integer[]{2500});
         kitPrices.put("Merchant", new Integer[]{4000});
-        kitPrices.put("Vampire", new Integer[]{5000});
+        kitPrices.put("Vampire", new Integer[]{5500});
         kitPrices.put("Giant", new Integer[]{6000, 9000});
     }
 
@@ -94,54 +94,54 @@ public class Kits {
     }
     public static ItemStack reaper1() {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
-        enchants.put(Enchantment.DAMAGE_ALL, 2);
+        enchants.put(Enchantment.DAMAGE_ALL, 3);
         return Utils.createItem(Material.NETHERITE_HOE, Utils.format("&aReaper's Scythe"), FLAGS, enchants);
     }
     public static ItemStack reaper2() {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
-        enchants.put(Enchantment.DAMAGE_ALL, 3);
+        enchants.put(Enchantment.DAMAGE_ALL, 4);
         return Utils.createItem(Material.NETHERITE_HOE, Utils.format("&aReaper's Scythe"), FLAGS, enchants);
     }
     public static ItemStack reaper3() {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
-        enchants.put(Enchantment.DAMAGE_ALL, 4);
+        enchants.put(Enchantment.DAMAGE_ALL, 5);
         return Utils.createItem(Material.NETHERITE_HOE, Utils.format("&aReaper's Scythe"), FLAGS, enchants);
     }
     public static ItemStack mage1() {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
         enchants.put(Enchantment.DURABILITY, 1);
         return Utils.createItem(Material.PURPLE_DYE, Utils.format("&dLevel 1 Mage Essence"), FLAGS2, enchants,
-                Utils.format("&7Right click to use ability"), Utils.format("&7Consumes 2 experience levels"));
+                Utils.format("&7Right click to use ability"), Utils.format("&7Consumes 1 experience levels"));
     }
     public static ItemStack mage2() {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
         enchants.put(Enchantment.DURABILITY, 1);
         return Utils.createItem(Material.PURPLE_DYE, Utils.format("&dLevel 2 Mage Essence"), FLAGS2, enchants,
-                Utils.format("&7Right click to use ability"), Utils.format("&7Consumes 4 experience levels"));
+                Utils.format("&7Right click to use ability"), Utils.format("&7Consumes 2 experience levels"));
     }
     public static ItemStack mage3() {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
         enchants.put(Enchantment.DURABILITY, 1);
         return Utils.createItem(Material.PURPLE_DYE, Utils.format("&dLevel 3 Mage Essence"), FLAGS2, enchants,
-                Utils.format("&7Right click to use ability"), Utils.format("&7Consumes 6 experience levels"));
+                Utils.format("&7Right click to use ability"), Utils.format("&7Consumes 4 experience levels"));
     }
     public static ItemStack ninja1() {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
         enchants.put(Enchantment.DURABILITY, 1);
         return Utils.createItem(Material.BLACK_DYE, Utils.format("&dLevel 1 Ninja Essence"), FLAGS2, enchants,
-                Utils.format("&7Right click to use ability"), Utils.format("&7Consumes 2 experience levels"));
+                Utils.format("&7Right click to use ability"), Utils.format("&7Consumes 1 experience levels"));
     }
     public static ItemStack ninja2() {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
         enchants.put(Enchantment.DURABILITY, 1);
         return Utils.createItem(Material.BLACK_DYE, Utils.format("&dLevel 2 Ninja Essence"), FLAGS2, enchants,
-                Utils.format("&7Right click to use ability"), Utils.format("&7Consumes 4 experience levels"));
+                Utils.format("&7Right click to use ability"), Utils.format("&7Consumes 1 experience levels"));
     }
     public static ItemStack ninja3() {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
         enchants.put(Enchantment.DURABILITY, 1);
         return Utils.createItem(Material.BLACK_DYE, Utils.format("&dLevel 3 Ninja Essence"), FLAGS2, enchants,
-                Utils.format("&7Right click to use ability"), Utils.format("&7Consumes 6 experience levels"));
+                Utils.format("&7Right click to use ability"), Utils.format("&7Consumes 1 experience levels"));
     }
     public static ItemStack templar1() {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();

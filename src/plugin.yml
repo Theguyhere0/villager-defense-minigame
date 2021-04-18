@@ -25,3 +25,7 @@ commands:
     select:
       description: Displays kits for the player to select for an arena
       usage: /vd select
+    crystals:
+      description: Changes the crystal balance of players
+      usage: /vd crystals
+      permission: vd.crystals
