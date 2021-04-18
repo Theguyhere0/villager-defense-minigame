@@ -5,6 +5,8 @@ import me.theguyhere.villagerdefense.customEvents.ReloadBoardsEvent;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
@@ -23,6 +25,32 @@ public class Mobs {
         livingEntity.setCanPickupItems(false);
         arena.incrementEnemies();
         Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
+
+        // Set attribute modifiers
+        double difficulty = arena.getCurrentDifficulty();
+        for (int i = 0; i < 3; i++) {
+            double boost;
+            if (difficulty < 5)
+                boost = 0;
+            else boost = difficulty - 5;
+            switch (i) {
+                case 0:
+                    livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).addModifier(new AttributeModifier(
+                            "hpBoost", boost / 3, AttributeModifier.Operation.ADD_NUMBER
+                    ));
+                    break;
+                case 1:
+                    livingEntity.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).addModifier(new AttributeModifier(
+                            "attBoost", boost / 4, AttributeModifier.Operation.ADD_NUMBER
+                    ));
+                    break;
+                case 2:
+                    livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).addModifier(new AttributeModifier(
+                            "spdBoost", boost / 120, AttributeModifier.Operation.ADD_NUMBER
+                    ));
+                    break;
+            }
+        }
     }
 
     private static void setSize(Arena arena, Slime slime) {

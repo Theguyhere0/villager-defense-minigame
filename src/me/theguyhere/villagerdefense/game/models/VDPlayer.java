@@ -49,6 +49,8 @@ public class VDPlayer {
     }
 
     public String getKit() {
+        if (kit == null)
+            return "";
         return kit;
     }
 

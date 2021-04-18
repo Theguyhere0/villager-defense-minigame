@@ -127,6 +127,22 @@ public class GameEvents implements Listener {
 		arena.getTask().updateBoards.run();
 	}
 
+	// Save gems from explosions
+	@EventHandler
+	public void onGemExplode(EntityDamageEvent e) {
+		Entity ent = e.getEntity();
+
+		// Check for item
+		if (!(ent instanceof Item))
+			return;
+
+		ItemStack item = ((Item) ent).getItemStack();
+
+		// Check for right item
+		if (item.getType() == Material.EMERALD && item.hasItemMeta() && item.getItemMeta().hasLore())
+			e.setCancelled(true);
+	}
+
 	// Update health bar when damage is dealt
 	@EventHandler
 	public void onHurt(EntityDamageEvent e) {
@@ -211,7 +227,7 @@ public class GameEvents implements Listener {
 				.collect(Collectors.toList()).get(0);
 
 		// Check for the shop item
-		if (!player.getEquipment().getItemInMainHand().equals(GameItems.shop()))
+		if (!GameItems.shop().equals(player.getEquipment().getItemInMainHand()))
 			return;
 
 		// Ignore if already in shop

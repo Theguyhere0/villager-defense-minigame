@@ -26,7 +26,7 @@ public class GameItems {
 		boolean[] flags = {true, false};
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		return Utils.createItem(Material.EMERALD, Utils.format("&2&lItem Shop"), flags, enchants, "",
+		return Utils.createItem(Material.EMERALD, Utils.format("&2&lItem Shop"), flags, enchants,
 				Utils.format("&7&oResets every 10 rounds"));
 	}
 

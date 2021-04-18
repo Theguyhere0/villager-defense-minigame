@@ -1,6 +1,5 @@
 package me.theguyhere.villagerdefense.game.listeners;
 
-import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.game.models.Arena;
 import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.game.models.Kits;
@@ -109,6 +108,9 @@ public class AbilityEvents implements Listener {
                     player.setLevel(player.getLevel() - expRequired);
                     player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Utils.secondsToTicks(10),
                             0));
+                    Utils.getPets(player).forEach(wolf ->
+                            wolf.addPotionEffect((new PotionEffect(PotionEffectType.INVISIBILITY,
+                                    Utils.secondsToTicks(10), 0))));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
                         String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
@@ -123,6 +125,9 @@ public class AbilityEvents implements Listener {
                     player.setLevel(player.getLevel() - expRequired);
                     player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Utils.secondsToTicks(20),
                             0));
+                    Utils.getPets(player).forEach(wolf ->
+                            wolf.addPotionEffect((new PotionEffect(PotionEffectType.INVISIBILITY,
+                                    Utils.secondsToTicks(20), 0))));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
                         String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
@@ -137,6 +142,9 @@ public class AbilityEvents implements Listener {
                     player.setLevel(player.getLevel() - expRequired);
                     player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Utils.secondsToTicks(30),
                             0));
+                    Utils.getPets(player).forEach(wolf ->
+                            wolf.addPotionEffect((new PotionEffect(PotionEffectType.INVISIBILITY,
+                                    Utils.secondsToTicks(30), 0))));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
                         String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
@@ -153,6 +161,8 @@ public class AbilityEvents implements Listener {
                 if (dif <= 0) {
                     player.setLevel(player.getLevel() - expRequired);
                     Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
+                            new PotionEffect(PotionEffectType.ABSORPTION, Utils.secondsToTicks(15), 0)));
+                    Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
                             new PotionEffect(PotionEffectType.ABSORPTION, Utils.secondsToTicks(15), 0)));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, Utils.secondsToTicks(20),
                             0));
@@ -171,6 +181,8 @@ public class AbilityEvents implements Listener {
                     player.setLevel(player.getLevel() - expRequired);
                     Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
                             new PotionEffect(PotionEffectType.ABSORPTION, Utils.secondsToTicks(15), 1)));
+                    Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+                            new PotionEffect(PotionEffectType.ABSORPTION, Utils.secondsToTicks(15), 1)));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, Utils.secondsToTicks(25),
                             1));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
@@ -187,6 +199,8 @@ public class AbilityEvents implements Listener {
                 if (dif <= 0) {
                     player.setLevel(player.getLevel() - expRequired);
                     Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
+                            new PotionEffect(PotionEffectType.ABSORPTION, Utils.secondsToTicks(20), 2)));
+                    Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
                             new PotionEffect(PotionEffectType.ABSORPTION, Utils.secondsToTicks(20), 2)));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, Utils.secondsToTicks(30),
                             2));
@@ -207,6 +221,8 @@ public class AbilityEvents implements Listener {
                     player.setLevel(player.getLevel() - expRequired);
                     Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
                             new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Utils.secondsToTicks(10), 0)));
+                    Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+                            new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Utils.secondsToTicks(10), 0)));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Utils.secondsToTicks(15),
                             0));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
@@ -224,6 +240,8 @@ public class AbilityEvents implements Listener {
                     player.setLevel(player.getLevel() - expRequired);
                     Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
                             new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Utils.secondsToTicks(10), 1)));
+                    Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+                            new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Utils.secondsToTicks(10), 1)));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Utils.secondsToTicks(15),
                             1));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
@@ -240,6 +258,8 @@ public class AbilityEvents implements Listener {
                 if (dif <= 0) {
                     player.setLevel(player.getLevel() - expRequired);
                     Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
+                            new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Utils.secondsToTicks(10), 2)));
+                    Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
                             new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Utils.secondsToTicks(10), 2)));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Utils.secondsToTicks(15),
                             2));
@@ -260,6 +280,8 @@ public class AbilityEvents implements Listener {
                     player.setLevel(player.getLevel() - expRequired);
                     Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
                             new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Utils.secondsToTicks(10), 0)));
+                    Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+                            new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Utils.secondsToTicks(10), 0)));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Utils.secondsToTicks(15),
                             0));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
@@ -277,6 +299,8 @@ public class AbilityEvents implements Listener {
                     player.setLevel(player.getLevel() - expRequired);
                     Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
                             new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Utils.secondsToTicks(10), 1)));
+                    Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+                            new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Utils.secondsToTicks(10), 1)));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Utils.secondsToTicks(15),
                             1));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
@@ -293,6 +317,8 @@ public class AbilityEvents implements Listener {
                 if (dif <= 0) {
                     player.setLevel(player.getLevel() - expRequired);
                     Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
+                            new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Utils.secondsToTicks(10), 2)));
+                    Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
                             new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Utils.secondsToTicks(10), 2)));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Utils.secondsToTicks(15),
                             2));
@@ -313,6 +339,8 @@ public class AbilityEvents implements Listener {
                     player.setLevel(player.getLevel() - expRequired);
                     Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
                             new PotionEffect(PotionEffectType.REGENERATION, Utils.secondsToTicks(10), 0)));
+                    Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+                            new PotionEffect(PotionEffectType.REGENERATION, Utils.secondsToTicks(10), 0)));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, Utils.secondsToTicks(15),
                             0));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
@@ -330,6 +358,8 @@ public class AbilityEvents implements Listener {
                     player.setLevel(player.getLevel() - expRequired);
                     Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
                             new PotionEffect(PotionEffectType.REGENERATION, Utils.secondsToTicks(10), 1)));
+                    Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+                            new PotionEffect(PotionEffectType.REGENERATION, Utils.secondsToTicks(10), 1)));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, Utils.secondsToTicks(15),
                             1));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
@@ -346,6 +376,8 @@ public class AbilityEvents implements Listener {
                 if (dif <= 0) {
                     player.setLevel(player.getLevel() - expRequired);
                     Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
+                            new PotionEffect(PotionEffectType.REGENERATION, Utils.secondsToTicks(10), 2)));
+                    Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
                             new PotionEffect(PotionEffectType.REGENERATION, Utils.secondsToTicks(10), 2)));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, Utils.secondsToTicks(15),
                             2));
@@ -417,6 +449,8 @@ public class AbilityEvents implements Listener {
                     player.setLevel(player.getLevel() - expRequired);
                     Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
                             new PotionEffect(PotionEffectType.FAST_DIGGING, Utils.secondsToTicks(15), 0)));
+                    Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+                            new PotionEffect(PotionEffectType.FAST_DIGGING, Utils.secondsToTicks(15), 0)));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, Utils.secondsToTicks(20),
                             0));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
@@ -434,6 +468,8 @@ public class AbilityEvents implements Listener {
                     player.setLevel(player.getLevel() - expRequired);
                     Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
                             new PotionEffect(PotionEffectType.FAST_DIGGING, Utils.secondsToTicks(15), 1)));
+                    Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+                            new PotionEffect(PotionEffectType.FAST_DIGGING, Utils.secondsToTicks(15), 1)));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, Utils.secondsToTicks(25),
                             1));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
@@ -450,6 +486,8 @@ public class AbilityEvents implements Listener {
                 if (dif <= 0) {
                     player.setLevel(player.getLevel() - expRequired);
                     Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
+                            new PotionEffect(PotionEffectType.FAST_DIGGING, Utils.secondsToTicks(20), 2)));
+                    Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
                             new PotionEffect(PotionEffectType.FAST_DIGGING, Utils.secondsToTicks(20), 2)));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, Utils.secondsToTicks(30),
                             2));
@@ -470,6 +508,8 @@ public class AbilityEvents implements Listener {
                     player.setLevel(player.getLevel() - expRequired);
                     Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
                             new PotionEffect(PotionEffectType.SPEED, Utils.secondsToTicks(10), 0)));
+                    Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+                            new PotionEffect(PotionEffectType.SPEED, Utils.secondsToTicks(10), 0)));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Utils.secondsToTicks(15),
                             0));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
@@ -487,6 +527,8 @@ public class AbilityEvents implements Listener {
                     player.setLevel(player.getLevel() - expRequired);
                     Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
                             new PotionEffect(PotionEffectType.SPEED, Utils.secondsToTicks(10), 1)));
+                    Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+                            new PotionEffect(PotionEffectType.SPEED, Utils.secondsToTicks(10), 1)));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Utils.secondsToTicks(15),
                             1));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
@@ -503,6 +545,8 @@ public class AbilityEvents implements Listener {
                 if (dif <= 0) {
                     player.setLevel(player.getLevel() - expRequired);
                     Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
+                            new PotionEffect(PotionEffectType.SPEED, Utils.secondsToTicks(10), 2)));
+                    Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
                             new PotionEffect(PotionEffectType.SPEED, Utils.secondsToTicks(10), 2)));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Utils.secondsToTicks(15),
                             2));

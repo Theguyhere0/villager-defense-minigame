@@ -21,7 +21,7 @@ public class Kits {
         kitPrices.put("Alchemist", new Integer[]{400});
         kitPrices.put("Trader", new Integer[]{500});
         kitPrices.put("Summoner", new Integer[]{750, 1750, 4500});
-        kitPrices.put("Reaper", new Integer[]{1000, 2500, 6000});
+        kitPrices.put("Reaper", new Integer[]{750, 2000, 4000});
         kitPrices.put("Phantom", new Integer[]{6000});
         kitPrices.put("Mage", new Integer[]{5000, 8000, 11000});
         kitPrices.put("Ninja", new Integer[]{4000, 7500, 10000});
@@ -99,12 +99,12 @@ public class Kits {
     }
     public static ItemStack reaper2() {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
-        enchants.put(Enchantment.DAMAGE_ALL, 4);
+        enchants.put(Enchantment.DAMAGE_ALL, 5);
         return Utils.createItem(Material.NETHERITE_HOE, Utils.format("&aReaper's Scythe"), FLAGS, enchants);
     }
     public static ItemStack reaper3() {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
-        enchants.put(Enchantment.DAMAGE_ALL, 5);
+        enchants.put(Enchantment.DAMAGE_ALL, 8);
         return Utils.createItem(Material.NETHERITE_HOE, Utils.format("&aReaper's Scythe"), FLAGS, enchants);
     }
     public static ItemStack mage1() {

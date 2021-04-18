@@ -200,12 +200,13 @@ public class Tasks {
 				player.getPlayer().setInvulnerable(false);
 				giveItems(player);
 
+				String kit = player.getKit();
 				// Set health for people with giant kits
-				if (player.getKit().equals("Giant1"))
+				if (kit.equals("Giant1"))
 					player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)
 							.addModifier(new AttributeModifier("Giant1", 4,
 									AttributeModifier.Operation.ADD_NUMBER));
-				else if (player.getKit().equals("Giant2"))
+				else if (kit.equals("Giant2"))
 					player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)
 							.addModifier(new AttributeModifier("Giant1", 8,
 									AttributeModifier.Operation.ADD_NUMBER));
@@ -353,15 +354,12 @@ public class Tasks {
 				Utils.giveItem(player.getPlayer(), Kits.summoner3());
 				break;
 			case "Reaper1":
-				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
 				Utils.giveItem(player.getPlayer(), Kits.reaper1());
 				break;
 			case "Reaper2":
-				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
 				Utils.giveItem(player.getPlayer(), Kits.reaper2());
 				break;
 			case "Reaper3":
-				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
 				Utils.giveItem(player.getPlayer(), Kits.reaper3());
 				break;
 			case "Mage1":

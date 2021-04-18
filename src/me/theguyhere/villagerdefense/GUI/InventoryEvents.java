@@ -1295,7 +1295,7 @@ public class InventoryEvents implements Listener {
 			}
 
 			// Exit menu
-			else if (slot == 8) {
+			else if (buttonName.contains("EXIT")) {
 				openInv(player, inv.createPlayersInventory(arena));
 			}
 		}
@@ -1336,7 +1336,7 @@ public class InventoryEvents implements Listener {
 			}
 
 			// Exit menu
-			else if (slot == 8) {
+			else if (buttonName.contains("EXIT")) {
 				openInv(player, inv.createPlayersInventory(arena));
 			}
 		}
@@ -1636,7 +1636,10 @@ public class InventoryEvents implements Listener {
 				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
 			// Edit allowed kits
-//			else if (buttonName.contains("Allowed Kits"))
+			else if (buttonName.contains("Allowed Kits"))
+				if (config.getBoolean("a" + arena + ".closed"))
+					openInv(player, inv.createAllowedKitsInventory(arena));
+				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
 			// Edit difficulty label
 			else if (buttonName.contains("Difficulty Label"))
@@ -1644,16 +1647,16 @@ public class InventoryEvents implements Listener {
 					openInv(player, inv.createDifficultyLabelInventory(arena));
 				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
-			// Edit sounds
-			else if (buttonName.contains("Sounds"))
-				if (config.getBoolean("a" + arena + ".closed"))
-					openInv(player, inv.createSoundsInventory(arena));
-				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
-
 			// Edit overall difficulty multiplier
 			else if (buttonName.contains("Difficulty Multiplier"))
 				if (config.getBoolean("a" + arena + ".closed"))
 					openInv(player, inv.createDifficultyMultiplierInventory(arena));
+				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+
+			// Edit sounds
+			else if (buttonName.contains("Sounds"))
+				if (config.getBoolean("a" + arena + ".closed"))
+					openInv(player, inv.createSoundsInventory(arena));
 				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
 			// Copy game settings from another arena or a preset
@@ -1723,7 +1726,7 @@ public class InventoryEvents implements Listener {
 			}
 
 			// Exit menu
-			else if (slot == 8)
+			else if (buttonName.contains("EXIT"))
 				openInv(player, inv.createGameSettingsInventory(arena));
 		}
 
@@ -1783,7 +1786,7 @@ public class InventoryEvents implements Listener {
 			}
 
 			// Exit menu
-			else if (slot == 8)
+			else if (buttonName.contains("EXIT"))
 				openInv(player, inv.createGameSettingsInventory(arena));
 		}
 
@@ -1838,7 +1841,7 @@ public class InventoryEvents implements Listener {
 			}
 
 			// Exit menu
-			else if (slot == 8)
+			else if (buttonName.contains("EXIT"))
 				openInv(player, inv.createGameSettingsInventory(arena));
 		}
 
@@ -1884,12 +1887,59 @@ public class InventoryEvents implements Listener {
 			}
 
 			// Exit menu
-			else if (slot == 8)
+			else if (buttonName.contains("EXIT"))
+				openInv(player, inv.createGameSettingsInventory(arena));
+		}
+
+		// Allowed kits menu for an arena
+		else if (title.contains("Allowed Kits")) {
+			String kit = buttonName.substring(4);
+			Arena arenaInstance = game.arenas.get(arena);
+			String path = "a" + arena + ".bannedKits";
+			List<String> banned = config.getStringList(path);
+
+			// Toggle a kit
+			if (!(kit.equals("Gift Kits") || kit.equals("Ability Kits") || kit.equals("Effect Kits") ||
+					kit.equals("EXIT"))) {
+				if (banned.contains(kit))
+					banned.remove(kit);
+				else banned.add(kit);
+				config.set(path, banned);
+				plugin.saveArenaData();
+				arenaInstance.updateArena();
+				openInv(player, inv.createAllowedKitsInventory(arena));
+			}
+
+			// Exit menu
+			else if (buttonName.contains("EXIT"))
+				openInv(player, inv.createGameSettingsInventory(arena));
+		}
+
+		// Sound settings menu for an arena
+		else if (title.contains("Sounds:")) {
+			// Edit win sound
+//			if (buttonName.contains("Win"))
+
+			// Edit lose sound
+//			else if (buttonName.contains("Lose"))
+
+			// Edit wave start sound
+//			else if (buttonName.contains("Start"))
+
+			// Edit wave finish sound
+//			else if (buttonName.contains("Finish"))
+
+			// Edit waiting music
+//			else if (buttonName.contains("Waiting"))
+
+			// Exit menu
+//			else if (buttonName.contains("EXIT"))
+			if (buttonName.contains("EXIT"))
 				openInv(player, inv.createGameSettingsInventory(arena));
 		}
 
 		// Menu to copy game settings
-		if (title.contains("Copy Game Settings")) {
+		else if (title.contains("Copy Game Settings")) {
 			String path = "a" + arena;
 			String path2 = "a" + slot;
 
@@ -1905,6 +1955,7 @@ public class InventoryEvents implements Listener {
 				config.set(path + ".dynamicLimit", config.getBoolean(path2 + ".dynamicLimit"));
 				config.set(path + ".dynamicPrices", config.getBoolean(path2 + ".dynamicPrices"));
 				config.set(path + ".difficultyLabel", config.getString(path2 + ".difficultyLabel"));
+				config.set(path + ".bannedKits", config.getStringList(path2 + ".bannedKits"));
 			}
 
 			// Copy easy preset
@@ -1965,29 +2016,6 @@ public class InventoryEvents implements Listener {
 			plugin.saveArenaData();
 			game.arenas.get(arena).updateArena();
 			portal.refreshHolo(arena, game);
-		}
-
-		// Sound settings menu for an arena
-		else if (title.contains("Sounds:")) {
-			// Edit win sound
-//			if (buttonName.contains("Win"))
-
-			// Edit lose sound
-//			else if (buttonName.contains("Lose"))
-
-			// Edit wave start sound
-//			else if (buttonName.contains("Start"))
-
-			// Edit wave finish sound
-//			else if (buttonName.contains("Finish"))
-
-			// Edit waiting music
-//			else if (buttonName.contains("Waiting"))
-
-			// Exit menu
-//			else if (buttonName.contains("EXIT"))
-			if (buttonName.contains("EXIT"))
-				openInv(player, inv.createGameSettingsInventory(arena));
 		}
 
 		// In-game item shop menu
@@ -2188,9 +2216,13 @@ public class InventoryEvents implements Listener {
 			// Check for useful phantom selection
 			if (gamer.isSpectating() && playerData.getBoolean(path + "Phantom") &&
 					kit.equals("Phantom")) {
-				Utils.teleAdventure(player, arenaInstance.getPlayerSpawn());
-				gamer.flipSpectating();
-				Tasks.giveItems(gamer);
+				if (arenaInstance.isEnding())
+					player.sendMessage(Utils.notify("&cArena is ending!"));
+				else {
+					Utils.teleAdventure(player, arenaInstance.getPlayerSpawn());
+					gamer.flipSpectating();
+					Tasks.giveItems(gamer);
+				}
 				return;
 			}
 

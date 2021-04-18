@@ -1,21 +1,24 @@
 package me.theguyhere.villagerdefense.GUI;
 
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.game.models.GameItems;
 import me.theguyhere.villagerdefense.game.models.Arena;
 import me.theguyhere.villagerdefense.game.models.Game;
+import me.theguyhere.villagerdefense.game.models.GameItems;
 import me.theguyhere.villagerdefense.game.models.Kits;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Inventories {
 	private final Main plugin;
@@ -1021,25 +1024,23 @@ public class Inventories {
 				Utils.format("&7in-game difficulty")));
 
 		// Option to edit allowed kits
-		inv.setItem(3, Utils.createItem(Material.ENDER_CHEST,
-				Utils.format("&9&lAllowed Kits"),
-				Utils.format(CONSTRUCTION)));
+		inv.setItem(3, Utils.createItem(Material.ENDER_CHEST, Utils.format("&9&lAllowed Kits")));
 
 		// Option to edit difficulty label
 		inv.setItem(4, Utils.createItem(Material.NAME_TAG, Utils.format("&6&lDifficulty Label")));
 
-		// Option to edit sounds
-		inv.setItem(5, Utils.createItem(Material.MUSIC_DISC_13,
-				Utils.format("&d&lSounds"),
-				FLAGS,
-				null));
-
 		// Option to adjust overall difficulty multiplier
-		inv.setItem(6, Utils.createItem(Material.TURTLE_HELMET,
+		inv.setItem(5, Utils.createItem(Material.TURTLE_HELMET,
 				Utils.format("&4&lDifficulty Multiplier"),
 				FLAGS,
 				null,
 				Utils.format("&7Determines difficulty increase rate")));
+
+		// Option to edit sounds
+		inv.setItem(6, Utils.createItem(Material.MUSIC_DISC_13,
+				Utils.format("&d&lSounds"),
+				FLAGS,
+				null));
 
 		// Option to copy game settings from another arena or a preset
 		inv.setItem(7, Utils.createItem(Material.WRITABLE_BOOK,
@@ -1115,6 +1116,318 @@ public class Inventories {
 		return inv;
 	}
 
+	// Menu for allowed kits of an arena
+	public Inventory createAllowedKitsInventory(int arena) {
+		Arena arenaInstance = game.arenas.get(arena);
+		HashMap<Enchantment, Integer> enchants = new HashMap<>();
+		enchants.put(Enchantment.DURABILITY, 1);
+
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 54, Utils.format("&k") +
+				Utils.format("&9&lAllowed Kits"));
+
+		// Gift kits
+		for (int i = 0; i < 9; i++)
+			inv.setItem(i, Utils.createItem(Material.LIME_STAINED_GLASS_PANE, Utils.format("&a&lGift Kits"),
+					Utils.format("&7Kits give one-time benefit"), Utils.format("&7per game or respawn")));
+
+		if (!arenaInstance.getBannedKits().contains("Orc"))
+			inv.setItem(9, Utils.createItem(Material.STICK, Utils.format("&a&lOrc"), FLAGS, enchants,
+					Utils.format("&7Start with a Knockback V stick")));
+		else inv.setItem(9, Utils.createItem(Material.STICK, Utils.format("&4&LOrc"),
+				Utils.format("&7Start with a Knockback V stick")));
+
+		if (!arenaInstance.getBannedKits().contains("Farmer"))
+			inv.setItem(10, Utils.createItem(Material.CARROT, Utils.format("&a&lFarmer"), FLAGS, enchants,
+					Utils.format("&7Start with 5 carrots")));
+		else inv.setItem(10, Utils.createItem(Material.CARROT, Utils.format("&4&LFarmer"),
+				Utils.format("&7Start with 5 carrots")));
+
+		if (!arenaInstance.getBannedKits().contains("Soldier"))
+			inv.setItem(11, Utils.createItem(Material.STONE_SWORD, Utils.format("&a&lSoldier"), FLAGS,
+					enchants, Utils.format("&7Start with a stone sword")));
+		else inv.setItem(11, Utils.createItem(Material.STONE_SWORD, Utils.format("&4&LSoldier"), FLAGS,
+				null, Utils.format("&7Start with a stone sword")));
+
+		if (!arenaInstance.getBannedKits().contains("Tailor"))
+			inv.setItem(12, Utils.createItem(Material.LEATHER_CHESTPLATE, Utils.format("&a&lTailor"), FLAGS,
+					enchants, Utils.format("&7Start with a full leather armor set")));
+		else inv.setItem(12, Utils.createItem(Material.LEATHER_CHESTPLATE, Utils.format("&4&LTailor"), FLAGS,
+				null, Utils.format("&7Start with a full leather armor set")));
+
+		if (!arenaInstance.getBannedKits().contains("Alchemist"))
+			inv.setItem(13, Utils.createItem(Material.BREWING_STAND, Utils.format("&a&lAlchemist"), FLAGS,
+					enchants, Utils.format("&7Start with 1 speed, 1 regeneration,"),
+					Utils.format("&7and 1 strength splash potion")));
+		else inv.setItem(13, Utils.createItem(Material.BREWING_STAND, Utils.format("&4&LAlchemist"),
+				Utils.format("&7Start with 1 speed, 1 regeneration,"),
+				Utils.format("&7and 1 strength splash potion")));
+
+		if (!arenaInstance.getBannedKits().contains("Trader"))
+			inv.setItem(14, Utils.createItem(Material.EMERALD, Utils.format("&a&lTrader"), FLAGS, enchants,
+					Utils.format("&7Start with 200 gems")));
+		else inv.setItem(14, Utils.createItem(Material.EMERALD, Utils.format("&4&LTrader"),
+				Utils.format("&7Start with 200 gems")));
+
+		if (!arenaInstance.getBannedKits().contains("Summoner"))
+			inv.setItem(15, Utils.createItem(Material.POLAR_BEAR_SPAWN_EGG, Utils.format("&a&lSummoner"),
+					FLAGS, enchants,
+					Utils.format("&fLevel 1"), Utils.format("&7Start with a wolf spawn"),
+					Utils.format("&fLevel 2"), Utils.format("&7Start with 2 wolf spawns"),
+					Utils.format("&fLevel 3"), Utils.format("&7Start with an iron golem spawn")));
+		else inv.setItem(15, Utils.createItem(Material.POLAR_BEAR_SPAWN_EGG, Utils.format("&4&LSummoner"),
+				Utils.format("&fLevel 1"), Utils.format("&7Start with a wolf spawn"),
+				Utils.format("&fLevel 2"), Utils.format("&7Start with 2 wolf spawns"),
+				Utils.format("&fLevel 3"), Utils.format("&7Start with an iron golem spawn")));
+
+		if (!arenaInstance.getBannedKits().contains("Reaper"))
+			inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&a&lReaper"), FLAGS,
+					enchants, Utils.format("&fLevel 1"),
+					Utils.format("&7Start with a sharpness III netherite hoe"), Utils.format("&fLevel 2"),
+					Utils.format("&7Start with a sharpness V netherite hoe"), Utils.format("&fLevel 3"),
+					Utils.format("&7Start with a sharpness VIII netherite hoe")));
+		else inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&4&LReaper"), FLAGS,
+				null, Utils.format("&fLevel 1"),
+				Utils.format("&7Start with a sharpness III netherite hoe"), Utils.format("&fLevel 2"),
+				Utils.format("&7Start with a sharpness V netherite hoe"), Utils.format("&fLevel 3"),
+				Utils.format("&7Start with a sharpness VIII netherite hoe")));
+
+		if (!arenaInstance.getBannedKits().contains("Phantom"))
+			inv.setItem(17, Utils.createItem(Material.PHANTOM_MEMBRANE, Utils.format("&a&lPhantom"), FLAGS,
+					enchants, Utils.format("&7Join as a player in any non-maxed game")));
+		else inv.setItem(17, Utils.createItem(Material.PHANTOM_MEMBRANE, Utils.format("&4&LPhantom"),
+				Utils.format("&7Join as a player in any non-maxed game")));
+
+		// Ability kits
+		for (int i = 18; i < 27; i++)
+			inv.setItem(i, Utils.createItem(Material.MAGENTA_STAINED_GLASS_PANE, Utils.format("&d&lAbility Kits"),
+					Utils.format("&7Kits give special ability per respawn")));
+
+		if (!arenaInstance.getBannedKits().contains("Mage"))
+			inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&d&lMage"), FLAGS, enchants,
+					Utils.format("&fLevel 1"), Utils.format("&7Shoot a fireball"),
+					Utils.format("&7(Cooldown 1 second)"), Utils.format("&fLevel 2"),
+					Utils.format("&7Shoot a strong fireball"), Utils.format("&7(Cooldown 2 seconds)"),
+					Utils.format("&fLevel 3"), Utils.format("&7Shoot a very strong fireball"),
+					Utils.format("&7(Cooldown 5 seconds)")));
+		else inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&4&LMage"),
+				Utils.format("&fLevel 1"), Utils.format("&7Shoot a fireball"),
+				Utils.format("&7(Cooldown 1 second)"), Utils.format("&fLevel 2"),
+				Utils.format("&7Shoot a strong fireball"), Utils.format("&7(Cooldown 2 seconds)"),
+				Utils.format("&fLevel 3"), Utils.format("&7Shoot a very strong fireball"),
+				Utils.format("&7(Cooldown 5 seconds)")));
+
+		if (!arenaInstance.getBannedKits().contains("Ninja"))
+			inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"), FLAGS, enchants,
+					Utils.format("&fLevel 1"), Utils.format("&7You and your pets become invisible for 10 seconds"),
+					Utils.format("&7(Cooldown 30 seconds)"), Utils.format("&fLevel 2"),
+					Utils.format("&7You and your pets become invisible for 20 seconds"),
+					Utils.format("&7(Cooldown 50 seconds)"),
+					Utils.format("&fLevel 3"), Utils.format("&7You and your pets become invisible for 30 seconds"),
+					Utils.format("&7(Cooldown 60 seconds)")));
+		else inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&4&LNinja"),
+				Utils.format("&fLevel 1"), Utils.format("&7You and your pets become invisible for 10 seconds"),
+				Utils.format("&7(Cooldown 30 seconds)"), Utils.format("&fLevel 2"),
+				Utils.format("&7You and your pets become invisible for 20 seconds"), 
+				Utils.format("&7(Cooldown 50 seconds)"),
+				Utils.format("&fLevel 3"), Utils.format("&7You and your pets become invisible for 30 seconds"),
+				Utils.format("&7(Cooldown 60 seconds)")));
+
+		if (!arenaInstance.getBannedKits().contains("Templar"))
+			inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
+					enchants, Utils.format("&fLevel 1"), Utils.format("&7Give all allies within 2.5 blocks"),
+					Utils.format("&7absorption I for 15 seconds,"),
+					Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+					Utils.format("&fLevel 2"), Utils.format("&7Give all allies within 4 blocks"),
+					Utils.format("&7absorption II for 15 seconds,"),
+					Utils.format("&725 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+					Utils.format("&fLevel 3"), Utils.format("&7Give all allies within 5 blocks"),
+					Utils.format("&7absorption III for 20 seconds,"),
+					Utils.format("&730 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)")));
+		else inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&4&LTemplar"), FLAGS,
+				null, Utils.format("&fLevel 1"), Utils.format("&7Give all allies within 2.5 blocks"),
+				Utils.format("&7absorption I for 15 seconds,"),
+				Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+				Utils.format("&fLevel 2"), Utils.format("&7Give all allies within 4 blocks"),
+				Utils.format("&7absorption II for 15 seconds,"),
+				Utils.format("&725 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+				Utils.format("&fLevel 3"), Utils.format("&7Give all allies within 5 blocks"),
+				Utils.format("&7absorption III for 20 seconds,"),
+				Utils.format("&730 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)")));
+
+		if (!arenaInstance.getBannedKits().contains("Warrior"))
+			inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
+					enchants, Utils.format("&fLevel 1"), Utils.format("&7Give all allies within 2.5 blocks"),
+					Utils.format("&7strength I for 10 seconds,"),
+					Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+					Utils.format("&fLevel 2"), Utils.format("&7Give all allies within 4 blocks"),
+					Utils.format("&7strength II for 10 seconds,"),
+					Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+					Utils.format("&fLevel 3"), Utils.format("&7Give all allies within 5 blocks"),
+					Utils.format("&7strength III for 10 seconds,"),
+					Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)")));
+		else inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&4&LWarrior"), FLAGS,
+				null, Utils.format("&fLevel 1"), Utils.format("&7Give all allies within 2.5 blocks"),
+				Utils.format("&7strength I for 10 seconds,"),
+				Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+				Utils.format("&fLevel 2"), Utils.format("&7Give all allies within 4 blocks"),
+				Utils.format("&7strength II for 10 seconds,"),
+				Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+				Utils.format("&fLevel 3"), Utils.format("&7Give all allies within 5 blocks"),
+				Utils.format("&7strength III for 10 seconds,"),
+				Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)")));
+
+		if (!arenaInstance.getBannedKits().contains("Knight"))
+			inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"), FLAGS, enchants,
+					Utils.format("&fLevel 1"), Utils.format("&7Give all allies within 2.5 blocks"),
+					Utils.format("&7resistance I for 10 seconds,"),
+					Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+					Utils.format("&fLevel 2"), Utils.format("&7Give all allies within 4 blocks"),
+					Utils.format("&7resistance II for 10 seconds,"),
+					Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 90 seconds)"),
+					Utils.format("&fLevel 3"), Utils.format("&7Give all allies within 5 blocks"),
+					Utils.format("&7resistance III for 10 seconds,"),
+					Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 120 seconds)")));
+		else inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&4&LKnight"),
+				Utils.format("&fLevel 1"), Utils.format("&7Give all allies within 2.5 blocks"),
+				Utils.format("&7resistance I for 10 seconds,"),
+				Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+				Utils.format("&fLevel 2"), Utils.format("&7Give all allies within 4 blocks"),
+				Utils.format("&7resistance II for 10 seconds,"),
+				Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 90 seconds)"),
+				Utils.format("&fLevel 3"), Utils.format("&7Give all allies within 5 blocks"),
+				Utils.format("&7resistance III for 10 seconds,"),
+				Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 120 seconds)")));
+
+		if (!arenaInstance.getBannedKits().contains("Priest"))
+			inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"), FLAGS,
+					enchants, Utils.format("&fLevel 1"), Utils.format("&7Give all allies within 2.5 blocks"),
+					Utils.format("&7regeneration I for 10 seconds,"),
+					Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+					Utils.format("&fLevel 2"), Utils.format("&7Give all allies within 4 blocks"),
+					Utils.format("&7regeneration II for 10 seconds,"),
+					Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 90 seconds)"),
+					Utils.format("&fLevel 3"), Utils.format("&7Give all allies within 5 blocks"),
+					Utils.format("&7regeneration III for 10 seconds,"),
+					Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 120 seconds)")));
+		else inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&4&LPriest"),
+				Utils.format("&fLevel 1"), Utils.format("&7Give all allies within 2.5 blocks"),
+				Utils.format("&7regeneration I for 10 seconds,"),
+				Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+				Utils.format("&fLevel 2"), Utils.format("&7Give all allies within 4 blocks"),
+				Utils.format("&7regeneration II for 10 seconds,"),
+				Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 90 seconds)"),
+				Utils.format("&fLevel 3"), Utils.format("&7Give all allies within 5 blocks"),
+				Utils.format("&7regeneration III for 10 seconds,"),
+				Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 120 seconds)")));
+
+		if (!arenaInstance.getBannedKits().contains("Siren"))
+			inv.setItem(33, Utils.createItem(Material.COBWEB, Utils.format("&d&lSiren"), FLAGS, enchants,
+					Utils.format("&fLevel 1"), Utils.format("&7Give mobs within 3 blocks"),
+					Utils.format("&7weakness I for 10 seconds"), Utils.format("&7(Cooldown 40 seconds)"),
+					Utils.format("&fLevel 2"), Utils.format("&7Give mobs within 5 blocks"),
+					Utils.format("&7weakness II for 10 seconds"), Utils.format("&7(Cooldown 60 seconds)"),
+					Utils.format("&fLevel 3"), Utils.format("&7Give mobs within 6 blocks"),
+					Utils.format("&7weakness II for 10 seconds,"),
+					Utils.format("&7slowness I for 10 seconds"), Utils.format("&7(Cooldown 80 seconds)")));
+		else inv.setItem(33, Utils.createItem(Material.COBWEB, Utils.format("&4&LSiren"),
+				Utils.format("&fLevel 1"), Utils.format("&7Give mobs within 3 blocks"),
+				Utils.format("&7weakness I for 10 seconds"), Utils.format("&7(Cooldown 40 seconds)"),
+				Utils.format("&fLevel 2"), Utils.format("&7Give mobs within 5 blocks"),
+				Utils.format("&7weakness II for 10 seconds"), Utils.format("&7(Cooldown 60 seconds)"),
+				Utils.format("&fLevel 3"), Utils.format("&7Give mobs within 6 blocks"),
+				Utils.format("&7weakness II for 10 seconds,"),
+				Utils.format("&7slowness I for 10 seconds"), Utils.format("&7(Cooldown 80 seconds)")));
+
+		if (!arenaInstance.getBannedKits().contains("Monk"))
+			inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"), FLAGS, enchants,
+					Utils.format("&fLevel 1"), Utils.format("&7Give all allies within 2.5 blocks"),
+					Utils.format("&7haste I for 15 seconds,"),
+					Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 40 seconds)"),
+					Utils.format("&fLevel 2"), Utils.format("&7Give all allies within 4 blocks"),
+					Utils.format("&7haste II for 15 seconds,"),
+					Utils.format("&725 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+					Utils.format("&fLevel 3"), Utils.format("&7Give all allies within 5 blocks"),
+					Utils.format("&7haste III for 20 seconds,"),
+					Utils.format("&730 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)")));
+		else inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&4&LMonk"),
+				Utils.format("&fLevel 1"), Utils.format("&7Give all allies within 2.5 blocks"),
+				Utils.format("&7haste I for 15 seconds,"),
+				Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 40 seconds)"),
+				Utils.format("&fLevel 2"), Utils.format("&7Give all allies within 4 blocks"),
+				Utils.format("&7haste II for 15 seconds,"),
+				Utils.format("&725 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+				Utils.format("&fLevel 3"), Utils.format("&7Give all allies within 5 blocks"),
+				Utils.format("&7haste III for 20 seconds,"),
+				Utils.format("&730 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)")));
+
+		if (!arenaInstance.getBannedKits().contains("Messenger"))
+			inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"), FLAGS, enchants,
+					Utils.format("&fLevel 1"), Utils.format("&7Give all allies within 2.5 blocks"),
+					Utils.format("&7speed I for 10 seconds,"),
+					Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 40 seconds)"),
+					Utils.format("&fLevel 2"), Utils.format("&7Give all allies within 4 blocks"),
+					Utils.format("&7speed II for 10 seconds,"),
+					Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+					Utils.format("&fLevel 3"), Utils.format("&7Give all allies within 5 blocks"),
+					Utils.format("&7speed III for 10 seconds,"),
+					Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)")));
+		else inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&4&lMessenger"),
+				Utils.format("&fLevel 1"), Utils.format("&7Give all allies within 2.5 blocks"),
+				Utils.format("&7speed I for 10 seconds,"),
+				Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 40 seconds)"),
+				Utils.format("&fLevel 2"), Utils.format("&7Give all allies within 4 blocks"),
+				Utils.format("&7speed II for 10 seconds,"),
+				Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+				Utils.format("&fLevel 3"), Utils.format("&7Give all allies within 5 blocks"),
+				Utils.format("&7speed III for 10 seconds,"),
+				Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)")));
+
+		// Effect kits
+		for (int i = 36; i < 45; i++)
+			inv.setItem(i, Utils.createItem(Material.YELLOW_STAINED_GLASS_PANE, Utils.format("&e&lEffect Kits"),
+					Utils.format("&7Kits give player a special effect")));
+
+		if (!arenaInstance.getBannedKits().contains("Blacksmith"))
+			inv.setItem(45, Utils.createItem(Material.ANVIL, Utils.format("&e&lBlacksmith"), FLAGS, enchants,
+					Utils.format("&7All equipment purchased are unbreakable")));
+		else inv.setItem(45, Utils.createItem(Material.ANVIL, Utils.format("&4&LBlacksmith"),
+				Utils.format("&7All equipment purchased are unbreakable")));
+
+		if (!arenaInstance.getBannedKits().contains("Witch"))
+			inv.setItem(46, Utils.createItem(Material.CAULDRON, Utils.format("&e&lWitch"), FLAGS, enchants,
+					Utils.format("&7All purchased potions become splash potions")));
+		else inv.setItem(46, Utils.createItem(Material.CAULDRON, Utils.format("&4&LWitch"),
+				Utils.format("&7All purchased potions become splash potions")));
+
+		if (!arenaInstance.getBannedKits().contains("Merchant"))
+			inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&e&lMerchant"), FLAGS,
+					enchants, Utils.format("&7Earn 5% rebate on all purchases")));
+		else inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&4&LMerchant"),
+				Utils.format("&7Earn 5% rebate on all purchases")));
+
+		if (!arenaInstance.getBannedKits().contains("Vampire"))
+			inv.setItem(48, Utils.createItem(Material.GHAST_TEAR, Utils.format("&e&lVampire"), FLAGS, enchants,
+					Utils.format("&7An attack of damage x has a 1.5x% chance"),
+					Utils.format("&7of healing half a heart")));
+		else inv.setItem(48, Utils.createItem(Material.GHAST_TEAR, Utils.format("&4&LVampire"),
+				Utils.format("&7An attack of damage x has a 1.5x% chance"),
+				Utils.format("&7of healing half a heart")));
+
+		if (!arenaInstance.getBannedKits().contains("Giant"))
+			inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&e&lGiant"), FLAGS, enchants,
+					Utils.format("&fLevel 1"), Utils.format("&7Permanent 20% health boost"),
+					Utils.format("&fLevel 2"), Utils.format("&7Permanent 40% health boost")));
+		else inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&4&LGiant"),
+				Utils.format("&fLevel 1"), Utils.format("&7Permanent 20% health boost"),
+				Utils.format("&fLevel 2"), Utils.format("&7Permanent 40% health boost")));
+
+		// Option to exit
+		inv.setItem(53, ii.exit());
+
+		return inv;
+	}
+
 	// Menu for changing the difficulty label of an arena
 	public Inventory createDifficultyLabelInventory(int arena) {
 		String label = game.arenas.get(arena).getDifficultyLabel();
@@ -1166,44 +1479,6 @@ public class Inventories {
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
-
-		return inv;
-	}
-
-	// Menu to copy game settings
-	public Inventory createCopySettingsInventory(int arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 54,  Utils.format("&k") +
-				Utils.format("&8&lCopy Game Settings"));
-
-		// Options to choose any of the 45 possible arenas
-		for (int i = 0; i < 45; i++) {
-			// Check if arena exists, set button accordingly
-			if (game.arenas.get(i) == null)
-				inv.setItem(i, Utils.createItem(Material.BLACK_CONCRETE,
-						Utils.format("&c&lArena " + (i + 1) + " not available")));
-			else if (i == arena)
-				inv.setItem(i, Utils.createItem(Material.GRAY_GLAZED_TERRACOTTA,
-						Utils.format("&6&l" + game.arenas.get(i).getName())));
-			else
-				inv.setItem(i, Utils.createItem(Material.WHITE_CONCRETE,
-						Utils.format("&a&lCopy " + game.arenas.get(i).getName())));
-		}
-
-		// Easy preset
-		inv.setItem(45, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&a&lEasy Preset")));
-
-		// Medium preset
-		inv.setItem(47, Utils.createItem(Material.YELLOW_CONCRETE, Utils.format("&e&lMedium Preset")));
-
-		// Hard preset
-		inv.setItem(49, Utils.createItem(Material.RED_CONCRETE, Utils.format("&c&lHard Preset")));
-
-		// Insane preset
-		inv.setItem(51, Utils.createItem(Material.MAGENTA_CONCRETE, Utils.format("&d&lInsane Preset")));
-
-		// Option to exit
-		inv.setItem(53, ii.exit());
 
 		return inv;
 	}
@@ -1264,6 +1539,44 @@ public class Inventories {
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	// Menu to copy game settings
+	public Inventory createCopySettingsInventory(int arena) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 54,  Utils.format("&k") +
+				Utils.format("&8&lCopy Game Settings"));
+
+		// Options to choose any of the 45 possible arenas
+		for (int i = 0; i < 45; i++) {
+			// Check if arena exists, set button accordingly
+			if (game.arenas.get(i) == null)
+				inv.setItem(i, Utils.createItem(Material.BLACK_CONCRETE,
+						Utils.format("&c&lArena " + (i + 1) + " not available")));
+			else if (i == arena)
+				inv.setItem(i, Utils.createItem(Material.GRAY_GLAZED_TERRACOTTA,
+						Utils.format("&6&l" + game.arenas.get(i).getName())));
+			else
+				inv.setItem(i, Utils.createItem(Material.WHITE_CONCRETE,
+						Utils.format("&a&lCopy " + game.arenas.get(i).getName())));
+		}
+
+		// Easy preset
+		inv.setItem(45, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&a&lEasy Preset")));
+
+		// Medium preset
+		inv.setItem(47, Utils.createItem(Material.YELLOW_CONCRETE, Utils.format("&e&lMedium Preset")));
+
+		// Hard preset
+		inv.setItem(49, Utils.createItem(Material.RED_CONCRETE, Utils.format("&c&lHard Preset")));
+
+		// Insane preset
+		inv.setItem(51, Utils.createItem(Material.MAGENTA_CONCRETE, Utils.format("&d&lInsane Preset")));
+
+		// Option to exit
+		inv.setItem(53, ii.exit());
 
 		return inv;
 	}
@@ -1475,21 +1788,21 @@ public class Inventories {
 						null,
 						Utils.format("&aLevel 1"), Utils.format("&7Start with a sharpness III netherite hoe"),
 						Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 2"), Utils.format("&7Start with a sharpness IV netherite hoe"),
+						Utils.format("&cLevel 2"), Utils.format("&7Start with a sharpness V netherite hoe"),
 						Utils.format("&cUpgrade: &b" + kits.getPrice("Reaper", 2) +" Crystals")));
 				break;
 			case 2:
 				inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&a&lReaper"), FLAGS,
 						null,
-						Utils.format("&aLevel 2"), Utils.format("&7Start with a sharpness IV netherite hoe"),
+						Utils.format("&aLevel 2"), Utils.format("&7Start with a sharpness V netherite hoe"),
 						Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 3"), Utils.format("&7Start with a sharpness V netherite hoe"),
+						Utils.format("&cLevel 3"), Utils.format("&7Start with a sharpness VIII netherite hoe"),
 						Utils.format("&cUpgrade: &b" + kits.getPrice("Reaper", 3) +" Crystals")));
 				break;
 			case 3:
 				inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&a&lReaper"), FLAGS,
 						null,
-						Utils.format("&aLevel 3"), Utils.format("&7Start with a sharpness V netherite hoe"),
+						Utils.format("&aLevel 3"), Utils.format("&7Start with a sharpness VIII netherite hoe"),
 						Utils.format("&aPurchased!")));
 				break;
 			default:
@@ -1543,28 +1856,28 @@ public class Inventories {
 		switch (playerData.getInt(path + "Ninja")) {
 			case 1:
 				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
-						Utils.format("&aLevel 1"), Utils.format("&7Become invisible for 10 seconds"),
+						Utils.format("&aLevel 1"), Utils.format("&7You and your pets become invisible for 10 seconds"),
 						Utils.format("&7(Cooldown 30 seconds)"), Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 2"), Utils.format("&7Become invisible for 20 seconds"),
+						Utils.format("&cLevel 2"), Utils.format("&7You and your pets become invisible for 20 seconds"),
 						Utils.format("&7(Cooldown 50 seconds)"),
 						Utils.format("&cUpgrade: &b" + kits.getPrice("Ninja", 2) +" Crystals")));
 				break;
 			case 2:
 				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
-						Utils.format("&aLevel 2"), Utils.format("&7Become invisible for 20 seconds"),
+						Utils.format("&aLevel 2"), Utils.format("&7You and your pets become invisible for 20 seconds"),
 						Utils.format("&7(Cooldown 50 seconds)"), Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 3"), Utils.format("&7Become invisible for 30 seconds"),
+						Utils.format("&cLevel 3"), Utils.format("&7You and your pets become invisible for 30 seconds"),
 						Utils.format("&7(Cooldown 60 seconds)"),
 						Utils.format("&cUpgrade: &b" + kits.getPrice("Ninja", 3) +" Crystals")));
 				break;
 			case 3:
 				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
-						Utils.format("&aLevel 3"), Utils.format("&7Become invisible for 30 seconds"),
+						Utils.format("&aLevel 3"), Utils.format("&7You and your pets become invisible for 30 seconds"),
 						Utils.format("&7(Cooldown 60 seconds)"), Utils.format("&aPurchased!")));
 				break;
 			default:
 				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
-						Utils.format("&cLevel 1"), Utils.format("&7Become invisible for 10 seconds"),
+						Utils.format("&cLevel 1"), Utils.format("&7You and your pets become invisible for 10 seconds"),
 						Utils.format("&7(Cooldown 30 seconds)"),
 						Utils.format("&cPurchase: &b" + kits.getPrice("Ninja", 1) +" Crystals")));
 		}
@@ -1573,11 +1886,11 @@ public class Inventories {
 			case 1:
 				inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
 						null, Utils.format("&aLevel 1"),
-						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7Give all allies within 2.5 blocks"),
 						Utils.format("&7absorption I for 15 seconds,"),
 						Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
 						Utils.format("&aPurchased!"), Utils.format("&cLevel 2"),
-						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7Give all allies within 4 blocks"),
 						Utils.format("&7absorption II for 15 seconds,"),
 						Utils.format("&725 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
 						Utils.format("&cUpgrade: &b" + kits.getPrice("Templar", 2) +" Crystals")));
@@ -1585,11 +1898,11 @@ public class Inventories {
 			case 2:
 				inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
 						null, Utils.format("&aLevel 2"),
-						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7Give all allies within 4 blocks"),
 						Utils.format("&7absorption II for 15 seconds,"),
 						Utils.format("&725 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
 						Utils.format("&aPurchased!"), Utils.format("&cLevel 3"),
-						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7Give all allies within 5 blocks"),
 						Utils.format("&7absorption III for 20 seconds,"),
 						Utils.format("&730 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)"),
 						Utils.format("&cUpgrade: &b" + kits.getPrice("Templar", 3) +" Crystals")));
@@ -1597,7 +1910,7 @@ public class Inventories {
 			case 3:
 				inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
 						null, Utils.format("&aLevel 3"),
-						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7Give all allies within 5 blocks"),
 						Utils.format("&7absorption III for 20 seconds,"),
 						Utils.format("&730 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)"),
 						Utils.format("&aPurchased!")));
@@ -1605,7 +1918,7 @@ public class Inventories {
 			default:
 				inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
 						null, Utils.format("&cLevel 1"),
-						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7Give all allies within 2.5 blocks"),
 						Utils.format("&7absorption I for 15 seconds,"),
 						Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
 						Utils.format("&cPurchase: &b" + kits.getPrice("Templar", 1) +" Crystals")));
@@ -1615,11 +1928,11 @@ public class Inventories {
 			case 1:
 				inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
 						null, Utils.format("&aLevel 1"),
-						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7Give all allies within 2.5 blocks"),
 						Utils.format("&7strength I for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
 						Utils.format("&aPurchased!"), Utils.format("&cLevel 2"),
-						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7Give all allies within 4 blocks"),
 						Utils.format("&7strength II for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
 						Utils.format("&cUpgrade: &b" + kits.getPrice("Warrior", 2) +" Crystals")));
@@ -1627,11 +1940,11 @@ public class Inventories {
 			case 2:
 				inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
 						null, Utils.format("&aLevel 2"),
-						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7Give all allies within 4 blocks"),
 						Utils.format("&7strength II for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
 						Utils.format("&aPurchased!"), Utils.format("&cLevel 3"),
-						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7Give all allies within 5 blocks"),
 						Utils.format("&7strength III for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)"),
 						Utils.format("&cUpgrade: &b" + kits.getPrice("Warrior", 3) +" Crystals")));
@@ -1639,7 +1952,7 @@ public class Inventories {
 			case 3:
 				inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
 						null, Utils.format("&aLevel 3"),
-						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7Give all allies within 5 blocks"),
 						Utils.format("&7strength III for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)"),
 						Utils.format("&aPurchased!")));
@@ -1647,7 +1960,7 @@ public class Inventories {
 			default:
 				inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
 						null, Utils.format("&cLevel 1"),
-						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7Give all allies within 2.5 blocks"),
 						Utils.format("&7strength I for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
 						Utils.format("&cPurchase: &b" + kits.getPrice("Warrior", 1) +" Crystals")));
@@ -1657,11 +1970,11 @@ public class Inventories {
 			case 1:
 				inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"),
 						Utils.format("&aLevel 1"),
-						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7Give all allies within 2.5 blocks"),
 						Utils.format("&7resistance I for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
 						Utils.format("&aPurchased!"), Utils.format("&cLevel 2"),
-						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7Give all allies within 4 blocks"),
 						Utils.format("&7resistance II for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 90 seconds)"),
 						Utils.format("&cUpgrade: &b" + kits.getPrice("Knight", 2) +" Crystals")));
@@ -1669,11 +1982,11 @@ public class Inventories {
 			case 2:
 				inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"),
 						Utils.format("&aLevel 2"),
-						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7Give all allies within 4 blocks"),
 						Utils.format("&7resistance II for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 90 seconds)"),
 						Utils.format("&aPurchased!"), Utils.format("&cLevel 3"),
-						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7Give all allies within 5 blocks"),
 						Utils.format("&7resistance III for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 120 seconds)"),
 						Utils.format("&cUpgrade: &b" + kits.getPrice("Knight", 3) +" Crystals")));
@@ -1681,7 +1994,7 @@ public class Inventories {
 			case 3:
 				inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"),
 						Utils.format("&aLevel 3"),
-						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7Give all allies within 5 blocks"),
 						Utils.format("&7resistance III for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 120 seconds)"),
 						Utils.format("&aPurchased!")));
@@ -1689,7 +2002,7 @@ public class Inventories {
 			default:
 				inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"),
 						Utils.format("&cLevel 1"),
-						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7Give all allies within 2.5 blocks"),
 						Utils.format("&7resistance I for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
 						Utils.format("&cPurchase: &b" + kits.getPrice("Knight", 1) +" Crystals")));
@@ -1699,11 +2012,11 @@ public class Inventories {
 			case 1:
 				inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"),
 						Utils.format("&aLevel 1"),
-						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7Give all allies within 2.5 blocks"),
 						Utils.format("&7regeneration I for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
 						Utils.format("&aPurchased!"), Utils.format("&cLevel 2"),
-						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7Give all allies within 4 blocks"),
 						Utils.format("&7regeneration II for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 90 seconds)"),
 						Utils.format("&cUpgrade: &b" + kits.getPrice("Priest", 2) +" Crystals")));
@@ -1711,11 +2024,11 @@ public class Inventories {
 			case 2:
 				inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"),
 						Utils.format("&aLevel 2"),
-						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7Give all allies within 4 blocks"),
 						Utils.format("&7regeneration II for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 90 seconds)"),
 						Utils.format("&aPurchased!"), Utils.format("&cLevel 3"),
-						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7Give all allies within 5 blocks"),
 						Utils.format("&7regeneration III for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 120 seconds)"),
 						Utils.format("&cUpgrade: &b" + kits.getPrice("Priest", 3) +" Crystals")));
@@ -1723,7 +2036,7 @@ public class Inventories {
 			case 3:
 				inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"),
 						Utils.format("&aLevel 3"),
-						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7Give all allies within 5 blocks"),
 						Utils.format("&7regeneration III for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 120 seconds)"),
 						Utils.format("&aPurchased!")));
@@ -1731,7 +2044,7 @@ public class Inventories {
 			default:
 				inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"),
 						Utils.format("&cLevel 1"),
-						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7Give all allies within 2.5 blocks"),
 						Utils.format("&7regeneration I for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
 						Utils.format("&cPurchase: &b" + kits.getPrice("Priest", 1) +" Crystals")));
@@ -1779,11 +2092,11 @@ public class Inventories {
 			case 1:
 				inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"),
 						Utils.format("&aLevel 1"),
-						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7Give all allies within 2.5 blocks"),
 						Utils.format("&7haste I for 15 seconds,"),
 						Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 40 seconds)"),
 						Utils.format("&aPurchased!"), Utils.format("&cLevel 2"),
-						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7Give all allies within 4 blocks"),
 						Utils.format("&7haste II for 15 seconds,"),
 						Utils.format("&725 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
 						Utils.format("&cUpgrade: &b" + kits.getPrice("Monk", 2) +" Crystals")));
@@ -1791,11 +2104,11 @@ public class Inventories {
 			case 2:
 				inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"),
 						Utils.format("&aLevel 2"),
-						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7Give all allies within 4 blocks"),
 						Utils.format("&7haste II for 15 seconds,"),
 						Utils.format("&725 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
 						Utils.format("&aPurchased!"), Utils.format("&cLevel 3"),
-						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7Give all allies within 5 blocks"),
 						Utils.format("&7haste III for 20 seconds,"),
 						Utils.format("&730 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
 						Utils.format("&cUpgrade: &b" + kits.getPrice("Monk", 3) +" Crystals")));
@@ -1803,7 +2116,7 @@ public class Inventories {
 			case 3:
 				inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"),
 						Utils.format("&aLevel 3"),
-						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7Give all allies within 5 blocks"),
 						Utils.format("&7haste III for 20 seconds,"),
 						Utils.format("&730 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
 						Utils.format("&aPurchased!")));
@@ -1811,7 +2124,7 @@ public class Inventories {
 			default:
 				inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"),
 						Utils.format("&cLevel 1"),
-						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7Give all allies within 2.5 blocks"),
 						Utils.format("&7haste I for 15 seconds,"),
 						Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 40 seconds)"),
 						Utils.format("&cPurchase: &b" + kits.getPrice("Monk", 1) +" Crystals")));
@@ -1821,11 +2134,11 @@ public class Inventories {
 			case 1:
 				inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"),
 						Utils.format("&aLevel 1"),
-						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7Give all allies within 2.5 blocks"),
 						Utils.format("&7speed I for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 40 seconds)"),
 						Utils.format("&aPurchased!"), Utils.format("&cLevel 2"),
-						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7Give all allies within 4 blocks"),
 						Utils.format("&7speed II for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
 						Utils.format("&cUpgrade: &b" + kits.getPrice("Messenger", 2) +" Crystals")));
@@ -1833,11 +2146,11 @@ public class Inventories {
 			case 2:
 				inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"),
 						Utils.format("&aLevel 2"),
-						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7Give all allies within 4 blocks"),
 						Utils.format("&7speed II for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
 						Utils.format("&aPurchased!"), Utils.format("&cLevel 3"),
-						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7Give all allies within 5 blocks"),
 						Utils.format("&7speed III for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
 						Utils.format("&cUpgrade: &b" + kits.getPrice("Messenger", 3) +" Crystals")));
@@ -1845,7 +2158,7 @@ public class Inventories {
 			case 3:
 				inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"),
 						Utils.format("&aLevel 3"),
-						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7Give all allies within 5 blocks"),
 						Utils.format("&7speed III for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
 						Utils.format("&aPurchased!")));
@@ -1853,7 +2166,7 @@ public class Inventories {
 			default:
 				inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"),
 						Utils.format("&cLevel 1"),
-						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7Give all allies within 2.5 blocks"),
 						Utils.format("&7speed I for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 40 seconds)"),
 						Utils.format("&cPurchase: &b" + kits.getPrice("Messenger", 1) +" Crystals")));
@@ -1896,7 +2209,7 @@ public class Inventories {
 
 		switch (playerData.getInt(path + "Giant")) {
 			case 1:
-				inv.setItem(49, Utils.createItem(Material.DRAGON_HEAD, Utils.format("&e&lGiant"),
+				inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&e&lGiant"),
 						Utils.format("&aLevel 1"),
 						Utils.format("&7Permanent 20% health boost"), Utils.format("&aPurchased!"),
 						Utils.format("&cLevel 2"),
@@ -1904,12 +2217,12 @@ public class Inventories {
 						Utils.format("&cUpgrade: &b" + kits.getPrice("Giant", 2) +" Crystals")));
 				break;
 			case 2:
-				inv.setItem(49, Utils.createItem(Material.DRAGON_HEAD, Utils.format("&e&lGiant"),
+				inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&e&lGiant"),
 						Utils.format("&aLevel 2"),
 						Utils.format("&7Permanent 40% health boost"), Utils.format("&aPurchased!")));
 				break;
 			default:
-				inv.setItem(49, Utils.createItem(Material.DRAGON_HEAD, Utils.format("&e&lGiant"),
+				inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&e&lGiant"),
 						Utils.format("&cLevel 1"),
 						Utils.format("&7Permanent 20% health boost"),
 						Utils.format("&cPurchase: &b" + kits.getPrice("Giant", 1) +" Crystals")));
@@ -2016,14 +2329,14 @@ public class Inventories {
 				inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&a&lReaper"), FLAGS,
 						null,
 						Utils.format("&aLevel 2"),
-						Utils.format("&7Start with a sharpness IV netherite hoe"),
+						Utils.format("&7Start with a sharpness V netherite hoe"),
 						Utils.format("&aAvailable")));
 				break;
 			case 3:
 				inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&a&lReaper"), FLAGS,
 						null,
 						Utils.format("&aLevel 3"),
-						Utils.format("&7Start with a sharpness V netherite hoe"),
+						Utils.format("&7Start with a sharpness VIII netherite hoe"),
 						Utils.format("&aAvailable")));
 				break;
 			default:
@@ -2072,22 +2385,22 @@ public class Inventories {
 			switch (playerData.getInt(path + "Ninja")) {
 			case 1:
 				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
-						Utils.format("&aLevel 1"), Utils.format("&7Become invisible for 10 seconds"),
+						Utils.format("&aLevel 1"), Utils.format("&7You and your pets become invisible for 10 seconds"),
 						Utils.format("&7(Cooldown 30 seconds)"), Utils.format("&aAvailable")));
 				break;
 			case 2:
 				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
-						Utils.format("&aLevel 2"), Utils.format("&7Become invisible for 20 seconds"),
+						Utils.format("&aLevel 2"), Utils.format("&7You and your pets become invisible for 20 seconds"),
 						Utils.format("&7(Cooldown 50 seconds)"), Utils.format("&aAvailable")));
 				break;
 			case 3:
 				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
-						Utils.format("&aLevel 3"), Utils.format("&7Become invisible for 30 seconds"),
+						Utils.format("&aLevel 3"), Utils.format("&7You and your pets become invisible for 30 seconds"),
 						Utils.format("&7(Cooldown 60 seconds)"), Utils.format("&aAvailable")));
 				break;
 			default:
 				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
-						Utils.format("&cLevel 1"), Utils.format("&7Become invisible for 10 seconds"),
+						Utils.format("&cLevel 1"), Utils.format("&7You and your pets become invisible for 10 seconds"),
 						Utils.format("&7(Cooldown 30 seconds)"), Utils.format("&cUnavailable")));
 		}
 
@@ -2096,7 +2409,7 @@ public class Inventories {
 			case 1:
 				inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
 						null, Utils.format("&aLevel 1"),
-						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7Give all allies within 2.5 blocks"),
 						Utils.format("&7absorption I for 15 seconds,"),
 						Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
 						Utils.format("&aAvailable")));
@@ -2104,7 +2417,7 @@ public class Inventories {
 			case 2:
 				inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
 						null, Utils.format("&aLevel 2"),
-						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7Give all allies within 4 blocks"),
 						Utils.format("&7absorption II for 15 seconds,"),
 						Utils.format("&725 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
 						Utils.format("&aAvailable")));
@@ -2112,7 +2425,7 @@ public class Inventories {
 			case 3:
 				inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
 						null, Utils.format("&aLevel 3"),
-						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7Give all allies within 5 blocks"),
 						Utils.format("&7absorption III for 20 seconds,"),
 						Utils.format("&730 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)"),
 						Utils.format("&aAvailable")));
@@ -2120,7 +2433,7 @@ public class Inventories {
 			default:
 				inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
 						null, Utils.format("&cLevel 1"),
-						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7Give all allies within 2.5 blocks"),
 						Utils.format("&7absorption I for 15 seconds,"),
 						Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
 						Utils.format("&cUnavailable")));
@@ -2131,7 +2444,7 @@ public class Inventories {
 			case 1:
 				inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
 						null, Utils.format("&aLevel 1"),
-						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7Give all allies within 2.5 blocks"),
 						Utils.format("&7strength I for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
 						Utils.format("&aAvailable")));
@@ -2139,7 +2452,7 @@ public class Inventories {
 			case 2:
 				inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
 						null, Utils.format("&aLevel 2"),
-						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7Give all allies within 4 blocks"),
 						Utils.format("&7strength II for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
 						Utils.format("&aAvailable")));
@@ -2147,7 +2460,7 @@ public class Inventories {
 			case 3:
 				inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
 						null, Utils.format("&aLevel 3"),
-						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7Give all allies within 5 blocks"),
 						Utils.format("&7strength III for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)"),
 						Utils.format("&aAvailable")));
@@ -2155,7 +2468,7 @@ public class Inventories {
 			default:
 				inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
 						null, Utils.format("&cLevel 1"),
-						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7Give all allies within 2.5 blocks"),
 						Utils.format("&7strength I for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
 						Utils.format("&cUnavailable")));
@@ -2166,7 +2479,7 @@ public class Inventories {
 			case 1:
 				inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"),
 						Utils.format("&aLevel 1"),
-						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7Give all allies within 2.5 blocks"),
 						Utils.format("&7resistance I for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
 						Utils.format("&aAvailable")));
@@ -2174,7 +2487,7 @@ public class Inventories {
 			case 2:
 				inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"),
 						Utils.format("&aLevel 2"),
-						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7Give all allies within 4 blocks"),
 						Utils.format("&7resistance II for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 90 seconds)"),
 						Utils.format("&aAvailable")));
@@ -2182,7 +2495,7 @@ public class Inventories {
 			case 3:
 				inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"),
 						Utils.format("&aLevel 3"),
-						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7Give all allies within 5 blocks"),
 						Utils.format("&7resistance III for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 120 seconds)"),
 						Utils.format("&aAvailable")));
@@ -2190,7 +2503,7 @@ public class Inventories {
 			default:
 				inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"),
 						Utils.format("&cLevel 1"),
-						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7Give all allies within 2.5 blocks"),
 						Utils.format("&7resistance I for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
 						Utils.format("&cUnavailable")));
@@ -2201,7 +2514,7 @@ public class Inventories {
 			case 1:
 				inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"),
 						Utils.format("&aLevel 1"),
-						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7Give all allies within 2.5 blocks"),
 						Utils.format("&7regeneration I for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
 						Utils.format("&aAvailable")));
@@ -2209,7 +2522,7 @@ public class Inventories {
 			case 2:
 				inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"),
 						Utils.format("&aLevel 2"),
-						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7Give all allies within 4 blocks"),
 						Utils.format("&7regeneration II for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 90 seconds)"),
 						Utils.format("&aAvailable")));
@@ -2217,7 +2530,7 @@ public class Inventories {
 			case 3:
 				inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"),
 						Utils.format("&aLevel 3"),
-						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7Give all allies within 5 blocks"),
 						Utils.format("&7regeneration III for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 120 seconds)"),
 						Utils.format("&aAvailable")));
@@ -2225,7 +2538,7 @@ public class Inventories {
 			default:
 				inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"),
 						Utils.format("&cLevel 1"),
-						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7Give all allies within 2.5 blocks"),
 						Utils.format("&7regeneration I for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
 						Utils.format("&cUnavailable")));
@@ -2268,7 +2581,7 @@ public class Inventories {
 			case 1:
 				inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"),
 						Utils.format("&aLevel 1"),
-						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7Give all allies within 2.5 blocks"),
 						Utils.format("&7haste I for 15 seconds,"),
 						Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 40 seconds)"),
 						Utils.format("&aAvailable")));
@@ -2276,7 +2589,7 @@ public class Inventories {
 			case 2:
 				inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"),
 						Utils.format("&aLevel 2"),
-						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7Give all allies within 4 blocks"),
 						Utils.format("&7haste II for 15 seconds,"),
 						Utils.format("&725 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
 						Utils.format("&aAvailable")));
@@ -2284,7 +2597,7 @@ public class Inventories {
 			case 3:
 				inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"),
 						Utils.format("&aLevel 3"),
-						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7Give all allies within 5 blocks"),
 						Utils.format("&7haste III for 20 seconds,"),
 						Utils.format("&730 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
 						Utils.format("&aAvailable")));
@@ -2292,7 +2605,7 @@ public class Inventories {
 			default:
 				inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"),
 						Utils.format("&cLevel 1"),
-						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7Give all allies within 2.5 blocks"),
 						Utils.format("&7haste I for 15 seconds,"),
 						Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 40 seconds)"),
 						Utils.format("&cUnavailable")));
@@ -2303,7 +2616,7 @@ public class Inventories {
 			case 1:
 				inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"),
 						Utils.format("&aLevel 1"),
-						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7Give all allies within 2.5 blocks"),
 						Utils.format("&7speed I for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 40 seconds)"),
 						Utils.format("&aAvailable")));
@@ -2311,7 +2624,7 @@ public class Inventories {
 			case 2:
 				inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"),
 						Utils.format("&aLevel 2"),
-						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7Give all allies within 4 blocks"),
 						Utils.format("&7speed II for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
 						Utils.format("&aAvailable")));
@@ -2319,7 +2632,7 @@ public class Inventories {
 			case 3:
 				inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"),
 						Utils.format("&aLevel 3"),
-						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7Give all allies within 5 blocks"),
 						Utils.format("&7speed III for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
 						Utils.format("&aAvailable")));
@@ -2327,7 +2640,7 @@ public class Inventories {
 			default:
 				inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"),
 						Utils.format("&cLevel 1"),
-						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7Give all allies within 2.5 blocks"),
 						Utils.format("&7speed I for 10 seconds,"),
 						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 40 seconds)"),
 						Utils.format("&cUnavailable")));
@@ -2372,17 +2685,17 @@ public class Inventories {
 		if (!arena.getBannedKits().contains("Giant"))
 			switch (playerData.getInt(path + "Giant")) {
 			case 1:
-				inv.setItem(49, Utils.createItem(Material.DRAGON_HEAD, Utils.format("&e&lGiant"),
+				inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&e&lGiant"),
 						Utils.format("&aLevel 1"),
 						Utils.format("&7Permanent 20% health boost"), Utils.format("&aAvailable")));
 				break;
 			case 2:
-				inv.setItem(49, Utils.createItem(Material.DRAGON_HEAD, Utils.format("&e&lGiant"),
+				inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&e&lGiant"),
 						Utils.format("&aLevel 2"),
 						Utils.format("&7Permanent 40% health boost"), Utils.format("&aAvailable")));
 				break;
 			default:
-				inv.setItem(49, Utils.createItem(Material.DRAGON_HEAD, Utils.format("&e&lGiant"),
+				inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&e&lGiant"),
 						Utils.format("&cLevel 1"),
 						Utils.format("&7Permanent 20% health boost"), Utils.format("&cUnavailable")));
 		}

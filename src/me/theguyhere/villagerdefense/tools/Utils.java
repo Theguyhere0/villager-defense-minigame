@@ -84,7 +84,7 @@ public class Utils {
 
         // Set enchants
         if (!(enchants == null))
-            enchants.forEach((k, v) -> meta.addEnchant(k, v, false));
+            enchants.forEach((k, v) -> meta.addEnchant(k, v, true));
         if (flags != null && flags[0])
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
@@ -108,7 +108,7 @@ public class Utils {
 
         // Set enchants
         if (!(enchants == null))
-            enchants.forEach((k, v) -> meta.addEnchant(k, v, false));
+            enchants.forEach((k, v) -> meta.addEnchant(k, v, true));
         if (flags != null && flags[0])
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
@@ -417,6 +417,20 @@ public class Utils {
     public static List<Player> getNearbyPlayers(Player player, double range) {
         return player.getNearbyEntities(range, range, range).stream().filter(ent -> ent instanceof Player)
                 .map(ent -> (Player) ent).collect(Collectors.toList());
+    }
+
+    // Get nearby allies
+    public static List<LivingEntity> getNearbyAllies(Player player, double range) {
+        return player.getNearbyEntities(range, range, range).stream().filter(ent -> ent instanceof Villager ||
+                ent instanceof Wolf || ent instanceof IronGolem).map(ent -> (LivingEntity) ent)
+                .collect(Collectors.toList());
+    }
+
+    // Get wolves
+    public static List<Wolf> getPets(Player player) {
+        return player.getNearbyEntities(150, 50, 150).stream().filter(ent -> ent instanceof Wolf)
+                .map(ent -> (Wolf) ent).filter(wolf -> Objects.equals(wolf.getOwner(), player))
+                .collect(Collectors.toList());
     }
 
     // Get nearby monsters
