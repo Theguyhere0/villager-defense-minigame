@@ -34,6 +34,7 @@ public class Arena {
     private Location waitingRoom; // Location of waiting room
     private List<Location> monsterSpawns = new ArrayList<>(); // List of monster spawn locations
     private List<Location> villagerSpawns = new ArrayList<>(); // List of villager spawn locations
+    private List<String> bannedKits = new ArrayList<>(); // LIst of kits that aren't allowed in the arena
     private boolean dynamicCount; // Toggle for dynamic mob count
     private boolean dynamicDifficulty; // Toggle for dynamic difficulty
     private boolean dynamicPrices; // Toggle for dynamic prices
@@ -118,6 +119,20 @@ public class Arena {
 
     public List<Location> getVillagerSpawns() {
         return villagerSpawns;
+    }
+
+    public List<String> getBannedKits() {
+        return bannedKits;
+    }
+
+    public void addBannedKit(String kit) {
+        bannedKits.add(kit);
+        plugin.getArenaData().set("a" + arena + ".bannedKits", bannedKits);
+    }
+
+    public void removeBannedKit(String kit) {
+        bannedKits.remove(kit);
+        plugin.getArenaData().set("a" + arena + ".bannedKits", bannedKits);
     }
 
     public String getSpawnTableFile() {
@@ -387,6 +402,7 @@ public class Arena {
                 .filter(Objects::nonNull).collect(Collectors.toList());
         villagerSpawns = utils.getConfigLocationList(path + ".villager").stream()
                 .filter(Objects::nonNull).collect(Collectors.toList());
+        bannedKits = config.getStringList(path + ".bannedKits");
         spawnTableFile = config.getString(path + ".spawnTable");
         dynamicCount = config.getBoolean(path + ".dynamicCount");
         dynamicDifficulty = config.getBoolean(path + ".dynamicDifficulty");

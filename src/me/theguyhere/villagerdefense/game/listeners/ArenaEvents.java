@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.game.listeners;
 
+import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.customEvents.*;
 import me.theguyhere.villagerdefense.game.*;
@@ -15,6 +16,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -28,13 +30,16 @@ public class ArenaEvents implements Listener {
     private final Portal portal;
     private final Leaderboard leaderboard;
     private final ArenaBoard arenaBoard;
+    private final Inventories inv;
 
-    public ArenaEvents(Main plugin, Game game, Portal portal, Leaderboard leaderboard, ArenaBoard arenaBoard) {
+    public ArenaEvents(Main plugin, Game game, Portal portal, Leaderboard leaderboard, ArenaBoard arenaBoard,
+                       Inventories inv) {
         this.plugin = plugin;
         this.game = game;
         this.portal = portal;
         this.leaderboard = leaderboard;
         this.arenaBoard = arenaBoard;
+        this.inv = inv;
     }
 
     @EventHandler
@@ -97,6 +102,10 @@ public class ArenaEvents implements Listener {
             Utils.teleAdventure(player, location);
             player.setInvulnerable(true);
 
+            // Notify everyone in the arena
+            arena.getPlayers().forEach(gamer ->
+                    gamer.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&a joined the arena.")));
+
             // Update player tracking and in-game stats
             VDPlayer fighter = new VDPlayer(player, false);
             arena.getPlayers().add(fighter);
@@ -105,9 +114,9 @@ public class ArenaEvents implements Listener {
             // Give them a game board
             game.createBoard(fighter);
 
-            // Notify everyone in the arena
-            arena.getPlayers().forEach(gamer ->
-                    gamer.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&a joined the arena.")));
+            // Tell player to choose a kit and automatically open inventory
+            player.openInventory(inv.createSelectKitsInventory(player, arena));
+            player.sendMessage(Utils.notify("&6Use &b/vd select &6to choose a kit!"));
         }
 
         // Join players as spectators if arena is full or game already started
@@ -161,11 +170,11 @@ public class ArenaEvents implements Listener {
             tasks.put(task.min1, scheduler.scheduleSyncDelayedTask(plugin, task.min1,
                     Utils.secondsToTicks(Utils.minutesToSeconds(1))));
             tasks.put(task.sec30, scheduler.scheduleSyncDelayedTask(plugin, task.sec30,
-                    Utils.secondsToTicks(Utils.minutesToSeconds(1) - 30)));
+                    Utils.secondsToTicks(Utils.minutesToSeconds(2) - 30)));
             tasks.put(task.sec10, scheduler.scheduleSyncDelayedTask(plugin, task.sec10,
-                    Utils.secondsToTicks(Utils.minutesToSeconds(1) - 10)));
+                    Utils.secondsToTicks(Utils.minutesToSeconds(2) - 10)));
             tasks.put(task.sec5, scheduler.scheduleSyncDelayedTask(plugin, task.sec5,
-                    Utils.secondsToTicks(Utils.minutesToSeconds(1) - 5)));
+                    Utils.secondsToTicks(Utils.minutesToSeconds(2) - 5)));
             tasks.put(task.start, scheduler.scheduleSyncDelayedTask(plugin, task.start,
                     Utils.secondsToTicks(Utils.minutesToSeconds(2))));
         }

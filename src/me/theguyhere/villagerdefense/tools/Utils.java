@@ -121,6 +121,29 @@ public class Utils {
         return item;
     }
 
+    // Makes an item unbreakable
+    public static ItemStack makeUnbreakable(ItemStack item) {
+        ItemStack newItem = item.clone();
+        ItemMeta meta = newItem.getItemMeta();
+        if (item.getType().getMaxDurability() == 0)
+            return item;
+        try {
+            meta.setUnbreakable(true);
+            newItem.setItemMeta(meta);
+            return newItem;
+        } catch (Exception e) {
+            return item;
+        }
+    }
+
+    // Make an item into a splash potion
+    public static ItemStack makeSplash(ItemStack item) {
+        ItemStack newItem = item.clone();
+        if (newItem.getType() == Material.POTION)
+            newItem.setType(Material.SPLASH_POTION);
+        return newItem;
+    }
+
     // Creates an ItemStack that has potion meta
     public static ItemStack createPotionItem(Material matID, PotionData potionData, String dispName, String ... lores) {
         // Create ItemStack
@@ -227,6 +250,9 @@ public class Utils {
     public static void teleAdventure(Player player, Location location) {
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
         player.setFireTicks(0);
+        if (!player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getModifiers().isEmpty())
+            player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getModifiers().forEach(attribute ->
+                    player.getAttribute(Attribute.GENERIC_MAX_HEALTH).removeModifier(attribute));
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         player.setFoodLevel(20);
         player.setSaturation(20);
@@ -242,6 +268,9 @@ public class Utils {
     public static void teleSpectator(Player player, Location location) {
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
         player.setFireTicks(0);
+        if (!player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getModifiers().isEmpty())
+            player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getModifiers().forEach(attribute ->
+                    player.getAttribute(Attribute.GENERIC_MAX_HEALTH).removeModifier(attribute));
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         player.setFoodLevel(20);
         player.setSaturation(20);
@@ -338,7 +367,7 @@ public class Utils {
         // Clear the arena for living entities
         ents.forEach(ent -> {
             if (ent instanceof LivingEntity && !(ent instanceof Player))
-                if (ent.hasMetadata("VD")) ((LivingEntity) ent).setHealth(0);
+                if (ent.hasMetadata("VD")) ent.remove();
         });
 
         // Clear the arena for items

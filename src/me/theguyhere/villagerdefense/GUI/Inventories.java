@@ -1,13 +1,15 @@
 package me.theguyhere.villagerdefense.GUI;
 
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.game.GameItems;
+import me.theguyhere.villagerdefense.game.models.GameItems;
 import me.theguyhere.villagerdefense.game.models.Arena;
 import me.theguyhere.villagerdefense.game.models.Game;
+import me.theguyhere.villagerdefense.game.models.Kits;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -19,6 +21,7 @@ public class Inventories {
 	private final Main plugin;
 	private final Game game;
 	private final InventoryItems ii;
+	private final Kits kits = new Kits();
 
 	public Inventories (Main plugin, Game game, InventoryItems ii) {
 		this.plugin = plugin;
@@ -1351,11 +1354,11 @@ public class Inventories {
 
 	// Display player stats
 	public Inventory createPlayerStatsInventory(String name) {
+		FileConfiguration playerData = plugin.getPlayerData();
+
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&2&l" + name + "'s Stats"));
-
-		FileConfiguration playerData = plugin.getPlayerData();
 
 		// Total kills
 		inv.setItem(0, Utils.createItem(Material.DRAGON_HEAD, Utils.format("&4&lTotal Kills: &4" +
@@ -1375,13 +1378,1017 @@ public class Inventories {
 				Utils.format("&7Highest gem balance in a game")));
 
 		// Top wave
-		inv.setItem(4, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&9&lTop Wave: &9" +
+		inv.setItem(4, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&3&lTop Wave: &9" +
 				playerData.getInt(name + ".topWave")), FLAGS, null,
 				Utils.format("&7Highest completed wave")));
+
+		// Kits
+		inv.setItem(6, Utils.createItem(Material.ENDER_CHEST, Utils.format("&9&lKits")));
 
 		// Crystal balance
 		inv.setItem(8, Utils.createItem(Material.DIAMOND, Utils.format("&b&lCrystal Balance: &b" +
 				playerData.getInt(name + ".crystalBalance"))));
+
+		return inv;
+	}
+
+	// Display kits for a player
+	public Inventory createPlayerKitsInventory(String name, String requester) {
+		FileConfiguration playerData = plugin.getPlayerData();
+		String path = name + ".kits.";
+
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 54, Utils.format("&k") +
+				Utils.format("&9&l" + name + "'s Kits"));
+
+		// Gift kits
+		for (int i = 0; i < 9; i++)
+			inv.setItem(i, Utils.createItem(Material.LIME_STAINED_GLASS_PANE, Utils.format("&a&lGift Kits"),
+					Utils.format("&7Kits give one-time benefit"), Utils.format("&7per game or respawn")));
+
+		inv.setItem(9, Utils.createItem(Material.STICK, Utils.format("&a&lOrc"),
+				Utils.format("&7Start with a Knockback V stick"), Utils.format("&aFree!")));
+
+		inv.setItem(10, Utils.createItem(Material.CARROT, Utils.format("&a&lFarmer"),
+				Utils.format("&7Start with 5 carrots"), Utils.format("&aFree!")));
+
+		if (playerData.getBoolean(path + "Soldier"))
+			inv.setItem(11, Utils.createItem(Material.STONE_SWORD, Utils.format("&a&lSoldier"), FLAGS,
+					null, Utils.format("&7Start with a stone sword"), Utils.format("&aPurchased!")));
+		else inv.setItem(11, Utils.createItem(Material.STONE_SWORD, Utils.format("&a&lSoldier"), FLAGS,
+				null, Utils.format("&7Start with a stone sword"),
+				Utils.format("&cPurchase: &b" + kits.getPrice("Soldier") + " Crystals")));
+
+		if (playerData.getBoolean(path + "Tailor"))
+			inv.setItem(12, Utils.createItem(Material.LEATHER_CHESTPLATE, Utils.format("&a&lTailor"), FLAGS,
+					null, Utils.format("&7Start with a full leather armor set"),
+					Utils.format("&aPurchased!")));
+		else inv.setItem(12, Utils.createItem(Material.LEATHER_CHESTPLATE, Utils.format("&a&lTailor"), FLAGS,
+				null, Utils.format("&7Start with a full leather armor set"),
+				Utils.format("&cPurchase: &b" + kits.getPrice("Tailor") + " Crystals")));
+
+		if (playerData.getBoolean(path + "Alchemist"))
+			inv.setItem(13, Utils.createItem(Material.BREWING_STAND, Utils.format("&a&lAlchemist"),
+				Utils.format("&7Start with 1 speed, 1 regeneration,"),
+					Utils.format("&7and 1 strength splash potion"), Utils.format("&aPurchased!")));
+		else inv.setItem(13, Utils.createItem(Material.BREWING_STAND, Utils.format("&a&lAlchemist"),
+				Utils.format("&7Start with 1 speed, 1 regeneration,"),
+				Utils.format("&7and 1 strength splash potion"),
+				Utils.format("&cPurchase: &b" + kits.getPrice("Alchemist") + " Crystals")));
+
+		if (playerData.getBoolean(path + "Trader"))
+			inv.setItem(14, Utils.createItem(Material.EMERALD, Utils.format("&a&lTrader"),
+				Utils.format("&7Start with 200 gems"), Utils.format("&aPurchased!")));
+		else inv.setItem(14, Utils.createItem(Material.EMERALD, Utils.format("&a&lTrader"),
+				Utils.format("&7Start with 200 gems"),
+				Utils.format("&cPurchase: &b" + kits.getPrice("Trader") + " Crystals")));
+
+		switch (playerData.getInt(path + "Summoner")) {
+			case 1:
+				inv.setItem(15, Utils.createItem(Material.POLAR_BEAR_SPAWN_EGG, Utils.format("&a&lSummoner"),
+						Utils.format("&aLevel 1"), Utils.format("&7Start with a wolf spawn"),
+						Utils.format("&aPurchased!"),
+						Utils.format("&cLevel 2"), Utils.format("&7Start with 2 wolf spawns"),
+						Utils.format("&cUpgrade: &b" + kits.getPrice("Summoner", 2) +" Crystals")));
+				break;
+			case 2:
+				inv.setItem(15, Utils.createItem(Material.POLAR_BEAR_SPAWN_EGG, Utils.format("&a&lSummoner"),
+						Utils.format("&aLevel 2"), Utils.format("&7Start with 2 wolf spawns"),
+						Utils.format("&aPurchased!"),
+						Utils.format("&cLevel 3"), Utils.format("&7Start with an iron golem spawn"),
+						Utils.format("&cUpgrade: &b" + kits.getPrice("Summoner", 3) +" Crystals")));
+				break;
+			case 3:
+				inv.setItem(15, Utils.createItem(Material.POLAR_BEAR_SPAWN_EGG, Utils.format("&a&lSummoner"),
+						Utils.format("&aLevel 3"), Utils.format("&7Start with an iron golem spawn"),
+						Utils.format("&aPurchased!")));
+				break;
+			default:
+				inv.setItem(15, Utils.createItem(Material.POLAR_BEAR_SPAWN_EGG, Utils.format("&a&lSummoner"),
+						Utils.format("&cLevel 1"), Utils.format("&7Start with a wolf spawn"),
+						Utils.format("&cPurchase: &b" + kits.getPrice("Summoner", 1) +" Crystals")));
+		}
+
+		switch (playerData.getInt(path + "Reaper")) {
+			case 1:
+				inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&a&lReaper"), FLAGS,
+						null,
+						Utils.format("&aLevel 1"), Utils.format("&7Start with a sharpness II netherite hoe"),
+						Utils.format("&aPurchased!"),
+						Utils.format("&cLevel 2"), Utils.format("&7Start with a sharpness III netherite hoe"),
+						Utils.format("&cUpgrade: &b" + kits.getPrice("Reaper", 2) +" Crystals")));
+				break;
+			case 2:
+				inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&a&lReaper"), FLAGS,
+						null,
+						Utils.format("&aLevel 2"), Utils.format("&7Start with a sharpness III netherite hoe"),
+						Utils.format("&aPurchased!"),
+						Utils.format("&cLevel 3"), Utils.format("&7Start with a sharpness IV netherite hoe"),
+						Utils.format("&cUpgrade: &b" + kits.getPrice("Reaper", 3) +" Crystals")));
+				break;
+			case 3:
+				inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&a&lReaper"), FLAGS,
+						null,
+						Utils.format("&aLevel 3"), Utils.format("&7Start with a sharpness IV netherite hoe"),
+						Utils.format("&aPurchased!")));
+				break;
+			default:
+				inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&a&lReaper"), FLAGS,
+						null,
+						Utils.format("&cLevel 1"), Utils.format("&7Start with a sharpness II netherite hoe"),
+						Utils.format("&cPurchase: &b" + kits.getPrice("Reaper", 1) +" Crystals")));
+		}
+
+		if (playerData.getBoolean(path + "Phantom"))
+			inv.setItem(17, Utils.createItem(Material.PHANTOM_MEMBRANE, Utils.format("&a&lPhantom"),
+					Utils.format("&7Join as a player in any non-maxed game"), Utils.format("&aPurchased!")));
+		else inv.setItem(17, Utils.createItem(Material.PHANTOM_MEMBRANE, Utils.format("&a&lPhantom"),
+				Utils.format("&7Join as a player in any non-maxed game"),
+				Utils.format("&cPurchase: &b" + kits.getPrice("Phantom") + " Crystals")));
+
+		// Ability kits
+		for (int i = 18; i < 27; i++)
+			inv.setItem(i, Utils.createItem(Material.MAGENTA_STAINED_GLASS_PANE, Utils.format("&d&lAbility Kits"),
+					Utils.format("&7Kits give special ability per respawn")));
+
+		switch (playerData.getInt(path + "Mage")) {
+			case 1:
+				inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&d&lMage"),
+						Utils.format("&aLevel 1"), Utils.format("&7Shoot a fireball"),
+						Utils.format("&aPurchased!"),
+						Utils.format("&cLevel 2"), Utils.format("&7Shoot a strong fireball"),
+						Utils.format("&cUpgrade: &b" + kits.getPrice("Mage", 2) +" Crystals")));
+				break;
+			case 2:
+				inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&d&lMage"),
+						Utils.format("&aLevel 2"), Utils.format("&7Shoot a strong fireball"),
+						Utils.format("&aPurchased!"),
+						Utils.format("&cLevel 3"), Utils.format("&7Shoot a very strong fireball"),
+						Utils.format("&cUpgrade: &b" + kits.getPrice("Mage", 3) +" Crystals")));
+				break;
+			case 3:
+				inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&d&lMage"),
+						Utils.format("&aLevel 3"), Utils.format("&7Shoot a very strong fireball"),
+						Utils.format("&aPurchased!")));
+				break;
+			default:
+				inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&d&lMage"),
+						Utils.format("&cLevel 1"), Utils.format("&7Shoot a fireball"),
+						Utils.format("&cPurchase: &b" + kits.getPrice("Mage", 1) +" Crystals")));
+		}
+
+		switch (playerData.getInt(path + "Ninja")) {
+			case 1:
+				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
+						Utils.format("&aLevel 1"), Utils.format("&7Become invisible for 10 seconds"),
+						Utils.format("&7(Cooldown 30 seconds)"), Utils.format("&aPurchased!"),
+						Utils.format("&cLevel 2"), Utils.format("&7Become invisible for 20 seconds"),
+						Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&cUpgrade: &b" + kits.getPrice("Ninja", 2) +" Crystals")));
+				break;
+			case 2:
+				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
+						Utils.format("&aLevel 2"), Utils.format("&7Become invisible for 20 seconds"),
+						Utils.format("&7(Cooldown 60 seconds)"), Utils.format("&aPurchased!"),
+						Utils.format("&cLevel 3"), Utils.format("&7Become invisible for 30 seconds"),
+						Utils.format("&7(Cooldown 90 seconds)"),
+						Utils.format("&cUpgrade: &b" + kits.getPrice("Ninja", 3) +" Crystals")));
+				break;
+			case 3:
+				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
+						Utils.format("&aLevel 3"), Utils.format("&7Become invisible for 30 seconds"),
+						Utils.format("&7(Cooldown 90 seconds)"), Utils.format("&aPurchased!")));
+				break;
+			default:
+				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
+						Utils.format("&cLevel 1"), Utils.format("&7Become invisible for 10 seconds"),
+						Utils.format("&7(Cooldown 30 seconds)"),
+						Utils.format("&cPurchase: &b" + kits.getPrice("Ninja", 1) +" Crystals")));
+		}
+
+		switch (playerData.getInt(path + "Templar")) {
+			case 1:
+				inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
+						null, Utils.format("&aLevel 1"),
+						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7absorption I for 15 seconds,"),
+						Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&aPurchased!"), Utils.format("&cLevel 2"),
+						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7absorption II for 15 seconds,"),
+						Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+						Utils.format("&cUpgrade: &b" + kits.getPrice("Templar", 2) +" Crystals")));
+				break;
+			case 2:
+				inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
+						null, Utils.format("&aLevel 2"),
+						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7absorption II for 15 seconds,"),
+						Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+						Utils.format("&aPurchased!"), Utils.format("&cLevel 3"),
+						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7absorption III for 15 seconds,"),
+						Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)"),
+						Utils.format("&cUpgrade: &b" + kits.getPrice("Templar", 3) +" Crystals")));
+				break;
+			case 3:
+				inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
+						null, Utils.format("&aLevel 3"),
+						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7absorption III for 15 seconds,"),
+						Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)"),
+						Utils.format("&aPurchased!")));
+				break;
+			default:
+				inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
+						null, Utils.format("&cLevel 1"),
+						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7absorption I for 15 seconds,"),
+						Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&cPurchase: &b" + kits.getPrice("Templar", 1) +" Crystals")));
+		}
+
+		switch (playerData.getInt(path + "Warrior")) {
+			case 1:
+				inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
+						null, Utils.format("&aLevel 1"),
+						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7strength I for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&aPurchased!"), Utils.format("&cLevel 2"),
+						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7strength II for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+						Utils.format("&cUpgrade: &b" + kits.getPrice("Warrior", 2) +" Crystals")));
+				break;
+			case 2:
+				inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
+						null, Utils.format("&aLevel 2"),
+						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7strength II for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+						Utils.format("&aPurchased!"), Utils.format("&cLevel 3"),
+						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7strength III for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)"),
+						Utils.format("&cUpgrade: &b" + kits.getPrice("Warrior", 3) +" Crystals")));
+				break;
+			case 3:
+				inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
+						null, Utils.format("&aLevel 3"),
+						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7strength III for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)"),
+						Utils.format("&aPurchased!")));
+				break;
+			default:
+				inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
+						null, Utils.format("&cLevel 1"),
+						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7strength I for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&cPurchase: &b" + kits.getPrice("Warrior", 1) +" Crystals")));
+		}
+
+		switch (playerData.getInt(path + "Knight")) {
+			case 1:
+				inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"),
+						Utils.format("&aLevel 1"),
+						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7resistance I for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&aPurchased!"), Utils.format("&cLevel 2"),
+						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7resistance II for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+						Utils.format("&cUpgrade: &b" + kits.getPrice("Knight", 2) +" Crystals")));
+				break;
+			case 2:
+				inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"),
+						Utils.format("&aLevel 2"),
+						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7resistance II for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+						Utils.format("&aPurchased!"), Utils.format("&cLevel 3"),
+						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7resistance III for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)"),
+						Utils.format("&cUpgrade: &b" + kits.getPrice("Knight", 3) +" Crystals")));
+				break;
+			case 3:
+				inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"),
+						Utils.format("&aLevel 3"),
+						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7resistance III for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)"),
+						Utils.format("&aPurchased!")));
+				break;
+			default:
+				inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"),
+						Utils.format("&cLevel 1"),
+						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7resistance I for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&cPurchase: &b" + kits.getPrice("Knight", 1) +" Crystals")));
+		}
+
+		switch (playerData.getInt(path + "Priest")) {
+			case 1:
+				inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"),
+						Utils.format("&aLevel 1"),
+						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7regeneration I for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&aPurchased!"), Utils.format("&cLevel 2"),
+						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7regeneration II for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+						Utils.format("&cUpgrade: &b" + kits.getPrice("Priest", 2) +" Crystals")));
+				break;
+			case 2:
+				inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"),
+						Utils.format("&aLevel 2"),
+						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7regeneration II for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+						Utils.format("&aPurchased!"), Utils.format("&cLevel 3"),
+						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7regeneration III for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)"),
+						Utils.format("&cUpgrade: &b" + kits.getPrice("Priest", 3) +" Crystals")));
+				break;
+			case 3:
+				inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"),
+						Utils.format("&aLevel 3"),
+						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7regeneration III for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)"),
+						Utils.format("&aPurchased!")));
+				break;
+			default:
+				inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"),
+						Utils.format("&cLevel 1"),
+						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7regeneration I for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&cPurchase: &b" + kits.getPrice("Priest", 1) +" Crystals")));
+		}
+
+		switch (playerData.getInt(path + "Siren")) {
+			case 1:
+				inv.setItem(33, Utils.createItem(Material.COBWEB, Utils.format("&d&lSiren"),
+						Utils.format("&aLevel 1"),
+						Utils.format("&7Give mobs within 3 blocks"),
+						Utils.format("&7weakness I for 10 seconds"), Utils.format("&7(Cooldown 40 seconds)"),
+						Utils.format("&aPurchased!"), Utils.format("&cLevel 2"),
+						Utils.format("&7Give mobs within 5 blocks"),
+						Utils.format("&7weakness II for 10 seconds"), Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&cUpgrade: &b" + kits.getPrice("Siren", 2) +" Crystals")));
+				break;
+			case 2:
+				inv.setItem(33, Utils.createItem(Material.COBWEB, Utils.format("&d&lSiren"),
+						Utils.format("&aLevel 2"),
+						Utils.format("&7Give mobs within 5 blocks"),
+						Utils.format("&7weakness II for 10 seconds"), Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&aPurchased!"), Utils.format("&cLevel 3"),
+						Utils.format("&7Give mobs within 6 blocks"),
+						Utils.format("&7weakness II for 10 seconds,"),
+						Utils.format("&7slowness I for 10 seconds"), Utils.format("&7(Cooldown 80 seconds)"),
+						Utils.format("&cUpgrade: &b" + kits.getPrice("Siren", 3) +" Crystals")));
+				break;
+			case 3:
+				inv.setItem(33, Utils.createItem(Material.COBWEB, Utils.format("&d&lSiren"),
+						Utils.format("&aLevel 3"),
+						Utils.format("&7Give mobs within 6 blocks"),
+						Utils.format("&7weakness II for 10 seconds,"),
+						Utils.format("&7slowness I for 10 seconds"), Utils.format("&7(Cooldown 80 seconds)"),
+						Utils.format("&aPurchased!")));
+				break;
+			default:
+				inv.setItem(33, Utils.createItem(Material.COBWEB, Utils.format("&d&lSiren"),
+						Utils.format("&cLevel 1"),
+						Utils.format("&7Give mobs within 3 blocks"),
+						Utils.format("&7weakness I for 10 seconds"), Utils.format("&7(Cooldown 40 seconds)"),
+						Utils.format("&cPurchase: &b" + kits.getPrice("Siren", 1) +" Crystals")));
+		}
+
+		switch (playerData.getInt(path + "Monk")) {
+			case 1:
+				inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"),
+						Utils.format("&aLevel 1"),
+						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7haste I for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 40 seconds)"),
+						Utils.format("&aPurchased!"), Utils.format("&cLevel 2"),
+						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7haste II for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&cUpgrade: &b" + kits.getPrice("Monk", 2) +" Crystals")));
+				break;
+			case 2:
+				inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"),
+						Utils.format("&aLevel 2"),
+						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7haste II for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&aPurchased!"), Utils.format("&cLevel 3"),
+						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7haste III for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+						Utils.format("&cUpgrade: &b" + kits.getPrice("Monk", 3) +" Crystals")));
+				break;
+			case 3:
+				inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"),
+						Utils.format("&aLevel 3"),
+						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7haste III for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+						Utils.format("&aPurchased!")));
+				break;
+			default:
+				inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"),
+						Utils.format("&cLevel 1"),
+						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7haste I for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 40 seconds)"),
+						Utils.format("&cPurchase: &b" + kits.getPrice("Monk", 1) +" Crystals")));
+		}
+
+		switch (playerData.getInt(path + "Messenger")) {
+			case 1:
+				inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"),
+						Utils.format("&aLevel 1"),
+						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7speed I for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 40 seconds)"),
+						Utils.format("&aPurchased!"), Utils.format("&cLevel 2"),
+						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7speed II for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&cUpgrade: &b" + kits.getPrice("Messenger", 2) +" Crystals")));
+				break;
+			case 2:
+				inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"),
+						Utils.format("&aLevel 2"),
+						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7speed II for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&aPurchased!"), Utils.format("&cLevel 3"),
+						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7speed III for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+						Utils.format("&cUpgrade: &b" + kits.getPrice("Messenger", 3) +" Crystals")));
+				break;
+			case 3:
+				inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"),
+						Utils.format("&aLevel 3"),
+						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7speed III for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+						Utils.format("&aPurchased!")));
+				break;
+			default:
+				inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"),
+						Utils.format("&cLevel 1"),
+						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7speed I for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 40 seconds)"),
+						Utils.format("&cPurchase: &b" + kits.getPrice("Messenger", 1) +" Crystals")));
+		}
+
+		// Effect kits
+		for (int i = 36; i < 45; i++)
+			inv.setItem(i, Utils.createItem(Material.YELLOW_STAINED_GLASS_PANE, Utils.format("&e&lEffect Kits"),
+					Utils.format("&7Kits give player a special effect")));
+
+		if (playerData.getBoolean(path + "Blacksmith"))
+			inv.setItem(45, Utils.createItem(Material.ANVIL, Utils.format("&e&lBlacksmith"),
+					Utils.format("&7All equipment purchased are unbreakable"), Utils.format("&aPurchased!")));
+		else inv.setItem(45, Utils.createItem(Material.ANVIL, Utils.format("&e&lBlacksmith"),
+				Utils.format("&7All equipment purchased are unbreakable"),
+				Utils.format("&cPurchase: &b" + kits.getPrice("Blacksmith") + " Crystals")));
+
+		if (playerData.getBoolean(path + "Witch"))
+			inv.setItem(46, Utils.createItem(Material.CAULDRON, Utils.format("&e&lWitch"),
+					Utils.format("&7All purchased potions become splash potions"), Utils.format("&aPurchased!")));
+		else inv.setItem(46, Utils.createItem(Material.CAULDRON, Utils.format("&e&lWitch"),
+				Utils.format("&7All purchased potions become splash potions"),
+				Utils.format("&cPurchase: &b" + kits.getPrice("Witch") + " Crystals")));
+
+		if (playerData.getBoolean(path + "Merchant"))
+			inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&e&lMerchant"),
+					Utils.format("&7Earn 5% rebate on all purchases"), Utils.format("&aPurchased!")));
+		else inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&e&lMerchant"),
+				Utils.format("&7Earn 5% rebate on all purchases"),
+				Utils.format("&cPurchase: &b" + kits.getPrice("Merchant") + " Crystals")));
+
+		if (playerData.getBoolean(path + "Vampire"))
+			inv.setItem(48, Utils.createItem(Material.GHAST_TEAR, Utils.format("&e&lVampire"),
+					Utils.format("&7Regain health from attacking"),
+					Utils.format("&7Heavier damage increases chance"), Utils.format("&aPurchased!")));
+		else inv.setItem(48, Utils.createItem(Material.GHAST_TEAR, Utils.format("&e&lVampire"),
+				Utils.format("&7Regain health from attacking"),
+				Utils.format("&7Heavier damage increases chance"),
+				Utils.format("&cPurchase: &b" + kits.getPrice("Vampire") + " Crystals")));
+
+		switch (playerData.getInt(path + "Giant")) {
+			case 1:
+				inv.setItem(49, Utils.createItem(Material.DRAGON_HEAD, Utils.format("&e&lGiant"),
+						Utils.format("&aLevel 1"),
+						Utils.format("&7Permanent 20% health boost"), Utils.format("&aPurchased!"),
+						Utils.format("&cLevel 2"),
+						Utils.format("&7Permanent 40% health boost"),
+						Utils.format("&cUpgrade: &b" + kits.getPrice("Giant", 2) +" Crystals")));
+				break;
+			case 2:
+				inv.setItem(49, Utils.createItem(Material.DRAGON_HEAD, Utils.format("&e&lGiant"),
+						Utils.format("&aLevel 2"),
+						Utils.format("&7Permanent 40% health boost"), Utils.format("&aPurchased!")));
+				break;
+			default:
+				inv.setItem(49, Utils.createItem(Material.DRAGON_HEAD, Utils.format("&e&lGiant"),
+						Utils.format("&cLevel 1"),
+						Utils.format("&7Permanent 20% health boost"),
+						Utils.format("&cPurchase: &b" + kits.getPrice("Giant", 1) +" Crystals")));
+		}
+
+		// Crystal balance
+		if (name.equals(requester))
+			inv.setItem(52, Utils.createItem(Material.DIAMOND, Utils.format("&b&lCrystal Balance: &b" +
+					playerData.getInt(name + ".crystalBalance"))));
+
+		// Option to exit
+		inv.setItem(53, ii.exit());
+
+		return inv;
+	}
+
+	// Display kits for a player to select
+	public Inventory createSelectKitsInventory(Player player, Arena arena) {
+		FileConfiguration playerData = plugin.getPlayerData();
+		String path = player.getName() + ".kits.";
+
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 54, Utils.format("&k") +
+				Utils.format("&9&l" + arena.getName() + " Kits"));
+
+		// Gift kits
+		for (int i = 0; i < 9; i++)
+			inv.setItem(i, Utils.createItem(Material.LIME_STAINED_GLASS_PANE, Utils.format("&a&lGift Kits"),
+					Utils.format("&7Kits give one-time benefit"), Utils.format("&7per game or respawn")));
+
+		if (!arena.getBannedKits().contains("Orc"))
+			inv.setItem(9, Utils.createItem(Material.STICK, Utils.format("&a&lOrc"),
+					Utils.format("&7Start with a Knockback V stick"), Utils.format("&aAvailable")));
+
+		if (!arena.getBannedKits().contains("Farmer"))
+			inv.setItem(10, Utils.createItem(Material.CARROT, Utils.format("&a&lFarmer"),
+				Utils.format("&7Start with 5 carrots"), Utils.format("&aAvailable")));
+
+		if (!arena.getBannedKits().contains("Soldier"))
+			if (playerData.getBoolean(path + "Soldier"))
+				inv.setItem(11, Utils.createItem(Material.STONE_SWORD, Utils.format("&a&lSoldier"), FLAGS,
+						null, Utils.format("&7Start with a stone sword"), Utils.format("&aAvailable")));
+			else inv.setItem(11, Utils.createItem(Material.STONE_SWORD, Utils.format("&a&lSoldier"), FLAGS,
+					null, Utils.format("&7Start with a stone sword"), Utils.format("&cUnavailable")));
+
+		if (!arena.getBannedKits().contains("Tailor"))
+			if (playerData.getBoolean(path + "Tailor"))
+				inv.setItem(12, Utils.createItem(Material.LEATHER_CHESTPLATE, Utils.format("&a&lTailor"), FLAGS,
+						null, Utils.format("&7Start with a full leather armor set"),
+						Utils.format("&aAvailable")));
+			else inv.setItem(12, Utils.createItem(Material.LEATHER_CHESTPLATE, Utils.format("&a&lTailor"), FLAGS,
+					null, Utils.format("&7Start with a full leather armor set"),
+					Utils.format("&cUnavailable")));
+
+		if (!arena.getBannedKits().contains("Alchemist"))
+			if (playerData.getBoolean(path + "Alchemist"))
+				inv.setItem(13, Utils.createItem(Material.BREWING_STAND, Utils.format("&a&lAlchemist"),
+						Utils.format("&7Start with 1 speed, 1 regeneration,"),
+						Utils.format("&7and 1 strength splash potion"), Utils.format("&aAvailable")));
+			else inv.setItem(13, Utils.createItem(Material.BREWING_STAND, Utils.format("&a&lAlchemist"),
+					Utils.format("&7Start with 1 speed, 1 regeneration,"),
+					Utils.format("&7and 1 strength splash potion"), Utils.format("&cUnavailable")));
+
+		if (!arena.getBannedKits().contains("Trader"))
+			if (playerData.getBoolean(path + "Trader"))
+				inv.setItem(14, Utils.createItem(Material.EMERALD, Utils.format("&a&lTrader"),
+						Utils.format("&7Start with 200 gems"), Utils.format("&aAvailable")));
+			else inv.setItem(14, Utils.createItem(Material.EMERALD, Utils.format("&a&lTrader"),
+					Utils.format("&7Start with 200 gems"), Utils.format("&cUnavailable")));
+
+		if (!arena.getBannedKits().contains("Summoner"))
+			switch (playerData.getInt(path + "Summoner")) {
+			case 1:
+				inv.setItem(15, Utils.createItem(Material.POLAR_BEAR_SPAWN_EGG, Utils.format("&a&lSummoner"),
+						Utils.format("&aLevel 1"), Utils.format("&7Start with a wolf spawn"),
+						Utils.format("&aAvailable")));
+				break;
+			case 2:
+				inv.setItem(15, Utils.createItem(Material.POLAR_BEAR_SPAWN_EGG, Utils.format("&a&lSummoner"),
+						Utils.format("&aLevel 2"), Utils.format("&7Start with 2 wolf spawns"),
+						Utils.format("&aAvailable")));
+				break;
+			case 3:
+				inv.setItem(15, Utils.createItem(Material.POLAR_BEAR_SPAWN_EGG, Utils.format("&a&lSummoner"),
+						Utils.format("&aLevel 3"), Utils.format("&7Start with an iron golem spawn"),
+						Utils.format("&aAvailable")));
+				break;
+			default:
+				inv.setItem(15, Utils.createItem(Material.POLAR_BEAR_SPAWN_EGG, Utils.format("&a&lSummoner"),
+						Utils.format("&cLevel 1"), Utils.format("&7Start with a wolf spawn"),
+						Utils.format("&cUnavailable")));
+		}
+
+		if (!arena.getBannedKits().contains("Reaper"))
+			switch (playerData.getInt(path + "Reaper")) {
+			case 1:
+				inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&a&lReaper"), FLAGS,
+						null,
+						Utils.format("&aLevel 1"),
+						Utils.format("&7Start with a sharpness II netherite hoe"),
+						Utils.format("&aAvailable")));
+				break;
+			case 2:
+				inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&a&lReaper"), FLAGS,
+						null,
+						Utils.format("&aLevel 2"),
+						Utils.format("&7Start with a sharpness III netherite hoe"),
+						Utils.format("&aAvailable")));
+				break;
+			case 3:
+				inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&a&lReaper"), FLAGS,
+						null,
+						Utils.format("&aLevel 3"),
+						Utils.format("&7Start with a sharpness IV netherite hoe"),
+						Utils.format("&aAvailable")));
+				break;
+			default:
+				inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&a&lReaper"), FLAGS,
+						null,
+						Utils.format("&cLevel 1"), Utils.format("&7Start with a sharpness II netherite hoe"),
+						Utils.format("&cUnavailable")));
+		}
+
+		if (!arena.getBannedKits().contains("Phantom"))
+			if (playerData.getBoolean(path + "Phantom"))
+				inv.setItem(17, Utils.createItem(Material.PHANTOM_MEMBRANE, Utils.format("&a&lPhantom"),
+						Utils.format("&7Join as a player in any non-maxed game"), Utils.format("&aAvailable")));
+			else inv.setItem(17, Utils.createItem(Material.PHANTOM_MEMBRANE, Utils.format("&a&lPhantom"),
+					Utils.format("&7Join as a player in any non-maxed game"), Utils.format("&cUnavailable")));
+
+		// Ability kits
+		for (int i = 18; i < 27; i++)
+			inv.setItem(i, Utils.createItem(Material.MAGENTA_STAINED_GLASS_PANE, Utils.format("&d&lAbility Kits"),
+					Utils.format("&7Kits give special ability per respawn")));
+
+		if (!arena.getBannedKits().contains("Mage"))
+			switch (playerData.getInt(path + "Mage")) {
+			case 1:
+				inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&d&lMage"),
+						Utils.format("&aLevel 1"), Utils.format("&7Shoot a fireball"),
+						Utils.format("&aAvailable")));
+				break;
+			case 2:
+				inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&d&lMage"),
+						Utils.format("&aLevel 2"), Utils.format("&7Shoot a strong fireball"),
+						Utils.format("&aAvailable")));
+				break;
+			case 3:
+				inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&d&lMage"),
+						Utils.format("&aLevel 3"), Utils.format("&7Shoot a very strong fireball"),
+						Utils.format("&aAvailable")));
+				break;
+			default:
+				inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&d&lMage"),
+						Utils.format("&cLevel 1"), Utils.format("&7Shoot a fireball"),
+						Utils.format("&cUnavailable")));
+		}
+
+		if (!arena.getBannedKits().contains("Ninja"))
+			switch (playerData.getInt(path + "Ninja")) {
+			case 1:
+				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
+						Utils.format("&aLevel 1"), Utils.format("&7Become invisible for 10 seconds"),
+						Utils.format("&7(Cooldown 30 seconds)"), Utils.format("&aAvailable")));
+				break;
+			case 2:
+				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
+						Utils.format("&aLevel 2"), Utils.format("&7Become invisible for 20 seconds"),
+						Utils.format("&7(Cooldown 60 seconds)"), Utils.format("&aAvailable")));
+				break;
+			case 3:
+				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
+						Utils.format("&aLevel 3"), Utils.format("&7Become invisible for 30 seconds"),
+						Utils.format("&7(Cooldown 90 seconds)"), Utils.format("&aAvailable")));
+				break;
+			default:
+				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
+						Utils.format("&cLevel 1"), Utils.format("&7Become invisible for 10 seconds"),
+						Utils.format("&7(Cooldown 30 seconds)"), Utils.format("&cUnavailable")));
+		}
+
+		if (!arena.getBannedKits().contains("Templar"))
+			switch (playerData.getInt(path + "Templar")) {
+			case 1:
+				inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
+						null, Utils.format("&aLevel 1"),
+						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7absorption I for 15 seconds,"),
+						Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&aAvailable")));
+				break;
+			case 2:
+				inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
+						null, Utils.format("&aLevel 2"),
+						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7absorption II for 15 seconds,"),
+						Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+						Utils.format("&aAvailable")));
+				break;
+			case 3:
+				inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
+						null, Utils.format("&aLevel 3"),
+						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7absorption III for 15 seconds,"),
+						Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)"),
+						Utils.format("&aAvailable")));
+				break;
+			default:
+				inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
+						null, Utils.format("&cLevel 1"),
+						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7absorption I for 15 seconds,"),
+						Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&cUnavailable")));
+		}
+
+		if (!arena.getBannedKits().contains("Warrior"))
+			switch (playerData.getInt(path + "Warrior")) {
+			case 1:
+				inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
+						null, Utils.format("&aLevel 1"),
+						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7strength I for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&aAvailable")));
+				break;
+			case 2:
+				inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
+						null, Utils.format("&aLevel 2"),
+						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7strength II for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+						Utils.format("&aAvailable")));
+				break;
+			case 3:
+				inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
+						null, Utils.format("&aLevel 3"),
+						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7strength III for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)"),
+						Utils.format("&aAvailable")));
+				break;
+			default:
+				inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
+						null, Utils.format("&cLevel 1"),
+						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7strength I for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&cUnavailable")));
+		}
+
+		if (!arena.getBannedKits().contains("Knight"))
+			switch (playerData.getInt(path + "Knight")) {
+			case 1:
+				inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"),
+						Utils.format("&aLevel 1"),
+						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7resistance I for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&aAvailable")));
+				break;
+			case 2:
+				inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"),
+						Utils.format("&aLevel 2"),
+						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7resistance II for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+						Utils.format("&aAvailable")));
+				break;
+			case 3:
+				inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"),
+						Utils.format("&aLevel 3"),
+						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7resistance III for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)"),
+						Utils.format("&aAvailable")));
+				break;
+			default:
+				inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"),
+						Utils.format("&cLevel 1"),
+						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7resistance I for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&cUnavailable")));
+		}
+
+		if (!arena.getBannedKits().contains("Priest"))
+			switch (playerData.getInt(path + "Priest")) {
+			case 1:
+				inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"),
+						Utils.format("&aLevel 1"),
+						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7regeneration I for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&aAvailable")));
+				break;
+			case 2:
+				inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"),
+						Utils.format("&aLevel 2"),
+						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7regeneration II for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+						Utils.format("&aAvailable")));
+				break;
+			case 3:
+				inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"),
+						Utils.format("&aLevel 3"),
+						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7regeneration III for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)"),
+						Utils.format("&aAvailable")));
+				break;
+			default:
+				inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"),
+						Utils.format("&cLevel 1"),
+						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7regeneration I for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&cUnavailable")));
+		}
+
+		if (!arena.getBannedKits().contains("Siren"))
+			switch (playerData.getInt(path + "Siren")) {
+			case 1:
+				inv.setItem(33, Utils.createItem(Material.COBWEB, Utils.format("&d&lSiren"),
+						Utils.format("&aLevel 1"),
+						Utils.format("&7Give mobs within 3 blocks"),
+						Utils.format("&7weakness I for 10 seconds"), Utils.format("&7(Cooldown 40 seconds)"),
+						Utils.format("&aAvailable")));
+				break;
+			case 2:
+				inv.setItem(33, Utils.createItem(Material.COBWEB, Utils.format("&d&lSiren"),
+						Utils.format("&aLevel 2"),
+						Utils.format("&7Give mobs within 5 blocks"),
+						Utils.format("&7weakness II for 10 seconds"), Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&aAvailable")));
+				break;
+			case 3:
+				inv.setItem(33, Utils.createItem(Material.COBWEB, Utils.format("&d&lSiren"),
+						Utils.format("&aLevel 3"),
+						Utils.format("&7Give mobs within 6 blocks"),
+						Utils.format("&7weakness II for 10 seconds,"),
+						Utils.format("&7slowness I for 10 seconds"), Utils.format("&7(Cooldown 80 seconds)"),
+						Utils.format("&aAvailable")));
+				break;
+			default:
+				inv.setItem(33, Utils.createItem(Material.COBWEB, Utils.format("&d&lSiren"),
+						Utils.format("&cLevel 1"),
+						Utils.format("&7Give mobs within 3 blocks"),
+						Utils.format("&7weakness I for 10 seconds"), Utils.format("&7(Cooldown 40 seconds)"),
+						Utils.format("&cUnavailable")));
+		}
+
+		if (!arena.getBannedKits().contains("Monk"))
+			switch (playerData.getInt(path + "Monk")) {
+			case 1:
+				inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"),
+						Utils.format("&aLevel 1"),
+						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7haste I for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 40 seconds)"),
+						Utils.format("&aAvailable")));
+				break;
+			case 2:
+				inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"),
+						Utils.format("&aLevel 2"),
+						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7haste II for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&aAvailable")));
+				break;
+			case 3:
+				inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"),
+						Utils.format("&aLevel 3"),
+						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7haste III for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+						Utils.format("&aAvailable")));
+				break;
+			default:
+				inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"),
+						Utils.format("&cLevel 1"),
+						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7haste I for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 40 seconds)"),
+						Utils.format("&cUnavailable")));
+		}
+
+		if (!arena.getBannedKits().contains("Messenger"))
+			switch (playerData.getInt(path + "Messenger")) {
+			case 1:
+				inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"),
+						Utils.format("&aLevel 1"),
+						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7speed I for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 40 seconds)"),
+						Utils.format("&aAvailable")));
+				break;
+			case 2:
+				inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"),
+						Utils.format("&aLevel 2"),
+						Utils.format("&7Give everyone within 4 blocks"),
+						Utils.format("&7speed II for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&aAvailable")));
+				break;
+			case 3:
+				inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"),
+						Utils.format("&aLevel 3"),
+						Utils.format("&7Give everyone within 5 blocks"),
+						Utils.format("&7speed III for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+						Utils.format("&aAvailable")));
+				break;
+			default:
+				inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"),
+						Utils.format("&cLevel 1"),
+						Utils.format("&7Give everyone within 2.5 blocks"),
+						Utils.format("&7speed I for 10 seconds,"),
+						Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 40 seconds)"),
+						Utils.format("&cUnavailable")));
+		}
+
+		// Effect kits
+		for (int i = 36; i < 45; i++)
+			inv.setItem(i, Utils.createItem(Material.YELLOW_STAINED_GLASS_PANE, Utils.format("&e&lEffect Kits"),
+					Utils.format("&7Kits give player a special effect")));
+
+		if (!arena.getBannedKits().contains("Blacksmith"))
+			if (playerData.getBoolean(path + "Blacksmith"))
+				inv.setItem(45, Utils.createItem(Material.ANVIL, Utils.format("&e&lBlacksmith"),
+						Utils.format("&7All equipment purchased are unbreakable"), Utils.format("&aAvailable")));
+			else inv.setItem(45, Utils.createItem(Material.ANVIL, Utils.format("&e&lBlacksmith"),
+					Utils.format("&7All equipment purchased are unbreakable"), Utils.format("&cUnavailable")));
+
+		if (!arena.getBannedKits().contains("Witch"))
+			if (playerData.getBoolean(path + "Witch"))
+				inv.setItem(46, Utils.createItem(Material.CAULDRON, Utils.format("&e&lWitch"),
+						Utils.format("&7All purchased potions become splash potions"), Utils.format("&aAvailable")));
+			else inv.setItem(46, Utils.createItem(Material.CAULDRON, Utils.format("&e&lWitch"),
+					Utils.format("&7All purchased potions become splash potions"),
+					Utils.format("&cUnavailable")));
+
+		if (!arena.getBannedKits().contains("Merchant"))
+			if (playerData.getBoolean(path + "Merchant"))
+				inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&e&lMerchant"),
+						Utils.format("&7Earn 5% rebate on all purchases"), Utils.format("&aAvailable")));
+			else inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&e&lMerchant"),
+					Utils.format("&7Earn 5% rebate on all purchases"), Utils.format("&cUnavailable")));
+
+		if (!arena.getBannedKits().contains("Vampire"))
+			if (playerData.getBoolean(path + "Vampire"))
+				inv.setItem(48, Utils.createItem(Material.GHAST_TEAR, Utils.format("&e&lVampire"),
+						Utils.format("&7Regain health from attacking"),
+						Utils.format("&7Heavier damage increases chance"), Utils.format("&aAvailable")));
+			else inv.setItem(48, Utils.createItem(Material.GHAST_TEAR, Utils.format("&e&lVampire"),
+					Utils.format("&7Regain health from attacking"),
+					Utils.format("&7Heavier damage increases chance"), Utils.format("&cUnavailable")));
+
+		if (!arena.getBannedKits().contains("Giant"))
+			switch (playerData.getInt(path + "Giant")) {
+			case 1:
+				inv.setItem(49, Utils.createItem(Material.DRAGON_HEAD, Utils.format("&e&lGiant"),
+						Utils.format("&aLevel 1"),
+						Utils.format("&7Permanent 20% health boost"), Utils.format("&aAvailable")));
+				break;
+			case 2:
+				inv.setItem(49, Utils.createItem(Material.DRAGON_HEAD, Utils.format("&e&lGiant"),
+						Utils.format("&aLevel 2"),
+						Utils.format("&7Permanent 40% health boost"), Utils.format("&aAvailable")));
+				break;
+			default:
+				inv.setItem(49, Utils.createItem(Material.DRAGON_HEAD, Utils.format("&e&lGiant"),
+						Utils.format("&cLevel 1"),
+						Utils.format("&7Permanent 20% health boost"), Utils.format("&cUnavailable")));
+		}
+
+		// Option for no kit
+		inv.setItem(52, Utils.createItem(Material.LIGHT_GRAY_CONCRETE, Utils.format("&f&lNone")));
+
+		// Option to exit
+		inv.setItem(53, ii.exit());
 
 		return inv;
 	}

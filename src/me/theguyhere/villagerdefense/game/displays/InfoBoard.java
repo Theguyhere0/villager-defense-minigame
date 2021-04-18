@@ -13,6 +13,8 @@ public class InfoBoard {
 	private final String[] HOLO_TEXT = {Utils.format("&bLeft click &eportal for arena info"),
 			Utils.format("&bRight click &aportal to enter arena"),
 			Utils.format("&6Use &b/vd stats &6to check personal stats"),
+			Utils.format("&6Use &b/vd kits &6to buy kits using crystals"),
+			Utils.format("&6Use &b/vd select &6before a game to select a kit"),
 			Utils.format("&6Use &b/vd help &6to go to plugin wiki")};
 	private final Hologram[] boards = new Hologram[8];
 	

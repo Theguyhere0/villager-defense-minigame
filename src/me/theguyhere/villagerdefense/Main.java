@@ -7,6 +7,7 @@ import me.theguyhere.villagerdefense.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.game.displays.InfoBoard;
 import me.theguyhere.villagerdefense.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.game.displays.Portal;
+import me.theguyhere.villagerdefense.game.listeners.AbilityEvents;
 import me.theguyhere.villagerdefense.game.listeners.ArenaEvents;
 import me.theguyhere.villagerdefense.game.listeners.ClickPortalEvents;
 import me.theguyhere.villagerdefense.game.listeners.GameEvents;
@@ -70,7 +71,8 @@ public class Main extends JavaPlugin {
 		pm.registerEvents(new Death(portal, reader), this);
 		pm.registerEvents(new ClickPortalEvents(game, portal, inventories), this);
 		pm.registerEvents(new GameEvents(this, game), this);
-		pm.registerEvents(new ArenaEvents(this, game, portal, leaderboard, arenaBoard), this);
+		pm.registerEvents(new ArenaEvents(this, game, portal, leaderboard, arenaBoard, inventories), this);
+		pm.registerEvents(new AbilityEvents(this, game), this);
 
 		// Inject online players into packet reader
 		if (!Bukkit.getOnlinePlayers().isEmpty())

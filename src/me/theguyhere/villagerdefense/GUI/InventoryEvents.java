@@ -9,6 +9,7 @@ import me.theguyhere.villagerdefense.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.game.models.Arena;
 import me.theguyhere.villagerdefense.game.models.Game;
+import me.theguyhere.villagerdefense.game.models.Kits;
 import me.theguyhere.villagerdefense.game.models.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
@@ -41,6 +42,7 @@ public class InventoryEvents implements Listener {
 	private final InfoBoard infoBoard;
 	private final ArenaBoard arenaBoard;
 	private final Utils utils;
+	private final Kits kits = new Kits();
 	private int arena = 0; // Keeps track of which arena for many of the menus
 	private int oldSlot = 0;
 	private String old = ""; // Old name to revert name back if cancelled during naming
@@ -2045,8 +2047,18 @@ public class InventoryEvents implements Listener {
 			// Remove cost meta
 			buy = Utils.removeLastLore(buy);
 
-			// Subtract from balance, update scoreboard, give item
+			// Make unbreakable for blacksmith
+			if (gamer.getKit().equals("Blacksmith"))
+				buy = Utils.makeUnbreakable(buy);
+
+			// Make splash potion for witch
+			if (gamer.getKit().equals("Witch"))
+				buy = Utils.makeSplash(buy);
+
+			// Subtract from balance, apply rebate, and update scoreboard
 			gamer.addGems(-cost);
+			if (gamer.getKit().equals("Merchant"))
+				gamer.addGems(cost / 20);
 			game.createBoard(gamer);
 
 			EntityEquipment equipment = player.getPlayer().getEquipment();
@@ -2070,6 +2082,163 @@ public class InventoryEvents implements Listener {
 				Utils.giveItem(player, buy);
 				player.sendMessage(Utils.notify("&aItem purchased!"));
 			}
+		}
+
+		// Stats menu for a player
+		else if (title.contains("'s Stats")) {
+			String name = title.substring(6, title.length() - 8);
+			if (buttonName.contains("Kits"))
+				openInv(player, inv.createPlayerKitsInventory(name, player.getName()));
+		}
+
+		// Kits menu for a player
+		else if (title.contains("'s Kits")) {
+			FileConfiguration playerData = plugin.getPlayerData();
+			String name = title.substring(6, title.length() - 7);
+			String kit = buttonName.substring(4);
+			String path = name + ".kits.";
+
+			// Check if requester is owner
+			if (name.equals(player.getName())) {
+				// Single tier kits
+				if (kit.equals("Soldier") || kit.equals("Tailor") || kit.equals("Alchemist") || kit.equals("Trader")
+				|| kit.equals("Phantom") || kit.equals("Blacksmith") || kit.equals("Witch") || kit.equals("Merchant")
+				|| kit.equals("Vampire"))
+					if (!playerData.getBoolean(path + kit))
+						if (playerData.getInt(name + ".crystalBalance") >= kits.getPrice(kit)) {
+							playerData.set(name + ".crystalBalance",
+									playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit));
+							playerData.set(path + kit, true);
+							player.sendMessage(Utils.notify("&aKit purchased!"));
+						} else player.sendMessage(Utils.notify("&cYou can't afford this kit!"));
+
+				// Double tier kits
+				if (kit.equals("Giant"))
+					switch (playerData.getInt(path + kit)) {
+						case 1:
+							if (playerData.getInt(name + ".crystalBalance") >= kits.getPrice(kit, 2)) {
+								playerData.set(name + ".crystalBalance",
+										playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit, 2));
+								playerData.set(path + kit, 2);
+								player.sendMessage(Utils.notify("&aKit upgraded!"));
+							} else player.sendMessage(Utils.notify("&cYou can't afford this upgrade!"));
+							break;
+						case 2:
+							return;
+						default:
+							if (playerData.getInt(name + ".crystalBalance") >= kits.getPrice(kit, 1)) {
+								playerData.set(name + ".crystalBalance",
+										playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit, 1));
+								playerData.set(path + kit, 1);
+								player.sendMessage(Utils.notify("&aKit purchased!"));
+							} else player.sendMessage(Utils.notify("&cYou can't afford this kit!"));
+					}
+
+				// Triple tier kits
+				if (kit.equals("Summoner") || kit.equals("Reaper") || kit.equals("Mage") || kit.equals("Ninja") ||
+						kit.equals("Templar") || kit.equals("Warrior") || kit.equals("Knight") || kit.equals("Priest")
+				|| kit.equals("Siren") || kit.equals("Monk") || kit.equals("Messenger"))
+					switch (playerData.getInt(path + kit)) {
+						case 1:
+							if (playerData.getInt(name + ".crystalBalance") >= kits.getPrice(kit, 2)) {
+								playerData.set(name + ".crystalBalance",
+										playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit, 2));
+								playerData.set(path + kit, 2);
+								player.sendMessage(Utils.notify("&aKit upgraded!"));
+							} else player.sendMessage(Utils.notify("&cYou can't afford this upgrade!"));
+							break;
+						case 2:
+							if (playerData.getInt(name + ".crystalBalance") >= kits.getPrice(kit, 3)) {
+								playerData.set(name + ".crystalBalance",
+										playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit, 3));
+								playerData.set(path + kit, 3);
+								player.sendMessage(Utils.notify("&aKit upgraded!"));
+							} else player.sendMessage(Utils.notify("&cYou can't afford this upgrade!"));
+							break;
+						case 3:
+							return;
+						default:
+							if (playerData.getInt(name + ".crystalBalance") >= kits.getPrice(kit, 1)) {
+								playerData.set(name + ".crystalBalance",
+										playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit, 1));
+								playerData.set(path + kit, 1);
+								player.sendMessage(Utils.notify("&aKit purchased!"));
+							} else player.sendMessage(Utils.notify("&cYou can't afford this kit!"));
+					}
+			}
+
+			if (buttonName.contains("EXIT")) {
+				openInv(player, inv.createPlayerStatsInventory(name));
+				return;
+			}
+
+			plugin.savePlayerData();
+			openInv(player, inv.createPlayerKitsInventory(name, name));
+		}
+
+		// Kit selection menu for an arena
+		else if (title.contains(" Kits")) {
+			FileConfiguration playerData = plugin.getPlayerData();
+			Arena arenaInstance = game.arenas.stream().filter(Objects::nonNull)
+					.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
+			VDPlayer gamer = arenaInstance.getPlayer(player);
+			String kit = buttonName.substring(4);
+			String path = player.getName() + ".kits.";
+
+			// Single tier kits
+			if (kit.equals("Orc") || kit.equals("Farmer") || kit.equals("Soldier") || kit.equals("Tailor") ||
+					kit.equals("Alchemist") || kit.equals("Trader") || kit.equals("Phantom") || kit.equals("Blacksmith")
+					|| kit.equals("Witch") || kit.equals("Merchant") || kit.equals("Vampire"))
+				if (playerData.getBoolean(path + kit)) {
+					gamer.setKit(kit);
+					player.sendMessage(Utils.notify("&aKit selected!"));
+				} else player.sendMessage(Utils.notify("&cYou don't own this kit!"));
+
+			// Double tier kits
+			if (kit.equals("Giant"))
+				switch (playerData.getInt(path + kit)) {
+					case 1:
+						gamer.setKit(kit + 1);
+						player.sendMessage(Utils.notify("&aKit selected!"));
+						break;
+					case 2:
+						gamer.setKit(kit + 2);
+						player.sendMessage(Utils.notify("&aKit selected!"));
+						break;
+					default:
+						player.sendMessage(Utils.notify("&cYou don't own this kit!"));
+				}
+
+			// Triple tier kits
+			if (kit.equals("Summoner") || kit.equals("Reaper") || kit.equals("Mage") || kit.equals("Ninja") ||
+					kit.equals("Templar") || kit.equals("Warrior") || kit.equals("Knight") || kit.equals("Priest")
+					|| kit.equals("Siren") || kit.equals("Monk") || kit.equals("Messenger"))
+				switch (playerData.getInt(path + kit)) {
+					case 1:
+						gamer.setKit(kit + 1);
+						player.sendMessage(Utils.notify("&aKit selected!"));
+						break;
+					case 2:
+						gamer.setKit(kit + 2);
+						player.sendMessage(Utils.notify("&aKit selected!"));
+						break;
+					case 3:
+						gamer.setKit(kit + 3);
+						player.sendMessage(Utils.notify("&aKit selected!"));
+						break;
+					default:
+						player.sendMessage(Utils.notify("&cYou don't own this kit!"));
+				}
+
+			// No kit
+			if (kit.equals("None")) {
+				gamer.setKit(null);
+				player.sendMessage(Utils.notify("&aKit selected!"));
+			}
+
+			// Close inventory
+			if (buttonName.contains("EXIT"))
+				player.closeInventory();
 		}
 	}
 	

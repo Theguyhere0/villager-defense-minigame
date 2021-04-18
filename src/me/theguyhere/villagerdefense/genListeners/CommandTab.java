@@ -11,7 +11,7 @@ import java.util.List;
 
 public class CommandTab implements TabCompleter {
 
-    private final String[] arguments = {"help", "leave", "stats"};
+    private final String[] arguments = {"help", "leave", "stats", "kits", "select"};
 
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String label, String[] args) {

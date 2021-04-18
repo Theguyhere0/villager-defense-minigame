@@ -3,6 +3,7 @@ package me.theguyhere.villagerdefense.genListeners;
 import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.customEvents.LeaveArenaEvent;
+import me.theguyhere.villagerdefense.game.models.Arena;
 import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.tools.Utils;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -12,6 +13,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Commands implements CommandExecutor {
 	Main plugin;
@@ -74,6 +78,34 @@ public class Commands implements CommandExecutor {
 				else if (plugin.getPlayerData().contains(args[1]))
 					player.openInventory(inv.createPlayerStatsInventory(args[1]));
 				else player.sendMessage(Utils.notify("&c" + args[1] + " does not have stats."));
+				return true;
+			}
+
+			// Player checks kits
+			if (args[0].equalsIgnoreCase("kits")) {
+				player.openInventory(inv.createPlayerKitsInventory(player.getName(), player.getName()));
+				return true;
+			}
+
+			// Player selects kits
+			if (args[0].equalsIgnoreCase("select")) {
+				// Check if player is in a game
+				if (game.arenas.stream().filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player))) {
+					player.sendMessage(Utils.notify("&cYou must be in a game to use this command!"));
+					return true;
+				}
+
+				Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(arena1 -> arena1.hasPlayer(player))
+						.collect(Collectors.toList()).get(0);
+
+				// Check arena is in session
+				if (arena.isActive()) {
+					player.sendMessage(Utils.notify("&cYou cannot change kits during the game!"));
+					return true;
+				}
+
+				// Open inventory
+				player.openInventory(inv.createSelectKitsInventory(player, arena));
 				return true;
 			}
 

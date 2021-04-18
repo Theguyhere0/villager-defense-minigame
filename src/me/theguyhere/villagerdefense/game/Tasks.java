@@ -7,12 +7,14 @@ import me.theguyhere.villagerdefense.customEvents.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.customEvents.WaveEndEvent;
 import me.theguyhere.villagerdefense.customEvents.WaveStartEvent;
 import me.theguyhere.villagerdefense.game.displays.Portal;
-import me.theguyhere.villagerdefense.game.models.Arena;
-import me.theguyhere.villagerdefense.game.models.Game;
+import me.theguyhere.villagerdefense.game.models.*;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.boss.BarColor;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -132,8 +134,7 @@ public class Tasks {
 			// Revive dead players
 			arenaInstance.getGhosts().forEach(p -> {
 				Utils.teleAdventure(p.getPlayer(), arenaInstance.getPlayerSpawn());
-				p.getPlayer().getInventory().addItem(new ItemStack(Material.WOODEN_SWORD));
-				p.getPlayer().getInventory().addItem(GameItems.shop());
+				giveItems(p);
 			});
 
 			arenaInstance.getActives().forEach(p -> {
@@ -195,12 +196,21 @@ public class Tasks {
 
 			// Give all players a wooden sword and a shop while removing pre-game protection
 			arenaInstance.getActives().forEach(player -> {
-				player.getPlayer().getInventory().addItem(new ItemStack(Material.WOODEN_SWORD));
-				player.getPlayer().getInventory().addItem(GameItems.shop());
 				player.getPlayer().setFireTicks(0);
 				player.getPlayer().setInvulnerable(false);
+				giveItems(player);
+
+				// Set health for people with giant kits
+				if (player.getKit().equals("Giant1"))
+					player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)
+							.addModifier(new AttributeModifier("Giant1", 4,
+									AttributeModifier.Operation.ADD_NUMBER));
+				else if (player.getKit().equals("Giant2"))
+					player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)
+							.addModifier(new AttributeModifier("Giant1", 8,
+									AttributeModifier.Operation.ADD_NUMBER));
 			});
-			
+
 			// Set arena to active and reset villager and enemy count
 			arenaInstance.setActive(true);
 			arenaInstance.resetVillagers();
@@ -297,4 +307,177 @@ public class Tasks {
 
 		}
 	};
+
+	// Gives items on spawn or respawn based on kit selected
+	private void giveItems(VDPlayer player) {
+		switch (player.getKit()) {
+			case "Orc":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.orc());
+				break;
+			case "Farmer":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.farmer());
+				break;
+			case "Soldier":
+				Utils.giveItem(player.getPlayer(), Kits.soldier());
+				break;
+			case "Tailor":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				EntityEquipment equipment = player.getPlayer().getEquipment();
+				equipment.setHelmet(Kits.tailorHelmet());
+				equipment.setChestplate(Kits.tailorChestplate());
+				equipment.setLeggings(Kits.tailorLeggings());
+				equipment.setBoots(Kits.tailorBoots());
+				break;
+			case "Alchemist":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.alchemistSpeed());
+				Utils.giveItem(player.getPlayer(), Kits.alchemistRegeneration());
+				Utils.giveItem(player.getPlayer(), Kits.alchemistStrength());
+				break;
+			case "Trader":
+				player.addGems(200);
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				break;
+			case "Summoner1":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.summoner1());
+				break;
+			case "Summoner2":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.summoner2());
+				break;
+			case "Summoner3":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.summoner3());
+				break;
+			case "Reaper1":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.reaper1());
+				break;
+			case "Reaper2":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.reaper2());
+				break;
+			case "Reaper3":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.reaper3());
+				break;
+			case "Mage1":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.mage1());
+				break;
+			case "Mage2":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.mage2());
+				break;
+			case "Mage3":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.mage3());
+				break;
+			case "Ninja1":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.ninja1());
+				break;
+			case "Ninja2":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.ninja2());
+				break;
+			case "Ninja3":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.ninja3());
+				break;
+			case "Templar1":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.templar1());
+				break;
+			case "Templar2":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.templar2());
+				break;
+			case "Templar3":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.templar3());
+				break;
+			case "Warrior1":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.warrior1());
+				break;
+			case "Warrior2":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.warrior2());
+				break;
+			case "Warrior3":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.warrior3());
+				break;
+			case "Knight1":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.knight1());
+				break;
+			case "Knight2":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.knight2());
+				break;
+			case "Knight3":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.knight3());
+				break;
+			case "Priest1":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.priest1());
+				break;
+			case "Priest2":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.priest2());
+				break;
+			case "Priest3":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.priest3());
+				break;
+			case "Siren1":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.siren1());
+				break;
+			case "Siren2":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.siren2());
+				break;
+			case "Siren3":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.siren3());
+				break;
+			case "Monk1":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.monk1());
+				break;
+			case "Monk2":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.monk2());
+				break;
+			case "Monk3":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.monk3());
+				break;
+			case "Messenger1":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.messenger1());
+				break;
+			case "Messenger2":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.messenger2());
+				break;
+			case "Messenger3":
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+				Utils.giveItem(player.getPlayer(), Kits.messenger3());
+				break;
+			case "Blacksmith":
+				Utils.giveItem(player.getPlayer(), Utils.makeUnbreakable(new ItemStack(Material.WOODEN_SWORD)));
+				break;
+			default:
+				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
+		}
+		Utils.giveItem(player.getPlayer(), GameItems.shop());
+	}
 }

@@ -4,7 +4,7 @@ import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.customEvents.GameEndEvent;
 import me.theguyhere.villagerdefense.customEvents.WaveEndEvent;
-import me.theguyhere.villagerdefense.game.GameItems;
+import me.theguyhere.villagerdefense.game.models.GameItems;
 import me.theguyhere.villagerdefense.game.models.Arena;
 import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.game.models.VDPlayer;
@@ -23,10 +23,8 @@ import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -75,6 +73,7 @@ public class GameEvents implements Listener {
 			if (ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin) {
 				// Set drop to emerald
 				e.getDrops().add(Utils.createItem(Material.EMERALD, null, Integer.toString(arena.getArena())));
+				e.setDroppedExp((int) arena.getCurrentDifficulty());
 
 				// Decrement enemy count
 				arena.decrementEnemies();
@@ -513,6 +512,7 @@ public class GameEvents implements Listener {
 
 		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0);
+		VDPlayer gamer = arena.getPlayer(player);
 
 		// Wolf spawn
 		if (item.getType() == Material.WOLF_SPAWN_EGG) {
@@ -572,8 +572,13 @@ public class GameEvents implements Listener {
 			else player.getInventory().setItemInMainHand(null);
 
 			// Give items and notify
-			Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(1)));
-			Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(1)));
+			if (gamer.getKit().equals("Blacksmith")) {
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(1))));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(1))));
+			} else {
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(1)));
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(1)));
+			}
 			player.sendMessage(Utils.notify("&aCare package delivered!"));
 		}
 
@@ -585,9 +590,17 @@ public class GameEvents implements Listener {
 			else player.getInventory().setItemInMainHand(null);
 
 			// Give items and notify
-			Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(2)));
-			Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(2)));
-			Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(2)));
+			if (gamer.getKit().equals("Blacksmith")) {
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(2))));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(2))));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randConsumable(2))));
+			} else {
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(2)));
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(2)));
+				if (gamer.getKit().equals("Witch"))
+					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randConsumable(2))));
+				else Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(2)));
+			}
 			player.sendMessage(Utils.notify("&aCare package delivered!"));
 		}
 
@@ -599,10 +612,19 @@ public class GameEvents implements Listener {
 			else player.getInventory().setItemInMainHand(null);
 
 			// Give items and notify
-			Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(4)));
-			Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(3)));
-			Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(3)));
-			Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(3)));
+			if (gamer.getKit().equals("Blacksmith")) {
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(4))));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(3))));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(3))));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randConsumable(3))));
+			} else {
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(4)));
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(3)));
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(3)));
+				if (gamer.getKit().equals("Witch"))
+					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randConsumable(3))));
+				else Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(3)));
+			}
 			player.sendMessage(Utils.notify("&aCare package delivered!"));
 		}
 
@@ -614,12 +636,26 @@ public class GameEvents implements Listener {
 			else player.getInventory().setItemInMainHand(null);
 
 			// Give items and notify
-			Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(5)));
-			Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(4)));
-			Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(5)));
-			Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(4)));
-			Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(4)));
-			Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(4)));
+			if (gamer.getKit().equals("Blacksmith")) {
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(5))));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(4))));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(5))));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(4))));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randConsumable(4))));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randConsumable(4))));
+			} else {
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(5)));
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(4)));
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(5)));
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(4)));
+				if (gamer.getKit().equals("Witch")) {
+					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randConsumable(4))));
+					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randConsumable(4))));
+				} else {
+					Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(4)));
+					Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(4)));
+				}
+			}
 			player.sendMessage(Utils.notify("&aCare package delivered!"));
 		}
 	}
