@@ -12,6 +12,7 @@ import me.theguyhere.villagerdefense.tools.DataManager;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -114,6 +115,10 @@ public class ArenaEvents implements Listener {
             // Give them a game board
             game.createBoard(fighter);
 
+            // Play waiting music
+            if (arena.getWaitingSound() != null)
+                player.playSound(arena.getWaitingRoom(), arena.getWaitingSound(), 4, 0);
+
             // Tell player to choose a kit and automatically open inventory
             player.openInventory(inv.createSelectKitsInventory(player, arena));
             player.sendMessage(Utils.notify("&6Use &b/vd select &6to choose a kit!"));
@@ -214,6 +219,11 @@ public class ArenaEvents implements Listener {
             arena.removeTimeLimitBar();
         }
 
+        // Play wave end sound
+        if (arena.isWaveFinishSound() && arena.getCurrentWave() != 0)
+            arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
+                    Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 10, 0));
+
         FileConfiguration playerData = plugin.getPlayerData();
 
         // Update player stats
@@ -228,6 +238,9 @@ public class ArenaEvents implements Listener {
             arena.incrementCurrentWave();
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
                     Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
+            if (arena.isWinSound())
+                arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
+                        Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 0));
         }
 
         // Start the next wave
@@ -243,6 +256,11 @@ public class ArenaEvents implements Listener {
             e.setCancelled(true);
             return;
         }
+
+        // Play wave start sound
+        if (arena.isWaveStartSound())
+            arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
+                    Sound.ENTITY_ENDER_DRAGON_GROWL, 10, 0));
 
         Tasks task = arena.getTask();
 
@@ -270,6 +288,9 @@ public class ArenaEvents implements Listener {
         Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
                 .collect(Collectors.toList()).get(0);
         VDPlayer gamer = arena.getPlayer(player);
+
+        // Stop playing possible ending sound
+        player.stopSound(Sound.ENTITY_ENDER_DRAGON_DEATH);
 
         // Not spectating
         if (!gamer.isSpectating()) {

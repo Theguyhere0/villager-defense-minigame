@@ -9,10 +9,7 @@ import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.game.models.GameItems;
 import me.theguyhere.villagerdefense.game.models.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
@@ -62,6 +59,9 @@ public class GameEvents implements Listener {
 			if (arena.getVillagers() == 0 && !arena.isSpawning()) {
 				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 						Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
+				if (arena.isLoseSound())
+					arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
+							Sound.ENTITY_ENDER_DRAGON_DEATH, 10, 0));
 			}
 		}
 
@@ -323,9 +323,13 @@ public class GameEvents implements Listener {
 			arena.getTask().updateBoards.run();
 
 			// Check for game end condition
-			if (arena.getAlive() == 0)
+			if (arena.getAlive() == 0) {
 				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 						Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
+				if (arena.isLoseSound())
+					arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
+							Sound.ENTITY_ENDER_DRAGON_DEATH, 10, 0));
+			}
 		}
 	}
 
@@ -363,6 +367,7 @@ public class GameEvents implements Listener {
 		e.setCancelled(true);
 		e.getItem().remove();
 		player.sendMessage(Utils.notify("&fYou found &a" + (earned) + "&f gem(s)!"));
+		player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, .5f, 0);
 
 		FileConfiguration playerData = plugin.getPlayerData();
 
@@ -407,17 +412,24 @@ public class GameEvents implements Listener {
 		player.getInventory().clear();
 
 		// Notify everyone of player death
-		arena.getPlayers().forEach(gamer ->
+		arena.getPlayers().forEach(gamer -> {
 				gamer.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&c has died and will " +
-						"respawn next round.")));
+						"respawn next round."));
+				if (arena.isPlayerDeathSound())
+					gamer.getPlayer().playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 4, 0);
+		});
 
 		// Update scoreboards
 		arena.getTask().updateBoards.run();
 
 		// Check for game end condition
-		if (arena.getAlive() == 0)
+		if (arena.getAlive() == 0) {
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 					Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
+			if (arena.isLoseSound())
+				arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
+						Sound.ENTITY_ENDER_DRAGON_DEATH, 10, 0));
+		}
 	}
 
 	// Update player kill counter
@@ -494,6 +506,10 @@ public class GameEvents implements Listener {
 
 		// Wolf spawn
 		if (item.getType() == Material.WOLF_SPAWN_EGG) {
+			// Ignore if it wasn't a right click on a block
+			if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
+				return;
+
 			// Cancel normal spawn
 			e.setCancelled(true);
 
@@ -523,6 +539,10 @@ public class GameEvents implements Listener {
 
 		// Iron golem spawn
 		if (item.getItemMeta().getDisplayName().contains("Iron Golem Spawn Egg")) {
+			// Ignore if it wasn't a right click on a block
+			if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
+				return;
+
 			// Cancel normal spawn
 			e.setCancelled(true);
 

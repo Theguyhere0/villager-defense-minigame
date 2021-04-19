@@ -6,6 +6,7 @@ import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -30,11 +31,18 @@ public class Arena {
     private int maxWaves; // Maximum waves in an arena
     private int waveTimeLimit; // Base wave time limit
     private int difficultyMultiplier;
+    private int waitingSound; // Selected waiting music
     private Location playerSpawn; // Location of player spawn
     private Location waitingRoom; // Location of waiting room
     private List<Location> monsterSpawns = new ArrayList<>(); // List of monster spawn locations
     private List<Location> villagerSpawns = new ArrayList<>(); // List of villager spawn locations
     private List<String> bannedKits = new ArrayList<>(); // LIst of kits that aren't allowed in the arena
+    private boolean winSound; // Toggle for win sound
+    private boolean loseSound; // Toggle for lose sound
+    private boolean waveStartSound; // Toggle for wave start sound
+    private boolean waveFinishSound; // Toggle for wave finish sound
+    private boolean gemSound; // Toggle for gem pickup sound
+    private boolean playerDeathSound; // Toggle for player death sound
     private boolean dynamicCount; // Toggle for dynamic mob count
     private boolean dynamicDifficulty; // Toggle for dynamic difficulty
     private boolean dynamicPrices; // Toggle for dynamic prices
@@ -105,6 +113,70 @@ public class Arena {
         return difficultyMultiplier;
     }
 
+    public Sound getWaitingSound() {
+        switch (waitingSound) {
+            case 0:
+                return Sound.MUSIC_DISC_CAT;
+            case 1:
+                return Sound.MUSIC_DISC_BLOCKS;
+            case 2:
+                return Sound.MUSIC_DISC_FAR;
+            case 3:
+                return Sound.MUSIC_DISC_STRAD;
+            case 4:
+                return Sound.MUSIC_DISC_MELLOHI;
+            case 5:
+                return Sound.MUSIC_DISC_WARD;
+            case 9:
+                return Sound.MUSIC_DISC_CHIRP;
+            case 10:
+                return Sound.MUSIC_DISC_STAL;
+            case 11:
+                return Sound.MUSIC_DISC_MALL;
+            case 12:
+                return Sound.MUSIC_DISC_WAIT;
+            case 13:
+                return Sound.MUSIC_DISC_PIGSTEP;
+            default:
+                return null;
+        }
+    }
+
+    public String getWaitingSoundName() {
+        switch (waitingSound) {
+            case 0:
+                return "Cat";
+            case 1:
+                return "Blocks";
+            case 2:
+                return "Far";
+            case 3:
+                return "Strad";
+            case 4:
+                return "Mellohi";
+            case 5:
+                return "Ward";
+            case 9:
+                return "Chirp";
+            case 10:
+                return "Stal";
+            case 11:
+                return "Mall";
+            case 12:
+                return "Wait";
+            case 13:
+                return "Pigstep";
+            default:
+                return "None";
+        }
+    }
+
+    public void setWaitingSound(int sound) {
+        plugin.getArenaData().set("a" + arena + ".sounds.waiting", sound);
+        plugin.saveArenaData();
+        waitingSound = sound;
+    }
+
     public Location getPlayerSpawn() {
         return playerSpawn;
     }
@@ -137,6 +209,66 @@ public class Arena {
 
     public String getSpawnTableFile() {
         return spawnTableFile;
+    }
+
+    public boolean isWinSound() {
+        return winSound;
+    }
+
+    public void flipWinSound() {
+        plugin.getArenaData().set("a" + arena + ".sounds.win", !winSound);
+        plugin.saveArenaData();
+        winSound = !winSound;
+    }
+
+    public boolean isLoseSound() {
+        return loseSound;
+    }
+
+    public void flipLoseSound() {
+        plugin.getArenaData().set("a" + arena + ".sounds.lose", !loseSound);
+        plugin.saveArenaData();
+        loseSound = !loseSound;
+    }
+
+    public boolean isWaveStartSound() {
+        return waveStartSound;
+    }
+
+    public void flipWaveStartSound() {
+        plugin.getArenaData().set("a" + arena + ".sounds.start", !waveStartSound);
+        plugin.saveArenaData();
+        waveStartSound = !waveStartSound;
+    }
+
+    public boolean isWaveFinishSound() {
+        return waveFinishSound;
+    }
+
+    public void flipWaveFinishSound() {
+        plugin.getArenaData().set("a" + arena + ".sounds.end", !waveFinishSound);
+        plugin.saveArenaData();
+        waveFinishSound = !waveFinishSound;
+    }
+
+    public boolean isGemSound() {
+        return gemSound;
+    }
+
+    public void flipGemSound() {
+        plugin.getArenaData().set("a" + arena + ".sounds.gem", !gemSound);
+        plugin.saveArenaData();
+        gemSound = !gemSound;
+    }
+
+    public boolean isPlayerDeathSound() {
+        return playerDeathSound;
+    }
+
+    public void flipPlayerDeathSound() {
+        plugin.getArenaData().set("a" + arena + ".sounds.death", !playerDeathSound);
+        plugin.saveArenaData();
+        playerDeathSound = !playerDeathSound;
     }
 
     public boolean isDynamicCount() {
@@ -396,6 +528,7 @@ public class Arena {
         maxWaves = config.getInt(path + ".maxWaves");
         waveTimeLimit = config.getInt(path + ".waveTimeLimit");
         difficultyMultiplier = config.getInt(path + ".difficulty");
+        waitingSound = config.getInt(path + ".sounds.waiting");
         playerSpawn = utils.getConfigLocationNoRotation(path + ".spawn");
         waitingRoom = utils.getConfigLocationNoRotation(path + ".waiting");
         monsterSpawns = utils.getConfigLocationList(path + ".monster").stream()
@@ -404,6 +537,12 @@ public class Arena {
                 .filter(Objects::nonNull).collect(Collectors.toList());
         bannedKits = config.getStringList(path + ".bannedKits");
         spawnTableFile = config.getString(path + ".spawnTable");
+        winSound = config.getBoolean(path + ".sounds.win");
+        loseSound = config.getBoolean(path + ".sounds.lose");
+        waveStartSound = config.getBoolean(path + ".sounds.start");
+        waveFinishSound = config.getBoolean(path + ".sounds.end");
+        gemSound = config.getBoolean(path + ".sounds.gem");
+        playerDeathSound = config.getBoolean(path + ".sounds.death");
         dynamicCount = config.getBoolean(path + ".dynamicCount");
         dynamicDifficulty = config.getBoolean(path + ".dynamicDifficulty");
         dynamicPrices = config.getBoolean(path + ".dynamicPrices");

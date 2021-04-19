@@ -612,6 +612,17 @@ public class InventoryEvents implements Listener {
 				if (!config.contains("a" + arena + ".closed"))
 					config.set("a" + arena + ".closed", true);
 
+				// Set default sound options
+				if (!config.contains("a" + arena + ".sounds")) {
+					config.set("a" + arena + ".sounds.win", true);
+					config.set("a" + arena + ".sounds.lose", true);
+					config.set("a" + arena + ".sounds.start", true);
+					config.set("a" + arena + ".sounds.end", true);
+					config.set("a" + arena + ".sounds.gem", true);
+					config.set("a" + arena + ".sounds.death", true);
+					config.set("a" + arena + ".sounds.waiting", 14);
+				}
+
 				plugin.saveArenaData();
 				arenaInstance.updateArena();
 				arenaInstance.updateArena();
@@ -1917,25 +1928,66 @@ public class InventoryEvents implements Listener {
 
 		// Sound settings menu for an arena
 		else if (title.contains("Sounds:")) {
-			// Edit win sound
-//			if (buttonName.contains("Win"))
+			Arena arenaInstance = game.arenas.get(arena);
 
-			// Edit lose sound
-//			else if (buttonName.contains("Lose"))
+			// Toggle win sound
+			if (buttonName.contains("Win")) {
+				arenaInstance.flipWinSound();
+				openInv(player, inv.createSoundsInventory(arena));
+			}
 
-			// Edit wave start sound
-//			else if (buttonName.contains("Start"))
+			// Toggle lose sound
+			else if (buttonName.contains("Lose")) {
+				arenaInstance.flipLoseSound();
+				openInv(player, inv.createSoundsInventory(arena));
+			}
 
-			// Edit wave finish sound
-//			else if (buttonName.contains("Finish"))
+			// Toggle wave start sound
+			else if (buttonName.contains("Start")) {
+				arenaInstance.flipWaveStartSound();
+				openInv(player, inv.createSoundsInventory(arena));
+			}
 
-			// Edit waiting music
-//			else if (buttonName.contains("Waiting"))
+			// Toggle wave finish sound
+			else if (buttonName.contains("Finish")) {
+				arenaInstance.flipWaveFinishSound();
+				openInv(player, inv.createSoundsInventory(arena));
+			}
+
+			// Edit waiting sound
+			else if (buttonName.contains("Waiting"))
+				openInv(player, inv.createWaitSoundInventory(arena));
+
+			// Toggle gem pickup sound
+			else if (buttonName.contains("Gem")) {
+				arenaInstance.flipGemSound();
+				openInv(player, inv.createSoundsInventory(arena));
+			}
+
+			// Toggle player death sound
+			else if (buttonName.contains("Death")) {
+				arenaInstance.flipPlayerDeathSound();
+				openInv(player, inv.createSoundsInventory(arena));
+			}
 
 			// Exit menu
-//			else if (buttonName.contains("EXIT"))
-			if (buttonName.contains("EXIT"))
+			else if (buttonName.contains("EXIT"))
 				openInv(player, inv.createGameSettingsInventory(arena));
+		}
+
+		// Waiting sound menu for an arena
+		else if (title.contains("Waiting Sound:")) {
+			Arena arenaInstance = game.arenas.get(arena);
+
+			// Exit menu
+			if (buttonName.contains("EXIT"))
+				openInv(player, inv.createSoundsInventory(arena));
+
+			// Set sound
+			else {
+				arenaInstance.setWaitingSound(slot);
+				openInv(player, inv.createWaitSoundInventory(arena));
+			}
 		}
 
 		// Menu to copy game settings
@@ -1956,6 +2008,13 @@ public class InventoryEvents implements Listener {
 				config.set(path + ".dynamicPrices", config.getBoolean(path2 + ".dynamicPrices"));
 				config.set(path + ".difficultyLabel", config.getString(path2 + ".difficultyLabel"));
 				config.set(path + ".bannedKits", config.getStringList(path2 + ".bannedKits"));
+				config.set(path + ".sounds.win", config.getBoolean(path2 + ".sounds.win"));
+				config.set(path + ".sounds.lose", config.getBoolean(path2 + ".sounds.lose"));
+				config.set(path + ".sounds.start", config.getBoolean(path2 + ".sounds.start"));
+				config.set(path + ".sounds.end", config.getBoolean(path2 + ".sounds.end"));
+				config.set(path + ".sounds.gem", config.getBoolean(path2 + ".sounds.gem"));
+				config.set(path + ".sounds.death", config.getBoolean(path2 + ".sounds.death"));
+				config.set(path + ".sounds.waiting", config.getInt(path2 + ".sounds.waiting"));
 			}
 
 			// Copy easy preset

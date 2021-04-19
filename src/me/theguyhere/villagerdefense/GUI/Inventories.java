@@ -1485,60 +1485,90 @@ public class Inventories {
 
 	// Menu for editing the sounds of an arena
 	public Inventory createSoundsInventory(int arena) {
+		Arena arenaInstance = game.arenas.get(arena);
+
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&d&lSounds: " + game.arenas.get(arena).getName()));
 
 		// Option to edit win sound
 		inv.setItem(0, Utils.createItem(Material.MUSIC_DISC_PIGSTEP,
-				Utils.format("&a&lWin"),
+				Utils.format("&a&lWin Sound: " + (arenaInstance.isWinSound() ? "&a&lON" : "&c&lOFF")),
 				FLAGS,
 				null,
-				Utils.format("&7Played when game ends and players win"),
-				Utils.format(CONSTRUCTION)));
+				Utils.format("&7Played when game ends and players win")));
 
 		// Option to edit lose sound
 		inv.setItem(1, Utils.createItem(Material.MUSIC_DISC_11,
-				Utils.format("&e&lLose"),
+				Utils.format("&e&lLose Sound: " + (arenaInstance.isLoseSound() ? "&a&lON" : "&c&lOFF")),
 				FLAGS,
 				null,
-				Utils.format("&7Played when game ends and players lose"),
-				Utils.format(CONSTRUCTION)));
+				Utils.format("&7Played when game ends and players lose")));
 
 		// Option to edit wave start sound
 		inv.setItem(2, Utils.createItem(Material.MUSIC_DISC_CAT,
-				Utils.format("&2&lWave Start"),
+				Utils.format("&2&lWave Start Sound: " + (arenaInstance.isWaveStartSound() ? "&a&lON" : "&c&lOFF")),
 				FLAGS,
 				null,
-				Utils.format("&7Played when a wave starts"),
-				Utils.format(CONSTRUCTION)));
+				Utils.format("&7Played when a wave starts")));
 
 		// Option to edit wave finish sound
 		inv.setItem(3, Utils.createItem(Material.MUSIC_DISC_BLOCKS,
-				Utils.format("&4&lWave Finish"),
+				Utils.format("&9&lWave Finish Sound: " + (arenaInstance.isWaveFinishSound() ? "&a&lON" : "&c&lOFF")),
 				FLAGS,
 				null,
-				Utils.format("&7Played when a wave ends"),
-				Utils.format(CONSTRUCTION)));
+				Utils.format("&7Played when a wave ends")));
 
 		// Option to edit waiting music
 		inv.setItem(4, Utils.createItem(Material.MUSIC_DISC_MELLOHI,
-				Utils.format("&6&lWaiting Music"),
+				Utils.format("&6&lWaiting Sound"),
 				FLAGS,
 				null,
-				Utils.format("&7Played while players wait for game to start"),
-				Utils.format(CONSTRUCTION)));
+				Utils.format("&7Played while players wait for game to start")));
 
 		// Option to edit gem pickup sound
 		inv.setItem(5, Utils.createItem(Material.MUSIC_DISC_FAR,
-				Utils.format("&b&lGem Pickup Music"),
+				Utils.format("&b&lGem Pickup Sound: " + (arenaInstance.isGemSound() ? "&a&lON" : "&c&lOFF")),
 				FLAGS,
 				null,
-				Utils.format("&7Played when players pick up gems"),
-				Utils.format(CONSTRUCTION)));
+				Utils.format("&7Played when players pick up gems")));
+
+		// Option to edit player death sound
+		inv.setItem(6, Utils.createItem(Material.MUSIC_DISC_CHIRP,
+				Utils.format("&4&lPlayer Death Sound: " + (arenaInstance.isPlayerDeathSound() ? "&a&lON" : "&c&lOFF")),
+				FLAGS,
+				null,
+				Utils.format("&7Played when a player dies")));
 
 		// Option to exit
 		inv.setItem(8, ii.exit());
+
+		return inv;
+	}
+
+	// Menu for editing the win sound of an arena
+	public Inventory createWaitSoundInventory(int arena) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 18, Utils.format("&k") +
+				Utils.format("&6&lWaiting Sound: " + game.arenas.get(arena).getWaitingSoundName()));
+
+		// Sound options
+		inv.setItem(0, Utils.createItem(Material.MUSIC_DISC_CAT, null));
+		inv.setItem(1, Utils.createItem(Material.MUSIC_DISC_BLOCKS, null));
+		inv.setItem(2, Utils.createItem(Material.MUSIC_DISC_FAR, null));
+		inv.setItem(3, Utils.createItem(Material.MUSIC_DISC_STRAD, null));
+		inv.setItem(4, Utils.createItem(Material.MUSIC_DISC_MELLOHI, null));
+		inv.setItem(5, Utils.createItem(Material.MUSIC_DISC_WARD, null));
+
+		inv.setItem(9, Utils.createItem(Material.MUSIC_DISC_CHIRP, null));
+		inv.setItem(10, Utils.createItem(Material.MUSIC_DISC_STAL, null));
+		inv.setItem(11, Utils.createItem(Material.MUSIC_DISC_MALL, null));
+		inv.setItem(12, Utils.createItem(Material.MUSIC_DISC_WAIT, null));
+		inv.setItem(13, Utils.createItem(Material.MUSIC_DISC_PIGSTEP, null));
+		inv.setItem(14, Utils.createItem(Material.LIGHT_GRAY_CONCRETE, Utils.format("&fNone")));
+
+		// Option to exit
+		inv.setItem(17, ii.exit());
 
 		return inv;
 	}

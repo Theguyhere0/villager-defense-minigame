@@ -66,7 +66,7 @@ public class Tasks {
 		@Override
 		public void run() {
 			game.arenas.get(arena).getPlayers().forEach(player ->
-					player.getPlayer().sendMessage(Utils.notify("&b1 &6minutes until the game starts!")));
+					player.getPlayer().sendMessage(Utils.notify("&b1 &6minute until the game starts!")));
 		}
 		
 	};
@@ -192,6 +192,9 @@ public class Tasks {
 						Utils.teleAdventure(player.getPlayer(), arenaInstance.getPlayerSpawn()));
 				arenaInstance.getSpectators().forEach(player ->
 						Utils.teleSpectator(player.getPlayer(), arenaInstance.getPlayerSpawn()));
+				if (arenaInstance.getWaitingSound() != null)
+					arenaInstance.getPlayers().forEach(player ->
+							player.getPlayer().stopSound(arenaInstance.getWaitingSound()));
 			}
 
 			// Give all players a wooden sword and a shop while removing pre-game protection
