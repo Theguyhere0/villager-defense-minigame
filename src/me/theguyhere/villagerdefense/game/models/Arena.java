@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.game.models;
 
+import me.theguyhere.villagerdefense.GUI.InventoryItems;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.game.Tasks;
 import me.theguyhere.villagerdefense.tools.Utils;
@@ -13,6 +14,8 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,6 +40,8 @@ public class Arena {
     private List<Location> monsterSpawns = new ArrayList<>(); // List of monster spawn locations
     private List<Location> villagerSpawns = new ArrayList<>(); // List of villager spawn locations
     private List<String> bannedKits = new ArrayList<>(); // LIst of kits that aren't allowed in the arena
+    private boolean normal; // Toggle for normal shop
+    private boolean custom; // Toggle for custom shop
     private boolean winSound; // Toggle for win sound
     private boolean loseSound; // Toggle for lose sound
     private boolean waveStartSound; // Toggle for wave start sound
@@ -48,7 +53,7 @@ public class Arena {
     private boolean dynamicPrices; // Toggle for dynamic prices
     private boolean dynamicLimit; // Toggle for dynamic wave time limit
     private boolean closed; // Indicates whether the arena is closed
-    private final List<ArenaRecord> arenaRecords = new ArrayList<>(); // List of top arena records
+    private List<ArenaRecord> arenaRecords = new ArrayList<>(); // List of top arena records
 
     // Temporary data
     private final Tasks task; // The tasks object for the arena
@@ -63,7 +68,6 @@ public class Arena {
     private Inventory weaponShop; // Weapon shop inventory
     private Inventory armorShop; // Armor shop inventory
     private Inventory consumeShop; // Consumables shop inventory
-    private Inventory customShop; // Custom shop inventory
     private BossBar timeLimitBar; // Time limit bar
 
     public Arena(Main plugin, int arena, Tasks task) {
@@ -197,18 +201,28 @@ public class Arena {
         return bannedKits;
     }
 
-    public void addBannedKit(String kit) {
-        bannedKits.add(kit);
-        plugin.getArenaData().set("a" + arena + ".bannedKits", bannedKits);
-    }
-
-    public void removeBannedKit(String kit) {
-        bannedKits.remove(kit);
-        plugin.getArenaData().set("a" + arena + ".bannedKits", bannedKits);
-    }
-
     public String getSpawnTableFile() {
         return spawnTableFile;
+    }
+
+    public boolean isNormal() {
+        return normal;
+    }
+
+    public void flipNormal() {
+        plugin.getArenaData().set("a" + arena + ".normal", !normal);
+        plugin.saveArenaData();
+        normal = !normal;
+    }
+
+    public boolean isCustom() {
+        return custom;
+    }
+
+    public void flipCustom() {
+        plugin.getArenaData().set("a" + arena + ".custom", !custom);
+        plugin.saveArenaData();
+        custom = !custom;
     }
 
     public boolean isWinSound() {
@@ -476,12 +490,100 @@ public class Arena {
         this.consumeShop = consumeShop;
     }
 
-    public Inventory getCustomShop() {
-        return customShop;
+    public Inventory getCustomShopEditor() {
+        // Create inventory
+        Inventory inv = Bukkit.createInventory(null, 54, Utils.format("&k") +
+                Utils.format("&6&lCustom Shop Editor: " + name));
+
+        // Set exit option
+        inv.setItem(53, InventoryItems.exit());
+
+        // Check for a stored inventory
+        if (!plugin.getArenaData().contains("a" + arena + ".customShop"))
+            return inv;
+
+        // Get items from stored inventory
+        plugin.getArenaData().getConfigurationSection("a" + arena + ".customShop").getKeys(false)
+            .forEach(index -> inv.setItem(Integer.parseInt(index),
+                    plugin.getArenaData().getItemStack("a" + arena + ".customShop." + index)));
+
+        return inv;
     }
 
-    public void setCustomShop(Inventory customShop) {
-        this.customShop = customShop;
+    public Inventory getCustomShop() {
+        // Create inventory
+        Inventory inv = Bukkit.createInventory(null, 54, Utils.format("&k") +
+                Utils.format("&6&lCustom Shop"));
+
+        // Set exit option
+        inv.setItem(53, InventoryItems.exit());
+
+        // Check for a stored inventory
+        if (!plugin.getArenaData().contains("a" + arena + ".customShop"))
+            return inv;
+
+        // Get items from stored inventory
+        plugin.getArenaData().getConfigurationSection("a" + arena + ".customShop").getKeys(false)
+                .forEach(index -> {
+                    // Get raw item and data
+                    ItemStack item = plugin.getArenaData().getItemStack("a" + arena + ".customShop." + index).clone();
+                    ItemMeta meta = item.getItemMeta();
+                    List<String> lore = new ArrayList<>();
+                    String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
+                    int price = Integer.parseInt(meta.getDisplayName().substring(meta.getDisplayName().length() - 5));
+
+                    // Transform to proper shop item
+                    meta.setDisplayName(Utils.format("&f" + name));
+                    if (meta.hasLore()) {
+                        lore = meta.getLore();
+                        lore.add(Utils.format("&2Gems: &a" + price));
+                    } else lore.add(Utils.format("&2Gems: &a" + price));
+                    meta.setLore(lore);
+                    item.setItemMeta(meta);
+
+                    // Set item into inventory
+                    inv.setItem(Integer.parseInt(index), item);
+                });
+
+        return inv;
+    }
+
+    public Inventory getMockCustomShop() {
+        // Create inventory
+        Inventory inv = Bukkit.createInventory(null, 54, Utils.format("&k") +
+                Utils.format("&6&lCustom Shop: " + name));
+
+        // Set exit option
+        inv.setItem(53, InventoryItems.exit());
+
+        // Check for a stored inventory
+        if (!plugin.getArenaData().contains("a" + arena + ".customShop"))
+            return inv;
+
+        // Get items from stored inventory
+        plugin.getArenaData().getConfigurationSection("a" + arena + ".customShop").getKeys(false)
+                .forEach(index -> {
+                    // Get raw item and data
+                    ItemStack item = plugin.getArenaData().getItemStack("a" + arena + ".customShop." + index).clone();
+                    ItemMeta meta = item.getItemMeta();
+                    List<String> lore = new ArrayList<>();
+                    String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
+                    int price = Integer.parseInt(meta.getDisplayName().substring(meta.getDisplayName().length() - 5));
+
+                    // Transform to proper shop item
+                    meta.setDisplayName(Utils.format("&f" + name));
+                    if (meta.hasLore()) {
+                        lore = meta.getLore();
+                        lore.add(Utils.format("&2Gems: &a" + price));
+                    } else lore.add(Utils.format("&2Gems: &a" + price));
+                    meta.setLore(lore);
+                    item.setItemMeta(meta);
+
+                    // Set item into inventory
+                    inv.setItem(Integer.parseInt(index), item);
+                });
+
+        return inv;
     }
 
     public BossBar getTimeLimitBar() {
@@ -537,6 +639,8 @@ public class Arena {
                 .filter(Objects::nonNull).collect(Collectors.toList());
         bannedKits = config.getStringList(path + ".bannedKits");
         spawnTableFile = config.getString(path + ".spawnTable");
+        normal = config.getBoolean(path + ".normal");
+        custom = config.getBoolean(path + ".custom");
         winSound = config.getBoolean(path + ".sounds.win");
         loseSound = config.getBoolean(path + ".sounds.lose");
         waveStartSound = config.getBoolean(path + ".sounds.start");
@@ -548,6 +652,7 @@ public class Arena {
         dynamicPrices = config.getBoolean(path + ".dynamicPrices");
         dynamicLimit = config.getBoolean(path + ".dynamicLimit");
         closed = config.getBoolean(path + ".closed");
+        arenaRecords = new ArrayList<>();
         if (config.contains(path + ".records"))
             config.getConfigurationSection(path + ".records").getKeys(false)
                     .forEach(index -> arenaRecords.add(new ArenaRecord(

@@ -119,12 +119,17 @@ public class InventoryEvents implements Listener {
 
 		ItemStack button = e.getCurrentItem();
 
-		// Ignore clicks on nothing and remove NullPointerExceptions
-		if (button == null)
-			return;
+		// Get material and name of button
+		Material buttonType;
+		String buttonName;
+		if (button == null) {
+			buttonType = null;
+			buttonName = "";
+		} else {
+			buttonType = button.getType();
+		 	buttonName = button.getItemMeta().getDisplayName();
+		}
 
-		Material buttonType = button.getType();
-		String buttonName = button.getItemMeta().getDisplayName();
 		Player player = (Player) e.getWhoClicked();
 		int slot = e.getSlot();
 		int num = slot;
@@ -623,6 +628,10 @@ public class InventoryEvents implements Listener {
 					config.set("a" + arena + ".sounds.waiting", 14);
 				}
 
+				// Set default shop toggle
+				if (!config.contains("a" + arena + ".normal"))
+					config.set("a" + arena + ".normal", true);
+
 				plugin.saveArenaData();
 				arenaInstance.updateArena();
 				arenaInstance.updateArena();
@@ -700,6 +709,12 @@ public class InventoryEvents implements Listener {
 					// No villager spawn
 					if (!config.contains("a" + arena + ".villager")) {
 						player.sendMessage(Utils.notify("&cArena cannot open without a villager spawn!"));
+						return;
+					}
+
+					// No shops
+					if (!arenaInstance.isCustom() && !arenaInstance.isNormal()) {
+						player.sendMessage(Utils.notify("&cArena cannot open without a shop!"));
 						return;
 					}
 
@@ -1594,30 +1609,78 @@ public class InventoryEvents implements Listener {
 
 		// Shop settings menu for an arena
 		else if (title.contains("Shop Settings:")) {
+			Arena arenaInstance = game.arenas.get(arena);
+
 			// Open custom shop editor
-//			if (buttonName.contains("Create"))
+			if (buttonName.contains("Edit Custom Shop"))
+				if (config.getBoolean("a" + arena + ".closed"))
+					openInv(player, arenaInstance.getCustomShopEditor());
+				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
 			// Toggle default shop
-//			else if (buttonName.contains("Toggle Default Shop"))
+			else if (buttonName.contains("Default Shop:"))
+				if (config.getBoolean("a" + arena + ".closed")) {
+					arenaInstance.flipNormal();
+					openInv(player, inv.createShopsInventory(arena));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
 			// Toggle custom shop
-//			else if (buttonName.contains("Toggle Custom Shop"))
+			else if (buttonName.contains("Custom Shop:"))
+				if (config.getBoolean("a" + arena + ".closed")) {
+					arenaInstance.flipCustom();
+					openInv(player, inv.createShopsInventory(arena));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
 			// Toggle dynamic prices
-//			else if (buttonName.contains("Dynamic Prices:"))
-			if (buttonName.contains("Dynamic Prices:")) {
+			else if (buttonName.contains("Dynamic Prices:"))
 				if (config.getBoolean("a" + arena + ".closed")) {
 					config.set("a" + arena + ".dynamicPrices",
 							!config.getBoolean("a" + arena + ".dynamicPrices"));
 					plugin.saveArenaData();
-					game.arenas.get(arena).updateArena();
+					arenaInstance.updateArena();
 					openInv(player, inv.createShopsInventory(arena));
 				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
-			}
 
 			// Exit menu
 			else if (buttonName.contains("EXIT"))
 				openInv(player, inv.createArenaInventory(arena));
+		}
+
+		// Custom shop editor for an arena
+		else if (title.contains("Custom Shop Editor:")) {
+			ItemStack cursor = e.getCursor();
+			String path = "a" + arena + ".customShop.";
+
+			// Exit menu
+			if (buttonName.contains("EXIT")) {
+				openInv(player, inv.createShopsInventory(arena));
+				return;
+			}
+
+			// Remove item from slot
+			if (cursor.getType() == Material.AIR)
+				if (buttonType != null)
+					config.set(path + slot, null);
+				else return;
+
+			// Check for valid item
+			else {
+				try {
+					Integer.parseInt(cursor.getItemMeta().getDisplayName()
+							.substring(cursor.getItemMeta().getDisplayName().length() - 5));
+					config.set(path + slot, cursor);
+				} catch (Exception err) {
+					player.sendMessage(Utils.notify(
+							"&cItem must have numbers as the last 5 characters of the item name!"));
+					return;
+				}
+			}
+
+			// Save changes and refresh GUI
+			plugin.saveArenaData();
+			Utils.giveItem(player, cursor.clone());
+			player.setItemOnCursor(new ItemStack(Material.AIR));
+			openInv(player, game.arenas.get(arena).getCustomShopEditor());
 		}
 
 		// Game settings menu for an arena
@@ -2008,6 +2071,8 @@ public class InventoryEvents implements Listener {
 				config.set(path + ".dynamicPrices", config.getBoolean(path2 + ".dynamicPrices"));
 				config.set(path + ".difficultyLabel", config.getString(path2 + ".difficultyLabel"));
 				config.set(path + ".bannedKits", config.getStringList(path2 + ".bannedKits"));
+				config.set(path + ".normal", config.getBoolean(path2 + ".normal"));
+				config.set(path + ".custom", config.getBoolean(path2 + ".custom"));
 				config.set(path + ".sounds.win", config.getBoolean(path2 + ".sounds.win"));
 				config.set(path + ".sounds.lose", config.getBoolean(path2 + ".sounds.lose"));
 				config.set(path + ".sounds.start", config.getBoolean(path2 + ".sounds.start"));
@@ -2015,6 +2080,10 @@ public class InventoryEvents implements Listener {
 				config.set(path + ".sounds.gem", config.getBoolean(path2 + ".sounds.gem"));
 				config.set(path + ".sounds.death", config.getBoolean(path2 + ".sounds.death"));
 				config.set(path + ".sounds.waiting", config.getInt(path2 + ".sounds.waiting"));
+				if (config.contains(path2 + ".customShop"))
+					config.getConfigurationSection(path2 + ".customShop").getKeys(false)
+							.forEach(index -> config.set(path + ".customShop." + index,
+									config.getItemStack(path2 + ".customShop." + index)));
 			}
 
 			// Copy easy preset
@@ -2075,6 +2144,7 @@ public class InventoryEvents implements Listener {
 			plugin.saveArenaData();
 			game.arenas.get(arena).updateArena();
 			portal.refreshHolo(arena, game);
+			player.sendMessage(Utils.notify("&aGame settings copied!"));
 		}
 
 		// In-game item shop menu
@@ -2088,19 +2158,36 @@ public class InventoryEvents implements Listener {
 
 			// Open weapon shop
 			if (buttonName.contains("Weapon Shop"))
-				openInv(player, arenaInstance.getWeaponShop());
+				if (arenaInstance.isNormal())
+					openInv(player, arenaInstance.getWeaponShop());
+				else player.sendMessage(Utils.notify("&cNormal shop has been disabled!"));
 
 			// Open armor shop
 			else if (buttonName.contains("Armor Shop"))
-				openInv(player, arenaInstance.getArmorShop());
+				if (arenaInstance.isNormal())
+					openInv(player, arenaInstance.getArmorShop());
+				else player.sendMessage(Utils.notify("&cNormal shop has been disabled!"));
 
 			// Open consumables shop
 			else if (buttonName.contains("Consumables Shop"))
-				openInv(player, arenaInstance.getConsumeShop());
+				if (arenaInstance.isNormal())
+					openInv(player, arenaInstance.getConsumeShop());
+				else player.sendMessage(Utils.notify("&cNormal shop has been disabled!"));
 
 			// Open custom shop
-//			else if (buttonName.contains("Custom Shop"))
+			else if (buttonName.contains("Custom Shop"))
+				if (arenaInstance.isCustom())
+					openInv(player, arenaInstance.getCustomShop());
+				else player.sendMessage(Utils.notify("&cCustom shop has been disabled!"));
+		}
 
+		// Mock custom shop for an arena
+		else if (title.contains("Custom Shop:")) {
+			String name = title.substring(19);
+			Arena arenaInstance = game.arenas.stream().filter(Objects::nonNull)
+					.filter(arena1 -> arena1.getName().equals(name)).collect(Collectors.toList()).get(0);
+			if (buttonName.contains("EXIT"))
+				openInv(player, inv.createArenaInfoInventory(arenaInstance));
 		}
 
 		// In-game shops
@@ -2115,10 +2202,14 @@ public class InventoryEvents implements Listener {
 			VDPlayer gamer = arenaInstance.getPlayer(player);
 
 			// Return to main shop menu
-			if (buttonName.contains("RETURN")) {
-				player.openInventory(Inventories.createShop(arenaInstance.getCurrentWave() / 10 + 1));
+			if (buttonName.contains("EXIT")) {
+				player.openInventory(Inventories.createShop(arenaInstance.getCurrentWave() / 10 + 1, arenaInstance));
 				return;
 			}
+
+			// Ignore null items
+			if (e.getClickedInventory().getItem(e.getSlot()) == null)
+				return;
 
 			ItemStack buy = e.getClickedInventory().getItem(e.getSlot()).clone();
 			Material buyType = buy.getType();
@@ -2339,6 +2430,15 @@ public class InventoryEvents implements Listener {
 			// Close inventory
 			if (buttonName.contains("EXIT"))
 				player.closeInventory();
+		}
+
+		// Stats menu for an arena
+		else if (title.contains("Info")) {
+			String name = title.substring(6, title.length() - 5);
+			Arena arenaInstance = game.arenas.stream().filter(Objects::nonNull)
+					.filter(arena1 -> arena1.getName().equals(name)).collect(Collectors.toList()).get(0);
+			if (buttonName.contains("Custom Shop Inventory"))
+				openInv(player, arenaInstance.getMockCustomShop());
 		}
 	}
 	

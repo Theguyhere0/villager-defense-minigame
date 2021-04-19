@@ -2,7 +2,6 @@ package me.theguyhere.villagerdefense;
 
 import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.GUI.InventoryEvents;
-import me.theguyhere.villagerdefense.GUI.InventoryItems;
 import me.theguyhere.villagerdefense.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.game.displays.InfoBoard;
 import me.theguyhere.villagerdefense.game.displays.Leaderboard;
@@ -33,7 +32,6 @@ public class Main extends JavaPlugin {
 	private final Portal portal = new Portal(this);
 	private final Leaderboard leaderboard = new Leaderboard(this);
 	private final InfoBoard infoBoard = new InfoBoard(this);
-	private final InventoryItems ii = new InventoryItems();
 	private final Utils utils = new Utils(this);
 	private PacketReader reader;
 	private Game game;
@@ -44,7 +42,7 @@ public class Main extends JavaPlugin {
 		saveDefaultConfig();
 
 		game = new Game(this, portal);
-		Inventories inventories = new Inventories(this, game, ii);
+		Inventories inventories = new Inventories(this, game);
 		Commands commands = new Commands(this, inventories, game);
 		ArenaBoard arenaBoard = new ArenaBoard(this, game);
 

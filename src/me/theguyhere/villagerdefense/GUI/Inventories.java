@@ -18,18 +18,15 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Inventories {
 	private final Main plugin;
 	private final Game game;
-	private final InventoryItems ii;
 	private final Kits kits = new Kits();
 
-	public Inventories (Main plugin, Game game, InventoryItems ii) {
+	public Inventories (Main plugin, Game game) {
 		this.plugin = plugin;
 		this.game = game;
-		this.ii = ii;
 	}
 
 	// Easily get alphabet
@@ -81,7 +78,7 @@ public class Inventories {
 				FLAGS, null, Utils.format("&7Manage leaderboards")));
 
 		// Option to exit
-		inv.setItem(53, ii.exit());
+		inv.setItem(53, InventoryItems.exit());
 		
 		return inv;
 	}
@@ -93,19 +90,19 @@ public class Inventories {
 				Utils.format("&2&lLobby"));
 
 		// Option to create the lobby
-		inv.setItem(0, ii.create("Lobby"));
+		inv.setItem(0, InventoryItems.create("Lobby"));
 
 		// Option to teleport to the lobby
-		inv.setItem(2, ii.teleport("Lobby"));
+		inv.setItem(2, InventoryItems.teleport("Lobby"));
 
 		// Option to center the lobby
-		inv.setItem(4, ii.center("Lobby"));
+		inv.setItem(4, InventoryItems.center("Lobby"));
 
 		// Option to remove the lobby
-		inv.setItem(6, ii.remove("LOBBY"));
+		inv.setItem(6, InventoryItems.remove("LOBBY"));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -116,10 +113,10 @@ public class Inventories {
 				Utils.format("&4&lRemove Lobby?"));
 
 		// "No" option
-		inv.setItem(0, ii.no());
+		inv.setItem(0, InventoryItems.no());
 
 		// "Yes" option
-		inv.setItem(8, ii.yes());
+		inv.setItem(8, InventoryItems.yes());
 
 		return inv;
 	}
@@ -145,7 +142,7 @@ public class Inventories {
 		}
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -157,19 +154,19 @@ public class Inventories {
 				Utils.format("&6&lInfo Board " + slot));
 
 		// Option to create info board
-		inv.setItem(0, ii.create("Info Board"));
+		inv.setItem(0, InventoryItems.create("Info Board"));
 
 		// Option to teleport to info board
-		inv.setItem(2, ii.teleport("Info Board"));
+		inv.setItem(2, InventoryItems.teleport("Info Board"));
 
 		// Option to center the info board
-		inv.setItem(4, ii.center("Info Board"));
+		inv.setItem(4, InventoryItems.center("Info Board"));
 
 		// Option to remove info board
-		inv.setItem(6, ii.remove("INFO BOARD"));
+		inv.setItem(6, InventoryItems.remove("INFO BOARD"));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -181,10 +178,10 @@ public class Inventories {
 				Utils.format("&4&lRemove Info Board?"));
 
 		// "No" option
-		inv.setItem(0, ii.no());
+		inv.setItem(0, InventoryItems.no());
 
 		// "Yes" option
-		inv.setItem(8, ii.yes());
+		inv.setItem(8, InventoryItems.yes());
 
 		return inv;
 	}
@@ -212,7 +209,7 @@ public class Inventories {
 				FLAGS, null));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -224,19 +221,19 @@ public class Inventories {
 				Utils.format("&4&lTotal Kills Leaderboard"));
 
 		// Option to create the leaderboard
-		inv.setItem(0, ii.create("Leaderboard"));
+		inv.setItem(0, InventoryItems.create("Leaderboard"));
 
 		// Option to teleport to the leaderboard
-		inv.setItem(2, ii.teleport("Leaderboard"));
+		inv.setItem(2, InventoryItems.teleport("Leaderboard"));
 
 		// Option to center the leaderboard
-		inv.setItem(4, ii.center("Leaderboard"));
+		inv.setItem(4, InventoryItems.center("Leaderboard"));
 
 		// Option to remove the leaderboard
-		inv.setItem(6, ii.remove("LEADERBOARD"));
+		inv.setItem(6, InventoryItems.remove("LEADERBOARD"));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -248,19 +245,19 @@ public class Inventories {
 				Utils.format("&c&lTop Kills Leaderboard"));
 
 		// Option to create the leaderboard
-		inv.setItem(0, ii.create("Leaderboard"));
+		inv.setItem(0, InventoryItems.create("Leaderboard"));
 
 		// Option to teleport to the leaderboard
-		inv.setItem(2, ii.teleport("Leaderboard"));
+		inv.setItem(2, InventoryItems.teleport("Leaderboard"));
 
 		// Option to center the leaderboard
-		inv.setItem(4, ii.center("Leaderboard"));
+		inv.setItem(4, InventoryItems.center("Leaderboard"));
 
 		// Option to remove the leaderboard
-		inv.setItem(6, ii.remove("LEADERBOARD"));
+		inv.setItem(6, InventoryItems.remove("LEADERBOARD"));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -272,19 +269,19 @@ public class Inventories {
 				Utils.format("&2&lTotal Gems Leaderboard"));
 
 		// Option to create the leaderboard
-		inv.setItem(0, ii.create("Leaderboard"));
+		inv.setItem(0, InventoryItems.create("Leaderboard"));
 
 		// Option to teleport to the leaderboard
-		inv.setItem(2, ii.teleport("Leaderboard"));
+		inv.setItem(2, InventoryItems.teleport("Leaderboard"));
 
 		// Option to center the leaderboard
-		inv.setItem(4, ii.center("Leaderboard"));
+		inv.setItem(4, InventoryItems.center("Leaderboard"));
 
 		// Option to remove the leaderboard
-		inv.setItem(6, ii.remove("LEADERBOARD"));
+		inv.setItem(6, InventoryItems.remove("LEADERBOARD"));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -296,19 +293,19 @@ public class Inventories {
 				Utils.format("&a&lTop Balance Leaderboard"));
 
 		// Option to create the leaderboard
-		inv.setItem(0, ii.create("Leaderboard"));
+		inv.setItem(0, InventoryItems.create("Leaderboard"));
 
 		// Option to teleport to the leaderboard
-		inv.setItem(2, ii.teleport("Leaderboard"));
+		inv.setItem(2, InventoryItems.teleport("Leaderboard"));
 
 		// Option to center the leaderboard
-		inv.setItem(4, ii.center("Leaderboard"));
+		inv.setItem(4, InventoryItems.center("Leaderboard"));
 
 		// Option to remove the leaderboard
-		inv.setItem(6, ii.remove("LEADERBOARD"));
+		inv.setItem(6, InventoryItems.remove("LEADERBOARD"));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -320,19 +317,19 @@ public class Inventories {
 				Utils.format("&9&lTop Wave Leaderboard"));
 
 		// Option to create the leaderboard
-		inv.setItem(0, ii.create("Leaderboard"));
+		inv.setItem(0, InventoryItems.create("Leaderboard"));
 
 		// Option to teleport to the leaderboard
-		inv.setItem(2, ii.teleport("Leaderboard"));
+		inv.setItem(2, InventoryItems.teleport("Leaderboard"));
 
 		// Option to center the leaderboard
-		inv.setItem(4, ii.center("Leaderboard"));
+		inv.setItem(4, InventoryItems.center("Leaderboard"));
 
 		// Option to remove the leaderboard
-		inv.setItem(6, ii.remove("LEADERBOARD"));
+		inv.setItem(6, InventoryItems.remove("LEADERBOARD"));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -343,10 +340,10 @@ public class Inventories {
 				Utils.format("&4&lRemove Total Kills Leaderboard?"));
 
 		// "No" option
-		inv.setItem(0, ii.no());
+		inv.setItem(0, InventoryItems.no());
 
 		// "Yes" option
-		inv.setItem(8, ii.yes());
+		inv.setItem(8, InventoryItems.yes());
 
 		return inv;
 	}
@@ -357,10 +354,10 @@ public class Inventories {
 				Utils.format("&4&lRemove Top Kills Leaderboard?"));
 
 		// "No" option
-		inv.setItem(0, ii.no());
+		inv.setItem(0, InventoryItems.no());
 
 		// "Yes" option
-		inv.setItem(8, ii.yes());
+		inv.setItem(8, InventoryItems.yes());
 
 		return inv;
 	}
@@ -371,10 +368,10 @@ public class Inventories {
 				Utils.format("&4&lRemove Total Gems Leaderboard?"));
 
 		// "No" option
-		inv.setItem(0, ii.no());
+		inv.setItem(0, InventoryItems.no());
 
 		// "Yes" option
-		inv.setItem(8, ii.yes());
+		inv.setItem(8, InventoryItems.yes());
 
 		return inv;
 	}
@@ -385,10 +382,10 @@ public class Inventories {
 				Utils.format("&4&lRemove Top Balance Leaderboard?"));
 
 		// "No" option
-		inv.setItem(0, ii.no());
+		inv.setItem(0, InventoryItems.no());
 
 		// "Yes" option
-		inv.setItem(8, ii.yes());
+		inv.setItem(8, InventoryItems.yes());
 
 		return inv;
 	}
@@ -399,10 +396,10 @@ public class Inventories {
 				Utils.format("&4&lRemove Top Wave Leaderboard?"));
 
 		// "No" option
-		inv.setItem(0, ii.no());
+		inv.setItem(0, InventoryItems.no());
 
 		// "Yes" option
-		inv.setItem(8, ii.yes());
+		inv.setItem(8, InventoryItems.yes());
 
 		return inv;
 	}
@@ -483,10 +480,10 @@ public class Inventories {
 		inv.setItem(6, Utils.createItem(Material.NETHER_BRICK_FENCE, Utils.format("&9&lClose Arena: " + closed)));
 
 		// Option to remove arena
-		inv.setItem(7, ii.remove("ARENA"));
+		inv.setItem(7, InventoryItems.remove("ARENA"));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -498,10 +495,10 @@ public class Inventories {
 				Utils.format("&4&lRemove " + game.arenas.get(arena).getName() + '?'));
 
 		// "No" option
-		inv.setItem(0, ii.no());
+		inv.setItem(0, InventoryItems.no());
 
 		// "Yes" option
-		inv.setItem(8, ii.yes());
+		inv.setItem(8, InventoryItems.yes());
 
 		return inv;
 	}
@@ -513,31 +510,31 @@ public class Inventories {
 				Utils.format("&5&lPortal/LBoard: " + game.arenas.get(arena).getName()));
 
 		// Option to create the portal
-		inv.setItem(0, ii.create("Portal"));
+		inv.setItem(0, InventoryItems.create("Portal"));
 
 		// Option to teleport to the portal
-		inv.setItem(1, ii.teleport("Portal"));
+		inv.setItem(1, InventoryItems.teleport("Portal"));
 
 		// Option to center the portal
-		inv.setItem(2, ii.center("Portal"));
+		inv.setItem(2, InventoryItems.center("Portal"));
 
 		// Option to remove the portal
-		inv.setItem(3, ii.remove("PORTAL"));
+		inv.setItem(3, InventoryItems.remove("PORTAL"));
 
 		// Option to create the leaderboard
-		inv.setItem(4, ii.create("Leaderboard"));
+		inv.setItem(4, InventoryItems.create("Leaderboard"));
 
 		// Option to teleport to the leaderboard
-		inv.setItem(5, ii.teleport("Leaderboard"));
+		inv.setItem(5, InventoryItems.teleport("Leaderboard"));
 
 		// Option to center the leaderboard
-		inv.setItem(6, ii.center("Leaderboard"));
+		inv.setItem(6, InventoryItems.center("Leaderboard"));
 
 		// Option to remove the leaderboard
-		inv.setItem(7, ii.remove("LEADERBOARD"));
+		inv.setItem(7, InventoryItems.remove("LEADERBOARD"));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -549,10 +546,10 @@ public class Inventories {
 				Utils.format("&4&lRemove Portal?"));
 
 		// "No" option
-		inv.setItem(0, ii.no());
+		inv.setItem(0, InventoryItems.no());
 
 		// "Yes" option
-		inv.setItem(8, ii.yes());
+		inv.setItem(8, InventoryItems.yes());
 
 		return inv;
 	}
@@ -564,10 +561,10 @@ public class Inventories {
 				Utils.format("&4&lRemove Leaderboard?"));
 
 		// "No" option
-		inv.setItem(0, ii.no());
+		inv.setItem(0, InventoryItems.no());
 
 		// "Yes" option
-		inv.setItem(8, ii.yes());
+		inv.setItem(8, InventoryItems.yes());
 
 		return inv;
 	}
@@ -607,7 +604,7 @@ public class Inventories {
 				Utils.format("&7Minimum players needed for game to start")));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -619,19 +616,19 @@ public class Inventories {
 				Utils.format("&d&lPlayer Spawn: " + game.arenas.get(arena).getName()));
 
 		// Option to create player spawn
-		inv.setItem(0, ii.create("Spawn"));
+		inv.setItem(0, InventoryItems.create("Spawn"));
 
 		// Option to teleport to player spawn
-		inv.setItem(2, ii.teleport("Spawn"));
+		inv.setItem(2, InventoryItems.teleport("Spawn"));
 
 		// Option to center the player spawn
-		inv.setItem(4, ii.center("Spawn"));
+		inv.setItem(4, InventoryItems.center("Spawn"));
 
 		// Option to remove player spawn
-		inv.setItem(6, ii.remove("SPAWN"));
+		inv.setItem(6, InventoryItems.remove("SPAWN"));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -643,10 +640,10 @@ public class Inventories {
 				Utils.format("&4&lRemove Spawn?"));
 
 		// "No" option
-		inv.setItem(0, ii.no());
+		inv.setItem(0, InventoryItems.no());
 
 		// "Yes" option
-		inv.setItem(8, ii.yes());
+		inv.setItem(8, InventoryItems.yes());
 
 		return inv;
 	}
@@ -658,19 +655,19 @@ public class Inventories {
 				Utils.format("&b&lWaiting Room: " + game.arenas.get(arena).getName()));
 
 		// Option to create waiting room
-		inv.setItem(0, ii.create("Waiting Room"));
+		inv.setItem(0, InventoryItems.create("Waiting Room"));
 
 		// Option to teleport to waiting room
-		inv.setItem(2, ii.teleport("Waiting Room"));
+		inv.setItem(2, InventoryItems.teleport("Waiting Room"));
 
 		// Option to center the waiting room
-		inv.setItem(4, ii.center("Waiting Room"));
+		inv.setItem(4, InventoryItems.center("Waiting Room"));
 
 		// Option to remove waiting room
-		inv.setItem(6, ii.remove("WAITING ROOM"));
+		inv.setItem(6, InventoryItems.remove("WAITING ROOM"));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -682,10 +679,10 @@ public class Inventories {
 				Utils.format("&4&lRemove Waiting Room?"));
 
 		// "No" option
-		inv.setItem(0, ii.no());
+		inv.setItem(0, InventoryItems.no());
 
 		// "Yes" option
-		inv.setItem(8, ii.yes());
+		inv.setItem(8, InventoryItems.yes());
 
 		return inv;
 	}
@@ -705,7 +702,7 @@ public class Inventories {
 			inv.setItem(i, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&2&lIncrease")));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -725,7 +722,7 @@ public class Inventories {
 			inv.setItem(i, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&2&lIncrease")));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -773,7 +770,7 @@ public class Inventories {
 				Utils.format("&7Difficulty adjusting based on"), Utils.format("&7number of players")));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -801,7 +798,7 @@ public class Inventories {
 		}
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -813,19 +810,19 @@ public class Inventories {
 				Utils.format("&2&lMonster Spawn " + (slot + 1) + ": " + game.arenas.get(arena).getName()));
 
 		// Option to create monster spawn
-		inv.setItem(0, ii.create("Spawn"));
+		inv.setItem(0, InventoryItems.create("Spawn"));
 
 		// Option to teleport to monster spawn
-		inv.setItem(2, ii.teleport("Spawn"));
+		inv.setItem(2, InventoryItems.teleport("Spawn"));
 
 		// Option to center the monster spawn
-		inv.setItem(4, ii.center("Spawn"));
+		inv.setItem(4, InventoryItems.center("Spawn"));
 
 		// Option to remove monster spawn
-		inv.setItem(6, ii.remove("SPAWN"));
+		inv.setItem(6, InventoryItems.remove("SPAWN"));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -837,10 +834,10 @@ public class Inventories {
 				Utils.format("&4&lRemove Monster Spawn?"));
 
 		// "No" option
-		inv.setItem(0, ii.no());
+		inv.setItem(0, InventoryItems.no());
 
 		// "Yes" option
-		inv.setItem(8, ii.yes());
+		inv.setItem(8, InventoryItems.yes());
 
 		return inv;
 	}
@@ -868,7 +865,7 @@ public class Inventories {
 		}
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -880,19 +877,19 @@ public class Inventories {
 				Utils.format("&5&lVillager Spawn " + (slot + 1) + ": " + game.arenas.get(arena).getName()));
 
 		// Option to create villager spawn
-		inv.setItem(0, ii.create("Spawn"));
+		inv.setItem(0, InventoryItems.create("Spawn"));
 
 		// Option to teleport to villager spawn
-		inv.setItem(2, ii.teleport("Spawn"));
+		inv.setItem(2, InventoryItems.teleport("Spawn"));
 
 		// Option to center the villager spawn
-		inv.setItem(4, ii.center("Spawn"));
+		inv.setItem(4, InventoryItems.center("Spawn"));
 
 		// Option to remove villager spawn
-		inv.setItem(6, ii.remove("SPAWN"));
+		inv.setItem(6, InventoryItems.remove("SPAWN"));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -904,10 +901,10 @@ public class Inventories {
 				Utils.format("&4&lRemove Villager Spawn?"));
 
 		// "No" option
-		inv.setItem(0, ii.no());
+		inv.setItem(0, InventoryItems.no());
 
 		// "Yes" option
-		inv.setItem(8, ii.yes());
+		inv.setItem(8, InventoryItems.yes());
 
 		return inv;
 	}
@@ -958,7 +955,7 @@ public class Inventories {
 				Utils.format("&7(Check the arena number in arenaData.yml)")));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -972,21 +969,18 @@ public class Inventories {
 				Utils.format("&e&lShop Settings: " + arenaInstance.getName()));
 
 		// Option to create a custom shop
-		inv.setItem(0, Utils.createItem(Material.EMERALD,
-				Utils.format("&a&lCreate Custom Shop"),
-				Utils.format(CONSTRUCTION)));
+		inv.setItem(0, Utils.createItem(Material.QUARTZ,
+				Utils.format("&a&lEdit Custom Shop")));
 
 		// Option to toggle default shop
-		inv.setItem(2, Utils.createItem(Material.GOLD_BLOCK,
-				Utils.format("&6&lToggle Default Shop"),
-				Utils.format("&7Turn default shop on and off"),
-				Utils.format(CONSTRUCTION)));
+		inv.setItem(2, Utils.createItem(Material.EMERALD_BLOCK,
+				Utils.format("&6&lDefault Shop: " + getToggleStatus(arenaInstance.isNormal())),
+				Utils.format("&7Turn default shop on and off")));
 
 		// Option to toggle custom shop
-		inv.setItem(4, Utils.createItem(Material.EMERALD_BLOCK,
-				Utils.format("&2&lToggle Custom Shop"),
-				Utils.format("&7Turn custom shop on and off"),
-				Utils.format(CONSTRUCTION)));
+		inv.setItem(4, Utils.createItem(Material.QUARTZ_BLOCK,
+				Utils.format("&2&lCustom Shop: " + getToggleStatus(arenaInstance.isCustom())),
+				Utils.format("&7Turn custom shop on and off")));
 
 		// Option to toggle dynamic prices
 		inv.setItem(6, Utils.createItem(Material.NETHER_STAR,
@@ -995,7 +989,7 @@ public class Inventories {
 				Utils.format("&7players in the game")));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1049,7 +1043,7 @@ public class Inventories {
 				Utils.format("&7choose from a menu of presets")));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1080,7 +1074,7 @@ public class Inventories {
 			inv.setItem(i, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&2&lIncrease")));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1111,7 +1105,7 @@ public class Inventories {
 			inv.setItem(i, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&2&lIncrease")));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1423,7 +1417,7 @@ public class Inventories {
 				Utils.format("&fLevel 2"), Utils.format("&7Permanent 40% health boost")));
 
 		// Option to exit
-		inv.setItem(53, ii.exit());
+		inv.setItem(53, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1454,7 +1448,7 @@ public class Inventories {
 		inv.setItem(4, Utils.createItem(Material.LIGHT_GRAY_CONCRETE, Utils.format("&7&lNone")));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1478,7 +1472,7 @@ public class Inventories {
 		inv.setItem(6, Utils.createItem(Material.RED_CONCRETE, Utils.format("&4&l4")));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1493,28 +1487,28 @@ public class Inventories {
 
 		// Option to edit win sound
 		inv.setItem(0, Utils.createItem(Material.MUSIC_DISC_PIGSTEP,
-				Utils.format("&a&lWin Sound: " + (arenaInstance.isWinSound() ? "&a&lON" : "&c&lOFF")),
+				Utils.format("&a&lWin Sound: " + getToggleStatus(arenaInstance.isWinSound())),
 				FLAGS,
 				null,
 				Utils.format("&7Played when game ends and players win")));
 
 		// Option to edit lose sound
 		inv.setItem(1, Utils.createItem(Material.MUSIC_DISC_11,
-				Utils.format("&e&lLose Sound: " + (arenaInstance.isLoseSound() ? "&a&lON" : "&c&lOFF")),
+				Utils.format("&e&lLose Sound: " + getToggleStatus(arenaInstance.isLoseSound())),
 				FLAGS,
 				null,
 				Utils.format("&7Played when game ends and players lose")));
 
 		// Option to edit wave start sound
 		inv.setItem(2, Utils.createItem(Material.MUSIC_DISC_CAT,
-				Utils.format("&2&lWave Start Sound: " + (arenaInstance.isWaveStartSound() ? "&a&lON" : "&c&lOFF")),
+				Utils.format("&2&lWave Start Sound: " + getToggleStatus(arenaInstance.isWaveStartSound())),
 				FLAGS,
 				null,
 				Utils.format("&7Played when a wave starts")));
 
 		// Option to edit wave finish sound
 		inv.setItem(3, Utils.createItem(Material.MUSIC_DISC_BLOCKS,
-				Utils.format("&9&lWave Finish Sound: " + (arenaInstance.isWaveFinishSound() ? "&a&lON" : "&c&lOFF")),
+				Utils.format("&9&lWave Finish Sound: " + getToggleStatus(arenaInstance.isWaveFinishSound())),
 				FLAGS,
 				null,
 				Utils.format("&7Played when a wave ends")));
@@ -1528,20 +1522,20 @@ public class Inventories {
 
 		// Option to edit gem pickup sound
 		inv.setItem(5, Utils.createItem(Material.MUSIC_DISC_FAR,
-				Utils.format("&b&lGem Pickup Sound: " + (arenaInstance.isGemSound() ? "&a&lON" : "&c&lOFF")),
+				Utils.format("&b&lGem Pickup Sound: " + getToggleStatus(arenaInstance.isGemSound())),
 				FLAGS,
 				null,
 				Utils.format("&7Played when players pick up gems")));
 
 		// Option to edit player death sound
 		inv.setItem(6, Utils.createItem(Material.MUSIC_DISC_CHIRP,
-				Utils.format("&4&lPlayer Death Sound: " + (arenaInstance.isPlayerDeathSound() ? "&a&lON" : "&c&lOFF")),
+				Utils.format("&4&lPlayer Death Sound: " + getToggleStatus(arenaInstance.isPlayerDeathSound())),
 				FLAGS,
 				null,
 				Utils.format("&7Played when a player dies")));
 
 		// Option to exit
-		inv.setItem(8, ii.exit());
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1568,7 +1562,7 @@ public class Inventories {
 		inv.setItem(14, Utils.createItem(Material.LIGHT_GRAY_CONCRETE, Utils.format("&fNone")));
 
 		// Option to exit
-		inv.setItem(17, ii.exit());
+		inv.setItem(17, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1606,28 +1600,31 @@ public class Inventories {
 		inv.setItem(51, Utils.createItem(Material.MAGENTA_CONCRETE, Utils.format("&d&lInsane Preset")));
 
 		// Option to exit
-		inv.setItem(53, ii.exit());
+		inv.setItem(53, InventoryItems.exit());
 
 		return inv;
 	}
 
 	// Generate the shop menu
-	public static Inventory createShop(int level) {
+	public static Inventory createShop(int level, Arena arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&2&lLevel &9&l" + level + " &2&lItem Shop"));
 
 		inv.setItem(1, Utils.createItem(Material.GOLDEN_SWORD,
-				Utils.format("&4&lLevel &9&l" + level + " &4&lWeapon Shop"), FLAGS, null));
+				Utils.format("&4&lLevel &9&l" + level + " &4&lWeapon Shop" +
+						(arena.isNormal() ? "" : " &4&l[DISABLED]")), FLAGS, null));
 
 		inv.setItem(3, Utils.createItem(Material.GOLDEN_CHESTPLATE,
-				Utils.format("&5&lLevel &9&l" + level + " &5&lArmor Shop"), FLAGS, null));
+				Utils.format("&5&lLevel &9&l" + level + " &5&lArmor Shop" +
+						(arena.isNormal() ? "" : " &4&l[DISABLED]")), FLAGS, null));
 
 		inv.setItem(5, Utils.createItem(Material.GOLDEN_APPLE,
-				Utils.format("&3&lLevel &9&l" + level + " &3&lConsumables Shop")));
+				Utils.format("&3&lLevel &9&l" + level + " &3&lConsumables Shop" +
+						(arena.isNormal() ? "" : " &4&l[DISABLED]"))));
 
-		inv.setItem(7, Utils.createItem(Material.QUARTZ, Utils.format("&6&lCustom Shop"),
-				Utils.format(CONSTRUCTION)));
+		inv.setItem(7, Utils.createItem(Material.QUARTZ, Utils.format("&6&lCustom Shop" +
+				(arena.isCustom() ? "" : " &4&l[DISABLED]"))));
 
 		return inv;
 	}
@@ -1648,7 +1645,7 @@ public class Inventories {
 			inv.setItem(i, modifyPrice(GameItems.randWeapon(level), modifier));
 
 		// Return option
-		inv.setItem(22, Utils.createItem(Material.BARRIER, Utils.format("&c&lRETURN")));
+		inv.setItem(22, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1669,7 +1666,7 @@ public class Inventories {
 			inv.setItem(i, modifyPrice(GameItems.randArmor(level), modifier));
 
 		// Return option
-		inv.setItem(22, Utils.createItem(Material.BARRIER, Utils.format("&c&lRETURN")));
+		inv.setItem(22, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1690,7 +1687,7 @@ public class Inventories {
 			inv.setItem(i, modifyPrice(GameItems.randConsumable(level), modifier));
 
 		// Return option
-		inv.setItem(13, Utils.createItem(Material.BARRIER, Utils.format("&c&lRETURN")));
+		inv.setItem(13, InventoryItems.exit());
 
 		return inv;
 	}
@@ -2264,7 +2261,7 @@ public class Inventories {
 					playerData.getInt(name + ".crystalBalance"))));
 
 		// Option to exit
-		inv.setItem(53, ii.exit());
+		inv.setItem(53, InventoryItems.exit());
 
 		return inv;
 	}
@@ -2734,7 +2731,7 @@ public class Inventories {
 		inv.setItem(52, Utils.createItem(Material.LIGHT_GRAY_CONCRETE, Utils.format("&f&lNone")));
 
 		// Option to exit
-		inv.setItem(53, ii.exit());
+		inv.setItem(53, InventoryItems.exit());
 
 		return inv;
 	}
@@ -2802,6 +2799,17 @@ public class Inventories {
 				null,
 				Utils.format("&7Determines difficulty increase rate")));
 
+		// Default shop toggle
+		inv.setItem(10, Utils.createItem(Material.EMERALD_BLOCK,
+				Utils.format("&6&lDefault Shop: " + getToggleStatus(arena.isNormal()))));
+
+		// Custom shop toggle
+		inv.setItem(12, Utils.createItem(Material.QUARTZ_BLOCK,
+				Utils.format("&2&lCustom Shop: " + getToggleStatus(arena.isNormal()))));
+
+		// Custom shop inventory
+		inv.setItem(14, Utils.createItem(Material.QUARTZ, Utils.format("&f&lCustom Shop Inventory")));
+
 		// Arena records
 		List<String> records = new ArrayList<>();
 		arena.getSortedDescendingRecords().forEach(arenaRecord -> {
@@ -2810,7 +2818,7 @@ public class Inventories {
 			arenaRecord.getPlayers().forEach(player -> players.append(player).append(", "));
 			records.add(Utils.format("&7" + players.substring(0, players.length() - 2)));
 		});
-		inv.setItem(13, Utils.createItem(Material.GOLDEN_HELMET, Utils.format("&e&lArena Records"), FLAGS,
+		inv.setItem(16, Utils.createItem(Material.GOLDEN_HELMET, Utils.format("&e&lArena Records"), FLAGS,
 				null, records));
 
 		return inv;

@@ -236,7 +236,7 @@ public class GameEvents implements Listener {
 
 		// Open shop inventory and cancel interaction
 		e.setCancelled(true);
-		player.openInventory(Inventories.createShop(arena.getCurrentWave() / 10 + 1));
+		player.openInventory(Inventories.createShop(arena.getCurrentWave() / 10 + 1, arena));
 	}
 
 	// Stops players from hurting villagers and other players, and monsters from hurting each other
