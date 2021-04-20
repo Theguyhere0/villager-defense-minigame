@@ -29,6 +29,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Main extends JavaPlugin {
 	private final DataManager arenaData = new DataManager(this, "arenaData.yml");
 	private final DataManager playerData = new DataManager(this, "playerData.yml");
+	private final DataManager languageData = new DataManager(this, "languages/" +
+			getConfig().getString("locale") + ".yml");
 	private final Portal portal = new Portal(this);
 	private final Leaderboard leaderboard = new Leaderboard(this);
 	private final InfoBoard infoBoard = new InfoBoard(this);
@@ -70,7 +72,7 @@ public class Main extends JavaPlugin {
 		pm.registerEvents(new ClickPortalEvents(game, portal, inventories), this);
 		pm.registerEvents(new GameEvents(this, game), this);
 		pm.registerEvents(new ArenaEvents(this, game, portal, leaderboard, arenaBoard, inventories), this);
-		pm.registerEvents(new AbilityEvents(game), this);
+		pm.registerEvents(new AbilityEvents(this, game), this);
 
 		// Inject online players into packet reader
 		if (!Bukkit.getOnlinePlayers().isEmpty())
@@ -90,6 +92,7 @@ public class Main extends JavaPlugin {
 		int playerDataVersion = 1;
 		int spawnTableVersion = 1;
 		int defaultSpawnVersion = 1;
+		int languageFileVersion = 1;
 
 		// Check config version
 		if (getConfig().getInt("version") < configVersion) {
@@ -139,7 +142,15 @@ public class Main extends JavaPlugin {
 					"Please do not update your config.yml unless your default.yml has been updated.");
 		}
 
-
+		// Check if the language file has been updated
+		if (getConfig().getInt("languageFile") < languageFileVersion) {
+			getServer().getConsoleSender().sendMessage("[VillagerDefense] " +
+					"You language files are no longer supported with this version!");
+			getServer().getConsoleSender().sendMessage("[VillagerDefense] " +
+					"Please update en_US.yml and update any other language files.");
+			getServer().getConsoleSender().sendMessage("[VillagerDefense] " +
+					"Please do not update your config.yml unless your language files been updated.");
+		}
 	}
 
 	// Runs when disabling plugin
@@ -171,6 +182,10 @@ public class Main extends JavaPlugin {
 	// Saves arena data changes
 	public void savePlayerData() {
 		playerData.saveConfig();
+	}
+
+	public FileConfiguration getLanguageData() {
+		return languageData.getConfig();
 	}
 
 	// Load portals

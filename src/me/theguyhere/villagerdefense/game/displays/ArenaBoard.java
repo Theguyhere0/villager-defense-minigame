@@ -4,13 +4,13 @@ import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.game.models.Arena;
-import me.theguyhere.villagerdefense.game.models.ArenaRecord;
 import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ArenaBoard {
 	private final Main plugin;
@@ -31,11 +31,6 @@ public class ArenaBoard {
 		// Save location data
 		utils.setConfigurationLocation("arenaBoard." + arena.getArena(), player.getLocation());
 		plugin.saveArenaData();
-	}
-
-	public void refreshArenaBoards() {
-		for (int i = 0; i < arenaBoards.length; i++)
-			refreshArenaBoard(i);
 	}
 
 	public void refreshArenaBoard(int arena) {

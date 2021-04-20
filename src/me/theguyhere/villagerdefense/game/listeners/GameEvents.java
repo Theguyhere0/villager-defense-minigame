@@ -75,6 +75,10 @@ public class GameEvents implements Listener {
 				// Set drop to emerald
 				e.getDrops().add(Utils.createItem(Material.EMERALD, null, Integer.toString(arena.getArena())));
 				e.setDroppedExp((int) arena.getCurrentDifficulty());
+				if (e.getDrops().stream().anyMatch(item -> item.getType() == Material.ARROW || item.getType() == Material.BONE)) {
+					System.out.println(ent);
+					System.out.println(e.getDrops());
+				}
 
 				// Decrement enemy count
 				arena.decrementEnemies();
@@ -363,8 +367,8 @@ public class GameEvents implements Listener {
 
 			// Notify everyone of player death
 			arena.getPlayers().forEach(gamer ->
-					gamer.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&c has died and will " +
-							"respawn next round.")));
+					gamer.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&c " +
+							plugin.getLanguageData().getString("death"))));
 
 			// Update scoreboards
 			arena.getTask().updateBoards.run();
@@ -418,7 +422,7 @@ public class GameEvents implements Listener {
 		// Cancel picking up of emeralds and notify player
 		e.setCancelled(true);
 		e.getItem().remove();
-		player.sendMessage(Utils.notify("&fYou found &a" + (earned) + "&f gem(s)!"));
+		player.sendMessage(Utils.notify(String.format(plugin.getLanguageData().getString("foundGems"), earned)));
 		player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, .5f, 0);
 
 		FileConfiguration playerData = plugin.getPlayerData();
@@ -465,8 +469,8 @@ public class GameEvents implements Listener {
 
 		// Notify everyone of player death
 		arena.getPlayers().forEach(gamer -> {
-				gamer.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&c has died and will " +
-						"respawn next round."));
+				gamer.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&c " +
+						plugin.getLanguageData().getString("death")));
 				if (arena.isPlayerDeathSound())
 					gamer.getPlayer().playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 4, 0);
 		});
@@ -548,6 +552,7 @@ public class GameEvents implements Listener {
 	public void onConsume(PlayerInteractEvent e) {
 		Player player = e.getPlayer();
 		ItemStack item = player.getInventory().getItemInMainHand();
+		FileConfiguration language = plugin.getLanguageData();
 
 		// See if the player is in a game
 		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player))) return;
@@ -623,13 +628,17 @@ public class GameEvents implements Listener {
 
 			// Give items and notify
 			if (gamer.getKit().equals("Blacksmith")) {
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(1))));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(1))));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(1))),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(1))),
+						language.getString("inventoryFull"));
 			} else {
-				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(1)));
-				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(1)));
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(1)),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(1)),
+						language.getString("inventoryFull"));
 			}
-			player.sendMessage(Utils.notify("&aCare package delivered!"));
+			player.sendMessage(Utils.notify("&a" + language.getString("carePackage")));
 		}
 
 		// Medium care package
@@ -641,17 +650,24 @@ public class GameEvents implements Listener {
 
 			// Give items and notify
 			if (gamer.getKit().equals("Blacksmith")) {
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(2))));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(2))));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randConsumable(2))));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(2))),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(2))),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randConsumable(2))),
+						language.getString("inventoryFull"));
 			} else {
-				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(2)));
-				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(2)));
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(2)),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(2)),
+						language.getString("inventoryFull"));
 				if (gamer.getKit().equals("Witch"))
-					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randConsumable(2))));
-				else Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(2)));
+					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randConsumable(2))),
+							language.getString("inventoryFull"));
+				else Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(2)),
+						language.getString("inventoryFull"));
 			}
-			player.sendMessage(Utils.notify("&aCare package delivered!"));
+			player.sendMessage(Utils.notify("&a" + language.getString("carePackage")));
 		}
 
 		// Large care package
@@ -663,19 +679,28 @@ public class GameEvents implements Listener {
 
 			// Give items and notify
 			if (gamer.getKit().equals("Blacksmith")) {
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(4))));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(3))));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(3))));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randConsumable(3))));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(4))),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(3))),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(3))),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randConsumable(3))),
+						language.getString("inventoryFull"));
 			} else {
-				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(4)));
-				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(3)));
-				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(3)));
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(4)),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(3)),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(3)),
+						language.getString("inventoryFull"));
 				if (gamer.getKit().equals("Witch"))
-					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randConsumable(3))));
-				else Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(3)));
+					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randConsumable(3))),
+							language.getString("inventoryFull"));
+				else Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(3)),
+						language.getString("inventoryFull"));
 			}
-			player.sendMessage(Utils.notify("&aCare package delivered!"));
+			player.sendMessage(Utils.notify("&a" + language.getString("carePackage")));
 		}
 
 		// Extra large care package
@@ -687,26 +712,40 @@ public class GameEvents implements Listener {
 
 			// Give items and notify
 			if (gamer.getKit().equals("Blacksmith")) {
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(5))));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(4))));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(5))));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(4))));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randConsumable(4))));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randConsumable(4))));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(5))),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(4))),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(5))),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(4))),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randConsumable(4))),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randConsumable(4))),
+						language.getString("inventoryFull"));
 			} else {
-				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(5)));
-				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(4)));
-				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(5)));
-				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(4)));
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(5)),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(4)),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(5)),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(4)),
+						language.getString("inventoryFull"));
 				if (gamer.getKit().equals("Witch")) {
-					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randConsumable(4))));
-					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randConsumable(4))));
+					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randConsumable(4))),
+							language.getString("inventoryFull"));
+					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randConsumable(4))),
+							language.getString("inventoryFull"));
 				} else {
-					Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(4)));
-					Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(4)));
+					Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(4)),
+							language.getString("inventoryFull"));
+					Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(4)),
+							language.getString("inventoryFull"));
 				}
 			}
-			player.sendMessage(Utils.notify("&aCare package delivered!"));
+			player.sendMessage(Utils.notify("&a" + language.getString("carePackage")));
 		}
 	}
 

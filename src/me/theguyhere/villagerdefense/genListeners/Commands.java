@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.Objects;
@@ -33,6 +34,8 @@ public class Commands implements CommandExecutor {
 		
 		// Open arena inventory
 		if (label.equalsIgnoreCase("vd")) {
+			FileConfiguration language = plugin.getLanguageData();
+
 			// Check for player executing command
 			if (!(sender instanceof Player)) {
 				sender.sendMessage("Bad console!");
@@ -43,7 +46,7 @@ public class Commands implements CommandExecutor {
 			
 			// Check for permission to use the command
 			if (!player.hasPermission("vd.use")) {
-				player.sendMessage(Utils.notify("&cYou do not have permission!"));
+				player.sendMessage(Utils.notify("&c" + language.getString("permissionError")));
 				return true;
 			}
 			
@@ -56,7 +59,7 @@ public class Commands implements CommandExecutor {
 			// Redirects to wiki for help
 			// NOT FINALIZED
 			if (args[0].equalsIgnoreCase("help")) {
-				player.sendMessage(Utils.notify("&6For more information, click below to visit the wiki!"));
+				player.sendMessage(Utils.notify("&6" + language.getString("info")));
 				TextComponent message = new TextComponent("Visit the wiki!");
 				message.setBold(true);
 				message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,
@@ -78,7 +81,7 @@ public class Commands implements CommandExecutor {
 					player.openInventory(inv.createPlayerStatsInventory(player.getName()));
 				else if (plugin.getPlayerData().contains(args[1]))
 					player.openInventory(inv.createPlayerStatsInventory(args[1]));
-				else player.sendMessage(Utils.notify("&c" + args[1] + " does not have stats."));
+				else player.sendMessage(Utils.notify("&c" + args[1] + " " + language.getString("noStats")));
 				return true;
 			}
 
@@ -92,7 +95,7 @@ public class Commands implements CommandExecutor {
 			if (args[0].equalsIgnoreCase("select")) {
 				// Check if player is in a game
 				if (game.arenas.stream().filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player))) {
-					player.sendMessage(Utils.notify("&cYou must be in a game to use this command!"));
+					player.sendMessage(Utils.notify("&c" + language.getString("inGameError")));
 					return true;
 				}
 
@@ -102,14 +105,14 @@ public class Commands implements CommandExecutor {
 
 				// Check arena is in session
 				if (arena.isActive() && arena.getActives().contains(gamer)) {
-					player.sendMessage(Utils.notify("&cYou cannot change kits during the game!"));
+					player.sendMessage(Utils.notify("&c" + language.getString("kitChangeError")));
 					return true;
 				}
 
 				// Check for unqualified spectators
 				if (arena.getSpectators().contains(gamer)  &&
 						!plugin.getPlayerData().getBoolean(player.getName() + ".kits.Phantom")) {
-					player.sendMessage(Utils.notify("&cSpectators don't have access to kits!"));
+					player.sendMessage(Utils.notify("&c" + language.getString("spectatorError")));
 					return true;
 				}
 
@@ -121,7 +124,7 @@ public class Commands implements CommandExecutor {
 			if (args[0].equalsIgnoreCase("crystals")) {
 				// Check for permission to use the command
 				if (!player.hasPermission("vd.use")) {
-					player.sendMessage(Utils.notify("&cYou do not have permission!"));
+					player.sendMessage(Utils.notify("&c" + language.getString("permissionError")));
 					return true;
 				}
 
@@ -153,7 +156,7 @@ public class Commands implements CommandExecutor {
 			}
 
 			// No valid command sent
-			player.sendMessage(Utils.notify("&cInvalid command. Use /vd help for more info."));
+			player.sendMessage(Utils.notify("&c" + language.getString("commandError")));
 			return true;
 		}
 		return false;

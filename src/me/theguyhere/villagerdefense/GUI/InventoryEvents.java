@@ -134,6 +134,7 @@ public class InventoryEvents implements Listener {
 		int slot = e.getSlot();
 		int num = slot;
 		FileConfiguration config = plugin.getArenaData();
+		FileConfiguration language = plugin.getLanguageData();
 
 		// Arena inventory
 		if (title.contains("Villager Defense Arenas")) {
@@ -1572,49 +1573,49 @@ public class InventoryEvents implements Listener {
 
 			// Default
 			if (buttonName.contains("Default"))
-				if (new File(plugin.getDataFolder() + "/spawnTables/default.yml").exists())
+				if (new File(plugin.getDataFolder().getPath() + "spawnTables/default.yml").exists())
 					config.set("a" + arena + ".spawnTable", "default");
 				else player.sendMessage(Utils.notify("&cFile doesn't exist!"));
 
 			// Option 1
 			else if (buttonName.contains("Option 1"))
-				if (new File(plugin.getDataFolder() + "/spawnTables/option1.yml").exists())
+				if (new File(plugin.getDataFolder().getPath() + "/spawnTables/option1.yml").exists())
 					config.set("a" + arena + ".spawnTable", "option1");
 				else player.sendMessage(Utils.notify("&cFile doesn't exist!"));
 
 			// Option 2
 			else if (buttonName.contains("Option 2"))
-				if (new File(plugin.getDataFolder() + "/spawnTables/option2.yml").exists())
+				if (new File(plugin.getDataFolder().getPath() + "/spawnTables/option2.yml").exists())
 					config.set("a" + arena + ".spawnTable", "option2");
 				else player.sendMessage(Utils.notify("&cFile doesn't exist!"));
 
 			// Option 3
 			else if (buttonName.contains("Option 3"))
-				if (new File(plugin.getDataFolder() + "/spawnTables/option3.yml").exists())
+				if (new File(plugin.getDataFolder().getPath() + "/spawnTables/option3.yml").exists())
 					config.set("a" + arena + ".spawnTable", "option3");
 				else player.sendMessage(Utils.notify("&cFile doesn't exist!"));
 
 			// Option 4
 			else if (buttonName.contains("Option 4"))
-				if (new File(plugin.getDataFolder() + "/spawnTables/option4.yml").exists())
+				if (new File(plugin.getDataFolder().getPath() + "/spawnTables/option4.yml").exists())
 					config.set("a" + arena + ".spawnTable", "option4");
 				else player.sendMessage(Utils.notify("&cFile doesn't exist!"));
 
 			// Option 5
 			else if (buttonName.contains("Option 5"))
-				if (new File(plugin.getDataFolder() + "/spawnTables/option5.yml").exists())
+				if (new File(plugin.getDataFolder().getPath() + "/spawnTables/option5.yml").exists())
 					config.set("a" + arena + ".spawnTable", "option5");
 				else player.sendMessage(Utils.notify("&cFile doesn't exist!"));
 
 			// Option 6
 			else if (buttonName.contains("Option 6"))
-				if (new File(plugin.getDataFolder() + "/spawnTables/option6.yml").exists())
+				if (new File(plugin.getDataFolder().getPath() + "/spawnTables/option6.yml").exists())
 					config.set("a" + arena + ".spawnTable", "option6");
 				else player.sendMessage(Utils.notify("&cFile doesn't exist!"));
 
 			// Custom
 			else if (buttonName.contains("Custom"))
-				if (new File(plugin.getDataFolder() + "/spawnTables/a" + arena + ".yml").exists())
+				if (new File(plugin.getDataFolder().getPath() + "/spawnTables/a" + arena + ".yml").exists())
 					config.set("a" + arena + ".spawnTable", "custom");
 				else player.sendMessage(Utils.notify("&cFile doesn't exist!"));
 
@@ -1701,7 +1702,7 @@ public class InventoryEvents implements Listener {
 
 			// Save changes and refresh GUI
 			plugin.saveArenaData();
-			Utils.giveItem(player, cursor.clone());
+			Utils.giveItem(player, cursor.clone(), language.getString("inventoryFull"));
 			player.setItemOnCursor(new ItemStack(Material.AIR));
 			openInv(player, game.arenas.get(arena).getCustomShopEditor());
 		}
@@ -2186,25 +2187,25 @@ public class InventoryEvents implements Listener {
 			if (buttonName.contains("Weapon Shop"))
 				if (arenaInstance.isNormal())
 					openInv(player, arenaInstance.getWeaponShop());
-				else player.sendMessage(Utils.notify("&cNormal shop has been disabled!"));
+				else player.sendMessage(Utils.notify("&c" + language.getString("normalShopError")));
 
 			// Open armor shop
 			else if (buttonName.contains("Armor Shop"))
 				if (arenaInstance.isNormal())
 					openInv(player, arenaInstance.getArmorShop());
-				else player.sendMessage(Utils.notify("&cNormal shop has been disabled!"));
+				else player.sendMessage(Utils.notify("&c" + language.getString("normalShopError")));
 
 			// Open consumables shop
 			else if (buttonName.contains("Consumables Shop"))
 				if (arenaInstance.isNormal())
 					openInv(player, arenaInstance.getConsumeShop());
-				else player.sendMessage(Utils.notify("&cNormal shop has been disabled!"));
+				else player.sendMessage(Utils.notify("&c" + language.getString("normalShopError")));
 
 			// Open custom shop
 			else if (buttonName.contains("Custom Shop"))
 				if (arenaInstance.isCustom())
 					openInv(player, arenaInstance.getCustomShop());
-				else player.sendMessage(Utils.notify("&cCustom shop has been disabled!"));
+				else player.sendMessage(Utils.notify("&c" + language.getString("customShopError")));
 		}
 
 		// Mock custom shop for an arena
@@ -2244,7 +2245,7 @@ public class InventoryEvents implements Listener {
 
 			// Check if they can afford the item
 			if (!gamer.canAfford(cost)) {
-				player.sendMessage(Utils.notify("&cYou can't afford this item!"));
+				player.sendMessage(Utils.notify("&c" + language.getString("buyError")));
 				return;
 			}
 
@@ -2270,21 +2271,21 @@ public class InventoryEvents implements Listener {
 			// Equip armor if possible, otherwise put in inventory, otherwise drop at feet
 			if (Arrays.stream(HELMETS).anyMatch(mat -> mat == buyType) && equipment.getHelmet() == null) {
 				equipment.setHelmet(buy);
-				player.sendMessage(Utils.notify("&aHelmet equipped!"));
+				player.sendMessage(Utils.notify("&a" + language.getString("helmet")));
 			} else if (Arrays.stream(CHESTPLATES).anyMatch(mat -> mat == buyType) &&
 					equipment.getChestplate() == null) {
 				equipment.setChestplate(buy);
-				player.sendMessage(Utils.notify("&aChestplate equipped!"));
+				player.sendMessage(Utils.notify("&a" + language.getString("chestplate")));
 			} else if (Arrays.stream(LEGGINGS).anyMatch(mat -> mat == buyType) &&
 					equipment.getLeggings() == null) {
 				equipment.setLeggings(buy);
-				player.sendMessage(Utils.notify("&aLeggings equipped!"));
+				player.sendMessage(Utils.notify("&a" + language.getString("leggings")));
 			} else if (Arrays.stream(BOOTS).anyMatch(mat -> mat == buyType) && equipment.getBoots() == null) {
 				equipment.setBoots(buy);
-				player.sendMessage(Utils.notify("&aBoots equipped!"));
+				player.sendMessage(Utils.notify("&a" + language.getString("boots")));
 			} else {
-				Utils.giveItem(player, buy);
-				player.sendMessage(Utils.notify("&aItem purchased!"));
+				Utils.giveItem(player, buy, language.getString("inventoryFull"));
+				player.sendMessage(Utils.notify("&a" + language.getString("buy")));
 			}
 		}
 
@@ -2313,8 +2314,8 @@ public class InventoryEvents implements Listener {
 							playerData.set(name + ".crystalBalance",
 									playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit));
 							playerData.set(path + kit, true);
-							player.sendMessage(Utils.notify("&aKit purchased!"));
-						} else player.sendMessage(Utils.notify("&cYou can't afford this kit!"));
+							player.sendMessage(Utils.notify("&a" + language.getString("kitBuy")));
+						} else player.sendMessage(Utils.notify("&c" + language.getString("kitBuyError")));
 
 				// Double tier kits
 				if (kit.equals("Giant"))
@@ -2324,8 +2325,9 @@ public class InventoryEvents implements Listener {
 								playerData.set(name + ".crystalBalance",
 										playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit, 2));
 								playerData.set(path + kit, 2);
-								player.sendMessage(Utils.notify("&aKit upgraded!"));
-							} else player.sendMessage(Utils.notify("&cYou can't afford this upgrade!"));
+								player.sendMessage(Utils.notify("&a" + language.getString("kitUpgrade")));
+							} else player.sendMessage(Utils.notify("&c" +
+									language.getString("kitUpgradeError")));
 							break;
 						case 2:
 							return;
@@ -2334,8 +2336,8 @@ public class InventoryEvents implements Listener {
 								playerData.set(name + ".crystalBalance",
 										playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit, 1));
 								playerData.set(path + kit, 1);
-								player.sendMessage(Utils.notify("&aKit purchased!"));
-							} else player.sendMessage(Utils.notify("&cYou can't afford this kit!"));
+								player.sendMessage(Utils.notify("&a" + language.getString("kitBuy")));
+							} else player.sendMessage(Utils.notify("&c" + language.getString("kitBuyError")));
 					}
 
 				// Triple tier kits
@@ -2348,16 +2350,18 @@ public class InventoryEvents implements Listener {
 								playerData.set(name + ".crystalBalance",
 										playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit, 2));
 								playerData.set(path + kit, 2);
-								player.sendMessage(Utils.notify("&aKit upgraded!"));
-							} else player.sendMessage(Utils.notify("&cYou can't afford this upgrade!"));
+								player.sendMessage(Utils.notify("&aKit" + language.getString("kitUpgrade")));
+							} else player.sendMessage(Utils.notify("&c" +
+									language.getString("kitUpgradeError")));
 							break;
 						case 2:
 							if (playerData.getInt(name + ".crystalBalance") >= kits.getPrice(kit, 3)) {
 								playerData.set(name + ".crystalBalance",
 										playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit, 3));
 								playerData.set(path + kit, 3);
-								player.sendMessage(Utils.notify("&aKit upgraded!"));
-							} else player.sendMessage(Utils.notify("&cYou can't afford this upgrade!"));
+								player.sendMessage(Utils.notify("&aKit" + language.getString("kitUpgrade")));
+							} else player.sendMessage(Utils.notify("&c" +
+									language.getString("kitUpgradeError")));
 							break;
 						case 3:
 							return;
@@ -2366,8 +2370,8 @@ public class InventoryEvents implements Listener {
 								playerData.set(name + ".crystalBalance",
 										playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit, 1));
 								playerData.set(path + kit, 1);
-								player.sendMessage(Utils.notify("&aKit purchased!"));
-							} else player.sendMessage(Utils.notify("&cYou can't afford this kit!"));
+								player.sendMessage(Utils.notify("&a" + language.getString("kitBuy")));
+							} else player.sendMessage(Utils.notify("&c" + language.getString("kitBuyError")));
 					}
 			}
 
@@ -2393,11 +2397,11 @@ public class InventoryEvents implements Listener {
 			if (gamer.isSpectating() && playerData.getBoolean(path + "Phantom") &&
 					kit.equals("Phantom")) {
 				if (arenaInstance.isEnding())
-					player.sendMessage(Utils.notify("&cArena is ending!"));
+					player.sendMessage(Utils.notify("&c" + language.getString("phantomError")));
 				else {
 					Utils.teleAdventure(player, arenaInstance.getPlayerSpawn());
 					gamer.flipSpectating();
-					Tasks.giveItems(gamer);
+					arenaInstance.getTask().giveItems(gamer);
 				}
 				return;
 			}
@@ -2408,22 +2412,22 @@ public class InventoryEvents implements Listener {
 					|| kit.equals("Witch") || kit.equals("Merchant") || kit.equals("Vampire"))
 				if (playerData.getBoolean(path + kit) || kit.equals("Orc") || kit.equals("Farmer")) {
 					gamer.setKit(kit);
-					player.sendMessage(Utils.notify("&aKit selected!"));
-				} else player.sendMessage(Utils.notify("&cYou don't own this kit!"));
+					player.sendMessage(Utils.notify("&a" + language.getString("kitSelect")));
+				} else player.sendMessage(Utils.notify("&c" + language.getString("kitSelectError")));
 
 			// Double tier kits
 			if (kit.equals("Giant"))
 				switch (playerData.getInt(path + kit)) {
 					case 1:
 						gamer.setKit(kit + 1);
-						player.sendMessage(Utils.notify("&aKit selected!"));
+						player.sendMessage(Utils.notify("&a" + language.getString("kitSelect")));
 						break;
 					case 2:
 						gamer.setKit(kit + 2);
-						player.sendMessage(Utils.notify("&aKit selected!"));
+						player.sendMessage(Utils.notify("&a" + language.getString("kitSelect")));
 						break;
 					default:
-						player.sendMessage(Utils.notify("&cYou don't own this kit!"));
+						player.sendMessage(Utils.notify("&c" + language.getString("kitSelectError")));
 				}
 
 			// Triple tier kits
@@ -2433,24 +2437,24 @@ public class InventoryEvents implements Listener {
 				switch (playerData.getInt(path + kit)) {
 					case 1:
 						gamer.setKit(kit + 1);
-						player.sendMessage(Utils.notify("&aKit selected!"));
+						player.sendMessage(Utils.notify("&a" + language.getString("kitSelect")));
 						break;
 					case 2:
 						gamer.setKit(kit + 2);
-						player.sendMessage(Utils.notify("&aKit selected!"));
+						player.sendMessage(Utils.notify("&a" + language.getString("kitSelect")));
 						break;
 					case 3:
 						gamer.setKit(kit + 3);
-						player.sendMessage(Utils.notify("&aKit selected!"));
+						player.sendMessage(Utils.notify("&a" + language.getString("kitSelect")));
 						break;
 					default:
-						player.sendMessage(Utils.notify("&cYou don't own this kit!"));
+						player.sendMessage(Utils.notify("&c" + language.getString("kitSelectError")));
 				}
 
 			// No kit
 			if (kit.equals("None")) {
 				gamer.setKit(null);
-				player.sendMessage(Utils.notify("&aKit selected!"));
+				player.sendMessage(Utils.notify("&a" + language.getString("kitSelect")));
 			}
 
 			// Close inventory

@@ -1,0 +1,49 @@
+boots: Boots equipped!
+buy: Item purchased!
+buyError: You can't afford this item!
+carePackage: Care package delivered!
+chestplate: Chestplate equipped!
+commandError: Invalid command. Use /vd help for more info.
+cooldownError: You have %.1f seconds left on your cooldown!
+crystals: You earned &b%d crystals &6this game!
+customShopError: Custom shop has been disabled!
+death: has died and will respawn next round.
+end: You defeated up to wave &b%d&6! Ending in 10 seconds.
+foundGems: You found &a%d&f gem(s)!
+gems: You have received &a%d &fgems!
+helmet: Helmet equipped!
+info: For more information, click below to visit the wiki!
+info1: Left click &eportal for arena info
+info2: Right click &aportal to enter arena
+info3: Use &b/vd stats &6to check personal stats
+info4: Use &b/vd kits &6to buy kits using crystals
+info5: Use &b/vd select &6before a game to select a kit
+info6: Use &b/vd help &6to go to plugin wiki
+inGameError: You must be in a game to use this command!
+inventoryFull: Your inventory is full!
+kitBuy: Kit purchased!
+kitBuyError: You can't afford this kit!
+kitChangeError: You cannot change kits during the game!
+kitSelect: Kit selected!
+kitSelectError: You don't own this kit!
+kitUpgrade: Kit upgraded!
+kitUpgradeError: You can't afford this upgrade!
+leave: left the arena.
+leaveError: You are not in a game!
+leggings: Leggings equipped!
+levelError: You don't have enough experience levels!
+maxCapacity: Arena has reached max player capacity.
+minutesLeft: minute(s) until the game starts!
+minuteWarning: 1 minute left!
+normalShopError: Normal shop has been disabled!
+noStats: does not have stats.
+permissionError: You do not have permission!
+phantomError: Arena is ending!
+record: New arena record!
+secondsLeft: seconds until the game starts!
+shopInfo: Shops upgrade every 10 rounds
+shopUpgrade: Shops upgraded!
+spectatorError: Spectators don't have access to kits!
+starting: Starting in 15 seconds
+waiting: Waiting for more players to start the game.
+wave: Wave

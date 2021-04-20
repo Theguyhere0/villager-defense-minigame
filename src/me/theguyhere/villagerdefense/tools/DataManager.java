@@ -13,8 +13,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 public class DataManager {
 	
 	private final Main plugin;
-	private FileConfiguration dataConfig = null;
-	private File configFile = null;
+	private FileConfiguration dataConfig;
+	private File configFile;
 	private final String fileName;
 
 	public DataManager(Main plugin, String fileName) {
@@ -33,6 +33,7 @@ public class DataManager {
 		// Refresh file configuration object
 		dataConfig = YamlConfiguration.loadConfiguration(configFile);
 
+		// Write data into default file
 		InputStream defaultStream = plugin.getResource(fileName);
 		if (defaultStream != null) {
 			YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defaultStream));
@@ -41,15 +42,18 @@ public class DataManager {
 	}
 	
 	public FileConfiguration getConfig() {
+		// Get current config, otherwise set default and return that
 		if (dataConfig == null)
 			reloadConfig();
 		return dataConfig;
 	}
 	
 	public void saveConfig() {
+		// Ignore null files
 		if (dataConfig == null || configFile == null)
 			return;
-		
+
+		// Try saving
 		try {
 			getConfig().save(configFile);
 		} catch (IOException e) {

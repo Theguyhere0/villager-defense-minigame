@@ -279,7 +279,7 @@ public class ArenaEvents implements Listener {
         // Check if the player is playing in a game
         if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player))) {
             e.setCancelled(true);
-            player.sendMessage(Utils.notify("&cYou are not in a game!"));
+            player.sendMessage(Utils.notify("&c" + plugin.getLanguageData().getString("leaveError")));
             return;
         }
 
@@ -313,7 +313,8 @@ public class ArenaEvents implements Listener {
 
             // Notify people in arena player left
             arena.getPlayers().forEach(fighter ->
-                    fighter.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&c left the arena.")));
+                    fighter.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&c " +
+                            plugin.getLanguageData().getString("leave"))));
 
             // Sets them up for teleport to lobby
             player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
@@ -380,6 +381,7 @@ public class ArenaEvents implements Listener {
     @EventHandler
     public void onGameEnd(GameEndEvent e) {
         Arena arena = e.getArena();
+        FileConfiguration language = plugin.getLanguageData();
 
         // Set the arena to ending
         arena.flipEnding();
@@ -387,15 +389,15 @@ public class ArenaEvents implements Listener {
 
         // Notify players that the game has ended
         arena.getPlayers().forEach(player ->
-            player.getPlayer().sendMessage(Utils.notify("&6You defeated up to wave &b" +
-                    (arena.getCurrentWave() - 1) + "&6! Ending in 10 seconds.")));
+            player.getPlayer().sendMessage(Utils.notify(String.format("&6" + language.getString("end"),
+                    arena.getCurrentWave() - 1))));
 
         if (arena.getActiveCount() > 0) {
             // Check for record
             if (arena.checkNewRecord(new ArenaRecord(arena.getCurrentWave() - 1, arena.getActives().stream()
                     .map(vdPlayer -> vdPlayer.getPlayer().getName()).collect(Collectors.toList())))) {
                 arena.getPlayers().forEach(player -> player.getPlayer().sendTitle(
-                        Utils.format("&6New arena record!"), null, Utils.secondsToTicks(.5),
+                        Utils.format("&6" + language.getString("record")), null, Utils.secondsToTicks(.5),
                         Utils.secondsToTicks(3.5), Utils.secondsToTicks(1)));
                 arenaBoard.refreshArenaBoard(arena.getArena());
             }
@@ -410,7 +412,8 @@ public class ArenaEvents implements Listener {
                 // Give rewards and notify
                 plugin.getPlayerData().set(vdPlayer.getPlayer().getName() + ".crystalBalance",
                         plugin.getPlayerData().getInt(vdPlayer.getPlayer().getName() + ".crystalBalance") + reward);
-                vdPlayer.getPlayer().sendMessage(Utils.notify("&6You earned &b" + reward + " crystals &6this game!"));
+                vdPlayer.getPlayer().sendMessage(Utils.notify(
+                        String.format("&6" + language.getString("crystals"), reward)));
             });
         }
 

@@ -1,11 +1,13 @@
 package me.theguyhere.villagerdefense.game.listeners;
 
+import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.game.models.Arena;
 import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.game.models.Kits;
 import me.theguyhere.villagerdefense.game.models.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,16 +26,20 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 public class AbilityEvents implements Listener {
+    private final Main plugin;
     private final Game game;
     private final Map<VDPlayer, Long> cooldowns = new HashMap<>();
 
-    public AbilityEvents(Game game) {
+    public AbilityEvents(Main plugin, Game game) {
+        this.plugin = plugin;
         this.game = game;
     }
 
     // Most ability functionalities
     @EventHandler
     public void onAbility(PlayerInteractEvent e) {
+        FileConfiguration language = plugin.getLanguageData();
+        
         // Check for right click
         if (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK)
             return;
@@ -66,8 +72,8 @@ public class AbilityEvents implements Listener {
                     fireball.setShooter(player);
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
         if (gamer.getKit().equals("Mage2") && (Kits.mage2().equals(item))) {
             int expRequired = 2;
@@ -81,8 +87,8 @@ public class AbilityEvents implements Listener {
                     fireball.setShooter(player);
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
         if (gamer.getKit().equals("Mage3") && (Kits.mage3().equals(item))) {
             int expRequired = 4;
@@ -96,8 +102,8 @@ public class AbilityEvents implements Listener {
                     fireball.setShooter(player);
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
 
         // Ninja
@@ -115,8 +121,8 @@ public class AbilityEvents implements Listener {
                                     Utils.secondsToTicks(10), 0))));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
         if (gamer.getKit().equals("Ninja2") && (Kits.ninja2().equals(item))) {
             int expRequired = 4;
@@ -132,8 +138,8 @@ public class AbilityEvents implements Listener {
                                     Utils.secondsToTicks(15), 0))));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
         if (gamer.getKit().equals("Ninja3") && (Kits.ninja3().equals(item))) {
             int expRequired = 6;
@@ -149,8 +155,8 @@ public class AbilityEvents implements Listener {
                                     Utils.secondsToTicks(20), 0))));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
 
         // Templar
@@ -170,8 +176,8 @@ public class AbilityEvents implements Listener {
                             0));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
         if (gamer.getKit().equals("Templar2") && (Kits.templar2().equals(item))) {
             int expRequired = 4;
@@ -189,8 +195,8 @@ public class AbilityEvents implements Listener {
                             1));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
         if (gamer.getKit().equals("Templar3") && (Kits.templar3().equals(item))) {
             int expRequired = 6;
@@ -208,8 +214,8 @@ public class AbilityEvents implements Listener {
                             2));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
 
         // Warrior
@@ -229,8 +235,8 @@ public class AbilityEvents implements Listener {
                             0));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
         if (gamer.getKit().equals("Warrior2") && (Kits.warrior2().equals(item))) {
             int expRequired = 4;
@@ -248,8 +254,8 @@ public class AbilityEvents implements Listener {
                             1));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
         if (gamer.getKit().equals("Warrior3") && (Kits.warrior3().equals(item))) {
             int expRequired = 6;
@@ -267,8 +273,8 @@ public class AbilityEvents implements Listener {
                             2));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
 
         // Knight
@@ -288,8 +294,8 @@ public class AbilityEvents implements Listener {
                             0));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
         if (gamer.getKit().equals("Knight2") && (Kits.knight2().equals(item))) {
             int expRequired = 4;
@@ -307,8 +313,8 @@ public class AbilityEvents implements Listener {
                             1));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
         if (gamer.getKit().equals("Knight3") && (Kits.knight3().equals(item))) {
             int expRequired = 6;
@@ -326,8 +332,8 @@ public class AbilityEvents implements Listener {
                             2));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
 
         // Priest
@@ -347,8 +353,8 @@ public class AbilityEvents implements Listener {
                             0));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
         if (gamer.getKit().equals("Priest2") && (Kits.priest2().equals(item))) {
             int expRequired = 4;
@@ -366,8 +372,8 @@ public class AbilityEvents implements Listener {
                             1));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
         if (gamer.getKit().equals("Priest3") && (Kits.priest3().equals(item))) {
             int expRequired = 6;
@@ -385,8 +391,8 @@ public class AbilityEvents implements Listener {
                             2));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
 
         // Siren
@@ -402,8 +408,8 @@ public class AbilityEvents implements Listener {
                             new PotionEffect(PotionEffectType.WEAKNESS, Utils.secondsToTicks(10), 0)));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
         if (gamer.getKit().equals("Siren2") && (Kits.siren2().equals(item))) {
             int expRequired = 4;
@@ -417,8 +423,8 @@ public class AbilityEvents implements Listener {
                             new PotionEffect(PotionEffectType.WEAKNESS, Utils.secondsToTicks(10), 1)));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
         if (gamer.getKit().equals("Siren3") && (Kits.siren3().equals(item))) {
             int expRequired = 6;
@@ -436,8 +442,8 @@ public class AbilityEvents implements Listener {
                     });
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
 
         // Monk
@@ -457,8 +463,8 @@ public class AbilityEvents implements Listener {
                             0));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
         if (gamer.getKit().equals("Monk2") && (Kits.monk2().equals(item))) {
             int expRequired = 4;
@@ -476,8 +482,8 @@ public class AbilityEvents implements Listener {
                             1));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
         if (gamer.getKit().equals("Monk3") && (Kits.monk3().equals(item))) {
             int expRequired = 6;
@@ -495,8 +501,8 @@ public class AbilityEvents implements Listener {
                             2));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
 
         // Messenger
@@ -516,8 +522,8 @@ public class AbilityEvents implements Listener {
                             0));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
         if (gamer.getKit().equals("Messenger2") && (Kits.messenger2().equals(item))) {
             int expRequired = 4;
@@ -535,8 +541,8 @@ public class AbilityEvents implements Listener {
                             1));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
         if (gamer.getKit().equals("Messenger3") && (Kits.messenger3().equals(item))) {
             int expRequired = 6;
@@ -554,8 +560,8 @@ public class AbilityEvents implements Listener {
                             2));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+                        String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
 
     }
