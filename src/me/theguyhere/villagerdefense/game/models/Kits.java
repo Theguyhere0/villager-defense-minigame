@@ -24,7 +24,7 @@ public class Kits {
         kitPrices.put("Reaper", new Integer[]{750, 2000, 4000});
         kitPrices.put("Phantom", new Integer[]{6000});
         kitPrices.put("Mage", new Integer[]{5000, 8000, 11000});
-        kitPrices.put("Ninja", new Integer[]{5000, 8500, 11500});
+        kitPrices.put("Ninja", new Integer[]{6000, 8500, 11500});
         kitPrices.put("Templar", new Integer[]{4500, 8500, 11000});
         kitPrices.put("Warrior", new Integer[]{5000, 8500, 11000});
         kitPrices.put("Knight", new Integer[]{6000, 9000, 12000});
@@ -107,7 +107,7 @@ public class Kits {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
         enchants.put(Enchantment.DURABILITY, 1);
         return Utils.createItem(Material.PURPLE_DYE, Utils.format("&dLevel 1 Mage Essence"), FLAGS2, enchants,
-                Utils.format("&7Right click to use ability"), Utils.format("&7Consumes 1 experience levels"));
+                Utils.format("&7Right click to use ability"), Utils.format("&7Consumes 1 experience level"));
     }
     public static ItemStack mage2() {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
@@ -125,19 +125,19 @@ public class Kits {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
         enchants.put(Enchantment.DURABILITY, 1);
         return Utils.createItem(Material.BLACK_DYE, Utils.format("&dLevel 1 Ninja Essence"), FLAGS2, enchants,
-                Utils.format("&7Right click to use ability"), Utils.format("&7Consumes 1 experience levels"));
+                Utils.format("&7Right click to use ability"), Utils.format("&7Consumes 2 experience levels"));
     }
     public static ItemStack ninja2() {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
         enchants.put(Enchantment.DURABILITY, 1);
         return Utils.createItem(Material.BLACK_DYE, Utils.format("&dLevel 2 Ninja Essence"), FLAGS2, enchants,
-                Utils.format("&7Right click to use ability"), Utils.format("&7Consumes 1 experience levels"));
+                Utils.format("&7Right click to use ability"), Utils.format("&7Consumes 4 experience levels"));
     }
     public static ItemStack ninja3() {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
         enchants.put(Enchantment.DURABILITY, 1);
         return Utils.createItem(Material.BLACK_DYE, Utils.format("&dLevel 3 Ninja Essence"), FLAGS2, enchants,
-                Utils.format("&7Right click to use ability"), Utils.format("&7Consumes 1 experience levels"));
+                Utils.format("&7Right click to use ability"), Utils.format("&7Consumes 6 experience levels"));
     }
     public static ItemStack templar1() {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();

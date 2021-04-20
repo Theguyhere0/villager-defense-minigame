@@ -1211,19 +1211,25 @@ public class Inventories {
 
 		if (!arenaInstance.getBannedKits().contains("Ninja"))
 			inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"), FLAGS, enchants,
-					Utils.format("&fLevel 1"), Utils.format("&7You and your pets become invisible for 10 seconds"),
+					Utils.format("&fLevel 1"), Utils.format("&7You and your pets become invisible"), 
+					Utils.format("&7and disarm nearby monsters for 10 seconds"),
 					Utils.format("&7(Cooldown 30 seconds)"), Utils.format("&fLevel 2"),
-					Utils.format("&7You and your pets become invisible for 20 seconds"),
-					Utils.format("&7(Cooldown 50 seconds)"),
-					Utils.format("&fLevel 3"), Utils.format("&7You and your pets become invisible for 30 seconds"),
-					Utils.format("&7(Cooldown 60 seconds)")));
+					Utils.format("&7You and your pets become invisible"), 
+					Utils.format("&7and disarm nearby monsters for 15 seconds"), 
+					Utils.format("&7(Cooldown 60 seconds)"),
+					Utils.format("&fLevel 3"), Utils.format("&7You and your pets become invisible"),
+					Utils.format("&7and disarm nearby monsters for 20 seconds"),
+					Utils.format("&7(Cooldown 90 seconds)")));
 		else inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&4&LNinja"),
-				Utils.format("&fLevel 1"), Utils.format("&7You and your pets become invisible for 10 seconds"),
+				Utils.format("&fLevel 1"), Utils.format("&7You and your pets become invisible"),
+				Utils.format("&7and disarm nearby monsters for 10 seconds"),
 				Utils.format("&7(Cooldown 30 seconds)"), Utils.format("&fLevel 2"),
-				Utils.format("&7You and your pets become invisible for 20 seconds"), 
-				Utils.format("&7(Cooldown 50 seconds)"),
-				Utils.format("&fLevel 3"), Utils.format("&7You and your pets become invisible for 30 seconds"),
-				Utils.format("&7(Cooldown 60 seconds)")));
+				Utils.format("&7You and your pets become invisible"),
+				Utils.format("&7and disarm nearby monsters for 15 seconds"),
+				Utils.format("&7(Cooldown 60 seconds)"),
+				Utils.format("&fLevel 3"), Utils.format("&7You and your pets become invisible"),
+				Utils.format("&7and disarm nearby monsters for 20 seconds"),
+				Utils.format("&7(Cooldown 90 seconds)")));
 
 		if (!arenaInstance.getBannedKits().contains("Templar"))
 			inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
@@ -1394,9 +1400,9 @@ public class Inventories {
 
 		if (!arenaInstance.getBannedKits().contains("Merchant"))
 			inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&e&lMerchant"), FLAGS,
-					enchants, Utils.format("&7Earn 5% rebate on all purchases")));
+					enchants, Utils.format("&7Earn a 5% rebate on all purchases")));
 		else inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&4&LMerchant"),
-				Utils.format("&7Earn 5% rebate on all purchases")));
+				Utils.format("&7Earn a 5% rebate on all purchases")));
 
 		if (!arenaInstance.getBannedKits().contains("Vampire"))
 			inv.setItem(48, Utils.createItem(Material.GHAST_TEAR, Utils.format("&e&lVampire"), FLAGS, enchants,
@@ -1880,28 +1886,34 @@ public class Inventories {
 		switch (playerData.getInt(path + "Ninja")) {
 			case 1:
 				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
-						Utils.format("&aLevel 1"), Utils.format("&7You and your pets become invisible for 10 seconds"),
+						Utils.format("&aLevel 1"), Utils.format("&7You and your pets become invisible"),
+						Utils.format("&7and disarm nearby monsters for 10 seconds"),
 						Utils.format("&7(Cooldown 30 seconds)"), Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 2"), Utils.format("&7You and your pets become invisible for 20 seconds"),
-						Utils.format("&7(Cooldown 50 seconds)"),
+						Utils.format("&cLevel 2"), Utils.format("&7You and your pets become invisible"),
+						Utils.format("&7and disarm nearby monsters for 15 seconds"),
+						Utils.format("&7(Cooldown 60 seconds)"),
 						Utils.format("&cUpgrade: &b" + kits.getPrice("Ninja", 2) +" Crystals")));
 				break;
 			case 2:
 				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
-						Utils.format("&aLevel 2"), Utils.format("&7You and your pets become invisible for 20 seconds"),
-						Utils.format("&7(Cooldown 50 seconds)"), Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 3"), Utils.format("&7You and your pets become invisible for 30 seconds"),
-						Utils.format("&7(Cooldown 60 seconds)"),
+						Utils.format("&aLevel 2"), Utils.format("&7You and your pets become invisible"),
+						Utils.format("&7and disarm nearby monsters for 15 seconds"),
+						Utils.format("&7(Cooldown 60 seconds)"), Utils.format("&aPurchased!"),
+						Utils.format("&cLevel 3"), Utils.format("&7You and your pets become invisible"),
+						Utils.format("&7and disarm nearby monsters for 20 seconds"),
+						Utils.format("&7(Cooldown 90 seconds)"),
 						Utils.format("&cUpgrade: &b" + kits.getPrice("Ninja", 3) +" Crystals")));
 				break;
 			case 3:
 				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
-						Utils.format("&aLevel 3"), Utils.format("&7You and your pets become invisible for 30 seconds"),
-						Utils.format("&7(Cooldown 60 seconds)"), Utils.format("&aPurchased!")));
+						Utils.format("&aLevel 3"), Utils.format("&7You and your pets become invisible"),
+						Utils.format("&7and disarm nearby monsters for 20 seconds"),
+						Utils.format("&7(Cooldown 90 seconds)"), Utils.format("&aPurchased!")));
 				break;
 			default:
 				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
-						Utils.format("&cLevel 1"), Utils.format("&7You and your pets become invisible for 10 seconds"),
+						Utils.format("&cLevel 1"), Utils.format("&7You and your pets become invisible"),
+						Utils.format("&7and disarm nearby monsters for 10 seconds"),
 						Utils.format("&7(Cooldown 30 seconds)"),
 						Utils.format("&cPurchase: &b" + kits.getPrice("Ninja", 1) +" Crystals")));
 		}
@@ -2217,9 +2229,9 @@ public class Inventories {
 
 		if (playerData.getBoolean(path + "Merchant"))
 			inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&e&lMerchant"),
-					Utils.format("&7Earn 5% rebate on all purchases"), Utils.format("&aPurchased!")));
+					Utils.format("&7Earn a 5% rebate on all purchases"), Utils.format("&aPurchased!")));
 		else inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&e&lMerchant"),
-				Utils.format("&7Earn 5% rebate on all purchases"),
+				Utils.format("&7Earn a 5% rebate on all purchases"),
 				Utils.format("&cPurchase: &b" + kits.getPrice("Merchant") + " Crystals")));
 
 		if (playerData.getBoolean(path + "Vampire"))
@@ -2409,22 +2421,26 @@ public class Inventories {
 			switch (playerData.getInt(path + "Ninja")) {
 			case 1:
 				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
-						Utils.format("&aLevel 1"), Utils.format("&7You and your pets become invisible for 10 seconds"),
+						Utils.format("&aLevel 1"), Utils.format("&7You and your pets become invisible"),
+						Utils.format("&7and disarm nearby monsters for 10 seconds"),
 						Utils.format("&7(Cooldown 30 seconds)"), Utils.format("&aAvailable")));
 				break;
 			case 2:
 				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
-						Utils.format("&aLevel 2"), Utils.format("&7You and your pets become invisible for 20 seconds"),
-						Utils.format("&7(Cooldown 50 seconds)"), Utils.format("&aAvailable")));
+						Utils.format("&aLevel 2"), Utils.format("&7You and your pets become invisible"),
+						Utils.format("&7and disarm nearby monsters for 15 seconds"),
+						Utils.format("&7(Cooldown 60 seconds)"), Utils.format("&aAvailable")));
 				break;
 			case 3:
 				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
-						Utils.format("&aLevel 3"), Utils.format("&7You and your pets become invisible for 30 seconds"),
-						Utils.format("&7(Cooldown 60 seconds)"), Utils.format("&aAvailable")));
+						Utils.format("&aLevel 3"), Utils.format("&7You and your pets become invisible"),
+						Utils.format("&7and disarm nearby monsters for 20 seconds"),
+						Utils.format("&7(Cooldown 90 seconds)"), Utils.format("&aAvailable")));
 				break;
 			default:
 				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
-						Utils.format("&cLevel 1"), Utils.format("&7You and your pets become invisible for 10 seconds"),
+						Utils.format("&cLevel 1"), Utils.format("&7You and your pets become invisible"),
+						Utils.format("&7and disarm nearby monsters for 10 seconds"),
 						Utils.format("&7(Cooldown 30 seconds)"), Utils.format("&cUnavailable")));
 		}
 
@@ -2693,9 +2709,9 @@ public class Inventories {
 		if (!arena.getBannedKits().contains("Merchant"))
 			if (playerData.getBoolean(path + "Merchant"))
 				inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&e&lMerchant"),
-						Utils.format("&7Earn 5% rebate on all purchases"), Utils.format("&aAvailable")));
+						Utils.format("&7Earn a 5% rebate on all purchases"), Utils.format("&aAvailable")));
 			else inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&e&lMerchant"),
-					Utils.format("&7Earn 5% rebate on all purchases"), Utils.format("&cUnavailable")));
+					Utils.format("&7Earn a 5% rebate on all purchases"), Utils.format("&cUnavailable")));
 
 		if (!arena.getBannedKits().contains("Vampire"))
 			if (playerData.getBoolean(path + "Vampire"))

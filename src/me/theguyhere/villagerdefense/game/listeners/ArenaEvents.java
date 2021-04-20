@@ -634,7 +634,7 @@ public class ArenaEvents implements Listener {
 
     // Function for spawn delay
     private int spawnDelay(int index) {
-        int result = (int) (60 * Math.pow(Math.E, - index / 10D));
+        int result = (int) (60 * Math.pow(Math.E, - index / 60D));
         return result == 0 ? 1 : result;
     }
 }

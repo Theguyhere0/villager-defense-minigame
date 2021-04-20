@@ -5125,17 +5125,17 @@ public class GameItems {
 	}
 	public static ItemStack smallCare() {
 		return Utils.createItem(Material.COAL_BLOCK, Utils.format("&2Small Care Package"),
-				Utils.format("&7Gives 1 lvl 1 weapon and 1 lvl 1 armor"), Utils.format("&2Gems: &a300"));
+				Utils.format("&7Gives 1 lvl 1 weapon and 1 lvl 1 armor"), Utils.format("&2Gems: &a200"));
 	}
 	public static ItemStack mediumCare() {
 		return Utils.createItem(Material.IRON_BLOCK, Utils.format("&3Medium Care Package"),
 				Utils.format("&7Gives 1 lvl 2 weapon, 1 lvl 2 armor,"),
-				Utils.format("&7and 1 lvl 1 consumable"), Utils.format("&2Gems: &a750"));
+				Utils.format("&7and 1 lvl 1 consumable"), Utils.format("&2Gems: &a500"));
 	}
 	public static ItemStack largeCare() {
 		return Utils.createItem(Material.DIAMOND_BLOCK, Utils.format("&9Large Care Package"),
 				Utils.format("&7Gives 1 lvl 4 weapon, 2 lvl 3 armor,"),
-				Utils.format("&7and 1 lvl 3 consumable"), Utils.format("&2Gems: &a1500"));
+				Utils.format("&7and 1 lvl 3 consumable"), Utils.format("&2Gems: &a1200"));
 	}
 	public static ItemStack extraCare() {
 		return Utils.createItem(Material.BEACON, Utils.format("&bExtra Large Care Package"),

@@ -12,7 +12,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -103,7 +102,7 @@ public class AbilityEvents implements Listener {
 
         // Ninja
         if (gamer.getKit().equals("Ninja1") && (Kits.ninja1().equals(item))) {
-            int expRequired = 1;
+            int expRequired = 2;
             int cooldown = 30;
             if (player.getLevel() >= expRequired) {
                 long dif = cooldowns.get(gamer) - System.currentTimeMillis();
@@ -120,8 +119,25 @@ public class AbilityEvents implements Listener {
             } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
         }
         if (gamer.getKit().equals("Ninja2") && (Kits.ninja2().equals(item))) {
-            int expRequired = 1;
-            int cooldown = 50;
+            int expRequired = 4;
+            int cooldown = 60;
+            if (player.getLevel() >= expRequired) {
+                long dif = cooldowns.get(gamer) - System.currentTimeMillis();
+                if (dif <= 0) {
+                    player.setLevel(player.getLevel() - expRequired);
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Utils.secondsToTicks(15),
+                            0));
+                    Utils.getPets(player).forEach(wolf ->
+                            wolf.addPotionEffect((new PotionEffect(PotionEffectType.INVISIBILITY,
+                                    Utils.secondsToTicks(15), 0))));
+                    cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
+                } else player.sendMessage(Utils.notify(
+                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
+            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
+        }
+        if (gamer.getKit().equals("Ninja3") && (Kits.ninja3().equals(item))) {
+            int expRequired = 6;
+            int cooldown = 90;
             if (player.getLevel() >= expRequired) {
                 long dif = cooldowns.get(gamer) - System.currentTimeMillis();
                 if (dif <= 0) {
@@ -131,23 +147,6 @@ public class AbilityEvents implements Listener {
                     Utils.getPets(player).forEach(wolf ->
                             wolf.addPotionEffect((new PotionEffect(PotionEffectType.INVISIBILITY,
                                     Utils.secondsToTicks(20), 0))));
-                    cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
-                } else player.sendMessage(Utils.notify(
-                        String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));
-            } else player.sendMessage(Utils.notify("&cYou don't have enough experience levels!"));
-        }
-        if (gamer.getKit().equals("Ninja3") && (Kits.ninja3().equals(item))) {
-            int expRequired = 1;
-            int cooldown = 60;
-            if (player.getLevel() >= expRequired) {
-                long dif = cooldowns.get(gamer) - System.currentTimeMillis();
-                if (dif <= 0) {
-                    player.setLevel(player.getLevel() - expRequired);
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Utils.secondsToTicks(30),
-                            0));
-                    Utils.getPets(player).forEach(wolf ->
-                            wolf.addPotionEffect((new PotionEffect(PotionEffectType.INVISIBILITY,
-                                    Utils.secondsToTicks(30), 0))));
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
                         String.format("&cYou have %.1f seconds left on your cooldown!", Utils.millisToSeconds(dif))));

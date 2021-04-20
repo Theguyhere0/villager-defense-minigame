@@ -143,21 +143,68 @@ public class GameEvents implements Listener {
 			e.setCancelled(true);
 	}
 
-	// Update health bar when damage is dealt
+	// Update health bar when damage is dealt by entity
 	@EventHandler
-	public void onHurt(EntityDamageEvent e) {
-		// Ignore cancelled events
-		if (e.isCancelled())
-			return;
-
+	public void onHurt(EntityDamageByEntityEvent e) {
 		Entity ent = e.getEntity();
 
 		// Check for arena enemies
 		if (!ent.hasMetadata("VD"))
 			return;
 
-		// Ignore wolves and players
-		if (ent instanceof Wolf || ent instanceof Player)
+		Entity damager = e.getDamager();
+
+		// Ignore wolves
+		if (ent instanceof Wolf)
+			return;
+
+		// Ignore phantom damage to villager
+		if ((ent instanceof Villager || ent instanceof IronGolem) && damager instanceof Player)
+			return;
+
+		// Ignore phantom damage to monsters
+		if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin) && (
+				damager instanceof Monster || damager instanceof Hoglin))
+			return;
+
+		// Check for phantom projectile damage
+		if (damager instanceof Projectile) {
+			if ((ent instanceof Villager || ent instanceof IronGolem) &&
+					((Projectile) damager).getShooter() instanceof Player)
+				return;
+			if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin) &&
+					((Projectile) damager).getShooter() instanceof Monster)
+				return;
+		}
+
+		LivingEntity n = (LivingEntity) ent;
+
+		// Update health bar
+		if (ent instanceof IronGolem)
+			ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
+					n.getHealth() - e.getFinalDamage(), 10));
+		else ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
+				n.getHealth() - e.getFinalDamage(), 5));
+	}
+
+	// Update health bar when damage is dealt not by another entity
+	@EventHandler
+	public void onHurt(EntityDamageEvent e) {
+		Entity ent = e.getEntity();
+
+		// Check for arena enemies
+		if (!ent.hasMetadata("VD"))
+			return;
+
+		// Ignore wolves
+		if (ent instanceof Wolf)
+			return;
+
+		// Don't handle entity on entity damage
+		if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK ||
+				e.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK||
+				e.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION||
+				e.getCause() == EntityDamageEvent.DamageCause.PROJECTILE)
 			return;
 
 		LivingEntity n = (LivingEntity) ent;
