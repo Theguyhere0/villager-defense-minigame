@@ -2,7 +2,6 @@ package me.theguyhere.villagerdefense.game.models;
 
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.game.displays.Portal;
-import me.theguyhere.villagerdefense.game.Tasks;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

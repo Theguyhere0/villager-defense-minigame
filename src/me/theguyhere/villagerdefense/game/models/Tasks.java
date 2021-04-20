@@ -1,4 +1,4 @@
-package me.theguyhere.villagerdefense.game;
+package me.theguyhere.villagerdefense.game.models;
 
 import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.Main;
@@ -7,7 +7,6 @@ import me.theguyhere.villagerdefense.customEvents.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.customEvents.WaveEndEvent;
 import me.theguyhere.villagerdefense.customEvents.WaveStartEvent;
 import me.theguyhere.villagerdefense.game.displays.Portal;
-import me.theguyhere.villagerdefense.game.models.*;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -44,7 +43,7 @@ public class Tasks {
 	public final Runnable waiting = new Runnable() {
 		@Override
 		public void run() {
-			game.arenas.get(arena).getPlayers().forEach(player -> 
+			game.arenas.get(arena).getPlayers().forEach(player ->
 				player.getPlayer().sendMessage(Utils.notify("&6Waiting for more players to start the game.")));
 		}
 	};
@@ -128,7 +127,7 @@ public class Tasks {
 			int currentWave = arenaInstance.getCurrentWave();
 
 			// Refresh the portal hologram and scoreboards
-			portal.refreshHolo(arena, game);
+			portal.refreshHolo(arenaInstance.getArena(), game);
 			updateBoards.run();
 
 			// Revive dead players
@@ -197,6 +196,14 @@ public class Tasks {
 							player.getPlayer().stopSound(arenaInstance.getWaitingSound()));
 			}
 
+			// Start particles if enabled
+			if (arenaInstance.isSpawnParticles())
+				arenaInstance.startSpawnParticles();
+			if (arenaInstance.isMonsterParticles())
+				arenaInstance.startMonsterParticles();
+			if (arenaInstance.isVillagerParticles())
+				arenaInstance.startVillagerParticles();
+
 			// Give all players a wooden sword and a shop while removing pre-game protection
 			arenaInstance.getActives().forEach(player -> {
 				player.getPlayer().setFireTicks(0);
@@ -207,11 +214,11 @@ public class Tasks {
 				// Set health for people with giant kits
 				if (kit.equals("Giant1"))
 					player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)
-							.addModifier(new AttributeModifier("Giant1", 4,
+							.addModifier(new AttributeModifier("Giant1", 2,
 									AttributeModifier.Operation.ADD_NUMBER));
 				else if (kit.equals("Giant2"))
 					player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)
-							.addModifier(new AttributeModifier("Giant1", 8,
+							.addModifier(new AttributeModifier("Giant1", 4,
 									AttributeModifier.Operation.ADD_NUMBER));
 			});
 
@@ -248,8 +255,13 @@ public class Tasks {
 			// Clear the arena
 			Utils.clear(arenaInstance.getPlayerSpawn());
 
+			// Remove particles
+			arenaInstance.cancelSpawnParticles();
+			arenaInstance.cancelMonsterParticles();
+			arenaInstance.cancelVillagerParticles();
+
 			// Refresh portal
-			portal.refreshHolo(arena, game);
+			portal.refreshHolo(arenaInstance.getArena(), game);
 		}
 	};
 
@@ -270,6 +282,7 @@ public class Tasks {
 		@Override
 		public void run() {
 			Arena arenaInstance = game.arenas.get(arena);
+
 			double multiplier = 1 + .2 * ((int) arenaInstance.getCurrentDifficulty() - 1);
 			if (!arenaInstance.isDynamicLimit())
 				multiplier = 1;
@@ -337,8 +350,8 @@ public class Tasks {
 			case "Alchemist":
 				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD));
 				Utils.giveItem(player.getPlayer(), Kits.alchemistSpeed());
-				Utils.giveItem(player.getPlayer(), Kits.alchemistRegeneration());
-				Utils.giveItem(player.getPlayer(), Kits.alchemistStrength());
+				Utils.giveItem(player.getPlayer(), Kits.alchemistHealth());
+				Utils.giveItem(player.getPlayer(), Kits.alchemistHealth());
 				break;
 			case "Trader":
 				player.addGems(200);

@@ -45,7 +45,7 @@ public class Inventories {
 	public static final Material[] VILLAGER_MATS = {Material.WITHER_ROSE, Material.POPPY};
 
 	// Button creation constants
-	final static String CONSTRUCTION = "&fComing Soon!";
+//	final static String CONSTRUCTION = "&fComing Soon!";
 	final static boolean[] FLAGS = {true, true};
 
 	// Menu of all the arenas
@@ -571,19 +571,19 @@ public class Inventories {
 
 	// Menu for editing the player settings of an arena
 	public Inventory createPlayersInventory(int arena) {
+		Arena arenaInstance = game.arenas.get(arena);
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&d&lPlayer Settings: " + game.arenas.get(arena).getName()));
+				Utils.format("&d&lPlayer Settings: " + arenaInstance.getName()));
 
 		// Option to edit player spawn
 		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&5&lPlayer Spawn")));
 
 		// Option to toggle player spawn particles
 		inv.setItem(1, Utils.createItem(Material.FIREWORK_ROCKET,
-				Utils.format("&d&lToggle Spawn Particles"),
+				Utils.format("&d&lSpawn Particles: " + getToggleStatus(arenaInstance.isSpawnParticles())),
 				Utils.format("&7Particles showing where the spawn is"),
-				Utils.format("&7(Visible in-game)"),
-				Utils.format(CONSTRUCTION)));
+				Utils.format("&7(Visible in-game)")));
 
 		// Option to edit waiting room
 		inv.setItem(2, Utils.createItem(Material.CLOCK, Utils.format("&b&lWaiting Room"),
@@ -740,10 +740,9 @@ public class Inventories {
 
 		// Option to toggle monster spawn particles
 		inv.setItem(1, Utils.createItem(Material.FIREWORK_ROCKET,
-				Utils.format("&a&lToggle Monster Spawn Particles"),
+				Utils.format("&a&lMonster Spawn Particles: " + getToggleStatus(arenaInstance.isMonsterParticles())),
 				Utils.format("&7Particles showing where the spawns are"),
-				Utils.format("&7(Visible in-game)"),
-				Utils.format(CONSTRUCTION)));
+				Utils.format("&7(Visible in-game)")));
 
 		// Option to edit villager spawns
 		inv.setItem(2, Utils.createItem(Material.END_PORTAL_FRAME,
@@ -751,10 +750,9 @@ public class Inventories {
 
 		// Option to toggle villager spawn particles
 		inv.setItem(3, Utils.createItem(Material.FIREWORK_ROCKET,
-				Utils.format("&d&lToggle Villager Spawn Particles"),
+				Utils.format("&d&lVillager Spawn Particles: " + getToggleStatus(arenaInstance.isVillagerParticles())),
 				Utils.format("&7Particles showing where the spawns are"),
-				Utils.format("&7(Visible in-game)"),
-				Utils.format(CONSTRUCTION)));
+				Utils.format("&7(Visible in-game)")));
 
 		// Option to edit spawn table
 		inv.setItem(4, Utils.createItem(Material.DRAGON_HEAD, Utils.format("&3&lSpawn Table")));
@@ -1151,11 +1149,11 @@ public class Inventories {
 
 		if (!arenaInstance.getBannedKits().contains("Alchemist"))
 			inv.setItem(13, Utils.createItem(Material.BREWING_STAND, Utils.format("&a&lAlchemist"), FLAGS,
-					enchants, Utils.format("&7Start with 1 speed, 1 regeneration,"),
-					Utils.format("&7and 1 strength splash potion")));
+					enchants, Utils.format("&7Start with 1 speed and 2 healing"),
+					Utils.format("&7splash potions")));
 		else inv.setItem(13, Utils.createItem(Material.BREWING_STAND, Utils.format("&4&LAlchemist"),
-				Utils.format("&7Start with 1 speed, 1 regeneration,"),
-				Utils.format("&7and 1 strength splash potion")));
+				Utils.format("&7Start with 1 speed and 2 healing"),
+				Utils.format("&7splash potions")));
 
 		if (!arenaInstance.getBannedKits().contains("Trader"))
 			inv.setItem(14, Utils.createItem(Material.EMERALD, Utils.format("&a&lTrader"), FLAGS, enchants,
@@ -1410,11 +1408,11 @@ public class Inventories {
 
 		if (!arenaInstance.getBannedKits().contains("Giant"))
 			inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&e&lGiant"), FLAGS, enchants,
-					Utils.format("&fLevel 1"), Utils.format("&7Permanent 20% health boost"),
-					Utils.format("&fLevel 2"), Utils.format("&7Permanent 40% health boost")));
+					Utils.format("&fLevel 1"), Utils.format("&7Permanent 10% health boost"),
+					Utils.format("&fLevel 2"), Utils.format("&7Permanent 20% health boost")));
 		else inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&4&LGiant"),
-				Utils.format("&fLevel 1"), Utils.format("&7Permanent 20% health boost"),
-				Utils.format("&fLevel 2"), Utils.format("&7Permanent 40% health boost")));
+				Utils.format("&fLevel 1"), Utils.format("&7Permanent 10% health boost"),
+				Utils.format("&fLevel 2"), Utils.format("&7Permanent 20% health boost")));
 
 		// Option to exit
 		inv.setItem(53, InventoryItems.exit());
@@ -1769,11 +1767,10 @@ public class Inventories {
 
 		if (playerData.getBoolean(path + "Alchemist"))
 			inv.setItem(13, Utils.createItem(Material.BREWING_STAND, Utils.format("&a&lAlchemist"),
-				Utils.format("&7Start with 1 speed, 1 regeneration,"),
-					Utils.format("&7and 1 strength splash potion"), Utils.format("&aPurchased!")));
+				Utils.format("&7Start with 1 speed and 2 healing"),
+					Utils.format("&7splash potions"), Utils.format("&aPurchased!")));
 		else inv.setItem(13, Utils.createItem(Material.BREWING_STAND, Utils.format("&a&lAlchemist"),
-				Utils.format("&7Start with 1 speed, 1 regeneration,"),
-				Utils.format("&7and 1 strength splash potion"),
+				Utils.format("&7Start with 1 speed and 2 healing"), Utils.format("&7splash potions"),
 				Utils.format("&cPurchase: &b" + kits.getPrice("Alchemist") + " Crystals")));
 
 		if (playerData.getBoolean(path + "Trader"))
@@ -2238,20 +2235,20 @@ public class Inventories {
 			case 1:
 				inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&e&lGiant"),
 						Utils.format("&aLevel 1"),
-						Utils.format("&7Permanent 20% health boost"), Utils.format("&aPurchased!"),
+						Utils.format("&7Permanent 10% health boost"), Utils.format("&aPurchased!"),
 						Utils.format("&cLevel 2"),
-						Utils.format("&7Permanent 40% health boost"),
+						Utils.format("&7Permanent 20% health boost"),
 						Utils.format("&cUpgrade: &b" + kits.getPrice("Giant", 2) +" Crystals")));
 				break;
 			case 2:
 				inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&e&lGiant"),
 						Utils.format("&aLevel 2"),
-						Utils.format("&7Permanent 40% health boost"), Utils.format("&aPurchased!")));
+						Utils.format("&7Permanent 20% health boost"), Utils.format("&aPurchased!")));
 				break;
 			default:
 				inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&e&lGiant"),
 						Utils.format("&cLevel 1"),
-						Utils.format("&7Permanent 20% health boost"),
+						Utils.format("&7Permanent 10% health boost"),
 						Utils.format("&cPurchase: &b" + kits.getPrice("Giant", 1) +" Crystals")));
 		}
 
@@ -2307,11 +2304,11 @@ public class Inventories {
 		if (!arena.getBannedKits().contains("Alchemist"))
 			if (playerData.getBoolean(path + "Alchemist"))
 				inv.setItem(13, Utils.createItem(Material.BREWING_STAND, Utils.format("&a&lAlchemist"),
-						Utils.format("&7Start with 1 speed, 1 regeneration,"),
-						Utils.format("&7and 1 strength splash potion"), Utils.format("&aAvailable")));
+						Utils.format("&7Start with 1 speed and 2 healing"),
+						Utils.format("&7splash potions"), Utils.format("&aAvailable")));
 			else inv.setItem(13, Utils.createItem(Material.BREWING_STAND, Utils.format("&a&lAlchemist"),
-					Utils.format("&7Start with 1 speed, 1 regeneration,"),
-					Utils.format("&7and 1 strength splash potion"), Utils.format("&cUnavailable")));
+					Utils.format("&7Start with 1 speed and 2 healing"),
+					Utils.format("&7splash potions"), Utils.format("&cUnavailable")));
 
 		if (!arena.getBannedKits().contains("Trader"))
 			if (playerData.getBoolean(path + "Trader"))
@@ -2714,17 +2711,17 @@ public class Inventories {
 			case 1:
 				inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&e&lGiant"),
 						Utils.format("&aLevel 1"),
-						Utils.format("&7Permanent 20% health boost"), Utils.format("&aAvailable")));
+						Utils.format("&7Permanent 10% health boost"), Utils.format("&aAvailable")));
 				break;
 			case 2:
 				inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&e&lGiant"),
 						Utils.format("&aLevel 2"),
-						Utils.format("&7Permanent 40% health boost"), Utils.format("&aAvailable")));
+						Utils.format("&7Permanent 20% health boost"), Utils.format("&aAvailable")));
 				break;
 			default:
 				inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&e&lGiant"),
 						Utils.format("&cLevel 1"),
-						Utils.format("&7Permanent 20% health boost"), Utils.format("&cUnavailable")));
+						Utils.format("&7Permanent 10% health boost"), Utils.format("&cUnavailable")));
 		}
 
 		// Option for no kit
@@ -2799,16 +2796,28 @@ public class Inventories {
 				null,
 				Utils.format("&7Determines difficulty increase rate")));
 
+		// Player spawn particles toggle
+		inv.setItem(10, Utils.createItem(Material.FIREWORK_ROCKET,
+				Utils.format("&e&lPlayer Spawn Particles: " + getToggleStatus(arena.isSpawnParticles()))));
+
+		// Monster spawn particles toggle
+		inv.setItem(11, Utils.createItem(Material.FIREWORK_ROCKET,
+				Utils.format("&d&lMonster Spawn Particles: " + getToggleStatus(arena.isMonsterParticles()))));
+
+		// Villager spawn particles toggle
+		inv.setItem(12, Utils.createItem(Material.FIREWORK_ROCKET,
+				Utils.format("&a&lVillager Spawn Particles: " + getToggleStatus(arena.isVillagerParticles()))));
+
 		// Default shop toggle
-		inv.setItem(10, Utils.createItem(Material.EMERALD_BLOCK,
+		inv.setItem(13, Utils.createItem(Material.EMERALD_BLOCK,
 				Utils.format("&6&lDefault Shop: " + getToggleStatus(arena.isNormal()))));
 
 		// Custom shop toggle
-		inv.setItem(12, Utils.createItem(Material.QUARTZ_BLOCK,
+		inv.setItem(14, Utils.createItem(Material.QUARTZ_BLOCK,
 				Utils.format("&2&lCustom Shop: " + getToggleStatus(arena.isNormal()))));
 
 		// Custom shop inventory
-		inv.setItem(14, Utils.createItem(Material.QUARTZ, Utils.format("&f&lCustom Shop Inventory")));
+		inv.setItem(15, Utils.createItem(Material.QUARTZ, Utils.format("&f&lCustom Shop Inventory")));
 
 		// Arena records
 		List<String> records = new ArrayList<>();

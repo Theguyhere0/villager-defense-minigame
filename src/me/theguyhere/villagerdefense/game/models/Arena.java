@@ -2,12 +2,8 @@ package me.theguyhere.villagerdefense.game.models;
 
 import me.theguyhere.villagerdefense.GUI.InventoryItems;
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.game.Tasks;
 import me.theguyhere.villagerdefense.tools.Utils;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -64,6 +60,9 @@ public class Arena {
     private int currentWave; // Current game wave
     private int villagers; // Villager count
     private int enemies; // Enemy count
+    private int spawnID = 0; // Spawn particles ID
+    private int monsterID = 0; // Monster particles ID
+    private int villagerID = 0; // Villager particles ID
     private final List<VDPlayer> players = new ArrayList<>(); // Tracks players playing and their other related stats
     private Inventory weaponShop; // Weapon shop inventory
     private Inventory armorShop; // Armor shop inventory
@@ -203,6 +202,120 @@ public class Arena {
 
     public String getSpawnTableFile() {
         return spawnTableFile;
+    }
+
+    public boolean isSpawnParticles() {
+        return plugin.getArenaData().getBoolean("a" + arena + ".particles.spawn");
+    }
+
+    public void flipSpawnParticles() {
+        plugin.getArenaData().set("a" + arena + ".particles.spawn", !isSpawnParticles());
+        plugin.saveArenaData();
+    }
+
+    public void startSpawnParticles() {
+        if (spawnID == 0)
+            spawnID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+                double var = 0;
+                double var2 = 0;
+                Location first, second;
+
+                @Override
+                public void run() {
+                    // Update particle locations
+                    var += Math.PI / 12;
+                    var2 -= Math.PI / 12;
+                    first = playerSpawn.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
+                    second = playerSpawn.clone().add(Math.cos(var2 + Math.PI), Math.sin(var2) + 1,
+                            Math.sin(var2 + Math.PI));
+
+                    // Spawn particles
+                    playerSpawn.getWorld().spawnParticle(Particle.FLAME, first, 0);
+                    playerSpawn.getWorld().spawnParticle(Particle.FLAME, second, 0);
+                }
+            }, 0 , 2);
+    }
+
+    public void cancelSpawnParticles() {
+        if (spawnID != 0)
+            Bukkit.getScheduler().cancelTask(spawnID);
+        spawnID = 0;
+    }
+
+    public boolean isMonsterParticles() {
+        return plugin.getArenaData().getBoolean("a" + arena + ".particles.monster");
+    }
+
+    public void flipMonsterParticles() {
+        plugin.getArenaData().set("a" + arena + ".particles.monster", !isMonsterParticles());
+        plugin.saveArenaData();
+    }
+
+    public void startMonsterParticles() {
+        if (monsterID == 0)
+            monsterID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+                double var = 0;
+                Location first, second;
+
+                @Override
+                public void run() {
+                    var -= Math.PI / 12;
+                    monsterSpawns.forEach(location -> {
+                        // Update particle locations
+                        first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
+                        second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
+                                Math.sin(var + Math.PI));
+
+                        // Spawn particles
+                        location.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, first, 0);
+                        location.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, second, 0);
+                    });
+                }
+            }, 0 , 2);
+    }
+
+    public void cancelMonsterParticles() {
+        if (monsterID != 0)
+            Bukkit.getScheduler().cancelTask(monsterID);
+        monsterID = 0;
+    }
+
+    public boolean isVillagerParticles() {
+        return plugin.getArenaData().getBoolean("a" + arena + ".particles.villager");
+    }
+
+    public void flipVillagerParticles() {
+        plugin.getArenaData().set("a" + arena + ".particles.villager", !isVillagerParticles());
+        plugin.saveArenaData();
+    }
+
+    public void startVillagerParticles() {
+        if (villagerID == 0)
+            villagerID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+                double var = 0;
+                Location first, second;
+
+                @Override
+                public void run() {
+                    var += Math.PI / 12;
+                    villagerSpawns.forEach(location -> {
+                        // Update particle locations
+                        first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
+                        second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
+                                Math.sin(var + Math.PI));
+
+                        // Spawn particles
+                        location.getWorld().spawnParticle(Particle.COMPOSTER, first, 0);
+                        location.getWorld().spawnParticle(Particle.COMPOSTER, second, 0);
+                    });
+                }
+            }, 0 , 2);
+    }
+
+    public void cancelVillagerParticles() {
+        if (villagerID != 0)
+            Bukkit.getScheduler().cancelTask(villagerID);
+        villagerID = 0;
     }
 
     public boolean isNormal() {

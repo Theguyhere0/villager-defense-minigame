@@ -24,7 +24,7 @@ public class Kits {
         kitPrices.put("Reaper", new Integer[]{750, 2000, 4000});
         kitPrices.put("Phantom", new Integer[]{6000});
         kitPrices.put("Mage", new Integer[]{5000, 8000, 11000});
-        kitPrices.put("Ninja", new Integer[]{4000, 7500, 10000});
+        kitPrices.put("Ninja", new Integer[]{5000, 8500, 11500});
         kitPrices.put("Templar", new Integer[]{4500, 8500, 11000});
         kitPrices.put("Warrior", new Integer[]{5000, 8500, 11000});
         kitPrices.put("Knight", new Integer[]{6000, 9000, 12000});
@@ -75,13 +75,9 @@ public class Kits {
         return Utils.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.SPEED),
                 Utils.format("&aAlchemist's Speed Potion"));
     }
-    public static ItemStack alchemistRegeneration() {
-        return Utils.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.REGEN),
-                Utils.format("&aAlchemist's Regeneration Potion"));
-    }
-    public static ItemStack alchemistStrength() {
-        return Utils.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.STRENGTH),
-                Utils.format("&aAlchemist's Strength Potion"));
+    public static ItemStack alchemistHealth() {
+        return Utils.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.INSTANT_HEAL),
+                Utils.format("&aAlchemist's Health Potion"));
     }
     public static ItemStack summoner1() {
         return Utils.createItem(Material.WOLF_SPAWN_EGG, Utils.format("&aSummoner's Wolf Spawn Egg"));

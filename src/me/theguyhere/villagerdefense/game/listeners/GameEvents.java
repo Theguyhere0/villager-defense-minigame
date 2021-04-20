@@ -349,13 +349,18 @@ public class GameEvents implements Listener {
 		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0);
 		VDPlayer gamer = arena.getPlayer(player);
+		ItemStack item = e.getItem().getItemStack();
 
 		// Check for gem item
-		if (!e.getItem().getItemStack().getType().equals(Material.EMERALD))
+		if (!item.getType().equals(Material.EMERALD))
+			return;
+
+		// Ignore item shop
+		if (item.getItemMeta().getDisplayName().contains("Item Shop"))
 			return;
 
 		// Calculate and give player gems
-		int stack = e.getItem().getItemStack().getAmount();
+		int stack = item.getAmount();
 		Random r = new Random();
 		int wave = arena.getCurrentWave();
 		int earned = 0;

@@ -3,7 +3,6 @@ package me.theguyhere.villagerdefense.game.listeners;
 import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.customEvents.*;
-import me.theguyhere.villagerdefense.game.*;
 import me.theguyhere.villagerdefense.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.game.displays.Portal;
@@ -17,7 +16,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -291,6 +289,8 @@ public class ArenaEvents implements Listener {
 
         // Stop playing possible ending sound
         player.stopSound(Sound.ENTITY_ENDER_DRAGON_DEATH);
+        if (arena.getWaitingSound() != null)
+            player.stopSound(arena.getWaitingSound());
 
         // Not spectating
         if (!gamer.isSpectating()) {

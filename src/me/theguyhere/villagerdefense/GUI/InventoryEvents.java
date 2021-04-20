@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.GUI;
 
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.customEvents.LeaveArenaEvent;
-import me.theguyhere.villagerdefense.game.Tasks;
+import me.theguyhere.villagerdefense.game.models.Tasks;
 import me.theguyhere.villagerdefense.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.game.displays.InfoBoard;
 import me.theguyhere.villagerdefense.game.displays.Leaderboard;
@@ -632,6 +632,14 @@ public class InventoryEvents implements Listener {
 				if (!config.contains("a" + arena + ".normal"))
 					config.set("a" + arena + ".normal", true);
 
+				// Set default particle toggles
+				if (!config.contains("a" + arena + ".particles.spawn"))
+					config.set("a" + arena + ".particles.spawn", true);
+				if (!config.contains("a" + arena + ".particles.monster"))
+					config.set("a" + arena + ".particles.monster", true);
+				if (!config.contains("a" + arena + ".particles.villager"))
+					config.set("a" + arena + ".particles.villager", true);
+
 				plugin.saveArenaData();
 				arenaInstance.updateArena();
 				arenaInstance.updateArena();
@@ -1160,7 +1168,12 @@ public class InventoryEvents implements Listener {
 				openInv(player, inv.createPlayerSpawnInventory(arena));
 
 			// Toggle player spawn particles
-//			else if (buttonName.contains("Toggle"))
+			else if (buttonName.contains("Spawn Particles:"))
+				if (config.getBoolean("a" + arena + ".closed")) {
+					game.arenas.get(arena).flipSpawnParticles();
+					openInv(player, inv.createPlayersInventory(arena));
+				}
+				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
 			// Open waiting room editor
 			else if (buttonName.contains("Waiting"))
@@ -1376,16 +1389,26 @@ public class InventoryEvents implements Listener {
 				openInv(player, inv.createMonsterSpawnInventory(arena));
 
 			// Toggle monster spawn particles
-//			else if (buttonName.contains("Toggle Monster"))
+			else if (buttonName.contains("Monster Spawn Particles:"))
+				if (config.getBoolean("a" + arena + ".closed")) {
+					arenaInstance.flipMonsterParticles();
+					openInv(player, inv.createMobsInventory(arena));
+				}
+				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
 			// Open villager spawns editor
 			else if (buttonName.contains("Villager Spawns"))
 				openInv(player, inv.createVillagerSpawnInventory(arena));
 
 			// Toggle villager spawn particles
-//			else if (buttonName.contains("Toggle Villager"))
+			else if (buttonName.contains("Villager Spawn Particles"))
+				if (config.getBoolean("a" + arena + ".closed")) {
+					arenaInstance.flipVillagerParticles();
+					openInv(player, inv.createMobsInventory(arena));
+				}
+				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
-			// Edit spawn table
+				// Edit spawn table
 			else if (buttonName.contains("Spawn Table"))
 				if (config.getBoolean("a" + arena + ".closed"))
 					openInv(player, inv.createSpawnTableInventory(arena));
@@ -2080,6 +2103,9 @@ public class InventoryEvents implements Listener {
 				config.set(path + ".sounds.gem", config.getBoolean(path2 + ".sounds.gem"));
 				config.set(path + ".sounds.death", config.getBoolean(path2 + ".sounds.death"));
 				config.set(path + ".sounds.waiting", config.getInt(path2 + ".sounds.waiting"));
+				config.set(path + ".particles.spawn", config.getBoolean(path2 + ".particles.spawn"));
+				config.set(path + ".particles.monster", config.getBoolean(path2 + ".particles.monster"));
+				config.set(path + ".particles.villager", config.getBoolean(path2 + ".particles.villager"));
 				if (config.contains(path2 + ".customShop"))
 					config.getConfigurationSection(path2 + ".customShop").getKeys(false)
 							.forEach(index -> config.set(path + ".customShop." + index,
@@ -2380,7 +2406,7 @@ public class InventoryEvents implements Listener {
 			if (kit.equals("Orc") || kit.equals("Farmer") || kit.equals("Soldier") || kit.equals("Tailor") ||
 					kit.equals("Alchemist") || kit.equals("Trader") || kit.equals("Phantom") || kit.equals("Blacksmith")
 					|| kit.equals("Witch") || kit.equals("Merchant") || kit.equals("Vampire"))
-				if (playerData.getBoolean(path + kit)) {
+				if (playerData.getBoolean(path + kit) || kit.equals("Orc") || kit.equals("Farmer")) {
 					gamer.setKit(kit);
 					player.sendMessage(Utils.notify("&aKit selected!"));
 				} else player.sendMessage(Utils.notify("&cYou don't own this kit!"));

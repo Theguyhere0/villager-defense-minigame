@@ -11,6 +11,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -30,6 +32,7 @@ public class AbilityEvents implements Listener {
         this.game = game;
     }
 
+    // Most ability functionalities
     @EventHandler
     public void onAbility(PlayerInteractEvent e) {
         // Check for right click
@@ -558,6 +561,7 @@ public class AbilityEvents implements Listener {
 
     }
 
+    // Vampire healing
     @EventHandler
     public void onVampire(EntityDamageByEntityEvent e) {
         // Ignore cancelled events
@@ -591,5 +595,32 @@ public class AbilityEvents implements Listener {
         if (r.nextInt(100) < damage * 1.5)
             player.setHealth(Math.min(player.getHealth() + 1,
                     player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
+    }
+
+    // Ninja stealth
+    @EventHandler
+    public void onTarget(EntityTargetEvent e) {
+        Entity ent = e.getEntity();
+        Entity target = e.getTarget();
+
+        // Check for arena mobs
+        if (!ent.hasMetadata("VD"))
+            return;
+
+        // Cancel for invisible players
+        if (target instanceof Player) {
+            Player player = (Player) target;
+            if (player.getActivePotionEffects().stream()
+                    .anyMatch(potion -> potion.getType().equals(PotionEffectType.INVISIBILITY)))
+                e.setCancelled(true);
+        }
+
+        // Cancel for invisible wolves
+        if (target instanceof Wolf) {
+            Wolf wolf = (Wolf) target;
+            if (wolf.getActivePotionEffects().stream()
+                    .anyMatch(potion -> potion.getType() == PotionEffectType.INVISIBILITY))
+                e.setCancelled(true);
+        }
     }
 }
