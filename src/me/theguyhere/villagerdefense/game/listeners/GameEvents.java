@@ -4,20 +4,18 @@ import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.customEvents.GameEndEvent;
 import me.theguyhere.villagerdefense.customEvents.WaveEndEvent;
-import me.theguyhere.villagerdefense.game.GameItems;
 import me.theguyhere.villagerdefense.game.models.Arena;
 import me.theguyhere.villagerdefense.game.models.Game;
+import me.theguyhere.villagerdefense.game.models.GameItems;
 import me.theguyhere.villagerdefense.game.models.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -56,12 +54,16 @@ public class GameEvents implements Listener {
 		}
 
 		// Update villager count
-		if (ent instanceof Villager) {
+		if (ent instanceof Villager)
 			arena.decrementVillagers();
-			if (arena.getVillagers() == 0) {
-				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
-						Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
-			}
+
+		// Check for lose condition
+		if (arena.getVillagers() == 0 && !arena.isSpawning() && !arena.isEnding()) {
+			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+					Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
+			if (arena.isLoseSound())
+				arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
+						Sound.ENTITY_ENDER_DRAGON_DEATH, 10, 0));
 		}
 
 		// Manage drops and update enemy count, update player kill count
@@ -73,13 +75,18 @@ public class GameEvents implements Listener {
 			if (ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin) {
 				// Set drop to emerald
 				e.getDrops().add(Utils.createItem(Material.EMERALD, null, Integer.toString(arena.getArena())));
+				e.setDroppedExp((int) arena.getCurrentDifficulty());
+				if (e.getDrops().stream().anyMatch(item -> item.getType() == Material.ARROW || item.getType() == Material.BONE)) {
+					System.out.println(ent);
+					System.out.println(e.getDrops());
+				}
 
 				// Decrement enemy count
 				arena.decrementEnemies();
 			}
 
 			// Check for wave end condition
-			if (arena.getEnemies() == 0 && !arena.isEnding()) {
+			if (arena.getEnemies() == 0 && !arena.isEnding() && !arena.isSpawning()) {
 				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 						Bukkit.getPluginManager().callEvent(new WaveEndEvent(arena)));
 			}
@@ -125,6 +132,22 @@ public class GameEvents implements Listener {
 		arena.getTask().updateBoards.run();
 	}
 
+	// Save gems from explosions
+	@EventHandler
+	public void onGemExplode(EntityDamageEvent e) {
+		Entity ent = e.getEntity();
+
+		// Check for item
+		if (!(ent instanceof Item))
+			return;
+
+		ItemStack item = ((Item) ent).getItemStack();
+
+		// Check for right item
+		if (item.getType() == Material.EMERALD && item.hasItemMeta() && item.getItemMeta().hasLore())
+			e.setCancelled(true);
+	}
+
 	// Update health bar when damage is dealt by entity
 	@EventHandler
 	public void onHurt(EntityDamageByEntityEvent e) {
@@ -145,7 +168,8 @@ public class GameEvents implements Listener {
 			return;
 
 		// Ignore phantom damage to monsters
-		if (ent instanceof Monster && damager instanceof Monster)
+		if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin) && (
+				damager instanceof Monster || damager instanceof Hoglin))
 			return;
 
 		// Check for phantom projectile damage
@@ -153,14 +177,15 @@ public class GameEvents implements Listener {
 			if ((ent instanceof Villager || ent instanceof IronGolem) &&
 					((Projectile) damager).getShooter() instanceof Player)
 				return;
-			if (ent instanceof Monster && ((Projectile) damager).getShooter() instanceof Monster)
+			if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin) &&
+					((Projectile) damager).getShooter() instanceof Monster)
 				return;
 		}
 
 		LivingEntity n = (LivingEntity) ent;
 
 		// Update health bar
-		if (ent instanceof IronGolem)
+		if (ent instanceof IronGolem || ent instanceof Ravager)
 			ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
 					n.getHealth() - e.getFinalDamage(), 10));
 		else ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
@@ -190,7 +215,7 @@ public class GameEvents implements Listener {
 		LivingEntity n = (LivingEntity) ent;
 
 		// Update health bar
-		if (ent instanceof IronGolem)
+		if (ent instanceof IronGolem || ent instanceof Ravager)
 			ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
 					n.getHealth() - e.getFinalDamage(), 10));
 		else ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
@@ -223,14 +248,14 @@ public class GameEvents implements Listener {
 		if (!ent.hasMetadata("VD"))
 			return;
 
-		// Ignore wolves
-		if (ent instanceof Wolf)
+		// Ignore wolves and players
+		if (ent instanceof Wolf || ent instanceof Player)
 			return;
 
 		LivingEntity n = (LivingEntity) ent;
 
 		// Update health bar
-		if (ent instanceof IronGolem)
+		if (ent instanceof IronGolem || ent instanceof Ravager)
 			ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
 					n.getHealth(), 10));
 		else ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
@@ -240,6 +265,10 @@ public class GameEvents implements Listener {
 	// Open shop
 	@EventHandler
 	public void onShop(PlayerInteractEvent e) {
+		// Check for right click
+		if (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK)
+			return;
+
 		Player player = e.getPlayer();
 
 		// See if the player is in a game
@@ -250,7 +279,7 @@ public class GameEvents implements Listener {
 				.collect(Collectors.toList()).get(0);
 
 		// Check for the shop item
-		if (!player.getEquipment().getItemInMainHand().equals(GameItems.shop()))
+		if (!GameItems.shop().equals(player.getEquipment().getItemInMainHand()))
 			return;
 
 		// Ignore if already in shop
@@ -259,7 +288,7 @@ public class GameEvents implements Listener {
 
 		// Open shop inventory and cancel interaction
 		e.setCancelled(true);
-		player.openInventory(Inventories.createShop(arena.getCurrentWave() / 10 + 1));
+		player.openInventory(Inventories.createShop(arena.getCurrentWave() / 10 + 1, arena));
 	}
 
 	// Stops players from hurting villagers and other players, and monsters from hurting each other
@@ -276,7 +305,7 @@ public class GameEvents implements Listener {
 		}
 
 		// Check for special mobs
-		if (!ent.hasMetadata("VD"))
+		if (!ent.hasMetadata("VD") && !(ent instanceof Player))
 			return;
 
 		// Cancel damage to villager
@@ -284,7 +313,8 @@ public class GameEvents implements Listener {
 			e.setCancelled(true);
 
 		// Cancel monster friendly fire damage
-		else if (ent instanceof Monster && damager instanceof Monster)
+		else if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin) &&
+				(damager instanceof Monster || damager instanceof Slime || ent instanceof Hoglin))
 			e.setCancelled(true);
 
 		// Check for projectile damage
@@ -297,7 +327,8 @@ public class GameEvents implements Listener {
 			if ((ent instanceof Villager || ent instanceof Wolf || ent instanceof IronGolem) &&
 					((Projectile) damager).getShooter() instanceof Player)
 				e.setCancelled(true);
-			else if (ent instanceof Monster && ((Projectile) damager).getShooter() instanceof Monster)
+			else if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin) &&
+					((Projectile) damager).getShooter() instanceof Monster)
 				e.setCancelled(true);
 		}
 	}
@@ -334,22 +365,27 @@ public class GameEvents implements Listener {
 
 			// Teleport player back to player spawn
 			player.teleport(arena.getPlayerSpawn());
+			player.closeInventory();
 
 			// Notify everyone of player death
 			arena.getPlayers().forEach(gamer ->
-					gamer.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&c has died and will " +
-							"respawn next round.")));
+					gamer.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&c " +
+							plugin.getLanguageData().getString("death"))));
 
 			// Update scoreboards
 			arena.getTask().updateBoards.run();
 
 			// Check for game end condition
-			if (arena.getAlive() == 0)
+			if (arena.getAlive() == 0 && !arena.isEnding()) {
 				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 						Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
+				if (arena.isLoseSound())
+					arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
+							Sound.ENTITY_ENDER_DRAGON_DEATH, 10, 0));
+			}
 		}
 	}
-	
+
 	// Give gems
 	@EventHandler
 	public void onGemPickup(EntityPickupItemEvent e) {
@@ -366,13 +402,18 @@ public class GameEvents implements Listener {
 		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0);
 		VDPlayer gamer = arena.getPlayer(player);
+		ItemStack item = e.getItem().getItemStack();
 
 		// Check for gem item
-		if (!e.getItem().getItemStack().getType().equals(Material.EMERALD))
+		if (!item.getType().equals(Material.EMERALD))
+			return;
+
+		// Ignore item shop
+		if (item.getItemMeta().getDisplayName().contains("Item Shop"))
 			return;
 
 		// Calculate and give player gems
-		int stack = e.getItem().getItemStack().getAmount();
+		int stack = item.getAmount();
 		Random r = new Random();
 		int wave = arena.getCurrentWave();
 		int earned = 0;
@@ -383,7 +424,8 @@ public class GameEvents implements Listener {
 		// Cancel picking up of emeralds and notify player
 		e.setCancelled(true);
 		e.getItem().remove();
-		player.sendMessage(Utils.notify("&fYou found &a" + (earned) + "&f gem(s)!"));
+		player.sendMessage(Utils.notify(String.format(plugin.getLanguageData().getString("foundGems"), earned)));
+		player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, .5f, 0);
 
 		FileConfiguration playerData = plugin.getPlayerData();
 
@@ -401,6 +443,10 @@ public class GameEvents implements Listener {
 	// Handle player death
 	@EventHandler
 	public void onPlayerDeath(EntityDamageEvent e) {
+		// Ignore if cancelled
+		if (e.isCancelled())
+			return;
+
 		// Check for player
 		if (!(e.getEntity() instanceof Player)) return;
 
@@ -422,19 +468,27 @@ public class GameEvents implements Listener {
 		e.setCancelled(true);
 		player.setGameMode(GameMode.SPECTATOR);
 		player.getInventory().clear();
+		player.closeInventory();
 
 		// Notify everyone of player death
-		arena.getPlayers().forEach(gamer ->
-				gamer.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&c has died and will " +
-						"respawn next round.")));
+		arena.getPlayers().forEach(gamer -> {
+				gamer.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&c " +
+						plugin.getLanguageData().getString("death")));
+				if (arena.isPlayerDeathSound())
+					gamer.getPlayer().playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 4, 0);
+		});
 
 		// Update scoreboards
 		arena.getTask().updateBoards.run();
 
 		// Check for game end condition
-		if (arena.getAlive() == 0)
+		if (arena.getAlive() == 0 && !arena.isEnding()) {
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 					Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
+			if (arena.isLoseSound())
+				arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
+						Sound.ENTITY_ENDER_DRAGON_DEATH, 10, 0));
+		}
 	}
 
 	// Update player kill counter
@@ -450,9 +504,16 @@ public class GameEvents implements Listener {
 		if (!(e.getEntity().hasMetadata("VD"))) return;
 
 		// Check that a player caused the damage
-		if (!(e.getDamager() instanceof Player)) return;
+		if (!(e.getDamager() instanceof Player || e.getDamager() instanceof Projectile)) return;
 
-		Player player = (Player) e.getDamager();
+		Player player;
+
+		// Check if projectile came from player, then set player
+		if (e.getDamager() instanceof Projectile) {
+			if (((Projectile) e.getDamager()).getShooter() instanceof Player)
+				player = (Player) ((Projectile) e.getDamager()).getShooter();
+			else return;
+		} else player = (Player) e.getDamager();
 
 		// Check for player in an arena
 		if (game.arenas.stream().filter(Objects::nonNull)
@@ -494,15 +555,21 @@ public class GameEvents implements Listener {
 	public void onConsume(PlayerInteractEvent e) {
 		Player player = e.getPlayer();
 		ItemStack item = player.getInventory().getItemInMainHand();
+		FileConfiguration language = plugin.getLanguageData();
 
 		// See if the player is in a game
 		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player))) return;
 
 		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0);
+		VDPlayer gamer = arena.getPlayer(player);
 
 		// Wolf spawn
 		if (item.getType() == Material.WOLF_SPAWN_EGG) {
+			// Ignore if it wasn't a right click on a block
+			if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
+				return;
+
 			// Cancel normal spawn
 			e.setCancelled(true);
 
@@ -532,6 +599,10 @@ public class GameEvents implements Listener {
 
 		// Iron golem spawn
 		if (item.getItemMeta().getDisplayName().contains("Iron Golem Spawn Egg")) {
+			// Ignore if it wasn't a right click on a block
+			if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
+				return;
+
 			// Cancel normal spawn
 			e.setCancelled(true);
 
@@ -559,9 +630,18 @@ public class GameEvents implements Listener {
 			else player.getInventory().setItemInMainHand(null);
 
 			// Give items and notify
-			Utils.giveItem(player, GameItems.randWeapon(1));
-			Utils.giveItem(player, GameItems.randArmor(1));
-			player.sendMessage(Utils.notify("&aCare package delivered!"));
+			if (gamer.getKit().equals("Blacksmith")) {
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(1))),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(1))),
+						language.getString("inventoryFull"));
+			} else {
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(1)),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(1)),
+						language.getString("inventoryFull"));
+			}
+			player.sendMessage(Utils.notify("&a" + language.getString("carePackage")));
 		}
 
 		// Medium care package
@@ -572,10 +652,25 @@ public class GameEvents implements Listener {
 			else player.getInventory().setItemInMainHand(null);
 
 			// Give items and notify
-			Utils.giveItem(player, GameItems.randWeapon(2));
-			Utils.giveItem(player, GameItems.randArmor(2));
-			Utils.giveItem(player, GameItems.randConsumable(2));
-			player.sendMessage(Utils.notify("&aCare package delivered!"));
+			if (gamer.getKit().equals("Blacksmith")) {
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(2))),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(2))),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randConsumable(2))),
+						language.getString("inventoryFull"));
+			} else {
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(2)),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(2)),
+						language.getString("inventoryFull"));
+				if (gamer.getKit().equals("Witch"))
+					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randConsumable(2))),
+							language.getString("inventoryFull"));
+				else Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(2)),
+						language.getString("inventoryFull"));
+			}
+			player.sendMessage(Utils.notify("&a" + language.getString("carePackage")));
 		}
 
 		// Large care package
@@ -586,11 +681,29 @@ public class GameEvents implements Listener {
 			else player.getInventory().setItemInMainHand(null);
 
 			// Give items and notify
-			Utils.giveItem(player, GameItems.randWeapon(4));
-			Utils.giveItem(player, GameItems.randArmor(3));
-			Utils.giveItem(player, GameItems.randArmor(3));
-			Utils.giveItem(player, GameItems.randConsumable(3));
-			player.sendMessage(Utils.notify("&aCare package delivered!"));
+			if (gamer.getKit().equals("Blacksmith")) {
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(4))),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(3))),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(3))),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randConsumable(3))),
+						language.getString("inventoryFull"));
+			} else {
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(4)),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(3)),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(3)),
+						language.getString("inventoryFull"));
+				if (gamer.getKit().equals("Witch"))
+					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randConsumable(3))),
+							language.getString("inventoryFull"));
+				else Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(3)),
+						language.getString("inventoryFull"));
+			}
+			player.sendMessage(Utils.notify("&a" + language.getString("carePackage")));
 		}
 
 		// Extra large care package
@@ -601,13 +714,41 @@ public class GameEvents implements Listener {
 			else player.getInventory().setItemInMainHand(null);
 
 			// Give items and notify
-			Utils.giveItem(player, GameItems.randWeapon(5));
-			Utils.giveItem(player, GameItems.randWeapon(4));
-			Utils.giveItem(player, GameItems.randArmor(5));
-			Utils.giveItem(player, GameItems.randArmor(4));
-			Utils.giveItem(player, GameItems.randConsumable(4));
-			Utils.giveItem(player, GameItems.randConsumable(4));
-			player.sendMessage(Utils.notify("&aCare package delivered!"));
+			if (gamer.getKit().equals("Blacksmith")) {
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(5))),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(4))),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(5))),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(4))),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randConsumable(4))),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randConsumable(4))),
+						language.getString("inventoryFull"));
+			} else {
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(5)),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(4)),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(5)),
+						language.getString("inventoryFull"));
+				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(4)),
+						language.getString("inventoryFull"));
+				if (gamer.getKit().equals("Witch")) {
+					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randConsumable(4))),
+							language.getString("inventoryFull"));
+					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randConsumable(4))),
+							language.getString("inventoryFull"));
+				} else {
+					Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(4)),
+							language.getString("inventoryFull"));
+					Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(4)),
+							language.getString("inventoryFull"));
+				}
+			}
+			player.sendMessage(Utils.notify("&a" + language.getString("carePackage")));
 		}
 	}
 

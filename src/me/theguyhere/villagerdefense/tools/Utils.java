@@ -4,10 +4,7 @@ import me.theguyhere.villagerdefense.Main;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -15,6 +12,7 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class Utils {
@@ -22,6 +20,7 @@ public class Utils {
 
     private static final int SECONDS_TO_TICKS = 20;
     private static final int MINUTES_TO_SECONDS = 60;
+    private static final int SECONDS_TO_MILLIS = 1000;
 
     public Utils(Main plugin) {
         this.plugin = plugin;
@@ -38,7 +37,7 @@ public class Utils {
     }
 
     // Creates an ItemStack using only material, name, and lore
-    public static ItemStack createItem(Material matID, String dispName, String ... lores) {
+    public static ItemStack createItem(Material matID, String dispName, String... lores) {
         // Create ItemStack
         ItemStack item = new ItemStack(matID);
         ItemMeta meta = item.getItemMeta();
@@ -78,14 +77,14 @@ public class Utils {
                                        String dispName,
                                        boolean[] flags,
                                        HashMap<Enchantment, Integer> enchants,
-                                       String ... lores) {
+                                       String... lores) {
         // Create ItemStack
         ItemStack item = createItem(matID, dispName, lores);
         ItemMeta meta = item.getItemMeta();
 
         // Set enchants
         if (!(enchants == null))
-            enchants.forEach((k, v) -> meta.addEnchant(k, v, false));
+            enchants.forEach((k, v) -> meta.addEnchant(k, v, true));
         if (flags != null && flags[0])
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
@@ -109,7 +108,7 @@ public class Utils {
 
         // Set enchants
         if (!(enchants == null))
-            enchants.forEach((k, v) -> meta.addEnchant(k, v, false));
+            enchants.forEach((k, v) -> meta.addEnchant(k, v, true));
         if (flags != null && flags[0])
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
@@ -121,8 +120,31 @@ public class Utils {
         return item;
     }
 
+    // Makes an item unbreakable
+    public static ItemStack makeUnbreakable(ItemStack item) {
+        ItemStack newItem = item.clone();
+        ItemMeta meta = newItem.getItemMeta();
+        if (item.getType().getMaxDurability() == 0)
+            return item;
+        try {
+            meta.setUnbreakable(true);
+            newItem.setItemMeta(meta);
+            return newItem;
+        } catch (Exception e) {
+            return item;
+        }
+    }
+
+    // Make an item into a splash potion
+    public static ItemStack makeSplash(ItemStack item) {
+        ItemStack newItem = item.clone();
+        if (newItem.getType() == Material.POTION)
+            newItem.setType(Material.SPLASH_POTION);
+        return newItem;
+    }
+
     // Creates an ItemStack that has potion meta
-    public static ItemStack createPotionItem(Material matID, PotionData potionData, String dispName, String ... lores) {
+    public static ItemStack createPotionItem(Material matID, PotionData potionData, String dispName, String... lores) {
         // Create ItemStack
         ItemStack item = new ItemStack(matID);
         ItemMeta meta = item.getItemMeta();
@@ -145,7 +167,7 @@ public class Utils {
     }
 
     // Creates an ItemStack using material, amount, name, and lore
-    public static ItemStack createItems(Material matID, int amount, String dispName, String ... lores) {
+    public static ItemStack createItems(Material matID, int amount, String dispName, String... lores) {
         // Create ItemStack
         ItemStack item = new ItemStack(matID, amount);
         ItemMeta meta = item.getItemMeta();
@@ -168,7 +190,7 @@ public class Utils {
                                               PotionData potionData,
                                               int amount,
                                               String dispName,
-                                              String ... lores) {
+                                              String... lores) {
         // Create ItemStack
         ItemStack item = new ItemStack(matID, amount);
         ItemMeta meta = item.getItemMeta();
@@ -190,25 +212,43 @@ public class Utils {
         return item;
     }
 
+    // Remove last lore on the list
+    public static ItemStack removeLastLore(ItemStack itemStack) {
+        ItemStack item = itemStack.clone();
+
+        // Check for lore
+        if (!item.hasItemMeta() || !item.getItemMeta().hasLore())
+            return item;
+
+        // Remove last lore and return
+        ItemMeta meta = item.getItemMeta();
+        List<String> lore = meta.getLore();
+        lore.remove(lore.size() - 1);
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+
+        return item;
+    }
+
     // Gives item to player if possible, otherwise drops at feet
-    public static void giveItem(Player player, ItemStack item) {
+    public static void giveItem(Player player, ItemStack item, String message) {
         if (player.getInventory().firstEmpty() == -1 && (player.getInventory().first(item.getType()) == -1 ||
                 (player.getInventory().all(new ItemStack(item.getType(), item.getMaxStackSize())).size() ==
                         player.getInventory().all(item.getType()).size()) &&
                         player.getInventory().all(item.getType()).size() != 0)) {
-
             // Inventory is full
             player.getWorld().dropItemNaturally(player.getLocation(), item);
-            player.sendMessage(notify("&cYour inventory is full!"));
-        } else {
-            player.getInventory().addItem(item);
-        }
+            player.sendMessage(notify("&c" + message));
+        } else player.getInventory().addItem(item);
     }
 
     // Prepares and teleports a player into adventure mode
     public static void teleAdventure(Player player, Location location) {
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
         player.setFireTicks(0);
+        if (!player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getModifiers().isEmpty())
+            player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getModifiers().forEach(attribute ->
+                    player.getAttribute(Attribute.GENERIC_MAX_HEALTH).removeModifier(attribute));
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         player.setFoodLevel(20);
         player.setSaturation(20);
@@ -224,6 +264,9 @@ public class Utils {
     public static void teleSpectator(Player player, Location location) {
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
         player.setFireTicks(0);
+        if (!player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getModifiers().isEmpty())
+            player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getModifiers().forEach(attribute ->
+                    player.getAttribute(Attribute.GENERIC_MAX_HEALTH).removeModifier(attribute));
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         player.setFoodLevel(20);
         player.setSaturation(20);
@@ -320,7 +363,7 @@ public class Utils {
         // Clear the arena for living entities
         ents.forEach(ent -> {
             if (ent instanceof LivingEntity && !(ent instanceof Player))
-                if (ent.hasMetadata("VD")) ((LivingEntity) ent).setHealth(0);
+                if (ent.hasMetadata("VD")) ent.remove();
         });
 
         // Clear the arena for items
@@ -339,6 +382,16 @@ public class Utils {
         return (int) (minutes * MINUTES_TO_SECONDS);
     }
 
+    // Converts seconds to milliseconds
+    public static int secondsToMillis(double seconds) {
+        return (int) (seconds * SECONDS_TO_MILLIS);
+    }
+
+    // Converts milliseconds to seconds
+    public static double millisToSeconds(double millis) {
+        return millis / SECONDS_TO_MILLIS;
+    }
+
     // Returns a formatted health bar
     public static String healthBar(double max, double remaining, int size) {
         String toFormat;
@@ -355,5 +408,32 @@ public class Utils {
         return format(toFormat +
                 new String(new char[healthBars]).replace("\0", "\u2592") +
                 new String(new char[size - healthBars]).replace("\0", "  "));
+    }
+
+    // Get nearby players
+    public static List<Player> getNearbyPlayers(Player player, double range) {
+        return player.getNearbyEntities(range, range, range).stream().filter(ent -> ent instanceof Player)
+                .map(ent -> (Player) ent).collect(Collectors.toList());
+    }
+
+    // Get nearby allies
+    public static List<LivingEntity> getNearbyAllies(Player player, double range) {
+        return player.getNearbyEntities(range, range, range).stream().filter(ent -> ent instanceof Villager ||
+                ent instanceof Wolf || ent instanceof IronGolem).map(ent -> (LivingEntity) ent)
+                .collect(Collectors.toList());
+    }
+
+    // Get wolves
+    public static List<Wolf> getPets(Player player) {
+        return player.getNearbyEntities(150, 50, 150).stream().filter(ent -> ent instanceof Wolf)
+                .map(ent -> (Wolf) ent).filter(wolf -> Objects.equals(wolf.getOwner(), player))
+                .collect(Collectors.toList());
+    }
+
+    // Get nearby monsters
+    public static List<LivingEntity> getNearbyMonsters(Player player, double range) {
+        return player.getNearbyEntities(range, range, range).stream().filter(ent -> ent instanceof Monster ||
+                ent instanceof Slime || ent instanceof Hoglin).map(ent -> (LivingEntity) ent)
+                .collect(Collectors.toList());
     }
 }

@@ -5,15 +5,12 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 public class InfoBoard {
 	private final Main plugin;
 	private final Utils utils;
-	private final String[] HOLO_TEXT = {Utils.format("&bLeft click &eportal for arena info"),
-			Utils.format("&bRight click &aportal to enter arena"),
-			Utils.format("&6Use &b/vd stats &6to check personal stats"),
-			Utils.format("&6Use &b/vd help &6to go to plugin wiki")};
 	private final Hologram[] boards = new Hologram[8];
 	
 	public InfoBoard(Main plugin) {
@@ -45,13 +42,21 @@ public class InfoBoard {
 	}
 
 	public void addHolo(Location location, int slot) {
+		FileConfiguration language = plugin.getLanguageData();
+		String[] text = {Utils.format("&b" + language.getString("info1")),
+				Utils.format("&b" + language.getString("info2")),
+				Utils.format("&6" + language.getString("info3")),
+				Utils.format("&6" + language.getString("info4")),
+				Utils.format("&6" + language.getString("info5")),
+				Utils.format("&6" + language.getString("info6"))};
+
 		// Create hologram
 		Location newLocation = location.clone();
 		newLocation.setY(newLocation.getY() + 2);
 		Hologram holo = HologramsAPI.createHologram(plugin, newLocation);
-		holo.insertTextLine(0, HOLO_TEXT[0]);
-		for (int i = 1; i < HOLO_TEXT.length; i++)
-			holo.appendTextLine(HOLO_TEXT[i]);
+		holo.insertTextLine(0, text[0]);
+		for (int i = 1; i < text.length; i++)
+			holo.appendTextLine(text[i]);
 
 		// Save hologram in array
 		boards[slot] = holo;

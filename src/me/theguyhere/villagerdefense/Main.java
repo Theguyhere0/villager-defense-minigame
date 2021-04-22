@@ -2,11 +2,11 @@ package me.theguyhere.villagerdefense;
 
 import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.GUI.InventoryEvents;
-import me.theguyhere.villagerdefense.GUI.InventoryItems;
 import me.theguyhere.villagerdefense.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.game.displays.InfoBoard;
 import me.theguyhere.villagerdefense.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.game.displays.Portal;
+import me.theguyhere.villagerdefense.game.listeners.AbilityEvents;
 import me.theguyhere.villagerdefense.game.listeners.ArenaEvents;
 import me.theguyhere.villagerdefense.game.listeners.ClickPortalEvents;
 import me.theguyhere.villagerdefense.game.listeners.GameEvents;
@@ -29,10 +29,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Main extends JavaPlugin {
 	private final DataManager arenaData = new DataManager(this, "arenaData.yml");
 	private final DataManager playerData = new DataManager(this, "playerData.yml");
+	private final DataManager languageData = new DataManager(this, "languages/" +
+			getConfig().getString("locale") + ".yml");
 	private final Portal portal = new Portal(this);
 	private final Leaderboard leaderboard = new Leaderboard(this);
 	private final InfoBoard infoBoard = new InfoBoard(this);
-	private final InventoryItems ii = new InventoryItems();
 	private final Utils utils = new Utils(this);
 	private PacketReader reader;
 	private Game game;
@@ -43,7 +44,7 @@ public class Main extends JavaPlugin {
 		saveDefaultConfig();
 
 		game = new Game(this, portal);
-		Inventories inventories = new Inventories(this, game, ii);
+		Inventories inventories = new Inventories(this, game);
 		Commands commands = new Commands(this, inventories, game);
 		ArenaBoard arenaBoard = new ArenaBoard(this, game);
 
@@ -70,7 +71,8 @@ public class Main extends JavaPlugin {
 		pm.registerEvents(new Death(portal, reader), this);
 		pm.registerEvents(new ClickPortalEvents(game, portal, inventories), this);
 		pm.registerEvents(new GameEvents(this, game), this);
-		pm.registerEvents(new ArenaEvents(this, game, portal, leaderboard, arenaBoard), this);
+		pm.registerEvents(new ArenaEvents(this, game, portal, leaderboard, arenaBoard, inventories), this);
+		pm.registerEvents(new AbilityEvents(this, game), this);
 
 		// Inject online players into packet reader
 		if (!Bukkit.getOnlinePlayers().isEmpty())
@@ -85,9 +87,12 @@ public class Main extends JavaPlugin {
 		infoBoard.loadInfoBoards();
 		arenaBoard.loadArenaBoards();
 
-		int configVersion = 5;
-		int arenaDataVersion = 1;
+		int configVersion = 6;
+		int arenaDataVersion = 2;
 		int playerDataVersion = 1;
+		int spawnTableVersion = 1;
+		int defaultSpawnVersion = 1;
+		int languageFileVersion = 1;
 
 		// Check config version
 		if (getConfig().getInt("version") < configVersion) {
@@ -115,6 +120,36 @@ public class Main extends JavaPlugin {
 					"Please manually transfer player data to version " + playerDataVersion + ".");
 			getServer().getConsoleSender().sendMessage(ChatColor.RED +  "[VillagerDefense] " +
 					"Please do not update your config.yml until your playerData.yml has been updated.");
+		}
+
+		// Check if spawn tables are outdated
+		if (getConfig().getInt("spawnTableStructure") < spawnTableVersion) {
+			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
+					"Your spawn tables are no longer supported with this version!");
+			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
+					"Please manually transfer spawn table data to version " + spawnTableVersion + ".");
+			getServer().getConsoleSender().sendMessage(ChatColor.RED +  "[VillagerDefense] " +
+					"Please do not update your config.yml until your spawn tables have been updated.");
+		}
+
+		// Check if default spawn table has been updated
+		if (getConfig().getInt("spawnTableDefault") < defaultSpawnVersion) {
+			getServer().getConsoleSender().sendMessage("[VillagerDefense] " +
+					"The default.yml spawn table has been updated!");
+			getServer().getConsoleSender().sendMessage("[VillagerDefense] " +
+					"Updating is optional but recommended.");
+			getServer().getConsoleSender().sendMessage("[VillagerDefense] " +
+					"Please do not update your config.yml unless your default.yml has been updated.");
+		}
+
+		// Check if the language file has been updated
+		if (getConfig().getInt("languageFile") < languageFileVersion) {
+			getServer().getConsoleSender().sendMessage("[VillagerDefense] " +
+					"You language files are no longer supported with this version!");
+			getServer().getConsoleSender().sendMessage("[VillagerDefense] " +
+					"Please update en_US.yml and update any other language files.");
+			getServer().getConsoleSender().sendMessage("[VillagerDefense] " +
+					"Please do not update your config.yml unless your language files been updated.");
 		}
 	}
 
@@ -147,6 +182,10 @@ public class Main extends JavaPlugin {
 	// Saves arena data changes
 	public void savePlayerData() {
 		playerData.saveConfig();
+	}
+
+	public FileConfiguration getLanguageData() {
+		return languageData.getConfig();
 	}
 
 	// Load portals

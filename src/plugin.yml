@@ -1,15 +1,16 @@
 main: me.theguyhere.villagerdefense.Main
 name: VillagerDefense
-version: 0.5.0
+version: 0.6.0
 author: Theguyhere
 api-version: 1.16
 depend: [HolographicDisplays]
 
 commands:
   vd:
-    description: Opens up the admin panel for Villager Defense
-    usage: /vd
-    permission: vd.use
+    admin:
+      description: Opens up the admin panel for Villager Defense
+      usage: /vd admin
+      permission: vd.use
     help:
       description: Redirects players to the Villager Defense wiki
       usage: /vd help
@@ -17,5 +18,15 @@ commands:
       description: Removes players from arenas and teleports them to the lobby
       usage: /vd leave
     stats:
-      description: Displays stats of the player
+      description: Displays stats of a player
       usage: /vd stats
+    kits:
+      description: Displays kits of the player
+      usage: /vd kits
+    select:
+      description: Displays kits for the player to select for an arena
+      usage: /vd select
+    crystals:
+      description: Changes the crystal balance of players
+      usage: /vd crystals
+      permission: vd.crystals

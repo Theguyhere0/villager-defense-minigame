@@ -4,13 +4,13 @@ import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.game.models.Arena;
-import me.theguyhere.villagerdefense.game.models.ArenaRecord;
 import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ArenaBoard {
 	private final Main plugin;
@@ -33,19 +33,18 @@ public class ArenaBoard {
 		plugin.saveArenaData();
 	}
 
-	public void refreshArenaBoards() {
-		for (int i = 0; i < arenaBoards.length; i++)
-			refreshArenaBoard(i);
-	}
-
 	public void refreshArenaBoard(int arena) {
-		arenaBoards[arena].delete();
-		addHolo(utils.getConfigLocationNoPitch("arenaBoard." + arena), game.arenas.get(arena));
+		if (arenaBoards[arena] != null) {
+			arenaBoards[arena].delete();
+			addHolo(utils.getConfigLocationNoPitch("arenaBoard." + arena), game.arenas.get(arena));
+		}
 	}
 
 	public void removeArenaBoard(int arena) {
-		arenaBoards[arena].delete();
-		arenaBoards[arena] = null;
+		if (arenaBoards[arena] != null) {
+			arenaBoards[arena].delete();
+			arenaBoards[arena] = null;
+		}
 	}
 
 	public void addHolo(Location location, Arena arena) {
@@ -77,8 +76,8 @@ public class ArenaBoard {
 		info.add(Utils.format("&6&l" + arena.getName() + " Records"));
 		if (!arena.getSortedDescendingRecords().isEmpty())
 			arena.getSortedDescendingRecords().stream().forEachOrdered(record -> {
-				StringBuilder firstLine = new StringBuilder("&fWave &b" + record.getWave() + " &f-&7");
-				StringBuilder secondLine = new StringBuilder("&7");
+				StringBuilder firstLine = new StringBuilder("Wave &b" + record.getWave() + " &f-");
+				StringBuilder secondLine = new StringBuilder();
 				if (record.getPlayers().size() > 6) {
 					for (int i = 0; i < record.getPlayers().size() / 2; i++)
 						firstLine.append(" ").append(record.getPlayers().get(i)).append(",");
