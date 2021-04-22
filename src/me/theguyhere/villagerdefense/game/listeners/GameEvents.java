@@ -185,7 +185,7 @@ public class GameEvents implements Listener {
 		LivingEntity n = (LivingEntity) ent;
 
 		// Update health bar
-		if (ent instanceof IronGolem)
+		if (ent instanceof IronGolem || ent instanceof Ravager)
 			ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
 					n.getHealth() - e.getFinalDamage(), 10));
 		else ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
@@ -215,7 +215,7 @@ public class GameEvents implements Listener {
 		LivingEntity n = (LivingEntity) ent;
 
 		// Update health bar
-		if (ent instanceof IronGolem)
+		if (ent instanceof IronGolem || ent instanceof Ravager)
 			ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
 					n.getHealth() - e.getFinalDamage(), 10));
 		else ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
@@ -255,7 +255,7 @@ public class GameEvents implements Listener {
 		LivingEntity n = (LivingEntity) ent;
 
 		// Update health bar
-		if (ent instanceof IronGolem)
+		if (ent instanceof IronGolem || ent instanceof Ravager)
 			ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
 					n.getHealth(), 10));
 		else ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
@@ -365,6 +365,7 @@ public class GameEvents implements Listener {
 
 			// Teleport player back to player spawn
 			player.teleport(arena.getPlayerSpawn());
+			player.closeInventory();
 
 			// Notify everyone of player death
 			arena.getPlayers().forEach(gamer ->
@@ -467,6 +468,7 @@ public class GameEvents implements Listener {
 		e.setCancelled(true);
 		player.setGameMode(GameMode.SPECTATOR);
 		player.getInventory().clear();
+		player.closeInventory();
 
 		// Notify everyone of player death
 		arena.getPlayers().forEach(gamer -> {

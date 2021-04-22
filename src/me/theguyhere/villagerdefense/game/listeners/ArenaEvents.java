@@ -622,11 +622,6 @@ public class ArenaEvents implements Listener {
                     Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setRavager(plugin, arena,
                             (Ravager) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.RAVAGER)
                     ), delay);
-                    break;
-                case "wthr":
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setWither(plugin, arena,
-                            (Wither) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.WITHER)
-                    ), delay);
             }
 
             // Bring arena out of spawning state
