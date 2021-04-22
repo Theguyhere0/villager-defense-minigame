@@ -7,9 +7,10 @@ depend: [HolographicDisplays]
 
 commands:
   vd:
-    description: Opens up the admin panel for Villager Defense
-    usage: /vd
-    permission: vd.use
+    admin:
+      description: Opens up the admin panel for Villager Defense
+      usage: /vd admin
+      permission: vd.use
     help:
       description: Redirects players to the Villager Defense wiki
       usage: /vd help

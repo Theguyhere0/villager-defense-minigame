@@ -37,7 +37,7 @@ public class Utils {
     }
 
     // Creates an ItemStack using only material, name, and lore
-    public static ItemStack createItem(Material matID, String dispName, String ... lores) {
+    public static ItemStack createItem(Material matID, String dispName, String... lores) {
         // Create ItemStack
         ItemStack item = new ItemStack(matID);
         ItemMeta meta = item.getItemMeta();
@@ -77,7 +77,7 @@ public class Utils {
                                        String dispName,
                                        boolean[] flags,
                                        HashMap<Enchantment, Integer> enchants,
-                                       String ... lores) {
+                                       String... lores) {
         // Create ItemStack
         ItemStack item = createItem(matID, dispName, lores);
         ItemMeta meta = item.getItemMeta();
@@ -144,7 +144,7 @@ public class Utils {
     }
 
     // Creates an ItemStack that has potion meta
-    public static ItemStack createPotionItem(Material matID, PotionData potionData, String dispName, String ... lores) {
+    public static ItemStack createPotionItem(Material matID, PotionData potionData, String dispName, String... lores) {
         // Create ItemStack
         ItemStack item = new ItemStack(matID);
         ItemMeta meta = item.getItemMeta();
@@ -167,7 +167,7 @@ public class Utils {
     }
 
     // Creates an ItemStack using material, amount, name, and lore
-    public static ItemStack createItems(Material matID, int amount, String dispName, String ... lores) {
+    public static ItemStack createItems(Material matID, int amount, String dispName, String... lores) {
         // Create ItemStack
         ItemStack item = new ItemStack(matID, amount);
         ItemMeta meta = item.getItemMeta();
@@ -190,7 +190,7 @@ public class Utils {
                                               PotionData potionData,
                                               int amount,
                                               String dispName,
-                                              String ... lores) {
+                                              String... lores) {
         // Create ItemStack
         ItemStack item = new ItemStack(matID, amount);
         ItemMeta meta = item.getItemMeta();

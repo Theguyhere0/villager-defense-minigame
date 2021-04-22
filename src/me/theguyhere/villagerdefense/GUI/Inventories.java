@@ -1406,10 +1406,10 @@ public class Inventories {
 
 		if (!arenaInstance.getBannedKits().contains("Vampire"))
 			inv.setItem(48, Utils.createItem(Material.GHAST_TEAR, Utils.format("&e&lVampire"), FLAGS, enchants,
-					Utils.format("&7An attack of damage x has a 1.5x% chance"),
+					Utils.format("&7Dealing x damage has an x% chance"),
 					Utils.format("&7of healing half a heart")));
 		else inv.setItem(48, Utils.createItem(Material.GHAST_TEAR, Utils.format("&4&LVampire"),
-				Utils.format("&7An attack of damage x has a 1.5x% chance"),
+				Utils.format("&7Dealing x damage has an x% chance"),
 				Utils.format("&7of healing half a heart")));
 
 		if (!arenaInstance.getBannedKits().contains("Giant"))
@@ -2236,10 +2236,10 @@ public class Inventories {
 
 		if (playerData.getBoolean(path + "Vampire"))
 			inv.setItem(48, Utils.createItem(Material.GHAST_TEAR, Utils.format("&e&lVampire"),
-					Utils.format("&7An attack of damage x has a 1.5x% chance"),
+					Utils.format("&7Dealing x damage has an x% chance"),
 					Utils.format("&7of healing half a heart"), Utils.format("&aPurchased!")));
 		else inv.setItem(48, Utils.createItem(Material.GHAST_TEAR, Utils.format("&e&lVampire"),
-				Utils.format("&7An attack of damage x has a 1.5x% chance"),
+				Utils.format("&7Dealing x damage has an x% chance"),
 				Utils.format("&7of healing half a heart"),
 				Utils.format("&cPurchase: &b" + kits.getPrice("Vampire") + " Crystals")));
 
@@ -2716,10 +2716,10 @@ public class Inventories {
 		if (!arena.getBannedKits().contains("Vampire"))
 			if (playerData.getBoolean(path + "Vampire"))
 				inv.setItem(48, Utils.createItem(Material.GHAST_TEAR, Utils.format("&e&lVampire"),
-						Utils.format("&7An attack of damage x has a 1.5x% chance"),
+						Utils.format("&7Dealing x damage has an x% chance"),
 						Utils.format("&7of healing half a heart"), Utils.format("&aAvailable")));
 			else inv.setItem(48, Utils.createItem(Material.GHAST_TEAR, Utils.format("&e&lVampire"),
-					Utils.format("&7An attack of damage x has a 1.5x% chance"),
+					Utils.format("&7Dealing x damage has an x% chance"),
 					Utils.format("&7of healing half a heart"), Utils.format("&cUnavailable")));
 
 		if (!arena.getBannedKits().contains("Giant"))

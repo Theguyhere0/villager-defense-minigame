@@ -597,7 +597,7 @@ public class AbilityEvents implements Listener {
         double damage = e.getFinalDamage();
 
         // Heal if probability is right
-        if (r.nextInt(100) < damage * 1.5)
+        if (r.nextInt(100) < damage)
             player.setHealth(Math.min(player.getHealth() + 1,
                     player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
     }

@@ -34,13 +34,17 @@ public class ArenaBoard {
 	}
 
 	public void refreshArenaBoard(int arena) {
-		arenaBoards[arena].delete();
-		addHolo(utils.getConfigLocationNoPitch("arenaBoard." + arena), game.arenas.get(arena));
+		if (arenaBoards[arena] != null) {
+			arenaBoards[arena].delete();
+			addHolo(utils.getConfigLocationNoPitch("arenaBoard." + arena), game.arenas.get(arena));
+		}
 	}
 
 	public void removeArenaBoard(int arena) {
-		arenaBoards[arena].delete();
-		arenaBoards[arena] = null;
+		if (arenaBoards[arena] != null) {
+			arenaBoards[arena].delete();
+			arenaBoards[arena] = null;
+		}
 	}
 
 	public void addHolo(Location location, Arena arena) {
@@ -72,8 +76,8 @@ public class ArenaBoard {
 		info.add(Utils.format("&6&l" + arena.getName() + " Records"));
 		if (!arena.getSortedDescendingRecords().isEmpty())
 			arena.getSortedDescendingRecords().stream().forEachOrdered(record -> {
-				StringBuilder firstLine = new StringBuilder("&fWave &b" + record.getWave() + " &f-&7");
-				StringBuilder secondLine = new StringBuilder("&7");
+				StringBuilder firstLine = new StringBuilder("Wave &b" + record.getWave() + " &f-");
+				StringBuilder secondLine = new StringBuilder();
 				if (record.getPlayers().size() > 6) {
 					for (int i = 0; i < record.getPlayers().size() / 2; i++)
 						firstLine.append(" ").append(record.getPlayers().get(i)).append(",");

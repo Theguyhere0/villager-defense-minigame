@@ -145,6 +145,16 @@ public class Tasks {
 			arenaInstance.getGhosts().forEach(p -> {
 				Utils.teleAdventure(p.getPlayer(), arenaInstance.getPlayerSpawn());
 				giveItems(p);
+
+				// Set health for people with giant kits
+				if (p.getKit().equals("Giant1"))
+					p.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)
+							.addModifier(new AttributeModifier("Giant1", 2,
+									AttributeModifier.Operation.ADD_NUMBER));
+				else if (p.getKit().equals("Giant2"))
+					p.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)
+							.addModifier(new AttributeModifier("Giant1", 4,
+									AttributeModifier.Operation.ADD_NUMBER));
 			});
 
 			arenaInstance.getActives().forEach(p -> {
@@ -225,6 +235,7 @@ public class Tasks {
 				giveItems(player);
 
 				String kit = player.getKit();
+
 				// Set health for people with giant kits
 				if (kit.equals("Giant1"))
 					player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)

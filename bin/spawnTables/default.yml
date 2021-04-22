@@ -84,7 +84,7 @@
     v: 4
     m: 16
   mtypes:
-    zomb: 2
+    zomb: 3
     husk: 0
     wskl: 0
     brut: 0
@@ -92,7 +92,7 @@
     spid: 1
     cspd: 0
     wtch: 0
-    skel: 1
+    skel: 0
     stry: 0
     drwd: 0
     blze: 0
@@ -111,15 +111,15 @@
     v: 5
     m: 20
   mtypes:
-    zomb: 15
+    zomb: 5
     husk: 0
     wskl: 0
     brut: 0
     vind: 0
-    spid: 5
+    spid: 2
     cspd: 0
     wtch: 0
-    skel: 7
+    skel: 1
     stry: 0
     drwd: 0
     blze: 0
@@ -138,15 +138,15 @@
     v: 7
     m: 24
   mtypes:
-    zomb: 18
+    zomb: 5
     husk: 0
     wskl: 0
     brut: 0
     vind: 0
-    spid: 7
+    spid: 3
     cspd: 0
     wtch: 0
-    skel: 10
+    skel: 2
     stry: 0
     drwd: 0
     blze: 0

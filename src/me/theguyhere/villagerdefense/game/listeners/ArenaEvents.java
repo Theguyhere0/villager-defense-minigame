@@ -45,11 +45,12 @@ public class ArenaEvents implements Listener {
     public void onJoin(JoinArenaEvent e) {
         Player player = e.getPlayer();
         BukkitScheduler scheduler = Bukkit.getScheduler();
+        FileConfiguration language = plugin.getLanguageData();
 
         // Ignore if player is already in a game somehow
         if (game.arenas.stream().filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player))) {
             e.setCancelled(true);
-            player.sendMessage(Utils.notify("&cYou're already in a game???"));
+            player.sendMessage(Utils.notify("&c" + language.getString("joinError")));
             return;
         }
 
@@ -69,13 +70,13 @@ public class ArenaEvents implements Listener {
                 location = arena.getPlayerSpawn();
             } catch (Exception err) {
                 err.printStackTrace();
-                player.sendMessage(Utils.notify("&cSomething went wrong"));
+                player.sendMessage(Utils.notify("&c" + language.getString("fatalError")));
                 return;
             }
 
         // Check if arena is closed
         if (arena.isClosed()) {
-            player.sendMessage(Utils.notify("&cArena is closed."));
+            player.sendMessage(Utils.notify("&c" + language.getString("closeError")));
             e.setCancelled(true);
             return;
         }
@@ -89,11 +90,9 @@ public class ArenaEvents implements Listener {
             plugin.getPlayerData().set(player.getName() + ".inventory." + i, player.getInventory().getContents()[i]);
         plugin.savePlayerData();
 
-        // First player joining the arena
-        if (players == 0) {
-            // Get all nearby entities in the arena and clear them out
+        // Clear arena for first person joining
+        if (players == 0)
             Utils.clear(location);
-        }
 
         // Prepares player to enter arena if it doesn't exceed max capacity or if the arena hasn't already started
         if (players < arena.getMaxPlayers() && !arena.isActive()) {
@@ -103,7 +102,8 @@ public class ArenaEvents implements Listener {
 
             // Notify everyone in the arena
             arena.getPlayers().forEach(gamer ->
-                    gamer.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&a joined the arena.")));
+                    gamer.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&a " +
+                            language.getString("join"))));
 
             // Update player tracking and in-game stats
             VDPlayer fighter = new VDPlayer(player, false);
@@ -119,7 +119,7 @@ public class ArenaEvents implements Listener {
 
             // Tell player to choose a kit and automatically open inventory
             player.openInventory(inv.createSelectKitsInventory(player, arena));
-            player.sendMessage(Utils.notify("&6Use &b/vd select &6to choose a kit!"));
+            player.sendMessage(Utils.notify("&6" + language.getString("kitChoose")));
         }
 
         // Join players as spectators if arena is full or game already started
@@ -183,7 +183,7 @@ public class ArenaEvents implements Listener {
         }
 
         // Quick start condition
-        else if (tasks.isEmpty() || scheduler.isCurrentlyRunning(tasks.get(task.sec10))) {
+        else if (tasks.isEmpty() || scheduler.isQueued(tasks.get(task.sec10))) {
             // Remove all tasks
             tasks.forEach((runnable, id) -> scheduler.cancelTask(id));
             tasks.clear();
@@ -344,7 +344,7 @@ public class ArenaEvents implements Listener {
             }
 
             // Checks if the game has ended because no players are left
-            if (arena.getAlive() == 0 && arena.isActive())
+            if (arena.getAlive() == 0 && arena.isActive() && !arena.isEnding())
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
                         Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
         }

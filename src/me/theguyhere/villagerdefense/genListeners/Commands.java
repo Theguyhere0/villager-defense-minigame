@@ -43,15 +43,21 @@ public class Commands implements CommandExecutor {
 			}
 			
 			Player player = (Player) sender;
-			
-			// Check for permission to use the command
-			if (!player.hasPermission("vd.use")) {
-				player.sendMessage(Utils.notify("&c" + language.getString("permissionError")));
-				return true;
-			}
-			
+
 			// No arguments
 			if (args.length == 0) {
+				player.sendMessage(Utils.notify("&c" + language.getString("commandError")));
+				return true;
+			}
+
+			// No arguments
+			if (args[0].equalsIgnoreCase("admin")) {
+				// Check for permission to use the command
+				if (!player.hasPermission("vd.use")) {
+					player.sendMessage(Utils.notify("&c" + language.getString("permissionError")));
+					return true;
+				}
+
 				player.openInventory(inv.createArenasInventory());
 				return true;
 			}
@@ -123,13 +129,13 @@ public class Commands implements CommandExecutor {
 
 			if (args[0].equalsIgnoreCase("crystals")) {
 				// Check for permission to use the command
-				if (!player.hasPermission("vd.use")) {
+				if (!player.hasPermission("vd.crystals")) {
 					player.sendMessage(Utils.notify("&c" + language.getString("permissionError")));
 					return true;
 				}
 
 				// Check for valid command format
-				if (args[1] == null || args[2] == null) {
+				if (args.length != 3) {
 					player.sendMessage(Utils.notify("&cCommand format: /vd crystals [player] [change amount]"));
 					return true;
 				}

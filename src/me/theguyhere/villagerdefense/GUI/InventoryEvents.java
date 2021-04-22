@@ -1058,11 +1058,13 @@ public class InventoryEvents implements Listener {
 					// Remove data
 					config.set("a" + arena, null);
 					config.set("portal." + arena, null);
+					config.set("arenaBoard." + arena, null);
 					plugin.saveArenaData();
 					game.arenas.set(arena, null);
 
-					// Remove portal
+					// Remove displays
 					portal.removePortalAll(arena);
+					arenaBoard.removeArenaBoard(arena);
 
 					// Confirm and return
 					player.sendMessage(Utils.notify("&aArena removed!"));
@@ -2350,7 +2352,7 @@ public class InventoryEvents implements Listener {
 								playerData.set(name + ".crystalBalance",
 										playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit, 2));
 								playerData.set(path + kit, 2);
-								player.sendMessage(Utils.notify("&aKit" + language.getString("kitUpgrade")));
+								player.sendMessage(Utils.notify("&a" + language.getString("kitUpgrade")));
 							} else player.sendMessage(Utils.notify("&c" +
 									language.getString("kitUpgradeError")));
 							break;
@@ -2359,7 +2361,7 @@ public class InventoryEvents implements Listener {
 								playerData.set(name + ".crystalBalance",
 										playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit, 3));
 								playerData.set(path + kit, 3);
-								player.sendMessage(Utils.notify("&aKit" + language.getString("kitUpgrade")));
+								player.sendMessage(Utils.notify("&a" + language.getString("kitUpgrade")));
 							} else player.sendMessage(Utils.notify("&c" +
 									language.getString("kitUpgradeError")));
 							break;
@@ -2403,20 +2405,26 @@ public class InventoryEvents implements Listener {
 					gamer.flipSpectating();
 					arenaInstance.getTask().giveItems(gamer);
 				}
+				player.closeInventory();
 				return;
 			}
 
 			// Single tier kits
 			if (kit.equals("Orc") || kit.equals("Farmer") || kit.equals("Soldier") || kit.equals("Tailor") ||
 					kit.equals("Alchemist") || kit.equals("Trader") || kit.equals("Phantom") || kit.equals("Blacksmith")
-					|| kit.equals("Witch") || kit.equals("Merchant") || kit.equals("Vampire"))
+					|| kit.equals("Witch") || kit.equals("Merchant") || kit.equals("Vampire")) {
 				if (playerData.getBoolean(path + kit) || kit.equals("Orc") || kit.equals("Farmer")) {
 					gamer.setKit(kit);
 					player.sendMessage(Utils.notify("&a" + language.getString("kitSelect")));
-				} else player.sendMessage(Utils.notify("&c" + language.getString("kitSelectError")));
+				} else {
+					player.sendMessage(Utils.notify("&c" + language.getString("kitSelectError")));
+					return;
+				}
+				player.closeInventory();
+			}
 
 			// Double tier kits
-			if (kit.equals("Giant"))
+			if (kit.equals("Giant")) {
 				switch (playerData.getInt(path + kit)) {
 					case 1:
 						gamer.setKit(kit + 1);
@@ -2428,12 +2436,15 @@ public class InventoryEvents implements Listener {
 						break;
 					default:
 						player.sendMessage(Utils.notify("&c" + language.getString("kitSelectError")));
+						return;
 				}
+				player.closeInventory();
+			}
 
 			// Triple tier kits
 			if (kit.equals("Summoner") || kit.equals("Reaper") || kit.equals("Mage") || kit.equals("Ninja") ||
 					kit.equals("Templar") || kit.equals("Warrior") || kit.equals("Knight") || kit.equals("Priest")
-					|| kit.equals("Siren") || kit.equals("Monk") || kit.equals("Messenger"))
+					|| kit.equals("Siren") || kit.equals("Monk") || kit.equals("Messenger")) {
 				switch (playerData.getInt(path + kit)) {
 					case 1:
 						gamer.setKit(kit + 1);
@@ -2449,12 +2460,16 @@ public class InventoryEvents implements Listener {
 						break;
 					default:
 						player.sendMessage(Utils.notify("&c" + language.getString("kitSelectError")));
+						return;
 				}
+				player.closeInventory();
+			}
 
 			// No kit
 			if (kit.equals("None")) {
 				gamer.setKit(null);
 				player.sendMessage(Utils.notify("&a" + language.getString("kitSelect")));
+				player.closeInventory();
 			}
 
 			// Close inventory
