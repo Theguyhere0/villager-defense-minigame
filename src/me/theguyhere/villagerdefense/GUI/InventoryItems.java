@@ -30,6 +30,11 @@ public class InventoryItems {
         return Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lCreate " + x));
     }
 
+    //	"Relocate x" button
+    public static ItemStack relocate(String x) {
+        return Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&a&lRelocate " + x));
+    }
+
     //	"Teleport to x" button
     public static ItemStack teleport(String x) {
         return Utils.createItem(Material.ENDER_PEARL, Utils.format("&9&lTeleport to " + x));

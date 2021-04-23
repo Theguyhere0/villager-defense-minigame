@@ -34,7 +34,6 @@ public class Main extends JavaPlugin {
 	private final Portal portal = new Portal(this);
 	private final Leaderboard leaderboard = new Leaderboard(this);
 	private final InfoBoard infoBoard = new InfoBoard(this);
-	private final Utils utils = new Utils(this);
 	private PacketReader reader;
 	private Game game;
 
@@ -91,7 +90,7 @@ public class Main extends JavaPlugin {
 		int arenaDataVersion = 2;
 		int playerDataVersion = 1;
 		int spawnTableVersion = 1;
-		int defaultSpawnVersion = 1;
+		int defaultSpawnVersion = 2;
 		int languageFileVersion = 1;
 
 		// Check config version
@@ -190,10 +189,7 @@ public class Main extends JavaPlugin {
 
 	// Load portals
 	public void loadPortals() {
-		getArenaData().getConfigurationSection("portal").getKeys(false).forEach(portal -> {
-			Location location = utils.getConfigLocationNoPitch("portal." + portal);
-			if (location != null)
-				this.portal.loadPortal(location, Integer.parseInt(portal), game);
-		});
+		getArenaData().getConfigurationSection("portal").getKeys(false).forEach(portal ->
+				this.portal.loadPortal(Integer.parseInt(portal), game));
 	}
 }

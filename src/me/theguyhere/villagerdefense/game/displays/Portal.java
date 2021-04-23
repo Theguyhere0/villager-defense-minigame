@@ -15,11 +15,9 @@ import org.bukkit.entity.Player;
 
 public class Portal {
 	private final Main plugin;
-	private final Utils utils;
 
 	public Portal(Main plugin) {
 		this.plugin = plugin;
-		utils = new Utils(plugin);
 	}
 
 	// Lists to store NPCs and holograms
@@ -48,24 +46,26 @@ public class Portal {
 		addHolo(player.getLocation(), num, getHoloText(arena));
 
 		// Save data about the NPC
-		utils.setConfigurationLocation("portal." + num, player.getLocation());
+		Utils.setConfigurationLocation(plugin, "portal." + num, player.getLocation());
 		plugin.saveArenaData();
 	}
 
-	public void loadPortal(Location location, int arena, Game game) {
+	public void loadPortal(int arena, Game game) {
 		Arena arenaInstance = game.arenas.get(arena);
 
 		// Create portal NPC
-		WorldServer world = ((CraftWorld) Bukkit.getWorld(location.getWorld().getName())).getHandle();
+		WorldServer world = ((CraftWorld) Bukkit.getWorld(arenaInstance.getPortal().getWorld().getName())).getHandle();
 		EntityVillager npc = new EntityVillager(EntityTypes.VILLAGER, world);
-		npc.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+		npc.setLocation(arenaInstance.getPortal().getX(), arenaInstance.getPortal().getY(),
+				arenaInstance.getPortal().getZ(), arenaInstance.getPortal().getYaw(),
+				arenaInstance.getPortal().getPitch());
 
 		// Add packets to all players
 		addNPCAll(npc);
 		NPC[arena] = npc;
 
 		// Create hologram
-		addHolo(location, arena, getHoloText(arenaInstance));
+		addHolo(arenaInstance.getPortal(), arena, getHoloText(arenaInstance));
 	}
 
 	public void removePortalAll(int arena) {
@@ -74,7 +74,12 @@ public class Portal {
 		if (holos[arena] != null)
 			holos[arena].delete();
 	}
-	
+
+	public void refreshPortal(int arena, Game game) {
+		removePortalAll(arena);
+		loadPortal(arena, game);
+	}
+
 	private void addNPC(Player player, EntityVillager npc) {
 		if (npc != null && npc.getWorld().getWorld().equals(player.getWorld())) {
 			PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
@@ -126,7 +131,7 @@ public class Portal {
 		Arena arenaInstance = game.arenas.get(arena);
 		if (holos[arena] != null)
 			holos[arena].delete();
-		Location location = utils.getConfigLocationNoPitch("portal." + arena);
+		Location location = Utils.getConfigLocationNoPitch(plugin, "portal." + arena);
 		if (location != null)
 			addHolo(location, arena, getHoloText(arenaInstance));
 	}

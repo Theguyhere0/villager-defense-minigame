@@ -15,13 +15,11 @@ import java.util.List;
 public class ArenaBoard {
 	private final Main plugin;
 	private final Game game;
-	private final Utils utils;
 	private final Hologram[] arenaBoards = new Hologram[45];
 
 	public ArenaBoard(Main plugin, Game game) {
 		this.plugin = plugin;
 		this.game = game;
-		utils = new Utils(plugin);
 	}
 
 	public void createArenaBoard(Player player, Arena arena) {
@@ -29,14 +27,14 @@ public class ArenaBoard {
 		addHolo(player.getLocation(), arena);
 
 		// Save location data
-		utils.setConfigurationLocation("arenaBoard." + arena.getArena(), player.getLocation());
+		Utils.setConfigurationLocation(plugin, "arenaBoard." + arena.getArena(), player.getLocation());
 		plugin.saveArenaData();
 	}
 
 	public void refreshArenaBoard(int arena) {
 		if (arenaBoards[arena] != null) {
 			arenaBoards[arena].delete();
-			addHolo(utils.getConfigLocationNoPitch("arenaBoard." + arena), game.arenas.get(arena));
+			addHolo(Utils.getConfigLocationNoPitch(plugin, "arenaBoard." + arena), game.arenas.get(arena));
 		}
 	}
 
@@ -63,7 +61,7 @@ public class ArenaBoard {
 	public void loadArenaBoards() {
 		if (plugin.getArenaData().contains("arenaBoard"))
 			plugin.getArenaData().getConfigurationSection("arenaBoard").getKeys(false).forEach(board -> {
-				Location location = utils.getConfigLocationNoPitch("arenaBoard." + board);
+				Location location = Utils.getConfigLocationNoPitch(plugin, "arenaBoard." + board);
 				if (location != null)
 					addHolo(location, game.arenas.get(Integer.parseInt(board)));
 			});

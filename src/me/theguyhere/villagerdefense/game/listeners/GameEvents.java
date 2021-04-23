@@ -61,7 +61,7 @@ public class GameEvents implements Listener {
 		if (arena.getVillagers() == 0 && !arena.isSpawning() && !arena.isEnding()) {
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 					Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
-			if (arena.isLoseSound())
+			if (arena.hasLoseSound())
 				arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
 						Sound.ENTITY_ENDER_DRAGON_DEATH, 10, 0));
 		}
@@ -379,7 +379,7 @@ public class GameEvents implements Listener {
 			if (arena.getAlive() == 0 && !arena.isEnding()) {
 				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 						Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
-				if (arena.isLoseSound())
+				if (arena.hasLoseSound())
 					arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
 							Sound.ENTITY_ENDER_DRAGON_DEATH, 10, 0));
 			}
@@ -474,7 +474,7 @@ public class GameEvents implements Listener {
 		arena.getPlayers().forEach(gamer -> {
 				gamer.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&c " +
 						plugin.getLanguageData().getString("death")));
-				if (arena.isPlayerDeathSound())
+				if (arena.hasPlayerDeathSound())
 					gamer.getPlayer().playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 4, 0);
 		});
 
@@ -485,7 +485,7 @@ public class GameEvents implements Listener {
 		if (arena.getAlive() == 0 && !arena.isEnding()) {
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 					Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
-			if (arena.isLoseSound())
+			if (arena.hasLoseSound())
 				arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
 						Sound.ENTITY_ENDER_DRAGON_DEATH, 10, 0));
 		}

@@ -14,19 +14,19 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Game {
-	private final Utils utils;
+	private final Main plugin;
 	// Tracks active arenas and their related stats
 	public List<Arena> arenas = new ArrayList<>(Collections.nCopies(45, null));
 	private Location lobby;
 
 	public Game(Main plugin, Portal portal) {
-		utils = new Utils(plugin);
+		this.plugin = plugin;
 		plugin.getArenaData().getConfigurationSection("").getKeys(false).forEach(path -> {
 			if (path.charAt(0) == 'a' && path.length() < 4)
 				arenas.set(Integer.parseInt(path.substring(1)), new Arena(plugin, Integer.parseInt(path.substring(1)),
 						new Tasks(plugin, this, Integer.parseInt(path.substring(1)), portal)));
 		});
-		lobby = utils.getConfigLocationNoRotation("lobby");
+		lobby = Utils.getConfigLocationNoRotation(plugin, "lobby");
 	}
 
 	public Location getLobby() {
@@ -34,7 +34,7 @@ public class Game {
 	}
 
 	public void reloadLobby() {
-		lobby = utils.getConfigLocationNoRotation("lobby");
+		lobby = Utils.getConfigLocationNoRotation(plugin, "lobby");
 	}
 
 	// Creates a game board for the player

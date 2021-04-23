@@ -18,6 +18,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class Inventories {
 	private final Main plugin;
@@ -505,12 +506,16 @@ public class Inventories {
 
 	// Menu for editing the portal and leaderboard of an arena
 	public Inventory createPortalInventory(int arena) {
+		Arena arenaInstance = game.arenas.get(arena);
+
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&5&lPortal/LBoard: " + game.arenas.get(arena).getName()));
+				Utils.format("&5&lPortal/LBoard: " + arenaInstance.getName()));
 
-		// Option to create the portal
-		inv.setItem(0, InventoryItems.create("Portal"));
+		// Option to create or relocate the portal
+		if (arenaInstance.getPortal() == null)
+			inv.setItem(0, InventoryItems.create("Portal"));
+		else inv.setItem(0, InventoryItems.relocate("Portal"));
 
 		// Option to teleport to the portal
 		inv.setItem(1, InventoryItems.teleport("Portal"));
@@ -521,8 +526,10 @@ public class Inventories {
 		// Option to remove the portal
 		inv.setItem(3, InventoryItems.remove("PORTAL"));
 
-		// Option to create the leaderboard
-		inv.setItem(4, InventoryItems.create("Leaderboard"));
+		// Option to create or relocate the leaderboard
+		if (arenaInstance.getArenaBoard() == null)
+			inv.setItem(4, InventoryItems.create("Leaderboard"));
+		else inv.setItem(4, InventoryItems.relocate("Leaderboard"));
 
 		// Option to teleport to the leaderboard
 		inv.setItem(5, InventoryItems.teleport("Leaderboard"));
@@ -581,7 +588,7 @@ public class Inventories {
 
 		// Option to toggle player spawn particles
 		inv.setItem(1, Utils.createItem(Material.FIREWORK_ROCKET,
-				Utils.format("&d&lSpawn Particles: " + getToggleStatus(arenaInstance.isSpawnParticles())),
+				Utils.format("&d&lSpawn Particles: " + getToggleStatus(arenaInstance.hasSpawnParticles())),
 				Utils.format("&7Particles showing where the spawn is"),
 				Utils.format("&7(Visible in-game)")));
 
@@ -611,12 +618,16 @@ public class Inventories {
 
 	// Menu for editing the player spawn of an arena
 	public Inventory createPlayerSpawnInventory(int arena) {
+		Arena arenaInstance = game.arenas.get(arena);
+
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&d&lPlayer Spawn: " + game.arenas.get(arena).getName()));
+				Utils.format("&d&lPlayer Spawn: " + arenaInstance.getName()));
 
-		// Option to create player spawn
-		inv.setItem(0, InventoryItems.create("Spawn"));
+		// Option to create or relocate player spawn
+		if (arenaInstance.getPlayerSpawn() == null)
+			inv.setItem(0, InventoryItems.create("Spawn"));
+		else inv.setItem(0, InventoryItems.relocate("Spawn"));
 
 		// Option to teleport to player spawn
 		inv.setItem(2, InventoryItems.teleport("Spawn"));
@@ -650,12 +661,16 @@ public class Inventories {
 
 	// Menu for editing the waiting room of an arena
 	public Inventory createWaitingRoomInventory(int arena) {
+		Arena arenaInstance = game.arenas.get(arena);
+
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&b&lWaiting Room: " + game.arenas.get(arena).getName()));
+				Utils.format("&b&lWaiting Room: " + arenaInstance.getName()));
 
 		// Option to create waiting room
-		inv.setItem(0, InventoryItems.create("Waiting Room"));
+		if (arenaInstance.getWaitingRoom() == null)
+			inv.setItem(0, InventoryItems.create("Waiting Room"));
+		else inv.setItem(0, InventoryItems.relocate("Waiting Room"));
 
 		// Option to teleport to waiting room
 		inv.setItem(2, InventoryItems.teleport("Waiting Room"));
@@ -740,7 +755,7 @@ public class Inventories {
 
 		// Option to toggle monster spawn particles
 		inv.setItem(1, Utils.createItem(Material.FIREWORK_ROCKET,
-				Utils.format("&a&lMonster Spawn Particles: " + getToggleStatus(arenaInstance.isMonsterParticles())),
+				Utils.format("&a&lMonster Spawn Particles: " + getToggleStatus(arenaInstance.hasMonsterParticles())),
 				Utils.format("&7Particles showing where the spawns are"),
 				Utils.format("&7(Visible in-game)")));
 
@@ -750,7 +765,7 @@ public class Inventories {
 
 		// Option to toggle villager spawn particles
 		inv.setItem(3, Utils.createItem(Material.FIREWORK_ROCKET,
-				Utils.format("&d&lVillager Spawn Particles: " + getToggleStatus(arenaInstance.isVillagerParticles())),
+				Utils.format("&d&lVillager Spawn Particles: " + getToggleStatus(arenaInstance.hasVillagerParticles())),
 				Utils.format("&7Particles showing where the spawns are"),
 				Utils.format("&7(Visible in-game)")));
 
@@ -759,12 +774,12 @@ public class Inventories {
 
 		// Option to toggle dynamic mob count
 		inv.setItem(5, Utils.createItem(Material.SLIME_BALL,
-				Utils.format("&e&lDynamic Mob Count: " + getToggleStatus(arenaInstance.isDynamicCount())),
+				Utils.format("&e&lDynamic Mob Count: " + getToggleStatus(arenaInstance.hasDynamicCount())),
 				Utils.format("&7Mob count adjusting based on"), Utils.format("&7number of players")));
 
 		// Option to toggle dynamic difficulty
 		inv.setItem(6, Utils.createItem(Material.MAGMA_CREAM,
-				Utils.format("&6&lDynamic Difficulty: " + getToggleStatus(arenaInstance.isDynamicDifficulty())),
+				Utils.format("&6&lDynamic Difficulty: " + getToggleStatus(arenaInstance.hasDynamicDifficulty())),
 				Utils.format("&7Difficulty adjusting based on"), Utils.format("&7number of players")));
 
 		// Option to exit
@@ -787,7 +802,7 @@ public class Inventories {
 		// Options to interact with all 8 possible mob spawns
 		for (int i = 0; i < 8; i++) {
 			// Check if the spawn exists
-			if (!plugin.getArenaData().contains("a" + arena + ".monster." + i))
+			if (arenaInstance.getMonsterSpawn(i) == null)
 				index = 0;
 			else index = 1;
 
@@ -803,12 +818,16 @@ public class Inventories {
 
 	// Menu for editing a specific monster spawn of an arena
 	public Inventory createMonsterSpawnMenu(int arena, int slot) {
+		Arena arenaInstance = game.arenas.get(arena);
+
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&2&lMonster Spawn " + (slot + 1) + ": " + game.arenas.get(arena).getName()));
+				Utils.format("&2&lMonster Spawn " + (slot + 1) + ": " + arenaInstance.getName()));
 
-		// Option to create monster spawn
-		inv.setItem(0, InventoryItems.create("Spawn"));
+		// Option to create or relocate monster spawn
+		if (arenaInstance.getMonsterSpawn(slot) == null)
+			inv.setItem(0, InventoryItems.create("Spawn"));
+		else inv.setItem(0, InventoryItems.relocate("Spawn"));
 
 		// Option to teleport to monster spawn
 		inv.setItem(2, InventoryItems.teleport("Spawn"));
@@ -854,7 +873,7 @@ public class Inventories {
 		// Options to interact with all 8 possible villager spawns
 		for (int i = 0; i < 8; i++) {
 			// Check if the spawn exists
-			if (!plugin.getArenaData().contains("a" + arena + ".villager." + i))
+			if (arenaInstance.getVillagerSpawn(i) == null)
 				index = 0;
 			else index = 1;
 
@@ -870,12 +889,16 @@ public class Inventories {
 
 	// Menu for editing a specific villager spawn of an arena
 	public Inventory createVillagerSpawnMenu(int arena, int slot) {
+		Arena arenaInstance = game.arenas.get(arena);
+
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&5&lVillager Spawn " + (slot + 1) + ": " + game.arenas.get(arena).getName()));
+				Utils.format("&5&lVillager Spawn " + (slot + 1) + ": " + arenaInstance.getName()));
 
-		// Option to create villager spawn
-		inv.setItem(0, InventoryItems.create("Spawn"));
+		// Option to create or relocate villager spawn
+		if (arenaInstance.getVillagerSpawn(slot) == null)
+			inv.setItem(0, InventoryItems.create("Spawn"));
+		else inv.setItem(0, InventoryItems.relocate("Spawn"));
 
 		// Option to teleport to villager spawn
 		inv.setItem(2, InventoryItems.teleport("Spawn"));
@@ -972,17 +995,17 @@ public class Inventories {
 
 		// Option to toggle default shop
 		inv.setItem(2, Utils.createItem(Material.EMERALD_BLOCK,
-				Utils.format("&6&lDefault Shop: " + getToggleStatus(arenaInstance.isNormal())),
+				Utils.format("&6&lDefault Shop: " + getToggleStatus(arenaInstance.hasNormal())),
 				Utils.format("&7Turn default shop on and off")));
 
 		// Option to toggle custom shop
 		inv.setItem(4, Utils.createItem(Material.QUARTZ_BLOCK,
-				Utils.format("&2&lCustom Shop: " + getToggleStatus(arenaInstance.isCustom())),
+				Utils.format("&2&lCustom Shop: " + getToggleStatus(arenaInstance.hasCustom())),
 				Utils.format("&7Turn custom shop on and off")));
 
 		// Option to toggle dynamic prices
 		inv.setItem(6, Utils.createItem(Material.NETHER_STAR,
-				Utils.format("&b&lDynamic Prices: " + getToggleStatus(arenaInstance.isDynamicPrices())),
+				Utils.format("&b&lDynamic Prices: " + getToggleStatus(arenaInstance.hasDynamicPrices())),
 				Utils.format("&7Prices adjusting based on number of"),
 				Utils.format("&7players in the game")));
 
@@ -1011,7 +1034,7 @@ public class Inventories {
 
 		// Option to toggle dynamic wave time limit
 		inv.setItem(2, Utils.createItem(Material.SNOWBALL,
-				Utils.format("&a&lDynamic Time Limit: " + getToggleStatus(arenaInstance.isDynamicLimit())),
+				Utils.format("&a&lDynamic Time Limit: " + getToggleStatus(arenaInstance.hasDynamicLimit())),
 				Utils.format("&7Wave time limit adjusting based on"),
 				Utils.format("&7in-game difficulty")));
 
@@ -1491,28 +1514,28 @@ public class Inventories {
 
 		// Option to edit win sound
 		inv.setItem(0, Utils.createItem(Material.MUSIC_DISC_PIGSTEP,
-				Utils.format("&a&lWin Sound: " + getToggleStatus(arenaInstance.isWinSound())),
+				Utils.format("&a&lWin Sound: " + getToggleStatus(arenaInstance.hasWinSound())),
 				FLAGS,
 				null,
 				Utils.format("&7Played when game ends and players win")));
 
 		// Option to edit lose sound
 		inv.setItem(1, Utils.createItem(Material.MUSIC_DISC_11,
-				Utils.format("&e&lLose Sound: " + getToggleStatus(arenaInstance.isLoseSound())),
+				Utils.format("&e&lLose Sound: " + getToggleStatus(arenaInstance.hasLoseSound())),
 				FLAGS,
 				null,
 				Utils.format("&7Played when game ends and players lose")));
 
 		// Option to edit wave start sound
 		inv.setItem(2, Utils.createItem(Material.MUSIC_DISC_CAT,
-				Utils.format("&2&lWave Start Sound: " + getToggleStatus(arenaInstance.isWaveStartSound())),
+				Utils.format("&2&lWave Start Sound: " + getToggleStatus(arenaInstance.hasWaveStartSound())),
 				FLAGS,
 				null,
 				Utils.format("&7Played when a wave starts")));
 
 		// Option to edit wave finish sound
 		inv.setItem(3, Utils.createItem(Material.MUSIC_DISC_BLOCKS,
-				Utils.format("&9&lWave Finish Sound: " + getToggleStatus(arenaInstance.isWaveFinishSound())),
+				Utils.format("&9&lWave Finish Sound: " + getToggleStatus(arenaInstance.hasWaveFinishSound())),
 				FLAGS,
 				null,
 				Utils.format("&7Played when a wave ends")));
@@ -1526,14 +1549,14 @@ public class Inventories {
 
 		// Option to edit gem pickup sound
 		inv.setItem(5, Utils.createItem(Material.MUSIC_DISC_FAR,
-				Utils.format("&b&lGem Pickup Sound: " + getToggleStatus(arenaInstance.isGemSound())),
+				Utils.format("&b&lGem Pickup Sound: " + getToggleStatus(arenaInstance.hasGemSound())),
 				FLAGS,
 				null,
 				Utils.format("&7Played when players pick up gems")));
 
 		// Option to edit player death sound
 		inv.setItem(6, Utils.createItem(Material.MUSIC_DISC_CHIRP,
-				Utils.format("&4&lPlayer Death Sound: " + getToggleStatus(arenaInstance.isPlayerDeathSound())),
+				Utils.format("&4&lPlayer Death Sound: " + getToggleStatus(arenaInstance.hasPlayerDeathSound())),
 				FLAGS,
 				null,
 				Utils.format("&7Played when a player dies")));
@@ -1617,18 +1640,18 @@ public class Inventories {
 
 		inv.setItem(1, Utils.createItem(Material.GOLDEN_SWORD,
 				Utils.format("&4&lLevel &9&l" + level + " &4&lWeapon Shop" +
-						(arena.isNormal() ? "" : " &4&l[DISABLED]")), FLAGS, null));
+						(arena.hasNormal() ? "" : " &4&l[DISABLED]")), FLAGS, null));
 
 		inv.setItem(3, Utils.createItem(Material.GOLDEN_CHESTPLATE,
 				Utils.format("&5&lLevel &9&l" + level + " &5&lArmor Shop" +
-						(arena.isNormal() ? "" : " &4&l[DISABLED]")), FLAGS, null));
+						(arena.hasNormal() ? "" : " &4&l[DISABLED]")), FLAGS, null));
 
 		inv.setItem(5, Utils.createItem(Material.GOLDEN_APPLE,
 				Utils.format("&3&lLevel &9&l" + level + " &3&lConsumables Shop" +
-						(arena.isNormal() ? "" : " &4&l[DISABLED]"))));
+						(arena.hasNormal() ? "" : " &4&l[DISABLED]"))));
 
 		inv.setItem(7, Utils.createItem(Material.QUARTZ, Utils.format("&6&lCustom Shop" +
-				(arena.isCustom() ? "" : " &4&l[DISABLED]"))));
+				(arena.hasCustom() ? "" : " &4&l[DISABLED]"))));
 
 		return inv;
 	}
@@ -1637,7 +1660,7 @@ public class Inventories {
 	public static Inventory createWeaponShop(int level, Arena arena) {
 		// Set price modifier
 		double modifier = Math.pow(arena.getActiveCount() - 4, 2) / 200 + 1;
-		if (!arena.isDynamicPrices())
+		if (!arena.hasDynamicPrices())
 			modifier = 1;
 
 		// Create inventory
@@ -1658,7 +1681,7 @@ public class Inventories {
 	public static Inventory createArmorShop(int level, Arena arena) {
 		// Set price modifier
 		double modifier = Math.pow(arena.getActiveCount() - 4, 2) / 200 + 1;
-		if (!arena.isDynamicPrices())
+		if (!arena.hasDynamicPrices())
 			modifier = 1;
 
 		// Create inventory
@@ -1679,7 +1702,7 @@ public class Inventories {
 	public static Inventory createConsumablesShop(int level, Arena arena) {
 		// Set price modifier
 		double modifier = Math.pow(arena.getActiveCount() - 4, 2) / 200 + 1;
-		if (!arena.isDynamicPrices())
+		if (!arena.hasDynamicPrices())
 			modifier = 1;
 
 		// Create inventory
@@ -2785,23 +2808,23 @@ public class Inventories {
 
 		// Dynamic mob count
 		inv.setItem(4, Utils.createItem(Material.SLIME_BALL,
-				Utils.format("&e&lDynamic Mob Count: &e" + getToggleStatus(arena.isDynamicCount())),
+				Utils.format("&e&lDynamic Mob Count: &e" + getToggleStatus(arena.hasDynamicCount())),
 				Utils.format("&7Mob count adjusting based on"), Utils.format("&7number of players")));
 
 		// Dynamic difficulty
 		inv.setItem(5, Utils.createItem(Material.MAGMA_CREAM,
-				Utils.format("&6&lDynamic Difficulty: &6" + getToggleStatus(arena.isDynamicDifficulty())),
+				Utils.format("&6&lDynamic Difficulty: &6" + getToggleStatus(arena.hasDynamicDifficulty())),
 				Utils.format("&7Difficulty adjusting based on"), Utils.format("&7number of players")));
 
 		// Dynamic prices
 		inv.setItem(6, Utils.createItem(Material.NETHER_STAR,
-				Utils.format("&b&lDynamic Prices: &b" + getToggleStatus(arena.isDynamicPrices())),
+				Utils.format("&b&lDynamic Prices: &b" + getToggleStatus(arena.hasDynamicPrices())),
 				Utils.format("&7Prices adjusting based on number of"),
 				Utils.format("&7players in the game")));
 
 		// Dynamic time limit
 		inv.setItem(7, Utils.createItem(Material.SNOWBALL,
-				Utils.format("&a&lDynamic Time Limit: &a" + getToggleStatus(arena.isDynamicLimit())),
+				Utils.format("&a&lDynamic Time Limit: &a" + getToggleStatus(arena.hasDynamicLimit())),
 				Utils.format("&7Wave time limit adjusting based on"),
 				Utils.format("&7in-game difficulty")));
 
@@ -2814,23 +2837,23 @@ public class Inventories {
 
 		// Player spawn particles toggle
 		inv.setItem(10, Utils.createItem(Material.FIREWORK_ROCKET,
-				Utils.format("&e&lPlayer Spawn Particles: " + getToggleStatus(arena.isSpawnParticles()))));
+				Utils.format("&e&lPlayer Spawn Particles: " + getToggleStatus(arena.hasSpawnParticles()))));
 
 		// Monster spawn particles toggle
 		inv.setItem(11, Utils.createItem(Material.FIREWORK_ROCKET,
-				Utils.format("&d&lMonster Spawn Particles: " + getToggleStatus(arena.isMonsterParticles()))));
+				Utils.format("&d&lMonster Spawn Particles: " + getToggleStatus(arena.hasMonsterParticles()))));
 
 		// Villager spawn particles toggle
 		inv.setItem(12, Utils.createItem(Material.FIREWORK_ROCKET,
-				Utils.format("&a&lVillager Spawn Particles: " + getToggleStatus(arena.isVillagerParticles()))));
+				Utils.format("&a&lVillager Spawn Particles: " + getToggleStatus(arena.hasVillagerParticles()))));
 
 		// Default shop toggle
 		inv.setItem(13, Utils.createItem(Material.EMERALD_BLOCK,
-				Utils.format("&6&lDefault Shop: " + getToggleStatus(arena.isNormal()))));
+				Utils.format("&6&lDefault Shop: " + getToggleStatus(arena.hasNormal()))));
 
 		// Custom shop toggle
 		inv.setItem(14, Utils.createItem(Material.QUARTZ_BLOCK,
-				Utils.format("&2&lCustom Shop: " + getToggleStatus(arena.isNormal()))));
+				Utils.format("&2&lCustom Shop: " + getToggleStatus(arena.hasNormal()))));
 
 		// Custom shop inventory
 		inv.setItem(15, Utils.createItem(Material.QUARTZ, Utils.format("&f&lCustom Shop Inventory")));
