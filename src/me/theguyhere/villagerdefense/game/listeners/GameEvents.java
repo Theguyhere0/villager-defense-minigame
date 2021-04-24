@@ -787,4 +787,16 @@ public class GameEvents implements Listener {
 
 		e.setCancelled(true);
 	}
+
+	// Prevents arena mobs from turning into different entities
+	@EventHandler
+	public void onTransform(EntityTransformEvent e) {
+		Entity ent = e.getEntity();
+
+		// Check for special mob
+		if (!ent.hasMetadata("VD"))
+			return;
+
+		e.setCancelled(true);
+	}
 }

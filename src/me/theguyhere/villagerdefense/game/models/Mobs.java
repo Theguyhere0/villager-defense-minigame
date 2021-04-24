@@ -976,12 +976,14 @@ public class Mobs {
         setMinion(plugin, arena, zombie);
         setSword(arena, zombie);
         setArmor(arena, zombie);
+        zombie.setConversionTime(Utils.secondsToTicks(9999999));
     }
 
     public static void setHusk(Main plugin, Arena arena, Husk husk) {
         setMinion(plugin, arena, husk);
         setSword(arena, husk);
         setArmor(arena, husk);
+        husk.setConversionTime(Utils.secondsToTicks(9999999));
     }
 
     public static void setWitherSkeleton(Main plugin, Arena arena, WitherSkeleton witherSkeleton) {
