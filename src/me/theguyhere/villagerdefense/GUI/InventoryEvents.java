@@ -1030,7 +1030,6 @@ public class InventoryEvents implements Listener {
 
 		// Portal and leaderboard menu for an arena
 		else if (title.contains("Portal/LBoard:")) {
-			String path2 = "arenaBoard." + arena;
 			Arena arenaInstance = game.arenas.get(arena);
 
 			// Create portal
@@ -1088,13 +1087,12 @@ public class InventoryEvents implements Listener {
 				openInv(player, inv.createPortalInventory(arena));
 			}
 
-			// Relocate portal
-			if (buttonName.contains("Relocate Leaderboard"))
-				if (arenaInstance.isClosed()) {
-					arenaInstance.setArenaBoard(player.getLocation());
-					arenaBoard.refreshArenaBoard(arena);
-					player.sendMessage(Utils.notify("&aLeaderboard relocated!"));
-				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+			// Relocate leaderboard
+			if (buttonName.contains("Relocate Leaderboard")) {
+				arenaInstance.setArenaBoard(player.getLocation());
+				arenaBoard.refreshArenaBoard(arena);
+				player.sendMessage(Utils.notify("&aLeaderboard relocated!"));
+			}
 
 			// Teleport player to leaderboard
 			else if (buttonName.contains("Teleport to Leaderboard")) {
@@ -1283,6 +1281,12 @@ public class InventoryEvents implements Listener {
 			
 			// Decrease max players
 			if (buttonName.contains("Decrease")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				// Check if max players is greater than 1
 				if (current <= 1) {
 					player.sendMessage(Utils.notify("&cMax players cannot be less than 1!"));
@@ -1302,6 +1306,12 @@ public class InventoryEvents implements Listener {
 
 			// Increase max players
 			else if (buttonName.contains("Increase")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				arenaInstance.setMaxPlayers(++current);
 				openInv(player, inv.createMaxPlayerInventory(arena));
 				portal.refreshHolo(arena, game);
@@ -1319,6 +1329,12 @@ public class InventoryEvents implements Listener {
 
 			// Decrease min players
 			if (buttonName.contains("Decrease")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				// Check if min players is greater than 1
 				if (current <= 1) {
 					player.sendMessage(Utils.notify("&cMin players cannot be less than 1!"));
@@ -1332,6 +1348,12 @@ public class InventoryEvents implements Listener {
 
 			// Increase min players
 			else if (buttonName.contains("Increase")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				// Check if min players is less than max players
 				if (current >= arenaInstance.getMaxPlayers()) {
 					player.sendMessage(Utils.notify("&cMin players cannot be greater than max player!"));
@@ -1541,44 +1563,100 @@ public class InventoryEvents implements Listener {
 			Arena arenaInstance = game.arenas.get(arena);
 
 			// Default
-			if (buttonName.contains("Default"))
+			if (buttonName.contains("Default")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				if (!arenaInstance.setSpawnTableFile("default"))
 					player.sendMessage(Utils.notify("&cFile doesn't exist!"));
+			}
 
 			// Option 1
-			else if (buttonName.contains("Option 1"))
+			else if (buttonName.contains("Option 1")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				if (!arenaInstance.setSpawnTableFile("option1"))
 					player.sendMessage(Utils.notify("&cFile doesn't exist!"));
+			}
 
 			// Option 2
-			else if (buttonName.contains("Option 2"))
+			else if (buttonName.contains("Option 2")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				if (!arenaInstance.setSpawnTableFile("option2"))
 					player.sendMessage(Utils.notify("&cFile doesn't exist!"));
+			}
 
 			// Option 3
-			else if (buttonName.contains("Option 3"))
+			else if (buttonName.contains("Option 3")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				if (!arenaInstance.setSpawnTableFile("option3"))
 					player.sendMessage(Utils.notify("&cFile doesn't exist!"));
+			}
 
 			// Option 4
-			else if (buttonName.contains("Option 4"))
+			else if (buttonName.contains("Option 4")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				if (!arenaInstance.setSpawnTableFile("option4"))
 					player.sendMessage(Utils.notify("&cFile doesn't exist!"));
+			}
 
 			// Option 5
-			else if (buttonName.contains("Option 5"))
+			else if (buttonName.contains("Option 5")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				if (!arenaInstance.setSpawnTableFile("option5"))
 					player.sendMessage(Utils.notify("&cFile doesn't exist!"));
+			}
 
 			// Option 6
-			else if (buttonName.contains("Option 6"))
+			else if (buttonName.contains("Option 6")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				if (!arenaInstance.setSpawnTableFile("option6"))
 					player.sendMessage(Utils.notify("&cFile doesn't exist!"));
+			}
 
 			// Custom
-			else if (buttonName.contains("Custom"))
+			else if (buttonName.contains("Custom")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				if (!arenaInstance.setSpawnTableFile("custom"))
 					player.sendMessage(Utils.notify("&cFile doesn't exist!"));
+			}
 
 			// Exit menu
 			else if (buttonName.contains("EXIT")) {
@@ -1630,10 +1708,17 @@ public class InventoryEvents implements Listener {
 		else if (title.contains("Custom Shop Editor:")) {
 			ItemStack cursor = e.getCursor();
 			String path = "a" + arena + ".customShop.";
+			Arena arenaInstance = game.arenas.get(arena);
 
 			// Exit menu
 			if (buttonName.contains("EXIT")) {
 				openInv(player, inv.createShopsInventory(arena));
+				return;
+			}
+
+			// Check for arena closure
+			if (!arenaInstance.isClosed()) {
+				player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 				return;
 			}
 
@@ -1660,7 +1745,7 @@ public class InventoryEvents implements Listener {
 			plugin.saveArenaData();
 			Utils.giveItem(player, cursor.clone(), language.getString("inventoryFull"));
 			player.setItemOnCursor(new ItemStack(Material.AIR));
-			openInv(player, game.arenas.get(arena).getCustomShopEditor());
+			openInv(player, arenaInstance.getCustomShopEditor());
 		}
 
 		// Game settings menu for an arena
@@ -1726,6 +1811,12 @@ public class InventoryEvents implements Listener {
 
 			// Decrease max waves
 			if (buttonName.contains("Decrease")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				// Check if max waves is unlimited
 				if (current == -1)
 					arenaInstance.setMaxWaves(1);
@@ -1742,6 +1833,12 @@ public class InventoryEvents implements Listener {
 
 			// Set max waves to unlimited
 			if (buttonName.contains("Unlimited")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				arenaInstance.setMaxWaves(-1);
 				openInv(player, inv.createMaxWaveInventory(arena));
 				portal.refreshHolo(arena, game);
@@ -1749,6 +1846,12 @@ public class InventoryEvents implements Listener {
 
 			// Reset max waves to 1
 			if (buttonName.contains("Reset")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				arenaInstance.setMaxWaves(1);
 				openInv(player, inv.createMaxWaveInventory(arena));
 				portal.refreshHolo(arena, game);
@@ -1756,6 +1859,12 @@ public class InventoryEvents implements Listener {
 
 			// Increase max waves
 			else if (buttonName.contains("Increase")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				// Check if max waves is unlimited
 				if (current == -1)
 					arenaInstance.setMaxWaves(1);
@@ -1777,6 +1886,12 @@ public class InventoryEvents implements Listener {
 
 			// Decrease wave time limit
 			if (buttonName.contains("Decrease")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				// Check if wave time limit is unlimited
 				if (current == -1)
 					arenaInstance.setWaveTimeLimit(1);
@@ -1793,6 +1908,12 @@ public class InventoryEvents implements Listener {
 
 			// Set wave time limit to unlimited
 			if (buttonName.contains("Unlimited")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				arenaInstance.setWaveTimeLimit(-1);
 				openInv(player, inv.createWaveTimeLimitInventory(arena));
 				portal.refreshHolo(arena, game);
@@ -1800,6 +1921,12 @@ public class InventoryEvents implements Listener {
 
 			// Reset wave time limit to 1
 			if (buttonName.contains("Reset")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				arenaInstance.setWaveTimeLimit(1);
 				openInv(player, inv.createWaveTimeLimitInventory(arena));
 				portal.refreshHolo(arena, game);
@@ -1807,6 +1934,12 @@ public class InventoryEvents implements Listener {
 
 			// Increase wave time limit
 			else if (buttonName.contains("Increase")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				// Check if wave time limit is unlimited
 				if (current == -1)
 					arenaInstance.setWaveTimeLimit(1);
@@ -1827,6 +1960,12 @@ public class InventoryEvents implements Listener {
 
 			// Set to Easy
 			if (buttonName.contains("Easy")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				arenaInstance.setDifficultyLabel("Easy");
 				openInv(player, inv.createDifficultyLabelInventory(arena));
 				portal.refreshHolo(arena, game);
@@ -1834,6 +1973,12 @@ public class InventoryEvents implements Listener {
 
 			// Set to Medium
 			if (buttonName.contains("Medium")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				arenaInstance.setDifficultyLabel("Medium");
 				openInv(player, inv.createDifficultyLabelInventory(arena));
 				portal.refreshHolo(arena, game);
@@ -1841,6 +1986,12 @@ public class InventoryEvents implements Listener {
 
 			// Set to Hard
 			if (buttonName.contains("Hard")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				arenaInstance.setDifficultyLabel("Hard");
 				openInv(player, inv.createDifficultyLabelInventory(arena));
 				portal.refreshHolo(arena, game);
@@ -1848,6 +1999,12 @@ public class InventoryEvents implements Listener {
 
 			// Set to Insane
 			if (buttonName.contains("Insane")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				arenaInstance.setDifficultyLabel("Insane");
 				openInv(player, inv.createDifficultyLabelInventory(arena));
 				portal.refreshHolo(arena, game);
@@ -1855,6 +2012,12 @@ public class InventoryEvents implements Listener {
 
 			// Set to nothing
 			if (buttonName.contains("None")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				arenaInstance.setDifficultyLabel(null);
 				openInv(player, inv.createDifficultyLabelInventory(arena));
 				portal.refreshHolo(arena, game);
@@ -1871,24 +2034,48 @@ public class InventoryEvents implements Listener {
 
 			// Set to 1
 			if (buttonName.contains("1")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				arenaInstance.setDifficultyMultiplier(1);
 				openInv(player, inv.createDifficultyMultiplierInventory(arena));
 			}
 
 			// Set to 2
 			if (buttonName.contains("2")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				arenaInstance.setDifficultyMultiplier(2);
 				openInv(player, inv.createDifficultyMultiplierInventory(arena));
 			}
 
 			// Set to 3
 			if (buttonName.contains("3")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				arenaInstance.setDifficultyMultiplier(3);
 				openInv(player, inv.createDifficultyMultiplierInventory(arena));
 			}
 
 			// Set to 4
 			if (buttonName.contains("4")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				arenaInstance.setDifficultyMultiplier(4);
 				openInv(player, inv.createDifficultyMultiplierInventory(arena));
 			}
@@ -1907,6 +2094,12 @@ public class InventoryEvents implements Listener {
 			// Toggle a kit
 			if (!(kit.equals("Gift Kits") || kit.equals("Ability Kits") || kit.equals("Effect Kits") ||
 					kit.equals("EXIT"))) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				if (banned.contains(kit))
 					banned.remove(kit);
 				else banned.add(kit);
@@ -1992,6 +2185,12 @@ public class InventoryEvents implements Listener {
 
 			// Set sound
 			else {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				arenaInstance.setWaitingSound(slot);
 				openInv(player, inv.createWaitSoundInventory(arena));
 			}
@@ -2002,6 +2201,12 @@ public class InventoryEvents implements Listener {
 			Arena arena1 = game.arenas.get(arena);
 
 			if (slot < 45) {
+				// Check for arena closure
+				if (!arena1.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				Arena arena2 = game.arenas.get(slot);
 
 				// Copy settings from another arena
@@ -2011,6 +2216,12 @@ public class InventoryEvents implements Listener {
 
 			// Copy easy preset
 			else if (buttonName.contains("Easy Preset")) {
+				// Check for arena closure
+				if (!arena1.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				arena1.setMaxWaves(80);
 				arena1.setWaveTimeLimit(5);
 				arena1.setDifficultyMultiplier(1);
@@ -2023,6 +2234,12 @@ public class InventoryEvents implements Listener {
 
 			// Copy medium preset
 			else if (buttonName.contains("Medium Preset")) {
+				// Check for arena closure
+				if (!arena1.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				arena1.setMaxWaves(70);
 				arena1.setWaveTimeLimit(4);
 				arena1.setDifficultyMultiplier(2);
@@ -2035,6 +2252,12 @@ public class InventoryEvents implements Listener {
 
 			// Copy hard preset
 			else if (buttonName.contains("Hard Preset")) {
+				// Check for arena closure
+				if (!arena1.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				arena1.setMaxWaves(60);
 				arena1.setWaveTimeLimit(3);
 				arena1.setDifficultyMultiplier(3);
@@ -2047,6 +2270,12 @@ public class InventoryEvents implements Listener {
 
 			// Copy insane preset
 			else if (buttonName.contains("Insane Preset")) {
+				// Check for arena closure
+				if (!arena1.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
 				arena1.setMaxWaves(50);
 				arena1.setWaveTimeLimit(3);
 				arena1.setDifficultyMultiplier(4);
