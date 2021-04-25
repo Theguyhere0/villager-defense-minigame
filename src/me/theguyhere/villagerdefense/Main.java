@@ -92,7 +92,7 @@ public class Main extends JavaPlugin {
 		int playerDataVersion = 1;
 		int spawnTableVersion = 1;
 		int defaultSpawnVersion = 1;
-		int languageFileVersion = 1;
+		int languageFileVersion = 2;
 
 		// Check config version
 		if (getConfig().getInt("version") < configVersion) {

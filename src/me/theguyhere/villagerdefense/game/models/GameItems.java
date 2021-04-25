@@ -5121,7 +5121,7 @@ public class GameItems {
 				Utils.format("&2Gems: &a500"));
 	}
 	public static ItemStack wolf() {
-		return Utils.createItem(Material.WOLF_SPAWN_EGG, null, Utils.format("&2Gems: &a200"));
+		return Utils.createItem(Material.WOLF_SPAWN_EGG, null, Utils.format("&2Gems: &a250"));
 	}
 	public static ItemStack smallCare() {
 		return Utils.createItem(Material.COAL_BLOCK, Utils.format("&2Small Care Package"),

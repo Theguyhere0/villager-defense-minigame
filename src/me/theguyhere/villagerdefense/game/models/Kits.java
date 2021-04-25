@@ -119,7 +119,7 @@ public class Kits {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
         enchants.put(Enchantment.DURABILITY, 1);
         return Utils.createItem(Material.PURPLE_DYE, Utils.format("&dLevel 3 Mage Essence"), FLAGS2, enchants,
-                Utils.format("&7Right click to use ability"), Utils.format("&7Consumes &b4 &7experience levels"));
+                Utils.format("&7Right click to use ability"), Utils.format("&7Consumes &b3 &7experience levels"));
     }
     public static ItemStack ninja1() {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();

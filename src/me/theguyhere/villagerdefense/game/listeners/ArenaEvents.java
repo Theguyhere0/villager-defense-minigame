@@ -57,6 +57,13 @@ public class ArenaEvents implements Listener {
         Arena arena = e.getArena();
         Location location;
 
+        // Check if arena is closed
+        if (arena.isClosed()) {
+            player.sendMessage(Utils.notify("&c" + language.getString("closeError")));
+            e.setCancelled(true);
+            return;
+        }
+
         // Try to get waiting room
         try {
             location = arena.getWaitingRoom();
@@ -74,13 +81,6 @@ public class ArenaEvents implements Listener {
                 return;
             }
 
-        // Check if arena is closed
-        if (arena.isClosed()) {
-            player.sendMessage(Utils.notify("&c" + language.getString("closeError")));
-            e.setCancelled(true);
-            return;
-        }
-
         int players = arena.getActiveCount();
 
         // Save player exp and items before going into arena
@@ -89,10 +89,6 @@ public class ArenaEvents implements Listener {
         for (int i = 0; i < player.getInventory().getContents().length; i++)
             plugin.getPlayerData().set(player.getName() + ".inventory." + i, player.getInventory().getContents()[i]);
         plugin.savePlayerData();
-
-        // Clear arena for first person joining
-        if (players == 0)
-            Utils.clear(location);
 
         // Prepares player to enter arena if it doesn't exceed max capacity or if the arena hasn't already started
         if (players < arena.getMaxPlayers() && !arena.isActive()) {
@@ -113,9 +109,14 @@ public class ArenaEvents implements Listener {
             // Give them a game board
             game.createBoard(fighter);
 
+            // Clear arena
+            Utils.clear(location);
+
             // Play waiting music
             if (arena.getWaitingSound() != null)
-                player.playSound(arena.getWaitingRoom(), arena.getWaitingSound(), 4, 0);
+                if (arena.getWaitingRoom() != null)
+                    player.playSound(arena.getWaitingRoom(), arena.getWaitingSound(), 4, 0);
+                else player.playSound(arena.getPlayerSpawn(), arena.getWaitingSound(), 4, 0);
 
             // Tell player to choose a kit and automatically open inventory
             player.openInventory(inv.createSelectKitsInventory(player, arena));
@@ -183,7 +184,7 @@ public class ArenaEvents implements Listener {
         }
 
         // Quick start condition
-        else if (tasks.isEmpty() || scheduler.isQueued(tasks.get(task.sec10))) {
+        else if (players == arena.getMaxPlayers() && !tasks.containsKey(task.full10)) {
             // Remove all tasks
             tasks.forEach((runnable, id) -> scheduler.cancelTask(id));
             tasks.clear();
@@ -310,6 +311,9 @@ public class ArenaEvents implements Listener {
             arena.getPlayers().remove(gamer);
             if (arena.getTimeLimitBar() != null)
                 arena.removePlayerFromTimeLimitBar(gamer.getPlayer());
+
+            // Remove pets
+            Utils.getPets(player).forEach(Entity::remove);
 
             // Notify people in arena player left
             arena.getPlayers().forEach(fighter ->
