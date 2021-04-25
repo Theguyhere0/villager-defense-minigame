@@ -115,7 +115,9 @@ public class ArenaEvents implements Listener {
 
             // Play waiting music
             if (arena.getWaitingSound() != null)
-                player.playSound(arena.getWaitingRoom(), arena.getWaitingSound(), 4, 0);
+                if (arena.getWaitingRoom() != null)
+                    player.playSound(arena.getWaitingRoom(), arena.getWaitingSound(), 4, 0);
+                else player.playSound(arena.getPlayerSpawn(), arena.getWaitingSound(), 4, 0);
 
             // Tell player to choose a kit and automatically open inventory
             player.openInventory(inv.createSelectKitsInventory(player, arena));
@@ -183,7 +185,7 @@ public class ArenaEvents implements Listener {
         }
 
         // Quick start condition
-        else if (tasks.isEmpty() || scheduler.isQueued(tasks.get(task.sec10))) {
+        else if (players == arena.getMaxPlayers() && tasks.containsKey(task.full10)) {
             // Remove all tasks
             tasks.forEach((runnable, id) -> scheduler.cancelTask(id));
             tasks.clear();

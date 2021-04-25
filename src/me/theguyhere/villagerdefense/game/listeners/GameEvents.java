@@ -72,7 +72,7 @@ public class GameEvents implements Listener {
 			e.getDrops().clear();
 			e.setDroppedExp(0);
 
-			if (ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin) {
+			if (!(ent instanceof Villager) || !(ent instanceof Wolf) || !(ent instanceof IronGolem)) {
 				// Set drop to emerald
 				e.getDrops().add(Utils.createItem(Material.EMERALD, null, Integer.toString(arena.getArena())));
 				e.setDroppedExp((int) arena.getCurrentDifficulty());
@@ -168,8 +168,9 @@ public class GameEvents implements Listener {
 			return;
 
 		// Ignore phantom damage to monsters
-		if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin) && (
-				damager instanceof Monster || damager instanceof Hoglin))
+		if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin || ent instanceof Phantom ||
+				ent instanceof EnderDragon) && (damager instanceof Monster || damager instanceof Hoglin ||
+				damager instanceof EnderDragon))
 			return;
 
 		// Check for phantom projectile damage
@@ -177,10 +178,14 @@ public class GameEvents implements Listener {
 			if ((ent instanceof Villager || ent instanceof IronGolem) &&
 					((Projectile) damager).getShooter() instanceof Player)
 				return;
-			if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin) &&
-					((Projectile) damager).getShooter() instanceof Monster)
+			if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin || ent instanceof Phantom ||
+					ent instanceof EnderDragon) && ((Projectile) damager).getShooter() instanceof Monster)
 				return;
 		}
+
+		// Ignore bosses
+		if (ent instanceof Wither || ent instanceof EnderDragon)
+			return;
 
 		LivingEntity n = (LivingEntity) ent;
 
@@ -210,6 +215,10 @@ public class GameEvents implements Listener {
 				e.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK||
 				e.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION||
 				e.getCause() == EntityDamageEvent.DamageCause.PROJECTILE)
+			return;
+
+		// Ignore bosses
+		if (ent instanceof Wither || ent instanceof EnderDragon)
 			return;
 
 		LivingEntity n = (LivingEntity) ent;
@@ -250,6 +259,10 @@ public class GameEvents implements Listener {
 
 		// Ignore wolves and players
 		if (ent instanceof Wolf || ent instanceof Player)
+			return;
+
+		// Ignore bosses
+		if (ent instanceof Wither || ent instanceof EnderDragon)
 			return;
 
 		LivingEntity n = (LivingEntity) ent;

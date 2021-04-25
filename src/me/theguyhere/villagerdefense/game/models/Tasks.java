@@ -215,10 +215,12 @@ public class Tasks {
 						Utils.teleAdventure(player.getPlayer(), arenaInstance.getPlayerSpawn()));
 				arenaInstance.getSpectators().forEach(player ->
 						Utils.teleSpectator(player.getPlayer(), arenaInstance.getPlayerSpawn()));
-				if (arenaInstance.getWaitingSound() != null)
-					arenaInstance.getPlayers().forEach(player ->
-							player.getPlayer().stopSound(arenaInstance.getWaitingSound()));
 			}
+
+			// Stop waiting sound
+			if (arenaInstance.getWaitingSound() != null)
+				arenaInstance.getPlayers().forEach(player ->
+						player.getPlayer().stopSound(arenaInstance.getWaitingSound()));
 
 			// Start particles if enabled
 			if (arenaInstance.isSpawnParticles())
