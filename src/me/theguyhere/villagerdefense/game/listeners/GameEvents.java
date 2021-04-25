@@ -812,4 +812,16 @@ public class GameEvents implements Listener {
 
 		e.setCancelled(true);
 	}
+
+	// Prevent zombies from breaking doors
+	@EventHandler
+	public void onBreakDoor(EntityBreakDoorEvent e) {
+		Entity ent = e.getEntity();
+
+		// Check for special mob
+		if (!ent.hasMetadata("VD"))
+			return;
+
+		e.setCancelled(true);
+	}
 }

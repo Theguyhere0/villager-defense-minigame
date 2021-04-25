@@ -255,6 +255,8 @@ public class Utils {
         player.setExp(0);
         player.setLevel(0);
         player.setFallDistance(0);
+        player.setFireTicks(0);
+        player.setInvulnerable(false);
         player.getInventory().clear();
         player.teleport(location);
         player.setGameMode(GameMode.ADVENTURE);
@@ -354,12 +356,14 @@ public class Utils {
     // Clears the arena
     public static void clear(Location location) {
         Collection<Entity> ents;
+
+        // Get all entities near spawn
         try {
-            // Get all entities near spawn
             ents = location.getWorld().getNearbyEntities(location, 200, 200, 100);
         } catch (Exception e) {
             return;
         }
+
         // Clear the arena for living entities
         ents.forEach(ent -> {
             if (ent instanceof LivingEntity && !(ent instanceof Player))

@@ -230,10 +230,8 @@ public class Tasks {
 			if (arenaInstance.isVillagerParticles())
 				arenaInstance.startVillagerParticles();
 
-			// Give all players a wooden sword and a shop while removing pre-game protection
+			// Give all players a wooden sword and a shop
 			arenaInstance.getActives().forEach(player -> {
-				player.getPlayer().setFireTicks(0);
-				player.getPlayer().setInvulnerable(false);
 				giveItems(player);
 
 				String kit = player.getKit();
