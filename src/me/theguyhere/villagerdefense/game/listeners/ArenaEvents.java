@@ -90,10 +90,6 @@ public class ArenaEvents implements Listener {
             plugin.getPlayerData().set(player.getName() + ".inventory." + i, player.getInventory().getContents()[i]);
         plugin.savePlayerData();
 
-        // Clear arena for first person joining
-        if (players == 0)
-
-
         // Prepares player to enter arena if it doesn't exceed max capacity or if the arena hasn't already started
         if (players < arena.getMaxPlayers() && !arena.isActive()) {
             // Teleport to arena or waiting room
@@ -188,7 +184,7 @@ public class ArenaEvents implements Listener {
         }
 
         // Quick start condition
-        else if (players == arena.getMaxPlayers() && tasks.containsKey(task.full10)) {
+        else if (players == arena.getMaxPlayers() && !tasks.containsKey(task.full10)) {
             // Remove all tasks
             tasks.forEach((runnable, id) -> scheduler.cancelTask(id));
             tasks.clear();
@@ -315,6 +311,9 @@ public class ArenaEvents implements Listener {
             arena.getPlayers().remove(gamer);
             if (arena.getTimeLimitBar() != null)
                 arena.removePlayerFromTimeLimitBar(gamer.getPlayer());
+
+            // Remove pets
+            Utils.getPets(player).forEach(Entity::remove);
 
             // Notify people in arena player left
             arena.getPlayers().forEach(fighter ->

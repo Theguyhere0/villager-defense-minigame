@@ -57,6 +57,20 @@ public class GameEvents implements Listener {
 		if (ent instanceof Villager)
 			arena.decrementVillagers();
 
+		// Update wolf count
+		if (ent instanceof Wolf) {
+			try {
+				arena.getPlayer((Player) ((Wolf) ent).getOwner()).decrementWolves();
+			} catch (Exception err) {
+				return;
+			}
+		}
+
+		// Update iron golem count
+		if (ent instanceof IronGolem) {
+			arena.decrementGolems();
+		}
+
 		// Check for lose condition
 		if (arena.getVillagers() == 0 && !arena.isSpawning() && !arena.isEnding()) {
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
@@ -586,6 +600,12 @@ public class GameEvents implements Listener {
 			// Cancel normal spawn
 			e.setCancelled(true);
 
+			// Check for wolf cap
+			if (gamer.getWolves() >= 5) {
+				player.sendMessage(Utils.notify("&c" + String.format(language.getString("wolfError"), 5)));
+				return;
+			}
+
 			// Remove an item
 			if (item.getAmount() > 1)
 				item.setAmount(item.getAmount() - 1);
@@ -602,6 +622,7 @@ public class GameEvents implements Listener {
 			wolf.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
 			wolf.setCustomName(player.getName() + "'s Wolf");
 			wolf.setCustomNameVisible(true);
+			gamer.incrementWolves();
 
 			return;
 		}
@@ -618,6 +639,12 @@ public class GameEvents implements Listener {
 
 			// Cancel normal spawn
 			e.setCancelled(true);
+
+			// Check for golem cap
+			if (arena.getGolems() >= 2) {
+				player.sendMessage(Utils.notify("&c" + String.format(language.getString("golemError"), 2)));
+				return;
+			}
 
 			// Remove an item
 			if (item.getAmount() > 1)

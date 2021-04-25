@@ -68,7 +68,7 @@ public class AbilityEvents implements Listener {
                 if (dif <= 0) {
                     player.setLevel(player.getLevel() - expRequired);
                     Fireball fireball = player.getWorld().spawn(player.getEyeLocation(), Fireball.class);
-                    fireball.setYield(1.25f);
+                    fireball.setYield(2f);
                     fireball.setShooter(player);
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
@@ -83,7 +83,7 @@ public class AbilityEvents implements Listener {
                 if (dif <= 0) {
                     player.setLevel(player.getLevel() - expRequired);
                     Fireball fireball = player.getWorld().spawn(player.getEyeLocation(), Fireball.class);
-                    fireball.setYield(1.75f);
+                    fireball.setYield(2.5f);
                     fireball.setShooter(player);
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(
@@ -91,14 +91,14 @@ public class AbilityEvents implements Listener {
             } else player.sendMessage(Utils.notify("&c" + language.getString("levelError")));
         }
         if (gamer.getKit().equals("Mage3") && (Kits.mage3().equals(item))) {
-            int expRequired = 4;
-            int cooldown = 5;
+            int expRequired = 3;
+            int cooldown = 3;
             if (player.getLevel() >= expRequired) {
                 long dif = cooldowns.get(gamer) - System.currentTimeMillis();
                 if (dif <= 0) {
                     player.setLevel(player.getLevel() - expRequired);
                     Fireball fireball = player.getWorld().spawn(player.getEyeLocation(), Fireball.class);
-                    fireball.setYield(2.25f);
+                    fireball.setYield(3f);
                     fireball.setShooter(player);
                     cooldowns.put(gamer, System.currentTimeMillis() + Utils.secondsToMillis(cooldown));
                 } else player.sendMessage(Utils.notify(

@@ -1201,13 +1201,13 @@ public class Inventories {
 					Utils.format("&7(Cooldown 1 second)"), Utils.format("&fLevel 2"),
 					Utils.format("&7Shoot a strong fireball"), Utils.format("&7(Cooldown 2 seconds)"),
 					Utils.format("&fLevel 3"), Utils.format("&7Shoot a very strong fireball"),
-					Utils.format("&7(Cooldown 5 seconds)")));
+					Utils.format("&7(Cooldown 3 seconds)")));
 		else inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&4&LMage"),
 				Utils.format("&fLevel 1"), Utils.format("&7Shoot a fireball"),
 				Utils.format("&7(Cooldown 1 second)"), Utils.format("&fLevel 2"),
 				Utils.format("&7Shoot a strong fireball"), Utils.format("&7(Cooldown 2 seconds)"),
 				Utils.format("&fLevel 3"), Utils.format("&7Shoot a very strong fireball"),
-				Utils.format("&7(Cooldown 5 seconds)")));
+				Utils.format("&7(Cooldown 3 seconds)")));
 
 		if (!arenaInstance.getBannedKits().contains("Ninja"))
 			inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"), FLAGS, enchants,
@@ -1868,13 +1868,13 @@ public class Inventories {
 						Utils.format("&aLevel 2"), Utils.format("&7Shoot a strong fireball"),
 						Utils.format("&7(Cooldown 2 seconds)"), Utils.format("&aPurchased!"),
 						Utils.format("&cLevel 3"), Utils.format("&7Shoot a very strong fireball"),
-						Utils.format("&7(Cooldown 5 seconds)"),
+						Utils.format("&7(Cooldown 3 seconds)"),
 						Utils.format("&cUpgrade: &b" + kits.getPrice("Mage", 3) +" Crystals")));
 				break;
 			case 3:
 				inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&d&lMage"),
 						Utils.format("&aLevel 3"), Utils.format("&7Shoot a very strong fireball"),
-						Utils.format("&7(Cooldown 5 seconds)"), Utils.format("&aPurchased!")));
+						Utils.format("&7(Cooldown 3 seconds)"), Utils.format("&aPurchased!")));
 				break;
 			default:
 				inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&d&lMage"),
@@ -2409,7 +2409,7 @@ public class Inventories {
 			case 3:
 				inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&d&lMage"),
 						Utils.format("&aLevel 3"), Utils.format("&7Shoot a very strong fireball"),
-						Utils.format("&7(Cooldown 5 seconds)"), Utils.format("&aAvailable")));
+						Utils.format("&7(Cooldown 3 seconds)"), Utils.format("&aAvailable")));
 				break;
 			default:
 				inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&d&lMage"),

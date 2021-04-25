@@ -60,6 +60,7 @@ public class Arena {
     private int currentWave; // Current game wave
     private int villagers; // Villager count
     private int enemies; // Enemy count
+    private int golems; // Iron golem count
     private int spawnID = 0; // Spawn particles ID
     private int monsterID = 0; // Monster particles ID
     private int villagerID = 0; // Villager particles ID
@@ -532,6 +533,22 @@ public class Arena {
 
     public void resetEnemies() {
         enemies = 0;
+    }
+
+    public int getGolems() {
+        return golems;
+    }
+
+    public void incrementGolems() {
+        golems++;
+    }
+
+    public void decrementGolems() {
+        golems--;
+    }
+
+    public void resetGolems() {
+        golems = 0;
     }
 
     public List<VDPlayer> getPlayers() {
