@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="HolographicDisplays">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../Minecraft Dev/Spigot Dependencies/HolographicDisplays/HolographicDisplays.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
