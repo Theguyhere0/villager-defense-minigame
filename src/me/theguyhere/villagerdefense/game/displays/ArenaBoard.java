@@ -76,10 +76,21 @@ public class ArenaBoard {
 			arena.getSortedDescendingRecords().stream().forEachOrdered(record -> {
 				StringBuilder firstLine = new StringBuilder("Wave &b" + record.getWave() + " &f-");
 				StringBuilder secondLine = new StringBuilder();
-				if (record.getPlayers().size() > 6) {
-					for (int i = 0; i < record.getPlayers().size() / 2; i++)
+				StringBuilder thirdLine = new StringBuilder();
+				if (record.getPlayers().size() > 8) {
+					for (int i = 0; i < 4; i++)
 						firstLine.append(" ").append(record.getPlayers().get(i)).append(",");
-					for (int i = record.getPlayers().size() / 2; i < record.getPlayers().size(); i++)
+					for (int i = 4; i < 8; i++)
+						secondLine.append(record.getPlayers().get(i)).append(", ");
+					for (int i = 8; i < record.getPlayers().size(); i++)
+						thirdLine.append(record.getPlayers().get(i)).append(", ");
+					info.add(Utils.format(firstLine.toString()));
+					info.add(Utils.format(secondLine.substring(0, secondLine.length() - 2)));
+					info.add(Utils.format(thirdLine.substring(0, secondLine.length() - 2)));
+				} else if (record.getPlayers().size() > 4) {
+					for (int i = 0; i < 4; i++)
+						firstLine.append(" ").append(record.getPlayers().get(i)).append(",");
+					for (int i = 4; i < record.getPlayers().size(); i++)
 						secondLine.append(record.getPlayers().get(i)).append(", ");
 					info.add(Utils.format(firstLine.toString()));
 					info.add(Utils.format(secondLine.substring(0, secondLine.length() - 2)));

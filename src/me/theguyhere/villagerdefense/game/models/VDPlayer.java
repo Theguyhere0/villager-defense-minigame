@@ -7,6 +7,7 @@ public class VDPlayer {
     private boolean spectating; // Whether they are spectating
     private int gems; // Gem count
     private int kills; // Kill count
+    private int wolves; // Wolf count
     private String kit; // Selected kit
 
     public VDPlayer(Player player, boolean spectating) {
@@ -14,6 +15,7 @@ public class VDPlayer {
         this.spectating = spectating;
         gems = 0;
         kills = 0;
+        wolves = 0;
     }
 
     public Player getPlayer() {
@@ -52,6 +54,18 @@ public class VDPlayer {
         if (kit == null)
             return "";
         return kit;
+    }
+
+    public int getWolves() {
+        return wolves;
+    }
+
+    public void incrementWolves() {
+        wolves++;
+    }
+
+    public void decrementWolves() {
+        wolves--;
     }
 
     public void setKit(String kit) {

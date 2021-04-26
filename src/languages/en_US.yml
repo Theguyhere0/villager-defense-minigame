@@ -13,6 +13,7 @@ end: You defeated up to wave &b%d&6! Ending in 10 seconds.
 fatalError: Something went wrong
 foundGems: You found &a%d&f gem(s)!
 gems: You have received &a%d &fgems!
+golemError: The arena can only have up to &b%d &ciron golems!
 helmet: Helmet equipped!
 info: For more information, click below to visit the wiki!
 info1: Left click &eportal for arena info
@@ -52,3 +53,4 @@ spectatorError: Spectators don't have access to kits!
 starting: Starting in 15 seconds
 waiting: Waiting for more players to start the game.
 wave: Wave
+wolfError: You can only have up to &b%d &cwolves!

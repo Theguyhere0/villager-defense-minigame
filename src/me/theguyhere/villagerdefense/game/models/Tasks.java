@@ -215,10 +215,12 @@ public class Tasks {
 						Utils.teleAdventure(player.getPlayer(), arenaInstance.getPlayerSpawn()));
 				arenaInstance.getSpectators().forEach(player ->
 						Utils.teleSpectator(player.getPlayer(), arenaInstance.getPlayerSpawn()));
-				if (arenaInstance.getWaitingSound() != null)
-					arenaInstance.getPlayers().forEach(player ->
-							player.getPlayer().stopSound(arenaInstance.getWaitingSound()));
 			}
+
+			// Stop waiting sound
+			if (arenaInstance.getWaitingSound() != null)
+				arenaInstance.getPlayers().forEach(player ->
+						player.getPlayer().stopSound(arenaInstance.getWaitingSound()));
 
 			// Start particles if enabled
 			if (arenaInstance.hasSpawnParticles())
@@ -228,10 +230,8 @@ public class Tasks {
 			if (arenaInstance.hasVillagerParticles())
 				arenaInstance.startVillagerParticles();
 
-			// Give all players a wooden sword and a shop while removing pre-game protection
+			// Give all players a wooden sword and a shop
 			arenaInstance.getActives().forEach(player -> {
-				player.getPlayer().setFireTicks(0);
-				player.getPlayer().setInvulnerable(false);
 				giveItems(player);
 
 				String kit = player.getKit();
