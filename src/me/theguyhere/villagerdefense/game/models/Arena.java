@@ -299,7 +299,7 @@ public class Arena {
         if (option.equals("custom"))
             file = "a" + arena + ".yml";
 
-        if (new File(plugin.getDataFolder().getPath() + "spawnTables/" + file).exists()) {
+        if (new File(plugin.getDataFolder().getPath(), "spawnTables/" + file).exists()) {
             config.set(path + ".spawnTable", option);
             plugin.saveArenaData();
             return true;

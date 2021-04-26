@@ -53,6 +53,41 @@ public class Mobs {
         }
     }
 
+    private static void setBoss(Main plugin, Arena arena, LivingEntity livingEntity) {
+        livingEntity.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
+        livingEntity.setRemoveWhenFarAway(false);
+        livingEntity.setCanPickupItems(false);
+        arena.incrementEnemies();
+        Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
+
+        // Set attribute modifiers
+        double difficulty = arena.getCurrentDifficulty();
+        for (int i = 0; i < 3; i++) {
+            double boost;
+            if (difficulty < 10)
+                boost = 0;
+            else boost = difficulty - 10;
+            switch (i) {
+                case 0:
+                    livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).addModifier(new AttributeModifier(
+                            "hpBoost", boost / 3, AttributeModifier.Operation.ADD_NUMBER
+                    ));
+                    break;
+                case 1:
+                    if (livingEntity.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE) != null)
+                        livingEntity.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).addModifier(new AttributeModifier(
+                                "attBoost", boost / 4, AttributeModifier.Operation.ADD_NUMBER
+                        ));
+                    break;
+                case 2:
+                    livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).addModifier(new AttributeModifier(
+                            "spdBoost", boost / 120, AttributeModifier.Operation.ADD_NUMBER
+                    ));
+                    break;
+            }
+        }
+    }
+
     private static void setLargeMinion(Main plugin, Arena arena, LivingEntity livingEntity) {
         livingEntity.setCustomName(Utils.healthBar(1, 1, 10));
         livingEntity.setCustomNameVisible(true);
@@ -1101,5 +1136,9 @@ public class Mobs {
 
     public static void setRavager(Main plugin, Arena arena, Ravager ravager) {
         setLargeMinion(plugin, arena, ravager);
+    }
+
+    public static void setWither(Main plugin, Arena arena, Wither wither) {
+        setBoss(plugin, arena, wither);
     }
 }

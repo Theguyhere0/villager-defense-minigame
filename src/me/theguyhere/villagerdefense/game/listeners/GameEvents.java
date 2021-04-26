@@ -40,7 +40,7 @@ public class GameEvents implements Listener {
 	// Keep score and drop gems
 	@EventHandler
 	public void onMobKill(EntityDeathEvent e) {
-		Entity ent = e.getEntity();
+		LivingEntity ent = e.getEntity();
 
 		// Check for arena mobs
 		if (!ent.hasMetadata("VD"))
@@ -87,13 +87,16 @@ public class GameEvents implements Listener {
 			e.getDrops().clear();
 			e.setDroppedExp(0);
 
-			if (!(ent instanceof Villager) || !(ent instanceof Wolf) || !(ent instanceof IronGolem)) {
+			if (!(ent instanceof Villager || ent instanceof Wolf || ent instanceof IronGolem)) {
 				// Set drop to emerald
-				e.getDrops().add(Utils.createItem(Material.EMERALD, null, Integer.toString(arena.getArena())));
-				e.setDroppedExp((int) arena.getCurrentDifficulty());
-				if (e.getDrops().stream().anyMatch(item -> item.getType() == Material.ARROW || item.getType() == Material.BONE)) {
-					System.out.println(ent);
-					System.out.println(e.getDrops());
+				if (ent instanceof Wither) {
+					e.getDrops().add(Utils.createItems(Material.EMERALD, 20, null,
+							Integer.toString(arena.getArena())));
+					e.setDroppedExp((int) arena.getCurrentDifficulty() * 20);
+				} else {
+					e.getDrops().add(Utils.createItem(Material.EMERALD, null,
+							Integer.toString(arena.getArena())));
+					e.setDroppedExp((int) arena.getCurrentDifficulty());
 				}
 
 				// Decrement enemy count
@@ -183,9 +186,8 @@ public class GameEvents implements Listener {
 			return;
 
 		// Ignore phantom damage to monsters
-		if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin || ent instanceof Phantom ||
-				ent instanceof EnderDragon) && (damager instanceof Monster || damager instanceof Hoglin ||
-				damager instanceof EnderDragon))
+		if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin || ent instanceof Phantom) &&
+				(damager instanceof Monster || damager instanceof Hoglin))
 			return;
 
 		// Check for phantom projectile damage
@@ -193,13 +195,13 @@ public class GameEvents implements Listener {
 			if ((ent instanceof Villager || ent instanceof IronGolem) &&
 					((Projectile) damager).getShooter() instanceof Player)
 				return;
-			if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin || ent instanceof Phantom ||
-					ent instanceof EnderDragon) && ((Projectile) damager).getShooter() instanceof Monster)
+			if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin || ent instanceof Phantom) &&
+					((Projectile) damager).getShooter() instanceof Monster)
 				return;
 		}
 
 		// Ignore bosses
-		if (ent instanceof Wither || ent instanceof EnderDragon)
+		if (ent instanceof Wither)
 			return;
 
 		LivingEntity n = (LivingEntity) ent;
@@ -233,7 +235,7 @@ public class GameEvents implements Listener {
 			return;
 
 		// Ignore bosses
-		if (ent instanceof Wither || ent instanceof EnderDragon)
+		if (ent instanceof Wither)
 			return;
 
 		LivingEntity n = (LivingEntity) ent;
@@ -277,7 +279,7 @@ public class GameEvents implements Listener {
 			return;
 
 		// Ignore bosses
-		if (ent instanceof Wither || ent instanceof EnderDragon)
+		if (ent instanceof Wither)
 			return;
 
 		LivingEntity n = (LivingEntity) ent;
@@ -530,6 +532,12 @@ public class GameEvents implements Listener {
 
 		// Check damage was done to monster
 		if (!(e.getEntity().hasMetadata("VD"))) return;
+
+		// Prevent wither roses from being created
+		if (e.getDamager() instanceof WitherSkull || e.getDamager() instanceof Wither) {
+			e.setCancelled(true);
+			e.getEntity().remove();
+		}
 
 		// Check that a player caused the damage
 		if (!(e.getDamager() instanceof Player || e.getDamager() instanceof Projectile)) return;
@@ -852,6 +860,7 @@ public class GameEvents implements Listener {
 			return;
 
 		e.setCancelled(true);
+	}
 
 	// Prevent players from dropping the item shop
 	@EventHandler

@@ -2222,7 +2222,7 @@ public class InventoryEvents implements Listener {
 					return;
 				}
 
-				arena1.setMaxWaves(80);
+				arena1.setMaxWaves(45);
 				arena1.setWaveTimeLimit(5);
 				arena1.setDifficultyMultiplier(1);
 				arena1.setDynamicCount(false);
@@ -2240,7 +2240,7 @@ public class InventoryEvents implements Listener {
 					return;
 				}
 
-				arena1.setMaxWaves(70);
+				arena1.setMaxWaves(50);
 				arena1.setWaveTimeLimit(4);
 				arena1.setDifficultyMultiplier(2);
 				arena1.setDynamicCount(false);
@@ -2276,7 +2276,7 @@ public class InventoryEvents implements Listener {
 					return;
 				}
 
-				arena1.setMaxWaves(50);
+				arena1.setMaxWaves(-1);
 				arena1.setWaveTimeLimit(3);
 				arena1.setDifficultyMultiplier(4);
 				arena1.setDynamicCount(true);
