@@ -13,43 +13,17 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Arena {
     private final Main plugin;
-    private final Utils utils;
 
     // Persistent data
     private final int arena; // Arena number
-    private String name; // Name of the arena
-    private String spawnTableFile; // File name of the spawn table
-    private String difficultyLabel; // Labeled difficulty of the arena
-    private int maxPlayers; // Maximum players in an arena
-    private int minPlayers; // Minimum players in an arena
-    private int maxWaves; // Maximum waves in an arena
-    private int waveTimeLimit; // Base wave time limit
-    private int difficultyMultiplier;
-    private int waitingSound; // Selected waiting music
-    private Location playerSpawn; // Location of player spawn
-    private Location waitingRoom; // Location of waiting room
-    private List<Location> monsterSpawns = new ArrayList<>(); // List of monster spawn locations
-    private List<Location> villagerSpawns = new ArrayList<>(); // List of villager spawn locations
-    private List<String> bannedKits = new ArrayList<>(); // LIst of kits that aren't allowed in the arena
-    private boolean normal; // Toggle for normal shop
-    private boolean custom; // Toggle for custom shop
-    private boolean winSound; // Toggle for win sound
-    private boolean loseSound; // Toggle for lose sound
-    private boolean waveStartSound; // Toggle for wave start sound
-    private boolean waveFinishSound; // Toggle for wave finish sound
-    private boolean gemSound; // Toggle for gem pickup sound
-    private boolean playerDeathSound; // Toggle for player death sound
-    private boolean dynamicCount; // Toggle for dynamic mob count
-    private boolean dynamicDifficulty; // Toggle for dynamic difficulty
-    private boolean dynamicPrices; // Toggle for dynamic prices
-    private boolean dynamicLimit; // Toggle for dynamic wave time limit
-    private boolean closed; // Indicates whether the arena is closed
-    private List<ArenaRecord> arenaRecords = new ArrayList<>(); // List of top arena records
+    private final FileConfiguration config; // Shortcut for file configuration of arena file
+    private final String path; // Shortcut for the arena path in the arena file
 
     // Temporary data
     private final Tasks task; // The tasks object for the arena
@@ -72,13 +46,13 @@ public class Arena {
 
     public Arena(Main plugin, int arena, Tasks task) {
         this.plugin = plugin;
-        utils = new Utils(plugin);
+        config = plugin.getArenaData();
         this.arena = arena;
+        path = "a" + arena;
         this.task = task;
         currentWave = 0;
         villagers = 0;
         enemies = 0;
-        updateArena();
     }
 
     public int getArena() {
@@ -86,39 +60,72 @@ public class Arena {
     }
 
     public String getName() {
-        return name;
+        return config.getString(path + ".name");
     }
 
     public void setName(String name) {
-        this.name = name;
+        config.set(path + ".name", name);
+        plugin.saveArenaData();
     }
 
     public String getDifficultyLabel() {
-        return difficultyLabel;
+        if (config.contains(path + ".difficultyLabel"))
+            return config.getString(path + ".difficultyLabel");
+        else return null;
+    }
+
+    public void setDifficultyLabel(String label) {
+        config.set(path + ".difficultyLabel", label);
+        plugin.saveArenaData();
     }
 
     public int getMaxPlayers() {
-        return maxPlayers;
+        return config.getInt(path + ".max");
+    }
+
+    public void setMaxPlayers(int maxPlayers) {
+        config.set(path + ".max", maxPlayers);
+        plugin.saveArenaData();
     }
 
     public int getMinPlayers() {
-        return minPlayers;
+        return config.getInt(path + ".min");
+    }
+
+    public void setMinPlayers(int minPlayers) {
+        config.set(path + ".min", minPlayers);
+        plugin.saveArenaData();
     }
 
     public int getMaxWaves() {
-        return maxWaves;
+        return config.getInt(path + ".maxWaves");
+    }
+
+    public void setMaxWaves(int maxWaves) {
+        config.set(path + ".maxWaves", maxWaves);
+        plugin.saveArenaData();
     }
 
     public int getWaveTimeLimit() {
-        return waveTimeLimit;
+        return config.getInt(path + ".waveTimeLimit");
+    }
+
+    public void setWaveTimeLimit(int timeLimit) {
+        config.set(path + ".waveTimeLimit", timeLimit);
+        plugin.saveArenaData();
     }
 
     public int getDifficultyMultiplier() {
-        return difficultyMultiplier;
+        return config.getInt(path + ".difficulty");
+    }
+
+    public void setDifficultyMultiplier(int multiplier) {
+        config.set(path + ".difficulty", multiplier);
+        plugin.saveArenaData();
     }
 
     public Sound getWaitingSound() {
-        switch (waitingSound) {
+        switch (config.getInt(path + ".sounds.waiting")) {
             case 0:
                 return Sound.MUSIC_DISC_CAT;
             case 1:
@@ -147,7 +154,7 @@ public class Arena {
     }
 
     public String getWaitingSoundName() {
-        switch (waitingSound) {
+        switch (config.getInt(path + ".sounds.waiting")) {
             case 0:
                 return "Cat";
             case 1:
@@ -175,42 +182,138 @@ public class Arena {
         }
     }
 
+    public int getWaitingSoundNum() {
+        return config.getInt(path + ".sounds.waiting");
+    }
+
     public void setWaitingSound(int sound) {
-        plugin.getArenaData().set("a" + arena + ".sounds.waiting", sound);
+        config.set(path + ".sounds.waiting", sound);
         plugin.saveArenaData();
-        waitingSound = sound;
+    }
+
+    public Location getPortal() {
+        return Utils.getConfigLocationNoRotation(plugin, "portal." + arena);
+    }
+
+    public void setPortal(Location location) {
+        Utils.setConfigurationLocation(plugin, "portal." + arena, location);
+        plugin.saveArenaData();
+    }
+
+    public void centerPortal() {
+        Utils.centerConfigLocation(plugin, "portal." + arena);
+    }
+
+    public Location getArenaBoard() {
+        return Utils.getConfigLocationNoRotation(plugin, "arenaBoard." + arena);
+    }
+
+    public void setArenaBoard(Location location) {
+        Utils.setConfigurationLocation(plugin, "arenaBoard." + arena, location);
+        plugin.saveArenaData();
+    }
+
+    public void centerArenaBoard() {
+        Utils.centerConfigLocation(plugin, "arenaBoard." + arena);
     }
 
     public Location getPlayerSpawn() {
-        return playerSpawn;
+        return Utils.getConfigLocationNoRotation(plugin, path + ".spawn");
+    }
+
+    public void setPlayerSpawn(Location location) {
+        Utils.setConfigurationLocation(plugin, path + ".spawn", location);
+        plugin.saveArenaData();
+    }
+
+    public void centerPlayerSpawn() {
+        Utils.centerConfigLocation(plugin, path + ".spawn");
     }
 
     public Location getWaitingRoom() {
-        return waitingRoom;
+        return Utils.getConfigLocationNoRotation(plugin, path + ".waiting");
+    }
+
+    public void setWaitingRoom(Location location) {
+        Utils.setConfigurationLocation(plugin, path + ".waiting", location);
+        plugin.saveArenaData();
+    }
+
+    public void centerWaitingRoom() {
+        Utils.centerConfigLocation(plugin, path + ".waiting");
     }
 
     public List<Location> getMonsterSpawns() {
-        return monsterSpawns;
+        return Utils.getConfigLocationList(plugin, path + ".monster").stream()
+                .filter(Objects::nonNull).collect(Collectors.toList());
+    }
+
+    public Location getMonsterSpawn(int num) {
+        return Utils.getConfigLocationNoRotation(plugin, path + ".monster." + num);
+    }
+
+    public void setMonsterSpawn(int num, Location location) {
+        Utils.setConfigurationLocation(plugin, path + ".monster." + num, location);
+        plugin.saveArenaData();
+    }
+
+    public void centerMonsterSpawn(int num) {
+        Utils.centerConfigLocation(plugin, path + ".monster." + num);
     }
 
     public List<Location> getVillagerSpawns() {
-        return villagerSpawns;
+        return Utils.getConfigLocationList(plugin, path + ".villager").stream()
+                .filter(Objects::nonNull).collect(Collectors.toList());
+    }
+
+    public Location getVillagerSpawn(int num) {
+        return Utils.getConfigLocationNoRotation(plugin, path + ".villager." + num);
+    }
+
+    public void setVillagerSpawn(int num, Location location) {
+        Utils.setConfigurationLocation(plugin, path + ".villager." + num, location);
+        plugin.saveArenaData();
+    }
+
+    public void centerVillagerSpawn(int num) {
+        Utils.centerConfigLocation(plugin, path + ".villager." + num);
     }
 
     public List<String> getBannedKits() {
-        return bannedKits;
+        return config.getStringList(path + ".bannedKits");
+    }
+
+    public void setBannedKits(List<String> bannedKits) {
+        config.set(path + ".bannedKits", bannedKits);
+        plugin.saveArenaData();
     }
 
     public String getSpawnTableFile() {
-        return spawnTableFile;
+        if (config.contains(path + ".spawnTable"))
+            return config.getString(path + ".spawnTable");
+        else return null;
     }
 
-    public boolean isSpawnParticles() {
-        return plugin.getArenaData().getBoolean("a" + arena + ".particles.spawn");
+    public boolean setSpawnTableFile(String option) {
+        String file = option + ".yml";
+        if (option.equals("custom"))
+            file = "a" + arena + ".yml";
+
+        if (new File(plugin.getDataFolder().getPath() + "spawnTables/" + file).exists()) {
+            config.set(path + ".spawnTable", option);
+            plugin.saveArenaData();
+            return true;
+        }
+
+        return false;
     }
 
-    public void flipSpawnParticles() {
-        plugin.getArenaData().set("a" + arena + ".particles.spawn", !isSpawnParticles());
+    public boolean hasSpawnParticles() {
+        return config.getBoolean(path + ".particles.spawn");
+    }
+
+    public void setSpawnParticles(boolean bool) {
+        config.set(path + ".particles.spawn", bool);
         plugin.saveArenaData();
     }
 
@@ -226,13 +329,13 @@ public class Arena {
                     // Update particle locations
                     var += Math.PI / 12;
                     var2 -= Math.PI / 12;
-                    first = playerSpawn.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
-                    second = playerSpawn.clone().add(Math.cos(var2 + Math.PI), Math.sin(var2) + 1,
+                    first = getPlayerSpawn().clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
+                    second = getPlayerSpawn().clone().add(Math.cos(var2 + Math.PI), Math.sin(var2) + 1,
                             Math.sin(var2 + Math.PI));
 
                     // Spawn particles
-                    playerSpawn.getWorld().spawnParticle(Particle.FLAME, first, 0);
-                    playerSpawn.getWorld().spawnParticle(Particle.FLAME, second, 0);
+                    getPlayerSpawn().getWorld().spawnParticle(Particle.FLAME, first, 0);
+                    getPlayerSpawn().getWorld().spawnParticle(Particle.FLAME, second, 0);
                 }
             }, 0 , 2);
     }
@@ -243,12 +346,12 @@ public class Arena {
         spawnID = 0;
     }
 
-    public boolean isMonsterParticles() {
-        return plugin.getArenaData().getBoolean("a" + arena + ".particles.monster");
+    public boolean hasMonsterParticles() {
+        return config.getBoolean(path + ".particles.monster");
     }
 
-    public void flipMonsterParticles() {
-        plugin.getArenaData().set("a" + arena + ".particles.monster", !isMonsterParticles());
+    public void setMonsterParticles(boolean bool) {
+        config.set(path + ".particles.monster", bool);
         plugin.saveArenaData();
     }
 
@@ -261,7 +364,7 @@ public class Arena {
                 @Override
                 public void run() {
                     var -= Math.PI / 12;
-                    monsterSpawns.forEach(location -> {
+                    getMonsterSpawns().forEach(location -> {
                         // Update particle locations
                         first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
                         second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
@@ -281,12 +384,12 @@ public class Arena {
         monsterID = 0;
     }
 
-    public boolean isVillagerParticles() {
-        return plugin.getArenaData().getBoolean("a" + arena + ".particles.villager");
+    public boolean hasVillagerParticles() {
+        return config.getBoolean(path + ".particles.villager");
     }
 
-    public void flipVillagerParticles() {
-        plugin.getArenaData().set("a" + arena + ".particles.villager", !isVillagerParticles());
+    public void setVillagerParticles(boolean bool) {
+        config.set(path + ".particles.villager", bool);
         plugin.saveArenaData();
     }
 
@@ -299,7 +402,7 @@ public class Arena {
                 @Override
                 public void run() {
                     var += Math.PI / 12;
-                    villagerSpawns.forEach(location -> {
+                    getVillagerSpawns().forEach(location -> {
                         // Update particle locations
                         first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
                         second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
@@ -319,133 +422,162 @@ public class Arena {
         villagerID = 0;
     }
 
-    public boolean isNormal() {
-        return normal;
+    public boolean hasNormal() {
+        return config.getBoolean(path + ".normal");
     }
 
-    public void flipNormal() {
-        plugin.getArenaData().set("a" + arena + ".normal", !normal);
+    public void setNormal(boolean normal) {
+        config.set(path + ".normal", normal);
         plugin.saveArenaData();
-        normal = !normal;
     }
 
-    public boolean isCustom() {
-        return custom;
+    public boolean hasCustom() {
+        return config.getBoolean(path + ".custom");
     }
 
-    public void flipCustom() {
-        plugin.getArenaData().set("a" + arena + ".custom", !custom);
+    public void setCustom(boolean bool) {
+        config.set(path + ".custom", bool);
         plugin.saveArenaData();
-        custom = !custom;
     }
 
-    public boolean isWinSound() {
-        return winSound;
+    public boolean hasWinSound() {
+        return config.getBoolean(path + ".sounds.win");
     }
 
-    public void flipWinSound() {
-        plugin.getArenaData().set("a" + arena + ".sounds.win", !winSound);
+    public void setWinSound(boolean bool) {
+        config.set(path + ".sounds.win", bool);
         plugin.saveArenaData();
-        winSound = !winSound;
     }
 
-    public boolean isLoseSound() {
-        return loseSound;
+    public boolean hasLoseSound() {
+        return config.getBoolean(path + ".sounds.lose");
     }
 
-    public void flipLoseSound() {
-        plugin.getArenaData().set("a" + arena + ".sounds.lose", !loseSound);
+    public void setLoseSound(boolean bool) {
+        config.set(path + ".sounds.lose", bool);
         plugin.saveArenaData();
-        loseSound = !loseSound;
     }
 
-    public boolean isWaveStartSound() {
-        return waveStartSound;
+    public boolean hasWaveStartSound() {
+        return config.getBoolean(path + ".sounds.start");
     }
 
-    public void flipWaveStartSound() {
-        plugin.getArenaData().set("a" + arena + ".sounds.start", !waveStartSound);
+    public void setWaveStartSound(boolean bool) {
+        config.set(path + ".sounds.start", bool);
         plugin.saveArenaData();
-        waveStartSound = !waveStartSound;
     }
 
-    public boolean isWaveFinishSound() {
-        return waveFinishSound;
+    public boolean hasWaveFinishSound() {
+        return config.getBoolean(path + ".sounds.end");
     }
 
-    public void flipWaveFinishSound() {
-        plugin.getArenaData().set("a" + arena + ".sounds.end", !waveFinishSound);
+    public void setWaveFinishSound(boolean bool) {
+        config.set(path + ".sounds.end", bool);
         plugin.saveArenaData();
-        waveFinishSound = !waveFinishSound;
     }
 
-    public boolean isGemSound() {
-        return gemSound;
+    public boolean hasGemSound() {
+        return config.getBoolean(path + ".sounds.gem");
     }
 
-    public void flipGemSound() {
-        plugin.getArenaData().set("a" + arena + ".sounds.gem", !gemSound);
+    public void setGemSound(boolean bool) {
+        config.set(path + ".sounds.gem", bool);
         plugin.saveArenaData();
-        gemSound = !gemSound;
     }
 
-    public boolean isPlayerDeathSound() {
-        return playerDeathSound;
+    public boolean hasPlayerDeathSound() {
+        return config.getBoolean(path + ".sounds.death");
     }
 
-    public void flipPlayerDeathSound() {
-        plugin.getArenaData().set("a" + arena + ".sounds.death", !playerDeathSound);
+    public void setPlayerDeathSound(boolean bool) {
+        config.set(path + ".sounds.death", bool);
         plugin.saveArenaData();
-        playerDeathSound = !playerDeathSound;
     }
 
-    public boolean isDynamicCount() {
-        return dynamicCount;
+    public boolean hasDynamicCount() {
+        return config.getBoolean(path + ".dynamicCount");
     }
 
-    public boolean isDynamicDifficulty() {
-        return dynamicDifficulty;
+    public void setDynamicCount(boolean bool) {
+        config.set(path + ".dynamicCount", bool);
+        plugin.saveArenaData();
     }
 
-    public boolean isDynamicPrices() {
-        return dynamicPrices;
+    public boolean hasDynamicDifficulty() {
+        return config.getBoolean(path + ".dynamicDifficulty");
     }
 
-    public boolean isDynamicLimit() {
-        return dynamicLimit;
+    public void setDynamicDifficulty(boolean bool) {
+        config.set(path + ".dynamicDifficulty", bool);
+        plugin.saveArenaData();
+    }
+
+    public boolean hasDynamicPrices() {
+        return config.getBoolean(path + ".dynamicPrices");
+    }
+
+    public void setDynamicPrices(boolean bool) {
+        config.set(path + ".dynamicPrices", bool);
+        plugin.saveArenaData();
+    }
+
+    public boolean hasDynamicLimit() {
+        return config.getBoolean(path + ".dynamicLimit");
+    }
+
+    public void setDynamicLimit(boolean bool) {
+        config.set(path + ".dynamicLimit", bool);
+        plugin.saveArenaData();
     }
 
     public boolean isClosed() {
-        return closed;
+        return config.getBoolean(path + ".closed");
+    }
+
+    public void setClosed(boolean closed) {
+        config.set(path + ".closed", closed);
+        plugin.saveArenaData();
+    }
+
+    public List<ArenaRecord> getArenaRecords() {
+        List<ArenaRecord> arenaRecords = new ArrayList<>();
+        if (config.contains(path + ".records"))
+            config.getConfigurationSection(path + ".records").getKeys(false)
+                    .forEach(index -> arenaRecords.add(new ArenaRecord(
+                            config.getInt(path + ".records." + index + ".wave"),
+                            config.getStringList(path + ".records." + index + ".players")
+                    )));
+
+        return arenaRecords;
+    }
+
+    public List<ArenaRecord> getSortedDescendingRecords() {
+        return getArenaRecords().stream().sorted(Comparator.comparingInt(ArenaRecord::getWave).reversed())
+                .collect(Collectors.toList());
     }
 
     public boolean checkNewRecord(ArenaRecord record) {
         // Automatic record
-        if (arenaRecords.size() < 4) {
-            arenaRecords.add(record);
+        if (getArenaRecords().size() < 4) {
+            getArenaRecords().add(record);
         }
 
         // New record
-        else if (arenaRecords.stream().anyMatch(arenaRecord -> arenaRecord.getWave() < record.getWave())) {
-            arenaRecords.sort(Comparator.comparingInt(ArenaRecord::getWave));
-            arenaRecords.set(0, record);
+        else if (getArenaRecords().stream().anyMatch(arenaRecord -> arenaRecord.getWave() < record.getWave())) {
+            getArenaRecords().sort(Comparator.comparingInt(ArenaRecord::getWave));
+            getArenaRecords().set(0, record);
         }
 
         // No record
         else return false;
 
         // Save data
-        for (int i = 0; i < arenaRecords.size(); i++) {
-            plugin.getArenaData().set("a" + arena + ".records." + i + ".wave", arenaRecords.get(i).getWave());
-            plugin.getArenaData().set("a" + arena + ".records." + i + ".players", arenaRecords.get(i).getPlayers());
+        for (int i = 0; i < getArenaRecords().size(); i++) {
+            config.set(path + ".records." + i + ".wave", getArenaRecords().get(i).getWave());
+            config.set(path + ".records." + i + ".players", getArenaRecords().get(i).getPlayers());
         }
         plugin.saveArenaData();
         return true;
-    }
-
-    public List<ArenaRecord> getSortedDescendingRecords() {
-        return arenaRecords.stream().sorted(Comparator.comparingInt(ArenaRecord::getWave).reversed())
-                .collect(Collectors.toList());
     }
 
     public Tasks getTask() {
@@ -489,8 +621,8 @@ public class Arena {
     }
 
     public double getCurrentDifficulty() {
-        double difficulty = Math.pow(Math.E, Math.pow(currentWave - 1, .6) / (5 - difficultyMultiplier / 2d));
-        if (dynamicDifficulty)
+        double difficulty = Math.pow(Math.E, Math.pow(currentWave - 1, .6) / (5 - getDifficultyMultiplier() / 2d));
+        if (hasDynamicDifficulty())
             difficulty *= .1 * getActiveCount() + .6;
         return difficulty;
     }
@@ -623,19 +755,19 @@ public class Arena {
     public Inventory getCustomShopEditor() {
         // Create inventory
         Inventory inv = Bukkit.createInventory(null, 54, Utils.format("&k") +
-                Utils.format("&6&lCustom Shop Editor: " + name));
+                Utils.format("&6&lCustom Shop Editor: " + getName()));
 
         // Set exit option
         inv.setItem(53, InventoryItems.exit());
 
         // Check for a stored inventory
-        if (!plugin.getArenaData().contains("a" + arena + ".customShop"))
+        if (!config.contains(path + ".customShop"))
             return inv;
 
         // Get items from stored inventory
-        plugin.getArenaData().getConfigurationSection("a" + arena + ".customShop").getKeys(false)
+        config.getConfigurationSection(path + ".customShop").getKeys(false)
             .forEach(index -> inv.setItem(Integer.parseInt(index),
-                    plugin.getArenaData().getItemStack("a" + arena + ".customShop." + index)));
+                    config.getItemStack(path + ".customShop." + index)));
 
         return inv;
     }
@@ -649,14 +781,14 @@ public class Arena {
         inv.setItem(53, InventoryItems.exit());
 
         // Check for a stored inventory
-        if (!plugin.getArenaData().contains("a" + arena + ".customShop"))
+        if (!config.contains(path + ".customShop"))
             return inv;
 
         // Get items from stored inventory
-        plugin.getArenaData().getConfigurationSection("a" + arena + ".customShop").getKeys(false)
+        config.getConfigurationSection(path + ".customShop").getKeys(false)
                 .forEach(index -> {
                     // Get raw item and data
-                    ItemStack item = plugin.getArenaData().getItemStack("a" + arena + ".customShop." + index).clone();
+                    ItemStack item = config.getItemStack(path + ".customShop." + index).clone();
                     ItemMeta meta = item.getItemMeta();
                     List<String> lore = new ArrayList<>();
                     String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
@@ -681,20 +813,20 @@ public class Arena {
     public Inventory getMockCustomShop() {
         // Create inventory
         Inventory inv = Bukkit.createInventory(null, 54, Utils.format("&k") +
-                Utils.format("&6&lCustom Shop: " + name));
+                Utils.format("&6&lCustom Shop: " + getName()));
 
         // Set exit option
         inv.setItem(53, InventoryItems.exit());
 
         // Check for a stored inventory
-        if (!plugin.getArenaData().contains("a" + arena + ".customShop"))
+        if (!config.contains(path + ".customShop"))
             return inv;
 
         // Get items from stored inventory
-        plugin.getArenaData().getConfigurationSection("a" + arena + ".customShop").getKeys(false)
+        config.getConfigurationSection(path + ".customShop").getKeys(false)
                 .forEach(index -> {
                     // Get raw item and data
-                    ItemStack item = plugin.getArenaData().getItemStack("a" + arena + ".customShop." + index).clone();
+                    ItemStack item = config.getItemStack(path + ".customShop." + index).clone();
                     ItemMeta meta = item.getItemMeta();
                     List<String> lore = new ArrayList<>();
                     String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
@@ -747,47 +879,39 @@ public class Arena {
         timeLimitBar.removePlayer(player);
     }
 
-    public void updateArena() {
-        FileConfiguration config = plugin.getArenaData();
-        String path = "a" + arena;
+    public void copy(Arena arenaToCopy) {
+        setMaxPlayers(arenaToCopy.getMaxPlayers());
+        setMinPlayers(arenaToCopy.getMinPlayers());
+        setMaxWaves(arenaToCopy.getMaxWaves());
+        setWaveTimeLimit(arenaToCopy.getWaveTimeLimit());
+        setDifficultyMultiplier(arenaToCopy.getDifficultyMultiplier());
+        setDynamicCount(arenaToCopy.hasDynamicCount());
+        setDynamicDifficulty(arenaToCopy.hasDynamicDifficulty());
+        setDynamicLimit(arenaToCopy.hasDynamicLimit());
+        setDynamicPrices(arenaToCopy.hasDynamicPrices());
+        setDifficultyLabel(arenaToCopy.getDifficultyLabel());
+        setBannedKits(arenaToCopy.getBannedKits());
+        setNormal(arenaToCopy.hasNormal());
+        setCustom(arenaToCopy.hasCustom());
+        setWinSound(arenaToCopy.hasWinSound());
+        setLoseSound(arenaToCopy.hasLoseSound());
+        setWaveStartSound(arenaToCopy.hasWaveStartSound());
+        setWaveFinishSound(arenaToCopy.hasWaveFinishSound());
+        setGemSound(arenaToCopy.hasGemSound());
+        setPlayerDeathSound(arenaToCopy.hasPlayerDeathSound());
+        setWaitingSound(arenaToCopy.getWaitingSoundNum());
+        setSpawnParticles(arenaToCopy.hasSpawnParticles());
+        setMonsterParticles(arenaToCopy.hasMonsterParticles());
+        setVillagerParticles(arenaToCopy.hasVillagerParticles());
+        if (config.contains("a" + arenaToCopy.getArena() + ".customShop"))
+            config.getConfigurationSection("a" + arenaToCopy.getArena() + ".customShop").getKeys(false)
+                    .forEach(index -> config.set(path + ".customShop." + index,
+                            config.getItemStack("a" + arenaToCopy.getArena() + ".customShop." + index)));
+    }
 
-        name = config.getString(path + ".name");
-        if (config.contains(path + ".difficultyLabel"))
-            difficultyLabel = config.getString(path + ".difficultyLabel");
-        else difficultyLabel = null;
-        maxPlayers = config.getInt(path + ".max");
-        minPlayers = config.getInt(path + ".min");
-        maxWaves = config.getInt(path + ".maxWaves");
-        waveTimeLimit = config.getInt(path + ".waveTimeLimit");
-        difficultyMultiplier = config.getInt(path + ".difficulty");
-        waitingSound = config.getInt(path + ".sounds.waiting");
-        playerSpawn = utils.getConfigLocationNoRotation(path + ".spawn");
-        waitingRoom = utils.getConfigLocationNoRotation(path + ".waiting");
-        monsterSpawns = utils.getConfigLocationList(path + ".monster").stream()
-                .filter(Objects::nonNull).collect(Collectors.toList());
-        villagerSpawns = utils.getConfigLocationList(path + ".villager").stream()
-                .filter(Objects::nonNull).collect(Collectors.toList());
-        bannedKits = config.getStringList(path + ".bannedKits");
-        spawnTableFile = config.getString(path + ".spawnTable");
-        normal = config.getBoolean(path + ".normal");
-        custom = config.getBoolean(path + ".custom");
-        winSound = config.getBoolean(path + ".sounds.win");
-        loseSound = config.getBoolean(path + ".sounds.lose");
-        waveStartSound = config.getBoolean(path + ".sounds.start");
-        waveFinishSound = config.getBoolean(path + ".sounds.end");
-        gemSound = config.getBoolean(path + ".sounds.gem");
-        playerDeathSound = config.getBoolean(path + ".sounds.death");
-        dynamicCount = config.getBoolean(path + ".dynamicCount");
-        dynamicDifficulty = config.getBoolean(path + ".dynamicDifficulty");
-        dynamicPrices = config.getBoolean(path + ".dynamicPrices");
-        dynamicLimit = config.getBoolean(path + ".dynamicLimit");
-        closed = config.getBoolean(path + ".closed");
-        arenaRecords = new ArrayList<>();
-        if (config.contains(path + ".records"))
-            config.getConfigurationSection(path + ".records").getKeys(false)
-                    .forEach(index -> arenaRecords.add(new ArenaRecord(
-                            config.getInt(path + ".records." + index + ".wave"),
-                            config.getStringList(path + ".records." + index + ".players")
-                    )));
+    public void remove() {
+        config.set(path, null);
+        setPortal(null);
+        setArenaBoard(null);
     }
 }

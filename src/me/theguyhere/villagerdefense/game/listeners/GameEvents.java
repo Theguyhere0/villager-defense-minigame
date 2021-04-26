@@ -17,6 +17,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -75,7 +76,7 @@ public class GameEvents implements Listener {
 		if (arena.getVillagers() == 0 && !arena.isSpawning() && !arena.isEnding()) {
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 					Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
-			if (arena.isLoseSound())
+			if (arena.hasLoseSound())
 				arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
 						Sound.ENTITY_ENDER_DRAGON_DEATH, 10, 0));
 		}
@@ -406,7 +407,7 @@ public class GameEvents implements Listener {
 			if (arena.getAlive() == 0 && !arena.isEnding()) {
 				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 						Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
-				if (arena.isLoseSound())
+				if (arena.hasLoseSound())
 					arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
 							Sound.ENTITY_ENDER_DRAGON_DEATH, 10, 0));
 			}
@@ -501,7 +502,7 @@ public class GameEvents implements Listener {
 		arena.getPlayers().forEach(gamer -> {
 				gamer.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&c " +
 						plugin.getLanguageData().getString("death")));
-				if (arena.isPlayerDeathSound())
+				if (arena.hasPlayerDeathSound())
 					gamer.getPlayer().playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 4, 0);
 		});
 
@@ -512,7 +513,7 @@ public class GameEvents implements Listener {
 		if (arena.getAlive() == 0 && !arena.isEnding()) {
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 					Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
-			if (arena.isLoseSound())
+			if (arena.hasLoseSound())
 				arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
 						Sound.ENTITY_ENDER_DRAGON_DEATH, 10, 0));
 		}
@@ -828,6 +829,7 @@ public class GameEvents implements Listener {
 		e.setCancelled(true);
 	}
 
+
 	// Prevents arena mobs from turning into different entities
 	@EventHandler
 	public void onTransform(EntityTransformEvent e) {
@@ -850,5 +852,19 @@ public class GameEvents implements Listener {
 			return;
 
 		e.setCancelled(true);
+
+	// Prevent players from dropping the item shop
+	@EventHandler
+	public void onShopDrop(PlayerDropItemEvent e) {
+		Player player = e.getPlayer();
+		ItemStack item = e.getItemDrop().getItemStack();
+
+		// Check if player is in an arena
+		if (game.arenas.stream().noneMatch(arena -> arena.hasPlayer(player)))
+			return;
+
+		// Check for shop item
+		if (item.getType() == Material.EMERALD && item.getItemMeta().getDisplayName().contains("Item Shop"))
+			e.setCancelled(true);
 	}
 }

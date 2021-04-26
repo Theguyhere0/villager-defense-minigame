@@ -11,12 +11,10 @@ import java.util.*;
 
 public class Leaderboard {
 	private final Main plugin;
-	private final Utils utils;
 	private final Map<String, Hologram> leaderboards = new HashMap<>();
 
 	public Leaderboard(Main plugin) {
 		this.plugin = plugin;
-		utils = new Utils(plugin);
 	}
 
 	public void createLeaderboard(Player player, String type) {
@@ -24,7 +22,7 @@ public class Leaderboard {
 		addHolo(player.getLocation(), type);
 
 		// Save location data
-		utils.setConfigurationLocation("leaderboard." + type, player.getLocation());
+		Utils.setConfigurationLocation(plugin, "leaderboard." + type, player.getLocation());
 		plugin.saveArenaData();
 	}
 
@@ -34,7 +32,7 @@ public class Leaderboard {
 
 	public void refreshLeaderboard(String type) {
 		leaderboards.get(type).delete();
-		addHolo(utils.getConfigLocationNoPitch("leaderboard." + type), type);
+		addHolo(Utils.getConfigLocationNoPitch(plugin, "leaderboard." + type), type);
 	}
 
 	public void removeLeaderboard(String type) {
@@ -60,7 +58,7 @@ public class Leaderboard {
 	public void loadLeaderboards() {
 		if (plugin.getArenaData().contains("leaderboard"))
 			plugin.getArenaData().getConfigurationSection("leaderboard").getKeys(false).forEach(board -> {
-				Location location = utils.getConfigLocationNoPitch("leaderboard." + board);
+				Location location = Utils.getConfigLocationNoPitch(plugin, "leaderboard." + board);
 				if (location != null)
 					addHolo(location, board);
 			});

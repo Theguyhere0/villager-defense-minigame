@@ -223,11 +223,11 @@ public class Tasks {
 						player.getPlayer().stopSound(arenaInstance.getWaitingSound()));
 
 			// Start particles if enabled
-			if (arenaInstance.isSpawnParticles())
+			if (arenaInstance.hasSpawnParticles())
 				arenaInstance.startSpawnParticles();
-			if (arenaInstance.isMonsterParticles())
+			if (arenaInstance.hasMonsterParticles())
 				arenaInstance.startMonsterParticles();
-			if (arenaInstance.isVillagerParticles())
+			if (arenaInstance.hasVillagerParticles())
 				arenaInstance.startVillagerParticles();
 
 			// Give all players a wooden sword and a shop
@@ -309,7 +309,7 @@ public class Tasks {
 			Arena arenaInstance = game.arenas.get(arena);
 
 			double multiplier = 1 + .2 * ((int) arenaInstance.getCurrentDifficulty() - 1);
-			if (!arenaInstance.isDynamicLimit())
+			if (!arenaInstance.hasDynamicLimit())
 				multiplier = 1;
 
 			// Add time limit bar if it doesn't exist

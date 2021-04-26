@@ -16,7 +16,7 @@ spawnTableStructure: 1
 
 # This is the default.yml version for reference.
 # ONLY EDIT ONCE THE DEFAULT SPAWN TABLE HAS BEEN UPDATED.
-spawnTableDefault: 1
+spawnTableDefault: 2
 
 # This is the en_US.yml version for reference.
 # ONLY EDIT ONCE THE LANGUAGE FILE HAS BEEN UPDATED.

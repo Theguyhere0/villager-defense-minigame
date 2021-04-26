@@ -16,15 +16,9 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class Utils {
-    private final Main plugin;
-
     private static final int SECONDS_TO_TICKS = 20;
     private static final int MINUTES_TO_SECONDS = 60;
     private static final int SECONDS_TO_MILLIS = 1000;
-
-    public Utils(Main plugin) {
-        this.plugin = plugin;
-    }
 
     // Formats chat text
     public static String format(String msg) {
@@ -280,7 +274,7 @@ public class Utils {
     }
 
     // Sets the location data to a configuration path
-    public void setConfigurationLocation(String path, Location location) {
+    public static void setConfigurationLocation(Main plugin, String path, Location location) {
         plugin.getArenaData().set(path + ".world", location.getWorld().getName());
         plugin.getArenaData().set(path + ".x", location.getX());
         plugin.getArenaData().set(path + ".y", location.getY());
@@ -291,7 +285,7 @@ public class Utils {
     }
 
     // Gets location data from a configuration path
-    public Location getConfigLocation(String path) {
+    public static Location getConfigLocation(Main plugin, String path) {
         try {
             return new Location(
                 Bukkit.getWorld(plugin.getArenaData().getString(path + ".world")),
@@ -307,9 +301,9 @@ public class Utils {
     }
 
     // Gets location data without pitch or yaw
-    public Location getConfigLocationNoRotation(String path) {
+    public static Location getConfigLocationNoRotation(Main plugin, String path) {
         try {
-            Location location = getConfigLocation(path);
+            Location location = getConfigLocation(plugin, path);
             location.setPitch(0);
             location.setYaw(0);
             return location;
@@ -319,9 +313,9 @@ public class Utils {
     }
 
     // Gets location data without pitch
-    public Location getConfigLocationNoPitch(String path) {
+    public static Location getConfigLocationNoPitch(Main plugin, String path) {
         try {
-            Location location = getConfigLocation(path);
+            Location location = getConfigLocation(plugin, path);
             location.setPitch(0);
             return location;
         } catch (Exception e) {
@@ -330,26 +324,26 @@ public class Utils {
     }
 
     // Centers location data
-    public void centerConfigLocation(String path) {
+    public static void centerConfigLocation(Main plugin, String path) {
         try {
-            Location location = getConfigLocation(path);
+            Location location = getConfigLocation(plugin, path);
             if (location.getX() > 0)
                 location.setX(((int) location.getX()) + .5);
             else location.setX(((int) location.getX()) - .5);
             if (location.getZ() > 0)
                 location.setZ(((int) location.getZ()) + .5);
             else location.setZ(((int) location.getZ()) - .5);
-            setConfigurationLocation(path, location);
+            setConfigurationLocation(plugin, path, location);
             plugin.saveArenaData();
         } catch (Exception ignored) {
         }
     }
 
     // Gets a list of locations from a configuration path
-    public List<Location> getConfigLocationList(String path) {
+    public static List<Location> getConfigLocationList(Main plugin, String path) {
         List<Location> locations = new ArrayList<>();
         for (int num = 0; num < 9; num++)
-            locations.add(getConfigLocationNoRotation(path + "." + num));
+            locations.add(getConfigLocationNoRotation(plugin, path + "." + num));
         return locations;
     }
 

@@ -10,12 +10,10 @@ import org.bukkit.entity.Player;
 
 public class InfoBoard {
 	private final Main plugin;
-	private final Utils utils;
 	private final Hologram[] boards = new Hologram[8];
 	
 	public InfoBoard(Main plugin) {
 		this.plugin = plugin;
-		utils = new Utils(plugin);
 	}
 
 	public void createInfoBoard(Player player, int slot) {
@@ -23,7 +21,7 @@ public class InfoBoard {
 		addHolo(player.getLocation(), slot);
 
 		// Save location data
-		utils.setConfigurationLocation("infoBoard." + slot, player.getLocation());
+		Utils.setConfigurationLocation(plugin, "infoBoard." + slot, player.getLocation());
 		plugin.saveArenaData();
 	}
 
@@ -31,7 +29,7 @@ public class InfoBoard {
 		if (boards[slot] != null) {
 			boards[slot].delete();
 			boards[slot] = null;
-			Location location = utils.getConfigLocationNoPitch("infoBoard." + slot);
+			Location location = Utils.getConfigLocationNoPitch(plugin, "infoBoard." + slot);
 			addHolo(location, slot);
 		}
 	}
@@ -65,7 +63,7 @@ public class InfoBoard {
 	public void loadInfoBoards() {
 		if (plugin.getArenaData().contains("infoBoard"))
 			plugin.getArenaData().getConfigurationSection("infoBoard").getKeys(false).forEach(board -> {
-				Location location = utils.getConfigLocationNoPitch("infoBoard." + board);
+				Location location = Utils.getConfigLocationNoPitch(plugin, "infoBoard." + board);
 				if (location != null)
 					addHolo(location, Integer.parseInt(board));
 			});

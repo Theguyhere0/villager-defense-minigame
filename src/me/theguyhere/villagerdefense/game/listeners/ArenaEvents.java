@@ -219,7 +219,7 @@ public class ArenaEvents implements Listener {
         }
 
         // Play wave end sound
-        if (arena.isWaveFinishSound() && arena.getCurrentWave() != 0)
+        if (arena.hasWaveFinishSound() && arena.getCurrentWave() != 0)
             arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
                     Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 10, 0));
 
@@ -237,7 +237,7 @@ public class ArenaEvents implements Listener {
             arena.incrementCurrentWave();
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
                     Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
-            if (arena.isWinSound())
+            if (arena.hasWinSound())
                 arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
                         Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 0));
         }
@@ -257,7 +257,7 @@ public class ArenaEvents implements Listener {
         }
 
         // Play wave start sound
-        if (arena.isWaveStartSound())
+        if (arena.hasWaveStartSound())
             arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
                     Sound.ENTITY_ENDER_DRAGON_GROWL, 10, 0));
 
@@ -461,7 +461,7 @@ public class ArenaEvents implements Listener {
 
         // Get count multiplier
         double countMultiplier = Math.log((arena.getActiveCount() + 7) / 10d) + 1;
-        if (!arena.isDynamicCount())
+        if (!arena.hasDynamicCount())
             countMultiplier = 1;
 
         int toSpawn = (int) (data.getConfig().getInt(arena.getCurrentWave() + ".count.v") * countMultiplier)
@@ -495,7 +495,7 @@ public class ArenaEvents implements Listener {
 
         // Calculate count multiplier
         double countMultiplier = Math.log((arena.getActiveCount() + 7) / 10d) + 1;
-        if (!arena.isDynamicCount())
+        if (!arena.hasDynamicCount())
             countMultiplier = 1;
 
         String path = wave + ".mtypes";
