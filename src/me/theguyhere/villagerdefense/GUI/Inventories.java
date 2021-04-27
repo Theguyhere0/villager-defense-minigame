@@ -1,10 +1,7 @@
 package me.theguyhere.villagerdefense.GUI;
 
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.game.models.Arena;
-import me.theguyhere.villagerdefense.game.models.Game;
-import me.theguyhere.villagerdefense.game.models.GameItems;
-import me.theguyhere.villagerdefense.game.models.Kits;
+import me.theguyhere.villagerdefense.game.models.*;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -18,7 +15,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 public class Inventories {
 	private final Main plugin;
@@ -151,7 +147,7 @@ public class Inventories {
 	// Menu for editing a specific info board
 	public Inventory createInfoBoardMenu(int slot) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(slot), 9, Utils.format("&k") +
 				Utils.format("&6&lInfo Board " + slot));
 
 		// Option to create info board
@@ -173,9 +169,9 @@ public class Inventories {
 	}
 
 	// Confirmation menu for removing info boards
-	public Inventory createInfoBoardConfirmInventory() {
+	public Inventory createInfoBoardConfirmInventory(int slot) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(slot), 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Info Board?"));
 
 		// "No" option
@@ -406,18 +402,13 @@ public class Inventories {
 	}
 
 	// Menu for naming an arena
-	public Inventory createNamingInventory(int arena) {
+	public Inventory createNamingInventory(int arena, String newName) {
 		Arena arenaInstance = game.arenas.get(arena);
-
-		// Gather arena name and caps lock state
-		String name = arenaInstance.getName();
-		if (name == null)
-			name = "";
 		boolean caps = arenaInstance.isCaps();
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 54, Utils.format("&k") +
-				Utils.format("&2&lArena " + (arena + 1) + " Name: &8&l" + name));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(newName, arena), 54, Utils.format("&k") +
+				Utils.format("&2&lArena " + (arena + 1) + " Name: &8&l" + newName));
 
 		// Letter and number inputs
 		for (int i = 0; i < 36; i++) {
@@ -451,7 +442,7 @@ public class Inventories {
 	public Inventory createArenaInventory(int arena) {
 		Arena arenaInstance = game.arenas.get(arena);
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&2&lEdit " + arenaInstance.getName()));
 
 		// Option to edit name
@@ -492,7 +483,7 @@ public class Inventories {
 	// Confirmation menu for removing an arena
 	public Inventory createArenaConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&4&lRemove " + game.arenas.get(arena).getName() + '?'));
 
 		// "No" option
@@ -509,7 +500,7 @@ public class Inventories {
 		Arena arenaInstance = game.arenas.get(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&5&lPortal/LBoard: " + arenaInstance.getName()));
 
 		// Option to create or relocate the portal
@@ -580,7 +571,7 @@ public class Inventories {
 	public Inventory createPlayersInventory(int arena) {
 		Arena arenaInstance = game.arenas.get(arena);
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&d&lPlayer Settings: " + arenaInstance.getName()));
 
 		// Option to edit player spawn
@@ -629,7 +620,7 @@ public class Inventories {
 		Arena arenaInstance = game.arenas.get(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&d&lPlayer Spawn: " + arenaInstance.getName()));
 
 		// Option to create or relocate player spawn
@@ -672,7 +663,7 @@ public class Inventories {
 		Arena arenaInstance = game.arenas.get(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&b&lWaiting Room: " + arenaInstance.getName()));
 
 		// Option to create waiting room
@@ -713,7 +704,7 @@ public class Inventories {
 	// Menu for changing max players in an arena
 	public Inventory createMaxPlayerInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&4&lMaximum Players: " + game.arenas.get(arena).getMaxPlayers()));
 
 		// Option to decrease
@@ -733,7 +724,7 @@ public class Inventories {
 	// Menu for changing min players in an arena
 	public Inventory createMinPlayerInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&2&lMinimum Players: " + game.arenas.get(arena).getMinPlayers()));
 
 		// Option to decrease
@@ -753,7 +744,7 @@ public class Inventories {
 	// Menu for changing wolf cap of an arena
 	public Inventory createWolfCapInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&6&lWolf Cap: " + game.arenas.get(arena).getWolfCap()));
 
 		// Option to decrease
@@ -773,7 +764,7 @@ public class Inventories {
 	// Menu for changing iron golem cap of an arena
 	public Inventory createGolemCapInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&e&lIron Golem Cap: " + game.arenas.get(arena).getGolemCap()));
 
 		// Option to decrease
@@ -795,7 +786,7 @@ public class Inventories {
 		Arena arenaInstance = game.arenas.get(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&2&lMob Settings: " + arenaInstance.getName()));
 
 		// Option to edit monster spawns
@@ -847,7 +838,7 @@ public class Inventories {
 		Arena arenaInstance = game.arenas.get(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&2&lMonster Spawns: " + arenaInstance.getName()));
 
 		// Prepare for material indexing
@@ -875,7 +866,7 @@ public class Inventories {
 		Arena arenaInstance = game.arenas.get(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9, Utils.format("&k") +
 				Utils.format("&2&lMonster Spawn " + (slot + 1) + ": " + arenaInstance.getName()));
 
 		// Option to create or relocate monster spawn
@@ -918,7 +909,7 @@ public class Inventories {
 		Arena arenaInstance = game.arenas.get(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&5&lVillager Spawns: " + arenaInstance.getName()));
 
 		// Prepare for material indexing
@@ -946,7 +937,7 @@ public class Inventories {
 		Arena arenaInstance = game.arenas.get(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9, Utils.format("&k") +
 				Utils.format("&5&lVillager Spawn " + (slot + 1) + ": " + arenaInstance.getName()));
 
 		// Option to create or relocate villager spawn
@@ -991,9 +982,9 @@ public class Inventories {
 
 		// Create inventory
 		if (arenaInstance.getSpawnTableFile().equals("custom"))
-			 inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+			 inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 					Utils.format("&3&lSpawn Table: a" + arena + ".yml"));
-		else inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		else inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&3&lSpawn Table: " + arenaInstance.getSpawnTableFile() + ".yml"));
 
 		// Option to set spawn table to default
@@ -1040,7 +1031,7 @@ public class Inventories {
 		Arena arenaInstance = game.arenas.get(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&e&lShop Settings: " + arenaInstance.getName()));
 
 		// Option to create a custom shop
@@ -1081,7 +1072,7 @@ public class Inventories {
 		Arena arenaInstance = game.arenas.get(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&8&lGame Settings: " + arenaInstance.getName()));
 
 		// Option to change max waves
@@ -1136,9 +1127,9 @@ public class Inventories {
 
 		// Create inventory
 		if (game.arenas.get(arena).getMaxWaves() < 0)
-			inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+			inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 					Utils.format("&3&lMaximum Waves: Unlimited"));
-		else inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		else inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&3&lMaximum Waves: " + game.arenas.get(arena).getMaxWaves()));
 
 		// Option to decrease
@@ -1167,9 +1158,9 @@ public class Inventories {
 
 		// Create inventory
 		if (game.arenas.get(arena).getWaveTimeLimit() < 0)
-			inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+			inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 					Utils.format("&2&lWave Time Limit: Unlimited"));
-		else inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		else inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&2&lWave Time Limit: " + game.arenas.get(arena).getWaveTimeLimit()));
 
 		// Option to decrease
@@ -1199,7 +1190,7 @@ public class Inventories {
 		enchants.put(Enchantment.DURABILITY, 1);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 54, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54, Utils.format("&k") +
 				Utils.format("&9&lAllowed Kits"));
 
 		// Gift kits
@@ -1510,6 +1501,324 @@ public class Inventories {
 		return inv;
 	}
 
+	// Menu for displaying allowed kits of an arena
+	public Inventory createMockAllowedKitsInventory(int arena) {
+		Arena arenaInstance = game.arenas.get(arena);
+		HashMap<Enchantment, Integer> enchants = new HashMap<>();
+		enchants.put(Enchantment.DURABILITY, 1);
+
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54, Utils.format("&k") +
+				Utils.format("&9&lAllowed Kits: " + arenaInstance.getName()));
+
+		// Gift kits
+		for (int i = 0; i < 9; i++)
+			inv.setItem(i, Utils.createItem(Material.LIME_STAINED_GLASS_PANE, Utils.format("&a&lGift Kits"),
+					Utils.format("&7Kits give one-time benefit"), Utils.format("&7per game or respawn")));
+
+		if (!arenaInstance.getBannedKits().contains("Orc"))
+			inv.setItem(9, Utils.createItem(Material.STICK, Utils.format("&a&lOrc"), FLAGS, enchants,
+					Utils.format("&7Start with a Knockback V stick")));
+		else inv.setItem(9, Utils.createItem(Material.STICK, Utils.format("&4&LOrc"),
+				Utils.format("&7Start with a Knockback V stick")));
+
+		if (!arenaInstance.getBannedKits().contains("Farmer"))
+			inv.setItem(10, Utils.createItem(Material.CARROT, Utils.format("&a&lFarmer"), FLAGS, enchants,
+					Utils.format("&7Start with 5 carrots")));
+		else inv.setItem(10, Utils.createItem(Material.CARROT, Utils.format("&4&LFarmer"),
+				Utils.format("&7Start with 5 carrots")));
+
+		if (!arenaInstance.getBannedKits().contains("Soldier"))
+			inv.setItem(11, Utils.createItem(Material.STONE_SWORD, Utils.format("&a&lSoldier"), FLAGS,
+					enchants, Utils.format("&7Start with a stone sword")));
+		else inv.setItem(11, Utils.createItem(Material.STONE_SWORD, Utils.format("&4&LSoldier"), FLAGS,
+				null, Utils.format("&7Start with a stone sword")));
+
+		if (!arenaInstance.getBannedKits().contains("Tailor"))
+			inv.setItem(12, Utils.createItem(Material.LEATHER_CHESTPLATE, Utils.format("&a&lTailor"), FLAGS,
+					enchants, Utils.format("&7Start with a full leather armor set")));
+		else inv.setItem(12, Utils.createItem(Material.LEATHER_CHESTPLATE, Utils.format("&4&LTailor"), FLAGS,
+				null, Utils.format("&7Start with a full leather armor set")));
+
+		if (!arenaInstance.getBannedKits().contains("Alchemist"))
+			inv.setItem(13, Utils.createItem(Material.BREWING_STAND, Utils.format("&a&lAlchemist"), FLAGS,
+					enchants, Utils.format("&7Start with 1 speed and 2 healing"),
+					Utils.format("&7splash potions")));
+		else inv.setItem(13, Utils.createItem(Material.BREWING_STAND, Utils.format("&4&LAlchemist"),
+				Utils.format("&7Start with 1 speed and 2 healing"),
+				Utils.format("&7splash potions")));
+
+		if (!arenaInstance.getBannedKits().contains("Trader"))
+			inv.setItem(14, Utils.createItem(Material.EMERALD, Utils.format("&a&lTrader"), FLAGS, enchants,
+					Utils.format("&7Start with 200 gems")));
+		else inv.setItem(14, Utils.createItem(Material.EMERALD, Utils.format("&4&LTrader"),
+				Utils.format("&7Start with 200 gems")));
+
+		if (!arenaInstance.getBannedKits().contains("Summoner"))
+			inv.setItem(15, Utils.createItem(Material.POLAR_BEAR_SPAWN_EGG, Utils.format("&a&lSummoner"),
+					FLAGS, enchants,
+					Utils.format("&fLevel 1"), Utils.format("&7Start with a wolf spawn"),
+					Utils.format("&fLevel 2"), Utils.format("&7Start with 2 wolf spawns"),
+					Utils.format("&fLevel 3"), Utils.format("&7Start with an iron golem spawn")));
+		else inv.setItem(15, Utils.createItem(Material.POLAR_BEAR_SPAWN_EGG, Utils.format("&4&LSummoner"),
+				Utils.format("&fLevel 1"), Utils.format("&7Start with a wolf spawn"),
+				Utils.format("&fLevel 2"), Utils.format("&7Start with 2 wolf spawns"),
+				Utils.format("&fLevel 3"), Utils.format("&7Start with an iron golem spawn")));
+
+		if (!arenaInstance.getBannedKits().contains("Reaper"))
+			inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&a&lReaper"), FLAGS,
+					enchants, Utils.format("&fLevel 1"),
+					Utils.format("&7Start with a sharpness III netherite hoe"), Utils.format("&fLevel 2"),
+					Utils.format("&7Start with a sharpness V netherite hoe"), Utils.format("&fLevel 3"),
+					Utils.format("&7Start with a sharpness VIII netherite hoe")));
+		else inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&4&LReaper"), FLAGS,
+				null, Utils.format("&fLevel 1"),
+				Utils.format("&7Start with a sharpness III netherite hoe"), Utils.format("&fLevel 2"),
+				Utils.format("&7Start with a sharpness V netherite hoe"), Utils.format("&fLevel 3"),
+				Utils.format("&7Start with a sharpness VIII netherite hoe")));
+
+		if (!arenaInstance.getBannedKits().contains("Phantom"))
+			inv.setItem(17, Utils.createItem(Material.PHANTOM_MEMBRANE, Utils.format("&a&lPhantom"), FLAGS,
+					enchants, Utils.format("&7Join as a player in any non-maxed game")));
+		else inv.setItem(17, Utils.createItem(Material.PHANTOM_MEMBRANE, Utils.format("&4&LPhantom"),
+				Utils.format("&7Join as a player in any non-maxed game")));
+
+		// Ability kits
+		for (int i = 18; i < 27; i++)
+			inv.setItem(i, Utils.createItem(Material.MAGENTA_STAINED_GLASS_PANE, Utils.format("&d&lAbility Kits"),
+					Utils.format("&7Kits give special ability per respawn")));
+
+		if (!arenaInstance.getBannedKits().contains("Mage"))
+			inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&d&lMage"), FLAGS, enchants,
+					Utils.format("&fLevel 1"), Utils.format("&7Shoot a fireball"),
+					Utils.format("&7(Cooldown 1 second)"), Utils.format("&fLevel 2"),
+					Utils.format("&7Shoot a strong fireball"), Utils.format("&7(Cooldown 2 seconds)"),
+					Utils.format("&fLevel 3"), Utils.format("&7Shoot a very strong fireball"),
+					Utils.format("&7(Cooldown 3 seconds)")));
+		else inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&4&LMage"),
+				Utils.format("&fLevel 1"), Utils.format("&7Shoot a fireball"),
+				Utils.format("&7(Cooldown 1 second)"), Utils.format("&fLevel 2"),
+				Utils.format("&7Shoot a strong fireball"), Utils.format("&7(Cooldown 2 seconds)"),
+				Utils.format("&fLevel 3"), Utils.format("&7Shoot a very strong fireball"),
+				Utils.format("&7(Cooldown 3 seconds)")));
+
+		if (!arenaInstance.getBannedKits().contains("Ninja"))
+			inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"), FLAGS, enchants,
+					Utils.format("&fLevel 1"), Utils.format("&7You and your pets become invisible"),
+					Utils.format("&7and disarm nearby monsters for 10 seconds"),
+					Utils.format("&7(Cooldown 30 seconds)"), Utils.format("&fLevel 2"),
+					Utils.format("&7You and your pets become invisible"),
+					Utils.format("&7and disarm nearby monsters for 15 seconds"),
+					Utils.format("&7(Cooldown 60 seconds)"),
+					Utils.format("&fLevel 3"), Utils.format("&7You and your pets become invisible"),
+					Utils.format("&7and disarm nearby monsters for 20 seconds"),
+					Utils.format("&7(Cooldown 90 seconds)")));
+		else inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&4&LNinja"),
+				Utils.format("&fLevel 1"), Utils.format("&7You and your pets become invisible"),
+				Utils.format("&7and disarm nearby monsters for 10 seconds"),
+				Utils.format("&7(Cooldown 30 seconds)"), Utils.format("&fLevel 2"),
+				Utils.format("&7You and your pets become invisible"),
+				Utils.format("&7and disarm nearby monsters for 15 seconds"),
+				Utils.format("&7(Cooldown 60 seconds)"),
+				Utils.format("&fLevel 3"), Utils.format("&7You and your pets become invisible"),
+				Utils.format("&7and disarm nearby monsters for 20 seconds"),
+				Utils.format("&7(Cooldown 90 seconds)")));
+
+		if (!arenaInstance.getBannedKits().contains("Templar"))
+			inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
+					enchants, Utils.format("&fLevel 1"), Utils.format("&7Give all allies within 2.5 blocks"),
+					Utils.format("&7absorption I for 15 seconds,"),
+					Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+					Utils.format("&fLevel 2"), Utils.format("&7Give all allies within 4 blocks"),
+					Utils.format("&7absorption II for 15 seconds,"),
+					Utils.format("&725 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+					Utils.format("&fLevel 3"), Utils.format("&7Give all allies within 5 blocks"),
+					Utils.format("&7absorption III for 20 seconds,"),
+					Utils.format("&730 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)")));
+		else inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&4&LTemplar"), FLAGS,
+				null, Utils.format("&fLevel 1"), Utils.format("&7Give all allies within 2.5 blocks"),
+				Utils.format("&7absorption I for 15 seconds,"),
+				Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+				Utils.format("&fLevel 2"), Utils.format("&7Give all allies within 4 blocks"),
+				Utils.format("&7absorption II for 15 seconds,"),
+				Utils.format("&725 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+				Utils.format("&fLevel 3"), Utils.format("&7Give all allies within 5 blocks"),
+				Utils.format("&7absorption III for 20 seconds,"),
+				Utils.format("&730 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)")));
+
+		if (!arenaInstance.getBannedKits().contains("Warrior"))
+			inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
+					enchants, Utils.format("&fLevel 1"), Utils.format("&7Give all allies within 2.5 blocks"),
+					Utils.format("&7strength I for 10 seconds,"),
+					Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+					Utils.format("&fLevel 2"), Utils.format("&7Give all allies within 4 blocks"),
+					Utils.format("&7strength II for 10 seconds,"),
+					Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+					Utils.format("&fLevel 3"), Utils.format("&7Give all allies within 5 blocks"),
+					Utils.format("&7strength III for 10 seconds,"),
+					Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)")));
+		else inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&4&LWarrior"), FLAGS,
+				null, Utils.format("&fLevel 1"), Utils.format("&7Give all allies within 2.5 blocks"),
+				Utils.format("&7strength I for 10 seconds,"),
+				Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+				Utils.format("&fLevel 2"), Utils.format("&7Give all allies within 4 blocks"),
+				Utils.format("&7strength II for 10 seconds,"),
+				Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)"),
+				Utils.format("&fLevel 3"), Utils.format("&7Give all allies within 5 blocks"),
+				Utils.format("&7strength III for 10 seconds,"),
+				Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 100 seconds)")));
+
+		if (!arenaInstance.getBannedKits().contains("Knight"))
+			inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"), FLAGS, enchants,
+					Utils.format("&fLevel 1"), Utils.format("&7Give all allies within 2.5 blocks"),
+					Utils.format("&7resistance I for 10 seconds,"),
+					Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+					Utils.format("&fLevel 2"), Utils.format("&7Give all allies within 4 blocks"),
+					Utils.format("&7resistance II for 10 seconds,"),
+					Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 90 seconds)"),
+					Utils.format("&fLevel 3"), Utils.format("&7Give all allies within 5 blocks"),
+					Utils.format("&7resistance III for 10 seconds,"),
+					Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 120 seconds)")));
+		else inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&4&LKnight"),
+				Utils.format("&fLevel 1"), Utils.format("&7Give all allies within 2.5 blocks"),
+				Utils.format("&7resistance I for 10 seconds,"),
+				Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+				Utils.format("&fLevel 2"), Utils.format("&7Give all allies within 4 blocks"),
+				Utils.format("&7resistance II for 10 seconds,"),
+				Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 90 seconds)"),
+				Utils.format("&fLevel 3"), Utils.format("&7Give all allies within 5 blocks"),
+				Utils.format("&7resistance III for 10 seconds,"),
+				Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 120 seconds)")));
+
+		if (!arenaInstance.getBannedKits().contains("Priest"))
+			inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"), FLAGS,
+					enchants, Utils.format("&fLevel 1"), Utils.format("&7Give all allies within 2.5 blocks"),
+					Utils.format("&7regeneration I for 10 seconds,"),
+					Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+					Utils.format("&fLevel 2"), Utils.format("&7Give all allies within 4 blocks"),
+					Utils.format("&7regeneration II for 10 seconds,"),
+					Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 90 seconds)"),
+					Utils.format("&fLevel 3"), Utils.format("&7Give all allies within 5 blocks"),
+					Utils.format("&7regeneration III for 10 seconds,"),
+					Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 120 seconds)")));
+		else inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&4&LPriest"),
+				Utils.format("&fLevel 1"), Utils.format("&7Give all allies within 2.5 blocks"),
+				Utils.format("&7regeneration I for 10 seconds,"),
+				Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+				Utils.format("&fLevel 2"), Utils.format("&7Give all allies within 4 blocks"),
+				Utils.format("&7regeneration II for 10 seconds,"),
+				Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 90 seconds)"),
+				Utils.format("&fLevel 3"), Utils.format("&7Give all allies within 5 blocks"),
+				Utils.format("&7regeneration III for 10 seconds,"),
+				Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 120 seconds)")));
+
+		if (!arenaInstance.getBannedKits().contains("Siren"))
+			inv.setItem(33, Utils.createItem(Material.COBWEB, Utils.format("&d&lSiren"), FLAGS, enchants,
+					Utils.format("&fLevel 1"), Utils.format("&7Give mobs within 3 blocks"),
+					Utils.format("&7weakness I for 10 seconds"), Utils.format("&7(Cooldown 40 seconds)"),
+					Utils.format("&fLevel 2"), Utils.format("&7Give mobs within 5 blocks"),
+					Utils.format("&7weakness II for 10 seconds"), Utils.format("&7(Cooldown 60 seconds)"),
+					Utils.format("&fLevel 3"), Utils.format("&7Give mobs within 6 blocks"),
+					Utils.format("&7weakness II for 10 seconds,"),
+					Utils.format("&7slowness I for 10 seconds"), Utils.format("&7(Cooldown 80 seconds)")));
+		else inv.setItem(33, Utils.createItem(Material.COBWEB, Utils.format("&4&LSiren"),
+				Utils.format("&fLevel 1"), Utils.format("&7Give mobs within 3 blocks"),
+				Utils.format("&7weakness I for 10 seconds"), Utils.format("&7(Cooldown 40 seconds)"),
+				Utils.format("&fLevel 2"), Utils.format("&7Give mobs within 5 blocks"),
+				Utils.format("&7weakness II for 10 seconds"), Utils.format("&7(Cooldown 60 seconds)"),
+				Utils.format("&fLevel 3"), Utils.format("&7Give mobs within 6 blocks"),
+				Utils.format("&7weakness II for 10 seconds,"),
+				Utils.format("&7slowness I for 10 seconds"), Utils.format("&7(Cooldown 80 seconds)")));
+
+		if (!arenaInstance.getBannedKits().contains("Monk"))
+			inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"), FLAGS, enchants,
+					Utils.format("&fLevel 1"), Utils.format("&7Give all allies within 2.5 blocks"),
+					Utils.format("&7haste I for 15 seconds,"),
+					Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 40 seconds)"),
+					Utils.format("&fLevel 2"), Utils.format("&7Give all allies within 4 blocks"),
+					Utils.format("&7haste II for 15 seconds,"),
+					Utils.format("&725 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+					Utils.format("&fLevel 3"), Utils.format("&7Give all allies within 5 blocks"),
+					Utils.format("&7haste III for 20 seconds,"),
+					Utils.format("&730 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)")));
+		else inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&4&LMonk"),
+				Utils.format("&fLevel 1"), Utils.format("&7Give all allies within 2.5 blocks"),
+				Utils.format("&7haste I for 15 seconds,"),
+				Utils.format("&720 seconds for yourself"), Utils.format("&7(Cooldown 40 seconds)"),
+				Utils.format("&fLevel 2"), Utils.format("&7Give all allies within 4 blocks"),
+				Utils.format("&7haste II for 15 seconds,"),
+				Utils.format("&725 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+				Utils.format("&fLevel 3"), Utils.format("&7Give all allies within 5 blocks"),
+				Utils.format("&7haste III for 20 seconds,"),
+				Utils.format("&730 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)")));
+
+		if (!arenaInstance.getBannedKits().contains("Messenger"))
+			inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"), FLAGS, enchants,
+					Utils.format("&fLevel 1"), Utils.format("&7Give all allies within 2.5 blocks"),
+					Utils.format("&7speed I for 10 seconds,"),
+					Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 40 seconds)"),
+					Utils.format("&fLevel 2"), Utils.format("&7Give all allies within 4 blocks"),
+					Utils.format("&7speed II for 10 seconds,"),
+					Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+					Utils.format("&fLevel 3"), Utils.format("&7Give all allies within 5 blocks"),
+					Utils.format("&7speed III for 10 seconds,"),
+					Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)")));
+		else inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&4&lMessenger"),
+				Utils.format("&fLevel 1"), Utils.format("&7Give all allies within 2.5 blocks"),
+				Utils.format("&7speed I for 10 seconds,"),
+				Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 40 seconds)"),
+				Utils.format("&fLevel 2"), Utils.format("&7Give all allies within 4 blocks"),
+				Utils.format("&7speed II for 10 seconds,"),
+				Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 60 seconds)"),
+				Utils.format("&fLevel 3"), Utils.format("&7Give all allies within 5 blocks"),
+				Utils.format("&7speed III for 10 seconds,"),
+				Utils.format("&715 seconds for yourself"), Utils.format("&7(Cooldown 80 seconds)")));
+
+		// Effect kits
+		for (int i = 36; i < 45; i++)
+			inv.setItem(i, Utils.createItem(Material.YELLOW_STAINED_GLASS_PANE, Utils.format("&e&lEffect Kits"),
+					Utils.format("&7Kits give player a special effect")));
+
+		if (!arenaInstance.getBannedKits().contains("Blacksmith"))
+			inv.setItem(45, Utils.createItem(Material.ANVIL, Utils.format("&e&lBlacksmith"), FLAGS, enchants,
+					Utils.format("&7All equipment purchased are unbreakable")));
+		else inv.setItem(45, Utils.createItem(Material.ANVIL, Utils.format("&4&LBlacksmith"),
+				Utils.format("&7All equipment purchased are unbreakable")));
+
+		if (!arenaInstance.getBannedKits().contains("Witch"))
+			inv.setItem(46, Utils.createItem(Material.CAULDRON, Utils.format("&e&lWitch"), FLAGS, enchants,
+					Utils.format("&7All purchased potions become splash potions")));
+		else inv.setItem(46, Utils.createItem(Material.CAULDRON, Utils.format("&4&LWitch"),
+				Utils.format("&7All purchased potions become splash potions")));
+
+		if (!arenaInstance.getBannedKits().contains("Merchant"))
+			inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&e&lMerchant"), FLAGS,
+					enchants, Utils.format("&7Earn a 5% rebate on all purchases")));
+		else inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&4&LMerchant"),
+				Utils.format("&7Earn a 5% rebate on all purchases")));
+
+		if (!arenaInstance.getBannedKits().contains("Vampire"))
+			inv.setItem(48, Utils.createItem(Material.GHAST_TEAR, Utils.format("&e&lVampire"), FLAGS, enchants,
+					Utils.format("&7Dealing x damage has an x% chance"),
+					Utils.format("&7of healing half a heart")));
+		else inv.setItem(48, Utils.createItem(Material.GHAST_TEAR, Utils.format("&4&LVampire"),
+				Utils.format("&7Dealing x damage has an x% chance"),
+				Utils.format("&7of healing half a heart")));
+
+		if (!arenaInstance.getBannedKits().contains("Giant"))
+			inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&e&lGiant"), FLAGS, enchants,
+					Utils.format("&fLevel 1"), Utils.format("&7Permanent 10% health boost"),
+					Utils.format("&fLevel 2"), Utils.format("&7Permanent 20% health boost")));
+		else inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&4&LGiant"),
+				Utils.format("&fLevel 1"), Utils.format("&7Permanent 10% health boost"),
+				Utils.format("&fLevel 2"), Utils.format("&7Permanent 20% health boost")));
+
+		// Option to exit
+		inv.setItem(53, InventoryItems.exit());
+
+		return inv;
+	}
+
 	// Menu for changing the difficulty label of an arena
 	public Inventory createDifficultyLabelInventory(int arena) {
 		String label = game.arenas.get(arena).getDifficultyLabel();
@@ -1517,7 +1826,7 @@ public class Inventories {
 			label = "";
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&6&lDifficulty Label: " + label));
 
 		// "Easy" option
@@ -1544,7 +1853,7 @@ public class Inventories {
 	// Menu for changing the difficulty multiplier of an arena
 	public Inventory createDifficultyMultiplierInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&4&lDifficulty Multiplier: " + game.arenas.get(arena).getDifficultyMultiplier()));
 
 		// "1" option
@@ -1570,7 +1879,7 @@ public class Inventories {
 		Arena arenaInstance = game.arenas.get(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&d&lSounds: " + game.arenas.get(arena).getName()));
 
 		// Option to edit win sound
@@ -1631,7 +1940,7 @@ public class Inventories {
 	// Menu for editing the win sound of an arena
 	public Inventory createWaitSoundInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 18, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 18, Utils.format("&k") +
 				Utils.format("&6&lWaiting Sound: " + game.arenas.get(arena).getWaitingSoundName()));
 
 		// Sound options
@@ -1658,7 +1967,7 @@ public class Inventories {
 	// Menu to copy game settings
 	public Inventory createCopySettingsInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 54,  Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54,  Utils.format("&k") +
 				Utils.format("&8&lCopy Game Settings"));
 
 		// Options to choose any of the 45 possible arenas
@@ -2836,16 +3145,16 @@ public class Inventories {
 	// Display arena information
 	public Inventory createArenaInfoInventory(Arena arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 18, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena.getArena()), 27, Utils.format("&k") +
 				Utils.format("&6&l" + arena.getName() + " Info"));
 
 		// Maximum players
-		inv.setItem(0, Utils.createItem(Material.NETHERITE_HELMET,
+		inv.setItem(1, Utils.createItem(Material.NETHERITE_HELMET,
 				Utils.format("&4&lMaximum players: &4" + arena.getMaxPlayers()), FLAGS, null,
 				Utils.format("&7The most players an arena can have")));
 
 		// Minimum players
-		inv.setItem(1, Utils.createItem(Material.NETHERITE_BOOTS,
+		inv.setItem(2, Utils.createItem(Material.NETHERITE_BOOTS,
 				Utils.format("&2&lMinimum players: &2" + arena.getMinPlayers()), FLAGS, null,
 				Utils.format("&7The least players an arena can have to start")));
 
@@ -2854,7 +3163,7 @@ public class Inventories {
 		if (arena.getMaxWaves() < 0)
 			waves = "Unlimited";
 		else waves = Integer.toString(arena.getMaxWaves());
-		inv.setItem(2, Utils.createItem(Material.GOLDEN_SWORD,
+		inv.setItem(3, Utils.createItem(Material.GOLDEN_SWORD,
 				Utils.format("&3&lMax waves: &3" + waves), FLAGS, null,
 				Utils.format("&7The highest wave the arena will go to")));
 
@@ -2863,61 +3172,86 @@ public class Inventories {
 		if (arena.getWaveTimeLimit() < 0)
 			limit = "Unlimited";
 		else limit = arena.getWaveTimeLimit() + " minute(s)";
-		inv.setItem(3, Utils.createItem(Material.CLOCK,
+		inv.setItem(4, Utils.createItem(Material.CLOCK,
 				Utils.format("&9&lWave time limit: &9" + limit),
 				Utils.format("&7The time limit for each wave before"), Utils.format("&7the game ends")));
 
+		// Wolf cap
+		inv.setItem(5, Utils.createItem(Material.BONE, Utils.format("&6&lWolf Cap: &6" + arena.getWolfCap()),
+				Utils.format("&7Maximum wolves a player can have")));
+
+		// Golem cap
+		inv.setItem(6, Utils.createItem(Material.IRON_INGOT, Utils.format("&e&lIron Golem Cap: &e" +
+						arena.getGolemCap()),
+				Utils.format("&7Maximum iron golems an arena can have")));
+
+		// Allowed kits
+		inv.setItem(7, Utils.createItem(Material.ENDER_CHEST, Utils.format("&9&lAllowed Kits")));
+
 		// Dynamic mob count
-		inv.setItem(4, Utils.createItem(Material.SLIME_BALL,
+		inv.setItem(10, Utils.createItem(Material.SLIME_BALL,
 				Utils.format("&e&lDynamic Mob Count: &e" + getToggleStatus(arena.hasDynamicCount())),
 				Utils.format("&7Mob count adjusting based on"), Utils.format("&7number of players")));
 
 		// Dynamic difficulty
-		inv.setItem(5, Utils.createItem(Material.MAGMA_CREAM,
+		inv.setItem(11, Utils.createItem(Material.MAGMA_CREAM,
 				Utils.format("&6&lDynamic Difficulty: &6" + getToggleStatus(arena.hasDynamicDifficulty())),
 				Utils.format("&7Difficulty adjusting based on"), Utils.format("&7number of players")));
 
 		// Dynamic prices
-		inv.setItem(6, Utils.createItem(Material.NETHER_STAR,
+		inv.setItem(12, Utils.createItem(Material.NETHER_STAR,
 				Utils.format("&b&lDynamic Prices: &b" + getToggleStatus(arena.hasDynamicPrices())),
 				Utils.format("&7Prices adjusting based on number of"),
 				Utils.format("&7players in the game")));
 
 		// Dynamic time limit
-		inv.setItem(7, Utils.createItem(Material.SNOWBALL,
+		inv.setItem(13, Utils.createItem(Material.SNOWBALL,
 				Utils.format("&a&lDynamic Time Limit: &a" + getToggleStatus(arena.hasDynamicLimit())),
 				Utils.format("&7Wave time limit adjusting based on"),
 				Utils.format("&7in-game difficulty")));
 
 		// Difficulty multiplier
-		inv.setItem(8, Utils.createItem(Material.TURTLE_HELMET,
+		inv.setItem(14, Utils.createItem(Material.TURTLE_HELMET,
 				Utils.format("&4&lDifficulty Multiplier: &4" + arena.getDifficultyMultiplier()),
 				FLAGS,
 				null,
 				Utils.format("&7Determines difficulty increase rate")));
 
-		// Player spawn particles toggle
-		inv.setItem(10, Utils.createItem(Material.FIREWORK_ROCKET,
+		// Gem dropping
+		inv.setItem(15, Utils.createItem(Material.EMERALD,
+				Utils.format("&9&lGem Drop: " + getToggleStatus(arena.hasGemDrop())),
+				Utils.format("&7Change whether gems drop as"),
+				Utils.format("&7physical gems or go straight"),
+				Utils.format("&7into the killer's balance")));
+
+		// Experience drop
+		inv.setItem(16, Utils.createItem(Material.EXPERIENCE_BOTTLE,
+				Utils.format("&b&lExperience Drop: " + getToggleStatus(arena.hasExpDrop())),
+				Utils.format("&7Change whether experience drop or go"),
+				Utils.format("&7straight into the killer's experience bar")));
+
+		// Player spawn particles
+		inv.setItem(19, Utils.createItem(Material.FIREWORK_ROCKET,
 				Utils.format("&e&lPlayer Spawn Particles: " + getToggleStatus(arena.hasSpawnParticles()))));
 
-		// Monster spawn particles toggle
-		inv.setItem(11, Utils.createItem(Material.FIREWORK_ROCKET,
+		// Monster spawn particles
+		inv.setItem(20, Utils.createItem(Material.FIREWORK_ROCKET,
 				Utils.format("&d&lMonster Spawn Particles: " + getToggleStatus(arena.hasMonsterParticles()))));
 
-		// Villager spawn particles toggle
-		inv.setItem(12, Utils.createItem(Material.FIREWORK_ROCKET,
+		// Villager spawn particles
+		inv.setItem(21, Utils.createItem(Material.FIREWORK_ROCKET,
 				Utils.format("&a&lVillager Spawn Particles: " + getToggleStatus(arena.hasVillagerParticles()))));
 
-		// Default shop toggle
-		inv.setItem(13, Utils.createItem(Material.EMERALD_BLOCK,
+		// Default shop
+		inv.setItem(22, Utils.createItem(Material.EMERALD_BLOCK,
 				Utils.format("&6&lDefault Shop: " + getToggleStatus(arena.hasNormal()))));
 
-		// Custom shop toggle
-		inv.setItem(14, Utils.createItem(Material.QUARTZ_BLOCK,
+		// Custom shop
+		inv.setItem(23, Utils.createItem(Material.QUARTZ_BLOCK,
 				Utils.format("&2&lCustom Shop: " + getToggleStatus(arena.hasNormal()))));
 
 		// Custom shop inventory
-		inv.setItem(15, Utils.createItem(Material.QUARTZ, Utils.format("&f&lCustom Shop Inventory")));
+		inv.setItem(24, Utils.createItem(Material.QUARTZ, Utils.format("&f&lCustom Shop Inventory")));
 
 		// Arena records
 		List<String> records = new ArrayList<>();
@@ -2927,7 +3261,7 @@ public class Inventories {
 			arenaRecord.getPlayers().forEach(player -> players.append(player).append(", "));
 			records.add(Utils.format("&7" + players.substring(0, players.length() - 2)));
 		});
-		inv.setItem(16, Utils.createItem(Material.GOLDEN_HELMET, Utils.format("&e&lArena Records"), FLAGS,
+		inv.setItem(25, Utils.createItem(Material.GOLDEN_HELMET, Utils.format("&e&lArena Records"), FLAGS,
 				null, records));
 
 		return inv;

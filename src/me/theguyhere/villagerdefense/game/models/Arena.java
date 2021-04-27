@@ -14,19 +14,19 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Arena {
     private final Main plugin;
-
-    // Persistent data
     private final int arena; // Arena number
     private final FileConfiguration config; // Shortcut for file configuration of arena file
     private final String path; // Shortcut for the arena path in the arena file
-
-    // Temporary data
     private final Tasks task; // The tasks object for the arena
+
     private boolean caps; // Indicates whether the naming inventory has caps lock on
     private boolean active; // Indicates whether the arena has a game ongoing
     private boolean spawning; // Indicates whether the arena is in the process of spawning mobs
