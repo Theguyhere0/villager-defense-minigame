@@ -610,6 +610,14 @@ public class Inventories {
 				null,
 				Utils.format("&7Minimum players needed for game to start")));
 
+		// Option to edit wolf cap
+		inv.setItem(5, Utils.createItem(Material.BONE, Utils.format("&6&lWolf Cap"),
+				Utils.format("&7Maximum wolves a player can have")));
+
+		// Option to edit golem cap
+		inv.setItem(6, Utils.createItem(Material.IRON_INGOT, Utils.format("&e&lIron Golem Cap"),
+				Utils.format("&7Maximum iron golems an arena can have")));
+
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());
 
@@ -742,6 +750,46 @@ public class Inventories {
 		return inv;
 	}
 
+	// Menu for changing wolf cap of an arena
+	public Inventory createWolfCapInventory(int arena) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&6&lWolf Cap: " + game.arenas.get(arena).getWolfCap()));
+
+		// Option to decrease
+		for (int i = 0; i < 4; i++)
+			inv.setItem(i, Utils.createItem(Material.RED_CONCRETE, Utils.format("&4&lDecrease")));
+
+		// Option to increase
+		for (int i = 4; i < 8; i++)
+			inv.setItem(i, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&2&lIncrease")));
+
+		// Option to exit
+		inv.setItem(8, InventoryItems.exit());
+
+		return inv;
+	}
+
+	// Menu for changing iron golem cap of an arena
+	public Inventory createGolemCapInventory(int arena) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+				Utils.format("&e&lIron Golem Cap: " + game.arenas.get(arena).getGolemCap()));
+
+		// Option to decrease
+		for (int i = 0; i < 4; i++)
+			inv.setItem(i, Utils.createItem(Material.RED_CONCRETE, Utils.format("&4&lDecrease")));
+
+		// Option to increase
+		for (int i = 4; i < 8; i++)
+			inv.setItem(i, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&2&lIncrease")));
+
+		// Option to exit
+		inv.setItem(8, InventoryItems.exit());
+
+		return inv;
+	}
+
 	// Menu for editing the mob settings of an arena
 	public Inventory createMobsInventory(int arena) {
 		Arena arenaInstance = game.arenas.get(arena);
@@ -781,6 +829,12 @@ public class Inventories {
 		inv.setItem(6, Utils.createItem(Material.MAGMA_CREAM,
 				Utils.format("&6&lDynamic Difficulty: " + getToggleStatus(arenaInstance.hasDynamicDifficulty())),
 				Utils.format("&7Difficulty adjusting based on"), Utils.format("&7number of players")));
+
+		// Option to toggle experience drop
+		inv.setItem(7, Utils.createItem(Material.EXPERIENCE_BOTTLE,
+				Utils.format("&b&lExperience Drop: " + getToggleStatus(arenaInstance.hasExpDrop())),
+				Utils.format("&7Change whether experience drop or go"),
+				Utils.format("&7straight into the killer's experience bar")));
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());
@@ -994,20 +1048,27 @@ public class Inventories {
 				Utils.format("&a&lEdit Custom Shop")));
 
 		// Option to toggle default shop
-		inv.setItem(2, Utils.createItem(Material.EMERALD_BLOCK,
+		inv.setItem(1, Utils.createItem(Material.EMERALD_BLOCK,
 				Utils.format("&6&lDefault Shop: " + getToggleStatus(arenaInstance.hasNormal())),
 				Utils.format("&7Turn default shop on and off")));
 
 		// Option to toggle custom shop
-		inv.setItem(4, Utils.createItem(Material.QUARTZ_BLOCK,
+		inv.setItem(2, Utils.createItem(Material.QUARTZ_BLOCK,
 				Utils.format("&2&lCustom Shop: " + getToggleStatus(arenaInstance.hasCustom())),
 				Utils.format("&7Turn custom shop on and off")));
 
 		// Option to toggle dynamic prices
-		inv.setItem(6, Utils.createItem(Material.NETHER_STAR,
+		inv.setItem(3, Utils.createItem(Material.NETHER_STAR,
 				Utils.format("&b&lDynamic Prices: " + getToggleStatus(arenaInstance.hasDynamicPrices())),
 				Utils.format("&7Prices adjusting based on number of"),
 				Utils.format("&7players in the game")));
+
+		// Option to toggle gem dropping
+		inv.setItem(4, Utils.createItem(Material.EMERALD,
+				Utils.format("&9&lGem Drop: " + getToggleStatus(arenaInstance.hasGemDrop())),
+				Utils.format("&7Change whether gems drop as"),
+				Utils.format("&7physical gems or go straight"),
+				Utils.format("&7into the killer's balance")));
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());

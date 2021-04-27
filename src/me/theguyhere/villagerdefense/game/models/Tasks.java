@@ -169,6 +169,7 @@ public class Tasks {
 				p.addGems(reward);
 				if (currentWave > 1)
 					p.getPlayer().sendMessage(Utils.notify(String.format(language.getString("gems"), reward)));
+				game.createBoard(p);
 			});
 
 			// Notify spectators of upcoming wave

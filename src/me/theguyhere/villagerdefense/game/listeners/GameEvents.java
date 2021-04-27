@@ -90,13 +90,17 @@ public class GameEvents implements Listener {
 			if (!(ent instanceof Villager || ent instanceof Wolf || ent instanceof IronGolem)) {
 				// Set drop to emerald
 				if (ent instanceof Wither) {
-					e.getDrops().add(Utils.createItems(Material.EMERALD, 20, null,
-							Integer.toString(arena.getArena())));
-					e.setDroppedExp((int) arena.getCurrentDifficulty() * 20);
+					if (arena.hasGemDrop())
+						e.getDrops().add(Utils.createItems(Material.EMERALD, 20, null,
+								Integer.toString(arena.getArena())));
+					if (arena.hasExpDrop())
+						e.setDroppedExp((int) arena.getCurrentDifficulty() * 20);
 				} else {
-					e.getDrops().add(Utils.createItem(Material.EMERALD, null,
-							Integer.toString(arena.getArena())));
-					e.setDroppedExp((int) arena.getCurrentDifficulty());
+					if (arena.hasGemDrop())
+						e.getDrops().add(Utils.createItem(Material.EMERALD, null,
+								Integer.toString(arena.getArena())));
+					if (arena.hasExpDrop())
+						e.setDroppedExp((int) arena.getCurrentDifficulty());
 				}
 
 				// Decrement enemy count
@@ -455,7 +459,8 @@ public class GameEvents implements Listener {
 		e.setCancelled(true);
 		e.getItem().remove();
 		player.sendMessage(Utils.notify(String.format(plugin.getLanguageData().getString("foundGems"), earned)));
-		player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, .5f, 0);
+		if (arena.hasGemSound())
+			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, .5f, 0);
 
 		FileConfiguration playerData = plugin.getPlayerData();
 
@@ -555,12 +560,72 @@ public class GameEvents implements Listener {
 		if (game.arenas.stream().filter(Objects::nonNull)
 				.noneMatch(a -> a.getPlayers().stream().anyMatch(p -> p.getPlayer().equals(player)))) return;
 
-		VDPlayer gamer = game.arenas.stream().filter(Objects::nonNull)
+		Arena arena = game.arenas.stream().filter(Objects::nonNull)
 				.filter(a -> a.getPlayers().stream().anyMatch(p -> p.getPlayer().equals(player)))
-				.collect(Collectors.toList()).get(0).getPlayer(player);
+				.collect(Collectors.toList()).get(0);
+		VDPlayer gamer = arena.getPlayer(player);
 
 		// Increment kill count
 		gamer.incrementKills();
+
+		// Add gems and experience if needed
+		if (!arena.hasGemDrop()) {
+			// Calculate and give player gems
+			Random r = new Random();
+			int wave = arena.getCurrentWave();
+
+			if (e.getEntity() instanceof Wither) {
+				int earned = r.nextInt((int) (40 * Math.pow(wave, .15) * 20) / arena.getAlive());
+				arena.getActives().stream().filter(vdPlayer -> !arena.getGhosts().contains(vdPlayer))
+						.forEach(vdPlayer -> {
+							vdPlayer.addGems(earned);
+
+							// Notify player
+							vdPlayer.getPlayer().sendMessage(
+									Utils.notify(String.format(plugin.getLanguageData().getString("earnedGems"),
+									earned)));
+
+							FileConfiguration playerData = plugin.getPlayerData();
+
+							// Update player stats
+							playerData.set(vdPlayer.getPlayer().getName() + ".totalGems",
+									playerData.getInt(vdPlayer.getPlayer().getName() + ".totalGems") + earned);
+							if (playerData.getInt(vdPlayer.getPlayer().getName() + ".topBalance") <
+									vdPlayer.getGems())
+								playerData.set(vdPlayer.getPlayer().getName() + ".topBalance", vdPlayer.getGems());
+							plugin.savePlayerData();
+
+							// Update scoreboard
+							game.createBoard(vdPlayer);
+						});
+			} else {
+				int earned = r.nextInt((int) (40 * Math.pow(wave, .15)));
+				gamer.addGems(earned);
+
+				// Notify player
+				player.sendMessage(Utils.notify(String.format(plugin.getLanguageData().getString("earnedGems"),
+						earned)));
+
+				FileConfiguration playerData = plugin.getPlayerData();
+
+				// Update player stats
+				playerData.set(player.getName() + ".totalGems",
+						playerData.getInt(player.getName() + ".totalGems") + earned);
+				if (playerData.getInt(player.getName() + ".topBalance") < gamer.getGems())
+					playerData.set(player.getName() + ".topBalance", gamer.getGems());
+				plugin.savePlayerData();
+
+				// Update scoreboard
+				game.createBoard(gamer);
+			}
+		}
+		if (!arena.hasExpDrop()) {
+			if (e.getEntity() instanceof Wither)
+				arena.getActives().stream().filter(vdPlayer -> !arena.getGhosts().contains(vdPlayer))
+						.forEach(vdPlayer -> vdPlayer.getPlayer()
+								.giveExp((int) (arena.getCurrentDifficulty() * 20) / arena.getAlive()));
+			else player.giveExp((int) arena.getCurrentDifficulty());
+		}
 	}
 	
 	// Stops slimes and magma cubes from splitting on death
@@ -610,8 +675,9 @@ public class GameEvents implements Listener {
 			e.setCancelled(true);
 
 			// Check for wolf cap
-			if (gamer.getWolves() >= 5) {
-				player.sendMessage(Utils.notify("&c" + String.format(language.getString("wolfError"), 5)));
+			if (gamer.getWolves() >= arena.getWolfCap()) {
+				player.sendMessage(Utils.notify("&c" + String.format(language.getString("wolfError"),
+						arena.getWolfCap())));
 				return;
 			}
 
@@ -650,8 +716,9 @@ public class GameEvents implements Listener {
 			e.setCancelled(true);
 
 			// Check for golem cap
-			if (arena.getGolems() >= 2) {
-				player.sendMessage(Utils.notify("&c" + String.format(language.getString("golemError"), 2)));
+			if (arena.getGolems() >= arena.getGolemCap()) {
+				player.sendMessage(Utils.notify("&c" + String.format(language.getString("golemError"),
+						arena.getGolemCap())));
 				return;
 			}
 
@@ -836,7 +903,6 @@ public class GameEvents implements Listener {
 
 		e.setCancelled(true);
 	}
-
 
 	// Prevents arena mobs from turning into different entities
 	@EventHandler

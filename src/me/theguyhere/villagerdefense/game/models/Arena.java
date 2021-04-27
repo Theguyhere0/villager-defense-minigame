@@ -97,6 +97,24 @@ public class Arena {
         plugin.saveArenaData();
     }
 
+    public int getWolfCap() {
+        return config.getInt(path + ".wolf");
+    }
+
+    public void setWolfCap(int wolfCap) {
+        config.set(path + ".wolf", wolfCap);
+        plugin.saveArenaData();
+    }
+
+    public int getGolemCap() {
+        return config.getInt(path + ".golem");
+    }
+
+    public void setgolemCap(int golemCap) {
+        config.set(path + ".golem", golemCap);
+        plugin.saveArenaData();
+    }
+
     public int getMaxWaves() {
         return config.getInt(path + ".maxWaves");
     }
@@ -437,6 +455,24 @@ public class Arena {
 
     public void setCustom(boolean bool) {
         config.set(path + ".custom", bool);
+        plugin.saveArenaData();
+    }
+
+    public boolean hasGemDrop() {
+        return config.getBoolean(path + ".gemDrop");
+    }
+
+    public void setGemDrop(boolean bool) {
+        config.set(path + ".gemDrop", bool);
+        plugin.saveArenaData();
+    }
+
+    public boolean hasExpDrop() {
+        return config.getBoolean(path + ".expDrop");
+    }
+
+    public void setExpDrop(boolean bool) {
+        config.set(path + ".expDrop", bool);
         plugin.saveArenaData();
     }
 
