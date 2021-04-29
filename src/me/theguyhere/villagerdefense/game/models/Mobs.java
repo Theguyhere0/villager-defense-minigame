@@ -1031,6 +1031,7 @@ public class Mobs {
         setMinion(plugin, arena, brute);
         setAxe(arena, brute);
         setArmor(arena, brute);
+        brute.setConversionTime(-1);
     }
 
     public static void setVindicator(Main plugin, Arena arena, Vindicator vindicator) {

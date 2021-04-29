@@ -538,9 +538,9 @@ public class Inventories {
 	}
 
 	// Confirmation menu for removing the arena portal
-	public Inventory createPortalConfirmInventory() {
+	public Inventory createPortalConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Portal?"));
 
 		// "No" option
@@ -553,9 +553,9 @@ public class Inventories {
 	}
 
 	// Confirmation menu for removing the arena leaderboard
-	public Inventory createArenaBoardConfirmInventory() {
+	public Inventory createArenaBoardConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Leaderboard?"));
 
 		// "No" option
@@ -644,9 +644,9 @@ public class Inventories {
 	}
 
 	// Confirmation menu for removing player spawn
-	public Inventory createSpawnConfirmInventory() {
+	public Inventory createSpawnConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Spawn?"));
 
 		// "No" option
@@ -687,9 +687,9 @@ public class Inventories {
 	}
 
 	// Confirmation menu for removing waiting room
-	public Inventory createWaitingConfirmInventory() {
+	public Inventory createWaitingConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Waiting Room?"));
 
 		// "No" option
@@ -890,9 +890,9 @@ public class Inventories {
 	}
 
 	// Confirmation menu for removing monster spawns
-	public Inventory createMonsterSpawnConfirmInventory() {
+	public Inventory createMonsterSpawnConfirmInventory(int arena, int slot) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Monster Spawn?"));
 
 		// "No" option
@@ -961,9 +961,9 @@ public class Inventories {
 	}
 
 	// Confirmation menu for removing mob spawns
-	public Inventory createVillagerSpawnConfirmInventory() {
+	public Inventory createVillagerSpawnConfirmInventory(int arena, int slot) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Villager Spawn?"));
 
 		// "No" option
@@ -2115,7 +2115,7 @@ public class Inventories {
 				Utils.format("&7Highest gem balance in a game")));
 
 		// Top wave
-		inv.setItem(4, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&3&lTop Wave: &9" +
+		inv.setItem(4, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&3&lTop Wave: &3" +
 				playerData.getInt(name + ".topWave")), FLAGS, null,
 				Utils.format("&7Highest completed wave")));
 

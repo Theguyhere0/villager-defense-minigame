@@ -2408,7 +2408,7 @@ public class GameItems {
 	}
 	public static ItemStack arrowsSPlus() {
 		return Utils.createPotionItems(Material.TIPPED_ARROW,
-				new PotionData(PotionType.SLOWNESS, true, true), 8, null,
+				new PotionData(PotionType.SLOWNESS, false, true), 8, null,
 				Utils.format("&2Gems: &a125"));
 	}
 	public static ItemStack arrowsDPlus() {
@@ -2418,12 +2418,12 @@ public class GameItems {
 	}
 	public static ItemStack arrowsWPlus() {
 		return Utils.createPotionItems(Material.TIPPED_ARROW,
-				new PotionData(PotionType.WEAKNESS, true ,true), 8, null,
+				new PotionData(PotionType.WEAKNESS, false,true), 8, null,
 				Utils.format("&2Gems: &a125"));
 	}
 	public static ItemStack arrowsPPlus() {
 		return Utils.createPotionItems(Material.TIPPED_ARROW,
-				new PotionData(PotionType.POISON, true, true), 8, null,
+				new PotionData(PotionType.POISON, false, true), 8, null,
 				Utils.format("&2Gems: &a100"));
 	}
 	public static ItemStack rockets() {
@@ -5082,13 +5082,18 @@ public class GameItems {
 		return Utils.createItems(Material.BEETROOT, 5, null, Utils.format("&2Gems: &a25"));
 	}
 	public static ItemStack health() {
-		return Utils.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.INSTANT_HEAL), null,
-				Utils.format("&2Gems: &a60"));
+		return Utils.createPotionItem(Material.POTION, new PotionData(PotionType.INSTANT_HEAL), null,
+				Utils.format("&2Gems: &a50"));
 	}
 	public static ItemStack health2() {
-		return Utils.createPotionItem(Material.SPLASH_POTION,
+		return Utils.createPotionItem(Material.POTION,
 				new PotionData(PotionType.INSTANT_HEAL, false, true), null,
-				Utils.format("&2Gems: &a150"));
+				Utils.format("&2Gems: &a120"));
+	}
+	public static ItemStack health3() {
+		return Utils.createPotionItem(Material.LINGERING_POTION,
+				new PotionData(PotionType.INSTANT_HEAL, false, true), null,
+				Utils.format("&2Gems: &a200"));
 	}
 	public static ItemStack strength() {
 		return Utils.createPotionItem(Material.POTION, new PotionData(PotionType.STRENGTH), null,
@@ -5096,7 +5101,7 @@ public class GameItems {
 	}
 	public static ItemStack strength2() {
 		return Utils.createPotionItem(Material.POTION,
-				new PotionData(PotionType.STRENGTH, true , true), null,
+				new PotionData(PotionType.STRENGTH, false, true), null,
 				Utils.format("&2Gems: &a400"));
 	}
 	public static ItemStack regen() {
@@ -5105,7 +5110,7 @@ public class GameItems {
 	}
 	public static ItemStack regen2() {
 		return Utils.createPotionItem(Material.POTION,
-				new PotionData(PotionType.REGEN, true , true), null,
+				new PotionData(PotionType.REGEN, false, true), null,
 				Utils.format("&2Gems: &a450"));
 	}
 	public static ItemStack speed() {
@@ -5113,7 +5118,7 @@ public class GameItems {
 				Utils.format("&2Gems: &a125"));
 	}
 	public static ItemStack speed2() {
-		return Utils.createPotionItem(Material.POTION, new PotionData(PotionType.SPEED, true, true),
+		return Utils.createPotionItem(Material.POTION, new PotionData(PotionType.SPEED, false, true),
 				null, Utils.format("&2Gems: &a350"));
 	}
 	public static ItemStack golem() {
@@ -5363,8 +5368,10 @@ public class GameItems {
 					return gcarrot();
 				else if (chance < .4)
 					return gapple();
-				else if (chance < .475)
+				else if (chance < .45)
 					return health2();
+				else if (chance < .475)
+					return health3();
 				else if (chance < .525)
 					return speed2();
 				else if (chance < .575)
@@ -5393,8 +5400,10 @@ public class GameItems {
 					return egapple();
 				else if (chance < .45)
 					return totem();
-				else if (chance < .525)
+				else if (chance < .5)
 					return health2();
+				else if (chance < .525)
+					return health3();
 				else if (chance < .575)
 					return speed2();
 				else if (chance < .625)
@@ -5419,8 +5428,10 @@ public class GameItems {
 					return egapple();
 				else if (chance < .45)
 					return totem();
-				else if (chance < .525)
+				else if (chance < .49)
 					return health2();
+				else if (chance < .525)
+					return health3();
 				else if (chance < .575)
 					return speed2();
 				else if (chance < .625)

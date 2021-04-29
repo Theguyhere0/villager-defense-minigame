@@ -633,9 +633,8 @@ public class InventoryEvents implements Listener {
 			else if (buttonName.contains("CANCEL")) {
 				if (arenaInstance.getName() == null) {
 					game.arenas.set(meta.getInteger1(), null);
-					arenaInstance.remove();
-				}
-				player.openInventory(inv.createArenasInventory());
+					openInv(player, inv.createArenasInventory());
+				} else openInv(player, inv.createArenaInventory(meta.getInteger1()));
 			}
 		}
 
@@ -768,7 +767,7 @@ public class InventoryEvents implements Listener {
 			}
 
 			// Confirm to remove leaderboard
-			if (title.contains("Remove Leaderboard?")) {
+			else if (title.contains("Remove Leaderboard?")) {
 				// Return to previous menu
 				if (buttonName.contains("NO"))
 					player.openInventory(inv.createPortalInventory(meta.getInteger1()));
@@ -1077,7 +1076,7 @@ public class InventoryEvents implements Listener {
 			else if (buttonName.contains("REMOVE PORTAL"))
 				if (arenaInstance.getPortal() != null)
 					if (arenaInstance.isClosed())
-						player.openInventory(inv.createPortalConfirmInventory());
+						player.openInventory(inv.createPortalConfirmInventory(meta.getInteger1()));
 					else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 				else player.sendMessage(Utils.notify("&cNo portal to remove!"));
 
@@ -1120,7 +1119,7 @@ public class InventoryEvents implements Listener {
 			// Remove leaderboard
 			else if (buttonName.contains("REMOVE LEADERBOARD"))
 				if (arenaInstance.getArenaBoard() != null)
-					player.openInventory(inv.createArenaBoardConfirmInventory());
+					player.openInventory(inv.createArenaBoardConfirmInventory(meta.getInteger1()));
 				else player.sendMessage(Utils.notify("&cNo leaderboard to remove!"));
 
 			// Exit menu
@@ -1224,7 +1223,7 @@ public class InventoryEvents implements Listener {
 			else if (buttonName.contains("REMOVE"))
 				if (arenaInstance.getPlayerSpawn() != null)
 					if (arenaInstance.isClosed())
-						player.openInventory(inv.createSpawnConfirmInventory());
+						player.openInventory(inv.createSpawnConfirmInventory(meta.getInteger1()));
 					else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 				else player.sendMessage(Utils.notify("&cNo player spawn to remove!"));
 
@@ -1281,7 +1280,7 @@ public class InventoryEvents implements Listener {
 			else if (buttonName.contains("REMOVE"))
 				if (arenaInstance.getWaitingRoom() != null)
 					if (arenaInstance.isClosed())
-						player.openInventory(inv.createWaitingConfirmInventory());
+						player.openInventory(inv.createWaitingConfirmInventory(meta.getInteger1()));
 					else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 				else player.sendMessage(Utils.notify("&cNo waiting room to remove!"));
 
@@ -1588,7 +1587,8 @@ public class InventoryEvents implements Listener {
 			else if (buttonName.contains("REMOVE"))
 				if (arenaInstance.getMonsterSpawn(meta.getInteger2()) != null)
 					if (arenaInstance.isClosed())
-						player.openInventory(inv.createMonsterSpawnConfirmInventory());
+						player.openInventory(inv.createMonsterSpawnConfirmInventory(meta.getInteger1(),
+								meta.getInteger2()));
 					else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 				else player.sendMessage(Utils.notify("&cNo monster spawn to remove!"));
 
@@ -1657,7 +1657,8 @@ public class InventoryEvents implements Listener {
 			else if (buttonName.contains("REMOVE"))
 				if (arenaInstance.getVillagerSpawn(meta.getInteger2()) != null)
 					if (arenaInstance.isClosed())
-						player.openInventory(inv.createVillagerSpawnConfirmInventory());
+						player.openInventory(inv.createVillagerSpawnConfirmInventory(meta.getInteger1(),
+								meta.getInteger2()));
 					else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 				else player.sendMessage(Utils.notify("&cNo villager spawn to remove!"));
 
@@ -1988,7 +1989,7 @@ public class InventoryEvents implements Listener {
 				// Check if max waves is unlimited
 				if (current == -1)
 					arenaInstance.setMaxWaves(1);
-				else arenaInstance.setMaxPlayers(++current);
+				else arenaInstance.setMaxWaves(++current);
 
 				player.openInventory(inv.createMaxWaveInventory(meta.getInteger1()));
 				portal.refreshHolo(meta.getInteger1(), game);
@@ -2348,6 +2349,7 @@ public class InventoryEvents implements Listener {
 				// Copy settings from another arena
 				if (buttonType == Material.WHITE_CONCRETE)
 					arena1.copy(arena2);
+				else return;
 			}
 
 			// Copy easy preset
@@ -2763,10 +2765,8 @@ public class InventoryEvents implements Listener {
 		if (title.contains("Arena ")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			Arena arena = game.arenas.get(meta.getInteger1());
-			if (arena.getName() == null) {
+			if (arena.getName() == null)
 				game.arenas.set(meta.getInteger1(), null);
-				arena.remove();
-			}
 		}
 	}
 

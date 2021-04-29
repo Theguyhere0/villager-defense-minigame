@@ -790,7 +790,7 @@ public class Arena {
 
     public Inventory getCustomShopEditor() {
         // Create inventory
-        Inventory inv = Bukkit.createInventory(null, 54, Utils.format("&k") +
+        Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54, Utils.format("&k") +
                 Utils.format("&6&lCustom Shop Editor: " + getName()));
 
         // Set exit option
@@ -810,7 +810,7 @@ public class Arena {
 
     public Inventory getCustomShop() {
         // Create inventory
-        Inventory inv = Bukkit.createInventory(null, 54, Utils.format("&k") +
+        Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54, Utils.format("&k") +
                 Utils.format("&6&lCustom Shop"));
 
         // Set exit option
@@ -848,7 +848,7 @@ public class Arena {
 
     public Inventory getMockCustomShop() {
         // Create inventory
-        Inventory inv = Bukkit.createInventory(null, 54, Utils.format("&k") +
+        Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54, Utils.format("&k") +
                 Utils.format("&6&lCustom Shop: " + getName()));
 
         // Set exit option
