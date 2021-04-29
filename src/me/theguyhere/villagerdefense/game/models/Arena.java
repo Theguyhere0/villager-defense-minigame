@@ -14,19 +14,19 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Arena {
     private final Main plugin;
-
-    // Persistent data
     private final int arena; // Arena number
     private final FileConfiguration config; // Shortcut for file configuration of arena file
     private final String path; // Shortcut for the arena path in the arena file
-
-    // Temporary data
     private final Tasks task; // The tasks object for the arena
+
     private boolean caps; // Indicates whether the naming inventory has caps lock on
     private boolean active; // Indicates whether the arena has a game ongoing
     private boolean spawning; // Indicates whether the arena is in the process of spawning mobs
@@ -94,6 +94,24 @@ public class Arena {
 
     public void setMinPlayers(int minPlayers) {
         config.set(path + ".min", minPlayers);
+        plugin.saveArenaData();
+    }
+
+    public int getWolfCap() {
+        return config.getInt(path + ".wolf");
+    }
+
+    public void setWolfCap(int wolfCap) {
+        config.set(path + ".wolf", wolfCap);
+        plugin.saveArenaData();
+    }
+
+    public int getGolemCap() {
+        return config.getInt(path + ".golem");
+    }
+
+    public void setgolemCap(int golemCap) {
+        config.set(path + ".golem", golemCap);
         plugin.saveArenaData();
     }
 
@@ -299,7 +317,7 @@ public class Arena {
         if (option.equals("custom"))
             file = "a" + arena + ".yml";
 
-        if (new File(plugin.getDataFolder().getPath() + "spawnTables/" + file).exists()) {
+        if (new File(plugin.getDataFolder().getPath(), "spawnTables/" + file).exists()) {
             config.set(path + ".spawnTable", option);
             plugin.saveArenaData();
             return true;
@@ -437,6 +455,24 @@ public class Arena {
 
     public void setCustom(boolean bool) {
         config.set(path + ".custom", bool);
+        plugin.saveArenaData();
+    }
+
+    public boolean hasGemDrop() {
+        return config.getBoolean(path + ".gemDrop");
+    }
+
+    public void setGemDrop(boolean bool) {
+        config.set(path + ".gemDrop", bool);
+        plugin.saveArenaData();
+    }
+
+    public boolean hasExpDrop() {
+        return config.getBoolean(path + ".expDrop");
+    }
+
+    public void setExpDrop(boolean bool) {
+        config.set(path + ".expDrop", bool);
         plugin.saveArenaData();
     }
 
@@ -754,7 +790,7 @@ public class Arena {
 
     public Inventory getCustomShopEditor() {
         // Create inventory
-        Inventory inv = Bukkit.createInventory(null, 54, Utils.format("&k") +
+        Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54, Utils.format("&k") +
                 Utils.format("&6&lCustom Shop Editor: " + getName()));
 
         // Set exit option
@@ -774,7 +810,7 @@ public class Arena {
 
     public Inventory getCustomShop() {
         // Create inventory
-        Inventory inv = Bukkit.createInventory(null, 54, Utils.format("&k") +
+        Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54, Utils.format("&k") +
                 Utils.format("&6&lCustom Shop"));
 
         // Set exit option
@@ -812,7 +848,7 @@ public class Arena {
 
     public Inventory getMockCustomShop() {
         // Create inventory
-        Inventory inv = Bukkit.createInventory(null, 54, Utils.format("&k") +
+        Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54, Utils.format("&k") +
                 Utils.format("&6&lCustom Shop: " + getName()));
 
         // Set exit option

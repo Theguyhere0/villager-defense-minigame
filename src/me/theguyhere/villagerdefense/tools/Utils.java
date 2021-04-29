@@ -275,12 +275,16 @@ public class Utils {
 
     // Sets the location data to a configuration path
     public static void setConfigurationLocation(Main plugin, String path, Location location) {
-        plugin.getArenaData().set(path + ".world", location.getWorld().getName());
-        plugin.getArenaData().set(path + ".x", location.getX());
-        plugin.getArenaData().set(path + ".y", location.getY());
-        plugin.getArenaData().set(path + ".z", location.getZ());
-        plugin.getArenaData().set(path + ".pitch", location.getPitch());
-        plugin.getArenaData().set(path + ".yaw", location.getYaw());
+        if (location == null)
+            plugin.getArenaData().set(path, location);
+        else {
+            plugin.getArenaData().set(path + ".world", location.getWorld().getName());
+            plugin.getArenaData().set(path + ".x", location.getX());
+            plugin.getArenaData().set(path + ".y", location.getY());
+            plugin.getArenaData().set(path + ".z", location.getZ());
+            plugin.getArenaData().set(path + ".pitch", location.getPitch());
+            plugin.getArenaData().set(path + ".yaw", location.getYaw());
+        }
         plugin.saveArenaData();
     }
 

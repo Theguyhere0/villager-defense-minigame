@@ -21,7 +21,6 @@ public class CommandTab implements TabCompleter {
             for (String a : arguments)
                 if (a.toLowerCase().startsWith(args[0].toLowerCase()))
                     result.add(a);
-            return result;
         } else if (args[0].equalsIgnoreCase("stats") || args[0].equalsIgnoreCase("crystals")
                 && args.length == 2) {
             Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).forEach(name -> {
@@ -30,6 +29,6 @@ public class CommandTab implements TabCompleter {
             });
         }
 
-        return null;
+        return result;
     }
 }

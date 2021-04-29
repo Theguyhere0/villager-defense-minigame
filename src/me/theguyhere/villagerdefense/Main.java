@@ -87,7 +87,7 @@ public class Main extends JavaPlugin {
 		arenaBoard.loadArenaBoards();
 
 		int configVersion = 6;
-		int arenaDataVersion = 2;
+		int arenaDataVersion = 3;
 		int playerDataVersion = 1;
 		int spawnTableVersion = 1;
 		int languageFileVersion = 2;
@@ -141,14 +141,15 @@ public class Main extends JavaPlugin {
 					"Please do not update your config.yml unless your default.yml has been updated.");
 		}
 
-		// Check if the language file has been updated
+		// Check if language files are outdated
 		if (getConfig().getInt("languageFile") < languageFileVersion) {
-			getServer().getConsoleSender().sendMessage("[VillagerDefense] " +
+			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
 					"You language files are no longer supported with this version!");
-			getServer().getConsoleSender().sendMessage("[VillagerDefense] " +
-					"Please update en_US.yml and update any other language files.");
-			getServer().getConsoleSender().sendMessage("[VillagerDefense] " +
-					"Please do not update your config.yml unless your language files been updated.");
+			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
+					"Please update en_US.yml and update any other language files to version " + languageFileVersion +
+					".");
+			getServer().getConsoleSender().sendMessage(ChatColor.RED +  "[VillagerDefense] " +
+					"Please do not update your config.yml until your language files have been updated.");
 		}
 	}
 

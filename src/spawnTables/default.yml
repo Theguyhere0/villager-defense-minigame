@@ -543,6 +543,571 @@
     evok: 2
     hgln: 4
     rvgr: 1
-
-
-
+'41':
+  count:
+    v: 20
+    m: 58
+  mtypes:
+    zomb: 2
+    husk: 2
+    wskl: 2
+    brut: 3
+    vind: 8
+    spid: 2
+    cspd: 2
+    wtch: 5
+    skel: 2
+    stry: 2
+    drwd: 9
+    blze: 2
+    ghst: 5
+    pill: 8
+    slim: 1
+    mslm: 1
+    crpr: 2
+    phtm: 2
+    evok: 2
+    hgln: 4
+    rvgr: 1
+'42':
+  count:
+    v: 20
+    m: 60
+  mtypes:
+    zomb: 2
+    husk: 2
+    wskl: 2
+    brut: 3
+    vind: 8
+    spid: 2
+    cspd: 2
+    wtch: 5
+    skel: 2
+    stry: 2
+    drwd: 9
+    blze: 2
+    ghst: 5
+    pill: 8
+    slim: 1
+    mslm: 1
+    crpr: 2
+    phtm: 2
+    evok: 2
+    hgln: 4
+    rvgr: 1
+'43':
+  count:
+    v: 20
+    m: 62
+  mtypes:
+    zomb: 2
+    husk: 2
+    wskl: 2
+    brut: 3
+    vind: 8
+    spid: 2
+    cspd: 2
+    wtch: 5
+    skel: 2
+    stry: 2
+    drwd: 9
+    blze: 2
+    ghst: 5
+    pill: 8
+    slim: 1
+    mslm: 1
+    crpr: 2
+    phtm: 2
+    evok: 2
+    hgln: 4
+    rvgr: 1
+'44':
+  count:
+    v: 20
+    m: 50
+  mtypes:
+    zomb: 2
+    husk: 2
+    wskl: 2
+    brut: 3
+    vind: 8
+    spid: 2
+    cspd: 2
+    wtch: 5
+    skel: 2
+    stry: 2
+    drwd: 9
+    blze: 2
+    ghst: 5
+    pill: 8
+    slim: 10
+    mslm: 10
+    crpr: 2
+    phtm: 2
+    evok: 2
+    hgln: 4
+    rvgr: 1
+'45':
+  count:
+    v: 20
+    m: 30
+    b: 1
+  mtypes:
+    zomb: 2
+    husk: 2
+    wskl: 2
+    brut: 3
+    vind: 8
+    spid: 2
+    cspd: 2
+    wtch: 5
+    skel: 2
+    stry: 2
+    drwd: 9
+    blze: 2
+    ghst: 5
+    pill: 8
+    slim: 1
+    mslm: 1
+    crpr: 2
+    phtm: 2
+    evok: 2
+    hgln: 4
+    rvgr: 1
+  btypes:
+    w: 1
+'46':
+  count:
+    v: 21
+    m: 65
+  mtypes:
+    zomb: 1
+    husk: 1
+    wskl: 2
+    brut: 3
+    vind: 8
+    spid: 2
+    cspd: 2
+    wtch: 5
+    skel: 2
+    stry: 2
+    drwd: 9
+    blze: 2
+    ghst: 5
+    pill: 8
+    slim: 1
+    mslm: 1
+    crpr: 2
+    phtm: 2
+    evok: 2
+    hgln: 4
+    rvgr: 3
+'47':
+  count:
+    v: 21
+    m: 68
+  mtypes:
+    zomb: 1
+    husk: 1
+    wskl: 2
+    brut: 3
+    vind: 8
+    spid: 1
+    cspd: 1
+    wtch: 5
+    skel: 1
+    stry: 2
+    drwd: 8
+    blze: 1
+    ghst: 3
+    pill: 8
+    slim: 1
+    mslm: 1
+    crpr: 2
+    phtm: 2
+    evok: 2
+    hgln: 4
+    rvgr: 4
+'48':
+  count:
+    v: 22
+    m: 40
+    b: 1
+  mtypes:
+    zomb: 1
+    husk: 1
+    wskl: 2
+    brut: 3
+    vind: 8
+    spid: 1
+    cspd: 1
+    wtch: 5
+    skel: 1
+    stry: 2
+    drwd: 8
+    blze: 1
+    ghst: 3
+    pill: 8
+    slim: 1
+    mslm: 1
+    crpr: 2
+    phtm: 2
+    evok: 2
+    hgln: 4
+    rvgr: 2
+  btypes:
+    w: 1
+'49':
+  count:
+    v: 22
+    m: 70
+  mtypes:
+    zomb: 1
+    husk: 1
+    wskl: 2
+    brut: 3
+    vind: 8
+    spid: 1
+    cspd: 1
+    wtch: 5
+    skel: 1
+    stry: 2
+    drwd: 8
+    blze: 1
+    ghst: 3
+    pill: 8
+    slim: 1
+    mslm: 1
+    crpr: 2
+    phtm: 2
+    evok: 2
+    hgln: 4
+    rvgr: 4
+'50':
+  count:
+    v: 23
+    m: 35
+    b: 2
+  mtypes:
+    zomb: 1
+    husk: 1
+    wskl: 2
+    brut: 3
+    vind: 8
+    spid: 1
+    cspd: 1
+    wtch: 5
+    skel: 1
+    stry: 2
+    drwd: 8
+    blze: 1
+    ghst: 3
+    pill: 8
+    slim: 1
+    mslm: 1
+    crpr: 2
+    phtm: 2
+    evok: 2
+    hgln: 4
+    rvgr: 2
+  btypes:
+    w: 1
+'51':
+  count:
+    v: 23
+    m: 70
+  mtypes:
+    zomb: 1
+    husk: 1
+    wskl: 2
+    brut: 3
+    vind: 8
+    spid: 1
+    cspd: 1
+    wtch: 5
+    skel: 1
+    stry: 2
+    drwd: 8
+    blze: 1
+    ghst: 3
+    pill: 8
+    slim: 1
+    mslm: 1
+    crpr: 2
+    phtm: 2
+    evok: 2
+    hgln: 4
+    rvgr: 4
+'52':
+  count:
+    v: 23
+    m: 38
+    b: 2
+  mtypes:
+    zomb: 1
+    husk: 1
+    wskl: 2
+    brut: 3
+    vind: 8
+    spid: 1
+    cspd: 1
+    wtch: 5
+    skel: 1
+    stry: 2
+    drwd: 8
+    blze: 1
+    ghst: 3
+    pill: 8
+    slim: 1
+    mslm: 1
+    crpr: 2
+    phtm: 2
+    evok: 2
+    hgln: 4
+    rvgr: 2
+  btypes:
+    w: 1
+'53':
+  count:
+    v: 23
+    m: 60
+  mtypes:
+    zomb: 1
+    husk: 1
+    wskl: 2
+    brut: 3
+    vind: 8
+    spid: 1
+    cspd: 1
+    wtch: 5
+    skel: 1
+    stry: 2
+    drwd: 8
+    blze: 1
+    ghst: 3
+    pill: 8
+    slim: 1
+    mslm: 1
+    crpr: 2
+    phtm: 2
+    evok: 2
+    hgln: 4
+    rvgr: 4
+'54':
+  count:
+    v: 23
+    m: 50
+  mtypes:
+    zomb: 1
+    husk: 1
+    wskl: 2
+    brut: 3
+    vind: 8
+    spid: 1
+    cspd: 1
+    wtch: 5
+    skel: 1
+    stry: 2
+    drwd: 8
+    blze: 1
+    ghst: 3
+    pill: 8
+    slim: 10
+    mslm: 10
+    crpr: 2
+    phtm: 2
+    evok: 2
+    hgln: 4
+    rvgr: 4
+'55':
+  count:
+    v: 23
+    m: 38
+    b: 3
+  mtypes:
+    zomb: 1
+    husk: 1
+    wskl: 2
+    brut: 3
+    vind: 8
+    spid: 1
+    cspd: 1
+    wtch: 5
+    skel: 1
+    stry: 2
+    drwd: 8
+    blze: 1
+    ghst: 3
+    pill: 8
+    slim: 1
+    mslm: 1
+    crpr: 2
+    phtm: 2
+    evok: 2
+    hgln: 4
+    rvgr: 2
+  btypes:
+    w: 1
+'56':
+  count:
+    v: 23
+    m: 70
+  mtypes:
+    zomb: 1
+    husk: 1
+    wskl: 2
+    brut: 3
+    vind: 8
+    spid: 1
+    cspd: 1
+    wtch: 5
+    skel: 1
+    stry: 2
+    drwd: 8
+    blze: 1
+    ghst: 3
+    pill: 8
+    slim: 1
+    mslm: 1
+    crpr: 2
+    phtm: 2
+    evok: 2
+    hgln: 4
+    rvgr: 4
+'57':
+  count:
+    v: 24
+    m: 70
+  mtypes:
+    zomb: 1
+    husk: 1
+    wskl: 2
+    brut: 3
+    vind: 8
+    spid: 1
+    cspd: 1
+    wtch: 5
+    skel: 1
+    stry: 2
+    drwd: 8
+    blze: 1
+    ghst: 2
+    pill: 6
+    slim: 1
+    mslm: 1
+    crpr: 2
+    phtm: 1
+    evok: 2
+    hgln: 4
+    rvgr: 4
+'58':
+  count:
+    v: 24
+    m: 38
+    b: 3
+  mtypes:
+    zomb: 1
+    husk: 1
+    wskl: 2
+    brut: 3
+    vind: 8
+    spid: 1
+    cspd: 1
+    wtch: 5
+    skel: 1
+    stry: 2
+    drwd: 8
+    blze: 1
+    ghst: 2
+    pill: 6
+    slim: 1
+    mslm: 1
+    crpr: 2
+    phtm: 1
+    evok: 2
+    hgln: 4
+    rvgr: 4
+  btypes:
+    w: 1
+'59':
+  count:
+    v: 24
+    m: 55
+  mtypes:
+    zomb: 10
+    husk: 1
+    wskl: 2
+    brut: 3
+    vind: 8
+    spid: 1
+    cspd: 1
+    wtch: 5
+    skel: 1
+    stry: 2
+    drwd: 8
+    blze: 1
+    ghst: 2
+    pill: 6
+    slim: 10
+    mslm: 10
+    crpr: 2
+    phtm: 1
+    evok: 2
+'60':
+  count:
+    v: 25
+    m: 40
+    b: 4
+  mtypes:
+    zomb: 1
+    husk: 1
+    wskl: 2
+    brut: 3
+    vind: 8
+    spid: 1
+    cspd: 1
+    wtch: 5
+    skel: 1
+    stry: 2
+    drwd: 8
+    blze: 1
+    ghst: 2
+    pill: 6
+    slim: 1
+    mslm: 1
+    crpr: 2
+    phtm: 1
+    evok: 2
+    hgln: 4
+    rvgr: 4
+  btypes:
+    w: 1
+freePlay:
+  count:
+    v: 25
+    m: 45
+    b: 4
+  mtypes:
+    zomb: 1
+    husk: 1
+    wskl: 2
+    brut: 3
+    vind: 8
+    spid: 1
+    cspd: 1
+    wtch: 5
+    skel: 1
+    stry: 2
+    drwd: 8
+    blze: 1
+    ghst: 2
+    pill: 6
+    slim: 1
+    mslm: 1
+    crpr: 2
+    phtm: 1
+    evok: 2
+    hgln: 4
+    rvgr: 4
+  btypes:
+    w: 1

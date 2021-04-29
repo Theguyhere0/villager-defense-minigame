@@ -232,8 +232,7 @@ public class ArenaEvents implements Listener {
         plugin.savePlayerData();
 
         // Win condition
-        if (arena.getCurrentWave() == arena.getMaxWaves() ||
-                !data.getConfig().contains(Integer.toString(arena.getCurrentWave() + 1))) {
+        if (arena.getCurrentWave() == arena.getMaxWaves()) {
             arena.incrementCurrentWave();
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
                     Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
@@ -271,6 +270,7 @@ public class ArenaEvents implements Listener {
         // Spawn mobs
         spawnVillagers(arena);
         spawnMonsters(arena);
+        spawnBosses(arena);
     }
 
     @EventHandler
@@ -448,9 +448,6 @@ public class ArenaEvents implements Listener {
     private void spawnVillagers(Arena arena) {
         DataManager data;
 
-        // Put arena in spawning state
-        arena.setSpawning(true);
-
         // Get spawn table
         if (arena.getSpawnTableFile().equals("custom"))
             data = new DataManager(plugin, "spawnTables/a" + arena.getArena() + ".yml");
@@ -458,13 +455,18 @@ public class ArenaEvents implements Listener {
 
         Random r = new Random();
         int delay = 0;
+        String wave = Integer.toString(arena.getCurrentWave());
+        if (!data.getConfig().contains(wave))
+            if (data.getConfig().contains("freePlay"))
+                wave = "freePlay";
+            else wave = "1";
 
         // Get count multiplier
         double countMultiplier = Math.log((arena.getActiveCount() + 7) / 10d) + 1;
         if (!arena.hasDynamicCount())
             countMultiplier = 1;
 
-        int toSpawn = (int) (data.getConfig().getInt(arena.getCurrentWave() + ".count.v") * countMultiplier)
+        int toSpawn = (int) (data.getConfig().getInt(wave + ".count.v") * countMultiplier)
                 - arena.getVillagers();
         List<Location> spawns = arena.getVillagerSpawns();
 
@@ -474,15 +476,17 @@ public class ArenaEvents implements Listener {
                     (Villager) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.VILLAGER)
             ), delay);
             delay += r.nextInt(spawnDelay(i));
+
+            // Manage spawning state
+            if (i + 1 >= toSpawn)
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawning(false), delay);
+            else Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawning(true), delay);
         }
     }
 
     // Spawns monsters randomly
     private void spawnMonsters(Arena arena) {
         DataManager data;
-
-        // Put the arena in spawning state
-        arena.setSpawning(true);
 
         // Get spawn table
         if (arena.getSpawnTableFile().equals("custom"))
@@ -491,7 +495,15 @@ public class ArenaEvents implements Listener {
 
         Random r = new Random();
         int delay = 0;
-        int wave = arena.getCurrentWave();
+        String wave = Integer.toString(arena.getCurrentWave());
+        if (!data.getConfig().contains(wave))
+            if (data.getConfig().contains("freePlay"))
+                wave = "freePlay";
+            else wave = "1";
+
+        // Check for greater than 0 count
+        if (data.getConfig().getInt(wave + ".count.m") == 0)
+            return;
 
         // Calculate count multiplier
         double countMultiplier = Math.log((arena.getActiveCount() + 7) / 10d) + 1;
@@ -628,9 +640,64 @@ public class ArenaEvents implements Listener {
                     ), delay);
             }
 
-            // Bring arena out of spawning state
+            // Manage spawning state
             if (i + 1 >= (int) (data.getConfig().getInt(wave + ".count.m") * countMultiplier))
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawning(false), delay);
+            else Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawning(true), delay);
+        }
+    }
+
+    // Spawns bosses randomly
+    private void spawnBosses(Arena arena) {
+        DataManager data;
+
+        // Get spawn table
+        if (arena.getSpawnTableFile().equals("custom"))
+            data = new DataManager(plugin, "spawnTables/a" + arena.getArena() + ".yml");
+        else data = new DataManager(plugin, "spawnTables/" + arena.getSpawnTableFile() + ".yml");
+
+        Random r = new Random();
+        int delay = 0;
+        String wave = Integer.toString(arena.getCurrentWave());
+        if (!data.getConfig().contains(wave))
+            if (data.getConfig().contains("freePlay"))
+                wave = "freePlay";
+            else wave = "1";
+
+        // Check for greater than 0 count
+        if (data.getConfig().getInt(wave + ".count.b") == 0)
+            return;
+
+        String path = wave + ".btypes";
+        List<Location> spawns = arena.getMonsterSpawns();
+        List<String> typeRatio = new ArrayList<>();
+
+        // Get monster type ratio
+        data.getConfig().getConfigurationSection(path).getKeys(false)
+                .forEach(type -> {
+                    for (int i = 0; i < data.getConfig().getInt(path + "." + type); i++)
+                        typeRatio.add(type);
+                });
+
+        // Spawn bosses
+        for (int i = 0; i < data.getConfig().getInt(wave + ".count.b"); i++) {
+            Location spawn = spawns.get(r.nextInt(spawns.size()));
+
+            // Update delay
+            delay += r.nextInt(spawnDelay(i)) * 10;
+
+            switch (typeRatio.get(r.nextInt(typeRatio.size()))) {
+                case "w":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setWither(plugin, arena,
+                            (Wither) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.WITHER)
+                    ), delay);
+                    break;
+            }
+
+            // Manage spawning state
+            if (i + 1 >= data.getConfig().getInt(wave + ".count.b"))
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawning(false), delay);
+            else Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawning(true), delay);
         }
     }
 
