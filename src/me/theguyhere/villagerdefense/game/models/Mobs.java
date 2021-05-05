@@ -1011,14 +1011,14 @@ public class Mobs {
         setMinion(plugin, arena, zombie);
         setSword(arena, zombie);
         setArmor(arena, zombie);
-        zombie.setConversionTime(-1);
+        zombie.setConversionTime(Utils.secondsToTicks(Utils.minutesToSeconds(20)));
     }
 
     public static void setHusk(Main plugin, Arena arena, Husk husk) {
         setMinion(plugin, arena, husk);
         setSword(arena, husk);
         setArmor(arena, husk);
-        husk.setConversionTime(-1);
+        husk.setConversionTime(Utils.secondsToTicks(Utils.minutesToSeconds(20)));
     }
 
     public static void setWitherSkeleton(Main plugin, Arena arena, WitherSkeleton witherSkeleton) {
@@ -1031,7 +1031,7 @@ public class Mobs {
         setMinion(plugin, arena, brute);
         setAxe(arena, brute);
         setArmor(arena, brute);
-        brute.setConversionTime(-1);
+        brute.setImmuneToZombification(true);
     }
 
     public static void setVindicator(Main plugin, Arena arena, Vindicator vindicator) {
