@@ -160,11 +160,17 @@ public class InventoryEvents implements Listener {
 
 			// Create lobby
 			if (buttonName.contains("Create Lobby")) {
-				if (!config.contains(path)) {
-					Utils.setConfigurationLocation(plugin, path, player.getLocation());
-					game.reloadLobby();
-					player.sendMessage(Utils.notify("&aLobby set!"));
-				} else player.sendMessage(Utils.notify("&cLobby already exists!"));
+				Utils.setConfigurationLocation(plugin, path, player.getLocation());
+				game.reloadLobby();
+				player.sendMessage(Utils.notify("&aLobby set!"));
+				player.openInventory(inv.createLobbyInventory());
+			}
+
+			// Relocate lobby
+			else if (buttonName.contains("Relocate Lobby")) {
+				Utils.setConfigurationLocation(plugin, path, player.getLocation());
+				game.reloadLobby();
+				player.sendMessage(Utils.notify("&aLobby relocated!"));
 			}
 
 			// Teleport player to lobby
@@ -214,15 +220,22 @@ public class InventoryEvents implements Listener {
 		// Info board menu for a specific board
 		else if (title.contains("Info Board ")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
-			String path = "infoBoard." + meta.getInteger1();
+			int num = meta.getInteger1();
+			String path = "infoBoard." + num;
 
 			// Create board
-			if (buttonName.contains("Create"))
-				if (!config.contains(path)) {
-					infoBoard.createInfoBoard(player, meta.getInteger1());
-					player.sendMessage(Utils.notify("&aInfo board set!"));
-				} else player.sendMessage(Utils.notify("&cInfo board already exists!"));
+			if (buttonName.contains("Create")) {
+				infoBoard.createInfoBoard(player, num);
+				player.sendMessage(Utils.notify("&aInfo board set!"));
+				player.openInventory(inv.createInfoBoardMenu(num));
+			}
 
+			// Relocate board
+			else if (buttonName.contains("Relocate")) {
+				Utils.setConfigurationLocation(plugin, path, player.getLocation());
+				infoBoard.refreshInfoBoard(num);
+				player.sendMessage(Utils.notify("&aInfo board relocated!"));
+			}
 
 			// Teleport player to info board
 			else if (buttonName.contains("Teleport")) {
@@ -237,20 +250,19 @@ public class InventoryEvents implements Listener {
 
 			// Center info board
 			else if (buttonName.contains("Center")) {
-				Location location = Utils.getConfigLocationNoRotation(plugin, path);
-				if (location == null) {
+				if (Utils.getConfigLocationNoRotation(plugin, path) == null) {
 					player.sendMessage(Utils.notify("&cNo info board to center!"));
 					return;
 				}
 				Utils.centerConfigLocation(plugin, path);
-				infoBoard.refreshInfoBoard(meta.getInteger1());
+				infoBoard.refreshInfoBoard(num);
 				player.sendMessage(Utils.notify("&aInfo board centered!"));
 			}
 
 			// Remove info board
 			else if (buttonName.contains("REMOVE"))
 				if (config.contains(path))
-					player.openInventory(inv.createInfoBoardConfirmInventory(meta.getInteger1()));
+					player.openInventory(inv.createInfoBoardConfirmInventory(num));
 				else player.sendMessage(Utils.notify("&cNo info board to remove!"));
 
 			// Exit menu
@@ -286,10 +298,16 @@ public class InventoryEvents implements Listener {
 
 			// Create leaderboard
 			if (buttonName.contains("Create")) {
-				if (!config.contains(path)) {
-					leaderboard.createLeaderboard(player, "totalKills");
-					player.sendMessage(Utils.notify("&aLeaderboard set!"));
-				} else player.sendMessage(Utils.notify("&cLeaderboard already exists!"));
+				leaderboard.createLeaderboard(player, "totalKills");
+				player.sendMessage(Utils.notify("&aLeaderboard set!"));
+				player.openInventory(inv.createTotalKillsLeaderboardInventory());
+			}
+
+			// Relocate leaderboard
+			else if (buttonName.contains("Relocate")) {
+				Utils.setConfigurationLocation(plugin, path, player.getLocation());
+				leaderboard.refreshLeaderboard("totalKills");
+				player.sendMessage(Utils.notify("&aLeaderboard relocated!"));
 			}
 
 			// Teleport player to leaderboard
@@ -332,10 +350,16 @@ public class InventoryEvents implements Listener {
 
 			// Create leaderboard
 			if (buttonName.contains("Create")) {
-				if (!config.contains(path)) {
-					leaderboard.createLeaderboard(player, "topKills");
-					player.sendMessage(Utils.notify("&aLeaderboard set!"));
-				} else player.sendMessage(Utils.notify("&cLeaderboard already exists!"));
+				leaderboard.createLeaderboard(player, "topKills");
+				player.sendMessage(Utils.notify("&aLeaderboard set!"));
+				player.openInventory(inv.createTopKillsLeaderboardInventory());
+			}
+
+			// Relocate leaderboard
+			else if (buttonName.contains("Relocate")) {
+				Utils.setConfigurationLocation(plugin, path, player.getLocation());
+				leaderboard.refreshLeaderboard("topKills");
+				player.sendMessage(Utils.notify("&aLeaderboard relocated!"));
 			}
 
 			// Teleport player to leaderboard
@@ -378,10 +402,16 @@ public class InventoryEvents implements Listener {
 
 			// Create leaderboard
 			if (buttonName.contains("Create")) {
-				if (!config.contains(path)) {
-					leaderboard.createLeaderboard(player, "totalGems");
-					player.sendMessage(Utils.notify("&aLeaderboard set!"));
-				} else player.sendMessage(Utils.notify("&cLeaderboard already exists!"));
+				leaderboard.createLeaderboard(player, "totalGems");
+				player.sendMessage(Utils.notify("&aLeaderboard set!"));
+				player.openInventory(inv.createTotalGemsLeaderboardInventory());
+			}
+
+			// Relocate leaderboard
+			else if (buttonName.contains("Relocate")) {
+				Utils.setConfigurationLocation(plugin, path, player.getLocation());
+				leaderboard.refreshLeaderboard("totalGems");
+				player.sendMessage(Utils.notify("&aLeaderboard relocated!"));
 			}
 
 			// Teleport player to leaderboard
@@ -424,10 +454,16 @@ public class InventoryEvents implements Listener {
 
 			// Create leaderboard
 			if (buttonName.contains("Create")) {
-				if (!config.contains(path)) {
-					leaderboard.createLeaderboard(player, "topBalance");
-					player.sendMessage(Utils.notify("&aLeaderboard set!"));
-				} else player.sendMessage(Utils.notify("&cLeaderboard already exists!"));
+				leaderboard.createLeaderboard(player, "topBalance");
+				player.sendMessage(Utils.notify("&aLeaderboard set!"));
+				player.openInventory(inv.createTopBalanceLeaderboardInventory());
+			}
+
+			// Relocate leaderboard
+			else if (buttonName.contains("Relocate")) {
+				Utils.setConfigurationLocation(plugin, path, player.getLocation());
+				leaderboard.refreshLeaderboard("topBalance");
+				player.sendMessage(Utils.notify("&aLeaderboard relocated!"));
 			}
 
 			// Teleport player to leaderboard
@@ -470,10 +506,16 @@ public class InventoryEvents implements Listener {
 
 			// Create leaderboard
 			if (buttonName.contains("Create")) {
-				if (!config.contains(path)) {
-					leaderboard.createLeaderboard(player, "topWave");
-					player.sendMessage(Utils.notify("&aLeaderboard set!"));
-				} else player.sendMessage(Utils.notify("&cLeaderboard already exists!"));
+				leaderboard.createLeaderboard(player, "topWave");
+				player.sendMessage(Utils.notify("&aLeaderboard set!"));
+				player.openInventory(inv.createTopWaveLeaderboardInventory());
+			}
+
+			// Relocate leaderboard
+			else if (buttonName.contains("Relocate")) {
+				Utils.setConfigurationLocation(plugin, path, player.getLocation());
+				leaderboard.refreshLeaderboard("topWave");
+				player.sendMessage(Utils.notify("&aLeaderboard relocated!"));
 			}
 
 			// Teleport player to leaderboard
@@ -1317,7 +1359,6 @@ public class InventoryEvents implements Listener {
 
 				arenaInstance.setMaxPlayers(--current);
 				player.openInventory(inv.createMaxPlayerInventory(meta.getInteger1()));
-				portal.refreshHolo(meta.getInteger1(), game);
 			}
 
 			// Increase max players
@@ -1330,7 +1371,6 @@ public class InventoryEvents implements Listener {
 
 				arenaInstance.setMaxPlayers(++current);
 				player.openInventory(inv.createMaxPlayerInventory(meta.getInteger1()));
-				portal.refreshHolo(meta.getInteger1(), game);
 			}
 
 			// Exit menu
@@ -1949,7 +1989,6 @@ public class InventoryEvents implements Listener {
 				} else arenaInstance.setMaxWaves(--current);
 
 				player.openInventory(inv.createMaxWaveInventory(meta.getInteger1()));
-				portal.refreshHolo(meta.getInteger1(), game);
 			}
 
 			// Set max waves to unlimited
@@ -1962,7 +2001,6 @@ public class InventoryEvents implements Listener {
 
 				arenaInstance.setMaxWaves(-1);
 				player.openInventory(inv.createMaxWaveInventory(meta.getInteger1()));
-				portal.refreshHolo(meta.getInteger1(), game);
 			}
 
 			// Reset max waves to 1
@@ -1975,7 +2013,6 @@ public class InventoryEvents implements Listener {
 
 				arenaInstance.setMaxWaves(1);
 				player.openInventory(inv.createMaxWaveInventory(meta.getInteger1()));
-				portal.refreshHolo(meta.getInteger1(), game);
 			}
 
 			// Increase max waves
@@ -1992,7 +2029,6 @@ public class InventoryEvents implements Listener {
 				else arenaInstance.setMaxWaves(++current);
 
 				player.openInventory(inv.createMaxWaveInventory(meta.getInteger1()));
-				portal.refreshHolo(meta.getInteger1(), game);
 			}
 
 			// Exit menu
@@ -2025,7 +2061,6 @@ public class InventoryEvents implements Listener {
 				} else arenaInstance.setWaveTimeLimit(--current);
 
 				player.openInventory(inv.createWaveTimeLimitInventory(meta.getInteger1()));
-				portal.refreshHolo(meta.getInteger1(), game);
 			}
 
 			// Set wave time limit to unlimited
@@ -2038,7 +2073,6 @@ public class InventoryEvents implements Listener {
 
 				arenaInstance.setWaveTimeLimit(-1);
 				player.openInventory(inv.createWaveTimeLimitInventory(meta.getInteger1()));
-				portal.refreshHolo(meta.getInteger1(), game);
 			}
 
 			// Reset wave time limit to 1
@@ -2051,7 +2085,6 @@ public class InventoryEvents implements Listener {
 
 				arenaInstance.setWaveTimeLimit(1);
 				player.openInventory(inv.createWaveTimeLimitInventory(meta.getInteger1()));
-				portal.refreshHolo(meta.getInteger1(), game);
 			}
 
 			// Increase wave time limit
@@ -2068,7 +2101,6 @@ public class InventoryEvents implements Listener {
 				else arenaInstance.setWaveTimeLimit(++current);
 
 				player.openInventory(inv.createWaveTimeLimitInventory(meta.getInteger1()));
-				portal.refreshHolo(meta.getInteger1(), game);
 			}
 
 			// Exit menu

@@ -86,8 +86,10 @@ public class Inventories {
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&2&lLobby"));
 
-		// Option to create the lobby
-		inv.setItem(0, InventoryItems.create("Lobby"));
+		// Option to create or relocate the lobby
+		if (Utils.getConfigLocation(plugin, "lobby") == null)
+			inv.setItem(0, InventoryItems.create("Lobby"));
+		else inv.setItem(0, InventoryItems.relocate("Lobby"));
 
 		// Option to teleport to the lobby
 		inv.setItem(2, InventoryItems.teleport("Lobby"));
@@ -150,8 +152,10 @@ public class Inventories {
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(slot), 9, Utils.format("&k") +
 				Utils.format("&6&lInfo Board " + slot));
 
-		// Option to create info board
-		inv.setItem(0, InventoryItems.create("Info Board"));
+		// Option to create or relocate info board
+		if (Utils.getConfigLocation(plugin, "infoBoard." + slot) == null)
+			inv.setItem(0, InventoryItems.create("Info Board"));
+		else inv.setItem(0, InventoryItems.relocate("Info Board"));
 
 		// Option to teleport to info board
 		inv.setItem(2, InventoryItems.teleport("Info Board"));
@@ -217,8 +221,10 @@ public class Inventories {
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&4&lTotal Kills Leaderboard"));
 
-		// Option to create the leaderboard
-		inv.setItem(0, InventoryItems.create("Leaderboard"));
+		// Option to create or relocate the leaderboard
+		if (Utils.getConfigLocation(plugin, "leaderboard.totalKills") == null)
+			inv.setItem(0, InventoryItems.create("Leaderboard"));
+		else inv.setItem(0, InventoryItems.relocate("Leaderboard"));
 
 		// Option to teleport to the leaderboard
 		inv.setItem(2, InventoryItems.teleport("Leaderboard"));
@@ -241,8 +247,10 @@ public class Inventories {
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&c&lTop Kills Leaderboard"));
 
-		// Option to create the leaderboard
-		inv.setItem(0, InventoryItems.create("Leaderboard"));
+		// Option to create or relocate the leaderboard
+		if (Utils.getConfigLocation(plugin, "leaderboard.topKills") == null)
+			inv.setItem(0, InventoryItems.create("Leaderboard"));
+		else inv.setItem(0, InventoryItems.relocate("Leaderboard"));
 
 		// Option to teleport to the leaderboard
 		inv.setItem(2, InventoryItems.teleport("Leaderboard"));
@@ -265,8 +273,10 @@ public class Inventories {
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&2&lTotal Gems Leaderboard"));
 
-		// Option to create the leaderboard
-		inv.setItem(0, InventoryItems.create("Leaderboard"));
+		// Option to create or relocate the leaderboard
+		if (Utils.getConfigLocation(plugin, "leaderboard.totalGems") == null)
+			inv.setItem(0, InventoryItems.create("Leaderboard"));
+		else inv.setItem(0, InventoryItems.relocate("Leaderboard"));
 
 		// Option to teleport to the leaderboard
 		inv.setItem(2, InventoryItems.teleport("Leaderboard"));
@@ -289,8 +299,10 @@ public class Inventories {
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&a&lTop Balance Leaderboard"));
 
-		// Option to create the leaderboard
-		inv.setItem(0, InventoryItems.create("Leaderboard"));
+		// Option to create or relocate the leaderboard
+		if (Utils.getConfigLocation(plugin, "leaderboard.topBalance") == null)
+			inv.setItem(0, InventoryItems.create("Leaderboard"));
+		else inv.setItem(0, InventoryItems.relocate("Leaderboard"));
 
 		// Option to teleport to the leaderboard
 		inv.setItem(2, InventoryItems.teleport("Leaderboard"));
@@ -313,8 +325,10 @@ public class Inventories {
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&9&lTop Wave Leaderboard"));
 
-		// Option to create the leaderboard
-		inv.setItem(0, InventoryItems.create("Leaderboard"));
+		// Option to create or relocate the leaderboard
+		if (Utils.getConfigLocation(plugin, "leaderboard.topWave") == null)
+			inv.setItem(0, InventoryItems.create("Leaderboard"));
+		else inv.setItem(0, InventoryItems.relocate("Leaderboard"));
 
 		// Option to teleport to the leaderboard
 		inv.setItem(2, InventoryItems.teleport("Leaderboard"));

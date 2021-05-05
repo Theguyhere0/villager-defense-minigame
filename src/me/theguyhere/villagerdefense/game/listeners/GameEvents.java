@@ -78,7 +78,7 @@ public class GameEvents implements Listener {
 					Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 			if (arena.hasLoseSound())
 				arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
-						Sound.ENTITY_ENDER_DRAGON_DEATH, 10, 0));
+						Sound.ENTITY_ENDER_DRAGON_DEATH, 10, .5f));
 		}
 
 		// Manage drops and update enemy count, update player kill count
@@ -375,7 +375,7 @@ public class GameEvents implements Listener {
 
 		Player player = (Player) e.getEntity();
 
-		// Check for fall damage
+		// Check for void damage
 		if (!e.getCause().equals(EntityDamageEvent.DamageCause.VOID)) return;
 
 		// Check if player is in a game
@@ -389,8 +389,10 @@ public class GameEvents implements Listener {
 			// Cancel void damage
 			e.setCancelled(true);
 
-			// Teleport player back to player spawn
-			player.teleport(arena.getPlayerSpawn());
+			// Teleport player back to player spawn or waiting room
+			if (arena.getWaitingRoom() == null)
+				player.teleport(arena.getPlayerSpawn());
+			else player.teleport(arena.getWaitingRoom());
 		} else {
 			// Set them to spectator mode instead of dying
 			e.setCancelled(true);
@@ -415,7 +417,7 @@ public class GameEvents implements Listener {
 						Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 				if (arena.hasLoseSound())
 					arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
-							Sound.ENTITY_ENDER_DRAGON_DEATH, 10, 0));
+							Sound.ENTITY_ENDER_DRAGON_DEATH, 10, .5f));
 			}
 		}
 	}
@@ -510,7 +512,7 @@ public class GameEvents implements Listener {
 				gamer.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&c " +
 						plugin.getLanguageData().getString("death")));
 				if (arena.hasPlayerDeathSound())
-					gamer.getPlayer().playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 4, 0);
+					gamer.getPlayer().playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 4, .75f);
 		});
 
 		// Update scoreboards
@@ -522,7 +524,7 @@ public class GameEvents implements Listener {
 					Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 			if (arena.hasLoseSound())
 				arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
-						Sound.ENTITY_ENDER_DRAGON_DEATH, 10, 0));
+						Sound.ENTITY_ENDER_DRAGON_DEATH, 10, .5f));
 		}
 	}
 
@@ -935,7 +937,7 @@ public class GameEvents implements Listener {
 		ItemStack item = e.getItemDrop().getItemStack();
 
 		// Check if player is in an arena
-		if (game.arenas.stream().noneMatch(arena -> arena.hasPlayer(player)))
+		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player)))
 			return;
 
 		// Check for shop item

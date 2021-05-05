@@ -115,8 +115,8 @@ public class ArenaEvents implements Listener {
             // Play waiting music
             if (arena.getWaitingSound() != null)
                 if (arena.getWaitingRoom() != null)
-                    player.playSound(arena.getWaitingRoom(), arena.getWaitingSound(), 4, 0);
-                else player.playSound(arena.getPlayerSpawn(), arena.getWaitingSound(), 4, 0);
+                    player.playSound(arena.getWaitingRoom(), arena.getWaitingSound(), 4, 1);
+                else player.playSound(arena.getPlayerSpawn(), arena.getWaitingSound(), 4, 1);
 
             // Tell player to choose a kit and automatically open inventory
             player.openInventory(inv.createSelectKitsInventory(player, arena));
@@ -221,7 +221,7 @@ public class ArenaEvents implements Listener {
         // Play wave end sound
         if (arena.hasWaveFinishSound() && arena.getCurrentWave() != 0)
             arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
-                    Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 10, 0));
+                    Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 10, .75f));
 
         FileConfiguration playerData = plugin.getPlayerData();
 
@@ -238,7 +238,7 @@ public class ArenaEvents implements Listener {
                     Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
             if (arena.hasWinSound())
                 arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
-                        Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 0));
+                        Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1));
         }
 
         // Start the next wave
@@ -258,7 +258,7 @@ public class ArenaEvents implements Listener {
         // Play wave start sound
         if (arena.hasWaveStartSound())
             arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
-                    Sound.ENTITY_ENDER_DRAGON_GROWL, 10, 0));
+                    Sound.ENTITY_ENDER_DRAGON_GROWL, 10, .25f));
 
         Tasks task = arena.getTask();
 

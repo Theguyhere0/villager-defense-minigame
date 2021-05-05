@@ -69,7 +69,7 @@ public class Commands implements CommandExecutor {
 				TextComponent message = new TextComponent("Visit the wiki!");
 				message.setBold(true);
 				message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,
-						"https://github.com/Theguyhere0/compressed-cobblestone/wiki"));
+						"https://github.com/Theguyhere0/villager-defense-minigame/wiki"));
 				player.spigot().sendMessage(message);
 				return true;
 			}
