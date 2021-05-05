@@ -23,10 +23,10 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+**Server and plugin versions (please complete the following information):**
+ - OS: [e.g. Windows 10]
+ - Server type (including the version): [ex. Spigot 1.16.5]
+ - Villager Defense version: [ex. 0.7.1]
 
 **Additional context**
 Add any other context about the problem here.
