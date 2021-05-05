@@ -375,7 +375,7 @@ public class GameEvents implements Listener {
 
 		Player player = (Player) e.getEntity();
 
-		// Check for fall damage
+		// Check for void damage
 		if (!e.getCause().equals(EntityDamageEvent.DamageCause.VOID)) return;
 
 		// Check if player is in a game
@@ -389,8 +389,10 @@ public class GameEvents implements Listener {
 			// Cancel void damage
 			e.setCancelled(true);
 
-			// Teleport player back to player spawn
-			player.teleport(arena.getPlayerSpawn());
+			// Teleport player back to player spawn or waiting room
+			if (arena.getWaitingRoom() == null)
+				player.teleport(arena.getPlayerSpawn());
+			else player.teleport(arena.getWaitingRoom());
 		} else {
 			// Set them to spectator mode instead of dying
 			e.setCancelled(true);
@@ -935,7 +937,7 @@ public class GameEvents implements Listener {
 		ItemStack item = e.getItemDrop().getItemStack();
 
 		// Check if player is in an arena
-		if (game.arenas.stream().noneMatch(arena -> arena.hasPlayer(player)))
+		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player)))
 			return;
 
 		// Check for shop item
