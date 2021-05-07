@@ -16,6 +16,7 @@ public class VDPlayer {
         gems = 0;
         kills = 0;
         wolves = 0;
+        kit = "None";
     }
 
     public Player getPlayer() {
@@ -51,8 +52,6 @@ public class VDPlayer {
     }
 
     public String getKit() {
-        if (kit == null)
-            return "";
         return kit;
     }
 

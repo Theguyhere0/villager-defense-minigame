@@ -7,7 +7,6 @@ import me.theguyhere.villagerdefense.customEvents.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.customEvents.WaveEndEvent;
 import me.theguyhere.villagerdefense.customEvents.WaveStartEvent;
 import me.theguyhere.villagerdefense.game.displays.Portal;
-import me.theguyhere.villagerdefense.tools.DataManager;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -271,6 +270,7 @@ public class Tasks {
 			arenaInstance.resetCurrentWave();
 			arenaInstance.resetEnemies();
 			arenaInstance.resetVillagers();
+			arenaInstance.resetGolems();
 			arenaInstance.getTask().getTasks().clear();
 
 			// Remove players from the arena

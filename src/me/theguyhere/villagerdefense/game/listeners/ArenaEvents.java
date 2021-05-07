@@ -200,7 +200,6 @@ public class ArenaEvents implements Listener {
     @EventHandler
     public void onWaveEnd(WaveEndEvent e) {
         Arena arena = e.getArena();
-        DataManager data = new DataManager(plugin, "spawnTables/default.yml");
 
         // Don't continue if the arena is ending
         if (arena.isEnding()) {
@@ -323,6 +322,20 @@ public class ArenaEvents implements Listener {
             // Sets them up for teleport to lobby
             player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
             Utils.teleAdventure(player, game.getLobby());
+
+            // Give persistent rewards if it applies
+            if (arena.getCurrentWave() != 0) {
+                // Calculate reward from difficulty multiplier, wave, kills, and gem balance
+                int reward = (10 + 5 * arena.getDifficultyMultiplier()) * (arena.getCurrentWave() - 1);
+                reward += gamer.getKills();
+                reward += (gamer.getGems() + 5) / 10;
+
+                // Give rewards and notify
+                plugin.getPlayerData().set(player.getName() + ".crystalBalance",
+                        plugin.getPlayerData().getInt(player.getName() + ".crystalBalance") + reward);
+                player.sendMessage(Utils.notify(String.format("&6" +
+                        plugin.getLanguageData().getString("crystals"), reward)));
+            }
 
             Tasks task = arena.getTask();
             Map<Runnable, Integer> tasks = task.getTasks();

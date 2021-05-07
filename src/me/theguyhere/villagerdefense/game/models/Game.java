@@ -48,9 +48,20 @@ public class Game {
 		Objective obj = board.registerNewObjective("VillagerDefense", "dummy",
 				Utils.format("&6&l   " + arena.getName() + "  "));
 		obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-		Score score9 = obj.getScore(Utils.format("&eWave: " + arena.getCurrentWave()));
+		Score score10 = obj.getScore(Utils.format("&eWave: " + arena.getCurrentWave()));
+		score10.setScore(10);
+		Score score9 = obj.getScore(Utils.format("&aGems: " + player.getGems()));
 		score9.setScore(9);
-		Score score8 = obj.getScore(Utils.format("&aGems: " + player.getGems()));
+		StringBuilder kit = new StringBuilder();
+		try {
+			kit.append(player.getKit().substring(0, player.getKit().length() - 1)).append(" ");
+			for (int i = 0; i < Integer.parseInt(player.getKit().substring(player.getKit().length() - 1)); i++)
+				kit.append("I");
+		} catch (NumberFormatException e) {
+			kit = new StringBuilder();
+			kit.append(player.getKit());
+		}
+		Score score8 = obj.getScore(Utils.format("&9Kit: " + kit));
 		score8.setScore(8);
 		Score score7 = obj.getScore("");
 		score7.setScore(7);
@@ -62,7 +73,7 @@ public class Game {
 		score4.setScore(4);
 		Score score3 = obj.getScore(" ");
 		score3.setScore(3);
-		Score score2 = obj.getScore(Utils.format("&aVillagers: " + arena.getVillagers()));
+		Score score2 = obj.getScore(Utils.format("&2Villagers: " + arena.getVillagers()));
 		score2.setScore(2);
 		Score score1 = obj.getScore(Utils.format("&cEnemies: " + arena.getEnemies()));
 		score1.setScore(1);
