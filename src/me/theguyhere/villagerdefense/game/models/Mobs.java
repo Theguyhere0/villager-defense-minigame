@@ -23,6 +23,8 @@ public class Mobs {
         livingEntity.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
         livingEntity.setRemoveWhenFarAway(false);
         livingEntity.setCanPickupItems(false);
+        for (Entity passenger : livingEntity.getPassengers())
+            passenger.remove();
         arena.incrementEnemies();
         Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
 
@@ -1011,14 +1013,12 @@ public class Mobs {
         setMinion(plugin, arena, zombie);
         setSword(arena, zombie);
         setArmor(arena, zombie);
-        zombie.setConversionTime(Utils.secondsToTicks(Utils.minutesToSeconds(20)));
     }
 
     public static void setHusk(Main plugin, Arena arena, Husk husk) {
         setMinion(plugin, arena, husk);
         setSword(arena, husk);
         setArmor(arena, husk);
-        husk.setConversionTime(Utils.secondsToTicks(Utils.minutesToSeconds(20)));
     }
 
     public static void setWitherSkeleton(Main plugin, Arena arena, WitherSkeleton witherSkeleton) {

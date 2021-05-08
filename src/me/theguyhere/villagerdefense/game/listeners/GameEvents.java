@@ -3,6 +3,7 @@ package me.theguyhere.villagerdefense.game.listeners;
 import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.customEvents.GameEndEvent;
+import me.theguyhere.villagerdefense.customEvents.ReloadBoardsEvent;
 import me.theguyhere.villagerdefense.customEvents.WaveEndEvent;
 import me.theguyhere.villagerdefense.game.models.Arena;
 import me.theguyhere.villagerdefense.game.models.Game;
@@ -115,7 +116,8 @@ public class GameEvents implements Listener {
 		}
 
 		// Update scoreboards
-		arena.getTask().updateBoards.run();
+		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+				Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)));
 	}
 
 	// Stop automatic game mode switching between worlds
@@ -151,7 +153,8 @@ public class GameEvents implements Listener {
 		}
 
 		// Update scoreboards
-		arena.getTask().updateBoards.run();
+		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+				Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)));
 	}
 
 	// Save gems from explosions
@@ -409,7 +412,8 @@ public class GameEvents implements Listener {
 							plugin.getLanguageData().getString("death"))));
 
 			// Update scoreboards
-			arena.getTask().updateBoards.run();
+			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+					Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)));
 
 			// Check for game end condition
 			if (arena.getAlive() == 0 && !arena.isEnding()) {
@@ -516,7 +520,8 @@ public class GameEvents implements Listener {
 		});
 
 		// Update scoreboards
-		arena.getTask().updateBoards.run();
+		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+				Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)));
 
 		// Check for game end condition
 		if (arena.getAlive() == 0 && !arena.isEnding()) {
@@ -738,6 +743,9 @@ public class GameEvents implements Listener {
 			ironGolem.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
 			ironGolem.setCustomName(Utils.healthBar(1, 1, 10));
 			ironGolem.setCustomNameVisible(true);
+			arena.incrementGolems();
+
+			return;
 		}
 
 		// Small care package

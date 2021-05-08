@@ -50,7 +50,7 @@ public class Commands implements CommandExecutor {
 				return true;
 			}
 
-			// No arguments
+			// Admin panel
 			if (args[0].equalsIgnoreCase("admin")) {
 				// Check for permission to use the command
 				if (!player.hasPermission("vd.use")) {
@@ -63,7 +63,6 @@ public class Commands implements CommandExecutor {
 			}
 			
 			// Redirects to wiki for help
-			// NOT FINALIZED
 			if (args[0].equalsIgnoreCase("help")) {
 				player.sendMessage(Utils.notify("&6" + language.getString("info")));
 				TextComponent message = new TextComponent("Visit the wiki!");

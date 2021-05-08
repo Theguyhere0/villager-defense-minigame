@@ -7,7 +7,6 @@ import me.theguyhere.villagerdefense.customEvents.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.customEvents.WaveEndEvent;
 import me.theguyhere.villagerdefense.customEvents.WaveStartEvent;
 import me.theguyhere.villagerdefense.game.displays.Portal;
-import me.theguyhere.villagerdefense.tools.DataManager;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -159,13 +158,27 @@ public class Tasks {
 
 			arenaInstance.getActives().forEach(p -> {
 				// Notify of upcoming wave
-				int reward = (currentWave - 1) * 5;
 				p.getPlayer().sendTitle(Utils.format("&6" + plugin.getLanguageData().getString("wave") +
 								" " + currentWave),
 						Utils.format("&7" + plugin.getLanguageData().getString("starting")),
 						Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
 
 				// Give players gem rewards
+				int multiplier;
+				switch (arenaInstance.getDifficultyMultiplier()) {
+					case 1:
+						multiplier = 10;
+						break;
+					case 2:
+						multiplier = 8;
+						break;
+					case 3:
+						multiplier = 6;
+						break;
+					default:
+						multiplier = 5;
+				}
+				int reward = (currentWave - 1) * multiplier;
 				p.addGems(reward);
 				if (currentWave > 1)
 					p.getPlayer().sendMessage(Utils.notify(String.format(language.getString("gems"), reward)));
@@ -271,6 +284,7 @@ public class Tasks {
 			arenaInstance.resetCurrentWave();
 			arenaInstance.resetEnemies();
 			arenaInstance.resetVillagers();
+			arenaInstance.resetGolems();
 			arenaInstance.getTask().getTasks().clear();
 
 			// Remove players from the arena

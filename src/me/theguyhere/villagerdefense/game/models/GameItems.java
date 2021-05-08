@@ -5130,23 +5130,28 @@ public class GameItems {
 	}
 	public static ItemStack smallCare() {
 		return Utils.createItem(Material.COAL_BLOCK, Utils.format("&2Small Care Package"),
-				Utils.format("&7Gives 1 lvl 1 weapon and 1 lvl 1 armor"), Utils.format("&2Gems: &a200"));
+				Utils.format("&7Contents:"), Utils.format("&7 - &bOne &7level &b1 &7weapon"),
+				Utils.format("&7 - &bOne &7level &b1 &7armor"), Utils.format("&2Gems: &a200"));
 	}
 	public static ItemStack mediumCare() {
 		return Utils.createItem(Material.IRON_BLOCK, Utils.format("&3Medium Care Package"),
-				Utils.format("&7Gives 1 lvl 2 weapon, 1 lvl 2 armor,"),
-				Utils.format("&7and 1 lvl 1 consumable"), Utils.format("&2Gems: &a500"));
+				Utils.format("&7Contents:"), Utils.format("&7 - &bOne &7level &b2 &7weapon"),
+				Utils.format("&7 - &bOne &7level &b2 &7armor"),
+				Utils.format("&7 - &bOne &7level &b2 &7consumable"), Utils.format("&2Gems: &a500"));
 	}
 	public static ItemStack largeCare() {
 		return Utils.createItem(Material.DIAMOND_BLOCK, Utils.format("&9Large Care Package"),
-				Utils.format("&7Gives 1 lvl 4 weapon, 2 lvl 3 armor,"),
-				Utils.format("&7and 1 lvl 3 consumable"), Utils.format("&2Gems: &a1200"));
+				Utils.format("&7Contents:"), Utils.format("&7 - &bOne &7level &b4 &7weapon"),
+				Utils.format("&7 - &bTwo &7level &b3 &7armor"),
+				Utils.format("&7 - &bOne &7level &b3 &7consumable"), Utils.format("&2Gems: &a1200"));
 	}
 	public static ItemStack extraCare() {
 		return Utils.createItem(Material.BEACON, Utils.format("&bExtra Large Care Package"),
-				Utils.format("&7Gives 1 lvl 5 weapon, 1 lvl 4 weapon,"),
-				Utils.format("&71 lvl 5 armor, 1 lvl 4 armor,"), Utils.format("&7and 2 lvl 4 consumables"),
-				Utils.format("&2Gems: &a3000"));
+				Utils.format("&7Contents:"), Utils.format("&7 - &bOne &7level &b5 &7weapon"),
+				Utils.format("&7 - &bOne &7level &b4 &7weapon"),
+				Utils.format("&7 - &bOne &7level &b5 &7armor"),
+				Utils.format("&7 - &bOne &7level &b4 &7armor"),
+				Utils.format("&7 - &bTwo &7level &b4 &7consumables"), Utils.format("&2Gems: &a3000"));
 	}
 
 	// Random generation of items

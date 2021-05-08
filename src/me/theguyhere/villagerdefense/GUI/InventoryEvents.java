@@ -2695,10 +2695,15 @@ public class InventoryEvents implements Listener {
 					Utils.teleAdventure(player, arenaInstance.getPlayerSpawn());
 					gamer.flipSpectating();
 					arenaInstance.getTask().giveItems(gamer);
+					game.createBoard(gamer);
 				}
 				player.closeInventory();
 				return;
 			}
+
+			// Ignore spectators from here on out
+			if (gamer.isSpectating())
+				return;
 
 			// Single tier kits
 			if (kit.equals("Orc") || kit.equals("Farmer") || kit.equals("Soldier") || kit.equals("Tailor") ||
@@ -2712,6 +2717,7 @@ public class InventoryEvents implements Listener {
 					return;
 				}
 				player.closeInventory();
+				game.createBoard(gamer);
 			}
 
 			// Double tier kits
@@ -2730,6 +2736,7 @@ public class InventoryEvents implements Listener {
 						return;
 				}
 				player.closeInventory();
+				game.createBoard(gamer);
 			}
 
 			// Triple tier kits
@@ -2754,6 +2761,7 @@ public class InventoryEvents implements Listener {
 						return;
 				}
 				player.closeInventory();
+				game.createBoard(gamer);
 			}
 
 			// No kit
@@ -2761,6 +2769,7 @@ public class InventoryEvents implements Listener {
 				gamer.setKit(null);
 				player.sendMessage(Utils.notify("&a" + language.getString("kitSelect")));
 				player.closeInventory();
+				game.createBoard(gamer);
 			}
 
 			// Close inventory
