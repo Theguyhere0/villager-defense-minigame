@@ -593,24 +593,25 @@ public class Arena {
     }
 
     public boolean checkNewRecord(ArenaRecord record) {
+        List<ArenaRecord> records = getArenaRecords();
+
         // Automatic record
-        if (getArenaRecords().size() < 4) {
-            getArenaRecords().add(record);
-        }
+        if (records.size() < 4)
+            records.add(record);
 
         // New record
-        else if (getArenaRecords().stream().anyMatch(arenaRecord -> arenaRecord.getWave() < record.getWave())) {
-            getArenaRecords().sort(Comparator.comparingInt(ArenaRecord::getWave));
-            getArenaRecords().set(0, record);
+        else if (records.stream().anyMatch(arenaRecord -> arenaRecord.getWave() < record.getWave())) {
+            records.sort(Comparator.comparingInt(ArenaRecord::getWave));
+            records.set(0, record);
         }
 
         // No record
         else return false;
 
         // Save data
-        for (int i = 0; i < getArenaRecords().size(); i++) {
-            config.set(path + ".records." + i + ".wave", getArenaRecords().get(i).getWave());
-            config.set(path + ".records." + i + ".players", getArenaRecords().get(i).getPlayers());
+        for (int i = 0; i < records.size(); i++) {
+            config.set(path + ".records." + i + ".wave", records.get(i).getWave());
+            config.set(path + ".records." + i + ".players", records.get(i).getPlayers());
         }
         plugin.saveArenaData();
         return true;
