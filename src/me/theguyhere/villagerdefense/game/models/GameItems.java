@@ -5283,6 +5283,96 @@ public class GameItems {
 				else return rocketsPlus();
 		}
 	}
+	public static ItemStack randRange(int level) {
+		Random r = new Random();
+		double chance = r.nextDouble();
+		switch (level) {
+			case 1:
+				return bow(level);
+			case 2:
+				if (chance < .5)
+					return bow(level);
+				else if (chance < .75)
+					return crossbow(level);
+				else return shield(level);
+			case 3:
+				if (chance < .33)
+					return bow(level);
+				else if (chance < .67)
+					return crossbow(level);
+				else return shield(level);
+			case 4:
+				if (chance < .3)
+					return bow(level);
+				else if (chance < .6)
+					return crossbow(level);
+				else if (chance < .9)
+					return shield(level);
+				else return trident(level);
+			default:
+				if (chance < .25)
+					return bow(level);
+				else if (chance < .5)
+					return crossbow(level);
+				else if (chance < .75)
+					return shield(level);
+				else return trident(level);
+		}
+	}
+	public static ItemStack randAmmo(int level) {
+		Random r = new Random();
+		double chance = r.nextDouble();
+		switch (level) {
+			case 1:
+				return arrows();
+			case 2:
+				if (chance < .4)
+					return arrows();
+				else if (chance < .7)
+					return arrowsSpectral();
+				else return arrowsP();
+			case 3:
+				if (chance < .2)
+					return arrows();
+				else if (chance < .4)
+					return arrowsSpectral();
+				else if (chance < .6)
+					return arrowsP();
+				else if (chance < .8)
+					return arrowsS();
+				else if (chance < .9)
+					return arrowsW();
+				else return arrowsD();
+			case 4:
+				if (chance < .2)
+					return arrows();
+				else if (chance < .4)
+					return arrowsSpectral();
+				else if (chance < .55)
+					return arrowsPPlus();
+				else if (chance < .7)
+					return arrowsSPlus();
+				else if (chance < .8)
+					return arrowsW();
+				else if (chance < .9)
+					return arrowsD();
+				else return rockets();
+			default:
+				if (chance < .15)
+					return arrows();
+				else if (chance < .3)
+					return arrowsSpectral();
+				else if (chance < .5)
+					return arrowsPPlus();
+				else if (chance < .7)
+					return arrowsSPlus();
+				else if (chance < .8)
+					return arrowsWPlus();
+				else if (chance < .9)
+					return arrowsDPlus();
+				else return rocketsPlus();
+		}
+	}
 	public static ItemStack randArmor(int level) {
 		Random r = new Random();
 		int chance = r.nextInt(4);

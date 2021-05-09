@@ -14,6 +14,10 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.boss.BarColor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Hoglin;
+import org.bukkit.entity.Monster;
+import org.bukkit.entity.Phantom;
+import org.bukkit.entity.Slime;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
@@ -350,11 +354,19 @@ public class Tasks {
 					if (progress <= time * Utils.minutesToSeconds(1)) {
 						arenaInstance.updateTimeLimitBar(BarColor.RED, progress);
 						if (!messageSent) {
+							// Send warning
 							arenaInstance.getActives().forEach(player ->
 									player.getPlayer().sendTitle(Utils.format("&c" +
 													plugin.getLanguageData().getString("minuteWarning")), null,
 											Utils.secondsToTicks(.5), Utils.secondsToTicks(1.5),
 											Utils.secondsToTicks(.5)));
+
+							// Set monsters glowing
+							arenaInstance.getPlayerSpawn().getWorld().getNearbyEntities(arenaInstance.getPlayerSpawn(),
+									200, 200, 200).stream().filter(entity -> entity.hasMetadata("VD"))
+									.filter(entity -> entity instanceof Monster || entity instanceof Slime ||
+											entity instanceof Hoglin || entity instanceof Phantom)
+									.forEach(entity -> entity.setGlowing(true));
 							messageSent = true;
 						}
 					} else arenaInstance.updateTimeLimitBar(progress);

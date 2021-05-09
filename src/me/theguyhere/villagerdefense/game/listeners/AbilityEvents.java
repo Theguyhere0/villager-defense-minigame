@@ -109,7 +109,7 @@ public class AbilityEvents implements Listener {
         // Ninja
         if (gamer.getKit().equals("Ninja1") && (Kits.ninja1().equals(item))) {
             int expRequired = 2;
-            int cooldown = 30;
+            int cooldown = 40;
             if (player.getLevel() >= expRequired) {
                 long dif = cooldowns.get(gamer) - System.currentTimeMillis();
                 if (dif <= 0) {
@@ -143,7 +143,7 @@ public class AbilityEvents implements Listener {
         }
         if (gamer.getKit().equals("Ninja3") && (Kits.ninja3().equals(item))) {
             int expRequired = 6;
-            int cooldown = 90;
+            int cooldown = 80;
             if (player.getLevel() >= expRequired) {
                 long dif = cooldowns.get(gamer) - System.currentTimeMillis();
                 if (dif <= 0) {
@@ -624,7 +624,7 @@ public class AbilityEvents implements Listener {
         if (target instanceof Wolf) {
             Wolf wolf = (Wolf) target;
             if (wolf.getActivePotionEffects().stream()
-                    .anyMatch(potion -> potion.getType() == PotionEffectType.INVISIBILITY))
+                    .anyMatch(potion -> potion.getType().equals(PotionEffectType.INVISIBILITY)))
                 e.setCancelled(true);
         }
     }

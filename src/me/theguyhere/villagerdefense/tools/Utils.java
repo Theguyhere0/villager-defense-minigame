@@ -435,7 +435,7 @@ public class Utils {
     // Get nearby monsters
     public static List<LivingEntity> getNearbyMonsters(Player player, double range) {
         return player.getNearbyEntities(range, range, range).stream().filter(ent -> ent instanceof Monster ||
-                ent instanceof Slime || ent instanceof Hoglin).map(ent -> (LivingEntity) ent)
+                ent instanceof Slime || ent instanceof Hoglin || ent instanceof Phantom).map(ent -> (LivingEntity) ent)
                 .collect(Collectors.toList());
     }
 }

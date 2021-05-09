@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -1302,23 +1303,23 @@ public class Inventories {
 			inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"), FLAGS, enchants,
 					Utils.format("&fLevel 1"), Utils.format("&7You and your pets become invisible"), 
 					Utils.format("&7and disarm nearby monsters for 10 seconds"),
-					Utils.format("&7(Cooldown 30 seconds)"), Utils.format("&fLevel 2"),
+					Utils.format("&7(Cooldown 40 seconds)"), Utils.format("&fLevel 2"),
 					Utils.format("&7You and your pets become invisible"), 
 					Utils.format("&7and disarm nearby monsters for 15 seconds"), 
 					Utils.format("&7(Cooldown 60 seconds)"),
 					Utils.format("&fLevel 3"), Utils.format("&7You and your pets become invisible"),
 					Utils.format("&7and disarm nearby monsters for 20 seconds"),
-					Utils.format("&7(Cooldown 90 seconds)")));
+					Utils.format("&7(Cooldown 80 seconds)")));
 		else inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&4&LNinja"),
 				Utils.format("&fLevel 1"), Utils.format("&7You and your pets become invisible"),
 				Utils.format("&7and disarm nearby monsters for 10 seconds"),
-				Utils.format("&7(Cooldown 30 seconds)"), Utils.format("&fLevel 2"),
+				Utils.format("&7(Cooldown 40 seconds)"), Utils.format("&fLevel 2"),
 				Utils.format("&7You and your pets become invisible"),
 				Utils.format("&7and disarm nearby monsters for 15 seconds"),
 				Utils.format("&7(Cooldown 60 seconds)"),
 				Utils.format("&fLevel 3"), Utils.format("&7You and your pets become invisible"),
 				Utils.format("&7and disarm nearby monsters for 20 seconds"),
-				Utils.format("&7(Cooldown 90 seconds)")));
+				Utils.format("&7(Cooldown 80 seconds)")));
 
 		if (!arenaInstance.getBannedKits().contains("Templar"))
 			inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
@@ -1620,23 +1621,23 @@ public class Inventories {
 			inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"), FLAGS, enchants,
 					Utils.format("&fLevel 1"), Utils.format("&7You and your pets become invisible"),
 					Utils.format("&7and disarm nearby monsters for 10 seconds"),
-					Utils.format("&7(Cooldown 30 seconds)"), Utils.format("&fLevel 2"),
+					Utils.format("&7(Cooldown 40 seconds)"), Utils.format("&fLevel 2"),
 					Utils.format("&7You and your pets become invisible"),
 					Utils.format("&7and disarm nearby monsters for 15 seconds"),
 					Utils.format("&7(Cooldown 60 seconds)"),
 					Utils.format("&fLevel 3"), Utils.format("&7You and your pets become invisible"),
 					Utils.format("&7and disarm nearby monsters for 20 seconds"),
-					Utils.format("&7(Cooldown 90 seconds)")));
+					Utils.format("&7(Cooldown 80 seconds)")));
 		else inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&4&LNinja"),
 				Utils.format("&fLevel 1"), Utils.format("&7You and your pets become invisible"),
 				Utils.format("&7and disarm nearby monsters for 10 seconds"),
-				Utils.format("&7(Cooldown 30 seconds)"), Utils.format("&fLevel 2"),
+				Utils.format("&7(Cooldown 40 seconds)"), Utils.format("&fLevel 2"),
 				Utils.format("&7You and your pets become invisible"),
 				Utils.format("&7and disarm nearby monsters for 15 seconds"),
 				Utils.format("&7(Cooldown 60 seconds)"),
 				Utils.format("&fLevel 3"), Utils.format("&7You and your pets become invisible"),
 				Utils.format("&7and disarm nearby monsters for 20 seconds"),
-				Utils.format("&7(Cooldown 90 seconds)")));
+				Utils.format("&7(Cooldown 80 seconds)")));
 
 		if (!arenaInstance.getBannedKits().contains("Templar"))
 			inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
@@ -2051,9 +2052,49 @@ public class Inventories {
 		Inventory inv = Bukkit.createInventory(null, 27, Utils.format("&k") +
 				Utils.format("&4&lLevel &9&l" + level + " &4&lWeapon Shop"));
 
-		// Fill in weapons
-		for (int i = 0; i < 18; i++)
-			inv.setItem(i, modifyPrice(GameItems.randWeapon(level), modifier));
+		// Fill in swords
+		List<ItemStack> swords = new ArrayList<>();
+		for (int i = 0; i < 4; i++)
+			swords.add(GameItems.sword(level));
+		swords.sort(Comparator.comparingInt(itemStack -> {
+			List<String> lore = itemStack.getItemMeta().getLore();
+			return Integer.parseInt(lore.get(lore.size() - 1).substring(10));
+		}));
+		for (int i = 0; i < 4; i++)
+			inv.setItem(i, modifyPrice(swords.get(i), modifier));
+
+		// Fill in axes
+		List<ItemStack> axes = new ArrayList<>();
+		for (int i = 0; i < 4; i++)
+			axes.add(GameItems.axe(level));
+		axes.sort(Comparator.comparingInt(itemStack -> {
+			List<String> lore = itemStack.getItemMeta().getLore();
+			return Integer.parseInt(lore.get(lore.size() - 1).substring(10));
+		}));
+		for (int i = 0; i < 4; i++)
+			inv.setItem(i + 5, modifyPrice(axes.get(i), modifier));
+
+		// Fill in range
+		List<ItemStack> ranges = new ArrayList<>();
+		for (int i = 0; i < 5; i++)
+			ranges.add(GameItems.randRange(level));
+		ranges.sort(Comparator.comparingInt(itemStack -> {
+			List<String> lore = itemStack.getItemMeta().getLore();
+			return Integer.parseInt(lore.get(lore.size() - 1).substring(10));
+		}));
+		for (int i = 0; i < 5; i++)
+			inv.setItem(i + 9, modifyPrice(ranges.get(i), modifier));
+
+		// Fill in ammo
+		List<ItemStack> ammos = new ArrayList<>();
+		for (int i = 0; i < 3; i++)
+			ammos.add(GameItems.randAmmo(level));
+		ammos.sort(Comparator.comparingInt(itemStack -> {
+			List<String> lore = itemStack.getItemMeta().getLore();
+			return Integer.parseInt(lore.get(lore.size() - 1).substring(10));
+		}));
+		for (int i = 0; i < 3; i++)
+			inv.setItem(i + 15, modifyPrice(ammos.get(i), modifier));
 
 		// Return option
 		inv.setItem(22, InventoryItems.exit());
@@ -2072,9 +2113,49 @@ public class Inventories {
 		Inventory inv = Bukkit.createInventory(null, 27, Utils.format("&k") +
 				Utils.format("&5&lLevel &9&l" + level + " &5&lArmor Shop"));
 
-		// Fill in armor
-		for (int i = 0; i < 18; i++)
-			inv.setItem(i, modifyPrice(GameItems.randArmor(level), modifier));
+		// Fill in helmets
+		List<ItemStack> helmets = new ArrayList<>();
+		for (int i = 0; i < 4; i++)
+			helmets.add(GameItems.helmet(level));
+		helmets.sort(Comparator.comparingInt(itemStack -> {
+			List<String> lore = itemStack.getItemMeta().getLore();
+			return Integer.parseInt(lore.get(lore.size() - 1).substring(10));
+		}));
+		for (int i = 0; i < 4; i++)
+			inv.setItem(i, modifyPrice(helmets.get(i), modifier));
+
+		// Fill in chestplates
+		List<ItemStack> chestplates = new ArrayList<>();
+		for (int i = 0; i < 4; i++)
+			chestplates.add(GameItems.chestplate(level));
+		chestplates.sort(Comparator.comparingInt(itemStack -> {
+			List<String> lore = itemStack.getItemMeta().getLore();
+			return Integer.parseInt(lore.get(lore.size() - 1).substring(10));
+		}));
+		for (int i = 0; i < 4; i++)
+			inv.setItem(i + 5, modifyPrice(chestplates.get(i), modifier));
+
+		// Fill in leggings
+		List<ItemStack> leggings = new ArrayList<>();
+		for (int i = 0; i < 4; i++)
+			leggings.add(GameItems.leggings(level));
+		leggings.sort(Comparator.comparingInt(itemStack -> {
+			List<String> lore = itemStack.getItemMeta().getLore();
+			return Integer.parseInt(lore.get(lore.size() - 1).substring(10));
+		}));
+		for (int i = 0; i < 4; i++)
+			inv.setItem(i + 9, modifyPrice(leggings.get(i), modifier));
+
+		// Fill in boots
+		List<ItemStack> boots = new ArrayList<>();
+		for (int i = 0; i < 4; i++)
+			boots.add(GameItems.boots(level));
+		boots.sort(Comparator.comparingInt(itemStack -> {
+			List<String> lore = itemStack.getItemMeta().getLore();
+			return Integer.parseInt(lore.get(lore.size() - 1).substring(10));
+		}));
+		for (int i = 0; i < 4; i++)
+			inv.setItem(i + 14, modifyPrice(boots.get(i), modifier));
 
 		// Return option
 		inv.setItem(22, InventoryItems.exit());
@@ -2094,8 +2175,15 @@ public class Inventories {
 				Utils.format("&3&lLevel &9&l" + level + " &3&lConsumables Shop"));
 
 		// Fill in consumables
+		List<ItemStack> consumables = new ArrayList<>();
 		for (int i = 0; i < 9; i++)
-			inv.setItem(i, modifyPrice(GameItems.randConsumable(level), modifier));
+			consumables.add(GameItems.randConsumable(level));
+		consumables.sort(Comparator.comparingInt(itemStack -> {
+			List<String> lore = itemStack.getItemMeta().getLore();
+			return Integer.parseInt(lore.get(lore.size() - 1).substring(10));
+		}));
+		for (int i = 0; i < 9; i++)
+			inv.setItem(i, modifyPrice(consumables.get(i), modifier));
 
 		// Return option
 		inv.setItem(13, InventoryItems.exit());
@@ -2295,7 +2383,7 @@ public class Inventories {
 				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
 						Utils.format("&aLevel 1"), Utils.format("&7You and your pets become invisible"),
 						Utils.format("&7and disarm nearby monsters for 10 seconds"),
-						Utils.format("&7(Cooldown 30 seconds)"), Utils.format("&aPurchased!"),
+						Utils.format("&7(Cooldown 40 seconds)"), Utils.format("&aPurchased!"),
 						Utils.format("&cLevel 2"), Utils.format("&7You and your pets become invisible"),
 						Utils.format("&7and disarm nearby monsters for 15 seconds"),
 						Utils.format("&7(Cooldown 60 seconds)"),
@@ -2308,20 +2396,20 @@ public class Inventories {
 						Utils.format("&7(Cooldown 60 seconds)"), Utils.format("&aPurchased!"),
 						Utils.format("&cLevel 3"), Utils.format("&7You and your pets become invisible"),
 						Utils.format("&7and disarm nearby monsters for 20 seconds"),
-						Utils.format("&7(Cooldown 90 seconds)"),
+						Utils.format("&7(Cooldown 80 seconds)"),
 						Utils.format("&cUpgrade: &b" + kits.getPrice("Ninja", 3) +" Crystals")));
 				break;
 			case 3:
 				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
 						Utils.format("&aLevel 3"), Utils.format("&7You and your pets become invisible"),
 						Utils.format("&7and disarm nearby monsters for 20 seconds"),
-						Utils.format("&7(Cooldown 90 seconds)"), Utils.format("&aPurchased!")));
+						Utils.format("&7(Cooldown 80 seconds)"), Utils.format("&aPurchased!")));
 				break;
 			default:
 				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
 						Utils.format("&cLevel 1"), Utils.format("&7You and your pets become invisible"),
 						Utils.format("&7and disarm nearby monsters for 10 seconds"),
-						Utils.format("&7(Cooldown 30 seconds)"),
+						Utils.format("&7(Cooldown 50 seconds)"),
 						Utils.format("&cPurchase: &b" + kits.getPrice("Ninja", 1) +" Crystals")));
 		}
 

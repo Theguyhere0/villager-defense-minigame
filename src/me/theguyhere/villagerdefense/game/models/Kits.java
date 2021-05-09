@@ -24,7 +24,7 @@ public class Kits {
         kitPrices.put("Reaper", new Integer[]{750, 2000, 4000});
         kitPrices.put("Phantom", new Integer[]{6000});
         kitPrices.put("Mage", new Integer[]{5000, 8000, 11000});
-        kitPrices.put("Ninja", new Integer[]{6000, 9000, 12500});
+        kitPrices.put("Ninja", new Integer[]{5000, 8000, 11000});
         kitPrices.put("Templar", new Integer[]{4500, 8500, 11000});
         kitPrices.put("Warrior", new Integer[]{5000, 8500, 11000});
         kitPrices.put("Knight", new Integer[]{6000, 9000, 11500});
