@@ -61,7 +61,7 @@ public class Game {
 			kit = new StringBuilder();
 			kit.append(player.getKit());
 		}
-		Score score8 = obj.getScore(Utils.format("&9Kit: " + kit));
+		Score score8 = obj.getScore(Utils.format("&bKit: " + kit));
 		score8.setScore(8);
 		Score score7 = obj.getScore("");
 		score7.setScore(7);

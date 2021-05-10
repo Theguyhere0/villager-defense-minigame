@@ -10,6 +10,7 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +22,7 @@ public class GameItems {
 	private static final boolean[] FLAGS = {false, false};
 
 	// Shop
-	public static ItemStack shop() {
+	public static @NotNull ItemStack shop() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		boolean[] flags = {true, false};
 		enchants.put(Enchantment.DURABILITY, 1);
@@ -31,7 +32,7 @@ public class GameItems {
 	}
 
 	// Weapons
-	public static ItemStack sword(int level) {
+	public static @NotNull ItemStack sword(int level) {
 		Random r = new Random();
 		Material mat;
 		HashMap<Enchantment, Integer> enchantments = new HashMap<>();
@@ -622,7 +623,7 @@ public class GameItems {
 		return Utils.createItem(mat, null, FLAGS, enchantments,
 				Utils.format("&2Gems: &a" + price));
 	}
-	public static ItemStack axe(int level) {
+	public static @NotNull ItemStack axe(int level) {
 		Random r = new Random();
 		Material mat;
 		HashMap<Enchantment, Integer> enchantments = new HashMap<>();
@@ -1084,7 +1085,7 @@ public class GameItems {
 		return Utils.createItem(mat, null, FLAGS, enchantments,
 				Utils.format("&2Gems: &a" + price));
 	}
-	public static ItemStack bow(int level) {
+	public static @NotNull ItemStack bow(int level) {
 		Random r = new Random();
 		HashMap<Enchantment, Integer> enchantments = new HashMap<>();
 		int price = 150;
@@ -1453,7 +1454,7 @@ public class GameItems {
 		return Utils.createItem(Material.BOW, null, FLAGS, enchantments,
 				Utils.format("&2Gems: &a" + price));
 	}
-	public static ItemStack crossbow(int level) {
+	public static @NotNull ItemStack crossbow(int level) {
 		Random r = new Random();
 		HashMap<Enchantment, Integer> enchantments = new HashMap<>();
 		int price = 300;
@@ -1785,7 +1786,7 @@ public class GameItems {
 		return Utils.createItem(Material.CROSSBOW, null, FLAGS, enchantments,
 				Utils.format("&2Gems: &a" + price));
 	}
-	public static ItemStack trident(int level) {
+	public static @NotNull ItemStack trident(int level) {
 		Random r = new Random();
 		HashMap<Enchantment, Integer> enchantments = new HashMap<>();
 		int price = 700;
@@ -2280,7 +2281,7 @@ public class GameItems {
 		return Utils.createItem(Material.TRIDENT, null, FLAGS, enchantments,
 				Utils.format("&2Gems: &a" + price));
 	}
-	public static ItemStack shield(int level) {
+	public static @NotNull ItemStack shield(int level) {
 		Random r = new Random();
 		HashMap<Enchantment, Integer> enchantments = new HashMap<>();
 		int price = 500;
@@ -2384,49 +2385,49 @@ public class GameItems {
 	}
 
 	// Ammo
-	public static ItemStack arrows() {
+	public static @NotNull ItemStack arrows() {
 		return Utils.createItems(Material.ARROW, 16, null, Utils.format("&2Gems: &a45"));
 	}
-	public static ItemStack arrowsSpectral() {
+	public static @NotNull ItemStack arrowsSpectral() {
 		return Utils.createItems(Material.SPECTRAL_ARROW, 8, null, Utils.format("&2Gems: &a30"));
 	}
-	public static ItemStack arrowsS() {
+	public static @NotNull ItemStack arrowsS() {
 		return Utils.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.SLOWNESS), 8,
 				null, Utils.format("&2Gems: &a50"));
 	}
-	public static ItemStack arrowsD() {
+	public static @NotNull ItemStack arrowsD() {
 		return Utils.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.INSTANT_DAMAGE), 8,
 				null, Utils.format("&2Gems: &a70"));
 	}
-	public static ItemStack arrowsW() {
+	public static @NotNull ItemStack arrowsW() {
 		return Utils.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.WEAKNESS), 8,
 				null, Utils.format("&2Gems: &a50"));
 	}
-	public static ItemStack arrowsP() {
+	public static @NotNull ItemStack arrowsP() {
 		return Utils.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.POISON), 8,
 				null, Utils.format("&2Gems: &a40"));
 	}
-	public static ItemStack arrowsSPlus() {
+	public static @NotNull ItemStack arrowsSPlus() {
 		return Utils.createPotionItems(Material.TIPPED_ARROW,
 				new PotionData(PotionType.SLOWNESS, false, true), 8, null,
 				Utils.format("&2Gems: &a125"));
 	}
-	public static ItemStack arrowsDPlus() {
+	public static @NotNull ItemStack arrowsDPlus() {
 		return Utils.createPotionItems(Material.TIPPED_ARROW,
 				new PotionData(PotionType.INSTANT_DAMAGE, false, true), 8, null,
 				Utils.format("&2Gems: &a175"));
 	}
-	public static ItemStack arrowsWPlus() {
+	public static @NotNull ItemStack arrowsWPlus() {
 		return Utils.createPotionItems(Material.TIPPED_ARROW,
 				new PotionData(PotionType.WEAKNESS, false,true), 8, null,
 				Utils.format("&2Gems: &a125"));
 	}
-	public static ItemStack arrowsPPlus() {
+	public static @NotNull ItemStack arrowsPPlus() {
 		return Utils.createPotionItems(Material.TIPPED_ARROW,
 				new PotionData(PotionType.POISON, false, true), 8, null,
 				Utils.format("&2Gems: &a100"));
 	}
-	public static ItemStack rockets() {
+	public static @NotNull ItemStack rockets() {
 		ItemStack item = new ItemStack(Material.FIREWORK_ROCKET, 4);
 		ItemMeta meta = item.getItemMeta();
 		FireworkMeta fireworkMeta = (FireworkMeta) meta;
@@ -2444,7 +2445,7 @@ public class GameItems {
 
 		return item;
 	}
-	public static ItemStack rocketsPlus() {
+	public static @NotNull ItemStack rocketsPlus() {
 		ItemStack item = new ItemStack(Material.FIREWORK_ROCKET, 4);
 		ItemMeta meta = item.getItemMeta();
 		FireworkMeta fireworkMeta = (FireworkMeta) meta;
@@ -2464,7 +2465,7 @@ public class GameItems {
 	}
 
 	// Armor
-	public static ItemStack helmet(int level) {
+	public static @NotNull ItemStack helmet(int level) {
 		Random r = new Random();
 		Material mat;
 		HashMap<Enchantment, Integer> enchantments = new HashMap<>();
@@ -3111,7 +3112,7 @@ public class GameItems {
 		return Utils.createItem(mat, null, FLAGS, enchantments,
 				Utils.format("&2Gems: &a" + price));
 	}
-	public static ItemStack chestplate(int level) {
+	public static @NotNull ItemStack chestplate(int level) {
 		Random r = new Random();
 		Material mat;
 		HashMap<Enchantment, Integer> enchantments = new HashMap<>();
@@ -3758,7 +3759,7 @@ public class GameItems {
 		return Utils.createItem(mat, null, FLAGS, enchantments,
 				Utils.format("&2Gems: &a" + price));
 	}
-	public static ItemStack leggings(int level) {
+	public static @NotNull ItemStack leggings(int level) {
 		Random r = new Random();
 		Material mat;
 		HashMap<Enchantment, Integer> enchantments = new HashMap<>();
@@ -4405,7 +4406,7 @@ public class GameItems {
 		return Utils.createItem(mat, null, FLAGS, enchantments,
 				Utils.format("&2Gems: &a" + price));
 	}
-	public static ItemStack boots(int level) {
+	public static @NotNull ItemStack boots(int level) {
 		Random r = new Random();
 		Material mat;
 		HashMap<Enchantment, Integer> enchantments = new HashMap<>();
@@ -5054,98 +5055,98 @@ public class GameItems {
 	}
 
 	// Consumables
-	public static ItemStack totem() {
+	public static @NotNull ItemStack totem() {
 		return Utils.createItem(Material.TOTEM_OF_UNDYING, null, Utils.format("&2Gems: &a1000"));
 	}
-	public static ItemStack gapple() {
+	public static @NotNull ItemStack gapple() {
 		return Utils.createItem(Material.GOLDEN_APPLE, null, Utils.format("&2Gems: &a120"));
 	}
-	public static ItemStack egapple() {
+	public static @NotNull ItemStack egapple() {
 		return Utils.createItem(Material.ENCHANTED_GOLDEN_APPLE, null, Utils.format("&2Gems: &a300"));
 	}
-	public static ItemStack gcarrot() {
+	public static @NotNull ItemStack gcarrot() {
 		return Utils.createItem(Material.GOLDEN_CARROT, null, Utils.format("&2Gems: &a80"));
 	}
-	public static ItemStack steak() {
+	public static @NotNull ItemStack steak() {
 		return Utils.createItem(Material.COOKED_BEEF, null, Utils.format("&2Gems: &a50"));
 	}
-	public static ItemStack mutton() {
+	public static @NotNull ItemStack mutton() {
 		return Utils.createItems(Material.COOKED_MUTTON, 2, null, Utils.format("&2Gems: &a40"));
 	}
-	public static ItemStack bread() {
+	public static @NotNull ItemStack bread() {
 		return Utils.createItems(Material.BREAD, 3, null, Utils.format("&2Gems: &a45"));
 	}
-	public static ItemStack carrot() {
+	public static @NotNull ItemStack carrot() {
 		return Utils.createItems(Material.CARROT, 4, null, Utils.format("&2Gems: &a35"));
 	}
-	public static ItemStack beetroot() {
+	public static @NotNull ItemStack beetroot() {
 		return Utils.createItems(Material.BEETROOT, 5, null, Utils.format("&2Gems: &a25"));
 	}
-	public static ItemStack health() {
+	public static @NotNull ItemStack health() {
 		return Utils.createPotionItem(Material.POTION, new PotionData(PotionType.INSTANT_HEAL), null,
 				Utils.format("&2Gems: &a50"));
 	}
-	public static ItemStack health2() {
+	public static @NotNull ItemStack health2() {
 		return Utils.createPotionItem(Material.POTION,
 				new PotionData(PotionType.INSTANT_HEAL, false, true), null,
 				Utils.format("&2Gems: &a120"));
 	}
-	public static ItemStack health3() {
+	public static @NotNull ItemStack health3() {
 		return Utils.createPotionItem(Material.LINGERING_POTION,
 				new PotionData(PotionType.INSTANT_HEAL, false, true), null,
 				Utils.format("&2Gems: &a200"));
 	}
-	public static ItemStack strength() {
+	public static @NotNull ItemStack strength() {
 		return Utils.createPotionItem(Material.POTION, new PotionData(PotionType.STRENGTH), null,
 				Utils.format("&2Gems: &a150"));
 	}
-	public static ItemStack strength2() {
+	public static @NotNull ItemStack strength2() {
 		return Utils.createPotionItem(Material.POTION,
 				new PotionData(PotionType.STRENGTH, false, true), null,
 				Utils.format("&2Gems: &a400"));
 	}
-	public static ItemStack regen() {
+	public static @NotNull ItemStack regen() {
 		return Utils.createPotionItem(Material.POTION, new PotionData(PotionType.REGEN), null,
 				Utils.format("&2Gems: &a175"));
 	}
-	public static ItemStack regen2() {
+	public static @NotNull ItemStack regen2() {
 		return Utils.createPotionItem(Material.POTION,
 				new PotionData(PotionType.REGEN, false, true), null,
 				Utils.format("&2Gems: &a450"));
 	}
-	public static ItemStack speed() {
+	public static @NotNull ItemStack speed() {
 		return Utils.createPotionItem(Material.POTION, new PotionData(PotionType.SPEED), null,
 				Utils.format("&2Gems: &a125"));
 	}
-	public static ItemStack speed2() {
+	public static @NotNull ItemStack speed2() {
 		return Utils.createPotionItem(Material.POTION, new PotionData(PotionType.SPEED, false, true),
 				null, Utils.format("&2Gems: &a350"));
 	}
-	public static ItemStack golem() {
+	public static @NotNull ItemStack golem() {
 		return Utils.createItem(Material.GHAST_SPAWN_EGG, Utils.format("&fIron Golem Spawn Egg"),
 				Utils.format("&2Gems: &a500"));
 	}
-	public static ItemStack wolf() {
+	public static @NotNull ItemStack wolf() {
 		return Utils.createItem(Material.WOLF_SPAWN_EGG, null, Utils.format("&2Gems: &a250"));
 	}
-	public static ItemStack smallCare() {
+	public static @NotNull ItemStack smallCare() {
 		return Utils.createItem(Material.COAL_BLOCK, Utils.format("&2Small Care Package"),
 				Utils.format("&7Contents:"), Utils.format("&7 - &bOne &7level &b1 &7weapon"),
 				Utils.format("&7 - &bOne &7level &b1 &7armor"), Utils.format("&2Gems: &a200"));
 	}
-	public static ItemStack mediumCare() {
+	public static @NotNull ItemStack mediumCare() {
 		return Utils.createItem(Material.IRON_BLOCK, Utils.format("&3Medium Care Package"),
 				Utils.format("&7Contents:"), Utils.format("&7 - &bOne &7level &b2 &7weapon"),
 				Utils.format("&7 - &bOne &7level &b2 &7armor"),
 				Utils.format("&7 - &bOne &7level &b2 &7consumable"), Utils.format("&2Gems: &a500"));
 	}
-	public static ItemStack largeCare() {
+	public static @NotNull ItemStack largeCare() {
 		return Utils.createItem(Material.DIAMOND_BLOCK, Utils.format("&9Large Care Package"),
 				Utils.format("&7Contents:"), Utils.format("&7 - &bOne &7level &b4 &7weapon"),
 				Utils.format("&7 - &bTwo &7level &b3 &7armor"),
 				Utils.format("&7 - &bOne &7level &b3 &7consumable"), Utils.format("&2Gems: &a1200"));
 	}
-	public static ItemStack extraCare() {
+	public static @NotNull ItemStack extraCare() {
 		return Utils.createItem(Material.BEACON, Utils.format("&bExtra Large Care Package"),
 				Utils.format("&7Contents:"), Utils.format("&7 - &bOne &7level &b5 &7weapon"),
 				Utils.format("&7 - &bOne &7level &b4 &7weapon"),
@@ -5153,9 +5154,12 @@ public class GameItems {
 				Utils.format("&7 - &bOne &7level &b4 &7armor"),
 				Utils.format("&7 - &bTwo &7level &b4 &7consumables"), Utils.format("&2Gems: &a3000"));
 	}
+	public static @NotNull ItemStack experience() {
+		return Utils.createItem(Material.EXPERIENCE_BOTTLE, null, Utils.format("&2Gems: &a75"));
+	}
 
 	// Random generation of items
-	public static ItemStack randWeapon(int level) {
+	public static @NotNull ItemStack randWeapon(int level) {
 		Random r = new Random();
 		double chance = r.nextDouble();
 		switch (level) {
@@ -5283,7 +5287,97 @@ public class GameItems {
 				else return rocketsPlus();
 		}
 	}
-	public static ItemStack randArmor(int level) {
+	public static @NotNull ItemStack randRange(int level) {
+		Random r = new Random();
+		double chance = r.nextDouble();
+		switch (level) {
+			case 1:
+				return bow(level);
+			case 2:
+				if (chance < .5)
+					return bow(level);
+				else if (chance < .75)
+					return crossbow(level);
+				else return shield(level);
+			case 3:
+				if (chance < .33)
+					return bow(level);
+				else if (chance < .67)
+					return crossbow(level);
+				else return shield(level);
+			case 4:
+				if (chance < .3)
+					return bow(level);
+				else if (chance < .6)
+					return crossbow(level);
+				else if (chance < .9)
+					return shield(level);
+				else return trident(level);
+			default:
+				if (chance < .25)
+					return bow(level);
+				else if (chance < .5)
+					return crossbow(level);
+				else if (chance < .75)
+					return shield(level);
+				else return trident(level);
+		}
+	}
+	public static @NotNull ItemStack randAmmo(int level) {
+		Random r = new Random();
+		double chance = r.nextDouble();
+		switch (level) {
+			case 1:
+				return arrows();
+			case 2:
+				if (chance < .4)
+					return arrows();
+				else if (chance < .7)
+					return arrowsSpectral();
+				else return arrowsP();
+			case 3:
+				if (chance < .2)
+					return arrows();
+				else if (chance < .4)
+					return arrowsSpectral();
+				else if (chance < .6)
+					return arrowsP();
+				else if (chance < .8)
+					return arrowsS();
+				else if (chance < .9)
+					return arrowsW();
+				else return arrowsD();
+			case 4:
+				if (chance < .2)
+					return arrows();
+				else if (chance < .4)
+					return arrowsSpectral();
+				else if (chance < .55)
+					return arrowsPPlus();
+				else if (chance < .7)
+					return arrowsSPlus();
+				else if (chance < .8)
+					return arrowsW();
+				else if (chance < .9)
+					return arrowsD();
+				else return rockets();
+			default:
+				if (chance < .15)
+					return arrows();
+				else if (chance < .3)
+					return arrowsSpectral();
+				else if (chance < .5)
+					return arrowsPPlus();
+				else if (chance < .7)
+					return arrowsSPlus();
+				else if (chance < .8)
+					return arrowsWPlus();
+				else if (chance < .9)
+					return arrowsDPlus();
+				else return rocketsPlus();
+		}
+	}
+	public static @NotNull ItemStack randArmor(int level) {
 		Random r = new Random();
 		int chance = r.nextInt(4);
 		switch (chance) {
@@ -5298,7 +5392,7 @@ public class GameItems {
 		}
 
 	}
-	public static ItemStack randConsumable(int level) {
+	public static @NotNull ItemStack randConsumable(int level) {
 		Random r = new Random();
 		double chance = r.nextDouble();
 		switch (level) {
@@ -5309,12 +5403,14 @@ public class GameItems {
 					return carrot();
 				else if (chance < .65)
 					return bread();
-				else if (chance < .75)
+				else if (chance < .725)
 					return health();
-				else if (chance < .80)
+				else if (chance < .775)
 					return speed();
-				else if (chance < .90)
+				else if (chance < .85)
 					return wolf();
+				else if (chance < .9)
+					return experience();
 				else return smallCare();
 			case 2:
 				if (chance < .15)
@@ -5333,8 +5429,10 @@ public class GameItems {
 					return strength();
 				else if (chance < .7)
 					return regen();
-				else if (chance < .8)
+				else if (chance < .775)
 					return wolf();
+				else if (chance < .825)
+					return experience();
 				else if (chance < .9)
 					return smallCare();
 				else return mediumCare();
@@ -5355,11 +5453,13 @@ public class GameItems {
 					return strength();
 				else if (chance < .625)
 					return regen();
-				else if (chance < .75)
+				else if (chance < .725)
 					return wolf();
-				else if (chance < .8)
+				else if (chance < .775)
 					return golem();
-				else if (chance < .85)
+				else if (chance < .825)
+					return experience();
+				else if (chance < .875)
 					return smallCare();
 				else if (chance < .925)
 					return mediumCare();
@@ -5383,10 +5483,12 @@ public class GameItems {
 					return strength2();
 				else if (chance < .625)
 					return regen2();
-				else if (chance < .725)
+				else if (chance < .7)
 					return wolf();
-				else if (chance < .825)
+				else if (chance < .775)
 					return golem();
+				else if (chance < .825)
+					return experience();
 				else if (chance < .85)
 					return mediumCare();
 				else if (chance < .925)
@@ -5417,8 +5519,10 @@ public class GameItems {
 					return regen2();
 				else if (chance < .75)
 					return wolf();
-				else if (chance < .85)
+				else if (chance < .825)
 					return golem();
+				else if (chance < .875)
+					return experience();
 				else if (chance < .925)
 					return largeCare();
 				else return extraCare();
@@ -5445,11 +5549,143 @@ public class GameItems {
 					return regen2();
 				else if (chance < .75)
 					return wolf();
-				else if (chance < .85)
+				else if (chance < .825)
 					return golem();
-				else if (chance < .9)
+				else if (chance < .875)
+					return experience();
+				else if (chance < .925)
 					return largeCare();
 				else return extraCare();
+		}
+	}
+	public static @NotNull ItemStack randFood(int level) {
+		Random r = new Random();
+		double chance = r.nextDouble();
+		switch (level) {
+			case 1:
+				if (chance < .4)
+					return beetroot();
+				else if (chance < .8)
+					return carrot();
+				else return bread();
+			case 2:
+				if (chance < .325)
+					return carrot();
+				else if (chance < .65)
+					return bread();
+				else if (chance < .85)
+					return mutton();
+				else return steak();
+			case 3:
+				if (chance < .25)
+					return bread();
+				else if (chance < .5)
+					return mutton();
+				else if (chance < .75)
+					return steak();
+				else return gcarrot();
+			case 4:
+				if (chance < .25)
+					return mutton();
+				else if (chance < .5)
+					return steak();
+				else if (chance < .75)
+					return gcarrot();
+				else return gapple();
+			default:
+				if (chance < .15)
+					return mutton();
+				else if (chance < .4)
+					return steak();
+				else if (chance < .65)
+					return gcarrot();
+				else if (chance < .9)
+					return gapple();
+				else return egapple();
+		}
+	}
+	public static @NotNull ItemStack randOther(int level) {
+		Random r = new Random();
+		double chance = r.nextDouble();
+		switch (level) {
+			case 1:
+				if (chance < .35)
+					return smallCare();
+				else if (chance < .65)
+					return wolf();
+				else if (chance < .75)
+					return experience();
+				else if (chance < .9)
+					return health();
+				else return speed();
+			case 2:
+				if (chance < .15)
+					return smallCare();
+				else if (chance < .45)
+					return mediumCare();
+				else if (chance < .6)
+					return wolf();
+				else if (chance < .7)
+					return experience();
+				else if (chance < .85)
+					return health();
+				else if (chance < .9)
+					return speed();
+				else if (chance < .95)
+					return strength();
+				else return regen();
+			case 3:
+				if (chance < .15)
+					return mediumCare();
+				else if (chance < .4)
+					return largeCare();
+				else if (chance < .5)
+					return wolf();
+				else if (chance < .6)
+					return golem();
+				else if (chance < .7)
+					return experience();
+				else if (chance < .85)
+					return health2();
+				else if (chance < .9)
+					return speed2();
+				else if (chance < .95)
+					return strength();
+				else return regen();
+			case 4:
+				if (chance < .15)
+					return largeCare();
+				else if (chance < .4)
+					return extraCare();
+				else if (chance < .5)
+					return wolf();
+				else if (chance < .6)
+					return golem();
+				else if (chance < .7)
+					return experience();
+				else if (chance < .85)
+					return health2();
+				else if (chance < .9)
+					return speed2();
+				else if (chance < .95)
+					return strength2();
+				else return regen2();
+			default:
+				if (chance < .3)
+					return extraCare();
+				else if (chance < .45)
+					return wolf();
+				else if (chance < .6)
+					return golem();
+				else if (chance < .7)
+					return experience();
+				else if (chance < .85)
+					return health2();
+				else if (chance < .9)
+					return speed2();
+				else if (chance < .95)
+					return strength2();
+				else return regen2();
 		}
 	}
 }

@@ -5,10 +5,7 @@ import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.customEvents.GameEndEvent;
 import me.theguyhere.villagerdefense.customEvents.ReloadBoardsEvent;
 import me.theguyhere.villagerdefense.customEvents.WaveEndEvent;
-import me.theguyhere.villagerdefense.game.models.Arena;
-import me.theguyhere.villagerdefense.game.models.Game;
-import me.theguyhere.villagerdefense.game.models.GameItems;
-import me.theguyhere.villagerdefense.game.models.VDPlayer;
+import me.theguyhere.villagerdefense.game.models.*;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
@@ -95,13 +92,13 @@ public class GameEvents implements Listener {
 						e.getDrops().add(Utils.createItems(Material.EMERALD, 20, null,
 								Integer.toString(arena.getArena())));
 					if (arena.hasExpDrop())
-						e.setDroppedExp((int) arena.getCurrentDifficulty() * 20);
+						e.setDroppedExp((int) (arena.getCurrentDifficulty() * 40));
 				} else {
 					if (arena.hasGemDrop())
 						e.getDrops().add(Utils.createItem(Material.EMERALD, null,
 								Integer.toString(arena.getArena())));
 					if (arena.hasExpDrop())
-						e.setDroppedExp((int) arena.getCurrentDifficulty());
+						e.setDroppedExp((int) (arena.getCurrentDifficulty() * 2));
 				}
 
 				// Decrement enemy count
@@ -630,8 +627,8 @@ public class GameEvents implements Listener {
 			if (e.getEntity() instanceof Wither)
 				arena.getActives().stream().filter(vdPlayer -> !arena.getGhosts().contains(vdPlayer))
 						.forEach(vdPlayer -> vdPlayer.getPlayer()
-								.giveExp((int) (arena.getCurrentDifficulty() * 20) / arena.getAlive()));
-			else player.giveExp((int) arena.getCurrentDifficulty());
+								.giveExp((int) (arena.getCurrentDifficulty() * 40) / arena.getAlive()));
+			else player.giveExp((int) (arena.getCurrentDifficulty() * 2));
 		}
 	}
 	
@@ -697,15 +694,7 @@ public class GameEvents implements Listener {
 			location.setY(location.getY() + 1);
 
 			// Spawn and tame the wolf
-			Wolf wolf = (Wolf) player.getWorld().spawnEntity(location, EntityType.WOLF);
-			wolf.setAdult();
-			wolf.setOwner(player);
-			wolf.setBreed(false);
-			wolf.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
-			wolf.setCustomName(player.getName() + "'s Wolf");
-			wolf.setCustomNameVisible(true);
-			gamer.incrementWolves();
-
+			Mobs.setWolf(plugin, arena, gamer, (Wolf) player.getWorld().spawnEntity(location, EntityType.WOLF));
 			return;
 		}
 
@@ -738,13 +727,7 @@ public class GameEvents implements Listener {
 			location.setY(location.getY() + 1);
 
 			// Spawn iron golem
-			IronGolem ironGolem = (IronGolem) player.getWorld()
-					.spawnEntity(location, EntityType.IRON_GOLEM);
-			ironGolem.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
-			ironGolem.setCustomName(Utils.healthBar(1, 1, 10));
-			ironGolem.setCustomNameVisible(true);
-			arena.incrementGolems();
-
+			Mobs.setGolem(plugin, arena, (IronGolem) player.getWorld().spawnEntity(location, EntityType.IRON_GOLEM));
 			return;
 		}
 

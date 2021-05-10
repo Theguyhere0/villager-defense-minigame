@@ -16,5 +16,14 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="HolographicDisplays" level="project" />
     <orderEntry type="library" name="spigot-1.16.5" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/annotations/20.1.0/annotations-20.1.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
