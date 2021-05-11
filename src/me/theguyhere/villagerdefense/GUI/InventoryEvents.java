@@ -615,10 +615,6 @@ public class InventoryEvents implements Listener {
 				if (arenaInstance.getGolemCap() == 0)
 					arenaInstance.setgolemCap(2);
 
-				// Set default spawn table to default
-				if (arenaInstance.getSpawnTableFile() == null)
-					arenaInstance.setSpawnTableFile("default");
-
 				// Set default max waves to -1 if it doesn't exist
 				if (arenaInstance.getMaxWaves() == 0)
 					arenaInstance.setMaxWaves(-1);
@@ -2556,7 +2552,7 @@ public class InventoryEvents implements Listener {
 			// Subtract from balance, apply rebate, and update scoreboard
 			gamer.addGems(-cost);
 			if (gamer.getKit().equals("Merchant"))
-				gamer.addGems(cost / 20);
+				gamer.addGems(cost / 10);
 			game.createBoard(gamer);
 
 			EntityEquipment equipment = player.getPlayer().getEquipment();
@@ -2766,7 +2762,7 @@ public class InventoryEvents implements Listener {
 
 			// No kit
 			if (kit.equals("None")) {
-				gamer.setKit(null);
+				gamer.setKit("None");
 				player.sendMessage(Utils.notify("&a" + language.getString("kitSelect")));
 				player.closeInventory();
 				game.createBoard(gamer);
