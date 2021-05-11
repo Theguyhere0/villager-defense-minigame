@@ -307,9 +307,9 @@ public class Arena {
     }
 
     public String getSpawnTableFile() {
-        if (config.contains(path + ".spawnTable"))
-            return config.getString(path + ".spawnTable");
-        else return null;
+        if (!config.contains(path + ".spawnTable"))
+            setSpawnTableFile("default");
+        return config.getString(path + ".spawnTable");
     }
 
     public boolean setSpawnTableFile(String option) {
@@ -317,7 +317,8 @@ public class Arena {
         if (option.equals("custom"))
             file = "a" + arena + ".yml";
 
-        if (new File(plugin.getDataFolder().getPath(), "spawnTables/" + file).exists()) {
+        if (new File(plugin.getDataFolder().getPath(), "spawnTables/" + file).exists() ||
+                option.equals("default")) {
             config.set(path + ".spawnTable", option);
             plugin.saveArenaData();
             return true;

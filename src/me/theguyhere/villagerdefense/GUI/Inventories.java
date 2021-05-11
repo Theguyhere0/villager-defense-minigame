@@ -1211,13 +1211,13 @@ public class Inventories {
 		// Gift kits
 		for (int i = 0; i < 9; i++)
 			inv.setItem(i, Utils.createItem(Material.LIME_STAINED_GLASS_PANE, Utils.format("&a&lGift Kits"),
-					Utils.format("&7Kits give one-time benefit"), Utils.format("&7per game or respawn")));
+					Utils.format("&7Kits give one-time benefits"), Utils.format("&7per game or respawn")));
 
 		if (!arenaInstance.getBannedKits().contains("Orc"))
 			inv.setItem(9, Utils.createItem(Material.STICK, Utils.format("&a&lOrc"), FLAGS, enchants,
-					Utils.format("&7Start with a Knockback V stick")));
+					Utils.format("&7Start with a knockback V stick")));
 		else inv.setItem(9, Utils.createItem(Material.STICK, Utils.format("&4&LOrc"),
-				Utils.format("&7Start with a Knockback V stick")));
+				Utils.format("&7Start with a knockback V stick")));
 
 		if (!arenaInstance.getBannedKits().contains("Farmer"))
 			inv.setItem(10, Utils.createItem(Material.CARROT, Utils.format("&a&lFarmer"), FLAGS, enchants,
@@ -1419,9 +1419,9 @@ public class Inventories {
 
 		if (!arenaInstance.getBannedKits().contains("Merchant"))
 			inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&e&lMerchant"), FLAGS,
-					enchants, Utils.format("&7Earn a 5% rebate on all purchases")));
+					enchants, Utils.format("&7Earn a 10% rebate on all purchases")));
 		else inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&4&LMerchant"),
-				Utils.format("&7Earn a 5% rebate on all purchases")));
+				Utils.format("&7Earn a 10% rebate on all purchases")));
 
 		if (!arenaInstance.getBannedKits().contains("Vampire"))
 			inv.setItem(48, Utils.createItem(Material.GHAST_TEAR, Utils.format("&e&lVampire"), FLAGS, enchants,
@@ -1458,13 +1458,13 @@ public class Inventories {
 		// Gift kits
 		for (int i = 0; i < 9; i++)
 			inv.setItem(i, Utils.createItem(Material.LIME_STAINED_GLASS_PANE, Utils.format("&a&lGift Kits"),
-					Utils.format("&7Kits give one-time benefit"), Utils.format("&7per game or respawn")));
+					Utils.format("&7Kits give one-time benefits"), Utils.format("&7per game or respawn")));
 
 		if (!arenaInstance.getBannedKits().contains("Orc"))
 			inv.setItem(9, Utils.createItem(Material.STICK, Utils.format("&a&lOrc"), FLAGS, enchants,
-					Utils.format("&7Start with a Knockback V stick")));
+					Utils.format("&7Start with a knockback V stick")));
 		else inv.setItem(9, Utils.createItem(Material.STICK, Utils.format("&4&LOrc"),
-				Utils.format("&7Start with a Knockback V stick")));
+				Utils.format("&7Start with a knockback V stick")));
 
 		if (!arenaInstance.getBannedKits().contains("Farmer"))
 			inv.setItem(10, Utils.createItem(Material.CARROT, Utils.format("&a&lFarmer"), FLAGS, enchants,
@@ -1666,9 +1666,9 @@ public class Inventories {
 
 		if (!arenaInstance.getBannedKits().contains("Merchant"))
 			inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&e&lMerchant"), FLAGS,
-					enchants, Utils.format("&7Earn a 5% rebate on all purchases")));
+					enchants, Utils.format("&7Earn a 10% rebate on all purchases")));
 		else inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&4&LMerchant"),
-				Utils.format("&7Earn a 5% rebate on all purchases")));
+				Utils.format("&7Earn a 10% rebate on all purchases")));
 
 		if (!arenaInstance.getBannedKits().contains("Vampire"))
 			inv.setItem(48, Utils.createItem(Material.GHAST_TEAR, Utils.format("&e&lVampire"), FLAGS, enchants,
@@ -2112,10 +2112,10 @@ public class Inventories {
 		// Gift kits
 		for (int i = 0; i < 9; i++)
 			inv.setItem(i, Utils.createItem(Material.LIME_STAINED_GLASS_PANE, Utils.format("&a&lGift Kits"),
-					Utils.format("&7Kits give one-time benefit"), Utils.format("&7per game or respawn")));
+					Utils.format("&7Kits give one-time benefits"), Utils.format("&7per game or respawn")));
 
 		inv.setItem(9, Utils.createItem(Material.STICK, Utils.format("&a&lOrc"),
-				Utils.format("&7Start with a Knockback V stick"), Utils.format("&aFree!")));
+				Utils.format("&7Start with a knockback V stick"), Utils.format("&aFree!")));
 
 		inv.setItem(10, Utils.createItem(Material.CARROT, Utils.format("&a&lFarmer"),
 				Utils.format("&7Start with 5 carrots"), Utils.format("&aFree!")));
@@ -2494,9 +2494,9 @@ public class Inventories {
 
 		if (playerData.getBoolean(path + "Merchant"))
 			inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&e&lMerchant"),
-					Utils.format("&7Earn a 5% rebate on all purchases"), Utils.format("&aPurchased!")));
+					Utils.format("&7Earn a 10% rebate on all purchases"), Utils.format("&aPurchased!")));
 		else inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&e&lMerchant"),
-				Utils.format("&7Earn a 5% rebate on all purchases"),
+				Utils.format("&7Earn a 10% rebate on all purchases"),
 				Utils.format("&cPurchase: &b" + kits.getPrice("Merchant") + " Crystals")));
 
 		if (playerData.getBoolean(path + "Vampire"))
@@ -2552,11 +2552,11 @@ public class Inventories {
 		// Gift kits
 		for (int i = 0; i < 9; i++)
 			inv.setItem(i, Utils.createItem(Material.LIME_STAINED_GLASS_PANE, Utils.format("&a&lGift Kits"),
-					Utils.format("&7Kits give one-time benefit"), Utils.format("&7per game or respawn")));
+					Utils.format("&7Kits give one-time benefits"), Utils.format("&7per game or respawn")));
 
 		if (!arena.getBannedKits().contains("Orc"))
 			inv.setItem(9, Utils.createItem(Material.STICK, Utils.format("&a&lOrc"),
-					Utils.format("&7Start with a Knockback V stick"), Utils.format("&aAvailable")));
+					Utils.format("&7Start with a knockback V stick"), Utils.format("&aAvailable")));
 
 		if (!arena.getBannedKits().contains("Farmer"))
 			inv.setItem(10, Utils.createItem(Material.CARROT, Utils.format("&a&lFarmer"),
@@ -2901,9 +2901,9 @@ public class Inventories {
 		if (!arena.getBannedKits().contains("Merchant"))
 			if (playerData.getBoolean(path + "Merchant"))
 				inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&e&lMerchant"),
-						Utils.format("&7Earn a 5% rebate on all purchases"), Utils.format("&aAvailable")));
+						Utils.format("&7Earn a 10% rebate on all purchases"), Utils.format("&aAvailable")));
 			else inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&e&lMerchant"),
-					Utils.format("&7Earn a 5% rebate on all purchases"), Utils.format("&cUnavailable")));
+					Utils.format("&7Earn a 10% rebate on all purchases"), Utils.format("&cUnavailable")));
 
 		if (!arena.getBannedKits().contains("Vampire"))
 			if (playerData.getBoolean(path + "Vampire"))

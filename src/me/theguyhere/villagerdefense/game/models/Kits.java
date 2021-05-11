@@ -33,10 +33,10 @@ public class Kits {
         kitPrices.put("Siren", new Integer[]{4000, 8000, 13000});
         kitPrices.put("Monk", new Integer[]{3000, 7000, 11000});
         kitPrices.put("Messenger", new Integer[]{4000, 8000, 12000});
-        kitPrices.put("Blacksmith", new Integer[]{2500});
+        kitPrices.put("Blacksmith", new Integer[]{7500});
         kitPrices.put("Witch", new Integer[]{2500});
         kitPrices.put("Merchant", new Integer[]{4000});
-        kitPrices.put("Vampire", new Integer[]{5500});
+        kitPrices.put("Vampire", new Integer[]{6000});
         kitPrices.put("Giant", new Integer[]{5000, 8000});
     }
 
