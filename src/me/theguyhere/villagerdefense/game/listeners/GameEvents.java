@@ -513,7 +513,7 @@ public class GameEvents implements Listener {
 				gamer.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&c " +
 						plugin.getLanguageData().getString("death")));
 				if (arena.hasPlayerDeathSound())
-					gamer.getPlayer().playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 4, .75f);
+					gamer.getPlayer().playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10, .75f);
 		});
 
 		// Update scoreboards

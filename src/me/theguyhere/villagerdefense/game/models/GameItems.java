@@ -160,38 +160,12 @@ public class GameItems {
 					price += 75;
 				}
 				break;
-			case 6:
-				if (chance < .25) {
-					enchantments.put(Enchantment.DURABILITY, 2);
-					price += 50;
-				} else if (chance < .9) {
-					enchantments.put(Enchantment.DURABILITY, 3);
-					price += 75;
-				}
-				break;
-			case 7:
+			default:
 				if (chance < .6) {
 					enchantments.put(Enchantment.DURABILITY, 3);
 					price += 75;
 				}
 				break;
-			case 8:
-				if (chance < .75) {
-					enchantments.put(Enchantment.DURABILITY, 3);
-					price += 75;
-				} else if (chance < .8) {
-					enchantments.put(Enchantment.DURABILITY, 4);
-					price += 100;
-				}
-				break;
-			default:
-				if (chance < .8) {
-					enchantments.put(Enchantment.DURABILITY, 3);
-					price += 75;
-				} else {
-					enchantments.put(Enchantment.DURABILITY, 4);
-					price += 100;
-				}
 		}
 		chance = r.nextDouble();
 
@@ -327,7 +301,7 @@ public class GameItems {
 					price += 200;
 				}
 				break;
-			case 7:
+			default:
 				if (chance < .05) {
 					enchantments.put(Enchantment.SWEEPING_EDGE, 2);
 					price += 100;
@@ -339,14 +313,6 @@ public class GameItems {
 					price += 200;
 				}
 				break;
-			default:
-				if (chance < .4) {
-					enchantments.put(Enchantment.SWEEPING_EDGE, 3);
-					price += 150;
-				} else if (chance < .6) {
-					enchantments.put(Enchantment.SWEEPING_EDGE, 4);
-					price += 200;
-				}
 		}
 		chance = r.nextDouble();
 
