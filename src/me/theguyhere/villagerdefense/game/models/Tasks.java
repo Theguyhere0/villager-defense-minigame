@@ -361,7 +361,7 @@ public class Tasks {
 											Utils.secondsToTicks(.5), Utils.secondsToTicks(1.5),
 											Utils.secondsToTicks(.5)));
 
-							// Set monsters glowing
+							// Set monsters glowing when time is low
 							arenaInstance.getPlayerSpawn().getWorld().getNearbyEntities(arenaInstance.getPlayerSpawn(),
 									200, 200, 200).stream().filter(entity -> entity.hasMetadata("VD"))
 									.filter(entity -> entity instanceof Monster || entity instanceof Slime ||

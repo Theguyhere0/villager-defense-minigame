@@ -6,7 +6,10 @@ import me.theguyhere.villagerdefense.customEvents.GameEndEvent;
 import me.theguyhere.villagerdefense.customEvents.ReloadBoardsEvent;
 import me.theguyhere.villagerdefense.customEvents.WaveEndEvent;
 import me.theguyhere.villagerdefense.game.models.*;
+import me.theguyhere.villagerdefense.tools.DataManager;
 import me.theguyhere.villagerdefense.tools.Utils;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -109,6 +112,37 @@ public class GameEvents implements Listener {
 			if (arena.getEnemies() == 0 && !arena.isEnding() && !arena.isSpawning()) {
 				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 						Bukkit.getPluginManager().callEvent(new WaveEndEvent(arena)));
+			}
+
+			DataManager data;
+
+			// Get spawn table
+			if (arena.getSpawnTableFile().equals("custom"))
+				data = new DataManager(plugin, "spawnTables/a" + arena.getArena() + ".yml");
+			else data = new DataManager(plugin, "spawnTables/" + arena.getSpawnTableFile() + ".yml");
+
+			// Get wave
+			String wave = Integer.toString(arena.getCurrentWave());
+			if (!data.getConfig().contains(wave))
+				if (data.getConfig().contains("freePlay"))
+					wave = "freePlay";
+				else wave = "1";
+
+			// Calculate count multiplier
+			double countMultiplier = Math.log((arena.getActiveCount() + 7) / 10d) + 1;
+			if (!arena.hasDynamicCount())
+				countMultiplier = 1;
+
+			// Calculate monster count
+			int count = (int) (data.getConfig().getInt(wave + ".count.m") * countMultiplier);
+
+			// Set monsters glowing when only 20% remain
+			if (arena.getEnemies() <= .2 * count && !arena.isSpawning() && arena.getEnemies() > 0) {
+				arena.getPlayerSpawn().getWorld().getNearbyEntities(arena.getPlayerSpawn(),
+						200, 200, 200).stream().filter(entity -> entity.hasMetadata("VD"))
+						.filter(entity -> entity instanceof Monster || entity instanceof Slime ||
+								entity instanceof Hoglin || entity instanceof Phantom)
+						.forEach(entity -> entity.setGlowing(true));
 			}
 		}
 
@@ -287,13 +321,13 @@ public class GameEvents implements Listener {
 			return;
 
 		LivingEntity n = (LivingEntity) ent;
+		double maxHealth = n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+		double modifiedHealth = n.getHealth() + e.getAmount();
 
 		// Update health bar
 		if (ent instanceof IronGolem || ent instanceof Ravager)
-			ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
-					n.getHealth(), 10));
-		else ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
-				n.getHealth(), 5));
+			ent.setCustomName(Utils.healthBar(maxHealth, Math.min(modifiedHealth, maxHealth), 10));
+		else ent.setCustomName(Utils.healthBar(maxHealth, Math.min(modifiedHealth, maxHealth), 5));
 	}
 
 	// Open shop
@@ -461,7 +495,8 @@ public class GameEvents implements Listener {
 		// Cancel picking up of emeralds and notify player
 		e.setCancelled(true);
 		e.getItem().remove();
-		player.sendMessage(Utils.notify(String.format(plugin.getLanguageData().getString("foundGems"), earned)));
+		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
+				Utils.format(String.format(plugin.getLanguageData().getString("foundGems"), earned))));
 		if (arena.hasGemSound())
 			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, .5f, 0);
 
