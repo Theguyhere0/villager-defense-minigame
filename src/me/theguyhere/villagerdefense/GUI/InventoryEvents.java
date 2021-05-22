@@ -2489,25 +2489,25 @@ public class InventoryEvents implements Listener {
 			if (buttonName.contains("Weapon Shop"))
 				if (arenaInstance.hasNormal())
 					player.openInventory(arenaInstance.getWeaponShop());
-				else player.sendMessage(Utils.notify("&c" + language.getString("normalShopError")));
+				else player.sendMessage(Utils.notify(language.getString("normalShopError")));
 
 			// Open armor shop
 			else if (buttonName.contains("Armor Shop"))
 				if (arenaInstance.hasNormal())
 					player.openInventory(arenaInstance.getArmorShop());
-				else player.sendMessage(Utils.notify("&c" + language.getString("normalShopError")));
+				else player.sendMessage(Utils.notify(language.getString("normalShopError")));
 
 			// Open consumables shop
 			else if (buttonName.contains("Consumables Shop"))
 				if (arenaInstance.hasNormal())
 					player.openInventory(arenaInstance.getConsumeShop());
-				else player.sendMessage(Utils.notify("&c" + language.getString("normalShopError")));
+				else player.sendMessage(Utils.notify(language.getString("normalShopError")));
 
 			// Open custom shop
 			else if (buttonName.contains("Custom Shop"))
 				if (arenaInstance.hasCustom())
 					player.openInventory(arenaInstance.getCustomShop());
-				else player.sendMessage(Utils.notify("&c" + language.getString("customShopError")));
+				else player.sendMessage(Utils.notify(language.getString("customShopError")));
 		}
 
 		// Mock custom shop for an arena
@@ -2547,7 +2547,7 @@ public class InventoryEvents implements Listener {
 
 			// Check if they can afford the item
 			if (!gamer.canAfford(cost)) {
-				player.sendMessage(Utils.notify("&c" + language.getString("buyError")));
+				player.sendMessage(Utils.notify(language.getString("buyError")));
 				return;
 			}
 
@@ -2573,21 +2573,21 @@ public class InventoryEvents implements Listener {
 			// Equip armor if possible, otherwise put in inventory, otherwise drop at feet
 			if (Arrays.stream(HELMETS).anyMatch(mat -> mat == buyType) && equipment.getHelmet() == null) {
 				equipment.setHelmet(buy);
-				player.sendMessage(Utils.notify("&a" + language.getString("helmet")));
+				player.sendMessage(Utils.notify(language.getString("helmet")));
 			} else if (Arrays.stream(CHESTPLATES).anyMatch(mat -> mat == buyType) &&
 					equipment.getChestplate() == null) {
 				equipment.setChestplate(buy);
-				player.sendMessage(Utils.notify("&a" + language.getString("chestplate")));
+				player.sendMessage(Utils.notify(language.getString("chestplate")));
 			} else if (Arrays.stream(LEGGINGS).anyMatch(mat -> mat == buyType) &&
 					equipment.getLeggings() == null) {
 				equipment.setLeggings(buy);
-				player.sendMessage(Utils.notify("&a" + language.getString("leggings")));
+				player.sendMessage(Utils.notify(language.getString("leggings")));
 			} else if (Arrays.stream(BOOTS).anyMatch(mat -> mat == buyType) && equipment.getBoots() == null) {
 				equipment.setBoots(buy);
-				player.sendMessage(Utils.notify("&a" + language.getString("boots")));
+				player.sendMessage(Utils.notify(language.getString("boots")));
 			} else {
 				Utils.giveItem(player, buy, language.getString("inventoryFull"));
-				player.sendMessage(Utils.notify("&a" + language.getString("buy")));
+				player.sendMessage(Utils.notify(language.getString("buy")));
 			}
 		}
 
@@ -2616,8 +2616,8 @@ public class InventoryEvents implements Listener {
 							playerData.set(name + ".crystalBalance",
 									playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit));
 							playerData.set(path + kit, true);
-							player.sendMessage(Utils.notify("&a" + language.getString("kitBuy")));
-						} else player.sendMessage(Utils.notify("&c" + language.getString("kitBuyError")));
+							player.sendMessage(Utils.notify(language.getString("kitBuy")));
+						} else player.sendMessage(Utils.notify(language.getString("kitBuyError")));
 
 				// Double tier kits
 				if (kit.equals("Giant"))
@@ -2627,9 +2627,8 @@ public class InventoryEvents implements Listener {
 								playerData.set(name + ".crystalBalance",
 										playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit, 2));
 								playerData.set(path + kit, 2);
-								player.sendMessage(Utils.notify("&a" + language.getString("kitUpgrade")));
-							} else player.sendMessage(Utils.notify("&c" +
-									language.getString("kitUpgradeError")));
+								player.sendMessage(Utils.notify(language.getString("kitUpgrade")));
+							} else player.sendMessage(Utils.notify(language.getString("kitUpgradeError")));
 							break;
 						case 2:
 							return;
@@ -2638,8 +2637,8 @@ public class InventoryEvents implements Listener {
 								playerData.set(name + ".crystalBalance",
 										playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit, 1));
 								playerData.set(path + kit, 1);
-								player.sendMessage(Utils.notify("&a" + language.getString("kitBuy")));
-							} else player.sendMessage(Utils.notify("&c" + language.getString("kitBuyError")));
+								player.sendMessage(Utils.notify(language.getString("kitBuy")));
+							} else player.sendMessage(Utils.notify(language.getString("kitBuyError")));
 					}
 
 				// Triple tier kits
@@ -2652,18 +2651,16 @@ public class InventoryEvents implements Listener {
 								playerData.set(name + ".crystalBalance",
 										playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit, 2));
 								playerData.set(path + kit, 2);
-								player.sendMessage(Utils.notify("&a" + language.getString("kitUpgrade")));
-							} else player.sendMessage(Utils.notify("&c" +
-									language.getString("kitUpgradeError")));
+								player.sendMessage(Utils.notify(language.getString("kitUpgrade")));
+							} else player.sendMessage(Utils.notify(language.getString("kitUpgradeError")));
 							break;
 						case 2:
 							if (playerData.getInt(name + ".crystalBalance") >= kits.getPrice(kit, 3)) {
 								playerData.set(name + ".crystalBalance",
 										playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit, 3));
 								playerData.set(path + kit, 3);
-								player.sendMessage(Utils.notify("&a" + language.getString("kitUpgrade")));
-							} else player.sendMessage(Utils.notify("&c" +
-									language.getString("kitUpgradeError")));
+								player.sendMessage(Utils.notify(language.getString("kitUpgrade")));
+							} else player.sendMessage(Utils.notify(language.getString("kitUpgradeError")));
 							break;
 						case 3:
 							return;
@@ -2672,8 +2669,8 @@ public class InventoryEvents implements Listener {
 								playerData.set(name + ".crystalBalance",
 										playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit, 1));
 								playerData.set(path + kit, 1);
-								player.sendMessage(Utils.notify("&a" + language.getString("kitBuy")));
-							} else player.sendMessage(Utils.notify("&c" + language.getString("kitBuyError")));
+								player.sendMessage(Utils.notify(language.getString("kitBuy")));
+							} else player.sendMessage(Utils.notify(language.getString("kitBuyError")));
 					}
 			}
 
@@ -2699,7 +2696,7 @@ public class InventoryEvents implements Listener {
 			if (gamer.isSpectating() && playerData.getBoolean(path + "Phantom") &&
 					kit.equals("Phantom")) {
 				if (arenaInstance.isEnding())
-					player.sendMessage(Utils.notify("&c" + language.getString("phantomError")));
+					player.sendMessage(Utils.notify(language.getString("phantomError")));
 				else {
 					Utils.teleAdventure(player, arenaInstance.getPlayerSpawn());
 					gamer.flipSpectating();
@@ -2720,9 +2717,9 @@ public class InventoryEvents implements Listener {
 					|| kit.equals("Witch") || kit.equals("Merchant") || kit.equals("Vampire")) {
 				if (playerData.getBoolean(path + kit) || kit.equals("Orc") || kit.equals("Farmer")) {
 					gamer.setKit(kit);
-					player.sendMessage(Utils.notify("&a" + language.getString("kitSelect")));
+					player.sendMessage(Utils.notify(language.getString("kitSelect")));
 				} else {
-					player.sendMessage(Utils.notify("&c" + language.getString("kitSelectError")));
+					player.sendMessage(Utils.notify(language.getString("kitSelectError")));
 					return;
 				}
 				player.closeInventory();
@@ -2734,14 +2731,14 @@ public class InventoryEvents implements Listener {
 				switch (playerData.getInt(path + kit)) {
 					case 1:
 						gamer.setKit(kit + 1);
-						player.sendMessage(Utils.notify("&a" + language.getString("kitSelect")));
+						player.sendMessage(Utils.notify(language.getString("kitSelect")));
 						break;
 					case 2:
 						gamer.setKit(kit + 2);
-						player.sendMessage(Utils.notify("&a" + language.getString("kitSelect")));
+						player.sendMessage(Utils.notify(language.getString("kitSelect")));
 						break;
 					default:
-						player.sendMessage(Utils.notify("&c" + language.getString("kitSelectError")));
+						player.sendMessage(Utils.notify(language.getString("kitSelectError")));
 						return;
 				}
 				player.closeInventory();
@@ -2755,18 +2752,18 @@ public class InventoryEvents implements Listener {
 				switch (playerData.getInt(path + kit)) {
 					case 1:
 						gamer.setKit(kit + 1);
-						player.sendMessage(Utils.notify("&a" + language.getString("kitSelect")));
+						player.sendMessage(Utils.notify(language.getString("kitSelect")));
 						break;
 					case 2:
 						gamer.setKit(kit + 2);
-						player.sendMessage(Utils.notify("&a" + language.getString("kitSelect")));
+						player.sendMessage(Utils.notify(language.getString("kitSelect")));
 						break;
 					case 3:
 						gamer.setKit(kit + 3);
-						player.sendMessage(Utils.notify("&a" + language.getString("kitSelect")));
+						player.sendMessage(Utils.notify(language.getString("kitSelect")));
 						break;
 					default:
-						player.sendMessage(Utils.notify("&c" + language.getString("kitSelectError")));
+						player.sendMessage(Utils.notify(language.getString("kitSelectError")));
 						return;
 				}
 				player.closeInventory();
@@ -2776,7 +2773,7 @@ public class InventoryEvents implements Listener {
 			// No kit
 			if (kit.equals("None")) {
 				gamer.setKit("None");
-				player.sendMessage(Utils.notify("&a" + language.getString("kitSelect")));
+				player.sendMessage(Utils.notify(language.getString("kitSelect")));
 				player.closeInventory();
 				game.createBoard(gamer);
 			}

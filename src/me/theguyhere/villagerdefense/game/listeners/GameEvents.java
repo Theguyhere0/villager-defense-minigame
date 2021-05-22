@@ -439,8 +439,8 @@ public class GameEvents implements Listener {
 
 			// Notify everyone of player death
 			arena.getPlayers().forEach(gamer ->
-					gamer.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&c " +
-							plugin.getLanguageData().getString("death"))));
+					gamer.getPlayer().sendMessage(Utils.notify(String.format(
+							plugin.getLanguageData().getString("death"), player.getName()))));
 
 			// Update scoreboards
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
@@ -488,8 +488,10 @@ public class GameEvents implements Listener {
 		Random r = new Random();
 		int wave = arena.getCurrentWave();
 		int earned = 0;
-		for (int i = 0; i < stack; i++)
-			earned += r.nextInt((int) (40 * Math.pow(wave, .15)));
+		for (int i = 0; i < stack; i++) {
+			int temp = r.nextInt((int) (40 * Math.pow(wave, .15)));
+			earned += temp == 0 ? 1 : temp;
+		}
 		gamer.addGems(earned);
 
 		// Cancel picking up of emeralds and notify player
@@ -545,8 +547,8 @@ public class GameEvents implements Listener {
 
 		// Notify everyone of player death
 		arena.getPlayers().forEach(gamer -> {
-				gamer.getPlayer().sendMessage(Utils.notify("&b" + player.getName() + "&c " +
-						plugin.getLanguageData().getString("death")));
+				gamer.getPlayer().sendMessage(Utils.notify(String.format(
+						plugin.getLanguageData().getString("death"), player.getName())));
 				if (arena.hasPlayerDeathSound())
 					gamer.getPlayer().playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10, .75f);
 		});
@@ -639,7 +641,7 @@ public class GameEvents implements Listener {
 						});
 			} else {
 				int earned = r.nextInt((int) (40 * Math.pow(wave, .15)));
-				gamer.addGems(earned);
+				gamer.addGems(earned == 0 ? 1 : earned);
 
 				// Notify player
 				player.sendMessage(Utils.notify(String.format(plugin.getLanguageData().getString("earnedGems"),
@@ -715,7 +717,7 @@ public class GameEvents implements Listener {
 
 			// Check for wolf cap
 			if (gamer.getWolves() >= arena.getWolfCap()) {
-				player.sendMessage(Utils.notify("&c" + String.format(language.getString("wolfError"),
+				player.sendMessage(Utils.notify(String.format(language.getString("wolfError"),
 						arena.getWolfCap())));
 				return;
 			}
@@ -748,7 +750,7 @@ public class GameEvents implements Listener {
 
 			// Check for golem cap
 			if (arena.getGolems() >= arena.getGolemCap()) {
-				player.sendMessage(Utils.notify("&c" + String.format(language.getString("golemError"),
+				player.sendMessage(Utils.notify(String.format(language.getString("golemError"),
 						arena.getGolemCap())));
 				return;
 			}
@@ -785,7 +787,7 @@ public class GameEvents implements Listener {
 				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(1)),
 						language.getString("inventoryFull"));
 			}
-			player.sendMessage(Utils.notify("&a" + language.getString("carePackage")));
+			player.sendMessage(Utils.notify(language.getString("carePackage")));
 		}
 
 		// Medium care package
@@ -814,7 +816,7 @@ public class GameEvents implements Listener {
 				else Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(2)),
 						language.getString("inventoryFull"));
 			}
-			player.sendMessage(Utils.notify("&a" + language.getString("carePackage")));
+			player.sendMessage(Utils.notify(language.getString("carePackage")));
 		}
 
 		// Large care package
@@ -847,7 +849,7 @@ public class GameEvents implements Listener {
 				else Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(3)),
 						language.getString("inventoryFull"));
 			}
-			player.sendMessage(Utils.notify("&a" + language.getString("carePackage")));
+			player.sendMessage(Utils.notify(language.getString("carePackage")));
 		}
 
 		// Extra large care package
@@ -892,7 +894,7 @@ public class GameEvents implements Listener {
 							language.getString("inventoryFull"));
 				}
 			}
-			player.sendMessage(Utils.notify("&a" + language.getString("carePackage")));
+			player.sendMessage(Utils.notify(language.getString("carePackage")));
 		}
 	}
 

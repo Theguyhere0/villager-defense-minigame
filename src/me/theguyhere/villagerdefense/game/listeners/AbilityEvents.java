@@ -49,7 +49,7 @@ public class AbilityEvents implements Listener {
 
         Player player = e.getPlayer();
 
-        // Avoid accidental usage when holding food, shop, or potions
+        // Avoid accidental usage when holding food, shop, ranged weapons, or potions
         if (player.getInventory().getItemInMainHand().getType() == Material.EMERALD ||
                 player.getInventory().getItemInMainHand().getType() == Material.BEETROOT ||
                 player.getInventory().getItemInMainHand().getType() == Material.CARROT ||
@@ -59,7 +59,9 @@ public class AbilityEvents implements Listener {
                 player.getInventory().getItemInMainHand().getType() == Material.GOLDEN_CARROT ||
                 player.getInventory().getItemInMainHand().getType() == Material.GOLDEN_APPLE ||
                 player.getInventory().getItemInMainHand().getType() == Material.ENCHANTED_GOLDEN_APPLE ||
-                player.getInventory().getItemInMainHand().getType() == Material.GLASS_BOTTLE
+                player.getInventory().getItemInMainHand().getType() == Material.GLASS_BOTTLE ||
+                player.getInventory().getItemInMainHand().getType() == Material.BOW ||
+                player.getInventory().getItemInMainHand().getType() == Material.CROSSBOW
         )
             return;
 
@@ -90,7 +92,7 @@ public class AbilityEvents implements Listener {
             // Check for zero level
             if (level == 0) {
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format("&c" + language.getString("levelError"))));
+				Utils.format(language .getString("levelError"))));
                 return;
             }
 
@@ -106,7 +108,7 @@ public class AbilityEvents implements Listener {
                 fireball.setShooter(player);
                 cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
             } else player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
+				Utils.format(String.format(language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
         }
 
         // Ninja
@@ -123,7 +125,7 @@ public class AbilityEvents implements Listener {
             // Check for zero level
             if (level == 0) {
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format("&c" + language.getString("levelError"))));
+				Utils.format(language.getString("levelError"))));
                 return;
             }
 
@@ -139,7 +141,7 @@ public class AbilityEvents implements Listener {
                         wolf.addPotionEffect((new PotionEffect(PotionEffectType.INVISIBILITY, duration, 0))));
                 cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
             } else player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
+				Utils.format(String.format(language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
         }
 
         // Templar
@@ -156,7 +158,7 @@ public class AbilityEvents implements Listener {
             // Check for zero level
             if (level == 0) {
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format("&c" + language.getString("levelError"))));
+				Utils.format(language.getString("levelError"))));
                 return;
             }
 
@@ -188,7 +190,7 @@ public class AbilityEvents implements Listener {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, duration, amplifier));
                 cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
             } else player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
+				Utils.format(String.format(language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
         }
 
         // Warrior
@@ -205,7 +207,7 @@ public class AbilityEvents implements Listener {
             // Check for zero level
             if (level == 0) {
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format("&c" + language.getString("levelError"))));
+				Utils.format(language.getString("levelError"))));
                 return;
             }
 
@@ -237,7 +239,7 @@ public class AbilityEvents implements Listener {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, duration, amplifier));
                 cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
             } else player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
+				Utils.format(String.format(language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
         }
 
         // Knight
@@ -254,7 +256,7 @@ public class AbilityEvents implements Listener {
             // Check for zero level
             if (level == 0) {
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format("&c" + language.getString("levelError"))));
+				Utils.format(language.getString("levelError"))));
                 return;
             }
 
@@ -286,7 +288,7 @@ public class AbilityEvents implements Listener {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, duration, amplifier));
                 cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
             } else player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
+				Utils.format(String.format(language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
         }
 
         // Priest
@@ -303,7 +305,7 @@ public class AbilityEvents implements Listener {
             // Check for zero level
             if (level == 0) {
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format("&c" + language.getString("levelError"))));
+				Utils.format(language.getString("levelError"))));
                 return;
             }
 
@@ -335,7 +337,7 @@ public class AbilityEvents implements Listener {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, duration, amplifier));
                 cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
             } else player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
+				Utils.format(String.format(language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
         }
 
         // Siren
@@ -352,7 +354,7 @@ public class AbilityEvents implements Listener {
             // Check for zero level
             if (level == 0) {
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format("&c" + language.getString("levelError"))));
+				Utils.format(language.getString("levelError"))));
                 return;
             }
 
@@ -387,7 +389,7 @@ public class AbilityEvents implements Listener {
                             new PotionEffect(PotionEffectType.WEAKNESS, altDuration, amp2)));
                 cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
             } else player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
+				Utils.format(String.format(language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
         }
 
         // Monk
@@ -404,7 +406,7 @@ public class AbilityEvents implements Listener {
             // Check for zero level
             if (level == 0) {
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format("&c" + language.getString("levelError"))));
+				Utils.format(language.getString("levelError"))));
                 return;
             }
 
@@ -436,7 +438,7 @@ public class AbilityEvents implements Listener {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, duration, amplifier));
                 cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
             } else player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
+				Utils.format(String.format(language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
         }
 
         // Messenger
@@ -453,7 +455,7 @@ public class AbilityEvents implements Listener {
             // Check for zero level
             if (level == 0) {
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format("&c" + language.getString("levelError"))));
+				Utils.format(language.getString("levelError"))));
                 return;
             }
 
@@ -485,7 +487,7 @@ public class AbilityEvents implements Listener {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, duration, amplifier));
                 cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
             } else player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(String.format("&c" + language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
+				Utils.format(String.format(language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
         }
     }
 

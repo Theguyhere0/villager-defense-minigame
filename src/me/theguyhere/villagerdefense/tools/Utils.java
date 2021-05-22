@@ -232,7 +232,7 @@ public class Utils {
                         player.getInventory().all(item.getType()).size() != 0)) {
             // Inventory is full
             player.getWorld().dropItemNaturally(player.getLocation(), item);
-            player.sendMessage(notify("&c" + message));
+            player.sendMessage(notify(message));
         } else player.getInventory().addItem(item);
     }
 
