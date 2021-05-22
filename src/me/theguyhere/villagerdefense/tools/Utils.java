@@ -368,9 +368,9 @@ public class Utils {
                 if (ent.hasMetadata("VD")) ent.remove();
         });
 
-        // Clear the arena for items
+        // Clear the arena for items and experience orbs
         ents.forEach(ent -> {
-            if (ent instanceof Item) ent.remove();
+            if (ent instanceof Item || ent instanceof ExperienceOrb) ent.remove();
         });
     }
 

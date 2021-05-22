@@ -100,12 +100,12 @@ public class InventoryEvents implements Listener {
 		if (e.getClickedInventory() == null)
 			return;
 
+		// Cancel the event
+		e.setCancelled(true);
+
 		// Ignore clicks in player inventory
 		if (e.getClickedInventory().getType() == InventoryType.PLAYER)
 			return;
-
-		// Cancel the event
-		e.setCancelled(true);
 
 		ItemStack button = e.getCurrentItem();
 
@@ -781,7 +781,6 @@ public class InventoryEvents implements Listener {
 		// Confirmation menus
 		else if (title.contains("Remove")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
-			Arena arenaInstance = game.arenas.get(meta.getInteger1());
 
 			// Confirm to remove portal
 			if (title.contains("Remove Portal?")) {
@@ -791,6 +790,8 @@ public class InventoryEvents implements Listener {
 
 				// Remove the portal, then return to previous menu
 				else if (buttonName.contains("YES")) {
+					Arena arenaInstance = game.arenas.get(meta.getInteger1());
+
 					// Remove portal data, close arena
 					arenaInstance.setPortal(null);
 					arenaInstance.setClosed(true);
@@ -812,6 +813,8 @@ public class InventoryEvents implements Listener {
 
 				// Remove the leaderboard, then return to previous menu
 				else if (buttonName.contains("YES")) {
+					Arena arenaInstance = game.arenas.get(meta.getInteger1());
+
 					// Remove leaderboard data, close arena
 					arenaInstance.setArenaBoard(null);
 
@@ -832,6 +835,8 @@ public class InventoryEvents implements Listener {
 
 				// Remove spawn, then return to previous menu
 				else if (buttonName.contains("YES")) {
+					Arena arenaInstance = game.arenas.get(meta.getInteger1());
+
 					arenaInstance.setPlayerSpawn(null);
 					arenaInstance.setClosed(true);
 					player.sendMessage(Utils.notify("&aSpawn removed!"));
@@ -848,6 +853,8 @@ public class InventoryEvents implements Listener {
 
 				// Remove spawn, then return to previous menu
 				else if (buttonName.contains("YES")) {
+					Arena arenaInstance = game.arenas.get(meta.getInteger1());
+
 					arenaInstance.setWaitingRoom(null);
 					player.sendMessage(Utils.notify("&aWaiting room removed!"));
 					player.openInventory(inv.createWaitingRoomInventory(meta.getInteger1()));
@@ -862,6 +869,8 @@ public class InventoryEvents implements Listener {
 
 				// Remove the monster spawn, then return to previous menu
 				else if (buttonName.contains("YES")) {
+					Arena arenaInstance = game.arenas.get(meta.getInteger1());
+
 					arenaInstance.setMonsterSpawn(meta.getInteger2(), null);
 					if (arenaInstance.getMonsterSpawns().stream().noneMatch(Objects::nonNull))
 						arenaInstance.setClosed(true);
@@ -879,6 +888,8 @@ public class InventoryEvents implements Listener {
 
 				// Remove the villager spawn, then return to previous menu
 				else if (buttonName.contains("YES")) {
+					Arena arenaInstance = game.arenas.get(meta.getInteger1());
+
 					arenaInstance.setVillagerSpawn(meta.getInteger2(), null);
 					if (arenaInstance.getVillagerSpawns().stream().noneMatch(Objects::nonNull))
 						arenaInstance.setClosed(true);
@@ -1050,6 +1061,8 @@ public class InventoryEvents implements Listener {
 
 				// Remove arena data, then return to previous menu
 				else if (buttonName.contains("YES")) {
+					Arena arenaInstance = game.arenas.get(meta.getInteger1());
+
 					// Remove data
 					arenaInstance.remove();
 					game.arenas.set(meta.getInteger1(), null);

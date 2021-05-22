@@ -1,6 +1,6 @@
 main: me.theguyhere.villagerdefense.Main
 name: VillagerDefense
-version: 0.7.4
+version: 0.7.5
 author: Theguyhere
 api-version: 1.16
 depend: [HolographicDisplays]

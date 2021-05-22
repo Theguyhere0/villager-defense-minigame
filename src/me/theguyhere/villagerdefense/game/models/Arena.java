@@ -210,7 +210,7 @@ public class Arena {
     }
 
     public Location getPortal() {
-        return Utils.getConfigLocationNoRotation(plugin, "portal." + arena);
+        return Utils.getConfigLocationNoPitch(plugin, "portal." + arena);
     }
 
     public void setPortal(Location location) {
@@ -236,7 +236,7 @@ public class Arena {
     }
 
     public Location getPlayerSpawn() {
-        return Utils.getConfigLocationNoRotation(plugin, path + ".spawn");
+        return Utils.getConfigLocation(plugin, path + ".spawn");
     }
 
     public void setPlayerSpawn(Location location) {
