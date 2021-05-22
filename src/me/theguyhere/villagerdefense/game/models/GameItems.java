@@ -2354,9 +2354,6 @@ public class GameItems {
 	public static @NotNull ItemStack arrows() {
 		return Utils.createItems(Material.ARROW, 16, null, Utils.format("&2Gems: &a45"));
 	}
-	public static @NotNull ItemStack arrowsSpectral() {
-		return Utils.createItems(Material.SPECTRAL_ARROW, 8, null, Utils.format("&2Gems: &a30"));
-	}
 	public static @NotNull ItemStack arrowsS() {
 		return Utils.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.SLOWNESS), 8,
 				null, Utils.format("&2Gems: &a50"));
@@ -5034,7 +5031,7 @@ public class GameItems {
 		return Utils.createItem(Material.GOLDEN_CARROT, null, Utils.format("&2Gems: &a80"));
 	}
 	public static @NotNull ItemStack steak() {
-		return Utils.createItem(Material.COOKED_BEEF, null, Utils.format("&2Gems: &a50"));
+		return Utils.createItems(Material.COOKED_BEEF, 2, null, Utils.format("&2Gems: &a60"));
 	}
 	public static @NotNull ItemStack mutton() {
 		return Utils.createItems(Material.COOKED_MUTTON, 2, null, Utils.format("&2Gems: &a40"));
@@ -5146,10 +5143,8 @@ public class GameItems {
 					return shield(level);
 				else if (chance < .9)
 					return bow(level);
-				else if (chance < .94)
+				else if (chance < .96)
 					return arrows();
-				else if (chance < .97)
-					return arrowsSpectral();
 				else return arrowsP();
 			case 3:
 				if (chance < .3)
@@ -5162,10 +5157,8 @@ public class GameItems {
 					return shield(level);
 				else if (chance < .9)
 					return crossbow(level);
-				else if (chance < .92)
+				else if (chance < .93)
 					return arrows();
-				else if (chance < .94)
-					return arrowsSpectral();
 				else if (chance < .96)
 					return arrowsP();
 				else if (chance < .98)
@@ -5184,10 +5177,8 @@ public class GameItems {
 					return shield(level);
 				else if (chance < .85)
 					return crossbow(level);
-				else if (chance < .88)
+				else if (chance < .9)
 					return arrows();
-				else if (chance < .91)
-					return arrowsSpectral();
 				else if (chance < .93)
 					return arrowsPPlus();
 				else if (chance < .95)
@@ -5210,10 +5201,8 @@ public class GameItems {
 					return crossbow(level);
 				else if (chance < .8)
 					return trident(level);
-				else if (chance < .83)
+				else if (chance < .85)
 					return arrows();
-				else if (chance < .86)
-					return arrowsSpectral();
 				else if (chance < .89)
 					return arrowsPPlus();
 				else if (chance < .92)
@@ -5238,10 +5227,8 @@ public class GameItems {
 					return crossbow(level);
 				else if (chance < .8)
 					return trident(level);
-				else if (chance < .83)
+				else if (chance < .85)
 					return arrows();
-				else if (chance < .86)
-					return arrowsSpectral();
 				else if (chance < .89)
 					return arrowsPPlus();
 				else if (chance < .92)
@@ -5296,16 +5283,12 @@ public class GameItems {
 			case 1:
 				return arrows();
 			case 2:
-				if (chance < .4)
+				if (chance < .6)
 					return arrows();
-				else if (chance < .7)
-					return arrowsSpectral();
 				else return arrowsP();
 			case 3:
-				if (chance < .2)
+				if (chance < .3)
 					return arrows();
-				else if (chance < .4)
-					return arrowsSpectral();
 				else if (chance < .6)
 					return arrowsP();
 				else if (chance < .8)
@@ -5314,10 +5297,8 @@ public class GameItems {
 					return arrowsW();
 				else return arrowsD();
 			case 4:
-				if (chance < .2)
+				if (chance < .35)
 					return arrows();
-				else if (chance < .4)
-					return arrowsSpectral();
 				else if (chance < .55)
 					return arrowsPPlus();
 				else if (chance < .7)
@@ -5328,10 +5309,8 @@ public class GameItems {
 					return arrowsD();
 				else return rockets();
 			default:
-				if (chance < .15)
+				if (chance < .25)
 					return arrows();
-				else if (chance < .3)
-					return arrowsSpectral();
 				else if (chance < .5)
 					return arrowsPPlus();
 				else if (chance < .7)

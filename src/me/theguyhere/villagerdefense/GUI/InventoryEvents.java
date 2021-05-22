@@ -103,6 +103,10 @@ public class InventoryEvents implements Listener {
 		// Cancel the event
 		e.setCancelled(true);
 
+		// Ignore clicks in player inventory
+		if (e.getClickedInventory().getType() == InventoryType.PLAYER)
+			return;
+
 		ItemStack button = e.getCurrentItem();
 
 		// Get material and name of button

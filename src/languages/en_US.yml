@@ -5,7 +5,7 @@ carePackage: Care package delivered!
 chestplate: Chestplate equipped!
 closeError: Arena is closed.
 commandError: Invalid command. Use /vd help for more info.
-cooldownError: You have %.1f seconds left on your cooldown!
+cooldownError: You have &b%.1f &cseconds left on your cooldown!
 crystals: You earned &b%d crystals &6this game!
 customShopError: Custom shop has been disabled!
 death: has died and will respawn next round.

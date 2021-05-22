@@ -8,6 +8,7 @@ import me.theguyhere.villagerdefense.game.models.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
@@ -47,6 +48,20 @@ public class AbilityEvents implements Listener {
             return;
 
         Player player = e.getPlayer();
+
+        // Avoid accidental usage when holding food, shop, or potions
+        if (player.getInventory().getItemInMainHand().getType() == Material.EMERALD ||
+                player.getInventory().getItemInMainHand().getType() == Material.BEETROOT ||
+                player.getInventory().getItemInMainHand().getType() == Material.CARROT ||
+                player.getInventory().getItemInMainHand().getType() == Material.BREAD ||
+                player.getInventory().getItemInMainHand().getType() == Material.MUTTON ||
+                player.getInventory().getItemInMainHand().getType() == Material.COOKED_BEEF ||
+                player.getInventory().getItemInMainHand().getType() == Material.GOLDEN_CARROT ||
+                player.getInventory().getItemInMainHand().getType() == Material.GOLDEN_APPLE ||
+                player.getInventory().getItemInMainHand().getType() == Material.ENCHANTED_GOLDEN_APPLE ||
+                player.getInventory().getItemInMainHand().getType() == Material.GLASS_BOTTLE
+        )
+            return;
 
         // See if the player is in a game
         if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
