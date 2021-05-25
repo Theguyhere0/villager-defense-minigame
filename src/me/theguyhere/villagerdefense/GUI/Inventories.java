@@ -1071,10 +1071,10 @@ public class Inventories {
 
 		// Option to toggle gem dropping
 		inv.setItem(4, Utils.createItem(Material.EMERALD,
-				Utils.format("&9&lGem Drop: " + getToggleStatus(arenaInstance.hasGemDrop())),
-				Utils.format("&7Change whether gems drop as"),
-				Utils.format("&7physical gems or go straight"),
-				Utils.format("&7into the killer's balance")));
+				Utils.format("&9&lItem Drop: " + getToggleStatus(arenaInstance.hasGemDrop())),
+				Utils.format("&7Change whether gems and loot drop"),
+				Utils.format("&7as physical items or go straight"),
+				Utils.format("&7into the killer's balance/inventory")));
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());
@@ -3018,7 +3018,7 @@ public class Inventories {
 
 		// Gem dropping
 		inv.setItem(15, Utils.createItem(Material.EMERALD,
-				Utils.format("&9&lGem Drop: " + getToggleStatus(arena.hasGemDrop())),
+				Utils.format("&9&lItem Drop: " + getToggleStatus(arena.hasGemDrop())),
 				Utils.format("&7Change whether gems drop as"),
 				Utils.format("&7physical gems or go straight"),
 				Utils.format("&7into the killer's balance")));

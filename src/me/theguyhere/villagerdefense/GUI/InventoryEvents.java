@@ -1860,7 +1860,7 @@ public class InventoryEvents implements Listener {
 				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
 			// Toggle gem drop
-			else if (buttonName.contains("Gem Drop:"))
+			else if (buttonName.contains("Item Drop:"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setGemDrop(!arenaInstance.hasGemDrop());
 					player.openInventory(inv.createShopsInventory(meta.getInteger1()));

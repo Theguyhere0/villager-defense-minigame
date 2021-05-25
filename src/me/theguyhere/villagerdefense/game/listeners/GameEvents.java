@@ -38,7 +38,7 @@ public class GameEvents implements Listener {
 		this.game = game;
 	}
 	
-	// Keep score and drop gems
+	// Keep score and drop gems, exp, and rare loot
 	@EventHandler
 	public void onMobKill(EntityDeathEvent e) {
 		LivingEntity ent = e.getEntity();
@@ -89,7 +89,9 @@ public class GameEvents implements Listener {
 			e.setDroppedExp(0);
 
 			if (!(ent instanceof Villager || ent instanceof Wolf || ent instanceof IronGolem)) {
-				// Set drop to emerald
+				Random r = new Random();
+
+				// Set drop to emerald, exp, and rare loot
 				if (ent instanceof Wither) {
 					if (arena.hasGemDrop())
 						e.getDrops().add(Utils.createItems(Material.EMERALD, 20, null,
@@ -97,9 +99,12 @@ public class GameEvents implements Listener {
 					if (arena.hasExpDrop())
 						e.setDroppedExp((int) (arena.getCurrentDifficulty() * 40));
 				} else {
-					if (arena.hasGemDrop())
+					if (arena.hasGemDrop()) {
 						e.getDrops().add(Utils.createItem(Material.EMERALD, null,
 								Integer.toString(arena.getArena())));
+						if (r.nextDouble() < .01)
+							e.getDrops().add(GameItems.randCare(arena.getCurrentWave() / 10 + 1));
+					}
 					if (arena.hasExpDrop())
 						e.setDroppedExp((int) (arena.getCurrentDifficulty() * 2));
 				}
@@ -609,7 +614,7 @@ public class GameEvents implements Listener {
 		// Increment kill count
 		gamer.incrementKills();
 
-		// Add gems and experience if needed
+		// Add gems, loot, and experience if needed
 		if (!arena.hasGemDrop()) {
 			// Calculate and give player gems
 			Random r = new Random();
@@ -642,6 +647,9 @@ public class GameEvents implements Listener {
 			} else {
 				int earned = r.nextInt((int) (40 * Math.pow(wave, .15)));
 				gamer.addGems(earned == 0 ? 1 : earned);
+				if (r.nextDouble() < .01)
+					Utils.giveItem(player, GameItems.randCare(wave / 10 + 1),
+							plugin.getLanguageData().getString("inventoryFull"));
 
 				// Notify player
 				player.sendMessage(Utils.notify(String.format(plugin.getLanguageData().getString("earnedGems"),
