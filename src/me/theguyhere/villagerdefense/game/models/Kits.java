@@ -24,13 +24,13 @@ public class Kits {
         kitPrices.put("Summoner", new Integer[]{750, 1750, 4500});
         kitPrices.put("Reaper", new Integer[]{750, 2000, 4000});
         kitPrices.put("Phantom", new Integer[]{6000});
-        kitPrices.put("Mage", new Integer[]{3500, 8000, 12000});
-        kitPrices.put("Ninja", new Integer[]{4000, 8000, 13000});
-        kitPrices.put("Templar", new Integer[]{4000, 8500, 13000});
+        kitPrices.put("Mage", new Integer[]{3500, 7500, 13000});
+        kitPrices.put("Ninja", new Integer[]{4000, 8000, 14000});
+        kitPrices.put("Templar", new Integer[]{3500, 8000, 12500});
         kitPrices.put("Warrior", new Integer[]{5000, 9000, 14000});
         kitPrices.put("Knight", new Integer[]{4500, 8500, 13000});
-        kitPrices.put("Priest", new Integer[]{5000, 9000, 14000});
-        kitPrices.put("Siren", new Integer[]{4000, 8000, 13000});
+        kitPrices.put("Priest", new Integer[]{5000, 9000, 15000});
+        kitPrices.put("Siren", new Integer[]{4000, 8000, 13500});
         kitPrices.put("Monk", new Integer[]{3000, 7000, 11000});
         kitPrices.put("Messenger", new Integer[]{4000, 8000, 12000});
         kitPrices.put("Blacksmith", new Integer[]{7500});

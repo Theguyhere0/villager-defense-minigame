@@ -1902,7 +1902,7 @@ public class Inventories {
 	// Generate the weapon shop
 	public static Inventory createWeaponShop(int level, Arena arena) {
 		// Set price modifier
-		double modifier = Math.pow(arena.getActiveCount() - 4, 2) / 200 + 1;
+		double modifier = Math.pow(arena.getActiveCount() - 5, 2) / 200 + 1;
 		if (!arena.hasDynamicPrices())
 			modifier = 1;
 
@@ -1963,7 +1963,7 @@ public class Inventories {
 	// Generate the armor shop
 	public static Inventory createArmorShop(int level, Arena arena) {
 		// Set price modifier
-		double modifier = Math.pow(arena.getActiveCount() - 4, 2) / 200 + 1;
+		double modifier = Math.pow(arena.getActiveCount() - 5, 2) / 200 + 1;
 		if (!arena.hasDynamicPrices())
 			modifier = 1;
 
@@ -2024,7 +2024,7 @@ public class Inventories {
 	// Generate the consumables shop
 	public static Inventory createConsumablesShop(int level, Arena arena) {
 		// Set price modifier
-		double modifier = Math.pow(arena.getActiveCount() - 4, 2) / 200 + 1;
+		double modifier = Math.pow(arena.getActiveCount() - 5, 2) / 200 + 1;
 		if (!arena.hasDynamicPrices())
 			modifier = 1;
 
