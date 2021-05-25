@@ -1,10 +1,7 @@
 package me.theguyhere.villagerdefense.game.listeners;
 
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.game.models.Arena;
-import me.theguyhere.villagerdefense.game.models.Game;
-import me.theguyhere.villagerdefense.game.models.Kits;
-import me.theguyhere.villagerdefense.game.models.VDPlayer;
+import me.theguyhere.villagerdefense.game.models.*;
 import me.theguyhere.villagerdefense.tools.Utils;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -49,8 +46,8 @@ public class AbilityEvents implements Listener {
 
         Player player = e.getPlayer();
 
-        // Avoid accidental usage when holding food, shop, ranged weapons, or potions
-        if (player.getInventory().getItemInMainHand().getType() == Material.EMERALD ||
+        // Avoid accidental usage when holding food, shop, ranged weapons, potions, or care packages
+        if (player.getInventory().getItemInMainHand().equals(GameItems.shop()) ||
                 player.getInventory().getItemInMainHand().getType() == Material.BEETROOT ||
                 player.getInventory().getItemInMainHand().getType() == Material.CARROT ||
                 player.getInventory().getItemInMainHand().getType() == Material.BREAD ||
@@ -61,7 +58,11 @@ public class AbilityEvents implements Listener {
                 player.getInventory().getItemInMainHand().getType() == Material.ENCHANTED_GOLDEN_APPLE ||
                 player.getInventory().getItemInMainHand().getType() == Material.GLASS_BOTTLE ||
                 player.getInventory().getItemInMainHand().getType() == Material.BOW ||
-                player.getInventory().getItemInMainHand().getType() == Material.CROSSBOW
+                player.getInventory().getItemInMainHand().getType() == Material.CROSSBOW ||
+                player.getInventory().getItemInMainHand().getType() == Material.COAL_BLOCK ||
+                player.getInventory().getItemInMainHand().getType() == Material.IRON_BLOCK ||
+                player.getInventory().getItemInMainHand().getType() == Material.DIAMOND_BLOCK ||
+                player.getInventory().getItemInMainHand().getType() == Material.BEACON
         )
             return;
 

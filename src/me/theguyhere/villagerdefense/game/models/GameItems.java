@@ -5042,8 +5042,8 @@ public class GameItems {
 	public static @NotNull ItemStack carrot() {
 		return Utils.createItems(Material.CARROT, 5, null, Utils.format("&2Gems: &a30"));
 	}
-	public static @NotNull ItemStack cookies() {
-		return Utils.createItems(Material.COOKIE, 10, null, Utils.format("&2Gems: &a40"));
+	public static @NotNull ItemStack beetroot() {
+		return Utils.createItems(Material.BEETROOT, 8, null, Utils.format("&2Gems: &a25"));
 	}
 	public static @NotNull ItemStack health() {
 		return Utils.createPotionItem(Material.POTION, new PotionData(PotionType.INSTANT_HEAL), null,
@@ -5343,7 +5343,7 @@ public class GameItems {
 		switch (level) {
 			case 1:
 				if (chance < .25)
-					return cookies();
+					return beetroot();
 				else if (chance < .5)
 					return carrot();
 				else if (chance < .65)
@@ -5508,13 +5508,13 @@ public class GameItems {
 		double chance = r.nextDouble();
 		switch (level) {
 			case 1:
-				if (chance < .3)
-					return cookies();
-				else if (chance < .7)
+				if (chance < .4)
+					return beetroot();
+				else if (chance < .8)
 					return carrot();
 				else return bread();
 			case 2:
-				if (chance < .3)
+				if (chance < .325)
 					return carrot();
 				else if (chance < .65)
 					return bread();

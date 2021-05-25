@@ -494,7 +494,7 @@ public class GameEvents implements Listener {
 		int wave = arena.getCurrentWave();
 		int earned = 0;
 		for (int i = 0; i < stack; i++) {
-			int temp = r.nextInt((int) (40 * Math.pow(wave, .15)));
+			int temp = r.nextInt((int) (50 * Math.pow(wave, .15)));
 			earned += temp == 0 ? 1 : temp;
 		}
 		gamer.addGems(earned);
@@ -621,7 +621,7 @@ public class GameEvents implements Listener {
 			int wave = arena.getCurrentWave();
 
 			if (e.getEntity() instanceof Wither) {
-				int earned = r.nextInt((int) (40 * Math.pow(wave, .15) * 20) / arena.getAlive());
+				int earned = r.nextInt((int) (50 * Math.pow(wave, .15) * 20) / arena.getAlive());
 				arena.getActives().stream().filter(vdPlayer -> !arena.getGhosts().contains(vdPlayer))
 						.forEach(vdPlayer -> {
 							vdPlayer.addGems(earned);
@@ -645,7 +645,7 @@ public class GameEvents implements Listener {
 							game.createBoard(vdPlayer);
 						});
 			} else {
-				int earned = r.nextInt((int) (40 * Math.pow(wave, .15)));
+				int earned = r.nextInt((int) (50 * Math.pow(wave, .15)));
 				gamer.addGems(earned == 0 ? 1 : earned);
 				if (r.nextDouble() < .01)
 					Utils.giveItem(player, GameItems.randCare(wave / 10 + 1),
