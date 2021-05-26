@@ -41,12 +41,12 @@ public class InfoBoard {
 
 	public void addHolo(Location location, int slot) {
 		FileConfiguration language = plugin.getLanguageData();
-		String[] text = {Utils.format("&b" + language.getString("info1")),
-				Utils.format("&b" + language.getString("info2")),
-				Utils.format("&6" + language.getString("info3")),
-				Utils.format("&6" + language.getString("info4")),
-				Utils.format("&6" + language.getString("info5")),
-				Utils.format("&6" + language.getString("info6"))};
+		String[] text = {Utils.format(language.getString("info1")),
+				Utils.format(language.getString("info2")),
+				Utils.format(language.getString("info3")),
+				Utils.format(language.getString("info4")),
+				Utils.format(language.getString("info5")),
+				Utils.format(language.getString("info6"))};
 
 		// Create hologram
 		Location newLocation = location.clone();

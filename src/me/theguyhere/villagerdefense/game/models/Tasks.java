@@ -49,8 +49,7 @@ public class Tasks {
 		@Override
 		public void run() {
 			game.arenas.get(arena).getPlayers().forEach(player ->
-				player.getPlayer().sendMessage(Utils.notify("&6" +
-						plugin.getLanguageData().getString("waiting"))));
+				player.getPlayer().sendMessage(Utils.notify(plugin.getLanguageData().getString("waiting"))));
 		}
 	};
 
@@ -60,8 +59,8 @@ public class Tasks {
 		@Override
 		public void run() {
 			game.arenas.get(arena).getPlayers().forEach(player ->
-					player.getPlayer().sendMessage(Utils.notify("&b2 &6" +
-							plugin.getLanguageData().getString("minutesLeft"))));
+					player.getPlayer().sendMessage(Utils.notify(String.format(
+							plugin.getLanguageData().getString("minutesLeft"), 2))));
 		}
 
 	};
@@ -72,8 +71,8 @@ public class Tasks {
 		@Override
 		public void run() {
 			game.arenas.get(arena).getPlayers().forEach(player ->
-					player.getPlayer().sendMessage(Utils.notify("&b1 &6" +
-							plugin.getLanguageData().getString("minutesLeft"))));
+					player.getPlayer().sendMessage(Utils.notify(String.format(
+							plugin.getLanguageData().getString("minutesLeft"), 1))));
 		}
 		
 	};
@@ -84,8 +83,8 @@ public class Tasks {
 		@Override
 		public void run() {
 			game.arenas.get(arena).getPlayers().forEach(player ->
-					player.getPlayer().sendMessage(Utils.notify("&b30 &6" +
-							plugin.getLanguageData().getString("secondsLeft"))));
+					player.getPlayer().sendMessage(Utils.notify(String.format(
+							plugin.getLanguageData().getString("secondsLeft"), 30))));
 		}
 	};
 
@@ -95,8 +94,8 @@ public class Tasks {
 		@Override
 		public void run() {
 			game.arenas.get(arena).getPlayers().forEach(player ->
-					player.getPlayer().sendMessage(Utils.notify("&b10 &6" +
-							plugin.getLanguageData().getString("secondsLeft"))));
+					player.getPlayer().sendMessage(Utils.notify(String.format(
+							plugin.getLanguageData().getString("secondsLeft"), 10))));
 		}
 		
 	};
@@ -107,10 +106,9 @@ public class Tasks {
 		@Override
 		public void run() {
 			game.arenas.get(arena).getPlayers().forEach(player -> {
-					player.getPlayer().sendMessage(Utils.notify("&6" +
-							plugin.getLanguageData().getString("maxCapacity")));
-					player.getPlayer().sendMessage(Utils.notify("&b10 &6" +
-							plugin.getLanguageData().getString("secondsLeft")));
+					player.getPlayer().sendMessage(Utils.notify(plugin.getLanguageData().getString("maxCapacity")));
+					player.getPlayer().sendMessage(Utils.notify(String.format(
+							plugin.getLanguageData().getString("secondsLeft"), 10)));
 			});
 		}
 
@@ -122,8 +120,8 @@ public class Tasks {
 		@Override
 		public void run() {
 			game.arenas.get(arena).getPlayers().forEach(player ->
-					player.getPlayer().sendMessage(Utils.notify("&b5 &6" +
-							plugin.getLanguageData().getString("secondsLeft"))));
+					player.getPlayer().sendMessage(Utils.notify(String.format(
+							plugin.getLanguageData().getString("secondsLeft"), 5))));
 		}
 		
 	};
@@ -162,9 +160,8 @@ public class Tasks {
 
 			arenaInstance.getActives().forEach(p -> {
 				// Notify of upcoming wave
-				p.getPlayer().sendTitle(Utils.format("&6" + plugin.getLanguageData().getString("wave") +
-								" " + currentWave),
-						Utils.format("&7" + plugin.getLanguageData().getString("starting")),
+				p.getPlayer().sendTitle(Utils.format(String.format(plugin.getLanguageData().getString("wave"),
+						currentWave)), Utils.format(plugin.getLanguageData().getString("starting")),
 						Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
 
 				// Give players gem rewards
@@ -191,10 +188,9 @@ public class Tasks {
 
 			// Notify spectators of upcoming wave
 			arenaInstance.getSpectators().forEach(p ->
-				p.getPlayer().sendTitle(Utils.format("&6" + language.getString("wave") +
-								" " + currentWave),
-						Utils.format("&7" + plugin.getLanguageData().getString("starting")),
-						Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
+				p.getPlayer().sendTitle(Utils.format(String.format(language.getString("wave"), currentWave)),
+						Utils.format(language.getString("starting")), Utils.secondsToTicks(.5),
+						Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
 
 			// Regenerate shops when time and notify players of it
 			if (currentWave % 10 == 0 || currentWave == 1) {
@@ -205,9 +201,8 @@ public class Tasks {
 				if (currentWave != 1)
 					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 							arenaInstance.getActives().forEach(player ->
-									player.getPlayer().sendTitle(Utils.format("&6" +
-													language.getString("shopUpgrade")),
-											Utils.format("&7" + language.getString("shopInfo")),
+									player.getPlayer().sendTitle(Utils.format(language.getString("shopUpgrade")),
+											Utils.format(language.getString("shopInfo")),
 											Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5),
 											Utils.secondsToTicks(1))), Utils.secondsToTicks(4));
 			}
@@ -356,8 +351,8 @@ public class Tasks {
 						if (!messageSent) {
 							// Send warning
 							arenaInstance.getActives().forEach(player ->
-									player.getPlayer().sendTitle(Utils.format("&c" +
-													plugin.getLanguageData().getString("minuteWarning")), null,
+									player.getPlayer().sendTitle(Utils.format(
+											plugin.getLanguageData().getString("minuteWarning")), null,
 											Utils.secondsToTicks(.5), Utils.secondsToTicks(1.5),
 											Utils.secondsToTicks(.5)));
 

@@ -90,7 +90,7 @@ public class Main extends JavaPlugin {
 		int arenaDataVersion = 3;
 		int playerDataVersion = 1;
 		int spawnTableVersion = 1;
-		int languageFileVersion = 3;
+		int languageFileVersion = 4;
 		int defaultSpawnVersion = 2;
 
 		// Check config version
@@ -98,7 +98,8 @@ public class Main extends JavaPlugin {
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
 					"Your config.yml is outdated!");
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
-					"Please update to the latest version (" + configVersion + ") to ensure compatibility.");
+					"Please update to the latest version (" + ChatColor.BLUE + configVersion + ChatColor.RED +
+					") to ensure compatibility.");
 		}
 
 		// Check if arenaData.yml is outdated
@@ -106,7 +107,8 @@ public class Main extends JavaPlugin {
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
 					"Your arenaData.yml is no longer supported with this version!");
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
-					"Please manually transfer arena data to version " + arenaDataVersion + ".");
+					"Please manually transfer arena data to version " + ChatColor.BLUE + arenaDataVersion +
+					ChatColor.RED + ".");
 			getServer().getConsoleSender().sendMessage(ChatColor.RED +  "[VillagerDefense] " +
 					"Please do not update your config.yml until your arenaData.yml has been updated.");
 		}
@@ -116,7 +118,8 @@ public class Main extends JavaPlugin {
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
 					"Your playerData.yml is no longer supported with this version!");
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
-					"Please manually transfer player data to version " + playerDataVersion + ".");
+					"Please manually transfer player data to version " + ChatColor.BLUE + playerDataVersion +
+					ChatColor.BLUE + ".");
 			getServer().getConsoleSender().sendMessage(ChatColor.RED +  "[VillagerDefense] " +
 					"Please do not update your config.yml until your playerData.yml has been updated.");
 		}
@@ -126,7 +129,8 @@ public class Main extends JavaPlugin {
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
 					"Your spawn tables are no longer supported with this version!");
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
-					"Please manually transfer spawn table data to version " + spawnTableVersion + ".");
+					"Please manually transfer spawn table data to version " + ChatColor.BLUE + spawnTableVersion +
+					ChatColor.RED + ".");
 			getServer().getConsoleSender().sendMessage(ChatColor.RED +  "[VillagerDefense] " +
 					"Please do not update your config.yml until your spawn tables have been updated.");
 		}
@@ -136,7 +140,8 @@ public class Main extends JavaPlugin {
 			getServer().getConsoleSender().sendMessage("[VillagerDefense] " +
 					"The default.yml spawn table has been updated!");
 			getServer().getConsoleSender().sendMessage("[VillagerDefense] " +
-					"Updating is optional but recommended.");
+					"Updating to version" + ChatColor.BLUE + defaultSpawnVersion + ChatColor.WHITE +
+					" is optional but recommended.");
 			getServer().getConsoleSender().sendMessage("[VillagerDefense] " +
 					"Please do not update your config.yml unless your default.yml has been updated.");
 		}
@@ -146,8 +151,8 @@ public class Main extends JavaPlugin {
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
 					"You language files are no longer supported with this version!");
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
-					"Please update en_US.yml and update any other language files to version " + languageFileVersion +
-					".");
+					"Please update en_US.yml and update any other language files to version " + ChatColor.BLUE +
+					languageFileVersion + ChatColor.RED + ".");
 			getServer().getConsoleSender().sendMessage(ChatColor.RED +  "[VillagerDefense] " +
 					"Please do not update your config.yml until your language files have been updated.");
 		}

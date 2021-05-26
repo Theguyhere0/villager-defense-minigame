@@ -126,6 +126,15 @@ public class Mobs {
         }
     }
 
+    private static void setBaby(Arena arena, Ageable ageable) {
+        Random r = new Random();
+        double difficulty = arena.getCurrentDifficulty();
+
+        if (r.nextDouble() < .25 / (1 + Math.pow(Math.E, - (difficulty - 8) / 2)))
+            ageable.setBaby();
+        else ageable.setAdult();
+    }
+
     private static void setSize(Arena arena, Slime slime) {
         Random r = new Random();
         double difficulty = arena.getCurrentDifficulty();
@@ -1013,12 +1022,14 @@ public class Mobs {
         setMinion(plugin, arena, zombie);
         setSword(arena, zombie);
         setArmor(arena, zombie);
+        setBaby(arena, zombie);
     }
 
     public static void setHusk(Main plugin, Arena arena, Husk husk) {
         setMinion(plugin, arena, husk);
         setSword(arena, husk);
         setArmor(arena, husk);
+        setBaby(arena, husk);
     }
 
     public static void setWitherSkeleton(Main plugin, Arena arena, WitherSkeleton witherSkeleton) {
@@ -1031,6 +1042,7 @@ public class Mobs {
         setMinion(plugin, arena, brute);
         setAxe(arena, brute);
         setArmor(arena, brute);
+        setBaby(arena, brute);
         brute.setImmuneToZombification(true);
     }
 
@@ -1069,6 +1081,7 @@ public class Mobs {
         setMinion(plugin, arena, drowned);
         setTrident(arena, drowned);
         setArmor(arena, drowned);
+        setBaby(arena, drowned);
     }
 
     public static void setBlaze(Main plugin, Arena arena, Blaze blaze) {

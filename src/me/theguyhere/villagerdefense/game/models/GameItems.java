@@ -5037,13 +5037,13 @@ public class GameItems {
 		return Utils.createItems(Material.COOKED_MUTTON, 2, null, Utils.format("&2Gems: &a40"));
 	}
 	public static @NotNull ItemStack bread() {
-		return Utils.createItems(Material.BREAD, 3, null, Utils.format("&2Gems: &a45"));
+		return Utils.createItems(Material.BREAD, 3, null, Utils.format("&2Gems: &a40"));
 	}
 	public static @NotNull ItemStack carrot() {
-		return Utils.createItems(Material.CARROT, 4, null, Utils.format("&2Gems: &a35"));
+		return Utils.createItems(Material.CARROT, 5, null, Utils.format("&2Gems: &a30"));
 	}
 	public static @NotNull ItemStack beetroot() {
-		return Utils.createItems(Material.BEETROOT, 5, null, Utils.format("&2Gems: &a25"));
+		return Utils.createItems(Material.BEETROOT, 8, null, Utils.format("&2Gems: &a25"));
 	}
 	public static @NotNull ItemStack health() {
 		return Utils.createPotionItem(Material.POTION, new PotionData(PotionType.INSTANT_HEAL), null,
@@ -5631,6 +5631,28 @@ public class GameItems {
 				else if (chance < .95)
 					return strength2();
 				else return regen2();
+		}
+	}
+	public static @NotNull ItemStack randCare(int level) {
+		Random r = new Random();
+		double chance = r.nextDouble();
+		switch (level) {
+			case 1:
+				return smallCare();
+			case 2:
+				if (chance < .35)
+					return smallCare();
+				else return mediumCare();
+			case 3:
+				if (chance < .35)
+					return mediumCare();
+				else return largeCare();
+			case 4:
+				if (chance < .35)
+					return largeCare();
+				else return extraCare();
+			default:
+				return extraCare();
 		}
 	}
 }
