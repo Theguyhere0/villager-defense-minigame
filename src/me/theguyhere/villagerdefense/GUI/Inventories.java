@@ -1788,7 +1788,7 @@ public class Inventories {
 				Utils.format("&6&lWaiting Sound"),
 				FLAGS,
 				null,
-				Utils.format("&7Played while players wait for game to start")));
+				Utils.format("&7Played while players wait"), Utils.format("&7for the game to start")));
 
 		// Option to edit gem pickup sound
 		inv.setItem(5, Utils.createItem(Material.MUSIC_DISC_FAR,
@@ -1803,6 +1803,13 @@ public class Inventories {
 				FLAGS,
 				null,
 				Utils.format("&7Played when a player dies")));
+
+		// Option to edit ability sound
+		inv.setItem(7, Utils.createItem(Material.MUSIC_DISC_MALL,
+				Utils.format("&d&lAbility Sound: " + getToggleStatus(arenaInstance.hasAbilitySound())),
+				FLAGS,
+				null,
+				Utils.format("&7Played when a player uses their ability")));
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());
@@ -3016,7 +3023,7 @@ public class Inventories {
 				null,
 				Utils.format("&7Determines difficulty increase rate")));
 
-		// Gem dropping
+		// Item dropping
 		inv.setItem(15, Utils.createItem(Material.EMERALD,
 				Utils.format("&9&lItem Drop: " + getToggleStatus(arena.hasGemDrop())),
 				Utils.format("&7Change whether gems drop as"),

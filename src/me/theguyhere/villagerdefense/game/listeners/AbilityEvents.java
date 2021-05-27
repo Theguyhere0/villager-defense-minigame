@@ -6,6 +6,7 @@ import me.theguyhere.villagerdefense.tools.Utils;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
@@ -39,132 +40,93 @@ public class AbilityEvents implements Listener {
     @EventHandler
     public void onAbility(PlayerInteractEvent e) {
         FileConfiguration language = plugin.getLanguageData();
-        
+
         // Check for right click
         if (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK)
             return;
 
         Player player = e.getPlayer();
+        Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+                .collect(Collectors.toList()).get(0);
+        VDPlayer gamer = arena.getPlayer(player);
+        ItemStack item = e.getItem();
+        ItemStack main = player.getInventory().getItemInMainHand();
 
         // Avoid accidental usage when holding food, shop, ranged weapons, potions, or care packages
-        if (player.getInventory().getItemInMainHand().equals(GameItems.shop()) ||
-                player.getInventory().getItemInMainHand().getType() == Material.BEETROOT ||
-                player.getInventory().getItemInMainHand().getType() == Material.CARROT ||
-                player.getInventory().getItemInMainHand().getType() == Material.BREAD ||
-                player.getInventory().getItemInMainHand().getType() == Material.MUTTON ||
-                player.getInventory().getItemInMainHand().getType() == Material.COOKED_BEEF ||
-                player.getInventory().getItemInMainHand().getType() == Material.GOLDEN_CARROT ||
-                player.getInventory().getItemInMainHand().getType() == Material.GOLDEN_APPLE ||
-                player.getInventory().getItemInMainHand().getType() == Material.ENCHANTED_GOLDEN_APPLE ||
-                player.getInventory().getItemInMainHand().getType() == Material.GLASS_BOTTLE ||
-                player.getInventory().getItemInMainHand().getType() == Material.BOW ||
-                player.getInventory().getItemInMainHand().getType() == Material.CROSSBOW ||
-                player.getInventory().getItemInMainHand().getType() == Material.COAL_BLOCK ||
-                player.getInventory().getItemInMainHand().getType() == Material.IRON_BLOCK ||
-                player.getInventory().getItemInMainHand().getType() == Material.DIAMOND_BLOCK ||
-                player.getInventory().getItemInMainHand().getType() == Material.BEACON
-        )
-            return;
+        if (main.equals(GameItems.shop()) || main.getType() == Material.BEETROOT || main.getType() == Material.CARROT ||
+                main.getType() == Material.BREAD || main.getType() == Material.COOKED_MUTTON ||
+                main.getType() == Material.COOKED_BEEF || main.getType() == Material.GOLDEN_CARROT ||
+                main.getType() == Material.GOLDEN_APPLE || main.getType() == Material.ENCHANTED_GOLDEN_APPLE ||
+                main.getType() == Material.GLASS_BOTTLE || main.getType() == Material.BOW ||
+                main.getType() == Material.CROSSBOW || main.getType() == Material.COAL_BLOCK ||
+                main.getType() == Material.IRON_BLOCK || main.getType() == Material.DIAMOND_BLOCK ||
+                main.getType() == Material.BEACON || main.getType() == Material.EXPERIENCE_BOTTLE) return;
 
         // See if the player is in a game
         if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
             return;
 
-        Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
-                .collect(Collectors.toList()).get(0);
-        VDPlayer gamer = arena.getPlayer(player);
-        ItemStack item = e.getItem();
-
         // Ensure cooldown is initialized
         if (!cooldowns.containsKey(gamer))
             cooldowns.put(gamer, 0L);
 
+        // Get effective player level
+        int level = player.getLevel();
+        if (gamer.getKit().contains("1") && level > 10)
+            level = 10;
+        if (gamer.getKit().contains("2") && level > 20)
+            level = 20;
+        if (gamer.getKit().contains("3") && level > 30)
+            level = 30;
+
+        // Check for zero level
+        if (level == 0) {
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
+                    Utils.format(language .getString("levelError"))));
+            return;
+        }
+        
+        // Check for cooldown
+        long dif = cooldowns.get(gamer) - System.currentTimeMillis();
+        if (dif > 0) {
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
+                    Utils.format(String.format(language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
+            return;
+        }
+
         // Mage
         if (gamer.getKit().contains("Mage") && Kits.mage().equals(item)) {
-            // Get effective player level
-            int level = player.getLevel();
-            if (gamer.getKit().contains("1") && level > 10)
-                level = 10;
-            if (gamer.getKit().contains("2") && level > 20)
-                level = 20;
-            if (gamer.getKit().contains("3") && level > 30)
-                level = 30;
-
-            // Check for zero level
-            if (level == 0) {
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(language .getString("levelError"))));
-                return;
-            }
-
             // Calculate stats
-            long dif = cooldowns.get(gamer) - System.currentTimeMillis();
             int coolDown = Utils.secondsToMillis(13 - Math.pow(Math.E, (level - 1) / 12d));
             float yield = 1 + level * .05f;
 
-            // Activate ability if cooldown has passed
-            if (dif <= 0) {
-                Fireball fireball = player.getWorld().spawn(player.getEyeLocation(), Fireball.class);
-                fireball.setYield(yield);
-                fireball.setShooter(player);
-                cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
-            } else player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(String.format(language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
+            // Activate ability
+            Fireball fireball = player.getWorld().spawn(player.getEyeLocation(), Fireball.class);
+            fireball.setYield(yield);
+            fireball.setShooter(player);
+            cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
         }
 
         // Ninja
         if (gamer.getKit().contains("Ninja") && Kits.ninja().equals(item)) {
-            // Get effective player level
-            int level = player.getLevel();
-            if (gamer.getKit().contains("1") && level > 10)
-                level = 10;
-            if (gamer.getKit().contains("2") && level > 20)
-                level = 20;
-            if (gamer.getKit().contains("3") && level > 30)
-                level = 30;
-
-            // Check for zero level
-            if (level == 0) {
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(language.getString("levelError"))));
-                return;
-            }
-
             // Calculate stats
-            long dif = cooldowns.get(gamer) - System.currentTimeMillis();
             int coolDown = Utils.secondsToMillis(46 - Math.pow(Math.E, (level - 1) / 12d));
             int duration = Utils.secondsToTicks(4 + Math.pow(Math.E, (level - 1) / 8.5));
 
-            // Activate ability if cooldown has passed
-            if (dif <= 0) {
-                player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, duration, 0));
-                Utils.getPets(player).forEach(wolf ->
-                        wolf.addPotionEffect((new PotionEffect(PotionEffectType.INVISIBILITY, duration, 0))));
-                cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
-            } else player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(String.format(language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
+            // Activate ability
+            player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, duration, 0));
+            Utils.getPets(player).forEach(wolf ->
+                    wolf.addPotionEffect((new PotionEffect(PotionEffectType.INVISIBILITY, duration, 0))));
+            cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
+
+            // Fire ability sound if turned on
+            if (arena.hasAbilitySound())
+                player.playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1);
         }
 
         // Templar
         if (gamer.getKit().contains("Templar") && Kits.templar().equals(item)) {
-            // Get effective player level
-            int level = player.getLevel();
-            if (gamer.getKit().contains("1") && level > 10)
-                level = 10;
-            if (gamer.getKit().contains("2") && level > 20)
-                level = 20;
-            if (gamer.getKit().contains("3") && level > 30)
-                level = 30;
-
-            // Check for zero level
-            if (level == 0) {
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(language.getString("levelError"))));
-                return;
-            }
-
             // Calculate stats
-            long dif = cooldowns.get(gamer) - System.currentTimeMillis();
             int duration, amplifier;
             int coolDown = Utils.secondsToMillis(46 - Math.pow(Math.E, (level - 1) / 12d));
             double range = 2 + level * .1d;
@@ -182,38 +144,23 @@ public class AbilityEvents implements Listener {
             }
             int altDuration = (int) (.6 * duration);
 
-            // Activate ability if cooldown has passed
-            if (dif <= 0) {
-                Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
-                        new PotionEffect(PotionEffectType.ABSORPTION, altDuration, amplifier)));
-                Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
-                        new PotionEffect(PotionEffectType.ABSORPTION, altDuration, amplifier)));
-                player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, duration, amplifier));
-                cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
-            } else player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(String.format(language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
+            // Activate ability
+            Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
+                    new PotionEffect(PotionEffectType.ABSORPTION, altDuration, amplifier)));
+            Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+                    new PotionEffect(PotionEffectType.ABSORPTION, altDuration, amplifier)));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, duration, amplifier));
+            cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
+
+            // Fire ability sound if turned on
+            if (arena.hasAbilitySound())
+                arena.getActives().forEach(vdPlayer -> vdPlayer.getPlayer()
+                        .playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
         }
 
         // Warrior
         if (gamer.getKit().contains("Warrior") && Kits.warrior().equals(item)) {
-            // Get effective player level
-            int level = player.getLevel();
-            if (gamer.getKit().contains("1") && level > 10)
-                level = 10;
-            if (gamer.getKit().contains("2") && level > 20)
-                level = 20;
-            if (gamer.getKit().contains("3") && level > 30)
-                level = 30;
-
-            // Check for zero level
-            if (level == 0) {
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(language.getString("levelError"))));
-                return;
-            }
-
             // Calculate stats
-            long dif = cooldowns.get(gamer) - System.currentTimeMillis();
             int duration, amplifier;
             int coolDown = Utils.secondsToMillis(46 - Math.pow(Math.E, (level - 1) / 12d));
             double range = 2 + level * .1d;
@@ -231,38 +178,23 @@ public class AbilityEvents implements Listener {
             }
             int altDuration = (int) (.6 * duration);
 
-            // Activate ability if cooldown has passed
-            if (dif <= 0) {
-                Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
-                        new PotionEffect(PotionEffectType.INCREASE_DAMAGE, altDuration, amplifier)));
-                Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
-                        new PotionEffect(PotionEffectType.INCREASE_DAMAGE, altDuration, amplifier)));
-                player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, duration, amplifier));
-                cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
-            } else player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(String.format(language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
+            // Activate ability
+            Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
+                    new PotionEffect(PotionEffectType.INCREASE_DAMAGE, altDuration, amplifier)));
+            Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+                    new PotionEffect(PotionEffectType.INCREASE_DAMAGE, altDuration, amplifier)));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, duration, amplifier));
+            cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
+
+            // Fire ability sound if turned on
+            if (arena.hasAbilitySound())
+                arena.getActives().forEach(vdPlayer -> vdPlayer.getPlayer()
+                        .playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
         }
 
         // Knight
         if (gamer.getKit().contains("Knight") && Kits.knight().equals(item)) {
-            // Get effective player level
-            int level = player.getLevel();
-            if (gamer.getKit().contains("1") && level > 10)
-                level = 10;
-            if (gamer.getKit().contains("2") && level > 20)
-                level = 20;
-            if (gamer.getKit().contains("3") && level > 30)
-                level = 30;
-
-            // Check for zero level
-            if (level == 0) {
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(language.getString("levelError"))));
-                return;
-            }
-
             // Calculate stats
-            long dif = cooldowns.get(gamer) - System.currentTimeMillis();
             int duration, amplifier;
             int coolDown = Utils.secondsToMillis(46 - Math.pow(Math.E, (level - 1) / 12d));
             double range = 2 + level * .1d;
@@ -280,38 +212,23 @@ public class AbilityEvents implements Listener {
             }
             int altDuration = (int) (.6 * duration);
 
-            // Activate ability if cooldown has passed
-            if (dif <= 0) {
-                Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
-                        new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, altDuration, amplifier)));
-                Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
-                        new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, altDuration, amplifier)));
-                player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, duration, amplifier));
-                cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
-            } else player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(String.format(language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
+            // Activate ability
+            Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
+                    new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, altDuration, amplifier)));
+            Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+                    new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, altDuration, amplifier)));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, duration, amplifier));
+            cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
+
+            // Fire ability sound if turned on
+            if (arena.hasAbilitySound())
+                arena.getActives().forEach(vdPlayer -> vdPlayer.getPlayer()
+                        .playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
         }
 
         // Priest
         if (gamer.getKit().contains("Priest") && Kits.priest().equals(item)) {
-            // Get effective player level
-            int level = player.getLevel();
-            if (gamer.getKit().contains("1") && level > 10)
-                level = 10;
-            if (gamer.getKit().contains("2") && level > 20)
-                level = 20;
-            if (gamer.getKit().contains("3") && level > 30)
-                level = 30;
-
-            // Check for zero level
-            if (level == 0) {
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(language.getString("levelError"))));
-                return;
-            }
-
             // Calculate stats
-            long dif = cooldowns.get(gamer) - System.currentTimeMillis();
             int duration, amplifier;
             int coolDown = Utils.secondsToMillis(46 - Math.pow(Math.E, (level - 1) / 12d));
             double range = 2 + level * .1d;
@@ -329,40 +246,25 @@ public class AbilityEvents implements Listener {
             }
             int altDuration = (int) (.6 * duration);
 
-            // Activate ability if cooldown has passed
-            if (dif <= 0) {
-                Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
-                        new PotionEffect(PotionEffectType.REGENERATION, altDuration, amplifier)));
-                Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
-                        new PotionEffect(PotionEffectType.REGENERATION, altDuration, amplifier)));
-                player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, duration, amplifier));
-                cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
-            } else player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(String.format(language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
+            // Activate ability
+            Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
+                    new PotionEffect(PotionEffectType.REGENERATION, altDuration, amplifier)));
+            Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+                    new PotionEffect(PotionEffectType.REGENERATION, altDuration, amplifier)));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, duration, amplifier));
+            cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
+
+            // Fire ability sound if turned on
+            if (arena.hasAbilitySound())
+                arena.getActives().forEach(vdPlayer -> vdPlayer.getPlayer()
+                        .playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
         }
 
         // Siren
         if (gamer.getKit().contains("Siren") && Kits.siren().equals(item)) {
-            // Get effective player level
-            int level = player.getLevel();
-            if (gamer.getKit().contains("1") && level > 10)
-                level = 10;
-            if (gamer.getKit().contains("2") && level > 20)
-                level = 20;
-            if (gamer.getKit().contains("3") && level > 30)
-                level = 30;
-
-            // Check for zero level
-            if (level == 0) {
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(language.getString("levelError"))));
-                return;
-            }
-
             // Calculate stats
-            long dif = cooldowns.get(gamer) - System.currentTimeMillis();
             int duration, amp1, amp2;
-            int coolDown = Utils.secondsToMillis(31 - Math.pow(Math.E, (level - 1) / 12d));
+            int coolDown = Utils.secondsToMillis(26 - Math.pow(Math.E, (level - 1) / 12d));
             double range = 3 + level * .1d;
             if (level > 20) {
                 duration = Utils.secondsToTicks(20.5 + Math.pow(Math.E, (level - 21) / 4d));
@@ -381,38 +283,23 @@ public class AbilityEvents implements Listener {
             }
             int altDuration = (int) (.4 * duration);
 
-            // Activate ability if cooldown has passed
-            if (dif <= 0) {
+            // Activate ability
+            Utils.getNearbyMonsters(player, range).forEach(ent -> ent.addPotionEffect(
+                    new PotionEffect(PotionEffectType.SLOW, duration, amp1)));
+            if (amp2 != -1)
                 Utils.getNearbyMonsters(player, range).forEach(ent -> ent.addPotionEffect(
-                        new PotionEffect(PotionEffectType.SLOW, duration, amp1)));
-                if (amp2 != -1)
-                    Utils.getNearbyMonsters(player, range).forEach(ent -> ent.addPotionEffect(
-                            new PotionEffect(PotionEffectType.WEAKNESS, altDuration, amp2)));
-                cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
-            } else player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(String.format(language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
+                        new PotionEffect(PotionEffectType.WEAKNESS, altDuration, amp2)));
+            cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
+
+            // Fire ability sound if turned on
+            if (arena.hasAbilitySound())
+                arena.getActives().forEach(vdPlayer -> vdPlayer.getPlayer()
+                        .playSound(player.getLocation(), Sound.AMBIENT_CAVE, 1, 1.25f));
         }
 
         // Monk
         if (gamer.getKit().contains("Monk") && Kits.monk().equals(item)) {
-            // Get effective player level
-            int level = player.getLevel();
-            if (gamer.getKit().contains("1") && level > 10)
-                level = 10;
-            if (gamer.getKit().contains("2") && level > 20)
-                level = 20;
-            if (gamer.getKit().contains("3") && level > 30)
-                level = 30;
-
-            // Check for zero level
-            if (level == 0) {
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(language.getString("levelError"))));
-                return;
-            }
-
             // Calculate stats
-            long dif = cooldowns.get(gamer) - System.currentTimeMillis();
             int duration, amplifier;
             int coolDown = Utils.secondsToMillis(46 - Math.pow(Math.E, (level - 1) / 12d));
             double range = 2 + level * .1d;
@@ -430,38 +317,23 @@ public class AbilityEvents implements Listener {
             }
             int altDuration = (int) (.6 * duration);
 
-            // Activate ability if cooldown has passed
-            if (dif <= 0) {
-                Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
-                        new PotionEffect(PotionEffectType.FAST_DIGGING, altDuration, amplifier)));
-                Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
-                        new PotionEffect(PotionEffectType.FAST_DIGGING, altDuration, amplifier)));
-                player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, duration, amplifier));
-                cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
-            } else player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(String.format(language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
+            // Activate ability
+            Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
+                    new PotionEffect(PotionEffectType.FAST_DIGGING, altDuration, amplifier)));
+            Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+                    new PotionEffect(PotionEffectType.FAST_DIGGING, altDuration, amplifier)));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, duration, amplifier));
+            cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
+
+            // Fire ability sound if turned on
+            if (arena.hasAbilitySound())
+                arena.getActives().forEach(vdPlayer -> vdPlayer.getPlayer()
+                        .playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
         }
 
         // Messenger
         if (gamer.getKit().contains("Messenger") && Kits.messenger().equals(item)) {
-            // Get effective player level
-            int level = player.getLevel();
-            if (gamer.getKit().contains("1") && level > 10)
-                level = 10;
-            if (gamer.getKit().contains("2") && level > 20)
-                level = 20;
-            if (gamer.getKit().contains("3") && level > 30)
-                level = 30;
-
-            // Check for zero level
-            if (level == 0) {
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(language.getString("levelError"))));
-                return;
-            }
-
             // Calculate stats
-            long dif = cooldowns.get(gamer) - System.currentTimeMillis();
             int duration, amplifier;
             int coolDown = Utils.secondsToMillis(46 - Math.pow(Math.E, (level - 1) / 12d));
             double range = 2 + level * .1d;
@@ -479,16 +351,18 @@ public class AbilityEvents implements Listener {
             }
             int altDuration = (int) (.6 * duration);
 
-            // Activate ability if cooldown has passed
-            if (dif <= 0) {
-                Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
-                        new PotionEffect(PotionEffectType.SPEED, altDuration, amplifier)));
-                Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
-                        new PotionEffect(PotionEffectType.SPEED, altDuration, amplifier)));
-                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, duration, amplifier));
-                cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
-            } else player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(String.format(language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
+            // Activate ability
+            Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
+                    new PotionEffect(PotionEffectType.SPEED, altDuration, amplifier)));
+            Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+                    new PotionEffect(PotionEffectType.SPEED, altDuration, amplifier)));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, duration, amplifier));
+            cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
+
+            // Fire ability sound if turned on
+            if (arena.hasAbilitySound())
+                arena.getActives().forEach(vdPlayer -> vdPlayer.getPlayer()
+                        .playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
         }
     }
 

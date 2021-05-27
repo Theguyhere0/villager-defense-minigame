@@ -249,7 +249,7 @@ public class Arena {
     }
 
     public Location getWaitingRoom() {
-        return Utils.getConfigLocationNoRotation(plugin, path + ".waiting");
+        return Utils.getConfigLocation(plugin, path + ".waiting");
     }
 
     public void setWaitingRoom(Location location) {
@@ -528,6 +528,15 @@ public class Arena {
 
     public void setPlayerDeathSound(boolean bool) {
         config.set(path + ".sounds.death", bool);
+        plugin.saveArenaData();
+    }
+
+    public boolean hasAbilitySound() {
+        return config.getBoolean(path + ".sounds.ability");
+    }
+
+    public void setAbilitySound(boolean bool) {
+        config.set(path + ".sounds.ability", bool);
         plugin.saveArenaData();
     }
 
@@ -937,6 +946,7 @@ public class Arena {
         setWaveFinishSound(arenaToCopy.hasWaveFinishSound());
         setGemSound(arenaToCopy.hasGemSound());
         setPlayerDeathSound(arenaToCopy.hasPlayerDeathSound());
+        setAbilitySound(arenaToCopy.hasAbilitySound());
         setWaitingSound(arenaToCopy.getWaitingSoundNum());
         setSpawnParticles(arenaToCopy.hasSpawnParticles());
         setMonsterParticles(arenaToCopy.hasMonsterParticles());

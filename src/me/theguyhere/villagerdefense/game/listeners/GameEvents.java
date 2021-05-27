@@ -704,7 +704,8 @@ public class GameEvents implements Listener {
 	@EventHandler
 	public void onConsume(PlayerInteractEvent e) {
 		Player player = e.getPlayer();
-		ItemStack item = player.getInventory().getItemInMainHand();
+		ItemStack item = e.getItem() == null ? new ItemStack(Material.AIR) : e.getItem();
+		ItemStack main = player.getInventory().getItemInMainHand();
 		FileConfiguration language = plugin.getLanguageData();
 
 		// See if the player is in a game
@@ -714,8 +715,21 @@ public class GameEvents implements Listener {
 				.collect(Collectors.toList()).get(0);
 		VDPlayer gamer = arena.getPlayer(player);
 
+		// Avoid false consume
+		if (main.equals(GameItems.shop()) || main.getType() == Material.BEETROOT || main.getType() == Material.CARROT ||
+				main.getType() == Material.BREAD || main.getType() == Material.COOKED_MUTTON ||
+				main.getType() == Material.COOKED_BEEF || main.getType() == Material.GOLDEN_CARROT ||
+				main.getType() == Material.GOLDEN_APPLE || main.getType() == Material.ENCHANTED_GOLDEN_APPLE ||
+				main.getType() == Material.GLASS_BOTTLE || main.getType() == Material.BOW ||
+				main.getType() == Material.EXPERIENCE_BOTTLE || main.equals(Kits.mage()) || main.equals(Kits.ninja()) ||
+				main.equals(Kits.templar()) || main.equals(Kits.warrior()) || main.equals(Kits.knight()) ||
+				main.equals(Kits.priest()) || main.equals(Kits.siren()) || main.equals(Kits.monk()) ||
+				main.equals(Kits.messenger())) return;
+
 		// Wolf spawn
-		if (item.getType() == Material.WOLF_SPAWN_EGG) {
+		if (item.getType() == Material.WOLF_SPAWN_EGG && main.getType() != Material.POLAR_BEAR_SPAWN_EGG &&
+				main.getType() != Material.COAL_BLOCK && main.getType() != Material.IRON_BLOCK && main.getType() !=
+				Material.DIAMOND_BLOCK && main.getType() != Material.BEACON) {
 			// Ignore if it wasn't a right click on a block
 			if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
 				return;
@@ -748,7 +762,9 @@ public class GameEvents implements Listener {
 			return;
 
 		// Iron golem spawn
-		if (item.getItemMeta().getDisplayName().contains("Iron Golem Spawn Egg")) {
+		if (item.getItemMeta().getDisplayName().contains("Iron Golem Spawn Egg") && main.getType() !=
+				Material.WOLF_SPAWN_EGG && main.getType() != Material.COAL_BLOCK && main.getType() !=
+				Material.IRON_BLOCK && main.getType() != Material.DIAMOND_BLOCK && main.getType() != Material.BEACON) {
 			// Ignore if it wasn't a right click on a block
 			if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
 				return;
@@ -777,7 +793,9 @@ public class GameEvents implements Listener {
 		}
 
 		// Small care package
-		if (item.getItemMeta().getDisplayName().contains("Small Care Package")) {
+		if (item.getItemMeta().getDisplayName().contains("Small Care Package") && main.getType() !=
+				Material.POLAR_BEAR_SPAWN_EGG && main.getType() != Material.WOLF_SPAWN_EGG && main.getType() !=
+				Material.IRON_BLOCK && main.getType() != Material.DIAMOND_BLOCK && main.getType() != Material.BEACON) {
 			// Remove an item
 			if (item.getAmount() > 1)
 				item.setAmount(item.getAmount() - 1);
@@ -799,7 +817,10 @@ public class GameEvents implements Listener {
 		}
 
 		// Medium care package
-		if (item.getItemMeta().getDisplayName().contains("Medium Care Package")) {
+		if (item.getItemMeta().getDisplayName().contains("Medium Care Package") && main.getType() !=
+				Material.POLAR_BEAR_SPAWN_EGG && main.getType() != Material.COAL_BLOCK && main.getType() !=
+				Material.WOLF_SPAWN_EGG && main.getType() != Material.DIAMOND_BLOCK && main.getType() !=
+				Material.BEACON) {
 			// Remove an item
 			if (item.getAmount() > 1)
 				item.setAmount(item.getAmount() - 1);
@@ -828,7 +849,9 @@ public class GameEvents implements Listener {
 		}
 
 		// Large care package
-		if (item.getItemMeta().getDisplayName().contains("Large Care Package")) {
+		if (item.getItemMeta().getDisplayName().contains("Large Care Package") && main.getType() !=
+				Material.POLAR_BEAR_SPAWN_EGG && main.getType() != Material.COAL_BLOCK && main.getType() !=
+				Material.IRON_BLOCK && main.getType() != Material.WOLF_SPAWN_EGG && main.getType() != Material.BEACON) {
 			// Remove an item
 			if (item.getAmount() > 1)
 				item.setAmount(item.getAmount() - 1);
@@ -861,7 +884,10 @@ public class GameEvents implements Listener {
 		}
 
 		// Extra large care package
-		if (item.getItemMeta().getDisplayName().contains("Extra large Care Package")) {
+		if (item.getItemMeta().getDisplayName().contains("Extra large Care Package") && main.getType() !=
+				Material.POLAR_BEAR_SPAWN_EGG && main.getType() != Material.COAL_BLOCK && main.getType() !=
+				Material.IRON_BLOCK && main.getType() != Material.DIAMOND_BLOCK && main.getType() !=
+				Material.WOLF_SPAWN_EGG) {
 			// Remove an item
 			if (item.getAmount() > 1)
 				item.setAmount(item.getAmount() - 1);

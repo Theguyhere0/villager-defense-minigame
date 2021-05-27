@@ -23,6 +23,8 @@ public class Mobs {
         livingEntity.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
         livingEntity.setRemoveWhenFarAway(false);
         livingEntity.setCanPickupItems(false);
+        if (livingEntity.isInsideVehicle())
+            livingEntity.getVehicle().remove();
         for (Entity passenger : livingEntity.getPassengers())
             passenger.remove();
         arena.incrementEnemies();

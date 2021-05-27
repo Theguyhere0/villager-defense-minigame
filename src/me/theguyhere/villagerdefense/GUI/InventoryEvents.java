@@ -639,6 +639,7 @@ public class InventoryEvents implements Listener {
 					arenaInstance.setWaveFinishSound(true);
 					arenaInstance.setGemSound(true);
 					arenaInstance.setPlayerDeathSound(true);
+					arenaInstance.setAbilitySound(true);
 					arenaInstance.setWaitingSound(14);
 				}
 
@@ -2342,6 +2343,14 @@ public class InventoryEvents implements Listener {
 			else if (buttonName.contains("Death")) {
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setPlayerDeathSound(!arenaInstance.hasPlayerDeathSound());
+					player.openInventory(inv.createSoundsInventory(meta.getInteger1()));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+			}
+
+			// Toggle ability sound
+			else if (buttonName.contains("Ability")) {
+				if (arenaInstance.isClosed()) {
+					arenaInstance.setAbilitySound(!arenaInstance.hasAbilitySound());
 					player.openInventory(inv.createSoundsInventory(meta.getInteger1()));
 				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 			}
