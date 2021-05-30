@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
+import org.bukkit.util.BoundingBox;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -352,12 +353,13 @@ public class Utils {
     }
 
     // Clears the arena
-    public static void clear(Location location) {
+    public static void clear(Location corner1, Location corner2) {
         Collection<Entity> ents;
 
         // Get all entities near spawn
         try {
-            ents = location.getWorld().getNearbyEntities(location, 200, 200, 100);
+            ents = corner1.getWorld().getNearbyEntities(new BoundingBox(corner1.getX(), corner1.getY(), corner1.getZ(),
+                    corner2.getX(), corner2.getY(), corner2.getZ()));
         } catch (Exception e) {
             return;
         }

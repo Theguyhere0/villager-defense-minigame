@@ -585,6 +585,7 @@ public class Inventories {
 	// Menu for editing the player settings of an arena
 	public Inventory createPlayersInventory(int arena) {
 		Arena arenaInstance = game.arenas.get(arena);
+
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&d&lPlayer Settings: " + arenaInstance.getName()));
@@ -615,14 +616,6 @@ public class Inventories {
 				FLAGS,
 				null,
 				Utils.format("&7Minimum players needed for game to start")));
-
-		// Option to edit wolf cap
-		inv.setItem(5, Utils.createItem(Material.BONE, Utils.format("&6&lWolf Cap"),
-				Utils.format("&7Maximum wolves a player can have")));
-
-		// Option to edit golem cap
-		inv.setItem(6, Utils.createItem(Material.IRON_INGOT, Utils.format("&e&lIron Golem Cap"),
-				Utils.format("&7Maximum iron golems an arena can have")));
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());
@@ -756,46 +749,6 @@ public class Inventories {
 		return inv;
 	}
 
-	// Menu for changing wolf cap of an arena
-	public Inventory createWolfCapInventory(int arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&6&lWolf Cap: " + game.arenas.get(arena).getWolfCap()));
-
-		// Option to decrease
-		for (int i = 0; i < 4; i++)
-			inv.setItem(i, Utils.createItem(Material.RED_CONCRETE, Utils.format("&4&lDecrease")));
-
-		// Option to increase
-		for (int i = 4; i < 8; i++)
-			inv.setItem(i, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&2&lIncrease")));
-
-		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
-
-		return inv;
-	}
-
-	// Menu for changing iron golem cap of an arena
-	public Inventory createGolemCapInventory(int arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&e&lIron Golem Cap: " + game.arenas.get(arena).getGolemCap()));
-
-		// Option to decrease
-		for (int i = 0; i < 4; i++)
-			inv.setItem(i, Utils.createItem(Material.RED_CONCRETE, Utils.format("&4&lDecrease")));
-
-		// Option to increase
-		for (int i = 4; i < 8; i++)
-			inv.setItem(i, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&2&lIncrease")));
-
-		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
-
-		return inv;
-	}
-
 	// Menu for editing the mob settings of an arena
 	public Inventory createMobsInventory(int arena) {
 		Arena arenaInstance = game.arenas.get(arena);
@@ -830,17 +783,6 @@ public class Inventories {
 		inv.setItem(5, Utils.createItem(Material.SLIME_BALL,
 				Utils.format("&e&lDynamic Mob Count: " + getToggleStatus(arenaInstance.hasDynamicCount())),
 				Utils.format("&7Mob count adjusting based on"), Utils.format("&7number of players")));
-
-		// Option to toggle dynamic difficulty
-		inv.setItem(6, Utils.createItem(Material.MAGMA_CREAM,
-				Utils.format("&6&lDynamic Difficulty: " + getToggleStatus(arenaInstance.hasDynamicDifficulty())),
-				Utils.format("&7Difficulty adjusting based on"), Utils.format("&7number of players")));
-
-		// Option to toggle experience drop
-		inv.setItem(7, Utils.createItem(Material.EXPERIENCE_BOTTLE,
-				Utils.format("&b&lExperience Drop: " + getToggleStatus(arenaInstance.hasExpDrop())),
-				Utils.format("&7Change whether experience drop or go"),
-				Utils.format("&7straight into the killer's experience bar")));
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());
@@ -1054,27 +996,20 @@ public class Inventories {
 				Utils.format("&a&lEdit Custom Shop")));
 
 		// Option to toggle default shop
-		inv.setItem(1, Utils.createItem(Material.EMERALD_BLOCK,
+		inv.setItem(2, Utils.createItem(Material.EMERALD_BLOCK,
 				Utils.format("&6&lDefault Shop: " + getToggleStatus(arenaInstance.hasNormal())),
 				Utils.format("&7Turn default shop on and off")));
 
 		// Option to toggle custom shop
-		inv.setItem(2, Utils.createItem(Material.QUARTZ_BLOCK,
+		inv.setItem(4, Utils.createItem(Material.QUARTZ_BLOCK,
 				Utils.format("&2&lCustom Shop: " + getToggleStatus(arenaInstance.hasCustom())),
 				Utils.format("&7Turn custom shop on and off")));
 
 		// Option to toggle dynamic prices
-		inv.setItem(3, Utils.createItem(Material.NETHER_STAR,
+		inv.setItem(6, Utils.createItem(Material.NETHER_STAR,
 				Utils.format("&b&lDynamic Prices: " + getToggleStatus(arenaInstance.hasDynamicPrices())),
 				Utils.format("&7Prices adjusting based on number of"),
 				Utils.format("&7players in the game")));
-
-		// Option to toggle gem dropping
-		inv.setItem(4, Utils.createItem(Material.EMERALD,
-				Utils.format("&9&lItem Drop: " + getToggleStatus(arenaInstance.hasGemDrop())),
-				Utils.format("&7Change whether gems and loot drop"),
-				Utils.format("&7as physical items or go straight"),
-				Utils.format("&7into the killer's balance/inventory")));
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());
@@ -1087,7 +1022,7 @@ public class Inventories {
 		Arena arenaInstance = game.arenas.get(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 18, Utils.format("&k") +
 				Utils.format("&8&lGame Settings: " + arenaInstance.getName()));
 
 		// Option to change max waves
@@ -1118,20 +1053,52 @@ public class Inventories {
 				null,
 				Utils.format("&7Determines difficulty increase rate")));
 
+		// Option to toggle dynamic difficulty
+		inv.setItem(6, Utils.createItem(Material.MAGMA_CREAM,
+				Utils.format("&6&lDynamic Difficulty: " + getToggleStatus(arenaInstance.hasDynamicDifficulty())),
+				Utils.format("&7Difficulty adjusting based on"), Utils.format("&7number of players")));
+
+		// Option to toggle experience drop
+		inv.setItem(9, Utils.createItem(Material.EXPERIENCE_BOTTLE,
+				Utils.format("&b&lExperience Drop: " + getToggleStatus(arenaInstance.hasExpDrop())),
+				Utils.format("&7Change whether experience drop or go"),
+				Utils.format("&7straight into the killer's experience bar")));
+
+		// Option to toggle item dropping
+		inv.setItem(10, Utils.createItem(Material.EMERALD,
+				Utils.format("&9&lItem Drop: " + getToggleStatus(arenaInstance.hasGemDrop())),
+				Utils.format("&7Change whether gems and loot drop"),
+				Utils.format("&7as physical items or go straight"),
+				Utils.format("&7into the killer's balance/inventory")));
+
+		// Option to set arena bounds
+		inv.setItem(11, Utils.createItem(Material.BEDROCK, Utils.format("&4&lArena Bounds"),
+				Utils.format("&7Bounds determine where players are"),
+				Utils.format("&7allowed to go and where the game will"),
+				Utils.format("&7function. Avoid building past arena bounds.")));
+
+		// Option to edit wolf cap
+		inv.setItem(12, Utils.createItem(Material.BONE, Utils.format("&6&lWolf Cap"),
+				Utils.format("&7Maximum wolves a player can have")));
+
+		// Option to edit golem cap
+		inv.setItem(13, Utils.createItem(Material.IRON_INGOT, Utils.format("&e&lIron Golem Cap"),
+				Utils.format("&7Maximum iron golems an arena can have")));
+
 		// Option to edit sounds
-		inv.setItem(6, Utils.createItem(Material.MUSIC_DISC_13,
+		inv.setItem(14, Utils.createItem(Material.MUSIC_DISC_13,
 				Utils.format("&d&lSounds"),
 				FLAGS,
 				null));
 
 		// Option to copy game settings from another arena or a preset
-		inv.setItem(7, Utils.createItem(Material.WRITABLE_BOOK,
+		inv.setItem(15, Utils.createItem(Material.WRITABLE_BOOK,
 				Utils.format("&f&lCopy Game Settings"),
 				Utils.format("&7Copy settings of another arena or"),
 				Utils.format("&7choose from a menu of presets")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(17, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1740,6 +1707,148 @@ public class Inventories {
 
 		// "4" option
 		inv.setItem(6, Utils.createItem(Material.RED_CONCRETE, Utils.format("&4&l4")));
+
+		// Option to exit
+		inv.setItem(8, InventoryItems.exit());
+
+		return inv;
+	}
+
+	// Menu for selecting arena bound corners
+	public Inventory createBoundsInventory(int arena) {
+		Arena arenaInstance = game.arenas.get(arena);
+
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
+				Utils.format("&4&lArena Bounds: " + arenaInstance.getName()));
+
+		// Option to interact with corner 1
+		inv.setItem(2, Utils.createItem(Material.TORCH, Utils.format("&b&lCorner 1: " +
+				(arenaInstance.getCorner1() == null ? "&c&lMissing" : "&a&lSet"))));
+
+		// Option to interact with corner 2
+		inv.setItem(5, Utils.createItem(Material.SOUL_TORCH, Utils.format("&9&lCorner 2: " +
+				(arenaInstance.getCorner2() == null ? "&c&lMissing" : "&a&lSet"))));
+
+		// Option to exit
+		inv.setItem(8, InventoryItems.exit());
+
+		return inv;
+	}
+
+	// Menu for editing corner 1 of an arena
+	public Inventory createCorner1Inventory(int arena) {
+		Arena arenaInstance = game.arenas.get(arena);
+
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
+				Utils.format("&b&lCorner 1: " + arenaInstance.getName()));
+
+		// Option to create waiting room
+		if (arenaInstance.getCorner1() == null)
+			inv.setItem(0, InventoryItems.create("Corner 1"));
+		else inv.setItem(0, InventoryItems.relocate("Corner 1"));
+
+		// Option to teleport to waiting room
+		inv.setItem(2, InventoryItems.teleport("Corner 1"));
+
+		// Option to remove waiting room
+		inv.setItem(4, InventoryItems.remove("CORNER 1"));
+
+		// Option to exit
+		inv.setItem(8, InventoryItems.exit());
+
+		return inv;
+	}
+
+	// Confirmation menu for removing corner 1
+	public Inventory createCorner1ConfirmInventory(int arena) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
+				Utils.format("&4&lRemove Corner 1?"));
+
+		// "No" option
+		inv.setItem(0, InventoryItems.no());
+
+		// "Yes" option
+		inv.setItem(8, InventoryItems.yes());
+
+		return inv;
+	}
+
+	// Menu for editing corner 2 of an arena
+	public Inventory createCorner2Inventory(int arena) {
+		Arena arenaInstance = game.arenas.get(arena);
+
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
+				Utils.format("&9&lCorner 2: " + arenaInstance.getName()));
+
+		// Option to create waiting room
+		if (arenaInstance.getCorner2() == null)
+			inv.setItem(0, InventoryItems.create("Corner 2"));
+		else inv.setItem(0, InventoryItems.relocate("Corner 2"));
+
+		// Option to teleport to waiting room
+		inv.setItem(2, InventoryItems.teleport("Corner 2"));
+
+		// Option to remove waiting room
+		inv.setItem(4, InventoryItems.remove("CORNER 2"));
+
+		// Option to exit
+		inv.setItem(8, InventoryItems.exit());
+
+		return inv;
+	}
+
+	// Confirmation menu for removing corner 2
+	public Inventory createCorner2ConfirmInventory(int arena) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
+				Utils.format("&4&lRemove Corner 2?"));
+
+		// "No" option
+		inv.setItem(0, InventoryItems.no());
+
+		// "Yes" option
+		inv.setItem(8, InventoryItems.yes());
+
+		return inv;
+	}
+
+	// Menu for changing wolf cap of an arena
+	public Inventory createWolfCapInventory(int arena) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
+				Utils.format("&6&lWolf Cap: " + game.arenas.get(arena).getWolfCap()));
+
+		// Option to decrease
+		for (int i = 0; i < 4; i++)
+			inv.setItem(i, Utils.createItem(Material.RED_CONCRETE, Utils.format("&4&lDecrease")));
+
+		// Option to increase
+		for (int i = 4; i < 8; i++)
+			inv.setItem(i, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&2&lIncrease")));
+
+		// Option to exit
+		inv.setItem(8, InventoryItems.exit());
+
+		return inv;
+	}
+
+	// Menu for changing iron golem cap of an arena
+	public Inventory createGolemCapInventory(int arena) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
+				Utils.format("&e&lIron Golem Cap: " + game.arenas.get(arena).getGolemCap()));
+
+		// Option to decrease
+		for (int i = 0; i < 4; i++)
+			inv.setItem(i, Utils.createItem(Material.RED_CONCRETE, Utils.format("&4&lDecrease")));
+
+		// Option to increase
+		for (int i = 4; i < 8; i++)
+			inv.setItem(i, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&2&lIncrease")));
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());

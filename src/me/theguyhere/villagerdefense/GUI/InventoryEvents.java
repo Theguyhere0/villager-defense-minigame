@@ -553,7 +553,7 @@ public class InventoryEvents implements Listener {
 		}
 
 		// Naming inventory
-		else if (title.contains("Arena ")) {
+		else if (title.contains("Arena ") && !title.contains("Bounds")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			Arena arenaInstance = game.arenas.get(meta.getInteger1());
 			int num = slot;
@@ -748,6 +748,13 @@ public class InventoryEvents implements Listener {
 						return;
 					}
 
+					// Invalid arena bounds
+					if (arenaInstance.getCorner1() == null || arenaInstance.getCorner2() == null ||
+							!arenaInstance.getCorner1().getWorld().equals(arenaInstance.getCorner2().getWorld())) {
+						player.sendMessage(Utils.notify("&cArena cannot open without valid arena bounds!"));
+						return;
+					}
+
 					// Open arena
 					arenaInstance.setClosed(false);
 				}
@@ -896,6 +903,42 @@ public class InventoryEvents implements Listener {
 						arenaInstance.setClosed(true);
 					player.sendMessage(Utils.notify("&aMob spawn removed!"));
 					player.openInventory(inv.createVillagerSpawnMenu(meta.getInteger1(), meta.getInteger2()));
+					portal.refreshHolo(meta.getInteger1(), game);
+				}
+			}
+
+			// Confirm to remove corner 1
+			else if (title.contains("Remove Corner 1?")) {
+				// Return to previous menu
+				if (buttonName.contains("NO"))
+					player.openInventory(inv.createCorner1Inventory(meta.getInteger1()));
+
+				// Remove corner 1, then return to previous menu
+				else if (buttonName.contains("YES")) {
+					Arena arenaInstance = game.arenas.get(meta.getInteger1());
+
+					arenaInstance.setCorner1(null);
+					arenaInstance.setClosed(true);
+					player.sendMessage(Utils.notify("&aCorner 1 removed!"));
+					player.openInventory(inv.createCorner1Inventory(meta.getInteger1()));
+					portal.refreshHolo(meta.getInteger1(), game);
+				}
+			}
+
+			// Confirm to remove corner 2
+			else if (title.contains("Remove Corner 2?")) {
+				// Return to previous menu
+				if (buttonName.contains("NO"))
+					player.openInventory(inv.createCorner1Inventory(meta.getInteger1()));
+
+				// Remove corner 2, then return to previous menu
+				else if (buttonName.contains("YES")) {
+					Arena arenaInstance = game.arenas.get(meta.getInteger1());
+
+					arenaInstance.setCorner2(null);
+					arenaInstance.setClosed(true);
+					player.sendMessage(Utils.notify("&aCorner 2 removed!"));
+					player.openInventory(inv.createCorner2Inventory(meta.getInteger1()));
 					portal.refreshHolo(meta.getInteger1(), game);
 				}
 			}
@@ -1212,18 +1255,6 @@ public class InventoryEvents implements Listener {
 					player.openInventory(inv.createMinPlayerInventory(meta.getInteger1()));
 				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
-			// Edit wolf cap
-			else if (buttonName.contains("Wolf Cap"))
-				if (arenaInstance.isClosed())
-					player.openInventory(inv.createWolfCapInventory(meta.getInteger1()));
-				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
-
-			// Edit iron golem cap
-			else if (buttonName.contains("Iron Golem Cap"))
-				if (arenaInstance.isClosed())
-					player.openInventory(inv.createGolemCapInventory(meta.getInteger1()));
-				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
-
 			// Exit menu
 			else if (buttonName.contains("EXIT"))
 				player.openInventory(inv.createArenaInventory(meta.getInteger1()));
@@ -1435,88 +1466,6 @@ public class InventoryEvents implements Listener {
 				player.openInventory(inv.createPlayersInventory(meta.getInteger1()));
 		}
 
-		// Wolf cap menu for an arena
-		else if (title.contains("Wolf Cap:")) {
-			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
-			Arena arenaInstance = game.arenas.get(meta.getInteger1());
-			int current = arenaInstance.getWolfCap();
-
-			// Decrease wolf cap
-			if (buttonName.contains("Decrease")) {
-				// Check for arena closure
-				if (!arenaInstance.isClosed()) {
-					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
-					return;
-				}
-
-				// Check if wolf cap is greater than 1
-				if (current <= 1) {
-					player.sendMessage(Utils.notify("&cWolf cap cannot be less than 1!"));
-					return;
-				}
-
-				arenaInstance.setWolfCap(--current);
-				player.openInventory(inv.createWolfCapInventory(meta.getInteger1()));
-			}
-
-			// Increase wolf cap
-			else if (buttonName.contains("Increase")) {
-				// Check for arena closure
-				if (!arenaInstance.isClosed()) {
-					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
-					return;
-				}
-
-				arenaInstance.setWolfCap(++current);
-				player.openInventory(inv.createWolfCapInventory(meta.getInteger1()));
-			}
-
-			// Exit menu
-			else if (buttonName.contains("EXIT"))
-				player.openInventory(inv.createPlayersInventory(meta.getInteger1()));
-		}
-
-		// Iron golem cap menu for an arena
-		else if (title.contains("Iron Golem Cap:")) {
-			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
-			Arena arenaInstance = game.arenas.get(meta.getInteger1());
-			int current = arenaInstance.getGolemCap();
-
-			// Decrease iron golem cap
-			if (buttonName.contains("Decrease")) {
-				// Check for arena closure
-				if (!arenaInstance.isClosed()) {
-					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
-					return;
-				}
-
-				// Check if iron golem cap is greater than 1
-				if (current <= 1) {
-					player.sendMessage(Utils.notify("&cIron golem cap cannot be less than 1!"));
-					return;
-				}
-
-				arenaInstance.setgolemCap(--current);
-				player.openInventory(inv.createGolemCapInventory(meta.getInteger1()));
-			}
-
-			// Increase iron golem cap
-			else if (buttonName.contains("Increase")) {
-				// Check for arena closure
-				if (!arenaInstance.isClosed()) {
-					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
-					return;
-				}
-
-				arenaInstance.setgolemCap(++current);
-				player.openInventory(inv.createGolemCapInventory(meta.getInteger1()));
-			}
-
-			// Exit menu
-			else if (buttonName.contains("EXIT"))
-				player.openInventory(inv.createPlayersInventory(meta.getInteger1()));
-		}
-
 		// Mob settings menu for an arena
 		else if (title.contains("Mob Settings:")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
@@ -1559,20 +1508,6 @@ public class InventoryEvents implements Listener {
 					player.openInventory(inv.createMobsInventory(meta.getInteger1()));
 				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
-			// Toggle dynamic difficulty
-			else if (buttonName.contains("Dynamic Difficulty:"))
-				if (arenaInstance.isClosed()) {
-					arenaInstance.setDynamicDifficulty(!arenaInstance.hasDynamicDifficulty());
-					player.openInventory(inv.createMobsInventory(meta.getInteger1()));
-				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
-
-			// Toggle experience drop
-			else if (buttonName.contains("Experience Drop:"))
-				if (arenaInstance.isClosed()) {
-					arenaInstance.setExpDrop(!arenaInstance.hasExpDrop());
-					player.openInventory(inv.createMobsInventory(meta.getInteger1()));
-				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
-
 			// Exit menu
 			else if (buttonName.contains("EXIT"))
 				player.openInventory(inv.createArenaInventory(meta.getInteger1()));
@@ -1597,7 +1532,7 @@ public class InventoryEvents implements Listener {
 			Arena arenaInstance = game.arenas.get(meta.getInteger1());
 
 			// Create spawn
-			if (buttonName.contains("Create Spawn"))
+			if (buttonName.contains("Create"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setMonsterSpawn(meta.getInteger2(), player.getLocation());
 					player.sendMessage(Utils.notify("&aMonster spawn set!"));
@@ -1605,7 +1540,7 @@ public class InventoryEvents implements Listener {
 				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
 			// Relocate spawn
-			if (buttonName.contains("Relocate Spawn"))
+			if (buttonName.contains("Relocate"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setMonsterSpawn(meta.getInteger2(), player.getLocation());
 					player.sendMessage(Utils.notify("&aMonster spawn relocated!"));
@@ -1666,7 +1601,7 @@ public class InventoryEvents implements Listener {
 			Arena arenaInstance = game.arenas.get(meta.getInteger1());
 
 			// Create spawn
-			if (buttonName.contains("Create Spawn"))
+			if (buttonName.contains("Create"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setVillagerSpawn(meta.getInteger2(), player.getLocation());
 					player.sendMessage(Utils.notify("&aVillager spawn set!"));
@@ -1674,7 +1609,7 @@ public class InventoryEvents implements Listener {
 				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
 			// Relocate spawn
-			if (buttonName.contains("Relocate Spawn"))
+			if (buttonName.contains("Relocate"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setVillagerSpawn(meta.getInteger2(), player.getLocation());
 					player.sendMessage(Utils.notify("&aVillager spawn set!"));
@@ -1860,13 +1795,6 @@ public class InventoryEvents implements Listener {
 					player.openInventory(inv.createShopsInventory(meta.getInteger1()));
 				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
-			// Toggle gem drop
-			else if (buttonName.contains("Item Drop:"))
-				if (arenaInstance.isClosed()) {
-					arenaInstance.setGemDrop(!arenaInstance.hasGemDrop());
-					player.openInventory(inv.createShopsInventory(meta.getInteger1()));
-				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
-
 			// Exit menu
 			else if (buttonName.contains("EXIT"))
 				player.openInventory(inv.createArenaInventory(meta.getInteger1()));
@@ -1957,6 +1885,43 @@ public class InventoryEvents implements Listener {
 			else if (buttonName.contains("Difficulty Multiplier"))
 				if (arenaInstance.isClosed())
 					player.openInventory(inv.createDifficultyMultiplierInventory(meta.getInteger1()));
+				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+
+			// Toggle dynamic difficulty
+			else if (buttonName.contains("Dynamic Difficulty:"))
+				if (arenaInstance.isClosed()) {
+					arenaInstance.setDynamicDifficulty(!arenaInstance.hasDynamicDifficulty());
+					player.openInventory(inv.createGameSettingsInventory(meta.getInteger1()));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+
+			// Toggle experience drop
+			else if (buttonName.contains("Experience Drop:"))
+				if (arenaInstance.isClosed()) {
+					arenaInstance.setExpDrop(!arenaInstance.hasExpDrop());
+					player.openInventory(inv.createGameSettingsInventory(meta.getInteger1()));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+
+			// Toggle item drop
+			else if (buttonName.contains("Item Drop:"))
+				if (arenaInstance.isClosed()) {
+					arenaInstance.setGemDrop(!arenaInstance.hasGemDrop());
+					player.openInventory(inv.createGameSettingsInventory(meta.getInteger1()));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+
+			// Edit arena bounds
+			else if (buttonName.contains("Arena Bounds"))
+				player.openInventory(inv.createBoundsInventory(meta.getInteger1()));
+
+			// Edit wolf cap
+			else if (buttonName.contains("Wolf Cap"))
+				if (arenaInstance.isClosed())
+					player.openInventory(inv.createWolfCapInventory(meta.getInteger1()));
+				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+
+			// Edit iron golem cap
+			else if (buttonName.contains("Iron Golem Cap"))
+				if (arenaInstance.isClosed())
+					player.openInventory(inv.createGolemCapInventory(meta.getInteger1()));
 				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
 			// Edit sounds
@@ -2281,6 +2246,193 @@ public class InventoryEvents implements Listener {
 				else banned.add(kit);
 				arenaInstance.setBannedKits(banned);
 				player.openInventory(inv.createAllowedKitsInventory(meta.getInteger1()));
+			}
+
+			// Exit menu
+			else if (buttonName.contains("EXIT"))
+				player.openInventory(inv.createGameSettingsInventory(meta.getInteger1()));
+		}
+
+		// Arena bounds menu for an arena
+		else if (title.contains("Arena Bounds")) {
+			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
+
+			// Edit corner 1
+			if (buttonName.contains("Corner 1"))
+				player.openInventory(inv.createCorner1Inventory(meta.getInteger1()));
+
+			// Edit corner 2
+			else if (buttonName.contains("Corner 2"))
+				player.openInventory(inv.createCorner2Inventory(meta.getInteger1()));
+
+			// Exit menu
+			else if (buttonName.contains("EXIT"))
+				player.openInventory(inv.createGameSettingsInventory(meta.getInteger1()));
+		}
+
+		// Corner 1 menu for an arena
+		else if (title.contains("Corner 1")) {
+			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
+			Arena arenaInstance = game.arenas.get(meta.getInteger1());
+
+			// Create spawn
+			if (buttonName.contains("Create"))
+				if (arenaInstance.isClosed()) {
+					arenaInstance.setCorner1(player.getLocation());
+					player.sendMessage(Utils.notify("&aCorner 1 set!"));
+					player.openInventory(inv.createBoundsInventory(meta.getInteger1()));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+
+			// Relocate spawn
+			if (buttonName.contains("Relocate"))
+				if (arenaInstance.isClosed()) {
+					arenaInstance.setCorner1(player.getLocation());
+					player.sendMessage(Utils.notify("&aCorner 1 set!"));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+
+			// Teleport player to spawn
+			else if (buttonName.contains("Teleport")) {
+				Location location = arenaInstance.getCorner1();
+				if (location == null) {
+					player.sendMessage(Utils.notify("&cNo corner 1 to teleport to!"));
+					return;
+				}
+				player.teleport(location);
+				player.closeInventory();
+			}
+
+			// Remove spawn
+			else if (buttonName.contains("REMOVE"))
+				if (arenaInstance.getCorner1() != null)
+					if (arenaInstance.isClosed())
+						player.openInventory(inv.createCorner1ConfirmInventory(meta.getInteger1()));
+					else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+				else player.sendMessage(Utils.notify("&cNo corner 1 to remove!"));
+
+			// Exit menu
+			else if (buttonName.contains("EXIT"))
+				player.openInventory(inv.createBoundsInventory(meta.getInteger1()));
+		}
+
+		// Corner 2 menu for an arena
+		else if (title.contains("Corner 2")) {
+			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
+			Arena arenaInstance = game.arenas.get(meta.getInteger1());
+
+			// Create spawn
+			if (buttonName.contains("Create"))
+				if (arenaInstance.isClosed()) {
+					arenaInstance.setCorner2(player.getLocation());
+					player.sendMessage(Utils.notify("&aCorner 2 set!"));
+					player.openInventory(inv.createBoundsInventory(meta.getInteger1()));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+
+			// Relocate spawn
+			if (buttonName.contains("Relocate"))
+				if (arenaInstance.isClosed()) {
+					arenaInstance.setCorner2(player.getLocation());
+					player.sendMessage(Utils.notify("&aCorner 2 set!"));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+
+				// Teleport player to spawn
+			else if (buttonName.contains("Teleport")) {
+				Location location = arenaInstance.getCorner2();
+				if (location == null) {
+					player.sendMessage(Utils.notify("&cNo corner 2 to teleport to!"));
+					return;
+				}
+				player.teleport(location);
+				player.closeInventory();
+			}
+
+			// Remove spawn
+			else if (buttonName.contains("REMOVE"))
+				if (arenaInstance.getCorner2() != null)
+					if (arenaInstance.isClosed())
+						player.openInventory(inv.createCorner2ConfirmInventory(meta.getInteger1()));
+					else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+				else player.sendMessage(Utils.notify("&cNo corner 2 to remove!"));
+
+				// Exit menu
+			else if (buttonName.contains("EXIT"))
+				player.openInventory(inv.createBoundsInventory(meta.getInteger1()));
+		}
+
+		// Wolf cap menu for an arena
+		else if (title.contains("Wolf Cap:")) {
+			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
+			Arena arenaInstance = game.arenas.get(meta.getInteger1());
+			int current = arenaInstance.getWolfCap();
+
+			// Decrease wolf cap
+			if (buttonName.contains("Decrease")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
+				// Check if wolf cap is greater than 1
+				if (current <= 1) {
+					player.sendMessage(Utils.notify("&cWolf cap cannot be less than 1!"));
+					return;
+				}
+
+				arenaInstance.setWolfCap(--current);
+				player.openInventory(inv.createWolfCapInventory(meta.getInteger1()));
+			}
+
+			// Increase wolf cap
+			else if (buttonName.contains("Increase")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
+				arenaInstance.setWolfCap(++current);
+				player.openInventory(inv.createWolfCapInventory(meta.getInteger1()));
+			}
+
+			// Exit menu
+			else if (buttonName.contains("EXIT"))
+				player.openInventory(inv.createGameSettingsInventory(meta.getInteger1()));
+		}
+
+		// Iron golem cap menu for an arena
+		else if (title.contains("Iron Golem Cap:")) {
+			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
+			Arena arenaInstance = game.arenas.get(meta.getInteger1());
+			int current = arenaInstance.getGolemCap();
+
+			// Decrease iron golem cap
+			if (buttonName.contains("Decrease")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
+				// Check if iron golem cap is greater than 1
+				if (current <= 1) {
+					player.sendMessage(Utils.notify("&cIron golem cap cannot be less than 1!"));
+					return;
+				}
+
+				arenaInstance.setgolemCap(--current);
+				player.openInventory(inv.createGolemCapInventory(meta.getInteger1()));
+			}
+
+			// Increase iron golem cap
+			else if (buttonName.contains("Increase")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+					return;
+				}
+
+				arenaInstance.setgolemCap(++current);
+				player.openInventory(inv.createGolemCapInventory(meta.getInteger1()));
 			}
 
 			// Exit menu

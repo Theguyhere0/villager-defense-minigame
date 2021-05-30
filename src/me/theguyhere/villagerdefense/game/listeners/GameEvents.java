@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.game.listeners;
 
+import javafx.geometry.BoundingBox;
 import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.customEvents.GameEndEvent;
@@ -18,12 +19,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.*;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerGameModeChangeEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.Objects;
 import java.util.Random;
@@ -966,6 +963,27 @@ public class GameEvents implements Listener {
 			return;
 
 		e.setCancelled(true);
+	}
+
+	// Prevent players from teleporting when in a game
+	@EventHandler
+	public void onPlayerTeleport(PlayerTeleportEvent e) {
+		Player player = e.getPlayer();
+
+		// Check if player is playing in an arena
+		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+			return;
+
+		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+				.collect(Collectors.toList()).get(0);
+
+		// Cancel teleport and notify if teleport is outside arena bounds
+		if (!(new BoundingBox(arena.getCorner1().getX(), arena.getCorner1().getY(), arena.getCorner1().getZ(),
+				arena.getCorner2().getX(), arena.getCorner2().getY(), arena.getCorner2().getZ())
+				.contains(e.getTo().getX(), e.getTo().getY(), e.getTo().getZ()))) {
+			e.setCancelled(true);
+			player.sendMessage(Utils.notify(plugin.getLanguageData().getString("teleportError")));
+		}
 	}
 
 	// Prevents arena mobs from turning into different entities

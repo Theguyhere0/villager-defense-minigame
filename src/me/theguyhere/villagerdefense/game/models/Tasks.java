@@ -292,7 +292,7 @@ public class Tasks {
 							Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player.getPlayer()))));
 
 			// Clear the arena
-			Utils.clear(arenaInstance.getPlayerSpawn());
+			Utils.clear(arenaInstance.getCorner1(), arenaInstance.getCorner2());
 
 			// Remove particles
 			arenaInstance.cancelSpawnParticles();

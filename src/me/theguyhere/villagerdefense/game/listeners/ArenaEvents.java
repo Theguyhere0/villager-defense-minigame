@@ -110,7 +110,7 @@ public class ArenaEvents implements Listener {
             game.createBoard(fighter);
 
             // Clear arena
-            Utils.clear(location);
+            Utils.clear(arena.getCorner1(), arena.getCorner2());
 
             // Play waiting music
             if (arena.getWaitingSound() != null)

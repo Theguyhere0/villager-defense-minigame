@@ -10,6 +10,7 @@ import me.theguyhere.villagerdefense.game.listeners.AbilityEvents;
 import me.theguyhere.villagerdefense.game.listeners.ArenaEvents;
 import me.theguyhere.villagerdefense.game.listeners.ClickPortalEvents;
 import me.theguyhere.villagerdefense.game.listeners.GameEvents;
+import me.theguyhere.villagerdefense.game.models.Arena;
 import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.genListeners.CommandTab;
 import me.theguyhere.villagerdefense.genListeners.Commands;
@@ -25,6 +26,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Objects;
 
 public class Main extends JavaPlugin {
 	private final DataManager arenaData = new DataManager(this, "arenaData.yml");
@@ -85,12 +88,13 @@ public class Main extends JavaPlugin {
 		leaderboard.loadLeaderboards();
 		infoBoard.loadInfoBoards();
 		arenaBoard.loadArenaBoards();
+		checkArenas();
 
 		int configVersion = 6;
 		int arenaDataVersion = 3;
 		int playerDataVersion = 1;
 		int spawnTableVersion = 1;
-		int languageFileVersion = 4;
+		int languageFileVersion = 5;
 		int defaultSpawnVersion = 2;
 
 		// Check config version
@@ -194,8 +198,13 @@ public class Main extends JavaPlugin {
 	}
 
 	// Load portals
-	public void loadPortals() {
+	private void loadPortals() {
 		getArenaData().getConfigurationSection("portal").getKeys(false).forEach(portal ->
 				this.portal.loadPortal(Integer.parseInt(portal), game));
+	}
+
+	// Check arenas for close
+	private void checkArenas() {
+		game.arenas.stream().filter(Objects::nonNull).forEach(Arena::checkClose);
 	}
 }

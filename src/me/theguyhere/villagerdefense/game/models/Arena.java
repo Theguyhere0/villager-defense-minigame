@@ -477,6 +477,22 @@ public class Arena {
         plugin.saveArenaData();
     }
 
+    public Location getCorner1() {
+        return Utils.getConfigLocationNoRotation(plugin, path + ".corner1");
+    }
+
+    public void setCorner1(Location location) {
+        Utils.setConfigurationLocation(plugin, path + ".corner1", location);
+    }
+
+    public Location getCorner2() {
+        return Utils.getConfigLocationNoRotation(plugin, path + ".corner2");
+    }
+
+    public void setCorner2(Location location) {
+        Utils.setConfigurationLocation(plugin, path + ".corner2", location);
+    }
+
     public boolean hasWinSound() {
         return config.getBoolean(path + ".sounds.win");
     }
@@ -924,6 +940,15 @@ public class Arena {
 
     public void removePlayerFromTimeLimitBar(Player player) {
         timeLimitBar.removePlayer(player);
+    }
+
+    public void checkClose() {
+        if (!plugin.getArenaData().contains("lobby") || getPortal() == null || getPlayerSpawn() == null ||
+                getMonsterSpawns().stream().noneMatch(Objects::nonNull) ||
+                getVillagerSpawns().stream().noneMatch(Objects::nonNull) || !hasCustom() && !hasNormal() ||
+                getCorner1() == null || getCorner2() == null ||
+                !getCorner1().getWorld().equals(getCorner2().getWorld()))
+            setClosed(true);
     }
 
     public void copy(Arena arenaToCopy) {
