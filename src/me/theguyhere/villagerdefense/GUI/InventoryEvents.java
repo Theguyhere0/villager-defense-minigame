@@ -83,8 +83,14 @@ public class InventoryEvents implements Listener {
 		if (e.getInventory().getType() == InventoryType.PLAYER)
 			return;
 
-		// Cancel the event
-		e.setCancelled(true);
+		// Cancel the event if the inventory isn't the community chest, otherwise save the inventory
+		if (!title.contains("Community Chest"))
+			e.setCancelled(true);
+		else {
+			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
+			Arena arenaInstance = game.arenas.get(meta.getInteger1());
+			arenaInstance.setCommunityChest(e.getInventory());
+		}
 	}
 	
 	// All click events in the inventories
@@ -100,8 +106,14 @@ public class InventoryEvents implements Listener {
 		if (e.getClickedInventory() == null)
 			return;
 
-		// Cancel the event
-		e.setCancelled(true);
+		// Cancel the event if the inventory isn't the community chest, otherwise save the inventory
+		if (!title.contains("Community Chest"))
+			e.setCancelled(true);
+		else {
+			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
+			Arena arenaInstance = game.arenas.get(meta.getInteger1());
+			arenaInstance.setCommunityChest(e.getInventory());
+		}
 
 		// Ignore clicks in player inventory
 		if (e.getClickedInventory().getType() == InventoryType.PLAYER)
@@ -646,6 +658,10 @@ public class InventoryEvents implements Listener {
 				// Set default shop toggle
 				if (!config.contains("a" + meta.getInteger1() + ".normal"))
 					arenaInstance.setNormal(true);
+
+				// Set community chest toggle
+				if (!config.contains("a" + meta.getInteger1() + ".community"))
+					arenaInstance.setCommunity(true);
 
 				// Set default gem drop toggle
 				if (!config.contains("a" + meta.getInteger1() + ".gemDrop"))
@@ -1791,6 +1807,13 @@ public class InventoryEvents implements Listener {
 					player.openInventory(inv.createShopsInventory(meta.getInteger1()));
 				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
+			// Toggle community chest
+			else if (buttonName.contains("Community Chest:"))
+				if (arenaInstance.isClosed()) {
+					arenaInstance.setCommunity(!arenaInstance.hasCommunity());
+					player.openInventory(inv.createShopsInventory(meta.getInteger1()));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+
 			// Toggle dynamic prices
 			else if (buttonName.contains("Dynamic Prices:"))
 				if (arenaInstance.isClosed()) {
@@ -2672,6 +2695,12 @@ public class InventoryEvents implements Listener {
 				if (arenaInstance.hasCustom())
 					player.openInventory(arenaInstance.getCustomShop());
 				else player.sendMessage(Utils.notify(language.getString("customShopError")));
+
+			// Open community chest
+			else if (buttonName.contains("Community Chest"))
+				if (arenaInstance.hasCommunity())
+					player.openInventory(arenaInstance.getCommunityChest());
+				else player.sendMessage(Utils.notify(language.getString("communityChestError")));
 		}
 
 		// Mock custom shop for an arena

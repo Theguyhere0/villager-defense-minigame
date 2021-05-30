@@ -996,17 +996,22 @@ public class Inventories {
 				Utils.format("&a&lEdit Custom Shop")));
 
 		// Option to toggle default shop
-		inv.setItem(2, Utils.createItem(Material.EMERALD_BLOCK,
+		inv.setItem(1, Utils.createItem(Material.EMERALD_BLOCK,
 				Utils.format("&6&lDefault Shop: " + getToggleStatus(arenaInstance.hasNormal())),
 				Utils.format("&7Turn default shop on and off")));
 
 		// Option to toggle custom shop
-		inv.setItem(4, Utils.createItem(Material.QUARTZ_BLOCK,
+		inv.setItem(2, Utils.createItem(Material.QUARTZ_BLOCK,
 				Utils.format("&2&lCustom Shop: " + getToggleStatus(arenaInstance.hasCustom())),
 				Utils.format("&7Turn custom shop on and off")));
 
+		// Option to toggle community chest
+		inv.setItem(3, Utils.createItem(Material.CHEST,
+				Utils.format("&d&lCommunity Chest: " + getToggleStatus(arenaInstance.hasCommunity())),
+				Utils.format("&7Turn community chest on and off")));
+
 		// Option to toggle dynamic prices
-		inv.setItem(6, Utils.createItem(Material.NETHER_STAR,
+		inv.setItem(4, Utils.createItem(Material.NETHER_STAR,
 				Utils.format("&b&lDynamic Prices: " + getToggleStatus(arenaInstance.hasDynamicPrices())),
 				Utils.format("&7Prices adjusting based on number of"),
 				Utils.format("&7players in the game")));
@@ -1997,20 +2002,23 @@ public class Inventories {
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&2&lLevel &9&l" + level + " &2&lItem Shop"));
 
-		inv.setItem(1, Utils.createItem(Material.GOLDEN_SWORD,
+		inv.setItem(0, Utils.createItem(Material.GOLDEN_SWORD,
 				Utils.format("&4&lLevel &9&l" + level + " &4&lWeapon Shop" +
 						(arena.hasNormal() ? "" : " &4&l[DISABLED]")), FLAGS, null));
 
-		inv.setItem(3, Utils.createItem(Material.GOLDEN_CHESTPLATE,
+		inv.setItem(2, Utils.createItem(Material.GOLDEN_CHESTPLATE,
 				Utils.format("&5&lLevel &9&l" + level + " &5&lArmor Shop" +
 						(arena.hasNormal() ? "" : " &4&l[DISABLED]")), FLAGS, null));
 
-		inv.setItem(5, Utils.createItem(Material.GOLDEN_APPLE,
+		inv.setItem(4, Utils.createItem(Material.GOLDEN_APPLE,
 				Utils.format("&3&lLevel &9&l" + level + " &3&lConsumables Shop" +
 						(arena.hasNormal() ? "" : " &4&l[DISABLED]"))));
 
-		inv.setItem(7, Utils.createItem(Material.QUARTZ, Utils.format("&6&lCustom Shop" +
+		inv.setItem(6, Utils.createItem(Material.QUARTZ, Utils.format("&6&lCustom Shop" +
 				(arena.hasCustom() ? "" : " &4&l[DISABLED]"))));
+
+		inv.setItem(8, Utils.createItem(Material.CHEST, Utils.format("&d&lCommunity Chest" +
+				(arena.hasCommunity() ? "" : " &4&l[DISABLED]"))));
 
 		return inv;
 	}
@@ -3060,7 +3068,7 @@ public class Inventories {
 	// Display arena information
 	public Inventory createArenaInfoInventory(Arena arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena.getArena()), 27, Utils.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena.getArena()), 36, Utils.format("&k") +
 				Utils.format("&6&l" + arena.getName() + " Info"));
 
 		// Maximum players
@@ -3163,20 +3171,33 @@ public class Inventories {
 
 		// Custom shop
 		inv.setItem(23, Utils.createItem(Material.QUARTZ_BLOCK,
-				Utils.format("&2&lCustom Shop: " + getToggleStatus(arena.hasNormal()))));
+				Utils.format("&2&lCustom Shop: " + getToggleStatus(arena.hasCustom()))));
+
+		// Community chest
+		inv.setItem(24, Utils.createItem(Material.CHEST,
+				Utils.format("&d&lCommunity Chest: " + getToggleStatus(arena.hasCommunity()))));
 
 		// Custom shop inventory
-		inv.setItem(24, Utils.createItem(Material.QUARTZ, Utils.format("&f&lCustom Shop Inventory")));
+		inv.setItem(25, Utils.createItem(Material.QUARTZ, Utils.format("&f&lCustom Shop Inventory")));
 
 		// Arena records
 		List<String> records = new ArrayList<>();
 		arena.getSortedDescendingRecords().forEach(arenaRecord -> {
 			records.add(Utils.format("&fWave " + arenaRecord.getWave()));
-			StringBuilder players = new StringBuilder();
-			arenaRecord.getPlayers().forEach(player -> players.append(player).append(", "));
-			records.add(Utils.format("&7" + players.substring(0, players.length() - 2)));
+			for (int i = 0; i < arenaRecord.getPlayers().size() / 4 + 1; i++) {
+				StringBuilder players = new StringBuilder(Utils.format("&7"));
+				if (i * 4 + 4 < arenaRecord.getPlayers().size()) {
+					for (int j = i * 4; j < i * 4 + 4; j++)
+						players.append(arenaRecord.getPlayers().get(j)).append(", ");
+					records.add(Utils.format(players.substring(0, players.length() - 1)));
+				} else {
+					for (int j = i * 4; j < arenaRecord.getPlayers().size(); j++)
+						players.append(arenaRecord.getPlayers().get(j)).append(", ");
+					records.add(Utils.format(players.substring(0, players.length() - 2)));
+				}
+			}
 		});
-		inv.setItem(25, Utils.createItem(Material.GOLDEN_HELMET, Utils.format("&e&lArena Records"), FLAGS,
+		inv.setItem(31, Utils.createItem(Material.GOLDEN_HELMET, Utils.format("&e&lArena Records"), FLAGS,
 				null, records));
 
 		return inv;

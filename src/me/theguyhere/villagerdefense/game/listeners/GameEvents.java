@@ -99,7 +99,24 @@ public class GameEvents implements Listener {
 					if (arena.hasGemDrop()) {
 						e.getDrops().add(Utils.createItem(Material.EMERALD, null,
 								Integer.toString(arena.getArena())));
-						if (r.nextDouble() < .01)
+
+						// Get rare loot probability
+						double probability;
+						switch (arena.getDifficultyMultiplier()) {
+							case 1:
+								probability = .015;
+								break;
+							case 2:
+								probability = .01;
+								break;
+							case 3:
+								probability = .008;
+								break;
+							default:
+								probability = .006;
+						}
+
+						if (r.nextDouble() < probability)
 							e.getDrops().add(GameItems.randCare(arena.getCurrentWave() / 10 + 1));
 					}
 					if (arena.hasExpDrop())
@@ -644,7 +661,24 @@ public class GameEvents implements Listener {
 			} else {
 				int earned = r.nextInt((int) (50 * Math.pow(wave, .15)));
 				gamer.addGems(earned == 0 ? 1 : earned);
-				if (r.nextDouble() < .01)
+
+				// Get rare loot probability
+				double probability;
+				switch (arena.getDifficultyMultiplier()) {
+					case 1:
+						probability = .015;
+						break;
+					case 2:
+						probability = .01;
+						break;
+					case 3:
+						probability = .008;
+						break;
+					default:
+						probability = .006;
+				}
+
+				if (r.nextDouble() < probability)
 					Utils.giveItem(player, GameItems.randCare(wave / 10 + 1),
 							plugin.getLanguageData().getString("inventoryFull"));
 

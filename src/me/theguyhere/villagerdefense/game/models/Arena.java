@@ -42,6 +42,7 @@ public class Arena {
     private Inventory weaponShop; // Weapon shop inventory
     private Inventory armorShop; // Armor shop inventory
     private Inventory consumeShop; // Consumables shop inventory
+    private Inventory communityChest; // Community chest inventory
     private BossBar timeLimitBar; // Time limit bar
 
     public Arena(Main plugin, int arena, Tasks task) {
@@ -459,6 +460,15 @@ public class Arena {
         plugin.saveArenaData();
     }
 
+    public boolean hasCommunity() {
+        return config.getBoolean(path + ".community");
+    }
+
+    public void setCommunity(boolean bool) {
+        config.set(path + ".community", bool);
+        plugin.saveArenaData();
+    }
+
     public boolean hasGemDrop() {
         return config.getBoolean(path + ".gemDrop");
     }
@@ -815,6 +825,14 @@ public class Arena {
         this.consumeShop = consumeShop;
     }
 
+    public Inventory getCommunityChest() {
+        return communityChest;
+    }
+
+    public void setCommunityChest(Inventory communityChest) {
+        this.communityChest = communityChest;
+    }
+
     public Inventory getCustomShopEditor() {
         // Create inventory
         Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54, Utils.format("&k") +
@@ -967,6 +985,7 @@ public class Arena {
         setBannedKits(arenaToCopy.getBannedKits());
         setNormal(arenaToCopy.hasNormal());
         setCustom(arenaToCopy.hasCustom());
+        setCommunity(arenaToCopy.hasCommunity());
         setWinSound(arenaToCopy.hasWinSound());
         setLoseSound(arenaToCopy.hasLoseSound());
         setWaveStartSound(arenaToCopy.hasWaveStartSound());
