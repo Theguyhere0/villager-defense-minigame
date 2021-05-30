@@ -358,16 +358,15 @@ public class Utils {
 
         // Get all entities near spawn
         try {
-            ents = corner1.getWorld().getNearbyEntities(new BoundingBox(corner1.getX(), corner1.getY(), corner1.getZ(),
-                    corner2.getX(), corner2.getY(), corner2.getZ()));
+            ents = corner1.getWorld().getNearbyEntities(BoundingBox.of(corner1, corner2));
         } catch (Exception e) {
             return;
         }
 
         // Clear the arena for living entities
         ents.forEach(ent -> {
-            if (ent instanceof LivingEntity && !(ent instanceof Player))
-                if (ent.hasMetadata("VD")) ent.remove();
+            if (ent instanceof LivingEntity && !(ent instanceof Player) && ent.hasMetadata("VD"))
+                ent.remove();
         });
 
         // Clear the arena for items and experience orbs

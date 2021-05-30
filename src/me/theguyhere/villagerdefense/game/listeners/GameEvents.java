@@ -1,6 +1,5 @@
 package me.theguyhere.villagerdefense.game.listeners;
 
-import javafx.geometry.BoundingBox;
 import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.customEvents.GameEndEvent;
@@ -21,6 +20,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.BoundingBox;
 
 import java.util.Objects;
 import java.util.Random;
@@ -978,11 +978,32 @@ public class GameEvents implements Listener {
 				.collect(Collectors.toList()).get(0);
 
 		// Cancel teleport and notify if teleport is outside arena bounds
-		if (!(new BoundingBox(arena.getCorner1().getX(), arena.getCorner1().getY(), arena.getCorner1().getZ(),
-				arena.getCorner2().getX(), arena.getCorner2().getY(), arena.getCorner2().getZ())
-				.contains(e.getTo().getX(), e.getTo().getY(), e.getTo().getZ()))) {
+		if (!(BoundingBox.of(arena.getCorner1(), arena.getCorner2())
+				.contains(e.getTo().getX(), e.getTo().getY(), e.getTo().getZ())) ||
+				!Objects.equals(e.getTo().getWorld(), arena.getCorner1().getWorld())) {
 			e.setCancelled(true);
 			player.sendMessage(Utils.notify(plugin.getLanguageData().getString("teleportError")));
+		}
+	}
+
+	// Prevent players from leaving the arena bounds
+	@EventHandler
+	public void onPlayerMove(PlayerMoveEvent e) {
+		Player player = e.getPlayer();
+
+		// Check if player is playing in an arena
+		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+			return;
+
+		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+				.collect(Collectors.toList()).get(0);
+
+		// Cancel move and notify if movement is outside arena bounds
+		if (!(BoundingBox.of(arena.getCorner1(), arena.getCorner2())
+				.contains(e.getTo().getX(), e.getTo().getY(), e.getTo().getZ())) ||
+				!Objects.equals(e.getTo().getWorld(), arena.getCorner1().getWorld())) {
+			e.setCancelled(true);
+			player.sendMessage(Utils.notify(plugin.getLanguageData().getString("boundsError")));
 		}
 	}
 

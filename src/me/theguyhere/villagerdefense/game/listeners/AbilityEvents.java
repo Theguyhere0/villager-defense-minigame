@@ -46,6 +46,11 @@ public class AbilityEvents implements Listener {
             return;
 
         Player player = e.getPlayer();
+
+        // Check if player is in an arena
+        if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+            return;
+
         Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
                 .collect(Collectors.toList()).get(0);
         VDPlayer gamer = arena.getPlayer(player);

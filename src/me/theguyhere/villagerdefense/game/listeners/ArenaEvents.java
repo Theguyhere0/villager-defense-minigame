@@ -125,8 +125,9 @@ public class ArenaEvents implements Listener {
 
         // Join players as spectators if arena is full or game already started
         else {
-            // Teleport to arena or waiting room
+            // Teleport to arena and give time limit bar
             Utils.teleSpectator(player, arena.getPlayerSpawn());
+            arena.addPlayerToTimeLimitBar(player);
 
             // Update player tracking and in-game stats
             arena.getPlayers().add(new VDPlayer(player, true));

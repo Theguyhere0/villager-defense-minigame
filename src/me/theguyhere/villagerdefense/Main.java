@@ -40,6 +40,8 @@ public class Main extends JavaPlugin {
 	private PacketReader reader;
 	private Game game;
 
+	private boolean outdated;
+
 	// Runs when enabling plugin
 	@Override
 	public void onEnable() {
@@ -96,6 +98,7 @@ public class Main extends JavaPlugin {
 		int spawnTableVersion = 1;
 		int languageFileVersion = 5;
 		int defaultSpawnVersion = 2;
+		outdated = false;
 
 		// Check config version
 		if (getConfig().getInt("version") < configVersion) {
@@ -104,6 +107,7 @@ public class Main extends JavaPlugin {
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
 					"Please update to the latest version (" + ChatColor.BLUE + configVersion + ChatColor.RED +
 					") to ensure compatibility.");
+			outdated = true;
 		}
 
 		// Check if arenaData.yml is outdated
@@ -115,6 +119,7 @@ public class Main extends JavaPlugin {
 					ChatColor.RED + ".");
 			getServer().getConsoleSender().sendMessage(ChatColor.RED +  "[VillagerDefense] " +
 					"Please do not update your config.yml until your arenaData.yml has been updated.");
+			outdated = true;
 		}
 
 		// Check if playerData.yml is outdated
@@ -126,6 +131,7 @@ public class Main extends JavaPlugin {
 					ChatColor.BLUE + ".");
 			getServer().getConsoleSender().sendMessage(ChatColor.RED +  "[VillagerDefense] " +
 					"Please do not update your config.yml until your playerData.yml has been updated.");
+			outdated = true;
 		}
 
 		// Check if spawn tables are outdated
@@ -137,6 +143,7 @@ public class Main extends JavaPlugin {
 					ChatColor.RED + ".");
 			getServer().getConsoleSender().sendMessage(ChatColor.RED +  "[VillagerDefense] " +
 					"Please do not update your config.yml until your spawn tables have been updated.");
+			outdated = true;
 		}
 
 		// Check if default spawn table has been updated
@@ -159,6 +166,7 @@ public class Main extends JavaPlugin {
 					languageFileVersion + ChatColor.RED + ".");
 			getServer().getConsoleSender().sendMessage(ChatColor.RED +  "[VillagerDefense] " +
 					"Please do not update your config.yml until your language files have been updated.");
+			outdated = true;
 		}
 	}
 
@@ -206,5 +214,9 @@ public class Main extends JavaPlugin {
 	// Check arenas for close
 	private void checkArenas() {
 		game.arenas.stream().filter(Objects::nonNull).forEach(Arena::checkClose);
+	}
+
+	public boolean isOutdated() {
+		return outdated;
 	}
 }

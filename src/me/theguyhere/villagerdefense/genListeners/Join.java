@@ -65,6 +65,10 @@ public class Join implements Listener {
 
 			plugin.savePlayerData();
 		}
+
+		// If the plugin setup is outdated, send message to admins
+		if (plugin.isOutdated() && player.hasPermission("vd.admin"))
+			player.sendMessage(Utils.notify(plugin.getLanguageData().getString("outdatedError")));
 	}
 	
 	@EventHandler

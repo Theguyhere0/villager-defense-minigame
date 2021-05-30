@@ -770,6 +770,9 @@ public class InventoryEvents implements Listener {
 									Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(vdPlayer.getPlayer()))));
 				}
 
+				// Clear the arena
+				Utils.clear(arenaInstance.getCorner1(), arenaInstance.getCorner2());
+
 				// Save perm data and update portal
 				player.openInventory(inv.createArenaInventory(meta.getInteger1()));
 				portal.refreshHolo(meta.getInteger1(), game);

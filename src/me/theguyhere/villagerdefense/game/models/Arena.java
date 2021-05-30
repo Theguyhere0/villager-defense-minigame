@@ -935,11 +935,13 @@ public class Arena {
     }
 
     public void addPlayerToTimeLimitBar(Player player) {
-        timeLimitBar.addPlayer(player);
+        if (timeLimitBar != null)
+            timeLimitBar.addPlayer(player);
     }
 
     public void removePlayerFromTimeLimitBar(Player player) {
-        timeLimitBar.removePlayer(player);
+        if (timeLimitBar != null)
+            timeLimitBar.removePlayer(player);
     }
 
     public void checkClose() {
