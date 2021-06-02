@@ -1,18 +1,25 @@
 package me.theguyhere.villagerdefense.game.models;
 
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class VDPlayer {
     private final Player player; // Player in a game
     private boolean spectating; // Whether they are spectating
+    private boolean left; // Whether a player has left the arena or not
     private int gems; // Gem count
     private int kills; // Kill count
     private int wolves; // Wolf count
     private String kit; // Selected kit
+    private ItemStack helmet; // Helmet to hold for ninja ability
+    private ItemStack chestplate; // Chestplate to hold for ninja ability
+    private ItemStack leggings; // Leggings to hold for ninja ability
+    private ItemStack boots; // Boots to hold for ninja ability
 
     public VDPlayer(Player player, boolean spectating) {
         this.player = player;
         this.spectating = spectating;
+        left = false;
         gems = 0;
         kills = 0;
         wolves = 0;
@@ -37,6 +44,14 @@ public class VDPlayer {
 
     public void flipSpectating() {
         spectating = !spectating;
+    }
+
+    public boolean hasLeft() {
+        return left;
+    }
+
+    public void leave() {
+        left = true;
     }
 
     public void addGems(int change) {
@@ -69,5 +84,23 @@ public class VDPlayer {
 
     public void setKit(String kit) {
         this.kit = kit;
+    }
+
+    public void hideArmor() {
+        helmet = player.getInventory().getHelmet();
+        player.getInventory().setHelmet(null);
+        chestplate = player.getInventory().getChestplate();
+        player.getInventory().setChestplate(null);
+        leggings = player.getInventory().getLeggings();
+        player.getInventory().setLeggings(null);
+        boots = player.getInventory().getBoots();
+        player.getInventory().setBoots(null);
+    }
+
+    public void exposeArmor() {
+        player.getInventory().setHelmet(helmet);
+        player.getInventory().setChestplate(chestplate);
+        player.getInventory().setLeggings(leggings);
+        player.getInventory().setBoots(boots);
     }
 }

@@ -71,7 +71,7 @@ public class GameEvents implements Listener {
 		}
 
 		// Check for lose condition
-		if (arena.getVillagers() == 0 && !arena.isSpawning() && !arena.isEnding()) {
+		if (arena.getVillagers() == 0 && !arena.isSpawningVillagers() && !arena.isEnding()) {
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 					Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 			if (arena.hasLoseSound())
@@ -128,7 +128,7 @@ public class GameEvents implements Listener {
 			}
 
 			// Check for wave end condition
-			if (arena.getEnemies() == 0 && !arena.isEnding() && !arena.isSpawning()) {
+			if (arena.getEnemies() == 0 && !arena.isEnding() && !arena.isSpawningMonsters()) {
 				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 						Bukkit.getPluginManager().callEvent(new WaveEndEvent(arena)));
 			}
@@ -156,7 +156,7 @@ public class GameEvents implements Listener {
 			int count = (int) (data.getConfig().getInt(wave + ".count.m") * countMultiplier);
 
 			// Set monsters glowing when only 20% remain
-			if (arena.getEnemies() <= .2 * count && !arena.isSpawning() && arena.getEnemies() > 0) {
+			if (arena.getEnemies() <= .2 * count && !arena.isSpawningMonsters() && arena.getEnemies() > 0) {
 				arena.getPlayerSpawn().getWorld().getNearbyEntities(arena.getPlayerSpawn(),
 						200, 200, 200).stream().filter(entity -> entity.hasMetadata("VD"))
 						.filter(entity -> entity instanceof Monster || entity instanceof Slime ||

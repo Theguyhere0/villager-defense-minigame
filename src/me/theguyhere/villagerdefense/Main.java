@@ -179,6 +179,9 @@ public class Main extends JavaPlugin {
 
 		// Remove portals
 		portal.removeAll();
+
+		game.arenas.stream().filter(Objects::nonNull).filter(arena -> !arena.isClosed())
+				.forEach(arena -> Utils.clear(arena.getCorner1(), arena.getCorner2()));
 	}
 
 	// Returns arena data

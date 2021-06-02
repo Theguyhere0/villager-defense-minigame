@@ -2367,8 +2367,8 @@ public class GameItems {
 				null, Utils.format("&2Gems: &a50"));
 	}
 	public static @NotNull ItemStack arrowsP() {
-		return Utils.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.POISON), 8,
-				null, Utils.format("&2Gems: &a40"));
+		return Utils.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.POISON), 16,
+				null, Utils.format("&2Gems: &a60"));
 	}
 	public static @NotNull ItemStack arrowsSPlus() {
 		return Utils.createPotionItems(Material.TIPPED_ARROW,
@@ -2387,8 +2387,8 @@ public class GameItems {
 	}
 	public static @NotNull ItemStack arrowsPPlus() {
 		return Utils.createPotionItems(Material.TIPPED_ARROW,
-				new PotionData(PotionType.POISON, false, true), 8, null,
-				Utils.format("&2Gems: &a100"));
+				new PotionData(PotionType.POISON, false, true), 16, null,
+				Utils.format("&2Gems: &a130"));
 	}
 	public static @NotNull ItemStack rockets() {
 		ItemStack item = new ItemStack(Material.FIREWORK_ROCKET, 4);

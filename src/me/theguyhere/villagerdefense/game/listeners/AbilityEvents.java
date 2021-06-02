@@ -1,12 +1,12 @@
 package me.theguyhere.villagerdefense.game.listeners;
 
 import me.theguyhere.villagerdefense.Main;
+import me.theguyhere.villagerdefense.customEvents.EndNinjaNerfEvent;
 import me.theguyhere.villagerdefense.game.models.*;
 import me.theguyhere.villagerdefense.tools.Utils;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
@@ -16,6 +16,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -65,7 +66,21 @@ public class AbilityEvents implements Listener {
                 main.getType() == Material.GLASS_BOTTLE || main.getType() == Material.BOW ||
                 main.getType() == Material.CROSSBOW || main.getType() == Material.COAL_BLOCK ||
                 main.getType() == Material.IRON_BLOCK || main.getType() == Material.DIAMOND_BLOCK ||
-                main.getType() == Material.BEACON || main.getType() == Material.EXPERIENCE_BOTTLE) return;
+                main.getType() == Material.BEACON || main.getType() == Material.EXPERIENCE_BOTTLE ||
+                main.getType() == Material.LEATHER_HELMET || main.getType() == Material.LEATHER_CHESTPLATE ||
+                main.getType() == Material.LEATHER_LEGGINGS || main.getType() == Material.LEATHER_BOOTS ||
+                main.getType() == Material.CHAINMAIL_HELMET || main.getType() == Material.CHAINMAIL_CHESTPLATE ||
+                main.getType() == Material.CHAINMAIL_LEGGINGS || main.getType() == Material.CHAINMAIL_BOOTS ||
+                main.getType() == Material.IRON_HELMET || main.getType() == Material.IRON_CHESTPLATE ||
+                main.getType() == Material.IRON_LEGGINGS || main.getType() == Material.IRON_BOOTS ||
+                main.getType() == Material.DIAMOND_HELMET || main.getType() == Material.DIAMOND_CHESTPLATE ||
+                main.getType() == Material.DIAMOND_LEGGINGS || main.getType() == Material.DIAMOND_BOOTS ||
+                main.getType() == Material.NETHERITE_HELMET || main.getType() == Material.NETHERITE_CHESTPLATE ||
+                main.getType() == Material.NETHERITE_LEGGINGS || main.getType() == Material.NETHERITE_BOOTS ||
+                main.equals(GameItems.health()) || main.equals(GameItems.health2()) ||
+                main.equals(GameItems.health3()) || main.equals(GameItems.speed()) || main.equals(GameItems.speed2()) ||
+                main.equals(GameItems.strength()) || main.equals(GameItems.strength2()) ||
+                main.equals(GameItems.regen()) || main.equals(GameItems.regen2())) return;
 
         // See if the player is in a game
         if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
@@ -123,6 +138,11 @@ public class AbilityEvents implements Listener {
             Utils.getPets(player).forEach(wolf ->
                     wolf.addPotionEffect((new PotionEffect(PotionEffectType.INVISIBILITY, duration, 0))));
             cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
+            gamer.hideArmor();
+
+            // Schedule un-nerf
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+                    Bukkit.getPluginManager().callEvent(new EndNinjaNerfEvent(gamer)), duration);
 
             // Fire ability sound if turned on
             if (arena.hasAbilitySound())
@@ -444,24 +464,76 @@ public class AbilityEvents implements Listener {
         if (!ent.hasMetadata("VD"))
             return;
 
-        // Check for player dealing damage
-        if (!(damager instanceof Player))
+        // Check for player or wolf dealing damage
+        if (!(damager instanceof Player || damager instanceof Wolf))
             return;
 
         // Check for mob taking damage
         if (!(ent instanceof Mob))
             return;
 
-        Player player = (Player) damager;
+        LivingEntity stealthy = (LivingEntity) damager;
         Mob mob = (Mob) ent;
 
         // Check for invisibility
-        if (player.getActivePotionEffects().stream()
+        if (stealthy.getActivePotionEffects().stream()
                 .noneMatch(potion -> potion.getType().equals(PotionEffectType.INVISIBILITY)))
             return;
 
         // Set target to null if not already
         if (mob.getTarget() != null)
             mob.setTarget(null);
+    }
+
+    // Ninja nerf
+    @EventHandler
+    public void onInvisibleEquip(PlayerStatisticIncrementEvent e) {
+        if (!e.getStatistic().equals(Statistic.TIME_SINCE_REST))
+            return;
+
+        Player player = e.getPlayer();
+
+        // Check if player is in a game
+        if (game.arenas.stream().filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player)))
+            return;
+
+        // Ignore creative and spectator mode players
+        if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR)
+            return;
+
+        // Ignore if not invisible
+        if (player.getActivePotionEffects().stream()
+                .noneMatch(potion -> potion.getType().equals(PotionEffectType.INVISIBILITY)))
+            return;
+
+        FileConfiguration language = plugin.getLanguageData();
+
+        // Get armor
+        ItemStack helmet = player.getInventory().getHelmet();
+        ItemStack chestplate = player.getInventory().getChestplate();
+        ItemStack leggings = player.getInventory().getLeggings();
+        ItemStack boots = player.getInventory().getBoots();
+
+        // Unequip armor
+        if (!(helmet == null || helmet.getType() == Material.AIR)) {
+            Utils.giveItem(player, helmet, Utils.notify(language.getString("inventoryFull")));
+            player.getInventory().setHelmet(null);
+            player.sendMessage(Utils.notify(language.getString("ninjaError")));
+        }
+        if (!(chestplate == null || chestplate.getType() == Material.AIR)) {
+            Utils.giveItem(player, chestplate, Utils.notify(language.getString("inventoryFull")));
+            player.getInventory().setChestplate(null);
+            player.sendMessage(Utils.notify(language.getString("ninjaError")));
+        }
+        if (!(leggings == null || leggings.getType() == Material.AIR)) {
+            Utils.giveItem(player, leggings, Utils.notify(language.getString("inventoryFull")));
+            player.getInventory().setLeggings(null);
+            player.sendMessage(Utils.notify(language.getString("ninjaError")));
+        }
+        if (!(boots == null || boots.getType() == Material.AIR)) {
+            Utils.giveItem(player, boots, Utils.notify(language.getString("inventoryFull")));
+            player.getInventory().setBoots(null);
+            player.sendMessage(Utils.notify(language.getString("ninjaError")));
+        }
     }
 }

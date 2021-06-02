@@ -29,7 +29,8 @@ public class Arena {
 
     private boolean caps; // Indicates whether the naming inventory has caps lock on
     private boolean active; // Indicates whether the arena has a game ongoing
-    private boolean spawning; // Indicates whether the arena is in the process of spawning mobs
+    private boolean spawningMonsters; // Indicates whether the arena is in the process of spawning monsters
+    private boolean spawningVillagers; // Indicates whether the arena is in the process of spawning villagers
     private boolean ending; // Indicates whether the arena is about to end
     private int currentWave; // Current game wave
     private int villagers; // Villager count
@@ -673,12 +674,20 @@ public class Arena {
         this.active = active;
     }
 
-    public boolean isSpawning() {
-        return spawning;
+    public boolean isSpawningMonsters() {
+        return spawningMonsters;
     }
 
-    public void setSpawning(boolean spawning) {
-        this.spawning = spawning;
+    public void setSpawningMonsters(boolean spawningMonsters) {
+        this.spawningMonsters = spawningMonsters;
+    }
+
+    public boolean isSpawningVillagers() {
+        return spawningVillagers;
+    }
+
+    public void setSpawningVillagers(boolean spawningVillagers) {
+        this.spawningVillagers = spawningVillagers;
     }
 
     public boolean isEnding() {

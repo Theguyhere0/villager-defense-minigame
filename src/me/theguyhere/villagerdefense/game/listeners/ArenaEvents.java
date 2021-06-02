@@ -392,6 +392,9 @@ public class ArenaEvents implements Listener {
             plugin.savePlayerData();
         }
 
+        // Mark VDPlayer as left
+        gamer.leave();
+
         // Refresh the game portal
         portal.refreshHolo(game.arenas.indexOf(arena), game);
     }
@@ -458,6 +461,12 @@ public class ArenaEvents implements Listener {
         e.getArena().getTask().updateBoards.run();
     }
 
+    @EventHandler
+    public void onEndNinjaNerfEvent(EndNinjaNerfEvent e) {
+        if (!e.getGamer().hasLeft())
+            e.getGamer().exposeArmor();
+    }
+
     // Spawns villagers randomly
     private void spawnVillagers(Arena arena) {
         DataManager data;
@@ -480,7 +489,7 @@ public class ArenaEvents implements Listener {
         if (!arena.hasDynamicCount())
             countMultiplier = 1;
 
-        int toSpawn = (int) (data.getConfig().getInt(wave + ".count.v") * countMultiplier)
+        int toSpawn = Math.max((int) (data.getConfig().getInt(wave + ".count.v") * countMultiplier), 1)
                 - arena.getVillagers();
         List<Location> spawns = arena.getVillagerSpawns();
 
@@ -493,8 +502,8 @@ public class ArenaEvents implements Listener {
 
             // Manage spawning state
             if (i + 1 >= toSpawn)
-                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawning(false), delay);
-            else Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawning(true), delay);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawningVillagers(false), delay);
+            else Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawningVillagers(true), delay);
         }
     }
 
@@ -536,7 +545,7 @@ public class ArenaEvents implements Listener {
         });
 
         // Spawn monsters
-        for (int i = 0; i < (int) (data.getConfig().getInt(wave + ".count.m") * countMultiplier); i++) {
+        for (int i = 0; i < Math.max((int) (data.getConfig().getInt(wave + ".count.m") * countMultiplier), 1); i++) {
             Location spawn = spawns.get(r.nextInt(spawns.size()));
 
             // Update delay
@@ -656,8 +665,8 @@ public class ArenaEvents implements Listener {
 
             // Manage spawning state
             if (i + 1 >= (int) (data.getConfig().getInt(wave + ".count.m") * countMultiplier))
-                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawning(false), delay);
-            else Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawning(true), delay);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawningMonsters(false), delay);
+            else Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawningMonsters(true), delay);
         }
     }
 
@@ -710,8 +719,8 @@ public class ArenaEvents implements Listener {
 
             // Manage spawning state
             if (i + 1 >= data.getConfig().getInt(wave + ".count.b"))
-                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawning(false), delay);
-            else Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawning(true), delay);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawningMonsters(false), delay);
+            else Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawningMonsters(true), delay);
         }
     }
 
