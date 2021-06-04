@@ -66,7 +66,7 @@ public class Main extends JavaPlugin {
 
 		// Set up commands and tab complete
 		getCommand("vd").setExecutor(commands);
-		getCommand("vd").setTabCompleter(new CommandTab());
+		getCommand("vd").setTabCompleter(new CommandTab(game));
 
 		// Register event listeners
 		pm.registerEvents(new InventoryEvents(this, game, inventories, portal, leaderboard, infoBoard,

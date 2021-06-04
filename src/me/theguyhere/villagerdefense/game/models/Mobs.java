@@ -1146,8 +1146,8 @@ public class Mobs {
         evoker.setPatrolLeader(false);
     }
 
-    public static void setHoglin(Main plugin, Arena arena, Hoglin hoglin) {
-        setMinion(plugin, arena, hoglin);
+    public static void setZoglin(Main plugin, Arena arena, Zoglin zoglin) {
+        setMinion(plugin, arena, zoglin);
     }
 
     public static void setRavager(Main plugin, Arena arena, Ravager ravager) {

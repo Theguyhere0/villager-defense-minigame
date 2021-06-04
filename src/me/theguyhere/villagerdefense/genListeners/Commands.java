@@ -2,9 +2,11 @@ package me.theguyhere.villagerdefense.genListeners;
 
 import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.Main;
+import me.theguyhere.villagerdefense.customEvents.GameEndEvent;
 import me.theguyhere.villagerdefense.customEvents.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.game.models.Arena;
 import me.theguyhere.villagerdefense.game.models.Game;
+import me.theguyhere.villagerdefense.game.models.Tasks;
 import me.theguyhere.villagerdefense.game.models.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -15,7 +17,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitScheduler;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -31,8 +35,6 @@ public class Commands implements CommandExecutor {
 	}
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		
-		// Open arena inventory
 		if (label.equalsIgnoreCase("vd")) {
 			FileConfiguration language = plugin.getLanguageData();
 
@@ -126,6 +128,7 @@ public class Commands implements CommandExecutor {
 				return true;
 			}
 
+			// Change crystal balance
 			if (args[0].equalsIgnoreCase("crystals")) {
 				// Check for permission to use the command
 				if (!player.hasPermission("vd.crystals")) {
@@ -158,6 +161,169 @@ public class Commands implements CommandExecutor {
 					player.sendMessage(Utils.notify("&cAmount must be an integer!"));
 					return true;
 				}
+			}
+
+			// Force start
+			if (args[0].equalsIgnoreCase("start")) {
+				// Start current arena
+				if (args.length == 1) {
+					// Check for permission to use the command
+					if (!player.hasPermission("vd.start")) {
+						player.sendMessage(Utils.notify(language.getString("permissionError")));
+						return true;
+					}
+
+					// Check if player is in a game
+					if (game.arenas.stream().filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player))) {
+						player.sendMessage(Utils.notify(language.getString("forceStartError1")));
+						return true;
+					}
+
+					Arena arena = game.arenas.stream().filter(Objects::nonNull)
+							.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
+					VDPlayer gamer = arena.getPlayer(player);
+
+					// Check if player is an active player
+					if (gamer.isSpectating()) {
+						player.sendMessage(Utils.notify(language.getString("forceStartError2")));
+						return true;
+					}
+
+					// Check if arena already started
+					if (arena.isActive()) {
+						player.sendMessage(Utils.notify(language.getString("forceStartError3")));
+						return true;
+					}
+
+					Tasks task = arena.getTask();
+					Map<Runnable, Integer> tasks = task.getTasks();
+					BukkitScheduler scheduler = Bukkit.getScheduler();
+
+					// Bring game to quick start if not already
+					if (tasks.containsKey(task.full10) || tasks.containsKey(task.sec10) &&
+							!scheduler.isQueued(tasks.get(task.sec10))) {
+						player.sendMessage(Utils.notify(language.getString("forceStartError4")));
+						return true;
+					} else {
+						// Remove all tasks
+						tasks.forEach((runnable, id) -> scheduler.cancelTask(id));
+						tasks.clear();
+
+						// Schedule accelerated countdown tasks
+						task.full10.run();
+						tasks.put(task.full10, 0); // Dummy task id to note that quick start condition was hit
+						tasks.put(task.sec5,
+								scheduler.scheduleSyncDelayedTask(plugin, task.sec5, Utils.secondsToTicks(5)));
+						tasks.put(task.start,
+								scheduler.scheduleSyncDelayedTask(plugin, task.start, Utils.secondsToTicks(10)));
+					}
+				}
+
+				// Start specific arena
+				else {
+					// Check for permission to use the command
+					if (!player.hasPermission("vd.admin")) {
+						player.sendMessage(Utils.notify(language.getString("permissionError")));
+						return true;
+					}
+
+					StringBuilder name = new StringBuilder(args[1]);
+					for (int i = 0; i < args.length - 2; i++)
+						name.append(" ").append(args[i + 2]);
+
+					// Check if this arena exists
+					if (game.arenas.stream().filter(Objects::nonNull)
+							.noneMatch(arena -> arena.getName().equals(name.toString()))) {
+						player.sendMessage(Utils.notify("&cNo arena with this name exists!"));
+						return true;
+					}
+
+					Arena arena = game.arenas.stream().filter(Objects::nonNull)
+							.filter(arena1 -> arena1.getName().equals(name.toString()))
+							.collect(Collectors.toList()).get(0);
+
+					// Check if arena already started
+					if (arena.isActive()) {
+						player.sendMessage(Utils.notify(language.getString("forceStartError3")));
+						return true;
+					}
+
+					// Check if there is at least 1 player
+					if (arena.getActiveCount() == 0) {
+						player.sendMessage(Utils.notify("&cThe arena needs at least 1 player to start!"));
+						return true;
+					}
+
+					Tasks task = arena.getTask();
+					Map<Runnable, Integer> tasks = task.getTasks();
+					BukkitScheduler scheduler = Bukkit.getScheduler();
+
+					// Bring game to quick start if not already
+					if (tasks.containsKey(task.full10) || tasks.containsKey(task.sec10) &&
+							!scheduler.isQueued(tasks.get(task.sec10))) {
+						player.sendMessage(Utils.notify(language.getString("forceStartError4")));
+						return true;
+					} else {
+						// Remove all tasks
+						tasks.forEach((runnable, id) -> scheduler.cancelTask(id));
+						tasks.clear();
+
+						// Schedule accelerated countdown tasks
+						task.full10.run();
+						tasks.put(task.full10, 0); // Dummy task id to note that quick start condition was hit
+						tasks.put(task.sec5,
+								scheduler.scheduleSyncDelayedTask(plugin, task.sec5, Utils.secondsToTicks(5)));
+						tasks.put(task.start,
+								scheduler.scheduleSyncDelayedTask(plugin, task.start, Utils.secondsToTicks(10)));
+					}
+				}
+
+				return true;
+			}
+
+			// Force end
+			if (args[0].equalsIgnoreCase("end")) {
+				// Check for permission to use the command
+				if (!player.hasPermission("vd.admin")) {
+					player.sendMessage(Utils.notify(language.getString("permissionError")));
+					return true;
+				}
+
+				// Check for valid command format
+				if (args.length < 2) {
+					player.sendMessage(Utils.notify("&cCommand format: /vd end [arena name]"));
+					return true;
+				}
+
+				StringBuilder name = new StringBuilder(args[1]);
+				for (int i = 0; i < args.length - 2; i++)
+					name.append(" ").append(args[i + 2]);
+
+				// Check if this arena exists
+				if (game.arenas.stream().filter(Objects::nonNull)
+						.noneMatch(arena -> arena.getName().equals(name.toString()))) {
+					player.sendMessage(Utils.notify("&cNo arena with this name exists!"));
+					return true;
+				}
+
+				Arena arena = game.arenas.stream().filter(Objects::nonNull)
+						.filter(arena1 -> arena1.getName().equals(name.toString())).collect(Collectors.toList()).get(0);
+
+				// Check if arena has a game in progress
+				if (!arena.isActive()) {
+					player.sendMessage(Utils.notify("&cNo game to end!"));
+					return true;
+				}
+
+				// Check if game is about to end
+				if (arena.isEnding()) {
+					player.sendMessage(Utils.notify("&cGame about to end!"));
+					return true;
+				}
+
+				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+						Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
+				return true;
 			}
 
 			// No valid command sent

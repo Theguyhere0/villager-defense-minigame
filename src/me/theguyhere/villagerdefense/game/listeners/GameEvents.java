@@ -71,13 +71,9 @@ public class GameEvents implements Listener {
 		}
 
 		// Check for lose condition
-		if (arena.getVillagers() == 0 && !arena.isSpawningVillagers() && !arena.isEnding()) {
+		if (arena.getVillagers() == 0 && !arena.isSpawningVillagers() && !arena.isEnding())
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 					Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
-			if (arena.hasLoseSound())
-				arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
-						Sound.ENTITY_ENDER_DRAGON_DEATH, 10, .5f));
-		}
 
 		// Manage drops and update enemy count, update player kill count
 		else {
@@ -466,13 +462,9 @@ public class GameEvents implements Listener {
 					Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)));
 
 			// Check for game end condition
-			if (arena.getAlive() == 0 && !arena.isEnding()) {
+			if (arena.getAlive() == 0 && !arena.isEnding())
 				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 						Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
-				if (arena.hasLoseSound())
-					arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
-							Sound.ENTITY_ENDER_DRAGON_DEATH, 10, .5f));
-			}
 		}
 	}
 
@@ -577,13 +569,9 @@ public class GameEvents implements Listener {
 				Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)));
 
 		// Check for game end condition
-		if (arena.getAlive() == 0 && !arena.isEnding()) {
+		if (arena.getAlive() == 0 && !arena.isEnding())
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 					Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
-			if (arena.hasLoseSound())
-				arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
-						Sound.ENTITY_ENDER_DRAGON_DEATH, 10, .5f));
-		}
 	}
 
 	// Update player kill counter

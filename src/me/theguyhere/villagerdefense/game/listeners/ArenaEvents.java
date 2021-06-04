@@ -185,7 +185,8 @@ public class ArenaEvents implements Listener {
         }
 
         // Quick start condition
-        else if (players == arena.getMaxPlayers() && !tasks.containsKey(task.full10)) {
+        else if (players == arena.getMaxPlayers() && !tasks.containsKey(task.full10) &&
+                !(tasks.containsKey(task.sec10) && !scheduler.isQueued(tasks.get(task.sec10)))) {
             // Remove all tasks
             tasks.forEach((runnable, id) -> scheduler.cancelTask(id));
             tasks.clear();
@@ -412,6 +413,11 @@ public class ArenaEvents implements Listener {
         arena.getPlayers().forEach(player ->
             player.getPlayer().sendMessage(Utils.notify(String.format(language.getString("end"),
                     arena.getCurrentWave() - 1))));
+
+        // Play sound if turned on
+        if (arena.hasLoseSound())
+            arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
+                    Sound.ENTITY_ENDER_DRAGON_DEATH, 10, .5f));
 
         if (arena.getActiveCount() > 0) {
             // Check for record
@@ -653,8 +659,8 @@ public class ArenaEvents implements Listener {
                     ), delay);
                     break;
                 case "hgln":
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setHoglin(plugin, arena,
-                            (Hoglin) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.HOGLIN)
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setZoglin(plugin, arena,
+                            (Zoglin) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.ZOGLIN)
                     ), delay);
                     break;
                 case "rvgr":
