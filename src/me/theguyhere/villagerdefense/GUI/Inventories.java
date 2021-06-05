@@ -43,7 +43,6 @@ public class Inventories {
 	public static final Material[] VILLAGER_MATS = {Material.WITHER_ROSE, Material.POPPY};
 
 	// Button creation constants
-//	final static String CONSTRUCTION = "&fComing Soon!";
 	final static boolean[] FLAGS = {true, true};
 
 	// Menu of all the arenas
@@ -1018,6 +1017,65 @@ public class Inventories {
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());
+
+		return inv;
+	}
+
+	// Menu for adding custom items
+	public Inventory createCustomItemsInventory(int arena, int slot) {
+		Arena arenaInstance = game.arenas.get(arena);
+
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 27, Utils.format("&k") +
+				Utils.format("&6&lEdit Item"));
+
+		// Item of interest
+		inv.setItem(4, arenaInstance.getCustomShop().getItem(slot));
+
+		// Option to increase by 1
+		inv.setItem(9, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&a&l+1 gem")));
+
+		// Option to increase by 10
+		inv.setItem(11, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&a&l+10 gems")));
+
+		// Option to increase by 100
+		inv.setItem(13, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&a&l+100 gems")));
+
+		// Option to increase by 1000
+		inv.setItem(15, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&a&l+1000 gems")));
+
+		// Option to delete item
+		inv.setItem(17, Utils.createItem(Material.LAVA_BUCKET, Utils.format("&4&lDELETE")));
+
+		// Option to decrease by 1
+		inv.setItem(18, Utils.createItem(Material.RED_CONCRETE, Utils.format("&c&l-1 gem")));
+
+		// Option to decrease by 10
+		inv.setItem(20, Utils.createItem(Material.RED_CONCRETE, Utils.format("&c&l-10 gems")));
+
+		// Option to decrease by 100
+		inv.setItem(22, Utils.createItem(Material.RED_CONCRETE, Utils.format("&c&l-100 gems")));
+
+		// Option to decrease by 1000
+		inv.setItem(24, Utils.createItem(Material.RED_CONCRETE, Utils.format("&c&l-1000 gems")));
+
+		// Option to exit
+		inv.setItem(26, InventoryItems.exit());
+
+		return inv;
+	}
+
+	// Confirmation menu for removing custom item
+	public Inventory createCustomItemConfirmInventory(int arena, int slot) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9, Utils.format("&k") +
+				Utils.format("&4&lRemove Custom Item?"));
+
+		// "No" option
+		inv.setItem(0, InventoryItems.no());
+
+		// "Yes" option
+		inv.setItem(8, InventoryItems.yes());
 
 		return inv;
 	}

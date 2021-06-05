@@ -22,6 +22,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
 import java.util.List;
@@ -106,10 +107,12 @@ public class InventoryEvents implements Listener {
 		if (e.getClickedInventory() == null)
 			return;
 
-		// Cancel the event if the inventory isn't the community chest, otherwise save the inventory
-		if (!title.contains("Community Chest"))
+		// Cancel the event if the inventory isn't the community chest or custom shop editor
+		if (!title.contains("Community Chest") && !title.contains("Custom Shop Editor"))
 			e.setCancelled(true);
-		else {
+
+		// Save community chest
+		else if (title.contains("Community Chest")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			Arena arenaInstance = game.arenas.get(meta.getInteger1());
 			arenaInstance.setCommunityChest(e.getInventory());
@@ -926,6 +929,20 @@ public class InventoryEvents implements Listener {
 				}
 			}
 
+			// Confirm to remove custom item
+			else if (title.contains("Remove Custom Item?")) {
+				// Return to previous menu
+				if (buttonName.contains("NO"))
+					player.openInventory(inv.createCustomItemsInventory(meta.getInteger1(), meta.getInteger2()));
+
+				// Remove custom item, then return to custom shop editor
+				else if (buttonName.contains("YES")) {
+					config.set("a" + meta.getInteger1() + ".customShop." + meta.getInteger2(), null);
+					plugin.saveArenaData();
+					player.openInventory(game.arenas.get(meta.getInteger1()).getCustomShopEditor());
+				}
+			}
+
 			// Confirm to remove corner 1
 			else if (title.contains("Remove Corner 1?")) {
 				// Return to previous menu
@@ -986,7 +1003,7 @@ public class InventoryEvents implements Listener {
 				if (buttonName.contains("NO"))
 					player.openInventory(inv.createInfoBoardMenu(meta.getInteger1()));
 
-				// Remove the info board, then return to previous menu
+					// Remove the info board, then return to previous menu
 				else if (buttonName.contains("YES")) {
 					// Remove info board data
 					config.set(path, null);
@@ -1835,6 +1852,7 @@ public class InventoryEvents implements Listener {
 
 			// Exit menu
 			if (buttonName.contains("EXIT")) {
+				e.setCancelled(true);
 				player.openInventory(inv.createShopsInventory(meta.getInteger1()));
 				return;
 			}
@@ -1845,30 +1863,174 @@ public class InventoryEvents implements Listener {
 				return;
 			}
 
-			// Remove item from slot
-			if (cursor.getType() == Material.AIR)
-				if (buttonType != null)
-					config.set(path + slot, null);
-				else return;
+			// Add item
+			if (cursor.getType() != Material.AIR && buttonType == null) {
+				ItemMeta itemMeta = cursor.getItemMeta();
+				itemMeta.setDisplayName((itemMeta.getDisplayName().equals("") ?
+						Arrays.stream(cursor.getType().name().toLowerCase().split("_"))
+								.reduce("", (partial, element) -> partial + " " +
+										element.substring(0, 1).toUpperCase() + element.substring(1)).substring(1) :
+						itemMeta.getDisplayName()) + String.format("%05d", 0));
+				ItemStack copy = cursor.clone();
+				copy.setItemMeta(itemMeta);
+				config.set(path + slot, copy);
+				Utils.giveItem(player, cursor.clone(), language.getString("inventoryFull"));
+				player.setItemOnCursor(new ItemStack(Material.AIR));
+				plugin.saveArenaData();
+				player.openInventory(inv.createCustomItemsInventory(meta.getInteger1(), slot));
+			}
 
-			// Check for valid item
-			else {
-				try {
-					Integer.parseInt(cursor.getItemMeta().getDisplayName()
-							.substring(cursor.getItemMeta().getDisplayName().length() - 5));
-					config.set(path + slot, cursor);
-				} catch (Exception err) {
-					player.sendMessage(Utils.notify(
-							"&cItem must have numbers as the last 5 characters of the item name!"));
+			// Edit item
+			else if (buttonType != null) {
+				e.setCancelled(true);
+				player.openInventory(inv.createCustomItemsInventory(meta.getInteger1(), slot));
+			}
+		}
+
+		// Menu for editing a specific custom item
+		else if (title.contains("Edit Item")) {
+			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
+			String path = "a" + meta.getInteger1() + ".customShop.";
+			ItemStack item = config.getItemStack(path + meta.getInteger2());
+			ItemMeta itemMeta = item.getItemMeta();
+			String name = itemMeta.getDisplayName();
+			int price = Integer.parseInt(name.substring(name.length() - 5));
+
+			// Increase by 1
+			if (buttonName.contains("+1 gem")) {
+				price++;
+
+				// Check for max price
+				if (price > 99999) {
+					player.sendMessage(Utils.notify("&cPrice cannot be above 99999 gems!"));
 					return;
 				}
+
+				itemMeta.setDisplayName(name.substring(0, name.length() - 5) + String.format("%05d", price));
+				item.setItemMeta(itemMeta);
+				config.set(path + meta.getInteger2(), item);
+			}
+
+			// Increase by 10
+			else if (buttonName.contains("+10 gems")) {
+				price += 10;
+
+				// Check for max price
+				if (price > 99999) {
+					player.sendMessage(Utils.notify("&cPrice cannot be above 99999 gems!"));
+					return;
+				}
+
+				itemMeta.setDisplayName(name.substring(0, name.length() - 5) + String.format("%05d", price));
+				item.setItemMeta(itemMeta);
+				config.set(path + meta.getInteger2(), item);
+			}
+
+			// Increase by 100
+			else if (buttonName.contains("+100 gems")) {
+				price += 100;
+
+				// Check for max price
+				if (price > 99999) {
+					player.sendMessage(Utils.notify("&cPrice cannot be above 99999 gems!"));
+					return;
+				}
+
+				itemMeta.setDisplayName(name.substring(0, name.length() - 5) + String.format("%05d", price));
+				item.setItemMeta(itemMeta);
+				config.set(path + meta.getInteger2(), item);
+			}
+
+			// Increase by 1000
+			else if (buttonName.contains("+1000 gems")) {
+				price += 1000;
+
+				// Check for max price
+				if (price > 99999) {
+					player.sendMessage(Utils.notify("&cPrice cannot be above 99999 gems!"));
+					return;
+				}
+
+				itemMeta.setDisplayName(name.substring(0, name.length() - 5) + String.format("%05d", price));
+				item.setItemMeta(itemMeta);
+				config.set(path + meta.getInteger2(), item);
+			}
+
+			// Delete item
+			else if (buttonName.contains("DELETE")) {
+				player.openInventory(inv.createCustomItemConfirmInventory(meta.getInteger1(), meta.getInteger2()));
+				return;
+			}
+
+			// Decrease by 1
+			else if (buttonName.contains("-1 gem")) {
+				price--;
+
+				// Check for min price
+				if (price < 0) {
+					player.sendMessage(Utils.notify("&cPrice cannot be negative!"));
+					return;
+				}
+
+				itemMeta.setDisplayName(name.substring(0, name.length() - 5) + String.format("%05d", price));
+				item.setItemMeta(itemMeta);
+				config.set(path + meta.getInteger2(), item);
+			}
+
+			// Decrease by 10
+			else if (buttonName.contains("-10 gems")) {
+				price -= 10;
+
+				// Check for min price
+				if (price < 0) {
+					player.sendMessage(Utils.notify("&cPrice cannot be negative!"));
+					return;
+				}
+
+				itemMeta.setDisplayName(name.substring(0, name.length() - 5) + String.format("%05d", price));
+				item.setItemMeta(itemMeta);
+				config.set(path + meta.getInteger2(), item);
+			}
+
+			// Decrease by 100
+			else if (buttonName.contains("-100 gems")) {
+				price -= 100;
+
+				// Check for min price
+				if (price < 0) {
+					player.sendMessage(Utils.notify("&cPrice cannot be negative!"));
+					return;
+				}
+
+				itemMeta.setDisplayName(name.substring(0, name.length() - 5) + String.format("%05d", price));
+				item.setItemMeta(itemMeta);
+				config.set(path + meta.getInteger2(), item);
+			}
+
+			// Decrease by 1000
+			else if (buttonName.contains("-1000 gems")) {
+				price -= 1000;
+
+				// Check for min price
+				if (price < 0) {
+					player.sendMessage(Utils.notify("&cPrice cannot be negative!"));
+					return;
+				}
+
+				itemMeta.setDisplayName(name.substring(0, name.length() - 5) + String.format("%05d", price));
+				item.setItemMeta(itemMeta);
+				config.set(path + meta.getInteger2(), item);
+			}
+
+			// Exit
+			else if (buttonName.contains("EXIT")) {
+				player.openInventory(game.arenas.get(meta.getInteger1()).getCustomShopEditor());
+				return;
 			}
 
 			// Save changes and refresh GUI
 			plugin.saveArenaData();
-			Utils.giveItem(player, cursor.clone(), language.getString("inventoryFull"));
-			player.setItemOnCursor(new ItemStack(Material.AIR));
-			player.openInventory(arenaInstance.getCustomShopEditor());
+			player.openInventory(inv.createCustomItemsInventory(meta.getInteger1(), meta.getInteger2()));
 		}
 
 		// Game settings menu for an arena

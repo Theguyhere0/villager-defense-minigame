@@ -848,7 +848,8 @@ public class Arena {
                 Utils.format("&6&lCustom Shop Editor: " + getName()));
 
         // Set exit option
-        inv.setItem(53, InventoryItems.exit());
+        for (int i = 45; i < 54; i++)
+            inv.setItem(i, InventoryItems.exit());
 
         // Check for a stored inventory
         if (!config.contains(path + ".customShop"))
@@ -856,8 +857,26 @@ public class Arena {
 
         // Get items from stored inventory
         config.getConfigurationSection(path + ".customShop").getKeys(false)
-            .forEach(index -> inv.setItem(Integer.parseInt(index),
-                    config.getItemStack(path + ".customShop." + index)));
+            .forEach(index -> {
+                // Get raw item and data
+                ItemStack item = config.getItemStack(path + ".customShop." + index).clone();
+                ItemMeta meta = item.getItemMeta();
+                List<String> lore = new ArrayList<>();
+                String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
+                int price = Integer.parseInt(meta.getDisplayName().substring(meta.getDisplayName().length() - 5));
+
+                // Transform to proper shop item
+                meta.setDisplayName(Utils.format("&f" + name));
+                if (meta.hasLore()) {
+                    lore = meta.getLore();
+                    lore.add(Utils.format("&2Gems: &a" + price));
+                } else lore.add(Utils.format("&2Gems: &a" + price));
+                meta.setLore(lore);
+                item.setItemMeta(meta);
+
+                // Set item into inventory
+                inv.setItem(Integer.parseInt(index), item);
+            });
 
         return inv;
     }
@@ -868,7 +887,7 @@ public class Arena {
                 Utils.format("&6&lCustom Shop"));
 
         // Set exit option
-        inv.setItem(53, InventoryItems.exit());
+        inv.setItem(49, InventoryItems.exit());
 
         // Check for a stored inventory
         if (!config.contains(path + ".customShop"))
@@ -906,7 +925,7 @@ public class Arena {
                 Utils.format("&6&lCustom Shop: " + getName()));
 
         // Set exit option
-        inv.setItem(53, InventoryItems.exit());
+        inv.setItem(49, InventoryItems.exit());
 
         // Check for a stored inventory
         if (!config.contains(path + ".customShop"))
