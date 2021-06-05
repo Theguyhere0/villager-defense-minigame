@@ -265,6 +265,10 @@ public class Tasks {
 			arenaInstance.resetVillagers();
 			arenaInstance.resetEnemies();
 
+			// Initiate community chest
+			arenaInstance.setCommunityChest(Bukkit.createInventory(new InventoryMeta(arena), 54,
+					Utils.format("&k") + Utils.format("&d&lCommunity Chest")));
+
 			// Trigger WaveEndEvent
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 					Bukkit.getPluginManager().callEvent(new WaveEndEvent(arenaInstance)));
@@ -292,7 +296,7 @@ public class Tasks {
 							Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player.getPlayer()))));
 
 			// Clear the arena
-			Utils.clear(arenaInstance.getPlayerSpawn());
+			Utils.clear(arenaInstance.getCorner1(), arenaInstance.getCorner2());
 
 			// Remove particles
 			arenaInstance.cancelSpawnParticles();

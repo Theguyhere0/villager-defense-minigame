@@ -26,7 +26,7 @@ public class Game {
 				arenas.set(Integer.parseInt(path.substring(1)), new Arena(plugin, Integer.parseInt(path.substring(1)),
 						new Tasks(plugin, this, Integer.parseInt(path.substring(1)), portal)));
 		});
-		lobby = Utils.getConfigLocationNoRotation(plugin, "lobby");
+		lobby = Utils.getConfigLocation(plugin, "lobby");
 	}
 
 	public Location getLobby() {
@@ -34,7 +34,7 @@ public class Game {
 	}
 
 	public void reloadLobby() {
-		lobby = Utils.getConfigLocationNoRotation(plugin, "lobby");
+		lobby = Utils.getConfigLocation(plugin, "lobby");
 	}
 
 	// Creates a game board for the player

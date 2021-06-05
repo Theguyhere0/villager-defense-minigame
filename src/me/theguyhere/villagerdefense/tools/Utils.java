@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
+import org.bukkit.util.BoundingBox;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -352,20 +353,20 @@ public class Utils {
     }
 
     // Clears the arena
-    public static void clear(Location location) {
+    public static void clear(Location corner1, Location corner2) {
         Collection<Entity> ents;
 
         // Get all entities near spawn
         try {
-            ents = location.getWorld().getNearbyEntities(location, 200, 200, 100);
+            ents = corner1.getWorld().getNearbyEntities(BoundingBox.of(corner1, corner2));
         } catch (Exception e) {
             return;
         }
 
         // Clear the arena for living entities
         ents.forEach(ent -> {
-            if (ent instanceof LivingEntity && !(ent instanceof Player))
-                if (ent.hasMetadata("VD")) ent.remove();
+            if (ent instanceof LivingEntity && !(ent instanceof Player) && ent.hasMetadata("VD"))
+                ent.remove();
         });
 
         // Clear the arena for items and experience orbs

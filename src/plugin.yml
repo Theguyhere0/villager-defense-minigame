@@ -1,6 +1,6 @@
 main: me.theguyhere.villagerdefense.Main
 name: VillagerDefense
-version: 0.7.6
+version: 0.8.0
 author: Theguyhere
 api-version: 1.16
 depend: [HolographicDisplays]
@@ -30,3 +30,11 @@ commands:
       description: Changes the crystal balance of players
       usage: /vd crystals
       permission: vd.crystals
+    start:
+      description: Forces the start of a game
+      usage: /vd start
+      permission: vd.start
+    end:
+      description: Forces the end of a game
+      usage: /vd end
+      permission: vd.admin

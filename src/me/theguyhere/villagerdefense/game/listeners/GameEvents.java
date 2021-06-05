@@ -18,12 +18,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.*;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerGameModeChangeEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.util.BoundingBox;
 
 import java.util.Objects;
 import java.util.Random;
@@ -74,13 +71,9 @@ public class GameEvents implements Listener {
 		}
 
 		// Check for lose condition
-		if (arena.getVillagers() == 0 && !arena.isSpawning() && !arena.isEnding()) {
+		if (arena.getVillagers() == 0 && !arena.isSpawningVillagers() && !arena.isEnding())
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 					Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
-			if (arena.hasLoseSound())
-				arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
-						Sound.ENTITY_ENDER_DRAGON_DEATH, 10, .5f));
-		}
 
 		// Manage drops and update enemy count, update player kill count
 		else {
@@ -102,7 +95,24 @@ public class GameEvents implements Listener {
 					if (arena.hasGemDrop()) {
 						e.getDrops().add(Utils.createItem(Material.EMERALD, null,
 								Integer.toString(arena.getArena())));
-						if (r.nextDouble() < .01)
+
+						// Get rare loot probability
+						double probability;
+						switch (arena.getDifficultyMultiplier()) {
+							case 1:
+								probability = .015;
+								break;
+							case 2:
+								probability = .01;
+								break;
+							case 3:
+								probability = .008;
+								break;
+							default:
+								probability = .006;
+						}
+
+						if (r.nextDouble() < probability)
 							e.getDrops().add(GameItems.randCare(arena.getCurrentWave() / 10 + 1));
 					}
 					if (arena.hasExpDrop())
@@ -114,7 +124,7 @@ public class GameEvents implements Listener {
 			}
 
 			// Check for wave end condition
-			if (arena.getEnemies() == 0 && !arena.isEnding() && !arena.isSpawning()) {
+			if (arena.getEnemies() == 0 && !arena.isEnding() && !arena.isSpawningMonsters()) {
 				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 						Bukkit.getPluginManager().callEvent(new WaveEndEvent(arena)));
 			}
@@ -142,7 +152,7 @@ public class GameEvents implements Listener {
 			int count = (int) (data.getConfig().getInt(wave + ".count.m") * countMultiplier);
 
 			// Set monsters glowing when only 20% remain
-			if (arena.getEnemies() <= .2 * count && !arena.isSpawning() && arena.getEnemies() > 0) {
+			if (arena.getEnemies() <= .2 * count && !arena.isSpawningMonsters() && arena.getEnemies() > 0) {
 				arena.getPlayerSpawn().getWorld().getNearbyEntities(arena.getPlayerSpawn(),
 						200, 200, 200).stream().filter(entity -> entity.hasMetadata("VD"))
 						.filter(entity -> entity instanceof Monster || entity instanceof Slime ||
@@ -452,13 +462,9 @@ public class GameEvents implements Listener {
 					Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)));
 
 			// Check for game end condition
-			if (arena.getAlive() == 0 && !arena.isEnding()) {
+			if (arena.getAlive() == 0 && !arena.isEnding())
 				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 						Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
-				if (arena.hasLoseSound())
-					arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
-							Sound.ENTITY_ENDER_DRAGON_DEATH, 10, .5f));
-			}
 		}
 	}
 
@@ -563,13 +569,9 @@ public class GameEvents implements Listener {
 				Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)));
 
 		// Check for game end condition
-		if (arena.getAlive() == 0 && !arena.isEnding()) {
+		if (arena.getAlive() == 0 && !arena.isEnding())
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 					Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
-			if (arena.hasLoseSound())
-				arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
-						Sound.ENTITY_ENDER_DRAGON_DEATH, 10, .5f));
-		}
 	}
 
 	// Update player kill counter
@@ -647,7 +649,24 @@ public class GameEvents implements Listener {
 			} else {
 				int earned = r.nextInt((int) (50 * Math.pow(wave, .15)));
 				gamer.addGems(earned == 0 ? 1 : earned);
-				if (r.nextDouble() < .01)
+
+				// Get rare loot probability
+				double probability;
+				switch (arena.getDifficultyMultiplier()) {
+					case 1:
+						probability = .015;
+						break;
+					case 2:
+						probability = .01;
+						break;
+					case 3:
+						probability = .008;
+						break;
+					default:
+						probability = .006;
+				}
+
+				if (r.nextDouble() < probability)
 					Utils.giveItem(player, GameItems.randCare(wave / 10 + 1),
 							plugin.getLanguageData().getString("inventoryFull"));
 
@@ -704,7 +723,8 @@ public class GameEvents implements Listener {
 	@EventHandler
 	public void onConsume(PlayerInteractEvent e) {
 		Player player = e.getPlayer();
-		ItemStack item = player.getInventory().getItemInMainHand();
+		ItemStack item = e.getItem() == null ? new ItemStack(Material.AIR) : e.getItem();
+		ItemStack main = player.getInventory().getItemInMainHand();
 		FileConfiguration language = plugin.getLanguageData();
 
 		// See if the player is in a game
@@ -714,8 +734,21 @@ public class GameEvents implements Listener {
 				.collect(Collectors.toList()).get(0);
 		VDPlayer gamer = arena.getPlayer(player);
 
+		// Avoid false consume
+		if (main.equals(GameItems.shop()) || main.getType() == Material.BEETROOT || main.getType() == Material.CARROT ||
+				main.getType() == Material.BREAD || main.getType() == Material.COOKED_MUTTON ||
+				main.getType() == Material.COOKED_BEEF || main.getType() == Material.GOLDEN_CARROT ||
+				main.getType() == Material.GOLDEN_APPLE || main.getType() == Material.ENCHANTED_GOLDEN_APPLE ||
+				main.getType() == Material.GLASS_BOTTLE || main.getType() == Material.BOW ||
+				main.getType() == Material.EXPERIENCE_BOTTLE || main.equals(Kits.mage()) || main.equals(Kits.ninja()) ||
+				main.equals(Kits.templar()) || main.equals(Kits.warrior()) || main.equals(Kits.knight()) ||
+				main.equals(Kits.priest()) || main.equals(Kits.siren()) || main.equals(Kits.monk()) ||
+				main.equals(Kits.messenger())) return;
+
 		// Wolf spawn
-		if (item.getType() == Material.WOLF_SPAWN_EGG) {
+		if (item.getType() == Material.WOLF_SPAWN_EGG && main.getType() != Material.POLAR_BEAR_SPAWN_EGG &&
+				main.getType() != Material.COAL_BLOCK && main.getType() != Material.IRON_BLOCK && main.getType() !=
+				Material.DIAMOND_BLOCK && main.getType() != Material.BEACON) {
 			// Ignore if it wasn't a right click on a block
 			if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
 				return;
@@ -748,7 +781,9 @@ public class GameEvents implements Listener {
 			return;
 
 		// Iron golem spawn
-		if (item.getItemMeta().getDisplayName().contains("Iron Golem Spawn Egg")) {
+		if (item.getItemMeta().getDisplayName().contains("Iron Golem Spawn Egg") && main.getType() !=
+				Material.WOLF_SPAWN_EGG && main.getType() != Material.COAL_BLOCK && main.getType() !=
+				Material.IRON_BLOCK && main.getType() != Material.DIAMOND_BLOCK && main.getType() != Material.BEACON) {
 			// Ignore if it wasn't a right click on a block
 			if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
 				return;
@@ -777,7 +812,9 @@ public class GameEvents implements Listener {
 		}
 
 		// Small care package
-		if (item.getItemMeta().getDisplayName().contains("Small Care Package")) {
+		if (item.getItemMeta().getDisplayName().contains("Small Care Package") && main.getType() !=
+				Material.POLAR_BEAR_SPAWN_EGG && main.getType() != Material.WOLF_SPAWN_EGG && main.getType() !=
+				Material.IRON_BLOCK && main.getType() != Material.DIAMOND_BLOCK && main.getType() != Material.BEACON) {
 			// Remove an item
 			if (item.getAmount() > 1)
 				item.setAmount(item.getAmount() - 1);
@@ -799,7 +836,10 @@ public class GameEvents implements Listener {
 		}
 
 		// Medium care package
-		if (item.getItemMeta().getDisplayName().contains("Medium Care Package")) {
+		if (item.getItemMeta().getDisplayName().contains("Medium Care Package") && main.getType() !=
+				Material.POLAR_BEAR_SPAWN_EGG && main.getType() != Material.COAL_BLOCK && main.getType() !=
+				Material.WOLF_SPAWN_EGG && main.getType() != Material.DIAMOND_BLOCK && main.getType() !=
+				Material.BEACON) {
 			// Remove an item
 			if (item.getAmount() > 1)
 				item.setAmount(item.getAmount() - 1);
@@ -828,7 +868,9 @@ public class GameEvents implements Listener {
 		}
 
 		// Large care package
-		if (item.getItemMeta().getDisplayName().contains("Large Care Package")) {
+		if (item.getItemMeta().getDisplayName().contains("Large Care Package") && main.getType() !=
+				Material.POLAR_BEAR_SPAWN_EGG && main.getType() != Material.COAL_BLOCK && main.getType() !=
+				Material.IRON_BLOCK && main.getType() != Material.WOLF_SPAWN_EGG && main.getType() != Material.BEACON) {
 			// Remove an item
 			if (item.getAmount() > 1)
 				item.setAmount(item.getAmount() - 1);
@@ -861,7 +903,10 @@ public class GameEvents implements Listener {
 		}
 
 		// Extra large care package
-		if (item.getItemMeta().getDisplayName().contains("Extra large Care Package")) {
+		if (item.getItemMeta().getDisplayName().contains("Extra large Care Package") && main.getType() !=
+				Material.POLAR_BEAR_SPAWN_EGG && main.getType() != Material.COAL_BLOCK && main.getType() !=
+				Material.IRON_BLOCK && main.getType() != Material.DIAMOND_BLOCK && main.getType() !=
+				Material.WOLF_SPAWN_EGG) {
 			// Remove an item
 			if (item.getAmount() > 1)
 				item.setAmount(item.getAmount() - 1);
@@ -940,6 +985,48 @@ public class GameEvents implements Listener {
 			return;
 
 		e.setCancelled(true);
+	}
+
+	// Prevent players from teleporting when in a game
+	@EventHandler
+	public void onPlayerTeleport(PlayerTeleportEvent e) {
+		Player player = e.getPlayer();
+
+		// Check if player is playing in an arena
+		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+			return;
+
+		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+				.collect(Collectors.toList()).get(0);
+
+		// Cancel teleport and notify if teleport is outside arena bounds
+		if (!(BoundingBox.of(arena.getCorner1(), arena.getCorner2())
+				.contains(e.getTo().getX(), e.getTo().getY(), e.getTo().getZ())) ||
+				!Objects.equals(e.getTo().getWorld(), arena.getCorner1().getWorld())) {
+			e.setCancelled(true);
+			player.sendMessage(Utils.notify(plugin.getLanguageData().getString("teleportError")));
+		}
+	}
+
+	// Prevent players from leaving the arena bounds
+	@EventHandler
+	public void onPlayerMove(PlayerMoveEvent e) {
+		Player player = e.getPlayer();
+
+		// Check if player is playing in an arena
+		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+			return;
+
+		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+				.collect(Collectors.toList()).get(0);
+
+		// Cancel move and notify if movement is outside arena bounds
+		if (!(BoundingBox.of(arena.getCorner1(), arena.getCorner2())
+				.contains(e.getTo().getX(), e.getTo().getY(), e.getTo().getZ())) ||
+				!Objects.equals(e.getTo().getWorld(), arena.getCorner1().getWorld())) {
+			e.setCancelled(true);
+			player.sendMessage(Utils.notify(plugin.getLanguageData().getString("boundsError")));
+		}
 	}
 
 	// Prevents arena mobs from turning into different entities

@@ -29,7 +29,8 @@ public class Arena {
 
     private boolean caps; // Indicates whether the naming inventory has caps lock on
     private boolean active; // Indicates whether the arena has a game ongoing
-    private boolean spawning; // Indicates whether the arena is in the process of spawning mobs
+    private boolean spawningMonsters; // Indicates whether the arena is in the process of spawning monsters
+    private boolean spawningVillagers; // Indicates whether the arena is in the process of spawning villagers
     private boolean ending; // Indicates whether the arena is about to end
     private int currentWave; // Current game wave
     private int villagers; // Villager count
@@ -42,6 +43,7 @@ public class Arena {
     private Inventory weaponShop; // Weapon shop inventory
     private Inventory armorShop; // Armor shop inventory
     private Inventory consumeShop; // Consumables shop inventory
+    private Inventory communityChest; // Community chest inventory
     private BossBar timeLimitBar; // Time limit bar
 
     public Arena(Main plugin, int arena, Tasks task) {
@@ -249,7 +251,7 @@ public class Arena {
     }
 
     public Location getWaitingRoom() {
-        return Utils.getConfigLocationNoRotation(plugin, path + ".waiting");
+        return Utils.getConfigLocation(plugin, path + ".waiting");
     }
 
     public void setWaitingRoom(Location location) {
@@ -459,6 +461,15 @@ public class Arena {
         plugin.saveArenaData();
     }
 
+    public boolean hasCommunity() {
+        return config.getBoolean(path + ".community");
+    }
+
+    public void setCommunity(boolean bool) {
+        config.set(path + ".community", bool);
+        plugin.saveArenaData();
+    }
+
     public boolean hasGemDrop() {
         return config.getBoolean(path + ".gemDrop");
     }
@@ -475,6 +486,22 @@ public class Arena {
     public void setExpDrop(boolean bool) {
         config.set(path + ".expDrop", bool);
         plugin.saveArenaData();
+    }
+
+    public Location getCorner1() {
+        return Utils.getConfigLocationNoRotation(plugin, path + ".corner1");
+    }
+
+    public void setCorner1(Location location) {
+        Utils.setConfigurationLocation(plugin, path + ".corner1", location);
+    }
+
+    public Location getCorner2() {
+        return Utils.getConfigLocationNoRotation(plugin, path + ".corner2");
+    }
+
+    public void setCorner2(Location location) {
+        Utils.setConfigurationLocation(plugin, path + ".corner2", location);
     }
 
     public boolean hasWinSound() {
@@ -528,6 +555,15 @@ public class Arena {
 
     public void setPlayerDeathSound(boolean bool) {
         config.set(path + ".sounds.death", bool);
+        plugin.saveArenaData();
+    }
+
+    public boolean hasAbilitySound() {
+        return config.getBoolean(path + ".sounds.ability");
+    }
+
+    public void setAbilitySound(boolean bool) {
+        config.set(path + ".sounds.ability", bool);
         plugin.saveArenaData();
     }
 
@@ -638,12 +674,20 @@ public class Arena {
         this.active = active;
     }
 
-    public boolean isSpawning() {
-        return spawning;
+    public boolean isSpawningMonsters() {
+        return spawningMonsters;
     }
 
-    public void setSpawning(boolean spawning) {
-        this.spawning = spawning;
+    public void setSpawningMonsters(boolean spawningMonsters) {
+        this.spawningMonsters = spawningMonsters;
+    }
+
+    public boolean isSpawningVillagers() {
+        return spawningVillagers;
+    }
+
+    public void setSpawningVillagers(boolean spawningVillagers) {
+        this.spawningVillagers = spawningVillagers;
     }
 
     public boolean isEnding() {
@@ -790,13 +834,22 @@ public class Arena {
         this.consumeShop = consumeShop;
     }
 
+    public Inventory getCommunityChest() {
+        return communityChest;
+    }
+
+    public void setCommunityChest(Inventory communityChest) {
+        this.communityChest = communityChest;
+    }
+
     public Inventory getCustomShopEditor() {
         // Create inventory
         Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54, Utils.format("&k") +
                 Utils.format("&6&lCustom Shop Editor: " + getName()));
 
         // Set exit option
-        inv.setItem(53, InventoryItems.exit());
+        for (int i = 45; i < 54; i++)
+            inv.setItem(i, InventoryItems.exit());
 
         // Check for a stored inventory
         if (!config.contains(path + ".customShop"))
@@ -804,8 +857,26 @@ public class Arena {
 
         // Get items from stored inventory
         config.getConfigurationSection(path + ".customShop").getKeys(false)
-            .forEach(index -> inv.setItem(Integer.parseInt(index),
-                    config.getItemStack(path + ".customShop." + index)));
+            .forEach(index -> {
+                // Get raw item and data
+                ItemStack item = config.getItemStack(path + ".customShop." + index).clone();
+                ItemMeta meta = item.getItemMeta();
+                List<String> lore = new ArrayList<>();
+                String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
+                int price = Integer.parseInt(meta.getDisplayName().substring(meta.getDisplayName().length() - 5));
+
+                // Transform to proper shop item
+                meta.setDisplayName(Utils.format("&f" + name));
+                if (meta.hasLore()) {
+                    lore = meta.getLore();
+                    lore.add(Utils.format("&2Gems: &a" + price));
+                } else lore.add(Utils.format("&2Gems: &a" + price));
+                meta.setLore(lore);
+                item.setItemMeta(meta);
+
+                // Set item into inventory
+                inv.setItem(Integer.parseInt(index), item);
+            });
 
         return inv;
     }
@@ -816,7 +887,7 @@ public class Arena {
                 Utils.format("&6&lCustom Shop"));
 
         // Set exit option
-        inv.setItem(53, InventoryItems.exit());
+        inv.setItem(49, InventoryItems.exit());
 
         // Check for a stored inventory
         if (!config.contains(path + ".customShop"))
@@ -854,7 +925,7 @@ public class Arena {
                 Utils.format("&6&lCustom Shop: " + getName()));
 
         // Set exit option
-        inv.setItem(53, InventoryItems.exit());
+        inv.setItem(49, InventoryItems.exit());
 
         // Check for a stored inventory
         if (!config.contains(path + ".customShop"))
@@ -910,11 +981,22 @@ public class Arena {
     }
 
     public void addPlayerToTimeLimitBar(Player player) {
-        timeLimitBar.addPlayer(player);
+        if (timeLimitBar != null)
+            timeLimitBar.addPlayer(player);
     }
 
     public void removePlayerFromTimeLimitBar(Player player) {
-        timeLimitBar.removePlayer(player);
+        if (timeLimitBar != null)
+            timeLimitBar.removePlayer(player);
+    }
+
+    public void checkClose() {
+        if (!plugin.getArenaData().contains("lobby") || getPortal() == null || getPlayerSpawn() == null ||
+                getMonsterSpawns().stream().noneMatch(Objects::nonNull) ||
+                getVillagerSpawns().stream().noneMatch(Objects::nonNull) || !hasCustom() && !hasNormal() ||
+                getCorner1() == null || getCorner2() == null ||
+                !getCorner1().getWorld().equals(getCorner2().getWorld()))
+            setClosed(true);
     }
 
     public void copy(Arena arenaToCopy) {
@@ -931,12 +1013,14 @@ public class Arena {
         setBannedKits(arenaToCopy.getBannedKits());
         setNormal(arenaToCopy.hasNormal());
         setCustom(arenaToCopy.hasCustom());
+        setCommunity(arenaToCopy.hasCommunity());
         setWinSound(arenaToCopy.hasWinSound());
         setLoseSound(arenaToCopy.hasLoseSound());
         setWaveStartSound(arenaToCopy.hasWaveStartSound());
         setWaveFinishSound(arenaToCopy.hasWaveFinishSound());
         setGemSound(arenaToCopy.hasGemSound());
         setPlayerDeathSound(arenaToCopy.hasPlayerDeathSound());
+        setAbilitySound(arenaToCopy.hasAbilitySound());
         setWaitingSound(arenaToCopy.getWaitingSoundNum());
         setSpawnParticles(arenaToCopy.hasSpawnParticles());
         setMonsterParticles(arenaToCopy.hasMonsterParticles());

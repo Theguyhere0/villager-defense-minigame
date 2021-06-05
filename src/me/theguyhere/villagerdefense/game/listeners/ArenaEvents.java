@@ -110,7 +110,7 @@ public class ArenaEvents implements Listener {
             game.createBoard(fighter);
 
             // Clear arena
-            Utils.clear(location);
+            Utils.clear(arena.getCorner1(), arena.getCorner2());
 
             // Play waiting music
             if (arena.getWaitingSound() != null)
@@ -125,8 +125,9 @@ public class ArenaEvents implements Listener {
 
         // Join players as spectators if arena is full or game already started
         else {
-            // Teleport to arena or waiting room
+            // Teleport to arena and give time limit bar
             Utils.teleSpectator(player, arena.getPlayerSpawn());
+            arena.addPlayerToTimeLimitBar(player);
 
             // Update player tracking and in-game stats
             arena.getPlayers().add(new VDPlayer(player, true));
@@ -184,7 +185,8 @@ public class ArenaEvents implements Listener {
         }
 
         // Quick start condition
-        else if (players == arena.getMaxPlayers() && !tasks.containsKey(task.full10)) {
+        else if (players == arena.getMaxPlayers() && !tasks.containsKey(task.full10) &&
+                !(tasks.containsKey(task.sec10) && !scheduler.isQueued(tasks.get(task.sec10)))) {
             // Remove all tasks
             tasks.forEach((runnable, id) -> scheduler.cancelTask(id));
             tasks.clear();
@@ -391,6 +393,9 @@ public class ArenaEvents implements Listener {
             plugin.savePlayerData();
         }
 
+        // Mark VDPlayer as left
+        gamer.leave();
+
         // Refresh the game portal
         portal.refreshHolo(game.arenas.indexOf(arena), game);
     }
@@ -408,6 +413,11 @@ public class ArenaEvents implements Listener {
         arena.getPlayers().forEach(player ->
             player.getPlayer().sendMessage(Utils.notify(String.format(language.getString("end"),
                     arena.getCurrentWave() - 1))));
+
+        // Play sound if turned on
+        if (arena.hasLoseSound())
+            arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
+                    Sound.ENTITY_ENDER_DRAGON_DEATH, 10, .5f));
 
         if (arena.getActiveCount() > 0) {
             // Check for record
@@ -457,6 +467,12 @@ public class ArenaEvents implements Listener {
         e.getArena().getTask().updateBoards.run();
     }
 
+    @EventHandler
+    public void onEndNinjaNerfEvent(EndNinjaNerfEvent e) {
+        if (!e.getGamer().hasLeft())
+            e.getGamer().exposeArmor();
+    }
+
     // Spawns villagers randomly
     private void spawnVillagers(Arena arena) {
         DataManager data;
@@ -479,7 +495,7 @@ public class ArenaEvents implements Listener {
         if (!arena.hasDynamicCount())
             countMultiplier = 1;
 
-        int toSpawn = (int) (data.getConfig().getInt(wave + ".count.v") * countMultiplier)
+        int toSpawn = Math.max((int) (data.getConfig().getInt(wave + ".count.v") * countMultiplier), 1)
                 - arena.getVillagers();
         List<Location> spawns = arena.getVillagerSpawns();
 
@@ -492,8 +508,8 @@ public class ArenaEvents implements Listener {
 
             // Manage spawning state
             if (i + 1 >= toSpawn)
-                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawning(false), delay);
-            else Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawning(true), delay);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawningVillagers(false), delay);
+            else Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawningVillagers(true), delay);
         }
     }
 
@@ -535,7 +551,7 @@ public class ArenaEvents implements Listener {
         });
 
         // Spawn monsters
-        for (int i = 0; i < (int) (data.getConfig().getInt(wave + ".count.m") * countMultiplier); i++) {
+        for (int i = 0; i < Math.max((int) (data.getConfig().getInt(wave + ".count.m") * countMultiplier), 1); i++) {
             Location spawn = spawns.get(r.nextInt(spawns.size()));
 
             // Update delay
@@ -643,8 +659,8 @@ public class ArenaEvents implements Listener {
                     ), delay);
                     break;
                 case "hgln":
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setHoglin(plugin, arena,
-                            (Hoglin) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.HOGLIN)
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setZoglin(plugin, arena,
+                            (Zoglin) Objects.requireNonNull(spawn.getWorld()).spawnEntity(spawn, EntityType.ZOGLIN)
                     ), delay);
                     break;
                 case "rvgr":
@@ -655,8 +671,8 @@ public class ArenaEvents implements Listener {
 
             // Manage spawning state
             if (i + 1 >= (int) (data.getConfig().getInt(wave + ".count.m") * countMultiplier))
-                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawning(false), delay);
-            else Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawning(true), delay);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawningMonsters(false), delay);
+            else Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawningMonsters(true), delay);
         }
     }
 
@@ -709,8 +725,8 @@ public class ArenaEvents implements Listener {
 
             // Manage spawning state
             if (i + 1 >= data.getConfig().getInt(wave + ".count.b"))
-                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawning(false), delay);
-            else Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawning(true), delay);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawningMonsters(false), delay);
+            else Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> arena.setSpawningMonsters(true), delay);
         }
     }
 

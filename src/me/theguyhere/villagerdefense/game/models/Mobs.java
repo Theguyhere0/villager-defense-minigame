@@ -23,6 +23,8 @@ public class Mobs {
         livingEntity.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
         livingEntity.setRemoveWhenFarAway(false);
         livingEntity.setCanPickupItems(false);
+        if (livingEntity.isInsideVehicle())
+            livingEntity.getVehicle().remove();
         for (Entity passenger : livingEntity.getPassengers())
             passenger.remove();
         arena.incrementEnemies();
@@ -1144,8 +1146,8 @@ public class Mobs {
         evoker.setPatrolLeader(false);
     }
 
-    public static void setHoglin(Main plugin, Arena arena, Hoglin hoglin) {
-        setMinion(plugin, arena, hoglin);
+    public static void setZoglin(Main plugin, Arena arena, Zoglin zoglin) {
+        setMinion(plugin, arena, zoglin);
     }
 
     public static void setRavager(Main plugin, Arena arena, Ravager ravager) {

@@ -74,30 +74,18 @@ public class ArenaBoard {
 		info.add(Utils.format("&6&l" + arena.getName() + " Records"));
 		if (!arena.getSortedDescendingRecords().isEmpty())
 			arena.getSortedDescendingRecords().stream().forEachOrdered(record -> {
-				StringBuilder firstLine = new StringBuilder("Wave &b" + record.getWave() + " &f-");
-				StringBuilder secondLine = new StringBuilder();
-				StringBuilder thirdLine = new StringBuilder();
-				if (record.getPlayers().size() > 8) {
-					for (int i = 0; i < 4; i++)
-						firstLine.append(" ").append(record.getPlayers().get(i)).append(",");
-					for (int i = 4; i < 8; i++)
-						secondLine.append(record.getPlayers().get(i)).append(", ");
-					for (int i = 8; i < record.getPlayers().size(); i++)
-						thirdLine.append(record.getPlayers().get(i)).append(", ");
-					info.add(Utils.format(firstLine.toString()));
-					info.add(Utils.format(secondLine.substring(0, secondLine.length() - 2)));
-					info.add(Utils.format(thirdLine.substring(0, secondLine.length() - 2)));
-				} else if (record.getPlayers().size() > 4) {
-					for (int i = 0; i < 4; i++)
-						firstLine.append(" ").append(record.getPlayers().get(i)).append(",");
-					for (int i = 4; i < record.getPlayers().size(); i++)
-						secondLine.append(record.getPlayers().get(i)).append(", ");
-					info.add(Utils.format(firstLine.toString()));
-					info.add(Utils.format(secondLine.substring(0, secondLine.length() - 2)));
-				} else {
-					for (int i = 0; i < record.getPlayers().size(); i++)
-						firstLine.append(" ").append(record.getPlayers().get(i)).append(",");
-					info.add(Utils.format(firstLine.substring(0, firstLine.length() - 1)));
+				StringBuilder line = new StringBuilder("Wave &b" + record.getWave() + " &f- ");
+				for (int i = 0; i < record.getPlayers().size() / 4 + 1; i++) {
+					if (i * 4 + 4 < record.getPlayers().size()) {
+						for (int j = i * 4; j < i * 4 + 4; j++)
+							line.append(record.getPlayers().get(j)).append(", ");
+						info.add(Utils.format(line.substring(0, line.length() - 1)));
+					} else {
+						for (int j = i * 4; j < record.getPlayers().size(); j++)
+							line.append(record.getPlayers().get(j)).append(", ");
+						info.add(Utils.format(line.substring(0, line.length() - 2)));
+					}
+					line = new StringBuilder();
 				}
 			});
 
