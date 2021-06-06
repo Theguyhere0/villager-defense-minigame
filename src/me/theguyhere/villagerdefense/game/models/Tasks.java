@@ -243,9 +243,14 @@ public class Tasks {
 			if (arenaInstance.hasVillagerParticles())
 				arenaInstance.startVillagerParticles();
 
-			// Give all players a wooden sword and a shop
 			arenaInstance.getActives().forEach(player -> {
+				// Give all players starting items
 				giveItems(player);
+
+				// Give me items to test with
+				if (player.getPlayer().getName().equals("Theguyhere")) {
+					Utils.giveItem(player.getPlayer(), GameItems.extraCare(), null);
+				}
 
 				String kit = player.getKit();
 

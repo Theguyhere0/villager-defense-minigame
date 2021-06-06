@@ -19,6 +19,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BoundingBox;
 
@@ -739,16 +740,33 @@ public class GameEvents implements Listener {
 				main.getType() == Material.BREAD || main.getType() == Material.COOKED_MUTTON ||
 				main.getType() == Material.COOKED_BEEF || main.getType() == Material.GOLDEN_CARROT ||
 				main.getType() == Material.GOLDEN_APPLE || main.getType() == Material.ENCHANTED_GOLDEN_APPLE ||
-				main.getType() == Material.GLASS_BOTTLE || main.getType() == Material.BOW ||
-				main.getType() == Material.EXPERIENCE_BOTTLE || main.equals(Kits.mage()) || main.equals(Kits.ninja()) ||
+				main.getType() == Material.GLASS_BOTTLE || main.getType() == Material.BOW || 
+				main.getType() == Material.EXPERIENCE_BOTTLE || main.getType() == Material.LEATHER_HELMET || 
+				main.getType() == Material.LEATHER_CHESTPLATE || main.getType() == Material.CROSSBOW ||
+				main.getType() == Material.LEATHER_LEGGINGS || main.getType() == Material.LEATHER_BOOTS ||
+				main.getType() == Material.CHAINMAIL_HELMET || main.getType() == Material.CHAINMAIL_CHESTPLATE ||
+				main.getType() == Material.CHAINMAIL_LEGGINGS || main.getType() == Material.CHAINMAIL_BOOTS ||
+				main.getType() == Material.IRON_HELMET || main.getType() == Material.IRON_CHESTPLATE ||
+				main.getType() == Material.IRON_LEGGINGS || main.getType() == Material.IRON_BOOTS ||
+				main.getType() == Material.DIAMOND_HELMET || main.getType() == Material.DIAMOND_CHESTPLATE ||
+				main.getType() == Material.DIAMOND_LEGGINGS || main.getType() == Material.DIAMOND_BOOTS ||
+				main.getType() == Material.NETHERITE_HELMET || main.getType() == Material.NETHERITE_CHESTPLATE ||
+				main.getType() == Material.NETHERITE_LEGGINGS || main.getType() == Material.NETHERITE_BOOTS ||
+				main.equals(GameItems.health()) || main.equals(GameItems.health2()) ||
+				main.equals(GameItems.health3()) || main.equals(GameItems.speed()) || main.equals(GameItems.speed2()) ||
+				main.equals(GameItems.strength()) || main.equals(GameItems.strength2()) ||
+				main.equals(GameItems.regen()) || main.equals(GameItems.regen2()) ||
+				main.equals(Kits.mage()) || main.equals(Kits.ninja()) || main.getType() == Material.TRIDENT ||
 				main.equals(Kits.templar()) || main.equals(Kits.warrior()) || main.equals(Kits.knight()) ||
 				main.equals(Kits.priest()) || main.equals(Kits.siren()) || main.equals(Kits.monk()) ||
 				main.equals(Kits.messenger())) return;
 
 		// Wolf spawn
-		if (item.getType() == Material.WOLF_SPAWN_EGG && main.getType() != Material.POLAR_BEAR_SPAWN_EGG &&
-				main.getType() != Material.COAL_BLOCK && main.getType() != Material.IRON_BLOCK && main.getType() !=
-				Material.DIAMOND_BLOCK && main.getType() != Material.BEACON) {
+		if (item.getType() == Material.WOLF_SPAWN_EGG && 
+				!(main.getType() == Material.WOLF_SPAWN_EGG && e.getHand() == EquipmentSlot.OFF_HAND) &&
+				main.getType() != Material.POLAR_BEAR_SPAWN_EGG && main.getType() != Material.COAL_BLOCK &&
+				main.getType() != Material.IRON_BLOCK && main.getType() != Material.DIAMOND_BLOCK &&
+				main.getType() != Material.BEACON) {
 			// Ignore if it wasn't a right click on a block
 			if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
 				return;
@@ -766,7 +784,7 @@ public class GameEvents implements Listener {
 			// Remove an item
 			if (item.getAmount() > 1)
 				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItemInMainHand(null);
+			else player.getInventory().setItem(e.getHand(), null);
 
 			Location location = e.getClickedBlock().getLocation();
 			location.setY(location.getY() + 1);
@@ -781,9 +799,11 @@ public class GameEvents implements Listener {
 			return;
 
 		// Iron golem spawn
-		if (item.getItemMeta().getDisplayName().contains("Iron Golem Spawn Egg") && main.getType() !=
-				Material.WOLF_SPAWN_EGG && main.getType() != Material.COAL_BLOCK && main.getType() !=
-				Material.IRON_BLOCK && main.getType() != Material.DIAMOND_BLOCK && main.getType() != Material.BEACON) {
+		if (item.getItemMeta().getDisplayName().contains("Iron Golem Spawn Egg") &&
+				!(main.getType() == Material.POLAR_BEAR_SPAWN_EGG && e.getHand() == EquipmentSlot.OFF_HAND) &&
+				main.getType() != Material.WOLF_SPAWN_EGG &&
+				main.getType() != Material.COAL_BLOCK && main.getType() != Material.IRON_BLOCK &&
+				main.getType() != Material.DIAMOND_BLOCK && main.getType() != Material.BEACON) {
 			// Ignore if it wasn't a right click on a block
 			if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
 				return;
@@ -801,7 +821,7 @@ public class GameEvents implements Listener {
 			// Remove an item
 			if (item.getAmount() > 1)
 				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItemInMainHand(null);
+			else player.getInventory().setItem(e.getHand(), null);
 
 			Location location = e.getClickedBlock().getLocation();
 			location.setY(location.getY() + 1);
@@ -812,13 +832,15 @@ public class GameEvents implements Listener {
 		}
 
 		// Small care package
-		if (item.getItemMeta().getDisplayName().contains("Small Care Package") && main.getType() !=
-				Material.POLAR_BEAR_SPAWN_EGG && main.getType() != Material.WOLF_SPAWN_EGG && main.getType() !=
-				Material.IRON_BLOCK && main.getType() != Material.DIAMOND_BLOCK && main.getType() != Material.BEACON) {
+		if (item.getItemMeta().getDisplayName().contains("Small Care Package") &&
+				main.getType() != Material.POLAR_BEAR_SPAWN_EGG && 
+				!(main.getType() == Material.COAL_BLOCK && e.getHand() == EquipmentSlot.OFF_HAND) &&
+				main.getType() != Material.WOLF_SPAWN_EGG && main.getType() != Material.IRON_BLOCK &&
+				main.getType() != Material.DIAMOND_BLOCK && main.getType() != Material.BEACON) {
 			// Remove an item
 			if (item.getAmount() > 1)
 				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItemInMainHand(null);
+			else player.getInventory().setItem(e.getHand(), null);
 
 			// Give items and notify
 			if (gamer.getKit().equals("Blacksmith")) {
@@ -836,14 +858,15 @@ public class GameEvents implements Listener {
 		}
 
 		// Medium care package
-		if (item.getItemMeta().getDisplayName().contains("Medium Care Package") && main.getType() !=
-				Material.POLAR_BEAR_SPAWN_EGG && main.getType() != Material.COAL_BLOCK && main.getType() !=
-				Material.WOLF_SPAWN_EGG && main.getType() != Material.DIAMOND_BLOCK && main.getType() !=
-				Material.BEACON) {
+		if (item.getItemMeta().getDisplayName().contains("Medium Care Package") &&
+				main.getType() != Material.POLAR_BEAR_SPAWN_EGG && main.getType() != Material.COAL_BLOCK &&
+				!(main.getType() == Material.IRON_BLOCK && e.getHand() == EquipmentSlot.OFF_HAND) &&
+				main.getType() != Material.WOLF_SPAWN_EGG &&
+				main.getType() != Material.DIAMOND_BLOCK && main.getType() != Material.BEACON) {
 			// Remove an item
 			if (item.getAmount() > 1)
 				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItemInMainHand(null);
+			else player.getInventory().setItem(e.getHand(), null);
 
 			// Give items and notify
 			if (gamer.getKit().equals("Blacksmith")) {
@@ -868,13 +891,15 @@ public class GameEvents implements Listener {
 		}
 
 		// Large care package
-		if (item.getItemMeta().getDisplayName().contains("Large Care Package") && main.getType() !=
-				Material.POLAR_BEAR_SPAWN_EGG && main.getType() != Material.COAL_BLOCK && main.getType() !=
-				Material.IRON_BLOCK && main.getType() != Material.WOLF_SPAWN_EGG && main.getType() != Material.BEACON) {
+		if (item.getItemMeta().getDisplayName().contains("Large Care Package") &&
+				main.getType() != Material.WOLF_SPAWN_EGG && main.getType() != Material.POLAR_BEAR_SPAWN_EGG &&
+				main.getType() != Material.COAL_BLOCK && main.getType() != Material.IRON_BLOCK &&
+				!(main.getType() == Material.DIAMOND_BLOCK && e.getHand() == EquipmentSlot.OFF_HAND) &&
+				main.getType() != Material.BEACON) {
 			// Remove an item
 			if (item.getAmount() > 1)
 				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItemInMainHand(null);
+			else player.getInventory().setItem(e.getHand(), null);
 
 			// Give items and notify
 			if (gamer.getKit().equals("Blacksmith")) {
@@ -903,14 +928,15 @@ public class GameEvents implements Listener {
 		}
 
 		// Extra large care package
-		if (item.getItemMeta().getDisplayName().contains("Extra large Care Package") && main.getType() !=
-				Material.POLAR_BEAR_SPAWN_EGG && main.getType() != Material.COAL_BLOCK && main.getType() !=
-				Material.IRON_BLOCK && main.getType() != Material.DIAMOND_BLOCK && main.getType() !=
-				Material.WOLF_SPAWN_EGG) {
+		if (item.getItemMeta().getDisplayName().contains("Extra Large Care Package") &&
+				main.getType() != Material.WOLF_SPAWN_EGG && main.getType() != Material.POLAR_BEAR_SPAWN_EGG &&
+				main.getType() != Material.COAL_BLOCK && main.getType() != Material.IRON_BLOCK &&
+				main.getType() != Material.DIAMOND_BLOCK && 
+				!(main.getType() == Material.BEACON && e.getHand() == EquipmentSlot.OFF_HAND)) {
 			// Remove an item
 			if (item.getAmount() > 1)
 				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItemInMainHand(null);
+			else player.getInventory().setItem(e.getHand(), null);
 
 			// Give items and notify
 			if (gamer.getKit().equals("Blacksmith")) {

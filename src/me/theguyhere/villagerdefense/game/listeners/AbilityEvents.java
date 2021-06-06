@@ -80,7 +80,8 @@ public class AbilityEvents implements Listener {
                 main.equals(GameItems.health()) || main.equals(GameItems.health2()) ||
                 main.equals(GameItems.health3()) || main.equals(GameItems.speed()) || main.equals(GameItems.speed2()) ||
                 main.equals(GameItems.strength()) || main.equals(GameItems.strength2()) ||
-                main.equals(GameItems.regen()) || main.equals(GameItems.regen2())) return;
+                main.equals(GameItems.regen()) || main.equals(GameItems.regen2()) || main.getType() == Material.TRIDENT)
+            return;
 
         // See if the player is in a game
         if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
@@ -99,23 +100,16 @@ public class AbilityEvents implements Listener {
         if (gamer.getKit().contains("3") && level > 30)
             level = 30;
 
-        // Check for zero level
-        if (level == 0) {
-            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-                    Utils.format(language .getString("levelError"))));
-            return;
-        }
-        
-        // Check for cooldown
         long dif = cooldowns.get(gamer) - System.currentTimeMillis();
-        if (dif > 0) {
-            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-                    Utils.format(String.format(language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
-            return;
-        }
 
         // Mage
         if (gamer.getKit().contains("Mage") && Kits.mage().equals(item)) {
+            // Perform checks
+            if (checkLevel(level, player, language))
+                return;
+            if (checkCooldown(dif, player, language))
+                return;
+
             // Calculate stats
             int coolDown = Utils.secondsToMillis(13 - Math.pow(Math.E, (level - 1) / 12d));
             float yield = 1 + level * .05f;
@@ -129,6 +123,12 @@ public class AbilityEvents implements Listener {
 
         // Ninja
         if (gamer.getKit().contains("Ninja") && Kits.ninja().equals(item)) {
+            // Perform checks
+            if (checkLevel(level, player, language))
+                return;
+            if (checkCooldown(dif, player, language))
+                return;
+
             // Calculate stats
             int coolDown = Utils.secondsToMillis(46 - Math.pow(Math.E, (level - 1) / 12d));
             int duration = Utils.secondsToTicks(4 + Math.pow(Math.E, (level - 1) / 8.5));
@@ -151,6 +151,12 @@ public class AbilityEvents implements Listener {
 
         // Templar
         if (gamer.getKit().contains("Templar") && Kits.templar().equals(item)) {
+            // Perform checks
+            if (checkLevel(level, player, language))
+                return;
+            if (checkCooldown(dif, player, language))
+                return;
+
             // Calculate stats
             int duration, amplifier;
             int coolDown = Utils.secondsToMillis(46 - Math.pow(Math.E, (level - 1) / 12d));
@@ -185,6 +191,12 @@ public class AbilityEvents implements Listener {
 
         // Warrior
         if (gamer.getKit().contains("Warrior") && Kits.warrior().equals(item)) {
+            // Perform checks
+            if (checkLevel(level, player, language))
+                return;
+            if (checkCooldown(dif, player, language))
+                return;
+
             // Calculate stats
             int duration, amplifier;
             int coolDown = Utils.secondsToMillis(46 - Math.pow(Math.E, (level - 1) / 12d));
@@ -219,6 +231,12 @@ public class AbilityEvents implements Listener {
 
         // Knight
         if (gamer.getKit().contains("Knight") && Kits.knight().equals(item)) {
+            // Perform checks
+            if (checkLevel(level, player, language))
+                return;
+            if (checkCooldown(dif, player, language))
+                return;
+
             // Calculate stats
             int duration, amplifier;
             int coolDown = Utils.secondsToMillis(46 - Math.pow(Math.E, (level - 1) / 12d));
@@ -253,6 +271,12 @@ public class AbilityEvents implements Listener {
 
         // Priest
         if (gamer.getKit().contains("Priest") && Kits.priest().equals(item)) {
+            // Perform checks
+            if (checkLevel(level, player, language))
+                return;
+            if (checkCooldown(dif, player, language))
+                return;
+
             // Calculate stats
             int duration, amplifier;
             int coolDown = Utils.secondsToMillis(46 - Math.pow(Math.E, (level - 1) / 12d));
@@ -287,6 +311,12 @@ public class AbilityEvents implements Listener {
 
         // Siren
         if (gamer.getKit().contains("Siren") && Kits.siren().equals(item)) {
+            // Perform checks
+            if (checkLevel(level, player, language))
+                return;
+            if (checkCooldown(dif, player, language))
+                return;
+
             // Calculate stats
             int duration, amp1, amp2;
             int coolDown = Utils.secondsToMillis(26 - Math.pow(Math.E, (level - 1) / 12d));
@@ -324,6 +354,12 @@ public class AbilityEvents implements Listener {
 
         // Monk
         if (gamer.getKit().contains("Monk") && Kits.monk().equals(item)) {
+            // Perform checks
+            if (checkLevel(level, player, language))
+                return;
+            if (checkCooldown(dif, player, language))
+                return;
+
             // Calculate stats
             int duration, amplifier;
             int coolDown = Utils.secondsToMillis(46 - Math.pow(Math.E, (level - 1) / 12d));
@@ -358,6 +394,12 @@ public class AbilityEvents implements Listener {
 
         // Messenger
         if (gamer.getKit().contains("Messenger") && Kits.messenger().equals(item)) {
+            // Perform checks
+            if (checkLevel(level, player, language))
+                return;
+            if (checkCooldown(dif, player, language))
+                return;
+
             // Calculate stats
             int duration, amplifier;
             int coolDown = Utils.secondsToMillis(46 - Math.pow(Math.E, (level - 1) / 12d));
@@ -535,5 +577,23 @@ public class AbilityEvents implements Listener {
             player.getInventory().setBoots(null);
             player.sendMessage(Utils.notify(language.getString("ninjaError")));
         }
+    }
+
+    private boolean checkLevel(int level, Player player, FileConfiguration language) {
+        if (level == 0) {
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
+                    Utils.format(language.getString("levelError"))));
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkCooldown(long dif, Player player, FileConfiguration language) {
+        if (dif > 0) {
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
+                    Utils.format(String.format(language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
+            return true;
+        }
+        return false;
     }
 }
