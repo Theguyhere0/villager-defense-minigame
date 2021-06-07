@@ -854,7 +854,7 @@ public class GameEvents implements Listener {
 						language.getString("inventoryFull"));
 				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(2))),
 						language.getString("inventoryFull"));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randConsumable(2))),
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randNotCare(2))),
 						language.getString("inventoryFull"));
 			} else {
 				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(2)),
@@ -862,9 +862,9 @@ public class GameEvents implements Listener {
 				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(2)),
 						language.getString("inventoryFull"));
 				if (gamer.getKit().equals("Witch"))
-					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randConsumable(2))),
+					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randNotCare(2))),
 							language.getString("inventoryFull"));
-				else Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(2)),
+				else Utils.giveItem(player, Utils.removeLastLore(GameItems.randNotCare(2)),
 						language.getString("inventoryFull"));
 			}
 			player.sendMessage(Utils.notify(language.getString("carePackage")));
@@ -889,7 +889,7 @@ public class GameEvents implements Listener {
 						language.getString("inventoryFull"));
 				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(3))),
 						language.getString("inventoryFull"));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randConsumable(3))),
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randNotCare(3))),
 						language.getString("inventoryFull"));
 			} else {
 				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(4)),
@@ -899,9 +899,9 @@ public class GameEvents implements Listener {
 				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(3)),
 						language.getString("inventoryFull"));
 				if (gamer.getKit().equals("Witch"))
-					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randConsumable(3))),
+					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randNotCare(3))),
 							language.getString("inventoryFull"));
-				else Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(3)),
+				else Utils.giveItem(player, Utils.removeLastLore(GameItems.randNotCare(3)),
 						language.getString("inventoryFull"));
 			}
 			player.sendMessage(Utils.notify(language.getString("carePackage")));
@@ -928,9 +928,9 @@ public class GameEvents implements Listener {
 						language.getString("inventoryFull"));
 				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(4))),
 						language.getString("inventoryFull"));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randConsumable(4))),
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randNotCare(4))),
 						language.getString("inventoryFull"));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randConsumable(4))),
+				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randNotCare(4))),
 						language.getString("inventoryFull"));
 			} else {
 				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(5)),
@@ -942,14 +942,14 @@ public class GameEvents implements Listener {
 				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(4)),
 						language.getString("inventoryFull"));
 				if (gamer.getKit().equals("Witch")) {
-					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randConsumable(4))),
+					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randNotCare(4))),
 							language.getString("inventoryFull"));
-					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randConsumable(4))),
+					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randNotCare(4))),
 							language.getString("inventoryFull"));
 				} else {
-					Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(4)),
+					Utils.giveItem(player, Utils.removeLastLore(GameItems.randNotCare(4)),
 							language.getString("inventoryFull"));
-					Utils.giveItem(player, Utils.removeLastLore(GameItems.randConsumable(4)),
+					Utils.giveItem(player, Utils.removeLastLore(GameItems.randNotCare(4)),
 							language.getString("inventoryFull"));
 				}
 			}
@@ -1024,8 +1024,8 @@ public class GameEvents implements Listener {
 			return;
 
 		// Exempt myself for testing purposes
-		if (player.getName().equals("Theguyhere"))
-			return;
+//		if (player.getName().equals("Theguyhere"))
+//			return;
 
 		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0);

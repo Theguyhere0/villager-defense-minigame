@@ -247,10 +247,9 @@ public class Tasks {
 				// Give all players starting items
 				giveItems(player);
 
-				// Give me items to test with
-				if (player.getPlayer().getName().equals("Theguyhere")) {
-					Utils.giveItem(player.getPlayer(), GameItems.extraCare(), null);
-				}
+//				// Give me items to test with
+//				if (player.getPlayer().getName().equals("Theguyhere")) {
+//				}
 
 				String kit = player.getKit();
 

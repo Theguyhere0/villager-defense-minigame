@@ -5655,4 +5655,144 @@ public class GameItems {
 				return extraCare();
 		}
 	}
+	public static @NotNull ItemStack randNotCare(int level) {
+		Random r = new Random();
+		double chance = r.nextDouble();
+		switch (level) {
+			case 1:
+				if (chance < .25)
+					return beetroot();
+				else if (chance < .5)
+					return carrot();
+				else if (chance < .7)
+					return bread();
+				else if (chance < .8)
+					return health();
+				else if (chance < .85)
+					return speed();
+				else if (chance < .95)
+					return wolf();
+				else return experience();
+			case 2:
+				if (chance < .2)
+					return carrot();
+				else if (chance < .35)
+					return bread();
+				else if (chance < .475)
+					return mutton();
+				else if (chance < .55)
+					return steak();
+				else if (chance < .625)
+					return health();
+				else if (chance < .675)
+					return speed();
+				else if (chance < .725)
+					return strength();
+				else if (chance < .775)
+					return regen();
+				else if (chance < .9)
+					return wolf();
+				else return experience();
+			case 3:
+				if (chance < .125)
+					return bread();
+				else if (chance < .25)
+					return mutton();
+				else if (chance < .35)
+					return steak();
+				else if (chance < .45)
+					return gcarrot();
+				else if (chance < .525)
+					return health2();
+				else if (chance < .575)
+					return speed2();
+				else if (chance < .65)
+					return strength();
+				else if (chance < .7)
+					return regen();
+				else if (chance < .8)
+					return wolf();
+				else if (chance < .9)
+					return golem();
+				else return experience();
+			case 4:
+				if (chance < .1)
+					return mutton();
+				else if (chance < .225)
+					return steak();
+				else if (chance < .35)
+					return gcarrot();
+				else if (chance < .45)
+					return gapple();
+				else if (chance < .5)
+					return health2();
+				else if (chance < .55)
+					return health3();
+				else if (chance < .6)
+					return speed2();
+				else if (chance < .65)
+					return strength2();
+				else if (chance < .7)
+					return regen2();
+				else if (chance < .8)
+					return wolf();
+				else if (chance < .9)
+					return golem();
+				else return experience();
+			case 5:
+				if (chance < .05)
+					return mutton();
+				else if (chance < .15)
+					return steak();
+				else if (chance < .25)
+					return gcarrot();
+				else if (chance < .35)
+					return gapple();
+				else if (chance < .4)
+					return egapple();
+				else if (chance < .45)
+					return totem();
+				else if (chance < .55)
+					return health2();
+				else if (chance < .6)
+					return health3();
+				else if (chance < .65)
+					return speed2();
+				else if (chance < .7)
+					return strength2();
+				else if (chance < .75)
+					return regen2();
+				else if (chance < .85)
+					return wolf();
+				else if (chance < .925)
+					return golem();
+				else return experience();
+			default:
+				if (chance < .05)
+					return steak();
+				else if (chance < .2)
+					return gcarrot();
+				else if (chance < .3)
+					return gapple();
+				else if (chance < .4)
+					return egapple();
+				else if (chance < .45)
+					return totem();
+				else if (chance < .5)
+					return health2();
+				else if (chance < .55)
+					return health3();
+				else if (chance < .6)
+					return speed2();
+				else if (chance < .65)
+					return strength2();
+				else if (chance < .7)
+					return regen2();
+				else if (chance < .8)
+					return wolf();
+				else if (chance < .9)
+					return golem();
+				else return experience();
+		}
+	}
 }
