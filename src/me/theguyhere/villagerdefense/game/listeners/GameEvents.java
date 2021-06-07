@@ -4,7 +4,6 @@ import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.customEvents.GameEndEvent;
 import me.theguyhere.villagerdefense.customEvents.ReloadBoardsEvent;
-import me.theguyhere.villagerdefense.customEvents.WaveEndEvent;
 import me.theguyhere.villagerdefense.game.models.*;
 import me.theguyhere.villagerdefense.tools.DataManager;
 import me.theguyhere.villagerdefense.tools.Utils;
@@ -53,12 +52,16 @@ public class GameEvents implements Listener {
 			return;
 		}
 
+		// Clear normal drops
+		e.getDrops().clear();
+		e.setDroppedExp(0);
+
 		// Update villager count
 		if (ent instanceof Villager)
 			arena.decrementVillagers();
 
 		// Update wolf count
-		if (ent instanceof Wolf) {
+		else if (ent instanceof Wolf) {
 			try {
 				arena.getPlayer((Player) ((Wolf) ent).getOwner()).decrementWolves();
 			} catch (Exception err) {
@@ -67,67 +70,50 @@ public class GameEvents implements Listener {
 		}
 
 		// Update iron golem count
-		if (ent instanceof IronGolem) {
+		else if (ent instanceof IronGolem) {
 			arena.decrementGolems();
 		}
 
-		// Check for lose condition
-		if (arena.getVillagers() == 0 && !arena.isSpawningVillagers() && !arena.isEnding())
-			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
-					Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
-
 		// Manage drops and update enemy count, update player kill count
 		else {
-			// Clear normal drops
-			e.getDrops().clear();
-			e.setDroppedExp(0);
+			Random r = new Random();
 
-			if (!(ent instanceof Villager || ent instanceof Wolf || ent instanceof IronGolem)) {
-				Random r = new Random();
+			// Set drop to emerald, exp, and rare loot
+			if (ent instanceof Wither) {
+				if (arena.hasGemDrop())
+					e.getDrops().add(Utils.createItems(Material.EMERALD, 20, null,
+							Integer.toString(arena.getArena())));
+				if (arena.hasExpDrop())
+					e.setDroppedExp((int) (arena.getCurrentDifficulty() * 40));
+			} else {
+				if (arena.hasGemDrop()) {
+					e.getDrops().add(Utils.createItem(Material.EMERALD, null,
+							Integer.toString(arena.getArena())));
 
-				// Set drop to emerald, exp, and rare loot
-				if (ent instanceof Wither) {
-					if (arena.hasGemDrop())
-						e.getDrops().add(Utils.createItems(Material.EMERALD, 20, null,
-								Integer.toString(arena.getArena())));
-					if (arena.hasExpDrop())
-						e.setDroppedExp((int) (arena.getCurrentDifficulty() * 40));
-				} else {
-					if (arena.hasGemDrop()) {
-						e.getDrops().add(Utils.createItem(Material.EMERALD, null,
-								Integer.toString(arena.getArena())));
-
-						// Get rare loot probability
-						double probability;
-						switch (arena.getDifficultyMultiplier()) {
-							case 1:
-								probability = .015;
-								break;
-							case 2:
-								probability = .01;
-								break;
-							case 3:
-								probability = .008;
-								break;
-							default:
-								probability = .006;
-						}
-
-						if (r.nextDouble() < probability)
-							e.getDrops().add(GameItems.randCare(arena.getCurrentWave() / 10 + 1));
+					// Get rare loot probability
+					double probability;
+					switch (arena.getDifficultyMultiplier()) {
+						case 1:
+							probability = .015;
+							break;
+						case 2:
+							probability = .01;
+							break;
+						case 3:
+							probability = .008;
+							break;
+						default:
+							probability = .006;
 					}
-					if (arena.hasExpDrop())
-						e.setDroppedExp((int) (arena.getCurrentDifficulty() * 2));
+
+					if (r.nextDouble() < probability)
+						e.getDrops().add(GameItems.randCare(arena.getCurrentWave() / 10 + 1));
 				}
+				if (arena.hasExpDrop())
+					e.setDroppedExp((int) (arena.getCurrentDifficulty() * 2));
 
 				// Decrement enemy count
 				arena.decrementEnemies();
-			}
-
-			// Check for wave end condition
-			if (arena.getEnemies() == 0 && !arena.isEnding() && !arena.isSpawningMonsters()) {
-				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
-						Bukkit.getPluginManager().callEvent(new WaveEndEvent(arena)));
 			}
 
 			DataManager data;
@@ -192,12 +178,6 @@ public class GameEvents implements Listener {
 
 		// Decrement enemy count
 		arena.decrementEnemies();
-
-		// Check for wave end condition
-		if (arena.getEnemies() == 0 && !arena.isEnding()) {
-			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
-					Bukkit.getPluginManager().callEvent(new WaveEndEvent(arena)));
-		}
 
 		// Update scoreboards
 		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
@@ -1041,6 +1021,10 @@ public class GameEvents implements Listener {
 
 		// Check if player is playing in an arena
 		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+			return;
+
+		// Exempt myself for testing purposes
+		if (player.getName().equals("Theguyhere"))
 			return;
 
 		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))

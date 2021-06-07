@@ -1306,9 +1306,11 @@ public class Inventories {
 
 		if (!arenaInstance.getBannedKits().contains("Phantom"))
 			inv.setItem(17, Utils.createItem(Material.PHANTOM_MEMBRANE, Utils.format("&a&lPhantom"), FLAGS,
-					enchants, Utils.format("&7Join as a player in any non-maxed game")));
+					enchants, Utils.format("&7Join as a player in any non-maxed game"),
+					Utils.format("&7using &b/vd select")));
 		else inv.setItem(17, Utils.createItem(Material.PHANTOM_MEMBRANE, Utils.format("&4&LPhantom"),
-				Utils.format("&7Join as a player in any non-maxed game")));
+				Utils.format("&7Join as a player in any non-maxed game"),
+				Utils.format("&7using &b/vd select")));
 
 		// Ability kits
 		for (int i = 18; i < 27; i++)
@@ -1553,9 +1555,11 @@ public class Inventories {
 
 		if (!arenaInstance.getBannedKits().contains("Phantom"))
 			inv.setItem(17, Utils.createItem(Material.PHANTOM_MEMBRANE, Utils.format("&a&lPhantom"), FLAGS,
-					enchants, Utils.format("&7Join as a player in any non-maxed game")));
+					enchants, Utils.format("&7Join as a player in any non-maxed game"),
+					Utils.format("&7using &b/vd select")));
 		else inv.setItem(17, Utils.createItem(Material.PHANTOM_MEMBRANE, Utils.format("&4&LPhantom"),
-				Utils.format("&7Join as a player in any non-maxed game")));
+				Utils.format("&7Join as a player in any non-maxed game"),
+				Utils.format("&7using &b/vd select")));
 
 		// Ability kits
 		for (int i = 18; i < 27; i++)
@@ -2390,9 +2394,11 @@ public class Inventories {
 
 		if (playerData.getBoolean(path + "Phantom"))
 			inv.setItem(17, Utils.createItem(Material.PHANTOM_MEMBRANE, Utils.format("&a&lPhantom"),
-					Utils.format("&7Join as a player in any non-maxed game"), Utils.format("&aPurchased!")));
+					Utils.format("&7Join as a player in any non-maxed game"),
+					Utils.format("&7using &b/vd select"), Utils.format("&aPurchased!")));
 		else inv.setItem(17, Utils.createItem(Material.PHANTOM_MEMBRANE, Utils.format("&a&lPhantom"),
 				Utils.format("&7Join as a player in any non-maxed game"),
+				Utils.format("&7using &b/vd select"),
 				Utils.format("&cPurchase: &b" + kits.getPrice("Phantom") + " Crystals")));
 
 		// Ability kits
@@ -2832,9 +2838,11 @@ public class Inventories {
 		if (!arena.getBannedKits().contains("Phantom"))
 			if (playerData.getBoolean(path + "Phantom"))
 				inv.setItem(17, Utils.createItem(Material.PHANTOM_MEMBRANE, Utils.format("&a&lPhantom"),
-						Utils.format("&7Join as a player in any non-maxed game"), Utils.format("&aAvailable")));
+						Utils.format("&7Join as a player in any non-maxed game"),
+						Utils.format("&7using &b/vd select"), Utils.format("&aAvailable")));
 			else inv.setItem(17, Utils.createItem(Material.PHANTOM_MEMBRANE, Utils.format("&a&lPhantom"),
-					Utils.format("&7Join as a player in any non-maxed game"), Utils.format("&cUnavailable")));
+					Utils.format("&7Join as a player in any non-maxed game"),
+					Utils.format("&7using &b/vd select"), Utils.format("&cUnavailable")));
 
 		// Ability kits
 		for (int i = 18; i < 27; i++)

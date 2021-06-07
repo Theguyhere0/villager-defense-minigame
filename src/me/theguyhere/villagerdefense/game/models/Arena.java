@@ -2,6 +2,8 @@ package me.theguyhere.villagerdefense.game.models;
 
 import me.theguyhere.villagerdefense.GUI.InventoryItems;
 import me.theguyhere.villagerdefense.Main;
+import me.theguyhere.villagerdefense.customEvents.GameEndEvent;
+import me.theguyhere.villagerdefense.customEvents.WaveEndEvent;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.*;
 import org.bukkit.boss.BarColor;
@@ -726,7 +728,9 @@ public class Arena {
     }
 
     public void decrementVillagers() {
-        villagers--;
+        if (--villagers <= 0 && !ending && !spawningVillagers)
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+                    Bukkit.getPluginManager().callEvent(new GameEndEvent(this)));
     }
 
     public void resetVillagers() {
@@ -742,7 +746,10 @@ public class Arena {
     }
 
     public void decrementEnemies() {
-        enemies--;
+        if (--enemies <= 0 && !ending && !spawningMonsters)
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+                    Bukkit.getPluginManager().callEvent(new WaveEndEvent(this)));
+        ;
     }
 
     public void resetEnemies() {

@@ -3057,6 +3057,7 @@ public class InventoryEvents implements Listener {
 					gamer.flipSpectating();
 					arenaInstance.getTask().giveItems(gamer);
 					game.createBoard(gamer);
+					gamer.setJoinedWave(arenaInstance.getCurrentWave());
 				}
 				player.closeInventory();
 				return;

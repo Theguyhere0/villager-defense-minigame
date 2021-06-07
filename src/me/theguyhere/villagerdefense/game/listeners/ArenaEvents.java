@@ -328,7 +328,8 @@ public class ArenaEvents implements Listener {
             // Give persistent rewards if it applies
             if (arena.getCurrentWave() != 0) {
                 // Calculate reward from difficulty multiplier, wave, kills, and gem balance
-                int reward = (10 + 5 * arena.getDifficultyMultiplier()) * (arena.getCurrentWave() - 1);
+                int reward = (10 + 5 * arena.getDifficultyMultiplier()) *
+                        (Math.max(arena.getCurrentWave() - gamer.getJoinedWave() - 1, 0));
                 reward += gamer.getKills();
                 reward += (gamer.getGems() + 5) / 10;
 
@@ -432,7 +433,8 @@ public class ArenaEvents implements Listener {
             // Give persistent rewards
             arena.getActives().forEach(vdPlayer -> {
                 // Calculate reward from difficulty multiplier, wave, kills, and gem balance
-                int reward = (10 + 5 * arena.getDifficultyMultiplier()) * (arena.getCurrentWave() - 1);
+                int reward = (10 + 5 * arena.getDifficultyMultiplier()) *
+                        (Math.max(arena.getCurrentWave() - vdPlayer.getJoinedWave() - 1, 0));
                 reward += vdPlayer.getKills();
                 reward += (vdPlayer.getGems() + 5) / 10;
 

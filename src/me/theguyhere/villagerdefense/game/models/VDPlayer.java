@@ -10,6 +10,7 @@ public class VDPlayer {
     private int gems; // Gem count
     private int kills; // Kill count
     private int wolves; // Wolf count
+    private int joinedWave; // The wave at which the player joined at
     private String kit; // Selected kit
     private ItemStack helmet; // Helmet to hold for ninja ability
     private ItemStack chestplate; // Chestplate to hold for ninja ability
@@ -23,6 +24,7 @@ public class VDPlayer {
         gems = 0;
         kills = 0;
         wolves = 0;
+        joinedWave = 0;
         kit = "None";
     }
 
@@ -80,6 +82,14 @@ public class VDPlayer {
 
     public void decrementWolves() {
         wolves--;
+    }
+
+    public int getJoinedWave() {
+        return joinedWave;
+    }
+
+    public void setJoinedWave(int joinedWave) {
+        this.joinedWave = joinedWave;
     }
 
     public void setKit(String kit) {
