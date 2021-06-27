@@ -524,6 +524,7 @@ public class GameEvents implements Listener {
 
 		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0);
+		FileConfiguration language = plugin.getLanguageData();
 
 		// Check if arena is active
 		if (!arena.isActive()) return;
@@ -531,18 +532,25 @@ public class GameEvents implements Listener {
 		// Check if player is about to die
 		if (e.getFinalDamage() < player.getHealth()) return;
 
-		// Set them to spectator mode instead of dying
-		e.setCancelled(true);
-		player.setGameMode(GameMode.SPECTATOR);
-		player.getInventory().clear();
-		player.closeInventory();
+		// Check if player is holding a totem
+		if (player.getInventory().getItemInMainHand().getType() == Material.TOTEM_OF_UNDYING ||
+				player.getInventory().getItemInOffHand().getType() == Material.TOTEM_OF_UNDYING) return;
 
-		// Notify everyone of player death
+		// Set them to false spectator mode instead of dying
+		e.setCancelled(true);
+		Utils.setFalseSpectator(player);
+
+		// Notify player of their own death
+		player.sendTitle(Utils.format(language.getString("death1")), language.getString("death2"),
+				Utils.secondsToTicks(.5), Utils.secondsToTicks(1.5), Utils.secondsToTicks(1));
+
+		// Notify everyone else of player death
 		arena.getPlayers().forEach(gamer -> {
+			if (!gamer.getPlayer().equals(player))
 				gamer.getPlayer().sendMessage(Utils.notify(String.format(
-						plugin.getLanguageData().getString("death"), player.getName())));
-				if (arena.hasPlayerDeathSound())
-					gamer.getPlayer().playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10, .75f);
+						language.getString("death"), player.getName())));
+			if (arena.hasPlayerDeathSound())
+				gamer.getPlayer().playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10, .75f);
 		});
 
 		// Update scoreboards
@@ -1024,8 +1032,8 @@ public class GameEvents implements Listener {
 			return;
 
 		// Exempt myself for testing purposes
-//		if (player.getName().equals("Theguyhere"))
-//			return;
+		if (player.getName().equals("Theguyhere"))
+			return;
 
 		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0);

@@ -96,7 +96,7 @@ public class Main extends JavaPlugin {
 		int arenaDataVersion = 3;
 		int playerDataVersion = 1;
 		int spawnTableVersion = 1;
-		int languageFileVersion = 5;
+		int languageFileVersion = 6;
 		int defaultSpawnVersion = 2;
 		outdated = false;
 

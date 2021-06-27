@@ -781,8 +781,7 @@ public class Arena {
     }
 
     public List<VDPlayer> getGhosts() {
-        return getActives().stream().filter(p -> p.getPlayer().getGameMode() == GameMode.SPECTATOR)
-                .collect(Collectors.toList());
+        return getActives().stream().filter(VDPlayer::isGhost).collect(Collectors.toList());
     }
 
     public List<VDPlayer> getSpectators() {
@@ -969,7 +968,8 @@ public class Arena {
     }
 
     public void startTimeLimitBar() {
-        timeLimitBar = Bukkit.createBossBar(Utils.format("&eWave " + getCurrentWave() + " Time Limit"),
+        timeLimitBar = Bukkit.createBossBar(Utils.format(
+                String.format(plugin.getLanguageData().getString("timeBar"), getCurrentWave())),
                 BarColor.YELLOW, BarStyle.SOLID);
     }
 

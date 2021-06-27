@@ -251,7 +251,7 @@ public class Utils {
         player.setLevel(0);
         player.setFallDistance(0);
         player.setFireTicks(0);
-        player.setInvulnerable(false);
+        undoFalseSpectator(player);
         player.getInventory().clear();
         player.teleport(location);
         player.setGameMode(GameMode.ADVENTURE);
@@ -259,19 +259,35 @@ public class Utils {
 
     // Prepares and teleports a player into spectator mode
     public static void teleSpectator(Player player, Location location) {
-        player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
-        player.setFireTicks(0);
         if (!player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getModifiers().isEmpty())
             player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getModifiers().forEach(attribute ->
                     player.getAttribute(Attribute.GENERIC_MAX_HEALTH).removeModifier(attribute));
-        player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+        setFalseSpectator(player);
+        player.teleport(location);
+    }
+
+    // Sets the player into false spectator mode for spectating or death
+    public static void setFalseSpectator(Player player) {
+        player.setInvulnerable(true);
+        player.setInvisible(true);
+        player.setAllowFlight(true);
+        player.setCanPickupItems(false);
+        player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
+        player.setFireTicks(0);
         player.setFoodLevel(20);
         player.setSaturation(20);
         player.setExp(0);
         player.setLevel(0);
         player.getInventory().clear();
-        player.teleport(location);
-        player.setGameMode(GameMode.SPECTATOR);
+        player.closeInventory();
+    }
+
+    // Reverts false spectator mode
+    public static void undoFalseSpectator(Player player) {
+        player.setInvulnerable(false);
+        player.setInvisible(false);
+        player.setAllowFlight(false);
+        player.setCanPickupItems(true);
     }
 
     // Sets the location data to a configuration path

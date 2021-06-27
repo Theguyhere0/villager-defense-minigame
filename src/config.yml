@@ -20,7 +20,7 @@ spawnTableDefault: 2
 
 # This is the en_US.yml version for reference.
 # ONLY EDIT ONCE THE LANGUAGE FILE HAS BEEN UPDATED.
-languageFile: 5
+languageFile: 6
 
 # This sets the language file for which plugin notification texts will pull from.
 locale: en_US

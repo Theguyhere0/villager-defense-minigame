@@ -6,6 +6,7 @@ import org.bukkit.inventory.ItemStack;
 public class VDPlayer {
     private final Player player; // Player in a game
     private boolean spectating; // Whether they are spectating
+    private boolean ghost; // Whether they are a ghost
     private boolean left; // Whether a player has left the arena or not
     private int gems; // Gem count
     private int kills; // Kill count
@@ -36,6 +37,10 @@ public class VDPlayer {
         return spectating;
     }
 
+    public boolean isGhost() {
+        return ghost;
+    }
+
     public int getGems() {
         return gems;
     }
@@ -46,6 +51,10 @@ public class VDPlayer {
 
     public void flipSpectating() {
         spectating = !spectating;
+    }
+
+    public void flipGhost() {
+        ghost = !ghost;
     }
 
     public boolean hasLeft() {
