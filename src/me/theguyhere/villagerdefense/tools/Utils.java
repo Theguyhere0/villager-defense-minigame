@@ -37,6 +37,10 @@ public class Utils {
         ItemStack item = new ItemStack(matID);
         ItemMeta meta = item.getItemMeta();
 
+        // Check for null meta
+        if (meta == null)
+            return null;
+
         // Set name
         if (!(dispName == null))
             meta.setDisplayName(dispName);
@@ -55,6 +59,10 @@ public class Utils {
         // Create ItemStack
         ItemStack item = new ItemStack(matID);
         ItemMeta meta = item.getItemMeta();
+
+        // Check for null meta
+        if (meta == null)
+            return null;
 
         // Set name
         if (!(dispName == null))
@@ -76,6 +84,10 @@ public class Utils {
         // Create ItemStack
         ItemStack item = createItem(matID, dispName, lores);
         ItemMeta meta = item.getItemMeta();
+
+        // Check for null meta
+        if (meta == null)
+            return null;
 
         // Set enchants
         if (!(enchants == null))
@@ -145,6 +157,10 @@ public class Utils {
         ItemMeta meta = item.getItemMeta();
         PotionMeta pot = (PotionMeta) meta;
 
+        // Check for null meta
+        if (meta == null)
+            return null;
+
         // Set name
         if (!(dispName == null))
             meta.setDisplayName(dispName);
@@ -166,6 +182,10 @@ public class Utils {
         // Create ItemStack
         ItemStack item = new ItemStack(matID, amount);
         ItemMeta meta = item.getItemMeta();
+
+        // Check for null meta
+        if (meta == null)
+            return null;
 
         // Set name
         if (!(dispName == null))
@@ -190,6 +210,10 @@ public class Utils {
         ItemStack item = new ItemStack(matID, amount);
         ItemMeta meta = item.getItemMeta();
         PotionMeta pot = (PotionMeta) meta;
+
+        // Check for null meta
+        if (meta == null)
+            return null;
 
         // Set name
         if (!(dispName == null))

@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.game.models;
 
+import com.sun.istack.internal.NotNull;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -10,7 +11,6 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,12 +1,12 @@
 package me.theguyhere.villagerdefense.game.models;
 
+import com.sun.istack.internal.NotNull;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;

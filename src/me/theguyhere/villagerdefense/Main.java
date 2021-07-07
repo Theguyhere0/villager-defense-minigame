@@ -21,7 +21,6 @@ import me.theguyhere.villagerdefense.tools.PacketReader;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -221,5 +220,13 @@ public class Main extends JavaPlugin {
 
 	public boolean isOutdated() {
 		return outdated;
+	}
+
+	public void debugError(String msg) {
+		getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " + msg);
+	}
+
+	public void debugInfo(String msg) {
+		getServer().getConsoleSender().sendMessage("[VillagerDefense] " + msg);
 	}
 }

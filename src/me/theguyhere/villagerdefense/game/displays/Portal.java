@@ -52,9 +52,19 @@ public class Portal {
 
 	public void loadPortal(int arena, Game game) {
 		Arena arenaInstance = game.arenas.get(arena);
+		WorldServer world;
 
 		// Create portal NPC
-		WorldServer world = ((CraftWorld) Bukkit.getWorld(arenaInstance.getPortal().getWorld().getName())).getHandle();
+		try {
+			world = ((CraftWorld) Bukkit.getWorld(arenaInstance.getPortal().getWorld().getName()))
+					.getHandle();
+		} catch (NullPointerException e) {
+			plugin.debugError("Invalid world for arena number " + arena);
+			plugin.debugInfo("Portal location data may be corrupt. If world attribute is missing, " +
+					"add 'world: [world_name]' under portal " + arena + " in arenaData.yml. Otherwise, delete the " +
+					"portal data.");
+			return;
+		}
 		EntityVillager npc = new EntityVillager(EntityTypes.VILLAGER, world);
 		npc.setLocation(arenaInstance.getPortal().getX(), arenaInstance.getPortal().getY(),
 				arenaInstance.getPortal().getZ(), arenaInstance.getPortal().getYaw(),
