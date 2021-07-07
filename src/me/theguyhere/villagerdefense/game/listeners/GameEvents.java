@@ -413,6 +413,7 @@ public class GameEvents implements Listener {
 
 		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0);
+		FileConfiguration language = plugin.getLanguageData();
 
 		// Check if game has started yet
 		if (!arena.isActive()) {
@@ -424,10 +425,17 @@ public class GameEvents implements Listener {
 				player.teleport(arena.getPlayerSpawn());
 			else player.teleport(arena.getWaitingRoom());
 		} else {
-			// Set them to spectator mode instead of dying
-			e.setCancelled(true);
+			// Set player to fake death mode
 			player.setGameMode(GameMode.SPECTATOR);
 			player.getInventory().clear();
+			player.closeInventory();
+			arena.getPlayer(player).flipGhost();
+			player.setFallDistance(0);
+//			Utils.setFalseSpectator(player);
+
+			// Notify player of their own death
+			player.sendTitle(Utils.format(language.getString("death1")), language.getString("death2"),
+					Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
 
 			// Teleport player back to player spawn
 			player.teleport(arena.getPlayerSpawn());
@@ -536,19 +544,27 @@ public class GameEvents implements Listener {
 		if (player.getInventory().getItemInMainHand().getType() == Material.TOTEM_OF_UNDYING ||
 				player.getInventory().getItemInOffHand().getType() == Material.TOTEM_OF_UNDYING) return;
 
-		// Set them to false spectator mode instead of dying
+		// Set player to fake death mode
 		e.setCancelled(true);
-		Utils.setFalseSpectator(player);
+		player.setGameMode(GameMode.SPECTATOR);
+		player.getInventory().clear();
+		player.closeInventory();
+		arena.getPlayer(player).flipGhost();
+//		Utils.setFalseSpectator(player);
 
 		// Notify player of their own death
 		player.sendTitle(Utils.format(language.getString("death1")), language.getString("death2"),
-				Utils.secondsToTicks(.5), Utils.secondsToTicks(1.5), Utils.secondsToTicks(1));
+				Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
 
 		// Notify everyone else of player death
 		arena.getPlayers().forEach(gamer -> {
 			if (!gamer.getPlayer().equals(player))
-				gamer.getPlayer().sendMessage(Utils.notify(String.format(
-						language.getString("death"), player.getName())));
+				if (language.getString("death") == null) {
+					plugin.debugError("The language file is missing the attribute 'death'!");
+				} else {
+					gamer.getPlayer().sendMessage(Utils.notify(String.format(
+							language.getString("death"), player.getName())));
+				}
 			if (arena.hasPlayerDeathSound())
 				gamer.getPlayer().playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10, .75f);
 		});
@@ -1031,9 +1047,9 @@ public class GameEvents implements Listener {
 		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
 			return;
 
-		// Exempt myself for testing purposes
-		if (player.getName().equals("Theguyhere"))
-			return;
+//		// Exempt myself for testing purposes
+//		if (player.getName().equals("Theguyhere"))
+//			return;
 
 		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0);

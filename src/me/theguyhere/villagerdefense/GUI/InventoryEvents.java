@@ -3160,6 +3160,13 @@ public class InventoryEvents implements Listener {
 		if (!title.contains(Utils.format("&k")))
 			return;
 
+		// Check for community chest with shop inside it
+		if (title.contains("Community Chest") && e.getInventory().contains(GameItems.shop())) {
+			e.getInventory().removeItem(GameItems.shop());
+			Utils.giveItem((Player) e.getPlayer(), GameItems.shop(),
+					plugin.getLanguageData().getString("inventoryFull"));
+		}
+
 		// Ignore if safe close toggle is on
 		if (close)
 			return;

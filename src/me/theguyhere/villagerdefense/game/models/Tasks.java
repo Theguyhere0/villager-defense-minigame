@@ -145,6 +145,7 @@ public class Tasks {
 			// Revive dead players
 			arenaInstance.getGhosts().forEach(p -> {
 				Utils.teleAdventure(p.getPlayer(), arenaInstance.getPlayerSpawn());
+				p.flipGhost();
 				giveItems(p);
 
 				// Set health for people with giant kits
