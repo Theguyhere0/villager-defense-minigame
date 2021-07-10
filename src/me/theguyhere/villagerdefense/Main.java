@@ -45,6 +45,7 @@ public class Main extends JavaPlugin {
 		saveDefaultConfig();
 
 		game = new Game(this, portal);
+		checkArenas();
 		Inventories inventories = new Inventories(this, game);
 		Commands commands = new Commands(this, inventories, game);
 		ArenaBoard arenaBoard = new ArenaBoard(this, game);
@@ -87,7 +88,6 @@ public class Main extends JavaPlugin {
 		leaderboard.loadLeaderboards();
 		infoBoard.loadInfoBoards();
 		arenaBoard.loadArenaBoards();
-		checkArenas();
 
 		int configVersion = 6;
 		int arenaDataVersion = 3;

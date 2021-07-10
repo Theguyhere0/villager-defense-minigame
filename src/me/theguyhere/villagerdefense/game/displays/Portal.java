@@ -59,10 +59,9 @@ public class Portal {
 			world = ((CraftWorld) Bukkit.getWorld(arenaInstance.getPortal().getWorld().getName()))
 					.getHandle();
 		} catch (NullPointerException e) {
-			plugin.debugError("Invalid world for arena number " + arena);
-			plugin.debugInfo("Portal location data may be corrupt. If world attribute is missing, " +
-					"add 'world: [world_name]' under portal " + arena + " in arenaData.yml. Otherwise, delete the " +
-					"portal data.");
+			plugin.debugError("Invalid location for arena number " + arena);
+			plugin.debugInfo("Portal location data may be corrupt. If data cannot be manually corrected in " +
+					"arenaData.yml, please delete the portal location data for arena " + arena + ".");
 			return;
 		}
 		EntityVillager npc = new EntityVillager(EntityTypes.VILLAGER, world);

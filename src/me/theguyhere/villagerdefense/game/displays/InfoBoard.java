@@ -18,7 +18,13 @@ public class InfoBoard {
 
 	public void createInfoBoard(Player player, int slot) {
 		// Create hologram
-		addHolo(player.getLocation(), slot);
+		try {
+			addHolo(player.getLocation(), slot);
+		} catch (Exception e) {
+			plugin.debugError("Invalid location for info board " + slot);
+			plugin.debugInfo("Info board location data may be corrupt. If data cannot be manually corrected in " +
+					"arenaData.yml, please delete the location data for info board " + slot + ".");
+		}
 
 		// Save location data
 		Utils.setConfigurationLocation(plugin, "infoBoard." + slot, player.getLocation());
@@ -30,7 +36,13 @@ public class InfoBoard {
 			boards[slot].delete();
 			boards[slot] = null;
 			Location location = Utils.getConfigLocationNoPitch(plugin, "infoBoard." + slot);
-			addHolo(location, slot);
+			try {
+				addHolo(location, slot);
+			} catch (Exception e) {
+				plugin.debugError("Invalid location for info board " + slot);
+				plugin.debugInfo("Info board location data may be corrupt. If data cannot be manually corrected in " +
+						"arenaData.yml, please delete the location data for info board " + slot + ".");
+			}
 		}
 	}
 
@@ -63,9 +75,14 @@ public class InfoBoard {
 	public void loadInfoBoards() {
 		if (plugin.getArenaData().contains("infoBoard"))
 			plugin.getArenaData().getConfigurationSection("infoBoard").getKeys(false).forEach(board -> {
-				Location location = Utils.getConfigLocationNoPitch(plugin, "infoBoard." + board);
-				if (location != null)
-					addHolo(location, Integer.parseInt(board));
+				try {
+					addHolo(Utils.getConfigLocationNoPitch(plugin, "infoBoard." + board), Integer.parseInt(board));
+				} catch (Exception e) {
+					plugin.debugError("Invalid location for info board " + board);
+					plugin.debugInfo("Info board location data may be corrupt. If data cannot be manually " +
+							"corrected in " +
+							"arenaData.yml, please delete the location data for info board " + board + ".");
+				}
 			});
 	}
 }

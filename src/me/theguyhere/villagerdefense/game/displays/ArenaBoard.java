@@ -24,7 +24,13 @@ public class ArenaBoard {
 
 	public void createArenaBoard(Player player, Arena arena) {
 		// Create hologram
-		addHolo(player.getLocation(), arena);
+		try {
+			addHolo(player.getLocation(), arena);
+		} catch (Exception e) {
+			plugin.debugError("Invalid location for arena board " + arena);
+			plugin.debugInfo("Arena board location data may be corrupt. If data cannot be manually corrected in " +
+					"arenaData.yml, please delete the location data for arena board " + arena + ".");
+		}
 
 		// Save location data
 		Utils.setConfigurationLocation(plugin, "arenaBoard." + arena.getArena(), player.getLocation());
@@ -34,7 +40,13 @@ public class ArenaBoard {
 	public void refreshArenaBoard(int arena) {
 		if (arenaBoards[arena] != null) {
 			arenaBoards[arena].delete();
-			addHolo(Utils.getConfigLocationNoPitch(plugin, "arenaBoard." + arena), game.arenas.get(arena));
+			try {
+				addHolo(Utils.getConfigLocationNoPitch(plugin, "arenaBoard." + arena), game.arenas.get(arena));
+			} catch (Exception e) {
+				plugin.debugError("Invalid location for arena board " + arena);
+				plugin.debugInfo("Arena board location data may be corrupt. If data cannot be manually corrected in " +
+						"arenaData.yml, please delete the location data for arena board " + arena + ".");
+			}
 		}
 	}
 
@@ -61,9 +73,15 @@ public class ArenaBoard {
 	public void loadArenaBoards() {
 		if (plugin.getArenaData().contains("arenaBoard"))
 			plugin.getArenaData().getConfigurationSection("arenaBoard").getKeys(false).forEach(board -> {
-				Location location = Utils.getConfigLocationNoPitch(plugin, "arenaBoard." + board);
-				if (location != null)
-					addHolo(location, game.arenas.get(Integer.parseInt(board)));
+				try {
+					addHolo(Utils.getConfigLocationNoPitch(plugin, "arenaBoard." + board),
+							game.arenas.get(Integer.parseInt(board)));
+				} catch (Exception e) {
+					plugin.debugError("Invalid location for arena board " + board);
+					plugin.debugInfo("Arena board location data may be corrupt. If data cannot be manually " +
+							"corrected in " +
+							"arenaData.yml, please delete the location data for arena board " + board + ".");
+				}
 			});
 	}
 

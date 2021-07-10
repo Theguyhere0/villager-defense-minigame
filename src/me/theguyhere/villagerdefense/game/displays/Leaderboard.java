@@ -4,7 +4,9 @@ import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.tools.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -19,7 +21,14 @@ public class Leaderboard {
 
 	public void createLeaderboard(Player player, String type) {
 		// Create hologram
-		addHolo(player.getLocation(), type);
+		try {
+			addHolo(player.getLocation(), type);
+		} catch (Exception e) {
+			plugin.debugError("Invalid location for leaderboard " + type);
+			plugin.debugInfo("Leaderboard location data may be corrupt. If data cannot be manually corrected in " +
+					"arenaData.yml, please delete the location data for leaderboard " + type + ".");
+			return;
+		}
 
 		// Save location data
 		Utils.setConfigurationLocation(plugin, "leaderboard." + type, player.getLocation());
@@ -32,7 +41,13 @@ public class Leaderboard {
 
 	public void refreshLeaderboard(String type) {
 		leaderboards.get(type).delete();
-		addHolo(Utils.getConfigLocationNoPitch(plugin, "leaderboard." + type), type);
+		try {
+			addHolo(Utils.getConfigLocationNoPitch(plugin, "leaderboard." + type), type);
+		} catch (Exception e) {
+			plugin.debugError("Invalid location for leaderboard " + type);
+			plugin.debugInfo("Leaderboard location data may be corrupt. If data cannot be manually corrected in " +
+					"arenaData.yml, please delete the location data for leaderboard " + type + ".");
+		}
 	}
 
 	public void removeLeaderboard(String type) {
@@ -58,9 +73,14 @@ public class Leaderboard {
 	public void loadLeaderboards() {
 		if (plugin.getArenaData().contains("leaderboard"))
 			plugin.getArenaData().getConfigurationSection("leaderboard").getKeys(false).forEach(board -> {
-				Location location = Utils.getConfigLocationNoPitch(plugin, "leaderboard." + board);
-				if (location != null)
-					addHolo(location, board);
+				try {
+					addHolo(Utils.getConfigLocationNoPitch(plugin, "leaderboard." + board), board);
+				} catch (Exception e) {
+					plugin.debugError("Invalid location for leaderboard " + board);
+					plugin.debugInfo("Leaderboard location data may be corrupt. If data cannot be manually " +
+							"corrected in arenaData.yml, please delete the location data for leaderboard " + board +
+							".");
+				}
 			});
 	}
 

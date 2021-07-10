@@ -249,9 +249,9 @@ public class Tasks {
 				giveItems(player);
 
 //				// Give me items to test with
-				if (player.getPlayer().getName().equals("Theguyhere")) {
-					Utils.giveItem(player.getPlayer(), new ItemStack(Material.TOTEM_OF_UNDYING), "uh oh");
-				}
+//				if (player.getPlayer().getName().equals("Theguyhere")) {
+//					Utils.giveItem(player.getPlayer(), new ItemStack(Material.TOTEM_OF_UNDYING), "uh oh");
+//				}
 
 				String kit = player.getKit();
 
