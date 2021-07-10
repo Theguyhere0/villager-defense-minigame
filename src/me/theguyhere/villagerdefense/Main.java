@@ -51,10 +51,8 @@ public class Main extends JavaPlugin {
 		ArenaBoard arenaBoard = new ArenaBoard(this, game);
 
 		if (!Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
-			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
-					"HolographicDisplays is not installed or not enabled.");
-			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
-					"This plugin will be disabled.");
+			debugError("HolographicDisplays is not installed or not enabled.");
+			debugError("This plugin will be disabled.");
 			this.setEnabled(false);
 			return;
 		}
@@ -99,8 +97,7 @@ public class Main extends JavaPlugin {
 
 		// Check config version
 		if (getConfig().getInt("version") < configVersion) {
-			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
-					"Your config.yml is outdated!");
+			debugError("Your config.yml is outdated!");
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
 					"Please update to the latest version (" + ChatColor.BLUE + configVersion + ChatColor.RED +
 					") to ensure compatibility.");
@@ -109,60 +106,50 @@ public class Main extends JavaPlugin {
 
 		// Check if arenaData.yml is outdated
 		if (getConfig().getInt("arenaData") < arenaDataVersion) {
-			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
-					"Your arenaData.yml is no longer supported with this version!");
+			debugError("Your arenaData.yml is no longer supported with this version!");
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
 					"Please manually transfer arena data to version " + ChatColor.BLUE + arenaDataVersion +
 					ChatColor.RED + ".");
-			getServer().getConsoleSender().sendMessage(ChatColor.RED +  "[VillagerDefense] " +
-					"Please do not update your config.yml until your arenaData.yml has been updated.");
+			debugError("Please do not update your config.yml until your arenaData.yml has been updated.");
 			outdated = true;
 		}
 
 		// Check if playerData.yml is outdated
 		if (getConfig().getInt("playerData") < playerDataVersion) {
-			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
-					"Your playerData.yml is no longer supported with this version!");
+			debugError("Your playerData.yml is no longer supported with this version!");
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
 					"Please manually transfer player data to version " + ChatColor.BLUE + playerDataVersion +
 					ChatColor.BLUE + ".");
-			getServer().getConsoleSender().sendMessage(ChatColor.RED +  "[VillagerDefense] " +
-					"Please do not update your config.yml until your playerData.yml has been updated.");
+			debugError("Please do not update your config.yml until your playerData.yml has been updated.");
 			outdated = true;
 		}
 
 		// Check if spawn tables are outdated
 		if (getConfig().getInt("spawnTableStructure") < spawnTableVersion) {
-			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
-					"Your spawn tables are no longer supported with this version!");
+			debugError("Your spawn tables are no longer supported with this version!");
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
 					"Please manually transfer spawn table data to version " + ChatColor.BLUE + spawnTableVersion +
 					ChatColor.RED + ".");
-			getServer().getConsoleSender().sendMessage(ChatColor.RED +  "[VillagerDefense] " +
-					"Please do not update your config.yml until your spawn tables have been updated.");
+			debugError("Please do not update your config.yml until your spawn tables have been updated.");
 			outdated = true;
 		}
 
 		// Check if default spawn table has been updated
 		if (getConfig().getInt("spawnTableDefault") < defaultSpawnVersion) {
-			getServer().getConsoleSender().sendMessage("[VillagerDefense] " +
-					"The default.yml spawn table has been updated!");
+			debugInfo("The default.yml spawn table has been updated!");
 			getServer().getConsoleSender().sendMessage("[VillagerDefense] " +
 					"Updating to version" + ChatColor.BLUE + defaultSpawnVersion + ChatColor.WHITE +
 					" is optional but recommended.");
-			getServer().getConsoleSender().sendMessage("[VillagerDefense] " +
-					"Please do not update your config.yml unless your default.yml has been updated.");
+			debugInfo("Please do not update your config.yml unless your default.yml has been updated.");
 		}
 
 		// Check if language files are outdated
 		if (getConfig().getInt("languageFile") < languageFileVersion) {
-			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
-					"You language files are no longer supported with this version!");
+			debugError("You language files are no longer supported with this version!");
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
 					"Please update en_US.yml and update any other language files to version " + ChatColor.BLUE +
 					languageFileVersion + ChatColor.RED + ".");
-			getServer().getConsoleSender().sendMessage(ChatColor.RED +  "[VillagerDefense] " +
-					"Please do not update your config.yml until your language files have been updated.");
+			debugError("Please do not update your config.yml until your language files have been updated.");
 			outdated = true;
 		}
 	}

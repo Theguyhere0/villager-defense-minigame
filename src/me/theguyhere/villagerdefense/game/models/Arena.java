@@ -1041,7 +1041,7 @@ public class Arena {
                 getMonsterSpawns().stream().noneMatch(Objects::nonNull) ||
                 getVillagerSpawns().stream().noneMatch(Objects::nonNull) || !hasCustom() && !hasNormal() ||
                 getCorner1() == null || getCorner2() == null ||
-                !getCorner1().getWorld().equals(getCorner2().getWorld()))
+                !Objects.equals(getCorner1().getWorld(), getCorner2().getWorld()))
             setClosed(true);
     }
 
