@@ -1,8 +1,8 @@
-package me.theguyhere.villagerdefense.game.listeners;
+package me.theguyhere.villagerdefense.listeners;
 
 import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.customEvents.*;
+import me.theguyhere.villagerdefense.events.*;
 import me.theguyhere.villagerdefense.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.game.displays.Portal;
@@ -23,7 +23,7 @@ import org.bukkit.scoreboard.DisplaySlot;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ArenaEvents implements Listener {
+public class ArenaEventsListener implements Listener {
     private final Main plugin;
     private final Game game;
     private final Portal portal;
@@ -31,8 +31,8 @@ public class ArenaEvents implements Listener {
     private final ArenaBoard arenaBoard;
     private final Inventories inv;
 
-    public ArenaEvents(Main plugin, Game game, Portal portal, Leaderboard leaderboard, ArenaBoard arenaBoard,
-                       Inventories inv) {
+    public ArenaEventsListener(Main plugin, Game game, Portal portal, Leaderboard leaderboard, ArenaBoard arenaBoard,
+                               Inventories inv) {
         this.plugin = plugin;
         this.game = game;
         this.portal = portal;
@@ -277,17 +277,19 @@ public class ArenaEvents implements Listener {
     @EventHandler
     public void onLeave(LeaveArenaEvent e) {
         Player player = e.getPlayer();
+        Arena arena;
+        VDPlayer gamer;
 
-        // Check if the player is playing in a game
-        if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player))) {
+        // Attempt to get arena and player
+        try {
+            arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+                    .collect(Collectors.toList()).get(0);
+            gamer = arena.getPlayer(player);
+        } catch (Exception err) {
             e.setCancelled(true);
             player.sendMessage(Utils.notify(plugin.getLanguageData().getString("leaveError")));
             return;
         }
-
-        Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
-                .collect(Collectors.toList()).get(0);
-        VDPlayer gamer = arena.getPlayer(player);
 
         // Stop playing possible ending sound
         player.stopSound(Sound.ENTITY_ENDER_DRAGON_DEATH);
@@ -295,7 +297,7 @@ public class ArenaEvents implements Listener {
             player.stopSound(arena.getWaitingSound());
 
         // Not spectating
-        if (!gamer.isSpectating()) {
+        if (gamer.getStatus() != PlayerStatus.SPECTATOR) {
             FileConfiguration playerData = plugin.getPlayerData();
 
             // Update player stats
@@ -395,7 +397,7 @@ public class ArenaEvents implements Listener {
         }
 
         // Mark VDPlayer as left
-        gamer.leave();
+        gamer.setStatus(PlayerStatus.LEFT);
 
         // Refresh the game portal
         portal.refreshHolo(game.arenas.indexOf(arena), game);
@@ -471,7 +473,7 @@ public class ArenaEvents implements Listener {
 
     @EventHandler
     public void onEndNinjaNerfEvent(EndNinjaNerfEvent e) {
-        if (!e.getGamer().hasLeft())
+        if (e.getGamer().getStatus() != PlayerStatus.LEFT)
             e.getGamer().exposeArmor();
     }
 

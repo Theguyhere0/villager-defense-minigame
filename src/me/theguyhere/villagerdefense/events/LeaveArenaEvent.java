@@ -1,17 +1,17 @@
-package me.theguyhere.villagerdefense.customEvents;
+package me.theguyhere.villagerdefense.events;
 
-import me.theguyhere.villagerdefense.game.models.Arena;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class ReloadBoardsEvent extends Event implements Cancellable {
-    private final Arena arena;
+public class LeaveArenaEvent extends Event implements Cancellable {
+    private final Player player;
     private boolean isCancelled;
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public ReloadBoardsEvent(Arena arena) {
-        this.arena = arena;
+    public LeaveArenaEvent(Player player) {
+        this.player = player;
     }
 
     @Override
@@ -23,8 +23,8 @@ public class ReloadBoardsEvent extends Event implements Cancellable {
         return HANDLERS;
     }
 
-    public Arena getArena() {
-        return arena;
+    public Player getPlayer() {
+        return player;
     }
 
     @Override

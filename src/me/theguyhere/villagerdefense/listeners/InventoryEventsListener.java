@@ -1,7 +1,8 @@
-package me.theguyhere.villagerdefense.GUI;
+package me.theguyhere.villagerdefense.listeners;
 
+import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.customEvents.LeaveArenaEvent;
+import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.game.displays.InfoBoard;
 import me.theguyhere.villagerdefense.game.displays.Leaderboard;
@@ -29,7 +30,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class InventoryEvents implements Listener {
+public class InventoryEventsListener implements Listener {
 	private final Main plugin;
 	private final Game game;
 	private final Inventories inv;
@@ -55,13 +56,13 @@ public class InventoryEvents implements Listener {
 			Material.IRON_BOOTS, Material.DIAMOND_BOOTS, Material.NETHERITE_BOOTS
 	};
 
-	public InventoryEvents (Main plugin,
-			Game game,
-			Inventories inv,
-			Portal portal,
-			Leaderboard leaderboard,
-			InfoBoard infoBoard,
-			ArenaBoard arenaBoard) {
+	public InventoryEventsListener(Main plugin,
+								   Game game,
+								   Inventories inv,
+								   Portal portal,
+								   Leaderboard leaderboard,
+								   InfoBoard infoBoard,
+								   ArenaBoard arenaBoard) {
 		this.plugin = plugin;
 		this.game = game;
 		this.inv = inv;
@@ -2877,13 +2878,17 @@ public class InventoryEvents implements Listener {
 		// In-game shops
 		else if (title.contains("Weapon Shop") || title.contains("Armor Shop") || title.contains("Consumables Shop") ||
 				title.contains("Custom Shop")) {
-			// See if the player is in a game
-			if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
-				return;
+			Arena arenaInstance;
+			VDPlayer gamer;
 
-			Arena arenaInstance = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
-					.collect(Collectors.toList()).get(0);
-			VDPlayer gamer = arenaInstance.getPlayer(player);
+			// Attempt to get arena and player
+			try {
+				arenaInstance = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+						.collect(Collectors.toList()).get(0);
+				gamer = arenaInstance.getPlayer(player);
+			} catch (Exception err) {
+				return;
+			}
 
 			// Return to main shop menu
 			if (buttonName.contains("EXIT")) {
@@ -3041,20 +3046,29 @@ public class InventoryEvents implements Listener {
 		// Kit selection menu for an arena
 		else if (title.contains(" Kits")) {
 			FileConfiguration playerData = plugin.getPlayerData();
-			Arena arenaInstance = game.arenas.stream().filter(Objects::nonNull)
-					.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
-			VDPlayer gamer = arenaInstance.getPlayer(player);
+			Arena arenaInstance;
+			VDPlayer gamer;
+
+			// Attempt to get arena and player
+			try {
+				arenaInstance = game.arenas.stream().filter(Objects::nonNull)
+						.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
+				gamer = arenaInstance.getPlayer(player);
+			} catch (Exception err) {
+				return;
+			}
+
 			String kit = buttonName.substring(4);
 			String path = player.getName() + ".kits.";
 
 			// Check for useful phantom selection
-			if (gamer.isSpectating() && playerData.getBoolean(path + "Phantom") &&
+			if (gamer.getStatus() == PlayerStatus.SPECTATOR && playerData.getBoolean(path + "Phantom") &&
 					kit.equals("Phantom")) {
 				if (arenaInstance.isEnding())
 					player.sendMessage(Utils.notify(language.getString("phantomError")));
 				else {
 					Utils.teleAdventure(player, arenaInstance.getPlayerSpawn());
-					gamer.flipSpectating();
+					gamer.setStatus(PlayerStatus.ALIVE);
 					arenaInstance.getTask().giveItems(gamer);
 					game.createBoard(gamer);
 					gamer.setJoinedWave(arenaInstance.getCurrentWave());
@@ -3064,7 +3078,7 @@ public class InventoryEvents implements Listener {
 			}
 
 			// Ignore spectators from here on out
-			if (gamer.isSpectating())
+			if (gamer.getStatus() == PlayerStatus.SPECTATOR)
 				return;
 
 			// Single tier kits

@@ -1,16 +1,16 @@
-package me.theguyhere.villagerdefense.customEvents;
+package me.theguyhere.villagerdefense.events;
 
 import me.theguyhere.villagerdefense.game.models.Arena;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class ArenaResetEvent extends Event implements Cancellable {
+public class GameEndEvent extends Event implements Cancellable {
     private final Arena arena;
     private boolean isCancelled;
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public ArenaResetEvent(Arena arena) {
+    public GameEndEvent(Arena arena) {
         this.arena = arena;
     }
 

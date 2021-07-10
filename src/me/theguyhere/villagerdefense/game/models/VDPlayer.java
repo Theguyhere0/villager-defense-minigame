@@ -1,27 +1,49 @@
 package me.theguyhere.villagerdefense.game.models;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class VDPlayer {
-    private final Player player; // Player in a game
-    private boolean spectating; // Whether they are spectating
-    private boolean ghost; // Whether they are a ghost
-    private boolean left; // Whether a player has left the arena or not
-    private int gems; // Gem count
-    private int kills; // Kill count
-    private int wolves; // Wolf count
-    private int joinedWave; // The wave at which the player joined at
-    private String kit; // Selected kit
-    private ItemStack helmet; // Helmet to hold for ninja ability
-    private ItemStack chestplate; // Chestplate to hold for ninja ability
-    private ItemStack leggings; // Leggings to hold for ninja ability
-    private ItemStack boots; // Boots to hold for ninja ability
+import java.util.UUID;
 
+/**
+ * A class holding data about players in a Villager Defense game.
+ */
+public class VDPlayer {
+    /** UUID of corresponding {@link Player}. */
+    private final UUID player;
+
+    /** Status of the this {@link VDPlayer}. */
+    private PlayerStatus status;
+    /** Gem balance. */
+    private int gems;
+    /** Kill count. */
+    private int kills;
+    /** Wolf count. */
+    private int wolves;
+    /** The wave at which the player joined the game as an active player. */
+    private int joinedWave;
+    /** Name of the kit selected. */
+    private String kit;
+    /** Helmet {@link ItemStack} held for ninja ability. */
+    private ItemStack helmet;
+    /** Chestplate {@link ItemStack} held for ninja ability. */
+    private ItemStack chestplate;
+    /** Leggings {@link ItemStack} held for ninja ability. */
+    private ItemStack leggings;
+    /** Boots {@link ItemStack} held for ninja ability. */
+    private ItemStack boots;
+
+    /**
+     * Basic {@link VDPlayer} constructor.
+     * @param player The player to hold data for
+     * @param spectating Whether they are spectating or not
+     */
     public VDPlayer(Player player, boolean spectating) {
-        this.player = player;
-        this.spectating = spectating;
-        left = false;
+        this.player = player.getUniqueId();
+        if (spectating)
+            status = PlayerStatus.SPECTATOR;
+        else status = PlayerStatus.ALIVE;
         gems = 0;
         kills = 0;
         wolves = 0;
@@ -30,15 +52,15 @@ public class VDPlayer {
     }
 
     public Player getPlayer() {
-        return player;
+        return Bukkit.getPlayer(player);
     }
 
-    public boolean isSpectating() {
-        return spectating;
+    public PlayerStatus getStatus() {
+        return status;
     }
 
-    public boolean isGhost() {
-        return ghost;
+    public void setStatus(PlayerStatus status) {
+        this.status = status;
     }
 
     public int getGems() {
@@ -49,26 +71,15 @@ public class VDPlayer {
         return kills;
     }
 
-    public void flipSpectating() {
-        spectating = !spectating;
-    }
-
-    public void flipGhost() {
-        ghost = !ghost;
-    }
-
-    public boolean hasLeft() {
-        return left;
-    }
-
-    public void leave() {
-        left = true;
-    }
-
     public void addGems(int change) {
         gems += change;
     }
 
+    /**
+     * Checks whether the player can afford a shop item.
+     * @param cost Item cost
+     * @return Boolean indicating whether the item was affordable.
+     */
     public boolean canAfford(int cost) {
         return cost <= gems;
     }
@@ -105,21 +116,27 @@ public class VDPlayer {
         this.kit = kit;
     }
 
+    /**
+     * Removes armor from the player while they are invisible under the ninja ability.
+     */
     public void hideArmor() {
-        helmet = player.getInventory().getHelmet();
-        player.getInventory().setHelmet(null);
-        chestplate = player.getInventory().getChestplate();
-        player.getInventory().setChestplate(null);
-        leggings = player.getInventory().getLeggings();
-        player.getInventory().setLeggings(null);
-        boots = player.getInventory().getBoots();
-        player.getInventory().setBoots(null);
+        helmet = getPlayer().getInventory().getHelmet();
+        getPlayer().getInventory().setHelmet(null);
+        chestplate = getPlayer().getInventory().getChestplate();
+        getPlayer().getInventory().setChestplate(null);
+        leggings = getPlayer().getInventory().getLeggings();
+        getPlayer().getInventory().setLeggings(null);
+        boots = getPlayer().getInventory().getBoots();
+        getPlayer().getInventory().setBoots(null);
     }
 
+    /**
+     * Returns armor to the player after the ninja ability wears out.
+     */
     public void exposeArmor() {
-        player.getInventory().setHelmet(helmet);
-        player.getInventory().setChestplate(chestplate);
-        player.getInventory().setLeggings(leggings);
-        player.getInventory().setBoots(boots);
+        getPlayer().getInventory().setHelmet(helmet);
+        getPlayer().getInventory().setChestplate(chestplate);
+        getPlayer().getInventory().setLeggings(leggings);
+        getPlayer().getInventory().setBoots(boots);
     }
 }

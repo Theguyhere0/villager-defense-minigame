@@ -1,21 +1,19 @@
 package me.theguyhere.villagerdefense;
 
 import me.theguyhere.villagerdefense.GUI.Inventories;
-import me.theguyhere.villagerdefense.GUI.InventoryEvents;
+import me.theguyhere.villagerdefense.listeners.InventoryEventsListener;
 import me.theguyhere.villagerdefense.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.game.displays.InfoBoard;
 import me.theguyhere.villagerdefense.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.game.displays.Portal;
-import me.theguyhere.villagerdefense.game.listeners.AbilityEvents;
-import me.theguyhere.villagerdefense.game.listeners.ArenaEvents;
-import me.theguyhere.villagerdefense.game.listeners.ClickPortalEvents;
-import me.theguyhere.villagerdefense.game.listeners.GameEvents;
+import me.theguyhere.villagerdefense.listeners.AbilityEventsListener;
+import me.theguyhere.villagerdefense.listeners.ArenaEventsListener;
+import me.theguyhere.villagerdefense.listeners.ClickPortalEventsListener;
+import me.theguyhere.villagerdefense.listeners.GameEventsListener;
 import me.theguyhere.villagerdefense.game.models.Arena;
 import me.theguyhere.villagerdefense.game.models.Game;
-import me.theguyhere.villagerdefense.genListeners.CommandTab;
-import me.theguyhere.villagerdefense.genListeners.Commands;
-import me.theguyhere.villagerdefense.genListeners.Death;
-import me.theguyhere.villagerdefense.genListeners.Join;
+import me.theguyhere.villagerdefense.listeners.DeathListener;
+import me.theguyhere.villagerdefense.listeners.JoinListener;
 import me.theguyhere.villagerdefense.tools.DataManager;
 import me.theguyhere.villagerdefense.tools.PacketReader;
 import me.theguyhere.villagerdefense.tools.Utils;
@@ -68,14 +66,14 @@ public class Main extends JavaPlugin {
 		getCommand("vd").setTabCompleter(new CommandTab(game));
 
 		// Register event listeners
-		pm.registerEvents(new InventoryEvents(this, game, inventories, portal, leaderboard, infoBoard,
+		pm.registerEvents(new InventoryEventsListener(this, game, inventories, portal, leaderboard, infoBoard,
 				arenaBoard), this);
-		pm.registerEvents(new Join(this, portal, reader, game), this);
-		pm.registerEvents(new Death(portal, reader), this);
-		pm.registerEvents(new ClickPortalEvents(game, portal, inventories), this);
-		pm.registerEvents(new GameEvents(this, game), this);
-		pm.registerEvents(new ArenaEvents(this, game, portal, leaderboard, arenaBoard, inventories), this);
-		pm.registerEvents(new AbilityEvents(this, game), this);
+		pm.registerEvents(new JoinListener(this, portal, reader, game), this);
+		pm.registerEvents(new DeathListener(portal, reader), this);
+		pm.registerEvents(new ClickPortalEventsListener(game, portal, inventories), this);
+		pm.registerEvents(new GameEventsListener(this, game), this);
+		pm.registerEvents(new ArenaEventsListener(this, game, portal, leaderboard, arenaBoard, inventories), this);
+		pm.registerEvents(new AbilityEventsListener(this, game), this);
 
 		// Inject online players into packet reader
 		if (!Bukkit.getOnlinePlayers().isEmpty())

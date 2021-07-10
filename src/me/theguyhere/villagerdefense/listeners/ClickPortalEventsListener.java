@@ -1,9 +1,9 @@
-package me.theguyhere.villagerdefense.game.listeners;
+package me.theguyhere.villagerdefense.listeners;
 
 import me.theguyhere.villagerdefense.GUI.Inventories;
-import me.theguyhere.villagerdefense.customEvents.JoinArenaEvent;
-import me.theguyhere.villagerdefense.customEvents.LeftClickNPCEvent;
-import me.theguyhere.villagerdefense.customEvents.RightClickNPCEvent;
+import me.theguyhere.villagerdefense.events.JoinArenaEvent;
+import me.theguyhere.villagerdefense.events.LeftClickNPCEvent;
+import me.theguyhere.villagerdefense.events.RightClickNPCEvent;
 import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.game.displays.Portal;
 import org.bukkit.Bukkit;
@@ -15,12 +15,12 @@ import me.theguyhere.villagerdefense.Main;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class ClickPortalEvents implements Listener {
+public class ClickPortalEventsListener implements Listener {
 	private final Game game;
 	private final Portal portal;
 	private final Inventories inv;
 	
-	public ClickPortalEvents(Game game, Portal portal, Inventories inv) {
+	public ClickPortalEventsListener(Game game, Portal portal, Inventories inv) {
 		this.game = game;
 		this.portal = portal;
 		this.inv = inv;

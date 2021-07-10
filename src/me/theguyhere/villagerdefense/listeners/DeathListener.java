@@ -1,4 +1,4 @@
-package me.theguyhere.villagerdefense.genListeners;
+package me.theguyhere.villagerdefense.listeners;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -8,11 +8,11 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.tools.PacketReader;
 
-public class Death implements Listener {
+public class DeathListener implements Listener {
 	private final Portal portal;
 	private final PacketReader reader;
 	
-	public Death(Portal portal, PacketReader reader) {
+	public DeathListener(Portal portal, PacketReader reader) {
 		this.portal = portal;
 		this.reader = reader;
 	}

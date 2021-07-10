@@ -1,4 +1,4 @@
-package me.theguyhere.villagerdefense.customEvents;
+package me.theguyhere.villagerdefense.events;
 
 import me.theguyhere.villagerdefense.game.models.Arena;
 import org.bukkit.event.Cancellable;

@@ -1,7 +1,7 @@
 package me.theguyhere.villagerdefense.game.models;
 
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.customEvents.ReloadBoardsEvent;
+import me.theguyhere.villagerdefense.events.ReloadBoardsEvent;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

@@ -2,8 +2,8 @@ package me.theguyhere.villagerdefense.game.models;
 
 import me.theguyhere.villagerdefense.GUI.InventoryItems;
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.customEvents.GameEndEvent;
-import me.theguyhere.villagerdefense.customEvents.WaveEndEvent;
+import me.theguyhere.villagerdefense.events.GameEndEvent;
+import me.theguyhere.villagerdefense.events.WaveEndEvent;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.*;
 import org.bukkit.boss.BarColor;
@@ -21,15 +21,20 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+/**
+ * A class holding data about a Villager Defense arena.
+ */
 public class Arena {
-    private final Main plugin;
+    private final Main plugin; // Instance of the plugin
     private final int arena; // Arena number
     private final FileConfiguration config; // Shortcut for file configuration of arena file
     private final String path; // Shortcut for the arena path in the arena file
     private final Tasks task; // The tasks object for the arena
 
-    private boolean caps; // Indicates whether the naming inventory has caps lock on
+    /** Caps lock flag for the arena's naming inventory. */
+    private boolean caps;
     private boolean active; // Indicates whether the arena has a game ongoing
     private boolean spawningMonsters; // Indicates whether the arena is in the process of spawning monsters
     private boolean spawningVillagers; // Indicates whether the arena is in the process of spawning villagers
@@ -772,26 +777,60 @@ public class Arena {
         golems = 0;
     }
 
+    /**
+     * @return A list of all {@link VDPlayer} in this arena.
+     */
     public List<VDPlayer> getPlayers() {
         return players;
     }
 
-    public List<VDPlayer> getActives() {
-        return players.stream().filter(p -> !p.isSpectating()).collect(Collectors.toList());
+    /**
+     * @return A list of {@link VDPlayer} of the {@link PlayerStatus} ALIVE.
+     */
+    public List<VDPlayer> getAlives() {
+        return players.stream().filter(p -> p.getStatus() == PlayerStatus.ALIVE).collect(Collectors.toList());
     }
 
+    /**
+     * @return A list of {@link VDPlayer} of the {@link PlayerStatus} GHOST.
+     */
     public List<VDPlayer> getGhosts() {
-        return getActives().stream().filter(VDPlayer::isGhost).collect(Collectors.toList());
+        return players.stream().filter(p -> p.getStatus() == PlayerStatus.GHOST).collect(Collectors.toList());
     }
 
+    /**
+     * @return A list of {@link VDPlayer} of the {@link PlayerStatus} SPECTATOR.
+     */
     public List<VDPlayer> getSpectators() {
-        return players.stream().filter(VDPlayer::isSpectating).collect(Collectors.toList());
+        return players.stream().filter(p -> p.getStatus() == PlayerStatus.SPECTATOR).collect(Collectors.toList());
     }
 
-    public VDPlayer getPlayer(Player player) {
-        return players.stream().filter(p -> p.getPlayer().equals(player)).collect(Collectors.toList()).get(0);
+    /**
+     * @return A list of {@link VDPlayer} of the {@link PlayerStatus} ALIVE or GHOST.
+     */
+    public List<VDPlayer> getActives() {
+        return Stream.concat(getAlives().stream(), getGhosts().stream()).collect(Collectors.toList());
     }
 
+    /**
+     * A function to get the corresponding {@link VDPlayer} in the arena for a given {@link Player}.
+     * @param player The {@link Player} in question.
+     * @return The corresponding {@link VDPlayer}.
+     * @throws PlayerNotFoundException Thrown when the arena doesn't have a corresponding {@link VDPlayer}.
+     */
+    public VDPlayer getPlayer(Player player) throws PlayerNotFoundException {
+        try {
+            return players.stream().filter(p -> p.getPlayer().equals(player)).collect(Collectors.toList()).get(0);
+        } catch (Exception e) {
+            throw new PlayerNotFoundException("Player not in this arena.");
+        }
+    }
+
+    /**
+     * Checks whether there is a corresponding {@link VDPlayer} for a given {@link Player}.
+     * @param player The {@link Player} in question.
+     * @return Whether a corresponding {@link VDPlayer} was found.
+     */
     public boolean hasPlayer(Player player) {
         return players.stream().anyMatch(p -> p.getPlayer().equals(player));
     }

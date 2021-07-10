@@ -1,7 +1,7 @@
-package me.theguyhere.villagerdefense.game.listeners;
+package me.theguyhere.villagerdefense.listeners;
 
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.customEvents.EndNinjaNerfEvent;
+import me.theguyhere.villagerdefense.events.EndNinjaNerfEvent;
 import me.theguyhere.villagerdefense.game.models.*;
 import me.theguyhere.villagerdefense.tools.Utils;
 import net.md_5.bungee.api.ChatMessageType;
@@ -27,12 +27,12 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public class AbilityEvents implements Listener {
+public class AbilityEventsListener implements Listener {
     private final Main plugin;
     private final Game game;
     private final Map<VDPlayer, Long> cooldowns = new HashMap<>();
 
-    public AbilityEvents(Main plugin, Game game) {
+    public AbilityEventsListener(Main plugin, Game game) {
         this.plugin = plugin;
         this.game = game;
     }
@@ -47,14 +47,18 @@ public class AbilityEvents implements Listener {
             return;
 
         Player player = e.getPlayer();
+        Arena arena;
+        VDPlayer gamer;
 
-        // Check if player is in an arena
-        if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+        // Attempt to get arena and player
+        try {
+            arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+                    .collect(Collectors.toList()).get(0);
+            gamer = arena.getPlayer(player);
+        } catch (Exception err) {
             return;
+        }
 
-        Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
-                .collect(Collectors.toList()).get(0);
-        VDPlayer gamer = arena.getPlayer(player);
         ItemStack item = e.getItem();
         ItemStack main = player.getInventory().getItemInMainHand();
 
@@ -448,13 +452,17 @@ public class AbilityEvents implements Listener {
             return;
 
         Player player = (Player) damager;
+        Arena arena;
+        VDPlayer gamer;
 
-        // Check if player is in a game
-        if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player))) return;
-
-        Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
-                .collect(Collectors.toList()).get(0);
-        VDPlayer gamer = arena.getPlayer(player);
+        // Attempt to get arena and player
+        try {
+            arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+                    .collect(Collectors.toList()).get(0);
+            gamer = arena.getPlayer(player);
+        } catch (Exception err) {
+            return;
+        }
 
         // Check for vampire kit
         if (!gamer.getKit().equals("Vampire"))

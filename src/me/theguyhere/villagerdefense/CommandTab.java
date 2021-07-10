@@ -1,4 +1,4 @@
-package me.theguyhere.villagerdefense.genListeners;
+package me.theguyhere.villagerdefense;
 
 import me.theguyhere.villagerdefense.game.models.Arena;
 import me.theguyhere.villagerdefense.game.models.Game;

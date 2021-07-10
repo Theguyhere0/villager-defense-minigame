@@ -2,10 +2,10 @@ package me.theguyhere.villagerdefense.game.models;
 
 import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.customEvents.GameEndEvent;
-import me.theguyhere.villagerdefense.customEvents.LeaveArenaEvent;
-import me.theguyhere.villagerdefense.customEvents.WaveEndEvent;
-import me.theguyhere.villagerdefense.customEvents.WaveStartEvent;
+import me.theguyhere.villagerdefense.events.GameEndEvent;
+import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
+import me.theguyhere.villagerdefense.events.WaveEndEvent;
+import me.theguyhere.villagerdefense.events.WaveStartEvent;
 import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
@@ -145,7 +145,7 @@ public class Tasks {
 			// Revive dead players
 			arenaInstance.getGhosts().forEach(p -> {
 				Utils.teleAdventure(p.getPlayer(), arenaInstance.getPlayerSpawn());
-				p.flipGhost();
+				p.setStatus(PlayerStatus.ALIVE);
 				giveItems(p);
 
 				// Set health for people with giant kits
@@ -249,8 +249,9 @@ public class Tasks {
 				giveItems(player);
 
 //				// Give me items to test with
-//				if (player.getPlayer().getName().equals("Theguyhere")) {
-//				}
+				if (player.getPlayer().getName().equals("Theguyhere")) {
+					Utils.giveItem(player.getPlayer(), new ItemStack(Material.TOTEM_OF_UNDYING), "uh oh");
+				}
 
 				String kit = player.getKit();
 

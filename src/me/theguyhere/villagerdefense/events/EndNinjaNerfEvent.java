@@ -1,20 +1,17 @@
-package me.theguyhere.villagerdefense.customEvents;
+package me.theguyhere.villagerdefense.events;
 
-import me.theguyhere.villagerdefense.game.models.Arena;
-import org.bukkit.entity.Player;
+import me.theguyhere.villagerdefense.game.models.VDPlayer;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class JoinArenaEvent extends Event implements Cancellable {
-    private final Player player;
-    private final Arena arena;
+public class EndNinjaNerfEvent extends Event implements Cancellable {
+    private final VDPlayer gamer;
     private boolean isCancelled;
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public JoinArenaEvent(Player player, Arena arena) {
-        this.player = player;
-        this.arena = arena;
+    public EndNinjaNerfEvent(VDPlayer gamer) {
+        this.gamer = gamer;
     }
 
     @Override
@@ -26,12 +23,8 @@ public class JoinArenaEvent extends Event implements Cancellable {
         return HANDLERS;
     }
 
-    public Player getPlayer() {
-        return player;
-    }
-
-    public Arena getArena() {
-        return arena;
+    public VDPlayer getGamer() {
+        return gamer;
     }
 
     @Override

@@ -1,7 +1,7 @@
-package me.theguyhere.villagerdefense.genListeners;
+package me.theguyhere.villagerdefense.listeners;
 
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.customEvents.LeaveArenaEvent;
+import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.tools.PacketReader;
@@ -18,13 +18,13 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.Objects;
 
-public class Join implements Listener {
+public class JoinListener implements Listener {
 	private final Main plugin;
 	private final Portal portal;
 	private final PacketReader reader;
 	private final Game game;
 
-	public Join(Main plugin, Portal portal, PacketReader reader, Game game) {
+	public JoinListener(Main plugin, Portal portal, PacketReader reader, Game game) {
 		this.plugin = plugin;
 		this.portal = portal;
 		this.reader = reader;

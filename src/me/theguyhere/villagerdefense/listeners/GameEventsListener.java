@@ -1,9 +1,10 @@
-package me.theguyhere.villagerdefense.game.listeners;
+package me.theguyhere.villagerdefense.listeners;
 
+import com.mysql.fabric.xmlrpc.base.Array;
 import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.customEvents.GameEndEvent;
-import me.theguyhere.villagerdefense.customEvents.ReloadBoardsEvent;
+import me.theguyhere.villagerdefense.events.GameEndEvent;
+import me.theguyhere.villagerdefense.events.ReloadBoardsEvent;
 import me.theguyhere.villagerdefense.game.models.*;
 import me.theguyhere.villagerdefense.tools.DataManager;
 import me.theguyhere.villagerdefense.tools.Utils;
@@ -26,11 +27,11 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public class GameEvents implements Listener {
+public class GameEventsListener implements Listener {
 	private final Main plugin;
 	private final Game game;
 
-	public GameEvents (Main plugin, Game game) {
+	public GameEventsListener(Main plugin, Game game) {
 		this.plugin = plugin;
 		this.game = game;
 	}
@@ -404,15 +405,20 @@ public class GameEvents implements Listener {
 		if (!(e.getEntity() instanceof Player)) return;
 
 		Player player = (Player) e.getEntity();
+		Arena arena;
+		VDPlayer gamer;
 
 		// Check for void damage
 		if (!e.getCause().equals(EntityDamageEvent.DamageCause.VOID)) return;
 
-		// Check if player is in a game
-		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player))) return;
-
-		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
-				.collect(Collectors.toList()).get(0);
+		// Attempt to get arena and player
+		try {
+			arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+					.collect(Collectors.toList()).get(0);
+			gamer = arena.getPlayer(player);
+		} catch (Exception err) {
+			return;
+		}
 		FileConfiguration language = plugin.getLanguageData();
 
 		// Check if game has started yet
@@ -429,7 +435,7 @@ public class GameEvents implements Listener {
 			player.setGameMode(GameMode.SPECTATOR);
 			player.getInventory().clear();
 			player.closeInventory();
-			arena.getPlayer(player).flipGhost();
+			gamer.setStatus(PlayerStatus.GHOST);
 			player.setFallDistance(0);
 //			Utils.setFalseSpectator(player);
 
@@ -442,8 +448,8 @@ public class GameEvents implements Listener {
 			player.closeInventory();
 
 			// Notify everyone of player death
-			arena.getPlayers().forEach(gamer ->
-					gamer.getPlayer().sendMessage(Utils.notify(String.format(
+			arena.getPlayers().forEach(fighter ->
+					fighter.getPlayer().sendMessage(Utils.notify(String.format(
 							plugin.getLanguageData().getString("death"), player.getName()))));
 
 			// Update scoreboards
@@ -465,14 +471,18 @@ public class GameEvents implements Listener {
 			return;
 
 		Player player = (Player) e.getEntity();
+		Arena arena;
+		VDPlayer gamer;
 
-		// See if the player is in a game
-		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+		// Attempt to get arena and player
+		try {
+			arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+					.collect(Collectors.toList()).get(0);
+			gamer = arena.getPlayer(player);
+		} catch (Exception err) {
 			return;
+		}
 
-		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
-				.collect(Collectors.toList()).get(0);
-		VDPlayer gamer = arena.getPlayer(player);
 		ItemStack item = e.getItem().getItemStack();
 
 		// Check for gem item
@@ -526,12 +536,18 @@ public class GameEvents implements Listener {
 		if (!(e.getEntity() instanceof Player)) return;
 
 		Player player = (Player) e.getEntity();
+		Arena arena;
+		VDPlayer gamer;
 
-		// See if the player is in a game
-		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player))) return;
+		// Attempt to get arena and player
+		try {
+			arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+					.collect(Collectors.toList()).get(0);
+			gamer = arena.getPlayer(player);
+		} catch (Exception err) {
+			return;
+		}
 
-		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
-				.collect(Collectors.toList()).get(0);
 		FileConfiguration language = plugin.getLanguageData();
 
 		// Check if arena is active
@@ -549,7 +565,7 @@ public class GameEvents implements Listener {
 		player.setGameMode(GameMode.SPECTATOR);
 		player.getInventory().clear();
 		player.closeInventory();
-		arena.getPlayer(player).flipGhost();
+		gamer.setStatus(PlayerStatus.GHOST);
 //		Utils.setFalseSpectator(player);
 
 		// Notify player of their own death
@@ -557,16 +573,16 @@ public class GameEvents implements Listener {
 				Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
 
 		// Notify everyone else of player death
-		arena.getPlayers().forEach(gamer -> {
-			if (!gamer.getPlayer().equals(player))
+		arena.getPlayers().forEach(fighter -> {
+			if (!fighter.getPlayer().equals(player))
 				if (language.getString("death") == null) {
 					plugin.debugError("The language file is missing the attribute 'death'!");
 				} else {
-					gamer.getPlayer().sendMessage(Utils.notify(String.format(
+					fighter.getPlayer().sendMessage(Utils.notify(String.format(
 							language.getString("death"), player.getName())));
 				}
 			if (arena.hasPlayerDeathSound())
-				gamer.getPlayer().playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10, .75f);
+				fighter.getPlayer().playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10, .75f);
 		});
 
 		// Update scoreboards
@@ -601,6 +617,8 @@ public class GameEvents implements Listener {
 		if (!(e.getDamager() instanceof Player || e.getDamager() instanceof Projectile)) return;
 
 		Player player;
+		Arena arena;
+		VDPlayer gamer;
 
 		// Check if projectile came from player, then set player
 		if (e.getDamager() instanceof Projectile) {
@@ -609,14 +627,15 @@ public class GameEvents implements Listener {
 			else return;
 		} else player = (Player) e.getDamager();
 
-		// Check for player in an arena
-		if (game.arenas.stream().filter(Objects::nonNull)
-				.noneMatch(a -> a.getPlayers().stream().anyMatch(p -> p.getPlayer().equals(player)))) return;
-
-		Arena arena = game.arenas.stream().filter(Objects::nonNull)
-				.filter(a -> a.getPlayers().stream().anyMatch(p -> p.getPlayer().equals(player)))
-				.collect(Collectors.toList()).get(0);
-		VDPlayer gamer = arena.getPlayer(player);
+		// Attempt to get arena and player
+		try {
+			arena = game.arenas.stream().filter(Objects::nonNull)
+					.filter(a -> a.getPlayers().stream().anyMatch(p -> p.getPlayer().equals(player)))
+					.collect(Collectors.toList()).get(0);
+			gamer = arena.getPlayer(player);
+		} catch (Exception err) {
+			return;
+		}
 
 		// Increment kill count
 		gamer.incrementKills();
@@ -731,13 +750,17 @@ public class GameEvents implements Listener {
 		ItemStack item = e.getItem() == null ? new ItemStack(Material.AIR) : e.getItem();
 		ItemStack main = player.getInventory().getItemInMainHand();
 		FileConfiguration language = plugin.getLanguageData();
+		Arena arena;
+		VDPlayer gamer;
 
-		// See if the player is in a game
-		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player))) return;
-
-		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
-				.collect(Collectors.toList()).get(0);
-		VDPlayer gamer = arena.getPlayer(player);
+		// Attempt to get arena and player
+		try {
+			arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+					.collect(Collectors.toList()).get(0);
+			gamer = arena.getPlayer(player);
+		} catch (Exception err) {
+			return;
+		}
 
 		// Avoid false consume
 		if (main.equals(GameItems.shop()) || main.getType() == Material.BEETROOT || main.getType() == Material.CARROT ||

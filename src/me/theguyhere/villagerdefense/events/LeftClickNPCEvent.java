@@ -1,4 +1,4 @@
-package me.theguyhere.villagerdefense.customEvents;
+package me.theguyhere.villagerdefense.events;
 
 import net.minecraft.server.v1_16_R3.EntityVillager;
 import org.bukkit.entity.Player;
@@ -6,13 +6,13 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class RightClickNPCEvent extends Event implements Cancellable {
+public class LeftClickNPCEvent extends Event implements Cancellable {
 	private final Player player;
 	private final EntityVillager npc;
 	private boolean isCancelled;
 	private static final HandlerList HANDLERS = new HandlerList();
-	
-	public RightClickNPCEvent(Player player, EntityVillager npc) {
+
+	public LeftClickNPCEvent(Player player, EntityVillager npc) {
 		this.player = player;
 		this.npc = npc;
 	}

@@ -1,9 +1,9 @@
-package me.theguyhere.villagerdefense.genListeners;
+package me.theguyhere.villagerdefense;
 
 import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.customEvents.GameEndEvent;
-import me.theguyhere.villagerdefense.customEvents.LeaveArenaEvent;
+import me.theguyhere.villagerdefense.events.GameEndEvent;
+import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.game.models.Arena;
 import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.game.models.Tasks;
@@ -100,15 +100,18 @@ public class Commands implements CommandExecutor {
 
 			// Player selects kits
 			if (args[0].equalsIgnoreCase("select")) {
-				// Check if player is in a game
-				if (game.arenas.stream().filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player))) {
+				Arena arena;
+				VDPlayer gamer;
+
+				// Attempt to get arena and player
+				try {
+					arena = game.arenas.stream().filter(Objects::nonNull).filter(arena1 -> arena1.hasPlayer(player))
+							.collect(Collectors.toList()).get(0);
+					gamer = arena.getPlayer(player);
+				} catch (Exception err) {
 					player.sendMessage(Utils.notify(language.getString("inGameError")));
 					return true;
 				}
-
-				Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(arena1 -> arena1.hasPlayer(player))
-						.collect(Collectors.toList()).get(0);
-				VDPlayer gamer = arena.getPlayer(player);
 
 				// Check arena is in session
 				if (arena.isActive() && arena.getActives().contains(gamer)) {
@@ -173,18 +176,21 @@ public class Commands implements CommandExecutor {
 						return true;
 					}
 
-					// Check if player is in a game
-					if (game.arenas.stream().filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player))) {
+					Arena arena;
+					VDPlayer gamer;
+
+					// Attempt to get arena and player
+					try {
+						arena = game.arenas.stream().filter(Objects::nonNull)
+								.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
+						gamer = arena.getPlayer(player);
+					} catch (Exception e) {
 						player.sendMessage(Utils.notify(language.getString("forceStartError1")));
 						return true;
 					}
 
-					Arena arena = game.arenas.stream().filter(Objects::nonNull)
-							.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
-					VDPlayer gamer = arena.getPlayer(player);
-
 					// Check if player is an active player
-					if (gamer.isSpectating()) {
+					if (!arena.getActives().contains(gamer)) {
 						player.sendMessage(Utils.notify(language.getString("forceStartError2")));
 						return true;
 					}
