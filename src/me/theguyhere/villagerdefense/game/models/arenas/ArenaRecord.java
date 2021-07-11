@@ -1,4 +1,4 @@
-package me.theguyhere.villagerdefense.game.models;
+package me.theguyhere.villagerdefense.game.models.arenas;
 
 import java.util.List;
 

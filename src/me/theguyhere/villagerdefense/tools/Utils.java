@@ -345,6 +345,7 @@ public class Utils {
     // Gets location data from a configuration path
     public static Location getConfigLocation(Main plugin, String path) {
         try {
+            plugin.debugInfo(path + " : " + Bukkit.getWorld(plugin.getArenaData().getString(path + ".world")), 2);
             return new Location(
                 Bukkit.getWorld(plugin.getArenaData().getString(path + ".world")),
                 plugin.getArenaData().getDouble(path + ".x"),
@@ -354,6 +355,7 @@ public class Utils {
                 Float.parseFloat(plugin.getArenaData().get(path + ".pitch").toString())
             );
         } catch (Exception e) {
+            plugin.debugError("Error getting location from yaml", 2);
             return null;
         }
     }

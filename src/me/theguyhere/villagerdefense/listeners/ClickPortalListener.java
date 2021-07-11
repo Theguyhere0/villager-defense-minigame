@@ -15,12 +15,12 @@ import me.theguyhere.villagerdefense.Main;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class ClickPortalEventsListener implements Listener {
+public class ClickPortalListener implements Listener {
 	private final Game game;
 	private final Portal portal;
 	private final Inventories inv;
 	
-	public ClickPortalEventsListener(Game game, Portal portal, Inventories inv) {
+	public ClickPortalListener(Game game, Portal portal, Inventories inv) {
 		this.game = game;
 		this.portal = portal;
 		this.inv = inv;

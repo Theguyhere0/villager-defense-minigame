@@ -3,7 +3,7 @@ package me.theguyhere.villagerdefense.game.displays;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.game.models.Arena;
+import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Location;
@@ -27,9 +27,9 @@ public class ArenaBoard {
 		try {
 			addHolo(player.getLocation(), arena);
 		} catch (Exception e) {
-			plugin.debugError("Invalid location for arena board " + arena);
+			plugin.debugError("Invalid location for arena board " + arena, 1);
 			plugin.debugInfo("Arena board location data may be corrupt. If data cannot be manually corrected in " +
-					"arenaData.yml, please delete the location data for arena board " + arena + ".");
+					"arenaData.yml, please delete the location data for arena board " + arena + ".", 1);
 		}
 
 		// Save location data
@@ -43,9 +43,9 @@ public class ArenaBoard {
 			try {
 				addHolo(Utils.getConfigLocationNoPitch(plugin, "arenaBoard." + arena), game.arenas.get(arena));
 			} catch (Exception e) {
-				plugin.debugError("Invalid location for arena board " + arena);
+				plugin.debugError("Invalid location for arena board " + arena, 1);
 				plugin.debugInfo("Arena board location data may be corrupt. If data cannot be manually corrected in " +
-						"arenaData.yml, please delete the location data for arena board " + arena + ".");
+						"arenaData.yml, please delete the location data for arena board " + arena + ".", 1);
 			}
 		}
 	}
@@ -77,10 +77,10 @@ public class ArenaBoard {
 					addHolo(Utils.getConfigLocationNoPitch(plugin, "arenaBoard." + board),
 							game.arenas.get(Integer.parseInt(board)));
 				} catch (Exception e) {
-					plugin.debugError("Invalid location for arena board " + board);
+					plugin.debugError("Invalid location for arena board " + board, 1);
 					plugin.debugInfo("Arena board location data may be corrupt. If data cannot be manually " +
 							"corrected in " +
-							"arenaData.yml, please delete the location data for arena board " + board + ".");
+							"arenaData.yml, please delete the location data for arena board " + board + ".", 1);
 				}
 			});
 	}

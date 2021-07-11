@@ -1,9 +1,10 @@
 main: me.theguyhere.villagerdefense.Main
 name: VillagerDefense
-version: 0.8.4
+version: 0.8.5
 author: Theguyhere
 api-version: 1.16
 depend: [HolographicDisplays]
+softdepend: [WorldGuard, WorldEdit, Multiverse-core]
 
 commands:
   vd:

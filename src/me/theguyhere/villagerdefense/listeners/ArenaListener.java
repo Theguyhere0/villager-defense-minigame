@@ -7,6 +7,10 @@ import me.theguyhere.villagerdefense.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.game.models.*;
+import me.theguyhere.villagerdefense.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.game.models.arenas.ArenaRecord;
+import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
+import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.DataManager;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
@@ -23,7 +27,7 @@ import org.bukkit.scoreboard.DisplaySlot;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ArenaEventsListener implements Listener {
+public class ArenaListener implements Listener {
     private final Main plugin;
     private final Game game;
     private final Portal portal;
@@ -31,8 +35,8 @@ public class ArenaEventsListener implements Listener {
     private final ArenaBoard arenaBoard;
     private final Inventories inv;
 
-    public ArenaEventsListener(Main plugin, Game game, Portal portal, Leaderboard leaderboard, ArenaBoard arenaBoard,
-                               Inventories inv) {
+    public ArenaListener(Main plugin, Game game, Portal portal, Leaderboard leaderboard, ArenaBoard arenaBoard,
+                         Inventories inv) {
         this.plugin = plugin;
         this.game = game;
         this.portal = portal;

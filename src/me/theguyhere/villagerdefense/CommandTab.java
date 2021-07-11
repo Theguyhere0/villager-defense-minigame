@@ -1,6 +1,6 @@
 package me.theguyhere.villagerdefense;
 
-import me.theguyhere.villagerdefense.game.models.Arena;
+import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.Game;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;

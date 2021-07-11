@@ -1,4 +1,4 @@
-package me.theguyhere.villagerdefense.game.models;
+package me.theguyhere.villagerdefense.game.models.players;
 
 /**
  * Status of players in Villager Defense. Possible status:<ul>

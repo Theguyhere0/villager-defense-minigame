@@ -1,9 +1,14 @@
-package me.theguyhere.villagerdefense.game.models;
+package me.theguyhere.villagerdefense.game.models.arenas;
 
 import me.theguyhere.villagerdefense.GUI.InventoryItems;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.GameEndEvent;
 import me.theguyhere.villagerdefense.events.WaveEndEvent;
+import me.theguyhere.villagerdefense.game.models.InventoryMeta;
+import me.theguyhere.villagerdefense.game.models.Tasks;
+import me.theguyhere.villagerdefense.game.models.players.PlayerNotFoundException;
+import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
+import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.*;
 import org.bukkit.boss.BarColor;
@@ -43,14 +48,22 @@ public class Arena {
     private int villagers; // Villager count
     private int enemies; // Enemy count
     private int golems; // Iron golem count
-    private int spawnID = 0; // Spawn particles ID
-    private int monsterID = 0; // Monster particles ID
-    private int villagerID = 0; // Villager particles ID
-    private final List<VDPlayer> players = new ArrayList<>(); // Tracks players playing and their other related stats
-    private Inventory weaponShop; // Weapon shop inventory
-    private Inventory armorShop; // Armor shop inventory
-    private Inventory consumeShop; // Consumables shop inventory
-    private Inventory communityChest; // Community chest inventory
+    /** ID of task managing player spawn particles. */
+    private int playerParticlesID = 0;
+    /** ID of task managing monster spawn particles. */
+    private int monsterParticlesID = 0;
+    /** ID of task managing villager spawn particles. */
+    private int villagerParticlesID = 0;
+    /** A list of players in the arena. */
+    private final List<VDPlayer> players = new ArrayList<>();
+    /** Weapon shop inventory. */
+    private Inventory weaponShop;
+    /** Armor shop inventory. */
+    private Inventory armorShop;
+    /** Consumables shop inventory. */
+    private Inventory consumeShop;
+    /** Community chest inventory. */
+    private Inventory communityChest;
     private BossBar timeLimitBar; // Time limit bar
 
     public Arena(Main plugin, int arena, Tasks task) {
@@ -346,8 +359,8 @@ public class Arena {
     }
 
     public void startSpawnParticles() {
-        if (spawnID == 0)
-            spawnID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+        if (playerParticlesID == 0)
+            playerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
                 double var = 0;
                 double var2 = 0;
                 Location first, second;
@@ -369,9 +382,9 @@ public class Arena {
     }
 
     public void cancelSpawnParticles() {
-        if (spawnID != 0)
-            Bukkit.getScheduler().cancelTask(spawnID);
-        spawnID = 0;
+        if (playerParticlesID != 0)
+            Bukkit.getScheduler().cancelTask(playerParticlesID);
+        playerParticlesID = 0;
     }
 
     public boolean hasMonsterParticles() {
@@ -384,8 +397,8 @@ public class Arena {
     }
 
     public void startMonsterParticles() {
-        if (monsterID == 0)
-            monsterID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+        if (monsterParticlesID == 0)
+            monsterParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
                 double var = 0;
                 Location first, second;
 
@@ -407,9 +420,9 @@ public class Arena {
     }
 
     public void cancelMonsterParticles() {
-        if (monsterID != 0)
-            Bukkit.getScheduler().cancelTask(monsterID);
-        monsterID = 0;
+        if (monsterParticlesID != 0)
+            Bukkit.getScheduler().cancelTask(monsterParticlesID);
+        monsterParticlesID = 0;
     }
 
     public boolean hasVillagerParticles() {
@@ -422,8 +435,8 @@ public class Arena {
     }
 
     public void startVillagerParticles() {
-        if (villagerID == 0)
-            villagerID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+        if (villagerParticlesID == 0)
+            villagerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
                 double var = 0;
                 Location first, second;
 
@@ -445,9 +458,9 @@ public class Arena {
     }
 
     public void cancelVillagerParticles() {
-        if (villagerID != 0)
-            Bukkit.getScheduler().cancelTask(villagerID);
-        villagerID = 0;
+        if (villagerParticlesID != 0)
+            Bukkit.getScheduler().cancelTask(villagerParticlesID);
+        villagerParticlesID = 0;
     }
 
     public boolean hasNormal() {

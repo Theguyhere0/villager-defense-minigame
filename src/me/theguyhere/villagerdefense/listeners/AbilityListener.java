@@ -3,6 +3,8 @@ package me.theguyhere.villagerdefense.listeners;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.EndNinjaNerfEvent;
 import me.theguyhere.villagerdefense.game.models.*;
+import me.theguyhere.villagerdefense.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -27,12 +29,12 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public class AbilityEventsListener implements Listener {
+public class AbilityListener implements Listener {
     private final Main plugin;
     private final Game game;
     private final Map<VDPlayer, Long> cooldowns = new HashMap<>();
 
-    public AbilityEventsListener(Main plugin, Game game) {
+    public AbilityListener(Main plugin, Game game) {
         this.plugin = plugin;
         this.game = game;
     }

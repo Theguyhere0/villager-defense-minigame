@@ -3,7 +3,7 @@ package me.theguyhere.villagerdefense.game.displays;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.game.models.Arena;
+import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.tools.Utils;
 import net.minecraft.server.v1_16_R3.*;
@@ -59,9 +59,9 @@ public class Portal {
 			world = ((CraftWorld) Bukkit.getWorld(arenaInstance.getPortal().getWorld().getName()))
 					.getHandle();
 		} catch (NullPointerException e) {
-			plugin.debugError("Invalid location for arena number " + arena);
+			plugin.debugError("Invalid location for arena number " + arena, 1);
 			plugin.debugInfo("Portal location data may be corrupt. If data cannot be manually corrected in " +
-					"arenaData.yml, please delete the portal location data for arena " + arena + ".");
+					"arenaData.yml, please delete the portal location data for arena " + arena + ".", 1);
 			return;
 		}
 		EntityVillager npc = new EntityVillager(EntityTypes.VILLAGER, world);

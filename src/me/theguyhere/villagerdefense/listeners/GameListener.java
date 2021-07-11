@@ -1,11 +1,13 @@
 package me.theguyhere.villagerdefense.listeners;
 
-import com.mysql.fabric.xmlrpc.base.Array;
 import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.GameEndEvent;
 import me.theguyhere.villagerdefense.events.ReloadBoardsEvent;
 import me.theguyhere.villagerdefense.game.models.*;
+import me.theguyhere.villagerdefense.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
+import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.DataManager;
 import me.theguyhere.villagerdefense.tools.Utils;
 import net.md_5.bungee.api.ChatMessageType;
@@ -27,11 +29,11 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public class GameEventsListener implements Listener {
+public class GameListener implements Listener {
 	private final Main plugin;
 	private final Game game;
 
-	public GameEventsListener(Main plugin, Game game) {
+	public GameListener(Main plugin, Game game) {
 		this.plugin = plugin;
 		this.game = game;
 	}
@@ -576,7 +578,7 @@ public class GameEventsListener implements Listener {
 		arena.getPlayers().forEach(fighter -> {
 			if (!fighter.getPlayer().equals(player))
 				if (language.getString("death") == null) {
-					plugin.debugError("The language file is missing the attribute 'death'!");
+					plugin.debugError("The language file is missing the attribute 'death'!", 0);
 				} else {
 					fighter.getPlayer().sendMessage(Utils.notify(String.format(
 							language.getString("death"), player.getName())));

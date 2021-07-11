@@ -24,9 +24,9 @@ public class Leaderboard {
 		try {
 			addHolo(player.getLocation(), type);
 		} catch (Exception e) {
-			plugin.debugError("Invalid location for leaderboard " + type);
+			plugin.debugError("Invalid location for leaderboard " + type, 1);
 			plugin.debugInfo("Leaderboard location data may be corrupt. If data cannot be manually corrected in " +
-					"arenaData.yml, please delete the location data for leaderboard " + type + ".");
+					"arenaData.yml, please delete the location data for leaderboard " + type + ".", 1);
 			return;
 		}
 
@@ -44,9 +44,9 @@ public class Leaderboard {
 		try {
 			addHolo(Utils.getConfigLocationNoPitch(plugin, "leaderboard." + type), type);
 		} catch (Exception e) {
-			plugin.debugError("Invalid location for leaderboard " + type);
+			plugin.debugError("Invalid location for leaderboard " + type, 1);
 			plugin.debugInfo("Leaderboard location data may be corrupt. If data cannot be manually corrected in " +
-					"arenaData.yml, please delete the location data for leaderboard " + type + ".");
+					"arenaData.yml, please delete the location data for leaderboard " + type + ".", 1);
 		}
 	}
 
@@ -76,10 +76,10 @@ public class Leaderboard {
 				try {
 					addHolo(Utils.getConfigLocationNoPitch(plugin, "leaderboard." + board), board);
 				} catch (Exception e) {
-					plugin.debugError("Invalid location for leaderboard " + board);
+					plugin.debugError("Invalid location for leaderboard " + board, 1);
 					plugin.debugInfo("Leaderboard location data may be corrupt. If data cannot be manually " +
 							"corrected in arenaData.yml, please delete the location data for leaderboard " + board +
-							".");
+							".", 1);
 				}
 			});
 	}

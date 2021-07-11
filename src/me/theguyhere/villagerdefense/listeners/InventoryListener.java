@@ -8,6 +8,9 @@ import me.theguyhere.villagerdefense.game.displays.InfoBoard;
 import me.theguyhere.villagerdefense.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.game.models.*;
+import me.theguyhere.villagerdefense.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
+import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -30,7 +33,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class InventoryEventsListener implements Listener {
+public class InventoryListener implements Listener {
 	private final Main plugin;
 	private final Game game;
 	private final Inventories inv;
@@ -56,13 +59,13 @@ public class InventoryEventsListener implements Listener {
 			Material.IRON_BOOTS, Material.DIAMOND_BOOTS, Material.NETHERITE_BOOTS
 	};
 
-	public InventoryEventsListener(Main plugin,
-								   Game game,
-								   Inventories inv,
-								   Portal portal,
-								   Leaderboard leaderboard,
-								   InfoBoard infoBoard,
-								   ArenaBoard arenaBoard) {
+	public InventoryListener(Main plugin,
+							 Game game,
+							 Inventories inv,
+							 Portal portal,
+							 Leaderboard leaderboard,
+							 InfoBoard infoBoard,
+							 ArenaBoard arenaBoard) {
 		this.plugin = plugin;
 		this.game = game;
 		this.inv = inv;

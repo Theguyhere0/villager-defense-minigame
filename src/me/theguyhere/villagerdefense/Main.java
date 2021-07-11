@@ -1,19 +1,13 @@
 package me.theguyhere.villagerdefense;
 
 import me.theguyhere.villagerdefense.GUI.Inventories;
-import me.theguyhere.villagerdefense.listeners.InventoryEventsListener;
+import me.theguyhere.villagerdefense.listeners.*;
 import me.theguyhere.villagerdefense.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.game.displays.InfoBoard;
 import me.theguyhere.villagerdefense.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.game.displays.Portal;
-import me.theguyhere.villagerdefense.listeners.AbilityEventsListener;
-import me.theguyhere.villagerdefense.listeners.ArenaEventsListener;
-import me.theguyhere.villagerdefense.listeners.ClickPortalEventsListener;
-import me.theguyhere.villagerdefense.listeners.GameEventsListener;
-import me.theguyhere.villagerdefense.game.models.Arena;
+import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.Game;
-import me.theguyhere.villagerdefense.listeners.DeathListener;
-import me.theguyhere.villagerdefense.listeners.JoinListener;
 import me.theguyhere.villagerdefense.tools.DataManager;
 import me.theguyhere.villagerdefense.tools.PacketReader;
 import me.theguyhere.villagerdefense.tools.Utils;
@@ -36,7 +30,11 @@ public class Main extends JavaPlugin {
 	private final InfoBoard infoBoard = new InfoBoard(this);
 	private PacketReader reader;
 	private Game game;
+	private Inventories inventories;
+	private Commands commands;
+	private ArenaBoard arenaBoard;
 
+	private final int debugLevel = 0;
 	private boolean outdated;
 
 	// Runs when enabling plugin
@@ -44,48 +42,42 @@ public class Main extends JavaPlugin {
 	public void onEnable() {
 		saveDefaultConfig();
 
+		reader = new PacketReader(portal);
+		PluginManager pm = getServer().getPluginManager();
 		game = new Game(this, portal);
+		inventories = new Inventories(this);
+		commands = new Commands(this, inventories, game);
+		arenaBoard = new ArenaBoard(this, game);
+
 		checkArenas();
-		Inventories inventories = new Inventories(this, game);
-		Commands commands = new Commands(this, inventories, game);
-		ArenaBoard arenaBoard = new ArenaBoard(this, game);
 
 		if (!Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
-			debugError("HolographicDisplays is not installed or not enabled.");
-			debugError("This plugin will be disabled.");
+			debugError("HolographicDisplays is not installed or not enabled.", 0);
+			debugError("This plugin will be disabled.", 0);
 			this.setEnabled(false);
 			return;
 		}
-
-		reader = new PacketReader(portal);
-		PluginManager pm = getServer().getPluginManager();
 
 		// Set up commands and tab complete
 		getCommand("vd").setExecutor(commands);
 		getCommand("vd").setTabCompleter(new CommandTab(game));
 
 		// Register event listeners
-		pm.registerEvents(new InventoryEventsListener(this, game, inventories, portal, leaderboard, infoBoard,
+		pm.registerEvents(new InventoryListener(this, game, inventories, portal, leaderboard, infoBoard,
 				arenaBoard), this);
 		pm.registerEvents(new JoinListener(this, portal, reader, game), this);
 		pm.registerEvents(new DeathListener(portal, reader), this);
-		pm.registerEvents(new ClickPortalEventsListener(game, portal, inventories), this);
-		pm.registerEvents(new GameEventsListener(this, game), this);
-		pm.registerEvents(new ArenaEventsListener(this, game, portal, leaderboard, arenaBoard, inventories), this);
-		pm.registerEvents(new AbilityEventsListener(this, game), this);
+		pm.registerEvents(new ClickPortalListener(game, portal, inventories), this);
+		pm.registerEvents(new GameListener(this, game), this);
+		pm.registerEvents(new ArenaListener(this, game, portal, leaderboard, arenaBoard, inventories), this);
+		pm.registerEvents(new AbilityListener(this, game), this);
+		pm.registerEvents(new WorldListener(this), this);
 
 		// Inject online players into packet reader
 		if (!Bukkit.getOnlinePlayers().isEmpty())
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				reader.inject(player);
 			}
-
-		// Spawn in portals
-		if (getArenaData().contains("portal"))
-			loadPortals();
-		leaderboard.loadLeaderboards();
-		infoBoard.loadInfoBoards();
-		arenaBoard.loadArenaBoards();
 
 		int configVersion = 6;
 		int arenaDataVersion = 3;
@@ -97,7 +89,7 @@ public class Main extends JavaPlugin {
 
 		// Check config version
 		if (getConfig().getInt("version") < configVersion) {
-			debugError("Your config.yml is outdated!");
+			debugError("Your config.yml is outdated!", 0);
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
 					"Please update to the latest version (" + ChatColor.BLUE + configVersion + ChatColor.RED +
 					") to ensure compatibility.");
@@ -106,52 +98,58 @@ public class Main extends JavaPlugin {
 
 		// Check if arenaData.yml is outdated
 		if (getConfig().getInt("arenaData") < arenaDataVersion) {
-			debugError("Your arenaData.yml is no longer supported with this version!");
+			debugError("Your arenaData.yml is no longer supported with this version!", 0);
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
 					"Please manually transfer arena data to version " + ChatColor.BLUE + arenaDataVersion +
 					ChatColor.RED + ".");
-			debugError("Please do not update your config.yml until your arenaData.yml has been updated.");
+			debugError("Please do not update your config.yml until your arenaData.yml has been updated.", 0);
 			outdated = true;
 		}
 
 		// Check if playerData.yml is outdated
 		if (getConfig().getInt("playerData") < playerDataVersion) {
-			debugError("Your playerData.yml is no longer supported with this version!");
+			debugError("Your playerData.yml is no longer supported with this version!", 0);
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
 					"Please manually transfer player data to version " + ChatColor.BLUE + playerDataVersion +
 					ChatColor.BLUE + ".");
-			debugError("Please do not update your config.yml until your playerData.yml has been updated.");
+			debugError("Please do not update your config.yml until your playerData.yml has been updated.", 0);
 			outdated = true;
 		}
 
 		// Check if spawn tables are outdated
 		if (getConfig().getInt("spawnTableStructure") < spawnTableVersion) {
-			debugError("Your spawn tables are no longer supported with this version!");
+			debugError("Your spawn tables are no longer supported with this version!", 0);
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
 					"Please manually transfer spawn table data to version " + ChatColor.BLUE + spawnTableVersion +
 					ChatColor.RED + ".");
-			debugError("Please do not update your config.yml until your spawn tables have been updated.");
+			debugError("Please do not update your config.yml until your spawn tables have been updated.", 0);
 			outdated = true;
 		}
 
 		// Check if default spawn table has been updated
 		if (getConfig().getInt("spawnTableDefault") < defaultSpawnVersion) {
-			debugInfo("The default.yml spawn table has been updated!");
+			debugInfo("The default.yml spawn table has been updated!", 0);
 			getServer().getConsoleSender().sendMessage("[VillagerDefense] " +
 					"Updating to version" + ChatColor.BLUE + defaultSpawnVersion + ChatColor.WHITE +
 					" is optional but recommended.");
-			debugInfo("Please do not update your config.yml unless your default.yml has been updated.");
+			debugInfo("Please do not update your config.yml unless your default.yml has been updated.", 0);
 		}
 
 		// Check if language files are outdated
 		if (getConfig().getInt("languageFile") < languageFileVersion) {
-			debugError("You language files are no longer supported with this version!");
+			debugError("You language files are no longer supported with this version!", 0);
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
 					"Please update en_US.yml and update any other language files to version " + ChatColor.BLUE +
 					languageFileVersion + ChatColor.RED + ".");
-			debugError("Please do not update your config.yml until your language files have been updated.");
+			debugError("Please do not update your config.yml until your language files have been updated.", 0);
 			outdated = true;
 		}
+
+		// Spawn in portals
+		loadPortals();
+		leaderboard.loadLeaderboards();
+		infoBoard.loadInfoBoards();
+		arenaBoard.loadArenaBoards();
 	}
 
 	// Runs when disabling plugin
@@ -166,6 +164,30 @@ public class Main extends JavaPlugin {
 
 		game.arenas.stream().filter(Objects::nonNull).filter(arena -> !arena.isClosed())
 				.forEach(arena -> Utils.clear(arena.getCorner1(), arena.getCorner2()));
+	}
+
+	public Game getGame() {
+		return game;
+	}
+
+	public Inventories getInventories() {
+		return inventories;
+	}
+
+	public InfoBoard getInfoBoard() {
+		return infoBoard;
+	}
+
+	public Leaderboard getLeaderboard() {
+		return leaderboard;
+	}
+
+	public Commands getCommands() {
+		return commands;
+	}
+
+	public ArenaBoard getArenaBoard() {
+		return arenaBoard;
 	}
 
 	// Returns arena data
@@ -193,8 +215,9 @@ public class Main extends JavaPlugin {
 	}
 
 	// Load portals
-	private void loadPortals() {
-		getArenaData().getConfigurationSection("portal").getKeys(false).forEach(portal ->
+	public void loadPortals() {
+		if (getArenaData().contains("portal"))
+			getArenaData().getConfigurationSection("portal").getKeys(false).forEach(portal ->
 				this.portal.loadPortal(Integer.parseInt(portal), game));
 	}
 
@@ -207,11 +230,13 @@ public class Main extends JavaPlugin {
 		return outdated;
 	}
 
-	public void debugError(String msg) {
-		getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " + msg);
+	public void debugError(String msg, int debugLevel) {
+		if (this.debugLevel >= debugLevel)
+			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " + msg);
 	}
 
-	public void debugInfo(String msg) {
-		getServer().getConsoleSender().sendMessage("[VillagerDefense] " + msg);
+	public void debugInfo(String msg, int debugLevel) {
+		if (this.debugLevel >= debugLevel)
+			getServer().getConsoleSender().sendMessage("[VillagerDefense] " + msg);
 	}
 }
