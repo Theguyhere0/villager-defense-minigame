@@ -34,6 +34,13 @@ public class Main extends JavaPlugin {
 	private Commands commands;
 	private ArenaBoard arenaBoard;
 
+	/**
+	 * The amount of debug information to display in the console.
+	 *
+	 * 2 (Verbose) - All errors and information tracked will be displayed.
+	 * 1 (Normal) - Errors that drastically reduce performance and important information will be displayed.
+	 * 0 (Quiet) - Only the most urgent error messages will be displayed.
+	 */
 	private final int debugLevel = 0;
 	private boolean outdated;
 

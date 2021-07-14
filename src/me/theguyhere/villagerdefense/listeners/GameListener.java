@@ -6,6 +6,7 @@ import me.theguyhere.villagerdefense.events.GameEndEvent;
 import me.theguyhere.villagerdefense.events.ReloadBoardsEvent;
 import me.theguyhere.villagerdefense.game.models.*;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.DataManager;
@@ -50,7 +51,7 @@ public class GameListener implements Listener {
 		Arena arena = game.arenas.get(ent.getMetadata("VD").get(0).asInt());
 
 		// Arena enemies not part of an active arena
-		if (!arena.isActive()) {
+		if (arena.getStatus() != ArenaStatus.ACTIVE) {
 			e.getDrops().clear();
 			return;
 		}
@@ -176,7 +177,7 @@ public class GameListener implements Listener {
 		Arena arena = game.arenas.get(ent.getMetadata("VD").get(0).asInt());
 
 		// Arena enemies not part of an active arena
-		if (!arena.isActive())
+		if (arena.getStatus() != ArenaStatus.ACTIVE)
 			return;
 
 		// Decrement enemy count
@@ -424,7 +425,7 @@ public class GameListener implements Listener {
 		FileConfiguration language = plugin.getLanguageData();
 
 		// Check if game has started yet
-		if (!arena.isActive()) {
+		if (arena.getStatus() == ArenaStatus.WAITING) {
 			// Cancel void damage
 			e.setCancelled(true);
 
@@ -459,7 +460,7 @@ public class GameListener implements Listener {
 					Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)));
 
 			// Check for game end condition
-			if (arena.getAlive() == 0 && !arena.isEnding())
+			if (arena.getAlive() == 0 && arena.getStatus() == ArenaStatus.ACTIVE)
 				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 						Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 		}
@@ -553,7 +554,7 @@ public class GameListener implements Listener {
 		FileConfiguration language = plugin.getLanguageData();
 
 		// Check if arena is active
-		if (!arena.isActive()) return;
+		if (arena.getStatus() != ArenaStatus.ACTIVE) return;
 
 		// Check if player is about to die
 		if (e.getFinalDamage() < player.getHealth()) return;
@@ -592,7 +593,7 @@ public class GameListener implements Listener {
 				Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)));
 
 		// Check for game end condition
-		if (arena.getAlive() == 0 && !arena.isEnding())
+		if (arena.getAlive() == 0 && arena.getStatus() == ArenaStatus.ACTIVE)
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 					Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 	}

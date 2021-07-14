@@ -6,6 +6,7 @@ import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.game.models.Tasks;
+import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -113,7 +114,7 @@ public class Commands implements CommandExecutor {
 				}
 
 				// Check arena is in session
-				if (arena.isActive() && arena.getActives().contains(gamer)) {
+				if (arena.getStatus() != ArenaStatus.WAITING && arena.getActives().contains(gamer)) {
 					player.sendMessage(Utils.notify(language.getString("kitChangeError")));
 					return true;
 				}
@@ -195,7 +196,7 @@ public class Commands implements CommandExecutor {
 					}
 
 					// Check if arena already started
-					if (arena.isActive()) {
+					if (arena.getStatus() != ArenaStatus.WAITING) {
 						player.sendMessage(Utils.notify(language.getString("forceStartError3")));
 						return true;
 					}
@@ -248,7 +249,7 @@ public class Commands implements CommandExecutor {
 							.collect(Collectors.toList()).get(0);
 
 					// Check if arena already started
-					if (arena.isActive()) {
+					if (arena.getStatus() != ArenaStatus.WAITING) {
 						player.sendMessage(Utils.notify(language.getString("forceStartError3")));
 						return true;
 					}
@@ -315,13 +316,13 @@ public class Commands implements CommandExecutor {
 						.filter(arena1 -> arena1.getName().equals(name.toString())).collect(Collectors.toList()).get(0);
 
 				// Check if arena has a game in progress
-				if (!arena.isActive()) {
+				if (arena.getStatus() != ArenaStatus.ACTIVE && arena.getStatus() != ArenaStatus.ENDING) {
 					player.sendMessage(Utils.notify("&cNo game to end!"));
 					return true;
 				}
 
 				// Check if game is about to end
-				if (arena.isEnding()) {
+				if (arena.getStatus() == ArenaStatus.ENDING) {
 					player.sendMessage(Utils.notify("&cGame about to end!"));
 					return true;
 				}

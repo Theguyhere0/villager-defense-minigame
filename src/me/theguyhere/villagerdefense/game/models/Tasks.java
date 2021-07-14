@@ -8,6 +8,7 @@ import me.theguyhere.villagerdefense.events.WaveEndEvent;
 import me.theguyhere.villagerdefense.events.WaveStartEvent;
 import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
@@ -270,7 +271,7 @@ public class Tasks {
 			});
 
 			// Set arena to active and reset villager and enemy count
-			arenaInstance.setActive(true);
+			arenaInstance.setStatus(ArenaStatus.ACTIVE);
 			arenaInstance.resetVillagers();
 			arenaInstance.resetEnemies();
 
@@ -291,8 +292,7 @@ public class Tasks {
 			Arena arenaInstance = game.arenas.get(arena);
 
 			// Update data
-			arenaInstance.setActive(false);
-			arenaInstance.flipEnding();
+			arenaInstance.setStatus(ArenaStatus.WAITING);
 			arenaInstance.resetCurrentWave();
 			arenaInstance.resetEnemies();
 			arenaInstance.resetVillagers();

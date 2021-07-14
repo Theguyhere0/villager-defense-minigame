@@ -9,6 +9,7 @@ import me.theguyhere.villagerdefense.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.game.models.*;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
@@ -3067,7 +3068,7 @@ public class InventoryListener implements Listener {
 			// Check for useful phantom selection
 			if (gamer.getStatus() == PlayerStatus.SPECTATOR && playerData.getBoolean(path + "Phantom") &&
 					kit.equals("Phantom")) {
-				if (arenaInstance.isEnding())
+				if (arenaInstance.getStatus() == ArenaStatus.ENDING)
 					player.sendMessage(Utils.notify(language.getString("phantomError")));
 				else {
 					Utils.teleAdventure(player, arenaInstance.getPlayerSpawn());

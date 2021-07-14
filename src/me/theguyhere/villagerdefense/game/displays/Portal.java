@@ -5,6 +5,7 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.Game;
+import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.tools.Utils;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Bukkit;
@@ -182,9 +183,9 @@ public class Portal {
 			return new String[]{Utils.format("&6&l" + arena.getName() + difficulty),
 					Utils.format("&4&lClosed")};
 		}
-		else if (arena.isEnding())
+		else if (arena.getStatus() == ArenaStatus.ENDING)
 			status = "&c&lEnding";
-		else if (!arena.isActive())
+		else if (arena.getStatus() == ArenaStatus.WAITING)
 			status = "&5&lWaiting";
 		else status = "&a&lWave: " + arena.getCurrentWave();
 

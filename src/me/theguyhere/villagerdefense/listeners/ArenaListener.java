@@ -9,6 +9,7 @@ import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.game.models.*;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.arenas.ArenaRecord;
+import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.DataManager;
@@ -94,8 +95,8 @@ public class ArenaListener implements Listener {
             plugin.getPlayerData().set(player.getName() + ".inventory." + i, player.getInventory().getContents()[i]);
         plugin.savePlayerData();
 
-        // Prepares player to enter arena if it doesn't exceed max capacity or if the arena hasn't already started
-        if (players < arena.getMaxPlayers() && !arena.isActive()) {
+        // Prepares player to enter arena if it doesn't exceed max capacity and if the arena is still waiting
+        if (players < arena.getMaxPlayers() && arena.getStatus() == ArenaStatus.WAITING) {
             // Teleport to arena or waiting room
             Utils.teleAdventure(player, location);
             player.setInvulnerable(true);
@@ -207,8 +208,8 @@ public class ArenaListener implements Listener {
     public void onWaveEnd(WaveEndEvent e) {
         Arena arena = e.getArena();
 
-        // Don't continue if the arena is ending
-        if (arena.isEnding()) {
+        // Don't continue if the arena is not active
+        if (arena.getStatus() != ArenaStatus.ACTIVE) {
             e.setCancelled(true);
             return;
         }
@@ -254,8 +255,8 @@ public class ArenaListener implements Listener {
     public void onWaveStart(WaveStartEvent e) {
         Arena arena = e.getArena();
 
-        // Don't continue if the arena is ending
-        if (arena.isEnding() || arena.getCurrentWave() == 0) {
+        // Don't continue if the arena is not active
+        if (arena.getStatus() != ArenaStatus.ACTIVE || arena.getCurrentWave() == 0) {
             e.setCancelled(true);
             return;
         }
@@ -353,7 +354,7 @@ public class ArenaListener implements Listener {
             int actives = arena.getActiveCount();
 
             // Check if arena can no longer start
-            if (actives < arena.getMinPlayers() && !arena.isActive()) {
+            if (actives < arena.getMinPlayers() && arena.getStatus() == ArenaStatus.WAITING) {
                 // Remove other tasks that's not the waiting task
                 tasks.forEach((runnable, id) -> {
                     if (actives == 0 || !runnable.equals(task.waiting)) toRemove.add(runnable);
@@ -370,7 +371,7 @@ public class ArenaListener implements Listener {
             }
 
             // Checks if the game has ended because no players are left
-            if (arena.getAlive() == 0 && arena.isActive() && !arena.isEnding())
+            if (arena.getAlive() == 0 && arena.getStatus() == ArenaStatus.ACTIVE)
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
                         Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
         }
@@ -413,7 +414,7 @@ public class ArenaListener implements Listener {
         FileConfiguration language = plugin.getLanguageData();
 
         // Set the arena to ending
-        arena.flipEnding();
+        arena.setStatus(ArenaStatus.ENDING);
         portal.refreshHolo(game.arenas.indexOf(arena), game);
 
         // Notify players that the game has ended

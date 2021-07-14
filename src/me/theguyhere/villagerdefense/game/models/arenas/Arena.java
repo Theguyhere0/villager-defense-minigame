@@ -29,25 +29,35 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * A class holding data about a Villager Defense arena.
+ * A class managing data about a Villager Defense arena.
  */
 public class Arena {
-    private final Main plugin; // Instance of the plugin
-    private final int arena; // Arena number
-    private final FileConfiguration config; // Shortcut for file configuration of arena file
-    private final String path; // Shortcut for the arena path in the arena file
+    /** Instance of the plugin. */
+    private final Main plugin;
+    /** Arena number. */
+    private final int arena;
+    /** A variable more quickly access the file configuration of the arena file. */
+    private final FileConfiguration config;
+    /** Common string for all data paths in the arena file. */
+    private final String path;
     private final Tasks task; // The tasks object for the arena
 
     /** Caps lock flag for the arena's naming inventory. */
     private boolean caps;
-    private boolean active; // Indicates whether the arena has a game ongoing
-    private boolean spawningMonsters; // Indicates whether the arena is in the process of spawning monsters
-    private boolean spawningVillagers; // Indicates whether the arena is in the process of spawning villagers
-    private boolean ending; // Indicates whether the arena is about to end
-    private int currentWave; // Current game wave
-    private int villagers; // Villager count
-    private int enemies; // Enemy count
-    private int golems; // Iron golem count
+    /** Status of the arena. */
+    private ArenaStatus status;
+    /** Whether the arena is in the process of spawning monsters. */
+    private boolean spawningMonsters;
+    /** Whether the arena is in the process of spawning villagers. */
+    private boolean spawningVillagers;
+    /** Current wave of the active game. */
+    private int currentWave;
+    /** Villager count. */
+    private int villagers;
+    /** Enemy count. */
+    private int enemies;
+    /** Iron golem count. */
+    private int golems;
     /** ID of task managing player spawn particles. */
     private int playerParticlesID = 0;
     /** ID of task managing monster spawn particles. */
@@ -64,8 +74,15 @@ public class Arena {
     private Inventory consumeShop;
     /** Community chest inventory. */
     private Inventory communityChest;
-    private BossBar timeLimitBar; // Time limit bar
+    /** Time limit bar object. */
+    private BossBar timeLimitBar;
 
+    /**
+     * Basic {@link Arena} constructor.
+     * @param plugin An instance of the plugin.
+     * @param arena The arena number.
+     * @param task An instance of the task object.
+     */
     public Arena(Main plugin, int arena, Tasks task) {
         this.plugin = plugin;
         config = plugin.getArenaData();
@@ -81,21 +98,37 @@ public class Arena {
         return arena;
     }
 
+    /**
+     * Retrieves the name of the arena from the arena file.
+     * @return Arena name.
+     */
     public String getName() {
         return config.getString(path + ".name");
     }
 
+    /**
+     * Writes the new name of the arena into the arena file.
+     * @param name New arena name.
+     */
     public void setName(String name) {
         config.set(path + ".name", name);
         plugin.saveArenaData();
     }
 
+    /**
+     * Retrieves the difficulty label of the arena from the arena file.
+     * @return Arena difficulty label.
+     */
     public String getDifficultyLabel() {
         if (config.contains(path + ".difficultyLabel"))
             return config.getString(path + ".difficultyLabel");
         else return null;
     }
 
+    /**
+     * Writes the new difficulty label of the arena into the arena file.
+     * @param label New difficulty label.
+     */
     public void setDifficultyLabel(String label) {
         config.set(path + ".difficultyLabel", label);
         plugin.saveArenaData();
@@ -367,16 +400,21 @@ public class Arena {
 
                 @Override
                 public void run() {
-                    // Update particle locations
-                    var += Math.PI / 12;
-                    var2 -= Math.PI / 12;
-                    first = getPlayerSpawn().clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
-                    second = getPlayerSpawn().clone().add(Math.cos(var2 + Math.PI), Math.sin(var2) + 1,
-                            Math.sin(var2 + Math.PI));
+                    try {
+                        // Update particle locations
+                        var += Math.PI / 12;
+                        var2 -= Math.PI / 12;
+                        first = getPlayerSpawn().clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
+                        second = getPlayerSpawn().clone().add(Math.cos(var2 + Math.PI), Math.sin(var2) + 1,
+                                Math.sin(var2 + Math.PI));
 
-                    // Spawn particles
-                    getPlayerSpawn().getWorld().spawnParticle(Particle.FLAME, first, 0);
-                    getPlayerSpawn().getWorld().spawnParticle(Particle.FLAME, second, 0);
+                        // Spawn particles
+                        getPlayerSpawn().getWorld().spawnParticle(Particle.FLAME, first, 0);
+                        getPlayerSpawn().getWorld().spawnParticle(Particle.FLAME, second, 0);
+                    } catch (Exception e) {
+                        plugin.debugError(String.format("Player spawn particle generation error for arena %d.", arena),
+                                2);
+                    }
                 }
             }, 0 , 2);
     }
@@ -406,14 +444,19 @@ public class Arena {
                 public void run() {
                     var -= Math.PI / 12;
                     getMonsterSpawns().forEach(location -> {
-                        // Update particle locations
-                        first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
-                        second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
-                                Math.sin(var + Math.PI));
+                        try {
+                            // Update particle locations
+                            first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
+                            second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
+                                    Math.sin(var + Math.PI));
 
-                        // Spawn particles
-                        location.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, first, 0);
-                        location.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, second, 0);
+                            // Spawn particles
+                            location.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, first, 0);
+                            location.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, second, 0);
+                        } catch (Exception e) {
+                            plugin.debugError(String.format("Monster particle generation error for arena %d.", arena),
+                                    2);
+                        }
                     });
                 }
             }, 0 , 2);
@@ -444,14 +487,19 @@ public class Arena {
                 public void run() {
                     var += Math.PI / 12;
                     getVillagerSpawns().forEach(location -> {
-                        // Update particle locations
-                        first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
-                        second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
-                                Math.sin(var + Math.PI));
+                        try {
+                            // Update particle locations
+                            first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
+                            second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
+                                    Math.sin(var + Math.PI));
 
-                        // Spawn particles
-                        location.getWorld().spawnParticle(Particle.COMPOSTER, first, 0);
-                        location.getWorld().spawnParticle(Particle.COMPOSTER, second, 0);
+                            // Spawn particles
+                            location.getWorld().spawnParticle(Particle.COMPOSTER, first, 0);
+                            location.getWorld().spawnParticle(Particle.COMPOSTER, second, 0);
+                        } catch (Exception e) {
+                            plugin.debugError(String.format("Villager particle generation error for arena %d.", arena),
+                                    2);
+                        }
                     });
                 }
             }, 0 , 2);
@@ -635,11 +683,17 @@ public class Arena {
     public List<ArenaRecord> getArenaRecords() {
         List<ArenaRecord> arenaRecords = new ArrayList<>();
         if (config.contains(path + ".records"))
-            config.getConfigurationSection(path + ".records").getKeys(false)
-                    .forEach(index -> arenaRecords.add(new ArenaRecord(
-                            config.getInt(path + ".records." + index + ".wave"),
-                            config.getStringList(path + ".records." + index + ".players")
-                    )));
+            try {
+                config.getConfigurationSection(path + ".records").getKeys(false)
+                        .forEach(index -> arenaRecords.add(new ArenaRecord(
+                                config.getInt(path + ".records." + index + ".wave"),
+                                config.getStringList(path + ".records." + index + ".players")
+                        )));
+            } catch (Exception e) {
+                plugin.debugError(
+                        String.format("Attempted to retrieve arena records for arena %d but found none.", arena),
+                        2);
+            }
 
         return arenaRecords;
     }
@@ -686,12 +740,12 @@ public class Arena {
         caps = !caps;
     }
 
-    public boolean isActive() {
-        return active;
+    public ArenaStatus getStatus() {
+        return status;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setStatus(ArenaStatus status) {
+        this.status = status;
     }
 
     public boolean isSpawningMonsters() {
@@ -708,14 +762,6 @@ public class Arena {
 
     public void setSpawningVillagers(boolean spawningVillagers) {
         this.spawningVillagers = spawningVillagers;
-    }
-
-    public boolean isEnding() {
-        return ending;
-    }
-
-    public void flipEnding() {
-        ending = !ending;
     }
 
     public int getCurrentWave() {
@@ -746,7 +792,7 @@ public class Arena {
     }
 
     public void decrementVillagers() {
-        if (--villagers <= 0 && !ending && !spawningVillagers)
+        if (--villagers <= 0 && status == ArenaStatus.ACTIVE && !spawningVillagers)
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
                     Bukkit.getPluginManager().callEvent(new GameEndEvent(this)));
     }
@@ -764,10 +810,9 @@ public class Arena {
     }
 
     public void decrementEnemies() {
-        if (--enemies <= 0 && !ending && !spawningMonsters)
+        if (--enemies <= 0 && status == ArenaStatus.ACTIVE && !spawningMonsters)
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
                     Bukkit.getPluginManager().callEvent(new WaveEndEvent(this)));
-        ;
     }
 
     public void resetEnemies() {
@@ -977,6 +1022,10 @@ public class Arena {
         return inv;
     }
 
+    /**
+     * Retrieves a mockup of the custom shop for presenting arena information.
+     * @return Mock custom shop {@link Inventory}
+     */
     public Inventory getMockCustomShop() {
         // Create inventory
         Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54, Utils.format("&k") +
@@ -990,27 +1039,40 @@ public class Arena {
             return inv;
 
         // Get items from stored inventory
-        config.getConfigurationSection(path + ".customShop").getKeys(false)
-                .forEach(index -> {
-                    // Get raw item and data
-                    ItemStack item = config.getItemStack(path + ".customShop." + index).clone();
-                    ItemMeta meta = item.getItemMeta();
-                    List<String> lore = new ArrayList<>();
-                    String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
-                    int price = Integer.parseInt(meta.getDisplayName().substring(meta.getDisplayName().length() - 5));
+        try {
+            config.getConfigurationSection(path + ".customShop").getKeys(false)
+                    .forEach(index -> {
+                        try {
+                            // Get raw item and data
+                            ItemStack item = config.getItemStack(path + ".customShop." + index).clone();
+                            ItemMeta meta = item.getItemMeta();
+                            List<String> lore = new ArrayList<>();
+                            String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
+                            int price = Integer.parseInt(meta.getDisplayName().substring(meta.getDisplayName().length() - 5));
 
-                    // Transform to proper shop item
-                    meta.setDisplayName(Utils.format("&f" + name));
-                    if (meta.hasLore()) {
-                        lore = meta.getLore();
-                        lore.add(Utils.format("&2Gems: &a" + price));
-                    } else lore.add(Utils.format("&2Gems: &a" + price));
-                    meta.setLore(lore);
-                    item.setItemMeta(meta);
+                            // Transform to proper shop item
+                            meta.setDisplayName(Utils.format("&f" + name));
+                            if (meta.hasLore()) {
+                                lore = meta.getLore();
+                                lore.add(Utils.format("&2Gems: &a" + price));
+                            } else lore.add(Utils.format("&2Gems: &a" + price));
+                            meta.setLore(lore);
+                            item.setItemMeta(meta);
 
-                    // Set item into inventory
-                    inv.setItem(Integer.parseInt(index), item);
-                });
+                            // Set item into inventory
+                            inv.setItem(Integer.parseInt(index), item);
+                        } catch (Exception e) {
+                            plugin.debugError(
+                                    String.format(
+                                            "An error occurred retrieving an item from arena %d's custom shop.", arena),
+                                    2);
+                        }
+                    });
+        } catch (Exception e) {
+            plugin.debugError(
+                    String.format("Attempted to retrieve the custom shop inventory of arena %d but found none.", arena),
+                    1);
+        }
 
         return inv;
     }
@@ -1019,45 +1081,82 @@ public class Arena {
         return timeLimitBar;
     }
 
+    /**
+     * Create a time limit bar to display.
+     */
     public void startTimeLimitBar() {
-        timeLimitBar = Bukkit.createBossBar(Utils.format(
-                String.format(plugin.getLanguageData().getString("timeBar"), getCurrentWave())),
-                BarColor.YELLOW, BarStyle.SOLID);
+        try {
+            timeLimitBar = Bukkit.createBossBar(Utils.format(
+                    String.format(plugin.getLanguageData().getString("timeBar"), getCurrentWave())),
+                    BarColor.YELLOW, BarStyle.SOLID);
+        } catch (Exception e) {
+            plugin.debugError("The active language file is missing text for the key 'timeBar'.", 1);
+        }
     }
 
+    /**
+     * Updates the time limit bar's progress.
+     * @param progress The bar's new progress.
+     */
     public void updateTimeLimitBar(double progress) {
         timeLimitBar.setProgress(progress);
     }
 
+    /**
+     * Updates the time limit bar's color and progress.
+     * @param color The bar's new color.
+     * @param progress The bar's new progress.
+     */
     public void updateTimeLimitBar(BarColor color, double progress) {
         timeLimitBar.setColor(color);
         timeLimitBar.setProgress(progress);
     }
 
+    /**
+     * Removes the time limit bar from every player.
+     */
     public void removeTimeLimitBar() {
         players.forEach(vdPlayer -> timeLimitBar.removePlayer(vdPlayer.getPlayer()));
         timeLimitBar = null;
     }
 
+    /**
+     * Displays the time limit bar to a player.
+     * @param player {@link Player} to display the time limit bar to.
+     */
     public void addPlayerToTimeLimitBar(Player player) {
         if (timeLimitBar != null)
             timeLimitBar.addPlayer(player);
     }
 
+    /**
+     * Removes the time limit bar from a player's display.
+     * @param player {@link Player} to remove the time limit bar from.
+     */
     public void removePlayerFromTimeLimitBar(Player player) {
         if (timeLimitBar != null)
             timeLimitBar.removePlayer(player);
     }
 
+    /**
+     * Checks and closes an arena if the arena does not meet opening requirements.
+     */
     public void checkClose() {
         if (!plugin.getArenaData().contains("lobby") || getPortal() == null || getPlayerSpawn() == null ||
                 getMonsterSpawns().stream().noneMatch(Objects::nonNull) ||
                 getVillagerSpawns().stream().noneMatch(Objects::nonNull) || !hasCustom() && !hasNormal() ||
                 getCorner1() == null || getCorner2() == null ||
-                !Objects.equals(getCorner1().getWorld(), getCorner2().getWorld()))
+                !Objects.equals(getCorner1().getWorld(), getCorner2().getWorld())) {
             setClosed(true);
+            plugin.debugInfo(String.format("Arena %d did not meet opening requirements and was closed.", arena),
+                    2);
+        }
     }
 
+    /**
+     * Copies permanent arena characteristics from an existing arena and saves the change to the arena file.
+     * @param arenaToCopy The arena to copy characteristics from.
+     */
     public void copy(Arena arenaToCopy) {
         setMaxPlayers(arenaToCopy.getMaxPlayers());
         setMinPlayers(arenaToCopy.getMinPlayers());
@@ -1085,14 +1184,28 @@ public class Arena {
         setMonsterParticles(arenaToCopy.hasMonsterParticles());
         setVillagerParticles(arenaToCopy.hasVillagerParticles());
         if (config.contains("a" + arenaToCopy.getArena() + ".customShop"))
-            config.getConfigurationSection("a" + arenaToCopy.getArena() + ".customShop").getKeys(false)
-                    .forEach(index -> config.set(path + ".customShop." + index,
-                            config.getItemStack("a" + arenaToCopy.getArena() + ".customShop." + index)));
+            try {
+                config.getConfigurationSection("a" + arenaToCopy.getArena() + ".customShop").getKeys(false)
+                        .forEach(index -> config.set(path + ".customShop." + index,
+                                config.getItemStack("a" + arenaToCopy.getArena() + ".customShop." + index)));
+            } catch (Exception e) {
+                plugin.debugError(
+                        String.format("Attempted to retrieve the custom shop inventory of arena %d but found none.",
+                                arena), 1);
+            }
+
+        plugin.debugInfo(
+                String.format("Copied the characteristics of arena %d to arena %d.", arenaToCopy.getArena(), arena),
+                2);
     }
 
+    /**
+     * Removes all data of this arena from the arena file.
+     */
     public void remove() {
         config.set(path, null);
         setPortal(null);
         setArenaBoard(null);
+        plugin.debugInfo(String.format("Removing arena %d.", arena), 1);
     }
 }
