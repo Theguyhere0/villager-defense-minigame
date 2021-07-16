@@ -9,6 +9,7 @@ import me.theguyhere.villagerdefense.events.WaveStartEvent;
 import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
+import me.theguyhere.villagerdefense.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
@@ -391,36 +392,36 @@ public class Tasks {
 			case "Orc":
 				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD), 
 						plugin.getLanguageData().getString("inventoryFull"));
-				Utils.giveItem(player.getPlayer(), Kits.orc(),
+				Utils.giveItem(player.getPlayer(), Kit.orc(),
 						plugin.getLanguageData().getString("inventoryFull"));
 				break;
 			case "Farmer":
 				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD),
 						plugin.getLanguageData().getString("inventoryFull"));
-				Utils.giveItem(player.getPlayer(), Kits.farmer(),
+				Utils.giveItem(player.getPlayer(), Kit.farmer(),
 						plugin.getLanguageData().getString("inventoryFull"));
 				break;
 			case "Soldier":
-				Utils.giveItem(player.getPlayer(), Kits.soldier(),
+				Utils.giveItem(player.getPlayer(), Kit.soldier(),
 						plugin.getLanguageData().getString("inventoryFull"));
 				break;
 			case "Tailor":
 				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD), 
 						plugin.getLanguageData().getString("inventoryFull"));
 				EntityEquipment equipment = player.getPlayer().getEquipment();
-				equipment.setHelmet(Kits.tailorHelmet());
-				equipment.setChestplate(Kits.tailorChestplate());
-				equipment.setLeggings(Kits.tailorLeggings());
-				equipment.setBoots(Kits.tailorBoots());
+				equipment.setHelmet(Kit.tailorHelmet());
+				equipment.setChestplate(Kit.tailorChestplate());
+				equipment.setLeggings(Kit.tailorLeggings());
+				equipment.setBoots(Kit.tailorBoots());
 				break;
 			case "Alchemist":
 				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD), 
 						plugin.getLanguageData().getString("inventoryFull"));
-				Utils.giveItem(player.getPlayer(), Kits.alchemistSpeed(), 
+				Utils.giveItem(player.getPlayer(), Kit.alchemistSpeed(),
 						plugin.getLanguageData().getString("inventoryFull"));
-				Utils.giveItem(player.getPlayer(), Kits.alchemistHealth(),
+				Utils.giveItem(player.getPlayer(), Kit.alchemistHealth(),
 						plugin.getLanguageData().getString("inventoryFull"));
-				Utils.giveItem(player.getPlayer(), Kits.alchemistHealth(), 
+				Utils.giveItem(player.getPlayer(), Kit.alchemistHealth(),
 						plugin.getLanguageData().getString("inventoryFull"));
 				break;
 			case "Trader":
@@ -431,31 +432,31 @@ public class Tasks {
 			case "Summoner1":
 				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD),
 						plugin.getLanguageData().getString("inventoryFull"));
-				Utils.giveItem(player.getPlayer(), Kits.summoner1(),
+				Utils.giveItem(player.getPlayer(), Kit.summoner1(),
 						plugin.getLanguageData().getString("inventoryFull"));
 				break;
 			case "Summoner2":
 				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD),
 						plugin.getLanguageData().getString("inventoryFull"));
-				Utils.giveItem(player.getPlayer(), Kits.summoner2(),
+				Utils.giveItem(player.getPlayer(), Kit.summoner2(),
 						plugin.getLanguageData().getString("inventoryFull"));
 				break;
 			case "Summoner3":
 				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD),
 						plugin.getLanguageData().getString("inventoryFull"));
-				Utils.giveItem(player.getPlayer(), Kits.summoner3(),
+				Utils.giveItem(player.getPlayer(), Kit.summoner3(),
 						plugin.getLanguageData().getString("inventoryFull"));
 				break;
 			case "Reaper1":
-				Utils.giveItem(player.getPlayer(), Kits.reaper1(),
+				Utils.giveItem(player.getPlayer(), Kit.reaper1(),
 						plugin.getLanguageData().getString("inventoryFull"));
 				break;
 			case "Reaper2":
-				Utils.giveItem(player.getPlayer(), Kits.reaper2(),
+				Utils.giveItem(player.getPlayer(), Kit.reaper2(),
 						plugin.getLanguageData().getString("inventoryFull"));
 				break;
 			case "Reaper3":
-				Utils.giveItem(player.getPlayer(), Kits.reaper3(),
+				Utils.giveItem(player.getPlayer(), Kit.reaper3(),
 						plugin.getLanguageData().getString("inventoryFull"));
 				break;
 			case "Mage1":
@@ -463,7 +464,7 @@ public class Tasks {
 			case "Mage3":
 				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD),
 						plugin.getLanguageData().getString("inventoryFull"));
-				Utils.giveItem(player.getPlayer(), Kits.mage(),
+				Utils.giveItem(player.getPlayer(), Kit.mage(),
 						plugin.getLanguageData().getString("inventoryFull"));
 				break;
 			case "Ninja1":
@@ -471,7 +472,7 @@ public class Tasks {
 			case "Ninja3":
 				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD),
 						plugin.getLanguageData().getString("inventoryFull"));
-				Utils.giveItem(player.getPlayer(), Kits.ninja(),
+				Utils.giveItem(player.getPlayer(), Kit.ninja(),
 						plugin.getLanguageData().getString("inventoryFull"));
 				break;
 			case "Templar1":
@@ -479,7 +480,7 @@ public class Tasks {
 			case "Templar3":
 				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD), 
 						plugin.getLanguageData().getString("inventoryFull"));
-				Utils.giveItem(player.getPlayer(), Kits.templar(),
+				Utils.giveItem(player.getPlayer(), Kit.templar(),
 						plugin.getLanguageData().getString("inventoryFull"));
 				break;
 			case "Warrior1":
@@ -487,7 +488,7 @@ public class Tasks {
 			case "Warrior3":
 				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD),
 						plugin.getLanguageData().getString("inventoryFull"));
-				Utils.giveItem(player.getPlayer(), Kits.warrior(),
+				Utils.giveItem(player.getPlayer(), Kit.warrior(),
 						plugin.getLanguageData().getString("inventoryFull"));
 				break;
 			case "Knight1":
@@ -495,7 +496,7 @@ public class Tasks {
 			case "Knight3":
 				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD),
 						plugin.getLanguageData().getString("inventoryFull"));
-				Utils.giveItem(player.getPlayer(), Kits.knight(),
+				Utils.giveItem(player.getPlayer(), Kit.knight(),
 						plugin.getLanguageData().getString("inventoryFull"));
 				break;
 			case "Priest1":
@@ -503,7 +504,7 @@ public class Tasks {
 			case "Priest3":
 				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD),
 						plugin.getLanguageData().getString("inventoryFull"));
-				Utils.giveItem(player.getPlayer(), Kits.priest(),
+				Utils.giveItem(player.getPlayer(), Kit.priest(),
 						plugin.getLanguageData().getString("inventoryFull"));
 				break;
 			case "Siren1":
@@ -511,7 +512,7 @@ public class Tasks {
 			case "Siren3":
 				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD),
 						plugin.getLanguageData().getString("inventoryFull"));
-				Utils.giveItem(player.getPlayer(), Kits.siren(),
+				Utils.giveItem(player.getPlayer(), Kit.siren(),
 						plugin.getLanguageData().getString("inventoryFull"));
 				break;
 			case "Monk1":
@@ -519,7 +520,7 @@ public class Tasks {
 			case "Monk3":
 				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD),
 						plugin.getLanguageData().getString("inventoryFull"));
-				Utils.giveItem(player.getPlayer(), Kits.monk(),
+				Utils.giveItem(player.getPlayer(), Kit.monk(),
 						plugin.getLanguageData().getString("inventoryFull"));
 				break;
 			case "Messenger1":
@@ -527,7 +528,7 @@ public class Tasks {
 			case "Messenger3":
 				Utils.giveItem(player.getPlayer(), new ItemStack(Material.WOODEN_SWORD),
 						plugin.getLanguageData().getString("inventoryFull"));
-				Utils.giveItem(player.getPlayer(), Kits.messenger(),
+				Utils.giveItem(player.getPlayer(), Kit.messenger(),
 						plugin.getLanguageData().getString("inventoryFull"));
 				break;
 			case "Blacksmith":

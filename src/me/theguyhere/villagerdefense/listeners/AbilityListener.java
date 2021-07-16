@@ -4,6 +4,7 @@ import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.EndNinjaNerfEvent;
 import me.theguyhere.villagerdefense.game.models.*;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
 import net.md_5.bungee.api.ChatMessageType;
@@ -109,7 +110,7 @@ public class AbilityListener implements Listener {
         long dif = cooldowns.get(gamer) - System.currentTimeMillis();
 
         // Mage
-        if (gamer.getKit().contains("Mage") && Kits.mage().equals(item)) {
+        if (gamer.getKit().contains("Mage") && Kit.mage().equals(item)) {
             // Perform checks
             if (checkLevel(level, player, language))
                 return;
@@ -128,7 +129,7 @@ public class AbilityListener implements Listener {
         }
 
         // Ninja
-        if (gamer.getKit().contains("Ninja") && Kits.ninja().equals(item)) {
+        if (gamer.getKit().contains("Ninja") && Kit.ninja().equals(item)) {
             // Perform checks
             if (checkLevel(level, player, language))
                 return;
@@ -156,7 +157,7 @@ public class AbilityListener implements Listener {
         }
 
         // Templar
-        if (gamer.getKit().contains("Templar") && Kits.templar().equals(item)) {
+        if (gamer.getKit().contains("Templar") && Kit.templar().equals(item)) {
             // Perform checks
             if (checkLevel(level, player, language))
                 return;
@@ -196,7 +197,7 @@ public class AbilityListener implements Listener {
         }
 
         // Warrior
-        if (gamer.getKit().contains("Warrior") && Kits.warrior().equals(item)) {
+        if (gamer.getKit().contains("Warrior") && Kit.warrior().equals(item)) {
             // Perform checks
             if (checkLevel(level, player, language))
                 return;
@@ -236,7 +237,7 @@ public class AbilityListener implements Listener {
         }
 
         // Knight
-        if (gamer.getKit().contains("Knight") && Kits.knight().equals(item)) {
+        if (gamer.getKit().contains("Knight") && Kit.knight().equals(item)) {
             // Perform checks
             if (checkLevel(level, player, language))
                 return;
@@ -276,7 +277,7 @@ public class AbilityListener implements Listener {
         }
 
         // Priest
-        if (gamer.getKit().contains("Priest") && Kits.priest().equals(item)) {
+        if (gamer.getKit().contains("Priest") && Kit.priest().equals(item)) {
             // Perform checks
             if (checkLevel(level, player, language))
                 return;
@@ -316,7 +317,7 @@ public class AbilityListener implements Listener {
         }
 
         // Siren
-        if (gamer.getKit().contains("Siren") && Kits.siren().equals(item)) {
+        if (gamer.getKit().contains("Siren") && Kit.siren().equals(item)) {
             // Perform checks
             if (checkLevel(level, player, language))
                 return;
@@ -359,7 +360,7 @@ public class AbilityListener implements Listener {
         }
 
         // Monk
-        if (gamer.getKit().contains("Monk") && Kits.monk().equals(item)) {
+        if (gamer.getKit().contains("Monk") && Kit.monk().equals(item)) {
             // Perform checks
             if (checkLevel(level, player, language))
                 return;
@@ -399,7 +400,7 @@ public class AbilityListener implements Listener {
         }
 
         // Messenger
-        if (gamer.getKit().contains("Messenger") && Kits.messenger().equals(item)) {
+        if (gamer.getKit().contains("Messenger") && Kit.messenger().equals(item)) {
             // Perform checks
             if (checkLevel(level, player, language))
                 return;

@@ -9,12 +9,12 @@ package me.theguyhere.villagerdefense.game.models.players;
  * </ul>
  */
 public enum PlayerStatus {
-    /** Player is alive and active in the game. */
+    /** Player is alive and active in the game.*/
     ALIVE,
-    /** Player is dead but active in the game. */
+    /** Player is dead but active in the game.*/
     GHOST,
-    /** Player is spectating in the game. */
+    /** Player is spectating in the game.*/
     SPECTATOR,
-    /** Player has left the game. */
+    /** Player has left the game.*/
     LEFT
 }

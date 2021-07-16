@@ -9,12 +9,12 @@ package me.theguyhere.villagerdefense.game.models.arenas;
  * </ul>
  */
 public enum ArenaStatus {
-    /** Arena is closed. */
+    /** Arena is closed.*/
     CLOSED,
-    /** Arena is waiting for players to start. */
+    /** Arena is waiting for players to start.*/
     WAITING,
-    /** Arena is ongoing. */
+    /** Arena is ongoing.*/
     ACTIVE,
-    /** Arena is ending the current game. */
+    /** Arena is ending the current game.*/
     ENDING
 }

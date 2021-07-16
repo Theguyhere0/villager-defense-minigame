@@ -7,6 +7,7 @@ import me.theguyhere.villagerdefense.events.ReloadBoardsEvent;
 import me.theguyhere.villagerdefense.game.models.*;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
+import me.theguyhere.villagerdefense.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.DataManager;
@@ -786,10 +787,10 @@ public class GameListener implements Listener {
 				main.equals(GameItems.health3()) || main.equals(GameItems.speed()) || main.equals(GameItems.speed2()) ||
 				main.equals(GameItems.strength()) || main.equals(GameItems.strength2()) ||
 				main.equals(GameItems.regen()) || main.equals(GameItems.regen2()) ||
-				main.equals(Kits.mage()) || main.equals(Kits.ninja()) || main.getType() == Material.TRIDENT ||
-				main.equals(Kits.templar()) || main.equals(Kits.warrior()) || main.equals(Kits.knight()) ||
-				main.equals(Kits.priest()) || main.equals(Kits.siren()) || main.equals(Kits.monk()) ||
-				main.equals(Kits.messenger())) return;
+				main.equals(Kit.mage()) || main.equals(Kit.ninja()) || main.getType() == Material.TRIDENT ||
+				main.equals(Kit.templar()) || main.equals(Kit.warrior()) || main.equals(Kit.knight()) ||
+				main.equals(Kit.priest()) || main.equals(Kit.siren()) || main.equals(Kit.monk()) ||
+				main.equals(Kit.messenger())) return;
 
 		// Wolf spawn
 		if (item.getType() == Material.WOLF_SPAWN_EGG && 

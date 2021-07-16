@@ -10,6 +10,7 @@ import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.game.models.*;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
+import me.theguyhere.villagerdefense.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
@@ -42,7 +43,6 @@ public class InventoryListener implements Listener {
 	private final Leaderboard leaderboard;
 	private final InfoBoard infoBoard;
 	private final ArenaBoard arenaBoard;
-	private final Kits kits = new Kits();
 	private boolean close;
 
 	// Constants for armor types
@@ -2065,7 +2065,7 @@ public class InventoryListener implements Listener {
 			// Edit allowed kits
 			else if (buttonName.contains("Allowed Kits"))
 				if (arenaInstance.isClosed())
-					player.openInventory(inv.createAllowedKitsInventory(meta.getInteger1()));
+					player.openInventory(inv.createAllowedKitsInventory(meta.getInteger1(), false));
 				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
 			// Edit difficulty label
@@ -2438,7 +2438,7 @@ public class InventoryListener implements Listener {
 					banned.remove(kit);
 				else banned.add(kit);
 				arenaInstance.setBannedKits(banned);
-				player.openInventory(inv.createAllowedKitsInventory(meta.getInteger1()));
+				player.openInventory(inv.createAllowedKitsInventory(meta.getInteger1(), false));
 			}
 
 			// Exit menu
@@ -2976,9 +2976,9 @@ public class InventoryListener implements Listener {
 				|| kit.equals("Phantom") || kit.equals("Blacksmith") || kit.equals("Witch") || kit.equals("Merchant")
 				|| kit.equals("Vampire"))
 					if (!playerData.getBoolean(path + kit))
-						if (playerData.getInt(name + ".crystalBalance") >= kits.getPrice(kit)) {
+						if (playerData.getInt(name + ".crystalBalance") >= this.kit.getPrice(kit)) {
 							playerData.set(name + ".crystalBalance",
-									playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit));
+									playerData.getInt(name + ".crystalBalance") - this.kit.getPrice(kit));
 							playerData.set(path + kit, true);
 							player.sendMessage(Utils.notify(language.getString("kitBuy")));
 						} else player.sendMessage(Utils.notify(language.getString("kitBuyError")));
@@ -2987,9 +2987,9 @@ public class InventoryListener implements Listener {
 				if (kit.equals("Giant"))
 					switch (playerData.getInt(path + kit)) {
 						case 1:
-							if (playerData.getInt(name + ".crystalBalance") >= kits.getPrice(kit, 2)) {
+							if (playerData.getInt(name + ".crystalBalance") >= this.kit.getPrice(kit, 2)) {
 								playerData.set(name + ".crystalBalance",
-										playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit, 2));
+										playerData.getInt(name + ".crystalBalance") - this.kit.getPrice(kit, 2));
 								playerData.set(path + kit, 2);
 								player.sendMessage(Utils.notify(language.getString("kitUpgrade")));
 							} else player.sendMessage(Utils.notify(language.getString("kitUpgradeError")));
@@ -2997,9 +2997,9 @@ public class InventoryListener implements Listener {
 						case 2:
 							return;
 						default:
-							if (playerData.getInt(name + ".crystalBalance") >= kits.getPrice(kit, 1)) {
+							if (playerData.getInt(name + ".crystalBalance") >= this.kit.getPrice(kit, 1)) {
 								playerData.set(name + ".crystalBalance",
-										playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit, 1));
+										playerData.getInt(name + ".crystalBalance") - this.kit.getPrice(kit, 1));
 								playerData.set(path + kit, 1);
 								player.sendMessage(Utils.notify(language.getString("kitBuy")));
 							} else player.sendMessage(Utils.notify(language.getString("kitBuyError")));
@@ -3011,17 +3011,17 @@ public class InventoryListener implements Listener {
 				|| kit.equals("Siren") || kit.equals("Monk") || kit.equals("Messenger"))
 					switch (playerData.getInt(path + kit)) {
 						case 1:
-							if (playerData.getInt(name + ".crystalBalance") >= kits.getPrice(kit, 2)) {
+							if (playerData.getInt(name + ".crystalBalance") >= this.kit.getPrice(kit, 2)) {
 								playerData.set(name + ".crystalBalance",
-										playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit, 2));
+										playerData.getInt(name + ".crystalBalance") - this.kit.getPrice(kit, 2));
 								playerData.set(path + kit, 2);
 								player.sendMessage(Utils.notify(language.getString("kitUpgrade")));
 							} else player.sendMessage(Utils.notify(language.getString("kitUpgradeError")));
 							break;
 						case 2:
-							if (playerData.getInt(name + ".crystalBalance") >= kits.getPrice(kit, 3)) {
+							if (playerData.getInt(name + ".crystalBalance") >= this.kit.getPrice(kit, 3)) {
 								playerData.set(name + ".crystalBalance",
-										playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit, 3));
+										playerData.getInt(name + ".crystalBalance") - this.kit.getPrice(kit, 3));
 								playerData.set(path + kit, 3);
 								player.sendMessage(Utils.notify(language.getString("kitUpgrade")));
 							} else player.sendMessage(Utils.notify(language.getString("kitUpgradeError")));
@@ -3029,9 +3029,9 @@ public class InventoryListener implements Listener {
 						case 3:
 							return;
 						default:
-							if (playerData.getInt(name + ".crystalBalance") >= kits.getPrice(kit, 1)) {
+							if (playerData.getInt(name + ".crystalBalance") >= this.kit.getPrice(kit, 1)) {
 								playerData.set(name + ".crystalBalance",
-										playerData.getInt(name + ".crystalBalance") - kits.getPrice(kit, 1));
+										playerData.getInt(name + ".crystalBalance") - this.kit.getPrice(kit, 1));
 								playerData.set(path + kit, 1);
 								player.sendMessage(Utils.notify(language.getString("kitBuy")));
 							} else player.sendMessage(Utils.notify(language.getString("kitBuyError")));
@@ -3165,7 +3165,7 @@ public class InventoryListener implements Listener {
 				player.openInventory(game.arenas.get(meta.getInteger1()).getMockCustomShop());
 
 			else if (buttonName.contains("Allowed Kits"))
-				player.openInventory(inv.createMockAllowedKitsInventory(meta.getInteger1()));
+				player.openInventory(inv.createAllowedKitsInventory(meta.getInteger1(), true));
 		}
 	}
 

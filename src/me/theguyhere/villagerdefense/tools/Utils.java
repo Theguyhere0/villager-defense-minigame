@@ -21,6 +21,13 @@ public class Utils {
     private static final int MINUTES_TO_SECONDS = 60;
     private static final int SECONDS_TO_MILLIS = 1000;
 
+    /** Flags for creating normal items with enchants and/or lore.*/
+    public static final boolean[] NORMAL_FLAGS = {false, false};
+    /** Flags for creating items with hidden enchants.*/
+    public static final boolean[] HIDE_ENCHANT_FLAGS = {true, false};
+    /** Flags for creating items with hidden enchants and attributes, mostly for buttons.*/
+    public static final boolean[] BUTTON_FLAGS = {true, true};
+
     // Formats chat text
     public static String format(String msg) {
         return ChatColor.translateAlternateColorCodes('&', msg);
@@ -55,7 +62,7 @@ public class Utils {
     }
 
     // Creates an ItemStack using only material, name, and lore list
-    public static ItemStack createItem(Material matID, String dispName, List<String> lores) {
+    public static ItemStack createItem(Material matID, String dispName, List<String> lores, String... moreLores) {
         // Create ItemStack
         ItemStack item = new ItemStack(matID);
         ItemMeta meta = item.getItemMeta();
@@ -69,6 +76,7 @@ public class Utils {
             meta.setDisplayName(dispName);
 
         // Set lore
+        lores.addAll(Arrays.asList(moreLores));
         meta.setLore(lores);
         item.setItemMeta(meta);
 
@@ -108,9 +116,10 @@ public class Utils {
                                        String dispName,
                                        boolean[] flags,
                                        HashMap<Enchantment, Integer> enchants,
-                                       List<String> lores) {
+                                       List<String> lores,
+                                       String... moreLores) {
         // Create ItemStack
-        ItemStack item = createItem(matID, dispName, lores);
+        ItemStack item = createItem(matID, dispName, lores, moreLores);
         ItemMeta meta = item.getItemMeta();
 
         // Set enchants

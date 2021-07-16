@@ -32,57 +32,51 @@ import java.util.stream.Stream;
  * A class managing data about a Villager Defense arena.
  */
 public class Arena {
-    /** Instance of the plugin. */
+    /** Instance of the plugin.*/
     private final Main plugin;
-    /** Arena number. */
+    /** Arena number.*/
     private final int arena;
-    /** A variable more quickly access the file configuration of the arena file. */
+    /** A variable more quickly access the file configuration of the arena file.*/
     private final FileConfiguration config;
-    /** Common string for all data paths in the arena file. */
+    /** Common string for all data paths in the arena file.*/
     private final String path;
     private final Tasks task; // The tasks object for the arena
 
-    /** Caps lock flag for the arena's naming inventory. */
+    /** Caps lock flag for the arena's naming inventory.*/
     private boolean caps;
-    /** Status of the arena. */
+    /** Status of the arena.*/
     private ArenaStatus status;
-    /** Whether the arena is in the process of spawning monsters. */
+    /** Whether the arena is in the process of spawning monsters.*/
     private boolean spawningMonsters;
-    /** Whether the arena is in the process of spawning villagers. */
+    /** Whether the arena is in the process of spawning villagers.*/
     private boolean spawningVillagers;
-    /** Current wave of the active game. */
+    /** Current wave of the active game.*/
     private int currentWave;
-    /** Villager count. */
+    /** Villager count.*/
     private int villagers;
-    /** Enemy count. */
+    /** Enemy count.*/
     private int enemies;
-    /** Iron golem count. */
+    /** Iron golem count.*/
     private int golems;
-    /** ID of task managing player spawn particles. */
+    /** ID of task managing player spawn particles.*/
     private int playerParticlesID = 0;
-    /** ID of task managing monster spawn particles. */
+    /** ID of task managing monster spawn particles.*/
     private int monsterParticlesID = 0;
-    /** ID of task managing villager spawn particles. */
+    /** ID of task managing villager spawn particles.*/
     private int villagerParticlesID = 0;
-    /** A list of players in the arena. */
+    /** A list of players in the arena.*/
     private final List<VDPlayer> players = new ArrayList<>();
-    /** Weapon shop inventory. */
+    /** Weapon shop inventory.*/
     private Inventory weaponShop;
-    /** Armor shop inventory. */
+    /** Armor shop inventory.*/
     private Inventory armorShop;
-    /** Consumables shop inventory. */
+    /** Consumables shop inventory.*/
     private Inventory consumeShop;
-    /** Community chest inventory. */
+    /** Community chest inventory.*/
     private Inventory communityChest;
-    /** Time limit bar object. */
+    /** Time limit bar object.*/
     private BossBar timeLimitBar;
 
-    /**
-     * Basic {@link Arena} constructor.
-     * @param plugin An instance of the plugin.
-     * @param arena The arena number.
-     * @param task An instance of the task object.
-     */
     public Arena(Main plugin, int arena, Tasks task) {
         this.plugin = plugin;
         config = plugin.getArenaData();

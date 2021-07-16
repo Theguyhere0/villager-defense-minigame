@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.game.models.players;
 
+import me.theguyhere.villagerdefense.game.models.kits.Kit;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -10,35 +11,29 @@ import java.util.UUID;
  * A class holding data about players in a Villager Defense game.
  */
 public class VDPlayer {
-    /** UUID of corresponding {@link Player}. */
+    /** UUID of corresponding {@link Player}.*/
     private final UUID player;
-
-    /** Status of the this {@link VDPlayer}. */
+    /** Status of the this {@link VDPlayer}.*/
     private PlayerStatus status;
-    /** Gem balance. */
+    /** Gem balance.*/
     private int gems;
-    /** Kill count. */
+    /** Kill count.*/
     private int kills;
-    /** Wolf count. */
+    /** Wolf count.*/
     private int wolves;
-    /** The wave at which the player joined the game as an active player. */
+    /** The wave at which the player joined the game as an active player.*/
     private int joinedWave;
-    /** Name of the kit selected. */
-    private String kit;
-    /** Helmet {@link ItemStack} held for ninja ability. */
+    /** The {@link Kit} the player will play with.*/
+    private Kit kit;
+    /** Helmet {@link ItemStack} held for ninja ability.*/
     private ItemStack helmet;
-    /** Chestplate {@link ItemStack} held for ninja ability. */
+    /** Chestplate {@link ItemStack} held for ninja ability.*/
     private ItemStack chestplate;
-    /** Leggings {@link ItemStack} held for ninja ability. */
+    /** Leggings {@link ItemStack} held for ninja ability.*/
     private ItemStack leggings;
-    /** Boots {@link ItemStack} held for ninja ability. */
+    /** Boots {@link ItemStack} held for ninja ability.*/
     private ItemStack boots;
 
-    /**
-     * Basic {@link VDPlayer} constructor.
-     * @param player The player to hold data for
-     * @param spectating Whether they are spectating or not
-     */
     public VDPlayer(Player player, boolean spectating) {
         this.player = player.getUniqueId();
         if (spectating)
@@ -48,7 +43,7 @@ public class VDPlayer {
         kills = 0;
         wolves = 0;
         joinedWave = 0;
-        kit = "None";
+        kit = Kit.none();
     }
 
     public Player getPlayer() {
@@ -77,7 +72,7 @@ public class VDPlayer {
 
     /**
      * Checks whether the player can afford a shop item.
-     * @param cost Item cost
+     * @param cost Item cost.
      * @return Boolean indicating whether the item was affordable.
      */
     public boolean canAfford(int cost) {
@@ -88,7 +83,7 @@ public class VDPlayer {
         kills++;
     }
 
-    public String getKit() {
+    public Kit getKit() {
         return kit;
     }
 
@@ -112,7 +107,7 @@ public class VDPlayer {
         this.joinedWave = joinedWave;
     }
 
-    public void setKit(String kit) {
+    public void setKit(Kit kit) {
         this.kit = kit;
     }
 

@@ -3,6 +3,7 @@ package me.theguyhere.villagerdefense.GUI;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.game.models.*;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -20,7 +21,6 @@ import java.util.List;
 
 public class Inventories {
 	private final Main plugin;
-	private final Kits kits = new Kits();
 
 	public Inventories (Main plugin) {
 		this.plugin = plugin;
@@ -40,10 +40,7 @@ public class Inventories {
 	public static final Material[] INFO_BOARD_MATS = {Material.DARK_OAK_SIGN, Material.BIRCH_SIGN};
 	public static final Material[] MONSTER_MATS = {Material.SKELETON_SKULL, Material.ZOMBIE_HEAD};
 	public static final Material[] VILLAGER_MATS = {Material.WITHER_ROSE, Material.POPPY};
-
-	// Button creation constants
-	final static boolean[] FLAGS = {true, true};
-
+	
 	// Menu of all the arenas
 	public Inventory createArenasInventory() {
 		// Create inventory
@@ -71,7 +68,7 @@ public class Inventories {
 
 		// Option to set leaderboard hologram
 		inv.setItem(47, Utils.createItem(Material.GOLDEN_HELMET, Utils.format("&e&lLeaderboards"),
-				FLAGS, null, Utils.format("&7Manage leaderboards")));
+				Utils.BUTTON_FLAGS, null, Utils.format("&7Manage leaderboards")));
 
 		// Option to exit
 		inv.setItem(53, InventoryItems.exit());
@@ -206,7 +203,7 @@ public class Inventories {
 
 		// Option to modify top wave leaderboard
 		inv.setItem(4, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&9&lTop Wave Leaderboard"),
-				FLAGS, null));
+				Utils.BUTTON_FLAGS, null));
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());
@@ -604,14 +601,14 @@ public class Inventories {
 		// Option to edit max players
 		inv.setItem(3, Utils.createItem(Material.NETHERITE_HELMET,
 				Utils.format("&4&lMaximum Players"),
-				FLAGS,
+				Utils.BUTTON_FLAGS,
 				null,
 				Utils.format("&7Maximum players the game will have")));
 
 		// Option to edit min players
 		inv.setItem(4, Utils.createItem(Material.NETHERITE_BOOTS,
 				Utils.format("&2&lMinimum Players"),
-				FLAGS,
+				Utils.BUTTON_FLAGS,
 				null,
 				Utils.format("&7Minimum players needed for game to start")));
 
@@ -1090,7 +1087,7 @@ public class Inventories {
 		// Option to change max waves
 		inv.setItem(0, Utils.createItem(Material.NETHERITE_SWORD,
 				Utils.format("&3&lMax Waves"),
-				FLAGS,
+				Utils.BUTTON_FLAGS,
 				null));
 
 		// Option to wave time limit
@@ -1111,7 +1108,7 @@ public class Inventories {
 		// Option to adjust overall difficulty multiplier
 		inv.setItem(5, Utils.createItem(Material.TURTLE_HELMET,
 				Utils.format("&4&lDifficulty Multiplier"),
-				FLAGS,
+				Utils.BUTTON_FLAGS,
 				null,
 				Utils.format("&7Determines difficulty increase rate")));
 
@@ -1150,7 +1147,7 @@ public class Inventories {
 		// Option to edit sounds
 		inv.setItem(14, Utils.createItem(Material.MUSIC_DISC_13,
 				Utils.format("&d&lSounds"),
-				FLAGS,
+				Utils.BUTTON_FLAGS,
 				null));
 
 		// Option to copy game settings from another arena or a preset
@@ -1228,496 +1225,100 @@ public class Inventories {
 	}
 
 	// Menu for allowed kits of an arena
-	public Inventory createAllowedKitsInventory(int arena) {
+	public Inventory createAllowedKitsInventory(int arena, boolean mock) {
 		Arena arenaInstance = plugin.getGame().arenas.get(arena);
-		HashMap<Enchantment, Integer> enchants = new HashMap<>();
-		enchants.put(Enchantment.DURABILITY, 1);
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54, Utils.format("&k") +
-				Utils.format("&9&lAllowed Kits"));
+				(mock ? Utils.format("&9&lAllowed Kits: " + arenaInstance.getName()) :
+						Utils.format("&9&lAllowed Kits")));
 
 		// Gift kits
 		for (int i = 0; i < 9; i++)
 			inv.setItem(i, Utils.createItem(Material.LIME_STAINED_GLASS_PANE, Utils.format("&a&lGift Kits"),
 					Utils.format("&7Kits give one-time benefits"), Utils.format("&7per game or respawn")));
 
-		if (!arenaInstance.getBannedKits().contains("Orc"))
-			inv.setItem(9, Utils.createItem(Material.STICK, Utils.format("&a&lOrc"), FLAGS, enchants,
-					Utils.format("&7Start with a knockback V stick")));
-		else inv.setItem(9, Utils.createItem(Material.STICK, Utils.format("&4&LOrc"),
-				Utils.format("&7Start with a knockback V stick")));
-
-		if (!arenaInstance.getBannedKits().contains("Farmer"))
-			inv.setItem(10, Utils.createItem(Material.CARROT, Utils.format("&a&lFarmer"), FLAGS, enchants,
-					Utils.format("&7Start with 5 carrots")));
-		else inv.setItem(10, Utils.createItem(Material.CARROT, Utils.format("&4&LFarmer"),
-				Utils.format("&7Start with 5 carrots")));
-
-		if (!arenaInstance.getBannedKits().contains("Soldier"))
-			inv.setItem(11, Utils.createItem(Material.STONE_SWORD, Utils.format("&a&lSoldier"), FLAGS,
-					enchants, Utils.format("&7Start with a stone sword")));
-		else inv.setItem(11, Utils.createItem(Material.STONE_SWORD, Utils.format("&4&LSoldier"), FLAGS,
-				null, Utils.format("&7Start with a stone sword")));
-
-		if (!arenaInstance.getBannedKits().contains("Tailor"))
-			inv.setItem(12, Utils.createItem(Material.LEATHER_CHESTPLATE, Utils.format("&a&lTailor"), FLAGS,
-					enchants, Utils.format("&7Start with a full leather armor set")));
-		else inv.setItem(12, Utils.createItem(Material.LEATHER_CHESTPLATE, Utils.format("&4&LTailor"), FLAGS,
-				null, Utils.format("&7Start with a full leather armor set")));
-
-		if (!arenaInstance.getBannedKits().contains("Alchemist"))
-			inv.setItem(13, Utils.createItem(Material.BREWING_STAND, Utils.format("&a&lAlchemist"), FLAGS,
-					enchants, Utils.format("&7Start with 1 speed and 2 healing"),
-					Utils.format("&7splash potions")));
-		else inv.setItem(13, Utils.createItem(Material.BREWING_STAND, Utils.format("&4&LAlchemist"),
-				Utils.format("&7Start with 1 speed and 2 healing"),
-				Utils.format("&7splash potions")));
-
-		if (!arenaInstance.getBannedKits().contains("Trader"))
-			inv.setItem(14, Utils.createItem(Material.EMERALD, Utils.format("&a&lTrader"), FLAGS, enchants,
-					Utils.format("&7Start with 200 gems")));
-		else inv.setItem(14, Utils.createItem(Material.EMERALD, Utils.format("&4&LTrader"),
-				Utils.format("&7Start with 200 gems")));
-
-		if (!arenaInstance.getBannedKits().contains("Summoner"))
-			inv.setItem(15, Utils.createItem(Material.POLAR_BEAR_SPAWN_EGG, Utils.format("&a&lSummoner"),
-					FLAGS, enchants,
-					Utils.format("&fLevel 1"), Utils.format("&7Start with a wolf spawn"),
-					Utils.format("&fLevel 2"), Utils.format("&7Start with 2 wolf spawns"),
-					Utils.format("&fLevel 3"), Utils.format("&7Start with an iron golem spawn")));
-		else inv.setItem(15, Utils.createItem(Material.POLAR_BEAR_SPAWN_EGG, Utils.format("&4&LSummoner"),
-				Utils.format("&fLevel 1"), Utils.format("&7Start with a wolf spawn"),
-				Utils.format("&fLevel 2"), Utils.format("&7Start with 2 wolf spawns"),
-				Utils.format("&fLevel 3"), Utils.format("&7Start with an iron golem spawn")));
-
-		if (!arenaInstance.getBannedKits().contains("Reaper"))
-			inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&a&lReaper"), FLAGS,
-					enchants, Utils.format("&fLevel 1"),
-					Utils.format("&7Start with a sharpness III netherite hoe"), Utils.format("&fLevel 2"),
-					Utils.format("&7Start with a sharpness V netherite hoe"), Utils.format("&fLevel 3"),
-					Utils.format("&7Start with a sharpness VIII netherite hoe")));
-		else inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&4&LReaper"), FLAGS,
-				null, Utils.format("&fLevel 1"),
-				Utils.format("&7Start with a sharpness III netherite hoe"), Utils.format("&fLevel 2"),
-				Utils.format("&7Start with a sharpness V netherite hoe"), Utils.format("&fLevel 3"),
-				Utils.format("&7Start with a sharpness VIII netherite hoe")));
-
-		if (!arenaInstance.getBannedKits().contains("Phantom"))
-			inv.setItem(17, Utils.createItem(Material.PHANTOM_MEMBRANE, Utils.format("&a&lPhantom"), FLAGS,
-					enchants, Utils.format("&7Join as a player in any non-maxed game"),
-					Utils.format("&7using &b/vd select")));
-		else inv.setItem(17, Utils.createItem(Material.PHANTOM_MEMBRANE, Utils.format("&4&LPhantom"),
-				Utils.format("&7Join as a player in any non-maxed game"),
-				Utils.format("&7using &b/vd select")));
+		if (arenaInstance.getBannedKits().contains(Kit.orc().getName()))
+			inv.setItem(9, Kit.orc().getButton(-1, false));
+		else inv.setItem(9, Kit.orc().getButton(-1, true));
+		if (arenaInstance.getBannedKits().contains(Kit.farmer().getName()))
+			inv.setItem(10, Kit.farmer().getButton(-1, false));
+		else inv.setItem(10, Kit.farmer().getButton(-1, true));
+		if (arenaInstance.getBannedKits().contains(Kit.soldier().getName()))
+			inv.setItem(11, Kit.soldier().getButton(-1, false));
+		else inv.setItem(11, Kit.soldier().getButton(-1, true));
+		if (arenaInstance.getBannedKits().contains(Kit.alchemist().getName()))
+			inv.setItem(12, Kit.alchemist().getButton(-1, false));
+		else inv.setItem(12, Kit.alchemist().getButton(-1, true));
+		if (arenaInstance.getBannedKits().contains(Kit.tailor().getName()))
+			inv.setItem(13, Kit.tailor().getButton(-1, false));
+		else inv.setItem(13, Kit.tailor().getButton(-1, true));
+		if (arenaInstance.getBannedKits().contains(Kit.trader().getName()))
+			inv.setItem(14, Kit.trader().getButton(-1, false));
+		else inv.setItem(14, Kit.trader().getButton(-1, true));
+		if (arenaInstance.getBannedKits().contains(Kit.summoner().getName()))
+			inv.setItem(15, Kit.summoner().getButton(-1, false));
+		else inv.setItem(15, Kit.summoner().getButton(-1, true));
+		if (arenaInstance.getBannedKits().contains(Kit.reaper().getName()))
+			inv.setItem(16, Kit.reaper().getButton(-1, false));
+		else inv.setItem(16, Kit.reaper().getButton(-1, true));
+		if (arenaInstance.getBannedKits().contains(Kit.phantom().getName()))
+			inv.setItem(17, Kit.phantom().getButton(-1, false));
+		else inv.setItem(17, Kit.phantom().getButton(-1, true));
 
 		// Ability kits
 		for (int i = 18; i < 27; i++)
 			inv.setItem(i, Utils.createItem(Material.MAGENTA_STAINED_GLASS_PANE, Utils.format("&d&lAbility Kits"),
 					Utils.format("&7Kits give special ability per respawn")));
 
-		if (!arenaInstance.getBannedKits().contains("Mage"))
-			inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&d&lMage"), FLAGS, enchants,
-					Utils.format("&7Shoot fireballs"), Utils.format("&fLevel 1"),
-					Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-					Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-					Utils.format("&7Up to level 30 ability")));
-		else inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&4&LMage"),
-				Utils.format("&7Shoot fireballs"), Utils.format("&fLevel 1"),
-				Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-				Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-				Utils.format("&7Up to level 30 ability")));
-
-		if (!arenaInstance.getBannedKits().contains("Ninja"))
-			inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"), FLAGS, enchants,
-					Utils.format("&7You and your pets become invisible"),
-					Utils.format("&7and stun monsters"), Utils.format("&fLevel 1"),
-					Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-					Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-					Utils.format("&7Up to level 30 ability")));
-		else inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&4&LNinja"),
-				Utils.format("&7You and your pets become invisible"),
-				Utils.format("&7and stun monsters"), Utils.format("&fLevel 1"),
-				Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-				Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-				Utils.format("&7Up to level 30 ability")));
-
-		if (!arenaInstance.getBannedKits().contains("Templar"))
-			inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
-					enchants,
-					Utils.format("&7Give yourself and nearby allies absorption"), Utils.format("&fLevel 1"),
-					Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-					Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-					Utils.format("&7Up to level 30 ability")));
-		else inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&4&LTemplar"), FLAGS,
-				null,
-				Utils.format("&7Give yourself and nearby allies absorption"), Utils.format("&fLevel 1"),
-				Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-				Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-				Utils.format("&7Up to level 30 ability")));
-
-		if (!arenaInstance.getBannedKits().contains("Warrior"))
-			inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
-					enchants,
-					Utils.format("&7Give yourself and nearby allies strength"), Utils.format("&fLevel 1"),
-					Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-					Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-					Utils.format("&7Up to level 30 ability")));
-		else inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&4&LWarrior"), FLAGS,
-				null,
-				Utils.format("&7Give yourself and nearby allies strength"), Utils.format("&fLevel 1"),
-				Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-				Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-				Utils.format("&7Up to level 30 ability")));
-
-		if (!arenaInstance.getBannedKits().contains("Knight"))
-			inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"), FLAGS, enchants,
-					Utils.format("&7Give yourself and nearby allies resistance"), Utils.format("&fLevel 1"),
-					Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-					Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-					Utils.format("&7Up to level 30 ability")));
-		else inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&4&LKnight"),
-				Utils.format("&7Give yourself and nearby allies resistance"), Utils.format("&fLevel 1"),
-				Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-				Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-				Utils.format("&7Up to level 30 ability")));
-
-		if (!arenaInstance.getBannedKits().contains("Priest"))
-			inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"), FLAGS,
-					enchants,
-					Utils.format("&7Give yourself and nearby allies regeneration"), Utils.format("&fLevel 1"),
-					Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-					Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-					Utils.format("&7Up to level 30 ability")));
-		else inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&4&LPriest"),
-				Utils.format("&7Give yourself and nearby allies regeneration"), Utils.format("&fLevel 1"),
-				Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-				Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-				Utils.format("&7Up to level 30 ability")));
-
-		if (!arenaInstance.getBannedKits().contains("Siren"))
-			inv.setItem(33, Utils.createItem(Material.COBWEB, Utils.format("&d&lSiren"), FLAGS, enchants,
-					Utils.format("&7Slow and even weaken nearby monsters"), Utils.format("&fLevel 1"),
-					Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-					Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-					Utils.format("&7Up to level 30 ability")));
-		else inv.setItem(33, Utils.createItem(Material.COBWEB, Utils.format("&4&LSiren"),
-				Utils.format("&7Slow and even weaken nearby monsters"), Utils.format("&fLevel 1"),
-				Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-				Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-				Utils.format("&7Up to level 30 ability")));
-
-		if (!arenaInstance.getBannedKits().contains("Monk"))
-			inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"), FLAGS, enchants,
-					Utils.format("&7Give yourself and nearby allies haste"), Utils.format("&fLevel 1"),
-					Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-					Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-					Utils.format("&7Up to level 30 ability")));
-		else inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&4&LMonk"),
-				Utils.format("&7Give yourself and nearby allies haste"), Utils.format("&fLevel 1"),
-				Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-				Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-				Utils.format("&7Up to level 30 ability")));
-
-		if (!arenaInstance.getBannedKits().contains("Messenger"))
-			inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"), FLAGS, enchants,
-					Utils.format("&7Give yourself and nearby allies speed"), Utils.format("&fLevel 1"),
-					Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-					Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-					Utils.format("&7Up to level 30 ability")));
-		else inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&4&lMessenger"),
-				Utils.format("&7Give yourself and nearby allies speed"), Utils.format("&fLevel 1"),
-				Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-				Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-				Utils.format("&7Up to level 30 ability")));
+		if (arenaInstance.getBannedKits().contains(Kit.mage().getName()))
+			inv.setItem(27, Kit.mage().getButton(-1, false));
+		else inv.setItem(27, Kit.mage().getButton(-1, true));
+		if (arenaInstance.getBannedKits().contains(Kit.ninja().getName()))
+			inv.setItem(28, Kit.ninja().getButton(-1, false));
+		else inv.setItem(28, Kit.ninja().getButton(-1, true));
+		if (arenaInstance.getBannedKits().contains(Kit.templar().getName()))
+			inv.setItem(29, Kit.templar().getButton(-1, false));
+		else inv.setItem(29, Kit.templar().getButton(-1, true));
+		if (arenaInstance.getBannedKits().contains(Kit.warrior().getName()))
+			inv.setItem(30, Kit.warrior().getButton(-1, false));
+		else inv.setItem(30, Kit.warrior().getButton(-1, true));
+		if (arenaInstance.getBannedKits().contains(Kit.knight().getName()))
+			inv.setItem(31, Kit.knight().getButton(-1, false));
+		else inv.setItem(31, Kit.knight().getButton(-1, true));
+		if (arenaInstance.getBannedKits().contains(Kit.priest().getName()))
+			inv.setItem(32, Kit.priest().getButton(-1, false));
+		else inv.setItem(32, Kit.priest().getButton(-1, true));
+		if (arenaInstance.getBannedKits().contains(Kit.siren().getName()))
+			inv.setItem(33, Kit.siren().getButton(-1, false));
+		else inv.setItem(33, Kit.siren().getButton(-1, true));
+		if (arenaInstance.getBannedKits().contains(Kit.monk().getName()))
+			inv.setItem(34, Kit.monk().getButton(-1, false));
+		else inv.setItem(34, Kit.monk().getButton(-1, true));
+		if (arenaInstance.getBannedKits().contains(Kit.messenger().getName()))
+			inv.setItem(35, Kit.messenger().getButton(-1, false));
+		else inv.setItem(35, Kit.messenger().getButton(-1, true));
 
 		// Effect kits
 		for (int i = 36; i < 45; i++)
 			inv.setItem(i, Utils.createItem(Material.YELLOW_STAINED_GLASS_PANE, Utils.format("&e&lEffect Kits"),
-					Utils.format("&7Kits give player a special effect")));
+					Utils.format("&7Kits give players a permanent") + Utils.format("&7special effect")));
 
-		if (!arenaInstance.getBannedKits().contains("Blacksmith"))
-			inv.setItem(45, Utils.createItem(Material.ANVIL, Utils.format("&e&lBlacksmith"), FLAGS, enchants,
-					Utils.format("&7All equipment purchased are unbreakable")));
-		else inv.setItem(45, Utils.createItem(Material.ANVIL, Utils.format("&4&LBlacksmith"),
-				Utils.format("&7All equipment purchased are unbreakable")));
-
-		if (!arenaInstance.getBannedKits().contains("Witch"))
-			inv.setItem(46, Utils.createItem(Material.CAULDRON, Utils.format("&e&lWitch"), FLAGS, enchants,
-					Utils.format("&7All purchased potions become splash potions")));
-		else inv.setItem(46, Utils.createItem(Material.CAULDRON, Utils.format("&4&LWitch"),
-				Utils.format("&7All purchased potions become splash potions")));
-
-		if (!arenaInstance.getBannedKits().contains("Merchant"))
-			inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&e&lMerchant"), FLAGS,
-					enchants, Utils.format("&7Earn a 10% rebate on all purchases")));
-		else inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&4&LMerchant"),
-				Utils.format("&7Earn a 10% rebate on all purchases")));
-
-		if (!arenaInstance.getBannedKits().contains("Vampire"))
-			inv.setItem(48, Utils.createItem(Material.GHAST_TEAR, Utils.format("&e&lVampire"), FLAGS, enchants,
-					Utils.format("&7Dealing x damage has an x% chance"),
-					Utils.format("&7of healing half a heart")));
-		else inv.setItem(48, Utils.createItem(Material.GHAST_TEAR, Utils.format("&4&LVampire"),
-				Utils.format("&7Dealing x damage has an x% chance"),
-				Utils.format("&7of healing half a heart")));
-
-		if (!arenaInstance.getBannedKits().contains("Giant"))
-			inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&e&lGiant"), FLAGS, enchants,
-					Utils.format("&fLevel 1"), Utils.format("&7Permanent 10% health boost"),
-					Utils.format("&fLevel 2"), Utils.format("&7Permanent 20% health boost")));
-		else inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&4&LGiant"),
-				Utils.format("&fLevel 1"), Utils.format("&7Permanent 10% health boost"),
-				Utils.format("&fLevel 2"), Utils.format("&7Permanent 20% health boost")));
-
-		// Option to exit
-		inv.setItem(53, InventoryItems.exit());
-
-		return inv;
-	}
-
-	// Menu for displaying allowed kits of an arena
-	public Inventory createMockAllowedKitsInventory(int arena) {
-		Arena arenaInstance = plugin.getGame().arenas.get(arena);
-		HashMap<Enchantment, Integer> enchants = new HashMap<>();
-		enchants.put(Enchantment.DURABILITY, 1);
-
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54, Utils.format("&k") +
-				Utils.format("&9&lAllowed Kits: " + arenaInstance.getName()));
-
-		// Gift kits
-		for (int i = 0; i < 9; i++)
-			inv.setItem(i, Utils.createItem(Material.LIME_STAINED_GLASS_PANE, Utils.format("&a&lGift Kits"),
-					Utils.format("&7Kits give one-time benefits"), Utils.format("&7per game or respawn")));
-
-		if (!arenaInstance.getBannedKits().contains("Orc"))
-			inv.setItem(9, Utils.createItem(Material.STICK, Utils.format("&a&lOrc"), FLAGS, enchants,
-					Utils.format("&7Start with a knockback V stick")));
-		else inv.setItem(9, Utils.createItem(Material.STICK, Utils.format("&4&LOrc"),
-				Utils.format("&7Start with a knockback V stick")));
-
-		if (!arenaInstance.getBannedKits().contains("Farmer"))
-			inv.setItem(10, Utils.createItem(Material.CARROT, Utils.format("&a&lFarmer"), FLAGS, enchants,
-					Utils.format("&7Start with 5 carrots")));
-		else inv.setItem(10, Utils.createItem(Material.CARROT, Utils.format("&4&LFarmer"),
-				Utils.format("&7Start with 5 carrots")));
-
-		if (!arenaInstance.getBannedKits().contains("Soldier"))
-			inv.setItem(11, Utils.createItem(Material.STONE_SWORD, Utils.format("&a&lSoldier"), FLAGS,
-					enchants, Utils.format("&7Start with a stone sword")));
-		else inv.setItem(11, Utils.createItem(Material.STONE_SWORD, Utils.format("&4&LSoldier"), FLAGS,
-				null, Utils.format("&7Start with a stone sword")));
-
-		if (!arenaInstance.getBannedKits().contains("Tailor"))
-			inv.setItem(12, Utils.createItem(Material.LEATHER_CHESTPLATE, Utils.format("&a&lTailor"), FLAGS,
-					enchants, Utils.format("&7Start with a full leather armor set")));
-		else inv.setItem(12, Utils.createItem(Material.LEATHER_CHESTPLATE, Utils.format("&4&LTailor"), FLAGS,
-				null, Utils.format("&7Start with a full leather armor set")));
-
-		if (!arenaInstance.getBannedKits().contains("Alchemist"))
-			inv.setItem(13, Utils.createItem(Material.BREWING_STAND, Utils.format("&a&lAlchemist"), FLAGS,
-					enchants, Utils.format("&7Start with 1 speed and 2 healing"),
-					Utils.format("&7splash potions")));
-		else inv.setItem(13, Utils.createItem(Material.BREWING_STAND, Utils.format("&4&LAlchemist"),
-				Utils.format("&7Start with 1 speed and 2 healing"),
-				Utils.format("&7splash potions")));
-
-		if (!arenaInstance.getBannedKits().contains("Trader"))
-			inv.setItem(14, Utils.createItem(Material.EMERALD, Utils.format("&a&lTrader"), FLAGS, enchants,
-					Utils.format("&7Start with 200 gems")));
-		else inv.setItem(14, Utils.createItem(Material.EMERALD, Utils.format("&4&LTrader"),
-				Utils.format("&7Start with 200 gems")));
-
-		if (!arenaInstance.getBannedKits().contains("Summoner"))
-			inv.setItem(15, Utils.createItem(Material.POLAR_BEAR_SPAWN_EGG, Utils.format("&a&lSummoner"),
-					FLAGS, enchants,
-					Utils.format("&fLevel 1"), Utils.format("&7Start with a wolf spawn"),
-					Utils.format("&fLevel 2"), Utils.format("&7Start with 2 wolf spawns"),
-					Utils.format("&fLevel 3"), Utils.format("&7Start with an iron golem spawn")));
-		else inv.setItem(15, Utils.createItem(Material.POLAR_BEAR_SPAWN_EGG, Utils.format("&4&LSummoner"),
-				Utils.format("&fLevel 1"), Utils.format("&7Start with a wolf spawn"),
-				Utils.format("&fLevel 2"), Utils.format("&7Start with 2 wolf spawns"),
-				Utils.format("&fLevel 3"), Utils.format("&7Start with an iron golem spawn")));
-
-		if (!arenaInstance.getBannedKits().contains("Reaper"))
-			inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&a&lReaper"), FLAGS,
-					enchants, Utils.format("&fLevel 1"),
-					Utils.format("&7Start with a sharpness III netherite hoe"), Utils.format("&fLevel 2"),
-					Utils.format("&7Start with a sharpness V netherite hoe"), Utils.format("&fLevel 3"),
-					Utils.format("&7Start with a sharpness VIII netherite hoe")));
-		else inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&4&LReaper"), FLAGS,
-				null, Utils.format("&fLevel 1"),
-				Utils.format("&7Start with a sharpness III netherite hoe"), Utils.format("&fLevel 2"),
-				Utils.format("&7Start with a sharpness V netherite hoe"), Utils.format("&fLevel 3"),
-				Utils.format("&7Start with a sharpness VIII netherite hoe")));
-
-		if (!arenaInstance.getBannedKits().contains("Phantom"))
-			inv.setItem(17, Utils.createItem(Material.PHANTOM_MEMBRANE, Utils.format("&a&lPhantom"), FLAGS,
-					enchants, Utils.format("&7Join as a player in any non-maxed game"),
-					Utils.format("&7using &b/vd select")));
-		else inv.setItem(17, Utils.createItem(Material.PHANTOM_MEMBRANE, Utils.format("&4&LPhantom"),
-				Utils.format("&7Join as a player in any non-maxed game"),
-				Utils.format("&7using &b/vd select")));
-
-		// Ability kits
-		for (int i = 18; i < 27; i++)
-			inv.setItem(i, Utils.createItem(Material.MAGENTA_STAINED_GLASS_PANE, Utils.format("&d&lAbility Kits"),
-					Utils.format("&7Kits give special ability per respawn")));
-
-		if (!arenaInstance.getBannedKits().contains("Mage"))
-			inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&d&lMage"), FLAGS, enchants,
-					Utils.format("&7Shoot fireballs"), Utils.format("&fLevel 1"),
-					Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-					Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-					Utils.format("&7Up to level 30 ability")));
-		else inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&4&LMage"),
-				Utils.format("&7Shoot fireballs"), Utils.format("&fLevel 1"),
-				Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-				Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-				Utils.format("&7Up to level 30 ability")));
-
-		if (!arenaInstance.getBannedKits().contains("Ninja"))
-			inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"), FLAGS, enchants,
-					Utils.format("&7You and your pets become invisible"),
-					Utils.format("&7and stun monsters"), Utils.format("&fLevel 1"),
-					Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-					Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-					Utils.format("&7Up to level 30 ability")));
-		else inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&4&LNinja"),
-				Utils.format("&7You and your pets become invisible"),
-				Utils.format("&7and stun monsters"), Utils.format("&fLevel 1"),
-				Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-				Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-				Utils.format("&7Up to level 30 ability")));
-
-		if (!arenaInstance.getBannedKits().contains("Templar"))
-			inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
-					enchants,
-					Utils.format("&7Give yourself and nearby allies absorption"), Utils.format("&fLevel 1"),
-					Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-					Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-					Utils.format("&7Up to level 30 ability")));
-		else inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&4&LTemplar"), FLAGS,
-				null,
-				Utils.format("&7Give yourself and nearby allies absorption"), Utils.format("&fLevel 1"),
-				Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-				Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-				Utils.format("&7Up to level 30 ability")));
-
-		if (!arenaInstance.getBannedKits().contains("Warrior"))
-			inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
-					enchants,
-					Utils.format("&7Give yourself and nearby allies strength"), Utils.format("&fLevel 1"),
-					Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-					Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-					Utils.format("&7Up to level 30 ability")));
-		else inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&4&LWarrior"), FLAGS,
-				null,
-				Utils.format("&7Give yourself and nearby allies strength"), Utils.format("&fLevel 1"),
-				Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-				Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-				Utils.format("&7Up to level 30 ability")));
-
-		if (!arenaInstance.getBannedKits().contains("Knight"))
-			inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"), FLAGS, enchants,
-					Utils.format("&7Give yourself and nearby allies resistance"), Utils.format("&fLevel 1"),
-					Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-					Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-					Utils.format("&7Up to level 30 ability")));
-		else inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&4&LKnight"),
-				Utils.format("&7Give yourself and nearby allies resistance"), Utils.format("&fLevel 1"),
-				Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-				Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-				Utils.format("&7Up to level 30 ability")));
-
-		if (!arenaInstance.getBannedKits().contains("Priest"))
-			inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"), FLAGS,
-					enchants,
-					Utils.format("&7Give yourself and nearby allies regeneration"), Utils.format("&fLevel 1"),
-					Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-					Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-					Utils.format("&7Up to level 30 ability")));
-		else inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&4&LPriest"),
-				Utils.format("&7Give yourself and nearby allies regeneration"), Utils.format("&fLevel 1"),
-				Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-				Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-				Utils.format("&7Up to level 30 ability")));
-
-		if (!arenaInstance.getBannedKits().contains("Siren"))
-			inv.setItem(33, Utils.createItem(Material.COBWEB, Utils.format("&d&lSiren"), FLAGS, enchants,
-					Utils.format("&7Slow and even weaken nearby monsters"), Utils.format("&fLevel 1"),
-					Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-					Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-					Utils.format("&7Up to level 30 ability")));
-		else inv.setItem(33, Utils.createItem(Material.COBWEB, Utils.format("&4&LSiren"),
-				Utils.format("&7Slow and even weaken nearby monsters"), Utils.format("&fLevel 1"),
-				Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-				Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-				Utils.format("&7Up to level 30 ability")));
-
-		if (!arenaInstance.getBannedKits().contains("Monk"))
-			inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"), FLAGS, enchants,
-					Utils.format("&7Give yourself and nearby allies haste"), Utils.format("&fLevel 1"),
-					Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-					Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-					Utils.format("&7Up to level 30 ability")));
-		else inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&4&LMonk"),
-				Utils.format("&7Give yourself and nearby allies haste"), Utils.format("&fLevel 1"),
-				Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-				Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-				Utils.format("&7Up to level 30 ability")));
-
-		if (!arenaInstance.getBannedKits().contains("Messenger"))
-			inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"), FLAGS, enchants,
-					Utils.format("&7Give yourself and nearby allies speed"), Utils.format("&fLevel 1"),
-					Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-					Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-					Utils.format("&7Up to level 30 ability")));
-		else inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&4&lMessenger"),
-				Utils.format("&7Give yourself and nearby allies speed"), Utils.format("&fLevel 1"),
-				Utils.format("&7Up to level 10 ability"), Utils.format("&fLevel 2"),
-				Utils.format("&7Up to level 20 ability"), Utils.format("&fLevel 3"),
-				Utils.format("&7Up to level 30 ability")));
-
-		// Effect kits
-		for (int i = 36; i < 45; i++)
-			inv.setItem(i, Utils.createItem(Material.YELLOW_STAINED_GLASS_PANE, Utils.format("&e&lEffect Kits"),
-					Utils.format("&7Kits give player a special effect")));
-
-		if (!arenaInstance.getBannedKits().contains("Blacksmith"))
-			inv.setItem(45, Utils.createItem(Material.ANVIL, Utils.format("&e&lBlacksmith"), FLAGS, enchants,
-					Utils.format("&7All equipment purchased are unbreakable")));
-		else inv.setItem(45, Utils.createItem(Material.ANVIL, Utils.format("&4&LBlacksmith"),
-				Utils.format("&7All equipment purchased are unbreakable")));
-
-		if (!arenaInstance.getBannedKits().contains("Witch"))
-			inv.setItem(46, Utils.createItem(Material.CAULDRON, Utils.format("&e&lWitch"), FLAGS, enchants,
-					Utils.format("&7All purchased potions become splash potions")));
-		else inv.setItem(46, Utils.createItem(Material.CAULDRON, Utils.format("&4&LWitch"),
-				Utils.format("&7All purchased potions become splash potions")));
-
-		if (!arenaInstance.getBannedKits().contains("Merchant"))
-			inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&e&lMerchant"), FLAGS,
-					enchants, Utils.format("&7Earn a 10% rebate on all purchases")));
-		else inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&4&LMerchant"),
-				Utils.format("&7Earn a 10% rebate on all purchases")));
-
-		if (!arenaInstance.getBannedKits().contains("Vampire"))
-			inv.setItem(48, Utils.createItem(Material.GHAST_TEAR, Utils.format("&e&lVampire"), FLAGS, enchants,
-					Utils.format("&7Dealing x damage has an x% chance"),
-					Utils.format("&7of healing half a heart")));
-		else inv.setItem(48, Utils.createItem(Material.GHAST_TEAR, Utils.format("&4&LVampire"),
-				Utils.format("&7Dealing x damage has an x% chance"),
-				Utils.format("&7of healing half a heart")));
-
-		if (!arenaInstance.getBannedKits().contains("Giant"))
-			inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&e&lGiant"), FLAGS, enchants,
-					Utils.format("&fLevel 1"), Utils.format("&7Permanent 10% health boost"),
-					Utils.format("&fLevel 2"), Utils.format("&7Permanent 20% health boost")));
-		else inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&4&LGiant"),
-				Utils.format("&fLevel 1"), Utils.format("&7Permanent 10% health boost"),
-				Utils.format("&fLevel 2"), Utils.format("&7Permanent 20% health boost")));
+		if (arenaInstance.getBannedKits().contains(Kit.blacksmith().getName()))
+			inv.setItem(45, Kit.blacksmith().getButton(-1, false));
+		else inv.setItem(45, Kit.blacksmith().getButton(-1, true));
+		if (arenaInstance.getBannedKits().contains(Kit.witch().getName()))
+			inv.setItem(46, Kit.witch().getButton(-1, false));
+		else inv.setItem(46, Kit.witch().getButton(-1, true));
+		if (arenaInstance.getBannedKits().contains(Kit.merchant().getName()))
+			inv.setItem(47, Kit.merchant().getButton(-1, false));
+		else inv.setItem(47, Kit.merchant().getButton(-1, true));
+		if (arenaInstance.getBannedKits().contains(Kit.vampire().getName()))
+			inv.setItem(48, Kit.vampire().getButton(-1, false));
+		else inv.setItem(48, Kit.vampire().getButton(-1, true));
+		if (arenaInstance.getBannedKits().contains(Kit.giant().getName()))
+			inv.setItem(49, Kit.giant().getButton(-1, false));
+		else inv.setItem(49, Kit.giant().getButton(-1, true));
 
 		// Option to exit
 		inv.setItem(53, InventoryItems.exit());
@@ -1933,56 +1534,56 @@ public class Inventories {
 		// Option to edit win sound
 		inv.setItem(0, Utils.createItem(Material.MUSIC_DISC_PIGSTEP,
 				Utils.format("&a&lWin Sound: " + getToggleStatus(arenaInstance.hasWinSound())),
-				FLAGS,
+				Utils.BUTTON_FLAGS,
 				null,
 				Utils.format("&7Played when game ends and players win")));
 
 		// Option to edit lose sound
 		inv.setItem(1, Utils.createItem(Material.MUSIC_DISC_11,
 				Utils.format("&e&lLose Sound: " + getToggleStatus(arenaInstance.hasLoseSound())),
-				FLAGS,
+				Utils.BUTTON_FLAGS,
 				null,
 				Utils.format("&7Played when game ends and players lose")));
 
 		// Option to edit wave start sound
 		inv.setItem(2, Utils.createItem(Material.MUSIC_DISC_CAT,
 				Utils.format("&2&lWave Start Sound: " + getToggleStatus(arenaInstance.hasWaveStartSound())),
-				FLAGS,
+				Utils.BUTTON_FLAGS,
 				null,
 				Utils.format("&7Played when a wave starts")));
 
 		// Option to edit wave finish sound
 		inv.setItem(3, Utils.createItem(Material.MUSIC_DISC_BLOCKS,
 				Utils.format("&9&lWave Finish Sound: " + getToggleStatus(arenaInstance.hasWaveFinishSound())),
-				FLAGS,
+				Utils.BUTTON_FLAGS,
 				null,
 				Utils.format("&7Played when a wave ends")));
 
 		// Option to edit waiting music
 		inv.setItem(4, Utils.createItem(Material.MUSIC_DISC_MELLOHI,
 				Utils.format("&6&lWaiting Sound"),
-				FLAGS,
+				Utils.BUTTON_FLAGS,
 				null,
 				Utils.format("&7Played while players wait"), Utils.format("&7for the game to start")));
 
 		// Option to edit gem pickup sound
 		inv.setItem(5, Utils.createItem(Material.MUSIC_DISC_FAR,
 				Utils.format("&b&lGem Pickup Sound: " + getToggleStatus(arenaInstance.hasGemSound())),
-				FLAGS,
+				Utils.BUTTON_FLAGS,
 				null,
 				Utils.format("&7Played when players pick up gems")));
 
 		// Option to edit player death sound
 		inv.setItem(6, Utils.createItem(Material.MUSIC_DISC_CHIRP,
 				Utils.format("&4&lPlayer Death Sound: " + getToggleStatus(arenaInstance.hasPlayerDeathSound())),
-				FLAGS,
+				Utils.BUTTON_FLAGS,
 				null,
 				Utils.format("&7Played when a player dies")));
 
 		// Option to edit ability sound
 		inv.setItem(7, Utils.createItem(Material.MUSIC_DISC_MALL,
 				Utils.format("&d&lAbility Sound: " + getToggleStatus(arenaInstance.hasAbilitySound())),
-				FLAGS,
+				Utils.BUTTON_FLAGS,
 				null,
 				Utils.format("&7Played when a player uses their ability")));
 
@@ -2065,11 +1666,11 @@ public class Inventories {
 
 		inv.setItem(0, Utils.createItem(Material.GOLDEN_SWORD,
 				Utils.format("&4&lLevel &9&l" + level + " &4&lWeapon Shop" +
-						(arena.hasNormal() ? "" : " &4&l[DISABLED]")), FLAGS, null));
+						(arena.hasNormal() ? "" : " &4&l[DISABLED]")), Utils.BUTTON_FLAGS, null));
 
 		inv.setItem(2, Utils.createItem(Material.GOLDEN_CHESTPLATE,
 				Utils.format("&5&lLevel &9&l" + level + " &5&lArmor Shop" +
-						(arena.hasNormal() ? "" : " &4&l[DISABLED]")), FLAGS, null));
+						(arena.hasNormal() ? "" : " &4&l[DISABLED]")), Utils.BUTTON_FLAGS, null));
 
 		inv.setItem(4, Utils.createItem(Material.GOLDEN_APPLE,
 				Utils.format("&3&lLevel &9&l" + level + " &3&lConsumables Shop" +
@@ -2272,7 +1873,7 @@ public class Inventories {
 
 		// Top wave
 		inv.setItem(4, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&3&lTop Wave: &3" +
-				playerData.getInt(name + ".topWave")), FLAGS, null,
+				playerData.getInt(name + ".topWave")), Utils.BUTTON_FLAGS, null,
 				Utils.format("&7Highest completed wave")));
 
 		// Kits
@@ -2299,422 +1900,61 @@ public class Inventories {
 			inv.setItem(i, Utils.createItem(Material.LIME_STAINED_GLASS_PANE, Utils.format("&a&lGift Kits"),
 					Utils.format("&7Kits give one-time benefits"), Utils.format("&7per game or respawn")));
 
-		inv.setItem(9, Utils.createItem(Material.STICK, Utils.format("&a&lOrc"),
-				Utils.format("&7Start with a knockback V stick"), Utils.format("&aFree!")));
-
-		inv.setItem(10, Utils.createItem(Material.CARROT, Utils.format("&a&lFarmer"),
-				Utils.format("&7Start with 5 carrots"), Utils.format("&aFree!")));
-
-		if (playerData.getBoolean(path + "Soldier"))
-			inv.setItem(11, Utils.createItem(Material.STONE_SWORD, Utils.format("&a&lSoldier"), FLAGS,
-					null, Utils.format("&7Start with a stone sword"), Utils.format("&aPurchased!")));
-		else inv.setItem(11, Utils.createItem(Material.STONE_SWORD, Utils.format("&a&lSoldier"), FLAGS,
-				null, Utils.format("&7Start with a stone sword"),
-				Utils.format("&cPurchase: &b" + kits.getPrice("Soldier") + " Crystals")));
-
-		if (playerData.getBoolean(path + "Tailor"))
-			inv.setItem(12, Utils.createItem(Material.LEATHER_CHESTPLATE, Utils.format("&a&lTailor"), FLAGS,
-					null, Utils.format("&7Start with a full leather armor set"),
-					Utils.format("&aPurchased!")));
-		else inv.setItem(12, Utils.createItem(Material.LEATHER_CHESTPLATE, Utils.format("&a&lTailor"), FLAGS,
-				null, Utils.format("&7Start with a full leather armor set"),
-				Utils.format("&cPurchase: &b" + kits.getPrice("Tailor") + " Crystals")));
-
-		if (playerData.getBoolean(path + "Alchemist"))
-			inv.setItem(13, Utils.createItem(Material.BREWING_STAND, Utils.format("&a&lAlchemist"),
-				Utils.format("&7Start with 1 speed and 2 healing"),
-					Utils.format("&7splash potions"), Utils.format("&aPurchased!")));
-		else inv.setItem(13, Utils.createItem(Material.BREWING_STAND, Utils.format("&a&lAlchemist"),
-				Utils.format("&7Start with 1 speed and 2 healing"), Utils.format("&7splash potions"),
-				Utils.format("&cPurchase: &b" + kits.getPrice("Alchemist") + " Crystals")));
-
-		if (playerData.getBoolean(path + "Trader"))
-			inv.setItem(14, Utils.createItem(Material.EMERALD, Utils.format("&a&lTrader"),
-				Utils.format("&7Start with 200 gems"), Utils.format("&aPurchased!")));
-		else inv.setItem(14, Utils.createItem(Material.EMERALD, Utils.format("&a&lTrader"),
-				Utils.format("&7Start with 200 gems"),
-				Utils.format("&cPurchase: &b" + kits.getPrice("Trader") + " Crystals")));
-
-		switch (playerData.getInt(path + "Summoner")) {
-			case 1:
-				inv.setItem(15, Utils.createItem(Material.POLAR_BEAR_SPAWN_EGG, Utils.format("&a&lSummoner"),
-						Utils.format("&aLevel 1"), Utils.format("&7Start with a wolf spawn"),
-						Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 2"), Utils.format("&7Start with 2 wolf spawns"),
-						Utils.format("&cUpgrade: &b" + kits.getPrice("Summoner", 2) +" Crystals")));
-				break;
-			case 2:
-				inv.setItem(15, Utils.createItem(Material.POLAR_BEAR_SPAWN_EGG, Utils.format("&a&lSummoner"),
-						Utils.format("&aLevel 2"), Utils.format("&7Start with 2 wolf spawns"),
-						Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 3"), Utils.format("&7Start with an iron golem spawn"),
-						Utils.format("&cUpgrade: &b" + kits.getPrice("Summoner", 3) +" Crystals")));
-				break;
-			case 3:
-				inv.setItem(15, Utils.createItem(Material.POLAR_BEAR_SPAWN_EGG, Utils.format("&a&lSummoner"),
-						Utils.format("&aLevel 3"), Utils.format("&7Start with an iron golem spawn"),
-						Utils.format("&aPurchased!")));
-				break;
-			default:
-				inv.setItem(15, Utils.createItem(Material.POLAR_BEAR_SPAWN_EGG, Utils.format("&a&lSummoner"),
-						Utils.format("&cLevel 1"), Utils.format("&7Start with a wolf spawn"),
-						Utils.format("&cPurchase: &b" + kits.getPrice("Summoner", 1) +" Crystals")));
-		}
-
-		switch (playerData.getInt(path + "Reaper")) {
-			case 1:
-				inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&a&lReaper"), FLAGS,
-						null,
-						Utils.format("&aLevel 1"), Utils.format("&7Start with a sharpness III netherite hoe"),
-						Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 2"), Utils.format("&7Start with a sharpness V netherite hoe"),
-						Utils.format("&cUpgrade: &b" + kits.getPrice("Reaper", 2) +" Crystals")));
-				break;
-			case 2:
-				inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&a&lReaper"), FLAGS,
-						null,
-						Utils.format("&aLevel 2"), Utils.format("&7Start with a sharpness V netherite hoe"),
-						Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 3"), Utils.format("&7Start with a sharpness VIII netherite hoe"),
-						Utils.format("&cUpgrade: &b" + kits.getPrice("Reaper", 3) +" Crystals")));
-				break;
-			case 3:
-				inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&a&lReaper"), FLAGS,
-						null,
-						Utils.format("&aLevel 3"), Utils.format("&7Start with a sharpness VIII netherite hoe"),
-						Utils.format("&aPurchased!")));
-				break;
-			default:
-				inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&a&lReaper"), FLAGS,
-						null,
-						Utils.format("&cLevel 1"), Utils.format("&7Start with a sharpness III netherite hoe"),
-						Utils.format("&cPurchase: &b" + kits.getPrice("Reaper", 1) +" Crystals")));
-		}
-
-		if (playerData.getBoolean(path + "Phantom"))
-			inv.setItem(17, Utils.createItem(Material.PHANTOM_MEMBRANE, Utils.format("&a&lPhantom"),
-					Utils.format("&7Join as a player in any non-maxed game"),
-					Utils.format("&7using &b/vd select"), Utils.format("&aPurchased!")));
-		else inv.setItem(17, Utils.createItem(Material.PHANTOM_MEMBRANE, Utils.format("&a&lPhantom"),
-				Utils.format("&7Join as a player in any non-maxed game"),
-				Utils.format("&7using &b/vd select"),
-				Utils.format("&cPurchase: &b" + kits.getPrice("Phantom") + " Crystals")));
+		inv.setItem(9, Kit.orc().getButton(1, true));
+		inv.setItem(10, Kit.farmer().getButton(1, true));
+		inv.setItem(11, Kit.soldier().getButton(playerData.getBoolean(path + Kit.soldier().getName()) ? 1 : 0,
+				true));
+		inv.setItem(12, Kit.alchemist().getButton(playerData.getBoolean(path + Kit.alchemist().getName()) ?
+				1 : 0, true));
+		inv.setItem(13, Kit.tailor().getButton(playerData.getBoolean(path + Kit.tailor().getName()) ? 1 : 0,
+				true));
+		inv.setItem(14, Kit.trader().getButton(playerData.getBoolean(path + Kit.trader().getName()) ? 1 : 0,
+				true));
+		inv.setItem(15, Kit.summoner().getButton(playerData.getInt(path + Kit.summoner().getName()),
+				true));
+		inv.setItem(16, Kit.reaper().getButton(playerData.getInt(path + Kit.reaper().getName()),
+				true));
+		inv.setItem(17, Kit.phantom().getButton(playerData.getBoolean(path + Kit.phantom().getName()) ? 1 : 0,
+				true));
 
 		// Ability kits
 		for (int i = 18; i < 27; i++)
 			inv.setItem(i, Utils.createItem(Material.MAGENTA_STAINED_GLASS_PANE, Utils.format("&d&lAbility Kits"),
 					Utils.format("&7Kits give special ability per respawn")));
 
-		switch (playerData.getInt(path + "Mage")) {
-			case 1:
-				inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&d&lMage"),
-						Utils.format("&7Shoot fireballs"), Utils.format("&aLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 2"), Utils.format("&7Up to level 20 ability"),
-						Utils.format("&cUpgrade: &b" + kits.getPrice("Mage", 2) +" Crystals")));
-				break;
-			case 2:
-				inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&d&lMage"),
-						Utils.format("&7Shoot fireballs"), Utils.format("&aLevel 2"),
-						Utils.format("&7Up to level 20 ability"), Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 3"), Utils.format("&7Up to level 30 ability"),
-						Utils.format("&cUpgrade: &b" + kits.getPrice("Mage", 3) +" Crystals")));
-				break;
-			case 3:
-				inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&d&lMage"),
-						Utils.format("&7Shoot fireballs"), Utils.format("&aLevel 3"),
-						Utils.format("&7Up to level 30 ability"), Utils.format("&aPurchased!")));
-				break;
-			default:
-				inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&d&lMage"),
-						Utils.format("&7Shoot fireballs"), Utils.format("&cLevel 1"),
-						Utils.format("&7Up to level 10 ability"),
-						Utils.format("&cPurchase: &b" + kits.getPrice("Mage", 1) +" Crystals")));
-		}
-
-		switch (playerData.getInt(path + "Ninja")) {
-			case 1:
-				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
-						Utils.format("&7You and your pets become invisible"),
-						Utils.format("&7and stun monsters"), Utils.format("&aLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 2"), Utils.format("&7Up to level 20 ability"),
-						Utils.format("&cUpgrade: &b" + kits.getPrice("Ninja", 2) +" Crystals")));
-				break;
-			case 2:
-				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
-						Utils.format("&7You and your pets become invisible"),
-						Utils.format("&7and stun monsters"), Utils.format("&aLevel 2"),
-						Utils.format("&7Up to level 20 ability"), Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 3"), Utils.format("&7Up to level 30 ability"),
-						Utils.format("&cUpgrade: &b" + kits.getPrice("Ninja", 3) +" Crystals")));
-				break;
-			case 3:
-				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
-						Utils.format("&7You and your pets become invisible"),
-						Utils.format("&7and stun monsters"), Utils.format("&aLevel 3"),
-						Utils.format("&7Up to level 30 ability"), Utils.format("&aPurchased!")));
-				break;
-			default:
-				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
-						Utils.format("&7You and your pets become invisible"),
-						Utils.format("&7and stun monsters"), Utils.format("&cLevel 1"),
-						Utils.format("&7Up to level 10 ability"),
-						Utils.format("&cPurchase: &b" + kits.getPrice("Ninja", 1) +" Crystals")));
-		}
-
-		switch (playerData.getInt(path + "Templar")) {
-			case 1:
-				inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
-						null,
-						Utils.format("&7Give yourself and nearby allies absorption"), Utils.format("&aLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 2"), Utils.format("&7Up to level 20 ability"),
-						Utils.format("&cUpgrade: &b" + kits.getPrice("Templar", 2) +" Crystals")));
-				break;
-			case 2:
-				inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
-						null,
-						Utils.format("&7Give yourself and nearby allies absorption"), Utils.format("&aLevel 2"),
-						Utils.format("&7Up to level 20 ability"), Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 3"), Utils.format("&7Up to level 30 ability"),
-						Utils.format("&cUpgrade: &b" + kits.getPrice("Templar", 3) +" Crystals")));
-				break;
-			case 3:
-				inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
-						null,
-						Utils.format("&7Give yourself and nearby allies absorption"), Utils.format("&aLevel 3"),
-						Utils.format("&7Up to level 30 ability"), Utils.format("&aPurchased!")));
-				break;
-			default:
-				inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
-						null,
-						Utils.format("&7Give yourself and nearby allies absorption"), Utils.format("&cLevel 1"),
-						Utils.format("&7Up to level 10 ability"),
-						Utils.format("&cPurchase: &b" + kits.getPrice("Templar", 1) +" Crystals")));
-		}
-
-		switch (playerData.getInt(path + "Warrior")) {
-			case 1:
-				inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
-						null,
-						Utils.format("&7Give yourself and nearby allies strength"), Utils.format("&aLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 2"), Utils.format("&7Up to level 20 ability"),
-						Utils.format("&cUpgrade: &b" + kits.getPrice("Warrior", 2) +" Crystals")));
-				break;
-			case 2:
-				inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
-						null,
-						Utils.format("&7Give yourself and nearby allies strength"), Utils.format("&aLevel 2"),
-						Utils.format("&7Up to level 20 ability"), Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 3"), Utils.format("&7Up to level 30 ability"),
-						Utils.format("&cUpgrade: &b" + kits.getPrice("Warrior", 3) +" Crystals")));
-				break;
-			case 3:
-				inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
-						null,
-						Utils.format("&7Give yourself and nearby allies strength"), Utils.format("&aLevel 3"),
-						Utils.format("&7Up to level 30 ability"), Utils.format("&aPurchased!")));
-				break;
-			default:
-				inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
-						null,
-						Utils.format("&7Give yourself and nearby allies strength"), Utils.format("&cLevel 1"),
-						Utils.format("&7Up to level 10 ability"),
-						Utils.format("&cPurchase: &b" + kits.getPrice("Warrior", 1) +" Crystals")));
-		}
-
-		switch (playerData.getInt(path + "Knight")) {
-			case 1:
-				inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"),
-						Utils.format("&7Give yourself and nearby allies resistance"), Utils.format("&aLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 2"), Utils.format("&7Up to level 20 ability"),
-						Utils.format("&cUpgrade: &b" + kits.getPrice("Knight", 2) +" Crystals")));
-				break;
-			case 2:
-				inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"),
-						Utils.format("&7Give yourself and nearby allies resistance"), Utils.format("&aLevel 2"),
-						Utils.format("&7Up to level 20 ability"), Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 3"), Utils.format("&7Up to level 30 ability"),
-						Utils.format("&cUpgrade: &b" + kits.getPrice("Knight", 3) +" Crystals")));
-				break;
-			case 3:
-				inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"),
-						Utils.format("&7Give yourself and nearby allies resistance"), Utils.format("&aLevel 3"),
-						Utils.format("&7Up to level 30 ability"), Utils.format("&aPurchased!")));
-				break;
-			default:
-				inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"),
-						Utils.format("&7Give yourself and nearby allies resistance"), Utils.format("&cLevel 1"),
-						Utils.format("&7Up to level 10 ability"),
-						Utils.format("&cPurchase: &b" + kits.getPrice("Knight", 1) +" Crystals")));
-		}
-
-		switch (playerData.getInt(path + "Priest")) {
-			case 1:
-				inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"),
-						Utils.format("&7Give yourself and nearby allies regeneration"), Utils.format("&aLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 2"), Utils.format("&7Up to level 20 ability"),
-						Utils.format("&cUpgrade: &b" + kits.getPrice("Priest", 2) +" Crystals")));
-				break;
-			case 2:
-				inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"),
-						Utils.format("&7Give yourself and nearby allies regeneration"), Utils.format("&aLevel 2"),
-						Utils.format("&7Up to level 20 ability"), Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 3"), Utils.format("&7Up to level 30 ability"),
-						Utils.format("&cUpgrade: &b" + kits.getPrice("Priest", 3) +" Crystals")));
-				break;
-			case 3:
-				inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"),
-						Utils.format("&7Give yourself and nearby allies regeneration"), Utils.format("&aLevel 3"),
-						Utils.format("&7Up to level 30 ability"), Utils.format("&aPurchased!")));
-				break;
-			default:
-				inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"),
-						Utils.format("&7Give yourself and nearby allies regeneration"), Utils.format("&cLevel 1"),
-						Utils.format("&7Up to level 10 ability"),
-						Utils.format("&cPurchase: &b" + kits.getPrice("Priest", 1) +" Crystals")));
-		}
-
-		switch (playerData.getInt(path + "Siren")) {
-			case 1:
-				inv.setItem(33, Utils.createItem(Material.COBWEB, Utils.format("&d&lSiren"),
-						Utils.format("&7Slow and even weaken nearby monsters"), Utils.format("&aLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 2"), Utils.format("&7Up to level 20 ability"),
-						Utils.format("&cUpgrade: &b" + kits.getPrice("Siren", 2) +" Crystals")));
-				break;
-			case 2:
-				inv.setItem(33, Utils.createItem(Material.COBWEB, Utils.format("&d&lSiren"),
-						Utils.format("&7Slow and even weaken nearby monsters"), Utils.format("&aLevel 2"),
-						Utils.format("&7Up to level 20 ability"), Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 3"), Utils.format("&7Up to level 30 ability"),
-						Utils.format("&cUpgrade: &b" + kits.getPrice("Siren", 3) +" Crystals")));
-				break;
-			case 3:
-				inv.setItem(33, Utils.createItem(Material.COBWEB, Utils.format("&d&lSiren"),
-						Utils.format("&7Slow and even weaken nearby monsters"), Utils.format("&aLevel 3"),
-						Utils.format("&7Up to level 30 ability"), Utils.format("&aPurchased!")));
-				break;
-			default:
-				inv.setItem(33, Utils.createItem(Material.COBWEB, Utils.format("&d&lSiren"),
-						Utils.format("&7Slow and even weaken nearby monsters"), Utils.format("&cLevel 1"),
-						Utils.format("&7Up to level 10 ability"),
-						Utils.format("&cPurchase: &b" + kits.getPrice("Siren", 1) +" Crystals")));
-		}
-
-		switch (playerData.getInt(path + "Monk")) {
-			case 1:
-				inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"),
-						Utils.format("&7Give yourself and nearby allies haste"), Utils.format("&aLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 2"), Utils.format("&7Up to level 20 ability"),
-						Utils.format("&cUpgrade: &b" + kits.getPrice("Monk", 2) +" Crystals")));
-				break;
-			case 2:
-				inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"),
-						Utils.format("&7Give yourself and nearby allies haste"), Utils.format("&aLevel 2"),
-						Utils.format("&7Up to level 20 ability"), Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 3"), Utils.format("&7Up to level 30 ability"),
-						Utils.format("&cUpgrade: &b" + kits.getPrice("Monk", 3) +" Crystals")));
-				break;
-			case 3:
-				inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"),
-						Utils.format("&7Give yourself and nearby allies haste"), Utils.format("&aLevel 3"),
-						Utils.format("&7Up to level 30 ability"), Utils.format("&aPurchased!")));
-				break;
-			default:
-				inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"),
-						Utils.format("&7Give yourself and nearby allies haste"), Utils.format("&cLevel 1"),
-						Utils.format("&7Up to level 10 ability"),
-						Utils.format("&cPurchase: &b" + kits.getPrice("Monk", 1) +" Crystals")));
-		}
-
-		switch (playerData.getInt(path + "Messenger")) {
-			case 1:
-				inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"),
-						Utils.format("&7Give yourself and nearby allies speed"), Utils.format("&aLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 2"), Utils.format("&7Up to level 20 ability"),
-						Utils.format("&cUpgrade: &b" + kits.getPrice("Messenger", 2) +" Crystals")));
-				break;
-			case 2:
-				inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"),
-						Utils.format("&7Give yourself and nearby allies speed"), Utils.format("&aLevel 2"),
-						Utils.format("&7Up to level 20 ability"), Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 3"), Utils.format("&7Up to level 30 ability"),
-						Utils.format("&cUpgrade: &b" + kits.getPrice("Messenger", 3) +" Crystals")));
-				break;
-			case 3:
-				inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"),
-						Utils.format("&7Give yourself and nearby allies speed"), Utils.format("&aLevel 3"),
-						Utils.format("&7Up to level 30 ability"), Utils.format("&aPurchased!")));
-				break;
-			default:
-				inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"),
-						Utils.format("&7Give yourself and nearby allies speed"), Utils.format("&cLevel 1"),
-						Utils.format("&7Up to level 10 ability"),
-						Utils.format("&cPurchase: &b" + kits.getPrice("Messenger", 1) +" Crystals")));
-		}
+		inv.setItem(27, Kit.mage().getButton(playerData.getInt(path + Kit.mage().getName()), true));
+		inv.setItem(28, Kit.ninja().getButton(playerData.getInt(path + Kit.ninja().getName()),
+				true));
+		inv.setItem(29, Kit.templar().getButton(playerData.getInt(path + Kit.templar().getName()),
+				true));
+		inv.setItem(30, Kit.warrior().getButton(playerData.getInt(path + Kit.warrior().getName()),
+				true));
+		inv.setItem(31, Kit.knight().getButton(playerData.getInt(path + Kit.knight().getName()),
+				true));
+		inv.setItem(32, Kit.priest().getButton(playerData.getInt(path + Kit.priest().getName()),
+				true));
+		inv.setItem(33, Kit.siren().getButton(playerData.getInt(path + Kit.siren().getName()),
+				true));
+		inv.setItem(34, Kit.monk().getButton(playerData.getInt(path + Kit.monk().getName()), true));
+		inv.setItem(35, Kit.messenger().getButton(playerData.getInt(path + Kit.messenger().getName()),
+				true));
 
 		// Effect kits
 		for (int i = 36; i < 45; i++)
 			inv.setItem(i, Utils.createItem(Material.YELLOW_STAINED_GLASS_PANE, Utils.format("&e&lEffect Kits"),
-					Utils.format("&7Kits give player a special effect")));
+					Utils.format("&7Kits give players a permanent") +
+							Utils.format("&7special effect")));
 
-		if (playerData.getBoolean(path + "Blacksmith"))
-			inv.setItem(45, Utils.createItem(Material.ANVIL, Utils.format("&e&lBlacksmith"),
-					Utils.format("&7All equipment purchased are unbreakable"), Utils.format("&aPurchased!")));
-		else inv.setItem(45, Utils.createItem(Material.ANVIL, Utils.format("&e&lBlacksmith"),
-				Utils.format("&7All equipment purchased are unbreakable"),
-				Utils.format("&cPurchase: &b" + kits.getPrice("Blacksmith") + " Crystals")));
-
-		if (playerData.getBoolean(path + "Witch"))
-			inv.setItem(46, Utils.createItem(Material.CAULDRON, Utils.format("&e&lWitch"),
-					Utils.format("&7All purchased potions become splash potions"), Utils.format("&aPurchased!")));
-		else inv.setItem(46, Utils.createItem(Material.CAULDRON, Utils.format("&e&lWitch"),
-				Utils.format("&7All purchased potions become splash potions"),
-				Utils.format("&cPurchase: &b" + kits.getPrice("Witch") + " Crystals")));
-
-		if (playerData.getBoolean(path + "Merchant"))
-			inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&e&lMerchant"),
-					Utils.format("&7Earn a 10% rebate on all purchases"), Utils.format("&aPurchased!")));
-		else inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&e&lMerchant"),
-				Utils.format("&7Earn a 10% rebate on all purchases"),
-				Utils.format("&cPurchase: &b" + kits.getPrice("Merchant") + " Crystals")));
-
-		if (playerData.getBoolean(path + "Vampire"))
-			inv.setItem(48, Utils.createItem(Material.GHAST_TEAR, Utils.format("&e&lVampire"),
-					Utils.format("&7Dealing x damage has an x% chance"),
-					Utils.format("&7of healing half a heart"), Utils.format("&aPurchased!")));
-		else inv.setItem(48, Utils.createItem(Material.GHAST_TEAR, Utils.format("&e&lVampire"),
-				Utils.format("&7Dealing x damage has an x% chance"),
-				Utils.format("&7of healing half a heart"),
-				Utils.format("&cPurchase: &b" + kits.getPrice("Vampire") + " Crystals")));
-
-		switch (playerData.getInt(path + "Giant")) {
-			case 1:
-				inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&e&lGiant"),
-						Utils.format("&aLevel 1"),
-						Utils.format("&7Permanent 10% health boost"), Utils.format("&aPurchased!"),
-						Utils.format("&cLevel 2"),
-						Utils.format("&7Permanent 20% health boost"),
-						Utils.format("&cUpgrade: &b" + kits.getPrice("Giant", 2) +" Crystals")));
-				break;
-			case 2:
-				inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&e&lGiant"),
-						Utils.format("&aLevel 2"),
-						Utils.format("&7Permanent 20% health boost"), Utils.format("&aPurchased!")));
-				break;
-			default:
-				inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&e&lGiant"),
-						Utils.format("&cLevel 1"),
-						Utils.format("&7Permanent 10% health boost"),
-						Utils.format("&cPurchase: &b" + kits.getPrice("Giant", 1) +" Crystals")));
-		}
+		inv.setItem(45, Kit.blacksmith().getButton(playerData.getBoolean(path + Kit.blacksmith().getName()) ?
+				1 : 0, true));
+		inv.setItem(46, Kit.witch().getButton(playerData.getBoolean(path + Kit.witch().getName()) ? 1 : 0,
+				true));
+		inv.setItem(47, Kit.merchant().getButton(playerData.getBoolean(path + Kit.merchant().getName()) ?
+				1 : 0, true));
+		inv.setItem(48, Kit.vampire().getButton(playerData.getBoolean(path + Kit.vampire().getName()) ? 1 : 0,
+				true));
+		inv.setItem(49, Kit.giant().getButton(playerData.getInt(path + Kit.giant().getName()),
+				true));
 
 		// Crystal balance
 		if (name.equals(requester))
@@ -2742,106 +1982,30 @@ public class Inventories {
 					Utils.format("&7Kits give one-time benefits"), Utils.format("&7per game or respawn")));
 
 		if (!arena.getBannedKits().contains("Orc"))
-			inv.setItem(9, Utils.createItem(Material.STICK, Utils.format("&a&lOrc"),
-					Utils.format("&7Start with a knockback V stick"), Utils.format("&aAvailable")));
-
+			inv.setItem(9, Kit.orc().getButton(1, false));
 		if (!arena.getBannedKits().contains("Farmer"))
-			inv.setItem(10, Utils.createItem(Material.CARROT, Utils.format("&a&lFarmer"),
-				Utils.format("&7Start with 5 carrots"), Utils.format("&aAvailable")));
-
+			inv.setItem(10, Kit.farmer().getButton(1, false));
 		if (!arena.getBannedKits().contains("Soldier"))
-			if (playerData.getBoolean(path + "Soldier"))
-				inv.setItem(11, Utils.createItem(Material.STONE_SWORD, Utils.format("&a&lSoldier"), FLAGS,
-						null, Utils.format("&7Start with a stone sword"), Utils.format("&aAvailable")));
-			else inv.setItem(11, Utils.createItem(Material.STONE_SWORD, Utils.format("&a&lSoldier"), FLAGS,
-					null, Utils.format("&7Start with a stone sword"), Utils.format("&cUnavailable")));
-
-		if (!arena.getBannedKits().contains("Tailor"))
-			if (playerData.getBoolean(path + "Tailor"))
-				inv.setItem(12, Utils.createItem(Material.LEATHER_CHESTPLATE, Utils.format("&a&lTailor"), FLAGS,
-						null, Utils.format("&7Start with a full leather armor set"),
-						Utils.format("&aAvailable")));
-			else inv.setItem(12, Utils.createItem(Material.LEATHER_CHESTPLATE, Utils.format("&a&lTailor"), FLAGS,
-					null, Utils.format("&7Start with a full leather armor set"),
-					Utils.format("&cUnavailable")));
-
+			inv.setItem(11, Kit.soldier().getButton(playerData.getBoolean(path + Kit.soldier().getName()) ?
+					1 : 0, false));
 		if (!arena.getBannedKits().contains("Alchemist"))
-			if (playerData.getBoolean(path + "Alchemist"))
-				inv.setItem(13, Utils.createItem(Material.BREWING_STAND, Utils.format("&a&lAlchemist"),
-						Utils.format("&7Start with 1 speed and 2 healing"),
-						Utils.format("&7splash potions"), Utils.format("&aAvailable")));
-			else inv.setItem(13, Utils.createItem(Material.BREWING_STAND, Utils.format("&a&lAlchemist"),
-					Utils.format("&7Start with 1 speed and 2 healing"),
-					Utils.format("&7splash potions"), Utils.format("&cUnavailable")));
-
+			inv.setItem(12, Kit.alchemist().getButton(playerData.getBoolean(path + Kit.alchemist().getName()) ?
+					1 : 0, false));
+		if (!arena.getBannedKits().contains("Tailor"))
+			inv.setItem(13, Kit.tailor().getButton(playerData.getBoolean(path + Kit.tailor().getName()) ? 1 : 0,
+					false));
 		if (!arena.getBannedKits().contains("Trader"))
-			if (playerData.getBoolean(path + "Trader"))
-				inv.setItem(14, Utils.createItem(Material.EMERALD, Utils.format("&a&lTrader"),
-						Utils.format("&7Start with 200 gems"), Utils.format("&aAvailable")));
-			else inv.setItem(14, Utils.createItem(Material.EMERALD, Utils.format("&a&lTrader"),
-					Utils.format("&7Start with 200 gems"), Utils.format("&cUnavailable")));
-
+			inv.setItem(14, Kit.trader().getButton(playerData.getBoolean(path + Kit.trader().getName()) ? 1 : 0,
+					false));
 		if (!arena.getBannedKits().contains("Summoner"))
-			switch (playerData.getInt(path + "Summoner")) {
-			case 1:
-				inv.setItem(15, Utils.createItem(Material.POLAR_BEAR_SPAWN_EGG, Utils.format("&a&lSummoner"),
-						Utils.format("&aLevel 1"), Utils.format("&7Start with a wolf spawn"),
-						Utils.format("&aAvailable")));
-				break;
-			case 2:
-				inv.setItem(15, Utils.createItem(Material.POLAR_BEAR_SPAWN_EGG, Utils.format("&a&lSummoner"),
-						Utils.format("&aLevel 2"), Utils.format("&7Start with 2 wolf spawns"),
-						Utils.format("&aAvailable")));
-				break;
-			case 3:
-				inv.setItem(15, Utils.createItem(Material.POLAR_BEAR_SPAWN_EGG, Utils.format("&a&lSummoner"),
-						Utils.format("&aLevel 3"), Utils.format("&7Start with an iron golem spawn"),
-						Utils.format("&aAvailable")));
-				break;
-			default:
-				inv.setItem(15, Utils.createItem(Material.POLAR_BEAR_SPAWN_EGG, Utils.format("&a&lSummoner"),
-						Utils.format("&cLevel 1"), Utils.format("&7Start with a wolf spawn"),
-						Utils.format("&cUnavailable")));
-		}
-
+			inv.setItem(15, Kit.summoner().getButton(playerData.getInt(path + Kit.summoner().getName()),
+					false));
 		if (!arena.getBannedKits().contains("Reaper"))
-			switch (playerData.getInt(path + "Reaper")) {
-			case 1:
-				inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&a&lReaper"), FLAGS,
-						null,
-						Utils.format("&aLevel 1"),
-						Utils.format("&7Start with a sharpness III netherite hoe"),
-						Utils.format("&aAvailable")));
-				break;
-			case 2:
-				inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&a&lReaper"), FLAGS,
-						null,
-						Utils.format("&aLevel 2"),
-						Utils.format("&7Start with a sharpness V netherite hoe"),
-						Utils.format("&aAvailable")));
-				break;
-			case 3:
-				inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&a&lReaper"), FLAGS,
-						null,
-						Utils.format("&aLevel 3"),
-						Utils.format("&7Start with a sharpness VIII netherite hoe"),
-						Utils.format("&aAvailable")));
-				break;
-			default:
-				inv.setItem(16, Utils.createItem(Material.NETHERITE_HOE, Utils.format("&a&lReaper"), FLAGS,
-						null,
-						Utils.format("&cLevel 1"), Utils.format("&7Start with a sharpness III netherite hoe"),
-						Utils.format("&cUnavailable")));
-		}
-
+			inv.setItem(16, Kit.reaper().getButton(playerData.getInt(path + Kit.reaper().getName()),
+					false));
 		if (!arena.getBannedKits().contains("Phantom"))
-			if (playerData.getBoolean(path + "Phantom"))
-				inv.setItem(17, Utils.createItem(Material.PHANTOM_MEMBRANE, Utils.format("&a&lPhantom"),
-						Utils.format("&7Join as a player in any non-maxed game"),
-						Utils.format("&7using &b/vd select"), Utils.format("&aAvailable")));
-			else inv.setItem(17, Utils.createItem(Material.PHANTOM_MEMBRANE, Utils.format("&a&lPhantom"),
-					Utils.format("&7Join as a player in any non-maxed game"),
-					Utils.format("&7using &b/vd select"), Utils.format("&cUnavailable")));
+			inv.setItem(17, Kit.phantom().getButton(playerData.getBoolean(path + Kit.phantom().getName()) ?
+					1 : 0, false));
 
 		// Ability kits
 		for (int i = 18; i < 27; i++)
@@ -2849,280 +2013,56 @@ public class Inventories {
 					Utils.format("&7Kits give special ability per respawn")));
 
 		if (!arena.getBannedKits().contains("Mage"))
-			switch (playerData.getInt(path + "Mage")) {
-			case 1:
-				inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&d&lMage"),
-						Utils.format("&7Shoot fireballs"), Utils.format("&aLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&aAvailable")));
-				break;
-			case 2:
-				inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&d&lMage"),
-						Utils.format("&7Shoot fireballs"), Utils.format("&aLevel 2"),
-						Utils.format("&7Up to level 20 ability"), Utils.format("&aAvailable")));
-				break;
-			case 3:
-				inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&d&lMage"),
-						Utils.format("&7Shoot fireballs"), Utils.format("&aLevel 3"),
-						Utils.format("&7Up to level 30 ability"), Utils.format("&aAvailable")));
-				break;
-			default:
-				inv.setItem(27, Utils.createItem(Material.FIRE_CHARGE, Utils.format("&d&lMage"),
-						Utils.format("&7Shoot fireballs"), Utils.format("&cLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&cUnavailable")));
-		}
-
+			inv.setItem(27, Kit.mage().getButton(playerData.getInt(path + Kit.mage().getName()),
+					false));
 		if (!arena.getBannedKits().contains("Ninja"))
-			switch (playerData.getInt(path + "Ninja")) {
-			case 1:
-				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
-						Utils.format("&7You and your pets become invisible"),
-						Utils.format("&7and stun monsters"), Utils.format("&aLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&aAvailable")));
-				break;
-			case 2:
-				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
-						Utils.format("&7You and your pets become invisible"),
-						Utils.format("&7and stun monsters"), Utils.format("&aLevel 2"),
-						Utils.format("&7Up to level 20 ability"), Utils.format("&aAvailable")));
-				break;
-			case 3:
-				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
-						Utils.format("&7You and your pets become invisible"),
-						Utils.format("&7and stun monsters"), Utils.format("&aLevel 3"),
-						Utils.format("&7Up to level 30 ability"), Utils.format("&aAvailable")));
-				break;
-			default:
-				inv.setItem(28, Utils.createItem(Material.CHAIN, Utils.format("&d&lNinja"),
-						Utils.format("&7You and your pets become invisible"),
-						Utils.format("&7and stun monsters"), Utils.format("&cLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&cUnavailable")));
-		}
-
+			inv.setItem(28, Kit.ninja().getButton(playerData.getInt(path + Kit.ninja().getName()),
+					false));
 		if (!arena.getBannedKits().contains("Templar"))
-			switch (playerData.getInt(path + "Templar")) {
-			case 1:
-				inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
-						null,
-						Utils.format("&7Give yourself and nearby allies absorption"), Utils.format("&aLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&aAvailable")));
-				break;
-			case 2:
-				inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
-						null,
-						Utils.format("&7Give yourself and nearby allies absorption"), Utils.format("&aLevel 2"),
-						Utils.format("&7Up to level 20 ability"), Utils.format("&aAvailable")));
-				break;
-			case 3:
-				inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
-						null,
-						Utils.format("&7Give yourself and nearby allies absorption"), Utils.format("&aLevel 3"),
-						Utils.format("&7Up to level 30 ability"), Utils.format("&aAvailable")));
-				break;
-			default:
-				inv.setItem(29, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&d&lTemplar"), FLAGS,
-						null,
-						Utils.format("&7Give yourself and nearby allies absorption"), Utils.format("&cLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&cUnavailable")));
-		}
-
+			inv.setItem(29, Kit.templar().getButton(playerData.getInt(path + Kit.templar().getName()),
+					false));
 		if (!arena.getBannedKits().contains("Warrior"))
-			switch (playerData.getInt(path + "Warrior")) {
-			case 1:
-				inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
-						null,
-						Utils.format("&7Give yourself and nearby allies strength"), Utils.format("&aLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&aAvailable")));
-				break;
-			case 2:
-				inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
-						null,
-						Utils.format("&7Give yourself and nearby allies strength"), Utils.format("&aLevel 2"),
-						Utils.format("&7Up to level 20 ability"), Utils.format("&aAvailable")));
-				break;
-			case 3:
-				inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
-						null,
-						Utils.format("&7Give yourself and nearby allies strength"), Utils.format("&aLevel 3"),
-						Utils.format("&7Up to level 30 ability"), Utils.format("&aAvailable")));
-				break;
-			default:
-				inv.setItem(30, Utils.createItem(Material.NETHERITE_HELMET, Utils.format("&d&lWarrior"), FLAGS,
-						null,
-						Utils.format("&7Give yourself and nearby allies strength"), Utils.format("&cLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&cUnavailable")));
-			}
-
+			inv.setItem(30, Kit.warrior().getButton(playerData.getInt(path + Kit.warrior().getName()),
+					false));
 		if (!arena.getBannedKits().contains("Knight"))
-			switch (playerData.getInt(path + "Knight")) {
-			case 1:
-				inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"),
-						Utils.format("&7Give yourself and nearby allies resistance"), Utils.format("&aLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&aAvailable")));
-				break;
-			case 2:
-				inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"),
-						Utils.format("&7Give yourself and nearby allies resistance"), Utils.format("&aLevel 2"),
-						Utils.format("&7Up to level 20 ability"), Utils.format("&aAvailable")));
-				break;
-			case 3:
-				inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"),
-						Utils.format("&7Give yourself and nearby allies resistance"), Utils.format("&aLevel 3"),
-						Utils.format("&7Up to level 30 ability"), Utils.format("&aAvailable")));
-				break;
-			default:
-				inv.setItem(31, Utils.createItem(Material.SHIELD, Utils.format("&d&lKnight"),
-						Utils.format("&7Give yourself and nearby allies resistance"), Utils.format("&cLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&cUnavailable")));
-		}
-
+			inv.setItem(31, Kit.knight().getButton(playerData.getInt(path + Kit.knight().getName()),
+					false));
 		if (!arena.getBannedKits().contains("Priest"))
-			switch (playerData.getInt(path + "Priest")) {
-			case 1:
-				inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"),
-						Utils.format("&7Give yourself and nearby allies regeneration"), Utils.format("&aLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&aAvailable")));
-				break;
-			case 2:
-				inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"),
-						Utils.format("&7Give yourself and nearby allies regeneration"), Utils.format("&aLevel 2"),
-						Utils.format("&7Up to level 20 ability"), Utils.format("&aAvailable")));
-				break;
-			case 3:
-				inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"),
-						Utils.format("&7Give yourself and nearby allies regeneration"), Utils.format("&aLevel 3"),
-						Utils.format("&7Up to level 30 ability"), Utils.format("&aAvailable")));
-				break;
-			default:
-				inv.setItem(32, Utils.createItem(Material.TOTEM_OF_UNDYING, Utils.format("&d&lPriest"),
-						Utils.format("&7Give yourself and nearby allies regeneration"), Utils.format("&cLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&cUnavailable")));
-		}
-
+			inv.setItem(32, Kit.priest().getButton(playerData.getInt(path + Kit.priest().getName()),
+					false));
 		if (!arena.getBannedKits().contains("Siren"))
-			switch (playerData.getInt(path + "Siren")) {
-			case 1:
-				inv.setItem(33, Utils.createItem(Material.COBWEB, Utils.format("&d&lSiren"),
-						Utils.format("&7Slow and even weaken nearby monsters"), Utils.format("&aLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&aAvailable")));
-				break;
-			case 2:
-				inv.setItem(33, Utils.createItem(Material.COBWEB, Utils.format("&d&lSiren"),
-						Utils.format("&7Slow and even weaken nearby monsters"), Utils.format("&aLevel 2"),
-						Utils.format("&7Up to level 20 ability"), Utils.format("&aAvailable")));
-				break;
-			case 3:
-				inv.setItem(33, Utils.createItem(Material.COBWEB, Utils.format("&d&lSiren"),
-						Utils.format("&7Slow and even weaken nearby monsters"), Utils.format("&aLevel 3"),
-						Utils.format("&7Up to level 30 ability"), Utils.format("&aAvailable")));
-				break;
-			default:
-				inv.setItem(33, Utils.createItem(Material.COBWEB, Utils.format("&d&lSiren"),
-						Utils.format("&7Slow and even weaken nearby monsters"), Utils.format("&cLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&cUnavailable")));
-		}
-
+			inv.setItem(33, Kit.siren().getButton(playerData.getInt(path + Kit.siren().getName()),
+					false));
 		if (!arena.getBannedKits().contains("Monk"))
-			switch (playerData.getInt(path + "Monk")) {
-			case 1:
-				inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"),
-						Utils.format("&7Give yourself and nearby allies haste"), Utils.format("&aLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&aAvailable")));
-				break;
-			case 2:
-				inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"),
-						Utils.format("&7Give yourself and nearby allies haste"), Utils.format("&aLevel 2"),
-						Utils.format("&7Up to level 20 ability"), Utils.format("&aAvailable")));
-				break;
-			case 3:
-				inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"),
-						Utils.format("&7Give yourself and nearby allies haste"), Utils.format("&aLevel 3"),
-						Utils.format("&7Up to level 30 ability"), Utils.format("&aAvailable")));
-				break;
-			default:
-				inv.setItem(34, Utils.createItem(Material.BELL, Utils.format("&d&lMonk"),
-						Utils.format("&7Give yourself and nearby allies haste"), Utils.format("&cLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&cUnavailable")));
-		}
-
+			inv.setItem(34, Kit.monk().getButton(playerData.getInt(path + Kit.monk().getName()),
+					false));
 		if (!arena.getBannedKits().contains("Messenger"))
-			switch (playerData.getInt(path + "Messenger")) {
-			case 1:
-				inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"),
-						Utils.format("&7Give yourself and nearby allies speed"), Utils.format("&aLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&aAvailable")));
-				break;
-			case 2:
-				inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"),
-						Utils.format("&7Give yourself and nearby allies speed"), Utils.format("&aLevel 2"),
-						Utils.format("&7Up to level 20 ability"), Utils.format("&aAvailable")));
-				break;
-			case 3:
-				inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"),
-						Utils.format("&7Give yourself and nearby allies speed"), Utils.format("&aLevel 3"),
-						Utils.format("&7Up to level 30 ability"), Utils.format("&aAvailable")));
-				break;
-			default:
-				inv.setItem(35, Utils.createItem(Material.FEATHER, Utils.format("&d&lMessenger"),
-						Utils.format("&7Give yourself and nearby allies speed"), Utils.format("&cLevel 1"),
-						Utils.format("&7Up to level 10 ability"), Utils.format("&cUnavailable")));
-		}
+			inv.setItem(35, Kit.messenger().getButton(playerData.getInt(path + Kit.messenger().getName()),
+					false));
 
 		// Effect kits
 		for (int i = 36; i < 45; i++)
 			inv.setItem(i, Utils.createItem(Material.YELLOW_STAINED_GLASS_PANE, Utils.format("&e&lEffect Kits"),
-					Utils.format("&7Kits give player a special effect")));
+					Utils.format("&7Kits give players a permanent") + Utils.format("&7special effect")));
 
 		if (!arena.getBannedKits().contains("Blacksmith"))
-			if (playerData.getBoolean(path + "Blacksmith"))
-				inv.setItem(45, Utils.createItem(Material.ANVIL, Utils.format("&e&lBlacksmith"),
-						Utils.format("&7All equipment purchased are unbreakable"), Utils.format("&aAvailable")));
-			else inv.setItem(45, Utils.createItem(Material.ANVIL, Utils.format("&e&lBlacksmith"),
-					Utils.format("&7All equipment purchased are unbreakable"), Utils.format("&cUnavailable")));
-
+			inv.setItem(45, Kit.blacksmith().getButton(
+					playerData.getBoolean(path + Kit.blacksmith().getName()) ? 1 : 0, false));
 		if (!arena.getBannedKits().contains("Witch"))
-			if (playerData.getBoolean(path + "Witch"))
-				inv.setItem(46, Utils.createItem(Material.CAULDRON, Utils.format("&e&lWitch"),
-						Utils.format("&7All purchased potions become splash potions"), Utils.format("&aAvailable")));
-			else inv.setItem(46, Utils.createItem(Material.CAULDRON, Utils.format("&e&lWitch"),
-					Utils.format("&7All purchased potions become splash potions"),
-					Utils.format("&cUnavailable")));
-
+			inv.setItem(46, Kit.witch().getButton(playerData.getBoolean(path + Kit.witch().getName()) ? 1 : 0,
+					false));
 		if (!arena.getBannedKits().contains("Merchant"))
-			if (playerData.getBoolean(path + "Merchant"))
-				inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&e&lMerchant"),
-						Utils.format("&7Earn a 10% rebate on all purchases"), Utils.format("&aAvailable")));
-			else inv.setItem(47, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&e&lMerchant"),
-					Utils.format("&7Earn a 10% rebate on all purchases"), Utils.format("&cUnavailable")));
-
+			inv.setItem(47, Kit.merchant().getButton(playerData.getBoolean(path + Kit.merchant().getName()) ?
+					1 : 0, false));
 		if (!arena.getBannedKits().contains("Vampire"))
-			if (playerData.getBoolean(path + "Vampire"))
-				inv.setItem(48, Utils.createItem(Material.GHAST_TEAR, Utils.format("&e&lVampire"),
-						Utils.format("&7Dealing x damage has an x% chance"),
-						Utils.format("&7of healing half a heart"), Utils.format("&aAvailable")));
-			else inv.setItem(48, Utils.createItem(Material.GHAST_TEAR, Utils.format("&e&lVampire"),
-					Utils.format("&7Dealing x damage has an x% chance"),
-					Utils.format("&7of healing half a heart"), Utils.format("&cUnavailable")));
-
+			inv.setItem(48, Kit.vampire().getButton(playerData.getBoolean(path + Kit.vampire().getName()) ?
+					1 : 0, false));
 		if (!arena.getBannedKits().contains("Giant"))
-			switch (playerData.getInt(path + "Giant")) {
-			case 1:
-				inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&e&lGiant"),
-						Utils.format("&aLevel 1"),
-						Utils.format("&7Permanent 10% health boost"), Utils.format("&aAvailable")));
-				break;
-			case 2:
-				inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&e&lGiant"),
-						Utils.format("&aLevel 2"),
-						Utils.format("&7Permanent 20% health boost"), Utils.format("&aAvailable")));
-				break;
-			default:
-				inv.setItem(49, Utils.createItem(Material.DARK_OAK_SAPLING, Utils.format("&e&lGiant"),
-						Utils.format("&cLevel 1"),
-						Utils.format("&7Permanent 10% health boost"), Utils.format("&cUnavailable")));
-		}
+			inv.setItem(49, Kit.giant().getButton(playerData.getInt(path + Kit.giant().getName()),
+					false));
 
 		// Option for no kit
-		inv.setItem(52, Utils.createItem(Material.LIGHT_GRAY_CONCRETE, Utils.format("&f&lNone")));
+		inv.setItem(52, Kit.none().getButton(0, true));
 
 		// Option to exit
 		inv.setItem(53, InventoryItems.exit());
@@ -3138,12 +2078,12 @@ public class Inventories {
 
 		// Maximum players
 		inv.setItem(1, Utils.createItem(Material.NETHERITE_HELMET,
-				Utils.format("&4&lMaximum players: &4" + arena.getMaxPlayers()), FLAGS, null,
+				Utils.format("&4&lMaximum players: &4" + arena.getMaxPlayers()), Utils.BUTTON_FLAGS, null,
 				Utils.format("&7The most players an arena can have")));
 
 		// Minimum players
 		inv.setItem(2, Utils.createItem(Material.NETHERITE_BOOTS,
-				Utils.format("&2&lMinimum players: &2" + arena.getMinPlayers()), FLAGS, null,
+				Utils.format("&2&lMinimum players: &2" + arena.getMinPlayers()), Utils.BUTTON_FLAGS, null,
 				Utils.format("&7The least players an arena can have to start")));
 
 		// Max waves
@@ -3152,7 +2092,7 @@ public class Inventories {
 			waves = "Unlimited";
 		else waves = Integer.toString(arena.getMaxWaves());
 		inv.setItem(3, Utils.createItem(Material.GOLDEN_SWORD,
-				Utils.format("&3&lMax waves: &3" + waves), FLAGS, null,
+				Utils.format("&3&lMax waves: &3" + waves), Utils.BUTTON_FLAGS, null,
 				Utils.format("&7The highest wave the arena will go to")));
 
 		// Wave time limit
@@ -3201,7 +2141,7 @@ public class Inventories {
 		// Difficulty multiplier
 		inv.setItem(14, Utils.createItem(Material.TURTLE_HELMET,
 				Utils.format("&4&lDifficulty Multiplier: &4" + arena.getDifficultyMultiplier()),
-				FLAGS,
+				Utils.BUTTON_FLAGS,
 				null,
 				Utils.format("&7Determines difficulty increase rate")));
 
@@ -3262,7 +2202,7 @@ public class Inventories {
 				}
 			}
 		});
-		inv.setItem(31, Utils.createItem(Material.GOLDEN_HELMET, Utils.format("&e&lArena Records"), FLAGS,
+		inv.setItem(31, Utils.createItem(Material.GOLDEN_HELMET, Utils.format("&e&lArena Records"), Utils.BUTTON_FLAGS,
 				null, records));
 
 		return inv;
