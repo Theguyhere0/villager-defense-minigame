@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.game.models.kits;
 
+import me.theguyhere.villagerdefense.game.models.GameItems;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -56,6 +57,8 @@ public class Kit {
     private final Map<Integer, Integer> pricesMap = new HashMap<>();
     /** A mapping between kit level and an array of {@link ItemStack} the player would receive.*/
     private final Map<Integer, ItemStack[]> itemsMap = new HashMap<>();
+    /** The level of this instance of the kit.*/
+    private int level;
 
     public Kit(String name, KitType kitType, Material buttonMaterial) {
         this.name = name;
@@ -65,6 +68,26 @@ public class Kit {
 
     public String getName() {
         return name;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    /**
+     * Returns the highest level this kit goes to.
+     * @return Highest level.
+     */
+    public int getMaxLevel() {
+        return pricesMap.size();
+    }
+
+    /**
+     * Checks if this kit has multiple levels.
+     * @return Whether the kit has multiple levels.
+     */
+    public boolean isMultiLevel() {
+        return pricesMap.size() > 1;
     }
 
     /**
@@ -89,10 +112,10 @@ public class Kit {
         List<String> description = new ArrayList<>();
         description.add(Utils.format("&7Up to ability level 10"));
         addLevelDescriptions(1, description);
-        description.clear();
+        description = new ArrayList<>();
         description.add(Utils.format("&7Up to ability level 20"));
         addLevelDescriptions(2, description);
-        description.clear();
+        description = new ArrayList<>();
         description.add(Utils.format("&7Up to ability level 30"));
         addLevelDescriptions(3, description);
     }
@@ -151,11 +174,10 @@ public class Kit {
     }
 
     /**
-     * Returns the items a player would receive at the specified level.
-     * @param level Kit level.
+     * Returns the items a player would receive.
      * @return Items to be received by the player.
      */
-    public ItemStack[] getItems(int level) {
+    public ItemStack[] getItems() {
         if (itemsMap.containsKey(level))
             return itemsMap.get(level);
         else return itemsMap.get(1);
@@ -177,7 +199,7 @@ public class Kit {
             return Utils.createItem(buttonMaterial,
                     Utils.format(getKitColor(kitType) + name), Utils.BUTTON_FLAGS, null);
         }
-        else if (pricesMap.size() > 1) {
+        else if (isMultiLevel()) {
             List<String> lores = new ArrayList<>();
             if (purchasedLevel == 0) {
                 lores.addAll(masterDescription);
@@ -187,15 +209,17 @@ public class Kit {
                         Utils.format("&cUnavailable"));
             }
             else if (purchasedLevel == pricesMap.size()) {
+//                System.out.println(pricesMap.size());
                 lores.addAll(masterDescription);
-                lores.add(Utils.format("&aLevel 3"));
-                lores.addAll(getLevelDescription(3));
+                lores.add(Utils.format("&aLevel " + pricesMap.size()));
+                lores.addAll(getLevelDescription(pricesMap.size()));
                 lores.add(purchaseMode ? Utils.format("&aPurchased!") : Utils.format("&aAvailable"));
             }
             else if (purchasedLevel == -1) {
                 lores.addAll(masterDescription);
                 descriptionsMap.forEach((level, description) -> {
-                    lores.add(Utils.format("&f&lLevel " + level));
+                    System.out.println("level " + level + " description: " + description);
+                    lores.add(Utils.format("&fLevel " + level));
                     lores.addAll(description);
                 });
                 return Utils.createItem(buttonMaterial,
@@ -232,6 +256,73 @@ public class Kit {
                             (purchaseMode ? Utils.format("&cPurchase: &b" + getPrice(1) + " Crystals") :
                                     Utils.format("&cUnavailable")));
         }
+    }
+
+    /**
+     * Sets the kit level while returning the same kit.
+     * @param level Kit level.
+     * @return This kit.
+     */
+    public Kit setKitLevel(int level) {
+        this.level = level;
+        return this;
+    }
+
+    /**
+     * Attempts to return a {@link Kit} based on the kit's name.
+     * @param kitName Name to check.
+     * @return Kit or null.
+     */
+    public static Kit getKit(String kitName) {
+        if (none().getName().equals(kitName))
+            return none();
+        else if (orc().getName().equals(kitName))
+            return orc();
+        else if (farmer().getName().equals(kitName))
+            return farmer();
+        else if (soldier().getName().equals(kitName))
+            return soldier();
+        else if (alchemist().getName().equals(kitName))
+            return alchemist();
+        else if (tailor().getName().equals(kitName))
+            return tailor();
+        else if (trader().getName().equals(kitName))
+            return trader();
+        else if (summoner().getName().equals(kitName))
+            return summoner();
+        else if (reaper().getName().equals(kitName))
+            return reaper();
+        else if (phantom().getName().equals(kitName))
+            return phantom();
+        else if (mage().getName().equals(kitName))
+            return mage();
+        else if (ninja().getName().equals(kitName))
+            return ninja();
+        else if (templar().getName().equals(kitName))
+            return templar();
+        else if (warrior().getName().equals(kitName))
+            return warrior();
+        else if (knight().getName().equals(kitName))
+            return knight();
+        else if (priest().getName().equals(kitName))
+            return priest();
+        else if (siren().getName().equals(kitName))
+            return siren();
+        else if (monk().getName().equals(kitName))
+            return monk();
+        else if (messenger().getName().equals(kitName))
+            return messenger();
+        else if (blacksmith().getName().equals(kitName))
+            return blacksmith();
+        else if (witch().getName().equals(kitName))
+            return witch();
+        else if (merchant().getName().equals(kitName))
+            return merchant();
+        else if (vampire().getName().equals(kitName))
+            return vampire();
+        else if (giant().getName().equals(kitName))
+            return giant();
+        else return null;
     }
 
     // Default Kit
@@ -311,10 +402,10 @@ public class Kit {
         List<String> description = new ArrayList<>();
         description.add(Utils.format("&7Start with a wolf spawn"));
         kit.addLevelDescriptions(1, description);
-        description.clear();
+        description = new ArrayList<>();
         description.add(Utils.format("&7Start with 2 wolf spawns"));
         kit.addLevelDescriptions(2, description);
-        description.clear();
+        description = new ArrayList<>();
         description.add(Utils.format("&7Start with an iron golem spawn"));
         kit.addLevelDescriptions(3, description);
 
@@ -341,10 +432,10 @@ public class Kit {
         List<String> description = new ArrayList<>();
         description.add(Utils.format("&7Start with a sharpness III netherite hoe"));
         kit.addLevelDescriptions(1, description);
-        description.clear();
+        description = new ArrayList<>();
         description.add(Utils.format("&7Start with a sharpness V netherite hoe"));
         kit.addLevelDescriptions(2, description);
-        description.clear();
+        description = new ArrayList<>();
         description.add(Utils.format("&7Start with a sharpness VIII netherite hoe"));
         kit.addLevelDescriptions(3, description);
 
@@ -388,12 +479,7 @@ public class Kit {
         kit.addPrice(2, 7500);
         kit.addPrice(3, 13000);
 
-        HashMap<Enchantment, Integer> enchants = new HashMap<>();
-        enchants.put(Enchantment.DURABILITY, 1);
-        kit.addItems(1, new ItemStack[]{
-                new ItemStack(Material.WOODEN_SWORD),
-                Utils.createItem(Material.PURPLE_DYE, Utils.format("&dMage Essence"), Utils.HIDE_ENCHANT_FLAGS,
-                        enchants, Utils.format("&7Right click to use ability"))});
+        kit.addItems(1, new ItemStack[]{new ItemStack(Material.WOODEN_SWORD), GameItems.mage()});
 
         return kit;
     }
@@ -408,12 +494,7 @@ public class Kit {
         kit.addPrice(2, 8000);
         kit.addPrice(3, 14000);
 
-        HashMap<Enchantment, Integer> enchants = new HashMap<>();
-        enchants.put(Enchantment.DURABILITY, 1);
-        kit.addItems(1, new ItemStack[]{
-                new ItemStack(Material.WOODEN_SWORD),
-                Utils.createItem(Material.BLACK_DYE, Utils.format("&dNinja Essence"), Utils.HIDE_ENCHANT_FLAGS,
-                        enchants, Utils.format("&7Right click to use ability"))});
+        kit.addItems(1, new ItemStack[]{new ItemStack(Material.WOODEN_SWORD), GameItems.ninja()});
 
         return kit;
     }
@@ -427,12 +508,7 @@ public class Kit {
         kit.addPrice(2, 8000);
         kit.addPrice(3, 12500);
 
-        HashMap<Enchantment, Integer> enchants = new HashMap<>();
-        enchants.put(Enchantment.DURABILITY, 1);
-        kit.addItems(1, new ItemStack[]{
-                new ItemStack(Material.WOODEN_SWORD),
-                Utils.createItem(Material.YELLOW_DYE, Utils.format("&dTemplar Essence"), Utils.HIDE_ENCHANT_FLAGS,
-                        enchants, Utils.format("&7Right click to use ability"))});
+        kit.addItems(1, new ItemStack[]{new ItemStack(Material.WOODEN_SWORD), GameItems.templar()});
 
         return kit;
     }
@@ -446,12 +522,7 @@ public class Kit {
         kit.addPrice(2, 9000);
         kit.addPrice(3, 14000);
 
-        HashMap<Enchantment, Integer> enchants = new HashMap<>();
-        enchants.put(Enchantment.DURABILITY, 1);
-        kit.addItems(1, new ItemStack[]{
-                new ItemStack(Material.WOODEN_SWORD),
-                Utils.createItem(Material.RED_DYE, Utils.format("&dWarrior Essence"), Utils.HIDE_ENCHANT_FLAGS,
-                        enchants, Utils.format("&7Right click to use ability"))});
+        kit.addItems(1, new ItemStack[]{new ItemStack(Material.WOODEN_SWORD), GameItems.warrior()});
 
         return kit;
     }
@@ -465,12 +536,7 @@ public class Kit {
         kit.addPrice(2, 8500);
         kit.addPrice(3, 13000);
 
-        HashMap<Enchantment, Integer> enchants = new HashMap<>();
-        enchants.put(Enchantment.DURABILITY, 1);
-        kit.addItems(1, new ItemStack[]{
-                new ItemStack(Material.WOODEN_SWORD),
-                Utils.createItem(Material.BROWN_DYE, Utils.format("&dKnight Essence"), Utils.HIDE_ENCHANT_FLAGS,
-                        enchants, Utils.format("&7Right click to use ability"))});
+        kit.addItems(1, new ItemStack[]{new ItemStack(Material.WOODEN_SWORD), GameItems.knight()});
 
         return kit;
     }
@@ -484,12 +550,7 @@ public class Kit {
         kit.addPrice(2, 9000);
         kit.addPrice(3, 15000);
 
-        HashMap<Enchantment, Integer> enchants = new HashMap<>();
-        enchants.put(Enchantment.DURABILITY, 1);
-        kit.addItems(1, new ItemStack[]{
-                new ItemStack(Material.WOODEN_SWORD),
-                Utils.createItem(Material.WHITE_DYE, Utils.format("&dPriest Essence"), Utils.HIDE_ENCHANT_FLAGS,
-                        enchants, Utils.format("&7Right click to use ability"))});
+        kit.addItems(1, new ItemStack[]{new ItemStack(Material.WOODEN_SWORD), GameItems.priest()});
 
         return kit;
     }
@@ -503,12 +564,7 @@ public class Kit {
         kit.addPrice(2, 8000);
         kit.addPrice(3, 13500);
 
-        HashMap<Enchantment, Integer> enchants = new HashMap<>();
-        enchants.put(Enchantment.DURABILITY, 1);
-        kit.addItems(1, new ItemStack[]{
-                new ItemStack(Material.WOODEN_SWORD),
-                Utils.createItem(Material.PINK_DYE, Utils.format("&dSiren Essence"), Utils.HIDE_ENCHANT_FLAGS,
-                        enchants, Utils.format("&7Right click to use ability"))});
+        kit.addItems(1, new ItemStack[]{new ItemStack(Material.WOODEN_SWORD), GameItems.siren()});
 
         return kit;
     }
@@ -522,12 +578,7 @@ public class Kit {
         kit.addPrice(2, 7000);
         kit.addPrice(3, 11000);
 
-        HashMap<Enchantment, Integer> enchants = new HashMap<>();
-        enchants.put(Enchantment.DURABILITY, 1);
-        kit.addItems(1, new ItemStack[]{
-                new ItemStack(Material.WOODEN_SWORD),
-                Utils.createItem(Material.GREEN_DYE, Utils.format("&dMonk Essence"), Utils.HIDE_ENCHANT_FLAGS,
-                        enchants, Utils.format("&7Right click to use ability"))});
+        kit.addItems(1, new ItemStack[]{new ItemStack(Material.WOODEN_SWORD), GameItems.monk()});
 
         return kit;
     }
@@ -541,12 +592,7 @@ public class Kit {
         kit.addPrice(2, 8000);
         kit.addPrice(3, 12000);
 
-        HashMap<Enchantment, Integer> enchants = new HashMap<>();
-        enchants.put(Enchantment.DURABILITY, 1);
-        kit.addItems(1, new ItemStack[]{
-                new ItemStack(Material.WOODEN_SWORD),
-                Utils.createItem(Material.BLUE_DYE, Utils.format("&dMessenger Essence"), Utils.HIDE_ENCHANT_FLAGS,
-                        enchants, Utils.format("&7Right click to use ability"))});
+        kit.addItems(1, new ItemStack[]{new ItemStack(Material.WOODEN_SWORD), GameItems.messenger()});
 
         return kit;
     }
@@ -587,10 +633,10 @@ public class Kit {
         List<String> description = new ArrayList<>();
         description.add(Utils.format("&7Permanent 10% health boost"));
         kit.addLevelDescriptions(1, description);
-        description.clear();
+        description = new ArrayList<>();
         description.add(Utils.format("&7Permanent 20% health boost"));
         kit.addLevelDescriptions(2, description);
-        description.clear();
+        description = new ArrayList<>();
 
         kit.addPrice(1, 5000);
         kit.addPrice(2, 8000);

@@ -1,12 +1,10 @@
 package me.theguyhere.villagerdefense.listeners;
 
-import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.*;
-import me.theguyhere.villagerdefense.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.game.displays.Leaderboard;
-import me.theguyhere.villagerdefense.game.displays.Portal;
-import me.theguyhere.villagerdefense.game.models.*;
+import me.theguyhere.villagerdefense.game.models.Mobs;
+import me.theguyhere.villagerdefense.game.models.Tasks;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.arenas.ArenaRecord;
 import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
@@ -30,20 +28,9 @@ import java.util.stream.Collectors;
 
 public class ArenaListener implements Listener {
     private final Main plugin;
-    private final Game game;
-    private final Portal portal;
-    private final Leaderboard leaderboard;
-    private final ArenaBoard arenaBoard;
-    private final Inventories inv;
 
-    public ArenaListener(Main plugin, Game game, Portal portal, Leaderboard leaderboard, ArenaBoard arenaBoard,
-                         Inventories inv) {
+    public ArenaListener(Main plugin) {
         this.plugin = plugin;
-        this.game = game;
-        this.portal = portal;
-        this.leaderboard = leaderboard;
-        this.arenaBoard = arenaBoard;
-        this.inv = inv;
     }
 
     @EventHandler
@@ -53,7 +40,7 @@ public class ArenaListener implements Listener {
         FileConfiguration language = plugin.getLanguageData();
 
         // Ignore if player is already in a game somehow
-        if (game.arenas.stream().filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player))) {
+        if (plugin.getGame().arenas.stream().filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player))) {
             e.setCancelled(true);
             player.sendMessage(Utils.notify(language.getString("joinError")));
             return;
@@ -109,10 +96,10 @@ public class ArenaListener implements Listener {
             // Update player tracking and in-game stats
             VDPlayer fighter = new VDPlayer(player, false);
             arena.getPlayers().add(fighter);
-            portal.refreshHolo(game.arenas.indexOf(arena), game);
+            plugin.getPortal().refreshHolo(plugin.getGame().arenas.indexOf(arena), plugin.getGame());
 
             // Give them a game board
-            game.createBoard(fighter);
+            plugin.getGame().createBoard(fighter);
 
             // Clear arena
             Utils.clear(arena.getCorner1(), arena.getCorner2());
@@ -124,7 +111,7 @@ public class ArenaListener implements Listener {
                 else player.playSound(arena.getPlayerSpawn(), arena.getWaitingSound(), 4, 1);
 
             // Tell player to choose a kit and automatically open inventory
-            player.openInventory(inv.createSelectKitsInventory(player, arena));
+            player.openInventory(plugin.getInventories().createSelectKitsInventory(player, arena));
             player.sendMessage(Utils.notify(language.getString("kitChoose")));
         }
 
@@ -136,7 +123,7 @@ public class ArenaListener implements Listener {
 
             // Update player tracking and in-game stats
             arena.getPlayers().add(new VDPlayer(player, true));
-            portal.refreshHolo(game.arenas.indexOf(arena), game);
+            plugin.getPortal().refreshHolo(plugin.getGame().arenas.indexOf(arena), plugin.getGame());
 
             // Don't touch task updating
             return;
@@ -287,7 +274,7 @@ public class ArenaListener implements Listener {
 
         // Attempt to get arena and player
         try {
-            arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+            arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
                     .collect(Collectors.toList()).get(0);
             gamer = arena.getPlayer(player);
         } catch (Exception err) {
@@ -313,7 +300,7 @@ public class ArenaListener implements Listener {
             plugin.savePlayerData();
 
             // Refresh leaderboards
-            leaderboard.refreshLeaderboards();
+            plugin.getLeaderboard().refreshLeaderboards();
 
             // Remove the player from the arena and time limit bar if exists
             arena.getPlayers().remove(gamer);
@@ -330,7 +317,7 @@ public class ArenaListener implements Listener {
 
             // Sets them up for teleport to lobby
             player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
-            Utils.teleAdventure(player, game.getLobby());
+            Utils.teleAdventure(player, plugin.getGame().getLobby());
 
             // Give persistent rewards if it applies
             if (arena.getCurrentWave() != 0) {
@@ -382,7 +369,7 @@ public class ArenaListener implements Listener {
             arena.getPlayers().remove(gamer);
 
             // Sets them up for teleport to lobby
-            Utils.teleAdventure(player, game.getLobby());
+            Utils.teleAdventure(player, plugin.getGame().getLobby());
         }
 
         // Return player exp and items
@@ -405,7 +392,7 @@ public class ArenaListener implements Listener {
         gamer.setStatus(PlayerStatus.LEFT);
 
         // Refresh the game portal
-        portal.refreshHolo(game.arenas.indexOf(arena), game);
+        plugin.getPortal().refreshHolo(plugin.getGame().arenas.indexOf(arena), plugin.getGame());
     }
 
     @EventHandler
@@ -415,7 +402,7 @@ public class ArenaListener implements Listener {
 
         // Set the arena to ending
         arena.setStatus(ArenaStatus.ENDING);
-        portal.refreshHolo(game.arenas.indexOf(arena), game);
+        plugin.getPortal().refreshHolo(plugin.getGame().arenas.indexOf(arena), plugin.getGame());
 
         // Notify players that the game has ended
         arena.getPlayers().forEach(player ->
@@ -434,7 +421,7 @@ public class ArenaListener implements Listener {
                 arena.getPlayers().forEach(player -> player.getPlayer().sendTitle(
                         Utils.format(language.getString("record")), null, Utils.secondsToTicks(.5),
                         Utils.secondsToTicks(3.5), Utils.secondsToTicks(1)));
-                arenaBoard.refreshArenaBoard(arena.getArena());
+                plugin.getArenaBoard().refreshArenaBoard(arena.getArena());
             }
 
             // Give persistent rewards
@@ -685,7 +672,7 @@ public class ArenaListener implements Listener {
         }
     }
 
-    // Spawns bosses randomly
+    // Spawn bosses randomly
     private void spawnBosses(Arena arena) {
         DataManager data;
 

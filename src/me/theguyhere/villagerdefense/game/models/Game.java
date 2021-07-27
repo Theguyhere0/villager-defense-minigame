@@ -54,14 +54,12 @@ public class Game {
 		score10.setScore(10);
 		Score score9 = obj.getScore(Utils.format("&aGems: " + player.getGems()));
 		score9.setScore(9);
-		StringBuilder kit = new StringBuilder();
-		try {
-			kit.append(player.getKit().substring(0, player.getKit().length() - 1)).append(" ");
-			for (int i = 0; i < Integer.parseInt(player.getKit().substring(player.getKit().length() - 1)); i++)
+		StringBuilder kit = new StringBuilder(player.getKit().getName());
+		if (player.getKit().isMultiLevel()) {
+			kit.append(" ");
+			for (int i = 0; i < player.getKit().getLevel(); i++) {
 				kit.append("I");
-		} catch (NumberFormatException e) {
-			kit = new StringBuilder();
-			kit.append(player.getKit());
+			}
 		}
 		Score score8 = obj.getScore(Utils.format("&bKit: " + kit));
 		score8.setScore(8);

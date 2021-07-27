@@ -86,6 +86,7 @@ public class Arena {
         currentWave = 0;
         villagers = 0;
         enemies = 0;
+        status = ArenaStatus.WAITING;
     }
 
     public int getArena() {
@@ -128,69 +129,129 @@ public class Arena {
         plugin.saveArenaData();
     }
 
+    /**
+     * Retrieves the maximum player count of the arena from the arena file.
+     * @return Maximum player count.
+     */
     public int getMaxPlayers() {
         return config.getInt(path + ".max");
     }
 
+    /**
+     * Writes the new maximum player count of the arena into the arena file.
+     * @param maxPlayers New maximum player count.
+     */
     public void setMaxPlayers(int maxPlayers) {
         config.set(path + ".max", maxPlayers);
         plugin.saveArenaData();
     }
 
+    /**
+     * Retrieves the minimum player count of the arena from the arena file.
+     * @return Minimum player count.
+     */
     public int getMinPlayers() {
         return config.getInt(path + ".min");
     }
 
+    /**
+     * Writes the new minimum player count of the arena into the arena file.
+     * @param minPlayers New minimum player count.
+     */
     public void setMinPlayers(int minPlayers) {
         config.set(path + ".min", minPlayers);
         plugin.saveArenaData();
     }
 
+    /**
+     * Retrieves the wolf cap per player of the arena from the arena file.
+     * @return Wolf cap per player.
+     */
     public int getWolfCap() {
         return config.getInt(path + ".wolf");
     }
 
+    /**
+     * Writes the new wolf cap per player of the arena into the arena file.
+     * @param wolfCap New wolf cap per player.
+     */
     public void setWolfCap(int wolfCap) {
         config.set(path + ".wolf", wolfCap);
         plugin.saveArenaData();
     }
 
+    /**
+     * Retrieves the iron golem cap of the arena from the arena file.
+     * @return Iron golem cap.
+     */
     public int getGolemCap() {
         return config.getInt(path + ".golem");
     }
 
+    /**
+     * Writes the new iron golem cap of the arena into the arena file.
+     * @param golemCap New iron golem cap.
+     */
     public void setgolemCap(int golemCap) {
         config.set(path + ".golem", golemCap);
         plugin.saveArenaData();
     }
 
+    /**
+     * Retrieves the maximum waves of the arena from the arena file.
+     * @return Maximum waves.
+     */
     public int getMaxWaves() {
         return config.getInt(path + ".maxWaves");
     }
 
+    /**
+     * Writes the new maximum waves of the arena into the arena file.
+     * @param maxWaves New maximum waves.
+     */
     public void setMaxWaves(int maxWaves) {
         config.set(path + ".maxWaves", maxWaves);
         plugin.saveArenaData();
     }
 
+    /**
+     * Retrieves the nominal time limit per wave of the arena from the arena file.
+     * @return Nominal time limit per wave.
+     */
     public int getWaveTimeLimit() {
         return config.getInt(path + ".waveTimeLimit");
     }
 
+    /**
+     * Writes the new nominal time limit per wave of the arena into the arena file.
+     * @param timeLimit New nominal time limit per wave.
+     */
     public void setWaveTimeLimit(int timeLimit) {
         config.set(path + ".waveTimeLimit", timeLimit);
         plugin.saveArenaData();
     }
 
+    /**
+     * Retrieves the difficulty multiplier of the arena from the arena file.
+     * @return Difficulty multiplier.
+     */
     public int getDifficultyMultiplier() {
         return config.getInt(path + ".difficulty");
     }
 
+    /**
+     * Writes the new difficulty multiplier of the arena into the arena file.
+     * @param multiplier New difficulty multiplier.
+     */
     public void setDifficultyMultiplier(int multiplier) {
         config.set(path + ".difficulty", multiplier);
         plugin.saveArenaData();
     }
 
+    /**
+     * Retrieves the waiting music of the arena from the arena file.
+     * @return Waiting {@link Sound}.
+     */
     public Sound getWaitingSound() {
         switch (config.getInt(path + ".sounds.waiting")) {
             case 0:
@@ -220,6 +281,10 @@ public class Arena {
         }
     }
 
+    /**
+     * Retrieves the waiting music title of the arena into the arena file.
+     * @return Waiting music title.
+     */
     public String getWaitingSoundName() {
         switch (config.getInt(path + ".sounds.waiting")) {
             case 0:
@@ -249,72 +314,133 @@ public class Arena {
         }
     }
 
+    /**
+     * Retrieves the waiting music numerical representation of the arena into the arena file.
+     * @return Waiting music numerical representation.
+     */
     public int getWaitingSoundNum() {
         return config.getInt(path + ".sounds.waiting");
     }
 
+    /**
+     * Writes the new waiting music of the arena into the arena file.
+     * @param sound Numerical representation of the new waiting music.
+     */
     public void setWaitingSound(int sound) {
         config.set(path + ".sounds.waiting", sound);
         plugin.saveArenaData();
     }
 
+    /**
+     * Retrieves the arena portal location from the arena file.
+     * @return Arena portal location.
+     */
     public Location getPortal() {
         return Utils.getConfigLocationNoPitch(plugin, "portal." + arena);
     }
 
+    /**
+     * Writes the new arena portal location into the arena file.
+     * @param location New arena portal location.
+     */
     public void setPortal(Location location) {
         Utils.setConfigurationLocation(plugin, "portal." + arena, location);
         plugin.saveArenaData();
     }
 
+    /**
+     * Centers the arena portal location along the x and z axis.
+     */
     public void centerPortal() {
         Utils.centerConfigLocation(plugin, "portal." + arena);
     }
 
+    /**
+     * Retrieves the arena leaderboard location from the arena file.
+     * @return Arena leaderboard location.
+     */
     public Location getArenaBoard() {
         return Utils.getConfigLocationNoRotation(plugin, "arenaBoard." + arena);
     }
 
+    /**
+     * Writes the new arena leaderboard location into the arena file.
+     * @param location New arena leaderboard location.
+     */
     public void setArenaBoard(Location location) {
         Utils.setConfigurationLocation(plugin, "arenaBoard." + arena, location);
         plugin.saveArenaData();
     }
 
+    /**
+     * Centers the arena leaderboard location along the x and z axis.
+     */
     public void centerArenaBoard() {
         Utils.centerConfigLocation(plugin, "arenaBoard." + arena);
     }
 
+    /**
+     * Retrieves the player spawn location of the arena from the arena file.
+     * @return Player spawn location.
+     */
     public Location getPlayerSpawn() {
         return Utils.getConfigLocation(plugin, path + ".spawn");
     }
 
+    /**
+     * Writes the new player spawn location of the arena into the arena file.
+     * @param location New player spawn location.
+     */
     public void setPlayerSpawn(Location location) {
         Utils.setConfigurationLocation(plugin, path + ".spawn", location);
         plugin.saveArenaData();
     }
 
+    /**
+     * Centers the player spawn location of the arena along the x and z axis.
+     */
     public void centerPlayerSpawn() {
         Utils.centerConfigLocation(plugin, path + ".spawn");
     }
 
+    /**
+     * Retrieves the waiting room location of the arena from the arena file.
+     * @return Player spawn location.
+     */
     public Location getWaitingRoom() {
         return Utils.getConfigLocation(plugin, path + ".waiting");
     }
 
+    /**
+     * Writes the new waiting room location of the arena into the arena file.
+     * @param location New player spawn location.
+     */
     public void setWaitingRoom(Location location) {
         Utils.setConfigurationLocation(plugin, path + ".waiting", location);
         plugin.saveArenaData();
     }
 
+    /**
+     * Centers the waiting room location of the arena along the x and z axis.
+     */
     public void centerWaitingRoom() {
         Utils.centerConfigLocation(plugin, path + ".waiting");
     }
 
+    /**
+     * Retrieves a list of monster spawn locations of the arena from the arena file.
+     * @return List of monster spawns.
+     */
     public List<Location> getMonsterSpawns() {
         return Utils.getConfigLocationList(plugin, path + ".monster").stream()
                 .filter(Objects::nonNull).collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves a specific monster spawn location of the arena from the arena file.
+     * @param num Monster spawn number.
+     * @return Monster spawn location.
+     */
     public Location getMonsterSpawn(int num) {
         return Utils.getConfigLocationNoRotation(plugin, path + ".monster." + num);
     }
@@ -953,27 +1079,39 @@ public class Arena {
             return inv;
 
         // Get items from stored inventory
-        config.getConfigurationSection(path + ".customShop").getKeys(false)
-            .forEach(index -> {
-                // Get raw item and data
-                ItemStack item = config.getItemStack(path + ".customShop." + index).clone();
-                ItemMeta meta = item.getItemMeta();
-                List<String> lore = new ArrayList<>();
-                String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
-                int price = Integer.parseInt(meta.getDisplayName().substring(meta.getDisplayName().length() - 5));
+        try {
+            config.getConfigurationSection(path + ".customShop").getKeys(false)
+                    .forEach(index -> {
+                        try {
+                            // Get raw item and data
+                            ItemStack item = config.getItemStack(path + ".customShop." + index).clone();
+                            ItemMeta meta = item.getItemMeta();
+                            List<String> lore = new ArrayList<>();
+                            String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
+                            int price = Integer.parseInt(meta.getDisplayName().substring(meta.getDisplayName().length() - 5));
 
-                // Transform to proper shop item
-                meta.setDisplayName(Utils.format("&f" + name));
-                if (meta.hasLore()) {
-                    lore = meta.getLore();
-                    lore.add(Utils.format("&2Gems: &a" + price));
-                } else lore.add(Utils.format("&2Gems: &a" + price));
-                meta.setLore(lore);
-                item.setItemMeta(meta);
+                            // Transform to proper shop item
+                            meta.setDisplayName(Utils.format("&f" + name));
+                            if (meta.hasLore())
+                                lore = meta.getLore();
+                            lore.add(Utils.format("&2Gems: &a" + price));
+                            meta.setLore(lore);
+                            item.setItemMeta(meta);
 
-                // Set item into inventory
-                inv.setItem(Integer.parseInt(index), item);
-            });
+                            // Set item into inventory
+                            inv.setItem(Integer.parseInt(index), item);
+                        } catch (Exception e) {
+                            plugin.debugError(
+                                    String.format(
+                                            "An error occurred retrieving an item from arena %d's custom shop.", arena),
+                                    2);
+                        }
+                    });
+        } catch (Exception e) {
+            plugin.debugError(
+                    String.format("Attempted to retrieve the custom shop inventory of arena %d but found none.", arena),
+                    1);
+        }
 
         return inv;
     }
@@ -991,27 +1129,39 @@ public class Arena {
             return inv;
 
         // Get items from stored inventory
-        config.getConfigurationSection(path + ".customShop").getKeys(false)
-                .forEach(index -> {
-                    // Get raw item and data
-                    ItemStack item = config.getItemStack(path + ".customShop." + index).clone();
-                    ItemMeta meta = item.getItemMeta();
-                    List<String> lore = new ArrayList<>();
-                    String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
-                    int price = Integer.parseInt(meta.getDisplayName().substring(meta.getDisplayName().length() - 5));
+        try {
+            config.getConfigurationSection(path + ".customShop").getKeys(false)
+                    .forEach(index -> {
+                        try {
+                            // Get raw item and data
+                            ItemStack item = config.getItemStack(path + ".customShop." + index).clone();
+                            ItemMeta meta = item.getItemMeta();
+                            List<String> lore = new ArrayList<>();
+                            String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
+                            int price = Integer.parseInt(meta.getDisplayName().substring(meta.getDisplayName().length() - 5));
 
-                    // Transform to proper shop item
-                    meta.setDisplayName(Utils.format("&f" + name));
-                    if (meta.hasLore()) {
-                        lore = meta.getLore();
-                        lore.add(Utils.format("&2Gems: &a" + price));
-                    } else lore.add(Utils.format("&2Gems: &a" + price));
-                    meta.setLore(lore);
-                    item.setItemMeta(meta);
+                            // Transform to proper shop item
+                            meta.setDisplayName(Utils.format("&f" + name));
+                            if (meta.hasLore())
+                                lore = meta.getLore();
+                            lore.add(Utils.format("&2Gems: &a" + price));
+                            meta.setLore(lore);
+                            item.setItemMeta(meta);
 
-                    // Set item into inventory
-                    inv.setItem(Integer.parseInt(index), item);
-                });
+                            // Set item into inventory
+                            inv.setItem(Integer.parseInt(index), item);
+                        } catch (Exception e) {
+                            plugin.debugError(
+                                    String.format(
+                                            "An error occurred retrieving an item from arena %d's custom shop.", arena),
+                                    2);
+                        }
+                    });
+        } catch (Exception e) {
+            plugin.debugError(
+                    String.format("Attempted to retrieve the custom shop inventory of arena %d but found none.", arena),
+                    1);
+        }
 
         return inv;
     }
@@ -1046,10 +1196,9 @@ public class Arena {
 
                             // Transform to proper shop item
                             meta.setDisplayName(Utils.format("&f" + name));
-                            if (meta.hasLore()) {
+                            if (meta.hasLore())
                                 lore = meta.getLore();
-                                lore.add(Utils.format("&2Gems: &a" + price));
-                            } else lore.add(Utils.format("&2Gems: &a" + price));
+                            lore.add(Utils.format("&2Gems: &a" + price));
                             meta.setLore(lore);
                             item.setItemMeta(meta);
 

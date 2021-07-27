@@ -2,9 +2,6 @@ package me.theguyhere.villagerdefense.listeners;
 
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
-import me.theguyhere.villagerdefense.game.models.Game;
-import me.theguyhere.villagerdefense.game.displays.Portal;
-import me.theguyhere.villagerdefense.tools.PacketReader;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -20,24 +17,18 @@ import java.util.Objects;
 
 public class JoinListener implements Listener {
 	private final Main plugin;
-	private final Portal portal;
-	private final PacketReader reader;
-	private final Game game;
 
-	public JoinListener(Main plugin, Portal portal, PacketReader reader, Game game) {
+	public JoinListener(Main plugin) {
 		this.plugin = plugin;
-		this.portal = portal;
-		this.reader = reader;
-		this.game = game;
 	}
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e) {
-		if (portal.getNPCs() == null)
+		if (plugin.getPortal().getNPCs() == null)
 			return;
 		Player player = e.getPlayer();
-		portal.addJoinPacket(player);
-		reader.inject(player);
+		plugin.getPortal().addJoinPacket(player);
+		plugin.getReader().inject(player);
 
 		// Get list of loggers from data file
 		List<String> loggers = plugin.getPlayerData().getStringList("loggers");
@@ -45,7 +36,7 @@ public class JoinListener implements Listener {
 		// Check if player is a logger
 		if (loggers.contains(player.getName())) {
 			// Teleport them back to lobby
-			Utils.teleAdventure(player, game.getLobby());
+			Utils.teleAdventure(player, plugin.getGame().getLobby());
 			loggers.remove(player.getName());
 			plugin.getPlayerData().set("loggers", loggers);
 
@@ -73,9 +64,9 @@ public class JoinListener implements Listener {
 	
 	@EventHandler
 	public void onPortal(PlayerChangedWorldEvent e) {
-		if (portal.getNPCs() == null)
+		if (plugin.getPortal().getNPCs() == null)
 			return;
-		portal.addJoinPacket(e.getPlayer());
+		plugin.getPortal().addJoinPacket(e.getPlayer());
 	}
 	
 	@EventHandler
@@ -83,7 +74,7 @@ public class JoinListener implements Listener {
 		Player player = e.getPlayer();
 
 		// Uninject player and make them leave from arena
-		reader.uninject(player);
+		plugin.getReader().uninject(player);
 		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 				Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player)));
 
@@ -92,7 +83,7 @@ public class JoinListener implements Listener {
 		loggers.add(player.getName());
 
 		// Add to list of loggers if in a game
-		if (game.arenas.stream().filter(Objects::nonNull).anyMatch(arena -> arena.hasPlayer(player))) {
+		if (plugin.getGame().arenas.stream().filter(Objects::nonNull).anyMatch(arena -> arena.hasPlayer(player))) {
 			plugin.getPlayerData().set("loggers", loggers);
 			plugin.savePlayerData();
 		}

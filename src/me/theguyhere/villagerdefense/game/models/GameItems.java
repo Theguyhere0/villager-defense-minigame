@@ -2391,13 +2391,11 @@ public class GameItems {
 				Utils.format("&2Gems: &a130"));
 	}
 	public static @NotNull ItemStack rockets() {
-		ItemStack item = new ItemStack(Material.FIREWORK_ROCKET, 4);
+		ItemStack item = Utils.createItems(Material.FIREWORK_ROCKET, 4, null,
+				Utils.format("&2Gems: &a50"));
 		ItemMeta meta = item.getItemMeta();
 		FireworkMeta fireworkMeta = (FireworkMeta) meta;
 
-		List<String> lore = new ArrayList<>();
-		lore.add(Utils.format("&2Gems: &a50"));
-		meta.setLore(lore);
 		for (int i = 0; i < 3; i++) {
 			fireworkMeta.addEffect(FireworkEffect.builder().withColor(Color.YELLOW).with(FireworkEffect.Type.BALL_LARGE)
 					.build());
@@ -5120,6 +5118,95 @@ public class GameItems {
 	public static @NotNull ItemStack experience() {
 		return Utils.createItem(Material.EXPERIENCE_BOTTLE, null, Utils.format("&2Gems: &a75"));
 	}
+
+	// Kit abilities
+	public static @NotNull ItemStack mage() {
+		HashMap<Enchantment, Integer> enchants = new HashMap<>();
+		enchants.put(Enchantment.DURABILITY, 1);
+		return Utils.createItem(Material.PURPLE_DYE, Utils.format("&dMage Essence"), Utils.HIDE_ENCHANT_FLAGS,
+				enchants, Utils.format("&7Right click to use ability"));
+	}
+	public static @NotNull ItemStack ninja() {
+		HashMap<Enchantment, Integer> enchants = new HashMap<>();
+		enchants.put(Enchantment.DURABILITY, 1);
+		return Utils.createItem(Material.BLACK_DYE, Utils.format("&dNinja Essence"), Utils.HIDE_ENCHANT_FLAGS,
+				enchants, Utils.format("&7Right click to use ability"));
+	}
+	public static @NotNull ItemStack templar() {
+		HashMap<Enchantment, Integer> enchants = new HashMap<>();
+		enchants.put(Enchantment.DURABILITY, 1);
+		return Utils.createItem(Material.YELLOW_DYE, Utils.format("&dTemplar Essence"), Utils.HIDE_ENCHANT_FLAGS,
+				enchants, Utils.format("&7Right click to use ability"));
+	}
+	public static @NotNull ItemStack warrior() {
+		HashMap<Enchantment, Integer> enchants = new HashMap<>();
+		enchants.put(Enchantment.DURABILITY, 1);
+		return Utils.createItem(Material.RED_DYE, Utils.format("&dWarrior Essence"), Utils.HIDE_ENCHANT_FLAGS,
+				enchants, Utils.format("&7Right click to use ability"));
+	}
+	public static @NotNull ItemStack knight() {
+		HashMap<Enchantment, Integer> enchants = new HashMap<>();
+		enchants.put(Enchantment.DURABILITY, 1);
+		return Utils.createItem(Material.BROWN_DYE, Utils.format("&dKnight Essence"), Utils.HIDE_ENCHANT_FLAGS,
+				enchants, Utils.format("&7Right click to use ability"));
+	}
+	public static @NotNull ItemStack priest() {
+		HashMap<Enchantment, Integer> enchants = new HashMap<>();
+		enchants.put(Enchantment.DURABILITY, 1);
+		return Utils.createItem(Material.WHITE_DYE, Utils.format("&dPriest Essence"), Utils.HIDE_ENCHANT_FLAGS,
+				enchants, Utils.format("&7Right click to use ability"));
+	}
+	public static @NotNull ItemStack siren() {
+		HashMap<Enchantment, Integer> enchants = new HashMap<>();
+		enchants.put(Enchantment.DURABILITY, 1);
+		return Utils.createItem(Material.PINK_DYE, Utils.format("&dSiren Essence"), Utils.HIDE_ENCHANT_FLAGS,
+				enchants, Utils.format("&7Right click to use ability"));
+	}
+	public static @NotNull ItemStack monk() {
+		HashMap<Enchantment, Integer> enchants = new HashMap<>();
+		enchants.put(Enchantment.DURABILITY, 1);
+		return Utils.createItem(Material.GREEN_DYE, Utils.format("&dMonk Essence"), Utils.HIDE_ENCHANT_FLAGS,
+				enchants, Utils.format("&7Right click to use ability"));
+	}
+	public static @NotNull ItemStack messenger() {
+		HashMap<Enchantment, Integer> enchants = new HashMap<>();
+		enchants.put(Enchantment.DURABILITY, 1);
+		return Utils.createItem(Material.BLUE_DYE, Utils.format("&dMessenger Essence"), Utils.HIDE_ENCHANT_FLAGS,
+				enchants, Utils.format("&7Right click to use ability"));
+	}
+
+	// Categories of items
+	public static final ItemStack[] ABILITY_ITEMS = new ItemStack[]{mage(), ninja(), templar(), warrior(), knight(), priest(),
+			siren(), monk(), messenger()};
+	public static final Material[] FOOD_MATERIALS = new Material[]{Material.BEETROOT, Material.CARROT, Material.BREAD,
+			Material.MUTTON, Material.COOKED_BEEF, Material.GOLDEN_CARROT, Material.GOLDEN_APPLE,
+			Material.ENCHANTED_GOLDEN_APPLE};
+	public static final Material[] HELMET_MATERIALS = {Material.LEATHER_HELMET, Material.GOLDEN_HELMET, Material.CHAINMAIL_HELMET,
+			Material.IRON_HELMET, Material.DIAMOND_HELMET, Material.NETHERITE_HELMET, Material.TURTLE_HELMET
+	};
+	public static final Material[] CHESTPLATE_MATERIALS = {Material.LEATHER_CHESTPLATE, Material.GOLDEN_CHESTPLATE,
+			Material.CHAINMAIL_CHESTPLATE, Material.IRON_CHESTPLATE, Material.DIAMOND_CHESTPLATE,
+			Material.NETHERITE_HELMET
+	};
+	public static final Material[] LEGGING_MATERIALS = {Material.LEATHER_LEGGINGS, Material.GOLDEN_LEGGINGS,
+			Material.CHAINMAIL_LEGGINGS, Material.IRON_LEGGINGS, Material.DIAMOND_LEGGINGS, Material.NETHERITE_LEGGINGS
+	};
+	public static final Material[] BOOTS_MATERIALS = {Material.LEATHER_BOOTS, Material.GOLDEN_BOOTS, Material.CHAINMAIL_BOOTS,
+			Material.IRON_BOOTS, Material.DIAMOND_BOOTS, Material.NETHERITE_BOOTS
+	};
+	public static final Material[] ARMOR_MATERIALS = new Material[]{Material.LEATHER_HELMET, Material.LEATHER_CHESTPLATE,
+			Material.LEATHER_LEGGINGS, Material.LEATHER_BOOTS, Material.CHAINMAIL_HELMET, Material.CHAINMAIL_CHESTPLATE,
+			Material.CHAINMAIL_LEGGINGS, Material.CHAINMAIL_BOOTS, Material.IRON_HELMET, Material.IRON_CHESTPLATE,
+			Material.IRON_LEGGINGS, Material.IRON_BOOTS, Material.DIAMOND_HELMET, Material.DIAMOND_CHESTPLATE,
+			Material.DIAMOND_LEGGINGS, Material.DIAMOND_BOOTS, Material.NETHERITE_HELMET, Material.NETHERITE_CHESTPLATE,
+			Material.NETHERITE_LEGGINGS, Material.NETHERITE_BOOTS};
+	public static final Material[] CARE_MATERIALS = new Material[]{Material.COAL_BLOCK, Material.IRON_BLOCK,
+			Material.DIAMOND_BLOCK, Material.BEACON};
+	public static final Material[] CLICKABLE_WEAPON_MATERIALS = new Material[]{Material.BOW, Material.CROSSBOW,
+			Material.TRIDENT};
+	public static final Material[] CLICKABLE_CONSUME_MATERIALS = new Material[]{Material.GLASS_BOTTLE,
+			Material.POTION, Material.SPLASH_POTION, Material.LINGERING_POTION, Material.EXPERIENCE_BOTTLE,
+			Material.MILK_BUCKET, Material.POLAR_BEAR_SPAWN_EGG, Material.WOLF_SPAWN_EGG};
 
 	// Random generation of items
 	public static @NotNull ItemStack randWeapon(int level) {

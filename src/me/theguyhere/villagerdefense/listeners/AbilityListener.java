@@ -24,20 +24,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AbilityListener implements Listener {
     private final Main plugin;
-    private final Game game;
     private final Map<VDPlayer, Long> cooldowns = new HashMap<>();
 
-    public AbilityListener(Main plugin, Game game) {
+    public AbilityListener(Main plugin) {
         this.plugin = plugin;
-        this.game = game;
     }
 
     // Most ability functionalities
@@ -55,7 +50,7 @@ public class AbilityListener implements Listener {
 
         // Attempt to get arena and player
         try {
-            arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+            arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
                     .collect(Collectors.toList()).get(0);
             gamer = arena.getPlayer(player);
         } catch (Exception err) {
@@ -66,32 +61,16 @@ public class AbilityListener implements Listener {
         ItemStack main = player.getInventory().getItemInMainHand();
 
         // Avoid accidental usage when holding food, shop, ranged weapons, potions, or care packages
-        if (main.equals(GameItems.shop()) || main.getType() == Material.BEETROOT || main.getType() == Material.CARROT ||
-                main.getType() == Material.BREAD || main.getType() == Material.COOKED_MUTTON ||
-                main.getType() == Material.COOKED_BEEF || main.getType() == Material.GOLDEN_CARROT ||
-                main.getType() == Material.GOLDEN_APPLE || main.getType() == Material.ENCHANTED_GOLDEN_APPLE ||
-                main.getType() == Material.GLASS_BOTTLE || main.getType() == Material.BOW ||
-                main.getType() == Material.CROSSBOW || main.getType() == Material.COAL_BLOCK ||
-                main.getType() == Material.IRON_BLOCK || main.getType() == Material.DIAMOND_BLOCK ||
-                main.getType() == Material.BEACON || main.getType() == Material.EXPERIENCE_BOTTLE ||
-                main.getType() == Material.LEATHER_HELMET || main.getType() == Material.LEATHER_CHESTPLATE ||
-                main.getType() == Material.LEATHER_LEGGINGS || main.getType() == Material.LEATHER_BOOTS ||
-                main.getType() == Material.CHAINMAIL_HELMET || main.getType() == Material.CHAINMAIL_CHESTPLATE ||
-                main.getType() == Material.CHAINMAIL_LEGGINGS || main.getType() == Material.CHAINMAIL_BOOTS ||
-                main.getType() == Material.IRON_HELMET || main.getType() == Material.IRON_CHESTPLATE ||
-                main.getType() == Material.IRON_LEGGINGS || main.getType() == Material.IRON_BOOTS ||
-                main.getType() == Material.DIAMOND_HELMET || main.getType() == Material.DIAMOND_CHESTPLATE ||
-                main.getType() == Material.DIAMOND_LEGGINGS || main.getType() == Material.DIAMOND_BOOTS ||
-                main.getType() == Material.NETHERITE_HELMET || main.getType() == Material.NETHERITE_CHESTPLATE ||
-                main.getType() == Material.NETHERITE_LEGGINGS || main.getType() == Material.NETHERITE_BOOTS ||
-                main.equals(GameItems.health()) || main.equals(GameItems.health2()) ||
-                main.equals(GameItems.health3()) || main.equals(GameItems.speed()) || main.equals(GameItems.speed2()) ||
-                main.equals(GameItems.strength()) || main.equals(GameItems.strength2()) ||
-                main.equals(GameItems.regen()) || main.equals(GameItems.regen2()) || main.getType() == Material.TRIDENT)
+        if (GameItems.shop().equals(main) ||
+                Arrays.stream(GameItems.FOOD_MATERIALS).anyMatch(m -> m == main.getType()) ||
+                Arrays.stream(GameItems.ARMOR_MATERIALS).anyMatch(m -> m == main.getType()) ||
+                Arrays.stream(GameItems.CARE_MATERIALS).anyMatch(m -> m == main.getType()) ||
+                Arrays.stream(GameItems.CLICKABLE_WEAPON_MATERIALS).anyMatch(m -> m == main.getType()) ||
+                Arrays.stream(GameItems.CLICKABLE_CONSUME_MATERIALS).anyMatch(m -> m == main.getType()))
             return;
 
         // See if the player is in a game
-        if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+        if (plugin.getGame().arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
             return;
 
         // Ensure cooldown is initialized
@@ -100,17 +79,17 @@ public class AbilityListener implements Listener {
 
         // Get effective player level
         int level = player.getLevel();
-        if (gamer.getKit().contains("1") && level > 10)
+        if (gamer.getKit().getLevel() == 1 && level > 10)
             level = 10;
-        if (gamer.getKit().contains("2") && level > 20)
+        if (gamer.getKit().getLevel() == 2 && level > 20)
             level = 20;
-        if (gamer.getKit().contains("3") && level > 30)
+        if (gamer.getKit().getLevel() == 3 && level > 30)
             level = 30;
 
         long dif = cooldowns.get(gamer) - System.currentTimeMillis();
 
         // Mage
-        if (gamer.getKit().contains("Mage") && Kit.mage().equals(item)) {
+        if (gamer.getKit().getName().equals(Kit.mage().getName()) && GameItems.mage().equals(item)) {
             // Perform checks
             if (checkLevel(level, player, language))
                 return;
@@ -129,7 +108,7 @@ public class AbilityListener implements Listener {
         }
 
         // Ninja
-        if (gamer.getKit().contains("Ninja") && Kit.ninja().equals(item)) {
+        if (gamer.getKit().getName().equals(Kit.ninja().getName()) && GameItems.ninja().equals(item)) {
             // Perform checks
             if (checkLevel(level, player, language))
                 return;
@@ -157,7 +136,7 @@ public class AbilityListener implements Listener {
         }
 
         // Templar
-        if (gamer.getKit().contains("Templar") && Kit.templar().equals(item)) {
+        if (gamer.getKit().getName().equals(Kit.templar().getName()) && GameItems.templar().equals(item)) {
             // Perform checks
             if (checkLevel(level, player, language))
                 return;
@@ -197,7 +176,7 @@ public class AbilityListener implements Listener {
         }
 
         // Warrior
-        if (gamer.getKit().contains("Warrior") && Kit.warrior().equals(item)) {
+        if (gamer.getKit().getName().equals(Kit.warrior().getName()) && GameItems.warrior().equals(item)) {
             // Perform checks
             if (checkLevel(level, player, language))
                 return;
@@ -237,7 +216,7 @@ public class AbilityListener implements Listener {
         }
 
         // Knight
-        if (gamer.getKit().contains("Knight") && Kit.knight().equals(item)) {
+        if (gamer.getKit().getName().equals(Kit.knight().getName()) && GameItems.knight().equals(item)) {
             // Perform checks
             if (checkLevel(level, player, language))
                 return;
@@ -277,7 +256,7 @@ public class AbilityListener implements Listener {
         }
 
         // Priest
-        if (gamer.getKit().contains("Priest") && Kit.priest().equals(item)) {
+        if (gamer.getKit().getName().equals(Kit.priest().getName()) && GameItems.priest().equals(item)) {
             // Perform checks
             if (checkLevel(level, player, language))
                 return;
@@ -317,7 +296,7 @@ public class AbilityListener implements Listener {
         }
 
         // Siren
-        if (gamer.getKit().contains("Siren") && Kit.siren().equals(item)) {
+        if (gamer.getKit().getName().equals(Kit.siren().getName()) && GameItems.siren().equals(item)) {
             // Perform checks
             if (checkLevel(level, player, language))
                 return;
@@ -360,7 +339,7 @@ public class AbilityListener implements Listener {
         }
 
         // Monk
-        if (gamer.getKit().contains("Monk") && Kit.monk().equals(item)) {
+        if (gamer.getKit().getName().equals(Kit.monk().getName()) && GameItems.monk().equals(item)) {
             // Perform checks
             if (checkLevel(level, player, language))
                 return;
@@ -400,7 +379,7 @@ public class AbilityListener implements Listener {
         }
 
         // Messenger
-        if (gamer.getKit().contains("Messenger") && Kit.messenger().equals(item)) {
+        if (gamer.getKit().getName().equals(Kit.messenger().getName()) && GameItems.messenger().equals(item)) {
             // Perform checks
             if (checkLevel(level, player, language))
                 return;
@@ -460,7 +439,7 @@ public class AbilityListener implements Listener {
 
         // Attempt to get arena and player
         try {
-            arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+            arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
                     .collect(Collectors.toList()).get(0);
             gamer = arena.getPlayer(player);
         } catch (Exception err) {
@@ -468,7 +447,7 @@ public class AbilityListener implements Listener {
         }
 
         // Check for vampire kit
-        if (!gamer.getKit().equals("Vampire"))
+        if (!gamer.getKit().getName().equals(Kit.vampire().getName()))
             return;
 
         Random r = new Random();
@@ -547,7 +526,7 @@ public class AbilityListener implements Listener {
         Player player = e.getPlayer();
 
         // Check if player is in a game
-        if (game.arenas.stream().filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player)))
+        if (plugin.getGame().arenas.stream().filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player)))
             return;
 
         // Ignore creative and spectator mode players

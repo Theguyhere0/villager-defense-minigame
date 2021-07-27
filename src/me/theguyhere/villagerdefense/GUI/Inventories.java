@@ -1302,7 +1302,7 @@ public class Inventories {
 		// Effect kits
 		for (int i = 36; i < 45; i++)
 			inv.setItem(i, Utils.createItem(Material.YELLOW_STAINED_GLASS_PANE, Utils.format("&e&lEffect Kits"),
-					Utils.format("&7Kits give players a permanent") + Utils.format("&7special effect")));
+					Utils.format("&7Kits give players a permanent"), Utils.format("&7special effect")));
 
 		if (arenaInstance.getBannedKits().contains(Kit.blacksmith().getName()))
 			inv.setItem(45, Kit.blacksmith().getButton(-1, false));
@@ -1942,7 +1942,7 @@ public class Inventories {
 		// Effect kits
 		for (int i = 36; i < 45; i++)
 			inv.setItem(i, Utils.createItem(Material.YELLOW_STAINED_GLASS_PANE, Utils.format("&e&lEffect Kits"),
-					Utils.format("&7Kits give players a permanent") +
+					Utils.format("&7Kits give players a permanent"),
 							Utils.format("&7special effect")));
 
 		inv.setItem(45, Kit.blacksmith().getButton(playerData.getBoolean(path + Kit.blacksmith().getName()) ?
@@ -2043,7 +2043,7 @@ public class Inventories {
 		// Effect kits
 		for (int i = 36; i < 45; i++)
 			inv.setItem(i, Utils.createItem(Material.YELLOW_STAINED_GLASS_PANE, Utils.format("&e&lEffect Kits"),
-					Utils.format("&7Kits give players a permanent") + Utils.format("&7special effect")));
+					Utils.format("&7Kits give players a permanent"), Utils.format("&7special effect")));
 
 		if (!arena.getBannedKits().contains("Blacksmith"))
 			inv.setItem(45, Kit.blacksmith().getButton(

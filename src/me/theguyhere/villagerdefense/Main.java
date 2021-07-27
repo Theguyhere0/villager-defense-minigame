@@ -37,11 +37,12 @@ public class Main extends JavaPlugin {
 	/**
 	 * The amount of debug information to display in the console.
 	 *
+	 * 3 (Override) - All errors and information tracked will be displayed. Certain behavior will be overridden.
 	 * 2 (Verbose) - All errors and information tracked will be displayed.
 	 * 1 (Normal) - Errors that drastically reduce performance and important information will be displayed.
 	 * 0 (Quiet) - Only the most urgent error messages will be displayed.
 	 */
-	private final int debugLevel = 0;
+	private final int debugLevel = 3;
 	private boolean outdated;
 
 	// Runs when enabling plugin
@@ -70,14 +71,13 @@ public class Main extends JavaPlugin {
 		getCommand("vd").setTabCompleter(new CommandTab(game));
 
 		// Register event listeners
-		pm.registerEvents(new InventoryListener(this, game, inventories, portal, leaderboard, infoBoard,
-				arenaBoard), this);
-		pm.registerEvents(new JoinListener(this, portal, reader, game), this);
-		pm.registerEvents(new DeathListener(portal, reader), this);
-		pm.registerEvents(new ClickPortalListener(game, portal, inventories), this);
-		pm.registerEvents(new GameListener(this, game), this);
-		pm.registerEvents(new ArenaListener(this, game, portal, leaderboard, arenaBoard, inventories), this);
-		pm.registerEvents(new AbilityListener(this, game), this);
+		pm.registerEvents(new InventoryListener(this), this);
+		pm.registerEvents(new JoinListener(this), this);
+		pm.registerEvents(new DeathListener(this), this);
+		pm.registerEvents(new ClickPortalListener(this), this);
+		pm.registerEvents(new GameListener(this), this);
+		pm.registerEvents(new ArenaListener(this), this);
+		pm.registerEvents(new AbilityListener(this), this);
 		pm.registerEvents(new WorldListener(this), this);
 
 		// Inject online players into packet reader
@@ -185,8 +185,16 @@ public class Main extends JavaPlugin {
 		return infoBoard;
 	}
 
+	public Portal getPortal() {
+		return portal;
+	}
+
 	public Leaderboard getLeaderboard() {
 		return leaderboard;
+	}
+
+	public PacketReader getReader() {
+		return reader;
 	}
 
 	public Commands getCommands() {
@@ -245,5 +253,9 @@ public class Main extends JavaPlugin {
 	public void debugInfo(String msg, int debugLevel) {
 		if (this.debugLevel >= debugLevel)
 			getServer().getConsoleSender().sendMessage("[VillagerDefense] " + msg);
+	}
+
+	public int getDebugLevel() {
+		return debugLevel;
 	}
 }

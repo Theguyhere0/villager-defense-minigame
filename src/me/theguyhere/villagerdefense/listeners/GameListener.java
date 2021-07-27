@@ -4,10 +4,10 @@ import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.GameEndEvent;
 import me.theguyhere.villagerdefense.events.ReloadBoardsEvent;
-import me.theguyhere.villagerdefense.game.models.*;
+import me.theguyhere.villagerdefense.game.models.GameItems;
+import me.theguyhere.villagerdefense.game.models.Mobs;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
-import me.theguyhere.villagerdefense.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.DataManager;
@@ -27,17 +27,16 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BoundingBox;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
 public class GameListener implements Listener {
 	private final Main plugin;
-	private final Game game;
 
-	public GameListener(Main plugin, Game game) {
+	public GameListener(Main plugin) {
 		this.plugin = plugin;
-		this.game = game;
 	}
 	
 	// Keep score and drop gems, exp, and rare loot
@@ -49,7 +48,7 @@ public class GameListener implements Listener {
 		if (!ent.hasMetadata("VD"))
 			return;
 
-		Arena arena = game.arenas.get(ent.getMetadata("VD").get(0).asInt());
+		Arena arena = plugin.getGame().arenas.get(ent.getMetadata("VD").get(0).asInt());
 
 		// Arena enemies not part of an active arena
 		if (arena.getStatus() != ArenaStatus.ACTIVE) {
@@ -161,7 +160,7 @@ public class GameListener implements Listener {
 	// Stop automatic game mode switching between worlds
 	@EventHandler
 	public void onGameModeSwitch(PlayerGameModeChangeEvent e) {
-		if (game.arenas.stream().filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(e.getPlayer())) &&
+		if (plugin.getGame().arenas.stream().filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(e.getPlayer())) &&
 				e.getNewGameMode() == GameMode.SURVIVAL) e.setCancelled(true);
 	}
 
@@ -175,7 +174,7 @@ public class GameListener implements Listener {
 		if (!ent.hasMetadata("VD"))
 			return;
 
-		Arena arena = game.arenas.get(ent.getMetadata("VD").get(0).asInt());
+		Arena arena = plugin.getGame().arenas.get(ent.getMetadata("VD").get(0).asInt());
 
 		// Arena enemies not part of an active arena
 		if (arena.getStatus() != ArenaStatus.ACTIVE)
@@ -293,11 +292,11 @@ public class GameListener implements Listener {
 		Player player = (Player) e.getEntity();
 
 		// See if the player is in a game
-		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+		if (plugin.getGame().arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
 			return;
 
 		// See if game is already in progress
-		if (game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+		if (plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0).getCurrentWave() != 0)
 			return;
 
@@ -341,10 +340,10 @@ public class GameListener implements Listener {
 		Player player = e.getPlayer();
 
 		// See if the player is in a game
-		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+		if (plugin.getGame().arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
 			return;
 
-		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+		Arena arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0);
 
 		// Check for the shop item
@@ -369,7 +368,7 @@ public class GameListener implements Listener {
 		// Cancel damage to each other if they are in a game
 		if (ent instanceof Player && damager instanceof Player) {
 			Player player = (Player) ent;
-			if (game.arenas.stream().filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player)))
+			if (plugin.getGame().arenas.stream().filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player)))
 				e.setCancelled(true);
 		}
 
@@ -390,7 +389,7 @@ public class GameListener implements Listener {
 		else if (damager instanceof Projectile) {
 			if (ent instanceof Player && ((Projectile) damager).getShooter() instanceof Player) {
 				Player player = (Player) ent;
-				if (game.arenas.stream().filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player)))
+				if (plugin.getGame().arenas.stream().filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player)))
 					e.setCancelled(true);
 			}
 			if ((ent instanceof Villager || ent instanceof Wolf || ent instanceof IronGolem) &&
@@ -417,7 +416,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+			arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 					.collect(Collectors.toList()).get(0);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
@@ -480,7 +479,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+			arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 					.collect(Collectors.toList()).get(0);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
@@ -526,7 +525,7 @@ public class GameListener implements Listener {
 		plugin.savePlayerData();
 
 		// Update scoreboard
-		game.createBoard(gamer);
+		plugin.getGame().createBoard(gamer);
 	}
 	
 	// Handle player death
@@ -545,7 +544,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+			arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 					.collect(Collectors.toList()).get(0);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
@@ -633,7 +632,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = game.arenas.stream().filter(Objects::nonNull)
+			arena = plugin.getGame().arenas.stream().filter(Objects::nonNull)
 					.filter(a -> a.getPlayers().stream().anyMatch(p -> p.getPlayer().equals(player)))
 					.collect(Collectors.toList()).get(0);
 			gamer = arena.getPlayer(player);
@@ -672,7 +671,7 @@ public class GameListener implements Listener {
 							plugin.savePlayerData();
 
 							// Update scoreboard
-							game.createBoard(vdPlayer);
+							plugin.getGame().createBoard(vdPlayer);
 						});
 			} else {
 				int earned = r.nextInt((int) (50 * Math.pow(wave, .15)));
@@ -712,7 +711,7 @@ public class GameListener implements Listener {
 				plugin.savePlayerData();
 
 				// Update scoreboard
-				game.createBoard(gamer);
+				plugin.getGame().createBoard(gamer);
 			}
 		}
 		if (!arena.hasExpDrop()) {
@@ -759,7 +758,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+			arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 					.collect(Collectors.toList()).get(0);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
@@ -767,30 +766,11 @@ public class GameListener implements Listener {
 		}
 
 		// Avoid false consume
-		if (main.equals(GameItems.shop()) || main.getType() == Material.BEETROOT || main.getType() == Material.CARROT ||
-				main.getType() == Material.BREAD || main.getType() == Material.COOKED_MUTTON ||
-				main.getType() == Material.COOKED_BEEF || main.getType() == Material.GOLDEN_CARROT ||
-				main.getType() == Material.GOLDEN_APPLE || main.getType() == Material.ENCHANTED_GOLDEN_APPLE ||
-				main.getType() == Material.GLASS_BOTTLE || main.getType() == Material.BOW || 
-				main.getType() == Material.EXPERIENCE_BOTTLE || main.getType() == Material.LEATHER_HELMET || 
-				main.getType() == Material.LEATHER_CHESTPLATE || main.getType() == Material.CROSSBOW ||
-				main.getType() == Material.LEATHER_LEGGINGS || main.getType() == Material.LEATHER_BOOTS ||
-				main.getType() == Material.CHAINMAIL_HELMET || main.getType() == Material.CHAINMAIL_CHESTPLATE ||
-				main.getType() == Material.CHAINMAIL_LEGGINGS || main.getType() == Material.CHAINMAIL_BOOTS ||
-				main.getType() == Material.IRON_HELMET || main.getType() == Material.IRON_CHESTPLATE ||
-				main.getType() == Material.IRON_LEGGINGS || main.getType() == Material.IRON_BOOTS ||
-				main.getType() == Material.DIAMOND_HELMET || main.getType() == Material.DIAMOND_CHESTPLATE ||
-				main.getType() == Material.DIAMOND_LEGGINGS || main.getType() == Material.DIAMOND_BOOTS ||
-				main.getType() == Material.NETHERITE_HELMET || main.getType() == Material.NETHERITE_CHESTPLATE ||
-				main.getType() == Material.NETHERITE_LEGGINGS || main.getType() == Material.NETHERITE_BOOTS ||
-				main.equals(GameItems.health()) || main.equals(GameItems.health2()) ||
-				main.equals(GameItems.health3()) || main.equals(GameItems.speed()) || main.equals(GameItems.speed2()) ||
-				main.equals(GameItems.strength()) || main.equals(GameItems.strength2()) ||
-				main.equals(GameItems.regen()) || main.equals(GameItems.regen2()) ||
-				main.equals(Kit.mage()) || main.equals(Kit.ninja()) || main.getType() == Material.TRIDENT ||
-				main.equals(Kit.templar()) || main.equals(Kit.warrior()) || main.equals(Kit.knight()) ||
-				main.equals(Kit.priest()) || main.equals(Kit.siren()) || main.equals(Kit.monk()) ||
-				main.equals(Kit.messenger())) return;
+		if (main.equals(GameItems.shop()) || Arrays.asList(GameItems.ABILITY_ITEMS).contains(main) ||
+				Arrays.stream(GameItems.FOOD_MATERIALS).anyMatch(m -> m == main.getType()) ||
+				Arrays.stream(GameItems.ARMOR_MATERIALS).anyMatch(m -> m == main.getType()) ||
+				Arrays.stream(GameItems.CLICKABLE_WEAPON_MATERIALS).anyMatch(m -> m == main.getType()) ||
+				Arrays.stream(GameItems.CLICKABLE_CONSUME_MATERIALS).anyMatch(m -> m == main.getType())) return;
 
 		// Wolf spawn
 		if (item.getType() == Material.WOLF_SPAWN_EGG && 
@@ -1038,7 +1018,7 @@ public class GameListener implements Listener {
 			return;
 
 		// Check if player is playing in an arena
-		if (game.arenas.stream().filter(Objects::nonNull).anyMatch(a -> a.hasPlayer((Player) ((Wolf) ent).getOwner())))
+		if (plugin.getGame().arenas.stream().filter(Objects::nonNull).anyMatch(a -> a.hasPlayer((Player) ((Wolf) ent).getOwner())))
 			return;
 
 		e.setCancelled(true);
@@ -1050,10 +1030,10 @@ public class GameListener implements Listener {
 		Player player = e.getPlayer();
 
 		// Check if player is playing in an arena
-		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+		if (plugin.getGame().arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
 			return;
 
-		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+		Arena arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0);
 
 		// Cancel teleport and notify if teleport is outside arena bounds
@@ -1071,14 +1051,14 @@ public class GameListener implements Listener {
 		Player player = e.getPlayer();
 
 		// Check if player is playing in an arena
-		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+		if (plugin.getGame().arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
 			return;
 
-//		// Exempt myself for testing purposes
-//		if (player.getName().equals("Theguyhere"))
-//			return;
+		// Exempt myself for testing purposes
+		if (plugin.getDebugLevel() >= 3 && player.getName().equals("Theguyhere"))
+			return;
 
-		Arena arena = game.arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+		Arena arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0);
 
 		// Cancel move and notify if movement is outside arena bounds
@@ -1121,7 +1101,7 @@ public class GameListener implements Listener {
 		ItemStack item = e.getItemDrop().getItemStack();
 
 		// Check if player is in an arena
-		if (game.arenas.stream().filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player)))
+		if (plugin.getGame().arenas.stream().filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player)))
 			return;
 
 		// Check for shop item

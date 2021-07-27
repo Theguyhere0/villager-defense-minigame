@@ -354,7 +354,8 @@ public class Utils {
     // Gets location data from a configuration path
     public static Location getConfigLocation(Main plugin, String path) {
         try {
-            plugin.debugInfo(path + " : " + Bukkit.getWorld(plugin.getArenaData().getString(path + ".world")), 2);
+//            plugin.debugInfo(path + " : " + Bukkit.getWorld(plugin.getArenaData().getString(path + ".world")),
+//                    2);
             return new Location(
                 Bukkit.getWorld(plugin.getArenaData().getString(path + ".world")),
                 plugin.getArenaData().getDouble(path + ".x"),
@@ -364,7 +365,7 @@ public class Utils {
                 Float.parseFloat(plugin.getArenaData().get(path + ".pitch").toString())
             );
         } catch (Exception e) {
-            plugin.debugError("Error getting location from yaml", 2);
+            plugin.debugError("Error getting location " + path + " from yaml", 2);
             return null;
         }
     }
@@ -411,8 +412,17 @@ public class Utils {
     // Gets a list of locations from a configuration path
     public static List<Location> getConfigLocationList(Main plugin, String path) {
         List<Location> locations = new ArrayList<>();
-        for (int num = 0; num < 9; num++)
-            locations.add(getConfigLocationNoRotation(plugin, path + "." + num));
+        try {
+            plugin.getArenaData().getConfigurationSection(path).getKeys(false).forEach(num -> {
+                try {
+                    locations.add(getConfigLocationNoRotation(plugin, path + "." + num));
+                } catch (Exception e) {
+                    plugin.debugError("An error occurred retrieving a location from section " + path, 1);
+                }
+            });
+        } catch (Exception e) {
+            plugin.debugError("Section " + path + " is invalid.", 1);
+        }
         return locations;
     }
 
