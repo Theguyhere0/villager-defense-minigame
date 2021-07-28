@@ -5083,6 +5083,9 @@ public class GameItems {
 		return Utils.createPotionItem(Material.POTION, new PotionData(PotionType.SPEED, false, true),
 				null, Utils.format("&2Gems: &a350"));
 	}
+	public static @NotNull ItemStack milk() {
+		return Utils.createItem(Material.MILK_BUCKET, null, Utils.format("&2Gems: &a75"));
+	}
 	public static @NotNull ItemStack golem() {
 		return Utils.createItem(Material.GHAST_SPAWN_EGG, Utils.format("&fIron Golem Spawn Egg"),
 				Utils.format("&2Gems: &a500"));
@@ -5176,18 +5179,17 @@ public class GameItems {
 	}
 
 	// Categories of items
-	public static final ItemStack[] ABILITY_ITEMS = new ItemStack[]{mage(), ninja(), templar(), warrior(), knight(), priest(),
-			siren(), monk(), messenger()};
+	public static final ItemStack[] ABILITY_ITEMS = new ItemStack[]{mage(), ninja(), templar(), warrior(), knight(),
+			priest(), siren(), monk(), messenger()};
 	public static final Material[] FOOD_MATERIALS = new Material[]{Material.BEETROOT, Material.CARROT, Material.BREAD,
 			Material.MUTTON, Material.COOKED_BEEF, Material.GOLDEN_CARROT, Material.GOLDEN_APPLE,
 			Material.ENCHANTED_GOLDEN_APPLE};
-	public static final Material[] HELMET_MATERIALS = {Material.LEATHER_HELMET, Material.GOLDEN_HELMET, Material.CHAINMAIL_HELMET,
-			Material.IRON_HELMET, Material.DIAMOND_HELMET, Material.NETHERITE_HELMET, Material.TURTLE_HELMET
-	};
+	public static final Material[] HELMET_MATERIALS = {Material.LEATHER_HELMET, Material.GOLDEN_HELMET,
+			Material.CHAINMAIL_HELMET, Material.IRON_HELMET, Material.DIAMOND_HELMET, Material.NETHERITE_HELMET,
+			Material.TURTLE_HELMET};
 	public static final Material[] CHESTPLATE_MATERIALS = {Material.LEATHER_CHESTPLATE, Material.GOLDEN_CHESTPLATE,
 			Material.CHAINMAIL_CHESTPLATE, Material.IRON_CHESTPLATE, Material.DIAMOND_CHESTPLATE,
-			Material.NETHERITE_HELMET
-	};
+			Material.NETHERITE_HELMET};
 	public static final Material[] LEGGING_MATERIALS = {Material.LEATHER_LEGGINGS, Material.GOLDEN_LEGGINGS,
 			Material.CHAINMAIL_LEGGINGS, Material.IRON_LEGGINGS, Material.DIAMOND_LEGGINGS, Material.NETHERITE_LEGGINGS
 	};
@@ -5451,8 +5453,10 @@ public class GameItems {
 					return bread();
 				else if (chance < .4)
 					return mutton();
-				else if (chance < .475)
+				else if (chance < .45)
 					return steak();
+				else if (chance < .475)
+					return milk();
 				else if (chance < .55)
 					return health();
 				else if (chance < .6)
@@ -5477,6 +5481,8 @@ public class GameItems {
 					return steak();
 				else if (chance < .4)
 					return gcarrot();
+				else if (chance < .425)
+					return milk();
 				else if (chance < .475)
 					return health2();
 				else if (chance < .525)
@@ -5505,6 +5511,8 @@ public class GameItems {
 					return gcarrot();
 				else if (chance < .4)
 					return gapple();
+				else if (chance < .42)
+					return milk();
 				else if (chance < .45)
 					return health2();
 				else if (chance < .475)
@@ -5539,6 +5547,8 @@ public class GameItems {
 					return egapple();
 				else if (chance < .45)
 					return totem();
+				else if (chance < .47)
+					return milk();
 				else if (chance < .5)
 					return health2();
 				else if (chance < .525)
@@ -5569,7 +5579,9 @@ public class GameItems {
 					return egapple();
 				else if (chance < .45)
 					return totem();
-				else if (chance < .49)
+				else if (chance < .47)
+					return milk();
+				else if (chance < .5)
 					return health2();
 				else if (chance < .525)
 					return health3();
@@ -5659,6 +5671,8 @@ public class GameItems {
 					return wolf();
 				else if (chance < .7)
 					return experience();
+				else if (chance < .75)
+					return milk();
 				else if (chance < .85)
 					return health();
 				else if (chance < .9)
@@ -5677,6 +5691,8 @@ public class GameItems {
 					return golem();
 				else if (chance < .7)
 					return experience();
+				else if (chance < .75)
+					return milk();
 				else if (chance < .85)
 					return health2();
 				else if (chance < .9)
@@ -5695,6 +5711,8 @@ public class GameItems {
 					return golem();
 				else if (chance < .7)
 					return experience();
+				else if (chance < .75)
+					return milk();
 				else if (chance < .85)
 					return health2();
 				else if (chance < .9)
@@ -5711,6 +5729,8 @@ public class GameItems {
 					return golem();
 				else if (chance < .7)
 					return experience();
+				else if (chance < .75)
+					return milk();
 				else if (chance < .85)
 					return health2();
 				else if (chance < .9)
@@ -5769,6 +5789,8 @@ public class GameItems {
 					return mutton();
 				else if (chance < .55)
 					return steak();
+				else if (chance < .575)
+					return milk();
 				else if (chance < .625)
 					return health();
 				else if (chance < .675)
@@ -5789,6 +5811,8 @@ public class GameItems {
 					return steak();
 				else if (chance < .45)
 					return gcarrot();
+				else if (chance < .475)
+					return milk();
 				else if (chance < .525)
 					return health2();
 				else if (chance < .575)
@@ -5811,7 +5835,9 @@ public class GameItems {
 					return gcarrot();
 				else if (chance < .45)
 					return gapple();
-				else if (chance < .5)
+				else if (chance < .47)
+					return milk();
+				else if (chance < .52)
 					return health2();
 				else if (chance < .55)
 					return health3();
@@ -5839,6 +5865,8 @@ public class GameItems {
 					return egapple();
 				else if (chance < .45)
 					return totem();
+				else if (chance < .475)
+					return milk();
 				else if (chance < .55)
 					return health2();
 				else if (chance < .6)
@@ -5865,7 +5893,9 @@ public class GameItems {
 					return egapple();
 				else if (chance < .45)
 					return totem();
-				else if (chance < .5)
+				else if (chance < .47)
+					return milk();
+				else if (chance < .52)
 					return health2();
 				else if (chance < .55)
 					return health3();

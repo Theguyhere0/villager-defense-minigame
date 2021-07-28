@@ -338,21 +338,40 @@ public class GameListener implements Listener {
 			return;
 
 		Player player = e.getPlayer();
+		Arena arena;
 
 		// See if the player is in a game
 		if (plugin.getGame().arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
 			return;
 
-		Arena arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
-				.collect(Collectors.toList()).get(0);
-
-		// Check for the shop item
-		if (!GameItems.shop().equals(player.getEquipment().getItemInMainHand()))
+		// Attempt to get arena
+		try {
+			arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+					.collect(Collectors.toList()).get(0);
+		} catch (Exception err) {
 			return;
+		}
 
-		// Ignore if already in shop
-		if (player.getOpenInventory().getTitle().contains(Utils.format("&k")))
-			return;
+		if (e.getHand() == EquipmentSlot.HAND) {
+			// Check for the shop item
+			if (!GameItems.shop().equals(player.getEquipment().getItemInMainHand()))
+				return;
+		} else {
+			// Check for the shop item
+			if (!GameItems.shop().equals(player.getEquipment().getItemInOffHand()))
+				return;
+
+			ItemStack mainHandItem = player.getEquipment().getItemInMainHand();
+
+			// Check for other clickables in main hand
+			if (Arrays.asList(GameItems.ABILITY_ITEMS).contains(mainHandItem) ||
+					Arrays.asList(GameItems.FOOD_MATERIALS).contains(mainHandItem.getType()) ||
+					Arrays.asList(GameItems.ARMOR_MATERIALS).contains(mainHandItem.getType()) ||
+					Arrays.asList(GameItems.CARE_MATERIALS).contains(mainHandItem.getType()) ||
+					Arrays.asList(GameItems.CLICKABLE_WEAPON_MATERIALS).contains(mainHandItem.getType()) ||
+					Arrays.asList(GameItems.CLICKABLE_CONSUME_MATERIALS).contains(mainHandItem.getType()))
+				return;
+		}
 
 		// Open shop inventory and cancel interaction
 		e.setCancelled(true);

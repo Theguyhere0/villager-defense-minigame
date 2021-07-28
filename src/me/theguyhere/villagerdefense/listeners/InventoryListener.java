@@ -112,8 +112,8 @@ public class InventoryListener implements Listener {
 		if (title.contains("Villager Defense Arenas")) {
 			// Create new arena with naming inventory
 			if (buttonType == Material.RED_CONCRETE) {
-				plugin.getGame().arenas.set(slot, new Arena(plugin, slot, new Tasks(plugin, plugin.getGame(), slot, 
-						plugin.getPortal())));
+				plugin.getGame().arenas.set(slot, new Arena(plugin, slot, new Tasks(plugin, slot
+				)));
 				player.openInventory(plugin.getInventories().createNamingInventory(slot, ""));
 			}
 

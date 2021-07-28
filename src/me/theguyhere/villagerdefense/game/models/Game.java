@@ -1,7 +1,6 @@
 package me.theguyhere.villagerdefense.game.models;
 
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
@@ -21,12 +20,12 @@ public class Game {
 	public List<Arena> arenas = new ArrayList<>(Collections.nCopies(45, null));
 	private Location lobby;
 
-	public Game(Main plugin, Portal portal) {
+	public Game(Main plugin) {
 		this.plugin = plugin;
 		plugin.getArenaData().getConfigurationSection("").getKeys(false).forEach(path -> {
 			if (path.charAt(0) == 'a' && path.length() < 4)
 				arenas.set(Integer.parseInt(path.substring(1)), new Arena(plugin, Integer.parseInt(path.substring(1)),
-						new Tasks(plugin, this, Integer.parseInt(path.substring(1)), portal)));
+						new Tasks(plugin, Integer.parseInt(path.substring(1)))));
 		});
 		lobby = Utils.getConfigLocation(plugin, "lobby");
 	}

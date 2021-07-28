@@ -6,7 +6,6 @@ import me.theguyhere.villagerdefense.events.GameEndEvent;
 import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.events.WaveEndEvent;
 import me.theguyhere.villagerdefense.events.WaveStartEvent;
-import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.game.models.kits.Kit;
@@ -14,7 +13,6 @@ import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.boss.BarColor;
@@ -23,7 +21,6 @@ import org.bukkit.entity.Hoglin;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Phantom;
 import org.bukkit.entity.Slime;
-import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -32,17 +29,13 @@ import java.util.Map;
 @SuppressWarnings("SpellCheckingInspection")
 public class Tasks {
 	private final Main plugin;
-	private final Game game;
 	private final int arena;
-	private final Portal portal;
 	// Maps runnables to ID of the currently running runnable
 	private final Map<Runnable, Integer> tasks = new HashMap<>();
 
-	public Tasks(Main plugin, Game game, int arena, Portal portal) {
+	public Tasks(Main plugin, int arena) {
 		this.plugin = plugin;
-		this.game = game;
 		this.arena = arena;
-		this.portal = portal;
 	}
 
 	public Map<Runnable, Integer> getTasks() {
@@ -53,7 +46,7 @@ public class Tasks {
 	public final Runnable waiting = new Runnable() {
 		@Override
 		public void run() {
-			game.arenas.get(arena).getPlayers().forEach(player ->
+			plugin.getGame().arenas.get(arena).getPlayers().forEach(player ->
 				player.getPlayer().sendMessage(Utils.notify(plugin.getLanguageData().getString("waiting"))));
 		}
 	};
@@ -63,7 +56,7 @@ public class Tasks {
 
 		@Override
 		public void run() {
-			game.arenas.get(arena).getPlayers().forEach(player ->
+			plugin.getGame().arenas.get(arena).getPlayers().forEach(player ->
 					player.getPlayer().sendMessage(Utils.notify(String.format(
 							plugin.getLanguageData().getString("minutesLeft"), 2))));
 		}
@@ -75,7 +68,7 @@ public class Tasks {
 
 		@Override
 		public void run() {
-			game.arenas.get(arena).getPlayers().forEach(player ->
+			plugin.getGame().arenas.get(arena).getPlayers().forEach(player ->
 					player.getPlayer().sendMessage(Utils.notify(String.format(
 							plugin.getLanguageData().getString("minutesLeft"), 1))));
 		}
@@ -87,7 +80,7 @@ public class Tasks {
 
 		@Override
 		public void run() {
-			game.arenas.get(arena).getPlayers().forEach(player ->
+			plugin.getGame().arenas.get(arena).getPlayers().forEach(player ->
 					player.getPlayer().sendMessage(Utils.notify(String.format(
 							plugin.getLanguageData().getString("secondsLeft"), 30))));
 		}
@@ -98,7 +91,7 @@ public class Tasks {
 
 		@Override
 		public void run() {
-			game.arenas.get(arena).getPlayers().forEach(player ->
+			plugin.getGame().arenas.get(arena).getPlayers().forEach(player ->
 					player.getPlayer().sendMessage(Utils.notify(String.format(
 							plugin.getLanguageData().getString("secondsLeft"), 10))));
 		}
@@ -110,7 +103,7 @@ public class Tasks {
 
 		@Override
 		public void run() {
-			game.arenas.get(arena).getPlayers().forEach(player -> {
+			plugin.getGame().arenas.get(arena).getPlayers().forEach(player -> {
 					player.getPlayer().sendMessage(Utils.notify(plugin.getLanguageData().getString("maxCapacity")));
 					player.getPlayer().sendMessage(Utils.notify(String.format(
 							plugin.getLanguageData().getString("secondsLeft"), 10)));
@@ -124,7 +117,7 @@ public class Tasks {
 
 		@Override
 		public void run() {
-			game.arenas.get(arena).getPlayers().forEach(player ->
+			plugin.getGame().arenas.get(arena).getPlayers().forEach(player ->
 					player.getPlayer().sendMessage(Utils.notify(String.format(
 							plugin.getLanguageData().getString("secondsLeft"), 5))));
 		}
@@ -136,7 +129,7 @@ public class Tasks {
 
 		@Override
 		public void run() {
-			Arena arenaInstance = game.arenas.get(arena);
+			Arena arenaInstance = plugin.getGame().arenas.get(arena);
 			FileConfiguration language = plugin.getLanguageData();
 
 			// Increment wave
@@ -144,7 +137,7 @@ public class Tasks {
 			int currentWave = arenaInstance.getCurrentWave();
 
 			// Refresh the portal hologram and scoreboards
-			portal.refreshHolo(arenaInstance.getArena(), game);
+			plugin.getPortal().refreshHolo(arenaInstance.getArena(), plugin.getGame());
 			updateBoards.run();
 
 			// Revive dead players
@@ -189,7 +182,7 @@ public class Tasks {
 				p.addGems(reward);
 				if (currentWave > 1)
 					p.getPlayer().sendMessage(Utils.notify(String.format(language.getString("gems"), reward)));
-				game.createBoard(p);
+				plugin.getGame().createBoard(p);
 			});
 
 			// Notify spectators of upcoming wave
@@ -226,7 +219,7 @@ public class Tasks {
 
 		@Override
 		public void run() {
-			Arena arenaInstance = game.arenas.get(arena);
+			Arena arenaInstance = plugin.getGame().arenas.get(arena);
 
 			// Teleport players to arena if waiting room exists
 			if (arenaInstance.getWaitingRoom() != null) {
@@ -253,10 +246,12 @@ public class Tasks {
 				// Give all players starting items
 				giveItems(player);
 
-//				// Give me items to test with
-//				if (player.getPlayer().getName().equals("Theguyhere")) {
-//					Utils.giveItem(player.getPlayer(), new ItemStack(Material.TOTEM_OF_UNDYING), "uh oh");
-//				}
+				// Give me items to test with
+				if (plugin.getDebugLevel() >= 3 && player.getPlayer().getName().equals("Theguyhere")) {
+					Utils.giveItem(player.getPlayer(), GameItems.smallCare(), "uh oh");
+					Utils.giveItem(player.getPlayer(), GameItems.smallCare(), "uh oh");
+					Utils.giveItem(player.getPlayer(), GameItems.milk(), "uh oh");
+				}
 
 				// Set health for people with giant kits
 				if (player.getKit().equals(Kit.giant().setKitLevel(1)))
@@ -288,7 +283,7 @@ public class Tasks {
 	public final Runnable reset = new Runnable() {
 		@Override
 		public void run() {
-			Arena arenaInstance = game.arenas.get(arena);
+			Arena arenaInstance = plugin.getGame().arenas.get(arena);
 
 			// Update data
 			arenaInstance.setStatus(ArenaStatus.WAITING);
@@ -312,7 +307,7 @@ public class Tasks {
 			arenaInstance.cancelVillagerParticles();
 
 			// Refresh portal
-			portal.refreshHolo(arenaInstance.getArena(), game);
+			plugin.getPortal().refreshHolo(arenaInstance.getArena(), plugin.getGame());
 		}
 	};
 
@@ -320,7 +315,7 @@ public class Tasks {
 	public final Runnable updateBoards = new Runnable() {
 		@Override
 		public void run() {
-			game.arenas.get(arena).getActives().forEach(game::createBoard);
+			plugin.getGame().arenas.get(arena).getActives().forEach(plugin.getGame()::createBoard);
 		}
 	};
 
@@ -332,7 +327,7 @@ public class Tasks {
 
 		@Override
 		public void run() {
-			Arena arenaInstance = game.arenas.get(arena);
+			Arena arenaInstance = plugin.getGame().arenas.get(arena);
 
 			double multiplier = 1 + .2 * ((int) arenaInstance.getCurrentDifficulty() - 1);
 			if (!arenaInstance.hasDynamicLimit())

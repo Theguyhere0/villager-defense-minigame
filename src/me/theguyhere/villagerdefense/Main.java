@@ -52,7 +52,7 @@ public class Main extends JavaPlugin {
 
 		reader = new PacketReader(portal);
 		PluginManager pm = getServer().getPluginManager();
-		game = new Game(this, portal);
+		game = new Game(this);
 		inventories = new Inventories(this);
 		commands = new Commands(this, inventories, game);
 		arenaBoard = new ArenaBoard(this, game);
