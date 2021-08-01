@@ -74,6 +74,19 @@ public class Kit {
         return level;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Kit kit = (Kit) o;
+        return level == kit.level && Objects.equals(name, kit.name) && kitType == kit.kitType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, kitType, masterDescription, descriptionsMap, buttonMaterial, pricesMap, itemsMap, level);
+    }
+
     /**
      * Returns the highest level this kit goes to.
      * @return Highest level.

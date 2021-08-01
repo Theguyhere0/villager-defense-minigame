@@ -8,6 +8,7 @@ import me.theguyhere.villagerdefense.game.models.GameItems;
 import me.theguyhere.villagerdefense.game.models.Mobs;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
+import me.theguyhere.villagerdefense.game.models.players.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.DataManager;
@@ -1079,12 +1080,32 @@ public class GameListener implements Listener {
 
 		Arena arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0);
+		VDPlayer gamer;
+
+		// Attempt to get VDPlayer
+		try {
+			gamer = arena.getPlayer(player);
+		} catch (PlayerNotFoundException err) {
+			return;
+		}
+
+		// Ignore players that have already left
+		if (gamer.getStatus() == PlayerStatus.LEFT)
+			return;
 
 		// Cancel move and notify if movement is outside arena bounds
 		if (!(BoundingBox.of(arena.getCorner1(), arena.getCorner2())
 				.contains(e.getTo().getX(), e.getTo().getY(), e.getTo().getZ())) ||
 				!Objects.equals(e.getTo().getWorld(), arena.getCorner1().getWorld())) {
-			e.setCancelled(true);
+
+			// Teleport player back into arena after several infractions
+			if (gamer.incrementInfractions() > 5) {
+				gamer.resetInfractions();
+				if (gamer.getStatus() == PlayerStatus.ALIVE)
+					player.teleport(arena.getPlayerSpawn());
+				else Utils.teleSpectator(player, arena.getPlayerSpawn());
+			} else e.setCancelled(true);
+
 			player.sendMessage(Utils.notify(plugin.getLanguageData().getString("boundsError")));
 		}
 	}

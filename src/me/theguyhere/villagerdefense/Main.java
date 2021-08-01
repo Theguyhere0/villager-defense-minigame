@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense;
 
 import me.theguyhere.villagerdefense.GUI.Inventories;
+import me.theguyhere.villagerdefense.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.listeners.*;
 import me.theguyhere.villagerdefense.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.game.displays.InfoBoard;
@@ -42,7 +43,7 @@ public class Main extends JavaPlugin {
 	 * 1 (Normal) - Errors that drastically reduce performance and important information will be displayed.
 	 * 0 (Quiet) - Only the most urgent error messages will be displayed.
 	 */
-	private final int debugLevel = 3;
+	private final int debugLevel = 2;
 	private boolean outdated;
 
 	// Runs when enabling plugin

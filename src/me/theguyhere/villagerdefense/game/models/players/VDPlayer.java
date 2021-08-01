@@ -23,6 +23,8 @@ public class VDPlayer {
     private int wolves;
     /** The wave at which the player joined the game as an active player.*/
     private int joinedWave;
+    /** The number of times this player violated arena boundaries.*/
+    private int infractions;
     /** The {@link Kit} the player will play with.*/
     private Kit kit;
     /** Helmet {@link ItemStack} held for ninja ability.*/
@@ -43,6 +45,7 @@ public class VDPlayer {
         kills = 0;
         wolves = 0;
         joinedWave = 0;
+        infractions = 0;
         kit = Kit.none();
     }
 
@@ -109,6 +112,18 @@ public class VDPlayer {
 
     public void setJoinedWave(int joinedWave) {
         this.joinedWave = joinedWave;
+    }
+
+    public int getInfractions() {
+        return infractions;
+    }
+
+    public int incrementInfractions() {
+        return ++infractions;
+    }
+
+    public void resetInfractions() {
+        infractions = 0;
     }
 
     public void setKit(Kit kit) {

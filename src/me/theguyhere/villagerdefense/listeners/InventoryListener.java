@@ -3005,6 +3005,12 @@ public class InventoryListener implements Listener {
 			Kit kit = Kit.getKit(buttonName.substring(4));
 			String path = player.getName() + ".kits.";
 
+			// Leave if EXIT
+			if (buttonName.contains("EXIT")) {
+				player.closeInventory();
+				return;
+			}
+
 			// Check if selected kit retrieval failed
 			if (kit == null) {
 				plugin.debugError("No kit of " + buttonName.substring(4) + " was found.", 1);
@@ -3040,8 +3046,6 @@ public class InventoryListener implements Listener {
 					player.sendMessage(Utils.notify(language.getString("kitSelectError")));
 					return;
 				}
-				player.closeInventory();
-				plugin.getGame().createBoard(gamer);
 			}
 
 			// Multiple tier kits
@@ -3052,13 +3056,11 @@ public class InventoryListener implements Listener {
 				}
 				gamer.setKit(kit.setKitLevel(playerData.getInt(path + kit.getName())));
 				player.sendMessage(Utils.notify(language.getString("kitSelect")));
-				player.closeInventory();
-				plugin.getGame().createBoard(gamer);
 			}
 
-			// Close inventory
-			if (buttonName.contains("EXIT"))
-				player.closeInventory();
+			// Close inventory and create scoreboard
+			player.closeInventory();
+			plugin.getGame().createBoard(gamer);
 		}
 
 		// Stats menu for an arena
