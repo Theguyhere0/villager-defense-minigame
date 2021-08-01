@@ -35,18 +35,22 @@ public class JoinListener implements Listener {
 
 		// Check if player is a logger
 		if (loggers.contains(player.getName())) {
+			plugin.debugInfo(player.getName() + " joined after logging mid-game.", 2);
+
 			// Teleport them back to lobby
 			Utils.teleAdventure(player, plugin.getGame().getLobby());
 			loggers.remove(player.getName());
 			plugin.getPlayerData().set("loggers", loggers);
 
 			// Return player exp and items
-			if (plugin.getPlayerData().contains(player.getName() + ".level"))
+			if (plugin.getPlayerData().contains(player.getName() + ".level")) {
 				player.setLevel(plugin.getPlayerData().getInt(player.getName() + ".level"));
-			plugin.getPlayerData().set(player.getName() + ".level", null);
-			if (plugin.getPlayerData().contains(player.getName() + ".exp"))
+				plugin.getPlayerData().set(player.getName() + ".level", null);
+			}
+			if (plugin.getPlayerData().contains(player.getName() + ".exp")) {
 				player.setExp((float) plugin.getPlayerData().getDouble(player.getName() + ".exp"));
-			plugin.getPlayerData().set(player.getName() + ".exp", null);
+				plugin.getPlayerData().set(player.getName() + ".exp", null);
+			}
 			if (plugin.getPlayerData().contains(player.getName() + ".inventory")) {
 				plugin.getPlayerData().getConfigurationSection(player.getName() + ".inventory").getKeys(false)
 						.forEach(num -> player.getInventory().setItem(Integer.parseInt(num),
@@ -84,6 +88,7 @@ public class JoinListener implements Listener {
 
 		// Add to list of loggers if in a game
 		if (plugin.getGame().arenas.stream().filter(Objects::nonNull).anyMatch(arena -> arena.hasPlayer(player))) {
+			plugin.debugInfo(player.getName() + " logged out mid-game.", 2);
 			plugin.getPlayerData().set("loggers", loggers);
 			plugin.savePlayerData();
 		}

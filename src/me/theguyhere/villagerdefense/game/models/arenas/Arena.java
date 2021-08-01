@@ -998,7 +998,8 @@ public class Arena {
      */
     public VDPlayer getPlayer(Player player) throws PlayerNotFoundException {
         try {
-            return players.stream().filter(p -> p.getPlayer().equals(player)).collect(Collectors.toList()).get(0);
+            return players.stream().filter(p -> p.getID().equals(player.getUniqueId())).collect(Collectors.toList())
+                    .get(0);
         } catch (Exception e) {
             throw new PlayerNotFoundException("Player not in this arena.");
         }
@@ -1010,7 +1011,11 @@ public class Arena {
      * @return Whether a corresponding {@link VDPlayer} was found.
      */
     public boolean hasPlayer(Player player) {
-        return players.stream().anyMatch(p -> p.getPlayer().equals(player));
+        try {
+            return players.stream().anyMatch(p -> p.getID().equals(player.getUniqueId()));
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public boolean hasPlayer(VDPlayer player) {

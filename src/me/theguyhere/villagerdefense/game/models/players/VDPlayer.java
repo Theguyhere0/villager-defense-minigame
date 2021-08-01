@@ -46,6 +46,10 @@ public class VDPlayer {
         kit = Kit.none();
     }
 
+    public UUID getID() {
+        return player;
+    }
+
     public Player getPlayer() {
         return Bukkit.getPlayer(player);
     }

@@ -439,7 +439,7 @@ public class Utils {
 
         // Clear the arena for living entities
         ents.forEach(ent -> {
-            if (ent instanceof LivingEntity && !(ent instanceof Player) && ent.hasMetadata("VD"))
+            if (ent instanceof LivingEntity && !(ent instanceof Player))
                 ent.remove();
         });
 
@@ -449,22 +449,22 @@ public class Utils {
         });
     }
 
-    // Converts seconds to ticks
+    // Convert seconds to ticks
     public static int secondsToTicks(double seconds) {
         return (int) (seconds * SECONDS_TO_TICKS);
     }
 
-    // Converts minutes to seconds
+    // Convert minutes to seconds
     public static int minutesToSeconds(double minutes) {
         return (int) (minutes * MINUTES_TO_SECONDS);
     }
 
-    // Converts seconds to milliseconds
+    // Convert seconds to milliseconds
     public static int secondsToMillis(double seconds) {
         return (int) (seconds * SECONDS_TO_MILLIS);
     }
 
-    // Converts milliseconds to seconds
+    // Convert milliseconds to seconds
     public static double millisToSeconds(double millis) {
         return millis / SECONDS_TO_MILLIS;
     }
