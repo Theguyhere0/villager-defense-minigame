@@ -4,7 +4,6 @@ import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -14,12 +13,10 @@ import java.util.List;
 
 public class ArenaBoard {
 	private final Main plugin;
-	private final Game game;
 	private final Hologram[] arenaBoards = new Hologram[45];
 
-	public ArenaBoard(Main plugin, Game game) {
+	public ArenaBoard(Main plugin) {
 		this.plugin = plugin;
-		this.game = game;
 	}
 
 	public void createArenaBoard(Player player, Arena arena) {
@@ -41,7 +38,8 @@ public class ArenaBoard {
 		if (arenaBoards[arena] != null) {
 			arenaBoards[arena].delete();
 			try {
-				addHolo(Utils.getConfigLocationNoPitch(plugin, "arenaBoard." + arena), game.arenas.get(arena));
+				addHolo(Utils.getConfigLocationNoPitch(plugin, "arenaBoard." + arena),
+						plugin.getGame().arenas.get(arena));
 			} catch (Exception e) {
 				plugin.debugError("Invalid location for arena board " + arena, 1);
 				plugin.debugInfo("Arena board location data may be corrupt. If data cannot be manually corrected in " +
@@ -75,7 +73,7 @@ public class ArenaBoard {
 			plugin.getArenaData().getConfigurationSection("arenaBoard").getKeys(false).forEach(board -> {
 				try {
 					addHolo(Utils.getConfigLocationNoPitch(plugin, "arenaBoard." + board),
-							game.arenas.get(Integer.parseInt(board)));
+							plugin.getGame().arenas.get(Integer.parseInt(board)));
 				} catch (Exception e) {
 					plugin.debugError("Invalid location for arena board " + board, 1);
 					plugin.debugInfo("Arena board location data may be corrupt. If data cannot be manually " +

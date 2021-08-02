@@ -16,7 +16,7 @@ public class CommandTab implements TabCompleter {
     private final Game game;
 
     private final String[] arguments = {"admin", "help", "leave", "stats", "kits", "select", "crystals", "start",
-            "end"};
+            "end", "delay"};
 
     public CommandTab(Game game) {
         this.game = game;

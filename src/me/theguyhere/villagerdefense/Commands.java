@@ -1,11 +1,9 @@
 package me.theguyhere.villagerdefense;
 
-import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.events.GameEndEvent;
 import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
-import me.theguyhere.villagerdefense.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.game.models.Tasks;
+import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
@@ -25,13 +23,9 @@ import java.util.stream.Collectors;
 
 public class Commands implements CommandExecutor {
 	Main plugin;
-	Inventories inv;
-	Game game;
-	
-	public Commands(Main plugin, Inventories inv, Game game) {
+
+	public Commands(Main plugin) {
 		this.plugin = plugin;
-		this.inv = inv;
-		this.game = game;
 	}
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -60,7 +54,7 @@ public class Commands implements CommandExecutor {
 					return true;
 				}
 
-				player.openInventory(inv.createArenasInventory());
+				player.openInventory(plugin.getInventories().createArenasInventory());
 				return true;
 			}
 			
@@ -85,16 +79,16 @@ public class Commands implements CommandExecutor {
 			// Player checks stats
 			if (args[0].equalsIgnoreCase("stats")) {
 				if (args.length == 1)
-					player.openInventory(inv.createPlayerStatsInventory(player.getName()));
+					player.openInventory(plugin.getInventories().createPlayerStatsInventory(player.getName()));
 				else if (plugin.getPlayerData().contains(args[1]))
-					player.openInventory(inv.createPlayerStatsInventory(args[1]));
+					player.openInventory(plugin.getInventories().createPlayerStatsInventory(args[1]));
 				else player.sendMessage(Utils.notify(String.format(language.getString("noStats"), args[1])));
 				return true;
 			}
 
 			// Player checks kits
 			if (args[0].equalsIgnoreCase("kits")) {
-				player.openInventory(inv.createPlayerKitsInventory(player.getName(), player.getName()));
+				player.openInventory(plugin.getInventories().createPlayerKitsInventory(player.getName(), player.getName()));
 				return true;
 			}
 
@@ -105,7 +99,7 @@ public class Commands implements CommandExecutor {
 
 				// Attempt to get arena and player
 				try {
-					arena = game.arenas.stream().filter(Objects::nonNull).filter(arena1 -> arena1.hasPlayer(player))
+					arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(arena1 -> arena1.hasPlayer(player))
 							.collect(Collectors.toList()).get(0);
 					gamer = arena.getPlayer(player);
 				} catch (Exception err) {
@@ -127,7 +121,7 @@ public class Commands implements CommandExecutor {
 				}
 
 				// Open inventory
-				player.openInventory(inv.createSelectKitsInventory(player, arena));
+				player.openInventory(plugin.getInventories().createSelectKitsInventory(player, arena));
 				return true;
 			}
 
@@ -181,7 +175,7 @@ public class Commands implements CommandExecutor {
 
 					// Attempt to get arena and player
 					try {
-						arena = game.arenas.stream().filter(Objects::nonNull)
+						arena = plugin.getGame().arenas.stream().filter(Objects::nonNull)
 								.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
 						gamer = arena.getPlayer(player);
 					} catch (Exception e) {
@@ -238,13 +232,13 @@ public class Commands implements CommandExecutor {
 						name.append(" ").append(args[i + 2]);
 
 					// Check if this arena exists
-					if (game.arenas.stream().filter(Objects::nonNull)
+					if (plugin.getGame().arenas.stream().filter(Objects::nonNull)
 							.noneMatch(arena -> arena.getName().equals(name.toString()))) {
 						player.sendMessage(Utils.notify("&cNo arena with this name exists!"));
 						return true;
 					}
 
-					Arena arena = game.arenas.stream().filter(Objects::nonNull)
+					Arena arena = plugin.getGame().arenas.stream().filter(Objects::nonNull)
 							.filter(arena1 -> arena1.getName().equals(name.toString()))
 							.collect(Collectors.toList()).get(0);
 
@@ -306,13 +300,13 @@ public class Commands implements CommandExecutor {
 					name.append(" ").append(args[i + 2]);
 
 				// Check if this arena exists
-				if (game.arenas.stream().filter(Objects::nonNull)
+				if (plugin.getGame().arenas.stream().filter(Objects::nonNull)
 						.noneMatch(arena -> arena.getName().equals(name.toString()))) {
 					player.sendMessage(Utils.notify("&cNo arena with this name exists!"));
 					return true;
 				}
 
-				Arena arena = game.arenas.stream().filter(Objects::nonNull)
+				Arena arena = plugin.getGame().arenas.stream().filter(Objects::nonNull)
 						.filter(arena1 -> arena1.getName().equals(name.toString())).collect(Collectors.toList()).get(0);
 
 				// Check if arena has a game in progress
@@ -329,6 +323,115 @@ public class Commands implements CommandExecutor {
 
 				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 						Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
+				return true;
+			}
+
+			// Force delay start
+			if (args[0].equalsIgnoreCase("delay")) {
+				// Start current arena
+				if (args.length == 1) {
+					// Check for permission to use the command
+					if (!player.hasPermission("vd.start")) {
+						player.sendMessage(Utils.notify(language.getString("permissionError")));
+						return true;
+					}
+
+					Arena arena;
+
+					// Attempt to get arena
+					try {
+						arena = plugin.getGame().arenas.stream().filter(Objects::nonNull)
+								.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
+					} catch (Exception e) {
+						player.sendMessage(Utils.notify(language.getString("forceStartError1")));
+						return true;
+					}
+
+					// Check if arena already started
+					if (arena.getStatus() != ArenaStatus.WAITING) {
+						player.sendMessage(Utils.notify(language.getString("forceStartError3")));
+						return true;
+					}
+
+					Tasks task = arena.getTask();
+					Map<Runnable, Integer> tasks = task.getTasks();
+					BukkitScheduler scheduler = Bukkit.getScheduler();
+
+					// Remove all tasks
+					tasks.forEach((runnable, id) -> scheduler.cancelTask(id));
+					tasks.clear();
+
+					// Reschedule countdown tasks
+					task.min2.run();
+					tasks.put(task.min1, scheduler.scheduleSyncDelayedTask(plugin, task.min1,
+							Utils.secondsToTicks(Utils.minutesToSeconds(1))));
+					tasks.put(task.sec30, scheduler.scheduleSyncDelayedTask(plugin, task.sec30,
+							Utils.secondsToTicks(Utils.minutesToSeconds(2) - 30)));
+					tasks.put(task.sec10, scheduler.scheduleSyncDelayedTask(plugin, task.sec10,
+							Utils.secondsToTicks(Utils.minutesToSeconds(2) - 10)));
+					tasks.put(task.sec5, scheduler.scheduleSyncDelayedTask(plugin, task.sec5,
+							Utils.secondsToTicks(Utils.minutesToSeconds(2) - 5)));
+					tasks.put(task.start, scheduler.scheduleSyncDelayedTask(plugin, task.start,
+							Utils.secondsToTicks(Utils.minutesToSeconds(2))));
+				}
+
+				// Start specific arena
+				else {
+					// Check for permission to use the command
+					if (!player.hasPermission("vd.admin")) {
+						player.sendMessage(Utils.notify(language.getString("permissionError")));
+						return true;
+					}
+
+					StringBuilder name = new StringBuilder(args[1]);
+					for (int i = 0; i < args.length - 2; i++)
+						name.append(" ").append(args[i + 2]);
+
+					// Check if this arena exists
+					if (plugin.getGame().arenas.stream().filter(Objects::nonNull)
+							.noneMatch(arena -> arena.getName().equals(name.toString()))) {
+						player.sendMessage(Utils.notify("&cNo arena with this name exists!"));
+						return true;
+					}
+
+					Arena arena = plugin.getGame().arenas.stream().filter(Objects::nonNull)
+							.filter(arena1 -> arena1.getName().equals(name.toString()))
+							.collect(Collectors.toList()).get(0);
+
+					// Check if arena already started
+					if (arena.getStatus() != ArenaStatus.WAITING) {
+						player.sendMessage(Utils.notify(language.getString("forceStartError3")));
+						return true;
+					}
+
+					// Check if there is at least 1 player
+					if (arena.getActiveCount() == 0) {
+						player.sendMessage(Utils.notify("&cThe arena has no players!"));
+						return true;
+					}
+
+					Tasks task = arena.getTask();
+					Map<Runnable, Integer> tasks = task.getTasks();
+					BukkitScheduler scheduler = Bukkit.getScheduler();
+
+					// Remove all tasks
+					tasks.forEach((runnable, id) -> scheduler.cancelTask(id));
+					tasks.clear();
+
+					// Reschedule countdown tasks
+					task.min2.run();
+					tasks.put(task.min1, scheduler.scheduleSyncDelayedTask(plugin, task.min1,
+							Utils.secondsToTicks(Utils.minutesToSeconds(1))));
+					tasks.put(task.sec30, scheduler.scheduleSyncDelayedTask(plugin, task.sec30,
+							Utils.secondsToTicks(Utils.minutesToSeconds(2) - 30)));
+					tasks.put(task.sec10, scheduler.scheduleSyncDelayedTask(plugin, task.sec10,
+							Utils.secondsToTicks(Utils.minutesToSeconds(2) - 10)));
+					tasks.put(task.sec5, scheduler.scheduleSyncDelayedTask(plugin, task.sec5,
+							Utils.secondsToTicks(Utils.minutesToSeconds(2) - 5)));
+					tasks.put(task.start, scheduler.scheduleSyncDelayedTask(plugin, task.start,
+							Utils.secondsToTicks(Utils.minutesToSeconds(2))));
+				}
+
 				return true;
 			}
 

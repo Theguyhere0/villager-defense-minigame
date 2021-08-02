@@ -24,8 +24,6 @@ public class JoinListener implements Listener {
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e) {
-		if (plugin.getPortal().getNPCs() == null)
-			return;
 		Player player = e.getPlayer();
 		plugin.getPortal().addJoinPacket(player);
 		plugin.getReader().inject(player);
@@ -68,8 +66,6 @@ public class JoinListener implements Listener {
 	
 	@EventHandler
 	public void onPortal(PlayerChangedWorldEvent e) {
-		if (plugin.getPortal().getNPCs() == null)
-			return;
 		plugin.getPortal().addJoinPacket(e.getPlayer());
 	}
 	

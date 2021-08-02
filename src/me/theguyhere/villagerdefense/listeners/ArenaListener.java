@@ -2,7 +2,6 @@ package me.theguyhere.villagerdefense.listeners;
 
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.*;
-import me.theguyhere.villagerdefense.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.game.models.Mobs;
 import me.theguyhere.villagerdefense.game.models.Tasks;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;

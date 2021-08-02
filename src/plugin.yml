@@ -39,3 +39,7 @@ commands:
       description: Forces the end of a game
       usage: /vd end
       permission: vd.admin
+    delay:
+      description: Forces a game to restart its waiting time
+      usage: /vd delay
+      permission: vd.start

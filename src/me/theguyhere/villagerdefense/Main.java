@@ -1,14 +1,13 @@
 package me.theguyhere.villagerdefense;
 
 import me.theguyhere.villagerdefense.GUI.Inventories;
-import me.theguyhere.villagerdefense.game.models.kits.Kit;
-import me.theguyhere.villagerdefense.listeners.*;
 import me.theguyhere.villagerdefense.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.game.displays.InfoBoard;
 import me.theguyhere.villagerdefense.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.game.displays.Portal;
-import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.Game;
+import me.theguyhere.villagerdefense.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.listeners.*;
 import me.theguyhere.villagerdefense.tools.DataManager;
 import me.theguyhere.villagerdefense.tools.PacketReader;
 import me.theguyhere.villagerdefense.tools.Utils;
@@ -55,8 +54,8 @@ public class Main extends JavaPlugin {
 		PluginManager pm = getServer().getPluginManager();
 		game = new Game(this);
 		inventories = new Inventories(this);
-		commands = new Commands(this, inventories, game);
-		arenaBoard = new ArenaBoard(this, game);
+		commands = new Commands(this);
+		arenaBoard = new ArenaBoard(this);
 
 		checkArenas();
 
@@ -91,7 +90,7 @@ public class Main extends JavaPlugin {
 		int arenaDataVersion = 3;
 		int playerDataVersion = 1;
 		int spawnTableVersion = 1;
-		int languageFileVersion = 6;
+		int languageFileVersion = 7;
 		int defaultSpawnVersion = 2;
 		outdated = false;
 
