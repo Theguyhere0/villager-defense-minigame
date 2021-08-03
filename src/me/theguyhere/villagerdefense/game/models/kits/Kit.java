@@ -231,7 +231,7 @@ public class Kit {
             else if (purchasedLevel == -1) {
                 lores.addAll(masterDescription);
                 descriptionsMap.forEach((level, description) -> {
-                    System.out.println("level " + level + " description: " + description);
+//                    System.out.println("level " + level + " description: " + description);
                     lores.add(Utils.format("&fLevel " + level));
                     lores.addAll(description);
                 });

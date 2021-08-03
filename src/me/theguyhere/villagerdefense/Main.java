@@ -42,7 +42,7 @@ public class Main extends JavaPlugin {
 	 * 1 (Normal) - Errors that drastically reduce performance and important information will be displayed.
 	 * 0 (Quiet) - Only the most urgent error messages will be displayed.
 	 */
-	private final int debugLevel = 0;
+	private final int debugLevel = 2;
 	private boolean outdated;
 
 	// Runs when enabling plugin

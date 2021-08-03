@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.listeners;
 
 import me.theguyhere.villagerdefense.GUI.Inventories;
+import me.theguyhere.villagerdefense.GUI.InventoryItems;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.game.models.GameItems;
@@ -78,6 +79,10 @@ public class InventoryListener implements Listener {
 		if (e.getClickedInventory() == null)
 			return;
 
+		// Debugging info
+		plugin.debugInfo("Inventory Item: " + e.getCurrentItem(), 2);
+		plugin.debugInfo("Cursor Item: " + e.getCursor(), 2);
+
 		// Cancel the event if the inventory isn't the community chest or custom shop editor
 		if (!title.contains("Community Chest") && !title.contains("Custom Shop Editor"))
 			e.setCancelled(true);
@@ -94,14 +99,21 @@ public class InventoryListener implements Listener {
 			return;
 
 		ItemStack button = e.getCurrentItem();
+		Material buttonType;
+		String buttonName;
 
 		// Ignore null items
-		if (button == null)
+		if (button == null && !title.contains("Custom Shop Editor"))
 			return;
 
 		// Get material and name of button
-		Material buttonType = button.getType();
-		String buttonName = button.getItemMeta().getDisplayName();
+		if (!title.contains("Custom Shop Editor")) {
+			buttonType = button.getType();
+			buttonName = button.getItemMeta().getDisplayName();
+		} else {
+			buttonType = null;
+			buttonName = null;
+		}
 
 		Player player = (Player) e.getWhoClicked();
 		int slot = e.getSlot();
@@ -1816,11 +1828,12 @@ public class InventoryListener implements Listener {
 		else if (title.contains("Custom Shop Editor:")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			ItemStack cursor = e.getCursor();
+			System.out.println(cursor);
 			String path = "a" + meta.getInteger1() + ".customShop.";
 			Arena arenaInstance = plugin.getGame().arenas.get(meta.getInteger1());
 
 			// Exit menu
-			if (buttonName.contains("EXIT")) {
+			if (InventoryItems.exit().equals(button)) {
 				e.setCancelled(true);
 				player.openInventory(plugin.getInventories().createShopsInventory(meta.getInteger1()));
 				return;
@@ -1833,7 +1846,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Add item
-			if (cursor.getType() != Material.AIR && buttonType == null) {
+			if (cursor.getType() != Material.AIR) {
 				ItemMeta itemMeta = cursor.getItemMeta();
 				itemMeta.setDisplayName((itemMeta.getDisplayName().equals("") ?
 						Arrays.stream(cursor.getType().name().toLowerCase().split("_"))
@@ -1846,14 +1859,14 @@ public class InventoryListener implements Listener {
 				Utils.giveItem(player, cursor.clone(), language.getString("inventoryFull"));
 				player.setItemOnCursor(new ItemStack(Material.AIR));
 				plugin.saveArenaData();
-				player.openInventory(plugin.getInventories().createCustomItemsInventory(meta.getInteger1(), slot));
 			}
 
 			// Edit item
-			else if (buttonType != null) {
-				e.setCancelled(true);
+			else e.setCancelled(true);
+
+			// Only open inventory for valid click
+			if (button != null || cursor.getType() != Material.AIR)
 				player.openInventory(plugin.getInventories().createCustomItemsInventory(meta.getInteger1(), slot));
-			}
 		}
 
 		// Menu for editing a specific custom item
