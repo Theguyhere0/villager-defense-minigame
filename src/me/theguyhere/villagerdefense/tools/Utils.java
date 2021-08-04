@@ -260,14 +260,17 @@ public class Utils {
 
     // Gives item to player if possible, otherwise drops at feet
     public static void giveItem(Player player, ItemStack item, String message) {
+        // Inventory is full
         if (player.getInventory().firstEmpty() == -1 && (player.getInventory().first(item.getType()) == -1 ||
                 (player.getInventory().all(new ItemStack(item.getType(), item.getMaxStackSize())).size() ==
                         player.getInventory().all(item.getType()).size()) &&
                         player.getInventory().all(item.getType()).size() != 0)) {
-            // Inventory is full
             player.getWorld().dropItemNaturally(player.getLocation(), item);
             player.sendMessage(notify(message));
-        } else player.getInventory().addItem(item);
+        }
+
+        // Add item to inventory
+        else player.getInventory().addItem(item);
     }
 
     // Prepares and teleports a player into adventure mode

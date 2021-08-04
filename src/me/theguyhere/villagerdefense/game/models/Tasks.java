@@ -21,8 +21,10 @@ import org.bukkit.entity.Hoglin;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Phantom;
 import org.bukkit.entity.Slime;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -248,8 +250,8 @@ public class Tasks {
 
 				// Give me items to test with
 				if (plugin.getDebugLevel() >= 3 && player.getPlayer().getName().equals("Theguyhere")) {
-					Utils.giveItem(player.getPlayer(), GameItems.smallCare(), "uh oh");
-					Utils.giveItem(player.getPlayer(), GameItems.smallCare(), "uh oh");
+					Utils.giveItem(player.getPlayer(), GameItems.health2(), "uh oh");
+					Utils.giveItem(player.getPlayer(), GameItems.speed2(), "uh oh");
 					Utils.giveItem(player.getPlayer(), GameItems.milk(), "uh oh");
 				}
 
@@ -382,7 +384,22 @@ public class Tasks {
 	// Gives items on spawn or respawn based on kit selected
 	public void giveItems(VDPlayer player) {
 		for (ItemStack item: player.getKit().getItems()) {
-			Utils.giveItem(player.getPlayer(), item, plugin.getLanguageData().getString("inventoryFull"));
+			EntityEquipment equipment = player.getPlayer().getEquipment();
+
+			// Equip armor if possible, otherwise put in inventory, otherwise drop at feet
+			if (Arrays.stream(GameItems.HELMET_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
+					equipment.getHelmet() == null)
+				equipment.setHelmet(item);
+			else if (Arrays.stream(GameItems.CHESTPLATE_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
+					equipment.getChestplate() == null)
+				equipment.setChestplate(item);
+			else if (Arrays.stream(GameItems.LEGGING_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
+					equipment.getLeggings() == null)
+				equipment.setLeggings(item);
+			else if (Arrays.stream(GameItems.BOOTS_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
+					equipment.getBoots() == null)
+				equipment.setBoots(item);
+			else Utils.giveItem(player.getPlayer(), item, plugin.getLanguageData().getString("inventoryFull"));
 		}
 		Utils.giveItem(player.getPlayer(), GameItems.shop(), plugin.getLanguageData().getString("inventoryFull"));
 	}

@@ -1148,4 +1148,21 @@ public class GameListener implements Listener {
 		if (item.getType() == Material.EMERALD && item.getItemMeta().getDisplayName().contains("Item Shop"))
 			e.setCancelled(true);
 	}
+
+	// Delete bottles and buckets after using consumables
+	@EventHandler
+	public void onFinishConsumption(PlayerItemConsumeEvent e) {
+		Player player = e.getPlayer();
+
+		// Check if player is playing in an arena
+		if (plugin.getGame().arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+			return;
+
+		if (e.getItem().getType() == Material.POTION || e.getItem().getType() == Material.MILK_BUCKET) {
+			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+				player.getInventory().remove(Material.GLASS_BOTTLE);
+				player.getInventory().remove(Material.BUCKET);
+			}, 3);
+		}
+	}
 }
