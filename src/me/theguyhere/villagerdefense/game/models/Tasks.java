@@ -250,9 +250,8 @@ public class Tasks {
 
 				// Give me items to test with
 				if (plugin.getDebugLevel() >= 3 && player.getPlayer().getName().equals("Theguyhere")) {
-					Utils.giveItem(player.getPlayer(), GameItems.health2(), "uh oh");
-					Utils.giveItem(player.getPlayer(), GameItems.speed2(), "uh oh");
-					Utils.giveItem(player.getPlayer(), GameItems.milk(), "uh oh");
+					Utils.giveItem(player.getPlayer(), GameItems.wolf(), "uh oh");
+					Utils.giveItem(player.getPlayer(), GameItems.golem(), "uh oh");
 				}
 
 				// Set health for people with giant kits

@@ -27,8 +27,10 @@ public class GameItems {
 		boolean[] flags = {true, false};
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		return Utils.createItem(Material.EMERALD, Utils.format("&2&lItem Shop"), flags, enchants,
+		ItemStack item = Utils.createItem(Material.EMERALD, Utils.format("&2&lItem Shop"), flags, enchants,
 				Utils.format("&7&oResets every 10 rounds"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 
 	// Weapons
@@ -586,8 +588,10 @@ public class GameItems {
 				}
 		}
 
-		return Utils.createItem(mat, null, FLAGS, enchantments,
+		ItemStack item = Utils.createItem(mat, null, FLAGS, enchantments,
 				Utils.format("&2Gems: &a" + price));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack axe(int level) {
 		Random r = new Random();
@@ -1048,8 +1052,10 @@ public class GameItems {
 				}
 		}
 
-		return Utils.createItem(mat, null, FLAGS, enchantments,
+		ItemStack item = Utils.createItem(mat, null, FLAGS, enchantments,
 				Utils.format("&2Gems: &a" + price));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack bow(int level) {
 		Random r = new Random();
@@ -1417,8 +1423,10 @@ public class GameItems {
 				}
 		}
 
-		return Utils.createItem(Material.BOW, null, FLAGS, enchantments,
+		ItemStack item = Utils.createItem(Material.BOW, null, FLAGS, enchantments,
 				Utils.format("&2Gems: &a" + price));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack crossbow(int level) {
 		Random r = new Random();
@@ -1749,8 +1757,10 @@ public class GameItems {
 				}
 		}
 
-		return Utils.createItem(Material.CROSSBOW, null, FLAGS, enchantments,
+		ItemStack item = Utils.createItem(Material.CROSSBOW, null, FLAGS, enchantments,
 				Utils.format("&2Gems: &a" + price));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack trident(int level) {
 		Random r = new Random();
@@ -2244,8 +2254,10 @@ public class GameItems {
 				}
 		}
 
-		return Utils.createItem(Material.TRIDENT, null, FLAGS, enchantments,
+		ItemStack item = Utils.createItem(Material.TRIDENT, null, FLAGS, enchantments,
 				Utils.format("&2Gems: &a" + price));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack shield(int level) {
 		Random r = new Random();
@@ -2346,49 +2358,69 @@ public class GameItems {
 				}
 		}
 
-		return Utils.createItem(Material.SHIELD, null, FLAGS, enchantments,
+		ItemStack item = Utils.createItem(Material.SHIELD, null, FLAGS, enchantments,
 				Utils.format("&2Gems: &a" + price));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 
 	// Ammo
 	public static @NotNull ItemStack arrows() {
-		return Utils.createItems(Material.ARROW, 16, null, Utils.format("&2Gems: &a45"));
+		ItemStack item = Utils.createItems(Material.ARROW, 16, null, Utils.format("&2Gems: &a45"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsS() {
-		return Utils.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.SLOWNESS), 8,
+		ItemStack item = Utils.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.SLOWNESS), 8,
 				null, Utils.format("&2Gems: &a50"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsD() {
-		return Utils.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.INSTANT_DAMAGE), 8,
+		ItemStack item = Utils.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.INSTANT_DAMAGE), 8,
 				null, Utils.format("&2Gems: &a70"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsW() {
-		return Utils.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.WEAKNESS), 8,
+		ItemStack item = Utils.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.WEAKNESS), 8,
 				null, Utils.format("&2Gems: &a50"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsP() {
-		return Utils.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.POISON), 16,
+		ItemStack item = Utils.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.POISON), 16,
 				null, Utils.format("&2Gems: &a60"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsSPlus() {
-		return Utils.createPotionItems(Material.TIPPED_ARROW,
+		ItemStack item = Utils.createPotionItems(Material.TIPPED_ARROW,
 				new PotionData(PotionType.SLOWNESS, false, true), 8, null,
 				Utils.format("&2Gems: &a125"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsDPlus() {
-		return Utils.createPotionItems(Material.TIPPED_ARROW,
+		ItemStack item = Utils.createPotionItems(Material.TIPPED_ARROW,
 				new PotionData(PotionType.INSTANT_DAMAGE, false, true), 8, null,
 				Utils.format("&2Gems: &a175"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsWPlus() {
-		return Utils.createPotionItems(Material.TIPPED_ARROW,
+		ItemStack item = Utils.createPotionItems(Material.TIPPED_ARROW,
 				new PotionData(PotionType.WEAKNESS, false,true), 8, null,
 				Utils.format("&2Gems: &a125"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsPPlus() {
-		return Utils.createPotionItems(Material.TIPPED_ARROW,
+		ItemStack item = Utils.createPotionItems(Material.TIPPED_ARROW,
 				new PotionData(PotionType.POISON, false, true), 16, null,
 				Utils.format("&2Gems: &a130"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack rockets() {
 		ItemStack item = Utils.createItems(Material.FIREWORK_ROCKET, 4, null,
@@ -3070,8 +3102,10 @@ public class GameItems {
 				}
 		}
 
-		return Utils.createItem(mat, null, FLAGS, enchantments,
+		ItemStack item = Utils.createItem(mat, null, FLAGS, enchantments,
 				Utils.format("&2Gems: &a" + price));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack chestplate(int level) {
 		Random r = new Random();
@@ -3717,8 +3751,10 @@ public class GameItems {
 				}
 		}
 
-		return Utils.createItem(mat, null, FLAGS, enchantments,
+		ItemStack item = Utils.createItem(mat, null, FLAGS, enchantments,
 				Utils.format("&2Gems: &a" + price));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack leggings(int level) {
 		Random r = new Random();
@@ -4364,8 +4400,10 @@ public class GameItems {
 				}
 		}
 
-		return Utils.createItem(mat, null, FLAGS, enchantments,
+		ItemStack item = Utils.createItem(mat, null, FLAGS, enchantments,
 				Utils.format("&2Gems: &a" + price));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack boots(int level) {
 		Random r = new Random();
@@ -5011,171 +5049,253 @@ public class GameItems {
 				}
 		}
 
-		return Utils.createItem(mat, null, FLAGS, enchantments,
+		ItemStack item = Utils.createItem(mat, null, FLAGS, enchantments,
 				Utils.format("&2Gems: &a" + price));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 
 	// Consumables
 	public static @NotNull ItemStack totem() {
-		return Utils.createItem(Material.TOTEM_OF_UNDYING, null, Utils.format("&2Gems: &a1000"));
+		ItemStack item = Utils.createItem(Material.TOTEM_OF_UNDYING, null, Utils.format("&2Gems: &a1000"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack gapple() {
-		return Utils.createItem(Material.GOLDEN_APPLE, null, Utils.format("&2Gems: &a120"));
+		ItemStack item = Utils.createItem(Material.GOLDEN_APPLE, null, Utils.format("&2Gems: &a120"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack egapple() {
-		return Utils.createItem(Material.ENCHANTED_GOLDEN_APPLE, null, Utils.format("&2Gems: &a300"));
+		ItemStack item = Utils.createItem(Material.ENCHANTED_GOLDEN_APPLE, null, Utils.format("&2Gems: &a300"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack gcarrot() {
-		return Utils.createItem(Material.GOLDEN_CARROT, null, Utils.format("&2Gems: &a80"));
+		ItemStack item = Utils.createItem(Material.GOLDEN_CARROT, null, Utils.format("&2Gems: &a80"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack steak() {
-		return Utils.createItems(Material.COOKED_BEEF, 2, null, Utils.format("&2Gems: &a60"));
+		ItemStack item = Utils.createItems(Material.COOKED_BEEF, 2, null, Utils.format("&2Gems: &a60"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack mutton() {
-		return Utils.createItems(Material.COOKED_MUTTON, 2, null, Utils.format("&2Gems: &a40"));
+		ItemStack item = Utils.createItems(Material.COOKED_MUTTON, 2, null,
+				Utils.format("&2Gems: &a40"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack bread() {
-		return Utils.createItems(Material.BREAD, 3, null, Utils.format("&2Gems: &a40"));
+		ItemStack item = Utils.createItems(Material.BREAD, 3, null, Utils.format("&2Gems: &a40"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack carrot() {
-		return Utils.createItems(Material.CARROT, 5, null, Utils.format("&2Gems: &a30"));
+		ItemStack item = Utils.createItems(Material.CARROT, 5, null, Utils.format("&2Gems: &a30"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack beetroot() {
-		return Utils.createItems(Material.BEETROOT, 8, null, Utils.format("&2Gems: &a25"));
+		ItemStack item = Utils.createItems(Material.BEETROOT, 8, null, Utils.format("&2Gems: &a25"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack health() {
-		return Utils.createPotionItem(Material.POTION, new PotionData(PotionType.INSTANT_HEAL), null,
+		ItemStack item = Utils.createPotionItem(Material.POTION, new PotionData(PotionType.INSTANT_HEAL), null,
 				Utils.format("&2Gems: &a50"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack health2() {
-		return Utils.createPotionItem(Material.POTION,
+		ItemStack item = Utils.createPotionItem(Material.POTION,
 				new PotionData(PotionType.INSTANT_HEAL, false, true), null,
 				Utils.format("&2Gems: &a120"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack health3() {
-		return Utils.createPotionItem(Material.LINGERING_POTION,
+		ItemStack item = Utils.createPotionItem(Material.LINGERING_POTION,
 				new PotionData(PotionType.INSTANT_HEAL, false, true), null,
 				Utils.format("&2Gems: &a200"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack strength() {
-		return Utils.createPotionItem(Material.POTION, new PotionData(PotionType.STRENGTH), null,
+		ItemStack item = Utils.createPotionItem(Material.POTION, new PotionData(PotionType.STRENGTH), null,
 				Utils.format("&2Gems: &a150"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack strength2() {
-		return Utils.createPotionItem(Material.POTION,
+		ItemStack item = Utils.createPotionItem(Material.POTION,
 				new PotionData(PotionType.STRENGTH, false, true), null,
 				Utils.format("&2Gems: &a400"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack regen() {
-		return Utils.createPotionItem(Material.POTION, new PotionData(PotionType.REGEN), null,
+		ItemStack item = Utils.createPotionItem(Material.POTION, new PotionData(PotionType.REGEN), null,
 				Utils.format("&2Gems: &a175"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack regen2() {
-		return Utils.createPotionItem(Material.POTION,
+		ItemStack item = Utils.createPotionItem(Material.POTION,
 				new PotionData(PotionType.REGEN, false, true), null,
 				Utils.format("&2Gems: &a450"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack speed() {
-		return Utils.createPotionItem(Material.POTION, new PotionData(PotionType.SPEED), null,
+		ItemStack item = Utils.createPotionItem(Material.POTION, new PotionData(PotionType.SPEED), null,
 				Utils.format("&2Gems: &a125"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack speed2() {
-		return Utils.createPotionItem(Material.POTION, new PotionData(PotionType.SPEED, false, true),
+		ItemStack item = Utils.createPotionItem(Material.POTION, new PotionData(PotionType.SPEED, false, true),
 				null, Utils.format("&2Gems: &a350"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack milk() {
-		return Utils.createItem(Material.MILK_BUCKET, null, Utils.format("&2Gems: &a75"));
+		ItemStack item = Utils.createItem(Material.MILK_BUCKET, null, Utils.format("&2Gems: &a75"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack golem() {
-		return Utils.createItem(Material.GHAST_SPAWN_EGG, Utils.format("&fIron Golem Spawn Egg"),
+		ItemStack item = Utils.createItem(Material.GHAST_SPAWN_EGG, Utils.format("&fIron Golem Spawn Egg"),
 				Utils.format("&2Gems: &a500"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack wolf() {
-		return Utils.createItem(Material.WOLF_SPAWN_EGG, null, Utils.format("&2Gems: &a250"));
+		ItemStack item = Utils.createItem(Material.WOLF_SPAWN_EGG, null, Utils.format("&2Gems: &a250"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack smallCare() {
-		return Utils.createItem(Material.COAL_BLOCK, Utils.format("&2Small Care Package"),
+		ItemStack item = Utils.createItem(Material.COAL_BLOCK, Utils.format("&2Small Care Package"),
 				Utils.format("&7Contents:"), Utils.format("&7 - &bOne &7level &b1 &7weapon"),
 				Utils.format("&7 - &bOne &7level &b1 &7armor"), Utils.format("&2Gems: &a200"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack mediumCare() {
-		return Utils.createItem(Material.IRON_BLOCK, Utils.format("&3Medium Care Package"),
+		ItemStack item = Utils.createItem(Material.IRON_BLOCK, Utils.format("&3Medium Care Package"),
 				Utils.format("&7Contents:"), Utils.format("&7 - &bOne &7level &b2 &7weapon"),
 				Utils.format("&7 - &bOne &7level &b2 &7armor"),
 				Utils.format("&7 - &bOne &7level &b2 &7consumable"), Utils.format("&2Gems: &a500"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack largeCare() {
-		return Utils.createItem(Material.DIAMOND_BLOCK, Utils.format("&9Large Care Package"),
+		ItemStack item = Utils.createItem(Material.DIAMOND_BLOCK, Utils.format("&9Large Care Package"),
 				Utils.format("&7Contents:"), Utils.format("&7 - &bOne &7level &b4 &7weapon"),
 				Utils.format("&7 - &bTwo &7level &b3 &7armor"),
 				Utils.format("&7 - &bOne &7level &b3 &7consumable"), Utils.format("&2Gems: &a1200"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack extraCare() {
-		return Utils.createItem(Material.BEACON, Utils.format("&bExtra Large Care Package"),
+		ItemStack item = Utils.createItem(Material.BEACON, Utils.format("&bExtra Large Care Package"),
 				Utils.format("&7Contents:"), Utils.format("&7 - &bOne &7level &b5 &7weapon"),
 				Utils.format("&7 - &bOne &7level &b4 &7weapon"),
 				Utils.format("&7 - &bOne &7level &b5 &7armor"),
 				Utils.format("&7 - &bOne &7level &b4 &7armor"),
 				Utils.format("&7 - &bTwo &7level &b4 &7consumables"), Utils.format("&2Gems: &a3000"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack experience() {
-		return Utils.createItem(Material.EXPERIENCE_BOTTLE, null, Utils.format("&2Gems: &a75"));
+		ItemStack item = Utils.createItem(Material.EXPERIENCE_BOTTLE, null, Utils.format("&2Gems: &a75"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 
 	// Kit abilities
 	public static @NotNull ItemStack mage() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
-		return Utils.createItem(Material.PURPLE_DYE, Utils.format("&dMage Essence"), Utils.HIDE_ENCHANT_FLAGS,
+
+		ItemStack item = Utils.createItem(Material.PURPLE_DYE, Utils.format("&dMage Essence"), Utils.HIDE_ENCHANT_FLAGS,
 				enchants, Utils.format("&7Right click to use ability"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack ninja() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
-		return Utils.createItem(Material.BLACK_DYE, Utils.format("&dNinja Essence"), Utils.HIDE_ENCHANT_FLAGS,
+
+		ItemStack item = Utils.createItem(Material.BLACK_DYE, Utils.format("&dNinja Essence"), Utils.HIDE_ENCHANT_FLAGS,
 				enchants, Utils.format("&7Right click to use ability"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack templar() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
-		return Utils.createItem(Material.YELLOW_DYE, Utils.format("&dTemplar Essence"), Utils.HIDE_ENCHANT_FLAGS,
+
+		ItemStack item = Utils.createItem(Material.YELLOW_DYE, Utils.format("&dTemplar Essence"), Utils.HIDE_ENCHANT_FLAGS,
 				enchants, Utils.format("&7Right click to use ability"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack warrior() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
-		return Utils.createItem(Material.RED_DYE, Utils.format("&dWarrior Essence"), Utils.HIDE_ENCHANT_FLAGS,
+
+		ItemStack item = Utils.createItem(Material.RED_DYE, Utils.format("&dWarrior Essence"), Utils.HIDE_ENCHANT_FLAGS,
 				enchants, Utils.format("&7Right click to use ability"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack knight() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
-		return Utils.createItem(Material.BROWN_DYE, Utils.format("&dKnight Essence"), Utils.HIDE_ENCHANT_FLAGS,
+
+		ItemStack item = Utils.createItem(Material.BROWN_DYE, Utils.format("&dKnight Essence"), Utils.HIDE_ENCHANT_FLAGS,
 				enchants, Utils.format("&7Right click to use ability"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack priest() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
-		return Utils.createItem(Material.WHITE_DYE, Utils.format("&dPriest Essence"), Utils.HIDE_ENCHANT_FLAGS,
+
+		ItemStack item = Utils.createItem(Material.WHITE_DYE, Utils.format("&dPriest Essence"), Utils.HIDE_ENCHANT_FLAGS,
 				enchants, Utils.format("&7Right click to use ability"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack siren() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
-		return Utils.createItem(Material.PINK_DYE, Utils.format("&dSiren Essence"), Utils.HIDE_ENCHANT_FLAGS,
+
+		ItemStack item = Utils.createItem(Material.PINK_DYE, Utils.format("&dSiren Essence"), Utils.HIDE_ENCHANT_FLAGS,
 				enchants, Utils.format("&7Right click to use ability"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack monk() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
-		return Utils.createItem(Material.GREEN_DYE, Utils.format("&dMonk Essence"), Utils.HIDE_ENCHANT_FLAGS,
+
+		ItemStack item = Utils.createItem(Material.GREEN_DYE, Utils.format("&dMonk Essence"), Utils.HIDE_ENCHANT_FLAGS,
 				enchants, Utils.format("&7Right click to use ability"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack messenger() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
-		return Utils.createItem(Material.BLUE_DYE, Utils.format("&dMessenger Essence"), Utils.HIDE_ENCHANT_FLAGS,
+
+		ItemStack item = Utils.createItem(Material.BLUE_DYE, Utils.format("&dMessenger Essence"), Utils.HIDE_ENCHANT_FLAGS,
 				enchants, Utils.format("&7Right click to use ability"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 
 	// Categories of items
@@ -5208,7 +5328,7 @@ public class GameItems {
 			Material.TRIDENT};
 	public static final Material[] CLICKABLE_CONSUME_MATERIALS = new Material[]{Material.GLASS_BOTTLE,
 			Material.POTION, Material.SPLASH_POTION, Material.LINGERING_POTION, Material.EXPERIENCE_BOTTLE,
-			Material.MILK_BUCKET, Material.POLAR_BEAR_SPAWN_EGG, Material.WOLF_SPAWN_EGG};
+			Material.MILK_BUCKET, Material.GHAST_SPAWN_EGG, Material.WOLF_SPAWN_EGG};
 
 	// Random generation of items
 	public static @NotNull ItemStack randWeapon(int level) {

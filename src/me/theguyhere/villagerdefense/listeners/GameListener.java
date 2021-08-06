@@ -790,7 +790,9 @@ public class GameListener implements Listener {
 				Arrays.stream(GameItems.FOOD_MATERIALS).anyMatch(m -> m == main.getType()) ||
 				Arrays.stream(GameItems.ARMOR_MATERIALS).anyMatch(m -> m == main.getType()) ||
 				Arrays.stream(GameItems.CLICKABLE_WEAPON_MATERIALS).anyMatch(m -> m == main.getType()) ||
-				Arrays.stream(GameItems.CLICKABLE_CONSUME_MATERIALS).anyMatch(m -> m == main.getType())) return;
+				(Arrays.stream(GameItems.CLICKABLE_CONSUME_MATERIALS).anyMatch(m -> m == main.getType()) &&
+						main.getType() != GameItems.wolf().getType() && main.getType() != GameItems.golem().getType() ))
+			return;
 
 		// Wolf spawn
 		if (item.getType() == Material.WOLF_SPAWN_EGG && 
