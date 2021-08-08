@@ -1167,4 +1167,36 @@ public class GameListener implements Listener {
 			}, 3);
 		}
 	}
+
+	// Prevent consumption from happening in the off hand when the main hand has something interact-able
+	@EventHandler
+	public void onFalseConsume(PlayerInteractEvent e) {
+		Player player = e.getPlayer();
+		ItemStack item = e.getItem() == null ? new ItemStack(Material.AIR) : e.getItem();
+		ItemStack main = player.getInventory().getItemInMainHand();
+		Arena arena;
+		VDPlayer gamer;
+
+		// Attempt to get arena and player
+		try {
+			arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+					.collect(Collectors.toList()).get(0);
+			gamer = arena.getPlayer(player);
+		} catch (Exception err) {
+			return;
+		}
+
+		// Filter off hand interactions
+		if (e.getHand() != EquipmentSlot.OFF_HAND)
+			return;
+
+		// Avoid false consume
+		if (main.equals(GameItems.shop()) || Arrays.asList(GameItems.ABILITY_ITEMS).contains(main) ||
+				Arrays.stream(GameItems.FOOD_MATERIALS).anyMatch(m -> m == main.getType()) ||
+				Arrays.stream(GameItems.ARMOR_MATERIALS).anyMatch(m -> m == main.getType()) ||
+				Arrays.stream(GameItems.CARE_MATERIALS).anyMatch(m -> m == main.getType()) ||
+				Arrays.stream(GameItems.CLICKABLE_WEAPON_MATERIALS).anyMatch(m -> m == main.getType()) ||
+				Arrays.stream(GameItems.CLICKABLE_CONSUME_MATERIALS).anyMatch(m -> m == main.getType()))
+			e.setCancelled(true);
+	}
 }

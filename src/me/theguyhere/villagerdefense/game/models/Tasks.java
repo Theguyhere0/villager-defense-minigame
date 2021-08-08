@@ -32,7 +32,7 @@ import java.util.Map;
 public class Tasks {
 	private final Main plugin;
 	private final int arena;
-	// Maps runnables to ID of the currently running runnable
+	/** Maps runnables to ID of the currently running runnable.*/
 	private final Map<Runnable, Integer> tasks = new HashMap<>();
 
 	public Tasks(Main plugin, int arena) {
@@ -50,80 +50,108 @@ public class Tasks {
 		public void run() {
 			plugin.getGame().arenas.get(arena).getPlayers().forEach(player ->
 				player.getPlayer().sendMessage(Utils.notify(plugin.getLanguageData().getString("waiting"))));
+			plugin.debugInfo("Arena " + arena + " is currently waiting for players to start.", 2);
 		}
 	};
 
 	// 2 minute warning
 	public final Runnable min2 = new Runnable() {
-
 		@Override
 		public void run() {
-			plugin.getGame().arenas.get(arena).getPlayers().forEach(player ->
-					player.getPlayer().sendMessage(Utils.notify(String.format(
-							plugin.getLanguageData().getString("minutesLeft"), 2))));
+			try {
+				plugin.getGame().arenas.get(arena).getPlayers().forEach(player ->
+						player.getPlayer().sendMessage(Utils.notify(String.format(
+								plugin.getLanguageData().getString("minutesLeft"), 2))));
+			} catch (Exception e) {
+				plugin.debugError("The key 'minutesLeft' is missing or corrupt in the active language file",
+						1);
+			}
+			plugin.debugInfo("Arena " + arena + " is starting in 2 minutes.", 2);
 		}
-
 	};
 
 	// 1 minute warning
 	public final Runnable min1 = new Runnable() {
-
 		@Override
 		public void run() {
-			plugin.getGame().arenas.get(arena).getPlayers().forEach(player ->
-					player.getPlayer().sendMessage(Utils.notify(String.format(
-							plugin.getLanguageData().getString("minutesLeft"), 1))));
+			try {
+				plugin.getGame().arenas.get(arena).getPlayers().forEach(player ->
+						player.getPlayer().sendMessage(Utils.notify(String.format(
+								plugin.getLanguageData().getString("minutesLeft"), 1))));
+			} catch (Exception e) {
+				plugin.debugError("The key 'minutesLeft' is missing or corrupt in the active language file",
+						1);
+			}
+			plugin.debugInfo("Arena " + arena + " is starting in 1 minute.", 2);
 		}
-		
 	};
 
 	// 30 second warning
 	public final Runnable sec30 = new Runnable() {
-
 		@Override
 		public void run() {
-			plugin.getGame().arenas.get(arena).getPlayers().forEach(player ->
-					player.getPlayer().sendMessage(Utils.notify(String.format(
-							plugin.getLanguageData().getString("secondsLeft"), 30))));
+			try {
+				plugin.getGame().arenas.get(arena).getPlayers().forEach(player ->
+						player.getPlayer().sendMessage(Utils.notify(String.format(
+								plugin.getLanguageData().getString("secondsLeft"), 30))));
+			} catch (Exception e) {
+				plugin.debugError("The key 'secondsLeft' is missing or corrupt in the active language file",
+						1);
+			}
+			plugin.debugInfo("Arena " + arena + " is starting in 30 seconds.", 2);
 		}
 	};
 
 	// 10 second warning
 	public final Runnable sec10 = new Runnable() {
-
 		@Override
 		public void run() {
-			plugin.getGame().arenas.get(arena).getPlayers().forEach(player ->
-					player.getPlayer().sendMessage(Utils.notify(String.format(
-							plugin.getLanguageData().getString("secondsLeft"), 10))));
+			try {
+				plugin.getGame().arenas.get(arena).getPlayers().forEach(player ->
+						player.getPlayer().sendMessage(Utils.notify(String.format(
+								plugin.getLanguageData().getString("secondsLeft"), 10))));
+			} catch (Exception e) {
+				plugin.debugError("The key 'secondsLeft' is missing or corrupt in the active language file",
+						1);
+			}
+			plugin.debugInfo("Arena " + arena + " is starting in 10 seconds.", 2);
 		}
-		
 	};
 
 	// 10 second warning when full
 	public final Runnable full10 = new Runnable() {
-
 		@Override
 		public void run() {
-			plugin.getGame().arenas.get(arena).getPlayers().forEach(player -> {
+			try {
+				plugin.getGame().arenas.get(arena).getPlayers().forEach(player -> {
 					player.getPlayer().sendMessage(Utils.notify(plugin.getLanguageData().getString("maxCapacity")));
 					player.getPlayer().sendMessage(Utils.notify(String.format(
 							plugin.getLanguageData().getString("secondsLeft"), 10)));
-			});
+				});
+			} catch (Exception e) {
+				plugin.debugError("The key 'secondsLeft' is missing or corrupt in the active language file",
+						1);
+			}
+			plugin.debugInfo("Arena " + arena + " is full and is starting in 10 seconds.", 2);
 		}
 
 	};
 
 	// 5 second warning
 	public final Runnable sec5 = new Runnable() {
-
 		@Override
 		public void run() {
-			plugin.getGame().arenas.get(arena).getPlayers().forEach(player ->
-					player.getPlayer().sendMessage(Utils.notify(String.format(
-							plugin.getLanguageData().getString("secondsLeft"), 5))));
+			try {
+				plugin.getGame().arenas.get(arena).getPlayers().forEach(player ->
+						player.getPlayer().sendMessage(Utils.notify(String.format(
+								plugin.getLanguageData().getString("secondsLeft"), 5))));
+			} catch (Exception e) {
+				plugin.debugError("The key 'secondsLeft' is missing or corrupt in the active language file",
+						1);
+			}
+			plugin.debugInfo("Arena " + arena + " is starting in 5 seconds.", 2);
+
 		}
-		
 	};
 
 	// Start a new wave
@@ -149,11 +177,11 @@ public class Tasks {
 				giveItems(p);
 
 				// Set health for people with giant kits
-				if (p.getKit().equals("Giant1"))
+				if (p.getKit().equals(Kit.giant().setKitLevel(1)))
 					p.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)
 							.addModifier(new AttributeModifier("Giant1", 2,
 									AttributeModifier.Operation.ADD_NUMBER));
-				else if (p.getKit().equals("Giant2"))
+				else if (p.getKit().equals(Kit.giant().setKitLevel(2)))
 					p.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)
 							.addModifier(new AttributeModifier("Giant1", 4,
 									AttributeModifier.Operation.ADD_NUMBER));
@@ -161,10 +189,14 @@ public class Tasks {
 
 			arenaInstance.getActives().forEach(p -> {
 				// Notify of upcoming wave
-				p.getPlayer().sendTitle(Utils.format(String.format(plugin.getLanguageData().getString("wave"),
-						currentWave)), Utils.format(plugin.getLanguageData().getString("starting")),
-						Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
-
+				try {
+					p.getPlayer().sendTitle(Utils.format(String.format(plugin.getLanguageData().getString("wave"),
+									currentWave)), Utils.format(plugin.getLanguageData().getString("starting")),
+							Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
+				} catch (Exception e) {
+					plugin.debugError("The key 'starting' is either missing or corrupt in the active language file",
+							1);
+				}
 				// Give players gem rewards
 				int multiplier;
 				switch (arenaInstance.getDifficultyMultiplier()) {
@@ -183,15 +215,25 @@ public class Tasks {
 				int reward = (currentWave - 1) * multiplier;
 				p.addGems(reward);
 				if (currentWave > 1)
-					p.getPlayer().sendMessage(Utils.notify(String.format(language.getString("gems"), reward)));
+					try {
+						p.getPlayer().sendMessage(Utils.notify(String.format(language.getString("gems"), reward)));
+					} catch (Exception e) {
+						plugin.debugError("The key 'gems' is either missing or corrupt in the active language file",
+								1);
+					}
 				plugin.getGame().createBoard(p);
 			});
 
 			// Notify spectators of upcoming wave
-			arenaInstance.getSpectators().forEach(p ->
-				p.getPlayer().sendTitle(Utils.format(String.format(language.getString("wave"), currentWave)),
-						Utils.format(language.getString("starting")), Utils.secondsToTicks(.5),
-						Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
+			try {
+				arenaInstance.getSpectators().forEach(p ->
+						p.getPlayer().sendTitle(Utils.format(String.format(language.getString("wave"), currentWave)),
+								Utils.format(language.getString("starting")), Utils.secondsToTicks(.5),
+								Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
+			} catch (Exception e) {
+				plugin.debugError("The key 'wave' is either missing or corrupt in the active language file",
+						1);
+			}
 
 			// Regenerate shops when time and notify players of it
 			if (currentWave % 10 == 0 || currentWave == 1) {
@@ -212,8 +254,10 @@ public class Tasks {
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 					Bukkit.getPluginManager().callEvent(new WaveStartEvent(arenaInstance)),
 					Utils.secondsToTicks(15));
+
+			// Debug message to console
+			plugin.debugInfo("Starting wave " + currentWave + " for Arena " + arena, 2);
 		}
-		
 	};
 	
 	// Start actual game
@@ -277,6 +321,9 @@ public class Tasks {
 			// Trigger WaveEndEvent
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 					Bukkit.getPluginManager().callEvent(new WaveEndEvent(arenaInstance)));
+
+			// Debug message to console
+			plugin.debugInfo("Arena " + arena + " is starting.", 2);
 		}
 	};
 
@@ -309,6 +356,9 @@ public class Tasks {
 
 			// Refresh portal
 			plugin.getPortal().refreshHolo(arenaInstance.getArena(), plugin.getGame());
+
+			// Debug message to console
+			plugin.debugInfo("Arena " + arena + " is resetting.", 2);
 		}
 	};
 
@@ -342,6 +392,9 @@ public class Tasks {
 						arenaInstance.addPlayerToTimeLimitBar(vdPlayer.getPlayer()));
 				time = 1d / Utils.minutesToSeconds(arenaInstance.getWaveTimeLimit() * multiplier);
 				messageSent = false;
+
+				// Debug message to console
+				plugin.debugInfo("Adding time limit bar to Arena " + arenaInstance, 2);
 			}
 
 			else {
@@ -376,7 +429,6 @@ public class Tasks {
 					progress -= time;
 				}
 			}
-
 		}
 	};
 

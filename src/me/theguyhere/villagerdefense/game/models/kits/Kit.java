@@ -649,7 +649,6 @@ public class Kit {
         description = new ArrayList<>();
         description.add(Utils.format("&7Permanent 20% health boost"));
         kit.addLevelDescriptions(2, description);
-        description = new ArrayList<>();
 
         kit.addPrice(1, 5000);
         kit.addPrice(2, 8000);
