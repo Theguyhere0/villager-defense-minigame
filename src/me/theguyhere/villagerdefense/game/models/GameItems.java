@@ -21,7 +21,7 @@ import java.util.Random;
 public class GameItems {
 	private static final boolean[] FLAGS = {false, false};
 
-	// Shop
+	// Standard game items
 	public static @NotNull ItemStack shop() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		boolean[] flags = {true, false};
@@ -29,6 +29,34 @@ public class GameItems {
 
 		ItemStack item = Utils.createItem(Material.EMERALD, Utils.format("&2&lItem Shop"), flags, enchants,
 				Utils.format("&7&oResets every 10 rounds"));
+
+		return item == null ? new ItemStack(Material.AIR) : item;
+	}
+	public static @NotNull ItemStack kitSelector() {
+		HashMap<Enchantment, Integer> enchants = new HashMap<>();
+		boolean[] flags = {true, false};
+		enchants.put(Enchantment.DURABILITY, 1);
+
+		ItemStack item = Utils.createItem(Material.CHEST, Utils.format("&9&lKit Selection"), flags, enchants);
+
+		return item == null ? new ItemStack(Material.AIR) : item;
+	}
+	public static @NotNull ItemStack challengeSelector() {
+		HashMap<Enchantment, Integer> enchants = new HashMap<>();
+		boolean[] flags = {true, false};
+		enchants.put(Enchantment.DURABILITY, 1);
+
+		ItemStack item = Utils.createItem(Material.NETHER_STAR, Utils.format("&9&lChallenge Selection"), flags,
+				enchants);
+
+		return item == null ? new ItemStack(Material.AIR) : item;
+	}
+	public static @NotNull ItemStack leave() {
+		HashMap<Enchantment, Integer> enchants = new HashMap<>();
+		boolean[] flags = {true, false};
+		enchants.put(Enchantment.DURABILITY, 1);
+
+		ItemStack item = Utils.createItem(Material.BARRIER, Utils.format("&c&lLEAVE"), flags, enchants);
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}

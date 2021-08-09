@@ -3,6 +3,7 @@ package me.theguyhere.villagerdefense.listeners;
 import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.GameEndEvent;
+import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.events.ReloadBoardsEvent;
 import me.theguyhere.villagerdefense.game.models.GameItems;
 import me.theguyhere.villagerdefense.game.models.Mobs;
@@ -23,6 +24,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -331,9 +333,9 @@ public class GameListener implements Listener {
 		else ent.setCustomName(Utils.healthBar(maxHealth, Math.min(modifiedHealth, maxHealth), 5));
 	}
 
-	// Open shop
+	// Open shop, kit selecting menu, or leave
 	@EventHandler
-	public void onShop(PlayerInteractEvent e) {
+	public void onInteract(PlayerInteractEvent e) {
 		// Check for right click
 		if (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK)
 			return;
@@ -353,30 +355,38 @@ public class GameListener implements Listener {
 			return;
 		}
 
-		if (e.getHand() == EquipmentSlot.HAND) {
-			// Check for the shop item
-			if (!GameItems.shop().equals(player.getEquipment().getItemInMainHand()))
-				return;
-		} else {
-			// Check for the shop item
-			if (!GameItems.shop().equals(player.getEquipment().getItemInOffHand()))
-				return;
-
-			ItemStack mainHandItem = player.getEquipment().getItemInMainHand();
+		// Get item in hand
+		ItemStack item;
+		if (e.getHand() == EquipmentSlot.OFF_HAND) {
+			item = player.getEquipment().getItemInOffHand();
 
 			// Check for other clickables in main hand
-			if (Arrays.asList(GameItems.ABILITY_ITEMS).contains(mainHandItem) ||
-					Arrays.asList(GameItems.FOOD_MATERIALS).contains(mainHandItem.getType()) ||
-					Arrays.asList(GameItems.ARMOR_MATERIALS).contains(mainHandItem.getType()) ||
-					Arrays.asList(GameItems.CARE_MATERIALS).contains(mainHandItem.getType()) ||
-					Arrays.asList(GameItems.CLICKABLE_WEAPON_MATERIALS).contains(mainHandItem.getType()) ||
-					Arrays.asList(GameItems.CLICKABLE_CONSUME_MATERIALS).contains(mainHandItem.getType()))
+			if (Arrays.asList(GameItems.ABILITY_ITEMS).contains(item) ||
+					Arrays.asList(GameItems.FOOD_MATERIALS).contains(item.getType()) ||
+					Arrays.asList(GameItems.ARMOR_MATERIALS).contains(item.getType()) ||
+					Arrays.asList(GameItems.CARE_MATERIALS).contains(item.getType()) ||
+					Arrays.asList(GameItems.CLICKABLE_WEAPON_MATERIALS).contains(item.getType()) ||
+					Arrays.asList(GameItems.CLICKABLE_CONSUME_MATERIALS).contains(item.getType()))
 				return;
 		}
+		else item = player.getEquipment().getItemInMainHand();
+
+		Inventories inv = new Inventories(plugin);
 
 		// Open shop inventory and cancel interaction
+		if (GameItems.shop().equals(item))
+			player.openInventory(Inventories.createShop(arena.getCurrentWave() / 10 + 1, arena));
+
+		// Open kit selection menu and cancel interaction
+		else if (GameItems.kitSelector().equals(item))
+			player.openInventory(inv.createSelectKitsInventory(player, arena));
+
+		// Make player leave
+		else if (GameItems.leave().equals(item))
+			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+					Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player)));
+
 		e.setCancelled(true);
-		player.openInventory(Inventories.createShop(arena.getCurrentWave() / 10 + 1, arena));
 	}
 
 	// Stops players from hurting villagers and other players, and monsters from hurting each other
@@ -1136,9 +1146,9 @@ public class GameListener implements Listener {
 		e.setCancelled(true);
 	}
 
-	// Prevent players from dropping the item shop
+	// Prevent players from dropping standard game items
 	@EventHandler
-	public void onShopDrop(PlayerDropItemEvent e) {
+	public void onItemDrop(PlayerDropItemEvent e) {
 		Player player = e.getPlayer();
 		ItemStack item = e.getItemDrop().getItemStack();
 
@@ -1146,8 +1156,8 @@ public class GameListener implements Listener {
 		if (plugin.getGame().arenas.stream().filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player)))
 			return;
 
-		// Check for shop item
-		if (item.getType() == Material.EMERALD && item.getItemMeta().getDisplayName().contains("Item Shop"))
+		// Check for standard game items item
+		if (item.equals(GameItems.shop()) || item.equals(GameItems.kitSelector()) || item.equals(GameItems.leave()))
 			e.setCancelled(true);
 	}
 
@@ -1176,16 +1186,14 @@ public class GameListener implements Listener {
 	@EventHandler
 	public void onFalseConsume(PlayerInteractEvent e) {
 		Player player = e.getPlayer();
-		ItemStack item = e.getItem() == null ? new ItemStack(Material.AIR) : e.getItem();
 		ItemStack main = player.getInventory().getItemInMainHand();
 		Arena arena;
-		VDPlayer gamer;
 
 		// Attempt to get arena and player
 		try {
 			arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 					.collect(Collectors.toList()).get(0);
-			gamer = arena.getPlayer(player);
+			arena.getPlayer(player);
 		} catch (Exception err) {
 			return;
 		}
@@ -1201,6 +1209,26 @@ public class GameListener implements Listener {
 				Arrays.stream(GameItems.CARE_MATERIALS).anyMatch(m -> m == main.getType()) ||
 				Arrays.stream(GameItems.CLICKABLE_WEAPON_MATERIALS).anyMatch(m -> m == main.getType()) ||
 				Arrays.stream(GameItems.CLICKABLE_CONSUME_MATERIALS).anyMatch(m -> m == main.getType()))
+			e.setCancelled(true);
+	}
+
+	// Prevent moving items around while waiting for game to start
+	@EventHandler
+	public void onInventoryClick(InventoryClickEvent e) {
+		Player player = (Player) e.getWhoClicked();
+		Arena arena;
+
+		// Attempt to get arena and player
+		try {
+			arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+					.collect(Collectors.toList()).get(0);
+			arena.getPlayer(player);
+		} catch (Exception err) {
+			return;
+		}
+
+		// Cancel event if arena is in waiting mode
+		if (arena.getStatus() == ArenaStatus.WAITING)
 			e.setCancelled(true);
 	}
 }

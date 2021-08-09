@@ -2,6 +2,7 @@ package me.theguyhere.villagerdefense.listeners;
 
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.*;
+import me.theguyhere.villagerdefense.game.models.GameItems;
 import me.theguyhere.villagerdefense.game.models.Mobs;
 import me.theguyhere.villagerdefense.game.models.Tasks;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
@@ -109,9 +110,9 @@ public class ArenaListener implements Listener {
                     player.playSound(arena.getWaitingRoom(), arena.getWaitingSound(), 4, 1);
                 else player.playSound(arena.getPlayerSpawn(), arena.getWaitingSound(), 4, 1);
 
-            // Tell player to choose a kit and automatically open inventory
-            player.openInventory(plugin.getInventories().createSelectKitsInventory(player, arena));
-            player.sendMessage(Utils.notify(language.getString("kitChoose")));
+            // Give player choice options
+            player.getInventory().setItem(2, GameItems.kitSelector());
+            player.getInventory().setItem(6, GameItems.leave());
 
             // Debug message to console
             plugin.debugInfo(player.getName() + "joined Arena " + arena.getArena(), 2);
