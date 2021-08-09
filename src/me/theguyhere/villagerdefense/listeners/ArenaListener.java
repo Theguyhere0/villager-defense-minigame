@@ -112,6 +112,9 @@ public class ArenaListener implements Listener {
             // Tell player to choose a kit and automatically open inventory
             player.openInventory(plugin.getInventories().createSelectKitsInventory(player, arena));
             player.sendMessage(Utils.notify(language.getString("kitChoose")));
+
+            // Debug message to console
+            plugin.debugInfo(player.getName() + "joined Arena " + arena.getArena(), 2);
         }
 
         // Join players as spectators if arena is full or game already started
@@ -123,6 +126,9 @@ public class ArenaListener implements Listener {
             // Update player tracking and in-game stats
             arena.getPlayers().add(new VDPlayer(player, true));
             plugin.getPortal().refreshHolo(plugin.getGame().arenas.indexOf(arena), plugin.getGame());
+
+            // Debug message to console
+            plugin.debugInfo(player.getName() + "is spectating Arena " + arena.getArena(), 2);
 
             // Don't touch task updating
             return;
@@ -223,6 +229,9 @@ public class ArenaListener implements Listener {
                 playerData.set(active.getPlayer().getName() + ".topWave", arena.getCurrentWave());
         plugin.savePlayerData();
 
+        // Debug message to console
+        plugin.debugInfo("Arena " + arena.getArena() + " completed wave " + arena.getCurrentWave(), 2);
+
         // Win condition
         if (arena.getCurrentWave() == arena.getMaxWaves()) {
             arena.incrementCurrentWave();
@@ -263,6 +272,9 @@ public class ArenaListener implements Listener {
         spawnVillagers(arena);
         spawnMonsters(arena);
         spawnBosses(arena);
+
+        // Debug message to console
+        plugin.debugInfo("Arena " + arena.getArena() + " started wave " + arena.getCurrentWave(), 2);
     }
 
     @EventHandler
@@ -392,6 +404,9 @@ public class ArenaListener implements Listener {
 
         // Refresh the game portal
         plugin.getPortal().refreshHolo(plugin.getGame().arenas.indexOf(arena), plugin.getGame());
+
+        // Debug message to console
+        plugin.debugInfo(player.getName() + " left Arena " + arena.getArena(), 2);
     }
 
     @EventHandler
@@ -404,9 +419,14 @@ public class ArenaListener implements Listener {
         plugin.getPortal().refreshHolo(plugin.getGame().arenas.indexOf(arena), plugin.getGame());
 
         // Notify players that the game has ended
-        arena.getPlayers().forEach(player ->
-            player.getPlayer().sendMessage(Utils.notify(String.format(language.getString("end"),
-                    arena.getCurrentWave() - 1))));
+        try {
+            arena.getPlayers().forEach(player ->
+                    player.getPlayer().sendMessage(Utils.notify(String.format(language.getString("end"),
+                            arena.getCurrentWave() - 1))));
+        } catch (Exception err) {
+            plugin.debugError("The key 'end' is either missing or corrupt in the active language file",
+                    1);
+        }
 
         // Play sound if turned on
         if (arena.hasLoseSound())
@@ -434,8 +454,13 @@ public class ArenaListener implements Listener {
                 // Give rewards and notify
                 plugin.getPlayerData().set(vdPlayer.getPlayer().getName() + ".crystalBalance",
                         plugin.getPlayerData().getInt(vdPlayer.getPlayer().getName() + ".crystalBalance") + reward);
-                vdPlayer.getPlayer().sendMessage(Utils.notify(
-                        String.format(language.getString("crystals"), reward)));
+                try {
+                    vdPlayer.getPlayer().sendMessage(Utils.notify(
+                            String.format(language.getString("crystals"), reward)));
+                } catch (Exception err) {
+                    plugin.debugError("The key 'crystals' is either missing or corrupt in the active language file",
+                            1);
+                }
             });
         }
 
@@ -450,6 +475,10 @@ public class ArenaListener implements Listener {
         }
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
                 Bukkit.getPluginManager().callEvent(new ArenaResetEvent(arena)), Utils.secondsToTicks(10));
+
+
+        // Debug message to console
+        plugin.debugInfo("Arena " + arena.getArena() + " is ending.", 2);
     }
 
     @EventHandler

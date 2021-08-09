@@ -293,9 +293,9 @@ public class Tasks {
 				giveItems(player);
 
 				// Give me items to test with
-				if (plugin.getDebugLevel() >= 3 && player.getPlayer().getName().equals("Theguyhere")) {
-					Utils.giveItem(player.getPlayer(), GameItems.wolf(), "uh oh");
-					Utils.giveItem(player.getPlayer(), GameItems.golem(), "uh oh");
+				if (plugin.getDebugLevel() >= 3 && player.getPlayer().hasPermission("vd.admin")) {
+					Utils.giveItem(player.getPlayer(), GameItems.health(), "uh oh");
+					Utils.giveItem(player.getPlayer(), GameItems.health(), "uh oh");
 				}
 
 				// Set health for people with giant kits
@@ -394,7 +394,7 @@ public class Tasks {
 				messageSent = false;
 
 				// Debug message to console
-				plugin.debugInfo("Adding time limit bar to Arena " + arenaInstance, 2);
+				plugin.debugInfo("Adding time limit bar to Arena " + arena, 2);
 			}
 
 			else {

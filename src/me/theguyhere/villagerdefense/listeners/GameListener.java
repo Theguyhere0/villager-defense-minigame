@@ -1164,6 +1164,10 @@ public class GameListener implements Listener {
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
 				player.getInventory().remove(Material.GLASS_BOTTLE);
 				player.getInventory().remove(Material.BUCKET);
+				if (player.getInventory().getItemInOffHand().getType() == Material.GLASS_BOTTLE)
+					player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
+				if (player.getInventory().getItemInOffHand().getType() == Material.BUCKET)
+					player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
 			}, 3);
 		}
 	}

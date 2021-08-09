@@ -1282,7 +1282,7 @@ public class Arena {
      * @param player {@link Player} to remove the time limit bar from.
      */
     public void removePlayerFromTimeLimitBar(Player player) {
-        if (timeLimitBar != null)
+        if (timeLimitBar != null && player != null)
             timeLimitBar.removePlayer(player);
     }
 
