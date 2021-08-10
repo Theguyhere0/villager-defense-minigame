@@ -1,6 +1,6 @@
 main: me.theguyhere.villagerdefense.Main
 name: VillagerDefense
-version: 0.8.7
+version: 0.9.0
 author: Theguyhere
 api-version: 1.16
 depend: [HolographicDisplays]
@@ -24,9 +24,9 @@ commands:
     kits:
       description: Displays kits of the player
       usage: /vd kits
-    select:
-      description: Displays kits for the player to select for an arena
-      usage: /vd select
+    join:
+      description: Attempt to join a full arena with the phantom kit.
+      usage: /vd join
     crystals:
       description: Changes the crystal balance of players
       usage: /vd crystals
@@ -43,3 +43,11 @@ commands:
       description: Forces a game to restart its waiting time
       usage: /vd delay
       permission: vd.start
+    fix:
+      description: Tries to automatically update files
+      usage: /vd fix
+      permission: vd.admin
+    debug:
+      description: Changes the plugin debug level
+      usage: /vd debug
+      permission: vd.admin

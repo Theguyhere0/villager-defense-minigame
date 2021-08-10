@@ -42,8 +42,14 @@ public class Main extends JavaPlugin {
 	 * 1 (Normal) - Errors that drastically reduce performance and important information will be displayed.
 	 * 0 (Quiet) - Only the most urgent error messages will be displayed.
 	 */
-	private final int debugLevel = 3;
-	private boolean outdated;
+	private int debugLevel = 3;
+	private boolean outdated = false;
+	int configVersion = 6;
+	int arenaDataVersion = 3;
+	int playerDataVersion = 1;
+	int spawnTableVersion = 1;
+	int languageFileVersion = 8;
+	int defaultSpawnVersion = 2;
 
 	// Runs when enabling plugin
 	@Override
@@ -85,14 +91,6 @@ public class Main extends JavaPlugin {
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				reader.inject(player);
 			}
-
-		int configVersion = 6;
-		int arenaDataVersion = 3;
-		int playerDataVersion = 1;
-		int spawnTableVersion = 1;
-		int languageFileVersion = 8;
-		int defaultSpawnVersion = 2;
-		outdated = false;
 
 		// Check config version
 		if (getConfig().getInt("version") < configVersion) {
@@ -243,6 +241,10 @@ public class Main extends JavaPlugin {
 
 	public boolean isOutdated() {
 		return outdated;
+	}
+
+	public void setDebugLevel(int debugLevel) {
+		this.debugLevel = debugLevel;
 	}
 
 	public void debugError(String msg, int debugLevel) {

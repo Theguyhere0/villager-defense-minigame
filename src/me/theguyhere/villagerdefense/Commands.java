@@ -5,6 +5,8 @@ import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.game.models.Tasks;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
+import me.theguyhere.villagerdefense.game.models.kits.Kit;
+import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -82,7 +84,13 @@ public class Commands implements CommandExecutor {
 					player.openInventory(plugin.getInventories().createPlayerStatsInventory(player.getName()));
 				else if (plugin.getPlayerData().contains(args[1]))
 					player.openInventory(plugin.getInventories().createPlayerStatsInventory(args[1]));
-				else player.sendMessage(Utils.notify(String.format(language.getString("noStats"), args[1])));
+				else {
+					try {
+						player.sendMessage(Utils.notify(String.format(language.getString("noStats"), args[1])));
+					} catch (Exception e) {
+						plugin.debugError("The language file is missing the attribute 'noStats'!", 1);
+					}
+				}
 				return true;
 			}
 
@@ -92,8 +100,9 @@ public class Commands implements CommandExecutor {
 				return true;
 			}
 
-			// Player selects kits
-			if (args[0].equalsIgnoreCase("select")) {
+			// Player joins as phantom
+			if (args[0].equalsIgnoreCase("join")) {
+				FileConfiguration playerData = plugin.getPlayerData();
 				Arena arena;
 				VDPlayer gamer;
 
@@ -107,21 +116,32 @@ public class Commands implements CommandExecutor {
 					return true;
 				}
 
-				// Check arena is in session
-				if (arena.getStatus() != ArenaStatus.WAITING && arena.getActives().contains(gamer)) {
-					player.sendMessage(Utils.notify(language.getString("kitChangeError")));
+				// Check if player owns the phantom kit
+				if (!playerData.getBoolean(player.getName() + ".kits." + Kit.phantom().getName())) {
+					player.sendMessage(Utils.notify(language.getString("phantomOwnError")));
 					return true;
 				}
 
-				// Check for unqualified spectators
-				if (arena.getSpectators().contains(gamer)  &&
-						!plugin.getPlayerData().getBoolean(player.getName() + ".kits.Phantom")) {
-					player.sendMessage(Utils.notify(language.getString("spectatorError")));
+				// Check if arena is not ending
+				if (arena.getStatus() == ArenaStatus.ENDING) {
+					player.sendMessage(Utils.notify(language.getString("phantomArenaError")));
 					return true;
 				}
 
-				// Open inventory
-				player.openInventory(plugin.getInventories().createSelectKitsInventory(player, arena));
+				// Check for useful phantom use
+				if (gamer.getStatus() != PlayerStatus.SPECTATOR) {
+					player.sendMessage(Utils.notify(language.getString("phantomPlayerError")));
+					return true;
+				}
+
+				// Let player join using phantom kit
+				Utils.teleAdventure(player, arena.getPlayerSpawn());
+				gamer.setStatus(PlayerStatus.ALIVE);
+				arena.getTask().giveItems(gamer);
+				plugin.getGame().createBoard(gamer);
+				gamer.setJoinedWave(arena.getCurrentWave());
+				gamer.setKit(Kit.phantom());
+				player.closeInventory();
 				return true;
 			}
 
@@ -431,6 +451,101 @@ public class Commands implements CommandExecutor {
 					tasks.put(task.start, scheduler.scheduleSyncDelayedTask(plugin, task.start,
 							Utils.secondsToTicks(Utils.minutesToSeconds(2))));
 				}
+
+				return true;
+			}
+
+			// Fix certain default files
+			if (args[0].equalsIgnoreCase("fix")) {
+				boolean fixed = false;
+
+				// Check for permission to use the command
+				if (!player.hasPermission("vd.admin")) {
+					player.sendMessage(Utils.notify(language.getString("permissionError")));
+					return true;
+				}
+
+				// Check for correct format
+				if (args.length > 1) {
+					player.sendMessage(Utils.notify("&cCommand format: /vd fix"));
+					return true;
+				}
+
+				// Check if plugin.yml is outdated
+				if (plugin.getConfig().getInt("version") < plugin.configVersion)
+					player.sendMessage(Utils.notify("&cplugin.yml must be updated manually."));
+
+				// Check if arenaData.yml is outdated
+				if (plugin.getConfig().getInt("arenaData") < plugin.arenaDataVersion)
+					player.sendMessage(Utils.notify("&carenaData.yml must be updated manually."));
+
+				// Check if playerData.yml is outdated
+				if (plugin.getConfig().getInt("playerData") < plugin.playerDataVersion)
+					player.sendMessage(Utils.notify("&cplayerData.yml must be updated manually."));
+
+				// Update default spawn table
+				if (plugin.getConfig().getInt("spawnTableStructure") < plugin.spawnTableVersion ||
+						plugin.getConfig().getInt("spawnTableDefault") < plugin.defaultSpawnVersion) {
+					// Flip flag
+					fixed = true;
+
+					// Fix
+					plugin.saveResource("default.yml", true);
+					plugin.getConfig().set("spawnTableStructure", plugin.spawnTableVersion);
+					plugin.getConfig().set("spawnTableDefault", plugin.defaultSpawnVersion);
+					plugin.saveConfig();
+
+					// Notify
+					player.sendMessage(Utils.notify("&adefault.yml has been automatically updated."));
+					plugin.debugInfo("default.yml has been automatically updated.", 0);
+				}
+
+				// Update default language file
+				if (plugin.getConfig().getInt("languageFile") < plugin.languageFileVersion) {
+					// Flip flag
+					fixed = true;
+
+					// Fix
+					plugin.saveResource("languages/en_US.yml", true);
+					plugin.getConfig().set("languageFile", plugin.languageFileVersion);
+					plugin.saveConfig();
+
+					// Notify
+					player.sendMessage(Utils.notify("&aen_US.yml has been automatically updated."));
+					plugin.debugInfo("en_US.yml has been automatically updated.", 0);
+				}
+
+				// Message to player depending on whether the command fixed anything
+				if (!fixed)
+					player.sendMessage(Utils.notify("There was nothing that could be updated automatically."));
+
+				return true;
+			}
+
+			// Change plugin debug level
+			if (args[0].equalsIgnoreCase("debug")) {
+				// Check for permission to use the command
+				if (!player.hasPermission("vd.admin")) {
+					player.sendMessage(Utils.notify(language.getString("permissionError")));
+					return true;
+				}
+
+				// Check for correct format
+				if (args.length != 2) {
+					player.sendMessage(Utils.notify("&cCommand format: /vd debug [debug level (0-3)]"));
+					return true;
+				}
+
+				// Set debug level
+				try {
+					plugin.setDebugLevel(Integer.parseInt(args[1]));
+				} catch (Exception e) {
+					player.sendMessage(Utils.notify("&cCommand format: /vd debug [debug level (0-3)]"));
+					return true;
+				}
+
+				// Notify
+				player.sendMessage(Utils.notify("&aDebug level set to " + args[1] + "."));
 
 				return true;
 			}

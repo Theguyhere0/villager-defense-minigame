@@ -3030,21 +3030,6 @@ public class InventoryListener implements Listener {
 				return;
 			}
 
-			// Check for useful phantom selection
-			if (gamer.getStatus() == PlayerStatus.SPECTATOR &&
-					playerData.getBoolean(path + Kit.phantom().getName()) && kit.equals(Kit.phantom())) {
-				if (arenaInstance.getStatus() == ArenaStatus.ENDING)
-					player.sendMessage(Utils.notify(language.getString("phantomError")));
-				else {
-					Utils.teleAdventure(player, arenaInstance.getPlayerSpawn());
-					gamer.setStatus(PlayerStatus.ALIVE);
-					arenaInstance.getTask().giveItems(gamer);
-					plugin.getGame().createBoard(gamer);
-					gamer.setJoinedWave(arenaInstance.getCurrentWave());
-				}
-				player.closeInventory();
-			}
-
 			// Ignore spectators from here on out
 			if (gamer.getStatus() == PlayerStatus.SPECTATOR)
 				return;

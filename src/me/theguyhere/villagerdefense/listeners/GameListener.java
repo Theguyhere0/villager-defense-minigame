@@ -1087,7 +1087,7 @@ public class GameListener implements Listener {
 			return;
 
 		// Exempt myself for testing purposes
-		if (plugin.getDebugLevel() >= 3 && player.getName().equals("Theguyhere"))
+		if (plugin.getDebugLevel() >= 3 && player.hasPermission("vd.admin"))
 			return;
 
 		Arena arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))

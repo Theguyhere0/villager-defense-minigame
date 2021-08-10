@@ -15,8 +15,8 @@ import java.util.Objects;
 public class CommandTab implements TabCompleter {
     private final Game game;
 
-    private final String[] arguments = {"admin", "help", "leave", "stats", "kits", "select", "crystals", "start",
-            "end", "delay"};
+    private final String[] arguments = {"admin", "help", "leave", "stats", "kits", "join", "crystals", "start",
+            "end", "delay", "fix", "debug"};
 
     public CommandTab(Game game) {
         this.game = game;
@@ -44,7 +44,9 @@ public class CommandTab implements TabCompleter {
                 if (name.toLowerCase().startsWith(nameFrag.toString()))
                     result.add(name);
             });
-        }
+        } else if (args[0].equalsIgnoreCase("debug"))
+            for (int i = 0; i < 4; i++)
+                result.add(String.valueOf(i));
 
         return result;
     }
