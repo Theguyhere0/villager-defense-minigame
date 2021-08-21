@@ -42,7 +42,7 @@ public class Main extends JavaPlugin {
 	 * 1 (Normal) - Errors that drastically reduce performance and important information will be displayed.
 	 * 0 (Quiet) - Only the most urgent error messages will be displayed.
 	 */
-	private int debugLevel = 3;
+	private int debugLevel = 0;
 	private boolean outdated = false;
 	int configVersion = 6;
 	int arenaDataVersion = 3;
@@ -84,6 +84,7 @@ public class Main extends JavaPlugin {
 		pm.registerEvents(new GameListener(this), this);
 		pm.registerEvents(new ArenaListener(this), this);
 		pm.registerEvents(new AbilityListener(this), this);
+		pm.registerEvents(new ChallengeListener(this), this);
 		pm.registerEvents(new WorldListener(this), this);
 
 		// Inject online players into packet reader

@@ -222,7 +222,6 @@ public class Kit {
                         Utils.format("&cUnavailable"));
             }
             else if (purchasedLevel == pricesMap.size()) {
-//                System.out.println(pricesMap.size());
                 lores.addAll(masterDescription);
                 lores.add(Utils.format("&aLevel " + pricesMap.size()));
                 lores.addAll(getLevelDescription(pricesMap.size()));
@@ -231,7 +230,6 @@ public class Kit {
             else if (purchasedLevel == -1) {
                 lores.addAll(masterDescription);
                 descriptionsMap.forEach((level, description) -> {
-//                    System.out.println("level " + level + " description: " + description);
                     lores.add(Utils.format("&fLevel " + level));
                     lores.addAll(description);
                 });

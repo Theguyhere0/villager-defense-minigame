@@ -2,6 +2,7 @@ package me.theguyhere.villagerdefense.listeners;
 
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.*;
+import me.theguyhere.villagerdefense.game.models.Challenge;
 import me.theguyhere.villagerdefense.game.models.GameItems;
 import me.theguyhere.villagerdefense.game.models.Mobs;
 import me.theguyhere.villagerdefense.game.models.Tasks;
@@ -112,6 +113,7 @@ public class ArenaListener implements Listener {
 
             // Give player choice options
             player.getInventory().setItem(2, GameItems.kitSelector());
+            player.getInventory().setItem(4, GameItems.challengeSelector());
             player.getInventory().setItem(6, GameItems.leave());
 
             // Debug message to console
@@ -339,6 +341,10 @@ public class ArenaListener implements Listener {
                 reward += gamer.getKills();
                 reward += (gamer.getGems() + 5) / 10;
 
+                // Apply challenge bonuses
+                for (Challenge challenge : gamer.getChallenges())
+                    reward *= challenge.getMultiplier();
+
                 // Give rewards and notify
                 plugin.getPlayerData().set(player.getName() + ".crystalBalance",
                         plugin.getPlayerData().getInt(player.getName() + ".crystalBalance") + reward);
@@ -451,6 +457,10 @@ public class ArenaListener implements Listener {
                         (Math.max(arena.getCurrentWave() - vdPlayer.getJoinedWave() - 1, 0));
                 reward += vdPlayer.getKills();
                 reward += (vdPlayer.getGems() + 5) / 10;
+
+                // Apply challenge bonuses
+                for (Challenge challenge : vdPlayer.getChallenges())
+                    reward *= challenge.getMultiplier();
 
                 // Give rewards and notify
                 plugin.getPlayerData().set(vdPlayer.getPlayer().getName() + ".crystalBalance",

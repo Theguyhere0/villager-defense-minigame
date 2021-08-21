@@ -4,6 +4,7 @@ import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.GUI.InventoryItems;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
+import me.theguyhere.villagerdefense.game.models.Challenge;
 import me.theguyhere.villagerdefense.game.models.GameItems;
 import me.theguyhere.villagerdefense.game.models.InventoryMeta;
 import me.theguyhere.villagerdefense.game.models.Tasks;
@@ -143,7 +144,7 @@ public class InventoryListener implements Listener {
 
 			// Open leaderboards menu
 			else if (buttonName.contains("Leaderboards"))
-				player.openInventory(plugin.getInventories().createLeaderboardInventory());
+				player.openInventory(Inventories.createLeaderboardInventory());
 
 			// Close inventory
 			else if (buttonName.contains("EXIT"))
@@ -194,7 +195,7 @@ public class InventoryListener implements Listener {
 			// Remove lobby
 			else if (buttonName.contains("REMOVE"))
 				if (config.contains("lobby"))
-					player.openInventory(plugin.getInventories().createLobbyConfirmInventory());
+					player.openInventory(Inventories.createLobbyConfirmInventory());
 				else player.sendMessage(Utils.notify("&cNo lobby to remove!"));
 
 			// Exit menu
@@ -258,7 +259,7 @@ public class InventoryListener implements Listener {
 			// Remove info board
 			else if (buttonName.contains("REMOVE"))
 				if (config.contains(path))
-					player.openInventory(plugin.getInventories().createInfoBoardConfirmInventory(num));
+					player.openInventory(Inventories.createInfoBoardConfirmInventory(num));
 				else player.sendMessage(Utils.notify("&cNo info board to remove!"));
 
 			// Exit menu
@@ -332,12 +333,12 @@ public class InventoryListener implements Listener {
 			// Remove leaderboard
 			else if (buttonName.contains("REMOVE"))
 				if (config.contains(path))
-					player.openInventory(plugin.getInventories().createTotalKillsConfirmInventory());
+					player.openInventory(Inventories.createTotalKillsConfirmInventory());
 				else player.sendMessage(Utils.notify("&cNo leaderboard to remove!"));
 
 			// Exit menu
 			else if (buttonName.contains("EXIT"))
-				player.openInventory(plugin.getInventories().createLeaderboardInventory());
+				player.openInventory(Inventories.createLeaderboardInventory());
 		}
 
 		// Top kills leaderboard menu
@@ -384,12 +385,12 @@ public class InventoryListener implements Listener {
 			// Remove leaderboard
 			else if (buttonName.contains("REMOVE"))
 				if (config.contains(path))
-					player.openInventory(plugin.getInventories().createTopKillsConfirmInventory());
+					player.openInventory(Inventories.createTopKillsConfirmInventory());
 				else player.sendMessage(Utils.notify("&cNo leaderboard to remove!"));
 
 			// Exit menu
 			else if (buttonName.contains("EXIT"))
-				player.openInventory(plugin.getInventories().createLeaderboardInventory());
+				player.openInventory(Inventories.createLeaderboardInventory());
 		}
 
 		// Total gems leaderboard menu
@@ -436,12 +437,12 @@ public class InventoryListener implements Listener {
 			// Remove leaderboard
 			else if (buttonName.contains("REMOVE"))
 				if (config.contains(path))
-					player.openInventory(plugin.getInventories().createTotalGemsConfirmInventory());
+					player.openInventory(Inventories.createTotalGemsConfirmInventory());
 				else player.sendMessage(Utils.notify("&cNo leaderboard to remove!"));
 
 			// Exit menu
 			else if (buttonName.contains("EXIT"))
-				player.openInventory(plugin.getInventories().createLeaderboardInventory());
+				player.openInventory(Inventories.createLeaderboardInventory());
 		}
 
 		// Top balance leaderboard menu
@@ -488,12 +489,12 @@ public class InventoryListener implements Listener {
 			// Remove leaderboard
 			else if (buttonName.contains("REMOVE"))
 				if (config.contains(path))
-					player.openInventory(plugin.getInventories().createTopBalanceConfirmInventory());
+					player.openInventory(Inventories.createTopBalanceConfirmInventory());
 				else player.sendMessage(Utils.notify("&cNo leaderboard to remove!"));
 
 			// Exit menu
 			else if (buttonName.contains("EXIT"))
-				player.openInventory(plugin.getInventories().createLeaderboardInventory());
+				player.openInventory(Inventories.createLeaderboardInventory());
 		}
 
 		// Top wave leaderboard menu
@@ -540,12 +541,12 @@ public class InventoryListener implements Listener {
 			// Remove leaderboard
 			else if (buttonName.contains("REMOVE"))
 				if (config.contains(path))
-					player.openInventory(plugin.getInventories().createTopWaveConfirmInventory());
+					player.openInventory(Inventories.createTopWaveConfirmInventory());
 				else player.sendMessage(Utils.notify("&cNo leaderboard to remove!"));
 
 			// Exit menu
 			else if (buttonName.contains("EXIT"))
-				player.openInventory(plugin.getInventories().createLeaderboardInventory());
+				player.openInventory(Inventories.createLeaderboardInventory());
 		}
 
 		// Naming inventory
@@ -1188,7 +1189,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("REMOVE PORTAL"))
 				if (arenaInstance.getPortal() != null)
 					if (arenaInstance.isClosed())
-						player.openInventory(plugin.getInventories().createPortalConfirmInventory(meta.getInteger1()));
+						player.openInventory(Inventories.createPortalConfirmInventory(meta.getInteger1()));
 					else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 				else player.sendMessage(Utils.notify("&cNo portal to remove!"));
 
@@ -1231,7 +1232,7 @@ public class InventoryListener implements Listener {
 			// Remove leaderboard
 			else if (buttonName.contains("REMOVE LEADERBOARD"))
 				if (arenaInstance.getArenaBoard() != null)
-					player.openInventory(plugin.getInventories().createArenaBoardConfirmInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createArenaBoardConfirmInventory(meta.getInteger1()));
 				else player.sendMessage(Utils.notify("&cNo leaderboard to remove!"));
 
 			// Exit menu
@@ -1323,7 +1324,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("REMOVE"))
 				if (arenaInstance.getPlayerSpawn() != null)
 					if (arenaInstance.isClosed())
-						player.openInventory(plugin.getInventories().createSpawnConfirmInventory(meta.getInteger1()));
+						player.openInventory(Inventories.createSpawnConfirmInventory(meta.getInteger1()));
 					else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 				else player.sendMessage(Utils.notify("&cNo player spawn to remove!"));
 
@@ -1380,7 +1381,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("REMOVE"))
 				if (arenaInstance.getWaitingRoom() != null)
 					if (arenaInstance.isClosed())
-						player.openInventory(plugin.getInventories().createWaitingConfirmInventory(meta.getInteger1()));
+						player.openInventory(Inventories.createWaitingConfirmInventory(meta.getInteger1()));
 					else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 				else player.sendMessage(Utils.notify("&cNo waiting room to remove!"));
 
@@ -1589,7 +1590,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("REMOVE"))
 				if (arenaInstance.getMonsterSpawn(meta.getInteger2()) != null)
 					if (arenaInstance.isClosed())
-						player.openInventory(plugin.getInventories().createMonsterSpawnConfirmInventory(meta.getInteger1(),
+						player.openInventory(Inventories.createMonsterSpawnConfirmInventory(meta.getInteger1(),
 								meta.getInteger2()));
 					else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 				else player.sendMessage(Utils.notify("&cNo monster spawn to remove!"));
@@ -1659,7 +1660,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("REMOVE"))
 				if (arenaInstance.getVillagerSpawn(meta.getInteger2()) != null)
 					if (arenaInstance.isClosed())
-						player.openInventory(plugin.getInventories().createVillagerSpawnConfirmInventory(meta.getInteger1(),
+						player.openInventory(Inventories.createVillagerSpawnConfirmInventory(meta.getInteger1(),
 								meta.getInteger2()));
 					else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 				else player.sendMessage(Utils.notify("&cNo villager spawn to remove!"));
@@ -1940,7 +1941,7 @@ public class InventoryListener implements Listener {
 
 			// Delete item
 			else if (buttonName.contains("DELETE")) {
-				player.openInventory(plugin.getInventories().createCustomItemConfirmInventory(meta.getInteger1(), meta.getInteger2()));
+				player.openInventory(Inventories.createCustomItemConfirmInventory(meta.getInteger1(), meta.getInteger2()));
 				return;
 			}
 
@@ -2475,7 +2476,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("REMOVE"))
 				if (arenaInstance.getCorner1() != null)
 					if (arenaInstance.isClosed())
-						player.openInventory(plugin.getInventories().createCorner1ConfirmInventory(meta.getInteger1()));
+						player.openInventory(Inventories.createCorner1ConfirmInventory(meta.getInteger1()));
 					else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 				else player.sendMessage(Utils.notify("&cNo corner 1 to remove!"));
 
@@ -2519,7 +2520,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("REMOVE"))
 				if (arenaInstance.getCorner2() != null)
 					if (arenaInstance.isClosed())
-						player.openInventory(plugin.getInventories().createCorner2ConfirmInventory(meta.getInteger1()));
+						player.openInventory(Inventories.createCorner2ConfirmInventory(meta.getInteger1()));
 					else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 				else player.sendMessage(Utils.notify("&cNo corner 2 to remove!"));
 
@@ -3059,6 +3060,55 @@ public class InventoryListener implements Listener {
 			// Close inventory and create scoreboard
 			player.closeInventory();
 			plugin.getGame().createBoard(gamer);
+		}
+
+		// Challenge selection menu for an arena
+		else if (title.contains(" Challenges")) {
+			Arena arenaInstance;
+			VDPlayer gamer;
+
+			// Attempt to get arena and player
+			try {
+				arenaInstance = plugin.getGame().arenas.stream().filter(Objects::nonNull)
+						.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
+				gamer = arenaInstance.getPlayer(player);
+			} catch (Exception err) {
+				return;
+			}
+
+			Challenge challenge = Challenge.getChallenge(buttonName.substring(4));
+
+			// Leave if EXIT
+			if (buttonName.contains("EXIT")) {
+				player.closeInventory();
+				return;
+			}
+
+			// Ignore spectators from here on out
+			if (gamer.getStatus() == PlayerStatus.SPECTATOR)
+				return;
+
+			// Option for no challenge
+			if (Challenge.none().equals(challenge)) {
+				gamer.resetChallenges();
+				player.sendMessage(Utils.notify(language.getString("challengeAdd")));
+			}
+
+			// Remove a challenge
+			else if (gamer.getChallenges().contains(challenge)) {
+				gamer.removeChallenge(challenge);
+				player.sendMessage(Utils.notify(language.getString("challengeDelete")));
+			}
+
+			// Add a challenge
+			else {
+				gamer.addChallenge(challenge);
+				player.sendMessage(Utils.notify(language.getString("challengeAdd")));
+			}
+
+			// Create scoreboard and update inventory
+			plugin.getGame().createBoard(gamer);
+			openInv(player, Inventories.createSelectChallengesInventory(gamer, arenaInstance));
 		}
 
 		// Stats menu for an arena

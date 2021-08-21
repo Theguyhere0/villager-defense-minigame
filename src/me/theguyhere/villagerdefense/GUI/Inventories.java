@@ -1,10 +1,12 @@
 package me.theguyhere.villagerdefense.GUI;
 
 import me.theguyhere.villagerdefense.Main;
+import me.theguyhere.villagerdefense.game.models.Challenge;
 import me.theguyhere.villagerdefense.game.models.GameItems;
 import me.theguyhere.villagerdefense.game.models.InventoryMeta;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.kits.Kit;
+import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -102,7 +104,7 @@ public class Inventories {
 	}
 
 	// Confirmation menu for removing lobby
-	public Inventory createLobbyConfirmInventory() {
+	public static Inventory createLobbyConfirmInventory() {
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Lobby?"));
 
@@ -168,7 +170,7 @@ public class Inventories {
 	}
 
 	// Confirmation menu for removing info boards
-	public Inventory createInfoBoardConfirmInventory(int slot) {
+	public static Inventory createInfoBoardConfirmInventory(int slot) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(slot), 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Info Board?"));
@@ -183,7 +185,7 @@ public class Inventories {
 	}
 
 	// Menu for leaderboards
-	public Inventory createLeaderboardInventory() {
+	public static Inventory createLeaderboardInventory() {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&e&lLeaderboards"));
@@ -341,7 +343,7 @@ public class Inventories {
 	}
 
 	// Confirmation menu for total kills leaderboard
-	public Inventory createTotalKillsConfirmInventory() {
+	public static Inventory createTotalKillsConfirmInventory() {
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Total Kills Leaderboard?"));
 
@@ -355,7 +357,7 @@ public class Inventories {
 	}
 
 	// Confirmation menu for top kills leaderboard
-	public Inventory createTopKillsConfirmInventory() {
+	public static Inventory createTopKillsConfirmInventory() {
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Top Kills Leaderboard?"));
 
@@ -369,7 +371,7 @@ public class Inventories {
 	}
 
 	// Confirmation menu for total gems leaderboard
-	public Inventory createTotalGemsConfirmInventory() {
+	public static Inventory createTotalGemsConfirmInventory() {
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Total Gems Leaderboard?"));
 
@@ -383,7 +385,7 @@ public class Inventories {
 	}
 
 	// Confirmation menu for top balance leaderboard
-	public Inventory createTopBalanceConfirmInventory() {
+	public static Inventory createTopBalanceConfirmInventory() {
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Top Balance Leaderboard?"));
 
@@ -397,7 +399,7 @@ public class Inventories {
 	}
 
 	// Confirmation menu for top wave leaderboard
-	public Inventory createTopWaveConfirmInventory() {
+	public static Inventory createTopWaveConfirmInventory() {
 		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Top Wave Leaderboard?"));
 
@@ -547,7 +549,7 @@ public class Inventories {
 	}
 
 	// Confirmation menu for removing the arena portal
-	public Inventory createPortalConfirmInventory(int arena) {
+	public static Inventory createPortalConfirmInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Portal?"));
@@ -562,7 +564,7 @@ public class Inventories {
 	}
 
 	// Confirmation menu for removing the arena leaderboard
-	public Inventory createArenaBoardConfirmInventory(int arena) {
+	public static Inventory createArenaBoardConfirmInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Leaderboard?"));
@@ -646,7 +648,7 @@ public class Inventories {
 	}
 
 	// Confirmation menu for removing player spawn
-	public Inventory createSpawnConfirmInventory(int arena) {
+	public static Inventory createSpawnConfirmInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Spawn?"));
@@ -689,7 +691,7 @@ public class Inventories {
 	}
 
 	// Confirmation menu for removing waiting room
-	public Inventory createWaitingConfirmInventory(int arena) {
+	public static Inventory createWaitingConfirmInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Waiting Room?"));
@@ -841,7 +843,7 @@ public class Inventories {
 	}
 
 	// Confirmation menu for removing monster spawns
-	public Inventory createMonsterSpawnConfirmInventory(int arena, int slot) {
+	public static Inventory createMonsterSpawnConfirmInventory(int arena, int slot) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Monster Spawn?"));
@@ -912,7 +914,7 @@ public class Inventories {
 	}
 
 	// Confirmation menu for removing mob spawns
-	public Inventory createVillagerSpawnConfirmInventory(int arena, int slot) {
+	public static Inventory createVillagerSpawnConfirmInventory(int arena, int slot) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Villager Spawn?"));
@@ -1061,7 +1063,7 @@ public class Inventories {
 	}
 
 	// Confirmation menu for removing custom item
-	public Inventory createCustomItemConfirmInventory(int arena, int slot) {
+	public static Inventory createCustomItemConfirmInventory(int arena, int slot) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Custom Item?"));
@@ -1428,7 +1430,7 @@ public class Inventories {
 	}
 
 	// Confirmation menu for removing corner 1
-	public Inventory createCorner1ConfirmInventory(int arena) {
+	public static Inventory createCorner1ConfirmInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Corner 1?"));
@@ -1468,7 +1470,7 @@ public class Inventories {
 	}
 
 	// Confirmation menu for removing corner 2
-	public Inventory createCorner2ConfirmInventory(int arena) {
+	public static Inventory createCorner2ConfirmInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
 				Utils.format("&4&lRemove Corner 2?"));
@@ -2065,6 +2067,29 @@ public class Inventories {
 
 		// Option to exit
 		inv.setItem(53, InventoryItems.exit());
+
+		return inv;
+	}
+
+	// Display challenges for a player to select
+	public static Inventory createSelectChallengesInventory(VDPlayer player, Arena arena) {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 18, Utils.format("&k") +
+				Utils.format("&5&l" + arena.getName() + " Challenges"));
+
+		// Set buttons
+		inv.setItem(0, Challenge.amputee().getButton(player.getChallenges().contains(Challenge.amputee())));
+		inv.setItem(1, Challenge.clumsy().getButton(player.getChallenges().contains(Challenge.clumsy())));
+		inv.setItem(2, Challenge.featherweight().getButton(player.getChallenges().contains(Challenge.featherweight())));
+		inv.setItem(3, Challenge.pacifist().getButton(player.getChallenges().contains(Challenge.pacifist())));
+		inv.setItem(4, Challenge.dwarf().getButton(player.getChallenges().contains(Challenge.dwarf())));
+		inv.setItem(5, Challenge.uhc().getButton(player.getChallenges().contains(Challenge.uhc())));
+		inv.setItem(6, Challenge.naked().getButton(player.getChallenges().contains(Challenge.naked())));
+		inv.setItem(7, Challenge.blind().getButton(player.getChallenges().contains(Challenge.blind())));
+		inv.setItem(8, Challenge.none().getButton(player.getChallenges().isEmpty()));
+
+		// Option to exit
+		inv.setItem(13, InventoryItems.exit());
 
 		return inv;
 	}

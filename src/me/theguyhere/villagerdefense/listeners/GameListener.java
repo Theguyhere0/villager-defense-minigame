@@ -342,15 +342,17 @@ public class GameListener implements Listener {
 
 		Player player = e.getPlayer();
 		Arena arena;
+		VDPlayer gamer;
 
 		// See if the player is in a game
 		if (plugin.getGame().arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
 			return;
 
-		// Attempt to get arena
+		// Attempt to get arena and player
 		try {
 			arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 					.collect(Collectors.toList()).get(0);
+			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
 			return;
 		}
@@ -373,19 +375,27 @@ public class GameListener implements Listener {
 
 		Inventories inv = new Inventories(plugin);
 
-		// Open shop inventory and cancel interaction
+		// Open shop inventory
 		if (GameItems.shop().equals(item))
 			player.openInventory(Inventories.createShop(arena.getCurrentWave() / 10 + 1, arena));
 
-		// Open kit selection menu and cancel interaction
+		// Open kit selection menu
 		else if (GameItems.kitSelector().equals(item))
 			player.openInventory(inv.createSelectKitsInventory(player, arena));
+
+		// Open challenge selection menu
+		else if (GameItems.challengeSelector().equals(item))
+			player.openInventory(inv.createSelectChallengesInventory(gamer, arena));
 
 		// Make player leave
 		else if (GameItems.leave().equals(item))
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 					Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player)));
 
+		// Ignore
+		else return;
+
+		// Cancel interaction
 		e.setCancelled(true);
 	}
 
@@ -470,7 +480,6 @@ public class GameListener implements Listener {
 			player.closeInventory();
 			gamer.setStatus(PlayerStatus.GHOST);
 			player.setFallDistance(0);
-//			Utils.setFalseSpectator(player);
 
 			// Notify player of their own death
 			player.sendTitle(Utils.format(language.getString("death1")), language.getString("death2"),
@@ -480,10 +489,19 @@ public class GameListener implements Listener {
 			player.teleport(arena.getPlayerSpawn());
 			player.closeInventory();
 
-			// Notify everyone of player death
-			arena.getPlayers().forEach(fighter ->
-					fighter.getPlayer().sendMessage(Utils.notify(String.format(
-							plugin.getLanguageData().getString("death"), player.getName()))));
+			// Notify everyone else of player death
+			arena.getPlayers().forEach(fighter -> {
+				if (!fighter.getPlayer().getUniqueId().equals(player.getUniqueId()))
+					if (language.getString("death") == null) {
+						plugin.debugError("The language file is missing the attribute 'death'!", 0);
+					} else {
+						fighter.getPlayer().sendMessage(Utils.notify(String.format(
+								language.getString("death"), player.getName())));
+					}
+				if (arena.hasPlayerDeathSound())
+					fighter.getPlayer().playSound(arena.getPlayerSpawn(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10,
+							.75f);
+			});
 
 			// Update scoreboards
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
@@ -599,7 +617,6 @@ public class GameListener implements Listener {
 		player.getInventory().clear();
 		player.closeInventory();
 		gamer.setStatus(PlayerStatus.GHOST);
-//		Utils.setFalseSpectator(player);
 
 		// Notify player of their own death
 		player.sendTitle(Utils.format(language.getString("death1")), language.getString("death2"),
@@ -607,7 +624,7 @@ public class GameListener implements Listener {
 
 		// Notify everyone else of player death
 		arena.getPlayers().forEach(fighter -> {
-			if (!fighter.getPlayer().equals(player))
+			if (!fighter.getPlayer().getUniqueId().equals(player.getUniqueId()))
 				if (language.getString("death") == null) {
 					plugin.debugError("The language file is missing the attribute 'death'!", 0);
 				} else {

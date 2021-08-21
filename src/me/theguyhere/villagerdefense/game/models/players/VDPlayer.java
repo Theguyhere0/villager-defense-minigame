@@ -1,10 +1,13 @@
 package me.theguyhere.villagerdefense.game.models.players;
 
+import me.theguyhere.villagerdefense.game.models.Challenge;
 import me.theguyhere.villagerdefense.game.models.kits.Kit;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -27,6 +30,10 @@ public class VDPlayer {
     private int infractions;
     /** The {@link Kit} the player will play with.*/
     private Kit kit;
+    /** The list of {@link Challenge}'s the player will take on.*/
+    private List<Challenge> challenge = new ArrayList<>();
+    /** The list of UUIDs of those that damaged the player.*/
+    private List<UUID> enemies = new ArrayList<>();
     /** Helmet {@link ItemStack} held for ninja ability.*/
     private ItemStack helmet;
     /** Chestplate {@link ItemStack} held for ninja ability.*/
@@ -92,6 +99,32 @@ public class VDPlayer {
 
     public Kit getKit() {
         return kit;
+    }
+
+    public List<Challenge> getChallenges() {
+        return challenge;
+    }
+
+    public void addChallenge(Challenge toBeAdded) {
+        if (!challenge.contains(toBeAdded))
+            challenge.add(toBeAdded);
+    }
+
+    public void removeChallenge(Challenge toBeRemoved) {
+        challenge.remove(toBeRemoved);
+    }
+
+    public void resetChallenges() {
+        challenge = new ArrayList<>();
+    }
+
+    public List<UUID> getEnemies() {
+        return enemies;
+    }
+
+    public void addEnemy(UUID toBeAdded) {
+        if (!enemies.contains(toBeAdded))
+            enemies.add(toBeAdded);
     }
 
     public int getWolves() {

@@ -49,10 +49,10 @@ public class Game {
 		Objective obj = board.registerNewObjective("VillagerDefense", "dummy",
 				Utils.format("&6&l   " + arena.getName() + "  "));
 		obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-		Score score10 = obj.getScore(Utils.format("&eWave: " + arena.getCurrentWave()));
-		score10.setScore(10);
-		Score score9 = obj.getScore(Utils.format("&aGems: " + player.getGems()));
-		score9.setScore(9);
+		Score score12= obj.getScore(Utils.format("&eWave: " + arena.getCurrentWave()));
+		score12.setScore(12);
+		Score score11 = obj.getScore(Utils.format("&aGems: " + player.getGems()));
+		score11.setScore(11);
 		StringBuilder kit = new StringBuilder(player.getKit().getName());
 		if (player.getKit().isMultiLevel()) {
 			kit.append(" ");
@@ -60,8 +60,14 @@ public class Game {
 				kit.append("I");
 			}
 		}
-		Score score8 = obj.getScore(Utils.format("&bKit: " + kit));
-		score8.setScore(8);
+		Score score10 = obj.getScore(Utils.format("&bKit: " + kit));
+		score10.setScore(10);
+		Score score9 = obj.getScore(Utils.format("&5Challenges: "));
+		score9.setScore(9);
+		for (Challenge challenge : player.getChallenges()) {
+			Score score8 = obj.getScore(Utils.format("  &5" + challenge.getName()));
+			score8.setScore(8);
+		}
 		Score score7 = obj.getScore("");
 		score7.setScore(7);
 		Score score6 = obj.getScore(Utils.format("&dPlayers: " + arena.getAlive()));

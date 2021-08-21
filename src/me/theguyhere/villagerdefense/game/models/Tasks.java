@@ -23,6 +23,8 @@ import org.bukkit.entity.Phantom;
 import org.bukkit.entity.Slime;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -185,6 +187,12 @@ public class Tasks {
 					p.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)
 							.addModifier(new AttributeModifier("Giant1", 4,
 									AttributeModifier.Operation.ADD_NUMBER));
+
+				// Set health for people with dwarf challenge
+				if (p.getChallenges().contains(Challenge.dwarf()))
+					p.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)
+							.addModifier(new AttributeModifier("Giant1", -.5,
+									AttributeModifier.Operation.MULTIPLY_SCALAR_1));
 			});
 
 			arenaInstance.getActives().forEach(p -> {
@@ -294,8 +302,6 @@ public class Tasks {
 
 				// Give me items to test with
 				if (plugin.getDebugLevel() >= 3 && player.getPlayer().hasPermission("vd.admin")) {
-					Utils.giveItem(player.getPlayer(), GameItems.health(), "uh oh");
-					Utils.giveItem(player.getPlayer(), GameItems.health(), "uh oh");
 				}
 
 				// Set health for people with giant kits
@@ -307,6 +313,17 @@ public class Tasks {
 					player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)
 							.addModifier(new AttributeModifier("Giant1", 4,
 									AttributeModifier.Operation.ADD_NUMBER));
+
+				// Set health for people with dwarf challenge
+				if (player.getChallenges().contains(Challenge.dwarf()))
+					player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)
+							.addModifier(new AttributeModifier("Giant1", -.5,
+									AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+
+				// Give blindness to people with that challenge
+				if (player.getChallenges().contains(Challenge.blind()))
+					player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999,
+							0));
 			});
 
 			// Set arena to active and reset villager and enemy count
