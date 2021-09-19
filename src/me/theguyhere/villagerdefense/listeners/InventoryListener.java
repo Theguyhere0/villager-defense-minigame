@@ -2042,9 +2042,7 @@ public class InventoryListener implements Listener {
 
 			// Edit allowed kits
 			else if (buttonName.contains("Allowed Kits"))
-				if (arenaInstance.isClosed())
-					player.openInventory(plugin.getInventories().createAllowedKitsInventory(meta.getInteger1(), false));
-				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+				player.openInventory(plugin.getInventories().createAllowedKitsInventory(meta.getInteger1(), false));
 
 			// Edit difficulty label
 			else if (buttonName.contains("Difficulty Label"))

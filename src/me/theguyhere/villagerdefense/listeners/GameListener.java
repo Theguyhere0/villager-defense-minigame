@@ -1085,6 +1085,10 @@ public class GameListener implements Listener {
 		Arena arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0);
 
+		// Check if the arena has started
+		if (arena.getStatus() == ArenaStatus.WAITING)
+			return;
+
 		// Cancel teleport and notify if teleport is outside arena bounds
 		if (!(BoundingBox.of(arena.getCorner1(), arena.getCorner2())
 				.contains(e.getTo().getX(), e.getTo().getY(), e.getTo().getZ())) ||
@@ -1103,13 +1107,17 @@ public class GameListener implements Listener {
 		if (plugin.getGame().arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
 			return;
 
-		// Exempt myself for testing purposes
+		// Exempt admins for testing purposes
 		if (plugin.getDebugLevel() >= 3 && player.hasPermission("vd.admin"))
 			return;
 
 		Arena arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0);
 		VDPlayer gamer;
+
+		// Exempt if in waiting status and waiting room exists
+		if (arena.getStatus() == ArenaStatus.WAITING && arena.getWaitingRoom() != null)
+			return;
 
 		// Attempt to get VDPlayer
 		try {
