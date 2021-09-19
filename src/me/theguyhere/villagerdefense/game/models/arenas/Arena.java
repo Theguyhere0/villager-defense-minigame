@@ -800,6 +800,15 @@ public class Arena {
         plugin.saveArenaData();
     }
 
+    public boolean hasLateArrival() {
+        return config.getBoolean(path + ".lateArrival");
+    }
+
+    public void setLateArrival(boolean bool) {
+        config.set(path + ".lateArrival", bool);
+        plugin.saveArenaData();
+    }
+
     public boolean isClosed() {
         return config.getBoolean(path + ".closed");
     }

@@ -234,7 +234,7 @@ public class Kit {
                     lores.addAll(description);
                 });
                 return Utils.createItem(buttonMaterial,
-                        Utils.format(getKitColor(kitType) + name), Utils.BUTTON_FLAGS,
+                        Utils.format((purchaseMode ? getKitColor(kitType): "&4&l") + name), Utils.BUTTON_FLAGS,
                         purchaseMode ? enchants : null, lores);
             }
             else {
@@ -253,7 +253,7 @@ public class Kit {
         } else {
             if (purchasedLevel == -1)
                 return Utils.createItem(buttonMaterial,
-                        Utils.format(getKitColor(kitType) + name), Utils.BUTTON_FLAGS,
+                        Utils.format((purchaseMode ? getKitColor(kitType): "&4&l") + name), Utils.BUTTON_FLAGS,
                         purchaseMode ? enchants : null, masterDescription);
             else if (pricesMap.get(1) == 0)
                 return Utils.createItem(buttonMaterial,
@@ -472,7 +472,7 @@ public class Kit {
     }
     public static Kit phantom() {
         Kit kit = new Kit("Phantom", KitType.GIFT, Material.PHANTOM_MEMBRANE);
-        kit.addMasterDescription(Utils.format("&7Join as a player in any non-full game"));
+        kit.addMasterDescription(Utils.format("&7Join as a player in any game"));
         kit.addMasterDescription(Utils.format("&7using &b/vd select"));
         kit.addPrice(1, 6000);
         kit.addItems(1, new ItemStack[]{new ItemStack(Material.WOODEN_SWORD)});

@@ -2077,6 +2077,13 @@ public class InventoryListener implements Listener {
 					player.openInventory(plugin.getInventories().createGameSettingsInventory(meta.getInteger1()));
 				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
+			// Toggle dynamic difficulty
+			else if (buttonName.contains("Late Arrival:"))
+				if (arenaInstance.isClosed()) {
+					arenaInstance.setLateArrival(!arenaInstance.hasLateArrival());
+					player.openInventory(plugin.getInventories().createGameSettingsInventory(meta.getInteger1()));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+
 			// Toggle experience drop
 			else if (buttonName.contains("Experience Drop:"))
 				if (arenaInstance.isClosed()) {

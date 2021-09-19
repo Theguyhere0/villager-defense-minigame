@@ -48,7 +48,8 @@ public class ArenaListener implements Listener {
         }
 
         Arena arena = e.getArena();
-        Location location;
+        Location spawn;
+        Location waiting;
 
         // Check if arena is closed
         if (arena.isClosed()) {
@@ -59,20 +60,23 @@ public class ArenaListener implements Listener {
 
         // Try to get waiting room
         try {
-            location = arena.getWaitingRoom();
+            waiting = arena.getWaitingRoom();
         } catch (Exception err) {
-            location = null;
+            waiting = null;
         }
 
         // Try to get player spawn
-        if (location == null)
-            try {
-                location = arena.getPlayerSpawn();
-            } catch (Exception err) {
-                err.printStackTrace();
-                player.sendMessage(Utils.notify(language.getString("fatalError")));
-                return;
-            }
+        try {
+            spawn = arena.getPlayerSpawn();
+        } catch (Exception err) {
+            err.printStackTrace();
+            player.sendMessage(Utils.notify(language.getString("fatalError")));
+            return;
+        }
+
+        // Set waiting room to spawn if absent
+        if (waiting == null)
+            waiting = spawn;
 
         int players = arena.getActiveCount();
 
@@ -86,7 +90,7 @@ public class ArenaListener implements Listener {
         // Prepares player to enter arena if it doesn't exceed max capacity and if the arena is still waiting
         if (players < arena.getMaxPlayers() && arena.getStatus() == ArenaStatus.WAITING) {
             // Teleport to arena or waiting room
-            Utils.teleAdventure(player, location);
+            Utils.teleAdventure(player, waiting);
             player.setInvulnerable(true);
 
             // Notify everyone in the arena
@@ -120,10 +124,32 @@ public class ArenaListener implements Listener {
             plugin.debugInfo(player.getName() + "joined Arena " + arena.getArena(), 2);
         }
 
+        // Enter arena if late arrival is allowed
+        else if (players < arena.getMaxPlayers() && arena.getStatus() == ArenaStatus.ACTIVE && arena.hasLateArrival()) {
+            // Teleport to arena
+            Utils.teleAdventure(player, spawn);
+
+            // Notify everyone in the arena
+            arena.getPlayers().forEach(gamer ->
+                    gamer.getPlayer().sendMessage(Utils.notify(String.format(language.getString("join"),
+                            player.getName()))));
+
+            // Update player tracking and in-game stats
+            VDPlayer fighter = new VDPlayer(player, false);
+            arena.getPlayers().add(fighter);
+            plugin.getPortal().refreshHolo(plugin.getGame().arenas.indexOf(arena), plugin.getGame());
+
+            // Give them a game board
+            plugin.getGame().createBoard(fighter);
+
+            // Debug message to console
+            plugin.debugInfo(player.getName() + "joined Arena " + arena.getArena(), 2);
+        }
+
         // Join players as spectators if arena is full or game already started
         else {
             // Teleport to arena and give time limit bar
-            Utils.teleSpectator(player, arena.getPlayerSpawn());
+            Utils.teleSpectator(player, spawn);
             arena.addPlayerToTimeLimitBar(player);
 
             // Update player tracking and in-game stats
@@ -328,6 +354,12 @@ public class ArenaListener implements Listener {
             arena.getPlayers().forEach(fighter ->
                     fighter.getPlayer().sendMessage(Utils.notify(String.format(
                             plugin.getLanguageData().getString("leave"), player.getName()))));
+
+            // Notify spectators of open spot if late arrival is on
+            if (arena.hasLateArrival())
+                arena.getSpectators().forEach(spectator ->
+                    spectator.getPlayer().sendMessage(Utils.notify(String.format(
+                            plugin.getLanguageData().getString(""), player.getName()))));
 
             // Sets them up for teleport to lobby
             player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);

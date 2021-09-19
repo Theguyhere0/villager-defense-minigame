@@ -1130,6 +1130,11 @@ public class Inventories {
 				Utils.format("&6&lDynamic Difficulty: " + getToggleStatus(arenaInstance.hasDynamicDifficulty())),
 				Utils.format("&7Difficulty adjusting based on"), Utils.format("&7number of players")));
 
+		// Option to toggle late arrival
+		inv.setItem(7, Utils.createItem(Material.DAYLIGHT_DETECTOR,
+				Utils.format("&e&lLate Arrival: " + getToggleStatus(arenaInstance.hasLateArrival())),
+				Utils.format("&7Allows players to join after"), Utils.format("&7the game has started")));
+
 		// Option to toggle experience drop
 		inv.setItem(9, Utils.createItem(Material.EXPERIENCE_BOTTLE,
 				Utils.format("&b&lExperience Drop: " + getToggleStatus(arenaInstance.hasExpDrop())),

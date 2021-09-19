@@ -116,8 +116,9 @@ public class Commands implements CommandExecutor {
 					return true;
 				}
 
-				// Check if player owns the phantom kit
-				if (!playerData.getBoolean(player.getName() + ".kits." + Kit.phantom().getName())) {
+				// Check if player owns the phantom kit if late arrival is not on
+				if (!playerData.getBoolean(player.getName() + ".kits." + Kit.phantom().getName()) &&
+						!arena.hasLateArrival()) {
 					player.sendMessage(Utils.notify(language.getString("phantomOwnError")));
 					return true;
 				}
@@ -131,6 +132,12 @@ public class Commands implements CommandExecutor {
 				// Check for useful phantom use
 				if (gamer.getStatus() != PlayerStatus.SPECTATOR) {
 					player.sendMessage(Utils.notify(language.getString("phantomPlayerError")));
+					return true;
+				}
+
+				// Check for arena capacity if late arrival is on
+				if (arena.hasLateArrival() && arena.getActiveCount() >= arena.getMaxPlayers()) {
+					player.sendMessage(Utils.notify(language.getString("maxCapacity")));
 					return true;
 				}
 
