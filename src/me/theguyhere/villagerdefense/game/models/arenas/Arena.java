@@ -454,6 +454,15 @@ public class Arena {
         Utils.centerConfigLocation(plugin, path + ".monster." + num);
     }
 
+    public void setMonsterSpawnType(int num, int type) {
+        config.set(path + ".monsters." + num + ".type", type);
+        plugin.saveArenaData();
+    }
+
+    public int getMonsterSpawnType(int num) {
+        return config.getInt(path + ".monsters." + num + ".type");
+    }
+
     public List<Location> getVillagerSpawns() {
         return Utils.getConfigLocationList(plugin, path + ".villager").stream()
                 .filter(Objects::nonNull).collect(Collectors.toList());

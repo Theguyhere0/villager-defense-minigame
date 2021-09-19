@@ -828,13 +828,25 @@ public class Inventories {
 		else inv.setItem(0, InventoryItems.relocate("Spawn"));
 
 		// Option to teleport to monster spawn
-		inv.setItem(2, InventoryItems.teleport("Spawn"));
+		inv.setItem(1, InventoryItems.teleport("Spawn"));
 
 		// Option to center the monster spawn
-		inv.setItem(4, InventoryItems.center("Spawn"));
+		inv.setItem(2, InventoryItems.center("Spawn"));
 
 		// Option to remove monster spawn
-		inv.setItem(6, InventoryItems.remove("SPAWN"));
+		inv.setItem(3, InventoryItems.remove("SPAWN"));
+
+		// Toggle to set monster spawn type
+		switch (arenaInstance.getMonsterSpawnType(slot)) {
+			case 1:
+				inv.setItem(4, Utils.createItem(Material.GUNPOWDER, Utils.format("&5&lType: Ground")));
+				break;
+			case 2:
+				inv.setItem(4, Utils.createItem(Material.FEATHER, Utils.format("&5&lType: Flying")));
+				break;
+			default:
+				inv.setItem(4, Utils.createItem(Material.BONE, Utils.format("&5&lType: All")));
+		}
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());

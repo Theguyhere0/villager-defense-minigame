@@ -1586,6 +1586,20 @@ public class InventoryListener implements Listener {
 					player.sendMessage(Utils.notify("&aMonster spawn centered!"));
 				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
+			// Set monster type
+			else if (buttonName.contains("Type"))
+				if (arenaInstance.isClosed()) {
+					if (arenaInstance.getMonsterSpawn(meta.getInteger2()) == null) {
+						player.sendMessage(Utils.notify("&cNo monster spawn to set type!"));
+						return;
+					}
+					arenaInstance.setMonsterSpawnType(meta.getInteger2(),
+							(arenaInstance.getMonsterSpawnType(meta.getInteger2()) + 1) % 3);
+					player.openInventory(plugin.getInventories().createMonsterSpawnMenu(meta.getInteger1(),
+							meta.getInteger2()));
+					player.sendMessage(Utils.notify("&aMonster spawn type changed!"));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+
 			// Remove spawn
 			else if (buttonName.contains("REMOVE"))
 				if (arenaInstance.getMonsterSpawn(meta.getInteger2()) != null)
