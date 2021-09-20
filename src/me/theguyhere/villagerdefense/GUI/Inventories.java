@@ -11,6 +11,7 @@ import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -18,6 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 public class Inventories {
@@ -943,7 +945,10 @@ public class Inventories {
 	// Spawn table menu for an arena
 	public Inventory createSpawnTableInventory(int arena) {
 		Arena arenaInstance = plugin.getGame().arenas.get(arena);
+		String chosen = arenaInstance.getSpawnTableFile();
 		Inventory inv;
+		HashMap<Enchantment, Integer> enchants = new HashMap<>();
+		enchants.put(Enchantment.DURABILITY, 1);
 
 		// Create inventory
 		if (arenaInstance.getSpawnTableFile().equals("custom"))
@@ -953,35 +958,36 @@ public class Inventories {
 				Utils.format("&3&lSpawn Table: " + arenaInstance.getSpawnTableFile() + ".yml"));
 
 		// Option to set spawn table to default
-		inv.setItem(0, Utils.createItem(Material.OAK_WOOD, Utils.format("&4&lDefault"),
-				Utils.format("&7Sets spawn table to default.yml")));
+		inv.setItem(0, Utils.createItem(Material.OAK_WOOD, Utils.format("&4&lDefault"), Utils.BUTTON_FLAGS,
+				chosen.equals("default") ? enchants : null, Utils.format("&7Sets spawn table to default.yml")));
 
 		// Option to set spawn table to global option 1
-		inv.setItem(1, Utils.createItem(Material.RED_CONCRETE, Utils.format("&6&lOption 1"),
-				Utils.format("&7Sets spawn table to option1.yml")));
+		inv.setItem(1, Utils.createItem(Material.RED_CONCRETE, Utils.format("&6&lOption 1"), Utils.BUTTON_FLAGS,
+				chosen.equals("option1") ? enchants : null, Utils.format("&7Sets spawn table to option1.yml")));
 
 		// Option to set spawn table to global option 2
-		inv.setItem(2, Utils.createItem(Material.ORANGE_CONCRETE, Utils.format("&6&lOption 2"),
-				Utils.format("&7Sets spawn table to option2.yml")));
+		inv.setItem(2, Utils.createItem(Material.ORANGE_CONCRETE, Utils.format("&6&lOption 2"), Utils.BUTTON_FLAGS,
+				chosen.equals("option2") ? enchants : null, Utils.format("&7Sets spawn table to option2.yml")));
 
 		// Option to set spawn table to global option 3
-		inv.setItem(3, Utils.createItem(Material.YELLOW_CONCRETE, Utils.format("&6&lOption 3"),
-				Utils.format("&7Sets spawn table to option3.yml")));
+		inv.setItem(3, Utils.createItem(Material.YELLOW_CONCRETE, Utils.format("&6&lOption 3"), Utils.BUTTON_FLAGS,
+				chosen.equals("option3") ? enchants : null, Utils.format("&7Sets spawn table to option3.yml")));
 
 		// Option to set spawn table to global option 4
-		inv.setItem(4, Utils.createItem(Material.BROWN_CONCRETE, Utils.format("&6&lOption 4"),
-				Utils.format("&7Sets spawn table to option4.yml")));
+		inv.setItem(4, Utils.createItem(Material.BROWN_CONCRETE, Utils.format("&6&lOption 4"), Utils.BUTTON_FLAGS,
+				chosen.equals("option4") ? enchants : null, Utils.format("&7Sets spawn table to option4.yml")));
 
 		// Option to set spawn table to global option 5
-		inv.setItem(5, Utils.createItem(Material.LIGHT_GRAY_CONCRETE, Utils.format("&6&lOption 5"),
-				Utils.format("&7Sets spawn table to option5.yml")));
+		inv.setItem(5, Utils.createItem(Material.LIGHT_GRAY_CONCRETE, Utils.format("&6&lOption 5"), Utils.BUTTON_FLAGS,
+				chosen.equals("option5") ? enchants : null, Utils.format("&7Sets spawn table to option5.yml")));
 
 		// Option to set spawn table to global option 6
-		inv.setItem(6, Utils.createItem(Material.WHITE_CONCRETE, Utils.format("&6&lOption 6"),
-				Utils.format("&7Sets spawn table to option6.yml")));
+		inv.setItem(6, Utils.createItem(Material.WHITE_CONCRETE, Utils.format("&6&lOption 6"), Utils.BUTTON_FLAGS,
+				chosen.equals("option6") ? enchants : null, Utils.format("&7Sets spawn table to option6.yml")));
 
 		// Option to set spawn table to custom option
-		inv.setItem(7, Utils.createItem(Material.BIRCH_WOOD, Utils.format("&e&lCustom"),
+		inv.setItem(7, Utils.createItem(Material.BIRCH_WOOD, Utils.format("&e&lCustom"), Utils.BUTTON_FLAGS,
+				chosen.length() < 4 ? enchants : null,
 				Utils.format("&7Sets spawn table to a[arena number].yml"),
 				Utils.format("&7(Check the arena number in arenaData.yml)")));
 
@@ -1347,8 +1353,22 @@ public class Inventories {
 	// Menu for changing the difficulty label of an arena
 	public Inventory createDifficultyLabelInventory(int arena) {
 		String label = plugin.getGame().arenas.get(arena).getDifficultyLabel();
-		if (label == null)
-			label = "";
+		switch (label) {
+			case "Easy":
+				label = "&a&lEasy";
+				break;
+			case "Medium":
+				label = "&e&lMedium";
+				break;
+			case "Hard":
+				label = "&c&lHard";
+				break;
+			case "Insane":
+				label = "&d&lInsane";
+				break;
+			default:
+				label = "";
+		}
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
@@ -1617,20 +1637,23 @@ public class Inventories {
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 18, Utils.format("&k") +
 				Utils.format("&6&lWaiting Sound: " + plugin.getGame().arenas.get(arena).getWaitingSoundName()));
 
-		// Sound options
-		inv.setItem(0, Utils.createItem(Material.MUSIC_DISC_CAT, null));
-		inv.setItem(1, Utils.createItem(Material.MUSIC_DISC_BLOCKS, null));
-		inv.setItem(2, Utils.createItem(Material.MUSIC_DISC_FAR, null));
-		inv.setItem(3, Utils.createItem(Material.MUSIC_DISC_STRAD, null));
-		inv.setItem(4, Utils.createItem(Material.MUSIC_DISC_MELLOHI, null));
-		inv.setItem(5, Utils.createItem(Material.MUSIC_DISC_WARD, null));
+		Arena arenaInstance = plugin.getGame().arenas.get(arena);
+		int music = arenaInstance.getWaitingSoundNum();
 
-		inv.setItem(9, Utils.createItem(Material.MUSIC_DISC_CHIRP, null));
-		inv.setItem(10, Utils.createItem(Material.MUSIC_DISC_STAL, null));
-		inv.setItem(11, Utils.createItem(Material.MUSIC_DISC_MALL, null));
-		inv.setItem(12, Utils.createItem(Material.MUSIC_DISC_WAIT, null));
-		inv.setItem(13, Utils.createItem(Material.MUSIC_DISC_PIGSTEP, null));
-		inv.setItem(14, Utils.createItem(Material.LIGHT_GRAY_CONCRETE, Utils.format("&fNone")));
+		// Sound options
+		inv.setItem(0, arenaInstance.getWaitingSoundButton(0));
+		inv.setItem(1, arenaInstance.getWaitingSoundButton(1));
+		inv.setItem(2, arenaInstance.getWaitingSoundButton(2));
+		inv.setItem(3, arenaInstance.getWaitingSoundButton(3));
+		inv.setItem(4, arenaInstance.getWaitingSoundButton(4));
+		inv.setItem(5, arenaInstance.getWaitingSoundButton(5));
+
+		inv.setItem(9, arenaInstance.getWaitingSoundButton(9));
+		inv.setItem(10, arenaInstance.getWaitingSoundButton(10));
+		inv.setItem(11, arenaInstance.getWaitingSoundButton(11));
+		inv.setItem(12, arenaInstance.getWaitingSoundButton(12));
+		inv.setItem(13, arenaInstance.getWaitingSoundButton(13));
+		inv.setItem(14, arenaInstance.getWaitingSoundButton(14));
 
 		// Option to exit
 		inv.setItem(17, InventoryItems.exit());

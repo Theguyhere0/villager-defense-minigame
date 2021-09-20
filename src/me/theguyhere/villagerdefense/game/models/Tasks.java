@@ -300,8 +300,9 @@ public class Tasks {
 				// Give all players starting items
 				giveItems(player);
 
-				// Give me items to test with
+				// Give admins items to test with
 				if (plugin.getDebugLevel() >= 3 && player.getPlayer().hasPermission("vd.admin")) {
+					Utils.giveItem(player.getPlayer(), GameItems.wolf(), null);
 				}
 
 				// Set health for people with giant kits

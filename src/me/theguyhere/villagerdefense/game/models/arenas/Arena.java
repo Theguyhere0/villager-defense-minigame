@@ -15,16 +15,14 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -278,6 +276,80 @@ public class Arena {
                 return Sound.MUSIC_DISC_PIGSTEP;
             default:
                 return null;
+        }
+    }
+
+    /**
+     * Create the button for a given waiting music of the arena from the arena file.
+     * @return A button for GUIs.
+     */
+    public ItemStack getWaitingSoundButton(int number) {
+        HashMap<Enchantment, Integer> enchants = new HashMap<>();
+        enchants.put(Enchantment.DURABILITY, 1);
+        int sound = config.getInt(path + ".sounds.waiting");
+        boolean selected;
+
+        switch (number) {
+            case 0:
+                 selected = sound == 0;
+                return Utils.createItem(Material.MUSIC_DISC_CAT,
+                        Utils.format((selected ? "&a&l" : "&4&l") + "Cat"),
+                        Utils.BUTTON_FLAGS, selected ? enchants : null);
+            case 1:
+                selected = sound == 1;
+                return Utils.createItem(Material.MUSIC_DISC_BLOCKS,
+                        Utils.format((selected ? "&a&l" : "&4&l") + "Blocks"),
+                        Utils.BUTTON_FLAGS, selected ? enchants : null);
+            case 2:
+                selected = sound == 2;
+                return Utils.createItem(Material.MUSIC_DISC_FAR,
+                        Utils.format((selected ? "&a&l" : "&4&l") + "Far"),
+                        Utils.BUTTON_FLAGS, selected ? enchants : null);
+            case 3:
+                selected = sound == 3;
+                return Utils.createItem(Material.MUSIC_DISC_STRAD,
+                        Utils.format((selected ? "&a&l" : "&4&l") + "Strad"),
+                        Utils.BUTTON_FLAGS, selected ? enchants : null);
+            case 4:
+                selected = sound == 4;
+                return Utils.createItem(Material.MUSIC_DISC_MELLOHI,
+                        Utils.format((selected ? "&a&l" : "&4&l") + "Mellohi"),
+                        Utils.BUTTON_FLAGS, selected ? enchants : null);
+            case 5:
+                selected = sound == 5;
+                return Utils.createItem(Material.MUSIC_DISC_WARD,
+                        Utils.format(((selected ? "&a&l" : "&4&l") + "Ward")),
+                        Utils.BUTTON_FLAGS, selected ? enchants : null);
+            case 9:
+                selected = sound == 9;
+                return Utils.createItem(Material.MUSIC_DISC_CHIRP,
+                        Utils.format((selected ? "&a&l" : "&4&l") + "Chirp"),
+                        Utils.BUTTON_FLAGS, selected ? enchants : null);
+            case 10:
+                selected = sound == 10;
+                return Utils.createItem(Material.MUSIC_DISC_STAL,
+                        Utils.format((selected ? "&a&l" : "&4&l") + "Stal"),
+                        Utils.BUTTON_FLAGS, selected ? enchants : null);
+            case 11:
+                selected = sound == 11;
+                return Utils.createItem(Material.MUSIC_DISC_MALL,
+                        Utils.format((selected ? "&a&l" : "&4&l") + "Mall"),
+                        Utils.BUTTON_FLAGS, selected ? enchants : null);
+            case 12:
+                selected = sound == 12;
+                return Utils.createItem(Material.MUSIC_DISC_WAIT,
+                        Utils.format((selected ? "&a&l" : "&4&l") + "Wait"),
+                        Utils.BUTTON_FLAGS, selected ? enchants : null);
+            case 13:
+                selected = sound == 13;
+                return Utils.createItem(Material.MUSIC_DISC_PIGSTEP,
+                        Utils.format((selected ? "&a&l" : "&4&l") + "Pigstep"),
+                        Utils.BUTTON_FLAGS, selected ? enchants : null);
+            default:
+                selected = sound < 0 || sound > 5 && sound < 9 || sound > 13;
+                return Utils.createItem(Material.LIGHT_GRAY_CONCRETE,
+                        Utils.format((selected ? "&a&l" : "&4&l") + "None"),
+                        Utils.BUTTON_FLAGS, selected ? enchants : null);
         }
     }
 
