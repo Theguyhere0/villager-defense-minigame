@@ -1,167 +1,264 @@
 package me.theguyhere.villagerdefense;
 
-import java.util.UUID;
-
-import net.minecraft.server.v1_16_R3.EntityPlayer;
+import me.theguyhere.villagerdefense.GUI.Inventories;
+import me.theguyhere.villagerdefense.game.displays.ArenaBoard;
+import me.theguyhere.villagerdefense.game.displays.InfoBoard;
+import me.theguyhere.villagerdefense.game.displays.Leaderboard;
+import me.theguyhere.villagerdefense.game.displays.Portal;
+import me.theguyhere.villagerdefense.game.models.Game;
+import me.theguyhere.villagerdefense.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.listeners.*;
+import me.theguyhere.villagerdefense.tools.DataManager;
+import me.theguyhere.villagerdefense.tools.PacketReader;
+import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
-
-import me.theguyhere.villagerdefense.events.ClickNPC;
-import me.theguyhere.villagerdefense.events.Death;
-import me.theguyhere.villagerdefense.events.InventoryEvents;
-import me.theguyhere.villagerdefense.events.Join;
-import me.theguyhere.villagerdefense.game.Game;
-import me.theguyhere.villagerdefense.game.GameEvents;
-import me.theguyhere.villagerdefense.game.GameItems;
+import java.util.Objects;
 
 public class Main extends JavaPlugin {
-	private final GameItems gi = new GameItems();
-	private final InventoryItems ii = new InventoryItems();
-	private final Inventories inventories = new Inventories(this, gi, ii);
-	private final NPC npc = new NPC(this);
+	private final DataManager arenaData = new DataManager(this, "arenaData.yml");
+	private final DataManager playerData = new DataManager(this, "playerData.yml");
+	private final DataManager languageData = new DataManager(this, "languages/" +
+			getConfig().getString("locale") + ".yml");
+	private final Portal portal = new Portal(this);
+	private final Leaderboard leaderboard = new Leaderboard(this);
+	private final InfoBoard infoBoard = new InfoBoard(this);
 	private PacketReader reader;
-	private final Game game = new Game(this, gi, inventories);
-	private final Commands commands = new Commands(this, inventories, game);
-	private DataManager data;
+	private Game game;
+	private Inventories inventories;
+	private Commands commands;
+	private ArenaBoard arenaBoard;
+
+	/**
+	 * The amount of debug information to display in the console.
+	 *
+	 * 3 (Override) - All errors and information tracked will be displayed. Certain behavior will be overridden.
+	 * 2 (Verbose) - All errors and information tracked will be displayed.
+	 * 1 (Normal) - Errors that drastically reduce performance and important information will be displayed.
+	 * 0 (Quiet) - Only the most urgent error messages will be displayed.
+	 */
+	private int debugLevel = 0;
+	private boolean outdated = false;
+	int configVersion = 6;
+	int arenaDataVersion = 3;
+	int playerDataVersion = 1;
+	int spawnTableVersion = 1;
+	int languageFileVersion = 8;
+	int defaultSpawnVersion = 2;
 
 	// Runs when enabling plugin
 	@Override
 	public void onEnable() {
 		saveDefaultConfig();
 
-		reader = new PacketReader(npc);
+		reader = new PacketReader(portal);
 		PluginManager pm = getServer().getPluginManager();
-		data = new DataManager(this);
+		game = new Game(this);
+		inventories = new Inventories(this);
+		commands = new Commands(this);
+		arenaBoard = new ArenaBoard(this);
+
+		checkArenas();
+
+		if (!Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
+			debugError("HolographicDisplays is not installed or not enabled.", 0);
+			debugError("This plugin will be disabled.", 0);
+			this.setEnabled(false);
+			return;
+		}
 
 		// Set up commands and tab complete
 		getCommand("vd").setExecutor(commands);
-		getCommand("vd").setTabCompleter(new CommandTab());
+		getCommand("vd").setTabCompleter(new CommandTab(game));
 
 		// Register event listeners
-		pm.registerEvents(new InventoryEvents(this, inventories, npc, reader), this);
-		pm.registerEvents(new Join(npc, reader, game), this);
-		pm.registerEvents(new Death(npc, reader), this);
-		pm.registerEvents(new ClickNPC(this, game), this);
-		pm.registerEvents(new GameEvents(this, game, gi), this);
+		pm.registerEvents(new InventoryListener(this), this);
+		pm.registerEvents(new JoinListener(this), this);
+		pm.registerEvents(new DeathListener(this), this);
+		pm.registerEvents(new ClickPortalListener(this), this);
+		pm.registerEvents(new GameListener(this), this);
+		pm.registerEvents(new ArenaListener(this), this);
+		pm.registerEvents(new AbilityListener(this), this);
+		pm.registerEvents(new ChallengeListener(this), this);
+		pm.registerEvents(new WorldListener(this), this);
 
+		// Inject online players into packet reader
 		if (!Bukkit.getOnlinePlayers().isEmpty())
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				reader.inject(player);
 			}
-		
-		if (getData().contains("data.portal")) {
-			loadNPC();
-			getData().getConfigurationSection("data.portal").getKeys(false).forEach(this::spawnHolo);
-		}
 
 		// Check config version
-		if (getConfig().getInt("version") < 1)
-			getServer().getConsoleSender().sendMessage(ChatColor.RED + "Your config.yml is outdated! "
-					+ "Please update to the latest version to ensure compatibility.");
+		if (getConfig().getInt("version") < configVersion) {
+			debugError("Your config.yml is outdated!", 0);
+			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
+					"Please update to the latest version (" + ChatColor.BLUE + configVersion + ChatColor.RED +
+					") to ensure compatibility.");
+			outdated = true;
+		}
 
-		// Check if data.yml is outdated
-		if (getConfig().getInt("data") < 1)
-			getServer().getConsoleSender().sendMessage(ChatColor.RED +
-					"Your data.yml is no longer supported with this version! " +
-					"Please manually transfer arena data. " +
-					"Please do not update your config.yml until your data.yml has been updated.");
+		// Check if arenaData.yml is outdated
+		if (getConfig().getInt("arenaData") < arenaDataVersion) {
+			debugError("Your arenaData.yml is no longer supported with this version!", 0);
+			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
+					"Please manually transfer arena data to version " + ChatColor.BLUE + arenaDataVersion +
+					ChatColor.RED + ".");
+			debugError("Please do not update your config.yml until your arenaData.yml has been updated.", 0);
+			outdated = true;
+		}
 
-		// Notify successful load
-		getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "Villager Defense has been loaded and enabled!");
+		// Check if playerData.yml is outdated
+		if (getConfig().getInt("playerData") < playerDataVersion) {
+			debugError("Your playerData.yml is no longer supported with this version!", 0);
+			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
+					"Please manually transfer player data to version " + ChatColor.BLUE + playerDataVersion +
+					ChatColor.BLUE + ".");
+			debugError("Please do not update your config.yml until your playerData.yml has been updated.", 0);
+			outdated = true;
+		}
+
+		// Check if spawn tables are outdated
+		if (getConfig().getInt("spawnTableStructure") < spawnTableVersion) {
+			debugError("Your spawn tables are no longer supported with this version!", 0);
+			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
+					"Please manually transfer spawn table data to version " + ChatColor.BLUE + spawnTableVersion +
+					ChatColor.RED + ".");
+			debugError("Please do not update your config.yml until your spawn tables have been updated.", 0);
+			outdated = true;
+		}
+
+		// Check if default spawn table has been updated
+		if (getConfig().getInt("spawnTableDefault") < defaultSpawnVersion) {
+			debugInfo("The default.yml spawn table has been updated!", 0);
+			getServer().getConsoleSender().sendMessage("[VillagerDefense] " +
+					"Updating to version" + ChatColor.BLUE + defaultSpawnVersion + ChatColor.WHITE +
+					" is optional but recommended.");
+			debugInfo("Please do not update your config.yml unless your default.yml has been updated.", 0);
+		}
+
+		// Check if language files are outdated
+		if (getConfig().getInt("languageFile") < languageFileVersion) {
+			debugError("You language files are no longer supported with this version!", 0);
+			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
+					"Please update en_US.yml and update any other language files to version " + ChatColor.BLUE +
+					languageFileVersion + ChatColor.RED + ".");
+			debugError("Please do not update your config.yml until your language files have been updated.", 0);
+			outdated = true;
+		}
+
+		// Spawn in portals
+		loadPortals();
+		leaderboard.loadLeaderboards();
+		infoBoard.loadInfoBoards();
+		arenaBoard.loadArenaBoards();
 	}
 
-//	Runs when disabling plugin
+	// Runs when disabling plugin
 	@Override
 	public void onDisable() {
-		for (Player player : Bukkit.getOnlinePlayers()) {
+		// Remove uninject players
+		for (Player player : Bukkit.getOnlinePlayers())
 			reader.uninject(player);
-			for ( EntityPlayer NPC : npc.getNPCs())
-				npc.removeNPC(player, NPC);
-		}
-		if (getData().contains("data.portal")) {
-			getData().getConfigurationSection("data.portal").getKeys(false).forEach(this::removeHolo);
-		}
-		getServer().getConsoleSender().sendMessage(ChatColor.RED + "Villager Defense has been unloaded and disabled!");
+
+		// Remove portals
+		portal.removeAll();
+
+		game.arenas.stream().filter(Objects::nonNull).filter(arena -> !arena.isClosed())
+				.forEach(arena -> Utils.clear(arena.getCorner1(), arena.getCorner2()));
 	}
 
-//	Returns data.yml data
-	public FileConfiguration getData() {
-		return data.getConfig();
+	public Game getGame() {
+		return game;
 	}
 
-//	Saves data.yml changes
-	public void saveData() {
-		data.saveConfig();
+	public Inventories getInventories() {
+		return inventories;
 	}
 
-//	Load saved NPCs
-	public void loadNPC() {
-		getData().getConfigurationSection("data.portal").getKeys(false).forEach(portal -> {
-			Location location = new Location(Bukkit.getWorld(getData().getString("data.portal." + portal + ".world")),
-					getData().getDouble("data.portal." + portal + ".x"), getData().getDouble("data.portal." + portal + ".y"),
-					getData().getDouble("data.portal." + portal + ".z"));
-			location.setPitch((float) getData().getDouble("data.portal." + portal + ".p"));
-			location.setYaw((float) getData().getDouble("data.portal." + portal + ".yaw"));
-
-			GameProfile gameProfile = new GameProfile(UUID.randomUUID(), portal);
-			gameProfile.getProperties().put("textures", new Property("textures", getData().getString("data.portal." + portal + ".text"),
-					getData().getString("data.portal." + portal + ".signature")));
-
-			npc.LoadNPC(location, gameProfile);
-		});
+	public InfoBoard getInfoBoard() {
+		return infoBoard;
 	}
 
-//	Spawn holograms
-	public void spawnHolo(String portal) {
-		Location location = new Location(Bukkit.getWorld(getData().getString("data.portal." + portal + ".world")),
-				getData().getDouble("data.portal." + portal + ".x"), getData().getDouble("data.portal." + portal + ".y") - .17,
-				getData().getDouble("data.portal." + portal + ".z"));
-
-		ArmorStand holo = (ArmorStand) Bukkit.getWorld(getData().getString("data.portal." + portal + ".world")).spawnEntity(location, EntityType.ARMOR_STAND);
-		holo.setVisible(false);
-		holo.setCustomNameVisible(true);
-		holo.setCustomName("\u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588");
-		holo.setGravity(false);
-
-		location = new Location(Bukkit.getWorld(getData().getString("data.portal." + portal + ".world")),
-				getData().getDouble("data.portal." + portal + ".x"),
-				getData().getDouble("data.portal." + portal + ".y") + .5,
-				getData().getDouble("data.portal." + portal + ".z"));
-
-		ArmorStand holo2 = (ArmorStand) Bukkit.getWorld(getData().getString("data.portal." + portal + ".world")).spawnEntity(location, EntityType.ARMOR_STAND);
-		holo2.setVisible(false);
-		holo2.setCustomNameVisible(true);
-		holo2.setCustomName(getData().getString("data.a" + portal + ".name"));
-		holo2.setGravity(false);
+	public Portal getPortal() {
+		return portal;
 	}
 
-//	Remove holograms
-	public void removeHolo(String portal) {
-		Location location;
-		try {
-			location = new Location(Bukkit.getWorld(getData().getString("data.portal." + portal + ".world")),
-					getData().getDouble("data.portal." + portal + ".x"),
-					getData().getDouble("data.portal." + portal + ".y"),
-					getData().getDouble("data.portal." + portal + ".z"));
-		} catch (Exception e) {
-			return;
-		}
+	public Leaderboard getLeaderboard() {
+		return leaderboard;
+	}
 
-		for (Entity holo : Bukkit.getWorld(getData().getString("data.portal." + portal + ".world")).getNearbyEntities(location, 1, 2, 1)) {
-			if (holo.getType().equals(EntityType.ARMOR_STAND)) {
-				holo.remove();
-			}
-		}
+	public PacketReader getReader() {
+		return reader;
+	}
+
+	public Commands getCommands() {
+		return commands;
+	}
+
+	public ArenaBoard getArenaBoard() {
+		return arenaBoard;
+	}
+
+	// Returns arena data
+	public FileConfiguration getArenaData() {
+		return arenaData.getConfig();
+	}
+
+	// Saves arena data changes
+	public void saveArenaData() {
+		arenaData.saveConfig();
+	}
+
+	// Returns player data
+	public FileConfiguration getPlayerData() {
+		return playerData.getConfig();
+	}
+
+	// Saves arena data changes
+	public void savePlayerData() {
+		playerData.saveConfig();
+	}
+
+	public FileConfiguration getLanguageData() {
+		return languageData.getConfig();
+	}
+
+	// Load portals
+	public void loadPortals() {
+		if (getArenaData().contains("portal"))
+			getArenaData().getConfigurationSection("portal").getKeys(false).forEach(portal ->
+				this.portal.loadPortal(Integer.parseInt(portal), game));
+	}
+
+	// Check arenas for close
+	private void checkArenas() {
+		game.arenas.stream().filter(Objects::nonNull).forEach(Arena::checkClose);
+	}
+
+	public boolean isOutdated() {
+		return outdated;
+	}
+
+	public void setDebugLevel(int debugLevel) {
+		this.debugLevel = debugLevel;
+	}
+
+	public void debugError(String msg, int debugLevel) {
+		if (this.debugLevel >= debugLevel)
+			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " + msg);
+	}
+
+	public void debugInfo(String msg, int debugLevel) {
+		if (this.debugLevel >= debugLevel)
+			getServer().getConsoleSender().sendMessage("[VillagerDefense] " + msg);
+	}
+
+	public int getDebugLevel() {
+		return debugLevel;
 	}
 }

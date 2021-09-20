@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="Direct to Server">
-    <output-path>$PROJECT_DIR$/../../Minecraft Dev/Spigot 1.16.5 Server/plugins</output-path>
-    <root id="archive" name="villager-defense-minigame.jar">
-      <element id="module-output" name="villager-defense-minigame" />
-    </root>
-  </artifact>
-</component>
