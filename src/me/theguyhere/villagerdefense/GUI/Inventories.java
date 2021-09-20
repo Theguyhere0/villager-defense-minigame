@@ -2182,32 +2182,33 @@ public class Inventories {
 
 		// Dynamic mob count
 		inv.setItem(10, Utils.createItem(Material.SLIME_BALL,
-				Utils.format("&e&lDynamic Mob Count: &e" + getToggleStatus(arena.hasDynamicCount())),
+				Utils.format("&e&lDynamic Mob Count: " + getToggleStatus(arena.hasDynamicCount())),
 				Utils.format("&7Mob count adjusting based on"), Utils.format("&7number of players")));
 
 		// Dynamic difficulty
 		inv.setItem(11, Utils.createItem(Material.MAGMA_CREAM,
-				Utils.format("&6&lDynamic Difficulty: &6" + getToggleStatus(arena.hasDynamicDifficulty())),
+				Utils.format("&6&lDynamic Difficulty: " + getToggleStatus(arena.hasDynamicDifficulty())),
 				Utils.format("&7Difficulty adjusting based on"), Utils.format("&7number of players")));
 
 		// Dynamic prices
 		inv.setItem(12, Utils.createItem(Material.NETHER_STAR,
-				Utils.format("&b&lDynamic Prices: &b" + getToggleStatus(arena.hasDynamicPrices())),
+				Utils.format("&b&lDynamic Prices: " + getToggleStatus(arena.hasDynamicPrices())),
 				Utils.format("&7Prices adjusting based on number of"),
 				Utils.format("&7players in the game")));
 
 		// Dynamic time limit
 		inv.setItem(13, Utils.createItem(Material.SNOWBALL,
-				Utils.format("&a&lDynamic Time Limit: &a" + getToggleStatus(arena.hasDynamicLimit())),
+				Utils.format("&a&lDynamic Time Limit: " + getToggleStatus(arena.hasDynamicLimit())),
 				Utils.format("&7Wave time limit adjusting based on"),
 				Utils.format("&7in-game difficulty")));
 
 		// Difficulty multiplier
-		inv.setItem(14, Utils.createItem(Material.TURTLE_HELMET,
-				Utils.format("&4&lDifficulty Multiplier: &4" + arena.getDifficultyMultiplier()),
+		inv.setItem(14, Utils.createItem(Material.DAYLIGHT_DETECTOR,
+				Utils.format("&e&lLate Arrival: " + getToggleStatus(arena.hasLateArrival())),
 				Utils.BUTTON_FLAGS,
 				null,
-				Utils.format("&7Determines difficulty increase rate")));
+				Utils.format("&7Whether players can enter"),
+				Utils.format("&7arenas late")));
 
 		// Item dropping
 		inv.setItem(15, Utils.createItem(Material.EMERALD,
@@ -2249,6 +2250,13 @@ public class Inventories {
 		// Custom shop inventory
 		inv.setItem(25, Utils.createItem(Material.QUARTZ, Utils.format("&f&lCustom Shop Inventory")));
 
+		// Difficulty multiplier
+		inv.setItem(30, Utils.createItem(Material.TURTLE_HELMET,
+				Utils.format("&4&lDifficulty Multiplier: &4" + arena.getDifficultyMultiplier()),
+				Utils.BUTTON_FLAGS,
+				null,
+				Utils.format("&7Determines difficulty increase rate")));
+
 		// Arena records
 		List<String> records = new ArrayList<>();
 		arena.getSortedDescendingRecords().forEach(arenaRecord -> {
@@ -2266,7 +2274,7 @@ public class Inventories {
 				}
 			}
 		});
-		inv.setItem(31, Utils.createItem(Material.GOLDEN_HELMET, Utils.format("&e&lArena Records"), Utils.BUTTON_FLAGS,
+		inv.setItem(32, Utils.createItem(Material.GOLDEN_HELMET, Utils.format("&e&lArena Records"), Utils.BUTTON_FLAGS,
 				null, records));
 
 		return inv;

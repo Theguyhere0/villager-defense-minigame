@@ -328,6 +328,9 @@ public class ArenaListener implements Listener {
         if (arena.getWaitingSound() != null)
             player.stopSound(arena.getWaitingSound());
 
+        // Mark VDPlayer as left
+        gamer.setStatus(PlayerStatus.LEFT);
+
         // Not spectating
         if (gamer.getStatus() != PlayerStatus.SPECTATOR) {
             FileConfiguration playerData = plugin.getPlayerData();
@@ -355,11 +358,13 @@ public class ArenaListener implements Listener {
                     fighter.getPlayer().sendMessage(Utils.notify(String.format(
                             plugin.getLanguageData().getString("leave"), player.getName()))));
 
-            // Notify spectators of open spot if late arrival is on
-            if (arena.hasLateArrival())
+            int actives = arena.getActiveCount();
+
+            // Notify spectators of open spot if late arrival is on and there is a spot open
+            if (arena.hasLateArrival() && actives < arena.getMaxPlayers())
                 arena.getSpectators().forEach(spectator ->
                     spectator.getPlayer().sendMessage(Utils.notify(String.format(
-                            plugin.getLanguageData().getString(""), player.getName()))));
+                            plugin.getLanguageData().getString("late"), player.getName()))));
 
             // Sets them up for teleport to lobby
             player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
@@ -388,7 +393,6 @@ public class ArenaListener implements Listener {
             Map<Runnable, Integer> tasks = task.getTasks();
             BukkitScheduler scheduler = Bukkit.getScheduler();
             List<Runnable> toRemove = new ArrayList<>();
-            int actives = arena.getActiveCount();
 
             // Check if arena can no longer start
             if (actives < arena.getMinPlayers() && arena.getStatus() == ArenaStatus.WAITING) {
@@ -437,9 +441,6 @@ public class ArenaListener implements Listener {
             plugin.getPlayerData().set(player.getName() + ".inventory", null);
             plugin.savePlayerData();
         }
-
-        // Mark VDPlayer as left
-        gamer.setStatus(PlayerStatus.LEFT);
 
         // Refresh the game portal
         plugin.getPortal().refreshHolo(plugin.getGame().arenas.indexOf(arena), plugin.getGame());
