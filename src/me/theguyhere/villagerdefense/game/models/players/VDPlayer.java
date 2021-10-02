@@ -33,7 +33,7 @@ public class VDPlayer {
     /** The list of {@link Challenge}'s the player will take on.*/
     private List<Challenge> challenge = new ArrayList<>();
     /** The list of UUIDs of those that damaged the player.*/
-    private List<UUID> enemies = new ArrayList<>();
+    private final List<UUID> enemies = new ArrayList<>();
     /** Helmet {@link ItemStack} held for ninja ability.*/
     private ItemStack helmet;
     /** Chestplate {@link ItemStack} held for ninja ability.*/
@@ -145,10 +145,6 @@ public class VDPlayer {
 
     public void setJoinedWave(int joinedWave) {
         this.joinedWave = joinedWave;
-    }
-
-    public int getInfractions() {
-        return infractions;
     }
 
     public int incrementInfractions() {

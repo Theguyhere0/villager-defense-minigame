@@ -45,7 +45,7 @@ public class Main extends JavaPlugin {
 	int arenaDataVersion = 4;
 	int playerDataVersion = 1;
 	int spawnTableVersion = 1;
-	int languageFileVersion = 9;
+	int languageFileVersion = 10;
 	int defaultSpawnVersion = 2;
 
 	// Runs when enabling plugin

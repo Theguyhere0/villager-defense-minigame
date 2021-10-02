@@ -9,6 +9,7 @@ import me.theguyhere.villagerdefense.game.models.Tasks;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.game.models.kits.Kit;
+import me.theguyhere.villagerdefense.game.models.players.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
@@ -21,6 +22,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
 
@@ -712,6 +714,47 @@ public class Commands implements CommandExecutor {
 					player.sendMessage(Utils.notify("&aDebug level set to " + args[1] + "."));
 				else Utils.debugInfo("Debug level set to " + args[1] + ".", 0);
 
+				return true;
+			}
+
+			// Player kills themselves
+			if (args[0].equalsIgnoreCase("die")) {
+				// Check for player executing command
+				if (player == null) {
+					sender.sendMessage("Bad console!");
+					return true;
+				}
+
+				// Check for player in a game
+				if (Arrays.stream(Game.arenas).filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player))) {
+					player.sendMessage(Utils.notify(language.getString("leaveError")));
+					return true;
+				}
+
+				// Check for player in an active game
+				if (Arrays.stream(Game.arenas).filter(Objects::nonNull)
+						.filter(arena -> arena.getStatus() == ArenaStatus.ACTIVE)
+						.noneMatch(arena -> arena.hasPlayer(player))) {
+					player.sendMessage(Utils.notify(language.getString("suicideActiveError")));
+					return true;
+				}
+
+				// Check for alive player
+				try {
+					if (Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(arena -> arena.hasPlayer(player))
+							.collect(Collectors.toList()).get(0).getPlayer(player).getStatus() != PlayerStatus.ALIVE) {
+						player.sendMessage(Utils.notify(language.getString("suicideError")));
+						return true;
+					}
+				} catch (PlayerNotFoundException err) {
+					player.sendMessage(Utils.notify(language.getString("suicideError")));
+					return true;
+				}
+
+				// Create a player death and make sure it gets detected
+				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+						Bukkit.getPluginManager().callEvent(new EntityDamageEvent(player,
+								EntityDamageEvent.DamageCause.SUICIDE, 99)));
 				return true;
 			}
 

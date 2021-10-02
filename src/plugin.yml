@@ -51,3 +51,6 @@ commands:
       description: Changes the plugin debug level
       usage: /vd debug
       permission: vd.admin
+    die:
+      description: Kills the player that initiates the command, if they are in an active game as an active player
+      usage: /vd die
