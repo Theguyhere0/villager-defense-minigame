@@ -308,6 +308,10 @@ public class Tasks {
 					Utils.giveItem(player.getPlayer(), GameItems.wolf(), null);
 				}
 
+				// Give Traders their gems
+				if (player.getKit().equals(Kit.trader().setKitLevel(1)))
+					player.addGems(200);
+
 				// Set health for people with giant kits
 				if (player.getKit().equals(Kit.giant().setKitLevel(1)))
 					Objects.requireNonNull(player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
