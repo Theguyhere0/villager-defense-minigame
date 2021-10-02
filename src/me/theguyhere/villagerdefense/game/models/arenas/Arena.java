@@ -1,20 +1,26 @@
 package me.theguyhere.villagerdefense.game.models.arenas;
 
+import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import me.theguyhere.villagerdefense.GUI.InventoryItems;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.GameEndEvent;
 import me.theguyhere.villagerdefense.events.WaveEndEvent;
+import me.theguyhere.villagerdefense.game.displays.ArenaBoard;
+import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.game.models.InventoryMeta;
 import me.theguyhere.villagerdefense.game.models.Tasks;
 import me.theguyhere.villagerdefense.game.models.players.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
+import net.minecraft.server.v1_16_R3.EntityTypes;
+import net.minecraft.server.v1_16_R3.EntityVillager;
 import org.bukkit.*;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -74,6 +80,10 @@ public class Arena {
     private Inventory communityChest;
     /** Time limit bar object.*/
     private BossBar timeLimitBar;
+    /** Portal object for the arena.*/
+    private Portal portal;
+    /** Arena scoreboard object for the arena.*/
+    private ArenaBoard arenaBoard;
 
     public Arena(Main plugin, int arena, Tasks task) {
         this.plugin = plugin;
@@ -85,6 +95,8 @@ public class Arena {
         villagers = 0;
         enemies = 0;
         status = ArenaStatus.WAITING;
+        refreshArenaBoard();
+        refreshPortal();
     }
 
     public int getArena() {
@@ -125,6 +137,7 @@ public class Arena {
     public void setDifficultyLabel(String label) {
         config.set(path + ".difficultyLabel", label);
         plugin.saveArenaData();
+        refreshPortal();
     }
 
     /**
@@ -354,7 +367,7 @@ public class Arena {
     }
 
     /**
-     * Retrieves the waiting music title of the arena into the arena file.
+     * Retrieves the waiting music title of the arena from the arena file.
      * @return Waiting music title.
      */
     public String getWaitingSoundName() {
@@ -403,52 +416,138 @@ public class Arena {
         plugin.saveArenaData();
     }
 
-    /**
-     * Retrieves the arena portal location from the arena file.
-     * @return Arena portal location.
-     */
-    public Location getPortal() {
-        return Utils.getConfigLocationNoPitch(plugin, "portal." + arena);
+    public Portal getPortal() {
+        return portal;
+    }
+
+    public Location getPortalLocation() {
+        return Utils.getConfigLocationNoPitch(plugin, path + ".portal");
     }
 
     /**
-     * Writes the new arena portal location into the arena file.
-     * @param location New arena portal location.
+     * Creates a new portal at the given location and deletes the old portal.
+     * @param location New location
      */
     public void setPortal(Location location) {
-        Utils.setConfigurationLocation(plugin, "portal." + arena, location);
-        plugin.saveArenaData();
+        // Save config location
+        Utils.setConfigurationLocation(plugin, path + ".portal", location);
+
+        // Recreate the portal
+        refreshPortal();
     }
 
     /**
-     * Centers the arena portal location along the x and z axis.
+     * Recreates the portal in game based on the location in the arena file.
+     */
+    public void refreshPortal() {
+        // Try recreating the portal
+        try {
+            Location location = Objects.requireNonNull(Utils.getConfigLocationNoPitch(plugin, path + ".portal"));
+            Hologram holo = Utils.addHolo(plugin, location, this, Portal.getHoloText(this));
+            EntityVillager npc = new EntityVillager(EntityTypes.VILLAGER, 
+                    ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
+            npc.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+
+            // Delete old board if needed and refresh NPC
+            if (portal != null) {
+                portal.setHologram(holo);
+                portal.setNPC(npc);
+            }
+
+            // Create a new portal from scratch
+            else portal = new Portal(npc, holo);
+        } catch (Exception e) {
+            Utils.debugError("Invalid location for arena board " + arena, 1);
+            Utils.debugInfo("Portal location data may be corrupt. If data cannot be manually corrected in " +
+                    "arenaData.yml, please delete the portal location data for arena " + arena + ".", 1);
+        }
+    }
+
+    /**
+     * Centers the portal location along the x and z axis.
      */
     public void centerPortal() {
-        Utils.centerConfigLocation(plugin, "portal." + arena);
+        // Center the location
+        Utils.centerConfigLocation(plugin, path + ".portal");
+
+        // Recreate the portal
+        refreshPortal();
     }
 
     /**
-     * Retrieves the arena leaderboard location from the arena file.
-     * @return Arena leaderboard location.
+     * Removes the portal from the game and from the arena file.
      */
-    public Location getArenaBoard() {
-        return Utils.getConfigLocationNoRotation(plugin, "arenaBoard." + arena);
+    public void removePortal() {
+        portal.getHologram().delete();
+        portal.removeNPCAll();
+        portal = null;
+        Utils.setConfigurationLocation(plugin, path + ".portal", null);
+        plugin.saveArenaData();
+        checkClose();
     }
 
+    public ArenaBoard getArenaBoard() {
+        return arenaBoard;
+    }
+
+    public Location getArenaBoardLocation() {
+        return Utils.getConfigLocationNoPitch(plugin, path + ".arenaBoard");
+    }
+    
     /**
-     * Writes the new arena leaderboard location into the arena file.
-     * @param location New arena leaderboard location.
+     * Creates a new arena leaderboard at the given location and deletes the old arena leaderboard.
+     * @param location New location
      */
     public void setArenaBoard(Location location) {
-        Utils.setConfigurationLocation(plugin, "arenaBoard." + arena, location);
-        plugin.saveArenaData();
+        // Save config location
+        Utils.setConfigurationLocation(plugin, path + ".arenaBoard", location);
+
+        // Recreate the board
+        refreshArenaBoard();
+    }
+
+    /**
+     * Recreates the arena leaderboard in game based on the location in the arena file.
+     */
+    public void refreshArenaBoard() {
+        // Try recreating the board
+        try {
+            Hologram holo = Utils.addHolo(plugin,
+                    Objects.requireNonNull(Utils.getConfigLocationNoPitch(plugin, path + ".arenaBoard")),
+                    this, ArenaBoard.getHoloText(this));
+            
+            // Delete old board if needed
+            if (arenaBoard != null)
+                arenaBoard.setHologram(holo);
+
+            // Create a new board from scratch
+            else arenaBoard = new ArenaBoard(holo);
+        } catch (Exception e) {
+            Utils.debugError("Invalid location for arena board " + arena, 1);
+            Utils.debugInfo("Arena board location data may be corrupt. If data cannot be manually corrected in " +
+                    "arenaData.yml, please delete the arena board location data for arena " + arena + ".", 1);
+        }
     }
 
     /**
      * Centers the arena leaderboard location along the x and z axis.
      */
     public void centerArenaBoard() {
-        Utils.centerConfigLocation(plugin, "arenaBoard." + arena);
+        // Center the location
+        Utils.centerConfigLocation(plugin, path + ".arenaBoard");
+
+        // Recreate the board
+        refreshArenaBoard();
+    }
+
+    /**
+     * Removes the arena board from the game and from the arena file.
+     */
+    public void removeArenaBoard() {
+        arenaBoard.getHologram().delete();
+        arenaBoard = null;
+        Utils.setConfigurationLocation(plugin, path + ".arenaBoard", null);
+        plugin.saveArenaData();
     }
 
     /**
@@ -610,10 +709,10 @@ public class Arena {
                                 Math.sin(var2 + Math.PI));
 
                         // Spawn particles
-                        getPlayerSpawn().getWorld().spawnParticle(Particle.FLAME, first, 0);
+                        Objects.requireNonNull(getPlayerSpawn().getWorld()).spawnParticle(Particle.FLAME, first, 0);
                         getPlayerSpawn().getWorld().spawnParticle(Particle.FLAME, second, 0);
                     } catch (Exception e) {
-                        plugin.debugError(String.format("Player spawn particle generation error for arena %d.", arena),
+                        Utils.debugError(String.format("Player spawn particle generation error for arena %d.", arena),
                                 2);
                     }
                 }
@@ -652,10 +751,11 @@ public class Arena {
                                     Math.sin(var + Math.PI));
 
                             // Spawn particles
-                            location.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, first, 0);
+                            Objects.requireNonNull(location.getWorld())
+                                    .spawnParticle(Particle.SOUL_FIRE_FLAME, first, 0);
                             location.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, second, 0);
                         } catch (Exception e) {
-                            plugin.debugError(String.format("Monster particle generation error for arena %d.", arena),
+                            Utils.debugError(String.format("Monster particle generation error for arena %d.", arena),
                                     2);
                         }
                     });
@@ -695,10 +795,11 @@ public class Arena {
                                     Math.sin(var + Math.PI));
 
                             // Spawn particles
-                            location.getWorld().spawnParticle(Particle.COMPOSTER, first, 0);
+                            Objects.requireNonNull(location.getWorld())
+                                    .spawnParticle(Particle.COMPOSTER, first, 0);
                             location.getWorld().spawnParticle(Particle.COMPOSTER, second, 0);
                         } catch (Exception e) {
-                            plugin.debugError(String.format("Villager particle generation error for arena %d.", arena),
+                            Utils.debugError(String.format("Villager particle generation error for arena %d.", arena),
                                     2);
                         }
                     });
@@ -888,19 +989,20 @@ public class Arena {
     public void setClosed(boolean closed) {
         config.set(path + ".closed", closed);
         plugin.saveArenaData();
+        refreshPortal();
     }
 
     public List<ArenaRecord> getArenaRecords() {
         List<ArenaRecord> arenaRecords = new ArrayList<>();
         if (config.contains(path + ".records"))
             try {
-                config.getConfigurationSection(path + ".records").getKeys(false)
+                Objects.requireNonNull(config.getConfigurationSection(path + ".records")).getKeys(false)
                         .forEach(index -> arenaRecords.add(new ArenaRecord(
                                 config.getInt(path + ".records." + index + ".wave"),
                                 config.getStringList(path + ".records." + index + ".players")
                         )));
             } catch (Exception e) {
-                plugin.debugError(
+                Utils.debugError(
                         String.format("Attempted to retrieve arena records for arena %d but found none.", arena),
                         2);
             }
@@ -956,6 +1058,7 @@ public class Arena {
 
     public void setStatus(ArenaStatus status) {
         this.status = status;
+        refreshPortal();
     }
 
     public boolean isSpawningMonsters() {
@@ -987,10 +1090,12 @@ public class Arena {
 
     public void incrementCurrentWave() {
         currentWave++;
+        refreshPortal();
     }
 
     public void resetCurrentWave() {
         currentWave = 0;
+        refreshPortal();
     }
 
     public int getVillagers() {
@@ -1175,13 +1280,15 @@ public class Arena {
 
         // Get items from stored inventory
         try {
-            config.getConfigurationSection(path + ".customShop").getKeys(false)
+            Objects.requireNonNull(config.getConfigurationSection(path + ".customShop")).getKeys(false)
                     .forEach(index -> {
                         try {
                             // Get raw item and data
-                            ItemStack item = config.getItemStack(path + ".customShop." + index).clone();
+                            ItemStack item = Objects.requireNonNull(
+                                    config.getItemStack(path + ".customShop." + index)).clone();
                             ItemMeta meta = item.getItemMeta();
                             List<String> lore = new ArrayList<>();
+                            assert meta != null;
                             String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
                             int price = Integer.parseInt(meta.getDisplayName().substring(meta.getDisplayName().length() - 5));
 
@@ -1189,6 +1296,7 @@ public class Arena {
                             meta.setDisplayName(Utils.format("&f" + name));
                             if (meta.hasLore())
                                 lore = meta.getLore();
+                            assert lore != null;
                             lore.add(Utils.format("&2Gems: &a" + price));
                             meta.setLore(lore);
                             item.setItemMeta(meta);
@@ -1196,14 +1304,14 @@ public class Arena {
                             // Set item into inventory
                             inv.setItem(Integer.parseInt(index), item);
                         } catch (Exception e) {
-                            plugin.debugError(
+                            Utils.debugError(
                                     String.format(
                                             "An error occurred retrieving an item from arena %d's custom shop.", arena),
                                     2);
                         }
                     });
         } catch (Exception e) {
-            plugin.debugError(
+            Utils.debugError(
                     String.format("Attempted to retrieve the custom shop inventory of arena %d but found none.", arena),
                     1);
         }
@@ -1225,13 +1333,15 @@ public class Arena {
 
         // Get items from stored inventory
         try {
-            config.getConfigurationSection(path + ".customShop").getKeys(false)
+            Objects.requireNonNull(config.getConfigurationSection(path + ".customShop")).getKeys(false)
                     .forEach(index -> {
                         try {
                             // Get raw item and data
-                            ItemStack item = config.getItemStack(path + ".customShop." + index).clone();
+                            ItemStack item = Objects.requireNonNull(
+                                    config.getItemStack(path + ".customShop." + index)).clone();
                             ItemMeta meta = item.getItemMeta();
                             List<String> lore = new ArrayList<>();
+                            assert meta != null;
                             String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
                             int price = Integer.parseInt(meta.getDisplayName().substring(meta.getDisplayName().length() - 5));
 
@@ -1239,6 +1349,7 @@ public class Arena {
                             meta.setDisplayName(Utils.format("&f" + name));
                             if (meta.hasLore())
                                 lore = meta.getLore();
+                            assert lore != null;
                             lore.add(Utils.format("&2Gems: &a" + price));
                             meta.setLore(lore);
                             item.setItemMeta(meta);
@@ -1246,14 +1357,14 @@ public class Arena {
                             // Set item into inventory
                             inv.setItem(Integer.parseInt(index), item);
                         } catch (Exception e) {
-                            plugin.debugError(
+                            Utils.debugError(
                                     String.format(
                                             "An error occurred retrieving an item from arena %d's custom shop.", arena),
                                     2);
                         }
                     });
         } catch (Exception e) {
-            plugin.debugError(
+            Utils.debugError(
                     String.format("Attempted to retrieve the custom shop inventory of arena %d but found none.", arena),
                     1);
         }
@@ -1279,13 +1390,15 @@ public class Arena {
 
         // Get items from stored inventory
         try {
-            config.getConfigurationSection(path + ".customShop").getKeys(false)
+            Objects.requireNonNull(config.getConfigurationSection(path + ".customShop")).getKeys(false)
                     .forEach(index -> {
                         try {
                             // Get raw item and data
-                            ItemStack item = config.getItemStack(path + ".customShop." + index).clone();
+                            ItemStack item = Objects.requireNonNull(
+                                    config.getItemStack(path + ".customShop." + index)).clone();
                             ItemMeta meta = item.getItemMeta();
                             List<String> lore = new ArrayList<>();
+                            assert meta != null;
                             String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
                             int price = Integer.parseInt(meta.getDisplayName().substring(meta.getDisplayName().length() - 5));
 
@@ -1293,6 +1406,7 @@ public class Arena {
                             meta.setDisplayName(Utils.format("&f" + name));
                             if (meta.hasLore())
                                 lore = meta.getLore();
+                            assert lore != null;
                             lore.add(Utils.format("&2Gems: &a" + price));
                             meta.setLore(lore);
                             item.setItemMeta(meta);
@@ -1300,14 +1414,14 @@ public class Arena {
                             // Set item into inventory
                             inv.setItem(Integer.parseInt(index), item);
                         } catch (Exception e) {
-                            plugin.debugError(
+                            Utils.debugError(
                                     String.format(
                                             "An error occurred retrieving an item from arena %d's custom shop.", arena),
                                     2);
                         }
                     });
         } catch (Exception e) {
-            plugin.debugError(
+            Utils.debugError(
                     String.format("Attempted to retrieve the custom shop inventory of arena %d but found none.", arena),
                     1);
         }
@@ -1325,10 +1439,11 @@ public class Arena {
     public void startTimeLimitBar() {
         try {
             timeLimitBar = Bukkit.createBossBar(Utils.format(
-                    String.format(plugin.getLanguageData().getString("timeBar"), getCurrentWave())),
+                    String.format(Objects.requireNonNull(plugin.getLanguageData().getString("timeBar")),
+                            getCurrentWave())),
                     BarColor.YELLOW, BarStyle.SOLID);
         } catch (Exception e) {
-            plugin.debugError("The active language file is missing text for the key 'timeBar'.", 1);
+            Utils.debugError("The active language file is missing text for the key 'timeBar'.", 1);
         }
     }
 
@@ -1380,13 +1495,13 @@ public class Arena {
      * Checks and closes an arena if the arena does not meet opening requirements.
      */
     public void checkClose() {
-        if (!plugin.getArenaData().contains("lobby") || getPortal() == null || getPlayerSpawn() == null ||
+        if (!plugin.getArenaData().contains("lobby") || getPortalLocation() == null || getPlayerSpawn() == null ||
                 getMonsterSpawns().stream().noneMatch(Objects::nonNull) ||
                 getVillagerSpawns().stream().noneMatch(Objects::nonNull) || !hasCustom() && !hasNormal() ||
                 getCorner1() == null || getCorner2() == null ||
                 !Objects.equals(getCorner1().getWorld(), getCorner2().getWorld())) {
             setClosed(true);
-            plugin.debugInfo(String.format("Arena %d did not meet opening requirements and was closed.", arena),
+            Utils.debugInfo(String.format("Arena %d did not meet opening requirements and was closed.", arena),
                     2);
         }
     }
@@ -1403,6 +1518,7 @@ public class Arena {
         setDifficultyMultiplier(arenaToCopy.getDifficultyMultiplier());
         setDynamicCount(arenaToCopy.hasDynamicCount());
         setDynamicDifficulty(arenaToCopy.hasDynamicDifficulty());
+        setLateArrival(arenaToCopy.hasLateArrival());
         setDynamicLimit(arenaToCopy.hasDynamicLimit());
         setDynamicPrices(arenaToCopy.hasDynamicPrices());
         setDifficultyLabel(arenaToCopy.getDifficultyLabel());
@@ -1423,16 +1539,17 @@ public class Arena {
         setVillagerParticles(arenaToCopy.hasVillagerParticles());
         if (config.contains("a" + arenaToCopy.getArena() + ".customShop"))
             try {
-                config.getConfigurationSection("a" + arenaToCopy.getArena() + ".customShop").getKeys(false)
+                Objects.requireNonNull(config.getConfigurationSection("a" + arenaToCopy.getArena() + ".customShop"))
+                        .getKeys(false)
                         .forEach(index -> config.set(path + ".customShop." + index,
                                 config.getItemStack("a" + arenaToCopy.getArena() + ".customShop." + index)));
             } catch (Exception e) {
-                plugin.debugError(
+                Utils.debugError(
                         String.format("Attempted to retrieve the custom shop inventory of arena %d but found none.",
                                 arena), 1);
             }
 
-        plugin.debugInfo(
+        Utils.debugInfo(
                 String.format("Copied the characteristics of arena %d to arena %d.", arenaToCopy.getArena(), arena),
                 2);
     }
@@ -1441,9 +1558,9 @@ public class Arena {
      * Removes all data of this arena from the arena file.
      */
     public void remove() {
+        removeArenaBoard();
+        removePortal();
         config.set(path, null);
-        setPortal(null);
-        setArenaBoard(null);
-        plugin.debugInfo(String.format("Removing arena %d.", arena), 1);
+        Utils.debugInfo(String.format("Removing arena %d.", arena), 1);
     }
 }

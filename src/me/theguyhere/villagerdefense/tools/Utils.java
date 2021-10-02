@@ -1,6 +1,9 @@
 package me.theguyhere.villagerdefense.tools;
 
+import com.gmail.filoghost.holographicdisplays.api.Hologram;
+import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import me.theguyhere.villagerdefense.Main;
+import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
@@ -13,6 +16,8 @@ import org.bukkit.potion.PotionData;
 import org.bukkit.util.BoundingBox;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("SpellCheckingInspection")
@@ -20,6 +25,8 @@ public class Utils {
     private static final int SECONDS_TO_TICKS = 20;
     private static final int MINUTES_TO_SECONDS = 60;
     private static final int SECONDS_TO_MILLIS = 1000;
+
+    private static Logger log = Logger.getLogger("Minecraft");
 
     /** Flags for creating normal items with enchants and/or lore.*/
     public static final boolean[] NORMAL_FLAGS = {false, false};
@@ -357,8 +364,6 @@ public class Utils {
     // Gets location data from a configuration path
     public static Location getConfigLocation(Main plugin, String path) {
         try {
-//            plugin.debugInfo(path + " : " + Bukkit.getWorld(plugin.getArenaData().getString(path + ".world")),
-//                    2);
             return new Location(
                 Bukkit.getWorld(plugin.getArenaData().getString(path + ".world")),
                 plugin.getArenaData().getDouble(path + ".x"),
@@ -368,7 +373,7 @@ public class Utils {
                 Float.parseFloat(plugin.getArenaData().get(path + ".pitch").toString())
             );
         } catch (Exception e) {
-            plugin.debugError("Error getting location " + path + " from yaml", 2);
+            debugError("Error getting location " + path + " from yaml", 2);
             return null;
         }
     }
@@ -377,6 +382,7 @@ public class Utils {
     public static Location getConfigLocationNoRotation(Main plugin, String path) {
         try {
             Location location = getConfigLocation(plugin, path);
+            assert location != null;
             location.setPitch(0);
             location.setYaw(0);
             return location;
@@ -416,15 +422,16 @@ public class Utils {
     public static List<Location> getConfigLocationList(Main plugin, String path) {
         List<Location> locations = new ArrayList<>();
         try {
-            plugin.getArenaData().getConfigurationSection(path).getKeys(false).forEach(num -> {
-                try {
-                    locations.add(getConfigLocationNoRotation(plugin, path + "." + num));
-                } catch (Exception e) {
-                    plugin.debugError("An error occurred retrieving a location from section " + path, 1);
-                }
-            });
+            Objects.requireNonNull(plugin.getArenaData().getConfigurationSection(path)).getKeys(false)
+                    .forEach(num -> {
+                        try {
+                            locations.add(getConfigLocationNoRotation(plugin, path + "." + num));
+                        } catch (Exception e) {
+                            debugError("An error occurred retrieving a location from section " + path, 1);
+                        }
+                    });
         } catch (Exception e) {
-            plugin.debugError("Section " + path + " is invalid.", 1);
+            debugError("Section " + path + " is invalid.", 1);
         }
         return locations;
     }
@@ -435,7 +442,7 @@ public class Utils {
 
         // Get all entities near spawn
         try {
-            ents = corner1.getWorld().getNearbyEntities(BoundingBox.of(corner1, corner2));
+            ents = Objects.requireNonNull(corner1.getWorld()).getNearbyEntities(BoundingBox.of(corner1, corner2));
         } catch (Exception e) {
             return;
         }
@@ -515,5 +522,27 @@ public class Utils {
         return player.getNearbyEntities(range, range, range).stream().filter(ent -> ent instanceof Monster ||
                 ent instanceof Slime || ent instanceof Hoglin || ent instanceof Phantom).map(ent -> (LivingEntity) ent)
                 .collect(Collectors.toList());
+    }
+
+    public static void debugError(String msg, int debugLevel) {
+        if (Main.getDebugLevel() >= debugLevel)
+            log.log(Level.WARNING,"[VillagerDefense] " + msg);
+    }
+
+    public static void debugInfo(String msg, int debugLevel) {
+        if (Main.getDebugLevel() >= debugLevel)
+            log.info("[VillagerDefense] " + msg);
+    }
+    
+    public static Hologram addHolo(Main plugin, Location location, Arena arena, String[] holoText) {
+        // Create hologram
+        Location newLocation = location.clone();
+        newLocation.setY(newLocation.getY() + 3);
+        Hologram holo = HologramsAPI.createHologram(plugin, newLocation);
+        holo.insertTextLine(0, holoText[0]);
+        for (int i = 1; i < holoText.length; i++)
+            holo.appendTextLine(holoText[i]);
+
+        return holo;
     }
 }

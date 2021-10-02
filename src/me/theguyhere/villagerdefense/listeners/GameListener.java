@@ -5,6 +5,7 @@ import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.GameEndEvent;
 import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.events.ReloadBoardsEvent;
+import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.game.models.GameItems;
 import me.theguyhere.villagerdefense.game.models.Mobs;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
@@ -51,7 +52,7 @@ public class GameListener implements Listener {
 		if (!ent.hasMetadata("VD"))
 			return;
 
-		Arena arena = plugin.getGame().arenas.get(ent.getMetadata("VD").get(0).asInt());
+		Arena arena = Game.arenas[ent.getMetadata("VD").get(0).asInt()];
 
 		// Arena enemies not part of an active arena
 		if (arena.getStatus() != ArenaStatus.ACTIVE) {
@@ -163,7 +164,7 @@ public class GameListener implements Listener {
 	// Stop automatic game mode switching between worlds
 	@EventHandler
 	public void onGameModeSwitch(PlayerGameModeChangeEvent e) {
-		if (plugin.getGame().arenas.stream().filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(e.getPlayer())) &&
+		if (Arrays.stream(Game.arenas).filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(e.getPlayer())) &&
 				e.getNewGameMode() == GameMode.SURVIVAL) e.setCancelled(true);
 	}
 
@@ -177,7 +178,7 @@ public class GameListener implements Listener {
 		if (!ent.hasMetadata("VD"))
 			return;
 
-		Arena arena = plugin.getGame().arenas.get(ent.getMetadata("VD").get(0).asInt());
+		Arena arena = Game.arenas[ent.getMetadata("VD").get(0).asInt()];
 
 		// Arena enemies not part of an active arena
 		if (arena.getStatus() != ArenaStatus.ACTIVE)
@@ -295,11 +296,11 @@ public class GameListener implements Listener {
 		Player player = (Player) e.getEntity();
 
 		// See if the player is in a game
-		if (plugin.getGame().arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+		if (Arrays.stream(Game.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
 			return;
 
 		// See if game is already in progress
-		if (plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+		if (Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0).getCurrentWave() != 0)
 			return;
 
@@ -345,12 +346,12 @@ public class GameListener implements Listener {
 		VDPlayer gamer;
 
 		// See if the player is in a game
-		if (plugin.getGame().arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+		if (Arrays.stream(Game.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
 			return;
 
 		// Attempt to get arena and player
 		try {
-			arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+			arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 					.collect(Collectors.toList()).get(0);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
@@ -373,19 +374,17 @@ public class GameListener implements Listener {
 		}
 		else item = player.getEquipment().getItemInMainHand();
 
-		Inventories inv = new Inventories(plugin);
-
 		// Open shop inventory
 		if (GameItems.shop().equals(item))
 			player.openInventory(Inventories.createShop(arena.getCurrentWave() / 10 + 1, arena));
 
 		// Open kit selection menu
 		else if (GameItems.kitSelector().equals(item))
-			player.openInventory(inv.createSelectKitsInventory(player, arena));
+			player.openInventory(Inventories.createSelectKitsInventory(plugin, player, arena));
 
 		// Open challenge selection menu
 		else if (GameItems.challengeSelector().equals(item))
-			player.openInventory(inv.createSelectChallengesInventory(gamer, arena));
+			player.openInventory(Inventories.createSelectChallengesInventory(gamer, arena));
 
 		// Make player leave
 		else if (GameItems.leave().equals(item))
@@ -408,7 +407,7 @@ public class GameListener implements Listener {
 		// Cancel damage to each other if they are in a game
 		if (ent instanceof Player && damager instanceof Player) {
 			Player player = (Player) ent;
-			if (plugin.getGame().arenas.stream().filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player)))
+			if (Arrays.stream(Game.arenas).filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player)))
 				e.setCancelled(true);
 		}
 
@@ -429,7 +428,7 @@ public class GameListener implements Listener {
 		else if (damager instanceof Projectile) {
 			if (ent instanceof Player && ((Projectile) damager).getShooter() instanceof Player) {
 				Player player = (Player) ent;
-				if (plugin.getGame().arenas.stream().filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player)))
+				if (Arrays.stream(Game.arenas).filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player)))
 					e.setCancelled(true);
 			}
 			if ((ent instanceof Villager || ent instanceof Wolf || ent instanceof IronGolem) &&
@@ -456,7 +455,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+			arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 					.collect(Collectors.toList()).get(0);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
@@ -493,10 +492,10 @@ public class GameListener implements Listener {
 			arena.getPlayers().forEach(fighter -> {
 				if (!fighter.getPlayer().getUniqueId().equals(player.getUniqueId()))
 					if (language.getString("death") == null) {
-						plugin.debugError("The language file is missing the attribute 'death'!", 0);
+						Utils.debugError("The language file is missing the attribute 'death'!", 0);
 					} else {
 						fighter.getPlayer().sendMessage(Utils.notify(String.format(
-								language.getString("death"), player.getName())));
+								Objects.requireNonNull(language.getString("death")), player.getName())));
 					}
 				if (arena.hasPlayerDeathSound())
 					fighter.getPlayer().playSound(arena.getPlayerSpawn(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10,
@@ -527,7 +526,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+			arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 					.collect(Collectors.toList()).get(0);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
@@ -541,7 +540,7 @@ public class GameListener implements Listener {
 			return;
 
 		// Ignore item shop
-		if (item.getItemMeta().getDisplayName().contains("Item Shop"))
+		if (Objects.requireNonNull(item.getItemMeta()).getDisplayName().contains("Item Shop"))
 			return;
 
 		// Calculate and give player gems
@@ -559,7 +558,8 @@ public class GameListener implements Listener {
 		e.setCancelled(true);
 		e.getItem().remove();
 		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(String.format(plugin.getLanguageData().getString("foundGems"), earned))));
+				Utils.format(String.format(Objects.requireNonNull(plugin.getLanguageData().getString("foundGems")), 
+						earned))));
 		if (arena.hasGemSound())
 			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, .5f, 0);
 
@@ -573,7 +573,7 @@ public class GameListener implements Listener {
 		plugin.savePlayerData();
 
 		// Update scoreboard
-		plugin.getGame().createBoard(gamer);
+		Game.createBoard(gamer);
 	}
 	
 	// Handle player death
@@ -592,7 +592,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+			arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 					.collect(Collectors.toList()).get(0);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
@@ -626,7 +626,7 @@ public class GameListener implements Listener {
 		arena.getPlayers().forEach(fighter -> {
 			if (!fighter.getPlayer().getUniqueId().equals(player.getUniqueId()))
 				if (language.getString("death") == null) {
-					plugin.debugError("The language file is missing the attribute 'death'!", 0);
+					Utils.debugError("The language file is missing the attribute 'death'!", 0);
 				} else {
 					fighter.getPlayer().sendMessage(Utils.notify(String.format(
 							language.getString("death"), player.getName())));
@@ -679,7 +679,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = plugin.getGame().arenas.stream().filter(Objects::nonNull)
+			arena = Arrays.stream(Game.arenas).filter(Objects::nonNull)
 					.filter(a -> a.getPlayers().stream().anyMatch(p -> p.getPlayer().equals(player)))
 					.collect(Collectors.toList()).get(0);
 			gamer = arena.getPlayer(player);
@@ -718,7 +718,7 @@ public class GameListener implements Listener {
 							plugin.savePlayerData();
 
 							// Update scoreboard
-							plugin.getGame().createBoard(vdPlayer);
+							Game.createBoard(vdPlayer);
 						});
 			} else {
 				int earned = r.nextInt((int) (50 * Math.pow(wave, .15)));
@@ -758,7 +758,7 @@ public class GameListener implements Listener {
 				plugin.savePlayerData();
 
 				// Update scoreboard
-				plugin.getGame().createBoard(gamer);
+				Game.createBoard(gamer);
 			}
 		}
 		if (!arena.hasExpDrop()) {
@@ -805,7 +805,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+			arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 					.collect(Collectors.toList()).get(0);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
@@ -1067,7 +1067,7 @@ public class GameListener implements Listener {
 			return;
 
 		// Check if player is playing in an arena
-		if (plugin.getGame().arenas.stream().filter(Objects::nonNull).anyMatch(a -> a.hasPlayer((Player) ((Wolf) ent).getOwner())))
+		if (Arrays.stream(Game.arenas).filter(Objects::nonNull).anyMatch(a -> a.hasPlayer((Player) ((Wolf) ent).getOwner())))
 			return;
 
 		e.setCancelled(true);
@@ -1079,10 +1079,10 @@ public class GameListener implements Listener {
 		Player player = e.getPlayer();
 
 		// Check if player is playing in an arena
-		if (plugin.getGame().arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+		if (Arrays.stream(Game.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
 			return;
 
-		Arena arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+		Arena arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0);
 
 		// Check if the arena has started
@@ -1104,14 +1104,14 @@ public class GameListener implements Listener {
 		Player player = e.getPlayer();
 
 		// Check if player is playing in an arena
-		if (plugin.getGame().arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+		if (Arrays.stream(Game.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
 			return;
 
 		// Exempt admins for testing purposes
-		if (plugin.getDebugLevel() >= 3 && player.hasPermission("vd.admin"))
+		if (Main.getDebugLevel() >= 3 && player.hasPermission("vd.admin"))
 			return;
 
-		Arena arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+		Arena arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0);
 		VDPlayer gamer;
 
@@ -1178,7 +1178,7 @@ public class GameListener implements Listener {
 		ItemStack item = e.getItemDrop().getItemStack();
 
 		// Check if player is in an arena
-		if (plugin.getGame().arenas.stream().filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player)))
+		if (Arrays.stream(Game.arenas).filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player)))
 			return;
 
 		// Check for standard game items item
@@ -1192,7 +1192,7 @@ public class GameListener implements Listener {
 		Player player = e.getPlayer();
 
 		// Check if player is playing in an arena
-		if (plugin.getGame().arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+		if (Arrays.stream(Game.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
 			return;
 
 		if (e.getItem().getType() == Material.POTION || e.getItem().getType() == Material.MILK_BUCKET) {
@@ -1216,7 +1216,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+			arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 					.collect(Collectors.toList()).get(0);
 			arena.getPlayer(player);
 		} catch (Exception err) {
@@ -1245,7 +1245,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+			arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 					.collect(Collectors.toList()).get(0);
 			arena.getPlayer(player);
 		} catch (Exception err) {

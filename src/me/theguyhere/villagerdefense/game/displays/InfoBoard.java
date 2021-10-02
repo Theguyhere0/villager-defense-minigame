@@ -21,8 +21,8 @@ public class InfoBoard {
 		try {
 			addHolo(player.getLocation(), slot);
 		} catch (Exception e) {
-			plugin.debugError("Invalid location for info board " + slot, 1);
-			plugin.debugInfo("Info board location data may be corrupt. If data cannot be manually corrected in " +
+			Utils.debugError("Invalid location for info board " + slot, 1);
+			Utils.debugInfo("Info board location data may be corrupt. If data cannot be manually corrected in " +
 					"arenaData.yml, please delete the location data for info board " + slot + ".", 1);
 		}
 
@@ -39,8 +39,8 @@ public class InfoBoard {
 			try {
 				addHolo(location, slot);
 			} catch (Exception e) {
-				plugin.debugError("Invalid location for info board " + slot, 1);
-				plugin.debugInfo("Info board location data may be corrupt. If data cannot be manually corrected in " +
+				Utils.debugError("Invalid location for info board " + slot, 1);
+				Utils.debugInfo("Info board location data may be corrupt. If data cannot be manually corrected in " +
 						"arenaData.yml, please delete the location data for info board " + slot + ".", 1);
 			}
 		}
@@ -78,8 +78,8 @@ public class InfoBoard {
 				try {
 					addHolo(Utils.getConfigLocationNoPitch(plugin, "infoBoard." + board), Integer.parseInt(board));
 				} catch (Exception e) {
-					plugin.debugError("Invalid location for info board " + board, 1);
-					plugin.debugInfo("Info board location data may be corrupt. If data cannot be manually " +
+					Utils.debugError("Invalid location for info board " + board, 1);
+					Utils.debugInfo("Info board location data may be corrupt. If data cannot be manually " +
 							"corrected in " +
 							"arenaData.yml, please delete the location data for info board " + board + ".", 1);
 				}

@@ -2,6 +2,8 @@ package me.theguyhere.villagerdefense.listeners;
 
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
+import me.theguyhere.villagerdefense.game.displays.Portal;
+import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -12,6 +14,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,7 +28,7 @@ public class JoinListener implements Listener {
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
-		plugin.getPortal().addJoinPacket(player);
+		Portal.addJoinPacket(player);
 		plugin.getReader().inject(player);
 
 		// Get list of loggers from data file
@@ -33,10 +36,10 @@ public class JoinListener implements Listener {
 
 		// Check if player is a logger
 		if (loggers.contains(player.getName())) {
-			plugin.debugInfo(player.getName() + " joined after logging mid-game.", 2);
+			Utils.debugInfo(player.getName() + " joined after logging mid-game.", 2);
 
 			// Teleport them back to lobby
-			Utils.teleAdventure(player, plugin.getGame().getLobby());
+			Utils.teleAdventure(player, Game.getLobby());
 			loggers.remove(player.getName());
 			plugin.getPlayerData().set("loggers", loggers);
 
@@ -50,7 +53,9 @@ public class JoinListener implements Listener {
 				plugin.getPlayerData().set(player.getName() + ".exp", null);
 			}
 			if (plugin.getPlayerData().contains(player.getName() + ".inventory")) {
-				plugin.getPlayerData().getConfigurationSection(player.getName() + ".inventory").getKeys(false)
+				Objects.requireNonNull(plugin.getPlayerData()
+								.getConfigurationSection(player.getName() + ".inventory"))
+						.getKeys(false)
 						.forEach(num -> player.getInventory().setItem(Integer.parseInt(num),
 								(ItemStack) plugin.getPlayerData().get(player.getName() + ".inventory." + num)));
 				plugin.getPlayerData().set(player.getName() + ".inventory", null);
@@ -66,7 +71,7 @@ public class JoinListener implements Listener {
 	
 	@EventHandler
 	public void onPortal(PlayerChangedWorldEvent e) {
-		plugin.getPortal().addJoinPacket(e.getPlayer());
+		Portal.addJoinPacket(e.getPlayer());
 	}
 	
 	@EventHandler
@@ -83,8 +88,8 @@ public class JoinListener implements Listener {
 		loggers.add(player.getName());
 
 		// Add to list of loggers if in a game
-		if (plugin.getGame().arenas.stream().filter(Objects::nonNull).anyMatch(arena -> arena.hasPlayer(player))) {
-			plugin.debugInfo(player.getName() + " logged out mid-game.", 2);
+		if (Arrays.stream(Game.arenas).filter(Objects::nonNull).anyMatch(arena -> arena.hasPlayer(player))) {
+			Utils.debugInfo(player.getName() + " logged out mid-game.", 2);
 			plugin.getPlayerData().set("loggers", loggers);
 			plugin.savePlayerData();
 		}

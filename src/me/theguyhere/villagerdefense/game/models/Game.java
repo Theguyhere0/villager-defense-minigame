@@ -1,48 +1,51 @@
 package me.theguyhere.villagerdefense.game.models;
 
 import me.theguyhere.villagerdefense.Main;
+import me.theguyhere.villagerdefense.game.displays.InfoBoard;
+import me.theguyhere.villagerdefense.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Game {
-	private final Main plugin;
-	// Tracks active arenas and their related stats
-	public List<Arena> arenas = new ArrayList<>(Collections.nCopies(45, null));
-	private Location lobby;
+	// Tracks arenas, infoboards, and leaderboards for the game
+	public static Arena[] arenas = new Arena[45];
+	public static InfoBoard[] infoBoards = new InfoBoard[9];
+	public static Leaderboard[] leaderboards = new Leaderboard[5];
 
-	public Game(Main plugin) {
-		this.plugin = plugin;
-		plugin.getArenaData().getConfigurationSection("").getKeys(false).forEach(path -> {
-			if (path.charAt(0) == 'a' && path.length() < 4)
-				arenas.set(Integer.parseInt(path.substring(1)), new Arena(plugin, Integer.parseInt(path.substring(1)),
-						new Tasks(plugin, Integer.parseInt(path.substring(1)))));
-		});
-		lobby = Utils.getConfigLocation(plugin, "lobby");
-	}
+	private static Location lobby;
 
-	public Location getLobby() {
+	public static Location getLobby() {
 		return lobby;
 	}
 
-	public void reloadLobby() {
+	public static void setLobby(Location lobby) {
+		Game.lobby = lobby;
+	}
+
+	public static void reloadLobby(Main plugin) {
 		lobby = Utils.getConfigLocation(plugin, "lobby");
 	}
 
-	// Creates a game board for the player
-	public void createBoard(VDPlayer player) {
+	/**
+	 * Creates a scoreboard for a player.
+	 * @param player Player to give a scoreboard.
+	 */
+	public static void createBoard(VDPlayer player) {
+		// Create scoreboard manager and check that it isn't null
 		ScoreboardManager manager = Bukkit.getScoreboardManager();
+		assert manager != null;
+
 		Scoreboard board = manager.getNewScoreboard();
-		Arena arena = arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+		Arena arena = Arrays.stream(arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0);
 
 		// Create score board
@@ -86,5 +89,13 @@ public class Game {
 		score.setScore(0);
 
 		player.getPlayer().setScoreboard(board);
+	}
+
+	/**
+	 * Wipes all mobs in all valid arenas
+	 */
+	public static void cleanAll() {
+		Arrays.stream(arenas).filter(Objects::nonNull).filter(arena -> !arena.isClosed())
+				.forEach(arena -> Utils.clear(arena.getCorner1(), arena.getCorner2()));
 	}
 }

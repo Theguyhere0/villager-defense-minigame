@@ -1,6 +1,10 @@
 package me.theguyhere.villagerdefense.listeners;
 
 import me.theguyhere.villagerdefense.Main;
+import me.theguyhere.villagerdefense.game.displays.ArenaBoard;
+import me.theguyhere.villagerdefense.game.displays.Portal;
+import me.theguyhere.villagerdefense.game.models.Game;
+import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldLoadEvent;
@@ -14,11 +18,11 @@ public class WorldListener implements Listener {
 
     @EventHandler
     public void onWorldLoadEvent(WorldLoadEvent e) {
-        plugin.debugInfo("Loading world: " + e.getWorld(), 2);
-        plugin.getGame().reloadLobby();
-        plugin.loadPortals();
+        Utils.debugInfo("Loading world: " + e.getWorld(), 2);
+        Game.reloadLobby(plugin);
         plugin.getLeaderboard().loadLeaderboards();
         plugin.getInfoBoard().loadInfoBoards();
-        plugin.getArenaBoard().loadArenaBoards();
+        ArenaBoard.refreshArenaBoards();
+        Portal.refreshPortals();
     }
 }

@@ -5,9 +5,10 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.LeftClickNPCEvent;
-import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.events.RightClickNPCEvent;
-import net.minecraft.server.v1_16_R3.EntityVillager;
+import me.theguyhere.villagerdefense.game.displays.Portal;
+import me.theguyhere.villagerdefense.game.models.Game;
+import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import net.minecraft.server.v1_16_R3.Packet;
 import net.minecraft.server.v1_16_R3.PacketPlayInUseEntity;
 import org.bukkit.Bukkit;
@@ -15,18 +16,9 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class PacketReader {
-	private final Portal portal;
-	
-	public PacketReader(Portal portal) {
-		this.portal = portal;
-	}
-	
 	Channel channel;
 	public static Map<UUID, Channel> channels = new HashMap<>();
 	
@@ -62,10 +54,12 @@ public class PacketReader {
 			int id = (int) getValue(packet, "a");
 
 			if (getValue(packet, "action").toString().equalsIgnoreCase("ATTACK")) {
-				for (EntityVillager npc : portal.getNPCs())
-					if (npc != null && npc.getId() == id)
-						Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
-								Bukkit.getPluginManager().callEvent(new LeftClickNPCEvent(player, npc)));
+				Arrays.stream(Game.arenas).filter(Objects::nonNull).map(Arena::getPortal).filter(Objects::nonNull)
+						.map(Portal::getNPC).forEach(npc -> {
+							if (npc != null && npc.getId() == id)
+								Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
+										Bukkit.getPluginManager().callEvent(new LeftClickNPCEvent(player, npc)));
+						});
 				return;
 			}
 			if (getValue(packet, "d").toString().equalsIgnoreCase("OFF_HAND"))
@@ -73,10 +67,12 @@ public class PacketReader {
 			if (getValue(packet, "action").toString().equalsIgnoreCase("INTERACT_AT"))
 				return;
 			if (getValue(packet, "action").toString().equalsIgnoreCase("INTERACT"))
-				for (EntityVillager npc : portal.getNPCs())
-					if (npc != null && npc.getId() == id)
-						Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
-								Bukkit.getPluginManager().callEvent(new RightClickNPCEvent(player, npc)), 0);
+				Arrays.stream(Game.arenas).filter(Objects::nonNull).map(Arena::getPortal).filter(Objects::nonNull)
+						.map(Portal::getNPC).forEach(npc -> {
+							if (npc != null && npc.getId() == id)
+								Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
+										Bukkit.getPluginManager().callEvent(new RightClickNPCEvent(player, npc)));
+						});
 		}
 	}
 

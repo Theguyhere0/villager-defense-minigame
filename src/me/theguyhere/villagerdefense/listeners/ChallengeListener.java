@@ -1,8 +1,8 @@
 package me.theguyhere.villagerdefense.listeners;
 
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.events.WaveEndEvent;
 import me.theguyhere.villagerdefense.game.models.Challenge;
+import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.game.models.GameItems;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
@@ -17,8 +17,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerStatisticIncrementEvent;
@@ -26,6 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -48,7 +47,7 @@ public class ChallengeListener implements Listener {
 
         // Attempt to get arena and player
         try {
-            gamer = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+            gamer = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
                     .collect(Collectors.toList()).get(0).getPlayer(player);
         } catch (Exception err) {
             return;
@@ -107,7 +106,7 @@ public class ChallengeListener implements Listener {
 
         // Attempt to get player
         try {
-            gamer = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+            gamer = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
                     .collect(Collectors.toList()).get(0).getPlayer(player);
         } catch (Exception err) {
             return;
@@ -142,7 +141,7 @@ public class ChallengeListener implements Listener {
 
             // Attempt to get player
             try {
-                gamer = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+                gamer = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
                         .collect(Collectors.toList()).get(0).getPlayer(player);
             } catch (Exception err) {
                 return;
@@ -170,7 +169,7 @@ public class ChallengeListener implements Listener {
 
             // Attempt to get player
             try {
-                gamer = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+                gamer = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
                         .collect(Collectors.toList()).get(0).getPlayer(player);
             } catch (Exception err) {
                 return;
@@ -196,7 +195,7 @@ public class ChallengeListener implements Listener {
 
         // Attempt to get player
         try {
-            gamer = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+            gamer = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
                     .collect(Collectors.toList()).get(0).getPlayer(player);
         } catch (Exception err) {
             return;
@@ -222,7 +221,7 @@ public class ChallengeListener implements Listener {
 
         // Attempt to get arena and player
         try {
-            gamer = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+            gamer = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
                     .collect(Collectors.toList()).get(0).getPlayer(player);
         } catch (Exception err) {
             return;

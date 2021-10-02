@@ -50,7 +50,7 @@ public class AbilityListener implements Listener {
 
         // Attempt to get arena and player
         try {
-            arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+            arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
                     .collect(Collectors.toList()).get(0);
             gamer = arena.getPlayer(player);
         } catch (Exception err) {
@@ -70,7 +70,7 @@ public class AbilityListener implements Listener {
             return;
 
         // See if the player is in a game
-        if (plugin.getGame().arenas.stream().filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+        if (Arrays.stream(Game.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
             return;
 
         // Ensure cooldown is initialized
@@ -439,7 +439,7 @@ public class AbilityListener implements Listener {
 
         // Attempt to get arena and player
         try {
-            arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+            arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
                     .collect(Collectors.toList()).get(0);
             gamer = arena.getPlayer(player);
         } catch (Exception err) {
@@ -526,7 +526,7 @@ public class AbilityListener implements Listener {
         Player player = e.getPlayer();
 
         // Check if player is in a game
-        if (plugin.getGame().arenas.stream().filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player)))
+        if (Arrays.stream(Game.arenas).filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player)))
             return;
 
         // Ignore creative and spectator mode players

@@ -1,7 +1,10 @@
 package me.theguyhere.villagerdefense;
 
+import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.events.GameEndEvent;
 import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
+import me.theguyhere.villagerdefense.game.displays.Portal;
+import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.game.models.Tasks;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
@@ -12,13 +15,16 @@ import me.theguyhere.villagerdefense.tools.Utils;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -30,49 +36,66 @@ public class Commands implements CommandExecutor {
 		this.plugin = plugin;
 	}
 	
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, String label, String[] args) {
 		if (label.equalsIgnoreCase("vd")) {
 			FileConfiguration language = plugin.getLanguageData();
 
-			// Check for player executing command
-			if (!(sender instanceof Player)) {
-				sender.sendMessage("Bad console!");
-				return true;
-			}
-			
-			Player player = (Player) sender;
+			Player player;
+
+			if (sender instanceof Player)
+				player = (Player) sender;
+			else player = null;
 
 			// No arguments
 			if (args.length == 0) {
-				player.sendMessage(Utils.notify(language.getString("commandError")));
+				if (player != null)
+					player.sendMessage(Utils.notify(language.getString("commandError")));
+				else Utils.debugError("Invalid command. Use 'vd help' for more info.",0);
 				return true;
 			}
 
 			// Admin panel
 			if (args[0].equalsIgnoreCase("admin")) {
+				// Check for player executing command
+				if (player == null) {
+					sender.sendMessage("Bad console!");
+					return true;
+				}
+
 				// Check for permission to use the command
 				if (!player.hasPermission("vd.use")) {
 					player.sendMessage(Utils.notify(language.getString("permissionError")));
 					return true;
 				}
 
-				player.openInventory(plugin.getInventories().createArenasInventory());
+				player.openInventory(Inventories.createArenasInventory());
 				return true;
 			}
 			
 			// Redirects to wiki for help
 			if (args[0].equalsIgnoreCase("help")) {
-				player.sendMessage(Utils.notify(language.getString("info")));
-				TextComponent message = new TextComponent("Visit the wiki!");
-				message.setBold(true);
-				message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,
-						"https://github.com/Theguyhere0/villager-defense-minigame/wiki"));
-				player.spigot().sendMessage(message);
+				if (player != null) {
+					player.sendMessage(Utils.notify(language.getString("info")));
+					TextComponent message = new TextComponent("Visit the wiki!");
+					message.setBold(true);
+					message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,
+							"https://github.com/Theguyhere0/villager-defense-minigame/wiki"));
+					player.spigot().sendMessage(message);
+
+				} else Utils.debugInfo(
+						"Visit the wiki: https://github.com/Theguyhere0/villager-defense-minigame/wiki",
+						0);
 				return true;
 			}
 			
 			// Player leaves a game
 			if (args[0].equalsIgnoreCase("leave")) {
+				// Check for player executing command
+				if (player == null) {
+					sender.sendMessage("Bad console!");
+					return true;
+				}
+
 				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 						Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player)));
 				return true;
@@ -80,15 +103,22 @@ public class Commands implements CommandExecutor {
 
 			// Player checks stats
 			if (args[0].equalsIgnoreCase("stats")) {
+				// Check for player executing command
+				if (player == null) {
+					sender.sendMessage("Bad console!");
+					return true;
+				}
+
 				if (args.length == 1)
-					player.openInventory(plugin.getInventories().createPlayerStatsInventory(player.getName()));
+					player.openInventory(Inventories.createPlayerStatsInventory(plugin, player.getName()));
 				else if (plugin.getPlayerData().contains(args[1]))
-					player.openInventory(plugin.getInventories().createPlayerStatsInventory(args[1]));
+					player.openInventory(Inventories.createPlayerStatsInventory(plugin, args[1]));
 				else {
 					try {
-						player.sendMessage(Utils.notify(String.format(language.getString("noStats"), args[1])));
+						player.sendMessage(Utils.notify(
+								String.format(Objects.requireNonNull(language.getString("noStats")), args[1])));
 					} catch (Exception e) {
-						plugin.debugError("The language file is missing the attribute 'noStats'!", 1);
+						Utils.debugError("The language file is missing the attribute 'noStats'!", 1);
 					}
 				}
 				return true;
@@ -96,19 +126,32 @@ public class Commands implements CommandExecutor {
 
 			// Player checks kits
 			if (args[0].equalsIgnoreCase("kits")) {
-				player.openInventory(plugin.getInventories().createPlayerKitsInventory(player.getName(), player.getName()));
+				// Check for player executing command
+				if (player == null) {
+					sender.sendMessage("Bad console!");
+					return true;
+				}
+
+				player.openInventory(Inventories.createPlayerKitsInventory(plugin, player.getName(), player.getName()));
 				return true;
 			}
 
 			// Player joins as phantom
 			if (args[0].equalsIgnoreCase("join")) {
+				// Check for player executing command
+				if (player == null) {
+					sender.sendMessage("Bad console!");
+					return true;
+				}
+
 				FileConfiguration playerData = plugin.getPlayerData();
 				Arena arena;
 				VDPlayer gamer;
 
 				// Attempt to get arena and player
 				try {
-					arena = plugin.getGame().arenas.stream().filter(Objects::nonNull).filter(arena1 -> arena1.hasPlayer(player))
+					arena = Arrays.stream(Game.arenas).filter(Objects::nonNull)
+							.filter(arena1 -> arena1.hasPlayer(player))
 							.collect(Collectors.toList()).get(0);
 					gamer = arena.getPlayer(player);
 				} catch (Exception err) {
@@ -145,7 +188,7 @@ public class Commands implements CommandExecutor {
 				Utils.teleAdventure(player, arena.getPlayerSpawn());
 				gamer.setStatus(PlayerStatus.ALIVE);
 				arena.getTask().giveItems(gamer);
-				plugin.getGame().createBoard(gamer);
+				Game.createBoard(gamer);
 				gamer.setJoinedWave(arena.getCurrentWave());
 				gamer.setKit(Kit.phantom());
 				player.closeInventory();
@@ -155,20 +198,24 @@ public class Commands implements CommandExecutor {
 			// Change crystal balance
 			if (args[0].equalsIgnoreCase("crystals")) {
 				// Check for permission to use the command
-				if (!player.hasPermission("vd.crystals")) {
+				if (player != null && !player.hasPermission("vd.crystals")) {
 					player.sendMessage(Utils.notify(language.getString("permissionError")));
 					return true;
 				}
 
 				// Check for valid command format
 				if (args.length != 3) {
-					player.sendMessage(Utils.notify("&cCommand format: /vd crystals [player] [change amount]"));
+					if (player != null)
+						player.sendMessage(Utils.notify("&cCommand format: /vd crystals [player] [change amount]"));
+					else Utils.debugError("Command format: 'vd crystals [player] [change amount]'", 0);
 					return true;
 				}
 
 				// Check for valid player
 				if (!plugin.getPlayerData().contains(args[1])) {
-					player.sendMessage(Utils.notify("&cInvalid player!"));
+					if (player != null)
+						player.sendMessage(Utils.notify("&cInvalid player!"));
+					else Utils.debugError("Invalid player!", 0);
 					return true;
 				}
 
@@ -178,11 +225,16 @@ public class Commands implements CommandExecutor {
 					plugin.getPlayerData().set(args[1] + ".crystalBalance",
 							Math.max(plugin.getPlayerData().getInt(args[1] + ".crystalBalance") + amount, 0));
 					plugin.savePlayerData();
-					player.sendMessage(Utils.notify("&a" + args[1] +"'s crystal balance was set to " +
-							plugin.getPlayerData().getInt(args[1] + ".crystalBalance")));
+					if (player != null)
+						player.sendMessage(Utils.notify("&a" + args[1] +"'s crystal balance was set to " +
+								plugin.getPlayerData().getInt(args[1] + ".crystalBalance")));
+					else Utils.debugInfo(args[1] +"'s crystal balance was set to " +
+							plugin.getPlayerData().getInt(args[1] + ".crystalBalance"), 0);
 					return true;
 				} catch (Exception e) {
-					player.sendMessage(Utils.notify("&cAmount must be an integer!"));
+					if (player != null)
+						player.sendMessage(Utils.notify("&cAmount must be an integer!"));
+					else Utils.debugError("Amount must be an integer!", 0);
 					return true;
 				}
 			}
@@ -191,6 +243,12 @@ public class Commands implements CommandExecutor {
 			if (args[0].equalsIgnoreCase("start")) {
 				// Start current arena
 				if (args.length == 1) {
+					// Check for player executing command
+					if (player == null) {
+						sender.sendMessage("Bad console!");
+						return true;
+					}
+
 					// Check for permission to use the command
 					if (!player.hasPermission("vd.start")) {
 						player.sendMessage(Utils.notify(language.getString("permissionError")));
@@ -202,8 +260,9 @@ public class Commands implements CommandExecutor {
 
 					// Attempt to get arena and player
 					try {
-						arena = plugin.getGame().arenas.stream().filter(Objects::nonNull)
-								.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
+						arena = Arrays.stream(Game.arenas).filter(Objects::nonNull)
+								.filter(arena1 -> arena1.hasPlayer(player))
+								.collect(Collectors.toList()).get(0);
 						gamer = arena.getPlayer(player);
 					} catch (Exception e) {
 						player.sendMessage(Utils.notify(language.getString("forceStartError1")));
@@ -249,7 +308,7 @@ public class Commands implements CommandExecutor {
 				// Start specific arena
 				else {
 					// Check for permission to use the command
-					if (!player.hasPermission("vd.admin")) {
+					if (player != null && !player.hasPermission("vd.admin")) {
 						player.sendMessage(Utils.notify(language.getString("permissionError")));
 						return true;
 					}
@@ -259,25 +318,31 @@ public class Commands implements CommandExecutor {
 						name.append(" ").append(args[i + 2]);
 
 					// Check if this arena exists
-					if (plugin.getGame().arenas.stream().filter(Objects::nonNull)
+					if (Arrays.stream(Game.arenas).filter(Objects::nonNull)
 							.noneMatch(arena -> arena.getName().equals(name.toString()))) {
-						player.sendMessage(Utils.notify("&cNo arena with this name exists!"));
+						if (player != null)
+							player.sendMessage(Utils.notify("&cNo arena with this name exists!"));
+						else Utils.debugError("No arena with this name exists!", 0);
 						return true;
 					}
 
-					Arena arena = plugin.getGame().arenas.stream().filter(Objects::nonNull)
-							.filter(arena1 -> arena1.getName().equals(name.toString()))
+					Arena arena = Arrays.stream(Game.arenas).filter(Objects::nonNull)
+							.filter(arena1 -> arena1.hasPlayer(player))
 							.collect(Collectors.toList()).get(0);
 
 					// Check if arena already started
 					if (arena.getStatus() != ArenaStatus.WAITING) {
-						player.sendMessage(Utils.notify(language.getString("forceStartError3")));
+						if (player != null)
+							player.sendMessage(Utils.notify(language.getString("forceStartError3")));
+						else Utils.debugError("The arena already has a game in progress!", 0);
 						return true;
 					}
 
 					// Check if there is at least 1 player
 					if (arena.getActiveCount() == 0) {
-						player.sendMessage(Utils.notify("&cThe arena needs at least 1 player to start!"));
+						if (player != null)
+							player.sendMessage(Utils.notify("&cThe arena needs at least 1 player to start!"));
+						else Utils.debugError("The arena needs at least 1 player to start!", 0);
 						return true;
 					}
 
@@ -288,7 +353,9 @@ public class Commands implements CommandExecutor {
 					// Bring game to quick start if not already
 					if (tasks.containsKey(task.full10) || tasks.containsKey(task.sec10) &&
 							!scheduler.isQueued(tasks.get(task.sec10))) {
-						player.sendMessage(Utils.notify(language.getString("forceStartError4")));
+						if (player != null)
+							player.sendMessage(Utils.notify(language.getString("forceStartError4")));
+						else Utils.debugError("The game is already starting soon!", 0);
 						return true;
 					} else {
 						// Remove all tasks
@@ -302,6 +369,9 @@ public class Commands implements CommandExecutor {
 								scheduler.scheduleSyncDelayedTask(plugin, task.sec5, Utils.secondsToTicks(5)));
 						tasks.put(task.start,
 								scheduler.scheduleSyncDelayedTask(plugin, task.start, Utils.secondsToTicks(10)));
+
+						// Notify console
+						Utils.debugInfo("Arena " + arena.getArena() + " was force started.", 1);
 					}
 				}
 
@@ -311,14 +381,16 @@ public class Commands implements CommandExecutor {
 			// Force end
 			if (args[0].equalsIgnoreCase("end")) {
 				// Check for permission to use the command
-				if (!player.hasPermission("vd.admin")) {
+				if (player != null && !player.hasPermission("vd.admin")) {
 					player.sendMessage(Utils.notify(language.getString("permissionError")));
 					return true;
 				}
 
 				// Check for valid command format
 				if (args.length < 2) {
-					player.sendMessage(Utils.notify("&cCommand format: /vd end [arena name]"));
+					if (player != null)
+						player.sendMessage(Utils.notify("&cCommand format: /vd end [arena name]"));
+					else Utils.debugError("Command format: 'vd end [arena name]'", 0);
 					return true;
 				}
 
@@ -327,36 +399,54 @@ public class Commands implements CommandExecutor {
 					name.append(" ").append(args[i + 2]);
 
 				// Check if this arena exists
-				if (plugin.getGame().arenas.stream().filter(Objects::nonNull)
+				if (Arrays.stream(Game.arenas).filter(Objects::nonNull)
 						.noneMatch(arena -> arena.getName().equals(name.toString()))) {
-					player.sendMessage(Utils.notify("&cNo arena with this name exists!"));
+					if (player != null)
+						player.sendMessage(Utils.notify("&cNo arena with this name exists!"));
+					else Utils.debugError("No arena with this name exists!", 0);
 					return true;
 				}
 
-				Arena arena = plugin.getGame().arenas.stream().filter(Objects::nonNull)
-						.filter(arena1 -> arena1.getName().equals(name.toString())).collect(Collectors.toList()).get(0);
+				Arena arena = Arrays.stream(Game.arenas).filter(Objects::nonNull)
+						.filter(arena1 -> arena1.hasPlayer(player))
+						.collect(Collectors.toList()).get(0);
 
 				// Check if arena has a game in progress
 				if (arena.getStatus() != ArenaStatus.ACTIVE && arena.getStatus() != ArenaStatus.ENDING) {
-					player.sendMessage(Utils.notify("&cNo game to end!"));
+					if (player != null)
+						player.sendMessage(Utils.notify("&cNo game to end!"));
+					else Utils.debugError("No game to end!", 0);
 					return true;
 				}
 
 				// Check if game is about to end
 				if (arena.getStatus() == ArenaStatus.ENDING) {
-					player.sendMessage(Utils.notify("&cGame about to end!"));
+					if (player != null)
+						player.sendMessage(Utils.notify("&cGame about to end!"));
+					else Utils.debugError("Game about to end!", 0);
 					return true;
 				}
 
+				// Force end
 				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 						Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
+
+				// Notify console
+				Utils.debugInfo("Arena " + arena.getArena() + " was force ended.", 1);
+
 				return true;
 			}
 
 			// Force delay start
 			if (args[0].equalsIgnoreCase("delay")) {
-				// Start current arena
+				// Delay current arena
 				if (args.length == 1) {
+					// Check for player executing command
+					if (player == null) {
+						sender.sendMessage("Bad console!");
+						return true;
+					}
+
 					// Check for permission to use the command
 					if (!player.hasPermission("vd.start")) {
 						player.sendMessage(Utils.notify(language.getString("permissionError")));
@@ -367,8 +457,9 @@ public class Commands implements CommandExecutor {
 
 					// Attempt to get arena
 					try {
-						arena = plugin.getGame().arenas.stream().filter(Objects::nonNull)
-								.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
+						arena = Arrays.stream(Game.arenas).filter(Objects::nonNull)
+								.filter(arena1 -> arena1.hasPlayer(player))
+								.collect(Collectors.toList()).get(0);
 					} catch (Exception e) {
 						player.sendMessage(Utils.notify(language.getString("forceStartError1")));
 						return true;
@@ -402,10 +493,10 @@ public class Commands implements CommandExecutor {
 							Utils.secondsToTicks(Utils.minutesToSeconds(2))));
 				}
 
-				// Start specific arena
+				// Delay specific arena
 				else {
 					// Check for permission to use the command
-					if (!player.hasPermission("vd.admin")) {
+					if (player != null && !player.hasPermission("vd.admin")) {
 						player.sendMessage(Utils.notify(language.getString("permissionError")));
 						return true;
 					}
@@ -415,25 +506,31 @@ public class Commands implements CommandExecutor {
 						name.append(" ").append(args[i + 2]);
 
 					// Check if this arena exists
-					if (plugin.getGame().arenas.stream().filter(Objects::nonNull)
+					if (Arrays.stream(Game.arenas).filter(Objects::nonNull)
 							.noneMatch(arena -> arena.getName().equals(name.toString()))) {
-						player.sendMessage(Utils.notify("&cNo arena with this name exists!"));
+						if (player != null)
+							player.sendMessage(Utils.notify("&cNo arena with this name exists!"));
+						else Utils.debugError("No arena with this name exists!", 0);
 						return true;
 					}
 
-					Arena arena = plugin.getGame().arenas.stream().filter(Objects::nonNull)
-							.filter(arena1 -> arena1.getName().equals(name.toString()))
+					Arena arena = Arrays.stream(Game.arenas).filter(Objects::nonNull)
+							.filter(arena1 -> arena1.hasPlayer(player))
 							.collect(Collectors.toList()).get(0);
 
 					// Check if arena already started
 					if (arena.getStatus() != ArenaStatus.WAITING) {
-						player.sendMessage(Utils.notify(language.getString("forceStartError3")));
+						if (player != null)
+							player.sendMessage(Utils.notify(language.getString("forceStartError3")));
+						else Utils.debugError("The arena already has a game in progress!", 0);
 						return true;
 					}
 
 					// Check if there is at least 1 player
 					if (arena.getActiveCount() == 0) {
-						player.sendMessage(Utils.notify("&cThe arena has no players!"));
+						if (player != null)
+							player.sendMessage(Utils.notify("&cThe arena has no players!"));
+						else Utils.debugError("The arena has no players!", 0);
 						return true;
 					}
 
@@ -457,6 +554,9 @@ public class Commands implements CommandExecutor {
 							Utils.secondsToTicks(Utils.minutesToSeconds(2) - 5)));
 					tasks.put(task.start, scheduler.scheduleSyncDelayedTask(plugin, task.start,
 							Utils.secondsToTicks(Utils.minutesToSeconds(2))));
+
+					// Notify console
+					Utils.debugInfo("Arena " + arena.getArena() + " was delayed.", 1);
 				}
 
 				return true;
@@ -467,28 +567,76 @@ public class Commands implements CommandExecutor {
 				boolean fixed = false;
 
 				// Check for permission to use the command
-				if (!player.hasPermission("vd.admin")) {
+				if (player != null && !player.hasPermission("vd.admin")) {
 					player.sendMessage(Utils.notify(language.getString("permissionError")));
 					return true;
 				}
 
 				// Check for correct format
 				if (args.length > 1) {
-					player.sendMessage(Utils.notify("&cCommand format: /vd fix"));
+					if (player != null)
+						player.sendMessage(Utils.notify("&cCommand format: /vd fix"));
+					else Utils.debugError("Command format: 'vd fix'", 0);
 					return true;
 				}
 
 				// Check if plugin.yml is outdated
 				if (plugin.getConfig().getInt("version") < plugin.configVersion)
-					player.sendMessage(Utils.notify("&cplugin.yml must be updated manually."));
+					if (player != null)
+						player.sendMessage(Utils.notify("&cplugin.yml must be updated manually."));
+					else Utils.debugError("plugin.yml must be updated manually.", 0);
 
 				// Check if arenaData.yml is outdated
-				if (plugin.getConfig().getInt("arenaData") < plugin.arenaDataVersion)
-					player.sendMessage(Utils.notify("&carenaData.yml must be updated manually."));
+				if (plugin.getConfig().getInt("arenaData") < 4) {
+					try {
+						// Transfer portals
+						Objects.requireNonNull(plugin.getArenaData().getConfigurationSection("portal"))
+								.getKeys(false).forEach(arenaID -> {
+							Location location = Utils.getConfigLocation(plugin, "portal." + arenaID);
+							plugin.getArenaData().set("portal." + arenaID, null);
+							Utils.setConfigurationLocation(plugin, "a" + arenaID + ".portal", location);
+						});
+						plugin.getArenaData().set("portal", null);
+
+						// Transfer arena boards
+						Objects.requireNonNull(plugin.getArenaData().getConfigurationSection("arenaBoard"))
+								.getKeys(false).forEach(arenaID -> {
+									Location location = Utils.getConfigLocation(plugin, "arenaBoard." + arenaID);
+									plugin.getArenaData().set("arenaBoard." + arenaID, null);
+									Utils.setConfigurationLocation(plugin, "a" + arenaID + ".arenaBoard", location);
+								});
+						plugin.getArenaData().set("arenaBoard", null);
+
+						plugin.saveArenaData();
+
+						// Reload portals
+						Portal.refreshPortals();
+
+						// Flip flag and update config.yml
+						fixed = true;
+						plugin.getConfig().set("arenaData", plugin.arenaDataVersion);
+						plugin.saveConfig();
+
+						// Notify
+						if (player != null)
+							player.sendMessage(Utils.notify("&aarenaData.yml has been automatically updated."));
+						Utils.debugInfo("arenaData.yml has been automatically updated.", 0);
+					} catch (Exception e) {
+						if (player != null)
+							player.sendMessage(Utils.notify("&carenaData.yml must be updated manually."));
+						else Utils.debugError("arenaData.yml must be updated manually.", 0);
+					}
+				} else if (plugin.getConfig().getInt("arenaData") < plugin.arenaDataVersion) {
+					if (player != null)
+						player.sendMessage(Utils.notify("&carenaData.yml must be updated manually."));
+					else Utils.debugError("arenaData.yml must be updated manually.", 0);
+				}
 
 				// Check if playerData.yml is outdated
 				if (plugin.getConfig().getInt("playerData") < plugin.playerDataVersion)
-					player.sendMessage(Utils.notify("&cplayerData.yml must be updated manually."));
+					if (player != null)
+						player.sendMessage(Utils.notify("&cplayerData.yml must be updated manually."));
+					else Utils.debugError("playerData.yml must be updated manually.", 0);
 
 				// Update default spawn table
 				if (plugin.getConfig().getInt("spawnTableStructure") < plugin.spawnTableVersion ||
@@ -503,8 +651,9 @@ public class Commands implements CommandExecutor {
 					plugin.saveConfig();
 
 					// Notify
-					player.sendMessage(Utils.notify("&adefault.yml has been automatically updated."));
-					plugin.debugInfo("default.yml has been automatically updated.", 0);
+					if (player != null)
+						player.sendMessage(Utils.notify("&adefault.yml has been automatically updated."));
+					Utils.debugInfo("default.yml has been automatically updated.", 0);
 				}
 
 				// Update default language file
@@ -518,13 +667,16 @@ public class Commands implements CommandExecutor {
 					plugin.saveConfig();
 
 					// Notify
-					player.sendMessage(Utils.notify("&aen_US.yml has been automatically updated."));
-					plugin.debugInfo("en_US.yml has been automatically updated.", 0);
+					if (player != null)
+						player.sendMessage(Utils.notify("&aen_US.yml has been automatically updated."));
+					Utils.debugInfo("en_US.yml has been automatically updated.", 0);
 				}
 
 				// Message to player depending on whether the command fixed anything
 				if (!fixed)
-					player.sendMessage(Utils.notify("There was nothing that could be updated automatically."));
+					if (player != null)
+						player.sendMessage(Utils.notify("There was nothing that could be updated automatically."));
+					else Utils.debugInfo("There was nothing that could be updated automatically.", 0);
 
 				return true;
 			}
@@ -532,33 +684,41 @@ public class Commands implements CommandExecutor {
 			// Change plugin debug level
 			if (args[0].equalsIgnoreCase("debug")) {
 				// Check for permission to use the command
-				if (!player.hasPermission("vd.admin")) {
+				if (player != null && !player.hasPermission("vd.admin")) {
 					player.sendMessage(Utils.notify(language.getString("permissionError")));
 					return true;
 				}
 
 				// Check for correct format
 				if (args.length != 2) {
-					player.sendMessage(Utils.notify("&cCommand format: /vd debug [debug level (0-3)]"));
+					if (player != null)
+						player.sendMessage(Utils.notify("&cCommand format: /vd debug [debug level (0-3)]"));
+					else Utils.debugError("Command format: /vd debug [debug level (0-3)]", 0);
 					return true;
 				}
 
 				// Set debug level
 				try {
-					plugin.setDebugLevel(Integer.parseInt(args[1]));
+					Main.setDebugLevel(Integer.parseInt(args[1]));
 				} catch (Exception e) {
-					player.sendMessage(Utils.notify("&cCommand format: /vd debug [debug level (0-3)]"));
+					if (player != null)
+						player.sendMessage(Utils.notify("&cCommand format: /vd debug [debug level (0-3)]"));
+					else Utils.debugError("Command format: /vd debug [debug level (0-3)]", 0);
 					return true;
 				}
 
 				// Notify
-				player.sendMessage(Utils.notify("&aDebug level set to " + args[1] + "."));
+				if (player != null)
+					player.sendMessage(Utils.notify("&aDebug level set to " + args[1] + "."));
+				else Utils.debugInfo("Debug level set to " + args[1] + ".", 0);
 
 				return true;
 			}
 
 			// No valid command sent
-			player.sendMessage(Utils.notify(language.getString("commandError")));
+			if (player != null)
+				player.sendMessage(Utils.notify(language.getString("commandError")));
+			else Utils.debugError("Invalid command. Use 'vd help' for more info.", 0);
 			return true;
 		}
 		return false;
