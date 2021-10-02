@@ -17,10 +17,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -63,7 +60,31 @@ public class InventoryListener implements Listener {
 			arenaInstance.setCommunityChest(e.getInventory());
 		}
 	}
-	
+
+	// Prevent losing items by shift clicking in custom inventory
+	@EventHandler
+	public void onShiftClick(InventoryClickEvent e) {
+		String title = e.getView().getTitle();
+
+		// Ignore non-plugin inventories
+		if (!title.contains(Utils.format("&k")))
+			return;
+
+		// Check for shift click
+		if (e.getClick() != ClickType.SHIFT_LEFT && e.getClick() != ClickType.SHIFT_RIGHT)
+			return;
+
+		// Cancel the event if the inventory isn't the community chest, otherwise save the inventory
+		if (!title.contains("Community Chest"))
+			e.setCancelled(true);
+		else {
+			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
+			assert meta != null;
+			Arena arenaInstance = Game.arenas[meta.getInteger1()];
+			arenaInstance.setCommunityChest(e.getInventory());
+		}
+	}
+
 	// All click events in the inventories
 	@EventHandler
 	public void onClick(InventoryClickEvent e) {
@@ -81,6 +102,8 @@ public class InventoryListener implements Listener {
 		// Debugging info
 		Utils.debugInfo("Inventory Item: " + e.getCurrentItem(), 2);
 		Utils.debugInfo("Cursor Item: " + e.getCursor(), 2);
+		Utils.debugInfo("Clicked Inventory: " + e.getClickedInventory(), 2);
+		Utils.debugInfo("Inventory Name: " + title, 2);
 
 		// Cancel the event if the inventory isn't the community chest or custom shop editor to prevent changing the GUI
 		if (!title.contains("Community Chest") && !title.contains("Custom Shop Editor"))
@@ -103,10 +126,6 @@ public class InventoryListener implements Listener {
 		Material buttonType;
 		String buttonName;
 
-		// Ignore null items
-		if (button == null)
-			return;
-
 		Player player = (Player) e.getWhoClicked();
 		int slot = e.getSlot();
 		FileConfiguration config = plugin.getArenaData();
@@ -114,6 +133,7 @@ public class InventoryListener implements Listener {
 
 		// Custom shop editor for an arena
 		if (title.contains("Custom Shop Editor:")) {
+			Utils.debugInfo("Custom shop editor being used.", 2);
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
 			ItemStack cursor = e.getCursor();
@@ -160,6 +180,11 @@ public class InventoryListener implements Listener {
 
 			return;
 		} else {
+			// Ignore null items
+			if (button == null)
+				return;
+
+			// Get button type and name
 			buttonType = button.getType();
 			buttonName = Objects.requireNonNull(button.getItemMeta()).getDisplayName();
 		}

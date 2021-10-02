@@ -478,9 +478,11 @@ public class Arena {
      * Removes the portal from the game and from the arena file.
      */
     public void removePortal() {
-        portal.getHologram().delete();
-        portal.removeNPCAll();
-        portal = null;
+        if (portal != null) {
+            portal.getHologram().delete();
+            portal.removeNPCAll();
+            portal = null;
+        }
         Utils.setConfigurationLocation(plugin, path + ".portal", null);
         plugin.saveArenaData();
         checkClose();
@@ -544,8 +546,10 @@ public class Arena {
      * Removes the arena board from the game and from the arena file.
      */
     public void removeArenaBoard() {
-        arenaBoard.getHologram().delete();
-        arenaBoard = null;
+        if (arenaBoard != null) {
+            arenaBoard.getHologram().delete();
+            arenaBoard = null;
+        }
         Utils.setConfigurationLocation(plugin, path + ".arenaBoard", null);
         plugin.saveArenaData();
     }
@@ -1543,6 +1547,7 @@ public class Arena {
                         .getKeys(false)
                         .forEach(index -> config.set(path + ".customShop." + index,
                                 config.getItemStack("a" + arenaToCopy.getArena() + ".customShop." + index)));
+                plugin.saveArenaData();
             } catch (Exception e) {
                 Utils.debugError(
                         String.format("Attempted to retrieve the custom shop inventory of arena %d but found none.",
@@ -1561,6 +1566,7 @@ public class Arena {
         removeArenaBoard();
         removePortal();
         config.set(path, null);
+        plugin.saveArenaData();
         Utils.debugInfo(String.format("Removing arena %d.", arena), 1);
     }
 }
