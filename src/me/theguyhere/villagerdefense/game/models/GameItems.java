@@ -24,39 +24,33 @@ public class GameItems {
 	// Standard game items
 	public static @NotNull ItemStack shop() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
-		boolean[] flags = {true, false};
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = Utils.createItem(Material.EMERALD, Utils.format("&2&lItem Shop"), flags, enchants,
-				Utils.format("&7&oResets every 10 rounds"));
+		ItemStack item = Utils.createItem(Material.EMERALD, Utils.format("&2&lItem Shop"),
+				Utils.HIDE_ENCHANT_FLAGS, enchants, Utils.format("&7&oResets every 10 rounds"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack kitSelector() {
-		HashMap<Enchantment, Integer> enchants = new HashMap<>();
-		boolean[] flags = {true, false};
-		enchants.put(Enchantment.DURABILITY, 1);
-
-		ItemStack item = Utils.createItem(Material.CHEST, Utils.format("&9&lKit Selection"), flags, enchants);
-
+		ItemStack item = Utils.createItem(Material.CHEST, Utils.format("&9&lKit Selection"));
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack challengeSelector() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
-		boolean[] flags = {true, false};
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = Utils.createItem(Material.NETHER_STAR, Utils.format("&9&lChallenge Selection"), flags,
+		ItemStack item = Utils.createItem(Material.NETHER_STAR, Utils.format("&9&lChallenge Selection"),
+				Utils.HIDE_ENCHANT_FLAGS,
 				enchants);
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack leave() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
-		boolean[] flags = {true, false};
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = Utils.createItem(Material.BARRIER, Utils.format("&c&lLEAVE"), flags, enchants);
+		ItemStack item = Utils.createItem(Material.BARRIER, Utils.format("&c&lLEAVE"),
+				Utils.HIDE_ENCHANT_FLAGS, enchants);
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}

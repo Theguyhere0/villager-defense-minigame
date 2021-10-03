@@ -299,6 +299,8 @@ public class Tasks {
 				arenaInstance.startMonsterParticles();
 			if (arenaInstance.hasVillagerParticles())
 				arenaInstance.startVillagerParticles();
+			if (arenaInstance.hasBorderParticles())
+				arenaInstance.startBorderParticles();
 
 			arenaInstance.getActives().forEach(player -> {
 				// Give all players starting items
@@ -379,6 +381,7 @@ public class Tasks {
 			arenaInstance.cancelSpawnParticles();
 			arenaInstance.cancelMonsterParticles();
 			arenaInstance.cancelVillagerParticles();
+			arenaInstance.cancelBorderParticles();
 
 			// Refresh portal
 			arenaInstance.refreshPortal();

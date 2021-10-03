@@ -68,6 +68,8 @@ public class Arena {
     private int monsterParticlesID = 0;
     /** ID of task managing villager spawn particles.*/
     private int villagerParticlesID = 0;
+    /** ID of task managing corner particles.*/
+    private int cornerParticlesID = 0;
     /** A list of players in the arena.*/
     private final List<VDPlayer> players = new ArrayList<>();
     /** Weapon shop inventory.*/
@@ -97,6 +99,7 @@ public class Arena {
         status = ArenaStatus.WAITING;
         refreshArenaBoard();
         refreshPortal();
+        checkClosedParticles();
     }
 
     public int getArena() {
@@ -817,6 +820,82 @@ public class Arena {
         villagerParticlesID = 0;
     }
 
+    public boolean hasBorderParticles() {
+        return config.getBoolean(path + ".particles.border");
+    }
+
+    public void setBorderParticles(boolean bool) {
+        config.set(path + ".particles.border", bool);
+        plugin.saveArenaData();
+    }
+
+    public void startBorderParticles() {
+        if (cornerParticlesID == 0)
+            cornerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+                World world;
+                Location first, second;
+
+                @Override
+                public void run() {
+                    // Spawn particles
+                    try {
+                        world = getCorner1().getWorld();
+                        assert world != null;
+
+                        first = new Location(world, Math.max(getCorner1().getX(), getCorner2().getX()),
+                                Math.max(getCorner1().getY(), getCorner2().getY()),
+                                Math.max(getCorner1().getZ(), getCorner2().getZ()));
+                        second = new Location(world, Math.min(getCorner1().getX(), getCorner2().getX()),
+                                Math.min(getCorner1().getY(), getCorner2().getY()),
+                                Math.min(getCorner1().getZ(), getCorner2().getZ()));
+
+                        for (double x = second.getX(); x <= first.getX(); x += 5)
+                            for (double y = second.getY(); y <= first.getY(); y += 5)
+                                world.spawnParticle(Particle.BARRIER, x, y, first.getZ(), 0);
+                        for (double x = second.getX(); x <= first.getX(); x += 5)
+                            for (double y = second.getY(); y <= first.getY(); y += 5)
+                                world.spawnParticle(Particle.BARRIER, x, y, second.getZ(), 0);
+                        for (double x = second.getX(); x <= first.getX(); x += 5)
+                            for (double z = second.getZ(); z <= first.getZ(); z += 5)
+                                world.spawnParticle(Particle.BARRIER, x, first.getY(), z, 0);
+                        for (double x = second.getX(); x <= first.getX(); x += 5)
+                            for (double z = second.getZ(); z <= first.getZ(); z += 5)
+                                world.spawnParticle(Particle.BARRIER, x, second.getY(), z, 0);
+                        for (double z = second.getZ(); z <= first.getZ(); z += 5)
+                            for (double y = second.getY(); y <= first.getY(); y += 5)
+                                world.spawnParticle(Particle.BARRIER, first.getX(), y, z, 0);
+                        for (double z = second.getZ(); z <= first.getZ(); z += 5)
+                            for (double y = second.getY(); y <= first.getY(); y += 5)
+                                world.spawnParticle(Particle.BARRIER, second.getX(), y, z, 0);
+
+                    } catch (Exception e) {
+                        Utils.debugError(String.format("Border particle generation error for arena %d.", arena),
+                                1);
+                    }
+                }
+            }, 0 , 20);
+    }
+
+    public void cancelBorderParticles() {
+        if (cornerParticlesID != 0)
+            Bukkit.getScheduler().cancelTask(cornerParticlesID);
+        cornerParticlesID = 0;
+    }
+
+    private void checkClosedParticles() {
+        if (isClosed()) {
+            startSpawnParticles();
+            startMonsterParticles();
+            startVillagerParticles();
+            startBorderParticles();
+        } else {
+            cancelSpawnParticles();
+            cancelMonsterParticles();
+            cancelVillagerParticles();
+            cancelBorderParticles();
+        }
+    }
+
     public boolean hasNormal() {
         return config.getBoolean(path + ".normal");
     }
@@ -994,6 +1073,7 @@ public class Arena {
         config.set(path + ".closed", closed);
         plugin.saveArenaData();
         refreshPortal();
+        checkClosedParticles();
     }
 
     public List<ArenaRecord> getArenaRecords() {
@@ -1541,6 +1621,7 @@ public class Arena {
         setSpawnParticles(arenaToCopy.hasSpawnParticles());
         setMonsterParticles(arenaToCopy.hasMonsterParticles());
         setVillagerParticles(arenaToCopy.hasVillagerParticles());
+        setBorderParticles(arenaToCopy.hasBorderParticles());
         if (config.contains("a" + arenaToCopy.getArena() + ".customShop"))
             try {
                 Objects.requireNonNull(config.getConfigurationSection("a" + arenaToCopy.getArena() + ".customShop"))

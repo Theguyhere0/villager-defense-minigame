@@ -1423,12 +1423,16 @@ public class Inventories {
 				Utils.format("&4&lArena Bounds: " + arenaInstance.getName()));
 
 		// Option to interact with corner 1
-		inv.setItem(2, Utils.createItem(Material.TORCH, Utils.format("&b&lCorner 1: " +
+		inv.setItem(0, Utils.createItem(Material.TORCH, Utils.format("&b&lCorner 1: " +
 				(arenaInstance.getCorner1() == null ? "&c&lMissing" : "&a&lSet"))));
 
 		// Option to interact with corner 2
-		inv.setItem(5, Utils.createItem(Material.SOUL_TORCH, Utils.format("&9&lCorner 2: " +
+		inv.setItem(3, Utils.createItem(Material.SOUL_TORCH, Utils.format("&9&lCorner 2: " +
 				(arenaInstance.getCorner2() == null ? "&c&lMissing" : "&a&lSet"))));
+
+		// Option to toggle arena border particles
+		inv.setItem(6, Utils.createItem(Material.FIREWORK_ROCKET, Utils.format("&4&lBorder Particles: " +
+				getToggleStatus(arenaInstance.hasBorderParticles()))));
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());

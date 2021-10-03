@@ -2469,6 +2469,7 @@ public class InventoryListener implements Listener {
 		else if (title.contains("Arena Bounds")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
+			Arena arenaInstance = Game.arenas[meta.getInteger1()];
 
 			// Edit corner 1
 			if (buttonName.contains("Corner 1"))
@@ -2477,6 +2478,14 @@ public class InventoryListener implements Listener {
 			// Edit corner 2
 			else if (buttonName.contains("Corner 2"))
 				player.openInventory(Inventories.createCorner2Inventory(meta.getInteger1()));
+
+			// Toggle border particles
+			else if (buttonName.contains("Border Particles:"))
+				if (arenaInstance.isClosed()) {
+					arenaInstance.setBorderParticles(!arenaInstance.hasBorderParticles());
+					player.openInventory(Inventories.createBoundsInventory(meta.getInteger1()));
+				}
+				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
 			// Exit menu
 			else if (buttonName.contains("EXIT"))
