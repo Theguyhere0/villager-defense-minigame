@@ -30,7 +30,7 @@ public class Challenge {
     private final List<String> masterDescription = new ArrayList<>();
     /** The material used for GUI buttons relating to this challenge.*/
     private final Material buttonMaterial;
-    /** The gem bonus for accepting this challenge, in percentage points.*/
+    /** The crystal bonus for accepting this challenge, in percentage points.*/
     private final int bonus;
 
     public Challenge(String name, Material buttonMaterial, int bonus) {
@@ -122,7 +122,7 @@ public class Challenge {
         Challenge challenge = new Challenge("Amputee", Material.BAMBOO, bonus);
         challenge.addMasterDescription(Utils.format("&7Where's my arm?"));
         challenge.addMasterDescription(Utils.format("&6No dual-wielding"));
-        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% gem bonus"));
+        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% crystal bonus"));
 
         return challenge;
     }
@@ -132,7 +132,7 @@ public class Challenge {
         Challenge challenge = new Challenge("Clumsy", Material.ICE, bonus);
         challenge.addMasterDescription(Utils.format("&7I'm losing my marbles"));
         challenge.addMasterDescription(Utils.format("&6Held items have a 2.5% chance to drop upon use"));
-        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% gem bonus"));
+        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% crystal bonus"));
 
         return challenge;
     }
@@ -142,7 +142,7 @@ public class Challenge {
         Challenge challenge = new Challenge("Featherweight", Material.FEATHER, bonus);
         challenge.addMasterDescription(Utils.format("&7WHEEEEEE"));
         challenge.addMasterDescription(Utils.format("&6Take x5 knockback"));
-        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% gem bonus"));
+        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% crystal bonus"));
 
         return challenge;
     }
@@ -152,7 +152,7 @@ public class Challenge {
         Challenge challenge = new Challenge("Pacifist", Material.TURTLE_HELMET, bonus);
         challenge.addMasterDescription(Utils.format("&7Don't hurt me!"));
         challenge.addMasterDescription(Utils.format("&6Only hurt monsters after they hurt you"));
-        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% gem bonus"));
+        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% crystal bonus"));
 
         return challenge;
     }
@@ -162,7 +162,7 @@ public class Challenge {
         Challenge challenge = new Challenge("Dwarf", Material.DEAD_BUSH, bonus);
         challenge.addMasterDescription(Utils.format("&7Short people unite!"));
         challenge.addMasterDescription(Utils.format("&6Max health is cut in half"));
-        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% gem bonus"));
+        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% crystal bonus"));
 
         return challenge;
     }
@@ -172,7 +172,7 @@ public class Challenge {
         Challenge challenge = new Challenge("UHC", Material.GOLDEN_APPLE, bonus);
         challenge.addMasterDescription(Utils.format("&7A true classic"));
         challenge.addMasterDescription(Utils.format("&6No natural healing"));
-        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% gem bonus"));
+        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% crystal bonus"));
 
         return challenge;
     }
@@ -182,7 +182,7 @@ public class Challenge {
         Challenge challenge = new Challenge("Naked", Material.ARMOR_STAND, bonus);
         challenge.addMasterDescription(Utils.format("&7All natural"));
         challenge.addMasterDescription(Utils.format("&6No armor"));
-        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% gem bonus"));
+        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% crystal bonus"));
 
         return challenge;
     }
@@ -192,7 +192,7 @@ public class Challenge {
         Challenge challenge = new Challenge("Blind", Material.INK_SAC, bonus);
         challenge.addMasterDescription(Utils.format("&7I hope you have good headphones"));
         challenge.addMasterDescription(Utils.format("&6Permanent blindness effect"));
-        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% gem bonus"));
+        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% crystal bonus"));
 
         return challenge;
     }

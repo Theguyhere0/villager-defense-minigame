@@ -710,8 +710,10 @@ public class Commands implements CommandExecutor {
 
 					// Notify
 					if (player != null)
-						player.sendMessage(Utils.notify("&aen_US.yml has been automatically updated."));
-					Utils.debugInfo("en_US.yml has been automatically updated.", 0);
+						player.sendMessage(Utils.notify("&aen_US.yml has been automatically updated. " +
+								"Please restart the plugin."));
+					Utils.debugInfo("en_US.yml has been automatically updated. Please restart the plugin.",
+							0);
 				}
 
 				// Message to player depending on whether the command fixed anything
