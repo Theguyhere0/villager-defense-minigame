@@ -206,6 +206,7 @@ public class Tasks {
 					Utils.debugError("The key 'starting' is either missing or corrupt in the active language file",
 							1);
 				}
+
 				// Give players gem rewards
 				int multiplier;
 				switch (arenaInstance.getDifficultyMultiplier()) {

@@ -382,61 +382,101 @@ public class Commands implements CommandExecutor {
 
 			// Force end
 			if (args[0].equalsIgnoreCase("end")) {
-				// Check for permission to use the command
-				if (player != null && !player.hasPermission("vd.admin")) {
-					player.sendMessage(Utils.notify(language.getString("permissionError")));
-					return true;
-				}
+				// Delay current arena
+				if (args.length == 1) {
+					// Check for player executing command
+					if (player == null) {
+						sender.sendMessage("Bad console!");
+						return true;
+					}
 
-				// Check for valid command format
-				if (args.length < 2) {
-					if (player != null)
-						player.sendMessage(Utils.notify("&cCommand format: /vd end [arena name]"));
-					else Utils.debugError("Command format: 'vd end [arena name]'", 0);
-					return true;
-				}
+					// Check for permission to use the command
+					if (!player.hasPermission("vd.admin")) {
+						player.sendMessage(Utils.notify(language.getString("permissionError")));
+						return true;
+					}
 
-				StringBuilder name = new StringBuilder(args[1]);
-				for (int i = 0; i < args.length - 2; i++)
-					name.append(" ").append(args[i + 2]);
+					Arena arena;
 
-				// Check if this arena exists
-				if (Arrays.stream(Game.arenas).filter(Objects::nonNull)
-						.noneMatch(arena -> arena.getName().equals(name.toString()))) {
-					if (player != null)
-						player.sendMessage(Utils.notify("&cNo arena with this name exists!"));
-					else Utils.debugError("No arena with this name exists!", 0);
-					return true;
-				}
+					// Attempt to get arena
+					try {
+						arena = Arrays.stream(Game.arenas).filter(Objects::nonNull)
+								.filter(arena1 -> arena1.hasPlayer(player))
+								.collect(Collectors.toList()).get(0);
+					} catch (Exception e) {
+						player.sendMessage(Utils.notify(language.getString("forceStartError1")));
+						return true;
+					}
 
-				Arena arena = Arrays.stream(Game.arenas).filter(Objects::nonNull)
-						.filter(arena1 -> arena1.hasPlayer(player))
-						.collect(Collectors.toList()).get(0);
-
-				// Check if arena has a game in progress
-				if (arena.getStatus() != ArenaStatus.ACTIVE && arena.getStatus() != ArenaStatus.ENDING) {
-					if (player != null)
+					// Check if arena has a game in progress
+					if (arena.getStatus() != ArenaStatus.ACTIVE && arena.getStatus() != ArenaStatus.ENDING) {
 						player.sendMessage(Utils.notify("&cNo game to end!"));
-					else Utils.debugError("No game to end!", 0);
-					return true;
-				}
+						return true;
+					}
 
-				// Check if game is about to end
-				if (arena.getStatus() == ArenaStatus.ENDING) {
-					if (player != null)
+					// Check if game is about to end
+					if (arena.getStatus() == ArenaStatus.ENDING) {
 						player.sendMessage(Utils.notify("&cGame about to end!"));
-					else Utils.debugError("Game about to end!", 0);
-					return true;
+						return true;
+					}
+
+					// Force end
+					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+							Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
+
+					// Notify console
+					Utils.debugInfo("Arena " + arena.getArena() + " was force ended.", 1);
 				}
 
-				// Force end
-				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
-						Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
+				else {
+					// Check for permission to use the command
+					if (player != null && !player.hasPermission("vd.admin")) {
+						player.sendMessage(Utils.notify(language.getString("permissionError")));
+						return true;
+					}
 
-				// Notify console
-				Utils.debugInfo("Arena " + arena.getArena() + " was force ended.", 1);
+					StringBuilder name = new StringBuilder(args[1]);
+					for (int i = 0; i < args.length - 2; i++)
+						name.append(" ").append(args[i + 2]);
 
-				return true;
+					// Check if this arena exists
+					if (Arrays.stream(Game.arenas).filter(Objects::nonNull)
+							.noneMatch(arena -> arena.getName().equals(name.toString()))) {
+						if (player != null)
+							player.sendMessage(Utils.notify("&cNo arena with this name exists!"));
+						else Utils.debugError("No arena with this name exists!", 0);
+						return true;
+					}
+
+					Arena arena = Arrays.stream(Game.arenas).filter(Objects::nonNull)
+							.filter(arena1 -> arena1.hasPlayer(player))
+							.collect(Collectors.toList()).get(0);
+
+					// Check if arena has a game in progress
+					if (arena.getStatus() != ArenaStatus.ACTIVE && arena.getStatus() != ArenaStatus.ENDING) {
+						if (player != null)
+							player.sendMessage(Utils.notify("&cNo game to end!"));
+						else Utils.debugError("No game to end!", 0);
+						return true;
+					}
+
+					// Check if game is about to end
+					if (arena.getStatus() == ArenaStatus.ENDING) {
+						if (player != null)
+							player.sendMessage(Utils.notify("&cGame about to end!"));
+						else Utils.debugError("Game about to end!", 0);
+						return true;
+					}
+
+					// Force end
+					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+							Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
+
+					// Notify console
+					Utils.debugInfo("Arena " + arena.getArena() + " was force ended.", 1);
+
+					return true;
+				}
 			}
 
 			// Force delay start

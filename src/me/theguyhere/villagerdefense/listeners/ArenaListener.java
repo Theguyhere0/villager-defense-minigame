@@ -461,7 +461,18 @@ public class ArenaListener implements Listener {
         // Set the arena to ending
         arena.setStatus(ArenaStatus.ENDING);
 
-        // Notify players that the game has ended
+        // Notify players that the game has ended (Title)
+        try {
+            arena.getPlayers().forEach(player ->
+                    player.getPlayer().sendTitle(Utils.format(
+                            Objects.requireNonNull(plugin.getLanguageData().getString("gameOver"))),
+                            "", Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
+        } catch (Exception err) {
+            Utils.debugError("The key 'gameOver' is either missing or corrupt in the active language file",
+                    1);
+        }
+
+        // Notify players that the game has ended (Chat)
         try {
             arena.getPlayers().forEach(player ->
                     player.getPlayer().sendMessage(Utils.notify(String.format(
