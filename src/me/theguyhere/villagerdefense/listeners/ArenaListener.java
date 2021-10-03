@@ -379,16 +379,20 @@ public class ArenaListener implements Listener {
                 reward += gamer.getKills();
                 reward += (gamer.getGems() + 5) / 10;
 
-                // Apply challenge bonuses
+                // Calculate challenge bonuses
+                int bonus = 0;
                 for (Challenge challenge : gamer.getChallenges())
-                    reward *= challenge.getMultiplier();
+                    bonus += challenge.getBonus();
+                bonus = (int) (reward * bonus / 100d);
 
                 // Give rewards and notify
                 plugin.getPlayerData().set(player.getName() + ".crystalBalance",
                         plugin.getPlayerData().getInt(player.getName() + ".crystalBalance") + reward);
+                plugin.getPlayerData().set(player.getName() + ".crystalBalance",
+                        plugin.getPlayerData().getInt(player.getName() + ".crystalBalance") + bonus);
                 player.sendMessage(Utils.notify(String.format(
                         Objects.requireNonNull(plugin.getLanguageData().getString("crystals")),
-                        reward)));
+                        reward, bonus)));
             }
 
             Tasks task = arena.getTask();
@@ -506,20 +510,20 @@ public class ArenaListener implements Listener {
                 reward += vdPlayer.getKills();
                 reward += (vdPlayer.getGems() + 5) / 10;
 
-                // Apply challenge bonuses
+                // Calculate challenge bonuses
+                int bonus = 0;
                 for (Challenge challenge : vdPlayer.getChallenges())
-                    reward *= challenge.getMultiplier();
+                    bonus += challenge.getBonus();
+                bonus = (int) (reward * bonus / 100d);
 
                 // Give rewards and notify
                 plugin.getPlayerData().set(vdPlayer.getPlayer().getName() + ".crystalBalance",
                         plugin.getPlayerData().getInt(vdPlayer.getPlayer().getName() + ".crystalBalance") + reward);
-                try {
-                    vdPlayer.getPlayer().sendMessage(Utils.notify(
-                            String.format(Objects.requireNonNull(language.getString("crystals")), reward)));
-                } catch (Exception err) {
-                    Utils.debugError("The key 'crystals' is either missing or corrupt in the active language file",
-                            1);
-                }
+                plugin.getPlayerData().set(vdPlayer.getPlayer().getName() + ".crystalBalance",
+                        plugin.getPlayerData().getInt(vdPlayer.getPlayer().getName() + ".crystalBalance") + bonus);
+                vdPlayer.getPlayer().sendMessage(Utils.notify(String.format(
+                        Objects.requireNonNull(plugin.getLanguageData().getString("crystals")),
+                        reward, bonus)));
             });
         }
 
@@ -640,7 +644,7 @@ public class ArenaListener implements Listener {
             airs = arena.getMonsterSpawns();
 
         // Get monster type ratio
-        data.getConfig().getConfigurationSection(path).getKeys(false)
+        Objects.requireNonNull(data.getConfig().getConfigurationSection(path)).getKeys(false)
                 .forEach(type -> {
             for (int i = 0; i < data.getConfig().getInt(path + "." + type); i++)
                 typeRatio.add(type);
@@ -800,7 +804,7 @@ public class ArenaListener implements Listener {
         List<String> typeRatio = new ArrayList<>();
 
         // Get monster type ratio
-        data.getConfig().getConfigurationSection(path).getKeys(false)
+        Objects.requireNonNull(data.getConfig().getConfigurationSection(path)).getKeys(false)
                 .forEach(type -> {
                     for (int i = 0; i < data.getConfig().getInt(path + "." + type); i++)
                         typeRatio.add(type);

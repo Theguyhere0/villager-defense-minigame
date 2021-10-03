@@ -476,6 +476,7 @@ public class GameListener implements Listener {
 			// Set player to fake death mode
 			player.setGameMode(GameMode.SPECTATOR);
 			player.getInventory().clear();
+			player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
 			player.closeInventory();
 			gamer.setStatus(PlayerStatus.GHOST);
 			player.setFallDistance(0);
@@ -615,6 +616,7 @@ public class GameListener implements Listener {
 		e.setCancelled(true);
 		player.setGameMode(GameMode.SPECTATOR);
 		player.getInventory().clear();
+		player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
 		player.closeInventory();
 		gamer.setStatus(PlayerStatus.GHOST);
 

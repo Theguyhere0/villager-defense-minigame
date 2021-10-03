@@ -193,6 +193,11 @@ public class Tasks {
 					Objects.requireNonNull(p.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
 							.addModifier(new AttributeModifier("Giant1", -.5,
 									AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+
+				// Give blindness to people with that challenge
+				if (p.getChallenges().contains(Challenge.blind()))
+					p.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999,
+							0));
 			});
 
 			arenaInstance.getActives().forEach(p -> {

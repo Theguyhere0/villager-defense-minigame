@@ -30,21 +30,21 @@ public class Challenge {
     private final List<String> masterDescription = new ArrayList<>();
     /** The material used for GUI buttons relating to this challenge.*/
     private final Material buttonMaterial;
-    /** The gem multiplier for accepting this challenge.*/
-    private final double multiplier;
+    /** The gem bonus for accepting this challenge, in percentage points.*/
+    private final int bonus;
 
-    public Challenge(String name, Material buttonMaterial, double multiplier) {
+    public Challenge(String name, Material buttonMaterial, int bonus) {
         this.name = name;
         this.buttonMaterial = buttonMaterial;
-        this.multiplier = multiplier;
+        this.bonus = bonus;
     }
 
     public String getName() {
         return name;
     }
 
-    public double getMultiplier() {
-        return multiplier;
+    public int getBonus() {
+        return bonus;
     }
 
     @Override
@@ -52,14 +52,14 @@ public class Challenge {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Challenge challenge = (Challenge) o;
-        return Double.compare(challenge.multiplier, multiplier) == 0 && Objects.equals(name, challenge.name) &&
+        return Double.compare(challenge.bonus, bonus) == 0 && Objects.equals(name, challenge.name) &&
                 Objects.equals(masterDescription, challenge.masterDescription) &&
                 buttonMaterial == challenge.buttonMaterial;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, masterDescription, buttonMaterial, multiplier);
+        return Objects.hash(name, masterDescription, buttonMaterial, bonus);
     }
 
     /**
@@ -117,82 +117,82 @@ public class Challenge {
     }
 
     public static Challenge amputee() {
-        double multiplier = 1.1;
+        int bonus = 10;
 
-        Challenge challenge = new Challenge("Amputee", Material.BAMBOO, multiplier);
+        Challenge challenge = new Challenge("Amputee", Material.BAMBOO, bonus);
         challenge.addMasterDescription(Utils.format("&7Where's my arm?"));
         challenge.addMasterDescription(Utils.format("&6No dual-wielding"));
-        challenge.addMasterDescription(Utils.format("&ax" + multiplier + " gem multiplier"));
+        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% gem bonus"));
 
         return challenge;
     }
     public static Challenge clumsy() {
-        double multiplier = 1.15;
+        int bonus = 15;
 
-        Challenge challenge = new Challenge("Clumsy", Material.ICE, multiplier);
+        Challenge challenge = new Challenge("Clumsy", Material.ICE, bonus);
         challenge.addMasterDescription(Utils.format("&7I'm losing my marbles"));
-        challenge.addMasterDescription(Utils.format("&6Held items have a chance to drop upon use"));
-        challenge.addMasterDescription(Utils.format("&ax" + multiplier + " gem multiplier"));
+        challenge.addMasterDescription(Utils.format("&6Held items have a 2.5% chance to drop upon use"));
+        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% gem bonus"));
 
         return challenge;
     }
     public static Challenge featherweight() {
-        double multiplier = 1.2;
+        int bonus = 20;
 
-        Challenge challenge = new Challenge("Featherweight", Material.FEATHER, multiplier);
+        Challenge challenge = new Challenge("Featherweight", Material.FEATHER, bonus);
         challenge.addMasterDescription(Utils.format("&7WHEEEEEE"));
-        challenge.addMasterDescription(Utils.format("&6Take increased knockback"));
-        challenge.addMasterDescription(Utils.format("&ax" + multiplier + " gem multiplier"));
+        challenge.addMasterDescription(Utils.format("&6Take x5 knockback"));
+        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% gem bonus"));
 
         return challenge;
     }
     public static Challenge pacifist() {
-        double multiplier = 1.25;
+        int bonus = 25;
 
-        Challenge challenge = new Challenge("Pacifist", Material.TURTLE_HELMET, multiplier);
+        Challenge challenge = new Challenge("Pacifist", Material.TURTLE_HELMET, bonus);
         challenge.addMasterDescription(Utils.format("&7Don't hurt me!"));
         challenge.addMasterDescription(Utils.format("&6Only hurt monsters after they hurt you"));
-        challenge.addMasterDescription(Utils.format("&ax" + multiplier + " gem multiplier"));
+        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% gem bonus"));
 
         return challenge;
     }
     public static Challenge dwarf() {
-        double multiplier = 1.4;
+        int bonus = 40;
 
-        Challenge challenge = new Challenge("Dwarf", Material.DEAD_BUSH, multiplier);
+        Challenge challenge = new Challenge("Dwarf", Material.DEAD_BUSH, bonus);
         challenge.addMasterDescription(Utils.format("&7Short people unite!"));
         challenge.addMasterDescription(Utils.format("&6Max health is cut in half"));
-        challenge.addMasterDescription(Utils.format("&ax" + multiplier + " gem multiplier"));
+        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% gem bonus"));
 
         return challenge;
     }
     public static Challenge uhc() {
-        double multiplier = 1.5;
+        int bonus = 50;
 
-        Challenge challenge = new Challenge("UHC", Material.GOLDEN_APPLE, multiplier);
+        Challenge challenge = new Challenge("UHC", Material.GOLDEN_APPLE, bonus);
         challenge.addMasterDescription(Utils.format("&7A true classic"));
         challenge.addMasterDescription(Utils.format("&6No natural healing"));
-        challenge.addMasterDescription(Utils.format("&ax" + multiplier + " gem multiplier"));
+        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% gem bonus"));
 
         return challenge;
     }
     public static Challenge naked() {
-        double multiplier = 1.75;
+        int bonus = 75;
 
-        Challenge challenge = new Challenge("Naked", Material.ARMOR_STAND, multiplier);
+        Challenge challenge = new Challenge("Naked", Material.ARMOR_STAND, bonus);
         challenge.addMasterDescription(Utils.format("&7All natural"));
         challenge.addMasterDescription(Utils.format("&6No armor"));
-        challenge.addMasterDescription(Utils.format("&ax" + multiplier + " gem multiplier"));
+        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% gem bonus"));
 
         return challenge;
     }
     public static Challenge blind() {
-        double multiplier = 2.25;
+        int bonus = 120;
 
-        Challenge challenge = new Challenge("Blind", Material.INK_SAC, multiplier);
+        Challenge challenge = new Challenge("Blind", Material.INK_SAC, bonus);
         challenge.addMasterDescription(Utils.format("&7I hope you have good headphones"));
         challenge.addMasterDescription(Utils.format("&6Permanent blindness effect"));
-        challenge.addMasterDescription(Utils.format("&ax" + multiplier + " gem multiplier"));
+        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% gem bonus"));
 
         return challenge;
     }

@@ -122,7 +122,7 @@ public class ChallengeListener implements Listener {
         if (!gamer.getChallenges().contains(Challenge.clumsy()))
             return;
 
-        double dropChance = .01;
+        double dropChance = .025;
         Random r = new Random();
 
         // See if item should be dropped

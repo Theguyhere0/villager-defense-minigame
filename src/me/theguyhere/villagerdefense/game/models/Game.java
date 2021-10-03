@@ -64,10 +64,21 @@ public class Game {
 		}
 		Score score10 = obj.getScore(Utils.format("&bKit: " + kit));
 		score10.setScore(10);
-		Score score9 = obj.getScore(Utils.format("&5Challenges: "));
+		int bonus = 0;
+		for (Challenge challenge : player.getChallenges())
+			bonus += challenge.getBonus();
+		Score score9 = obj.getScore(Utils.format(String.format("&5Challenges: (+%d%%)", bonus)));
 		score9.setScore(9);
-		for (Challenge challenge : player.getChallenges()) {
-			Score score8 = obj.getScore(Utils.format("  &5" + challenge.getName()));
+		if (player.getChallenges().size() < 4)
+			for (Challenge challenge : player.getChallenges()) {
+				Score score8 = obj.getScore(Utils.format("  &5" + challenge.getName()));
+				score8.setScore(8);
+			}
+		else {
+			StringBuilder challenges = new StringBuilder();
+			for (Challenge challenge : player.getChallenges())
+				challenges.append(challenge.getName().toCharArray()[0]);
+			Score score8 = obj.getScore(Utils.format("  &5" + challenges));
 			score8.setScore(8);
 		}
 		Score score7 = obj.getScore("");
