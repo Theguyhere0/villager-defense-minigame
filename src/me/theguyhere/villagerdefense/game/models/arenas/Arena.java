@@ -118,9 +118,85 @@ public class Arena {
      * Writes the new name of the arena into the arena file.
      * @param name New arena name.
      */
-    public void setName(String name) {
-        config.set(path + ".name", name);
-        plugin.saveArenaData();
+    public void setName(String name) throws InvalidNameException {
+        // Check if name is not empty
+        if (name == null || name.length() == 0) throw new InvalidNameException();
+        else {
+            config.set(path + ".name", name);
+            plugin.saveArenaData();
+        }
+
+        // Set default max players to 12 if it doesn't exist
+        if (getMaxPlayers() == 0)
+            setMaxPlayers(12);
+
+        // Set default min players to 1 if it doesn't exist
+        if (getMinPlayers() == 0)
+            setMinPlayers(1);
+
+        // Set default wolf cap to 5 if it doesn't exist
+        if (getWolfCap() == 0)
+            setWolfCap(5);
+
+        // Set default iron golem cap to 2 if it doesn't exist
+        if (getGolemCap() == 0)
+            setgolemCap(2);
+
+        // Set default max waves to -1 if it doesn't exist
+        if (getMaxWaves() == 0)
+            setMaxWaves(-1);
+
+        // Set default wave time limit to -1 if it doesn't exist
+        if (getWaveTimeLimit() == 0)
+            setWaveTimeLimit(-1);
+
+        // Set default difficulty multiplier to 1 if it doesn't exist
+        if (getDifficultyMultiplier() == 0)
+            setDifficultyMultiplier(1);
+
+        // Set default to closed if arena closed doesn't exist
+        if (!config.contains(path + ".closed"))
+            setClosed(true);
+
+        // Set default sound options
+        if (!config.contains(path + ".sounds")) {
+            setWinSound(true);
+            setLoseSound(true);
+            setWaveStartSound(true);
+            setWaveFinishSound(true);
+            setGemSound(true);
+            setPlayerDeathSound(true);
+            setAbilitySound(true);
+            setWaitingSound(14);
+        }
+
+        // Set default shop toggle
+        if (!config.contains(path + ".normal"))
+            setNormal(true);
+
+        // Set community chest toggle
+        if (!config.contains(path + ".community"))
+            setCommunity(true);
+
+        // Set default gem drop toggle
+        if (!config.contains(path + ".gemDrop"))
+            setGemDrop(true);
+
+        // Set default experience drop toggle
+        if (!config.contains(path + ".expDrop"))
+            setExpDrop(true);
+
+        // Set default particle toggles
+        if (!config.contains(path + ".particles.spawn"))
+            setSpawnParticles(true);
+        if (!config.contains(path + ".particles.monster"))
+            setMonsterParticles(true);
+        if (!config.contains(path + ".particles.villager"))
+            setVillagerParticles(true);
+
+        // Refresh portal
+        if (getPortalLocation() != null)
+            refreshPortal();
     }
 
     /**
@@ -699,7 +775,7 @@ public class Arena {
     }
 
     public void startSpawnParticles() {
-        if (playerParticlesID == 0)
+        if (playerParticlesID == 0 && getPlayerSpawn() != null)
             playerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
                 double var = 0;
                 double var2 = 0;
@@ -742,7 +818,7 @@ public class Arena {
     }
 
     public void startMonsterParticles() {
-        if (monsterParticlesID == 0)
+        if (monsterParticlesID == 0 && !getMonsterSpawns().isEmpty())
             monsterParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
                 double var = 0;
                 Location first, second;
@@ -751,19 +827,21 @@ public class Arena {
                 public void run() {
                     var -= Math.PI / 12;
                     getMonsterSpawns().forEach(location -> {
-                        try {
-                            // Update particle locations
-                            first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
-                            second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
-                                    Math.sin(var + Math.PI));
+                        if (location != null) {
+                            try {
+                                // Update particle locations
+                                first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
+                                second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
+                                        Math.sin(var + Math.PI));
 
-                            // Spawn particles
-                            Objects.requireNonNull(location.getWorld())
-                                    .spawnParticle(Particle.SOUL_FIRE_FLAME, first, 0);
-                            location.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, second, 0);
-                        } catch (Exception e) {
-                            Utils.debugError(String.format("Monster particle generation error for arena %d.", arena),
-                                    2);
+                                // Spawn particles
+                                Objects.requireNonNull(location.getWorld())
+                                        .spawnParticle(Particle.SOUL_FIRE_FLAME, first, 0);
+                                location.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, second, 0);
+                            } catch (Exception e) {
+                                Utils.debugError(String.format("Monster particle generation error for arena %d.", arena),
+                                        2);
+                            }
                         }
                     });
                 }
@@ -786,7 +864,7 @@ public class Arena {
     }
 
     public void startVillagerParticles() {
-        if (villagerParticlesID == 0)
+        if (villagerParticlesID == 0 && !getVillagerSpawns().isEmpty())
             villagerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
                 double var = 0;
                 Location first, second;
@@ -795,19 +873,21 @@ public class Arena {
                 public void run() {
                     var += Math.PI / 12;
                     getVillagerSpawns().forEach(location -> {
-                        try {
-                            // Update particle locations
-                            first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
-                            second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
-                                    Math.sin(var + Math.PI));
+                        if (location != null) {
+                            try {
+                                // Update particle locations
+                                first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
+                                second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
+                                        Math.sin(var + Math.PI));
 
-                            // Spawn particles
-                            Objects.requireNonNull(location.getWorld())
-                                    .spawnParticle(Particle.COMPOSTER, first, 0);
-                            location.getWorld().spawnParticle(Particle.COMPOSTER, second, 0);
-                        } catch (Exception e) {
-                            Utils.debugError(String.format("Villager particle generation error for arena %d.", arena),
-                                    2);
+                                // Spawn particles
+                                Objects.requireNonNull(location.getWorld())
+                                        .spawnParticle(Particle.COMPOSTER, first, 0);
+                                location.getWorld().spawnParticle(Particle.COMPOSTER, second, 0);
+                            } catch (Exception e) {
+                                Utils.debugError(String.format("Villager particle generation error for arena %d.", arena),
+                                        2);
+                            }
                         }
                     });
                 }
@@ -830,7 +910,7 @@ public class Arena {
     }
 
     public void startBorderParticles() {
-        if (cornerParticlesID == 0)
+        if (cornerParticlesID == 0 && getCorner1() != null && getCorner2() != null)
             cornerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
                 World world;
                 Location first, second;

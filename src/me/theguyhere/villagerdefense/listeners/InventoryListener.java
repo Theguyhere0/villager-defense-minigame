@@ -4,6 +4,7 @@ import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.GUI.InventoryItems;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
+import me.theguyhere.villagerdefense.events.SignGUIEvent;
 import me.theguyhere.villagerdefense.game.models.*;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.kits.Kit;
@@ -193,8 +194,10 @@ public class InventoryListener implements Listener {
 		if (title.contains("Villager Defense Arenas")) {
 			// Create new arena with naming inventory
 			if (buttonType == Material.RED_CONCRETE) {
+				// Set a new arena
 				Game.arenas[slot] = new Arena(plugin, slot, new Tasks(plugin, slot));
-				player.openInventory(Inventories.createNamingInventory(slot, ""));
+
+				Inventories.nameArena(player, Game.arenas[slot]);
 			}
 
 			// Edit existing arena
@@ -659,85 +662,13 @@ public class InventoryListener implements Listener {
 
 			// Save
 			else if (buttonName.contains("SAVE")) {
-				// Check if name is not empty
-				if (newName.length() == 0) {
-					player.sendMessage(Utils.notify("&cName cannot be empty!"));
+				try {
+					arenaInstance.setName(newName);
+				} catch (Exception ignored) {
 					return;
-				} else arenaInstance.setName(newName);
-
-				player.openInventory(Inventories.createArenaInventory(meta.getInteger1()));
-
-				// Set default max players to 12 if it doesn't exist
-				if (arenaInstance.getMaxPlayers() == 0)
-					arenaInstance.setMaxPlayers(12);
-
-				// Set default min players to 1 if it doesn't exist
-				if (arenaInstance.getMinPlayers() == 0)
-					arenaInstance.setMinPlayers(1);
-
-				// Set default wolf cap to 5 if it doesn't exist
-				if (arenaInstance.getWolfCap() == 0)
-					arenaInstance.setWolfCap(5);
-
-				// Set default iron golem cap to 2 if it doesn't exist
-				if (arenaInstance.getGolemCap() == 0)
-					arenaInstance.setgolemCap(2);
-
-				// Set default max waves to -1 if it doesn't exist
-				if (arenaInstance.getMaxWaves() == 0)
-					arenaInstance.setMaxWaves(-1);
-
-				// Set default wave time limit to -1 if it doesn't exist
-				if (arenaInstance.getWaveTimeLimit() == 0)
-					arenaInstance.setWaveTimeLimit(-1);
-
-				// Set default difficulty multiplier to 1 if it doesn't exist
-				if (arenaInstance.getDifficultyMultiplier() == 0)
-					arenaInstance.setDifficultyMultiplier(1);
-
-				// Set default to closed if arena closed doesn't exist
-				if (!config.contains("a" + meta.getInteger1() + ".closed"))
-					arenaInstance.setClosed(true);
-
-				// Set default sound options
-				if (!config.contains("a" + meta.getInteger1() + ".sounds")) {
-					arenaInstance.setWinSound(true);
-					arenaInstance.setLoseSound(true);
-					arenaInstance.setWaveStartSound(true);
-					arenaInstance.setWaveFinishSound(true);
-					arenaInstance.setGemSound(true);
-					arenaInstance.setPlayerDeathSound(true);
-					arenaInstance.setAbilitySound(true);
-					arenaInstance.setWaitingSound(14);
 				}
 
-				// Set default shop toggle
-				if (!config.contains("a" + meta.getInteger1() + ".normal"))
-					arenaInstance.setNormal(true);
-
-				// Set community chest toggle
-				if (!config.contains("a" + meta.getInteger1() + ".community"))
-					arenaInstance.setCommunity(true);
-
-				// Set default gem drop toggle
-				if (!config.contains("a" + meta.getInteger1() + ".gemDrop"))
-					arenaInstance.setGemDrop(true);
-
-				// Set default experience drop toggle
-				if (!config.contains("a" + meta.getInteger1() + ".expDrop"))
-					arenaInstance.setExpDrop(true);
-
-				// Set default particle toggles
-				if (!config.contains("a" + meta.getInteger1() + ".particles.spawn"))
-					arenaInstance.setSpawnParticles(true);
-				if (!config.contains("a" + meta.getInteger1() + ".particles.monster"))
-					arenaInstance.setMonsterParticles(true);
-				if (!config.contains("a" + meta.getInteger1() + ".particles.villager"))
-					arenaInstance.setVillagerParticles(true);
-
-				// Refresh portal
-				if (arenaInstance.getPortalLocation() != null)
-					arenaInstance.refreshPortal();
+				player.openInventory(Inventories.createArenaInventory(meta.getInteger1()));
 			}
 
 			// Cancel
@@ -757,9 +688,11 @@ public class InventoryListener implements Listener {
 
 			// Open name editor
 			if (buttonName.contains("Edit Name"))
-				if (arenaInstance.isClosed())
-					player.openInventory(Inventories.createNamingInventory(meta.getInteger1(), arenaInstance.getName()));
-				else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+				if (arenaInstance.isClosed()) {
+					Inventories.nameArena(player, arenaInstance);
+
+//					player.openInventory(Inventories.createNamingInventory(meta.getInteger1(), arenaInstance.getName()));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
 			// Open portal menu
 			else if (buttonName.contains("Portal and Leaderboard"))
@@ -3201,10 +3134,29 @@ public class InventoryListener implements Listener {
 		// Close safely for the inventory of concern
 		if (title.contains("Arena ")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
+			assert meta != null;
 			Arena arena = Game.arenas[meta.getInteger1()];
 			if (arena.getName() == null)
 				Game.arenas[meta.getInteger1()] = null;
 		}
+	}
+
+	// Handles arena naming
+	@EventHandler
+	public void onRename(SignGUIEvent e) {
+		Arena arena = e.getArena();
+		Player player = e.getPlayer();
+
+		// Try updating name
+		try {
+			arena.setName(e.getLines()[2]);
+			Utils.debugInfo(String.format("Name changed for arena %d!", arena.getArena()), 2);
+		} catch (Exception ignored) {
+			player.sendMessage(Utils.notify(Utils.format("&cInvalid arena name!")));
+			return;
+		}
+
+		player.openInventory(Inventories.createArenaInventory(arena.getArena()));
 	}
 
 	// Ensures safely opening inventories
