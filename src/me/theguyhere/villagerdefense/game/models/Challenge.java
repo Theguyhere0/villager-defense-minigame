@@ -131,7 +131,7 @@ public class Challenge {
 
         Challenge challenge = new Challenge("Clumsy", Material.ICE, bonus);
         challenge.addMasterDescription(Utils.format("&7I'm losing my marbles"));
-        challenge.addMasterDescription(Utils.format("&6Held items have a 2.5% chance to drop upon use"));
+        challenge.addMasterDescription(Utils.format("&6Held items have a 2% chance to drop upon use"));
         challenge.addMasterDescription(Utils.format("&a+" + bonus + "% crystal bonus"));
 
         return challenge;

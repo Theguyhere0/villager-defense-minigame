@@ -16,11 +16,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerStatisticIncrementEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -123,12 +125,17 @@ public class ChallengeListener implements Listener {
         if (!gamer.getChallenges().contains(Challenge.clumsy()))
             return;
 
-        double dropChance = .025;
+        double dropChance = .02;
         Random r = new Random();
 
         // See if item should be dropped
         if (r.nextDouble() < dropChance)
-            player.dropItem(true);
+            if (e.getHand() == EquipmentSlot.HAND)
+                player.dropItem(true);
+            else if (item != null) {
+                player.getWorld().dropItem(player.getLocation(), item);
+                Objects.requireNonNull(player.getEquipment()).setItemInOffHand(null);
+            }
     }
 
     // Handle taking damage

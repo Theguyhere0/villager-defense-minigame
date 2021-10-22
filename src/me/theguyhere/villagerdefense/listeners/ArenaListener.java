@@ -487,6 +487,9 @@ public class ArenaListener implements Listener {
                     1);
         }
 
+        // Set all players to invincible
+        arena.getAlives().forEach(player -> player.getPlayer().setInvulnerable(true));
+
         // Play sound if turned on
         if (arena.hasLoseSound())
             arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
