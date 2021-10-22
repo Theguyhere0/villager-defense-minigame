@@ -16,6 +16,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.Team;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -163,6 +164,20 @@ public class Main extends JavaPlugin {
 		// Spawn in portals
 		leaderboard.loadLeaderboards();
 		infoBoard.loadInfoBoards();
+
+		// Set teams
+		if (Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("monsters") == null) {
+			Team monsters = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard()
+					.registerNewTeam("monsters");
+			monsters.setColor(ChatColor.RED);
+			monsters.setDisplayName(ChatColor.RED + "Monsters");
+		}
+		if (Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("villagers") == null) {
+			Team villagers = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard()
+					.registerNewTeam("villagers");
+			villagers.setColor(ChatColor.GREEN);
+			villagers.setDisplayName(ChatColor.GREEN + "Villagers");
+		}
 	}
 
 	// Runs when disabling plugin

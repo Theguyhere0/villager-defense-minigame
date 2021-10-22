@@ -4,6 +4,8 @@ import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
+import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
@@ -258,6 +260,7 @@ public class Utils {
         // Remove last lore and return
         ItemMeta meta = item.getItemMeta();
         List<String> lore = meta.getLore();
+        assert lore != null;
         lore.remove(lore.size() - 1);
         meta.setLore(lore);
         item.setItemMeta(meta);
@@ -298,6 +301,7 @@ public class Utils {
         player.getInventory().clear();
         player.teleport(location);
         player.setGameMode(GameMode.ADVENTURE);
+        player.setGlowing(false);
     }
 
     // Prepares and teleports a player into spectator mode
@@ -309,7 +313,6 @@ public class Utils {
         if (!player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getModifiers().isEmpty())
             player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getModifiers().forEach(attribute ->
                     player.getAttribute(Attribute.GENERIC_MAX_HEALTH).removeModifier(attribute));
-//        setFalseSpectator(player);
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
         player.setFireTicks(0);
         player.setFoodLevel(20);
@@ -320,30 +323,7 @@ public class Utils {
         player.setGameMode(GameMode.SPECTATOR);
         player.closeInventory();
         player.teleport(location);
-    }
-
-    // Sets the player into false spectator mode for spectating or death
-    public static void setFalseSpectator(Player player) {
-        player.setInvulnerable(true);
-        player.setInvisible(true);
-        player.setAllowFlight(true);
-        player.setCanPickupItems(false);
-        player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
-        player.setFireTicks(0);
-        player.setFoodLevel(20);
-        player.setSaturation(20);
-        player.setExp(0);
-        player.setLevel(0);
-        player.getInventory().clear();
-        player.closeInventory();
-    }
-
-    // Reverts false spectator mode
-    public static void undoFalseSpectator(Player player) {
-        player.setInvulnerable(false);
-        player.setInvisible(false);
-        player.setAllowFlight(false);
-        player.setCanPickupItems(true);
+        player.setGlowing(false);
     }
 
     // Sets the location data to a configuration path
@@ -544,5 +524,16 @@ public class Utils {
             holo.appendTextLine(holoText[i]);
 
         return holo;
+    }
+
+    public static void fakeDeath(VDPlayer vdPlayer) {
+        Player player = vdPlayer.getPlayer();
+        player.setGameMode(GameMode.SPECTATOR);
+        player.getInventory().clear();
+        player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
+        player.closeInventory();
+        vdPlayer.setStatus(PlayerStatus.GHOST);
+        player.setFallDistance(0);
+        player.setGlowing(false);
     }
 }

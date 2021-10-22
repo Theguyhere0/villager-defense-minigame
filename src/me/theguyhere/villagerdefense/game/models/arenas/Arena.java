@@ -22,10 +22,11 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.BoundingBox;
 
 import java.io.File;
 import java.util.*;
@@ -1037,6 +1038,11 @@ public class Arena {
         Utils.setConfigurationLocation(plugin, path + ".corner2", location);
     }
 
+    public BoundingBox getBounds() {
+        return new BoundingBox(getCorner1().getX(), getCorner1().getY(), getCorner1().getZ(),
+                getCorner2().getX(), getCorner2().getY(), getCorner2().getZ());
+    }
+
     public boolean hasWinSound() {
         return config.getBoolean(path + ".sounds.win");
     }
@@ -1653,6 +1659,17 @@ public class Arena {
     public void removePlayerFromTimeLimitBar(Player player) {
         if (timeLimitBar != null && player != null)
             timeLimitBar.removePlayer(player);
+    }
+
+    /**
+     * Sets remaining monsters glowing.
+     */
+    public void setMonsterGlow() {
+        Objects.requireNonNull(getPlayerSpawn().getWorld())
+                .getNearbyEntities(getBounds()).stream().filter(entity -> entity.hasMetadata("VD"))
+                .filter(entity -> entity instanceof Monster || entity instanceof Slime ||
+                        entity instanceof Hoglin || entity instanceof Phantom)
+                .forEach(entity -> entity.setGlowing(true));
     }
 
     /**

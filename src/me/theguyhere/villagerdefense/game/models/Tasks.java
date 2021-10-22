@@ -17,10 +17,6 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.boss.BarColor;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Hoglin;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Phantom;
-import org.bukkit.entity.Slime;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -313,7 +309,6 @@ public class Tasks {
 
 				// Give admins items to test with
 				if (Main.getDebugLevel() >= 3 && player.getPlayer().hasPermission("vd.admin")) {
-					Utils.giveItem(player.getPlayer(), GameItems.wolf(), null);
 				}
 
 				// Give Traders their gems
@@ -409,10 +404,12 @@ public class Tasks {
 		double progress = 1;
 		double time;
 		boolean messageSent;
+		Arena arenaInstance;
+
 
 		@Override
 		public void run() {
-			Arena arenaInstance = Game.arenas[arena];
+			arenaInstance = Game.arenas[arena];
 
 			double multiplier = 1 + .2 * ((int) arenaInstance.getCurrentDifficulty() - 1);
 			if (!arenaInstance.hasDynamicLimit())
@@ -452,12 +449,8 @@ public class Tasks {
 											Utils.secondsToTicks(.5)));
 
 							// Set monsters glowing when time is low
-							Objects.requireNonNull(arenaInstance.getPlayerSpawn().getWorld())
-									.getNearbyEntities(arenaInstance.getPlayerSpawn(),
-									200, 200, 200).stream().filter(entity -> entity.hasMetadata("VD"))
-									.filter(entity -> entity instanceof Monster || entity instanceof Slime ||
-											entity instanceof Hoglin || entity instanceof Phantom)
-									.forEach(entity -> entity.setGlowing(true));
+							arenaInstance.setMonsterGlow();
+
 							messageSent = true;
 						}
 					} else arenaInstance.updateTimeLimitBar(progress);

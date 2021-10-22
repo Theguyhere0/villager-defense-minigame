@@ -64,6 +64,13 @@ public class GameListener implements Listener {
 		e.getDrops().clear();
 		e.setDroppedExp(0);
 
+		DataManager data;
+
+		// Get spawn table
+		if (arena.getSpawnTableFile().equals("custom"))
+			data = new DataManager(plugin, "spawnTables/a" + arena.getArena() + ".yml");
+		else data = new DataManager(plugin, "spawnTables/" + arena.getSpawnTableFile() + ".yml");
+
 		// Update villager count
 		if (ent instanceof Villager)
 			arena.decrementVillagers();
@@ -124,13 +131,6 @@ public class GameListener implements Listener {
 				arena.decrementEnemies();
 			}
 
-			DataManager data;
-
-			// Get spawn table
-			if (arena.getSpawnTableFile().equals("custom"))
-				data = new DataManager(plugin, "spawnTables/a" + arena.getArena() + ".yml");
-			else data = new DataManager(plugin, "spawnTables/" + arena.getSpawnTableFile() + ".yml");
-
 			// Get wave
 			String wave = Integer.toString(arena.getCurrentWave());
 			if (!data.getConfig().contains(wave))
@@ -147,13 +147,8 @@ public class GameListener implements Listener {
 			int count = (int) (data.getConfig().getInt(wave + ".count.m") * countMultiplier);
 
 			// Set monsters glowing when only 20% remain
-			if (arena.getEnemies() <= .2 * count && !arena.isSpawningMonsters() && arena.getEnemies() > 0) {
-				arena.getPlayerSpawn().getWorld().getNearbyEntities(arena.getPlayerSpawn(),
-						200, 200, 200).stream().filter(entity -> entity.hasMetadata("VD"))
-						.filter(entity -> entity instanceof Monster || entity instanceof Slime ||
-								entity instanceof Hoglin || entity instanceof Phantom)
-						.forEach(entity -> entity.setGlowing(true));
-			}
+			if (arena.getEnemies() <= .2 * count && !arena.isSpawningMonsters() && arena.getEnemies() > 0)
+				arena.setMonsterGlow();
 		}
 
 		// Update scoreboards
@@ -474,12 +469,7 @@ public class GameListener implements Listener {
 			else player.teleport(arena.getWaitingRoom());
 		} else {
 			// Set player to fake death mode
-			player.setGameMode(GameMode.SPECTATOR);
-			player.getInventory().clear();
-			player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
-			player.closeInventory();
-			gamer.setStatus(PlayerStatus.GHOST);
-			player.setFallDistance(0);
+			Utils.fakeDeath(gamer);
 
 			// Notify player of their own death
 			player.sendTitle(Utils.format(language.getString("death1")), language.getString("death2"),
@@ -614,11 +604,7 @@ public class GameListener implements Listener {
 
 		// Set player to fake death mode
 		e.setCancelled(true);
-		player.setGameMode(GameMode.SPECTATOR);
-		player.getInventory().clear();
-		player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
-		player.closeInventory();
-		gamer.setStatus(PlayerStatus.GHOST);
+		Utils.fakeDeath(gamer);
 
 		// Notify player of their own death
 		player.sendTitle(Utils.format(language.getString("death1")), language.getString("death2"),

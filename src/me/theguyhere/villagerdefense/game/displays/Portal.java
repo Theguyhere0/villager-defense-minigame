@@ -150,7 +150,7 @@ public class Portal {
 
         // Return full hologram text
         return new String[]{Utils.format("&6&l" + arena.getName() + difficulty),
-                Utils.format("&bPlayers: " + countColor + arena.getActiveCount() + "&b/ " + arena.getMaxPlayers()),
+                Utils.format("&bPlayers: " + countColor + arena.getActiveCount() + "&b / " + arena.getMaxPlayers()),
                 Utils.format("Spectators: " + arena.getSpectatorCount()),
                 Utils.format(status)};
     }

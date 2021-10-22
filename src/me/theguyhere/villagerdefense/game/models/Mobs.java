@@ -14,19 +14,26 @@ import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.scoreboard.Team;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Random;
 
 public class Mobs {
     private static void setMinion(Main plugin, Arena arena, LivingEntity livingEntity) {
+        Team monsters = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard()
+                .getTeam("monsters");
+        assert monsters != null;
+
+        monsters.addEntry(livingEntity.getUniqueId().toString());
         livingEntity.setCustomName(Utils.healthBar(1, 1, 5));
         livingEntity.setCustomNameVisible(true);
         livingEntity.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
         livingEntity.setRemoveWhenFarAway(false);
         livingEntity.setCanPickupItems(false);
         if (livingEntity.isInsideVehicle())
-            livingEntity.getVehicle().remove();
+            Objects.requireNonNull(livingEntity.getVehicle()).remove();
         for (Entity passenger : livingEntity.getPassengers())
             passenger.remove();
         arena.incrementEnemies();
@@ -60,6 +67,11 @@ public class Mobs {
     }
 
     private static void setBoss(Main plugin, Arena arena, LivingEntity livingEntity) {
+        Team monsters = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard()
+                .getTeam("monsters");
+        assert monsters != null;
+
+        monsters.addEntry(livingEntity.getUniqueId().toString());
         livingEntity.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
         livingEntity.setRemoveWhenFarAway(false);
         livingEntity.setCanPickupItems(false);
@@ -177,6 +189,7 @@ public class Mobs {
 
     private static void setSword(Arena arena, Monster monster) {
         EntityEquipment equipment = monster.getEquipment();
+        assert equipment != null;
         equipment.setItemInMainHand(getSword(arena), true);
         equipment.setItemInMainHandDropChance(0);
         equipment.setItemInOffHand(null);
@@ -184,6 +197,7 @@ public class Mobs {
 
     private static void setAxe(Arena arena, Monster monster) {
         EntityEquipment equipment = monster.getEquipment();
+        assert equipment != null;
         equipment.setItemInMainHand(getAxe(arena), true);
         equipment.setItemInMainHandDropChance(0);
         equipment.setItemInOffHand(null);
@@ -191,6 +205,7 @@ public class Mobs {
 
     private static void setBow(Arena arena, Monster monster) {
         EntityEquipment equipment = monster.getEquipment();
+        assert equipment != null;
         equipment.setItemInMainHand(getBow(arena), true);
         equipment.setItemInMainHandDropChance(0);
         equipment.setItemInOffHand(null);
@@ -198,6 +213,7 @@ public class Mobs {
 
     private static void setCrossbow(Arena arena, Monster monster) {
         EntityEquipment equipment = monster.getEquipment();
+        assert equipment != null;
         equipment.setItemInMainHand(getCrossbow(arena), true);
         equipment.setItemInMainHandDropChance(0);
         equipment.setItemInOffHand(null);
@@ -205,6 +221,7 @@ public class Mobs {
 
     private static void setTrident(Arena arena, Monster monster) {
         EntityEquipment equipment = monster.getEquipment();
+        assert equipment != null;
         equipment.setItemInMainHand(getTrident(arena), true);
         equipment.setItemInMainHandDropChance(0);
         equipment.setItemInOffHand(null);
@@ -212,6 +229,7 @@ public class Mobs {
 
     private static void setArmor(Arena arena, Monster monster) {
         EntityEquipment equipment = monster.getEquipment();
+        assert equipment != null;
         equipment.setHelmet(getHelmet(arena), true);
         equipment.setHelmetDropChance(0);
         equipment.setChestplate(getChestplate(arena), true);
@@ -1015,6 +1033,11 @@ public class Mobs {
     }
 
     public static void setVillager(Main plugin, Arena arena, Villager villager) {
+        Team villagers = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard()
+                .getTeam("villagers");
+        assert villagers != null;
+
+        villagers.addEntry(villager.getUniqueId().toString());
         villager.setCustomName(Utils.healthBar(1, 1, 5));
         villager.setCustomNameVisible(true);
         villager.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
