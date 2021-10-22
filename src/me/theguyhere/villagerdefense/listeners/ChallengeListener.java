@@ -13,6 +13,7 @@ import org.bukkit.Statistic;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -161,13 +162,18 @@ public class ChallengeListener implements Listener {
             // Check damage was done to monster
             if (!(e.getEntity().hasMetadata("VD"))) return;
 
-            // Check for player damager
-            if (!(e.getDamager() instanceof Player)) return;
-
-            Player player = (Player) e.getDamager();
+            Player player;
             VDPlayer gamer;
 
-            // Attempt to get player
+            // Check for player damager, then get player
+            if (e.getDamager() instanceof Player)
+                player = (Player) e.getDamager();
+            else if (e.getDamager() instanceof Projectile &&
+                    ((Projectile) e.getDamager()).getShooter() instanceof Player)
+                player = (Player) ((Projectile) e.getDamager()).getShooter();
+            else return;
+
+            // Attempt to get VDplayer
             try {
                 gamer = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
                         .collect(Collectors.toList()).get(0).getPlayer(player);

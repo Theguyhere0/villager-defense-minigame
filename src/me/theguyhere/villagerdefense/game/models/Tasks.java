@@ -309,6 +309,8 @@ public class Tasks {
 
 				// Give admins items to test with
 				if (Main.getDebugLevel() >= 3 && player.getPlayer().hasPermission("vd.admin")) {
+					Utils.giveItem(player.getPlayer(), GameItems.bow(4), "");
+					Utils.giveItem(player.getPlayer(), GameItems.arrows(), "");
 				}
 
 				// Give Traders their gems

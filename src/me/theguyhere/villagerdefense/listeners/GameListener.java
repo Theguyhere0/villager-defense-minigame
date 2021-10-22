@@ -5,6 +5,7 @@ import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.GameEndEvent;
 import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.events.ReloadBoardsEvent;
+import me.theguyhere.villagerdefense.game.models.Challenge;
 import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.game.models.GameItems;
 import me.theguyhere.villagerdefense.game.models.Mobs;
@@ -213,6 +214,34 @@ public class GameListener implements Listener {
 			return;
 
 		Entity damager = e.getDamager();
+
+		Player player;
+		VDPlayer gamer;
+
+		// Check for player damager, then get player
+		if (damager instanceof Player)
+			player = (Player) damager;
+		else if (damager instanceof Projectile &&
+				((Projectile) damager).getShooter() instanceof Player)
+			player = (Player) ((Projectile) damager).getShooter();
+		else player = null;
+
+		// Attempt to get VDplayer
+		if (player != null) {
+			try {
+				gamer = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+						.collect(Collectors.toList()).get(0).getPlayer(player);
+			} catch (Exception err) {
+				return;
+			}
+		} else gamer = null;
+
+		// Check for pacifist challenge
+		if (gamer != null)
+			if (gamer.getChallenges().contains(Challenge.pacifist()))
+				// Cancel if not an enemy of the player
+				if (!gamer.getEnemies().contains(ent.getUniqueId()))
+					return;
 
 		// Ignore wolves
 		if (ent instanceof Wolf)
