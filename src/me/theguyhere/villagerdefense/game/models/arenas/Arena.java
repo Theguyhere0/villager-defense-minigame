@@ -1195,7 +1195,8 @@ public class Arena {
     }
 
     public List<ArenaRecord> getSortedDescendingRecords() {
-        return getArenaRecords().stream().sorted(Comparator.comparingInt(ArenaRecord::getWave).reversed())
+        return getArenaRecords().stream().filter(Objects::nonNull)
+                .sorted(Comparator.comparingInt(ArenaRecord::getWave).reversed())
                 .collect(Collectors.toList());
     }
 
@@ -1207,7 +1208,8 @@ public class Arena {
             records.add(record);
 
         // New record
-        else if (records.stream().anyMatch(arenaRecord -> arenaRecord.getWave() < record.getWave())) {
+        else if (records.stream().filter(Objects::nonNull)
+                .anyMatch(arenaRecord -> arenaRecord.getWave() < record.getWave())) {
             records.sort(Comparator.comparingInt(ArenaRecord::getWave));
             records.set(0, record);
         }
@@ -1345,21 +1347,24 @@ public class Arena {
      * @return A list of {@link VDPlayer} of the {@link PlayerStatus} ALIVE.
      */
     public List<VDPlayer> getAlives() {
-        return players.stream().filter(p -> p.getStatus() == PlayerStatus.ALIVE).collect(Collectors.toList());
+        return players.stream().filter(Objects::nonNull).filter(p -> p.getStatus() == PlayerStatus.ALIVE)
+                .collect(Collectors.toList());
     }
 
     /**
      * @return A list of {@link VDPlayer} of the {@link PlayerStatus} GHOST.
      */
     public List<VDPlayer> getGhosts() {
-        return players.stream().filter(p -> p.getStatus() == PlayerStatus.GHOST).collect(Collectors.toList());
+        return players.stream().filter(Objects::nonNull).filter(p -> p.getStatus() == PlayerStatus.GHOST)
+                .collect(Collectors.toList());
     }
 
     /**
      * @return A list of {@link VDPlayer} of the {@link PlayerStatus} SPECTATOR.
      */
     public List<VDPlayer> getSpectators() {
-        return players.stream().filter(p -> p.getStatus() == PlayerStatus.SPECTATOR).collect(Collectors.toList());
+        return players.stream().filter(Objects::nonNull).filter(p -> p.getStatus() == PlayerStatus.SPECTATOR)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -1377,7 +1382,8 @@ public class Arena {
      */
     public VDPlayer getPlayer(Player player) throws PlayerNotFoundException {
         try {
-            return players.stream().filter(p -> p.getID().equals(player.getUniqueId())).collect(Collectors.toList())
+            return players.stream().filter(Objects::nonNull).filter(p -> p.getID().equals(player.getUniqueId()))
+                    .collect(Collectors.toList())
                     .get(0);
         } catch (Exception e) {
             throw new PlayerNotFoundException("Player not in this arena.");
@@ -1391,14 +1397,14 @@ public class Arena {
      */
     public boolean hasPlayer(Player player) {
         try {
-            return players.stream().anyMatch(p -> p.getID().equals(player.getUniqueId()));
+            return players.stream().filter(Objects::nonNull).anyMatch(p -> p.getID().equals(player.getUniqueId()));
         } catch (Exception e) {
             return false;
         }
     }
 
     public boolean hasPlayer(VDPlayer player) {
-        return players.stream().anyMatch(p -> p.equals(player));
+        return players.stream().filter(Objects::nonNull).anyMatch(p -> p.equals(player));
     }
 
     public int getActiveCount() {
@@ -1680,7 +1686,8 @@ public class Arena {
      */
     public void setMonsterGlow() {
         Objects.requireNonNull(getPlayerSpawn().getWorld())
-                .getNearbyEntities(getBounds()).stream().filter(entity -> entity.hasMetadata("VD"))
+                .getNearbyEntities(getBounds()).stream().filter(Objects::nonNull)
+                .filter(entity -> entity.hasMetadata("VD"))
                 .filter(entity -> entity instanceof Monster || entity instanceof Slime ||
                         entity instanceof Hoglin || entity instanceof Phantom)
                 .forEach(entity -> entity.setGlowing(true));
@@ -1707,12 +1714,15 @@ public class Arena {
     public void calibrate() {
         // Get accurate numbers
         int monsters = (int) Objects.requireNonNull(getPlayerSpawn().getWorld()).getNearbyEntities(getBounds()).stream()
+                .filter(Objects::nonNull)
                 .filter(entity -> entity.hasMetadata("VD"))
                 .filter(entity -> entity instanceof Monster || entity instanceof Slime || entity instanceof Hoglin ||
                 entity instanceof Phantom).count();
         int villagers = (int) Objects.requireNonNull(getPlayerSpawn().getWorld()).getNearbyEntities(getBounds()).stream()
+                .filter(Objects::nonNull)
                 .filter(entity -> entity.hasMetadata("VD")).filter(entity -> entity instanceof Villager).count();
         int golems = (int) Objects.requireNonNull(getPlayerSpawn().getWorld()).getNearbyEntities(getBounds()).stream()
+                .filter(Objects::nonNull)
                 .filter(entity -> entity.hasMetadata("VD")).filter(entity -> entity instanceof IronGolem).count();
         boolean calibrated = false;
 

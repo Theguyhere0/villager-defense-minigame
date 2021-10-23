@@ -60,6 +60,14 @@ public class EnchantingBook extends ItemStack {
                 return new EnchantingBook(multishot(), Enchantment.MULTISHOT);
             case "Infinity":
                 return new EnchantingBook(infinity(), Enchantment.ARROW_INFINITE);
+            case "Blast":
+                return new EnchantingBook(blastProtection(), Enchantment.PROTECTION_EXPLOSIONS);
+            case "Thorns":
+                return new EnchantingBook(thorns(), Enchantment.THORNS);
+            case "Projectile":
+                return new EnchantingBook(projectileProtection(), Enchantment.PROTECTION_PROJECTILE);
+            case "Protection":
+                return new EnchantingBook(protection(), Enchantment.PROTECTION_ENVIRONMENTAL);
             case "Unbreaking":
                 return new EnchantingBook(unbreaking(), Enchantment.DURABILITY);
             case "Mending":
@@ -133,6 +141,26 @@ public class EnchantingBook extends ItemStack {
         return Utils.createItem(Material.ENCHANTED_BOOK, Utils.format("&a&lBook of Infinity"),
                 Utils.BUTTON_FLAGS, Utils.glow(), Utils.format("&7Drop onto another item to enchant"),
                 Utils.format("&5CAUTION: CAN'T INCREASE LEVEL"), Utils.format("&4WARNING: WORKS ON ANY ITEM"));
+    }
+    public static ItemStack blastProtection() {
+        return Utils.createItem(Material.ENCHANTED_BOOK, Utils.format("&a&lBook of Blast Protection"),
+                Utils.BUTTON_FLAGS, Utils.glow(), Utils.format("&7Drop onto another item to enchant"),
+                Utils.format("&4WARNING: WORKS ON ANY ITEM"));
+    }
+    public static ItemStack thorns() {
+        return Utils.createItem(Material.ENCHANTED_BOOK, Utils.format("&a&lBook of Thorns"),
+                Utils.BUTTON_FLAGS, Utils.glow(), Utils.format("&7Drop onto another item to enchant"),
+                Utils.format("&4WARNING: WORKS ON ANY ITEM"));
+    }
+    public static ItemStack projectileProtection() {
+        return Utils.createItem(Material.ENCHANTED_BOOK, Utils.format("&a&lBook of Projectile Protection"),
+                Utils.BUTTON_FLAGS, Utils.glow(), Utils.format("&7Drop onto another item to enchant"),
+                Utils.format("&4WARNING: WORKS ON ANY ITEM"));
+    }
+    public static ItemStack protection() {
+        return Utils.createItem(Material.ENCHANTED_BOOK, Utils.format("&a&lBook of Protection"),
+                Utils.BUTTON_FLAGS, Utils.glow(), Utils.format("&7Drop onto another item to enchant"),
+                Utils.format("&4WARNING: WORKS ON ANY ITEM"));
     }
     public static ItemStack unbreaking() {
         return Utils.createItem(Material.ENCHANTED_BOOK, Utils.format("&a&lBook of Unbreaking"),

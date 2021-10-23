@@ -1924,7 +1924,7 @@ public class Inventories {
 		// Ranged enchants
 		inv.setItem(18, Utils.createItem(Material.STICKY_PISTON, Utils.format("&a&lIncrease Punch"),
 				Utils.format("&2Costs 4 XP Levels")));
-		inv.setItem(19, Utils.createItem(Material.ARROW, Utils.format("&a&lIncrease Piercing"),
+		inv.setItem(19, Utils.createItem(Material.SPECTRAL_ARROW, Utils.format("&a&lIncrease Piercing"),
 				Utils.format("&2Costs 5 XP Levels")));
 		inv.setItem(20, Utils.createItem(Material.REDSTONE_TORCH, Utils.format("&a&lIncrease Quick Charge"),
 				Utils.format("&2Costs 6 XP Levels")));
@@ -1939,10 +1939,20 @@ public class Inventories {
 		inv.setItem(25, Utils.createItem(Material.BEACON, Utils.format("&a&lAdd Infinity"),
 				Utils.format("&2Costs 15 XP Levels")));
 
+		// Armor enchants
+		inv.setItem(36, Utils.createItem(Material.TNT, Utils.format("&a&lIncrease Blast Protection"),
+				Utils.format("&2Costs 4 XP Levels")));
+		inv.setItem(37, Utils.createItem(Material.VINE, Utils.format("&a&lIncrease Thorns"),
+				Utils.format("&2Costs 5 XP Levels")));
+		inv.setItem(38, Utils.createItem(Material.ARROW, Utils.format("&a&lIncrease Projectile Protection"),
+				Utils.format("&2Costs 6 XP Levels")));
+		inv.setItem(39, Utils.createItem(Material.SHIELD, Utils.format("&a&lIncrease Protection"),
+				Utils.format("&2Costs 8 XP Levels")));
+
 		// General enchants
-		inv.setItem(36, Utils.createItem(Material.BEDROCK, Utils.format("&a&lIncrease Unbreaking"),
+		inv.setItem(43, Utils.createItem(Material.BEDROCK, Utils.format("&a&lIncrease Unbreaking"),
 				Utils.format("&2Costs 3 XP Levels")));
-		inv.setItem(37, Utils.createItem(Material.ANVIL, Utils.format("&a&lAdd Mending"),
+		inv.setItem(44, Utils.createItem(Material.ANVIL, Utils.format("&a&lAdd Mending"),
 				Utils.format("&2Costs 20 XP Levels")));
 
 		// Return option

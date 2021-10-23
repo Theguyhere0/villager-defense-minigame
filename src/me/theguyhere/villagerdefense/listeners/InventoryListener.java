@@ -2912,23 +2912,23 @@ public class InventoryListener implements Listener {
 				gamer.addGems(cost / 10);
 			Game.createBoard(gamer);
 
-			EntityEquipment equipment = player.getPlayer().getEquipment();
+			EntityEquipment equipment = Objects.requireNonNull(player.getPlayer()).getEquipment();
 
 			// Equip armor if possible, otherwise put in inventory, otherwise drop at feet
 			if (Arrays.stream(GameItems.HELMET_MATERIALS).anyMatch(mat -> mat == buyType) &&
-					equipment.getHelmet() == null) {
+					Objects.requireNonNull(equipment).getHelmet() == null) {
 				equipment.setHelmet(buy);
 				player.sendMessage(Utils.notify(language.getString("helmet")));
 			} else if (Arrays.stream(GameItems.CHESTPLATE_MATERIALS).anyMatch(mat -> mat == buyType) &&
-					equipment.getChestplate() == null) {
+					Objects.requireNonNull(equipment).getChestplate() == null) {
 				equipment.setChestplate(buy);
 				player.sendMessage(Utils.notify(language.getString("chestplate")));
 			} else if (Arrays.stream(GameItems.LEGGING_MATERIALS).anyMatch(mat -> mat == buyType) &&
-					equipment.getLeggings() == null) {
+					Objects.requireNonNull(equipment).getLeggings() == null) {
 				equipment.setLeggings(buy);
 				player.sendMessage(Utils.notify(language.getString("leggings")));
 			} else if (Arrays.stream(GameItems.BOOTS_MATERIALS).anyMatch(mat -> mat == buyType) &&
-					equipment.getBoots() == null) {
+					Objects.requireNonNull(equipment).getBoots() == null) {
 				equipment.setBoots(buy);
 				player.sendMessage(Utils.notify(language.getString("boots")));
 			} else {
@@ -3022,6 +3022,18 @@ public class InventoryListener implements Listener {
 					break;
 				case "Infinity":
 					give = EnchantingBook.infinity();
+					break;
+				case "Blast":
+					give = EnchantingBook.blastProtection();
+					break;
+				case "Thorns":
+					give = EnchantingBook.thorns();
+					break;
+				case "Projectile":
+					give = EnchantingBook.projectileProtection();
+					break;
+				case "Protection":
+					give = EnchantingBook.protection();
 					break;
 				case "Unbreaking":
 					give = EnchantingBook.unbreaking();

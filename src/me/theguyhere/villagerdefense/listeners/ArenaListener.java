@@ -307,7 +307,7 @@ public class ArenaListener implements Listener {
 
         // Schedule and record calibration task
         task.getTasks().put(task.calibrate, Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, task.calibrate, 0,
-                Utils.secondsToTicks(30)));
+                Utils.secondsToTicks(10)));
 
         // Spawn mobs
         spawnVillagers(arena);

@@ -381,7 +381,7 @@ public class GameListener implements Listener {
 		// Get item in hand
 		ItemStack item;
 		if (e.getHand() == EquipmentSlot.OFF_HAND) {
-			item = player.getEquipment().getItemInOffHand();
+			item = Objects.requireNonNull(player.getEquipment()).getItemInOffHand();
 
 			// Check for other clickables in main hand
 			if (Arrays.asList(GameItems.ABILITY_ITEMS).contains(item) ||
@@ -779,7 +779,10 @@ public class GameListener implements Listener {
 				arena.getActives().stream().filter(vdPlayer -> !arena.getGhosts().contains(vdPlayer))
 						.forEach(vdPlayer -> vdPlayer.getPlayer()
 								.giveExp((int) (arena.getCurrentDifficulty() * 40) / arena.getAlive()));
-			else player.giveExp((int) (arena.getCurrentDifficulty() * 2));
+			else {
+				assert player != null;
+				player.giveExp((int) (arena.getCurrentDifficulty() * 2));
+			}
 		}
 	}
 	
@@ -1104,7 +1107,7 @@ public class GameListener implements Listener {
 
 		// Cancel teleport and notify if teleport is outside arena bounds
 		if (!(BoundingBox.of(arena.getCorner1(), arena.getCorner2())
-				.contains(e.getTo().getX(), e.getTo().getY(), e.getTo().getZ())) ||
+				.contains(Objects.requireNonNull(e.getTo()).getX(), e.getTo().getY(), e.getTo().getZ())) ||
 				!Objects.equals(e.getTo().getWorld(), arena.getCorner1().getWorld())) {
 			e.setCancelled(true);
 			player.sendMessage(Utils.notify(plugin.getLanguageData().getString("teleportError")));

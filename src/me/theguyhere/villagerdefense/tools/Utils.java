@@ -486,27 +486,31 @@ public class Utils {
 
     // Get nearby players
     public static List<Player> getNearbyPlayers(Player player, double range) {
-        return player.getNearbyEntities(range, range, range).stream().filter(ent -> ent instanceof Player)
+        return player.getNearbyEntities(range, range, range).stream().filter(Objects::nonNull)
+                .filter(ent -> ent instanceof Player)
                 .map(ent -> (Player) ent).collect(Collectors.toList());
     }
 
     // Get nearby allies
     public static List<LivingEntity> getNearbyAllies(Player player, double range) {
-        return player.getNearbyEntities(range, range, range).stream().filter(ent -> ent instanceof Villager ||
+        return player.getNearbyEntities(range, range, range).stream().filter(Objects::nonNull)
+                .filter(ent -> ent instanceof Villager ||
                 ent instanceof Wolf || ent instanceof IronGolem).map(ent -> (LivingEntity) ent)
                 .collect(Collectors.toList());
     }
 
     // Get wolves
     public static List<Wolf> getPets(Player player) {
-        return player.getNearbyEntities(150, 50, 150).stream().filter(ent -> ent instanceof Wolf)
+        return player.getNearbyEntities(150, 50, 150).stream().filter(Objects::nonNull)
+                .filter(ent -> ent instanceof Wolf)
                 .map(ent -> (Wolf) ent).filter(wolf -> Objects.equals(wolf.getOwner(), player))
                 .collect(Collectors.toList());
     }
 
     // Get nearby monsters
     public static List<LivingEntity> getNearbyMonsters(Player player, double range) {
-        return player.getNearbyEntities(range, range, range).stream().filter(ent -> ent instanceof Monster ||
+        return player.getNearbyEntities(range, range, range).stream().filter(Objects::nonNull)
+                .filter(ent -> ent instanceof Monster ||
                 ent instanceof Slime || ent instanceof Hoglin || ent instanceof Phantom).map(ent -> (LivingEntity) ent)
                 .collect(Collectors.toList());
     }
