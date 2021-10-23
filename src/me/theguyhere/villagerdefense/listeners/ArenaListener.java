@@ -244,6 +244,12 @@ public class ArenaListener implements Listener {
             arena.removeTimeLimitBar();
         }
 
+        // Remove calibration task
+        if (tasks.containsKey(task.calibrate)) {
+            Bukkit.getScheduler().cancelTask(tasks.get(task.calibrate));
+            tasks.remove(task.calibrate);
+        }
+
         // Play wave end sound
         if (arena.hasWaveFinishSound() && arena.getCurrentWave() != 0)
             arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
@@ -295,6 +301,10 @@ public class ArenaListener implements Listener {
         if (arena.getWaveTimeLimit() != -1)
             task.getTasks().put(task.updateBar,
                 Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, task.updateBar, 0, Utils.secondsToTicks(1)));
+
+        // Schedule and record calibration task
+        task.getTasks().put(task.calibrate, Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, task.calibrate, 0,
+                Utils.secondsToTicks(30)));
 
         // Spawn mobs
         spawnVillagers(arena);
@@ -538,6 +548,10 @@ public class ArenaListener implements Listener {
             Bukkit.getScheduler().cancelTask(tasks.get(task.updateBar));
             tasks.remove(task.updateBar);
             arena.removeTimeLimitBar();
+        }
+        if (tasks.containsKey(task.calibrate)) {
+            Bukkit.getScheduler().cancelTask(tasks.get(task.calibrate));
+            tasks.remove(task.calibrate);
         }
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
                 Bukkit.getPluginManager().callEvent(new ArenaResetEvent(arena)), Utils.secondsToTicks(10));

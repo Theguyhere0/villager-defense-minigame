@@ -4,6 +4,7 @@ import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import me.theguyhere.villagerdefense.GUI.InventoryItems;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.GameEndEvent;
+import me.theguyhere.villagerdefense.events.ReloadBoardsEvent;
 import me.theguyhere.villagerdefense.events.WaveEndEvent;
 import me.theguyhere.villagerdefense.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.game.displays.Portal;
@@ -1685,6 +1686,54 @@ public class Arena {
             Utils.debugInfo(String.format("Arena %d did not meet opening requirements and was closed.", arena),
                     2);
         }
+    }
+
+    /**
+     * Checks mobs within its boundaries to make sure mob counts are accurate.
+     */
+    public void calibrate() {
+        // Get accurate numbers
+        int monsters = (int) Objects.requireNonNull(getPlayerSpawn().getWorld()).getNearbyEntities(getBounds()).stream()
+                .filter(entity -> entity.hasMetadata("VD"))
+                .filter(entity -> entity instanceof Monster || entity instanceof Slime || entity instanceof Hoglin ||
+                entity instanceof Phantom).count();
+        int villagers = (int) Objects.requireNonNull(getPlayerSpawn().getWorld()).getNearbyEntities(getBounds()).stream()
+                .filter(entity -> entity.hasMetadata("VD")).filter(entity -> entity instanceof Villager).count();
+        int golems = (int) Objects.requireNonNull(getPlayerSpawn().getWorld()).getNearbyEntities(getBounds()).stream()
+                .filter(entity -> entity.hasMetadata("VD")).filter(entity -> entity instanceof IronGolem).count();
+        boolean calibrated = false;
+
+        // Update if out of cal
+        if (monsters != enemies) {
+            enemies = monsters;
+            calibrated = true;
+        }
+        if (villagers != this.villagers) {
+            this.villagers = villagers;
+            calibrated = true;
+        }
+        if (golems != this.golems)
+            this.golems = golems;
+
+        // Skip if no visible calibration was performed
+        if (!calibrated)
+            return;
+
+        // Update scoreboards
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+                Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(this)));
+
+        // Trigger game end if all villagers are gone
+        if (this.villagers <= 0 && status == ArenaStatus.ACTIVE) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+                    Bukkit.getPluginManager().callEvent(new GameEndEvent(this)));
+            return;
+        }
+
+        // Trigger wave end if all monsters are gone
+        if (enemies <= 0 && status == ArenaStatus.ACTIVE)
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+                    Bukkit.getPluginManager().callEvent(new WaveEndEvent(this)));
     }
 
     /**

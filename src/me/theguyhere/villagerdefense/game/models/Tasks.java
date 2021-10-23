@@ -17,6 +17,8 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.boss.BarColor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Villager;
+import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -153,6 +155,88 @@ public class Tasks {
 		}
 	};
 
+	// Start actual game
+	public final Runnable start = new Runnable() {
+
+		@Override
+		public void run() {
+			Arena arenaInstance = Game.arenas[arena];
+
+			// Teleport players to arena if waiting room exists
+			if (arenaInstance.getWaitingRoom() != null) {
+				arenaInstance.getActives().forEach(player ->
+						Utils.teleAdventure(player.getPlayer(), arenaInstance.getPlayerSpawn()));
+				arenaInstance.getSpectators().forEach(player ->
+						Utils.teleSpectator(player.getPlayer(), arenaInstance.getPlayerSpawn()));
+			}
+
+			// Stop waiting sound
+			if (arenaInstance.getWaitingSound() != null)
+				arenaInstance.getPlayers().forEach(player ->
+						player.getPlayer().stopSound(arenaInstance.getWaitingSound()));
+
+			// Start particles if enabled
+			if (arenaInstance.hasSpawnParticles())
+				arenaInstance.startSpawnParticles();
+			if (arenaInstance.hasMonsterParticles())
+				arenaInstance.startMonsterParticles();
+			if (arenaInstance.hasVillagerParticles())
+				arenaInstance.startVillagerParticles();
+			if (arenaInstance.hasBorderParticles())
+				arenaInstance.startBorderParticles();
+
+			arenaInstance.getActives().forEach(player -> {
+				// Give all players starting items
+				giveItems(player);
+
+				// Give admins items or events to test with
+				if (Main.getDebugLevel() >= 3 && player.getPlayer().hasPermission("vd.admin")) {
+				}
+
+				// Give Traders their gems
+				if (player.getKit().equals(Kit.trader().setKitLevel(1)))
+					player.addGems(200);
+
+				// Set health for people with giant kits
+				if (player.getKit().equals(Kit.giant().setKitLevel(1)))
+					Objects.requireNonNull(player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+							.addModifier(new AttributeModifier("Giant1", 2,
+									AttributeModifier.Operation.ADD_NUMBER));
+				else if (player.getKit().equals(Kit.giant().setKitLevel(2)))
+					Objects.requireNonNull(player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+							.addModifier(new AttributeModifier("Giant1", 4,
+									AttributeModifier.Operation.ADD_NUMBER));
+
+				// Set health for people with dwarf challenge
+				if (player.getChallenges().contains(Challenge.dwarf()))
+					Objects.requireNonNull(player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+							.addModifier(new AttributeModifier("Giant1", -.5,
+									AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+
+				// Give blindness to people with that challenge
+				if (player.getChallenges().contains(Challenge.blind()))
+					player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999,
+							0));
+			});
+
+			// Set arena to active and reset villager and enemy count
+			arenaInstance.setStatus(ArenaStatus.ACTIVE);
+			arenaInstance.resetVillagers();
+			arenaInstance.resetEnemies();
+
+			// Initiate community chest
+			arenaInstance.setCommunityChest(Bukkit.createInventory(new InventoryMeta(arena), 54,
+					Utils.format("&k") + Utils.format("&d&lCommunity Chest")));
+
+			// Trigger WaveEndEvent
+			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+					Bukkit.getPluginManager().callEvent(new WaveEndEvent(arenaInstance)));
+
+			// Debug message to console
+			Utils.debugInfo("Arena " + arena + " is starting.", 2);
+		}
+	};
+
 	// Start a new wave
 	public final Runnable wave = new Runnable() {
 
@@ -272,88 +356,13 @@ public class Tasks {
 			Utils.debugInfo("Starting wave " + currentWave + " for Arena " + arena, 2);
 		}
 	};
-	
-	// Start actual game
-	public final Runnable start = new Runnable() {
 
+	// Calibrate the arena
+	public final Runnable calibrate = new Runnable() {
 		@Override
 		public void run() {
-			Arena arenaInstance = Game.arenas[arena];
-
-			// Teleport players to arena if waiting room exists
-			if (arenaInstance.getWaitingRoom() != null) {
-				arenaInstance.getActives().forEach(player ->
-						Utils.teleAdventure(player.getPlayer(), arenaInstance.getPlayerSpawn()));
-				arenaInstance.getSpectators().forEach(player ->
-						Utils.teleSpectator(player.getPlayer(), arenaInstance.getPlayerSpawn()));
-			}
-
-			// Stop waiting sound
-			if (arenaInstance.getWaitingSound() != null)
-				arenaInstance.getPlayers().forEach(player ->
-						player.getPlayer().stopSound(arenaInstance.getWaitingSound()));
-
-			// Start particles if enabled
-			if (arenaInstance.hasSpawnParticles())
-				arenaInstance.startSpawnParticles();
-			if (arenaInstance.hasMonsterParticles())
-				arenaInstance.startMonsterParticles();
-			if (arenaInstance.hasVillagerParticles())
-				arenaInstance.startVillagerParticles();
-			if (arenaInstance.hasBorderParticles())
-				arenaInstance.startBorderParticles();
-
-			arenaInstance.getActives().forEach(player -> {
-				// Give all players starting items
-				giveItems(player);
-
-				// Give admins items to test with
-				if (Main.getDebugLevel() >= 3 && player.getPlayer().hasPermission("vd.admin")) {
-					Utils.giveItem(player.getPlayer(), GameItems.bow(4), "");
-					Utils.giveItem(player.getPlayer(), GameItems.arrows(), "");
-				}
-
-				// Give Traders their gems
-				if (player.getKit().equals(Kit.trader().setKitLevel(1)))
-					player.addGems(200);
-
-				// Set health for people with giant kits
-				if (player.getKit().equals(Kit.giant().setKitLevel(1)))
-					Objects.requireNonNull(player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
-							.addModifier(new AttributeModifier("Giant1", 2,
-									AttributeModifier.Operation.ADD_NUMBER));
-				else if (player.getKit().equals(Kit.giant().setKitLevel(2)))
-					Objects.requireNonNull(player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
-							.addModifier(new AttributeModifier("Giant1", 4,
-									AttributeModifier.Operation.ADD_NUMBER));
-
-				// Set health for people with dwarf challenge
-				if (player.getChallenges().contains(Challenge.dwarf()))
-					Objects.requireNonNull(player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
-							.addModifier(new AttributeModifier("Giant1", -.5,
-									AttributeModifier.Operation.MULTIPLY_SCALAR_1));
-
-				// Give blindness to people with that challenge
-				if (player.getChallenges().contains(Challenge.blind()))
-					player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999,
-							0));
-			});
-
-			// Set arena to active and reset villager and enemy count
-			arenaInstance.setStatus(ArenaStatus.ACTIVE);
-			arenaInstance.resetVillagers();
-			arenaInstance.resetEnemies();
-
-			// Initiate community chest
-			arenaInstance.setCommunityChest(Bukkit.createInventory(new InventoryMeta(arena), 54,
-					Utils.format("&k") + Utils.format("&d&lCommunity Chest")));
-
-			// Trigger WaveEndEvent
-			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
-					Bukkit.getPluginManager().callEvent(new WaveEndEvent(arenaInstance)));
-
-			// Debug message to console
-			Utils.debugInfo("Arena " + arena + " is starting.", 2);
+			Game.arenas[arena].calibrate();
+			Utils.debugInfo("Arena " + arena + " performed a calibration check.", 2);
 		}
 	};
 
