@@ -28,7 +28,7 @@ public class Utils {
     private static final int MINUTES_TO_SECONDS = 60;
     private static final int SECONDS_TO_MILLIS = 1000;
 
-    private static Logger log = Logger.getLogger("Minecraft");
+    private static final Logger log = Logger.getLogger("Minecraft");
 
     /** Flags for creating normal items with enchants and/or lore.*/
     public static final boolean[] NORMAL_FLAGS = {false, false};
@@ -36,6 +36,13 @@ public class Utils {
     public static final boolean[] HIDE_ENCHANT_FLAGS = {true, false};
     /** Flags for creating items with hidden enchants and attributes, mostly for buttons.*/
     public static final boolean[] BUTTON_FLAGS = {true, true};
+
+    // Dummy enchant for glowing buttons
+    public static HashMap<Enchantment, Integer> glow() {
+        HashMap<Enchantment, Integer> enchants = new HashMap<>();
+        enchants.put(Enchantment.DURABILITY, 1);
+        return enchants;
+    }
 
     // Formats chat text
     public static String format(String msg) {

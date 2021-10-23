@@ -8,6 +8,7 @@ import me.theguyhere.villagerdefense.tools.Utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A class managing data about a Villager Defense arena's scoreboard.
@@ -30,7 +31,7 @@ public class ArenaBoard {
 	}
 
 	public static void refreshArenaBoards() {
-		Arrays.stream(Game.arenas).forEach(Arena::refreshArenaBoard);
+		Arrays.stream(Game.arenas).filter(Objects::nonNull).forEach(Arena::refreshArenaBoard);
 	}
 
 	/**

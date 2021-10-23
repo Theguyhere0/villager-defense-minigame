@@ -5,10 +5,7 @@ import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.GameEndEvent;
 import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.events.ReloadBoardsEvent;
-import me.theguyhere.villagerdefense.game.models.Challenge;
-import me.theguyhere.villagerdefense.game.models.Game;
-import me.theguyhere.villagerdefense.game.models.GameItems;
-import me.theguyhere.villagerdefense.game.models.Mobs;
+import me.theguyhere.villagerdefense.game.models.*;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.game.models.players.PlayerNotFoundException;
@@ -21,6 +18,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -32,9 +30,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BoundingBox;
 
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class GameListener implements Listener {
@@ -1272,5 +1268,56 @@ public class GameListener implements Listener {
 		// Cancel event if arena is in waiting mode
 		if (arena.getStatus() == ArenaStatus.WAITING)
 			e.setCancelled(true);
+	}
+
+	// Apply book enchantment to items
+	@EventHandler
+	public void onEnchantingApply(InventoryClickEvent e) {
+		Player player = (Player) e.getWhoClicked();
+		ItemStack clickedOn = e.getCurrentItem();
+		ItemStack clickedWith = e.getCursor();
+		EnchantingBook enchantingBook = EnchantingBook.check(clickedWith);
+		Arena arena;
+
+		// Attempt to get arena and player
+		try {
+			arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+					.collect(Collectors.toList()).get(0);
+			arena.getPlayer(player);
+		} catch (Exception err) {
+			return;
+		}
+
+		// Ignore if not clicking on own inventory
+		if (e.getClickedInventory() == null || !player.equals(e.getClickedInventory().getHolder()))
+			return;
+
+		// Ignore clicks to nothing
+		if (clickedOn == null || clickedOn.getType() == Material.AIR)
+			return;
+
+		// Check for enchanting book
+		if (enchantingBook == null)
+			return;
+
+		// Cancel event
+		e.setCancelled(true);
+
+		// Attempt to add enchant and remove book
+		Map<Enchantment, Integer> enchantList = Objects.requireNonNull(clickedOn.getItemMeta()).getEnchants();
+		FileConfiguration language = plugin.getLanguageData();
+		if (enchantList.containsKey(enchantingBook.getEnchantToAdd())) {
+			if (enchantingBook.getEnchantToAdd() == Enchantment.ARROW_FIRE ||
+					enchantingBook.getEnchantToAdd() == Enchantment.MULTISHOT ||
+					enchantingBook.getEnchantToAdd() == Enchantment.ARROW_INFINITE ||
+					enchantingBook.getEnchantToAdd() == Enchantment.MENDING) {
+				player.sendMessage(Utils.notify(language.getString("enchantFail")));
+				return;
+			}
+			clickedOn.addUnsafeEnchantment(enchantingBook.getEnchantToAdd(),
+					enchantList.get(enchantingBook.getEnchantToAdd()) + 1);
+		} else clickedOn.addUnsafeEnchantment(enchantingBook.getEnchantToAdd(), 1);
+		player.setItemOnCursor(new ItemStack(Material.AIR));
+		player.sendMessage(Utils.notify(language.getString("enchantSuccess")));
 	}
 }

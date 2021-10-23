@@ -176,6 +176,10 @@ public class Arena {
         if (!config.contains(path + ".normal"))
             setNormal(true);
 
+        // Set enchant shop toggle
+        if (!config.contains(path + ".enchants"))
+            setEnchants(true);
+
         // Set community chest toggle
         if (!config.contains(path + ".community"))
             setCommunity(true);
@@ -987,6 +991,15 @@ public class Arena {
         plugin.saveArenaData();
     }
 
+    public boolean hasEnchants() {
+        return config.getBoolean(path + ".enchants");
+    }
+
+    public void setEnchants(boolean enchants) {
+        config.set(path + ".enchants", enchants);
+        plugin.saveArenaData();
+    }
+
     public boolean hasCustom() {
         return config.getBoolean(path + ".custom");
     }
@@ -1754,6 +1767,7 @@ public class Arena {
         setDifficultyLabel(arenaToCopy.getDifficultyLabel());
         setBannedKits(arenaToCopy.getBannedKits());
         setNormal(arenaToCopy.hasNormal());
+        setEnchants(arenaToCopy.hasEnchants());
         setCustom(arenaToCopy.hasCustom());
         setCommunity(arenaToCopy.hasCommunity());
         setWinSound(arenaToCopy.hasWinSound());

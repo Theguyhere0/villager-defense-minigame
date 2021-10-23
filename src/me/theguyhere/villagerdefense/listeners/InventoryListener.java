@@ -15,6 +15,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -1814,6 +1815,13 @@ public class InventoryListener implements Listener {
 					player.openInventory(Inventories.createShopsInventory(meta.getInteger1()));
 				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
+			// Toggle enchants shop
+			else if (buttonName.contains("Enchants Shop:"))
+				if (arenaInstance.isClosed()) {
+					arenaInstance.setEnchants(!arenaInstance.hasEnchants());
+					player.openInventory(Inventories.createShopsInventory(meta.getInteger1()));
+				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
+
 			// Toggle community chest
 			else if (buttonName.contains("Community Chest:"))
 				if (arenaInstance.isClosed()) {
@@ -2823,6 +2831,12 @@ public class InventoryListener implements Listener {
 					player.openInventory(arenaInstance.getConsumeShop());
 				else player.sendMessage(Utils.notify(language.getString("normalShopError")));
 
+			// Open enchants shop
+			else if (buttonName.contains("Enchants Shop"))
+				if (arenaInstance.hasEnchants())
+					player.openInventory(Inventories.createEnchantsShop());
+				else player.sendMessage(Utils.notify(language.getString("enchantsShopError")));
+
 			// Open custom shop
 			else if (buttonName.contains("Custom Shop"))
 				if (arenaInstance.hasCustom())
@@ -2921,6 +2935,105 @@ public class InventoryListener implements Listener {
 				Utils.giveItem(player, buy, language.getString("inventoryFull"));
 				player.sendMessage(Utils.notify(language.getString("buy")));
 			}
+		}
+		else if (title.contains("Enchants Shop")) {
+			Arena arenaInstance;
+
+			// Attempt to get arena
+			try {
+				arenaInstance = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+						.collect(Collectors.toList()).get(0);
+			} catch (Exception err) {
+				return;
+			}
+
+			// Return to main shop menu
+			if (buttonName.contains("EXIT")) {
+				player.openInventory(Inventories.createShop(arenaInstance.getCurrentWave() / 10 + 1, arenaInstance));
+				return;
+			}
+
+			// Ignore null items
+			if (e.getClickedInventory().getItem(e.getSlot()) == null)
+				return;
+
+			// Get necessary info
+			ItemStack buy = e.getClickedInventory().getItem(e.getSlot());
+			assert buy != null;
+			List<String> lore = Objects.requireNonNull(buy.getItemMeta()).getLore();
+			assert lore != null;
+			int cost = Integer.parseInt(lore.get(0).split(" ")[1]);
+
+			// Check if they can afford the item, then deduct
+			if (player.getLevel() < cost) {
+				player.sendMessage(Utils.notify(language.getString("buyError")));
+				return;
+			}
+			player.setLevel(player.getLevel() - cost);
+
+			// Give book
+			String enchant;
+			ItemStack give;
+
+			// Gather enchant from name
+			try {
+				enchant = Objects.requireNonNull(buy.getItemMeta()).getDisplayName().split(" ")[1];
+			} catch (Exception err) {
+				return;
+			}
+
+			// Assign to known enchanting books
+			switch (enchant) {
+				case "Knockback":
+					give = EnchantingBook.knockback();
+					break;
+				case "Sweeping":
+					give = EnchantingBook.sweepingEdge();
+					break;
+				case "Smite":
+					give = EnchantingBook.smite();
+					break;
+				case "Sharpness":
+					give = EnchantingBook.sharpness();
+					break;
+				case "Fire":
+					give = EnchantingBook.fireAspect();
+					break;
+				case "Punch":
+					give = EnchantingBook.punch();
+					break;
+				case "Piercing":
+					give = EnchantingBook.piercing();
+					break;
+				case "Quick":
+					give = EnchantingBook.quickCharge();
+					break;
+				case "Power":
+					give = EnchantingBook.power();
+					break;
+				case "Loyalty":
+					give = EnchantingBook.loyalty();
+					break;
+				case "Flame":
+					give = EnchantingBook.flame();
+					break;
+				case "Multishot":
+					give = EnchantingBook.multishot();
+					break;
+				case "Infinity":
+					give = EnchantingBook.infinity();
+					break;
+				case "Unbreaking":
+					give = EnchantingBook.unbreaking();
+					break;
+				case "Mending":
+					give = EnchantingBook.mending();
+					break;
+				default:
+					return;
+			}
+			Utils.giveItem(player, give, language.getString("inventoryFull"));
+			player.sendMessage(Utils.notify(language.getString("buy")));
 		}
 
 		// Stats menu for a player
@@ -3153,6 +3266,8 @@ public class InventoryListener implements Listener {
 			Utils.debugInfo(String.format("Name changed for arena %d!", arena.getArena()), 2);
 		} catch (Exception ignored) {
 			player.sendMessage(Utils.notify(Utils.format("&cInvalid arena name!")));
+			if (arena.getName() == null)
+				Game.arenas[arena.getArena()] = null;
 			return;
 		}
 

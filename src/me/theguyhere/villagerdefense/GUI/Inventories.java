@@ -949,8 +949,6 @@ public class Inventories {
 		Arena arenaInstance = Game.arenas[arena];
 		String chosen = arenaInstance.getSpawnTableFile();
 		Inventory inv;
-		HashMap<Enchantment, Integer> enchants = new HashMap<>();
-		enchants.put(Enchantment.DURABILITY, 1);
 
 		// Create inventory
 		if (arenaInstance.getSpawnTableFile().equals("custom"))
@@ -961,35 +959,35 @@ public class Inventories {
 
 		// Option to set spawn table to default
 		inv.setItem(0, Utils.createItem(Material.OAK_WOOD, Utils.format("&4&lDefault"), Utils.BUTTON_FLAGS,
-				chosen.equals("default") ? enchants : null, Utils.format("&7Sets spawn table to default.yml")));
+				chosen.equals("default") ? Utils.glow() : null, Utils.format("&7Sets spawn table to default.yml")));
 
 		// Option to set spawn table to global option 1
 		inv.setItem(1, Utils.createItem(Material.RED_CONCRETE, Utils.format("&6&lOption 1"), Utils.BUTTON_FLAGS,
-				chosen.equals("option1") ? enchants : null, Utils.format("&7Sets spawn table to option1.yml")));
+				chosen.equals("option1") ? Utils.glow() : null, Utils.format("&7Sets spawn table to option1.yml")));
 
 		// Option to set spawn table to global option 2
 		inv.setItem(2, Utils.createItem(Material.ORANGE_CONCRETE, Utils.format("&6&lOption 2"), Utils.BUTTON_FLAGS,
-				chosen.equals("option2") ? enchants : null, Utils.format("&7Sets spawn table to option2.yml")));
+				chosen.equals("option2") ? Utils.glow() : null, Utils.format("&7Sets spawn table to option2.yml")));
 
 		// Option to set spawn table to global option 3
 		inv.setItem(3, Utils.createItem(Material.YELLOW_CONCRETE, Utils.format("&6&lOption 3"), Utils.BUTTON_FLAGS,
-				chosen.equals("option3") ? enchants : null, Utils.format("&7Sets spawn table to option3.yml")));
+				chosen.equals("option3") ? Utils.glow() : null, Utils.format("&7Sets spawn table to option3.yml")));
 
 		// Option to set spawn table to global option 4
 		inv.setItem(4, Utils.createItem(Material.BROWN_CONCRETE, Utils.format("&6&lOption 4"), Utils.BUTTON_FLAGS,
-				chosen.equals("option4") ? enchants : null, Utils.format("&7Sets spawn table to option4.yml")));
+				chosen.equals("option4") ? Utils.glow() : null, Utils.format("&7Sets spawn table to option4.yml")));
 
 		// Option to set spawn table to global option 5
 		inv.setItem(5, Utils.createItem(Material.LIGHT_GRAY_CONCRETE, Utils.format("&6&lOption 5"), Utils.BUTTON_FLAGS,
-				chosen.equals("option5") ? enchants : null, Utils.format("&7Sets spawn table to option5.yml")));
+				chosen.equals("option5") ? Utils.glow() : null, Utils.format("&7Sets spawn table to option5.yml")));
 
 		// Option to set spawn table to global option 6
 		inv.setItem(6, Utils.createItem(Material.WHITE_CONCRETE, Utils.format("&6&lOption 6"), Utils.BUTTON_FLAGS,
-				chosen.equals("option6") ? enchants : null, Utils.format("&7Sets spawn table to option6.yml")));
+				chosen.equals("option6") ? Utils.glow() : null, Utils.format("&7Sets spawn table to option6.yml")));
 
 		// Option to set spawn table to custom option
 		inv.setItem(7, Utils.createItem(Material.BIRCH_WOOD, Utils.format("&e&lCustom"), Utils.BUTTON_FLAGS,
-				chosen.length() < 4 ? enchants : null,
+				chosen.length() < 4 ? Utils.glow() : null,
 				Utils.format("&7Sets spawn table to a[arena number].yml"),
 				Utils.format("&7(Check the arena number in arenaData.yml)")));
 
@@ -1021,13 +1019,18 @@ public class Inventories {
 				Utils.format("&2&lCustom Shop: " + getToggleStatus(arenaInstance.hasCustom())),
 				Utils.format("&7Turn custom shop on and off")));
 
+		// Option to toggle custom shop
+		inv.setItem(3, Utils.createItem(Material.BOOKSHELF,
+				Utils.format("&3&lEnchants Shop: " + getToggleStatus(arenaInstance.hasEnchants())),
+				Utils.format("&7Turn enchants shop on and off")));
+
 		// Option to toggle community chest
-		inv.setItem(3, Utils.createItem(Material.CHEST,
+		inv.setItem(4, Utils.createItem(Material.CHEST,
 				Utils.format("&d&lCommunity Chest: " + getToggleStatus(arenaInstance.hasCommunity())),
 				Utils.format("&7Turn community chest on and off")));
 
 		// Option to toggle dynamic prices
-		inv.setItem(4, Utils.createItem(Material.NETHER_STAR,
+		inv.setItem(5, Utils.createItem(Material.NETHER_STAR,
 				Utils.format("&b&lDynamic Prices: " + getToggleStatus(arenaInstance.hasDynamicPrices())),
 				Utils.format("&7Prices adjusting based on number of"),
 				Utils.format("&7players in the game")));
@@ -1644,7 +1647,6 @@ public class Inventories {
 				Utils.format("&6&lWaiting Sound: " + Game.arenas[arena].getWaitingSoundName()));
 
 		Arena arenaInstance = Game.arenas[arena];
-		int music = arenaInstance.getWaitingSoundNum();
 
 		// Sound options
 		inv.setItem(0, arenaInstance.getWaitingSoundButton(0));
@@ -1713,18 +1715,26 @@ public class Inventories {
 
 		inv.setItem(0, Utils.createItem(Material.GOLDEN_SWORD,
 				Utils.format("&4&lLevel &9&l" + level + " &4&lWeapon Shop" +
-						(arena.hasNormal() ? "" : " &4&l[DISABLED]")), Utils.BUTTON_FLAGS, null));
+						(arena.hasNormal() ? "" : " &4&l[DISABLED]")), Utils.BUTTON_FLAGS,
+				arena.hasNormal() ? Utils.glow() : null));
 
-		inv.setItem(2, Utils.createItem(Material.GOLDEN_CHESTPLATE,
+		inv.setItem(1, Utils.createItem(Material.GOLDEN_CHESTPLATE,
 				Utils.format("&5&lLevel &9&l" + level + " &5&lArmor Shop" +
-						(arena.hasNormal() ? "" : " &4&l[DISABLED]")), Utils.BUTTON_FLAGS, null));
+						(arena.hasNormal() ? "" : " &4&l[DISABLED]")), Utils.BUTTON_FLAGS,
+				arena.hasNormal() ? Utils.glow() : null));
 
-		inv.setItem(4, Utils.createItem(Material.GOLDEN_APPLE,
+		inv.setItem(2, Utils.createItem(Material.GOLDEN_APPLE,
 				Utils.format("&3&lLevel &9&l" + level + " &3&lConsumables Shop" +
-						(arena.hasNormal() ? "" : " &4&l[DISABLED]"))));
+						(arena.hasNormal() ? "" : " &4&l[DISABLED]")), Utils.BUTTON_FLAGS,
+				arena.hasNormal() ? Utils.glow() : null));
+
+		inv.setItem(4, Utils.createItem(Material.BOOKSHELF,
+				Utils.format("&a&lEnchants Shop" + (arena.hasEnchants() ? "" : " &4&l[DISABLED]")),
+				Utils.BUTTON_FLAGS, arena.hasEnchants() ? Utils.glow() : null));
 
 		inv.setItem(6, Utils.createItem(Material.QUARTZ, Utils.format("&6&lCustom Shop" +
-				(arena.hasCustom() ? "" : " &4&l[DISABLED]"))));
+				(arena.hasCustom() ? "" : " &4&l[DISABLED]")), Utils.BUTTON_FLAGS,
+				arena.hasNormal() ? Utils.glow() : null));
 
 		inv.setItem(8, Utils.createItem(Material.CHEST, Utils.format("&d&lCommunity Chest" +
 				(arena.hasCommunity() ? "" : " &4&l[DISABLED]"))));
@@ -1889,6 +1899,54 @@ public class Inventories {
 
 		// Return option
 		inv.setItem(13, InventoryItems.exit());
+
+		return inv;
+	}
+
+	// Generate the enchants shop
+	public static Inventory createEnchantsShop() {
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(null, 54, Utils.format("&k") +
+				Utils.format("&a&lEnchants Shop"));
+
+		// Melee enchants
+		inv.setItem(0, Utils.createItem(Material.PISTON, Utils.format("&a&lIncrease Knockback"),
+				Utils.format("&2Costs 4 XP Levels")));
+		inv.setItem(1, Utils.createItem(Material.GOLDEN_HOE, Utils.format("&a&lIncrease Sweeping Edge"),
+				Utils.BUTTON_FLAGS, null, Utils.format("&2Costs 6 XP Levels")));
+		inv.setItem(2, Utils.createItem(Material.DIAMOND_SWORD, Utils.format("&a&lIncrease Smite"),
+				Utils.BUTTON_FLAGS, null, Utils.format("&2Costs 7 XP Levels")));
+		inv.setItem(3, Utils.createItem(Material.NETHERITE_AXE, Utils.format("&a&lIncrease Sharpness"),
+				Utils.BUTTON_FLAGS, null, Utils.format("&2Costs 8 XP Levels")));
+		inv.setItem(4, Utils.createItem(Material.FIRE, Utils.format("&a&lIncrease Fire Aspect"),
+				Utils.format("&2Costs 10 XP Levels")));
+
+		// Ranged enchants
+		inv.setItem(18, Utils.createItem(Material.STICKY_PISTON, Utils.format("&a&lIncrease Punch"),
+				Utils.format("&2Costs 4 XP Levels")));
+		inv.setItem(19, Utils.createItem(Material.ARROW, Utils.format("&a&lIncrease Piercing"),
+				Utils.format("&2Costs 5 XP Levels")));
+		inv.setItem(20, Utils.createItem(Material.REDSTONE_TORCH, Utils.format("&a&lIncrease Quick Charge"),
+				Utils.format("&2Costs 6 XP Levels")));
+		inv.setItem(21, Utils.createItem(Material.BOW, Utils.format("&a&lIncrease Power"),
+				Utils.format("&2Costs 8 XP Levels")));
+		inv.setItem(22, Utils.createItem(Material.TRIDENT, Utils.format("&a&lIncrease Loyalty"),
+				Utils.BUTTON_FLAGS, null, Utils.format("&2Costs 10 XP Levels")));
+		inv.setItem(23, Utils.createItem(Material.MAGMA_BLOCK, Utils.format("&a&lAdd Flame"),
+				Utils.format("&2Costs 10 XP Levels")));
+		inv.setItem(24, Utils.createItem(Material.CROSSBOW, Utils.format("&a&lAdd Multishot"),
+				Utils.format("&2Costs 10 XP Levels")));
+		inv.setItem(25, Utils.createItem(Material.BEACON, Utils.format("&a&lAdd Infinity"),
+				Utils.format("&2Costs 15 XP Levels")));
+
+		// General enchants
+		inv.setItem(36, Utils.createItem(Material.BEDROCK, Utils.format("&a&lIncrease Unbreaking"),
+				Utils.format("&2Costs 3 XP Levels")));
+		inv.setItem(37, Utils.createItem(Material.ANVIL, Utils.format("&a&lAdd Mending"),
+				Utils.format("&2Costs 20 XP Levels")));
+
+		// Return option
+		inv.setItem(53, InventoryItems.exit());
 
 		return inv;
 	}
@@ -2249,15 +2307,19 @@ public class Inventories {
 		inv.setItem(23, Utils.createItem(Material.QUARTZ_BLOCK,
 				Utils.format("&2&lCustom Shop: " + getToggleStatus(arena.hasCustom()))));
 
+		// Enchants shop
+		inv.setItem(24, Utils.createItem(Material.BOOKSHELF,
+				Utils.format("&3&lEnchants Shop: " + getToggleStatus(arena.hasEnchants()))));
+
 		// Community chest
-		inv.setItem(24, Utils.createItem(Material.CHEST,
+		inv.setItem(25, Utils.createItem(Material.CHEST,
 				Utils.format("&d&lCommunity Chest: " + getToggleStatus(arena.hasCommunity()))));
 
 		// Custom shop inventory
-		inv.setItem(25, Utils.createItem(Material.QUARTZ, Utils.format("&f&lCustom Shop Inventory")));
+		inv.setItem(30, Utils.createItem(Material.QUARTZ, Utils.format("&f&lCustom Shop Inventory")));
 
 		// Difficulty multiplier
-		inv.setItem(30, Utils.createItem(Material.TURTLE_HELMET,
+		inv.setItem(31, Utils.createItem(Material.TURTLE_HELMET,
 				Utils.format("&4&lDifficulty Multiplier: &4" + arena.getDifficultyMultiplier()),
 				Utils.BUTTON_FLAGS,
 				null,
