@@ -78,6 +78,9 @@ public class ArenaListener implements Listener {
         int players = arena.getActiveCount();
 
         // Save player exp and items before going into arena
+        plugin.getPlayerData().set(player.getName() + ".health", player.getHealth());
+        plugin.getPlayerData().set(player.getName() + ".food", player.getFoodLevel());
+        plugin.getPlayerData().set(player.getName() + ".saturation", (double) player.getSaturation());
         plugin.getPlayerData().set(player.getName() + ".level", player.getLevel());
         plugin.getPlayerData().set(player.getName() + ".exp", (double) player.getExp());
         for (int i = 0; i < player.getInventory().getContents().length; i++)
@@ -442,8 +445,17 @@ public class ArenaListener implements Listener {
             Utils.teleAdventure(player, Game.getLobby());
         }
 
-        // Return player exp and items
+        // Return player health, food, exp, and items
         if (player.isOnline()) {
+            if (plugin.getPlayerData().contains(player.getName() + ".health"))
+                player.setHealth(plugin.getPlayerData().getDouble(player.getName() + ".health"));
+            plugin.getPlayerData().set(player.getName() + ".health", null);
+            if (plugin.getPlayerData().contains(player.getName() + ".food"))
+                player.setFoodLevel(plugin.getPlayerData().getInt(player.getName() + ".food"));
+            plugin.getPlayerData().set(player.getName() + ".food", null);
+            if (plugin.getPlayerData().contains(player.getName() + ".saturation"))
+                player.setSaturation((float) plugin.getPlayerData().getDouble(player.getName() + ".saturation"));
+            plugin.getPlayerData().set(player.getName() + ".saturation", null);
             if (plugin.getPlayerData().contains(player.getName() + ".level"))
                 player.setLevel(plugin.getPlayerData().getInt(player.getName() + ".level"));
             plugin.getPlayerData().set(player.getName() + ".level", null);
