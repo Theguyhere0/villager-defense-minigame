@@ -30,6 +30,8 @@ public class Mobs {
         livingEntity.setCustomName(Utils.healthBar(1, 1, 5));
         livingEntity.setCustomNameVisible(true);
         livingEntity.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
+        livingEntity.setMetadata("game", new FixedMetadataValue(plugin, arena.getGameID()));
+        livingEntity.setMetadata("wave", new FixedMetadataValue(plugin, arena.getCurrentWave()));
         livingEntity.setRemoveWhenFarAway(false);
         livingEntity.setCanPickupItems(false);
         if (livingEntity.isInsideVehicle())

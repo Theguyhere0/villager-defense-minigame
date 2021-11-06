@@ -51,11 +51,23 @@ public class GameListener implements Listener {
 
 		Arena arena = Game.arenas[ent.getMetadata("VD").get(0).asInt()];
 
+		// Check for right game
+		if (!ent.hasMetadata("game"))
+			return;
+		if (ent.getMetadata("game").get(0).asInt() != arena.getGameID())
+			return;
+
 		// Arena enemies not part of an active arena
 		if (arena.getStatus() != ArenaStatus.ACTIVE) {
 			e.getDrops().clear();
 			return;
 		}
+
+		// Check for right wave
+		if (!ent.hasMetadata("wave"))
+			return;
+		if (ent.getMetadata("wave").get(0).asInt() != arena.getCurrentWave())
+			return;
 
 		// Clear normal drops
 		e.getDrops().clear();
@@ -172,8 +184,20 @@ public class GameListener implements Listener {
 
 		Arena arena = Game.arenas[ent.getMetadata("VD").get(0).asInt()];
 
+		// Check for right game
+		if (!ent.hasMetadata("game"))
+			return;
+		if (ent.getMetadata("game").get(0).asInt() != arena.getGameID())
+			return;
+
 		// Arena enemies not part of an active arena
 		if (arena.getStatus() != ArenaStatus.ACTIVE)
+			return;
+
+		// Check for right wave
+		if (!ent.hasMetadata("wave"))
+			return;
+		if (ent.getMetadata("wave").get(0).asInt() != arena.getCurrentWave())
 			return;
 
 		// Decrement enemy count

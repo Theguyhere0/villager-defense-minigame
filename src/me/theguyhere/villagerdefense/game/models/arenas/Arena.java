@@ -56,6 +56,8 @@ public class Arena {
     private boolean spawningMonsters;
     /** Whether the arena is in the process of spawning villagers.*/
     private boolean spawningVillagers;
+    /** The ID of the game currently in progress.*/
+    private int gameID;
     /** Current wave of the active game.*/
     private int currentWave;
     /** Villager count.*/
@@ -1261,6 +1263,14 @@ public class Arena {
 
     public void setSpawningVillagers(boolean spawningVillagers) {
         this.spawningVillagers = spawningVillagers;
+    }
+
+    public int getGameID() {
+        return gameID;
+    }
+
+    public void newGameID() {
+        gameID = (int) (100 * Math.random());
     }
 
     public int getCurrentWave() {

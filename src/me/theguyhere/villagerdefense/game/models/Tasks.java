@@ -17,8 +17,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.boss.BarColor;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Villager;
-import org.bukkit.entity.Zombie;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -162,6 +161,13 @@ public class Tasks {
 		public void run() {
 			Arena arenaInstance = Game.arenas[arena];
 
+			// Set arena to active, reset villager and enemy count, set new game ID, clear arena
+			arenaInstance.setStatus(ArenaStatus.ACTIVE);
+			arenaInstance.resetVillagers();
+			arenaInstance.resetEnemies();
+			arenaInstance.newGameID();
+			Utils.clear(arenaInstance.getCorner1(), arenaInstance.getCorner2());
+
 			// Teleport players to arena if waiting room exists
 			if (arenaInstance.getWaitingRoom() != null) {
 				arenaInstance.getActives().forEach(player ->
@@ -219,11 +225,6 @@ public class Tasks {
 							0));
 			});
 
-			// Set arena to active and reset villager and enemy count
-			arenaInstance.setStatus(ArenaStatus.ACTIVE);
-			arenaInstance.resetVillagers();
-			arenaInstance.resetEnemies();
-
 			// Initiate community chest
 			arenaInstance.setCommunityChest(Bukkit.createInventory(new InventoryMeta(arena), 54,
 					Utils.format("&k") + Utils.format("&d&lCommunity Chest")));
@@ -251,6 +252,22 @@ public class Tasks {
 
 			// Refresh the scoreboards
 			updateBoards.run();
+
+			// Remove any unwanted mobs
+			Objects.requireNonNull(arenaInstance.getCorner1().getWorld()).getNearbyEntities(arenaInstance.getBounds())
+					.stream().filter(Objects::nonNull)
+					.filter(ent -> ent instanceof Monster || ent instanceof Hoglin || ent instanceof Phantom ||
+							ent instanceof Slime)
+					.filter(ent -> (!ent.hasMetadata("game") ||
+							ent.getMetadata("game").get(0).asInt() != arenaInstance.getGameID()))
+					.forEach(System.out::println);
+			Objects.requireNonNull(arenaInstance.getCorner1().getWorld()).getNearbyEntities(arenaInstance.getBounds())
+					.stream().filter(Objects::nonNull)
+					.filter(ent -> ent instanceof Monster || ent instanceof Hoglin || ent instanceof Phantom ||
+							ent instanceof Slime)
+					.filter(ent -> (!ent.hasMetadata("wave") ||
+							ent.getMetadata("wave").get(0).asInt() != arenaInstance.getCurrentWave()))
+					.forEach(Entity::remove);
 
 			// Revive dead players
 			arenaInstance.getGhosts().forEach(p -> {
