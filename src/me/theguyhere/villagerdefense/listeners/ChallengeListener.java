@@ -4,6 +4,7 @@ import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.game.models.Challenge;
 import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.game.models.GameItems;
+import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
@@ -153,6 +154,10 @@ public class ChallengeListener implements Listener {
             } catch (Exception err) {
                 return;
             }
+
+            // Make sure player is alive
+            if (gamer.getStatus() != PlayerStatus.ALIVE)
+                return;
 
             // Check for featherweight challenge
             if (gamer.getChallenges().contains(Challenge.featherweight()))

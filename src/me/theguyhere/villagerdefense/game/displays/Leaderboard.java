@@ -40,7 +40,7 @@ public class Leaderboard {
 	public void refreshLeaderboard(String type) {
 		leaderboards.get(type).delete();
 		try {
-			addHolo(Utils.getConfigLocationNoPitch(plugin, "leaderboard." + type), type);
+			addHolo(Objects.requireNonNull(Utils.getConfigLocationNoPitch(plugin, "leaderboard." + type)), type);
 		} catch (Exception e) {
 			Utils.debugError("Invalid location for leaderboard " + type, 1);
 			Utils.debugInfo("Leaderboard location data may be corrupt. If data cannot be manually corrected in " +
@@ -60,9 +60,9 @@ public class Leaderboard {
 		Hologram holo = HologramsAPI.createHologram(plugin, newLocation);
 		if (getHoloText(type) == null)
 			return;
-		holo.insertTextLine(0, getHoloText(type)[0]);
-		for (int i = 1; i < getHoloText(type).length; i++)
-			holo.appendTextLine(getHoloText(type)[i]);
+		holo.insertTextLine(0, Objects.requireNonNull(getHoloText(type))[0]);
+		for (int i = 1; i < Objects.requireNonNull(getHoloText(type)).length; i++)
+			holo.appendTextLine(Objects.requireNonNull(getHoloText(type))[i]);
 
 		// Save hologram in map
 		leaderboards.put(type, holo);
@@ -70,15 +70,17 @@ public class Leaderboard {
 
 	public void loadLeaderboards() {
 		if (plugin.getArenaData().contains("leaderboard"))
-			plugin.getArenaData().getConfigurationSection("leaderboard").getKeys(false).forEach(board -> {
-				try {
-					addHolo(Utils.getConfigLocationNoPitch(plugin, "leaderboard." + board), board);
-				} catch (Exception e) {
-					Utils.debugError("Invalid location for leaderboard " + board, 1);
-					Utils.debugInfo("Leaderboard location data may be corrupt. If data cannot be manually " +
-							"corrected in arenaData.yml, please delete the location data for leaderboard " + board +
-							".", 1);
-				}
+			Objects.requireNonNull(plugin.getArenaData().getConfigurationSection("leaderboard"))
+					.getKeys(false).forEach(board -> {
+					try {
+						addHolo(Objects.requireNonNull(Utils.getConfigLocationNoPitch(plugin, "leaderboard." + board)),
+								board);
+					} catch (Exception e) {
+						Utils.debugError("Invalid location for leaderboard " + board, 1);
+						Utils.debugInfo("Leaderboard location data may be corrupt. If data cannot be manually " +
+								"corrected in arenaData.yml, please delete the location data for leaderboard " + board +
+								".", 1);
+					}
 			});
 	}
 
@@ -108,10 +110,11 @@ public class Leaderboard {
 		}
 
 		// Gather relevant stats
-		for (String key : plugin.getPlayerData().getConfigurationSection("").getKeys(false)) {
-			if (!key.equals("logger") && plugin.getPlayerData().contains(key + "." + type))
-				mapping.put(key, plugin.getPlayerData().getInt(key + "." + type));
-		}
+		for (String key : Objects.requireNonNull(plugin.getPlayerData().getConfigurationSection(""))
+				.getKeys(false)) {
+					if (!key.equals("logger") && plugin.getPlayerData().contains(key + "." + type))
+						mapping.put(key, plugin.getPlayerData().getInt(key + "." + type));
+				}
 
 		// Put names and values into the leaderboard
 		mapping.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).limit(10)

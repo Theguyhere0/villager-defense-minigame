@@ -8,6 +8,8 @@ import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
+import java.util.Objects;
+
 public class InfoBoard {
 	private final Main plugin;
 	private final Hologram[] boards = new Hologram[8];
@@ -74,15 +76,18 @@ public class InfoBoard {
 
 	public void loadInfoBoards() {
 		if (plugin.getArenaData().contains("infoBoard"))
-			plugin.getArenaData().getConfigurationSection("infoBoard").getKeys(false).forEach(board -> {
-				try {
-					addHolo(Utils.getConfigLocationNoPitch(plugin, "infoBoard." + board), Integer.parseInt(board));
-				} catch (Exception e) {
-					Utils.debugError("Invalid location for info board " + board, 1);
-					Utils.debugInfo("Info board location data may be corrupt. If data cannot be manually " +
-							"corrected in " +
-							"arenaData.yml, please delete the location data for info board " + board + ".", 1);
-				}
+			Objects.requireNonNull(plugin.getArenaData().getConfigurationSection("infoBoard")).getKeys(false)
+					.forEach(board -> {
+						try {
+							addHolo(Objects.requireNonNull(
+									Utils.getConfigLocationNoPitch(plugin, "infoBoard." + board)),
+									Integer.parseInt(board));
+						} catch (Exception e) {
+							Utils.debugError("Invalid location for info board " + board, 1);
+							Utils.debugInfo("Info board location data may be corrupt. If data cannot be manually " +
+									"corrected in " +
+									"arenaData.yml, please delete the location data for info board " + board + ".", 1);
+						}
 			});
 	}
 }

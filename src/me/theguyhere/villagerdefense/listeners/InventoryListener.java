@@ -2597,6 +2597,7 @@ public class InventoryListener implements Listener {
 		// Iron golem cap menu for an arena
 		else if (title.contains("Iron Golem Cap:")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
+			assert meta != null;
 			Arena arenaInstance = Game.arenas[meta.getInteger1()];
 			int current = arenaInstance.getGolemCap();
 
@@ -2638,6 +2639,7 @@ public class InventoryListener implements Listener {
 		// Sound settings menu for an arena
 		else if (title.contains("Sounds:")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
+			assert meta != null;
 			Arena arenaInstance = Game.arenas[meta.getInteger1()];
 
 			// Toggle win sound
@@ -3261,6 +3263,7 @@ public class InventoryListener implements Listener {
 		// Stats menu for an arena
 		else if (title.contains("Info")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
+			assert meta != null;
 
 			if (buttonName.contains("Custom Shop Inventory"))
 				player.openInventory(Game.arenas[meta.getInteger1()].getMockCustomShop());

@@ -3,11 +3,11 @@ package me.theguyhere.villagerdefense.tools;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemFlag;
@@ -16,6 +16,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -107,6 +108,7 @@ public class Utils {
                                        String... lores) {
         // Create ItemStack
         ItemStack item = createItem(matID, dispName, lores);
+        assert item != null;
         ItemMeta meta = item.getItemMeta();
 
         // Check for null meta
@@ -136,7 +138,9 @@ public class Utils {
                                        String... moreLores) {
         // Create ItemStack
         ItemStack item = createItem(matID, dispName, lores, moreLores);
+        assert item != null;
         ItemMeta meta = item.getItemMeta();
+        assert meta != null;
 
         // Set enchants
         if (!(enchants == null))
@@ -156,6 +160,8 @@ public class Utils {
     public static ItemStack makeUnbreakable(ItemStack item) {
         ItemStack newItem = item.clone();
         ItemMeta meta = newItem.getItemMeta();
+        assert meta != null;
+
         if (item.getType().getMaxDurability() == 0)
             return item;
         try {
@@ -261,7 +267,7 @@ public class Utils {
         ItemStack item = itemStack.clone();
 
         // Check for lore
-        if (!item.hasItemMeta() || !item.getItemMeta().hasLore())
+        if (!item.hasItemMeta() || !Objects.requireNonNull(item.getItemMeta()).hasLore())
             return item;
 
         // Remove last lore and return
@@ -294,10 +300,12 @@ public class Utils {
     public static void teleAdventure(Player player, Location location) {
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
         player.setFireTicks(0);
-        if (!player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getModifiers().isEmpty())
-            player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getModifiers().forEach(attribute ->
-                    player.getAttribute(Attribute.GENERIC_MAX_HEALTH).removeModifier(attribute));
-        player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+        AttributeInstance maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        assert maxHealth != null;
+
+        if (!maxHealth.getModifiers().isEmpty())
+            maxHealth.getModifiers().forEach(maxHealth::removeModifier);
+        player.setHealth(maxHealth.getValue());
         player.setFoodLevel(20);
         player.setSaturation(20);
         player.setExp(0);
@@ -313,13 +321,12 @@ public class Utils {
 
     // Prepares and teleports a player into spectator mode
     public static void teleSpectator(Player player, Location location) {
-        // Check for null attribute
-        if (player.getAttribute(Attribute.GENERIC_MAX_HEALTH) == null)
+        AttributeInstance maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        if (maxHealth == null)
             return;
 
-        if (!player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getModifiers().isEmpty())
-            player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getModifiers().forEach(attribute ->
-                    player.getAttribute(Attribute.GENERIC_MAX_HEALTH).removeModifier(attribute));
+        if (!maxHealth.getModifiers().isEmpty())
+            maxHealth.getModifiers().forEach(maxHealth::removeModifier);
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
         player.setFireTicks(0);
         player.setFoodLevel(20);
@@ -336,9 +343,9 @@ public class Utils {
     // Sets the location data to a configuration path
     public static void setConfigurationLocation(Main plugin, String path, Location location) {
         if (location == null)
-            plugin.getArenaData().set(path, location);
+            plugin.getArenaData().set(path, null);
         else {
-            plugin.getArenaData().set(path + ".world", location.getWorld().getName());
+            plugin.getArenaData().set(path + ".world", Objects.requireNonNull(location.getWorld()).getName());
             plugin.getArenaData().set(path + ".x", location.getX());
             plugin.getArenaData().set(path + ".y", location.getY());
             plugin.getArenaData().set(path + ".z", location.getZ());
@@ -352,12 +359,12 @@ public class Utils {
     public static Location getConfigLocation(Main plugin, String path) {
         try {
             return new Location(
-                Bukkit.getWorld(plugin.getArenaData().getString(path + ".world")),
+                Bukkit.getWorld(Objects.requireNonNull(plugin.getArenaData().getString(path + ".world"))),
                 plugin.getArenaData().getDouble(path + ".x"),
                 plugin.getArenaData().getDouble(path + ".y"),
                 plugin.getArenaData().getDouble(path + ".z"),
-                Float.parseFloat(plugin.getArenaData().get(path + ".yaw").toString()),
-                Float.parseFloat(plugin.getArenaData().get(path + ".pitch").toString())
+                Float.parseFloat(Objects.requireNonNull(plugin.getArenaData().get(path + ".yaw")).toString()),
+                Float.parseFloat(Objects.requireNonNull(plugin.getArenaData().get(path + ".pitch")).toString())
             );
         } catch (Exception e) {
             debugError("Error getting location " + path + " from yaml", 2);
@@ -382,6 +389,7 @@ public class Utils {
     public static Location getConfigLocationNoPitch(Main plugin, String path) {
         try {
             Location location = getConfigLocation(plugin, path);
+            assert location != null;
             location.setPitch(0);
             return location;
         } catch (Exception e) {
@@ -393,6 +401,7 @@ public class Utils {
     public static void centerConfigLocation(Main plugin, String path) {
         try {
             Location location = getConfigLocation(plugin, path);
+            assert location != null;
             if (location.getX() > 0)
                 location.setX(((int) location.getX()) + .5);
             else location.setX(((int) location.getX()) - .5);
@@ -525,7 +534,7 @@ public class Utils {
             log.info("[VillagerDefense] " + msg);
     }
     
-    public static Hologram addHolo(Main plugin, Location location, Arena arena, String[] holoText) {
+    public static Hologram addHolo(Main plugin, Location location, String[] holoText) {
         // Create hologram
         Location newLocation = location.clone();
         newLocation.setY(newLocation.getY() + 3);
@@ -546,5 +555,6 @@ public class Utils {
         vdPlayer.setStatus(PlayerStatus.GHOST);
         player.setFallDistance(0);
         player.setGlowing(false);
+        player.setVelocity(new Vector());
     }
 }

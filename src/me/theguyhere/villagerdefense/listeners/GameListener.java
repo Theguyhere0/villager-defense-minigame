@@ -8,6 +8,7 @@ import me.theguyhere.villagerdefense.events.ReloadBoardsEvent;
 import me.theguyhere.villagerdefense.game.models.*;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
+import me.theguyhere.villagerdefense.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.game.models.players.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
@@ -291,13 +292,12 @@ public class GameListener implements Listener {
 			return;
 
 		LivingEntity n = (LivingEntity) ent;
+		double maxHealth = Objects.requireNonNull(n.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue();
 
 		// Update health bar
 		if (ent instanceof IronGolem || ent instanceof Ravager)
-			ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
-					n.getHealth() - e.getFinalDamage(), 10));
-		else ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
-				n.getHealth() - e.getFinalDamage(), 5));
+			ent.setCustomName(Utils.healthBar(maxHealth, n.getHealth() - e.getFinalDamage(), 10));
+		else ent.setCustomName(Utils.healthBar(maxHealth, n.getHealth() - e.getFinalDamage(), 5));
 	}
 
 	// Update health bar when damage is dealt not by another entity
@@ -325,13 +325,12 @@ public class GameListener implements Listener {
 			return;
 
 		LivingEntity n = (LivingEntity) ent;
+		double maxHealth = Objects.requireNonNull(n.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue();
 
 		// Update health bar
 		if (ent instanceof IronGolem || ent instanceof Ravager)
-			ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
-					n.getHealth() - e.getFinalDamage(), 10));
-		else ent.setCustomName(Utils.healthBar(n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(),
-				n.getHealth() - e.getFinalDamage(), 5));
+			ent.setCustomName(Utils.healthBar(maxHealth, n.getHealth() - e.getFinalDamage(), 10));
+		else ent.setCustomName(Utils.healthBar(maxHealth, n.getHealth() - e.getFinalDamage(), 5));
 	}
 
 	// Prevent players from going hungry while waiting for an arena to start
@@ -369,7 +368,7 @@ public class GameListener implements Listener {
 			return;
 
 		LivingEntity n = (LivingEntity) ent;
-		double maxHealth = n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+		double maxHealth = Objects.requireNonNull(n.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue();
 		double modifiedHealth = n.getHealth() + e.getAmount();
 
 		// Update health bar
@@ -416,7 +415,7 @@ public class GameListener implements Listener {
 					Arrays.asList(GameItems.CLICKABLE_CONSUME_MATERIALS).contains(item.getType()))
 				return;
 		}
-		else item = player.getEquipment().getItemInMainHand();
+		else item = Objects.requireNonNull(player.getEquipment()).getItemInMainHand();
 
 		// Open shop inventory
 		if (GameItems.shop().equals(item))
@@ -478,7 +477,7 @@ public class GameListener implements Listener {
 			if ((ent instanceof Villager || ent instanceof Wolf || ent instanceof IronGolem) &&
 					((Projectile) damager).getShooter() instanceof Player)
 				e.setCancelled(true);
-			else if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin) &&
+			else if ((ent instanceof Monster || ent instanceof Slime) &&
 					((Projectile) damager).getShooter() instanceof Monster)
 				e.setCancelled(true);
 		}
@@ -666,7 +665,7 @@ public class GameListener implements Listener {
 					Utils.debugError("The language file is missing the attribute 'death'!", 0);
 				} else {
 					fighter.getPlayer().sendMessage(Utils.notify(String.format(
-							language.getString("death"), player.getName())));
+							Objects.requireNonNull(language.getString("death")), player.getName())));
 				}
 			if (arena.hasPlayerDeathSound())
 				fighter.getPlayer().playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10, .75f);
@@ -713,6 +712,7 @@ public class GameListener implements Listener {
 				player = (Player) ((Projectile) e.getDamager()).getShooter();
 			else return;
 		} else player = (Player) e.getDamager();
+		assert player != null;
 
 		// Attempt to get arena and player
 		try {
@@ -741,7 +741,8 @@ public class GameListener implements Listener {
 
 							// Notify player
 							vdPlayer.getPlayer().sendMessage(
-									Utils.notify(String.format(plugin.getLanguageData().getString("earnedGems"),
+									Utils.notify(String.format(Objects.requireNonNull(
+											plugin.getLanguageData().getString("earnedGems")),
 									earned)));
 
 							FileConfiguration playerData = plugin.getPlayerData();
@@ -782,7 +783,8 @@ public class GameListener implements Listener {
 							plugin.getLanguageData().getString("inventoryFull"));
 
 				// Notify player
-				player.sendMessage(Utils.notify(String.format(plugin.getLanguageData().getString("earnedGems"),
+				player.sendMessage(Utils.notify(String.format(
+						Objects.requireNonNull(plugin.getLanguageData().getString("earnedGems")),
 						earned)));
 
 				FileConfiguration playerData = plugin.getPlayerData();
@@ -803,10 +805,7 @@ public class GameListener implements Listener {
 				arena.getActives().stream().filter(vdPlayer -> !arena.getGhosts().contains(vdPlayer))
 						.forEach(vdPlayer -> vdPlayer.getPlayer()
 								.giveExp((int) (arena.getCurrentDifficulty() * 40) / arena.getAlive()));
-			else {
-				assert player != null;
-				player.giveExp((int) (arena.getCurrentDifficulty() * 2));
-			}
+			else player.giveExp((int) (arena.getCurrentDifficulty() * 2));
 		}
 	}
 	
@@ -876,7 +875,8 @@ public class GameListener implements Listener {
 
 			// Check for wolf cap
 			if (gamer.getWolves() >= arena.getWolfCap()) {
-				player.sendMessage(Utils.notify(String.format(language.getString("wolfError"),
+				player.sendMessage(Utils.notify(String.format(
+						Objects.requireNonNull(language.getString("wolfError")),
 						arena.getWolfCap())));
 				return;
 			}
@@ -884,9 +884,9 @@ public class GameListener implements Listener {
 			// Remove an item
 			if (item.getAmount() > 1)
 				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItem(e.getHand(), null);
+			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
 
-			Location location = e.getClickedBlock().getLocation();
+			Location location = Objects.requireNonNull(e.getClickedBlock()).getLocation();
 			location.setY(location.getY() + 1);
 
 			// Spawn and tame the wolf
@@ -913,7 +913,8 @@ public class GameListener implements Listener {
 
 			// Check for golem cap
 			if (arena.getGolems() >= arena.getGolemCap()) {
-				player.sendMessage(Utils.notify(String.format(language.getString("golemError"),
+				player.sendMessage(Utils.notify(String.format(
+						Objects.requireNonNull(language.getString("golemError")),
 						arena.getGolemCap())));
 				return;
 			}
@@ -921,9 +922,9 @@ public class GameListener implements Listener {
 			// Remove an item
 			if (item.getAmount() > 1)
 				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItem(e.getHand(), null);
+			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
 
-			Location location = e.getClickedBlock().getLocation();
+			Location location = Objects.requireNonNull(e.getClickedBlock()).getLocation();
 			location.setY(location.getY() + 1);
 
 			// Spawn iron golem
@@ -940,10 +941,10 @@ public class GameListener implements Listener {
 			// Remove an item
 			if (item.getAmount() > 1)
 				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItem(e.getHand(), null);
+			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
 
 			// Give items and notify
-			if (gamer.getKit().equals("Blacksmith")) {
+			if (gamer.getKit().equals(Kit.blacksmith().setKitLevel(1))) {
 				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(1))),
 						language.getString("inventoryFull"));
 				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(1))),
@@ -966,10 +967,10 @@ public class GameListener implements Listener {
 			// Remove an item
 			if (item.getAmount() > 1)
 				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItem(e.getHand(), null);
+			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
 
 			// Give items and notify
-			if (gamer.getKit().equals("Blacksmith")) {
+			if (gamer.getKit().equals(Kit.blacksmith().setKitLevel(1))) {
 				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(2))),
 						language.getString("inventoryFull"));
 				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(2))),
@@ -981,7 +982,7 @@ public class GameListener implements Listener {
 						language.getString("inventoryFull"));
 				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(2)),
 						language.getString("inventoryFull"));
-				if (gamer.getKit().equals("Witch"))
+				if (gamer.getKit().equals(Kit.witch().setKitLevel(1)))
 					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randNotCare(2))),
 							language.getString("inventoryFull"));
 				else Utils.giveItem(player, Utils.removeLastLore(GameItems.randNotCare(2)),
@@ -999,10 +1000,10 @@ public class GameListener implements Listener {
 			// Remove an item
 			if (item.getAmount() > 1)
 				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItem(e.getHand(), null);
+			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
 
 			// Give items and notify
-			if (gamer.getKit().equals("Blacksmith")) {
+			if (gamer.getKit().equals(Kit.blacksmith().setKitLevel(1))) {
 				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(4))),
 						language.getString("inventoryFull"));
 				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(3))),
@@ -1018,7 +1019,7 @@ public class GameListener implements Listener {
 						language.getString("inventoryFull"));
 				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(3)),
 						language.getString("inventoryFull"));
-				if (gamer.getKit().equals("Witch"))
+				if (gamer.getKit().equals(Kit.witch().setKitLevel(1)))
 					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randNotCare(3))),
 							language.getString("inventoryFull"));
 				else Utils.giveItem(player, Utils.removeLastLore(GameItems.randNotCare(3)),
@@ -1036,10 +1037,10 @@ public class GameListener implements Listener {
 			// Remove an item
 			if (item.getAmount() > 1)
 				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItem(e.getHand(), null);
+			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
 
 			// Give items and notify
-			if (gamer.getKit().equals("Blacksmith")) {
+			if (gamer.getKit().equals(Kit.blacksmith().setKitLevel(1))) {
 				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(5))),
 						language.getString("inventoryFull"));
 				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(4))),
@@ -1061,7 +1062,7 @@ public class GameListener implements Listener {
 						language.getString("inventoryFull"));
 				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(4)),
 						language.getString("inventoryFull"));
-				if (gamer.getKit().equals("Witch")) {
+				if (gamer.getKit().equals(Kit.witch().setKitLevel(1))) {
 					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randNotCare(4))),
 							language.getString("inventoryFull"));
 					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randNotCare(4))),
@@ -1172,7 +1173,7 @@ public class GameListener implements Listener {
 
 		// Cancel move and notify if movement is outside arena bounds
 		if (!(BoundingBox.of(arena.getCorner1(), arena.getCorner2())
-				.contains(e.getTo().getX(), e.getTo().getY(), e.getTo().getZ())) ||
+				.contains(Objects.requireNonNull(e.getTo()).getX(), e.getTo().getY(), e.getTo().getZ())) ||
 				!Objects.equals(e.getTo().getWorld(), arena.getCorner1().getWorld())) {
 
 			// Teleport player back into arena after several infractions

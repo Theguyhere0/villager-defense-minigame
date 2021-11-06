@@ -531,7 +531,7 @@ public class Arena {
         // Try recreating the portal
         try {
             Location location = Objects.requireNonNull(Utils.getConfigLocationNoPitch(plugin, path + ".portal"));
-            Hologram holo = Utils.addHolo(plugin, location, this, Portal.getHoloText(this));
+            Hologram holo = Utils.addHolo(plugin, location, Portal.getHoloText(this));
             EntityVillager npc = new EntityVillager(EntityTypes.VILLAGER, 
                     ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
             npc.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
@@ -604,7 +604,7 @@ public class Arena {
         try {
             Hologram holo = Utils.addHolo(plugin,
                     Objects.requireNonNull(Utils.getConfigLocationNoPitch(plugin, path + ".arenaBoard")),
-                    this, ArenaBoard.getHoloText(this));
+                    ArenaBoard.getHoloText(this));
             
             // Delete old board if needed
             if (arenaBoard != null)

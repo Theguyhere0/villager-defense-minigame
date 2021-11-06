@@ -77,15 +77,17 @@ public class ArenaListener implements Listener {
 
         int players = arena.getActiveCount();
 
-        // Save player exp and items before going into arena
-        plugin.getPlayerData().set(player.getName() + ".health", player.getHealth());
-        plugin.getPlayerData().set(player.getName() + ".food", player.getFoodLevel());
-        plugin.getPlayerData().set(player.getName() + ".saturation", (double) player.getSaturation());
-        plugin.getPlayerData().set(player.getName() + ".level", player.getLevel());
-        plugin.getPlayerData().set(player.getName() + ".exp", (double) player.getExp());
-        for (int i = 0; i < player.getInventory().getContents().length; i++)
-            plugin.getPlayerData().set(player.getName() + ".inventory." + i, player.getInventory().getContents()[i]);
-        plugin.savePlayerData();
+        if (plugin.getConfig().getBoolean("keepInv")) {
+            // Save player exp and items before going into arena
+            plugin.getPlayerData().set(player.getName() + ".health", player.getHealth());
+            plugin.getPlayerData().set(player.getName() + ".food", player.getFoodLevel());
+            plugin.getPlayerData().set(player.getName() + ".saturation", (double) player.getSaturation());
+            plugin.getPlayerData().set(player.getName() + ".level", player.getLevel());
+            plugin.getPlayerData().set(player.getName() + ".exp", (double) player.getExp());
+            for (int i = 0; i < player.getInventory().getContents().length; i++)
+                plugin.getPlayerData().set(player.getName() + ".inventory." + i, player.getInventory().getContents()[i]);
+            plugin.savePlayerData();
+        }
 
         // Prepares player to enter arena if it doesn't exceed max capacity and if the arena is still waiting
         if (players < arena.getMaxPlayers() && arena.getStatus() == ArenaStatus.WAITING) {
@@ -146,6 +148,9 @@ public class ArenaListener implements Listener {
 
             // Debug message to console
             Utils.debugInfo(player.getName() + "joined Arena " + arena.getArena(), 2);
+
+            // Don't touch task updating
+            return;
         }
 
         // Join players as spectators if arena is full or game already started
@@ -446,7 +451,7 @@ public class ArenaListener implements Listener {
         }
 
         // Return player health, food, exp, and items
-        if (player.isOnline()) {
+        if (plugin.getConfig().getBoolean("keepInv") && player.isOnline()) {
             if (plugin.getPlayerData().contains(player.getName() + ".health"))
                 player.setHealth(plugin.getPlayerData().getDouble(player.getName() + ".health"));
             plugin.getPlayerData().set(player.getName() + ".health", null);

@@ -43,31 +43,33 @@ public class JoinListener implements Listener {
 			loggers.remove(player.getName());
 			plugin.getPlayerData().set("loggers", loggers);
 
-			// Return player health, food, exp, and items
-			if (plugin.getPlayerData().contains(player.getName() + ".health"))
-				player.setHealth(plugin.getPlayerData().getDouble(player.getName() + ".health"));
-			plugin.getPlayerData().set(player.getName() + ".health", null);
-			if (plugin.getPlayerData().contains(player.getName() + ".food"))
-				player.setFoodLevel(plugin.getPlayerData().getInt(player.getName() + ".food"));
-			plugin.getPlayerData().set(player.getName() + ".food", null);
-			if (plugin.getPlayerData().contains(player.getName() + ".saturation"))
-				player.setSaturation((float) plugin.getPlayerData().getDouble(player.getName() + ".saturation"));
-			plugin.getPlayerData().set(player.getName() + ".saturation", null);
-			if (plugin.getPlayerData().contains(player.getName() + ".level")) {
-				player.setLevel(plugin.getPlayerData().getInt(player.getName() + ".level"));
-				plugin.getPlayerData().set(player.getName() + ".level", null);
-			}
-			if (plugin.getPlayerData().contains(player.getName() + ".exp")) {
-				player.setExp((float) plugin.getPlayerData().getDouble(player.getName() + ".exp"));
-				plugin.getPlayerData().set(player.getName() + ".exp", null);
-			}
-			if (plugin.getPlayerData().contains(player.getName() + ".inventory")) {
-				Objects.requireNonNull(plugin.getPlayerData()
-								.getConfigurationSection(player.getName() + ".inventory"))
-						.getKeys(false)
-						.forEach(num -> player.getInventory().setItem(Integer.parseInt(num),
-								(ItemStack) plugin.getPlayerData().get(player.getName() + ".inventory." + num)));
-				plugin.getPlayerData().set(player.getName() + ".inventory", null);
+			if (plugin.getConfig().getBoolean("keepInv")) {
+				// Return player health, food, exp, and items
+				if (plugin.getPlayerData().contains(player.getName() + ".health"))
+					player.setHealth(plugin.getPlayerData().getDouble(player.getName() + ".health"));
+				plugin.getPlayerData().set(player.getName() + ".health", null);
+				if (plugin.getPlayerData().contains(player.getName() + ".food"))
+					player.setFoodLevel(plugin.getPlayerData().getInt(player.getName() + ".food"));
+				plugin.getPlayerData().set(player.getName() + ".food", null);
+				if (plugin.getPlayerData().contains(player.getName() + ".saturation"))
+					player.setSaturation((float) plugin.getPlayerData().getDouble(player.getName() + ".saturation"));
+				plugin.getPlayerData().set(player.getName() + ".saturation", null);
+				if (plugin.getPlayerData().contains(player.getName() + ".level")) {
+					player.setLevel(plugin.getPlayerData().getInt(player.getName() + ".level"));
+					plugin.getPlayerData().set(player.getName() + ".level", null);
+				}
+				if (plugin.getPlayerData().contains(player.getName() + ".exp")) {
+					player.setExp((float) plugin.getPlayerData().getDouble(player.getName() + ".exp"));
+					plugin.getPlayerData().set(player.getName() + ".exp", null);
+				}
+				if (plugin.getPlayerData().contains(player.getName() + ".inventory")) {
+					Objects.requireNonNull(plugin.getPlayerData()
+									.getConfigurationSection(player.getName() + ".inventory"))
+							.getKeys(false)
+							.forEach(num -> player.getInventory().setItem(Integer.parseInt(num),
+									(ItemStack) plugin.getPlayerData().get(player.getName() + ".inventory." + num)));
+					plugin.getPlayerData().set(player.getName() + ".inventory", null);
+				}
 			}
 
 			plugin.savePlayerData();

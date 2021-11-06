@@ -2447,8 +2447,10 @@ public class GameItems {
 	public static @NotNull ItemStack rockets() {
 		ItemStack item = Utils.createItems(Material.FIREWORK_ROCKET, 4, null,
 				Utils.format("&2Gems: &a50"));
+		assert item != null;
 		ItemMeta meta = item.getItemMeta();
 		FireworkMeta fireworkMeta = (FireworkMeta) meta;
+		assert fireworkMeta != null;
 
 		for (int i = 0; i < 3; i++) {
 			fireworkMeta.addEffect(FireworkEffect.builder().withColor(Color.YELLOW).with(FireworkEffect.Type.BALL_LARGE)
@@ -2467,6 +2469,7 @@ public class GameItems {
 
 		List<String> lore = new ArrayList<>();
 		lore.add(Utils.format("&2Gems: &a100"));
+		assert meta != null;
 		meta.setLore(lore);
 		for (int i = 0; i < 9; i++) {
 			fireworkMeta.addEffect(FireworkEffect.builder().withColor(Color.RED).with(FireworkEffect.Type.BALL_LARGE)

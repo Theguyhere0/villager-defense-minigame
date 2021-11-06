@@ -116,7 +116,7 @@ public class AbilityListener implements Listener {
                 return;
 
             // Calculate stats
-            int coolDown = Utils.secondsToMillis(46 - Math.pow(Math.E, (level - 1) / 12d));
+            int coolDown = normalCooldown(level);
             int duration = Utils.secondsToTicks(4 + Math.pow(Math.E, (level - 1) / 8.5));
 
             // Activate ability
@@ -145,18 +145,18 @@ public class AbilityListener implements Listener {
 
             // Calculate stats
             int duration, amplifier;
-            int coolDown = Utils.secondsToMillis(46 - Math.pow(Math.E, (level - 1) / 12d));
+            int coolDown = normalCooldown(level);
             double range = 2 + level * .1d;
             if (level > 20) {
-                duration = Utils.secondsToTicks(20.5 + Math.pow(Math.E, (level - 21) / 4d));
+                duration = normalDuration20Plus(level);
                 amplifier = 2;
             }
             else if (level > 10) {
-                duration = Utils.secondsToTicks(12 + Math.pow(Math.E, (level - 11) / 4d));
+                duration = normalDuration10Plus(level);
                 amplifier = 1;
             }
             else {
-                duration = Utils.secondsToTicks(4 + Math.pow(Math.E, (level - 1) / 4d));
+                duration = normalDuration(level);
                 amplifier = 0;
             }
             int altDuration = (int) (.6 * duration);
@@ -185,18 +185,18 @@ public class AbilityListener implements Listener {
 
             // Calculate stats
             int duration, amplifier;
-            int coolDown = Utils.secondsToMillis(46 - Math.pow(Math.E, (level - 1) / 12d));
+            int coolDown = normalCooldown(level);
             double range = 2 + level * .1d;
             if (level > 20) {
-                duration = Utils.secondsToTicks(20.5 + Math.pow(Math.E, (level - 21) / 4d));
+                duration = normalDuration20Plus(level);
                 amplifier = 2;
             }
             else if (level > 10) {
-                duration = Utils.secondsToTicks(12 + Math.pow(Math.E, (level - 11) / 4d));
+                duration = normalDuration10Plus(level);
                 amplifier = 1;
             }
             else {
-                duration = Utils.secondsToTicks(4 + Math.pow(Math.E, (level - 1) / 4d));
+                duration = normalDuration(level);
                 amplifier = 0;
             }
             int altDuration = (int) (.6 * duration);
@@ -225,18 +225,18 @@ public class AbilityListener implements Listener {
 
             // Calculate stats
             int duration, amplifier;
-            int coolDown = Utils.secondsToMillis(46 - Math.pow(Math.E, (level - 1) / 12d));
+            int coolDown = normalCooldown(level);
             double range = 2 + level * .1d;
             if (level > 20) {
-                duration = Utils.secondsToTicks(20.5 + Math.pow(Math.E, (level - 21) / 4d));
+                duration = normalDuration20Plus(level);
                 amplifier = 2;
             }
             else if (level > 10) {
-                duration = Utils.secondsToTicks(12 + Math.pow(Math.E, (level - 11) / 4d));
+                duration = normalDuration10Plus(level);
                 amplifier = 1;
             }
             else {
-                duration = Utils.secondsToTicks(4 + Math.pow(Math.E, (level - 1) / 4d));
+                duration = normalDuration(level);
                 amplifier = 0;
             }
             int altDuration = (int) (.6 * duration);
@@ -265,18 +265,18 @@ public class AbilityListener implements Listener {
 
             // Calculate stats
             int duration, amplifier;
-            int coolDown = Utils.secondsToMillis(46 - Math.pow(Math.E, (level - 1) / 12d));
+            int coolDown = normalCooldown(level);
             double range = 2 + level * .1d;
             if (level > 20) {
-                duration = Utils.secondsToTicks(20.5 + Math.pow(Math.E, (level - 21) / 4d));
+                duration = normalDuration20Plus(level);
                 amplifier = 2;
             }
             else if (level > 10) {
-                duration = Utils.secondsToTicks(12 + Math.pow(Math.E, (level - 11) / 4d));
+                duration = normalDuration10Plus(level);
                 amplifier = 1;
             }
             else {
-                duration = Utils.secondsToTicks(4 + Math.pow(Math.E, (level - 1) / 4d));
+                duration = normalDuration(level);
                 amplifier = 0;
             }
             int altDuration = (int) (.6 * duration);
@@ -308,17 +308,17 @@ public class AbilityListener implements Listener {
             int coolDown = Utils.secondsToMillis(26 - Math.pow(Math.E, (level - 1) / 12d));
             double range = 3 + level * .1d;
             if (level > 20) {
-                duration = Utils.secondsToTicks(20.5 + Math.pow(Math.E, (level - 21) / 4d));
+                duration = normalDuration20Plus(level);
                 amp1 = 1;
                 amp2 = 0;
             }
             else if (level > 10) {
-                duration = Utils.secondsToTicks(12 + Math.pow(Math.E, (level - 11) / 4d));
+                duration = normalDuration10Plus(level);
                 amp1 = 1;
                 amp2 = -1;
             }
             else {
-                duration = Utils.secondsToTicks(4 + Math.pow(Math.E, (level - 1) / 4d));
+                duration = normalDuration(level);
                 amp1 = 0;
                 amp2 = -1;
             }
@@ -348,18 +348,18 @@ public class AbilityListener implements Listener {
 
             // Calculate stats
             int duration, amplifier;
-            int coolDown = Utils.secondsToMillis(46 - Math.pow(Math.E, (level - 1) / 12d));
+            int coolDown = normalCooldown(level);
             double range = 2 + level * .1d;
             if (level > 20) {
-                duration = Utils.secondsToTicks(20.5 + Math.pow(Math.E, (level - 21) / 4d));
+                duration = normalDuration20Plus(level);
                 amplifier = 2;
             }
             else if (level > 10) {
-                duration = Utils.secondsToTicks(12 + Math.pow(Math.E, (level - 11) / 4d));
+                duration = normalDuration10Plus(level);
                 amplifier = 1;
             }
             else {
-                duration = Utils.secondsToTicks(4 + Math.pow(Math.E, (level - 1) / 4d));
+                duration = normalDuration(level);
                 amplifier = 0;
             }
             int altDuration = (int) (.6 * duration);
@@ -388,18 +388,18 @@ public class AbilityListener implements Listener {
 
             // Calculate stats
             int duration, amplifier;
-            int coolDown = Utils.secondsToMillis(46 - Math.pow(Math.E, (level - 1) / 12d));
+            int coolDown = normalCooldown(level);
             double range = 2 + level * .1d;
             if (level > 20) {
-                duration = Utils.secondsToTicks(20.5 + Math.pow(Math.E, (level - 21) / 4d));
+                duration = normalDuration20Plus(level);
                 amplifier = 2;
             }
             else if (level > 10) {
-                duration = Utils.secondsToTicks(12 + Math.pow(Math.E, (level - 11) / 4d));
+                duration = normalDuration10Plus(level);
                 amplifier = 1;
             }
             else {
-                duration = Utils.secondsToTicks(4 + Math.pow(Math.E, (level - 1) / 4d));
+                duration = normalDuration(level);
                 amplifier = 0;
             }
             int altDuration = (int) (.6 * duration);
@@ -456,7 +456,7 @@ public class AbilityListener implements Listener {
         // Heal if probability is right
         if (r.nextInt(100) < damage)
             player.setHealth(Math.min(player.getHealth() + 1,
-                    player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
+                    Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue()));
     }
 
     // Ninja stealth
@@ -578,12 +578,29 @@ public class AbilityListener implements Listener {
         return false;
     }
 
-    private boolean checkCooldown(long dif, Player player, FileConfiguration language) {
+    private static boolean checkCooldown(long dif, Player player, FileConfiguration language) {
         if (dif > 0) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-                    Utils.format(String.format(language.getString("cooldownError"), Utils.millisToSeconds(dif)))));
+                    Utils.format(String.format(Objects.requireNonNull(language.getString("cooldownError")),
+                            Utils.millisToSeconds(dif)))));
             return true;
         }
         return false;
+    }
+
+    private static int normalCooldown(int level) {
+        return Utils.secondsToMillis(46 - Math.pow(Math.E, (level - 1) / 12d));
+    }
+
+    private static int normalDuration(int level) {
+        return Utils.secondsToTicks(4 + Math.pow(Math.E, (level - 1) / 4d));
+    }
+
+    private static int normalDuration10Plus(int level) {
+        return Utils.secondsToTicks(12 + Math.pow(Math.E, (level - 11) / 4d));
+    }
+
+    private static int normalDuration20Plus(int level) {
+        return Utils.secondsToTicks(20.5 + Math.pow(Math.E, (level - 21) / 4d));
     }
 }

@@ -27,6 +27,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 public class Inventories {
 	// Easily get alphabet
@@ -1758,10 +1759,7 @@ public class Inventories {
 		List<ItemStack> swords = new ArrayList<>();
 		for (int i = 0; i < 4; i++)
 			swords.add(GameItems.sword(level));
-		swords.sort(Comparator.comparingInt(itemStack -> {
-			List<String> lore = itemStack.getItemMeta().getLore();
-			return Integer.parseInt(lore.get(lore.size() - 1).substring(10));
-		}));
+		sort(swords);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i, modifyPrice(swords.get(i), modifier));
 
@@ -1769,10 +1767,7 @@ public class Inventories {
 		List<ItemStack> axes = new ArrayList<>();
 		for (int i = 0; i < 4; i++)
 			axes.add(GameItems.axe(level));
-		axes.sort(Comparator.comparingInt(itemStack -> {
-			List<String> lore = itemStack.getItemMeta().getLore();
-			return Integer.parseInt(lore.get(lore.size() - 1).substring(10));
-		}));
+		sort(axes);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 5, modifyPrice(axes.get(i), modifier));
 
@@ -1780,23 +1775,17 @@ public class Inventories {
 		List<ItemStack> ranges = new ArrayList<>();
 		for (int i = 0; i < 5; i++)
 			ranges.add(GameItems.randRange(level));
-		ranges.sort(Comparator.comparingInt(itemStack -> {
-			List<String> lore = itemStack.getItemMeta().getLore();
-			return Integer.parseInt(lore.get(lore.size() - 1).substring(10));
-		}));
+		sort(ranges);
 		for (int i = 0; i < 5; i++)
 			inv.setItem(i + 9, modifyPrice(ranges.get(i), modifier));
 
 		// Fill in ammo
-		List<ItemStack> ammos = new ArrayList<>();
+		List<ItemStack> ammo = new ArrayList<>();
 		for (int i = 0; i < 3; i++)
-			ammos.add(GameItems.randAmmo(level));
-		ammos.sort(Comparator.comparingInt(itemStack -> {
-			List<String> lore = itemStack.getItemMeta().getLore();
-			return Integer.parseInt(lore.get(lore.size() - 1).substring(10));
-		}));
+			ammo.add(GameItems.randAmmo(level));
+		sort(ammo);
 		for (int i = 0; i < 3; i++)
-			inv.setItem(i + 15, modifyPrice(ammos.get(i), modifier));
+			inv.setItem(i + 15, modifyPrice(ammo.get(i), modifier));
 
 		// Return option
 		inv.setItem(22, InventoryItems.exit());
@@ -1819,10 +1808,7 @@ public class Inventories {
 		List<ItemStack> helmets = new ArrayList<>();
 		for (int i = 0; i < 4; i++)
 			helmets.add(GameItems.helmet(level));
-		helmets.sort(Comparator.comparingInt(itemStack -> {
-			List<String> lore = itemStack.getItemMeta().getLore();
-			return Integer.parseInt(lore.get(lore.size() - 1).substring(10));
-		}));
+		sort(helmets);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i, modifyPrice(helmets.get(i), modifier));
 
@@ -1830,10 +1816,7 @@ public class Inventories {
 		List<ItemStack> chestplates = new ArrayList<>();
 		for (int i = 0; i < 4; i++)
 			chestplates.add(GameItems.chestplate(level));
-		chestplates.sort(Comparator.comparingInt(itemStack -> {
-			List<String> lore = itemStack.getItemMeta().getLore();
-			return Integer.parseInt(lore.get(lore.size() - 1).substring(10));
-		}));
+		sort(chestplates);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 5, modifyPrice(chestplates.get(i), modifier));
 
@@ -1841,10 +1824,7 @@ public class Inventories {
 		List<ItemStack> leggings = new ArrayList<>();
 		for (int i = 0; i < 4; i++)
 			leggings.add(GameItems.leggings(level));
-		leggings.sort(Comparator.comparingInt(itemStack -> {
-			List<String> lore = itemStack.getItemMeta().getLore();
-			return Integer.parseInt(lore.get(lore.size() - 1).substring(10));
-		}));
+		sort(leggings);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 9, modifyPrice(leggings.get(i), modifier));
 
@@ -1852,10 +1832,7 @@ public class Inventories {
 		List<ItemStack> boots = new ArrayList<>();
 		for (int i = 0; i < 4; i++)
 			boots.add(GameItems.boots(level));
-		boots.sort(Comparator.comparingInt(itemStack -> {
-			List<String> lore = itemStack.getItemMeta().getLore();
-			return Integer.parseInt(lore.get(lore.size() - 1).substring(10));
-		}));
+		sort(boots);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 14, modifyPrice(boots.get(i), modifier));
 
@@ -1880,10 +1857,7 @@ public class Inventories {
 		List<ItemStack> foods = new ArrayList<>();
 		for (int i = 0; i < 4; i++)
 			foods.add(GameItems.randFood(level));
-		foods.sort(Comparator.comparingInt(itemStack -> {
-			List<String> lore = itemStack.getItemMeta().getLore();
-			return Integer.parseInt(lore.get(lore.size() - 1).substring(10));
-		}));
+		sort(foods);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i, modifyPrice(foods.get(i), modifier));
 
@@ -1891,10 +1865,7 @@ public class Inventories {
 		List<ItemStack> others = new ArrayList<>();
 		for (int i = 0; i < 9; i++)
 			others.add(GameItems.randOther(level));
-		others.sort(Comparator.comparingInt(itemStack -> {
-			List<String> lore = itemStack.getItemMeta().getLore();
-			return Integer.parseInt(lore.get(lore.size() - 1).substring(10));
-		}));
+		sort(others);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 5, modifyPrice(others.get(i), modifier));
 
@@ -2400,5 +2371,13 @@ public class Inventories {
 		meta.setLore(lore);
 		item.setItemMeta(meta);
 		return item;
+	}
+
+	private static void sort(List<ItemStack> list) {
+		list.sort(Comparator.comparingInt(itemStack -> {
+			List<String> lore = Objects.requireNonNull(itemStack.getItemMeta()).getLore();
+			assert lore != null;
+			return Integer.parseInt(lore.get(lore.size() - 1).substring(10));
+		}));
 	}
 }
