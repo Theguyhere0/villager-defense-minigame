@@ -219,6 +219,11 @@ public class Tasks {
 							.addModifier(new AttributeModifier("Giant1", -.5,
 									AttributeModifier.Operation.MULTIPLY_SCALAR_1));
 
+				// Make sure new health is set up correctly
+				player.getPlayer().setHealth(
+						Objects.requireNonNull(player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+								.getValue());
+
 				// Give blindness to people with that challenge
 				if (player.getChallenges().contains(Challenge.blind()))
 					player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999,
@@ -290,6 +295,11 @@ public class Tasks {
 					Objects.requireNonNull(p.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
 							.addModifier(new AttributeModifier("Giant1", -.5,
 									AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+
+				// Make sure new health is set up correctly
+				p.getPlayer().setHealth(
+						Objects.requireNonNull(p.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+								.getValue());
 
 				// Give blindness to people with that challenge
 				if (p.getChallenges().contains(Challenge.blind()))

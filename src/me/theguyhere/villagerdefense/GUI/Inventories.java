@@ -19,7 +19,6 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.craftbukkit.v1_16_R3.block.CraftSign;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -27,7 +26,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 
 public class Inventories {
@@ -1051,6 +1049,9 @@ public class Inventories {
 
 		// Item of interest
 		inv.setItem(4, arenaInstance.getCustomShop().getItem(slot));
+
+		// Option to set un-purchasable
+		inv.setItem(8, Utils.createItem(Material.BEDROCK, Utils.format("&5&lToggle Un-purchasable")));
 
 		// Option to increase by 1
 		inv.setItem(9, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&a&l+1 gem")));

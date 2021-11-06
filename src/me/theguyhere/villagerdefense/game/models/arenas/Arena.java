@@ -16,6 +16,7 @@ import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
 import net.minecraft.server.v1_16_R3.EntityTypes;
 import net.minecraft.server.v1_16_R3.EntityVillager;
+import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.*;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -1490,14 +1491,16 @@ public class Arena {
                             List<String> lore = new ArrayList<>();
                             assert meta != null;
                             String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
-                            int price = Integer.parseInt(meta.getDisplayName().substring(meta.getDisplayName().length() - 5));
+                            int price = NumberUtils.toInt(
+                                    meta.getDisplayName().substring(meta.getDisplayName().length() - 5), -1);
 
                             // Transform to proper shop item
                             meta.setDisplayName(Utils.format("&f" + name));
                             if (meta.hasLore())
                                 lore = meta.getLore();
                             assert lore != null;
-                            lore.add(Utils.format("&2Gems: &a" + price));
+                            if (price >= 0)
+                                lore.add(Utils.format("&2Gems: &a" + price));
                             meta.setLore(lore);
                             item.setItemMeta(meta);
 
@@ -1543,14 +1546,16 @@ public class Arena {
                             List<String> lore = new ArrayList<>();
                             assert meta != null;
                             String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
-                            int price = Integer.parseInt(meta.getDisplayName().substring(meta.getDisplayName().length() - 5));
+                            int price = NumberUtils.toInt(
+                                    meta.getDisplayName().substring(meta.getDisplayName().length() - 5), -1);
 
                             // Transform to proper shop item
                             meta.setDisplayName(Utils.format("&f" + name));
                             if (meta.hasLore())
                                 lore = meta.getLore();
                             assert lore != null;
-                            lore.add(Utils.format("&2Gems: &a" + price));
+                            if (price >= 0)
+                                lore.add(Utils.format("&2Gems: &a" + price));
                             meta.setLore(lore);
                             item.setItemMeta(meta);
 
@@ -1600,14 +1605,16 @@ public class Arena {
                             List<String> lore = new ArrayList<>();
                             assert meta != null;
                             String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
-                            int price = Integer.parseInt(meta.getDisplayName().substring(meta.getDisplayName().length() - 5));
+                            int price = NumberUtils.toInt(
+                                    meta.getDisplayName().substring(meta.getDisplayName().length() - 5), -1);
 
                             // Transform to proper shop item
                             meta.setDisplayName(Utils.format("&f" + name));
                             if (meta.hasLore())
                                 lore = meta.getLore();
                             assert lore != null;
-                            lore.add(Utils.format("&2Gems: &a" + price));
+                            if (price >= 0)
+                                lore.add(Utils.format("&2Gems: &a" + price));
                             meta.setLore(lore);
                             item.setItemMeta(meta);
 

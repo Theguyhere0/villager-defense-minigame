@@ -11,11 +11,11 @@ import me.theguyhere.villagerdefense.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -171,13 +171,15 @@ public class InventoryListener implements Listener {
 				Utils.giveItem(player, cursor.clone(), language.getString("inventoryFull"));
 				player.setItemOnCursor(new ItemStack(Material.AIR));
 				plugin.saveArenaData();
+				player.openInventory(Inventories.createCustomItemsInventory(meta.getInteger1(), slot));
+				return;
 			}
 
 			// Edit item
 			else e.setCancelled(true);
 
 			// Only open inventory for valid click
-			if (cursor.getType() != Material.AIR)
+			if (Objects.requireNonNull(e.getCurrentItem()).getType() != Material.AIR)
 				player.openInventory(Inventories.createCustomItemsInventory(meta.getInteger1(), slot));
 
 			return;
@@ -1851,11 +1853,24 @@ public class InventoryListener implements Listener {
 			ItemMeta itemMeta = item.getItemMeta();
 			assert itemMeta != null;
 			String name = itemMeta.getDisplayName();
-			int price = Integer.parseInt(name.substring(name.length() - 5));
+			String realName = name.substring(0, name.length() - 5);
+			int price = NumberUtils.toInt(name.substring(name.length() - 5), -1);
+
+			// Set un-purchasable
+			if (buttonName.contains("Toggle Un-purchasable")) {
+				if (price < 0) {
+					price = 0;
+					itemMeta.setDisplayName(realName + String.format("%05d", price));
+				} else itemMeta.setDisplayName(realName + "-----");
+				item.setItemMeta(itemMeta);
+				config.set(path + meta.getInteger2(), item);
+			}
 
 			// Increase by 1
-			if (buttonName.contains("+1 gem")) {
-				price++;
+			else if (buttonName.contains("+1 gem")) {
+				if (price < 0) {
+					price = 0;
+				} else price++;
 
 				// Check for max price
 				if (price > 99999) {
@@ -1863,14 +1878,16 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				itemMeta.setDisplayName(name.substring(0, name.length() - 5) + String.format("%05d", price));
+				itemMeta.setDisplayName(realName + String.format("%05d", price));
 				item.setItemMeta(itemMeta);
 				config.set(path + meta.getInteger2(), item);
 			}
 
 			// Increase by 10
 			else if (buttonName.contains("+10 gems")) {
-				price += 10;
+				if (price < 0) {
+					price = 0;
+				} else price += 10;
 
 				// Check for max price
 				if (price > 99999) {
@@ -1878,14 +1895,16 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				itemMeta.setDisplayName(name.substring(0, name.length() - 5) + String.format("%05d", price));
+				itemMeta.setDisplayName(realName + String.format("%05d", price));
 				item.setItemMeta(itemMeta);
 				config.set(path + meta.getInteger2(), item);
 			}
 
 			// Increase by 100
 			else if (buttonName.contains("+100 gems")) {
-				price += 100;
+				if (price < 0) {
+					price = 0;
+				} else price += 100;
 
 				// Check for max price
 				if (price > 99999) {
@@ -1893,14 +1912,16 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				itemMeta.setDisplayName(name.substring(0, name.length() - 5) + String.format("%05d", price));
+				itemMeta.setDisplayName(realName + String.format("%05d", price));
 				item.setItemMeta(itemMeta);
 				config.set(path + meta.getInteger2(), item);
 			}
 
 			// Increase by 1000
 			else if (buttonName.contains("+1000 gems")) {
-				price += 1000;
+				if (price < 0) {
+					price = 0;
+				} else price += 1000;
 
 				// Check for max price
 				if (price > 99999) {
@@ -1908,7 +1929,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				itemMeta.setDisplayName(name.substring(0, name.length() - 5) + String.format("%05d", price));
+				itemMeta.setDisplayName(realName + String.format("%05d", price));
 				item.setItemMeta(itemMeta);
 				config.set(path + meta.getInteger2(), item);
 			}
@@ -1921,7 +1942,9 @@ public class InventoryListener implements Listener {
 
 			// Decrease by 1
 			else if (buttonName.contains("-1 gem")) {
-				price--;
+				if (price < 0) {
+					price = 0;
+				} else price--;
 
 				// Check for min price
 				if (price < 0) {
@@ -1929,14 +1952,16 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				itemMeta.setDisplayName(name.substring(0, name.length() - 5) + String.format("%05d", price));
+				itemMeta.setDisplayName(realName + String.format("%05d", price));
 				item.setItemMeta(itemMeta);
 				config.set(path + meta.getInteger2(), item);
 			}
 
 			// Decrease by 10
 			else if (buttonName.contains("-10 gems")) {
-				price -= 10;
+				if (price < 0) {
+					price = 0;
+				} else price -= 10;
 
 				// Check for min price
 				if (price < 0) {
@@ -1944,14 +1969,16 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				itemMeta.setDisplayName(name.substring(0, name.length() - 5) + String.format("%05d", price));
+				itemMeta.setDisplayName(realName + String.format("%05d", price));
 				item.setItemMeta(itemMeta);
 				config.set(path + meta.getInteger2(), item);
 			}
 
 			// Decrease by 100
 			else if (buttonName.contains("-100 gems")) {
-				price -= 100;
+				if (price < 0) {
+					price = 0;
+				} else price -= 100;
 
 				// Check for min price
 				if (price < 0) {
@@ -1959,14 +1986,16 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				itemMeta.setDisplayName(name.substring(0, name.length() - 5) + String.format("%05d", price));
+				itemMeta.setDisplayName(realName + String.format("%05d", price));
 				item.setItemMeta(itemMeta);
 				config.set(path + meta.getInteger2(), item);
 			}
 
 			// Decrease by 1000
 			else if (buttonName.contains("-1000 gems")) {
-				price -= 1000;
+				if (price < 0) {
+					price = 0;
+				} else price -= 1000;
 
 				// Check for min price
 				if (price < 0) {
@@ -1974,7 +2003,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				itemMeta.setDisplayName(name.substring(0, name.length() - 5) + String.format("%05d", price));
+				itemMeta.setDisplayName(realName + String.format("%05d", price));
 				item.setItemMeta(itemMeta);
 				config.set(path + meta.getInteger2(), item);
 			}
@@ -2884,9 +2913,14 @@ public class InventoryListener implements Listener {
 			if (e.getClickedInventory().getItem(e.getSlot()) == null)
 				return;
 
-			ItemStack buy = e.getClickedInventory().getItem(e.getSlot()).clone();
+			ItemStack buy = Objects.requireNonNull(e.getClickedInventory().getItem(e.getSlot())).clone();
 			Material buyType = buy.getType();
-			List<String> lore = buy.getItemMeta().getLore();
+			List<String> lore = Objects.requireNonNull(buy.getItemMeta()).getLore();
+
+			// Ignore un-purchasable items
+			if (lore == null)
+				return;
+
 			int cost = Integer.parseInt(lore.get(lore.size() - 1).substring(10));
 
 			// Check if they can afford the item

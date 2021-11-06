@@ -1347,4 +1347,24 @@ public class GameListener implements Listener {
 		player.setItemOnCursor(new ItemStack(Material.AIR));
 		player.sendMessage(Utils.notify(language.getString("enchantSuccess")));
 	}
+
+	// Prevent swapping items while waiting for game to start
+	@EventHandler
+	public void onSwap(PlayerSwapHandItemsEvent e) {
+		Player player = e.getPlayer();
+		Arena arena;
+
+		// Attempt to get arena and player
+		try {
+			arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+					.collect(Collectors.toList()).get(0);
+			arena.getPlayer(player);
+		} catch (Exception err) {
+			return;
+		}
+
+		// Cancel event if arena is in waiting mode
+		if (arena.getStatus() == ArenaStatus.WAITING)
+			e.setCancelled(true);
+	}
 }
