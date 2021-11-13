@@ -146,6 +146,9 @@ public class ArenaListener implements Listener {
             // Give them a game board
             Game.createBoard(fighter);
 
+            // Give them starting items
+            arena.getTask().giveItems(fighter);
+
             // Debug message to console
             Utils.debugInfo(player.getName() + "joined Arena " + arena.getArena(), 2);
 
