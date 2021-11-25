@@ -570,10 +570,9 @@ public class Arena {
         else countColor = "&c";
 
         // Return full hologram text
-        return new String[]{Utils.format("&6&l" + this.getName() + difficulty),
+        return new String[]{Utils.format("&6&l" + this.getName() + difficulty), Utils.format(status),
                 Utils.format("&bPlayers: " + countColor + this.getActiveCount() + "&b / " + this.getMaxPlayers()),
-                Utils.format("Spectators: " + this.getSpectatorCount()),
-                Utils.format(status)};
+                Utils.format("Spectators: " + this.getSpectatorCount())};
     }
 
     /**

@@ -25,7 +25,7 @@ public class Hologram {
         this.location = location;
         this.lines = new HoloLine[lines.length];
         for (int i = 0; i < lines.length; i++)
-            this.lines[i] = new HoloLine(lines[i], location.clone().add(0, i * .25, 0));
+            this.lines[i] = new HoloLine(lines[i], location.clone().add(0, (lines.length - i - 1) * .25, 0));
     }
 
     public Location getLocation() {

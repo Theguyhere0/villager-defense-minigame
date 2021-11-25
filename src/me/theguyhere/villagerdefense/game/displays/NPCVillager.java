@@ -43,7 +43,7 @@ public class NPCVillager {
     public void displayForOnline() {
         try {
             PacketManager.spawnEntityLivingForOnline(villager);
-            PacketManager.entityHeadRotationForOnline(villager);
+            PacketManager.entityHeadRotationForOnline(villager, location.getYaw());
         } catch (EntitySpawnPacketException e) {
             Utils.debugError(e.getMessage(), 1);
         }
@@ -56,7 +56,7 @@ public class NPCVillager {
     public void displayForPlayer(Player player) {
         try {
             PacketManager.spawnEntityLivingForPlayer(villager, player);
-            PacketManager.entityHeadRotationForPlayer(villager, player);
+            PacketManager.entityHeadRotationForPlayer(villager, location.getYaw(), player);
         } catch (EntitySpawnPacketException e) {
             Utils.debugError(e.getMessage(), 1);
         }

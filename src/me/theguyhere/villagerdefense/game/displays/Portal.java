@@ -63,29 +63,4 @@ public class Portal {
         hologram.remove();
         npc.remove();
     }
-
-//    public void setNPC(EntityVillager NPC) {
-//        removeNPCAll();
-//        this.NPC = NPC;
-//        addNPCAll();
-//    }
-
-//    /**
-//     * Adds the NPC to a player's client
-//     * @param player Player to add NPC to
-//     */
-//    public void addNPC(Player player) {
-//        if (NPC != null && NPC.getWorld().getWorld().equals(player.getWorld())) {
-//            PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
-//            connection.sendPacket(new PacketPlayOutSpawnEntityLiving(NPC));
-//            connection.sendPacket(new PacketPlayOutEntityHeadRotation(NPC, (byte) (NPC.yaw * 256 / 360)));
-//        }
-//    }
-
-//    public static void addJoinPacket(Player player) {
-//        Arrays.stream(Game.arenas).filter(Objects::nonNull).map(Arena::getPortal).filter(Objects::nonNull)
-//                .forEach(portal -> portal.addNPC(player));
-//        Arrays.stream(Game.arenas).filter(Objects::nonNull).forEach(arena -> arena.getTest().displayForPlayer(player));
-//        Arrays.stream(Game.arenas).filter(Objects::nonNull).forEach(arena -> arena.getAnotherTest().displayForPlayer(player));
-//    }
 }

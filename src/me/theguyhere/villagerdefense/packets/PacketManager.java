@@ -72,15 +72,15 @@ public class PacketManager {
             updateHoloLineForPlayer(holoLine, player);
     }
 
-    public static void entityHeadRotationForPlayer(Entity entity, Player player) {
+    public static void entityHeadRotationForPlayer(Entity entity, float yaw, Player player) {
         WrapperPlayServerEntityHeadRotation packet = new WrapperPlayServerEntityHeadRotation();
         packet.setEntityId(entity.getEntityId());
-        packet.setHeadYaw(entity.getLocation().getYaw());
+        packet.setHeadYaw(yaw);
         packet.sendPacket(player);
     }
 
-    public static void entityHeadRotationForOnline(Entity entity) {
+    public static void entityHeadRotationForOnline(Entity entity, float yaw) {
         for (Player player : Bukkit.getOnlinePlayers())
-            entityHeadRotationForPlayer(entity, player);
+            entityHeadRotationForPlayer(entity, yaw, player);
     }
 }

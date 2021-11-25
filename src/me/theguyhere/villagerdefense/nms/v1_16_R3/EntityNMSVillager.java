@@ -12,7 +12,7 @@ public class EntityNMSVillager extends EntityVillager {
     public EntityNMSVillager(Location location) {
         super(EntityTypes.VILLAGER, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
         super.collides = false;
-        super.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+        super.setPosition(location.getX(), location.getY(), location.getZ());
     }
 
     @Override
