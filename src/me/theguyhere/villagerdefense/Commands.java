@@ -3,7 +3,6 @@ package me.theguyhere.villagerdefense;
 import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.events.GameEndEvent;
 import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
-import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.game.models.Tasks;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
@@ -652,7 +651,7 @@ public class Commands implements CommandExecutor {
 						plugin.saveArenaData();
 
 						// Reload portals
-						Portal.refreshPortals();
+						Game.refreshPortals();
 
 						// Flip flag and update config.yml
 						fixed = true;

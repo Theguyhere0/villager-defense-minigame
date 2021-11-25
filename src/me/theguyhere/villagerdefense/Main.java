@@ -7,6 +7,7 @@ import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.game.models.Tasks;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.listeners.*;
+import me.theguyhere.villagerdefense.packets.MetadataHelper;
 import me.theguyhere.villagerdefense.tools.DataManager;
 import me.theguyhere.villagerdefense.tools.PacketReader;
 import me.theguyhere.villagerdefense.tools.Utils;
@@ -53,8 +54,8 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		saveDefaultConfig();
-
 		PluginManager pm = getServer().getPluginManager();
+		MetadataHelper.init();
 
 		// Set up Game class
 		Objects.requireNonNull(getArenaData().getConfigurationSection("")).getKeys(false).forEach(path -> {
@@ -189,7 +190,7 @@ public class Main extends JavaPlugin {
 
 		// Clear every valid arena and remove all portals
 		Game.cleanAll();
-		Portal.removePortals();
+		Game.removePortals();
 	}
 
 	public InfoBoard getInfoBoard() {

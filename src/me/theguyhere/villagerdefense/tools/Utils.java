@@ -21,6 +21,8 @@ import org.bukkit.util.Vector;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("SpellCheckingInspection")
@@ -556,5 +558,19 @@ public class Utils {
         player.setFallDistance(0);
         player.setGlowing(false);
         player.setVelocity(new Vector());
+    }
+
+    /**
+     * This method uses a regex to get the NMS package part that changes with every update.
+     * Example: v1_13_R2
+     * @return the NMS package part or null if not found.
+     */
+    public static String extractNMSVersion() {
+        Matcher matcher = Pattern.compile("v\\d+_\\d+_R\\d+").matcher(Bukkit.getServer().getClass().getPackage().getName());
+        if (matcher.find()) {
+            return matcher.group();
+        } else {
+            return null;
+        }
     }
 }

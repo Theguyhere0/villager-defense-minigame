@@ -69,10 +69,11 @@ public class PacketReader {
 
 			if (getValue(packet, "action").toString().equalsIgnoreCase("ATTACK")) {
 				Arrays.stream(Game.arenas).filter(Objects::nonNull).map(Arena::getPortal).filter(Objects::nonNull)
-						.map(Portal::getNPC).forEach(npc -> {
-							if (npc != null && npc.getId() == id)
+						.map(Portal::getNpc).filter(Objects::nonNull).forEach(npc -> {
+							int npcId = npc.getVillager().getEntityId();
+							if (npcId == id)
 								Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
-										Bukkit.getPluginManager().callEvent(new LeftClickNPCEvent(player, npc)));
+										Bukkit.getPluginManager().callEvent(new LeftClickNPCEvent(player, npcId)));
 						});
 				return;
 			}
@@ -82,10 +83,11 @@ public class PacketReader {
 				return;
 			if (getValue(packet, "action").toString().equalsIgnoreCase("INTERACT"))
 				Arrays.stream(Game.arenas).filter(Objects::nonNull).map(Arena::getPortal).filter(Objects::nonNull)
-						.map(Portal::getNPC).forEach(npc -> {
-							if (npc != null && npc.getId() == id)
+						.map(Portal::getNpc).filter(Objects::nonNull).forEach(npc -> {
+							int npcId = npc.getVillager().getEntityId();
+							if (npcId == id)
 								Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
-										Bukkit.getPluginManager().callEvent(new RightClickNPCEvent(player, npc)));
+										Bukkit.getPluginManager().callEvent(new RightClickNPCEvent(player, npcId)));
 						});
 			return;
 		}

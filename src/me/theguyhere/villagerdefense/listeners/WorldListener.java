@@ -2,7 +2,6 @@ package me.theguyhere.villagerdefense.listeners;
 
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.game.displays.ArenaBoard;
-import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.event.EventHandler;
@@ -23,6 +22,6 @@ public class WorldListener implements Listener {
         plugin.getLeaderboard().loadLeaderboards();
         plugin.getInfoBoard().loadInfoBoards();
         ArenaBoard.refreshArenaBoards();
-        Portal.refreshPortals();
+        Game.refreshPortals();
     }
 }

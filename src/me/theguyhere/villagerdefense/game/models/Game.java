@@ -102,10 +102,21 @@ public class Game {
 	}
 
 	/**
-	 * Wipes all mobs in all valid arenas
+	 * Wipes all mobs in all valid arenas.
 	 */
 	public static void cleanAll() {
 		Arrays.stream(arenas).filter(Objects::nonNull).filter(arena -> !arena.isClosed())
 				.forEach(arena -> Utils.clear(arena.getCorner1(), arena.getCorner2()));
 	}
+
+	/**
+	 * Refresh the portal of every arena.
+	 */
+	public static void refreshPortals() {
+		Arrays.stream(arenas).filter(Objects::nonNull).forEach(Arena::refreshPortal);
+	}
+
+    public static void removePortals() {
+        Arrays.stream(arenas).filter(Objects::nonNull).forEach(Arena::refreshPortal);
+    }
 }

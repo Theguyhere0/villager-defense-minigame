@@ -14,15 +14,12 @@ import me.theguyhere.villagerdefense.game.models.players.PlayerNotFoundException
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
-import net.minecraft.server.v1_16_R3.EntityTypes;
-import net.minecraft.server.v1_16_R3.EntityVillager;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.*;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.Inventory;
@@ -525,25 +522,75 @@ public class Arena {
     }
 
     /**
+     * Formats a string array of text based on the Arena given.
+     * @return The properly formatted string array of text.
+     */
+    private String[] getHoloText() {
+        String status;
+
+        // Get difficulty
+        String difficulty = this.getDifficultyLabel();
+        if (difficulty != null)
+            switch (difficulty) {
+                case "Easy":
+                    difficulty = " &a&l[" + difficulty + "]";
+                    break;
+                case "Medium":
+                    difficulty = " &e&l[" + difficulty + "]";
+                    break;
+                case "Hard":
+                    difficulty = " &c&l[" + difficulty + "]";
+                    break;
+                case "Insane":
+                    difficulty = " &d&l[" + difficulty + "]";
+                    break;
+                default:
+                    difficulty = "";
+            }
+        else difficulty = "";
+
+        // Get status
+        if (this.isClosed()) {
+            return new String[]{Utils.format("&6&l" + this.getName() + difficulty),
+                    Utils.format("&4&lClosed")};
+        }
+        else if (this.getStatus() == ArenaStatus.ENDING)
+            status = "&c&lEnding";
+        else if (this.getStatus() == ArenaStatus.WAITING)
+            status = "&5&lWaiting";
+        else status = "&a&lWave: " + this.getCurrentWave();
+
+        // Get player count color
+        String countColor;
+        double fillRatio = this.getActiveCount() / (double) this.getMaxPlayers();
+        if (fillRatio < .8)
+            countColor = "&a";
+        else if (fillRatio < 1)
+            countColor = "&6";
+        else countColor = "&c";
+
+        // Return full hologram text
+        return new String[]{Utils.format("&6&l" + this.getName() + difficulty),
+                Utils.format("&bPlayers: " + countColor + this.getActiveCount() + "&b / " + this.getMaxPlayers()),
+                Utils.format("Spectators: " + this.getSpectatorCount()),
+                Utils.format(status)};
+    }
+
+    /**
      * Recreates the portal in game based on the location in the arena file.
      */
     public void refreshPortal() {
         // Try recreating the portal
         try {
             Location location = Objects.requireNonNull(Utils.getConfigLocationNoPitch(plugin, path + ".portal"));
-            Hologram holo = Utils.addHolo(plugin, location, Portal.getHoloText(this));
-            EntityVillager npc = new EntityVillager(EntityTypes.VILLAGER, 
-                    ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-            npc.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 
-            // Delete old board if needed and refresh NPC
-            if (portal != null) {
-                portal.setHologram(holo);
-                portal.setNPC(npc);
-            }
+            // Delete old portal if needed
+            if (portal != null)
+                portal.remove();
 
-            // Create a new portal from scratch
-            else portal = new Portal(npc, holo);
+            // Create a new portal and display it
+            portal = new Portal(location, getHoloText());
+            portal.displayForOnline();
         } catch (Exception e) {
             Utils.debugError("Invalid location for arena board " + arena, 1);
             Utils.debugInfo("Portal location data may be corrupt. If data cannot be manually corrected in " +
@@ -567,8 +614,7 @@ public class Arena {
      */
     public void removePortal() {
         if (portal != null) {
-            portal.getHologram().delete();
-            portal.removeNPCAll();
+            portal.remove();
             portal = null;
         }
         Utils.setConfigurationLocation(plugin, path + ".portal", null);
