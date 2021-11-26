@@ -1,7 +1,5 @@
 package me.theguyhere.villagerdefense.tools;
 
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
@@ -534,18 +532,6 @@ public class Utils {
     public static void debugInfo(String msg, int debugLevel) {
         if (Main.getDebugLevel() >= debugLevel)
             log.info("[VillagerDefense] " + msg);
-    }
-    
-    public static Hologram addHolo(Main plugin, Location location, String[] holoText) {
-        // Create hologram
-        Location newLocation = location.clone();
-        newLocation.setY(newLocation.getY() + 3);
-        Hologram holo = HologramsAPI.createHologram(plugin, newLocation);
-        holo.insertTextLine(0, holoText[0]);
-        for (int i = 1; i < holoText.length; i++)
-            holo.appendTextLine(holoText[i]);
-
-        return holo;
     }
 
     public static void fakeDeath(VDPlayer vdPlayer) {

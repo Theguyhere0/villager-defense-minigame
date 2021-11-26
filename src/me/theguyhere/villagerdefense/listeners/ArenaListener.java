@@ -363,7 +363,7 @@ public class ArenaListener implements Listener {
             plugin.savePlayerData();
 
             // Refresh leaderboards
-            plugin.getLeaderboard().refreshLeaderboards();
+            plugin.getGame().refreshLeaderboards();
 
             // Remove the player from the arena and time limit bar if exists
             arena.getPlayers().remove(gamer);

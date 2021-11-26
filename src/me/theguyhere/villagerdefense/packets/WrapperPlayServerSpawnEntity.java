@@ -6,7 +6,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.injector.PacketConstructor;
 import com.comphenix.protocol.reflect.IntEnum;
-import com.gmail.filoghost.holographicdisplays.util.NMSVersion;
+import me.theguyhere.villagerdefense.nms.NMSVersion;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 

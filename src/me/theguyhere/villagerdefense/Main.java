@@ -1,6 +1,5 @@
 package me.theguyhere.villagerdefense;
 
-import me.theguyhere.villagerdefense.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.listeners.*;
@@ -26,7 +25,6 @@ public class Main extends JavaPlugin {
 	private final DataManager languageData = new DataManager(this, "languages/" +
 			getConfig().getString("locale") + ".yml");
 
-	private final Leaderboard leaderboard = new Leaderboard(this);
 	private final PacketReader reader = new PacketReader();
 	private Game game;
 
@@ -58,13 +56,6 @@ public class Main extends JavaPlugin {
 		Commands commands = new Commands(this);
 
 		checkArenas();
-
-		if (!Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
-			Utils.debugError("HolographicDisplays is not installed or not enabled.", 0);
-			Utils.debugError("This plugin will be disabled.", 0);
-			this.setEnabled(false);
-			return;
-		}
 
 		// Set up commands and tab complete
 		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist").setExecutor(commands);
@@ -151,9 +142,6 @@ public class Main extends JavaPlugin {
 			outdated = true;
 		}
 
-		// Spawn in portals
-		leaderboard.loadLeaderboards();
-
 		// Set teams
 		if (Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("monsters") == null) {
 			Team monsters = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard()
@@ -179,10 +167,6 @@ public class Main extends JavaPlugin {
 		// Clear every valid arena and remove all portals
 		Game.cleanAll();
 		Game.removePortals();
-	}
-
-	public Leaderboard getLeaderboard() {
-		return leaderboard;
 	}
 
 	public PacketReader getReader() {

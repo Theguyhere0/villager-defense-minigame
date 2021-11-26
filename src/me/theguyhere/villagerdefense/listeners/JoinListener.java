@@ -30,6 +30,7 @@ public class JoinListener implements Listener {
 		Game.displayAllPortals(e.getPlayer());
 		Game.displayAllArenaBoards(e.getPlayer());
 		Game.displayAllInfoBoards(e.getPlayer());
+		Game.displayAllLeaderboards(e.getPlayer());
 		plugin.getReader().inject(player);
 
 		// Get list of loggers from data file

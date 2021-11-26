@@ -18,7 +18,7 @@ public class WorldListener implements Listener {
     public void onWorldLoadEvent(WorldLoadEvent e) {
         Utils.debugInfo("Loading world: " + e.getWorld(), 2);
         plugin.getGame().reloadLobby();
-        plugin.getLeaderboard().loadLeaderboards();
+        plugin.getGame().refreshLeaderboards();
         plugin.getGame().refreshInfoBoards();
         Game.refreshArenaBoards();
         Game.refreshPortals();

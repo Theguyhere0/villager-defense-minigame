@@ -1,90 +1,27 @@
 package me.theguyhere.villagerdefense.game.displays;
 
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import me.theguyhere.villagerdefense.Main;
+import me.theguyhere.villagerdefense.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 public class Leaderboard {
-	private final Main plugin;
-	private final Map<String, Hologram> leaderboards = new HashMap<>();
+	/** The information for the Leaderboard.*/
+	private final Hologram hologram;
+	/** The location of the Leaderboard.*/
+	private final Location location;
 
-	public Leaderboard(Main plugin) {
-		this.plugin = plugin;
-	}
+	public Leaderboard(@NotNull String type, Main plugin) throws InvalidLocationException {
+		Location location = Objects.requireNonNull(Utils.getConfigLocationNoPitch(plugin, "leaderboard." + type));
+		// Check for null world
+		if (location.getWorld() == null)
+			throw new InvalidLocationException("Location world cannot be null!");
 
-	public void createLeaderboard(Player player, String type) {
-		// Create hologram
-		try {
-			addHolo(player.getLocation(), type);
-		} catch (Exception e) {
-			Utils.debugError("Invalid location for leaderboard " + type, 1);
-			Utils.debugInfo("Leaderboard location data may be corrupt. If data cannot be manually corrected in " +
-					"arenaData.yml, please delete the location data for leaderboard " + type + ".", 1);
-			return;
-		}
-
-		// Save location data
-		Utils.setConfigurationLocation(plugin, "leaderboard." + type, player.getLocation());
-		plugin.saveArenaData();
-	}
-
-	public void refreshLeaderboards() {
-		leaderboards.keySet().forEach(this::refreshLeaderboard);
-	}
-
-	public void refreshLeaderboard(String type) {
-		leaderboards.get(type).delete();
-		try {
-			addHolo(Objects.requireNonNull(Utils.getConfigLocationNoPitch(plugin, "leaderboard." + type)), type);
-		} catch (Exception e) {
-			Utils.debugError("Invalid location for leaderboard " + type, 1);
-			Utils.debugInfo("Leaderboard location data may be corrupt. If data cannot be manually corrected in " +
-					"arenaData.yml, please delete the location data for leaderboard " + type + ".", 1);
-		}
-	}
-
-	public void removeLeaderboard(String type) {
-		leaderboards.get(type).delete();
-		leaderboards.remove(type);
-	}
-
-	public void addHolo(Location location, String type) {
-		// Create hologram
-		Location newLocation = location.clone();
-		newLocation.setY(newLocation.getY() + 3);
-		Hologram holo = HologramsAPI.createHologram(plugin, newLocation);
-		if (getHoloText(type) == null)
-			return;
-		holo.insertTextLine(0, Objects.requireNonNull(getHoloText(type))[0]);
-		for (int i = 1; i < Objects.requireNonNull(getHoloText(type)).length; i++)
-			holo.appendTextLine(Objects.requireNonNull(getHoloText(type))[i]);
-
-		// Save hologram in map
-		leaderboards.put(type, holo);
-	}
-
-	public void loadLeaderboards() {
-		if (plugin.getArenaData().contains("leaderboard"))
-			Objects.requireNonNull(plugin.getArenaData().getConfigurationSection("leaderboard"))
-					.getKeys(false).forEach(board -> {
-					try {
-						addHolo(Objects.requireNonNull(Utils.getConfigLocationNoPitch(plugin, "leaderboard." + board)),
-								board);
-					} catch (Exception e) {
-						Utils.debugError("Invalid location for leaderboard " + board, 1);
-						Utils.debugInfo("Leaderboard location data may be corrupt. If data cannot be manually " +
-								"corrected in arenaData.yml, please delete the location data for leaderboard " + board +
-								".", 1);
-					}
-			});
-	}
-
-	private String[] getHoloText(String type) {
+		// Gather info text
 		List<String> info = new ArrayList<>();
 		Map<String, Integer> mapping = new HashMap<>();
 
@@ -106,15 +43,15 @@ public class Leaderboard {
 				info.add(Utils.format("&b&lTop Wave Leaderboard"));
 				break;
 			default:
-				return null;
+				info.add("");
 		}
 
 		// Gather relevant stats
 		for (String key : Objects.requireNonNull(plugin.getPlayerData().getConfigurationSection(""))
 				.getKeys(false)) {
-					if (!key.equals("logger") && plugin.getPlayerData().contains(key + "." + type))
-						mapping.put(key, plugin.getPlayerData().getInt(key + "." + type));
-				}
+			if (!key.equals("logger") && plugin.getPlayerData().contains(key + "." + type))
+				mapping.put(key, plugin.getPlayerData().getInt(key + "." + type));
+		}
 
 		// Put names and values into the leaderboard
 		mapping.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).limit(10)
@@ -123,6 +60,39 @@ public class Leaderboard {
 		for (int i = 1; i < info.size(); i++)
 			info.set(i, Utils.format("&6" + i + ") &f" + info.get(i)));
 
-		return info.toArray(new String[]{});
+		// Set location and hologram
+		this.location = location;
+		this.hologram = info.get(0).isEmpty() ? null : new Hologram(location.clone().add(0, 2.5, 0),
+				false, info.toArray(new String[]{}));
+	}
+
+	public Location getLocation() {
+		return location;
+	}
+
+	public Hologram getHologram() {
+		return hologram;
+	}
+
+	/**
+	 * Spawn in the Leaderboard for every online player.
+	 */
+	public void displayForOnline() {
+		hologram.displayForOnline();
+	}
+
+	/**
+	 * Spawn in the Leaderboard for a specific player.
+	 * @param player - The player to display the Leaderboard for.
+	 */
+	public void displayForPlayer(Player player) {
+		hologram.displayForPlayer(player);
+	}
+
+	/**
+	 * Stop displaying the Leaderboard for every online player.
+	 */
+	public void remove() {
+		hologram.remove();
 	}
 }

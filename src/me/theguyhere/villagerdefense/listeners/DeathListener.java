@@ -24,6 +24,7 @@ public class DeathListener implements Listener {
 		Game.displayAllPortals(e.getPlayer());
 		Game.displayAllArenaBoards(e.getPlayer());
 		Game.displayAllInfoBoards(e.getPlayer());
+		Game.displayAllLeaderboards(e.getPlayer());
 		plugin.getReader().inject(e.getPlayer());
 	}
 }

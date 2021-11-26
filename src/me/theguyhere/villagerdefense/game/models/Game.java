@@ -13,17 +13,16 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Game {
 	private final Main plugin;
 
-	// Tracks arenas, infoboards, and leaderboards for the game
+	// Tracks arenas, info boards, and leaderboards for the game
 	public static Arena[] arenas = new Arena[45];
 	public static InfoBoard[] infoBoards = new InfoBoard[8];
-	public static Leaderboard[] leaderboards = new Leaderboard[5];
+	public static Map<String, Leaderboard> leaderboards = new HashMap<>();
 
 	private static Location lobby;
 
@@ -43,6 +42,15 @@ public class Game {
 						Location location = Utils.getConfigLocationNoPitch(plugin, "infoBoard." + path);
 						if (location != null)
 							infoBoards[Integer.parseInt(path)] = new InfoBoard(location, plugin);
+					} catch (InvalidLocationException ignored) {
+					}
+				});
+		Objects.requireNonNull(plugin.getArenaData().getConfigurationSection("leaderboard")).getKeys(false)
+				.forEach(path -> {
+					try {
+						Location location = Utils.getConfigLocationNoPitch(plugin, "leaderboard." + path);
+						if (location != null)
+							leaderboards.put(path, new Leaderboard(path, plugin));
 					} catch (InvalidLocationException ignored) {
 					}
 				});
@@ -138,7 +146,7 @@ public class Game {
 
 	/**
 	 * Creates a new info board at the given location and deletes the old info board.
-	 * @param location New location
+	 * @param location - New location.
 	 */
 	public void setInfoBoard(Location location, int num) {
 		// Save config location
@@ -192,6 +200,59 @@ public class Game {
 	}
 
 	/**
+	 * Creates a new leaderboard at the given location and deletes the old leaderboard.
+	 * @param location - New location.
+	 */
+	public void setLeaderboard(Location location, String type) {
+		// Save config location
+		Utils.setConfigurationLocation(plugin, "leaderboard." + type, location);
+
+		// Recreate the leaderboard
+		refreshLeaderboard(type);
+	}
+
+	/**
+	 * Recreates the leaderboard in game based on the location in the arena file.
+	 */
+	public void refreshLeaderboard(String type) {
+		// Delete old board if needed
+		if (leaderboards.get(type) != null)
+			leaderboards.remove(type);
+
+		try {
+			// Create a new board and display it
+			leaderboards.put(type, new Leaderboard(type, plugin));
+			leaderboards.get(type).displayForOnline();
+		} catch (Exception e) {
+			Utils.debugError("Invalid location for leaderboard " + type, 1);
+			Utils.debugInfo("Leaderboard location data may be corrupt. If data cannot be manually corrected in " +
+					"arenaData.yml, please delete the location data for leaderboard " + type + ".", 1);
+		}
+	}
+
+	/**
+	 * Centers the leaderboard location along the x and z axis.
+	 */
+	public void centerLeaderboard(String type) {
+		// Center the location
+		Utils.centerConfigLocation(plugin, "leaderboard." + type);
+
+		// Recreate the leaderboard
+		refreshLeaderboard(type);
+	}
+
+	/**
+	 * Removes the leaderboard from the game and from the arena file.
+	 */
+	public void removeLeaderboard(String type) {
+		if (leaderboards.get(type) != null) {
+			leaderboards.get(type).remove();
+			leaderboards.remove(type);
+		}
+		Utils.setConfigurationLocation(plugin, "leaderboard." + type, null);
+	}
+
+	/**
 	 * Display all portals to a player.
 	 * @param player - The player to display all portals to.
 	 */
@@ -218,6 +279,14 @@ public class Game {
 	}
 
 	/**
+	 * Display all leaderboards to a player.
+	 * @param player - The player to display all leaderboards to.
+	 */
+	public static void displayAllLeaderboards(Player player) {
+		leaderboards.forEach((type, board) -> board.displayForPlayer(player));
+	}
+
+	/**
 	 * Refresh the portal of every arena.
 	 */
 	public static void refreshPortals() {
@@ -238,6 +307,14 @@ public class Game {
 		for (int i = 0; i < infoBoards.length; i++) {
 			refreshInfoBoard(i);
 		}
+	}
+
+	/**
+	 * Refresh every leaderboard.
+	 */
+	public void refreshLeaderboards() {
+		List<String> types = new ArrayList<>(leaderboards.keySet());
+		types.forEach(this::refreshLeaderboard);
 	}
 
 	public static void removePortals() {
