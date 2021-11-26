@@ -2,7 +2,6 @@ package me.theguyhere.villagerdefense.nms;
 
 import me.theguyhere.villagerdefense.nms.v1_16_R3.EntityNMSArmorStand;
 import me.theguyhere.villagerdefense.nms.v1_16_R3.EntityNMSVillager;
-import me.theguyhere.villagerdefense.tools.NMSVersion;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;

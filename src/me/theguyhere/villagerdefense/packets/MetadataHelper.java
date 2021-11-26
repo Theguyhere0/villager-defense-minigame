@@ -6,7 +6,7 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Serializer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
-import me.theguyhere.villagerdefense.tools.NMSVersion;
+import me.theguyhere.villagerdefense.nms.NMSVersion;
 
 import java.util.List;
 import java.util.Optional;

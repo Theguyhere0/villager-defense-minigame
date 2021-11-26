@@ -1,4 +1,6 @@
-package me.theguyhere.villagerdefense.tools;
+package me.theguyhere.villagerdefense.nms;
+
+import me.theguyhere.villagerdefense.tools.Utils;
 
 public enum NMSVersion {
     v1_8_R2,

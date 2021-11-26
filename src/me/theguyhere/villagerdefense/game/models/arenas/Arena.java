@@ -1,16 +1,16 @@
 package me.theguyhere.villagerdefense.game.models.arenas;
 
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import me.theguyhere.villagerdefense.GUI.InventoryItems;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.GameEndEvent;
 import me.theguyhere.villagerdefense.events.ReloadBoardsEvent;
 import me.theguyhere.villagerdefense.events.WaveEndEvent;
+import me.theguyhere.villagerdefense.exceptions.InvalidNameException;
+import me.theguyhere.villagerdefense.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.game.models.InventoryMeta;
 import me.theguyhere.villagerdefense.game.models.Tasks;
-import me.theguyhere.villagerdefense.game.models.players.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
@@ -522,73 +522,18 @@ public class Arena {
     }
 
     /**
-     * Formats a string array of text based on the Arena given.
-     * @return The properly formatted string array of text.
-     */
-    private String[] getHoloText() {
-        String status;
-
-        // Get difficulty
-        String difficulty = this.getDifficultyLabel();
-        if (difficulty != null)
-            switch (difficulty) {
-                case "Easy":
-                    difficulty = " &a&l[" + difficulty + "]";
-                    break;
-                case "Medium":
-                    difficulty = " &e&l[" + difficulty + "]";
-                    break;
-                case "Hard":
-                    difficulty = " &c&l[" + difficulty + "]";
-                    break;
-                case "Insane":
-                    difficulty = " &d&l[" + difficulty + "]";
-                    break;
-                default:
-                    difficulty = "";
-            }
-        else difficulty = "";
-
-        // Get status
-        if (this.isClosed()) {
-            return new String[]{Utils.format("&6&l" + this.getName() + difficulty),
-                    Utils.format("&4&lClosed")};
-        }
-        else if (this.getStatus() == ArenaStatus.ENDING)
-            status = "&c&lEnding";
-        else if (this.getStatus() == ArenaStatus.WAITING)
-            status = "&5&lWaiting";
-        else status = "&a&lWave: " + this.getCurrentWave();
-
-        // Get player count color
-        String countColor;
-        double fillRatio = this.getActiveCount() / (double) this.getMaxPlayers();
-        if (fillRatio < .8)
-            countColor = "&a";
-        else if (fillRatio < 1)
-            countColor = "&6";
-        else countColor = "&c";
-
-        // Return full hologram text
-        return new String[]{Utils.format("&6&l" + this.getName() + difficulty), Utils.format(status),
-                Utils.format("&bPlayers: " + countColor + this.getActiveCount() + "&b / " + this.getMaxPlayers()),
-                Utils.format("Spectators: " + this.getSpectatorCount())};
-    }
-
-    /**
      * Recreates the portal in game based on the location in the arena file.
      */
     public void refreshPortal() {
         // Try recreating the portal
         try {
-            Location location = Objects.requireNonNull(Utils.getConfigLocationNoPitch(plugin, path + ".portal"));
-
             // Delete old portal if needed
             if (portal != null)
                 portal.remove();
 
             // Create a new portal and display it
-            portal = new Portal(location, getHoloText());
+            portal = new Portal(Objects.requireNonNull(Utils.getConfigLocationNoPitch(plugin, path + ".portal")),
+                    this);
             portal.displayForOnline();
         } catch (Exception e) {
             Utils.debugError("Invalid location for arena board " + arena, 1);
@@ -617,7 +562,6 @@ public class Arena {
             portal = null;
         }
         Utils.setConfigurationLocation(plugin, path + ".portal", null);
-        plugin.saveArenaData();
         checkClose();
     }
 
@@ -647,16 +591,16 @@ public class Arena {
     public void refreshArenaBoard() {
         // Try recreating the board
         try {
-            Hologram holo = Utils.addHolo(plugin,
-                    Objects.requireNonNull(Utils.getConfigLocationNoPitch(plugin, path + ".arenaBoard")),
-                    ArenaBoard.getHoloText(this));
-            
             // Delete old board if needed
             if (arenaBoard != null)
-                arenaBoard.setHologram(holo);
+                arenaBoard.remove();
 
-            // Create a new board from scratch
-            else arenaBoard = new ArenaBoard(holo);
+            // Create a new board and display it
+            arenaBoard = new ArenaBoard(
+                    Objects.requireNonNull(Utils.getConfigLocationNoPitch(plugin, path + ".arenaBoard")),
+                    this
+            );
+            arenaBoard.displayForOnline();
         } catch (Exception e) {
             Utils.debugError("Invalid location for arena board " + arena, 1);
             Utils.debugInfo("Arena board location data may be corrupt. If data cannot be manually corrected in " +
@@ -680,11 +624,10 @@ public class Arena {
      */
     public void removeArenaBoard() {
         if (arenaBoard != null) {
-            arenaBoard.getHologram().delete();
+            arenaBoard.remove();
             arenaBoard = null;
         }
         Utils.setConfigurationLocation(plugin, path + ".arenaBoard", null);
-        plugin.saveArenaData();
     }
 
     /**

@@ -1,48 +1,31 @@
 package me.theguyhere.villagerdefense.game.displays;
 
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import me.theguyhere.villagerdefense.game.models.Game;
+import me.theguyhere.villagerdefense.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.tools.Utils;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 /**
- * A class managing data about a Villager Defense arena's scoreboard.
+ * The scoreboard of an Arena.
  */
 public class ArenaBoard {
-	private Hologram hologram;
+	/** The information for the ArenaBoard.*/
+	private final Hologram hologram;
+	/** The location of the ArenaBoard.*/
+	private final Location location;
 
-	public ArenaBoard(Hologram hologram) {
-		this.hologram = hologram;
-	}
-
-	public Hologram getHologram() {
-		return hologram;
-	}
-
-	public void setHologram(Hologram hologram) {
-		if (this.hologram != null)
-			this.hologram.delete();
-		this.hologram = hologram;
-	}
-
-	public static void refreshArenaBoards() {
-		Arrays.stream(Game.arenas).filter(Objects::nonNull).forEach(Arena::refreshArenaBoard);
-	}
-
-	/**
-	 * Formats a string array of text based on the Arena given.
-	 * @param arena The arena this text will be for.
-	 * @return The properly formatted string array of text.
-	 */
-	public static String[] getHoloText(Arena arena) {
-		List<String> info = new ArrayList<>();
+	public ArenaBoard(@NotNull Location location, Arena arena) throws InvalidLocationException {
+		// Check for null world
+		if (location.getWorld() == null)
+			throw new InvalidLocationException("Location world cannot be null!");
 
 		// Gather relevant stats
+		List<String> info = new ArrayList<>();
 		info.add(Utils.format("&6&l" + arena.getName() + " Records"));
 		if (!arena.getSortedDescendingRecords().isEmpty())
 			arena.getSortedDescendingRecords().forEach(record -> {
@@ -61,6 +44,39 @@ public class ArenaBoard {
 				}
 			});
 
-		return info.toArray(new String[]{});
+		// Set location and hologram
+		this.location = location;
+		this.hologram = new Hologram(location.clone().add(0, 2.5, 0), false,
+				info.toArray(new String[]{}));
+	}
+
+	public Location getLocation() {
+		return location;
+	}
+
+	public Hologram getHologram() {
+		return hologram;
+	}
+
+	/**
+	 * Spawn in the ArenaBoard for every online player.
+	 */
+	public void displayForOnline() {
+		hologram.displayForOnline();
+	}
+
+	/**
+	 * Spawn in the ArenaBoard for a specific player.
+	 * @param player - The player to display the ArenaBoard for.
+	 */
+	public void displayForPlayer(Player player) {
+		hologram.displayForPlayer(player);
+	}
+
+	/**
+	 * Stop displaying the ArenaBoard for every online player.
+	 */
+	public void remove() {
+		hologram.remove();
 	}
 }

@@ -1,4 +1,6 @@
-package me.theguyhere.villagerdefense.game.models.players;
+package me.theguyhere.villagerdefense.exceptions;
+
+import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 
 /**
  * An exception thrown when a {@link VDPlayer} cannot be found.

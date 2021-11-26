@@ -1,4 +1,4 @@
-package me.theguyhere.villagerdefense.game.models.arenas;
+package me.theguyhere.villagerdefense.exceptions;
 
 public class InvalidNameException extends Exception{
     public InvalidNameException(String message) {

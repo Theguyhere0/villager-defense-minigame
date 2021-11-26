@@ -1,15 +1,12 @@
 package me.theguyhere.villagerdefense;
 
-import me.theguyhere.villagerdefense.game.displays.InfoBoard;
 import me.theguyhere.villagerdefense.game.displays.Leaderboard;
-import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.game.models.Game;
-import me.theguyhere.villagerdefense.game.models.Tasks;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.listeners.*;
 import me.theguyhere.villagerdefense.packets.MetadataHelper;
+import me.theguyhere.villagerdefense.packets.PacketReader;
 import me.theguyhere.villagerdefense.tools.DataManager;
-import me.theguyhere.villagerdefense.tools.PacketReader;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -30,8 +27,8 @@ public class Main extends JavaPlugin {
 			getConfig().getString("locale") + ".yml");
 
 	private final Leaderboard leaderboard = new Leaderboard(this);
-	private final InfoBoard infoBoard = new InfoBoard(this);
 	private final PacketReader reader = new PacketReader();
+	private Game game;
 
 	/**
 	 * The amount of debug information to display in the console.
@@ -56,15 +53,7 @@ public class Main extends JavaPlugin {
 		saveDefaultConfig();
 		PluginManager pm = getServer().getPluginManager();
 		MetadataHelper.init();
-
-		// Set up Game class
-		Objects.requireNonNull(getArenaData().getConfigurationSection("")).getKeys(false).forEach(path -> {
-			if (path.charAt(0) == 'a' && path.length() < 4)
-				Game.arenas[Integer.parseInt(path.substring(1))] = new Arena(this,
-						Integer.parseInt(path.substring(1)),
-						new Tasks(this, Integer.parseInt(path.substring(1))));
-		});
-		Game.setLobby(Utils.getConfigLocation(this, "lobby"));
+		game = new Game(this);
 
 		Commands commands = new Commands(this);
 
@@ -164,7 +153,6 @@ public class Main extends JavaPlugin {
 
 		// Spawn in portals
 		leaderboard.loadLeaderboards();
-		infoBoard.loadInfoBoards();
 
 		// Set teams
 		if (Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("monsters") == null) {
@@ -193,16 +181,16 @@ public class Main extends JavaPlugin {
 		Game.removePortals();
 	}
 
-	public InfoBoard getInfoBoard() {
-		return infoBoard;
-	}
-
 	public Leaderboard getLeaderboard() {
 		return leaderboard;
 	}
 
 	public PacketReader getReader() {
 		return reader;
+	}
+
+	public Game getGame() {
+		return game;
 	}
 
 	// Returns arena data

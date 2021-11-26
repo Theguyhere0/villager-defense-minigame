@@ -8,7 +8,7 @@ import me.theguyhere.villagerdefense.game.models.Tasks;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.game.models.kits.Kit;
-import me.theguyhere.villagerdefense.game.models.players.PlayerNotFoundException;
+import me.theguyhere.villagerdefense.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
