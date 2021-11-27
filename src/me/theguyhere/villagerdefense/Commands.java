@@ -298,8 +298,8 @@ public class Commands implements CommandExecutor {
 						tasks.clear();
 
 						// Schedule accelerated countdown tasks
-						task.full10.run();
-						tasks.put(task.full10, 0); // Dummy task id to note that quick start condition was hit
+						task.sec10.run();
+						tasks.put(task.sec10, 0); // Dummy task id to note that quick start condition was hit
 						tasks.put(task.sec5,
 								scheduler.scheduleSyncDelayedTask(plugin, task.sec5, Utils.secondsToTicks(5)));
 						tasks.put(task.start,
