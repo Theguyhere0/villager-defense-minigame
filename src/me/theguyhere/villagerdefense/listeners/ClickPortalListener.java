@@ -37,21 +37,19 @@ public class ClickPortalListener implements Listener {
 
 	@EventHandler
 	public void onLeftClick(LeftClickNPCEvent e) {
-		int arena;
+		Arena arena;
 
 		// Try to get arena from npc
 		try {
-			arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).map(Arena::getPortal).filter(Objects::nonNull)
-					.map(portal -> portal.getNpc().getVillager().getEntityId()).collect(Collectors.toList())
-					.indexOf(e.getNpcId());
+			arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(arena1 -> arena1.getPortal() != null)
+					.filter(arena1 -> arena1.getPortal().getNpc().getVillager().getEntityId() == e.getNpcId())
+					.collect(Collectors.toList()).get(0);
 		} catch (Exception err) {
 			err.printStackTrace();
 			return;
 		}
 
 		// Open inventory
-		e.getPlayer().openInventory(Inventories.createArenaInfoInventory(
-				Game.arenas[arena]
-		));
+		e.getPlayer().openInventory(Inventories.createArenaInfoInventory(arena));
 	}
 }
