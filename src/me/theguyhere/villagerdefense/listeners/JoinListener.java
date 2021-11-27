@@ -27,10 +27,7 @@ public class JoinListener implements Listener {
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
-		Game.displayAllPortals(e.getPlayer());
-		Game.displayAllArenaBoards(e.getPlayer());
-		Game.displayAllInfoBoards(e.getPlayer());
-		Game.displayAllLeaderboards(e.getPlayer());
+		Game.displayEverything(player);
 		plugin.getReader().inject(player);
 
 		// Get list of loggers from data file

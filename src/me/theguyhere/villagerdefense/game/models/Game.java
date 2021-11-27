@@ -287,6 +287,17 @@ public class Game {
 	}
 
 	/**
+	 * Display everything displayable to a player.
+	 * @param player - The player to display everything to.
+	 */
+	public static void displayEverything(Player player) {
+		displayAllPortals(player);
+		displayAllArenaBoards(player);
+		displayAllInfoBoards(player);
+		displayAllLeaderboards(player);
+	}
+
+	/**
 	 * Refresh the portal of every arena.
 	 */
 	public static void refreshPortals() {
@@ -315,6 +326,16 @@ public class Game {
 	public void refreshLeaderboards() {
 		List<String> types = new ArrayList<>(leaderboards.keySet());
 		types.forEach(this::refreshLeaderboard);
+	}
+
+	/**
+	 * Refresh all holographics.
+	 */
+	public void refreshAll() {
+		refreshPortals();
+		refreshArenaBoards();
+		refreshInfoBoards();
+		refreshLeaderboards();
 	}
 
 	public static void removePortals() {
