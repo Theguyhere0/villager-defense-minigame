@@ -215,7 +215,7 @@ public class Arena {
     public String getDifficultyLabel() {
         if (config.contains(path + ".difficultyLabel"))
             return config.getString(path + ".difficultyLabel");
-        else return null;
+        else return "";
     }
 
     /**
