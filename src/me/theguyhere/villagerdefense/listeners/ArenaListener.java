@@ -483,6 +483,12 @@ public class ArenaListener implements Listener {
         // Refresh the game portal
         arena.refreshPortal();
 
+        // Refresh all displays for the player
+        Game.displayAllPortals(player);
+        Game.displayAllArenaBoards(player);
+        Game.displayAllInfoBoards(player);
+        Game.displayAllLeaderboards(player);
+
         // Debug message to console
         Utils.debugInfo(player.getName() + " left Arena " + arena.getArena(), 2);
     }
