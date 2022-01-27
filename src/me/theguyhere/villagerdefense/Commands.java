@@ -3,6 +3,7 @@ package me.theguyhere.villagerdefense;
 import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.events.GameEndEvent;
 import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
+import me.theguyhere.villagerdefense.exceptions.NoSpawnException;
 import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.game.models.Tasks;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
@@ -186,7 +187,7 @@ public class Commands implements CommandExecutor {
 				}
 
 				// Let player join using phantom kit
-				Utils.teleAdventure(player, arena.getPlayerSpawn());
+				Utils.teleAdventure(player, arena.getPlayerSpawn().getLocation());
 				gamer.setStatus(PlayerStatus.ALIVE);
 				arena.getTask().giveItems(gamer);
 				Game.createBoard(gamer);
@@ -381,7 +382,7 @@ public class Commands implements CommandExecutor {
 
 			// Force end
 			if (args[0].equalsIgnoreCase("end")) {
-				// Delay current arena
+				// End current arena
 				if (args.length == 1) {
 					// Check for player executing command
 					if (player == null) {

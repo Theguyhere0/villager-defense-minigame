@@ -2,9 +2,11 @@ package me.theguyhere.villagerdefense.listeners;
 
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.*;
+import me.theguyhere.villagerdefense.exceptions.NoSpawnException;
 import me.theguyhere.villagerdefense.game.models.*;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.arenas.ArenaRecord;
+import me.theguyhere.villagerdefense.game.models.arenas.ArenaSpawn;
 import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
@@ -64,7 +66,7 @@ public class ArenaListener implements Listener {
 
         // Try to get player spawn
         try {
-            spawn = arena.getPlayerSpawn();
+            spawn = arena.getPlayerSpawn().getLocation();
         } catch (Exception err) {
             err.printStackTrace();
             player.sendMessage(Utils.notify(language.getString("fatalError")));
@@ -114,9 +116,13 @@ public class ArenaListener implements Listener {
 
             // Play waiting music
             if (arena.getWaitingSound() != null)
-                if (arena.getWaitingRoom() != null)
-                    player.playSound(arena.getWaitingRoom(), arena.getWaitingSound(), 4, 1);
-                else player.playSound(arena.getPlayerSpawn(), arena.getWaitingSound(), 4, 1);
+                try {
+                    if (arena.getWaitingRoom() != null)
+                        player.playSound(arena.getWaitingRoom(), arena.getWaitingSound(), 4, 1);
+                    else player.playSound(arena.getPlayerSpawn().getLocation(), arena.getWaitingSound(), 4, 1);
+                } catch (Exception err) {
+                    Utils.debugError(err.getMessage(), 0);
+                }
 
             // Give player choice options
             player.getInventory().setItem(2, GameItems.kitSelector());
@@ -263,8 +269,10 @@ public class ArenaListener implements Listener {
 
         // Play wave end sound
         if (arena.hasWaveFinishSound() && arena.getCurrentWave() != 0)
-            arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
-                    Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 10, .75f));
+                for (VDPlayer vdPlayer : arena.getPlayers()) {
+                    vdPlayer.getPlayer().playSound(arena.getPlayerSpawn().getLocation(),
+                            Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 10, .75f);
+                }
 
         FileConfiguration playerData = plugin.getPlayerData();
 
@@ -282,9 +290,12 @@ public class ArenaListener implements Listener {
             arena.incrementCurrentWave();
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
                     Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
-            if (arena.hasWinSound())
-                arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
-                        Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1));
+            if (arena.hasWinSound()) {
+                for (VDPlayer vdPlayer : arena.getPlayers()) {
+                    vdPlayer.getPlayer().playSound(arena.getPlayerSpawn().getLocation(),
+                            Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
+                }
+            }
         }
 
         // Start the next wave
@@ -302,9 +313,12 @@ public class ArenaListener implements Listener {
         }
 
         // Play wave start sound
-        if (arena.hasWaveStartSound())
-            arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
-                    Sound.ENTITY_ENDER_DRAGON_GROWL, 10, .25f));
+        if (arena.hasWaveStartSound()) {
+            for (VDPlayer vdPlayer : arena.getPlayers()) {
+                vdPlayer.getPlayer().playSound(arena.getPlayerSpawn().getLocation(),
+                        Sound.ENTITY_ENDER_DRAGON_GROWL, 10, .25f);
+            }
+        }
 
         Tasks task = arena.getTask();
 
@@ -524,9 +538,12 @@ public class ArenaListener implements Listener {
         arena.getAlives().forEach(player -> player.getPlayer().setInvulnerable(true));
 
         // Play sound if turned on
-        if (arena.hasLoseSound())
-            arena.getPlayers().forEach(vdPlayer -> vdPlayer.getPlayer().playSound(arena.getPlayerSpawn(),
-                    Sound.ENTITY_ENDER_DRAGON_DEATH, 10, .5f));
+        if (arena.hasLoseSound()) {
+            for (VDPlayer vdPlayer : arena.getPlayers()) {
+                vdPlayer.getPlayer().playSound(arena.getPlayerSpawn().getLocation(),
+                        Sound.ENTITY_ENDER_DRAGON_DEATH, 10, .5f);
+            }
+        }
 
         if (arena.getActiveCount() > 0) {
             // Check for record
@@ -624,7 +641,8 @@ public class ArenaListener implements Listener {
 
         int toSpawn = Math.max((int) (data.getConfig().getInt(wave + ".count.v") * countMultiplier), 1)
                 - arena.getVillagers();
-        List<Location> spawns = arena.getVillagerSpawns();
+        List<Location> spawns = arena.getVillagerSpawns().stream()
+                .map(ArenaSpawn::getLocation).collect(Collectors.toList());
 
         for (int i = 0; i < toSpawn; i++) {
             Location spawn = spawns.get(r.nextInt(spawns.size()));
@@ -672,16 +690,22 @@ public class ArenaListener implements Listener {
         // Split spawns by type
         List<Location> grounds = new ArrayList<>();
         for (int i = 0; i < 9; i++)
-            if (arena.getMonsterSpawn(i) != null && arena.getMonsterSpawnType(i) != 2)
-                grounds.add(arena.getMonsterSpawn(i));
+            try {
+                if (arena.getMonsterSpawn(i).getLocation() != null && arena.getMonsterSpawnType(i) != 2)
+                    grounds.add(arena.getMonsterSpawn(i).getLocation());
+            } catch (NullPointerException ignored) {
+            }
         if (grounds.isEmpty())
-            grounds = arena.getMonsterSpawns();
+            grounds = arena.getMonsterSpawns().stream().map(ArenaSpawn::getLocation).collect(Collectors.toList());
         List<Location> airs = new ArrayList<>();
         for (int i = 0; i < 9; i++)
-            if (arena.getMonsterSpawn(i) != null && arena.getMonsterSpawnType(i) != 1)
-                airs.add(arena.getMonsterSpawn(i));
+            try {
+                if (arena.getMonsterSpawn(i).getLocation() != null && arena.getMonsterSpawnType(i) != 1)
+                    airs.add(arena.getMonsterSpawn(i).getLocation());
+            } catch (NullPointerException ignored) {
+            }
         if (airs.isEmpty())
-            airs = arena.getMonsterSpawns();
+            airs = arena.getMonsterSpawns().stream().map(ArenaSpawn::getLocation).collect(Collectors.toList());
 
         // Get monster type ratio
         Objects.requireNonNull(data.getConfig().getConfigurationSection(path)).getKeys(false)
@@ -840,7 +864,8 @@ public class ArenaListener implements Listener {
             return;
 
         String path = wave + ".btypes";
-        List<Location> spawns = arena.getMonsterSpawns();
+        List<Location> spawns = arena.getMonsterSpawns().stream()
+                .map(ArenaSpawn::getLocation).collect(Collectors.toList());
         List<String> typeRatio = new ArrayList<>();
 
         // Get monster type ratio

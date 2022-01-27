@@ -15,6 +15,7 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -297,7 +298,7 @@ public class Utils {
     }
 
     // Prepares and teleports a player into adventure mode
-    public static void teleAdventure(Player player, Location location) {
+    public static void teleAdventure(Player player, @NotNull Location location) {
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
         player.setFireTicks(0);
         AttributeInstance maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
@@ -320,7 +321,7 @@ public class Utils {
     }
 
     // Prepares and teleports a player into spectator mode
-    public static void teleSpectator(Player player, Location location) {
+    public static void teleSpectator(Player player, @NotNull Location location) {
         AttributeInstance maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
         if (maxHealth == null)
             return;
@@ -414,14 +415,15 @@ public class Utils {
         }
     }
 
-    // Gets a list of locations from a configuration path
-    public static List<Location> getConfigLocationList(Main plugin, String path) {
-        List<Location> locations = new ArrayList<>();
+    // Gets a map of locations from a configuration path
+    public static Map<Integer, Location> getConfigLocationMap(Main plugin, String path) {
+        Map<Integer, Location> locations = new HashMap<>();
         try {
             Objects.requireNonNull(plugin.getArenaData().getConfigurationSection(path)).getKeys(false)
                     .forEach(num -> {
                         try {
-                            locations.add(getConfigLocationNoRotation(plugin, path + "." + num));
+                            locations.put(Integer.parseInt(num),
+                                    getConfigLocationNoRotation(plugin, path + "." + num));
                         } catch (Exception e) {
                             debugError("An error occurred retrieving a location from section " + path, 1);
                         }

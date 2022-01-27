@@ -5,6 +5,7 @@ import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.GameEndEvent;
 import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.events.ReloadBoardsEvent;
+import me.theguyhere.villagerdefense.exceptions.NoSpawnException;
 import me.theguyhere.villagerdefense.game.models.*;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
@@ -221,7 +222,8 @@ public class GameListener implements Listener {
 		ItemStack item = ((Item) ent).getItemStack();
 
 		// Check for right item
-		if (item.getType() == Material.EMERALD && item.hasItemMeta() && item.getItemMeta().hasLore())
+		if (item.getType() == Material.EMERALD && item.hasItemMeta() &&
+				Objects.requireNonNull(item.getItemMeta()).hasLore())
 			e.setCancelled(true);
 	}
 
@@ -513,7 +515,11 @@ public class GameListener implements Listener {
 
 			// Teleport player back to player spawn or waiting room
 			if (arena.getWaitingRoom() == null)
-				player.teleport(arena.getPlayerSpawn());
+				try {
+					player.teleport(arena.getPlayerSpawn().getLocation());
+				} catch (NullPointerException err) {
+					Utils.debugError(err.getMessage(), 0);
+				}
 			else player.teleport(arena.getWaitingRoom());
 		} else {
 			// Set player to fake death mode
@@ -524,7 +530,11 @@ public class GameListener implements Listener {
 					Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
 
 			// Teleport player back to player spawn
-			player.teleport(arena.getPlayerSpawn());
+			try {
+				player.teleport(arena.getPlayerSpawn().getLocation());
+			} catch (NullPointerException err) {
+				Utils.debugError(err.getMessage(), 0);
+			}
 			player.closeInventory();
 
 			// Notify everyone else of player death
@@ -537,8 +547,13 @@ public class GameListener implements Listener {
 								Objects.requireNonNull(language.getString("death")), player.getName())));
 					}
 				if (arena.hasPlayerDeathSound())
-					fighter.getPlayer().playSound(arena.getPlayerSpawn(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10,
-							.75f);
+					try {
+						fighter.getPlayer().playSound(arena.getPlayerSpawn().getLocation(),
+								Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10,
+								.75f);
+					} catch (NullPointerException err) {
+						Utils.debugError(err.getMessage(), 0);
+					}
 			});
 
 			// Update scoreboards
@@ -1179,9 +1194,13 @@ public class GameListener implements Listener {
 			// Teleport player back into arena after several infractions
 			if (gamer.incrementInfractions() > 5) {
 				gamer.resetInfractions();
-				if (gamer.getStatus() == PlayerStatus.ALIVE)
-					player.teleport(arena.getPlayerSpawn());
-				else Utils.teleSpectator(player, arena.getPlayerSpawn());
+				try {
+					if (gamer.getStatus() == PlayerStatus.ALIVE)
+						player.teleport(arena.getPlayerSpawn().getLocation());
+					else Utils.teleSpectator(player, arena.getPlayerSpawn().getLocation());
+				} catch (NullPointerException err) {
+					Utils.debugError(err.getMessage(), 0);
+				}
 			} else e.setCancelled(true);
 
 			player.sendMessage(Utils.notify(plugin.getLanguageData().getString("boundsError")));

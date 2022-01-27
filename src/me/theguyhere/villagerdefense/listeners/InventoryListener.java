@@ -2,6 +2,7 @@ package me.theguyhere.villagerdefense.listeners;
 
 import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.GUI.InventoryItems;
+import me.theguyhere.villagerdefense.GUI.InventoryMeta;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.events.SignGUIEvent;
@@ -729,13 +730,13 @@ public class InventoryListener implements Listener {
 					}
 
 					// No monster spawn
-					if (arenaInstance.getMonsterSpawns().stream().noneMatch(Objects::nonNull)) {
+					if (arenaInstance.getMonsterSpawns().isEmpty()) {
 						player.sendMessage(Utils.notify("&cArena cannot open without a monster spawn!"));
 						return;
 					}
 
 					// No villager spawn
-					if (arenaInstance.getVillagerSpawns().stream().noneMatch(Objects::nonNull)) {
+					if (arenaInstance.getVillagerSpawns().isEmpty()) {
 						player.sendMessage(Utils.notify("&cArena cannot open without a villager spawn!"));
 						return;
 					}
@@ -869,7 +870,7 @@ public class InventoryListener implements Listener {
 					Arena arenaInstance = Game.arenas[meta.getInteger1()];
 
 					arenaInstance.setMonsterSpawn(meta.getInteger2(), null);
-					if (arenaInstance.getMonsterSpawns().stream().noneMatch(Objects::nonNull))
+					if (arenaInstance.getMonsterSpawns().isEmpty())
 						arenaInstance.setClosed(true);
 					player.sendMessage(Utils.notify("&aMob spawn removed!"));
 					player.openInventory(Inventories.createMonsterSpawnMenu(meta.getInteger1(), meta.getInteger2()));
@@ -887,7 +888,7 @@ public class InventoryListener implements Listener {
 					Arena arenaInstance = Game.arenas[meta.getInteger1()];
 
 					arenaInstance.setVillagerSpawn(meta.getInteger2(), null);
-					if (arenaInstance.getVillagerSpawns().stream().noneMatch(Objects::nonNull))
+					if (arenaInstance.getVillagerSpawns().isEmpty())
 						arenaInstance.setClosed(true);
 					player.sendMessage(Utils.notify("&aMob spawn removed!"));
 					player.openInventory(Inventories.createVillagerSpawnMenu(meta.getInteger1(), meta.getInteger2()));
@@ -1276,33 +1277,30 @@ public class InventoryListener implements Listener {
 
 			// Teleport player to spawn
 			else if (buttonName.contains("Teleport")) {
-				Location location = arenaInstance.getPlayerSpawn();
-				if (location == null) {
+				try {
+					player.teleport(arenaInstance.getPlayerSpawn().getLocation());
+					player.closeInventory();
+				} catch (NullPointerException err) {
 					player.sendMessage(Utils.notify("&cNo player spawn to teleport to!"));
-					return;
 				}
-				player.teleport(location);
-				player.closeInventory();
 			}
 
 			// Center player spawn
 			else if (buttonName.contains("Center"))
 				if (arenaInstance.isClosed()) {
-					if (arenaInstance.getPlayerSpawn() == null) {
-						player.sendMessage(Utils.notify("&cNo player spawn to center!"));
-						return;
-					}
-					arenaInstance.centerPlayerSpawn();
-					player.sendMessage(Utils.notify("&aSpawn centered!"));
+					if (arenaInstance.getPlayerSpawn() != null) {
+						arenaInstance.centerPlayerSpawn();
+						player.sendMessage(Utils.notify("&aSpawn centered!"));
+					} else player.sendMessage(Utils.notify("&cNo player spawn to center!"));
 				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
 			// Remove spawn
 			else if (buttonName.contains("REMOVE"))
-				if (arenaInstance.getPlayerSpawn() != null)
+				if (arenaInstance.getPlayerSpawn() != null) {
 					if (arenaInstance.isClosed())
 						player.openInventory(Inventories.createSpawnConfirmInventory(meta.getInteger1()));
 					else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
-				else player.sendMessage(Utils.notify("&cNo player spawn to remove!"));
+				} else player.sendMessage(Utils.notify("&cNo player spawn to remove!"));
 
 			// Exit menu
 			else if (buttonName.contains("EXIT"))
@@ -1547,49 +1545,43 @@ public class InventoryListener implements Listener {
 				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
 			// Teleport player to spawn
-			else if (buttonName.contains("Teleport")) {
-				Location location = arenaInstance.getMonsterSpawn(meta.getInteger2());
-				if (location == null) {
+			else if (buttonName.contains("Teleport"))
+				try {
+					player.teleport(arenaInstance.getMonsterSpawn(meta.getInteger2()).getLocation());
+					player.closeInventory();
+				} catch (NullPointerException err) {
 					player.sendMessage(Utils.notify("&cNo monster spawn to teleport to!"));
-					return;
 				}
-				player.teleport(location);
-				player.closeInventory();
-			}
 
 			// Center monster spawn
 			else if (buttonName.contains("Center"))
 				if (arenaInstance.isClosed()) {
-					if (arenaInstance.getMonsterSpawn(meta.getInteger2()) == null) {
-						player.sendMessage(Utils.notify("&cNo monster spawn to center!"));
-						return;
-					}
-					arenaInstance.centerMonsterSpawn(meta.getInteger2());
-					player.sendMessage(Utils.notify("&aMonster spawn centered!"));
+					if (arenaInstance.getMonsterSpawn(meta.getInteger2()) != null) {
+						arenaInstance.centerMonsterSpawn(meta.getInteger2());
+						player.sendMessage(Utils.notify("&aMonster spawn centered!"));
+					} else player.sendMessage(Utils.notify("&cNo monster spawn to center!"));
 				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
 			// Set monster type
 			else if (buttonName.contains("Type"))
 				if (arenaInstance.isClosed()) {
-					if (arenaInstance.getMonsterSpawn(meta.getInteger2()) == null) {
-						player.sendMessage(Utils.notify("&cNo monster spawn to set type!"));
-						return;
-					}
-					arenaInstance.setMonsterSpawnType(meta.getInteger2(),
-							(arenaInstance.getMonsterSpawnType(meta.getInteger2()) + 1) % 3);
-					player.openInventory(Inventories.createMonsterSpawnMenu(meta.getInteger1(),
-							meta.getInteger2()));
-					player.sendMessage(Utils.notify("&aMonster spawn type changed!"));
+					if (arenaInstance.getMonsterSpawn(meta.getInteger2()) != null) {
+						arenaInstance.setMonsterSpawnType(meta.getInteger2(),
+								(arenaInstance.getMonsterSpawnType(meta.getInteger2()) + 1) % 3);
+						player.openInventory(Inventories.createMonsterSpawnMenu(meta.getInteger1(),
+								meta.getInteger2()));
+						player.sendMessage(Utils.notify("&aMonster spawn type changed!"));
+					} else player.sendMessage(Utils.notify("&cNo monster spawn to set type!"));
 				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
 			// Remove spawn
 			else if (buttonName.contains("REMOVE"))
-				if (arenaInstance.getMonsterSpawn(meta.getInteger2()) != null)
+				if (arenaInstance.getMonsterSpawn(meta.getInteger2()) != null) {
 					if (arenaInstance.isClosed())
 						player.openInventory(Inventories.createMonsterSpawnConfirmInventory(meta.getInteger1(),
 								meta.getInteger2()));
 					else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
-				else player.sendMessage(Utils.notify("&cNo monster spawn to remove!"));
+				} else player.sendMessage(Utils.notify("&cNo monster spawn to remove!"));
 
 			// Exit menu
 			else if (buttonName.contains("EXIT"))
@@ -1632,36 +1624,32 @@ public class InventoryListener implements Listener {
 				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 
 			// Teleport player to spawn
-			else if (buttonName.contains("Teleport")) {
-				Location location = arenaInstance.getVillagerSpawn(meta.getInteger2());
-				if (location == null) {
+			else if (buttonName.contains("Teleport"))
+				try {
+					player.teleport(arenaInstance.getVillagerSpawn(meta.getInteger2()).getLocation());
+					player.closeInventory();
+				} catch (NullPointerException err) {
 					player.sendMessage(Utils.notify("&cNo villager spawn to teleport to!"));
-					return;
 				}
-				player.teleport(location);
-				player.closeInventory();
-			}
 
 			// Center villager spawn
 			else if (buttonName.contains("Center")) {
 				if (arenaInstance.isClosed()) {
-					if (arenaInstance.getVillagerSpawn(meta.getInteger2()) == null) {
-						player.sendMessage(Utils.notify("&cNo villager spawn to center!"));
-						return;
-					}
-					arenaInstance.centerVillagerSpawn(meta.getInteger2());
-					player.sendMessage(Utils.notify("&aVillager spawn centered!"));
+					if (arenaInstance.getVillagerSpawn(meta.getInteger2()) != null) {
+						arenaInstance.centerVillagerSpawn(meta.getInteger2());
+						player.sendMessage(Utils.notify("&Villager spawn centered!"));
+					} else player.sendMessage(Utils.notify("&cNo villager spawn to center!"));
 				} else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
 			}
 
 			// Remove spawn
 			else if (buttonName.contains("REMOVE"))
-				if (arenaInstance.getVillagerSpawn(meta.getInteger2()) != null)
+				if (arenaInstance.getVillagerSpawn(meta.getInteger2()) != null) {
 					if (arenaInstance.isClosed())
 						player.openInventory(Inventories.createVillagerSpawnConfirmInventory(meta.getInteger1(),
 								meta.getInteger2()));
 					else player.sendMessage(Utils.notify("&cArena must be closed to modify this!"));
-				else player.sendMessage(Utils.notify("&cNo villager spawn to remove!"));
+				} else player.sendMessage(Utils.notify("&cNo villager spawn to remove!"));
 
 			// Exit menu
 			else if (buttonName.contains("EXIT"))

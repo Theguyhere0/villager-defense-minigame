@@ -2,6 +2,7 @@ package me.theguyhere.villagerdefense.game.models;
 
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.exceptions.InvalidLocationException;
+import me.theguyhere.villagerdefense.exceptions.NoSpawnException;
 import me.theguyhere.villagerdefense.game.displays.InfoBoard;
 import me.theguyhere.villagerdefense.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.game.displays.Portal;
@@ -286,6 +287,24 @@ public class Game {
 		leaderboards.forEach((type, board) -> board.displayForPlayer(player));
 	}
 
+	public static void displayAllIndicators(Player player) {
+		Arrays.stream(arenas).filter(Objects::nonNull).forEach(arena ->
+		{
+			if (arena.getPlayerSpawn() != null && arena.getPlayerSpawn().isOn())
+				arena.getPlayerSpawn().getSpawnIndicator().displayForPlayer(player);
+		});
+		Arrays.stream(arenas).filter(Objects::nonNull).forEach(arena ->
+				arena.getMonsterSpawns().forEach(spawn -> {
+					if (spawn.isOn())
+						spawn.getSpawnIndicator().displayForPlayer(player);
+				}));
+		Arrays.stream(arenas).filter(Objects::nonNull).forEach(arena ->
+				arena.getVillagerSpawns().forEach(spawn -> {
+					if (spawn.isOn())
+						spawn.getSpawnIndicator().displayForPlayer(player);
+				}));
+	}
+
 	/**
 	 * Display everything displayable to a player.
 	 * @param player - The player to display everything to.
@@ -295,6 +314,7 @@ public class Game {
 		displayAllArenaBoards(player);
 		displayAllInfoBoards(player);
 		displayAllLeaderboards(player);
+		displayAllIndicators(player);
 	}
 
 	/**

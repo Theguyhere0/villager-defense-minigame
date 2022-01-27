@@ -45,7 +45,6 @@ public class Main extends JavaPlugin {
 	int languageFileVersion = 11;
 	int defaultSpawnVersion = 2;
 
-	// Runs when enabling plugin
 	@Override
 	public void onEnable() {
 		saveDefaultConfig();
@@ -157,7 +156,6 @@ public class Main extends JavaPlugin {
 		}
 	}
 
-	// Runs when disabling plugin
 	@Override
 	public void onDisable() {
 		// Remove uninject players

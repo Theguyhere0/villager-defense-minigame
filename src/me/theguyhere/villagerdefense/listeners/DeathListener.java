@@ -21,10 +21,7 @@ public class DeathListener implements Listener {
 	
 	@EventHandler
 	public void onRespawn(PlayerRespawnEvent e) {
-		Game.displayAllPortals(e.getPlayer());
-		Game.displayAllArenaBoards(e.getPlayer());
-		Game.displayAllInfoBoards(e.getPlayer());
-		Game.displayAllLeaderboards(e.getPlayer());
+		Game.displayEverything(e.getPlayer());
 		plugin.getReader().inject(e.getPlayer());
 	}
 }

@@ -4,7 +4,6 @@ import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.game.models.Challenge;
 import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.game.models.GameItems;
-import me.theguyhere.villagerdefense.game.models.InventoryMeta;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
@@ -631,9 +630,9 @@ public class Inventories {
 				Utils.format("&d&lPlayer Spawn: " + arenaInstance.getName()));
 
 		// Option to create or relocate player spawn
-		if (arenaInstance.getPlayerSpawn() == null)
-			inv.setItem(0, InventoryItems.create("Spawn"));
-		else inv.setItem(0, InventoryItems.relocate("Spawn"));
+		if (arenaInstance.getPlayerSpawn() != null)
+			inv.setItem(0, InventoryItems.relocate("Spawn"));
+		else inv.setItem(0, InventoryItems.create("Spawn"));
 
 		// Option to teleport to player spawn
 		inv.setItem(2, InventoryItems.teleport("Spawn"));
@@ -803,9 +802,9 @@ public class Inventories {
 		// Options to interact with all 8 possible mob spawns
 		for (int i = 0; i < 8; i++) {
 			// Check if the spawn exists
-			if (arenaInstance.getMonsterSpawn(i) == null)
-				index = 0;
-			else index = 1;
+			if (arenaInstance.getMonsterSpawn(i) != null)
+				index = 1;
+			else index = 0;
 
 			// Create and set item
 			inv.setItem(i, Utils.createItem(MONSTER_MATS[index], Utils.format("&2&lMob Spawn " + (i + 1))));
@@ -826,9 +825,9 @@ public class Inventories {
 				Utils.format("&2&lMonster Spawn " + (slot + 1) + ": " + arenaInstance.getName()));
 
 		// Option to create or relocate monster spawn
-		if (arenaInstance.getMonsterSpawn(slot) == null)
-			inv.setItem(0, InventoryItems.create("Spawn"));
-		else inv.setItem(0, InventoryItems.relocate("Spawn"));
+		if (arenaInstance.getMonsterSpawn(slot) != null)
+			inv.setItem(0, InventoryItems.relocate("Spawn"));
+		else inv.setItem(0, InventoryItems.create("Spawn"));
 
 		// Option to teleport to monster spawn
 		inv.setItem(1, InventoryItems.teleport("Spawn"));
@@ -886,9 +885,9 @@ public class Inventories {
 		// Options to interact with all 8 possible villager spawns
 		for (int i = 0; i < 8; i++) {
 			// Check if the spawn exists
-			if (arenaInstance.getVillagerSpawn(i) == null)
-				index = 0;
-			else index = 1;
+			if (arenaInstance.getVillagerSpawn(i) != null)
+				index = 1;
+			else index = 0;
 
 			// Create and set item
 			inv.setItem(i, Utils.createItem(VILLAGER_MATS[index], Utils.format("&5&lVillager Spawn " + (i + 1))));
@@ -909,9 +908,9 @@ public class Inventories {
 				Utils.format("&5&lVillager Spawn " + (slot + 1) + ": " + arenaInstance.getName()));
 
 		// Option to create or relocate villager spawn
-		if (arenaInstance.getVillagerSpawn(slot) == null)
-			inv.setItem(0, InventoryItems.create("Spawn"));
-		else inv.setItem(0, InventoryItems.relocate("Spawn"));
+		if (arenaInstance.getVillagerSpawn(slot) != null)
+			inv.setItem(0, InventoryItems.relocate("Spawn"));
+		else inv.setItem(0, InventoryItems.create("Spawn"));
 
 		// Option to teleport to villager spawn
 		inv.setItem(2, InventoryItems.teleport("Spawn"));

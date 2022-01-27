@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.game.models;
 
 import me.theguyhere.villagerdefense.GUI.Inventories;
+import me.theguyhere.villagerdefense.GUI.InventoryMeta;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.GameEndEvent;
 import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
@@ -170,10 +171,12 @@ public class Tasks {
 
 			// Teleport players to arena if waiting room exists
 			if (arenaInstance.getWaitingRoom() != null) {
-				arenaInstance.getActives().forEach(player ->
-						Utils.teleAdventure(player.getPlayer(), arenaInstance.getPlayerSpawn()));
-				arenaInstance.getSpectators().forEach(player ->
-						Utils.teleSpectator(player.getPlayer(), arenaInstance.getPlayerSpawn()));
+				for (VDPlayer vdPlayer : arenaInstance.getActives()) {
+					Utils.teleAdventure(vdPlayer.getPlayer(), arenaInstance.getPlayerSpawn().getLocation());
+				}
+				for (VDPlayer player : arenaInstance.getSpectators()) {
+					Utils.teleSpectator(player.getPlayer(), arenaInstance.getPlayerSpawn().getLocation());
+				}
 			}
 
 			// Stop waiting sound
@@ -275,8 +278,8 @@ public class Tasks {
 					.forEach(Entity::remove);
 
 			// Revive dead players
-			arenaInstance.getGhosts().forEach(p -> {
-				Utils.teleAdventure(p.getPlayer(), arenaInstance.getPlayerSpawn());
+			for (VDPlayer p : arenaInstance.getGhosts()) {
+				Utils.teleAdventure(p.getPlayer(), arenaInstance.getPlayerSpawn().getLocation());
 				p.setStatus(PlayerStatus.ALIVE);
 				giveItems(p);
 
@@ -305,7 +308,7 @@ public class Tasks {
 				if (p.getChallenges().contains(Challenge.blind()))
 					p.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999,
 							0));
-			});
+			}
 
 			arenaInstance.getActives().forEach(p -> {
 				// Notify of upcoming wave
