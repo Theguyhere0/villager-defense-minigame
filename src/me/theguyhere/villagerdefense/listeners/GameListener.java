@@ -5,15 +5,15 @@ import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.GameEndEvent;
 import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.events.ReloadBoardsEvent;
+import me.theguyhere.villagerdefense.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.game.models.*;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.game.models.arenas.ArenaManager;
 import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.game.models.kits.Kit;
-import me.theguyhere.villagerdefense.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.tools.DataManager;
-import me.theguyhere.villagerdefense.tools.Utils;
+import me.theguyhere.villagerdefense.tools.*;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
@@ -31,7 +31,10 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BoundingBox;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class GameListener implements Listener {
@@ -50,7 +53,7 @@ public class GameListener implements Listener {
 		if (!ent.hasMetadata("VD"))
 			return;
 
-		Arena arena = Game.arenas[ent.getMetadata("VD").get(0).asInt()];
+		Arena arena = ArenaManager.arenas[ent.getMetadata("VD").get(0).asInt()];
 
 		// Check for right game
 		if (!ent.hasMetadata("game"))
@@ -106,13 +109,13 @@ public class GameListener implements Listener {
 			// Set drop to emerald, exp, and rare loot
 			if (ent instanceof Wither) {
 				if (arena.hasGemDrop())
-					e.getDrops().add(Utils.createItems(Material.EMERALD, 20, null,
+					e.getDrops().add(ItemManager.createItems(Material.EMERALD, 20, null,
 							Integer.toString(arena.getArena())));
 				if (arena.hasExpDrop())
 					e.setDroppedExp((int) (arena.getCurrentDifficulty() * 40));
 			} else {
 				if (arena.hasGemDrop()) {
-					e.getDrops().add(Utils.createItem(Material.EMERALD, null,
+					e.getDrops().add(ItemManager.createItem(Material.EMERALD, null,
 							Integer.toString(arena.getArena())));
 
 					// Get rare loot probability
@@ -169,7 +172,7 @@ public class GameListener implements Listener {
 	// Stop automatic game mode switching between worlds
 	@EventHandler
 	public void onGameModeSwitch(PlayerGameModeChangeEvent e) {
-		if (Arrays.stream(Game.arenas).filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(e.getPlayer())) &&
+		if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(e.getPlayer())) &&
 				e.getNewGameMode() == GameMode.SURVIVAL) e.setCancelled(true);
 	}
 
@@ -183,7 +186,7 @@ public class GameListener implements Listener {
 		if (!ent.hasMetadata("VD"))
 			return;
 
-		Arena arena = Game.arenas[ent.getMetadata("VD").get(0).asInt()];
+		Arena arena = ArenaManager.arenas[ent.getMetadata("VD").get(0).asInt()];
 
 		// Check for right game
 		if (!ent.hasMetadata("game"))
@@ -221,7 +224,8 @@ public class GameListener implements Listener {
 		ItemStack item = ((Item) ent).getItemStack();
 
 		// Check for right item
-		if (item.getType() == Material.EMERALD && item.hasItemMeta() && item.getItemMeta().hasLore())
+		if (item.getType() == Material.EMERALD && item.hasItemMeta() &&
+				Objects.requireNonNull(item.getItemMeta()).hasLore())
 			e.setCancelled(true);
 	}
 
@@ -250,7 +254,7 @@ public class GameListener implements Listener {
 		// Attempt to get VDplayer
 		if (player != null) {
 			try {
-				gamer = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+				gamer = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 						.collect(Collectors.toList()).get(0).getPlayer(player);
 			} catch (Exception err) {
 				return;
@@ -339,11 +343,11 @@ public class GameListener implements Listener {
 		Player player = (Player) e.getEntity();
 
 		// See if the player is in a game
-		if (Arrays.stream(Game.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+		if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
 			return;
 
 		// See if game is already in progress
-		if (Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+		if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0).getCurrentWave() != 0)
 			return;
 
@@ -389,12 +393,12 @@ public class GameListener implements Listener {
 		VDPlayer gamer;
 
 		// See if the player is in a game
-		if (Arrays.stream(Game.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+		if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
 			return;
 
 		// Attempt to get arena and player
 		try {
-			arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+			arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 					.collect(Collectors.toList()).get(0);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
@@ -450,7 +454,7 @@ public class GameListener implements Listener {
 		// Cancel damage to each other if they are in a game
 		if (ent instanceof Player && damager instanceof Player) {
 			Player player = (Player) ent;
-			if (Arrays.stream(Game.arenas).filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player)))
+			if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player)))
 				e.setCancelled(true);
 		}
 
@@ -471,7 +475,7 @@ public class GameListener implements Listener {
 		else if (damager instanceof Projectile) {
 			if (ent instanceof Player && ((Projectile) damager).getShooter() instanceof Player) {
 				Player player = (Player) ent;
-				if (Arrays.stream(Game.arenas).filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player)))
+				if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player)))
 					e.setCancelled(true);
 			}
 			if ((ent instanceof Villager || ent instanceof Wolf || ent instanceof IronGolem) &&
@@ -498,7 +502,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+			arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 					.collect(Collectors.toList()).get(0);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
@@ -513,32 +517,46 @@ public class GameListener implements Listener {
 
 			// Teleport player back to player spawn or waiting room
 			if (arena.getWaitingRoom() == null)
-				player.teleport(arena.getPlayerSpawn());
+				try {
+					player.teleport(arena.getPlayerSpawn().getLocation());
+				} catch (NullPointerException err) {
+					CommunicationManager.debugError(err.getMessage(), 0);
+				}
 			else player.teleport(arena.getWaitingRoom());
 		} else {
 			// Set player to fake death mode
-			Utils.fakeDeath(gamer);
+			PlayerManager.fakeDeath(gamer);
 
 			// Notify player of their own death
-			player.sendTitle(Utils.format(language.getString("death1")), language.getString("death2"),
+			player.sendTitle(CommunicationManager.format(language.getString("death1")), language.getString("death2"),
 					Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
 
 			// Teleport player back to player spawn
-			player.teleport(arena.getPlayerSpawn());
+			try {
+				player.teleport(arena.getPlayerSpawn().getLocation());
+			} catch (NullPointerException err) {
+				CommunicationManager.debugError(err.getMessage(), 0);
+			}
 			player.closeInventory();
 
 			// Notify everyone else of player death
 			arena.getPlayers().forEach(fighter -> {
 				if (!fighter.getPlayer().getUniqueId().equals(player.getUniqueId()))
 					if (language.getString("death") == null) {
-						Utils.debugError("The language file is missing the attribute 'death'!", 0);
+						CommunicationManager.debugError("The language file is missing the attribute 'death'!", 0);
 					} else {
-						fighter.getPlayer().sendMessage(Utils.notify(String.format(
-								Objects.requireNonNull(language.getString("death")), player.getName())));
+						PlayerManager.notify(fighter.getPlayer(),
+								String.format(
+								Objects.requireNonNull(language.getString("death")), player.getName()));
 					}
 				if (arena.hasPlayerDeathSound())
-					fighter.getPlayer().playSound(arena.getPlayerSpawn(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10,
-							.75f);
+					try {
+						fighter.getPlayer().playSound(arena.getPlayerSpawn().getLocation(),
+								Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10,
+								.75f);
+					} catch (NullPointerException err) {
+						CommunicationManager.debugError(err.getMessage(), 0);
+					}
 			});
 
 			// Update scoreboards
@@ -565,7 +583,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+			arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 					.collect(Collectors.toList()).get(0);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
@@ -597,7 +615,7 @@ public class GameListener implements Listener {
 		e.setCancelled(true);
 		e.getItem().remove();
 		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				Utils.format(String.format(Objects.requireNonNull(plugin.getLanguageData().getString("foundGems")), 
+				CommunicationManager.format(String.format(Objects.requireNonNull(plugin.getLanguageData().getString("foundGems")), 
 						earned))));
 		if (arena.hasGemSound())
 			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, .5f, 0);
@@ -612,7 +630,7 @@ public class GameListener implements Listener {
 		plugin.savePlayerData();
 
 		// Update scoreboard
-		Game.createBoard(gamer);
+		ArenaManager.createBoard(gamer);
 	}
 	
 	// Handle player death
@@ -631,7 +649,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+			arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 					.collect(Collectors.toList()).get(0);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
@@ -652,20 +670,20 @@ public class GameListener implements Listener {
 
 		// Set player to fake death mode
 		e.setCancelled(true);
-		Utils.fakeDeath(gamer);
+		PlayerManager.fakeDeath(gamer);
 
 		// Notify player of their own death
-		player.sendTitle(Utils.format(language.getString("death1")), language.getString("death2"),
+		player.sendTitle(CommunicationManager.format(language.getString("death1")), language.getString("death2"),
 				Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
 
 		// Notify everyone else of player death
 		arena.getPlayers().forEach(fighter -> {
 			if (!fighter.getPlayer().getUniqueId().equals(player.getUniqueId()))
 				if (language.getString("death") == null) {
-					Utils.debugError("The language file is missing the attribute 'death'!", 0);
+					CommunicationManager.debugError("The language file is missing the attribute 'death'!", 0);
 				} else {
-					fighter.getPlayer().sendMessage(Utils.notify(String.format(
-							Objects.requireNonNull(language.getString("death")), player.getName())));
+					PlayerManager.notify(fighter.getPlayer(),
+							String.format(Objects.requireNonNull(language.getString("death")), player.getName()));
 				}
 			if (arena.hasPlayerDeathSound())
 				fighter.getPlayer().playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10, .75f);
@@ -716,7 +734,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = Arrays.stream(Game.arenas).filter(Objects::nonNull)
+			arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
 					.filter(a -> a.getPlayers().stream().anyMatch(p -> p.getPlayer().equals(player)))
 					.collect(Collectors.toList()).get(0);
 			gamer = arena.getPlayer(player);
@@ -740,10 +758,9 @@ public class GameListener implements Listener {
 							vdPlayer.addGems(earned);
 
 							// Notify player
-							vdPlayer.getPlayer().sendMessage(
-									Utils.notify(String.format(Objects.requireNonNull(
-											plugin.getLanguageData().getString("earnedGems")),
-									earned)));
+							PlayerManager.notify(vdPlayer.getPlayer(), String.format(Objects.requireNonNull(
+									plugin.getLanguageData().getString("earnedGems")),
+									earned));
 
 							FileConfiguration playerData = plugin.getPlayerData();
 
@@ -756,7 +773,7 @@ public class GameListener implements Listener {
 							plugin.savePlayerData();
 
 							// Update scoreboard
-							Game.createBoard(vdPlayer);
+							ArenaManager.createBoard(vdPlayer);
 						});
 			} else {
 				int earned = r.nextInt((int) (50 * Math.pow(wave, .15)));
@@ -779,13 +796,13 @@ public class GameListener implements Listener {
 				}
 
 				if (r.nextDouble() < probability)
-					Utils.giveItem(player, GameItems.randCare(wave / 10 + 1),
+					PlayerManager.giveItem(player, GameItems.randCare(wave / 10 + 1),
 							plugin.getLanguageData().getString("inventoryFull"));
 
 				// Notify player
-				player.sendMessage(Utils.notify(String.format(
+				PlayerManager.notify(player, String.format(
 						Objects.requireNonNull(plugin.getLanguageData().getString("earnedGems")),
-						earned)));
+						earned));
 
 				FileConfiguration playerData = plugin.getPlayerData();
 
@@ -797,7 +814,7 @@ public class GameListener implements Listener {
 				plugin.savePlayerData();
 
 				// Update scoreboard
-				Game.createBoard(gamer);
+				ArenaManager.createBoard(gamer);
 			}
 		}
 		if (!arena.hasExpDrop()) {
@@ -844,7 +861,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+			arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 					.collect(Collectors.toList()).get(0);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
@@ -875,9 +892,9 @@ public class GameListener implements Listener {
 
 			// Check for wolf cap
 			if (gamer.getWolves() >= arena.getWolfCap()) {
-				player.sendMessage(Utils.notify(String.format(
+				PlayerManager.notify(player, String.format(
 						Objects.requireNonNull(language.getString("wolfError")),
-						arena.getWolfCap())));
+						arena.getWolfCap()));
 				return;
 			}
 
@@ -913,9 +930,9 @@ public class GameListener implements Listener {
 
 			// Check for golem cap
 			if (arena.getGolems() >= arena.getGolemCap()) {
-				player.sendMessage(Utils.notify(String.format(
+				PlayerManager.notify(player, String.format(
 						Objects.requireNonNull(language.getString("golemError")),
-						arena.getGolemCap())));
+						arena.getGolemCap()));
 				return;
 			}
 
@@ -945,17 +962,17 @@ public class GameListener implements Listener {
 
 			// Give items and notify
 			if (gamer.getKit().equals(Kit.blacksmith().setKitLevel(1))) {
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(1))),
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(GameItems.randWeapon(1))),
 						language.getString("inventoryFull"));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(1))),
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(GameItems.randArmor(1))),
 						language.getString("inventoryFull"));
 			} else {
-				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(1)),
+				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(1)),
 						language.getString("inventoryFull"));
-				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(1)),
+				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(1)),
 						language.getString("inventoryFull"));
 			}
-			player.sendMessage(Utils.notify(language.getString("carePackage")));
+			PlayerManager.notify(player, language.getString("carePackage"));
 		}
 
 		// Medium care package
@@ -971,24 +988,24 @@ public class GameListener implements Listener {
 
 			// Give items and notify
 			if (gamer.getKit().equals(Kit.blacksmith().setKitLevel(1))) {
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(2))),
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(GameItems.randWeapon(2))),
 						language.getString("inventoryFull"));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(2))),
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(GameItems.randArmor(2))),
 						language.getString("inventoryFull"));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randNotCare(2))),
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(GameItems.randNotCare(2))),
 						language.getString("inventoryFull"));
 			} else {
-				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(2)),
+				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(2)),
 						language.getString("inventoryFull"));
-				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(2)),
+				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(2)),
 						language.getString("inventoryFull"));
 				if (gamer.getKit().equals(Kit.witch().setKitLevel(1)))
-					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randNotCare(2))),
+					PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(GameItems.randNotCare(2))),
 							language.getString("inventoryFull"));
-				else Utils.giveItem(player, Utils.removeLastLore(GameItems.randNotCare(2)),
+				else PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(2)),
 						language.getString("inventoryFull"));
 			}
-			player.sendMessage(Utils.notify(language.getString("carePackage")));
+			PlayerManager.notify(player, language.getString("carePackage"));
 		}
 
 		// Large care package
@@ -1004,28 +1021,28 @@ public class GameListener implements Listener {
 
 			// Give items and notify
 			if (gamer.getKit().equals(Kit.blacksmith().setKitLevel(1))) {
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(4))),
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(GameItems.randWeapon(4))),
 						language.getString("inventoryFull"));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(3))),
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(GameItems.randArmor(3))),
 						language.getString("inventoryFull"));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(3))),
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(GameItems.randArmor(3))),
 						language.getString("inventoryFull"));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randNotCare(3))),
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(GameItems.randNotCare(3))),
 						language.getString("inventoryFull"));
 			} else {
-				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(4)),
+				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(4)),
 						language.getString("inventoryFull"));
-				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(3)),
+				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(3)),
 						language.getString("inventoryFull"));
-				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(3)),
+				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(3)),
 						language.getString("inventoryFull"));
 				if (gamer.getKit().equals(Kit.witch().setKitLevel(1)))
-					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randNotCare(3))),
+					PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(GameItems.randNotCare(3))),
 							language.getString("inventoryFull"));
-				else Utils.giveItem(player, Utils.removeLastLore(GameItems.randNotCare(3)),
+				else PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(3)),
 						language.getString("inventoryFull"));
 			}
-			player.sendMessage(Utils.notify(language.getString("carePackage")));
+			PlayerManager.notify(player, language.getString("carePackage"));
 		}
 
 		// Extra large care package
@@ -1041,40 +1058,40 @@ public class GameListener implements Listener {
 
 			// Give items and notify
 			if (gamer.getKit().equals(Kit.blacksmith().setKitLevel(1))) {
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(5))),
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(GameItems.randWeapon(5))),
 						language.getString("inventoryFull"));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randWeapon(4))),
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(GameItems.randWeapon(4))),
 						language.getString("inventoryFull"));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(5))),
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(GameItems.randArmor(5))),
 						language.getString("inventoryFull"));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randArmor(4))),
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(GameItems.randArmor(4))),
 						language.getString("inventoryFull"));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randNotCare(4))),
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(GameItems.randNotCare(4))),
 						language.getString("inventoryFull"));
-				Utils.giveItem(player, Utils.makeUnbreakable(Utils.removeLastLore(GameItems.randNotCare(4))),
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(GameItems.randNotCare(4))),
 						language.getString("inventoryFull"));
 			} else {
-				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(5)),
+				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(5)),
 						language.getString("inventoryFull"));
-				Utils.giveItem(player, Utils.removeLastLore(GameItems.randWeapon(4)),
+				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(4)),
 						language.getString("inventoryFull"));
-				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(5)),
+				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(5)),
 						language.getString("inventoryFull"));
-				Utils.giveItem(player, Utils.removeLastLore(GameItems.randArmor(4)),
+				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(4)),
 						language.getString("inventoryFull"));
 				if (gamer.getKit().equals(Kit.witch().setKitLevel(1))) {
-					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randNotCare(4))),
+					PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(GameItems.randNotCare(4))),
 							language.getString("inventoryFull"));
-					Utils.giveItem(player, Utils.makeSplash(Utils.removeLastLore(GameItems.randNotCare(4))),
+					PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(GameItems.randNotCare(4))),
 							language.getString("inventoryFull"));
 				} else {
-					Utils.giveItem(player, Utils.removeLastLore(GameItems.randNotCare(4)),
+					PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(4)),
 							language.getString("inventoryFull"));
-					Utils.giveItem(player, Utils.removeLastLore(GameItems.randNotCare(4)),
+					PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(4)),
 							language.getString("inventoryFull"));
 				}
 			}
-			player.sendMessage(Utils.notify(language.getString("carePackage")));
+			PlayerManager.notify(player, language.getString("carePackage"));
 		}
 	}
 
@@ -1108,7 +1125,7 @@ public class GameListener implements Listener {
 			return;
 
 		// Check if player is playing in an arena
-		if (Arrays.stream(Game.arenas).filter(Objects::nonNull).anyMatch(a -> a.hasPlayer((Player) ((Wolf) ent).getOwner())))
+		if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).anyMatch(a -> a.hasPlayer((Player) ((Wolf) ent).getOwner())))
 			return;
 
 		e.setCancelled(true);
@@ -1120,10 +1137,10 @@ public class GameListener implements Listener {
 		Player player = e.getPlayer();
 
 		// Check if player is playing in an arena
-		if (Arrays.stream(Game.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+		if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
 			return;
 
-		Arena arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+		Arena arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0);
 
 		// Check if the arena has started
@@ -1135,7 +1152,7 @@ public class GameListener implements Listener {
 				.contains(Objects.requireNonNull(e.getTo()).getX(), e.getTo().getY(), e.getTo().getZ())) ||
 				!Objects.equals(e.getTo().getWorld(), arena.getCorner1().getWorld())) {
 			e.setCancelled(true);
-			player.sendMessage(Utils.notify(plugin.getLanguageData().getString("teleportError")));
+			PlayerManager.notify(player, plugin.getLanguageData().getString("teleportError"));
 		}
 	}
 
@@ -1145,14 +1162,14 @@ public class GameListener implements Listener {
 		Player player = e.getPlayer();
 
 		// Check if player is playing in an arena
-		if (Arrays.stream(Game.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+		if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
 			return;
 
 		// Exempt admins for testing purposes
-		if (Main.getDebugLevel() >= 3 && player.hasPermission("vd.admin"))
+		if (CommunicationManager.getDebugLevel() >= 3 && player.hasPermission("vd.admin"))
 			return;
 
-		Arena arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+		Arena arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0);
 		VDPlayer gamer;
 
@@ -1179,12 +1196,16 @@ public class GameListener implements Listener {
 			// Teleport player back into arena after several infractions
 			if (gamer.incrementInfractions() > 5) {
 				gamer.resetInfractions();
-				if (gamer.getStatus() == PlayerStatus.ALIVE)
-					player.teleport(arena.getPlayerSpawn());
-				else Utils.teleSpectator(player, arena.getPlayerSpawn());
+				try {
+					if (gamer.getStatus() == PlayerStatus.ALIVE)
+						player.teleport(arena.getPlayerSpawn().getLocation());
+					else PlayerManager.teleSpectator(player, arena.getPlayerSpawn().getLocation());
+				} catch (NullPointerException err) {
+					CommunicationManager.debugError(err.getMessage(), 0);
+				}
 			} else e.setCancelled(true);
 
-			player.sendMessage(Utils.notify(plugin.getLanguageData().getString("boundsError")));
+			PlayerManager.notify(player, plugin.getLanguageData().getString("boundsError"));
 		}
 	}
 
@@ -1219,7 +1240,7 @@ public class GameListener implements Listener {
 		ItemStack item = e.getItemDrop().getItemStack();
 
 		// Check if player is in an arena
-		if (Arrays.stream(Game.arenas).filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player)))
+		if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player)))
 			return;
 
 		// Check for standard game items item
@@ -1233,7 +1254,7 @@ public class GameListener implements Listener {
 		Player player = e.getPlayer();
 
 		// Check if player is playing in an arena
-		if (Arrays.stream(Game.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+		if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
 			return;
 
 		if (e.getItem().getType() == Material.POTION || e.getItem().getType() == Material.MILK_BUCKET) {
@@ -1248,7 +1269,7 @@ public class GameListener implements Listener {
 		}
 	}
 
-	// Prevent consumption from happening in the off hand when the main hand has something interact-able
+	// Prevent consumption from happening in the off-hand when the main hand has something interact-able
 	@EventHandler
 	public void onFalseConsume(PlayerInteractEvent e) {
 		Player player = e.getPlayer();
@@ -1257,14 +1278,14 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+			arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 					.collect(Collectors.toList()).get(0);
 			arena.getPlayer(player);
 		} catch (Exception err) {
 			return;
 		}
 
-		// Filter off hand interactions
+		// Filter off-hand interactions
 		if (e.getHand() != EquipmentSlot.OFF_HAND)
 			return;
 
@@ -1286,7 +1307,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+			arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 					.collect(Collectors.toList()).get(0);
 			arena.getPlayer(player);
 		} catch (Exception err) {
@@ -1309,7 +1330,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+			arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 					.collect(Collectors.toList()).get(0);
 			arena.getPlayer(player);
 		} catch (Exception err) {
@@ -1339,14 +1360,14 @@ public class GameListener implements Listener {
 					enchantingBook.getEnchantToAdd() == Enchantment.MULTISHOT ||
 					enchantingBook.getEnchantToAdd() == Enchantment.ARROW_INFINITE ||
 					enchantingBook.getEnchantToAdd() == Enchantment.MENDING) {
-				player.sendMessage(Utils.notify(language.getString("enchantFail")));
+				PlayerManager.notify(player, language.getString("enchantFail"));
 				return;
 			}
 			clickedOn.addUnsafeEnchantment(enchantingBook.getEnchantToAdd(),
 					enchantList.get(enchantingBook.getEnchantToAdd()) + 1);
 		} else clickedOn.addUnsafeEnchantment(enchantingBook.getEnchantToAdd(), 1);
 		player.setItemOnCursor(new ItemStack(Material.AIR));
-		player.sendMessage(Utils.notify(language.getString("enchantSuccess")));
+		PlayerManager.notify(player, language.getString("enchantSuccess"));
 	}
 
 	// Prevent swapping items while waiting for game to start
@@ -1357,7 +1378,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+			arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 					.collect(Collectors.toList()).get(0);
 			arena.getPlayer(player);
 		} catch (Exception err) {

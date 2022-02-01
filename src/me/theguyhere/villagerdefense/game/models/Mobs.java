@@ -4,6 +4,7 @@ import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.ReloadBoardsEvent;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
+import me.theguyhere.villagerdefense.tools.ItemManager;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -415,7 +416,7 @@ public class Mobs {
         if (enchants.isEmpty())
             enchants = null;
 
-        return Utils.createItem(mat, null, null, enchants);
+        return ItemManager.createItem(mat, null, null, enchants);
     }
 
     private static ItemStack getAxe(Arena arena) {
@@ -546,7 +547,7 @@ public class Mobs {
         if (enchants.isEmpty())
             enchants = null;
 
-        return Utils.createItem(mat, null, null, enchants);
+        return ItemManager.createItem(mat, null, null, enchants);
     }
 
     private static ItemStack getBow(Arena arena) {
@@ -654,7 +655,7 @@ public class Mobs {
         if (enchants.isEmpty())
             enchants = null;
 
-        return Utils.createItem(Material.BOW, null, null, enchants);
+        return ItemManager.createItem(Material.BOW, null, null, enchants);
     }
 
     private static ItemStack getCrossbow(Arena arena) {
@@ -761,7 +762,7 @@ public class Mobs {
         if (enchants.isEmpty())
             enchants = null;
 
-        return Utils.createItem(Material.CROSSBOW, null, null, enchants);
+        return ItemManager.createItem(Material.CROSSBOW, null, null, enchants);
     }
 
     private static ItemStack getTrident(Arena arena) {
@@ -886,7 +887,7 @@ public class Mobs {
         if (enchants.isEmpty())
             enchants = null;
 
-        return Utils.createItem(Material.TRIDENT, null, null, enchants);
+        return ItemManager.createItem(Material.TRIDENT, null, null, enchants);
     }
 
     private static ItemStack getHelmet(Arena arena) {

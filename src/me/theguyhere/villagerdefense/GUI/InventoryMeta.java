@@ -1,4 +1,4 @@
-package me.theguyhere.villagerdefense.game.models;
+package me.theguyhere.villagerdefense.GUI;
 
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;

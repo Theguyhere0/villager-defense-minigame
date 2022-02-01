@@ -2,11 +2,11 @@ package me.theguyhere.villagerdefense.listeners;
 
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.game.models.Challenge;
-import me.theguyhere.villagerdefense.game.models.Game;
+import me.theguyhere.villagerdefense.game.models.arenas.ArenaManager;
 import me.theguyhere.villagerdefense.game.models.GameItems;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.tools.Utils;
+import me.theguyhere.villagerdefense.tools.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -50,7 +50,7 @@ public class ChallengeListener implements Listener {
 
         // Attempt to get arena and player
         try {
-            gamer = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+            gamer = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
                     .collect(Collectors.toList()).get(0).getPlayer(player);
         } catch (Exception err) {
             return;
@@ -69,35 +69,35 @@ public class ChallengeListener implements Listener {
         ItemStack leggings = player.getInventory().getLeggings();
         ItemStack boots = player.getInventory().getBoots();
 
-        // Unequip off hand
+        // Unequip off-hand
         if (gamer.getChallenges().contains(Challenge.amputee()) && off.getType() != Material.AIR) {
-            Utils.giveItem(player, off, Utils.notify(language.getString("inventoryFull")));
+            PlayerManager.giveItem(player, off, language.getString("inventoryFull"));
             player.getInventory().setItemInOffHand(null);
-            player.sendMessage(Utils.notify(language.getString("amputee")));
+            PlayerManager.notify(player, language.getString("amputee"));
         }
 
         // Unequip armor
         if (!gamer.getChallenges().contains(Challenge.naked()))
             return;
         if (!(helmet == null || helmet.getType() == Material.AIR)) {
-            Utils.giveItem(player, helmet, Utils.notify(language.getString("inventoryFull")));
+            PlayerManager.giveItem(player, helmet, language.getString("inventoryFull"));
             player.getInventory().setHelmet(null);
-            player.sendMessage(Utils.notify(language.getString("naked")));
+            PlayerManager.notify(player, language.getString("naked"));
         }
         if (!(chestplate == null || chestplate.getType() == Material.AIR)) {
-            Utils.giveItem(player, chestplate, Utils.notify(language.getString("inventoryFull")));
+            PlayerManager.giveItem(player, chestplate, language.getString("inventoryFull"));
             player.getInventory().setChestplate(null);
-            player.sendMessage(Utils.notify(language.getString("naked")));
+            PlayerManager.notify(player, language.getString("naked"));
         }
         if (!(leggings == null || leggings.getType() == Material.AIR)) {
-            Utils.giveItem(player, leggings, Utils.notify(language.getString("inventoryFull")));
+            PlayerManager.giveItem(player, leggings, language.getString("inventoryFull"));
             player.getInventory().setLeggings(null);
-            player.sendMessage(Utils.notify(language.getString("naked")));
+            PlayerManager.notify(player, language.getString("naked"));
         }
         if (!(boots == null || boots.getType() == Material.AIR)) {
-            Utils.giveItem(player, boots, Utils.notify(language.getString("inventoryFull")));
+            PlayerManager.giveItem(player, boots, language.getString("inventoryFull"));
             player.getInventory().setBoots(null);
-            player.sendMessage(Utils.notify(language.getString("naked")));
+            PlayerManager.notify(player, language.getString("naked"));
         }
     }
 
@@ -109,7 +109,7 @@ public class ChallengeListener implements Listener {
 
         // Attempt to get player
         try {
-            gamer = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+            gamer = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
                     .collect(Collectors.toList()).get(0).getPlayer(player);
         } catch (Exception err) {
             return;
@@ -149,7 +149,7 @@ public class ChallengeListener implements Listener {
 
             // Attempt to get player
             try {
-                gamer = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+                gamer = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
                         .collect(Collectors.toList()).get(0).getPlayer(player);
             } catch (Exception err) {
                 return;
@@ -186,7 +186,7 @@ public class ChallengeListener implements Listener {
 
             // Attempt to get VDplayer
             try {
-                gamer = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+                gamer = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
                         .collect(Collectors.toList()).get(0).getPlayer(player);
             } catch (Exception err) {
                 return;
@@ -212,7 +212,7 @@ public class ChallengeListener implements Listener {
 
         // Attempt to get player
         try {
-            gamer = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+            gamer = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
                     .collect(Collectors.toList()).get(0).getPlayer(player);
         } catch (Exception err) {
             return;
@@ -238,7 +238,7 @@ public class ChallengeListener implements Listener {
 
         // Attempt to get arena and player
         try {
-            gamer = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+            gamer = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
                     .collect(Collectors.toList()).get(0).getPlayer(player);
         } catch (Exception err) {
             return;

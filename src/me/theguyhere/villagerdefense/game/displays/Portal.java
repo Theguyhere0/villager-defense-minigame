@@ -3,7 +3,7 @@ package me.theguyhere.villagerdefense.game.displays;
 import me.theguyhere.villagerdefense.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
-import me.theguyhere.villagerdefense.tools.Utils;
+import me.theguyhere.villagerdefense.tools.CommunicationManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -68,11 +68,11 @@ public class Portal {
         this.location = location;
         this.npc = new NPCVillager(location);
         this.hologram = new Hologram(location.clone().add(0, 2.5, 0), false,
-                Utils.format("&6&l" + arena.getName() + difficulty),
-                Utils.format(status),
-                arena.isClosed() ? "" : Utils.format(
+                CommunicationManager.format("&6&l" + arena.getName() + difficulty),
+                CommunicationManager.format(status),
+                arena.isClosed() ? "" : CommunicationManager.format(
                         "&bPlayers: " + countColor + arena.getActiveCount() + "&b / " + arena.getMaxPlayers()),
-                arena.isClosed() ? "" : Utils.format("Spectators: " + arena.getSpectatorCount()));
+                arena.isClosed() ? "" : CommunicationManager.format("Spectators: " + arena.getSpectatorCount()));
     }
 
     public Location getLocation() {

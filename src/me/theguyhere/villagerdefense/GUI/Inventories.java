@@ -2,12 +2,13 @@ package me.theguyhere.villagerdefense.GUI;
 
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.game.models.Challenge;
-import me.theguyhere.villagerdefense.game.models.Game;
+import me.theguyhere.villagerdefense.game.models.arenas.ArenaManager;
 import me.theguyhere.villagerdefense.game.models.GameItems;
-import me.theguyhere.villagerdefense.game.models.InventoryMeta;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
+import me.theguyhere.villagerdefense.tools.CommunicationManager;
+import me.theguyhere.villagerdefense.tools.ItemManager;
 import me.theguyhere.villagerdefense.tools.Utils;
 import net.minecraft.server.v1_16_R3.BlockPosition;
 import net.minecraft.server.v1_16_R3.EntityPlayer;
@@ -48,31 +49,31 @@ public class Inventories {
 	// Menu of all the arenas
 	public static Inventory createArenasInventory() {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 54,  Utils.format("&k") +
-				Utils.format("&2&lVillager Defense Arenas"));
+		Inventory inv = Bukkit.createInventory(null, 54,  CommunicationManager.format("&k") +
+				CommunicationManager.format("&2&lVillager Defense Arenas"));
 
 		// Options to interact with all 45 possible arenas
 		for (int i = 0; i < 45; i++) {
 			// Check if arena exists, set button accordingly
-			if (Game.arenas[i] == null)
-				inv.setItem(i, Utils.createItem(Material.RED_CONCRETE,
-						Utils.format("&c&lCreate Arena " + (i + 1))));
+			if (ArenaManager.arenas[i] == null)
+				inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE,
+						CommunicationManager.format("&c&lCreate Arena " + (i + 1))));
 			else
-				inv.setItem(i, Utils.createItem(Material.LIME_CONCRETE,
-						Utils.format("&a&lEdit " + Game.arenas[i].getName())));
+				inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE,
+						CommunicationManager.format("&a&lEdit " + ArenaManager.arenas[i].getName())));
 		}
 
 		// Option to set lobby location
-		inv.setItem(45, Utils.createItem(Material.BELL, Utils.format("&2&lLobby"),
-				Utils.format("&7Manage minigame lobby")));
+		inv.setItem(45, ItemManager.createItem(Material.BELL, CommunicationManager.format("&2&lLobby"),
+				CommunicationManager.format("&7Manage minigame lobby")));
 
 		// Option to set info hologram
-		inv.setItem(46, Utils.createItem(Material.OAK_SIGN, Utils.format("&6&lInfo Boards"),
-				Utils.format("&7Manage info boards")));
+		inv.setItem(46, ItemManager.createItem(Material.OAK_SIGN, CommunicationManager.format("&6&lInfo Boards"),
+				CommunicationManager.format("&7Manage info boards")));
 
 		// Option to set leaderboard hologram
-		inv.setItem(47, Utils.createItem(Material.GOLDEN_HELMET, Utils.format("&e&lLeaderboards"),
-				Utils.BUTTON_FLAGS, null, Utils.format("&7Manage leaderboards")));
+		inv.setItem(47, ItemManager.createItem(Material.GOLDEN_HELMET, CommunicationManager.format("&e&lLeaderboards"),
+				Utils.BUTTON_FLAGS, null, CommunicationManager.format("&7Manage leaderboards")));
 
 		// Option to exit
 		inv.setItem(53, InventoryItems.exit());
@@ -83,8 +84,8 @@ public class Inventories {
 	// Menu for lobby
 	public static Inventory createLobbyInventory(Main plugin) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&2&lLobby"));
+		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&2&lLobby"));
 
 		// Option to create or relocate the lobby
 		if (Utils.getConfigLocation(plugin, "lobby") == null)
@@ -108,8 +109,8 @@ public class Inventories {
 
 	// Confirmation menu for removing lobby
 	public static Inventory createLobbyConfirmInventory() {
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&4&lRemove Lobby?"));
+		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&4&lRemove Lobby?"));
 
 		// "No" option
 		inv.setItem(0, InventoryItems.no());
@@ -123,8 +124,8 @@ public class Inventories {
 	// Menu for editing info boards
 	public static Inventory createInfoBoardInventory(Main plugin) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&6&lInfo Boards"));
+		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&6&lInfo Boards"));
 
 		// Prepare for material indexing
 		int index;
@@ -137,7 +138,7 @@ public class Inventories {
 			else index = 1;
 
 			// Create and set item
-			inv.setItem(i, Utils.createItem(INFO_BOARD_MATS[index], Utils.format("&6&lInfo Board " + (i + 1))));
+			inv.setItem(i, ItemManager.createItem(INFO_BOARD_MATS[index], CommunicationManager.format("&6&lInfo Board " + (i + 1))));
 		}
 
 		// Option to exit
@@ -149,8 +150,8 @@ public class Inventories {
 	// Menu for editing a specific info board
 	public static Inventory createInfoBoardMenu(Main plugin, int slot) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(slot), 9, Utils.format("&k") +
-				Utils.format("&6&lInfo Board " + slot));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(slot), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&6&lInfo Board " + slot));
 
 		// Option to create or relocate info board
 		if (Utils.getConfigLocation(plugin, "infoBoard." + slot) == null)
@@ -175,8 +176,8 @@ public class Inventories {
 	// Confirmation menu for removing info boards
 	public static Inventory createInfoBoardConfirmInventory(int slot) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(slot), 9, Utils.format("&k") +
-				Utils.format("&4&lRemove Info Board?"));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(slot), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&4&lRemove Info Board?"));
 
 		// "No" option
 		inv.setItem(0, InventoryItems.no());
@@ -190,23 +191,23 @@ public class Inventories {
 	// Menu for leaderboards
 	public static Inventory createLeaderboardInventory() {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&e&lLeaderboards"));
+		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&e&lLeaderboards"));
 
 		// Option to modify total kills leaderboard
-		inv.setItem(0, Utils.createItem(Material.DRAGON_HEAD, Utils.format("&4&lTotal Kills Leaderboard")));
+		inv.setItem(0, ItemManager.createItem(Material.DRAGON_HEAD, CommunicationManager.format("&4&lTotal Kills Leaderboard")));
 
 		// Option to modify top kills leaderboard
-		inv.setItem(1, Utils.createItem(Material.ZOMBIE_HEAD, Utils.format("&c&lTop Kills Leaderboard")));
+		inv.setItem(1, ItemManager.createItem(Material.ZOMBIE_HEAD, CommunicationManager.format("&c&lTop Kills Leaderboard")));
 
 		// Option to modify total gems leaderboard
-		inv.setItem(2, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&2&lTotal Gems Leaderboard")));
+		inv.setItem(2, ItemManager.createItem(Material.EMERALD_BLOCK, CommunicationManager.format("&2&lTotal Gems Leaderboard")));
 
 		// Option to modify top balance leaderboard
-		inv.setItem(3, Utils.createItem(Material.EMERALD, Utils.format("&a&lTop Balance Leaderboard")));
+		inv.setItem(3, ItemManager.createItem(Material.EMERALD, CommunicationManager.format("&a&lTop Balance Leaderboard")));
 
 		// Option to modify top wave leaderboard
-		inv.setItem(4, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&9&lTop Wave Leaderboard"),
+		inv.setItem(4, ItemManager.createItem(Material.GOLDEN_SWORD, CommunicationManager.format("&9&lTop Wave Leaderboard"),
 				Utils.BUTTON_FLAGS, null));
 
 		// Option to exit
@@ -218,8 +219,8 @@ public class Inventories {
 	// Menu for editing the total kills leaderboard
 	public static Inventory createTotalKillsLeaderboardInventory(Main plugin) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&4&lTotal Kills Leaderboard"));
+		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&4&lTotal Kills Leaderboard"));
 
 		// Option to create or relocate the leaderboard
 		if (Utils.getConfigLocation(plugin, "leaderboard.totalKills") == null)
@@ -244,8 +245,8 @@ public class Inventories {
 	// Menu for editing the top kills leaderboard
 	public static Inventory createTopKillsLeaderboardInventory(Main plugin) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&c&lTop Kills Leaderboard"));
+		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&c&lTop Kills Leaderboard"));
 
 		// Option to create or relocate the leaderboard
 		if (Utils.getConfigLocation(plugin, "leaderboard.topKills") == null)
@@ -270,8 +271,8 @@ public class Inventories {
 	// Menu for editing the total gems leaderboard
 	public static Inventory createTotalGemsLeaderboardInventory(Main plugin) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&2&lTotal Gems Leaderboard"));
+		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&2&lTotal Gems Leaderboard"));
 
 		// Option to create or relocate the leaderboard
 		if (Utils.getConfigLocation(plugin, "leaderboard.totalGems") == null)
@@ -296,8 +297,8 @@ public class Inventories {
 	// Menu for editing the top balance leaderboard
 	public static Inventory createTopBalanceLeaderboardInventory(Main plugin) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&a&lTop Balance Leaderboard"));
+		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&a&lTop Balance Leaderboard"));
 
 		// Option to create or relocate the leaderboard
 		if (Utils.getConfigLocation(plugin, "leaderboard.topBalance") == null)
@@ -322,8 +323,8 @@ public class Inventories {
 	// Menu for editing the top wave leaderboard
 	public static Inventory createTopWaveLeaderboardInventory(Main plugin) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&9&lTop Wave Leaderboard"));
+		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&9&lTop Wave Leaderboard"));
 
 		// Option to create or relocate the leaderboard
 		if (Utils.getConfigLocation(plugin, "leaderboard.topWave") == null)
@@ -347,8 +348,8 @@ public class Inventories {
 
 	// Confirmation menu for total kills leaderboard
 	public static Inventory createTotalKillsConfirmInventory() {
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&4&lRemove Total Kills Leaderboard?"));
+		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&4&lRemove Total Kills Leaderboard?"));
 
 		// "No" option
 		inv.setItem(0, InventoryItems.no());
@@ -361,8 +362,8 @@ public class Inventories {
 
 	// Confirmation menu for top kills leaderboard
 	public static Inventory createTopKillsConfirmInventory() {
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&4&lRemove Top Kills Leaderboard?"));
+		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&4&lRemove Top Kills Leaderboard?"));
 
 		// "No" option
 		inv.setItem(0, InventoryItems.no());
@@ -375,8 +376,8 @@ public class Inventories {
 
 	// Confirmation menu for total gems leaderboard
 	public static Inventory createTotalGemsConfirmInventory() {
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&4&lRemove Total Gems Leaderboard?"));
+		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&4&lRemove Total Gems Leaderboard?"));
 
 		// "No" option
 		inv.setItem(0, InventoryItems.no());
@@ -389,8 +390,8 @@ public class Inventories {
 
 	// Confirmation menu for top balance leaderboard
 	public static Inventory createTopBalanceConfirmInventory() {
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&4&lRemove Top Balance Leaderboard?"));
+		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&4&lRemove Top Balance Leaderboard?"));
 
 		// "No" option
 		inv.setItem(0, InventoryItems.no());
@@ -403,8 +404,8 @@ public class Inventories {
 
 	// Confirmation menu for top wave leaderboard
 	public static Inventory createTopWaveConfirmInventory() {
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&4&lRemove Top Wave Leaderboard?"));
+		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&4&lRemove Top Wave Leaderboard?"));
 
 		// "No" option
 		inv.setItem(0, InventoryItems.no());
@@ -417,73 +418,73 @@ public class Inventories {
 
 	// Menu for naming an arena
 	public static Inventory createNamingInventory(int arena, String newName) {
-		Arena arenaInstance = Game.arenas[arena];
+		Arena arenaInstance = ArenaManager.arenas[arena];
 		boolean caps = arenaInstance.isCaps();
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(newName, arena), 54, Utils.format("&k") +
-				Utils.format("&2&lArena " + (arena + 1) + " Name: &8&l" + newName));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(newName, arena), 54, CommunicationManager.format("&k") +
+				CommunicationManager.format("&2&lArena " + (arena + 1) + " Name: &8&l" + newName));
 
 		// Letter and number inputs
 		for (int i = 0; i < 36; i++) {
 			if (caps)
-				inv.setItem(i, Utils.createItem(KEY_MATS[i % 2], Utils.format("&f&l" + NAMES[i + 36])));
-			else inv.setItem(i, Utils.createItem(KEY_MATS[i % 2], Utils.format("&f&l" + NAMES[i])));
+				inv.setItem(i, ItemManager.createItem(KEY_MATS[i % 2], CommunicationManager.format("&f&l" + NAMES[i + 36])));
+			else inv.setItem(i, ItemManager.createItem(KEY_MATS[i % 2], CommunicationManager.format("&f&l" + NAMES[i])));
 		}
 
 		// Space inputs
 		for (int i = 36; i < 45; i++)
-			inv.setItem(i, Utils.createItem(Material.GRAY_CONCRETE, Utils.format("&f&lSpace")));
+			inv.setItem(i, ItemManager.createItem(Material.GRAY_CONCRETE, CommunicationManager.format("&f&lSpace")));
 
 		// Caps lock toggle
 		if (caps)
-			inv.setItem(45, Utils.createItem(Material.SPECTRAL_ARROW, Utils.format("&2&lCAPS LOCK: ON")));
-		else inv.setItem(45, Utils.createItem(Material.ARROW, Utils.format("&4&lCAPS LOCK: OFF")));
+			inv.setItem(45, ItemManager.createItem(Material.SPECTRAL_ARROW, CommunicationManager.format("&2&lCAPS LOCK: ON")));
+		else inv.setItem(45, ItemManager.createItem(Material.ARROW, CommunicationManager.format("&4&lCAPS LOCK: OFF")));
 
 		// Backspace input
-		inv.setItem(46, Utils.createItem(Material.RED_CONCRETE, Utils.format("&c&lBackspace")));
+		inv.setItem(46, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&c&lBackspace")));
 
 		// Save option
-		inv.setItem(52, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&a&lSAVE")));
+		inv.setItem(52, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&a&lSAVE")));
 
 		// Cancel option
-		inv.setItem(53, Utils.createItem(Material.BARRIER, Utils.format("&c&lCANCEL")));
+		inv.setItem(53, ItemManager.createItem(Material.BARRIER, CommunicationManager.format("&c&lCANCEL")));
 
 		return inv;
 	}
 
 	// Menu for editing an arena
 	public static  Inventory createArenaInventory(int arena) {
-		Arena arenaInstance = Game.arenas[arena];
+		Arena arenaInstance = ArenaManager.arenas[arena];
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&2&lEdit " + arenaInstance.getName()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&2&lEdit " + arenaInstance.getName()));
 
 		// Option to edit name
-		inv.setItem(0, Utils.createItem(Material.NAME_TAG, Utils.format("&6&lEdit Name")));
+		inv.setItem(0, ItemManager.createItem(Material.NAME_TAG, CommunicationManager.format("&6&lEdit Name")));
 
 		// Option to edit game portal and leaderboard
-		inv.setItem(1, Utils.createItem(Material.END_PORTAL_FRAME,
-				Utils.format("&5&lPortal and Leaderboard")));
+		inv.setItem(1, ItemManager.createItem(Material.END_PORTAL_FRAME,
+				CommunicationManager.format("&5&lPortal and Leaderboard")));
 
 		// Option to edit player settings
-		inv.setItem(2, Utils.createItem(Material.PLAYER_HEAD, Utils.format("&d&lPlayer Settings")));
+		inv.setItem(2, ItemManager.createItem(Material.PLAYER_HEAD, CommunicationManager.format("&d&lPlayer Settings")));
 
 		// Option to edit mob settings
-		inv.setItem(3, Utils.createItem(Material.ZOMBIE_SPAWN_EGG, Utils.format("&2&lMob Settings")));
+		inv.setItem(3, ItemManager.createItem(Material.ZOMBIE_SPAWN_EGG, CommunicationManager.format("&2&lMob Settings")));
 
 		// Option to edit shop settings
-		inv.setItem(4, Utils.createItem(Material.GOLD_BLOCK, Utils.format("&e&lShop Settings")));
+		inv.setItem(4, ItemManager.createItem(Material.GOLD_BLOCK, CommunicationManager.format("&e&lShop Settings")));
 
 		// Option to edit miscellaneous game settings
-		inv.setItem(5, Utils.createItem(Material.REDSTONE, Utils.format("&7&lGame Settings")));
+		inv.setItem(5, ItemManager.createItem(Material.REDSTONE, CommunicationManager.format("&7&lGame Settings")));
 
 		// Option to close the arena
 		String closed;
 		if (arenaInstance.isClosed())
 			closed = "&c&lCLOSED";
 		else closed = "&a&lOPEN";
-		inv.setItem(6, Utils.createItem(Material.NETHER_BRICK_FENCE, Utils.format("&9&lClose Arena: " + closed)));
+		inv.setItem(6, ItemManager.createItem(Material.NETHER_BRICK_FENCE, CommunicationManager.format("&9&lClose Arena: " + closed)));
 
 		// Option to remove arena
 		inv.setItem(7, InventoryItems.remove("ARENA"));
@@ -497,8 +498,8 @@ public class Inventories {
 	// Confirmation menu for removing an arena
 	public static Inventory createArenaConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&4&lRemove " + Game.arenas[arena].getName() + '?'));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&4&lRemove " + ArenaManager.arenas[arena].getName() + '?'));
 
 		// "No" option
 		inv.setItem(0, InventoryItems.no());
@@ -511,11 +512,11 @@ public class Inventories {
 
 	// Menu for editing the portal and leaderboard of an arena
 	public static Inventory createPortalInventory(int arena) {
-		Arena arenaInstance = Game.arenas[arena];
+		Arena arenaInstance = ArenaManager.arenas[arena];
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&5&lPortal/LBoard: " + arenaInstance.getName()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&5&lPortal/LBoard: " + arenaInstance.getName()));
 
 		// Option to create or relocate the portal
 		if (arenaInstance.getPortal() == null)
@@ -554,8 +555,8 @@ public class Inventories {
 	// Confirmation menu for removing the arena portal
 	public static Inventory createPortalConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&4&lRemove Portal?"));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&4&lRemove Portal?"));
 
 		// "No" option
 		inv.setItem(0, InventoryItems.no());
@@ -569,8 +570,8 @@ public class Inventories {
 	// Confirmation menu for removing the arena leaderboard
 	public static Inventory createArenaBoardConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&4&lRemove Leaderboard?"));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&4&lRemove Leaderboard?"));
 
 		// "No" option
 		inv.setItem(0, InventoryItems.no());
@@ -583,38 +584,38 @@ public class Inventories {
 
 	// Menu for editing the player settings of an arena
 	public static Inventory createPlayersInventory(int arena) {
-		Arena arenaInstance = Game.arenas[arena];
+		Arena arenaInstance = ArenaManager.arenas[arena];
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&d&lPlayer Settings: " + arenaInstance.getName()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&d&lPlayer Settings: " + arenaInstance.getName()));
 
 		// Option to edit player spawn
-		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&5&lPlayer Spawn")));
+		inv.setItem(0, ItemManager.createItem(Material.END_PORTAL_FRAME, CommunicationManager.format("&5&lPlayer Spawn")));
 
 		// Option to toggle player spawn particles
-		inv.setItem(1, Utils.createItem(Material.FIREWORK_ROCKET,
-				Utils.format("&d&lSpawn Particles: " + getToggleStatus(arenaInstance.hasSpawnParticles())),
-				Utils.format("&7Particles showing where the spawn is"),
-				Utils.format("&7(Visible in-game)")));
+		inv.setItem(1, ItemManager.createItem(Material.FIREWORK_ROCKET,
+				CommunicationManager.format("&d&lSpawn Particles: " + getToggleStatus(arenaInstance.hasSpawnParticles())),
+				CommunicationManager.format("&7Particles showing where the spawn is"),
+				CommunicationManager.format("&7(Visible in-game)")));
 
 		// Option to edit waiting room
-		inv.setItem(2, Utils.createItem(Material.CLOCK, Utils.format("&b&lWaiting Room"),
-				Utils.format("&7An optional room to wait in before"), Utils.format("&7the game starts")));
+		inv.setItem(2, ItemManager.createItem(Material.CLOCK, CommunicationManager.format("&b&lWaiting Room"),
+				CommunicationManager.format("&7An optional room to wait in before"), CommunicationManager.format("&7the game starts")));
 
 		// Option to edit max players
-		inv.setItem(3, Utils.createItem(Material.NETHERITE_HELMET,
-				Utils.format("&4&lMaximum Players"),
+		inv.setItem(3, ItemManager.createItem(Material.NETHERITE_HELMET,
+				CommunicationManager.format("&4&lMaximum Players"),
 				Utils.BUTTON_FLAGS,
 				null,
-				Utils.format("&7Maximum players the game will have")));
+				CommunicationManager.format("&7Maximum players the game will have")));
 
 		// Option to edit min players
-		inv.setItem(4, Utils.createItem(Material.NETHERITE_BOOTS,
-				Utils.format("&2&lMinimum Players"),
+		inv.setItem(4, ItemManager.createItem(Material.NETHERITE_BOOTS,
+				CommunicationManager.format("&2&lMinimum Players"),
 				Utils.BUTTON_FLAGS,
 				null,
-				Utils.format("&7Minimum players needed for game to start")));
+				CommunicationManager.format("&7Minimum players needed for game to start")));
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());
@@ -624,16 +625,16 @@ public class Inventories {
 
 	// Menu for editing the player spawn of an arena
 	public static Inventory createPlayerSpawnInventory(int arena) {
-		Arena arenaInstance = Game.arenas[arena];
+		Arena arenaInstance = ArenaManager.arenas[arena];
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&d&lPlayer Spawn: " + arenaInstance.getName()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&d&lPlayer Spawn: " + arenaInstance.getName()));
 
 		// Option to create or relocate player spawn
-		if (arenaInstance.getPlayerSpawn() == null)
-			inv.setItem(0, InventoryItems.create("Spawn"));
-		else inv.setItem(0, InventoryItems.relocate("Spawn"));
+		if (arenaInstance.getPlayerSpawn() != null)
+			inv.setItem(0, InventoryItems.relocate("Spawn"));
+		else inv.setItem(0, InventoryItems.create("Spawn"));
 
 		// Option to teleport to player spawn
 		inv.setItem(2, InventoryItems.teleport("Spawn"));
@@ -653,8 +654,8 @@ public class Inventories {
 	// Confirmation menu for removing player spawn
 	public static Inventory createSpawnConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&4&lRemove Spawn?"));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&4&lRemove Spawn?"));
 
 		// "No" option
 		inv.setItem(0, InventoryItems.no());
@@ -667,11 +668,11 @@ public class Inventories {
 
 	// Menu for editing the waiting room of an arena
 	public static Inventory createWaitingRoomInventory(int arena) {
-		Arena arenaInstance = Game.arenas[arena];
+		Arena arenaInstance = ArenaManager.arenas[arena];
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&b&lWaiting Room: " + arenaInstance.getName()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&b&lWaiting Room: " + arenaInstance.getName()));
 
 		// Option to create waiting room
 		if (arenaInstance.getWaitingRoom() == null)
@@ -696,8 +697,8 @@ public class Inventories {
 	// Confirmation menu for removing waiting room
 	public static Inventory createWaitingConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&4&lRemove Waiting Room?"));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&4&lRemove Waiting Room?"));
 
 		// "No" option
 		inv.setItem(0, InventoryItems.no());
@@ -711,16 +712,16 @@ public class Inventories {
 	// Menu for changing max players in an arena
 	public static Inventory createMaxPlayerInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&4&lMaximum Players: " + Game.arenas[arena].getMaxPlayers()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&4&lMaximum Players: " + ArenaManager.arenas[arena].getMaxPlayers()));
 
 		// Option to decrease
 		for (int i = 0; i < 4; i++)
-			inv.setItem(i, Utils.createItem(Material.RED_CONCRETE, Utils.format("&4&lDecrease")));
+			inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&lDecrease")));
 
 		// Option to increase
 		for (int i = 4; i < 8; i++)
-			inv.setItem(i, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&2&lIncrease")));
+			inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&2&lIncrease")));
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());
@@ -731,16 +732,16 @@ public class Inventories {
 	// Menu for changing min players in an arena
 	public static Inventory createMinPlayerInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&2&lMinimum Players: " + Game.arenas[arena].getMinPlayers()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&2&lMinimum Players: " + ArenaManager.arenas[arena].getMinPlayers()));
 
 		// Option to decrease
 		for (int i = 0; i < 4; i++)
-			inv.setItem(i, Utils.createItem(Material.RED_CONCRETE, Utils.format("&4&lDecrease")));
+			inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&lDecrease")));
 
 		// Option to increase
 		for (int i = 4; i < 8; i++)
-			inv.setItem(i, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&2&lIncrease")));
+			inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&2&lIncrease")));
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());
@@ -750,38 +751,38 @@ public class Inventories {
 
 	// Menu for editing the mob settings of an arena
 	public static Inventory createMobsInventory(int arena) {
-		Arena arenaInstance = Game.arenas[arena];
+		Arena arenaInstance = ArenaManager.arenas[arena];
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&2&lMob Settings: " + arenaInstance.getName()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&2&lMob Settings: " + arenaInstance.getName()));
 
 		// Option to edit monster spawns
-		inv.setItem(0, Utils.createItem(Material.END_PORTAL_FRAME, Utils.format("&2&lMonster Spawns")));
+		inv.setItem(0, ItemManager.createItem(Material.END_PORTAL_FRAME, CommunicationManager.format("&2&lMonster Spawns")));
 
 		// Option to toggle monster spawn particles
-		inv.setItem(1, Utils.createItem(Material.FIREWORK_ROCKET,
-				Utils.format("&a&lMonster Spawn Particles: " + getToggleStatus(arenaInstance.hasMonsterParticles())),
-				Utils.format("&7Particles showing where the spawns are"),
-				Utils.format("&7(Visible in-game)")));
+		inv.setItem(1, ItemManager.createItem(Material.FIREWORK_ROCKET,
+				CommunicationManager.format("&a&lMonster Spawn Particles: " + getToggleStatus(arenaInstance.hasMonsterParticles())),
+				CommunicationManager.format("&7Particles showing where the spawns are"),
+				CommunicationManager.format("&7(Visible in-game)")));
 
 		// Option to edit villager spawns
-		inv.setItem(2, Utils.createItem(Material.END_PORTAL_FRAME,
-				Utils.format("&5&lVillager Spawns")));
+		inv.setItem(2, ItemManager.createItem(Material.END_PORTAL_FRAME,
+				CommunicationManager.format("&5&lVillager Spawns")));
 
 		// Option to toggle villager spawn particles
-		inv.setItem(3, Utils.createItem(Material.FIREWORK_ROCKET,
-				Utils.format("&d&lVillager Spawn Particles: " + getToggleStatus(arenaInstance.hasVillagerParticles())),
-				Utils.format("&7Particles showing where the spawns are"),
-				Utils.format("&7(Visible in-game)")));
+		inv.setItem(3, ItemManager.createItem(Material.FIREWORK_ROCKET,
+				CommunicationManager.format("&d&lVillager Spawn Particles: " + getToggleStatus(arenaInstance.hasVillagerParticles())),
+				CommunicationManager.format("&7Particles showing where the spawns are"),
+				CommunicationManager.format("&7(Visible in-game)")));
 
 		// Option to edit spawn table
-		inv.setItem(4, Utils.createItem(Material.DRAGON_HEAD, Utils.format("&3&lSpawn Table")));
+		inv.setItem(4, ItemManager.createItem(Material.DRAGON_HEAD, CommunicationManager.format("&3&lSpawn Table")));
 
 		// Option to toggle dynamic mob count
-		inv.setItem(5, Utils.createItem(Material.SLIME_BALL,
-				Utils.format("&e&lDynamic Mob Count: " + getToggleStatus(arenaInstance.hasDynamicCount())),
-				Utils.format("&7Mob count adjusting based on"), Utils.format("&7number of players")));
+		inv.setItem(5, ItemManager.createItem(Material.SLIME_BALL,
+				CommunicationManager.format("&e&lDynamic Mob Count: " + getToggleStatus(arenaInstance.hasDynamicCount())),
+				CommunicationManager.format("&7Mob count adjusting based on"), CommunicationManager.format("&7number of players")));
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());
@@ -791,11 +792,11 @@ public class Inventories {
 
 	// Menu for editing the monster spawns of an arena
 	public static Inventory createMonsterSpawnInventory(int arena) {
-		Arena arenaInstance = Game.arenas[arena];
+		Arena arenaInstance = ArenaManager.arenas[arena];
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&2&lMonster Spawns: " + arenaInstance.getName()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&2&lMonster Spawns: " + arenaInstance.getName()));
 
 		// Prepare for material indexing
 		int index;
@@ -803,12 +804,12 @@ public class Inventories {
 		// Options to interact with all 8 possible mob spawns
 		for (int i = 0; i < 8; i++) {
 			// Check if the spawn exists
-			if (arenaInstance.getMonsterSpawn(i) == null)
-				index = 0;
-			else index = 1;
+			if (arenaInstance.getMonsterSpawn(i) != null)
+				index = 1;
+			else index = 0;
 
 			// Create and set item
-			inv.setItem(i, Utils.createItem(MONSTER_MATS[index], Utils.format("&2&lMob Spawn " + (i + 1))));
+			inv.setItem(i, ItemManager.createItem(MONSTER_MATS[index], CommunicationManager.format("&2&lMob Spawn " + (i + 1))));
 		}
 
 		// Option to exit
@@ -819,16 +820,16 @@ public class Inventories {
 
 	// Menu for editing a specific monster spawn of an arena
 	public static Inventory createMonsterSpawnMenu(int arena, int slot) {
-		Arena arenaInstance = Game.arenas[arena];
+		Arena arenaInstance = ArenaManager.arenas[arena];
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9, Utils.format("&k") +
-				Utils.format("&2&lMonster Spawn " + (slot + 1) + ": " + arenaInstance.getName()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&2&lMonster Spawn " + (slot + 1) + ": " + arenaInstance.getName()));
 
 		// Option to create or relocate monster spawn
-		if (arenaInstance.getMonsterSpawn(slot) == null)
-			inv.setItem(0, InventoryItems.create("Spawn"));
-		else inv.setItem(0, InventoryItems.relocate("Spawn"));
+		if (arenaInstance.getMonsterSpawn(slot) != null)
+			inv.setItem(0, InventoryItems.relocate("Spawn"));
+		else inv.setItem(0, InventoryItems.create("Spawn"));
 
 		// Option to teleport to monster spawn
 		inv.setItem(1, InventoryItems.teleport("Spawn"));
@@ -842,13 +843,13 @@ public class Inventories {
 		// Toggle to set monster spawn type
 		switch (arenaInstance.getMonsterSpawnType(slot)) {
 			case 1:
-				inv.setItem(4, Utils.createItem(Material.GUNPOWDER, Utils.format("&5&lType: Ground")));
+				inv.setItem(4, ItemManager.createItem(Material.GUNPOWDER, CommunicationManager.format("&5&lType: Ground")));
 				break;
 			case 2:
-				inv.setItem(4, Utils.createItem(Material.FEATHER, Utils.format("&5&lType: Flying")));
+				inv.setItem(4, ItemManager.createItem(Material.FEATHER, CommunicationManager.format("&5&lType: Flying")));
 				break;
 			default:
-				inv.setItem(4, Utils.createItem(Material.BONE, Utils.format("&5&lType: All")));
+				inv.setItem(4, ItemManager.createItem(Material.BONE, CommunicationManager.format("&5&lType: All")));
 		}
 
 		// Option to exit
@@ -860,8 +861,8 @@ public class Inventories {
 	// Confirmation menu for removing monster spawns
 	public static Inventory createMonsterSpawnConfirmInventory(int arena, int slot) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9, Utils.format("&k") +
-				Utils.format("&4&lRemove Monster Spawn?"));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&4&lRemove Monster Spawn?"));
 
 		// "No" option
 		inv.setItem(0, InventoryItems.no());
@@ -874,11 +875,11 @@ public class Inventories {
 
 	// Menu for editing the villager spawns of an arena
 	public static Inventory createVillagerSpawnInventory(int arena) {
-		Arena arenaInstance = Game.arenas[arena];
+		Arena arenaInstance = ArenaManager.arenas[arena];
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&5&lVillager Spawns: " + arenaInstance.getName()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&5&lVillager Spawns: " + arenaInstance.getName()));
 
 		// Prepare for material indexing
 		int index;
@@ -886,12 +887,12 @@ public class Inventories {
 		// Options to interact with all 8 possible villager spawns
 		for (int i = 0; i < 8; i++) {
 			// Check if the spawn exists
-			if (arenaInstance.getVillagerSpawn(i) == null)
-				index = 0;
-			else index = 1;
+			if (arenaInstance.getVillagerSpawn(i) != null)
+				index = 1;
+			else index = 0;
 
 			// Create and set item
-			inv.setItem(i, Utils.createItem(VILLAGER_MATS[index], Utils.format("&5&lVillager Spawn " + (i + 1))));
+			inv.setItem(i, ItemManager.createItem(VILLAGER_MATS[index], CommunicationManager.format("&5&lVillager Spawn " + (i + 1))));
 		}
 
 		// Option to exit
@@ -902,16 +903,16 @@ public class Inventories {
 
 	// Menu for editing a specific villager spawn of an arena
 	public static Inventory createVillagerSpawnMenu(int arena, int slot) {
-		Arena arenaInstance = Game.arenas[arena];
+		Arena arenaInstance = ArenaManager.arenas[arena];
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9, Utils.format("&k") +
-				Utils.format("&5&lVillager Spawn " + (slot + 1) + ": " + arenaInstance.getName()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&5&lVillager Spawn " + (slot + 1) + ": " + arenaInstance.getName()));
 
 		// Option to create or relocate villager spawn
-		if (arenaInstance.getVillagerSpawn(slot) == null)
-			inv.setItem(0, InventoryItems.create("Spawn"));
-		else inv.setItem(0, InventoryItems.relocate("Spawn"));
+		if (arenaInstance.getVillagerSpawn(slot) != null)
+			inv.setItem(0, InventoryItems.relocate("Spawn"));
+		else inv.setItem(0, InventoryItems.create("Spawn"));
 
 		// Option to teleport to villager spawn
 		inv.setItem(2, InventoryItems.teleport("Spawn"));
@@ -931,8 +932,8 @@ public class Inventories {
 	// Confirmation menu for removing mob spawns
 	public static Inventory createVillagerSpawnConfirmInventory(int arena, int slot) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9, Utils.format("&k") +
-				Utils.format("&4&lRemove Villager Spawn?"));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&4&lRemove Villager Spawn?"));
 
 		// "No" option
 		inv.setItem(0, InventoryItems.no());
@@ -945,50 +946,50 @@ public class Inventories {
 
 	// Spawn table menu for an arena
 	public static Inventory createSpawnTableInventory(int arena) {
-		Arena arenaInstance = Game.arenas[arena];
+		Arena arenaInstance = ArenaManager.arenas[arena];
 		String chosen = arenaInstance.getSpawnTableFile();
 		Inventory inv;
 
 		// Create inventory
 		if (arenaInstance.getSpawnTableFile().equals("custom"))
-			 inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-					Utils.format("&3&lSpawn Table: a" + arena + ".yml"));
-		else inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&3&lSpawn Table: " + arenaInstance.getSpawnTableFile() + ".yml"));
+			 inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+					CommunicationManager.format("&3&lSpawn Table: a" + arena + ".yml"));
+		else inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&3&lSpawn Table: " + arenaInstance.getSpawnTableFile() + ".yml"));
 
 		// Option to set spawn table to default
-		inv.setItem(0, Utils.createItem(Material.OAK_WOOD, Utils.format("&4&lDefault"), Utils.BUTTON_FLAGS,
-				chosen.equals("default") ? Utils.glow() : null, Utils.format("&7Sets spawn table to default.yml")));
+		inv.setItem(0, ItemManager.createItem(Material.OAK_WOOD, CommunicationManager.format("&4&lDefault"), Utils.BUTTON_FLAGS,
+				chosen.equals("default") ? Utils.glow() : null, CommunicationManager.format("&7Sets spawn table to default.yml")));
 
 		// Option to set spawn table to global option 1
-		inv.setItem(1, Utils.createItem(Material.RED_CONCRETE, Utils.format("&6&lOption 1"), Utils.BUTTON_FLAGS,
-				chosen.equals("option1") ? Utils.glow() : null, Utils.format("&7Sets spawn table to option1.yml")));
+		inv.setItem(1, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&6&lOption 1"), Utils.BUTTON_FLAGS,
+				chosen.equals("option1") ? Utils.glow() : null, CommunicationManager.format("&7Sets spawn table to option1.yml")));
 
 		// Option to set spawn table to global option 2
-		inv.setItem(2, Utils.createItem(Material.ORANGE_CONCRETE, Utils.format("&6&lOption 2"), Utils.BUTTON_FLAGS,
-				chosen.equals("option2") ? Utils.glow() : null, Utils.format("&7Sets spawn table to option2.yml")));
+		inv.setItem(2, ItemManager.createItem(Material.ORANGE_CONCRETE, CommunicationManager.format("&6&lOption 2"), Utils.BUTTON_FLAGS,
+				chosen.equals("option2") ? Utils.glow() : null, CommunicationManager.format("&7Sets spawn table to option2.yml")));
 
 		// Option to set spawn table to global option 3
-		inv.setItem(3, Utils.createItem(Material.YELLOW_CONCRETE, Utils.format("&6&lOption 3"), Utils.BUTTON_FLAGS,
-				chosen.equals("option3") ? Utils.glow() : null, Utils.format("&7Sets spawn table to option3.yml")));
+		inv.setItem(3, ItemManager.createItem(Material.YELLOW_CONCRETE, CommunicationManager.format("&6&lOption 3"), Utils.BUTTON_FLAGS,
+				chosen.equals("option3") ? Utils.glow() : null, CommunicationManager.format("&7Sets spawn table to option3.yml")));
 
 		// Option to set spawn table to global option 4
-		inv.setItem(4, Utils.createItem(Material.BROWN_CONCRETE, Utils.format("&6&lOption 4"), Utils.BUTTON_FLAGS,
-				chosen.equals("option4") ? Utils.glow() : null, Utils.format("&7Sets spawn table to option4.yml")));
+		inv.setItem(4, ItemManager.createItem(Material.BROWN_CONCRETE, CommunicationManager.format("&6&lOption 4"), Utils.BUTTON_FLAGS,
+				chosen.equals("option4") ? Utils.glow() : null, CommunicationManager.format("&7Sets spawn table to option4.yml")));
 
 		// Option to set spawn table to global option 5
-		inv.setItem(5, Utils.createItem(Material.LIGHT_GRAY_CONCRETE, Utils.format("&6&lOption 5"), Utils.BUTTON_FLAGS,
-				chosen.equals("option5") ? Utils.glow() : null, Utils.format("&7Sets spawn table to option5.yml")));
+		inv.setItem(5, ItemManager.createItem(Material.LIGHT_GRAY_CONCRETE, CommunicationManager.format("&6&lOption 5"), Utils.BUTTON_FLAGS,
+				chosen.equals("option5") ? Utils.glow() : null, CommunicationManager.format("&7Sets spawn table to option5.yml")));
 
 		// Option to set spawn table to global option 6
-		inv.setItem(6, Utils.createItem(Material.WHITE_CONCRETE, Utils.format("&6&lOption 6"), Utils.BUTTON_FLAGS,
-				chosen.equals("option6") ? Utils.glow() : null, Utils.format("&7Sets spawn table to option6.yml")));
+		inv.setItem(6, ItemManager.createItem(Material.WHITE_CONCRETE, CommunicationManager.format("&6&lOption 6"), Utils.BUTTON_FLAGS,
+				chosen.equals("option6") ? Utils.glow() : null, CommunicationManager.format("&7Sets spawn table to option6.yml")));
 
 		// Option to set spawn table to custom option
-		inv.setItem(7, Utils.createItem(Material.BIRCH_WOOD, Utils.format("&e&lCustom"), Utils.BUTTON_FLAGS,
+		inv.setItem(7, ItemManager.createItem(Material.BIRCH_WOOD, CommunicationManager.format("&e&lCustom"), Utils.BUTTON_FLAGS,
 				chosen.length() < 4 ? Utils.glow() : null,
-				Utils.format("&7Sets spawn table to a[arena number].yml"),
-				Utils.format("&7(Check the arena number in arenaData.yml)")));
+				CommunicationManager.format("&7Sets spawn table to a[arena number].yml"),
+				CommunicationManager.format("&7(Check the arena number in arenaData.yml)")));
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());
@@ -998,41 +999,41 @@ public class Inventories {
 
 	// Menu for editing the shop settings of an arena
 	public static Inventory createShopsInventory(int arena) {
-		Arena arenaInstance = Game.arenas[arena];
+		Arena arenaInstance = ArenaManager.arenas[arena];
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&e&lShop Settings: " + arenaInstance.getName()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&e&lShop Settings: " + arenaInstance.getName()));
 
 		// Option to create a custom shop
-		inv.setItem(0, Utils.createItem(Material.QUARTZ,
-				Utils.format("&a&lEdit Custom Shop")));
+		inv.setItem(0, ItemManager.createItem(Material.QUARTZ,
+				CommunicationManager.format("&a&lEdit Custom Shop")));
 
 		// Option to toggle default shop
-		inv.setItem(1, Utils.createItem(Material.EMERALD_BLOCK,
-				Utils.format("&6&lDefault Shop: " + getToggleStatus(arenaInstance.hasNormal())),
-				Utils.format("&7Turn default shop on and off")));
+		inv.setItem(1, ItemManager.createItem(Material.EMERALD_BLOCK,
+				CommunicationManager.format("&6&lDefault Shop: " + getToggleStatus(arenaInstance.hasNormal())),
+				CommunicationManager.format("&7Turn default shop on and off")));
 
 		// Option to toggle custom shop
-		inv.setItem(2, Utils.createItem(Material.QUARTZ_BLOCK,
-				Utils.format("&2&lCustom Shop: " + getToggleStatus(arenaInstance.hasCustom())),
-				Utils.format("&7Turn custom shop on and off")));
+		inv.setItem(2, ItemManager.createItem(Material.QUARTZ_BLOCK,
+				CommunicationManager.format("&2&lCustom Shop: " + getToggleStatus(arenaInstance.hasCustom())),
+				CommunicationManager.format("&7Turn custom shop on and off")));
 
 		// Option to toggle custom shop
-		inv.setItem(3, Utils.createItem(Material.BOOKSHELF,
-				Utils.format("&3&lEnchants Shop: " + getToggleStatus(arenaInstance.hasEnchants())),
-				Utils.format("&7Turn enchants shop on and off")));
+		inv.setItem(3, ItemManager.createItem(Material.BOOKSHELF,
+				CommunicationManager.format("&3&lEnchants Shop: " + getToggleStatus(arenaInstance.hasEnchants())),
+				CommunicationManager.format("&7Turn enchants shop on and off")));
 
 		// Option to toggle community chest
-		inv.setItem(4, Utils.createItem(Material.CHEST,
-				Utils.format("&d&lCommunity Chest: " + getToggleStatus(arenaInstance.hasCommunity())),
-				Utils.format("&7Turn community chest on and off")));
+		inv.setItem(4, ItemManager.createItem(Material.CHEST,
+				CommunicationManager.format("&d&lCommunity Chest: " + getToggleStatus(arenaInstance.hasCommunity())),
+				CommunicationManager.format("&7Turn community chest on and off")));
 
 		// Option to toggle dynamic prices
-		inv.setItem(5, Utils.createItem(Material.NETHER_STAR,
-				Utils.format("&b&lDynamic Prices: " + getToggleStatus(arenaInstance.hasDynamicPrices())),
-				Utils.format("&7Prices adjusting based on number of"),
-				Utils.format("&7players in the game")));
+		inv.setItem(5, ItemManager.createItem(Material.NETHER_STAR,
+				CommunicationManager.format("&b&lDynamic Prices: " + getToggleStatus(arenaInstance.hasDynamicPrices())),
+				CommunicationManager.format("&7Prices adjusting based on number of"),
+				CommunicationManager.format("&7players in the game")));
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());
@@ -1042,44 +1043,44 @@ public class Inventories {
 
 	// Menu for adding custom items
 	public static Inventory createCustomItemsInventory(int arena, int slot) {
-		Arena arenaInstance = Game.arenas[arena];
+		Arena arenaInstance = ArenaManager.arenas[arena];
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 27, Utils.format("&k") +
-				Utils.format("&6&lEdit Item"));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 27, CommunicationManager.format("&k") +
+				CommunicationManager.format("&6&lEdit Item"));
 
 		// Item of interest
 		inv.setItem(4, arenaInstance.getCustomShop().getItem(slot));
 
 		// Option to set un-purchasable
-		inv.setItem(8, Utils.createItem(Material.BEDROCK, Utils.format("&5&lToggle Un-purchasable")));
+		inv.setItem(8, ItemManager.createItem(Material.BEDROCK, CommunicationManager.format("&5&lToggle Un-purchasable")));
 
 		// Option to increase by 1
-		inv.setItem(9, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&a&l+1 gem")));
+		inv.setItem(9, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&a&l+1 gem")));
 
 		// Option to increase by 10
-		inv.setItem(11, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&a&l+10 gems")));
+		inv.setItem(11, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&a&l+10 gems")));
 
 		// Option to increase by 100
-		inv.setItem(13, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&a&l+100 gems")));
+		inv.setItem(13, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&a&l+100 gems")));
 
 		// Option to increase by 1000
-		inv.setItem(15, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&a&l+1000 gems")));
+		inv.setItem(15, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&a&l+1000 gems")));
 
 		// Option to delete item
-		inv.setItem(17, Utils.createItem(Material.LAVA_BUCKET, Utils.format("&4&lDELETE")));
+		inv.setItem(17, ItemManager.createItem(Material.LAVA_BUCKET, CommunicationManager.format("&4&lDELETE")));
 
 		// Option to decrease by 1
-		inv.setItem(18, Utils.createItem(Material.RED_CONCRETE, Utils.format("&c&l-1 gem")));
+		inv.setItem(18, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&c&l-1 gem")));
 
 		// Option to decrease by 10
-		inv.setItem(20, Utils.createItem(Material.RED_CONCRETE, Utils.format("&c&l-10 gems")));
+		inv.setItem(20, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&c&l-10 gems")));
 
 		// Option to decrease by 100
-		inv.setItem(22, Utils.createItem(Material.RED_CONCRETE, Utils.format("&c&l-100 gems")));
+		inv.setItem(22, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&c&l-100 gems")));
 
 		// Option to decrease by 1000
-		inv.setItem(24, Utils.createItem(Material.RED_CONCRETE, Utils.format("&c&l-1000 gems")));
+		inv.setItem(24, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&c&l-1000 gems")));
 
 		// Option to exit
 		inv.setItem(26, InventoryItems.exit());
@@ -1090,8 +1091,8 @@ public class Inventories {
 	// Confirmation menu for removing custom item
 	public static Inventory createCustomItemConfirmInventory(int arena, int slot) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9, Utils.format("&k") +
-				Utils.format("&4&lRemove Custom Item?"));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&4&lRemove Custom Item?"));
 
 		// "No" option
 		inv.setItem(0, InventoryItems.no());
@@ -1104,88 +1105,88 @@ public class Inventories {
 
 	// Menu for editing the game settings of an arena
 	public static Inventory createGameSettingsInventory(int arena) {
-		Arena arenaInstance = Game.arenas[arena];
+		Arena arenaInstance = ArenaManager.arenas[arena];
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 18, Utils.format("&k") +
-				Utils.format("&8&lGame Settings: " + arenaInstance.getName()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 18, CommunicationManager.format("&k") +
+				CommunicationManager.format("&8&lGame Settings: " + arenaInstance.getName()));
 
 		// Option to change max waves
-		inv.setItem(0, Utils.createItem(Material.NETHERITE_SWORD,
-				Utils.format("&3&lMax Waves"),
+		inv.setItem(0, ItemManager.createItem(Material.NETHERITE_SWORD,
+				CommunicationManager.format("&3&lMax Waves"),
 				Utils.BUTTON_FLAGS,
 				null));
 
 		// Option to wave time limit
-		inv.setItem(1, Utils.createItem(Material.CLOCK, Utils.format("&2&lWave Time Limit")));
+		inv.setItem(1, ItemManager.createItem(Material.CLOCK, CommunicationManager.format("&2&lWave Time Limit")));
 
 		// Option to toggle dynamic wave time limit
-		inv.setItem(2, Utils.createItem(Material.SNOWBALL,
-				Utils.format("&a&lDynamic Time Limit: " + getToggleStatus(arenaInstance.hasDynamicLimit())),
-				Utils.format("&7Wave time limit adjusting based on"),
-				Utils.format("&7in-game difficulty")));
+		inv.setItem(2, ItemManager.createItem(Material.SNOWBALL,
+				CommunicationManager.format("&a&lDynamic Time Limit: " + getToggleStatus(arenaInstance.hasDynamicLimit())),
+				CommunicationManager.format("&7Wave time limit adjusting based on"),
+				CommunicationManager.format("&7in-game difficulty")));
 
 		// Option to edit allowed kits
-		inv.setItem(3, Utils.createItem(Material.ENDER_CHEST, Utils.format("&9&lAllowed Kits")));
+		inv.setItem(3, ItemManager.createItem(Material.ENDER_CHEST, CommunicationManager.format("&9&lAllowed Kits")));
 
 		// Option to edit difficulty label
-		inv.setItem(4, Utils.createItem(Material.NAME_TAG, Utils.format("&6&lDifficulty Label")));
+		inv.setItem(4, ItemManager.createItem(Material.NAME_TAG, CommunicationManager.format("&6&lDifficulty Label")));
 
 		// Option to adjust overall difficulty multiplier
-		inv.setItem(5, Utils.createItem(Material.TURTLE_HELMET,
-				Utils.format("&4&lDifficulty Multiplier"),
+		inv.setItem(5, ItemManager.createItem(Material.TURTLE_HELMET,
+				CommunicationManager.format("&4&lDifficulty Multiplier"),
 				Utils.BUTTON_FLAGS,
 				null,
-				Utils.format("&7Determines difficulty increase rate")));
+				CommunicationManager.format("&7Determines difficulty increase rate")));
 
 		// Option to toggle dynamic difficulty
-		inv.setItem(6, Utils.createItem(Material.MAGMA_CREAM,
-				Utils.format("&6&lDynamic Difficulty: " + getToggleStatus(arenaInstance.hasDynamicDifficulty())),
-				Utils.format("&7Difficulty adjusting based on"), Utils.format("&7number of players")));
+		inv.setItem(6, ItemManager.createItem(Material.MAGMA_CREAM,
+				CommunicationManager.format("&6&lDynamic Difficulty: " + getToggleStatus(arenaInstance.hasDynamicDifficulty())),
+				CommunicationManager.format("&7Difficulty adjusting based on"), CommunicationManager.format("&7number of players")));
 
 		// Option to toggle late arrival
-		inv.setItem(7, Utils.createItem(Material.DAYLIGHT_DETECTOR,
-				Utils.format("&e&lLate Arrival: " + getToggleStatus(arenaInstance.hasLateArrival())),
-				Utils.format("&7Allows players to join after"), Utils.format("&7the game has started")));
+		inv.setItem(7, ItemManager.createItem(Material.DAYLIGHT_DETECTOR,
+				CommunicationManager.format("&e&lLate Arrival: " + getToggleStatus(arenaInstance.hasLateArrival())),
+				CommunicationManager.format("&7Allows players to join after"), CommunicationManager.format("&7the game has started")));
 
 		// Option to toggle experience drop
-		inv.setItem(9, Utils.createItem(Material.EXPERIENCE_BOTTLE,
-				Utils.format("&b&lExperience Drop: " + getToggleStatus(arenaInstance.hasExpDrop())),
-				Utils.format("&7Change whether experience drop or go"),
-				Utils.format("&7straight into the killer's experience bar")));
+		inv.setItem(9, ItemManager.createItem(Material.EXPERIENCE_BOTTLE,
+				CommunicationManager.format("&b&lExperience Drop: " + getToggleStatus(arenaInstance.hasExpDrop())),
+				CommunicationManager.format("&7Change whether experience drop or go"),
+				CommunicationManager.format("&7straight into the killer's experience bar")));
 
 		// Option to toggle item dropping
-		inv.setItem(10, Utils.createItem(Material.EMERALD,
-				Utils.format("&9&lItem Drop: " + getToggleStatus(arenaInstance.hasGemDrop())),
-				Utils.format("&7Change whether gems and loot drop"),
-				Utils.format("&7as physical items or go straight"),
-				Utils.format("&7into the killer's balance/inventory")));
+		inv.setItem(10, ItemManager.createItem(Material.EMERALD,
+				CommunicationManager.format("&9&lItem Drop: " + getToggleStatus(arenaInstance.hasGemDrop())),
+				CommunicationManager.format("&7Change whether gems and loot drop"),
+				CommunicationManager.format("&7as physical items or go straight"),
+				CommunicationManager.format("&7into the killer's balance/inventory")));
 
 		// Option to set arena bounds
-		inv.setItem(11, Utils.createItem(Material.BEDROCK, Utils.format("&4&lArena Bounds"),
-				Utils.format("&7Bounds determine where players are"),
-				Utils.format("&7allowed to go and where the game will"),
-				Utils.format("&7function. Avoid building past arena bounds.")));
+		inv.setItem(11, ItemManager.createItem(Material.BEDROCK, CommunicationManager.format("&4&lArena Bounds"),
+				CommunicationManager.format("&7Bounds determine where players are"),
+				CommunicationManager.format("&7allowed to go and where the game will"),
+				CommunicationManager.format("&7function. Avoid building past arena bounds.")));
 
 		// Option to edit wolf cap
-		inv.setItem(12, Utils.createItem(Material.BONE, Utils.format("&6&lWolf Cap"),
-				Utils.format("&7Maximum wolves a player can have")));
+		inv.setItem(12, ItemManager.createItem(Material.BONE, CommunicationManager.format("&6&lWolf Cap"),
+				CommunicationManager.format("&7Maximum wolves a player can have")));
 
 		// Option to edit golem cap
-		inv.setItem(13, Utils.createItem(Material.IRON_INGOT, Utils.format("&e&lIron Golem Cap"),
-				Utils.format("&7Maximum iron golems an arena can have")));
+		inv.setItem(13, ItemManager.createItem(Material.IRON_INGOT, CommunicationManager.format("&e&lIron Golem Cap"),
+				CommunicationManager.format("&7Maximum iron golems an arena can have")));
 
 		// Option to edit sounds
-		inv.setItem(14, Utils.createItem(Material.MUSIC_DISC_13,
-				Utils.format("&d&lSounds"),
+		inv.setItem(14, ItemManager.createItem(Material.MUSIC_DISC_13,
+				CommunicationManager.format("&d&lSounds"),
 				Utils.BUTTON_FLAGS,
 				null));
 
 		// Option to copy game settings from another arena or a preset
-		inv.setItem(15, Utils.createItem(Material.WRITABLE_BOOK,
-				Utils.format("&f&lCopy Game Settings"),
-				Utils.format("&7Copy settings of another arena or"),
-				Utils.format("&7choose from a menu of presets")));
+		inv.setItem(15, ItemManager.createItem(Material.WRITABLE_BOOK,
+				CommunicationManager.format("&f&lCopy Game Settings"),
+				CommunicationManager.format("&7Copy settings of another arena or"),
+				CommunicationManager.format("&7choose from a menu of presets")));
 
 		// Option to exit
 		inv.setItem(17, InventoryItems.exit());
@@ -1198,25 +1199,25 @@ public class Inventories {
 		Inventory inv;
 
 		// Create inventory
-		if (Game.arenas[arena].getMaxWaves() < 0)
-			inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-					Utils.format("&3&lMaximum Waves: Unlimited"));
-		else inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&3&lMaximum Waves: " + Game.arenas[arena].getMaxWaves()));
+		if (ArenaManager.arenas[arena].getMaxWaves() < 0)
+			inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+					CommunicationManager.format("&3&lMaximum Waves: Unlimited"));
+		else inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&3&lMaximum Waves: " + ArenaManager.arenas[arena].getMaxWaves()));
 
 		// Option to decrease
 		for (int i = 0; i < 3; i++)
-			inv.setItem(i, Utils.createItem(Material.RED_CONCRETE, Utils.format("&4&lDecrease")));
+			inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&lDecrease")));
 
 		// Option to set to unlimited
-		inv.setItem(3, Utils.createItem(Material.ORANGE_CONCRETE, Utils.format("&6&lUnlimited")));
+		inv.setItem(3, ItemManager.createItem(Material.ORANGE_CONCRETE, CommunicationManager.format("&6&lUnlimited")));
 
 		// Option to reset to 1
-		inv.setItem(4, Utils.createItem(Material.LIGHT_BLUE_CONCRETE, Utils.format("&3&lReset to 1")));
+		inv.setItem(4, ItemManager.createItem(Material.LIGHT_BLUE_CONCRETE, CommunicationManager.format("&3&lReset to 1")));
 
 		// Option to increase
 		for (int i = 5; i < 8; i++)
-			inv.setItem(i, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&2&lIncrease")));
+			inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&2&lIncrease")));
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());
@@ -1229,25 +1230,25 @@ public class Inventories {
 		Inventory inv;
 
 		// Create inventory
-		if (Game.arenas[arena].getWaveTimeLimit() < 0)
-			inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-					Utils.format("&2&lWave Time Limit: Unlimited"));
-		else inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&2&lWave Time Limit: " + Game.arenas[arena].getWaveTimeLimit()));
+		if (ArenaManager.arenas[arena].getWaveTimeLimit() < 0)
+			inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+					CommunicationManager.format("&2&lWave Time Limit: Unlimited"));
+		else inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&2&lWave Time Limit: " + ArenaManager.arenas[arena].getWaveTimeLimit()));
 
 		// Option to decrease
 		for (int i = 0; i < 3; i++)
-			inv.setItem(i, Utils.createItem(Material.RED_CONCRETE, Utils.format("&4&lDecrease")));
+			inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&lDecrease")));
 
 		// Option to set to unlimited
-		inv.setItem(3, Utils.createItem(Material.ORANGE_CONCRETE, Utils.format("&6&lUnlimited")));
+		inv.setItem(3, ItemManager.createItem(Material.ORANGE_CONCRETE, CommunicationManager.format("&6&lUnlimited")));
 
 		// Option to reset to 1
-		inv.setItem(4, Utils.createItem(Material.LIGHT_BLUE_CONCRETE, Utils.format("&3&lReset to 1")));
+		inv.setItem(4, ItemManager.createItem(Material.LIGHT_BLUE_CONCRETE, CommunicationManager.format("&3&lReset to 1")));
 
 		// Option to increase
 		for (int i = 5; i < 8; i++)
-			inv.setItem(i, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&2&lIncrease")));
+			inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&2&lIncrease")));
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());
@@ -1257,17 +1258,17 @@ public class Inventories {
 
 	// Menu for allowed kits of an arena
 	public static Inventory createAllowedKitsInventory(int arena, boolean mock) {
-		Arena arenaInstance = Game.arenas[arena];
+		Arena arenaInstance = ArenaManager.arenas[arena];
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54, Utils.format("&k") +
-				(mock ? Utils.format("&9&lAllowed Kits: " + arenaInstance.getName()) :
-						Utils.format("&9&lAllowed Kits")));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54, CommunicationManager.format("&k") +
+				(mock ? CommunicationManager.format("&9&lAllowed Kits: " + arenaInstance.getName()) :
+						CommunicationManager.format("&9&lAllowed Kits")));
 
 		// Gift kits
 		for (int i = 0; i < 9; i++)
-			inv.setItem(i, Utils.createItem(Material.LIME_STAINED_GLASS_PANE, Utils.format("&a&lGift Kits"),
-					Utils.format("&7Kits give one-time benefits"), Utils.format("&7per game or respawn")));
+			inv.setItem(i, ItemManager.createItem(Material.LIME_STAINED_GLASS_PANE, CommunicationManager.format("&a&lGift Kits"),
+					CommunicationManager.format("&7Kits give one-time benefits"), CommunicationManager.format("&7per game or respawn")));
 
 		if (arenaInstance.getBannedKits().contains(Kit.orc().getName()))
 			inv.setItem(9, Kit.orc().getButton(-1, false));
@@ -1299,8 +1300,8 @@ public class Inventories {
 
 		// Ability kits
 		for (int i = 18; i < 27; i++)
-			inv.setItem(i, Utils.createItem(Material.MAGENTA_STAINED_GLASS_PANE, Utils.format("&d&lAbility Kits"),
-					Utils.format("&7Kits give special ability per respawn")));
+			inv.setItem(i, ItemManager.createItem(Material.MAGENTA_STAINED_GLASS_PANE, CommunicationManager.format("&d&lAbility Kits"),
+					CommunicationManager.format("&7Kits give special ability per respawn")));
 
 		if (arenaInstance.getBannedKits().contains(Kit.mage().getName()))
 			inv.setItem(27, Kit.mage().getButton(-1, false));
@@ -1332,8 +1333,8 @@ public class Inventories {
 
 		// Effect kits
 		for (int i = 36; i < 45; i++)
-			inv.setItem(i, Utils.createItem(Material.YELLOW_STAINED_GLASS_PANE, Utils.format("&e&lEffect Kits"),
-					Utils.format("&7Kits give players a permanent"), Utils.format("&7special effect")));
+			inv.setItem(i, ItemManager.createItem(Material.YELLOW_STAINED_GLASS_PANE, CommunicationManager.format("&e&lEffect Kits"),
+					CommunicationManager.format("&7Kits give players a permanent"), CommunicationManager.format("&7special effect")));
 
 		if (arenaInstance.getBannedKits().contains(Kit.blacksmith().getName()))
 			inv.setItem(45, Kit.blacksmith().getButton(-1, false));
@@ -1359,7 +1360,7 @@ public class Inventories {
 
 	// Menu for changing the difficulty label of an arena
 	public static Inventory createDifficultyLabelInventory(int arena) {
-		String label = Game.arenas[arena].getDifficultyLabel();
+		String label = ArenaManager.arenas[arena].getDifficultyLabel();
 		switch (label) {
 			case "Easy":
 				label = "&a&lEasy";
@@ -1378,23 +1379,23 @@ public class Inventories {
 		}
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&6&lDifficulty Label: " + label));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&6&lDifficulty Label: " + label));
 
 		// "Easy" option
-		inv.setItem(0, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&a&lEasy")));
+		inv.setItem(0, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&a&lEasy")));
 
 		// "Medium" option
-		inv.setItem(1, Utils.createItem(Material.YELLOW_CONCRETE, Utils.format("&e&lMedium")));
+		inv.setItem(1, ItemManager.createItem(Material.YELLOW_CONCRETE, CommunicationManager.format("&e&lMedium")));
 
 		// "Hard" option
-		inv.setItem(2, Utils.createItem(Material.RED_CONCRETE, Utils.format("&c&lHard")));
+		inv.setItem(2, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&c&lHard")));
 
 		// "Insane" option
-		inv.setItem(3, Utils.createItem(Material.MAGENTA_CONCRETE, Utils.format("&d&lInsane")));
+		inv.setItem(3, ItemManager.createItem(Material.MAGENTA_CONCRETE, CommunicationManager.format("&d&lInsane")));
 
 		// "None" option
-		inv.setItem(4, Utils.createItem(Material.LIGHT_GRAY_CONCRETE, Utils.format("&7&lNone")));
+		inv.setItem(4, ItemManager.createItem(Material.LIGHT_GRAY_CONCRETE, CommunicationManager.format("&7&lNone")));
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());
@@ -1405,20 +1406,20 @@ public class Inventories {
 	// Menu for changing the difficulty multiplier of an arena
 	public static Inventory createDifficultyMultiplierInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&4&lDifficulty Multiplier: " + Game.arenas[arena].getDifficultyMultiplier()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&4&lDifficulty Multiplier: " + ArenaManager.arenas[arena].getDifficultyMultiplier()));
 
 		// "1" option
-		inv.setItem(0, Utils.createItem(Material.LIGHT_BLUE_CONCRETE, Utils.format("&b&l1")));
+		inv.setItem(0, ItemManager.createItem(Material.LIGHT_BLUE_CONCRETE, CommunicationManager.format("&b&l1")));
 
 		// "2" option
-		inv.setItem(2, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&a&l2")));
+		inv.setItem(2, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&a&l2")));
 
 		// "3" option
-		inv.setItem(4, Utils.createItem(Material.YELLOW_CONCRETE, Utils.format("&6&l3")));
+		inv.setItem(4, ItemManager.createItem(Material.YELLOW_CONCRETE, CommunicationManager.format("&6&l3")));
 
 		// "4" option
-		inv.setItem(6, Utils.createItem(Material.RED_CONCRETE, Utils.format("&4&l4")));
+		inv.setItem(6, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&l4")));
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());
@@ -1428,22 +1429,22 @@ public class Inventories {
 
 	// Menu for selecting arena bound corners
 	public static Inventory createBoundsInventory(int arena) {
-		Arena arenaInstance = Game.arenas[arena];
+		Arena arenaInstance = ArenaManager.arenas[arena];
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&4&lArena Bounds: " + arenaInstance.getName()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&4&lArena Bounds: " + arenaInstance.getName()));
 
 		// Option to interact with corner 1
-		inv.setItem(0, Utils.createItem(Material.TORCH, Utils.format("&b&lCorner 1: " +
+		inv.setItem(0, ItemManager.createItem(Material.TORCH, CommunicationManager.format("&b&lCorner 1: " +
 				(arenaInstance.getCorner1() == null ? "&c&lMissing" : "&a&lSet"))));
 
 		// Option to interact with corner 2
-		inv.setItem(3, Utils.createItem(Material.SOUL_TORCH, Utils.format("&9&lCorner 2: " +
+		inv.setItem(3, ItemManager.createItem(Material.SOUL_TORCH, CommunicationManager.format("&9&lCorner 2: " +
 				(arenaInstance.getCorner2() == null ? "&c&lMissing" : "&a&lSet"))));
 
 		// Option to toggle arena border particles
-		inv.setItem(6, Utils.createItem(Material.FIREWORK_ROCKET, Utils.format("&4&lBorder Particles: " +
+		inv.setItem(6, ItemManager.createItem(Material.FIREWORK_ROCKET, CommunicationManager.format("&4&lBorder Particles: " +
 				getToggleStatus(arenaInstance.hasBorderParticles()))));
 
 		// Option to exit
@@ -1454,11 +1455,11 @@ public class Inventories {
 
 	// Menu for editing corner 1 of an arena
 	public static Inventory createCorner1Inventory(int arena) {
-		Arena arenaInstance = Game.arenas[arena];
+		Arena arenaInstance = ArenaManager.arenas[arena];
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&b&lCorner 1: " + arenaInstance.getName()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&b&lCorner 1: " + arenaInstance.getName()));
 
 		// Option to create waiting room
 		if (arenaInstance.getCorner1() == null)
@@ -1480,8 +1481,8 @@ public class Inventories {
 	// Confirmation menu for removing corner 1
 	public static Inventory createCorner1ConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&4&lRemove Corner 1?"));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&4&lRemove Corner 1?"));
 
 		// "No" option
 		inv.setItem(0, InventoryItems.no());
@@ -1494,11 +1495,11 @@ public class Inventories {
 
 	// Menu for editing corner 2 of an arena
 	public static Inventory createCorner2Inventory(int arena) {
-		Arena arenaInstance = Game.arenas[arena];
+		Arena arenaInstance = ArenaManager.arenas[arena];
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&9&lCorner 2: " + arenaInstance.getName()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&9&lCorner 2: " + arenaInstance.getName()));
 
 		// Option to create waiting room
 		if (arenaInstance.getCorner2() == null)
@@ -1520,8 +1521,8 @@ public class Inventories {
 	// Confirmation menu for removing corner 2
 	public static Inventory createCorner2ConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&4&lRemove Corner 2?"));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&4&lRemove Corner 2?"));
 
 		// "No" option
 		inv.setItem(0, InventoryItems.no());
@@ -1535,16 +1536,16 @@ public class Inventories {
 	// Menu for changing wolf cap of an arena
 	public static Inventory createWolfCapInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&6&lWolf Cap: " + Game.arenas[arena].getWolfCap()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&6&lWolf Cap: " + ArenaManager.arenas[arena].getWolfCap()));
 
 		// Option to decrease
 		for (int i = 0; i < 4; i++)
-			inv.setItem(i, Utils.createItem(Material.RED_CONCRETE, Utils.format("&4&lDecrease")));
+			inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&lDecrease")));
 
 		// Option to increase
 		for (int i = 4; i < 8; i++)
-			inv.setItem(i, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&2&lIncrease")));
+			inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&2&lIncrease")));
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());
@@ -1555,16 +1556,16 @@ public class Inventories {
 	// Menu for changing iron golem cap of an arena
 	public static Inventory createGolemCapInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&e&lIron Golem Cap: " + Game.arenas[arena].getGolemCap()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&e&lIron Golem Cap: " + ArenaManager.arenas[arena].getGolemCap()));
 
 		// Option to decrease
 		for (int i = 0; i < 4; i++)
-			inv.setItem(i, Utils.createItem(Material.RED_CONCRETE, Utils.format("&4&lDecrease")));
+			inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&lDecrease")));
 
 		// Option to increase
 		for (int i = 4; i < 8; i++)
-			inv.setItem(i, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&2&lIncrease")));
+			inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&2&lIncrease")));
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());
@@ -1574,67 +1575,67 @@ public class Inventories {
 
 	// Menu for editing the sounds of an arena
 	public static Inventory createSoundsInventory(int arena) {
-		Arena arenaInstance = Game.arenas[arena];
+		Arena arenaInstance = ArenaManager.arenas[arena];
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, Utils.format("&k") +
-				Utils.format("&d&lSounds: " + Game.arenas[arena].getName()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&d&lSounds: " + ArenaManager.arenas[arena].getName()));
 
 		// Option to edit win sound
-		inv.setItem(0, Utils.createItem(Material.MUSIC_DISC_PIGSTEP,
-				Utils.format("&a&lWin Sound: " + getToggleStatus(arenaInstance.hasWinSound())),
+		inv.setItem(0, ItemManager.createItem(Material.MUSIC_DISC_PIGSTEP,
+				CommunicationManager.format("&a&lWin Sound: " + getToggleStatus(arenaInstance.hasWinSound())),
 				Utils.BUTTON_FLAGS,
 				null,
-				Utils.format("&7Played when game ends and players win")));
+				CommunicationManager.format("&7Played when game ends and players win")));
 
 		// Option to edit lose sound
-		inv.setItem(1, Utils.createItem(Material.MUSIC_DISC_11,
-				Utils.format("&e&lLose Sound: " + getToggleStatus(arenaInstance.hasLoseSound())),
+		inv.setItem(1, ItemManager.createItem(Material.MUSIC_DISC_11,
+				CommunicationManager.format("&e&lLose Sound: " + getToggleStatus(arenaInstance.hasLoseSound())),
 				Utils.BUTTON_FLAGS,
 				null,
-				Utils.format("&7Played when game ends and players lose")));
+				CommunicationManager.format("&7Played when game ends and players lose")));
 
 		// Option to edit wave start sound
-		inv.setItem(2, Utils.createItem(Material.MUSIC_DISC_CAT,
-				Utils.format("&2&lWave Start Sound: " + getToggleStatus(arenaInstance.hasWaveStartSound())),
+		inv.setItem(2, ItemManager.createItem(Material.MUSIC_DISC_CAT,
+				CommunicationManager.format("&2&lWave Start Sound: " + getToggleStatus(arenaInstance.hasWaveStartSound())),
 				Utils.BUTTON_FLAGS,
 				null,
-				Utils.format("&7Played when a wave starts")));
+				CommunicationManager.format("&7Played when a wave starts")));
 
 		// Option to edit wave finish sound
-		inv.setItem(3, Utils.createItem(Material.MUSIC_DISC_BLOCKS,
-				Utils.format("&9&lWave Finish Sound: " + getToggleStatus(arenaInstance.hasWaveFinishSound())),
+		inv.setItem(3, ItemManager.createItem(Material.MUSIC_DISC_BLOCKS,
+				CommunicationManager.format("&9&lWave Finish Sound: " + getToggleStatus(arenaInstance.hasWaveFinishSound())),
 				Utils.BUTTON_FLAGS,
 				null,
-				Utils.format("&7Played when a wave ends")));
+				CommunicationManager.format("&7Played when a wave ends")));
 
 		// Option to edit waiting music
-		inv.setItem(4, Utils.createItem(Material.MUSIC_DISC_MELLOHI,
-				Utils.format("&6&lWaiting Sound"),
+		inv.setItem(4, ItemManager.createItem(Material.MUSIC_DISC_MELLOHI,
+				CommunicationManager.format("&6&lWaiting Sound"),
 				Utils.BUTTON_FLAGS,
 				null,
-				Utils.format("&7Played while players wait"), Utils.format("&7for the game to start")));
+				CommunicationManager.format("&7Played while players wait"), CommunicationManager.format("&7for the game to start")));
 
 		// Option to edit gem pickup sound
-		inv.setItem(5, Utils.createItem(Material.MUSIC_DISC_FAR,
-				Utils.format("&b&lGem Pickup Sound: " + getToggleStatus(arenaInstance.hasGemSound())),
+		inv.setItem(5, ItemManager.createItem(Material.MUSIC_DISC_FAR,
+				CommunicationManager.format("&b&lGem Pickup Sound: " + getToggleStatus(arenaInstance.hasGemSound())),
 				Utils.BUTTON_FLAGS,
 				null,
-				Utils.format("&7Played when players pick up gems")));
+				CommunicationManager.format("&7Played when players pick up gems")));
 
 		// Option to edit player death sound
-		inv.setItem(6, Utils.createItem(Material.MUSIC_DISC_CHIRP,
-				Utils.format("&4&lPlayer Death Sound: " + getToggleStatus(arenaInstance.hasPlayerDeathSound())),
+		inv.setItem(6, ItemManager.createItem(Material.MUSIC_DISC_CHIRP,
+				CommunicationManager.format("&4&lPlayer Death Sound: " + getToggleStatus(arenaInstance.hasPlayerDeathSound())),
 				Utils.BUTTON_FLAGS,
 				null,
-				Utils.format("&7Played when a player dies")));
+				CommunicationManager.format("&7Played when a player dies")));
 
 		// Option to edit ability sound
-		inv.setItem(7, Utils.createItem(Material.MUSIC_DISC_MALL,
-				Utils.format("&d&lAbility Sound: " + getToggleStatus(arenaInstance.hasAbilitySound())),
+		inv.setItem(7, ItemManager.createItem(Material.MUSIC_DISC_MALL,
+				CommunicationManager.format("&d&lAbility Sound: " + getToggleStatus(arenaInstance.hasAbilitySound())),
 				Utils.BUTTON_FLAGS,
 				null,
-				Utils.format("&7Played when a player uses their ability")));
+				CommunicationManager.format("&7Played when a player uses their ability")));
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());
@@ -1645,10 +1646,10 @@ public class Inventories {
 	// Menu for editing the win sound of an arena
 	public static Inventory createWaitSoundInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 18, Utils.format("&k") +
-				Utils.format("&6&lWaiting Sound: " + Game.arenas[arena].getWaitingSoundName()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 18, CommunicationManager.format("&k") +
+				CommunicationManager.format("&6&lWaiting Sound: " + ArenaManager.arenas[arena].getWaitingSoundName()));
 
-		Arena arenaInstance = Game.arenas[arena];
+		Arena arenaInstance = ArenaManager.arenas[arena];
 
 		// Sound options
 		inv.setItem(0, arenaInstance.getWaitingSoundButton(0));
@@ -1674,34 +1675,34 @@ public class Inventories {
 	// Menu to copy game settings
 	public static Inventory createCopySettingsInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54,  Utils.format("&k") +
-				Utils.format("&8&lCopy Game Settings"));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54,  CommunicationManager.format("&k") +
+				CommunicationManager.format("&8&lCopy Game Settings"));
 
 		// Options to choose any of the 45 possible arenas
 		for (int i = 0; i < 45; i++) {
 			// Check if arena exists, set button accordingly
-			if (Game.arenas[i] == null)
-				inv.setItem(i, Utils.createItem(Material.BLACK_CONCRETE,
-						Utils.format("&c&lArena " + (i + 1) + " not available")));
+			if (ArenaManager.arenas[i] == null)
+				inv.setItem(i, ItemManager.createItem(Material.BLACK_CONCRETE,
+						CommunicationManager.format("&c&lArena " + (i + 1) + " not available")));
 			else if (i == arena)
-				inv.setItem(i, Utils.createItem(Material.GRAY_GLAZED_TERRACOTTA,
-						Utils.format("&6&l" + Game.arenas[i].getName())));
+				inv.setItem(i, ItemManager.createItem(Material.GRAY_GLAZED_TERRACOTTA,
+						CommunicationManager.format("&6&l" + ArenaManager.arenas[i].getName())));
 			else
-				inv.setItem(i, Utils.createItem(Material.WHITE_CONCRETE,
-						Utils.format("&a&lCopy " + Game.arenas[i].getName())));
+				inv.setItem(i, ItemManager.createItem(Material.WHITE_CONCRETE,
+						CommunicationManager.format("&a&lCopy " + ArenaManager.arenas[i].getName())));
 		}
 
 		// Easy preset
-		inv.setItem(45, Utils.createItem(Material.LIME_CONCRETE, Utils.format("&a&lEasy Preset")));
+		inv.setItem(45, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&a&lEasy Preset")));
 
 		// Medium preset
-		inv.setItem(47, Utils.createItem(Material.YELLOW_CONCRETE, Utils.format("&e&lMedium Preset")));
+		inv.setItem(47, ItemManager.createItem(Material.YELLOW_CONCRETE, CommunicationManager.format("&e&lMedium Preset")));
 
 		// Hard preset
-		inv.setItem(49, Utils.createItem(Material.RED_CONCRETE, Utils.format("&c&lHard Preset")));
+		inv.setItem(49, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&c&lHard Preset")));
 
 		// Insane preset
-		inv.setItem(51, Utils.createItem(Material.MAGENTA_CONCRETE, Utils.format("&d&lInsane Preset")));
+		inv.setItem(51, ItemManager.createItem(Material.MAGENTA_CONCRETE, CommunicationManager.format("&d&lInsane Preset")));
 
 		// Option to exit
 		inv.setItem(53, InventoryItems.exit());
@@ -1712,33 +1713,33 @@ public class Inventories {
 	// Generate the shop menu
 	public static Inventory createShop(int level, Arena arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&2&lLevel &9&l" + level + " &2&lItem Shop"));
+		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&2&lLevel &9&l" + level + " &2&lItem Shop"));
 
-		inv.setItem(0, Utils.createItem(Material.GOLDEN_SWORD,
-				Utils.format("&4&lLevel &9&l" + level + " &4&lWeapon Shop" +
+		inv.setItem(0, ItemManager.createItem(Material.GOLDEN_SWORD,
+				CommunicationManager.format("&4&lLevel &9&l" + level + " &4&lWeapon Shop" +
 						(arena.hasNormal() ? "" : " &4&l[DISABLED]")), Utils.BUTTON_FLAGS,
 				arena.hasNormal() ? Utils.glow() : null));
 
-		inv.setItem(1, Utils.createItem(Material.GOLDEN_CHESTPLATE,
-				Utils.format("&5&lLevel &9&l" + level + " &5&lArmor Shop" +
+		inv.setItem(1, ItemManager.createItem(Material.GOLDEN_CHESTPLATE,
+				CommunicationManager.format("&5&lLevel &9&l" + level + " &5&lArmor Shop" +
 						(arena.hasNormal() ? "" : " &4&l[DISABLED]")), Utils.BUTTON_FLAGS,
 				arena.hasNormal() ? Utils.glow() : null));
 
-		inv.setItem(2, Utils.createItem(Material.GOLDEN_APPLE,
-				Utils.format("&3&lLevel &9&l" + level + " &3&lConsumables Shop" +
+		inv.setItem(2, ItemManager.createItem(Material.GOLDEN_APPLE,
+				CommunicationManager.format("&3&lLevel &9&l" + level + " &3&lConsumables Shop" +
 						(arena.hasNormal() ? "" : " &4&l[DISABLED]")), Utils.BUTTON_FLAGS,
 				arena.hasNormal() ? Utils.glow() : null));
 
-		inv.setItem(4, Utils.createItem(Material.BOOKSHELF,
-				Utils.format("&a&lEnchants Shop" + (arena.hasEnchants() ? "" : " &4&l[DISABLED]")),
+		inv.setItem(4, ItemManager.createItem(Material.BOOKSHELF,
+				CommunicationManager.format("&a&lEnchants Shop" + (arena.hasEnchants() ? "" : " &4&l[DISABLED]")),
 				Utils.BUTTON_FLAGS, arena.hasEnchants() ? Utils.glow() : null));
 
-		inv.setItem(6, Utils.createItem(Material.QUARTZ, Utils.format("&6&lCustom Shop" +
+		inv.setItem(6, ItemManager.createItem(Material.QUARTZ, CommunicationManager.format("&6&lCustom Shop" +
 				(arena.hasCustom() ? "" : " &4&l[DISABLED]")), Utils.BUTTON_FLAGS,
 				arena.hasNormal() ? Utils.glow() : null));
 
-		inv.setItem(8, Utils.createItem(Material.CHEST, Utils.format("&d&lCommunity Chest" +
+		inv.setItem(8, ItemManager.createItem(Material.CHEST, CommunicationManager.format("&d&lCommunity Chest" +
 				(arena.hasCommunity() ? "" : " &4&l[DISABLED]"))));
 
 		return inv;
@@ -1752,8 +1753,8 @@ public class Inventories {
 			modifier = 1;
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 27, Utils.format("&k") +
-				Utils.format("&4&lLevel &9&l" + level + " &4&lWeapon Shop"));
+		Inventory inv = Bukkit.createInventory(null, 27, CommunicationManager.format("&k") +
+				CommunicationManager.format("&4&lLevel &9&l" + level + " &4&lWeapon Shop"));
 
 		// Fill in swords
 		List<ItemStack> swords = new ArrayList<>();
@@ -1801,8 +1802,8 @@ public class Inventories {
 			modifier = 1;
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 27, Utils.format("&k") +
-				Utils.format("&5&lLevel &9&l" + level + " &5&lArmor Shop"));
+		Inventory inv = Bukkit.createInventory(null, 27, CommunicationManager.format("&k") +
+				CommunicationManager.format("&5&lLevel &9&l" + level + " &5&lArmor Shop"));
 
 		// Fill in helmets
 		List<ItemStack> helmets = new ArrayList<>();
@@ -1850,8 +1851,8 @@ public class Inventories {
 			modifier = 1;
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 18, Utils.format("&k") +
-				Utils.format("&3&lLevel &9&l" + level + " &3&lConsumables Shop"));
+		Inventory inv = Bukkit.createInventory(null, 18, CommunicationManager.format("&k") +
+				CommunicationManager.format("&3&lLevel &9&l" + level + " &3&lConsumables Shop"));
 
 		// Fill in food
 		List<ItemStack> foods = new ArrayList<>();
@@ -1878,54 +1879,54 @@ public class Inventories {
 	// Generate the enchants shop
 	public static Inventory createEnchantsShop() {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 54, Utils.format("&k") +
-				Utils.format("&a&lEnchants Shop"));
+		Inventory inv = Bukkit.createInventory(null, 54, CommunicationManager.format("&k") +
+				CommunicationManager.format("&a&lEnchants Shop"));
 
 		// Melee enchants
-		inv.setItem(0, Utils.createItem(Material.PISTON, Utils.format("&a&lIncrease Knockback"),
-				Utils.format("&2Costs 4 XP Levels")));
-		inv.setItem(1, Utils.createItem(Material.GOLDEN_HOE, Utils.format("&a&lIncrease Sweeping Edge"),
-				Utils.BUTTON_FLAGS, null, Utils.format("&2Costs 6 XP Levels")));
-		inv.setItem(2, Utils.createItem(Material.DIAMOND_SWORD, Utils.format("&a&lIncrease Smite"),
-				Utils.BUTTON_FLAGS, null, Utils.format("&2Costs 7 XP Levels")));
-		inv.setItem(3, Utils.createItem(Material.NETHERITE_AXE, Utils.format("&a&lIncrease Sharpness"),
-				Utils.BUTTON_FLAGS, null, Utils.format("&2Costs 8 XP Levels")));
-		inv.setItem(4, Utils.createItem(Material.FIRE, Utils.format("&a&lIncrease Fire Aspect"),
-				Utils.format("&2Costs 10 XP Levels")));
+		inv.setItem(0, ItemManager.createItem(Material.PISTON, CommunicationManager.format("&a&lIncrease Knockback"),
+				CommunicationManager.format("&2Costs 4 XP Levels")));
+		inv.setItem(1, ItemManager.createItem(Material.GOLDEN_HOE, CommunicationManager.format("&a&lIncrease Sweeping Edge"),
+				Utils.BUTTON_FLAGS, null, CommunicationManager.format("&2Costs 6 XP Levels")));
+		inv.setItem(2, ItemManager.createItem(Material.DIAMOND_SWORD, CommunicationManager.format("&a&lIncrease Smite"),
+				Utils.BUTTON_FLAGS, null, CommunicationManager.format("&2Costs 7 XP Levels")));
+		inv.setItem(3, ItemManager.createItem(Material.NETHERITE_AXE, CommunicationManager.format("&a&lIncrease Sharpness"),
+				Utils.BUTTON_FLAGS, null, CommunicationManager.format("&2Costs 8 XP Levels")));
+		inv.setItem(4, ItemManager.createItem(Material.FIRE, CommunicationManager.format("&a&lIncrease Fire Aspect"),
+				CommunicationManager.format("&2Costs 10 XP Levels")));
 
 		// Ranged enchants
-		inv.setItem(18, Utils.createItem(Material.STICKY_PISTON, Utils.format("&a&lIncrease Punch"),
-				Utils.format("&2Costs 4 XP Levels")));
-		inv.setItem(19, Utils.createItem(Material.SPECTRAL_ARROW, Utils.format("&a&lIncrease Piercing"),
-				Utils.format("&2Costs 5 XP Levels")));
-		inv.setItem(20, Utils.createItem(Material.REDSTONE_TORCH, Utils.format("&a&lIncrease Quick Charge"),
-				Utils.format("&2Costs 6 XP Levels")));
-		inv.setItem(21, Utils.createItem(Material.BOW, Utils.format("&a&lIncrease Power"),
-				Utils.format("&2Costs 8 XP Levels")));
-		inv.setItem(22, Utils.createItem(Material.TRIDENT, Utils.format("&a&lIncrease Loyalty"),
-				Utils.BUTTON_FLAGS, null, Utils.format("&2Costs 10 XP Levels")));
-		inv.setItem(23, Utils.createItem(Material.MAGMA_BLOCK, Utils.format("&a&lAdd Flame"),
-				Utils.format("&2Costs 10 XP Levels")));
-		inv.setItem(24, Utils.createItem(Material.CROSSBOW, Utils.format("&a&lAdd Multishot"),
-				Utils.format("&2Costs 10 XP Levels")));
-		inv.setItem(25, Utils.createItem(Material.BEACON, Utils.format("&a&lAdd Infinity"),
-				Utils.format("&2Costs 15 XP Levels")));
+		inv.setItem(18, ItemManager.createItem(Material.STICKY_PISTON, CommunicationManager.format("&a&lIncrease Punch"),
+				CommunicationManager.format("&2Costs 4 XP Levels")));
+		inv.setItem(19, ItemManager.createItem(Material.SPECTRAL_ARROW, CommunicationManager.format("&a&lIncrease Piercing"),
+				CommunicationManager.format("&2Costs 5 XP Levels")));
+		inv.setItem(20, ItemManager.createItem(Material.REDSTONE_TORCH, CommunicationManager.format("&a&lIncrease Quick Charge"),
+				CommunicationManager.format("&2Costs 6 XP Levels")));
+		inv.setItem(21, ItemManager.createItem(Material.BOW, CommunicationManager.format("&a&lIncrease Power"),
+				CommunicationManager.format("&2Costs 8 XP Levels")));
+		inv.setItem(22, ItemManager.createItem(Material.TRIDENT, CommunicationManager.format("&a&lIncrease Loyalty"),
+				Utils.BUTTON_FLAGS, null, CommunicationManager.format("&2Costs 10 XP Levels")));
+		inv.setItem(23, ItemManager.createItem(Material.MAGMA_BLOCK, CommunicationManager.format("&a&lAdd Flame"),
+				CommunicationManager.format("&2Costs 10 XP Levels")));
+		inv.setItem(24, ItemManager.createItem(Material.CROSSBOW, CommunicationManager.format("&a&lAdd Multishot"),
+				CommunicationManager.format("&2Costs 10 XP Levels")));
+		inv.setItem(25, ItemManager.createItem(Material.BEACON, CommunicationManager.format("&a&lAdd Infinity"),
+				CommunicationManager.format("&2Costs 15 XP Levels")));
 
 		// Armor enchants
-		inv.setItem(36, Utils.createItem(Material.TNT, Utils.format("&a&lIncrease Blast Protection"),
-				Utils.format("&2Costs 4 XP Levels")));
-		inv.setItem(37, Utils.createItem(Material.VINE, Utils.format("&a&lIncrease Thorns"),
-				Utils.format("&2Costs 5 XP Levels")));
-		inv.setItem(38, Utils.createItem(Material.ARROW, Utils.format("&a&lIncrease Projectile Protection"),
-				Utils.format("&2Costs 6 XP Levels")));
-		inv.setItem(39, Utils.createItem(Material.SHIELD, Utils.format("&a&lIncrease Protection"),
-				Utils.format("&2Costs 8 XP Levels")));
+		inv.setItem(36, ItemManager.createItem(Material.TNT, CommunicationManager.format("&a&lIncrease Blast Protection"),
+				CommunicationManager.format("&2Costs 4 XP Levels")));
+		inv.setItem(37, ItemManager.createItem(Material.VINE, CommunicationManager.format("&a&lIncrease Thorns"),
+				CommunicationManager.format("&2Costs 5 XP Levels")));
+		inv.setItem(38, ItemManager.createItem(Material.ARROW, CommunicationManager.format("&a&lIncrease Projectile Protection"),
+				CommunicationManager.format("&2Costs 6 XP Levels")));
+		inv.setItem(39, ItemManager.createItem(Material.SHIELD, CommunicationManager.format("&a&lIncrease Protection"),
+				CommunicationManager.format("&2Costs 8 XP Levels")));
 
 		// General enchants
-		inv.setItem(43, Utils.createItem(Material.BEDROCK, Utils.format("&a&lIncrease Unbreaking"),
-				Utils.format("&2Costs 3 XP Levels")));
-		inv.setItem(44, Utils.createItem(Material.ANVIL, Utils.format("&a&lAdd Mending"),
-				Utils.format("&2Costs 20 XP Levels")));
+		inv.setItem(43, ItemManager.createItem(Material.BEDROCK, CommunicationManager.format("&a&lIncrease Unbreaking"),
+				CommunicationManager.format("&2Costs 3 XP Levels")));
+		inv.setItem(44, ItemManager.createItem(Material.ANVIL, CommunicationManager.format("&a&lAdd Mending"),
+				CommunicationManager.format("&2Costs 20 XP Levels")));
 
 		// Return option
 		inv.setItem(53, InventoryItems.exit());
@@ -1938,36 +1939,36 @@ public class Inventories {
 		FileConfiguration playerData = plugin.getPlayerData();
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, Utils.format("&k") +
-				Utils.format("&2&l" + name + "'s Stats"));
+		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+				CommunicationManager.format("&2&l" + name + "'s Stats"));
 
 		// Total kills
-		inv.setItem(0, Utils.createItem(Material.DRAGON_HEAD, Utils.format("&4&lTotal Kills: &4" +
-				playerData.getInt(name + ".totalKills")), Utils.format("&7Lifetime kill count")));
+		inv.setItem(0, ItemManager.createItem(Material.DRAGON_HEAD, CommunicationManager.format("&4&lTotal Kills: &4" +
+				playerData.getInt(name + ".totalKills")), CommunicationManager.format("&7Lifetime kill count")));
 
 		// Top kills
-		inv.setItem(1, Utils.createItem(Material.ZOMBIE_HEAD, Utils.format("&c&lTop Kills: &c" +
-				playerData.getInt(name + ".topKills")), Utils.format("&7Most kills in a game")));
+		inv.setItem(1, ItemManager.createItem(Material.ZOMBIE_HEAD, CommunicationManager.format("&c&lTop Kills: &c" +
+				playerData.getInt(name + ".topKills")), CommunicationManager.format("&7Most kills in a game")));
 
 		// Total gems
-		inv.setItem(2, Utils.createItem(Material.EMERALD_BLOCK, Utils.format("&2&lTotal Gems: &2" +
-				playerData.getInt(name + ".totalGems")), Utils.format("&7Lifetime gems collected")));
+		inv.setItem(2, ItemManager.createItem(Material.EMERALD_BLOCK, CommunicationManager.format("&2&lTotal Gems: &2" +
+				playerData.getInt(name + ".totalGems")), CommunicationManager.format("&7Lifetime gems collected")));
 
 		// Top balance
-		inv.setItem(3, Utils.createItem(Material.EMERALD, Utils.format("&a&lTop Balance: &a" +
+		inv.setItem(3, ItemManager.createItem(Material.EMERALD, CommunicationManager.format("&a&lTop Balance: &a" +
 				playerData.getInt(name + ".topBalance")),
-				Utils.format("&7Highest gem balance in a game")));
+				CommunicationManager.format("&7Highest gem balance in a game")));
 
 		// Top wave
-		inv.setItem(4, Utils.createItem(Material.GOLDEN_SWORD, Utils.format("&3&lTop Wave: &3" +
+		inv.setItem(4, ItemManager.createItem(Material.GOLDEN_SWORD, CommunicationManager.format("&3&lTop Wave: &3" +
 				playerData.getInt(name + ".topWave")), Utils.BUTTON_FLAGS, null,
-				Utils.format("&7Highest completed wave")));
+				CommunicationManager.format("&7Highest completed wave")));
 
 		// Kits
-		inv.setItem(6, Utils.createItem(Material.ENDER_CHEST, Utils.format("&9&lKits")));
+		inv.setItem(6, ItemManager.createItem(Material.ENDER_CHEST, CommunicationManager.format("&9&lKits")));
 
 		// Crystal balance
-		inv.setItem(8, Utils.createItem(Material.DIAMOND, Utils.format("&b&lCrystal Balance: &b" +
+		inv.setItem(8, ItemManager.createItem(Material.DIAMOND, CommunicationManager.format("&b&lCrystal Balance: &b" +
 				playerData.getInt(name + ".crystalBalance"))));
 
 		return inv;
@@ -1979,13 +1980,13 @@ public class Inventories {
 		String path = name + ".kits.";
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 54, Utils.format("&k") +
-				Utils.format("&9&l" + name + "'s Kits"));
+		Inventory inv = Bukkit.createInventory(null, 54, CommunicationManager.format("&k") +
+				CommunicationManager.format("&9&l" + name + "'s Kits"));
 
 		// Gift kits
 		for (int i = 0; i < 9; i++)
-			inv.setItem(i, Utils.createItem(Material.LIME_STAINED_GLASS_PANE, Utils.format("&a&lGift Kits"),
-					Utils.format("&7Kits give one-time benefits"), Utils.format("&7per game or respawn")));
+			inv.setItem(i, ItemManager.createItem(Material.LIME_STAINED_GLASS_PANE, CommunicationManager.format("&a&lGift Kits"),
+					CommunicationManager.format("&7Kits give one-time benefits"), CommunicationManager.format("&7per game or respawn")));
 
 		inv.setItem(9, Kit.orc().getButton(1, true));
 		inv.setItem(10, Kit.farmer().getButton(1, true));
@@ -2006,8 +2007,8 @@ public class Inventories {
 
 		// Ability kits
 		for (int i = 18; i < 27; i++)
-			inv.setItem(i, Utils.createItem(Material.MAGENTA_STAINED_GLASS_PANE, Utils.format("&d&lAbility Kits"),
-					Utils.format("&7Kits give special ability per respawn")));
+			inv.setItem(i, ItemManager.createItem(Material.MAGENTA_STAINED_GLASS_PANE, CommunicationManager.format("&d&lAbility Kits"),
+					CommunicationManager.format("&7Kits give special ability per respawn")));
 
 		inv.setItem(27, Kit.mage().getButton(playerData.getInt(path + Kit.mage().getName()), true));
 		inv.setItem(28, Kit.ninja().getButton(playerData.getInt(path + Kit.ninja().getName()),
@@ -2028,9 +2029,9 @@ public class Inventories {
 
 		// Effect kits
 		for (int i = 36; i < 45; i++)
-			inv.setItem(i, Utils.createItem(Material.YELLOW_STAINED_GLASS_PANE, Utils.format("&e&lEffect Kits"),
-					Utils.format("&7Kits give players a permanent"),
-							Utils.format("&7special effect")));
+			inv.setItem(i, ItemManager.createItem(Material.YELLOW_STAINED_GLASS_PANE, CommunicationManager.format("&e&lEffect Kits"),
+					CommunicationManager.format("&7Kits give players a permanent"),
+							CommunicationManager.format("&7special effect")));
 
 		inv.setItem(45, Kit.blacksmith().getButton(playerData.getBoolean(path + Kit.blacksmith().getName()) ?
 				1 : 0, true));
@@ -2045,7 +2046,7 @@ public class Inventories {
 
 		// Crystal balance
 		if (name.equals(requester))
-			inv.setItem(52, Utils.createItem(Material.DIAMOND, Utils.format("&b&lCrystal Balance: &b" +
+			inv.setItem(52, ItemManager.createItem(Material.DIAMOND, CommunicationManager.format("&b&lCrystal Balance: &b" +
 					playerData.getInt(name + ".crystalBalance"))));
 
 		// Option to exit
@@ -2060,13 +2061,13 @@ public class Inventories {
 		String path = player.getName() + ".kits.";
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 54, Utils.format("&k") +
-				Utils.format("&9&l" + arena.getName() + " Kits"));
+		Inventory inv = Bukkit.createInventory(null, 54, CommunicationManager.format("&k") +
+				CommunicationManager.format("&9&l" + arena.getName() + " Kits"));
 
 		// Gift kits
 		for (int i = 0; i < 9; i++)
-			inv.setItem(i, Utils.createItem(Material.LIME_STAINED_GLASS_PANE, Utils.format("&a&lGift Kits"),
-					Utils.format("&7Kits give one-time benefits"), Utils.format("&7per game or respawn")));
+			inv.setItem(i, ItemManager.createItem(Material.LIME_STAINED_GLASS_PANE, CommunicationManager.format("&a&lGift Kits"),
+					CommunicationManager.format("&7Kits give one-time benefits"), CommunicationManager.format("&7per game or respawn")));
 
 		if (!arena.getBannedKits().contains("Orc"))
 			inv.setItem(9, Kit.orc().getButton(1, false));
@@ -2096,8 +2097,8 @@ public class Inventories {
 
 		// Ability kits
 		for (int i = 18; i < 27; i++)
-			inv.setItem(i, Utils.createItem(Material.MAGENTA_STAINED_GLASS_PANE, Utils.format("&d&lAbility Kits"),
-					Utils.format("&7Kits give special ability per respawn")));
+			inv.setItem(i, ItemManager.createItem(Material.MAGENTA_STAINED_GLASS_PANE, CommunicationManager.format("&d&lAbility Kits"),
+					CommunicationManager.format("&7Kits give special ability per respawn")));
 
 		if (!arena.getBannedKits().contains("Mage"))
 			inv.setItem(27, Kit.mage().getButton(playerData.getInt(path + Kit.mage().getName()),
@@ -2129,8 +2130,8 @@ public class Inventories {
 
 		// Effect kits
 		for (int i = 36; i < 45; i++)
-			inv.setItem(i, Utils.createItem(Material.YELLOW_STAINED_GLASS_PANE, Utils.format("&e&lEffect Kits"),
-					Utils.format("&7Kits give players a permanent"), Utils.format("&7special effect")));
+			inv.setItem(i, ItemManager.createItem(Material.YELLOW_STAINED_GLASS_PANE, CommunicationManager.format("&e&lEffect Kits"),
+					CommunicationManager.format("&7Kits give players a permanent"), CommunicationManager.format("&7special effect")));
 
 		if (!arena.getBannedKits().contains("Blacksmith"))
 			inv.setItem(45, Kit.blacksmith().getButton(
@@ -2160,8 +2161,8 @@ public class Inventories {
 	// Display challenges for a player to select
 	public static Inventory createSelectChallengesInventory(VDPlayer player, Arena arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 18, Utils.format("&k") +
-				Utils.format("&5&l" + arena.getName() + " Challenges"));
+		Inventory inv = Bukkit.createInventory(null, 18, CommunicationManager.format("&k") +
+				CommunicationManager.format("&5&l" + arena.getName() + " Challenges"));
 
 		// Set buttons
 		inv.setItem(0, Challenge.amputee().getButton(player.getChallenges().contains(Challenge.amputee())));
@@ -2183,148 +2184,148 @@ public class Inventories {
 	// Display arena information
 	public static Inventory createArenaInfoInventory(Arena arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena.getArena()), 36, Utils.format("&k") +
-				Utils.format("&6&l" + arena.getName() + " Info"));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena.getArena()), 36, CommunicationManager.format("&k") +
+				CommunicationManager.format("&6&l" + arena.getName() + " Info"));
 
 		// Maximum players
-		inv.setItem(1, Utils.createItem(Material.NETHERITE_HELMET,
-				Utils.format("&4&lMaximum players: &4" + arena.getMaxPlayers()), Utils.BUTTON_FLAGS, null,
-				Utils.format("&7The most players an arena can have")));
+		inv.setItem(1, ItemManager.createItem(Material.NETHERITE_HELMET,
+				CommunicationManager.format("&4&lMaximum players: &4" + arena.getMaxPlayers()), Utils.BUTTON_FLAGS, null,
+				CommunicationManager.format("&7The most players an arena can have")));
 
 		// Minimum players
-		inv.setItem(2, Utils.createItem(Material.NETHERITE_BOOTS,
-				Utils.format("&2&lMinimum players: &2" + arena.getMinPlayers()), Utils.BUTTON_FLAGS, null,
-				Utils.format("&7The least players an arena can have to start")));
+		inv.setItem(2, ItemManager.createItem(Material.NETHERITE_BOOTS,
+				CommunicationManager.format("&2&lMinimum players: &2" + arena.getMinPlayers()), Utils.BUTTON_FLAGS, null,
+				CommunicationManager.format("&7The least players an arena can have to start")));
 
 		// Max waves
 		String waves;
 		if (arena.getMaxWaves() < 0)
 			waves = "Unlimited";
 		else waves = Integer.toString(arena.getMaxWaves());
-		inv.setItem(3, Utils.createItem(Material.GOLDEN_SWORD,
-				Utils.format("&3&lMax waves: &3" + waves), Utils.BUTTON_FLAGS, null,
-				Utils.format("&7The highest wave the arena will go to")));
+		inv.setItem(3, ItemManager.createItem(Material.GOLDEN_SWORD,
+				CommunicationManager.format("&3&lMax waves: &3" + waves), Utils.BUTTON_FLAGS, null,
+				CommunicationManager.format("&7The highest wave the arena will go to")));
 
 		// Wave time limit
 		String limit;
 		if (arena.getWaveTimeLimit() < 0)
 			limit = "Unlimited";
 		else limit = arena.getWaveTimeLimit() + " minute(s)";
-		inv.setItem(4, Utils.createItem(Material.CLOCK,
-				Utils.format("&9&lWave time limit: &9" + limit),
-				Utils.format("&7The time limit for each wave before"), Utils.format("&7the game ends")));
+		inv.setItem(4, ItemManager.createItem(Material.CLOCK,
+				CommunicationManager.format("&9&lWave time limit: &9" + limit),
+				CommunicationManager.format("&7The time limit for each wave before"), CommunicationManager.format("&7the game ends")));
 
 		// Wolf cap
-		inv.setItem(5, Utils.createItem(Material.BONE, Utils.format("&6&lWolf Cap: &6" + arena.getWolfCap()),
-				Utils.format("&7Maximum wolves a player can have")));
+		inv.setItem(5, ItemManager.createItem(Material.BONE, CommunicationManager.format("&6&lWolf Cap: &6" + arena.getWolfCap()),
+				CommunicationManager.format("&7Maximum wolves a player can have")));
 
 		// Golem cap
-		inv.setItem(6, Utils.createItem(Material.IRON_INGOT, Utils.format("&e&lIron Golem Cap: &e" +
+		inv.setItem(6, ItemManager.createItem(Material.IRON_INGOT, CommunicationManager.format("&e&lIron Golem Cap: &e" +
 						arena.getGolemCap()),
-				Utils.format("&7Maximum iron golems an arena can have")));
+				CommunicationManager.format("&7Maximum iron golems an arena can have")));
 
 		// Allowed kits
-		inv.setItem(7, Utils.createItem(Material.ENDER_CHEST, Utils.format("&9&lAllowed Kits")));
+		inv.setItem(7, ItemManager.createItem(Material.ENDER_CHEST, CommunicationManager.format("&9&lAllowed Kits")));
 
 		// Dynamic mob count
-		inv.setItem(10, Utils.createItem(Material.SLIME_BALL,
-				Utils.format("&e&lDynamic Mob Count: " + getToggleStatus(arena.hasDynamicCount())),
-				Utils.format("&7Mob count adjusting based on"), Utils.format("&7number of players")));
+		inv.setItem(10, ItemManager.createItem(Material.SLIME_BALL,
+				CommunicationManager.format("&e&lDynamic Mob Count: " + getToggleStatus(arena.hasDynamicCount())),
+				CommunicationManager.format("&7Mob count adjusting based on"), CommunicationManager.format("&7number of players")));
 
 		// Dynamic difficulty
-		inv.setItem(11, Utils.createItem(Material.MAGMA_CREAM,
-				Utils.format("&6&lDynamic Difficulty: " + getToggleStatus(arena.hasDynamicDifficulty())),
-				Utils.format("&7Difficulty adjusting based on"), Utils.format("&7number of players")));
+		inv.setItem(11, ItemManager.createItem(Material.MAGMA_CREAM,
+				CommunicationManager.format("&6&lDynamic Difficulty: " + getToggleStatus(arena.hasDynamicDifficulty())),
+				CommunicationManager.format("&7Difficulty adjusting based on"), CommunicationManager.format("&7number of players")));
 
 		// Dynamic prices
-		inv.setItem(12, Utils.createItem(Material.NETHER_STAR,
-				Utils.format("&b&lDynamic Prices: " + getToggleStatus(arena.hasDynamicPrices())),
-				Utils.format("&7Prices adjusting based on number of"),
-				Utils.format("&7players in the game")));
+		inv.setItem(12, ItemManager.createItem(Material.NETHER_STAR,
+				CommunicationManager.format("&b&lDynamic Prices: " + getToggleStatus(arena.hasDynamicPrices())),
+				CommunicationManager.format("&7Prices adjusting based on number of"),
+				CommunicationManager.format("&7players in the game")));
 
 		// Dynamic time limit
-		inv.setItem(13, Utils.createItem(Material.SNOWBALL,
-				Utils.format("&a&lDynamic Time Limit: " + getToggleStatus(arena.hasDynamicLimit())),
-				Utils.format("&7Wave time limit adjusting based on"),
-				Utils.format("&7in-game difficulty")));
+		inv.setItem(13, ItemManager.createItem(Material.SNOWBALL,
+				CommunicationManager.format("&a&lDynamic Time Limit: " + getToggleStatus(arena.hasDynamicLimit())),
+				CommunicationManager.format("&7Wave time limit adjusting based on"),
+				CommunicationManager.format("&7in-game difficulty")));
 
 		// Difficulty multiplier
-		inv.setItem(14, Utils.createItem(Material.DAYLIGHT_DETECTOR,
-				Utils.format("&e&lLate Arrival: " + getToggleStatus(arena.hasLateArrival())),
+		inv.setItem(14, ItemManager.createItem(Material.DAYLIGHT_DETECTOR,
+				CommunicationManager.format("&e&lLate Arrival: " + getToggleStatus(arena.hasLateArrival())),
 				Utils.BUTTON_FLAGS,
 				null,
-				Utils.format("&7Whether players can enter"),
-				Utils.format("&7arenas late")));
+				CommunicationManager.format("&7Whether players can enter"),
+				CommunicationManager.format("&7arenas late")));
 
 		// Item dropping
-		inv.setItem(15, Utils.createItem(Material.EMERALD,
-				Utils.format("&9&lItem Drop: " + getToggleStatus(arena.hasGemDrop())),
-				Utils.format("&7Change whether gems drop as"),
-				Utils.format("&7physical gems or go straight"),
-				Utils.format("&7into the killer's balance")));
+		inv.setItem(15, ItemManager.createItem(Material.EMERALD,
+				CommunicationManager.format("&9&lItem Drop: " + getToggleStatus(arena.hasGemDrop())),
+				CommunicationManager.format("&7Change whether gems drop as"),
+				CommunicationManager.format("&7physical gems or go straight"),
+				CommunicationManager.format("&7into the killer's balance")));
 
 		// Experience drop
-		inv.setItem(16, Utils.createItem(Material.EXPERIENCE_BOTTLE,
-				Utils.format("&b&lExperience Drop: " + getToggleStatus(arena.hasExpDrop())),
-				Utils.format("&7Change whether experience drop or go"),
-				Utils.format("&7straight into the killer's experience bar")));
+		inv.setItem(16, ItemManager.createItem(Material.EXPERIENCE_BOTTLE,
+				CommunicationManager.format("&b&lExperience Drop: " + getToggleStatus(arena.hasExpDrop())),
+				CommunicationManager.format("&7Change whether experience drop or go"),
+				CommunicationManager.format("&7straight into the killer's experience bar")));
 
 		// Player spawn particles
-		inv.setItem(19, Utils.createItem(Material.FIREWORK_ROCKET,
-				Utils.format("&e&lPlayer Spawn Particles: " + getToggleStatus(arena.hasSpawnParticles()))));
+		inv.setItem(19, ItemManager.createItem(Material.FIREWORK_ROCKET,
+				CommunicationManager.format("&e&lPlayer Spawn Particles: " + getToggleStatus(arena.hasSpawnParticles()))));
 
 		// Monster spawn particles
-		inv.setItem(20, Utils.createItem(Material.FIREWORK_ROCKET,
-				Utils.format("&d&lMonster Spawn Particles: " + getToggleStatus(arena.hasMonsterParticles()))));
+		inv.setItem(20, ItemManager.createItem(Material.FIREWORK_ROCKET,
+				CommunicationManager.format("&d&lMonster Spawn Particles: " + getToggleStatus(arena.hasMonsterParticles()))));
 
 		// Villager spawn particles
-		inv.setItem(21, Utils.createItem(Material.FIREWORK_ROCKET,
-				Utils.format("&a&lVillager Spawn Particles: " + getToggleStatus(arena.hasVillagerParticles()))));
+		inv.setItem(21, ItemManager.createItem(Material.FIREWORK_ROCKET,
+				CommunicationManager.format("&a&lVillager Spawn Particles: " + getToggleStatus(arena.hasVillagerParticles()))));
 
 		// Default shop
-		inv.setItem(22, Utils.createItem(Material.EMERALD_BLOCK,
-				Utils.format("&6&lDefault Shop: " + getToggleStatus(arena.hasNormal()))));
+		inv.setItem(22, ItemManager.createItem(Material.EMERALD_BLOCK,
+				CommunicationManager.format("&6&lDefault Shop: " + getToggleStatus(arena.hasNormal()))));
 
 		// Custom shop
-		inv.setItem(23, Utils.createItem(Material.QUARTZ_BLOCK,
-				Utils.format("&2&lCustom Shop: " + getToggleStatus(arena.hasCustom()))));
+		inv.setItem(23, ItemManager.createItem(Material.QUARTZ_BLOCK,
+				CommunicationManager.format("&2&lCustom Shop: " + getToggleStatus(arena.hasCustom()))));
 
 		// Enchants shop
-		inv.setItem(24, Utils.createItem(Material.BOOKSHELF,
-				Utils.format("&3&lEnchants Shop: " + getToggleStatus(arena.hasEnchants()))));
+		inv.setItem(24, ItemManager.createItem(Material.BOOKSHELF,
+				CommunicationManager.format("&3&lEnchants Shop: " + getToggleStatus(arena.hasEnchants()))));
 
 		// Community chest
-		inv.setItem(25, Utils.createItem(Material.CHEST,
-				Utils.format("&d&lCommunity Chest: " + getToggleStatus(arena.hasCommunity()))));
+		inv.setItem(25, ItemManager.createItem(Material.CHEST,
+				CommunicationManager.format("&d&lCommunity Chest: " + getToggleStatus(arena.hasCommunity()))));
 
 		// Custom shop inventory
-		inv.setItem(30, Utils.createItem(Material.QUARTZ, Utils.format("&f&lCustom Shop Inventory")));
+		inv.setItem(30, ItemManager.createItem(Material.QUARTZ, CommunicationManager.format("&f&lCustom Shop Inventory")));
 
 		// Difficulty multiplier
-		inv.setItem(31, Utils.createItem(Material.TURTLE_HELMET,
-				Utils.format("&4&lDifficulty Multiplier: &4" + arena.getDifficultyMultiplier()),
+		inv.setItem(31, ItemManager.createItem(Material.TURTLE_HELMET,
+				CommunicationManager.format("&4&lDifficulty Multiplier: &4" + arena.getDifficultyMultiplier()),
 				Utils.BUTTON_FLAGS,
 				null,
-				Utils.format("&7Determines difficulty increase rate")));
+				CommunicationManager.format("&7Determines difficulty increase rate")));
 
 		// Arena records
 		List<String> records = new ArrayList<>();
 		arena.getSortedDescendingRecords().forEach(arenaRecord -> {
-			records.add(Utils.format("&fWave " + arenaRecord.getWave()));
+			records.add(CommunicationManager.format("&fWave " + arenaRecord.getWave()));
 			for (int i = 0; i < arenaRecord.getPlayers().size() / 4 + 1; i++) {
-				StringBuilder players = new StringBuilder(Utils.format("&7"));
+				StringBuilder players = new StringBuilder(CommunicationManager.format("&7"));
 				if (i * 4 + 4 < arenaRecord.getPlayers().size()) {
 					for (int j = i * 4; j < i * 4 + 4; j++)
 						players.append(arenaRecord.getPlayers().get(j)).append(", ");
-					records.add(Utils.format(players.substring(0, players.length() - 1)));
+					records.add(CommunicationManager.format(players.substring(0, players.length() - 1)));
 				} else {
 					for (int j = i * 4; j < arenaRecord.getPlayers().size(); j++)
 						players.append(arenaRecord.getPlayers().get(j)).append(", ");
-					records.add(Utils.format(players.substring(0, players.length() - 2)));
+					records.add(CommunicationManager.format(players.substring(0, players.length() - 2)));
 				}
 			}
 		});
-		inv.setItem(32, Utils.createItem(Material.GOLDEN_HELMET, Utils.format("&e&lArena Records"), Utils.BUTTON_FLAGS,
+		inv.setItem(32, ItemManager.createItem(Material.GOLDEN_HELMET, CommunicationManager.format("&e&lArena Records"), Utils.BUTTON_FLAGS,
 				null, records));
 
 		return inv;
@@ -2340,8 +2341,8 @@ public class Inventories {
 		TileEntitySign sign = new TileEntitySign();
 		sign.setPosition(blockPosition);
 		sign.lines[0] = CraftSign.sanitizeLines(new String[]{String.format("Rename Arena %d:", arena.getArena())})[0];
-		sign.lines[1] = CraftSign.sanitizeLines(new String[]{Utils.format("===============")})[0];
-		sign.lines[3] = CraftSign.sanitizeLines(new String[]{Utils.format("===============")})[0];
+		sign.lines[1] = CraftSign.sanitizeLines(new String[]{CommunicationManager.format("===============")})[0];
+		sign.lines[3] = CraftSign.sanitizeLines(new String[]{CommunicationManager.format("===============")})[0];
 		sign.lines[2] = CraftSign.sanitizeLines(new String[]{arena.getName()})[0];
 		sign.update();
 
@@ -2367,7 +2368,7 @@ public class Inventories {
 		List<String> lore = meta.getLore();
 		assert lore != null;
 		int price = (int) Math.round(Integer.parseInt(lore.get(lore.size() - 1).substring(10)) * modifier / 5) * 5;
-		lore.set(lore.size() - 1, Utils.format("&2Gems: &a" + price));
+		lore.set(lore.size() - 1, CommunicationManager.format("&2Gems: &a" + price));
 		meta.setLore(lore);
 		item.setItemMeta(meta);
 		return item;

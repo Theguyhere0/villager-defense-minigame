@@ -1,7 +1,7 @@
 package me.theguyhere.villagerdefense;
 
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.game.models.Game;
+import me.theguyhere.villagerdefense.game.models.arenas.ArenaManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -37,7 +37,7 @@ public class CommandTab implements TabCompleter {
             StringBuilder nameFrag = new StringBuilder(args[1]);
             for (int i = 0; i < args.length - 2; i++)
                 nameFrag.append(" ").append(args[i + 2]);
-            Arrays.stream(Game.arenas).filter(Objects::nonNull).map(Arena::getName).forEach(name -> {
+            Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).map(Arena::getName).forEach(name -> {
                 if (name.toLowerCase().startsWith(nameFrag.toString()))
                     result.add(name);
             });

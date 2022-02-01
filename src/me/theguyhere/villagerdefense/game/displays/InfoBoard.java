@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.game.displays;
 
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.exceptions.InvalidLocationException;
-import me.theguyhere.villagerdefense.tools.Utils;
+import me.theguyhere.villagerdefense.tools.CommunicationManager;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -21,12 +21,12 @@ public class InfoBoard {
 
 		// Gather info text
 		FileConfiguration language = plugin.getLanguageData();
-		String[] text = {Utils.format(language.getString("info1")),
-				Utils.format(language.getString("info2")),
-				Utils.format(language.getString("info3")),
-				Utils.format(language.getString("info4")),
-				Utils.format(language.getString("info5")),
-				Utils.format(language.getString("info6"))};
+		String[] text = {CommunicationManager.format(language.getString("info1")),
+				CommunicationManager.format(language.getString("info2")),
+				CommunicationManager.format(language.getString("info3")),
+				CommunicationManager.format(language.getString("info4")),
+				CommunicationManager.format(language.getString("info5")),
+				CommunicationManager.format(language.getString("info6"))};
 
 		// Set location and hologram
 		this.location = location;

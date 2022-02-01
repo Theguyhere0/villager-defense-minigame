@@ -4,9 +4,13 @@ import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.EndNinjaNerfEvent;
 import me.theguyhere.villagerdefense.game.models.*;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.game.models.arenas.ArenaManager;
 import me.theguyhere.villagerdefense.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
+import me.theguyhere.villagerdefense.tools.CommunicationManager;
+import me.theguyhere.villagerdefense.tools.PlayerManager;
 import me.theguyhere.villagerdefense.tools.Utils;
+import me.theguyhere.villagerdefense.tools.WorldManager;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
@@ -50,7 +54,7 @@ public class AbilityListener implements Listener {
 
         // Attempt to get arena and player
         try {
-            arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+            arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
                     .collect(Collectors.toList()).get(0);
             gamer = arena.getPlayer(player);
         } catch (Exception err) {
@@ -70,7 +74,7 @@ public class AbilityListener implements Listener {
             return;
 
         // See if the player is in a game
-        if (Arrays.stream(Game.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+        if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
             return;
 
         // Ensure cooldown is initialized
@@ -121,7 +125,7 @@ public class AbilityListener implements Listener {
 
             // Activate ability
             player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, duration, 0));
-            Utils.getPets(player).forEach(wolf ->
+            WorldManager.getPets(player).forEach(wolf ->
                     wolf.addPotionEffect((new PotionEffect(PotionEffectType.INVISIBILITY, duration, 0))));
             cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
             gamer.hideArmor();
@@ -162,9 +166,9 @@ public class AbilityListener implements Listener {
             int altDuration = (int) (.6 * duration);
 
             // Activate ability
-            Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
+            WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
                     new PotionEffect(PotionEffectType.ABSORPTION, altDuration, amplifier)));
-            Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+            WorldManager.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
                     new PotionEffect(PotionEffectType.ABSORPTION, altDuration, amplifier)));
             player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, duration, amplifier));
             cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
@@ -202,9 +206,9 @@ public class AbilityListener implements Listener {
             int altDuration = (int) (.6 * duration);
 
             // Activate ability
-            Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
+            WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
                     new PotionEffect(PotionEffectType.INCREASE_DAMAGE, altDuration, amplifier)));
-            Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+            WorldManager.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
                     new PotionEffect(PotionEffectType.INCREASE_DAMAGE, altDuration, amplifier)));
             player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, duration, amplifier));
             cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
@@ -242,9 +246,9 @@ public class AbilityListener implements Listener {
             int altDuration = (int) (.6 * duration);
 
             // Activate ability
-            Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
+            WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
                     new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, altDuration, amplifier)));
-            Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+            WorldManager.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
                     new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, altDuration, amplifier)));
             player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, duration, amplifier));
             cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
@@ -282,9 +286,9 @@ public class AbilityListener implements Listener {
             int altDuration = (int) (.6 * duration);
 
             // Activate ability
-            Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
+            WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
                     new PotionEffect(PotionEffectType.REGENERATION, altDuration, amplifier)));
-            Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+            WorldManager.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
                     new PotionEffect(PotionEffectType.REGENERATION, altDuration, amplifier)));
             player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, duration, amplifier));
             cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
@@ -325,10 +329,10 @@ public class AbilityListener implements Listener {
             int altDuration = (int) (.4 * duration);
 
             // Activate ability
-            Utils.getNearbyMonsters(player, range).forEach(ent -> ent.addPotionEffect(
+            WorldManager.getNearbyMonsters(player, range).forEach(ent -> ent.addPotionEffect(
                     new PotionEffect(PotionEffectType.SLOW, duration, amp1)));
             if (amp2 != -1)
-                Utils.getNearbyMonsters(player, range).forEach(ent -> ent.addPotionEffect(
+                WorldManager.getNearbyMonsters(player, range).forEach(ent -> ent.addPotionEffect(
                         new PotionEffect(PotionEffectType.WEAKNESS, altDuration, amp2)));
             cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
 
@@ -365,9 +369,9 @@ public class AbilityListener implements Listener {
             int altDuration = (int) (.6 * duration);
 
             // Activate ability
-            Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
+            WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
                     new PotionEffect(PotionEffectType.FAST_DIGGING, altDuration, amplifier)));
-            Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+            WorldManager.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
                     new PotionEffect(PotionEffectType.FAST_DIGGING, altDuration, amplifier)));
             player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, duration, amplifier));
             cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
@@ -405,9 +409,9 @@ public class AbilityListener implements Listener {
             int altDuration = (int) (.6 * duration);
 
             // Activate ability
-            Utils.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
+            WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
                     new PotionEffect(PotionEffectType.SPEED, altDuration, amplifier)));
-            Utils.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+            WorldManager.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
                     new PotionEffect(PotionEffectType.SPEED, altDuration, amplifier)));
             player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, duration, amplifier));
             cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
@@ -439,7 +443,7 @@ public class AbilityListener implements Listener {
 
         // Attempt to get arena and player
         try {
-            arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+            arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
                     .collect(Collectors.toList()).get(0);
             gamer = arena.getPlayer(player);
         } catch (Exception err) {
@@ -526,7 +530,7 @@ public class AbilityListener implements Listener {
         Player player = e.getPlayer();
 
         // Check if player is in a game
-        if (Arrays.stream(Game.arenas).filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player)))
+        if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player)))
             return;
 
         // Ignore creative and spectator mode players
@@ -548,31 +552,31 @@ public class AbilityListener implements Listener {
 
         // Unequip armor
         if (!(helmet == null || helmet.getType() == Material.AIR)) {
-            Utils.giveItem(player, helmet, Utils.notify(language.getString("inventoryFull")));
+            PlayerManager.giveItem(player, helmet, language.getString("inventoryFull"));
             player.getInventory().setHelmet(null);
-            player.sendMessage(Utils.notify(language.getString("ninjaError")));
+            PlayerManager.notify(player, language.getString("ninjaError"));
         }
         if (!(chestplate == null || chestplate.getType() == Material.AIR)) {
-            Utils.giveItem(player, chestplate, Utils.notify(language.getString("inventoryFull")));
+            PlayerManager.giveItem(player, chestplate, language.getString("inventoryFull"));
             player.getInventory().setChestplate(null);
-            player.sendMessage(Utils.notify(language.getString("ninjaError")));
+            PlayerManager.notify(player, language.getString("ninjaError"));
         }
         if (!(leggings == null || leggings.getType() == Material.AIR)) {
-            Utils.giveItem(player, leggings, Utils.notify(language.getString("inventoryFull")));
+            PlayerManager.giveItem(player, leggings, language.getString("inventoryFull"));
             player.getInventory().setLeggings(null);
-            player.sendMessage(Utils.notify(language.getString("ninjaError")));
+            PlayerManager.notify(player, language.getString("ninjaError"));
         }
         if (!(boots == null || boots.getType() == Material.AIR)) {
-            Utils.giveItem(player, boots, Utils.notify(language.getString("inventoryFull")));
+            PlayerManager.giveItem(player, boots, language.getString("inventoryFull"));
             player.getInventory().setBoots(null);
-            player.sendMessage(Utils.notify(language.getString("ninjaError")));
+            PlayerManager.notify(player, language.getString("ninjaError"));
         }
     }
 
     private boolean checkLevel(int level, Player player, FileConfiguration language) {
         if (level == 0) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-                    Utils.format(language.getString("levelError"))));
+                    CommunicationManager.format(language.getString("levelError"))));
             return true;
         }
         return false;
@@ -581,7 +585,7 @@ public class AbilityListener implements Listener {
     private static boolean checkCooldown(long dif, Player player, FileConfiguration language) {
         if (dif > 0) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-                    Utils.format(String.format(Objects.requireNonNull(language.getString("cooldownError")),
+                    CommunicationManager.format(String.format(Objects.requireNonNull(language.getString("cooldownError")),
                             Utils.millisToSeconds(dif)))));
             return true;
         }
