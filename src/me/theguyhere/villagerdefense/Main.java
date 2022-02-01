@@ -1,7 +1,6 @@
 package me.theguyhere.villagerdefense;
 
 import me.theguyhere.villagerdefense.game.models.arenas.ArenaManager;
-import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.listeners.*;
 import me.theguyhere.villagerdefense.packets.MetadataHelper;
 import me.theguyhere.villagerdefense.packets.PacketReader;
@@ -15,7 +14,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Team;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 public class Main extends JavaPlugin {
@@ -40,14 +38,11 @@ public class Main extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		// Set up initial classes
 		saveDefaultConfig();
 		PluginManager pm = getServer().getPluginManager();
 		MetadataHelper.init();
-		arenaManager = new ArenaManager(this);
-
 		Commands commands = new Commands(this);
-
-		checkArenas();
 
 		// Set up commands and tab complete
 		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist").setExecutor(commands);
@@ -84,7 +79,7 @@ public class Main extends JavaPlugin {
 		if (getConfig().getInt("arenaData") < arenaDataVersion) {
 			CommunicationManager.debugError("Your arenaData.yml is no longer supported with this version!", 0);
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
-					"Please manually transfer arena data to version " + ChatColor.BLUE + arenaDataVersion +
+					"Please transfer arena data to version " + ChatColor.BLUE + arenaDataVersion +
 					ChatColor.RED + ".");
 			CommunicationManager.debugError("Please do not update your config.yml until your arenaData.yml has been updated.",
 					0);
@@ -95,7 +90,7 @@ public class Main extends JavaPlugin {
 		if (getConfig().getInt("playerData") < playerDataVersion) {
 			CommunicationManager.debugError("Your playerData.yml is no longer supported with this version!", 0);
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
-					"Please manually transfer player data to version " + ChatColor.BLUE + playerDataVersion +
+					"Please transfer player data to version " + ChatColor.BLUE + playerDataVersion +
 					ChatColor.BLUE + ".");
 			CommunicationManager.debugError("Please do not update your config.yml until your playerData.yml has been updated.",
 					0);
@@ -106,7 +101,7 @@ public class Main extends JavaPlugin {
 		if (getConfig().getInt("spawnTableStructure") < spawnTableVersion) {
 			CommunicationManager.debugError("Your spawn tables are no longer supported with this version!", 0);
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
-					"Please manually transfer spawn table data to version " + ChatColor.BLUE + spawnTableVersion +
+					"Please transfer spawn table data to version " + ChatColor.BLUE + spawnTableVersion +
 					ChatColor.RED + ".");
 			CommunicationManager.debugError("Please do not update your config.yml until your spawn tables have been updated.",
 					0);
@@ -147,6 +142,9 @@ public class Main extends JavaPlugin {
 			villagers.setColor(ChatColor.GREEN);
 			villagers.setDisplayName(ChatColor.GREEN + "Villagers");
 		}
+
+		// Set ArenaManager
+		arenaManager = new ArenaManager(this);
 	}
 
 	@Override
@@ -190,11 +188,6 @@ public class Main extends JavaPlugin {
 
 	public FileConfiguration getLanguageData() {
 		return languageData.getConfig();
-	}
-
-	// Check arenas for close
-	private void checkArenas() {
-		Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).forEach(Arena::checkClose);
 	}
 
 	public boolean isOutdated() {

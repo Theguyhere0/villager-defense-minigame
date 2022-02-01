@@ -27,9 +27,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Commands implements CommandExecutor {
@@ -630,23 +628,24 @@ public class Commands implements CommandExecutor {
 					else CommunicationManager.debugError("plugin.yml must be updated manually.", 0);
 
 				// Check if arenaData.yml is outdated
-				if (plugin.getConfig().getInt("arenaData") < 4) {
+				int arenaDataVersion = plugin.getConfig().getInt("arenaData");
+				if (arenaDataVersion < 4) {
 					try {
 						// Transfer portals
 						Objects.requireNonNull(plugin.getArenaData().getConfigurationSection("portal"))
 								.getKeys(false).forEach(arenaID -> {
-							Location location = Utils.getConfigLocation(plugin, "portal." + arenaID);
-							plugin.getArenaData().set("portal." + arenaID, null);
-							Utils.setConfigurationLocation(plugin, "a" + arenaID + ".portal", location);
-						});
+									Location location = Utils.getConfigLocation(plugin, "portal." + arenaID);
+									Utils.setConfigurationLocation(plugin, "a" + arenaID + ".portal", location);
+									plugin.getArenaData().set("portal." + arenaID, null);
+								});
 						plugin.getArenaData().set("portal", null);
 
 						// Transfer arena boards
 						Objects.requireNonNull(plugin.getArenaData().getConfigurationSection("arenaBoard"))
 								.getKeys(false).forEach(arenaID -> {
 									Location location = Utils.getConfigLocation(plugin, "arenaBoard." + arenaID);
-									plugin.getArenaData().set("arenaBoard." + arenaID, null);
 									Utils.setConfigurationLocation(plugin, "a" + arenaID + ".arenaBoard", location);
+									plugin.getArenaData().set("arenaBoard." + arenaID, null);
 								});
 						plugin.getArenaData().set("arenaBoard", null);
 
@@ -657,19 +656,23 @@ public class Commands implements CommandExecutor {
 
 						// Flip flag and update config.yml
 						fixed = true;
-						plugin.getConfig().set("arenaData", plugin.arenaDataVersion);
+						plugin.getConfig().set("arenaData", 4);
 						plugin.saveConfig();
 
 						// Notify
 						if (player != null)
-							PlayerManager.notify(player, "&aarenaData.yml has been automatically updated.");
-						CommunicationManager.debugInfo("arenaData.yml has been automatically updated.", 0);
+							PlayerManager.notify(player,
+									"&aarenaData.yml has been automatically updated to version 4.");
+						CommunicationManager.debugInfo(
+								"arenaData.yml has been automatically updated to version 4.", 0);
 					} catch (Exception e) {
 						if (player != null)
 							PlayerManager.notify(player, "&carenaData.yml must be updated manually.");
-						else CommunicationManager.debugError("arenaData.yml must be updated manually.", 0);
+						else CommunicationManager.debugError("arenaData.yml must be updated manually.",
+								0);
 					}
-				} else if (plugin.getConfig().getInt("arenaData") < plugin.arenaDataVersion) {
+				}
+				else if (arenaDataVersion < plugin.arenaDataVersion) {
 					if (player != null)
 						PlayerManager.notify(player, "&carenaData.yml must be updated manually.");
 					else CommunicationManager.debugError("arenaData.yml must be updated manually.", 0);
@@ -713,7 +716,8 @@ public class Commands implements CommandExecutor {
 					if (player != null)
 						PlayerManager.notify(player, "&aen_US.yml has been automatically updated. " +
 								"Please restart the plugin.");
-					CommunicationManager.debugInfo("en_US.yml has been automatically updated. Please restart the plugin.",
+					CommunicationManager.debugInfo("en_US.yml has been automatically updated. " +
+									"Please restart the plugin.",
 							0);
 				}
 
@@ -721,7 +725,8 @@ public class Commands implements CommandExecutor {
 				if (!fixed)
 					if (player != null)
 						PlayerManager.notify(player, "There was nothing that could be updated automatically.");
-					else CommunicationManager.debugInfo("There was nothing that could be updated automatically.", 0);
+					else CommunicationManager.debugInfo("There was nothing that could be updated automatically.",
+							0);
 
 				return true;
 			}

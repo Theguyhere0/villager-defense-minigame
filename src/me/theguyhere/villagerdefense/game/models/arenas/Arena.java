@@ -114,6 +114,7 @@ public class Arena {
         refreshVillagerSpawns();
         refreshPortal();
         checkClosedParticles();
+        checkClose();
     }
 
     public int getArena() {
