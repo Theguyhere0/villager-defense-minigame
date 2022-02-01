@@ -1,6 +1,8 @@
 package me.theguyhere.villagerdefense.game.models.kits;
 
 import me.theguyhere.villagerdefense.game.models.GameItems;
+import me.theguyhere.villagerdefense.tools.CommunicationManager;
+import me.theguyhere.villagerdefense.tools.ItemManager;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -123,13 +125,13 @@ public class Kit {
      */
     private void setAbilityKitDescriptions() {
         List<String> description = new ArrayList<>();
-        description.add(Utils.format("&7Up to ability level 10"));
+        description.add(CommunicationManager.format("&7Up to ability level 10"));
         addLevelDescriptions(1, description);
         description = new ArrayList<>();
-        description.add(Utils.format("&7Up to ability level 20"));
+        description.add(CommunicationManager.format("&7Up to ability level 20"));
         addLevelDescriptions(2, description);
         description = new ArrayList<>();
-        description.add(Utils.format("&7Up to ability level 30"));
+        description.add(CommunicationManager.format("&7Up to ability level 30"));
         addLevelDescriptions(3, description);
     }
 
@@ -209,63 +211,63 @@ public class Kit {
         enchants.put(Enchantment.DURABILITY, 1);
 
         if (kitType == KitType.NONE) {
-            return Utils.createItem(buttonMaterial,
-                    Utils.format(getKitColor(kitType) + name), Utils.BUTTON_FLAGS, null);
+            return ItemManager.createItem(buttonMaterial,
+                    CommunicationManager.format(getKitColor(kitType) + name), Utils.BUTTON_FLAGS, null);
         }
         else if (isMultiLevel()) {
             List<String> lores = new ArrayList<>();
             if (purchasedLevel == 0) {
                 lores.addAll(masterDescription);
-                lores.add(Utils.format("&cLevel 1"));
+                lores.add(CommunicationManager.format("&cLevel 1"));
                 lores.addAll(getLevelDescription(1));
-                lores.add(purchaseMode ? Utils.format("&cPurchase: &b" + getPrice(1) + " Crystals") :
-                        Utils.format("&cUnavailable"));
+                lores.add(purchaseMode ? CommunicationManager.format("&cPurchase: &b" + getPrice(1) + " Crystals") :
+                        CommunicationManager.format("&cUnavailable"));
             }
             else if (purchasedLevel == pricesMap.size()) {
                 lores.addAll(masterDescription);
-                lores.add(Utils.format("&aLevel " + pricesMap.size()));
+                lores.add(CommunicationManager.format("&aLevel " + pricesMap.size()));
                 lores.addAll(getLevelDescription(pricesMap.size()));
-                lores.add(purchaseMode ? Utils.format("&aPurchased!") : Utils.format("&aAvailable"));
+                lores.add(purchaseMode ? CommunicationManager.format("&aPurchased!") : CommunicationManager.format("&aAvailable"));
             }
             else if (purchasedLevel == -1) {
                 lores.addAll(masterDescription);
                 descriptionsMap.forEach((level, description) -> {
-                    lores.add(Utils.format("&fLevel " + level));
+                    lores.add(CommunicationManager.format("&fLevel " + level));
                     lores.addAll(description);
                 });
-                return Utils.createItem(buttonMaterial,
-                        Utils.format((purchaseMode ? getKitColor(kitType): "&4&l") + name), Utils.BUTTON_FLAGS,
+                return ItemManager.createItem(buttonMaterial,
+                        CommunicationManager.format((purchaseMode ? getKitColor(kitType): "&4&l") + name), Utils.BUTTON_FLAGS,
                         purchaseMode ? enchants : null, lores);
             }
             else {
                 lores.addAll(masterDescription);
-                lores.add(Utils.format("&aLevel " + purchasedLevel));
+                lores.add(CommunicationManager.format("&aLevel " + purchasedLevel));
                 lores.addAll(getLevelDescription(purchasedLevel));
                 if (purchaseMode) {
-                    lores.add(Utils.format("&cLevel " + ++purchasedLevel));
+                    lores.add(CommunicationManager.format("&cLevel " + ++purchasedLevel));
                     lores.addAll(getLevelDescription(purchasedLevel));
-                    lores.add(Utils.format("&cPurchase: &b" + getPrice(purchasedLevel) + " Crystals"));
-                } else lores.add(Utils.format("&aAvailable"));
+                    lores.add(CommunicationManager.format("&cPurchase: &b" + getPrice(purchasedLevel) + " Crystals"));
+                } else lores.add(CommunicationManager.format("&aAvailable"));
             }
 
-            return Utils.createItem(buttonMaterial,
-                    Utils.format(getKitColor(kitType) + name), Utils.BUTTON_FLAGS, null, lores);
+            return ItemManager.createItem(buttonMaterial,
+                    CommunicationManager.format(getKitColor(kitType) + name), Utils.BUTTON_FLAGS, null, lores);
         } else {
             if (purchasedLevel == -1)
-                return Utils.createItem(buttonMaterial,
-                        Utils.format((purchaseMode ? getKitColor(kitType): "&4&l") + name), Utils.BUTTON_FLAGS,
+                return ItemManager.createItem(buttonMaterial,
+                        CommunicationManager.format((purchaseMode ? getKitColor(kitType): "&4&l") + name), Utils.BUTTON_FLAGS,
                         purchaseMode ? enchants : null, masterDescription);
             else if (pricesMap.get(1) == 0)
-                return Utils.createItem(buttonMaterial,
-                        Utils.format(getKitColor(kitType) + name), Utils.BUTTON_FLAGS, null,
-                        masterDescription, purchaseMode ? Utils.format("&aFree!") :
-                                Utils.format("&aAvailable"));
-            else return Utils.createItem(buttonMaterial,
-                    Utils.format(getKitColor(kitType) + name), Utils.BUTTON_FLAGS, null,
+                return ItemManager.createItem(buttonMaterial,
+                        CommunicationManager.format(getKitColor(kitType) + name), Utils.BUTTON_FLAGS, null,
+                        masterDescription, purchaseMode ? CommunicationManager.format("&aFree!") :
+                                CommunicationManager.format("&aAvailable"));
+            else return ItemManager.createItem(buttonMaterial,
+                    CommunicationManager.format(getKitColor(kitType) + name), Utils.BUTTON_FLAGS, null,
                     masterDescription, purchasedLevel == 1 ?
-                            (purchaseMode ? Utils.format("&aPurchased!") : Utils.format("&aAvailable")) :
-                            (purchaseMode ? Utils.format("&cPurchase: &b" + getPrice(1) + " Crystals") :
-                                    Utils.format("&cUnavailable")));
+                            (purchaseMode ? CommunicationManager.format("&aPurchased!") : CommunicationManager.format("&aAvailable")) :
+                            (purchaseMode ? CommunicationManager.format("&cPurchase: &b" + getPrice(1) + " Crystals") :
+                                    CommunicationManager.format("&cUnavailable")));
         }
     }
 
@@ -346,63 +348,63 @@ public class Kit {
     // Gift Kits
     public static Kit orc() {
         Kit kit = new Kit("Orc", KitType.GIFT, Material.STICK);
-        kit.addMasterDescription(Utils.format("&7Start with a knockback V stick"));
+        kit.addMasterDescription(CommunicationManager.format("&7Start with a knockback V stick"));
         kit.addPrice(1, 0);
 
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
         enchants.put(Enchantment.KNOCKBACK, 5);
         kit.addItems(1, new ItemStack[]{
                 new ItemStack(Material.WOODEN_SWORD),
-                Utils.createItem(Material.STICK, Utils.format("&aOrc's Club"), Utils.NORMAL_FLAGS, enchants)});
+                ItemManager.createItem(Material.STICK, CommunicationManager.format("&aOrc's Club"), Utils.NORMAL_FLAGS, enchants)});
         return kit;
     }
     public static Kit farmer() {
         Kit kit = new Kit("Farmer", KitType.GIFT, Material.CARROT);
-        kit.addMasterDescription(Utils.format("&7Start with 5 carrots"));
+        kit.addMasterDescription(CommunicationManager.format("&7Start with 5 carrots"));
         kit.addPrice(1, 0);
         kit.addItems(1, new ItemStack[]{
                 new ItemStack(Material.WOODEN_SWORD),
-                Utils.createItems(Material.CARROT, 5, Utils.format("&aFarmer's Carrots"))});
+                ItemManager.createItems(Material.CARROT, 5, CommunicationManager.format("&aFarmer's Carrots"))});
         return kit;
     }
     public static Kit soldier() {
         Kit kit = new Kit("Soldier", KitType.GIFT, Material.STONE_SWORD);
-        kit.addMasterDescription(Utils.format("&7Start with a stone sword"));
+        kit.addMasterDescription(CommunicationManager.format("&7Start with a stone sword"));
         kit.addPrice(1, 250);
         kit.addItems(1, new ItemStack[]{
-                Utils.createItem(Material.STONE_SWORD, Utils.format("&aSoldier's Sword"))});
+                ItemManager.createItem(Material.STONE_SWORD, CommunicationManager.format("&aSoldier's Sword"))});
         return kit;
     }
     public static Kit alchemist() {
         Kit kit = new Kit("Alchemist", KitType.GIFT, Material.BREWING_STAND);
-        kit.addMasterDescription(Utils.format("&7Start with 1 speed and 2 healing"));
-        kit.addMasterDescription(Utils.format("&7splash potions"));
+        kit.addMasterDescription(CommunicationManager.format("&7Start with 1 speed and 2 healing"));
+        kit.addMasterDescription(CommunicationManager.format("&7splash potions"));
         kit.addPrice(1, 300);
         kit.addItems(1, new ItemStack[]{
                 new ItemStack(Material.WOODEN_SWORD),
-                Utils.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.SPEED),
-                        Utils.format("&aAlchemist's Speed Potion")),
-                Utils.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.INSTANT_HEAL),
-                        Utils.format("&aAlchemist's Health Potion")),
-                Utils.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.INSTANT_HEAL),
-                        Utils.format("&aAlchemist's Health Potion"))});
+                ItemManager.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.SPEED),
+                        CommunicationManager.format("&aAlchemist's Speed Potion")),
+                ItemManager.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.INSTANT_HEAL),
+                        CommunicationManager.format("&aAlchemist's Health Potion")),
+                ItemManager.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.INSTANT_HEAL),
+                        CommunicationManager.format("&aAlchemist's Health Potion"))});
         return kit;
     }
     public static Kit tailor() {
         Kit kit = new Kit("Tailor", KitType.GIFT, Material.LEATHER_CHESTPLATE);
-        kit.addMasterDescription(Utils.format("&7Start with a full leather armor set"));
+        kit.addMasterDescription(CommunicationManager.format("&7Start with a full leather armor set"));
         kit.addPrice(1, 400);
         kit.addItems(1, new ItemStack[]{
                 new ItemStack(Material.WOODEN_SWORD),
-                Utils.createItem(Material.LEATHER_HELMET, Utils.format("&aTailor's Helmet")),
-                Utils.createItem(Material.LEATHER_CHESTPLATE, Utils.format("&aTailor's Chestplate")),
-                Utils.createItem(Material.LEATHER_LEGGINGS, Utils.format("&aTailor's Leggings")),
-                Utils.createItem(Material.LEATHER_BOOTS, Utils.format("&aTailor's Boots"))});
+                ItemManager.createItem(Material.LEATHER_HELMET, CommunicationManager.format("&aTailor's Helmet")),
+                ItemManager.createItem(Material.LEATHER_CHESTPLATE, CommunicationManager.format("&aTailor's Chestplate")),
+                ItemManager.createItem(Material.LEATHER_LEGGINGS, CommunicationManager.format("&aTailor's Leggings")),
+                ItemManager.createItem(Material.LEATHER_BOOTS, CommunicationManager.format("&aTailor's Boots"))});
         return kit;
     }
     public static Kit trader() {
         Kit kit = new Kit("Trader", KitType.GIFT, Material.EMERALD);
-        kit.addMasterDescription(Utils.format("&7Start with 200 gems"));
+        kit.addMasterDescription(CommunicationManager.format("&7Start with 200 gems"));
         kit.addPrice(1, 500);
         kit.addItems(1, new ItemStack[]{new ItemStack(Material.WOODEN_SWORD)});
         return kit;
@@ -411,13 +413,13 @@ public class Kit {
         Kit kit = new Kit("Summoner", KitType.GIFT, Material.POLAR_BEAR_SPAWN_EGG);
 
         List<String> description = new ArrayList<>();
-        description.add(Utils.format("&7Start with a wolf spawn"));
+        description.add(CommunicationManager.format("&7Start with a wolf spawn"));
         kit.addLevelDescriptions(1, description);
         description = new ArrayList<>();
-        description.add(Utils.format("&7Start with 2 wolf spawns"));
+        description.add(CommunicationManager.format("&7Start with 2 wolf spawns"));
         kit.addLevelDescriptions(2, description);
         description = new ArrayList<>();
-        description.add(Utils.format("&7Start with an iron golem spawn"));
+        description.add(CommunicationManager.format("&7Start with an iron golem spawn"));
         kit.addLevelDescriptions(3, description);
 
         kit.addPrice(1, 750);
@@ -426,14 +428,14 @@ public class Kit {
 
         kit.addItems(1, new ItemStack[]{
                 new ItemStack(Material.WOODEN_SWORD),
-                Utils.createItem(Material.WOLF_SPAWN_EGG, Utils.format("&aSummoner's Wolf Spawn Egg"))});
+                ItemManager.createItem(Material.WOLF_SPAWN_EGG, CommunicationManager.format("&aSummoner's Wolf Spawn Egg"))});
         kit.addItems(2, new ItemStack[]{
                 new ItemStack(Material.WOODEN_SWORD),
-                Utils.createItems(Material.WOLF_SPAWN_EGG, 2, Utils.format("&aSummoner's Wolf Spawn Egg"))
+                ItemManager.createItems(Material.WOLF_SPAWN_EGG, 2, CommunicationManager.format("&aSummoner's Wolf Spawn Egg"))
         });
         kit.addItems(3, new ItemStack[]{
                 new ItemStack(Material.WOODEN_SWORD),
-                Utils.createItem(Material.GHAST_SPAWN_EGG, Utils.format("&aSummoner's Iron Golem Spawn Egg"))});
+                ItemManager.createItem(Material.GHAST_SPAWN_EGG, CommunicationManager.format("&aSummoner's Iron Golem Spawn Egg"))});
 
         return kit;
     }
@@ -441,13 +443,13 @@ public class Kit {
         Kit kit = new Kit("Reaper", KitType.GIFT, Material.NETHERITE_HOE);
 
         List<String> description = new ArrayList<>();
-        description.add(Utils.format("&7Start with a sharpness III netherite hoe"));
+        description.add(CommunicationManager.format("&7Start with a sharpness III netherite hoe"));
         kit.addLevelDescriptions(1, description);
         description = new ArrayList<>();
-        description.add(Utils.format("&7Start with a sharpness V netherite hoe"));
+        description.add(CommunicationManager.format("&7Start with a sharpness V netherite hoe"));
         kit.addLevelDescriptions(2, description);
         description = new ArrayList<>();
-        description.add(Utils.format("&7Start with a sharpness VIII netherite hoe"));
+        description.add(CommunicationManager.format("&7Start with a sharpness VIII netherite hoe"));
         kit.addLevelDescriptions(3, description);
 
         kit.addPrice(1, 750);
@@ -457,23 +459,23 @@ public class Kit {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
         enchants.put(Enchantment.DAMAGE_ALL, 3);
         kit.addItems(1, new ItemStack[]{
-                Utils.createItem(Material.NETHERITE_HOE, Utils.format("&aReaper's Scythe"), Utils.NORMAL_FLAGS,
+                ItemManager.createItem(Material.NETHERITE_HOE, CommunicationManager.format("&aReaper's Scythe"), Utils.NORMAL_FLAGS,
                         enchants)});
         enchants.put(Enchantment.DAMAGE_ALL, 5);
         kit.addItems(2, new ItemStack[]{
-                Utils.createItem(Material.NETHERITE_HOE, Utils.format("&aReaper's Scythe"), Utils.NORMAL_FLAGS,
+                ItemManager.createItem(Material.NETHERITE_HOE, CommunicationManager.format("&aReaper's Scythe"), Utils.NORMAL_FLAGS,
                         enchants)});
         enchants.put(Enchantment.DAMAGE_ALL, 8);
         kit.addItems(3, new ItemStack[]{
-                Utils.createItem(Material.NETHERITE_HOE, Utils.format("&aReaper's Scythe"), Utils.NORMAL_FLAGS,
+                ItemManager.createItem(Material.NETHERITE_HOE, CommunicationManager.format("&aReaper's Scythe"), Utils.NORMAL_FLAGS,
                         enchants)});
 
         return kit;
     }
     public static Kit phantom() {
         Kit kit = new Kit("Phantom", KitType.GIFT, Material.PHANTOM_MEMBRANE);
-        kit.addMasterDescription(Utils.format("&7Join as a player in any game"));
-        kit.addMasterDescription(Utils.format("&7using &b/vd select"));
+        kit.addMasterDescription(CommunicationManager.format("&7Join as a player in any game"));
+        kit.addMasterDescription(CommunicationManager.format("&7using &b/vd select"));
         kit.addPrice(1, 6000);
         kit.addItems(1, new ItemStack[]{new ItemStack(Material.WOODEN_SWORD)});
         return kit;
@@ -483,7 +485,7 @@ public class Kit {
     public static Kit mage() {
         Kit kit = new Kit("Mage", KitType.ABILITY, Material.FIRE_CHARGE);
 
-        kit.addMasterDescription(Utils.format("&7Shoot fireballs"));
+        kit.addMasterDescription(CommunicationManager.format("&7Shoot fireballs"));
         kit.setAbilityKitDescriptions();
 
         kit.addPrice(1, 3500);
@@ -497,8 +499,8 @@ public class Kit {
     public static Kit ninja() {
         Kit kit = new Kit("Ninja", KitType.ABILITY, Material.CHAIN);
 
-        kit.addMasterDescription(Utils.format("&7You and your pets become invisible"));
-        kit.addMasterDescription(Utils.format("&7and stun monsters"));
+        kit.addMasterDescription(CommunicationManager.format("&7You and your pets become invisible"));
+        kit.addMasterDescription(CommunicationManager.format("&7and stun monsters"));
         kit.setAbilityKitDescriptions();
 
         kit.addPrice(1, 4000);
@@ -512,7 +514,7 @@ public class Kit {
     public static Kit templar() {
         Kit kit = new Kit("Templar", KitType.ABILITY, Material.GOLDEN_SWORD);
 
-        kit.addMasterDescription(Utils.format("&7Give yourself and nearby allies absorption"));
+        kit.addMasterDescription(CommunicationManager.format("&7Give yourself and nearby allies absorption"));
         kit.setAbilityKitDescriptions();
 
         kit.addPrice(1, 3500);
@@ -526,7 +528,7 @@ public class Kit {
     public static Kit warrior() {
         Kit kit = new Kit("Warrior", KitType.ABILITY, Material.NETHERITE_HELMET);
 
-        kit.addMasterDescription(Utils.format("&7Give yourself and nearby allies strength"));
+        kit.addMasterDescription(CommunicationManager.format("&7Give yourself and nearby allies strength"));
         kit.setAbilityKitDescriptions();
 
         kit.addPrice(1, 5000);
@@ -540,7 +542,7 @@ public class Kit {
     public static Kit knight() {
         Kit kit = new Kit("Knight", KitType.ABILITY, Material.SHIELD);
 
-        kit.addMasterDescription(Utils.format("&7Give yourself and nearby allies resistance"));
+        kit.addMasterDescription(CommunicationManager.format("&7Give yourself and nearby allies resistance"));
         kit.setAbilityKitDescriptions();
 
         kit.addPrice(1, 4500);
@@ -554,7 +556,7 @@ public class Kit {
     public static Kit priest() {
         Kit kit = new Kit("Priest", KitType.ABILITY, Material.TOTEM_OF_UNDYING);
 
-        kit.addMasterDescription(Utils.format("&7Give yourself and nearby allies regeneration"));
+        kit.addMasterDescription(CommunicationManager.format("&7Give yourself and nearby allies regeneration"));
         kit.setAbilityKitDescriptions();
 
         kit.addPrice(1, 5000);
@@ -568,7 +570,7 @@ public class Kit {
     public static Kit siren() {
         Kit kit = new Kit("Siren", KitType.ABILITY, Material.COBWEB);
 
-        kit.addMasterDescription(Utils.format("&7Slow and even weaken nearby monsters"));
+        kit.addMasterDescription(CommunicationManager.format("&7Slow and even weaken nearby monsters"));
         kit.setAbilityKitDescriptions();
 
         kit.addPrice(1, 4000);
@@ -582,7 +584,7 @@ public class Kit {
     public static Kit monk() {
         Kit kit = new Kit("Monk", KitType.ABILITY, Material.BELL);
 
-        kit.addMasterDescription(Utils.format("&7Give yourself and nearby allies haste"));
+        kit.addMasterDescription(CommunicationManager.format("&7Give yourself and nearby allies haste"));
         kit.setAbilityKitDescriptions();
 
         kit.addPrice(1, 3000);
@@ -596,7 +598,7 @@ public class Kit {
     public static Kit messenger() {
         Kit kit = new Kit("Messenger", KitType.ABILITY, Material.FEATHER);
 
-        kit.addMasterDescription(Utils.format("&7Give yourself and nearby allies speed"));
+        kit.addMasterDescription(CommunicationManager.format("&7Give yourself and nearby allies speed"));
         kit.setAbilityKitDescriptions();
 
         kit.addPrice(1, 4000);
@@ -611,29 +613,29 @@ public class Kit {
     // Effect Kits
     public static Kit blacksmith() {
         Kit kit = new Kit("Blacksmith", KitType.EFFECT, Material.ANVIL);
-        kit.addMasterDescription(Utils.format("&7All equipment purchased are unbreakable"));
+        kit.addMasterDescription(CommunicationManager.format("&7All equipment purchased are unbreakable"));
         kit.addPrice(1, 7500);
-        kit.addItems(1, new ItemStack[]{Utils.makeUnbreakable(new ItemStack(Material.WOODEN_SWORD))});
+        kit.addItems(1, new ItemStack[]{ItemManager.makeUnbreakable(new ItemStack(Material.WOODEN_SWORD))});
         return kit;
     }
     public static Kit witch() {
         Kit kit = new Kit("Witch", KitType.EFFECT, Material.CAULDRON);
-        kit.addMasterDescription(Utils.format("&7All purchased potions become splash potions"));
+        kit.addMasterDescription(CommunicationManager.format("&7All purchased potions become splash potions"));
         kit.addPrice(1, 2500);
         kit.addItems(1, new ItemStack[]{new ItemStack(Material.WOODEN_SWORD)});
         return kit;
     }
     public static Kit merchant() {
         Kit kit = new Kit("Merchant", KitType.EFFECT, Material.EMERALD_BLOCK);
-        kit.addMasterDescription(Utils.format("&7Earn a 10% rebate on all purchases"));
+        kit.addMasterDescription(CommunicationManager.format("&7Earn a 10% rebate on all purchases"));
         kit.addPrice(1, 4000);
         kit.addItems(1, new ItemStack[]{new ItemStack(Material.WOODEN_SWORD)});
         return kit;
     }
     public static Kit vampire() {
         Kit kit = new Kit("Vampire", KitType.EFFECT, Material.GHAST_TEAR);
-        kit.addMasterDescription(Utils.format("&7Dealing x damage has an x% chance"));
-        kit.addMasterDescription(Utils.format("&7of healing half a heart"));
+        kit.addMasterDescription(CommunicationManager.format("&7Dealing x damage has an x% chance"));
+        kit.addMasterDescription(CommunicationManager.format("&7of healing half a heart"));
         kit.addPrice(1, 6000);
         kit.addItems(1, new ItemStack[]{new ItemStack(Material.WOODEN_SWORD)});
         return kit;
@@ -642,10 +644,10 @@ public class Kit {
         Kit kit = new Kit("Giant", KitType.EFFECT, Material.DARK_OAK_SAPLING);
 
         List<String> description = new ArrayList<>();
-        description.add(Utils.format("&7Permanent 10% health boost"));
+        description.add(CommunicationManager.format("&7Permanent 10% health boost"));
         kit.addLevelDescriptions(1, description);
         description = new ArrayList<>();
-        description.add(Utils.format("&7Permanent 20% health boost"));
+        description.add(CommunicationManager.format("&7Permanent 20% health boost"));
         kit.addLevelDescriptions(2, description);
 
         kit.addPrice(1, 5000);

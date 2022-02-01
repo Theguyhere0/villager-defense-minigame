@@ -1,5 +1,7 @@
 package me.theguyhere.villagerdefense.game.models;
 
+import me.theguyhere.villagerdefense.tools.CommunicationManager;
+import me.theguyhere.villagerdefense.tools.ItemManager;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -81,7 +83,7 @@ public class Challenge {
         enchants.put(Enchantment.DURABILITY, 1);
         List<String> lores = new ArrayList<>(masterDescription);
 
-        return Utils.createItem(buttonMaterial, Utils.format((active ? "&d&l" : "&5&l") + name), Utils.BUTTON_FLAGS,
+        return ItemManager.createItem(buttonMaterial, CommunicationManager.format((active ? "&d&l" : "&5&l") + name), Utils.BUTTON_FLAGS,
                 active ? enchants : null, lores);
     }
 
@@ -120,9 +122,9 @@ public class Challenge {
         int bonus = 10;
 
         Challenge challenge = new Challenge("Amputee", Material.BAMBOO, bonus);
-        challenge.addMasterDescription(Utils.format("&7Where's my arm?"));
-        challenge.addMasterDescription(Utils.format("&6No dual-wielding"));
-        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% crystal bonus"));
+        challenge.addMasterDescription(CommunicationManager.format("&7Where's my arm?"));
+        challenge.addMasterDescription(CommunicationManager.format("&6No dual-wielding"));
+        challenge.addMasterDescription(CommunicationManager.format("&a+" + bonus + "% crystal bonus"));
 
         return challenge;
     }
@@ -130,9 +132,9 @@ public class Challenge {
         int bonus = 15;
 
         Challenge challenge = new Challenge("Clumsy", Material.ICE, bonus);
-        challenge.addMasterDescription(Utils.format("&7I'm losing my marbles"));
-        challenge.addMasterDescription(Utils.format("&6Held items have a 2% chance to drop upon use"));
-        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% crystal bonus"));
+        challenge.addMasterDescription(CommunicationManager.format("&7I'm losing my marbles"));
+        challenge.addMasterDescription(CommunicationManager.format("&6Held items have a 2% chance to drop upon use"));
+        challenge.addMasterDescription(CommunicationManager.format("&a+" + bonus + "% crystal bonus"));
 
         return challenge;
     }
@@ -140,9 +142,9 @@ public class Challenge {
         int bonus = 20;
 
         Challenge challenge = new Challenge("Featherweight", Material.FEATHER, bonus);
-        challenge.addMasterDescription(Utils.format("&7WHEEEEEE"));
-        challenge.addMasterDescription(Utils.format("&6Take x5 knockback"));
-        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% crystal bonus"));
+        challenge.addMasterDescription(CommunicationManager.format("&7WHEEEEEE"));
+        challenge.addMasterDescription(CommunicationManager.format("&6Take x5 knockback"));
+        challenge.addMasterDescription(CommunicationManager.format("&a+" + bonus + "% crystal bonus"));
 
         return challenge;
     }
@@ -150,9 +152,9 @@ public class Challenge {
         int bonus = 25;
 
         Challenge challenge = new Challenge("Pacifist", Material.TURTLE_HELMET, bonus);
-        challenge.addMasterDescription(Utils.format("&7Don't hurt me!"));
-        challenge.addMasterDescription(Utils.format("&6Only hurt monsters after they hurt you"));
-        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% crystal bonus"));
+        challenge.addMasterDescription(CommunicationManager.format("&7Don't hurt me!"));
+        challenge.addMasterDescription(CommunicationManager.format("&6Only hurt monsters after they hurt you"));
+        challenge.addMasterDescription(CommunicationManager.format("&a+" + bonus + "% crystal bonus"));
 
         return challenge;
     }
@@ -160,9 +162,9 @@ public class Challenge {
         int bonus = 40;
 
         Challenge challenge = new Challenge("Dwarf", Material.DEAD_BUSH, bonus);
-        challenge.addMasterDescription(Utils.format("&7Short people unite!"));
-        challenge.addMasterDescription(Utils.format("&6Max health is cut in half"));
-        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% crystal bonus"));
+        challenge.addMasterDescription(CommunicationManager.format("&7Short people unite!"));
+        challenge.addMasterDescription(CommunicationManager.format("&6Max health is cut in half"));
+        challenge.addMasterDescription(CommunicationManager.format("&a+" + bonus + "% crystal bonus"));
 
         return challenge;
     }
@@ -170,9 +172,9 @@ public class Challenge {
         int bonus = 50;
 
         Challenge challenge = new Challenge("UHC", Material.GOLDEN_APPLE, bonus);
-        challenge.addMasterDescription(Utils.format("&7A true classic"));
-        challenge.addMasterDescription(Utils.format("&6No natural healing"));
-        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% crystal bonus"));
+        challenge.addMasterDescription(CommunicationManager.format("&7A true classic"));
+        challenge.addMasterDescription(CommunicationManager.format("&6No natural healing"));
+        challenge.addMasterDescription(CommunicationManager.format("&a+" + bonus + "% crystal bonus"));
 
         return challenge;
     }
@@ -180,9 +182,9 @@ public class Challenge {
         int bonus = 75;
 
         Challenge challenge = new Challenge("Naked", Material.ARMOR_STAND, bonus);
-        challenge.addMasterDescription(Utils.format("&7All natural"));
-        challenge.addMasterDescription(Utils.format("&6No armor"));
-        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% crystal bonus"));
+        challenge.addMasterDescription(CommunicationManager.format("&7All natural"));
+        challenge.addMasterDescription(CommunicationManager.format("&6No armor"));
+        challenge.addMasterDescription(CommunicationManager.format("&a+" + bonus + "% crystal bonus"));
 
         return challenge;
     }
@@ -190,9 +192,9 @@ public class Challenge {
         int bonus = 120;
 
         Challenge challenge = new Challenge("Blind", Material.INK_SAC, bonus);
-        challenge.addMasterDescription(Utils.format("&7I hope you have good headphones"));
-        challenge.addMasterDescription(Utils.format("&6Permanent blindness effect"));
-        challenge.addMasterDescription(Utils.format("&a+" + bonus + "% crystal bonus"));
+        challenge.addMasterDescription(CommunicationManager.format("&7I hope you have good headphones"));
+        challenge.addMasterDescription(CommunicationManager.format("&6Permanent blindness effect"));
+        challenge.addMasterDescription(CommunicationManager.format("&a+" + bonus + "% crystal bonus"));
 
         return challenge;
     }

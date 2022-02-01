@@ -1,5 +1,7 @@
 package me.theguyhere.villagerdefense.game.models;
 
+import me.theguyhere.villagerdefense.tools.CommunicationManager;
+import me.theguyhere.villagerdefense.tools.ItemManager;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -78,98 +80,102 @@ public class EnchantingBook extends ItemStack {
     }
 
     public static ItemStack knockback() {
-        return Utils.createItem(Material.ENCHANTED_BOOK, Utils.format("&a&lBook of Knockback"),
-                Utils.BUTTON_FLAGS, Utils.glow(), Utils.format("&7Drop onto another item to enchant"),
-                Utils.format("&4WARNING: WORKS ON ANY ITEM"));
+        return ItemManager.createItem(Material.ENCHANTED_BOOK, CommunicationManager.format("&a&lBook of Knockback"),
+                Utils.BUTTON_FLAGS, Utils.glow(), CommunicationManager.format("&7Drop onto another item to enchant"),
+                CommunicationManager.format("&4WARNING: WORKS ON ANY ITEM"));
     }
     public static ItemStack sweepingEdge() {
-        return Utils.createItem(Material.ENCHANTED_BOOK, Utils.format("&a&lBook of Sweeping Edge"),
-                Utils.BUTTON_FLAGS, Utils.glow(), Utils.format("&7Drop onto another item to enchant"),
-                Utils.format("&4WARNING: WORKS ON ANY ITEM"));
+        return ItemManager.createItem(Material.ENCHANTED_BOOK, CommunicationManager.format("&a&lBook of Sweeping Edge"),
+                Utils.BUTTON_FLAGS, Utils.glow(), CommunicationManager.format("&7Drop onto another item to enchant"),
+                CommunicationManager.format("&4WARNING: WORKS ON ANY ITEM"));
     }
     public static ItemStack smite() {
-        return Utils.createItem(Material.ENCHANTED_BOOK, Utils.format("&a&lBook of Smite"),
-                Utils.BUTTON_FLAGS, Utils.glow(), Utils.format("&7Drop onto another item to enchant"),
-                Utils.format("&4WARNING: WORKS ON ANY ITEM"));
+        return ItemManager.createItem(Material.ENCHANTED_BOOK, CommunicationManager.format("&a&lBook of Smite"),
+                Utils.BUTTON_FLAGS, Utils.glow(), CommunicationManager.format("&7Drop onto another item to enchant"),
+                CommunicationManager.format("&4WARNING: WORKS ON ANY ITEM"));
     }
     public static ItemStack sharpness() {
-        return Utils.createItem(Material.ENCHANTED_BOOK, Utils.format("&a&lBook of Sharpness"),
-                Utils.BUTTON_FLAGS, Utils.glow(), Utils.format("&7Drop onto another item to enchant"),
-                Utils.format("&4WARNING: WORKS ON ANY ITEM"));
+        return ItemManager.createItem(Material.ENCHANTED_BOOK, CommunicationManager.format("&a&lBook of Sharpness"),
+                Utils.BUTTON_FLAGS, Utils.glow(), CommunicationManager.format("&7Drop onto another item to enchant"),
+                CommunicationManager.format("&4WARNING: WORKS ON ANY ITEM"));
     }
     public static ItemStack fireAspect() {
-        return Utils.createItem(Material.ENCHANTED_BOOK, Utils.format("&a&lBook of Fire Aspect"),
-                Utils.BUTTON_FLAGS, Utils.glow(), Utils.format("&7Drop onto another item to enchant"),
-                Utils.format("&4WARNING: WORKS ON ANY ITEM"));
+        return ItemManager.createItem(Material.ENCHANTED_BOOK, CommunicationManager.format("&a&lBook of Fire Aspect"),
+                Utils.BUTTON_FLAGS, Utils.glow(), CommunicationManager.format("&7Drop onto another item to enchant"),
+                CommunicationManager.format("&4WARNING: WORKS ON ANY ITEM"));
     }
     public static ItemStack punch() {
-        return Utils.createItem(Material.ENCHANTED_BOOK, Utils.format("&a&lBook of Punch"),
-                Utils.BUTTON_FLAGS, Utils.glow(), Utils.format("&7Drop onto another item to enchant"),
-                Utils.format("&4WARNING: WORKS ON ANY ITEM"));
+        return ItemManager.createItem(Material.ENCHANTED_BOOK, CommunicationManager.format("&a&lBook of Punch"),
+                Utils.BUTTON_FLAGS, Utils.glow(), CommunicationManager.format("&7Drop onto another item to enchant"),
+                CommunicationManager.format("&4WARNING: WORKS ON ANY ITEM"));
     }
     public static ItemStack piercing() {
-        return Utils.createItem(Material.ENCHANTED_BOOK, Utils.format("&a&lBook of Piercing"),
-                Utils.BUTTON_FLAGS, Utils.glow(), Utils.format("&7Drop onto another item to enchant"),
-                Utils.format("&4WARNING: WORKS ON ANY ITEM"));
+        return ItemManager.createItem(Material.ENCHANTED_BOOK, CommunicationManager.format("&a&lBook of Piercing"),
+                Utils.BUTTON_FLAGS, Utils.glow(), CommunicationManager.format("&7Drop onto another item to enchant"),
+                CommunicationManager.format("&4WARNING: WORKS ON ANY ITEM"));
     }
     public static ItemStack quickCharge() {
-        return Utils.createItem(Material.ENCHANTED_BOOK, Utils.format("&a&lBook of Quick Charge"),
-                Utils.BUTTON_FLAGS, Utils.glow(), Utils.format("&7Drop onto another item to enchant"),
-                Utils.format("&4WARNING: WORKS ON ANY ITEM"));
+        return ItemManager.createItem(Material.ENCHANTED_BOOK, CommunicationManager.format("&a&lBook of Quick Charge"),
+                Utils.BUTTON_FLAGS, Utils.glow(), CommunicationManager.format("&7Drop onto another item to enchant"),
+                CommunicationManager.format("&4WARNING: WORKS ON ANY ITEM"));
     }
     public static ItemStack power() {
-        return Utils.createItem(Material.ENCHANTED_BOOK, Utils.format("&a&lBook of Power"),
-                Utils.BUTTON_FLAGS, Utils.glow(), Utils.format("&7Drop onto another item to enchant"),
-                Utils.format("&4WARNING: WORKS ON ANY ITEM"));
+        return ItemManager.createItem(Material.ENCHANTED_BOOK, CommunicationManager.format("&a&lBook of Power"),
+                Utils.BUTTON_FLAGS, Utils.glow(), CommunicationManager.format("&7Drop onto another item to enchant"),
+                CommunicationManager.format("&4WARNING: WORKS ON ANY ITEM"));
     }
     public static ItemStack loyalty() {
-        return Utils.createItem(Material.ENCHANTED_BOOK, Utils.format("&a&lBook of Loyalty"),
-                Utils.BUTTON_FLAGS, Utils.glow(), Utils.format("&7Drop onto another item to enchant"),
-                Utils.format("&4WARNING: WORKS ON ANY ITEM"));
+        return ItemManager.createItem(Material.ENCHANTED_BOOK, CommunicationManager.format("&a&lBook of Loyalty"),
+                Utils.BUTTON_FLAGS, Utils.glow(), CommunicationManager.format("&7Drop onto another item to enchant"),
+                CommunicationManager.format("&4WARNING: WORKS ON ANY ITEM"));
     }
     public static ItemStack flame() {
-        return Utils.createItem(Material.ENCHANTED_BOOK, Utils.format("&a&lBook of Flame"),
-                Utils.BUTTON_FLAGS, Utils.glow(), Utils.format("&7Drop onto another item to enchant"),
-                Utils.format("&5CAUTION: CAN'T INCREASE LEVEL"), Utils.format("&4WARNING: WORKS ON ANY ITEM"));
+        return ItemManager.createItem(Material.ENCHANTED_BOOK, CommunicationManager.format("&a&lBook of Flame"),
+                Utils.BUTTON_FLAGS, Utils.glow(), CommunicationManager.format("&7Drop onto another item to enchant"),
+                CommunicationManager.format("&5CAUTION: CAN'T INCREASE LEVEL"),
+                CommunicationManager.format("&4WARNING: WORKS ON ANY ITEM"));
     }
     public static ItemStack multishot() {
-        return Utils.createItem(Material.ENCHANTED_BOOK, Utils.format("&a&lBook of Multishot"),
-                Utils.BUTTON_FLAGS, Utils.glow(), Utils.format("&7Drop onto another item to enchant"),
-                Utils.format("&5CAUTION: CAN'T INCREASE LEVEL"), Utils.format("&4WARNING: WORKS ON ANY ITEM"));
+        return ItemManager.createItem(Material.ENCHANTED_BOOK, CommunicationManager.format("&a&lBook of Multishot"),
+                Utils.BUTTON_FLAGS, Utils.glow(), CommunicationManager.format("&7Drop onto another item to enchant"),
+                CommunicationManager.format("&5CAUTION: CAN'T INCREASE LEVEL"),
+                CommunicationManager.format("&4WARNING: WORKS ON ANY ITEM"));
     }
     public static ItemStack infinity() {
-        return Utils.createItem(Material.ENCHANTED_BOOK, Utils.format("&a&lBook of Infinity"),
-                Utils.BUTTON_FLAGS, Utils.glow(), Utils.format("&7Drop onto another item to enchant"),
-                Utils.format("&5CAUTION: CAN'T INCREASE LEVEL"), Utils.format("&4WARNING: WORKS ON ANY ITEM"));
+        return ItemManager.createItem(Material.ENCHANTED_BOOK, CommunicationManager.format("&a&lBook of Infinity"),
+                Utils.BUTTON_FLAGS, Utils.glow(), CommunicationManager.format("&7Drop onto another item to enchant"),
+                CommunicationManager.format("&5CAUTION: CAN'T INCREASE LEVEL"),
+                CommunicationManager.format("&4WARNING: WORKS ON ANY ITEM"));
     }
     public static ItemStack blastProtection() {
-        return Utils.createItem(Material.ENCHANTED_BOOK, Utils.format("&a&lBook of Blast Protection"),
-                Utils.BUTTON_FLAGS, Utils.glow(), Utils.format("&7Drop onto another item to enchant"),
-                Utils.format("&4WARNING: WORKS ON ANY ITEM"));
+        return ItemManager.createItem(Material.ENCHANTED_BOOK, CommunicationManager.format("&a&lBook of Blast Protection"),
+                Utils.BUTTON_FLAGS, Utils.glow(), CommunicationManager.format("&7Drop onto another item to enchant"),
+                CommunicationManager.format("&4WARNING: WORKS ON ANY ITEM"));
     }
     public static ItemStack thorns() {
-        return Utils.createItem(Material.ENCHANTED_BOOK, Utils.format("&a&lBook of Thorns"),
-                Utils.BUTTON_FLAGS, Utils.glow(), Utils.format("&7Drop onto another item to enchant"),
-                Utils.format("&4WARNING: WORKS ON ANY ITEM"));
+        return ItemManager.createItem(Material.ENCHANTED_BOOK, CommunicationManager.format("&a&lBook of Thorns"),
+                Utils.BUTTON_FLAGS, Utils.glow(), CommunicationManager.format("&7Drop onto another item to enchant"),
+                CommunicationManager.format("&4WARNING: WORKS ON ANY ITEM"));
     }
     public static ItemStack projectileProtection() {
-        return Utils.createItem(Material.ENCHANTED_BOOK, Utils.format("&a&lBook of Projectile Protection"),
-                Utils.BUTTON_FLAGS, Utils.glow(), Utils.format("&7Drop onto another item to enchant"),
-                Utils.format("&4WARNING: WORKS ON ANY ITEM"));
+        return ItemManager.createItem(Material.ENCHANTED_BOOK, CommunicationManager.format("&a&lBook of Projectile Protection"),
+                Utils.BUTTON_FLAGS, Utils.glow(), CommunicationManager.format("&7Drop onto another item to enchant"),
+                CommunicationManager.format("&4WARNING: WORKS ON ANY ITEM"));
     }
     public static ItemStack protection() {
-        return Utils.createItem(Material.ENCHANTED_BOOK, Utils.format("&a&lBook of Protection"),
-                Utils.BUTTON_FLAGS, Utils.glow(), Utils.format("&7Drop onto another item to enchant"),
-                Utils.format("&4WARNING: WORKS ON ANY ITEM"));
+        return ItemManager.createItem(Material.ENCHANTED_BOOK, CommunicationManager.format("&a&lBook of Protection"),
+                Utils.BUTTON_FLAGS, Utils.glow(), CommunicationManager.format("&7Drop onto another item to enchant"),
+                CommunicationManager.format("&4WARNING: WORKS ON ANY ITEM"));
     }
     public static ItemStack unbreaking() {
-        return Utils.createItem(Material.ENCHANTED_BOOK, Utils.format("&a&lBook of Unbreaking"),
-                Utils.BUTTON_FLAGS, Utils.glow(), Utils.format("&7Drop onto another item to enchant"),
-                Utils.format("&4WARNING: WORKS ON ANY ITEM"));
+        return ItemManager.createItem(Material.ENCHANTED_BOOK, CommunicationManager.format("&a&lBook of Unbreaking"),
+                Utils.BUTTON_FLAGS, Utils.glow(), CommunicationManager.format("&7Drop onto another item to enchant"),
+                CommunicationManager.format("&4WARNING: WORKS ON ANY ITEM"));
     }
     public static ItemStack mending() {
-        return Utils.createItem(Material.ENCHANTED_BOOK, Utils.format("&a&lBook of Mending"),
-                Utils.BUTTON_FLAGS, Utils.glow(), Utils.format("&7Drop onto another item to enchant"),
-                Utils.format("&5CAUTION: CAN'T INCREASE LEVEL"), Utils.format("&4WARNING: WORKS ON ANY ITEM"));
+        return ItemManager.createItem(Material.ENCHANTED_BOOK, CommunicationManager.format("&a&lBook of Mending"),
+                Utils.BUTTON_FLAGS, Utils.glow(), CommunicationManager.format("&7Drop onto another item to enchant"),
+                CommunicationManager.format("&5CAUTION: CAN'T INCREASE LEVEL"),
+                CommunicationManager.format("&4WARNING: WORKS ON ANY ITEM"));
     }
 }

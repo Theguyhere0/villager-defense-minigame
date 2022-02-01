@@ -1,12 +1,12 @@
 package me.theguyhere.villagerdefense;
 
-import me.theguyhere.villagerdefense.game.models.Game;
+import me.theguyhere.villagerdefense.game.models.arenas.ArenaManager;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.listeners.*;
 import me.theguyhere.villagerdefense.packets.MetadataHelper;
 import me.theguyhere.villagerdefense.packets.PacketReader;
+import me.theguyhere.villagerdefense.tools.CommunicationManager;
 import me.theguyhere.villagerdefense.tools.DataManager;
-import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -25,18 +25,11 @@ public class Main extends JavaPlugin {
 	private final DataManager languageData = new DataManager(this, "languages/" +
 			getConfig().getString("locale") + ".yml");
 
+	// Global instance variables
 	private final PacketReader reader = new PacketReader();
-	private Game game;
+	private ArenaManager arenaManager;
+	private boolean loaded = false;
 
-	/**
-	 * The amount of debug information to display in the console.
-	 *
-	 * 3 (Override) - All errors and information tracked will be displayed. Certain behavior will be overridden.
-	 * 2 (Verbose) - All errors and information tracked will be displayed.
-	 * 1 (Normal) - Errors that drastically reduce performance and important information will be displayed.
-	 * 0 (Quiet) - Only the most urgent error messages will be displayed.
-	 */
-	private static int debugLevel = 0;
 	private boolean outdated = false;
 	int configVersion = 6;
 	int arenaDataVersion = 4;
@@ -50,7 +43,7 @@ public class Main extends JavaPlugin {
 		saveDefaultConfig();
 		PluginManager pm = getServer().getPluginManager();
 		MetadataHelper.init();
-		game = new Game(this);
+		arenaManager = new ArenaManager(this);
 
 		Commands commands = new Commands(this);
 
@@ -80,7 +73,7 @@ public class Main extends JavaPlugin {
 
 		// Check config version
 		if (getConfig().getInt("version") < configVersion) {
-			Utils.debugError("Your config.yml is outdated!", 0);
+			CommunicationManager.debugError("Your config.yml is outdated!", 0);
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
 					"Please update to the latest version (" + ChatColor.BLUE + configVersion + ChatColor.RED +
 					") to ensure compatibility.");
@@ -89,54 +82,54 @@ public class Main extends JavaPlugin {
 
 		// Check if arenaData.yml is outdated
 		if (getConfig().getInt("arenaData") < arenaDataVersion) {
-			Utils.debugError("Your arenaData.yml is no longer supported with this version!", 0);
+			CommunicationManager.debugError("Your arenaData.yml is no longer supported with this version!", 0);
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
 					"Please manually transfer arena data to version " + ChatColor.BLUE + arenaDataVersion +
 					ChatColor.RED + ".");
-			Utils.debugError("Please do not update your config.yml until your arenaData.yml has been updated.",
+			CommunicationManager.debugError("Please do not update your config.yml until your arenaData.yml has been updated.",
 					0);
 			outdated = true;
 		}
 
 		// Check if playerData.yml is outdated
 		if (getConfig().getInt("playerData") < playerDataVersion) {
-			Utils.debugError("Your playerData.yml is no longer supported with this version!", 0);
+			CommunicationManager.debugError("Your playerData.yml is no longer supported with this version!", 0);
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
 					"Please manually transfer player data to version " + ChatColor.BLUE + playerDataVersion +
 					ChatColor.BLUE + ".");
-			Utils.debugError("Please do not update your config.yml until your playerData.yml has been updated.",
+			CommunicationManager.debugError("Please do not update your config.yml until your playerData.yml has been updated.",
 					0);
 			outdated = true;
 		}
 
 		// Check if spawn tables are outdated
 		if (getConfig().getInt("spawnTableStructure") < spawnTableVersion) {
-			Utils.debugError("Your spawn tables are no longer supported with this version!", 0);
+			CommunicationManager.debugError("Your spawn tables are no longer supported with this version!", 0);
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
 					"Please manually transfer spawn table data to version " + ChatColor.BLUE + spawnTableVersion +
 					ChatColor.RED + ".");
-			Utils.debugError("Please do not update your config.yml until your spawn tables have been updated.",
+			CommunicationManager.debugError("Please do not update your config.yml until your spawn tables have been updated.",
 					0);
 			outdated = true;
 		}
 
 		// Check if default spawn table has been updated
 		if (getConfig().getInt("spawnTableDefault") < defaultSpawnVersion) {
-			Utils.debugInfo("The default.yml spawn table has been updated!", 0);
+			CommunicationManager.debugInfo("The default.yml spawn table has been updated!", 0);
 			getServer().getConsoleSender().sendMessage("[VillagerDefense] " +
 					"Updating to version" + ChatColor.BLUE + defaultSpawnVersion + ChatColor.WHITE +
 					" is optional but recommended.");
-			Utils.debugInfo("Please do not update your config.yml unless your default.yml has been updated.",
+			CommunicationManager.debugInfo("Please do not update your config.yml unless your default.yml has been updated.",
 					0);
 		}
 
 		// Check if language files are outdated
 		if (getConfig().getInt("languageFile") < languageFileVersion) {
-			Utils.debugError("You language files are no longer supported with this version!", 0);
+			CommunicationManager.debugError("You language files are no longer supported with this version!", 0);
 			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
 					"Please update en_US.yml and update any other language files to version " + ChatColor.BLUE +
 					languageFileVersion + ChatColor.RED + ".");
-			Utils.debugError("Please do not update your config.yml until your language files have been updated.",
+			CommunicationManager.debugError("Please do not update your config.yml until your language files have been updated.",
 					0);
 			outdated = true;
 		}
@@ -163,16 +156,16 @@ public class Main extends JavaPlugin {
 			reader.uninject(player);
 
 		// Clear every valid arena and remove all portals
-		Game.cleanAll();
-		Game.removePortals();
+		ArenaManager.cleanAll();
+		ArenaManager.removePortals();
 	}
 
 	public PacketReader getReader() {
 		return reader;
 	}
 
-	public Game getGame() {
-		return game;
+	public ArenaManager getArenaManager() {
+		return arenaManager;
 	}
 
 	// Returns arena data
@@ -201,18 +194,18 @@ public class Main extends JavaPlugin {
 
 	// Check arenas for close
 	private void checkArenas() {
-		Arrays.stream(Game.arenas).filter(Objects::nonNull).forEach(Arena::checkClose);
+		Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).forEach(Arena::checkClose);
 	}
 
 	public boolean isOutdated() {
 		return outdated;
 	}
 
-	public static int getDebugLevel() {
-		return debugLevel;
+	public void setLoaded() {
+		loaded = true;
 	}
 
-	public static void setDebugLevel(int newDebugLevel) {
-		debugLevel = newDebugLevel;
+	public boolean isLoaded() {
+		return loaded;
 	}
 }

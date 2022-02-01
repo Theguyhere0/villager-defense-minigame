@@ -4,7 +4,7 @@ import me.theguyhere.villagerdefense.exceptions.EntitySpawnPacketException;
 import me.theguyhere.villagerdefense.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.nms.NMSManager;
 import me.theguyhere.villagerdefense.packets.PacketManager;
-import me.theguyhere.villagerdefense.tools.Utils;
+import me.theguyhere.villagerdefense.tools.CommunicationManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -45,7 +45,7 @@ public class NPCVillager {
             PacketManager.spawnEntityLivingForOnline(villager);
             PacketManager.entityHeadRotationForOnline(villager, location.getYaw());
         } catch (EntitySpawnPacketException e) {
-            Utils.debugError(e.getMessage(), 1);
+            CommunicationManager.debugError(e.getMessage(), 1);
         }
     }
 
@@ -58,7 +58,7 @@ public class NPCVillager {
             PacketManager.spawnEntityLivingForPlayer(villager, player);
             PacketManager.entityHeadRotationForPlayer(villager, location.getYaw(), player);
         } catch (EntitySpawnPacketException e) {
-            Utils.debugError(e.getMessage(), 1);
+            CommunicationManager.debugError(e.getMessage(), 1);
         }
     }
 

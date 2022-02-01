@@ -1,7 +1,7 @@
 package me.theguyhere.villagerdefense.listeners;
 
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.game.models.Game;
+import me.theguyhere.villagerdefense.game.models.arenas.ArenaManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -21,7 +21,7 @@ public class DeathListener implements Listener {
 	
 	@EventHandler
 	public void onRespawn(PlayerRespawnEvent e) {
-		Game.displayEverything(e.getPlayer());
+		ArenaManager.displayEverything(e.getPlayer());
 		plugin.getReader().inject(e.getPlayer());
 	}
 }

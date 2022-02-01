@@ -2,16 +2,11 @@ package me.theguyhere.villagerdefense.listeners;
 
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.*;
-import me.theguyhere.villagerdefense.exceptions.NoSpawnException;
 import me.theguyhere.villagerdefense.game.models.*;
-import me.theguyhere.villagerdefense.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.game.models.arenas.ArenaRecord;
-import me.theguyhere.villagerdefense.game.models.arenas.ArenaSpawn;
-import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
+import me.theguyhere.villagerdefense.game.models.arenas.*;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.tools.DataManager;
-import me.theguyhere.villagerdefense.tools.Utils;
+import me.theguyhere.villagerdefense.tools.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -40,9 +35,9 @@ public class ArenaListener implements Listener {
         FileConfiguration language = plugin.getLanguageData();
 
         // Ignore if player is already in a game somehow
-        if (Arrays.stream(Game.arenas).filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player))) {
+        if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player))) {
             e.setCancelled(true);
-            player.sendMessage(Utils.notify(language.getString("joinError")));
+            PlayerManager.notify(player, language.getString("joinError"));
             return;
         }
 
@@ -52,7 +47,7 @@ public class ArenaListener implements Listener {
 
         // Check if arena is closed
         if (arena.isClosed()) {
-            player.sendMessage(Utils.notify(language.getString("closeError")));
+            PlayerManager.notify(player, language.getString("closeError"));
             e.setCancelled(true);
             return;
         }
@@ -69,7 +64,7 @@ public class ArenaListener implements Listener {
             spawn = arena.getPlayerSpawn().getLocation();
         } catch (Exception err) {
             err.printStackTrace();
-            player.sendMessage(Utils.notify(language.getString("fatalError")));
+            PlayerManager.notify(player, language.getString("fatalError"));
             return;
         }
 
@@ -94,14 +89,14 @@ public class ArenaListener implements Listener {
         // Prepares player to enter arena if it doesn't exceed max capacity and if the arena is still waiting
         if (players < arena.getMaxPlayers() && arena.getStatus() == ArenaStatus.WAITING) {
             // Teleport to arena or waiting room
-            Utils.teleAdventure(player, waiting);
+            PlayerManager.teleAdventure(player, waiting);
             player.setInvulnerable(true);
 
             // Notify everyone in the arena
             arena.getPlayers().forEach(gamer ->
-                    gamer.getPlayer().sendMessage(Utils.notify(
+                    PlayerManager.notify(gamer.getPlayer(),
                             String.format(Objects.requireNonNull(language.getString("join")),
-                            player.getName()))));
+                            player.getName())));
 
             // Update player tracking and in-game stats
             VDPlayer fighter = new VDPlayer(player, false);
@@ -109,10 +104,10 @@ public class ArenaListener implements Listener {
             arena.refreshPortal();
 
             // Give them a game board
-            Game.createBoard(fighter);
+            ArenaManager.createBoard(fighter);
 
             // Clear arena
-            Utils.clear(arena.getCorner1(), arena.getCorner2());
+            WorldManager.clear(arena.getCorner1(), arena.getCorner2());
 
             // Play waiting music
             if (arena.getWaitingSound() != null)
@@ -121,7 +116,7 @@ public class ArenaListener implements Listener {
                         player.playSound(arena.getWaitingRoom(), arena.getWaitingSound(), 4, 1);
                     else player.playSound(arena.getPlayerSpawn().getLocation(), arena.getWaitingSound(), 4, 1);
                 } catch (Exception err) {
-                    Utils.debugError(err.getMessage(), 0);
+                    CommunicationManager.debugError(err.getMessage(), 0);
                 }
 
             // Give player choice options
@@ -130,19 +125,19 @@ public class ArenaListener implements Listener {
             player.getInventory().setItem(6, GameItems.leave());
 
             // Debug message to console
-            Utils.debugInfo(player.getName() + "joined Arena " + arena.getArena(), 2);
+            CommunicationManager.debugInfo(player.getName() + "joined Arena " + arena.getArena(), 2);
         }
 
         // Enter arena if late arrival is allowed
         else if (players < arena.getMaxPlayers() && arena.getStatus() == ArenaStatus.ACTIVE && arena.hasLateArrival()) {
             // Teleport to arena
-            Utils.teleAdventure(player, spawn);
+            PlayerManager.teleAdventure(player, spawn);
 
             // Notify everyone in the arena
             arena.getPlayers().forEach(gamer ->
-                    gamer.getPlayer().sendMessage(Utils.notify(String.format(
+                    PlayerManager.notify(gamer.getPlayer(), String.format(
                             Objects.requireNonNull(language.getString("join")),
-                            player.getName()))));
+                            player.getName())));
 
             // Update player tracking and in-game stats
             VDPlayer fighter = new VDPlayer(player, false);
@@ -150,13 +145,13 @@ public class ArenaListener implements Listener {
             arena.refreshPortal();
 
             // Give them a game board
-            Game.createBoard(fighter);
+            ArenaManager.createBoard(fighter);
 
             // Give them starting items
             arena.getTask().giveItems(fighter);
 
             // Debug message to console
-            Utils.debugInfo(player.getName() + "joined Arena " + arena.getArena(), 2);
+            CommunicationManager.debugInfo(player.getName() + "joined Arena " + arena.getArena(), 2);
 
             // Don't touch task updating
             return;
@@ -165,7 +160,7 @@ public class ArenaListener implements Listener {
         // Join players as spectators if arena is full or game already started
         else {
             // Teleport to arena and give time limit bar
-            Utils.teleSpectator(player, spawn);
+            PlayerManager.teleSpectator(player, spawn);
             arena.addPlayerToTimeLimitBar(player);
 
             // Update player tracking and in-game stats
@@ -173,7 +168,7 @@ public class ArenaListener implements Listener {
             arena.refreshPortal();
 
             // Debug message to console
-            Utils.debugInfo(player.getName() + "is spectating Arena " + arena.getArena(), 2);
+            CommunicationManager.debugInfo(player.getName() + "is spectating Arena " + arena.getArena(), 2);
 
             // Don't touch task updating
             return;
@@ -283,7 +278,7 @@ public class ArenaListener implements Listener {
         plugin.savePlayerData();
 
         // Debug message to console
-        Utils.debugInfo("Arena " + arena.getArena() + " completed wave " + arena.getCurrentWave(), 2);
+        CommunicationManager.debugInfo("Arena " + arena.getArena() + " completed wave " + arena.getCurrentWave(), 2);
 
         // Win condition
         if (arena.getCurrentWave() == arena.getMaxWaves()) {
@@ -337,7 +332,7 @@ public class ArenaListener implements Listener {
         spawnBosses(arena);
 
         // Debug message to console
-        Utils.debugInfo("Arena " + arena.getArena() + " started wave " + arena.getCurrentWave(), 2);
+        CommunicationManager.debugInfo("Arena " + arena.getArena() + " started wave " + arena.getCurrentWave(), 2);
     }
 
     @EventHandler
@@ -348,12 +343,12 @@ public class ArenaListener implements Listener {
 
         // Attempt to get arena and player
         try {
-            arena = Arrays.stream(Game.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+            arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
                     .collect(Collectors.toList()).get(0);
             gamer = arena.getPlayer(player);
         } catch (Exception err) {
             e.setCancelled(true);
-            player.sendMessage(Utils.notify(plugin.getLanguageData().getString("leaveError")));
+            PlayerManager.notify(player, plugin.getLanguageData().getString("leaveError"));
             return;
         }
 
@@ -377,7 +372,7 @@ public class ArenaListener implements Listener {
             plugin.savePlayerData();
 
             // Refresh leaderboards
-            plugin.getGame().refreshLeaderboards();
+            plugin.getArenaManager().refreshLeaderboards();
 
             // Remove the player from the arena and time limit bar if exists
             arena.getPlayers().remove(gamer);
@@ -385,26 +380,26 @@ public class ArenaListener implements Listener {
                 arena.removePlayerFromTimeLimitBar(gamer.getPlayer());
 
             // Remove pets
-            Utils.getPets(player).forEach(Entity::remove);
+            WorldManager.getPets(player).forEach(Entity::remove);
 
             // Notify people in arena player left
             arena.getPlayers().forEach(fighter ->
-                    fighter.getPlayer().sendMessage(Utils.notify(String.format(
+                    PlayerManager.notify(fighter.getPlayer(), String.format(
                             Objects.requireNonNull(plugin.getLanguageData().getString("leave")),
-                            player.getName()))));
+                            player.getName())));
 
             int actives = arena.getActiveCount();
 
             // Notify spectators of open spot if late arrival is on and there is a spot open
             if (arena.hasLateArrival() && actives < arena.getMaxPlayers())
                 arena.getSpectators().forEach(spectator ->
-                    spectator.getPlayer().sendMessage(Utils.notify(String.format(
+                    PlayerManager.notify(spectator.getPlayer(), String.format(
                             Objects.requireNonNull(plugin.getLanguageData().getString("late")),
-                            player.getName()))));
+                            player.getName())));
 
             // Sets them up for teleport to lobby
             player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
-            Utils.teleAdventure(player, Game.getLobby());
+            PlayerManager.teleAdventure(player, ArenaManager.getLobby());
 
             // Give persistent rewards if it applies
             if (arena.getCurrentWave() != 0) {
@@ -425,9 +420,9 @@ public class ArenaListener implements Listener {
                         plugin.getPlayerData().getInt(player.getName() + ".crystalBalance") + reward);
                 plugin.getPlayerData().set(player.getName() + ".crystalBalance",
                         plugin.getPlayerData().getInt(player.getName() + ".crystalBalance") + bonus);
-                player.sendMessage(Utils.notify(String.format(
+                PlayerManager.notify(player, String.format(
                         Objects.requireNonNull(plugin.getLanguageData().getString("crystals")),
-                        reward, bonus)));
+                        reward, bonus));
             }
 
             Tasks task = arena.getTask();
@@ -464,7 +459,7 @@ public class ArenaListener implements Listener {
             arena.getPlayers().remove(gamer);
 
             // Sets them up for teleport to lobby
-            Utils.teleAdventure(player, Game.getLobby());
+            PlayerManager.teleAdventure(player, ArenaManager.getLobby());
         }
 
         // Return player health, food, exp, and items
@@ -498,10 +493,10 @@ public class ArenaListener implements Listener {
         arena.refreshPortal();
 
         // Refresh all displays for the player
-        Game.displayEverything(player);
+        ArenaManager.displayEverything(player);
 
         // Debug message to console
-        Utils.debugInfo(player.getName() + " left Arena " + arena.getArena(), 2);
+        CommunicationManager.debugInfo(player.getName() + " left Arena " + arena.getArena(), 2);
     }
 
     @EventHandler
@@ -515,22 +510,22 @@ public class ArenaListener implements Listener {
         // Notify players that the game has ended (Title)
         try {
             arena.getPlayers().forEach(player ->
-                    player.getPlayer().sendTitle(Utils.format(
+                    player.getPlayer().sendTitle(CommunicationManager.format(
                             Objects.requireNonNull(plugin.getLanguageData().getString("gameOver"))),
                             "", Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
         } catch (Exception err) {
-            Utils.debugError("The key 'gameOver' is either missing or corrupt in the active language file",
+            CommunicationManager.debugError("The key 'gameOver' is either missing or corrupt in the active language file",
                     1);
         }
 
         // Notify players that the game has ended (Chat)
         try {
             arena.getPlayers().forEach(player ->
-                    player.getPlayer().sendMessage(Utils.notify(String.format(
+                    PlayerManager.notify(player.getPlayer(), String.format(
                             Objects.requireNonNull(language.getString("end")),
-                            arena.getCurrentWave() - 1))));
+                            arena.getCurrentWave() - 1)));
         } catch (Exception err) {
-            Utils.debugError("The key 'end' is either missing or corrupt in the active language file",
+            CommunicationManager.debugError("The key 'end' is either missing or corrupt in the active language file",
                     1);
         }
 
@@ -550,7 +545,7 @@ public class ArenaListener implements Listener {
             if (arena.checkNewRecord(new ArenaRecord(arena.getCurrentWave() - 1, arena.getActives().stream()
                     .map(vdPlayer -> vdPlayer.getPlayer().getName()).collect(Collectors.toList())))) {
                 arena.getPlayers().forEach(player -> player.getPlayer().sendTitle(
-                        Utils.format(language.getString("record")), null, Utils.secondsToTicks(.5),
+                        CommunicationManager.format(language.getString("record")), null, Utils.secondsToTicks(.5),
                         Utils.secondsToTicks(3.5), Utils.secondsToTicks(1)));
                 arena.refreshArenaBoard();
             }
@@ -574,9 +569,9 @@ public class ArenaListener implements Listener {
                         plugin.getPlayerData().getInt(vdPlayer.getPlayer().getName() + ".crystalBalance") + reward);
                 plugin.getPlayerData().set(vdPlayer.getPlayer().getName() + ".crystalBalance",
                         plugin.getPlayerData().getInt(vdPlayer.getPlayer().getName() + ".crystalBalance") + bonus);
-                vdPlayer.getPlayer().sendMessage(Utils.notify(String.format(
+                PlayerManager.notify(vdPlayer.getPlayer(), String.format(
                         Objects.requireNonNull(plugin.getLanguageData().getString("crystals")),
-                        reward, bonus)));
+                        reward, bonus));
             });
         }
 
@@ -598,7 +593,7 @@ public class ArenaListener implements Listener {
 
 
         // Debug message to console
-        Utils.debugInfo("Arena " + arena.getArena() + " is ending.", 2);
+        CommunicationManager.debugInfo("Arena " + arena.getArena() + " is ending.", 2);
     }
 
     @EventHandler

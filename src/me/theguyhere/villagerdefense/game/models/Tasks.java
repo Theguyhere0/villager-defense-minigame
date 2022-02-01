@@ -8,11 +8,15 @@ import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.events.WaveEndEvent;
 import me.theguyhere.villagerdefense.events.WaveStartEvent;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.game.models.arenas.ArenaManager;
 import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
+import me.theguyhere.villagerdefense.tools.CommunicationManager;
+import me.theguyhere.villagerdefense.tools.PlayerManager;
 import me.theguyhere.villagerdefense.tools.Utils;
+import me.theguyhere.villagerdefense.tools.WorldManager;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -49,9 +53,9 @@ public class Tasks {
 	public final Runnable waiting = new Runnable() {
 		@Override
 		public void run() {
-			Game.arenas[arena].getPlayers().forEach(player ->
-				player.getPlayer().sendMessage(Utils.notify(plugin.getLanguageData().getString("waiting"))));
-			Utils.debugInfo("Arena " + arena + " is currently waiting for players to start.", 2);
+			ArenaManager.arenas[arena].getPlayers().forEach(player ->
+				PlayerManager.notify(player.getPlayer(), plugin.getLanguageData().getString("waiting")));
+			CommunicationManager.debugInfo("Arena " + arena + " is currently waiting for players to start.", 2);
 		}
 	};
 
@@ -60,14 +64,14 @@ public class Tasks {
 		@Override
 		public void run() {
 			try {
-				Game.arenas[arena].getPlayers().forEach(player ->
-						player.getPlayer().sendMessage(Utils.notify(String.format(
-								Objects.requireNonNull(plugin.getLanguageData().getString("minutesLeft")), 2))));
+				ArenaManager.arenas[arena].getPlayers().forEach(player ->
+						PlayerManager.notify(player.getPlayer(), String.format(
+								Objects.requireNonNull(plugin.getLanguageData().getString("minutesLeft")), 2)));
 			} catch (Exception e) {
-				Utils.debugError("The key 'minutesLeft' is missing or corrupt in the active language file",
+				CommunicationManager.debugError("The key 'minutesLeft' is missing or corrupt in the active language file",
 						1);
 			}
-			Utils.debugInfo("Arena " + arena + " is starting in 2 minutes.", 2);
+			CommunicationManager.debugInfo("Arena " + arena + " is starting in 2 minutes.", 2);
 		}
 	};
 
@@ -76,14 +80,14 @@ public class Tasks {
 		@Override
 		public void run() {
 			try {
-				Game.arenas[arena].getPlayers().forEach(player ->
-						player.getPlayer().sendMessage(Utils.notify(String.format(
-								Objects.requireNonNull(plugin.getLanguageData().getString("minutesLeft")), 1))));
+				ArenaManager.arenas[arena].getPlayers().forEach(player ->
+						PlayerManager.notify(player.getPlayer(), String.format(
+								Objects.requireNonNull(plugin.getLanguageData().getString("minutesLeft")), 1)));
 			} catch (Exception e) {
-				Utils.debugError("The key 'minutesLeft' is missing or corrupt in the active language file",
+				CommunicationManager.debugError("The key 'minutesLeft' is missing or corrupt in the active language file",
 						1);
 			}
-			Utils.debugInfo("Arena " + arena + " is starting in 1 minute.", 2);
+			CommunicationManager.debugInfo("Arena " + arena + " is starting in 1 minute.", 2);
 		}
 	};
 
@@ -92,14 +96,14 @@ public class Tasks {
 		@Override
 		public void run() {
 			try {
-				Game.arenas[arena].getPlayers().forEach(player ->
-						player.getPlayer().sendMessage(Utils.notify(String.format(
-								Objects.requireNonNull(plugin.getLanguageData().getString("secondsLeft")), 30))));
+				ArenaManager.arenas[arena].getPlayers().forEach(player ->
+						PlayerManager.notify(player.getPlayer(), String.format(
+								Objects.requireNonNull(plugin.getLanguageData().getString("secondsLeft")), 30)));
 			} catch (Exception e) {
-				Utils.debugError("The key 'secondsLeft' is missing or corrupt in the active language file",
+				CommunicationManager.debugError("The key 'secondsLeft' is missing or corrupt in the active language file",
 						1);
 			}
-			Utils.debugInfo("Arena " + arena + " is starting in 30 seconds.", 2);
+			CommunicationManager.debugInfo("Arena " + arena + " is starting in 30 seconds.", 2);
 		}
 	};
 
@@ -108,14 +112,14 @@ public class Tasks {
 		@Override
 		public void run() {
 			try {
-				Game.arenas[arena].getPlayers().forEach(player ->
-						player.getPlayer().sendMessage(Utils.notify(String.format(
-								Objects.requireNonNull(plugin.getLanguageData().getString("secondsLeft")), 10))));
+				ArenaManager.arenas[arena].getPlayers().forEach(player ->
+						PlayerManager.notify(player.getPlayer(), String.format(
+								Objects.requireNonNull(plugin.getLanguageData().getString("secondsLeft")), 10)));
 			} catch (Exception e) {
-				Utils.debugError("The key 'secondsLeft' is missing or corrupt in the active language file",
+				CommunicationManager.debugError("The key 'secondsLeft' is missing or corrupt in the active language file",
 						1);
 			}
-			Utils.debugInfo("Arena " + arena + " is starting in 10 seconds.", 2);
+			CommunicationManager.debugInfo("Arena " + arena + " is starting in 10 seconds.", 2);
 		}
 	};
 
@@ -124,16 +128,16 @@ public class Tasks {
 		@Override
 		public void run() {
 			try {
-				Game.arenas[arena].getPlayers().forEach(player -> {
-					player.getPlayer().sendMessage(Utils.notify(plugin.getLanguageData().getString("maxCapacity")));
-					player.getPlayer().sendMessage(Utils.notify(String.format(
-							Objects.requireNonNull(plugin.getLanguageData().getString("secondsLeft")), 10)));
+				ArenaManager.arenas[arena].getPlayers().forEach(player -> {
+					PlayerManager.notify(player.getPlayer(), plugin.getLanguageData().getString("maxCapacity"));
+					PlayerManager.notify(player.getPlayer(), String.format(
+							Objects.requireNonNull(plugin.getLanguageData().getString("secondsLeft")), 10));
 				});
 			} catch (Exception e) {
-				Utils.debugError("The key 'secondsLeft' is missing or corrupt in the active language file",
+				CommunicationManager.debugError("The key 'secondsLeft' is missing or corrupt in the active language file",
 						1);
 			}
-			Utils.debugInfo("Arena " + arena + " is full and is starting in 10 seconds.", 2);
+			CommunicationManager.debugInfo("Arena " + arena + " is full and is starting in 10 seconds.", 2);
 		}
 
 	};
@@ -143,14 +147,14 @@ public class Tasks {
 		@Override
 		public void run() {
 			try {
-				Game.arenas[arena].getPlayers().forEach(player ->
-						player.getPlayer().sendMessage(Utils.notify(String.format(
-								Objects.requireNonNull(plugin.getLanguageData().getString("secondsLeft")), 5))));
+				ArenaManager.arenas[arena].getPlayers().forEach(player ->
+						PlayerManager.notify(player.getPlayer(), String.format(
+								Objects.requireNonNull(plugin.getLanguageData().getString("secondsLeft")), 5)));
 			} catch (Exception e) {
-				Utils.debugError("The key 'secondsLeft' is missing or corrupt in the active language file",
+				CommunicationManager.debugError("The key 'secondsLeft' is missing or corrupt in the active language file",
 						1);
 			}
-			Utils.debugInfo("Arena " + arena + " is starting in 5 seconds.", 2);
+			CommunicationManager.debugInfo("Arena " + arena + " is starting in 5 seconds.", 2);
 
 		}
 	};
@@ -160,22 +164,22 @@ public class Tasks {
 
 		@Override
 		public void run() {
-			Arena arenaInstance = Game.arenas[arena];
+			Arena arenaInstance = ArenaManager.arenas[arena];
 
 			// Set arena to active, reset villager and enemy count, set new game ID, clear arena
 			arenaInstance.setStatus(ArenaStatus.ACTIVE);
 			arenaInstance.resetVillagers();
 			arenaInstance.resetEnemies();
 			arenaInstance.newGameID();
-			Utils.clear(arenaInstance.getCorner1(), arenaInstance.getCorner2());
+			WorldManager.clear(arenaInstance.getCorner1(), arenaInstance.getCorner2());
 
 			// Teleport players to arena if waiting room exists
 			if (arenaInstance.getWaitingRoom() != null) {
 				for (VDPlayer vdPlayer : arenaInstance.getActives()) {
-					Utils.teleAdventure(vdPlayer.getPlayer(), arenaInstance.getPlayerSpawn().getLocation());
+					PlayerManager.teleAdventure(vdPlayer.getPlayer(), arenaInstance.getPlayerSpawn().getLocation());
 				}
 				for (VDPlayer player : arenaInstance.getSpectators()) {
-					Utils.teleSpectator(player.getPlayer(), arenaInstance.getPlayerSpawn().getLocation());
+					PlayerManager.teleSpectator(player.getPlayer(), arenaInstance.getPlayerSpawn().getLocation());
 				}
 			}
 
@@ -199,7 +203,7 @@ public class Tasks {
 				giveItems(player);
 
 				// Give admins items or events to test with
-				if (Main.getDebugLevel() >= 3 && player.getPlayer().hasPermission("vd.admin")) {
+				if (CommunicationManager.getDebugLevel() >= 3 && player.getPlayer().hasPermission("vd.admin")) {
 				}
 
 				// Give Traders their gems
@@ -235,14 +239,14 @@ public class Tasks {
 
 			// Initiate community chest
 			arenaInstance.setCommunityChest(Bukkit.createInventory(new InventoryMeta(arena), 54,
-					Utils.format("&k") + Utils.format("&d&lCommunity Chest")));
+					CommunicationManager.format("&k") + CommunicationManager.format("&d&lCommunity Chest")));
 
 			// Trigger WaveEndEvent
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 					Bukkit.getPluginManager().callEvent(new WaveEndEvent(arenaInstance)));
 
 			// Debug message to console
-			Utils.debugInfo("Arena " + arena + " is starting.", 2);
+			CommunicationManager.debugInfo("Arena " + arena + " is starting.", 2);
 		}
 	};
 
@@ -251,7 +255,7 @@ public class Tasks {
 
 		@Override
 		public void run() {
-			Arena arenaInstance = Game.arenas[arena];
+			Arena arenaInstance = ArenaManager.arenas[arena];
 			FileConfiguration language = plugin.getLanguageData();
 
 			// Increment wave
@@ -279,7 +283,7 @@ public class Tasks {
 
 			// Revive dead players
 			for (VDPlayer p : arenaInstance.getGhosts()) {
-				Utils.teleAdventure(p.getPlayer(), arenaInstance.getPlayerSpawn().getLocation());
+				PlayerManager.teleAdventure(p.getPlayer(), arenaInstance.getPlayerSpawn().getLocation());
 				p.setStatus(PlayerStatus.ALIVE);
 				giveItems(p);
 
@@ -313,12 +317,12 @@ public class Tasks {
 			arenaInstance.getActives().forEach(p -> {
 				// Notify of upcoming wave
 				try {
-					p.getPlayer().sendTitle(Utils.format(String.format(
+					p.getPlayer().sendTitle(CommunicationManager.format(String.format(
 							Objects.requireNonNull(plugin.getLanguageData().getString("wave")), currentWave)),
-							Utils.format(plugin.getLanguageData().getString("starting")),
+							CommunicationManager.format(plugin.getLanguageData().getString("starting")),
 							Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
 				} catch (Exception e) {
-					Utils.debugError("The key 'starting' is either missing or corrupt in the active language file",
+					CommunicationManager.debugError("The key 'starting' is either missing or corrupt in the active language file",
 							1);
 				}
 
@@ -341,24 +345,24 @@ public class Tasks {
 				p.addGems(reward);
 				if (currentWave > 1)
 					try {
-						p.getPlayer().sendMessage(Utils.notify(String.format(
-								Objects.requireNonNull(language.getString("gems")), reward)));
+						PlayerManager.notify(p.getPlayer(), String.format(
+								Objects.requireNonNull(language.getString("gems")), reward));
 					} catch (Exception e) {
-						Utils.debugError("The key 'gems' is either missing or corrupt in the active language file",
+						CommunicationManager.debugError("The key 'gems' is either missing or corrupt in the active language file",
 								1);
 					}
-				Game.createBoard(p);
+				ArenaManager.createBoard(p);
 			});
 
 			// Notify spectators of upcoming wave
 			try {
 				arenaInstance.getSpectators().forEach(p ->
-						p.getPlayer().sendTitle(Utils.format(String.format(
+						p.getPlayer().sendTitle(CommunicationManager.format(String.format(
 								Objects.requireNonNull(language.getString("wave")), currentWave)),
-								Utils.format(language.getString("starting")), Utils.secondsToTicks(.5),
+								CommunicationManager.format(language.getString("starting")), Utils.secondsToTicks(.5),
 								Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
 			} catch (Exception e) {
-				Utils.debugError("The key 'wave' is either missing or corrupt in the active language file",
+				CommunicationManager.debugError("The key 'wave' is either missing or corrupt in the active language file",
 						1);
 			}
 
@@ -371,8 +375,8 @@ public class Tasks {
 				if (currentWave != 1)
 					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 							arenaInstance.getActives().forEach(player ->
-									player.getPlayer().sendTitle(Utils.format(language.getString("shopUpgrade")),
-											Utils.format(language.getString("shopInfo")),
+									player.getPlayer().sendTitle(CommunicationManager.format(language.getString("shopUpgrade")),
+											CommunicationManager.format(language.getString("shopInfo")),
 											Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5),
 											Utils.secondsToTicks(1))), Utils.secondsToTicks(4));
 			}
@@ -383,7 +387,7 @@ public class Tasks {
 					Utils.secondsToTicks(15));
 
 			// Debug message to console
-			Utils.debugInfo("Starting wave " + currentWave + " for Arena " + arena, 2);
+			CommunicationManager.debugInfo("Starting wave " + currentWave + " for Arena " + arena, 2);
 		}
 	};
 
@@ -391,8 +395,8 @@ public class Tasks {
 	public final Runnable calibrate = new Runnable() {
 		@Override
 		public void run() {
-			Game.arenas[arena].calibrate();
-			Utils.debugInfo("Arena " + arena + " performed a calibration check.", 2);
+			ArenaManager.arenas[arena].calibrate();
+			CommunicationManager.debugInfo("Arena " + arena + " performed a calibration check.", 2);
 		}
 	};
 
@@ -400,7 +404,7 @@ public class Tasks {
 	public final Runnable reset = new Runnable() {
 		@Override
 		public void run() {
-			Arena arenaInstance = Game.arenas[arena];
+			Arena arenaInstance = ArenaManager.arenas[arena];
 
 			// Update data
 			arenaInstance.setStatus(ArenaStatus.WAITING);
@@ -416,7 +420,7 @@ public class Tasks {
 							Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player.getPlayer()))));
 
 			// Clear the arena
-			Utils.clear(arenaInstance.getCorner1(), arenaInstance.getCorner2());
+			WorldManager.clear(arenaInstance.getCorner1(), arenaInstance.getCorner2());
 
 			// Remove particles
 			arenaInstance.cancelSpawnParticles();
@@ -428,7 +432,7 @@ public class Tasks {
 			arenaInstance.refreshPortal();
 
 			// Debug message to console
-			Utils.debugInfo("Arena " + arena + " is resetting.", 2);
+			CommunicationManager.debugInfo("Arena " + arena + " is resetting.", 2);
 		}
 	};
 
@@ -436,7 +440,7 @@ public class Tasks {
 	public final Runnable updateBoards = new Runnable() {
 		@Override
 		public void run() {
-			Game.arenas[arena].getActives().forEach(Game::createBoard);
+			ArenaManager.arenas[arena].getActives().forEach(ArenaManager::createBoard);
 		}
 	};
 
@@ -450,7 +454,7 @@ public class Tasks {
 
 		@Override
 		public void run() {
-			arenaInstance = Game.arenas[arena];
+			arenaInstance = ArenaManager.arenas[arena];
 
 			double multiplier = 1 + .2 * ((int) arenaInstance.getCurrentDifficulty() - 1);
 			if (!arenaInstance.hasDynamicLimit())
@@ -466,7 +470,7 @@ public class Tasks {
 				messageSent = false;
 
 				// Debug message to console
-				Utils.debugInfo("Adding time limit bar to Arena " + arena, 2);
+				CommunicationManager.debugInfo("Adding time limit bar to Arena " + arena, 2);
 			}
 
 			else {
@@ -484,7 +488,7 @@ public class Tasks {
 						if (!messageSent) {
 							// Send warning
 							arenaInstance.getActives().forEach(player ->
-									player.getPlayer().sendTitle(Utils.format(
+									player.getPlayer().sendTitle(CommunicationManager.format(
 											plugin.getLanguageData().getString("minuteWarning")), null,
 											Utils.secondsToTicks(.5), Utils.secondsToTicks(1.5),
 											Utils.secondsToTicks(.5)));
@@ -519,8 +523,8 @@ public class Tasks {
 			else if (Arrays.stream(GameItems.BOOTS_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
 					Objects.requireNonNull(equipment).getBoots() == null)
 				equipment.setBoots(item);
-			else Utils.giveItem(player.getPlayer(), item, plugin.getLanguageData().getString("inventoryFull"));
+			else PlayerManager.giveItem(player.getPlayer(), item, plugin.getLanguageData().getString("inventoryFull"));
 		}
-		Utils.giveItem(player.getPlayer(), GameItems.shop(), plugin.getLanguageData().getString("inventoryFull"));
+		PlayerManager.giveItem(player.getPlayer(), GameItems.shop(), plugin.getLanguageData().getString("inventoryFull"));
 	}
 }

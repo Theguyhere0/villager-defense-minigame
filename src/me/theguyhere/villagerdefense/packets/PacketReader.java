@@ -8,9 +8,9 @@ import me.theguyhere.villagerdefense.events.LeftClickNPCEvent;
 import me.theguyhere.villagerdefense.events.RightClickNPCEvent;
 import me.theguyhere.villagerdefense.events.SignGUIEvent;
 import me.theguyhere.villagerdefense.game.displays.Portal;
-import me.theguyhere.villagerdefense.game.models.Game;
+import me.theguyhere.villagerdefense.game.models.arenas.ArenaManager;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.tools.Utils;
+import me.theguyhere.villagerdefense.tools.CommunicationManager;
 import net.minecraft.server.v1_16_R3.Packet;
 import net.minecraft.server.v1_16_R3.PacketPlayInUpdateSign;
 import net.minecraft.server.v1_16_R3.PacketPlayInUseEntity;
@@ -69,7 +69,7 @@ public class PacketReader {
 			int id = (int) getValue(packet, "a");
 
 			if (getValue(packet, "action").toString().equalsIgnoreCase("ATTACK")) {
-				Arrays.stream(Game.arenas).filter(Objects::nonNull).map(Arena::getPortal).filter(Objects::nonNull)
+				Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).map(Arena::getPortal).filter(Objects::nonNull)
 						.map(Portal::getNpc).filter(Objects::nonNull).forEach(npc -> {
 							int npcId = npc.getVillager().getEntityId();
 							if (npcId == id)
@@ -83,7 +83,7 @@ public class PacketReader {
 			if (getValue(packet, "action").toString().equalsIgnoreCase("INTERACT_AT"))
 				return;
 			if (getValue(packet, "action").toString().equalsIgnoreCase("INTERACT"))
-				Arrays.stream(Game.arenas).filter(Objects::nonNull).map(Arena::getPortal).filter(Objects::nonNull)
+				Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).map(Arena::getPortal).filter(Objects::nonNull)
 						.map(Portal::getNpc).filter(Objects::nonNull).forEach(npc -> {
 							int npcId = npc.getVillager().getEntityId();
 							if (npcId == id)
@@ -98,14 +98,14 @@ public class PacketReader {
 			String header = ((String[]) getValue(packet, "b"))[0];
 
 			try {
-				arena = Game.arenas[Integer.parseInt(header.substring(13, header.length() - 1))];
+				arena = ArenaManager.arenas[Integer.parseInt(header.substring(13, header.length() - 1))];
 			} catch (Exception ignored) {
 				return;
 			}
 
 			// Check for right sign GUI
-			if (!(((String[]) getValue(packet, "b"))[1].contains(Utils.format("===============")) &&
-					((String[]) getValue(packet, "b"))[3].contains(Utils.format("==============="))))
+			if (!(((String[]) getValue(packet, "b"))[1].contains(CommunicationManager.format("===============")) &&
+					((String[]) getValue(packet, "b"))[3].contains(CommunicationManager.format("==============="))))
 				return;
 
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->

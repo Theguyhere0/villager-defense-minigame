@@ -2,8 +2,9 @@ package me.theguyhere.villagerdefense.listeners;
 
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
-import me.theguyhere.villagerdefense.game.models.Game;
-import me.theguyhere.villagerdefense.tools.Utils;
+import me.theguyhere.villagerdefense.game.models.arenas.ArenaManager;
+import me.theguyhere.villagerdefense.tools.CommunicationManager;
+import me.theguyhere.villagerdefense.tools.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,7 +28,7 @@ public class JoinListener implements Listener {
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
-		Game.displayEverything(player);
+		ArenaManager.displayEverything(player);
 		plugin.getReader().inject(player);
 
 		// Get list of loggers from data file
@@ -35,10 +36,10 @@ public class JoinListener implements Listener {
 
 		// Check if player is a logger
 		if (loggers.contains(player.getName())) {
-			Utils.debugInfo(player.getName() + " joined after logging mid-game.", 2);
+			CommunicationManager.debugInfo(player.getName() + " joined after logging mid-game.", 2);
 
 			// Teleport them back to lobby
-			Utils.teleAdventure(player, Game.getLobby());
+			PlayerManager.teleAdventure(player, ArenaManager.getLobby());
 			loggers.remove(player.getName());
 			plugin.getPlayerData().set("loggers", loggers);
 
@@ -76,12 +77,12 @@ public class JoinListener implements Listener {
 
 		// If the plugin setup is outdated, send message to admins
 		if (plugin.isOutdated() && player.hasPermission("vd.admin"))
-			player.sendMessage(Utils.notify(plugin.getLanguageData().getString("outdatedError")));
+			PlayerManager.notify(player, plugin.getLanguageData().getString("outdatedError"));
 	}
 	
 	@EventHandler
 	public void onPortal(PlayerChangedWorldEvent e) {
-		Game.displayAllPortals(e.getPlayer());
+		ArenaManager.displayAllPortals(e.getPlayer());
 	}
 	
 	@EventHandler
@@ -98,8 +99,8 @@ public class JoinListener implements Listener {
 		loggers.add(player.getName());
 
 		// Add to list of loggers if in a game
-		if (Arrays.stream(Game.arenas).filter(Objects::nonNull).anyMatch(arena -> arena.hasPlayer(player))) {
-			Utils.debugInfo(player.getName() + " logged out mid-game.", 2);
+		if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).anyMatch(arena -> arena.hasPlayer(player))) {
+			CommunicationManager.debugInfo(player.getName() + " logged out mid-game.", 2);
 			plugin.getPlayerData().set("loggers", loggers);
 			plugin.savePlayerData();
 		}

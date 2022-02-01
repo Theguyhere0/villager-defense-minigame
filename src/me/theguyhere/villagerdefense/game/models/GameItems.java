@@ -1,5 +1,7 @@
 package me.theguyhere.villagerdefense.game.models;
 
+import me.theguyhere.villagerdefense.tools.CommunicationManager;
+import me.theguyhere.villagerdefense.tools.ItemManager;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -26,20 +28,20 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = Utils.createItem(Material.EMERALD, Utils.format("&2&lItem Shop"),
-				Utils.HIDE_ENCHANT_FLAGS, enchants, Utils.format("&7&oResets every 10 rounds"));
+		ItemStack item = ItemManager.createItem(Material.EMERALD, CommunicationManager.format("&2&lItem Shop"),
+				Utils.HIDE_ENCHANT_FLAGS, enchants, CommunicationManager.format("&7&oResets every 10 rounds"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack kitSelector() {
-		ItemStack item = Utils.createItem(Material.CHEST, Utils.format("&9&lKit Selection"));
+		ItemStack item = ItemManager.createItem(Material.CHEST, CommunicationManager.format("&9&lKit Selection"));
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack challengeSelector() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = Utils.createItem(Material.NETHER_STAR, Utils.format("&9&lChallenge Selection"),
+		ItemStack item = ItemManager.createItem(Material.NETHER_STAR, CommunicationManager.format("&9&lChallenge Selection"),
 				Utils.HIDE_ENCHANT_FLAGS,
 				enchants);
 
@@ -49,7 +51,7 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = Utils.createItem(Material.BARRIER, Utils.format("&c&lLEAVE"),
+		ItemStack item = ItemManager.createItem(Material.BARRIER, CommunicationManager.format("&c&lLEAVE"),
 				Utils.HIDE_ENCHANT_FLAGS, enchants);
 
 		return item == null ? new ItemStack(Material.AIR) : item;
@@ -610,8 +612,8 @@ public class GameItems {
 				}
 		}
 
-		ItemStack item = Utils.createItem(mat, null, FLAGS, enchantments,
-				Utils.format("&2Gems: &a" + price));
+		ItemStack item = ItemManager.createItem(mat, null, FLAGS, enchantments,
+				CommunicationManager.format("&2Gems: &a" + price));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -1074,8 +1076,8 @@ public class GameItems {
 				}
 		}
 
-		ItemStack item = Utils.createItem(mat, null, FLAGS, enchantments,
-				Utils.format("&2Gems: &a" + price));
+		ItemStack item = ItemManager.createItem(mat, null, FLAGS, enchantments,
+				CommunicationManager.format("&2Gems: &a" + price));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -1445,8 +1447,8 @@ public class GameItems {
 				}
 		}
 
-		ItemStack item = Utils.createItem(Material.BOW, null, FLAGS, enchantments,
-				Utils.format("&2Gems: &a" + price));
+		ItemStack item = ItemManager.createItem(Material.BOW, null, FLAGS, enchantments,
+				CommunicationManager.format("&2Gems: &a" + price));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -1779,8 +1781,8 @@ public class GameItems {
 				}
 		}
 
-		ItemStack item = Utils.createItem(Material.CROSSBOW, null, FLAGS, enchantments,
-				Utils.format("&2Gems: &a" + price));
+		ItemStack item = ItemManager.createItem(Material.CROSSBOW, null, FLAGS, enchantments,
+				CommunicationManager.format("&2Gems: &a" + price));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -2276,8 +2278,8 @@ public class GameItems {
 				}
 		}
 
-		ItemStack item = Utils.createItem(Material.TRIDENT, null, FLAGS, enchantments,
-				Utils.format("&2Gems: &a" + price));
+		ItemStack item = ItemManager.createItem(Material.TRIDENT, null, FLAGS, enchantments,
+				CommunicationManager.format("&2Gems: &a" + price));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -2380,73 +2382,73 @@ public class GameItems {
 				}
 		}
 
-		ItemStack item = Utils.createItem(Material.SHIELD, null, FLAGS, enchantments,
-				Utils.format("&2Gems: &a" + price));
+		ItemStack item = ItemManager.createItem(Material.SHIELD, null, FLAGS, enchantments,
+				CommunicationManager.format("&2Gems: &a" + price));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 
 	// Ammo
 	public static @NotNull ItemStack arrows() {
-		ItemStack item = Utils.createItems(Material.ARROW, 16, null, Utils.format("&2Gems: &a45"));
+		ItemStack item = ItemManager.createItems(Material.ARROW, 16, null, CommunicationManager.format("&2Gems: &a45"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsS() {
-		ItemStack item = Utils.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.SLOWNESS), 8,
-				null, Utils.format("&2Gems: &a50"));
+		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.SLOWNESS), 8,
+				null, CommunicationManager.format("&2Gems: &a50"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsD() {
-		ItemStack item = Utils.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.INSTANT_DAMAGE), 8,
-				null, Utils.format("&2Gems: &a70"));
+		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.INSTANT_DAMAGE), 8,
+				null, CommunicationManager.format("&2Gems: &a70"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsW() {
-		ItemStack item = Utils.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.WEAKNESS), 8,
-				null, Utils.format("&2Gems: &a50"));
+		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.WEAKNESS), 8,
+				null, CommunicationManager.format("&2Gems: &a50"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsP() {
-		ItemStack item = Utils.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.POISON), 16,
-				null, Utils.format("&2Gems: &a60"));
+		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.POISON), 16,
+				null, CommunicationManager.format("&2Gems: &a60"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsSPlus() {
-		ItemStack item = Utils.createPotionItems(Material.TIPPED_ARROW,
+		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW,
 				new PotionData(PotionType.SLOWNESS, false, true), 8, null,
-				Utils.format("&2Gems: &a125"));
+				CommunicationManager.format("&2Gems: &a125"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsDPlus() {
-		ItemStack item = Utils.createPotionItems(Material.TIPPED_ARROW,
+		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW,
 				new PotionData(PotionType.INSTANT_DAMAGE, false, true), 8, null,
-				Utils.format("&2Gems: &a175"));
+				CommunicationManager.format("&2Gems: &a175"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsWPlus() {
-		ItemStack item = Utils.createPotionItems(Material.TIPPED_ARROW,
+		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW,
 				new PotionData(PotionType.WEAKNESS, false,true), 8, null,
-				Utils.format("&2Gems: &a125"));
+				CommunicationManager.format("&2Gems: &a125"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsPPlus() {
-		ItemStack item = Utils.createPotionItems(Material.TIPPED_ARROW,
+		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW,
 				new PotionData(PotionType.POISON, false, true), 16, null,
-				Utils.format("&2Gems: &a130"));
+				CommunicationManager.format("&2Gems: &a130"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack rockets() {
-		ItemStack item = Utils.createItems(Material.FIREWORK_ROCKET, 4, null,
-				Utils.format("&2Gems: &a50"));
+		ItemStack item = ItemManager.createItems(Material.FIREWORK_ROCKET, 4, null,
+				CommunicationManager.format("&2Gems: &a50"));
 		assert item != null;
 		ItemMeta meta = item.getItemMeta();
 		FireworkMeta fireworkMeta = (FireworkMeta) meta;
@@ -2468,7 +2470,7 @@ public class GameItems {
 		FireworkMeta fireworkMeta = (FireworkMeta) meta;
 
 		List<String> lore = new ArrayList<>();
-		lore.add(Utils.format("&2Gems: &a100"));
+		lore.add(CommunicationManager.format("&2Gems: &a100"));
 		assert meta != null;
 		meta.setLore(lore);
 		for (int i = 0; i < 9; i++) {
@@ -3127,8 +3129,8 @@ public class GameItems {
 				}
 		}
 
-		ItemStack item = Utils.createItem(mat, null, FLAGS, enchantments,
-				Utils.format("&2Gems: &a" + price));
+		ItemStack item = ItemManager.createItem(mat, null, FLAGS, enchantments,
+				CommunicationManager.format("&2Gems: &a" + price));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -3776,8 +3778,8 @@ public class GameItems {
 				}
 		}
 
-		ItemStack item = Utils.createItem(mat, null, FLAGS, enchantments,
-				Utils.format("&2Gems: &a" + price));
+		ItemStack item = ItemManager.createItem(mat, null, FLAGS, enchantments,
+				CommunicationManager.format("&2Gems: &a" + price));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -4425,8 +4427,8 @@ public class GameItems {
 				}
 		}
 
-		ItemStack item = Utils.createItem(mat, null, FLAGS, enchantments,
-				Utils.format("&2Gems: &a" + price));
+		ItemStack item = ItemManager.createItem(mat, null, FLAGS, enchantments,
+				CommunicationManager.format("&2Gems: &a" + price));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5074,168 +5076,168 @@ public class GameItems {
 				}
 		}
 
-		ItemStack item = Utils.createItem(mat, null, FLAGS, enchantments,
-				Utils.format("&2Gems: &a" + price));
+		ItemStack item = ItemManager.createItem(mat, null, FLAGS, enchantments,
+				CommunicationManager.format("&2Gems: &a" + price));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 
 	// Consumables
 	public static @NotNull ItemStack totem() {
-		ItemStack item = Utils.createItem(Material.TOTEM_OF_UNDYING, null, Utils.format("&2Gems: &a1000"));
+		ItemStack item = ItemManager.createItem(Material.TOTEM_OF_UNDYING, null, CommunicationManager.format("&2Gems: &a1000"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack gapple() {
-		ItemStack item = Utils.createItem(Material.GOLDEN_APPLE, null, Utils.format("&2Gems: &a120"));
+		ItemStack item = ItemManager.createItem(Material.GOLDEN_APPLE, null, CommunicationManager.format("&2Gems: &a120"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack egapple() {
-		ItemStack item = Utils.createItem(Material.ENCHANTED_GOLDEN_APPLE, null, Utils.format("&2Gems: &a300"));
+		ItemStack item = ItemManager.createItem(Material.ENCHANTED_GOLDEN_APPLE, null, CommunicationManager.format("&2Gems: &a300"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack gcarrot() {
-		ItemStack item = Utils.createItem(Material.GOLDEN_CARROT, null, Utils.format("&2Gems: &a80"));
+		ItemStack item = ItemManager.createItem(Material.GOLDEN_CARROT, null, CommunicationManager.format("&2Gems: &a80"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack steak() {
-		ItemStack item = Utils.createItems(Material.COOKED_BEEF, 2, null, Utils.format("&2Gems: &a60"));
+		ItemStack item = ItemManager.createItems(Material.COOKED_BEEF, 2, null, CommunicationManager.format("&2Gems: &a60"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack mutton() {
-		ItemStack item = Utils.createItems(Material.COOKED_MUTTON, 2, null,
-				Utils.format("&2Gems: &a40"));
+		ItemStack item = ItemManager.createItems(Material.COOKED_MUTTON, 2, null,
+				CommunicationManager.format("&2Gems: &a40"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack bread() {
-		ItemStack item = Utils.createItems(Material.BREAD, 3, null, Utils.format("&2Gems: &a40"));
+		ItemStack item = ItemManager.createItems(Material.BREAD, 3, null, CommunicationManager.format("&2Gems: &a40"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack carrot() {
-		ItemStack item = Utils.createItems(Material.CARROT, 5, null, Utils.format("&2Gems: &a30"));
+		ItemStack item = ItemManager.createItems(Material.CARROT, 5, null, CommunicationManager.format("&2Gems: &a30"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack beetroot() {
-		ItemStack item = Utils.createItems(Material.BEETROOT, 8, null, Utils.format("&2Gems: &a25"));
+		ItemStack item = ItemManager.createItems(Material.BEETROOT, 8, null, CommunicationManager.format("&2Gems: &a25"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack health() {
-		ItemStack item = Utils.createPotionItem(Material.POTION, new PotionData(PotionType.INSTANT_HEAL), null,
-				Utils.format("&2Gems: &a50"));
+		ItemStack item = ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.INSTANT_HEAL), null,
+				CommunicationManager.format("&2Gems: &a50"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack health2() {
-		ItemStack item = Utils.createPotionItem(Material.POTION,
+		ItemStack item = ItemManager.createPotionItem(Material.POTION,
 				new PotionData(PotionType.INSTANT_HEAL, false, true), null,
-				Utils.format("&2Gems: &a120"));
+				CommunicationManager.format("&2Gems: &a120"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack health3() {
-		ItemStack item = Utils.createPotionItem(Material.LINGERING_POTION,
+		ItemStack item = ItemManager.createPotionItem(Material.LINGERING_POTION,
 				new PotionData(PotionType.INSTANT_HEAL, false, true), null,
-				Utils.format("&2Gems: &a200"));
+				CommunicationManager.format("&2Gems: &a200"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack strength() {
-		ItemStack item = Utils.createPotionItem(Material.POTION, new PotionData(PotionType.STRENGTH), null,
-				Utils.format("&2Gems: &a150"));
+		ItemStack item = ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.STRENGTH), null,
+				CommunicationManager.format("&2Gems: &a150"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack strength2() {
-		ItemStack item = Utils.createPotionItem(Material.POTION,
+		ItemStack item = ItemManager.createPotionItem(Material.POTION,
 				new PotionData(PotionType.STRENGTH, false, true), null,
-				Utils.format("&2Gems: &a400"));
+				CommunicationManager.format("&2Gems: &a400"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack regen() {
-		ItemStack item = Utils.createPotionItem(Material.POTION, new PotionData(PotionType.REGEN), null,
-				Utils.format("&2Gems: &a175"));
+		ItemStack item = ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.REGEN), null,
+				CommunicationManager.format("&2Gems: &a175"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack regen2() {
-		ItemStack item = Utils.createPotionItem(Material.POTION,
+		ItemStack item = ItemManager.createPotionItem(Material.POTION,
 				new PotionData(PotionType.REGEN, false, true), null,
-				Utils.format("&2Gems: &a450"));
+				CommunicationManager.format("&2Gems: &a450"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack speed() {
-		ItemStack item = Utils.createPotionItem(Material.POTION, new PotionData(PotionType.SPEED), null,
-				Utils.format("&2Gems: &a125"));
+		ItemStack item = ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.SPEED), null,
+				CommunicationManager.format("&2Gems: &a125"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack speed2() {
-		ItemStack item = Utils.createPotionItem(Material.POTION, new PotionData(PotionType.SPEED, false, true),
-				null, Utils.format("&2Gems: &a350"));
+		ItemStack item = ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.SPEED, false, true),
+				null, CommunicationManager.format("&2Gems: &a350"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack milk() {
-		ItemStack item = Utils.createItem(Material.MILK_BUCKET, null, Utils.format("&2Gems: &a75"));
+		ItemStack item = ItemManager.createItem(Material.MILK_BUCKET, null, CommunicationManager.format("&2Gems: &a75"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack golem() {
-		ItemStack item = Utils.createItem(Material.GHAST_SPAWN_EGG, Utils.format("&fIron Golem Spawn Egg"),
-				Utils.format("&2Gems: &a500"));
+		ItemStack item = ItemManager.createItem(Material.GHAST_SPAWN_EGG, CommunicationManager.format("&fIron Golem Spawn Egg"),
+				CommunicationManager.format("&2Gems: &a500"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack wolf() {
-		ItemStack item = Utils.createItem(Material.WOLF_SPAWN_EGG, null, Utils.format("&2Gems: &a250"));
+		ItemStack item = ItemManager.createItem(Material.WOLF_SPAWN_EGG, null, CommunicationManager.format("&2Gems: &a250"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack smallCare() {
-		ItemStack item = Utils.createItem(Material.COAL_BLOCK, Utils.format("&2Small Care Package"),
-				Utils.format("&7Contents:"), Utils.format("&7 - &bOne &7level &b1 &7weapon"),
-				Utils.format("&7 - &bOne &7level &b1 &7armor"), Utils.format("&2Gems: &a200"));
+		ItemStack item = ItemManager.createItem(Material.COAL_BLOCK, CommunicationManager.format("&2Small Care Package"),
+				CommunicationManager.format("&7Contents:"), CommunicationManager.format("&7 - &bOne &7level &b1 &7weapon"),
+				CommunicationManager.format("&7 - &bOne &7level &b1 &7armor"), CommunicationManager.format("&2Gems: &a200"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack mediumCare() {
-		ItemStack item = Utils.createItem(Material.IRON_BLOCK, Utils.format("&3Medium Care Package"),
-				Utils.format("&7Contents:"), Utils.format("&7 - &bOne &7level &b2 &7weapon"),
-				Utils.format("&7 - &bOne &7level &b2 &7armor"),
-				Utils.format("&7 - &bOne &7level &b2 &7consumable"), Utils.format("&2Gems: &a500"));
+		ItemStack item = ItemManager.createItem(Material.IRON_BLOCK, CommunicationManager.format("&3Medium Care Package"),
+				CommunicationManager.format("&7Contents:"), CommunicationManager.format("&7 - &bOne &7level &b2 &7weapon"),
+				CommunicationManager.format("&7 - &bOne &7level &b2 &7armor"),
+				CommunicationManager.format("&7 - &bOne &7level &b2 &7consumable"), CommunicationManager.format("&2Gems: &a500"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack largeCare() {
-		ItemStack item = Utils.createItem(Material.DIAMOND_BLOCK, Utils.format("&9Large Care Package"),
-				Utils.format("&7Contents:"), Utils.format("&7 - &bOne &7level &b4 &7weapon"),
-				Utils.format("&7 - &bTwo &7level &b3 &7armor"),
-				Utils.format("&7 - &bOne &7level &b3 &7consumable"), Utils.format("&2Gems: &a1200"));
+		ItemStack item = ItemManager.createItem(Material.DIAMOND_BLOCK, CommunicationManager.format("&9Large Care Package"),
+				CommunicationManager.format("&7Contents:"), CommunicationManager.format("&7 - &bOne &7level &b4 &7weapon"),
+				CommunicationManager.format("&7 - &bTwo &7level &b3 &7armor"),
+				CommunicationManager.format("&7 - &bOne &7level &b3 &7consumable"), CommunicationManager.format("&2Gems: &a1200"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack extraCare() {
-		ItemStack item = Utils.createItem(Material.BEACON, Utils.format("&bExtra Large Care Package"),
-				Utils.format("&7Contents:"), Utils.format("&7 - &bOne &7level &b5 &7weapon"),
-				Utils.format("&7 - &bOne &7level &b4 &7weapon"),
-				Utils.format("&7 - &bOne &7level &b5 &7armor"),
-				Utils.format("&7 - &bOne &7level &b4 &7armor"),
-				Utils.format("&7 - &bTwo &7level &b4 &7consumables"), Utils.format("&2Gems: &a3000"));
+		ItemStack item = ItemManager.createItem(Material.BEACON, CommunicationManager.format("&bExtra Large Care Package"),
+				CommunicationManager.format("&7Contents:"), CommunicationManager.format("&7 - &bOne &7level &b5 &7weapon"),
+				CommunicationManager.format("&7 - &bOne &7level &b4 &7weapon"),
+				CommunicationManager.format("&7 - &bOne &7level &b5 &7armor"),
+				CommunicationManager.format("&7 - &bOne &7level &b4 &7armor"),
+				CommunicationManager.format("&7 - &bTwo &7level &b4 &7consumables"), CommunicationManager.format("&2Gems: &a3000"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack experience() {
-		ItemStack item = Utils.createItem(Material.EXPERIENCE_BOTTLE, null, Utils.format("&2Gems: &a75"));
+		ItemStack item = ItemManager.createItem(Material.EXPERIENCE_BOTTLE, null, CommunicationManager.format("&2Gems: &a75"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5245,8 +5247,8 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = Utils.createItem(Material.PURPLE_DYE, Utils.format("&dMage Essence"), Utils.HIDE_ENCHANT_FLAGS,
-				enchants, Utils.format("&7Right click to use ability"));
+		ItemStack item = ItemManager.createItem(Material.PURPLE_DYE, CommunicationManager.format("&dMage Essence"), Utils.HIDE_ENCHANT_FLAGS,
+				enchants, CommunicationManager.format("&7Right click to use ability"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5254,8 +5256,8 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = Utils.createItem(Material.BLACK_DYE, Utils.format("&dNinja Essence"), Utils.HIDE_ENCHANT_FLAGS,
-				enchants, Utils.format("&7Right click to use ability"));
+		ItemStack item = ItemManager.createItem(Material.BLACK_DYE, CommunicationManager.format("&dNinja Essence"), Utils.HIDE_ENCHANT_FLAGS,
+				enchants, CommunicationManager.format("&7Right click to use ability"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5263,8 +5265,8 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = Utils.createItem(Material.YELLOW_DYE, Utils.format("&dTemplar Essence"), Utils.HIDE_ENCHANT_FLAGS,
-				enchants, Utils.format("&7Right click to use ability"));
+		ItemStack item = ItemManager.createItem(Material.YELLOW_DYE, CommunicationManager.format("&dTemplar Essence"), Utils.HIDE_ENCHANT_FLAGS,
+				enchants, CommunicationManager.format("&7Right click to use ability"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5272,8 +5274,8 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = Utils.createItem(Material.RED_DYE, Utils.format("&dWarrior Essence"), Utils.HIDE_ENCHANT_FLAGS,
-				enchants, Utils.format("&7Right click to use ability"));
+		ItemStack item = ItemManager.createItem(Material.RED_DYE, CommunicationManager.format("&dWarrior Essence"), Utils.HIDE_ENCHANT_FLAGS,
+				enchants, CommunicationManager.format("&7Right click to use ability"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5281,8 +5283,8 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = Utils.createItem(Material.BROWN_DYE, Utils.format("&dKnight Essence"), Utils.HIDE_ENCHANT_FLAGS,
-				enchants, Utils.format("&7Right click to use ability"));
+		ItemStack item = ItemManager.createItem(Material.BROWN_DYE, CommunicationManager.format("&dKnight Essence"), Utils.HIDE_ENCHANT_FLAGS,
+				enchants, CommunicationManager.format("&7Right click to use ability"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5290,8 +5292,8 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = Utils.createItem(Material.WHITE_DYE, Utils.format("&dPriest Essence"), Utils.HIDE_ENCHANT_FLAGS,
-				enchants, Utils.format("&7Right click to use ability"));
+		ItemStack item = ItemManager.createItem(Material.WHITE_DYE, CommunicationManager.format("&dPriest Essence"), Utils.HIDE_ENCHANT_FLAGS,
+				enchants, CommunicationManager.format("&7Right click to use ability"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5299,8 +5301,8 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = Utils.createItem(Material.PINK_DYE, Utils.format("&dSiren Essence"), Utils.HIDE_ENCHANT_FLAGS,
-				enchants, Utils.format("&7Right click to use ability"));
+		ItemStack item = ItemManager.createItem(Material.PINK_DYE, CommunicationManager.format("&dSiren Essence"), Utils.HIDE_ENCHANT_FLAGS,
+				enchants, CommunicationManager.format("&7Right click to use ability"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5308,8 +5310,8 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = Utils.createItem(Material.GREEN_DYE, Utils.format("&dMonk Essence"), Utils.HIDE_ENCHANT_FLAGS,
-				enchants, Utils.format("&7Right click to use ability"));
+		ItemStack item = ItemManager.createItem(Material.GREEN_DYE, CommunicationManager.format("&dMonk Essence"), Utils.HIDE_ENCHANT_FLAGS,
+				enchants, CommunicationManager.format("&7Right click to use ability"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5317,8 +5319,8 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = Utils.createItem(Material.BLUE_DYE, Utils.format("&dMessenger Essence"), Utils.HIDE_ENCHANT_FLAGS,
-				enchants, Utils.format("&7Right click to use ability"));
+		ItemStack item = ItemManager.createItem(Material.BLUE_DYE, CommunicationManager.format("&dMessenger Essence"), Utils.HIDE_ENCHANT_FLAGS,
+				enchants, CommunicationManager.format("&7Right click to use ability"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}

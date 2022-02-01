@@ -1,14 +1,16 @@
-package me.theguyhere.villagerdefense.game.models;
+package me.theguyhere.villagerdefense.game.models.arenas;
 
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.exceptions.InvalidLocationException;
-import me.theguyhere.villagerdefense.exceptions.NoSpawnException;
 import me.theguyhere.villagerdefense.game.displays.InfoBoard;
 import me.theguyhere.villagerdefense.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.game.displays.Portal;
-import me.theguyhere.villagerdefense.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.game.models.Challenge;
+import me.theguyhere.villagerdefense.game.models.Tasks;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
+import me.theguyhere.villagerdefense.tools.CommunicationManager;
 import me.theguyhere.villagerdefense.tools.Utils;
+import me.theguyhere.villagerdefense.tools.WorldManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -17,7 +19,7 @@ import org.bukkit.scoreboard.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Game {
+public class ArenaManager {
 	private final Main plugin;
 
 	// Tracks arenas, info boards, and leaderboards for the game
@@ -27,7 +29,7 @@ public class Game {
 
 	private static Location lobby;
 
-	public Game(Main plugin) {
+	public ArenaManager(Main plugin) {
 		this.plugin = plugin;
 
 		Objects.requireNonNull(plugin.getArenaData().getConfigurationSection("")).getKeys(false)
@@ -56,6 +58,8 @@ public class Game {
 					}
 				});
 		setLobby(Utils.getConfigLocation(plugin, "lobby"));
+
+		plugin.setLoaded();
 	}
 
 	/**
@@ -73,11 +77,11 @@ public class Game {
 
 		// Create score board
 		Objective obj = board.registerNewObjective("VillagerDefense", "dummy",
-				Utils.format("&6&l   " + arena.getName() + "  "));
+				CommunicationManager.format("&6&l   " + arena.getName() + "  "));
 		obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-		Score score12= obj.getScore(Utils.format("&eWave: " + arena.getCurrentWave()));
+		Score score12= obj.getScore(CommunicationManager.format("&eWave: " + arena.getCurrentWave()));
 		score12.setScore(12);
-		Score score11 = obj.getScore(Utils.format("&aGems: " + player.getGems()));
+		Score score11 = obj.getScore(CommunicationManager.format("&aGems: " + player.getGems()));
 		score11.setScore(11);
 		StringBuilder kit = new StringBuilder(player.getKit().getName());
 		if (player.getKit().isMultiLevel()) {
@@ -86,40 +90,40 @@ public class Game {
 				kit.append("I");
 			}
 		}
-		Score score10 = obj.getScore(Utils.format("&bKit: " + kit));
+		Score score10 = obj.getScore(CommunicationManager.format("&bKit: " + kit));
 		score10.setScore(10);
 		int bonus = 0;
 		for (Challenge challenge : player.getChallenges())
 			bonus += challenge.getBonus();
-		Score score9 = obj.getScore(Utils.format(String.format("&5Challenges: (+%d%%)", bonus)));
+		Score score9 = obj.getScore(CommunicationManager.format(String.format("&5Challenges: (+%d%%)", bonus)));
 		score9.setScore(9);
 		if (player.getChallenges().size() < 4)
 			for (Challenge challenge : player.getChallenges()) {
-				Score score8 = obj.getScore(Utils.format("  &5" + challenge.getName()));
+				Score score8 = obj.getScore(CommunicationManager.format("  &5" + challenge.getName()));
 				score8.setScore(8);
 			}
 		else {
 			StringBuilder challenges = new StringBuilder();
 			for (Challenge challenge : player.getChallenges())
 				challenges.append(challenge.getName().toCharArray()[0]);
-			Score score8 = obj.getScore(Utils.format("  &5" + challenges));
+			Score score8 = obj.getScore(CommunicationManager.format("  &5" + challenges));
 			score8.setScore(8);
 		}
 		Score score7 = obj.getScore("");
 		score7.setScore(7);
-		Score score6 = obj.getScore(Utils.format("&dPlayers: " + arena.getAlive()));
+		Score score6 = obj.getScore(CommunicationManager.format("&dPlayers: " + arena.getAlive()));
 		score6.setScore(6);
 		Score score5 = obj.getScore("Ghosts: " + arena.getGhostCount());
 		score5.setScore(5);
-		Score score4 = obj.getScore(Utils.format("&7Spectators: " + arena.getSpectatorCount()));
+		Score score4 = obj.getScore(CommunicationManager.format("&7Spectators: " + arena.getSpectatorCount()));
 		score4.setScore(4);
 		Score score3 = obj.getScore(" ");
 		score3.setScore(3);
-		Score score2 = obj.getScore(Utils.format("&2Villagers: " + arena.getVillagers()));
+		Score score2 = obj.getScore(CommunicationManager.format("&2Villagers: " + arena.getVillagers()));
 		score2.setScore(2);
-		Score score1 = obj.getScore(Utils.format("&cEnemies: " + arena.getEnemies()));
+		Score score1 = obj.getScore(CommunicationManager.format("&cEnemies: " + arena.getEnemies()));
 		score1.setScore(1);
-		Score score = obj.getScore(Utils.format("&4Kills: " + player.getKills()));
+		Score score = obj.getScore(CommunicationManager.format("&4Kills: " + player.getKills()));
 		score.setScore(0);
 
 		player.getPlayer().setScoreboard(board);
@@ -130,7 +134,7 @@ public class Game {
 	 */
 	public static void cleanAll() {
 		Arrays.stream(arenas).filter(Objects::nonNull).filter(arena -> !arena.isClosed())
-				.forEach(arena -> Utils.clear(arena.getCorner1(), arena.getCorner2()));
+				.forEach(arena -> WorldManager.clear(arena.getCorner1(), arena.getCorner2()));
 	}
 
 	public static Location getLobby() {
@@ -138,7 +142,7 @@ public class Game {
 	}
 
 	public static void setLobby(Location lobby) {
-		Game.lobby = lobby;
+		ArenaManager.lobby = lobby;
 	}
 
 	public void reloadLobby() {
@@ -172,8 +176,8 @@ public class Game {
 					plugin);
 			infoBoards[num].displayForOnline();
 		} catch (Exception e) {
-			Utils.debugError("Invalid location for info board " + num, 1);
-			Utils.debugInfo("Info board location data may be corrupt. If data cannot be manually corrected in " +
+			CommunicationManager.debugError("Invalid location for info board " + num, 1);
+			CommunicationManager.debugInfo("Info board location data may be corrupt. If data cannot be manually corrected in " +
 					"arenaData.yml, please delete the location data for info board " + num + ".", 1);
 		}
 	}
@@ -225,8 +229,8 @@ public class Game {
 			leaderboards.put(type, new Leaderboard(type, plugin));
 			leaderboards.get(type).displayForOnline();
 		} catch (Exception e) {
-			Utils.debugError("Invalid location for leaderboard " + type, 1);
-			Utils.debugInfo("Leaderboard location data may be corrupt. If data cannot be manually corrected in " +
+			CommunicationManager.debugError("Invalid location for leaderboard " + type, 1);
+			CommunicationManager.debugInfo("Leaderboard location data may be corrupt. If data cannot be manually corrected in " +
 					"arenaData.yml, please delete the location data for leaderboard " + type + ".", 1);
 		}
 	}

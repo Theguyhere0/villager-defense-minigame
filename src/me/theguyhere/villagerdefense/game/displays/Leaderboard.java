@@ -2,6 +2,7 @@ package me.theguyhere.villagerdefense.game.displays;
 
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.exceptions.InvalidLocationException;
+import me.theguyhere.villagerdefense.tools.CommunicationManager;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -28,19 +29,19 @@ public class Leaderboard {
 		// Determine leaderboard title
 		switch (type) {
 			case "totalKills":
-				info.add(Utils.format("&d&lTotal Kills Leaderboard"));
+				info.add(CommunicationManager.format("&d&lTotal Kills Leaderboard"));
 				break;
 			case "topKills":
-				info.add(Utils.format("&c&lTop Kills Leaderboard"));
+				info.add(CommunicationManager.format("&c&lTop Kills Leaderboard"));
 				break;
 			case "totalGems":
-				info.add(Utils.format("&e&lTotal Gems Leaderboard"));
+				info.add(CommunicationManager.format("&e&lTotal Gems Leaderboard"));
 				break;
 			case "topBalance":
-				info.add(Utils.format("&a&lTop Balance Leaderboard"));
+				info.add(CommunicationManager.format("&a&lTop Balance Leaderboard"));
 				break;
 			case "topWave":
-				info.add(Utils.format("&b&lTop Wave Leaderboard"));
+				info.add(CommunicationManager.format("&b&lTop Wave Leaderboard"));
 				break;
 			default:
 				info.add("");
@@ -58,7 +59,7 @@ public class Leaderboard {
 				.forEachOrdered(map -> info.add(map.getKey() + " - &b" + map.getValue()));
 
 		for (int i = 1; i < info.size(); i++)
-			info.set(i, Utils.format("&6" + i + ") &f" + info.get(i)));
+			info.set(i, CommunicationManager.format("&6" + i + ") &f" + info.get(i)));
 
 		// Set location and hologram
 		this.location = location;

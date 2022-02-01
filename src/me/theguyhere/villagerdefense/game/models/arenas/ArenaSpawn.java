@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.game.models.arenas;
 
 import me.theguyhere.villagerdefense.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.game.displays.SpawnIndicator;
-import me.theguyhere.villagerdefense.tools.Utils;
+import me.theguyhere.villagerdefense.tools.CommunicationManager;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
@@ -68,11 +68,11 @@ public class ArenaSpawn {
     private String getName() {
         switch (spawnType) {
             case PLAYER:
-                return Utils.format("&6Player Spawn");
+                return CommunicationManager.format("&6Player Spawn");
             case MONSTER:
-                return Utils.format("&3Monster Spawn " + id);
+                return CommunicationManager.format("&3Monster Spawn " + id);
             case VILLAGER:
-                return Utils.format("&aVillager Spawn " + id);
+                return CommunicationManager.format("&aVillager Spawn " + id);
             default:
                 return null;
         }
