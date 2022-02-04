@@ -12,6 +12,7 @@ import me.theguyhere.villagerdefense.game.models.arenas.ArenaManager;
 import me.theguyhere.villagerdefense.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
+import me.theguyhere.villagerdefense.nms.NMSManager;
 import me.theguyhere.villagerdefense.tools.*;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
@@ -202,7 +203,7 @@ public class InventoryListener implements Listener {
 				// Set a new arena
 				ArenaManager.arenas[slot] = new Arena(plugin, slot, new Tasks(plugin, slot));
 
-				Inventories.nameArena(player, ArenaManager.arenas[slot]);
+				NMSManager.nameArena(player, ArenaManager.arenas[slot]);
 			}
 
 			// Edit existing arena
@@ -683,7 +684,7 @@ public class InventoryListener implements Listener {
 			// Open name editor
 			if (buttonName.contains("Edit Name"))
 				if (arenaInstance.isClosed())
-					Inventories.nameArena(player, arenaInstance);
+					NMSManager.nameArena(player, arenaInstance);
 				else PlayerManager.notify(player, "&cArena must be closed to modify this!");
 
 			// Open portal menu

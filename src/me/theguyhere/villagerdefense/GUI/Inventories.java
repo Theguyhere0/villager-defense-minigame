@@ -2,24 +2,17 @@ package me.theguyhere.villagerdefense.GUI;
 
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.game.models.Challenge;
-import me.theguyhere.villagerdefense.game.models.arenas.ArenaManager;
 import me.theguyhere.villagerdefense.game.models.GameItems;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.game.models.arenas.ArenaManager;
 import me.theguyhere.villagerdefense.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.CommunicationManager;
 import me.theguyhere.villagerdefense.tools.ItemManager;
 import me.theguyhere.villagerdefense.tools.Utils;
-import net.minecraft.server.v1_16_R3.BlockPosition;
-import net.minecraft.server.v1_16_R3.EntityPlayer;
-import net.minecraft.server.v1_16_R3.PacketPlayOutOpenSignEditor;
-import net.minecraft.server.v1_16_R3.TileEntitySign;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.craftbukkit.v1_16_R3.block.CraftSign;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -2331,25 +2324,6 @@ public class Inventories {
 		return inv;
 	}
 
-	// Shows sign GUI to name arena
-	public static void nameArena(Player player, Arena arena) {
-		Location location = player.getLocation();
-		location.setY(0);
-		BlockPosition blockPosition = new BlockPosition(location.getX(), location.getY(), location.getZ());
-		player.sendBlockChange(location, Bukkit.createBlockData(Material.OAK_SIGN));
-
-		TileEntitySign sign = new TileEntitySign();
-		sign.setPosition(blockPosition);
-		sign.lines[0] = CraftSign.sanitizeLines(new String[]{String.format("Rename Arena %d:", arena.getArena())})[0];
-		sign.lines[1] = CraftSign.sanitizeLines(new String[]{CommunicationManager.format("===============")})[0];
-		sign.lines[3] = CraftSign.sanitizeLines(new String[]{CommunicationManager.format("===============")})[0];
-		sign.lines[2] = CraftSign.sanitizeLines(new String[]{arena.getName()})[0];
-		sign.update();
-
-		EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
-		entityPlayer.playerConnection.sendPacket(sign.getUpdatePacket());
-		entityPlayer.playerConnection.sendPacket(new PacketPlayOutOpenSignEditor(blockPosition));
-	}
 
 	// Easy way to get a string for a toggle status
 	private static String getToggleStatus(boolean status) {

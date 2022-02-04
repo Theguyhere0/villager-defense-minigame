@@ -1,18 +1,38 @@
-package me.theguyhere.villagerdefense.nms.v1_16_R3;
+package me.theguyhere.villagerdefense.nms.v1_17_R1;
 
-import net.minecraft.server.v1_16_R3.*;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.chat.IChatBaseComponent;
+import net.minecraft.sounds.SoundEffect;
+import net.minecraft.world.EnumHand;
+import net.minecraft.world.EnumInteractionResult;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EnumItemSlot;
+import net.minecraft.world.entity.decoration.EntityArmorStand;
+import net.minecraft.world.entity.player.EntityHuman;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AxisAlignedBB;
+import net.minecraft.world.phys.Vec3D;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage;
+import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_17_R1.util.CraftChatMessage;
 
 import java.util.Objects;
 
-public class EntityNMSVillager extends EntityVillager {
+public class EntityNMSArmorStand extends EntityArmorStand {
 
-    public EntityNMSVillager(Location location) {
-        super(EntityTypes.VILLAGER, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
+    public EntityNMSArmorStand(Location location, String name) {
+        super(EntityTypes.c, ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
+        super.setInvisible(true);
+        super.setSmall(true);
+        super.setArms(false);
+        super.setBasePlate(true);
+        super.setMarker(true);
         super.collides = false;
         super.setPosition(location.getX(), location.getY(), location.getZ());
+        super.a(new AxisAlignedBB(0, 0, 0, 0, 0, 0));
+        super.setCustomName(CraftChatMessage.fromStringOrNull(name));
+        super.setCustomNameVisible(name != null && !name.isEmpty());
+        super.setOnGround(true);
     }
 
     @Override
@@ -31,13 +51,13 @@ public class EntityNMSVillager extends EntityVillager {
     }
 
     @Override
-    public boolean a_(NBTTagCompound nbttagcompound) {
+    public boolean d(NBTTagCompound nbttagcompound) {
         // Prevent saving NBT
         return false;
     }
 
     @Override
-    public boolean d(NBTTagCompound nbttagcompound) {
+    public boolean e(NBTTagCompound nbttagcompound) {
         // Prevent saving NBT
         return false;
     }
@@ -76,13 +96,7 @@ public class EntityNMSVillager extends EntityVillager {
     @Override
     public EnumInteractionResult a(EntityHuman human, Vec3D vec3d, EnumHand enumhand) {
         // Prevent stand being equipped
-        return EnumInteractionResult.PASS;
-    }
-
-    @Override
-    public boolean a_(int i, ItemStack item) {
-        // Prevent stand being equipped
-        return false;
+        return EnumInteractionResult.c;
     }
 
     @Override
@@ -91,21 +105,11 @@ public class EntityNMSVillager extends EntityVillager {
     }
 
     @Override
-    public void a(AxisAlignedBB boundingBox) {
-        // Prevent changing alignment
-    }
-
-    @Override
     public void playSound(SoundEffect soundeffect, float f, float f1) {
         // Remove sounds.
     }
 
-    @Override
-    public void die() {
-        // Prevent being killed.
-    }
-
-    public CraftNMSVillager getBukkitEntity() {
-        return new CraftNMSVillager(super.world.getServer(), this);
+    public CraftNMSArmorStand getBukkitEntity() {
+        return new CraftNMSArmorStand(super.getWorld().getCraftServer(), this);
     }
 }

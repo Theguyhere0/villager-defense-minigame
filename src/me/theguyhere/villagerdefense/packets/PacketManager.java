@@ -3,10 +3,12 @@ package me.theguyhere.villagerdefense.packets;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import me.theguyhere.villagerdefense.exceptions.EntitySpawnPacketException;
 import me.theguyhere.villagerdefense.game.displays.HoloLine;
+import me.theguyhere.villagerdefense.nms.NMSManager;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+
+import java.lang.reflect.Field;
 
 public class PacketManager {
     public static void spawnEntityForPlayer(Entity entity, int type, Player player) throws EntitySpawnPacketException {
@@ -60,7 +62,7 @@ public class PacketManager {
         MetadataHelper.setEntityStatus(dataWatcher, (byte) 0x20); // Invisible
         MetadataHelper.setArmorStandStatus(dataWatcher, (byte) (0x01 | 0x08 | 0x10)); // Small, no base-plate, marker
         if (holoLine.getText() != null && !holoLine.getText().isEmpty()) {
-            MetadataHelper.setCustomNameNMSObject(dataWatcher, CraftChatMessage.fromStringOrNull(holoLine.getText()));
+            MetadataHelper.setCustomNameNMSObject(dataWatcher, NMSManager.getIChatBaseComponent(holoLine.getText()));
             MetadataHelper.setCustomNameVisible(dataWatcher, true);
         }
         packet.setEntityMetadata(dataWatcher.getWatchableObjects());
@@ -82,5 +84,22 @@ public class PacketManager {
     public static void entityHeadRotationForOnline(Entity entity, float yaw) {
         for (Player player : Bukkit.getOnlinePlayers())
             entityHeadRotationForPlayer(entity, yaw, player);
+    }
+
+    public static Object getValue(Object instance, String name) {
+        Object result = null;
+
+        try {
+            Field field = instance.getClass().getDeclaredField(name);
+            field.setAccessible(true);
+
+            result = field.get(instance);
+
+            field.setAccessible(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 }
