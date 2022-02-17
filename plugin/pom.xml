@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>VillagerDefense-plugin</artifactId>
-    <name>VillagerDefense NMS Plugin</name>
+    <name>VillagerDefense Plugin</name>
 
     <dependencies>
         <dependency>
@@ -19,23 +19,62 @@
             <version>1.18.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
-            <groupId>me.theguyhere</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>VillagerDefense-nms-common</artifactId>
-            <version>1.1.0-pre3</version>
-            <scope>compile</scope>
         </dependency>
+
         <dependency>
-            <groupId>me.theguyhere</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>VillagerDefense-nms-v1_18_r1</artifactId>
-            <version>1.1.0-pre3</version>
-            <scope>compile</scope>
         </dependency>
+
         <dependency>
-            <groupId>me.theguyhere</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>VillagerDefense-nms-v1_17_r1</artifactId>
-            <version>1.1.0-pre3</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <finalName>VillagerDefense-${project.version}</finalName>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <configuration>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <shadedArtifactAttached>false</shadedArtifactAttached>
+                    <artifactSet>
+                        <includes>
+                            <include>${project.groupId}:*</include>
+                        </includes>
+                    </artifactSet>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/maven/</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

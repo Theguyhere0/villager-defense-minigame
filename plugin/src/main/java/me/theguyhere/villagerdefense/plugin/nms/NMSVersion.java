@@ -1,7 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.nms;
 
-import me.theguyhere.villagedefense.nms.common.NMSManager;
-import me.theguyhere.villagedefense.nms.v1_18_r1.VersionNMSManager;
+import me.theguyhere.villagerdefense.nms.common.NMSManager;
+import me.theguyhere.villagerdefense.nms.v1_18_r1.VersionNMSManager;
 import me.theguyhere.villagerdefense.plugin.tools.Utils;
 
 public enum NMSVersion {

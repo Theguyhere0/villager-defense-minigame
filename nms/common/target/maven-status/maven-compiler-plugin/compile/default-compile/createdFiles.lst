@@ -1,0 +1,8 @@
+me\theguyhere\villagerdefense\nms\common\NMSManager.class
+me\theguyhere\villagerdefense\nms\common\PacketEntity.class
+me\theguyhere\villagerdefense\nms\common\PacketGroupImp$DoublePacket.class
+me\theguyhere\villagerdefense\nms\common\EntityID.class
+me\theguyhere\villagerdefense\nms\common\PacketGroup.class
+me\theguyhere\villagerdefense\nms\common\PacketGroupImp.class
+me\theguyhere\villagerdefense\nms\common\TextPacketEntity.class
+me\theguyhere\villagerdefense\nms\common\VillagerPacketEntity.class

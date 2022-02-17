@@ -1,6 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.tools;
 
-import me.theguyhere.villagedefense.nms.common.PacketGroup;
+import me.theguyhere.villagerdefense.nms.common.PacketGroup;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import org.bukkit.Bukkit;
