@@ -1,8 +1,11 @@
-package me.theguyhere.villagerdefense.plugin.nms;
+package me.theguyhere.villagerdefense.plugin.tools;
 
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
 import me.theguyhere.villagerdefense.nms.v1_18_r1.VersionNMSManager;
-import me.theguyhere.villagerdefense.plugin.tools.Utils;
+import org.bukkit.Bukkit;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public enum NMSVersion {
 //    v1_8_R2,
@@ -31,7 +34,7 @@ public enum NMSVersion {
     }
 
     private static NMSVersion extractCurrentVersion() {
-        String nmsVersionName = Utils.extractNMSVersion();
+        String nmsVersionName = extractNMSVersion();
 
         if (nmsVersionName != null) {
             try {
@@ -65,5 +68,19 @@ public enum NMSVersion {
 
     public static boolean isBetween(NMSVersion from, NMSVersion to) {
         return from.ordinal() <= getCurrent().ordinal() && getCurrent().ordinal() <= to.ordinal();
+    }
+
+    /**
+     * This method uses a regex to get the NMS package part that changes with every update.
+     * Example: v1_13_R2
+     * @return the NMS package part or null if not found.
+     */
+    private static String extractNMSVersion() {
+        Matcher matcher = Pattern.compile("v\\d+_\\d+_R\\d+").matcher(Bukkit.getServer().getClass().getPackage().getName());
+        if (matcher.find()) {
+            return matcher.group();
+        } else {
+            return null;
+        }
     }
 }

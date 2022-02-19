@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.GUI.Inventories;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
@@ -294,8 +295,8 @@ public class GameListener implements Listener {
 
 		// Update health bar
 		if (ent instanceof IronGolem || ent instanceof Ravager)
-			ent.setCustomName(Utils.healthBar(maxHealth, n.getHealth() - e.getFinalDamage(), 10));
-		else ent.setCustomName(Utils.healthBar(maxHealth, n.getHealth() - e.getFinalDamage(), 5));
+			ent.setCustomName(Mobs.healthBar(maxHealth, n.getHealth() - e.getFinalDamage(), 10));
+		else ent.setCustomName(Mobs.healthBar(maxHealth, n.getHealth() - e.getFinalDamage(), 5));
 	}
 
 	// Update health bar when damage is dealt not by another entity
@@ -327,8 +328,8 @@ public class GameListener implements Listener {
 
 		// Update health bar
 		if (ent instanceof IronGolem || ent instanceof Ravager)
-			ent.setCustomName(Utils.healthBar(maxHealth, n.getHealth() - e.getFinalDamage(), 10));
-		else ent.setCustomName(Utils.healthBar(maxHealth, n.getHealth() - e.getFinalDamage(), 5));
+			ent.setCustomName(Mobs.healthBar(maxHealth, n.getHealth() - e.getFinalDamage(), 10));
+		else ent.setCustomName(Mobs.healthBar(maxHealth, n.getHealth() - e.getFinalDamage(), 5));
 	}
 
 	// Prevent players from going hungry while waiting for an arena to start
@@ -371,8 +372,8 @@ public class GameListener implements Listener {
 
 		// Update health bar
 		if (ent instanceof IronGolem || ent instanceof Ravager)
-			ent.setCustomName(Utils.healthBar(maxHealth, Math.min(modifiedHealth, maxHealth), 10));
-		else ent.setCustomName(Utils.healthBar(maxHealth, Math.min(modifiedHealth, maxHealth), 5));
+			ent.setCustomName(Mobs.healthBar(maxHealth, Math.min(modifiedHealth, maxHealth), 10));
+		else ent.setCustomName(Mobs.healthBar(maxHealth, Math.min(modifiedHealth, maxHealth), 5));
 	}
 
 	// Open shop, kit selecting menu, or leave

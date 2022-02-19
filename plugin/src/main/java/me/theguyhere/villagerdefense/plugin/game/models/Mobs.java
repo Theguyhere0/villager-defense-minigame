@@ -4,8 +4,8 @@ import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.ReloadBoardsEvent;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.tools.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
-import me.theguyhere.villagerdefense.plugin.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -28,7 +28,7 @@ public class Mobs {
         assert monsters != null;
 
         monsters.addEntry(livingEntity.getUniqueId().toString());
-        livingEntity.setCustomName(Utils.healthBar(1, 1, 5));
+        livingEntity.setCustomName(healthBar(1, 1, 5));
         livingEntity.setCustomNameVisible(true);
         livingEntity.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
         livingEntity.setMetadata("game", new FixedMetadataValue(plugin, arena.getGameID()));
@@ -110,7 +110,7 @@ public class Mobs {
     }
 
     private static void setLargeMinion(Main plugin, Arena arena, LivingEntity livingEntity) {
-        livingEntity.setCustomName(Utils.healthBar(1, 1, 10));
+        livingEntity.setCustomName(healthBar(1, 1, 10));
         livingEntity.setCustomNameVisible(true);
         livingEntity.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
         livingEntity.setRemoveWhenFarAway(false);
@@ -1044,7 +1044,7 @@ public class Mobs {
         assert villagers != null;
 
         villagers.addEntry(villager.getUniqueId().toString());
-        villager.setCustomName(Utils.healthBar(1, 1, 5));
+        villager.setCustomName(healthBar(1, 1, 5));
         villager.setCustomNameVisible(true);
         villager.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
         arena.incrementVillagers();
@@ -1224,7 +1224,7 @@ public class Mobs {
 
     public static void setGolem(Main plugin, Arena arena, IronGolem ironGolem) {
         ironGolem.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
-        ironGolem.setCustomName(Utils.healthBar(1, 1, 10));
+        ironGolem.setCustomName(healthBar(1, 1, 10));
         ironGolem.setCustomNameVisible(true);
         arena.incrementGolems();
 
@@ -1250,5 +1250,23 @@ public class Mobs {
                         ));
             }
         }
+    }
+
+    // Returns a formatted health bar
+    public static String healthBar(double max, double remaining, int size) {
+        String toFormat;
+        double healthLeft = remaining / max;
+        int healthBars = (int) (healthLeft * size + .99);
+        if (healthBars < 0) healthBars = 0;
+
+        if (healthLeft > .5)
+            toFormat = "&a";
+        else if (healthLeft > .25)
+            toFormat = "&e";
+        else toFormat = "&c";
+
+        return CommunicationManager.format(toFormat +
+                new String(new char[healthBars]).replace("\0", "\u2592") +
+                new String(new char[size - healthBars]).replace("\0", "  "));
     }
 }

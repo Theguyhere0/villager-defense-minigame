@@ -1,9 +1,11 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
+import me.theguyhere.villagerdefense.nms.common.NMSManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaManager;
 import me.theguyhere.villagerdefense.plugin.tools.CommunicationManager;
+import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -19,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class JoinListener implements Listener {
+	private final NMSManager nmsManager = NMSVersion.getCurrent().getNmsManager();
 	private final Main plugin;
 
 	public JoinListener(Main plugin) {
@@ -29,7 +32,7 @@ public class JoinListener implements Listener {
 	public void onJoin(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
 		ArenaManager.displayEverything(player);
-//		plugin.getReader().inject(player);
+		nmsManager.injectPacketListener(player, new PacketListenerImpl());
 
 		// Get list of loggers from data file
 		List<String> loggers = plugin.getPlayerData().getStringList("loggers");
@@ -90,7 +93,7 @@ public class JoinListener implements Listener {
 		Player player = e.getPlayer();
 
 		// Uninject player and make them leave from arena
-//		plugin.getReader().uninject(player);
+		nmsManager.uninjectPacketListener(player);
 		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 				Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player)));
 

@@ -7,8 +7,8 @@ import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaManager;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.tools.Utils;
 import me.theguyhere.villagerdefense.plugin.tools.CommunicationManager;
+import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -66,7 +66,7 @@ public class Inventories {
 
 		// Option to set leaderboard hologram
 		inv.setItem(47, ItemManager.createItem(Material.GOLDEN_HELMET, CommunicationManager.format("&e&lLeaderboards"),
-				Utils.BUTTON_FLAGS, null, CommunicationManager.format("&7Manage leaderboards")));
+				ItemManager.BUTTON_FLAGS, null, CommunicationManager.format("&7Manage leaderboards")));
 
 		// Option to exit
 		inv.setItem(53, InventoryItems.exit());
@@ -81,7 +81,7 @@ public class Inventories {
 				CommunicationManager.format("&2&lLobby"));
 
 		// Option to create or relocate the lobby
-		if (Utils.getConfigLocation(plugin, "lobby") == null)
+		if (DataManager.getConfigLocation(plugin, "lobby") == null)
 			inv.setItem(0, InventoryItems.create("Lobby"));
 		else inv.setItem(0, InventoryItems.relocate("Lobby"));
 
@@ -147,7 +147,7 @@ public class Inventories {
 				CommunicationManager.format("&6&lInfo Board " + slot));
 
 		// Option to create or relocate info board
-		if (Utils.getConfigLocation(plugin, "infoBoard." + slot) == null)
+		if (DataManager.getConfigLocation(plugin, "infoBoard." + slot) == null)
 			inv.setItem(0, InventoryItems.create("Info Board"));
 		else inv.setItem(0, InventoryItems.relocate("Info Board"));
 
@@ -201,7 +201,7 @@ public class Inventories {
 
 		// Option to modify top wave leaderboard
 		inv.setItem(4, ItemManager.createItem(Material.GOLDEN_SWORD, CommunicationManager.format("&9&lTop Wave Leaderboard"),
-				Utils.BUTTON_FLAGS, null));
+				ItemManager.BUTTON_FLAGS, null));
 
 		// Option to exit
 		inv.setItem(8, InventoryItems.exit());
@@ -216,7 +216,7 @@ public class Inventories {
 				CommunicationManager.format("&4&lTotal Kills Leaderboard"));
 
 		// Option to create or relocate the leaderboard
-		if (Utils.getConfigLocation(plugin, "leaderboard.totalKills") == null)
+		if (DataManager.getConfigLocation(plugin, "leaderboard.totalKills") == null)
 			inv.setItem(0, InventoryItems.create("Leaderboard"));
 		else inv.setItem(0, InventoryItems.relocate("Leaderboard"));
 
@@ -242,7 +242,7 @@ public class Inventories {
 				CommunicationManager.format("&c&lTop Kills Leaderboard"));
 
 		// Option to create or relocate the leaderboard
-		if (Utils.getConfigLocation(plugin, "leaderboard.topKills") == null)
+		if (DataManager.getConfigLocation(plugin, "leaderboard.topKills") == null)
 			inv.setItem(0, InventoryItems.create("Leaderboard"));
 		else inv.setItem(0, InventoryItems.relocate("Leaderboard"));
 
@@ -268,7 +268,7 @@ public class Inventories {
 				CommunicationManager.format("&2&lTotal Gems Leaderboard"));
 
 		// Option to create or relocate the leaderboard
-		if (Utils.getConfigLocation(plugin, "leaderboard.totalGems") == null)
+		if (DataManager.getConfigLocation(plugin, "leaderboard.totalGems") == null)
 			inv.setItem(0, InventoryItems.create("Leaderboard"));
 		else inv.setItem(0, InventoryItems.relocate("Leaderboard"));
 
@@ -294,7 +294,7 @@ public class Inventories {
 				CommunicationManager.format("&a&lTop Balance Leaderboard"));
 
 		// Option to create or relocate the leaderboard
-		if (Utils.getConfigLocation(plugin, "leaderboard.topBalance") == null)
+		if (DataManager.getConfigLocation(plugin, "leaderboard.topBalance") == null)
 			inv.setItem(0, InventoryItems.create("Leaderboard"));
 		else inv.setItem(0, InventoryItems.relocate("Leaderboard"));
 
@@ -320,7 +320,7 @@ public class Inventories {
 				CommunicationManager.format("&9&lTop Wave Leaderboard"));
 
 		// Option to create or relocate the leaderboard
-		if (Utils.getConfigLocation(plugin, "leaderboard.topWave") == null)
+		if (DataManager.getConfigLocation(plugin, "leaderboard.topWave") == null)
 			inv.setItem(0, InventoryItems.create("Leaderboard"));
 		else inv.setItem(0, InventoryItems.relocate("Leaderboard"));
 
@@ -599,14 +599,14 @@ public class Inventories {
 		// Option to edit max players
 		inv.setItem(3, ItemManager.createItem(Material.NETHERITE_HELMET,
 				CommunicationManager.format("&4&lMaximum Players"),
-				Utils.BUTTON_FLAGS,
+				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Maximum players the game will have")));
 
 		// Option to edit min players
 		inv.setItem(4, ItemManager.createItem(Material.NETHERITE_BOOTS,
 				CommunicationManager.format("&2&lMinimum Players"),
-				Utils.BUTTON_FLAGS,
+				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Minimum players needed for game to start")));
 
@@ -802,7 +802,8 @@ public class Inventories {
 			else index = 0;
 
 			// Create and set item
-			inv.setItem(i, ItemManager.createItem(MONSTER_MATS[index], CommunicationManager.format("&2&lMob Spawn " + (i + 1))));
+			inv.setItem(i, ItemManager.createItem(MONSTER_MATS[index],
+					CommunicationManager.format("&2&lMob Spawn " + (i + 1))));
 		}
 
 		// Option to exit
@@ -816,7 +817,8 @@ public class Inventories {
 		Arena arenaInstance = ArenaManager.arenas[arena];
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&2&lMonster Spawn " + (slot + 1) + ": " + arenaInstance.getName()));
 
 		// Option to create or relocate monster spawn
@@ -835,9 +837,12 @@ public class Inventories {
 
 		// Toggle to set monster spawn type
 		switch (arenaInstance.getMonsterSpawnType(slot)) {
-			case 1 -> inv.setItem(4, ItemManager.createItem(Material.GUNPOWDER, CommunicationManager.format("&5&lType: Ground")));
-			case 2 -> inv.setItem(4, ItemManager.createItem(Material.FEATHER, CommunicationManager.format("&5&lType: Flying")));
-			default -> inv.setItem(4, ItemManager.createItem(Material.BONE, CommunicationManager.format("&5&lType: All")));
+			case 1 -> inv.setItem(4, ItemManager.createItem(Material.GUNPOWDER,
+					CommunicationManager.format("&5&lType: Ground")));
+			case 2 -> inv.setItem(4, ItemManager.createItem(Material.FEATHER,
+					CommunicationManager.format("&5&lType: Flying")));
+			default -> inv.setItem(4, ItemManager.createItem(Material.BONE,
+					CommunicationManager.format("&5&lType: All")));
 		}
 
 		// Option to exit
@@ -849,7 +854,8 @@ public class Inventories {
 	// Confirmation menu for removing monster spawns
 	public static Inventory createMonsterSpawnConfirmInventory(int arena, int slot) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&4&lRemove Monster Spawn?"));
 
 		// "No" option
@@ -880,7 +886,8 @@ public class Inventories {
 			else index = 0;
 
 			// Create and set item
-			inv.setItem(i, ItemManager.createItem(VILLAGER_MATS[index], CommunicationManager.format("&5&lVillager Spawn " + (i + 1))));
+			inv.setItem(i, ItemManager.createItem(VILLAGER_MATS[index],
+					CommunicationManager.format("&5&lVillager Spawn " + (i + 1))));
 		}
 
 		// Option to exit
@@ -946,36 +953,51 @@ public class Inventories {
 				CommunicationManager.format("&3&lSpawn Table: " + arenaInstance.getSpawnTableFile() + ".yml"));
 
 		// Option to set spawn table to default
-		inv.setItem(0, ItemManager.createItem(Material.OAK_WOOD, CommunicationManager.format("&4&lDefault"), Utils.BUTTON_FLAGS,
-				chosen.equals("default") ? Utils.glow() : null, CommunicationManager.format("&7Sets spawn table to default.yml")));
+		inv.setItem(0, ItemManager.createItem(Material.OAK_WOOD,
+				CommunicationManager.format("&4&lDefault"), ItemManager.BUTTON_FLAGS,
+				chosen.equals("default") ? ItemManager.glow() : null,
+				CommunicationManager.format("&7Sets spawn table to default.yml")));
 
 		// Option to set spawn table to global option 1
-		inv.setItem(1, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&6&lOption 1"), Utils.BUTTON_FLAGS,
-				chosen.equals("option1") ? Utils.glow() : null, CommunicationManager.format("&7Sets spawn table to option1.yml")));
+		inv.setItem(1, ItemManager.createItem(Material.RED_CONCRETE,
+				CommunicationManager.format("&6&lOption 1"), ItemManager.BUTTON_FLAGS,
+				chosen.equals("option1") ? ItemManager.glow() : null,
+				CommunicationManager.format("&7Sets spawn table to option1.yml")));
 
 		// Option to set spawn table to global option 2
-		inv.setItem(2, ItemManager.createItem(Material.ORANGE_CONCRETE, CommunicationManager.format("&6&lOption 2"), Utils.BUTTON_FLAGS,
-				chosen.equals("option2") ? Utils.glow() : null, CommunicationManager.format("&7Sets spawn table to option2.yml")));
+		inv.setItem(2, ItemManager.createItem(Material.ORANGE_CONCRETE,
+				CommunicationManager.format("&6&lOption 2"), ItemManager.BUTTON_FLAGS,
+				chosen.equals("option2") ? ItemManager.glow() : null,
+				CommunicationManager.format("&7Sets spawn table to option2.yml")));
 
 		// Option to set spawn table to global option 3
-		inv.setItem(3, ItemManager.createItem(Material.YELLOW_CONCRETE, CommunicationManager.format("&6&lOption 3"), Utils.BUTTON_FLAGS,
-				chosen.equals("option3") ? Utils.glow() : null, CommunicationManager.format("&7Sets spawn table to option3.yml")));
+		inv.setItem(3, ItemManager.createItem(Material.YELLOW_CONCRETE,
+				CommunicationManager.format("&6&lOption 3"), ItemManager.BUTTON_FLAGS,
+				chosen.equals("option3") ? ItemManager.glow() : null,
+				CommunicationManager.format("&7Sets spawn table to option3.yml")));
 
 		// Option to set spawn table to global option 4
-		inv.setItem(4, ItemManager.createItem(Material.BROWN_CONCRETE, CommunicationManager.format("&6&lOption 4"), Utils.BUTTON_FLAGS,
-				chosen.equals("option4") ? Utils.glow() : null, CommunicationManager.format("&7Sets spawn table to option4.yml")));
+		inv.setItem(4, ItemManager.createItem(Material.BROWN_CONCRETE,
+				CommunicationManager.format("&6&lOption 4"), ItemManager.BUTTON_FLAGS,
+				chosen.equals("option4") ? ItemManager.glow() : null,
+				CommunicationManager.format("&7Sets spawn table to option4.yml")));
 
 		// Option to set spawn table to global option 5
-		inv.setItem(5, ItemManager.createItem(Material.LIGHT_GRAY_CONCRETE, CommunicationManager.format("&6&lOption 5"), Utils.BUTTON_FLAGS,
-				chosen.equals("option5") ? Utils.glow() : null, CommunicationManager.format("&7Sets spawn table to option5.yml")));
+		inv.setItem(5, ItemManager.createItem(Material.LIGHT_GRAY_CONCRETE,
+				CommunicationManager.format("&6&lOption 5"), ItemManager.BUTTON_FLAGS,
+				chosen.equals("option5") ? ItemManager.glow() : null,
+				CommunicationManager.format("&7Sets spawn table to option5.yml")));
 
 		// Option to set spawn table to global option 6
-		inv.setItem(6, ItemManager.createItem(Material.WHITE_CONCRETE, CommunicationManager.format("&6&lOption 6"), Utils.BUTTON_FLAGS,
-				chosen.equals("option6") ? Utils.glow() : null, CommunicationManager.format("&7Sets spawn table to option6.yml")));
+		inv.setItem(6, ItemManager.createItem(Material.WHITE_CONCRETE,
+				CommunicationManager.format("&6&lOption 6"), ItemManager.BUTTON_FLAGS,
+				chosen.equals("option6") ? ItemManager.glow() : null,
+				CommunicationManager.format("&7Sets spawn table to option6.yml")));
 
 		// Option to set spawn table to custom option
-		inv.setItem(7, ItemManager.createItem(Material.BIRCH_WOOD, CommunicationManager.format("&e&lCustom"), Utils.BUTTON_FLAGS,
-				chosen.length() < 4 ? Utils.glow() : null,
+		inv.setItem(7, ItemManager.createItem(Material.BIRCH_WOOD,
+				CommunicationManager.format("&e&lCustom"), ItemManager.BUTTON_FLAGS,
+				chosen.length() < 4 ? ItemManager.glow() : null,
 				CommunicationManager.format("&7Sets spawn table to a[arena number].yml"),
 				CommunicationManager.format("&7(Check the arena number in arenaData.yml)")));
 
@@ -1102,7 +1124,7 @@ public class Inventories {
 		// Option to change max waves
 		inv.setItem(0, ItemManager.createItem(Material.NETHERITE_SWORD,
 				CommunicationManager.format("&3&lMax Waves"),
-				Utils.BUTTON_FLAGS,
+				ItemManager.BUTTON_FLAGS,
 				null));
 
 		// Option to wave time limit
@@ -1123,7 +1145,7 @@ public class Inventories {
 		// Option to adjust overall difficulty multiplier
 		inv.setItem(5, ItemManager.createItem(Material.TURTLE_HELMET,
 				CommunicationManager.format("&4&lDifficulty Multiplier"),
-				Utils.BUTTON_FLAGS,
+				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Determines difficulty increase rate")));
 
@@ -1167,7 +1189,7 @@ public class Inventories {
 		// Option to edit sounds
 		inv.setItem(14, ItemManager.createItem(Material.MUSIC_DISC_13,
 				CommunicationManager.format("&d&lSounds"),
-				Utils.BUTTON_FLAGS,
+				ItemManager.BUTTON_FLAGS,
 				null));
 
 		// Option to copy game settings from another arena or a preset
@@ -1563,56 +1585,56 @@ public class Inventories {
 		// Option to edit win sound
 		inv.setItem(0, ItemManager.createItem(Material.MUSIC_DISC_PIGSTEP,
 				CommunicationManager.format("&a&lWin Sound: " + getToggleStatus(arenaInstance.hasWinSound())),
-				Utils.BUTTON_FLAGS,
+				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Played when game ends and players win")));
 
 		// Option to edit lose sound
 		inv.setItem(1, ItemManager.createItem(Material.MUSIC_DISC_11,
 				CommunicationManager.format("&e&lLose Sound: " + getToggleStatus(arenaInstance.hasLoseSound())),
-				Utils.BUTTON_FLAGS,
+				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Played when game ends and players lose")));
 
 		// Option to edit wave start sound
 		inv.setItem(2, ItemManager.createItem(Material.MUSIC_DISC_CAT,
 				CommunicationManager.format("&2&lWave Start Sound: " + getToggleStatus(arenaInstance.hasWaveStartSound())),
-				Utils.BUTTON_FLAGS,
+				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Played when a wave starts")));
 
 		// Option to edit wave finish sound
 		inv.setItem(3, ItemManager.createItem(Material.MUSIC_DISC_BLOCKS,
 				CommunicationManager.format("&9&lWave Finish Sound: " + getToggleStatus(arenaInstance.hasWaveFinishSound())),
-				Utils.BUTTON_FLAGS,
+				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Played when a wave ends")));
 
 		// Option to edit waiting music
 		inv.setItem(4, ItemManager.createItem(Material.MUSIC_DISC_MELLOHI,
 				CommunicationManager.format("&6&lWaiting Sound"),
-				Utils.BUTTON_FLAGS,
+				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Played while players wait"), CommunicationManager.format("&7for the game to start")));
 
 		// Option to edit gem pickup sound
 		inv.setItem(5, ItemManager.createItem(Material.MUSIC_DISC_FAR,
 				CommunicationManager.format("&b&lGem Pickup Sound: " + getToggleStatus(arenaInstance.hasGemSound())),
-				Utils.BUTTON_FLAGS,
+				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Played when players pick up gems")));
 
 		// Option to edit player death sound
 		inv.setItem(6, ItemManager.createItem(Material.MUSIC_DISC_CHIRP,
 				CommunicationManager.format("&4&lPlayer Death Sound: " + getToggleStatus(arenaInstance.hasPlayerDeathSound())),
-				Utils.BUTTON_FLAGS,
+				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Played when a player dies")));
 
 		// Option to edit ability sound
 		inv.setItem(7, ItemManager.createItem(Material.MUSIC_DISC_MALL,
 				CommunicationManager.format("&d&lAbility Sound: " + getToggleStatus(arenaInstance.hasAbilitySound())),
-				Utils.BUTTON_FLAGS,
+				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Played when a player uses their ability")));
 
@@ -1697,26 +1719,26 @@ public class Inventories {
 
 		inv.setItem(0, ItemManager.createItem(Material.GOLDEN_SWORD,
 				CommunicationManager.format("&4&lLevel &9&l" + level + " &4&lWeapon Shop" +
-						(arena.hasNormal() ? "" : " &4&l[DISABLED]")), Utils.BUTTON_FLAGS,
-				arena.hasNormal() ? Utils.glow() : null));
+						(arena.hasNormal() ? "" : " &4&l[DISABLED]")), ItemManager.BUTTON_FLAGS,
+				arena.hasNormal() ? ItemManager.glow() : null));
 
 		inv.setItem(1, ItemManager.createItem(Material.GOLDEN_CHESTPLATE,
 				CommunicationManager.format("&5&lLevel &9&l" + level + " &5&lArmor Shop" +
-						(arena.hasNormal() ? "" : " &4&l[DISABLED]")), Utils.BUTTON_FLAGS,
-				arena.hasNormal() ? Utils.glow() : null));
+						(arena.hasNormal() ? "" : " &4&l[DISABLED]")), ItemManager.BUTTON_FLAGS,
+				arena.hasNormal() ? ItemManager.glow() : null));
 
 		inv.setItem(2, ItemManager.createItem(Material.GOLDEN_APPLE,
 				CommunicationManager.format("&3&lLevel &9&l" + level + " &3&lConsumables Shop" +
-						(arena.hasNormal() ? "" : " &4&l[DISABLED]")), Utils.BUTTON_FLAGS,
-				arena.hasNormal() ? Utils.glow() : null));
+						(arena.hasNormal() ? "" : " &4&l[DISABLED]")), ItemManager.BUTTON_FLAGS,
+				arena.hasNormal() ? ItemManager.glow() : null));
 
 		inv.setItem(4, ItemManager.createItem(Material.BOOKSHELF,
 				CommunicationManager.format("&a&lEnchants Shop" + (arena.hasEnchants() ? "" : " &4&l[DISABLED]")),
-				Utils.BUTTON_FLAGS, arena.hasEnchants() ? Utils.glow() : null));
+				ItemManager.BUTTON_FLAGS, arena.hasEnchants() ? ItemManager.glow() : null));
 
 		inv.setItem(6, ItemManager.createItem(Material.QUARTZ, CommunicationManager.format("&6&lCustom Shop" +
-				(arena.hasCustom() ? "" : " &4&l[DISABLED]")), Utils.BUTTON_FLAGS,
-				arena.hasNormal() ? Utils.glow() : null));
+				(arena.hasCustom() ? "" : " &4&l[DISABLED]")), ItemManager.BUTTON_FLAGS,
+				arena.hasNormal() ? ItemManager.glow() : null));
 
 		inv.setItem(8, ItemManager.createItem(Material.CHEST, CommunicationManager.format("&d&lCommunity Chest" +
 				(arena.hasCommunity() ? "" : " &4&l[DISABLED]"))));
@@ -1865,11 +1887,11 @@ public class Inventories {
 		inv.setItem(0, ItemManager.createItem(Material.PISTON, CommunicationManager.format("&a&lIncrease Knockback"),
 				CommunicationManager.format("&2Costs 4 XP Levels")));
 		inv.setItem(1, ItemManager.createItem(Material.GOLDEN_HOE, CommunicationManager.format("&a&lIncrease Sweeping Edge"),
-				Utils.BUTTON_FLAGS, null, CommunicationManager.format("&2Costs 6 XP Levels")));
+				ItemManager.BUTTON_FLAGS, null, CommunicationManager.format("&2Costs 6 XP Levels")));
 		inv.setItem(2, ItemManager.createItem(Material.DIAMOND_SWORD, CommunicationManager.format("&a&lIncrease Smite"),
-				Utils.BUTTON_FLAGS, null, CommunicationManager.format("&2Costs 7 XP Levels")));
+				ItemManager.BUTTON_FLAGS, null, CommunicationManager.format("&2Costs 7 XP Levels")));
 		inv.setItem(3, ItemManager.createItem(Material.NETHERITE_AXE, CommunicationManager.format("&a&lIncrease Sharpness"),
-				Utils.BUTTON_FLAGS, null, CommunicationManager.format("&2Costs 8 XP Levels")));
+				ItemManager.BUTTON_FLAGS, null, CommunicationManager.format("&2Costs 8 XP Levels")));
 		inv.setItem(4, ItemManager.createItem(Material.FIRE, CommunicationManager.format("&a&lIncrease Fire Aspect"),
 				CommunicationManager.format("&2Costs 10 XP Levels")));
 
@@ -1883,7 +1905,7 @@ public class Inventories {
 		inv.setItem(21, ItemManager.createItem(Material.BOW, CommunicationManager.format("&a&lIncrease Power"),
 				CommunicationManager.format("&2Costs 8 XP Levels")));
 		inv.setItem(22, ItemManager.createItem(Material.TRIDENT, CommunicationManager.format("&a&lIncrease Loyalty"),
-				Utils.BUTTON_FLAGS, null, CommunicationManager.format("&2Costs 10 XP Levels")));
+				ItemManager.BUTTON_FLAGS, null, CommunicationManager.format("&2Costs 10 XP Levels")));
 		inv.setItem(23, ItemManager.createItem(Material.MAGMA_BLOCK, CommunicationManager.format("&a&lAdd Flame"),
 				CommunicationManager.format("&2Costs 10 XP Levels")));
 		inv.setItem(24, ItemManager.createItem(Material.CROSSBOW, CommunicationManager.format("&a&lAdd Multishot"),
@@ -1940,7 +1962,7 @@ public class Inventories {
 
 		// Top wave
 		inv.setItem(4, ItemManager.createItem(Material.GOLDEN_SWORD, CommunicationManager.format("&3&lTop Wave: &3" +
-				playerData.getInt(name + ".topWave")), Utils.BUTTON_FLAGS, null,
+				playerData.getInt(name + ".topWave")), ItemManager.BUTTON_FLAGS, null,
 				CommunicationManager.format("&7Highest completed wave")));
 
 		// Kits
@@ -2168,12 +2190,12 @@ public class Inventories {
 
 		// Maximum players
 		inv.setItem(1, ItemManager.createItem(Material.NETHERITE_HELMET,
-				CommunicationManager.format("&4&lMaximum players: &4" + arena.getMaxPlayers()), Utils.BUTTON_FLAGS, null,
+				CommunicationManager.format("&4&lMaximum players: &4" + arena.getMaxPlayers()), ItemManager.BUTTON_FLAGS, null,
 				CommunicationManager.format("&7The most players an arena can have")));
 
 		// Minimum players
 		inv.setItem(2, ItemManager.createItem(Material.NETHERITE_BOOTS,
-				CommunicationManager.format("&2&lMinimum players: &2" + arena.getMinPlayers()), Utils.BUTTON_FLAGS, null,
+				CommunicationManager.format("&2&lMinimum players: &2" + arena.getMinPlayers()), ItemManager.BUTTON_FLAGS, null,
 				CommunicationManager.format("&7The least players an arena can have to start")));
 
 		// Max waves
@@ -2182,7 +2204,7 @@ public class Inventories {
 			waves = "Unlimited";
 		else waves = Integer.toString(arena.getMaxWaves());
 		inv.setItem(3, ItemManager.createItem(Material.GOLDEN_SWORD,
-				CommunicationManager.format("&3&lMax waves: &3" + waves), Utils.BUTTON_FLAGS, null,
+				CommunicationManager.format("&3&lMax waves: &3" + waves), ItemManager.BUTTON_FLAGS, null,
 				CommunicationManager.format("&7The highest wave the arena will go to")));
 
 		// Wave time limit
@@ -2231,7 +2253,7 @@ public class Inventories {
 		// Difficulty multiplier
 		inv.setItem(14, ItemManager.createItem(Material.DAYLIGHT_DETECTOR,
 				CommunicationManager.format("&e&lLate Arrival: " + getToggleStatus(arena.hasLateArrival())),
-				Utils.BUTTON_FLAGS,
+				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Whether players can enter"),
 				CommunicationManager.format("&7arenas late")));
@@ -2283,7 +2305,7 @@ public class Inventories {
 		// Difficulty multiplier
 		inv.setItem(31, ItemManager.createItem(Material.TURTLE_HELMET,
 				CommunicationManager.format("&4&lDifficulty Multiplier: &4" + arena.getDifficultyMultiplier()),
-				Utils.BUTTON_FLAGS,
+				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Determines difficulty increase rate")));
 
@@ -2304,7 +2326,7 @@ public class Inventories {
 				}
 			}
 		});
-		inv.setItem(32, ItemManager.createItem(Material.GOLDEN_HELMET, CommunicationManager.format("&e&lArena Records"), Utils.BUTTON_FLAGS,
+		inv.setItem(32, ItemManager.createItem(Material.GOLDEN_HELMET, CommunicationManager.format("&e&lArena Records"), ItemManager.BUTTON_FLAGS,
 				null, records));
 
 		return inv;

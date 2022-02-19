@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.nms.v1_18_r1;
 
 import me.theguyhere.villagerdefense.nms.common.EntityID;
 import me.theguyhere.villagerdefense.nms.common.PacketGroup;
-import me.theguyhere.villagerdefense.nms.common.TextPacketEntity;
+import me.theguyhere.villagerdefense.nms.common.entities.TextPacketEntity;
 import org.bukkit.Location;
 
 /**

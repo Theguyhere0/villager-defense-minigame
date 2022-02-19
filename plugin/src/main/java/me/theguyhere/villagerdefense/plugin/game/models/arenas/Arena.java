@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models.arenas;
 
 import me.theguyhere.villagerdefense.plugin.GUI.InventoryItems;
+import me.theguyhere.villagerdefense.plugin.GUI.InventoryMeta;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
 import me.theguyhere.villagerdefense.plugin.events.ReloadBoardsEvent;
@@ -10,13 +11,12 @@ import me.theguyhere.villagerdefense.plugin.exceptions.InvalidNameException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
-import me.theguyhere.villagerdefense.plugin.GUI.InventoryMeta;
 import me.theguyhere.villagerdefense.plugin.game.models.Tasks;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.CommunicationManager;
+import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
-import me.theguyhere.villagerdefense.plugin.tools.Utils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.*;
 import org.bukkit.boss.BarColor;
@@ -393,73 +393,73 @@ public class Arena {
                 selected = sound == 0;
                 return ItemManager.createItem(Material.MUSIC_DISC_CAT,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Cat"),
-                        Utils.BUTTON_FLAGS, selected ? enchants : null);
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
             }
             case 1 -> {
                 selected = sound == 1;
                 return ItemManager.createItem(Material.MUSIC_DISC_BLOCKS,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Blocks"),
-                        Utils.BUTTON_FLAGS, selected ? enchants : null);
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
             }
             case 2 -> {
                 selected = sound == 2;
                 return ItemManager.createItem(Material.MUSIC_DISC_FAR,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Far"),
-                        Utils.BUTTON_FLAGS, selected ? enchants : null);
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
             }
             case 3 -> {
                 selected = sound == 3;
                 return ItemManager.createItem(Material.MUSIC_DISC_STRAD,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Strad"),
-                        Utils.BUTTON_FLAGS, selected ? enchants : null);
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
             }
             case 4 -> {
                 selected = sound == 4;
                 return ItemManager.createItem(Material.MUSIC_DISC_MELLOHI,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Mellohi"),
-                        Utils.BUTTON_FLAGS, selected ? enchants : null);
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
             }
             case 5 -> {
                 selected = sound == 5;
                 return ItemManager.createItem(Material.MUSIC_DISC_WARD,
                         CommunicationManager.format(((selected ? "&a&l" : "&4&l") + "Ward")),
-                        Utils.BUTTON_FLAGS, selected ? enchants : null);
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
             }
             case 9 -> {
                 selected = sound == 9;
                 return ItemManager.createItem(Material.MUSIC_DISC_CHIRP,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Chirp"),
-                        Utils.BUTTON_FLAGS, selected ? enchants : null);
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
             }
             case 10 -> {
                 selected = sound == 10;
                 return ItemManager.createItem(Material.MUSIC_DISC_STAL,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Stal"),
-                        Utils.BUTTON_FLAGS, selected ? enchants : null);
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
             }
             case 11 -> {
                 selected = sound == 11;
                 return ItemManager.createItem(Material.MUSIC_DISC_MALL,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Mall"),
-                        Utils.BUTTON_FLAGS, selected ? enchants : null);
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
             }
             case 12 -> {
                 selected = sound == 12;
                 return ItemManager.createItem(Material.MUSIC_DISC_WAIT,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Wait"),
-                        Utils.BUTTON_FLAGS, selected ? enchants : null);
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
             }
             case 13 -> {
                 selected = sound == 13;
                 return ItemManager.createItem(Material.MUSIC_DISC_PIGSTEP,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Pigstep"),
-                        Utils.BUTTON_FLAGS, selected ? enchants : null);
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
             }
             default -> {
                 selected = sound < 0 || sound > 5 && sound < 9 || sound > 13;
                 return ItemManager.createItem(Material.LIGHT_GRAY_CONCRETE,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "None"),
-                        Utils.BUTTON_FLAGS, selected ? enchants : null);
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
             }
         }
     }
@@ -507,7 +507,7 @@ public class Arena {
     }
 
     public Location getPortalLocation() {
-        return Utils.getConfigLocationNoPitch(plugin, path + ".portal");
+        return DataManager.getConfigLocationNoPitch(plugin, path + ".portal");
     }
 
     /**
@@ -516,7 +516,7 @@ public class Arena {
      */
     public void setPortal(Location location) {
         // Save config location
-        Utils.setConfigurationLocation(plugin, path + ".portal", location);
+        DataManager.setConfigurationLocation(plugin, path + ".portal", location);
 
         // Recreate the portal
         refreshPortal();
@@ -533,7 +533,7 @@ public class Arena {
                 portal.remove();
 
             // Create a new portal and display it
-            portal = new Portal(Objects.requireNonNull(Utils.getConfigLocationNoPitch(plugin, path + ".portal")),
+            portal = new Portal(Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin, path + ".portal")),
                     this);
             portal.displayForOnline();
         } catch (Exception e) {
@@ -548,7 +548,7 @@ public class Arena {
      */
     public void centerPortal() {
         // Center the location
-        Utils.centerConfigLocation(plugin, path + ".portal");
+        DataManager.centerConfigLocation(plugin, path + ".portal");
 
         // Recreate the portal
         refreshPortal();
@@ -562,7 +562,7 @@ public class Arena {
             portal.remove();
             portal = null;
         }
-        Utils.setConfigurationLocation(plugin, path + ".portal", null);
+        DataManager.setConfigurationLocation(plugin, path + ".portal", null);
         checkClose();
     }
 
@@ -571,7 +571,7 @@ public class Arena {
     }
 
     public Location getArenaBoardLocation() {
-        return Utils.getConfigLocationNoPitch(plugin, path + ".arenaBoard");
+        return DataManager.getConfigLocationNoPitch(plugin, path + ".arenaBoard");
     }
     
     /**
@@ -580,7 +580,7 @@ public class Arena {
      */
     public void setArenaBoard(Location location) {
         // Save config location
-        Utils.setConfigurationLocation(plugin, path + ".arenaBoard", location);
+        DataManager.setConfigurationLocation(plugin, path + ".arenaBoard", location);
 
         // Recreate the board
         refreshArenaBoard();
@@ -598,7 +598,7 @@ public class Arena {
 
             // Create a new board and display it
             arenaBoard = new ArenaBoard(
-                    Objects.requireNonNull(Utils.getConfigLocationNoPitch(plugin, path + ".arenaBoard")),
+                    Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin, path + ".arenaBoard")),
                     this
             );
             arenaBoard.displayForOnline();
@@ -614,7 +614,7 @@ public class Arena {
      */
     public void centerArenaBoard() {
         // Center the location
-        Utils.centerConfigLocation(plugin, path + ".arenaBoard");
+        DataManager.centerConfigLocation(plugin, path + ".arenaBoard");
 
         // Recreate the board
         refreshArenaBoard();
@@ -628,7 +628,7 @@ public class Arena {
             arenaBoard.remove();
             arenaBoard = null;
         }
-        Utils.setConfigurationLocation(plugin, path + ".arenaBoard", null);
+        DataManager.setConfigurationLocation(plugin, path + ".arenaBoard", null);
     }
 
     /**
@@ -646,7 +646,7 @@ public class Arena {
         // Attempt to fetch new player spawn
         try {
             playerSpawn = new ArenaSpawn(
-                    Objects.requireNonNull(Utils.getConfigLocation(plugin, path + ".spawn")),
+                    Objects.requireNonNull(DataManager.getConfigLocation(plugin, path + ".spawn")),
                     ArenaSpawnType.PLAYER,
                     0);
         } catch (InvalidLocationException | NullPointerException e) {
@@ -663,7 +663,7 @@ public class Arena {
      * @param location New player spawn location.
      */
     public void setPlayerSpawn(Location location) {
-        Utils.setConfigurationLocation(plugin, path + ".spawn", location);
+        DataManager.setConfigurationLocation(plugin, path + ".spawn", location);
         refreshPlayerSpawn();
     }
 
@@ -671,7 +671,7 @@ public class Arena {
      * Centers the player spawn location of the arena along the x and z axis.
      */
     public void centerPlayerSpawn() {
-        Utils.centerConfigLocation(plugin, path + ".spawn");
+        DataManager.centerConfigLocation(plugin, path + ".spawn");
         refreshPlayerSpawn();
     }
 
@@ -680,7 +680,7 @@ public class Arena {
      * @return Player spawn location.
      */
     public Location getWaitingRoom() {
-        return Utils.getConfigLocation(plugin, path + ".waiting");
+        return DataManager.getConfigLocation(plugin, path + ".waiting");
     }
 
     /**
@@ -688,7 +688,7 @@ public class Arena {
      * @param location New player spawn location.
      */
     public void setWaitingRoom(Location location) {
-        Utils.setConfigurationLocation(plugin, path + ".waiting", location);
+        DataManager.setConfigurationLocation(plugin, path + ".waiting", location);
         plugin.saveArenaData();
     }
 
@@ -696,7 +696,7 @@ public class Arena {
      * Centers the waiting room location of the arena along the x and z axis.
      */
     public void centerWaitingRoom() {
-        Utils.centerConfigLocation(plugin, path + ".waiting");
+        DataManager.centerConfigLocation(plugin, path + ".waiting");
     }
 
     /**
@@ -715,7 +715,7 @@ public class Arena {
 
         // Attempt to fetch new monster spawns
         monsterSpawns.clear();
-        Utils.getConfigLocationMap(plugin, path + ".monster").forEach((id, location) ->
+        DataManager.getConfigLocationMap(plugin, path + ".monster").forEach((id, location) ->
         {
             try {
                 monsterSpawns.add(new ArenaSpawn(Objects.requireNonNull(location), ArenaSpawnType.MONSTER, id + 1));
@@ -742,12 +742,12 @@ public class Arena {
     }
 
     public void setMonsterSpawn(int num, Location location) {
-        Utils.setConfigurationLocation(plugin, path + ".monster." + num, location);
+        DataManager.setConfigurationLocation(plugin, path + ".monster." + num, location);
         refreshMonsterSpawns();
     }
 
     public void centerMonsterSpawn(int num) {
-        Utils.centerConfigLocation(plugin, path + ".monster." + num);
+        DataManager.centerConfigLocation(plugin, path + ".monster." + num);
         refreshMonsterSpawns();
     }
 
@@ -776,7 +776,7 @@ public class Arena {
 
         // Attempt to fetch new villager spawns
         villagerSpawns.clear();
-        Utils.getConfigLocationMap(plugin, path + ".villager").forEach((id, location) ->
+        DataManager.getConfigLocationMap(plugin, path + ".villager").forEach((id, location) ->
         {
             try {
                 villagerSpawns.add(new ArenaSpawn(Objects.requireNonNull(location), ArenaSpawnType.VILLAGER, id + 1));
@@ -803,12 +803,12 @@ public class Arena {
     }
 
     public void setVillagerSpawn(int num, Location location) {
-        Utils.setConfigurationLocation(plugin, path + ".villager." + num, location);
+        DataManager.setConfigurationLocation(plugin, path + ".villager." + num, location);
         refreshVillagerSpawns();
     }
 
     public void centerVillagerSpawn(int num) {
-        Utils.centerConfigLocation(plugin, path + ".villager." + num);
+        DataManager.centerConfigLocation(plugin, path + ".villager." + num);
         refreshVillagerSpawns();
     }
 
@@ -1136,19 +1136,19 @@ public class Arena {
     }
 
     public Location getCorner1() {
-        return Utils.getConfigLocationNoRotation(plugin, path + ".corner1");
+        return DataManager.getConfigLocationNoRotation(plugin, path + ".corner1");
     }
 
     public void setCorner1(Location location) {
-        Utils.setConfigurationLocation(plugin, path + ".corner1", location);
+        DataManager.setConfigurationLocation(plugin, path + ".corner1", location);
     }
 
     public Location getCorner2() {
-        return Utils.getConfigLocationNoRotation(plugin, path + ".corner2");
+        return DataManager.getConfigLocationNoRotation(plugin, path + ".corner2");
     }
 
     public void setCorner2(Location location) {
-        Utils.setConfigurationLocation(plugin, path + ".corner2", location);
+        DataManager.setConfigurationLocation(plugin, path + ".corner2", location);
     }
 
     public BoundingBox getBounds() {

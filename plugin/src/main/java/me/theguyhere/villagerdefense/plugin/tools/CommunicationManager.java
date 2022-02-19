@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.tools;
 
+import me.theguyhere.villagerdefense.common.Log;
 import org.bukkit.ChatColor;
 
 import java.util.logging.Level;
@@ -15,8 +16,6 @@ public class CommunicationManager {
      * 0 (Quiet) - Only the most urgent error messages will be displayed.
      */
     private static int debugLevel = 0;
-    private static final Logger log = Logger.getLogger("Minecraft");
-
 
     public static int getDebugLevel() {
         return debugLevel;
@@ -38,11 +37,11 @@ public class CommunicationManager {
 
     public static void debugError(String msg, int debugLevel) {
         if (CommunicationManager.debugLevel >= debugLevel)
-            log.log(Level.WARNING,"[VillagerDefense] " + msg);
+            Log.warning(msg);
     }
 
     public static void debugInfo(String msg, int debugLevel) {
         if (CommunicationManager.debugLevel >= debugLevel)
-            log.info("[VillagerDefense] " + msg);
+            Log.info(msg);
     }
 }

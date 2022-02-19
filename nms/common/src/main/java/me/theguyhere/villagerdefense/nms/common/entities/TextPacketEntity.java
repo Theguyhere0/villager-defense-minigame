@@ -1,5 +1,6 @@
-package me.theguyhere.villagerdefense.nms.common;
+package me.theguyhere.villagerdefense.nms.common.entities;
 
+import me.theguyhere.villagerdefense.nms.common.PacketGroup;
 import org.bukkit.Location;
 
 /**

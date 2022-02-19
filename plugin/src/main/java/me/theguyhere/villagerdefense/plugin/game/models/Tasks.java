@@ -15,7 +15,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
-import me.theguyhere.villagerdefense.plugin.tools.Utils;
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.tools.WorldManager;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;

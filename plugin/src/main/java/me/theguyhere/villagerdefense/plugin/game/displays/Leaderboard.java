@@ -3,7 +3,7 @@ package me.theguyhere.villagerdefense.plugin.game.displays;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.tools.CommunicationManager;
-import me.theguyhere.villagerdefense.plugin.tools.Utils;
+import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,8 @@ public class Leaderboard {
 	private final Location location;
 
 	public Leaderboard(@NotNull String type, Main plugin) throws InvalidLocationException {
-		Location location = Objects.requireNonNull(Utils.getConfigLocationNoPitch(plugin, "leaderboard." + type));
+		Location location = Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin,
+				"leaderboard." + type));
 		// Check for null world
 		if (location.getWorld() == null)
 			throw new InvalidLocationException("Location world cannot be null!");
@@ -28,23 +29,12 @@ public class Leaderboard {
 
 		// Determine leaderboard title
 		switch (type) {
-			case "totalKills":
-				info.add(CommunicationManager.format("&d&lTotal Kills Leaderboard"));
-				break;
-			case "topKills":
-				info.add(CommunicationManager.format("&c&lTop Kills Leaderboard"));
-				break;
-			case "totalGems":
-				info.add(CommunicationManager.format("&e&lTotal Gems Leaderboard"));
-				break;
-			case "topBalance":
-				info.add(CommunicationManager.format("&a&lTop Balance Leaderboard"));
-				break;
-			case "topWave":
-				info.add(CommunicationManager.format("&b&lTop Wave Leaderboard"));
-				break;
-			default:
-				info.add("");
+			case "totalKills" -> info.add(CommunicationManager.format("&d&lTotal Kills Leaderboard"));
+			case "topKills" -> info.add(CommunicationManager.format("&c&lTop Kills Leaderboard"));
+			case "totalGems" -> info.add(CommunicationManager.format("&e&lTotal Gems Leaderboard"));
+			case "topBalance" -> info.add(CommunicationManager.format("&a&lTop Balance Leaderboard"));
+			case "topWave" -> info.add(CommunicationManager.format("&b&lTop Wave Leaderboard"));
+			default -> info.add("");
 		}
 
 		// Gather relevant stats

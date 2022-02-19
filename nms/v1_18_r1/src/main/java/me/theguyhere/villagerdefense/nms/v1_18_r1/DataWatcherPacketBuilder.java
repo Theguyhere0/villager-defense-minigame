@@ -38,7 +38,8 @@ abstract class DataWatcherPacketBuilder<T> {
     }
 
     private Optional<IChatBaseComponent> getCustomNameDataWatcherValue(String customName) {
-        customName = customName.substring(0, 300);
+        if (customName.length() > 300)
+            customName = customName.substring(0, 300);
         if (!Strings.isEmpty(customName)) {
             return Optional.of(CraftChatMessage.fromString(customName, false, true)[0]);
         } else {

@@ -9,7 +9,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.Tasks;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.CommunicationManager;
-import me.theguyhere.villagerdefense.plugin.tools.Utils;
+import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.WorldManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -17,7 +17,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ArenaManager {
 	private final Main plugin;
@@ -42,7 +41,7 @@ public class ArenaManager {
 		Objects.requireNonNull(plugin.getArenaData().getConfigurationSection("infoBoard")).getKeys(false)
 				.forEach(path -> {
 					try {
-						Location location = Utils.getConfigLocationNoPitch(plugin, "infoBoard." + path);
+						Location location = DataManager.getConfigLocationNoPitch(plugin, "infoBoard." + path);
 						if (location != null)
 							infoBoards[Integer.parseInt(path)] = new InfoBoard(location, plugin);
 					} catch (InvalidLocationException ignored) {
@@ -51,13 +50,13 @@ public class ArenaManager {
 		Objects.requireNonNull(plugin.getArenaData().getConfigurationSection("leaderboard")).getKeys(false)
 				.forEach(path -> {
 					try {
-						Location location = Utils.getConfigLocationNoPitch(plugin, "leaderboard." + path);
+						Location location = DataManager.getConfigLocationNoPitch(plugin, "leaderboard." + path);
 						if (location != null)
 							leaderboards.put(path, new Leaderboard(path, plugin));
 					} catch (InvalidLocationException ignored) {
 					}
 				});
-		setLobby(Utils.getConfigLocation(plugin, "lobby"));
+		setLobby(DataManager.getConfigLocation(plugin, "lobby"));
 
 		plugin.setLoaded();
 	}
@@ -143,7 +142,7 @@ public class ArenaManager {
 	}
 
 	public void reloadLobby() {
-		lobby = Utils.getConfigLocation(plugin, "lobby");
+		lobby = DataManager.getConfigLocation(plugin, "lobby");
 	}
 
 	/**
@@ -152,7 +151,7 @@ public class ArenaManager {
 	 */
 	public void setInfoBoard(Location location, int num) {
 		// Save config location
-		Utils.setConfigurationLocation(plugin, "infoBoard." + num, location);
+		DataManager.setConfigurationLocation(plugin, "infoBoard." + num, location);
 
 		// Recreate the info board
 		refreshInfoBoard(num);
@@ -169,7 +168,7 @@ public class ArenaManager {
 		try {
 			// Create a new board and display it
 			infoBoards[num] = new InfoBoard(
-					Objects.requireNonNull(Utils.getConfigLocationNoPitch(plugin, "infoBoard." + num)),
+					Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin, "infoBoard." + num)),
 					plugin);
 			infoBoards[num].displayForOnline();
 		} catch (Exception e) {
@@ -184,7 +183,7 @@ public class ArenaManager {
 	 */
 	public void centerInfoBoard(int num) {
 		// Center the location
-		Utils.centerConfigLocation(plugin, "infoBoard." + num);
+		DataManager.centerConfigLocation(plugin, "infoBoard." + num);
 
 		// Recreate the portal
 		refreshInfoBoard(num);
@@ -198,7 +197,7 @@ public class ArenaManager {
 			infoBoards[num].remove();
 			infoBoards[num] = null;
 		}
-		Utils.setConfigurationLocation(plugin, "infoBoard." + num, null);
+		DataManager.setConfigurationLocation(plugin, "infoBoard." + num, null);
 	}
 
 	/**
@@ -207,7 +206,7 @@ public class ArenaManager {
 	 */
 	public void setLeaderboard(Location location, String type) {
 		// Save config location
-		Utils.setConfigurationLocation(plugin, "leaderboard." + type, location);
+		DataManager.setConfigurationLocation(plugin, "leaderboard." + type, location);
 
 		// Recreate the leaderboard
 		refreshLeaderboard(type);
@@ -237,7 +236,7 @@ public class ArenaManager {
 	 */
 	public void centerLeaderboard(String type) {
 		// Center the location
-		Utils.centerConfigLocation(plugin, "leaderboard." + type);
+		DataManager.centerConfigLocation(plugin, "leaderboard." + type);
 
 		// Recreate the leaderboard
 		refreshLeaderboard(type);
@@ -251,7 +250,7 @@ public class ArenaManager {
 			leaderboards.get(type).remove();
 			leaderboards.remove(type);
 		}
-		Utils.setConfigurationLocation(plugin, "leaderboard." + type, null);
+		DataManager.setConfigurationLocation(plugin, "leaderboard." + type, null);
 	}
 
 	/**

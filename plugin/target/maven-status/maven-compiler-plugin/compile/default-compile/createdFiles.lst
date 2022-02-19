@@ -9,7 +9,6 @@ me\theguyhere\villagerdefense\plugin\game\displays\NPCVillager.class
 me\theguyhere\villagerdefense\plugin\game\displays\SpawnIndicator.class
 me\theguyhere\villagerdefense\plugin\game\models\Tasks$2.class
 me\theguyhere\villagerdefense\plugin\game\displays\HoloLine.class
-me\theguyhere\villagerdefense\plugin\exceptions\NoSpawnException.class
 me\theguyhere\villagerdefense\plugin\game\displays\Portal.class
 me\theguyhere\villagerdefense\plugin\exceptions\PlayerNotFoundException.class
 me\theguyhere\villagerdefense\plugin\game\models\kits\Kit$1.class
@@ -20,6 +19,7 @@ me\theguyhere\villagerdefense\plugin\tools\CommunicationManager.class
 me\theguyhere\villagerdefense\plugin\game\models\Tasks.class
 me\theguyhere\villagerdefense\plugin\commands\Commands.class
 me\theguyhere\villagerdefense\plugin\game\models\Tasks$4.class
+me\theguyhere\villagerdefense\plugin\tools\NMSVersion.class
 me\theguyhere\villagerdefense\plugin\game\models\Challenge.class
 me\theguyhere\villagerdefense\plugin\game\models\Tasks$13.class
 me\theguyhere\villagerdefense\plugin\listeners\ChallengeListener.class
@@ -30,7 +30,6 @@ me\theguyhere\villagerdefense\plugin\events\ReloadBoardsEvent.class
 me\theguyhere\villagerdefense\plugin\game\models\arenas\Arena$2.class
 me\theguyhere\villagerdefense\plugin\game\models\Tasks$8.class
 me\theguyhere\villagerdefense\plugin\GUI\InventoryItems.class
-me\theguyhere\villagerdefense\plugin\tools\Utils.class
 me\theguyhere\villagerdefense\plugin\events\ArenaResetEvent.class
 me\theguyhere\villagerdefense\plugin\game\displays\Hologram.class
 me\theguyhere\villagerdefense\plugin\listeners\GameListener.class
@@ -57,7 +56,7 @@ me\theguyhere\villagerdefense\plugin\game\models\arenas\Arena.class
 me\theguyhere\villagerdefense\plugin\events\JoinArenaEvent.class
 me\theguyhere\villagerdefense\plugin\listeners\WorldListener.class
 me\theguyhere\villagerdefense\plugin\listeners\JoinListener.class
-me\theguyhere\villagerdefense\plugin\nms\NMSVersion.class
+me\theguyhere\villagerdefense\plugin\listeners\ClickPortalListener.class
 me\theguyhere\villagerdefense\plugin\game\models\arenas\ArenaRecord.class
 me\theguyhere\villagerdefense\plugin\game\models\Tasks$7.class
 me\theguyhere\villagerdefense\plugin\game\models\arenas\ArenaSpawn.class
@@ -67,10 +66,10 @@ me\theguyhere\villagerdefense\plugin\game\models\Tasks$6.class
 me\theguyhere\villagerdefense\plugin\listeners\AbilityListener.class
 me\theguyhere\villagerdefense\plugin\events\SignGUIEvent.class
 me\theguyhere\villagerdefense\plugin\game\models\Tasks$9.class
+me\theguyhere\villagerdefense\plugin\listeners\PacketListenerImpl.class
 me\theguyhere\villagerdefense\plugin\events\RightClickNPCEvent.class
 me\theguyhere\villagerdefense\plugin\exceptions\InvalidNameException.class
 me\theguyhere\villagerdefense\plugin\events\WaveStartEvent.class
-me\theguyhere\villagerdefense\plugin\packets\PacketReader.class
 me\theguyhere\villagerdefense\plugin\game\models\kits\Kit.class
 me\theguyhere\villagerdefense\plugin\game\models\Tasks$3.class
 me\theguyhere\villagerdefense\plugin\events\EndNinjaNerfEvent.class

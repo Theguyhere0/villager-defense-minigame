@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.nms.v1_18_r1;
 
 import me.theguyhere.villagerdefense.nms.common.EntityID;
 import me.theguyhere.villagerdefense.nms.common.PacketGroup;
-import me.theguyhere.villagerdefense.nms.common.VillagerPacketEntity;
+import me.theguyhere.villagerdefense.nms.common.entities.VillagerPacketEntity;
 import org.bukkit.Location;
 
 /**
@@ -26,5 +26,10 @@ class PacketEntityVillager implements VillagerPacketEntity {
                 new SpawnEntityLivingPacket(villagerID, EntityTypeID.VILLAGER, location, location.getPitch()),
                 new EntityHeadRotationPacket(villagerID, location.getYaw())
         );
+    }
+
+    @Override
+    public int getEntityID() {
+        return villagerID.getNumericID();
     }
 }

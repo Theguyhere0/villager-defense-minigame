@@ -13,8 +13,9 @@ import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.CommunicationManager;
+import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
-import me.theguyhere.villagerdefense.plugin.tools.Utils;
+import me.theguyhere.villagerdefense.common.Utils;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -629,8 +630,8 @@ public class Commands implements CommandExecutor {
 						// Transfer portals
 						Objects.requireNonNull(plugin.getArenaData().getConfigurationSection("portal"))
 								.getKeys(false).forEach(arenaID -> {
-									Location location = Utils.getConfigLocation(plugin, "portal." + arenaID);
-									Utils.setConfigurationLocation(plugin, "a" + arenaID + ".portal", location);
+									Location location = DataManager.getConfigLocation(plugin, "portal." + arenaID);
+									DataManager.setConfigurationLocation(plugin, "a" + arenaID + ".portal", location);
 									plugin.getArenaData().set("portal." + arenaID, null);
 								});
 						plugin.getArenaData().set("portal", null);
@@ -638,8 +639,8 @@ public class Commands implements CommandExecutor {
 						// Transfer arena boards
 						Objects.requireNonNull(plugin.getArenaData().getConfigurationSection("arenaBoard"))
 								.getKeys(false).forEach(arenaID -> {
-									Location location = Utils.getConfigLocation(plugin, "arenaBoard." + arenaID);
-									Utils.setConfigurationLocation(plugin, "a" + arenaID + ".arenaBoard", location);
+									Location location = DataManager.getConfigLocation(plugin, "arenaBoard." + arenaID);
+									DataManager.setConfigurationLocation(plugin, "a" + arenaID + ".arenaBoard", location);
 									plugin.getArenaData().set("arenaBoard." + arenaID, null);
 								});
 						plugin.getArenaData().set("arenaBoard", null);

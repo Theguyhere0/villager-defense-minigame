@@ -9,5 +9,6 @@ me\theguyhere\villagerdefense\nms\v1_18_r1\PacketEntityArmorStand.class
 me\theguyhere\villagerdefense\nms\v1_18_r1\EntityTypeID.class
 me\theguyhere\villagerdefense\nms\v1_18_r1\VersionNMSPacket.class
 me\theguyhere\villagerdefense\nms\v1_18_r1\EntityDestroyPacket.class
+me\theguyhere\villagerdefense\nms\v1_18_r1\InboundPacketHandler.class
 me\theguyhere\villagerdefense\nms\v1_18_r1\PacketEntityVillager.class
 me\theguyhere\villagerdefense\nms\v1_18_r1\PacketSetter.class

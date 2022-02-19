@@ -3,7 +3,6 @@ package me.theguyhere.villagerdefense.plugin.game.models.kits;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.tools.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
-import me.theguyhere.villagerdefense.plugin.tools.Utils;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -211,7 +210,7 @@ public class Kit {
 
         if (kitType == KitType.NONE) {
             return ItemManager.createItem(buttonMaterial,
-                    CommunicationManager.format(getKitColor(kitType) + name), Utils.BUTTON_FLAGS, null);
+                    CommunicationManager.format(getKitColor(kitType) + name), ItemManager.BUTTON_FLAGS, null);
         }
         else if (isMultiLevel()) {
             List<String> lores = new ArrayList<>();
@@ -235,7 +234,7 @@ public class Kit {
                     lores.addAll(description);
                 });
                 return ItemManager.createItem(buttonMaterial,
-                        CommunicationManager.format((purchaseMode ? getKitColor(kitType): "&4&l") + name), Utils.BUTTON_FLAGS,
+                        CommunicationManager.format((purchaseMode ? getKitColor(kitType): "&4&l") + name), ItemManager.BUTTON_FLAGS,
                         purchaseMode ? enchants : null, lores);
             }
             else {
@@ -250,19 +249,19 @@ public class Kit {
             }
 
             return ItemManager.createItem(buttonMaterial,
-                    CommunicationManager.format(getKitColor(kitType) + name), Utils.BUTTON_FLAGS, null, lores);
+                    CommunicationManager.format(getKitColor(kitType) + name), ItemManager.BUTTON_FLAGS, null, lores);
         } else {
             if (purchasedLevel == -1)
                 return ItemManager.createItem(buttonMaterial,
-                        CommunicationManager.format((purchaseMode ? getKitColor(kitType): "&4&l") + name), Utils.BUTTON_FLAGS,
+                        CommunicationManager.format((purchaseMode ? getKitColor(kitType): "&4&l") + name), ItemManager.BUTTON_FLAGS,
                         purchaseMode ? enchants : null, masterDescription);
             else if (pricesMap.get(1) == 0)
                 return ItemManager.createItem(buttonMaterial,
-                        CommunicationManager.format(getKitColor(kitType) + name), Utils.BUTTON_FLAGS, null,
+                        CommunicationManager.format(getKitColor(kitType) + name), ItemManager.BUTTON_FLAGS, null,
                         masterDescription, purchaseMode ? CommunicationManager.format("&aFree!") :
                                 CommunicationManager.format("&aAvailable"));
             else return ItemManager.createItem(buttonMaterial,
-                    CommunicationManager.format(getKitColor(kitType) + name), Utils.BUTTON_FLAGS, null,
+                    CommunicationManager.format(getKitColor(kitType) + name), ItemManager.BUTTON_FLAGS, null,
                     masterDescription, purchasedLevel == 1 ?
                             (purchaseMode ? CommunicationManager.format("&aPurchased!") : CommunicationManager.format("&aAvailable")) :
                             (purchaseMode ? CommunicationManager.format("&cPurchase: &b" + getPrice(1) + " Crystals") :
@@ -354,7 +353,7 @@ public class Kit {
         enchants.put(Enchantment.KNOCKBACK, 5);
         kit.addItems(1, new ItemStack[]{
                 new ItemStack(Material.WOODEN_SWORD),
-                ItemManager.createItem(Material.STICK, CommunicationManager.format("&aOrc's Club"), Utils.NORMAL_FLAGS, enchants)});
+                ItemManager.createItem(Material.STICK, CommunicationManager.format("&aOrc's Club"), ItemManager.NORMAL_FLAGS, enchants)});
         return kit;
     }
     public static Kit farmer() {
@@ -458,16 +457,16 @@ public class Kit {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
         enchants.put(Enchantment.DAMAGE_ALL, 3);
         kit.addItems(1, new ItemStack[]{
-                ItemManager.createItem(Material.NETHERITE_HOE, CommunicationManager.format("&aReaper's Scythe"), Utils.NORMAL_FLAGS,
-                        enchants)});
+                ItemManager.createItem(Material.NETHERITE_HOE, CommunicationManager.format("&aReaper's Scythe"), 
+                        ItemManager.NORMAL_FLAGS, enchants)});
         enchants.put(Enchantment.DAMAGE_ALL, 5);
         kit.addItems(2, new ItemStack[]{
-                ItemManager.createItem(Material.NETHERITE_HOE, CommunicationManager.format("&aReaper's Scythe"), Utils.NORMAL_FLAGS,
-                        enchants)});
+                ItemManager.createItem(Material.NETHERITE_HOE, CommunicationManager.format("&aReaper's Scythe"), 
+                        ItemManager.NORMAL_FLAGS, enchants)});
         enchants.put(Enchantment.DAMAGE_ALL, 8);
         kit.addItems(3, new ItemStack[]{
-                ItemManager.createItem(Material.NETHERITE_HOE, CommunicationManager.format("&aReaper's Scythe"), Utils.NORMAL_FLAGS,
-                        enchants)});
+                ItemManager.createItem(Material.NETHERITE_HOE, CommunicationManager.format("&aReaper's Scythe"), 
+                        ItemManager.NORMAL_FLAGS, enchants)});
 
         return kit;
     }

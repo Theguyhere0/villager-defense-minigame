@@ -1,14 +1,17 @@
 package me.theguyhere.villagerdefense.plugin;
 
+import me.theguyhere.villagerdefense.nms.common.NMSManager;
 import me.theguyhere.villagerdefense.plugin.commands.CommandTab;
 import me.theguyhere.villagerdefense.plugin.commands.Commands;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaManager;
 import me.theguyhere.villagerdefense.plugin.listeners.*;
 import me.theguyhere.villagerdefense.plugin.tools.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
+import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Team;
@@ -23,7 +26,7 @@ public class Main extends JavaPlugin {
 			getConfig().getString("locale") + ".yml");
 
 	// Global instance variables
-//	private final PacketReader reader = new PacketReader();
+	private final NMSManager nmsManager = NMSVersion.getCurrent().getNmsManager();
 	private ArenaManager arenaManager;
 	private boolean loaded = false;
 
@@ -50,19 +53,16 @@ public class Main extends JavaPlugin {
 		// Register event listeners
 		pm.registerEvents(new InventoryListener(this), this);
 		pm.registerEvents(new JoinListener(this), this);
-//		pm.registerEvents(new DeathListener(this), this);
-//		pm.registerEvents(new ClickPortalListener(), this);
+		pm.registerEvents(new ClickPortalListener(), this);
 		pm.registerEvents(new GameListener(this), this);
 		pm.registerEvents(new ArenaListener(this), this);
 		pm.registerEvents(new AbilityListener(this), this);
 		pm.registerEvents(new ChallengeListener(this), this);
 		pm.registerEvents(new WorldListener(this), this);
 
-//		// Inject online players into packet reader
-//		if (!Bukkit.getOnlinePlayers().isEmpty())
-//			for (Player player : Bukkit.getOnlinePlayers()) {
-//				reader.inject(player);
-//			}
+		// Add packet listeners for online players
+		for (Player player : Bukkit.getOnlinePlayers())
+			nmsManager.injectPacketListener(player, new PacketListenerImpl());
 
 		// Check config version
 		if (getConfig().getInt("version") < configVersion) {
@@ -147,18 +147,14 @@ public class Main extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-//		// Remove uninject players
-//		for (Player player : Bukkit.getOnlinePlayers())
-//			reader.uninject(player);
+		// Clear packet listeners
+		for (Player player : Bukkit.getOnlinePlayers())
+			nmsManager.uninjectPacketListener(player);
 
 		// Clear every valid arena and remove all portals
 		ArenaManager.cleanAll();
 		ArenaManager.removePortals();
 	}
-//
-//	public PacketReader getReader() {
-//		return reader;
-//	}
 
 	public ArenaManager getArenaManager() {
 		return arenaManager;

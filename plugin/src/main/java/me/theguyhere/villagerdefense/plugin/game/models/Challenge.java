@@ -2,7 +2,6 @@ package me.theguyhere.villagerdefense.plugin.game.models;
 
 import me.theguyhere.villagerdefense.plugin.tools.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
-import me.theguyhere.villagerdefense.plugin.tools.Utils;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -83,7 +82,8 @@ public class Challenge {
         enchants.put(Enchantment.DURABILITY, 1);
         List<String> lores = new ArrayList<>(masterDescription);
 
-        return ItemManager.createItem(buttonMaterial, CommunicationManager.format((active ? "&d&l" : "&5&l") + name), Utils.BUTTON_FLAGS,
+        return ItemManager.createItem(buttonMaterial,
+                CommunicationManager.format((active ? "&d&l" : "&5&l") + name), ItemManager.BUTTON_FLAGS,
                 active ? enchants : null, lores);
     }
 

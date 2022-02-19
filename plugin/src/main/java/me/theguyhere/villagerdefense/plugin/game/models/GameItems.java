@@ -2,7 +2,6 @@ package me.theguyhere.villagerdefense.plugin.game.models;
 
 import me.theguyhere.villagerdefense.plugin.tools.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
-import me.theguyhere.villagerdefense.plugin.tools.Utils;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
@@ -29,7 +28,7 @@ public class GameItems {
 		enchants.put(Enchantment.DURABILITY, 1);
 
 		ItemStack item = ItemManager.createItem(Material.EMERALD, CommunicationManager.format("&2&lItem Shop"),
-				Utils.HIDE_ENCHANT_FLAGS, enchants, CommunicationManager.format("&7&oResets every 10 rounds"));
+				ItemManager.HIDE_ENCHANT_FLAGS, enchants, CommunicationManager.format("&7&oResets every 10 rounds"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -42,7 +41,7 @@ public class GameItems {
 		enchants.put(Enchantment.DURABILITY, 1);
 
 		ItemStack item = ItemManager.createItem(Material.NETHER_STAR, CommunicationManager.format("&9&lChallenge Selection"),
-				Utils.HIDE_ENCHANT_FLAGS,
+				ItemManager.HIDE_ENCHANT_FLAGS,
 				enchants);
 
 		return item == null ? new ItemStack(Material.AIR) : item;
@@ -52,7 +51,7 @@ public class GameItems {
 		enchants.put(Enchantment.DURABILITY, 1);
 
 		ItemStack item = ItemManager.createItem(Material.BARRIER, CommunicationManager.format("&c&lLEAVE"),
-				Utils.HIDE_ENCHANT_FLAGS, enchants);
+				ItemManager.HIDE_ENCHANT_FLAGS, enchants);
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5285,7 +5284,7 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.PURPLE_DYE, CommunicationManager.format("&dMage Essence"), Utils.HIDE_ENCHANT_FLAGS,
+		ItemStack item = ItemManager.createItem(Material.PURPLE_DYE, CommunicationManager.format("&dMage Essence"), ItemManager.HIDE_ENCHANT_FLAGS,
 				enchants, CommunicationManager.format("&7Right click to use ability"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
@@ -5294,7 +5293,7 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.BLACK_DYE, CommunicationManager.format("&dNinja Essence"), Utils.HIDE_ENCHANT_FLAGS,
+		ItemStack item = ItemManager.createItem(Material.BLACK_DYE, CommunicationManager.format("&dNinja Essence"), ItemManager.HIDE_ENCHANT_FLAGS,
 				enchants, CommunicationManager.format("&7Right click to use ability"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
@@ -5303,7 +5302,7 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.YELLOW_DYE, CommunicationManager.format("&dTemplar Essence"), Utils.HIDE_ENCHANT_FLAGS,
+		ItemStack item = ItemManager.createItem(Material.YELLOW_DYE, CommunicationManager.format("&dTemplar Essence"), ItemManager.HIDE_ENCHANT_FLAGS,
 				enchants, CommunicationManager.format("&7Right click to use ability"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
@@ -5312,7 +5311,7 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.RED_DYE, CommunicationManager.format("&dWarrior Essence"), Utils.HIDE_ENCHANT_FLAGS,
+		ItemStack item = ItemManager.createItem(Material.RED_DYE, CommunicationManager.format("&dWarrior Essence"), ItemManager.HIDE_ENCHANT_FLAGS,
 				enchants, CommunicationManager.format("&7Right click to use ability"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
@@ -5321,7 +5320,7 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.BROWN_DYE, CommunicationManager.format("&dKnight Essence"), Utils.HIDE_ENCHANT_FLAGS,
+		ItemStack item = ItemManager.createItem(Material.BROWN_DYE, CommunicationManager.format("&dKnight Essence"), ItemManager.HIDE_ENCHANT_FLAGS,
 				enchants, CommunicationManager.format("&7Right click to use ability"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
@@ -5330,7 +5329,7 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.WHITE_DYE, CommunicationManager.format("&dPriest Essence"), Utils.HIDE_ENCHANT_FLAGS,
+		ItemStack item = ItemManager.createItem(Material.WHITE_DYE, CommunicationManager.format("&dPriest Essence"), ItemManager.HIDE_ENCHANT_FLAGS,
 				enchants, CommunicationManager.format("&7Right click to use ability"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
@@ -5339,7 +5338,7 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.PINK_DYE, CommunicationManager.format("&dSiren Essence"), Utils.HIDE_ENCHANT_FLAGS,
+		ItemStack item = ItemManager.createItem(Material.PINK_DYE, CommunicationManager.format("&dSiren Essence"), ItemManager.HIDE_ENCHANT_FLAGS,
 				enchants, CommunicationManager.format("&7Right click to use ability"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
@@ -5348,7 +5347,7 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.GREEN_DYE, CommunicationManager.format("&dMonk Essence"), Utils.HIDE_ENCHANT_FLAGS,
+		ItemStack item = ItemManager.createItem(Material.GREEN_DYE, CommunicationManager.format("&dMonk Essence"), ItemManager.HIDE_ENCHANT_FLAGS,
 				enchants, CommunicationManager.format("&7Right click to use ability"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
@@ -5357,7 +5356,7 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.BLUE_DYE, CommunicationManager.format("&dMessenger Essence"), Utils.HIDE_ENCHANT_FLAGS,
+		ItemStack item = ItemManager.createItem(Material.BLUE_DYE, CommunicationManager.format("&dMessenger Essence"), ItemManager.HIDE_ENCHANT_FLAGS,
 				enchants, CommunicationManager.format("&7Right click to use ability"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;

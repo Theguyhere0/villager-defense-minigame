@@ -1,5 +1,6 @@
-package me.theguyhere.villagerdefense.nms.common;
+package me.theguyhere.villagerdefense.nms.common.entities;
 
+import me.theguyhere.villagerdefense.nms.common.PacketGroup;
 import org.bukkit.Location;
 
 /**
@@ -7,4 +8,6 @@ import org.bukkit.Location;
  */
 public interface VillagerPacketEntity extends PacketEntity {
     PacketGroup newSpawnPackets(Location location);
+
+    int getEntityID();
 }

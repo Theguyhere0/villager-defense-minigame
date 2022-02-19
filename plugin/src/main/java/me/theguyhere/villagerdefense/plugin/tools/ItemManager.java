@@ -11,9 +11,16 @@ import org.bukkit.potion.PotionData;
 import java.util.*;
 
 /**
- * Class to manage Itemstack manipulations.
+ * Class to manage ItemStack manipulations.
  */
 public class ItemManager {
+    /** Flags for creating normal items with enchants and/or lore.*/
+    public static final boolean[] NORMAL_FLAGS = {false, false};
+    /** Flags for creating items with hidden enchants.*/
+    public static final boolean[] HIDE_ENCHANT_FLAGS = {true, false};
+    /** Flags for creating items with hidden enchants and attributes, mostly for buttons.*/
+    public static final boolean[] BUTTON_FLAGS = {true, true};
+
     // Creates an ItemStack using only material, name, and lore
     public static ItemStack createItem(Material matID, String dispName, String... lores) {
         // Create ItemStack
@@ -240,4 +247,10 @@ public class ItemManager {
         return item;
     }
 
+    // Dummy enchant for glowing buttons
+    public static HashMap<Enchantment, Integer> glow() {
+        HashMap<Enchantment, Integer> enchants = new HashMap<>();
+        enchants.put(Enchantment.DURABILITY, 1);
+        return enchants;
+    }
 }
