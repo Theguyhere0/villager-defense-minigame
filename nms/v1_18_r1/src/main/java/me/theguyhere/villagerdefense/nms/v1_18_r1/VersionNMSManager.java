@@ -4,14 +4,15 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelPipeline;
 import me.theguyhere.villagerdefense.common.Log;
-import me.theguyhere.villagerdefense.nms.common.EntityID;
-import me.theguyhere.villagerdefense.nms.common.NMSErrors;
-import me.theguyhere.villagerdefense.nms.common.NMSManager;
-import me.theguyhere.villagerdefense.nms.common.PacketListener;
+import me.theguyhere.villagerdefense.nms.common.*;
 import me.theguyhere.villagerdefense.nms.common.entities.TextPacketEntity;
 import me.theguyhere.villagerdefense.nms.common.entities.VillagerPacketEntity;
+import net.minecraft.core.BlockPosition;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.network.PlayerConnection;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
@@ -21,9 +22,6 @@ import java.util.function.Consumer;
  * Manager class for a specific NMS version.
  */
 public class VersionNMSManager implements NMSManager {
-    public VersionNMSManager() {
-    }
-
     @Override
     public TextPacketEntity newTextPacketEntity() {
         return new PacketEntityArmorStand(new EntityID());
@@ -32,6 +30,24 @@ public class VersionNMSManager implements NMSManager {
     @Override
     public VillagerPacketEntity newVillagerPacketEntity() {
         return new PacketEntityVillager(new EntityID());
+    }
+
+    @Override
+    public void nameArena(Player player, String arenaName, int arenaNum) {
+        Location location = player.getLocation();
+        Material original = location.getBlock().getType();
+        BlockPosition position = new BlockPosition(location.getX(), location.getY(), location.getZ());
+        NBTTagCompound signNBT = new NBTTagCompound();
+        signNBT.a("Text1", String.format("Rename Arena %d:", arenaNum));
+        signNBT.a("Text2", "===============");
+        signNBT.a("Text3", "arenaName");
+        signNBT.a("Text4", "===============");
+
+        PacketGroup.of(
+                new BlockChangePacket(position, Material.OAK_SIGN),
+                new TileEntityDataPacket(position, 0, signNBT),
+                new OpenSignEditorPacket(position),
+                new BlockChangePacket(position, original)).sendTo(player);
     }
 
     @Override

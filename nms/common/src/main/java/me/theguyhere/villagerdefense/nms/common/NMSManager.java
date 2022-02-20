@@ -15,6 +15,8 @@ public interface NMSManager {
 
     VillagerPacketEntity newVillagerPacketEntity();
 
+    void nameArena(Player player, String arenaName, int arenaNum);
+
     void injectPacketListener(Player player, PacketListener packetListener);
 
     void uninjectPacketListener(Player player);

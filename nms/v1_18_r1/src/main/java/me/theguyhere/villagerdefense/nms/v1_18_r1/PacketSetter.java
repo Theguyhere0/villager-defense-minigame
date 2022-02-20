@@ -1,6 +1,8 @@
 package me.theguyhere.villagerdefense.nms.v1_18_r1;
 
 import io.netty.buffer.Unpooled;
+import net.minecraft.core.BlockPosition;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketDataSerializer;
 
 import java.util.UUID;
@@ -49,6 +51,14 @@ class PacketSetter extends PacketDataSerializer {
 
     void writeUUID(UUID uuid) {
         super.a(uuid);
+    }
+
+    void writePosition(BlockPosition position) {
+        super.a(position);
+    }
+
+    void writeNBTTagCompound(NBTTagCompound nbtTagCompound) {
+        super.a(nbtTagCompound);
     }
 
     <T> void writeDataWatcherEntry(DataWatcherKey<T> key, T value) {

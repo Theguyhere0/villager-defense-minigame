@@ -32,7 +32,7 @@ public class JoinListener implements Listener {
 	public void onJoin(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
 		ArenaManager.displayEverything(player);
-		nmsManager.injectPacketListener(player, new PacketListenerImpl());
+		nmsManager.injectPacketListener(player, new PacketListenerImp());
 
 		// Get list of loggers from data file
 		List<String> loggers = plugin.getPlayerData().getStringList("loggers");

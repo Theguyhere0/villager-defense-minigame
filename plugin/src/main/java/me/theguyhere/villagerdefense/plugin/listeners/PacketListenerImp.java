@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class PacketListenerImpl implements PacketListener {
+public class PacketListenerImp implements PacketListener {
     @Override
     public void onAttack(Player player, int entityID) {
         Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).map(Arena::getPortal).filter(Objects::nonNull)

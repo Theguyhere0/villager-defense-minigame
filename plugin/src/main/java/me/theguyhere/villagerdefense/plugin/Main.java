@@ -62,7 +62,7 @@ public class Main extends JavaPlugin {
 
 		// Add packet listeners for online players
 		for (Player player : Bukkit.getOnlinePlayers())
-			nmsManager.injectPacketListener(player, new PacketListenerImpl());
+			nmsManager.injectPacketListener(player, new PacketListenerImp());
 
 		// Check config version
 		if (getConfig().getInt("version") < configVersion) {

@@ -201,10 +201,11 @@ public class InventoryListener implements Listener {
 		if (title.contains("Villager Defense Arenas")) {
 			// Create new arena with naming inventory
 			if (buttonType == Material.RED_CONCRETE) {
-				// Set a new arena
-				ArenaManager.arenas[slot] = new Arena(plugin, slot, new Tasks(plugin, slot));
+				Arena arena = new Arena(plugin, slot, new Tasks(plugin, slot));
 
-//				NMSManager.nameArena(player, ArenaManager.arenas[slot]);
+				// Set a new arena
+				ArenaManager.arenas[slot] = arena;
+				NMSVersion.getCurrent().getNmsManager().nameArena(player, arena.getName(), arena.getArena());
 			}
 
 			// Edit existing arena
@@ -685,8 +686,8 @@ public class InventoryListener implements Listener {
 			// Open name editor
 			if (buttonName.contains("Edit Name"))
 				if (arenaInstance.isClosed())
-//					NMSManager.nameArena(player, arenaInstance);
-					return;
+					NMSVersion.getCurrent().getNmsManager().nameArena(player, arenaInstance.getName(),
+							arenaInstance.getArena());
 				else PlayerManager.notify(player, "&cArena must be closed to modify this!");
 
 			// Open portal menu

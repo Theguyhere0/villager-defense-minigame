@@ -48,6 +48,7 @@ me\theguyhere\villagerdefense\plugin\tools\DataManager.class
 me\theguyhere\villagerdefense\plugin\exceptions\InvalidLocationException.class
 me\theguyhere\villagerdefense\plugin\game\models\Mobs.class
 me\theguyhere\villagerdefense\plugin\game\displays\Leaderboard.class
+me\theguyhere\villagerdefense\plugin\listeners\PacketListenerImp.class
 me\theguyhere\villagerdefense\plugin\tools\WorldManager.class
 me\theguyhere\villagerdefense\plugin\commands\CommandTab.class
 me\theguyhere\villagerdefense\plugin\Main.class
@@ -66,7 +67,6 @@ me\theguyhere\villagerdefense\plugin\game\models\Tasks$6.class
 me\theguyhere\villagerdefense\plugin\listeners\AbilityListener.class
 me\theguyhere\villagerdefense\plugin\events\SignGUIEvent.class
 me\theguyhere\villagerdefense\plugin\game\models\Tasks$9.class
-me\theguyhere\villagerdefense\plugin\listeners\PacketListenerImpl.class
 me\theguyhere\villagerdefense\plugin\events\RightClickNPCEvent.class
 me\theguyhere\villagerdefense\plugin\exceptions\InvalidNameException.class
 me\theguyhere\villagerdefense\plugin\events\WaveStartEvent.class

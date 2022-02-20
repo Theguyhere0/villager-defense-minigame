@@ -1,4 +1,5 @@
 me\theguyhere\villagerdefense\nms\common\NMSManager.class
+me\theguyhere\villagerdefense\nms\common\PacketGroupImp$QuadruplePacket.class
 me\theguyhere\villagerdefense\nms\common\PacketGroupImp$DoublePacket.class
 me\theguyhere\villagerdefense\nms\common\PacketListener.class
 me\theguyhere\villagerdefense\nms\common\entities\VillagerPacketEntity.class
@@ -6,5 +7,6 @@ me\theguyhere\villagerdefense\nms\common\NMSErrors.class
 me\theguyhere\villagerdefense\nms\common\entities\TextPacketEntity.class
 me\theguyhere\villagerdefense\nms\common\EntityID.class
 me\theguyhere\villagerdefense\nms\common\PacketGroup.class
+me\theguyhere\villagerdefense\nms\common\PacketGroupImp$TriplePacket.class
 me\theguyhere\villagerdefense\nms\common\PacketGroupImp.class
 me\theguyhere\villagerdefense\nms\common\entities\PacketEntity.class
