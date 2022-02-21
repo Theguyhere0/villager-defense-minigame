@@ -32,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Commands implements CommandExecutor {
 	Main plugin;
@@ -155,7 +156,7 @@ public class Commands implements CommandExecutor {
 				// Attempt to get arena and player
 				try {
 					arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
-							.filter(arena1 -> arena1.hasPlayer(player)).toList().get(0);
+							.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
 					gamer = arena.getPlayer(player);
 				} catch (Exception err) {
 					PlayerManager.notify(player, language.getString("inGameError"));
@@ -264,7 +265,7 @@ public class Commands implements CommandExecutor {
 					// Attempt to get arena and player
 					try {
 						arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
-								.filter(arena1 -> arena1.hasPlayer(player)).toList().get(0);
+								.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
 						gamer = arena.getPlayer(player);
 					} catch (Exception e) {
 						PlayerManager.notify(player, language.getString("forceStartError1"));
@@ -329,7 +330,7 @@ public class Commands implements CommandExecutor {
 					}
 
 					Arena arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
-							.filter(arena1 -> arena1.hasPlayer(player)).toList().get(0);
+							.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
 
 					// Check if arena already started
 					if (arena.getStatus() != ArenaStatus.WAITING) {
@@ -400,7 +401,7 @@ public class Commands implements CommandExecutor {
 					// Attempt to get arena
 					try {
 						arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
-								.filter(arena1 -> arena1.hasPlayer(player)).toList().get(0);
+								.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
 					} catch (Exception e) {
 						PlayerManager.notify(player, language.getString("forceStartError1"));
 						return true;
@@ -447,7 +448,7 @@ public class Commands implements CommandExecutor {
 					}
 
 					Arena arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
-							.filter(arena1 -> arena1.hasPlayer(player)).toList().get(0);
+							.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
 
 					// Check if arena has a game in progress
 					if (arena.getStatus() != ArenaStatus.ACTIVE && arena.getStatus() != ArenaStatus.ENDING) {
@@ -497,7 +498,7 @@ public class Commands implements CommandExecutor {
 					// Attempt to get arena
 					try {
 						arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
-								.filter(arena1 -> arena1.hasPlayer(player)).toList().get(0);
+								.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
 					} catch (Exception e) {
 						PlayerManager.notify(player, language.getString("forceStartError1"));
 						return true;
@@ -553,7 +554,7 @@ public class Commands implements CommandExecutor {
 					}
 
 					Arena arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
-							.filter(arena1 -> arena1.hasPlayer(player)).toList().get(0);
+							.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
 
 					// Check if arena already started
 					if (arena.getStatus() != ArenaStatus.WAITING) {
@@ -785,7 +786,7 @@ public class Commands implements CommandExecutor {
 
 				// Check for alive player
 				try {
-					if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(arena -> arena.hasPlayer(player)).toList().get(0).getPlayer(player).getStatus() != PlayerStatus.ALIVE) {
+					if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(arena -> arena.hasPlayer(player)).collect(Collectors.toList()).get(0).getPlayer(player).getStatus() != PlayerStatus.ALIVE) {
 						PlayerManager.notify(player, language.getString("suicideError"));
 						return true;
 					}

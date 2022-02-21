@@ -327,12 +327,20 @@ public class Tasks {
 				}
 
 				// Give players gem rewards
-				int multiplier = switch (arenaInstance.getDifficultyMultiplier()) {
-					case 1 -> 10;
-					case 2 -> 8;
-					case 3 -> 6;
-					default -> 5;
-				};
+				int multiplier;
+				switch (arenaInstance.getDifficultyMultiplier()) {
+					case 1:
+						multiplier = 10;
+						break;
+					case 2:
+						multiplier = 8;
+						break;
+					case 3:
+						multiplier = 6;
+						break;
+					default:
+						multiplier = 5;
+				}
 				int reward = (currentWave - 1) * multiplier;
 				p.addGems(reward);
 				if (currentWave > 1)

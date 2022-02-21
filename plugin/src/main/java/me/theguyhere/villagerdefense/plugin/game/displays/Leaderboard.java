@@ -29,12 +29,23 @@ public class Leaderboard {
 
 		// Determine leaderboard title
 		switch (type) {
-			case "totalKills" -> info.add(CommunicationManager.format("&d&lTotal Kills Leaderboard"));
-			case "topKills" -> info.add(CommunicationManager.format("&c&lTop Kills Leaderboard"));
-			case "totalGems" -> info.add(CommunicationManager.format("&e&lTotal Gems Leaderboard"));
-			case "topBalance" -> info.add(CommunicationManager.format("&a&lTop Balance Leaderboard"));
-			case "topWave" -> info.add(CommunicationManager.format("&b&lTop Wave Leaderboard"));
-			default -> info.add("");
+			case "totalKills":
+				info.add(CommunicationManager.format("&d&lTotal Kills Leaderboard"));
+				break;
+			case "topKills":
+				info.add(CommunicationManager.format("&c&lTop Kills Leaderboard"));
+				break;
+			case "totalGems":
+				info.add(CommunicationManager.format("&e&lTotal Gems Leaderboard"));
+				break;
+			case "topBalance":
+				info.add(CommunicationManager.format("&a&lTop Balance Leaderboard"));
+				break;
+			case "topWave":
+				info.add(CommunicationManager.format("&b&lTop Wave Leaderboard"));
+				break;
+			default:
+				info.add("");
 		}
 
 		// Gather relevant stats

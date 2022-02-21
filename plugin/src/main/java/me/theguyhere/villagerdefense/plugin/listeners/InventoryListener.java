@@ -34,6 +34,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class InventoryListener implements Listener {
 	private final Main plugin;
@@ -2823,7 +2824,7 @@ public class InventoryListener implements Listener {
 				return;
 
 			Arena arenaInstance = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
-					a.hasPlayer(player)).toList().get(0);
+					a.hasPlayer(player)).collect(Collectors.toList()).get(0);
 
 			// Open weapon shop
 			if (buttonName.contains("Weapon Shop"))
@@ -2866,7 +2867,7 @@ public class InventoryListener implements Listener {
 		else if (title.contains("Custom Shop:")) {
 			String name = title.substring(19);
 			Arena arenaInstance = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
-					.filter(arena1 -> arena1.getName().equals(name)).toList().get(0);
+					.filter(arena1 -> arena1.getName().equals(name)).collect(Collectors.toList()).get(0);
 			if (buttonName.contains("EXIT"))
 				player.openInventory(Inventories.createArenaInfoInventory(arenaInstance));
 		}
@@ -2880,7 +2881,7 @@ public class InventoryListener implements Listener {
 			// Attempt to get arena and player
 			try {
 				arenaInstance = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
-						a.hasPlayer(player)).toList().get(0);
+						a.hasPlayer(player)).collect(Collectors.toList()).get(0);
 				gamer = arenaInstance.getPlayer(player);
 			} catch (Exception err) {
 				return;
@@ -2959,7 +2960,7 @@ public class InventoryListener implements Listener {
 			// Attempt to get arena
 			try {
 				arenaInstance = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
-						a.hasPlayer(player)).toList().get(0);
+						a.hasPlayer(player)).collect(Collectors.toList()).get(0);
 			} catch (Exception err) {
 				return;
 			}
@@ -3140,7 +3141,7 @@ public class InventoryListener implements Listener {
 			// Attempt to get arena and player
 			try {
 				arenaInstance = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
-						.filter(arena1 -> arena1.hasPlayer(player)).toList().get(0);
+						.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
 				gamer = arenaInstance.getPlayer(player);
 			} catch (Exception err) {
 				return;
@@ -3200,7 +3201,7 @@ public class InventoryListener implements Listener {
 			// Attempt to get arena and player
 			try {
 				arenaInstance = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
-						.filter(arena1 -> arena1.hasPlayer(player)).toList().get(0);
+						.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
 				gamer = arenaInstance.getPlayer(player);
 			} catch (Exception err) {
 				return;

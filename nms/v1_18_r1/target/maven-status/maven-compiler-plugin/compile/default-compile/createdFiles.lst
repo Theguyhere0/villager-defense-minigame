@@ -6,6 +6,7 @@ me\theguyhere\villagerdefense\nms\v1_18_r1\DataWatcherKey.class
 me\theguyhere\villagerdefense\nms\v1_18_r1\EntityMetadataPacket$Builder.class
 me\theguyhere\villagerdefense\nms\v1_18_r1\EntityMetadataPacket.class
 me\theguyhere\villagerdefense\nms\v1_18_r1\EntityHeadRotationPacket.class
+me\theguyhere\villagerdefense\nms\v1_18_r1\EntityMetadataPacket$1.class
 me\theguyhere\villagerdefense\nms\v1_18_r1\VersionNMSManager.class
 me\theguyhere\villagerdefense\nms\v1_18_r1\PacketEntityArmorStand.class
 me\theguyhere\villagerdefense\nms\v1_18_r1\BlockChangePacket.class

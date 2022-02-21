@@ -15,9 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.18.1-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
+            <artifactId>spigot-api</artifactId>
         </dependency>
 
         <dependency>
@@ -33,6 +31,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>VillagerDefense-nms-v1_17_r1</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>VillagerDefense-nms-v1_16_r3</artifactId>
         </dependency>
     </dependencies>
 

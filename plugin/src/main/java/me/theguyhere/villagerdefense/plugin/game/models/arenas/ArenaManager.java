@@ -13,10 +13,12 @@ import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.WorldManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ArenaManager {
 	private final Main plugin;
@@ -30,32 +32,42 @@ public class ArenaManager {
 
 	public ArenaManager(Main plugin) {
 		this.plugin = plugin;
+		ConfigurationSection section;
 
-		Objects.requireNonNull(plugin.getArenaData().getConfigurationSection("")).getKeys(false)
-				.forEach(path -> {
-			if (path.charAt(0) == 'a' && path.length() < 4)
-				arenas[Integer.parseInt(path.substring(1))] = new Arena(plugin,
-						Integer.parseInt(path.substring(1)),
-						new Tasks(plugin, Integer.parseInt(path.substring(1))));
-		});
-		Objects.requireNonNull(plugin.getArenaData().getConfigurationSection("infoBoard")).getKeys(false)
-				.forEach(path -> {
-					try {
-						Location location = DataManager.getConfigLocationNoPitch(plugin, "infoBoard." + path);
-						if (location != null)
-							infoBoards[Integer.parseInt(path)] = new InfoBoard(location, plugin);
-					} catch (InvalidLocationException ignored) {
-					}
-				});
-		Objects.requireNonNull(plugin.getArenaData().getConfigurationSection("leaderboard")).getKeys(false)
-				.forEach(path -> {
-					try {
-						Location location = DataManager.getConfigLocationNoPitch(plugin, "leaderboard." + path);
-						if (location != null)
-							leaderboards.put(path, new Leaderboard(path, plugin));
-					} catch (InvalidLocationException ignored) {
-					}
-				});
+		section = plugin.getArenaData().getConfigurationSection("");
+		if (section != null)
+			section.getKeys(false)
+					.forEach(path -> {
+				if (path.charAt(0) == 'a' && path.length() < 4)
+					arenas[Integer.parseInt(path.substring(1))] = new Arena(plugin,
+							Integer.parseInt(path.substring(1)),
+							new Tasks(plugin, Integer.parseInt(path.substring(1))));
+			});
+
+		section = plugin.getArenaData().getConfigurationSection("infoBoard");
+		if (section != null)
+			section.getKeys(false)
+					.forEach(path -> {
+						try {
+							Location location = DataManager.getConfigLocationNoPitch(plugin, "infoBoard." + path);
+							if (location != null)
+								infoBoards[Integer.parseInt(path)] = new InfoBoard(location, plugin);
+						} catch (InvalidLocationException ignored) {
+						}
+					});
+
+		section = plugin.getArenaData().getConfigurationSection("leaderboard");
+		if (section != null)
+			section.getKeys(false)
+					.forEach(path -> {
+						try {
+							Location location = DataManager.getConfigLocationNoPitch(plugin, "leaderboard." + path);
+							if (location != null)
+								leaderboards.put(path, new Leaderboard(path, plugin));
+						} catch (InvalidLocationException ignored) {
+						}
+					});
+
 		setLobby(DataManager.getConfigLocation(plugin, "lobby"));
 
 		plugin.setLoaded();
@@ -71,7 +83,8 @@ public class ArenaManager {
 		assert manager != null;
 
 		Scoreboard board = manager.getNewScoreboard();
-		Arena arena = Arrays.stream(arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player)).toList().get(0);
+		Arena arena = Arrays.stream(arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+				.collect(Collectors.toList()).get(0);
 
 		// Create score board
 		Objective obj = board.registerNewObjective("VillagerDefense", "dummy",
@@ -84,7 +97,8 @@ public class ArenaManager {
 		StringBuilder kit = new StringBuilder(player.getKit().getName());
 		if (player.getKit().isMultiLevel()) {
 			kit.append(" ");
-			kit.append("I".repeat(Math.max(0, player.getKit().getLevel())));
+			for (int i = 0; i < Math.max(0, player.getKit().getLevel()); i++)
+				kit.append("I");
 		}
 		Score score10 = obj.getScore(CommunicationManager.format("&bKit: " + kit));
 		score10.setScore(10);

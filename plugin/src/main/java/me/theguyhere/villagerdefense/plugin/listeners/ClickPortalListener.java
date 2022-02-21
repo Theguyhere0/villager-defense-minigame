@@ -13,6 +13,7 @@ import org.bukkit.event.Listener;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ClickPortalListener implements Listener {
 	@EventHandler
@@ -23,7 +24,8 @@ public class ClickPortalListener implements Listener {
 		try {
 			arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
 					.filter(arena1 -> arena1.getPortal() != null)
-					.filter(arena1 -> arena1.getPortal().getNpc().getEntityID() == e.getNpcId()).toList().get(0);
+					.filter(arena1 -> arena1.getPortal().getNpc().getEntityID() == e.getNpcId())
+					.collect(Collectors.toList()).get(0);
 		} catch (Exception err) {
 			err.printStackTrace();
 			return;
@@ -42,7 +44,8 @@ public class ClickPortalListener implements Listener {
 		try {
 			arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
 					.filter(arena1 -> arena1.getPortal() != null)
-					.filter(arena1 -> arena1.getPortal().getNpc().getEntityID() == e.getNpcId()).toList().get(0);
+					.filter(arena1 -> arena1.getPortal().getNpc().getEntityID() == e.getNpcId())
+					.collect(Collectors.toList()).get(0);
 		} catch (Exception err) {
 			err.printStackTrace();
 			return;

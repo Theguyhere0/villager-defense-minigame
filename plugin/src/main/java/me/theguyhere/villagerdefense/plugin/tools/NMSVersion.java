@@ -7,20 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum NMSVersion {
-//    v1_8_R2,
-//    v1_8_R3,
-//    v1_9_R1,
-//    v1_9_R2,
-//    v1_10_R1,
-//    v1_11_R1,
-//    v1_12_R1,
-//    v1_13_R1,
-//    v1_13_R2,
-//    v1_14_R1,
-//    v1_15_R1,
-//    v1_16_R1,
-//    v1_16_R2,
-//    v1_16_R3,
+    v1_16_R3(new me.theguyhere.villagerdefense.nms.v1_16_r3.VersionNMSManager()),
     v1_17_R1(new me.theguyhere.villagerdefense.nms.v1_17_r1.VersionNMSManager()),
     v1_18_R1(new me.theguyhere.villagerdefense.nms.v1_18_r1.VersionNMSManager());
 
@@ -71,7 +58,7 @@ public enum NMSVersion {
 
     /**
      * This method uses a regex to get the NMS package part that changes with every update.
-     * Example: v1_13_R2
+     * Example: v1_16_R3
      * @return the NMS package part or null if not found.
      */
     private static String extractNMSVersion() {

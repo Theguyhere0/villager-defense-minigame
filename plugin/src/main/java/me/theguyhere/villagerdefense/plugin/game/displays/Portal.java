@@ -27,13 +27,22 @@ public class Portal {
         // Get difficulty
         String difficulty = arena.getDifficultyLabel();
         if (difficulty != null)
-            difficulty = switch (difficulty) {
-                case "Easy" -> " &a&l[" + difficulty + "]";
-                case "Medium" -> " &e&l[" + difficulty + "]";
-                case "Hard" -> " &c&l[" + difficulty + "]";
-                case "Insane" -> " &d&l[" + difficulty + "]";
-                default -> "";
-            };
+            switch (difficulty) {
+                case "Easy":
+                    difficulty = " &a&l[" + difficulty + "]";
+                    break;
+                case "Medium":
+                    difficulty = " &e&l[" + difficulty + "]";
+                    break;
+                case "Hard":
+                    difficulty = " &c&l[" + difficulty + "]";
+                    break;
+                case "Insane":
+                    difficulty = " &d&l[" + difficulty + "]";
+                    break;
+                default:
+                    difficulty = "";
+            }
         else difficulty = "";
 
         // Get status

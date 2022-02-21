@@ -10,6 +10,7 @@ me\theguyhere\villagerdefense\nms\v1_17_r1\EntityDestroyPacket.class
 me\theguyhere\villagerdefense\nms\v1_17_r1\PacketEntityVillager.class
 me\theguyhere\villagerdefense\nms\v1_17_r1\TileEntityDataPacket.class
 me\theguyhere\villagerdefense\nms\v1_17_r1\EntityHeadRotationPacket.class
+me\theguyhere\villagerdefense\nms\v1_17_r1\EntityMetadataPacket$1.class
 me\theguyhere\villagerdefense\nms\v1_17_r1\InboundPacketHandler.class
 me\theguyhere\villagerdefense\nms\v1_17_r1\DataWatcherKey.class
 me\theguyhere\villagerdefense\nms\v1_17_r1\DataWatcherPacketBuilder.class

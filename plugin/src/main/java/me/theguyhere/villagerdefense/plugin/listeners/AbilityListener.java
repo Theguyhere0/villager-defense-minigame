@@ -29,6 +29,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class AbilityListener implements Listener {
     private final Main plugin;
@@ -54,7 +55,7 @@ public class AbilityListener implements Listener {
         // Attempt to get arena and player
         try {
             arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
-                    a.hasPlayer(player)).toList().get(0);
+                    a.hasPlayer(player)).collect(Collectors.toList()).get(0);
             gamer = arena.getPlayer(player);
         } catch (Exception err) {
             return;
@@ -434,16 +435,17 @@ public class AbilityListener implements Listener {
 
         // Check if damage was done by player to valid monsters
         if (!(ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin) ||
-                !(damager instanceof Player player))
+                !(damager instanceof Player))
             return;
 
+        Player player = (Player) damager;
         Arena arena;
         VDPlayer gamer;
 
         // Attempt to get arena and player
         try {
             arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
-                    a.hasPlayer(player)).toList().get(0);
+                    a.hasPlayer(player)).collect(Collectors.toList()).get(0);
             gamer = arena.getPlayer(player);
         } catch (Exception err) {
             return;
@@ -473,14 +475,18 @@ public class AbilityListener implements Listener {
             return;
 
         // Cancel for invisible players
-        if (target instanceof Player player) {
+        if (target instanceof Player) {
+            Player player = (Player) target;
+
             if (player.getActivePotionEffects().stream()
                     .anyMatch(potion -> potion.getType().equals(PotionEffectType.INVISIBILITY)))
                 e.setCancelled(true);
         }
 
         // Cancel for invisible wolves
-        if (target instanceof Wolf wolf) {
+        if (target instanceof Wolf) {
+            Wolf wolf = (Wolf) target;
+
             if (wolf.getActivePotionEffects().stream()
                     .anyMatch(potion -> potion.getType().equals(PotionEffectType.INVISIBILITY)))
                 e.setCancelled(true);
@@ -502,9 +508,10 @@ public class AbilityListener implements Listener {
             return;
 
         // Check for mob taking damage
-        if (!(ent instanceof Mob mob))
+        if (!(ent instanceof Mob))
             return;
 
+        Mob mob = (Mob) ent;
         LivingEntity stealthy = (LivingEntity) damager;
 
         // Check for invisibility

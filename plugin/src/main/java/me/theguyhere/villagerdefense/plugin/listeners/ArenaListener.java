@@ -349,7 +349,7 @@ public class ArenaListener implements Listener {
         // Attempt to get arena and player
         try {
             arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
-                    a.hasPlayer(player)).toList().get(0);
+                    a.hasPlayer(player)).collect(Collectors.toList()).get(0);
             gamer = arena.getPlayer(player);
         } catch (Exception err) {
             e.setCancelled(true);
@@ -641,7 +641,8 @@ public class ArenaListener implements Listener {
 
         int toSpawn = Math.max((int) (data.getConfig().getInt(wave + ".count.v") * countMultiplier), 1)
                 - arena.getVillagers();
-        List<Location> spawns = arena.getVillagerSpawns().stream().map(ArenaSpawn::getLocation).toList();
+        List<Location> spawns = arena.getVillagerSpawns().stream().map(ArenaSpawn::getLocation)
+                .collect(Collectors.toList());
 
         for (int i = 0; i < toSpawn; i++) {
             Location spawn = spawns.get(r.nextInt(spawns.size()));
@@ -723,74 +724,115 @@ public class ArenaListener implements Listener {
             delay += r.nextInt(spawnDelay(i));
 
             switch (typeRatio.get(r.nextInt(typeRatio.size()))) {
-                case "zomb" -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setZombie(plugin, arena,
-                        (Zombie) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.ZOMBIE)
-                ), delay);
-                case "husk" -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setHusk(plugin, arena,
-                        (Husk) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.HUSK)
-                ), delay);
-                case "wskl" -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setWitherSkeleton(plugin, arena,
-                        (WitherSkeleton) Objects.requireNonNull(ground.getWorld())
-                                .spawnEntity(ground, EntityType.WITHER_SKELETON)
-                ), delay);
-                case "brut" -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setBrute(plugin, arena,
-                        (PiglinBrute) Objects.requireNonNull(ground.getWorld())
-                                .spawnEntity(ground, EntityType.PIGLIN_BRUTE)
-                ), delay);
-                case "vind" -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setVindicator(plugin, arena,
-                        (Vindicator) Objects.requireNonNull(ground.getWorld())
-                                .spawnEntity(ground, EntityType.VINDICATOR)
-                ), delay);
-                case "spid" -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setSpider(plugin, arena,
-                        (Spider) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.SPIDER)
-                ), delay);
-                case "cspd" -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setCaveSpider(plugin, arena,
-                        (CaveSpider) Objects.requireNonNull(ground.getWorld())
-                                .spawnEntity(ground, EntityType.CAVE_SPIDER)
-                ), delay);
-                case "wtch" -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setWitch(plugin, arena,
-                        (Witch) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.WITCH)
-                ), delay);
-                case "skel" -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setSkeleton(plugin, arena,
-                        (Skeleton) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.SKELETON)
-                ), delay);
-                case "stry" -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setStray(plugin, arena,
-                        (Stray) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.STRAY)
-                ), delay);
-                case "drwd" -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setDrowned(plugin, arena,
-                        (Drowned) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.DROWNED)
-                ), delay);
-                case "blze" -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setBlaze(plugin, arena,
-                        (Blaze) Objects.requireNonNull(air.getWorld()).spawnEntity(air, EntityType.BLAZE)
-                ), delay);
-                case "ghst" -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setGhast(plugin, arena,
-                        (Ghast) Objects.requireNonNull(air.getWorld()).spawnEntity(air, EntityType.GHAST)
-                ), delay);
-                case "pill" -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setPillager(plugin, arena,
-                        (Pillager) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.PILLAGER)
-                ), delay);
-                case "slim" -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setSlime(plugin, arena,
-                        (Slime) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.SLIME)
-                ), delay);
-                case "mslm" -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setMagmaCube(plugin, arena,
-                        (MagmaCube) Objects.requireNonNull(ground.getWorld())
-                                .spawnEntity(ground, EntityType.MAGMA_CUBE)
-                ), delay);
-                case "crpr" -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setCreeper(plugin, arena,
-                        (Creeper) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.CREEPER)
-                ), delay);
-                case "phtm" -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setPhantom(plugin, arena,
-                        (Phantom) Objects.requireNonNull(air.getWorld()).spawnEntity(air, EntityType.PHANTOM)
-                ), delay);
-                case "evok" -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setEvoker(plugin, arena,
-                        (Evoker) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.EVOKER)
-                ), delay);
-                case "hgln" -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setZoglin(plugin, arena,
-                        (Zoglin) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.ZOGLIN)
-                ), delay);
-                case "rvgr" -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setRavager(plugin, arena,
-                        (Ravager) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.RAVAGER)
-                ), delay);
+                case "zomb":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setZombie(plugin, arena,
+                            (Zombie) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.ZOMBIE)
+                    ), delay);
+                    break;
+                case "husk":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setHusk(plugin, arena,
+                            (Husk) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.HUSK)
+                    ), delay);
+                    break;
+                case "wskl":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setWitherSkeleton(plugin, arena,
+                            (WitherSkeleton) Objects.requireNonNull(ground.getWorld())
+                                    .spawnEntity(ground, EntityType.WITHER_SKELETON)
+                    ), delay);
+                    break;
+                case "brut":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setBrute(plugin, arena,
+                            (PiglinBrute) Objects.requireNonNull(ground.getWorld())
+                                    .spawnEntity(ground, EntityType.PIGLIN_BRUTE)
+                    ), delay);
+                    break;
+                case "vind":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setVindicator(plugin, arena,
+                            (Vindicator) Objects.requireNonNull(ground.getWorld())
+                                    .spawnEntity(ground, EntityType.VINDICATOR)
+                    ), delay);
+                    break;
+                case "spid":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setSpider(plugin, arena,
+                            (Spider) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.SPIDER)
+                    ), delay);
+                    break;
+                case "cspd":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setCaveSpider(plugin, arena,
+                            (CaveSpider) Objects.requireNonNull(ground.getWorld())
+                                    .spawnEntity(ground, EntityType.CAVE_SPIDER)
+                    ), delay);
+                    break;
+                case "wtch":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setWitch(plugin, arena,
+                            (Witch) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.WITCH)
+                    ), delay);
+                    break;
+                case "skel":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setSkeleton(plugin, arena,
+                            (Skeleton) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.SKELETON)
+                    ), delay);
+                    break;
+                case "stry":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setStray(plugin, arena,
+                            (Stray) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.STRAY)
+                    ), delay);
+                    break;
+                case "drwd":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setDrowned(plugin, arena,
+                            (Drowned) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.DROWNED)
+                    ), delay);
+                    break;
+                case "blze":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setBlaze(plugin, arena,
+                            (Blaze) Objects.requireNonNull(air.getWorld()).spawnEntity(air, EntityType.BLAZE)
+                    ), delay);
+                    break;
+                case "ghst":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setGhast(plugin, arena,
+                            (Ghast) Objects.requireNonNull(air.getWorld()).spawnEntity(air, EntityType.GHAST)
+                    ), delay);
+                    break;
+                case "pill":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setPillager(plugin, arena,
+                            (Pillager) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.PILLAGER)
+                    ), delay);
+                    break;
+                case "slim":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setSlime(plugin, arena,
+                            (Slime) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.SLIME)
+                    ), delay);
+                    break;
+                case "mslm":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setMagmaCube(plugin, arena,
+                            (MagmaCube) Objects.requireNonNull(ground.getWorld())
+                                    .spawnEntity(ground, EntityType.MAGMA_CUBE)
+                    ), delay);
+                    break;
+                case "crpr":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setCreeper(plugin, arena,
+                            (Creeper) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.CREEPER)
+                    ), delay);
+                    break;
+                case "phtm":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setPhantom(plugin, arena,
+                            (Phantom) Objects.requireNonNull(air.getWorld()).spawnEntity(air, EntityType.PHANTOM)
+                    ), delay);
+                    break;
+                case "evok":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setEvoker(plugin, arena,
+                            (Evoker) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.EVOKER)
+                    ), delay);
+                    break;
+                case "hgln":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setZoglin(plugin, arena,
+                            (Zoglin) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.ZOGLIN)
+                    ), delay);
+                    break;
+                case "rvgr":
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> Mobs.setRavager(plugin, arena,
+                            (Ravager) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.RAVAGER)
+                    ), delay);
             }
 
             // Manage spawning state
@@ -822,7 +864,8 @@ public class ArenaListener implements Listener {
             return;
 
         String path = wave + ".btypes";
-        List<Location> spawns = arena.getMonsterSpawns().stream().map(ArenaSpawn::getLocation).toList();
+        List<Location> spawns = arena.getMonsterSpawns().stream().map(ArenaSpawn::getLocation)
+                .collect(Collectors.toList());
         List<String> typeRatio = new ArrayList<>();
 
         // Get monster type ratio

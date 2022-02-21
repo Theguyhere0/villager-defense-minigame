@@ -837,11 +837,16 @@ public class Inventories {
 
 		// Toggle to set monster spawn type
 		switch (arenaInstance.getMonsterSpawnType(slot)) {
-			case 1 -> inv.setItem(4, ItemManager.createItem(Material.GUNPOWDER,
-					CommunicationManager.format("&5&lType: Ground")));
-			case 2 -> inv.setItem(4, ItemManager.createItem(Material.FEATHER,
+			case 1:
+				inv.setItem(4, ItemManager.createItem(Material.GUNPOWDER,
+						CommunicationManager.format("&5&lType: Ground")));
+				break;
+			case 2:
+				inv.setItem(4, ItemManager.createItem(Material.FEATHER,
 					CommunicationManager.format("&5&lType: Flying")));
-			default -> inv.setItem(4, ItemManager.createItem(Material.BONE,
+				break;
+			default:
+				inv.setItem(4, ItemManager.createItem(Material.BONE,
 					CommunicationManager.format("&5&lType: All")));
 		}
 
@@ -1371,13 +1376,22 @@ public class Inventories {
 	// Menu for changing the difficulty label of an arena
 	public static Inventory createDifficultyLabelInventory(int arena) {
 		String label = ArenaManager.arenas[arena].getDifficultyLabel();
-		label = switch (label) {
-			case "Easy" -> "&a&lEasy";
-			case "Medium" -> "&e&lMedium";
-			case "Hard" -> "&c&lHard";
-			case "Insane" -> "&d&lInsane";
-			default -> "";
-		};
+		switch (label) {
+			case "Easy":
+				label = "&a&lEasy";
+				break;
+			case "Medium":
+				label = "&e&lMedium";
+				break;
+			case "Hard":
+				label = "&c&lHard";
+				break;
+			case "Insane":
+				label = "&d&lInsane";
+				break;
+			default:
+				label = "";
+		}
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +

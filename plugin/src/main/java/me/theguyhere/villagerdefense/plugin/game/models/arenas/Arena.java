@@ -363,20 +363,20 @@ public class Arena {
      * @return Waiting {@link Sound}.
      */
     public Sound getWaitingSound() {
-        return switch (config.getInt(path + ".sounds.waiting")) {
-            case 0 -> Sound.MUSIC_DISC_CAT;
-            case 1 -> Sound.MUSIC_DISC_BLOCKS;
-            case 2 -> Sound.MUSIC_DISC_FAR;
-            case 3 -> Sound.MUSIC_DISC_STRAD;
-            case 4 -> Sound.MUSIC_DISC_MELLOHI;
-            case 5 -> Sound.MUSIC_DISC_WARD;
-            case 9 -> Sound.MUSIC_DISC_CHIRP;
-            case 10 -> Sound.MUSIC_DISC_STAL;
-            case 11 -> Sound.MUSIC_DISC_MALL;
-            case 12 -> Sound.MUSIC_DISC_WAIT;
-            case 13 -> Sound.MUSIC_DISC_PIGSTEP;
-            default -> null;
-        };
+        switch (config.getInt(path + ".sounds.waiting")) {
+            case 0: return Sound.MUSIC_DISC_CAT;
+            case 1: return Sound.MUSIC_DISC_BLOCKS;
+            case 2: return Sound.MUSIC_DISC_FAR;
+            case 3: return Sound.MUSIC_DISC_STRAD;
+            case 4: return Sound.MUSIC_DISC_MELLOHI;
+            case 5: return Sound.MUSIC_DISC_WARD;
+            case 9: return Sound.MUSIC_DISC_CHIRP;
+            case 10: return Sound.MUSIC_DISC_STAL;
+            case 11: return Sound.MUSIC_DISC_MALL;
+            case 12: return Sound.MUSIC_DISC_WAIT;
+            case 13: return Sound.MUSIC_DISC_PIGSTEP;
+            default: return null;
+        }
     }
 
     /**
@@ -390,78 +390,66 @@ public class Arena {
         boolean selected;
 
         switch (number) {
-            case 0 -> {
+            case 0:
                 selected = sound == 0;
                 return ItemManager.createItem(Material.MUSIC_DISC_CAT,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Cat"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            }
-            case 1 -> {
+            case 1:
                 selected = sound == 1;
                 return ItemManager.createItem(Material.MUSIC_DISC_BLOCKS,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Blocks"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            }
-            case 2 -> {
+            case 2:
                 selected = sound == 2;
                 return ItemManager.createItem(Material.MUSIC_DISC_FAR,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Far"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            }
-            case 3 -> {
+            case 3:
                 selected = sound == 3;
                 return ItemManager.createItem(Material.MUSIC_DISC_STRAD,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Strad"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            }
-            case 4 -> {
+            case 4:
                 selected = sound == 4;
                 return ItemManager.createItem(Material.MUSIC_DISC_MELLOHI,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Mellohi"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            }
-            case 5 -> {
+            case 5:
                 selected = sound == 5;
                 return ItemManager.createItem(Material.MUSIC_DISC_WARD,
                         CommunicationManager.format(((selected ? "&a&l" : "&4&l") + "Ward")),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            }
-            case 9 -> {
+            case 9:
                 selected = sound == 9;
                 return ItemManager.createItem(Material.MUSIC_DISC_CHIRP,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Chirp"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            }
-            case 10 -> {
+            case 10:
                 selected = sound == 10;
                 return ItemManager.createItem(Material.MUSIC_DISC_STAL,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Stal"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            }
-            case 11 -> {
+            case 11:
                 selected = sound == 11;
                 return ItemManager.createItem(Material.MUSIC_DISC_MALL,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Mall"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            }
-            case 12 -> {
+            case 12:
                 selected = sound == 12;
                 return ItemManager.createItem(Material.MUSIC_DISC_WAIT,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Wait"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            }
-            case 13 -> {
+            case 13:
                 selected = sound == 13;
                 return ItemManager.createItem(Material.MUSIC_DISC_PIGSTEP,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Pigstep"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            }
-            default -> {
+            default:
                 selected = sound < 0 || sound > 5 && sound < 9 || sound > 13;
                 return ItemManager.createItem(Material.LIGHT_GRAY_CONCRETE,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "None"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            }
         }
     }
 
@@ -470,20 +458,20 @@ public class Arena {
      * @return Waiting music title.
      */
     public String getWaitingSoundName() {
-        return switch (config.getInt(path + ".sounds.waiting")) {
-            case 0 -> "Cat";
-            case 1 -> "Blocks";
-            case 2 -> "Far";
-            case 3 -> "Strad";
-            case 4 -> "Mellohi";
-            case 5 -> "Ward";
-            case 9 -> "Chirp";
-            case 10 -> "Stal";
-            case 11 -> "Mall";
-            case 12 -> "Wait";
-            case 13 -> "Pigstep";
-            default -> "None";
-        };
+        switch (config.getInt(path + ".sounds.waiting")) {
+            case 0: return "Cat";
+            case 1: return "Blocks";
+            case 2: return "Far";
+            case 3: return "Strad";
+            case 4: return "Mellohi";
+            case 5: return "Ward";
+            case 9: return "Chirp";
+            case 10: return "Stal";
+            case 11: return "Mall";
+            case 12: return "Wait";
+            case 13: return "Pigstep";
+            default: return "None";
+        }
     }
 
     /**
@@ -735,7 +723,8 @@ public class Arena {
      * @return Monster spawn.
      */
     public ArenaSpawn getMonsterSpawn(int num) {
-        List<ArenaSpawn> query = monsterSpawns.stream().filter(spawn -> spawn.getId() == num + 1).toList();
+        List<ArenaSpawn> query = monsterSpawns.stream().filter(spawn -> spawn.getId() == num + 1)
+                .collect(Collectors.toList());
 
         if (query.size() != 1)
             return null;
@@ -796,7 +785,8 @@ public class Arena {
      * @return Villager spawn.
      */
     public ArenaSpawn getVillagerSpawn(int num) {
-        List<ArenaSpawn> query = villagerSpawns.stream().filter(spawn -> spawn.getId() == num + 1).toList();
+        List<ArenaSpawn> query = villagerSpawns.stream().filter(spawn -> spawn.getId() == num + 1)
+                .collect(Collectors.toList());
 
         if (query.size() != 1)
             return null;
@@ -1498,8 +1488,8 @@ public class Arena {
      */
     public VDPlayer getPlayer(Player player) throws PlayerNotFoundException {
         try {
-            return players.stream().filter(Objects::nonNull).filter(p -> p.getID().equals(player.getUniqueId())).toList()
-                    .get(0);
+            return players.stream().filter(Objects::nonNull).filter(p -> p.getID().equals(player.getUniqueId()))
+                    .collect(Collectors.toList()).get(0);
         } catch (Exception e) {
             throw new PlayerNotFoundException("Player not in this arena.");
         }

@@ -29,6 +29,7 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class ChallengeListener implements Listener {
     private final Main plugin;
@@ -46,7 +47,7 @@ public class ChallengeListener implements Listener {
         // Attempt to get arena and player
         try {
             gamer = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
-                    a.hasPlayer(player)).toList().get(0).getPlayer(player);
+                    a.hasPlayer(player)).collect(Collectors.toList()).get(0).getPlayer(player);
         } catch (Exception err) {
             return;
         }
@@ -105,7 +106,7 @@ public class ChallengeListener implements Listener {
         // Attempt to get player
         try {
             gamer = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
-                    a.hasPlayer(player)).toList().get(0).getPlayer(player);
+                    a.hasPlayer(player)).collect(Collectors.toList()).get(0).getPlayer(player);
         } catch (Exception err) {
             return;
         }
@@ -137,14 +138,15 @@ public class ChallengeListener implements Listener {
     @EventHandler
     public void onPlayerHurt(EntityDamageByEntityEvent e) {
         // Player hurt
-        if (e.getEntity() instanceof Player player) {
+        if (e.getEntity() instanceof Player) {
+            Player player = (Player) e.getEntity();
             Entity enemy = e.getDamager();
             VDPlayer gamer;
 
             // Attempt to get player
             try {
                 gamer = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
-                        a.hasPlayer(player)).toList().get(0).getPlayer(player);
+                        a.hasPlayer(player)).collect(Collectors.toList()).get(0).getPlayer(player);
             } catch (Exception err) {
                 return;
             }
@@ -181,7 +183,7 @@ public class ChallengeListener implements Listener {
             // Attempt to get VDplayer
             try {
                 gamer = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
-                        a.hasPlayer(player)).toList().get(0).getPlayer(player);
+                        a.hasPlayer(player)).collect(Collectors.toList()).get(0).getPlayer(player);
             } catch (Exception err) {
                 return;
             }
@@ -207,7 +209,7 @@ public class ChallengeListener implements Listener {
         // Attempt to get player
         try {
             gamer = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
-                    a.hasPlayer(player)).toList().get(0).getPlayer(player);
+                    a.hasPlayer(player)).collect(Collectors.toList()).get(0).getPlayer(player);
         } catch (Exception err) {
             return;
         }
@@ -225,14 +227,15 @@ public class ChallengeListener implements Listener {
     @EventHandler
     public void onHeal(EntityRegainHealthEvent e) {
         // Check for player
-        if (!(e.getEntity() instanceof Player player)) return;
+        if (!(e.getEntity() instanceof Player)) return;
 
+        Player player = (Player) e.getEntity();
         VDPlayer gamer;
 
         // Attempt to get arena and player
         try {
             gamer = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
-                    a.hasPlayer(player)).toList().get(0).getPlayer(player);
+                    a.hasPlayer(player)).collect(Collectors.toList()).get(0).getPlayer(player);
         } catch (Exception err) {
             return;
         }

@@ -12,16 +12,11 @@
     <artifactId>VillagerDefense-common</artifactId>
     <name>VillagerDefense Common</name>
 
-    <properties>
-        <maven.compiler.source>16</maven.compiler.source>
-        <maven.compiler.target>16</maven.compiler.target>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.18.1-R0.1-SNAPSHOT</version>
+            <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

@@ -19,5 +19,9 @@
             <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>me.theguyhere</groupId>
+            <artifactId>VillagerDefense-nms-common</artifactId>
+        </dependency>
     </dependencies>
 </project>

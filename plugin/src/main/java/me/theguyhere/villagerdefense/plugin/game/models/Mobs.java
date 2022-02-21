@@ -50,18 +50,23 @@ public class Mobs {
                 boost = 0;
             else boost = difficulty - 5;
             switch (i) {
-                case 0 -> Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH))
-                        .addModifier(new AttributeModifier(
+                case 0:
+                    Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH))
+                            .addModifier(new AttributeModifier(
                                 "hpBoost", boost / 3, AttributeModifier.Operation.ADD_NUMBER
-                        ));
-                case 1 -> Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE))
-                        .addModifier(new AttributeModifier(
+                            ));
+                    break;
+                case 1:
+                    Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE))
+                            .addModifier(new AttributeModifier(
                                 "attBoost", boost / 4, AttributeModifier.Operation.ADD_NUMBER
-                        ));
-                case 2 -> Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-                        .addModifier(new AttributeModifier(
+                            ));
+                    break;
+                case 2:
+                    Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+                            .addModifier(new AttributeModifier(
                                 "spdBoost", boost / 120, AttributeModifier.Operation.ADD_NUMBER
-                        ));
+                            ));
             }
         }
     }
@@ -126,18 +131,23 @@ public class Mobs {
                 boost = 0;
             else boost = difficulty - 8;
             switch (i) {
-                case 0 -> Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH))
-                        .addModifier(new AttributeModifier(
+                case 0:
+                    Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH))
+                            .addModifier(new AttributeModifier(
                                 "hpBoost", boost / 3, AttributeModifier.Operation.ADD_NUMBER
-                        ));
-                case 1 -> Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE))
-                        .addModifier(new AttributeModifier(
+                            ));
+                    break;
+                case 1:
+                    Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE))
+                            .addModifier(new AttributeModifier(
                                 "attBoost", boost / 4, AttributeModifier.Operation.ADD_NUMBER
-                        ));
-                case 2 -> Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-                        .addModifier(new AttributeModifier(
+                            ));
+                    break;
+                case 2:
+                    Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+                            .addModifier(new AttributeModifier(
                                 "spdBoost", boost / 120, AttributeModifier.Operation.ADD_NUMBER
-                        ));
+                            ));
             }
         }
     }
@@ -1206,18 +1216,23 @@ public class Mobs {
                 boost = 0;
             else boost = difficulty - 5;
             switch (i) {
-                case 0 -> Objects.requireNonNull(wolf.getAttribute(Attribute.GENERIC_MAX_HEALTH))
-                        .addModifier(new AttributeModifier(
+                case 0:
+                    Objects.requireNonNull(wolf.getAttribute(Attribute.GENERIC_MAX_HEALTH))
+                            .addModifier(new AttributeModifier(
                                 "hpBoost", boost / 3, AttributeModifier.Operation.ADD_NUMBER
-                        ));
-                case 1 -> Objects.requireNonNull(wolf.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE))
-                        .addModifier(new AttributeModifier(
+                            ));
+                    break;
+                case 1:
+                    Objects.requireNonNull(wolf.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE))
+                            .addModifier(new AttributeModifier(
                                 "attBoost", boost / 4, AttributeModifier.Operation.ADD_NUMBER
-                        ));
-                case 2 -> Objects.requireNonNull(wolf.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-                        .addModifier(new AttributeModifier(
+                            ));
+                    break;
+                case 2:
+                    Objects.requireNonNull(wolf.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+                            .addModifier(new AttributeModifier(
                                 "spdBoost", boost / 120, AttributeModifier.Operation.ADD_NUMBER
-                        ));
+                            ));
             }
         }
     }
@@ -1236,18 +1251,23 @@ public class Mobs {
                 boost = 0;
             else boost = difficulty - 5;
             switch (i) {
-                case 0 -> Objects.requireNonNull(ironGolem.getAttribute(Attribute.GENERIC_MAX_HEALTH))
-                        .addModifier(new AttributeModifier(
+                case 0:
+                    Objects.requireNonNull(ironGolem.getAttribute(Attribute.GENERIC_MAX_HEALTH))
+                            .addModifier(new AttributeModifier(
                                 "hpBoost", boost / 3, AttributeModifier.Operation.ADD_NUMBER
-                        ));
-                case 1 -> Objects.requireNonNull(ironGolem.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE))
-                        .addModifier(new AttributeModifier(
+                            ));
+                    break;
+                case 1:
+                    Objects.requireNonNull(ironGolem.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE))
+                            .addModifier(new AttributeModifier(
                                 "attBoost", boost / 4, AttributeModifier.Operation.ADD_NUMBER
-                        ));
-                case 2 -> Objects.requireNonNull(ironGolem.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-                        .addModifier(new AttributeModifier(
+                            ));
+                    break;
+                case 2:
+                    Objects.requireNonNull(ironGolem.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+                            .addModifier(new AttributeModifier(
                                 "spdBoost", boost / 120, AttributeModifier.Operation.ADD_NUMBER
-                        ));
+                            ));
             }
         }
     }

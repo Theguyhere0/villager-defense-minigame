@@ -66,11 +66,11 @@ public class ArenaSpawn {
     }
 
     private String getName() {
-        return switch (spawnType) {
-            case PLAYER -> CommunicationManager.format("&6Player Spawn");
-            case MONSTER -> CommunicationManager.format("&3Monster Spawn " + id);
-            case VILLAGER -> CommunicationManager.format("&aVillager Spawn " + id);
-            default -> null;
-        };
+        switch (spawnType) {
+            case PLAYER: return CommunicationManager.format("&6Player Spawn");
+            case MONSTER: return CommunicationManager.format("&3Monster Spawn " + id);
+            case VILLAGER: return CommunicationManager.format("&aVillager Spawn " + id);
+            default: return null;
+        }
     }
 }

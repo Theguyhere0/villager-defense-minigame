@@ -3,7 +3,6 @@ name: VillagerDefense
 version: 1.1.0-pre3
 author: Theguyhere
 api-version: 1.16
-depend: [ProtocolLib]
 softdepend: [WorldGuard, WorldEdit, Multiverse-core]
 
 commands:

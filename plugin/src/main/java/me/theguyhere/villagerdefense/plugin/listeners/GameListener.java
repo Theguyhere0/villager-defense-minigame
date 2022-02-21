@@ -40,6 +40,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class GameListener implements Listener {
 	private final Main plugin;
@@ -123,12 +124,20 @@ public class GameListener implements Listener {
 							Integer.toString(arena.getArena())));
 
 					// Get rare loot probability
-					double probability = switch (arena.getDifficultyMultiplier()) {
-						case 1 -> .015;
-						case 2 -> .01;
-						case 3 -> .008;
-						default -> .006;
-					};
+					double probability;
+					switch (arena.getDifficultyMultiplier()) {
+						case 1:
+							probability = .015;
+							break;
+						case 2:
+							probability = .01;
+							break;
+						case 3:
+							probability = .008;
+							break;
+						default:
+							probability = .006;
+					}
 
 					if (r.nextDouble() < probability)
 						e.getDrops().add(GameItems.randCare(arena.getCurrentWave() / 10 + 1));
@@ -251,7 +260,7 @@ public class GameListener implements Listener {
 		if (player != null) {
 			try {
 				gamer = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
-						a.hasPlayer(player)).toList().get(0).getPlayer(player);
+						a.hasPlayer(player)).collect(Collectors.toList()).get(0).getPlayer(player);
 			} catch (Exception err) {
 				return;
 			}
@@ -344,7 +353,7 @@ public class GameListener implements Listener {
 
 		// See if game is already in progress
 		if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
-				a.hasPlayer(player)).toList().get(0).getCurrentWave() != 0)
+				a.hasPlayer(player)).collect(Collectors.toList()).get(0).getCurrentWave() != 0)
 			return;
 
 		e.setCancelled(true);
@@ -395,7 +404,7 @@ public class GameListener implements Listener {
 		// Attempt to get arena and player
 		try {
 			arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
-					a.hasPlayer(player)).toList().get(0);
+					a.hasPlayer(player)).collect(Collectors.toList()).get(0);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
 			return;
@@ -448,8 +457,8 @@ public class GameListener implements Listener {
 		Entity damager = e.getDamager();
 
 		// Cancel damage to each other if they are in a game
-		if (ent instanceof Player player && damager instanceof Player) {
-			if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player)))
+		if (ent instanceof Player && damager instanceof Player) {
+			if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).anyMatch(a -> a.hasPlayer((Player) ent)))
 				e.setCancelled(true);
 		}
 
@@ -468,8 +477,8 @@ public class GameListener implements Listener {
 
 		// Check for projectile damage
 		else if (damager instanceof Projectile) {
-			if (ent instanceof Player player && ((Projectile) damager).getShooter() instanceof Player) {
-				if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player)))
+			if (ent instanceof Player && ((Projectile) damager).getShooter() instanceof Player) {
+				if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).anyMatch(a -> a.hasPlayer((Player) ent)))
 					e.setCancelled(true);
 			}
 			if ((ent instanceof Villager || ent instanceof Wolf || ent instanceof IronGolem) &&
@@ -485,8 +494,9 @@ public class GameListener implements Listener {
 	@EventHandler
 	public void onVoidDamage(EntityDamageEvent e) {
 		// Check for player taking damage
-		if (!(e.getEntity() instanceof Player player)) return;
+		if (!(e.getEntity() instanceof Player)) return;
 
+		Player player = (Player) e.getEntity();
 		Arena arena;
 		VDPlayer gamer;
 
@@ -496,7 +506,7 @@ public class GameListener implements Listener {
 		// Attempt to get arena and player
 		try {
 			arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
-					a.hasPlayer(player)).toList().get(0);
+					a.hasPlayer(player)).collect(Collectors.toList()).get(0);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
 			return;
@@ -567,16 +577,17 @@ public class GameListener implements Listener {
 	@EventHandler
 	public void onGemPickup(EntityPickupItemEvent e) {
 		// Check for player picking up item
-		if (!(e.getEntity() instanceof Player player))
+		if (!(e.getEntity() instanceof Player))
 			return;
 
+		Player player = (Player) e.getEntity();
 		Arena arena;
 		VDPlayer gamer;
 
 		// Attempt to get arena and player
 		try {
 			arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
-					a.hasPlayer(player)).toList().get(0);
+					a.hasPlayer(player)).collect(Collectors.toList()).get(0);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
 			return;
@@ -633,15 +644,16 @@ public class GameListener implements Listener {
 			return;
 
 		// Check for player
-		if (!(e.getEntity() instanceof Player player)) return;
+		if (!(e.getEntity() instanceof Player)) return;
 
+		Player player = (Player) e.getEntity();
 		Arena arena;
 		VDPlayer gamer;
 
 		// Attempt to get arena and player
 		try {
 			arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
-					a.hasPlayer(player)).toList().get(0);
+					a.hasPlayer(player)).collect(Collectors.toList()).get(0);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
 			return;
@@ -727,7 +739,7 @@ public class GameListener implements Listener {
 		try {
 			arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
 					.filter(a -> a.getPlayers().stream().anyMatch(p ->
-							p.getPlayer().equals(player))).toList().get(0);
+							p.getPlayer().equals(player))).collect(Collectors.toList()).get(0);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
 			return;
@@ -771,12 +783,20 @@ public class GameListener implements Listener {
 				gamer.addGems(earned == 0 ? 1 : earned);
 
 				// Get rare loot probability
-				double probability = switch (arena.getDifficultyMultiplier()) {
-					case 1 -> .015;
-					case 2 -> .01;
-					case 3 -> .008;
-					default -> .006;
-				};
+				double probability;
+				switch (arena.getDifficultyMultiplier()) {
+					case 1:
+						probability = .015;
+						break;
+					case 2:
+						probability = .01;
+						break;
+					case 3:
+						probability = .008;
+						break;
+					default:
+						probability = .006;
+				}
 
 				if (r.nextDouble() < probability)
 					PlayerManager.giveItem(player, GameItems.randCare(wave / 10 + 1),
@@ -845,7 +865,7 @@ public class GameListener implements Listener {
 		// Attempt to get arena and player
 		try {
 			arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
-					a.hasPlayer(player)).toList().get(0);
+					a.hasPlayer(player)).collect(Collectors.toList()).get(0);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
 			return;
@@ -1124,7 +1144,7 @@ public class GameListener implements Listener {
 			return;
 
 		Arena arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
-				a.hasPlayer(player)).toList().get(0);
+				a.hasPlayer(player)).collect(Collectors.toList()).get(0);
 
 		// Check if the arena has started
 		if (arena.getStatus() == ArenaStatus.WAITING)
@@ -1153,7 +1173,7 @@ public class GameListener implements Listener {
 			return;
 
 		Arena arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
-				a.hasPlayer(player)).toList().get(0);
+				a.hasPlayer(player)).collect(Collectors.toList()).get(0);
 		VDPlayer gamer;
 
 		// Exempt if in waiting status and waiting room exists
@@ -1262,7 +1282,7 @@ public class GameListener implements Listener {
 		// Attempt to get arena and player
 		try {
 			arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
-					a.hasPlayer(player)).toList().get(0);
+					a.hasPlayer(player)).collect(Collectors.toList()).get(0);
 			arena.getPlayer(player);
 		} catch (Exception err) {
 			return;
@@ -1291,7 +1311,7 @@ public class GameListener implements Listener {
 		// Attempt to get arena and player
 		try {
 			arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
-					a.hasPlayer(player)).toList().get(0);
+					a.hasPlayer(player)).collect(Collectors.toList()).get(0);
 			arena.getPlayer(player);
 		} catch (Exception err) {
 			return;
@@ -1314,7 +1334,7 @@ public class GameListener implements Listener {
 		// Attempt to get arena and player
 		try {
 			arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
-					a.hasPlayer(player)).toList().get(0);
+					a.hasPlayer(player)).collect(Collectors.toList()).get(0);
 			arena.getPlayer(player);
 		} catch (Exception err) {
 			return;
@@ -1362,7 +1382,7 @@ public class GameListener implements Listener {
 		// Attempt to get arena and player
 		try {
 			arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
-					a.hasPlayer(player)).toList().get(0);
+					a.hasPlayer(player)).collect(Collectors.toList()).get(0);
 			arena.getPlayer(player);
 		} catch (Exception err) {
 			return;

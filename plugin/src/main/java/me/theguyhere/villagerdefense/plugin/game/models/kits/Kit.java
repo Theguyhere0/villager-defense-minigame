@@ -110,12 +110,13 @@ public class Kit {
      * @return Color code.
      */
     private String getKitColor(KitType kitType) {
-        return switch (kitType) {
-            case NONE -> "&f&l";
-            case GIFT -> "&a&l";
-            case ABILITY -> "&d&l";
-            case EFFECT -> "&e&l";
-        };
+        switch (kitType) {
+            case NONE: return "&f&l";
+            case GIFT: return "&a&l";
+            case ABILITY: return "&d&l";
+            case EFFECT: return "&e&l";
+        }
+        return null;
     }
 
     /**
