@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.plugin.listeners;
 
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaManager;
-import me.theguyhere.villagerdefense.plugin.tools.CommunicationManager;
+import me.theguyhere.villagerdefense.common.CommunicationManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;

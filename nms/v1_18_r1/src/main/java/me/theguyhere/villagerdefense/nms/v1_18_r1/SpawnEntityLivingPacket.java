@@ -42,7 +42,7 @@ class SpawnEntityLivingPacket extends VersionNMSPacket {
         packetSetter.writeShort(0);
         packetSetter.writeShort(0);
 
-        this.rawPacket = new PacketPlayOutSpawnEntityLiving(packetSetter);
+        rawPacket = new PacketPlayOutSpawnEntityLiving(packetSetter);
     }
 
 

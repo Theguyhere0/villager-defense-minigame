@@ -5,7 +5,7 @@ import me.theguyhere.villagerdefense.plugin.commands.CommandTab;
 import me.theguyhere.villagerdefense.plugin.commands.Commands;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaManager;
 import me.theguyhere.villagerdefense.plugin.listeners.*;
-import me.theguyhere.villagerdefense.plugin.tools.CommunicationManager;
+import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
 import org.bukkit.Bukkit;

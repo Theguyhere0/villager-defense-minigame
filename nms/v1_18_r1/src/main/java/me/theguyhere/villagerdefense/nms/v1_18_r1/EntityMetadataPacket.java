@@ -13,7 +13,7 @@ class EntityMetadataPacket extends VersionNMSPacket {
     private final Packet<?> rawPacket;
 
     private EntityMetadataPacket(PacketSetter packetSetter) {
-        this.rawPacket = new PacketPlayOutEntityMetadata(packetSetter);
+        rawPacket = new PacketPlayOutEntityMetadata(packetSetter);
     }
 
     @Override

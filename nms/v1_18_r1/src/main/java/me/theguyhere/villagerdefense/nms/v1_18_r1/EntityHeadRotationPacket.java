@@ -19,7 +19,7 @@ public class EntityHeadRotationPacket extends VersionNMSPacket {
         // Head yaw
         packetSetter.writeByte((int) headYaw);
 
-        this.rawPacket = new PacketPlayOutEntityHeadRotation(packetSetter);
+        rawPacket = new PacketPlayOutEntityHeadRotation(packetSetter);
     }
 
     @Override

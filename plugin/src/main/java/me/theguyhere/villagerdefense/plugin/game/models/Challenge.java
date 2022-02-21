@@ -1,6 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.game.models;
 
-import me.theguyhere.villagerdefense.plugin.tools.CommunicationManager;
+import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;

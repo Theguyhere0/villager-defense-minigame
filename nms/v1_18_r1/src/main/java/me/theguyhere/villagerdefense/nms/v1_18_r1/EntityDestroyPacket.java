@@ -19,7 +19,7 @@ class EntityDestroyPacket extends VersionNMSPacket {
         packetSetter.writeVarIntArray(entityID.getNumericID());
 
         // Send out packet
-        this.rawPacket = new PacketPlayOutEntityDestroy(packetSetter);
+        rawPacket = new PacketPlayOutEntityDestroy(packetSetter);
     }
 
     @Override

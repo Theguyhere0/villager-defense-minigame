@@ -1,10 +1,6 @@
-package me.theguyhere.villagerdefense.plugin.tools;
+package me.theguyhere.villagerdefense.common;
 
-import me.theguyhere.villagerdefense.common.Log;
 import org.bukkit.ChatColor;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class CommunicationManager {
     /**

@@ -15,7 +15,6 @@ me\theguyhere\villagerdefense\plugin\game\models\kits\Kit$1.class
 me\theguyhere\villagerdefense\plugin\game\models\arenas\Arena$3.class
 me\theguyhere\villagerdefense\plugin\listeners\InventoryListener.class
 me\theguyhere\villagerdefense\plugin\listeners\ArenaListener.class
-me\theguyhere\villagerdefense\plugin\tools\CommunicationManager.class
 me\theguyhere\villagerdefense\plugin\game\models\Tasks.class
 me\theguyhere\villagerdefense\plugin\commands\Commands.class
 me\theguyhere\villagerdefense\plugin\game\models\Tasks$4.class

@@ -13,7 +13,7 @@ public class OpenSignEditorPacket extends VersionNMSPacket {
         // Sign location
         packetSetter.writePosition(position);
 
-        this.rawPacket = new PacketPlayOutOpenSignEditor(packetSetter);
+        rawPacket = new PacketPlayOutOpenSignEditor(packetSetter);
     }
 
     @Override

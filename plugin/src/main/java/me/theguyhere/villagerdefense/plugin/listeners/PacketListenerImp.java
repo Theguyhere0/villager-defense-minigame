@@ -8,7 +8,7 @@ import me.theguyhere.villagerdefense.plugin.events.SignGUIEvent;
 import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaManager;
-import me.theguyhere.villagerdefense.plugin.tools.CommunicationManager;
+import me.theguyhere.villagerdefense.common.CommunicationManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -44,14 +44,14 @@ public class PacketListenerImp implements PacketListener {
         String header = signLines[0];
 
         try {
-            arena = ArenaManager.arenas[Integer.parseInt(header.substring(13, header.length() - 1))];
+            arena = ArenaManager.arenas[Integer.parseInt(header.substring(18, header.length() - 4))];
         } catch (Exception ignored) {
             return;
         }
 
         // Check for right sign GUI
-        if (!(signLines[1].contains(CommunicationManager.format("===============")) &&
-                signLines[3].contains(CommunicationManager.format("==============="))))
+        if (!(signLines[1].contains(CommunicationManager.format("&1===============")) &&
+                signLines[3].contains(CommunicationManager.format("&1==============="))))
             return;
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
