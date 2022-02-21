@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin;
 
+import me.theguyhere.villagerdefense.common.Log;
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
 import me.theguyhere.villagerdefense.plugin.commands.CommandTab;
 import me.theguyhere.villagerdefense.plugin.commands.Commands;
@@ -30,7 +31,9 @@ public class Main extends JavaPlugin {
 	private ArenaManager arenaManager;
 	private boolean loaded = false;
 
+	// Global state variables
 	private boolean outdated = false;
+	public static final boolean releaseMode = true;
 	public int configVersion = 6;
 	public int arenaDataVersion = 4;
 	public int playerDataVersion = 1;
@@ -143,6 +146,24 @@ public class Main extends JavaPlugin {
 
 		// Set ArenaManager
 		arenaManager = new ArenaManager(this);
+
+		// Remind if this build is release
+		if (!releaseMode) {
+			Log.warning("! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !");
+			Log.warning("");
+			Log.warning("This build is not meant for release! Testing code may still be active.");
+			Log.warning("");
+			Log.warning("! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !");
+		}
+
+		// Check default debug level
+		if (releaseMode && CommunicationManager.getDebugLevel() > 1) {
+			Log.warning("! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !");
+			Log.warning("");
+			Log.warning("Default debug level should be set to 0 or 1!");
+			Log.warning("");
+			Log.warning("! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !");
+		}
 	}
 
 	@Override
@@ -194,5 +215,22 @@ public class Main extends JavaPlugin {
 
 	public boolean isLoaded() {
 		return loaded;
+	}
+
+	// Quick way to send test messages to console but remembering to take them down before release
+	public static void testInfo(String msg, boolean stackTrace) {
+		if (releaseMode) {
+			Log.warning("! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !");
+			Log.warning("");
+			Log.warning("This should not be here!");
+			Log.warning("");
+			Log.warning("! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !");
+		}
+
+		Log.info(msg);
+
+		if (stackTrace || releaseMode)
+			Thread.dumpStack();
+
 	}
 }

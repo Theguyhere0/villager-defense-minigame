@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.game.models.arenas;
 
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.GUI.InventoryItems;
 import me.theguyhere.villagerdefense.plugin.GUI.InventoryMeta;
 import me.theguyhere.villagerdefense.plugin.Main;
@@ -20,6 +21,7 @@ import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.*;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -1013,7 +1015,9 @@ public class Arena {
 
     public void startBorderParticles() {
         Particle borderParticle = Particle.valueOf(NMSVersion.getCurrent().getNmsManager().getBorderParticleName());
-        
+        BlockData blockData = NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1) ?
+                Bukkit.createBlockData(Material.BARRIER) : null;
+
         if (cornerParticlesID == 0 && getCorner1() != null && getCorner2() != null)
             cornerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
                 World world;
@@ -1035,26 +1039,27 @@ public class Arena {
 
                         for (double x = second.getX(); x <= first.getX(); x += 5)
                             for (double y = second.getY(); y <= first.getY(); y += 5)
-                                world.spawnParticle(borderParticle, x, y, first.getZ(), 0);
+                                world.spawnParticle(borderParticle, x, y, first.getZ(), 0, blockData);
                         for (double x = second.getX(); x <= first.getX(); x += 5)
                             for (double y = second.getY(); y <= first.getY(); y += 5)
-                                world.spawnParticle(borderParticle, x, y, second.getZ(), 0);
-                        for (double x = second.getX(); x <= first.getX(); x += 5)
-                            for (double z = second.getZ(); z <= first.getZ(); z += 5)
-                                world.spawnParticle(borderParticle, x, first.getY(), z, 0);
+                                world.spawnParticle(borderParticle, x, y, second.getZ(), 0, blockData);
                         for (double x = second.getX(); x <= first.getX(); x += 5)
                             for (double z = second.getZ(); z <= first.getZ(); z += 5)
-                                world.spawnParticle(borderParticle, x, second.getY(), z, 0);
+                                world.spawnParticle(borderParticle, x, first.getY(), z, 0, blockData);
+                        for (double x = second.getX(); x <= first.getX(); x += 5)
+                            for (double z = second.getZ(); z <= first.getZ(); z += 5)
+                                world.spawnParticle(borderParticle, x, second.getY(), z, 0, blockData);
                         for (double z = second.getZ(); z <= first.getZ(); z += 5)
                             for (double y = second.getY(); y <= first.getY(); y += 5)
-                                world.spawnParticle(borderParticle, first.getX(), y, z, 0);
+                                world.spawnParticle(borderParticle, first.getX(), y, z, 0, blockData);
                         for (double z = second.getZ(); z <= first.getZ(); z += 5)
                             for (double y = second.getY(); y <= first.getY(); y += 5)
-                                world.spawnParticle(borderParticle, second.getX(), y, z, 0);
+                                world.spawnParticle(borderParticle, second.getX(), y, z, 0, blockData);
 
                     } catch (Exception e) {
-                        CommunicationManager.debugError(String.format("Border particle generation error for arena %d.", arena),
-                                1);
+                        CommunicationManager.debugError(
+                                String.format("Border particle generation error for arena %d.", arena),
+                                1, true, e);
                     }
                 }
             }, 0 , 20);

@@ -21,7 +21,7 @@ public class SpawnIndicator {
 
         // Set location and hologram
         this.location = location;
-        this.hologram = new Hologram(location.clone().add(0, 1, 0), name);
+        this.hologram = new Hologram(location.clone().add(0, .75, 0), name);
     }
 
     public Location getLocation() {

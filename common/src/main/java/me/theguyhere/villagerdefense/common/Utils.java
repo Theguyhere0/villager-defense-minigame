@@ -28,7 +28,7 @@ public class Utils {
     }
 
     /**
-     * Reflection.
+     * Read reflection.
      *
      * @param instance Object to perform reflection on.
      * @param name Name of field.
@@ -49,5 +49,26 @@ public class Utils {
         }
 
         return result;
+    }
+
+    /**
+     * Write reflection.
+     *
+     * @param instance Object to perform reflection on.
+     * @param name Name of field.
+     * @param newValue New value to write to the field.
+     */
+    public static void setFieldValue(Object instance, String name, Object newValue) {
+
+        try {
+            Field field = instance.getClass().getDeclaredField(name);
+            field.setAccessible(true);
+
+            field.set(instance, newValue);
+
+            field.setAccessible(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

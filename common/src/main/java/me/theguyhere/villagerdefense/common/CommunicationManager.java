@@ -32,12 +32,37 @@ public class CommunicationManager {
     }
 
     public static void debugError(String msg, int debugLevel) {
-        if (CommunicationManager.debugLevel >= debugLevel)
+        debugError(msg, debugLevel, false);
+    }
+
+    public static void debugError(String msg, int debugLevel, boolean stackTrace) {
+        if (CommunicationManager.debugLevel >= debugLevel) {
             Log.warning(msg);
+
+            if (stackTrace)
+                Thread.dumpStack();
+        }
+    }
+
+    public static void debugError(String msg, int debugLevel, boolean stackTrace, Exception e) {
+        if (CommunicationManager.debugLevel >= debugLevel) {
+            Log.warning(msg);
+
+            if (stackTrace)
+                e.printStackTrace();
+        }
     }
 
     public static void debugInfo(String msg, int debugLevel) {
-        if (CommunicationManager.debugLevel >= debugLevel)
+        debugInfo(msg, debugLevel, false);
+    }
+
+    public static void debugInfo(String msg, int debugLevel, boolean stackTrace) {
+        if (CommunicationManager.debugLevel >= debugLevel) {
             Log.info(msg);
+
+            if (stackTrace)
+                Thread.dumpStack();
+        }
     }
 }
