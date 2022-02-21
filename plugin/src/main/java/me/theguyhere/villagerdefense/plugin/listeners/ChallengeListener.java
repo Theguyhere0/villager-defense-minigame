@@ -10,7 +10,6 @@ import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.Statistic;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -21,7 +20,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
-import org.bukkit.event.player.PlayerStatisticIncrementEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -40,10 +39,7 @@ public class ChallengeListener implements Listener {
 
     // Prevent using certain item slots
     @EventHandler
-    public void onIllegalEquip(PlayerStatisticIncrementEvent e) {
-        if (!e.getStatistic().equals(Statistic.TIME_SINCE_REST))
-            return;
-
+    public void onIllegalEquip(PlayerMoveEvent e) {
         Player player = e.getPlayer();
         VDPlayer gamer;
 

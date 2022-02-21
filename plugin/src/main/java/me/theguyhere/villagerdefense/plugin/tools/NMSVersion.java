@@ -1,7 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.tools;
 
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
-import me.theguyhere.villagerdefense.nms.v1_18_r1.VersionNMSManager;
 import org.bukkit.Bukkit;
 
 import java.util.regex.Matcher;
@@ -22,8 +21,8 @@ public enum NMSVersion {
 //    v1_16_R1,
 //    v1_16_R2,
 //    v1_16_R3,
-//    v1_17_R1,
-    v1_18_R1(new VersionNMSManager());
+    v1_17_R1(new me.theguyhere.villagerdefense.nms.v1_17_r1.VersionNMSManager()),
+    v1_18_R1(new me.theguyhere.villagerdefense.nms.v1_18_r1.VersionNMSManager());
 
     private static final NMSVersion CURRENT_VERSION = extractCurrentVersion();
 

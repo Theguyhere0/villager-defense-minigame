@@ -17,6 +17,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
+import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.*;
 import org.bukkit.boss.BarColor;
@@ -852,6 +853,8 @@ public class Arena {
     }
 
     public void startSpawnParticles() {
+        Particle spawnParticle = Particle.valueOf(NMSVersion.getCurrent().getNmsManager().getSpawnParticleName());
+        
         if (getPlayerSpawn() == null)
             return;
 
@@ -878,8 +881,8 @@ public class Arena {
 
                     // Spawn particles
                     Objects.requireNonNull(getPlayerSpawn().getLocation().getWorld())
-                            .spawnParticle(Particle.FLAME, first, 0);
-                    getPlayerSpawn().getLocation().getWorld().spawnParticle(Particle.FLAME, second, 0);
+                            .spawnParticle(spawnParticle, first, 0);
+                    getPlayerSpawn().getLocation().getWorld().spawnParticle(spawnParticle, second, 0);
                 } catch (Exception e) {
                     CommunicationManager.debugError(String.format("Player spawn particle generation error for arena %d.", arena),
                             2);
@@ -909,6 +912,8 @@ public class Arena {
     }
 
     public void startMonsterParticles() {
+        Particle monsterParticle = Particle.valueOf(NMSVersion.getCurrent().getNmsManager().getMonsterParticleName());
+        
         if (monsterParticlesID == 0 && !getMonsterSpawns().isEmpty())
             monsterParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
                 double var = 0;
@@ -932,8 +937,8 @@ public class Arena {
 
                                 // Spawn particles
                                 Objects.requireNonNull(location.getWorld())
-                                        .spawnParticle(Particle.SOUL_FIRE_FLAME, first, 0);
-                                location.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, second, 0);
+                                        .spawnParticle(monsterParticle, first, 0);
+                                location.getWorld().spawnParticle(monsterParticle, second, 0);
                             } catch (Exception e) {
                                 CommunicationManager.debugError(String.format("Monster particle generation error for arena %d.", arena),
                                         2);
@@ -962,6 +967,8 @@ public class Arena {
     }
 
     public void startVillagerParticles() {
+        Particle villagerParticle = Particle.valueOf(NMSVersion.getCurrent().getNmsManager().getVillagerParticleName());
+        
         if (villagerParticlesID == 0 && !getVillagerSpawns().isEmpty())
             villagerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
                 double var = 0;
@@ -985,8 +992,8 @@ public class Arena {
 
                                 // Spawn particles
                                 Objects.requireNonNull(location.getWorld())
-                                        .spawnParticle(Particle.COMPOSTER, first, 0);
-                                location.getWorld().spawnParticle(Particle.COMPOSTER, second, 0);
+                                        .spawnParticle(villagerParticle, first, 0);
+                                location.getWorld().spawnParticle(villagerParticle, second, 0);
                             } catch (Exception e) {
                                 CommunicationManager.debugError(String.format("Villager particle generation error for arena %d.", arena),
                                         2);
@@ -1015,6 +1022,8 @@ public class Arena {
     }
 
     public void startBorderParticles() {
+        Particle borderParticle = Particle.valueOf(NMSVersion.getCurrent().getNmsManager().getBorderParticleName());
+        
         if (cornerParticlesID == 0 && getCorner1() != null && getCorner2() != null)
             cornerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
                 World world;
@@ -1036,22 +1045,22 @@ public class Arena {
 
                         for (double x = second.getX(); x <= first.getX(); x += 5)
                             for (double y = second.getY(); y <= first.getY(); y += 5)
-                                world.spawnParticle(Particle.BLOCK_MARKER, x, y, first.getZ(), 0);
+                                world.spawnParticle(borderParticle, x, y, first.getZ(), 0);
                         for (double x = second.getX(); x <= first.getX(); x += 5)
                             for (double y = second.getY(); y <= first.getY(); y += 5)
-                                world.spawnParticle(Particle.BLOCK_MARKER, x, y, second.getZ(), 0);
-                        for (double x = second.getX(); x <= first.getX(); x += 5)
-                            for (double z = second.getZ(); z <= first.getZ(); z += 5)
-                                world.spawnParticle(Particle.BLOCK_MARKER, x, first.getY(), z, 0);
+                                world.spawnParticle(borderParticle, x, y, second.getZ(), 0);
                         for (double x = second.getX(); x <= first.getX(); x += 5)
                             for (double z = second.getZ(); z <= first.getZ(); z += 5)
-                                world.spawnParticle(Particle.BLOCK_MARKER, x, second.getY(), z, 0);
+                                world.spawnParticle(borderParticle, x, first.getY(), z, 0);
+                        for (double x = second.getX(); x <= first.getX(); x += 5)
+                            for (double z = second.getZ(); z <= first.getZ(); z += 5)
+                                world.spawnParticle(borderParticle, x, second.getY(), z, 0);
                         for (double z = second.getZ(); z <= first.getZ(); z += 5)
                             for (double y = second.getY(); y <= first.getY(); y += 5)
-                                world.spawnParticle(Particle.BLOCK_MARKER, first.getX(), y, z, 0);
+                                world.spawnParticle(borderParticle, first.getX(), y, z, 0);
                         for (double z = second.getZ(); z <= first.getZ(); z += 5)
                             for (double y = second.getY(); y <= first.getY(); y += 5)
-                                world.spawnParticle(Particle.BLOCK_MARKER, second.getX(), y, z, 0);
+                                world.spawnParticle(borderParticle, second.getX(), y, z, 0);
 
                     } catch (Exception e) {
                         CommunicationManager.debugError(String.format("Border particle generation error for arena %d.", arena),

@@ -15,6 +15,14 @@ public interface NMSManager {
 
     VillagerPacketEntity newVillagerPacketEntity();
 
+    String getSpawnParticleName();
+
+    String getMonsterParticleName();
+
+    String getVillagerParticleName();
+
+    String getBorderParticleName();
+
     void nameArena(Player player, String arenaName, int arenaNum);
 
     void injectPacketListener(Player player, PacketListener packetListener);
