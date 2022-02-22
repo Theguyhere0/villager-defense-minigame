@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>VillagerDefense-parent</artifactId>
+        <groupId>me.theguyhere</groupId>
+        <version>1.1.0-pre3</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>VillagerDefense-nms</artifactId>
+    <packaging>pom</packaging>
+    <name>VillagerDefense NMS</name>
+
+    <modules>
+        <module>v1_16_r3</module>
+        <module>v1_17_r1</module>
+        <module>v1_18_r1</module>
+        <module>common</module>
+    </modules>
+</project>
