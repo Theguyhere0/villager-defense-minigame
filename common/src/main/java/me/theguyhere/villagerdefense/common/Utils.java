@@ -27,6 +27,10 @@ public class Utils {
         return millis / SECONDS_TO_MILLIS;
     }
 
+    public static int angleToByte(float angle) {
+        return (int) (angle / 360f * 256);
+    }
+
     /**
      * Read reflection.
      *

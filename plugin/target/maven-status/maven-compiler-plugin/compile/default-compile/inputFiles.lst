@@ -7,6 +7,7 @@ C:\Users\mxlin\Documents\GitHub\villager-defense-minigame\plugin\src\main\java\m
 C:\Users\mxlin\Documents\GitHub\villager-defense-minigame\plugin\src\main\java\me\theguyhere\villagerdefense\plugin\events\EndNinjaNerfEvent.java
 C:\Users\mxlin\Documents\GitHub\villager-defense-minigame\plugin\src\main\java\me\theguyhere\villagerdefense\plugin\game\models\players\PlayerStatus.java
 C:\Users\mxlin\Documents\GitHub\villager-defense-minigame\plugin\src\main\java\me\theguyhere\villagerdefense\plugin\game\displays\Hologram.java
+C:\Users\mxlin\Documents\GitHub\villager-defense-minigame\plugin\src\main\java\me\theguyhere\villagerdefense\plugin\game\models\GameManager.java
 C:\Users\mxlin\Documents\GitHub\villager-defense-minigame\plugin\src\main\java\me\theguyhere\villagerdefense\plugin\listeners\PacketListenerImp.java
 C:\Users\mxlin\Documents\GitHub\villager-defense-minigame\plugin\src\main\java\me\theguyhere\villagerdefense\plugin\events\SignGUIEvent.java
 C:\Users\mxlin\Documents\GitHub\villager-defense-minigame\plugin\src\main\java\me\theguyhere\villagerdefense\plugin\GUI\InventoryItems.java
@@ -15,7 +16,6 @@ C:\Users\mxlin\Documents\GitHub\villager-defense-minigame\plugin\src\main\java\m
 C:\Users\mxlin\Documents\GitHub\villager-defense-minigame\plugin\src\main\java\me\theguyhere\villagerdefense\plugin\game\displays\ArenaBoard.java
 C:\Users\mxlin\Documents\GitHub\villager-defense-minigame\plugin\src\main\java\me\theguyhere\villagerdefense\plugin\exceptions\InvalidNameException.java
 C:\Users\mxlin\Documents\GitHub\villager-defense-minigame\plugin\src\main\java\me\theguyhere\villagerdefense\plugin\tools\NMSVersion.java
-C:\Users\mxlin\Documents\GitHub\villager-defense-minigame\plugin\src\main\java\me\theguyhere\villagerdefense\plugin\game\models\arenas\ArenaManager.java
 C:\Users\mxlin\Documents\GitHub\villager-defense-minigame\plugin\src\main\java\me\theguyhere\villagerdefense\plugin\listeners\ClickPortalListener.java
 C:\Users\mxlin\Documents\GitHub\villager-defense-minigame\plugin\src\main\java\me\theguyhere\villagerdefense\plugin\listeners\ArenaListener.java
 C:\Users\mxlin\Documents\GitHub\villager-defense-minigame\plugin\src\main\java\me\theguyhere\villagerdefense\plugin\exceptions\PlayerNotFoundException.java

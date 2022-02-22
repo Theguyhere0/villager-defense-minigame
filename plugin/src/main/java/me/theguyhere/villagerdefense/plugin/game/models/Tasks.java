@@ -8,7 +8,6 @@ import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.plugin.events.WaveEndEvent;
 import me.theguyhere.villagerdefense.plugin.events.WaveStartEvent;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
@@ -53,7 +52,7 @@ public class Tasks {
 	public final Runnable waiting = new Runnable() {
 		@Override
 		public void run() {
-			ArenaManager.arenas[arena].getPlayers().forEach(player ->
+			GameManager.arenas[arena].getPlayers().forEach(player ->
 				PlayerManager.notify(player.getPlayer(), plugin.getLanguageData().getString("waiting")));
 			CommunicationManager.debugInfo("Arena " + arena + " is currently waiting for players to start.", 2);
 		}
@@ -64,7 +63,7 @@ public class Tasks {
 		@Override
 		public void run() {
 			try {
-				ArenaManager.arenas[arena].getPlayers().forEach(player ->
+				GameManager.arenas[arena].getPlayers().forEach(player ->
 						PlayerManager.notify(player.getPlayer(), String.format(
 								Objects.requireNonNull(plugin.getLanguageData().getString("minutesLeft")), 2)));
 			} catch (Exception e) {
@@ -80,7 +79,7 @@ public class Tasks {
 		@Override
 		public void run() {
 			try {
-				ArenaManager.arenas[arena].getPlayers().forEach(player ->
+				GameManager.arenas[arena].getPlayers().forEach(player ->
 						PlayerManager.notify(player.getPlayer(), String.format(
 								Objects.requireNonNull(plugin.getLanguageData().getString("minutesLeft")), 1)));
 			} catch (Exception e) {
@@ -96,7 +95,7 @@ public class Tasks {
 		@Override
 		public void run() {
 			try {
-				ArenaManager.arenas[arena].getPlayers().forEach(player ->
+				GameManager.arenas[arena].getPlayers().forEach(player ->
 						PlayerManager.notify(player.getPlayer(), String.format(
 								Objects.requireNonNull(plugin.getLanguageData().getString("secondsLeft")), 30)));
 			} catch (Exception e) {
@@ -112,7 +111,7 @@ public class Tasks {
 		@Override
 		public void run() {
 			try {
-				ArenaManager.arenas[arena].getPlayers().forEach(player ->
+				GameManager.arenas[arena].getPlayers().forEach(player ->
 						PlayerManager.notify(player.getPlayer(), String.format(
 								Objects.requireNonNull(plugin.getLanguageData().getString("secondsLeft")), 10)));
 			} catch (Exception e) {
@@ -128,7 +127,7 @@ public class Tasks {
 		@Override
 		public void run() {
 			try {
-				ArenaManager.arenas[arena].getPlayers().forEach(player -> {
+				GameManager.arenas[arena].getPlayers().forEach(player -> {
 					PlayerManager.notify(player.getPlayer(), plugin.getLanguageData().getString("maxCapacity"));
 					PlayerManager.notify(player.getPlayer(), String.format(
 							Objects.requireNonNull(plugin.getLanguageData().getString("secondsLeft")), 10));
@@ -147,7 +146,7 @@ public class Tasks {
 		@Override
 		public void run() {
 			try {
-				ArenaManager.arenas[arena].getPlayers().forEach(player ->
+				GameManager.arenas[arena].getPlayers().forEach(player ->
 						PlayerManager.notify(player.getPlayer(), String.format(
 								Objects.requireNonNull(plugin.getLanguageData().getString("secondsLeft")), 5)));
 			} catch (Exception e) {
@@ -164,7 +163,7 @@ public class Tasks {
 
 		@Override
 		public void run() {
-			Arena arenaInstance = ArenaManager.arenas[arena];
+			Arena arenaInstance = GameManager.arenas[arena];
 
 			// Set arena to active, reset villager and enemy count, set new game ID, clear arena
 			arenaInstance.setStatus(ArenaStatus.ACTIVE);
@@ -255,7 +254,7 @@ public class Tasks {
 
 		@Override
 		public void run() {
-			Arena arenaInstance = ArenaManager.arenas[arena];
+			Arena arenaInstance = GameManager.arenas[arena];
 			FileConfiguration language = plugin.getLanguageData();
 
 			// Increment wave
@@ -351,7 +350,7 @@ public class Tasks {
 						CommunicationManager.debugError("The key 'gems' is either missing or corrupt in the active language file",
 								1);
 					}
-				ArenaManager.createBoard(p);
+				GameManager.createBoard(p);
 			});
 
 			// Notify spectators of upcoming wave
@@ -395,7 +394,7 @@ public class Tasks {
 	public final Runnable calibrate = new Runnable() {
 		@Override
 		public void run() {
-			ArenaManager.arenas[arena].calibrate();
+			GameManager.arenas[arena].calibrate();
 			CommunicationManager.debugInfo("Arena " + arena + " performed a calibration check.", 2);
 		}
 	};
@@ -404,7 +403,7 @@ public class Tasks {
 	public final Runnable reset = new Runnable() {
 		@Override
 		public void run() {
-			Arena arenaInstance = ArenaManager.arenas[arena];
+			Arena arenaInstance = GameManager.arenas[arena];
 
 			// Update data
 			arenaInstance.setStatus(ArenaStatus.WAITING);
@@ -440,7 +439,7 @@ public class Tasks {
 	public final Runnable updateBoards = new Runnable() {
 		@Override
 		public void run() {
-			ArenaManager.arenas[arena].getActives().forEach(ArenaManager::createBoard);
+			GameManager.arenas[arena].getActives().forEach(GameManager::createBoard);
 		}
 	};
 
@@ -454,7 +453,7 @@ public class Tasks {
 
 		@Override
 		public void run() {
-			arenaInstance = ArenaManager.arenas[arena];
+			arenaInstance = GameManager.arenas[arena];
 
 			double multiplier = 1 + .2 * ((int) arenaInstance.getCurrentDifficulty() - 1);
 			if (!arenaInstance.hasDynamicLimit())

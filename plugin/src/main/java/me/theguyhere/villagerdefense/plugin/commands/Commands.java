@@ -7,7 +7,7 @@ import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.Tasks;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaManager;
+import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
@@ -155,7 +155,7 @@ public class Commands implements CommandExecutor {
 
 				// Attempt to get arena and player
 				try {
-					arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
+					arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
 							.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
 					gamer = arena.getPlayer(player);
 				} catch (Exception err) {
@@ -192,7 +192,7 @@ public class Commands implements CommandExecutor {
 				PlayerManager.teleAdventure(player, arena.getPlayerSpawn().getLocation());
 				gamer.setStatus(PlayerStatus.ALIVE);
 				arena.getTask().giveItems(gamer);
-				ArenaManager.createBoard(gamer);
+				GameManager.createBoard(gamer);
 				gamer.setJoinedWave(arena.getCurrentWave());
 				gamer.setKit(Kit.phantom());
 				player.closeInventory();
@@ -264,7 +264,7 @@ public class Commands implements CommandExecutor {
 
 					// Attempt to get arena and player
 					try {
-						arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
+						arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
 								.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
 						gamer = arena.getPlayer(player);
 					} catch (Exception e) {
@@ -321,7 +321,7 @@ public class Commands implements CommandExecutor {
 						name.append(" ").append(args[i + 2]);
 
 					// Check if this arena exists
-					if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
+					if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
 							.noneMatch(arena -> arena.getName().equals(name.toString()))) {
 						if (player != null)
 							PlayerManager.notify(player, "&cNo arena with this name exists!");
@@ -329,7 +329,7 @@ public class Commands implements CommandExecutor {
 						return true;
 					}
 
-					Arena arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
+					Arena arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
 							.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
 
 					// Check if arena already started
@@ -400,7 +400,7 @@ public class Commands implements CommandExecutor {
 
 					// Attempt to get arena
 					try {
-						arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
+						arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
 								.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
 					} catch (Exception e) {
 						PlayerManager.notify(player, language.getString("forceStartError1"));
@@ -439,7 +439,7 @@ public class Commands implements CommandExecutor {
 						name.append(" ").append(args[i + 2]);
 
 					// Check if this arena exists
-					if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
+					if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
 							.noneMatch(arena -> arena.getName().equals(name.toString()))) {
 						if (player != null)
 							PlayerManager.notify(player, "&cNo arena with this name exists!");
@@ -447,7 +447,7 @@ public class Commands implements CommandExecutor {
 						return true;
 					}
 
-					Arena arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
+					Arena arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
 							.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
 
 					// Check if arena has a game in progress
@@ -497,7 +497,7 @@ public class Commands implements CommandExecutor {
 
 					// Attempt to get arena
 					try {
-						arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
+						arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
 								.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
 					} catch (Exception e) {
 						PlayerManager.notify(player, language.getString("forceStartError1"));
@@ -545,7 +545,7 @@ public class Commands implements CommandExecutor {
 						name.append(" ").append(args[i + 2]);
 
 					// Check if this arena exists
-					if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
+					if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
 							.noneMatch(arena -> arena.getName().equals(name.toString()))) {
 						if (player != null)
 							PlayerManager.notify(player, "&cNo arena with this name exists!");
@@ -553,7 +553,7 @@ public class Commands implements CommandExecutor {
 						return true;
 					}
 
-					Arena arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
+					Arena arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
 							.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
 
 					// Check if arena already started
@@ -649,7 +649,7 @@ public class Commands implements CommandExecutor {
 						plugin.saveArenaData();
 
 						// Reload portals
-						ArenaManager.refreshPortals();
+						GameManager.refreshPortals();
 
 						// Flip flag and update config.yml
 						fixed = true;
@@ -771,13 +771,13 @@ public class Commands implements CommandExecutor {
 				}
 
 				// Check for player in a game
-				if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player))) {
+				if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player))) {
 					PlayerManager.notify(player, language.getString("leaveError"));
 					return true;
 				}
 
 				// Check for player in an active game
-				if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
+				if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
 						.filter(arena -> arena.getStatus() == ArenaStatus.ACTIVE)
 						.noneMatch(arena -> arena.hasPlayer(player))) {
 					PlayerManager.notify(player, language.getString("suicideActiveError"));
@@ -786,7 +786,7 @@ public class Commands implements CommandExecutor {
 
 				// Check for alive player
 				try {
-					if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(arena -> arena.hasPlayer(player)).collect(Collectors.toList()).get(0).getPlayer(player).getStatus() != PlayerStatus.ALIVE) {
+					if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(arena -> arena.hasPlayer(player)).collect(Collectors.toList()).get(0).getPlayer(player).getStatus() != PlayerStatus.ALIVE) {
 						PlayerManager.notify(player, language.getString("suicideError"));
 						return true;
 					}

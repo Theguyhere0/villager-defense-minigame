@@ -3,7 +3,7 @@ package me.theguyhere.villagerdefense.plugin.listeners;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaManager;
+import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
@@ -46,7 +46,7 @@ public class ChallengeListener implements Listener {
 
         // Attempt to get arena and player
         try {
-            gamer = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
+            gamer = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
                     a.hasPlayer(player)).collect(Collectors.toList()).get(0).getPlayer(player);
         } catch (Exception err) {
             return;
@@ -105,7 +105,7 @@ public class ChallengeListener implements Listener {
 
         // Attempt to get player
         try {
-            gamer = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
+            gamer = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
                     a.hasPlayer(player)).collect(Collectors.toList()).get(0).getPlayer(player);
         } catch (Exception err) {
             return;
@@ -145,7 +145,7 @@ public class ChallengeListener implements Listener {
 
             // Attempt to get player
             try {
-                gamer = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
+                gamer = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
                         a.hasPlayer(player)).collect(Collectors.toList()).get(0).getPlayer(player);
             } catch (Exception err) {
                 return;
@@ -182,7 +182,7 @@ public class ChallengeListener implements Listener {
 
             // Attempt to get VDplayer
             try {
-                gamer = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
+                gamer = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
                         a.hasPlayer(player)).collect(Collectors.toList()).get(0).getPlayer(player);
             } catch (Exception err) {
                 return;
@@ -208,7 +208,7 @@ public class ChallengeListener implements Listener {
 
         // Attempt to get player
         try {
-            gamer = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
+            gamer = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
                     a.hasPlayer(player)).collect(Collectors.toList()).get(0).getPlayer(player);
         } catch (Exception err) {
             return;
@@ -234,7 +234,7 @@ public class ChallengeListener implements Listener {
 
         // Attempt to get arena and player
         try {
-            gamer = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
+            gamer = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
                     a.hasPlayer(player)).collect(Collectors.toList()).get(0).getPlayer(player);
         } catch (Exception err) {
             return;

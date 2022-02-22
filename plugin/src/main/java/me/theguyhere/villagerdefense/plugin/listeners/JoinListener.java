@@ -3,7 +3,7 @@ package me.theguyhere.villagerdefense.plugin.listeners;
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaManager;
+import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
@@ -31,7 +31,7 @@ public class JoinListener implements Listener {
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
-		ArenaManager.displayEverything(player);
+		GameManager.displayEverything(player);
 		nmsManager.injectPacketListener(player, new PacketListenerImp());
 
 		// Get list of loggers from data file
@@ -42,7 +42,7 @@ public class JoinListener implements Listener {
 			CommunicationManager.debugInfo(player.getName() + " joined after logging mid-game.", 2);
 
 			// Teleport them back to lobby
-			PlayerManager.teleAdventure(player, ArenaManager.getLobby());
+			PlayerManager.teleAdventure(player, GameManager.getLobby());
 			loggers.remove(player.getName());
 			plugin.getPlayerData().set("loggers", loggers);
 
@@ -85,7 +85,7 @@ public class JoinListener implements Listener {
 	
 	@EventHandler
 	public void onPortal(PlayerChangedWorldEvent e) {
-		ArenaManager.displayAllPortals(e.getPlayer());
+		GameManager.displayAllPortals(e.getPlayer());
 	}
 	
 	@EventHandler
@@ -102,7 +102,7 @@ public class JoinListener implements Listener {
 		loggers.add(player.getName());
 
 		// Add to list of loggers if in a game
-		if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).anyMatch(arena -> arena.hasPlayer(player))) {
+		if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull).anyMatch(arena -> arena.hasPlayer(player))) {
 			CommunicationManager.debugInfo(player.getName() + " logged out mid-game.", 2);
 			plugin.getPlayerData().set("loggers", loggers);
 			plugin.savePlayerData();

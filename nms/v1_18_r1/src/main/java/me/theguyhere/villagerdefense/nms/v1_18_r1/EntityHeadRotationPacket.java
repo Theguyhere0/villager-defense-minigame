@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.nms.v1_18_r1;
 
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.nms.common.EntityID;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityHeadRotation;
@@ -17,7 +18,7 @@ public class EntityHeadRotationPacket extends VersionNMSPacket {
         packetSetter.writeVarInt(entityID.getNumericID());
 
         // Head yaw
-        packetSetter.writeByte((int) headYaw);
+        packetSetter.writeByte(Utils.angleToByte(headYaw));
 
         rawPacket = new PacketPlayOutEntityHeadRotation(packetSetter);
     }

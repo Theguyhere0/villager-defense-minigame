@@ -4,7 +4,7 @@ import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.EndNinjaNerfEvent;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaManager;
+import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
@@ -54,7 +54,7 @@ public class AbilityListener implements Listener {
 
         // Attempt to get arena and player
         try {
-            arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
+            arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
                     a.hasPlayer(player)).collect(Collectors.toList()).get(0);
             gamer = arena.getPlayer(player);
         } catch (Exception err) {
@@ -74,7 +74,7 @@ public class AbilityListener implements Listener {
             return;
 
         // See if the player is in a game
-        if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+        if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
             return;
 
         // Ensure cooldown is initialized
@@ -444,7 +444,7 @@ public class AbilityListener implements Listener {
 
         // Attempt to get arena and player
         try {
-            arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).filter(a ->
+            arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
                     a.hasPlayer(player)).collect(Collectors.toList()).get(0);
             gamer = arena.getPlayer(player);
         } catch (Exception err) {
@@ -533,7 +533,7 @@ public class AbilityListener implements Listener {
         Player player = e.getPlayer();
 
         // Check if player is in a game
-        if (Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player)))
+        if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player)))
             return;
 
         // Ignore creative and spectator mode players

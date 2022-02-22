@@ -47,6 +47,7 @@ me\theguyhere\villagerdefense\plugin\tools\DataManager.class
 me\theguyhere\villagerdefense\plugin\exceptions\InvalidLocationException.class
 me\theguyhere\villagerdefense\plugin\game\models\Mobs.class
 me\theguyhere\villagerdefense\plugin\game\displays\Leaderboard.class
+me\theguyhere\villagerdefense\plugin\game\models\GameManager.class
 me\theguyhere\villagerdefense\plugin\listeners\PacketListenerImp.class
 me\theguyhere\villagerdefense\plugin\tools\WorldManager.class
 me\theguyhere\villagerdefense\plugin\commands\CommandTab.class
@@ -72,5 +73,4 @@ me\theguyhere\villagerdefense\plugin\events\WaveStartEvent.class
 me\theguyhere\villagerdefense\plugin\game\models\kits\Kit.class
 me\theguyhere\villagerdefense\plugin\game\models\Tasks$3.class
 me\theguyhere\villagerdefense\plugin\events\EndNinjaNerfEvent.class
-me\theguyhere\villagerdefense\plugin\game\models\arenas\ArenaManager.class
 me\theguyhere\villagerdefense\plugin\tools\PlayerManager.class

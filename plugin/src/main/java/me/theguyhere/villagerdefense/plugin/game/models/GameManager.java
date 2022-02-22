@@ -1,12 +1,11 @@
-package me.theguyhere.villagerdefense.plugin.game.models.arenas;
+package me.theguyhere.villagerdefense.plugin.game.models;
 
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.game.displays.InfoBoard;
 import me.theguyhere.villagerdefense.plugin.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
-import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.models.Tasks;
+import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
@@ -20,7 +19,7 @@ import org.bukkit.scoreboard.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ArenaManager {
+public class GameManager {
 	private final Main plugin;
 
 	// Tracks arenas, info boards, and leaderboards for the game
@@ -30,7 +29,7 @@ public class ArenaManager {
 
 	private static Location lobby;
 
-	public ArenaManager(Main plugin) {
+	public GameManager(Main plugin) {
 		this.plugin = plugin;
 		ConfigurationSection section;
 
@@ -152,7 +151,7 @@ public class ArenaManager {
 	}
 
 	public static void setLobby(Location lobby) {
-		ArenaManager.lobby = lobby;
+		GameManager.lobby = lobby;
 	}
 
 	public void reloadLobby() {

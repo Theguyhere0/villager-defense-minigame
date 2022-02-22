@@ -7,7 +7,7 @@ import me.theguyhere.villagerdefense.plugin.events.RightClickNPCEvent;
 import me.theguyhere.villagerdefense.plugin.events.SignGUIEvent;
 import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaManager;
+import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -18,7 +18,7 @@ import java.util.Objects;
 public class PacketListenerImp implements PacketListener {
     @Override
     public void onAttack(Player player, int entityID) {
-        Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).map(Arena::getPortal).filter(Objects::nonNull)
+        Arrays.stream(GameManager.arenas).filter(Objects::nonNull).map(Arena::getPortal).filter(Objects::nonNull)
                 .map(Portal::getNpc).filter(Objects::nonNull).forEach(npc -> {
                     int npcId = npc.getEntityID();
                     if (npcId == entityID)
@@ -29,7 +29,7 @@ public class PacketListenerImp implements PacketListener {
 
     @Override
     public void onInteractMain(Player player, int entityID) {
-        Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull).map(Arena::getPortal).filter(Objects::nonNull)
+        Arrays.stream(GameManager.arenas).filter(Objects::nonNull).map(Arena::getPortal).filter(Objects::nonNull)
                 .map(Portal::getNpc).filter(Objects::nonNull).forEach(npc -> {
                     int npcId = npc.getEntityID();
                     if (npcId == entityID)
@@ -44,7 +44,7 @@ public class PacketListenerImp implements PacketListener {
         String header = signLines[0];
 
         try {
-            arena = ArenaManager.arenas[Integer.parseInt(header.substring(18, header.length() - 4))];
+            arena = GameManager.arenas[Integer.parseInt(header.substring(18, header.length() - 4)) - 1];
         } catch (Exception ignored) {
             return;
         }

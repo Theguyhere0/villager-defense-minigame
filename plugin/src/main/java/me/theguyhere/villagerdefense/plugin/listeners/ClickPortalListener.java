@@ -6,7 +6,7 @@ import me.theguyhere.villagerdefense.plugin.events.JoinArenaEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeftClickNPCEvent;
 import me.theguyhere.villagerdefense.plugin.events.RightClickNPCEvent;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaManager;
+import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,7 +22,7 @@ public class ClickPortalListener implements Listener {
 
 		// Try to get arena from npc
 		try {
-			arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
+			arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
 					.filter(arena1 -> arena1.getPortal() != null)
 					.filter(arena1 -> arena1.getPortal().getNpc().getEntityID() == e.getNpcId())
 					.collect(Collectors.toList()).get(0);
@@ -42,7 +42,7 @@ public class ClickPortalListener implements Listener {
 
 		// Try to get arena from npc
 		try {
-			arena = Arrays.stream(ArenaManager.arenas).filter(Objects::nonNull)
+			arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
 					.filter(arena1 -> arena1.getPortal() != null)
 					.filter(arena1 -> arena1.getPortal().getNpc().getEntityID() == e.getNpcId())
 					.collect(Collectors.toList()).get(0);

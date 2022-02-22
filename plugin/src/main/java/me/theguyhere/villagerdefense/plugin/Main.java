@@ -4,7 +4,7 @@ import me.theguyhere.villagerdefense.common.Log;
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
 import me.theguyhere.villagerdefense.plugin.commands.CommandTab;
 import me.theguyhere.villagerdefense.plugin.commands.Commands;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaManager;
+import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.listeners.*;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
@@ -28,12 +28,12 @@ public class Main extends JavaPlugin {
 
 	// Global instance variables
 	private final NMSManager nmsManager = NMSVersion.getCurrent().getNmsManager();
-	private ArenaManager arenaManager;
+	private GameManager gameManager;
 	private boolean loaded = false;
 
 	// Global state variables
 	private boolean outdated = false;
-	public static final boolean releaseMode = true;
+	public static final boolean releaseMode = false;
 	public int configVersion = 6;
 	public int arenaDataVersion = 4;
 	public int playerDataVersion = 1;
@@ -145,7 +145,7 @@ public class Main extends JavaPlugin {
 		}
 
 		// Set ArenaManager
-		arenaManager = new ArenaManager(this);
+		gameManager = new GameManager(this);
 
 		// Remind if this build is release
 		if (!releaseMode) {
@@ -173,12 +173,12 @@ public class Main extends JavaPlugin {
 			nmsManager.uninjectPacketListener(player);
 
 		// Clear every valid arena and remove all portals
-		ArenaManager.cleanAll();
-		ArenaManager.removePortals();
+		GameManager.cleanAll();
+		GameManager.removePortals();
 	}
 
-	public ArenaManager getArenaManager() {
-		return arenaManager;
+	public GameManager getGameManager() {
+		return gameManager;
 	}
 
 	// Returns arena data
