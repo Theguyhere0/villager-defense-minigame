@@ -449,7 +449,7 @@ public class InventoryListener implements Listener {
 					PlayerManager.notify(player, "&cNo leaderboard to center!");
 					return;
 				}
-				plugin.getGameManager().refreshLeaderboard("topKills");
+				plugin.getGameManager().centerLeaderboard("topKills");
 				PlayerManager.notify(player, "&aLeaderboard centered!");
 			}
 
@@ -499,7 +499,7 @@ public class InventoryListener implements Listener {
 					PlayerManager.notify(player, "&cNo leaderboard to center!");
 					return;
 				}
-				plugin.getGameManager().refreshLeaderboard("totalGems");
+				plugin.getGameManager().centerLeaderboard("totalGems");
 				PlayerManager.notify(player, "&aLeaderboard centered!");
 			}
 
@@ -549,7 +549,7 @@ public class InventoryListener implements Listener {
 					PlayerManager.notify(player, "&cNo leaderboard to center!");
 					return;
 				}
-				plugin.getGameManager().refreshLeaderboard("topBalance");
+				plugin.getGameManager().centerLeaderboard("topBalance");
 				PlayerManager.notify(player, "&aLeaderboard centered!");
 			}
 
@@ -599,7 +599,7 @@ public class InventoryListener implements Listener {
 					PlayerManager.notify(player, "&cNo leaderboard to center!");
 					return;
 				}
-				plugin.getGameManager().refreshLeaderboard("topWave");
+				plugin.getGameManager().centerLeaderboard("topWave");
 				PlayerManager.notify(player, "&aLeaderboard centered!");
 			}
 

@@ -134,7 +134,7 @@ public class Inventories {
 	public static Inventory createInfoBoardMenu(Main plugin, int slot) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(slot), 9, CommunicationManager.format("&k") +
-				CommunicationManager.format("&6&lInfo Board " + slot));
+				CommunicationManager.format("&6&lInfo Board " + (slot + 1)));
 
 		// Option to create or relocate info board
 		if (DataManager.getConfigLocation(plugin, "infoBoard." + slot) == null)

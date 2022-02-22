@@ -148,6 +148,7 @@ public class DataManager {
 			setConfigurationLocation(plugin, path, location);
 			plugin.saveArenaData();
 		} catch (Exception ignored) {
+			CommunicationManager.debugError("Something went wrong centering!", 1);
 		}
 	}
 

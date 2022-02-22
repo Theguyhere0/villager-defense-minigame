@@ -33,7 +33,7 @@ public class Main extends JavaPlugin {
 
 	// Global state variables
 	private boolean outdated = false;
-	public static final boolean releaseMode = false;
+	public static final boolean releaseMode = true;
 	public int configVersion = 6;
 	public int arenaDataVersion = 4;
 	public int playerDataVersion = 1;

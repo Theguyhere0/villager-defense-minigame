@@ -206,7 +206,7 @@ public class GameManager {
 	public void refreshInfoBoard(int num) {
 		// Delete old board if needed
 		if (infoBoards[num] != null)
-			removeInfoBoard(num);
+			infoBoards[num].remove();
 
 		try {
 			// Create a new board and display it
@@ -261,7 +261,7 @@ public class GameManager {
 	public void refreshLeaderboard(String type) {
 		// Delete old board if needed
 		if (leaderboards.get(type) != null)
-			removeLeaderboard(type);
+			leaderboards.get(type).remove();
 
 		try {
 			// Create a new board and display it
@@ -269,8 +269,9 @@ public class GameManager {
 			leaderboards.get(type).displayForOnline();
 		} catch (Exception e) {
 			CommunicationManager.debugError("Invalid location for leaderboard " + type, 1);
-			CommunicationManager.debugInfo("Leaderboard location data may be corrupt. If data cannot be manually corrected in " +
-					"arenaData.yml, please delete the location data for leaderboard " + type + ".", 1);
+			CommunicationManager.debugInfo("Leaderboard location data may be corrupt. " +
+					"If data cannot be manually corrected in arenaData.yml, please delete the location data for " +
+					"leaderboard " + type + ".", 1);
 		}
 	}
 
