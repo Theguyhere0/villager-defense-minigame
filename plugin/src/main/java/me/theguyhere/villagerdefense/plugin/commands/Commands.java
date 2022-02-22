@@ -1,21 +1,21 @@
 package me.theguyhere.villagerdefense.plugin.commands;
 
+import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.GUI.Inventories;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
+import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.Tasks;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
-import me.theguyhere.villagerdefense.common.Utils;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -32,7 +32,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class Commands implements CommandExecutor {
 	Main plugin;
@@ -155,8 +154,7 @@ public class Commands implements CommandExecutor {
 
 				// Attempt to get arena and player
 				try {
-					arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
-							.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
+					arena = GameManager.getArena(player);
 					gamer = arena.getPlayer(player);
 				} catch (Exception err) {
 					PlayerManager.notify(player, language.getString("inGameError"));
@@ -264,8 +262,7 @@ public class Commands implements CommandExecutor {
 
 					// Attempt to get arena and player
 					try {
-						arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
-								.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
+						arena = GameManager.getArena(player);
 						gamer = arena.getPlayer(player);
 					} catch (Exception e) {
 						PlayerManager.notify(player, language.getString("forceStartError1"));
@@ -319,18 +316,17 @@ public class Commands implements CommandExecutor {
 					StringBuilder name = new StringBuilder(args[1]);
 					for (int i = 0; i < args.length - 2; i++)
 						name.append(" ").append(args[i + 2]);
+					Arena arena;
 
 					// Check if this arena exists
-					if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
-							.noneMatch(arena -> arena.getName().equals(name.toString()))) {
+					try {
+						arena = GameManager.getArena(name.toString());
+					} catch (Exception e) {
 						if (player != null)
 							PlayerManager.notify(player, "&cNo arena with this name exists!");
 						else CommunicationManager.debugError("No arena with this name exists!", 0);
 						return true;
 					}
-
-					Arena arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
-							.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
 
 					// Check if arena already started
 					if (arena.getStatus() != ArenaStatus.WAITING) {
@@ -400,8 +396,7 @@ public class Commands implements CommandExecutor {
 
 					// Attempt to get arena
 					try {
-						arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
-								.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
+						arena = GameManager.getArena(player);
 					} catch (Exception e) {
 						PlayerManager.notify(player, language.getString("forceStartError1"));
 						return true;
@@ -437,18 +432,17 @@ public class Commands implements CommandExecutor {
 					StringBuilder name = new StringBuilder(args[1]);
 					for (int i = 0; i < args.length - 2; i++)
 						name.append(" ").append(args[i + 2]);
+					Arena arena;
 
 					// Check if this arena exists
-					if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
-							.noneMatch(arena -> arena.getName().equals(name.toString()))) {
+					try {
+						arena = GameManager.getArena(name.toString());
+					} catch (Exception e) {
 						if (player != null)
 							PlayerManager.notify(player, "&cNo arena with this name exists!");
 						else CommunicationManager.debugError("No arena with this name exists!", 0);
 						return true;
 					}
-
-					Arena arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
-							.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
 
 					// Check if arena has a game in progress
 					if (arena.getStatus() != ArenaStatus.ACTIVE && arena.getStatus() != ArenaStatus.ENDING) {
@@ -497,8 +491,7 @@ public class Commands implements CommandExecutor {
 
 					// Attempt to get arena
 					try {
-						arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
-								.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
+						arena = GameManager.getArena(player);
 					} catch (Exception e) {
 						PlayerManager.notify(player, language.getString("forceStartError1"));
 						return true;
@@ -543,24 +536,24 @@ public class Commands implements CommandExecutor {
 					StringBuilder name = new StringBuilder(args[1]);
 					for (int i = 0; i < args.length - 2; i++)
 						name.append(" ").append(args[i + 2]);
+					Arena arena;
 
 					// Check if this arena exists
-					if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
-							.noneMatch(arena -> arena.getName().equals(name.toString()))) {
+					try {
+						arena = GameManager.getArena(name.toString());
+					} catch (Exception e) {
 						if (player != null)
 							PlayerManager.notify(player, "&cNo arena with this name exists!");
 						else CommunicationManager.debugError("No arena with this name exists!", 0);
 						return true;
 					}
 
-					Arena arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
-							.filter(arena1 -> arena1.hasPlayer(player)).collect(Collectors.toList()).get(0);
-
 					// Check if arena already started
 					if (arena.getStatus() != ArenaStatus.WAITING) {
 						if (player != null)
 							PlayerManager.notify(player, language.getString("forceStartError3"));
-						else CommunicationManager.debugError("The arena already has a game in progress!", 0);
+						else CommunicationManager.debugError("The arena already has a game in progress!",
+								0);
 						return true;
 					}
 
@@ -771,13 +764,13 @@ public class Commands implements CommandExecutor {
 				}
 
 				// Check for player in a game
-				if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player))) {
+				if (!GameManager.checkPlayer(player)) {
 					PlayerManager.notify(player, language.getString("leaveError"));
 					return true;
 				}
 
 				// Check for player in an active game
-				if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
+				if (Arrays.stream(GameManager.getArenas()).filter(Objects::nonNull)
 						.filter(arena -> arena.getStatus() == ArenaStatus.ACTIVE)
 						.noneMatch(arena -> arena.hasPlayer(player))) {
 					PlayerManager.notify(player, language.getString("suicideActiveError"));
@@ -786,7 +779,7 @@ public class Commands implements CommandExecutor {
 
 				// Check for alive player
 				try {
-					if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(arena -> arena.hasPlayer(player)).collect(Collectors.toList()).get(0).getPlayer(player).getStatus() != PlayerStatus.ALIVE) {
+					if (GameManager.getArena(player).getPlayer(player).getStatus() != PlayerStatus.ALIVE) {
 						PlayerManager.notify(player, language.getString("suicideError"));
 						return true;
 					}

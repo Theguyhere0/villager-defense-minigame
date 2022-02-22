@@ -1,15 +1,15 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
+import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.EndNinjaNerfEvent;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
-import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.tools.WorldManager;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -29,7 +29,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class AbilityListener implements Listener {
     private final Main plugin;
@@ -54,8 +53,7 @@ public class AbilityListener implements Listener {
 
         // Attempt to get arena and player
         try {
-            arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
-                    a.hasPlayer(player)).collect(Collectors.toList()).get(0);
+            arena = GameManager.getArena(player);
             gamer = arena.getPlayer(player);
         } catch (Exception err) {
             return;
@@ -71,10 +69,6 @@ public class AbilityListener implements Listener {
                 Arrays.stream(GameItems.CARE_MATERIALS).anyMatch(m -> m == main.getType()) ||
                 Arrays.stream(GameItems.CLICKABLE_WEAPON_MATERIALS).anyMatch(m -> m == main.getType()) ||
                 Arrays.stream(GameItems.CLICKABLE_CONSUME_MATERIALS).anyMatch(m -> m == main.getType()))
-            return;
-
-        // See if the player is in a game
-        if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
             return;
 
         // Ensure cooldown is initialized
@@ -444,8 +438,7 @@ public class AbilityListener implements Listener {
 
         // Attempt to get arena and player
         try {
-            arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
-                    a.hasPlayer(player)).collect(Collectors.toList()).get(0);
+            arena = GameManager.getArena(player);
             gamer = arena.getPlayer(player);
         } catch (Exception err) {
             return;
@@ -533,7 +526,7 @@ public class AbilityListener implements Listener {
         Player player = e.getPlayer();
 
         // Check if player is in a game
-        if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player)))
+        if (!GameManager.checkPlayer(player))
             return;
 
         // Ignore creative and spectator mode players

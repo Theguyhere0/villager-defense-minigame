@@ -1,6 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.game.models.arenas;
 
-import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.GUI.InventoryItems;
 import me.theguyhere.villagerdefense.plugin.GUI.InventoryMeta;
 import me.theguyhere.villagerdefense.plugin.Main;
@@ -15,7 +15,6 @@ import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
 import me.theguyhere.villagerdefense.plugin.game.models.Tasks;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
@@ -52,8 +51,6 @@ public class Arena {
     private final String path;
     private final Tasks task; // The tasks object for the arena
 
-    /** Caps lock flag for the arena's naming inventory.*/
-    private boolean caps;
     /** Status of the arena.*/
     private ArenaStatus status;
     /** Whether the arena is in the process of spawning monsters.*/
@@ -630,9 +627,8 @@ public class Arena {
         if (!isClosed() && plugin.isLoaded())
             return;
 
-        // Close off any particles if they are on
-        if (playerSpawn != null && playerSpawn.isOn())
-            playerSpawn.turnOffIndicator();
+        // Remove particles
+        cancelSpawnParticles();
 
         // Attempt to fetch new player spawn
         try {
@@ -643,6 +639,10 @@ public class Arena {
         } catch (InvalidLocationException | NullPointerException e) {
             playerSpawn = null;
         }
+
+        // Turn on particles if appropriate
+        if (isClosed())
+            startSpawnParticles();
     }
 
     public ArenaSpawn getPlayerSpawn() {
@@ -699,10 +699,7 @@ public class Arena {
             return;
 
         // Close off any particles if they are on
-        monsterSpawns.stream().filter(Objects::nonNull).forEach(spawn -> {
-            if (spawn.isOn())
-                spawn.turnOffIndicator();
-        });
+        cancelMonsterParticles();
 
         // Attempt to fetch new monster spawns
         monsterSpawns.clear();
@@ -713,6 +710,10 @@ public class Arena {
             } catch (InvalidLocationException | NullPointerException ignored) {
             }
         });
+
+        // Turn on particles if appropriate
+        if (isClosed())
+            startMonsterParticles();
     }
 
     public List<ArenaSpawn> getMonsterSpawns() {
@@ -761,10 +762,7 @@ public class Arena {
             return;
 
         // Close off any particles if they are on
-        villagerSpawns.stream().filter(Objects::nonNull).forEach(spawn -> {
-            if (spawn.isOn())
-                spawn.turnOffIndicator();
-        });
+        cancelVillagerParticles();
 
         // Attempt to fetch new villager spawns
         villagerSpawns.clear();
@@ -775,6 +773,10 @@ public class Arena {
             } catch (InvalidLocationException | NullPointerException ignored) {
             }
         });
+
+        // Turn on particles if appropriate
+        if (isClosed())
+            startVillagerParticles();
     }
 
     public List<ArenaSpawn> getVillagerSpawns() {
@@ -1144,7 +1146,15 @@ public class Arena {
     }
 
     public void setCorner1(Location location) {
+        // Remove particles
+        cancelBorderParticles();
+
+        // Set location
         DataManager.setConfigurationLocation(plugin, path + ".corner1", location);
+
+        // Turn on particles if appropriate
+        if (isClosed())
+            startBorderParticles();
     }
 
     public Location getCorner2() {
@@ -1152,7 +1162,15 @@ public class Arena {
     }
 
     public void setCorner2(Location location) {
+        // Remove particles
+        cancelBorderParticles();
+
+        // Set location
         DataManager.setConfigurationLocation(plugin, path + ".corner2", location);
+
+        // Turn on particles if appropriate
+        if (isClosed())
+            startBorderParticles();
     }
 
     public BoundingBox getBounds() {
@@ -1331,14 +1349,6 @@ public class Arena {
 
     public Tasks getTask() {
         return task;
-    }
-
-    public boolean isCaps() {
-        return caps;
-    }
-
-    public void flipCaps() {
-        caps = !caps;
     }
 
     public ArenaStatus getStatus() {

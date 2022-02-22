@@ -24,17 +24,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Inventories {
-	// Easily get alphabet
-	public static final char[] NAMES = {
-		'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
-		's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-		'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
-		'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-		' '
-	};
-
 	// Easily alternate between different materials
-	public static final Material[] KEY_MATS = {Material.BLACK_CONCRETE, Material.WHITE_WOOL};
 	public static final Material[] INFO_BOARD_MATS = {Material.DARK_OAK_SIGN, Material.BIRCH_SIGN};
 	public static final Material[] MONSTER_MATS = {Material.SKELETON_SKULL, Material.ZOMBIE_HEAD};
 	public static final Material[] VILLAGER_MATS = {Material.WITHER_ROSE, Material.POPPY};
@@ -48,12 +38,12 @@ public class Inventories {
 		// Options to interact with all 45 possible arenas
 		for (int i = 0; i < 45; i++) {
 			// Check if arena exists, set button accordingly
-			if (GameManager.arenas[i] == null)
+			if (GameManager.getArena(i) == null)
 				inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE,
 						CommunicationManager.format("&c&lCreate Arena " + (i + 1))));
 			else
 				inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE,
-						CommunicationManager.format("&a&lEdit " + GameManager.arenas[i].getName())));
+						CommunicationManager.format("&a&lEdit " + GameManager.getArena(i).getName())));
 		}
 
 		// Option to set lobby location
@@ -409,46 +399,9 @@ public class Inventories {
 		return inv;
 	}
 
-	// Menu for naming an arena
-	public static Inventory createNamingInventory(int arena, String newName) {
-		Arena arenaInstance = GameManager.arenas[arena];
-		boolean caps = arenaInstance.isCaps();
-
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(newName, arena), 54, CommunicationManager.format("&k") +
-				CommunicationManager.format("&2&lArena " + (arena + 1) + " Name: &8&l" + newName));
-
-		// Letter and number inputs
-		for (int i = 0; i < 36; i++) {
-			if (caps)
-				inv.setItem(i, ItemManager.createItem(KEY_MATS[i % 2], CommunicationManager.format("&f&l" + NAMES[i + 36])));
-			else inv.setItem(i, ItemManager.createItem(KEY_MATS[i % 2], CommunicationManager.format("&f&l" + NAMES[i])));
-		}
-
-		// Space inputs
-		for (int i = 36; i < 45; i++)
-			inv.setItem(i, ItemManager.createItem(Material.GRAY_CONCRETE, CommunicationManager.format("&f&lSpace")));
-
-		// Caps lock toggle
-		if (caps)
-			inv.setItem(45, ItemManager.createItem(Material.SPECTRAL_ARROW, CommunicationManager.format("&2&lCAPS LOCK: ON")));
-		else inv.setItem(45, ItemManager.createItem(Material.ARROW, CommunicationManager.format("&4&lCAPS LOCK: OFF")));
-
-		// Backspace input
-		inv.setItem(46, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&c&lBackspace")));
-
-		// Save option
-		inv.setItem(52, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&a&lSAVE")));
-
-		// Cancel option
-		inv.setItem(53, ItemManager.createItem(Material.BARRIER, CommunicationManager.format("&c&lCANCEL")));
-
-		return inv;
-	}
-
 	// Menu for editing an arena
 	public static  Inventory createArenaInventory(int arena) {
-		Arena arenaInstance = GameManager.arenas[arena];
+		Arena arenaInstance = GameManager.getArena(arena);
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
 				CommunicationManager.format("&2&lEdit " + arenaInstance.getName()));
@@ -492,7 +445,7 @@ public class Inventories {
 	public static Inventory createArenaConfirmInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
-				CommunicationManager.format("&4&lRemove " + GameManager.arenas[arena].getName() + '?'));
+				CommunicationManager.format("&4&lRemove " + GameManager.getArena(arena).getName() + '?'));
 
 		// "No" option
 		inv.setItem(0, InventoryItems.no());
@@ -505,7 +458,7 @@ public class Inventories {
 
 	// Menu for editing the portal and leaderboard of an arena
 	public static Inventory createPortalInventory(int arena) {
-		Arena arenaInstance = GameManager.arenas[arena];
+		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
@@ -577,7 +530,7 @@ public class Inventories {
 
 	// Menu for editing the player settings of an arena
 	public static Inventory createPlayersInventory(int arena) {
-		Arena arenaInstance = GameManager.arenas[arena];
+		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
@@ -618,7 +571,7 @@ public class Inventories {
 
 	// Menu for editing the player spawn of an arena
 	public static Inventory createPlayerSpawnInventory(int arena) {
-		Arena arenaInstance = GameManager.arenas[arena];
+		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
@@ -661,7 +614,7 @@ public class Inventories {
 
 	// Menu for editing the waiting room of an arena
 	public static Inventory createWaitingRoomInventory(int arena) {
-		Arena arenaInstance = GameManager.arenas[arena];
+		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
@@ -706,7 +659,7 @@ public class Inventories {
 	public static Inventory createMaxPlayerInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
-				CommunicationManager.format("&4&lMaximum Players: " + GameManager.arenas[arena].getMaxPlayers()));
+				CommunicationManager.format("&4&lMaximum Players: " + GameManager.getArena(arena).getMaxPlayers()));
 
 		// Option to decrease
 		for (int i = 0; i < 4; i++)
@@ -726,7 +679,7 @@ public class Inventories {
 	public static Inventory createMinPlayerInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
-				CommunicationManager.format("&2&lMinimum Players: " + GameManager.arenas[arena].getMinPlayers()));
+				CommunicationManager.format("&2&lMinimum Players: " + GameManager.getArena(arena).getMinPlayers()));
 
 		// Option to decrease
 		for (int i = 0; i < 4; i++)
@@ -744,7 +697,7 @@ public class Inventories {
 
 	// Menu for editing the mob settings of an arena
 	public static Inventory createMobsInventory(int arena) {
-		Arena arenaInstance = GameManager.arenas[arena];
+		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
@@ -785,7 +738,7 @@ public class Inventories {
 
 	// Menu for editing the monster spawns of an arena
 	public static Inventory createMonsterSpawnInventory(int arena) {
-		Arena arenaInstance = GameManager.arenas[arena];
+		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
@@ -814,7 +767,7 @@ public class Inventories {
 
 	// Menu for editing a specific monster spawn of an arena
 	public static Inventory createMonsterSpawnMenu(int arena, int slot) {
-		Arena arenaInstance = GameManager.arenas[arena];
+		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9,
@@ -874,7 +827,7 @@ public class Inventories {
 
 	// Menu for editing the villager spawns of an arena
 	public static Inventory createVillagerSpawnInventory(int arena) {
-		Arena arenaInstance = GameManager.arenas[arena];
+		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
@@ -903,7 +856,7 @@ public class Inventories {
 
 	// Menu for editing a specific villager spawn of an arena
 	public static Inventory createVillagerSpawnMenu(int arena, int slot) {
-		Arena arenaInstance = GameManager.arenas[arena];
+		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9, CommunicationManager.format("&k") +
@@ -946,7 +899,7 @@ public class Inventories {
 
 	// Spawn table menu for an arena
 	public static Inventory createSpawnTableInventory(int arena) {
-		Arena arenaInstance = GameManager.arenas[arena];
+		Arena arenaInstance = GameManager.getArena(arena);
 		String chosen = arenaInstance.getSpawnTableFile();
 		Inventory inv;
 
@@ -1014,7 +967,7 @@ public class Inventories {
 
 	// Menu for editing the shop settings of an arena
 	public static Inventory createShopsInventory(int arena) {
-		Arena arenaInstance = GameManager.arenas[arena];
+		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
@@ -1058,7 +1011,7 @@ public class Inventories {
 
 	// Menu for adding custom items
 	public static Inventory createCustomItemsInventory(int arena, int slot) {
-		Arena arenaInstance = GameManager.arenas[arena];
+		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 27, CommunicationManager.format("&k") +
@@ -1120,7 +1073,7 @@ public class Inventories {
 
 	// Menu for editing the game settings of an arena
 	public static Inventory createGameSettingsInventory(int arena) {
-		Arena arenaInstance = GameManager.arenas[arena];
+		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 18, CommunicationManager.format("&k") +
@@ -1214,11 +1167,11 @@ public class Inventories {
 		Inventory inv;
 
 		// Create inventory
-		if (GameManager.arenas[arena].getMaxWaves() < 0)
+		if (GameManager.getArena(arena).getMaxWaves() < 0)
 			inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
 					CommunicationManager.format("&3&lMaximum Waves: Unlimited"));
 		else inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
-				CommunicationManager.format("&3&lMaximum Waves: " + GameManager.arenas[arena].getMaxWaves()));
+				CommunicationManager.format("&3&lMaximum Waves: " + GameManager.getArena(arena).getMaxWaves()));
 
 		// Option to decrease
 		for (int i = 0; i < 3; i++)
@@ -1245,11 +1198,11 @@ public class Inventories {
 		Inventory inv;
 
 		// Create inventory
-		if (GameManager.arenas[arena].getWaveTimeLimit() < 0)
+		if (GameManager.getArena(arena).getWaveTimeLimit() < 0)
 			inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
 					CommunicationManager.format("&2&lWave Time Limit: Unlimited"));
 		else inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
-				CommunicationManager.format("&2&lWave Time Limit: " + GameManager.arenas[arena].getWaveTimeLimit()));
+				CommunicationManager.format("&2&lWave Time Limit: " + GameManager.getArena(arena).getWaveTimeLimit()));
 
 		// Option to decrease
 		for (int i = 0; i < 3; i++)
@@ -1273,7 +1226,7 @@ public class Inventories {
 
 	// Menu for allowed kits of an arena
 	public static Inventory createAllowedKitsInventory(int arena, boolean mock) {
-		Arena arenaInstance = GameManager.arenas[arena];
+		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54, CommunicationManager.format("&k") +
@@ -1375,7 +1328,7 @@ public class Inventories {
 
 	// Menu for changing the difficulty label of an arena
 	public static Inventory createDifficultyLabelInventory(int arena) {
-		String label = GameManager.arenas[arena].getDifficultyLabel();
+		String label = GameManager.getArena(arena).getDifficultyLabel();
 		switch (label) {
 			case "Easy":
 				label = "&a&lEasy";
@@ -1422,7 +1375,7 @@ public class Inventories {
 	public static Inventory createDifficultyMultiplierInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
-				CommunicationManager.format("&4&lDifficulty Multiplier: " + GameManager.arenas[arena].getDifficultyMultiplier()));
+				CommunicationManager.format("&4&lDifficulty Multiplier: " + GameManager.getArena(arena).getDifficultyMultiplier()));
 
 		// "1" option
 		inv.setItem(0, ItemManager.createItem(Material.LIGHT_BLUE_CONCRETE, CommunicationManager.format("&b&l1")));
@@ -1444,7 +1397,7 @@ public class Inventories {
 
 	// Menu for selecting arena bound corners
 	public static Inventory createBoundsInventory(int arena) {
-		Arena arenaInstance = GameManager.arenas[arena];
+		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
@@ -1470,7 +1423,7 @@ public class Inventories {
 
 	// Menu for editing corner 1 of an arena
 	public static Inventory createCorner1Inventory(int arena) {
-		Arena arenaInstance = GameManager.arenas[arena];
+		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
@@ -1510,7 +1463,7 @@ public class Inventories {
 
 	// Menu for editing corner 2 of an arena
 	public static Inventory createCorner2Inventory(int arena) {
-		Arena arenaInstance = GameManager.arenas[arena];
+		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
@@ -1552,7 +1505,7 @@ public class Inventories {
 	public static Inventory createWolfCapInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
-				CommunicationManager.format("&6&lWolf Cap: " + GameManager.arenas[arena].getWolfCap()));
+				CommunicationManager.format("&6&lWolf Cap: " + GameManager.getArena(arena).getWolfCap()));
 
 		// Option to decrease
 		for (int i = 0; i < 4; i++)
@@ -1572,7 +1525,7 @@ public class Inventories {
 	public static Inventory createGolemCapInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
-				CommunicationManager.format("&e&lIron Golem Cap: " + GameManager.arenas[arena].getGolemCap()));
+				CommunicationManager.format("&e&lIron Golem Cap: " + GameManager.getArena(arena).getGolemCap()));
 
 		// Option to decrease
 		for (int i = 0; i < 4; i++)
@@ -1590,11 +1543,11 @@ public class Inventories {
 
 	// Menu for editing the sounds of an arena
 	public static Inventory createSoundsInventory(int arena) {
-		Arena arenaInstance = GameManager.arenas[arena];
+		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
-				CommunicationManager.format("&d&lSounds: " + GameManager.arenas[arena].getName()));
+				CommunicationManager.format("&d&lSounds: " + GameManager.getArena(arena).getName()));
 
 		// Option to edit win sound
 		inv.setItem(0, ItemManager.createItem(Material.MUSIC_DISC_PIGSTEP,
@@ -1662,9 +1615,9 @@ public class Inventories {
 	public static Inventory createWaitSoundInventory(int arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 18, CommunicationManager.format("&k") +
-				CommunicationManager.format("&6&lWaiting Sound: " + GameManager.arenas[arena].getWaitingSoundName()));
+				CommunicationManager.format("&6&lWaiting Sound: " + GameManager.getArena(arena).getWaitingSoundName()));
 
-		Arena arenaInstance = GameManager.arenas[arena];
+		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Sound options
 		inv.setItem(0, arenaInstance.getWaitingSoundButton(0));
@@ -1696,15 +1649,15 @@ public class Inventories {
 		// Options to choose any of the 45 possible arenas
 		for (int i = 0; i < 45; i++) {
 			// Check if arena exists, set button accordingly
-			if (GameManager.arenas[i] == null)
+			if (GameManager.getArena(i) == null)
 				inv.setItem(i, ItemManager.createItem(Material.BLACK_CONCRETE,
 						CommunicationManager.format("&c&lArena " + (i + 1) + " not available")));
 			else if (i == arena)
 				inv.setItem(i, ItemManager.createItem(Material.GRAY_GLAZED_TERRACOTTA,
-						CommunicationManager.format("&6&l" + GameManager.arenas[i].getName())));
+						CommunicationManager.format("&6&l" + GameManager.getArena(i).getName())));
 			else
 				inv.setItem(i, ItemManager.createItem(Material.WHITE_CONCRETE,
-						CommunicationManager.format("&a&lCopy " + GameManager.arenas[i].getName())));
+						CommunicationManager.format("&a&lCopy " + GameManager.getArena(i).getName())));
 		}
 
 		// Easy preset

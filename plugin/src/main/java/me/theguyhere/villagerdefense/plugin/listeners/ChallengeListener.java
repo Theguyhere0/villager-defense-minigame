@@ -26,10 +26,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 public class ChallengeListener implements Listener {
     private final Main plugin;
@@ -44,10 +42,9 @@ public class ChallengeListener implements Listener {
         Player player = e.getPlayer();
         VDPlayer gamer;
 
-        // Attempt to get arena and player
+        // Attempt to get VDPlayer
         try {
-            gamer = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
-                    a.hasPlayer(player)).collect(Collectors.toList()).get(0).getPlayer(player);
+            gamer = GameManager.getArena(player).getPlayer(player);
         } catch (Exception err) {
             return;
         }
@@ -103,10 +100,9 @@ public class ChallengeListener implements Listener {
         Player player = e.getPlayer();
         VDPlayer gamer;
 
-        // Attempt to get player
+        // Attempt to get VDPlayer
         try {
-            gamer = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
-                    a.hasPlayer(player)).collect(Collectors.toList()).get(0).getPlayer(player);
+            gamer = GameManager.getArena(player).getPlayer(player);
         } catch (Exception err) {
             return;
         }
@@ -143,10 +139,9 @@ public class ChallengeListener implements Listener {
             Entity enemy = e.getDamager();
             VDPlayer gamer;
 
-            // Attempt to get player
+            // Attempt to get VDPlayer
             try {
-                gamer = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
-                        a.hasPlayer(player)).collect(Collectors.toList()).get(0).getPlayer(player);
+                gamer = GameManager.getArena(player).getPlayer(player);
             } catch (Exception err) {
                 return;
             }
@@ -180,10 +175,9 @@ public class ChallengeListener implements Listener {
                 player = (Player) ((Projectile) e.getDamager()).getShooter();
             else return;
 
-            // Attempt to get VDplayer
+            // Attempt to get VDPlayer
             try {
-                gamer = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
-                        a.hasPlayer(player)).collect(Collectors.toList()).get(0).getPlayer(player);
+                gamer = GameManager.getArena(player).getPlayer(player);
             } catch (Exception err) {
                 return;
             }
@@ -206,10 +200,9 @@ public class ChallengeListener implements Listener {
         Player player = e.getPlayer();
         VDPlayer gamer;
 
-        // Attempt to get player
+        // Attempt to get VDPlayer
         try {
-            gamer = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
-                    a.hasPlayer(player)).collect(Collectors.toList()).get(0).getPlayer(player);
+            gamer = GameManager.getArena(player).getPlayer(player);
         } catch (Exception err) {
             return;
         }
@@ -232,10 +225,9 @@ public class ChallengeListener implements Listener {
         Player player = (Player) e.getEntity();
         VDPlayer gamer;
 
-        // Attempt to get arena and player
+        // Attempt to get VDPlayer
         try {
-            gamer = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
-                    a.hasPlayer(player)).collect(Collectors.toList()).get(0).getPlayer(player);
+            gamer = GameManager.getArena(player).getPlayer(player);
         } catch (Exception err) {
             return;
         }

@@ -22,7 +22,7 @@ public class ClickPortalListener implements Listener {
 
 		// Try to get arena from npc
 		try {
-			arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
+			arena = Arrays.stream(GameManager.getArenas()).filter(Objects::nonNull)
 					.filter(arena1 -> arena1.getPortal() != null)
 					.filter(arena1 -> arena1.getPortal().getNpc().getEntityID() == e.getNpcId())
 					.collect(Collectors.toList()).get(0);
@@ -42,7 +42,7 @@ public class ClickPortalListener implements Listener {
 
 		// Try to get arena from npc
 		try {
-			arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
+			arena = Arrays.stream(GameManager.getArenas()).filter(Objects::nonNull)
 					.filter(arena1 -> arena1.getPortal() != null)
 					.filter(arena1 -> arena1.getPortal().getNpc().getEntityID() == e.getNpcId())
 					.collect(Collectors.toList()).get(0);

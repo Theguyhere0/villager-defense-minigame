@@ -37,7 +37,7 @@ public class ArenaListener implements Listener {
         FileConfiguration language = plugin.getLanguageData();
 
         // Ignore if player is already in a game somehow
-        if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(player))) {
+        if (GameManager.checkPlayer(player)) {
             e.setCancelled(true);
             PlayerManager.notify(player, language.getString("joinError"));
             return;
@@ -345,8 +345,7 @@ public class ArenaListener implements Listener {
 
         // Attempt to get arena and player
         try {
-            arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
-                    a.hasPlayer(player)).collect(Collectors.toList()).get(0);
+            arena = GameManager.getArena(player);
             gamer = arena.getPlayer(player);
         } catch (Exception err) {
             e.setCancelled(true);

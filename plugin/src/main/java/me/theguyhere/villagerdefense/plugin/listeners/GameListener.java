@@ -1,24 +1,21 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
-import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.GUI.Inventories;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.plugin.events.ReloadBoardsEvent;
-import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.models.EnchantingBook;
-import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
-import me.theguyhere.villagerdefense.plugin.game.models.Mobs;
+import me.theguyhere.villagerdefense.plugin.game.models.*;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.tools.*;
+import me.theguyhere.villagerdefense.plugin.tools.DataManager;
+import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
+import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
@@ -40,7 +37,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 public class GameListener implements Listener {
 	private final Main plugin;
@@ -58,7 +54,7 @@ public class GameListener implements Listener {
 		if (!ent.hasMetadata("VD"))
 			return;
 
-		Arena arena = GameManager.arenas[ent.getMetadata("VD").get(0).asInt()];
+		Arena arena = GameManager.getArena(ent.getMetadata("VD").get(0).asInt());
 
 		// Check for right game
 		if (!ent.hasMetadata("game"))
@@ -177,8 +173,8 @@ public class GameListener implements Listener {
 	// Stop automatic game mode switching between worlds
 	@EventHandler
 	public void onGameModeSwitch(PlayerGameModeChangeEvent e) {
-		if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull).anyMatch(a -> a.hasPlayer(e.getPlayer())) &&
-				e.getNewGameMode() == GameMode.SURVIVAL) e.setCancelled(true);
+		if (GameManager.checkPlayer(e.getPlayer()) && e.getNewGameMode() == GameMode.SURVIVAL)
+			e.setCancelled(true);
 	}
 
 	// Handle creeper explosions
@@ -191,7 +187,7 @@ public class GameListener implements Listener {
 		if (!ent.hasMetadata("VD"))
 			return;
 
-		Arena arena = GameManager.arenas[ent.getMetadata("VD").get(0).asInt()];
+		Arena arena = GameManager.getArena(ent.getMetadata("VD").get(0).asInt());
 
 		// Check for right game
 		if (!ent.hasMetadata("game"))
@@ -259,8 +255,7 @@ public class GameListener implements Listener {
 		// Attempt to get VDplayer
 		if (player != null) {
 			try {
-				gamer = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
-						a.hasPlayer(player)).collect(Collectors.toList()).get(0).getPlayer(player);
+				gamer = GameManager.getArena(player).getPlayer(player);
 			} catch (Exception err) {
 				return;
 			}
@@ -347,14 +342,13 @@ public class GameListener implements Listener {
 	public void onHunger(FoodLevelChangeEvent e) {
 		Player player = (Player) e.getEntity();
 
-		// See if the player is in a game
-		if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+		// See if player is in a game and if game is already in progress
+		try {
+			if (GameManager.getArena(player).getCurrentWave() != 0)
+				return;
+		} catch (Exception err) {
 			return;
-
-		// See if game is already in progress
-		if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
-				a.hasPlayer(player)).collect(Collectors.toList()).get(0).getCurrentWave() != 0)
-			return;
+		}
 
 		e.setCancelled(true);
 	}
@@ -397,14 +391,9 @@ public class GameListener implements Listener {
 		Arena arena;
 		VDPlayer gamer;
 
-		// See if the player is in a game
-		if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
-			return;
-
 		// Attempt to get arena and player
 		try {
-			arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
-					a.hasPlayer(player)).collect(Collectors.toList()).get(0);
+			arena = GameManager.getArena(player);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
 			return;
@@ -458,7 +447,7 @@ public class GameListener implements Listener {
 
 		// Cancel damage to each other if they are in a game
 		if (ent instanceof Player && damager instanceof Player) {
-			if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull).anyMatch(a -> a.hasPlayer((Player) ent)))
+			if (GameManager.checkPlayer((Player) ent))
 				e.setCancelled(true);
 		}
 
@@ -477,13 +466,18 @@ public class GameListener implements Listener {
 
 		// Check for projectile damage
 		else if (damager instanceof Projectile) {
+			// Player on player
 			if (ent instanceof Player && ((Projectile) damager).getShooter() instanceof Player) {
-				if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull).anyMatch(a -> a.hasPlayer((Player) ent)))
+				if (GameManager.checkPlayer((Player) ent))
 					e.setCancelled(true);
 			}
+
+			// Player on friendly
 			if ((ent instanceof Villager || ent instanceof Wolf || ent instanceof IronGolem) &&
 					((Projectile) damager).getShooter() instanceof Player)
 				e.setCancelled(true);
+
+			// Monster on monster
 			else if ((ent instanceof Monster || ent instanceof Slime) &&
 					((Projectile) damager).getShooter() instanceof Monster)
 				e.setCancelled(true);
@@ -505,8 +499,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
-					a.hasPlayer(player)).collect(Collectors.toList()).get(0);
+			arena = GameManager.getArena(player);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
 			return;
@@ -586,8 +579,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
-					a.hasPlayer(player)).collect(Collectors.toList()).get(0);
+			arena = GameManager.getArena(player);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
 			return;
@@ -652,8 +644,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
-					a.hasPlayer(player)).collect(Collectors.toList()).get(0);
+			arena = GameManager.getArena(player);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
 			return;
@@ -737,9 +728,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull)
-					.filter(a -> a.getPlayers().stream().anyMatch(p ->
-							p.getPlayer().equals(player))).collect(Collectors.toList()).get(0);
+			arena = GameManager.getArena(player);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
 			return;
@@ -864,8 +853,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
-					a.hasPlayer(player)).collect(Collectors.toList()).get(0);
+			arena = GameManager.getArena(player);
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
 			return;
@@ -1128,7 +1116,7 @@ public class GameListener implements Listener {
 			return;
 
 		// Check if player is playing in an arena
-		if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull).anyMatch(a -> a.hasPlayer((Player) ((Wolf) ent).getOwner())))
+		if (GameManager.checkPlayer((Player) ((Wolf) ent).getOwner()))
 			return;
 
 		e.setCancelled(true);
@@ -1138,13 +1126,14 @@ public class GameListener implements Listener {
 	@EventHandler
 	public void onPlayerTeleport(PlayerTeleportEvent e) {
 		Player player = e.getPlayer();
+		Arena arena;
 
-		// Check if player is playing in an arena
-		if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+		// Attempt to get arena
+		try {
+			arena = GameManager.getArena(player);
+		} catch (Exception err) {
 			return;
-
-		Arena arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
-				a.hasPlayer(player)).collect(Collectors.toList()).get(0);
+		}
 
 		// Check if the arena has started
 		if (arena.getStatus() == ArenaStatus.WAITING)
@@ -1163,29 +1152,24 @@ public class GameListener implements Listener {
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent e) {
 		Player player = e.getPlayer();
-
-		// Check if player is playing in an arena
-		if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
-			return;
+		Arena arena;
+		VDPlayer gamer;
 
 		// Exempt admins for testing purposes
 		if (CommunicationManager.getDebugLevel() >= 3 && player.hasPermission("vd.admin"))
 			return;
 
-		Arena arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
-				a.hasPlayer(player)).collect(Collectors.toList()).get(0);
-		VDPlayer gamer;
+		// Attempt to get VDPlayer and arena
+		try {
+			arena = GameManager.getArena(player);
+			gamer = arena.getPlayer(player);
+		} catch (Exception err) {
+			return;
+		}
 
 		// Exempt if in waiting status and waiting room exists
 		if (arena.getStatus() == ArenaStatus.WAITING && arena.getWaitingRoom() != null)
 			return;
-
-		// Attempt to get VDPlayer
-		try {
-			gamer = arena.getPlayer(player);
-		} catch (PlayerNotFoundException err) {
-			return;
-		}
 
 		// Ignore players that have already left
 		if (gamer.getStatus() == PlayerStatus.LEFT)
@@ -1243,7 +1227,7 @@ public class GameListener implements Listener {
 		ItemStack item = e.getItemDrop().getItemStack();
 
 		// Check if player is in an arena
-		if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull).noneMatch(arena -> arena.hasPlayer(player)))
+		if (!GameManager.checkPlayer(player))
 			return;
 
 		// Check for standard game items item
@@ -1257,7 +1241,7 @@ public class GameListener implements Listener {
 		Player player = e.getPlayer();
 
 		// Check if player is playing in an arena
-		if (Arrays.stream(GameManager.arenas).filter(Objects::nonNull).noneMatch(a -> a.hasPlayer(player)))
+		if (!GameManager.checkPlayer(player))
 			return;
 
 		if (e.getItem().getType() == Material.POTION || e.getItem().getType() == Material.MILK_BUCKET) {
@@ -1277,16 +1261,10 @@ public class GameListener implements Listener {
 	public void onFalseConsume(PlayerInteractEvent e) {
 		Player player = e.getPlayer();
 		ItemStack main = player.getInventory().getItemInMainHand();
-		Arena arena;
 
-		// Attempt to get arena and player
-		try {
-			arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
-					a.hasPlayer(player)).collect(Collectors.toList()).get(0);
-			arena.getPlayer(player);
-		} catch (Exception err) {
+		// Check for player in arena
+		if (!GameManager.checkPlayer(player))
 			return;
-		}
 
 		// Filter off-hand interactions
 		if (e.getHand() != EquipmentSlot.OFF_HAND)
@@ -1308,11 +1286,9 @@ public class GameListener implements Listener {
 		Player player = (Player) e.getWhoClicked();
 		Arena arena;
 
-		// Attempt to get arena and player
+		// Attempt to get arena
 		try {
-			arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
-					a.hasPlayer(player)).collect(Collectors.toList()).get(0);
-			arena.getPlayer(player);
+			arena = GameManager.getArena(player);
 		} catch (Exception err) {
 			return;
 		}
@@ -1329,16 +1305,10 @@ public class GameListener implements Listener {
 		ItemStack clickedOn = e.getCurrentItem();
 		ItemStack clickedWith = e.getCursor();
 		EnchantingBook enchantingBook = EnchantingBook.check(clickedWith);
-		Arena arena;
 
-		// Attempt to get arena and player
-		try {
-			arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
-					a.hasPlayer(player)).collect(Collectors.toList()).get(0);
-			arena.getPlayer(player);
-		} catch (Exception err) {
+		// Check for player in arena
+		if (!GameManager.checkPlayer(player))
 			return;
-		}
 
 		// Ignore if not clicking on own inventory
 		if (e.getClickedInventory() == null || !player.equals(e.getClickedInventory().getHolder()))
@@ -1379,11 +1349,9 @@ public class GameListener implements Listener {
 		Player player = e.getPlayer();
 		Arena arena;
 
-		// Attempt to get arena and player
+		// Attempt to get arena
 		try {
-			arena = Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a ->
-					a.hasPlayer(player)).collect(Collectors.toList()).get(0);
-			arena.getPlayer(player);
+			arena = GameManager.getArena(player);
 		} catch (Exception err) {
 			return;
 		}

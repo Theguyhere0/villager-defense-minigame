@@ -52,7 +52,7 @@ public class Tasks {
 	public final Runnable waiting = new Runnable() {
 		@Override
 		public void run() {
-			GameManager.arenas[arena].getPlayers().forEach(player ->
+			GameManager.getArena(arena).getPlayers().forEach(player ->
 				PlayerManager.notify(player.getPlayer(), plugin.getLanguageData().getString("waiting")));
 			CommunicationManager.debugInfo("Arena " + arena + " is currently waiting for players to start.", 2);
 		}
@@ -63,7 +63,7 @@ public class Tasks {
 		@Override
 		public void run() {
 			try {
-				GameManager.arenas[arena].getPlayers().forEach(player ->
+				GameManager.getArena(arena).getPlayers().forEach(player ->
 						PlayerManager.notify(player.getPlayer(), String.format(
 								Objects.requireNonNull(plugin.getLanguageData().getString("minutesLeft")), 2)));
 			} catch (Exception e) {
@@ -79,7 +79,7 @@ public class Tasks {
 		@Override
 		public void run() {
 			try {
-				GameManager.arenas[arena].getPlayers().forEach(player ->
+				GameManager.getArena(arena).getPlayers().forEach(player ->
 						PlayerManager.notify(player.getPlayer(), String.format(
 								Objects.requireNonNull(plugin.getLanguageData().getString("minutesLeft")), 1)));
 			} catch (Exception e) {
@@ -95,7 +95,7 @@ public class Tasks {
 		@Override
 		public void run() {
 			try {
-				GameManager.arenas[arena].getPlayers().forEach(player ->
+				GameManager.getArena(arena).getPlayers().forEach(player ->
 						PlayerManager.notify(player.getPlayer(), String.format(
 								Objects.requireNonNull(plugin.getLanguageData().getString("secondsLeft")), 30)));
 			} catch (Exception e) {
@@ -111,7 +111,7 @@ public class Tasks {
 		@Override
 		public void run() {
 			try {
-				GameManager.arenas[arena].getPlayers().forEach(player ->
+				GameManager.getArena(arena).getPlayers().forEach(player ->
 						PlayerManager.notify(player.getPlayer(), String.format(
 								Objects.requireNonNull(plugin.getLanguageData().getString("secondsLeft")), 10)));
 			} catch (Exception e) {
@@ -127,7 +127,7 @@ public class Tasks {
 		@Override
 		public void run() {
 			try {
-				GameManager.arenas[arena].getPlayers().forEach(player -> {
+				GameManager.getArena(arena).getPlayers().forEach(player -> {
 					PlayerManager.notify(player.getPlayer(), plugin.getLanguageData().getString("maxCapacity"));
 					PlayerManager.notify(player.getPlayer(), String.format(
 							Objects.requireNonNull(plugin.getLanguageData().getString("secondsLeft")), 10));
@@ -146,7 +146,7 @@ public class Tasks {
 		@Override
 		public void run() {
 			try {
-				GameManager.arenas[arena].getPlayers().forEach(player ->
+				GameManager.getArena(arena).getPlayers().forEach(player ->
 						PlayerManager.notify(player.getPlayer(), String.format(
 								Objects.requireNonNull(plugin.getLanguageData().getString("secondsLeft")), 5)));
 			} catch (Exception e) {
@@ -163,7 +163,7 @@ public class Tasks {
 
 		@Override
 		public void run() {
-			Arena arenaInstance = GameManager.arenas[arena];
+			Arena arenaInstance = GameManager.getArena(arena);
 
 			// Set arena to active, reset villager and enemy count, set new game ID, clear arena
 			arenaInstance.setStatus(ArenaStatus.ACTIVE);
@@ -172,14 +172,15 @@ public class Tasks {
 			arenaInstance.newGameID();
 			WorldManager.clear(arenaInstance.getCorner1(), arenaInstance.getCorner2());
 
-			// Teleport players to arena if waiting room exists
+			// Teleport players to arena if waiting room exists, otherwise clear inventory
 			if (arenaInstance.getWaitingRoom() != null) {
-				for (VDPlayer vdPlayer : arenaInstance.getActives()) {
+				for (VDPlayer vdPlayer : arenaInstance.getActives())
 					PlayerManager.teleAdventure(vdPlayer.getPlayer(), arenaInstance.getPlayerSpawn().getLocation());
-				}
-				for (VDPlayer player : arenaInstance.getSpectators()) {
+				for (VDPlayer player : arenaInstance.getSpectators())
 					PlayerManager.teleSpectator(player.getPlayer(), arenaInstance.getPlayerSpawn().getLocation());
-				}
+			} else {
+				for (VDPlayer vdPlayer : arenaInstance.getActives())
+					vdPlayer.getPlayer().getInventory().clear();
 			}
 
 			// Stop waiting sound
@@ -254,7 +255,7 @@ public class Tasks {
 
 		@Override
 		public void run() {
-			Arena arenaInstance = GameManager.arenas[arena];
+			Arena arenaInstance = GameManager.getArena(arena);
 			FileConfiguration language = plugin.getLanguageData();
 
 			// Increment wave
@@ -394,7 +395,7 @@ public class Tasks {
 	public final Runnable calibrate = new Runnable() {
 		@Override
 		public void run() {
-			GameManager.arenas[arena].calibrate();
+			GameManager.getArena(arena).calibrate();
 			CommunicationManager.debugInfo("Arena " + arena + " performed a calibration check.", 2);
 		}
 	};
@@ -403,7 +404,7 @@ public class Tasks {
 	public final Runnable reset = new Runnable() {
 		@Override
 		public void run() {
-			Arena arenaInstance = GameManager.arenas[arena];
+			Arena arenaInstance = GameManager.getArena(arena);
 
 			// Update data
 			arenaInstance.setStatus(ArenaStatus.WAITING);
@@ -439,7 +440,7 @@ public class Tasks {
 	public final Runnable updateBoards = new Runnable() {
 		@Override
 		public void run() {
-			GameManager.arenas[arena].getActives().forEach(GameManager::createBoard);
+			GameManager.getArena(arena).getActives().forEach(GameManager::createBoard);
 		}
 	};
 
@@ -453,7 +454,7 @@ public class Tasks {
 
 		@Override
 		public void run() {
-			arenaInstance = GameManager.arenas[arena];
+			arenaInstance = GameManager.getArena(arena);
 
 			double multiplier = 1 + .2 * ((int) arenaInstance.getCurrentDifficulty() - 1);
 			if (!arenaInstance.hasDynamicLimit())

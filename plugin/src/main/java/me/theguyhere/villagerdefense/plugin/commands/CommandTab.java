@@ -37,7 +37,7 @@ public class CommandTab implements TabCompleter {
             StringBuilder nameFrag = new StringBuilder(args[1]);
             for (int i = 0; i < args.length - 2; i++)
                 nameFrag.append(" ").append(args[i + 2]);
-            Arrays.stream(GameManager.arenas).filter(Objects::nonNull).map(Arena::getName).forEach(name -> {
+            Arrays.stream(GameManager.getArenas()).filter(Objects::nonNull).map(Arena::getName).forEach(name -> {
                 if (name.toLowerCase().startsWith(nameFrag.toString()))
                     result.add(name);
             });

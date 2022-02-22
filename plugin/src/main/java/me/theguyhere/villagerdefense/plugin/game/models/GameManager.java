@@ -21,12 +21,9 @@ import java.util.stream.Collectors;
 
 public class GameManager {
 	private final Main plugin;
-
-	// Tracks arenas, info boards, and leaderboards for the game
-	public static Arena[] arenas = new Arena[45];
-	public static InfoBoard[] infoBoards = new InfoBoard[8];
-	public static Map<String, Leaderboard> leaderboards = new HashMap<>();
-
+	private static final Arena[] arenas = new Arena[45];
+	private static final InfoBoard[] infoBoards = new InfoBoard[8];
+	private static final Map<String, Leaderboard> leaderboards = new HashMap<>();
 	private static Location lobby;
 
 	public GameManager(Main plugin) {
@@ -70,6 +67,39 @@ public class GameManager {
 		setLobby(DataManager.getConfigLocation(plugin, "lobby"));
 
 		plugin.setLoaded();
+	}
+
+	public static Arena getArena(int arenaNum) {
+		return arenas[arenaNum];
+	}
+
+	public static Arena getArena(String arenaName) {
+		return Arrays.stream(arenas).filter(Objects::nonNull)
+				.filter(arena1 -> arena1.getName().equals(arenaName)).collect(Collectors.toList()).get(0);
+	}
+
+	public static Arena getArena(Player player) {
+		return Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+				.collect(Collectors.toList()).get(0);
+	}
+
+	public static void setArena(int arenaNum, Arena arena) {
+		arenas[arenaNum] = arena;
+	}
+
+	public static void removeArena(int arenaNum) {
+		if (arenas[arenaNum] != null) {
+			arenas[arenaNum].remove();
+			arenas[arenaNum] = null;
+		}
+	}
+
+	public static boolean checkPlayer(Player player) {
+		return Arrays.stream(arenas).filter(Objects::nonNull).anyMatch(arena -> arena.hasPlayer(player));
+	}
+
+	public static Arena[] getArenas() {
+		return arenas;
 	}
 
 	/**
@@ -176,7 +206,7 @@ public class GameManager {
 	public void refreshInfoBoard(int num) {
 		// Delete old board if needed
 		if (infoBoards[num] != null)
-			infoBoards[num].remove();
+			removeInfoBoard(num);
 
 		try {
 			// Create a new board and display it
@@ -231,7 +261,7 @@ public class GameManager {
 	public void refreshLeaderboard(String type) {
 		// Delete old board if needed
 		if (leaderboards.get(type) != null)
-			leaderboards.remove(type);
+			removeLeaderboard(type);
 
 		try {
 			// Create a new board and display it
