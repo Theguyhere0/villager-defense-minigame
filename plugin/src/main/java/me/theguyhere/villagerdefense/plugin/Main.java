@@ -1,22 +1,25 @@
 package me.theguyhere.villagerdefense.plugin;
 
+import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Log;
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
 import me.theguyhere.villagerdefense.plugin.commands.CommandTab;
 import me.theguyhere.villagerdefense.plugin.commands.Commands;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.listeners.*;
-import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Team;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Main extends JavaPlugin {
@@ -30,10 +33,11 @@ public class Main extends JavaPlugin {
 	private final NMSManager nmsManager = NMSVersion.getCurrent().getNmsManager();
 	private GameManager gameManager;
 	private boolean loaded = false;
+	private final List<String> unloadedWorlds = new ArrayList<>();
 
 	// Global state variables
-	private boolean outdated = false;
-	public static final boolean releaseMode = true;
+	private boolean outdated = false; // DO NOT CHANGE
+	public static final boolean releaseMode = false;
 	public int configVersion = 6;
 	public int arenaDataVersion = 4;
 	public int playerDataVersion = 1;
@@ -144,8 +148,45 @@ public class Main extends JavaPlugin {
 			villagers.setDisplayName(ChatColor.GREEN + "Villagers");
 		}
 
-		// Set ArenaManager
-		gameManager = new GameManager(this);
+		// Gather unloaded world list
+		ConfigurationSection section;
+
+		// Relevant worlds from arenas
+		section = getArenaData().getConfigurationSection("");
+		if (section != null)
+			section.getKeys(false)
+					.forEach(path -> {
+						if (path.charAt(0) == 'a' && path.length() < 4) {
+							// Arena board world
+							checkAddUnloadedWorld(getArenaData().getString(path + ".arenaBoard.world"));
+
+							// Arena world
+							checkAddUnloadedWorld(getArenaData().getString(path + ".spawn.world"));
+
+							// Portal world
+							checkAddUnloadedWorld(getArenaData().getString(path + ".portal.world"));
+						}
+					});
+
+		// Relevant worlds from info boards
+		section = getArenaData().getConfigurationSection("infoBoard");
+		if (section != null)
+			section.getKeys(false)
+					.forEach(path ->
+							checkAddUnloadedWorld(getArenaData().getString("infoBoard." + path + ".world")));
+
+		// Relevant worlds from leaderboards
+		section = getArenaData().getConfigurationSection("leaderboard");
+		if (section != null)
+			section.getKeys(false)
+					.forEach(path ->
+							checkAddUnloadedWorld(getArenaData().getString("leaderboard." + path + ".world")));
+
+		// Lobby world
+		checkAddUnloadedWorld(getArenaData().getString("lobby.world"));
+
+		// Set GameManager
+		resetGameManager();
 
 		// Remind if this build is release
 		if (!releaseMode) {
@@ -179,6 +220,16 @@ public class Main extends JavaPlugin {
 
 	public GameManager getGameManager() {
 		return gameManager;
+	}
+
+	public void resetGameManager() {
+		gameManager = new GameManager(this);
+
+		// Check for proper initialization with worlds
+		if (unloadedWorlds.size() > 0) {
+			Log.warning("Plugin not properly initialized! The following worlds are not loaded yet:");
+			Log.warning(unloadedWorlds.toString());
+		} else Log.info("All worlds fully loaded. The plugin is properly initialized.");
 	}
 
 	// Returns arena data
@@ -232,5 +283,29 @@ public class Main extends JavaPlugin {
 		if (stackTrace || releaseMode)
 			Thread.dumpStack();
 
+	}
+
+	public List<String> getUnloadedWorlds() {
+		return unloadedWorlds;
+	}
+
+	public void loadWorld(String worldName) {
+		unloadedWorlds.remove(worldName);
+	}
+
+	private void checkAddUnloadedWorld(String worldName) {
+		System.out.println(worldName);
+		if (worldName == null)
+			return;
+		System.out.println(worldName);
+
+		if (unloadedWorlds.contains(worldName))
+			return;
+		System.out.println(worldName);
+
+		if (Bukkit.getWorld(worldName) != null)
+			return;
+
+		unloadedWorlds.add(worldName);
 	}
 }

@@ -379,7 +379,7 @@ public class GameManager {
 	 * Refresh every info board.
 	 */
 	public void refreshInfoBoards() {
-		for (int i = 0; i < infoBoards.length; i++) {
+		for (int i = 0; i < Arrays.stream(infoBoards).filter(Objects::nonNull).count(); i++) {
 			refreshInfoBoard(i);
 		}
 	}

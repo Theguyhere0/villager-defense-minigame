@@ -521,11 +521,15 @@ public class Arena {
                 portal.remove();
 
             // Create a new portal and display it
-            portal = new Portal(Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin, path + ".portal")),
+            portal = new Portal(Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin,
+                    path + ".portal")),
                     this);
+            Main.testInfo(path, false);
+            Main.testInfo(portal.getLocation().toString(), false);
             portal.displayForOnline();
         } catch (Exception e) {
-            CommunicationManager.debugError("Invalid location for arena board " + arena, 1);
+            CommunicationManager.debugError("Invalid location for portal " + arena, 1,
+                    !Main.releaseMode, e);
             CommunicationManager.debugInfo("Portal location data may be corrupt. If data cannot be manually corrected in " +
                     "arenaData.yml, please delete the portal location data for arena " + arena + ".", 1);
         }
@@ -591,7 +595,8 @@ public class Arena {
             );
             arenaBoard.displayForOnline();
         } catch (Exception e) {
-            CommunicationManager.debugError("Invalid location for arena board " + arena, 1);
+            CommunicationManager.debugError("Invalid location for arena board " + arena, 1,
+                    !Main.releaseMode, e);
             CommunicationManager.debugInfo("Arena board location data may be corrupt. If data cannot be manually corrected in " +
                     "arenaData.yml, please delete the arena board location data for arena " + arena + ".", 1);
         }
