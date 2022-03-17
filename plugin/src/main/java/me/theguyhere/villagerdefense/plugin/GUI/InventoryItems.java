@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.GUI;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -17,8 +18,9 @@ public class InventoryItems {
     }
 
     //	"Exit" button
-    public static ItemStack exit() {
-        return ItemManager.createItem(Material.BARRIER, CommunicationManager.format("&c&lEXIT"));
+    public static ItemStack exit(Main plugin) {
+        return ItemManager.createItem(Material.BARRIER, CommunicationManager.format("&c&l" +
+                plugin.getLanguageString("messages.exit")));
     }
 
     //	"Remove x" button

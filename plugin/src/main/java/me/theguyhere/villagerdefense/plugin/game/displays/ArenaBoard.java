@@ -1,8 +1,9 @@
 package me.theguyhere.villagerdefense.plugin.game.displays;
 
+import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.common.CommunicationManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -19,17 +20,19 @@ public class ArenaBoard {
 	/** The location of the ArenaBoard.*/
 	private final Location location;
 
-	public ArenaBoard(@NotNull Location location, Arena arena) throws InvalidLocationException {
+	public ArenaBoard(@NotNull Location location, Arena arena, Main plugin) throws InvalidLocationException {
 		// Check for null world
 		if (location.getWorld() == null)
 			throw new InvalidLocationException("Location world cannot be null!");
 
 		// Gather relevant stats
 		List<String> info = new ArrayList<>();
-		info.add(CommunicationManager.format("&6&l" + arena.getName() + " Records"));
+		info.add(CommunicationManager.format( "&6&l" + arena.getName() + " " +
+				plugin.getLanguageString("messages.records")));
 		if (!arena.getSortedDescendingRecords().isEmpty())
 			arena.getSortedDescendingRecords().forEach(record -> {
-				StringBuilder line = new StringBuilder("Wave &b" + record.getWave() + " &f- ");
+				StringBuilder line = new StringBuilder(plugin.getLanguageString("messages.wave") + " &b" +
+						record.getWave() + " &f- ");
 				for (int i = 0; i < record.getPlayers().size() / 4 + 1; i++) {
 					if (i * 4 + 4 < record.getPlayers().size()) {
 						for (int j = i * 4; j < i * 4 + 4; j++)

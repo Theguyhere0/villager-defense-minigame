@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -34,10 +35,16 @@ public class Challenge {
     /** The crystal bonus for accepting this challenge, in percentage points.*/
     private final int bonus;
 
+    private static Main plugin;
+
     public Challenge(String name, Material buttonMaterial, int bonus) {
         this.name = name;
         this.buttonMaterial = buttonMaterial;
         this.bonus = bonus;
+    }
+
+    public static void setPlugin(Main plugin) {
+        Challenge.plugin = plugin;
     }
 
     public String getName() {
@@ -115,86 +122,119 @@ public class Challenge {
     }
 
     public static Challenge none() {
-        return new Challenge("None", Material.LIGHT_GRAY_CONCRETE, 1);
+        return new Challenge(plugin.getLanguageString("names.none"), Material.LIGHT_GRAY_CONCRETE,
+                1);
     }
 
     public static Challenge amputee() {
         int bonus = 10;
 
-        Challenge challenge = new Challenge("Amputee", Material.BAMBOO, bonus);
-        challenge.addMasterDescription(CommunicationManager.format("&7Where's my arm?"));
-        challenge.addMasterDescription(CommunicationManager.format("&6No dual-wielding"));
-        challenge.addMasterDescription(CommunicationManager.format("&a+" + bonus + "% crystal bonus"));
+        Challenge challenge = new Challenge(plugin.getLanguageString("challenges.amputee.name"), Material.BAMBOO,
+                bonus);
+        challenge.addMasterDescription(CommunicationManager.format("&7" +
+                plugin.getLanguageString("challenges.amputee.description1")));
+        challenge.addMasterDescription(CommunicationManager.format("&6" +
+                plugin.getLanguageString("challenges.amputee.description2")));
+        challenge.addMasterDescription(CommunicationManager.format("&a" +
+                plugin.getLanguageStringFormatted("messages.crystalBonus", bonus + "%")));
 
         return challenge;
     }
     public static Challenge clumsy() {
         int bonus = 15;
 
-        Challenge challenge = new Challenge("Clumsy", Material.ICE, bonus);
-        challenge.addMasterDescription(CommunicationManager.format("&7I'm losing my marbles"));
-        challenge.addMasterDescription(CommunicationManager.format("&6Held items have a 2% chance to drop upon use"));
-        challenge.addMasterDescription(CommunicationManager.format("&a+" + bonus + "% crystal bonus"));
+        Challenge challenge = new Challenge(plugin.getLanguageString("challenges.clumsy.name"), Material.ICE,
+                bonus);
+        challenge.addMasterDescription(CommunicationManager.format("&7" +
+                plugin.getLanguageString("challenges.clumsy.description1")));
+        challenge.addMasterDescription(CommunicationManager.format("&6" +
+                plugin.getLanguageStringFormatted("challenges.clumsy.description2", "2%")));
+        challenge.addMasterDescription(CommunicationManager.format("&a" +
+                plugin.getLanguageStringFormatted("messages.crystalBonus", bonus + "%")));
 
         return challenge;
     }
     public static Challenge featherweight() {
         int bonus = 20;
 
-        Challenge challenge = new Challenge("Featherweight", Material.FEATHER, bonus);
-        challenge.addMasterDescription(CommunicationManager.format("&7WHEEEEEE"));
-        challenge.addMasterDescription(CommunicationManager.format("&6Take x5 knockback"));
-        challenge.addMasterDescription(CommunicationManager.format("&a+" + bonus + "% crystal bonus"));
+        Challenge challenge = new Challenge(plugin.getLanguageString("challenges.featherweight.name"),
+                Material.FEATHER, bonus);
+        challenge.addMasterDescription(CommunicationManager.format("&7" +
+                plugin.getLanguageString("challenges.featherweight.description1")));
+        challenge.addMasterDescription(CommunicationManager.format("&6" +
+                plugin.getLanguageStringFormatted("challenges.featherweight.description2", "5")));
+        challenge.addMasterDescription(CommunicationManager.format("&a" +
+                plugin.getLanguageStringFormatted("messages.crystalBonus", bonus + "%")));
 
         return challenge;
     }
     public static Challenge pacifist() {
         int bonus = 25;
 
-        Challenge challenge = new Challenge("Pacifist", Material.TURTLE_HELMET, bonus);
-        challenge.addMasterDescription(CommunicationManager.format("&7Don't hurt me!"));
-        challenge.addMasterDescription(CommunicationManager.format("&6Only hurt monsters after they hurt you"));
-        challenge.addMasterDescription(CommunicationManager.format("&a+" + bonus + "% crystal bonus"));
+        Challenge challenge = new Challenge(plugin.getLanguageString("challenges.pacifist.name"),
+                Material.TURTLE_HELMET, bonus);
+        challenge.addMasterDescription(CommunicationManager.format("&7" +
+                plugin.getLanguageString("challenges.pacifist.description1")));
+        challenge.addMasterDescription(CommunicationManager.format("&6" +
+                plugin.getLanguageString("challenges.pacifist.description2")));
+        challenge.addMasterDescription(CommunicationManager.format("&a" +
+                plugin.getLanguageStringFormatted("messages.crystalBonus", bonus + "%")));
 
         return challenge;
     }
     public static Challenge dwarf() {
         int bonus = 40;
 
-        Challenge challenge = new Challenge("Dwarf", Material.DEAD_BUSH, bonus);
-        challenge.addMasterDescription(CommunicationManager.format("&7Short people unite!"));
-        challenge.addMasterDescription(CommunicationManager.format("&6Max health is cut in half"));
-        challenge.addMasterDescription(CommunicationManager.format("&a+" + bonus + "% crystal bonus"));
+        Challenge challenge = new Challenge(plugin.getLanguageString("challenges.dwarf.name"),
+                Material.DEAD_BUSH, bonus);
+        challenge.addMasterDescription(CommunicationManager.format("&7" +
+                plugin.getLanguageString("challenges.dwarf.description1")));
+        challenge.addMasterDescription(CommunicationManager.format("&6" +
+                plugin.getLanguageString("challenges.dwarf.description2")));
+        challenge.addMasterDescription(CommunicationManager.format("&a" +
+                plugin.getLanguageStringFormatted("messages.crystalBonus", bonus + "%")));
 
         return challenge;
     }
     public static Challenge uhc() {
         int bonus = 50;
 
-        Challenge challenge = new Challenge("UHC", Material.GOLDEN_APPLE, bonus);
-        challenge.addMasterDescription(CommunicationManager.format("&7A true classic"));
-        challenge.addMasterDescription(CommunicationManager.format("&6No natural healing"));
-        challenge.addMasterDescription(CommunicationManager.format("&a+" + bonus + "% crystal bonus"));
+        Challenge challenge = new Challenge(plugin.getLanguageString("challenges.uhc.name"), Material.GOLDEN_APPLE,
+                bonus);
+        challenge.addMasterDescription(CommunicationManager.format("&7" +
+                plugin.getLanguageString("challenges.uhc.description1")));
+        challenge.addMasterDescription(CommunicationManager.format("&6" +
+                plugin.getLanguageString("challenges.uhc.description2")));
+        challenge.addMasterDescription(CommunicationManager.format("&a" +
+                plugin.getLanguageStringFormatted("messages.crystalBonus", bonus + "%")));
 
         return challenge;
     }
     public static Challenge naked() {
         int bonus = 75;
 
-        Challenge challenge = new Challenge("Naked", Material.ARMOR_STAND, bonus);
-        challenge.addMasterDescription(CommunicationManager.format("&7All natural"));
-        challenge.addMasterDescription(CommunicationManager.format("&6No armor"));
-        challenge.addMasterDescription(CommunicationManager.format("&a+" + bonus + "% crystal bonus"));
+        Challenge challenge = new Challenge(plugin.getLanguageString("challenges.naked.name"),
+                Material.ARMOR_STAND, bonus);
+        challenge.addMasterDescription(CommunicationManager.format("&7" +
+                plugin.getLanguageString("challenges.naked.description1")));
+        challenge.addMasterDescription(CommunicationManager.format("&6" +
+                plugin.getLanguageString("challenges.naked.description2")));
+        challenge.addMasterDescription(CommunicationManager.format("&a" +
+                plugin.getLanguageStringFormatted("messages.crystalBonus", bonus + "%")));
 
         return challenge;
     }
     public static Challenge blind() {
         int bonus = 120;
 
-        Challenge challenge = new Challenge("Blind", Material.INK_SAC, bonus);
-        challenge.addMasterDescription(CommunicationManager.format("&7I hope you have good headphones"));
-        challenge.addMasterDescription(CommunicationManager.format("&6Permanent blindness effect"));
-        challenge.addMasterDescription(CommunicationManager.format("&a+" + bonus + "% crystal bonus"));
+        Challenge challenge = new Challenge(plugin.getLanguageString("challenges.blind.name"), Material.INK_SAC,
+                bonus);
+        challenge.addMasterDescription(CommunicationManager.format("&7" +
+                plugin.getLanguageString("challenges.blind.description1")));
+        challenge.addMasterDescription(CommunicationManager.format("&6" +
+                plugin.getLanguageString("challenges.blind.description2")));
+        challenge.addMasterDescription(CommunicationManager.format("&a" +
+                plugin.getLanguageStringFormatted("messages.crystalBonus", bonus + "%")));
 
         return challenge;
     }

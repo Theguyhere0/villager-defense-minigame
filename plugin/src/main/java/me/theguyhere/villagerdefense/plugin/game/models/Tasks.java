@@ -1,5 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models;
 
+import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.GUI.Inventories;
 import me.theguyhere.villagerdefense.plugin.GUI.InventoryMeta;
 import me.theguyhere.villagerdefense.plugin.Main;
@@ -12,15 +14,13 @@ import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
-import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.tools.WorldManager;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.boss.BarColor;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
@@ -53,8 +53,10 @@ public class Tasks {
 		@Override
 		public void run() {
 			GameManager.getArena(arena).getPlayers().forEach(player ->
-				PlayerManager.notify(player.getPlayer(), plugin.getLanguageData().getString("waiting")));
-			CommunicationManager.debugInfo("Arena " + arena + " is currently waiting for players to start.", 2);
+				PlayerManager.notifyAlert(player.getPlayer(),
+						plugin.getLanguageString("messages.waitingForPlayers")));
+			CommunicationManager.debugInfo("Arena " + arena + " is currently waiting for players to start.",
+					2);
 		}
 	};
 
@@ -62,14 +64,9 @@ public class Tasks {
 	public final Runnable min2 = new Runnable() {
 		@Override
 		public void run() {
-			try {
-				GameManager.getArena(arena).getPlayers().forEach(player ->
-						PlayerManager.notify(player.getPlayer(), String.format(
-								Objects.requireNonNull(plugin.getLanguageData().getString("minutesLeft")), 2)));
-			} catch (Exception e) {
-				CommunicationManager.debugError("The key 'minutesLeft' is missing or corrupt in the active language file",
-						1);
-			}
+			GameManager.getArena(arena).getPlayers().forEach(player ->
+					PlayerManager.notifyAlert(player.getPlayer(),
+							plugin.getLanguageString("messages.minutesLeft"), ChatColor.AQUA, "2"));
 			CommunicationManager.debugInfo("Arena " + arena + " is starting in 2 minutes.", 2);
 		}
 	};
@@ -78,14 +75,9 @@ public class Tasks {
 	public final Runnable min1 = new Runnable() {
 		@Override
 		public void run() {
-			try {
-				GameManager.getArena(arena).getPlayers().forEach(player ->
-						PlayerManager.notify(player.getPlayer(), String.format(
-								Objects.requireNonNull(plugin.getLanguageData().getString("minutesLeft")), 1)));
-			} catch (Exception e) {
-				CommunicationManager.debugError("The key 'minutesLeft' is missing or corrupt in the active language file",
-						1);
-			}
+			GameManager.getArena(arena).getPlayers().forEach(player ->
+					PlayerManager.notifyAlert(player.getPlayer(),
+							plugin.getLanguageString("messages.minutesLeft"), ChatColor.AQUA, "1"));
 			CommunicationManager.debugInfo("Arena " + arena + " is starting in 1 minute.", 2);
 		}
 	};
@@ -94,14 +86,9 @@ public class Tasks {
 	public final Runnable sec30 = new Runnable() {
 		@Override
 		public void run() {
-			try {
-				GameManager.getArena(arena).getPlayers().forEach(player ->
-						PlayerManager.notify(player.getPlayer(), String.format(
-								Objects.requireNonNull(plugin.getLanguageData().getString("secondsLeft")), 30)));
-			} catch (Exception e) {
-				CommunicationManager.debugError("The key 'secondsLeft' is missing or corrupt in the active language file",
-						1);
-			}
+			GameManager.getArena(arena).getPlayers().forEach(player ->
+					PlayerManager.notifyAlert(player.getPlayer(),
+							plugin.getLanguageString("messages.secondsLeft"), ChatColor.AQUA, "30"));
 			CommunicationManager.debugInfo("Arena " + arena + " is starting in 30 seconds.", 2);
 		}
 	};
@@ -110,14 +97,9 @@ public class Tasks {
 	public final Runnable sec10 = new Runnable() {
 		@Override
 		public void run() {
-			try {
-				GameManager.getArena(arena).getPlayers().forEach(player ->
-						PlayerManager.notify(player.getPlayer(), String.format(
-								Objects.requireNonNull(plugin.getLanguageData().getString("secondsLeft")), 10)));
-			} catch (Exception e) {
-				CommunicationManager.debugError("The key 'secondsLeft' is missing or corrupt in the active language file",
-						1);
-			}
+			GameManager.getArena(arena).getPlayers().forEach(player ->
+					PlayerManager.notifyAlert(player.getPlayer(),
+							plugin.getLanguageString("messages.secondsLeft"), ChatColor.AQUA, "10"));
 			CommunicationManager.debugInfo("Arena " + arena + " is starting in 10 seconds.", 2);
 		}
 	};
@@ -126,17 +108,14 @@ public class Tasks {
 	public final Runnable full10 = new Runnable() {
 		@Override
 		public void run() {
-			try {
-				GameManager.getArena(arena).getPlayers().forEach(player -> {
-					PlayerManager.notify(player.getPlayer(), plugin.getLanguageData().getString("maxCapacity"));
-					PlayerManager.notify(player.getPlayer(), String.format(
-							Objects.requireNonNull(plugin.getLanguageData().getString("secondsLeft")), 10));
-				});
-			} catch (Exception e) {
-				CommunicationManager.debugError("The key 'secondsLeft' is missing or corrupt in the active language file",
-						1);
-			}
-			CommunicationManager.debugInfo("Arena " + arena + " is full and is starting in 10 seconds.", 2);
+			GameManager.getArena(arena).getPlayers().forEach(player -> {
+				PlayerManager.notifyAlert(player.getPlayer(),
+						plugin.getLanguageString("messages.maxCapacity"));
+				PlayerManager.notifyAlert(player.getPlayer(),
+						plugin.getLanguageString("messages.secondsLeft"), ChatColor.AQUA, "10");
+			});
+			CommunicationManager.debugInfo("Arena " + arena + " is full and is starting in 10 seconds.",
+					2);
 		}
 
 	};
@@ -145,14 +124,9 @@ public class Tasks {
 	public final Runnable sec5 = new Runnable() {
 		@Override
 		public void run() {
-			try {
-				GameManager.getArena(arena).getPlayers().forEach(player ->
-						PlayerManager.notify(player.getPlayer(), String.format(
-								Objects.requireNonNull(plugin.getLanguageData().getString("secondsLeft")), 5)));
-			} catch (Exception e) {
-				CommunicationManager.debugError("The key 'secondsLeft' is missing or corrupt in the active language file",
-						1);
-			}
+			GameManager.getArena(arena).getPlayers().forEach(player ->
+					PlayerManager.notifyAlert(player.getPlayer(),
+							plugin.getLanguageString("messages.secondsLeft"), ChatColor.AQUA, "5"));
 			CommunicationManager.debugInfo("Arena " + arena + " is starting in 5 seconds.", 2);
 
 		}
@@ -239,7 +213,8 @@ public class Tasks {
 
 			// Initiate community chest
 			arenaInstance.setCommunityChest(Bukkit.createInventory(new InventoryMeta(arena), 54,
-					CommunicationManager.format("&k") + CommunicationManager.format("&d&lCommunity Chest")));
+					CommunicationManager.format("&k") + CommunicationManager.format("&d&l" +
+							plugin.getLanguageString("names.communityChest"))));
 
 			// Trigger WaveEndEvent
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
@@ -256,7 +231,6 @@ public class Tasks {
 		@Override
 		public void run() {
 			Arena arenaInstance = GameManager.getArena(arena);
-			FileConfiguration language = plugin.getLanguageData();
 
 			// Increment wave
 			arenaInstance.incrementCurrentWave();
@@ -316,15 +290,11 @@ public class Tasks {
 
 			arenaInstance.getActives().forEach(p -> {
 				// Notify of upcoming wave
-				try {
-					p.getPlayer().sendTitle(CommunicationManager.format(String.format(
-							Objects.requireNonNull(plugin.getLanguageData().getString("wave")), currentWave)),
-							CommunicationManager.format(plugin.getLanguageData().getString("starting")),
-							Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
-				} catch (Exception e) {
-					CommunicationManager.debugError("The key 'starting' is either missing or corrupt in the active language file",
-							1);
-				}
+				p.getPlayer().sendTitle(CommunicationManager.format("&6" +
+						plugin.getLanguageStringFormatted("messages.waveNum", Integer.toString(currentWave))),
+						CommunicationManager.format("&7" +
+								plugin.getLanguageStringFormatted("messages.starting", "&b15&7")),
+						Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
 
 				// Give players gem rewards
 				int multiplier;
@@ -344,39 +314,34 @@ public class Tasks {
 				int reward = (currentWave - 1) * multiplier;
 				p.addGems(reward);
 				if (currentWave > 1)
-					try {
-						PlayerManager.notify(p.getPlayer(), String.format(
-								Objects.requireNonNull(language.getString("gems")), reward));
-					} catch (Exception e) {
-						CommunicationManager.debugError("The key 'gems' is either missing or corrupt in the active language file",
-								1);
-					}
+					PlayerManager.notifySuccess(p.getPlayer(), plugin.getLanguageString("messages.gemsReceived"),
+							ChatColor.AQUA, Integer.toString(reward));
 				GameManager.createBoard(p);
 			});
 
 			// Notify spectators of upcoming wave
-			try {
-				arenaInstance.getSpectators().forEach(p ->
-						p.getPlayer().sendTitle(CommunicationManager.format(String.format(
-								Objects.requireNonNull(language.getString("wave")), currentWave)),
-								CommunicationManager.format(language.getString("starting")), Utils.secondsToTicks(.5),
-								Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
-			} catch (Exception e) {
-				CommunicationManager.debugError("The key 'wave' is either missing or corrupt in the active language file",
-						1);
-			}
+			arenaInstance.getSpectators().forEach(p ->
+					p.getPlayer().sendTitle(CommunicationManager.format(
+							plugin.getLanguageStringFormatted("messages.waveNum",
+									Integer.toString(currentWave))),
+							CommunicationManager.format("&7" +
+									plugin.getLanguageStringFormatted("messages.starting", "15")),
+							Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
 
 			// Regenerate shops when time and notify players of it
 			if (currentWave % 10 == 0 || currentWave == 1) {
 				int level = currentWave / 10 + 1;
 				arenaInstance.setWeaponShop(Inventories.createWeaponShop(level, arenaInstance));
 				arenaInstance.setArmorShop(Inventories.createArmorShop(level, arenaInstance));
-				arenaInstance.setConsumeShop(Inventories.createConsumablesShop(level, arenaInstance));
+				arenaInstance.setConsumeShop(Inventories.createConsumableShop(level, arenaInstance));
 				if (currentWave != 1)
 					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 							arenaInstance.getActives().forEach(player ->
-									player.getPlayer().sendTitle(CommunicationManager.format(language.getString("shopUpgrade")),
-											CommunicationManager.format(language.getString("shopInfo")),
+									player.getPlayer().sendTitle(CommunicationManager.format(
+											"&6" + plugin.getLanguageString("messages.shopUpgrade")),
+											"&7" + CommunicationManager.format(
+													plugin.getLanguageStringFormatted("messages.shopInfo",
+															"10")),
 											Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5),
 											Utils.secondsToTicks(1))), Utils.secondsToTicks(4));
 			}
@@ -489,8 +454,8 @@ public class Tasks {
 							// Send warning
 							arenaInstance.getActives().forEach(player ->
 									player.getPlayer().sendTitle(CommunicationManager.format(
-											plugin.getLanguageData().getString("minuteWarning")), null,
-											Utils.secondsToTicks(.5), Utils.secondsToTicks(1.5),
+											"&c" + plugin.getLanguageString("messages.oneMinuteWarning")),
+											null, Utils.secondsToTicks(.5), Utils.secondsToTicks(1.5),
 											Utils.secondsToTicks(.5)));
 
 							// Set monsters glowing when time is low
@@ -523,8 +488,10 @@ public class Tasks {
 			else if (Arrays.stream(GameItems.BOOTS_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
 					Objects.requireNonNull(equipment).getBoots() == null)
 				equipment.setBoots(item);
-			else PlayerManager.giveItem(player.getPlayer(), item, plugin.getLanguageData().getString("inventoryFull"));
+			else PlayerManager.giveItem(player.getPlayer(), item,
+						plugin.getLanguageString("errors.inventoryFull"));
 		}
-		PlayerManager.giveItem(player.getPlayer(), GameItems.shop(), plugin.getLanguageData().getString("inventoryFull"));
+		PlayerManager.giveItem(player.getPlayer(), GameItems.shop(),
+				plugin.getLanguageString("errors.inventoryFull"));
 	}
 }
