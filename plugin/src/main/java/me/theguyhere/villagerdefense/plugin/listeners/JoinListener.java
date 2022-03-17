@@ -8,6 +8,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -54,7 +55,8 @@ public class JoinListener implements Listener {
 					player.setFoodLevel(plugin.getPlayerData().getInt(player.getName() + ".food"));
 				plugin.getPlayerData().set(player.getName() + ".food", null);
 				if (plugin.getPlayerData().contains(player.getName() + ".saturation"))
-					player.setSaturation((float) plugin.getPlayerData().getDouble(player.getName() + ".saturation"));
+					player.setSaturation((float) plugin.getPlayerData().getDouble(player.getName() +
+							".saturation"));
 				plugin.getPlayerData().set(player.getName() + ".saturation", null);
 				if (plugin.getPlayerData().contains(player.getName() + ".level")) {
 					player.setLevel(plugin.getPlayerData().getInt(player.getName() + ".level"));
@@ -78,8 +80,9 @@ public class JoinListener implements Listener {
 		}
 
 		// If the plugin setup is outdated, send message to admins
-		if (plugin.isOutdated() && player.hasPermission("vd.admin"))
-			PlayerManager.notify(player, plugin.getLanguageData().getString("outdatedError"));
+		if (Main.isOutdated() && player.hasPermission("vd.admin"))
+			PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.outdated"), ChatColor.AQUA,
+					"/vd fix");
 	}
 	
 	@EventHandler

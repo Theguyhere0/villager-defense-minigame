@@ -20,14 +20,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class GameManager {
-	private final Main plugin;
+	private static Main plugin;
 	private static final Arena[] arenas = new Arena[45];
 	private static final InfoBoard[] infoBoards = new InfoBoard[8];
 	private static final Map<String, Leaderboard> leaderboards = new HashMap<>();
 	private static Location lobby;
 
 	public GameManager(Main plugin) {
-		this.plugin = plugin;
+		GameManager.plugin = plugin;
 		ConfigurationSection section;
 
 		section = plugin.getArenaData().getConfigurationSection("");
@@ -119,9 +119,11 @@ public class GameManager {
 		Objective obj = board.registerNewObjective("VillagerDefense", "dummy",
 				CommunicationManager.format("&6&l   " + arena.getName() + "  "));
 		obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-		Score score12= obj.getScore(CommunicationManager.format("&eWave: " + arena.getCurrentWave()));
+		Score score12 = obj.getScore(CommunicationManager.format("&e" +
+				plugin.getLanguageString("messages.wave") + ": " + arena.getCurrentWave()));
 		score12.setScore(12);
-		Score score11 = obj.getScore(CommunicationManager.format("&aGems: " + player.getGems()));
+		Score score11 = obj.getScore(CommunicationManager.format("&a" +
+				plugin.getLanguageString("messages.gems") + ": " + player.getGems()));
 		score11.setScore(11);
 		StringBuilder kit = new StringBuilder(player.getKit().getName());
 		if (player.getKit().isMultiLevel()) {
@@ -129,12 +131,14 @@ public class GameManager {
 			for (int i = 0; i < Math.max(0, player.getKit().getLevel()); i++)
 				kit.append("I");
 		}
-		Score score10 = obj.getScore(CommunicationManager.format("&bKit: " + kit));
+		Score score10 = obj.getScore(CommunicationManager.format("&b" +
+				plugin.getLanguageString("messages.kit") + ": " + kit));
 		score10.setScore(10);
 		int bonus = 0;
 		for (Challenge challenge : player.getChallenges())
 			bonus += challenge.getBonus();
-		Score score9 = obj.getScore(CommunicationManager.format(String.format("&5Challenges: (+%d%%)", bonus)));
+		Score score9 = obj.getScore(CommunicationManager.format(String.format("&5" +
+				plugin.getLanguageString("messages.challenges") + ": (+%d%%)", bonus)));
 		score9.setScore(9);
 		if (player.getChallenges().size() < 4)
 			for (Challenge challenge : player.getChallenges()) {
@@ -150,19 +154,24 @@ public class GameManager {
 		}
 		Score score7 = obj.getScore("");
 		score7.setScore(7);
-		Score score6 = obj.getScore(CommunicationManager.format("&dPlayers: " + arena.getAlive()));
+		Score score6 = obj.getScore(CommunicationManager.format("&d" +
+				plugin.getLanguageString("messages.players") + ": " + arena.getAlive()));
 		score6.setScore(6);
-		Score score5 = obj.getScore("Ghosts: " + arena.getGhostCount());
+		Score score5 = obj.getScore(plugin.getLanguageString("messages.ghosts") + ": " + arena.getGhostCount());
 		score5.setScore(5);
-		Score score4 = obj.getScore(CommunicationManager.format("&7Spectators: " + arena.getSpectatorCount()));
+		Score score4 = obj.getScore(CommunicationManager.format("&7" +
+				plugin.getLanguageString("messages.spectators") + ": " + arena.getSpectatorCount()));
 		score4.setScore(4);
 		Score score3 = obj.getScore(" ");
 		score3.setScore(3);
-		Score score2 = obj.getScore(CommunicationManager.format("&2Villagers: " + arena.getVillagers()));
+		Score score2 = obj.getScore(CommunicationManager.format("&2" +
+				plugin.getLanguageString("messages.villagers") + ": " + arena.getVillagers()));
 		score2.setScore(2);
-		Score score1 = obj.getScore(CommunicationManager.format("&cEnemies: " + arena.getEnemies()));
+		Score score1 = obj.getScore(CommunicationManager.format("&c" +
+				plugin.getLanguageString("messages.enemies") + ": " + arena.getEnemies()));
 		score1.setScore(1);
-		Score score = obj.getScore(CommunicationManager.format("&4Kills: " + player.getKills()));
+		Score score = obj.getScore(CommunicationManager.format("&4" +
+				plugin.getLanguageString("messages.kills") + ": " + player.getKills()));
 		score.setScore(0);
 
 		player.getPlayer().setScoreboard(board);
@@ -216,8 +225,9 @@ public class GameManager {
 			infoBoards[num].displayForOnline();
 		} catch (Exception e) {
 			CommunicationManager.debugError("Invalid location for info board " + num, 1);
-			CommunicationManager.debugInfo("Info board location data may be corrupt. If data cannot be manually corrected in " +
-					"arenaData.yml, please delete the location data for info board " + num + ".", 1);
+			CommunicationManager.debugInfo("Info board location data may be corrupt. If data cannot be manually " +
+					"corrected in arenaData.yml, please delete the location data for info board " + num + ".",
+					1);
 		}
 	}
 
@@ -379,7 +389,7 @@ public class GameManager {
 	 * Refresh every info board.
 	 */
 	public void refreshInfoBoards() {
-		for (int i = 0; i < infoBoards.length; i++) {
+		for (int i = 0; i < Arrays.stream(infoBoards).filter(Objects::nonNull).count(); i++) {
 			refreshInfoBoard(i);
 		}
 	}

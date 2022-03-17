@@ -43,7 +43,7 @@ public class HoloLine {
      * Spawn in the HoloLine for every online player.
      */
     public void displayForOnline() {
-        PlayerManager.sendPacketToOnline(textPacketEntity.newSpawnPackets(location, text));
+        PlayerManager.sendLocationPacketToOnline(textPacketEntity.newSpawnPackets(location, text), location.getWorld());
     }
 
     /**
@@ -51,7 +51,9 @@ public class HoloLine {
      * @param player - The player to display the HoloLine for.
      */
     public void displayForPlayer(Player player) {
-        textPacketEntity.newSpawnPackets(location, text).sendTo(player);
+        // Only display if player is in the same world
+        if (player.getWorld().equals(location.getWorld()))
+            textPacketEntity.newSpawnPackets(location, text).sendTo(player);
     }
 
     /**

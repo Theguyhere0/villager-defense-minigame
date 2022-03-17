@@ -1,7 +1,9 @@
 package me.theguyhere.villagerdefense.plugin.game.models;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
+import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
@@ -13,34 +15,84 @@ import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class GameItems {
 	private static final boolean[] FLAGS = {false, false};
+	private static Main plugin;
+
+	// Categories of items
+	public static ItemStack[] ABILITY_ITEMS;
+	public static Material[] FOOD_MATERIALS;
+	public static Material[] HELMET_MATERIALS;
+	public static Material[] CHESTPLATE_MATERIALS;
+	public static Material[] LEGGING_MATERIALS;
+	public static Material[] BOOTS_MATERIALS;
+	public static Material[] ARMOR_MATERIALS;
+	public static Material[] CARE_MATERIALS;
+	public static Material[] CLICKABLE_WEAPON_MATERIALS;
+	public static Material[] CLICKABLE_CONSUME_MATERIALS;
+
+	public static void setPlugin(Main plugin) {
+		GameItems.plugin = plugin;
+
+		// Initialize constant arrays
+		ABILITY_ITEMS = new ItemStack[]{mage(), ninja(), templar(), warrior(), knight(),
+				priest(), siren(), monk(), messenger()};
+		FOOD_MATERIALS = new Material[]{Material.BEETROOT, Material.CARROT, Material.BREAD,
+				Material.MUTTON, Material.COOKED_BEEF, Material.GOLDEN_CARROT, Material.GOLDEN_APPLE,
+				Material.ENCHANTED_GOLDEN_APPLE};
+		HELMET_MATERIALS = new Material[]{Material.LEATHER_HELMET, Material.GOLDEN_HELMET,
+				Material.CHAINMAIL_HELMET, Material.IRON_HELMET, Material.DIAMOND_HELMET, Material.NETHERITE_HELMET,
+				Material.TURTLE_HELMET};
+		CHESTPLATE_MATERIALS = new Material[]{Material.LEATHER_CHESTPLATE, Material.GOLDEN_CHESTPLATE,
+				Material.CHAINMAIL_CHESTPLATE, Material.IRON_CHESTPLATE, Material.DIAMOND_CHESTPLATE,
+				Material.NETHERITE_HELMET};
+		LEGGING_MATERIALS = new Material[]{Material.LEATHER_LEGGINGS, Material.GOLDEN_LEGGINGS,
+				Material.CHAINMAIL_LEGGINGS, Material.IRON_LEGGINGS, Material.DIAMOND_LEGGINGS,
+				Material.NETHERITE_LEGGINGS};
+		BOOTS_MATERIALS = new Material[]{Material.LEATHER_BOOTS, Material.GOLDEN_BOOTS,
+				Material.CHAINMAIL_BOOTS, Material.IRON_BOOTS, Material.DIAMOND_BOOTS, Material.NETHERITE_BOOTS};
+		ARMOR_MATERIALS = new Material[]{Material.LEATHER_HELMET, Material.LEATHER_CHESTPLATE,
+				Material.LEATHER_LEGGINGS, Material.LEATHER_BOOTS, Material.CHAINMAIL_HELMET, Material.CHAINMAIL_CHESTPLATE,
+				Material.CHAINMAIL_LEGGINGS, Material.CHAINMAIL_BOOTS, Material.IRON_HELMET, Material.IRON_CHESTPLATE,
+				Material.IRON_LEGGINGS, Material.IRON_BOOTS, Material.DIAMOND_HELMET, Material.DIAMOND_CHESTPLATE,
+				Material.DIAMOND_LEGGINGS, Material.DIAMOND_BOOTS, Material.NETHERITE_HELMET, Material.NETHERITE_CHESTPLATE,
+				Material.NETHERITE_LEGGINGS, Material.NETHERITE_BOOTS};
+		CARE_MATERIALS = new Material[]{Material.COAL_BLOCK, Material.IRON_BLOCK,
+				Material.DIAMOND_BLOCK, Material.BEACON};
+		CLICKABLE_WEAPON_MATERIALS = new Material[]{Material.BOW, Material.CROSSBOW,
+				Material.TRIDENT};
+		CLICKABLE_CONSUME_MATERIALS = new Material[]{Material.GLASS_BOTTLE,
+				Material.POTION, Material.SPLASH_POTION, Material.LINGERING_POTION, Material.EXPERIENCE_BOTTLE,
+				Material.MILK_BUCKET, Material.GHAST_SPAWN_EGG, Material.WOLF_SPAWN_EGG};
+	}
 
 	// Standard game items
 	public static @NotNull ItemStack shop() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.EMERALD, CommunicationManager.format("&2&lItem Shop"),
-				ItemManager.HIDE_ENCHANT_FLAGS, enchants, CommunicationManager.format("&7&oResets every 10 rounds"));
+		ItemStack item = ItemManager.createItem(Material.EMERALD,
+				CommunicationManager.format("&2&l" + plugin.getLanguageString("names.itemShop")),
+				ItemManager.HIDE_ENCHANT_FLAGS, enchants,
+				CommunicationManager.format("&7&o" +
+						plugin.getLanguageStringFormatted("messages.itemShopDesc", "10")));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack kitSelector() {
-		ItemStack item = ItemManager.createItem(Material.CHEST, CommunicationManager.format("&9&lKit Selection"));
+		ItemStack item = ItemManager.createItem(Material.CHEST,
+				CommunicationManager.format("&9&l" + plugin.getLanguageString("names.kitSelection")));
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack challengeSelector() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.NETHER_STAR, CommunicationManager.format("&9&lChallenge Selection"),
+		ItemStack item = ItemManager.createItem(Material.NETHER_STAR,
+				CommunicationManager.format("&9&l" + plugin.getLanguageString("names.challengeSelection")),
 				ItemManager.HIDE_ENCHANT_FLAGS,
 				enchants);
 
@@ -50,7 +102,8 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.BARRIER, CommunicationManager.format("&c&lLEAVE"),
+		ItemStack item = ItemManager.createItem(Material.BARRIER,
+				CommunicationManager.format("&c&l" + plugin.getLanguageString("messages.leave")),
 				ItemManager.HIDE_ENCHANT_FLAGS, enchants);
 
 		return item == null ? new ItemStack(Material.AIR) : item;
@@ -612,7 +665,8 @@ public class GameItems {
 		}
 
 		ItemStack item = ItemManager.createItem(mat, null, FLAGS, enchantments,
-				CommunicationManager.format("&2Gems: &a" + price));
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a" +
+						price));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -1076,7 +1130,8 @@ public class GameItems {
 		}
 
 		ItemStack item = ItemManager.createItem(mat, null, FLAGS, enchantments,
-				CommunicationManager.format("&2Gems: &a" + price));
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a" +
+						price));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -1447,7 +1502,8 @@ public class GameItems {
 		}
 
 		ItemStack item = ItemManager.createItem(Material.BOW, null, FLAGS, enchantments,
-				CommunicationManager.format("&2Gems: &a" + price));
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a" +
+						price));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -1781,7 +1837,8 @@ public class GameItems {
 		}
 
 		ItemStack item = ItemManager.createItem(Material.CROSSBOW, null, FLAGS, enchantments,
-				CommunicationManager.format("&2Gems: &a" + price));
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a" +
+						price));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -2278,7 +2335,8 @@ public class GameItems {
 		}
 
 		ItemStack item = ItemManager.createItem(Material.TRIDENT, null, FLAGS, enchantments,
-				CommunicationManager.format("&2Gems: &a" + price));
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a" +
+						price));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -2382,72 +2440,78 @@ public class GameItems {
 		}
 
 		ItemStack item = ItemManager.createItem(Material.SHIELD, null, FLAGS, enchantments,
-				CommunicationManager.format("&2Gems: &a" + price));
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a" +
+						price));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 
 	// Ammo
 	public static @NotNull ItemStack arrows() {
-		ItemStack item = ItemManager.createItems(Material.ARROW, 16, null, CommunicationManager.format("&2Gems: &a45"));
+		ItemStack item = ItemManager.createItems(Material.ARROW, 16, null,
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a45"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsS() {
-		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.SLOWNESS), 8,
-				null, CommunicationManager.format("&2Gems: &a50"));
+		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.SLOWNESS),
+				8, null,
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a50"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsD() {
-		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.INSTANT_DAMAGE), 8,
-				null, CommunicationManager.format("&2Gems: &a70"));
+		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.INSTANT_DAMAGE),
+				8, null,
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a70"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsW() {
-		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.WEAKNESS), 8,
-				null, CommunicationManager.format("&2Gems: &a50"));
+		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.WEAKNESS),
+				8, null,
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a50"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsP() {
-		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.POISON), 16,
-				null, CommunicationManager.format("&2Gems: &a60"));
+		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.POISON),
+				16, null,
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a60"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsSPlus() {
 		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW,
 				new PotionData(PotionType.SLOWNESS, false, true), 8, null,
-				CommunicationManager.format("&2Gems: &a125"));
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a125"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsDPlus() {
 		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW,
 				new PotionData(PotionType.INSTANT_DAMAGE, false, true), 8, null,
-				CommunicationManager.format("&2Gems: &a175"));
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a175"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsWPlus() {
 		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW,
 				new PotionData(PotionType.WEAKNESS, false,true), 8, null,
-				CommunicationManager.format("&2Gems: &a125"));
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a125"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsPPlus() {
 		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW,
 				new PotionData(PotionType.POISON, false, true), 16, null,
-				CommunicationManager.format("&2Gems: &a130"));
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a130"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack rockets() {
 		ItemStack item = ItemManager.createItems(Material.FIREWORK_ROCKET, 4, null,
-				CommunicationManager.format("&2Gems: &a50"));
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a50"));
 		assert item != null;
 		ItemMeta meta = item.getItemMeta();
 		FireworkMeta fireworkMeta = (FireworkMeta) meta;
@@ -2469,7 +2533,7 @@ public class GameItems {
 		FireworkMeta fireworkMeta = (FireworkMeta) meta;
 
 		List<String> lore = new ArrayList<>();
-		lore.add(CommunicationManager.format("&2Gems: &a100"));
+		lore.add(CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a100"));
 		assert meta != null;
 		meta.setLore(lore);
 		for (int i = 0; i < 9; i++) {
@@ -3129,7 +3193,8 @@ public class GameItems {
 		}
 
 		ItemStack item = ItemManager.createItem(mat, null, FLAGS, enchantments,
-				CommunicationManager.format("&2Gems: &a" + price));
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a" +
+						price));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -3778,7 +3843,8 @@ public class GameItems {
 		}
 
 		ItemStack item = ItemManager.createItem(mat, null, FLAGS, enchantments,
-				CommunicationManager.format("&2Gems: &a" + price));
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a" +
+						price));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -4427,7 +4493,8 @@ public class GameItems {
 		}
 
 		ItemStack item = ItemManager.createItem(mat, null, FLAGS, enchantments,
-				CommunicationManager.format("&2Gems: &a" + price));
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a" +
+						price));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5076,167 +5143,214 @@ public class GameItems {
 		}
 
 		ItemStack item = ItemManager.createItem(mat, null, FLAGS, enchantments,
-				CommunicationManager.format("&2Gems: &a" + price));
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a" +
+						price));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 
 	// Consumables
 	public static @NotNull ItemStack totem() {
-		ItemStack item = ItemManager.createItem(Material.TOTEM_OF_UNDYING, null, CommunicationManager.format("&2Gems: &a1000"));
+		ItemStack item = ItemManager.createItem(Material.TOTEM_OF_UNDYING, null,
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a1000"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack gapple() {
-		ItemStack item = ItemManager.createItem(Material.GOLDEN_APPLE, null, CommunicationManager.format("&2Gems: &a120"));
+		ItemStack item = ItemManager.createItem(Material.GOLDEN_APPLE, null,
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a120"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack egapple() {
-		ItemStack item = ItemManager.createItem(Material.ENCHANTED_GOLDEN_APPLE, null, CommunicationManager.format("&2Gems: &a300"));
+		ItemStack item = ItemManager.createItem(Material.ENCHANTED_GOLDEN_APPLE, null,
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a300"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack gcarrot() {
-		ItemStack item = ItemManager.createItem(Material.GOLDEN_CARROT, null, CommunicationManager.format("&2Gems: &a80"));
+		ItemStack item = ItemManager.createItem(Material.GOLDEN_CARROT, null,
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a80"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack steak() {
-		ItemStack item = ItemManager.createItems(Material.COOKED_BEEF, 2, null, CommunicationManager.format("&2Gems: &a60"));
+		ItemStack item = ItemManager.createItems(Material.COOKED_BEEF, 2, null,
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a60"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack mutton() {
 		ItemStack item = ItemManager.createItems(Material.COOKED_MUTTON, 2, null,
-				CommunicationManager.format("&2Gems: &a40"));
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a40"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack bread() {
-		ItemStack item = ItemManager.createItems(Material.BREAD, 3, null, CommunicationManager.format("&2Gems: &a40"));
+		ItemStack item = ItemManager.createItems(Material.BREAD, 3, null,
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a40"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack carrot() {
-		ItemStack item = ItemManager.createItems(Material.CARROT, 5, null, CommunicationManager.format("&2Gems: &a30"));
+		ItemStack item = ItemManager.createItems(Material.CARROT, 5, null,
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a30"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack beetroot() {
-		ItemStack item = ItemManager.createItems(Material.BEETROOT, 8, null, CommunicationManager.format("&2Gems: &a25"));
+		ItemStack item = ItemManager.createItems(Material.BEETROOT, 8, null,
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a25"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack health() {
-		ItemStack item = ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.INSTANT_HEAL), null,
-				CommunicationManager.format("&2Gems: &a50"));
+		ItemStack item = ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.INSTANT_HEAL),
+				null,
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a50"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack health2() {
 		ItemStack item = ItemManager.createPotionItem(Material.POTION,
 				new PotionData(PotionType.INSTANT_HEAL, false, true), null,
-				CommunicationManager.format("&2Gems: &a120"));
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a120"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack health3() {
 		ItemStack item = ItemManager.createPotionItem(Material.LINGERING_POTION,
 				new PotionData(PotionType.INSTANT_HEAL, false, true), null,
-				CommunicationManager.format("&2Gems: &a200"));
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a200"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack strength() {
-		ItemStack item = ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.STRENGTH), null,
-				CommunicationManager.format("&2Gems: &a150"));
+		ItemStack item = ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.STRENGTH),
+				null,
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a150"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack strength2() {
 		ItemStack item = ItemManager.createPotionItem(Material.POTION,
 				new PotionData(PotionType.STRENGTH, false, true), null,
-				CommunicationManager.format("&2Gems: &a400"));
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a400"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack regen() {
 		ItemStack item = ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.REGEN), null,
-				CommunicationManager.format("&2Gems: &a175"));
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a175"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack regen2() {
 		ItemStack item = ItemManager.createPotionItem(Material.POTION,
 				new PotionData(PotionType.REGEN, false, true), null,
-				CommunicationManager.format("&2Gems: &a450"));
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a450"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack speed() {
 		ItemStack item = ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.SPEED), null,
-				CommunicationManager.format("&2Gems: &a125"));
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a125"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack speed2() {
-		ItemStack item = ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.SPEED, false, true),
-				null, CommunicationManager.format("&2Gems: &a350"));
+		ItemStack item = ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.SPEED, false,
+						true), null,
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a350"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack milk() {
-		ItemStack item = ItemManager.createItem(Material.MILK_BUCKET, null, CommunicationManager.format("&2Gems: &a75"));
+		ItemStack item = ItemManager.createItem(Material.MILK_BUCKET, null,
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a75"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack golem() {
-		ItemStack item = ItemManager.createItem(Material.GHAST_SPAWN_EGG, CommunicationManager.format("&fIron Golem Spawn Egg"),
-				CommunicationManager.format("&2Gems: &a500"));
+		ItemStack item = ItemManager.createItem(Material.GHAST_SPAWN_EGG,
+				CommunicationManager.format(ChatColor.WHITE,plugin.getLanguageString("names.golemEgg")),
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a500"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack wolf() {
-		ItemStack item = ItemManager.createItem(Material.WOLF_SPAWN_EGG, null, CommunicationManager.format("&2Gems: &a250"));
+		ItemStack item = ItemManager.createItem(Material.WOLF_SPAWN_EGG, null,
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a250"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack smallCare() {
-		ItemStack item = ItemManager.createItem(Material.COAL_BLOCK, CommunicationManager.format("&2Small Care Package"),
-				CommunicationManager.format("&7Contents:"), CommunicationManager.format("&7 - &bOne &7level &b1 &7weapon"),
-				CommunicationManager.format("&7 - &bOne &7level &b1 &7armor"), CommunicationManager.format("&2Gems: &a200"));
+		ItemStack item = ItemManager.createItem(Material.COAL_BLOCK,
+				CommunicationManager.format(ChatColor.DARK_GREEN, 
+						plugin.getLanguageString("names.carePackageSmall")),
+				CommunicationManager.format(ChatColor.WHITE, 
+						plugin.getLanguageString("names.contents") + ":"),
+				CommunicationManager.format(ChatColor.WHITE, plugin.getLanguageString("messages.weapon"), 
+						ChatColor.AQUA, "1", "1"),
+				CommunicationManager.format(ChatColor.WHITE, plugin.getLanguageString("messages.armor"), 
+						ChatColor.AQUA, "1", "1"),
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a200"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack mediumCare() {
-		ItemStack item = ItemManager.createItem(Material.IRON_BLOCK, CommunicationManager.format("&3Medium Care Package"),
-				CommunicationManager.format("&7Contents:"), CommunicationManager.format("&7 - &bOne &7level &b2 &7weapon"),
-				CommunicationManager.format("&7 - &bOne &7level &b2 &7armor"),
-				CommunicationManager.format("&7 - &bOne &7level &b2 &7consumable"), CommunicationManager.format("&2Gems: &a500"));
+		ItemStack item = ItemManager.createItem(Material.IRON_BLOCK,
+				CommunicationManager.format(ChatColor.DARK_AQUA, 
+						plugin.getLanguageString("names.carePackageMedium")),
+				CommunicationManager.format(ChatColor.WHITE, 
+						plugin.getLanguageString("names.contents") + ":"),
+				CommunicationManager.format(ChatColor.WHITE, plugin.getLanguageString("messages.weapon"), 
+						ChatColor.AQUA, "1", "2"),
+				CommunicationManager.format(ChatColor.WHITE, plugin.getLanguageString("messages.armor"), 
+						ChatColor.AQUA, "1", "2"),
+				CommunicationManager.format(ChatColor.WHITE, plugin.getLanguageString("messages.consumable"), 
+						ChatColor.AQUA, "1", "2"),
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a500"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack largeCare() {
-		ItemStack item = ItemManager.createItem(Material.DIAMOND_BLOCK, CommunicationManager.format("&9Large Care Package"),
-				CommunicationManager.format("&7Contents:"), CommunicationManager.format("&7 - &bOne &7level &b4 &7weapon"),
-				CommunicationManager.format("&7 - &bTwo &7level &b3 &7armor"),
-				CommunicationManager.format("&7 - &bOne &7level &b3 &7consumable"), CommunicationManager.format("&2Gems: &a1200"));
+		ItemStack item = ItemManager.createItem(Material.DIAMOND_BLOCK,
+				CommunicationManager.format(ChatColor.BLUE, plugin.getLanguageString("names.carePackageLarge")),
+				CommunicationManager.format(ChatColor.WHITE, 
+						plugin.getLanguageString("names.contents") + ":"),
+				CommunicationManager.format(ChatColor.WHITE, plugin.getLanguageString("messages.weapon"), 
+						ChatColor.AQUA, "1", "4"),
+				CommunicationManager.format(ChatColor.WHITE, plugin.getLanguageString("messages.armor"), 
+						ChatColor.AQUA, "2", "3"),
+				CommunicationManager.format(ChatColor.WHITE, plugin.getLanguageString("messages.consumable"), 
+						ChatColor.AQUA, "1", "3"),
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a1200"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack extraCare() {
-		ItemStack item = ItemManager.createItem(Material.BEACON, CommunicationManager.format("&bExtra Large Care Package"),
-				CommunicationManager.format("&7Contents:"), CommunicationManager.format("&7 - &bOne &7level &b5 &7weapon"),
-				CommunicationManager.format("&7 - &bOne &7level &b4 &7weapon"),
-				CommunicationManager.format("&7 - &bOne &7level &b5 &7armor"),
-				CommunicationManager.format("&7 - &bOne &7level &b4 &7armor"),
-				CommunicationManager.format("&7 - &bTwo &7level &b4 &7consumables"), CommunicationManager.format("&2Gems: &a3000"));
+		ItemStack item = ItemManager.createItem(Material.BEACON,
+				CommunicationManager.format(ChatColor.AQUA, plugin.getLanguageString("names.carePackageExtra")),
+				CommunicationManager.format(ChatColor.WHITE, 
+						plugin.getLanguageString("names.contents") + ":"),
+				CommunicationManager.format(ChatColor.WHITE, plugin.getLanguageString("messages.weapon"), 
+						ChatColor.AQUA, "1", "5"),
+				CommunicationManager.format(ChatColor.WHITE, plugin.getLanguageString("messages.weapon"), 
+						ChatColor.AQUA, "1", "4"),
+				CommunicationManager.format(ChatColor.WHITE, plugin.getLanguageString("messages.armor"), 
+						ChatColor.AQUA, "1", "5"),
+				CommunicationManager.format(ChatColor.WHITE, plugin.getLanguageString("messages.armor"), 
+						ChatColor.AQUA, "1", "4"),
+				CommunicationManager.format(ChatColor.WHITE, plugin.getLanguageString("messages.consumable"), 
+						ChatColor.AQUA, "2", "4"),
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a3000"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack experience() {
-		ItemStack item = ItemManager.createItem(Material.EXPERIENCE_BOTTLE, null, CommunicationManager.format("&2Gems: &a75"));
+		ItemStack item = ItemManager.createItem(Material.EXPERIENCE_BOTTLE, null,
+				CommunicationManager.format("&2" + plugin.getLanguageString("messages.gems") + ": &a75"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5246,8 +5360,12 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.PURPLE_DYE, CommunicationManager.format("&dMage Essence"), ItemManager.HIDE_ENCHANT_FLAGS,
-				enchants, CommunicationManager.format("&7Right click to use ability"));
+		ItemStack item = ItemManager.createItem(Material.PURPLE_DYE, CommunicationManager.format(ChatColor.LIGHT_PURPLE, 
+						plugin.getLanguageString("kits.mage.name") + " " +
+						plugin.getLanguageString("names.essence")),
+				ItemManager.HIDE_ENCHANT_FLAGS, enchants,
+				CommunicationManager.format(ChatColor.WHITE, 
+						plugin.getLanguageString("messages.rightClick")));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5255,8 +5373,12 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.BLACK_DYE, CommunicationManager.format("&dNinja Essence"), ItemManager.HIDE_ENCHANT_FLAGS,
-				enchants, CommunicationManager.format("&7Right click to use ability"));
+		ItemStack item = ItemManager.createItem(Material.BLACK_DYE, CommunicationManager.format(ChatColor.LIGHT_PURPLE, 
+						plugin.getLanguageString("kits.ninja.name") + " " +
+						plugin.getLanguageString("names.essence")),
+				ItemManager.HIDE_ENCHANT_FLAGS, enchants,
+				CommunicationManager.format(ChatColor.WHITE, 
+						plugin.getLanguageString("messages.rightClick")));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5264,8 +5386,11 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.YELLOW_DYE, CommunicationManager.format("&dTemplar Essence"), ItemManager.HIDE_ENCHANT_FLAGS,
-				enchants, CommunicationManager.format("&7Right click to use ability"));
+		ItemStack item = ItemManager.createItem(Material.YELLOW_DYE, CommunicationManager.format(ChatColor.LIGHT_PURPLE, 
+						plugin.getLanguageString("kits.templar.name") + " " +
+						plugin.getLanguageString("names.essence")), ItemManager.HIDE_ENCHANT_FLAGS,
+				enchants, CommunicationManager.format(ChatColor.WHITE, 
+						plugin.getLanguageString("messages.rightClick")));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5273,8 +5398,11 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.RED_DYE, CommunicationManager.format("&dWarrior Essence"), ItemManager.HIDE_ENCHANT_FLAGS,
-				enchants, CommunicationManager.format("&7Right click to use ability"));
+		ItemStack item = ItemManager.createItem(Material.RED_DYE, CommunicationManager.format(ChatColor.LIGHT_PURPLE, 
+						plugin.getLanguageString("kits.warrior.name") + " " +
+						plugin.getLanguageString("names.essence")), ItemManager.HIDE_ENCHANT_FLAGS,
+				enchants, CommunicationManager.format(ChatColor.WHITE, 
+						plugin.getLanguageString("messages.rightClick")));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5282,8 +5410,11 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.BROWN_DYE, CommunicationManager.format("&dKnight Essence"), ItemManager.HIDE_ENCHANT_FLAGS,
-				enchants, CommunicationManager.format("&7Right click to use ability"));
+		ItemStack item = ItemManager.createItem(Material.BROWN_DYE, CommunicationManager.format(ChatColor.LIGHT_PURPLE, 
+						plugin.getLanguageString("kits.knight.name") + " " +
+						plugin.getLanguageString("names.essence")), ItemManager.HIDE_ENCHANT_FLAGS,
+				enchants, CommunicationManager.format(ChatColor.WHITE, 
+						plugin.getLanguageString("messages.rightClick")));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5291,8 +5422,11 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.WHITE_DYE, CommunicationManager.format("&dPriest Essence"), ItemManager.HIDE_ENCHANT_FLAGS,
-				enchants, CommunicationManager.format("&7Right click to use ability"));
+		ItemStack item = ItemManager.createItem(Material.WHITE_DYE, CommunicationManager.format(ChatColor.LIGHT_PURPLE, 
+						plugin.getLanguageString("kits.priest.name") + " " +
+						plugin.getLanguageString("names.essence")), ItemManager.HIDE_ENCHANT_FLAGS,
+				enchants, CommunicationManager.format(ChatColor.WHITE, 
+						plugin.getLanguageString("messages.rightClick")));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5300,8 +5434,11 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.PINK_DYE, CommunicationManager.format("&dSiren Essence"), ItemManager.HIDE_ENCHANT_FLAGS,
-				enchants, CommunicationManager.format("&7Right click to use ability"));
+		ItemStack item = ItemManager.createItem(Material.PINK_DYE, CommunicationManager.format(ChatColor.LIGHT_PURPLE, 
+						plugin.getLanguageString("kits.siren.name") + " " +
+						plugin.getLanguageString("names.essence")), ItemManager.HIDE_ENCHANT_FLAGS,
+				enchants, CommunicationManager.format(ChatColor.WHITE, 
+						plugin.getLanguageString("messages.rightClick")));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5309,8 +5446,11 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.GREEN_DYE, CommunicationManager.format("&dMonk Essence"), ItemManager.HIDE_ENCHANT_FLAGS,
-				enchants, CommunicationManager.format("&7Right click to use ability"));
+		ItemStack item = ItemManager.createItem(Material.GREEN_DYE, CommunicationManager.format(ChatColor.LIGHT_PURPLE, 
+						plugin.getLanguageString("kits.monk.name") + " " +
+						plugin.getLanguageString("names.essence")), ItemManager.HIDE_ENCHANT_FLAGS,
+				enchants, CommunicationManager.format(ChatColor.WHITE, 
+						plugin.getLanguageString("messages.rightClick")));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5318,43 +5458,14 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.BLUE_DYE, CommunicationManager.format("&dMessenger Essence"), ItemManager.HIDE_ENCHANT_FLAGS,
-				enchants, CommunicationManager.format("&7Right click to use ability"));
+		ItemStack item = ItemManager.createItem(Material.BLUE_DYE, CommunicationManager.format(ChatColor.LIGHT_PURPLE,
+						plugin.getLanguageString("kits.messenger.name") + " " +
+								plugin.getLanguageString("names.essence")), ItemManager.HIDE_ENCHANT_FLAGS,
+				enchants, CommunicationManager.format(ChatColor.WHITE, 
+						plugin.getLanguageString("messages.rightClick")));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
-
-	// Categories of items
-	public static final ItemStack[] ABILITY_ITEMS = new ItemStack[]{mage(), ninja(), templar(), warrior(), knight(),
-			priest(), siren(), monk(), messenger()};
-	public static final Material[] FOOD_MATERIALS = new Material[]{Material.BEETROOT, Material.CARROT, Material.BREAD,
-			Material.MUTTON, Material.COOKED_BEEF, Material.GOLDEN_CARROT, Material.GOLDEN_APPLE,
-			Material.ENCHANTED_GOLDEN_APPLE};
-	public static final Material[] HELMET_MATERIALS = {Material.LEATHER_HELMET, Material.GOLDEN_HELMET,
-			Material.CHAINMAIL_HELMET, Material.IRON_HELMET, Material.DIAMOND_HELMET, Material.NETHERITE_HELMET,
-			Material.TURTLE_HELMET};
-	public static final Material[] CHESTPLATE_MATERIALS = {Material.LEATHER_CHESTPLATE, Material.GOLDEN_CHESTPLATE,
-			Material.CHAINMAIL_CHESTPLATE, Material.IRON_CHESTPLATE, Material.DIAMOND_CHESTPLATE,
-			Material.NETHERITE_HELMET};
-	public static final Material[] LEGGING_MATERIALS = {Material.LEATHER_LEGGINGS, Material.GOLDEN_LEGGINGS,
-			Material.CHAINMAIL_LEGGINGS, Material.IRON_LEGGINGS, Material.DIAMOND_LEGGINGS, Material.NETHERITE_LEGGINGS
-	};
-	public static final Material[] BOOTS_MATERIALS = {Material.LEATHER_BOOTS, Material.GOLDEN_BOOTS, Material.CHAINMAIL_BOOTS,
-			Material.IRON_BOOTS, Material.DIAMOND_BOOTS, Material.NETHERITE_BOOTS
-	};
-	public static final Material[] ARMOR_MATERIALS = new Material[]{Material.LEATHER_HELMET, Material.LEATHER_CHESTPLATE,
-			Material.LEATHER_LEGGINGS, Material.LEATHER_BOOTS, Material.CHAINMAIL_HELMET, Material.CHAINMAIL_CHESTPLATE,
-			Material.CHAINMAIL_LEGGINGS, Material.CHAINMAIL_BOOTS, Material.IRON_HELMET, Material.IRON_CHESTPLATE,
-			Material.IRON_LEGGINGS, Material.IRON_BOOTS, Material.DIAMOND_HELMET, Material.DIAMOND_CHESTPLATE,
-			Material.DIAMOND_LEGGINGS, Material.DIAMOND_BOOTS, Material.NETHERITE_HELMET, Material.NETHERITE_CHESTPLATE,
-			Material.NETHERITE_LEGGINGS, Material.NETHERITE_BOOTS};
-	public static final Material[] CARE_MATERIALS = new Material[]{Material.COAL_BLOCK, Material.IRON_BLOCK,
-			Material.DIAMOND_BLOCK, Material.BEACON};
-	public static final Material[] CLICKABLE_WEAPON_MATERIALS = new Material[]{Material.BOW, Material.CROSSBOW,
-			Material.TRIDENT};
-	public static final Material[] CLICKABLE_CONSUME_MATERIALS = new Material[]{Material.GLASS_BOTTLE,
-			Material.POTION, Material.SPLASH_POTION, Material.LINGERING_POTION, Material.EXPERIENCE_BOTTLE,
-			Material.MILK_BUCKET, Material.GHAST_SPAWN_EGG, Material.WOLF_SPAWN_EGG};
 
 	// Random generation of items
 	public static @NotNull ItemStack randWeapon(int level) {

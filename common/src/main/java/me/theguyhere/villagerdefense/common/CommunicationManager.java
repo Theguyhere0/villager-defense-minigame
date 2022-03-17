@@ -1,6 +1,10 @@
 package me.theguyhere.villagerdefense.common;
 
 import org.bukkit.ChatColor;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CommunicationManager {
     /**
@@ -21,9 +25,51 @@ public class CommunicationManager {
         debugLevel = newDebugLevel;
     }
 
-    // Formats chat text
     public static String format(String msg) {
         return ChatColor.translateAlternateColorCodes('&', msg);
+    }
+
+    public static String format(@NotNull ChatColor base, String msg) {
+        return base + msg;
+    }
+
+    public static String[] formatDescriptionArr(@NotNull ChatColor base, String description) {
+        return formatDescriptionList(base, description).toArray(new String[0]);
+    }
+
+    public static List<String> formatDescriptionList(@NotNull ChatColor base, String description) {
+        int charLimit = 30 + base.toString().length();
+        String[] descArray = description.split(" ");
+        List<String> descLines = new ArrayList<>();
+        StringBuilder line = new StringBuilder(base.toString());
+
+        for (String s : descArray) {
+            // Always add to a line if empty or line remains under character limit
+            if (line.length() == 0 || line.length() + s.length() <= charLimit)
+                line.append(s).append(" ");
+
+            // Start new line if next word makes line longer than character limit
+            else {
+                line.deleteCharAt(line.length() - 1);
+                descLines.add(format(line.toString()));
+                line = new StringBuilder(base.toString()).append(s).append(" ");
+            }
+        }
+
+        // Add last line
+        line.deleteCharAt(line.length() - 1);
+        descLines.add(line.toString());
+
+        return descLines;
+    }
+
+    public static String format(@NotNull ChatColor base, String msg, @NotNull ChatColor replace, String value) {
+        return base + String.format(msg, replace + value + base);
+    }
+
+    public static String format(@NotNull ChatColor base, String msg, @NotNull ChatColor replace, String value1,
+                                String value2) {
+        return base + String.format(msg, replace + value1 + base, replace + value2 + base);
     }
 
     // Formats plugin notifications

@@ -4,9 +4,7 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.nms.common.PacketGroup;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
@@ -26,7 +24,7 @@ public class PlayerManager {
                         player.getInventory().all(item.getType()).size()) &&
                         player.getInventory().all(item.getType()).size() != 0)) {
             player.getWorld().dropItemNaturally(player.getLocation(), item);
-            notify(player, message);
+            notifyFailure(player, message);
         }
 
         // Add item to inventory
@@ -77,9 +75,53 @@ public class PlayerManager {
         player.setGlowing(false);
     }
 
-    // Sends a message to the player with proper formatting
-    public static void notify(Player player, String msg) {
-        player.sendMessage(CommunicationManager.notify(msg));
+    public static void notify(Player player, @NotNull ChatColor base, String msg) {
+        player.sendMessage(CommunicationManager.notify(base + msg));
+    }
+
+    public static void notify(Player player, @NotNull ChatColor base, String msg, @NotNull ChatColor replace,
+                              String value) {
+        player.sendMessage(CommunicationManager.notify(base + String.format(msg, replace + value + base)));
+    }
+
+    public static void notify(Player player, @NotNull ChatColor base, String msg, @NotNull ChatColor replace,
+                              String value1, String value2) {
+        player.sendMessage(CommunicationManager.notify(base + String.format(msg, replace + value1 + base,
+                replace + value2 + base)));
+    }
+
+    public static void notifySuccess(Player player, String msg) {
+        notify(player, ChatColor.GREEN, msg);
+    }
+
+    public static void notifySuccess(Player player, String msg, @NotNull ChatColor replace, String value) {
+        notify(player, ChatColor.GREEN, msg, replace, value);
+    }
+
+    public static void notifySuccess(Player player, String msg, @NotNull ChatColor replace, String value1,
+                                     String value2) {
+        notify(player, ChatColor.GREEN, msg, replace, value1, value2);
+    }
+
+    public static void notifyFailure(Player player, String msg) {
+        notify(player, ChatColor.RED, msg);
+    }
+
+    public static void notifyFailure(Player player, String msg, @NotNull ChatColor replace, String value) {
+        notify(player, ChatColor.RED, msg, replace, value);
+    }
+
+    public static void notifyAlert(Player player, String msg) {
+        notify(player, ChatColor.GOLD, msg);
+    }
+
+    public static void notifyAlert(Player player, String msg, @NotNull ChatColor replace, String value) {
+        notify(player, ChatColor.GOLD, msg, replace, value);
+    }
+
+    public static void notifyAlert(Player player, String msg, @NotNull ChatColor replace, String value1,
+                                   String value2) {
+        notify(player, ChatColor.GOLD, msg, replace, value1, value2);
     }
 
     public static void fakeDeath(VDPlayer vdPlayer) {
@@ -97,5 +139,11 @@ public class PlayerManager {
     public static void sendPacketToOnline(PacketGroup packetGroup) {
         for (Player player : Bukkit.getOnlinePlayers())
             packetGroup.sendTo(player);
+    }
+
+    public static void sendLocationPacketToOnline(PacketGroup packetGroup, World world) {
+        for (Player player : Bukkit.getOnlinePlayers())
+            if (player.getWorld().equals(world))
+                packetGroup.sendTo(player);
     }
 }

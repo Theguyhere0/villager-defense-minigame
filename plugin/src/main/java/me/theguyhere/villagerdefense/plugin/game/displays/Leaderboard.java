@@ -1,8 +1,8 @@
 package me.theguyhere.villagerdefense.plugin.game.displays;
 
+import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
-import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -19,6 +19,7 @@ public class Leaderboard {
 	public Leaderboard(@NotNull String type, Main plugin) throws InvalidLocationException {
 		Location location = Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin,
 				"leaderboard." + type));
+
 		// Check for null world
 		if (location.getWorld() == null)
 			throw new InvalidLocationException("Location world cannot be null!");
@@ -30,19 +31,24 @@ public class Leaderboard {
 		// Determine leaderboard title
 		switch (type) {
 			case "totalKills":
-				info.add(CommunicationManager.format("&d&lTotal Kills Leaderboard"));
+				info.add(CommunicationManager.format("&d&l" +
+						plugin.getLanguageString("playerStats.totalKills.leaderboard")));
 				break;
 			case "topKills":
-				info.add(CommunicationManager.format("&c&lTop Kills Leaderboard"));
+				info.add(CommunicationManager.format("&c&l" +
+						plugin.getLanguageString("playerStats.topKills.leaderboard")));
 				break;
 			case "totalGems":
-				info.add(CommunicationManager.format("&e&lTotal Gems Leaderboard"));
+				info.add(CommunicationManager.format("&e&l" +
+						plugin.getLanguageString("playerStats.totalGems.leaderboard")));
 				break;
 			case "topBalance":
-				info.add(CommunicationManager.format("&a&lTop Balance Leaderboard"));
+				info.add(CommunicationManager.format("&a&l" +
+						plugin.getLanguageString("playerStats.topBalance.leaderboard")));
 				break;
 			case "topWave":
-				info.add(CommunicationManager.format("&b&lTop Wave Leaderboard"));
+				info.add(CommunicationManager.format("&b&l" +
+						plugin.getLanguageString("playerStats.topWave.leaderboard")));
 				break;
 			default:
 				info.add("");

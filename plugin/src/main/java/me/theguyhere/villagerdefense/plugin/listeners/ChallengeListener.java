@@ -10,7 +10,6 @@ import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -53,8 +52,6 @@ public class ChallengeListener implements Listener {
         if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR)
             return;
 
-        FileConfiguration language = plugin.getLanguageData();
-
         // Get armor
         ItemStack off = player.getInventory().getItemInOffHand();
         ItemStack helmet = player.getInventory().getHelmet();
@@ -64,33 +61,33 @@ public class ChallengeListener implements Listener {
 
         // Unequip off-hand
         if (gamer.getChallenges().contains(Challenge.amputee()) && off.getType() != Material.AIR) {
-            PlayerManager.giveItem(player, off, language.getString("inventoryFull"));
+            PlayerManager.giveItem(player, off, plugin.getLanguageString("errors.inventoryFull"));
             player.getInventory().setItemInOffHand(null);
-            PlayerManager.notify(player, language.getString("amputee"));
+            PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.amputee"));
         }
 
         // Unequip armor
         if (!gamer.getChallenges().contains(Challenge.naked()))
             return;
         if (!(helmet == null || helmet.getType() == Material.AIR)) {
-            PlayerManager.giveItem(player, helmet, language.getString("inventoryFull"));
+            PlayerManager.giveItem(player, helmet, plugin.getLanguageString("errors.inventoryFull"));
             player.getInventory().setHelmet(null);
-            PlayerManager.notify(player, language.getString("naked"));
+            PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.naked"));
         }
         if (!(chestplate == null || chestplate.getType() == Material.AIR)) {
-            PlayerManager.giveItem(player, chestplate, language.getString("inventoryFull"));
+            PlayerManager.giveItem(player, chestplate, plugin.getLanguageString("errors.inventoryFull"));
             player.getInventory().setChestplate(null);
-            PlayerManager.notify(player, language.getString("naked"));
+            PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.naked"));
         }
         if (!(leggings == null || leggings.getType() == Material.AIR)) {
-            PlayerManager.giveItem(player, leggings, language.getString("inventoryFull"));
+            PlayerManager.giveItem(player, leggings, plugin.getLanguageString("errors.inventoryFull"));
             player.getInventory().setLeggings(null);
-            PlayerManager.notify(player, language.getString("naked"));
+            PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.naked"));
         }
         if (!(boots == null || boots.getType() == Material.AIR)) {
-            PlayerManager.giveItem(player, boots, language.getString("inventoryFull"));
+            PlayerManager.giveItem(player, boots, plugin.getLanguageString("errors.inventoryFull"));
             player.getInventory().setBoots(null);
-            PlayerManager.notify(player, language.getString("naked"));
+            PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.naked"));
         }
     }
 

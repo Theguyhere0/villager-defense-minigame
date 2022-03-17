@@ -11,6 +11,7 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -24,11 +25,18 @@ import java.util.List;
 import java.util.Objects;
 
 public class Inventories {
+	private static Main plugin;
+
 	// Easily alternate between different materials
 	public static final Material[] INFO_BOARD_MATS = {Material.DARK_OAK_SIGN, Material.BIRCH_SIGN};
 	public static final Material[] MONSTER_MATS = {Material.SKELETON_SKULL, Material.ZOMBIE_HEAD};
 	public static final Material[] VILLAGER_MATS = {Material.WITHER_ROSE, Material.POPPY};
-	
+
+	// Initiate this class on plugin startup
+	public static void setPlugin(Main plugin) {
+		Inventories.plugin = plugin;
+	}
+
 	// Menu of all the arenas
 	public static Inventory createArenasInventory() {
 		// Create inventory
@@ -55,17 +63,18 @@ public class Inventories {
 				CommunicationManager.format("&7Manage info boards")));
 
 		// Option to set leaderboard hologram
-		inv.setItem(47, ItemManager.createItem(Material.GOLDEN_HELMET, CommunicationManager.format("&e&lLeaderboards"),
-				ItemManager.BUTTON_FLAGS, null, CommunicationManager.format("&7Manage leaderboards")));
+		inv.setItem(47, ItemManager.createItem(Material.GOLDEN_HELMET,
+				CommunicationManager.format("&e&lLeaderboards"), ItemManager.BUTTON_FLAGS, null,
+				CommunicationManager.format("&7Manage leaderboards")));
 
 		// Option to exit
-		inv.setItem(53, InventoryItems.exit());
+		inv.setItem(53, InventoryItems.exit(plugin));
 
 		return inv;
 	}
 
 	// Menu for lobby
-	public static Inventory createLobbyInventory(Main plugin) {
+	public static Inventory createLobbyInventory() {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
 				CommunicationManager.format("&2&lLobby"));
@@ -85,7 +94,7 @@ public class Inventories {
 		inv.setItem(6, InventoryItems.remove("LOBBY"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -105,7 +114,7 @@ public class Inventories {
 	}
 
 	// Menu for editing info boards
-	public static Inventory createInfoBoardInventory(Main plugin) {
+	public static Inventory createInfoBoardInventory() {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
 				CommunicationManager.format("&6&lInfo Boards"));
@@ -121,19 +130,21 @@ public class Inventories {
 			else index = 1;
 
 			// Create and set item
-			inv.setItem(i, ItemManager.createItem(INFO_BOARD_MATS[index], CommunicationManager.format("&6&lInfo Board " + (i + 1))));
+			inv.setItem(i, ItemManager.createItem(INFO_BOARD_MATS[index],
+					CommunicationManager.format("&6&lInfo Board " + (i + 1))));
 		}
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
 
 	// Menu for editing a specific info board
-	public static Inventory createInfoBoardMenu(Main plugin, int slot) {
+	public static Inventory createInfoBoardMenu(int slot) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(slot), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(slot), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&6&lInfo Board " + (slot + 1)));
 
 		// Option to create or relocate info board
@@ -151,7 +162,7 @@ public class Inventories {
 		inv.setItem(6, InventoryItems.remove("INFO BOARD"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -159,7 +170,8 @@ public class Inventories {
 	// Confirmation menu for removing info boards
 	public static Inventory createInfoBoardConfirmInventory(int slot) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(slot), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(slot), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&4&lRemove Info Board?"));
 
 		// "No" option
@@ -178,29 +190,33 @@ public class Inventories {
 				CommunicationManager.format("&e&lLeaderboards"));
 
 		// Option to modify total kills leaderboard
-		inv.setItem(0, ItemManager.createItem(Material.DRAGON_HEAD, CommunicationManager.format("&4&lTotal Kills Leaderboard")));
+		inv.setItem(0, ItemManager.createItem(Material.DRAGON_HEAD,
+				CommunicationManager.format("&4&lTotal Kills Leaderboard")));
 
 		// Option to modify top kills leaderboard
-		inv.setItem(1, ItemManager.createItem(Material.ZOMBIE_HEAD, CommunicationManager.format("&c&lTop Kills Leaderboard")));
+		inv.setItem(1, ItemManager.createItem(Material.ZOMBIE_HEAD,
+				CommunicationManager.format("&c&lTop Kills Leaderboard")));
 
 		// Option to modify total gems leaderboard
-		inv.setItem(2, ItemManager.createItem(Material.EMERALD_BLOCK, CommunicationManager.format("&2&lTotal Gems Leaderboard")));
+		inv.setItem(2, ItemManager.createItem(Material.EMERALD_BLOCK,
+				CommunicationManager.format("&2&lTotal Gems Leaderboard")));
 
 		// Option to modify top balance leaderboard
-		inv.setItem(3, ItemManager.createItem(Material.EMERALD, CommunicationManager.format("&a&lTop Balance Leaderboard")));
+		inv.setItem(3, ItemManager.createItem(Material.EMERALD,
+				CommunicationManager.format("&a&lTop Balance Leaderboard")));
 
 		// Option to modify top wave leaderboard
-		inv.setItem(4, ItemManager.createItem(Material.GOLDEN_SWORD, CommunicationManager.format("&9&lTop Wave Leaderboard"),
-				ItemManager.BUTTON_FLAGS, null));
+		inv.setItem(4, ItemManager.createItem(Material.GOLDEN_SWORD,
+				CommunicationManager.format("&9&lTop Wave Leaderboard"), ItemManager.BUTTON_FLAGS, null));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
 
 	// Menu for editing the total kills leaderboard
-	public static Inventory createTotalKillsLeaderboardInventory(Main plugin) {
+	public static Inventory createTotalKillsLeaderboardInventory() {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
 				CommunicationManager.format("&4&lTotal Kills Leaderboard"));
@@ -220,13 +236,13 @@ public class Inventories {
 		inv.setItem(6, InventoryItems.remove("LEADERBOARD"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
 
 	// Menu for editing the top kills leaderboard
-	public static Inventory createTopKillsLeaderboardInventory(Main plugin) {
+	public static Inventory createTopKillsLeaderboardInventory() {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
 				CommunicationManager.format("&c&lTop Kills Leaderboard"));
@@ -246,13 +262,13 @@ public class Inventories {
 		inv.setItem(6, InventoryItems.remove("LEADERBOARD"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
 
 	// Menu for editing the total gems leaderboard
-	public static Inventory createTotalGemsLeaderboardInventory(Main plugin) {
+	public static Inventory createTotalGemsLeaderboardInventory() {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
 				CommunicationManager.format("&2&lTotal Gems Leaderboard"));
@@ -272,13 +288,13 @@ public class Inventories {
 		inv.setItem(6, InventoryItems.remove("LEADERBOARD"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
 
 	// Menu for editing the top balance leaderboard
-	public static Inventory createTopBalanceLeaderboardInventory(Main plugin) {
+	public static Inventory createTopBalanceLeaderboardInventory() {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
 				CommunicationManager.format("&a&lTop Balance Leaderboard"));
@@ -298,13 +314,13 @@ public class Inventories {
 		inv.setItem(6, InventoryItems.remove("LEADERBOARD"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
 
 	// Menu for editing the top wave leaderboard
-	public static Inventory createTopWaveLeaderboardInventory(Main plugin) {
+	public static Inventory createTopWaveLeaderboardInventory() {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
 				CommunicationManager.format("&9&lTop Wave Leaderboard"));
@@ -324,7 +340,7 @@ public class Inventories {
 		inv.setItem(6, InventoryItems.remove("LEADERBOARD"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -403,40 +419,47 @@ public class Inventories {
 	public static  Inventory createArenaInventory(int arena) {
 		Arena arenaInstance = GameManager.getArena(arena);
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&2&lEdit " + arenaInstance.getName()));
 
 		// Option to edit name
-		inv.setItem(0, ItemManager.createItem(Material.NAME_TAG, CommunicationManager.format("&6&lEdit Name")));
+		inv.setItem(0, ItemManager.createItem(Material.NAME_TAG,
+				CommunicationManager.format("&6&lEdit Name")));
 
 		// Option to edit game portal and leaderboard
 		inv.setItem(1, ItemManager.createItem(Material.END_PORTAL_FRAME,
 				CommunicationManager.format("&5&lPortal and Leaderboard")));
 
 		// Option to edit player settings
-		inv.setItem(2, ItemManager.createItem(Material.PLAYER_HEAD, CommunicationManager.format("&d&lPlayer Settings")));
+		inv.setItem(2, ItemManager.createItem(Material.PLAYER_HEAD,
+				CommunicationManager.format("&d&lPlayer Settings")));
 
 		// Option to edit mob settings
-		inv.setItem(3, ItemManager.createItem(Material.ZOMBIE_SPAWN_EGG, CommunicationManager.format("&2&lMob Settings")));
+		inv.setItem(3, ItemManager.createItem(Material.ZOMBIE_SPAWN_EGG,
+				CommunicationManager.format("&2&lMob Settings")));
 
 		// Option to edit shop settings
-		inv.setItem(4, ItemManager.createItem(Material.GOLD_BLOCK, CommunicationManager.format("&e&lShop Settings")));
+		inv.setItem(4, ItemManager.createItem(Material.GOLD_BLOCK,
+				CommunicationManager.format("&e&lShop Settings")));
 
 		// Option to edit miscellaneous game settings
-		inv.setItem(5, ItemManager.createItem(Material.REDSTONE, CommunicationManager.format("&7&lGame Settings")));
+		inv.setItem(5, ItemManager.createItem(Material.REDSTONE,
+				CommunicationManager.format("&7&lGame Settings")));
 
 		// Option to close the arena
 		String closed;
 		if (arenaInstance.isClosed())
 			closed = "&c&lCLOSED";
 		else closed = "&a&lOPEN";
-		inv.setItem(6, ItemManager.createItem(Material.NETHER_BRICK_FENCE, CommunicationManager.format("&9&lClose Arena: " + closed)));
+		inv.setItem(6, ItemManager.createItem(Material.NETHER_BRICK_FENCE,
+				CommunicationManager.format("&9&lClose Arena: " + closed)));
 
 		// Option to remove arena
 		inv.setItem(7, InventoryItems.remove("ARENA"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -444,7 +467,8 @@ public class Inventories {
 	// Confirmation menu for removing an arena
 	public static Inventory createArenaConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&4&lRemove " + GameManager.getArena(arena).getName() + '?'));
 
 		// "No" option
@@ -461,7 +485,8 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&5&lPortal/LBoard: " + arenaInstance.getName()));
 
 		// Option to create or relocate the portal
@@ -493,7 +518,7 @@ public class Inventories {
 		inv.setItem(7, InventoryItems.remove("LEADERBOARD"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -501,8 +526,8 @@ public class Inventories {
 	// Confirmation menu for removing the arena portal
 	public static Inventory createPortalConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
-				CommunicationManager.format("&4&lRemove Portal?"));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") + CommunicationManager.format("&4&lRemove Portal?"));
 
 		// "No" option
 		inv.setItem(0, InventoryItems.no());
@@ -516,8 +541,8 @@ public class Inventories {
 	// Confirmation menu for removing the arena leaderboard
 	public static Inventory createArenaBoardConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
-				CommunicationManager.format("&4&lRemove Leaderboard?"));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") + CommunicationManager.format("&4&lRemove Leaderboard?"));
 
 		// "No" option
 		inv.setItem(0, InventoryItems.no());
@@ -533,21 +558,25 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&d&lPlayer Settings: " + arenaInstance.getName()));
 
 		// Option to edit player spawn
-		inv.setItem(0, ItemManager.createItem(Material.END_PORTAL_FRAME, CommunicationManager.format("&5&lPlayer Spawn")));
+		inv.setItem(0, ItemManager.createItem(Material.END_PORTAL_FRAME,
+				CommunicationManager.format("&5&lPlayer Spawn")));
 
 		// Option to toggle player spawn particles
 		inv.setItem(1, ItemManager.createItem(Material.FIREWORK_ROCKET,
-				CommunicationManager.format("&d&lSpawn Particles: " + getToggleStatus(arenaInstance.hasSpawnParticles())),
+				CommunicationManager.format("&d&lSpawn Particles: " +
+						getToggleStatus(arenaInstance.hasSpawnParticles())),
 				CommunicationManager.format("&7Particles showing where the spawn is"),
 				CommunicationManager.format("&7(Visible in-game)")));
 
 		// Option to edit waiting room
 		inv.setItem(2, ItemManager.createItem(Material.CLOCK, CommunicationManager.format("&b&lWaiting Room"),
-				CommunicationManager.format("&7An optional room to wait in before"), CommunicationManager.format("&7the game starts")));
+				CommunicationManager.format("&7An optional room to wait in before"),
+				CommunicationManager.format("&7the game starts")));
 
 		// Option to edit max players
 		inv.setItem(3, ItemManager.createItem(Material.NETHERITE_HELMET,
@@ -564,7 +593,7 @@ public class Inventories {
 				CommunicationManager.format("&7Minimum players needed for game to start")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -574,7 +603,8 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&d&lPlayer Spawn: " + arenaInstance.getName()));
 
 		// Option to create or relocate player spawn
@@ -592,7 +622,7 @@ public class Inventories {
 		inv.setItem(6, InventoryItems.remove("SPAWN"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -600,7 +630,8 @@ public class Inventories {
 	// Confirmation menu for removing player spawn
 	public static Inventory createSpawnConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&4&lRemove Spawn?"));
 
 		// "No" option
@@ -617,7 +648,8 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&b&lWaiting Room: " + arenaInstance.getName()));
 
 		// Option to create waiting room
@@ -635,7 +667,7 @@ public class Inventories {
 		inv.setItem(6, InventoryItems.remove("WAITING ROOM"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -643,7 +675,8 @@ public class Inventories {
 	// Confirmation menu for removing waiting room
 	public static Inventory createWaitingConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&4&lRemove Waiting Room?"));
 
 		// "No" option
@@ -658,19 +691,23 @@ public class Inventories {
 	// Menu for changing max players in an arena
 	public static Inventory createMaxPlayerInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
-				CommunicationManager.format("&4&lMaximum Players: " + GameManager.getArena(arena).getMaxPlayers()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") +
+				CommunicationManager.format("&4&lMaximum Players: " +
+						GameManager.getArena(arena).getMaxPlayers()));
 
 		// Option to decrease
 		for (int i = 0; i < 4; i++)
-			inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&lDecrease")));
+			inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE,
+					CommunicationManager.format("&4&lDecrease")));
 
 		// Option to increase
 		for (int i = 4; i < 8; i++)
-			inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&2&lIncrease")));
+			inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE,
+					CommunicationManager.format("&2&lIncrease")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -678,19 +715,23 @@ public class Inventories {
 	// Menu for changing min players in an arena
 	public static Inventory createMinPlayerInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
-				CommunicationManager.format("&2&lMinimum Players: " + GameManager.getArena(arena).getMinPlayers()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") +
+				CommunicationManager.format("&2&lMinimum Players: " +
+						GameManager.getArena(arena).getMinPlayers()));
 
 		// Option to decrease
 		for (int i = 0; i < 4; i++)
-			inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&lDecrease")));
+			inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE,
+					CommunicationManager.format("&4&lDecrease")));
 
 		// Option to increase
 		for (int i = 4; i < 8; i++)
-			inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&2&lIncrease")));
+			inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE,
+					CommunicationManager.format("&2&lIncrease")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -700,15 +741,18 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&2&lMob Settings: " + arenaInstance.getName()));
 
 		// Option to edit monster spawns
-		inv.setItem(0, ItemManager.createItem(Material.END_PORTAL_FRAME, CommunicationManager.format("&2&lMonster Spawns")));
+		inv.setItem(0, ItemManager.createItem(Material.END_PORTAL_FRAME,
+				CommunicationManager.format("&2&lMonster Spawns")));
 
 		// Option to toggle monster spawn particles
 		inv.setItem(1, ItemManager.createItem(Material.FIREWORK_ROCKET,
-				CommunicationManager.format("&a&lMonster Spawn Particles: " + getToggleStatus(arenaInstance.hasMonsterParticles())),
+				CommunicationManager.format("&a&lMonster Spawn Particles: " +
+						getToggleStatus(arenaInstance.hasMonsterParticles())),
 				CommunicationManager.format("&7Particles showing where the spawns are"),
 				CommunicationManager.format("&7(Visible in-game)")));
 
@@ -718,20 +762,24 @@ public class Inventories {
 
 		// Option to toggle villager spawn particles
 		inv.setItem(3, ItemManager.createItem(Material.FIREWORK_ROCKET,
-				CommunicationManager.format("&d&lVillager Spawn Particles: " + getToggleStatus(arenaInstance.hasVillagerParticles())),
+				CommunicationManager.format("&d&lVillager Spawn Particles: " +
+						getToggleStatus(arenaInstance.hasVillagerParticles())),
 				CommunicationManager.format("&7Particles showing where the spawns are"),
 				CommunicationManager.format("&7(Visible in-game)")));
 
 		// Option to edit spawn table
-		inv.setItem(4, ItemManager.createItem(Material.DRAGON_HEAD, CommunicationManager.format("&3&lSpawn Table")));
+		inv.setItem(4, ItemManager.createItem(Material.DRAGON_HEAD,
+				CommunicationManager.format("&3&lSpawn Table")));
 
 		// Option to toggle dynamic mob count
 		inv.setItem(5, ItemManager.createItem(Material.SLIME_BALL,
-				CommunicationManager.format("&e&lDynamic Mob Count: " + getToggleStatus(arenaInstance.hasDynamicCount())),
-				CommunicationManager.format("&7Mob count adjusting based on"), CommunicationManager.format("&7number of players")));
+				CommunicationManager.format("&e&lDynamic Mob Count: " +
+						getToggleStatus(arenaInstance.hasDynamicCount())),
+				CommunicationManager.format("&7Mob count adjusting based on"),
+				CommunicationManager.format("&7number of players")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -741,7 +789,8 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&2&lMonster Spawns: " + arenaInstance.getName()));
 
 		// Prepare for material indexing
@@ -760,7 +809,7 @@ public class Inventories {
 		}
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -804,7 +853,7 @@ public class Inventories {
 		}
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -830,7 +879,8 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&5&lVillager Spawns: " + arenaInstance.getName()));
 
 		// Prepare for material indexing
@@ -849,7 +899,7 @@ public class Inventories {
 		}
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -859,7 +909,8 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&5&lVillager Spawn " + (slot + 1) + ": " + arenaInstance.getName()));
 
 		// Option to create or relocate villager spawn
@@ -877,7 +928,7 @@ public class Inventories {
 		inv.setItem(6, InventoryItems.remove("SPAWN"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -885,7 +936,8 @@ public class Inventories {
 	// Confirmation menu for removing mob spawns
 	public static Inventory createVillagerSpawnConfirmInventory(int arena, int slot) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&4&lRemove Villager Spawn?"));
 
 		// "No" option
@@ -960,7 +1012,7 @@ public class Inventories {
 				CommunicationManager.format("&7(Check the arena number in arenaData.yml)")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -970,7 +1022,8 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&e&lShop Settings: " + arenaInstance.getName()));
 
 		// Option to create a custom shop
@@ -989,7 +1042,7 @@ public class Inventories {
 
 		// Option to toggle custom shop
 		inv.setItem(3, ItemManager.createItem(Material.BOOKSHELF,
-				CommunicationManager.format("&3&lEnchants Shop: " + getToggleStatus(arenaInstance.hasEnchants())),
+				CommunicationManager.format("&3&lEnchant Shop: " + getToggleStatus(arenaInstance.hasEnchants())),
 				CommunicationManager.format("&7Turn enchants shop on and off")));
 
 		// Option to toggle community chest
@@ -1004,7 +1057,7 @@ public class Inventories {
 				CommunicationManager.format("&7players in the game")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -1014,44 +1067,55 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 27, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 27,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&6&lEdit Item"));
 
 		// Item of interest
 		inv.setItem(4, arenaInstance.getCustomShop().getItem(slot));
 
 		// Option to set un-purchasable
-		inv.setItem(8, ItemManager.createItem(Material.BEDROCK, CommunicationManager.format("&5&lToggle Un-purchasable")));
+		inv.setItem(8, ItemManager.createItem(Material.BEDROCK,
+				CommunicationManager.format("&5&lToggle Un-purchasable")));
 
 		// Option to increase by 1
-		inv.setItem(9, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&a&l+1 gem")));
+		inv.setItem(9, ItemManager.createItem(Material.LIME_CONCRETE,
+				CommunicationManager.format("&a&l+1 gem")));
 
 		// Option to increase by 10
-		inv.setItem(11, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&a&l+10 gems")));
+		inv.setItem(11, ItemManager.createItem(Material.LIME_CONCRETE,
+				CommunicationManager.format("&a&l+10 gems")));
 
 		// Option to increase by 100
-		inv.setItem(13, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&a&l+100 gems")));
+		inv.setItem(13, ItemManager.createItem(Material.LIME_CONCRETE,
+				CommunicationManager.format("&a&l+100 gems")));
 
 		// Option to increase by 1000
-		inv.setItem(15, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&a&l+1000 gems")));
+		inv.setItem(15, ItemManager.createItem(Material.LIME_CONCRETE,
+				CommunicationManager.format("&a&l+1000 gems")));
 
 		// Option to delete item
-		inv.setItem(17, ItemManager.createItem(Material.LAVA_BUCKET, CommunicationManager.format("&4&lDELETE")));
+		inv.setItem(17, ItemManager.createItem(Material.LAVA_BUCKET,
+				CommunicationManager.format("&4&lDELETE")));
 
 		// Option to decrease by 1
-		inv.setItem(18, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&c&l-1 gem")));
+		inv.setItem(18, ItemManager.createItem(Material.RED_CONCRETE,
+				CommunicationManager.format("&c&l-1 gem")));
 
 		// Option to decrease by 10
-		inv.setItem(20, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&c&l-10 gems")));
+		inv.setItem(20, ItemManager.createItem(Material.RED_CONCRETE,
+				CommunicationManager.format("&c&l-10 gems")));
 
 		// Option to decrease by 100
-		inv.setItem(22, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&c&l-100 gems")));
+		inv.setItem(22, ItemManager.createItem(Material.RED_CONCRETE,
+				CommunicationManager.format("&c&l-100 gems")));
 
 		// Option to decrease by 1000
-		inv.setItem(24, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&c&l-1000 gems")));
+		inv.setItem(24, ItemManager.createItem(Material.RED_CONCRETE,
+				CommunicationManager.format("&c&l-1000 gems")));
 
 		// Option to exit
-		inv.setItem(26, InventoryItems.exit());
+		inv.setItem(26, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -1059,7 +1123,8 @@ public class Inventories {
 	// Confirmation menu for removing custom item
 	public static Inventory createCustomItemConfirmInventory(int arena, int slot) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&4&lRemove Custom Item?"));
 
 		// "No" option
@@ -1076,7 +1141,8 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 18, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 18,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&8&lGame Settings: " + arenaInstance.getName()));
 
 		// Option to change max waves
@@ -1086,19 +1152,23 @@ public class Inventories {
 				null));
 
 		// Option to wave time limit
-		inv.setItem(1, ItemManager.createItem(Material.CLOCK, CommunicationManager.format("&2&lWave Time Limit")));
+		inv.setItem(1, ItemManager.createItem(Material.CLOCK,
+				CommunicationManager.format("&2&lWave Time Limit")));
 
 		// Option to toggle dynamic wave time limit
 		inv.setItem(2, ItemManager.createItem(Material.SNOWBALL,
-				CommunicationManager.format("&a&lDynamic Time Limit: " + getToggleStatus(arenaInstance.hasDynamicLimit())),
+				CommunicationManager.format("&a&lDynamic Time Limit: " +
+						getToggleStatus(arenaInstance.hasDynamicLimit())),
 				CommunicationManager.format("&7Wave time limit adjusting based on"),
 				CommunicationManager.format("&7in-game difficulty")));
 
 		// Option to edit allowed kits
-		inv.setItem(3, ItemManager.createItem(Material.ENDER_CHEST, CommunicationManager.format("&9&lAllowed Kits")));
+		inv.setItem(3, ItemManager.createItem(Material.ENDER_CHEST,
+				CommunicationManager.format("&9&lAllowed Kits")));
 
 		// Option to edit difficulty label
-		inv.setItem(4, ItemManager.createItem(Material.NAME_TAG, CommunicationManager.format("&6&lDifficulty Label")));
+		inv.setItem(4, ItemManager.createItem(Material.NAME_TAG,
+				CommunicationManager.format("&6&lDifficulty Label")));
 
 		// Option to adjust overall difficulty multiplier
 		inv.setItem(5, ItemManager.createItem(Material.TURTLE_HELMET,
@@ -1109,13 +1179,17 @@ public class Inventories {
 
 		// Option to toggle dynamic difficulty
 		inv.setItem(6, ItemManager.createItem(Material.MAGMA_CREAM,
-				CommunicationManager.format("&6&lDynamic Difficulty: " + getToggleStatus(arenaInstance.hasDynamicDifficulty())),
-				CommunicationManager.format("&7Difficulty adjusting based on"), CommunicationManager.format("&7number of players")));
+				CommunicationManager.format("&6&lDynamic Difficulty: " +
+						getToggleStatus(arenaInstance.hasDynamicDifficulty())),
+				CommunicationManager.format("&7Difficulty adjusting based on"),
+				CommunicationManager.format("&7number of players")));
 
 		// Option to toggle late arrival
 		inv.setItem(7, ItemManager.createItem(Material.DAYLIGHT_DETECTOR,
-				CommunicationManager.format("&e&lLate Arrival: " + getToggleStatus(arenaInstance.hasLateArrival())),
-				CommunicationManager.format("&7Allows players to join after"), CommunicationManager.format("&7the game has started")));
+				CommunicationManager.format("&e&lLate Arrival: " +
+						getToggleStatus(arenaInstance.hasLateArrival())),
+				CommunicationManager.format("&7Allows players to join after"),
+				CommunicationManager.format("&7the game has started")));
 
 		// Option to toggle experience drop
 		inv.setItem(9, ItemManager.createItem(Material.EXPERIENCE_BOTTLE,
@@ -1141,7 +1215,8 @@ public class Inventories {
 				CommunicationManager.format("&7Maximum wolves a player can have")));
 
 		// Option to edit golem cap
-		inv.setItem(13, ItemManager.createItem(Material.IRON_INGOT, CommunicationManager.format("&e&lIron Golem Cap"),
+		inv.setItem(13, ItemManager.createItem(Material.IRON_INGOT,
+				CommunicationManager.format("&e&lIron Golem Cap"),
 				CommunicationManager.format("&7Maximum iron golems an arena can have")));
 
 		// Option to edit sounds
@@ -1157,7 +1232,7 @@ public class Inventories {
 				CommunicationManager.format("&7choose from a menu of presets")));
 
 		// Option to exit
-		inv.setItem(17, InventoryItems.exit());
+		inv.setItem(17, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -1175,20 +1250,24 @@ public class Inventories {
 
 		// Option to decrease
 		for (int i = 0; i < 3; i++)
-			inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&lDecrease")));
+			inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE,
+					CommunicationManager.format("&4&lDecrease")));
 
 		// Option to set to unlimited
-		inv.setItem(3, ItemManager.createItem(Material.ORANGE_CONCRETE, CommunicationManager.format("&6&lUnlimited")));
+		inv.setItem(3, ItemManager.createItem(Material.ORANGE_CONCRETE,
+				CommunicationManager.format("&6&lUnlimited")));
 
 		// Option to reset to 1
-		inv.setItem(4, ItemManager.createItem(Material.LIGHT_BLUE_CONCRETE, CommunicationManager.format("&3&lReset to 1")));
+		inv.setItem(4, ItemManager.createItem(Material.LIGHT_BLUE_CONCRETE,
+				CommunicationManager.format("&3&lReset to 1")));
 
 		// Option to increase
 		for (int i = 5; i < 8; i++)
-			inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&2&lIncrease")));
+			inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE,
+					CommunicationManager.format("&2&lIncrease")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -1201,25 +1280,31 @@ public class Inventories {
 		if (GameManager.getArena(arena).getWaveTimeLimit() < 0)
 			inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
 					CommunicationManager.format("&2&lWave Time Limit: Unlimited"));
-		else inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
-				CommunicationManager.format("&2&lWave Time Limit: " + GameManager.getArena(arena).getWaveTimeLimit()));
+		else inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") +
+				CommunicationManager.format("&2&lWave Time Limit: " +
+						GameManager.getArena(arena).getWaveTimeLimit()));
 
 		// Option to decrease
 		for (int i = 0; i < 3; i++)
-			inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&lDecrease")));
+			inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE,
+					CommunicationManager.format("&4&lDecrease")));
 
 		// Option to set to unlimited
-		inv.setItem(3, ItemManager.createItem(Material.ORANGE_CONCRETE, CommunicationManager.format("&6&lUnlimited")));
+		inv.setItem(3, ItemManager.createItem(Material.ORANGE_CONCRETE,
+				CommunicationManager.format("&6&lUnlimited")));
 
 		// Option to reset to 1
-		inv.setItem(4, ItemManager.createItem(Material.LIGHT_BLUE_CONCRETE, CommunicationManager.format("&3&lReset to 1")));
+		inv.setItem(4, ItemManager.createItem(Material.LIGHT_BLUE_CONCRETE,
+				CommunicationManager.format("&3&lReset to 1")));
 
 		// Option to increase
 		for (int i = 5; i < 8; i++)
-			inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&2&lIncrease")));
+			inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE,
+					CommunicationManager.format("&2&lIncrease")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -1229,14 +1314,19 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54, CommunicationManager.format("&k") +
-				(mock ? CommunicationManager.format("&9&lAllowed Kits: " + arenaInstance.getName()) :
-						CommunicationManager.format("&9&lAllowed Kits")));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54,
+				CommunicationManager.format("&k") +
+				(mock ? CommunicationManager.format("&9&l" +
+						plugin.getLanguageString("messages.allowedKits") + ": " + arenaInstance.getName()) :
+						CommunicationManager.format("&9&l" +
+								plugin.getLanguageString("messages.allowedKits"))));
 
 		// Gift kits
 		for (int i = 0; i < 9; i++)
-			inv.setItem(i, ItemManager.createItem(Material.LIME_STAINED_GLASS_PANE, CommunicationManager.format("&a&lGift Kits"),
-					CommunicationManager.format("&7Kits give one-time benefits"), CommunicationManager.format("&7per game or respawn")));
+			inv.setItem(i, ItemManager.createItem(Material.LIME_STAINED_GLASS_PANE,
+					CommunicationManager.format("&a&l" + plugin.getLanguageString("names.giftKits")),
+					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+							plugin.getLanguageString("messages.giftKitsDescription"))));
 
 		if (arenaInstance.getBannedKits().contains(Kit.orc().getName()))
 			inv.setItem(9, Kit.orc().getButton(-1, false));
@@ -1268,8 +1358,10 @@ public class Inventories {
 
 		// Ability kits
 		for (int i = 18; i < 27; i++)
-			inv.setItem(i, ItemManager.createItem(Material.MAGENTA_STAINED_GLASS_PANE, CommunicationManager.format("&d&lAbility Kits"),
-					CommunicationManager.format("&7Kits give special ability per respawn")));
+			inv.setItem(i, ItemManager.createItem(Material.MAGENTA_STAINED_GLASS_PANE,
+					CommunicationManager.format("&d&l" + plugin.getLanguageString("names.abilityKits")),
+					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+							plugin.getLanguageString("messages.abilityKitsDescription"))));
 
 		if (arenaInstance.getBannedKits().contains(Kit.mage().getName()))
 			inv.setItem(27, Kit.mage().getButton(-1, false));
@@ -1301,8 +1393,10 @@ public class Inventories {
 
 		// Effect kits
 		for (int i = 36; i < 45; i++)
-			inv.setItem(i, ItemManager.createItem(Material.YELLOW_STAINED_GLASS_PANE, CommunicationManager.format("&e&lEffect Kits"),
-					CommunicationManager.format("&7Kits give players a permanent"), CommunicationManager.format("&7special effect")));
+			inv.setItem(i, ItemManager.createItem(Material.YELLOW_STAINED_GLASS_PANE,
+					CommunicationManager.format("&e&l" + plugin.getLanguageString("names.effectKits")),
+					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+							plugin.getLanguageString("messages.effectKitsDescription"))));
 
 		if (arenaInstance.getBannedKits().contains(Kit.blacksmith().getName()))
 			inv.setItem(45, Kit.blacksmith().getButton(-1, false));
@@ -1321,7 +1415,7 @@ public class Inventories {
 		else inv.setItem(49, Kit.giant().getButton(-1, true));
 
 		// Option to exit
-		inv.setItem(53, InventoryItems.exit());
+		inv.setItem(53, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -1331,42 +1425,48 @@ public class Inventories {
 		String label = GameManager.getArena(arena).getDifficultyLabel();
 		switch (label) {
 			case "Easy":
-				label = "&a&lEasy";
+				label = "&a&l" + plugin.getLanguageString("names.easy");
 				break;
 			case "Medium":
-				label = "&e&lMedium";
+				label = "&e&l" + plugin.getLanguageString("names.medium");
 				break;
 			case "Hard":
-				label = "&c&lHard";
+				label = "&c&l" + plugin.getLanguageString("names.hard");
 				break;
 			case "Insane":
-				label = "&d&lInsane";
+				label = "&d&l" + plugin.getLanguageString("names.insane");
 				break;
 			default:
 				label = "";
 		}
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&6&lDifficulty Label: " + label));
 
 		// "Easy" option
-		inv.setItem(0, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&a&lEasy")));
+		inv.setItem(0, ItemManager.createItem(Material.LIME_CONCRETE,
+				CommunicationManager.format("&a&l" + plugin.getLanguageString("names.easy"))));
 
 		// "Medium" option
-		inv.setItem(1, ItemManager.createItem(Material.YELLOW_CONCRETE, CommunicationManager.format("&e&lMedium")));
+		inv.setItem(1, ItemManager.createItem(Material.YELLOW_CONCRETE,
+				CommunicationManager.format("&e&l" + plugin.getLanguageString("names.medium"))));
 
 		// "Hard" option
-		inv.setItem(2, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&c&lHard")));
+		inv.setItem(2, ItemManager.createItem(Material.RED_CONCRETE,
+				CommunicationManager.format("&c&l" + plugin.getLanguageString("names.hard"))));
 
 		// "Insane" option
-		inv.setItem(3, ItemManager.createItem(Material.MAGENTA_CONCRETE, CommunicationManager.format("&d&lInsane")));
+		inv.setItem(3, ItemManager.createItem(Material.MAGENTA_CONCRETE,
+				CommunicationManager.format("&d&l" + plugin.getLanguageString("names.insane"))));
 
 		// "None" option
-		inv.setItem(4, ItemManager.createItem(Material.LIGHT_GRAY_CONCRETE, CommunicationManager.format("&7&lNone")));
+		inv.setItem(4, ItemManager.createItem(Material.LIGHT_GRAY_CONCRETE,
+				CommunicationManager.format("&7&l" + plugin.getLanguageString("names.none"))));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -1374,11 +1474,14 @@ public class Inventories {
 	// Menu for changing the difficulty multiplier of an arena
 	public static Inventory createDifficultyMultiplierInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
-				CommunicationManager.format("&4&lDifficulty Multiplier: " + GameManager.getArena(arena).getDifficultyMultiplier()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") +
+				CommunicationManager.format("&4&lDifficulty Multiplier: " +
+						GameManager.getArena(arena).getDifficultyMultiplier()));
 
 		// "1" option
-		inv.setItem(0, ItemManager.createItem(Material.LIGHT_BLUE_CONCRETE, CommunicationManager.format("&b&l1")));
+		inv.setItem(0, ItemManager.createItem(Material.LIGHT_BLUE_CONCRETE,
+				CommunicationManager.format("&b&l1")));
 
 		// "2" option
 		inv.setItem(2, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&a&l2")));
@@ -1390,7 +1493,7 @@ public class Inventories {
 		inv.setItem(6, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&l4")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -1400,7 +1503,8 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&4&lArena Bounds: " + arenaInstance.getName()));
 
 		// Option to interact with corner 1
@@ -1408,15 +1512,17 @@ public class Inventories {
 				(arenaInstance.getCorner1() == null ? "&c&lMissing" : "&a&lSet"))));
 
 		// Option to interact with corner 2
-		inv.setItem(3, ItemManager.createItem(Material.SOUL_TORCH, CommunicationManager.format("&9&lCorner 2: " +
+		inv.setItem(3, ItemManager.createItem(Material.SOUL_TORCH,
+				CommunicationManager.format("&9&lCorner 2: " +
 				(arenaInstance.getCorner2() == null ? "&c&lMissing" : "&a&lSet"))));
 
 		// Option to toggle arena border particles
-		inv.setItem(6, ItemManager.createItem(Material.FIREWORK_ROCKET, CommunicationManager.format("&4&lBorder Particles: " +
+		inv.setItem(6, ItemManager.createItem(Material.FIREWORK_ROCKET,
+				CommunicationManager.format("&4&lBorder Particles: " +
 				getToggleStatus(arenaInstance.hasBorderParticles()))));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -1426,7 +1532,8 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&b&lCorner 1: " + arenaInstance.getName()));
 
 		// Option to create waiting room
@@ -1441,7 +1548,7 @@ public class Inventories {
 		inv.setItem(4, InventoryItems.remove("CORNER 1"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -1449,7 +1556,8 @@ public class Inventories {
 	// Confirmation menu for removing corner 1
 	public static Inventory createCorner1ConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&4&lRemove Corner 1?"));
 
 		// "No" option
@@ -1466,7 +1574,8 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&9&lCorner 2: " + arenaInstance.getName()));
 
 		// Option to create waiting room
@@ -1481,7 +1590,7 @@ public class Inventories {
 		inv.setItem(4, InventoryItems.remove("CORNER 2"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -1489,7 +1598,8 @@ public class Inventories {
 	// Confirmation menu for removing corner 2
 	public static Inventory createCorner2ConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&4&lRemove Corner 2?"));
 
 		// "No" option
@@ -1504,19 +1614,22 @@ public class Inventories {
 	// Menu for changing wolf cap of an arena
 	public static Inventory createWolfCapInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&6&lWolf Cap: " + GameManager.getArena(arena).getWolfCap()));
 
 		// Option to decrease
 		for (int i = 0; i < 4; i++)
-			inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&lDecrease")));
+			inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE,
+					CommunicationManager.format("&4&lDecrease")));
 
 		// Option to increase
 		for (int i = 4; i < 8; i++)
-			inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&2&lIncrease")));
+			inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE,
+					CommunicationManager.format("&2&lIncrease")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -1524,19 +1637,22 @@ public class Inventories {
 	// Menu for changing iron golem cap of an arena
 	public static Inventory createGolemCapInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&e&lIron Golem Cap: " + GameManager.getArena(arena).getGolemCap()));
 
 		// Option to decrease
 		for (int i = 0; i < 4; i++)
-			inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&lDecrease")));
+			inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE,
+					CommunicationManager.format("&4&lDecrease")));
 
 		// Option to increase
 		for (int i = 4; i < 8; i++)
-			inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&2&lIncrease")));
+			inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE,
+					CommunicationManager.format("&2&lIncrease")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -1546,7 +1662,8 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&d&lSounds: " + GameManager.getArena(arena).getName()));
 
 		// Option to edit win sound
@@ -1565,14 +1682,16 @@ public class Inventories {
 
 		// Option to edit wave start sound
 		inv.setItem(2, ItemManager.createItem(Material.MUSIC_DISC_CAT,
-				CommunicationManager.format("&2&lWave Start Sound: " + getToggleStatus(arenaInstance.hasWaveStartSound())),
+				CommunicationManager.format("&2&lWave Start Sound: " +
+						getToggleStatus(arenaInstance.hasWaveStartSound())),
 				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Played when a wave starts")));
 
 		// Option to edit wave finish sound
 		inv.setItem(3, ItemManager.createItem(Material.MUSIC_DISC_BLOCKS,
-				CommunicationManager.format("&9&lWave Finish Sound: " + getToggleStatus(arenaInstance.hasWaveFinishSound())),
+				CommunicationManager.format("&9&lWave Finish Sound: " +
+						getToggleStatus(arenaInstance.hasWaveFinishSound())),
 				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Played when a wave ends")));
@@ -1582,31 +1701,35 @@ public class Inventories {
 				CommunicationManager.format("&6&lWaiting Sound"),
 				ItemManager.BUTTON_FLAGS,
 				null,
-				CommunicationManager.format("&7Played while players wait"), CommunicationManager.format("&7for the game to start")));
+				CommunicationManager.format("&7Played while players wait"),
+				CommunicationManager.format("&7for the game to start")));
 
 		// Option to edit gem pickup sound
 		inv.setItem(5, ItemManager.createItem(Material.MUSIC_DISC_FAR,
-				CommunicationManager.format("&b&lGem Pickup Sound: " + getToggleStatus(arenaInstance.hasGemSound())),
+				CommunicationManager.format("&b&lGem Pickup Sound: " +
+						getToggleStatus(arenaInstance.hasGemSound())),
 				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Played when players pick up gems")));
 
 		// Option to edit player death sound
 		inv.setItem(6, ItemManager.createItem(Material.MUSIC_DISC_CHIRP,
-				CommunicationManager.format("&4&lPlayer Death Sound: " + getToggleStatus(arenaInstance.hasPlayerDeathSound())),
+				CommunicationManager.format("&4&lPlayer Death Sound: " +
+						getToggleStatus(arenaInstance.hasPlayerDeathSound())),
 				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Played when a player dies")));
 
 		// Option to edit ability sound
 		inv.setItem(7, ItemManager.createItem(Material.MUSIC_DISC_MALL,
-				CommunicationManager.format("&d&lAbility Sound: " + getToggleStatus(arenaInstance.hasAbilitySound())),
+				CommunicationManager.format("&d&lAbility Sound: " +
+						getToggleStatus(arenaInstance.hasAbilitySound())),
 				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Played when a player uses their ability")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -1614,8 +1737,10 @@ public class Inventories {
 	// Menu for editing the win sound of an arena
 	public static Inventory createWaitSoundInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 18, CommunicationManager.format("&k") +
-				CommunicationManager.format("&6&lWaiting Sound: " + GameManager.getArena(arena).getWaitingSoundName()));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 18,
+				CommunicationManager.format("&k") +
+				CommunicationManager.format("&6&lWaiting Sound: " +
+						GameManager.getArena(arena).getWaitingSoundName()));
 
 		Arena arenaInstance = GameManager.getArena(arena);
 
@@ -1635,7 +1760,7 @@ public class Inventories {
 		inv.setItem(14, arenaInstance.getWaitingSoundButton(14));
 
 		// Option to exit
-		inv.setItem(17, InventoryItems.exit());
+		inv.setItem(17, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -1643,7 +1768,8 @@ public class Inventories {
 	// Menu to copy game settings
 	public static Inventory createCopySettingsInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54,  CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54,
+				CommunicationManager.format("&k") +
 				CommunicationManager.format("&8&lCopy Game Settings"));
 
 		// Options to choose any of the 45 possible arenas
@@ -1661,54 +1787,67 @@ public class Inventories {
 		}
 
 		// Easy preset
-		inv.setItem(45, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&a&lEasy Preset")));
+		inv.setItem(45, ItemManager.createItem(Material.LIME_CONCRETE,
+				CommunicationManager.format("&a&lEasy Preset")));
 
 		// Medium preset
-		inv.setItem(47, ItemManager.createItem(Material.YELLOW_CONCRETE, CommunicationManager.format("&e&lMedium Preset")));
+		inv.setItem(47, ItemManager.createItem(Material.YELLOW_CONCRETE,
+				CommunicationManager.format("&e&lMedium Preset")));
 
 		// Hard preset
-		inv.setItem(49, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&c&lHard Preset")));
+		inv.setItem(49, ItemManager.createItem(Material.RED_CONCRETE,
+				CommunicationManager.format("&c&lHard Preset")));
 
 		// Insane preset
-		inv.setItem(51, ItemManager.createItem(Material.MAGENTA_CONCRETE, CommunicationManager.format("&d&lInsane Preset")));
+		inv.setItem(51, ItemManager.createItem(Material.MAGENTA_CONCRETE,
+				CommunicationManager.format("&d&lInsane Preset")));
 
 		// Option to exit
-		inv.setItem(53, InventoryItems.exit());
+		inv.setItem(53, InventoryItems.exit(plugin));
 
 		return inv;
 	}
 
 	// Generate the shop menu
 	public static Inventory createShop(int level, Arena arena) {
+		String disabled = " &4&l[" + plugin.getLanguageString("messages.disabled") + "]";
+		
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
-				CommunicationManager.format("&2&lLevel &9&l" + level + " &2&lItem Shop"));
+				CommunicationManager.format("&2&l" + plugin.getLanguageString("messages.level") +
+						" &9&l" + level + " &2&l" + plugin.getLanguageString("names.itemShop")));
 
 		inv.setItem(0, ItemManager.createItem(Material.GOLDEN_SWORD,
-				CommunicationManager.format("&4&lLevel &9&l" + level + " &4&lWeapon Shop" +
-						(arena.hasNormal() ? "" : " &4&l[DISABLED]")), ItemManager.BUTTON_FLAGS,
-				arena.hasNormal() ? ItemManager.glow() : null));
+				CommunicationManager.format("&4&l" + plugin.getLanguageString("messages.level") +
+						" &9&l" + level + " &4&l" + plugin.getLanguageString("names.weaponShop") +
+						(arena.hasNormal() ? "" : disabled)), ItemManager.BUTTON_FLAGS, arena.hasNormal() ?
+						ItemManager.glow() : null));
 
 		inv.setItem(1, ItemManager.createItem(Material.GOLDEN_CHESTPLATE,
-				CommunicationManager.format("&5&lLevel &9&l" + level + " &5&lArmor Shop" +
-						(arena.hasNormal() ? "" : " &4&l[DISABLED]")), ItemManager.BUTTON_FLAGS,
-				arena.hasNormal() ? ItemManager.glow() : null));
+				CommunicationManager.format("&5&l" + plugin.getLanguageString("messages.level") +
+						" &9&l" + level + " &5&l" + plugin.getLanguageString("names.armorShop") +
+						(arena.hasNormal() ? "" : disabled)), ItemManager.BUTTON_FLAGS, arena.hasNormal() ?
+						ItemManager.glow() : null));
 
 		inv.setItem(2, ItemManager.createItem(Material.GOLDEN_APPLE,
-				CommunicationManager.format("&3&lLevel &9&l" + level + " &3&lConsumables Shop" +
-						(arena.hasNormal() ? "" : " &4&l[DISABLED]")), ItemManager.BUTTON_FLAGS,
-				arena.hasNormal() ? ItemManager.glow() : null));
+				CommunicationManager.format("&3&l" + plugin.getLanguageString("messages.level") +
+						" &9&l" + level + " &3&l" + plugin.getLanguageString("names.consumableShop") +
+						(arena.hasNormal() ? "" : disabled)), ItemManager.BUTTON_FLAGS, arena.hasNormal() ?
+						ItemManager.glow() : null));
 
 		inv.setItem(4, ItemManager.createItem(Material.BOOKSHELF,
-				CommunicationManager.format("&a&lEnchants Shop" + (arena.hasEnchants() ? "" : " &4&l[DISABLED]")),
-				ItemManager.BUTTON_FLAGS, arena.hasEnchants() ? ItemManager.glow() : null));
+				CommunicationManager.format("&a&l" + plugin.getLanguageString("names.enchantShop") + 
+						(arena.hasEnchants() ? "" : disabled)), ItemManager.BUTTON_FLAGS, arena.hasEnchants() ?
+						ItemManager.glow() : null));
 
-		inv.setItem(6, ItemManager.createItem(Material.QUARTZ, CommunicationManager.format("&6&lCustom Shop" +
-				(arena.hasCustom() ? "" : " &4&l[DISABLED]")), ItemManager.BUTTON_FLAGS,
-				arena.hasNormal() ? ItemManager.glow() : null));
+		inv.setItem(6, ItemManager.createItem(Material.QUARTZ, 
+				CommunicationManager.format("&6&l" + plugin.getLanguageString("names.customShop") + 
+						(arena.hasCustom() ? "" : disabled)), ItemManager.BUTTON_FLAGS, arena.hasNormal() ?
+						ItemManager.glow() : null));
 
-		inv.setItem(8, ItemManager.createItem(Material.CHEST, CommunicationManager.format("&d&lCommunity Chest" +
-				(arena.hasCommunity() ? "" : " &4&l[DISABLED]"))));
+		inv.setItem(8, ItemManager.createItem(Material.CHEST,
+				CommunicationManager.format("&d&l" + plugin.getLanguageString("names.communityChest") +
+						(arena.hasCommunity() ? "" : disabled))));
 
 		return inv;
 	}
@@ -1722,7 +1861,8 @@ public class Inventories {
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 27, CommunicationManager.format("&k") +
-				CommunicationManager.format("&4&lLevel &9&l" + level + " &4&lWeapon Shop"));
+				CommunicationManager.format("&4&l" + plugin.getLanguageString("messages.level") +
+						" &9&l" + level + " &4&l" + plugin.getLanguageString("names.weaponShop")));
 
 		// Fill in swords
 		List<ItemStack> swords = new ArrayList<>();
@@ -1757,7 +1897,7 @@ public class Inventories {
 			inv.setItem(i + 15, modifyPrice(ammo.get(i), modifier));
 
 		// Return option
-		inv.setItem(22, InventoryItems.exit());
+		inv.setItem(22, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -1771,7 +1911,8 @@ public class Inventories {
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 27, CommunicationManager.format("&k") +
-				CommunicationManager.format("&5&lLevel &9&l" + level + " &5&lArmor Shop"));
+				CommunicationManager.format("&5&l" + plugin.getLanguageString("messages.level") +
+						" &9&l" + level + " &5&l" + plugin.getLanguageString("names.armorShop")));
 
 		// Fill in helmets
 		List<ItemStack> helmets = new ArrayList<>();
@@ -1806,13 +1947,13 @@ public class Inventories {
 			inv.setItem(i + 14, modifyPrice(boots.get(i), modifier));
 
 		// Return option
-		inv.setItem(22, InventoryItems.exit());
+		inv.setItem(22, InventoryItems.exit(plugin));
 
 		return inv;
 	}
 
-	// Generate the consumables shop
-	public static Inventory createConsumablesShop(int level, Arena arena) {
+	// Generate the consumable shop
+	public static Inventory createConsumableShop(int level, Arena arena) {
 		// Set price modifier
 		double modifier = Math.pow(arena.getActiveCount() - 5, 2) / 200 + 1;
 		if (!arena.hasDynamicPrices())
@@ -1820,7 +1961,8 @@ public class Inventories {
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 18, CommunicationManager.format("&k") +
-				CommunicationManager.format("&3&lLevel &9&l" + level + " &3&lConsumables Shop"));
+				CommunicationManager.format("&3&l" + plugin.getLanguageString("messages.level") +
+						" &9&l" + level + " &3&l" + plugin.getLanguageString("names.consumableShop")));
 
 		// Fill in food
 		List<ItemStack> foods = new ArrayList<>();
@@ -1839,122 +1981,157 @@ public class Inventories {
 			inv.setItem(i + 5, modifyPrice(others.get(i), modifier));
 
 		// Return option
-		inv.setItem(13, InventoryItems.exit());
+		inv.setItem(13, InventoryItems.exit(plugin));
 
 		return inv;
 	}
 
-	// Generate the enchants shop
-	public static Inventory createEnchantsShop() {
+	// Generate the enchant shop
+	public static Inventory createEnchantShop() {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 54, CommunicationManager.format("&k") +
-				CommunicationManager.format("&a&lEnchants Shop"));
+				CommunicationManager.format("&a&l" + plugin.getLanguageString("names.enchantShop")));
 
 		// Melee enchants
-		inv.setItem(0, ItemManager.createItem(Material.PISTON, CommunicationManager.format("&a&lIncrease Knockback"),
+		inv.setItem(0, ItemManager.createItem(Material.PISTON,
+				CommunicationManager.format("&a&lIncrease Knockback"),
 				CommunicationManager.format("&2Costs 4 XP Levels")));
-		inv.setItem(1, ItemManager.createItem(Material.GOLDEN_HOE, CommunicationManager.format("&a&lIncrease Sweeping Edge"),
+		inv.setItem(1, ItemManager.createItem(Material.GOLDEN_HOE,
+				CommunicationManager.format("&a&lIncrease Sweeping Edge"),
 				ItemManager.BUTTON_FLAGS, null, CommunicationManager.format("&2Costs 6 XP Levels")));
-		inv.setItem(2, ItemManager.createItem(Material.DIAMOND_SWORD, CommunicationManager.format("&a&lIncrease Smite"),
+		inv.setItem(2, ItemManager.createItem(Material.DIAMOND_SWORD,
+				CommunicationManager.format("&a&lIncrease Smite"),
 				ItemManager.BUTTON_FLAGS, null, CommunicationManager.format("&2Costs 7 XP Levels")));
-		inv.setItem(3, ItemManager.createItem(Material.NETHERITE_AXE, CommunicationManager.format("&a&lIncrease Sharpness"),
+		inv.setItem(3, ItemManager.createItem(Material.NETHERITE_AXE,
+				CommunicationManager.format("&a&lIncrease Sharpness"),
 				ItemManager.BUTTON_FLAGS, null, CommunicationManager.format("&2Costs 8 XP Levels")));
-		inv.setItem(4, ItemManager.createItem(Material.FIRE, CommunicationManager.format("&a&lIncrease Fire Aspect"),
+		inv.setItem(4, ItemManager.createItem(Material.FIRE,
+				CommunicationManager.format("&a&lIncrease Fire Aspect"),
 				CommunicationManager.format("&2Costs 10 XP Levels")));
 
 		// Ranged enchants
-		inv.setItem(18, ItemManager.createItem(Material.STICKY_PISTON, CommunicationManager.format("&a&lIncrease Punch"),
+		inv.setItem(18, ItemManager.createItem(Material.STICKY_PISTON,
+				CommunicationManager.format("&a&lIncrease Punch"),
 				CommunicationManager.format("&2Costs 4 XP Levels")));
-		inv.setItem(19, ItemManager.createItem(Material.SPECTRAL_ARROW, CommunicationManager.format("&a&lIncrease Piercing"),
+		inv.setItem(19, ItemManager.createItem(Material.SPECTRAL_ARROW,
+				CommunicationManager.format("&a&lIncrease Piercing"),
 				CommunicationManager.format("&2Costs 5 XP Levels")));
-		inv.setItem(20, ItemManager.createItem(Material.REDSTONE_TORCH, CommunicationManager.format("&a&lIncrease Quick Charge"),
+		inv.setItem(20, ItemManager.createItem(Material.REDSTONE_TORCH,
+				CommunicationManager.format("&a&lIncrease Quick Charge"),
 				CommunicationManager.format("&2Costs 6 XP Levels")));
 		inv.setItem(21, ItemManager.createItem(Material.BOW, CommunicationManager.format("&a&lIncrease Power"),
 				CommunicationManager.format("&2Costs 8 XP Levels")));
-		inv.setItem(22, ItemManager.createItem(Material.TRIDENT, CommunicationManager.format("&a&lIncrease Loyalty"),
+		inv.setItem(22, ItemManager.createItem(Material.TRIDENT,
+				CommunicationManager.format("&a&lIncrease Loyalty"),
 				ItemManager.BUTTON_FLAGS, null, CommunicationManager.format("&2Costs 10 XP Levels")));
-		inv.setItem(23, ItemManager.createItem(Material.MAGMA_BLOCK, CommunicationManager.format("&a&lAdd Flame"),
+		inv.setItem(23, ItemManager.createItem(Material.MAGMA_BLOCK,
+				CommunicationManager.format("&a&lAdd Flame"),
 				CommunicationManager.format("&2Costs 10 XP Levels")));
-		inv.setItem(24, ItemManager.createItem(Material.CROSSBOW, CommunicationManager.format("&a&lAdd Multishot"),
+		inv.setItem(24, ItemManager.createItem(Material.CROSSBOW,
+				CommunicationManager.format("&a&lAdd Multishot"),
 				CommunicationManager.format("&2Costs 10 XP Levels")));
 		inv.setItem(25, ItemManager.createItem(Material.BEACON, CommunicationManager.format("&a&lAdd Infinity"),
 				CommunicationManager.format("&2Costs 15 XP Levels")));
 
 		// Armor enchants
-		inv.setItem(36, ItemManager.createItem(Material.TNT, CommunicationManager.format("&a&lIncrease Blast Protection"),
+		inv.setItem(36, ItemManager.createItem(Material.TNT,
+				CommunicationManager.format("&a&lIncrease Blast Protection"),
 				CommunicationManager.format("&2Costs 4 XP Levels")));
-		inv.setItem(37, ItemManager.createItem(Material.VINE, CommunicationManager.format("&a&lIncrease Thorns"),
+		inv.setItem(37, ItemManager.createItem(Material.VINE,
+				CommunicationManager.format("&a&lIncrease Thorns"),
 				CommunicationManager.format("&2Costs 5 XP Levels")));
-		inv.setItem(38, ItemManager.createItem(Material.ARROW, CommunicationManager.format("&a&lIncrease Projectile Protection"),
+		inv.setItem(38, ItemManager.createItem(Material.ARROW,
+				CommunicationManager.format("&a&lIncrease Projectile Protection"),
 				CommunicationManager.format("&2Costs 6 XP Levels")));
-		inv.setItem(39, ItemManager.createItem(Material.SHIELD, CommunicationManager.format("&a&lIncrease Protection"),
+		inv.setItem(39, ItemManager.createItem(Material.SHIELD,
+				CommunicationManager.format("&a&lIncrease Protection"),
 				CommunicationManager.format("&2Costs 8 XP Levels")));
 
 		// General enchants
-		inv.setItem(43, ItemManager.createItem(Material.BEDROCK, CommunicationManager.format("&a&lIncrease Unbreaking"),
+		inv.setItem(43, ItemManager.createItem(Material.BEDROCK,
+				CommunicationManager.format("&a&lIncrease Unbreaking"),
 				CommunicationManager.format("&2Costs 3 XP Levels")));
 		inv.setItem(44, ItemManager.createItem(Material.ANVIL, CommunicationManager.format("&a&lAdd Mending"),
 				CommunicationManager.format("&2Costs 20 XP Levels")));
 
 		// Return option
-		inv.setItem(53, InventoryItems.exit());
+		inv.setItem(53, InventoryItems.exit(plugin));
 
 		return inv;
 	}
 
 	// Display player stats
-	public static Inventory createPlayerStatsInventory(Main plugin, String name) {
+	public static Inventory createPlayerStatsInventory(String name) {
 		FileConfiguration playerData = plugin.getPlayerData();
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
-				CommunicationManager.format("&2&l" + name + "'s Stats"));
+				CommunicationManager.format("&2&l" + plugin.getLanguageStringFormatted(
+						"messages.playerStatistics", name)));
 
 		// Total kills
-		inv.setItem(0, ItemManager.createItem(Material.DRAGON_HEAD, CommunicationManager.format("&4&lTotal Kills: &4" +
-				playerData.getInt(name + ".totalKills")), CommunicationManager.format("&7Lifetime kill count")));
+		inv.setItem(0, ItemManager.createItem(Material.DRAGON_HEAD,
+				CommunicationManager.format("&4&l" + plugin.getLanguageString("playerStats.totalKills.name") +
+						": &4" + playerData.getInt(name + ".totalKills")),
+				CommunicationManager.format("&7" +
+						plugin.getLanguageString("playerStats.totalKills.description"))));
 
 		// Top kills
-		inv.setItem(1, ItemManager.createItem(Material.ZOMBIE_HEAD, CommunicationManager.format("&c&lTop Kills: &c" +
-				playerData.getInt(name + ".topKills")), CommunicationManager.format("&7Most kills in a game")));
+		inv.setItem(1, ItemManager.createItem(Material.ZOMBIE_HEAD,
+				CommunicationManager.format("&c&l" + plugin.getLanguageString("playerStats.topKills.name") +
+						": &c" + playerData.getInt(name + ".topKills")),
+				CommunicationManager.format("&7" +
+						plugin.getLanguageString("playerStats.topKills.description"))));
 
 		// Total gems
-		inv.setItem(2, ItemManager.createItem(Material.EMERALD_BLOCK, CommunicationManager.format("&2&lTotal Gems: &2" +
-				playerData.getInt(name + ".totalGems")), CommunicationManager.format("&7Lifetime gems collected")));
+		inv.setItem(2, ItemManager.createItem(Material.EMERALD_BLOCK,
+				CommunicationManager.format("&2&l" + plugin.getLanguageString("playerStats.totalGems.name") +
+						": &2" + playerData.getInt(name + ".totalGems")),
+				CommunicationManager.format("&7" +
+						plugin.getLanguageString("playerStats.totalGems.description"))));
 
 		// Top balance
-		inv.setItem(3, ItemManager.createItem(Material.EMERALD, CommunicationManager.format("&a&lTop Balance: &a" +
-				playerData.getInt(name + ".topBalance")),
-				CommunicationManager.format("&7Highest gem balance in a game")));
+		inv.setItem(3, ItemManager.createItem(Material.EMERALD,
+				CommunicationManager.format("&a&l" + plugin.getLanguageString("playerStats.topBalance.name") +
+						": &a" + playerData.getInt(name + ".topBalance")),
+				CommunicationManager.format("&7" +
+						plugin.getLanguageString("playerStats.topBalance.description"))));
 
 		// Top wave
-		inv.setItem(4, ItemManager.createItem(Material.GOLDEN_SWORD, CommunicationManager.format("&3&lTop Wave: &3" +
-				playerData.getInt(name + ".topWave")), ItemManager.BUTTON_FLAGS, null,
-				CommunicationManager.format("&7Highest completed wave")));
+		inv.setItem(4, ItemManager.createItem(Material.GOLDEN_SWORD,
+				CommunicationManager.format("&3&l" + plugin.getLanguageString("playerStats.topWave.name") +
+						": &3" + playerData.getInt(name + ".topWave")),
+				ItemManager.BUTTON_FLAGS, null, CommunicationManager.format("&7" +
+						plugin.getLanguageString("playerStats.topWave.description"))));
 
 		// Kits
-		inv.setItem(6, ItemManager.createItem(Material.ENDER_CHEST, CommunicationManager.format("&9&lKits")));
+		inv.setItem(6, ItemManager.createItem(Material.ENDER_CHEST, CommunicationManager.format("&9&l" +
+				plugin.getLanguageString("messages.kits"))));
 
 		// Crystal balance
-		inv.setItem(8, ItemManager.createItem(Material.DIAMOND, CommunicationManager.format("&b&lCrystal Balance: &b" +
-				playerData.getInt(name + ".crystalBalance"))));
+		inv.setItem(8, ItemManager.createItem(Material.DIAMOND,
+				CommunicationManager.format("&b&l" + plugin.getLanguageString("messages.crystalBalance") +
+						": &b" + playerData.getInt(name + ".crystalBalance"))));
 
 		return inv;
 	}
 
 	// Display kits for a player
-	public static Inventory createPlayerKitsInventory(Main plugin, String name, String requester) {
+	public static Inventory createPlayerKitsInventory(String name, String requester) {
 		FileConfiguration playerData = plugin.getPlayerData();
 		String path = name + ".kits.";
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 54, CommunicationManager.format("&k") +
-				CommunicationManager.format("&9&l" + name + "'s Kits"));
+				CommunicationManager.format("&9&l" + plugin.getLanguageStringFormatted("messages.playerKits",
+						name)));
 
 		// Gift kits
 		for (int i = 0; i < 9; i++)
-			inv.setItem(i, ItemManager.createItem(Material.LIME_STAINED_GLASS_PANE, CommunicationManager.format("&a&lGift Kits"),
-					CommunicationManager.format("&7Kits give one-time benefits"), CommunicationManager.format("&7per game or respawn")));
+			inv.setItem(i, ItemManager.createItem(Material.LIME_STAINED_GLASS_PANE,
+					CommunicationManager.format("&a&l" + plugin.getLanguageString("names.giftKits")),
+					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+							plugin.getLanguageString("messages.giftKitsDescription"))));
 
 		inv.setItem(9, Kit.orc().getButton(1, true));
 		inv.setItem(10, Kit.farmer().getButton(1, true));
@@ -1975,8 +2152,10 @@ public class Inventories {
 
 		// Ability kits
 		for (int i = 18; i < 27; i++)
-			inv.setItem(i, ItemManager.createItem(Material.MAGENTA_STAINED_GLASS_PANE, CommunicationManager.format("&d&lAbility Kits"),
-					CommunicationManager.format("&7Kits give special ability per respawn")));
+			inv.setItem(i, ItemManager.createItem(Material.MAGENTA_STAINED_GLASS_PANE,
+					CommunicationManager.format("&d&l" + plugin.getLanguageString("names.abilityKits")),
+					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+							plugin.getLanguageString("messages.abilityKitsDescription"))));
 
 		inv.setItem(27, Kit.mage().getButton(playerData.getInt(path + Kit.mage().getName()), true));
 		inv.setItem(28, Kit.ninja().getButton(playerData.getInt(path + Kit.ninja().getName()),
@@ -1997,9 +2176,10 @@ public class Inventories {
 
 		// Effect kits
 		for (int i = 36; i < 45; i++)
-			inv.setItem(i, ItemManager.createItem(Material.YELLOW_STAINED_GLASS_PANE, CommunicationManager.format("&e&lEffect Kits"),
-					CommunicationManager.format("&7Kits give players a permanent"),
-							CommunicationManager.format("&7special effect")));
+			inv.setItem(i, ItemManager.createItem(Material.YELLOW_STAINED_GLASS_PANE,
+					CommunicationManager.format("&e&l" + plugin.getLanguageString("names.effectKits")),
+					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+							plugin.getLanguageString("messages.effectKitsDescription"))));
 
 		inv.setItem(45, Kit.blacksmith().getButton(playerData.getBoolean(path + Kit.blacksmith().getName()) ?
 				1 : 0, true));
@@ -2014,44 +2194,52 @@ public class Inventories {
 
 		// Crystal balance
 		if (name.equals(requester))
-			inv.setItem(52, ItemManager.createItem(Material.DIAMOND, CommunicationManager.format("&b&lCrystal Balance: &b" +
-					playerData.getInt(name + ".crystalBalance"))));
+			inv.setItem(52, ItemManager.createItem(Material.DIAMOND,
+					CommunicationManager.format("&b&l" + plugin.getLanguageString("messages.crystalBalance") +
+							": &b" + playerData.getInt(name + ".crystalBalance"))));
 
 		// Option to exit
-		inv.setItem(53, InventoryItems.exit());
+		inv.setItem(53, InventoryItems.exit(plugin));
 
 		return inv;
 	}
 
 	// Display kits for a player to select
-	public static Inventory createSelectKitsInventory(Main plugin, Player player, Arena arena) {
+	public static Inventory createSelectKitsInventory(Player player, Arena arena) {
 		FileConfiguration playerData = plugin.getPlayerData();
 		String path = player.getName() + ".kits.";
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 54, CommunicationManager.format("&k") +
-				CommunicationManager.format("&9&l" + arena.getName() + " Kits"));
+				CommunicationManager.format("&9&l" + arena.getName() + " " +
+						plugin.getLanguageString("messages.kits")));
 
 		// Gift kits
 		for (int i = 0; i < 9; i++)
-			inv.setItem(i, ItemManager.createItem(Material.LIME_STAINED_GLASS_PANE, CommunicationManager.format("&a&lGift Kits"),
-					CommunicationManager.format("&7Kits give one-time benefits"), CommunicationManager.format("&7per game or respawn")));
+			inv.setItem(i, ItemManager.createItem(Material.LIME_STAINED_GLASS_PANE,
+					CommunicationManager.format("&a&l" + plugin.getLanguageString("names.giftKits")),
+					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+							plugin.getLanguageString("messages.giftKitsDescription"))));
 
 		if (!arena.getBannedKits().contains("Orc"))
 			inv.setItem(9, Kit.orc().getButton(1, false));
 		if (!arena.getBannedKits().contains("Farmer"))
 			inv.setItem(10, Kit.farmer().getButton(1, false));
 		if (!arena.getBannedKits().contains("Soldier"))
-			inv.setItem(11, Kit.soldier().getButton(playerData.getBoolean(path + Kit.soldier().getName()) ?
+			inv.setItem(11, Kit.soldier().getButton(playerData.getBoolean(
+					path + Kit.soldier().getName()) ?
 					1 : 0, false));
 		if (!arena.getBannedKits().contains("Alchemist"))
-			inv.setItem(12, Kit.alchemist().getButton(playerData.getBoolean(path + Kit.alchemist().getName()) ?
+			inv.setItem(12, Kit.alchemist().getButton(playerData.getBoolean(
+					path + Kit.alchemist().getName()) ?
 					1 : 0, false));
 		if (!arena.getBannedKits().contains("Tailor"))
-			inv.setItem(13, Kit.tailor().getButton(playerData.getBoolean(path + Kit.tailor().getName()) ? 1 : 0,
+			inv.setItem(13, Kit.tailor().getButton(playerData.getBoolean(
+					path + Kit.tailor().getName()) ? 1 : 0,
 					false));
 		if (!arena.getBannedKits().contains("Trader"))
-			inv.setItem(14, Kit.trader().getButton(playerData.getBoolean(path + Kit.trader().getName()) ? 1 : 0,
+			inv.setItem(14, Kit.trader().getButton(playerData.getBoolean(
+					path + Kit.trader().getName()) ? 1 : 0,
 					false));
 		if (!arena.getBannedKits().contains("Summoner"))
 			inv.setItem(15, Kit.summoner().getButton(playerData.getInt(path + Kit.summoner().getName()),
@@ -2065,8 +2253,10 @@ public class Inventories {
 
 		// Ability kits
 		for (int i = 18; i < 27; i++)
-			inv.setItem(i, ItemManager.createItem(Material.MAGENTA_STAINED_GLASS_PANE, CommunicationManager.format("&d&lAbility Kits"),
-					CommunicationManager.format("&7Kits give special ability per respawn")));
+			inv.setItem(i, ItemManager.createItem(Material.MAGENTA_STAINED_GLASS_PANE,
+					CommunicationManager.format("&d&l" + plugin.getLanguageString("names.abilityKits")),
+					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+							plugin.getLanguageString("messages.abilityKitsDescription"))));
 
 		if (!arena.getBannedKits().contains("Mage"))
 			inv.setItem(27, Kit.mage().getButton(playerData.getInt(path + Kit.mage().getName()),
@@ -2098,8 +2288,10 @@ public class Inventories {
 
 		// Effect kits
 		for (int i = 36; i < 45; i++)
-			inv.setItem(i, ItemManager.createItem(Material.YELLOW_STAINED_GLASS_PANE, CommunicationManager.format("&e&lEffect Kits"),
-					CommunicationManager.format("&7Kits give players a permanent"), CommunicationManager.format("&7special effect")));
+			inv.setItem(i, ItemManager.createItem(Material.YELLOW_STAINED_GLASS_PANE,
+					CommunicationManager.format("&e&l" + plugin.getLanguageString("names.effectKits")),
+					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+							plugin.getLanguageString("messages.effectKitsDescription"))));
 
 		if (!arena.getBannedKits().contains("Blacksmith"))
 			inv.setItem(45, Kit.blacksmith().getButton(
@@ -2121,7 +2313,7 @@ public class Inventories {
 		inv.setItem(52, Kit.none().getButton(0, true));
 
 		// Option to exit
-		inv.setItem(53, InventoryItems.exit());
+		inv.setItem(53, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -2130,12 +2322,14 @@ public class Inventories {
 	public static Inventory createSelectChallengesInventory(VDPlayer player, Arena arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 18, CommunicationManager.format("&k") +
-				CommunicationManager.format("&5&l" + arena.getName() + " Challenges"));
+				CommunicationManager.format("&5&l" + arena.getName() + " " +
+						plugin.getLanguageString("messages.challenges")));
 
 		// Set buttons
 		inv.setItem(0, Challenge.amputee().getButton(player.getChallenges().contains(Challenge.amputee())));
 		inv.setItem(1, Challenge.clumsy().getButton(player.getChallenges().contains(Challenge.clumsy())));
-		inv.setItem(2, Challenge.featherweight().getButton(player.getChallenges().contains(Challenge.featherweight())));
+		inv.setItem(2, Challenge.featherweight().getButton(player.getChallenges().contains(
+				Challenge.featherweight())));
 		inv.setItem(3, Challenge.pacifist().getButton(player.getChallenges().contains(Challenge.pacifist())));
 		inv.setItem(4, Challenge.dwarf().getButton(player.getChallenges().contains(Challenge.dwarf())));
 		inv.setItem(5, Challenge.uhc().getButton(player.getChallenges().contains(Challenge.uhc())));
@@ -2144,7 +2338,7 @@ public class Inventories {
 		inv.setItem(8, Challenge.none().getButton(player.getChallenges().isEmpty()));
 
 		// Option to exit
-		inv.setItem(13, InventoryItems.exit());
+		inv.setItem(13, InventoryItems.exit(plugin));
 
 		return inv;
 	}
@@ -2152,134 +2346,169 @@ public class Inventories {
 	// Display arena information
 	public static Inventory createArenaInfoInventory(Arena arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena.getArena()), 36, CommunicationManager.format("&k") +
-				CommunicationManager.format("&6&l" + arena.getName() + " Info"));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena.getArena()), 36,
+				CommunicationManager.format("&k") + CommunicationManager.format("&6&l" +
+						plugin.getLanguageStringFormatted("messages.arenaInfo", arena.getName())));
 
 		// Maximum players
 		inv.setItem(1, ItemManager.createItem(Material.NETHERITE_HELMET,
-				CommunicationManager.format("&4&lMaximum players: &4" + arena.getMaxPlayers()), ItemManager.BUTTON_FLAGS, null,
-				CommunicationManager.format("&7The most players an arena can have")));
+				CommunicationManager.format("&4&l" + plugin.getLanguageString("arenaStats.maxPlayers.name") +
+						": &4" + arena.getMaxPlayers()), ItemManager.BUTTON_FLAGS, null,
+				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+						plugin.getLanguageString("arenaStats.maxPlayers.description"))));
 
 		// Minimum players
 		inv.setItem(2, ItemManager.createItem(Material.NETHERITE_BOOTS,
-				CommunicationManager.format("&2&lMinimum players: &2" + arena.getMinPlayers()), ItemManager.BUTTON_FLAGS, null,
-				CommunicationManager.format("&7The least players an arena can have to start")));
+				CommunicationManager.format("&2&l" + plugin.getLanguageString("arenaStats.minPlayers.name") +
+						": &2" + arena.getMinPlayers()), ItemManager.BUTTON_FLAGS, null,
+				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+						plugin.getLanguageString("arenaStats.minPlayers.description"))));
 
 		// Max waves
 		String waves;
 		if (arena.getMaxWaves() < 0)
-			waves = "Unlimited";
+			waves = plugin.getLanguageString("messages.unlimited");
 		else waves = Integer.toString(arena.getMaxWaves());
 		inv.setItem(3, ItemManager.createItem(Material.GOLDEN_SWORD,
-				CommunicationManager.format("&3&lMax waves: &3" + waves), ItemManager.BUTTON_FLAGS, null,
-				CommunicationManager.format("&7The highest wave the arena will go to")));
+				CommunicationManager.format("&3&l" + plugin.getLanguageString("arenaStats.maxWaves.name") +
+						": &3" + waves), ItemManager.BUTTON_FLAGS, null,
+				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+						plugin.getLanguageString("arenaStats.maxWaves.description"))));
 
 		// Wave time limit
 		String limit;
 		if (arena.getWaveTimeLimit() < 0)
-			limit = "Unlimited";
+			limit = plugin.getLanguageString("messages.unlimited");
 		else limit = arena.getWaveTimeLimit() + " minute(s)";
 		inv.setItem(4, ItemManager.createItem(Material.CLOCK,
-				CommunicationManager.format("&9&lWave time limit: &9" + limit),
-				CommunicationManager.format("&7The time limit for each wave before"), CommunicationManager.format("&7the game ends")));
+				CommunicationManager.format("&9&l" + plugin.getLanguageString("arenaStats.timeLimit.name") +
+						": &9" + limit), CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+						plugin.getLanguageString("arenaStats.timeLimit.description"))));
 
 		// Wolf cap
-		inv.setItem(5, ItemManager.createItem(Material.BONE, CommunicationManager.format("&6&lWolf Cap: &6" + arena.getWolfCap()),
-				CommunicationManager.format("&7Maximum wolves a player can have")));
+		inv.setItem(5, ItemManager.createItem(Material.BONE,
+				CommunicationManager.format("&6&l" + plugin.getLanguageString("arenaStats.wolfCap.name") +
+						": &6" + arena.getWolfCap()),
+				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+						plugin.getLanguageString("arenaStats.wolfCap.description"))));
 
 		// Golem cap
-		inv.setItem(6, ItemManager.createItem(Material.IRON_INGOT, CommunicationManager.format("&e&lIron Golem Cap: &e" +
-						arena.getGolemCap()),
-				CommunicationManager.format("&7Maximum iron golems an arena can have")));
+		inv.setItem(6, ItemManager.createItem(Material.IRON_INGOT,
+				CommunicationManager.format("&e&l" + plugin.getLanguageString("arenaStats.golemCap.name") +
+						": &e" + arena.getGolemCap()),
+				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+						plugin.getLanguageString("arenaStats.golemCap.description"))));
 
 		// Allowed kits
-		inv.setItem(7, ItemManager.createItem(Material.ENDER_CHEST, CommunicationManager.format("&9&lAllowed Kits")));
+		inv.setItem(7, ItemManager.createItem(Material.ENDER_CHEST,
+				CommunicationManager.format("&9&l" + plugin.getLanguageString("messages.allowedKits"))));
 
 		// Dynamic mob count
 		inv.setItem(10, ItemManager.createItem(Material.SLIME_BALL,
-				CommunicationManager.format("&e&lDynamic Mob Count: " + getToggleStatus(arena.hasDynamicCount())),
-				CommunicationManager.format("&7Mob count adjusting based on"), CommunicationManager.format("&7number of players")));
+				CommunicationManager.format("&e&l" +
+						plugin.getLanguageString("arenaStats.dynamicMobCount.name") +
+						": " + getToggleStatus(arena.hasDynamicCount())),
+				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+						plugin.getLanguageString("arenaStats.dynamicMobCount.description"))));
 
 		// Dynamic difficulty
 		inv.setItem(11, ItemManager.createItem(Material.MAGMA_CREAM,
-				CommunicationManager.format("&6&lDynamic Difficulty: " + getToggleStatus(arena.hasDynamicDifficulty())),
-				CommunicationManager.format("&7Difficulty adjusting based on"), CommunicationManager.format("&7number of players")));
+				CommunicationManager.format("&6&l" +
+						plugin.getLanguageString("arenaStats.dynamicDifficulty.name") + ": " +
+						getToggleStatus(arena.hasDynamicDifficulty())),
+				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+						plugin.getLanguageString("arenaStats.dynamicDifficulty.description"))));
 
 		// Dynamic prices
 		inv.setItem(12, ItemManager.createItem(Material.NETHER_STAR,
-				CommunicationManager.format("&b&lDynamic Prices: " + getToggleStatus(arena.hasDynamicPrices())),
-				CommunicationManager.format("&7Prices adjusting based on number of"),
-				CommunicationManager.format("&7players in the game")));
+				CommunicationManager.format("&b&l" +
+						plugin.getLanguageString("arenaStats.dynamicPrices.name") +
+						": " + getToggleStatus(arena.hasDynamicPrices())),
+				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+						plugin.getLanguageString("arenaStats.dynamicPrices.description"))));
 
 		// Dynamic time limit
 		inv.setItem(13, ItemManager.createItem(Material.SNOWBALL,
-				CommunicationManager.format("&a&lDynamic Time Limit: " + getToggleStatus(arena.hasDynamicLimit())),
-				CommunicationManager.format("&7Wave time limit adjusting based on"),
-				CommunicationManager.format("&7in-game difficulty")));
+				CommunicationManager.format("&a&l" +
+						plugin.getLanguageString("arenaStats.dynamicTimeLimit.name") +
+						": " + getToggleStatus(arena.hasDynamicLimit())),
+				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+						plugin.getLanguageString("arenaStats.dynamicTimeLimit.description"))));
 
-		// Difficulty multiplier
+		// Late arrival
 		inv.setItem(14, ItemManager.createItem(Material.DAYLIGHT_DETECTOR,
-				CommunicationManager.format("&e&lLate Arrival: " + getToggleStatus(arena.hasLateArrival())),
-				ItemManager.BUTTON_FLAGS,
-				null,
-				CommunicationManager.format("&7Whether players can enter"),
-				CommunicationManager.format("&7arenas late")));
+				CommunicationManager.format("&e&l" + plugin.getLanguageString("arenaStats.lateArrival.name") +
+						": " + getToggleStatus(arena.hasLateArrival())), ItemManager.BUTTON_FLAGS, null,
+				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+						plugin.getLanguageString("arenaStats.lateArrival.description"))));
 
 		// Item dropping
 		inv.setItem(15, ItemManager.createItem(Material.EMERALD,
-				CommunicationManager.format("&9&lItem Drop: " + getToggleStatus(arena.hasGemDrop())),
-				CommunicationManager.format("&7Change whether gems drop as"),
-				CommunicationManager.format("&7physical gems or go straight"),
-				CommunicationManager.format("&7into the killer's balance")));
+				CommunicationManager.format("&9&l" + plugin.getLanguageString("arenaStats.gemDrop.name") +
+						": " + getToggleStatus(arena.hasGemDrop())),
+				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+						plugin.getLanguageString("arenaStats.gemDrop.description"))));
 
 		// Experience drop
 		inv.setItem(16, ItemManager.createItem(Material.EXPERIENCE_BOTTLE,
-				CommunicationManager.format("&b&lExperience Drop: " + getToggleStatus(arena.hasExpDrop())),
-				CommunicationManager.format("&7Change whether experience drop or go"),
-				CommunicationManager.format("&7straight into the killer's experience bar")));
+				CommunicationManager.format("&b&l" + plugin.getLanguageString("arenaStats.expDrop.name") +
+						": " + getToggleStatus(arena.hasExpDrop())),
+				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+						plugin.getLanguageString("arenaStats.expDrop.description"))));
 
 		// Player spawn particles
 		inv.setItem(19, ItemManager.createItem(Material.FIREWORK_ROCKET,
-				CommunicationManager.format("&e&lPlayer Spawn Particles: " + getToggleStatus(arena.hasSpawnParticles()))));
+				CommunicationManager.format("&e&l" + plugin.getLanguageString("names.playerSpawnParticles") +
+						": " + getToggleStatus(arena.hasSpawnParticles()))));
 
 		// Monster spawn particles
 		inv.setItem(20, ItemManager.createItem(Material.FIREWORK_ROCKET,
-				CommunicationManager.format("&d&lMonster Spawn Particles: " + getToggleStatus(arena.hasMonsterParticles()))));
+				CommunicationManager.format("&d&l" + plugin.getLanguageString("names.monsterSpawnParticles") +
+						": " + getToggleStatus(arena.hasMonsterParticles()))));
 
 		// Villager spawn particles
 		inv.setItem(21, ItemManager.createItem(Material.FIREWORK_ROCKET,
-				CommunicationManager.format("&a&lVillager Spawn Particles: " + getToggleStatus(arena.hasVillagerParticles()))));
+				CommunicationManager.format("&a&l" +
+						plugin.getLanguageString("names.villagerSpawnParticles") + ": " +
+						getToggleStatus(arena.hasVillagerParticles()))));
 
 		// Default shop
 		inv.setItem(22, ItemManager.createItem(Material.EMERALD_BLOCK,
-				CommunicationManager.format("&6&lDefault Shop: " + getToggleStatus(arena.hasNormal()))));
+				CommunicationManager.format("&6&l" + plugin.getLanguageString("names.defaultShop") +
+						": " + getToggleStatus(arena.hasNormal()))));
 
 		// Custom shop
 		inv.setItem(23, ItemManager.createItem(Material.QUARTZ_BLOCK,
-				CommunicationManager.format("&2&lCustom Shop: " + getToggleStatus(arena.hasCustom()))));
+				CommunicationManager.format("&2&l" + plugin.getLanguageString("names.customShop") +
+						": " + getToggleStatus(arena.hasCustom()))));
 
 		// Enchants shop
 		inv.setItem(24, ItemManager.createItem(Material.BOOKSHELF,
-				CommunicationManager.format("&3&lEnchants Shop: " + getToggleStatus(arena.hasEnchants()))));
+				CommunicationManager.format("&3&l" + plugin.getLanguageString("names.enchantShop") +
+						": " + getToggleStatus(arena.hasEnchants()))));
 
 		// Community chest
 		inv.setItem(25, ItemManager.createItem(Material.CHEST,
-				CommunicationManager.format("&d&lCommunity Chest: " + getToggleStatus(arena.hasCommunity()))));
+				CommunicationManager.format("&d&l" + plugin.getLanguageString("names.communityChest") +
+						": " + getToggleStatus(arena.hasCommunity()))));
 
 		// Custom shop inventory
-		inv.setItem(30, ItemManager.createItem(Material.QUARTZ, CommunicationManager.format("&f&lCustom Shop Inventory")));
+		inv.setItem(30, ItemManager.createItem(Material.QUARTZ,
+				CommunicationManager.format("&f&l" + plugin.getLanguageString("messages.customShopInv"))));
 
 		// Difficulty multiplier
 		inv.setItem(31, ItemManager.createItem(Material.TURTLE_HELMET,
-				CommunicationManager.format("&4&lDifficulty Multiplier: &4" + arena.getDifficultyMultiplier()),
-				ItemManager.BUTTON_FLAGS,
-				null,
-				CommunicationManager.format("&7Determines difficulty increase rate")));
+				CommunicationManager.format("&4&l" +
+						plugin.getLanguageString("arenaStats.difficultyMultiplier.name") + ": &4" +
+						arena.getDifficultyMultiplier()), ItemManager.BUTTON_FLAGS, null,
+				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+						plugin.getLanguageString("arenaStats.difficultyMultiplier.description"))));
 
 		// Arena records
 		List<String> records = new ArrayList<>();
 		arena.getSortedDescendingRecords().forEach(arenaRecord -> {
-			records.add(CommunicationManager.format("&fWave " + arenaRecord.getWave()));
+			records.add(CommunicationManager.format("&f" + plugin.getLanguageString("messages.wave") + " " +
+					arenaRecord.getWave()));
 			for (int i = 0; i < arenaRecord.getPlayers().size() / 4 + 1; i++) {
 				StringBuilder players = new StringBuilder(CommunicationManager.format("&7"));
 				if (i * 4 + 4 < arenaRecord.getPlayers().size()) {
@@ -2293,8 +2522,9 @@ public class Inventories {
 				}
 			}
 		});
-		inv.setItem(32, ItemManager.createItem(Material.GOLDEN_HELMET, CommunicationManager.format("&e&lArena Records"), ItemManager.BUTTON_FLAGS,
-				null, records));
+		inv.setItem(32, ItemManager.createItem(Material.GOLDEN_HELMET,
+				CommunicationManager.format("&e&l" + plugin.getLanguageString("messages.arenaRecords")),
+				ItemManager.BUTTON_FLAGS, null, records));
 
 		return inv;
 	}
@@ -2304,8 +2534,8 @@ public class Inventories {
 	private static String getToggleStatus(boolean status) {
 		String toggle;
 		if (status)
-			toggle = "&a&lON";
-		else toggle = "&c&lOFF";
+			toggle = "&a&l" + plugin.getLanguageString("messages.onToggle");
+		else toggle = "&c&l" + plugin.getLanguageString("messages.offToggle");
 		return toggle;
 	}
 
@@ -2317,7 +2547,8 @@ public class Inventories {
 		List<String> lore = meta.getLore();
 		assert lore != null;
 		int price = (int) Math.round(Integer.parseInt(lore.get(lore.size() - 1).substring(10)) * modifier / 5) * 5;
-		lore.set(lore.size() - 1, CommunicationManager.format("&2Gems: &a" + price));
+		lore.set(lore.size() - 1, CommunicationManager.format("&2" +
+				plugin.getLanguageString("messages.gems") + ": &a" + price));
 		meta.setLore(lore);
 		item.setItemMeta(meta);
 		return item;

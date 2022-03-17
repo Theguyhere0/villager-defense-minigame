@@ -1,9 +1,10 @@
 package me.theguyhere.villagerdefense.plugin.game.displays;
 
+import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
-import me.theguyhere.villagerdefense.common.CommunicationManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +20,7 @@ public class Portal {
     /** The location of the Portal.*/
     private final Location location;
 
-    public Portal(@NotNull Location location, Arena arena) throws InvalidLocationException {
+    public Portal(@NotNull Location location, Arena arena, Main plugin) throws InvalidLocationException {
         // Check for null world
         if (location.getWorld() == null)
             throw new InvalidLocationException("Location world cannot be null!");
@@ -29,16 +30,16 @@ public class Portal {
         if (difficulty != null)
             switch (difficulty) {
                 case "Easy":
-                    difficulty = " &a&l[" + difficulty + "]";
+                    difficulty = " &a&l[" + plugin.getLanguageString("names." + difficulty.toLowerCase()) + "]";
                     break;
                 case "Medium":
-                    difficulty = " &e&l[" + difficulty + "]";
+                    difficulty = " &e&l[" + plugin.getLanguageString("names." + difficulty.toLowerCase()) + "]";
                     break;
                 case "Hard":
-                    difficulty = " &c&l[" + difficulty + "]";
+                    difficulty = " &c&l[" + plugin.getLanguageString("names." + difficulty.toLowerCase()) + "]";
                     break;
                 case "Insane":
-                    difficulty = " &d&l[" + difficulty + "]";
+                    difficulty = " &d&l[" + plugin.getLanguageString("names." + difficulty.toLowerCase()) + "]";
                     break;
                 default:
                     difficulty = "";
@@ -48,12 +49,12 @@ public class Portal {
         // Get status
         String status;
         if (arena.isClosed())
-            status = "&4&lClosed";
+            status = "&4&l" + plugin.getLanguageString("messages.closed");
         else if (arena.getStatus() == ArenaStatus.ENDING)
-            status = "&c&lEnding";
+            status = "&c&l" + plugin.getLanguageString("messages.ending");
         else if (arena.getStatus() == ArenaStatus.WAITING)
-            status = "&5&lWaiting";
-        else status = "&a&lWave: " + arena.getCurrentWave();
+            status = "&5&l" + plugin.getLanguageString("messages.waiting");
+        else status = "&a&l" + plugin.getLanguageString("messages.wave") + ": " + arena.getCurrentWave();
 
         // Get player count color
         String countColor;
@@ -70,9 +71,11 @@ public class Portal {
         this.hologram = new Hologram(location.clone().add(0, 2.5, 0), false,
                 CommunicationManager.format("&6&l" + arena.getName() + difficulty),
                 CommunicationManager.format(status),
+                arena.isClosed() ? "" : CommunicationManager.format("&b" +
+                        plugin.getLanguageString("messages.players") + ": " + countColor +
+                        arena.getActiveCount() + "&b / " + arena.getMaxPlayers()),
                 arena.isClosed() ? "" : CommunicationManager.format(
-                        "&bPlayers: " + countColor + arena.getActiveCount() + "&b / " + arena.getMaxPlayers()),
-                arena.isClosed() ? "" : CommunicationManager.format("Spectators: " + arena.getSpectatorCount()));
+                        plugin.getLanguageString("messages.spectators") + ": " + arena.getSpectatorCount()));
     }
 
     public Location getLocation() {

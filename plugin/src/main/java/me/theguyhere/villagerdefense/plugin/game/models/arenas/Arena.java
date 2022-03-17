@@ -45,7 +45,7 @@ public class Arena {
     private final Main plugin;
     /** Arena number.*/
     private final int arena;
-    /** A variable more quickly access the file configuration of the arena file.*/
+    /** A variable to more quickly access the file configuration of the arena file.*/
     private final FileConfiguration config;
     /** Common string for all data paths in the arena file.*/
     private final String path;
@@ -521,11 +521,12 @@ public class Arena {
                 portal.remove();
 
             // Create a new portal and display it
-            portal = new Portal(Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin, path + ".portal")),
-                    this);
+            portal = new Portal(Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin,
+                    path + ".portal")), this, plugin);
             portal.displayForOnline();
         } catch (Exception e) {
-            CommunicationManager.debugError("Invalid location for arena board " + arena, 1);
+            CommunicationManager.debugError("Invalid location for portal " + arena, 1,
+                    !Main.releaseMode, e);
             CommunicationManager.debugInfo("Portal location data may be corrupt. If data cannot be manually corrected in " +
                     "arenaData.yml, please delete the portal location data for arena " + arena + ".", 1);
         }
@@ -587,13 +588,14 @@ public class Arena {
             // Create a new board and display it
             arenaBoard = new ArenaBoard(
                     Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin, path + ".arenaBoard")),
-                    this
-            );
+                    this, plugin);
             arenaBoard.displayForOnline();
         } catch (Exception e) {
-            CommunicationManager.debugError("Invalid location for arena board " + arena, 1);
-            CommunicationManager.debugInfo("Arena board location data may be corrupt. If data cannot be manually corrected in " +
-                    "arenaData.yml, please delete the arena board location data for arena " + arena + ".", 1);
+            CommunicationManager.debugError("Invalid location for arena board " + arena, 1,
+                    !Main.releaseMode, e);
+            CommunicationManager.debugInfo("Arena board location data may be corrupt. If data cannot be manually " +
+                    "corrected in arenaData.yml, please delete the arena board location data for arena " + arena + ".",
+                    1);
         }
     }
 
@@ -878,7 +880,8 @@ public class Arena {
                             .spawnParticle(spawnParticle, first, 0);
                     getPlayerSpawn().getLocation().getWorld().spawnParticle(spawnParticle, second, 0);
                 } catch (Exception e) {
-                    CommunicationManager.debugError(String.format("Player spawn particle generation error for arena %d.", arena),
+                    CommunicationManager.debugError(
+                            String.format("Player spawn particle generation error for arena %d.", arena),
                             2);
                 }
             }
@@ -934,8 +937,8 @@ public class Arena {
                                         .spawnParticle(monsterParticle, first, 0);
                                 location.getWorld().spawnParticle(monsterParticle, second, 0);
                             } catch (Exception e) {
-                                CommunicationManager.debugError(String.format("Monster particle generation error for arena %d.", arena),
-                                        2);
+                                CommunicationManager.debugError(String.format("Monster particle generation error for " +
+                                                "arena %d.", arena), 2);
                             }
                         }
                     });
@@ -989,8 +992,8 @@ public class Arena {
                                         .spawnParticle(villagerParticle, first, 0);
                                 location.getWorld().spawnParticle(villagerParticle, second, 0);
                             } catch (Exception e) {
-                                CommunicationManager.debugError(String.format("Villager particle generation error for arena %d.", arena),
-                                        2);
+                                CommunicationManager.debugError(String.format("Villager particle generation error " +
+                                                "for arena %d.", arena), 2);
                             }
                         }
                     });
@@ -1582,7 +1585,7 @@ public class Arena {
 
         // Set exit option
         for (int i = 45; i < 54; i++)
-            inv.setItem(i, InventoryItems.exit());
+            inv.setItem(i, InventoryItems.exit(plugin));
 
         // Check for a stored inventory
         if (!config.contains(path + ".customShop"))
@@ -1609,7 +1612,8 @@ public class Arena {
                                 lore = meta.getLore();
                             assert lore != null;
                             if (price >= 0)
-                                lore.add(CommunicationManager.format("&2Gems: &a" + price));
+                                lore.add(CommunicationManager.format("&2" +
+                                        plugin.getLanguageString("messages.gems") + ": &a" + price));
                             meta.setLore(lore);
                             item.setItemMeta(meta);
 
@@ -1633,11 +1637,12 @@ public class Arena {
 
     public Inventory getCustomShop() {
         // Create inventory
-        Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54, CommunicationManager.format("&k") +
-                CommunicationManager.format("&6&lCustom Shop"));
+        Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54,
+                CommunicationManager.format("&k") + CommunicationManager.format("&6&l") +
+                        plugin.getLanguageString("names.customShop"));
 
         // Set exit option
-        inv.setItem(49, InventoryItems.exit());
+        inv.setItem(49, InventoryItems.exit(plugin));
 
         // Check for a stored inventory
         if (!config.contains(path + ".customShop"))
@@ -1664,7 +1669,8 @@ public class Arena {
                                 lore = meta.getLore();
                             assert lore != null;
                             if (price >= 0)
-                                lore.add(CommunicationManager.format("&2Gems: &a" + price));
+                                lore.add(CommunicationManager.format("&2" +
+                                        plugin.getLanguageString("messages.gems") + ": &a" + price));
                             meta.setLore(lore);
                             item.setItemMeta(meta);
 
@@ -1692,11 +1698,12 @@ public class Arena {
      */
     public Inventory getMockCustomShop() {
         // Create inventory
-        Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54, CommunicationManager.format("&k") +
-                CommunicationManager.format("&6&lCustom Shop: " + getName()));
+        Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54,
+                CommunicationManager.format("&k") + CommunicationManager.format("&6&l" +
+                        plugin.getLanguageString("names.customShop") + ": " + getName()));
 
         // Set exit option
-        inv.setItem(49, InventoryItems.exit());
+        inv.setItem(49, InventoryItems.exit(plugin));
 
         // Check for a stored inventory
         if (!config.contains(path + ".customShop"))
@@ -1723,7 +1730,8 @@ public class Arena {
                                 lore = meta.getLore();
                             assert lore != null;
                             if (price >= 0)
-                                lore.add(CommunicationManager.format("&2Gems: &a" + price));
+                                lore.add(CommunicationManager.format("&2" +
+                                        plugin.getLanguageString("messages.gems") + ": &a" + price));
                             meta.setLore(lore);
                             item.setItemMeta(meta);
 
@@ -1753,14 +1761,9 @@ public class Arena {
      * Create a time limit bar to display.
      */
     public void startTimeLimitBar() {
-        try {
-            timeLimitBar = Bukkit.createBossBar(CommunicationManager.format(
-                    String.format(Objects.requireNonNull(plugin.getLanguageData().getString("timeBar")),
-                            getCurrentWave())),
-                    BarColor.YELLOW, BarStyle.SOLID);
-        } catch (Exception e) {
-            CommunicationManager.debugError("The active language file is missing text for the key 'timeBar'.", 1);
-        }
+        timeLimitBar = Bukkit.createBossBar(CommunicationManager.format("&e" +
+                        plugin.getLanguageStringFormatted("names.timeBar", Integer.toString(getCurrentWave()))),
+                BarColor.YELLOW, BarStyle.SOLID);
     }
 
     /**
@@ -1828,7 +1831,8 @@ public class Arena {
                 getCorner1() == null || getCorner2() == null ||
                 !Objects.equals(getCorner1().getWorld(), getCorner2().getWorld())) {
             setClosed(true);
-            CommunicationManager.debugInfo(String.format("Arena %d did not meet opening requirements and was closed.", arena),
+            CommunicationManager.debugInfo(String.format("Arena %d did not meet opening requirements and was closed.",
+                            arena),
                     2);
         }
     }
@@ -1924,7 +1928,8 @@ public class Arena {
         setBorderParticles(arenaToCopy.hasBorderParticles());
         if (config.contains("a" + arenaToCopy.getArena() + ".customShop"))
             try {
-                Objects.requireNonNull(config.getConfigurationSection("a" + arenaToCopy.getArena() + ".customShop"))
+                Objects.requireNonNull(config.getConfigurationSection("a" + arenaToCopy.getArena() +
+                                ".customShop"))
                         .getKeys(false)
                         .forEach(index -> config.set(path + ".customShop." + index,
                                 config.getItemStack("a" + arenaToCopy.getArena() + ".customShop." + index)));

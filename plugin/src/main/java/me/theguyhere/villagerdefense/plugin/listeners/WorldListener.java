@@ -18,8 +18,15 @@ public class WorldListener implements Listener {
     @EventHandler
     public void onWorldLoadEvent(WorldLoadEvent e) {
         CommunicationManager.debugInfo("Loading world: " + e.getWorld(), 2);
-        plugin.getGameManager().reloadLobby();
-        plugin.getGameManager().refreshAll();
+        String worldName = e.getWorld().getName();
+
+        // Handle world loading after initialization
+        if (plugin.getUnloadedWorlds().contains(worldName)) {
+            plugin.loadWorld(worldName);
+            plugin.resetGameManager();
+            plugin.getGameManager().reloadLobby();
+            plugin.getGameManager().refreshAll();
+        }
     }
 
     @EventHandler

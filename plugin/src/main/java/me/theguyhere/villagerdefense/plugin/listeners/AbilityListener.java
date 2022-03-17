@@ -15,7 +15,6 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -41,8 +40,6 @@ public class AbilityListener implements Listener {
     // Most ability functionalities
     @EventHandler
     public void onAbility(PlayerInteractEvent e) {
-        FileConfiguration language = plugin.getLanguageData();
-
         // Check for right click
         if (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK)
             return;
@@ -89,9 +86,9 @@ public class AbilityListener implements Listener {
         // Mage
         if (gamer.getKit().getName().equals(Kit.mage().getName()) && GameItems.mage().equals(item)) {
             // Perform checks
-            if (checkLevel(level, player, language))
+            if (checkLevel(level, player))
                 return;
-            if (checkCooldown(dif, player, language))
+            if (checkCooldown(dif, player))
                 return;
 
             // Calculate stats
@@ -108,9 +105,9 @@ public class AbilityListener implements Listener {
         // Ninja
         if (gamer.getKit().getName().equals(Kit.ninja().getName()) && GameItems.ninja().equals(item)) {
             // Perform checks
-            if (checkLevel(level, player, language))
+            if (checkLevel(level, player))
                 return;
-            if (checkCooldown(dif, player, language))
+            if (checkCooldown(dif, player))
                 return;
 
             // Calculate stats
@@ -136,9 +133,9 @@ public class AbilityListener implements Listener {
         // Templar
         if (gamer.getKit().getName().equals(Kit.templar().getName()) && GameItems.templar().equals(item)) {
             // Perform checks
-            if (checkLevel(level, player, language))
+            if (checkLevel(level, player))
                 return;
-            if (checkCooldown(dif, player, language))
+            if (checkCooldown(dif, player))
                 return;
 
             // Calculate stats
@@ -176,9 +173,9 @@ public class AbilityListener implements Listener {
         // Warrior
         if (gamer.getKit().getName().equals(Kit.warrior().getName()) && GameItems.warrior().equals(item)) {
             // Perform checks
-            if (checkLevel(level, player, language))
+            if (checkLevel(level, player))
                 return;
-            if (checkCooldown(dif, player, language))
+            if (checkCooldown(dif, player))
                 return;
 
             // Calculate stats
@@ -216,9 +213,9 @@ public class AbilityListener implements Listener {
         // Knight
         if (gamer.getKit().getName().equals(Kit.knight().getName()) && GameItems.knight().equals(item)) {
             // Perform checks
-            if (checkLevel(level, player, language))
+            if (checkLevel(level, player))
                 return;
-            if (checkCooldown(dif, player, language))
+            if (checkCooldown(dif, player))
                 return;
 
             // Calculate stats
@@ -256,9 +253,9 @@ public class AbilityListener implements Listener {
         // Priest
         if (gamer.getKit().getName().equals(Kit.priest().getName()) && GameItems.priest().equals(item)) {
             // Perform checks
-            if (checkLevel(level, player, language))
+            if (checkLevel(level, player))
                 return;
-            if (checkCooldown(dif, player, language))
+            if (checkCooldown(dif, player))
                 return;
 
             // Calculate stats
@@ -296,9 +293,9 @@ public class AbilityListener implements Listener {
         // Siren
         if (gamer.getKit().getName().equals(Kit.siren().getName()) && GameItems.siren().equals(item)) {
             // Perform checks
-            if (checkLevel(level, player, language))
+            if (checkLevel(level, player))
                 return;
-            if (checkCooldown(dif, player, language))
+            if (checkCooldown(dif, player))
                 return;
 
             // Calculate stats
@@ -339,9 +336,9 @@ public class AbilityListener implements Listener {
         // Monk
         if (gamer.getKit().getName().equals(Kit.monk().getName()) && GameItems.monk().equals(item)) {
             // Perform checks
-            if (checkLevel(level, player, language))
+            if (checkLevel(level, player))
                 return;
-            if (checkCooldown(dif, player, language))
+            if (checkCooldown(dif, player))
                 return;
 
             // Calculate stats
@@ -379,9 +376,9 @@ public class AbilityListener implements Listener {
         // Messenger
         if (gamer.getKit().getName().equals(Kit.messenger().getName()) && GameItems.messenger().equals(item)) {
             // Perform checks
-            if (checkLevel(level, player, language))
+            if (checkLevel(level, player))
                 return;
-            if (checkCooldown(dif, player, language))
+            if (checkCooldown(dif, player))
                 return;
 
             // Calculate stats
@@ -538,8 +535,6 @@ public class AbilityListener implements Listener {
                 .noneMatch(potion -> potion.getType().equals(PotionEffectType.INVISIBILITY)))
             return;
 
-        FileConfiguration language = plugin.getLanguageData();
-
         // Get armor
         ItemStack helmet = player.getInventory().getHelmet();
         ItemStack chestplate = player.getInventory().getChestplate();
@@ -548,41 +543,41 @@ public class AbilityListener implements Listener {
 
         // Unequip armor
         if (!(helmet == null || helmet.getType() == Material.AIR)) {
-            PlayerManager.giveItem(player, helmet, language.getString("inventoryFull"));
+            PlayerManager.giveItem(player, helmet, plugin.getLanguageString("errors.inventoryFull"));
             player.getInventory().setHelmet(null);
-            PlayerManager.notify(player, language.getString("ninjaError"));
+            PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.ninja"));
         }
         if (!(chestplate == null || chestplate.getType() == Material.AIR)) {
-            PlayerManager.giveItem(player, chestplate, language.getString("inventoryFull"));
+            PlayerManager.giveItem(player, chestplate, plugin.getLanguageString("errors.inventoryFull"));
             player.getInventory().setChestplate(null);
-            PlayerManager.notify(player, language.getString("ninjaError"));
+            PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.ninja"));
         }
         if (!(leggings == null || leggings.getType() == Material.AIR)) {
-            PlayerManager.giveItem(player, leggings, language.getString("inventoryFull"));
+            PlayerManager.giveItem(player, leggings, plugin.getLanguageString("errors.inventoryFull"));
             player.getInventory().setLeggings(null);
-            PlayerManager.notify(player, language.getString("ninjaError"));
+            PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.ninja"));
         }
         if (!(boots == null || boots.getType() == Material.AIR)) {
-            PlayerManager.giveItem(player, boots, language.getString("inventoryFull"));
+            PlayerManager.giveItem(player, boots, plugin.getLanguageString("errors.inventoryFull"));
             player.getInventory().setBoots(null);
-            PlayerManager.notify(player, language.getString("ninjaError"));
+            PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.ninja"));
         }
     }
 
-    private boolean checkLevel(int level, Player player, FileConfiguration language) {
+    private boolean checkLevel(int level, Player player) {
         if (level == 0) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-                    CommunicationManager.format(language.getString("levelError"))));
+                    CommunicationManager.format("&c" + plugin.getLanguageString("errors.level"))));
             return true;
         }
         return false;
     }
 
-    private static boolean checkCooldown(long dif, Player player, FileConfiguration language) {
+    private boolean checkCooldown(long dif, Player player) {
         if (dif > 0) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-                    CommunicationManager.format(String.format(Objects.requireNonNull(language.getString("cooldownError")),
-                            Utils.millisToSeconds(dif)))));
+                    CommunicationManager.format("&c" + plugin.getLanguageStringFormatted("errors.cooldown",
+                            "&b" + (Math.round(Utils.millisToSeconds(dif) * 10) / 10d) + "&c"))));
             return true;
         }
         return false;
