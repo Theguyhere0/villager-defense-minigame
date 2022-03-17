@@ -39,7 +39,7 @@ public class NPCVillager {
      * Spawn in the NPCVillager for every online player.
      */
     public void displayForOnline() {
-        PlayerManager.sendPacketToOnline(villagerPacketEntity.newSpawnPackets(location));
+        PlayerManager.sendLocationPacketToOnline(villagerPacketEntity.newSpawnPackets(location), location.getWorld());
     }
 
     /**
@@ -47,7 +47,9 @@ public class NPCVillager {
      * @param player - The player to display the NPCVillager for.
      */
     public void displayForPlayer(Player player) {
-        villagerPacketEntity.newSpawnPackets(location).sendTo(player);
+        // Only display if player is in the same world
+        if (player.getWorld().equals(location.getWorld()))
+            villagerPacketEntity.newSpawnPackets(location).sendTo(player);
     }
 
     /**

@@ -4,10 +4,7 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.nms.common.PacketGroup;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
@@ -142,5 +139,11 @@ public class PlayerManager {
     public static void sendPacketToOnline(PacketGroup packetGroup) {
         for (Player player : Bukkit.getOnlinePlayers())
             packetGroup.sendTo(player);
+    }
+
+    public static void sendLocationPacketToOnline(PacketGroup packetGroup, World world) {
+        for (Player player : Bukkit.getOnlinePlayers())
+            if (player.getWorld().equals(world))
+                packetGroup.sendTo(player);
     }
 }

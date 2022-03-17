@@ -523,8 +523,6 @@ public class Arena {
             // Create a new portal and display it
             portal = new Portal(Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin,
                     path + ".portal")), this, plugin);
-            Main.testInfo(path, false);
-            Main.testInfo(portal.getLocation().toString(), false);
             portal.displayForOnline();
         } catch (Exception e) {
             CommunicationManager.debugError("Invalid location for portal " + arena, 1,

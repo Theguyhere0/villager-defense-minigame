@@ -42,7 +42,7 @@ public class Main extends JavaPlugin {
 
 	// Global state variables
 	private static boolean outdated = false; // DO NOT CHANGE
-	public static final boolean releaseMode = false;
+	public static final boolean releaseMode = true;
 	public static final int configVersion = 6;
 	public static final int arenaDataVersion = 4;
 	public static final int playerDataVersion = 1;
@@ -323,14 +323,11 @@ public class Main extends JavaPlugin {
 	}
 
 	private void checkAddUnloadedWorld(String worldName) {
-		System.out.println(worldName);
 		if (worldName == null)
 			return;
-		System.out.println(worldName);
 
 		if (unloadedWorlds.contains(worldName))
 			return;
-		System.out.println(worldName);
 
 		if (Bukkit.getWorld(worldName) != null)
 			return;

@@ -106,13 +106,6 @@ public class DataManager {
 		} catch (Exception e) {
 			CommunicationManager.debugError("Error getting location " + path + " from yaml", 2,
 					!Main.releaseMode, e);
-			Main.testInfo("Path: " + path, false);
-			Main.testInfo("World: " + plugin.getArenaData().getString(path + ".world"), false);
-			Main.testInfo("x: " + plugin.getArenaData().getDouble(path + ".x"), false);
-			Main.testInfo("y: " + plugin.getArenaData().getDouble(path + ".y"), false);
-			Main.testInfo("z: " + plugin.getArenaData().getDouble(path + ".z"), false);
-			Main.testInfo("pitch: " + plugin.getArenaData().get(path + ".pitch"), false);
-			Main.testInfo("yaw: " + plugin.getArenaData().get(path + ".yaw"), false);
 			return null;
 		}
 	}
