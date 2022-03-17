@@ -606,8 +606,8 @@ public class GameListener implements Listener {
 		e.setCancelled(true);
 		e.getItem().remove();
 		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				CommunicationManager.format(plugin.getLanguageStringFormatted("messages.foundGems", 
-						"&a" + earned + "&f"))));
+				CommunicationManager.format(ChatColor.GREEN, plugin.getLanguageString("messages.foundGems"),
+						ChatColor.AQUA, Integer.toString(earned))));
 		if (arena.hasGemSound())
 			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, .5f, 0);
 
@@ -1310,6 +1310,10 @@ public class GameListener implements Listener {
 
 		// Ignore clicks to nothing
 		if (clickedOn == null || clickedOn.getType() == Material.AIR)
+			return;
+
+		// Ignore clicks on shop or other books
+		if (EnchantingBook.check(clickedOn) != null || GameItems.shop().equals(clickedOn))
 			return;
 
 		// Check for enchanting book

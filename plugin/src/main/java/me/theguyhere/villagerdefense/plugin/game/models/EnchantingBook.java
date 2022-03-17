@@ -173,7 +173,7 @@ public class EnchantingBook extends ItemStack {
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
                 CommunicationManager.format(ChatColor.WHITE, 
                         plugin.getLanguageString("messages.enchantInstruction")),
-                CommunicationManager.format(ChatColor.DARK_PURPLE, plugin.getLanguageString("caution")),
+                CommunicationManager.format(ChatColor.DARK_PURPLE, plugin.getLanguageString("messages.caution")),
                 CommunicationManager.format(ChatColor.DARK_RED, plugin.getLanguageString("messages.warning")));
     }
     public static ItemStack multishot() {
@@ -184,7 +184,7 @@ public class EnchantingBook extends ItemStack {
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
                 CommunicationManager.format(ChatColor.WHITE, 
                         plugin.getLanguageString("messages.enchantInstruction")),
-                CommunicationManager.format(ChatColor.DARK_PURPLE, plugin.getLanguageString("caution")),
+                CommunicationManager.format(ChatColor.DARK_PURPLE, plugin.getLanguageString("messages.caution")),
                 CommunicationManager.format(ChatColor.DARK_RED, plugin.getLanguageString("messages.warning")));
     }
     public static ItemStack infinity() {
@@ -195,7 +195,7 @@ public class EnchantingBook extends ItemStack {
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
                 CommunicationManager.format(ChatColor.WHITE, 
                         plugin.getLanguageString("messages.enchantInstruction")),
-                CommunicationManager.format(ChatColor.DARK_PURPLE, plugin.getLanguageString("caution")),
+                CommunicationManager.format(ChatColor.DARK_PURPLE, plugin.getLanguageString("messages.caution")),
                 CommunicationManager.format(ChatColor.DARK_RED, plugin.getLanguageString("messages.warning")));
     }
     public static ItemStack blastProtection() {
@@ -256,7 +256,7 @@ public class EnchantingBook extends ItemStack {
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
                 CommunicationManager.format(ChatColor.WHITE, 
                         plugin.getLanguageString("messages.enchantInstruction")),
-                CommunicationManager.format(ChatColor.DARK_PURPLE, plugin.getLanguageString("caution")),
+                CommunicationManager.format(ChatColor.DARK_PURPLE, plugin.getLanguageString("messages.caution")),
                 CommunicationManager.format(ChatColor.DARK_RED, plugin.getLanguageString("messages.warning")));
     }
 }
