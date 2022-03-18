@@ -642,10 +642,10 @@ public class Commands implements CommandExecutor {
 						if (player != null)
 							PlayerManager.notifyAlert(player, 
 									plugin.getLanguageString("messages.manualUpdateWarn"), ChatColor.AQUA,
-									"plugin.yml");
+									"config.yml");
 						else CommunicationManager.debugError(
 								plugin.getLanguageStringFormatted("messages.manualUpdateWarn",
-								"plugin.yml"), 0);
+								"config.yml"), 0);
 
 					// Check if arenaData.yml is outdated
 					int arenaDataVersion = plugin.getConfig().getInt("arenaData");
@@ -759,14 +759,14 @@ public class Commands implements CommandExecutor {
 						// Notify
 						if (player != null) {
 							PlayerManager.notifySuccess(player, plugin.getLanguageString("confirms.autoUpdate"),
-									ChatColor.AQUA, "en_US.yml", String.valueOf(Main.defaultSpawnVersion));
+									ChatColor.AQUA, "en_US.yml", String.valueOf(Main.languageFileVersion));
 							PlayerManager.notifyAlert(player, 
 									plugin.getLanguageString("messages.manualUpdateWarn"), ChatColor.AQUA, 
 									"All other language files");
 							PlayerManager.notifyAlert(player, plugin.getLanguageString("messages.restartPlugin"));
 						}
 						CommunicationManager.debugInfo(plugin.getLanguageStringFormatted("confirms.autoUpdate",
-								"en_US.yml", String.valueOf(Main.defaultSpawnVersion)), 0);
+								"en_US.yml", String.valueOf(Main.languageFileVersion)), 0);
 						CommunicationManager.debugError(
 								plugin.getLanguageStringFormatted("messages.manualUpdateWarn",
 										"All other language files"), 0);
