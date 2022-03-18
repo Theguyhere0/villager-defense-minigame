@@ -1,59 +1,25 @@
 package me.theguyhere.villagerdefense.game.displays;
 
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import me.theguyhere.villagerdefense.Main;
+import me.theguyhere.villagerdefense.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-
-import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
 
 public class InfoBoard {
-	private final Main plugin;
-	private final Hologram[] boards = new Hologram[8];
-	
-	public InfoBoard(Main plugin) {
-		this.plugin = plugin;
-	}
+	/** The information for the InfoBoard.*/
+	private final Hologram hologram;
+	/** The location of the InfoBoard.*/
+	private final Location location;
 
-	public void createInfoBoard(Player player, int slot) {
-		// Create hologram
-		try {
-			addHolo(player.getLocation(), slot);
-		} catch (Exception e) {
-			Utils.debugError("Invalid location for info board " + slot, 1);
-			Utils.debugInfo("Info board location data may be corrupt. If data cannot be manually corrected in " +
-					"arenaData.yml, please delete the location data for info board " + slot + ".", 1);
-		}
+	public InfoBoard(@NotNull Location location, Main plugin) throws InvalidLocationException {
+		// Check for null world
+		if (location.getWorld() == null)
+			throw new InvalidLocationException("Location world cannot be null!");
 
-		// Save location data
-		Utils.setConfigurationLocation(plugin, "infoBoard." + slot, player.getLocation());
-		plugin.saveArenaData();
-	}
-
-	public void refreshInfoBoard(int slot) {
-		if (boards[slot] != null) {
-			boards[slot].delete();
-			boards[slot] = null;
-			Location location = Utils.getConfigLocationNoPitch(plugin, "infoBoard." + slot);
-			try {
-				addHolo(location, slot);
-			} catch (Exception e) {
-				Utils.debugError("Invalid location for info board " + slot, 1);
-				Utils.debugInfo("Info board location data may be corrupt. If data cannot be manually corrected in " +
-						"arenaData.yml, please delete the location data for info board " + slot + ".", 1);
-			}
-		}
-	}
-
-	public void removeInfoBoard(int slot) {
-		boards[slot].delete();
-		boards[slot] = null;
-	}
-
-	public void addHolo(Location location, int slot) {
+		// Gather info text
 		FileConfiguration language = plugin.getLanguageData();
 		String[] text = {Utils.format(language.getString("info1")),
 				Utils.format(language.getString("info2")),
@@ -62,32 +28,38 @@ public class InfoBoard {
 				Utils.format(language.getString("info5")),
 				Utils.format(language.getString("info6"))};
 
-		// Create hologram
-		Location newLocation = location.clone();
-		newLocation.setY(newLocation.getY() + 2);
-		Hologram holo = HologramsAPI.createHologram(plugin, newLocation);
-		holo.insertTextLine(0, text[0]);
-		for (int i = 1; i < text.length; i++)
-			holo.appendTextLine(text[i]);
-
-		// Save hologram in array
-		boards[slot] = holo;
+		// Set location and hologram
+		this.location = location;
+		this.hologram = new Hologram(location.clone().add(0, .5, 0), text);
 	}
 
-	public void loadInfoBoards() {
-		if (plugin.getArenaData().contains("infoBoard"))
-			Objects.requireNonNull(plugin.getArenaData().getConfigurationSection("infoBoard")).getKeys(false)
-					.forEach(board -> {
-						try {
-							addHolo(Objects.requireNonNull(
-									Utils.getConfigLocationNoPitch(plugin, "infoBoard." + board)),
-									Integer.parseInt(board));
-						} catch (Exception e) {
-							Utils.debugError("Invalid location for info board " + board, 1);
-							Utils.debugInfo("Info board location data may be corrupt. If data cannot be manually " +
-									"corrected in " +
-									"arenaData.yml, please delete the location data for info board " + board + ".", 1);
-						}
-			});
+	public Location getLocation() {
+		return location;
+	}
+
+	public Hologram getHologram() {
+		return hologram;
+	}
+
+	/**
+	 * Spawn in the InfoBoard for every online player.
+	 */
+	public void displayForOnline() {
+		hologram.displayForOnline();
+	}
+
+	/**
+	 * Spawn in the InfoBoard for a specific player.
+	 * @param player - The player to display the InfoBoard for.
+	 */
+	public void displayForPlayer(Player player) {
+		hologram.displayForPlayer(player);
+	}
+
+	/**
+	 * Stop displaying the InfoBoard for every online player.
+	 */
+	public void remove() {
+		hologram.remove();
 	}
 }

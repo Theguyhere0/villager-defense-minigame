@@ -1,111 +1,28 @@
 package me.theguyhere.villagerdefense.game.displays;
 
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import me.theguyhere.villagerdefense.game.models.Game;
+import me.theguyhere.villagerdefense.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.tools.Utils;
-import net.minecraft.server.v1_16_R3.*;
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
-
-import java.util.Arrays;
-import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * A class managing data about a Villager Defense portal to an arena.
+ * The portal to an Arena.
  */
 public class Portal {
-    private EntityVillager NPC;
-    private Hologram hologram;
+    /** The NPC for the Portal.*/
+    private final NPCVillager npc;
+    /** The information for the Portal.*/
+    private final Hologram hologram;
+    /** The location of the Portal.*/
+    private final Location location;
 
-    public Portal(EntityVillager NPC, Hologram hologram) {
-        this.NPC = NPC;
-        addNPCAll();
-        this.hologram = hologram;
-    }
-
-    public void setNPC(EntityVillager NPC) {
-        removeNPCAll();
-        this.NPC = NPC;
-        addNPCAll();
-    }
-
-    public void setHologram(Hologram hologram) {
-        if (this.hologram != null)
-            this.hologram.delete();
-        this.hologram = hologram;
-    }
-
-    public Hologram getHologram() {
-        return hologram;
-    }
-
-    public EntityVillager getNPC() {
-        return NPC;
-    }
-
-    /**
-     * Adds the NPC to a player's client
-     * @param player Player to add NPC to
-     */
-    public void addNPC(Player player) {
-        if (NPC != null && NPC.getWorld().getWorld().equals(player.getWorld())) {
-            PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
-            connection.sendPacket(new PacketPlayOutSpawnEntityLiving(NPC));
-            connection.sendPacket(new PacketPlayOutEntityHeadRotation(NPC, (byte) (NPC.yaw * 256 / 360)));
-        }
-    }
-
-    /**
-     * Add an NPC to every online player's client
-     */
-    public void addNPCAll() {
-        for (Player player : Bukkit.getOnlinePlayers())
-            addNPC(player);
-    }
-
-    /**
-     * Removes the NPC from a player's client
-     * @param player Player to remove NPC from
-     */
-    public void removeNPC(Player player) {
-        if (NPC != null) {
-            PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
-            connection.sendPacket(new PacketPlayOutEntityDestroy(NPC.getId()));
-        }
-    }
-
-    /**
-     * Removes the NPC from every online player's client
-     */
-    public void removeNPCAll() {
-        for (Player player : Bukkit.getOnlinePlayers())
-            removeNPC(player);
-    }
-
-    public static void refreshPortals() {
-        Arrays.stream(Game.arenas).filter(Objects::nonNull).forEach(Arena::refreshPortal);
-    }
-
-    public static void addJoinPacket(Player player) {
-        Arrays.stream(Game.arenas).filter(Objects::nonNull).map(Arena::getPortal).filter(Objects::nonNull)
-                .forEach(portal -> portal.addNPC(player));
-    }
-
-    public static void removePortals() {
-        Arrays.stream(Game.arenas).filter(Objects::nonNull).map(Arena::getPortal).filter(Objects::nonNull)
-                .forEach(Portal::removeNPCAll);
-    }
-
-    /**
-     * Formats a string array of text based on the Arena given.
-     * @param arena The arena this text will be for.
-     * @return The properly formatted string array of text.
-     */
-    public static String[] getHoloText(Arena arena) {
-        String status;
+    public Portal(@NotNull Location location, Arena arena) throws InvalidLocationException {
+        // Check for null world
+        if (location.getWorld() == null)
+            throw new InvalidLocationException("Location world cannot be null!");
 
         // Get difficulty
         String difficulty = arena.getDifficultyLabel();
@@ -129,10 +46,9 @@ public class Portal {
         else difficulty = "";
 
         // Get status
-        if (arena.isClosed()) {
-            return new String[]{Utils.format("&6&l" + arena.getName() + difficulty),
-                    Utils.format("&4&lClosed")};
-        }
+        String status;
+        if (arena.isClosed())
+            status = "&4&lClosed";
         else if (arena.getStatus() == ArenaStatus.ENDING)
             status = "&c&lEnding";
         else if (arena.getStatus() == ArenaStatus.WAITING)
@@ -148,10 +64,51 @@ public class Portal {
             countColor = "&6";
         else countColor = "&c";
 
-        // Return full hologram text
-        return new String[]{Utils.format("&6&l" + arena.getName() + difficulty),
-                Utils.format("&bPlayers: " + countColor + arena.getActiveCount() + "&b / " + arena.getMaxPlayers()),
-                Utils.format("Spectators: " + arena.getSpectatorCount()),
-                Utils.format(status)};
+        // Set location, hologram, and npc
+        this.location = location;
+        this.npc = new NPCVillager(location);
+        this.hologram = new Hologram(location.clone().add(0, 2.5, 0), false,
+                Utils.format("&6&l" + arena.getName() + difficulty),
+                Utils.format(status),
+                arena.isClosed() ? "" : Utils.format(
+                        "&bPlayers: " + countColor + arena.getActiveCount() + "&b / " + arena.getMaxPlayers()),
+                arena.isClosed() ? "" : Utils.format("Spectators: " + arena.getSpectatorCount()));
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public Hologram getHologram() {
+        return hologram;
+    }
+
+    public NPCVillager getNpc() {
+        return npc;
+    }
+
+    /**
+     * Spawn in the Portal for every online player.
+     */
+    public void displayForOnline() {
+        hologram.displayForOnline();
+        npc.displayForOnline();
+    }
+
+    /**
+     * Spawn in the Portal for a specific player.
+     * @param player - The player to display the Portal for.
+     */
+    public void displayForPlayer(Player player) {
+        hologram.displayForPlayer(player);
+        npc.displayForPlayer(player);
+    }
+
+    /**
+     * Stop displaying the Portal for every online player.
+     */
+    public void remove() {
+        hologram.remove();
+        npc.remove();
     }
 }

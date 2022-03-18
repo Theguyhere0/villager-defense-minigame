@@ -1,28 +1,25 @@
 package me.theguyhere.villagerdefense.game.models.arenas;
 
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import me.theguyhere.villagerdefense.GUI.InventoryItems;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.GameEndEvent;
 import me.theguyhere.villagerdefense.events.ReloadBoardsEvent;
 import me.theguyhere.villagerdefense.events.WaveEndEvent;
+import me.theguyhere.villagerdefense.exceptions.InvalidNameException;
+import me.theguyhere.villagerdefense.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.game.models.InventoryMeta;
 import me.theguyhere.villagerdefense.game.models.Tasks;
-import me.theguyhere.villagerdefense.game.models.players.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
-import net.minecraft.server.v1_16_R3.EntityTypes;
-import net.minecraft.server.v1_16_R3.EntityVillager;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.*;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.Inventory;
@@ -530,20 +527,14 @@ public class Arena {
     public void refreshPortal() {
         // Try recreating the portal
         try {
-            Location location = Objects.requireNonNull(Utils.getConfigLocationNoPitch(plugin, path + ".portal"));
-            Hologram holo = Utils.addHolo(plugin, location, Portal.getHoloText(this));
-            EntityVillager npc = new EntityVillager(EntityTypes.VILLAGER, 
-                    ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle());
-            npc.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+            // Delete old portal if needed
+            if (portal != null)
+                portal.remove();
 
-            // Delete old board if needed and refresh NPC
-            if (portal != null) {
-                portal.setHologram(holo);
-                portal.setNPC(npc);
-            }
-
-            // Create a new portal from scratch
-            else portal = new Portal(npc, holo);
+            // Create a new portal and display it
+            portal = new Portal(Objects.requireNonNull(Utils.getConfigLocationNoPitch(plugin, path + ".portal")),
+                    this);
+            portal.displayForOnline();
         } catch (Exception e) {
             Utils.debugError("Invalid location for arena board " + arena, 1);
             Utils.debugInfo("Portal location data may be corrupt. If data cannot be manually corrected in " +
@@ -567,12 +558,10 @@ public class Arena {
      */
     public void removePortal() {
         if (portal != null) {
-            portal.getHologram().delete();
-            portal.removeNPCAll();
+            portal.remove();
             portal = null;
         }
         Utils.setConfigurationLocation(plugin, path + ".portal", null);
-        plugin.saveArenaData();
         checkClose();
     }
 
@@ -602,16 +591,16 @@ public class Arena {
     public void refreshArenaBoard() {
         // Try recreating the board
         try {
-            Hologram holo = Utils.addHolo(plugin,
-                    Objects.requireNonNull(Utils.getConfigLocationNoPitch(plugin, path + ".arenaBoard")),
-                    ArenaBoard.getHoloText(this));
-            
             // Delete old board if needed
             if (arenaBoard != null)
-                arenaBoard.setHologram(holo);
+                arenaBoard.remove();
 
-            // Create a new board from scratch
-            else arenaBoard = new ArenaBoard(holo);
+            // Create a new board and display it
+            arenaBoard = new ArenaBoard(
+                    Objects.requireNonNull(Utils.getConfigLocationNoPitch(plugin, path + ".arenaBoard")),
+                    this
+            );
+            arenaBoard.displayForOnline();
         } catch (Exception e) {
             Utils.debugError("Invalid location for arena board " + arena, 1);
             Utils.debugInfo("Arena board location data may be corrupt. If data cannot be manually corrected in " +
@@ -635,11 +624,10 @@ public class Arena {
      */
     public void removeArenaBoard() {
         if (arenaBoard != null) {
-            arenaBoard.getHologram().delete();
+            arenaBoard.remove();
             arenaBoard = null;
         }
         Utils.setConfigurationLocation(plugin, path + ".arenaBoard", null);
-        plugin.saveArenaData();
     }
 
     /**

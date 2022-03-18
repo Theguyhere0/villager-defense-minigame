@@ -231,7 +231,7 @@ public class InventoryListener implements Listener {
 			// Create lobby
 			if (buttonName.contains("Create Lobby")) {
 				Utils.setConfigurationLocation(plugin, path, player.getLocation());
-				Game.reloadLobby(plugin);
+				plugin.getGame().reloadLobby();
 				player.sendMessage(Utils.notify("&aLobby set!"));
 				player.openInventory(Inventories.createLobbyInventory(plugin));
 			}
@@ -239,7 +239,7 @@ public class InventoryListener implements Listener {
 			// Relocate lobby
 			else if (buttonName.contains("Relocate Lobby")) {
 				Utils.setConfigurationLocation(plugin, path, player.getLocation());
-				Game.reloadLobby(plugin);
+				plugin.getGame().reloadLobby();
 				player.sendMessage(Utils.notify("&aLobby relocated!"));
 			}
 
@@ -297,7 +297,7 @@ public class InventoryListener implements Listener {
 
 			// Create board
 			if (buttonName.contains("Create")) {
-				plugin.getInfoBoard().createInfoBoard(player, num);
+				plugin.getGame().setInfoBoard(player.getLocation(), num);
 				player.sendMessage(Utils.notify("&aInfo board set!"));
 				player.openInventory(Inventories.createInfoBoardMenu(plugin, num));
 			}
@@ -305,7 +305,7 @@ public class InventoryListener implements Listener {
 			// Relocate board
 			else if (buttonName.contains("Relocate")) {
 				Utils.setConfigurationLocation(plugin, path, player.getLocation());
-				plugin.getInfoBoard().refreshInfoBoard(num);
+				plugin.getGame().refreshInfoBoard(num);
 				player.sendMessage(Utils.notify("&aInfo board relocated!"));
 			}
 
@@ -326,8 +326,7 @@ public class InventoryListener implements Listener {
 					player.sendMessage(Utils.notify("&cNo info board to center!"));
 					return;
 				}
-				Utils.centerConfigLocation(plugin, path);
-				plugin.getInfoBoard().refreshInfoBoard(num);
+				plugin.getGame().centerInfoBoard(num);
 				player.sendMessage(Utils.notify("&aInfo board centered!"));
 			}
 
@@ -370,15 +369,14 @@ public class InventoryListener implements Listener {
 
 			// Create leaderboard
 			if (buttonName.contains("Create")) {
-				plugin.getLeaderboard().createLeaderboard(player, "totalKills");
+				plugin.getGame().setLeaderboard(player.getLocation(), "totalKills");
 				player.sendMessage(Utils.notify("&aLeaderboard set!"));
 				player.openInventory(Inventories.createTotalKillsLeaderboardInventory(plugin));
 			}
 
 			// Relocate leaderboard
 			else if (buttonName.contains("Relocate")) {
-				Utils.setConfigurationLocation(plugin, path, player.getLocation());
-				plugin.getLeaderboard().refreshLeaderboard("totalKills");
+				plugin.getGame().setLeaderboard(player.getLocation(), "totalKills");
 				player.sendMessage(Utils.notify("&aLeaderboard relocated!"));
 			}
 
@@ -400,8 +398,7 @@ public class InventoryListener implements Listener {
 					player.sendMessage(Utils.notify("&cNo leaderboard to center!"));
 					return;
 				}
-				Utils.centerConfigLocation(plugin, path);
-				plugin.getLeaderboard().refreshLeaderboard("totalKills");
+				plugin.getGame().centerLeaderboard("totalKills");
 				player.sendMessage(Utils.notify("&aLeaderboard centered!"));
 			}
 
@@ -422,15 +419,14 @@ public class InventoryListener implements Listener {
 
 			// Create leaderboard
 			if (buttonName.contains("Create")) {
-				plugin.getLeaderboard().createLeaderboard(player, "topKills");
+				plugin.getGame().setLeaderboard(player.getLocation(), "topKills");
 				player.sendMessage(Utils.notify("&aLeaderboard set!"));
 				player.openInventory(Inventories.createTopKillsLeaderboardInventory(plugin));
 			}
 
 			// Relocate leaderboard
 			else if (buttonName.contains("Relocate")) {
-				Utils.setConfigurationLocation(plugin, path, player.getLocation());
-				plugin.getLeaderboard().refreshLeaderboard("topKills");
+				plugin.getGame().setLeaderboard(player.getLocation(), "topKills");
 				player.sendMessage(Utils.notify("&aLeaderboard relocated!"));
 			}
 
@@ -452,8 +448,7 @@ public class InventoryListener implements Listener {
 					player.sendMessage(Utils.notify("&cNo leaderboard to center!"));
 					return;
 				}
-				Utils.centerConfigLocation(plugin, path);
-				plugin.getLeaderboard().refreshLeaderboard("topKills");
+				plugin.getGame().refreshLeaderboard("topKills");
 				player.sendMessage(Utils.notify("&aLeaderboard centered!"));
 			}
 
@@ -474,15 +469,14 @@ public class InventoryListener implements Listener {
 
 			// Create leaderboard
 			if (buttonName.contains("Create")) {
-				plugin.getLeaderboard().createLeaderboard(player, "totalGems");
+				plugin.getGame().setLeaderboard(player.getLocation(), "totalGems");
 				player.sendMessage(Utils.notify("&aLeaderboard set!"));
 				player.openInventory(Inventories.createTotalGemsLeaderboardInventory(plugin));
 			}
 
 			// Relocate leaderboard
 			else if (buttonName.contains("Relocate")) {
-				Utils.setConfigurationLocation(plugin, path, player.getLocation());
-				plugin.getLeaderboard().refreshLeaderboard("totalGems");
+				plugin.getGame().setLeaderboard(player.getLocation(), "totalGems");
 				player.sendMessage(Utils.notify("&aLeaderboard relocated!"));
 			}
 
@@ -504,8 +498,7 @@ public class InventoryListener implements Listener {
 					player.sendMessage(Utils.notify("&cNo leaderboard to center!"));
 					return;
 				}
-				Utils.centerConfigLocation(plugin, path);
-				plugin.getLeaderboard().refreshLeaderboard("totalGems");
+				plugin.getGame().refreshLeaderboard("totalGems");
 				player.sendMessage(Utils.notify("&aLeaderboard centered!"));
 			}
 
@@ -526,15 +519,14 @@ public class InventoryListener implements Listener {
 
 			// Create leaderboard
 			if (buttonName.contains("Create")) {
-				plugin.getLeaderboard().createLeaderboard(player, "topBalance");
+				plugin.getGame().setLeaderboard(player.getLocation(), "topBalance");
 				player.sendMessage(Utils.notify("&aLeaderboard set!"));
 				player.openInventory(Inventories.createTopBalanceLeaderboardInventory(plugin));
 			}
 
 			// Relocate leaderboard
 			else if (buttonName.contains("Relocate")) {
-				Utils.setConfigurationLocation(plugin, path, player.getLocation());
-				plugin.getLeaderboard().refreshLeaderboard("topBalance");
+				plugin.getGame().setLeaderboard(player.getLocation(), "topBalance");
 				player.sendMessage(Utils.notify("&aLeaderboard relocated!"));
 			}
 
@@ -556,8 +548,7 @@ public class InventoryListener implements Listener {
 					player.sendMessage(Utils.notify("&cNo leaderboard to center!"));
 					return;
 				}
-				Utils.centerConfigLocation(plugin, path);
-				plugin.getLeaderboard().refreshLeaderboard("topBalance");
+				plugin.getGame().refreshLeaderboard("topBalance");
 				player.sendMessage(Utils.notify("&aLeaderboard centered!"));
 			}
 
@@ -578,15 +569,14 @@ public class InventoryListener implements Listener {
 
 			// Create leaderboard
 			if (buttonName.contains("Create")) {
-				plugin.getLeaderboard().createLeaderboard(player, "topWave");
+				plugin.getGame().setLeaderboard(player.getLocation(), "topWave");
 				player.sendMessage(Utils.notify("&aLeaderboard set!"));
 				player.openInventory(Inventories.createTopWaveLeaderboardInventory(plugin));
 			}
 
 			// Relocate leaderboard
 			else if (buttonName.contains("Relocate")) {
-				Utils.setConfigurationLocation(plugin, path, player.getLocation());
-				plugin.getLeaderboard().refreshLeaderboard("topWave");
+				plugin.getGame().setLeaderboard(player.getLocation(), "topWave");
 				player.sendMessage(Utils.notify("&aLeaderboard relocated!"));
 			}
 
@@ -608,8 +598,7 @@ public class InventoryListener implements Listener {
 					player.sendMessage(Utils.notify("&cNo leaderboard to center!"));
 					return;
 				}
-				Utils.centerConfigLocation(plugin, path);
-				plugin.getLeaderboard().refreshLeaderboard("topWave");
+				plugin.getGame().refreshLeaderboard("topWave");
 				player.sendMessage(Utils.notify("&aLeaderboard centered!"));
 			}
 
@@ -963,7 +952,7 @@ public class InventoryListener implements Listener {
 				else if (buttonName.contains("YES")) {
 					config.set("lobby", null);
 					plugin.saveArenaData();
-					Game.reloadLobby(plugin);
+					plugin.getGame().reloadLobby();
 					player.sendMessage(Utils.notify("&aLobby removed!"));
 					player.openInventory(Inventories.createLobbyInventory(plugin));
 				}
@@ -984,7 +973,7 @@ public class InventoryListener implements Listener {
 					plugin.saveArenaData();
 
 					// Remove info board
-					plugin.getInfoBoard().removeInfoBoard(meta.getInteger1());
+					plugin.getGame().removeInfoBoard(meta.getInteger1());
 
 					// Confirm and return
 					player.sendMessage(Utils.notify("&aInfo board removed!"));
@@ -1007,7 +996,7 @@ public class InventoryListener implements Listener {
 					plugin.saveArenaData();
 
 					// Remove leaderboard
-					plugin.getLeaderboard().removeLeaderboard("totalKills");
+					plugin.getGame().removeLeaderboard("totalKills");
 
 					// Confirm and return
 					player.sendMessage(Utils.notify("&aLeaderboard removed!"));
@@ -1030,7 +1019,7 @@ public class InventoryListener implements Listener {
 					plugin.saveArenaData();
 
 					// Remove leaderboard
-					plugin.getLeaderboard().removeLeaderboard("topKills");
+					plugin.getGame().removeLeaderboard("topKills");
 
 					// Confirm and return
 					player.sendMessage(Utils.notify("&aLeaderboard removed!"));
@@ -1053,7 +1042,7 @@ public class InventoryListener implements Listener {
 					plugin.saveArenaData();
 
 					// Remove leaderboard
-					plugin.getLeaderboard().removeLeaderboard("totalGems");
+					plugin.getGame().removeLeaderboard("totalGems");
 
 					// Confirm and return
 					player.sendMessage(Utils.notify("&aLeaderboard removed!"));
@@ -1076,7 +1065,7 @@ public class InventoryListener implements Listener {
 					plugin.saveArenaData();
 
 					// Remove leaderboard
-					plugin.getLeaderboard().removeLeaderboard("topBalance");
+					plugin.getGame().removeLeaderboard("topBalance");
 
 					// Confirm and return
 					player.sendMessage(Utils.notify("&aLeaderboard removed!"));
@@ -1099,7 +1088,7 @@ public class InventoryListener implements Listener {
 					plugin.saveArenaData();
 
 					// Remove leaderboard
-					plugin.getLeaderboard().removeLeaderboard("topWave");
+					plugin.getGame().removeLeaderboard("topWave");
 
 					// Confirm and return
 					player.sendMessage(Utils.notify("&aLeaderboard removed!"));

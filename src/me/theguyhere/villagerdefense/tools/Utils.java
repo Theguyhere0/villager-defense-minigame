@@ -1,7 +1,5 @@
 package me.theguyhere.villagerdefense.tools;
 
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
@@ -21,6 +19,8 @@ import org.bukkit.util.Vector;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("SpellCheckingInspection")
@@ -533,18 +533,6 @@ public class Utils {
         if (Main.getDebugLevel() >= debugLevel)
             log.info("[VillagerDefense] " + msg);
     }
-    
-    public static Hologram addHolo(Main plugin, Location location, String[] holoText) {
-        // Create hologram
-        Location newLocation = location.clone();
-        newLocation.setY(newLocation.getY() + 3);
-        Hologram holo = HologramsAPI.createHologram(plugin, newLocation);
-        holo.insertTextLine(0, holoText[0]);
-        for (int i = 1; i < holoText.length; i++)
-            holo.appendTextLine(holoText[i]);
-
-        return holo;
-    }
 
     public static void fakeDeath(VDPlayer vdPlayer) {
         Player player = vdPlayer.getPlayer();
@@ -556,5 +544,19 @@ public class Utils {
         player.setFallDistance(0);
         player.setGlowing(false);
         player.setVelocity(new Vector());
+    }
+
+    /**
+     * This method uses a regex to get the NMS package part that changes with every update.
+     * Example: v1_13_R2
+     * @return the NMS package part or null if not found.
+     */
+    public static String extractNMSVersion() {
+        Matcher matcher = Pattern.compile("v\\d+_\\d+_R\\d+").matcher(Bukkit.getServer().getClass().getPackage().getName());
+        if (matcher.find()) {
+            return matcher.group();
+        } else {
+            return null;
+        }
     }
 }

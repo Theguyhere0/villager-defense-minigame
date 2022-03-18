@@ -1,4 +1,4 @@
-package me.theguyhere.villagerdefense.tools;
+package me.theguyhere.villagerdefense.packets;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -10,6 +10,7 @@ import me.theguyhere.villagerdefense.events.SignGUIEvent;
 import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.tools.Utils;
 import net.minecraft.server.v1_16_R3.Packet;
 import net.minecraft.server.v1_16_R3.PacketPlayInUpdateSign;
 import net.minecraft.server.v1_16_R3.PacketPlayInUseEntity;
@@ -69,10 +70,11 @@ public class PacketReader {
 
 			if (getValue(packet, "action").toString().equalsIgnoreCase("ATTACK")) {
 				Arrays.stream(Game.arenas).filter(Objects::nonNull).map(Arena::getPortal).filter(Objects::nonNull)
-						.map(Portal::getNPC).forEach(npc -> {
-							if (npc != null && npc.getId() == id)
+						.map(Portal::getNpc).filter(Objects::nonNull).forEach(npc -> {
+							int npcId = npc.getVillager().getEntityId();
+							if (npcId == id)
 								Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
-										Bukkit.getPluginManager().callEvent(new LeftClickNPCEvent(player, npc)));
+										Bukkit.getPluginManager().callEvent(new LeftClickNPCEvent(player, npcId)));
 						});
 				return;
 			}
@@ -82,10 +84,11 @@ public class PacketReader {
 				return;
 			if (getValue(packet, "action").toString().equalsIgnoreCase("INTERACT"))
 				Arrays.stream(Game.arenas).filter(Objects::nonNull).map(Arena::getPortal).filter(Objects::nonNull)
-						.map(Portal::getNPC).forEach(npc -> {
-							if (npc != null && npc.getId() == id)
+						.map(Portal::getNpc).filter(Objects::nonNull).forEach(npc -> {
+							int npcId = npc.getVillager().getEntityId();
+							if (npcId == id)
 								Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
-										Bukkit.getPluginManager().callEvent(new RightClickNPCEvent(player, npc)));
+										Bukkit.getPluginManager().callEvent(new RightClickNPCEvent(player, npcId)));
 						});
 			return;
 		}

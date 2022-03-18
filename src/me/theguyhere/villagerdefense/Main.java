@@ -1,14 +1,11 @@
 package me.theguyhere.villagerdefense;
 
-import me.theguyhere.villagerdefense.game.displays.InfoBoard;
-import me.theguyhere.villagerdefense.game.displays.Leaderboard;
-import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.game.models.Game;
-import me.theguyhere.villagerdefense.game.models.Tasks;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.listeners.*;
+import me.theguyhere.villagerdefense.packets.MetadataHelper;
+import me.theguyhere.villagerdefense.packets.PacketReader;
 import me.theguyhere.villagerdefense.tools.DataManager;
-import me.theguyhere.villagerdefense.tools.PacketReader;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -28,9 +25,8 @@ public class Main extends JavaPlugin {
 	private final DataManager languageData = new DataManager(this, "languages/" +
 			getConfig().getString("locale") + ".yml");
 
-	private final Leaderboard leaderboard = new Leaderboard(this);
-	private final InfoBoard infoBoard = new InfoBoard(this);
 	private final PacketReader reader = new PacketReader();
+	private Game game;
 
 	/**
 	 * The amount of debug information to display in the console.
@@ -53,28 +49,13 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		saveDefaultConfig();
-
 		PluginManager pm = getServer().getPluginManager();
-
-		// Set up Game class
-		Objects.requireNonNull(getArenaData().getConfigurationSection("")).getKeys(false).forEach(path -> {
-			if (path.charAt(0) == 'a' && path.length() < 4)
-				Game.arenas[Integer.parseInt(path.substring(1))] = new Arena(this,
-						Integer.parseInt(path.substring(1)),
-						new Tasks(this, Integer.parseInt(path.substring(1))));
-		});
-		Game.setLobby(Utils.getConfigLocation(this, "lobby"));
+		MetadataHelper.init();
+		game = new Game(this);
 
 		Commands commands = new Commands(this);
 
 		checkArenas();
-
-		if (!Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
-			Utils.debugError("HolographicDisplays is not installed or not enabled.", 0);
-			Utils.debugError("This plugin will be disabled.", 0);
-			this.setEnabled(false);
-			return;
-		}
 
 		// Set up commands and tab complete
 		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist").setExecutor(commands);
@@ -161,10 +142,6 @@ public class Main extends JavaPlugin {
 			outdated = true;
 		}
 
-		// Spawn in portals
-		leaderboard.loadLeaderboards();
-		infoBoard.loadInfoBoards();
-
 		// Set teams
 		if (Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("monsters") == null) {
 			Team monsters = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard()
@@ -189,19 +166,15 @@ public class Main extends JavaPlugin {
 
 		// Clear every valid arena and remove all portals
 		Game.cleanAll();
-		Portal.removePortals();
-	}
-
-	public InfoBoard getInfoBoard() {
-		return infoBoard;
-	}
-
-	public Leaderboard getLeaderboard() {
-		return leaderboard;
+		Game.removePortals();
 	}
 
 	public PacketReader getReader() {
 		return reader;
+	}
+
+	public Game getGame() {
+		return game;
 	}
 
 	// Returns arena data

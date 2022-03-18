@@ -2,7 +2,6 @@ package me.theguyhere.villagerdefense.listeners;
 
 import me.theguyhere.villagerdefense.Main;
 import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
-import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.tools.Utils;
 import org.bukkit.Bukkit;
@@ -28,7 +27,7 @@ public class JoinListener implements Listener {
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
-		Portal.addJoinPacket(player);
+		Game.displayEverything(player);
 		plugin.getReader().inject(player);
 
 		// Get list of loggers from data file
@@ -82,7 +81,7 @@ public class JoinListener implements Listener {
 	
 	@EventHandler
 	public void onPortal(PlayerChangedWorldEvent e) {
-		Portal.addJoinPacket(e.getPlayer());
+		Game.displayAllPortals(e.getPlayer());
 	}
 	
 	@EventHandler

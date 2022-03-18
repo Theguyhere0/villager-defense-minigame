@@ -3,13 +3,12 @@ package me.theguyhere.villagerdefense;
 import me.theguyhere.villagerdefense.GUI.Inventories;
 import me.theguyhere.villagerdefense.events.GameEndEvent;
 import me.theguyhere.villagerdefense.events.LeaveArenaEvent;
-import me.theguyhere.villagerdefense.game.displays.Portal;
 import me.theguyhere.villagerdefense.game.models.Game;
 import me.theguyhere.villagerdefense.game.models.Tasks;
 import me.theguyhere.villagerdefense.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.game.models.kits.Kit;
-import me.theguyhere.villagerdefense.game.models.players.PlayerNotFoundException;
+import me.theguyhere.villagerdefense.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.tools.Utils;
@@ -365,8 +364,8 @@ public class Commands implements CommandExecutor {
 						tasks.clear();
 
 						// Schedule accelerated countdown tasks
-						task.full10.run();
-						tasks.put(task.full10, 0); // Dummy task id to note that quick start condition was hit
+						task.sec10.run();
+						tasks.put(task.sec10, 0); // Dummy task id to note that quick start condition was hit
 						tasks.put(task.sec5,
 								scheduler.scheduleSyncDelayedTask(plugin, task.sec5, Utils.secondsToTicks(5)));
 						tasks.put(task.start,
@@ -652,7 +651,7 @@ public class Commands implements CommandExecutor {
 						plugin.saveArenaData();
 
 						// Reload portals
-						Portal.refreshPortals();
+						Game.refreshPortals();
 
 						// Flip flag and update config.yml
 						fixed = true;

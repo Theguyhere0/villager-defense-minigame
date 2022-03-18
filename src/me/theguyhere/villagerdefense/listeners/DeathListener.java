@@ -1,7 +1,7 @@
 package me.theguyhere.villagerdefense.listeners;
 
 import me.theguyhere.villagerdefense.Main;
-import me.theguyhere.villagerdefense.game.displays.Portal;
+import me.theguyhere.villagerdefense.game.models.Game;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -15,14 +15,16 @@ public class DeathListener implements Listener {
 	}
 
 	@EventHandler
-	public void onDeath(PlayerDeathEvent event) {
-		plugin.getReader().uninject(event.getEntity());
+	public void onDeath(PlayerDeathEvent e) {
+		plugin.getReader().uninject(e.getEntity());
 	}
 	
 	@EventHandler
-	public void onRespawn(PlayerRespawnEvent event) {
-		Portal.addJoinPacket(event.getPlayer());
-		
-		plugin.getReader().inject(event.getPlayer());
+	public void onRespawn(PlayerRespawnEvent e) {
+		Game.displayAllPortals(e.getPlayer());
+		Game.displayAllArenaBoards(e.getPlayer());
+		Game.displayAllInfoBoards(e.getPlayer());
+		Game.displayAllLeaderboards(e.getPlayer());
+		plugin.getReader().inject(e.getPlayer());
 	}
 }
