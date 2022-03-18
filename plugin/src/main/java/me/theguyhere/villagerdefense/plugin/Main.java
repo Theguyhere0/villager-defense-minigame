@@ -43,7 +43,7 @@ public class Main extends JavaPlugin {
 	// Global state variables
 	private static boolean outdated = false; // DO NOT CHANGE
 	public static final boolean releaseMode = true;
-	public static final int configVersion = 6;
+	public static final int configVersion = 7;
 	public static final int arenaDataVersion = 4;
 	public static final int playerDataVersion = 1;
 	public static final int spawnTableVersion = 1;
@@ -83,68 +83,64 @@ public class Main extends JavaPlugin {
 
 		// Check config version
 		if (getConfig().getInt("version") < configVersion) {
-			CommunicationManager.debugError("Your config.yml is outdated!", 0);
-			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
-					"Please update to the latest version (" + ChatColor.BLUE + configVersion + ChatColor.RED +
-					") to ensure compatibility.");
+			CommunicationManager.debugError(ChatColor.RED + "Your config.yml is outdated!", 0);
+			CommunicationManager.debugError(ChatColor.RED + "Please update to the latest version (" +
+					ChatColor.BLUE + configVersion + ChatColor.RED + ") to ensure compatibility.", 0);
 			outdated = true;
 		}
 
 		// Check if arenaData.yml is outdated
 		if (getConfig().getInt("arenaData") < arenaDataVersion) {
-			CommunicationManager.debugError("Your arenaData.yml is no longer supported with this version!",
-					0);
-			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
-					"Please transfer arena data to version " + ChatColor.BLUE + arenaDataVersion +
-					ChatColor.RED + ".");
-			CommunicationManager.debugError("Please do not update your config.yml until your arenaData.yml has " +
-							"been updated.", 0);
+			CommunicationManager.debugError(ChatColor.RED + "Your arenaData.yml is no longer supported with " +
+					"this version!", 0);
+			CommunicationManager.debugError(ChatColor.RED + "Please transfer arena data to version " +
+					ChatColor.BLUE + arenaDataVersion + ChatColor.RED + ".", 0);
+			CommunicationManager.debugError(ChatColor.RED + "Please do not update your config.yml until your " +
+					"arenaData.yml has been updated.", 0);
 			outdated = true;
 		}
 
 		// Check if playerData.yml is outdated
 		if (getConfig().getInt("playerData") < playerDataVersion) {
-			CommunicationManager.debugError("Your playerData.yml is no longer supported with this version!",
-					0);
-			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
-					"Please transfer player data to version " + ChatColor.BLUE + playerDataVersion +
-					ChatColor.BLUE + ".");
-			CommunicationManager.debugError("Please do not update your config.yml until your playerData.yml has " +
-							"been updated.", 0);
+			CommunicationManager.debugError(ChatColor.RED + "Your playerData.yml is no longer supported with " +
+					"this version!", 0);
+			CommunicationManager.debugError(ChatColor.RED + "Please transfer player data to version " +
+					ChatColor.BLUE + playerDataVersion + ChatColor.BLUE + ".", 0);
+			CommunicationManager.debugError(ChatColor.RED + "Please do not update your config.yml until your " +
+					"playerData.yml has been updated.", 0);
 			outdated = true;
 		}
 
 		// Check if spawn tables are outdated
 		if (getConfig().getInt("spawnTableStructure") < spawnTableVersion) {
-			CommunicationManager.debugError("Your spawn tables are no longer supported with this version!",
-					0);
-			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
-					"Please transfer spawn table data to version " + ChatColor.BLUE + spawnTableVersion +
-					ChatColor.RED + ".");
-			CommunicationManager.debugError("Please do not update your config.yml until your spawn tables have " +
-							"been updated.", 0);
+			CommunicationManager.debugError(ChatColor.RED + "Your spawn tables are no longer supported with " +
+					"this version!", 0);
+			CommunicationManager.debugError(ChatColor.RED + "Please transfer spawn table data to version " +
+					ChatColor.BLUE + spawnTableVersion + ChatColor.RED + ".", 0);
+			CommunicationManager.debugError(ChatColor.RED + "Please do not update your config.yml until your " +
+					"spawn tables have been updated.", 0);
 			outdated = true;
 		}
 
 		// Check if default spawn table has been updated
 		if (getConfig().getInt("spawnTableDefault") < defaultSpawnVersion) {
-			CommunicationManager.debugInfo("The default.yml spawn table has been updated!", 0);
-			getServer().getConsoleSender().sendMessage("[VillagerDefense] " +
-					"Updating to version" + ChatColor.BLUE + defaultSpawnVersion + ChatColor.WHITE +
-					" is optional but recommended.");
+			CommunicationManager.debugInfo(ChatColor.RED + "The default.yml spawn table has been updated!",
+					0);
+			CommunicationManager.debugInfo("Updating to version" + ChatColor.BLUE + defaultSpawnVersion +
+					ChatColor.WHITE + " is optional but recommended.", 0);
 			CommunicationManager.debugInfo("Please do not update your config.yml unless your default.yml has " +
 							"been updated.", 0);
 		}
 
 		// Check if language files are outdated
 		if (getConfig().getInt("languageFile") < languageFileVersion) {
-			CommunicationManager.debugError("You language files are no longer supported with this version!",
+			CommunicationManager.debugError(ChatColor.RED + "You language files are no longer supported with " +
+					"this version!", 0);
+			CommunicationManager.debugError(ChatColor.RED + "Please update en_US.yml and update any other " +
+					"language files to version " + ChatColor.BLUE + languageFileVersion + ChatColor.RED + ".",
 					0);
-			getServer().getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " +
-					"Please update en_US.yml and update any other language files to version " + ChatColor.BLUE +
-					languageFileVersion + ChatColor.RED + ".");
-			CommunicationManager.debugError("Please do not update your config.yml until your language files have " +
-							"been updated.", 0);
+			CommunicationManager.debugError(ChatColor.RED + "Please do not update your config.yml until your " +
+					"language files have been updated.", 0);
 			outdated = true;
 		}
 

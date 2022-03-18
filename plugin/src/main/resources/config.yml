@@ -1,6 +1,6 @@
 # This is the config version for reference.
 # DO NOT EDIT VALUE.
-version: 6
+version: 7
 
 # This is the arenaData.yml structure version for reference.
 # ONLY EDIT ONCE FILE HAS BEEN UPDATED.
@@ -28,3 +28,7 @@ locale: en_US
 # This toggles the ability to save a player's inventory, health, and other attributes before entering an arena and
 # returns them to that state after leaving an arena.
 keepInv: true
+
+# This toggles whether the arenas automatically open upon initialization if they meet opening requirements. Turning it
+# off may result in arenas closing on server restart due to worlds loading after the plugin.
+autoOpen: true

@@ -637,8 +637,9 @@ public class Commands implements CommandExecutor {
 						return true;
 					}
 
-					// Check if plugin.yml is outdated
-					if (plugin.getConfig().getInt("version") < Main.configVersion)
+					// Check if config.yml is outdated
+					int configVersion = plugin.getConfig().getInt("version");
+					if (configVersion < Main.configVersion)
 						if (player != null)
 							PlayerManager.notifyAlert(player, 
 									plugin.getLanguageString("messages.manualUpdateWarn"), ChatColor.AQUA,

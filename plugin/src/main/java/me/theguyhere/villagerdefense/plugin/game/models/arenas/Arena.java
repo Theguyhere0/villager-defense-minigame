@@ -1823,7 +1823,7 @@ public class Arena {
     }
 
     /**
-     * Checks and closes an arena if the arena does not meet opening requirements.
+     * Checks and closes an arena if the arena does not meet opening requirements. Opens arena if autoOpen is on.
      */
     public void checkClose() {
         if (!plugin.getArenaData().contains("lobby") || getPortalLocation() == null || getPlayerSpawn() == null ||
@@ -1833,6 +1833,12 @@ public class Arena {
             setClosed(true);
             CommunicationManager.debugInfo(String.format("Arena %d did not meet opening requirements and was closed.",
                             arena),
+                    2);
+        }
+
+        else if (plugin.getConfig().getBoolean("autoOpen")) {
+            setClosed(false);
+            CommunicationManager.debugInfo(String.format("Arena %d met opening requirements and was opened.", arena),
                     2);
         }
     }

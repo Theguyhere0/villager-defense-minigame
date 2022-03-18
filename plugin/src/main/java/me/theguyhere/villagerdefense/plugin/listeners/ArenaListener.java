@@ -421,7 +421,7 @@ public class ArenaListener implements Listener {
                 plugin.getPlayerData().set(player.getName() + ".crystalBalance",
                         plugin.getPlayerData().getInt(player.getName() + ".crystalBalance") + bonus);
                 PlayerManager.notifySuccess(player, plugin.getLanguageString("messages.crystalsEarned"),
-                        ChatColor.AQUA, String.format("%d (+%d) ", reward, bonus));
+                        ChatColor.AQUA, String.format("%d (+%d)", reward, bonus));
             }
 
             Tasks task = arena.getTask();
@@ -558,7 +558,7 @@ public class ArenaListener implements Listener {
                         plugin.getPlayerData().getInt(vdPlayer.getPlayer().getName() + ".crystalBalance") + bonus);
                 PlayerManager.notifySuccess(vdPlayer.getPlayer(),
                         plugin.getLanguageString("messages.crystalsEarned"),
-                        ChatColor.AQUA, String.format("%d (+%d) ", reward, bonus));
+                        ChatColor.AQUA, String.format("%d (+%d)", reward, bonus));
             });
         }
 
