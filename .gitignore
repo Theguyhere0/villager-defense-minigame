@@ -7,3 +7,4 @@ bin/
 *.jar
 out/
 *.iml
+target/
