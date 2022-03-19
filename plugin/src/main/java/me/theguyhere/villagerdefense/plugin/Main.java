@@ -83,64 +83,58 @@ public class Main extends JavaPlugin {
 
 		// Check config version
 		if (getConfig().getInt("version") < configVersion) {
-			CommunicationManager.debugError(ChatColor.RED + "Your config.yml is outdated!", 0);
-			CommunicationManager.debugError(ChatColor.RED + "Please update to the latest version (" +
-					ChatColor.BLUE + configVersion + ChatColor.RED + ") to ensure compatibility.", 0);
+			urgentConsoleWarning("Your config.yml is outdated!");
+			urgentConsoleWarning("Please update to the latest version (" + ChatColor.BLUE + configVersion +
+					ChatColor.RED + ") to ensure compatibility.");
+			urgentConsoleWarning("Please only update AFTER updating all other data files.");
 			outdated = true;
 		}
 
 		// Check if arenaData.yml is outdated
 		if (getConfig().getInt("arenaData") < arenaDataVersion) {
-			CommunicationManager.debugError(ChatColor.RED + "Your arenaData.yml is no longer supported with " +
-					"this version!", 0);
-			CommunicationManager.debugError(ChatColor.RED + "Please transfer arena data to version " +
-					ChatColor.BLUE + arenaDataVersion + ChatColor.RED + ".", 0);
-			CommunicationManager.debugError(ChatColor.RED + "Please do not update your config.yml until your " +
-					"arenaData.yml has been updated.", 0);
+			urgentConsoleWarning("Your arenaData.yml is no longer supported with this version!");
+			urgentConsoleWarning("Please transfer arena data to version " + ChatColor.BLUE + arenaDataVersion +
+					ChatColor.RED + ".");
+			urgentConsoleWarning("Please do not update your config.yml until your arenaData.yml has been " +
+					"updated.");
 			outdated = true;
 		}
 
 		// Check if playerData.yml is outdated
 		if (getConfig().getInt("playerData") < playerDataVersion) {
-			CommunicationManager.debugError(ChatColor.RED + "Your playerData.yml is no longer supported with " +
-					"this version!", 0);
-			CommunicationManager.debugError(ChatColor.RED + "Please transfer player data to version " +
-					ChatColor.BLUE + playerDataVersion + ChatColor.BLUE + ".", 0);
-			CommunicationManager.debugError(ChatColor.RED + "Please do not update your config.yml until your " +
-					"playerData.yml has been updated.", 0);
+			urgentConsoleWarning("Your playerData.yml is no longer supported with this version!");
+			urgentConsoleWarning("Please transfer player data to version " + ChatColor.BLUE + playerDataVersion +
+					ChatColor.BLUE + ".");
+			urgentConsoleWarning("Please do not update your config.yml until your playerData.yml has been " +
+					"updated.");
 			outdated = true;
 		}
 
 		// Check if spawn tables are outdated
 		if (getConfig().getInt("spawnTableStructure") < spawnTableVersion) {
-			CommunicationManager.debugError(ChatColor.RED + "Your spawn tables are no longer supported with " +
-					"this version!", 0);
-			CommunicationManager.debugError(ChatColor.RED + "Please transfer spawn table data to version " +
-					ChatColor.BLUE + spawnTableVersion + ChatColor.RED + ".", 0);
-			CommunicationManager.debugError(ChatColor.RED + "Please do not update your config.yml until your " +
-					"spawn tables have been updated.", 0);
+			urgentConsoleWarning("Your spawn tables are no longer supported with this version!");
+			urgentConsoleWarning("Please transfer spawn table data to version " + ChatColor.BLUE +
+					spawnTableVersion + ChatColor.RED + ".");
+			urgentConsoleWarning("Please do not update your config.yml until your spawn tables have been " +
+					"updated.");
 			outdated = true;
 		}
 
 		// Check if default spawn table has been updated
 		if (getConfig().getInt("spawnTableDefault") < defaultSpawnVersion) {
-			CommunicationManager.debugInfo(ChatColor.RED + "The default.yml spawn table has been updated!",
-					0);
-			CommunicationManager.debugInfo("Updating to version" + ChatColor.BLUE + defaultSpawnVersion +
-					ChatColor.WHITE + " is optional but recommended.", 0);
-			CommunicationManager.debugInfo("Please do not update your config.yml unless your default.yml has " +
-							"been updated.", 0);
+			consoleMessage("The default.yml spawn table has been updated!");
+			consoleMessage("Updating to version" + ChatColor.BLUE + defaultSpawnVersion + ChatColor.WHITE +
+					" is optional but recommended.");
+			consoleMessage("Please do not update your config.yml unless your default.yml has been updated.");
 		}
 
 		// Check if language files are outdated
 		if (getConfig().getInt("languageFile") < languageFileVersion) {
-			CommunicationManager.debugError(ChatColor.RED + "You language files are no longer supported with " +
-					"this version!", 0);
-			CommunicationManager.debugError(ChatColor.RED + "Please update en_US.yml and update any other " +
-					"language files to version " + ChatColor.BLUE + languageFileVersion + ChatColor.RED + ".",
-					0);
-			CommunicationManager.debugError(ChatColor.RED + "Please do not update your config.yml until your " +
-					"language files have been updated.", 0);
+			urgentConsoleWarning("You language files are no longer supported with this version!");
+			urgentConsoleWarning("Please update en_US.yml and update any other language files to version " +
+					ChatColor.BLUE + languageFileVersion + ChatColor.RED + ".");
+			urgentConsoleWarning("Please do not update your config.yml until your language files have been " +
+					"updated.");
 			outdated = true;
 		}
 
@@ -354,6 +348,14 @@ public class Main extends JavaPlugin {
 
 	}
 
+	private static void urgentConsoleWarning(String msg) {
+		Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " + msg);
+	}
+
+	private static void consoleMessage(String msg) {
+		Bukkit.getConsoleSender().sendMessage("[VillagerDefense] " + msg);
+	}
+	
 	public List<String> getUnloadedWorlds() {
 		return unloadedWorlds;
 	}
