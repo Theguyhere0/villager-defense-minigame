@@ -867,6 +867,17 @@ public class Commands implements CommandExecutor {
 					return true;
 				}
 
+				// Reload internal plugin data
+				if (args[0].equalsIgnoreCase("reload")) {
+					// Notify of reload
+					if (player != null)
+						PlayerManager.notifyAlert(player, "Reloading plugin data");
+					else CommunicationManager.debugInfo("Reloading plugin data", 0);
+
+					plugin.reload();
+					return true;
+				}
+
 				// No valid command sent
 				if (player != null)
 					PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.command"), ChatColor.AQUA,

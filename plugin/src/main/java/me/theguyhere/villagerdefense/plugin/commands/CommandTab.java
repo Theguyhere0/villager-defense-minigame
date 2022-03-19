@@ -16,7 +16,7 @@ import java.util.Objects;
 
 public class CommandTab implements TabCompleter {
     private final String[] arguments = {"admin", "help", "leave", "stats", "kits", "join", "crystals", "start",
-            "end", "delay", "fix", "debug", "die"};
+            "end", "delay", "fix", "debug", "die", "reload"};
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command,

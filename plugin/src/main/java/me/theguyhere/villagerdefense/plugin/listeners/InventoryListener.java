@@ -700,18 +700,7 @@ public class InventoryListener implements Listener {
 				}
 
 				// Arena currently open
-				else {
-					// Set to closed and update portal
-					arenaInstance.setClosed(true);
-
-					// Kick players
-					arenaInstance.getPlayers().forEach(vdPlayer ->
-							Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
-									Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(vdPlayer.getPlayer()))));
-				}
-
-				// Clear the arena
-				WorldManager.clear(arenaInstance.getCorner1(), arenaInstance.getCorner2());
+				else arenaInstance.setClosed(true);
 
 				// Save perm data
 				player.openInventory(Inventories.createArenaInventory(meta.getInteger1()));
