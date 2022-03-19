@@ -27,6 +27,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.plugin.PluginLoader;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
 
@@ -864,6 +865,17 @@ public class Commands implements CommandExecutor {
 					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 							Bukkit.getPluginManager().callEvent(new EntityDamageEvent(player,
 									EntityDamageEvent.DamageCause.SUICIDE, 99)));
+					return true;
+				}
+
+				// Reload internal plugin data
+				if (args[0].equalsIgnoreCase("reload")) {
+					// Notify of reload
+					if (player != null)
+						PlayerManager.notifyAlert(player, "Reloading plugin data");
+					else CommunicationManager.debugInfo("Reloading plugin data", 0);
+
+					plugin.reload();
 					return true;
 				}
 

@@ -42,7 +42,7 @@ public class Main extends JavaPlugin {
 
 	// Global state variables
 	private static boolean outdated = false; // DO NOT CHANGE
-	public static final boolean releaseMode = true;
+	public static final boolean releaseMode = false;
 	public static final int configVersion = 7;
 	public static final int arenaDataVersion = 4;
 	public static final int playerDataVersion = 1;
@@ -223,9 +223,53 @@ public class Main extends JavaPlugin {
 		for (Player player : Bukkit.getOnlinePlayers())
 			nmsManager.uninjectPacketListener(player);
 
-		// Clear every valid arena and remove all portals
-		GameManager.cleanAll();
-		GameManager.removePortals();
+		// Wipe every valid arena
+		GameManager.wipeArenas();
+	}
+
+	public void reload() {
+		// Set as unloaded while reloading
+		setLoaded(false);
+
+		// Gather unloaded world list
+		ConfigurationSection section;
+
+		// Relevant worlds from arenas
+		section = getArenaData().getConfigurationSection("");
+		if (section != null)
+			section.getKeys(false)
+					.forEach(path -> {
+						if (path.charAt(0) == 'a' && path.length() < 4) {
+							// Arena board world
+							checkAddUnloadedWorld(getArenaData().getString(path + ".arenaBoard.world"));
+
+							// Arena world
+							checkAddUnloadedWorld(getArenaData().getString(path + ".spawn.world"));
+
+							// Portal world
+							checkAddUnloadedWorld(getArenaData().getString(path + ".portal.world"));
+						}
+					});
+
+		// Relevant worlds from info boards
+		section = getArenaData().getConfigurationSection("infoBoard");
+		if (section != null)
+			section.getKeys(false)
+					.forEach(path ->
+							checkAddUnloadedWorld(getArenaData().getString("infoBoard." + path + ".world")));
+
+		// Relevant worlds from leaderboards
+		section = getArenaData().getConfigurationSection("leaderboard");
+		if (section != null)
+			section.getKeys(false)
+					.forEach(path ->
+							checkAddUnloadedWorld(getArenaData().getString("leaderboard." + path + ".world")));
+
+		// Lobby world
+		checkAddUnloadedWorld(getArenaData().getString("lobby.world"));
+
+		// Set GameManager
+		resetGameManager();
 	}
 
 	public GameManager getGameManager() {
@@ -237,8 +281,8 @@ public class Main extends JavaPlugin {
 
 		// Check for proper initialization with worlds
 		if (unloadedWorlds.size() > 0) {
-			Log.warning("Plugin not properly initialized! The following worlds are not loaded yet:");
-			Log.warning(unloadedWorlds.toString());
+			Log.warning("Plugin not properly initialized! The following worlds are not loaded yet: " +
+					unloadedWorlds);
 		} else Log.info("All worlds fully loaded. The plugin is properly initialized.");
 	}
 
@@ -285,8 +329,8 @@ public class Main extends JavaPlugin {
 		return outdated;
 	}
 
-	public void setLoaded() {
-		loaded = true;
+	public void setLoaded(boolean state) {
+		loaded = state;
 	}
 
 	public boolean isLoaded() {
