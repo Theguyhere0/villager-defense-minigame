@@ -2,6 +2,7 @@ package me.theguyhere.villagerdefense.plugin.game.models;
 
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
+import me.theguyhere.villagerdefense.plugin.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.plugin.game.displays.InfoBoard;
 import me.theguyhere.villagerdefense.plugin.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
@@ -32,6 +33,7 @@ public class GameManager {
 	public GameManager(Main plugin) {
 		GameManager.plugin = plugin;
 		ConfigurationSection section;
+		wipeArenas();
 
 		if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1))
 			validSounds.add("otherside");
@@ -72,7 +74,7 @@ public class GameManager {
 
 		setLobby(DataManager.getConfigLocation(plugin, "lobby"));
 
-		plugin.setLoaded();
+		plugin.setLoaded(true);
 	}
 
 	public static Arena getArena(int arenaNum) {
@@ -422,8 +424,7 @@ public class GameManager {
 		refreshLeaderboards();
 	}
 
-	public static void removePortals() {
-        Arrays.stream(arenas).filter(Objects::nonNull).map(Arena::getPortal).filter(Objects::nonNull)
-				.forEach(Portal::remove);
-    }
+	public static void wipeArenas() {
+		Arrays.stream(arenas).filter(Objects::nonNull).forEach(Arena::wipe);
+	}
 }

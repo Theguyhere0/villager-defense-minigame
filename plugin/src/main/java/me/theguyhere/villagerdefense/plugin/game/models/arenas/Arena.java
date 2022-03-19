@@ -5,6 +5,7 @@ import me.theguyhere.villagerdefense.plugin.GUI.InventoryItems;
 import me.theguyhere.villagerdefense.plugin.GUI.InventoryMeta;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
+import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.plugin.events.ReloadBoardsEvent;
 import me.theguyhere.villagerdefense.plugin.events.WaveEndEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
@@ -19,6 +20,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
+import me.theguyhere.villagerdefense.plugin.tools.WorldManager;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
@@ -1338,6 +1340,14 @@ public class Arena {
     }
 
     public void setClosed(boolean closed) {
+        // Kick players
+        getPlayers().forEach(vdPlayer -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+                Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(vdPlayer.getPlayer()))));
+
+        // Clear the arena
+        WorldManager.clear(getCorner1(), getCorner2());
+
+        // Set closed and handle particles/holographics
         config.set(path + ".closed", closed);
         plugin.saveArenaData();
         refreshPortal();
@@ -1999,10 +2009,35 @@ public class Arena {
      * Removes all data of this arena from the arena file.
      */
     public void remove() {
-        removeArenaBoard();
-        removePortal();
+        wipe();
         config.set(path, null);
         plugin.saveArenaData();
         CommunicationManager.debugInfo(String.format("Removing arena %d.", arena), 1);
+    }
+
+    /**
+     * Removes all trace of the arena's physical existence.
+     */
+    public void wipe() {
+        // Kick players
+        getPlayers().forEach(vdPlayer -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+                Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(vdPlayer.getPlayer()))));
+
+        // Clear the arena
+        WorldManager.clear(getCorner1(), getCorner2());
+
+        // Set closed
+        config.set(path + ".closed", true);
+        plugin.saveArenaData();
+
+        // Remove holographics
+        if (getArenaBoard() != null)
+            getArenaBoard().remove();
+        if (getPortal() != null)
+            getPortal().remove();
+        cancelSpawnParticles();
+        cancelMonsterParticles();
+        cancelVillagerParticles();
+        cancelBorderParticles();
     }
 }

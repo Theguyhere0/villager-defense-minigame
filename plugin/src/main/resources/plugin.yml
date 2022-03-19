@@ -1,6 +1,6 @@
 main: me.theguyhere.villagerdefense.plugin.Main
 name: VillagerDefense
-version: 1.1.0
+version: 1.1.1
 author: Theguyhere
 api-version: 1.16
 softdepend: [WorldGuard, WorldEdit, Multiverse-core]
@@ -53,3 +53,7 @@ commands:
     die:
       description: Kills the player that initiates the command, if they are in an active game as an active player
       usage: /vd die
+    reload:
+      description: Reload internal plugin data
+      usage: /vd reload
+      permission: vd.admin
