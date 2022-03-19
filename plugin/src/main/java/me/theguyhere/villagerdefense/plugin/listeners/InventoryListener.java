@@ -2644,7 +2644,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				arenaInstance.setWaitingSound(buttonName.toLowerCase());
+				arenaInstance.setWaitingSound(buttonName.toLowerCase().substring(4));
 				player.openInventory(Inventories.createWaitSoundInventory(meta.getInteger1()));
 			}
 		}

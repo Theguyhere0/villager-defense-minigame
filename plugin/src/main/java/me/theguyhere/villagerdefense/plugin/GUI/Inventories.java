@@ -1699,7 +1699,7 @@ public class Inventories {
 
 		// Option to edit waiting music
 		inv.setItem(4, ItemManager.createItem(Material.MUSIC_DISC_MELLOHI,
-				CommunicationManager.format("&6&lWaiting Sound"),
+				CommunicationManager.format("&6&lWaiting Sound: &b&l" + arenaInstance.getWaitingSoundName()),
 				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Played while players wait"),
