@@ -10,6 +10,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
+import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -1751,6 +1752,8 @@ public class Inventories {
 		inv.setItem(3, arenaInstance.getWaitingSoundButton(3));
 		inv.setItem(4, arenaInstance.getWaitingSoundButton(4));
 		inv.setItem(5, arenaInstance.getWaitingSoundButton(5));
+		if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1))
+			inv.setItem(8, arenaInstance.getWaitingSoundButton(8));
 
 		inv.setItem(9, arenaInstance.getWaitingSoundButton(9));
 		inv.setItem(10, arenaInstance.getWaitingSoundButton(10));

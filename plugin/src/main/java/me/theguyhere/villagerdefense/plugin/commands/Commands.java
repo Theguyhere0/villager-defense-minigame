@@ -700,14 +700,76 @@ public class Commands implements CommandExecutor {
 									plugin.getLanguageStringFormatted("messages.manualUpdateWarn", 
 											"arenaData.yml"), 0);
 						}
-					} else if (arenaDataVersion < Main.arenaDataVersion) {
-						if (player != null)
-							PlayerManager.notifyAlert(player, 
-									plugin.getLanguageString("messages.manualUpdateWarn"), ChatColor.AQUA,
-									"arenaData.yml");
-						else CommunicationManager.debugError(
-								plugin.getLanguageStringFormatted("messages.manualUpdateWarn",
-										"arenaData.yml"), 0);
+					} else if (arenaDataVersion < 5) {
+						try {
+							// Translate waiting sounds
+							Objects.requireNonNull(arenaData.getConfigurationSection("")).getKeys(false)
+									.forEach(key -> {
+										String path = key + ".sounds.waiting";
+										if (key.charAt(0) == 'a' && key.length() < 4 && arenaData.contains(path)) {
+											int oldValue = arenaData.getInt(path);
+											switch (oldValue) {
+												case 0:
+													arenaData.set(path, "cat");
+													break;
+												case 1:
+													arenaData.set(path, "blocks");
+													break;
+												case 2:
+													arenaData.set(path, "far");
+													break;
+												case 3:
+													arenaData.set(path, "strad");
+													break;
+												case 4:
+													arenaData.set(path, "mellohi");
+													break;
+												case 5:
+													arenaData.set(path, "ward");
+													break;
+												case 9:
+													arenaData.set(path, "chirp");
+													break;
+												case 10:
+													arenaData.set(path, "stal");
+													break;
+												case 11:
+													arenaData.set(path, "mall");
+													break;
+												case 12:
+													arenaData.set(path, "wait");
+													break;
+												case 13:
+													arenaData.set(path, "pigstep");
+													break;
+												default:
+													arenaData.set(path, "none");
+											}
+										}
+									});
+							plugin.saveArenaData();
+
+							// Flip flag and update config.yml
+							fixed = true;
+							plugin.getConfig().set("arenaData", 5);
+							plugin.saveConfig();
+
+							// Notify
+							if (player != null)
+								PlayerManager.notifySuccess(player,
+										plugin.getLanguageString("confirms.autoUpdate"), ChatColor.AQUA,
+										"arenaData.yml", "5");
+							CommunicationManager.debugInfo(plugin.getLanguageStringFormatted(
+									"confirms.autoUpdate", "arenaData.yml", "5"), 0);
+						} catch (Exception e) {
+							if (player != null)
+								PlayerManager.notifyAlert(player,
+										plugin.getLanguageString("messages.manualUpdateWarn"), ChatColor.AQUA,
+										"arenaData.yml");
+							else CommunicationManager.debugError(
+									plugin.getLanguageStringFormatted("messages.manualUpdateWarn",
+											"arenaData.yml"), 0);
+						}
 					}
 
 					// Check if playerData.yml is outdated

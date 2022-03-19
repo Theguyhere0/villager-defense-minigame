@@ -12,6 +12,7 @@ import me.theguyhere.villagerdefense.plugin.exceptions.InvalidNameException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
+import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.Tasks;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
@@ -182,7 +183,7 @@ public class Arena {
             setGemSound(true);
             setPlayerDeathSound(true);
             setAbilitySound(true);
-            setWaitingSound(14);
+            setWaitingSound("none");
         }
 
         // Set default shop toggle
@@ -362,18 +363,22 @@ public class Arena {
      * @return Waiting {@link Sound}.
      */
     public Sound getWaitingSound() {
-        switch (config.getInt(path + ".sounds.waiting")) {
-            case 0: return Sound.MUSIC_DISC_CAT;
-            case 1: return Sound.MUSIC_DISC_BLOCKS;
-            case 2: return Sound.MUSIC_DISC_FAR;
-            case 3: return Sound.MUSIC_DISC_STRAD;
-            case 4: return Sound.MUSIC_DISC_MELLOHI;
-            case 5: return Sound.MUSIC_DISC_WARD;
-            case 9: return Sound.MUSIC_DISC_CHIRP;
-            case 10: return Sound.MUSIC_DISC_STAL;
-            case 11: return Sound.MUSIC_DISC_MALL;
-            case 12: return Sound.MUSIC_DISC_WAIT;
-            case 13: return Sound.MUSIC_DISC_PIGSTEP;
+        switch (Objects.requireNonNull(config.getString(path + ".sounds.waiting"))) {
+            case "blocks": return Sound.MUSIC_DISC_BLOCKS;
+            case "cat": return Sound.MUSIC_DISC_CAT;
+            case "chirp": return Sound.MUSIC_DISC_CHIRP;
+            case "far": return Sound.MUSIC_DISC_FAR;
+            case "mall": return Sound.MUSIC_DISC_MALL;
+            case "mellohi": return Sound.MUSIC_DISC_MELLOHI;
+            case "otherside":
+                if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1))
+                    return Sound.valueOf("MUSIC_DISC_OTHERSIDE");
+                else return null;
+            case "pigstep": return Sound.MUSIC_DISC_PIGSTEP;
+            case "stal": return Sound.MUSIC_DISC_STAL;
+            case "strad": return Sound.MUSIC_DISC_STRAD;
+            case "wait": return Sound.MUSIC_DISC_WAIT;
+            case "ward": return Sound.MUSIC_DISC_WARD;
             default: return null;
         }
     }
@@ -385,67 +390,114 @@ public class Arena {
     public ItemStack getWaitingSoundButton(int number) {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
         enchants.put(Enchantment.DURABILITY, 1);
-        int sound = config.getInt(path + ".sounds.waiting");
+        String sound = config.getString(path + ".sounds.waiting");
         boolean selected;
 
         switch (number) {
             case 0:
-                selected = sound == 0;
-                return ItemManager.createItem(Material.MUSIC_DISC_CAT,
-                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Cat"),
-                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 1:
-                selected = sound == 1;
+                selected = "blocks".equals(sound);
                 return ItemManager.createItem(Material.MUSIC_DISC_BLOCKS,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Blocks"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+            case 1:
+                selected = "cat".equals(sound);
+                return ItemManager.createItem(Material.MUSIC_DISC_CAT,
+                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Cat"),
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
             case 2:
-                selected = sound == 2;
-                return ItemManager.createItem(Material.MUSIC_DISC_FAR,
-                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Far"),
-                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 3:
-                selected = sound == 3;
-                return ItemManager.createItem(Material.MUSIC_DISC_STRAD,
-                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Strad"),
-                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 4:
-                selected = sound == 4;
-                return ItemManager.createItem(Material.MUSIC_DISC_MELLOHI,
-                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Mellohi"),
-                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 5:
-                selected = sound == 5;
-                return ItemManager.createItem(Material.MUSIC_DISC_WARD,
-                        CommunicationManager.format(((selected ? "&a&l" : "&4&l") + "Ward")),
-                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 9:
-                selected = sound == 9;
+                selected = "chirp".equals(sound);
                 return ItemManager.createItem(Material.MUSIC_DISC_CHIRP,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Chirp"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 10:
-                selected = sound == 10;
-                return ItemManager.createItem(Material.MUSIC_DISC_STAL,
-                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Stal"),
+            case 3:
+                selected = "far".equals(sound);
+                return ItemManager.createItem(Material.MUSIC_DISC_FAR,
+                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Far"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 11:
-                selected = sound == 11;
+            case 4:
+                selected = "mall".equals(sound);
                 return ItemManager.createItem(Material.MUSIC_DISC_MALL,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Mall"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+            case 5:
+                selected = "mellohi".equals(sound);
+                return ItemManager.createItem(Material.MUSIC_DISC_MELLOHI,
+                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Mellohi"),
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+            case 9:
+                if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1)) {
+                    selected = "otherside".equals(sound);
+                    return ItemManager.createItem(Material.valueOf("MUSIC_DISC_OTHERSIDE"),
+                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Otherside"),
+                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                } else {
+                    selected = "pigstep".equals(sound);
+                    return ItemManager.createItem(Material.MUSIC_DISC_PIGSTEP,
+                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Pigstep"),
+                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                }
+            case 10:
+                if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1)) {
+                    selected = "pigstep".equals(sound);
+                    return ItemManager.createItem(Material.MUSIC_DISC_PIGSTEP,
+                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Pigstep"),
+                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                } else {
+                    selected = "stal".equals(sound);
+                    return ItemManager.createItem(Material.MUSIC_DISC_STAL,
+                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Stal"),
+                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                }
+            case 11:
+                if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1)) {
+                    selected = "stal".equals(sound);
+                    return ItemManager.createItem(Material.MUSIC_DISC_STAL,
+                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Stal"),
+                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                } else {
+                    selected = "strad".equals(sound);
+                    return ItemManager.createItem(Material.MUSIC_DISC_STRAD,
+                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Strad"),
+                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                }
             case 12:
-                selected = sound == 12;
-                return ItemManager.createItem(Material.MUSIC_DISC_WAIT,
-                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Wait"),
-                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1)) {
+                    selected = "strad".equals(sound);
+                    return ItemManager.createItem(Material.MUSIC_DISC_STRAD,
+                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Strad"),
+                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                } else {
+                    selected = "wait".equals(sound);
+                    return ItemManager.createItem(Material.MUSIC_DISC_WAIT,
+                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Wait"),
+                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                }
             case 13:
-                selected = sound == 13;
-                return ItemManager.createItem(Material.MUSIC_DISC_PIGSTEP,
-                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Pigstep"),
-                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1)) {
+                    selected = "wait".equals(sound);
+                    return ItemManager.createItem(Material.MUSIC_DISC_WAIT,
+                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Wait"),
+                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                } else {
+                    selected = "ward".equals(sound);
+                    return ItemManager.createItem(Material.MUSIC_DISC_WARD,
+                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Ward"),
+                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                }
+            case 14:
+                if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1)) {
+                    selected = "ward".equals(sound);
+                    return ItemManager.createItem(Material.MUSIC_DISC_WARD,
+                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Ward"),
+                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                } else {
+                    selected = !GameManager.getValidSounds().contains(sound);
+                    return ItemManager.createItem(Material.LIGHT_GRAY_CONCRETE,
+                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "None"),
+                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                }
             default:
-                selected = sound < 0 || sound > 5 && sound < 9 || sound > 13;
+                selected = !GameManager.getValidSounds().contains(sound);
                 return ItemManager.createItem(Material.LIGHT_GRAY_CONCRETE,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "None"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
@@ -457,35 +509,27 @@ public class Arena {
      * @return Waiting music title.
      */
     public String getWaitingSoundName() {
-        switch (config.getInt(path + ".sounds.waiting")) {
-            case 0: return "Cat";
-            case 1: return "Blocks";
-            case 2: return "Far";
-            case 3: return "Strad";
-            case 4: return "Mellohi";
-            case 5: return "Ward";
-            case 9: return "Chirp";
-            case 10: return "Stal";
-            case 11: return "Mall";
-            case 12: return "Wait";
-            case 13: return "Pigstep";
-            default: return "None";
+        String sound = config.getString(path + ".sounds.waiting");
+        if (GameManager.getValidSounds().contains(sound)) {
+            assert sound != null;
+            return sound.substring(0, 1).toUpperCase() + sound.substring(1);
         }
+        else return "None";
     }
 
     /**
-     * Retrieves the waiting music numerical representation of the arena into the arena file.
-     * @return Waiting music numerical representation.
+     * Retrieves the waiting music code of the arena into the arena file.
+     * @return Waiting music code.
      */
-    public int getWaitingSoundNum() {
-        return config.getInt(path + ".sounds.waiting");
+    public String getWaitingSoundCode() {
+        return config.getString(path + ".sounds.waiting");
     }
 
     /**
      * Writes the new waiting music of the arena into the arena file.
      * @param sound Numerical representation of the new waiting music.
      */
-    public void setWaitingSound(int sound) {
+    public void setWaitingSound(String sound) {
         config.set(path + ".sounds.waiting", sound);
         plugin.saveArenaData();
     }
@@ -1927,7 +1971,7 @@ public class Arena {
         setGemSound(arenaToCopy.hasGemSound());
         setPlayerDeathSound(arenaToCopy.hasPlayerDeathSound());
         setAbilitySound(arenaToCopy.hasAbilitySound());
-        setWaitingSound(arenaToCopy.getWaitingSoundNum());
+        setWaitingSound(arenaToCopy.getWaitingSoundCode());
         setSpawnParticles(arenaToCopy.hasSpawnParticles());
         setMonsterParticles(arenaToCopy.hasMonsterParticles());
         setVillagerParticles(arenaToCopy.hasVillagerParticles());
