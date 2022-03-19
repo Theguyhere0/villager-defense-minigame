@@ -54,6 +54,6 @@ commands:
       description: Kills the player that initiates the command, if they are in an active game as an active player
       usage: /vd die
     reload:
-      description: Reload some internal plugin data
+      description: Reload internal plugin data
       usage: /vd reload
       permission: vd.admin
