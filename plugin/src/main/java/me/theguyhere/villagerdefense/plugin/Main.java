@@ -194,20 +194,20 @@ public class Main extends JavaPlugin {
 
 		// Remind if this build is release
 		if (!releaseMode) {
-			Log.warning("! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !");
-			Log.warning("");
-			Log.warning("This build is not meant for release! Testing code may still be active.");
-			Log.warning("");
-			Log.warning("! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !");
+			urgentConsoleWarning("! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !");
+			urgentConsoleWarning("");
+			urgentConsoleWarning("This build is not meant for release! Testing code may still be active.");
+			urgentConsoleWarning("");
+			urgentConsoleWarning("! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !");
 		}
 
 		// Check default debug level
 		if (releaseMode && CommunicationManager.getDebugLevel() > 1) {
-			Log.warning("! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !");
-			Log.warning("");
-			Log.warning("Default debug level should be set to 0 or 1!");
-			Log.warning("");
-			Log.warning("! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !");
+			urgentConsoleWarning("! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !");
+			urgentConsoleWarning("");
+			urgentConsoleWarning("Default debug level should be set to 0 or 1!");
+			urgentConsoleWarning("");
+			urgentConsoleWarning("! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !");
 		}
 	}
 
@@ -222,6 +222,69 @@ public class Main extends JavaPlugin {
 	}
 
 	public void reload() {
+		// Once again check for config
+		saveDefaultConfig();
+
+		// Reset "outdated" flag
+		outdated = false;
+
+		// Check config version
+		if (getConfig().getInt("version") < configVersion) {
+			urgentConsoleWarning("Your config.yml is outdated!");
+			urgentConsoleWarning("Please update to the latest version (" + ChatColor.BLUE + configVersion +
+					ChatColor.RED + ") to ensure compatibility.");
+			urgentConsoleWarning("Please only update AFTER updating all other data files.");
+			outdated = true;
+		}
+
+		// Check if arenaData.yml is outdated
+		if (getConfig().getInt("arenaData") < arenaDataVersion) {
+			urgentConsoleWarning("Your arenaData.yml is no longer supported with this version!");
+			urgentConsoleWarning("Please transfer arena data to version " + ChatColor.BLUE + arenaDataVersion +
+					ChatColor.RED + ".");
+			urgentConsoleWarning("Please do not update your config.yml until your arenaData.yml has been " +
+					"updated.");
+			outdated = true;
+		}
+
+		// Check if playerData.yml is outdated
+		if (getConfig().getInt("playerData") < playerDataVersion) {
+			urgentConsoleWarning("Your playerData.yml is no longer supported with this version!");
+			urgentConsoleWarning("Please transfer player data to version " + ChatColor.BLUE + playerDataVersion +
+					ChatColor.BLUE + ".");
+			urgentConsoleWarning("Please do not update your config.yml until your playerData.yml has been " +
+					"updated.");
+			outdated = true;
+		}
+
+		// Check if spawn tables are outdated
+		if (getConfig().getInt("spawnTableStructure") < spawnTableVersion) {
+			urgentConsoleWarning("Your spawn tables are no longer supported with this version!");
+			urgentConsoleWarning("Please transfer spawn table data to version " + ChatColor.BLUE +
+					spawnTableVersion + ChatColor.RED + ".");
+			urgentConsoleWarning("Please do not update your config.yml until your spawn tables have been " +
+					"updated.");
+			outdated = true;
+		}
+
+		// Check if default spawn table has been updated
+		if (getConfig().getInt("spawnTableDefault") < defaultSpawnVersion) {
+			consoleMessage("The default.yml spawn table has been updated!");
+			consoleMessage("Updating to version" + ChatColor.BLUE + defaultSpawnVersion + ChatColor.WHITE +
+					" is optional but recommended.");
+			consoleMessage("Please do not update your config.yml unless your default.yml has been updated.");
+		}
+
+		// Check if language files are outdated
+		if (getConfig().getInt("languageFile") < languageFileVersion) {
+			urgentConsoleWarning("You language files are no longer supported with this version!");
+			urgentConsoleWarning("Please update en_US.yml and update any other language files to version " +
+					ChatColor.BLUE + languageFileVersion + ChatColor.RED + ".");
+			urgentConsoleWarning("Please do not update your config.yml until your language files have been " +
+					"updated.");
+			outdated = true;
+		}
+
 		// Set as unloaded while reloading
 		setLoaded(false);
 
@@ -275,9 +338,9 @@ public class Main extends JavaPlugin {
 
 		// Check for proper initialization with worlds
 		if (unloadedWorlds.size() > 0) {
-			Log.warning("Plugin not properly initialized! The following worlds are not loaded yet: " +
+			urgentConsoleWarning("Plugin not properly initialized! The following worlds are not loaded yet: " +
 					unloadedWorlds);
-		} else Log.info("All worlds fully loaded. The plugin is properly initialized.");
+		} else consoleMessage(ChatColor.GREEN + "All worlds fully loaded. The plugin is properly initialized.");
 	}
 
 	// Returns arena data
@@ -334,11 +397,11 @@ public class Main extends JavaPlugin {
 	// Quick way to send test messages to console but remembering to take them down before release
 	public static void testInfo(String msg, boolean stackTrace) {
 		if (releaseMode) {
-			Log.warning("! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !");
-			Log.warning("");
-			Log.warning("This should not be here!");
-			Log.warning("");
-			Log.warning("! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !");
+			urgentConsoleWarning("! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !");
+			urgentConsoleWarning("");
+			urgentConsoleWarning("This should not be here!");
+			urgentConsoleWarning("");
+			urgentConsoleWarning("! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !");
 		}
 
 		Log.info(msg);
@@ -349,7 +412,7 @@ public class Main extends JavaPlugin {
 	}
 
 	private static void urgentConsoleWarning(String msg) {
-		Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[VillagerDefense] " + msg);
+		Bukkit.getConsoleSender().sendMessage("[VillagerDefense] " + ChatColor.RED + msg);
 	}
 
 	private static void consoleMessage(String msg) {
