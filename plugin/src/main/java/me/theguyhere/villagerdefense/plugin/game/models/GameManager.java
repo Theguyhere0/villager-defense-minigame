@@ -9,6 +9,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
+import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.tools.WorldManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -25,10 +26,15 @@ public class GameManager {
 	private static final InfoBoard[] infoBoards = new InfoBoard[8];
 	private static final Map<String, Leaderboard> leaderboards = new HashMap<>();
 	private static Location lobby;
+	private static final List<String> validSounds = new LinkedList<>(Arrays.asList("blocks", "cat", "chirp", "far",
+			"mall", "mellohi", "pigstep", "stal", "strad", "wait", "ward"));
 
 	public GameManager(Main plugin) {
 		GameManager.plugin = plugin;
 		ConfigurationSection section;
+
+		if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1))
+			validSounds.add("otherside");
 
 		section = plugin.getArenaData().getConfigurationSection("");
 		if (section != null)
@@ -100,6 +106,10 @@ public class GameManager {
 
 	public static Arena[] getArenas() {
 		return arenas;
+	}
+
+	public static List<String> getValidSounds() {
+		return validSounds;
 	}
 
 	/**
