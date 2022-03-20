@@ -5,16 +5,17 @@ import me.theguyhere.villagerdefense.plugin.GUI.Inventories;
 import me.theguyhere.villagerdefense.plugin.GUI.InventoryItems;
 import me.theguyhere.villagerdefense.plugin.GUI.InventoryMeta;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.plugin.events.SignGUIEvent;
 import me.theguyhere.villagerdefense.plugin.game.models.*;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.tools.*;
+import me.theguyhere.villagerdefense.plugin.tools.DataManager;
+import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
+import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
+import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import org.apache.commons.lang.math.NumberUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -689,7 +690,7 @@ public class InventoryListener implements Listener {
 
 					// Invalid arena bounds
 					if (arenaInstance.getCorner1() == null || arenaInstance.getCorner2() == null ||
-							!Objects.equals(arenaInstance.getCorner1().getWorld(), 
+							!Objects.equals(arenaInstance.getCorner1().getWorld(),
 									arenaInstance.getCorner2().getWorld())) {
 						PlayerManager.notifyFailure(player, "Arena cannot open without valid arena bounds!");
 						return;
@@ -2791,7 +2792,7 @@ public class InventoryListener implements Listener {
 
 		// Mock custom shop for an arena
 		else if (title.contains(plugin.getLanguageString("names.customShop") + ":")) {
-			Arena arenaInstance = GameManager.getArena(title.substring(19));
+			Arena arenaInstance = Objects.requireNonNull(GameManager.getArena(title.substring(19)));
 			if (buttonName.contains(plugin.getLanguageString("messages.exit")))
 				player.openInventory(Inventories.createArenaInfoInventory(arenaInstance));
 		}
@@ -3192,7 +3193,7 @@ public class InventoryListener implements Listener {
 		} catch (Exception err) {
 			if (arena.getName() == null)
 				GameManager.removeArena(arena.getArena());
-			else PlayerManager.notifyFailure(player, "Invalid arena name!");
+			PlayerManager.notifyFailure(player, "Invalid arena name!");
 			return;
 		}
 

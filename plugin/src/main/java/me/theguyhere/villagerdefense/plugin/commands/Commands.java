@@ -329,7 +329,7 @@ public class Commands implements CommandExecutor {
 
 						// Check if this arena exists
 						try {
-							arena = GameManager.getArena(name.toString());
+							arena = Objects.requireNonNull(GameManager.getArena(name.toString()));
 						} catch (Exception e) {
 							if (player != null)
 								PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.noArena"));
@@ -438,7 +438,10 @@ public class Commands implements CommandExecutor {
 						// Notify console
 						CommunicationManager.debugInfo("Arena " + arena.getArena() + " was force ended.",
 								1);
-					} else {
+					}
+
+					// End specific arena
+					else {
 						// Check for permission to use the command
 						if (player != null && !player.hasPermission("vd.admin")) {
 							PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.permission"));
@@ -452,7 +455,7 @@ public class Commands implements CommandExecutor {
 
 						// Check if this arena exists
 						try {
-							arena = GameManager.getArena(name.toString());
+							arena = Objects.requireNonNull(GameManager.getArena(name.toString()));
 						} catch (Exception e) {
 							if (player != null)
 								PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.noArena"));
@@ -561,7 +564,7 @@ public class Commands implements CommandExecutor {
 
 						// Check if this arena exists
 						try {
-							arena = GameManager.getArena(name.toString());
+							arena = Objects.requireNonNull(GameManager.getArena(name.toString()));
 						} catch (Exception e) {
 							if (player != null)
 								PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.noArena"));
@@ -931,12 +934,189 @@ public class Commands implements CommandExecutor {
 
 				// Reload internal plugin data
 				if (args[0].equalsIgnoreCase("reload")) {
+					// Check for permission to use the command
+					if (player != null && !player.hasPermission("vd.admin")) {
+						PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.permission"));
+						return true;
+					}
+
 					// Notify of reload
 					if (player != null)
 						PlayerManager.notifyAlert(player, "Reloading plugin data");
 					else CommunicationManager.debugInfo("Reloading plugin data", 0);
 
 					plugin.reload();
+					return true;
+				}
+
+				// Attempt to open arena
+				if (args[0].equalsIgnoreCase("open")) {
+					// Check for permission to use the command
+					if (player != null && !player.hasPermission("vd.use")) {
+						PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.permission"));
+						return true;
+					}
+
+					// Check for valid command format
+					if (args.length < 2) {
+						if (player != null)
+							PlayerManager.notifyFailure(player, plugin.getLanguageString("messages.commandFormat"),
+									ChatColor.AQUA, "/vd open [arena name]");
+						else
+							CommunicationManager.debugError(plugin.getLanguageStringFormatted(
+											"messages.commandFormat", "vd open [arena name]"),
+									0);
+						return true;
+					}
+
+					StringBuilder name = new StringBuilder(args[1]);
+					for (int i = 0; i < args.length - 2; i++)
+						name.append(" ").append(args[i + 2]);
+					Arena arena;
+
+					// Check if this arena exists
+					try {
+						arena = Objects.requireNonNull(GameManager.getArena(name.toString()));
+					} catch (Exception e) {
+						if (player != null)
+							PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.noArena"));
+						else CommunicationManager.debugError(plugin.getLanguageString("errors.noArena"),
+								0);
+						return true;
+					}
+
+					// Check if arena is already open
+					if (!arena.isClosed()) {
+						if (player != null)
+							PlayerManager.notifyFailure(player, "Arena is already open!");
+						else CommunicationManager.debugError("Arena is already open!", 0);
+						return true;
+					}
+
+					// No lobby
+					if (!plugin.getArenaData().contains("lobby")) {
+						if (player != null)
+							PlayerManager.notifyFailure(player, "Arena cannot open without a lobby!");
+						else CommunicationManager.debugError("Arena cannot open without a lobby!", 0);
+						return true;
+					}
+
+					// No arena portal
+					if (arena.getPortalLocation() == null) {
+						if (player != null)
+							PlayerManager.notifyFailure(player, "Arena cannot open without a portal!");
+						else CommunicationManager.debugError("Arena cannot open without a portal!", 0);
+						return true;
+					}
+
+					// No player spawn
+					if (arena.getPlayerSpawn() == null) {
+						if (player != null)
+							PlayerManager.notifyFailure(player, "Arena cannot open without a player spawn!");
+						else CommunicationManager.debugError("Arena cannot open without a player spawn!",
+								0);
+						return true;
+					}
+
+					// No monster spawn
+					if (arena.getMonsterSpawns().isEmpty()) {
+						if (player != null)
+							PlayerManager.notifyFailure(player, "Arena cannot open without a monster spawn!");
+						else CommunicationManager.debugError("Arena cannot open without a monster spawn!",
+								0);
+						return true;
+					}
+
+					// No villager spawn
+					if (arena.getVillagerSpawns().isEmpty()) {
+						if (player != null)
+							PlayerManager.notifyFailure(player, "Arena cannot open without a villager spawn!");
+						else CommunicationManager.debugError("Arena cannot open without a villager spawn!",
+								0);
+						return true;
+					}
+
+					// No shops
+					if (!arena.hasCustom() && !arena.hasNormal()) {
+						if (player != null)
+							PlayerManager.notifyFailure(player, "Arena cannot open without a shop!");
+						else CommunicationManager.debugError("Arena cannot open without a shop!", 0);
+						return true;
+					}
+
+					// Invalid arena bounds
+					if (arena.getCorner1() == null || arena.getCorner2() == null ||
+							!Objects.equals(arena.getCorner1().getWorld(), arena.getCorner2().getWorld())) {
+						if (player != null)
+							PlayerManager.notifyFailure(player, "Arena cannot open without valid arena bounds!");
+						else CommunicationManager.debugError("Arena cannot open without valid arena bounds!",
+								0);
+						return true;
+					}
+
+					// Open arena
+					arena.setClosed(false);
+
+					// Notify console and possibly player
+					if (player != null)
+						PlayerManager.notifySuccess(player, "Arena " + arena.getName() +  " was opened.");
+					CommunicationManager.debugInfo("Arena " + arena.getArena() + " was opened.", 1);
+
+					return true;
+				}
+
+				// Attempt to close arena
+				if (args[0].equalsIgnoreCase("close")) {
+					// Check for permission to use the command
+					if (player != null && !player.hasPermission("vd.use")) {
+						PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.permission"));
+						return true;
+					}
+
+					// Check for valid command format
+					if (args.length < 2) {
+						if (player != null)
+							PlayerManager.notifyFailure(player, plugin.getLanguageString("messages.commandFormat"),
+									ChatColor.AQUA, "/vd close [arena name]");
+						else
+							CommunicationManager.debugError(plugin.getLanguageStringFormatted(
+											"messages.commandFormat", "vd close [arena name]"),
+									0);
+						return true;
+					}
+
+					StringBuilder name = new StringBuilder(args[1]);
+					for (int i = 0; i < args.length - 2; i++)
+						name.append(" ").append(args[i + 2]);
+					Arena arena;
+
+					// Check if this arena exists
+					try {
+						arena = Objects.requireNonNull(GameManager.getArena(name.toString()));
+					} catch (Exception e) {
+						if (player != null)
+							PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.noArena"));
+						else CommunicationManager.debugError(plugin.getLanguageString("errors.noArena"),
+								0);
+						return true;
+					}
+
+					// Check if arena is already closed
+					if (arena.isClosed()) {
+						if (player != null)
+							PlayerManager.notifyFailure(player, "Arena is already closed!");
+						else CommunicationManager.debugError("Arena is already closed!", 0);
+						return true;
+					}
+
+					// Close arena
+					arena.setClosed(true);
+
+					// Notify console and possibly player
+					if (player != null)
+						PlayerManager.notifySuccess(player, "Arena " + arena.getName() +  " was closed.");
+					CommunicationManager.debugInfo("Arena " + arena.getArena() + " was closed.", 1);
+
 					return true;
 				}
 
