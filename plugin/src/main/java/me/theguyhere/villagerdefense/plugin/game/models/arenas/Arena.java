@@ -139,6 +139,11 @@ public class Arena {
     public void setName(String name) throws InvalidNameException {
         // Check if name is not empty
         if (name == null || name.length() == 0) throw new InvalidNameException();
+
+        // Check for duplicate name
+        else if (GameManager.getArena(name) != null) throw new InvalidNameException();
+
+        // Save name
         else {
             config.set(path + ".name", name);
             plugin.saveArenaData();

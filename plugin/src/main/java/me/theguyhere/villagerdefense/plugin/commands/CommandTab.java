@@ -16,7 +16,7 @@ import java.util.Objects;
 
 public class CommandTab implements TabCompleter {
     private final String[] arguments = {"admin", "help", "leave", "stats", "kits", "join", "crystals", "start",
-            "end", "delay", "fix", "debug", "die", "reload"};
+            "end", "delay", "fix", "debug", "die", "reload", "open", "close"};
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command,
@@ -33,7 +33,9 @@ public class CommandTab implements TabCompleter {
                 if (name.toLowerCase().startsWith(args[1].toLowerCase()))
                     result.add(name);
             });
-        } else if (args[0].equalsIgnoreCase("start") || args[0].equalsIgnoreCase("end")) {
+        } else if (args[0].equalsIgnoreCase("start") || args[0].equalsIgnoreCase("end") ||
+                args[0].equalsIgnoreCase("delay") || args[0].equalsIgnoreCase("open") ||
+                args[0].equalsIgnoreCase("close")) {
             StringBuilder nameFrag = new StringBuilder(args[1]);
             for (int i = 0; i < args.length - 2; i++)
                 nameFrag.append(" ").append(args[i + 2]);

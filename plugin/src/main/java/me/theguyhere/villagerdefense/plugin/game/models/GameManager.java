@@ -1,17 +1,14 @@
 package me.theguyhere.villagerdefense.plugin.game.models;
 
+import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
-import me.theguyhere.villagerdefense.plugin.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.plugin.game.displays.InfoBoard;
 import me.theguyhere.villagerdefense.plugin.game.displays.Leaderboard;
-import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
-import me.theguyhere.villagerdefense.plugin.tools.WorldManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -82,8 +79,12 @@ public class GameManager {
 	}
 
 	public static Arena getArena(String arenaName) {
-		return Arrays.stream(arenas).filter(Objects::nonNull)
-				.filter(arena1 -> arena1.getName().equals(arenaName)).collect(Collectors.toList()).get(0);
+		try {
+			return Arrays.stream(arenas).filter(Objects::nonNull)
+					.filter(arena1 -> arena1.getName().equals(arenaName)).collect(Collectors.toList()).get(0);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	public static Arena getArena(Player player) {
@@ -187,14 +188,6 @@ public class GameManager {
 		score.setScore(0);
 
 		player.getPlayer().setScoreboard(board);
-	}
-
-	/**
-	 * Wipes all mobs in all valid arenas.
-	 */
-	public static void cleanAll() {
-		Arrays.stream(arenas).filter(Objects::nonNull).filter(arena -> !arena.isClosed())
-				.forEach(arena -> WorldManager.clear(arena.getCorner1(), arena.getCorner2()));
 	}
 
 	public static Location getLobby() {
