@@ -74,7 +74,7 @@ public class CommunicationManager {
 
     // Formats plugin notifications
     public static String notify(String msg) {
-        return format("&2VD: &f" + msg);
+        return format("&2[VD] &f" + msg);
     }
 
     public static void debugError(String msg, int debugLevel) {
