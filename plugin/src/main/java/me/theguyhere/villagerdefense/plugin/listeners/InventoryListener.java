@@ -690,7 +690,7 @@ public class InventoryListener implements Listener {
 
 					// Invalid arena bounds
 					if (arenaInstance.getCorner1() == null || arenaInstance.getCorner2() == null ||
-							!Objects.equals(arenaInstance.getCorner1().getWorld(), 
+							!Objects.equals(arenaInstance.getCorner1().getWorld(),
 									arenaInstance.getCorner2().getWorld())) {
 						PlayerManager.notifyFailure(player, "Arena cannot open without valid arena bounds!");
 						return;
@@ -3193,7 +3193,7 @@ public class InventoryListener implements Listener {
 		} catch (Exception err) {
 			if (arena.getName() == null)
 				GameManager.removeArena(arena.getArena());
-			else PlayerManager.notifyFailure(player, "Invalid arena name!");
+			PlayerManager.notifyFailure(player, "Invalid arena name!");
 			return;
 		}
 

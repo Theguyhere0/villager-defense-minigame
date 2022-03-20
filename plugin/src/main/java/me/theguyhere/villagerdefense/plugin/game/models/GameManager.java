@@ -80,8 +80,8 @@ public class GameManager {
 
 	public static Arena getArena(String arenaName) {
 		try {
-			return Arrays.stream(arenas).filter(Objects::nonNull)
-					.filter(arena1 -> arena1.getName().equals(arenaName)).collect(Collectors.toList()).get(0);
+			return Arrays.stream(arenas).filter(Objects::nonNull).filter(a -> a.getName() != null)
+					.filter(a -> a.getName().equals(arenaName)).collect(Collectors.toList()).get(0);
 		} catch (Exception e) {
 			return null;
 		}
