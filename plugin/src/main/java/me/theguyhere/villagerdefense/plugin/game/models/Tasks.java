@@ -14,6 +14,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.tools.WorldManager;
 import org.bukkit.Bukkit;
@@ -53,8 +54,7 @@ public class Tasks {
 		@Override
 		public void run() {
 			GameManager.getArena(arena).getPlayers().forEach(player ->
-				PlayerManager.notifyAlert(player.getPlayer(),
-						plugin.getLanguageString("messages.waitingForPlayers")));
+				PlayerManager.notifyAlert(player.getPlayer(), LanguageManager.messages.waitingForPlayers));
 			CommunicationManager.debugInfo("Arena " + arena + " is currently waiting for players to start.",
 					2);
 		}
@@ -66,7 +66,7 @@ public class Tasks {
 		public void run() {
 			GameManager.getArena(arena).getPlayers().forEach(player ->
 					PlayerManager.notifyAlert(player.getPlayer(),
-							plugin.getLanguageString("messages.minutesLeft"), ChatColor.AQUA, "2"));
+							LanguageManager.messages.minutesLeft, ChatColor.AQUA, "2"));
 			CommunicationManager.debugInfo("Arena " + arena + " is starting in 2 minutes.", 2);
 		}
 	};
@@ -77,7 +77,7 @@ public class Tasks {
 		public void run() {
 			GameManager.getArena(arena).getPlayers().forEach(player ->
 					PlayerManager.notifyAlert(player.getPlayer(),
-							plugin.getLanguageString("messages.minutesLeft"), ChatColor.AQUA, "1"));
+							LanguageManager.messages.minutesLeft, ChatColor.AQUA, "1"));
 			CommunicationManager.debugInfo("Arena " + arena + " is starting in 1 minute.", 2);
 		}
 	};
@@ -88,7 +88,7 @@ public class Tasks {
 		public void run() {
 			GameManager.getArena(arena).getPlayers().forEach(player ->
 					PlayerManager.notifyAlert(player.getPlayer(),
-							plugin.getLanguageString("messages.secondsLeft"), ChatColor.AQUA, "30"));
+							LanguageManager.messages.secondsLeft, ChatColor.AQUA, "30"));
 			CommunicationManager.debugInfo("Arena " + arena + " is starting in 30 seconds.", 2);
 		}
 	};
@@ -99,7 +99,7 @@ public class Tasks {
 		public void run() {
 			GameManager.getArena(arena).getPlayers().forEach(player ->
 					PlayerManager.notifyAlert(player.getPlayer(),
-							plugin.getLanguageString("messages.secondsLeft"), ChatColor.AQUA, "10"));
+							LanguageManager.messages.secondsLeft, ChatColor.AQUA, "10"));
 			CommunicationManager.debugInfo("Arena " + arena + " is starting in 10 seconds.", 2);
 		}
 	};
@@ -109,10 +109,9 @@ public class Tasks {
 		@Override
 		public void run() {
 			GameManager.getArena(arena).getPlayers().forEach(player -> {
+				PlayerManager.notifyAlert(player.getPlayer(), LanguageManager.messages.maxCapacity);
 				PlayerManager.notifyAlert(player.getPlayer(),
-						plugin.getLanguageString("messages.maxCapacity"));
-				PlayerManager.notifyAlert(player.getPlayer(),
-						plugin.getLanguageString("messages.secondsLeft"), ChatColor.AQUA, "10");
+						LanguageManager.messages.secondsLeft, ChatColor.AQUA, "10");
 			});
 			CommunicationManager.debugInfo("Arena " + arena + " is full and is starting in 10 seconds.",
 					2);
@@ -126,7 +125,7 @@ public class Tasks {
 		public void run() {
 			GameManager.getArena(arena).getPlayers().forEach(player ->
 					PlayerManager.notifyAlert(player.getPlayer(),
-							plugin.getLanguageString("messages.secondsLeft"), ChatColor.AQUA, "5"));
+							LanguageManager.messages.secondsLeft, ChatColor.AQUA, "5"));
 			CommunicationManager.debugInfo("Arena " + arena + " is starting in 5 seconds.", 2);
 
 		}
@@ -214,7 +213,7 @@ public class Tasks {
 			// Initiate community chest
 			arenaInstance.setCommunityChest(Bukkit.createInventory(new InventoryMeta(arena), 54,
 					CommunicationManager.format("&k") + CommunicationManager.format("&d&l" +
-							plugin.getLanguageString("names.communityChest"))));
+							LanguageManager.names.communityChest)));
 
 			// Trigger WaveEndEvent
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
@@ -291,9 +290,9 @@ public class Tasks {
 			arenaInstance.getActives().forEach(p -> {
 				// Notify of upcoming wave
 				p.getPlayer().sendTitle(CommunicationManager.format("&6" +
-						plugin.getLanguageStringFormatted("messages.waveNum", Integer.toString(currentWave))),
-						CommunicationManager.format("&7" +
-								plugin.getLanguageStringFormatted("messages.starting", "&b15&7")),
+						String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
+						CommunicationManager.format("&7" + String.format(LanguageManager.messages.starting,
+								"&b15&7")),
 						Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
 
 				// Give players gem rewards
@@ -314,18 +313,17 @@ public class Tasks {
 				int reward = (currentWave - 1) * multiplier;
 				p.addGems(reward);
 				if (currentWave > 1)
-					PlayerManager.notifySuccess(p.getPlayer(), plugin.getLanguageString("messages.gemsReceived"),
+					PlayerManager.notifySuccess(p.getPlayer(), LanguageManager.messages.gemsReceived,
 							ChatColor.AQUA, Integer.toString(reward));
 				GameManager.createBoard(p);
 			});
 
 			// Notify spectators of upcoming wave
 			arenaInstance.getSpectators().forEach(p ->
-					p.getPlayer().sendTitle(CommunicationManager.format(
-							plugin.getLanguageStringFormatted("messages.waveNum",
-									Integer.toString(currentWave))),
+					p.getPlayer().sendTitle(CommunicationManager.format("&6" +
+							String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
 							CommunicationManager.format("&7" +
-									plugin.getLanguageStringFormatted("messages.starting", "15")),
+									String.format(LanguageManager.messages.starting, "15")),
 							Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
 
 			// Regenerate shops when time and notify players of it
@@ -338,10 +336,9 @@ public class Tasks {
 					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 							arenaInstance.getActives().forEach(player ->
 									player.getPlayer().sendTitle(CommunicationManager.format(
-											"&6" + plugin.getLanguageString("messages.shopUpgrade")),
+											"&6" + LanguageManager.messages.shopUpgrade),
 											"&7" + CommunicationManager.format(
-													plugin.getLanguageStringFormatted("messages.shopInfo",
-															"10")),
+													String.format(LanguageManager.messages.shopInfo, "10")),
 											Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5),
 											Utils.secondsToTicks(1))), Utils.secondsToTicks(4));
 			}
@@ -454,7 +451,7 @@ public class Tasks {
 							// Send warning
 							arenaInstance.getActives().forEach(player ->
 									player.getPlayer().sendTitle(CommunicationManager.format(
-											"&c" + plugin.getLanguageString("messages.oneMinuteWarning")),
+											"&c" + LanguageManager.messages.oneMinuteWarning),
 											null, Utils.secondsToTicks(.5), Utils.secondsToTicks(1.5),
 											Utils.secondsToTicks(.5)));
 
@@ -488,10 +485,8 @@ public class Tasks {
 			else if (Arrays.stream(GameItems.BOOTS_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
 					Objects.requireNonNull(equipment).getBoots() == null)
 				equipment.setBoots(item);
-			else PlayerManager.giveItem(player.getPlayer(), item,
-						plugin.getLanguageString("errors.inventoryFull"));
+			else PlayerManager.giveItem(player.getPlayer(), item, LanguageManager.errors.inventoryFull);
 		}
-		PlayerManager.giveItem(player.getPlayer(), GameItems.shop(),
-				plugin.getLanguageString("errors.inventoryFull"));
+		PlayerManager.giveItem(player.getPlayer(), GameItems.shop(), LanguageManager.errors.inventoryFull);
 	}
 }

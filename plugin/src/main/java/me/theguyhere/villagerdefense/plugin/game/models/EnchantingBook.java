@@ -1,8 +1,8 @@
 package me.theguyhere.villagerdefense.plugin.game.models;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -12,15 +12,10 @@ import java.util.Objects;
 
 public class EnchantingBook extends ItemStack {
     private final Enchantment enchantToAdd;
-    private static Main plugin;
 
     public EnchantingBook(ItemStack itemStack, Enchantment enchantToAdd) {
         super(itemStack);
         this.enchantToAdd = enchantToAdd;
-    }
-
-    public static void setPlugin(Main plugin) {
-        EnchantingBook.plugin = plugin;
     }
 
     public Enchantment getEnchantToAdd() {
@@ -67,196 +62,158 @@ public class EnchantingBook extends ItemStack {
 
     public static ItemStack knockback() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
-                CommunicationManager.format("&a&l" +
-                        String.format(plugin.getLanguageString("names.enchantBook"),
-                                plugin.getLanguageString("enchants.knockback"))),
+                CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
+                        LanguageManager.enchants.knockback)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(), 
-                CommunicationManager.format(ChatColor.WHITE, 
-                        plugin.getLanguageString("messages.enchantInstruction")),
-                CommunicationManager.format(ChatColor.DARK_RED, plugin.getLanguageString("messages.warning")));
+                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
+                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
     }
     public static ItemStack sweepingEdge() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
-                CommunicationManager.format("&a&l" +
-                        String.format(plugin.getLanguageString("names.enchantBook"),
-                                plugin.getLanguageString("enchants.sweepingEdge"))),
+                CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
+                        LanguageManager.enchants.sweepingEdge)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, 
-                        plugin.getLanguageString("messages.enchantInstruction")),
-                CommunicationManager.format(ChatColor.DARK_RED, plugin.getLanguageString("messages.warning")));
+                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
+                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
     }
     public static ItemStack smite() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
-                CommunicationManager.format("&a&l" +
-                        String.format(plugin.getLanguageString("names.enchantBook"),
-                                plugin.getLanguageString("enchants.smite"))),
+                CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
+                        LanguageManager.enchants.smite)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, 
-                        plugin.getLanguageString("messages.enchantInstruction")),
-                CommunicationManager.format(ChatColor.DARK_RED, plugin.getLanguageString("messages.warning")));
+                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
+                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
     }
     public static ItemStack sharpness() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
-                CommunicationManager.format("&a&l" +
-                        String.format(plugin.getLanguageString("names.enchantBook"),
-                                plugin.getLanguageString("enchants.sharpness"))),
+                CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
+                        LanguageManager.enchants.sharpness)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, 
-                        plugin.getLanguageString("messages.enchantInstruction")),
-                CommunicationManager.format(ChatColor.DARK_RED, plugin.getLanguageString("messages.warning")));
+                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
+                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
     }
     public static ItemStack fireAspect() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
-                CommunicationManager.format("&a&l" +
-                        String.format(plugin.getLanguageString("names.enchantBook"),
-                                plugin.getLanguageString("enchants.fireAspect"))),
+                CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
+                        LanguageManager.enchants.fireAspect)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, 
-                        plugin.getLanguageString("messages.enchantInstruction")),
-                CommunicationManager.format(ChatColor.DARK_RED, plugin.getLanguageString("messages.warning")));
+                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
+                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
     }
     public static ItemStack punch() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
-                CommunicationManager.format("&a&l" +
-                        String.format(plugin.getLanguageString("names.enchantBook"),
-                                plugin.getLanguageString("enchants.punch"))),
+                CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
+                        LanguageManager.enchants.punch)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, 
-                        plugin.getLanguageString("messages.enchantInstruction")),
-                CommunicationManager.format(ChatColor.DARK_RED, plugin.getLanguageString("messages.warning")));
+                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
+                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
     }
     public static ItemStack piercing() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
-                CommunicationManager.format("&a&l" +
-                        String.format(plugin.getLanguageString("names.enchantBook"),
-                                plugin.getLanguageString("enchants.piercing"))),
+                CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
+                        LanguageManager.enchants.piercing)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, 
-                        plugin.getLanguageString("messages.enchantInstruction")),
-                CommunicationManager.format(ChatColor.DARK_RED, plugin.getLanguageString("messages.warning")));
+                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
+                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
     }
     public static ItemStack quickCharge() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
-                CommunicationManager.format("&a&l" +
-                        String.format(plugin.getLanguageString("names.enchantBook"),
-                                plugin.getLanguageString("enchants.quickCharge"))),
+                CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
+                        LanguageManager.enchants.quickCharge)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, 
-                        plugin.getLanguageString("messages.enchantInstruction")),
-                CommunicationManager.format(ChatColor.DARK_RED, plugin.getLanguageString("messages.warning")));
+                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
+                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
     }
     public static ItemStack power() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
-                CommunicationManager.format("&a&l" +
-                        String.format(plugin.getLanguageString("names.enchantBook"),
-                                plugin.getLanguageString("enchants.power"))),
+                CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
+                        LanguageManager.enchants.power)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, 
-                        plugin.getLanguageString("messages.enchantInstruction")),
-                CommunicationManager.format(ChatColor.DARK_RED, plugin.getLanguageString("messages.warning")));
+                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
+                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
     }
     public static ItemStack loyalty() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
-                CommunicationManager.format("&a&l" +
-                        String.format(plugin.getLanguageString("names.enchantBook"),
-                                plugin.getLanguageString("enchants.loyalty"))),
+                CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
+                        LanguageManager.enchants.loyalty)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, 
-                        plugin.getLanguageString("messages.enchantInstruction")),
-                CommunicationManager.format(ChatColor.DARK_RED, plugin.getLanguageString("messages.warning")));
+                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
+                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
     }
     public static ItemStack flame() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
-                CommunicationManager.format("&a&l" +
-                        String.format(plugin.getLanguageString("names.enchantBook"),
-                                plugin.getLanguageString("enchants.flame"))),
+                CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
+                        LanguageManager.enchants.flame)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, 
-                        plugin.getLanguageString("messages.enchantInstruction")),
-                CommunicationManager.format(ChatColor.DARK_PURPLE, plugin.getLanguageString("messages.caution")),
-                CommunicationManager.format(ChatColor.DARK_RED, plugin.getLanguageString("messages.warning")));
+                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
+                CommunicationManager.format(ChatColor.DARK_PURPLE, LanguageManager.messages.caution),
+                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
     }
     public static ItemStack multishot() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
-                CommunicationManager.format("&a&l" +
-                        String.format(plugin.getLanguageString("names.enchantBook"),
-                                plugin.getLanguageString("enchants.multishot"))),
+                CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
+                        LanguageManager.enchants.multishot)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, 
-                        plugin.getLanguageString("messages.enchantInstruction")),
-                CommunicationManager.format(ChatColor.DARK_PURPLE, plugin.getLanguageString("messages.caution")),
-                CommunicationManager.format(ChatColor.DARK_RED, plugin.getLanguageString("messages.warning")));
+                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
+                CommunicationManager.format(ChatColor.DARK_PURPLE, LanguageManager.messages.caution),
+                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
     }
     public static ItemStack infinity() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
-                CommunicationManager.format("&a&l" +
-                        String.format(plugin.getLanguageString("names.enchantBook"),
-                                plugin.getLanguageString("enchants.infinity"))),
+                CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
+                        LanguageManager.enchants.infinity)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, 
-                        plugin.getLanguageString("messages.enchantInstruction")),
-                CommunicationManager.format(ChatColor.DARK_PURPLE, plugin.getLanguageString("messages.caution")),
-                CommunicationManager.format(ChatColor.DARK_RED, plugin.getLanguageString("messages.warning")));
+                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
+                CommunicationManager.format(ChatColor.DARK_PURPLE, LanguageManager.messages.caution),
+                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
     }
     public static ItemStack blastProtection() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
-                CommunicationManager.format("&a&l" +
-                        String.format(plugin.getLanguageString("names.enchantBook"),
-                                plugin.getLanguageString("enchants.blastProtection"))),
+                CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
+                        LanguageManager.enchants.blastProtection)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, 
-                        plugin.getLanguageString("messages.enchantInstruction")),
-                CommunicationManager.format(ChatColor.DARK_RED, plugin.getLanguageString("messages.warning")));
+                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
+                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
     }
     public static ItemStack thorns() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
-                CommunicationManager.format("&a&l" +
-                        String.format(plugin.getLanguageString("names.enchantBook"),
-                                plugin.getLanguageString("enchants.thorns"))),
+                CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
+                        LanguageManager.enchants.thorns)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, 
-                        plugin.getLanguageString("messages.enchantInstruction")),
-                CommunicationManager.format(ChatColor.DARK_RED, plugin.getLanguageString("messages.warning")));
+                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
+                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
     }
     public static ItemStack projectileProtection() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
-                CommunicationManager.format("&a&l" +
-                        String.format(plugin.getLanguageString("names.enchantBook"),
-                                plugin.getLanguageString("enchants.projectileProtection"))),
+                CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
+                        LanguageManager.enchants.projectileProtection)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, 
-                        plugin.getLanguageString("messages.enchantInstruction")),
-                CommunicationManager.format(ChatColor.DARK_RED, plugin.getLanguageString("messages.warning")));
+                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
+                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
     }
     public static ItemStack protection() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
-                CommunicationManager.format("&a&l" +
-                        String.format(plugin.getLanguageString("names.enchantBook"),
-                                plugin.getLanguageString("enchants.protection"))),
+                CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
+                        LanguageManager.enchants.protection)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, 
-                        plugin.getLanguageString("messages.enchantInstruction")),
-                CommunicationManager.format(ChatColor.DARK_RED, plugin.getLanguageString("messages.warning")));
+                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
+                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
     }
     public static ItemStack unbreaking() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
-                CommunicationManager.format("&a&l" +
-                        String.format(plugin.getLanguageString("names.enchantBook"),
-                                plugin.getLanguageString("enchants.unbreaking"))),
+                CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
+                        LanguageManager.enchants.unbreaking)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, 
-                        plugin.getLanguageString("messages.enchantInstruction")),
-                CommunicationManager.format(ChatColor.DARK_RED, plugin.getLanguageString("messages.warning")));
+                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
+                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
     }
     public static ItemStack mending() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
-                CommunicationManager.format("&a&l" +
-                        String.format(plugin.getLanguageString("names.enchantBook"),
-                                plugin.getLanguageString("enchants.mending"))),
+                CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
+                        LanguageManager.enchants.mending)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, 
-                        plugin.getLanguageString("messages.enchantInstruction")),
-                CommunicationManager.format(ChatColor.DARK_PURPLE, plugin.getLanguageString("messages.caution")),
-                CommunicationManager.format(ChatColor.DARK_RED, plugin.getLanguageString("messages.warning")));
+                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
+                CommunicationManager.format(ChatColor.DARK_PURPLE, LanguageManager.messages.caution),
+                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
     }
 }

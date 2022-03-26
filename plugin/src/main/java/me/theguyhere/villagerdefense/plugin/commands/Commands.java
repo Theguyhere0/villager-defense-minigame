@@ -15,6 +15,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -57,10 +58,10 @@ public class Commands implements CommandExecutor {
 				// No arguments
 				if (args.length == 0) {
 					if (player != null)
-						PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.command"),
-								ChatColor.AQUA, "/vd help");
-					else CommunicationManager.debugError(plugin.getLanguageStringFormatted("errors.command",
-							"vd help"), 0);
+						PlayerManager.notifyFailure(player, LanguageManager.errors.command, ChatColor.AQUA,
+								"/vd help");
+					else CommunicationManager.debugError(String.format(LanguageManager.errors.command, "vd help"),
+							0);
 					return true;
 				}
 
@@ -68,13 +69,13 @@ public class Commands implements CommandExecutor {
 				if (args[0].equalsIgnoreCase("admin")) {
 					// Check for player executing command
 					if (player == null) {
-						sender.sendMessage(plugin.getLanguageString("errors.playerOnlyCommand"));
+						sender.sendMessage(LanguageManager.errors.playerOnlyCommand);
 						return true;
 					}
 
 					// Check for permission to use the command
 					if (!player.hasPermission("vd.use")) {
-						PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.permission"));
+						PlayerManager.notifyFailure(player, LanguageManager.errors.permission);
 						return true;
 					}
 
@@ -85,9 +86,8 @@ public class Commands implements CommandExecutor {
 				// Redirects to wiki for help
 				if (args[0].equalsIgnoreCase("help")) {
 					if (player != null) {
-						PlayerManager.notifyAlert(player, plugin.getLanguageString("messages.infoAboutWiki"));
-						TextComponent message = new TextComponent(plugin.getLanguageString("messages.visitWiki") +
-								"!");
+						PlayerManager.notifyAlert(player, LanguageManager.messages.infoAboutWiki);
+						TextComponent message = new TextComponent(LanguageManager.messages.visitWiki + "!");
 						message.setBold(true);
 						message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,
 								"https://github.com/Theguyhere0/villager-defense-minigame/wiki"));
@@ -95,7 +95,7 @@ public class Commands implements CommandExecutor {
 
 					} else CommunicationManager.debugInfo(
 							String.format("%s: https://github.com/Theguyhere0/villager-defense-minigame/wiki",
-									plugin.getLanguageString("messages.visitWiki")), 0);
+									LanguageManager.messages.visitWiki), 0);
 					return true;
 				}
 
@@ -103,7 +103,7 @@ public class Commands implements CommandExecutor {
 				if (args[0].equalsIgnoreCase("leave")) {
 					// Check for player executing command
 					if (player == null) {
-						sender.sendMessage(plugin.getLanguageString("errors.playerOnlyCommand"));
+						sender.sendMessage(LanguageManager.errors.playerOnlyCommand);
 						return true;
 					}
 
@@ -116,7 +116,7 @@ public class Commands implements CommandExecutor {
 				if (args[0].equalsIgnoreCase("stats")) {
 					// Check for player executing command
 					if (player == null) {
-						sender.sendMessage(plugin.getLanguageString("errors.playerOnlyCommand"));
+						sender.sendMessage(LanguageManager.errors.playerOnlyCommand);
 						return true;
 					}
 
@@ -124,7 +124,7 @@ public class Commands implements CommandExecutor {
 						player.openInventory(Inventories.createPlayerStatsInventory(player.getName()));
 					else if (plugin.getPlayerData().contains(args[1]))
 						player.openInventory(Inventories.createPlayerStatsInventory(args[1]));
-					else PlayerManager.notifyFailure(player, plugin.getLanguageString("messages.noStats"),
+					else PlayerManager.notifyFailure(player, LanguageManager.messages.noStats,
 								ChatColor.AQUA, args[1]);
 					return true;
 				}
@@ -133,7 +133,7 @@ public class Commands implements CommandExecutor {
 				if (args[0].equalsIgnoreCase("kits")) {
 					// Check for player executing command
 					if (player == null) {
-						sender.sendMessage(plugin.getLanguageString("errors.playerOnlyCommand"));
+						sender.sendMessage(LanguageManager.errors.playerOnlyCommand);
 						return true;
 					}
 
@@ -145,7 +145,7 @@ public class Commands implements CommandExecutor {
 				if (args[0].equalsIgnoreCase("join")) {
 					// Check for player executing command
 					if (player == null) {
-						sender.sendMessage(plugin.getLanguageString("errors.playerOnlyCommand"));
+						sender.sendMessage(LanguageManager.errors.playerOnlyCommand);
 						return true;
 					}
 
@@ -157,32 +157,32 @@ public class Commands implements CommandExecutor {
 						arena = GameManager.getArena(player);
 						gamer = arena.getPlayer(player);
 					} catch (Exception err) {
-						PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.inGame"));
+						PlayerManager.notifyFailure(player, LanguageManager.errors.inGame);
 						return true;
 					}
 
 					// Check if player owns the phantom kit if late arrival is not on
 					if (!playerData.getBoolean(player.getName() + ".kits." + Kit.phantom().getName()) &&
 							!arena.hasLateArrival()) {
-						PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.phantomOwn"));
+						PlayerManager.notifyFailure(player, LanguageManager.errors.phantomOwn);
 						return true;
 					}
 
 					// Check if arena is not ending
 					if (arena.getStatus() == ArenaStatus.ENDING) {
-						PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.phantomArena"));
+						PlayerManager.notifyFailure(player, LanguageManager.errors.phantomArena);
 						return true;
 					}
 
 					// Check for useful phantom use
 					if (gamer.getStatus() != PlayerStatus.SPECTATOR) {
-						PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.phantomPlayer"));
+						PlayerManager.notifyFailure(player, LanguageManager.errors.phantomPlayer);
 						return true;
 					}
 
 					// Check for arena capacity if late arrival is on
 					if (arena.hasLateArrival() && arena.getActiveCount() >= arena.getMaxPlayers()) {
-						PlayerManager.notifyAlert(player, plugin.getLanguageString("messages.maxCapacity"));
+						PlayerManager.notifyAlert(player, LanguageManager.messages.maxCapacity);
 						return true;
 					}
 
@@ -201,28 +201,25 @@ public class Commands implements CommandExecutor {
 				if (args[0].equalsIgnoreCase("crystals")) {
 					// Check for permission to use the command
 					if (player != null && !player.hasPermission("vd.crystals")) {
-						PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.permission"));
+						PlayerManager.notifyFailure(player, LanguageManager.errors.permission);
 						return true;
 					}
 
 					// Check for valid command format
 					if (args.length != 3) {
 						if (player != null)
-							PlayerManager.notifyFailure(player, plugin.getLanguageString("messages.commandFormat"),
-									ChatColor.AQUA, "/vd crystals [player] [change amount]");
-						else
-							CommunicationManager.debugError(plugin.getLanguageStringFormatted(
-									"messages.commandFormat", "vd crystals [player] [change amount]"),
-									0);
+							PlayerManager.notifyFailure(player, LanguageManager.messages.commandFormat, ChatColor.AQUA,
+									"/vd crystals [player] [change amount]");
+						else CommunicationManager.debugError(String.format(LanguageManager.messages.commandFormat,
+								"vd crystals [player] [change amount]"), 0);
 						return true;
 					}
 
 					// Check for valid player
 					if (!plugin.getPlayerData().contains(args[1])) {
 						if (player != null)
-							PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.invalidPlayer"));
-						else CommunicationManager.debugError(plugin.getLanguageString("errors.invalidPlayer"),
-								0);
+							PlayerManager.notifyFailure(player, LanguageManager.errors.invalidPlayer);
+						else CommunicationManager.debugError(LanguageManager.errors.invalidPlayer, 0);
 						return true;
 					}
 
@@ -233,19 +230,16 @@ public class Commands implements CommandExecutor {
 								".crystalBalance") + amount, 0));
 						plugin.savePlayerData();
 						if (player != null)
-							PlayerManager.notifySuccess(player, plugin.getLanguageString("confirms.balanceSet"),
+							PlayerManager.notifySuccess(player, LanguageManager.confirms.balanceSet,
 									ChatColor.AQUA, args[1],
 									String.valueOf(playerData.getInt(args[1] + ".crystalBalance")));
-						else CommunicationManager.debugInfo(
-								plugin.getLanguageStringFormatted("confirms.balanceSet", args[1],
-								String.valueOf(playerData.getInt(args[1] + ".crystalBalance"))),
-								0);
+						else CommunicationManager.debugInfo(String.format(LanguageManager.confirms.balanceSet, args[1],
+								String.valueOf(playerData.getInt(args[1] + ".crystalBalance"))), 0);
 						return true;
 					} catch (Exception e) {
 						if (player != null)
-							PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.integer"));
-						else CommunicationManager.debugError(plugin.getLanguageString("errors.integer"),
-								0);
+							PlayerManager.notifyFailure(player, LanguageManager.errors.integer);
+						else CommunicationManager.debugError(LanguageManager.errors.integer, 0);
 						return true;
 					}
 				}
@@ -256,13 +250,13 @@ public class Commands implements CommandExecutor {
 					if (args.length == 1) {
 						// Check for player executing command
 						if (player == null) {
-							sender.sendMessage(plugin.getLanguageString("errors.playerOnlyCommand"));
+							sender.sendMessage(LanguageManager.errors.playerOnlyCommand);
 							return true;
 						}
 
 						// Check for permission to use the command
 						if (!player.hasPermission("vd.start")) {
-							PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.permission"));
+							PlayerManager.notifyFailure(player, LanguageManager.errors.permission);
 							return true;
 						}
 
@@ -274,19 +268,19 @@ public class Commands implements CommandExecutor {
 							arena = GameManager.getArena(player);
 							gamer = arena.getPlayer(player);
 						} catch (Exception e) {
-							PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.inGame"));
+							PlayerManager.notifyFailure(player, LanguageManager.errors.inGame);
 							return true;
 						}
 
 						// Check if player is an active player
 						if (!arena.getActives().contains(gamer)) {
-							PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.activePlayer"));
+							PlayerManager.notifyFailure(player, LanguageManager.errors.activePlayer);
 							return true;
 						}
 
 						// Check if arena already started
 						if (arena.getStatus() != ArenaStatus.WAITING) {
-							PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.arenaInProgress"));
+							PlayerManager.notifyFailure(player, LanguageManager.errors.arenaInProgress);
 							return true;
 						}
 
@@ -297,7 +291,7 @@ public class Commands implements CommandExecutor {
 						// Bring game to quick start if not already
 						if (tasks.containsKey(task.full10) || tasks.containsKey(task.sec10) &&
 								!scheduler.isQueued(tasks.get(task.sec10))) {
-							PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.startingSoon"));
+							PlayerManager.notifyFailure(player, LanguageManager.errors.startingSoon);
 							return true;
 						} else {
 							// Remove all tasks
@@ -318,7 +312,7 @@ public class Commands implements CommandExecutor {
 					else {
 						// Check for permission to use the command
 						if (player != null && !player.hasPermission("vd.admin")) {
-							PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.permission"));
+							PlayerManager.notifyFailure(player, LanguageManager.errors.permission);
 							return true;
 						}
 
@@ -332,8 +326,8 @@ public class Commands implements CommandExecutor {
 							arena = Objects.requireNonNull(GameManager.getArena(name.toString()));
 						} catch (Exception e) {
 							if (player != null)
-								PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.noArena"));
-							else CommunicationManager.debugError(plugin.getLanguageString("errors.noArena"), 
+								PlayerManager.notifyFailure(player, LanguageManager.errors.noArena);
+							else CommunicationManager.debugError(LanguageManager.errors.noArena, 
 									0);
 							return true;
 						}
@@ -342,19 +336,17 @@ public class Commands implements CommandExecutor {
 						if (arena.getStatus() != ArenaStatus.WAITING) {
 							if (player != null)
 								PlayerManager.notifyFailure(player, 
-										plugin.getLanguageString("errors.arenaInProgress"));
+										LanguageManager.errors.arenaInProgress);
 							else CommunicationManager.debugError(
-									plugin.getLanguageString("errors.arenaInProgress"), 0);
+									LanguageManager.errors.arenaInProgress, 0);
 							return true;
 						}
 
 						// Check if there is at least 1 player
 						if (arena.getActiveCount() == 0) {
 							if (player != null)
-								PlayerManager.notifyFailure(player, 
-										plugin.getLanguageString("errors.arenaNoPlayers"));
-							else CommunicationManager.debugError(plugin.getLanguageString("errors.arenaNoPlayers"),
-									0);
+								PlayerManager.notifyFailure(player, LanguageManager.errors.arenaNoPlayers);
+							else CommunicationManager.debugError(LanguageManager.errors.arenaNoPlayers, 0);
 							return true;
 						}
 
@@ -367,8 +359,8 @@ public class Commands implements CommandExecutor {
 								!scheduler.isQueued(tasks.get(task.sec10))) {
 							if (player != null)
 								PlayerManager.notifyFailure(player, 
-										plugin.getLanguageString("errors.startingSoon"));
-							else CommunicationManager.debugError(plugin.getLanguageString("errors.startingSoon"),
+										LanguageManager.errors.startingSoon);
+							else CommunicationManager.debugError(LanguageManager.errors.startingSoon,
 									0);
 							return true;
 						} else {
@@ -399,13 +391,13 @@ public class Commands implements CommandExecutor {
 					if (args.length == 1) {
 						// Check for player executing command
 						if (player == null) {
-							sender.sendMessage(plugin.getLanguageString("errors.playerOnlyCommand"));
+							sender.sendMessage(LanguageManager.errors.playerOnlyCommand);
 							return true;
 						}
 
 						// Check for permission to use the command
 						if (!player.hasPermission("vd.admin")) {
-							PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.permission"));
+							PlayerManager.notifyFailure(player, LanguageManager.errors.permission);
 							return true;
 						}
 
@@ -415,19 +407,19 @@ public class Commands implements CommandExecutor {
 						try {
 							arena = GameManager.getArena(player);
 						} catch (Exception e) {
-							PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.inGame"));
+							PlayerManager.notifyFailure(player, LanguageManager.errors.inGame);
 							return true;
 						}
 
 						// Check if arena has a game in progress
 						if (arena.getStatus() != ArenaStatus.ACTIVE && arena.getStatus() != ArenaStatus.ENDING) {
-							PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.noGameEnd"));
+							PlayerManager.notifyFailure(player, LanguageManager.errors.noGameEnd);
 							return true;
 						}
 
 						// Check if game is about to end
 						if (arena.getStatus() == ArenaStatus.ENDING) {
-							PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.endingSoon"));
+							PlayerManager.notifyFailure(player, LanguageManager.errors.endingSoon);
 							return true;
 						}
 
@@ -444,7 +436,7 @@ public class Commands implements CommandExecutor {
 					else {
 						// Check for permission to use the command
 						if (player != null && !player.hasPermission("vd.admin")) {
-							PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.permission"));
+							PlayerManager.notifyFailure(player, LanguageManager.errors.permission);
 							return true;
 						}
 
@@ -458,8 +450,8 @@ public class Commands implements CommandExecutor {
 							arena = Objects.requireNonNull(GameManager.getArena(name.toString()));
 						} catch (Exception e) {
 							if (player != null)
-								PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.noArena"));
-							else CommunicationManager.debugError(plugin.getLanguageString("errors.noArena"), 
+								PlayerManager.notifyFailure(player, LanguageManager.errors.noArena);
+							else CommunicationManager.debugError(LanguageManager.errors.noArena, 
 									0);
 							return true;
 						}
@@ -467,8 +459,8 @@ public class Commands implements CommandExecutor {
 						// Check if arena has a game in progress
 						if (arena.getStatus() != ArenaStatus.ACTIVE && arena.getStatus() != ArenaStatus.ENDING) {
 							if (player != null)
-								PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.noGameEnd"));
-							else CommunicationManager.debugError(plugin.getLanguageString("errors.noGameEnd"),
+								PlayerManager.notifyFailure(player, LanguageManager.errors.noGameEnd);
+							else CommunicationManager.debugError(LanguageManager.errors.noGameEnd,
 									0);
 							return true;
 						}
@@ -476,8 +468,8 @@ public class Commands implements CommandExecutor {
 						// Check if game is about to end
 						if (arena.getStatus() == ArenaStatus.ENDING) {
 							if (player != null)
-								PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.endingSoon"));
-							else CommunicationManager.debugError(plugin.getLanguageString("errors.endingSoon"),
+								PlayerManager.notifyFailure(player, LanguageManager.errors.endingSoon);
+							else CommunicationManager.debugError(LanguageManager.errors.endingSoon,
 									0);
 							return true;
 						}
@@ -500,13 +492,13 @@ public class Commands implements CommandExecutor {
 					if (args.length == 1) {
 						// Check for player executing command
 						if (player == null) {
-							sender.sendMessage(plugin.getLanguageString("errors.playerOnlyCommand"));
+							sender.sendMessage(LanguageManager.errors.playerOnlyCommand);
 							return true;
 						}
 
 						// Check for permission to use the command
 						if (!player.hasPermission("vd.start")) {
-							PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.permission"));
+							PlayerManager.notifyFailure(player, LanguageManager.errors.permission);
 							return true;
 						}
 
@@ -516,14 +508,14 @@ public class Commands implements CommandExecutor {
 						try {
 							arena = GameManager.getArena(player);
 						} catch (Exception e) {
-							PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.inGame"));
+							PlayerManager.notifyFailure(player, LanguageManager.errors.inGame);
 							return true;
 						}
 
 						// Check if arena already started
 						if (arena.getStatus() != ArenaStatus.WAITING) {
 							PlayerManager.notifyFailure(player, 
-									plugin.getLanguageString("errors.arenaInProgress"));
+									LanguageManager.errors.arenaInProgress);
 							return true;
 						}
 
@@ -553,7 +545,7 @@ public class Commands implements CommandExecutor {
 					else {
 						// Check for permission to use the command
 						if (player != null && !player.hasPermission("vd.admin")) {
-							PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.permission"));
+							PlayerManager.notifyFailure(player, LanguageManager.errors.permission);
 							return true;
 						}
 
@@ -567,28 +559,24 @@ public class Commands implements CommandExecutor {
 							arena = Objects.requireNonNull(GameManager.getArena(name.toString()));
 						} catch (Exception e) {
 							if (player != null)
-								PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.noArena"));
-							else CommunicationManager.debugError(plugin.getLanguageString("errors.noArena"), 
-									0);
+								PlayerManager.notifyFailure(player, LanguageManager.errors.noArena);
+							else CommunicationManager.debugError(LanguageManager.errors.noArena, 0);
 							return true;
 						}
 
 						// Check if arena already started
 						if (arena.getStatus() != ArenaStatus.WAITING) {
 							if (player != null)
-								PlayerManager.notifyFailure(player, 
-										plugin.getLanguageString("errors.arenaInProgress"));
-							else CommunicationManager.debugError(
-									plugin.getLanguageString("errors.arenaInProgress"), 0);
+								PlayerManager.notifyFailure(player, LanguageManager.errors.arenaInProgress);
+							else CommunicationManager.debugError(LanguageManager.errors.arenaInProgress, 0);
 							return true;
 						}
 
 						// Check if there is at least 1 player
 						if (arena.getActiveCount() == 0) {
 							if (player != null)
-								PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.emptyArena"));
-							else CommunicationManager.debugError(plugin.getLanguageString("errors.emptyArena"),
-									0);
+								PlayerManager.notifyFailure(player, LanguageManager.errors.emptyArena);
+							else CommunicationManager.debugError(LanguageManager.errors.emptyArena, 0);
 							return true;
 						}
 
@@ -626,17 +614,17 @@ public class Commands implements CommandExecutor {
 
 					// Check for permission to use the command
 					if (player != null && !player.hasPermission("vd.admin")) {
-						PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.permission"));
+						PlayerManager.notifyFailure(player, LanguageManager.errors.permission);
 						return true;
 					}
 
 					// Check for correct format
 					if (args.length > 1) {
 						if (player != null)
-							PlayerManager.notifyFailure(player, plugin.getLanguageString("messages.commandFormat"),
+							PlayerManager.notifyFailure(player, LanguageManager.messages.commandFormat,
 									ChatColor.AQUA, "/vd fix");
-						else CommunicationManager.debugError(plugin.getLanguageStringFormatted(
-								"messages.commandFormat", "vd fix"), 0);
+						else CommunicationManager.debugError(String.format(LanguageManager.messages.commandFormat,
+								"vd fix"), 0);
 						return true;
 					}
 
@@ -645,10 +633,8 @@ public class Commands implements CommandExecutor {
 					if (configVersion < Main.configVersion)
 						if (player != null)
 							PlayerManager.notifyAlert(player, 
-									plugin.getLanguageString("messages.manualUpdateWarn"), ChatColor.AQUA,
-									"config.yml");
-						else CommunicationManager.debugError(
-								plugin.getLanguageStringFormatted("messages.manualUpdateWarn",
+									LanguageManager.messages.manualUpdateWarn, ChatColor.AQUA, "config.yml");
+						else CommunicationManager.debugError(String.format(LanguageManager.messages.manualUpdateWarn,
 								"config.yml"), 0);
 
 					// Check if arenaData.yml is outdated
@@ -690,18 +676,16 @@ public class Commands implements CommandExecutor {
 							// Notify
 							if (player != null)
 								PlayerManager.notifySuccess(player,
-										plugin.getLanguageString("confirms.autoUpdate"), ChatColor.AQUA,
+										LanguageManager.confirms.autoUpdate, ChatColor.AQUA,
 										"arenaData.yml", "4");
-							CommunicationManager.debugInfo(plugin.getLanguageStringFormatted(
-									"confirms.autoUpdate", "arenaData.yml", "4"), 0);
+							CommunicationManager.debugInfo(String.format(LanguageManager.confirms.autoUpdate,
+									"arenaData.yml", "4"), 0);
 						} catch (Exception e) {
 							if (player != null)
-								PlayerManager.notifyAlert(player, 
-										plugin.getLanguageString("messages.manualUpdateWarn"), ChatColor.AQUA,
-										"arenaData.yml");
-							else CommunicationManager.debugError(
-									plugin.getLanguageStringFormatted("messages.manualUpdateWarn", 
-											"arenaData.yml"), 0);
+								PlayerManager.notifyAlert(player, LanguageManager.messages.manualUpdateWarn,
+										ChatColor.AQUA, "arenaData.yml");
+							else CommunicationManager.debugError(String.format(
+									LanguageManager.messages.manualUpdateWarn, "arenaData.yml"), 0);
 						}
 					} else if (arenaDataVersion < 5) {
 						try {
@@ -760,17 +744,17 @@ public class Commands implements CommandExecutor {
 							// Notify
 							if (player != null)
 								PlayerManager.notifySuccess(player,
-										plugin.getLanguageString("confirms.autoUpdate"), ChatColor.AQUA,
-										"arenaData.yml", "5");
-							CommunicationManager.debugInfo(plugin.getLanguageStringFormatted(
-									"confirms.autoUpdate", "arenaData.yml", "5"), 0);
+										LanguageManager.confirms.autoUpdate, ChatColor.AQUA, "arenaData.yml",
+										"5");
+							CommunicationManager.debugInfo(String.format(LanguageManager.confirms.autoUpdate,
+									"arenaData.yml", "5"), 0);
 						} catch (Exception e) {
 							if (player != null)
 								PlayerManager.notifyAlert(player,
-										plugin.getLanguageString("messages.manualUpdateWarn"), ChatColor.AQUA,
+										LanguageManager.messages.manualUpdateWarn, ChatColor.AQUA,
 										"arenaData.yml");
 							else CommunicationManager.debugError(
-									plugin.getLanguageStringFormatted("messages.manualUpdateWarn",
+									String.format(LanguageManager.messages.manualUpdateWarn,
 											"arenaData.yml"), 0);
 						}
 					}
@@ -779,10 +763,10 @@ public class Commands implements CommandExecutor {
 					if (plugin.getConfig().getInt("playerData") < Main.playerDataVersion)
 						if (player != null)
 							PlayerManager.notifyAlert(player, 
-									plugin.getLanguageString("messages.manualUpdateWarn"), ChatColor.AQUA,
+									LanguageManager.messages.manualUpdateWarn, ChatColor.AQUA,
 									"playerData.yml");
 						else CommunicationManager.debugError(
-								plugin.getLanguageStringFormatted("messages.manualUpdateWarn",
+								String.format(LanguageManager.messages.manualUpdateWarn,
 								"playerData.yml"), 0);
 
 					// Update default spawn table
@@ -799,16 +783,16 @@ public class Commands implements CommandExecutor {
 
 						// Notify
 						if (player != null) {
-							PlayerManager.notifySuccess(player, plugin.getLanguageString("confirms.autoUpdate"),
+							PlayerManager.notifySuccess(player, LanguageManager.confirms.autoUpdate,
 									ChatColor.AQUA, "default.yml", String.valueOf(Main.defaultSpawnVersion));
 							PlayerManager.notifyAlert(player, 
-									plugin.getLanguageString("messages.manualUpdateWarn"), ChatColor.AQUA, 
+									LanguageManager.messages.manualUpdateWarn, ChatColor.AQUA, 
 									"All other spawn files");
 						}
-						CommunicationManager.debugInfo(plugin.getLanguageStringFormatted("confirms.autoUpdate",
+						CommunicationManager.debugInfo(String.format(LanguageManager.confirms.autoUpdate,
 								"default.yml", String.valueOf(Main.defaultSpawnVersion)), 0);
 						CommunicationManager.debugError(
-								plugin.getLanguageStringFormatted("messages.manualUpdateWarn",
+								String.format(LanguageManager.messages.manualUpdateWarn,
 										"All other spawn files"), 0);
 					}
 
@@ -824,28 +808,26 @@ public class Commands implements CommandExecutor {
 
 						// Notify
 						if (player != null) {
-							PlayerManager.notifySuccess(player, plugin.getLanguageString("confirms.autoUpdate"),
+							PlayerManager.notifySuccess(player, LanguageManager.confirms.autoUpdate,
 									ChatColor.AQUA, "en_US.yml", String.valueOf(Main.languageFileVersion));
 							PlayerManager.notifyAlert(player, 
-									plugin.getLanguageString("messages.manualUpdateWarn"), ChatColor.AQUA, 
+									LanguageManager.messages.manualUpdateWarn, ChatColor.AQUA, 
 									"All other language files");
-							PlayerManager.notifyAlert(player, plugin.getLanguageString("messages.restartPlugin"));
+							PlayerManager.notifyAlert(player, LanguageManager.messages.restartPlugin);
 						}
-						CommunicationManager.debugInfo(plugin.getLanguageStringFormatted("confirms.autoUpdate",
-								"en_US.yml", String.valueOf(Main.languageFileVersion)), 0);
+						CommunicationManager.debugInfo(String.format(LanguageManager.confirms.autoUpdate, "en_US.yml",
+								String.valueOf(Main.languageFileVersion)), 0);
 						CommunicationManager.debugError(
-								plugin.getLanguageStringFormatted("messages.manualUpdateWarn",
+								String.format(LanguageManager.messages.manualUpdateWarn,
 										"All other language files"), 0);
-						CommunicationManager.debugError(
-								plugin.getLanguageString("messages.restartPlugin"), 0);
+						CommunicationManager.debugError(LanguageManager.messages.restartPlugin, 0);
 					}
 
 					// Message to player depending on whether the command fixed anything
 					if (!fixed)
 						if (player != null)
-							PlayerManager.notifyAlert(player, plugin.getLanguageString("messages.noAutoUpdate"));
-						else CommunicationManager.debugInfo(plugin.getLanguageString("messages.noAutoUpdate"),
-								0);
+							PlayerManager.notifyAlert(player, LanguageManager.messages.noAutoUpdate);
+						else CommunicationManager.debugInfo(LanguageManager.messages.noAutoUpdate, 0);
 
 					return true;
 				}
@@ -854,17 +836,16 @@ public class Commands implements CommandExecutor {
 				if (args[0].equalsIgnoreCase("debug")) {
 					// Check for permission to use the command
 					if (player != null && !player.hasPermission("vd.admin")) {
-						PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.permission"));
+						PlayerManager.notifyFailure(player, LanguageManager.errors.permission);
 						return true;
 					}
 
 					// Check for correct format
 					if (args.length != 2) {
 						if (player != null)
-							PlayerManager.notifyFailure(player, plugin.getLanguageString("messages.commandFormat"),
+							PlayerManager.notifyFailure(player, LanguageManager.messages.commandFormat,
 									ChatColor.AQUA, "/vd debug [debug level (0-3)]");
-						else CommunicationManager.debugError(
-								plugin.getLanguageStringFormatted("messages.commandFormat",
+						else CommunicationManager.debugError(String.format(LanguageManager.messages.commandFormat,
 										"vd debug [debug level (0-3)]"), 0);
 						return true;
 					}
@@ -874,20 +855,19 @@ public class Commands implements CommandExecutor {
 						CommunicationManager.setDebugLevel(Integer.parseInt(args[1]));
 					} catch (Exception e) {
 						if (player != null)
-							PlayerManager.notifyFailure(player, plugin.getLanguageString("messages.commandFormat"),
+							PlayerManager.notifyFailure(player, LanguageManager.messages.commandFormat,
 									ChatColor.AQUA, "/vd debug [debug level (0-3)]");
-						else CommunicationManager.debugError(
-								plugin.getLanguageStringFormatted("messages.commandFormat",
+						else CommunicationManager.debugError(String.format(LanguageManager.messages.commandFormat,
 										"vd debug [debug level (0-3)]"), 0);
 						return true;
 					}
 
 					// Notify
 					if (player != null)
-						PlayerManager.notifySuccess(player, plugin.getLanguageString("messages.debugLevelSet"),
-								ChatColor.AQUA, args[1]);
-					else CommunicationManager.debugInfo(plugin.getLanguageStringFormatted("messages.debugLevelSet",
-							args[1]), 0);
+						PlayerManager.notifySuccess(player, LanguageManager.messages.debugLevelSet, ChatColor.AQUA,
+								args[1]);
+					else CommunicationManager.debugInfo(String.format(LanguageManager.messages.debugLevelSet, args[1]),
+							0);
 
 					return true;
 				}
@@ -896,13 +876,13 @@ public class Commands implements CommandExecutor {
 				if (args[0].equalsIgnoreCase("die")) {
 					// Check for player executing command
 					if (player == null) {
-						sender.sendMessage(plugin.getLanguageString("errors.playerOnlyCommand"));
+						sender.sendMessage(LanguageManager.errors.playerOnlyCommand);
 						return true;
 					}
 
 					// Check for player in a game
 					if (!GameManager.checkPlayer(player)) {
-						PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.notInGame"));
+						PlayerManager.notifyFailure(player, LanguageManager.errors.notInGame);
 						return true;
 					}
 
@@ -910,18 +890,18 @@ public class Commands implements CommandExecutor {
 					if (Arrays.stream(GameManager.getArenas()).filter(Objects::nonNull)
 							.filter(arena -> arena.getStatus() == ArenaStatus.ACTIVE)
 							.noneMatch(arena -> arena.hasPlayer(player))) {
-						PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.suicideActive"));
+						PlayerManager.notifyFailure(player, LanguageManager.errors.suicideActive);
 						return true;
 					}
 
 					// Check for alive player
 					try {
 						if (GameManager.getArena(player).getPlayer(player).getStatus() != PlayerStatus.ALIVE) {
-							PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.suicide"));
+							PlayerManager.notifyFailure(player, LanguageManager.errors.suicide);
 							return true;
 						}
 					} catch (PlayerNotFoundException err) {
-						PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.suicide"));
+						PlayerManager.notifyFailure(player, LanguageManager.errors.suicide);
 						return true;
 					}
 
@@ -936,7 +916,7 @@ public class Commands implements CommandExecutor {
 				if (args[0].equalsIgnoreCase("reload")) {
 					// Check for permission to use the command
 					if (player != null && !player.hasPermission("vd.admin")) {
-						PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.permission"));
+						PlayerManager.notifyFailure(player, LanguageManager.errors.permission);
 						return true;
 					}
 
@@ -953,19 +933,18 @@ public class Commands implements CommandExecutor {
 				if (args[0].equalsIgnoreCase("open")) {
 					// Check for permission to use the command
 					if (player != null && !player.hasPermission("vd.use")) {
-						PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.permission"));
+						PlayerManager.notifyFailure(player, LanguageManager.errors.permission);
 						return true;
 					}
 
 					// Check for valid command format
 					if (args.length < 2) {
 						if (player != null)
-							PlayerManager.notifyFailure(player, plugin.getLanguageString("messages.commandFormat"),
+							PlayerManager.notifyFailure(player, LanguageManager.messages.commandFormat,
 									ChatColor.AQUA, "/vd open [arena name]");
 						else
-							CommunicationManager.debugError(plugin.getLanguageStringFormatted(
-											"messages.commandFormat", "vd open [arena name]"),
-									0);
+							CommunicationManager.debugError(String.format(LanguageManager.messages.commandFormat,
+											"vd open [arena name]"), 0);
 						return true;
 					}
 
@@ -979,8 +958,8 @@ public class Commands implements CommandExecutor {
 						arena = Objects.requireNonNull(GameManager.getArena(name.toString()));
 					} catch (Exception e) {
 						if (player != null)
-							PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.noArena"));
-						else CommunicationManager.debugError(plugin.getLanguageString("errors.noArena"),
+							PlayerManager.notifyFailure(player, LanguageManager.errors.noArena);
+						else CommunicationManager.debugError(LanguageManager.errors.noArena,
 								0);
 						return true;
 					}
@@ -1069,19 +1048,18 @@ public class Commands implements CommandExecutor {
 				if (args[0].equalsIgnoreCase("close")) {
 					// Check for permission to use the command
 					if (player != null && !player.hasPermission("vd.use")) {
-						PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.permission"));
+						PlayerManager.notifyFailure(player, LanguageManager.errors.permission);
 						return true;
 					}
 
 					// Check for valid command format
 					if (args.length < 2) {
 						if (player != null)
-							PlayerManager.notifyFailure(player, plugin.getLanguageString("messages.commandFormat"),
+							PlayerManager.notifyFailure(player, LanguageManager.messages.commandFormat,
 									ChatColor.AQUA, "/vd close [arena name]");
 						else
-							CommunicationManager.debugError(plugin.getLanguageStringFormatted(
-											"messages.commandFormat", "vd close [arena name]"),
-									0);
+							CommunicationManager.debugError(String.format(LanguageManager.messages.commandFormat,
+											"vd close [arena name]"), 0);
 						return true;
 					}
 
@@ -1095,8 +1073,8 @@ public class Commands implements CommandExecutor {
 						arena = Objects.requireNonNull(GameManager.getArena(name.toString()));
 					} catch (Exception e) {
 						if (player != null)
-							PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.noArena"));
-						else CommunicationManager.debugError(plugin.getLanguageString("errors.noArena"),
+							PlayerManager.notifyFailure(player, LanguageManager.errors.noArena);
+						else CommunicationManager.debugError(LanguageManager.errors.noArena,
 								0);
 						return true;
 					}
@@ -1122,10 +1100,10 @@ public class Commands implements CommandExecutor {
 
 				// No valid command sent
 				if (player != null)
-					PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.command"), ChatColor.AQUA,
+					PlayerManager.notifyFailure(player, LanguageManager.errors.command, ChatColor.AQUA,
 							"/vd help");
-				else CommunicationManager.debugError(plugin.getLanguageStringFormatted("errors.command",
-						"vd help"), 0);
+				else CommunicationManager.debugError(String.format(LanguageManager.errors.command, "vd help"),
+						0);
 				return true;
 			}
 		} catch (NullPointerException e) {

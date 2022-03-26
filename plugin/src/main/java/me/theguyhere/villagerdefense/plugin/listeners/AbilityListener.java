@@ -9,6 +9,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.tools.WorldManager;
 import net.md_5.bungee.api.ChatMessageType;
@@ -543,31 +544,31 @@ public class AbilityListener implements Listener {
 
         // Unequip armor
         if (!(helmet == null || helmet.getType() == Material.AIR)) {
-            PlayerManager.giveItem(player, helmet, plugin.getLanguageString("errors.inventoryFull"));
+            PlayerManager.giveItem(player, helmet, LanguageManager.errors.inventoryFull);
             player.getInventory().setHelmet(null);
-            PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.ninja"));
+            PlayerManager.notifyFailure(player, LanguageManager.errors.ninja);
         }
         if (!(chestplate == null || chestplate.getType() == Material.AIR)) {
-            PlayerManager.giveItem(player, chestplate, plugin.getLanguageString("errors.inventoryFull"));
+            PlayerManager.giveItem(player, chestplate, LanguageManager.errors.inventoryFull);
             player.getInventory().setChestplate(null);
-            PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.ninja"));
+            PlayerManager.notifyFailure(player, LanguageManager.errors.ninja);
         }
         if (!(leggings == null || leggings.getType() == Material.AIR)) {
-            PlayerManager.giveItem(player, leggings, plugin.getLanguageString("errors.inventoryFull"));
+            PlayerManager.giveItem(player, leggings, LanguageManager.errors.inventoryFull);
             player.getInventory().setLeggings(null);
-            PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.ninja"));
+            PlayerManager.notifyFailure(player, LanguageManager.errors.ninja);
         }
         if (!(boots == null || boots.getType() == Material.AIR)) {
-            PlayerManager.giveItem(player, boots, plugin.getLanguageString("errors.inventoryFull"));
+            PlayerManager.giveItem(player, boots, LanguageManager.errors.inventoryFull);
             player.getInventory().setBoots(null);
-            PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.ninja"));
+            PlayerManager.notifyFailure(player, LanguageManager.errors.ninja);
         }
     }
 
     private boolean checkLevel(int level, Player player) {
         if (level == 0) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-                    CommunicationManager.format("&c" + plugin.getLanguageString("errors.level"))));
+                    CommunicationManager.format("&c" + LanguageManager.errors.level)));
             return true;
         }
         return false;
@@ -576,8 +577,8 @@ public class AbilityListener implements Listener {
     private boolean checkCooldown(long dif, Player player) {
         if (dif > 0) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-                    CommunicationManager.format("&c" + plugin.getLanguageStringFormatted("errors.cooldown",
-                            "&b" + (Math.round(Utils.millisToSeconds(dif) * 10) / 10d) + "&c"))));
+                    CommunicationManager.format(ChatColor.RED, LanguageManager.errors.cooldown, ChatColor.AQUA,
+                            String.valueOf(Math.round(Utils.millisToSeconds(dif) * 10) / 10d))));
             return true;
         }
         return false;

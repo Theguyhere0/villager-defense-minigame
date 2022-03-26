@@ -123,7 +123,7 @@ errors:
   customShop: "Custom shop has been disabled!"
   emptyArena: "The arena has no players!"
   enchant: "Cannot enchant item!"
-  enchantsShop: "Enchants shop has been disabled!"
+  enchantShop: "Enchant shop has been disabled!"
   endingSoon: "Game about to end!"
   fatal: "Something went wrong"
   golem: "The arena can only have up to %s iron golems!"
@@ -150,8 +150,8 @@ errors:
   phantomPlayer: "You're already in the game!"
   playerOnlyCommand: "Bad console!"
   startingSoon: "The game is already starting soon!"
-  suicideActive: "You must be in an active game to kill yourself!"
   suicide: "You must be alive to kill yourself!"
+  suicideActive: "You must be in an active game to kill yourself!"
   teleport: "You must leave the arena before you can teleport! Use %s to leave the arena."
   wolf: "You can only have up to %s wolves!"
 kits:

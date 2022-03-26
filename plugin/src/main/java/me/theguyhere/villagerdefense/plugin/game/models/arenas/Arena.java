@@ -17,10 +17,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.Tasks;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.tools.DataManager;
-import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
-import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
-import me.theguyhere.villagerdefense.plugin.tools.WorldManager;
+import me.theguyhere.villagerdefense.plugin.tools.*;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
@@ -573,7 +570,7 @@ public class Arena {
 
             // Create a new portal and display it
             portal = new Portal(Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin,
-                    path + ".portal")), this, plugin);
+                    path + ".portal")), this);
             portal.displayForOnline();
         } catch (Exception e) {
             CommunicationManager.debugError("Invalid location for portal " + arena, 1,
@@ -639,7 +636,7 @@ public class Arena {
             // Create a new board and display it
             arenaBoard = new ArenaBoard(
                     Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin, path + ".arenaBoard")),
-                    this, plugin);
+                    this);
             arenaBoard.displayForOnline();
         } catch (Exception e) {
             CommunicationManager.debugError("Invalid location for arena board " + arena, 1,
@@ -1644,7 +1641,7 @@ public class Arena {
 
         // Set exit option
         for (int i = 45; i < 54; i++)
-            inv.setItem(i, InventoryItems.exit(plugin));
+            inv.setItem(i, InventoryItems.exit());
 
         // Check for a stored inventory
         if (!config.contains(path + ".customShop"))
@@ -1671,8 +1668,8 @@ public class Arena {
                                 lore = meta.getLore();
                             assert lore != null;
                             if (price >= 0)
-                                lore.add(CommunicationManager.format("&2" +
-                                        plugin.getLanguageString("messages.gems") + ": &a" + price));
+                                lore.add(CommunicationManager.format("&2" + LanguageManager.messages.gems +
+                                        ": &a" + price));
                             meta.setLore(lore);
                             item.setItemMeta(meta);
 
@@ -1698,10 +1695,10 @@ public class Arena {
         // Create inventory
         Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54,
                 CommunicationManager.format("&k") + CommunicationManager.format("&6&l") +
-                        plugin.getLanguageString("names.customShop"));
+                        LanguageManager.names.customShop);
 
         // Set exit option
-        inv.setItem(49, InventoryItems.exit(plugin));
+        inv.setItem(49, InventoryItems.exit());
 
         // Check for a stored inventory
         if (!config.contains(path + ".customShop"))
@@ -1729,7 +1726,7 @@ public class Arena {
                             assert lore != null;
                             if (price >= 0)
                                 lore.add(CommunicationManager.format("&2" +
-                                        plugin.getLanguageString("messages.gems") + ": &a" + price));
+                                        LanguageManager.messages.gems + ": &a" + price));
                             meta.setLore(lore);
                             item.setItemMeta(meta);
 
@@ -1759,10 +1756,10 @@ public class Arena {
         // Create inventory
         Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54,
                 CommunicationManager.format("&k") + CommunicationManager.format("&6&l" +
-                        plugin.getLanguageString("names.customShop") + ": " + getName()));
+                        LanguageManager.names.customShop + ": " + getName()));
 
         // Set exit option
-        inv.setItem(49, InventoryItems.exit(plugin));
+        inv.setItem(49, InventoryItems.exit());
 
         // Check for a stored inventory
         if (!config.contains(path + ".customShop"))
@@ -1790,7 +1787,7 @@ public class Arena {
                             assert lore != null;
                             if (price >= 0)
                                 lore.add(CommunicationManager.format("&2" +
-                                        plugin.getLanguageString("messages.gems") + ": &a" + price));
+                                        LanguageManager.messages.gems + ": &a" + price));
                             meta.setLore(lore);
                             item.setItemMeta(meta);
 
@@ -1821,7 +1818,7 @@ public class Arena {
      */
     public void startTimeLimitBar() {
         timeLimitBar = Bukkit.createBossBar(CommunicationManager.format("&e" +
-                        plugin.getLanguageStringFormatted("names.timeBar", Integer.toString(getCurrentWave()))),
+                        String.format(LanguageManager.names.timeBar, Integer.toString(getCurrentWave()))),
                 BarColor.YELLOW, BarStyle.SOLID);
     }
 

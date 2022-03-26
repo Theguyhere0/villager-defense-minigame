@@ -11,10 +11,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.tools.DataManager;
-import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
-import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
-import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.tools.*;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -53,7 +50,7 @@ public class InventoryListener implements Listener {
 			return;
 
 		// Cancel the event if the inventory isn't the community chest, otherwise save the inventory
-		if (!title.contains(plugin.getLanguageString("names.communityChest")))
+		if (!title.contains(LanguageManager.names.communityChest))
 			e.setCancelled(true);
 		else {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
@@ -77,7 +74,7 @@ public class InventoryListener implements Listener {
 			return;
 
 		// Cancel the event if the inventory isn't the community chest, otherwise save the inventory
-		if (!title.contains(plugin.getLanguageString("names.communityChest")))
+		if (!title.contains(LanguageManager.names.communityChest))
 			e.setCancelled(true);
 		else {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
@@ -108,12 +105,12 @@ public class InventoryListener implements Listener {
 		CommunicationManager.debugInfo("Inventory Name: " + title, 2);
 
 		// Cancel the event if the inventory isn't the community chest or custom shop editor to prevent changing the GUI
-		if (!title.contains(plugin.getLanguageString("names.communityChest")) && 
+		if (!title.contains(LanguageManager.names.communityChest) && 
 				!title.contains("Custom Shop Editor"))
 			e.setCancelled(true);
 
 		// Save community chest
-		else if (title.contains(plugin.getLanguageString("names.communityChest"))) {
+		else if (title.contains(LanguageManager.names.communityChest)) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
 			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
@@ -144,7 +141,7 @@ public class InventoryListener implements Listener {
 			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
 
 			// Exit menu
-			if (InventoryItems.exit(plugin).equals(button)) {
+			if (InventoryItems.exit().equals(button)) {
 				e.setCancelled(true);
 				player.openInventory(Inventories.createShopsInventory(meta.getInteger1()));
 				return;
@@ -168,7 +165,7 @@ public class InventoryListener implements Listener {
 				ItemStack copy = cursor.clone();
 				copy.setItemMeta(itemMeta);
 				config.set(path + slot, copy);
-				PlayerManager.giveItem(player, cursor.clone(), plugin.getLanguageString("errors.inventoryFull"));
+				PlayerManager.giveItem(player, cursor.clone(), LanguageManager.errors.inventoryFull);
 				player.setItemOnCursor(new ItemStack(Material.AIR));
 				plugin.saveArenaData();
 				player.openInventory(Inventories.createCustomItemsInventory(meta.getInteger1(), slot));
@@ -222,7 +219,7 @@ public class InventoryListener implements Listener {
 				player.openInventory(Inventories.createLeaderboardInventory());
 
 			// Close inventory
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.closeInventory();
 		}
 
@@ -274,7 +271,7 @@ public class InventoryListener implements Listener {
 				else PlayerManager.notifyFailure(player, "No lobby to remove!");
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createArenasInventory());
 		}
 
@@ -286,7 +283,7 @@ public class InventoryListener implements Listener {
 				player.openInventory(Inventories.createInfoBoardMenu(slot));
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createArenasInventory());
 		}
 
@@ -339,7 +336,7 @@ public class InventoryListener implements Listener {
 				else PlayerManager.notifyFailure(player, "No info board to remove!");
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createInfoBoardInventory());
 		}
 
@@ -361,7 +358,7 @@ public class InventoryListener implements Listener {
 				player.openInventory(Inventories.createTopWaveLeaderboardInventory());
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createArenasInventory());
 		}
 
@@ -411,7 +408,7 @@ public class InventoryListener implements Listener {
 				else PlayerManager.notifyFailure(player, "No leaderboard to remove!");
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createLeaderboardInventory());
 		}
 
@@ -461,7 +458,7 @@ public class InventoryListener implements Listener {
 				else PlayerManager.notifyFailure(player, "No leaderboard to remove!");
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createLeaderboardInventory());
 		}
 
@@ -511,7 +508,7 @@ public class InventoryListener implements Listener {
 				else PlayerManager.notifyFailure(player, "No leaderboard to remove!");
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createLeaderboardInventory());
 		}
 
@@ -561,7 +558,7 @@ public class InventoryListener implements Listener {
 				else PlayerManager.notifyFailure(player, "No leaderboard to remove!");
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createLeaderboardInventory());
 		}
 
@@ -611,7 +608,7 @@ public class InventoryListener implements Listener {
 				else PlayerManager.notifyFailure(player, "No leaderboard to remove!");
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createLeaderboardInventory());
 		}
 
@@ -714,7 +711,7 @@ public class InventoryListener implements Listener {
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Return to arenas menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createArenasInventory());
 		}
 
@@ -1139,7 +1136,7 @@ public class InventoryListener implements Listener {
 				else PlayerManager.notifyFailure(player, "No leaderboard to remove!");
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createArenaInventory(meta.getInteger1()));
 		}
 
@@ -1178,7 +1175,7 @@ public class InventoryListener implements Listener {
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createArenaInventory(meta.getInteger1()));
 		}
 
@@ -1231,7 +1228,7 @@ public class InventoryListener implements Listener {
 				} else PlayerManager.notifyFailure(player, "No player spawn to remove!");
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createPlayersInventory(meta.getInteger1()));
 		}
 
@@ -1289,7 +1286,7 @@ public class InventoryListener implements Listener {
 				else PlayerManager.notifyFailure(player, "No waiting room to remove!");
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createPlayersInventory(meta.getInteger1()));
 		}
 
@@ -1337,7 +1334,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createPlayersInventory(meta.getInteger1()));
 		}
 
@@ -1385,7 +1382,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createPlayersInventory(meta.getInteger1()));
 		}
 
@@ -1433,7 +1430,7 @@ public class InventoryListener implements Listener {
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createArenaInventory(meta.getInteger1()));
 		}
 
@@ -1447,7 +1444,7 @@ public class InventoryListener implements Listener {
 				player.openInventory(Inventories.createMonsterSpawnMenu(meta.getInteger1(), slot));
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createMobsInventory(meta.getInteger1()));
 		}
 
@@ -1512,7 +1509,7 @@ public class InventoryListener implements Listener {
 				} else PlayerManager.notifyFailure(player, "No monster spawn to remove!");
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createMonsterSpawnInventory(meta.getInteger1()));
 		}
 
@@ -1526,7 +1523,7 @@ public class InventoryListener implements Listener {
 				player.openInventory(Inventories.createVillagerSpawnMenu(meta.getInteger1(), slot));
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createMobsInventory(meta.getInteger1()));
 		}
 
@@ -1580,7 +1577,7 @@ public class InventoryListener implements Listener {
 				} else PlayerManager.notifyFailure(player, "No villager spawn to remove!");
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createVillagerSpawnInventory(meta.getInteger1()));
 		}
 
@@ -1687,7 +1684,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit"))) {
+			else if (buttonName.contains(LanguageManager.messages.exit)) {
 				player.openInventory(Inventories.createMobsInventory(meta.getInteger1()));
 				return;
 			}
@@ -1744,7 +1741,7 @@ public class InventoryListener implements Listener {
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createArenaInventory(meta.getInteger1()));
 		}
 
@@ -1914,7 +1911,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Exit
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit"))) {
+			else if (buttonName.contains(LanguageManager.messages.exit)) {
 				player.openInventory(GameManager.getArena(meta.getInteger1()).getCustomShopEditor());
 				return;
 			}
@@ -2020,7 +2017,7 @@ public class InventoryListener implements Listener {
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createArenaInventory(meta.getInteger1()));
 		}
 
@@ -2093,7 +2090,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createGameSettingsInventory(meta.getInteger1()));
 		}
 
@@ -2166,7 +2163,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createGameSettingsInventory(meta.getInteger1()));
 		}
 
@@ -2237,7 +2234,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createGameSettingsInventory(meta.getInteger1()));
 		}
 
@@ -2296,23 +2293,23 @@ public class InventoryListener implements Listener {
 			}
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createGameSettingsInventory(meta.getInteger1()));
 		}
 
 		// Allowed kits display for an arena
-		else if (title.contains(plugin.getLanguageString("messages.allowedKits") + ": ")) {
+		else if (title.contains(LanguageManager.messages.allowedKits + ": ")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 
 			// Exit menu
-			if (buttonName.contains(plugin.getLanguageString("messages.exit"))) {
+			if (buttonName.contains(LanguageManager.messages.exit)) {
 				assert meta != null;
 				player.openInventory(Inventories.createArenaInfoInventory(GameManager.getArena(meta.getInteger1())));
 			}
 		}
 
 		// Allowed kits menu for an arena
-		else if (title.contains(plugin.getLanguageString("messages.allowedKits"))) {
+		else if (title.contains(LanguageManager.messages.allowedKits)) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
 			String kit = buttonName.substring(4);
@@ -2320,10 +2317,8 @@ public class InventoryListener implements Listener {
 			List<String> banned = arenaInstance.getBannedKits();
 
 			// Toggle a kit
-			if (!(kit.equals(plugin.getLanguageString("names.giftKits")) || 
-					kit.equals(plugin.getLanguageString("names.abilityKits")) ||
-					kit.equals(plugin.getLanguageString("names.effectKits")) ||
-					kit.equals(plugin.getLanguageString("messages.exit")))) {
+			if (!(kit.equals(LanguageManager.names.giftKits) || kit.equals(LanguageManager.names.abilityKits) ||
+					kit.equals(LanguageManager.names.effectKits) || kit.equals(LanguageManager.messages.exit))) {
 				// Check for arena closure
 				if (!arenaInstance.isClosed()) {
 					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
@@ -2338,7 +2333,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createGameSettingsInventory(meta.getInteger1()));
 		}
 
@@ -2365,7 +2360,7 @@ public class InventoryListener implements Listener {
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createGameSettingsInventory(meta.getInteger1()));
 		}
 
@@ -2410,7 +2405,7 @@ public class InventoryListener implements Listener {
 				else PlayerManager.notifyFailure(player, "No corner 1 to remove!");
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createBoundsInventory(meta.getInteger1()));
 		}
 
@@ -2455,7 +2450,7 @@ public class InventoryListener implements Listener {
 				else PlayerManager.notifyFailure(player, "No corner 2 to remove!");
 
 				// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createBoundsInventory(meta.getInteger1()));
 		}
 
@@ -2497,7 +2492,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createGameSettingsInventory(meta.getInteger1()));
 		}
 
@@ -2539,7 +2534,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createGameSettingsInventory(meta.getInteger1()));
 		}
 
@@ -2612,7 +2607,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createGameSettingsInventory(meta.getInteger1()));
 		}
 
@@ -2623,7 +2618,7 @@ public class InventoryListener implements Listener {
 			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
 
 			// Exit menu
-			if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createSoundsInventory(meta.getInteger1()));
 
 			// Set sound
@@ -2733,7 +2728,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Exit menu
-			else if (buttonName.contains(plugin.getLanguageString("messages.exit"))) {
+			else if (buttonName.contains(LanguageManager.messages.exit)) {
 				player.openInventory(Inventories.createGameSettingsInventory(meta.getInteger1()));
 				return;
 			}
@@ -2743,7 +2738,7 @@ public class InventoryListener implements Listener {
 		}
 
 		// In-game item shop menu
-		else if (title.contains(plugin.getLanguageString("names.itemShop"))) {
+		else if (title.contains(LanguageManager.names.itemShop)) {
 			Arena arenaInstance;
 
 			// See if the player is in a game
@@ -2754,54 +2749,54 @@ public class InventoryListener implements Listener {
 			}
 
 			// Open weapon shop
-			if (buttonName.contains(plugin.getLanguageString("names.weaponShop")))
+			if (buttonName.contains(LanguageManager.names.weaponShop))
 				if (arenaInstance.hasNormal())
 					player.openInventory(arenaInstance.getWeaponShop());
-				else PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.normalShop"));
+				else PlayerManager.notifyFailure(player, LanguageManager.errors.normalShop);
 
 			// Open armor shop
-			else if (buttonName.contains(plugin.getLanguageString("names.armorShop")))
+			else if (buttonName.contains(LanguageManager.names.armorShop))
 				if (arenaInstance.hasNormal())
 					player.openInventory(arenaInstance.getArmorShop());
-				else PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.normalShop"));
+				else PlayerManager.notifyFailure(player, LanguageManager.errors.normalShop);
 
 			// Open consumables shop
-			else if (buttonName.contains(plugin.getLanguageString("names.consumableShop")))
+			else if (buttonName.contains(LanguageManager.names.consumableShop))
 				if (arenaInstance.hasNormal())
 					player.openInventory(arenaInstance.getConsumeShop());
-				else PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.normalShop"));
+				else PlayerManager.notifyFailure(player, LanguageManager.errors.normalShop);
 
 			// Open enchant shop
-			else if (buttonName.contains(plugin.getLanguageString("names.enchantShop")))
+			else if (buttonName.contains(LanguageManager.names.enchantShop))
 				if (arenaInstance.hasEnchants())
 					player.openInventory(Inventories.createEnchantShop());
-				else PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.enchantShop"));
+				else PlayerManager.notifyFailure(player, LanguageManager.errors.enchantShop);
 
 			// Open custom shop
-			else if (buttonName.contains(plugin.getLanguageString("names.customShop")))
+			else if (buttonName.contains(LanguageManager.names.customShop))
 				if (arenaInstance.hasCustom())
 					player.openInventory(arenaInstance.getCustomShop());
-				else PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.customShop"));
+				else PlayerManager.notifyFailure(player, LanguageManager.errors.customShop);
 
 			// Open community chest
-			else if (buttonName.contains(plugin.getLanguageString("names.communityChest")))
+			else if (buttonName.contains(LanguageManager.names.communityChest))
 				if (arenaInstance.hasCommunity())
 					player.openInventory(arenaInstance.getCommunityChest());
-				else PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.communityChest"));
+				else PlayerManager.notifyFailure(player, LanguageManager.errors.communityChest);
 		}
 
 		// Mock custom shop for an arena
-		else if (title.contains(plugin.getLanguageString("names.customShop") + ":")) {
+		else if (title.contains(LanguageManager.names.customShop + ":")) {
 			Arena arenaInstance = Objects.requireNonNull(GameManager.getArena(title.substring(19)));
-			if (buttonName.contains(plugin.getLanguageString("messages.exit")))
+			if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createArenaInfoInventory(arenaInstance));
 		}
 
 		// In-game shops
-		else if (title.contains(plugin.getLanguageString("names.weaponShop")) ||
-				title.contains(plugin.getLanguageString("names.armorShop")) ||
-				title.contains(plugin.getLanguageString("names.consumableShop")) ||
-				title.contains(plugin.getLanguageString("names.customShop"))) {
+		else if (title.contains(LanguageManager.names.weaponShop) ||
+				title.contains(LanguageManager.names.armorShop) ||
+				title.contains(LanguageManager.names.consumableShop) ||
+				title.contains(LanguageManager.names.customShop)) {
 			Arena arenaInstance;
 			VDPlayer gamer;
 
@@ -2814,7 +2809,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Return to main shop menu
-			if (buttonName.contains(plugin.getLanguageString("messages.exit"))) {
+			if (buttonName.contains(LanguageManager.messages.exit)) {
 				player.openInventory(Inventories.createShop(arenaInstance.getCurrentWave() / 10 + 1, arenaInstance));
 				return;
 			}
@@ -2835,7 +2830,7 @@ public class InventoryListener implements Listener {
 
 			// Check if they can afford the item
 			if (!gamer.canAfford(cost)) {
-				PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.buy"));
+				PlayerManager.notifyFailure(player, LanguageManager.errors.buy);
 				return;
 			}
 
@@ -2862,25 +2857,25 @@ public class InventoryListener implements Listener {
 			if (Arrays.stream(GameItems.HELMET_MATERIALS).anyMatch(mat -> mat == buyType) &&
 					Objects.requireNonNull(equipment).getHelmet() == null) {
 				equipment.setHelmet(buy);
-				PlayerManager.notifySuccess(player, plugin.getLanguageString("confirms.helmet"));
+				PlayerManager.notifySuccess(player, LanguageManager.confirms.helmet);
 			} else if (Arrays.stream(GameItems.CHESTPLATE_MATERIALS).anyMatch(mat -> mat == buyType) &&
 					Objects.requireNonNull(equipment).getChestplate() == null) {
 				equipment.setChestplate(buy);
-				PlayerManager.notifySuccess(player, plugin.getLanguageString("confirms.chestplate"));
+				PlayerManager.notifySuccess(player, LanguageManager.confirms.chestplate);
 			} else if (Arrays.stream(GameItems.LEGGING_MATERIALS).anyMatch(mat -> mat == buyType) &&
 					Objects.requireNonNull(equipment).getLeggings() == null) {
 				equipment.setLeggings(buy);
-				PlayerManager.notifySuccess(player, plugin.getLanguageString("confirms.leggings"));
+				PlayerManager.notifySuccess(player, LanguageManager.confirms.leggings);
 			} else if (Arrays.stream(GameItems.BOOTS_MATERIALS).anyMatch(mat -> mat == buyType) &&
 					Objects.requireNonNull(equipment).getBoots() == null) {
 				equipment.setBoots(buy);
-				PlayerManager.notifySuccess(player, plugin.getLanguageString("confirms.boots"));
+				PlayerManager.notifySuccess(player, LanguageManager.confirms.boots);
 			} else {
-				PlayerManager.giveItem(player, buy, plugin.getLanguageString("errors.inventoryFull"));
-				PlayerManager.notifySuccess(player, plugin.getLanguageString("confirms.buy"));
+				PlayerManager.giveItem(player, buy, LanguageManager.errors.inventoryFull);
+				PlayerManager.notifySuccess(player, LanguageManager.confirms.buy);
 			}
 		}
-		else if (title.contains(plugin.getLanguageString("names.enchantShop"))) {
+		else if (title.contains(LanguageManager.names.enchantShop)) {
 			Arena arenaInstance;
 
 			// Attempt to get arena
@@ -2891,7 +2886,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Return to main shop menu
-			if (buttonName.contains(plugin.getLanguageString("messages.exit"))) {
+			if (buttonName.contains(LanguageManager.messages.exit)) {
 				player.openInventory(Inventories.createShop(arenaInstance.getCurrentWave() / 10 + 1, arenaInstance));
 				return;
 			}
@@ -2909,7 +2904,7 @@ public class InventoryListener implements Listener {
 
 			// Check if they can afford the item, then deduct
 			if (player.getLevel() < cost) {
-				PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.buy"));
+				PlayerManager.notifyFailure(player, LanguageManager.errors.buy);
 				return;
 			}
 			player.setLevel(player.getLevel() - cost);
@@ -2926,69 +2921,69 @@ public class InventoryListener implements Listener {
 			}
 
 			// Assign to known enchanting books
-			if (enchant.equals(plugin.getLanguageString("enchants.knockback").split(" ")[0]))
+			if (enchant.equals(LanguageManager.enchants.knockback.split(" ")[0]))
 				give = EnchantingBook.knockback();
-			else if (enchant.equals(plugin.getLanguageString("enchants.sweepingEdge").split(" ")[0]))
+			else if (enchant.equals(LanguageManager.enchants.sweepingEdge.split(" ")[0]))
 				give = EnchantingBook.sweepingEdge();
-			else if (enchant.equals(plugin.getLanguageString("enchants.smite").split(" ")[0]))
+			else if (enchant.equals(LanguageManager.enchants.smite.split(" ")[0]))
 				give = EnchantingBook.smite();
-			else if (enchant.equals(plugin.getLanguageString("enchants.sharpness").split(" ")[0]))
+			else if (enchant.equals(LanguageManager.enchants.sharpness.split(" ")[0]))
 				give = EnchantingBook.sharpness();
-			else if (enchant.equals(plugin.getLanguageString("enchants.fireAspect").split(" ")[0]))
+			else if (enchant.equals(LanguageManager.enchants.fireAspect.split(" ")[0]))
 				give = EnchantingBook.fireAspect();
-			else if (enchant.equals(plugin.getLanguageString("enchants.punch").split(" ")[0]))
+			else if (enchant.equals(LanguageManager.enchants.punch.split(" ")[0]))
 				give = EnchantingBook.punch();
-			else if (enchant.equals(plugin.getLanguageString("enchants.piercing").split(" ")[0]))
+			else if (enchant.equals(LanguageManager.enchants.piercing.split(" ")[0]))
 				give = EnchantingBook.piercing();
-			else if (enchant.equals(plugin.getLanguageString("enchants.quickCharge").split(" ")[0]))
+			else if (enchant.equals(LanguageManager.enchants.quickCharge.split(" ")[0]))
 				give = EnchantingBook.quickCharge();
-			else if (enchant.equals(plugin.getLanguageString("enchants.power").split(" ")[0]))
+			else if (enchant.equals(LanguageManager.enchants.power.split(" ")[0]))
 				give = EnchantingBook.power();
-			else if (enchant.equals(plugin.getLanguageString("enchants.loyalty").split(" ")[0]))
+			else if (enchant.equals(LanguageManager.enchants.loyalty.split(" ")[0]))
 				give = EnchantingBook.loyalty();
-			else if (enchant.equals(plugin.getLanguageString("enchants.flame").split(" ")[0]))
+			else if (enchant.equals(LanguageManager.enchants.flame.split(" ")[0]))
 				give = EnchantingBook.flame();
-			else if (enchant.equals(plugin.getLanguageString("enchants.multishot").split(" ")[0]))
+			else if (enchant.equals(LanguageManager.enchants.multishot.split(" ")[0]))
 				give = EnchantingBook.multishot();
-			else if (enchant.equals(plugin.getLanguageString("enchants.infinity").split(" ")[0]))
+			else if (enchant.equals(LanguageManager.enchants.infinity.split(" ")[0]))
 				give = EnchantingBook.infinity();
-			else if (enchant.equals(plugin.getLanguageString("enchants.blastProtection").split(" ")[0]))
+			else if (enchant.equals(LanguageManager.enchants.blastProtection.split(" ")[0]))
 				give = EnchantingBook.blastProtection();
-			else if (enchant.equals(plugin.getLanguageString("enchants.thorns").split(" ")[0]))
+			else if (enchant.equals(LanguageManager.enchants.thorns.split(" ")[0]))
 				give = EnchantingBook.thorns();
-			else if (enchant.equals(plugin.getLanguageString("enchants.projectileProtection").split(" ")[0]))
+			else if (enchant.equals(LanguageManager.enchants.projectileProtection.split(" ")[0]))
 				give = EnchantingBook.projectileProtection();
-			else if (enchant.equals(plugin.getLanguageString("enchants.protection").split(" ")[0]))
+			else if (enchant.equals(LanguageManager.enchants.protection.split(" ")[0]))
 				give = EnchantingBook.protection();
-			else if (enchant.equals(plugin.getLanguageString("enchants.unbreaking").split(" ")[0]))
+			else if (enchant.equals(LanguageManager.enchants.unbreaking.split(" ")[0]))
 				give = EnchantingBook.unbreaking();
-			else if (enchant.equals(plugin.getLanguageString("enchants.mending").split(" ")[0]))
+			else if (enchant.equals(LanguageManager.enchants.mending.split(" ")[0]))
 				give = EnchantingBook.mending();
 			else give = null;
 
-			PlayerManager.giveItem(player, give, plugin.getLanguageString("errors.inventoryFull"));
-			PlayerManager.notifySuccess(player, plugin.getLanguageString("confirms.buy"));
+			PlayerManager.giveItem(player, give, LanguageManager.errors.inventoryFull);
+			PlayerManager.notifySuccess(player, LanguageManager.confirms.buy);
 		}
 
 		// Stats menu for a player
-		else if (title.contains(plugin.getLanguageString("messages.playerStatistics")
-				.substring(plugin.getLanguageString("messages.playerStatistics").indexOf("%s") + 2))) {
-			String raw = plugin.getLanguageString("messages.playerStatistics");
+		else if (title.contains(LanguageManager.messages.playerStatistics
+				.substring(LanguageManager.messages.playerStatistics.indexOf("%s") + 2))) {
+			String raw = LanguageManager.messages.playerStatistics;
 			String name = title.substring(raw.indexOf("%s") + 6, title.length() - raw.length() + raw.indexOf("%s") + 2);
 			if (buttonName.contains("Kits"))
 				player.openInventory(Inventories.createPlayerKitsInventory(name, player.getName()));
 		}
 
 		// Kits menu for a player
-		else if (title.contains(plugin.getLanguageString("messages.playerKits")
-				.substring(plugin.getLanguageString("messages.playerKits").indexOf("%s") + 2))) {
-			String raw = plugin.getLanguageString("messages.playerKits");
+		else if (title.contains(LanguageManager.messages.playerKits
+				.substring(LanguageManager.messages.playerKits.indexOf("%s") + 2))) {
+			String raw = LanguageManager.messages.playerKits;
 			FileConfiguration playerData = plugin.getPlayerData();
 			String name = title.substring(raw.indexOf("%s") + 6, title.length() - raw.length() + raw.indexOf("%s") + 2);
 			Kit kit = Kit.getKit(buttonName.substring(4));
 			String path = name + ".kits.";
 
-			if (buttonName.contains(plugin.getLanguageString("messages.exit"))) {
+			if (buttonName.contains(LanguageManager.messages.exit)) {
 				player.openInventory(Inventories.createPlayerStatsInventory(name));
 				return;
 			}
@@ -3010,8 +3005,8 @@ public class InventoryListener implements Listener {
 						playerData.set(name + ".crystalBalance",
 								playerData.getInt(name + ".crystalBalance") - kit.getPrice(1));
 						playerData.set(path + kit.getName(), true);
-						PlayerManager.notifySuccess(player, plugin.getLanguageString("confirms.kitBuy"));
-					} else PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.kitBuy"));
+						PlayerManager.notifySuccess(player, LanguageManager.confirms.kitBuy);
+					} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitBuy);
 			}
 
 			// Multiple tier kits
@@ -3024,15 +3019,15 @@ public class InventoryListener implements Listener {
 						playerData.set(name + ".crystalBalance",
 								playerData.getInt(name + ".crystalBalance") - kit.getPrice(kitLevel));
 						playerData.set(path + kit.getName(), kitLevel);
-						PlayerManager.notifySuccess(player, plugin.getLanguageString("confirms.kitBuy"));
-					} else PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.kitBuy"));
+						PlayerManager.notifySuccess(player, LanguageManager.confirms.kitBuy);
+					} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitBuy);
 				} else {
 					if (playerData.getInt(name + ".crystalBalance") >= kit.getPrice(++kitLevel)) {
 						playerData.set(name + ".crystalBalance",
 								playerData.getInt(name + ".crystalBalance") - kit.getPrice(kitLevel));
 						playerData.set(path + kit.getName(), kitLevel);
-						PlayerManager.notifySuccess(player, plugin.getLanguageString("confirms.kitUpgrade"));
-					} else PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.kitUpgrade"));
+						PlayerManager.notifySuccess(player, LanguageManager.confirms.kitUpgrade);
+					} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitUpgrade);
 				}
 			}
 
@@ -3041,7 +3036,7 @@ public class InventoryListener implements Listener {
 		}
 
 		// Kit selection menu for an arena
-		else if (title.contains(" " + plugin.getLanguageString("messages.kits"))) {
+		else if (title.contains(" " + LanguageManager.messages.kits)) {
 			FileConfiguration playerData = plugin.getPlayerData();
 			Arena arenaInstance;
 			VDPlayer gamer;
@@ -3058,7 +3053,7 @@ public class InventoryListener implements Listener {
 			String path = player.getName() + ".kits.";
 
 			// Leave if EXIT
-			if (buttonName.contains(plugin.getLanguageString("messages.exit"))) {
+			if (buttonName.contains(LanguageManager.messages.exit)) {
 				player.closeInventory();
 				return;
 			}
@@ -3079,9 +3074,9 @@ public class InventoryListener implements Listener {
 				if (playerData.getBoolean(path + kit.getName()) || kit.equals(Kit.orc()) ||
 						kit.equals(Kit.farmer()) || kit.equals(Kit.none())) {
 					gamer.setKit(kit.setKitLevel(1));
-					PlayerManager.notifySuccess(player, plugin.getLanguageString("confirms.kitSelect"));
+					PlayerManager.notifySuccess(player, LanguageManager.confirms.kitSelect);
 				} else {
-					PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.kitSelect"));
+					PlayerManager.notifyFailure(player, LanguageManager.errors.kitSelect);
 					return;
 				}
 			}
@@ -3089,11 +3084,11 @@ public class InventoryListener implements Listener {
 			// Multiple tier kits
 			else {
 				if (playerData.getInt(path + kit.getName()) < 1) {
-					PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.kitSelect"));
+					PlayerManager.notifyFailure(player, LanguageManager.errors.kitSelect);
 					return;
 				}
 				gamer.setKit(kit.setKitLevel(playerData.getInt(path + kit.getName())));
-				PlayerManager.notifySuccess(player, plugin.getLanguageString("confirms.kitSelect"));
+				PlayerManager.notifySuccess(player, LanguageManager.confirms.kitSelect);
 			}
 
 			// Close inventory and create scoreboard
@@ -3102,7 +3097,7 @@ public class InventoryListener implements Listener {
 		}
 
 		// Challenge selection menu for an arena
-		else if (title.contains(" " + plugin.getLanguageString("messages.challenges"))) {
+		else if (title.contains(" " + LanguageManager.messages.challenges)) {
 			Arena arenaInstance;
 			VDPlayer gamer;
 
@@ -3117,7 +3112,7 @@ public class InventoryListener implements Listener {
 			Challenge challenge = Challenge.getChallenge(buttonName.substring(4));
 
 			// Leave if EXIT
-			if (buttonName.contains(plugin.getLanguageString("messages.exit"))) {
+			if (buttonName.contains(LanguageManager.messages.exit)) {
 				player.closeInventory();
 				return;
 			}
@@ -3129,19 +3124,19 @@ public class InventoryListener implements Listener {
 			// Option for no challenge
 			if (Challenge.none().equals(challenge)) {
 				gamer.resetChallenges();
-				PlayerManager.notifySuccess(player, plugin.getLanguageString("confirms.challengeAdd"));
+				PlayerManager.notifySuccess(player, LanguageManager.confirms.challengeAdd);
 			}
 
 			// Remove a challenge
 			else if (gamer.getChallenges().contains(challenge)) {
 				gamer.removeChallenge(challenge);
-				PlayerManager.notifySuccess(player, plugin.getLanguageString("confirms.challengeDelete"));
+				PlayerManager.notifySuccess(player, LanguageManager.confirms.challengeDelete);
 			}
 
 			// Add a challenge
 			else {
 				gamer.addChallenge(challenge);
-				PlayerManager.notifySuccess(player, plugin.getLanguageString("confirms.challengeAdd"));
+				PlayerManager.notifySuccess(player, LanguageManager.confirms.challengeAdd);
 			}
 
 			// Create scoreboard and update inventory
@@ -3150,15 +3145,15 @@ public class InventoryListener implements Listener {
 		}
 
 		// Stats menu for an arena
-		else if (title.contains(plugin.getLanguageString("messages.arenaInfo")
-				.substring(plugin.getLanguageString("messages.arenaInfo").indexOf("%s") + 2))) {
+		else if (title.contains(LanguageManager.messages.arenaInfo
+				.substring(LanguageManager.messages.arenaInfo.indexOf("%s") + 2))) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
 
-			if (buttonName.contains(plugin.getLanguageString("messages.customShopInv")))
+			if (buttonName.contains(LanguageManager.messages.customShopInv))
 				player.openInventory(GameManager.getArena(meta.getInteger1()).getMockCustomShop());
 
-			else if (buttonName.contains(plugin.getLanguageString("messages.allowedKits")))
+			else if (buttonName.contains(LanguageManager.messages.allowedKits))
 				player.openInventory(Inventories.createAllowedKitsInventory(meta.getInteger1(), true));
 		}
 	}
@@ -3175,8 +3170,7 @@ public class InventoryListener implements Listener {
 		// Check for community chest with shop inside it
 		if (title.contains("Community Chest") && e.getInventory().contains(GameItems.shop())) {
 			e.getInventory().removeItem(GameItems.shop());
-			PlayerManager.giveItem((Player) e.getPlayer(), GameItems.shop(),
-					plugin.getLanguageData().getString("inventoryFull"));
+			PlayerManager.giveItem((Player) e.getPlayer(), GameItems.shop(), LanguageManager.errors.inventoryFull);
 		}
 	}
 
