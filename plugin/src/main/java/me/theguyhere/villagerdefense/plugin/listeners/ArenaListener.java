@@ -39,7 +39,7 @@ public class ArenaListener implements Listener {
         // Ignore if player is already in a game somehow
         if (GameManager.checkPlayer(player)) {
             e.setCancelled(true);
-            PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.join"));
+            PlayerManager.notifyFailure(player, LanguageManager.errors.join);
             return;
         }
 
@@ -49,7 +49,7 @@ public class ArenaListener implements Listener {
 
         // Check if arena is closed
         if (arena.isClosed()) {
-            PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.close"));
+            PlayerManager.notifyFailure(player, LanguageManager.errors.close);
             e.setCancelled(true);
             return;
         }
@@ -66,7 +66,7 @@ public class ArenaListener implements Listener {
             spawn = arena.getPlayerSpawn().getLocation();
         } catch (Exception err) {
             err.printStackTrace();
-            PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.fatal"));
+            PlayerManager.notifyFailure(player, LanguageManager.errors.fatal);
             return;
         }
 
@@ -96,7 +96,7 @@ public class ArenaListener implements Listener {
 
             // Notify everyone in the arena
             arena.getPlayers().forEach(gamer ->
-                    PlayerManager.notifyAlert(gamer.getPlayer(), plugin.getLanguageStringFormatted("messages.join",
+                    PlayerManager.notifyAlert(gamer.getPlayer(), String.format(LanguageManager.messages.join,
                             player.getName())));
 
             // Update player tracking and in-game stats
@@ -136,7 +136,7 @@ public class ArenaListener implements Listener {
 
             // Notify everyone in the arena
             arena.getPlayers().forEach(gamer ->
-                    PlayerManager.notifyAlert(gamer.getPlayer(), plugin.getLanguageStringFormatted("messages.join",
+                    PlayerManager.notifyAlert(gamer.getPlayer(), String.format(LanguageManager.messages.join,
                             player.getName())));
 
             // Update player tracking and in-game stats
@@ -350,7 +350,7 @@ public class ArenaListener implements Listener {
             gamer = arena.getPlayer(player);
         } catch (Exception err) {
             e.setCancelled(true);
-            PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.notInGame"));
+            PlayerManager.notifyFailure(player, LanguageManager.errors.notInGame);
             return;
         }
 
@@ -387,7 +387,7 @@ public class ArenaListener implements Listener {
             // Notify people in arena player left
             arena.getPlayers().forEach(fighter ->
                     PlayerManager.notifyAlert(fighter.getPlayer(),
-                            plugin.getLanguageStringFormatted("messages.leaveArena", player.getName())));
+                            String.format(LanguageManager.messages.leaveArena, player.getName())));
 
             int actives = arena.getActiveCount();
 
@@ -395,7 +395,7 @@ public class ArenaListener implements Listener {
             if (arena.hasLateArrival() && actives < arena.getMaxPlayers())
                 arena.getSpectators().forEach(spectator ->
                     PlayerManager.notifyAlert(spectator.getPlayer(),
-                            plugin.getLanguageStringFormatted("messages.late", player.getName())));
+                            String.format(LanguageManager.messages.late, player.getName())));
 
             // Sets them up for teleport to lobby
             player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
@@ -420,7 +420,7 @@ public class ArenaListener implements Listener {
                         plugin.getPlayerData().getInt(player.getName() + ".crystalBalance") + reward);
                 plugin.getPlayerData().set(player.getName() + ".crystalBalance",
                         plugin.getPlayerData().getInt(player.getName() + ".crystalBalance") + bonus);
-                PlayerManager.notifySuccess(player, plugin.getLanguageString("messages.crystalsEarned"),
+                PlayerManager.notifySuccess(player, LanguageManager.messages.crystalsEarned,
                         ChatColor.AQUA, String.format("%d (+%d)", reward, bonus));
             }
 
@@ -508,12 +508,12 @@ public class ArenaListener implements Listener {
         // Notify players that the game has ended (Title)
         arena.getPlayers().forEach(player ->
                 player.getPlayer().sendTitle(CommunicationManager.format("&4&l" +
-                        plugin.getLanguageString("messages.gameOver")),
-                        "", Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
+                        LanguageManager.messages.gameOver), "", Utils.secondsToTicks(.5),
+                        Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
 
         // Notify players that the game has ended (Chat)
         arena.getPlayers().forEach(player ->
-                PlayerManager.notifyAlert(player.getPlayer(), plugin.getLanguageString("messages.end"),
+                PlayerManager.notifyAlert(player.getPlayer(), LanguageManager.messages.end,
                         ChatColor.AQUA, Integer.toString(arena.getCurrentWave() - 1), "10"));
 
         // Set all players to invincible
@@ -532,7 +532,7 @@ public class ArenaListener implements Listener {
             if (arena.checkNewRecord(new ArenaRecord(arena.getCurrentWave() - 1, arena.getActives().stream()
                     .map(vdPlayer -> vdPlayer.getPlayer().getName()).collect(Collectors.toList())))) {
                 arena.getPlayers().forEach(player -> player.getPlayer().sendTitle(
-                        CommunicationManager.format(plugin.getLanguageString("messages.record")), null,
+                        CommunicationManager.format("&a" + LanguageManager.messages.record), null,
                         Utils.secondsToTicks(.5), Utils.secondsToTicks(3.5), Utils.secondsToTicks(1)));
                 arena.refreshArenaBoard();
             }
@@ -557,7 +557,7 @@ public class ArenaListener implements Listener {
                 plugin.getPlayerData().set(vdPlayer.getPlayer().getName() + ".crystalBalance",
                         plugin.getPlayerData().getInt(vdPlayer.getPlayer().getName() + ".crystalBalance") + bonus);
                 PlayerManager.notifySuccess(vdPlayer.getPlayer(),
-                        plugin.getLanguageString("messages.crystalsEarned"),
+                        LanguageManager.messages.crystalsEarned,
                         ChatColor.AQUA, String.format("%d (+%d)", reward, bonus));
             });
         }

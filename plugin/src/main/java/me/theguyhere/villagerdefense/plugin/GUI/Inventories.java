@@ -10,6 +10,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -69,7 +70,7 @@ public class Inventories {
 				CommunicationManager.format("&7Manage leaderboards")));
 
 		// Option to exit
-		inv.setItem(53, InventoryItems.exit(plugin));
+		inv.setItem(53, InventoryItems.exit());
 
 		return inv;
 	}
@@ -95,7 +96,7 @@ public class Inventories {
 		inv.setItem(6, InventoryItems.remove("LOBBY"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -136,7 +137,7 @@ public class Inventories {
 		}
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -163,7 +164,7 @@ public class Inventories {
 		inv.setItem(6, InventoryItems.remove("INFO BOARD"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -211,7 +212,7 @@ public class Inventories {
 				CommunicationManager.format("&9&lTop Wave Leaderboard"), ItemManager.BUTTON_FLAGS, null));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -237,7 +238,7 @@ public class Inventories {
 		inv.setItem(6, InventoryItems.remove("LEADERBOARD"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -263,7 +264,7 @@ public class Inventories {
 		inv.setItem(6, InventoryItems.remove("LEADERBOARD"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -289,7 +290,7 @@ public class Inventories {
 		inv.setItem(6, InventoryItems.remove("LEADERBOARD"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -315,7 +316,7 @@ public class Inventories {
 		inv.setItem(6, InventoryItems.remove("LEADERBOARD"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -341,7 +342,7 @@ public class Inventories {
 		inv.setItem(6, InventoryItems.remove("LEADERBOARD"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -460,7 +461,7 @@ public class Inventories {
 		inv.setItem(7, InventoryItems.remove("ARENA"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -519,7 +520,7 @@ public class Inventories {
 		inv.setItem(7, InventoryItems.remove("LEADERBOARD"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -594,7 +595,7 @@ public class Inventories {
 				CommunicationManager.format("&7Minimum players needed for game to start")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -623,7 +624,7 @@ public class Inventories {
 		inv.setItem(6, InventoryItems.remove("SPAWN"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -668,7 +669,7 @@ public class Inventories {
 		inv.setItem(6, InventoryItems.remove("WAITING ROOM"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -708,7 +709,7 @@ public class Inventories {
 					CommunicationManager.format("&2&lIncrease")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -732,7 +733,7 @@ public class Inventories {
 					CommunicationManager.format("&2&lIncrease")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -780,7 +781,7 @@ public class Inventories {
 				CommunicationManager.format("&7number of players")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -810,7 +811,7 @@ public class Inventories {
 		}
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -854,7 +855,7 @@ public class Inventories {
 		}
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -900,7 +901,7 @@ public class Inventories {
 		}
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -929,7 +930,7 @@ public class Inventories {
 		inv.setItem(6, InventoryItems.remove("SPAWN"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1013,7 +1014,7 @@ public class Inventories {
 				CommunicationManager.format("&7(Check the arena number in arenaData.yml)")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1058,7 +1059,7 @@ public class Inventories {
 				CommunicationManager.format("&7players in the game")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1116,7 +1117,7 @@ public class Inventories {
 				CommunicationManager.format("&c&l-1000 gems")));
 
 		// Option to exit
-		inv.setItem(26, InventoryItems.exit(plugin));
+		inv.setItem(26, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1233,7 +1234,7 @@ public class Inventories {
 				CommunicationManager.format("&7choose from a menu of presets")));
 
 		// Option to exit
-		inv.setItem(17, InventoryItems.exit(plugin));
+		inv.setItem(17, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1268,7 +1269,7 @@ public class Inventories {
 					CommunicationManager.format("&2&lIncrease")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1305,7 +1306,7 @@ public class Inventories {
 					CommunicationManager.format("&2&lIncrease")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1318,16 +1319,16 @@ public class Inventories {
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54,
 				CommunicationManager.format("&k") +
 				(mock ? CommunicationManager.format("&9&l" +
-						plugin.getLanguageString("messages.allowedKits") + ": " + arenaInstance.getName()) :
+						LanguageManager.messages.allowedKits + ": " + arenaInstance.getName()) :
 						CommunicationManager.format("&9&l" +
-								plugin.getLanguageString("messages.allowedKits"))));
+								LanguageManager.messages.allowedKits)));
 
 		// Gift kits
 		for (int i = 0; i < 9; i++)
 			inv.setItem(i, ItemManager.createItem(Material.LIME_STAINED_GLASS_PANE,
-					CommunicationManager.format("&a&l" + plugin.getLanguageString("names.giftKits")),
+					CommunicationManager.format("&a&l" + LanguageManager.names.giftKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							plugin.getLanguageString("messages.giftKitsDescription"))));
+							LanguageManager.messages.giftKitsDescription)));
 
 		if (arenaInstance.getBannedKits().contains(Kit.orc().getName()))
 			inv.setItem(9, Kit.orc().getButton(-1, false));
@@ -1360,9 +1361,9 @@ public class Inventories {
 		// Ability kits
 		for (int i = 18; i < 27; i++)
 			inv.setItem(i, ItemManager.createItem(Material.MAGENTA_STAINED_GLASS_PANE,
-					CommunicationManager.format("&d&l" + plugin.getLanguageString("names.abilityKits")),
+					CommunicationManager.format("&d&l" + LanguageManager.names.abilityKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							plugin.getLanguageString("messages.abilityKitsDescription"))));
+							LanguageManager.messages.abilityKitsDescription)));
 
 		if (arenaInstance.getBannedKits().contains(Kit.mage().getName()))
 			inv.setItem(27, Kit.mage().getButton(-1, false));
@@ -1395,9 +1396,9 @@ public class Inventories {
 		// Effect kits
 		for (int i = 36; i < 45; i++)
 			inv.setItem(i, ItemManager.createItem(Material.YELLOW_STAINED_GLASS_PANE,
-					CommunicationManager.format("&e&l" + plugin.getLanguageString("names.effectKits")),
+					CommunicationManager.format("&e&l" + LanguageManager.names.effectKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							plugin.getLanguageString("messages.effectKitsDescription"))));
+							LanguageManager.messages.effectKitsDescription)));
 
 		if (arenaInstance.getBannedKits().contains(Kit.blacksmith().getName()))
 			inv.setItem(45, Kit.blacksmith().getButton(-1, false));
@@ -1416,7 +1417,7 @@ public class Inventories {
 		else inv.setItem(49, Kit.giant().getButton(-1, true));
 
 		// Option to exit
-		inv.setItem(53, InventoryItems.exit(plugin));
+		inv.setItem(53, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1426,16 +1427,16 @@ public class Inventories {
 		String label = GameManager.getArena(arena).getDifficultyLabel();
 		switch (label) {
 			case "Easy":
-				label = "&a&l" + plugin.getLanguageString("names.easy");
+				label = "&a&l" + LanguageManager.names.easy;
 				break;
 			case "Medium":
-				label = "&e&l" + plugin.getLanguageString("names.medium");
+				label = "&e&l" + LanguageManager.names.medium;
 				break;
 			case "Hard":
-				label = "&c&l" + plugin.getLanguageString("names.hard");
+				label = "&c&l" + LanguageManager.names.hard;
 				break;
 			case "Insane":
-				label = "&d&l" + plugin.getLanguageString("names.insane");
+				label = "&d&l" + LanguageManager.names.insane;
 				break;
 			default:
 				label = "";
@@ -1448,26 +1449,26 @@ public class Inventories {
 
 		// "Easy" option
 		inv.setItem(0, ItemManager.createItem(Material.LIME_CONCRETE,
-				CommunicationManager.format("&a&l" + plugin.getLanguageString("names.easy"))));
+				CommunicationManager.format("&a&l" + LanguageManager.names.easy)));
 
 		// "Medium" option
 		inv.setItem(1, ItemManager.createItem(Material.YELLOW_CONCRETE,
-				CommunicationManager.format("&e&l" + plugin.getLanguageString("names.medium"))));
+				CommunicationManager.format("&e&l" + LanguageManager.names.medium)));
 
 		// "Hard" option
 		inv.setItem(2, ItemManager.createItem(Material.RED_CONCRETE,
-				CommunicationManager.format("&c&l" + plugin.getLanguageString("names.hard"))));
+				CommunicationManager.format("&c&l" + LanguageManager.names.hard)));
 
 		// "Insane" option
 		inv.setItem(3, ItemManager.createItem(Material.MAGENTA_CONCRETE,
-				CommunicationManager.format("&d&l" + plugin.getLanguageString("names.insane"))));
+				CommunicationManager.format("&d&l" + LanguageManager.names.insane)));
 
 		// "None" option
 		inv.setItem(4, ItemManager.createItem(Material.LIGHT_GRAY_CONCRETE,
-				CommunicationManager.format("&7&l" + plugin.getLanguageString("names.none"))));
+				CommunicationManager.format("&7&l" + LanguageManager.names.none)));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1494,7 +1495,7 @@ public class Inventories {
 		inv.setItem(6, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&l4")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1523,7 +1524,7 @@ public class Inventories {
 				getToggleStatus(arenaInstance.hasBorderParticles()))));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1549,7 +1550,7 @@ public class Inventories {
 		inv.setItem(4, InventoryItems.remove("CORNER 1"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1591,7 +1592,7 @@ public class Inventories {
 		inv.setItem(4, InventoryItems.remove("CORNER 2"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1630,7 +1631,7 @@ public class Inventories {
 					CommunicationManager.format("&2&lIncrease")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1653,7 +1654,7 @@ public class Inventories {
 					CommunicationManager.format("&2&lIncrease")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1730,7 +1731,7 @@ public class Inventories {
 				CommunicationManager.format("&7Played when a player uses their ability")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit(plugin));
+		inv.setItem(8, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1763,7 +1764,7 @@ public class Inventories {
 		inv.setItem(14, arenaInstance.getWaitingSoundButton(14));
 
 		// Option to exit
-		inv.setItem(17, InventoryItems.exit(plugin));
+		inv.setItem(17, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1806,50 +1807,50 @@ public class Inventories {
 				CommunicationManager.format("&d&lInsane Preset")));
 
 		// Option to exit
-		inv.setItem(53, InventoryItems.exit(plugin));
+		inv.setItem(53, InventoryItems.exit());
 
 		return inv;
 	}
 
 	// Generate the shop menu
 	public static Inventory createShop(int level, Arena arena) {
-		String disabled = " &4&l[" + plugin.getLanguageString("messages.disabled") + "]";
+		String disabled = " &4&l[" + LanguageManager.messages.disabled + "]";
 		
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
-				CommunicationManager.format("&2&l" + plugin.getLanguageString("messages.level") +
-						" &9&l" + level + " &2&l" + plugin.getLanguageString("names.itemShop")));
+				CommunicationManager.format("&2&l" + LanguageManager.messages.level +
+						" &9&l" + level + " &2&l" + LanguageManager.names.itemShop));
 
 		inv.setItem(0, ItemManager.createItem(Material.GOLDEN_SWORD,
-				CommunicationManager.format("&4&l" + plugin.getLanguageString("messages.level") +
-						" &9&l" + level + " &4&l" + plugin.getLanguageString("names.weaponShop") +
+				CommunicationManager.format("&4&l" + LanguageManager.messages.level +
+						" &9&l" + level + " &4&l" + LanguageManager.names.weaponShop +
 						(arena.hasNormal() ? "" : disabled)), ItemManager.BUTTON_FLAGS, arena.hasNormal() ?
 						ItemManager.glow() : null));
 
 		inv.setItem(1, ItemManager.createItem(Material.GOLDEN_CHESTPLATE,
-				CommunicationManager.format("&5&l" + plugin.getLanguageString("messages.level") +
-						" &9&l" + level + " &5&l" + plugin.getLanguageString("names.armorShop") +
+				CommunicationManager.format("&5&l" + LanguageManager.messages.level +
+						" &9&l" + level + " &5&l" + LanguageManager.names.armorShop +
 						(arena.hasNormal() ? "" : disabled)), ItemManager.BUTTON_FLAGS, arena.hasNormal() ?
 						ItemManager.glow() : null));
 
 		inv.setItem(2, ItemManager.createItem(Material.GOLDEN_APPLE,
-				CommunicationManager.format("&3&l" + plugin.getLanguageString("messages.level") +
-						" &9&l" + level + " &3&l" + plugin.getLanguageString("names.consumableShop") +
+				CommunicationManager.format("&3&l" + LanguageManager.messages.level +
+						" &9&l" + level + " &3&l" + LanguageManager.names.consumableShop +
 						(arena.hasNormal() ? "" : disabled)), ItemManager.BUTTON_FLAGS, arena.hasNormal() ?
 						ItemManager.glow() : null));
 
 		inv.setItem(4, ItemManager.createItem(Material.BOOKSHELF,
-				CommunicationManager.format("&a&l" + plugin.getLanguageString("names.enchantShop") + 
+				CommunicationManager.format("&a&l" + LanguageManager.names.enchantShop +
 						(arena.hasEnchants() ? "" : disabled)), ItemManager.BUTTON_FLAGS, arena.hasEnchants() ?
 						ItemManager.glow() : null));
 
-		inv.setItem(6, ItemManager.createItem(Material.QUARTZ, 
-				CommunicationManager.format("&6&l" + plugin.getLanguageString("names.customShop") + 
+		inv.setItem(6, ItemManager.createItem(Material.QUARTZ,
+				CommunicationManager.format("&6&l" + LanguageManager.names.customShop +
 						(arena.hasCustom() ? "" : disabled)), ItemManager.BUTTON_FLAGS, arena.hasNormal() ?
 						ItemManager.glow() : null));
 
 		inv.setItem(8, ItemManager.createItem(Material.CHEST,
-				CommunicationManager.format("&d&l" + plugin.getLanguageString("names.communityChest") +
+				CommunicationManager.format("&d&l" + LanguageManager.names.communityChest +
 						(arena.hasCommunity() ? "" : disabled))));
 
 		return inv;
@@ -1864,8 +1865,8 @@ public class Inventories {
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 27, CommunicationManager.format("&k") +
-				CommunicationManager.format("&4&l" + plugin.getLanguageString("messages.level") +
-						" &9&l" + level + " &4&l" + plugin.getLanguageString("names.weaponShop")));
+				CommunicationManager.format("&4&l" + LanguageManager.messages.level +
+						" &9&l" + level + " &4&l" + LanguageManager.names.weaponShop));
 
 		// Fill in swords
 		List<ItemStack> swords = new ArrayList<>();
@@ -1900,7 +1901,7 @@ public class Inventories {
 			inv.setItem(i + 15, modifyPrice(ammo.get(i), modifier));
 
 		// Return option
-		inv.setItem(22, InventoryItems.exit(plugin));
+		inv.setItem(22, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1914,8 +1915,8 @@ public class Inventories {
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 27, CommunicationManager.format("&k") +
-				CommunicationManager.format("&5&l" + plugin.getLanguageString("messages.level") +
-						" &9&l" + level + " &5&l" + plugin.getLanguageString("names.armorShop")));
+				CommunicationManager.format("&5&l" + LanguageManager.messages.level +
+						" &9&l" + level + " &5&l" + LanguageManager.names.armorShop));
 
 		// Fill in helmets
 		List<ItemStack> helmets = new ArrayList<>();
@@ -1950,7 +1951,7 @@ public class Inventories {
 			inv.setItem(i + 14, modifyPrice(boots.get(i), modifier));
 
 		// Return option
-		inv.setItem(22, InventoryItems.exit(plugin));
+		inv.setItem(22, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1964,8 +1965,8 @@ public class Inventories {
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 18, CommunicationManager.format("&k") +
-				CommunicationManager.format("&3&l" + plugin.getLanguageString("messages.level") +
-						" &9&l" + level + " &3&l" + plugin.getLanguageString("names.consumableShop")));
+				CommunicationManager.format("&3&l" + LanguageManager.messages.level +
+						" &9&l" + level + " &3&l" + LanguageManager.names.consumableShop));
 
 		// Fill in food
 		List<ItemStack> foods = new ArrayList<>();
@@ -1984,7 +1985,7 @@ public class Inventories {
 			inv.setItem(i + 5, modifyPrice(others.get(i), modifier));
 
 		// Return option
-		inv.setItem(13, InventoryItems.exit(plugin));
+		inv.setItem(13, InventoryItems.exit());
 
 		return inv;
 	}
@@ -1993,7 +1994,7 @@ public class Inventories {
 	public static Inventory createEnchantShop() {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 54, CommunicationManager.format("&k") +
-				CommunicationManager.format("&a&l" + plugin.getLanguageString("names.enchantShop")));
+				CommunicationManager.format("&a&l" + LanguageManager.names.enchantShop));
 
 		// Melee enchants
 		inv.setItem(0, ItemManager.createItem(Material.PISTON,
@@ -2058,7 +2059,7 @@ public class Inventories {
 				CommunicationManager.format("&2Costs 20 XP Levels")));
 
 		// Return option
-		inv.setItem(53, InventoryItems.exit(plugin));
+		inv.setItem(53, InventoryItems.exit());
 
 		return inv;
 	}
@@ -2069,51 +2070,51 @@ public class Inventories {
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
-				CommunicationManager.format("&2&l" + plugin.getLanguageStringFormatted(
-						"messages.playerStatistics", name)));
+				CommunicationManager.format("&2&l" + String.format(LanguageManager.messages.playerStatistics,
+						name)));
 
 		// Total kills
 		inv.setItem(0, ItemManager.createItem(Material.DRAGON_HEAD,
-				CommunicationManager.format("&4&l" + plugin.getLanguageString("playerStats.totalKills.name") +
+				CommunicationManager.format("&4&l" + LanguageManager.playerStats.totalKills.name +
 						": &4" + playerData.getInt(name + ".totalKills")),
 				CommunicationManager.format("&7" +
-						plugin.getLanguageString("playerStats.totalKills.description"))));
+						LanguageManager.playerStats.totalKills.description)));
 
 		// Top kills
 		inv.setItem(1, ItemManager.createItem(Material.ZOMBIE_HEAD,
-				CommunicationManager.format("&c&l" + plugin.getLanguageString("playerStats.topKills.name") +
+				CommunicationManager.format("&c&l" + LanguageManager.playerStats.topKills.name +
 						": &c" + playerData.getInt(name + ".topKills")),
 				CommunicationManager.format("&7" +
-						plugin.getLanguageString("playerStats.topKills.description"))));
+						LanguageManager.playerStats.topKills.description)));
 
 		// Total gems
 		inv.setItem(2, ItemManager.createItem(Material.EMERALD_BLOCK,
-				CommunicationManager.format("&2&l" + plugin.getLanguageString("playerStats.totalGems.name") +
+				CommunicationManager.format("&2&l" + LanguageManager.playerStats.totalGems.name +
 						": &2" + playerData.getInt(name + ".totalGems")),
 				CommunicationManager.format("&7" +
-						plugin.getLanguageString("playerStats.totalGems.description"))));
+						LanguageManager.playerStats.totalGems.description)));
 
 		// Top balance
 		inv.setItem(3, ItemManager.createItem(Material.EMERALD,
-				CommunicationManager.format("&a&l" + plugin.getLanguageString("playerStats.topBalance.name") +
+				CommunicationManager.format("&a&l" + LanguageManager.playerStats.topBalance.name +
 						": &a" + playerData.getInt(name + ".topBalance")),
 				CommunicationManager.format("&7" +
-						plugin.getLanguageString("playerStats.topBalance.description"))));
+						LanguageManager.playerStats.topBalance.description)));
 
 		// Top wave
 		inv.setItem(4, ItemManager.createItem(Material.GOLDEN_SWORD,
-				CommunicationManager.format("&3&l" + plugin.getLanguageString("playerStats.topWave.name") +
+				CommunicationManager.format("&3&l" + LanguageManager.playerStats.topWave.name +
 						": &3" + playerData.getInt(name + ".topWave")),
 				ItemManager.BUTTON_FLAGS, null, CommunicationManager.format("&7" +
-						plugin.getLanguageString("playerStats.topWave.description"))));
+						LanguageManager.playerStats.topWave.description)));
 
 		// Kits
 		inv.setItem(6, ItemManager.createItem(Material.ENDER_CHEST, CommunicationManager.format("&9&l" +
-				plugin.getLanguageString("messages.kits"))));
+				LanguageManager.messages.kits)));
 
 		// Crystal balance
 		inv.setItem(8, ItemManager.createItem(Material.DIAMOND,
-				CommunicationManager.format("&b&l" + plugin.getLanguageString("messages.crystalBalance") +
+				CommunicationManager.format("&b&l" + LanguageManager.messages.crystalBalance +
 						": &b" + playerData.getInt(name + ".crystalBalance"))));
 
 		return inv;
@@ -2126,15 +2127,14 @@ public class Inventories {
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 54, CommunicationManager.format("&k") +
-				CommunicationManager.format("&9&l" + plugin.getLanguageStringFormatted("messages.playerKits",
-						name)));
+				CommunicationManager.format("&9&l" + String.format(LanguageManager.messages.playerKits, name)));
 
 		// Gift kits
 		for (int i = 0; i < 9; i++)
 			inv.setItem(i, ItemManager.createItem(Material.LIME_STAINED_GLASS_PANE,
-					CommunicationManager.format("&a&l" + plugin.getLanguageString("names.giftKits")),
+					CommunicationManager.format("&a&l" + LanguageManager.names.giftKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							plugin.getLanguageString("messages.giftKitsDescription"))));
+							LanguageManager.messages.giftKitsDescription)));
 
 		inv.setItem(9, Kit.orc().getButton(1, true));
 		inv.setItem(10, Kit.farmer().getButton(1, true));
@@ -2156,9 +2156,9 @@ public class Inventories {
 		// Ability kits
 		for (int i = 18; i < 27; i++)
 			inv.setItem(i, ItemManager.createItem(Material.MAGENTA_STAINED_GLASS_PANE,
-					CommunicationManager.format("&d&l" + plugin.getLanguageString("names.abilityKits")),
+					CommunicationManager.format("&d&l" + LanguageManager.names.abilityKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							plugin.getLanguageString("messages.abilityKitsDescription"))));
+							LanguageManager.messages.abilityKitsDescription)));
 
 		inv.setItem(27, Kit.mage().getButton(playerData.getInt(path + Kit.mage().getName()), true));
 		inv.setItem(28, Kit.ninja().getButton(playerData.getInt(path + Kit.ninja().getName()),
@@ -2180,9 +2180,9 @@ public class Inventories {
 		// Effect kits
 		for (int i = 36; i < 45; i++)
 			inv.setItem(i, ItemManager.createItem(Material.YELLOW_STAINED_GLASS_PANE,
-					CommunicationManager.format("&e&l" + plugin.getLanguageString("names.effectKits")),
+					CommunicationManager.format("&e&l" + LanguageManager.names.effectKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							plugin.getLanguageString("messages.effectKitsDescription"))));
+							LanguageManager.messages.effectKitsDescription)));
 
 		inv.setItem(45, Kit.blacksmith().getButton(playerData.getBoolean(path + Kit.blacksmith().getName()) ?
 				1 : 0, true));
@@ -2198,11 +2198,11 @@ public class Inventories {
 		// Crystal balance
 		if (name.equals(requester))
 			inv.setItem(52, ItemManager.createItem(Material.DIAMOND,
-					CommunicationManager.format("&b&l" + plugin.getLanguageString("messages.crystalBalance") +
+					CommunicationManager.format("&b&l" + LanguageManager.messages.crystalBalance +
 							": &b" + playerData.getInt(name + ".crystalBalance"))));
 
 		// Option to exit
-		inv.setItem(53, InventoryItems.exit(plugin));
+		inv.setItem(53, InventoryItems.exit());
 
 		return inv;
 	}
@@ -2215,14 +2215,14 @@ public class Inventories {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 54, CommunicationManager.format("&k") +
 				CommunicationManager.format("&9&l" + arena.getName() + " " +
-						plugin.getLanguageString("messages.kits")));
+						LanguageManager.messages.kits));
 
 		// Gift kits
 		for (int i = 0; i < 9; i++)
 			inv.setItem(i, ItemManager.createItem(Material.LIME_STAINED_GLASS_PANE,
-					CommunicationManager.format("&a&l" + plugin.getLanguageString("names.giftKits")),
+					CommunicationManager.format("&a&l" + LanguageManager.names.giftKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							plugin.getLanguageString("messages.giftKitsDescription"))));
+							LanguageManager.messages.giftKitsDescription)));
 
 		if (!arena.getBannedKits().contains("Orc"))
 			inv.setItem(9, Kit.orc().getButton(1, false));
@@ -2257,9 +2257,9 @@ public class Inventories {
 		// Ability kits
 		for (int i = 18; i < 27; i++)
 			inv.setItem(i, ItemManager.createItem(Material.MAGENTA_STAINED_GLASS_PANE,
-					CommunicationManager.format("&d&l" + plugin.getLanguageString("names.abilityKits")),
+					CommunicationManager.format("&d&l" + LanguageManager.names.abilityKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							plugin.getLanguageString("messages.abilityKitsDescription"))));
+							LanguageManager.messages.abilityKitsDescription)));
 
 		if (!arena.getBannedKits().contains("Mage"))
 			inv.setItem(27, Kit.mage().getButton(playerData.getInt(path + Kit.mage().getName()),
@@ -2292,9 +2292,9 @@ public class Inventories {
 		// Effect kits
 		for (int i = 36; i < 45; i++)
 			inv.setItem(i, ItemManager.createItem(Material.YELLOW_STAINED_GLASS_PANE,
-					CommunicationManager.format("&e&l" + plugin.getLanguageString("names.effectKits")),
+					CommunicationManager.format("&e&l" + LanguageManager.names.effectKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							plugin.getLanguageString("messages.effectKitsDescription"))));
+							LanguageManager.messages.effectKitsDescription)));
 
 		if (!arena.getBannedKits().contains("Blacksmith"))
 			inv.setItem(45, Kit.blacksmith().getButton(
@@ -2316,7 +2316,7 @@ public class Inventories {
 		inv.setItem(52, Kit.none().getButton(0, true));
 
 		// Option to exit
-		inv.setItem(53, InventoryItems.exit(plugin));
+		inv.setItem(53, InventoryItems.exit());
 
 		return inv;
 	}
@@ -2326,7 +2326,7 @@ public class Inventories {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(null, 18, CommunicationManager.format("&k") +
 				CommunicationManager.format("&5&l" + arena.getName() + " " +
-						plugin.getLanguageString("messages.challenges")));
+						LanguageManager.messages.challenges));
 
 		// Set buttons
 		inv.setItem(0, Challenge.amputee().getButton(player.getChallenges().contains(Challenge.amputee())));
@@ -2341,7 +2341,7 @@ public class Inventories {
 		inv.setItem(8, Challenge.none().getButton(player.getChallenges().isEmpty()));
 
 		// Option to exit
-		inv.setItem(13, InventoryItems.exit(plugin));
+		inv.setItem(13, InventoryItems.exit());
 
 		return inv;
 	}
@@ -2351,166 +2351,166 @@ public class Inventories {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena.getArena()), 36,
 				CommunicationManager.format("&k") + CommunicationManager.format("&6&l" +
-						plugin.getLanguageStringFormatted("messages.arenaInfo", arena.getName())));
+						String.format(LanguageManager.messages.arenaInfo, arena.getName())));
 
 		// Maximum players
 		inv.setItem(1, ItemManager.createItem(Material.NETHERITE_HELMET,
-				CommunicationManager.format("&4&l" + plugin.getLanguageString("arenaStats.maxPlayers.name") +
+				CommunicationManager.format("&4&l" + LanguageManager.arenaStats.maxPlayers.name +
 						": &4" + arena.getMaxPlayers()), ItemManager.BUTTON_FLAGS, null,
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						plugin.getLanguageString("arenaStats.maxPlayers.description"))));
+						LanguageManager.arenaStats.maxPlayers.description)));
 
 		// Minimum players
 		inv.setItem(2, ItemManager.createItem(Material.NETHERITE_BOOTS,
-				CommunicationManager.format("&2&l" + plugin.getLanguageString("arenaStats.minPlayers.name") +
+				CommunicationManager.format("&2&l" + LanguageManager.arenaStats.minPlayers.name +
 						": &2" + arena.getMinPlayers()), ItemManager.BUTTON_FLAGS, null,
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						plugin.getLanguageString("arenaStats.minPlayers.description"))));
+						LanguageManager.arenaStats.minPlayers.description)));
 
 		// Max waves
 		String waves;
 		if (arena.getMaxWaves() < 0)
-			waves = plugin.getLanguageString("messages.unlimited");
+			waves = LanguageManager.messages.unlimited;
 		else waves = Integer.toString(arena.getMaxWaves());
 		inv.setItem(3, ItemManager.createItem(Material.GOLDEN_SWORD,
-				CommunicationManager.format("&3&l" + plugin.getLanguageString("arenaStats.maxWaves.name") +
+				CommunicationManager.format("&3&l" + LanguageManager.arenaStats.maxWaves.name +
 						": &3" + waves), ItemManager.BUTTON_FLAGS, null,
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						plugin.getLanguageString("arenaStats.maxWaves.description"))));
+						LanguageManager.arenaStats.maxWaves.description)));
 
 		// Wave time limit
 		String limit;
 		if (arena.getWaveTimeLimit() < 0)
-			limit = plugin.getLanguageString("messages.unlimited");
+			limit = LanguageManager.messages.unlimited;
 		else limit = arena.getWaveTimeLimit() + " minute(s)";
 		inv.setItem(4, ItemManager.createItem(Material.CLOCK,
-				CommunicationManager.format("&9&l" + plugin.getLanguageString("arenaStats.timeLimit.name") +
+				CommunicationManager.format("&9&l" + LanguageManager.arenaStats.timeLimit.name +
 						": &9" + limit), CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						plugin.getLanguageString("arenaStats.timeLimit.description"))));
+						LanguageManager.arenaStats.timeLimit.description)));
 
 		// Wolf cap
 		inv.setItem(5, ItemManager.createItem(Material.BONE,
-				CommunicationManager.format("&6&l" + plugin.getLanguageString("arenaStats.wolfCap.name") +
+				CommunicationManager.format("&6&l" + LanguageManager.arenaStats.wolfCap.name +
 						": &6" + arena.getWolfCap()),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						plugin.getLanguageString("arenaStats.wolfCap.description"))));
+						LanguageManager.arenaStats.wolfCap.description)));
 
 		// Golem cap
 		inv.setItem(6, ItemManager.createItem(Material.IRON_INGOT,
-				CommunicationManager.format("&e&l" + plugin.getLanguageString("arenaStats.golemCap.name") +
+				CommunicationManager.format("&e&l" + LanguageManager.arenaStats.golemCap.name +
 						": &e" + arena.getGolemCap()),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						plugin.getLanguageString("arenaStats.golemCap.description"))));
+						LanguageManager.arenaStats.golemCap.description)));
 
 		// Allowed kits
 		inv.setItem(7, ItemManager.createItem(Material.ENDER_CHEST,
-				CommunicationManager.format("&9&l" + plugin.getLanguageString("messages.allowedKits"))));
+				CommunicationManager.format("&9&l" + LanguageManager.messages.allowedKits)));
 
 		// Dynamic mob count
 		inv.setItem(10, ItemManager.createItem(Material.SLIME_BALL,
 				CommunicationManager.format("&e&l" +
-						plugin.getLanguageString("arenaStats.dynamicMobCount.name") +
+						LanguageManager.arenaStats.dynamicMobCount.name +
 						": " + getToggleStatus(arena.hasDynamicCount())),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						plugin.getLanguageString("arenaStats.dynamicMobCount.description"))));
+						LanguageManager.arenaStats.dynamicMobCount.description)));
 
 		// Dynamic difficulty
 		inv.setItem(11, ItemManager.createItem(Material.MAGMA_CREAM,
 				CommunicationManager.format("&6&l" +
-						plugin.getLanguageString("arenaStats.dynamicDifficulty.name") + ": " +
+						LanguageManager.arenaStats.dynamicDifficulty.name + ": " +
 						getToggleStatus(arena.hasDynamicDifficulty())),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						plugin.getLanguageString("arenaStats.dynamicDifficulty.description"))));
+						LanguageManager.arenaStats.dynamicDifficulty.description)));
 
 		// Dynamic prices
 		inv.setItem(12, ItemManager.createItem(Material.NETHER_STAR,
 				CommunicationManager.format("&b&l" +
-						plugin.getLanguageString("arenaStats.dynamicPrices.name") +
+						LanguageManager.arenaStats.dynamicPrices.name +
 						": " + getToggleStatus(arena.hasDynamicPrices())),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						plugin.getLanguageString("arenaStats.dynamicPrices.description"))));
+						LanguageManager.arenaStats.dynamicPrices.description)));
 
 		// Dynamic time limit
 		inv.setItem(13, ItemManager.createItem(Material.SNOWBALL,
 				CommunicationManager.format("&a&l" +
-						plugin.getLanguageString("arenaStats.dynamicTimeLimit.name") +
+						LanguageManager.arenaStats.dynamicTimeLimit.name +
 						": " + getToggleStatus(arena.hasDynamicLimit())),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						plugin.getLanguageString("arenaStats.dynamicTimeLimit.description"))));
+						LanguageManager.arenaStats.dynamicTimeLimit.description)));
 
 		// Late arrival
 		inv.setItem(14, ItemManager.createItem(Material.DAYLIGHT_DETECTOR,
-				CommunicationManager.format("&e&l" + plugin.getLanguageString("arenaStats.lateArrival.name") +
+				CommunicationManager.format("&e&l" + LanguageManager.arenaStats.lateArrival.name +
 						": " + getToggleStatus(arena.hasLateArrival())), ItemManager.BUTTON_FLAGS, null,
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						plugin.getLanguageString("arenaStats.lateArrival.description"))));
+						LanguageManager.arenaStats.lateArrival.description)));
 
 		// Item dropping
 		inv.setItem(15, ItemManager.createItem(Material.EMERALD,
-				CommunicationManager.format("&9&l" + plugin.getLanguageString("arenaStats.gemDrop.name") +
+				CommunicationManager.format("&9&l" + LanguageManager.arenaStats.gemDrop.name +
 						": " + getToggleStatus(arena.hasGemDrop())),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						plugin.getLanguageString("arenaStats.gemDrop.description"))));
+						LanguageManager.arenaStats.gemDrop.description)));
 
 		// Experience drop
 		inv.setItem(16, ItemManager.createItem(Material.EXPERIENCE_BOTTLE,
-				CommunicationManager.format("&b&l" + plugin.getLanguageString("arenaStats.expDrop.name") +
+				CommunicationManager.format("&b&l" + LanguageManager.arenaStats.expDrop.name +
 						": " + getToggleStatus(arena.hasExpDrop())),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						plugin.getLanguageString("arenaStats.expDrop.description"))));
+						LanguageManager.arenaStats.expDrop.description)));
 
 		// Player spawn particles
 		inv.setItem(19, ItemManager.createItem(Material.FIREWORK_ROCKET,
-				CommunicationManager.format("&e&l" + plugin.getLanguageString("names.playerSpawnParticles") +
+				CommunicationManager.format("&e&l" + LanguageManager.names.playerSpawnParticles +
 						": " + getToggleStatus(arena.hasSpawnParticles()))));
 
 		// Monster spawn particles
 		inv.setItem(20, ItemManager.createItem(Material.FIREWORK_ROCKET,
-				CommunicationManager.format("&d&l" + plugin.getLanguageString("names.monsterSpawnParticles") +
+				CommunicationManager.format("&d&l" + LanguageManager.names.monsterSpawnParticles +
 						": " + getToggleStatus(arena.hasMonsterParticles()))));
 
 		// Villager spawn particles
 		inv.setItem(21, ItemManager.createItem(Material.FIREWORK_ROCKET,
 				CommunicationManager.format("&a&l" +
-						plugin.getLanguageString("names.villagerSpawnParticles") + ": " +
+						LanguageManager.names.villagerSpawnParticles + ": " +
 						getToggleStatus(arena.hasVillagerParticles()))));
 
 		// Default shop
 		inv.setItem(22, ItemManager.createItem(Material.EMERALD_BLOCK,
-				CommunicationManager.format("&6&l" + plugin.getLanguageString("names.defaultShop") +
+				CommunicationManager.format("&6&l" + LanguageManager.names.defaultShop +
 						": " + getToggleStatus(arena.hasNormal()))));
 
 		// Custom shop
 		inv.setItem(23, ItemManager.createItem(Material.QUARTZ_BLOCK,
-				CommunicationManager.format("&2&l" + plugin.getLanguageString("names.customShop") +
+				CommunicationManager.format("&2&l" + LanguageManager.names.customShop +
 						": " + getToggleStatus(arena.hasCustom()))));
 
 		// Enchants shop
 		inv.setItem(24, ItemManager.createItem(Material.BOOKSHELF,
-				CommunicationManager.format("&3&l" + plugin.getLanguageString("names.enchantShop") +
+				CommunicationManager.format("&3&l" + LanguageManager.names.enchantShop +
 						": " + getToggleStatus(arena.hasEnchants()))));
 
 		// Community chest
 		inv.setItem(25, ItemManager.createItem(Material.CHEST,
-				CommunicationManager.format("&d&l" + plugin.getLanguageString("names.communityChest") +
+				CommunicationManager.format("&d&l" + LanguageManager.names.communityChest +
 						": " + getToggleStatus(arena.hasCommunity()))));
 
 		// Custom shop inventory
 		inv.setItem(30, ItemManager.createItem(Material.QUARTZ,
-				CommunicationManager.format("&f&l" + plugin.getLanguageString("messages.customShopInv"))));
+				CommunicationManager.format("&f&l" + LanguageManager.messages.customShopInv)));
 
 		// Difficulty multiplier
 		inv.setItem(31, ItemManager.createItem(Material.TURTLE_HELMET,
 				CommunicationManager.format("&4&l" +
-						plugin.getLanguageString("arenaStats.difficultyMultiplier.name") + ": &4" +
+						LanguageManager.arenaStats.difficultyMultiplier.name + ": &4" +
 						arena.getDifficultyMultiplier()), ItemManager.BUTTON_FLAGS, null,
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						plugin.getLanguageString("arenaStats.difficultyMultiplier.description"))));
+						LanguageManager.arenaStats.difficultyMultiplier.description)));
 
 		// Arena records
 		List<String> records = new ArrayList<>();
 		arena.getSortedDescendingRecords().forEach(arenaRecord -> {
-			records.add(CommunicationManager.format("&f" + plugin.getLanguageString("messages.wave") + " " +
+			records.add(CommunicationManager.format("&f" + LanguageManager.messages.wave + " " +
 					arenaRecord.getWave()));
 			for (int i = 0; i < arenaRecord.getPlayers().size() / 4 + 1; i++) {
 				StringBuilder players = new StringBuilder(CommunicationManager.format("&7"));
@@ -2526,7 +2526,7 @@ public class Inventories {
 			}
 		});
 		inv.setItem(32, ItemManager.createItem(Material.GOLDEN_HELMET,
-				CommunicationManager.format("&e&l" + plugin.getLanguageString("messages.arenaRecords")),
+				CommunicationManager.format("&e&l" + LanguageManager.messages.arenaRecords),
 				ItemManager.BUTTON_FLAGS, null, records));
 
 		return inv;
@@ -2537,8 +2537,8 @@ public class Inventories {
 	private static String getToggleStatus(boolean status) {
 		String toggle;
 		if (status)
-			toggle = "&a&l" + plugin.getLanguageString("messages.onToggle");
-		else toggle = "&c&l" + plugin.getLanguageString("messages.offToggle");
+			toggle = "&a&l" + LanguageManager.messages.onToggle;
+		else toggle = "&c&l" + LanguageManager.messages.offToggle;
 		return toggle;
 	}
 
@@ -2550,8 +2550,8 @@ public class Inventories {
 		List<String> lore = meta.getLore();
 		assert lore != null;
 		int price = (int) Math.round(Integer.parseInt(lore.get(lore.size() - 1).substring(10)) * modifier / 5) * 5;
-		lore.set(lore.size() - 1, CommunicationManager.format("&2" +
-				plugin.getLanguageString("messages.gems") + ": &a" + price));
+		lore.set(lore.size() - 1, CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
+				price));
 		meta.setLore(lore);
 		item.setItemMeta(meta);
 		return item;

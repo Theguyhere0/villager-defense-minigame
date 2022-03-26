@@ -8,6 +8,7 @@ import me.theguyhere.villagerdefense.plugin.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -52,7 +53,7 @@ public class GameManager {
 						try {
 							Location location = DataManager.getConfigLocationNoPitch(plugin, "infoBoard." + path);
 							if (location != null)
-								infoBoards[Integer.parseInt(path)] = new InfoBoard(location, plugin);
+								infoBoards[Integer.parseInt(path)] = new InfoBoard(location);
 						} catch (InvalidLocationException ignored) {
 						}
 					});
@@ -132,11 +133,11 @@ public class GameManager {
 		Objective obj = board.registerNewObjective("VillagerDefense", "dummy",
 				CommunicationManager.format("&6&l   " + arena.getName() + "  "));
 		obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-		Score score12 = obj.getScore(CommunicationManager.format("&e" +
-				plugin.getLanguageString("messages.wave") + ": " + arena.getCurrentWave()));
+		Score score12 = obj.getScore(CommunicationManager.format("&e" + LanguageManager.messages.wave + ": " +
+				arena.getCurrentWave()));
 		score12.setScore(12);
-		Score score11 = obj.getScore(CommunicationManager.format("&a" +
-				plugin.getLanguageString("messages.gems") + ": " + player.getGems()));
+		Score score11 = obj.getScore(CommunicationManager.format("&a" + LanguageManager.messages.gems + ": " +
+				player.getGems()));
 		score11.setScore(11);
 		StringBuilder kit = new StringBuilder(player.getKit().getName());
 		if (player.getKit().isMultiLevel()) {
@@ -144,14 +145,14 @@ public class GameManager {
 			for (int i = 0; i < Math.max(0, player.getKit().getLevel()); i++)
 				kit.append("I");
 		}
-		Score score10 = obj.getScore(CommunicationManager.format("&b" +
-				plugin.getLanguageString("messages.kit") + ": " + kit));
+		Score score10 = obj.getScore(CommunicationManager.format("&b" + LanguageManager.messages.kit + ": " +
+				kit));
 		score10.setScore(10);
 		int bonus = 0;
 		for (Challenge challenge : player.getChallenges())
 			bonus += challenge.getBonus();
 		Score score9 = obj.getScore(CommunicationManager.format(String.format("&5" +
-				plugin.getLanguageString("messages.challenges") + ": (+%d%%)", bonus)));
+				LanguageManager.messages.challenges + ": (+%d%%)", bonus)));
 		score9.setScore(9);
 		if (player.getChallenges().size() < 4)
 			for (Challenge challenge : player.getChallenges()) {
@@ -167,24 +168,24 @@ public class GameManager {
 		}
 		Score score7 = obj.getScore("");
 		score7.setScore(7);
-		Score score6 = obj.getScore(CommunicationManager.format("&d" +
-				plugin.getLanguageString("messages.players") + ": " + arena.getAlive()));
+		Score score6 = obj.getScore(CommunicationManager.format("&d" + LanguageManager.messages.players + ": " +
+				arena.getAlive()));
 		score6.setScore(6);
-		Score score5 = obj.getScore(plugin.getLanguageString("messages.ghosts") + ": " + arena.getGhostCount());
+		Score score5 = obj.getScore(LanguageManager.messages.ghosts + ": " + arena.getGhostCount());
 		score5.setScore(5);
-		Score score4 = obj.getScore(CommunicationManager.format("&7" +
-				plugin.getLanguageString("messages.spectators") + ": " + arena.getSpectatorCount()));
+		Score score4 = obj.getScore(CommunicationManager.format("&7" + LanguageManager.messages.spectators +
+				": " + arena.getSpectatorCount()));
 		score4.setScore(4);
 		Score score3 = obj.getScore(" ");
 		score3.setScore(3);
-		Score score2 = obj.getScore(CommunicationManager.format("&2" +
-				plugin.getLanguageString("messages.villagers") + ": " + arena.getVillagers()));
+		Score score2 = obj.getScore(CommunicationManager.format("&2" + LanguageManager.messages.villagers + ": " +
+				arena.getVillagers()));
 		score2.setScore(2);
-		Score score1 = obj.getScore(CommunicationManager.format("&c" +
-				plugin.getLanguageString("messages.enemies") + ": " + arena.getEnemies()));
+		Score score1 = obj.getScore(CommunicationManager.format("&c" + LanguageManager.messages.enemies + ": " +
+				arena.getEnemies()));
 		score1.setScore(1);
-		Score score = obj.getScore(CommunicationManager.format("&4" +
-				plugin.getLanguageString("messages.kills") + ": " + player.getKills()));
+		Score score = obj.getScore(CommunicationManager.format("&4" + LanguageManager.messages.kills + ": " +
+				player.getKills()));
 		score.setScore(0);
 
 		player.getPlayer().setScoreboard(board);
@@ -225,8 +226,8 @@ public class GameManager {
 		try {
 			// Create a new board and display it
 			infoBoards[num] = new InfoBoard(
-					Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin, "infoBoard." + num)),
-					plugin);
+					Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin, "infoBoard." + num))
+            );
 			infoBoards[num].displayForOnline();
 		} catch (Exception e) {
 			CommunicationManager.debugError("Invalid location for info board " + num, 1);

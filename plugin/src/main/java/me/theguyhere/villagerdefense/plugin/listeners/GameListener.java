@@ -15,6 +15,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -523,8 +524,8 @@ public class GameListener implements Listener {
 			PlayerManager.fakeDeath(gamer);
 
 			// Notify player of their own death
-			player.sendTitle(CommunicationManager.format(plugin.getLanguageString("messages.death1")),
-					plugin.getLanguageString("messages.death2"),
+			player.sendTitle(CommunicationManager.format("&4" + LanguageManager.messages.death1),
+					CommunicationManager.format("&c" + LanguageManager.messages.death2),
 					Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
 
 			// Teleport player back to player spawn
@@ -539,7 +540,7 @@ public class GameListener implements Listener {
 			arena.getPlayers().forEach(fighter -> {
 				if (!fighter.getPlayer().getUniqueId().equals(player.getUniqueId()))
 					PlayerManager.notifyAlert(fighter.getPlayer(),
-							plugin.getLanguageStringFormatted("messages.death", player.getName()));
+							String.format(LanguageManager.messages.death, player.getName()));
 				if (arena.hasPlayerDeathSound())
 					try {
 						fighter.getPlayer().playSound(arena.getPlayerSpawn().getLocation(),
@@ -587,8 +588,7 @@ public class GameListener implements Listener {
 			return;
 
 		// Ignore item shop
-		if (Objects.requireNonNull(item.getItemMeta()).getDisplayName().contains(
-				plugin.getLanguageString("names.itemShop")))
+		if (Objects.requireNonNull(item.getItemMeta()).getDisplayName().contains(LanguageManager.names.itemShop))
 			return;
 
 		// Calculate and give player gems
@@ -606,7 +606,7 @@ public class GameListener implements Listener {
 		e.setCancelled(true);
 		e.getItem().remove();
 		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				CommunicationManager.format(ChatColor.GREEN, plugin.getLanguageString("messages.foundGems"),
+				CommunicationManager.format(ChatColor.GREEN, LanguageManager.messages.foundGems,
 						ChatColor.AQUA, Integer.toString(earned))));
 		if (arena.hasGemSound())
 			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, .5f, 0);
@@ -661,15 +661,15 @@ public class GameListener implements Listener {
 		PlayerManager.fakeDeath(gamer);
 
 		// Notify player of their own death
-		player.sendTitle(CommunicationManager.format(plugin.getLanguageString("messages.death1")),
-				plugin.getLanguageString("messages.death2"),
+		player.sendTitle(CommunicationManager.format("&4" + LanguageManager.messages.death1),
+				CommunicationManager.format("&c" + LanguageManager.messages.death2),
 				Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
 
 		// Notify everyone else of player death
 		arena.getPlayers().forEach(fighter -> {
 			if (!fighter.getPlayer().getUniqueId().equals(player.getUniqueId()))
 				PlayerManager.notifyAlert(fighter.getPlayer(),
-						plugin.getLanguageStringFormatted("messages.death", player.getName()));
+						String.format(LanguageManager.messages.death, player.getName()));
 			if (arena.hasPlayerDeathSound())
 				try {
 					fighter.getPlayer().playSound(arena.getPlayerSpawn().getLocation(),
@@ -748,7 +748,7 @@ public class GameListener implements Listener {
 
 							// Notify player
 							PlayerManager.notifySuccess(vdPlayer.getPlayer(),
-									plugin.getLanguageString("messages.earnedGems"), ChatColor.AQUA,
+									LanguageManager.messages.earnedGems, ChatColor.AQUA,
 									Integer.toString(earned));
 
 							FileConfiguration playerData = plugin.getPlayerData();
@@ -786,10 +786,10 @@ public class GameListener implements Listener {
 
 				if (r.nextDouble() < probability)
 					PlayerManager.giveItem(player, GameItems.randCare(wave / 10 + 1),
-							plugin.getLanguageString("inventoryFull"));
+							LanguageManager.errors.inventoryFull);
 
 				// Notify player
-				PlayerManager.notifySuccess(player, plugin.getLanguageString("messages.earnedGems"),
+				PlayerManager.notifySuccess(player, LanguageManager.messages.earnedGems,
 						ChatColor.AQUA, Integer.toString(earned));
 
 				FileConfiguration playerData = plugin.getPlayerData();
@@ -878,7 +878,7 @@ public class GameListener implements Listener {
 
 			// Check for wolf cap
 			if (gamer.getWolves() >= arena.getWolfCap()) {
-				PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.wolf"), ChatColor.AQUA,
+				PlayerManager.notifyFailure(player, LanguageManager.errors.wolf, ChatColor.AQUA,
 						Integer.toString(arena.getWolfCap()));
 				return;
 			}
@@ -915,7 +915,7 @@ public class GameListener implements Listener {
 
 			// Check for golem cap
 			if (arena.getGolems() >= arena.getGolemCap()) {
-				PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.golem"), ChatColor.AQUA,
+				PlayerManager.notifyFailure(player, LanguageManager.errors.golem, ChatColor.AQUA,
 						Integer.toString(arena.getGolemCap()));
 				return;
 			}
@@ -947,16 +947,16 @@ public class GameListener implements Listener {
 			// Give items and notify
 			if (gamer.getKit().equals(Kit.blacksmith().setKitLevel(1))) {
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randWeapon(1))), plugin.getLanguageString("errors.inventoryFull"));
+						GameItems.randWeapon(1))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(1))), plugin.getLanguageString("errors.inventoryFull"));
+						GameItems.randArmor(1))), LanguageManager.errors.inventoryFull);
 			} else {
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(1)),
-						plugin.getLanguageString("errors.inventoryFull"));
+						LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(1)),
-						plugin.getLanguageString("errors.inventoryFull"));
+						LanguageManager.errors.inventoryFull);
 			}
-			PlayerManager.notifySuccess(player, plugin.getLanguageString("confirms.carePackage"));
+			PlayerManager.notifySuccess(player, LanguageManager.confirms.carePackage);
 		}
 
 		// Medium care package
@@ -973,23 +973,23 @@ public class GameListener implements Listener {
 			// Give items and notify
 			if (gamer.getKit().equals(Kit.blacksmith().setKitLevel(1))) {
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randWeapon(2))), plugin.getLanguageString("errors.inventoryFull"));
+						GameItems.randWeapon(2))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(2))), plugin.getLanguageString("errors.inventoryFull"));
+						GameItems.randArmor(2))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randNotCare(2))), plugin.getLanguageString("errors.inventoryFull"));
+						GameItems.randNotCare(2))), LanguageManager.errors.inventoryFull);
 			} else {
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(2)),
-						plugin.getLanguageString("errors.inventoryFull"));
+						LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(2)),
-						plugin.getLanguageString("errors.inventoryFull"));
+						LanguageManager.errors.inventoryFull);
 				if (gamer.getKit().equals(Kit.witch().setKitLevel(1)))
 					PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-							GameItems.randNotCare(2))), plugin.getLanguageString("errors.inventoryFull"));
+							GameItems.randNotCare(2))), LanguageManager.errors.inventoryFull);
 				else PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(2)),
-						plugin.getLanguageString("errors.inventoryFull"));
+						LanguageManager.errors.inventoryFull);
 			}
-			PlayerManager.notifySuccess(player, plugin.getLanguageString("confirms.carePackage"));
+			PlayerManager.notifySuccess(player, LanguageManager.confirms.carePackage);
 		}
 
 		// Large care package
@@ -1006,27 +1006,27 @@ public class GameListener implements Listener {
 			// Give items and notify
 			if (gamer.getKit().equals(Kit.blacksmith().setKitLevel(1))) {
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randWeapon(4))), plugin.getLanguageString("errors.inventoryFull"));
+						GameItems.randWeapon(4))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(3))), plugin.getLanguageString("errors.inventoryFull"));
+						GameItems.randArmor(3))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(3))), plugin.getLanguageString("errors.inventoryFull"));
+						GameItems.randArmor(3))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randNotCare(3))), plugin.getLanguageString("errors.inventoryFull"));
+						GameItems.randNotCare(3))), LanguageManager.errors.inventoryFull);
 			} else {
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(4)),
-						plugin.getLanguageString("errors.inventoryFull"));
+						LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(3)),
-						plugin.getLanguageString("errors.inventoryFull"));
+						LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(3)),
-						plugin.getLanguageString("errors.inventoryFull"));
+						LanguageManager.errors.inventoryFull);
 				if (gamer.getKit().equals(Kit.witch().setKitLevel(1)))
 					PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-							GameItems.randNotCare(3))), plugin.getLanguageString("errors.inventoryFull"));
+							GameItems.randNotCare(3))), LanguageManager.errors.inventoryFull);
 				else PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(3)),
-						plugin.getLanguageString("errors.inventoryFull"));
+						LanguageManager.errors.inventoryFull);
 			}
-			PlayerManager.notifySuccess(player, plugin.getLanguageString("confirms.carePackage"));
+			PlayerManager.notifySuccess(player, LanguageManager.confirms.carePackage);
 		}
 
 		// Extra large care package
@@ -1043,39 +1043,39 @@ public class GameListener implements Listener {
 			// Give items and notify
 			if (gamer.getKit().equals(Kit.blacksmith().setKitLevel(1))) {
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randWeapon(5))), plugin.getLanguageString("errors.inventoryFull"));
+						GameItems.randWeapon(5))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randWeapon(4))), plugin.getLanguageString("errors.inventoryFull"));
+						GameItems.randWeapon(4))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(5))), plugin.getLanguageString("errors.inventoryFull"));
+						GameItems.randArmor(5))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(4))), plugin.getLanguageString("errors.inventoryFull"));
+						GameItems.randArmor(4))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randNotCare(4))), plugin.getLanguageString("errors.inventoryFull"));
+						GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randNotCare(4))), plugin.getLanguageString("errors.inventoryFull"));
+						GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
 			} else {
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(5)),
-						plugin.getLanguageString("errors.inventoryFull"));
+						LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(4)),
-						plugin.getLanguageString("errors.inventoryFull"));
+						LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(5)),
-						plugin.getLanguageString("errors.inventoryFull"));
+						LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(4)),
-						plugin.getLanguageString("errors.inventoryFull"));
+						LanguageManager.errors.inventoryFull);
 				if (gamer.getKit().equals(Kit.witch().setKitLevel(1))) {
 					PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-							GameItems.randNotCare(4))), plugin.getLanguageString("errors.inventoryFull"));
+							GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
 					PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-							GameItems.randNotCare(4))), plugin.getLanguageString("errors.inventoryFull"));
+							GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
 				} else {
 					PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(4)),
-							plugin.getLanguageString("errors.inventoryFull"));
+							LanguageManager.errors.inventoryFull);
 					PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(4)),
-							plugin.getLanguageString("errors.inventoryFull"));
+							LanguageManager.errors.inventoryFull);
 				}
 			}
-			PlayerManager.notifySuccess(player, plugin.getLanguageString("confirms.carePackage"));
+			PlayerManager.notifySuccess(player, LanguageManager.confirms.carePackage);
 		}
 	}
 
@@ -1137,8 +1137,7 @@ public class GameListener implements Listener {
 				.contains(Objects.requireNonNull(e.getTo()).getX(), e.getTo().getY(), e.getTo().getZ())) ||
 				!Objects.equals(e.getTo().getWorld(), arena.getCorner1().getWorld())) {
 			e.setCancelled(true);
-			PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.teleport"), ChatColor.AQUA, 
-					"/vd leave");
+			PlayerManager.notifyFailure(player, LanguageManager.errors.teleport, ChatColor.AQUA, "/vd leave");
 		}
 	}
 
@@ -1186,7 +1185,7 @@ public class GameListener implements Listener {
 				}
 			} else e.setCancelled(true);
 
-			PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.bounds"));
+			PlayerManager.notifyFailure(player, LanguageManager.errors.bounds);
 		}
 	}
 
@@ -1330,14 +1329,14 @@ public class GameListener implements Listener {
 					enchantingBook.getEnchantToAdd() == Enchantment.MULTISHOT ||
 					enchantingBook.getEnchantToAdd() == Enchantment.ARROW_INFINITE ||
 					enchantingBook.getEnchantToAdd() == Enchantment.MENDING) {
-				PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.enchant"));
+				PlayerManager.notifyFailure(player, LanguageManager.errors.enchant);
 				return;
 			}
 			clickedOn.addUnsafeEnchantment(enchantingBook.getEnchantToAdd(),
 					enchantList.get(enchantingBook.getEnchantToAdd()) + 1);
 		} else clickedOn.addUnsafeEnchantment(enchantingBook.getEnchantToAdd(), 1);
 		player.setItemOnCursor(new ItemStack(Material.AIR));
-		PlayerManager.notifySuccess(player, plugin.getLanguageString("confirms.enchant"));
+		PlayerManager.notifySuccess(player, LanguageManager.confirms.enchant);
 	}
 
 	// Prevent swapping items while waiting for game to start

@@ -6,13 +6,12 @@ import me.theguyhere.villagerdefense.nms.common.NMSManager;
 import me.theguyhere.villagerdefense.plugin.GUI.Inventories;
 import me.theguyhere.villagerdefense.plugin.commands.CommandTab;
 import me.theguyhere.villagerdefense.plugin.commands.Commands;
-import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.models.EnchantingBook;
+import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLanguageKeyException;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.listeners.*;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -47,7 +46,7 @@ public class Main extends JavaPlugin {
 	public static final int arenaDataVersion = 5;
 	public static final int playerDataVersion = 1;
 	public static final int spawnTableVersion = 1;
-	public static final int languageFileVersion = 12;
+	public static final int languageFileVersion = 13;
 	public static final int defaultSpawnVersion = 2;
 
 	@Override
@@ -55,11 +54,13 @@ public class Main extends JavaPlugin {
 		// Set up initial classes
 		saveDefaultConfig();
 		PluginManager pm = getServer().getPluginManager();
+		try {
+			LanguageManager.init(languageData.getConfig());
+		} catch (InvalidLanguageKeyException e) {
+			CommunicationManager.debugError(e.getMessage(), 0);
+		}
 		Commands commands = new Commands(this);
-		Kit.setPlugin(this);
-		Challenge.setPlugin(this);
-		EnchantingBook.setPlugin(this);
-		GameItems.setPlugin(this);
+		GameItems.setPlugin();
 		Inventories.setPlugin(this);
 
 		// Set up commands and tab complete
@@ -363,24 +364,20 @@ public class Main extends JavaPlugin {
 		playerData.saveConfig();
 	}
 
-	public FileConfiguration getLanguageData() {
-		return languageData.getConfig();
-	}
-
-	public String getLanguageString(String path) {
-		if (!languageData.getConfig().contains(path))
-			CommunicationManager.debugError("The key '" + path + "' is either missing or corrupt in the active " +
-					"language file", 0, true);
-		return languageData.getConfig().getString(path);
-	}
-
-	public String getLanguageStringFormatted(String path, String replacement) {
-		return String.format(getLanguageString(path), replacement);
-	}
-
-	public String getLanguageStringFormatted(String path, String replace1, String replace2) {
-		return String.format(getLanguageString(path), replace1, replace2);
-	}
+//	public String getLanguageString(String path) {
+//		if (!languageData.getConfig().contains(path))
+//			CommunicationManager.debugError("The key '" + path + "' is either missing or corrupt in the active " +
+//					"language file", 0, true);
+//		return languageData.getConfig().getString(path);
+//	}
+//
+//	public String getLanguageStringFormatted(String path, String replacement) {
+//		return String.format(getLanguageString(path), replacement);
+//	}
+//
+//	public String getLanguageStringFormatted(String path, String replace1, String replace2) {
+//		return String.format(getLanguageString(path), replace1, replace2);
+//	}
 
 	public static boolean isOutdated() {
 		return outdated;

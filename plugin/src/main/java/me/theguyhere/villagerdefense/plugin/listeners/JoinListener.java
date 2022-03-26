@@ -5,6 +5,7 @@ import me.theguyhere.villagerdefense.nms.common.NMSManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import org.bukkit.Bukkit;
@@ -81,8 +82,7 @@ public class JoinListener implements Listener {
 
 		// If the plugin setup is outdated, send message to admins
 		if (Main.isOutdated() && player.hasPermission("vd.admin"))
-			PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.outdated"), ChatColor.AQUA,
-					"/vd fix");
+			PlayerManager.notifyFailure(player, LanguageManager.errors.outdated, ChatColor.AQUA, "/vd fix");
 	}
 	
 	@EventHandler
