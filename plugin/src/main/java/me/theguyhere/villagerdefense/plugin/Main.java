@@ -364,21 +364,6 @@ public class Main extends JavaPlugin {
 		playerData.saveConfig();
 	}
 
-//	public String getLanguageString(String path) {
-//		if (!languageData.getConfig().contains(path))
-//			CommunicationManager.debugError("The key '" + path + "' is either missing or corrupt in the active " +
-//					"language file", 0, true);
-//		return languageData.getConfig().getString(path);
-//	}
-//
-//	public String getLanguageStringFormatted(String path, String replacement) {
-//		return String.format(getLanguageString(path), replacement);
-//	}
-//
-//	public String getLanguageStringFormatted(String path, String replace1, String replace2) {
-//		return String.format(getLanguageString(path), replace1, replace2);
-//	}
-
 	public static boolean isOutdated() {
 		return outdated;
 	}
