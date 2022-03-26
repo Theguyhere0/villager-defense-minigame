@@ -50,7 +50,7 @@ public class VersionNMSManager implements NMSManager {
 
     @Override
     public String getBorderParticleName() {
-        return "BARRIER";
+        return "REDSTONE";
     }
 
     @Override

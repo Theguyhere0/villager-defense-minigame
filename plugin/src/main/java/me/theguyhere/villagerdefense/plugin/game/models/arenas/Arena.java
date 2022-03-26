@@ -1068,8 +1068,7 @@ public class Arena {
 
     public void startBorderParticles() {
         Particle borderParticle = Particle.valueOf(NMSVersion.getCurrent().getNmsManager().getBorderParticleName());
-        BlockData blockData = NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1) ?
-                Bukkit.createBlockData(Material.BARRIER) : null;
+        Particle.DustOptions dust = new Particle.DustOptions(Color.RED, 2);
 
         if (cornerParticlesID == 0 && getCorner1() != null && getCorner2() != null)
             cornerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
@@ -1092,22 +1091,22 @@ public class Arena {
 
                         for (double x = second.getX(); x <= first.getX(); x += 5)
                             for (double y = second.getY(); y <= first.getY(); y += 5)
-                                world.spawnParticle(borderParticle, x, y, first.getZ(), 0, blockData);
+                                world.spawnParticle(borderParticle, x, y, first.getZ(), 0, dust);
                         for (double x = second.getX(); x <= first.getX(); x += 5)
                             for (double y = second.getY(); y <= first.getY(); y += 5)
-                                world.spawnParticle(borderParticle, x, y, second.getZ(), 0, blockData);
-                        for (double x = second.getX(); x <= first.getX(); x += 5)
-                            for (double z = second.getZ(); z <= first.getZ(); z += 5)
-                                world.spawnParticle(borderParticle, x, first.getY(), z, 0, blockData);
+                                world.spawnParticle(borderParticle, x, y, second.getZ(), 0, dust);
                         for (double x = second.getX(); x <= first.getX(); x += 5)
                             for (double z = second.getZ(); z <= first.getZ(); z += 5)
-                                world.spawnParticle(borderParticle, x, second.getY(), z, 0, blockData);
+                                world.spawnParticle(borderParticle, x, first.getY(), z, 0, dust);
+                        for (double x = second.getX(); x <= first.getX(); x += 5)
+                            for (double z = second.getZ(); z <= first.getZ(); z += 5)
+                                world.spawnParticle(borderParticle, x, second.getY(), z, 0, dust);
                         for (double z = second.getZ(); z <= first.getZ(); z += 5)
                             for (double y = second.getY(); y <= first.getY(); y += 5)
-                                world.spawnParticle(borderParticle, first.getX(), y, z, 0, blockData);
+                                world.spawnParticle(borderParticle, first.getX(), y, z, 0, dust);
                         for (double z = second.getZ(); z <= first.getZ(); z += 5)
                             for (double y = second.getY(); y <= first.getY(); y += 5)
-                                world.spawnParticle(borderParticle, second.getX(), y, z, 0, blockData);
+                                world.spawnParticle(borderParticle, second.getX(), y, z, 0, dust);
 
                     } catch (Exception e) {
                         CommunicationManager.debugError(
