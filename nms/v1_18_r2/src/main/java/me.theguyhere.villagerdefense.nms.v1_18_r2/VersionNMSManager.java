@@ -52,7 +52,7 @@ public class VersionNMSManager implements NMSManager {
 
     @Override
     public String getBorderParticleName() {
-        return "BLOCK_MARKER";
+        return "REDSTONE";
     }
 
     @Override

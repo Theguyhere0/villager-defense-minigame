@@ -377,8 +377,7 @@ public class Commands implements CommandExecutor {
 									scheduler.scheduleSyncDelayedTask(plugin, task.start, Utils.secondsToTicks(10)));
 
 							// Notify console
-							CommunicationManager.debugInfo("Arena " + arena.getArena() + " was force started.", 
-									1);
+							CommunicationManager.debugInfo(arena.getArena() + " was force started.", 1);
 						}
 					}
 
@@ -428,8 +427,7 @@ public class Commands implements CommandExecutor {
 								Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 
 						// Notify console
-						CommunicationManager.debugInfo("Arena " + arena.getArena() + " was force ended.",
-								1);
+						CommunicationManager.debugInfo(arena.getArena() + " was force ended.", 1);
 					}
 
 					// End specific arena
@@ -479,8 +477,7 @@ public class Commands implements CommandExecutor {
 								Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 
 						// Notify console
-						CommunicationManager.debugInfo("Arena " + arena.getArena() + " was force ended.", 
-								1);
+						CommunicationManager.debugInfo(arena.getArena() + " was force ended.", 1);
 
 						return true;
 					}
@@ -602,7 +599,7 @@ public class Commands implements CommandExecutor {
 								Utils.secondsToTicks(Utils.minutesToSeconds(2))));
 
 						// Notify console
-						CommunicationManager.debugInfo("Arena " + arena.getArena() + " was delayed.", 1);
+						CommunicationManager.debugInfo(arena.getArena() + " was delayed.", 1);
 					}
 
 					return true;
@@ -1038,8 +1035,8 @@ public class Commands implements CommandExecutor {
 
 					// Notify console and possibly player
 					if (player != null)
-						PlayerManager.notifySuccess(player, "Arena " + arena.getName() +  " was opened.");
-					CommunicationManager.debugInfo("Arena " + arena.getArena() + " was opened.", 1);
+						PlayerManager.notifySuccess(player, arena.getName() +  " was opened.");
+					CommunicationManager.debugInfo(arena.getArena() + " was opened.", 1);
 
 					return true;
 				}
@@ -1092,8 +1089,8 @@ public class Commands implements CommandExecutor {
 
 					// Notify console and possibly player
 					if (player != null)
-						PlayerManager.notifySuccess(player, "Arena " + arena.getName() +  " was closed.");
-					CommunicationManager.debugInfo("Arena " + arena.getArena() + " was closed.", 1);
+						PlayerManager.notifySuccess(player, arena.getName() +  " was closed.");
+					CommunicationManager.debugInfo(arena.getArena() + " was closed.", 1);
 
 					return true;
 				}
