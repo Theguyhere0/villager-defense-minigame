@@ -26,7 +26,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-public class Inventories {
+public class Menus {
 	private static Main plugin;
 
 	// Easily alternate between different materials
@@ -36,13 +36,15 @@ public class Inventories {
 
 	// Initiate this class on plugin startup
 	public static void setPlugin(Main plugin) {
-		Inventories.plugin = plugin;
+		Menus.plugin = plugin;
 	}
 
 	// Menu of all the arenas
 	public static Inventory createArenasInventory() {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 54,  CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(
+				new InventoryMeta(InventoryType.MENU),
+				54,
 				CommunicationManager.format("&2&lVillager Defense Arenas"));
 
 		// Options to interact with all 45 possible arenas
@@ -70,7 +72,7 @@ public class Inventories {
 				CommunicationManager.format("&7Manage leaderboards")));
 
 		// Option to exit
-		inv.setItem(53, InventoryItems.exit());
+		inv.setItem(53, MenuItems.exit());
 
 		return inv;
 	}
@@ -78,39 +80,45 @@ public class Inventories {
 	// Menu for lobby
 	public static Inventory createLobbyInventory() {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
-				CommunicationManager.format("&2&lLobby"));
+		Inventory inv = Bukkit.createInventory(
+				new InventoryMeta(InventoryType.MENU),
+				9,
+				CommunicationManager.format("&2&lLobby")
+		);
 
 		// Option to create or relocate the lobby
 		if (DataManager.getConfigLocation(plugin, "lobby") == null)
-			inv.setItem(0, InventoryItems.create("Lobby"));
-		else inv.setItem(0, InventoryItems.relocate("Lobby"));
+			inv.setItem(0, MenuItems.create("Lobby"));
+		else inv.setItem(0, MenuItems.relocate("Lobby"));
 
 		// Option to teleport to the lobby
-		inv.setItem(2, InventoryItems.teleport("Lobby"));
+		inv.setItem(2, MenuItems.teleport("Lobby"));
 
 		// Option to center the lobby
-		inv.setItem(4, InventoryItems.center("Lobby"));
+		inv.setItem(4, MenuItems.center("Lobby"));
 
 		// Option to remove the lobby
-		inv.setItem(6, InventoryItems.remove("LOBBY"));
+		inv.setItem(6, MenuItems.remove("LOBBY"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
 
 	// Confirmation menu for removing lobby
 	public static Inventory createLobbyConfirmInventory() {
-		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
-				CommunicationManager.format("&4&lRemove Lobby?"));
+		Inventory inv = Bukkit.createInventory(
+				new InventoryMeta(InventoryType.MENU),
+				9,
+				CommunicationManager.format("&4&lRemove Lobby?")
+		);
 
 		// "No" option
-		inv.setItem(0, InventoryItems.no());
+		inv.setItem(0, MenuItems.no());
 
 		// "Yes" option
-		inv.setItem(8, InventoryItems.yes());
+		inv.setItem(8, MenuItems.yes());
 
 		return inv;
 	}
@@ -118,8 +126,11 @@ public class Inventories {
 	// Menu for editing info boards
 	public static Inventory createInfoBoardInventory() {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
-				CommunicationManager.format("&6&lInfo Boards"));
+		Inventory inv = Bukkit.createInventory(
+				new InventoryMeta(InventoryType.MENU),
+				9,
+				CommunicationManager.format("&6&lInfo Boards")
+		);
 
 		// Prepare for material indexing
 		int index;
@@ -137,7 +148,7 @@ public class Inventories {
 		}
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -145,26 +156,28 @@ public class Inventories {
 	// Menu for editing a specific info board
 	public static Inventory createInfoBoardMenu(int slot) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(slot), 9,
-				CommunicationManager.format("&k") +
-				CommunicationManager.format("&6&lInfo Board " + (slot + 1)));
+		Inventory inv = Bukkit.createInventory(
+				new InventoryMeta(InventoryType.MENU, slot),
+				9,
+				CommunicationManager.format("&6&lInfo Board " + (slot + 1))
+		);
 
 		// Option to create or relocate info board
 		if (DataManager.getConfigLocation(plugin, "infoBoard." + slot) == null)
-			inv.setItem(0, InventoryItems.create("Info Board"));
-		else inv.setItem(0, InventoryItems.relocate("Info Board"));
+			inv.setItem(0, MenuItems.create("Info Board"));
+		else inv.setItem(0, MenuItems.relocate("Info Board"));
 
 		// Option to teleport to info board
-		inv.setItem(2, InventoryItems.teleport("Info Board"));
+		inv.setItem(2, MenuItems.teleport("Info Board"));
 
 		// Option to center the info board
-		inv.setItem(4, InventoryItems.center("Info Board"));
+		inv.setItem(4, MenuItems.center("Info Board"));
 
 		// Option to remove info board
-		inv.setItem(6, InventoryItems.remove("INFO BOARD"));
+		inv.setItem(6, MenuItems.remove("INFO BOARD"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -172,15 +185,17 @@ public class Inventories {
 	// Confirmation menu for removing info boards
 	public static Inventory createInfoBoardConfirmInventory(int slot) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(slot), 9,
-				CommunicationManager.format("&k") +
-				CommunicationManager.format("&4&lRemove Info Board?"));
+		Inventory inv = Bukkit.createInventory(
+				new InventoryMeta(InventoryType.MENU, slot),
+				9,
+				CommunicationManager.format("&4&lRemove Info Board?")
+		);
 
 		// "No" option
-		inv.setItem(0, InventoryItems.no());
+		inv.setItem(0, MenuItems.no());
 
 		// "Yes" option
-		inv.setItem(8, InventoryItems.yes());
+		inv.setItem(8, MenuItems.yes());
 
 		return inv;
 	}
@@ -188,8 +203,11 @@ public class Inventories {
 	// Menu for leaderboards
 	public static Inventory createLeaderboardInventory() {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
-				CommunicationManager.format("&e&lLeaderboards"));
+		Inventory inv = Bukkit.createInventory(
+				new InventoryMeta(InventoryType.MENU),
+				9,
+				CommunicationManager.format("&e&lLeaderboards")
+		);
 
 		// Option to modify total kills leaderboard
 		inv.setItem(0, ItemManager.createItem(Material.DRAGON_HEAD,
@@ -212,7 +230,7 @@ public class Inventories {
 				CommunicationManager.format("&9&lTop Wave Leaderboard"), ItemManager.BUTTON_FLAGS, null));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -220,25 +238,28 @@ public class Inventories {
 	// Menu for editing the total kills leaderboard
 	public static Inventory createTotalKillsLeaderboardInventory() {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
-				CommunicationManager.format("&4&lTotal Kills Leaderboard"));
+		Inventory inv = Bukkit.createInventory(
+				new InventoryMeta(InventoryType.MENU),
+				9,
+				CommunicationManager.format("&4&lTotal Kills Leaderboard")
+		);
 
 		// Option to create or relocate the leaderboard
 		if (DataManager.getConfigLocation(plugin, "leaderboard.totalKills") == null)
-			inv.setItem(0, InventoryItems.create("Leaderboard"));
-		else inv.setItem(0, InventoryItems.relocate("Leaderboard"));
+			inv.setItem(0, MenuItems.create("Leaderboard"));
+		else inv.setItem(0, MenuItems.relocate("Leaderboard"));
 
 		// Option to teleport to the leaderboard
-		inv.setItem(2, InventoryItems.teleport("Leaderboard"));
+		inv.setItem(2, MenuItems.teleport("Leaderboard"));
 
 		// Option to center the leaderboard
-		inv.setItem(4, InventoryItems.center("Leaderboard"));
+		inv.setItem(4, MenuItems.center("Leaderboard"));
 
 		// Option to remove the leaderboard
-		inv.setItem(6, InventoryItems.remove("LEADERBOARD"));
+		inv.setItem(6, MenuItems.remove("LEADERBOARD"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -246,25 +267,25 @@ public class Inventories {
 	// Menu for editing the top kills leaderboard
 	public static Inventory createTopKillsLeaderboardInventory() {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 9, 
 				CommunicationManager.format("&c&lTop Kills Leaderboard"));
 
 		// Option to create or relocate the leaderboard
 		if (DataManager.getConfigLocation(plugin, "leaderboard.topKills") == null)
-			inv.setItem(0, InventoryItems.create("Leaderboard"));
-		else inv.setItem(0, InventoryItems.relocate("Leaderboard"));
+			inv.setItem(0, MenuItems.create("Leaderboard"));
+		else inv.setItem(0, MenuItems.relocate("Leaderboard"));
 
 		// Option to teleport to the leaderboard
-		inv.setItem(2, InventoryItems.teleport("Leaderboard"));
+		inv.setItem(2, MenuItems.teleport("Leaderboard"));
 
 		// Option to center the leaderboard
-		inv.setItem(4, InventoryItems.center("Leaderboard"));
+		inv.setItem(4, MenuItems.center("Leaderboard"));
 
 		// Option to remove the leaderboard
-		inv.setItem(6, InventoryItems.remove("LEADERBOARD"));
+		inv.setItem(6, MenuItems.remove("LEADERBOARD"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -272,25 +293,25 @@ public class Inventories {
 	// Menu for editing the total gems leaderboard
 	public static Inventory createTotalGemsLeaderboardInventory() {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 9, 
 				CommunicationManager.format("&2&lTotal Gems Leaderboard"));
 
 		// Option to create or relocate the leaderboard
 		if (DataManager.getConfigLocation(plugin, "leaderboard.totalGems") == null)
-			inv.setItem(0, InventoryItems.create("Leaderboard"));
-		else inv.setItem(0, InventoryItems.relocate("Leaderboard"));
+			inv.setItem(0, MenuItems.create("Leaderboard"));
+		else inv.setItem(0, MenuItems.relocate("Leaderboard"));
 
 		// Option to teleport to the leaderboard
-		inv.setItem(2, InventoryItems.teleport("Leaderboard"));
+		inv.setItem(2, MenuItems.teleport("Leaderboard"));
 
 		// Option to center the leaderboard
-		inv.setItem(4, InventoryItems.center("Leaderboard"));
+		inv.setItem(4, MenuItems.center("Leaderboard"));
 
 		// Option to remove the leaderboard
-		inv.setItem(6, InventoryItems.remove("LEADERBOARD"));
+		inv.setItem(6, MenuItems.remove("LEADERBOARD"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -298,25 +319,25 @@ public class Inventories {
 	// Menu for editing the top balance leaderboard
 	public static Inventory createTopBalanceLeaderboardInventory() {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 9, 
 				CommunicationManager.format("&a&lTop Balance Leaderboard"));
 
 		// Option to create or relocate the leaderboard
 		if (DataManager.getConfigLocation(plugin, "leaderboard.topBalance") == null)
-			inv.setItem(0, InventoryItems.create("Leaderboard"));
-		else inv.setItem(0, InventoryItems.relocate("Leaderboard"));
+			inv.setItem(0, MenuItems.create("Leaderboard"));
+		else inv.setItem(0, MenuItems.relocate("Leaderboard"));
 
 		// Option to teleport to the leaderboard
-		inv.setItem(2, InventoryItems.teleport("Leaderboard"));
+		inv.setItem(2, MenuItems.teleport("Leaderboard"));
 
 		// Option to center the leaderboard
-		inv.setItem(4, InventoryItems.center("Leaderboard"));
+		inv.setItem(4, MenuItems.center("Leaderboard"));
 
 		// Option to remove the leaderboard
-		inv.setItem(6, InventoryItems.remove("LEADERBOARD"));
+		inv.setItem(6, MenuItems.remove("LEADERBOARD"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -324,95 +345,95 @@ public class Inventories {
 	// Menu for editing the top wave leaderboard
 	public static Inventory createTopWaveLeaderboardInventory() {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 9, 
 				CommunicationManager.format("&9&lTop Wave Leaderboard"));
 
 		// Option to create or relocate the leaderboard
 		if (DataManager.getConfigLocation(plugin, "leaderboard.topWave") == null)
-			inv.setItem(0, InventoryItems.create("Leaderboard"));
-		else inv.setItem(0, InventoryItems.relocate("Leaderboard"));
+			inv.setItem(0, MenuItems.create("Leaderboard"));
+		else inv.setItem(0, MenuItems.relocate("Leaderboard"));
 
 		// Option to teleport to the leaderboard
-		inv.setItem(2, InventoryItems.teleport("Leaderboard"));
+		inv.setItem(2, MenuItems.teleport("Leaderboard"));
 
 		// Option to center the leaderboard
-		inv.setItem(4, InventoryItems.center("Leaderboard"));
+		inv.setItem(4, MenuItems.center("Leaderboard"));
 
 		// Option to remove the leaderboard
-		inv.setItem(6, InventoryItems.remove("LEADERBOARD"));
+		inv.setItem(6, MenuItems.remove("LEADERBOARD"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
 
 	// Confirmation menu for total kills leaderboard
 	public static Inventory createTotalKillsConfirmInventory() {
-		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 9, 
 				CommunicationManager.format("&4&lRemove Total Kills Leaderboard?"));
 
 		// "No" option
-		inv.setItem(0, InventoryItems.no());
+		inv.setItem(0, MenuItems.no());
 
 		// "Yes" option
-		inv.setItem(8, InventoryItems.yes());
+		inv.setItem(8, MenuItems.yes());
 
 		return inv;
 	}
 
 	// Confirmation menu for top kills leaderboard
 	public static Inventory createTopKillsConfirmInventory() {
-		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 9, 
 				CommunicationManager.format("&4&lRemove Top Kills Leaderboard?"));
 
 		// "No" option
-		inv.setItem(0, InventoryItems.no());
+		inv.setItem(0, MenuItems.no());
 
 		// "Yes" option
-		inv.setItem(8, InventoryItems.yes());
+		inv.setItem(8, MenuItems.yes());
 
 		return inv;
 	}
 
 	// Confirmation menu for total gems leaderboard
 	public static Inventory createTotalGemsConfirmInventory() {
-		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 9, 
 				CommunicationManager.format("&4&lRemove Total Gems Leaderboard?"));
 
 		// "No" option
-		inv.setItem(0, InventoryItems.no());
+		inv.setItem(0, MenuItems.no());
 
 		// "Yes" option
-		inv.setItem(8, InventoryItems.yes());
+		inv.setItem(8, MenuItems.yes());
 
 		return inv;
 	}
 
 	// Confirmation menu for top balance leaderboard
 	public static Inventory createTopBalanceConfirmInventory() {
-		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 9, 
 				CommunicationManager.format("&4&lRemove Top Balance Leaderboard?"));
 
 		// "No" option
-		inv.setItem(0, InventoryItems.no());
+		inv.setItem(0, MenuItems.no());
 
 		// "Yes" option
-		inv.setItem(8, InventoryItems.yes());
+		inv.setItem(8, MenuItems.yes());
 
 		return inv;
 	}
 
 	// Confirmation menu for top wave leaderboard
 	public static Inventory createTopWaveConfirmInventory() {
-		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 9, 
 				CommunicationManager.format("&4&lRemove Top Wave Leaderboard?"));
 
 		// "No" option
-		inv.setItem(0, InventoryItems.no());
+		inv.setItem(0, MenuItems.no());
 
 		// "Yes" option
-		inv.setItem(8, InventoryItems.yes());
+		inv.setItem(8, MenuItems.yes());
 
 		return inv;
 	}
@@ -421,8 +442,8 @@ public class Inventories {
 	public static  Inventory createArenaInventory(int arena) {
 		Arena arenaInstance = GameManager.getArena(arena);
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				
 				CommunicationManager.format("&2&lEdit " + arenaInstance.getName()));
 
 		// Option to edit name
@@ -458,10 +479,10 @@ public class Inventories {
 				CommunicationManager.format("&9&lClose Arena: " + closed)));
 
 		// Option to remove arena
-		inv.setItem(7, InventoryItems.remove("ARENA"));
+		inv.setItem(7, MenuItems.remove("ARENA"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -469,15 +490,15 @@ public class Inventories {
 	// Confirmation menu for removing an arena
 	public static Inventory createArenaConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				
 				CommunicationManager.format("&4&lRemove " + GameManager.getArena(arena).getName() + '?'));
 
 		// "No" option
-		inv.setItem(0, InventoryItems.no());
+		inv.setItem(0, MenuItems.no());
 
 		// "Yes" option
-		inv.setItem(8, InventoryItems.yes());
+		inv.setItem(8, MenuItems.yes());
 
 		return inv;
 	}
@@ -487,40 +508,40 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				
 				CommunicationManager.format("&5&lPortal/LBoard: " + arenaInstance.getName()));
 
 		// Option to create or relocate the portal
 		if (arenaInstance.getPortal() == null)
-			inv.setItem(0, InventoryItems.create("Portal"));
-		else inv.setItem(0, InventoryItems.relocate("Portal"));
+			inv.setItem(0, MenuItems.create("Portal"));
+		else inv.setItem(0, MenuItems.relocate("Portal"));
 
 		// Option to teleport to the portal
-		inv.setItem(1, InventoryItems.teleport("Portal"));
+		inv.setItem(1, MenuItems.teleport("Portal"));
 
 		// Option to center the portal
-		inv.setItem(2, InventoryItems.center("Portal"));
+		inv.setItem(2, MenuItems.center("Portal"));
 
 		// Option to remove the portal
-		inv.setItem(3, InventoryItems.remove("PORTAL"));
+		inv.setItem(3, MenuItems.remove("PORTAL"));
 
 		// Option to create or relocate the leaderboard
 		if (arenaInstance.getArenaBoard() == null)
-			inv.setItem(4, InventoryItems.create("Leaderboard"));
-		else inv.setItem(4, InventoryItems.relocate("Leaderboard"));
+			inv.setItem(4, MenuItems.create("Leaderboard"));
+		else inv.setItem(4, MenuItems.relocate("Leaderboard"));
 
 		// Option to teleport to the leaderboard
-		inv.setItem(5, InventoryItems.teleport("Leaderboard"));
+		inv.setItem(5, MenuItems.teleport("Leaderboard"));
 
 		// Option to center the leaderboard
-		inv.setItem(6, InventoryItems.center("Leaderboard"));
+		inv.setItem(6, MenuItems.center("Leaderboard"));
 
 		// Option to remove the leaderboard
-		inv.setItem(7, InventoryItems.remove("LEADERBOARD"));
+		inv.setItem(7, MenuItems.remove("LEADERBOARD"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -528,14 +549,14 @@ public class Inventories {
 	// Confirmation menu for removing the arena portal
 	public static Inventory createPortalConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") + CommunicationManager.format("&4&lRemove Portal?"));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				 CommunicationManager.format("&4&lRemove Portal?"));
 
 		// "No" option
-		inv.setItem(0, InventoryItems.no());
+		inv.setItem(0, MenuItems.no());
 
 		// "Yes" option
-		inv.setItem(8, InventoryItems.yes());
+		inv.setItem(8, MenuItems.yes());
 
 		return inv;
 	}
@@ -543,14 +564,14 @@ public class Inventories {
 	// Confirmation menu for removing the arena leaderboard
 	public static Inventory createArenaBoardConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") + CommunicationManager.format("&4&lRemove Leaderboard?"));
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				 CommunicationManager.format("&4&lRemove Leaderboard?"));
 
 		// "No" option
-		inv.setItem(0, InventoryItems.no());
+		inv.setItem(0, MenuItems.no());
 
 		// "Yes" option
-		inv.setItem(8, InventoryItems.yes());
+		inv.setItem(8, MenuItems.yes());
 
 		return inv;
 	}
@@ -560,8 +581,8 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				
 				CommunicationManager.format("&d&lPlayer Settings: " + arenaInstance.getName()));
 
 		// Option to edit player spawn
@@ -595,7 +616,7 @@ public class Inventories {
 				CommunicationManager.format("&7Minimum players needed for game to start")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -605,26 +626,26 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				
 				CommunicationManager.format("&d&lPlayer Spawn: " + arenaInstance.getName()));
 
 		// Option to create or relocate player spawn
 		if (arenaInstance.getPlayerSpawn() != null)
-			inv.setItem(0, InventoryItems.relocate("Spawn"));
-		else inv.setItem(0, InventoryItems.create("Spawn"));
+			inv.setItem(0, MenuItems.relocate("Spawn"));
+		else inv.setItem(0, MenuItems.create("Spawn"));
 
 		// Option to teleport to player spawn
-		inv.setItem(2, InventoryItems.teleport("Spawn"));
+		inv.setItem(2, MenuItems.teleport("Spawn"));
 
 		// Option to center the player spawn
-		inv.setItem(4, InventoryItems.center("Spawn"));
+		inv.setItem(4, MenuItems.center("Spawn"));
 
 		// Option to remove player spawn
-		inv.setItem(6, InventoryItems.remove("SPAWN"));
+		inv.setItem(6, MenuItems.remove("SPAWN"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -632,15 +653,15 @@ public class Inventories {
 	// Confirmation menu for removing player spawn
 	public static Inventory createSpawnConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				
 				CommunicationManager.format("&4&lRemove Spawn?"));
 
 		// "No" option
-		inv.setItem(0, InventoryItems.no());
+		inv.setItem(0, MenuItems.no());
 
 		// "Yes" option
-		inv.setItem(8, InventoryItems.yes());
+		inv.setItem(8, MenuItems.yes());
 
 		return inv;
 	}
@@ -650,26 +671,26 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				
 				CommunicationManager.format("&b&lWaiting Room: " + arenaInstance.getName()));
 
 		// Option to create waiting room
 		if (arenaInstance.getWaitingRoom() == null)
-			inv.setItem(0, InventoryItems.create("Waiting Room"));
-		else inv.setItem(0, InventoryItems.relocate("Waiting Room"));
+			inv.setItem(0, MenuItems.create("Waiting Room"));
+		else inv.setItem(0, MenuItems.relocate("Waiting Room"));
 
 		// Option to teleport to waiting room
-		inv.setItem(2, InventoryItems.teleport("Waiting Room"));
+		inv.setItem(2, MenuItems.teleport("Waiting Room"));
 
 		// Option to center the waiting room
-		inv.setItem(4, InventoryItems.center("Waiting Room"));
+		inv.setItem(4, MenuItems.center("Waiting Room"));
 
 		// Option to remove waiting room
-		inv.setItem(6, InventoryItems.remove("WAITING ROOM"));
+		inv.setItem(6, MenuItems.remove("WAITING ROOM"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -677,15 +698,15 @@ public class Inventories {
 	// Confirmation menu for removing waiting room
 	public static Inventory createWaitingConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				
 				CommunicationManager.format("&4&lRemove Waiting Room?"));
 
 		// "No" option
-		inv.setItem(0, InventoryItems.no());
+		inv.setItem(0, MenuItems.no());
 
 		// "Yes" option
-		inv.setItem(8, InventoryItems.yes());
+		inv.setItem(8, MenuItems.yes());
 
 		return inv;
 	}
@@ -693,8 +714,8 @@ public class Inventories {
 	// Menu for changing max players in an arena
 	public static Inventory createMaxPlayerInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				
 				CommunicationManager.format("&4&lMaximum Players: " +
 						GameManager.getArena(arena).getMaxPlayers()));
 
@@ -709,7 +730,7 @@ public class Inventories {
 					CommunicationManager.format("&2&lIncrease")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -717,8 +738,8 @@ public class Inventories {
 	// Menu for changing min players in an arena
 	public static Inventory createMinPlayerInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				
 				CommunicationManager.format("&2&lMinimum Players: " +
 						GameManager.getArena(arena).getMinPlayers()));
 
@@ -733,7 +754,7 @@ public class Inventories {
 					CommunicationManager.format("&2&lIncrease")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -743,8 +764,8 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				
 				CommunicationManager.format("&2&lMob Settings: " + arenaInstance.getName()));
 
 		// Option to edit monster spawns
@@ -781,7 +802,7 @@ public class Inventories {
 				CommunicationManager.format("&7number of players")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -791,8 +812,8 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				
 				CommunicationManager.format("&2&lMonster Spawns: " + arenaInstance.getName()));
 
 		// Prepare for material indexing
@@ -811,7 +832,7 @@ public class Inventories {
 		}
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -821,23 +842,23 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena, slot), 9,
+				
 				CommunicationManager.format("&2&lMonster Spawn " + (slot + 1) + ": " + arenaInstance.getName()));
 
 		// Option to create or relocate monster spawn
 		if (arenaInstance.getMonsterSpawn(slot) != null)
-			inv.setItem(0, InventoryItems.relocate("Spawn"));
-		else inv.setItem(0, InventoryItems.create("Spawn"));
+			inv.setItem(0, MenuItems.relocate("Spawn"));
+		else inv.setItem(0, MenuItems.create("Spawn"));
 
 		// Option to teleport to monster spawn
-		inv.setItem(1, InventoryItems.teleport("Spawn"));
+		inv.setItem(1, MenuItems.teleport("Spawn"));
 
 		// Option to center the monster spawn
-		inv.setItem(2, InventoryItems.center("Spawn"));
+		inv.setItem(2, MenuItems.center("Spawn"));
 
 		// Option to remove monster spawn
-		inv.setItem(3, InventoryItems.remove("SPAWN"));
+		inv.setItem(3, MenuItems.remove("SPAWN"));
 
 		// Toggle to set monster spawn type
 		switch (arenaInstance.getMonsterSpawnType(slot)) {
@@ -855,7 +876,7 @@ public class Inventories {
 		}
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -863,15 +884,15 @@ public class Inventories {
 	// Confirmation menu for removing monster spawns
 	public static Inventory createMonsterSpawnConfirmInventory(int arena, int slot) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena, slot), 9,
+				
 				CommunicationManager.format("&4&lRemove Monster Spawn?"));
 
 		// "No" option
-		inv.setItem(0, InventoryItems.no());
+		inv.setItem(0, MenuItems.no());
 
 		// "Yes" option
-		inv.setItem(8, InventoryItems.yes());
+		inv.setItem(8, MenuItems.yes());
 
 		return inv;
 	}
@@ -881,8 +902,8 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				
 				CommunicationManager.format("&5&lVillager Spawns: " + arenaInstance.getName()));
 
 		// Prepare for material indexing
@@ -901,7 +922,7 @@ public class Inventories {
 		}
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -911,26 +932,26 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena, slot), 9,
+				
 				CommunicationManager.format("&5&lVillager Spawn " + (slot + 1) + ": " + arenaInstance.getName()));
 
 		// Option to create or relocate villager spawn
 		if (arenaInstance.getVillagerSpawn(slot) != null)
-			inv.setItem(0, InventoryItems.relocate("Spawn"));
-		else inv.setItem(0, InventoryItems.create("Spawn"));
+			inv.setItem(0, MenuItems.relocate("Spawn"));
+		else inv.setItem(0, MenuItems.create("Spawn"));
 
 		// Option to teleport to villager spawn
-		inv.setItem(2, InventoryItems.teleport("Spawn"));
+		inv.setItem(2, MenuItems.teleport("Spawn"));
 
 		// Option to center the villager spawn
-		inv.setItem(4, InventoryItems.center("Spawn"));
+		inv.setItem(4, MenuItems.center("Spawn"));
 
 		// Option to remove villager spawn
-		inv.setItem(6, InventoryItems.remove("SPAWN"));
+		inv.setItem(6, MenuItems.remove("SPAWN"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -938,15 +959,15 @@ public class Inventories {
 	// Confirmation menu for removing mob spawns
 	public static Inventory createVillagerSpawnConfirmInventory(int arena, int slot) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena, slot), 9,
+				
 				CommunicationManager.format("&4&lRemove Villager Spawn?"));
 
 		// "No" option
-		inv.setItem(0, InventoryItems.no());
+		inv.setItem(0, MenuItems.no());
 
 		// "Yes" option
-		inv.setItem(8, InventoryItems.yes());
+		inv.setItem(8, MenuItems.yes());
 
 		return inv;
 	}
@@ -959,9 +980,9 @@ public class Inventories {
 
 		// Create inventory
 		if (arenaInstance.getSpawnTableFile().equals("custom"))
-			 inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+			 inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
 					CommunicationManager.format("&3&lSpawn Table: a" + arena + ".yml"));
-		else inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+		else inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
 				CommunicationManager.format("&3&lSpawn Table: " + arenaInstance.getSpawnTableFile() + ".yml"));
 
 		// Option to set spawn table to default
@@ -1014,7 +1035,7 @@ public class Inventories {
 				CommunicationManager.format("&7(Check the arena number in arenaData.yml)")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -1024,8 +1045,8 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				
 				CommunicationManager.format("&e&lShop Settings: " + arenaInstance.getName()));
 
 		// Option to create a custom shop
@@ -1059,7 +1080,7 @@ public class Inventories {
 				CommunicationManager.format("&7players in the game")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -1069,8 +1090,8 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 27,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena, slot), 27,
+				
 				CommunicationManager.format("&6&lEdit Item"));
 
 		// Item of interest
@@ -1117,7 +1138,7 @@ public class Inventories {
 				CommunicationManager.format("&c&l-1000 gems")));
 
 		// Option to exit
-		inv.setItem(26, InventoryItems.exit());
+		inv.setItem(26, MenuItems.exit());
 
 		return inv;
 	}
@@ -1125,15 +1146,15 @@ public class Inventories {
 	// Confirmation menu for removing custom item
 	public static Inventory createCustomItemConfirmInventory(int arena, int slot) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena, slot), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena, slot), 9,
+				
 				CommunicationManager.format("&4&lRemove Custom Item?"));
 
 		// "No" option
-		inv.setItem(0, InventoryItems.no());
+		inv.setItem(0, MenuItems.no());
 
 		// "Yes" option
-		inv.setItem(8, InventoryItems.yes());
+		inv.setItem(8, MenuItems.yes());
 
 		return inv;
 	}
@@ -1143,8 +1164,8 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 18,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 18,
+				
 				CommunicationManager.format("&8&lGame Settings: " + arenaInstance.getName()));
 
 		// Option to change max waves
@@ -1234,7 +1255,7 @@ public class Inventories {
 				CommunicationManager.format("&7choose from a menu of presets")));
 
 		// Option to exit
-		inv.setItem(17, InventoryItems.exit());
+		inv.setItem(17, MenuItems.exit());
 
 		return inv;
 	}
@@ -1245,9 +1266,9 @@ public class Inventories {
 
 		// Create inventory
 		if (GameManager.getArena(arena).getMaxWaves() < 0)
-			inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+			inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
 					CommunicationManager.format("&3&lMaximum Waves: Unlimited"));
-		else inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+		else inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
 				CommunicationManager.format("&3&lMaximum Waves: " + GameManager.getArena(arena).getMaxWaves()));
 
 		// Option to decrease
@@ -1269,7 +1290,7 @@ public class Inventories {
 					CommunicationManager.format("&2&lIncrease")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -1280,10 +1301,10 @@ public class Inventories {
 
 		// Create inventory
 		if (GameManager.getArena(arena).getWaveTimeLimit() < 0)
-			inv = Bukkit.createInventory(new InventoryMeta(arena), 9, CommunicationManager.format("&k") +
+			inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
 					CommunicationManager.format("&2&lWave Time Limit: Unlimited"));
-		else inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") +
+		else inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				
 				CommunicationManager.format("&2&lWave Time Limit: " +
 						GameManager.getArena(arena).getWaveTimeLimit()));
 
@@ -1306,7 +1327,7 @@ public class Inventories {
 					CommunicationManager.format("&2&lIncrease")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -1316,8 +1337,8 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 54,
+				
 				(mock ? CommunicationManager.format("&9&l" +
 						LanguageManager.messages.allowedKits + ": " + arenaInstance.getName()) :
 						CommunicationManager.format("&9&l" +
@@ -1417,7 +1438,7 @@ public class Inventories {
 		else inv.setItem(49, Kit.giant().getButton(-1, true));
 
 		// Option to exit
-		inv.setItem(53, InventoryItems.exit());
+		inv.setItem(53, MenuItems.exit());
 
 		return inv;
 	}
@@ -1443,8 +1464,8 @@ public class Inventories {
 		}
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				
 				CommunicationManager.format("&6&lDifficulty Label: " + label));
 
 		// "Easy" option
@@ -1468,7 +1489,7 @@ public class Inventories {
 				CommunicationManager.format("&7&l" + LanguageManager.names.none)));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -1476,8 +1497,8 @@ public class Inventories {
 	// Menu for changing the difficulty multiplier of an arena
 	public static Inventory createDifficultyMultiplierInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				
 				CommunicationManager.format("&4&lDifficulty Multiplier: " +
 						GameManager.getArena(arena).getDifficultyMultiplier()));
 
@@ -1495,7 +1516,7 @@ public class Inventories {
 		inv.setItem(6, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&l4")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -1505,8 +1526,8 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				
 				CommunicationManager.format("&4&lArena Bounds: " + arenaInstance.getName()));
 
 		// Option to interact with corner 1
@@ -1524,7 +1545,7 @@ public class Inventories {
 				getToggleStatus(arenaInstance.hasBorderParticles()))));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -1534,23 +1555,23 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				
 				CommunicationManager.format("&b&lCorner 1: " + arenaInstance.getName()));
 
 		// Option to create waiting room
 		if (arenaInstance.getCorner1() == null)
-			inv.setItem(0, InventoryItems.create("Corner 1"));
-		else inv.setItem(0, InventoryItems.relocate("Corner 1"));
+			inv.setItem(0, MenuItems.create("Corner 1"));
+		else inv.setItem(0, MenuItems.relocate("Corner 1"));
 
 		// Option to teleport to waiting room
-		inv.setItem(2, InventoryItems.teleport("Corner 1"));
+		inv.setItem(2, MenuItems.teleport("Corner 1"));
 
 		// Option to remove waiting room
-		inv.setItem(4, InventoryItems.remove("CORNER 1"));
+		inv.setItem(4, MenuItems.remove("CORNER 1"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -1558,15 +1579,15 @@ public class Inventories {
 	// Confirmation menu for removing corner 1
 	public static Inventory createCorner1ConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				
 				CommunicationManager.format("&4&lRemove Corner 1?"));
 
 		// "No" option
-		inv.setItem(0, InventoryItems.no());
+		inv.setItem(0, MenuItems.no());
 
 		// "Yes" option
-		inv.setItem(8, InventoryItems.yes());
+		inv.setItem(8, MenuItems.yes());
 
 		return inv;
 	}
@@ -1576,23 +1597,23 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				
 				CommunicationManager.format("&9&lCorner 2: " + arenaInstance.getName()));
 
 		// Option to create waiting room
 		if (arenaInstance.getCorner2() == null)
-			inv.setItem(0, InventoryItems.create("Corner 2"));
-		else inv.setItem(0, InventoryItems.relocate("Corner 2"));
+			inv.setItem(0, MenuItems.create("Corner 2"));
+		else inv.setItem(0, MenuItems.relocate("Corner 2"));
 
 		// Option to teleport to waiting room
-		inv.setItem(2, InventoryItems.teleport("Corner 2"));
+		inv.setItem(2, MenuItems.teleport("Corner 2"));
 
 		// Option to remove waiting room
-		inv.setItem(4, InventoryItems.remove("CORNER 2"));
+		inv.setItem(4, MenuItems.remove("CORNER 2"));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -1600,15 +1621,15 @@ public class Inventories {
 	// Confirmation menu for removing corner 2
 	public static Inventory createCorner2ConfirmInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				
 				CommunicationManager.format("&4&lRemove Corner 2?"));
 
 		// "No" option
-		inv.setItem(0, InventoryItems.no());
+		inv.setItem(0, MenuItems.no());
 
 		// "Yes" option
-		inv.setItem(8, InventoryItems.yes());
+		inv.setItem(8, MenuItems.yes());
 
 		return inv;
 	}
@@ -1616,8 +1637,8 @@ public class Inventories {
 	// Menu for changing wolf cap of an arena
 	public static Inventory createWolfCapInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				
 				CommunicationManager.format("&6&lWolf Cap: " + GameManager.getArena(arena).getWolfCap()));
 
 		// Option to decrease
@@ -1631,7 +1652,7 @@ public class Inventories {
 					CommunicationManager.format("&2&lIncrease")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -1639,8 +1660,8 @@ public class Inventories {
 	// Menu for changing iron golem cap of an arena
 	public static Inventory createGolemCapInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				
 				CommunicationManager.format("&e&lIron Golem Cap: " + GameManager.getArena(arena).getGolemCap()));
 
 		// Option to decrease
@@ -1654,7 +1675,7 @@ public class Inventories {
 					CommunicationManager.format("&2&lIncrease")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -1664,8 +1685,8 @@ public class Inventories {
 		Arena arenaInstance = GameManager.getArena(arena);
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 9,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
+				
 				CommunicationManager.format("&d&lSounds: " + GameManager.getArena(arena).getName()));
 
 		// Option to edit win sound
@@ -1731,7 +1752,7 @@ public class Inventories {
 				CommunicationManager.format("&7Played when a player uses their ability")));
 
 		// Option to exit
-		inv.setItem(8, InventoryItems.exit());
+		inv.setItem(8, MenuItems.exit());
 
 		return inv;
 	}
@@ -1739,8 +1760,8 @@ public class Inventories {
 	// Menu for editing the win sound of an arena
 	public static Inventory createWaitSoundInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 18,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 18,
+				
 				CommunicationManager.format("&6&lWaiting Sound: " +
 						GameManager.getArena(arena).getWaitingSoundName()));
 
@@ -1764,7 +1785,7 @@ public class Inventories {
 		inv.setItem(14, arenaInstance.getWaitingSoundButton(14));
 
 		// Option to exit
-		inv.setItem(17, InventoryItems.exit());
+		inv.setItem(17, MenuItems.exit());
 
 		return inv;
 	}
@@ -1772,8 +1793,8 @@ public class Inventories {
 	// Menu to copy game settings
 	public static Inventory createCopySettingsInventory(int arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54,
-				CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 54,
+				
 				CommunicationManager.format("&8&lCopy Game Settings"));
 
 		// Options to choose any of the 45 possible arenas
@@ -1807,7 +1828,7 @@ public class Inventories {
 				CommunicationManager.format("&d&lInsane Preset")));
 
 		// Option to exit
-		inv.setItem(53, InventoryItems.exit());
+		inv.setItem(53, MenuItems.exit());
 
 		return inv;
 	}
@@ -1817,7 +1838,7 @@ public class Inventories {
 		String disabled = " &4&l[" + LanguageManager.messages.disabled + "]";
 		
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 9, 
 				CommunicationManager.format("&2&l" + LanguageManager.messages.level +
 						" &9&l" + level + " &2&l" + LanguageManager.names.itemShop));
 
@@ -1864,7 +1885,7 @@ public class Inventories {
 			modifier = 1;
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 27, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 27, 
 				CommunicationManager.format("&4&l" + LanguageManager.messages.level +
 						" &9&l" + level + " &4&l" + LanguageManager.names.weaponShop));
 
@@ -1901,7 +1922,7 @@ public class Inventories {
 			inv.setItem(i + 15, modifyPrice(ammo.get(i), modifier));
 
 		// Return option
-		inv.setItem(22, InventoryItems.exit());
+		inv.setItem(22, MenuItems.exit());
 
 		return inv;
 	}
@@ -1914,7 +1935,7 @@ public class Inventories {
 			modifier = 1;
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 27, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 27, 
 				CommunicationManager.format("&5&l" + LanguageManager.messages.level +
 						" &9&l" + level + " &5&l" + LanguageManager.names.armorShop));
 
@@ -1951,7 +1972,7 @@ public class Inventories {
 			inv.setItem(i + 14, modifyPrice(boots.get(i), modifier));
 
 		// Return option
-		inv.setItem(22, InventoryItems.exit());
+		inv.setItem(22, MenuItems.exit());
 
 		return inv;
 	}
@@ -1964,7 +1985,7 @@ public class Inventories {
 			modifier = 1;
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 18, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 18, 
 				CommunicationManager.format("&3&l" + LanguageManager.messages.level +
 						" &9&l" + level + " &3&l" + LanguageManager.names.consumableShop));
 
@@ -1985,7 +2006,7 @@ public class Inventories {
 			inv.setItem(i + 5, modifyPrice(others.get(i), modifier));
 
 		// Return option
-		inv.setItem(13, InventoryItems.exit());
+		inv.setItem(13, MenuItems.exit());
 
 		return inv;
 	}
@@ -1993,7 +2014,7 @@ public class Inventories {
 	// Generate the enchant shop
 	public static Inventory createEnchantShop() {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 54, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 54, 
 				CommunicationManager.format("&a&l" + LanguageManager.names.enchantShop));
 
 		// Melee enchants
@@ -2059,7 +2080,7 @@ public class Inventories {
 				CommunicationManager.format("&2Costs 20 XP Levels")));
 
 		// Return option
-		inv.setItem(53, InventoryItems.exit());
+		inv.setItem(53, MenuItems.exit());
 
 		return inv;
 	}
@@ -2069,7 +2090,7 @@ public class Inventories {
 		FileConfiguration playerData = plugin.getPlayerData();
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 9, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 9, 
 				CommunicationManager.format("&2&l" + String.format(LanguageManager.messages.playerStatistics,
 						name)));
 
@@ -2126,7 +2147,7 @@ public class Inventories {
 		String path = name + ".kits.";
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 54, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 54, 
 				CommunicationManager.format("&9&l" + String.format(LanguageManager.messages.playerKits, name)));
 
 		// Gift kits
@@ -2202,7 +2223,7 @@ public class Inventories {
 							": &b" + playerData.getInt(name + ".crystalBalance"))));
 
 		// Option to exit
-		inv.setItem(53, InventoryItems.exit());
+		inv.setItem(53, MenuItems.exit());
 
 		return inv;
 	}
@@ -2213,7 +2234,7 @@ public class Inventories {
 		String path = player.getName() + ".kits.";
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 54, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 54, 
 				CommunicationManager.format("&9&l" + arena.getName() + " " +
 						LanguageManager.messages.kits));
 
@@ -2316,7 +2337,7 @@ public class Inventories {
 		inv.setItem(52, Kit.none().getButton(0, true));
 
 		// Option to exit
-		inv.setItem(53, InventoryItems.exit());
+		inv.setItem(53, MenuItems.exit());
 
 		return inv;
 	}
@@ -2324,7 +2345,7 @@ public class Inventories {
 	// Display challenges for a player to select
 	public static Inventory createSelectChallengesInventory(VDPlayer player, Arena arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(null, 18, CommunicationManager.format("&k") +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 18, 
 				CommunicationManager.format("&5&l" + arena.getName() + " " +
 						LanguageManager.messages.challenges));
 
@@ -2341,7 +2362,7 @@ public class Inventories {
 		inv.setItem(8, Challenge.none().getButton(player.getChallenges().isEmpty()));
 
 		// Option to exit
-		inv.setItem(13, InventoryItems.exit());
+		inv.setItem(13, MenuItems.exit());
 
 		return inv;
 	}
@@ -2349,8 +2370,8 @@ public class Inventories {
 	// Display arena information
 	public static Inventory createArenaInfoInventory(Arena arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(arena.getArena()), 36,
-				CommunicationManager.format("&k") + CommunicationManager.format("&6&l" +
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena.getArena()), 36,
+				 CommunicationManager.format("&6&l" +
 						String.format(LanguageManager.messages.arenaInfo, arena.getName())));
 
 		// Maximum players

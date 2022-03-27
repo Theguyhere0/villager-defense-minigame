@@ -3,7 +3,7 @@ package me.theguyhere.villagerdefense.plugin;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Log;
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
-import me.theguyhere.villagerdefense.plugin.GUI.Inventories;
+import me.theguyhere.villagerdefense.plugin.GUI.Menus;
 import me.theguyhere.villagerdefense.plugin.commands.CommandTab;
 import me.theguyhere.villagerdefense.plugin.commands.Commands;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLanguageKeyException;
@@ -61,7 +61,7 @@ public class Main extends JavaPlugin {
 		}
 		Commands commands = new Commands(this);
 		GameItems.setPlugin();
-		Inventories.setPlugin(this);
+		Menus.setPlugin(this);
 
 		// Set up commands and tab complete
 		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist").setExecutor(commands);

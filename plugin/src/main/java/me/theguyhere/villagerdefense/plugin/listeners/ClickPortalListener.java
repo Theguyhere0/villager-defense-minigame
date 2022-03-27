@@ -1,6 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
-import me.theguyhere.villagerdefense.plugin.GUI.Inventories;
+import me.theguyhere.villagerdefense.plugin.GUI.Menus;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.JoinArenaEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeftClickNPCEvent;
@@ -52,6 +52,6 @@ public class ClickPortalListener implements Listener {
 		}
 
 		// Open inventory
-		e.getPlayer().openInventory(Inventories.createArenaInfoInventory(arena));
+		e.getPlayer().openInventory(Menus.createArenaInfoInventory(arena));
 	}
 }

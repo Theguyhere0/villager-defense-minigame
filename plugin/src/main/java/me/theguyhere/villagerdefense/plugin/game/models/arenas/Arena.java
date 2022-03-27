@@ -1,7 +1,8 @@
 package me.theguyhere.villagerdefense.plugin.game.models.arenas;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.plugin.GUI.InventoryItems;
+import me.theguyhere.villagerdefense.plugin.GUI.InventoryType;
+import me.theguyhere.villagerdefense.plugin.GUI.MenuItems;
 import me.theguyhere.villagerdefense.plugin.GUI.InventoryMeta;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
@@ -20,7 +21,6 @@ import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.*;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.*;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -1635,12 +1635,16 @@ public class Arena {
 
     public Inventory getCustomShopEditor() {
         // Create inventory
-        Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54, CommunicationManager.format("&k") +
-                CommunicationManager.format("&6&lCustom Shop Editor: " + getName()));
+        Inventory inv = Bukkit.createInventory(
+                new InventoryMeta(InventoryType.MENU, arena),
+                54,
+                CommunicationManager.format("&k") +
+                        CommunicationManager.format("&6&lCustom Shop Editor: " + getName())
+        );
 
         // Set exit option
         for (int i = 45; i < 54; i++)
-            inv.setItem(i, InventoryItems.exit());
+            inv.setItem(i, MenuItems.exit());
 
         // Check for a stored inventory
         if (!config.contains(path + ".customShop"))
@@ -1692,12 +1696,15 @@ public class Arena {
 
     public Inventory getCustomShop() {
         // Create inventory
-        Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54,
+        Inventory inv = Bukkit.createInventory(
+                new InventoryMeta(InventoryType.MENU, arena),
+                54,
                 CommunicationManager.format("&k") + CommunicationManager.format("&6&l") +
-                        LanguageManager.names.customShop);
+                        LanguageManager.names.customShop
+        );
 
         // Set exit option
-        inv.setItem(49, InventoryItems.exit());
+        inv.setItem(49, MenuItems.exit());
 
         // Check for a stored inventory
         if (!config.contains(path + ".customShop"))
@@ -1753,12 +1760,15 @@ public class Arena {
      */
     public Inventory getMockCustomShop() {
         // Create inventory
-        Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54,
+        Inventory inv = Bukkit.createInventory(
+                new InventoryMeta(InventoryType.MENU, arena),
+                54,
                 CommunicationManager.format("&k") + CommunicationManager.format("&6&l" +
-                        LanguageManager.names.customShop + ": " + getName()));
+                        LanguageManager.names.customShop + ": " + getName())
+        );
 
         // Set exit option
-        inv.setItem(49, InventoryItems.exit());
+        inv.setItem(49, MenuItems.exit());
 
         // Check for a stored inventory
         if (!config.contains(path + ".customShop"))

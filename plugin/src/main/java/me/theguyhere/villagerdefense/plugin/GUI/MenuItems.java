@@ -6,7 +6,7 @@ import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public class InventoryItems {
+public class MenuItems {
     //	"No" button
     public static ItemStack no() {
         return ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&c&lNO"));
