@@ -1,8 +1,10 @@
 package me.theguyhere.villagerdefense.plugin.inventories;
 
+import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -136,23 +138,27 @@ public class InventoryFactory {
             inv.setItem((lines - 1) * 9 + (9 - hangingButtons) / 2 + i, buttonIterator.next());
 
         // Set exit button
-        if (exitButton)
-            inv.setItem(invSize - 1, Buttons.exit());
+        if (exitButton) {
+            if (hangingButtons == 0)
+                inv.setItem(invSize - 5, Buttons.exit());
+            else
+                inv.setItem(invSize - 1, Buttons.exit());
+        }
 
         return inv;
     }
     
-    public static Inventory createSingleLocationMenu(
+    public static Inventory createLocationMenu(
             Arena arena,
             int id,
             @NotNull String formattedName,
-            Location location,
+            boolean locationExists,
             @NotNull String locationName
     ) {
         List<ItemStack> buttons = new ArrayList<>();
 
         // Option to create or relocate the location
-        if (location == null)
+        if (!locationExists)
             buttons.add(Buttons.create(locationName));
         else buttons.add(Buttons.relocate(locationName));
 
@@ -173,30 +179,67 @@ public class InventoryFactory {
                 buttons);
     }
 
-    public static Inventory createSingleLocationMenu(
+    public static Inventory createLocationMenu(
             Arena arena,
             @NotNull String formattedName,
-            Location location,
+            boolean locationExists,
             @NotNull String locationName
     ) {
-        return createSingleLocationMenu(arena, 0, formattedName, location, locationName);
+        return createLocationMenu(arena, 0, formattedName, locationExists, locationName);
     }
 
-    public static Inventory createSingleLocationMenu(
+    public static Inventory createLocationMenu(
             int id,
             @NotNull String formattedName,
-            Location location,
+            boolean locationExists,
             @NotNull String locationName
     ) {
-        return createSingleLocationMenu(null, id, formattedName, location, locationName);
+        return createLocationMenu(null, id, formattedName, locationExists, locationName);
     }
 
-    public static Inventory createSingleLocationMenu(
+    public static Inventory createLocationMenu(
             @NotNull String formattedName,
-            Location location,
+            boolean locationExists,
             @NotNull String locationName
     ) {
-        return createSingleLocationMenu(null, 0, formattedName, location, locationName);
+        return createLocationMenu(null, 0, formattedName, locationExists, locationName);
+    }
+
+    public static Inventory createSimpleLocationMenu(
+            Arena arena,
+            @NotNull String formattedName,
+            boolean locationExists,
+            @NotNull String locationName
+    ) {
+        return createSimpleLocationMenu(arena, 0, formattedName, locationExists, locationName);
+    }
+
+    public static Inventory createSimpleLocationMenu(
+            Arena arena,
+            int id,
+            @NotNull String formattedName,
+            boolean locationExists,
+            @NotNull String locationName
+    ) {
+        List<ItemStack> buttons = new ArrayList<>();
+
+        // Option to create or relocate the location
+        if (!locationExists)
+            buttons.add(Buttons.create(locationName));
+        else buttons.add(Buttons.relocate(locationName));
+
+        // Option to teleport to the location
+        buttons.add(Buttons.teleport(locationName));
+
+        // Option to remove the location
+        buttons.add(Buttons.remove(locationName.toUpperCase()));
+
+        return createFixedSizeInventory(
+                new InventoryMeta(InventoryType.MENU, arena, id),
+                formattedName,
+                1,
+                true,
+                buttons);
     }
 
     public static Inventory createConfirmationMenu(Arena arena, int id, @NotNull String formattedName) {
@@ -227,5 +270,61 @@ public class InventoryFactory {
 
     public static Inventory createConfirmationMenu(@NotNull String formattedName) {
         return createConfirmationMenu(null, 0, formattedName);
+    }
+
+    public static Inventory createIncrementorMenu(Arena arena, int id, @NotNull String formattedName) {
+        List<ItemStack> buttons = new ArrayList<>();
+
+        // Decrement button
+        buttons.add(ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&lDecrease")));
+
+        // Increment button
+        buttons.add(ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&2&lIncrease")));
+
+        return createFixedSizeInventory(
+                new InventoryMeta(InventoryType.MENU, arena, id),
+                formattedName,
+                1,
+                true,
+                buttons
+        );
+    }
+
+    public static Inventory createIncrementorMenu(Arena arena, @NotNull String formattedName) {
+        return createIncrementorMenu(arena, 0, formattedName);
+    }
+
+    public static Inventory createAdvancedIncrementorMenu(Arena arena, int id, @NotNull String formattedName) {
+        List<ItemStack> buttons = new ArrayList<>();
+
+        // Decrement button
+        buttons.add(ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&lDecrease")));
+
+        // Unlimited button
+        buttons.add(
+                ItemManager.createItem(Material.ORANGE_CONCRETE,
+                CommunicationManager.format("&6&lUnlimited"))
+        );
+
+        // Reset button
+        buttons.add(
+                ItemManager.createItem(Material.LIGHT_BLUE_CONCRETE,
+                CommunicationManager.format("&3&lReset to 1"))
+        );
+
+        // Increment button
+        buttons.add(ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&2&lIncrease")));
+
+        return createFixedSizeInventory(
+                new InventoryMeta(InventoryType.MENU, arena, id),
+                formattedName,
+                1,
+                true,
+                buttons
+        );
+    }
+
+    public static Inventory createAdvancedIncrementorMenu(Arena arena, @NotNull String formattedName) {
+        return createAdvancedIncrementorMenu(arena, 0, formattedName);
     }
 }

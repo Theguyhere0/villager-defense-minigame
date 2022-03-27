@@ -418,15 +418,15 @@ public class GameListener implements Listener {
 
 		// Open shop inventory
 		if (GameItems.shop().equals(item))
-			player.openInventory(Inventories.createShop(arena.getCurrentWave() / 10 + 1, arena));
+			player.openInventory(Inventories.createShopMenu(arena.getCurrentWave() / 10 + 1, arena));
 
 		// Open kit selection menu
 		else if (GameItems.kitSelector().equals(item))
-			player.openInventory(Inventories.createSelectKitsInventory(player, arena));
+			player.openInventory(Inventories.createSelectKitsMenu(player, arena));
 
 		// Open challenge selection menu
 		else if (GameItems.challengeSelector().equals(item))
-			player.openInventory(Inventories.createSelectChallengesInventory(gamer, arena));
+			player.openInventory(Inventories.createSelectChallengesMenu(gamer, arena));
 
 		// Make player leave
 		else if (GameItems.leave().equals(item))

@@ -135,10 +135,13 @@ public class Arena {
      */
     public void setName(String name) throws InvalidNameException {
         // Check if name is not empty
-        if (name == null || name.length() == 0) throw new InvalidNameException();
+        if (name == null || name.length() == 0) throw new InvalidNameException("Empty");
+
+        // Check if name is the same as current
+        else if (name.equals(getName())) throw new InvalidNameException("Same");
 
         // Check for duplicate name
-        else if (GameManager.getArena(name) != null) throw new InvalidNameException();
+        else if (GameManager.getArena(name) != null) throw new InvalidNameException("Duplicate");
 
         // Save name
         else {
@@ -391,108 +394,48 @@ public class Arena {
      * Create the button for a given waiting music of the arena from the arena file.
      * @return A button for GUIs.
      */
-    public ItemStack getWaitingSoundButton(int number) {
+    public ItemStack getWaitingSoundButton(String name) {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
         enchants.put(Enchantment.DURABILITY, 1);
         String sound = config.getString(path + ".sounds.waiting");
         boolean selected;
 
-        switch (number) {
-            case 0:
+        switch (name) {
+            case "blocks":
                 selected = "blocks".equals(sound);
                 return ItemManager.createItem(Material.MUSIC_DISC_BLOCKS,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Blocks"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 1:
+            case "cat":
                 selected = "cat".equals(sound);
                 return ItemManager.createItem(Material.MUSIC_DISC_CAT,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Cat"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 2:
+            case "chirp":
                 selected = "chirp".equals(sound);
                 return ItemManager.createItem(Material.MUSIC_DISC_CHIRP,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Chirp"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 3:
+            case "far":
                 selected = "far".equals(sound);
                 return ItemManager.createItem(Material.MUSIC_DISC_FAR,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Far"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 4:
+            case "mall":
                 selected = "mall".equals(sound);
                 return ItemManager.createItem(Material.MUSIC_DISC_MALL,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Mall"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 5:
+            case "mellohi":
                 selected = "mellohi".equals(sound);
                 return ItemManager.createItem(Material.MUSIC_DISC_MELLOHI,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Mellohi"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 9:
+            case "otherside":
                 if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1)) {
                     selected = "otherside".equals(sound);
                     return ItemManager.createItem(Material.valueOf("MUSIC_DISC_OTHERSIDE"),
                             CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Otherside"),
-                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-                } else {
-                    selected = "pigstep".equals(sound);
-                    return ItemManager.createItem(Material.MUSIC_DISC_PIGSTEP,
-                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Pigstep"),
-                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-                }
-            case 10:
-                if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1)) {
-                    selected = "pigstep".equals(sound);
-                    return ItemManager.createItem(Material.MUSIC_DISC_PIGSTEP,
-                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Pigstep"),
-                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-                } else {
-                    selected = "stal".equals(sound);
-                    return ItemManager.createItem(Material.MUSIC_DISC_STAL,
-                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Stal"),
-                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-                }
-            case 11:
-                if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1)) {
-                    selected = "stal".equals(sound);
-                    return ItemManager.createItem(Material.MUSIC_DISC_STAL,
-                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Stal"),
-                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-                } else {
-                    selected = "strad".equals(sound);
-                    return ItemManager.createItem(Material.MUSIC_DISC_STRAD,
-                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Strad"),
-                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-                }
-            case 12:
-                if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1)) {
-                    selected = "strad".equals(sound);
-                    return ItemManager.createItem(Material.MUSIC_DISC_STRAD,
-                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Strad"),
-                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-                } else {
-                    selected = "wait".equals(sound);
-                    return ItemManager.createItem(Material.MUSIC_DISC_WAIT,
-                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Wait"),
-                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-                }
-            case 13:
-                if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1)) {
-                    selected = "wait".equals(sound);
-                    return ItemManager.createItem(Material.MUSIC_DISC_WAIT,
-                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Wait"),
-                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-                } else {
-                    selected = "ward".equals(sound);
-                    return ItemManager.createItem(Material.MUSIC_DISC_WARD,
-                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Ward"),
-                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-                }
-            case 14:
-                if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1)) {
-                    selected = "ward".equals(sound);
-                    return ItemManager.createItem(Material.MUSIC_DISC_WARD,
-                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Ward"),
                             ItemManager.BUTTON_FLAGS, selected ? enchants : null);
                 } else {
                     selected = !GameManager.getValidSounds().contains(sound);
@@ -500,6 +443,31 @@ public class Arena {
                             CommunicationManager.format((selected ? "&a&l" : "&4&l") + "None"),
                             ItemManager.BUTTON_FLAGS, selected ? enchants : null);
                 }
+            case "pigstep":
+                selected = "pigstep".equals(sound);
+                return ItemManager.createItem(Material.MUSIC_DISC_PIGSTEP,
+                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Pigstep"),
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+            case "stal":
+                selected = "stal".equals(sound);
+                return ItemManager.createItem(Material.MUSIC_DISC_STAL,
+                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Stal"),
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+            case "strad":
+                selected = "strad".equals(sound);
+                return ItemManager.createItem(Material.MUSIC_DISC_STRAD,
+                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Strad"),
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+            case "wait":
+                selected = "wait".equals(sound);
+                return ItemManager.createItem(Material.MUSIC_DISC_WAIT,
+                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Wait"),
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+            case "ward":
+                selected = "ward".equals(sound);
+                return ItemManager.createItem(Material.MUSIC_DISC_WARD,
+                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Ward"),
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
             default:
                 selected = !GameManager.getValidSounds().contains(sound);
                 return ItemManager.createItem(Material.LIGHT_GRAY_CONCRETE,
@@ -1636,10 +1604,9 @@ public class Arena {
     public Inventory getCustomShopEditor() {
         // Create inventory
         Inventory inv = Bukkit.createInventory(
-                new InventoryMeta(InventoryType.MENU, arena),
+                new InventoryMeta(InventoryType.MENU, this),
                 54,
-                CommunicationManager.format("&k") +
-                        CommunicationManager.format("&6&lCustom Shop Editor: " + getName())
+                CommunicationManager.format("&6&lCustom Shop Editor: " + getName())
         );
 
         // Set exit option
@@ -1697,10 +1664,9 @@ public class Arena {
     public Inventory getCustomShop() {
         // Create inventory
         Inventory inv = Bukkit.createInventory(
-                new InventoryMeta(InventoryType.MENU, arena),
+                new InventoryMeta(InventoryType.MENU, this),
                 54,
-                CommunicationManager.format("&k") + CommunicationManager.format("&6&l") +
-                        LanguageManager.names.customShop
+                CommunicationManager.format("&6&l") + LanguageManager.names.customShop
         );
 
         // Set exit option
@@ -1761,10 +1727,9 @@ public class Arena {
     public Inventory getMockCustomShop() {
         // Create inventory
         Inventory inv = Bukkit.createInventory(
-                new InventoryMeta(InventoryType.MENU, arena),
+                new InventoryMeta(InventoryType.MENU, this),
                 54,
-                CommunicationManager.format("&k") + CommunicationManager.format("&6&l" +
-                        LanguageManager.names.customShop + ": " + getName())
+                CommunicationManager.format("&6&l" + LanguageManager.names.customShop + ": " + getName())
         );
 
         // Set exit option

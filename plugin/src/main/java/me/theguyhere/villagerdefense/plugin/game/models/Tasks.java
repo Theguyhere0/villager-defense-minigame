@@ -212,9 +212,11 @@ public class Tasks {
 			});
 
 			// Initiate community chest
-			arenaInstance.setCommunityChest(Bukkit.createInventory(new InventoryMeta(InventoryType.CONTROLLED, arena),
-					54, CommunicationManager.format("&k") + CommunicationManager.format("&d&l" +
-							LanguageManager.names.communityChest)));
+			arenaInstance.setCommunityChest(Bukkit.createInventory(
+					new InventoryMeta(InventoryType.CONTROLLED, arena),
+					54,
+					CommunicationManager.format("&d&l" + LanguageManager.names.communityChest)
+			));
 
 			// Trigger WaveEndEvent
 			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
@@ -330,9 +332,9 @@ public class Tasks {
 			// Regenerate shops when time and notify players of it
 			if (currentWave % 10 == 0 || currentWave == 1) {
 				int level = currentWave / 10 + 1;
-				arenaInstance.setWeaponShop(Inventories.createWeaponShop(level, arenaInstance));
-				arenaInstance.setArmorShop(Inventories.createArmorShop(level, arenaInstance));
-				arenaInstance.setConsumeShop(Inventories.createConsumableShop(level, arenaInstance));
+				arenaInstance.setWeaponShop(Inventories.createWeaponShopMenu(level, arenaInstance));
+				arenaInstance.setArmorShop(Inventories.createArmorShopMenu(level, arenaInstance));
+				arenaInstance.setConsumeShop(Inventories.createConsumableShopMenu(level, arenaInstance));
 				if (currentWave != 1)
 					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 							arenaInstance.getActives().forEach(player ->

@@ -52,6 +52,6 @@ public class ClickPortalListener implements Listener {
 		}
 
 		// Open inventory
-		e.getPlayer().openInventory(Inventories.createArenaInfoInventory(arena));
+		e.getPlayer().openInventory(Inventories.createArenaInfoMenu(arena));
 	}
 }

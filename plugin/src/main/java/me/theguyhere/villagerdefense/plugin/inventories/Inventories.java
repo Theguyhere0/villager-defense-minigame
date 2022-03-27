@@ -79,9 +79,9 @@ public class Inventories {
 
 	// Menu for lobby
 	public static Inventory createLobbyMenu() {
-		return InventoryFactory.createSingleLocationMenu(
+		return InventoryFactory.createLocationMenu(
 				CommunicationManager.format("&2&lLobby"),
-				DataManager.getConfigLocation(plugin, "lobby"),
+				DataManager.getConfigLocation(plugin, "lobby") != null,
 				"Lobby"
 		);
 	}
@@ -121,10 +121,10 @@ public class Inventories {
 
 	// Menu for editing a specific info board
 	public static Inventory createInfoBoardMenu(int infoBoardID) {
-		return InventoryFactory.createSingleLocationMenu(
+		return InventoryFactory.createLocationMenu(
 				infoBoardID,
 				CommunicationManager.format("&6&lInfo Board " + (infoBoardID + 1)),
-				DataManager.getConfigLocation(plugin, "infoBoard." + infoBoardID),
+				DataManager.getConfigLocation(plugin, "infoBoard." + infoBoardID) != null,
 				"Info Board"
 		);
 	}
@@ -172,45 +172,45 @@ public class Inventories {
 
 	// Menu for editing the total kills leaderboard
 	public static Inventory createTotalKillsLeaderboardMenu() {
-		return InventoryFactory.createSingleLocationMenu(
+		return InventoryFactory.createLocationMenu(
 				CommunicationManager.format("&4&lTotal Kills Leaderboard"),
-				DataManager.getConfigLocation(plugin, "leaderboard.totalKills"),
+				DataManager.getConfigLocation(plugin, "leaderboard.totalKills") != null,
 				"Leaderboard"
 		);
 	}
 
 	// Menu for editing the top kills leaderboard
 	public static Inventory createTopKillsLeaderboardMenu() {
-		return InventoryFactory.createSingleLocationMenu(
+		return InventoryFactory.createLocationMenu(
 				CommunicationManager.format("&c&lTop Kills Leaderboard"),
-				DataManager.getConfigLocation(plugin, "leaderboard.topKills"),
+				DataManager.getConfigLocation(plugin, "leaderboard.topKills") != null,
 				"Leaderboard"
 		);
 	}
 
 	// Menu for editing the total gems leaderboard
 	public static Inventory createTotalGemsLeaderboardMenu() {
-		return InventoryFactory.createSingleLocationMenu(
+		return InventoryFactory.createLocationMenu(
 				CommunicationManager.format("&2&lTotal Gems Leaderboard"),
-				DataManager.getConfigLocation(plugin, "leaderboard.totalGems"),
+				DataManager.getConfigLocation(plugin, "leaderboard.totalGems") != null,
 				"Leaderboard"
 		);
 	}
 
 	// Menu for editing the top balance leaderboard
 	public static Inventory createTopBalanceLeaderboardMenu() {
-		return InventoryFactory.createSingleLocationMenu(
+		return InventoryFactory.createLocationMenu(
 				CommunicationManager.format("&a&lTop Balance Leaderboard"),
-				DataManager.getConfigLocation(plugin, "leaderboard.topBalance"),
+				DataManager.getConfigLocation(plugin, "leaderboard.topBalance") != null,
 				"Leaderboard"
 		);
 	}
 
 	// Menu for editing the top wave leaderboard
 	public static Inventory createTopWaveLeaderboardMenu() {
-		return InventoryFactory.createSingleLocationMenu(
+		return InventoryFactory.createLocationMenu(
 				CommunicationManager.format("&9&lTop Wave Leaderboard"),
-				DataManager.getConfigLocation(plugin, "leaderboard.topWave"),
+				DataManager.getConfigLocation(plugin, "leaderboard.topWave") != null,
 				"Leaderboard"
 		);
 	}
@@ -258,9 +258,13 @@ public class Inventories {
 		buttons.add(ItemManager.createItem(Material.NAME_TAG,
 				CommunicationManager.format("&6&lEdit Name")));
 
-		// Option to edit game portal and leaderboard
+		// Option to edit game portal
 		buttons.add(ItemManager.createItem(Material.END_PORTAL_FRAME,
-				CommunicationManager.format("&5&lPortal and Leaderboard")));
+				CommunicationManager.format("&5&lArena Portal")));
+
+		// Option to edit leaderboard
+		buttons.add(ItemManager.createItem(Material.TOTEM_OF_UNDYING,
+				CommunicationManager.format("&a&lArena Leaderboard")));
 
 		// Option to edit player settings
 		buttons.add(ItemManager.createItem(Material.PLAYER_HEAD,
@@ -302,305 +306,184 @@ public class Inventories {
 		);
 	}
 
-	// Menu for editing the portal and leaderboard of an arena
-	public static Inventory createPortalLeaderboardMenu(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				
-				CommunicationManager.format("&5&lPortal/LBoard: " + arena.getName()));
+	// Menu for editing the portal of an arena
+	public static Inventory createPortalMenu(Arena arena) {
+		return InventoryFactory.createLocationMenu(
+				arena,
+				CommunicationManager.format("&5&lPortal: " + arena.getName()),
+				arena.getPortal()  != null,
+				"Portal"
+		);
+	}
 
-		// Option to create or relocate the portal
-		if (arena.getPortal() == null)
-			inv.setItem(0, Buttons.create("Portal"));
-		else inv.setItem(0, Buttons.relocate("Portal"));
-
-		// Option to teleport to the portal
-		inv.setItem(1, Buttons.teleport("Portal"));
-
-		// Option to center the portal
-		inv.setItem(2, Buttons.center("Portal"));
-
-		// Option to remove the portal
-		inv.setItem(3, Buttons.remove("PORTAL"));
-
-		// Option to create or relocate the leaderboard
-		if (arena.getArenaBoard() == null)
-			inv.setItem(4, Buttons.create("Leaderboard"));
-		else inv.setItem(4, Buttons.relocate("Leaderboard"));
-
-		// Option to teleport to the leaderboard
-		inv.setItem(5, Buttons.teleport("Leaderboard"));
-
-		// Option to center the leaderboard
-		inv.setItem(6, Buttons.center("Leaderboard"));
-
-		// Option to remove the leaderboard
-		inv.setItem(7, Buttons.remove("LEADERBOARD"));
-
-		// Option to exit
-		inv.setItem(8, Buttons.exit());
-
-		return inv;
+	// Menu for editing the leaderboard of an arena
+	public static Inventory createArenaBoardMenu(Arena arena) {
+		return InventoryFactory.createLocationMenu(
+				arena,
+				CommunicationManager.format("&a&lLeaderboard: " + arena.getName()),
+				arena.getArenaBoard() != null,
+				"Leaderboard"
+		);
 	}
 
 	// Confirmation menu for removing the arena portal
-	public static Inventory createPortalConfirmInventory(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				 CommunicationManager.format("&4&lRemove Portal?"));
-
-		// "No" option
-		inv.setItem(0, Buttons.no());
-
-		// "Yes" option
-		inv.setItem(8, Buttons.yes());
-
-		return inv;
+	public static Inventory createPortalConfirmMenu(Arena arena) {
+		return InventoryFactory.createConfirmationMenu(
+				arena,
+				CommunicationManager.format("&4&lRemove Portal?")
+		);
 	}
 
 	// Confirmation menu for removing the arena leaderboard
-	public static Inventory createArenaBoardConfirmInventory(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				 CommunicationManager.format("&4&lRemove Leaderboard?"));
-
-		// "No" option
-		inv.setItem(0, Buttons.no());
-
-		// "Yes" option
-		inv.setItem(8, Buttons.yes());
-
-		return inv;
+	public static Inventory createArenaBoardConfirmMenu(Arena arena) {
+		return InventoryFactory.createConfirmationMenu(
+				arena,
+				CommunicationManager.format("&4&lRemove Leaderboard?")
+		);
 	}
 
 	// Menu for editing the player settings of an arena
-	public static Inventory createPlayersInventory(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				
-				CommunicationManager.format("&d&lPlayer Settings: " + arena.getName()));
+	public static Inventory createPlayersMenu(Arena arena) {
+		List<ItemStack> buttons = new ArrayList<>();
 
 		// Option to edit player spawn
-		inv.setItem(0, ItemManager.createItem(Material.END_PORTAL_FRAME,
+		buttons.add(ItemManager.createItem(Material.END_PORTAL_FRAME,
 				CommunicationManager.format("&5&lPlayer Spawn")));
 
 		// Option to toggle player spawn particles
-		inv.setItem(1, ItemManager.createItem(Material.FIREWORK_ROCKET,
+		buttons.add(ItemManager.createItem(Material.FIREWORK_ROCKET,
 				CommunicationManager.format("&d&lSpawn Particles: " +
 						getToggleStatus(arena.hasSpawnParticles())),
 				CommunicationManager.format("&7Particles showing where the spawn is"),
 				CommunicationManager.format("&7(Visible in-game)")));
 
 		// Option to edit waiting room
-		inv.setItem(2, ItemManager.createItem(Material.CLOCK, CommunicationManager.format("&b&lWaiting Room"),
+		buttons.add(ItemManager.createItem(Material.CLOCK, CommunicationManager.format("&b&lWaiting Room"),
 				CommunicationManager.format("&7An optional room to wait in before"),
 				CommunicationManager.format("&7the game starts")));
 
 		// Option to edit max players
-		inv.setItem(3, ItemManager.createItem(Material.NETHERITE_HELMET,
+		buttons.add(ItemManager.createItem(Material.NETHERITE_HELMET,
 				CommunicationManager.format("&4&lMaximum Players"),
 				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Maximum players the game will have")));
 
 		// Option to edit min players
-		inv.setItem(4, ItemManager.createItem(Material.NETHERITE_BOOTS,
+		buttons.add(ItemManager.createItem(Material.NETHERITE_BOOTS,
 				CommunicationManager.format("&2&lMinimum Players"),
 				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Minimum players needed for game to start")));
 
-		// Option to exit
-		inv.setItem(8, Buttons.exit());
-
-		return inv;
+		return InventoryFactory.createDynamicSizeInventory(
+				new InventoryMeta(InventoryType.MENU, arena),
+				CommunicationManager.format("&d&lPlayer Settings: " + arena.getName()),
+				true,
+				buttons
+		);
 	}
 
 	// Menu for editing the player spawn of an arena
-	public static Inventory createPlayerSpawnInventory(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				
-				CommunicationManager.format("&d&lPlayer Spawn: " + arena.getName()));
-
-		// Option to create or relocate player spawn
-		if (arena.getPlayerSpawn() != null)
-			inv.setItem(0, Buttons.relocate("Spawn"));
-		else inv.setItem(0, Buttons.create("Spawn"));
-
-		// Option to teleport to player spawn
-		inv.setItem(2, Buttons.teleport("Spawn"));
-
-		// Option to center the player spawn
-		inv.setItem(4, Buttons.center("Spawn"));
-
-		// Option to remove player spawn
-		inv.setItem(6, Buttons.remove("SPAWN"));
-
-		// Option to exit
-		inv.setItem(8, Buttons.exit());
-
-		return inv;
+	public static Inventory createPlayerSpawnMenu(Arena arena) {
+		return InventoryFactory.createLocationMenu(
+				arena,
+				CommunicationManager.format("&d&lPlayer Spawn: " + arena.getName()),
+				arena.getPlayerSpawn() != null,
+				"Spawn"
+		);
 	}
 
 	// Confirmation menu for removing player spawn
-	public static Inventory createSpawnConfirmInventory(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				
-				CommunicationManager.format("&4&lRemove Spawn?"));
-
-		// "No" option
-		inv.setItem(0, Buttons.no());
-
-		// "Yes" option
-		inv.setItem(8, Buttons.yes());
-
-		return inv;
+	public static Inventory createSpawnConfirmMenu(Arena arena) {
+		return InventoryFactory.createConfirmationMenu(
+				arena,
+				CommunicationManager.format("&4&lRemove Spawn?")
+		);
 	}
 
 	// Menu for editing the waiting room of an arena
-	public static Inventory createWaitingRoomInventory(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				
-				CommunicationManager.format("&b&lWaiting Room: " + arena.getName()));
-
-		// Option to create waiting room
-		if (arena.getWaitingRoom() == null)
-			inv.setItem(0, Buttons.create("Waiting Room"));
-		else inv.setItem(0, Buttons.relocate("Waiting Room"));
-
-		// Option to teleport to waiting room
-		inv.setItem(2, Buttons.teleport("Waiting Room"));
-
-		// Option to center the waiting room
-		inv.setItem(4, Buttons.center("Waiting Room"));
-
-		// Option to remove waiting room
-		inv.setItem(6, Buttons.remove("WAITING ROOM"));
-
-		// Option to exit
-		inv.setItem(8, Buttons.exit());
-
-		return inv;
+	public static Inventory createWaitingRoomMenu(Arena arena) {
+		return InventoryFactory.createLocationMenu(
+				arena,
+				CommunicationManager.format("&b&lWaiting Room: " + arena.getName()),
+				arena.getWaitingRoom() != null,
+				"Waiting Room"
+		);
 	}
 
 	// Confirmation menu for removing waiting room
-	public static Inventory createWaitingConfirmInventory(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				
-				CommunicationManager.format("&4&lRemove Waiting Room?"));
-
-		// "No" option
-		inv.setItem(0, Buttons.no());
-
-		// "Yes" option
-		inv.setItem(8, Buttons.yes());
-
-		return inv;
+	public static Inventory createWaitingConfirmMenu(Arena arena) {
+		return InventoryFactory.createConfirmationMenu(
+				arena,
+				CommunicationManager.format("&4&lRemove Waiting Room?")
+		);
 	}
 
 	// Menu for changing max players in an arena
-	public static Inventory createMaxPlayerInventory(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				
-				CommunicationManager.format("&4&lMaximum Players: " + arena.getMaxPlayers()));
-
-		// Option to decrease
-		for (int i = 0; i < 4; i++)
-			inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE,
-					CommunicationManager.format("&4&lDecrease")));
-
-		// Option to increase
-		for (int i = 4; i < 8; i++)
-			inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE,
-					CommunicationManager.format("&2&lIncrease")));
-
-		// Option to exit
-		inv.setItem(8, Buttons.exit());
-
-		return inv;
+	public static Inventory createMaxPlayerMenu(Arena arena) {
+		return InventoryFactory.createIncrementorMenu(
+				arena,
+				CommunicationManager.format("&4&lMaximum Players: " + arena.getMaxPlayers())
+		);
 	}
 
 	// Menu for changing min players in an arena
-	public static Inventory createMinPlayerInventory(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				
-				CommunicationManager.format("&2&lMinimum Players: " +
-						arena.getMinPlayers()));
-
-		// Option to decrease
-		for (int i = 0; i < 4; i++)
-			inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE,
-					CommunicationManager.format("&4&lDecrease")));
-
-		// Option to increase
-		for (int i = 4; i < 8; i++)
-			inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE,
-					CommunicationManager.format("&2&lIncrease")));
-
-		// Option to exit
-		inv.setItem(8, Buttons.exit());
-
-		return inv;
+	public static Inventory createMinPlayerMenu(Arena arena) {
+		return InventoryFactory.createIncrementorMenu(
+				arena,
+				CommunicationManager.format("&2&lMinimum Players: " + arena.getMinPlayers())
+		);
 	}
 
 	// Menu for editing the mob settings of an arena
-	public static Inventory createMobsInventory(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				
-				CommunicationManager.format("&2&lMob Settings: " + arena.getName()));
+	public static Inventory createMobsMenu(Arena arena) {
+		List<ItemStack> buttons = new ArrayList<>();
 
 		// Option to edit monster spawns
-		inv.setItem(0, ItemManager.createItem(Material.END_PORTAL_FRAME,
+		buttons.add(ItemManager.createItem(Material.END_PORTAL_FRAME,
 				CommunicationManager.format("&2&lMonster Spawns")));
 
 		// Option to toggle monster spawn particles
-		inv.setItem(1, ItemManager.createItem(Material.FIREWORK_ROCKET,
+		buttons.add(ItemManager.createItem(Material.FIREWORK_ROCKET,
 				CommunicationManager.format("&a&lMonster Spawn Particles: " +
 						getToggleStatus(arena.hasMonsterParticles())),
 				CommunicationManager.format("&7Particles showing where the spawns are"),
 				CommunicationManager.format("&7(Visible in-game)")));
 
 		// Option to edit villager spawns
-		inv.setItem(2, ItemManager.createItem(Material.END_PORTAL_FRAME,
+		buttons.add(ItemManager.createItem(Material.END_PORTAL_FRAME,
 				CommunicationManager.format("&5&lVillager Spawns")));
 
 		// Option to toggle villager spawn particles
-		inv.setItem(3, ItemManager.createItem(Material.FIREWORK_ROCKET,
+		buttons.add(ItemManager.createItem(Material.FIREWORK_ROCKET,
 				CommunicationManager.format("&d&lVillager Spawn Particles: " +
 						getToggleStatus(arena.hasVillagerParticles())),
 				CommunicationManager.format("&7Particles showing where the spawns are"),
 				CommunicationManager.format("&7(Visible in-game)")));
 
 		// Option to edit spawn table
-		inv.setItem(4, ItemManager.createItem(Material.DRAGON_HEAD,
+		buttons.add(ItemManager.createItem(Material.DRAGON_HEAD,
 				CommunicationManager.format("&3&lSpawn Table")));
 
 		// Option to toggle dynamic mob count
-		inv.setItem(5, ItemManager.createItem(Material.SLIME_BALL,
+		buttons.add(ItemManager.createItem(Material.SLIME_BALL,
 				CommunicationManager.format("&e&lDynamic Mob Count: " +
 						getToggleStatus(arena.hasDynamicCount())),
 				CommunicationManager.format("&7Mob count adjusting based on"),
 				CommunicationManager.format("&7number of players")));
 
-		// Option to exit
-		inv.setItem(8, Buttons.exit());
-
-		return inv;
+		return InventoryFactory.createDynamicSizeInventory(
+				new InventoryMeta(InventoryType.MENU, arena),
+				CommunicationManager.format("&2&lMob Settings: " + arena.getName()),
+				true,
+				buttons
+		);
 	}
 
-	// Menu for editing the monster spawns of an arena
-	public static Inventory createMonsterSpawnInventory(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				
-				CommunicationManager.format("&2&lMonster Spawns: " + arena.getName()));
+	// Dashboard for editing the monster spawns of an arena
+	public static Inventory createMonsterSpawnDashboard(Arena arena) {
+		List<ItemStack> buttons = new ArrayList<>();
 
 		// Prepare for material indexing
 		int index;
@@ -613,79 +496,73 @@ public class Inventories {
 			else index = 0;
 
 			// Create and set item
-			inv.setItem(i, ItemManager.createItem(MONSTER_MATS[index],
+			buttons.add(ItemManager.createItem(MONSTER_MATS[index],
 					CommunicationManager.format("&2&lMob Spawn " + (i + 1))));
 		}
 
-		// Option to exit
-		inv.setItem(8, Buttons.exit());
-
-		return inv;
+		return InventoryFactory.createFixedSizeInventory(
+				new InventoryMeta(InventoryType.MENU, arena),
+				CommunicationManager.format("&2&lMonster Spawns: " + arena.getName()),
+				1,
+				true,
+				buttons
+		);
 	}
 
 	// Menu for editing a specific monster spawn of an arena
 	public static Inventory createMonsterSpawnMenu(Arena arena, int id) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena, id), 9,
-				CommunicationManager.format("&2&lMonster Spawn " + (id + 1) + ": " + arena.getName()));
+		List<ItemStack> buttons = new ArrayList<>();
 
 		// Option to create or relocate monster spawn
 		if (arena.getMonsterSpawn(id) != null)
-			inv.setItem(0, Buttons.relocate("Spawn"));
-		else inv.setItem(0, Buttons.create("Spawn"));
+			buttons.add(Buttons.relocate("Spawn"));
+		else buttons.add(Buttons.create("Spawn"));
 
 		// Option to teleport to monster spawn
-		inv.setItem(1, Buttons.teleport("Spawn"));
+		buttons.add(Buttons.teleport("Spawn"));
 
 		// Option to center the monster spawn
-		inv.setItem(2, Buttons.center("Spawn"));
+		buttons.add(Buttons.center("Spawn"));
 
 		// Option to remove monster spawn
-		inv.setItem(3, Buttons.remove("SPAWN"));
+		buttons.add(Buttons.remove("SPAWN"));
 
 		// Toggle to set monster spawn type
 		switch (arena.getMonsterSpawnType(id)) {
 			case 1:
-				inv.setItem(4, ItemManager.createItem(Material.GUNPOWDER,
+				buttons.add(ItemManager.createItem(Material.GUNPOWDER,
 						CommunicationManager.format("&5&lType: Ground")));
 				break;
 			case 2:
-				inv.setItem(4, ItemManager.createItem(Material.FEATHER,
+				buttons.add(ItemManager.createItem(Material.FEATHER,
 					CommunicationManager.format("&5&lType: Flying")));
 				break;
 			default:
-				inv.setItem(4, ItemManager.createItem(Material.BONE,
+				buttons.add(ItemManager.createItem(Material.BONE,
 					CommunicationManager.format("&5&lType: All")));
 		}
 
-		// Option to exit
-		inv.setItem(8, Buttons.exit());
-
-		return inv;
+		return InventoryFactory.createFixedSizeInventory(
+				new InventoryMeta(InventoryType.MENU, arena, id),
+				CommunicationManager.format("&2&lMonster Spawn " + (id + 1) + ": " + arena.getName()),
+				1,
+				true,
+				buttons
+		);
 	}
 
 	// Confirmation menu for removing monster spawns
-	public static Inventory createMonsterSpawnConfirmInventory(Arena arena, int id) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena, id), 9,
-				
-				CommunicationManager.format("&4&lRemove Monster Spawn?"));
-
-		// "No" option
-		inv.setItem(0, Buttons.no());
-
-		// "Yes" option
-		inv.setItem(8, Buttons.yes());
-
-		return inv;
+	public static Inventory createMonsterSpawnConfirmMenu(Arena arena, int id) {
+		return InventoryFactory.createConfirmationMenu(
+				arena,
+				id,
+				CommunicationManager.format("&4&lRemove Monster Spawn?")
+		);
 	}
 
-	// Menu for editing the villager spawns of an arena
-	public static Inventory createVillagerSpawnInventory(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				
-				CommunicationManager.format("&5&lVillager Spawns: " + arena.getName()));
+	// Dashboard for editing the villager spawns of an arena
+	public static Inventory createVillagerSpawnDashboard(Arena arena) {
+		List<ItemStack> buttons = new ArrayList<>();
 
 		// Prepare for material indexing
 		int index;
@@ -698,174 +575,150 @@ public class Inventories {
 			else index = 0;
 
 			// Create and set item
-			inv.setItem(i, ItemManager.createItem(VILLAGER_MATS[index],
+			buttons.add(ItemManager.createItem(VILLAGER_MATS[index],
 					CommunicationManager.format("&5&lVillager Spawn " + (i + 1))));
 		}
 
-		// Option to exit
-		inv.setItem(8, Buttons.exit());
-
-		return inv;
+		return InventoryFactory.createFixedSizeInventory(
+				new InventoryMeta(InventoryType.MENU, arena),
+				CommunicationManager.format("&5&lVillager Spawns: " + arena.getName()),
+				1,
+				true,
+				buttons
+		);
 	}
 
 	// Menu for editing a specific villager spawn of an arena
 	public static Inventory createVillagerSpawnMenu(Arena arena, int id) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena, id), 9,
-				
-				CommunicationManager.format("&5&lVillager Spawn " + (id + 1) + ": " + arena.getName()));
-
-		// Option to create or relocate villager spawn
-		if (arena.getVillagerSpawn(id) != null)
-			inv.setItem(0, Buttons.relocate("Spawn"));
-		else inv.setItem(0, Buttons.create("Spawn"));
-
-		// Option to teleport to villager spawn
-		inv.setItem(2, Buttons.teleport("Spawn"));
-
-		// Option to center the villager spawn
-		inv.setItem(4, Buttons.center("Spawn"));
-
-		// Option to remove villager spawn
-		inv.setItem(6, Buttons.remove("SPAWN"));
-
-		// Option to exit
-		inv.setItem(8, Buttons.exit());
-
-		return inv;
+		return InventoryFactory.createLocationMenu(
+				arena,
+				id,
+				CommunicationManager.format("&5&lVillager Spawn " + (id + 1) + ": " + arena.getName()),
+				arena.getVillagerSpawn(id) != null,
+				"Spawn"
+		);
 	}
 
 	// Confirmation menu for removing mob spawns
-	public static Inventory createVillagerSpawnConfirmInventory(Arena arena, int id) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena, id), 9,
-				
-				CommunicationManager.format("&4&lRemove Villager Spawn?"));
-
-		// "No" option
-		inv.setItem(0, Buttons.no());
-
-		// "Yes" option
-		inv.setItem(8, Buttons.yes());
-
-		return inv;
+	public static Inventory createVillagerSpawnConfirmMenu(Arena arena, int id) {
+		return InventoryFactory.createConfirmationMenu(
+				arena,
+				id,
+				CommunicationManager.format("&4&lRemove Villager Spawn?")
+		);
 	}
 
 	// Spawn table menu for an arena
-	public static Inventory createSpawnTableInventory(Arena arena) {
+	public static Inventory createSpawnTableMenu(Arena arena) {
+		List<ItemStack> buttons = new ArrayList<>();
 		String chosen = arena.getSpawnTableFile();
-		Inventory inv;
-
-		// Create inventory
-		if (arena.getSpawnTableFile().equals("custom"))
-			 inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-					CommunicationManager.format("&3&lSpawn Table: a" + arena + ".yml"));
-		else inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				CommunicationManager.format("&3&lSpawn Table: " + arena.getSpawnTableFile() + ".yml"));
 
 		// Option to set spawn table to default
-		inv.setItem(0, ItemManager.createItem(Material.OAK_WOOD,
+		buttons.add(ItemManager.createItem(Material.OAK_WOOD,
 				CommunicationManager.format("&4&lDefault"), ItemManager.BUTTON_FLAGS,
 				chosen.equals("default") ? ItemManager.glow() : null,
 				CommunicationManager.format("&7Sets spawn table to default.yml")));
 
 		// Option to set spawn table to global option 1
-		inv.setItem(1, ItemManager.createItem(Material.RED_CONCRETE,
+		buttons.add(ItemManager.createItem(Material.RED_CONCRETE,
 				CommunicationManager.format("&6&lOption 1"), ItemManager.BUTTON_FLAGS,
 				chosen.equals("option1") ? ItemManager.glow() : null,
 				CommunicationManager.format("&7Sets spawn table to option1.yml")));
 
 		// Option to set spawn table to global option 2
-		inv.setItem(2, ItemManager.createItem(Material.ORANGE_CONCRETE,
+		buttons.add(ItemManager.createItem(Material.ORANGE_CONCRETE,
 				CommunicationManager.format("&6&lOption 2"), ItemManager.BUTTON_FLAGS,
 				chosen.equals("option2") ? ItemManager.glow() : null,
 				CommunicationManager.format("&7Sets spawn table to option2.yml")));
 
 		// Option to set spawn table to global option 3
-		inv.setItem(3, ItemManager.createItem(Material.YELLOW_CONCRETE,
+		buttons.add(ItemManager.createItem(Material.YELLOW_CONCRETE,
 				CommunicationManager.format("&6&lOption 3"), ItemManager.BUTTON_FLAGS,
 				chosen.equals("option3") ? ItemManager.glow() : null,
 				CommunicationManager.format("&7Sets spawn table to option3.yml")));
 
 		// Option to set spawn table to global option 4
-		inv.setItem(4, ItemManager.createItem(Material.BROWN_CONCRETE,
+		buttons.add(ItemManager.createItem(Material.BROWN_CONCRETE,
 				CommunicationManager.format("&6&lOption 4"), ItemManager.BUTTON_FLAGS,
 				chosen.equals("option4") ? ItemManager.glow() : null,
 				CommunicationManager.format("&7Sets spawn table to option4.yml")));
 
 		// Option to set spawn table to global option 5
-		inv.setItem(5, ItemManager.createItem(Material.LIGHT_GRAY_CONCRETE,
+		buttons.add(ItemManager.createItem(Material.LIGHT_GRAY_CONCRETE,
 				CommunicationManager.format("&6&lOption 5"), ItemManager.BUTTON_FLAGS,
 				chosen.equals("option5") ? ItemManager.glow() : null,
 				CommunicationManager.format("&7Sets spawn table to option5.yml")));
 
 		// Option to set spawn table to global option 6
-		inv.setItem(6, ItemManager.createItem(Material.WHITE_CONCRETE,
+		buttons.add(ItemManager.createItem(Material.WHITE_CONCRETE,
 				CommunicationManager.format("&6&lOption 6"), ItemManager.BUTTON_FLAGS,
 				chosen.equals("option6") ? ItemManager.glow() : null,
 				CommunicationManager.format("&7Sets spawn table to option6.yml")));
 
 		// Option to set spawn table to custom option
-		inv.setItem(7, ItemManager.createItem(Material.BIRCH_WOOD,
+		buttons.add(ItemManager.createItem(Material.BIRCH_WOOD,
 				CommunicationManager.format("&e&lCustom"), ItemManager.BUTTON_FLAGS,
 				chosen.length() < 4 ? ItemManager.glow() : null,
 				CommunicationManager.format("&7Sets spawn table to a[arena number].yml"),
 				CommunicationManager.format("&7(Check the arena number in arenaData.yml)")));
 
-		// Option to exit
-		inv.setItem(8, Buttons.exit());
-
-		return inv;
+		return InventoryFactory.createFixedSizeInventory(
+				new InventoryMeta(InventoryType.MENU, arena),
+				chosen.equals("custom") ?
+						CommunicationManager.format("&3&lSpawn Table: a" + arena.getArena() + ".yml") :
+						CommunicationManager.format("&3&lSpawn Table: " + arena.getSpawnTableFile() + ".yml"),
+				1,
+				true,
+				buttons
+		);
 	}
 
 	// Menu for editing the shop settings of an arena
-	public static Inventory createShopsInventory(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				
-				CommunicationManager.format("&e&lShop Settings: " + arena.getName()));
+	public static Inventory createShopSettingsMenu(Arena arena) {
+		List<ItemStack> buttons = new ArrayList<>();
 
 		// Option to create a custom shop
-		inv.setItem(0, ItemManager.createItem(Material.QUARTZ,
+		buttons.add(ItemManager.createItem(Material.QUARTZ,
 				CommunicationManager.format("&a&lEdit Custom Shop")));
 
 		// Option to toggle default shop
-		inv.setItem(1, ItemManager.createItem(Material.EMERALD_BLOCK,
+		buttons.add(ItemManager.createItem(Material.EMERALD_BLOCK,
 				CommunicationManager.format("&6&lDefault Shop: " + getToggleStatus(arena.hasNormal())),
 				CommunicationManager.format("&7Turn default shop on and off")));
 
 		// Option to toggle custom shop
-		inv.setItem(2, ItemManager.createItem(Material.QUARTZ_BLOCK,
+		buttons.add(ItemManager.createItem(Material.QUARTZ_BLOCK,
 				CommunicationManager.format("&2&lCustom Shop: " + getToggleStatus(arena.hasCustom())),
 				CommunicationManager.format("&7Turn custom shop on and off")));
 
 		// Option to toggle custom shop
-		inv.setItem(3, ItemManager.createItem(Material.BOOKSHELF,
+		buttons.add(ItemManager.createItem(Material.BOOKSHELF,
 				CommunicationManager.format("&3&lEnchant Shop: " + getToggleStatus(arena.hasEnchants())),
 				CommunicationManager.format("&7Turn enchants shop on and off")));
 
 		// Option to toggle community chest
-		inv.setItem(4, ItemManager.createItem(Material.CHEST,
+		buttons.add(ItemManager.createItem(Material.CHEST,
 				CommunicationManager.format("&d&lCommunity Chest: " + getToggleStatus(arena.hasCommunity())),
 				CommunicationManager.format("&7Turn community chest on and off")));
 
 		// Option to toggle dynamic prices
-		inv.setItem(5, ItemManager.createItem(Material.NETHER_STAR,
+		buttons.add(ItemManager.createItem(Material.NETHER_STAR,
 				CommunicationManager.format("&b&lDynamic Prices: " + getToggleStatus(arena.hasDynamicPrices())),
 				CommunicationManager.format("&7Prices adjusting based on number of"),
 				CommunicationManager.format("&7players in the game")));
 
-		// Option to exit
-		inv.setItem(8, Buttons.exit());
-
-		return inv;
+		return InventoryFactory.createDynamicSizeInventory(
+				new InventoryMeta(InventoryType.MENU, arena),
+				CommunicationManager.format("&e&lShop Settings: " + arena.getName()),
+				true,
+				buttons
+		);
 	}
 
 	// Menu for adding custom items
-	public static Inventory createCustomItemsInventory(Arena arena, int id) {
+	public static Inventory createCustomItemsMenu(Arena arena, int id) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena, id), 27,
-				
 				CommunicationManager.format("&6&lEdit Item"));
 
 		// Item of interest
@@ -918,194 +771,138 @@ public class Inventories {
 	}
 
 	// Confirmation menu for removing custom item
-	public static Inventory createCustomItemConfirmInventory(Arena arena, int id) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena, id), 9,
-				
-				CommunicationManager.format("&4&lRemove Custom Item?"));
-
-		// "No" option
-		inv.setItem(0, Buttons.no());
-
-		// "Yes" option
-		inv.setItem(8, Buttons.yes());
-
-		return inv;
+	public static Inventory createCustomItemConfirmMenu(Arena arena, int id) {
+		return InventoryFactory.createConfirmationMenu(
+				arena,
+				id,
+				CommunicationManager.format("&4&lRemove Custom Item?")
+		);
 	}
 
 	// Menu for editing the game settings of an arena
-	public static Inventory createGameSettingsInventory(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 18,
-				
-				CommunicationManager.format("&8&lGame Settings: " + arena.getName()));
+	public static Inventory createGameSettingsMenu(Arena arena) {
+		List<ItemStack> buttons = new ArrayList<>();
 
 		// Option to change max waves
-		inv.setItem(0, ItemManager.createItem(Material.NETHERITE_SWORD,
+		buttons.add(
+				ItemManager.createItem(Material.NETHERITE_SWORD,
 				CommunicationManager.format("&3&lMax Waves"),
 				ItemManager.BUTTON_FLAGS,
-				null));
+				null)
+		);
 
 		// Option to wave time limit
-		inv.setItem(1, ItemManager.createItem(Material.CLOCK,
-				CommunicationManager.format("&2&lWave Time Limit")));
+		buttons.add(ItemManager.createItem(Material.CLOCK, CommunicationManager.format("&2&lWave Time Limit")));
 
 		// Option to toggle dynamic wave time limit
-		inv.setItem(2, ItemManager.createItem(Material.SNOWBALL,
-				CommunicationManager.format("&a&lDynamic Time Limit: " +
-						getToggleStatus(arena.hasDynamicLimit())),
+		buttons.add(
+				ItemManager.createItem(Material.SNOWBALL,
+				CommunicationManager.format("&a&lDynamic Time Limit: " + getToggleStatus(arena.hasDynamicLimit())),
 				CommunicationManager.format("&7Wave time limit adjusting based on"),
-				CommunicationManager.format("&7in-game difficulty")));
+				CommunicationManager.format("&7in-game difficulty"))
+		);
 
 		// Option to edit allowed kits
-		inv.setItem(3, ItemManager.createItem(Material.ENDER_CHEST,
+		buttons.add(ItemManager.createItem(Material.ENDER_CHEST,
 				CommunicationManager.format("&9&lAllowed Kits")));
 
 		// Option to edit difficulty label
-		inv.setItem(4, ItemManager.createItem(Material.NAME_TAG,
+		buttons.add(ItemManager.createItem(Material.NAME_TAG,
 				CommunicationManager.format("&6&lDifficulty Label")));
 
 		// Option to adjust overall difficulty multiplier
-		inv.setItem(5, ItemManager.createItem(Material.TURTLE_HELMET,
+		buttons.add(ItemManager.createItem(Material.TURTLE_HELMET,
 				CommunicationManager.format("&4&lDifficulty Multiplier"),
 				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Determines difficulty increase rate")));
 
 		// Option to toggle dynamic difficulty
-		inv.setItem(6, ItemManager.createItem(Material.MAGMA_CREAM,
+		buttons.add(ItemManager.createItem(Material.MAGMA_CREAM,
 				CommunicationManager.format("&6&lDynamic Difficulty: " +
 						getToggleStatus(arena.hasDynamicDifficulty())),
 				CommunicationManager.format("&7Difficulty adjusting based on"),
 				CommunicationManager.format("&7number of players")));
 
 		// Option to toggle late arrival
-		inv.setItem(7, ItemManager.createItem(Material.DAYLIGHT_DETECTOR,
+		buttons.add(ItemManager.createItem(Material.DAYLIGHT_DETECTOR,
 				CommunicationManager.format("&e&lLate Arrival: " +
 						getToggleStatus(arena.hasLateArrival())),
 				CommunicationManager.format("&7Allows players to join after"),
 				CommunicationManager.format("&7the game has started")));
 
 		// Option to toggle experience drop
-		inv.setItem(9, ItemManager.createItem(Material.EXPERIENCE_BOTTLE,
+		buttons.add(ItemManager.createItem(Material.EXPERIENCE_BOTTLE,
 				CommunicationManager.format("&b&lExperience Drop: " + getToggleStatus(arena.hasExpDrop())),
 				CommunicationManager.format("&7Change whether experience drop or go"),
 				CommunicationManager.format("&7straight into the killer's experience bar")));
 
 		// Option to toggle item dropping
-		inv.setItem(10, ItemManager.createItem(Material.EMERALD,
+		buttons.add(ItemManager.createItem(Material.EMERALD,
 				CommunicationManager.format("&9&lItem Drop: " + getToggleStatus(arena.hasGemDrop())),
 				CommunicationManager.format("&7Change whether gems and loot drop"),
 				CommunicationManager.format("&7as physical items or go straight"),
 				CommunicationManager.format("&7into the killer's balance/inventory")));
 
 		// Option to set arena bounds
-		inv.setItem(11, ItemManager.createItem(Material.BEDROCK, CommunicationManager.format("&4&lArena Bounds"),
+		buttons.add(ItemManager.createItem(Material.BEDROCK, CommunicationManager.format("&4&lArena Bounds"),
 				CommunicationManager.format("&7Bounds determine where players are"),
 				CommunicationManager.format("&7allowed to go and where the game will"),
 				CommunicationManager.format("&7function. Avoid building past arena bounds.")));
 
 		// Option to edit wolf cap
-		inv.setItem(12, ItemManager.createItem(Material.BONE, CommunicationManager.format("&6&lWolf Cap"),
+		buttons.add(ItemManager.createItem(Material.BONE, CommunicationManager.format("&6&lWolf Cap"),
 				CommunicationManager.format("&7Maximum wolves a player can have")));
 
 		// Option to edit golem cap
-		inv.setItem(13, ItemManager.createItem(Material.IRON_INGOT,
+		buttons.add(ItemManager.createItem(Material.IRON_INGOT,
 				CommunicationManager.format("&e&lIron Golem Cap"),
 				CommunicationManager.format("&7Maximum iron golems an arena can have")));
 
 		// Option to edit sounds
-		inv.setItem(14, ItemManager.createItem(Material.MUSIC_DISC_13,
+		buttons.add(
+				ItemManager.createItem(Material.MUSIC_DISC_13,
 				CommunicationManager.format("&d&lSounds"),
 				ItemManager.BUTTON_FLAGS,
-				null));
+				null)
+		);
 
 		// Option to copy game settings from another arena or a preset
-		inv.setItem(15, ItemManager.createItem(Material.WRITABLE_BOOK,
+		buttons.add(ItemManager.createItem(Material.WRITABLE_BOOK,
 				CommunicationManager.format("&f&lCopy Game Settings"),
 				CommunicationManager.format("&7Copy settings of another arena or"),
 				CommunicationManager.format("&7choose from a menu of presets")));
 
-		// Option to exit
-		inv.setItem(17, Buttons.exit());
-
-		return inv;
+		return InventoryFactory.createDynamicSizeInventory(
+				new InventoryMeta(InventoryType.MENU, arena),
+				CommunicationManager.format("&8&lGame Settings: " + arena.getName()),
+				true,
+				buttons
+		);
 	}
 
 	// Menu for changing max waves of an arena
-	public static Inventory createMaxWaveInventory(Arena arena) {
-		Inventory inv;
-
-		// Create inventory
-		if (arena.getMaxWaves() < 0)
-			inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-					CommunicationManager.format("&3&lMaximum Waves: Unlimited"));
-		else inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				CommunicationManager.format("&3&lMaximum Waves: " + arena.getMaxWaves()));
-
-		// Option to decrease
-		for (int i = 0; i < 3; i++)
-			inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE,
-					CommunicationManager.format("&4&lDecrease")));
-
-		// Option to set to unlimited
-		inv.setItem(3, ItemManager.createItem(Material.ORANGE_CONCRETE,
-				CommunicationManager.format("&6&lUnlimited")));
-
-		// Option to reset to 1
-		inv.setItem(4, ItemManager.createItem(Material.LIGHT_BLUE_CONCRETE,
-				CommunicationManager.format("&3&lReset to 1")));
-
-		// Option to increase
-		for (int i = 5; i < 8; i++)
-			inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE,
-					CommunicationManager.format("&2&lIncrease")));
-
-		// Option to exit
-		inv.setItem(8, Buttons.exit());
-
-		return inv;
+	public static Inventory createMaxWaveMenu(Arena arena) {
+		return InventoryFactory.createAdvancedIncrementorMenu(
+				arena,
+				(arena.getMaxWaves() < 0) ?
+						CommunicationManager.format("&3&lMaximum Waves: Unlimited") :
+						CommunicationManager.format("&3&lMaximum Waves: " + arena.getMaxWaves())
+		);
 	}
 
 	// Menu for changing wave time limit of an arena
-	public static Inventory createWaveTimeLimitInventory(Arena arena) {
-		Inventory inv;
-
-		// Create inventory
-		if (arena.getWaveTimeLimit() < 0)
-			inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-					CommunicationManager.format("&2&lWave Time Limit: Unlimited"));
-		else inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				
-				CommunicationManager.format("&2&lWave Time Limit: " +
-						arena.getWaveTimeLimit()));
-
-		// Option to decrease
-		for (int i = 0; i < 3; i++)
-			inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE,
-					CommunicationManager.format("&4&lDecrease")));
-
-		// Option to set to unlimited
-		inv.setItem(3, ItemManager.createItem(Material.ORANGE_CONCRETE,
-				CommunicationManager.format("&6&lUnlimited")));
-
-		// Option to reset to 1
-		inv.setItem(4, ItemManager.createItem(Material.LIGHT_BLUE_CONCRETE,
-				CommunicationManager.format("&3&lReset to 1")));
-
-		// Option to increase
-		for (int i = 5; i < 8; i++)
-			inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE,
-					CommunicationManager.format("&2&lIncrease")));
-
-		// Option to exit
-		inv.setItem(8, Buttons.exit());
-
-		return inv;
+	public static Inventory createWaveTimeLimitMenu(Arena arena) {
+		return InventoryFactory.createAdvancedIncrementorMenu(
+				arena,
+				(arena.getWaveTimeLimit() < 0) ?
+						CommunicationManager.format("&2&lWave Time Limit: Unlimited") :
+						CommunicationManager.format("&2&lWave Time Limit: " + arena.getWaveTimeLimit())
+		);
 	}
 
 	// Menu for allowed kits of an arena
-	public static Inventory createAllowedKitsInventory(Arena arena, boolean mock) {
+	public static Inventory createAllowedKitsMenu(Arena arena, boolean mock) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 54,
 				
@@ -1214,7 +1011,9 @@ public class Inventories {
 	}
 
 	// Menu for changing the difficulty label of an arena
-	public static Inventory createDifficultyLabelInventory(Arena arena) {
+	public static Inventory createDifficultyLabelMenu(Arena arena) {
+		List<ItemStack> buttons = new ArrayList<>();
+
 		String label = arena.getDifficultyLabel();
 		switch (label) {
 			case "Easy":
@@ -1233,240 +1032,159 @@ public class Inventories {
 				label = "";
 		}
 
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				
-				CommunicationManager.format("&6&lDifficulty Label: " + label));
-
 		// "Easy" option
-		inv.setItem(0, ItemManager.createItem(Material.LIME_CONCRETE,
+		buttons.add(ItemManager.createItem(Material.LIME_CONCRETE,
 				CommunicationManager.format("&a&l" + LanguageManager.names.easy)));
 
 		// "Medium" option
-		inv.setItem(1, ItemManager.createItem(Material.YELLOW_CONCRETE,
+		buttons.add(ItemManager.createItem(Material.YELLOW_CONCRETE,
 				CommunicationManager.format("&e&l" + LanguageManager.names.medium)));
 
 		// "Hard" option
-		inv.setItem(2, ItemManager.createItem(Material.RED_CONCRETE,
+		buttons.add(ItemManager.createItem(Material.RED_CONCRETE,
 				CommunicationManager.format("&c&l" + LanguageManager.names.hard)));
 
 		// "Insane" option
-		inv.setItem(3, ItemManager.createItem(Material.MAGENTA_CONCRETE,
+		buttons.add(ItemManager.createItem(Material.MAGENTA_CONCRETE,
 				CommunicationManager.format("&d&l" + LanguageManager.names.insane)));
 
 		// "None" option
-		inv.setItem(4, ItemManager.createItem(Material.LIGHT_GRAY_CONCRETE,
+		buttons.add(ItemManager.createItem(Material.LIGHT_GRAY_CONCRETE,
 				CommunicationManager.format("&7&l" + LanguageManager.names.none)));
 
-		// Option to exit
-		inv.setItem(8, Buttons.exit());
-
-		return inv;
+		return InventoryFactory.createDynamicSizeInventory(
+				new InventoryMeta(InventoryType.MENU, arena),
+				CommunicationManager.format("&6&lDifficulty Label: " + label),
+				true,
+				buttons
+		);
 	}
 
 	// Menu for changing the difficulty multiplier of an arena
-	public static Inventory createDifficultyMultiplierInventory(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				
-				CommunicationManager.format("&4&lDifficulty Multiplier: " +
-						arena.getDifficultyMultiplier()));
+	public static Inventory createDifficultyMultiplierMenu(Arena arena) {
+		List<ItemStack> buttons = new ArrayList<>();
 
 		// "1" option
-		inv.setItem(0, ItemManager.createItem(Material.LIGHT_BLUE_CONCRETE,
+		buttons.add(ItemManager.createItem(Material.LIGHT_BLUE_CONCRETE,
 				CommunicationManager.format("&b&l1")));
 
 		// "2" option
-		inv.setItem(2, ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&a&l2")));
+		buttons.add(ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&a&l2")));
 
 		// "3" option
-		inv.setItem(4, ItemManager.createItem(Material.YELLOW_CONCRETE, CommunicationManager.format("&6&l3")));
+		buttons.add(ItemManager.createItem(Material.YELLOW_CONCRETE, CommunicationManager.format("&6&l3")));
 
 		// "4" option
-		inv.setItem(6, ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&l4")));
+		buttons.add(ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&l4")));
 
-		// Option to exit
-		inv.setItem(8, Buttons.exit());
-
-		return inv;
+		return InventoryFactory.createFixedSizeInventory(
+				new InventoryMeta(InventoryType.MENU, arena),
+				CommunicationManager.format("&4&lDifficulty Multiplier: " + arena.getDifficultyMultiplier()),
+				1,
+				true,
+				buttons
+		);
 	}
 
 	// Menu for selecting arena bound corners
-	public static Inventory createBoundsInventory(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				
-				CommunicationManager.format("&4&lArena Bounds: " + arena.getName()));
+	public static Inventory createBoundsMenu(Arena arena) {
+		List<ItemStack> buttons = new ArrayList<>();
 
 		// Option to interact with corner 1
-		inv.setItem(0, ItemManager.createItem(Material.TORCH, CommunicationManager.format("&b&lCorner 1: " +
+		buttons.add(ItemManager.createItem(Material.TORCH, CommunicationManager.format("&b&lCorner 1: " +
 				(arena.getCorner1() == null ? "&c&lMissing" : "&a&lSet"))));
 
 		// Option to interact with corner 2
-		inv.setItem(3, ItemManager.createItem(Material.SOUL_TORCH,
+		buttons.add(ItemManager.createItem(Material.SOUL_TORCH,
 				CommunicationManager.format("&9&lCorner 2: " +
 				(arena.getCorner2() == null ? "&c&lMissing" : "&a&lSet"))));
 
 		// Option to toggle arena border particles
-		inv.setItem(6, ItemManager.createItem(Material.FIREWORK_ROCKET,
+		buttons.add(ItemManager.createItem(Material.FIREWORK_ROCKET,
 				CommunicationManager.format("&4&lBorder Particles: " +
 				getToggleStatus(arena.hasBorderParticles()))));
 
-		// Option to exit
-		inv.setItem(8, Buttons.exit());
-
-		return inv;
+		return InventoryFactory.createFixedSizeInventory(
+				new InventoryMeta(InventoryType.MENU, arena),
+				CommunicationManager.format("&4&lArena Bounds: " + arena.getName()),
+				1,
+				true,
+				buttons
+		);
 	}
 
 	// Menu for editing corner 1 of an arena
-	public static Inventory createCorner1Inventory(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				
-				CommunicationManager.format("&b&lCorner 1: " + arena.getName()));
-
-		// Option to create waiting room
-		if (arena.getCorner1() == null)
-			inv.setItem(0, Buttons.create("Corner 1"));
-		else inv.setItem(0, Buttons.relocate("Corner 1"));
-
-		// Option to teleport to waiting room
-		inv.setItem(2, Buttons.teleport("Corner 1"));
-
-		// Option to remove waiting room
-		inv.setItem(4, Buttons.remove("CORNER 1"));
-
-		// Option to exit
-		inv.setItem(8, Buttons.exit());
-
-		return inv;
+	public static Inventory createCorner1Menu(Arena arena) {
+		return InventoryFactory.createSimpleLocationMenu(
+				arena,
+				CommunicationManager.format("&b&lCorner 1: " + arena.getName()),
+				arena.getCorner1() != null,
+				"Corner 1"
+		);
 	}
 
 	// Confirmation menu for removing corner 1
-	public static Inventory createCorner1ConfirmInventory(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				
-				CommunicationManager.format("&4&lRemove Corner 1?"));
-
-		// "No" option
-		inv.setItem(0, Buttons.no());
-
-		// "Yes" option
-		inv.setItem(8, Buttons.yes());
-
-		return inv;
+	public static Inventory createCorner1ConfirmMenu(Arena arena) {
+		return InventoryFactory.createConfirmationMenu(
+				arena,
+				CommunicationManager.format("&4&lRemove Corner 1?")
+		);
 	}
 
 	// Menu for editing corner 2 of an arena
-	public static Inventory createCorner2Inventory(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				
-				CommunicationManager.format("&9&lCorner 2: " + arena.getName()));
-
-		// Option to create waiting room
-		if (arena.getCorner2() == null)
-			inv.setItem(0, Buttons.create("Corner 2"));
-		else inv.setItem(0, Buttons.relocate("Corner 2"));
-
-		// Option to teleport to waiting room
-		inv.setItem(2, Buttons.teleport("Corner 2"));
-
-		// Option to remove waiting room
-		inv.setItem(4, Buttons.remove("CORNER 2"));
-
-		// Option to exit
-		inv.setItem(8, Buttons.exit());
-
-		return inv;
+	public static Inventory createCorner2Menu(Arena arena) {
+		return InventoryFactory.createSimpleLocationMenu(
+				arena,
+				CommunicationManager.format("&9&lCorner 2: " + arena.getName()),
+				arena.getCorner2() != null,
+				"Corner 2"
+		);
 	}
 
 	// Confirmation menu for removing corner 2
-	public static Inventory createCorner2ConfirmInventory(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				
-				CommunicationManager.format("&4&lRemove Corner 2?"));
-
-		// "No" option
-		inv.setItem(0, Buttons.no());
-
-		// "Yes" option
-		inv.setItem(8, Buttons.yes());
-
-		return inv;
+	public static Inventory createCorner2ConfirmMenu(Arena arena) {
+		return InventoryFactory.createConfirmationMenu(
+				arena,
+				CommunicationManager.format("&4&lRemove Corner 2?")
+		);
 	}
 
 	// Menu for changing wolf cap of an arena
-	public static Inventory createWolfCapInventory(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				
-				CommunicationManager.format("&6&lWolf Cap: " + arena.getWolfCap()));
-
-		// Option to decrease
-		for (int i = 0; i < 4; i++)
-			inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE,
-					CommunicationManager.format("&4&lDecrease")));
-
-		// Option to increase
-		for (int i = 4; i < 8; i++)
-			inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE,
-					CommunicationManager.format("&2&lIncrease")));
-
-		// Option to exit
-		inv.setItem(8, Buttons.exit());
-
-		return inv;
+	public static Inventory createWolfCapMenu(Arena arena) {
+		return InventoryFactory.createIncrementorMenu(
+				arena,
+				CommunicationManager.format("&6&lWolf Cap: " + arena.getWolfCap())
+		);
 	}
 
 	// Menu for changing iron golem cap of an arena
-	public static Inventory createGolemCapInventory(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				
-				CommunicationManager.format("&e&lIron Golem Cap: " + arena.getGolemCap()));
-
-		// Option to decrease
-		for (int i = 0; i < 4; i++)
-			inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE,
-					CommunicationManager.format("&4&lDecrease")));
-
-		// Option to increase
-		for (int i = 4; i < 8; i++)
-			inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE,
-					CommunicationManager.format("&2&lIncrease")));
-
-		// Option to exit
-		inv.setItem(8, Buttons.exit());
-
-		return inv;
+	public static Inventory createGolemCapMenu(Arena arena) {
+		return InventoryFactory.createIncrementorMenu(
+				arena,
+				CommunicationManager.format("&e&lIron Golem Cap: " + arena.getGolemCap())
+		);
 	}
 
 	// Menu for editing the sounds of an arena
-	public static Inventory createSoundsInventory(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 9,
-				
-				CommunicationManager.format("&d&lSounds: " + arena.getName()));
+	public static Inventory createSoundsMenu(Arena arena) {
+		List<ItemStack> buttons = new ArrayList<>();
 
 		// Option to edit win sound
-		inv.setItem(0, ItemManager.createItem(Material.MUSIC_DISC_PIGSTEP,
+		buttons.add( ItemManager.createItem(Material.MUSIC_DISC_PIGSTEP,
 				CommunicationManager.format("&a&lWin Sound: " + getToggleStatus(arena.hasWinSound())),
 				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Played when game ends and players win")));
 
 		// Option to edit lose sound
-		inv.setItem(1, ItemManager.createItem(Material.MUSIC_DISC_11,
+		buttons.add( ItemManager.createItem(Material.MUSIC_DISC_11,
 				CommunicationManager.format("&e&lLose Sound: " + getToggleStatus(arena.hasLoseSound())),
 				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Played when game ends and players lose")));
 
 		// Option to edit wave start sound
-		inv.setItem(2, ItemManager.createItem(Material.MUSIC_DISC_CAT,
+		buttons.add( ItemManager.createItem(Material.MUSIC_DISC_CAT,
 				CommunicationManager.format("&2&lWave Start Sound: " +
 						getToggleStatus(arena.hasWaveStartSound())),
 				ItemManager.BUTTON_FLAGS,
@@ -1474,7 +1192,7 @@ public class Inventories {
 				CommunicationManager.format("&7Played when a wave starts")));
 
 		// Option to edit wave finish sound
-		inv.setItem(3, ItemManager.createItem(Material.MUSIC_DISC_BLOCKS,
+		buttons.add( ItemManager.createItem(Material.MUSIC_DISC_BLOCKS,
 				CommunicationManager.format("&9&lWave Finish Sound: " +
 						getToggleStatus(arena.hasWaveFinishSound())),
 				ItemManager.BUTTON_FLAGS,
@@ -1482,7 +1200,7 @@ public class Inventories {
 				CommunicationManager.format("&7Played when a wave ends")));
 
 		// Option to edit waiting music
-		inv.setItem(4, ItemManager.createItem(Material.MUSIC_DISC_MELLOHI,
+		buttons.add( ItemManager.createItem(Material.MUSIC_DISC_MELLOHI,
 				CommunicationManager.format("&6&lWaiting Sound: &b&l" + arena.getWaitingSoundName()),
 				ItemManager.BUTTON_FLAGS,
 				null,
@@ -1490,7 +1208,7 @@ public class Inventories {
 				CommunicationManager.format("&7for the game to start")));
 
 		// Option to edit gem pickup sound
-		inv.setItem(5, ItemManager.createItem(Material.MUSIC_DISC_FAR,
+		buttons.add( ItemManager.createItem(Material.MUSIC_DISC_FAR,
 				CommunicationManager.format("&b&lGem Pickup Sound: " +
 						getToggleStatus(arena.hasGemSound())),
 				ItemManager.BUTTON_FLAGS,
@@ -1498,7 +1216,7 @@ public class Inventories {
 				CommunicationManager.format("&7Played when players pick up gems")));
 
 		// Option to edit player death sound
-		inv.setItem(6, ItemManager.createItem(Material.MUSIC_DISC_CHIRP,
+		buttons.add( ItemManager.createItem(Material.MUSIC_DISC_CHIRP,
 				CommunicationManager.format("&4&lPlayer Death Sound: " +
 						getToggleStatus(arena.hasPlayerDeathSound())),
 				ItemManager.BUTTON_FLAGS,
@@ -1506,54 +1224,54 @@ public class Inventories {
 				CommunicationManager.format("&7Played when a player dies")));
 
 		// Option to edit ability sound
-		inv.setItem(7, ItemManager.createItem(Material.MUSIC_DISC_MALL,
+		buttons.add( ItemManager.createItem(Material.MUSIC_DISC_MALL,
 				CommunicationManager.format("&d&lAbility Sound: " +
 						getToggleStatus(arena.hasAbilitySound())),
 				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Played when a player uses their ability")));
 
-		// Option to exit
-		inv.setItem(8, Buttons.exit());
-
-		return inv;
+		return InventoryFactory.createDynamicSizeInventory(
+				new InventoryMeta(InventoryType.MENU, arena),
+				CommunicationManager.format("&d&lSounds: " + arena.getName()),
+				true,
+				buttons
+		);
 	}
 
-	// Menu for editing the win sound of an arena
-	public static Inventory createWaitSoundInventory(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 18,
-				
-				CommunicationManager.format("&6&lWaiting Sound: " + arena.getWaitingSoundName()));
+	// Menu for editing the waiting sound of an arena
+	public static Inventory createWaitSoundMenu(Arena arena) {
+		List<ItemStack> buttons = new ArrayList<>();
 
 		// Sound options
-		inv.setItem(0, arena.getWaitingSoundButton(0));
-		inv.setItem(1, arena.getWaitingSoundButton(1));
-		inv.setItem(2, arena.getWaitingSoundButton(2));
-		inv.setItem(3, arena.getWaitingSoundButton(3));
-		inv.setItem(4, arena.getWaitingSoundButton(4));
-		inv.setItem(5, arena.getWaitingSoundButton(5));
+		buttons.add( arena.getWaitingSoundButton("blocks"));
+		buttons.add( arena.getWaitingSoundButton("cat"));
+		buttons.add( arena.getWaitingSoundButton("chirp"));
+		buttons.add( arena.getWaitingSoundButton("far"));
+		buttons.add( arena.getWaitingSoundButton("mall"));
+		buttons.add( arena.getWaitingSoundButton("mellohi"));
 		if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1))
-			inv.setItem(8, arena.getWaitingSoundButton(8));
+			buttons.add( arena.getWaitingSoundButton("otherside"));
 
-		inv.setItem(9, arena.getWaitingSoundButton(9));
-		inv.setItem(10, arena.getWaitingSoundButton(10));
-		inv.setItem(11, arena.getWaitingSoundButton(11));
-		inv.setItem(12, arena.getWaitingSoundButton(12));
-		inv.setItem(13, arena.getWaitingSoundButton(13));
-		inv.setItem(14, arena.getWaitingSoundButton(14));
+		buttons.add( arena.getWaitingSoundButton("pigstep"));
+		buttons.add( arena.getWaitingSoundButton("stal"));
+		buttons.add( arena.getWaitingSoundButton("strad"));
+		buttons.add( arena.getWaitingSoundButton("wait"));
+		buttons.add( arena.getWaitingSoundButton("ward"));
+		buttons.add( arena.getWaitingSoundButton("none"));
 
-		// Option to exit
-		inv.setItem(17, Buttons.exit());
-
-		return inv;
+		return InventoryFactory.createDynamicSizeInventory(
+				new InventoryMeta(InventoryType.MENU, arena),
+				CommunicationManager.format("&6&lWaiting Sound: " + arena.getWaitingSoundName()),
+				true,
+				buttons
+		);
 	}
 
 	// Menu to copy game settings
-	public static Inventory createCopySettingsInventory(Arena arena) {
+	public static Inventory createCopySettingsMenu(Arena arena) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 54,
-				
 				CommunicationManager.format("&8&lCopy Game Settings"));
 
 		// Options to choose any of the 45 possible arenas
@@ -1593,7 +1311,7 @@ public class Inventories {
 	}
 
 	// Generate the shop menu
-	public static Inventory createShop(int level, Arena arena) {
+	public static Inventory createShopMenu(int level, Arena arena) {
 		String disabled = " &4&l[" + LanguageManager.messages.disabled + "]";
 		
 		// Create inventory
@@ -1637,7 +1355,7 @@ public class Inventories {
 	}
 
 	// Generate the weapon shop
-	public static Inventory createWeaponShop(int level, Arena arena) {
+	public static Inventory createWeaponShopMenu(int level, Arena arena) {
 		// Set price modifier
 		double modifier = Math.pow(arena.getActiveCount() - 5, 2) / 200 + 1;
 		if (!arena.hasDynamicPrices())
@@ -1687,7 +1405,7 @@ public class Inventories {
 	}
 
 	// Generate the armor shop
-	public static Inventory createArmorShop(int level, Arena arena) {
+	public static Inventory createArmorShopMenu(int level, Arena arena) {
 		// Set price modifier
 		double modifier = Math.pow(arena.getActiveCount() - 5, 2) / 200 + 1;
 		if (!arena.hasDynamicPrices())
@@ -1737,7 +1455,7 @@ public class Inventories {
 	}
 
 	// Generate the consumable shop
-	public static Inventory createConsumableShop(int level, Arena arena) {
+	public static Inventory createConsumableShopMenu(int level, Arena arena) {
 		// Set price modifier
 		double modifier = Math.pow(arena.getActiveCount() - 5, 2) / 200 + 1;
 		if (!arena.hasDynamicPrices())
@@ -1771,7 +1489,7 @@ public class Inventories {
 	}
 
 	// Generate the enchant shop
-	public static Inventory createEnchantShop() {
+	public static Inventory createEnchantShopMenu() {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 54, 
 				CommunicationManager.format("&a&l" + LanguageManager.names.enchantShop));
@@ -1845,11 +1563,12 @@ public class Inventories {
 	}
 
 	// Display player stats
-	public static Inventory createPlayerStatsInventory(String name) {
+	public static Inventory createPlayerStatsMenu(Player player) {
 		FileConfiguration playerData = plugin.getPlayerData();
+		String name = player.getName();
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 9, 
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, player), 9,
 				CommunicationManager.format("&2&l" + String.format(LanguageManager.messages.playerStatistics,
 						name)));
 
@@ -1901,12 +1620,13 @@ public class Inventories {
 	}
 
 	// Display kits for a player
-	public static Inventory createPlayerKitsInventory(String name, String requester) {
+	public static Inventory createPlayerKitsMenu(Player owner, String requester) {
 		FileConfiguration playerData = plugin.getPlayerData();
+		String name = owner.getName();
 		String path = name + ".kits.";
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 54, 
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, owner), 54,
 				CommunicationManager.format("&9&l" + String.format(LanguageManager.messages.playerKits, name)));
 
 		// Gift kits
@@ -1988,12 +1708,12 @@ public class Inventories {
 	}
 
 	// Display kits for a player to select
-	public static Inventory createSelectKitsInventory(Player player, Arena arena) {
+	public static Inventory createSelectKitsMenu(Player player, Arena arena) {
 		FileConfiguration playerData = plugin.getPlayerData();
 		String path = player.getName() + ".kits.";
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 54, 
+		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, player, arena), 54,
 				CommunicationManager.format("&9&l" + arena.getName() + " " +
 						LanguageManager.messages.kits));
 
@@ -2102,46 +1822,41 @@ public class Inventories {
 	}
 
 	// Display challenges for a player to select
-	public static Inventory createSelectChallengesInventory(VDPlayer player, Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 18, 
-				CommunicationManager.format("&5&l" + arena.getName() + " " +
-						LanguageManager.messages.challenges));
+	public static Inventory createSelectChallengesMenu(VDPlayer player, Arena arena) {
+		List<ItemStack> buttons = new ArrayList<>();
 
 		// Set buttons
-		inv.setItem(0, Challenge.amputee().getButton(player.getChallenges().contains(Challenge.amputee())));
-		inv.setItem(1, Challenge.clumsy().getButton(player.getChallenges().contains(Challenge.clumsy())));
-		inv.setItem(2, Challenge.featherweight().getButton(player.getChallenges().contains(
-				Challenge.featherweight())));
-		inv.setItem(3, Challenge.pacifist().getButton(player.getChallenges().contains(Challenge.pacifist())));
-		inv.setItem(4, Challenge.dwarf().getButton(player.getChallenges().contains(Challenge.dwarf())));
-		inv.setItem(5, Challenge.uhc().getButton(player.getChallenges().contains(Challenge.uhc())));
-		inv.setItem(6, Challenge.naked().getButton(player.getChallenges().contains(Challenge.naked())));
-		inv.setItem(7, Challenge.blind().getButton(player.getChallenges().contains(Challenge.blind())));
-		inv.setItem(8, Challenge.none().getButton(player.getChallenges().isEmpty()));
+		buttons.add( Challenge.amputee().getButton(player.getChallenges().contains(Challenge.amputee())));
+		buttons.add( Challenge.clumsy().getButton(player.getChallenges().contains(Challenge.clumsy())));
+		buttons.add( Challenge.featherweight().getButton(player.getChallenges().contains(Challenge.featherweight())));
+		buttons.add( Challenge.pacifist().getButton(player.getChallenges().contains(Challenge.pacifist())));
+		buttons.add( Challenge.dwarf().getButton(player.getChallenges().contains(Challenge.dwarf())));
+		buttons.add( Challenge.uhc().getButton(player.getChallenges().contains(Challenge.uhc())));
+		buttons.add( Challenge.naked().getButton(player.getChallenges().contains(Challenge.naked())));
+		buttons.add( Challenge.blind().getButton(player.getChallenges().contains(Challenge.blind())));
+		buttons.add( Challenge.none().getButton(player.getChallenges().isEmpty()));
 
-		// Option to exit
-		inv.setItem(13, Buttons.exit());
-
-		return inv;
+		return InventoryFactory.createDynamicSizeInventory(
+				new InventoryMeta(InventoryType.MENU, player.getPlayer(), arena),
+				CommunicationManager.format("&5&l" + arena.getName() + " " + LanguageManager.messages.challenges),
+				true,
+				buttons
+		);
 	}
 
 	// Display arena information
-	public static Inventory createArenaInfoInventory(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena.getArena()), 36,
-				 CommunicationManager.format("&6&l" +
-						String.format(LanguageManager.messages.arenaInfo, arena.getName())));
+	public static Inventory createArenaInfoMenu(Arena arena) {
+		List<ItemStack> buttons = new ArrayList<>();
 
 		// Maximum players
-		inv.setItem(1, ItemManager.createItem(Material.NETHERITE_HELMET,
+		buttons.add(ItemManager.createItem(Material.NETHERITE_HELMET,
 				CommunicationManager.format("&4&l" + LanguageManager.arenaStats.maxPlayers.name +
 						": &4" + arena.getMaxPlayers()), ItemManager.BUTTON_FLAGS, null,
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
 						LanguageManager.arenaStats.maxPlayers.description)));
 
 		// Minimum players
-		inv.setItem(2, ItemManager.createItem(Material.NETHERITE_BOOTS,
+		buttons.add(ItemManager.createItem(Material.NETHERITE_BOOTS,
 				CommunicationManager.format("&2&l" + LanguageManager.arenaStats.minPlayers.name +
 						": &2" + arena.getMinPlayers()), ItemManager.BUTTON_FLAGS, null,
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
@@ -2152,7 +1867,7 @@ public class Inventories {
 		if (arena.getMaxWaves() < 0)
 			waves = LanguageManager.messages.unlimited;
 		else waves = Integer.toString(arena.getMaxWaves());
-		inv.setItem(3, ItemManager.createItem(Material.GOLDEN_SWORD,
+		buttons.add(ItemManager.createItem(Material.GOLDEN_SWORD,
 				CommunicationManager.format("&3&l" + LanguageManager.arenaStats.maxWaves.name +
 						": &3" + waves), ItemManager.BUTTON_FLAGS, null,
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
@@ -2163,31 +1878,31 @@ public class Inventories {
 		if (arena.getWaveTimeLimit() < 0)
 			limit = LanguageManager.messages.unlimited;
 		else limit = arena.getWaveTimeLimit() + " minute(s)";
-		inv.setItem(4, ItemManager.createItem(Material.CLOCK,
+		buttons.add(ItemManager.createItem(Material.CLOCK,
 				CommunicationManager.format("&9&l" + LanguageManager.arenaStats.timeLimit.name +
 						": &9" + limit), CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
 						LanguageManager.arenaStats.timeLimit.description)));
 
 		// Wolf cap
-		inv.setItem(5, ItemManager.createItem(Material.BONE,
+		buttons.add(ItemManager.createItem(Material.BONE,
 				CommunicationManager.format("&6&l" + LanguageManager.arenaStats.wolfCap.name +
 						": &6" + arena.getWolfCap()),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
 						LanguageManager.arenaStats.wolfCap.description)));
 
 		// Golem cap
-		inv.setItem(6, ItemManager.createItem(Material.IRON_INGOT,
+		buttons.add(ItemManager.createItem(Material.IRON_INGOT,
 				CommunicationManager.format("&e&l" + LanguageManager.arenaStats.golemCap.name +
 						": &e" + arena.getGolemCap()),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
 						LanguageManager.arenaStats.golemCap.description)));
 
 		// Allowed kits
-		inv.setItem(7, ItemManager.createItem(Material.ENDER_CHEST,
+		buttons.add(ItemManager.createItem(Material.ENDER_CHEST,
 				CommunicationManager.format("&9&l" + LanguageManager.messages.allowedKits)));
 
 		// Dynamic mob count
-		inv.setItem(10, ItemManager.createItem(Material.SLIME_BALL,
+		buttons.add(ItemManager.createItem(Material.SLIME_BALL,
 				CommunicationManager.format("&e&l" +
 						LanguageManager.arenaStats.dynamicMobCount.name +
 						": " + getToggleStatus(arena.hasDynamicCount())),
@@ -2195,7 +1910,7 @@ public class Inventories {
 						LanguageManager.arenaStats.dynamicMobCount.description)));
 
 		// Dynamic difficulty
-		inv.setItem(11, ItemManager.createItem(Material.MAGMA_CREAM,
+		buttons.add(ItemManager.createItem(Material.MAGMA_CREAM,
 				CommunicationManager.format("&6&l" +
 						LanguageManager.arenaStats.dynamicDifficulty.name + ": " +
 						getToggleStatus(arena.hasDynamicDifficulty())),
@@ -2203,7 +1918,7 @@ public class Inventories {
 						LanguageManager.arenaStats.dynamicDifficulty.description)));
 
 		// Dynamic prices
-		inv.setItem(12, ItemManager.createItem(Material.NETHER_STAR,
+		buttons.add(ItemManager.createItem(Material.NETHER_STAR,
 				CommunicationManager.format("&b&l" +
 						LanguageManager.arenaStats.dynamicPrices.name +
 						": " + getToggleStatus(arena.hasDynamicPrices())),
@@ -2211,7 +1926,7 @@ public class Inventories {
 						LanguageManager.arenaStats.dynamicPrices.description)));
 
 		// Dynamic time limit
-		inv.setItem(13, ItemManager.createItem(Material.SNOWBALL,
+		buttons.add(ItemManager.createItem(Material.SNOWBALL,
 				CommunicationManager.format("&a&l" +
 						LanguageManager.arenaStats.dynamicTimeLimit.name +
 						": " + getToggleStatus(arena.hasDynamicLimit())),
@@ -2219,68 +1934,68 @@ public class Inventories {
 						LanguageManager.arenaStats.dynamicTimeLimit.description)));
 
 		// Late arrival
-		inv.setItem(14, ItemManager.createItem(Material.DAYLIGHT_DETECTOR,
+		buttons.add( ItemManager.createItem(Material.DAYLIGHT_DETECTOR,
 				CommunicationManager.format("&e&l" + LanguageManager.arenaStats.lateArrival.name +
 						": " + getToggleStatus(arena.hasLateArrival())), ItemManager.BUTTON_FLAGS, null,
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
 						LanguageManager.arenaStats.lateArrival.description)));
 
 		// Item dropping
-		inv.setItem(15, ItemManager.createItem(Material.EMERALD,
+		buttons.add( ItemManager.createItem(Material.EMERALD,
 				CommunicationManager.format("&9&l" + LanguageManager.arenaStats.gemDrop.name +
 						": " + getToggleStatus(arena.hasGemDrop())),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
 						LanguageManager.arenaStats.gemDrop.description)));
 
 		// Experience drop
-		inv.setItem(16, ItemManager.createItem(Material.EXPERIENCE_BOTTLE,
+		buttons.add( ItemManager.createItem(Material.EXPERIENCE_BOTTLE,
 				CommunicationManager.format("&b&l" + LanguageManager.arenaStats.expDrop.name +
 						": " + getToggleStatus(arena.hasExpDrop())),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
 						LanguageManager.arenaStats.expDrop.description)));
 
 		// Player spawn particles
-		inv.setItem(19, ItemManager.createItem(Material.FIREWORK_ROCKET,
+		buttons.add( ItemManager.createItem(Material.FIREWORK_ROCKET,
 				CommunicationManager.format("&e&l" + LanguageManager.names.playerSpawnParticles +
 						": " + getToggleStatus(arena.hasSpawnParticles()))));
 
 		// Monster spawn particles
-		inv.setItem(20, ItemManager.createItem(Material.FIREWORK_ROCKET,
+		buttons.add( ItemManager.createItem(Material.FIREWORK_ROCKET,
 				CommunicationManager.format("&d&l" + LanguageManager.names.monsterSpawnParticles +
 						": " + getToggleStatus(arena.hasMonsterParticles()))));
 
 		// Villager spawn particles
-		inv.setItem(21, ItemManager.createItem(Material.FIREWORK_ROCKET,
+		buttons.add( ItemManager.createItem(Material.FIREWORK_ROCKET,
 				CommunicationManager.format("&a&l" +
 						LanguageManager.names.villagerSpawnParticles + ": " +
 						getToggleStatus(arena.hasVillagerParticles()))));
 
 		// Default shop
-		inv.setItem(22, ItemManager.createItem(Material.EMERALD_BLOCK,
+		buttons.add( ItemManager.createItem(Material.EMERALD_BLOCK,
 				CommunicationManager.format("&6&l" + LanguageManager.names.defaultShop +
 						": " + getToggleStatus(arena.hasNormal()))));
 
 		// Custom shop
-		inv.setItem(23, ItemManager.createItem(Material.QUARTZ_BLOCK,
+		buttons.add( ItemManager.createItem(Material.QUARTZ_BLOCK,
 				CommunicationManager.format("&2&l" + LanguageManager.names.customShop +
 						": " + getToggleStatus(arena.hasCustom()))));
 
 		// Enchants shop
-		inv.setItem(24, ItemManager.createItem(Material.BOOKSHELF,
+		buttons.add( ItemManager.createItem(Material.BOOKSHELF,
 				CommunicationManager.format("&3&l" + LanguageManager.names.enchantShop +
 						": " + getToggleStatus(arena.hasEnchants()))));
 
 		// Community chest
-		inv.setItem(25, ItemManager.createItem(Material.CHEST,
+		buttons.add( ItemManager.createItem(Material.CHEST,
 				CommunicationManager.format("&d&l" + LanguageManager.names.communityChest +
 						": " + getToggleStatus(arena.hasCommunity()))));
 
 		// Custom shop inventory
-		inv.setItem(30, ItemManager.createItem(Material.QUARTZ,
+		buttons.add( ItemManager.createItem(Material.QUARTZ,
 				CommunicationManager.format("&f&l" + LanguageManager.messages.customShopInv)));
 
 		// Difficulty multiplier
-		inv.setItem(31, ItemManager.createItem(Material.TURTLE_HELMET,
+		buttons.add( ItemManager.createItem(Material.TURTLE_HELMET,
 				CommunicationManager.format("&4&l" +
 						LanguageManager.arenaStats.difficultyMultiplier.name + ": &4" +
 						arena.getDifficultyMultiplier()), ItemManager.BUTTON_FLAGS, null,
@@ -2305,13 +2020,18 @@ public class Inventories {
 				}
 			}
 		});
-		inv.setItem(32, ItemManager.createItem(Material.GOLDEN_HELMET,
+		buttons.add( ItemManager.createItem(Material.GOLDEN_HELMET,
 				CommunicationManager.format("&e&l" + LanguageManager.messages.arenaRecords),
 				ItemManager.BUTTON_FLAGS, null, records));
 
-		return inv;
+		return InventoryFactory.createDynamicSizeInventory(
+				new InventoryMeta(InventoryType.MENU, arena),
+				CommunicationManager.format("&6&l" +
+						String.format(LanguageManager.messages.arenaInfo, arena.getName())),
+				false,
+				buttons
+		);
 	}
-
 
 	// Easy way to get a string for a toggle status
 	private static String getToggleStatus(boolean status) {

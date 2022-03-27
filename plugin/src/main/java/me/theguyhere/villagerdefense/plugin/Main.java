@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@SuppressWarnings("unused")
 public class Main extends JavaPlugin {
 	// Yaml file managers
 	private final DataManager arenaData = new DataManager(this, "arenaData.yml");

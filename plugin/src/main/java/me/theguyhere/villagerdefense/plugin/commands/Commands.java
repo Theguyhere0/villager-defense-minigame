@@ -121,9 +121,10 @@ public class Commands implements CommandExecutor {
 					}
 
 					if (args.length == 1)
-						player.openInventory(Inventories.createPlayerStatsInventory(player.getName()));
+						player.openInventory(Inventories.createPlayerStatsMenu(player));
 					else if (plugin.getPlayerData().contains(args[1]))
-						player.openInventory(Inventories.createPlayerStatsInventory(args[1]));
+						player.openInventory(Inventories.createPlayerStatsMenu(
+								Objects.requireNonNull(Bukkit.getPlayer(args[1]))));
 					else PlayerManager.notifyFailure(player, LanguageManager.messages.noStats,
 								ChatColor.AQUA, args[1]);
 					return true;
@@ -137,7 +138,7 @@ public class Commands implements CommandExecutor {
 						return true;
 					}
 
-					player.openInventory(Inventories.createPlayerKitsInventory(player.getName(), player.getName()));
+					player.openInventory(Inventories.createPlayerKitsMenu(player, player.getName()));
 					return true;
 				}
 
