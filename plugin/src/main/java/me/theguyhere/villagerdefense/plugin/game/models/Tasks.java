@@ -2,9 +2,9 @@ package me.theguyhere.villagerdefense.plugin.game.models;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
-import me.theguyhere.villagerdefense.plugin.GUI.InventoryType;
-import me.theguyhere.villagerdefense.plugin.GUI.Menus;
-import me.theguyhere.villagerdefense.plugin.GUI.InventoryMeta;
+import me.theguyhere.villagerdefense.plugin.inventories.InventoryType;
+import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
+import me.theguyhere.villagerdefense.plugin.inventories.InventoryMeta;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
@@ -330,9 +330,9 @@ public class Tasks {
 			// Regenerate shops when time and notify players of it
 			if (currentWave % 10 == 0 || currentWave == 1) {
 				int level = currentWave / 10 + 1;
-				arenaInstance.setWeaponShop(Menus.createWeaponShop(level, arenaInstance));
-				arenaInstance.setArmorShop(Menus.createArmorShop(level, arenaInstance));
-				arenaInstance.setConsumeShop(Menus.createConsumableShop(level, arenaInstance));
+				arenaInstance.setWeaponShop(Inventories.createWeaponShop(level, arenaInstance));
+				arenaInstance.setArmorShop(Inventories.createArmorShop(level, arenaInstance));
+				arenaInstance.setConsumeShop(Inventories.createConsumableShop(level, arenaInstance));
 				if (currentWave != 1)
 					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
 							arenaInstance.getActives().forEach(player ->

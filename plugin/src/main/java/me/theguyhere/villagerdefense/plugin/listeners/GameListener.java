@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.plugin.listeners;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
-import me.theguyhere.villagerdefense.plugin.GUI.Menus;
+import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
@@ -418,15 +418,15 @@ public class GameListener implements Listener {
 
 		// Open shop inventory
 		if (GameItems.shop().equals(item))
-			player.openInventory(Menus.createShop(arena.getCurrentWave() / 10 + 1, arena));
+			player.openInventory(Inventories.createShop(arena.getCurrentWave() / 10 + 1, arena));
 
 		// Open kit selection menu
 		else if (GameItems.kitSelector().equals(item))
-			player.openInventory(Menus.createSelectKitsInventory(player, arena));
+			player.openInventory(Inventories.createSelectKitsInventory(player, arena));
 
 		// Open challenge selection menu
 		else if (GameItems.challengeSelector().equals(item))
-			player.openInventory(Menus.createSelectChallengesInventory(gamer, arena));
+			player.openInventory(Inventories.createSelectChallengesInventory(gamer, arena));
 
 		// Make player leave
 		else if (GameItems.leave().equals(item))

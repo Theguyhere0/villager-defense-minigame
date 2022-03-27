@@ -1,4 +1,4 @@
-package me.theguyhere.villagerdefense.plugin.GUI;
+package me.theguyhere.villagerdefense.plugin.inventories;
 
 /**
  * Type of custom inventory. Possible inventory types:<ul>

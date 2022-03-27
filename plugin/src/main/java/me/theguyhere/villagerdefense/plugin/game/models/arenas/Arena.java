@@ -1,9 +1,9 @@
 package me.theguyhere.villagerdefense.plugin.game.models.arenas;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.plugin.GUI.InventoryType;
-import me.theguyhere.villagerdefense.plugin.GUI.MenuItems;
-import me.theguyhere.villagerdefense.plugin.GUI.InventoryMeta;
+import me.theguyhere.villagerdefense.plugin.inventories.InventoryType;
+import me.theguyhere.villagerdefense.plugin.inventories.Buttons;
+import me.theguyhere.villagerdefense.plugin.inventories.InventoryMeta;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
@@ -1644,7 +1644,7 @@ public class Arena {
 
         // Set exit option
         for (int i = 45; i < 54; i++)
-            inv.setItem(i, MenuItems.exit());
+            inv.setItem(i, Buttons.exit());
 
         // Check for a stored inventory
         if (!config.contains(path + ".customShop"))
@@ -1704,7 +1704,7 @@ public class Arena {
         );
 
         // Set exit option
-        inv.setItem(49, MenuItems.exit());
+        inv.setItem(49, Buttons.exit());
 
         // Check for a stored inventory
         if (!config.contains(path + ".customShop"))
@@ -1768,7 +1768,7 @@ public class Arena {
         );
 
         // Set exit option
-        inv.setItem(49, MenuItems.exit());
+        inv.setItem(49, Buttons.exit());
 
         // Check for a stored inventory
         if (!config.contains(path + ".customShop"))

@@ -1,4 +1,4 @@
-package me.theguyhere.villagerdefense.plugin.GUI;
+package me.theguyhere.villagerdefense.plugin.inventories;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
@@ -6,7 +6,7 @@ import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public class MenuItems {
+public class Buttons {
     //	"No" button
     public static ItemStack no() {
         return ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&c&lNO"));

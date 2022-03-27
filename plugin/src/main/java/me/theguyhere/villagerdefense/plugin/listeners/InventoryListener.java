@@ -1,9 +1,9 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.plugin.GUI.Menus;
-import me.theguyhere.villagerdefense.plugin.GUI.MenuItems;
-import me.theguyhere.villagerdefense.plugin.GUI.InventoryMeta;
+import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
+import me.theguyhere.villagerdefense.plugin.inventories.Buttons;
+import me.theguyhere.villagerdefense.plugin.inventories.InventoryMeta;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.SignGUIEvent;
 import me.theguyhere.villagerdefense.plugin.game.models.*;
@@ -55,7 +55,7 @@ public class InventoryListener implements Listener {
 		else {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 			arenaInstance.setCommunityChest(e.getInventory());
 		}
 	}
@@ -79,7 +79,7 @@ public class InventoryListener implements Listener {
 		else {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 			arenaInstance.setCommunityChest(e.getInventory());
 		}
 	}
@@ -113,7 +113,7 @@ public class InventoryListener implements Listener {
 		else if (title.contains(LanguageManager.names.communityChest)) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 			arenaInstance.setCommunityChest(e.getInventory());
 		}
 
@@ -137,13 +137,13 @@ public class InventoryListener implements Listener {
 			assert meta != null;
 			ItemStack cursor = e.getCursor();
 			assert cursor != null;
-			String path = "a" + meta.getInteger1() + ".customShop.";
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			String path = "a" + meta.getArena().getArena() + ".customShop.";
+			Arena arenaInstance = meta.getArena();
 
 			// Exit menu
-			if (MenuItems.exit().equals(button)) {
+			if (Buttons.exit().equals(button)) {
 				e.setCancelled(true);
-				player.openInventory(Menus.createShopsInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createShopsInventory(meta.getArena()));
 				return;
 			}
 
@@ -168,7 +168,7 @@ public class InventoryListener implements Listener {
 				PlayerManager.giveItem(player, cursor.clone(), LanguageManager.errors.inventoryFull);
 				player.setItemOnCursor(new ItemStack(Material.AIR));
 				plugin.saveArenaData();
-				player.openInventory(Menus.createCustomItemsInventory(meta.getInteger1(), slot));
+				player.openInventory(Inventories.createCustomItemsInventory(meta.getArena(), slot));
 				return;
 			}
 
@@ -177,7 +177,7 @@ public class InventoryListener implements Listener {
 
 			// Only open inventory for valid click
 			if (Objects.requireNonNull(e.getCurrentItem()).getType() != Material.AIR)
-				player.openInventory(Menus.createCustomItemsInventory(meta.getInteger1(), slot));
+				player.openInventory(Inventories.createCustomItemsInventory(meta.getArena(), slot));
 
 			return;
 		} else {
@@ -204,19 +204,19 @@ public class InventoryListener implements Listener {
 
 			// Edit existing arena
 			else if (buttonType == Material.LIME_CONCRETE)
-				player.openInventory(Menus.createArenaInventory(slot));
+				player.openInventory(Inventories.createArenaMenu(GameManager.getArena(slot)));
 
 			// Open lobby menu
 			else if (buttonName.contains("Lobby"))
-				player.openInventory(Menus.createLobbyInventory());
+				player.openInventory(Inventories.createLobbyMenu());
 
 			// Open info boards menu
 			else if (buttonName.contains("Info Boards"))
-				player.openInventory(Menus.createInfoBoardInventory());
+				player.openInventory(Inventories.createInfoBoardDashboard());
 
 			// Open leaderboards menu
 			else if (buttonName.contains("Leaderboards"))
-				player.openInventory(Menus.createLeaderboardInventory());
+				player.openInventory(Inventories.createLeaderboardDashboard());
 
 			// Close inventory
 			else if (buttonName.contains(LanguageManager.messages.exit))
@@ -232,7 +232,7 @@ public class InventoryListener implements Listener {
 				DataManager.setConfigurationLocation(plugin, path, player.getLocation());
 				plugin.getGameManager().reloadLobby();
 				PlayerManager.notifySuccess(player, "Lobby set!");
-				player.openInventory(Menus.createLobbyInventory());
+				player.openInventory(Inventories.createLobbyMenu());
 			}
 
 			// Relocate lobby
@@ -267,38 +267,38 @@ public class InventoryListener implements Listener {
 			// Remove lobby
 			else if (buttonName.contains("REMOVE"))
 				if (config.contains("lobby"))
-					player.openInventory(Menus.createLobbyConfirmInventory());
+					player.openInventory(Inventories.createLobbyConfirmMenu());
 				else PlayerManager.notifyFailure(player, "No lobby to remove!");
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createArenasInventory());
+				player.openInventory(Inventories.createArenasDashboard());
 		}
 
 		// Info board menu
 		else if (title.contains("Info Boards")) {
 
 			// Edit board
-			if (Arrays.asList(Menus.INFO_BOARD_MATS).contains(buttonType))
-				player.openInventory(Menus.createInfoBoardMenu(slot));
+			if (Arrays.asList(Inventories.INFO_BOARD_MATS).contains(buttonType))
+				player.openInventory(Inventories.createInfoBoardMenu(slot));
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createArenasInventory());
+				player.openInventory(Inventories.createArenasDashboard());
 		}
 
 		// Info board menu for a specific board
 		else if (title.contains("Info Board ")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			int num = meta.getInteger1();
+			int num = meta.getId();
 			String path = "infoBoard." + num;
 
 			// Create board
 			if (buttonName.contains("Create")) {
 				plugin.getGameManager().setInfoBoard(player.getLocation(), num);
 				PlayerManager.notifySuccess(player, "Info board set!");
-				player.openInventory(Menus.createInfoBoardMenu(num));
+				player.openInventory(Inventories.createInfoBoardMenu(num));
 			}
 
 			// Relocate board
@@ -332,34 +332,34 @@ public class InventoryListener implements Listener {
 			// Remove info board
 			else if (buttonName.contains("REMOVE"))
 				if (config.contains(path))
-					player.openInventory(Menus.createInfoBoardConfirmInventory(num));
+					player.openInventory(Inventories.createInfoBoardConfirmMenu(num));
 				else PlayerManager.notifyFailure(player, "No info board to remove!");
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createInfoBoardInventory());
+				player.openInventory(Inventories.createInfoBoardDashboard());
 		}
 
 		// Leaderboard menu
 		else if (title.contains("Leaderboards")) {
 			if (buttonName.contains("Total Kills Leaderboard"))
-				player.openInventory(Menus.createTotalKillsLeaderboardInventory());
+				player.openInventory(Inventories.createTotalKillsLeaderboardMenu());
 
 			if (buttonName.contains("Top Kills Leaderboard"))
-				player.openInventory(Menus.createTopKillsLeaderboardInventory());
+				player.openInventory(Inventories.createTopKillsLeaderboardMenu());
 
 			if (buttonName.contains("Total Gems Leaderboard"))
-				player.openInventory(Menus.createTotalGemsLeaderboardInventory());
+				player.openInventory(Inventories.createTotalGemsLeaderboardMenu());
 
 			if (buttonName.contains("Top Balance Leaderboard"))
-				player.openInventory(Menus.createTopBalanceLeaderboardInventory());
+				player.openInventory(Inventories.createTopBalanceLeaderboardMenu());
 
 			if (buttonName.contains("Top Wave Leaderboard"))
-				player.openInventory(Menus.createTopWaveLeaderboardInventory());
+				player.openInventory(Inventories.createTopWaveLeaderboardMenu());
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createArenasInventory());
+				player.openInventory(Inventories.createArenasDashboard());
 		}
 
 		// Total kills leaderboard menu
@@ -370,7 +370,7 @@ public class InventoryListener implements Listener {
 			if (buttonName.contains("Create")) {
 				plugin.getGameManager().setLeaderboard(player.getLocation(), "totalKills");
 				PlayerManager.notifySuccess(player, "Leaderboard set!");
-				player.openInventory(Menus.createTotalKillsLeaderboardInventory());
+				player.openInventory(Inventories.createTotalKillsLeaderboardMenu());
 			}
 
 			// Relocate leaderboard
@@ -404,12 +404,12 @@ public class InventoryListener implements Listener {
 			// Remove leaderboard
 			else if (buttonName.contains("REMOVE"))
 				if (config.contains(path))
-					player.openInventory(Menus.createTotalKillsConfirmInventory());
+					player.openInventory(Inventories.createTotalKillsConfirmMenu());
 				else PlayerManager.notifyFailure(player, "No leaderboard to remove!");
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createLeaderboardInventory());
+				player.openInventory(Inventories.createLeaderboardDashboard());
 		}
 
 		// Top kills leaderboard menu
@@ -420,7 +420,7 @@ public class InventoryListener implements Listener {
 			if (buttonName.contains("Create")) {
 				plugin.getGameManager().setLeaderboard(player.getLocation(), "topKills");
 				PlayerManager.notifySuccess(player, "Leaderboard set!");
-				player.openInventory(Menus.createTopKillsLeaderboardInventory());
+				player.openInventory(Inventories.createTopKillsLeaderboardMenu());
 			}
 
 			// Relocate leaderboard
@@ -454,12 +454,12 @@ public class InventoryListener implements Listener {
 			// Remove leaderboard
 			else if (buttonName.contains("REMOVE"))
 				if (config.contains(path))
-					player.openInventory(Menus.createTopKillsConfirmInventory());
+					player.openInventory(Inventories.createTopKillsConfirmMenu());
 				else PlayerManager.notifyFailure(player, "No leaderboard to remove!");
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createLeaderboardInventory());
+				player.openInventory(Inventories.createLeaderboardDashboard());
 		}
 
 		// Total gems leaderboard menu
@@ -470,7 +470,7 @@ public class InventoryListener implements Listener {
 			if (buttonName.contains("Create")) {
 				plugin.getGameManager().setLeaderboard(player.getLocation(), "totalGems");
 				PlayerManager.notifySuccess(player, "Leaderboard set!");
-				player.openInventory(Menus.createTotalGemsLeaderboardInventory());
+				player.openInventory(Inventories.createTotalGemsLeaderboardMenu());
 			}
 
 			// Relocate leaderboard
@@ -504,12 +504,12 @@ public class InventoryListener implements Listener {
 			// Remove leaderboard
 			else if (buttonName.contains("REMOVE"))
 				if (config.contains(path))
-					player.openInventory(Menus.createTotalGemsConfirmInventory());
+					player.openInventory(Inventories.createTotalGemsConfirmMenu());
 				else PlayerManager.notifyFailure(player, "No leaderboard to remove!");
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createLeaderboardInventory());
+				player.openInventory(Inventories.createLeaderboardDashboard());
 		}
 
 		// Top balance leaderboard menu
@@ -520,7 +520,7 @@ public class InventoryListener implements Listener {
 			if (buttonName.contains("Create")) {
 				plugin.getGameManager().setLeaderboard(player.getLocation(), "topBalance");
 				PlayerManager.notifySuccess(player, "Leaderboard set!");
-				player.openInventory(Menus.createTopBalanceLeaderboardInventory());
+				player.openInventory(Inventories.createTopBalanceLeaderboardMenu());
 			}
 
 			// Relocate leaderboard
@@ -554,12 +554,12 @@ public class InventoryListener implements Listener {
 			// Remove leaderboard
 			else if (buttonName.contains("REMOVE"))
 				if (config.contains(path))
-					player.openInventory(Menus.createTopBalanceConfirmInventory());
+					player.openInventory(Inventories.createTopBalanceConfirmMenu());
 				else PlayerManager.notifyFailure(player, "No leaderboard to remove!");
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createLeaderboardInventory());
+				player.openInventory(Inventories.createLeaderboardDashboard());
 		}
 
 		// Top wave leaderboard menu
@@ -570,7 +570,7 @@ public class InventoryListener implements Listener {
 			if (buttonName.contains("Create")) {
 				plugin.getGameManager().setLeaderboard(player.getLocation(), "topWave");
 				PlayerManager.notifySuccess(player, "Leaderboard set!");
-				player.openInventory(Menus.createTopWaveLeaderboardInventory());
+				player.openInventory(Inventories.createTopWaveLeaderboardMenu());
 			}
 
 			// Relocate leaderboard
@@ -604,19 +604,19 @@ public class InventoryListener implements Listener {
 			// Remove leaderboard
 			else if (buttonName.contains("REMOVE"))
 				if (config.contains(path))
-					player.openInventory(Menus.createTopWaveConfirmInventory());
+					player.openInventory(Inventories.createTopWaveConfirmMenu());
 				else PlayerManager.notifyFailure(player, "No leaderboard to remove!");
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createLeaderboardInventory());
+				player.openInventory(Inventories.createLeaderboardDashboard());
 		}
 
 		// Menu for an arena
 		else if (title.contains(CommunicationManager.format("&2&lEdit "))) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 
 			// Open name editor
 			if (buttonName.contains("Edit Name"))
@@ -627,23 +627,23 @@ public class InventoryListener implements Listener {
 
 			// Open portal menu
 			else if (buttonName.contains("Portal and Leaderboard"))
-				player.openInventory(Menus.createPortalInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createPortalLeaderboardMenu(meta.getArena()));
 
 			// Open player menu
 			else if (buttonName.contains("Player Settings"))
-				player.openInventory(Menus.createPlayersInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createPlayersInventory(meta.getArena()));
 
 			// Open mob menu
 			else if (buttonName.contains("Mob Settings"))
-				player.openInventory(Menus.createMobsInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createMobsInventory(meta.getArena()));
 
 			// Open shop menu
 			else if (buttonName.contains("Shop Settings"))
-				player.openInventory(Menus.createShopsInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createShopsInventory(meta.getArena()));
 
 			// Open game settings menu
 			else if (buttonName.contains("Game Settings"))
-				player.openInventory(Menus.createGameSettingsInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createGameSettingsInventory(meta.getArena()));
 
 			// Toggle arena close
 			else if (buttonName.contains("Close")) {
@@ -701,18 +701,18 @@ public class InventoryListener implements Listener {
 				else arenaInstance.setClosed(true);
 
 				// Save perm data
-				player.openInventory(Menus.createArenaInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createArenaMenu(meta.getArena()));
 			}
 
 			// Open arena remove confirmation menu
 			else if (buttonName.contains("REMOVE"))
 				if (arenaInstance.isClosed())
-					player.openInventory(Menus.createArenaConfirmInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createArenaConfirmMenu(meta.getArena()));
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Return to arenas menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createArenasInventory());
+				player.openInventory(Inventories.createArenasDashboard());
 		}
 
 		// Confirmation menus
@@ -724,16 +724,16 @@ public class InventoryListener implements Listener {
 			if (title.contains("Remove Portal?")) {
 				// Return to previous menu
 				if (buttonName.contains("NO"))
-					player.openInventory(Menus.createPortalInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createPortalLeaderboardMenu(meta.getArena()));
 
 				// Remove the portal, then return to previous menu
 				else if (buttonName.contains("YES")) {
 					// Remove portal, close arena
-					GameManager.getArena(meta.getInteger1()).removePortal();
+					meta.getArena().removePortal();
 
 					// Confirm and return
 					PlayerManager.notifySuccess(player, "Portal removed!");
-					player.openInventory(Menus.createPortalInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createPortalLeaderboardMenu(meta.getArena()));
 				}
 			}
 
@@ -741,16 +741,16 @@ public class InventoryListener implements Listener {
 			else if (title.contains("Remove Leaderboard?")) {
 				// Return to previous menu
 				if (buttonName.contains("NO"))
-					player.openInventory(Menus.createPortalInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createPortalLeaderboardMenu(meta.getArena()));
 
 				// Remove the leaderboard, then return to previous menu
 				else if (buttonName.contains("YES")) {
 					// Delete arena leaderboard
-					GameManager.getArena(meta.getInteger1()).removeArenaBoard();
+					meta.getArena().removeArenaBoard();
 
 					// Confirm and return
 					PlayerManager.notifySuccess(player, "Leaderboard removed!");
-					player.openInventory(Menus.createPortalInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createPortalLeaderboardMenu(meta.getArena()));
 				}
 			}
 
@@ -758,16 +758,16 @@ public class InventoryListener implements Listener {
 			else if (title.contains("Remove Spawn?")) {
 				// Return to previous menu
 				if (buttonName.contains("NO"))
-					player.openInventory(Menus.createPlayerSpawnInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createPlayerSpawnInventory(meta.getArena()));
 
 				// Remove spawn, then return to previous menu
 				else if (buttonName.contains("YES")) {
-					Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+					Arena arenaInstance = meta.getArena();
 
 					arenaInstance.setPlayerSpawn(null);
 					arenaInstance.setClosed(true);
 					PlayerManager.notifySuccess(player, "Spawn removed!");
-					player.openInventory(Menus.createPlayerSpawnInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createPlayerSpawnInventory(meta.getArena()));
 				}
 			}
 
@@ -775,15 +775,15 @@ public class InventoryListener implements Listener {
 			else if (title.contains("Remove Waiting Room?")) {
 				// Return to previous menu
 				if (buttonName.contains("NO"))
-					player.openInventory(Menus.createWaitingRoomInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createWaitingRoomInventory(meta.getArena()));
 
 				// Remove spawn, then return to previous menu
 				else if (buttonName.contains("YES")) {
-					Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+					Arena arenaInstance = meta.getArena();
 
 					arenaInstance.setWaitingRoom(null);
 					PlayerManager.notifySuccess(player, "Waiting room removed!");
-					player.openInventory(Menus.createWaitingRoomInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createWaitingRoomInventory(meta.getArena()));
 				}
 			}
 
@@ -791,17 +791,17 @@ public class InventoryListener implements Listener {
 			else if (title.contains("Remove Monster Spawn?")) {
 				// Return to previous menu
 				if (buttonName.contains("NO"))
-					player.openInventory(Menus.createMonsterSpawnMenu(meta.getInteger1(), meta.getInteger2()));
+					player.openInventory(Inventories.createMonsterSpawnMenu(meta.getArena(), meta.getId()));
 
 				// Remove the monster spawn, then return to previous menu
 				else if (buttonName.contains("YES")) {
-					Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+					Arena arenaInstance = meta.getArena();
 
-					arenaInstance.setMonsterSpawn(meta.getInteger2(), null);
+					arenaInstance.setMonsterSpawn(meta.getId(), null);
 					if (arenaInstance.getMonsterSpawns().isEmpty())
 						arenaInstance.setClosed(true);
 					PlayerManager.notifySuccess(player, "Mob spawn removed!");
-					player.openInventory(Menus.createMonsterSpawnMenu(meta.getInteger1(), meta.getInteger2()));
+					player.openInventory(Inventories.createMonsterSpawnMenu(meta.getArena(), meta.getId()));
 				}
 			}
 
@@ -809,17 +809,17 @@ public class InventoryListener implements Listener {
 			else if (title.contains("Remove Villager Spawn?")) {
 				// Return to previous menu
 				if (buttonName.contains("NO"))
-					player.openInventory(Menus.createVillagerSpawnMenu(meta.getInteger1(), meta.getInteger2()));
+					player.openInventory(Inventories.createVillagerSpawnMenu(meta.getArena(), meta.getId()));
 
 				// Remove the villager spawn, then return to previous menu
 				else if (buttonName.contains("YES")) {
-					Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+					Arena arenaInstance = meta.getArena();
 
-					arenaInstance.setVillagerSpawn(meta.getInteger2(), null);
+					arenaInstance.setVillagerSpawn(meta.getId(), null);
 					if (arenaInstance.getVillagerSpawns().isEmpty())
 						arenaInstance.setClosed(true);
 					PlayerManager.notifySuccess(player, "Mob spawn removed!");
-					player.openInventory(Menus.createVillagerSpawnMenu(meta.getInteger1(), meta.getInteger2()));
+					player.openInventory(Inventories.createVillagerSpawnMenu(meta.getArena(), meta.getId()));
 				}
 			}
 
@@ -827,13 +827,13 @@ public class InventoryListener implements Listener {
 			else if (title.contains("Remove Custom Item?")) {
 				// Return to previous menu
 				if (buttonName.contains("NO"))
-					player.openInventory(Menus.createCustomItemsInventory(meta.getInteger1(), meta.getInteger2()));
+					player.openInventory(Inventories.createCustomItemsInventory(meta.getArena(), meta.getId()));
 
 				// Remove custom item, then return to custom shop editor
 				else if (buttonName.contains("YES")) {
-					config.set("a" + meta.getInteger1() + ".customShop." + meta.getInteger2(), null);
+					config.set("a" + meta.getArena() + ".customShop." + meta.getId(), null);
 					plugin.saveArenaData();
-					player.openInventory(GameManager.getArena(meta.getInteger1()).getCustomShopEditor());
+					player.openInventory(meta.getArena().getCustomShopEditor());
 				}
 			}
 
@@ -841,16 +841,16 @@ public class InventoryListener implements Listener {
 			else if (title.contains("Remove Corner 1?")) {
 				// Return to previous menu
 				if (buttonName.contains("NO"))
-					player.openInventory(Menus.createCorner1Inventory(meta.getInteger1()));
+					player.openInventory(Inventories.createCorner1Inventory(meta.getArena()));
 
 				// Remove corner 1, then return to previous menu
 				else if (buttonName.contains("YES")) {
-					Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+					Arena arenaInstance = meta.getArena();
 
 					arenaInstance.setCorner1(null);
 					arenaInstance.setClosed(true);
 					PlayerManager.notifySuccess(player, "Corner 1 removed!");
-					player.openInventory(Menus.createCorner1Inventory(meta.getInteger1()));
+					player.openInventory(Inventories.createCorner1Inventory(meta.getArena()));
 				}
 			}
 
@@ -858,16 +858,16 @@ public class InventoryListener implements Listener {
 			else if (title.contains("Remove Corner 2?")) {
 				// Return to previous menu
 				if (buttonName.contains("NO"))
-					player.openInventory(Menus.createCorner1Inventory(meta.getInteger1()));
+					player.openInventory(Inventories.createCorner1Inventory(meta.getArena()));
 
 				// Remove corner 2, then return to previous menu
 				else if (buttonName.contains("YES")) {
-					Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+					Arena arenaInstance = meta.getArena();
 
 					arenaInstance.setCorner2(null);
 					arenaInstance.setClosed(true);
 					PlayerManager.notifySuccess(player, "Corner 2 removed!");
-					player.openInventory(Menus.createCorner2Inventory(meta.getInteger1()));
+					player.openInventory(Inventories.createCorner2Inventory(meta.getArena()));
 				}
 			}
 
@@ -875,7 +875,7 @@ public class InventoryListener implements Listener {
 			else if (title.contains("Remove Lobby?")) {
 				// Return to previous menu
 				if (buttonName.contains("NO"))
-					player.openInventory(Menus.createLobbyInventory());
+					player.openInventory(Inventories.createLobbyMenu());
 
 				// Remove the lobby, then return to previous menu
 				else if (buttonName.contains("YES")) {
@@ -883,17 +883,17 @@ public class InventoryListener implements Listener {
 					plugin.saveArenaData();
 					plugin.getGameManager().reloadLobby();
 					PlayerManager.notifySuccess(player, "Lobby removed!");
-					player.openInventory(Menus.createLobbyInventory());
+					player.openInventory(Inventories.createLobbyMenu());
 				}
 			}
 
 			// Confirm to remove info board
 			else if (title.contains("Remove Info Board?")) {
-				String path = "infoBoard." + meta.getInteger1();
+				String path = "infoBoard." + meta.getId();
 
 				// Return to previous menu
 				if (buttonName.contains("NO"))
-					player.openInventory(Menus.createInfoBoardMenu(meta.getInteger1()));
+					player.openInventory(Inventories.createInfoBoardMenu(meta.getId()));
 
 					// Remove the info board, then return to previous menu
 				else if (buttonName.contains("YES")) {
@@ -902,11 +902,11 @@ public class InventoryListener implements Listener {
 					plugin.saveArenaData();
 
 					// Remove info board
-					plugin.getGameManager().removeInfoBoard(meta.getInteger1());
+					plugin.getGameManager().removeInfoBoard(meta.getId());
 
 					// Confirm and return
 					PlayerManager.notifySuccess(player, "Info board removed!");
-					player.openInventory(Menus.createInfoBoardMenu(meta.getInteger1()));
+					player.openInventory(Inventories.createInfoBoardMenu(meta.getId()));
 				}
 			}
 
@@ -916,7 +916,7 @@ public class InventoryListener implements Listener {
 
 				// Return to previous menu
 				if (buttonName.contains("NO"))
-					player.openInventory(Menus.createTotalKillsLeaderboardInventory());
+					player.openInventory(Inventories.createTotalKillsLeaderboardMenu());
 
 				// Remove the leaderboard, then return to previous menu
 				else if (buttonName.contains("YES")) {
@@ -929,7 +929,7 @@ public class InventoryListener implements Listener {
 
 					// Confirm and return
 					PlayerManager.notifySuccess(player, "Leaderboard removed!");
-					player.openInventory(Menus.createTotalKillsLeaderboardInventory());
+					player.openInventory(Inventories.createTotalKillsLeaderboardMenu());
 				}
 			}
 
@@ -939,7 +939,7 @@ public class InventoryListener implements Listener {
 
 				// Return to previous menu
 				if (buttonName.contains("NO"))
-					player.openInventory(Menus.createTopKillsLeaderboardInventory());
+					player.openInventory(Inventories.createTopKillsLeaderboardMenu());
 
 				// Remove the leaderboard, then return to previous menu
 				else if (buttonName.contains("YES")) {
@@ -952,7 +952,7 @@ public class InventoryListener implements Listener {
 
 					// Confirm and return
 					PlayerManager.notifySuccess(player, "Leaderboard removed!");
-					player.openInventory(Menus.createTopKillsLeaderboardInventory());
+					player.openInventory(Inventories.createTopKillsLeaderboardMenu());
 				}
 			}
 
@@ -962,7 +962,7 @@ public class InventoryListener implements Listener {
 
 				// Return to previous menu
 				if (buttonName.contains("NO"))
-					player.openInventory(Menus.createTotalGemsLeaderboardInventory());
+					player.openInventory(Inventories.createTotalGemsLeaderboardMenu());
 
 				// Remove the leaderboard, then return to previous menu
 				else if (buttonName.contains("YES")) {
@@ -975,7 +975,7 @@ public class InventoryListener implements Listener {
 
 					// Confirm and return
 					PlayerManager.notifySuccess(player, "Leaderboard removed!");
-					player.openInventory(Menus.createTotalGemsLeaderboardInventory());
+					player.openInventory(Inventories.createTotalGemsLeaderboardMenu());
 				}
 			}
 
@@ -985,7 +985,7 @@ public class InventoryListener implements Listener {
 
 				// Return to previous menu
 				if (buttonName.contains("NO"))
-					player.openInventory(Menus.createTopBalanceLeaderboardInventory());
+					player.openInventory(Inventories.createTopBalanceLeaderboardMenu());
 
 				// Remove the leaderboard, then return to previous menu
 				else if (buttonName.contains("YES")) {
@@ -998,7 +998,7 @@ public class InventoryListener implements Listener {
 
 					// Confirm and return
 					PlayerManager.notifySuccess(player, "Leaderboard removed!");
-					player.openInventory(Menus.createTopBalanceLeaderboardInventory());
+					player.openInventory(Inventories.createTopBalanceLeaderboardMenu());
 				}
 			}
 
@@ -1008,7 +1008,7 @@ public class InventoryListener implements Listener {
 
 				// Return to previous menu
 				if (buttonName.contains("NO"))
-					player.openInventory(Menus.createTopWaveLeaderboardInventory());
+					player.openInventory(Inventories.createTopWaveLeaderboardMenu());
 
 				// Remove the leaderboard, then return to previous menu
 				else if (buttonName.contains("YES")) {
@@ -1021,7 +1021,7 @@ public class InventoryListener implements Listener {
 
 					// Confirm and return
 					PlayerManager.notifySuccess(player, "Leaderboard removed!");
-					player.openInventory(Menus.createTopWaveLeaderboardInventory());
+					player.openInventory(Inventories.createTopWaveLeaderboardMenu());
 				}
 			}
 
@@ -1029,16 +1029,16 @@ public class InventoryListener implements Listener {
 			else {
 				// Return to previous menu
 				if (buttonName.contains("NO"))
-					player.openInventory(Menus.createArenaInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createArenaMenu(meta.getArena()));
 
 				// Remove arena data, then return to previous menu
 				else if (buttonName.contains("YES")) {
 					// Remove data
-					GameManager.removeArena(meta.getInteger1());
+					GameManager.removeArena(meta.getArena().getArena());
 
 					// Confirm and return
 					PlayerManager.notifySuccess(player, "Arena removed!");
-					player.openInventory(Menus.createArenasInventory());
+					player.openInventory(Inventories.createArenasDashboard());
 				}
 			}
 		}
@@ -1047,14 +1047,14 @@ public class InventoryListener implements Listener {
 		else if (title.contains("Portal/LBoard:")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 
 			// Create portal
 			if (buttonName.contains("Create Portal"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setPortal(player.getLocation());
 					PlayerManager.notifySuccess(player, "Portal set!");
-					player.openInventory(Menus.createPortalInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createPortalLeaderboardMenu(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 			
 			// Relocate portal
@@ -1091,7 +1091,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("REMOVE PORTAL"))
 				if (arenaInstance.getPortal() != null)
 					if (arenaInstance.isClosed())
-						player.openInventory(Menus.createPortalConfirmInventory(meta.getInteger1()));
+						player.openInventory(Inventories.createPortalConfirmInventory(meta.getArena()));
 					else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 				else PlayerManager.notifyFailure(player, "No portal to remove!");
 
@@ -1099,7 +1099,7 @@ public class InventoryListener implements Listener {
 			if (buttonName.contains("Create Leaderboard")) {
 				arenaInstance.setArenaBoard(player.getLocation());
 				PlayerManager.notifySuccess(player, "Leaderboard set!");
-				player.openInventory(Menus.createPortalInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createPortalLeaderboardMenu(meta.getArena()));
 			}
 
 			// Relocate leaderboard
@@ -1132,65 +1132,65 @@ public class InventoryListener implements Listener {
 			// Remove leaderboard
 			else if (buttonName.contains("REMOVE LEADERBOARD"))
 				if (arenaInstance.getArenaBoardLocation() != null)
-					player.openInventory(Menus.createArenaBoardConfirmInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createArenaBoardConfirmInventory(meta.getArena()));
 				else PlayerManager.notifyFailure(player, "No leaderboard to remove!");
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createArenaInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createArenaMenu(meta.getArena()));
 		}
 
 		// Player settings menu for an arena
 		else if (title.contains("Player Settings:")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 
 			// Open player spawn editor
 			if (buttonName.contains("Player Spawn"))
-				player.openInventory(Menus.createPlayerSpawnInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createPlayerSpawnInventory(meta.getArena()));
 
 			// Toggle player spawn particles
 			else if (buttonName.contains("Spawn Particles:"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setSpawnParticles(!arenaInstance.hasSpawnParticles());
-					player.openInventory(Menus.createPlayersInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createPlayersInventory(meta.getArena()));
 				}
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Open waiting room editor
 			else if (buttonName.contains("Waiting"))
-				player.openInventory(Menus.createWaitingRoomInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createWaitingRoomInventory(meta.getArena()));
 
 			// Edit max players
 			else if (buttonName.contains("Maximum"))
 				if (arenaInstance.isClosed())
-					player.openInventory(Menus.createMaxPlayerInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createMaxPlayerInventory(meta.getArena()));
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Edit min players
 			else if (buttonName.contains("Minimum"))
 				if (arenaInstance.isClosed())
-					player.openInventory(Menus.createMinPlayerInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createMinPlayerInventory(meta.getArena()));
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createArenaInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createArenaMenu(meta.getArena()));
 		}
 
 		// Player spawn menu for an arena
 		else if (title.contains("Player Spawn:")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 
 			// Create spawn
 			if (buttonName.contains("Create"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setPlayerSpawn(player.getLocation());
 					PlayerManager.notifySuccess(player, "Spawn set!");
-					player.openInventory(Menus.createPlayerSpawnInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createPlayerSpawnInventory(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Create spawn
@@ -1223,27 +1223,27 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("REMOVE"))
 				if (arenaInstance.getPlayerSpawn() != null) {
 					if (arenaInstance.isClosed())
-						player.openInventory(Menus.createSpawnConfirmInventory(meta.getInteger1()));
+						player.openInventory(Inventories.createSpawnConfirmInventory(meta.getArena()));
 					else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 				} else PlayerManager.notifyFailure(player, "No player spawn to remove!");
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createPlayersInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createPlayersInventory(meta.getArena()));
 		}
 
 		// Waiting room menu for an arena
 		else if (title.contains("Waiting Room:")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 
 			// Create waiting room
 			if (buttonName.contains("Create")) {
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setWaitingRoom(player.getLocation());
 					PlayerManager.notifySuccess(player, "Waiting room set!");
-					player.openInventory(Menus.createWaitingRoomInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createWaitingRoomInventory(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 			}
 
@@ -1281,20 +1281,20 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("REMOVE"))
 				if (arenaInstance.getWaitingRoom() != null)
 					if (arenaInstance.isClosed())
-						player.openInventory(Menus.createWaitingConfirmInventory(meta.getInteger1()));
+						player.openInventory(Inventories.createWaitingConfirmInventory(meta.getArena()));
 					else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 				else PlayerManager.notifyFailure(player, "No waiting room to remove!");
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createPlayersInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createPlayersInventory(meta.getArena()));
 		}
 
 		// Max player menu for an arena
 		else if (title.contains("Maximum Players:")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 			int current = arenaInstance.getMaxPlayers();
 			
 			// Decrease max players
@@ -1318,7 +1318,7 @@ public class InventoryListener implements Listener {
 				}
 
 				arenaInstance.setMaxPlayers(--current);
-				player.openInventory(Menus.createMaxPlayerInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createMaxPlayerInventory(meta.getArena()));
 			}
 
 			// Increase max players
@@ -1330,19 +1330,19 @@ public class InventoryListener implements Listener {
 				}
 
 				arenaInstance.setMaxPlayers(++current);
-				player.openInventory(Menus.createMaxPlayerInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createMaxPlayerInventory(meta.getArena()));
 			}
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createPlayersInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createPlayersInventory(meta.getArena()));
 		}
 
 		// Min player menu for an arena
 		else if (title.contains("Minimum Players:")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 			int current = arenaInstance.getMinPlayers();
 
 			// Decrease min players
@@ -1360,7 +1360,7 @@ public class InventoryListener implements Listener {
 				}
 
 				arenaInstance.setMinPlayers(--current);
-				player.openInventory(Menus.createMinPlayerInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createMinPlayerInventory(meta.getArena()));
 			}
 
 			// Increase min players
@@ -1378,60 +1378,60 @@ public class InventoryListener implements Listener {
 				}
 
 				arenaInstance.setMinPlayers(++current);
-				player.openInventory(Menus.createMinPlayerInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createMinPlayerInventory(meta.getArena()));
 			}
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createPlayersInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createPlayersInventory(meta.getArena()));
 		}
 
 		// Mob settings menu for an arena
 		else if (title.contains("Mob Settings:")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 
 			// Open monster spawns editor
 			if (buttonName.contains("Monster Spawns"))
-				player.openInventory(Menus.createMonsterSpawnInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createMonsterSpawnInventory(meta.getArena()));
 
 			// Toggle monster spawn particles
 			else if (buttonName.contains("Monster Spawn Particles:"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setMonsterParticles(!arenaInstance.hasMonsterParticles());
-					player.openInventory(Menus.createMobsInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createMobsInventory(meta.getArena()));
 				}
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Open villager spawns editor
 			else if (buttonName.contains("Villager Spawns"))
-				player.openInventory(Menus.createVillagerSpawnInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createVillagerSpawnInventory(meta.getArena()));
 
 			// Toggle villager spawn particles
 			else if (buttonName.contains("Villager Spawn Particles"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setVillagerParticles(!arenaInstance.hasVillagerParticles());
-					player.openInventory(Menus.createMobsInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createMobsInventory(meta.getArena()));
 				}
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Edit spawn table
 			else if (buttonName.contains("Spawn Table"))
 				if (arenaInstance.isClosed())
-					player.openInventory(Menus.createSpawnTableInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createSpawnTableInventory(meta.getArena()));
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Toggle dynamic mob count
 			else if (buttonName.contains("Dynamic Mob Count:"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setDynamicCount(!arenaInstance.hasDynamicCount());
-					player.openInventory(Menus.createMobsInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createMobsInventory(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createArenaInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createArenaMenu(meta.getArena()));
 		}
 
 		// Monster spawn menu for an arena
@@ -1440,39 +1440,39 @@ public class InventoryListener implements Listener {
 			assert meta != null;
 
 			// Edit spawn
-			if (Arrays.asList(Menus.MONSTER_MATS).contains(buttonType))
-				player.openInventory(Menus.createMonsterSpawnMenu(meta.getInteger1(), slot));
+			if (Arrays.asList(Inventories.MONSTER_MATS).contains(buttonType))
+				player.openInventory(Inventories.createMonsterSpawnMenu(meta.getArena(), slot));
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createMobsInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createMobsInventory(meta.getArena()));
 		}
 
 		// Monster spawn menu for a specific spawn
 		else if (title.contains("Monster Spawn ")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 
 			// Create spawn
 			if (buttonName.contains("Create"))
 				if (arenaInstance.isClosed()) {
-					arenaInstance.setMonsterSpawn(meta.getInteger2(), player.getLocation());
+					arenaInstance.setMonsterSpawn(meta.getId(), player.getLocation());
 					PlayerManager.notifySuccess(player, "Monster spawn set!");
-					player.openInventory(Menus.createMonsterSpawnMenu(meta.getInteger1(), meta.getInteger2()));
+					player.openInventory(Inventories.createMonsterSpawnMenu(meta.getArena(), meta.getId()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Relocate spawn
 			if (buttonName.contains("Relocate"))
 				if (arenaInstance.isClosed()) {
-					arenaInstance.setMonsterSpawn(meta.getInteger2(), player.getLocation());
+					arenaInstance.setMonsterSpawn(meta.getId(), player.getLocation());
 					PlayerManager.notifySuccess(player, "Monster spawn relocated!");
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Teleport player to spawn
 			else if (buttonName.contains("Teleport"))
 				try {
-					player.teleport(arenaInstance.getMonsterSpawn(meta.getInteger2()).getLocation());
+					player.teleport(arenaInstance.getMonsterSpawn(meta.getId()).getLocation());
 					player.closeInventory();
 				} catch (NullPointerException err) {
 					PlayerManager.notifyFailure(player, "No monster spawn to teleport to!");
@@ -1481,8 +1481,8 @@ public class InventoryListener implements Listener {
 			// Center monster spawn
 			else if (buttonName.contains("Center"))
 				if (arenaInstance.isClosed()) {
-					if (arenaInstance.getMonsterSpawn(meta.getInteger2()) != null) {
-						arenaInstance.centerMonsterSpawn(meta.getInteger2());
+					if (arenaInstance.getMonsterSpawn(meta.getId()) != null) {
+						arenaInstance.centerMonsterSpawn(meta.getId());
 						PlayerManager.notifySuccess(player, "Monster spawn centered!");
 					} else PlayerManager.notifyFailure(player, "No monster spawn to center!");
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
@@ -1490,27 +1490,27 @@ public class InventoryListener implements Listener {
 			// Set monster type
 			else if (buttonName.contains("Type"))
 				if (arenaInstance.isClosed()) {
-					if (arenaInstance.getMonsterSpawn(meta.getInteger2()) != null) {
-						arenaInstance.setMonsterSpawnType(meta.getInteger2(),
-								(arenaInstance.getMonsterSpawnType(meta.getInteger2()) + 1) % 3);
-						player.openInventory(Menus.createMonsterSpawnMenu(meta.getInteger1(),
-								meta.getInteger2()));
+					if (arenaInstance.getMonsterSpawn(meta.getId()) != null) {
+						arenaInstance.setMonsterSpawnType(meta.getId(),
+								(arenaInstance.getMonsterSpawnType(meta.getId()) + 1) % 3);
+						player.openInventory(Inventories.createMonsterSpawnMenu(meta.getArena(),
+								meta.getId()));
 						PlayerManager.notifySuccess(player, "Monster spawn type changed!");
 					} else PlayerManager.notifyFailure(player, "No monster spawn to set type!");
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Remove spawn
 			else if (buttonName.contains("REMOVE"))
-				if (arenaInstance.getMonsterSpawn(meta.getInteger2()) != null) {
+				if (arenaInstance.getMonsterSpawn(meta.getId()) != null) {
 					if (arenaInstance.isClosed())
-						player.openInventory(Menus.createMonsterSpawnConfirmInventory(meta.getInteger1(),
-								meta.getInteger2()));
+						player.openInventory(Inventories.createMonsterSpawnConfirmInventory(meta.getArena(),
+								meta.getId()));
 					else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 				} else PlayerManager.notifyFailure(player, "No monster spawn to remove!");
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createMonsterSpawnInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createMonsterSpawnInventory(meta.getArena()));
 		}
 
 		// Villager spawn menu for an arena
@@ -1519,39 +1519,39 @@ public class InventoryListener implements Listener {
 			assert meta != null;
 
 			// Edit spawn
-			if (Arrays.asList(Menus.VILLAGER_MATS).contains(buttonType))
-				player.openInventory(Menus.createVillagerSpawnMenu(meta.getInteger1(), slot));
+			if (Arrays.asList(Inventories.VILLAGER_MATS).contains(buttonType))
+				player.openInventory(Inventories.createVillagerSpawnMenu(meta.getArena(), slot));
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createMobsInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createMobsInventory(meta.getArena()));
 		}
 
 		// Villager spawn menu for a specific spawn
 		else if (title.contains("Villager Spawn ")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 
 			// Create spawn
 			if (buttonName.contains("Create"))
 				if (arenaInstance.isClosed()) {
-					arenaInstance.setVillagerSpawn(meta.getInteger2(), player.getLocation());
+					arenaInstance.setVillagerSpawn(meta.getId(), player.getLocation());
 					PlayerManager.notifySuccess(player, "Villager spawn set!");
-					player.openInventory(Menus.createVillagerSpawnMenu(meta.getInteger1(), meta.getInteger2()));
+					player.openInventory(Inventories.createVillagerSpawnMenu(meta.getArena(), meta.getId()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Relocate spawn
 			if (buttonName.contains("Relocate"))
 				if (arenaInstance.isClosed()) {
-					arenaInstance.setVillagerSpawn(meta.getInteger2(), player.getLocation());
+					arenaInstance.setVillagerSpawn(meta.getId(), player.getLocation());
 					PlayerManager.notifySuccess(player, "Villager spawn set!");
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Teleport player to spawn
 			else if (buttonName.contains("Teleport"))
 				try {
-					player.teleport(arenaInstance.getVillagerSpawn(meta.getInteger2()).getLocation());
+					player.teleport(arenaInstance.getVillagerSpawn(meta.getId()).getLocation());
 					player.closeInventory();
 				} catch (NullPointerException err) {
 					PlayerManager.notifyFailure(player, "No villager spawn to teleport to!");
@@ -1560,8 +1560,8 @@ public class InventoryListener implements Listener {
 			// Center villager spawn
 			else if (buttonName.contains("Center")) {
 				if (arenaInstance.isClosed()) {
-					if (arenaInstance.getVillagerSpawn(meta.getInteger2()) != null) {
-						arenaInstance.centerVillagerSpawn(meta.getInteger2());
+					if (arenaInstance.getVillagerSpawn(meta.getId()) != null) {
+						arenaInstance.centerVillagerSpawn(meta.getId());
 						PlayerManager.notifySuccess(player, "Villager spawn centered!");
 					} else PlayerManager.notifyFailure(player, "No villager spawn to center!");
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
@@ -1569,23 +1569,23 @@ public class InventoryListener implements Listener {
 
 			// Remove spawn
 			else if (buttonName.contains("REMOVE"))
-				if (arenaInstance.getVillagerSpawn(meta.getInteger2()) != null) {
+				if (arenaInstance.getVillagerSpawn(meta.getId()) != null) {
 					if (arenaInstance.isClosed())
-						player.openInventory(Menus.createVillagerSpawnConfirmInventory(meta.getInteger1(),
-								meta.getInteger2()));
+						player.openInventory(Inventories.createVillagerSpawnConfirmInventory(meta.getArena(),
+								meta.getId()));
 					else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 				} else PlayerManager.notifyFailure(player, "No villager spawn to remove!");
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createVillagerSpawnInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createVillagerSpawnInventory(meta.getArena()));
 		}
 
 		// Spawn table menu for an arena
 		else if (title.contains("Spawn Table:")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 
 			// Default
 			if (buttonName.contains("Default")) {
@@ -1685,19 +1685,19 @@ public class InventoryListener implements Listener {
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit)) {
-				player.openInventory(Menus.createMobsInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createMobsInventory(meta.getArena()));
 				return;
 			}
 
 			// Reload inventory
-			player.openInventory(Menus.createSpawnTableInventory(meta.getInteger1()));
+			player.openInventory(Inventories.createSpawnTableInventory(meta.getArena()));
 		}
 
 		// Shop settings menu for an arena
 		else if (title.contains("Shop Settings:")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 
 			// Open custom shop editor
 			if (buttonName.contains("Edit Custom Shop"))
@@ -1709,48 +1709,48 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("Default Shop:"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setNormal(!arenaInstance.hasNormal());
-					player.openInventory(Menus.createShopsInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createShopsInventory(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Toggle custom shop
 			else if (buttonName.contains("Custom Shop:"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setCustom(!arenaInstance.hasCustom());
-					player.openInventory(Menus.createShopsInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createShopsInventory(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Toggle enchants shop
 			else if (buttonName.contains("Enchants Shop:"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setEnchants(!arenaInstance.hasEnchants());
-					player.openInventory(Menus.createShopsInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createShopsInventory(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Toggle community chest
 			else if (buttonName.contains("Community Chest:"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setCommunity(!arenaInstance.hasCommunity());
-					player.openInventory(Menus.createShopsInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createShopsInventory(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Toggle dynamic prices
 			else if (buttonName.contains("Dynamic Prices:"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setDynamicPrices(!arenaInstance.hasDynamicPrices());
-					player.openInventory(Menus.createShopsInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createShopsInventory(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createArenaInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createArenaMenu(meta.getArena()));
 		}
 
 		// Menu for editing a specific custom item
 		else if (title.contains("Edit Item")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			String path = "a" + meta.getInteger1() + ".customShop.";
-			ItemStack item = config.getItemStack(path + meta.getInteger2());
+			String path = "a" + meta.getArena().getArena() + ".customShop.";
+			ItemStack item = config.getItemStack(path + meta.getId());
 			assert item != null;
 			ItemMeta itemMeta = item.getItemMeta();
 			assert itemMeta != null;
@@ -1765,7 +1765,7 @@ public class InventoryListener implements Listener {
 					itemMeta.setDisplayName(realName + String.format("%05d", price));
 				} else itemMeta.setDisplayName(realName + "-----");
 				item.setItemMeta(itemMeta);
-				config.set(path + meta.getInteger2(), item);
+				config.set(path + meta.getId(), item);
 			}
 
 			// Increase by 1
@@ -1782,7 +1782,7 @@ public class InventoryListener implements Listener {
 
 				itemMeta.setDisplayName(realName + String.format("%05d", price));
 				item.setItemMeta(itemMeta);
-				config.set(path + meta.getInteger2(), item);
+				config.set(path + meta.getId(), item);
 			}
 
 			// Increase by 10
@@ -1799,7 +1799,7 @@ public class InventoryListener implements Listener {
 
 				itemMeta.setDisplayName(realName + String.format("%05d", price));
 				item.setItemMeta(itemMeta);
-				config.set(path + meta.getInteger2(), item);
+				config.set(path + meta.getId(), item);
 			}
 
 			// Increase by 100
@@ -1816,7 +1816,7 @@ public class InventoryListener implements Listener {
 
 				itemMeta.setDisplayName(realName + String.format("%05d", price));
 				item.setItemMeta(itemMeta);
-				config.set(path + meta.getInteger2(), item);
+				config.set(path + meta.getId(), item);
 			}
 
 			// Increase by 1000
@@ -1833,12 +1833,12 @@ public class InventoryListener implements Listener {
 
 				itemMeta.setDisplayName(realName + String.format("%05d", price));
 				item.setItemMeta(itemMeta);
-				config.set(path + meta.getInteger2(), item);
+				config.set(path + meta.getId(), item);
 			}
 
 			// Delete item
 			else if (buttonName.contains("DELETE")) {
-				player.openInventory(Menus.createCustomItemConfirmInventory(meta.getInteger1(), meta.getInteger2()));
+				player.openInventory(Inventories.createCustomItemConfirmInventory(meta.getArena(), meta.getId()));
 				return;
 			}
 
@@ -1856,7 +1856,7 @@ public class InventoryListener implements Listener {
 
 				itemMeta.setDisplayName(realName + String.format("%05d", price));
 				item.setItemMeta(itemMeta);
-				config.set(path + meta.getInteger2(), item);
+				config.set(path + meta.getId(), item);
 			}
 
 			// Decrease by 10
@@ -1873,7 +1873,7 @@ public class InventoryListener implements Listener {
 
 				itemMeta.setDisplayName(realName + String.format("%05d", price));
 				item.setItemMeta(itemMeta);
-				config.set(path + meta.getInteger2(), item);
+				config.set(path + meta.getId(), item);
 			}
 
 			// Decrease by 100
@@ -1890,7 +1890,7 @@ public class InventoryListener implements Listener {
 
 				itemMeta.setDisplayName(realName + String.format("%05d", price));
 				item.setItemMeta(itemMeta);
-				config.set(path + meta.getInteger2(), item);
+				config.set(path + meta.getId(), item);
 			}
 
 			// Decrease by 1000
@@ -1907,125 +1907,125 @@ public class InventoryListener implements Listener {
 
 				itemMeta.setDisplayName(realName + String.format("%05d", price));
 				item.setItemMeta(itemMeta);
-				config.set(path + meta.getInteger2(), item);
+				config.set(path + meta.getId(), item);
 			}
 
 			// Exit
 			else if (buttonName.contains(LanguageManager.messages.exit)) {
-				player.openInventory(GameManager.getArena(meta.getInteger1()).getCustomShopEditor());
+				player.openInventory(meta.getArena().getCustomShopEditor());
 				return;
 			}
 
 			// Save changes and refresh GUI
 			plugin.saveArenaData();
-			player.openInventory(Menus.createCustomItemsInventory(meta.getInteger1(), meta.getInteger2()));
+			player.openInventory(Inventories.createCustomItemsInventory(meta.getArena(), meta.getId()));
 		}
 
 		// Game settings menu for an arena
 		else if (title.contains("Game Settings:")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 
 			// Change max waves
 			if (buttonName.contains("Max Waves"))
 				if (arenaInstance.isClosed())
-					player.openInventory(Menus.createMaxWaveInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createMaxWaveInventory(meta.getArena()));
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Change wave time limit
 			else if (buttonName.contains("Wave Time Limit"))
 				if (arenaInstance.isClosed())
-					player.openInventory(Menus.createWaveTimeLimitInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createWaveTimeLimitInventory(meta.getArena()));
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Toggle dynamic wave time limit
 			else if (buttonName.contains("Dynamic Time Limit:"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setDynamicLimit(!arenaInstance.hasDynamicLimit());
-					player.openInventory(Menus.createGameSettingsInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createGameSettingsInventory(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Edit allowed kits
 			else if (buttonName.contains("Allowed Kits"))
-				player.openInventory(Menus.createAllowedKitsInventory(arenaInstance.getArena(), false));
+				player.openInventory(Inventories.createAllowedKitsInventory(arenaInstance, false));
 
 			// Edit difficulty label
 			else if (buttonName.contains("Difficulty Label"))
 				if (arenaInstance.isClosed())
-					player.openInventory(Menus.createDifficultyLabelInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createDifficultyLabelInventory(meta.getArena()));
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Edit overall difficulty multiplier
 			else if (buttonName.contains("Difficulty Multiplier"))
 				if (arenaInstance.isClosed())
-					player.openInventory(Menus.createDifficultyMultiplierInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createDifficultyMultiplierInventory(meta.getArena()));
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Toggle dynamic difficulty
 			else if (buttonName.contains("Dynamic Difficulty:"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setDynamicDifficulty(!arenaInstance.hasDynamicDifficulty());
-					player.openInventory(Menus.createGameSettingsInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createGameSettingsInventory(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Toggle dynamic difficulty
 			else if (buttonName.contains("Late Arrival:"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setLateArrival(!arenaInstance.hasLateArrival());
-					player.openInventory(Menus.createGameSettingsInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createGameSettingsInventory(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Toggle experience drop
 			else if (buttonName.contains("Experience Drop:"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setExpDrop(!arenaInstance.hasExpDrop());
-					player.openInventory(Menus.createGameSettingsInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createGameSettingsInventory(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Toggle item drop
 			else if (buttonName.contains("Item Drop:"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setGemDrop(!arenaInstance.hasGemDrop());
-					player.openInventory(Menus.createGameSettingsInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createGameSettingsInventory(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Edit arena bounds
 			else if (buttonName.contains("Arena Bounds"))
-				player.openInventory(Menus.createBoundsInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createBoundsInventory(meta.getArena()));
 
 			// Edit wolf cap
 			else if (buttonName.contains("Wolf Cap"))
 				if (arenaInstance.isClosed())
-					player.openInventory(Menus.createWolfCapInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createWolfCapInventory(meta.getArena()));
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Edit iron golem cap
 			else if (buttonName.contains("Iron Golem Cap"))
 				if (arenaInstance.isClosed())
-					player.openInventory(Menus.createGolemCapInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createGolemCapInventory(meta.getArena()));
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Edit sounds
 			else if (buttonName.contains("Sounds"))
-				player.openInventory(Menus.createSoundsInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createSoundsInventory(meta.getArena()));
 
 			// Copy game settings from another arena or a preset
 			else if (buttonName.contains("Copy Game Settings"))
 				if (arenaInstance.isClosed())
-					player.openInventory(Menus.createCopySettingsInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createCopySettingsInventory(meta.getArena()));
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createArenaInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createArenaMenu(meta.getArena()));
 		}
 
 		// Max wave menu for an arena
 		else if (title.contains("Maximum Waves:")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 			int current = arenaInstance.getMaxWaves();
 
 			// Decrease max waves
@@ -2046,7 +2046,7 @@ public class InventoryListener implements Listener {
 					return;
 				} else arenaInstance.setMaxWaves(--current);
 
-				player.openInventory(Menus.createMaxWaveInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createMaxWaveInventory(meta.getArena()));
 			}
 
 			// Set max waves to unlimited
@@ -2058,7 +2058,7 @@ public class InventoryListener implements Listener {
 				}
 
 				arenaInstance.setMaxWaves(-1);
-				player.openInventory(Menus.createMaxWaveInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createMaxWaveInventory(meta.getArena()));
 			}
 
 			// Reset max waves to 1
@@ -2070,7 +2070,7 @@ public class InventoryListener implements Listener {
 				}
 
 				arenaInstance.setMaxWaves(1);
-				player.openInventory(Menus.createMaxWaveInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createMaxWaveInventory(meta.getArena()));
 			}
 
 			// Increase max waves
@@ -2086,19 +2086,19 @@ public class InventoryListener implements Listener {
 					arenaInstance.setMaxWaves(1);
 				else arenaInstance.setMaxWaves(++current);
 
-				player.openInventory(Menus.createMaxWaveInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createMaxWaveInventory(meta.getArena()));
 			}
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createGameSettingsInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createGameSettingsInventory(meta.getArena()));
 		}
 
 		// Wave time limit menu for an arena
 		else if (title.contains("Wave Time Limit:")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 			int current = arenaInstance.getWaveTimeLimit();
 
 			// Decrease wave time limit
@@ -2119,7 +2119,7 @@ public class InventoryListener implements Listener {
 					return;
 				} else arenaInstance.setWaveTimeLimit(--current);
 
-				player.openInventory(Menus.createWaveTimeLimitInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createWaveTimeLimitInventory(meta.getArena()));
 			}
 
 			// Set wave time limit to unlimited
@@ -2131,7 +2131,7 @@ public class InventoryListener implements Listener {
 				}
 
 				arenaInstance.setWaveTimeLimit(-1);
-				player.openInventory(Menus.createWaveTimeLimitInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createWaveTimeLimitInventory(meta.getArena()));
 			}
 
 			// Reset wave time limit to 1
@@ -2143,7 +2143,7 @@ public class InventoryListener implements Listener {
 				}
 
 				arenaInstance.setWaveTimeLimit(1);
-				player.openInventory(Menus.createWaveTimeLimitInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createWaveTimeLimitInventory(meta.getArena()));
 			}
 
 			// Increase wave time limit
@@ -2159,19 +2159,19 @@ public class InventoryListener implements Listener {
 					arenaInstance.setWaveTimeLimit(1);
 				else arenaInstance.setWaveTimeLimit(++current);
 
-				player.openInventory(Menus.createWaveTimeLimitInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createWaveTimeLimitInventory(meta.getArena()));
 			}
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createGameSettingsInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createGameSettingsInventory(meta.getArena()));
 		}
 
 		// Difficulty label menu for an arena
 		else if (title.contains("Difficulty Label:")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 
 			// Set to Easy
 			if (buttonName.contains("Easy")) {
@@ -2182,7 +2182,7 @@ public class InventoryListener implements Listener {
 				}
 
 				arenaInstance.setDifficultyLabel("Easy");
-				player.openInventory(Menus.createDifficultyLabelInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createDifficultyLabelInventory(meta.getArena()));
 			}
 
 			// Set to Medium
@@ -2194,7 +2194,7 @@ public class InventoryListener implements Listener {
 				}
 
 				arenaInstance.setDifficultyLabel("Medium");
-				player.openInventory(Menus.createDifficultyLabelInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createDifficultyLabelInventory(meta.getArena()));
 			}
 
 			// Set to Hard
@@ -2206,7 +2206,7 @@ public class InventoryListener implements Listener {
 				}
 
 				arenaInstance.setDifficultyLabel("Hard");
-				player.openInventory(Menus.createDifficultyLabelInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createDifficultyLabelInventory(meta.getArena()));
 			}
 
 			// Set to Insane
@@ -2218,7 +2218,7 @@ public class InventoryListener implements Listener {
 				}
 
 				arenaInstance.setDifficultyLabel("Insane");
-				player.openInventory(Menus.createDifficultyLabelInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createDifficultyLabelInventory(meta.getArena()));
 			}
 
 			// Set to nothing
@@ -2230,19 +2230,19 @@ public class InventoryListener implements Listener {
 				}
 
 				arenaInstance.setDifficultyLabel(null);
-				player.openInventory(Menus.createDifficultyLabelInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createDifficultyLabelInventory(meta.getArena()));
 			}
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createGameSettingsInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createGameSettingsInventory(meta.getArena()));
 		}
 
 		// Difficulty multiplier menu for an arena
 		else if (title.contains("Difficulty Multiplier:")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 
 			// Set to 1
 			if (buttonName.contains("1")) {
@@ -2253,7 +2253,7 @@ public class InventoryListener implements Listener {
 				}
 
 				arenaInstance.setDifficultyMultiplier(1);
-				player.openInventory(Menus.createDifficultyMultiplierInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createDifficultyMultiplierInventory(meta.getArena()));
 			}
 
 			// Set to 2
@@ -2265,7 +2265,7 @@ public class InventoryListener implements Listener {
 				}
 
 				arenaInstance.setDifficultyMultiplier(2);
-				player.openInventory(Menus.createDifficultyMultiplierInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createDifficultyMultiplierInventory(meta.getArena()));
 			}
 
 			// Set to 3
@@ -2277,7 +2277,7 @@ public class InventoryListener implements Listener {
 				}
 
 				arenaInstance.setDifficultyMultiplier(3);
-				player.openInventory(Menus.createDifficultyMultiplierInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createDifficultyMultiplierInventory(meta.getArena()));
 			}
 
 			// Set to 4
@@ -2289,12 +2289,12 @@ public class InventoryListener implements Listener {
 				}
 
 				arenaInstance.setDifficultyMultiplier(4);
-				player.openInventory(Menus.createDifficultyMultiplierInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createDifficultyMultiplierInventory(meta.getArena()));
 			}
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createGameSettingsInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createGameSettingsInventory(meta.getArena()));
 		}
 
 		// Allowed kits display for an arena
@@ -2304,7 +2304,7 @@ public class InventoryListener implements Listener {
 			// Exit menu
 			if (buttonName.contains(LanguageManager.messages.exit)) {
 				assert meta != null;
-				player.openInventory(Menus.createArenaInfoInventory(GameManager.getArena(meta.getInteger1())));
+				player.openInventory(Inventories.createArenaInfoInventory(meta.getArena()));
 			}
 		}
 
@@ -2313,7 +2313,7 @@ public class InventoryListener implements Listener {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
 			String kit = buttonName.substring(4);
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 			List<String> banned = arenaInstance.getBannedKits();
 
 			// Toggle a kit
@@ -2329,53 +2329,53 @@ public class InventoryListener implements Listener {
 					banned.remove(kit);
 				else banned.add(kit);
 				arenaInstance.setBannedKits(banned);
-				player.openInventory(Menus.createAllowedKitsInventory(arenaInstance.getArena(), false));
+				player.openInventory(Inventories.createAllowedKitsInventory(arenaInstance, false));
 			}
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createGameSettingsInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createGameSettingsInventory(meta.getArena()));
 		}
 
 		// Arena bounds menu for an arena
 		else if (title.contains("Arena Bounds")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 
 			// Edit corner 1
 			if (buttonName.contains("Corner 1"))
-				player.openInventory(Menus.createCorner1Inventory(meta.getInteger1()));
+				player.openInventory(Inventories.createCorner1Inventory(meta.getArena()));
 
 			// Edit corner 2
 			else if (buttonName.contains("Corner 2"))
-				player.openInventory(Menus.createCorner2Inventory(meta.getInteger1()));
+				player.openInventory(Inventories.createCorner2Inventory(meta.getArena()));
 
 			// Toggle border particles
 			else if (buttonName.contains("Border Particles:"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setBorderParticles(!arenaInstance.hasBorderParticles());
-					player.openInventory(Menus.createBoundsInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createBoundsInventory(meta.getArena()));
 				}
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createGameSettingsInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createGameSettingsInventory(meta.getArena()));
 		}
 
 		// Corner 1 menu for an arena
 		else if (title.contains("Corner 1")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 
 			// Create spawn
 			if (buttonName.contains("Create"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setCorner1(player.getLocation());
 					PlayerManager.notifySuccess(player, "Corner 1 set!");
-					player.openInventory(Menus.createBoundsInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createBoundsInventory(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Relocate spawn
@@ -2400,27 +2400,27 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("REMOVE"))
 				if (arenaInstance.getCorner1() != null)
 					if (arenaInstance.isClosed())
-						player.openInventory(Menus.createCorner1ConfirmInventory(meta.getInteger1()));
+						player.openInventory(Inventories.createCorner1ConfirmInventory(meta.getArena()));
 					else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 				else PlayerManager.notifyFailure(player, "No corner 1 to remove!");
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createBoundsInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createBoundsInventory(meta.getArena()));
 		}
 
 		// Corner 2 menu for an arena
 		else if (title.contains("Corner 2")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 
 			// Create spawn
 			if (buttonName.contains("Create"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setCorner2(player.getLocation());
 					PlayerManager.notifySuccess(player, "Corner 2 set!");
-					player.openInventory(Menus.createBoundsInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createBoundsInventory(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Relocate spawn
@@ -2445,20 +2445,20 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("REMOVE"))
 				if (arenaInstance.getCorner2() != null)
 					if (arenaInstance.isClosed())
-						player.openInventory(Menus.createCorner2ConfirmInventory(meta.getInteger1()));
+						player.openInventory(Inventories.createCorner2ConfirmInventory(meta.getArena()));
 					else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 				else PlayerManager.notifyFailure(player, "No corner 2 to remove!");
 
 				// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createBoundsInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createBoundsInventory(meta.getArena()));
 		}
 
 		// Wolf cap menu for an arena
 		else if (title.contains("Wolf Cap:")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 			int current = arenaInstance.getWolfCap();
 
 			// Decrease wolf cap
@@ -2476,7 +2476,7 @@ public class InventoryListener implements Listener {
 				}
 
 				arenaInstance.setWolfCap(--current);
-				player.openInventory(Menus.createWolfCapInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createWolfCapInventory(meta.getArena()));
 			}
 
 			// Increase wolf cap
@@ -2488,19 +2488,19 @@ public class InventoryListener implements Listener {
 				}
 
 				arenaInstance.setWolfCap(++current);
-				player.openInventory(Menus.createWolfCapInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createWolfCapInventory(meta.getArena()));
 			}
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createGameSettingsInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createGameSettingsInventory(meta.getArena()));
 		}
 
 		// Iron golem cap menu for an arena
 		else if (title.contains("Iron Golem Cap:")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 			int current = arenaInstance.getGolemCap();
 
 			// Decrease iron golem cap
@@ -2518,7 +2518,7 @@ public class InventoryListener implements Listener {
 				}
 
 				arenaInstance.setgolemCap(--current);
-				player.openInventory(Menus.createGolemCapInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createGolemCapInventory(meta.getArena()));
 			}
 
 			// Increase iron golem cap
@@ -2530,25 +2530,25 @@ public class InventoryListener implements Listener {
 				}
 
 				arenaInstance.setgolemCap(++current);
-				player.openInventory(Menus.createGolemCapInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createGolemCapInventory(meta.getArena()));
 			}
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createGameSettingsInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createGameSettingsInventory(meta.getArena()));
 		}
 
 		// Sound settings menu for an arena
 		else if (title.contains("Sounds:")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 
 			// Toggle win sound
 			if (buttonName.contains("Win")) {
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setWinSound(!arenaInstance.hasWinSound());
-					player.openInventory(Menus.createSoundsInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createSoundsInventory(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 			}
 
@@ -2556,7 +2556,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("Lose")) {
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setLoseSound(!arenaInstance.hasLoseSound());
-					player.openInventory(Menus.createSoundsInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createSoundsInventory(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 			}
 
@@ -2564,7 +2564,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("Start")) {
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setWaveStartSound(!arenaInstance.hasWaveStartSound());
-					player.openInventory(Menus.createSoundsInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createSoundsInventory(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 			}
 
@@ -2572,21 +2572,21 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("Finish")) {
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setWaveFinishSound(!arenaInstance.hasWaveFinishSound());
-					player.openInventory(Menus.createSoundsInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createSoundsInventory(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 			}
 
 			// Edit waiting sound
 			else if (buttonName.contains("Waiting"))
 				if (arenaInstance.isClosed())
-					player.openInventory(Menus.createWaitSoundInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createWaitSoundInventory(meta.getArena()));
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Toggle gem pickup sound
 			else if (buttonName.contains("Gem")) {
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setGemSound(!arenaInstance.hasGemSound());
-					player.openInventory(Menus.createSoundsInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createSoundsInventory(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 			}
 
@@ -2594,7 +2594,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("Death")) {
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setPlayerDeathSound(!arenaInstance.hasPlayerDeathSound());
-					player.openInventory(Menus.createSoundsInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createSoundsInventory(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 			}
 
@@ -2602,24 +2602,24 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("Ability")) {
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setAbilitySound(!arenaInstance.hasAbilitySound());
-					player.openInventory(Menus.createSoundsInventory(meta.getInteger1()));
+					player.openInventory(Inventories.createSoundsInventory(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 			}
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createGameSettingsInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createGameSettingsInventory(meta.getArena()));
 		}
 
 		// Waiting sound menu for an arena
 		else if (title.contains("Waiting Sound:")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arenaInstance = GameManager.getArena(meta.getInteger1());
+			Arena arenaInstance = meta.getArena();
 
 			// Exit menu
 			if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createSoundsInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createSoundsInventory(meta.getArena()));
 
 			// Set sound
 			else {
@@ -2630,7 +2630,7 @@ public class InventoryListener implements Listener {
 				}
 
 				arenaInstance.setWaitingSound(buttonName.toLowerCase().substring(4));
-				player.openInventory(Menus.createWaitSoundInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createWaitSoundInventory(meta.getArena()));
 			}
 		}
 
@@ -2638,7 +2638,7 @@ public class InventoryListener implements Listener {
 		else if (title.contains("Copy Game Settings")) {
 			InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 			assert meta != null;
-			Arena arena1 = GameManager.getArena(meta.getInteger1());
+			Arena arena1 = meta.getArena();
 
 			if (slot < 45) {
 				// Check for arena closure
@@ -2729,7 +2729,7 @@ public class InventoryListener implements Listener {
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit)) {
-				player.openInventory(Menus.createGameSettingsInventory(meta.getInteger1()));
+				player.openInventory(Inventories.createGameSettingsInventory(meta.getArena()));
 				return;
 			}
 
@@ -2769,7 +2769,7 @@ public class InventoryListener implements Listener {
 			// Open enchant shop
 			else if (buttonName.contains(LanguageManager.names.enchantShop))
 				if (arenaInstance.hasEnchants())
-					player.openInventory(Menus.createEnchantShop());
+					player.openInventory(Inventories.createEnchantShop());
 				else PlayerManager.notifyFailure(player, LanguageManager.errors.enchantShop);
 
 			// Open custom shop
@@ -2789,7 +2789,7 @@ public class InventoryListener implements Listener {
 		else if (title.contains(LanguageManager.names.customShop + ":")) {
 			Arena arenaInstance = Objects.requireNonNull(GameManager.getArena(title.substring(19)));
 			if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Menus.createArenaInfoInventory(arenaInstance));
+				player.openInventory(Inventories.createArenaInfoInventory(arenaInstance));
 		}
 
 		// In-game shops
@@ -2810,7 +2810,7 @@ public class InventoryListener implements Listener {
 
 			// Return to main shop menu
 			if (buttonName.contains(LanguageManager.messages.exit)) {
-				player.openInventory(Menus.createShop(arenaInstance.getCurrentWave() / 10 + 1, arenaInstance));
+				player.openInventory(Inventories.createShop(arenaInstance.getCurrentWave() / 10 + 1, arenaInstance));
 				return;
 			}
 
@@ -2887,7 +2887,7 @@ public class InventoryListener implements Listener {
 
 			// Return to main shop menu
 			if (buttonName.contains(LanguageManager.messages.exit)) {
-				player.openInventory(Menus.createShop(arenaInstance.getCurrentWave() / 10 + 1, arenaInstance));
+				player.openInventory(Inventories.createShop(arenaInstance.getCurrentWave() / 10 + 1, arenaInstance));
 				return;
 			}
 
@@ -2971,7 +2971,7 @@ public class InventoryListener implements Listener {
 			String raw = LanguageManager.messages.playerStatistics;
 			String name = title.substring(raw.indexOf("%s") + 6, title.length() - raw.length() + raw.indexOf("%s") + 2);
 			if (buttonName.contains("Kits"))
-				player.openInventory(Menus.createPlayerKitsInventory(name, player.getName()));
+				player.openInventory(Inventories.createPlayerKitsInventory(name, player.getName()));
 		}
 
 		// Kits menu for a player
@@ -2984,7 +2984,7 @@ public class InventoryListener implements Listener {
 			String path = name + ".kits.";
 
 			if (buttonName.contains(LanguageManager.messages.exit)) {
-				player.openInventory(Menus.createPlayerStatsInventory(name));
+				player.openInventory(Inventories.createPlayerStatsInventory(name));
 				return;
 			}
 
@@ -3032,7 +3032,7 @@ public class InventoryListener implements Listener {
 			}
 
 			plugin.savePlayerData();
-			player.openInventory(Menus.createPlayerKitsInventory(name, name));
+			player.openInventory(Inventories.createPlayerKitsInventory(name, name));
 		}
 
 		// Kit selection menu for an arena
@@ -3141,7 +3141,7 @@ public class InventoryListener implements Listener {
 
 			// Create scoreboard and update inventory
 			GameManager.createBoard(gamer);
-			player.openInventory(Menus.createSelectChallengesInventory(gamer, arenaInstance));
+			player.openInventory(Inventories.createSelectChallengesInventory(gamer, arenaInstance));
 		}
 
 		// Stats menu for an arena
@@ -3151,10 +3151,10 @@ public class InventoryListener implements Listener {
 			assert meta != null;
 
 			if (buttonName.contains(LanguageManager.messages.customShopInv))
-				player.openInventory(GameManager.getArena(meta.getInteger1()).getMockCustomShop());
+				player.openInventory(meta.getArena().getMockCustomShop());
 
 			else if (buttonName.contains(LanguageManager.messages.allowedKits))
-				player.openInventory(Menus.createAllowedKitsInventory(meta.getInteger1(), true));
+				player.openInventory(Inventories.createAllowedKitsInventory(meta.getArena(), true));
 		}
 	}
 
@@ -3191,6 +3191,6 @@ public class InventoryListener implements Listener {
 			return;
 		}
 
-		player.openInventory(Menus.createArenaInventory(arena.getArena()));
+		player.openInventory(Inventories.createArenaMenu(arena));
 	}
 }

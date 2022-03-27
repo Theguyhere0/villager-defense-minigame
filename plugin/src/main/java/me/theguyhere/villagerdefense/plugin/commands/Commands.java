@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.plugin.commands;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
-import me.theguyhere.villagerdefense.plugin.GUI.Menus;
+import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
@@ -79,7 +79,7 @@ public class Commands implements CommandExecutor {
 						return true;
 					}
 
-					player.openInventory(Menus.createArenasInventory());
+					player.openInventory(Inventories.createArenasDashboard());
 					return true;
 				}
 
@@ -121,9 +121,9 @@ public class Commands implements CommandExecutor {
 					}
 
 					if (args.length == 1)
-						player.openInventory(Menus.createPlayerStatsInventory(player.getName()));
+						player.openInventory(Inventories.createPlayerStatsInventory(player.getName()));
 					else if (plugin.getPlayerData().contains(args[1]))
-						player.openInventory(Menus.createPlayerStatsInventory(args[1]));
+						player.openInventory(Inventories.createPlayerStatsInventory(args[1]));
 					else PlayerManager.notifyFailure(player, LanguageManager.messages.noStats,
 								ChatColor.AQUA, args[1]);
 					return true;
@@ -137,7 +137,7 @@ public class Commands implements CommandExecutor {
 						return true;
 					}
 
-					player.openInventory(Menus.createPlayerKitsInventory(player.getName(), player.getName()));
+					player.openInventory(Inventories.createPlayerKitsInventory(player.getName(), player.getName()));
 					return true;
 				}
 
