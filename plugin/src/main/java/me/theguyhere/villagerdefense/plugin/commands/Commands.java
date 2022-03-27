@@ -79,7 +79,7 @@ public class Commands implements CommandExecutor {
 						return true;
 					}
 
-					player.openInventory(Inventories.createArenasDashboard());
+					player.openInventory(Inventories.createMainMenu());
 					return true;
 				}
 

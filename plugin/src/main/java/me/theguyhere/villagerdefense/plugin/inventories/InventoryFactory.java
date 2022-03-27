@@ -149,6 +149,7 @@ public class InventoryFactory {
     }
     
     public static Inventory createLocationMenu(
+            @NotNull InventoryID inventoryID,
             Arena arena,
             int id,
             @NotNull String formattedName,
@@ -172,7 +173,7 @@ public class InventoryFactory {
         buttons.add(Buttons.remove(locationName.toUpperCase()));
 
         return createFixedSizeInventory(
-                new InventoryMeta(InventoryType.MENU, arena, id),
+                new InventoryMeta(inventoryID, InventoryType.MENU, arena, id),
                 formattedName,
                 1,
                 true,
@@ -180,41 +181,46 @@ public class InventoryFactory {
     }
 
     public static Inventory createLocationMenu(
+            @NotNull InventoryID inventoryID,
             Arena arena,
             @NotNull String formattedName,
             boolean locationExists,
             @NotNull String locationName
     ) {
-        return createLocationMenu(arena, 0, formattedName, locationExists, locationName);
+        return createLocationMenu(inventoryID, arena, 0, formattedName, locationExists, locationName);
     }
 
     public static Inventory createLocationMenu(
+            @NotNull InventoryID inventoryID,
             int id,
             @NotNull String formattedName,
             boolean locationExists,
             @NotNull String locationName
     ) {
-        return createLocationMenu(null, id, formattedName, locationExists, locationName);
+        return createLocationMenu(inventoryID, null, id, formattedName, locationExists, locationName);
     }
 
     public static Inventory createLocationMenu(
+            @NotNull InventoryID inventoryID,
             @NotNull String formattedName,
             boolean locationExists,
             @NotNull String locationName
     ) {
-        return createLocationMenu(null, 0, formattedName, locationExists, locationName);
+        return createLocationMenu(inventoryID, null, 0, formattedName, locationExists, locationName);
     }
 
     public static Inventory createSimpleLocationMenu(
+            @NotNull InventoryID inventoryID,
             Arena arena,
             @NotNull String formattedName,
             boolean locationExists,
             @NotNull String locationName
     ) {
-        return createSimpleLocationMenu(arena, 0, formattedName, locationExists, locationName);
+        return createSimpleLocationMenu(inventoryID, arena, 0, formattedName, locationExists, locationName);
     }
 
     public static Inventory createSimpleLocationMenu(
+            @NotNull InventoryID inventoryID,
             Arena arena,
             int id,
             @NotNull String formattedName,
@@ -235,14 +241,19 @@ public class InventoryFactory {
         buttons.add(Buttons.remove(locationName.toUpperCase()));
 
         return createFixedSizeInventory(
-                new InventoryMeta(InventoryType.MENU, arena, id),
+                new InventoryMeta(inventoryID, InventoryType.MENU, arena, id),
                 formattedName,
                 1,
                 true,
                 buttons);
     }
 
-    public static Inventory createConfirmationMenu(Arena arena, int id, @NotNull String formattedName) {
+    public static Inventory createConfirmationMenu(
+            @NotNull InventoryID inventoryID,
+            Arena arena,
+            int id,
+            @NotNull String formattedName
+    ) {
         List<ItemStack> buttons = new ArrayList<>();
 
         // "No" option
@@ -252,7 +263,7 @@ public class InventoryFactory {
         buttons.add(Buttons.yes());
 
         return createFixedSizeInventory(
-                new InventoryMeta(InventoryType.MENU, arena, id),
+                new InventoryMeta(inventoryID, InventoryType.MENU, arena, id),
                 formattedName,
                 1,
                 false,
@@ -260,19 +271,32 @@ public class InventoryFactory {
         );
     }
 
-    public static Inventory createConfirmationMenu(Arena arena, @NotNull String formattedName) {
-        return createConfirmationMenu(arena, 0, formattedName);
+    public static Inventory createConfirmationMenu(
+            @NotNull InventoryID inventoryID,
+            Arena arena,
+            @NotNull String formattedName
+    ) {
+        return createConfirmationMenu(inventoryID, arena, 0, formattedName);
     }
 
-    public static Inventory createConfirmationMenu(int id, @NotNull String formattedName) {
-        return createConfirmationMenu(null, id, formattedName);
+    public static Inventory createConfirmationMenu(
+            @NotNull InventoryID inventoryID,
+            int id,
+            @NotNull String formattedName
+    ) {
+        return createConfirmationMenu(inventoryID, null, id, formattedName);
     }
 
-    public static Inventory createConfirmationMenu(@NotNull String formattedName) {
-        return createConfirmationMenu(null, 0, formattedName);
+    public static Inventory createConfirmationMenu(@NotNull InventoryID inventoryID, @NotNull String formattedName) {
+        return createConfirmationMenu(inventoryID, null, 0, formattedName);
     }
 
-    public static Inventory createIncrementorMenu(Arena arena, int id, @NotNull String formattedName) {
+    public static Inventory createIncrementorMenu(
+            @NotNull InventoryID inventoryID,
+            Arena arena,
+            int id,
+            @NotNull String formattedName
+    ) {
         List<ItemStack> buttons = new ArrayList<>();
 
         // Decrement button
@@ -282,7 +306,7 @@ public class InventoryFactory {
         buttons.add(ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&2&lIncrease")));
 
         return createFixedSizeInventory(
-                new InventoryMeta(InventoryType.MENU, arena, id),
+                new InventoryMeta(inventoryID, InventoryType.MENU, arena, id),
                 formattedName,
                 1,
                 true,
@@ -290,11 +314,11 @@ public class InventoryFactory {
         );
     }
 
-    public static Inventory createIncrementorMenu(Arena arena, @NotNull String formattedName) {
-        return createIncrementorMenu(arena, 0, formattedName);
+    public static Inventory createIncrementorMenu(@NotNull InventoryID inventoryID, Arena arena, @NotNull String formattedName) {
+        return createIncrementorMenu(inventoryID, arena, 0, formattedName);
     }
 
-    public static Inventory createAdvancedIncrementorMenu(Arena arena, int id, @NotNull String formattedName) {
+    public static Inventory createAdvancedIncrementorMenu(@NotNull InventoryID inventoryID, Arena arena, int id, @NotNull String formattedName) {
         List<ItemStack> buttons = new ArrayList<>();
 
         // Decrement button
@@ -316,7 +340,7 @@ public class InventoryFactory {
         buttons.add(ItemManager.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&2&lIncrease")));
 
         return createFixedSizeInventory(
-                new InventoryMeta(InventoryType.MENU, arena, id),
+                new InventoryMeta(inventoryID, InventoryType.MENU, arena, id),
                 formattedName,
                 1,
                 true,
@@ -324,7 +348,7 @@ public class InventoryFactory {
         );
     }
 
-    public static Inventory createAdvancedIncrementorMenu(Arena arena, @NotNull String formattedName) {
-        return createAdvancedIncrementorMenu(arena, 0, formattedName);
+    public static Inventory createAdvancedIncrementorMenu(@NotNull InventoryID inventoryID, Arena arena, @NotNull String formattedName) {
+        return createAdvancedIncrementorMenu(inventoryID, arena, 0, formattedName);
     }
 }

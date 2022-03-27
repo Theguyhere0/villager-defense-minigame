@@ -8,43 +8,55 @@ import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
 public class InventoryMeta implements InventoryHolder {
-    private final InventoryType type;
+    private final @NotNull InventoryID inventoryID;
+    private final @NotNull InventoryType type;
     private final Player player;
     private final Arena arena;
     private final int id;
 
-    public InventoryMeta(InventoryType type) {
-        this(type, null, 0);
+    public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type) {
+        this(inventoryID, type, null, 0);
     }
 
-    public InventoryMeta(InventoryType type, Arena arena) {
-        this(type, arena, 0);
+    public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type, Arena arena) {
+        this(inventoryID, type, arena, 0);
     }
 
-    public InventoryMeta(InventoryType type, int id) {
-        this(type, null, id);
+    public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type, int id) {
+        this(inventoryID, type, null, id);
     }
 
-    public InventoryMeta(InventoryType type, Arena arena, int id) {
-        this(type, null, arena, id);
+    public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type, Arena arena, int id) {
+        this(inventoryID, type, null, arena, id);
     }
 
-    public InventoryMeta(InventoryType type, Player player) {
-        this(type, player, null, 0);
+    public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type, Player player) {
+        this(inventoryID, type, player, null, 0);
     }
 
-    public InventoryMeta(InventoryType type, Player player, Arena arena) {
-        this(type, player, arena, 0);
+    public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type, Player player, Arena arena) {
+        this(inventoryID, type, player, arena, 0);
     }
 
-    public InventoryMeta(InventoryType type, Player player, Arena arena, int id) {
+    public InventoryMeta(
+            @NotNull InventoryID inventoryID,
+            @NotNull InventoryType type,
+            Player player,
+            Arena arena,
+            int id
+    ) {
+        this.inventoryID = inventoryID;
         this.type = type;
         this.player = player;
         this.arena = arena;
         this.id = id;
     }
 
-    public InventoryType getType() {
+    public @NotNull InventoryID getInventoryID() {
+        return inventoryID;
+    }
+
+    public @NotNull InventoryType getType() {
         return type;
     }
 

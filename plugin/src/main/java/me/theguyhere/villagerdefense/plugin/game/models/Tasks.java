@@ -2,6 +2,7 @@ package me.theguyhere.villagerdefense.plugin.game.models;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.plugin.inventories.InventoryID;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryType;
 import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryMeta;
@@ -213,7 +214,7 @@ public class Tasks {
 
 			// Initiate community chest
 			arenaInstance.setCommunityChest(Bukkit.createInventory(
-					new InventoryMeta(InventoryType.CONTROLLED, arena),
+					new InventoryMeta(InventoryID.COMMUNITY_CHEST_INVENTORY, InventoryType.CONTROLLED, arena),
 					54,
 					CommunicationManager.format("&d&l" + LanguageManager.names.communityChest)
 			));

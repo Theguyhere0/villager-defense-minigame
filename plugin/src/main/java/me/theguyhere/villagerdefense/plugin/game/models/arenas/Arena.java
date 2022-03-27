@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models.arenas;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.plugin.inventories.InventoryID;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryType;
 import me.theguyhere.villagerdefense.plugin.inventories.Buttons;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryMeta;
@@ -1601,10 +1602,10 @@ public class Arena {
         this.communityChest = communityChest;
     }
 
-    public Inventory getCustomShopEditor() {
+    public Inventory getCustomShopEditorMenu() {
         // Create inventory
         Inventory inv = Bukkit.createInventory(
-                new InventoryMeta(InventoryType.MENU, this),
+                new InventoryMeta(InventoryID.CUSTOM_SHOP_EDITOR_MENU, InventoryType.MENU, this),
                 54,
                 CommunicationManager.format("&6&lCustom Shop Editor: " + getName())
         );
@@ -1664,7 +1665,7 @@ public class Arena {
     public Inventory getCustomShop() {
         // Create inventory
         Inventory inv = Bukkit.createInventory(
-                new InventoryMeta(InventoryType.MENU, this),
+                new InventoryMeta(InventoryID.CUSTOM_SHOP_MENU, InventoryType.MENU, this),
                 54,
                 CommunicationManager.format("&6&l") + LanguageManager.names.customShop
         );
@@ -1727,7 +1728,7 @@ public class Arena {
     public Inventory getMockCustomShop() {
         // Create inventory
         Inventory inv = Bukkit.createInventory(
-                new InventoryMeta(InventoryType.MENU, this),
+                new InventoryMeta(InventoryID.MOCK_CUSTOM_SHOP_MENU, InventoryType.MENU, this),
                 54,
                 CommunicationManager.format("&6&l" + LanguageManager.names.customShop + ": " + getName())
         );

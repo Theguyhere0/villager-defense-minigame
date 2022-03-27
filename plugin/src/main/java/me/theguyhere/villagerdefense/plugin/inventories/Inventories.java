@@ -39,13 +39,45 @@ public class Inventories {
 		Inventories.plugin = plugin;
 	}
 
+	// The main admin menu for the plugin
+	public static Inventory createMainMenu() {
+		List<ItemStack> buttons = new ArrayList<>();
+
+		// Option to set lobby location
+		buttons.add(ItemManager.createItem(Material.BELL, CommunicationManager.format("&2&lLobby"),
+				CommunicationManager.format("&7Manage minigame lobby")));
+
+		// Option to set info boards
+		buttons.add(ItemManager.createItem(Material.OAK_SIGN, CommunicationManager.format("&6&lInfo Boards"),
+				CommunicationManager.format("&7Manage info boards")));
+
+		// Option to set leaderboards
+		buttons.add(ItemManager.createItem(Material.GOLDEN_HELMET,
+				CommunicationManager.format("&e&lLeaderboards"), ItemManager.BUTTON_FLAGS, null,
+				CommunicationManager.format("&7Manage leaderboards")));
+
+		// Option to edit arenas
+		buttons.add(ItemManager.createItem(Material.NETHERITE_AXE,
+				CommunicationManager.format("&9&lArenas"), ItemManager.BUTTON_FLAGS, null,
+				CommunicationManager.format("&7Manage leaderboards")));
+
+		return InventoryFactory.createFixedSizeInventory(
+				new InventoryMeta(InventoryID.MAIN_MENU, InventoryType.MENU),
+				CommunicationManager.format("&2&lVillager Defense"),
+				1,
+				true,
+				buttons
+		);
+
+	}
+
 	// Menu of all the arenas
 	public static Inventory createArenasDashboard() {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(
-				new InventoryMeta(InventoryType.MENU),
+				new InventoryMeta(InventoryID.ARENA_DASHBOARD, InventoryType.MENU),
 				54,
-				CommunicationManager.format("&2&lVillager Defense Arenas"));
+				CommunicationManager.format("&9&lArenas"));
 
 		// Options to interact with all 45 possible arenas
 		for (int i = 0; i < 45; i++) {
@@ -58,19 +90,6 @@ public class Inventories {
 						CommunicationManager.format("&a&lEdit " + GameManager.getArena(i).getName())));
 		}
 
-		// Option to set lobby location
-		inv.setItem(45, ItemManager.createItem(Material.BELL, CommunicationManager.format("&2&lLobby"),
-				CommunicationManager.format("&7Manage minigame lobby")));
-
-		// Option to set info hologram
-		inv.setItem(46, ItemManager.createItem(Material.OAK_SIGN, CommunicationManager.format("&6&lInfo Boards"),
-				CommunicationManager.format("&7Manage info boards")));
-
-		// Option to set leaderboard hologram
-		inv.setItem(47, ItemManager.createItem(Material.GOLDEN_HELMET,
-				CommunicationManager.format("&e&lLeaderboards"), ItemManager.BUTTON_FLAGS, null,
-				CommunicationManager.format("&7Manage leaderboards")));
-
 		// Option to exit
 		inv.setItem(53, Buttons.exit());
 
@@ -80,6 +99,7 @@ public class Inventories {
 	// Menu for lobby
 	public static Inventory createLobbyMenu() {
 		return InventoryFactory.createLocationMenu(
+				InventoryID.LOBBY_MENU,
 				CommunicationManager.format("&2&lLobby"),
 				DataManager.getConfigLocation(plugin, "lobby") != null,
 				"Lobby"
@@ -88,7 +108,10 @@ public class Inventories {
 
 	// Confirmation menu for removing lobby
 	public static Inventory createLobbyConfirmMenu() {
-		return InventoryFactory.createConfirmationMenu(CommunicationManager.format("&4&lRemove Lobby?"));
+		return InventoryFactory.createConfirmationMenu(
+				InventoryID.LOBBY_CONFIRM_MENU,
+				CommunicationManager.format("&4&lRemove Lobby?")
+		);
 	}
 
 	// Dashboard for info boards
@@ -111,7 +134,7 @@ public class Inventories {
 		}
 
 		return InventoryFactory.createFixedSizeInventory(
-				new InventoryMeta(InventoryType.MENU),
+				new InventoryMeta(InventoryID.INFO_BOARD_DASHBOARD, InventoryType.MENU),
 				CommunicationManager.format("&6&lInfo Boards"),
 				1,
 				true,
@@ -122,6 +145,7 @@ public class Inventories {
 	// Menu for editing a specific info board
 	public static Inventory createInfoBoardMenu(int infoBoardID) {
 		return InventoryFactory.createLocationMenu(
+				InventoryID.INFO_BOARD_MENU,
 				infoBoardID,
 				CommunicationManager.format("&6&lInfo Board " + (infoBoardID + 1)),
 				DataManager.getConfigLocation(plugin, "infoBoard." + infoBoardID) != null,
@@ -132,6 +156,7 @@ public class Inventories {
 	// Confirmation menu for removing a specific info board
 	public static Inventory createInfoBoardConfirmMenu(int infoBoardID) {
 		return InventoryFactory.createConfirmationMenu(
+				InventoryID.INFO_BOARD_CONFIRM_MENU,
 				infoBoardID,
 				CommunicationManager.format("&4&lRemove Info Board?")
 		);
@@ -162,7 +187,7 @@ public class Inventories {
 				CommunicationManager.format("&9&lTop Wave Leaderboard"), ItemManager.BUTTON_FLAGS, null));
 
 		return InventoryFactory.createFixedSizeInventory(
-				new InventoryMeta(InventoryType.MENU),
+				new InventoryMeta(InventoryID.LEADERBOARD_DASHBOARD, InventoryType.MENU),
 				CommunicationManager.format("&e&lLeaderboards"),
 				1,
 				true,
@@ -173,6 +198,7 @@ public class Inventories {
 	// Menu for editing the total kills leaderboard
 	public static Inventory createTotalKillsLeaderboardMenu() {
 		return InventoryFactory.createLocationMenu(
+				InventoryID.TOTAL_KILLS_LEADERBOARD_MENU,
 				CommunicationManager.format("&4&lTotal Kills Leaderboard"),
 				DataManager.getConfigLocation(plugin, "leaderboard.totalKills") != null,
 				"Leaderboard"
@@ -182,6 +208,7 @@ public class Inventories {
 	// Menu for editing the top kills leaderboard
 	public static Inventory createTopKillsLeaderboardMenu() {
 		return InventoryFactory.createLocationMenu(
+				InventoryID.TOP_KILLS_LEADERBOARD_MENU,
 				CommunicationManager.format("&c&lTop Kills Leaderboard"),
 				DataManager.getConfigLocation(plugin, "leaderboard.topKills") != null,
 				"Leaderboard"
@@ -191,6 +218,7 @@ public class Inventories {
 	// Menu for editing the total gems leaderboard
 	public static Inventory createTotalGemsLeaderboardMenu() {
 		return InventoryFactory.createLocationMenu(
+				InventoryID.TOTAL_GEMS_LEADERBOARD_MENU,
 				CommunicationManager.format("&2&lTotal Gems Leaderboard"),
 				DataManager.getConfigLocation(plugin, "leaderboard.totalGems") != null,
 				"Leaderboard"
@@ -200,6 +228,7 @@ public class Inventories {
 	// Menu for editing the top balance leaderboard
 	public static Inventory createTopBalanceLeaderboardMenu() {
 		return InventoryFactory.createLocationMenu(
+				InventoryID.TOP_BALANCE_LEADERBOARD_MENU,
 				CommunicationManager.format("&a&lTop Balance Leaderboard"),
 				DataManager.getConfigLocation(plugin, "leaderboard.topBalance") != null,
 				"Leaderboard"
@@ -209,6 +238,7 @@ public class Inventories {
 	// Menu for editing the top wave leaderboard
 	public static Inventory createTopWaveLeaderboardMenu() {
 		return InventoryFactory.createLocationMenu(
+				InventoryID.TOP_WAVE_LEADERBOARD_MENU,
 				CommunicationManager.format("&9&lTop Wave Leaderboard"),
 				DataManager.getConfigLocation(plugin, "leaderboard.topWave") != null,
 				"Leaderboard"
@@ -218,6 +248,7 @@ public class Inventories {
 	// Confirmation menu for total kills leaderboard
 	public static Inventory createTotalKillsConfirmMenu() {
 		return InventoryFactory.createConfirmationMenu(
+				InventoryID.TOTAL_KILLS_CONFIRM_MENU,
 				CommunicationManager.format("&4&lRemove Total Kills Leaderboard?")
 		);
 	}
@@ -225,6 +256,7 @@ public class Inventories {
 	// Confirmation menu for top kills leaderboard
 	public static Inventory createTopKillsConfirmMenu() {
 		return InventoryFactory.createConfirmationMenu(
+				InventoryID.TOP_KILLS_CONFIRM_MENU,
 				CommunicationManager.format("&4&lRemove Top Kills Leaderboard?")
 		);
 	}
@@ -232,6 +264,7 @@ public class Inventories {
 	// Confirmation menu for total gems leaderboard
 	public static Inventory createTotalGemsConfirmMenu() {
 		return InventoryFactory.createConfirmationMenu(
+				InventoryID.TOTAL_GEMS_CONFIRM_MENU,
 				CommunicationManager.format("&4&lRemove Total Gems Leaderboard?")
 		);
 	}
@@ -239,6 +272,7 @@ public class Inventories {
 	// Confirmation menu for top balance leaderboard
 	public static Inventory createTopBalanceConfirmMenu() {
 		return InventoryFactory.createConfirmationMenu(
+				InventoryID.TOP_BALANCE_CONFIRM_MENU,
 				CommunicationManager.format("&4&lRemove Top Balance Leaderboard?")
 		);
 	}
@@ -246,6 +280,7 @@ public class Inventories {
 	// Confirmation menu for top wave leaderboard
 	public static Inventory createTopWaveConfirmMenu() {
 		return InventoryFactory.createConfirmationMenu(
+				InventoryID.TOP_WAVE_CONFIRM_MENU,
 				CommunicationManager.format("&4&lRemove Top Wave Leaderboard?")
 		);
 	}
@@ -291,7 +326,7 @@ public class Inventories {
 		buttons.add(Buttons.remove("ARENA"));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryType.MENU, arena),
+				new InventoryMeta(InventoryID.ARENA_MENU, InventoryType.MENU, arena),
 				CommunicationManager.format("&2&lEdit " + arena.getName()),
 				true,
 				buttons
@@ -301,6 +336,7 @@ public class Inventories {
 	// Confirmation menu for removing an arena
 	public static Inventory createArenaConfirmMenu(Arena arena) {
 		return InventoryFactory.createConfirmationMenu(
+				InventoryID.ARENA_CONFIRM_MENU,
 				arena,
 				CommunicationManager.format("&4&lRemove " + arena.getName() + '?')
 		);
@@ -309,6 +345,7 @@ public class Inventories {
 	// Menu for editing the portal of an arena
 	public static Inventory createPortalMenu(Arena arena) {
 		return InventoryFactory.createLocationMenu(
+				InventoryID.PORTAL_MENU,
 				arena,
 				CommunicationManager.format("&5&lPortal: " + arena.getName()),
 				arena.getPortal()  != null,
@@ -319,6 +356,7 @@ public class Inventories {
 	// Menu for editing the leaderboard of an arena
 	public static Inventory createArenaBoardMenu(Arena arena) {
 		return InventoryFactory.createLocationMenu(
+				InventoryID.ARENA_BOARD_MENU,
 				arena,
 				CommunicationManager.format("&a&lLeaderboard: " + arena.getName()),
 				arena.getArenaBoard() != null,
@@ -329,6 +367,7 @@ public class Inventories {
 	// Confirmation menu for removing the arena portal
 	public static Inventory createPortalConfirmMenu(Arena arena) {
 		return InventoryFactory.createConfirmationMenu(
+				InventoryID.PORTAL_CONFIRM_MENU,
 				arena,
 				CommunicationManager.format("&4&lRemove Portal?")
 		);
@@ -337,6 +376,7 @@ public class Inventories {
 	// Confirmation menu for removing the arena leaderboard
 	public static Inventory createArenaBoardConfirmMenu(Arena arena) {
 		return InventoryFactory.createConfirmationMenu(
+				InventoryID.ARENA_BOARD_CONFIRM_MENU,
 				arena,
 				CommunicationManager.format("&4&lRemove Leaderboard?")
 		);
@@ -377,7 +417,7 @@ public class Inventories {
 				CommunicationManager.format("&7Minimum players needed for game to start")));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryType.MENU, arena),
+				new InventoryMeta(InventoryID.PLAYERS_MENU, InventoryType.MENU, arena),
 				CommunicationManager.format("&d&lPlayer Settings: " + arena.getName()),
 				true,
 				buttons
@@ -387,6 +427,7 @@ public class Inventories {
 	// Menu for editing the player spawn of an arena
 	public static Inventory createPlayerSpawnMenu(Arena arena) {
 		return InventoryFactory.createLocationMenu(
+				InventoryID.PLAYER_SPAWN_MENU,
 				arena,
 				CommunicationManager.format("&d&lPlayer Spawn: " + arena.getName()),
 				arena.getPlayerSpawn() != null,
@@ -397,6 +438,7 @@ public class Inventories {
 	// Confirmation menu for removing player spawn
 	public static Inventory createSpawnConfirmMenu(Arena arena) {
 		return InventoryFactory.createConfirmationMenu(
+				InventoryID.SPAWN_CONFIRM_MENU,
 				arena,
 				CommunicationManager.format("&4&lRemove Spawn?")
 		);
@@ -405,6 +447,7 @@ public class Inventories {
 	// Menu for editing the waiting room of an arena
 	public static Inventory createWaitingRoomMenu(Arena arena) {
 		return InventoryFactory.createLocationMenu(
+				InventoryID.WAITING_ROOM_MENU,
 				arena,
 				CommunicationManager.format("&b&lWaiting Room: " + arena.getName()),
 				arena.getWaitingRoom() != null,
@@ -415,6 +458,7 @@ public class Inventories {
 	// Confirmation menu for removing waiting room
 	public static Inventory createWaitingConfirmMenu(Arena arena) {
 		return InventoryFactory.createConfirmationMenu(
+				InventoryID.WAITING_CONFIRM_MENU,
 				arena,
 				CommunicationManager.format("&4&lRemove Waiting Room?")
 		);
@@ -423,6 +467,7 @@ public class Inventories {
 	// Menu for changing max players in an arena
 	public static Inventory createMaxPlayerMenu(Arena arena) {
 		return InventoryFactory.createIncrementorMenu(
+				InventoryID.MAX_PLAYER_MENU,
 				arena,
 				CommunicationManager.format("&4&lMaximum Players: " + arena.getMaxPlayers())
 		);
@@ -431,6 +476,7 @@ public class Inventories {
 	// Menu for changing min players in an arena
 	public static Inventory createMinPlayerMenu(Arena arena) {
 		return InventoryFactory.createIncrementorMenu(
+				InventoryID.MIN_PLAYER_MENU,
 				arena,
 				CommunicationManager.format("&2&lMinimum Players: " + arena.getMinPlayers())
 		);
@@ -474,7 +520,7 @@ public class Inventories {
 				CommunicationManager.format("&7number of players")));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryType.MENU, arena),
+				new InventoryMeta(InventoryID.MOBS_MENU, InventoryType.MENU, arena),
 				CommunicationManager.format("&2&lMob Settings: " + arena.getName()),
 				true,
 				buttons
@@ -501,7 +547,7 @@ public class Inventories {
 		}
 
 		return InventoryFactory.createFixedSizeInventory(
-				new InventoryMeta(InventoryType.MENU, arena),
+				new InventoryMeta(InventoryID.MONSTER_SPAWN_DASHBOARD, InventoryType.MENU, arena),
 				CommunicationManager.format("&2&lMonster Spawns: " + arena.getName()),
 				1,
 				true,
@@ -543,7 +589,7 @@ public class Inventories {
 		}
 
 		return InventoryFactory.createFixedSizeInventory(
-				new InventoryMeta(InventoryType.MENU, arena, id),
+				new InventoryMeta(InventoryID.MONSTER_SPAWN_MENU, InventoryType.MENU, arena, id),
 				CommunicationManager.format("&2&lMonster Spawn " + (id + 1) + ": " + arena.getName()),
 				1,
 				true,
@@ -554,6 +600,7 @@ public class Inventories {
 	// Confirmation menu for removing monster spawns
 	public static Inventory createMonsterSpawnConfirmMenu(Arena arena, int id) {
 		return InventoryFactory.createConfirmationMenu(
+				InventoryID.MONSTER_SPAWN_CONFIRM_MENU,
 				arena,
 				id,
 				CommunicationManager.format("&4&lRemove Monster Spawn?")
@@ -580,7 +627,7 @@ public class Inventories {
 		}
 
 		return InventoryFactory.createFixedSizeInventory(
-				new InventoryMeta(InventoryType.MENU, arena),
+				new InventoryMeta(InventoryID.VILLAGER_SPAWN_DASHBOARD, InventoryType.MENU, arena),
 				CommunicationManager.format("&5&lVillager Spawns: " + arena.getName()),
 				1,
 				true,
@@ -591,6 +638,7 @@ public class Inventories {
 	// Menu for editing a specific villager spawn of an arena
 	public static Inventory createVillagerSpawnMenu(Arena arena, int id) {
 		return InventoryFactory.createLocationMenu(
+				InventoryID.VILLAGER_SPAWN_MENU,
 				arena,
 				id,
 				CommunicationManager.format("&5&lVillager Spawn " + (id + 1) + ": " + arena.getName()),
@@ -602,6 +650,7 @@ public class Inventories {
 	// Confirmation menu for removing mob spawns
 	public static Inventory createVillagerSpawnConfirmMenu(Arena arena, int id) {
 		return InventoryFactory.createConfirmationMenu(
+				InventoryID.VILLAGER_SPAWN_CONFIRM_MENU,
 				arena,
 				id,
 				CommunicationManager.format("&4&lRemove Villager Spawn?")
@@ -663,7 +712,7 @@ public class Inventories {
 				CommunicationManager.format("&7(Check the arena number in arenaData.yml)")));
 
 		return InventoryFactory.createFixedSizeInventory(
-				new InventoryMeta(InventoryType.MENU, arena),
+				new InventoryMeta(InventoryID.SPAWN_TABLE_MENU, InventoryType.MENU, arena),
 				chosen.equals("custom") ?
 						CommunicationManager.format("&3&lSpawn Table: a" + arena.getArena() + ".yml") :
 						CommunicationManager.format("&3&lSpawn Table: " + arena.getSpawnTableFile() + ".yml"),
@@ -708,7 +757,7 @@ public class Inventories {
 				CommunicationManager.format("&7players in the game")));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryType.MENU, arena),
+				new InventoryMeta(InventoryID.SHOP_SETTINGS_MENU, InventoryType.MENU, arena),
 				CommunicationManager.format("&e&lShop Settings: " + arena.getName()),
 				true,
 				buttons
@@ -718,8 +767,11 @@ public class Inventories {
 	// Menu for adding custom items
 	public static Inventory createCustomItemsMenu(Arena arena, int id) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena, id), 27,
-				CommunicationManager.format("&6&lEdit Item"));
+		Inventory inv = Bukkit.createInventory(
+				new InventoryMeta(InventoryID.CUSTOM_ITEMS_MENU, InventoryType.MENU, arena, id),
+				27,
+				CommunicationManager.format("&6&lEdit Item")
+		);
 
 		// Item of interest
 		inv.setItem(4, arena.getCustomShop().getItem(id));
@@ -773,6 +825,7 @@ public class Inventories {
 	// Confirmation menu for removing custom item
 	public static Inventory createCustomItemConfirmMenu(Arena arena, int id) {
 		return InventoryFactory.createConfirmationMenu(
+				InventoryID.CUSTOM_ITEM_CONFIRM_MENU,
 				arena,
 				id,
 				CommunicationManager.format("&4&lRemove Custom Item?")
@@ -874,7 +927,7 @@ public class Inventories {
 				CommunicationManager.format("&7choose from a menu of presets")));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryType.MENU, arena),
+				new InventoryMeta(InventoryID.GAME_SETTINGS_MENU, InventoryType.MENU, arena),
 				CommunicationManager.format("&8&lGame Settings: " + arena.getName()),
 				true,
 				buttons
@@ -884,6 +937,7 @@ public class Inventories {
 	// Menu for changing max waves of an arena
 	public static Inventory createMaxWaveMenu(Arena arena) {
 		return InventoryFactory.createAdvancedIncrementorMenu(
+				InventoryID.MAX_WAVE_MENU,
 				arena,
 				(arena.getMaxWaves() < 0) ?
 						CommunicationManager.format("&3&lMaximum Waves: Unlimited") :
@@ -894,6 +948,7 @@ public class Inventories {
 	// Menu for changing wave time limit of an arena
 	public static Inventory createWaveTimeLimitMenu(Arena arena) {
 		return InventoryFactory.createAdvancedIncrementorMenu(
+				InventoryID.WAVE_TIME_LIMIT_MENU,
 				arena,
 				(arena.getWaveTimeLimit() < 0) ?
 						CommunicationManager.format("&2&lWave Time Limit: Unlimited") :
@@ -904,12 +959,16 @@ public class Inventories {
 	// Menu for allowed kits of an arena
 	public static Inventory createAllowedKitsMenu(Arena arena, boolean mock) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 54,
-				
-				(mock ? CommunicationManager.format("&9&l" +
-						LanguageManager.messages.allowedKits + ": " + arena.getName()) :
-						CommunicationManager.format("&9&l" +
-								LanguageManager.messages.allowedKits)));
+		Inventory inv = mock ? Bukkit.createInventory(
+				new InventoryMeta(InventoryID.ALLOWED_KITS_MENU, InventoryType.MENU, arena),
+				54,
+				CommunicationManager.format(
+						"&9&l" + LanguageManager.messages.allowedKits + ": " + arena.getName())
+		) : Bukkit.createInventory(
+				new InventoryMeta(InventoryID.ALLOWED_KITS_DISPLAY_MENU, InventoryType.MENU, arena),
+				54,
+				CommunicationManager.format("&9&l" + LanguageManager.messages.allowedKits)
+		);
 
 		// Gift kits
 		for (int i = 0; i < 9; i++)
@@ -1053,7 +1112,7 @@ public class Inventories {
 				CommunicationManager.format("&7&l" + LanguageManager.names.none)));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryType.MENU, arena),
+				new InventoryMeta(InventoryID.DIFFICULTY_LABEL_MENU, InventoryType.MENU, arena),
 				CommunicationManager.format("&6&lDifficulty Label: " + label),
 				true,
 				buttons
@@ -1078,7 +1137,7 @@ public class Inventories {
 		buttons.add(ItemManager.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&l4")));
 
 		return InventoryFactory.createFixedSizeInventory(
-				new InventoryMeta(InventoryType.MENU, arena),
+				new InventoryMeta(InventoryID.DIFFICULTY_MULTIPLIER_MENU, InventoryType.MENU, arena),
 				CommunicationManager.format("&4&lDifficulty Multiplier: " + arena.getDifficultyMultiplier()),
 				1,
 				true,
@@ -1105,7 +1164,7 @@ public class Inventories {
 				getToggleStatus(arena.hasBorderParticles()))));
 
 		return InventoryFactory.createFixedSizeInventory(
-				new InventoryMeta(InventoryType.MENU, arena),
+				new InventoryMeta(InventoryID.ARENA_BOUNDS_MENU, InventoryType.MENU, arena),
 				CommunicationManager.format("&4&lArena Bounds: " + arena.getName()),
 				1,
 				true,
@@ -1116,6 +1175,7 @@ public class Inventories {
 	// Menu for editing corner 1 of an arena
 	public static Inventory createCorner1Menu(Arena arena) {
 		return InventoryFactory.createSimpleLocationMenu(
+				InventoryID.CORNER_1_MENU,
 				arena,
 				CommunicationManager.format("&b&lCorner 1: " + arena.getName()),
 				arena.getCorner1() != null,
@@ -1126,6 +1186,7 @@ public class Inventories {
 	// Confirmation menu for removing corner 1
 	public static Inventory createCorner1ConfirmMenu(Arena arena) {
 		return InventoryFactory.createConfirmationMenu(
+				InventoryID.CORNER_1_CONFIRM_MENU,
 				arena,
 				CommunicationManager.format("&4&lRemove Corner 1?")
 		);
@@ -1134,6 +1195,7 @@ public class Inventories {
 	// Menu for editing corner 2 of an arena
 	public static Inventory createCorner2Menu(Arena arena) {
 		return InventoryFactory.createSimpleLocationMenu(
+				InventoryID.CORNER_2_MENU,
 				arena,
 				CommunicationManager.format("&9&lCorner 2: " + arena.getName()),
 				arena.getCorner2() != null,
@@ -1144,6 +1206,7 @@ public class Inventories {
 	// Confirmation menu for removing corner 2
 	public static Inventory createCorner2ConfirmMenu(Arena arena) {
 		return InventoryFactory.createConfirmationMenu(
+				InventoryID.CORNER_2_CONFIRM_MENU,
 				arena,
 				CommunicationManager.format("&4&lRemove Corner 2?")
 		);
@@ -1152,6 +1215,7 @@ public class Inventories {
 	// Menu for changing wolf cap of an arena
 	public static Inventory createWolfCapMenu(Arena arena) {
 		return InventoryFactory.createIncrementorMenu(
+				InventoryID.WOLF_CAP_MENU,
 				arena,
 				CommunicationManager.format("&6&lWolf Cap: " + arena.getWolfCap())
 		);
@@ -1160,6 +1224,7 @@ public class Inventories {
 	// Menu for changing iron golem cap of an arena
 	public static Inventory createGolemCapMenu(Arena arena) {
 		return InventoryFactory.createIncrementorMenu(
+				InventoryID.GOLEM_CAP_MENU,
 				arena,
 				CommunicationManager.format("&e&lIron Golem Cap: " + arena.getGolemCap())
 		);
@@ -1232,7 +1297,7 @@ public class Inventories {
 				CommunicationManager.format("&7Played when a player uses their ability")));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryType.MENU, arena),
+				new InventoryMeta(InventoryID.SOUNDS_MENU, InventoryType.MENU, arena),
 				CommunicationManager.format("&d&lSounds: " + arena.getName()),
 				true,
 				buttons
@@ -1261,7 +1326,7 @@ public class Inventories {
 		buttons.add( arena.getWaitingSoundButton("none"));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryType.MENU, arena),
+				new InventoryMeta(InventoryID.WAITING_SOUND_MENU, InventoryType.MENU, arena),
 				CommunicationManager.format("&6&lWaiting Sound: " + arena.getWaitingSoundName()),
 				true,
 				buttons
@@ -1271,8 +1336,11 @@ public class Inventories {
 	// Menu to copy game settings
 	public static Inventory createCopySettingsMenu(Arena arena) {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, arena), 54,
-				CommunicationManager.format("&8&lCopy Game Settings"));
+		Inventory inv = Bukkit.createInventory(
+				new InventoryMeta(InventoryID.COPY_SETTINGS_MENU, InventoryType.MENU, arena),
+				54,
+				CommunicationManager.format("&8&lCopy Game Settings")
+		);
 
 		// Options to choose any of the 45 possible arenas
 		for (int i = 0; i < 45; i++) {
@@ -1315,7 +1383,9 @@ public class Inventories {
 		String disabled = " &4&l[" + LanguageManager.messages.disabled + "]";
 		
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 9, 
+		Inventory inv = Bukkit.createInventory(
+				new InventoryMeta(InventoryID.SHOP_MENU, InventoryType.MENU),
+				9,
 				CommunicationManager.format("&2&l" + LanguageManager.messages.level +
 						" &9&l" + level + " &2&l" + LanguageManager.names.itemShop));
 
@@ -1362,9 +1432,12 @@ public class Inventories {
 			modifier = 1;
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 27, 
+		Inventory inv = Bukkit.createInventory(
+				new InventoryMeta(InventoryID.WEAPON_SHOP_MENU, InventoryType.MENU),
+				27,
 				CommunicationManager.format("&4&l" + LanguageManager.messages.level +
-						" &9&l" + level + " &4&l" + LanguageManager.names.weaponShop));
+						" &9&l" + level + " &4&l" + LanguageManager.names.weaponShop)
+		);
 
 		// Fill in swords
 		List<ItemStack> swords = new ArrayList<>();
@@ -1412,9 +1485,12 @@ public class Inventories {
 			modifier = 1;
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 27, 
+		Inventory inv = Bukkit.createInventory(
+				new InventoryMeta(InventoryID.ARMOR_SHOP_MENU, InventoryType.MENU),
+				27,
 				CommunicationManager.format("&5&l" + LanguageManager.messages.level +
-						" &9&l" + level + " &5&l" + LanguageManager.names.armorShop));
+						" &9&l" + level + " &5&l" + LanguageManager.names.armorShop)
+		);
 
 		// Fill in helmets
 		List<ItemStack> helmets = new ArrayList<>();
@@ -1462,9 +1538,12 @@ public class Inventories {
 			modifier = 1;
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 18, 
+		Inventory inv = Bukkit.createInventory(
+				new InventoryMeta(InventoryID.CONSUMABLE_SHOP_MENU, InventoryType.MENU),
+				18,
 				CommunicationManager.format("&3&l" + LanguageManager.messages.level +
-						" &9&l" + level + " &3&l" + LanguageManager.names.consumableShop));
+						" &9&l" + level + " &3&l" + LanguageManager.names.consumableShop)
+		);
 
 		// Fill in food
 		List<ItemStack> foods = new ArrayList<>();
@@ -1491,8 +1570,11 @@ public class Inventories {
 	// Generate the enchant shop
 	public static Inventory createEnchantShopMenu() {
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU), 54, 
-				CommunicationManager.format("&a&l" + LanguageManager.names.enchantShop));
+		Inventory inv = Bukkit.createInventory(
+				new InventoryMeta(InventoryID.ENCHANT_SHOP_MENU, InventoryType.MENU),
+				54,
+				CommunicationManager.format("&a&l" + LanguageManager.names.enchantShop)
+		);
 
 		// Melee enchants
 		inv.setItem(0, ItemManager.createItem(Material.PISTON,
@@ -1568,9 +1650,12 @@ public class Inventories {
 		String name = player.getName();
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, player), 9,
+		Inventory inv = Bukkit.createInventory(
+				new InventoryMeta(InventoryID.PLAYER_STATS_MENU, InventoryType.MENU, player),
+				9,
 				CommunicationManager.format("&2&l" + String.format(LanguageManager.messages.playerStatistics,
-						name)));
+						name))
+		);
 
 		// Total kills
 		inv.setItem(0, ItemManager.createItem(Material.DRAGON_HEAD,
@@ -1626,8 +1711,11 @@ public class Inventories {
 		String path = name + ".kits.";
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, owner), 54,
-				CommunicationManager.format("&9&l" + String.format(LanguageManager.messages.playerKits, name)));
+		Inventory inv = Bukkit.createInventory(
+				new InventoryMeta(InventoryID.PLAYER_KITS_MENU, InventoryType.MENU, owner),
+				54,
+				CommunicationManager.format("&9&l" + String.format(LanguageManager.messages.playerKits, name))
+		);
 
 		// Gift kits
 		for (int i = 0; i < 9; i++)
@@ -1713,9 +1801,11 @@ public class Inventories {
 		String path = player.getName() + ".kits.";
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(new InventoryMeta(InventoryType.MENU, player, arena), 54,
-				CommunicationManager.format("&9&l" + arena.getName() + " " +
-						LanguageManager.messages.kits));
+		Inventory inv = Bukkit.createInventory(
+				new InventoryMeta(InventoryID.SELECT_KITS_MENU, InventoryType.MENU, player, arena),
+				54,
+				CommunicationManager.format("&9&l" + arena.getName() + " " + LanguageManager.messages.kits)
+		);
 
 		// Gift kits
 		for (int i = 0; i < 9; i++)
@@ -1837,7 +1927,7 @@ public class Inventories {
 		buttons.add( Challenge.none().getButton(player.getChallenges().isEmpty()));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryType.MENU, player.getPlayer(), arena),
+				new InventoryMeta(InventoryID.SELECT_CHALLENGES_MENU, InventoryType.MENU, player.getPlayer(), arena),
 				CommunicationManager.format("&5&l" + arena.getName() + " " + LanguageManager.messages.challenges),
 				true,
 				buttons
@@ -2025,7 +2115,7 @@ public class Inventories {
 				ItemManager.BUTTON_FLAGS, null, records));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryType.MENU, arena),
+				new InventoryMeta(InventoryID.ARENA_INFO_MENU, InventoryType.MENU, arena),
 				CommunicationManager.format("&6&l" +
 						String.format(LanguageManager.messages.arenaInfo, arena.getName())),
 				false,
