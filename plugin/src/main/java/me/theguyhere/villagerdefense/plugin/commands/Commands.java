@@ -2,6 +2,8 @@ package me.theguyhere.villagerdefense.plugin.commands;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
+import me.theguyhere.villagerdefense.plugin.game.displays.InfoBoard;
 import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
@@ -685,7 +687,8 @@ public class Commands implements CommandExecutor {
 							else CommunicationManager.debugError(String.format(
 									LanguageManager.messages.manualUpdateWarn, "arenaData.yml"), 0);
 						}
-					} else if (arenaDataVersion < 5) {
+					}
+					else if (arenaDataVersion < 5) {
 						try {
 							// Translate waiting sounds
 							Objects.requireNonNull(arenaData.getConfigurationSection("")).getKeys(false)

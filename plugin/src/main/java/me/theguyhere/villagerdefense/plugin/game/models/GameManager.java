@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.game.displays.InfoBoard;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 public class GameManager {
 	private static Main plugin;
 	private static final Arena[] arenas = new Arena[45];
-	private static final InfoBoard[] infoBoards = new InfoBoard[8];
+	private static final Map<Integer, InfoBoard> infoBoards = new HashMap<>();
 	private static final Map<String, Leaderboard> leaderboards = new HashMap<>();
 	private static Location lobby;
 	private static final List<String> validSounds = new LinkedList<>(Arrays.asList("blocks", "cat", "chirp", "far",
@@ -53,7 +54,7 @@ public class GameManager {
 						try {
 							Location location = DataManager.getConfigLocationNoPitch(plugin, "infoBoard." + path);
 							if (location != null)
-								infoBoards[Integer.parseInt(path)] = new InfoBoard(location);
+								infoBoards.put(Integer.parseInt(path), new InfoBoard(location));
 						} catch (InvalidLocationException ignored) {
 						}
 					});
@@ -207,32 +208,32 @@ public class GameManager {
 	 * Creates a new info board at the given location and deletes the old info board.
 	 * @param location - New location.
 	 */
-	public void setInfoBoard(Location location, int num) {
+	public void setInfoBoard(Location location, int infoBoardID) {
 		// Save config location
-		DataManager.setConfigurationLocation(plugin, "infoBoard." + num, location);
+		DataManager.setConfigurationLocation(plugin, "infoBoard." + infoBoardID, location);
 
 		// Recreate the info board
-		refreshInfoBoard(num);
+		refreshInfoBoard(infoBoardID);
 	}
 
 	/**
 	 * Recreates the info board in game based on the location in the arena file.
 	 */
-	public void refreshInfoBoard(int num) {
+	public void refreshInfoBoard(int infoBoardID) {
 		// Delete old board if needed
-		if (infoBoards[num] != null)
-			infoBoards[num].remove();
+		if (infoBoards.containsKey(infoBoardID))
+			infoBoards.get(infoBoardID).remove();
 
 		try {
 			// Create a new board and display it
-			infoBoards[num] = new InfoBoard(
-					Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin, "infoBoard." + num))
-            );
-			infoBoards[num].displayForOnline();
+			infoBoards.put(infoBoardID, new InfoBoard(
+					Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin, "infoBoard." + infoBoardID))
+            ));
+			infoBoards.get(infoBoardID).displayForOnline();
 		} catch (Exception e) {
-			CommunicationManager.debugError("Invalid location for info board " + num, 1);
+			CommunicationManager.debugError("Invalid location for info board " + infoBoardID, 1);
 			CommunicationManager.debugInfo("Info board location data may be corrupt. If data cannot be manually " +
-					"corrected in arenaData.yml, please delete the location data for info board " + num + ".",
+					"corrected in arenaData.yml, please delete the location data for info board " + infoBoardID + ".",
 					1);
 		}
 	}
@@ -240,23 +241,32 @@ public class GameManager {
 	/**
 	 * Centers the info board location along the x and z axis.
 	 */
-	public void centerInfoBoard(int num) {
+	public void centerInfoBoard(int infoBoardID) {
 		// Center the location
-		DataManager.centerConfigLocation(plugin, "infoBoard." + num);
+		DataManager.centerConfigLocation(plugin, "infoBoard." + infoBoardID);
 
-		// Recreate the portal
-		refreshInfoBoard(num);
+		// Recreate the info board
+		refreshInfoBoard(infoBoardID);
 	}
 
 	/**
 	 * Removes the info board from the game and from the arena file.
 	 */
-	public void removeInfoBoard(int num) {
-		if (infoBoards[num] != null) {
-			infoBoards[num].remove();
-			infoBoards[num] = null;
+	public void removeInfoBoard(int infoBoardID) {
+		if (infoBoards.containsKey(infoBoardID)) {
+			infoBoards.get(infoBoardID).remove();
+			infoBoards.remove(infoBoardID);
 		}
-		DataManager.setConfigurationLocation(plugin, "infoBoard." + num, null);
+		DataManager.setConfigurationLocation(plugin, "infoBoard." + infoBoardID, null);
+	}
+
+	/**
+	 * Generates a new ID for a new info board.
+	 *
+	 * @return New info board ID
+	 */
+	public int newInfoBoardID() {
+		return Utils.nextSmallestUniqueWhole(infoBoards.keySet());
 	}
 
 	/**
@@ -336,7 +346,7 @@ public class GameManager {
 	 * @param player - The player to display all info boards to.
 	 */
 	public static void displayAllInfoBoards(Player player) {
-		Arrays.stream(infoBoards).filter(Objects::nonNull).forEach(infoBoard -> infoBoard.displayForPlayer(player));
+		infoBoards.values().stream().filter(Objects::nonNull).forEach(infoBoard -> infoBoard.displayForPlayer(player));
 	}
 
 	/**
@@ -395,7 +405,7 @@ public class GameManager {
 	 * Refresh every info board.
 	 */
 	public void refreshInfoBoards() {
-		for (int i = 0; i < Arrays.stream(infoBoards).filter(Objects::nonNull).count(); i++) {
+		for (int i = 0; i < infoBoards.values().stream().filter(Objects::nonNull).count(); i++) {
 			refreshInfoBoard(i);
 		}
 	}

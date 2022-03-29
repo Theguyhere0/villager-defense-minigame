@@ -30,7 +30,6 @@ public class Inventories {
 	private static Main plugin;
 
 	// Easily alternate between different materials
-	public static final Material[] INFO_BOARD_MATS = {Material.DARK_OAK_SIGN, Material.BIRCH_SIGN};
 	public static final Material[] MONSTER_MATS = {Material.SKELETON_SKULL, Material.ZOMBIE_HEAD};
 	public static final Material[] VILLAGER_MATS = {Material.WITHER_ROSE, Material.POPPY};
 
@@ -118,26 +117,17 @@ public class Inventories {
 	public static Inventory createInfoBoardDashboard() {
 		List<ItemStack> buttons = new ArrayList<>();
 
-		// Prepare for material indexing
-		int index;
+		// Capture all info boards
+		Objects.requireNonNull(plugin.getArenaData().getConfigurationSection("infoBoard"))
+				.getKeys(false).forEach(path -> buttons.add(ItemManager.createItem(Material.BIRCH_SIGN,
+						CommunicationManager.format("&6&lInfo Board " + path))));
 
-		// Options to interact with all 8 possible info boards
-		for (int i = 0; i < 8; i++) {
-			// Check if the info board exists
-			if (!plugin.getArenaData().contains("infoBoard." + i))
-				index = 0;
-			else index = 1;
-
-			// Create and set item
-			buttons.add(ItemManager.createItem(INFO_BOARD_MATS[index],
-					CommunicationManager.format("&6&lInfo Board " + (i + 1))));
-		}
-
-		return InventoryFactory.createFixedSizeInventory(
+		return InventoryFactory.createDynamicSizeBottomNavInventory(
 				new InventoryMeta(InventoryID.INFO_BOARD_DASHBOARD, InventoryType.MENU),
 				CommunicationManager.format("&6&lInfo Boards"),
-				1,
 				true,
+				true,
+				"Info Board",
 				buttons
 		);
 	}
@@ -147,7 +137,7 @@ public class Inventories {
 		return InventoryFactory.createLocationMenu(
 				InventoryID.INFO_BOARD_MENU,
 				infoBoardID,
-				CommunicationManager.format("&6&lInfo Board " + (infoBoardID + 1)),
+				CommunicationManager.format("&6&lInfo Board " + infoBoardID),
 				DataManager.getConfigLocation(plugin, "infoBoard." + infoBoardID) != null,
 				"Info Board"
 		);

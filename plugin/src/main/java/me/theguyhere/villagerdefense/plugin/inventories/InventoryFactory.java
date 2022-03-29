@@ -147,7 +147,48 @@ public class InventoryFactory {
 
         return inv;
     }
-    
+
+    public static Inventory createDynamicSizeBottomNavInventory(
+            @NotNull InventoryMeta meta,
+            @NotNull String formattedName,
+            boolean exitButton,
+            boolean newButton,
+            @NotNull String dataStructureName,
+            @NotNull List<ItemStack> buttons
+    ) {
+        int lines = (buttons.size() + 8) / 9 + 1;
+        int invSize = lines * 9;
+        int hangingButtons = buttons.size() % 9;
+        Iterator<ItemStack> buttonIterator = buttons.iterator();
+
+        // Ensure valid number of lines
+        if (lines > 6)
+            return null;
+
+        // Create inventory
+        Inventory inv = Bukkit.createInventory(meta, invSize, formattedName);
+
+        for (int i = 0; i < lines - 2; i++)
+            for (int j = 0; j < 9; j++)
+                inv.setItem(i * 9 + j, buttonIterator.next());
+        for (int i = 0; i < hangingButtons; i++)
+            inv.setItem((lines - 2) * 9 + (9 - hangingButtons) / 2 + i, buttonIterator.next());
+
+        // Set exit button
+        if (exitButton) {
+            if (newButton)
+                inv.setItem(invSize - 1, Buttons.exit());
+            else
+                inv.setItem(invSize - 5, Buttons.exit());
+        }
+
+        // Set new button
+        if (newButton)
+            inv.setItem(invSize - 5, Buttons.newAdd(dataStructureName));
+
+        return inv;
+    }
+
     public static Inventory createLocationMenu(
             @NotNull InventoryID inventoryID,
             Arena arena,
@@ -287,7 +328,8 @@ public class InventoryFactory {
         return createConfirmationMenu(inventoryID, null, id, formattedName);
     }
 
-    public static Inventory createConfirmationMenu(@NotNull InventoryID inventoryID, @NotNull String formattedName) {
+    public static Inventory createConfirmationMenu(@NotNull InventoryID inventoryID, @NotNull String formattedName)
+            {
         return createConfirmationMenu(inventoryID, null, 0, formattedName);
     }
 
@@ -314,11 +356,20 @@ public class InventoryFactory {
         );
     }
 
-    public static Inventory createIncrementorMenu(@NotNull InventoryID inventoryID, Arena arena, @NotNull String formattedName) {
+    public static Inventory createIncrementorMenu(
+            @NotNull InventoryID inventoryID,
+            Arena arena,
+            @NotNull String formattedName
+    ) {
         return createIncrementorMenu(inventoryID, arena, 0, formattedName);
     }
 
-    public static Inventory createAdvancedIncrementorMenu(@NotNull InventoryID inventoryID, Arena arena, int id, @NotNull String formattedName) {
+    public static Inventory createAdvancedIncrementorMenu(
+            @NotNull InventoryID inventoryID,
+            Arena arena,
+            int id,
+            @NotNull String formattedName
+    ) {
         List<ItemStack> buttons = new ArrayList<>();
 
         // Decrement button
@@ -348,7 +399,11 @@ public class InventoryFactory {
         );
     }
 
-    public static Inventory createAdvancedIncrementorMenu(@NotNull InventoryID inventoryID, Arena arena, @NotNull String formattedName) {
+    public static Inventory createAdvancedIncrementorMenu(
+            @NotNull InventoryID inventoryID,
+            Arena arena,
+            @NotNull String formattedName
+    ) {
         return createAdvancedIncrementorMenu(inventoryID, arena, 0, formattedName);
     }
 }

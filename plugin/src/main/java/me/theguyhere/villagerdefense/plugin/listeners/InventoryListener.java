@@ -275,8 +275,12 @@ public class InventoryListener implements Listener {
 		// Info board dashboard
 		else if (invID == InventoryID.INFO_BOARD_DASHBOARD) {
 			// Edit board
-			if (Arrays.asList(Inventories.INFO_BOARD_MATS).contains(buttonType))
-				player.openInventory(Inventories.createInfoBoardMenu(slot));
+			if (buttonType == Material.BIRCH_SIGN)
+				player.openInventory(Inventories.createInfoBoardMenu(Integer.parseInt(buttonName.split(" ")[2])));
+
+			// Create new
+			else if (buttonName.contains(CommunicationManager.format("&a&lNew ")))
+				player.openInventory(Inventories.createInfoBoardMenu(plugin.getGameManager().newInfoBoardID()));
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
@@ -285,20 +289,20 @@ public class InventoryListener implements Listener {
 
 		// Info board menu for a specific board
 		else if (invID == InventoryID.INFO_BOARD_MENU) {
-			int num = meta.getId();
-			String path = "infoBoard." + num;
+			int id = meta.getId();
+			String path = "infoBoard." + id;
 
 			// Create board
 			if (buttonName.contains("Create")) {
-				plugin.getGameManager().setInfoBoard(player.getLocation(), num);
+				plugin.getGameManager().setInfoBoard(player.getLocation(), id);
 				PlayerManager.notifySuccess(player, "Info board set!");
-				player.openInventory(Inventories.createInfoBoardMenu(num));
+				player.openInventory(Inventories.createInfoBoardMenu(id));
 			}
 
 			// Relocate board
 			else if (buttonName.contains("Relocate")) {
 				DataManager.setConfigurationLocation(plugin, path, player.getLocation());
-				plugin.getGameManager().refreshInfoBoard(num);
+				plugin.getGameManager().refreshInfoBoard(id);
 				PlayerManager.notifySuccess(player, "Info board relocated!");
 			}
 
@@ -319,14 +323,14 @@ public class InventoryListener implements Listener {
 					PlayerManager.notifyFailure(player, "No info board to center!");
 					return;
 				}
-				plugin.getGameManager().centerInfoBoard(num);
+				plugin.getGameManager().centerInfoBoard(id);
 				PlayerManager.notifySuccess(player, "Info board centered!");
 			}
 
 			// Remove info board
 			else if (buttonName.contains("REMOVE"))
 				if (config.contains(path))
-					player.openInventory(Inventories.createInfoBoardConfirmMenu(num));
+					player.openInventory(Inventories.createInfoBoardConfirmMenu(id));
 				else PlayerManager.notifyFailure(player, "No info board to remove!");
 
 			// Exit menu
@@ -897,7 +901,7 @@ public class InventoryListener implements Listener {
 
 				// Confirm and return
 				PlayerManager.notifySuccess(player, "Info board removed!");
-				player.openInventory(Inventories.createInfoBoardMenu(meta.getId()));
+				player.openInventory(Inventories.createInfoBoardDashboard());
 			}
 		}
 
