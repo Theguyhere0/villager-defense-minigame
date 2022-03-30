@@ -726,7 +726,18 @@ public class Arena {
         DataManager.getConfigLocationMap(plugin, path + ".monster").forEach((id, location) ->
         {
             try {
-                monsterSpawns.add(new ArenaSpawn(Objects.requireNonNull(location), ArenaSpawnType.MONSTER, id));
+                ArenaSpawnType spawnType;
+                switch (getMonsterSpawnType(id)) {
+                    case 1:
+                        spawnType = ArenaSpawnType.MONSTER_GROUND;
+                        break;
+                    case 2:
+                        spawnType = ArenaSpawnType.MONSTER_AIR;
+                        break;
+                    default:
+                        spawnType = ArenaSpawnType.MONSTER_ALL;
+                }
+                monsterSpawns.add(new ArenaSpawn(Objects.requireNonNull(location), spawnType, id));
             } catch (InvalidLocationException | NullPointerException ignored) {
             }
         });
@@ -742,11 +753,11 @@ public class Arena {
 
     /**
      * Retrieves a specific monster spawn of the arena.
-     * @param num - Monster spawn number.
+     * @param monsterSpawnID - Monster spawn ID.
      * @return Monster spawn.
      */
-    public ArenaSpawn getMonsterSpawn(int num) {
-        List<ArenaSpawn> query = monsterSpawns.stream().filter(spawn -> spawn.getId() == num + 1)
+    public ArenaSpawn getMonsterSpawn(int monsterSpawnID) {
+        List<ArenaSpawn> query = monsterSpawns.stream().filter(spawn -> spawn.getId() == monsterSpawnID)
                 .collect(Collectors.toList());
 
         if (query.size() != 1)
@@ -754,29 +765,30 @@ public class Arena {
         else return query.get(0);
     }
 
-    public void setMonsterSpawn(int num, Location location) {
-        DataManager.setConfigurationLocation(plugin, path + ".monster." + num, location);
+    public void setMonsterSpawn(int monsterSpawnID, Location location) {
+        DataManager.setConfigurationLocation(plugin, path + ".monster." + monsterSpawnID, location);
         refreshMonsterSpawns();
     }
 
-    public void centerMonsterSpawn(int num) {
-        DataManager.centerConfigLocation(plugin, path + ".monster." + num);
+    public void centerMonsterSpawn(int monsterSpawnID) {
+        DataManager.centerConfigLocation(plugin, path + ".monster." + monsterSpawnID);
         refreshMonsterSpawns();
     }
 
-    public void setMonsterSpawnType(int num, int type) {
-        config.set(path + ".monsters." + num + ".type", type);
+    public void setMonsterSpawnType(int monsterSpawnID, int type) {
+        config.set(path + ".monsters." + monsterSpawnID + ".type", type);
         plugin.saveArenaData();
+        refreshMonsterSpawns();
     }
 
-    public int getMonsterSpawnType(int num) {
-        return config.getInt(path + ".monsters." + num + ".type");
+    public int getMonsterSpawnType(int monsterSpawnID) {
+        return config.getInt(path + ".monsters." + monsterSpawnID + ".type");
     }
 
     /**
-     * Generates a new ID for a new info board.
+     * Generates a new ID for a new monster spawn.
      *
-     * @return New info board ID
+     * @return New monster spawn ID
      */
     public int newMonsterSpawnID() {
         return Utils.nextSmallestUniqueWhole(DataManager.getConfigLocationMap(plugin, path + ".monster").keySet());
@@ -814,11 +826,11 @@ public class Arena {
 
     /**
      * Retrieves a specific villager spawn of the arena.
-     * @param num - Villager spawn number.
+     * @param villagerSpawnID - Villager spawn ID.
      * @return Villager spawn.
      */
-    public ArenaSpawn getVillagerSpawn(int num) {
-        List<ArenaSpawn> query = villagerSpawns.stream().filter(spawn -> spawn.getId() == num + 1)
+    public ArenaSpawn getVillagerSpawn(int villagerSpawnID) {
+        List<ArenaSpawn> query = villagerSpawns.stream().filter(spawn -> spawn.getId() == villagerSpawnID)
                 .collect(Collectors.toList());
 
         if (query.size() != 1)
@@ -826,14 +838,24 @@ public class Arena {
         else return query.get(0);
     }
 
-    public void setVillagerSpawn(int num, Location location) {
-        DataManager.setConfigurationLocation(plugin, path + ".villager." + num, location);
+    public void setVillagerSpawn(int villagerSpawnID, Location location) {
+        DataManager.setConfigurationLocation(plugin, path + ".villager." + villagerSpawnID, location);
         refreshVillagerSpawns();
     }
 
-    public void centerVillagerSpawn(int num) {
-        DataManager.centerConfigLocation(plugin, path + ".villager." + num);
+    public void centerVillagerSpawn(int villagerSpawnID) {
+        DataManager.centerConfigLocation(plugin, path + ".villager." + villagerSpawnID);
         refreshVillagerSpawns();
+    }
+
+    /**
+     * Generates a new ID for a new villager spawn.
+     *
+     * @return New villager spawn ID
+     */
+    public int newVillagerSpawnID() {
+        return Utils.nextSmallestUniqueWhole(DataManager.getConfigLocationMap(plugin, path + ".villager")
+                .keySet());
     }
 
     public List<String> getBannedKits() {
@@ -952,21 +974,19 @@ public class Arena {
                             spawn.turnOnIndicator();
 
                         Location location = spawn.getLocation();
-                        if (location != null) {
-                            try {
-                                // Update particle locations
-                                first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
-                                second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
-                                        Math.sin(var + Math.PI));
+                        try {
+                            // Update particle locations
+                            first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
+                            second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
+                                    Math.sin(var + Math.PI));
 
-                                // Spawn particles
-                                Objects.requireNonNull(location.getWorld())
-                                        .spawnParticle(monsterParticle, first, 0);
-                                location.getWorld().spawnParticle(monsterParticle, second, 0);
-                            } catch (Exception e) {
-                                CommunicationManager.debugError(String.format("Monster particle generation error for " +
-                                                "arena %d.", arena), 2);
-                            }
+                            // Spawn particles
+                            Objects.requireNonNull(location.getWorld())
+                                    .spawnParticle(monsterParticle, first, 0);
+                            location.getWorld().spawnParticle(monsterParticle, second, 0);
+                        } catch (Exception e) {
+                            CommunicationManager.debugError(String.format("Monster particle generation error for " +
+                                            "arena %d.", arena), 2);
                         }
                     });
                     init = true;
@@ -1007,21 +1027,19 @@ public class Arena {
                             spawn.turnOnIndicator();
 
                         Location location = spawn.getLocation();
-                        if (location != null) {
-                            try {
-                                // Update particle locations
-                                first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
-                                second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
-                                        Math.sin(var + Math.PI));
+                        try {
+                            // Update particle locations
+                            first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
+                            second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
+                                    Math.sin(var + Math.PI));
 
-                                // Spawn particles
-                                Objects.requireNonNull(location.getWorld())
-                                        .spawnParticle(villagerParticle, first, 0);
-                                location.getWorld().spawnParticle(villagerParticle, second, 0);
-                            } catch (Exception e) {
-                                CommunicationManager.debugError(String.format("Villager particle generation error " +
-                                                "for arena %d.", arena), 2);
-                            }
+                            // Spawn particles
+                            Objects.requireNonNull(location.getWorld())
+                                    .spawnParticle(villagerParticle, first, 0);
+                            location.getWorld().spawnParticle(villagerParticle, second, 0);
+                        } catch (Exception e) {
+                            CommunicationManager.debugError(String.format("Villager particle generation error " +
+                                            "for arena %d.", arena), 2);
                         }
                     });
                     init = true;

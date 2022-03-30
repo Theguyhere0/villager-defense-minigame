@@ -29,9 +29,6 @@ import java.util.Objects;
 public class Inventories {
 	private static Main plugin;
 
-	// Easily alternate between different materials
-	public static final Material[] VILLAGER_MATS = {Material.WITHER_ROSE, Material.POPPY};
-
 	// Initiate this class on plugin startup
 	public static void setPlugin(Main plugin) {
 		Inventories.plugin = plugin;
@@ -524,7 +521,7 @@ public class Inventories {
 	public static Inventory createMonsterSpawnDashboard(Arena arena) {
 		List<ItemStack> buttons = new ArrayList<>();
 
-		// Capture all info boards
+		// Capture all monster spawns
 		DataManager.getConfigLocationMap(plugin, "a" + arena.getArena() + ".monster").forEach((id, location) ->
 				buttons.add(ItemManager.createItem(Material.ZOMBIE_HEAD,
 						CommunicationManager.format("&2&lMob Spawn " + id))));
@@ -541,7 +538,6 @@ public class Inventories {
 				"Mob Spawn",
 				buttons
 		);
-
 	}
 
 	// Menu for editing a specific monster spawn of an arena
@@ -600,26 +596,21 @@ public class Inventories {
 	public static Inventory createVillagerSpawnDashboard(Arena arena) {
 		List<ItemStack> buttons = new ArrayList<>();
 
-		// Prepare for material indexing
-		int index;
+		// Capture all monster spawns
+		DataManager.getConfigLocationMap(plugin, "a" + arena.getArena() + ".villager").forEach((id, location) ->
+				buttons.add(ItemManager.createItem(Material.POPPY,
+						CommunicationManager.format("&5&lVillager Spawn " + id))));
 
-		// Options to interact with all 8 possible villager spawns
-		for (int i = 0; i < 8; i++) {
-			// Check if the spawn exists
-			if (arena.getVillagerSpawn(i) != null)
-				index = 1;
-			else index = 0;
+		// Sort buttons
+		buttons.sort(Comparator.comparing(button ->
+				Integer.parseInt(Objects.requireNonNull(button.getItemMeta()).getDisplayName().split(" ")[2])));
 
-			// Create and set item
-			buttons.add(ItemManager.createItem(VILLAGER_MATS[index],
-					CommunicationManager.format("&5&lVillager Spawn " + (i + 1))));
-		}
-
-		return InventoryFactory.createFixedSizeInventory(
+		return InventoryFactory.createDynamicSizeBottomNavInventory(
 				new InventoryMeta(InventoryID.VILLAGER_SPAWN_DASHBOARD, InventoryType.MENU, arena),
 				CommunicationManager.format("&5&lVillager Spawns: " + arena.getName()),
-				1,
 				true,
+				true,
+				"Villager Spawn",
 				buttons
 		);
 	}

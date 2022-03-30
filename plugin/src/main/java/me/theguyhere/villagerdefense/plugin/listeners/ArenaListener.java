@@ -671,21 +671,20 @@ public class ArenaListener implements Listener {
 
         // Split spawns by type
         List<Location> grounds = new ArrayList<>();
-        for (int i = 0; i < 9; i++)
-            try {
-                if (arena.getMonsterSpawn(i).getLocation() != null && arena.getMonsterSpawnType(i) != 2)
-                    grounds.add(arena.getMonsterSpawn(i).getLocation());
-            } catch (NullPointerException ignored) {
-            }
+        for (ArenaSpawn arenaSpawn : arena.getMonsterSpawns()) {
+            if (arenaSpawn.getSpawnType() != ArenaSpawnType.MONSTER_AIR)
+                grounds.add(arenaSpawn.getLocation());
+        }
+
+        List<Location> airs = new ArrayList<>();
+        for (ArenaSpawn arenaSpawn : arena.getMonsterSpawns()) {
+            if (arenaSpawn.getSpawnType() != ArenaSpawnType.MONSTER_GROUND)
+                airs.add(arenaSpawn.getLocation());
+        }
+
+        // Default to all spawns if dedicated spawns are empty
         if (grounds.isEmpty())
             grounds = arena.getMonsterSpawns().stream().map(ArenaSpawn::getLocation).collect(Collectors.toList());
-        List<Location> airs = new ArrayList<>();
-        for (int i = 0; i < 9; i++)
-            try {
-                if (arena.getMonsterSpawn(i).getLocation() != null && arena.getMonsterSpawnType(i) != 1)
-                    airs.add(arena.getMonsterSpawn(i).getLocation());
-            } catch (NullPointerException ignored) {
-            }
         if (airs.isEmpty())
             airs = arena.getMonsterSpawns().stream().map(ArenaSpawn::getLocation).collect(Collectors.toList());
 

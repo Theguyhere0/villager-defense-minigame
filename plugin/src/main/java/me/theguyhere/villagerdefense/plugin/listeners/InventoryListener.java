@@ -814,7 +814,7 @@ public class InventoryListener implements Listener {
 				if (arenaInstance.getVillagerSpawns().isEmpty())
 					arenaInstance.setClosed(true);
 				PlayerManager.notifySuccess(player, "Mob spawn removed!");
-				player.openInventory(Inventories.createVillagerSpawnMenu(meta.getArena(), meta.getId()));
+				player.openInventory(Inventories.createVillagerSpawnDashboard(meta.getArena()));
 			}
 		}
 
@@ -1504,8 +1504,18 @@ public class InventoryListener implements Listener {
 		// Villager spawn dashboard for an arena
 		else if (invID == InventoryID.VILLAGER_SPAWN_DASHBOARD) {
 			// Edit spawn
-			if (Arrays.asList(Inventories.VILLAGER_MATS).contains(buttonType))
-				player.openInventory(Inventories.createVillagerSpawnMenu(meta.getArena(), slot));
+			if (buttonType == Material.POPPY)
+				player.openInventory(Inventories.createVillagerSpawnMenu(
+						meta.getArena(),
+						Integer.parseInt(buttonName.split(" ")[2])
+				));
+
+			// Create new
+			else if (buttonName.contains(CommunicationManager.format("&a&lNew ")))
+				player.openInventory(Inventories.createVillagerSpawnMenu(
+						meta.getArena(),
+						meta.getArena().newVillagerSpawnID())
+				);
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
