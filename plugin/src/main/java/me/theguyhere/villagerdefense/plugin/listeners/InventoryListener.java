@@ -788,7 +788,7 @@ public class InventoryListener implements Listener {
 			if (buttonName.contains("NO"))
 				player.openInventory(Inventories.createMonsterSpawnMenu(meta.getArena(), meta.getId()));
 
-			// Remove the monster spawn, then return to previous menu
+			// Remove the monster spawn, then return to dashboard
 			else if (buttonName.contains("YES")) {
 				Arena arenaInstance = meta.getArena();
 
@@ -796,7 +796,7 @@ public class InventoryListener implements Listener {
 				if (arenaInstance.getMonsterSpawns().isEmpty())
 					arenaInstance.setClosed(true);
 				PlayerManager.notifySuccess(player, "Mob spawn removed!");
-				player.openInventory(Inventories.createMonsterSpawnMenu(meta.getArena(), meta.getId()));
+				player.openInventory(Inventories.createMonsterSpawnDashboard(meta.getArena()));
 			}
 		}
 
@@ -884,18 +884,12 @@ public class InventoryListener implements Listener {
 
 		// Confirm to remove info board
 		else if (invID == InventoryID.INFO_BOARD_CONFIRM_MENU) {
-			String path = "infoBoard." + meta.getId();
-
 			// Return to previous menu
 			if (buttonName.contains("NO"))
 				player.openInventory(Inventories.createInfoBoardMenu(meta.getId()));
 
-				// Remove the info board, then return to previous menu
+			// Remove the info board, then return to dashboard
 			else if (buttonName.contains("YES")) {
-				// Remove info board data
-				config.set(path, null);
-				plugin.saveArenaData();
-
 				// Remove info board
 				plugin.getGameManager().removeInfoBoard(meta.getId());
 
@@ -1426,8 +1420,18 @@ public class InventoryListener implements Listener {
 		// Monster spawn dashboard for an arena
 		else if (invID == InventoryID.MONSTER_SPAWN_DASHBOARD) {
 			// Edit spawn
-			if (Arrays.asList(Inventories.MONSTER_MATS).contains(buttonType))
-				player.openInventory(Inventories.createMonsterSpawnMenu(meta.getArena(), slot));
+			if (buttonType == Material.ZOMBIE_HEAD)
+				player.openInventory(Inventories.createMonsterSpawnMenu(
+						meta.getArena(),
+						Integer.parseInt(buttonName.split(" ")[2])
+				));
+
+			// Create new
+			else if (buttonName.contains(CommunicationManager.format("&a&lNew ")))
+				player.openInventory(Inventories.createMonsterSpawnMenu(
+						meta.getArena(),
+						meta.getArena().newMonsterSpawnID())
+				);
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))

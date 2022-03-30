@@ -121,6 +121,7 @@ public class InventoryFactory {
     ) {
         int lines = (buttons.size() + 8 + (exitButton ? 1 : 0)) / 9;
         int invSize = lines * 9;
+        int fullSizedLines = buttons.size() / 9;
         int hangingButtons = buttons.size() % 9;
         Iterator<ItemStack> buttonIterator = buttons.iterator();
 
@@ -131,7 +132,7 @@ public class InventoryFactory {
         // Create inventory
         Inventory inv = Bukkit.createInventory(meta, invSize, formattedName);
 
-        for (int i = 0; i < lines - 1; i++)
+        for (int i = 0; i < fullSizedLines; i++)
             for (int j = 0; j < 9; j++)
                 inv.setItem(i * 9 + j, buttonIterator.next());
         for (int i = 0; i < hangingButtons; i++)
@@ -158,6 +159,7 @@ public class InventoryFactory {
     ) {
         int lines = (buttons.size() + 8) / 9 + 1;
         int invSize = lines * 9;
+        int fullSizedLines = buttons.size() / 9;
         int hangingButtons = buttons.size() % 9;
         Iterator<ItemStack> buttonIterator = buttons.iterator();
 
@@ -168,7 +170,7 @@ public class InventoryFactory {
         // Create inventory
         Inventory inv = Bukkit.createInventory(meta, invSize, formattedName);
 
-        for (int i = 0; i < lines - 2; i++)
+        for (int i = 0; i < fullSizedLines; i++)
             for (int j = 0; j < 9; j++)
                 inv.setItem(i * 9 + j, buttonIterator.next());
         for (int i = 0; i < hangingButtons; i++)

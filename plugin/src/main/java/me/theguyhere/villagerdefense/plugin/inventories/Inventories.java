@@ -30,7 +30,6 @@ public class Inventories {
 	private static Main plugin;
 
 	// Easily alternate between different materials
-	public static final Material[] MONSTER_MATS = {Material.SKELETON_SKULL, Material.ZOMBIE_HEAD};
 	public static final Material[] VILLAGER_MATS = {Material.WITHER_ROSE, Material.POPPY};
 
 	// Initiate this class on plugin startup
@@ -118,9 +117,13 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Capture all info boards
-		Objects.requireNonNull(plugin.getArenaData().getConfigurationSection("infoBoard"))
-				.getKeys(false).forEach(path -> buttons.add(ItemManager.createItem(Material.BIRCH_SIGN,
-						CommunicationManager.format("&6&lInfo Board " + path))));
+		DataManager.getConfigLocationMap(plugin, "infoBoard").forEach((id, location) ->
+				buttons.add(ItemManager.createItem(Material.BIRCH_SIGN,
+						CommunicationManager.format("&6&lInfo Board " + id))));
+
+		// Sort buttons
+		buttons.sort(Comparator.comparing(button ->
+				Integer.parseInt(Objects.requireNonNull(button.getItemMeta()).getDisplayName().split(" ")[2])));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
 				new InventoryMeta(InventoryID.INFO_BOARD_DASHBOARD, InventoryType.MENU),
@@ -521,36 +524,32 @@ public class Inventories {
 	public static Inventory createMonsterSpawnDashboard(Arena arena) {
 		List<ItemStack> buttons = new ArrayList<>();
 
-		// Prepare for material indexing
-		int index;
+		// Capture all info boards
+		DataManager.getConfigLocationMap(plugin, "a" + arena.getArena() + ".monster").forEach((id, location) ->
+				buttons.add(ItemManager.createItem(Material.ZOMBIE_HEAD,
+						CommunicationManager.format("&2&lMob Spawn " + id))));
 
-		// Options to interact with all 8 possible mob spawns
-		for (int i = 0; i < 8; i++) {
-			// Check if the spawn exists
-			if (arena.getMonsterSpawn(i) != null)
-				index = 1;
-			else index = 0;
+		// Sort buttons
+		buttons.sort(Comparator.comparing(button ->
+				Integer.parseInt(Objects.requireNonNull(button.getItemMeta()).getDisplayName().split(" ")[2])));
 
-			// Create and set item
-			buttons.add(ItemManager.createItem(MONSTER_MATS[index],
-					CommunicationManager.format("&2&lMob Spawn " + (i + 1))));
-		}
-
-		return InventoryFactory.createFixedSizeInventory(
+		return InventoryFactory.createDynamicSizeBottomNavInventory(
 				new InventoryMeta(InventoryID.MONSTER_SPAWN_DASHBOARD, InventoryType.MENU, arena),
 				CommunicationManager.format("&2&lMonster Spawns: " + arena.getName()),
-				1,
 				true,
+				true,
+				"Mob Spawn",
 				buttons
 		);
+
 	}
 
 	// Menu for editing a specific monster spawn of an arena
-	public static Inventory createMonsterSpawnMenu(Arena arena, int id) {
+	public static Inventory createMonsterSpawnMenu(Arena arena, int monsterSpawnID) {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Option to create or relocate monster spawn
-		if (arena.getMonsterSpawn(id) != null)
+		if (arena.getMonsterSpawn(monsterSpawnID) != null)
 			buttons.add(Buttons.relocate("Spawn"));
 		else buttons.add(Buttons.create("Spawn"));
 
@@ -564,7 +563,7 @@ public class Inventories {
 		buttons.add(Buttons.remove("SPAWN"));
 
 		// Toggle to set monster spawn type
-		switch (arena.getMonsterSpawnType(id)) {
+		switch (arena.getMonsterSpawnType(monsterSpawnID)) {
 			case 1:
 				buttons.add(ItemManager.createItem(Material.GUNPOWDER,
 						CommunicationManager.format("&5&lType: Ground")));
@@ -579,8 +578,8 @@ public class Inventories {
 		}
 
 		return InventoryFactory.createFixedSizeInventory(
-				new InventoryMeta(InventoryID.MONSTER_SPAWN_MENU, InventoryType.MENU, arena, id),
-				CommunicationManager.format("&2&lMonster Spawn " + (id + 1) + ": " + arena.getName()),
+				new InventoryMeta(InventoryID.MONSTER_SPAWN_MENU, InventoryType.MENU, arena, monsterSpawnID),
+				CommunicationManager.format("&2&lMonster Spawn " + monsterSpawnID + ": " + arena.getName()),
 				1,
 				true,
 				buttons
@@ -588,11 +587,11 @@ public class Inventories {
 	}
 
 	// Confirmation menu for removing monster spawns
-	public static Inventory createMonsterSpawnConfirmMenu(Arena arena, int id) {
+	public static Inventory createMonsterSpawnConfirmMenu(Arena arena, int monsterSpawnID) {
 		return InventoryFactory.createConfirmationMenu(
 				InventoryID.MONSTER_SPAWN_CONFIRM_MENU,
 				arena,
-				id,
+				monsterSpawnID,
 				CommunicationManager.format("&4&lRemove Monster Spawn?")
 		);
 	}
@@ -626,23 +625,23 @@ public class Inventories {
 	}
 
 	// Menu for editing a specific villager spawn of an arena
-	public static Inventory createVillagerSpawnMenu(Arena arena, int id) {
+	public static Inventory createVillagerSpawnMenu(Arena arena, int villagerSpawnID) {
 		return InventoryFactory.createLocationMenu(
 				InventoryID.VILLAGER_SPAWN_MENU,
 				arena,
-				id,
-				CommunicationManager.format("&5&lVillager Spawn " + (id + 1) + ": " + arena.getName()),
-				arena.getVillagerSpawn(id) != null,
+				villagerSpawnID,
+				CommunicationManager.format("&5&lVillager Spawn " + villagerSpawnID + ": " + arena.getName()),
+				arena.getVillagerSpawn(villagerSpawnID) != null,
 				"Spawn"
 		);
 	}
 
 	// Confirmation menu for removing mob spawns
-	public static Inventory createVillagerSpawnConfirmMenu(Arena arena, int id) {
+	public static Inventory createVillagerSpawnConfirmMenu(Arena arena, int villagerSpawnID) {
 		return InventoryFactory.createConfirmationMenu(
 				InventoryID.VILLAGER_SPAWN_CONFIRM_MENU,
 				arena,
-				id,
+				villagerSpawnID,
 				CommunicationManager.format("&4&lRemove Villager Spawn?")
 		);
 	}

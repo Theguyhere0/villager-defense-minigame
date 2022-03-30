@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models.arenas;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryID;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryType;
 import me.theguyhere.villagerdefense.plugin.inventories.Buttons;
@@ -725,7 +726,7 @@ public class Arena {
         DataManager.getConfigLocationMap(plugin, path + ".monster").forEach((id, location) ->
         {
             try {
-                monsterSpawns.add(new ArenaSpawn(Objects.requireNonNull(location), ArenaSpawnType.MONSTER, id + 1));
+                monsterSpawns.add(new ArenaSpawn(Objects.requireNonNull(location), ArenaSpawnType.MONSTER, id));
             } catch (InvalidLocationException | NullPointerException ignored) {
             }
         });
@@ -773,6 +774,15 @@ public class Arena {
     }
 
     /**
+     * Generates a new ID for a new info board.
+     *
+     * @return New info board ID
+     */
+    public int newMonsterSpawnID() {
+        return Utils.nextSmallestUniqueWhole(DataManager.getConfigLocationMap(plugin, path + ".monster").keySet());
+    }
+
+    /**
      * Refreshes the villager spawns of the arena.
      */
     public void refreshVillagerSpawns() {
@@ -788,7 +798,7 @@ public class Arena {
         DataManager.getConfigLocationMap(plugin, path + ".villager").forEach((id, location) ->
         {
             try {
-                villagerSpawns.add(new ArenaSpawn(Objects.requireNonNull(location), ArenaSpawnType.VILLAGER, id + 1));
+                villagerSpawns.add(new ArenaSpawn(Objects.requireNonNull(location), ArenaSpawnType.VILLAGER, id));
             } catch (InvalidLocationException | NullPointerException ignored) {
             }
         });
