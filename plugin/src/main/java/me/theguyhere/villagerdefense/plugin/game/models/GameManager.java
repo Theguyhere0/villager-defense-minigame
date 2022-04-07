@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.game.displays.InfoBoard;
@@ -21,14 +22,14 @@ import java.util.stream.Collectors;
 
 public class GameManager {
 	private static Main plugin;
-	private static final Arena[] arenas = new Arena[45];
-	private static final InfoBoard[] infoBoards = new InfoBoard[8];
+	private static final Map<Integer, Arena> arenas = new HashMap<>();
+	private static final Map<Integer, InfoBoard> infoBoards = new HashMap<>();
 	private static final Map<String, Leaderboard> leaderboards = new HashMap<>();
 	private static Location lobby;
 	private static final List<String> validSounds = new LinkedList<>(Arrays.asList("blocks", "cat", "chirp", "far",
 			"mall", "mellohi", "pigstep", "stal", "strad", "wait", "ward"));
 
-	public GameManager(Main plugin) {
+	public static void init(Main plugin) {
 		GameManager.plugin = plugin;
 		ConfigurationSection section;
 		wipeArenas();
@@ -36,24 +37,19 @@ public class GameManager {
 		if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1))
 			validSounds.add("otherside");
 
-		section = plugin.getArenaData().getConfigurationSection("");
+		section = plugin.getArenaData().getConfigurationSection("arena");
 		if (section != null)
 			section.getKeys(false)
-					.forEach(path -> {
-				if (path.charAt(0) == 'a' && path.length() < 4)
-					arenas[Integer.parseInt(path.substring(1))] = new Arena(plugin,
-							Integer.parseInt(path.substring(1)),
-							new Tasks(plugin, Integer.parseInt(path.substring(1))));
-			});
+					.forEach(id -> arenas.put(Integer.parseInt(id), new Arena(plugin, Integer.parseInt(id))));
 
 		section = plugin.getArenaData().getConfigurationSection("infoBoard");
 		if (section != null)
 			section.getKeys(false)
-					.forEach(path -> {
+					.forEach(id -> {
 						try {
-							Location location = DataManager.getConfigLocationNoPitch(plugin, "infoBoard." + path);
+							Location location = DataManager.getConfigLocationNoPitch(plugin, "infoBoard." + id);
 							if (location != null)
-								infoBoards[Integer.parseInt(path)] = new InfoBoard(location);
+								infoBoards.put(Integer.parseInt(id), new InfoBoard(location));
 						} catch (InvalidLocationException ignored) {
 						}
 					});
@@ -61,11 +57,11 @@ public class GameManager {
 		section = plugin.getArenaData().getConfigurationSection("leaderboard");
 		if (section != null)
 			section.getKeys(false)
-					.forEach(path -> {
+					.forEach(id -> {
 						try {
-							Location location = DataManager.getConfigLocationNoPitch(plugin, "leaderboard." + path);
+							Location location = DataManager.getConfigLocationNoPitch(plugin, "leaderboard." + id);
 							if (location != null)
-								leaderboards.put(path, new Leaderboard(path, plugin));
+								leaderboards.put(id, new Leaderboard(id, plugin));
 						} catch (InvalidLocationException ignored) {
 						}
 					});
@@ -75,13 +71,13 @@ public class GameManager {
 		plugin.setLoaded(true);
 	}
 
-	public static Arena getArena(int arenaNum) {
-		return arenas[arenaNum];
+	public static Arena getArena(int arenaID) {
+		return arenas.get(arenaID);
 	}
 
 	public static Arena getArena(String arenaName) {
 		try {
-			return Arrays.stream(arenas).filter(Objects::nonNull).filter(a -> a.getName() != null)
+			return arenas.values().stream().filter(Objects::nonNull).filter(a -> a.getName() != null)
 					.filter(a -> a.getName().equals(arenaName)).collect(Collectors.toList()).get(0);
 		} catch (Exception e) {
 			return null;
@@ -89,26 +85,24 @@ public class GameManager {
 	}
 
 	public static Arena getArena(Player player) {
-		return Arrays.stream(GameManager.arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+		return arenas.values().stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0);
 	}
 
-	public static void setArena(int arenaNum, Arena arena) {
-		arenas[arenaNum] = arena;
+	public static void addArena(int id, Arena arena) {
+		arenas.put(id, arena);
 	}
 
-	public static void removeArena(int arenaNum) {
-		if (arenas[arenaNum] != null) {
-			arenas[arenaNum].remove();
-			arenas[arenaNum] = null;
-		}
+	public static void removeArena(int arenaID) {
+		arenas.get(arenaID).remove();
+		arenas.remove(arenaID);
 	}
 
 	public static boolean checkPlayer(Player player) {
-		return Arrays.stream(arenas).filter(Objects::nonNull).anyMatch(arena -> arena.hasPlayer(player));
+		return arenas.values().stream().filter(Objects::nonNull).anyMatch(arena -> arena.hasPlayer(player));
 	}
 
-	public static Arena[] getArenas() {
+	public static Map<Integer, Arena> getArenas() {
 		return arenas;
 	}
 
@@ -126,7 +120,7 @@ public class GameManager {
 		assert manager != null;
 
 		Scoreboard board = manager.getNewScoreboard();
-		Arena arena = Arrays.stream(arenas).filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+		Arena arena = arenas.values().stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 				.collect(Collectors.toList()).get(0);
 
 		// Create score board
@@ -199,40 +193,49 @@ public class GameManager {
 		GameManager.lobby = lobby;
 	}
 
-	public void reloadLobby() {
+	public static void reloadLobby() {
 		lobby = DataManager.getConfigLocation(plugin, "lobby");
+	}
+
+	/**
+	 * Generates a new ID for a new info board.
+	 *
+	 * @return New info board ID
+	 */
+	public static int newArenaID() {
+		return Utils.nextSmallestUniqueWhole(arenas.keySet());
 	}
 
 	/**
 	 * Creates a new info board at the given location and deletes the old info board.
 	 * @param location - New location.
 	 */
-	public void setInfoBoard(Location location, int num) {
+	public static void setInfoBoard(Location location, int infoBoardID) {
 		// Save config location
-		DataManager.setConfigurationLocation(plugin, "infoBoard." + num, location);
+		DataManager.setConfigurationLocation(plugin, "infoBoard." + infoBoardID, location);
 
 		// Recreate the info board
-		refreshInfoBoard(num);
+		refreshInfoBoard(infoBoardID);
 	}
 
 	/**
 	 * Recreates the info board in game based on the location in the arena file.
 	 */
-	public void refreshInfoBoard(int num) {
+	public static void refreshInfoBoard(int infoBoardID) {
 		// Delete old board if needed
-		if (infoBoards[num] != null)
-			infoBoards[num].remove();
+		if (infoBoards.containsKey(infoBoardID))
+			infoBoards.get(infoBoardID).remove();
 
 		try {
 			// Create a new board and display it
-			infoBoards[num] = new InfoBoard(
-					Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin, "infoBoard." + num))
-            );
-			infoBoards[num].displayForOnline();
+			infoBoards.put(infoBoardID, new InfoBoard(
+					Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin, "infoBoard." + infoBoardID))
+            ));
+			infoBoards.get(infoBoardID).displayForOnline();
 		} catch (Exception e) {
-			CommunicationManager.debugError("Invalid location for info board " + num, 1);
+			CommunicationManager.debugError("Invalid location for info board " + infoBoardID, 1);
 			CommunicationManager.debugInfo("Info board location data may be corrupt. If data cannot be manually " +
-					"corrected in arenaData.yml, please delete the location data for info board " + num + ".",
+					"corrected in arenaData.yml, please delete the location data for info board " + infoBoardID + ".",
 					1);
 		}
 	}
@@ -240,30 +243,39 @@ public class GameManager {
 	/**
 	 * Centers the info board location along the x and z axis.
 	 */
-	public void centerInfoBoard(int num) {
+	public static void centerInfoBoard(int infoBoardID) {
 		// Center the location
-		DataManager.centerConfigLocation(plugin, "infoBoard." + num);
+		DataManager.centerConfigLocation(plugin, "infoBoard." + infoBoardID);
 
-		// Recreate the portal
-		refreshInfoBoard(num);
+		// Recreate the info board
+		refreshInfoBoard(infoBoardID);
 	}
 
 	/**
 	 * Removes the info board from the game and from the arena file.
 	 */
-	public void removeInfoBoard(int num) {
-		if (infoBoards[num] != null) {
-			infoBoards[num].remove();
-			infoBoards[num] = null;
+	public static void removeInfoBoard(int infoBoardID) {
+		if (infoBoards.containsKey(infoBoardID)) {
+			infoBoards.get(infoBoardID).remove();
+			infoBoards.remove(infoBoardID);
 		}
-		DataManager.setConfigurationLocation(plugin, "infoBoard." + num, null);
+		DataManager.setConfigurationLocation(plugin, "infoBoard." + infoBoardID, null);
+	}
+
+	/**
+	 * Generates a new ID for a new info board.
+	 *
+	 * @return New info board ID
+	 */
+	public static int newInfoBoardID() {
+		return Utils.nextSmallestUniqueWhole(infoBoards.keySet());
 	}
 
 	/**
 	 * Creates a new leaderboard at the given location and deletes the old leaderboard.
 	 * @param location - New location.
 	 */
-	public void setLeaderboard(Location location, String type) {
+	public static void setLeaderboard(Location location, String type) {
 		// Save config location
 		DataManager.setConfigurationLocation(plugin, "leaderboard." + type, location);
 
@@ -274,7 +286,7 @@ public class GameManager {
 	/**
 	 * Recreates the leaderboard in game based on the location in the arena file.
 	 */
-	public void refreshLeaderboard(String type) {
+	public static void refreshLeaderboard(String type) {
 		// Delete old board if needed
 		if (leaderboards.get(type) != null)
 			leaderboards.get(type).remove();
@@ -294,7 +306,7 @@ public class GameManager {
 	/**
 	 * Centers the leaderboard location along the x and z axis.
 	 */
-	public void centerLeaderboard(String type) {
+	public static void centerLeaderboard(String type) {
 		// Center the location
 		DataManager.centerConfigLocation(plugin, "leaderboard." + type);
 
@@ -305,7 +317,7 @@ public class GameManager {
 	/**
 	 * Removes the leaderboard from the game and from the arena file.
 	 */
-	public void removeLeaderboard(String type) {
+	public static void removeLeaderboard(String type) {
 		if (leaderboards.get(type) != null) {
 			leaderboards.get(type).remove();
 			leaderboards.remove(type);
@@ -318,7 +330,7 @@ public class GameManager {
 	 * @param player - The player to display all portals to.
 	 */
 	public static void displayAllPortals(Player player) {
-		Arrays.stream(arenas).filter(Objects::nonNull).map(Arena::getPortal)
+		arenas.values().stream().filter(Objects::nonNull).map(Arena::getPortal)
 				.filter(Objects::nonNull).forEach(portal -> portal.displayForPlayer(player));
 	}
 
@@ -327,7 +339,7 @@ public class GameManager {
 	 * @param player - The player to display all arena boards to.
 	 */
 	public static void displayAllArenaBoards(Player player) {
-		Arrays.stream(arenas).filter(Objects::nonNull).map(Arena::getArenaBoard)
+		arenas.values().stream().filter(Objects::nonNull).map(Arena::getArenaBoard)
 				.filter(Objects::nonNull).forEach(arenaBoard -> arenaBoard.displayForPlayer(player));
 	}
 
@@ -336,7 +348,7 @@ public class GameManager {
 	 * @param player - The player to display all info boards to.
 	 */
 	public static void displayAllInfoBoards(Player player) {
-		Arrays.stream(infoBoards).filter(Objects::nonNull).forEach(infoBoard -> infoBoard.displayForPlayer(player));
+		infoBoards.values().stream().filter(Objects::nonNull).forEach(infoBoard -> infoBoard.displayForPlayer(player));
 	}
 
 	/**
@@ -348,17 +360,17 @@ public class GameManager {
 	}
 
 	public static void displayAllIndicators(Player player) {
-		Arrays.stream(arenas).filter(Objects::nonNull).forEach(arena ->
+		arenas.values().stream().filter(Objects::nonNull).forEach(arena ->
 		{
 			if (arena.getPlayerSpawn() != null && arena.getPlayerSpawn().isOn())
 				arena.getPlayerSpawn().getSpawnIndicator().displayForPlayer(player);
 		});
-		Arrays.stream(arenas).filter(Objects::nonNull).forEach(arena ->
+		arenas.values().stream().filter(Objects::nonNull).forEach(arena ->
 				arena.getMonsterSpawns().forEach(spawn -> {
 					if (spawn.isOn())
 						spawn.getSpawnIndicator().displayForPlayer(player);
 				}));
-		Arrays.stream(arenas).filter(Objects::nonNull).forEach(arena ->
+		arenas.values().stream().filter(Objects::nonNull).forEach(arena ->
 				arena.getVillagerSpawns().forEach(spawn -> {
 					if (spawn.isOn())
 						spawn.getSpawnIndicator().displayForPlayer(player);
@@ -381,21 +393,21 @@ public class GameManager {
 	 * Refresh the portal of every arena.
 	 */
 	public static void refreshPortals() {
-		Arrays.stream(arenas).filter(Objects::nonNull).forEach(Arena::refreshPortal);
+		arenas.values().stream().filter(Objects::nonNull).forEach(Arena::refreshPortal);
 	}
 
 	/**
 	 * Refresh the arena board of every arena.
 	 */
 	public static void refreshArenaBoards() {
-		Arrays.stream(arenas).filter(Objects::nonNull).forEach(Arena::refreshArenaBoard);
+		arenas.values().stream().filter(Objects::nonNull).forEach(Arena::refreshArenaBoard);
 	}
 
 	/**
 	 * Refresh every info board.
 	 */
-	public void refreshInfoBoards() {
-		for (int i = 0; i < Arrays.stream(infoBoards).filter(Objects::nonNull).count(); i++) {
+	public static void refreshInfoBoards() {
+		for (int i = 0; i < infoBoards.values().stream().filter(Objects::nonNull).count(); i++) {
 			refreshInfoBoard(i);
 		}
 	}
@@ -403,15 +415,15 @@ public class GameManager {
 	/**
 	 * Refresh every leaderboard.
 	 */
-	public void refreshLeaderboards() {
+	public static void refreshLeaderboards() {
 		List<String> types = new ArrayList<>(leaderboards.keySet());
-		types.forEach(this::refreshLeaderboard);
+		types.forEach(GameManager::refreshLeaderboard);
 	}
 
 	/**
 	 * Refresh all holographics.
 	 */
-	public void refreshAll() {
+	public static void refreshAll() {
 		refreshPortals();
 		refreshArenaBoards();
 		refreshInfoBoards();
@@ -419,6 +431,6 @@ public class GameManager {
 	}
 
 	public static void wipeArenas() {
-		Arrays.stream(arenas).filter(Objects::nonNull).forEach(Arena::wipe);
+		arenas.values().stream().filter(Objects::nonNull).forEach(Arena::wipe);
 	}
 }

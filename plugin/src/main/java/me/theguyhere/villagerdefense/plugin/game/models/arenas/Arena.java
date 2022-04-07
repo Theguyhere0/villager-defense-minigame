@@ -1,8 +1,11 @@
 package me.theguyhere.villagerdefense.plugin.game.models.arenas;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.plugin.GUI.InventoryItems;
-import me.theguyhere.villagerdefense.plugin.GUI.InventoryMeta;
+import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.plugin.inventories.InventoryID;
+import me.theguyhere.villagerdefense.plugin.inventories.InventoryType;
+import me.theguyhere.villagerdefense.plugin.inventories.Buttons;
+import me.theguyhere.villagerdefense.plugin.inventories.InventoryMeta;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
@@ -20,7 +23,6 @@ import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.*;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.*;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -43,8 +45,8 @@ import java.util.stream.Stream;
 public class Arena {
     /** Instance of the plugin.*/
     private final Main plugin;
-    /** Arena number.*/
-    private final int arena;
+    /** Arena id.*/
+    private final int id;
     /** A variable to more quickly access the file configuration of the arena file.*/
     private final FileConfiguration config;
     /** Common string for all data paths in the arena file.*/
@@ -98,12 +100,12 @@ public class Arena {
     /** Arena scoreboard object for the arena.*/
     private ArenaBoard arenaBoard;
 
-    public Arena(Main plugin, int arena, Tasks task) {
+    public Arena(Main plugin, int arenaID) {
         this.plugin = plugin;
         config = plugin.getArenaData();
-        this.arena = arena;
-        path = "a" + arena;
-        this.task = task;
+        id = arenaID;
+        path = "arena." + arenaID;
+        task = new Tasks(plugin, this);
         currentWave = 0;
         villagers = 0;
         enemies = 0;
@@ -117,8 +119,16 @@ public class Arena {
         checkClose();
     }
 
-    public int getArena() {
-        return arena;
+    public int getId() {
+        return id;
+    }
+
+    /**
+     * Retrieves the path of the arena from the arena file.
+     * @return Arena path prefix.
+     */
+    public String getPath() {
+        return path;
     }
 
     /**
@@ -135,10 +145,13 @@ public class Arena {
      */
     public void setName(String name) throws InvalidNameException {
         // Check if name is not empty
-        if (name == null || name.length() == 0) throw new InvalidNameException();
+        if (name == null || name.length() == 0) throw new InvalidNameException("Empty");
+
+        // Check if name is the same as current
+        else if (name.equals(getName())) throw new InvalidNameException("Same");
 
         // Check for duplicate name
-        else if (GameManager.getArena(name) != null) throw new InvalidNameException();
+        else if (GameManager.getArena(name) != null) throw new InvalidNameException("Duplicate");
 
         // Save name
         else {
@@ -391,108 +404,48 @@ public class Arena {
      * Create the button for a given waiting music of the arena from the arena file.
      * @return A button for GUIs.
      */
-    public ItemStack getWaitingSoundButton(int number) {
+    public ItemStack getWaitingSoundButton(String name) {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
         enchants.put(Enchantment.DURABILITY, 1);
         String sound = config.getString(path + ".sounds.waiting");
         boolean selected;
 
-        switch (number) {
-            case 0:
+        switch (name) {
+            case "blocks":
                 selected = "blocks".equals(sound);
                 return ItemManager.createItem(Material.MUSIC_DISC_BLOCKS,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Blocks"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 1:
+            case "cat":
                 selected = "cat".equals(sound);
                 return ItemManager.createItem(Material.MUSIC_DISC_CAT,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Cat"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 2:
+            case "chirp":
                 selected = "chirp".equals(sound);
                 return ItemManager.createItem(Material.MUSIC_DISC_CHIRP,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Chirp"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 3:
+            case "far":
                 selected = "far".equals(sound);
                 return ItemManager.createItem(Material.MUSIC_DISC_FAR,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Far"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 4:
+            case "mall":
                 selected = "mall".equals(sound);
                 return ItemManager.createItem(Material.MUSIC_DISC_MALL,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Mall"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 5:
+            case "mellohi":
                 selected = "mellohi".equals(sound);
                 return ItemManager.createItem(Material.MUSIC_DISC_MELLOHI,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Mellohi"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 9:
+            case "otherside":
                 if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1)) {
                     selected = "otherside".equals(sound);
                     return ItemManager.createItem(Material.valueOf("MUSIC_DISC_OTHERSIDE"),
                             CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Otherside"),
-                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-                } else {
-                    selected = "pigstep".equals(sound);
-                    return ItemManager.createItem(Material.MUSIC_DISC_PIGSTEP,
-                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Pigstep"),
-                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-                }
-            case 10:
-                if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1)) {
-                    selected = "pigstep".equals(sound);
-                    return ItemManager.createItem(Material.MUSIC_DISC_PIGSTEP,
-                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Pigstep"),
-                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-                } else {
-                    selected = "stal".equals(sound);
-                    return ItemManager.createItem(Material.MUSIC_DISC_STAL,
-                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Stal"),
-                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-                }
-            case 11:
-                if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1)) {
-                    selected = "stal".equals(sound);
-                    return ItemManager.createItem(Material.MUSIC_DISC_STAL,
-                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Stal"),
-                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-                } else {
-                    selected = "strad".equals(sound);
-                    return ItemManager.createItem(Material.MUSIC_DISC_STRAD,
-                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Strad"),
-                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-                }
-            case 12:
-                if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1)) {
-                    selected = "strad".equals(sound);
-                    return ItemManager.createItem(Material.MUSIC_DISC_STRAD,
-                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Strad"),
-                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-                } else {
-                    selected = "wait".equals(sound);
-                    return ItemManager.createItem(Material.MUSIC_DISC_WAIT,
-                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Wait"),
-                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-                }
-            case 13:
-                if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1)) {
-                    selected = "wait".equals(sound);
-                    return ItemManager.createItem(Material.MUSIC_DISC_WAIT,
-                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Wait"),
-                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-                } else {
-                    selected = "ward".equals(sound);
-                    return ItemManager.createItem(Material.MUSIC_DISC_WARD,
-                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Ward"),
-                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-                }
-            case 14:
-                if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1)) {
-                    selected = "ward".equals(sound);
-                    return ItemManager.createItem(Material.MUSIC_DISC_WARD,
-                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Ward"),
                             ItemManager.BUTTON_FLAGS, selected ? enchants : null);
                 } else {
                     selected = !GameManager.getValidSounds().contains(sound);
@@ -500,6 +453,31 @@ public class Arena {
                             CommunicationManager.format((selected ? "&a&l" : "&4&l") + "None"),
                             ItemManager.BUTTON_FLAGS, selected ? enchants : null);
                 }
+            case "pigstep":
+                selected = "pigstep".equals(sound);
+                return ItemManager.createItem(Material.MUSIC_DISC_PIGSTEP,
+                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Pigstep"),
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+            case "stal":
+                selected = "stal".equals(sound);
+                return ItemManager.createItem(Material.MUSIC_DISC_STAL,
+                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Stal"),
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+            case "strad":
+                selected = "strad".equals(sound);
+                return ItemManager.createItem(Material.MUSIC_DISC_STRAD,
+                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Strad"),
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+            case "wait":
+                selected = "wait".equals(sound);
+                return ItemManager.createItem(Material.MUSIC_DISC_WAIT,
+                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Wait"),
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+            case "ward":
+                selected = "ward".equals(sound);
+                return ItemManager.createItem(Material.MUSIC_DISC_WARD,
+                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Ward"),
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
             default:
                 selected = !GameManager.getValidSounds().contains(sound);
                 return ItemManager.createItem(Material.LIGHT_GRAY_CONCRETE,
@@ -573,10 +551,11 @@ public class Arena {
                     path + ".portal")), this);
             portal.displayForOnline();
         } catch (Exception e) {
-            CommunicationManager.debugError("Invalid location for portal " + arena, 1,
+            CommunicationManager.debugError(String.format("Invalid location for %s's portal ", getName()), 1,
                     !Main.releaseMode, e);
-            CommunicationManager.debugInfo("Portal location data may be corrupt. If data cannot be manually corrected in " +
-                    "arenaData.yml, please delete the portal location data for arena " + arena + ".", 1);
+            CommunicationManager.debugInfo("Portal location data may be corrupt. If data cannot be manually " +
+                    "corrected in arenaData.yml, please delete the portal location data for " + getName() + ".",
+                    1);
         }
     }
 
@@ -639,11 +618,15 @@ public class Arena {
                     this);
             arenaBoard.displayForOnline();
         } catch (Exception e) {
-            CommunicationManager.debugError("Invalid location for arena board " + arena, 1,
-                    !Main.releaseMode, e);
-            CommunicationManager.debugInfo("Arena board location data may be corrupt. If data cannot be manually " +
-                    "corrected in arenaData.yml, please delete the arena board location data for arena " + arena + ".",
-                    1);
+            CommunicationManager.debugError(
+                    String.format("Invalid location for %s's arena board ", getName()),
+                    1,
+                    !Main.releaseMode,
+                    e
+            );
+            CommunicationManager.debugInfo("Arena board location data may be corrupt. If data cannot be " +
+                            "manually corrected in arenaData.yml, please delete the arena board location data for " +
+                            getName() + ".", 1);
         }
     }
 
@@ -756,7 +739,18 @@ public class Arena {
         DataManager.getConfigLocationMap(plugin, path + ".monster").forEach((id, location) ->
         {
             try {
-                monsterSpawns.add(new ArenaSpawn(Objects.requireNonNull(location), ArenaSpawnType.MONSTER, id + 1));
+                ArenaSpawnType spawnType;
+                switch (getMonsterSpawnType(id)) {
+                    case 1:
+                        spawnType = ArenaSpawnType.MONSTER_GROUND;
+                        break;
+                    case 2:
+                        spawnType = ArenaSpawnType.MONSTER_AIR;
+                        break;
+                    default:
+                        spawnType = ArenaSpawnType.MONSTER_ALL;
+                }
+                monsterSpawns.add(new ArenaSpawn(Objects.requireNonNull(location), spawnType, id));
             } catch (InvalidLocationException | NullPointerException ignored) {
             }
         });
@@ -772,11 +766,11 @@ public class Arena {
 
     /**
      * Retrieves a specific monster spawn of the arena.
-     * @param num - Monster spawn number.
+     * @param monsterSpawnID - Monster spawn ID.
      * @return Monster spawn.
      */
-    public ArenaSpawn getMonsterSpawn(int num) {
-        List<ArenaSpawn> query = monsterSpawns.stream().filter(spawn -> spawn.getId() == num + 1)
+    public ArenaSpawn getMonsterSpawn(int monsterSpawnID) {
+        List<ArenaSpawn> query = monsterSpawns.stream().filter(spawn -> spawn.getId() == monsterSpawnID)
                 .collect(Collectors.toList());
 
         if (query.size() != 1)
@@ -784,23 +778,33 @@ public class Arena {
         else return query.get(0);
     }
 
-    public void setMonsterSpawn(int num, Location location) {
-        DataManager.setConfigurationLocation(plugin, path + ".monster." + num, location);
+    public void setMonsterSpawn(int monsterSpawnID, Location location) {
+        DataManager.setConfigurationLocation(plugin, path + ".monster." + monsterSpawnID, location);
         refreshMonsterSpawns();
     }
 
-    public void centerMonsterSpawn(int num) {
-        DataManager.centerConfigLocation(plugin, path + ".monster." + num);
+    public void centerMonsterSpawn(int monsterSpawnID) {
+        DataManager.centerConfigLocation(plugin, path + ".monster." + monsterSpawnID);
         refreshMonsterSpawns();
     }
 
-    public void setMonsterSpawnType(int num, int type) {
-        config.set(path + ".monsters." + num + ".type", type);
+    public void setMonsterSpawnType(int monsterSpawnID, int type) {
+        config.set(path + ".monster." + monsterSpawnID + ".type", type);
         plugin.saveArenaData();
+        refreshMonsterSpawns();
     }
 
-    public int getMonsterSpawnType(int num) {
-        return config.getInt(path + ".monsters." + num + ".type");
+    public int getMonsterSpawnType(int monsterSpawnID) {
+        return config.getInt(path + ".monster." + monsterSpawnID + ".type");
+    }
+
+    /**
+     * Generates a new ID for a new monster spawn.
+     *
+     * @return New monster spawn ID
+     */
+    public int newMonsterSpawnID() {
+        return Utils.nextSmallestUniqueWhole(DataManager.getConfigLocationMap(plugin, path + ".monster").keySet());
     }
 
     /**
@@ -819,7 +823,7 @@ public class Arena {
         DataManager.getConfigLocationMap(plugin, path + ".villager").forEach((id, location) ->
         {
             try {
-                villagerSpawns.add(new ArenaSpawn(Objects.requireNonNull(location), ArenaSpawnType.VILLAGER, id + 1));
+                villagerSpawns.add(new ArenaSpawn(Objects.requireNonNull(location), ArenaSpawnType.VILLAGER, id));
             } catch (InvalidLocationException | NullPointerException ignored) {
             }
         });
@@ -835,11 +839,11 @@ public class Arena {
 
     /**
      * Retrieves a specific villager spawn of the arena.
-     * @param num - Villager spawn number.
+     * @param villagerSpawnID - Villager spawn ID.
      * @return Villager spawn.
      */
-    public ArenaSpawn getVillagerSpawn(int num) {
-        List<ArenaSpawn> query = villagerSpawns.stream().filter(spawn -> spawn.getId() == num + 1)
+    public ArenaSpawn getVillagerSpawn(int villagerSpawnID) {
+        List<ArenaSpawn> query = villagerSpawns.stream().filter(spawn -> spawn.getId() == villagerSpawnID)
                 .collect(Collectors.toList());
 
         if (query.size() != 1)
@@ -847,14 +851,24 @@ public class Arena {
         else return query.get(0);
     }
 
-    public void setVillagerSpawn(int num, Location location) {
-        DataManager.setConfigurationLocation(plugin, path + ".villager." + num, location);
+    public void setVillagerSpawn(int villagerSpawnID, Location location) {
+        DataManager.setConfigurationLocation(plugin, path + ".villager." + villagerSpawnID, location);
         refreshVillagerSpawns();
     }
 
-    public void centerVillagerSpawn(int num) {
-        DataManager.centerConfigLocation(plugin, path + ".villager." + num);
+    public void centerVillagerSpawn(int villagerSpawnID) {
+        DataManager.centerConfigLocation(plugin, path + ".villager." + villagerSpawnID);
         refreshVillagerSpawns();
+    }
+
+    /**
+     * Generates a new ID for a new villager spawn.
+     *
+     * @return New villager spawn ID
+     */
+    public int newVillagerSpawnID() {
+        return Utils.nextSmallestUniqueWhole(DataManager.getConfigLocationMap(plugin, path + ".villager")
+                .keySet());
     }
 
     public List<String> getBannedKits() {
@@ -875,7 +889,7 @@ public class Arena {
     public boolean setSpawnTableFile(String option) {
         String file = option + ".yml";
         if (option.equals("custom"))
-            file = "a" + arena + ".yml";
+            file = path + ".yml";
 
         if (new File(plugin.getDataFolder().getPath(), "spawnTables/" + file).exists() ||
                 option.equals("default")) {
@@ -929,7 +943,7 @@ public class Arena {
                     getPlayerSpawn().getLocation().getWorld().spawnParticle(spawnParticle, second, 0);
                 } catch (Exception e) {
                     CommunicationManager.debugError(
-                            String.format("Player spawn particle generation error for arena %d.", arena),
+                            String.format("Player spawn particle generation error for %s.", getName()),
                             2);
                 }
             }
@@ -973,21 +987,21 @@ public class Arena {
                             spawn.turnOnIndicator();
 
                         Location location = spawn.getLocation();
-                        if (location != null) {
-                            try {
-                                // Update particle locations
-                                first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
-                                second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
-                                        Math.sin(var + Math.PI));
+                        try {
+                            // Update particle locations
+                            first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
+                            second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
+                                    Math.sin(var + Math.PI));
 
-                                // Spawn particles
-                                Objects.requireNonNull(location.getWorld())
-                                        .spawnParticle(monsterParticle, first, 0);
-                                location.getWorld().spawnParticle(monsterParticle, second, 0);
-                            } catch (Exception e) {
-                                CommunicationManager.debugError(String.format("Monster particle generation error for " +
-                                                "arena %d.", arena), 2);
-                            }
+                            // Spawn particles
+                            Objects.requireNonNull(location.getWorld())
+                                    .spawnParticle(monsterParticle, first, 0);
+                            location.getWorld().spawnParticle(monsterParticle, second, 0);
+                        } catch (Exception e) {
+                            CommunicationManager.debugError(
+                                    String.format("Monster particle generation error for %s.", getName()),
+                                    2
+                            );
                         }
                     });
                     init = true;
@@ -1028,21 +1042,21 @@ public class Arena {
                             spawn.turnOnIndicator();
 
                         Location location = spawn.getLocation();
-                        if (location != null) {
-                            try {
-                                // Update particle locations
-                                first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
-                                second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
-                                        Math.sin(var + Math.PI));
+                        try {
+                            // Update particle locations
+                            first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
+                            second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
+                                    Math.sin(var + Math.PI));
 
-                                // Spawn particles
-                                Objects.requireNonNull(location.getWorld())
-                                        .spawnParticle(villagerParticle, first, 0);
-                                location.getWorld().spawnParticle(villagerParticle, second, 0);
-                            } catch (Exception e) {
-                                CommunicationManager.debugError(String.format("Villager particle generation error " +
-                                                "for arena %d.", arena), 2);
-                            }
+                            // Spawn particles
+                            Objects.requireNonNull(location.getWorld())
+                                    .spawnParticle(villagerParticle, first, 0);
+                            location.getWorld().spawnParticle(villagerParticle, second, 0);
+                        } catch (Exception e) {
+                            CommunicationManager.debugError(
+                                    String.format("Villager particle generation error for %s.", getName()),
+                                    2
+                            );
                         }
                     });
                     init = true;
@@ -1110,8 +1124,11 @@ public class Arena {
 
                     } catch (Exception e) {
                         CommunicationManager.debugError(
-                                String.format("Border particle generation error for arena %d.", arena),
-                                1, true, e);
+                                String.format("Border particle generation error for %s.", getName()),
+                                1,
+                                true,
+                                e
+                        );
                     }
                 }
             }, 0 , 20);
@@ -1366,7 +1383,7 @@ public class Arena {
                         )));
             } catch (Exception e) {
                 CommunicationManager.debugError(
-                        String.format("Attempted to retrieve arena records for arena %d but found none.", arena),
+                        String.format("Attempted to retrieve arena records for %s but found none.", getName()),
                         2);
             }
 
@@ -1633,14 +1650,17 @@ public class Arena {
         this.communityChest = communityChest;
     }
 
-    public Inventory getCustomShopEditor() {
+    public Inventory getCustomShopEditorMenu() {
         // Create inventory
-        Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54, CommunicationManager.format("&k") +
-                CommunicationManager.format("&6&lCustom Shop Editor: " + getName()));
+        Inventory inv = Bukkit.createInventory(
+                new InventoryMeta(InventoryID.CUSTOM_SHOP_EDITOR_MENU, InventoryType.MENU, this),
+                54,
+                CommunicationManager.format("&6&lCustom Shop Editor: " + getName())
+        );
 
         // Set exit option
         for (int i = 45; i < 54; i++)
-            inv.setItem(i, InventoryItems.exit());
+            inv.setItem(i, Buttons.exit());
 
         // Check for a stored inventory
         if (!config.contains(path + ".customShop"))
@@ -1677,14 +1697,16 @@ public class Arena {
                         } catch (Exception e) {
                             CommunicationManager.debugError(
                                     String.format(
-                                            "An error occurred retrieving an item from arena %d's custom shop.", arena),
-                                    2);
+                                            "An error occurred retrieving an item from %s's custom shop.", getName()),
+                                    2
+                            );
                         }
                     });
         } catch (Exception e) {
             CommunicationManager.debugError(
-                    String.format("Attempted to retrieve the custom shop inventory of arena %d but found none.", arena),
-                    1);
+                    String.format("Attempted to retrieve the custom shop inventory of %s but found none.", getName()),
+                    1
+            );
         }
 
         return inv;
@@ -1692,12 +1714,14 @@ public class Arena {
 
     public Inventory getCustomShop() {
         // Create inventory
-        Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54,
-                CommunicationManager.format("&k") + CommunicationManager.format("&6&l") +
-                        LanguageManager.names.customShop);
+        Inventory inv = Bukkit.createInventory(
+                new InventoryMeta(InventoryID.CUSTOM_SHOP_MENU, InventoryType.MENU, this),
+                54,
+                CommunicationManager.format("&6&l") + LanguageManager.names.customShop
+        );
 
         // Set exit option
-        inv.setItem(49, InventoryItems.exit());
+        inv.setItem(49, Buttons.exit());
 
         // Check for a stored inventory
         if (!config.contains(path + ".customShop"))
@@ -1734,14 +1758,16 @@ public class Arena {
                         } catch (Exception e) {
                             CommunicationManager.debugError(
                                     String.format(
-                                            "An error occurred retrieving an item from arena %d's custom shop.", arena),
-                                    2);
+                                            "An error occurred retrieving an item from %s's custom shop.", getName()),
+                                    2
+                            );
                         }
                     });
         } catch (Exception e) {
             CommunicationManager.debugError(
-                    String.format("Attempted to retrieve the custom shop inventory of arena %d but found none.", arena),
-                    1);
+                    String.format("Attempted to retrieve the custom shop inventory of %s but found none.", getName()),
+                    1
+            );
         }
 
         return inv;
@@ -1753,12 +1779,14 @@ public class Arena {
      */
     public Inventory getMockCustomShop() {
         // Create inventory
-        Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54,
-                CommunicationManager.format("&k") + CommunicationManager.format("&6&l" +
-                        LanguageManager.names.customShop + ": " + getName()));
+        Inventory inv = Bukkit.createInventory(
+                new InventoryMeta(InventoryID.MOCK_CUSTOM_SHOP_MENU, InventoryType.MENU, this),
+                54,
+                CommunicationManager.format("&6&l" + LanguageManager.names.customShop + ": " + getName())
+        );
 
         // Set exit option
-        inv.setItem(49, InventoryItems.exit());
+        inv.setItem(49, Buttons.exit());
 
         // Check for a stored inventory
         if (!config.contains(path + ".customShop"))
@@ -1795,14 +1823,16 @@ public class Arena {
                         } catch (Exception e) {
                             CommunicationManager.debugError(
                                     String.format(
-                                            "An error occurred retrieving an item from arena %d's custom shop.", arena),
-                                    2);
+                                            "An error occurred retrieving an item from %s's custom shop.", getName()),
+                                    2
+                            );
                         }
                     });
         } catch (Exception e) {
             CommunicationManager.debugError(
-                    String.format("Attempted to retrieve the custom shop inventory of arena %d but found none.", arena),
-                    1);
+                    String.format("Attempted to retrieve the custom shop inventory of %s but found none.", getName()),
+                    1
+            );
         }
 
         return inv;
@@ -1886,15 +1916,18 @@ public class Arena {
                 getCorner1() == null || getCorner2() == null ||
                 !Objects.equals(getCorner1().getWorld(), getCorner2().getWorld())) {
             setClosed(true);
-            CommunicationManager.debugInfo(String.format("Arena %d did not meet opening requirements and was closed.",
-                            arena),
-                    2);
+            CommunicationManager.debugInfo(
+                    String.format("%s did not meet opening requirements and was closed.", getName()),
+                    2
+            );
         }
 
         else if (plugin.getConfig().getBoolean("autoOpen")) {
             setClosed(false);
-            CommunicationManager.debugInfo(String.format("Arena %d met opening requirements and was opened.", arena),
-                    2);
+            CommunicationManager.debugInfo(
+                    String.format("%s met opening requirements and was opened.", getName()),
+                    2
+            );
         }
     }
 
@@ -1987,23 +2020,23 @@ public class Arena {
         setMonsterParticles(arenaToCopy.hasMonsterParticles());
         setVillagerParticles(arenaToCopy.hasVillagerParticles());
         setBorderParticles(arenaToCopy.hasBorderParticles());
-        if (config.contains("a" + arenaToCopy.getArena() + ".customShop"))
+        if (config.contains(arenaToCopy.getPath() + ".customShop"))
             try {
-                Objects.requireNonNull(config.getConfigurationSection("a" + arenaToCopy.getArena() +
-                                ".customShop"))
+                Objects.requireNonNull(config.getConfigurationSection(arenaToCopy.getPath() + ".customShop"))
                         .getKeys(false)
                         .forEach(index -> config.set(path + ".customShop." + index,
-                                config.getItemStack("a" + arenaToCopy.getArena() + ".customShop." + index)));
+                                config.getItemStack(arenaToCopy.getPath() + ".customShop." + index)));
                 plugin.saveArenaData();
             } catch (Exception e) {
                 CommunicationManager.debugError(
-                        String.format("Attempted to retrieve the custom shop inventory of arena %d but found none.",
-                                arena), 1);
+                        String.format("Unsuccessful attempt to copy the custom shop inventory of %s to %s.",
+                                arenaToCopy.getName(), getName()), 1);
             }
 
         CommunicationManager.debugInfo(
-                String.format("Copied the characteristics of arena %d to arena %d.", arenaToCopy.getArena(), arena),
-                2);
+                String.format("Copied the characteristics of %s to %s.", arenaToCopy.getName(), getName()),
+                2
+        );
     }
 
     /**
@@ -2013,7 +2046,7 @@ public class Arena {
         wipe();
         config.set(path, null);
         plugin.saveArenaData();
-        CommunicationManager.debugInfo(String.format("Removing arena %d.", arena), 1);
+        CommunicationManager.debugInfo(String.format("Removing %s.", getName()), 1);
     }
 
     /**

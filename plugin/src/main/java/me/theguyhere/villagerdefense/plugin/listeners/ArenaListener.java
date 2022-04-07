@@ -126,7 +126,7 @@ public class ArenaListener implements Listener {
             player.getInventory().setItem(6, GameItems.leave());
 
             // Debug message to console
-            CommunicationManager.debugInfo(player.getName() + "joined Arena " + arena.getArena(), 2);
+            CommunicationManager.debugInfo(player.getName() + "joined " + arena.getName(), 2);
         }
 
         // Enter arena if late arrival is allowed
@@ -151,7 +151,7 @@ public class ArenaListener implements Listener {
             arena.getTask().giveItems(fighter);
 
             // Debug message to console
-            CommunicationManager.debugInfo(player.getName() + "joined Arena " + arena.getArena(), 2);
+            CommunicationManager.debugInfo(player.getName() + "joined " + arena.getName(), 2);
 
             // Don't touch task updating
             return;
@@ -168,7 +168,7 @@ public class ArenaListener implements Listener {
             arena.refreshPortal();
 
             // Debug message to console
-            CommunicationManager.debugInfo(player.getName() + "is spectating Arena " + arena.getArena(),
+            CommunicationManager.debugInfo(player.getName() + "is spectating " + arena.getName(),
                     2);
 
             // Don't touch task updating
@@ -279,7 +279,7 @@ public class ArenaListener implements Listener {
         plugin.savePlayerData();
 
         // Debug message to console
-        CommunicationManager.debugInfo("Arena " + arena.getArena() + " completed wave " + arena.getCurrentWave(),
+        CommunicationManager.debugInfo("" + arena.getName() + " completed wave " + arena.getCurrentWave(),
                 2);
 
         // Win condition
@@ -334,7 +334,7 @@ public class ArenaListener implements Listener {
         spawnBosses(arena);
 
         // Debug message to console
-        CommunicationManager.debugInfo("Arena " + arena.getArena() + " started wave " + arena.getCurrentWave(),
+        CommunicationManager.debugInfo("" + arena.getName() + " started wave " + arena.getCurrentWave(),
                 2);
     }
 
@@ -374,7 +374,7 @@ public class ArenaListener implements Listener {
             plugin.savePlayerData();
 
             // Refresh leaderboards
-            plugin.getGameManager().refreshLeaderboards();
+            GameManager.refreshLeaderboards();
 
             // Remove the player from the arena and time limit bar if exists
             arena.getPlayers().remove(gamer);
@@ -495,7 +495,7 @@ public class ArenaListener implements Listener {
         GameManager.displayEverything(player);
 
         // Debug message to console
-        CommunicationManager.debugInfo(player.getName() + " left Arena " + arena.getArena(), 2);
+        CommunicationManager.debugInfo(player.getName() + " left " + arena.getName(), 2);
     }
 
     @EventHandler
@@ -580,7 +580,7 @@ public class ArenaListener implements Listener {
 
 
         // Debug message to console
-        CommunicationManager.debugInfo("Arena " + arena.getArena() + " is ending.", 2);
+        CommunicationManager.debugInfo("" + arena.getName() + " is ending.", 2);
     }
 
     @EventHandler
@@ -605,7 +605,7 @@ public class ArenaListener implements Listener {
 
         // Get spawn table
         if (arena.getSpawnTableFile().equals("custom"))
-            data = new DataManager(plugin, "spawnTables/a" + arena.getArena() + ".yml");
+            data = new DataManager(plugin, "spawnTables/" + arena.getPath() + ".yml");
         else data = new DataManager(plugin, "spawnTables/" + arena.getSpawnTableFile() + ".yml");
 
         Random r = new Random();
@@ -646,7 +646,7 @@ public class ArenaListener implements Listener {
 
         // Get spawn table
         if (arena.getSpawnTableFile().equals("custom"))
-            data = new DataManager(plugin, "spawnTables/a" + arena.getArena() + ".yml");
+            data = new DataManager(plugin, "spawnTables/" + arena.getPath() + ".yml");
         else data = new DataManager(plugin, "spawnTables/" + arena.getSpawnTableFile() + ".yml");
 
         Random r = new Random();
@@ -671,21 +671,20 @@ public class ArenaListener implements Listener {
 
         // Split spawns by type
         List<Location> grounds = new ArrayList<>();
-        for (int i = 0; i < 9; i++)
-            try {
-                if (arena.getMonsterSpawn(i).getLocation() != null && arena.getMonsterSpawnType(i) != 2)
-                    grounds.add(arena.getMonsterSpawn(i).getLocation());
-            } catch (NullPointerException ignored) {
-            }
+        for (ArenaSpawn arenaSpawn : arena.getMonsterSpawns()) {
+            if (arenaSpawn.getSpawnType() != ArenaSpawnType.MONSTER_AIR)
+                grounds.add(arenaSpawn.getLocation());
+        }
+
+        List<Location> airs = new ArrayList<>();
+        for (ArenaSpawn arenaSpawn : arena.getMonsterSpawns()) {
+            if (arenaSpawn.getSpawnType() != ArenaSpawnType.MONSTER_GROUND)
+                airs.add(arenaSpawn.getLocation());
+        }
+
+        // Default to all spawns if dedicated spawns are empty
         if (grounds.isEmpty())
             grounds = arena.getMonsterSpawns().stream().map(ArenaSpawn::getLocation).collect(Collectors.toList());
-        List<Location> airs = new ArrayList<>();
-        for (int i = 0; i < 9; i++)
-            try {
-                if (arena.getMonsterSpawn(i).getLocation() != null && arena.getMonsterSpawnType(i) != 1)
-                    airs.add(arena.getMonsterSpawn(i).getLocation());
-            } catch (NullPointerException ignored) {
-            }
         if (airs.isEmpty())
             airs = arena.getMonsterSpawns().stream().map(ArenaSpawn::getLocation).collect(Collectors.toList());
 
@@ -830,7 +829,7 @@ public class ArenaListener implements Listener {
 
         // Get spawn table
         if (arena.getSpawnTableFile().equals("custom"))
-            data = new DataManager(plugin, "spawnTables/a" + arena.getArena() + ".yml");
+            data = new DataManager(plugin, "spawnTables/" + arena.getPath() + ".yml");
         else data = new DataManager(plugin, "spawnTables/" + arena.getSpawnTableFile() + ".yml");
 
         Random r = new Random();

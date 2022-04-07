@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.plugin.listeners;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
-import me.theguyhere.villagerdefense.plugin.GUI.Inventories;
+import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
@@ -83,7 +83,7 @@ public class GameListener implements Listener {
 
 		// Get spawn table
 		if (arena.getSpawnTableFile().equals("custom"))
-			data = new DataManager(plugin, "spawnTables/a" + arena.getArena() + ".yml");
+			data = new DataManager(plugin, "spawnTables/a" + arena.getId() + ".yml");
 		else data = new DataManager(plugin, "spawnTables/" + arena.getSpawnTableFile() + ".yml");
 
 		// Update villager count
@@ -112,13 +112,13 @@ public class GameListener implements Listener {
 			if (ent instanceof Wither) {
 				if (arena.hasGemDrop())
 					e.getDrops().add(ItemManager.createItems(Material.EMERALD, 20, null,
-							Integer.toString(arena.getArena())));
+							Integer.toString(arena.getId())));
 				if (arena.hasExpDrop())
 					e.setDroppedExp((int) (arena.getCurrentDifficulty() * 40));
 			} else {
 				if (arena.hasGemDrop()) {
 					e.getDrops().add(ItemManager.createItem(Material.EMERALD, null,
-							Integer.toString(arena.getArena())));
+							Integer.toString(arena.getId())));
 
 					// Get rare loot probability
 					double probability;
@@ -418,15 +418,15 @@ public class GameListener implements Listener {
 
 		// Open shop inventory
 		if (GameItems.shop().equals(item))
-			player.openInventory(Inventories.createShop(arena.getCurrentWave() / 10 + 1, arena));
+			player.openInventory(Inventories.createShopMenu(arena.getCurrentWave() / 10 + 1, arena));
 
 		// Open kit selection menu
 		else if (GameItems.kitSelector().equals(item))
-			player.openInventory(Inventories.createSelectKitsInventory(player, arena));
+			player.openInventory(Inventories.createSelectKitsMenu(player, arena));
 
 		// Open challenge selection menu
 		else if (GameItems.challengeSelector().equals(item))
-			player.openInventory(Inventories.createSelectChallengesInventory(gamer, arena));
+			player.openInventory(Inventories.createSelectChallengesMenu(gamer, arena));
 
 		// Make player leave
 		else if (GameItems.leave().equals(item))

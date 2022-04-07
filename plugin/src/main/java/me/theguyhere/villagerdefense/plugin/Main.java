@@ -3,12 +3,12 @@ package me.theguyhere.villagerdefense.plugin;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Log;
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
-import me.theguyhere.villagerdefense.plugin.GUI.Inventories;
 import me.theguyhere.villagerdefense.plugin.commands.CommandTab;
 import me.theguyhere.villagerdefense.plugin.commands.Commands;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLanguageKeyException;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
+import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import me.theguyhere.villagerdefense.plugin.listeners.*;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
@@ -25,7 +25,9 @@ import org.bukkit.scoreboard.Team;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+@SuppressWarnings("unused")
 public class Main extends JavaPlugin {
 	// Yaml file managers
 	private final DataManager arenaData = new DataManager(this, "arenaData.yml");
@@ -35,7 +37,6 @@ public class Main extends JavaPlugin {
 
 	// Global instance variables
 	private final NMSManager nmsManager = NMSVersion.getCurrent().getNmsManager();
-	private GameManager gameManager;
 	private boolean loaded = false;
 	private final List<String> unloadedWorlds = new ArrayList<>();
 
@@ -43,7 +44,7 @@ public class Main extends JavaPlugin {
 	private static boolean outdated = false; // DO NOT CHANGE
 	public static final boolean releaseMode = false;
 	public static final int configVersion = 7;
-	public static final int arenaDataVersion = 5;
+	public static final int arenaDataVersion = 6;
 	public static final int playerDataVersion = 1;
 	public static final int spawnTableVersion = 1;
 	public static final int languageFileVersion = 13;
@@ -156,36 +157,51 @@ public class Main extends JavaPlugin {
 		// Gather unloaded world list
 		ConfigurationSection section;
 
-		// Relevant worlds from arenas
-		section = getArenaData().getConfigurationSection("");
+		// Relevant worlds from arenas + check for duplicate arena names
+		AtomicBoolean duplicate = new AtomicBoolean(false);
+		List<String> arenaNames = new ArrayList<>();
+		section = getArenaData().getConfigurationSection("arena");
 		if (section != null)
 			section.getKeys(false)
-					.forEach(path -> {
-						if (path.charAt(0) == 'a' && path.length() < 4) {
-							// Arena board world
-							checkAddUnloadedWorld(getArenaData().getString(path + ".arenaBoard.world"));
+					.forEach(id -> {
+						String path = "arena." + id;
 
-							// Arena world
-							checkAddUnloadedWorld(getArenaData().getString(path + ".spawn.world"));
+						// Check for name in list
+						if (arenaNames.contains(getArenaData().getString(path + ".name")))
+							duplicate.set(true);
+						else arenaNames.add(getArenaData().getString(path + ".name"));
 
-							// Portal world
-							checkAddUnloadedWorld(getArenaData().getString(path + ".portal.world"));
-						}
+						// Arena board world
+						checkAddUnloadedWorld(getArenaData().getString(path + ".arenaBoard.world"));
+
+						// Arena world
+						checkAddUnloadedWorld(getArenaData().getString(path + ".spawn.world"));
+
+						// Portal world
+						checkAddUnloadedWorld(getArenaData().getString(path + ".portal.world"));
 					});
+
+		if (duplicate.get()) {
+			urgentConsoleWarning("Some of your arenas have duplicate names! That is not allowed :(");
+			urgentConsoleWarning("Shutting down plugin to protect your data. Please fix and restart server.");
+			Main plugin = this;
+			Bukkit.getScheduler().scheduleSyncDelayedTask(this,
+					() -> getServer().getPluginManager().disablePlugin(plugin), 0);
+		}
 
 		// Relevant worlds from info boards
 		section = getArenaData().getConfigurationSection("infoBoard");
 		if (section != null)
 			section.getKeys(false)
-					.forEach(path ->
-							checkAddUnloadedWorld(getArenaData().getString("infoBoard." + path + ".world")));
+					.forEach(id ->
+							checkAddUnloadedWorld(getArenaData().getString("infoBoard." + id + ".world")));
 
 		// Relevant worlds from leaderboards
 		section = getArenaData().getConfigurationSection("leaderboard");
 		if (section != null)
 			section.getKeys(false)
-					.forEach(path ->
-							checkAddUnloadedWorld(getArenaData().getString("leaderboard." + path + ".world")));
+					.forEach(id ->
+							checkAddUnloadedWorld(getArenaData().getString("leaderboard." + id + ".world")));
 
 		// Lobby world
 		checkAddUnloadedWorld(getArenaData().getString("lobby.world"));
@@ -292,36 +308,51 @@ public class Main extends JavaPlugin {
 		// Gather unloaded world list
 		ConfigurationSection section;
 
-		// Relevant worlds from arenas
-		section = getArenaData().getConfigurationSection("");
+		// Relevant worlds from arenas + check for duplicate arena names
+		AtomicBoolean duplicate = new AtomicBoolean(false);
+		List<String> arenaNames = new ArrayList<>();
+		section = getArenaData().getConfigurationSection("arena");
 		if (section != null)
 			section.getKeys(false)
-					.forEach(path -> {
-						if (path.charAt(0) == 'a' && path.length() < 4) {
-							// Arena board world
-							checkAddUnloadedWorld(getArenaData().getString(path + ".arenaBoard.world"));
+					.forEach(id -> {
+						String path = "arena." + id;
 
-							// Arena world
-							checkAddUnloadedWorld(getArenaData().getString(path + ".spawn.world"));
+						// Check for name in list
+						if (arenaNames.contains(getArenaData().getString(path + ".name")))
+							duplicate.set(true);
+						else arenaNames.add(getArenaData().getString(path + ".name"));
 
-							// Portal world
-							checkAddUnloadedWorld(getArenaData().getString(path + ".portal.world"));
-						}
+						// Arena board world
+						checkAddUnloadedWorld(getArenaData().getString(path + ".arenaBoard.world"));
+
+						// Arena world
+						checkAddUnloadedWorld(getArenaData().getString(path + ".spawn.world"));
+
+						// Portal world
+						checkAddUnloadedWorld(getArenaData().getString(path + ".portal.world"));
 					});
+
+		if (duplicate.get()) {
+			urgentConsoleWarning("Some of your arenas have duplicate names! That is not allowed :(");
+			urgentConsoleWarning("Shutting down plugin to protect your data. Please fix and restart server.");
+			Main plugin = this;
+			Bukkit.getScheduler().scheduleSyncDelayedTask(this,
+					() -> getServer().getPluginManager().disablePlugin(plugin), 0);
+		}
 
 		// Relevant worlds from info boards
 		section = getArenaData().getConfigurationSection("infoBoard");
 		if (section != null)
 			section.getKeys(false)
-					.forEach(path ->
-							checkAddUnloadedWorld(getArenaData().getString("infoBoard." + path + ".world")));
+					.forEach(id ->
+							checkAddUnloadedWorld(getArenaData().getString("infoBoard." + id + ".world")));
 
 		// Relevant worlds from leaderboards
 		section = getArenaData().getConfigurationSection("leaderboard");
 		if (section != null)
 			section.getKeys(false)
-					.forEach(path ->
-							checkAddUnloadedWorld(getArenaData().getString("leaderboard." + path + ".world")));
+					.forEach(id ->
+							checkAddUnloadedWorld(getArenaData().getString("leaderboard." + id + ".world")));
 
 		// Lobby world
 		checkAddUnloadedWorld(getArenaData().getString("lobby.world"));
@@ -330,12 +361,8 @@ public class Main extends JavaPlugin {
 		resetGameManager();
 	}
 
-	public GameManager getGameManager() {
-		return gameManager;
-	}
-
 	public void resetGameManager() {
-		gameManager = new GameManager(this);
+		GameManager.init(this);
 
 		// Check for proper initialization with worlds
 		if (unloadedWorlds.size() > 0) {
