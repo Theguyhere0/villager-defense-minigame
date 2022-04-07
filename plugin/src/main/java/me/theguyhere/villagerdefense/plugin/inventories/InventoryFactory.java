@@ -157,15 +157,18 @@ public class InventoryFactory {
             @NotNull String dataStructureName,
             @NotNull List<ItemStack> buttons
     ) {
-        int lines = (buttons.size() + 8) / 9 + 1;
-        int invSize = lines * 9;
-        int fullSizedLines = buttons.size() / 9;
-        int hangingButtons = buttons.size() % 9;
-        Iterator<ItemStack> buttonIterator = buttons.iterator();
+        int pages = (buttons.size() + 44) / 45;
+        int page = meta.getPage();
+        List<ItemStack> visibleButtons = buttons.subList(
+                Math.max((Math.min(page, pages) - 1) * 45, 0),
+                Math.min((Math.min(page, pages)) * 45, buttons.size())
+        );
 
-        // Ensure valid number of lines
-        if (lines > 6)
-            return null;
+        int lines = (visibleButtons.size() + 8) / 9 + 1;
+        int invSize = lines * 9;
+        int fullSizedLines = visibleButtons.size() / 9;
+        int hangingButtons = visibleButtons.size() % 9;
+        Iterator<ItemStack> buttonIterator = visibleButtons.iterator();
 
         // Create inventory
         Inventory inv = Bukkit.createInventory(meta, invSize, formattedName);
@@ -188,6 +191,13 @@ public class InventoryFactory {
         if (newButton)
             inv.setItem(invSize - 5, Buttons.newAdd(dataStructureName));
 
+        // Set page navigation buttons
+        if (page > 1)
+            inv.setItem(invSize - 7, Buttons.previousPage());
+
+        if (page < pages)
+            inv.setItem(invSize - 3, Buttons.nextPage());
+
         return inv;
     }
 
@@ -202,18 +212,27 @@ public class InventoryFactory {
             int frozenRows,
             List<ItemStack>... frozenRowButtons
     ) {
-        int lines = (buttons.size() + 8) / 9 + 1 + frozenRows;
+        // Ensure valid number of frozen rows
+        if (frozenRows > 5)
+            return null;
+
+        int freeSpaces = ((5 - frozenRows) * 9);
+        int pages = (buttons.size() + freeSpaces - 1) / freeSpaces;
+        int page = meta.getPage();
+        List<ItemStack> visibleButtons = buttons.subList(
+                Math.max((Math.min(page, pages) - 1) * freeSpaces, 0),
+                Math.min((Math.min(page, pages)) * freeSpaces, buttons.size())
+        );
+
+
+        int lines = (visibleButtons.size() + 8) / 9 + 1 + frozenRows;
         int invSize = lines * 9;
-        int fullSizedLines = buttons.size() / 9;
-        int hangingButtons = buttons.size() % 9;
-        Iterator<ItemStack> buttonIterator = buttons.iterator();
+        int fullSizedLines = visibleButtons.size() / 9;
+        int hangingButtons = visibleButtons.size() % 9;
+        Iterator<ItemStack> buttonIterator = visibleButtons.iterator();
 
         // Ensure valid lists for the frozen rows
         if (frozenRows != frozenRowButtons.length)
-            return null;
-
-        // Ensure valid number of lines
-        if (lines > 6)
             return null;
 
         // Create inventory
@@ -274,6 +293,13 @@ public class InventoryFactory {
         // Set new button
         if (newButton)
             inv.setItem(invSize - 5, Buttons.newAdd(dataStructureName));
+
+        // Set page navigation buttons
+        if (page > 1)
+            inv.setItem(invSize - 7, Buttons.previousPage());
+
+        if (page < pages)
+            inv.setItem(invSize - 3, Buttons.nextPage());
 
         return inv;
     }

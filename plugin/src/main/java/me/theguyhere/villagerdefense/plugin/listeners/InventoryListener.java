@@ -218,6 +218,14 @@ public class InventoryListener implements Listener {
 			// Return to main menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createMainMenu());
+
+			// Previous page
+			else if (button.equals(Buttons.previousPage()))
+				player.openInventory(Inventories.createArenasDashboard(meta.getPage() - 1));
+
+			// Next page
+			else if (button.equals(Buttons.nextPage()))
+				player.openInventory(Inventories.createArenasDashboard(meta.getPage() + 1));
 		}
 
 		// Lobby menu
@@ -281,6 +289,14 @@ public class InventoryListener implements Listener {
 			// Create new
 			else if (buttonName.contains(CommunicationManager.format("&a&lNew ")))
 				player.openInventory(Inventories.createInfoBoardMenu(GameManager.newInfoBoardID()));
+
+			// Previous page
+			else if (button.equals(Buttons.previousPage()))
+				player.openInventory(Inventories.createInfoBoardDashboard(meta.getPage() - 1));
+
+			// Next page
+			else if (button.equals(Buttons.nextPage()))
+				player.openInventory(Inventories.createInfoBoardDashboard(meta.getPage() + 1));
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
@@ -1436,6 +1452,14 @@ public class InventoryListener implements Listener {
 						meta.getArena().newMonsterSpawnID())
 				);
 
+			// Previous page
+			else if (button.equals(Buttons.previousPage()))
+				player.openInventory(Inventories.createMonsterSpawnDashboard(meta.getArena(), meta.getPage() - 1));
+
+			// Next page
+			else if (button.equals(Buttons.nextPage()))
+				player.openInventory(Inventories.createMonsterSpawnDashboard(meta.getArena(), meta.getPage() + 1));
+
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createMobsMenu(meta.getArena()));
@@ -1519,6 +1543,20 @@ public class InventoryListener implements Listener {
 						meta.getArena(),
 						meta.getArena().newVillagerSpawnID())
 				);
+
+			// Previous page
+			else if (button.equals(Buttons.previousPage()))
+				player.openInventory(Inventories.createVillagerSpawnDashboard(
+						meta.getArena(),
+						meta.getPage() - 1
+				));
+
+			// Next page
+			else if (button.equals(Buttons.nextPage()))
+				player.openInventory(Inventories.createVillagerSpawnDashboard(
+						meta.getArena(),
+						meta.getPage() + 1
+				));
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
@@ -2688,6 +2726,14 @@ public class InventoryListener implements Listener {
 				arena1.setDynamicPrices(true);
 				arena1.setDifficultyLabel("Insane");
 			}
+
+			// Previous page
+			else if (button.equals(Buttons.previousPage()))
+				player.openInventory(Inventories.createCopySettingsMenu(meta.getArena(), meta.getPage() - 1));
+
+			// Next page
+			else if (button.equals(Buttons.nextPage()))
+				player.openInventory(Inventories.createCopySettingsMenu(meta.getArena(), meta.getPage() + 1));
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit)) {

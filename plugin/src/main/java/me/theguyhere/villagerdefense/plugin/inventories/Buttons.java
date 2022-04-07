@@ -54,6 +54,16 @@ public class Buttons {
 
     // "New x" button
     public static ItemStack newAdd(String x) {
-        return ItemManager.createItem(Material.EMERALD, CommunicationManager.format("&a&lNew " + x));
+        return ItemManager.createItem(Material.NETHER_STAR, CommunicationManager.format("&a&lNew " + x));
+    }
+
+    // "Previous Page" button
+    public static ItemStack previousPage() {
+        return ItemManager.createItem(Material.PRISMARINE_SHARD, CommunicationManager.format("&e&lPrevious Page"));
+    }
+
+    // "Next Page" button
+    public static ItemStack nextPage() {
+        return ItemManager.createItem(Material.FEATHER, CommunicationManager.format("&d&lNext Page"));
     }
 }

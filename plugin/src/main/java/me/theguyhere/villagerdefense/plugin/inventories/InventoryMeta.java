@@ -13,17 +13,22 @@ public class InventoryMeta implements InventoryHolder {
     private final Player player;
     private final Arena arena;
     private final int id;
+    private final int page;
 
     public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type) {
         this(inventoryID, type, null, 0);
+    }
+
+    public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type, int page) {
+        this(inventoryID, type, null, null, 0, page);
     }
 
     public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type, Arena arena) {
         this(inventoryID, type, arena, 0);
     }
 
-    public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type, int id) {
-        this(inventoryID, type, null, id);
+    public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type, int page, Arena arena) {
+        this(inventoryID, type, null, arena, 0, page);
     }
 
     public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type, Arena arena, int id) {
@@ -45,11 +50,23 @@ public class InventoryMeta implements InventoryHolder {
             Arena arena,
             int id
     ) {
+        this(inventoryID, type, player, arena, id, 1);
+    }
+
+    public InventoryMeta(
+            @NotNull InventoryID inventoryID,
+            @NotNull InventoryType type,
+            Player player,
+            Arena arena,
+            int id,
+            int page
+    ) {
         this.inventoryID = inventoryID;
         this.type = type;
         this.player = player;
         this.arena = arena;
         this.id = id;
+        this.page = page;
     }
 
     public @NotNull InventoryID getInventoryID() {
@@ -70,6 +87,10 @@ public class InventoryMeta implements InventoryHolder {
 
     public int getId() {
         return id;
+    }
+
+    public int getPage() {
+        return page;
     }
 
     @Override

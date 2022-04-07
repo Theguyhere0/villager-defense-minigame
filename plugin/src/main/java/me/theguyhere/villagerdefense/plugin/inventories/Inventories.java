@@ -68,6 +68,9 @@ public class Inventories {
 
 	// Menu of all the arenas
 	public static Inventory createArenasDashboard() {
+		return createArenasDashboard(1);
+	}
+	public static Inventory createArenasDashboard(int page) {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Gather all arenas in order
@@ -77,7 +80,7 @@ public class Inventories {
 		)));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-				new InventoryMeta(InventoryID.ARENA_DASHBOARD, InventoryType.MENU),
+				new InventoryMeta(InventoryID.ARENA_DASHBOARD, InventoryType.MENU, page),
 				CommunicationManager.format("&9&lArenas"),
 				true,
 				true,
@@ -106,6 +109,9 @@ public class Inventories {
 
 	// Dashboard for info boards
 	public static Inventory createInfoBoardDashboard() {
+		return createInfoBoardDashboard(1);
+	}
+	public static Inventory createInfoBoardDashboard(int page) {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Capture all info boards
@@ -118,7 +124,7 @@ public class Inventories {
 				Integer.parseInt(Objects.requireNonNull(button.getItemMeta()).getDisplayName().split(" ")[2])));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-				new InventoryMeta(InventoryID.INFO_BOARD_DASHBOARD, InventoryType.MENU),
+				new InventoryMeta(InventoryID.INFO_BOARD_DASHBOARD, InventoryType.MENU, page),
 				CommunicationManager.format("&6&lInfo Boards"),
 				true,
 				true,
@@ -514,6 +520,9 @@ public class Inventories {
 
 	// Dashboard for editing the monster spawns of an arena
 	public static Inventory createMonsterSpawnDashboard(Arena arena) {
+		return createMonsterSpawnDashboard(arena, 1);
+	}
+	public static Inventory createMonsterSpawnDashboard(Arena arena, int page) {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Capture all monster spawns
@@ -589,6 +598,9 @@ public class Inventories {
 
 	// Dashboard for editing the villager spawns of an arena
 	public static Inventory createVillagerSpawnDashboard(Arena arena) {
+		return createVillagerSpawnDashboard(arena, 1);
+	}
+	public static Inventory createVillagerSpawnDashboard(Arena arena, int page) {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Capture all monster spawns
@@ -601,7 +613,7 @@ public class Inventories {
 				Integer.parseInt(Objects.requireNonNull(button.getItemMeta()).getDisplayName().split(" ")[2])));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-				new InventoryMeta(InventoryID.VILLAGER_SPAWN_DASHBOARD, InventoryType.MENU, arena),
+				new InventoryMeta(InventoryID.VILLAGER_SPAWN_DASHBOARD, InventoryType.MENU, page, arena),
 				CommunicationManager.format("&5&lVillager Spawns: " + arena.getName()),
 				true,
 				true,
@@ -1310,6 +1322,9 @@ public class Inventories {
 
 	// Menu to copy game settings
 	public static Inventory createCopySettingsMenu(Arena arena) {
+		return createCopySettingsMenu(arena, 1);
+	}
+	public static Inventory createCopySettingsMenu(Arena arena, int page) {
 		List<ItemStack> buttons = new ArrayList<>();
 		List<ItemStack> frozenButtons = new ArrayList<>();
 
@@ -1341,7 +1356,7 @@ public class Inventories {
 				CommunicationManager.format("&d&lInsane Preset")));
 
 		return InventoryFactory.createDynamicSizeBottomNavFreezeRowInventory(
-				new InventoryMeta(InventoryID.COPY_SETTINGS_MENU, InventoryType.MENU, arena),
+				new InventoryMeta(InventoryID.COPY_SETTINGS_MENU, InventoryType.MENU, page, arena),
 				CommunicationManager.format("&8&lCopy Game Settings"),
 				true,
 				false,
