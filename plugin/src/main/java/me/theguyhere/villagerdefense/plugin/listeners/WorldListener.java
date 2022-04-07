@@ -24,8 +24,8 @@ public class WorldListener implements Listener {
         if (plugin.getUnloadedWorlds().contains(worldName)) {
             plugin.loadWorld(worldName);
             plugin.resetGameManager();
-            plugin.getGameManager().reloadLobby();
-            plugin.getGameManager().refreshAll();
+            GameManager.reloadLobby();
+            GameManager.refreshAll();
         }
     }
 

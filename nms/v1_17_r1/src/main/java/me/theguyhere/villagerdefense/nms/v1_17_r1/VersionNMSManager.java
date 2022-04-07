@@ -54,14 +54,14 @@ public class VersionNMSManager implements NMSManager {
     }
 
     @Override
-    public void nameArena(Player player, String arenaName, int arenaNum) {
+    public void nameArena(Player player, String arenaName, int arenaID) {
         Location location = player.getLocation();
         location.setY(location.getY() + 1);
         Material original = location.getBlock().getType();
         BlockPosition position = new BlockPosition(location.getX(), location.getY(), location.getZ());
         NBTTagCompound signNBT = new NBTTagCompound();
         signNBT.setString("Text1", String.format("{\"text\":\"%s\"}",
-                CommunicationManager.format(String.format("&9   Rename Arena %d:   ", arenaNum))));
+                CommunicationManager.format(String.format("&9   Rename Arena %d:   ", arenaID))));
         signNBT.setString("Text2", String.format("{\"text\":\"%s\"}",
                 CommunicationManager.format("&1===============")));
         signNBT.setString("Text3", String.format("{\"text\":\"%s\"}",

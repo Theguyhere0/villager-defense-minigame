@@ -45,8 +45,8 @@ import java.util.stream.Stream;
 public class Arena {
     /** Instance of the plugin.*/
     private final Main plugin;
-    /** Arena number.*/
-    private final int arena;
+    /** Arena id.*/
+    private final int id;
     /** A variable to more quickly access the file configuration of the arena file.*/
     private final FileConfiguration config;
     /** Common string for all data paths in the arena file.*/
@@ -100,12 +100,12 @@ public class Arena {
     /** Arena scoreboard object for the arena.*/
     private ArenaBoard arenaBoard;
 
-    public Arena(Main plugin, int arena, Tasks task) {
+    public Arena(Main plugin, int arenaID) {
         this.plugin = plugin;
         config = plugin.getArenaData();
-        this.arena = arena;
-        path = "a" + arena;
-        this.task = task;
+        id = arenaID;
+        path = "arena." + arenaID;
+        task = new Tasks(plugin, this);
         currentWave = 0;
         villagers = 0;
         enemies = 0;
@@ -119,8 +119,16 @@ public class Arena {
         checkClose();
     }
 
-    public int getArena() {
-        return arena;
+    public int getId() {
+        return id;
+    }
+
+    /**
+     * Retrieves the path of the arena from the arena file.
+     * @return Arena path prefix.
+     */
+    public String getPath() {
+        return path;
     }
 
     /**
@@ -543,10 +551,11 @@ public class Arena {
                     path + ".portal")), this);
             portal.displayForOnline();
         } catch (Exception e) {
-            CommunicationManager.debugError("Invalid location for portal " + arena, 1,
+            CommunicationManager.debugError(String.format("Invalid location for %s's portal ", getName()), 1,
                     !Main.releaseMode, e);
-            CommunicationManager.debugInfo("Portal location data may be corrupt. If data cannot be manually corrected in " +
-                    "arenaData.yml, please delete the portal location data for arena " + arena + ".", 1);
+            CommunicationManager.debugInfo("Portal location data may be corrupt. If data cannot be manually " +
+                    "corrected in arenaData.yml, please delete the portal location data for " + getName() + ".",
+                    1);
         }
     }
 
@@ -609,11 +618,15 @@ public class Arena {
                     this);
             arenaBoard.displayForOnline();
         } catch (Exception e) {
-            CommunicationManager.debugError("Invalid location for arena board " + arena, 1,
-                    !Main.releaseMode, e);
-            CommunicationManager.debugInfo("Arena board location data may be corrupt. If data cannot be manually " +
-                    "corrected in arenaData.yml, please delete the arena board location data for arena " + arena + ".",
-                    1);
+            CommunicationManager.debugError(
+                    String.format("Invalid location for %s's arena board ", getName()),
+                    1,
+                    !Main.releaseMode,
+                    e
+            );
+            CommunicationManager.debugInfo("Arena board location data may be corrupt. If data cannot be " +
+                            "manually corrected in arenaData.yml, please delete the arena board location data for " +
+                            getName() + ".", 1);
         }
     }
 
@@ -776,13 +789,13 @@ public class Arena {
     }
 
     public void setMonsterSpawnType(int monsterSpawnID, int type) {
-        config.set(path + ".monsters." + monsterSpawnID + ".type", type);
+        config.set(path + ".monster." + monsterSpawnID + ".type", type);
         plugin.saveArenaData();
         refreshMonsterSpawns();
     }
 
     public int getMonsterSpawnType(int monsterSpawnID) {
-        return config.getInt(path + ".monsters." + monsterSpawnID + ".type");
+        return config.getInt(path + ".monster." + monsterSpawnID + ".type");
     }
 
     /**
@@ -876,7 +889,7 @@ public class Arena {
     public boolean setSpawnTableFile(String option) {
         String file = option + ".yml";
         if (option.equals("custom"))
-            file = "a" + arena + ".yml";
+            file = path + ".yml";
 
         if (new File(plugin.getDataFolder().getPath(), "spawnTables/" + file).exists() ||
                 option.equals("default")) {
@@ -930,7 +943,7 @@ public class Arena {
                     getPlayerSpawn().getLocation().getWorld().spawnParticle(spawnParticle, second, 0);
                 } catch (Exception e) {
                     CommunicationManager.debugError(
-                            String.format("Player spawn particle generation error for arena %d.", arena),
+                            String.format("Player spawn particle generation error for %s.", getName()),
                             2);
                 }
             }
@@ -985,8 +998,10 @@ public class Arena {
                                     .spawnParticle(monsterParticle, first, 0);
                             location.getWorld().spawnParticle(monsterParticle, second, 0);
                         } catch (Exception e) {
-                            CommunicationManager.debugError(String.format("Monster particle generation error for " +
-                                            "arena %d.", arena), 2);
+                            CommunicationManager.debugError(
+                                    String.format("Monster particle generation error for %s.", getName()),
+                                    2
+                            );
                         }
                     });
                     init = true;
@@ -1038,8 +1053,10 @@ public class Arena {
                                     .spawnParticle(villagerParticle, first, 0);
                             location.getWorld().spawnParticle(villagerParticle, second, 0);
                         } catch (Exception e) {
-                            CommunicationManager.debugError(String.format("Villager particle generation error " +
-                                            "for arena %d.", arena), 2);
+                            CommunicationManager.debugError(
+                                    String.format("Villager particle generation error for %s.", getName()),
+                                    2
+                            );
                         }
                     });
                     init = true;
@@ -1107,8 +1124,11 @@ public class Arena {
 
                     } catch (Exception e) {
                         CommunicationManager.debugError(
-                                String.format("Border particle generation error for arena %d.", arena),
-                                1, true, e);
+                                String.format("Border particle generation error for %s.", getName()),
+                                1,
+                                true,
+                                e
+                        );
                     }
                 }
             }, 0 , 20);
@@ -1363,7 +1383,7 @@ public class Arena {
                         )));
             } catch (Exception e) {
                 CommunicationManager.debugError(
-                        String.format("Attempted to retrieve arena records for arena %d but found none.", arena),
+                        String.format("Attempted to retrieve arena records for %s but found none.", getName()),
                         2);
             }
 
@@ -1677,14 +1697,16 @@ public class Arena {
                         } catch (Exception e) {
                             CommunicationManager.debugError(
                                     String.format(
-                                            "An error occurred retrieving an item from arena %d's custom shop.", arena),
-                                    2);
+                                            "An error occurred retrieving an item from %s's custom shop.", getName()),
+                                    2
+                            );
                         }
                     });
         } catch (Exception e) {
             CommunicationManager.debugError(
-                    String.format("Attempted to retrieve the custom shop inventory of arena %d but found none.", arena),
-                    1);
+                    String.format("Attempted to retrieve the custom shop inventory of %s but found none.", getName()),
+                    1
+            );
         }
 
         return inv;
@@ -1736,14 +1758,16 @@ public class Arena {
                         } catch (Exception e) {
                             CommunicationManager.debugError(
                                     String.format(
-                                            "An error occurred retrieving an item from arena %d's custom shop.", arena),
-                                    2);
+                                            "An error occurred retrieving an item from %s's custom shop.", getName()),
+                                    2
+                            );
                         }
                     });
         } catch (Exception e) {
             CommunicationManager.debugError(
-                    String.format("Attempted to retrieve the custom shop inventory of arena %d but found none.", arena),
-                    1);
+                    String.format("Attempted to retrieve the custom shop inventory of %s but found none.", getName()),
+                    1
+            );
         }
 
         return inv;
@@ -1799,14 +1823,16 @@ public class Arena {
                         } catch (Exception e) {
                             CommunicationManager.debugError(
                                     String.format(
-                                            "An error occurred retrieving an item from arena %d's custom shop.", arena),
-                                    2);
+                                            "An error occurred retrieving an item from %s's custom shop.", getName()),
+                                    2
+                            );
                         }
                     });
         } catch (Exception e) {
             CommunicationManager.debugError(
-                    String.format("Attempted to retrieve the custom shop inventory of arena %d but found none.", arena),
-                    1);
+                    String.format("Attempted to retrieve the custom shop inventory of %s but found none.", getName()),
+                    1
+            );
         }
 
         return inv;
@@ -1890,15 +1916,18 @@ public class Arena {
                 getCorner1() == null || getCorner2() == null ||
                 !Objects.equals(getCorner1().getWorld(), getCorner2().getWorld())) {
             setClosed(true);
-            CommunicationManager.debugInfo(String.format("Arena %d did not meet opening requirements and was closed.",
-                            arena),
-                    2);
+            CommunicationManager.debugInfo(
+                    String.format("%s did not meet opening requirements and was closed.", getName()),
+                    2
+            );
         }
 
         else if (plugin.getConfig().getBoolean("autoOpen")) {
             setClosed(false);
-            CommunicationManager.debugInfo(String.format("Arena %d met opening requirements and was opened.", arena),
-                    2);
+            CommunicationManager.debugInfo(
+                    String.format("%s met opening requirements and was opened.", getName()),
+                    2
+            );
         }
     }
 
@@ -1991,23 +2020,23 @@ public class Arena {
         setMonsterParticles(arenaToCopy.hasMonsterParticles());
         setVillagerParticles(arenaToCopy.hasVillagerParticles());
         setBorderParticles(arenaToCopy.hasBorderParticles());
-        if (config.contains("a" + arenaToCopy.getArena() + ".customShop"))
+        if (config.contains(arenaToCopy.getPath() + ".customShop"))
             try {
-                Objects.requireNonNull(config.getConfigurationSection("a" + arenaToCopy.getArena() +
-                                ".customShop"))
+                Objects.requireNonNull(config.getConfigurationSection(arenaToCopy.getPath() + ".customShop"))
                         .getKeys(false)
                         .forEach(index -> config.set(path + ".customShop." + index,
-                                config.getItemStack("a" + arenaToCopy.getArena() + ".customShop." + index)));
+                                config.getItemStack(arenaToCopy.getPath() + ".customShop." + index)));
                 plugin.saveArenaData();
             } catch (Exception e) {
                 CommunicationManager.debugError(
-                        String.format("Attempted to retrieve the custom shop inventory of arena %d but found none.",
-                                arena), 1);
+                        String.format("Unsuccessful attempt to copy the custom shop inventory of %s to %s.",
+                                arenaToCopy.getName(), getName()), 1);
             }
 
         CommunicationManager.debugInfo(
-                String.format("Copied the characteristics of arena %d to arena %d.", arenaToCopy.getArena(), arena),
-                2);
+                String.format("Copied the characteristics of %s to %s.", arenaToCopy.getName(), getName()),
+                2
+        );
     }
 
     /**
@@ -2017,7 +2046,7 @@ public class Arena {
         wipe();
         config.set(path, null);
         plugin.saveArenaData();
-        CommunicationManager.debugInfo(String.format("Removing arena %d.", arena), 1);
+        CommunicationManager.debugInfo(String.format("Removing %s.", getName()), 1);
     }
 
     /**

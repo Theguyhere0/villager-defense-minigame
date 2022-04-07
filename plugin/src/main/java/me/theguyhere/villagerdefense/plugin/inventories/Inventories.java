@@ -68,27 +68,22 @@ public class Inventories {
 
 	// Menu of all the arenas
 	public static Inventory createArenasDashboard() {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(
+		List<ItemStack> buttons = new ArrayList<>();
+
+		// Gather all arenas in order
+		GameManager.getArenas().keySet().stream().sorted().forEach(id -> buttons.add(ItemManager.createItem(
+				Material.EMERALD_BLOCK,
+				CommunicationManager.format("&a&lEdit " + GameManager.getArenas().get(id).getName())
+		)));
+
+		return InventoryFactory.createDynamicSizeBottomNavInventory(
 				new InventoryMeta(InventoryID.ARENA_DASHBOARD, InventoryType.MENU),
-				54,
-				CommunicationManager.format("&9&lArenas"));
-
-		// Options to interact with all 45 possible arenas
-		for (int i = 0; i < 45; i++) {
-			// Check if arena exists, set button accordingly
-			if (GameManager.getArena(i) == null)
-				inv.setItem(i, ItemManager.createItem(Material.RED_CONCRETE,
-						CommunicationManager.format("&c&lCreate Arena " + (i + 1))));
-			else
-				inv.setItem(i, ItemManager.createItem(Material.LIME_CONCRETE,
-						CommunicationManager.format("&a&lEdit " + GameManager.getArena(i).getName())));
-		}
-
-		// Option to exit
-		inv.setItem(53, Buttons.exit());
-
-		return inv;
+				CommunicationManager.format("&9&lArenas"),
+				true,
+				true,
+				"Info Board",
+				buttons
+		);
 	}
 
 	// Menu for lobby
@@ -522,7 +517,7 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Capture all monster spawns
-		DataManager.getConfigLocationMap(plugin, "a" + arena.getArena() + ".monster").forEach((id, location) ->
+		DataManager.getConfigLocationMap(plugin, arena.getPath() + ".monster").forEach((id, location) ->
 				buttons.add(ItemManager.createItem(Material.ZOMBIE_HEAD,
 						CommunicationManager.format("&2&lMob Spawn " + id))));
 
@@ -597,7 +592,7 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Capture all monster spawns
-		DataManager.getConfigLocationMap(plugin, "a" + arena.getArena() + ".villager").forEach((id, location) ->
+		DataManager.getConfigLocationMap(plugin, arena.getPath() + ".villager").forEach((id, location) ->
 				buttons.add(ItemManager.createItem(Material.POPPY,
 						CommunicationManager.format("&5&lVillager Spawn " + id))));
 
@@ -694,7 +689,7 @@ public class Inventories {
 		return InventoryFactory.createFixedSizeInventory(
 				new InventoryMeta(InventoryID.SPAWN_TABLE_MENU, InventoryType.MENU, arena),
 				chosen.equals("custom") ?
-						CommunicationManager.format("&3&lSpawn Table: a" + arena.getArena() + ".yml") :
+						CommunicationManager.format("&3&lSpawn Table: " + arena.getPath() + ".yml") :
 						CommunicationManager.format("&3&lSpawn Table: " + arena.getSpawnTableFile() + ".yml"),
 				1,
 				true,
@@ -1315,47 +1310,46 @@ public class Inventories {
 
 	// Menu to copy game settings
 	public static Inventory createCopySettingsMenu(Arena arena) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(
-				new InventoryMeta(InventoryID.COPY_SETTINGS_MENU, InventoryType.MENU, arena),
-				54,
-				CommunicationManager.format("&8&lCopy Game Settings")
-		);
+		List<ItemStack> buttons = new ArrayList<>();
+		List<ItemStack> frozenButtons = new ArrayList<>();
 
-		// Options to choose any of the 45 possible arenas
-		for (int i = 0; i < 45; i++) {
-			// Check if arena exists, set button accordingly
-			if (GameManager.getArena(i) == null)
-				inv.setItem(i, ItemManager.createItem(Material.BLACK_CONCRETE,
-						CommunicationManager.format("&c&lArena " + (i + 1) + " not available")));
-			else if (i == arena.getArena())
-				inv.setItem(i, ItemManager.createItem(Material.GRAY_GLAZED_TERRACOTTA,
-						CommunicationManager.format("&6&l" + GameManager.getArena(i).getName())));
-			else
-				inv.setItem(i, ItemManager.createItem(Material.WHITE_CONCRETE,
-						CommunicationManager.format("&a&lCopy " + GameManager.getArena(i).getName())));
-		}
+		// Options to choose any of the other arenas
+		Objects.requireNonNull(plugin.getArenaData().getConfigurationSection("arena")).getKeys(false)
+				.forEach(id -> {
+					if (Integer.parseInt(id) != arena.getId())
+						buttons.add(
+								ItemManager.createItem(Material.GRAY_GLAZED_TERRACOTTA,
+								CommunicationManager.format("&a&lCopy " +
+										GameManager.getArena(Integer.parseInt(id)).getName()))
+						);
+				});
 
 		// Easy preset
-		inv.setItem(45, ItemManager.createItem(Material.LIME_CONCRETE,
+		frozenButtons.add(ItemManager.createItem(Material.LIME_CONCRETE,
 				CommunicationManager.format("&a&lEasy Preset")));
 
 		// Medium preset
-		inv.setItem(47, ItemManager.createItem(Material.YELLOW_CONCRETE,
+		frozenButtons.add(ItemManager.createItem(Material.YELLOW_CONCRETE,
 				CommunicationManager.format("&e&lMedium Preset")));
 
 		// Hard preset
-		inv.setItem(49, ItemManager.createItem(Material.RED_CONCRETE,
+		frozenButtons.add(ItemManager.createItem(Material.RED_CONCRETE,
 				CommunicationManager.format("&c&lHard Preset")));
 
 		// Insane preset
-		inv.setItem(51, ItemManager.createItem(Material.MAGENTA_CONCRETE,
+		frozenButtons.add(ItemManager.createItem(Material.MAGENTA_CONCRETE,
 				CommunicationManager.format("&d&lInsane Preset")));
 
-		// Option to exit
-		inv.setItem(53, Buttons.exit());
-
-		return inv;
+		return InventoryFactory.createDynamicSizeBottomNavFreezeRowInventory(
+				new InventoryMeta(InventoryID.COPY_SETTINGS_MENU, InventoryType.MENU, arena),
+				CommunicationManager.format("&8&lCopy Game Settings"),
+				true,
+				false,
+				"",
+				buttons,
+				1,
+				frozenButtons
+		);
 	}
 
 	// Generate the shop menu

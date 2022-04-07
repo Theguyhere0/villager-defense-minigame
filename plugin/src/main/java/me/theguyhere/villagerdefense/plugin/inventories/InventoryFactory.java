@@ -191,6 +191,93 @@ public class InventoryFactory {
         return inv;
     }
 
+    @SafeVarargs
+    public static Inventory createDynamicSizeBottomNavFreezeRowInventory(
+            @NotNull InventoryMeta meta,
+            @NotNull String formattedName,
+            boolean exitButton,
+            boolean newButton,
+            @NotNull String dataStructureName,
+            @NotNull List<ItemStack> buttons,
+            int frozenRows,
+            List<ItemStack>... frozenRowButtons
+    ) {
+        int lines = (buttons.size() + 8) / 9 + 1 + frozenRows;
+        int invSize = lines * 9;
+        int fullSizedLines = buttons.size() / 9;
+        int hangingButtons = buttons.size() % 9;
+        Iterator<ItemStack> buttonIterator = buttons.iterator();
+
+        // Ensure valid lists for the frozen rows
+        if (frozenRows != frozenRowButtons.length)
+            return null;
+
+        // Ensure valid number of lines
+        if (lines > 6)
+            return null;
+
+        // Create inventory
+        Inventory inv = Bukkit.createInventory(meta, invSize, formattedName);
+
+        // Set buttons
+        for (int i = 0; i < fullSizedLines; i++)
+            for (int j = 0; j < 9; j++)
+                inv.setItem(i * 9 + j, buttonIterator.next());
+        for (int i = 0; i < hangingButtons; i++)
+            inv.setItem((lines - 2 - frozenRows) * 9 + (9 - hangingButtons) / 2 + i, buttonIterator.next());
+
+        // Set frozen row buttons
+        for (int i = 0; i < frozenRows; i++) {
+            Iterator<ItemStack> freezeButtonIterator = frozenRowButtons[i].iterator();
+            int frozenButtonsNum = frozenRowButtons[i].size();
+
+            switch (frozenButtonsNum) {
+                case 1:
+                    inv.setItem((lines - 1 - frozenRows + i) * 9 + 4, freezeButtonIterator.next());
+                    break;
+                case 2:
+                    inv.setItem((lines - 1 - frozenRows + i) * 9 + 2, freezeButtonIterator.next());
+                    inv.setItem((lines - 1 - frozenRows + i) * 9 + 6, freezeButtonIterator.next());
+                    break;
+                case 3:
+                    inv.setItem((lines - 1 - frozenRows + i) * 9 + 2, freezeButtonIterator.next());
+                    inv.setItem((lines - 1 - frozenRows + i) * 9 + 4, freezeButtonIterator.next());
+                    inv.setItem((lines - 1 - frozenRows + i) * 9 + 6, freezeButtonIterator.next());
+                    break;
+                case 4:
+                    for (int j = 0; j < frozenButtonsNum; j++)
+                        inv.setItem((lines - 1 - frozenRows + i) * 9 + j * 2 + 1, freezeButtonIterator.next());
+                    break;
+                case 5:
+                    for (int j = 0; j < frozenButtonsNum; j++)
+                        inv.setItem((lines - 1 - frozenRows + i) * 9 + j * 2, freezeButtonIterator.next());
+                    break;
+                case 6:
+                case 7:
+                    for (int j = 0; j < frozenButtonsNum; j++)
+                        inv.setItem((lines - 1 - frozenRows + i) * 9 + j + 1, freezeButtonIterator.next());
+                    break;
+                default:
+                    for (int j = 0; j < frozenButtonsNum; j++)
+                        inv.setItem((lines - 1 - frozenRows + i) * 9 + j, freezeButtonIterator.next());
+            }
+        }
+
+        // Set exit button
+        if (exitButton) {
+            if (newButton)
+                inv.setItem(invSize - 1, Buttons.exit());
+            else
+                inv.setItem(invSize - 5, Buttons.exit());
+        }
+
+        // Set new button
+        if (newButton)
+            inv.setItem(invSize - 5, Buttons.newAdd(dataStructureName));
+
+        return inv;
+    }
+
     public static Inventory createLocationMenu(
             @NotNull InventoryID inventoryID,
             Arena arena,

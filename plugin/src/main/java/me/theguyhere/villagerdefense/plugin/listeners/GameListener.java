@@ -83,7 +83,7 @@ public class GameListener implements Listener {
 
 		// Get spawn table
 		if (arena.getSpawnTableFile().equals("custom"))
-			data = new DataManager(plugin, "spawnTables/a" + arena.getArena() + ".yml");
+			data = new DataManager(plugin, "spawnTables/a" + arena.getId() + ".yml");
 		else data = new DataManager(plugin, "spawnTables/" + arena.getSpawnTableFile() + ".yml");
 
 		// Update villager count
@@ -112,13 +112,13 @@ public class GameListener implements Listener {
 			if (ent instanceof Wither) {
 				if (arena.hasGemDrop())
 					e.getDrops().add(ItemManager.createItems(Material.EMERALD, 20, null,
-							Integer.toString(arena.getArena())));
+							Integer.toString(arena.getId())));
 				if (arena.hasExpDrop())
 					e.setDroppedExp((int) (arena.getCurrentDifficulty() * 40));
 			} else {
 				if (arena.hasGemDrop()) {
 					e.getDrops().add(ItemManager.createItem(Material.EMERALD, null,
-							Integer.toString(arena.getArena())));
+							Integer.toString(arena.getId())));
 
 					// Get rare loot probability
 					double probability;

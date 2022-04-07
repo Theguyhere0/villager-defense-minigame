@@ -123,7 +123,7 @@ public class InventoryListener implements Listener {
 			CommunicationManager.debugInfo("Custom shop editor being used.", 2);
 			ItemStack cursor = e.getCursor();
 			assert cursor != null;
-			String path = "a" + meta.getArena().getArena() + ".customShop.";
+			String path = meta.getArena().getPath() + ".customShop.";
 			Arena arenaInstance = meta.getArena();
 
 			// Exit menu
@@ -201,21 +201,21 @@ public class InventoryListener implements Listener {
 
 		// Arenas dashboard
 		else if (invID == InventoryID.ARENA_DASHBOARD) {
+			// Edit existing arena
+			if (buttonType == Material.EMERALD_BLOCK)
+				player.openInventory(Inventories.createArenaMenu(Objects.requireNonNull(
+						GameManager.getArena(buttonName.substring(9)))));
+
 			// Create new arena with naming inventory
-			if (buttonType == Material.RED_CONCRETE) {
-				Arena arena = new Arena(plugin, slot, new Tasks(plugin, slot));
+			else if (buttonName.contains(CommunicationManager.format("&a&lNew "))) {
+				Arena arena = new Arena(plugin, GameManager.newArenaID());
 
 				// Set a new arena
-				GameManager.setArena(slot, arena);
-				NMSVersion.getCurrent().getNmsManager().nameArena(player, arena.getName(),
-						arena.getArena() + 1);
+				GameManager.addArena(GameManager.newArenaID(), arena);
+				NMSVersion.getCurrent().getNmsManager().nameArena(player, arena.getName(), arena.getId());
 			}
 
-			// Edit existing arena
-			else if (buttonType == Material.LIME_CONCRETE)
-				player.openInventory(Inventories.createArenaMenu(GameManager.getArena(slot)));
-
-			// Close inventory
+			// Return to main menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createMainMenu());
 		}
@@ -227,7 +227,7 @@ public class InventoryListener implements Listener {
 			// Create lobby
 			if (buttonName.contains("Create Lobby")) {
 				DataManager.setConfigurationLocation(plugin, path, player.getLocation());
-				plugin.getGameManager().reloadLobby();
+				GameManager.reloadLobby();
 				PlayerManager.notifySuccess(player, "Lobby set!");
 				player.openInventory(Inventories.createLobbyMenu());
 			}
@@ -235,7 +235,7 @@ public class InventoryListener implements Listener {
 			// Relocate lobby
 			else if (buttonName.contains("Relocate Lobby")) {
 				DataManager.setConfigurationLocation(plugin, path, player.getLocation());
-				plugin.getGameManager().reloadLobby();
+				GameManager.reloadLobby();
 				PlayerManager.notifySuccess(player, "Lobby relocated!");
 			}
 
@@ -280,7 +280,7 @@ public class InventoryListener implements Listener {
 
 			// Create new
 			else if (buttonName.contains(CommunicationManager.format("&a&lNew ")))
-				player.openInventory(Inventories.createInfoBoardMenu(plugin.getGameManager().newInfoBoardID()));
+				player.openInventory(Inventories.createInfoBoardMenu(GameManager.newInfoBoardID()));
 
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
@@ -294,7 +294,7 @@ public class InventoryListener implements Listener {
 
 			// Create board
 			if (buttonName.contains("Create")) {
-				plugin.getGameManager().setInfoBoard(player.getLocation(), id);
+				GameManager.setInfoBoard(player.getLocation(), id);
 				PlayerManager.notifySuccess(player, "Info board set!");
 				player.openInventory(Inventories.createInfoBoardMenu(id));
 			}
@@ -302,7 +302,7 @@ public class InventoryListener implements Listener {
 			// Relocate board
 			else if (buttonName.contains("Relocate")) {
 				DataManager.setConfigurationLocation(plugin, path, player.getLocation());
-				plugin.getGameManager().refreshInfoBoard(id);
+				GameManager.refreshInfoBoard(id);
 				PlayerManager.notifySuccess(player, "Info board relocated!");
 			}
 
@@ -323,7 +323,7 @@ public class InventoryListener implements Listener {
 					PlayerManager.notifyFailure(player, "No info board to center!");
 					return;
 				}
-				plugin.getGameManager().centerInfoBoard(id);
+				GameManager.centerInfoBoard(id);
 				PlayerManager.notifySuccess(player, "Info board centered!");
 			}
 
@@ -366,14 +366,14 @@ public class InventoryListener implements Listener {
 
 			// Create leaderboard
 			if (buttonName.contains("Create")) {
-				plugin.getGameManager().setLeaderboard(player.getLocation(), "totalKills");
+				GameManager.setLeaderboard(player.getLocation(), "totalKills");
 				PlayerManager.notifySuccess(player, "Leaderboard set!");
 				player.openInventory(Inventories.createTotalKillsLeaderboardMenu());
 			}
 
 			// Relocate leaderboard
 			else if (buttonName.contains("Relocate")) {
-				plugin.getGameManager().setLeaderboard(player.getLocation(), "totalKills");
+				GameManager.setLeaderboard(player.getLocation(), "totalKills");
 				PlayerManager.notifySuccess(player, "Leaderboard relocated!");
 			}
 
@@ -395,7 +395,7 @@ public class InventoryListener implements Listener {
 					PlayerManager.notifyFailure(player, "No leaderboard to center!");
 					return;
 				}
-				plugin.getGameManager().centerLeaderboard("totalKills");
+				GameManager.centerLeaderboard("totalKills");
 				PlayerManager.notifySuccess(player, "Leaderboard centered!");
 			}
 
@@ -416,14 +416,14 @@ public class InventoryListener implements Listener {
 
 			// Create leaderboard
 			if (buttonName.contains("Create")) {
-				plugin.getGameManager().setLeaderboard(player.getLocation(), "topKills");
+				GameManager.setLeaderboard(player.getLocation(), "topKills");
 				PlayerManager.notifySuccess(player, "Leaderboard set!");
 				player.openInventory(Inventories.createTopKillsLeaderboardMenu());
 			}
 
 			// Relocate leaderboard
 			else if (buttonName.contains("Relocate")) {
-				plugin.getGameManager().setLeaderboard(player.getLocation(), "topKills");
+				GameManager.setLeaderboard(player.getLocation(), "topKills");
 				PlayerManager.notifySuccess(player, "Leaderboard relocated!");
 			}
 
@@ -445,7 +445,7 @@ public class InventoryListener implements Listener {
 					PlayerManager.notifyFailure(player, "No leaderboard to center!");
 					return;
 				}
-				plugin.getGameManager().centerLeaderboard("topKills");
+				GameManager.centerLeaderboard("topKills");
 				PlayerManager.notifySuccess(player, "Leaderboard centered!");
 			}
 
@@ -466,14 +466,14 @@ public class InventoryListener implements Listener {
 
 			// Create leaderboard
 			if (buttonName.contains("Create")) {
-				plugin.getGameManager().setLeaderboard(player.getLocation(), "totalGems");
+				GameManager.setLeaderboard(player.getLocation(), "totalGems");
 				PlayerManager.notifySuccess(player, "Leaderboard set!");
 				player.openInventory(Inventories.createTotalGemsLeaderboardMenu());
 			}
 
 			// Relocate leaderboard
 			else if (buttonName.contains("Relocate")) {
-				plugin.getGameManager().setLeaderboard(player.getLocation(), "totalGems");
+				GameManager.setLeaderboard(player.getLocation(), "totalGems");
 				PlayerManager.notifySuccess(player, "Leaderboard relocated!");
 			}
 
@@ -495,7 +495,7 @@ public class InventoryListener implements Listener {
 					PlayerManager.notifyFailure(player, "No leaderboard to center!");
 					return;
 				}
-				plugin.getGameManager().centerLeaderboard("totalGems");
+				GameManager.centerLeaderboard("totalGems");
 				PlayerManager.notifySuccess(player, "Leaderboard centered!");
 			}
 
@@ -516,14 +516,14 @@ public class InventoryListener implements Listener {
 
 			// Create leaderboard
 			if (buttonName.contains("Create")) {
-				plugin.getGameManager().setLeaderboard(player.getLocation(), "topBalance");
+				GameManager.setLeaderboard(player.getLocation(), "topBalance");
 				PlayerManager.notifySuccess(player, "Leaderboard set!");
 				player.openInventory(Inventories.createTopBalanceLeaderboardMenu());
 			}
 
 			// Relocate leaderboard
 			else if (buttonName.contains("Relocate")) {
-				plugin.getGameManager().setLeaderboard(player.getLocation(), "topBalance");
+				GameManager.setLeaderboard(player.getLocation(), "topBalance");
 				PlayerManager.notifySuccess(player, "Leaderboard relocated!");
 			}
 
@@ -545,7 +545,7 @@ public class InventoryListener implements Listener {
 					PlayerManager.notifyFailure(player, "No leaderboard to center!");
 					return;
 				}
-				plugin.getGameManager().centerLeaderboard("topBalance");
+				GameManager.centerLeaderboard("topBalance");
 				PlayerManager.notifySuccess(player, "Leaderboard centered!");
 			}
 
@@ -566,14 +566,14 @@ public class InventoryListener implements Listener {
 
 			// Create leaderboard
 			if (buttonName.contains("Create")) {
-				plugin.getGameManager().setLeaderboard(player.getLocation(), "topWave");
+				GameManager.setLeaderboard(player.getLocation(), "topWave");
 				PlayerManager.notifySuccess(player, "Leaderboard set!");
 				player.openInventory(Inventories.createTopWaveLeaderboardMenu());
 			}
 
 			// Relocate leaderboard
 			else if (buttonName.contains("Relocate")) {
-				plugin.getGameManager().setLeaderboard(player.getLocation(), "topWave");
+				GameManager.setLeaderboard(player.getLocation(), "topWave");
 				PlayerManager.notifySuccess(player, "Leaderboard relocated!");
 			}
 
@@ -595,7 +595,7 @@ public class InventoryListener implements Listener {
 					PlayerManager.notifyFailure(player, "No leaderboard to center!");
 					return;
 				}
-				plugin.getGameManager().centerLeaderboard("topWave");
+				GameManager.centerLeaderboard("topWave");
 				PlayerManager.notifySuccess(player, "Leaderboard centered!");
 			}
 
@@ -617,8 +617,11 @@ public class InventoryListener implements Listener {
 			// Open name editor
 			if (buttonName.contains("Edit Name"))
 				if (arenaInstance.isClosed())
-					NMSVersion.getCurrent().getNmsManager().nameArena(player, arenaInstance.getName(),
-							arenaInstance.getArena() + 1);
+					NMSVersion.getCurrent().getNmsManager().nameArena(
+							player,
+							arenaInstance.getName(),
+							arenaInstance.getId()
+					);
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Open portal menu
@@ -826,7 +829,7 @@ public class InventoryListener implements Listener {
 
 			// Remove custom item, then return to custom shop editor
 			else if (buttonName.contains("YES")) {
-				config.set("a" + meta.getArena() + ".customShop." + meta.getId(), null);
+				config.set(meta.getArena().getPath() + ".customShop." + meta.getId(), null);
 				plugin.saveArenaData();
 				player.openInventory(meta.getArena().getCustomShopEditorMenu());
 			}
@@ -876,7 +879,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("YES")) {
 				config.set("lobby", null);
 				plugin.saveArenaData();
-				plugin.getGameManager().reloadLobby();
+				GameManager.reloadLobby();
 				PlayerManager.notifySuccess(player, "Lobby removed!");
 				player.openInventory(Inventories.createLobbyMenu());
 			}
@@ -891,7 +894,7 @@ public class InventoryListener implements Listener {
 			// Remove the info board, then return to dashboard
 			else if (buttonName.contains("YES")) {
 				// Remove info board
-				plugin.getGameManager().removeInfoBoard(meta.getId());
+				GameManager.removeInfoBoard(meta.getId());
 
 				// Confirm and return
 				PlayerManager.notifySuccess(player, "Info board removed!");
@@ -914,7 +917,7 @@ public class InventoryListener implements Listener {
 				plugin.saveArenaData();
 
 				// Remove leaderboard
-				plugin.getGameManager().removeLeaderboard("totalKills");
+				GameManager.removeLeaderboard("totalKills");
 
 				// Confirm and return
 				PlayerManager.notifySuccess(player, "Leaderboard removed!");
@@ -937,7 +940,7 @@ public class InventoryListener implements Listener {
 				plugin.saveArenaData();
 
 				// Remove leaderboard
-				plugin.getGameManager().removeLeaderboard("topKills");
+				GameManager.removeLeaderboard("topKills");
 
 				// Confirm and return
 				PlayerManager.notifySuccess(player, "Leaderboard removed!");
@@ -960,7 +963,7 @@ public class InventoryListener implements Listener {
 				plugin.saveArenaData();
 
 				// Remove leaderboard
-				plugin.getGameManager().removeLeaderboard("totalGems");
+				GameManager.removeLeaderboard("totalGems");
 
 				// Confirm and return
 				PlayerManager.notifySuccess(player, "Leaderboard removed!");
@@ -983,7 +986,7 @@ public class InventoryListener implements Listener {
 				plugin.saveArenaData();
 
 				// Remove leaderboard
-				plugin.getGameManager().removeLeaderboard("topBalance");
+				GameManager.removeLeaderboard("topBalance");
 
 				// Confirm and return
 				PlayerManager.notifySuccess(player, "Leaderboard removed!");
@@ -1006,7 +1009,7 @@ public class InventoryListener implements Listener {
 				plugin.saveArenaData();
 
 				// Remove leaderboard
-				plugin.getGameManager().removeLeaderboard("topWave");
+				GameManager.removeLeaderboard("topWave");
 
 				// Confirm and return
 				PlayerManager.notifySuccess(player, "Leaderboard removed!");
@@ -1023,7 +1026,7 @@ public class InventoryListener implements Listener {
 			// Remove arena data, then return to previous menu
 			else if (buttonName.contains("YES")) {
 				// Remove data
-				GameManager.removeArena(meta.getArena().getArena());
+				GameManager.removeArena(meta.getArena().getId());
 
 				// Confirm and return
 				PlayerManager.notifySuccess(player, "Arena removed!");
@@ -1736,7 +1739,7 @@ public class InventoryListener implements Listener {
 
 		// Menu for editing a specific custom item
 		else if (invID == InventoryID.CUSTOM_ITEMS_MENU) {
-			String path = "a" + meta.getArena().getArena() + ".customShop.";
+			String path = meta.getArena().getPath() + ".customShop.";
 			ItemStack item = config.getItemStack(path + meta.getId());
 			assert item != null;
 			ItemMeta itemMeta = item.getItemMeta();
@@ -2596,19 +2599,22 @@ public class InventoryListener implements Listener {
 		else if (invID == InventoryID.COPY_SETTINGS_MENU) {
 			Arena arena1 = meta.getArena();
 
-			if (slot < 45) {
+			// Copy existing arena
+			if (buttonName.contains("Copy")) {
 				// Check for arena closure
 				if (!arena1.isClosed()) {
 					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 					return;
 				}
 
-				Arena arena2 = GameManager.getArena(slot);
+				Arena arena2 = GameManager.getArena(buttonName.substring(9));
+
+				// Check for valid arena to copy
+				if (arena2 == null)
+					return;
 
 				// Copy settings from another arena
-				if (buttonType == Material.WHITE_CONCRETE)
-					arena1.copy(arena2);
-				else return;
+				arena1.copy(arena2);
 			}
 
 			// Copy easy preset
@@ -3129,13 +3135,16 @@ public class InventoryListener implements Listener {
 		// Try updating name
 		try {
 			arena.setName(e.getLines()[2]);
-			CommunicationManager.debugInfo(String.format("Name changed for arena %d!", arena.getArena()), 2);
+			CommunicationManager.debugInfo(
+					String.format("Name changed for arena %s!", arena.getPath().substring(1)),
+					2
+			);
 		} catch (InvalidNameException err) {
 			if (err.getMessage().equals("Same"))
 				player.openInventory(Inventories.createArenaMenu(arena));
 			else {
 				if (arena.getName() == null)
-					GameManager.removeArena(arena.getArena());
+					GameManager.removeArena(arena.getId());
 				PlayerManager.notifyFailure(player, "Invalid arena name!");
 			}
 			return;

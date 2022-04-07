@@ -31,7 +31,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 
@@ -378,7 +377,7 @@ public class Commands implements CommandExecutor {
 									scheduler.scheduleSyncDelayedTask(plugin, task.start, Utils.secondsToTicks(10)));
 
 							// Notify console
-							CommunicationManager.debugInfo(arena.getArena() + " was force started.", 1);
+							CommunicationManager.debugInfo(arena.getName() + " was force started.", 1);
 						}
 					}
 
@@ -428,7 +427,7 @@ public class Commands implements CommandExecutor {
 								Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 
 						// Notify console
-						CommunicationManager.debugInfo(arena.getArena() + " was force ended.", 1);
+						CommunicationManager.debugInfo(arena.getName() + " was force ended.", 1);
 					}
 
 					// End specific arena
@@ -478,7 +477,7 @@ public class Commands implements CommandExecutor {
 								Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 
 						// Notify console
-						CommunicationManager.debugInfo(arena.getArena() + " was force ended.", 1);
+						CommunicationManager.debugInfo(arena.getName() + " was force ended.", 1);
 
 						return true;
 					}
@@ -600,7 +599,7 @@ public class Commands implements CommandExecutor {
 								Utils.secondsToTicks(Utils.minutesToSeconds(2))));
 
 						// Notify console
-						CommunicationManager.debugInfo(arena.getArena() + " was delayed.", 1);
+						CommunicationManager.debugInfo(arena.getName() + " was delayed.", 1);
 					}
 
 					return true;
@@ -757,6 +756,82 @@ public class Commands implements CommandExecutor {
 											"arenaData.yml"), 0);
 						}
 					}
+					else if (arenaDataVersion < 6) {
+						try {
+							// Take old data and put into new format
+							Objects.requireNonNull(arenaData.getConfigurationSection("")).getKeys(false)
+									.stream().filter(key -> key.contains("a") && key.length() < 4)
+									.forEach(key -> {
+										int id = Integer.parseInt(key.substring(1));
+										String newPath = "arena." + id;
+
+										// Single key-value pairs
+										moveData(newPath + ".name", key + ".name");
+										moveData(newPath + ".max", key + ".max");
+										moveData(newPath + ".min", key + ".min");
+										moveData(newPath + ".spawnTable", key + ".spawnTable");
+										moveData(newPath + ".maxWaves", key + ".maxWaves");
+										moveData(newPath + ".waveTimeLimit", key + ".waveTimeLimit");
+										moveData(newPath + ".difficulty", key + ".difficulty");
+										moveData(newPath + ".closed", key + ".closed");
+										moveData(newPath + ".normal", key + ".normal");
+										moveData(newPath + ".dynamicCount", key + ".dynamicCount");
+										moveData(newPath + ".dynamicDifficulty", key + ".dynamicDifficulty");
+										moveData(newPath + ".dynamicPrices", key + ".dynamicPrices");
+										moveData(newPath + ".difficultyLabel", key + ".difficultyLabel");
+										moveData(newPath + ".dynamicLimit", key + ".dynamicLimit");
+										moveData(newPath + ".wolf", key + ".wolf");
+										moveData(newPath + ".golem", key + ".golem");
+										moveData(newPath + ".expDrop", key + ".expDrop");
+										moveData(newPath + ".gemDrop", key + ".gemDrop");
+										moveData(newPath + ".community", key + ".community");
+										moveData(newPath + ".lateArrival", key + ".lateArrival");
+										moveData(newPath + ".enchants", key + ".enchants");
+										moveData(newPath + ".bannedKits", key + ".bannedKits");
+
+										// Config sections
+										moveSection(newPath + ".sounds", key + ".sounds");
+										moveSection(newPath + ".particles", key + ".particles");
+										moveSection(newPath + ".spawn", key + ".spawn");
+										moveSection(newPath + ".waiting", key + ".waiting");
+										moveSection(newPath + ".corner1", key + ".corner1");
+										moveSection(newPath + ".corner2", key + ".corner2");
+										moveSection(newPath + ".arenaBoard", key + ".arenaBoard");
+										moveSection(newPath + ".portal", key + ".portal");
+
+										// Nested sections
+										moveNested(newPath + ".monster", key + ".monster");
+										moveNested(newPath + ".monster", key + ".monsters");
+										moveNested(newPath + ".villager", key + ".villager");
+										moveNested(newPath + ".records", key + ".records");
+										moveInventory(newPath + ".customShop", key + ".customShop");
+
+										// Remove old structure
+										arenaData.set(key, null);
+									});
+
+							// Flip flag and update config.yml
+							fixed = true;
+							plugin.getConfig().set("arenaData", 6);
+							plugin.saveConfig();
+
+							// Notify
+							if (player != null)
+								PlayerManager.notifySuccess(player,
+										LanguageManager.confirms.autoUpdate, ChatColor.AQUA, "arenaData.yml",
+										"6");
+							CommunicationManager.debugInfo(String.format(LanguageManager.confirms.autoUpdate,
+									"arenaData.yml", "6"), 0);
+						} catch (Exception e) {
+							if (player != null)
+								PlayerManager.notifyAlert(player,
+										LanguageManager.messages.manualUpdateWarn, ChatColor.AQUA,
+										"arenaData.yml");
+							else CommunicationManager.debugError(
+									String.format(LanguageManager.messages.manualUpdateWarn,
+											"arenaData.yml"), 0);
+						}
+					}
 
 					// Check if playerData.yml is outdated
 					if (plugin.getConfig().getInt("playerData") < Main.playerDataVersion)
@@ -886,7 +961,7 @@ public class Commands implements CommandExecutor {
 					}
 
 					// Check for player in an active game
-					if (Arrays.stream(GameManager.getArenas()).filter(Objects::nonNull)
+					if (GameManager.getArenas().values().stream().filter(Objects::nonNull)
 							.filter(arena -> arena.getStatus() == ArenaStatus.ACTIVE)
 							.noneMatch(arena -> arena.hasPlayer(player))) {
 						PlayerManager.notifyFailure(player, LanguageManager.errors.suicideActive);
@@ -1038,7 +1113,7 @@ public class Commands implements CommandExecutor {
 					// Notify console and possibly player
 					if (player != null)
 						PlayerManager.notifySuccess(player, arena.getName() +  " was opened.");
-					CommunicationManager.debugInfo(arena.getArena() + " was opened.", 1);
+					CommunicationManager.debugInfo(arena.getName() + " was opened.", 1);
 
 					return true;
 				}
@@ -1092,7 +1167,7 @@ public class Commands implements CommandExecutor {
 					// Notify console and possibly player
 					if (player != null)
 						PlayerManager.notifySuccess(player, arena.getName() +  " was closed.");
-					CommunicationManager.debugInfo(arena.getArena() + " was closed.", 1);
+					CommunicationManager.debugInfo(arena.getName() + " was closed.", 1);
 
 					return true;
 				}
@@ -1110,5 +1185,28 @@ public class Commands implements CommandExecutor {
 					0);
 		}
 		return false;
+	}
+
+	private void moveData(String to, String from) {
+		if (arenaData.get(from) != null)
+			arenaData.set(to, arenaData.get(from));
+	}
+
+	private void moveSection(String to, String from) {
+		if (arenaData.contains(from))
+			Objects.requireNonNull(arenaData.getConfigurationSection(from)).getKeys(false).forEach(key ->
+					moveData(to + "." + key, from + "." + key));
+	}
+
+	private void moveNested(String to, String from) {
+		if (arenaData.contains(from))
+			Objects.requireNonNull(arenaData.getConfigurationSection(from)).getKeys(false).forEach(key ->
+					moveSection(to + "." + key, from + "." + key));
+	}
+
+	private void moveInventory(String to, String from) {
+		if (arenaData.contains(from))
+			Objects.requireNonNull(arenaData.getConfigurationSection(from)).getKeys(false).forEach(key ->
+					arenaData.set(to + "." + key, arenaData.getItemStack(from + "." + key)));
 	}
 }
