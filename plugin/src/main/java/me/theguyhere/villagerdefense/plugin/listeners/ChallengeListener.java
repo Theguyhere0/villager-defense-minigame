@@ -4,6 +4,7 @@ import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
@@ -48,6 +49,10 @@ public class ChallengeListener implements Listener {
         } catch (Exception err) {
             return;
         }
+
+        // Ignore arenas that aren't started
+        if (GameManager.getArena(player).getStatus() != ArenaStatus.ACTIVE)
+            return;
 
         // Ignore creative and spectator mode players
         if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR)
@@ -105,6 +110,10 @@ public class ChallengeListener implements Listener {
             return;
         }
 
+        // Ignore arenas that aren't started
+        if (GameManager.getArena(player).getStatus() != ArenaStatus.ACTIVE)
+            return;
+
         ItemStack item = e.getItem();
 
         // Ignore shop item
@@ -119,13 +128,19 @@ public class ChallengeListener implements Listener {
         Random r = new Random();
 
         // See if item should be dropped
-        if (r.nextDouble() < dropChance)
-            if (e.getHand() == EquipmentSlot.HAND)
-                player.dropItem(true);
-            else if (item != null) {
-                player.getWorld().dropItem(player.getLocation(), item);
+        if (r.nextDouble() < dropChance) {
+            if (item == null)
+                return;
+
+            player.getWorld().dropItem(player.getLocation(), item);
+
+            if (e.getHand() == EquipmentSlot.HAND) {
+                Objects.requireNonNull(player.getEquipment()).setItemInMainHand(null);
+            }
+            else {
                 Objects.requireNonNull(player.getEquipment()).setItemInOffHand(null);
             }
+        }
     }
 
     // Handle taking damage
@@ -143,6 +158,10 @@ public class ChallengeListener implements Listener {
             } catch (Exception err) {
                 return;
             }
+
+            // Ignore arenas that aren't started
+            if (GameManager.getArena(player).getStatus() != ArenaStatus.ACTIVE)
+                return;
 
             // Make sure player is alive
             if (gamer.getStatus() != PlayerStatus.ALIVE)
@@ -205,6 +224,10 @@ public class ChallengeListener implements Listener {
             return;
         }
 
+        // Ignore arenas that aren't started
+        if (GameManager.getArena(player).getStatus() != ArenaStatus.ACTIVE)
+            return;
+
         // Check for blind challenge
         if (!gamer.getChallenges().contains(Challenge.blind()))
             return;
@@ -229,6 +252,10 @@ public class ChallengeListener implements Listener {
         } catch (Exception err) {
             return;
         }
+
+        // Ignore arenas that aren't started
+        if (GameManager.getArena(player).getStatus() != ArenaStatus.ACTIVE)
+            return;
 
         // Check for uhc challenge
         if (!gamer.getChallenges().contains(Challenge.uhc()))

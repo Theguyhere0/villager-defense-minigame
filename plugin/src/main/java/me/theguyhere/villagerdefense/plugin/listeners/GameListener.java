@@ -1224,7 +1224,8 @@ public class GameListener implements Listener {
 			return;
 
 		// Check for standard game items item
-		if (item.equals(GameItems.shop()) || item.equals(GameItems.kitSelector()) || item.equals(GameItems.leave()))
+		if (item.equals(GameItems.shop()) || item.equals(GameItems.kitSelector()) || item.equals(GameItems.leave()) ||
+				item.equals(GameItems.challengeSelector()))
 			e.setCancelled(true);
 	}
 

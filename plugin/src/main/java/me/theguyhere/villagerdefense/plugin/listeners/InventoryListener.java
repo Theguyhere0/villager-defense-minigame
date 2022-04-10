@@ -4,7 +4,10 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.SignGUIEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidNameException;
-import me.theguyhere.villagerdefense.plugin.game.models.*;
+import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
+import me.theguyhere.villagerdefense.plugin.game.models.EnchantingBook;
+import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
+import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
@@ -15,6 +18,7 @@ import me.theguyhere.villagerdefense.plugin.inventories.InventoryID;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryMeta;
 import me.theguyhere.villagerdefense.plugin.tools.*;
 import org.apache.commons.lang.math.NumberUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -197,7 +201,7 @@ public class InventoryListener implements Listener {
 
 			// Close inventory
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.closeInventory();
+				closeInv(player);
 		}
 
 		// Arenas dashboard
@@ -256,7 +260,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 				player.teleport(location);
-				player.closeInventory();
+				closeInv(player);
 			}
 
 			// Center lobby
@@ -331,7 +335,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 				player.teleport(location);
-				player.closeInventory();
+				closeInv(player);
 			}
 
 			// Center info board
@@ -402,7 +406,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 				player.teleport(location);
-				player.closeInventory();
+				closeInv(player);
 			}
 
 			// Center leaderboard
@@ -452,7 +456,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 				player.teleport(location);
-				player.closeInventory();
+				closeInv(player);
 			}
 
 			// Center leaderboard
@@ -502,7 +506,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 				player.teleport(location);
-				player.closeInventory();
+				closeInv(player);
 			}
 
 			// Center leaderboard
@@ -552,7 +556,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 				player.teleport(location);
-				player.closeInventory();
+				closeInv(player);
 			}
 
 			// Center leaderboard
@@ -602,7 +606,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 				player.teleport(location);
-				player.closeInventory();
+				closeInv(player);
 			}
 
 			// Center leaderboard
@@ -1078,7 +1082,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 				player.teleport(location);
-				player.closeInventory();
+				closeInv(player);
 			}
 
 			// Center portal
@@ -1131,7 +1135,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 				player.teleport(location);
-				player.closeInventory();
+				closeInv(player);
 			}
 
 			// Center leaderboard
@@ -1215,7 +1219,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("Teleport")) {
 				try {
 					player.teleport(arenaInstance.getPlayerSpawn().getLocation());
-					player.closeInventory();
+					closeInv(player);
 				} catch (NullPointerException err) {
 					PlayerManager.notifyFailure(player, "No player spawn to teleport to!");
 				}
@@ -1272,7 +1276,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 				player.teleport(location);
-				player.closeInventory();
+				closeInv(player);
 			}
 
 			// Center waiting room
@@ -1489,7 +1493,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("Teleport"))
 				try {
 					player.teleport(arenaInstance.getMonsterSpawn(meta.getId()).getLocation());
-					player.closeInventory();
+					closeInv(player);
 				} catch (NullPointerException err) {
 					PlayerManager.notifyFailure(player, "No monster spawn to teleport to!");
 				}
@@ -1587,7 +1591,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("Teleport"))
 				try {
 					player.teleport(arenaInstance.getVillagerSpawn(meta.getId()).getLocation());
-					player.closeInventory();
+					closeInv(player);
 				} catch (NullPointerException err) {
 					PlayerManager.notifyFailure(player, "No villager spawn to teleport to!");
 				}
@@ -2403,7 +2407,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 				player.teleport(location);
-				player.closeInventory();
+				closeInv(player);
 			}
 
 			// Remove spawn
@@ -2446,7 +2450,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 				player.teleport(location);
-				player.closeInventory();
+				closeInv(player);
 			}
 
 			// Remove spawn
@@ -3059,7 +3063,7 @@ public class InventoryListener implements Listener {
 
 			// Leave if EXIT
 			if (buttonName.contains(LanguageManager.messages.exit)) {
-				player.closeInventory();
+				closeInv(player);
 				return;
 			}
 
@@ -3097,7 +3101,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Close inventory and create scoreboard
-			player.closeInventory();
+			closeInv(player);
 			GameManager.createBoard(gamer);
 		}
 
@@ -3118,7 +3122,7 @@ public class InventoryListener implements Listener {
 
 			// Leave if EXIT
 			if (buttonName.contains(LanguageManager.messages.exit)) {
-				player.closeInventory();
+				closeInv(player);
 				return;
 			}
 
@@ -3199,5 +3203,13 @@ public class InventoryListener implements Listener {
 		}
 
 		player.openInventory(Inventories.createArenaMenu(arena));
+	}
+
+	/**
+	 * Closes the inventory of a player without creating a ghost item artifact.
+	 * @param player Player to close inventory.
+	 */
+	private void closeInv(Player player) {
+		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, player::closeInventory, 1);
 	}
 }
