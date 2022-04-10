@@ -702,7 +702,7 @@ public class Commands implements CommandExecutor {
 									LanguageManager.messages.manualUpdateWarn, "arenaData.yml"), 0);
 						}
 					}
-					else if (arenaDataVersion < 5) {
+					if (arenaDataVersion < 5) {
 						try {
 							// Translate waiting sounds
 							Objects.requireNonNull(arenaData.getConfigurationSection("")).getKeys(false)
@@ -773,7 +773,7 @@ public class Commands implements CommandExecutor {
 											"arenaData.yml"), 0);
 						}
 					}
-					else if (arenaDataVersion < 6) {
+					if (arenaDataVersion < 6) {
 						try {
 							// Take old data and put into new format
 							Objects.requireNonNull(arenaData.getConfigurationSection("")).getKeys(false)
