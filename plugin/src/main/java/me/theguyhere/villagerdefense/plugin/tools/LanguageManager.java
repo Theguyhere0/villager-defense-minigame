@@ -793,11 +793,11 @@ public class LanguageManager {
         public final @NotNull PlayerStat totalKills;
 
         private PlayerStats() throws InvalidLanguageKeyException {
-            topBalance = new PlayerStat("topKills");
-            topKills = new PlayerStat("topWave");
-            topWave = new PlayerStat("totalGems");
-            totalGems = new PlayerStat("totalKills");
-            totalKills = new PlayerStat("topBalance");
+            topBalance = new PlayerStat("topBalance");
+            topKills = new PlayerStat("topKills");
+            topWave = new PlayerStat("topWave");
+            totalGems = new PlayerStat("totalGems");
+            totalKills = new PlayerStat("totalKills");
         }
 
         public static class PlayerStat extends Section {
