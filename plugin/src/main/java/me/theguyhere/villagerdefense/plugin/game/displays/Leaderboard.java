@@ -5,6 +5,7 @@ import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +60,13 @@ public class Leaderboard {
 
 		// Put names and values into the leaderboard
 		mapping.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).limit(10)
-				.forEachOrdered(map -> info.add(map.getKey() + " - &b" + map.getValue()));
+				.forEachOrdered(map -> {
+					try {
+						info.add(Bukkit.getOfflinePlayer(UUID.fromString(map.getKey())).getName() +
+								" - &b" + map.getValue());
+					} catch (Exception ignored) {
+					}
+				});
 
 		for (int i = 1; i < info.size(); i++)
 			info.set(i, CommunicationManager.format("&6" + i + ") &f" + info.get(i)));

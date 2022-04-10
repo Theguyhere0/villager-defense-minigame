@@ -4,7 +4,10 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.SignGUIEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidNameException;
-import me.theguyhere.villagerdefense.plugin.game.models.*;
+import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
+import me.theguyhere.villagerdefense.plugin.game.models.EnchantingBook;
+import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
+import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
@@ -15,6 +18,7 @@ import me.theguyhere.villagerdefense.plugin.inventories.InventoryID;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryMeta;
 import me.theguyhere.villagerdefense.plugin.tools.*;
 import org.apache.commons.lang.math.NumberUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -29,6 +33,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public class InventoryListener implements Listener {
 	private final Main plugin;
@@ -196,7 +201,7 @@ public class InventoryListener implements Listener {
 
 			// Close inventory
 			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.closeInventory();
+				closeInv(player);
 		}
 
 		// Arenas dashboard
@@ -255,7 +260,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 				player.teleport(location);
-				player.closeInventory();
+				closeInv(player);
 			}
 
 			// Center lobby
@@ -330,7 +335,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 				player.teleport(location);
-				player.closeInventory();
+				closeInv(player);
 			}
 
 			// Center info board
@@ -401,7 +406,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 				player.teleport(location);
-				player.closeInventory();
+				closeInv(player);
 			}
 
 			// Center leaderboard
@@ -451,7 +456,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 				player.teleport(location);
-				player.closeInventory();
+				closeInv(player);
 			}
 
 			// Center leaderboard
@@ -501,7 +506,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 				player.teleport(location);
-				player.closeInventory();
+				closeInv(player);
 			}
 
 			// Center leaderboard
@@ -551,7 +556,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 				player.teleport(location);
-				player.closeInventory();
+				closeInv(player);
 			}
 
 			// Center leaderboard
@@ -601,7 +606,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 				player.teleport(location);
-				player.closeInventory();
+				closeInv(player);
 			}
 
 			// Center leaderboard
@@ -1077,7 +1082,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 				player.teleport(location);
-				player.closeInventory();
+				closeInv(player);
 			}
 
 			// Center portal
@@ -1130,7 +1135,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 				player.teleport(location);
-				player.closeInventory();
+				closeInv(player);
 			}
 
 			// Center leaderboard
@@ -1214,7 +1219,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("Teleport")) {
 				try {
 					player.teleport(arenaInstance.getPlayerSpawn().getLocation());
-					player.closeInventory();
+					closeInv(player);
 				} catch (NullPointerException err) {
 					PlayerManager.notifyFailure(player, "No player spawn to teleport to!");
 				}
@@ -1271,7 +1276,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 				player.teleport(location);
-				player.closeInventory();
+				closeInv(player);
 			}
 
 			// Center waiting room
@@ -1488,7 +1493,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("Teleport"))
 				try {
 					player.teleport(arenaInstance.getMonsterSpawn(meta.getId()).getLocation());
-					player.closeInventory();
+					closeInv(player);
 				} catch (NullPointerException err) {
 					PlayerManager.notifyFailure(player, "No monster spawn to teleport to!");
 				}
@@ -1586,7 +1591,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("Teleport"))
 				try {
 					player.teleport(arenaInstance.getVillagerSpawn(meta.getId()).getLocation());
-					player.closeInventory();
+					closeInv(player);
 				} catch (NullPointerException err) {
 					PlayerManager.notifyFailure(player, "No villager spawn to teleport to!");
 				}
@@ -2402,7 +2407,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 				player.teleport(location);
-				player.closeInventory();
+				closeInv(player);
 			}
 
 			// Remove spawn
@@ -2445,7 +2450,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 				player.teleport(location);
-				player.closeInventory();
+				closeInv(player);
 			}
 
 			// Remove spawn
@@ -2983,8 +2988,9 @@ public class InventoryListener implements Listener {
 			FileConfiguration playerData = plugin.getPlayerData();
 			Player owner = meta.getPlayer();
 			String name = owner.getName();
+			UUID id = owner.getUniqueId();
 			Kit kit = Kit.getKit(buttonName.substring(4));
-			String path = name + ".kits.";
+			String path = id + ".kits.";
 
 			if (buttonName.contains(LanguageManager.messages.exit)) {
 				player.openInventory(Inventories.createPlayerStatsMenu(owner));
@@ -3004,9 +3010,9 @@ public class InventoryListener implements Listener {
 			// Single tier kits
 			if (!kit.isMultiLevel()) {
 				if (!playerData.getBoolean(path + kit.getName()))
-					if (playerData.getInt(name + ".crystalBalance") >= kit.getPrice(1)) {
-						playerData.set(name + ".crystalBalance",
-								playerData.getInt(name + ".crystalBalance") - kit.getPrice(1));
+					if (playerData.getInt(id + ".crystalBalance") >= kit.getPrice(1)) {
+						playerData.set(id + ".crystalBalance",
+								playerData.getInt(id + ".crystalBalance") - kit.getPrice(1));
 						playerData.set(path + kit.getName(), true);
 						PlayerManager.notifySuccess(player, LanguageManager.confirms.kitBuy);
 					} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitBuy);
@@ -3018,16 +3024,16 @@ public class InventoryListener implements Listener {
 				if (kitLevel == kit.getMaxLevel())
 					return;
 				else if (kitLevel == 0) {
-					if (playerData.getInt(name + ".crystalBalance") >= kit.getPrice(++kitLevel)) {
-						playerData.set(name + ".crystalBalance",
-								playerData.getInt(name + ".crystalBalance") - kit.getPrice(kitLevel));
+					if (playerData.getInt(id + ".crystalBalance") >= kit.getPrice(++kitLevel)) {
+						playerData.set(id + ".crystalBalance",
+								playerData.getInt(id + ".crystalBalance") - kit.getPrice(kitLevel));
 						playerData.set(path + kit.getName(), kitLevel);
 						PlayerManager.notifySuccess(player, LanguageManager.confirms.kitBuy);
 					} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitBuy);
 				} else {
-					if (playerData.getInt(name + ".crystalBalance") >= kit.getPrice(++kitLevel)) {
-						playerData.set(name + ".crystalBalance",
-								playerData.getInt(name + ".crystalBalance") - kit.getPrice(kitLevel));
+					if (playerData.getInt(id + ".crystalBalance") >= kit.getPrice(++kitLevel)) {
+						playerData.set(id + ".crystalBalance",
+								playerData.getInt(id + ".crystalBalance") - kit.getPrice(kitLevel));
 						playerData.set(path + kit.getName(), kitLevel);
 						PlayerManager.notifySuccess(player, LanguageManager.confirms.kitUpgrade);
 					} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitUpgrade);
@@ -3053,11 +3059,11 @@ public class InventoryListener implements Listener {
 			}
 
 			Kit kit = Kit.getKit(buttonName.substring(4));
-			String path = player.getName() + ".kits.";
+			String path = player.getUniqueId() + ".kits.";
 
 			// Leave if EXIT
 			if (buttonName.contains(LanguageManager.messages.exit)) {
-				player.closeInventory();
+				closeInv(player);
 				return;
 			}
 
@@ -3095,7 +3101,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Close inventory and create scoreboard
-			player.closeInventory();
+			closeInv(player);
 			GameManager.createBoard(gamer);
 		}
 
@@ -3116,7 +3122,7 @@ public class InventoryListener implements Listener {
 
 			// Leave if EXIT
 			if (buttonName.contains(LanguageManager.messages.exit)) {
-				player.closeInventory();
+				closeInv(player);
 				return;
 			}
 
@@ -3197,5 +3203,13 @@ public class InventoryListener implements Listener {
 		}
 
 		player.openInventory(Inventories.createArenaMenu(arena));
+	}
+
+	/**
+	 * Closes the inventory of a player without creating a ghost item artifact.
+	 * @param player Player to close inventory.
+	 */
+	private void closeInv(Player player) {
+		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, player::closeInventory, 1);
 	}
 }
