@@ -30,7 +30,7 @@ public class Mobs {
         monsters.addEntry(livingEntity.getUniqueId().toString());
         livingEntity.setCustomName(healthBar(1, 1, 5));
         livingEntity.setCustomNameVisible(true);
-        livingEntity.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
+        livingEntity.setMetadata("VD", new FixedMetadataValue(plugin, arena.getId()));
         livingEntity.setMetadata("game", new FixedMetadataValue(plugin, arena.getGameID()));
         livingEntity.setMetadata("wave", new FixedMetadataValue(plugin, arena.getCurrentWave()));
         livingEntity.setRemoveWhenFarAway(false);
@@ -77,7 +77,7 @@ public class Mobs {
         assert monsters != null;
 
         monsters.addEntry(livingEntity.getUniqueId().toString());
-        livingEntity.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
+        livingEntity.setMetadata("VD", new FixedMetadataValue(plugin, arena.getId()));
         livingEntity.setRemoveWhenFarAway(false);
         livingEntity.setCanPickupItems(false);
         arena.incrementEnemies();
@@ -117,7 +117,7 @@ public class Mobs {
     private static void setLargeMinion(Main plugin, Arena arena, LivingEntity livingEntity) {
         livingEntity.setCustomName(healthBar(1, 1, 10));
         livingEntity.setCustomNameVisible(true);
-        livingEntity.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
+        livingEntity.setMetadata("VD", new FixedMetadataValue(plugin, arena.getId()));
         livingEntity.setRemoveWhenFarAway(false);
         livingEntity.setCanPickupItems(false);
         arena.incrementEnemies();
@@ -1056,7 +1056,7 @@ public class Mobs {
         villagers.addEntry(villager.getUniqueId().toString());
         villager.setCustomName(healthBar(1, 1, 5));
         villager.setCustomNameVisible(true);
-        villager.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
+        villager.setMetadata("VD", new FixedMetadataValue(plugin, arena.getId()));
         arena.incrementVillagers();
         Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
     }
@@ -1203,7 +1203,7 @@ public class Mobs {
         wolf.setAdult();
         wolf.setOwner(vdPlayer.getPlayer());
         wolf.setBreed(false);
-        wolf.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
+        wolf.setMetadata("VD", new FixedMetadataValue(plugin, arena.getId()));
         wolf.setCustomName(vdPlayer.getPlayer().getName() + "'s Wolf");
         wolf.setCustomNameVisible(true);
         vdPlayer.incrementWolves();
@@ -1238,7 +1238,7 @@ public class Mobs {
     }
 
     public static void setGolem(Main plugin, Arena arena, IronGolem ironGolem) {
-        ironGolem.setMetadata("VD", new FixedMetadataValue(plugin, arena.getArena()));
+        ironGolem.setMetadata("VD", new FixedMetadataValue(plugin, arena.getId()));
         ironGolem.setCustomName(healthBar(1, 1, 10));
         ironGolem.setCustomNameVisible(true);
         arena.incrementGolems();

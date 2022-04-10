@@ -39,7 +39,7 @@ public class ArenaListener implements Listener {
         // Ignore if player is already in a game somehow
         if (GameManager.checkPlayer(player)) {
             e.setCancelled(true);
-            PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.join"));
+            PlayerManager.notifyFailure(player, LanguageManager.errors.join);
             return;
         }
 
@@ -49,7 +49,7 @@ public class ArenaListener implements Listener {
 
         // Check if arena is closed
         if (arena.isClosed()) {
-            PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.close"));
+            PlayerManager.notifyFailure(player, LanguageManager.errors.close);
             e.setCancelled(true);
             return;
         }
@@ -66,7 +66,7 @@ public class ArenaListener implements Listener {
             spawn = arena.getPlayerSpawn().getLocation();
         } catch (Exception err) {
             err.printStackTrace();
-            PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.fatal"));
+            PlayerManager.notifyFailure(player, LanguageManager.errors.fatal);
             return;
         }
 
@@ -78,13 +78,13 @@ public class ArenaListener implements Listener {
 
         if (plugin.getConfig().getBoolean("keepInv")) {
             // Save player exp and items before going into arena
-            plugin.getPlayerData().set(player.getName() + ".health", player.getHealth());
-            plugin.getPlayerData().set(player.getName() + ".food", player.getFoodLevel());
-            plugin.getPlayerData().set(player.getName() + ".saturation", (double) player.getSaturation());
-            plugin.getPlayerData().set(player.getName() + ".level", player.getLevel());
-            plugin.getPlayerData().set(player.getName() + ".exp", (double) player.getExp());
+            plugin.getPlayerData().set(player.getUniqueId() + ".health", player.getHealth());
+            plugin.getPlayerData().set(player.getUniqueId() + ".food", player.getFoodLevel());
+            plugin.getPlayerData().set(player.getUniqueId() + ".saturation", (double) player.getSaturation());
+            plugin.getPlayerData().set(player.getUniqueId() + ".level", player.getLevel());
+            plugin.getPlayerData().set(player.getUniqueId() + ".exp", (double) player.getExp());
             for (int i = 0; i < player.getInventory().getContents().length; i++)
-                plugin.getPlayerData().set(player.getName() + ".inventory." + i, player.getInventory().getContents()[i]);
+                plugin.getPlayerData().set(player.getUniqueId() + ".inventory." + i, player.getInventory().getContents()[i]);
             plugin.savePlayerData();
         }
 
@@ -96,7 +96,7 @@ public class ArenaListener implements Listener {
 
             // Notify everyone in the arena
             arena.getPlayers().forEach(gamer ->
-                    PlayerManager.notifyAlert(gamer.getPlayer(), plugin.getLanguageStringFormatted("messages.join",
+                    PlayerManager.notifyAlert(gamer.getPlayer(), String.format(LanguageManager.messages.join,
                             player.getName())));
 
             // Update player tracking and in-game stats
@@ -126,7 +126,7 @@ public class ArenaListener implements Listener {
             player.getInventory().setItem(6, GameItems.leave());
 
             // Debug message to console
-            CommunicationManager.debugInfo(player.getName() + "joined Arena " + arena.getArena(), 2);
+            CommunicationManager.debugInfo(player.getName() + "joined " + arena.getName(), 2);
         }
 
         // Enter arena if late arrival is allowed
@@ -136,7 +136,7 @@ public class ArenaListener implements Listener {
 
             // Notify everyone in the arena
             arena.getPlayers().forEach(gamer ->
-                    PlayerManager.notifyAlert(gamer.getPlayer(), plugin.getLanguageStringFormatted("messages.join",
+                    PlayerManager.notifyAlert(gamer.getPlayer(), String.format(LanguageManager.messages.join,
                             player.getName())));
 
             // Update player tracking and in-game stats
@@ -151,7 +151,7 @@ public class ArenaListener implements Listener {
             arena.getTask().giveItems(fighter);
 
             // Debug message to console
-            CommunicationManager.debugInfo(player.getName() + "joined Arena " + arena.getArena(), 2);
+            CommunicationManager.debugInfo(player.getName() + "joined " + arena.getName(), 2);
 
             // Don't touch task updating
             return;
@@ -168,7 +168,7 @@ public class ArenaListener implements Listener {
             arena.refreshPortal();
 
             // Debug message to console
-            CommunicationManager.debugInfo(player.getName() + "is spectating Arena " + arena.getArena(),
+            CommunicationManager.debugInfo(player.getName() + "is spectating " + arena.getName(),
                     2);
 
             // Don't touch task updating
@@ -274,12 +274,12 @@ public class ArenaListener implements Listener {
 
         // Update player stats
         for (VDPlayer active : arena.getActives())
-            if (playerData.getInt(active.getPlayer().getName() + ".topWave") < arena.getCurrentWave())
-                playerData.set(active.getPlayer().getName() + ".topWave", arena.getCurrentWave());
+            if (playerData.getInt(active.getID() + ".topWave") < arena.getCurrentWave())
+                playerData.set(active.getID() + ".topWave", arena.getCurrentWave());
         plugin.savePlayerData();
 
         // Debug message to console
-        CommunicationManager.debugInfo("Arena " + arena.getArena() + " completed wave " + arena.getCurrentWave(),
+        CommunicationManager.debugInfo("" + arena.getName() + " completed wave " + arena.getCurrentWave(),
                 2);
 
         // Win condition
@@ -334,7 +334,7 @@ public class ArenaListener implements Listener {
         spawnBosses(arena);
 
         // Debug message to console
-        CommunicationManager.debugInfo("Arena " + arena.getArena() + " started wave " + arena.getCurrentWave(),
+        CommunicationManager.debugInfo("" + arena.getName() + " started wave " + arena.getCurrentWave(),
                 2);
     }
 
@@ -350,7 +350,7 @@ public class ArenaListener implements Listener {
             gamer = arena.getPlayer(player);
         } catch (Exception err) {
             e.setCancelled(true);
-            PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.notInGame"));
+            PlayerManager.notifyFailure(player, LanguageManager.errors.notInGame);
             return;
         }
 
@@ -367,14 +367,14 @@ public class ArenaListener implements Listener {
             FileConfiguration playerData = plugin.getPlayerData();
 
             // Update player stats
-            playerData.set(player.getName() + ".totalKills",
-                    playerData.getInt(player.getName() + ".totalKills") + gamer.getKills());
-            if (playerData.getInt(player.getName() + ".topKills") < gamer.getKills())
-                playerData.set(player.getName() + ".topKills", gamer.getKills());
+            playerData.set(player.getUniqueId() + ".totalKills",
+                    playerData.getInt(player.getUniqueId() + ".totalKills") + gamer.getKills());
+            if (playerData.getInt(player.getUniqueId() + ".topKills") < gamer.getKills())
+                playerData.set(player.getUniqueId() + ".topKills", gamer.getKills());
             plugin.savePlayerData();
 
             // Refresh leaderboards
-            plugin.getGameManager().refreshLeaderboards();
+            GameManager.refreshLeaderboards();
 
             // Remove the player from the arena and time limit bar if exists
             arena.getPlayers().remove(gamer);
@@ -387,7 +387,7 @@ public class ArenaListener implements Listener {
             // Notify people in arena player left
             arena.getPlayers().forEach(fighter ->
                     PlayerManager.notifyAlert(fighter.getPlayer(),
-                            plugin.getLanguageStringFormatted("messages.leaveArena", player.getName())));
+                            String.format(LanguageManager.messages.leaveArena, player.getName())));
 
             int actives = arena.getActiveCount();
 
@@ -395,7 +395,7 @@ public class ArenaListener implements Listener {
             if (arena.hasLateArrival() && actives < arena.getMaxPlayers())
                 arena.getSpectators().forEach(spectator ->
                     PlayerManager.notifyAlert(spectator.getPlayer(),
-                            plugin.getLanguageStringFormatted("messages.late", player.getName())));
+                            String.format(LanguageManager.messages.late, player.getName())));
 
             // Sets them up for teleport to lobby
             player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
@@ -416,11 +416,11 @@ public class ArenaListener implements Listener {
                 bonus = (int) (reward * bonus / 100d);
 
                 // Give rewards and notify
-                plugin.getPlayerData().set(player.getName() + ".crystalBalance",
-                        plugin.getPlayerData().getInt(player.getName() + ".crystalBalance") + reward);
-                plugin.getPlayerData().set(player.getName() + ".crystalBalance",
-                        plugin.getPlayerData().getInt(player.getName() + ".crystalBalance") + bonus);
-                PlayerManager.notifySuccess(player, plugin.getLanguageString("messages.crystalsEarned"),
+                plugin.getPlayerData().set(player.getUniqueId() + ".crystalBalance",
+                        plugin.getPlayerData().getInt(player.getUniqueId() + ".crystalBalance") + reward);
+                plugin.getPlayerData().set(player.getUniqueId() + ".crystalBalance",
+                        plugin.getPlayerData().getInt(player.getUniqueId() + ".crystalBalance") + bonus);
+                PlayerManager.notifySuccess(player, LanguageManager.messages.crystalsEarned,
                         ChatColor.AQUA, String.format("%d (+%d)", reward, bonus));
             }
 
@@ -463,28 +463,28 @@ public class ArenaListener implements Listener {
 
         // Return player health, food, exp, and items
         if (plugin.getConfig().getBoolean("keepInv") && player.isOnline()) {
-            if (plugin.getPlayerData().contains(player.getName() + ".health"))
-                player.setHealth(plugin.getPlayerData().getDouble(player.getName() + ".health"));
-            plugin.getPlayerData().set(player.getName() + ".health", null);
-            if (plugin.getPlayerData().contains(player.getName() + ".food"))
-                player.setFoodLevel(plugin.getPlayerData().getInt(player.getName() + ".food"));
-            plugin.getPlayerData().set(player.getName() + ".food", null);
-            if (plugin.getPlayerData().contains(player.getName() + ".saturation"))
-                player.setSaturation((float) plugin.getPlayerData().getDouble(player.getName() + ".saturation"));
-            plugin.getPlayerData().set(player.getName() + ".saturation", null);
-            if (plugin.getPlayerData().contains(player.getName() + ".level"))
-                player.setLevel(plugin.getPlayerData().getInt(player.getName() + ".level"));
-            plugin.getPlayerData().set(player.getName() + ".level", null);
-            if (plugin.getPlayerData().contains(player.getName() + ".exp"))
-                player.setExp((float) plugin.getPlayerData().getDouble(player.getName() + ".exp"));
-            plugin.getPlayerData().set(player.getName() + ".exp", null);
-            if (plugin.getPlayerData().contains(player.getName() + ".inventory"))
+            if (plugin.getPlayerData().contains(player.getUniqueId() + ".health"))
+                player.setHealth(plugin.getPlayerData().getDouble(player.getUniqueId() + ".health"));
+            plugin.getPlayerData().set(player.getUniqueId() + ".health", null);
+            if (plugin.getPlayerData().contains(player.getUniqueId() + ".food"))
+                player.setFoodLevel(plugin.getPlayerData().getInt(player.getUniqueId() + ".food"));
+            plugin.getPlayerData().set(player.getUniqueId() + ".food", null);
+            if (plugin.getPlayerData().contains(player.getUniqueId() + ".saturation"))
+                player.setSaturation((float) plugin.getPlayerData().getDouble(player.getUniqueId() + ".saturation"));
+            plugin.getPlayerData().set(player.getUniqueId() + ".saturation", null);
+            if (plugin.getPlayerData().contains(player.getUniqueId() + ".level"))
+                player.setLevel(plugin.getPlayerData().getInt(player.getUniqueId() + ".level"));
+            plugin.getPlayerData().set(player.getUniqueId() + ".level", null);
+            if (plugin.getPlayerData().contains(player.getUniqueId() + ".exp"))
+                player.setExp((float) plugin.getPlayerData().getDouble(player.getUniqueId() + ".exp"));
+            plugin.getPlayerData().set(player.getUniqueId() + ".exp", null);
+            if (plugin.getPlayerData().contains(player.getUniqueId() + ".inventory"))
                 Objects.requireNonNull(plugin.getPlayerData()
-                                .getConfigurationSection(player.getName() + ".inventory"))
+                                .getConfigurationSection(player.getUniqueId() + ".inventory"))
                         .getKeys(false)
                         .forEach(num -> player.getInventory().setItem(Integer.parseInt(num),
-                                (ItemStack) plugin.getPlayerData().get(player.getName() + ".inventory." + num)));
-            plugin.getPlayerData().set(player.getName() + ".inventory", null);
+                                (ItemStack) plugin.getPlayerData().get(player.getUniqueId() + ".inventory." + num)));
+            plugin.getPlayerData().set(player.getUniqueId() + ".inventory", null);
             plugin.savePlayerData();
         }
 
@@ -495,7 +495,7 @@ public class ArenaListener implements Listener {
         GameManager.displayEverything(player);
 
         // Debug message to console
-        CommunicationManager.debugInfo(player.getName() + " left Arena " + arena.getArena(), 2);
+        CommunicationManager.debugInfo(player.getName() + " left " + arena.getName(), 2);
     }
 
     @EventHandler
@@ -508,12 +508,12 @@ public class ArenaListener implements Listener {
         // Notify players that the game has ended (Title)
         arena.getPlayers().forEach(player ->
                 player.getPlayer().sendTitle(CommunicationManager.format("&4&l" +
-                        plugin.getLanguageString("messages.gameOver")),
-                        "", Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
+                        LanguageManager.messages.gameOver), "", Utils.secondsToTicks(.5),
+                        Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
 
         // Notify players that the game has ended (Chat)
         arena.getPlayers().forEach(player ->
-                PlayerManager.notifyAlert(player.getPlayer(), plugin.getLanguageString("messages.end"),
+                PlayerManager.notifyAlert(player.getPlayer(), LanguageManager.messages.end,
                         ChatColor.AQUA, Integer.toString(arena.getCurrentWave() - 1), "10"));
 
         // Set all players to invincible
@@ -532,7 +532,7 @@ public class ArenaListener implements Listener {
             if (arena.checkNewRecord(new ArenaRecord(arena.getCurrentWave() - 1, arena.getActives().stream()
                     .map(vdPlayer -> vdPlayer.getPlayer().getName()).collect(Collectors.toList())))) {
                 arena.getPlayers().forEach(player -> player.getPlayer().sendTitle(
-                        CommunicationManager.format(plugin.getLanguageString("messages.record")), null,
+                        CommunicationManager.format("&a" + LanguageManager.messages.record), null,
                         Utils.secondsToTicks(.5), Utils.secondsToTicks(3.5), Utils.secondsToTicks(1)));
                 arena.refreshArenaBoard();
             }
@@ -552,12 +552,12 @@ public class ArenaListener implements Listener {
                 bonus = (int) (reward * bonus / 100d);
 
                 // Give rewards and notify
-                plugin.getPlayerData().set(vdPlayer.getPlayer().getName() + ".crystalBalance",
-                        plugin.getPlayerData().getInt(vdPlayer.getPlayer().getName() + ".crystalBalance") + reward);
-                plugin.getPlayerData().set(vdPlayer.getPlayer().getName() + ".crystalBalance",
-                        plugin.getPlayerData().getInt(vdPlayer.getPlayer().getName() + ".crystalBalance") + bonus);
+                plugin.getPlayerData().set(vdPlayer.getID() + ".crystalBalance",
+                        plugin.getPlayerData().getInt(vdPlayer.getID() + ".crystalBalance") + reward);
+                plugin.getPlayerData().set(vdPlayer.getID() + ".crystalBalance",
+                        plugin.getPlayerData().getInt(vdPlayer.getID() + ".crystalBalance") + bonus);
                 PlayerManager.notifySuccess(vdPlayer.getPlayer(),
-                        plugin.getLanguageString("messages.crystalsEarned"),
+                        LanguageManager.messages.crystalsEarned,
                         ChatColor.AQUA, String.format("%d (+%d)", reward, bonus));
             });
         }
@@ -580,7 +580,7 @@ public class ArenaListener implements Listener {
 
 
         // Debug message to console
-        CommunicationManager.debugInfo("Arena " + arena.getArena() + " is ending.", 2);
+        CommunicationManager.debugInfo("" + arena.getName() + " is ending.", 2);
     }
 
     @EventHandler
@@ -605,7 +605,7 @@ public class ArenaListener implements Listener {
 
         // Get spawn table
         if (arena.getSpawnTableFile().equals("custom"))
-            data = new DataManager(plugin, "spawnTables/a" + arena.getArena() + ".yml");
+            data = new DataManager(plugin, "spawnTables/" + arena.getPath() + ".yml");
         else data = new DataManager(plugin, "spawnTables/" + arena.getSpawnTableFile() + ".yml");
 
         Random r = new Random();
@@ -646,7 +646,7 @@ public class ArenaListener implements Listener {
 
         // Get spawn table
         if (arena.getSpawnTableFile().equals("custom"))
-            data = new DataManager(plugin, "spawnTables/a" + arena.getArena() + ".yml");
+            data = new DataManager(plugin, "spawnTables/" + arena.getPath() + ".yml");
         else data = new DataManager(plugin, "spawnTables/" + arena.getSpawnTableFile() + ".yml");
 
         Random r = new Random();
@@ -671,21 +671,20 @@ public class ArenaListener implements Listener {
 
         // Split spawns by type
         List<Location> grounds = new ArrayList<>();
-        for (int i = 0; i < 9; i++)
-            try {
-                if (arena.getMonsterSpawn(i).getLocation() != null && arena.getMonsterSpawnType(i) != 2)
-                    grounds.add(arena.getMonsterSpawn(i).getLocation());
-            } catch (NullPointerException ignored) {
-            }
+        for (ArenaSpawn arenaSpawn : arena.getMonsterSpawns()) {
+            if (arenaSpawn.getSpawnType() != ArenaSpawnType.MONSTER_AIR)
+                grounds.add(arenaSpawn.getLocation());
+        }
+
+        List<Location> airs = new ArrayList<>();
+        for (ArenaSpawn arenaSpawn : arena.getMonsterSpawns()) {
+            if (arenaSpawn.getSpawnType() != ArenaSpawnType.MONSTER_GROUND)
+                airs.add(arenaSpawn.getLocation());
+        }
+
+        // Default to all spawns if dedicated spawns are empty
         if (grounds.isEmpty())
             grounds = arena.getMonsterSpawns().stream().map(ArenaSpawn::getLocation).collect(Collectors.toList());
-        List<Location> airs = new ArrayList<>();
-        for (int i = 0; i < 9; i++)
-            try {
-                if (arena.getMonsterSpawn(i).getLocation() != null && arena.getMonsterSpawnType(i) != 1)
-                    airs.add(arena.getMonsterSpawn(i).getLocation());
-            } catch (NullPointerException ignored) {
-            }
         if (airs.isEmpty())
             airs = arena.getMonsterSpawns().stream().map(ArenaSpawn::getLocation).collect(Collectors.toList());
 
@@ -830,7 +829,7 @@ public class ArenaListener implements Listener {
 
         // Get spawn table
         if (arena.getSpawnTableFile().equals("custom"))
-            data = new DataManager(plugin, "spawnTables/a" + arena.getArena() + ".yml");
+            data = new DataManager(plugin, "spawnTables/" + arena.getPath() + ".yml");
         else data = new DataManager(plugin, "spawnTables/" + arena.getSpawnTableFile() + ".yml");
 
         Random r = new Random();

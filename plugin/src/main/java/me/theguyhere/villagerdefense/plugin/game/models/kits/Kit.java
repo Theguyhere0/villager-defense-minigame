@@ -1,9 +1,9 @@
 package me.theguyhere.villagerdefense.plugin.game.models.kits;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -63,16 +63,10 @@ public class Kit {
     /** The level of this instance of the kit.*/
     private int level;
 
-    private static Main plugin;
-
     public Kit(String name, KitType kitType, Material buttonMaterial) {
         this.name = name;
         this.kitType = kitType;
         this.buttonMaterial = buttonMaterial;
-    }
-
-    public static void setPlugin(Main plugin) {
-        Kit.plugin = plugin;
     }
 
     public String getName() {
@@ -132,12 +126,12 @@ public class Kit {
      * Sets the descriptions map to a common map used for ability kits.
      */
     private void setAbilityKitDescriptions() {
-        addLevelDescriptions(1, plugin.getLanguageStringFormatted("messages.upToAbilityLevel",
-                CommunicationManager.format("&b10&7")));
-        addLevelDescriptions(2, plugin.getLanguageStringFormatted("messages.upToAbilityLevel",
-                CommunicationManager.format("&b20&7")));
-        addLevelDescriptions(3, plugin.getLanguageStringFormatted("messages.upToAbilityLevel",
-                CommunicationManager.format("&b30&7")));
+        addLevelDescriptions(1, CommunicationManager.format(ChatColor.GRAY, 
+                LanguageManager.messages.upToAbilityLevel, ChatColor.AQUA, "10"));
+        addLevelDescriptions(2, CommunicationManager.format(ChatColor.GRAY,
+                LanguageManager.messages.upToAbilityLevel, ChatColor.AQUA, "20"));
+        addLevelDescriptions(3, CommunicationManager.format(ChatColor.GRAY,
+                LanguageManager.messages.upToAbilityLevel, ChatColor.AQUA, "30"));
     }
 
     /**
@@ -224,30 +218,26 @@ public class Kit {
             List<String> lores = new ArrayList<>();
             if (purchasedLevel == 0) {
                 lores.addAll(masterDescription);
-                lores.add(CommunicationManager.format("&c" + plugin.getLanguageString("messages.level") +
-                        " 1"));
+                lores.add(CommunicationManager.format("&c" + LanguageManager.messages.level + " 1"));
                 lores.addAll(getLevelDescription(1));
-                lores.add(purchaseMode ? CommunicationManager.format("&c" +
-                        plugin.getLanguageString("messages.purchase") + ": &b" + getPrice(1) + " " +
-                        plugin.getLanguageString("names.crystals")) : CommunicationManager.format(
-                                ChatColor.RED + plugin.getLanguageString("messages.unavailable")));
+                lores.add(purchaseMode ? CommunicationManager.format("&c" + 
+                        LanguageManager.messages.purchase + ": &b" + getPrice(1) + " " + 
+                        LanguageManager.names.crystals) : CommunicationManager.format(ChatColor.RED + 
+                        LanguageManager.messages.unavailable));
             }
             else if (purchasedLevel == pricesMap.size()) {
                 lores.addAll(masterDescription);
-                lores.add(CommunicationManager.format("&a" + plugin.getLanguageString("messages.level") +
-                        " " + pricesMap.size()));
+                lores.add(CommunicationManager.format("&a" + LanguageManager.messages.level + " " +
+                        pricesMap.size()));
                 lores.addAll(getLevelDescription(pricesMap.size()));
-                lores.add(purchaseMode ?
-                        CommunicationManager.format(ChatColor.GREEN +
-                                plugin.getLanguageString("messages.purchased")) :
-                        CommunicationManager.format(ChatColor.GREEN +
-                                plugin.getLanguageString("messages.available")));
+                lores.add(purchaseMode ? CommunicationManager.format(ChatColor.GREEN + 
+                        LanguageManager.messages.purchased) : CommunicationManager.format(ChatColor.GREEN +
+                        LanguageManager.messages.available));
             }
             else if (purchasedLevel == -1) {
                 lores.addAll(masterDescription);
                 descriptionsMap.forEach((level, description) -> {
-                    lores.add(CommunicationManager.format("&f" + plugin.getLanguageString("messages.level") +
-                            " " + level));
+                    lores.add(CommunicationManager.format("&f" + LanguageManager.messages.level + " " + level));
                     lores.addAll(description);
                 });
                 return ItemManager.createItem(buttonMaterial,
@@ -256,18 +246,18 @@ public class Kit {
             }
             else {
                 lores.addAll(masterDescription);
-                lores.add(CommunicationManager.format("&a" + plugin.getLanguageString("messages.level") +
-                        " " + purchasedLevel));
+                lores.add(CommunicationManager.format("&a" + LanguageManager.messages.level + " " +
+                        purchasedLevel));
                 lores.addAll(getLevelDescription(purchasedLevel));
                 if (purchaseMode) {
-                    lores.add(CommunicationManager.format("&c" + plugin.getLanguageString("messages.level") +
+                    lores.add(CommunicationManager.format("&c" + LanguageManager.messages.level +
                             " " + ++purchasedLevel));
                     lores.addAll(getLevelDescription(purchasedLevel));
                     lores.add(CommunicationManager.format("&c" +
-                            plugin.getLanguageString("messages.purchase") + ": &b" + getPrice(purchasedLevel) +
-                            " " + plugin.getLanguageString("names.crystals")));
+                            LanguageManager.messages.purchase + ": &b" + getPrice(purchasedLevel) +
+                            " " + LanguageManager.names.crystals));
                 } else lores.add(CommunicationManager.format(ChatColor.GREEN +
-                        plugin.getLanguageString("messages.available")));
+                        LanguageManager.messages.available));
             }
 
             return ItemManager.createItem(buttonMaterial,
@@ -282,23 +272,21 @@ public class Kit {
                 return ItemManager.createItem(buttonMaterial,
                         CommunicationManager.format(getKitColor(kitType) + name), ItemManager.BUTTON_FLAGS,
                         null, masterDescription, purchaseMode ?
-                                CommunicationManager.format(ChatColor.GREEN + 
-                                        plugin.getLanguageString("messages.free")) :
-                                CommunicationManager.format(ChatColor.GREEN +
-                                        plugin.getLanguageString("messages.available")));
+                                CommunicationManager.format(ChatColor.GREEN + LanguageManager.messages.free) :
+                                CommunicationManager.format(ChatColor.GREEN + LanguageManager.messages.available));
             else return ItemManager.createItem(buttonMaterial,
                     CommunicationManager.format(getKitColor(kitType) + name), ItemManager.BUTTON_FLAGS,
                         null, masterDescription, purchasedLevel == 1 ?
                                 (purchaseMode ?
                                         CommunicationManager.format(ChatColor.GREEN +
-                                                plugin.getLanguageString("messages.purchased")) :
+                                                LanguageManager.messages.purchased) :
                                         CommunicationManager.format(ChatColor.GREEN +
-                                                plugin.getLanguageString("messages.available"))) :
+                                                LanguageManager.messages.available)) :
                                 (purchaseMode ? CommunicationManager.format("&c" +
-                                        plugin.getLanguageString("messages.purchase") + ": &b" + 
-                                        getPrice(1) + " " + plugin.getLanguageString("names.crystals")) :
+                                        LanguageManager.messages.purchase + ": &b" + 
+                                        getPrice(1) + " " + LanguageManager.names.crystals) :
                                         CommunicationManager.format(ChatColor.RED +
-                                                plugin.getLanguageString("messages.unavailable"))));
+                                                LanguageManager.messages.unavailable)));
         }
     }
 
@@ -371,15 +359,15 @@ public class Kit {
 
     // Default Kit
     public static Kit none() {
-        Kit kit = new Kit(plugin.getLanguageString("names.none"), KitType.NONE, Material.LIGHT_GRAY_CONCRETE);
+        Kit kit = new Kit(LanguageManager.names.none, KitType.NONE, Material.LIGHT_GRAY_CONCRETE);
         kit.addItems(1, new ItemStack[]{new ItemStack(Material.WOODEN_SWORD)});
         return kit;
     }
 
     // Gift Kits
     public static Kit orc() {
-        Kit kit = new Kit(plugin.getLanguageString("kits.orc.name"), KitType.GIFT, Material.STICK);
-        kit.addMasterDescription(plugin.getLanguageString("kits.orc.description"));
+        Kit kit = new Kit(LanguageManager.kits.orc.name, KitType.GIFT, Material.STICK);
+        kit.addMasterDescription(LanguageManager.kits.orc.description);
         kit.addPrice(1, 0);
 
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
@@ -387,79 +375,79 @@ public class Kit {
         kit.addItems(1, new ItemStack[]{
                 new ItemStack(Material.WOODEN_SWORD),
                 ItemManager.createItem(Material.STICK, CommunicationManager.format(ChatColor.GREEN,
-                        plugin.getLanguageString("kits.orc.items.club")), ItemManager.NORMAL_FLAGS, enchants)});
+                        LanguageManager.kits.orc.items.club), ItemManager.NORMAL_FLAGS, enchants)});
         return kit;
     }
     public static Kit farmer() {
-        Kit kit = new Kit(plugin.getLanguageString("kits.farmer.name"), KitType.GIFT, Material.CARROT);
-        kit.addMasterDescription(plugin.getLanguageString("kits.farmer.description"));
+        Kit kit = new Kit(LanguageManager.kits.farmer.name, KitType.GIFT, Material.CARROT);
+        kit.addMasterDescription(LanguageManager.kits.farmer.description);
         kit.addPrice(1, 0);
         kit.addItems(1, new ItemStack[]{
                 new ItemStack(Material.WOODEN_SWORD),
                 ItemManager.createItems(Material.CARROT, 5, CommunicationManager.format(ChatColor.GREEN,
-                        plugin.getLanguageString("kits.farmer.items.carrot")))});
+                        LanguageManager.kits.farmer.items.carrot))});
         return kit;
     }
     public static Kit soldier() {
-        Kit kit = new Kit(plugin.getLanguageString("kits.soldier.name"), KitType.GIFT, Material.STONE_SWORD);
-        kit.addMasterDescription(plugin.getLanguageString("kits.soldier.description"));
+        Kit kit = new Kit(LanguageManager.kits.soldier.name, KitType.GIFT, Material.STONE_SWORD);
+        kit.addMasterDescription(LanguageManager.kits.soldier.description);
         kit.addPrice(1, 250);
         kit.addItems(1, new ItemStack[]{
                 ItemManager.createItem(Material.STONE_SWORD, CommunicationManager.format(ChatColor.GREEN,
-                        plugin.getLanguageString("kits.soldier.items.sword")))});
+                        LanguageManager.kits.soldier.items.sword))});
         return kit;
     }
     public static Kit alchemist() {
-        Kit kit = new Kit(plugin.getLanguageString("kits.alchemist.name"), KitType.GIFT, Material.BREWING_STAND);
-        kit.addMasterDescription(plugin.getLanguageString("kits.alchemist.description"));
+        Kit kit = new Kit(LanguageManager.kits.alchemist.name, KitType.GIFT, Material.BREWING_STAND);
+        kit.addMasterDescription(LanguageManager.kits.alchemist.description);
         kit.addPrice(1, 300);
         kit.addItems(1, new ItemStack[]{
                 new ItemStack(Material.WOODEN_SWORD),
                 ItemManager.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.SPEED),
                         CommunicationManager.format(ChatColor.GREEN,
-                                plugin.getLanguageString("kits.alchemist.items.speed"))),
+                                LanguageManager.kits.alchemist.items.speed)),
                 ItemManager.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.INSTANT_HEAL),
                         CommunicationManager.format(ChatColor.GREEN,
-                                plugin.getLanguageString("kits.alchemist.items.health"))),
+                                LanguageManager.kits.alchemist.items.health)),
                 ItemManager.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.INSTANT_HEAL),
                         CommunicationManager.format(ChatColor.GREEN,
-                                plugin.getLanguageString("kits.alchemist.items.health")))});
+                                LanguageManager.kits.alchemist.items.health))});
         return kit;
     }
     public static Kit tailor() {
-        Kit kit = new Kit(plugin.getLanguageString("kits.tailor.name"), KitType.GIFT, Material.LEATHER_CHESTPLATE);
-        kit.addMasterDescription(CommunicationManager.format(plugin.getLanguageString("kits.tailor.description")));
+        Kit kit = new Kit(LanguageManager.kits.tailor.name, KitType.GIFT, Material.LEATHER_CHESTPLATE);
+        kit.addMasterDescription(CommunicationManager.format(LanguageManager.kits.tailor.description));
         kit.addPrice(1, 400);
         kit.addItems(1, new ItemStack[]{
                 new ItemStack(Material.WOODEN_SWORD),
                 ItemManager.createItem(Material.LEATHER_HELMET,
                         CommunicationManager.format(ChatColor.GREEN,
-                                plugin.getLanguageString("kits.tailor.items.helmet"))),
+                                LanguageManager.kits.tailor.items.helmet)),
                 ItemManager.createItem(Material.LEATHER_CHESTPLATE,
                         CommunicationManager.format(ChatColor.GREEN,
-                                plugin.getLanguageString("kits.tailor.items.chestplate"))),
+                                LanguageManager.kits.tailor.items.chestplate)),
                 ItemManager.createItem(Material.LEATHER_LEGGINGS,
                         CommunicationManager.format(ChatColor.GREEN,
-                                plugin.getLanguageString("kits.tailor.items.leggings"))),
+                                LanguageManager.kits.tailor.items.leggings)),
                 ItemManager.createItem(Material.LEATHER_BOOTS,
                         CommunicationManager.format(ChatColor.GREEN,
-                                plugin.getLanguageString("kits.tailor.items.boots")))});
+                                LanguageManager.kits.tailor.items.boots))});
         return kit;
     }
     public static Kit trader() {
-        Kit kit = new Kit(plugin.getLanguageString("kits.trader.name"), KitType.GIFT, Material.EMERALD);
-        kit.addMasterDescription(CommunicationManager.format(plugin.getLanguageString("kits.trader.description")));
+        Kit kit = new Kit(LanguageManager.kits.trader.name, KitType.GIFT, Material.EMERALD);
+        kit.addMasterDescription(CommunicationManager.format(LanguageManager.kits.trader.description));
         kit.addPrice(1, 500);
         kit.addItems(1, new ItemStack[]{new ItemStack(Material.WOODEN_SWORD)});
         return kit;
     }
     public static Kit summoner() {
-        Kit kit = new Kit(plugin.getLanguageString("kits.summoner.name"), KitType.GIFT,
+        Kit kit = new Kit(LanguageManager.kits.summoner.name, KitType.GIFT,
                 Material.POLAR_BEAR_SPAWN_EGG);
 
-        kit.addLevelDescriptions(1, plugin.getLanguageString("kits.summoner.description1"));
-        kit.addLevelDescriptions(2, plugin.getLanguageString("kits.summoner.description2"));
-        kit.addLevelDescriptions(3, plugin.getLanguageString("kits.summoner.description3"));
+        kit.addLevelDescriptions(1, LanguageManager.kits.summoner.description1);
+        kit.addLevelDescriptions(2, LanguageManager.kits.summoner.description2);
+        kit.addLevelDescriptions(3, LanguageManager.kits.summoner.description3);
 
         kit.addPrice(1, 750);
         kit.addPrice(2, 1750);
@@ -469,30 +457,27 @@ public class Kit {
                 new ItemStack(Material.WOODEN_SWORD),
                 ItemManager.createItem(Material.WOLF_SPAWN_EGG,
                         CommunicationManager.format(ChatColor.GREEN,
-                                plugin.getLanguageString("kits.summoner.items.wolf")))});
+                                LanguageManager.kits.summoner.items.wolf))});
         kit.addItems(2, new ItemStack[]{
                 new ItemStack(Material.WOODEN_SWORD),
                 ItemManager.createItems(Material.WOLF_SPAWN_EGG, 2,
                         CommunicationManager.format(ChatColor.GREEN,
-                                plugin.getLanguageString("kits.summoner.items.wolf")))
+                                LanguageManager.kits.summoner.items.wolf))
         });
         kit.addItems(3, new ItemStack[]{
                 new ItemStack(Material.WOODEN_SWORD),
                 ItemManager.createItem(Material.GHAST_SPAWN_EGG,
                         CommunicationManager.format(ChatColor.GREEN,
-                                plugin.getLanguageString("kits.summoner.items.golem")))});
+                                LanguageManager.kits.summoner.items.golem))});
 
         return kit;
     }
     public static Kit reaper() {
-        Kit kit = new Kit(plugin.getLanguageString("kits.reaper.name"), KitType.GIFT, Material.NETHERITE_HOE);
+        Kit kit = new Kit(LanguageManager.kits.reaper.name, KitType.GIFT, Material.NETHERITE_HOE);
 
-        kit.addLevelDescriptions(1, plugin.getLanguageStringFormatted("kits.reaper.description",
-                "III"));
-        kit.addLevelDescriptions(2, plugin.getLanguageStringFormatted("kits.reaper.description",
-                "V"));
-        kit.addLevelDescriptions(3, plugin.getLanguageStringFormatted("kits.reaper.description",
-                "VIII"));
+        kit.addLevelDescriptions(1, String.format(LanguageManager.kits.reaper.description, "III"));
+        kit.addLevelDescriptions(2, String.format(LanguageManager.kits.reaper.description, "V"));
+        kit.addLevelDescriptions(3, String.format(LanguageManager.kits.reaper.description, "VIII"));
 
         kit.addPrice(1, 750);
         kit.addPrice(2, 2000);
@@ -501,29 +486,23 @@ public class Kit {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
         enchants.put(Enchantment.DAMAGE_ALL, 3);
         kit.addItems(1, new ItemStack[]{
-                ItemManager.createItem(Material.NETHERITE_HOE,
-                        CommunicationManager.format(ChatColor.GREEN,
-                                plugin.getLanguageString("kits.reaper.items.scythe")), ItemManager.NORMAL_FLAGS,
-                        enchants)});
+                ItemManager.createItem(Material.NETHERITE_HOE, CommunicationManager.format(ChatColor.GREEN, 
+                                LanguageManager.kits.reaper.items.scythe), ItemManager.NORMAL_FLAGS, enchants)});
         enchants.put(Enchantment.DAMAGE_ALL, 5);
         kit.addItems(2, new ItemStack[]{
-                ItemManager.createItem(Material.NETHERITE_HOE,
-                        CommunicationManager.format(ChatColor.GREEN,
-                                plugin.getLanguageString("kits.reaper.items.scythe")), ItemManager.NORMAL_FLAGS,
-                        enchants)});
+                ItemManager.createItem(Material.NETHERITE_HOE, CommunicationManager.format(ChatColor.GREEN, 
+                                LanguageManager.kits.reaper.items.scythe), ItemManager.NORMAL_FLAGS, enchants)});
         enchants.put(Enchantment.DAMAGE_ALL, 8);
         kit.addItems(3, new ItemStack[]{
-                ItemManager.createItem(Material.NETHERITE_HOE,
-                        CommunicationManager.format(ChatColor.GREEN,
-                                plugin.getLanguageString("kits.reaper.items.scythe")), ItemManager.NORMAL_FLAGS,
-                        enchants)});
+                ItemManager.createItem(Material.NETHERITE_HOE, CommunicationManager.format(ChatColor.GREEN,
+                                LanguageManager.kits.reaper.items.scythe), ItemManager.NORMAL_FLAGS, enchants)});
 
         return kit;
     }
     public static Kit phantom() {
-        Kit kit = new Kit(plugin.getLanguageString("kits.phantom.name"), KitType.GIFT, Material.PHANTOM_MEMBRANE);
-        kit.addMasterDescription(plugin.getLanguageStringFormatted("kits.phantom.description",
-                CommunicationManager.format("&b/vd select&7")));
+        Kit kit = new Kit(LanguageManager.kits.phantom.name, KitType.GIFT, Material.PHANTOM_MEMBRANE);
+        kit.addMasterDescription(CommunicationManager.format(ChatColor.GRAY, LanguageManager.kits.phantom.description,
+                ChatColor.AQUA, "/vd select"));
         kit.addPrice(1, 6000);
         kit.addItems(1, new ItemStack[]{new ItemStack(Material.WOODEN_SWORD)});
         return kit;
@@ -531,9 +510,9 @@ public class Kit {
 
     // Ability Kits
     public static Kit mage() {
-        Kit kit = new Kit(plugin.getLanguageString("kits.mage.name"), KitType.ABILITY, Material.FIRE_CHARGE);
+        Kit kit = new Kit(LanguageManager.kits.mage.name, KitType.ABILITY, Material.FIRE_CHARGE);
 
-        kit.addMasterDescription(plugin.getLanguageString("kits.mage.description"));
+        kit.addMasterDescription(LanguageManager.kits.mage.description);
         kit.setAbilityKitDescriptions();
 
         kit.addPrice(1, 3500);
@@ -545,9 +524,9 @@ public class Kit {
         return kit;
     }
     public static Kit ninja() {
-        Kit kit = new Kit(plugin.getLanguageString("kits.ninja.name"), KitType.ABILITY, Material.CHAIN);
+        Kit kit = new Kit(LanguageManager.kits.ninja.name, KitType.ABILITY, Material.CHAIN);
 
-        kit.addMasterDescription(plugin.getLanguageString("kits.ninja.description"));
+        kit.addMasterDescription(LanguageManager.kits.ninja.description);
         kit.setAbilityKitDescriptions();
 
         kit.addPrice(1, 4000);
@@ -559,9 +538,9 @@ public class Kit {
         return kit;
     }
     public static Kit templar() {
-        Kit kit = new Kit(plugin.getLanguageString("kits.templar.name"), KitType.ABILITY, Material.GOLDEN_SWORD);
+        Kit kit = new Kit(LanguageManager.kits.templar.name, KitType.ABILITY, Material.GOLDEN_SWORD);
 
-        kit.addMasterDescription(plugin.getLanguageString("kits.templar.description"));
+        kit.addMasterDescription(LanguageManager.kits.templar.description);
         kit.setAbilityKitDescriptions();
 
         kit.addPrice(1, 3500);
@@ -573,10 +552,10 @@ public class Kit {
         return kit;
     }
     public static Kit warrior() {
-        Kit kit = new Kit(plugin.getLanguageString("kits.warrior.name"), KitType.ABILITY,
+        Kit kit = new Kit(LanguageManager.kits.warrior.name, KitType.ABILITY,
                 Material.NETHERITE_HELMET);
 
-        kit.addMasterDescription(plugin.getLanguageString("kits.warrior.description"));
+        kit.addMasterDescription(LanguageManager.kits.warrior.description);
         kit.setAbilityKitDescriptions();
 
         kit.addPrice(1, 5000);
@@ -588,9 +567,9 @@ public class Kit {
         return kit;
     }
     public static Kit knight() {
-        Kit kit = new Kit(plugin.getLanguageString("kits.knight.name"), KitType.ABILITY, Material.SHIELD);
+        Kit kit = new Kit(LanguageManager.kits.knight.name, KitType.ABILITY, Material.SHIELD);
 
-        kit.addMasterDescription(plugin.getLanguageString("kits.knight.description"));
+        kit.addMasterDescription(LanguageManager.kits.knight.description);
         kit.setAbilityKitDescriptions();
 
         kit.addPrice(1, 4500);
@@ -602,10 +581,10 @@ public class Kit {
         return kit;
     }
     public static Kit priest() {
-        Kit kit = new Kit(plugin.getLanguageString("kits.priest.name"), KitType.ABILITY,
+        Kit kit = new Kit(LanguageManager.kits.priest.name, KitType.ABILITY,
                 Material.TOTEM_OF_UNDYING);
 
-        kit.addMasterDescription(plugin.getLanguageString("kits.priest.description"));
+        kit.addMasterDescription(LanguageManager.kits.priest.description);
         kit.setAbilityKitDescriptions();
 
         kit.addPrice(1, 5000);
@@ -617,9 +596,9 @@ public class Kit {
         return kit;
     }
     public static Kit siren() {
-        Kit kit = new Kit(plugin.getLanguageString("kits.siren.name"), KitType.ABILITY, Material.COBWEB);
+        Kit kit = new Kit(LanguageManager.kits.siren.name, KitType.ABILITY, Material.COBWEB);
 
-        kit.addMasterDescription(plugin.getLanguageString("kits.siren.description"));
+        kit.addMasterDescription(LanguageManager.kits.siren.description);
         kit.setAbilityKitDescriptions();
 
         kit.addPrice(1, 4000);
@@ -631,9 +610,9 @@ public class Kit {
         return kit;
     }
     public static Kit monk() {
-        Kit kit = new Kit(plugin.getLanguageString("kits.monk.name"), KitType.ABILITY, Material.BELL);
+        Kit kit = new Kit(LanguageManager.kits.monk.name, KitType.ABILITY, Material.BELL);
 
-        kit.addMasterDescription(plugin.getLanguageString("kits.monk.description"));
+        kit.addMasterDescription(LanguageManager.kits.monk.description);
         kit.setAbilityKitDescriptions();
 
         kit.addPrice(1, 3000);
@@ -645,9 +624,9 @@ public class Kit {
         return kit;
     }
     public static Kit messenger() {
-        Kit kit = new Kit(plugin.getLanguageString("kits.messenger.name"), KitType.ABILITY, Material.FEATHER);
+        Kit kit = new Kit(LanguageManager.kits.messenger.name, KitType.ABILITY, Material.FEATHER);
 
-        kit.addMasterDescription(plugin.getLanguageString("kits.messenger.description"));
+        kit.addMasterDescription(LanguageManager.kits.messenger.description);
         kit.setAbilityKitDescriptions();
 
         kit.addPrice(1, 4000);
@@ -661,40 +640,38 @@ public class Kit {
 
     // Effect Kits
     public static Kit blacksmith() {
-        Kit kit = new Kit(plugin.getLanguageString("kits.blacksmith.name"), KitType.EFFECT, Material.ANVIL);
-        kit.addMasterDescription(plugin.getLanguageString("kits.blacksmith.description"));
+        Kit kit = new Kit(LanguageManager.kits.blacksmith.name, KitType.EFFECT, Material.ANVIL);
+        kit.addMasterDescription(LanguageManager.kits.blacksmith.description);
         kit.addPrice(1, 7500);
         kit.addItems(1, new ItemStack[]{ItemManager.makeUnbreakable(new ItemStack(Material.WOODEN_SWORD))});
         return kit;
     }
     public static Kit witch() {
-        Kit kit = new Kit(plugin.getLanguageString("kits.witch.name"), KitType.EFFECT, Material.CAULDRON);
-        kit.addMasterDescription(plugin.getLanguageString("kits.witch.description"));
+        Kit kit = new Kit(LanguageManager.kits.witch.name, KitType.EFFECT, Material.CAULDRON);
+        kit.addMasterDescription(LanguageManager.kits.witch.description);
         kit.addPrice(1, 2500);
         kit.addItems(1, new ItemStack[]{new ItemStack(Material.WOODEN_SWORD)});
         return kit;
     }
     public static Kit merchant() {
-        Kit kit = new Kit(plugin.getLanguageString("kits.merchant.name"), KitType.EFFECT, Material.EMERALD_BLOCK);
-        kit.addMasterDescription(plugin.getLanguageStringFormatted("kits.merchant.description", "10%"));
+        Kit kit = new Kit(LanguageManager.kits.merchant.name, KitType.EFFECT, Material.EMERALD_BLOCK);
+        kit.addMasterDescription(String.format(LanguageManager.kits.merchant.description, "10%"));
         kit.addPrice(1, 4000);
         kit.addItems(1, new ItemStack[]{new ItemStack(Material.WOODEN_SWORD)});
         return kit;
     }
     public static Kit vampire() {
-        Kit kit = new Kit(plugin.getLanguageString("kits.vampire.name"), KitType.EFFECT, Material.GHAST_TEAR);
-        kit.addMasterDescription(plugin.getLanguageString("kits.vampire.description"));
+        Kit kit = new Kit(LanguageManager.kits.vampire.name, KitType.EFFECT, Material.GHAST_TEAR);
+        kit.addMasterDescription(LanguageManager.kits.vampire.description);
         kit.addPrice(1, 6000);
         kit.addItems(1, new ItemStack[]{new ItemStack(Material.WOODEN_SWORD)});
         return kit;
     }
     public static Kit giant() {
-        Kit kit = new Kit(plugin.getLanguageString("kits.giant.name"), KitType.EFFECT, Material.DARK_OAK_SAPLING);
+        Kit kit = new Kit(LanguageManager.kits.giant.name, KitType.EFFECT, Material.DARK_OAK_SAPLING);
 
-        kit.addLevelDescriptions(1, plugin.getLanguageStringFormatted("kits.giant.description",
-                "10%"));
-        kit.addLevelDescriptions(2, plugin.getLanguageStringFormatted("kits.giant.description",
-                "20%"));
+        kit.addLevelDescriptions(1, String.format(LanguageManager.kits.giant.description, "10%"));
+        kit.addLevelDescriptions(2, String.format(LanguageManager.kits.giant.description, "20%"));
 
         kit.addPrice(1, 5000);
         kit.addPrice(2, 8000);

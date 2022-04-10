@@ -4,11 +4,11 @@ version: 7
 
 # This is the arenaData.yml structure version for reference.
 # ONLY EDIT ONCE FILE HAS BEEN UPDATED.
-arenaData: 4
+arenaData: 6
 
 # This is the playerData.yml structure version for reference.
 # ONLY EDIT ONCE FILE HAS BEEN UPDATED.
-playerData: 1
+playerData: 2
 
 # This is the spawn table structure version for reference.
 # ONLY EDIT ONCE SPAWN TABLE FILES HAVE BEEN UPDATED.
@@ -20,7 +20,7 @@ spawnTableDefault: 2
 
 # This is the en_US.yml version for reference.
 # ONLY EDIT ONCE THE LANGUAGE FILE HAS BEEN UPDATED.
-languageFile: 12
+languageFile: 13
 
 # This sets the language file for which plugin notification texts will pull from.
 locale: en_US

@@ -1,17 +1,16 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
-import me.theguyhere.villagerdefense.plugin.GUI.Inventories;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.JoinArenaEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeftClickNPCEvent;
 import me.theguyhere.villagerdefense.plugin.events.RightClickNPCEvent;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -22,7 +21,7 @@ public class ClickPortalListener implements Listener {
 
 		// Try to get arena from npc
 		try {
-			arena = Arrays.stream(GameManager.getArenas()).filter(Objects::nonNull)
+			arena = GameManager.getArenas().values().stream().filter(Objects::nonNull)
 					.filter(arena1 -> arena1.getPortal() != null)
 					.filter(arena1 -> arena1.getPortal().getNpc().getEntityID() == e.getNpcId())
 					.collect(Collectors.toList()).get(0);
@@ -42,7 +41,7 @@ public class ClickPortalListener implements Listener {
 
 		// Try to get arena from npc
 		try {
-			arena = Arrays.stream(GameManager.getArenas()).filter(Objects::nonNull)
+			arena = GameManager.getArenas().values().stream().filter(Objects::nonNull)
 					.filter(arena1 -> arena1.getPortal() != null)
 					.filter(arena1 -> arena1.getPortal().getNpc().getEntityID() == e.getNpcId())
 					.collect(Collectors.toList()).get(0);
@@ -52,6 +51,6 @@ public class ClickPortalListener implements Listener {
 		}
 
 		// Open inventory
-		e.getPlayer().openInventory(Inventories.createArenaInfoInventory(arena));
+		e.getPlayer().openInventory(Inventories.createArenaInfoMenu(arena));
 	}
 }

@@ -8,12 +8,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class ArenaSpawn {
     /** Location of the arena spawn.*/
-    private final Location location;
+    @NotNull private final Location location;
     /** Type of arena spawn.*/
-    private final ArenaSpawnType spawnType;
+    @NotNull private final ArenaSpawnType spawnType;
     /** The spawn indicator for this spawn.*/
-    private final SpawnIndicator spawnIndicator;
-    /** Id of the arena spawn.*/
+    @NotNull private final SpawnIndicator spawnIndicator;
+    /** ID of the arena spawn.*/
     private final int id;
     /** Whether the spawn indicator is on or not.*/
     private boolean on;
@@ -31,15 +31,15 @@ public class ArenaSpawn {
         on = false;
     }
 
-    public Location getLocation() {
+    public @NotNull Location getLocation() {
         return location;
     }
 
-    public ArenaSpawnType getSpawnType() {
+    public @NotNull ArenaSpawnType getSpawnType() {
         return spawnType;
     }
 
-    public SpawnIndicator getSpawnIndicator() {
+    public @NotNull SpawnIndicator getSpawnIndicator() {
         return spawnIndicator;
     }
 
@@ -68,7 +68,9 @@ public class ArenaSpawn {
     private String getName() {
         switch (spawnType) {
             case PLAYER: return CommunicationManager.format("&6Player Spawn");
-            case MONSTER: return CommunicationManager.format("&3Monster Spawn " + id);
+            case MONSTER_AIR: return CommunicationManager.format("&3Monster Spawn (Air) " + id);
+            case MONSTER_ALL: return CommunicationManager.format("&3Monster Spawn (All) " + id);
+            case MONSTER_GROUND: return CommunicationManager.format("&3Monster Spawn (Ground) " + id);
             case VILLAGER: return CommunicationManager.format("&aVillager Spawn " + id);
             default: return null;
         }
