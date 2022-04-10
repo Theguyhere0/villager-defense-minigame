@@ -614,10 +614,10 @@ public class GameListener implements Listener {
 		FileConfiguration playerData = plugin.getPlayerData();
 
 		// Update player stats
-		playerData.set(player.getName() + ".totalGems",
-				playerData.getInt(player.getName() + ".totalGems") + earned);
-		if (playerData.getInt(player.getName() + ".topBalance") < gamer.getGems())
-			playerData.set(player.getName() + ".topBalance", gamer.getGems());
+		playerData.set(player.getUniqueId() + ".totalGems",
+				playerData.getInt(player.getUniqueId() + ".totalGems") + earned);
+		if (playerData.getInt(player.getUniqueId() + ".topBalance") < gamer.getGems())
+			playerData.set(player.getUniqueId() + ".topBalance", gamer.getGems());
 		plugin.savePlayerData();
 
 		// Update scoreboard
@@ -754,11 +754,11 @@ public class GameListener implements Listener {
 							FileConfiguration playerData = plugin.getPlayerData();
 
 							// Update player stats
-							playerData.set(vdPlayer.getPlayer().getName() + ".totalGems",
-									playerData.getInt(vdPlayer.getPlayer().getName() + ".totalGems") + earned);
-							if (playerData.getInt(vdPlayer.getPlayer().getName() + ".topBalance") <
+							playerData.set(vdPlayer.getID() + ".totalGems",
+									playerData.getInt(vdPlayer.getID() + ".totalGems") + earned);
+							if (playerData.getInt(vdPlayer.getID() + ".topBalance") <
 									vdPlayer.getGems())
-								playerData.set(vdPlayer.getPlayer().getName() + ".topBalance", vdPlayer.getGems());
+								playerData.set(vdPlayer.getID() + ".topBalance", vdPlayer.getGems());
 							plugin.savePlayerData();
 
 							// Update scoreboard
@@ -795,10 +795,10 @@ public class GameListener implements Listener {
 				FileConfiguration playerData = plugin.getPlayerData();
 
 				// Update player stats
-				playerData.set(player.getName() + ".totalGems",
-						playerData.getInt(player.getName() + ".totalGems") + earned);
-				if (playerData.getInt(player.getName() + ".topBalance") < gamer.getGems())
-					playerData.set(player.getName() + ".topBalance", gamer.getGems());
+				playerData.set(player.getUniqueId() + ".totalGems",
+						playerData.getInt(player.getUniqueId() + ".totalGems") + earned);
+				if (playerData.getInt(player.getUniqueId() + ".topBalance") < gamer.getGems())
+					playerData.set(player.getUniqueId() + ".topBalance", gamer.getGems());
 				plugin.savePlayerData();
 
 				// Update scoreboard

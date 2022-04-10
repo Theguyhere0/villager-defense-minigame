@@ -78,13 +78,13 @@ public class ArenaListener implements Listener {
 
         if (plugin.getConfig().getBoolean("keepInv")) {
             // Save player exp and items before going into arena
-            plugin.getPlayerData().set(player.getName() + ".health", player.getHealth());
-            plugin.getPlayerData().set(player.getName() + ".food", player.getFoodLevel());
-            plugin.getPlayerData().set(player.getName() + ".saturation", (double) player.getSaturation());
-            plugin.getPlayerData().set(player.getName() + ".level", player.getLevel());
-            plugin.getPlayerData().set(player.getName() + ".exp", (double) player.getExp());
+            plugin.getPlayerData().set(player.getUniqueId() + ".health", player.getHealth());
+            plugin.getPlayerData().set(player.getUniqueId() + ".food", player.getFoodLevel());
+            plugin.getPlayerData().set(player.getUniqueId() + ".saturation", (double) player.getSaturation());
+            plugin.getPlayerData().set(player.getUniqueId() + ".level", player.getLevel());
+            plugin.getPlayerData().set(player.getUniqueId() + ".exp", (double) player.getExp());
             for (int i = 0; i < player.getInventory().getContents().length; i++)
-                plugin.getPlayerData().set(player.getName() + ".inventory." + i, player.getInventory().getContents()[i]);
+                plugin.getPlayerData().set(player.getUniqueId() + ".inventory." + i, player.getInventory().getContents()[i]);
             plugin.savePlayerData();
         }
 
@@ -274,8 +274,8 @@ public class ArenaListener implements Listener {
 
         // Update player stats
         for (VDPlayer active : arena.getActives())
-            if (playerData.getInt(active.getPlayer().getName() + ".topWave") < arena.getCurrentWave())
-                playerData.set(active.getPlayer().getName() + ".topWave", arena.getCurrentWave());
+            if (playerData.getInt(active.getID() + ".topWave") < arena.getCurrentWave())
+                playerData.set(active.getID() + ".topWave", arena.getCurrentWave());
         plugin.savePlayerData();
 
         // Debug message to console
@@ -367,10 +367,10 @@ public class ArenaListener implements Listener {
             FileConfiguration playerData = plugin.getPlayerData();
 
             // Update player stats
-            playerData.set(player.getName() + ".totalKills",
-                    playerData.getInt(player.getName() + ".totalKills") + gamer.getKills());
-            if (playerData.getInt(player.getName() + ".topKills") < gamer.getKills())
-                playerData.set(player.getName() + ".topKills", gamer.getKills());
+            playerData.set(player.getUniqueId() + ".totalKills",
+                    playerData.getInt(player.getUniqueId() + ".totalKills") + gamer.getKills());
+            if (playerData.getInt(player.getUniqueId() + ".topKills") < gamer.getKills())
+                playerData.set(player.getUniqueId() + ".topKills", gamer.getKills());
             plugin.savePlayerData();
 
             // Refresh leaderboards
@@ -416,10 +416,10 @@ public class ArenaListener implements Listener {
                 bonus = (int) (reward * bonus / 100d);
 
                 // Give rewards and notify
-                plugin.getPlayerData().set(player.getName() + ".crystalBalance",
-                        plugin.getPlayerData().getInt(player.getName() + ".crystalBalance") + reward);
-                plugin.getPlayerData().set(player.getName() + ".crystalBalance",
-                        plugin.getPlayerData().getInt(player.getName() + ".crystalBalance") + bonus);
+                plugin.getPlayerData().set(player.getUniqueId() + ".crystalBalance",
+                        plugin.getPlayerData().getInt(player.getUniqueId() + ".crystalBalance") + reward);
+                plugin.getPlayerData().set(player.getUniqueId() + ".crystalBalance",
+                        plugin.getPlayerData().getInt(player.getUniqueId() + ".crystalBalance") + bonus);
                 PlayerManager.notifySuccess(player, LanguageManager.messages.crystalsEarned,
                         ChatColor.AQUA, String.format("%d (+%d)", reward, bonus));
             }
@@ -463,28 +463,28 @@ public class ArenaListener implements Listener {
 
         // Return player health, food, exp, and items
         if (plugin.getConfig().getBoolean("keepInv") && player.isOnline()) {
-            if (plugin.getPlayerData().contains(player.getName() + ".health"))
-                player.setHealth(plugin.getPlayerData().getDouble(player.getName() + ".health"));
-            plugin.getPlayerData().set(player.getName() + ".health", null);
-            if (plugin.getPlayerData().contains(player.getName() + ".food"))
-                player.setFoodLevel(plugin.getPlayerData().getInt(player.getName() + ".food"));
-            plugin.getPlayerData().set(player.getName() + ".food", null);
-            if (plugin.getPlayerData().contains(player.getName() + ".saturation"))
-                player.setSaturation((float) plugin.getPlayerData().getDouble(player.getName() + ".saturation"));
-            plugin.getPlayerData().set(player.getName() + ".saturation", null);
-            if (plugin.getPlayerData().contains(player.getName() + ".level"))
-                player.setLevel(plugin.getPlayerData().getInt(player.getName() + ".level"));
-            plugin.getPlayerData().set(player.getName() + ".level", null);
-            if (plugin.getPlayerData().contains(player.getName() + ".exp"))
-                player.setExp((float) plugin.getPlayerData().getDouble(player.getName() + ".exp"));
-            plugin.getPlayerData().set(player.getName() + ".exp", null);
-            if (plugin.getPlayerData().contains(player.getName() + ".inventory"))
+            if (plugin.getPlayerData().contains(player.getUniqueId() + ".health"))
+                player.setHealth(plugin.getPlayerData().getDouble(player.getUniqueId() + ".health"));
+            plugin.getPlayerData().set(player.getUniqueId() + ".health", null);
+            if (plugin.getPlayerData().contains(player.getUniqueId() + ".food"))
+                player.setFoodLevel(plugin.getPlayerData().getInt(player.getUniqueId() + ".food"));
+            plugin.getPlayerData().set(player.getUniqueId() + ".food", null);
+            if (plugin.getPlayerData().contains(player.getUniqueId() + ".saturation"))
+                player.setSaturation((float) plugin.getPlayerData().getDouble(player.getUniqueId() + ".saturation"));
+            plugin.getPlayerData().set(player.getUniqueId() + ".saturation", null);
+            if (plugin.getPlayerData().contains(player.getUniqueId() + ".level"))
+                player.setLevel(plugin.getPlayerData().getInt(player.getUniqueId() + ".level"));
+            plugin.getPlayerData().set(player.getUniqueId() + ".level", null);
+            if (plugin.getPlayerData().contains(player.getUniqueId() + ".exp"))
+                player.setExp((float) plugin.getPlayerData().getDouble(player.getUniqueId() + ".exp"));
+            plugin.getPlayerData().set(player.getUniqueId() + ".exp", null);
+            if (plugin.getPlayerData().contains(player.getUniqueId() + ".inventory"))
                 Objects.requireNonNull(plugin.getPlayerData()
-                                .getConfigurationSection(player.getName() + ".inventory"))
+                                .getConfigurationSection(player.getUniqueId() + ".inventory"))
                         .getKeys(false)
                         .forEach(num -> player.getInventory().setItem(Integer.parseInt(num),
-                                (ItemStack) plugin.getPlayerData().get(player.getName() + ".inventory." + num)));
-            plugin.getPlayerData().set(player.getName() + ".inventory", null);
+                                (ItemStack) plugin.getPlayerData().get(player.getUniqueId() + ".inventory." + num)));
+            plugin.getPlayerData().set(player.getUniqueId() + ".inventory", null);
             plugin.savePlayerData();
         }
 
@@ -552,10 +552,10 @@ public class ArenaListener implements Listener {
                 bonus = (int) (reward * bonus / 100d);
 
                 // Give rewards and notify
-                plugin.getPlayerData().set(vdPlayer.getPlayer().getName() + ".crystalBalance",
-                        plugin.getPlayerData().getInt(vdPlayer.getPlayer().getName() + ".crystalBalance") + reward);
-                plugin.getPlayerData().set(vdPlayer.getPlayer().getName() + ".crystalBalance",
-                        plugin.getPlayerData().getInt(vdPlayer.getPlayer().getName() + ".crystalBalance") + bonus);
+                plugin.getPlayerData().set(vdPlayer.getID() + ".crystalBalance",
+                        plugin.getPlayerData().getInt(vdPlayer.getID() + ".crystalBalance") + reward);
+                plugin.getPlayerData().set(vdPlayer.getID() + ".crystalBalance",
+                        plugin.getPlayerData().getInt(vdPlayer.getID() + ".crystalBalance") + bonus);
                 PlayerManager.notifySuccess(vdPlayer.getPlayer(),
                         LanguageManager.messages.crystalsEarned,
                         ChatColor.AQUA, String.format("%d (+%d)", reward, bonus));

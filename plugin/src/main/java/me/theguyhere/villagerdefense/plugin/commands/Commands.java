@@ -31,8 +31,11 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class Commands implements CommandExecutor {
 	private final Main plugin;
@@ -162,7 +165,7 @@ public class Commands implements CommandExecutor {
 					}
 
 					// Check if player owns the phantom kit if late arrival is not on
-					if (!playerData.getBoolean(player.getName() + ".kits." + Kit.phantom().getName()) &&
+					if (!playerData.getBoolean(player.getUniqueId() + ".kits." + Kit.phantom().getName()) &&
 							!arena.hasLateArrival()) {
 						PlayerManager.notifyFailure(player, LanguageManager.errors.phantomOwn);
 						return true;
@@ -199,6 +202,8 @@ public class Commands implements CommandExecutor {
 
 				// Change crystal balance
 				if (args[0].equalsIgnoreCase("crystals")) {
+					UUID id;
+
 					// Check for permission to use the command
 					if (player != null && !player.hasPermission("vd.crystals")) {
 						PlayerManager.notifyFailure(player, LanguageManager.errors.permission);
@@ -216,7 +221,17 @@ public class Commands implements CommandExecutor {
 					}
 
 					// Check for valid player
-					if (!plugin.getPlayerData().contains(args[1])) {
+					try {
+						id = Arrays.stream(Bukkit.getOfflinePlayers())
+								.filter(oPlayer -> Objects.equals(oPlayer.getName(), args[1]))
+								.collect(Collectors.toList()).get(0).getUniqueId();
+					} catch (NullPointerException e) {
+						if (player != null)
+							PlayerManager.notifyFailure(player, LanguageManager.errors.invalidPlayer);
+						else CommunicationManager.debugError(LanguageManager.errors.invalidPlayer, 0);
+						return true;
+					}
+					if (!plugin.getPlayerData().contains(id.toString())) {
 						if (player != null)
 							PlayerManager.notifyFailure(player, LanguageManager.errors.invalidPlayer);
 						else CommunicationManager.debugError(LanguageManager.errors.invalidPlayer, 0);
@@ -226,15 +241,17 @@ public class Commands implements CommandExecutor {
 					// Check for valid amount
 					try {
 						int amount = Integer.parseInt(args[2]);
-						playerData.set(args[1] + ".crystalBalance", Math.max(playerData.getInt(args[1] +
-								".crystalBalance") + amount, 0));
+						playerData.set(
+								id + ".crystalBalance",
+								Math.max(playerData.getInt(id + ".crystalBalance") + amount, 0)
+						);
 						plugin.savePlayerData();
 						if (player != null)
 							PlayerManager.notifySuccess(player, LanguageManager.confirms.balanceSet,
 									ChatColor.AQUA, args[1],
-									String.valueOf(playerData.getInt(args[1] + ".crystalBalance")));
+									String.valueOf(playerData.getInt(id + ".crystalBalance")));
 						else CommunicationManager.debugInfo(String.format(LanguageManager.confirms.balanceSet, args[1],
-								String.valueOf(playerData.getInt(args[1] + ".crystalBalance"))), 0);
+								String.valueOf(playerData.getInt(id + ".crystalBalance"))), 0);
 						return true;
 					} catch (Exception e) {
 						if (player != null)
@@ -834,14 +851,46 @@ public class Commands implements CommandExecutor {
 					}
 
 					// Check if playerData.yml is outdated
-					if (plugin.getConfig().getInt("playerData") < Main.playerDataVersion)
-						if (player != null)
-							PlayerManager.notifyAlert(player, 
-									LanguageManager.messages.manualUpdateWarn, ChatColor.AQUA,
-									"playerData.yml");
-						else CommunicationManager.debugError(
-								String.format(LanguageManager.messages.manualUpdateWarn,
-								"playerData.yml"), 0);
+					if (plugin.getConfig().getInt("playerData") < 2) {
+						try {
+							// Transfer player names to UUID
+							Objects.requireNonNull(playerData.getConfigurationSection("")).getKeys(false)
+									.forEach(key -> {
+										if (!key.equals("loggers")) {
+											playerData.set(
+													Bukkit.getOfflinePlayer(key).getUniqueId().toString(),
+													playerData.get(key)
+											);
+											playerData.set(key, null);
+										}
+									});
+							plugin.savePlayerData();
+
+							// Reload everything
+							GameManager.refreshAll();
+
+							// Flip flag and update config.yml
+							fixed = true;
+							plugin.getConfig().set("playerData", 2);
+							plugin.saveConfig();
+
+							// Notify
+							if (player != null)
+								PlayerManager.notifySuccess(player,
+										LanguageManager.confirms.autoUpdate, ChatColor.AQUA,
+										"playerData.yml", "2");
+							CommunicationManager.debugInfo(String.format(LanguageManager.confirms.autoUpdate,
+									"playerData.yml", "2"), 0);
+						} catch (Exception e) {
+							if (player != null)
+								PlayerManager.notifyAlert(player,
+										LanguageManager.messages.manualUpdateWarn, ChatColor.AQUA,
+										"playerData.yml");
+							else CommunicationManager.debugError(
+									String.format(LanguageManager.messages.manualUpdateWarn,
+											"playerData.yml"), 0);
+						}
+					}
 
 					// Update default spawn table
 					if (plugin.getConfig().getInt("spawnTableStructure") < Main.spawnTableVersion ||

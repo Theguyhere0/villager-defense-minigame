@@ -29,6 +29,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public class InventoryListener implements Listener {
 	private final Main plugin;
@@ -2983,8 +2984,9 @@ public class InventoryListener implements Listener {
 			FileConfiguration playerData = plugin.getPlayerData();
 			Player owner = meta.getPlayer();
 			String name = owner.getName();
+			UUID id = owner.getUniqueId();
 			Kit kit = Kit.getKit(buttonName.substring(4));
-			String path = name + ".kits.";
+			String path = id + ".kits.";
 
 			if (buttonName.contains(LanguageManager.messages.exit)) {
 				player.openInventory(Inventories.createPlayerStatsMenu(owner));
@@ -3004,9 +3006,9 @@ public class InventoryListener implements Listener {
 			// Single tier kits
 			if (!kit.isMultiLevel()) {
 				if (!playerData.getBoolean(path + kit.getName()))
-					if (playerData.getInt(name + ".crystalBalance") >= kit.getPrice(1)) {
-						playerData.set(name + ".crystalBalance",
-								playerData.getInt(name + ".crystalBalance") - kit.getPrice(1));
+					if (playerData.getInt(id + ".crystalBalance") >= kit.getPrice(1)) {
+						playerData.set(id + ".crystalBalance",
+								playerData.getInt(id + ".crystalBalance") - kit.getPrice(1));
 						playerData.set(path + kit.getName(), true);
 						PlayerManager.notifySuccess(player, LanguageManager.confirms.kitBuy);
 					} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitBuy);
@@ -3018,16 +3020,16 @@ public class InventoryListener implements Listener {
 				if (kitLevel == kit.getMaxLevel())
 					return;
 				else if (kitLevel == 0) {
-					if (playerData.getInt(name + ".crystalBalance") >= kit.getPrice(++kitLevel)) {
-						playerData.set(name + ".crystalBalance",
-								playerData.getInt(name + ".crystalBalance") - kit.getPrice(kitLevel));
+					if (playerData.getInt(id + ".crystalBalance") >= kit.getPrice(++kitLevel)) {
+						playerData.set(id + ".crystalBalance",
+								playerData.getInt(id + ".crystalBalance") - kit.getPrice(kitLevel));
 						playerData.set(path + kit.getName(), kitLevel);
 						PlayerManager.notifySuccess(player, LanguageManager.confirms.kitBuy);
 					} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitBuy);
 				} else {
-					if (playerData.getInt(name + ".crystalBalance") >= kit.getPrice(++kitLevel)) {
-						playerData.set(name + ".crystalBalance",
-								playerData.getInt(name + ".crystalBalance") - kit.getPrice(kitLevel));
+					if (playerData.getInt(id + ".crystalBalance") >= kit.getPrice(++kitLevel)) {
+						playerData.set(id + ".crystalBalance",
+								playerData.getInt(id + ".crystalBalance") - kit.getPrice(kitLevel));
 						playerData.set(path + kit.getName(), kitLevel);
 						PlayerManager.notifySuccess(player, LanguageManager.confirms.kitUpgrade);
 					} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitUpgrade);
@@ -3053,7 +3055,7 @@ public class InventoryListener implements Listener {
 			}
 
 			Kit kit = Kit.getKit(buttonName.substring(4));
-			String path = player.getName() + ".kits.";
+			String path = player.getUniqueId() + ".kits.";
 
 			// Leave if EXIT
 			if (buttonName.contains(LanguageManager.messages.exit)) {

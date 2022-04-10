@@ -21,10 +21,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Inventories {
 	private static Main plugin;
@@ -535,7 +532,7 @@ public class Inventories {
 				Integer.parseInt(Objects.requireNonNull(button.getItemMeta()).getDisplayName().split(" ")[2])));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-				new InventoryMeta(InventoryID.MONSTER_SPAWN_DASHBOARD, InventoryType.MENU, arena),
+				new InventoryMeta(InventoryID.MONSTER_SPAWN_DASHBOARD, InventoryType.MENU, page, arena),
 				CommunicationManager.format("&2&lMonster Spawns: " + arena.getName()),
 				true,
 				true,
@@ -1637,6 +1634,7 @@ public class Inventories {
 	public static Inventory createPlayerStatsMenu(Player player) {
 		FileConfiguration playerData = plugin.getPlayerData();
 		String name = player.getName();
+		UUID id = player.getUniqueId();
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(
@@ -1649,35 +1647,35 @@ public class Inventories {
 		// Total kills
 		inv.setItem(0, ItemManager.createItem(Material.DRAGON_HEAD,
 				CommunicationManager.format("&4&l" + LanguageManager.playerStats.totalKills.name +
-						": &4" + playerData.getInt(name + ".totalKills")),
+						": &4" + playerData.getInt(id + ".totalKills")),
 				CommunicationManager.format("&7" +
 						LanguageManager.playerStats.totalKills.description)));
 
 		// Top kills
 		inv.setItem(1, ItemManager.createItem(Material.ZOMBIE_HEAD,
 				CommunicationManager.format("&c&l" + LanguageManager.playerStats.topKills.name +
-						": &c" + playerData.getInt(name + ".topKills")),
+						": &c" + playerData.getInt(id + ".topKills")),
 				CommunicationManager.format("&7" +
 						LanguageManager.playerStats.topKills.description)));
 
 		// Total gems
 		inv.setItem(2, ItemManager.createItem(Material.EMERALD_BLOCK,
 				CommunicationManager.format("&2&l" + LanguageManager.playerStats.totalGems.name +
-						": &2" + playerData.getInt(name + ".totalGems")),
+						": &2" + playerData.getInt(id + ".totalGems")),
 				CommunicationManager.format("&7" +
 						LanguageManager.playerStats.totalGems.description)));
 
 		// Top balance
 		inv.setItem(3, ItemManager.createItem(Material.EMERALD,
 				CommunicationManager.format("&a&l" + LanguageManager.playerStats.topBalance.name +
-						": &a" + playerData.getInt(name + ".topBalance")),
+						": &a" + playerData.getInt(id + ".topBalance")),
 				CommunicationManager.format("&7" +
 						LanguageManager.playerStats.topBalance.description)));
 
 		// Top wave
 		inv.setItem(4, ItemManager.createItem(Material.GOLDEN_SWORD,
 				CommunicationManager.format("&3&l" + LanguageManager.playerStats.topWave.name +
-						": &3" + playerData.getInt(name + ".topWave")),
+						": &3" + playerData.getInt(id + ".topWave")),
 				ItemManager.BUTTON_FLAGS, null, CommunicationManager.format("&7" +
 						LanguageManager.playerStats.topWave.description)));
 
@@ -1688,7 +1686,7 @@ public class Inventories {
 		// Crystal balance
 		inv.setItem(8, ItemManager.createItem(Material.DIAMOND,
 				CommunicationManager.format("&b&l" + LanguageManager.messages.crystalBalance +
-						": &b" + playerData.getInt(name + ".crystalBalance"))));
+						": &b" + playerData.getInt(id + ".crystalBalance"))));
 
 		return inv;
 	}
@@ -1697,7 +1695,8 @@ public class Inventories {
 	public static Inventory createPlayerKitsMenu(Player owner, String requester) {
 		FileConfiguration playerData = plugin.getPlayerData();
 		String name = owner.getName();
-		String path = name + ".kits.";
+		UUID id = owner.getUniqueId();
+		String path = id + ".kits.";
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(
@@ -1776,7 +1775,7 @@ public class Inventories {
 		if (name.equals(requester))
 			inv.setItem(52, ItemManager.createItem(Material.DIAMOND,
 					CommunicationManager.format("&b&l" + LanguageManager.messages.crystalBalance +
-							": &b" + playerData.getInt(name + ".crystalBalance"))));
+							": &b" + playerData.getInt(id + ".crystalBalance"))));
 
 		// Option to exit
 		inv.setItem(53, Buttons.exit());
@@ -1787,7 +1786,7 @@ public class Inventories {
 	// Display kits for a player to select
 	public static Inventory createSelectKitsMenu(Player player, Arena arena) {
 		FileConfiguration playerData = plugin.getPlayerData();
-		String path = player.getName() + ".kits.";
+		String path = player.getUniqueId() + ".kits.";
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(
