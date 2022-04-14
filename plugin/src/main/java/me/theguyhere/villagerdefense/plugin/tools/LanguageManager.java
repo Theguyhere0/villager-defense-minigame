@@ -8,6 +8,7 @@ public class LanguageManager {
     private static FileConfiguration config;
 
     // Sections
+    public static Achievements achievements;
     public static ArenaStats arenaStats;
     public static Challenges challenges;
     public static Confirms confirms;
@@ -21,6 +22,7 @@ public class LanguageManager {
     public static void init(FileConfiguration config) throws InvalidLanguageKeyException {
         LanguageManager.config = config;
 
+        LanguageManager.achievements = new Achievements();
         LanguageManager.arenaStats = new ArenaStats();
         LanguageManager.challenges = new Challenges();
         LanguageManager.confirms = new Confirms();
@@ -39,6 +41,114 @@ public class LanguageManager {
                 throw new InvalidLanguageKeyException("The key '" + path + "' is either missing or corrupt in the " +
                         "active language file");
             else return result;
+        }
+    }
+
+    public static class Achievements extends Section {
+        public final @NotNull SpecialAchievement allAbility;
+        public final @NotNull SpecialAchievement allChallenges;
+        public final @NotNull SpecialAchievement allEffect;
+        public final @NotNull SpecialAchievement allGift;
+        public final @NotNull SpecialAchievement allKits;
+        public final @NotNull SpecialAchievement allMaxedAbility;
+        public final @NotNull AchievementPortion amputee;
+        public final @NotNull AchievementPortion blind;
+        public final @NotNull AchievementPortion challengeDescription;
+        public final @NotNull AchievementPortion clumsy;
+        public final @NotNull AchievementPortion dwarf;
+        public final @NotNull AchievementPortion explosive;
+        public final @NotNull AchievementPortion featherweight;
+        public final @NotNull SpecialAchievement maxedAbility;
+        public final @NotNull AchievementPortion naked;
+        public final @NotNull AchievementPortion pacifist;
+        public final @NotNull SpecialAchievement pacifistUhc;
+        public final @NotNull AchievementSection topBalance;
+        public final @NotNull AchievementSection topKills;
+        public final @NotNull AchievementSection topWave;
+        public final @NotNull AchievementSection totalGems;
+        public final @NotNull AchievementSection totalKills;
+        public final @NotNull AchievementPortion uhc;
+
+        private Achievements() throws InvalidLanguageKeyException {
+            allAbility = new SpecialAchievement("allAbility");
+            allChallenges = new SpecialAchievement("allChallenges");
+            allEffect = new SpecialAchievement("allEffect");
+            allGift = new SpecialAchievement("allGift");
+            allKits = new SpecialAchievement("allKits");
+            allMaxedAbility = new SpecialAchievement("allMaxedAbility");
+            amputee = new AchievementPortion("amputee");
+            blind = new AchievementPortion("blind");
+            challengeDescription = new AchievementPortion("challengeDescription");
+            clumsy = new AchievementPortion("clumsy");
+            dwarf = new AchievementPortion("dwarf");
+            explosive = new AchievementPortion("explosive");
+            featherweight = new AchievementPortion("featherweight");
+            maxedAbility = new SpecialAchievement("maxedAbility");
+            naked = new AchievementPortion("naked");
+            pacifist = new AchievementPortion("pacifist");
+            pacifistUhc = new SpecialAchievement("pacifistUhc");
+            topBalance = new AchievementSection("topBalance");
+            topKills = new AchievementSection("topKills");
+            topWave = new AchievementSection("topWave");
+            totalGems = new AchievementSection("totalGems");
+            totalKills = new AchievementSection("totalKills");
+            uhc = new AchievementPortion("uhc");
+        }
+
+        public static class AchievementSection extends Section {
+            public final @NotNull String one;
+            public final @NotNull String two;
+            public final @NotNull String three;
+            public final @NotNull String four;
+            public final @NotNull String five;
+            public final @NotNull String six;
+            public final @NotNull String seven;
+            public final @NotNull String eight;
+            public final @NotNull String nine;
+            public final @NotNull String description;
+
+            private AchievementSection(@NotNull String key) throws InvalidLanguageKeyException {
+                String pathPrefix = "achievements." + key;
+
+                one = getConfigString(pathPrefix + ".1");
+                two = getConfigString(pathPrefix + ".2");
+                three = getConfigString(pathPrefix + ".3");
+                four = getConfigString(pathPrefix + ".4");
+                five = getConfigString(pathPrefix + ".5");
+                six = getConfigString(pathPrefix + ".6");
+                seven = getConfigString(pathPrefix + ".7");
+                eight = getConfigString(pathPrefix + ".8");
+                nine = getConfigString(pathPrefix + ".9");
+                description = getConfigString(pathPrefix + ".description");
+            }
+        }
+
+        public static class AchievementPortion extends Section {
+            public final @NotNull String alone;
+            public final @NotNull String balance;
+            public final @NotNull String kills;
+            public final @NotNull String wave;
+
+            private AchievementPortion(@NotNull String key) throws InvalidLanguageKeyException {
+                String pathPrefix = "achievements." + key;
+
+                alone = getConfigString(pathPrefix + ".alone");
+                balance = getConfigString(pathPrefix + ".balance");
+                kills = getConfigString(pathPrefix + ".kills");
+                wave = getConfigString(pathPrefix + ".wave");
+            }
+        }
+
+        public static class SpecialAchievement extends Section {
+            public final @NotNull String name;
+            public final @NotNull String description;
+
+            private SpecialAchievement(@NotNull String key) throws InvalidLanguageKeyException {
+                String pathPrefix = "achievements." + key;
+
+                name = getConfigString(pathPrefix + ".name");
+                description = getConfigString(pathPrefix + ".description");
+            }
         }
     }
 
@@ -93,6 +203,7 @@ public class LanguageManager {
         public final @NotNull Challenge blind;
         public final @NotNull Challenge clumsy;
         public final @NotNull Challenge dwarf;
+        public final @NotNull Challenge explosive;
         public final @NotNull Challenge featherweight;
         public final @NotNull Challenge naked;
         public final @NotNull Challenge pacifist;
@@ -103,6 +214,7 @@ public class LanguageManager {
             blind = new Challenge("blind");
             clumsy = new Challenge("clumsy");
             dwarf = new Challenge("dwarf");
+            explosive = new Challenge("explosive");
             featherweight = new Challenge("featherweight");
             naked = new Challenge("naked");
             pacifist = new Challenge("pacifist");
@@ -360,22 +472,6 @@ public class LanguageManager {
 
                 name = getConfigString(pathPrefix + ".name");
                 description = getConfigString(pathPrefix + ".description");
-            }
-        }
-
-        public static class TieredKit extends Section {
-            public final @NotNull String name;
-            public final @NotNull String description1;
-            public final @NotNull String description2;
-            public final @NotNull String description3;
-
-            private TieredKit(@NotNull String key) throws InvalidLanguageKeyException {
-                String pathPrefix = "kits." + key;
-
-                name = getConfigString(pathPrefix + ".name");
-                description1 = getConfigString(pathPrefix + ".description1");
-                description2 = getConfigString(pathPrefix + ".description2");
-                description3 = getConfigString(pathPrefix + ".description3");
             }
         }
 

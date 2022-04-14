@@ -373,6 +373,9 @@ public class ArenaListener implements Listener {
                 playerData.set(player.getUniqueId() + ".topKills", gamer.getKills());
             plugin.savePlayerData();
 
+            // Check for achievements
+
+
             // Refresh leaderboards
             GameManager.refreshLeaderboards();
 
@@ -402,7 +405,7 @@ public class ArenaListener implements Listener {
             PlayerManager.teleAdventure(player, GameManager.getLobby());
 
             // Give persistent rewards if it applies
-            if (arena.getCurrentWave() != 0) {
+            if (arena.getCurrentWave() != 0 && arena.getStatus() == ArenaStatus.ACTIVE) {
                 // Calculate reward from difficulty multiplier, wave, kills, and gem balance
                 int reward = (10 + 5 * arena.getDifficultyMultiplier()) *
                         (Math.max(arena.getCurrentWave() - gamer.getJoinedWave() - 1, 0));
@@ -575,17 +578,13 @@ public class ArenaListener implements Listener {
             Bukkit.getScheduler().cancelTask(tasks.get(task.calibrate));
             tasks.remove(task.calibrate);
         }
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
-                Bukkit.getPluginManager().callEvent(new ArenaResetEvent(arena)), Utils.secondsToTicks(10));
-
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> e.getArena().getTask().kickPlayers.run(),
+                Utils.secondsToTicks(10));
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> e.getArena().getTask().reset.run(),
+                Utils.secondsToTicks(12));
 
         // Debug message to console
         CommunicationManager.debugInfo("" + arena.getName() + " is ending.", 2);
-    }
-
-    @EventHandler
-    public void onArenaReset(ArenaResetEvent e) {
-        e.getArena().getTask().reset.run();
     }
 
     @EventHandler

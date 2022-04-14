@@ -1,3 +1,129 @@
+achievements:
+  allAbility:
+    name: "I'm Talented"
+    description: "Own all ability kits."
+  allChallenges:
+    name: "It Hurts So Good"
+    description: "Finish a game past at least wave 3 on all challenges."
+  allEffect:
+    name: "I'm Effective"
+    description: "Own all effect kits."
+  allGift:
+    name: "I'm Gifted"
+    description: "Own all gift kits."
+  allKits:
+    name: "Kitted Out"
+    description: "Own and max out all kits."
+  allMaxedAbility:
+    name: "I'm A Genius"
+    description: "Own and max out all ability kits."
+  amputee:
+    alone: "Amputee Hermit"
+    balance: "Amputee Banker"
+    kills: "Amputee Warrior"
+    wave: "Amputee Hero"
+  blind:
+    alone: "Blind Hermit"
+    balance: "Blind Banker"
+    kills: "Blind Warrior"
+    wave: "Blind Hero"
+  challengeDescription:
+    alone: "Finish a game alone on %s challenge."
+    balance: "Finish a game with at least 8000 gems on %s challenge."
+    kills: "Finish a game with at least 150 kills on %s challenge."
+    wave: "Finish a game past at least wave 20 on %s challenge."
+  clumsy:
+    alone: "Clumsy Hermit"
+    balance: "Clumsy Banker"
+    kills: "Clumsy Warrior"
+    wave: "Clumsy Hero"
+  dwarf:
+    alone: "Dwarf Hermit"
+    balance: "Dwarf Banker"
+    kills: "Dwarf Warrior"
+    wave: "Dwarf Hero"
+  featherweight:
+    alone: "Featherweight Hermit"
+    balance: "Featherweight Banker"
+    kills: "Featherweight Warrior"
+    wave: "Featherweight Hero"
+  maxedAbility:
+    name: "I'm Very Talented"
+    description: "Own a maxed ability kit."
+  naked:
+    alone: "Naked Hermit"
+    balance: "Naked Banker"
+    kills: "Naked Warrior"
+    wave: "Naked Hero"
+  pacifist:
+    alone: "Pacifist Hermit"
+    balance: "Pacifist Banker"
+    kills: "Pacifist Warrior"
+    wave: "Pacifist Hero"
+  pacifistUhc:
+    name: "Well That's Inconvenient"
+    description: "Finish a game past at least wave 10 on %s challenges."
+  topBalance:
+    1: "Gem Locator"
+    2: "Gem Finder"
+    3: "Gem Collector"
+    4: "Gem Hoarder"
+    5: "Gem Trader"
+    6: "Gem Merchant"
+    7: "Gem Banker"
+    8: "Gem Treasurer"
+    9: "Gem Fabricator"
+    description: "Reach %s top balance"
+  topKills:
+    1: "Monster Brawler"
+    2: "Monster Fighter"
+    3: "Monster Slayer"
+    4: "Monster Crusher"
+    5: "Monster Destroyer"
+    6: "Monster Exterminator"
+    7: "Monster Obliterator"
+    8: "Monster Eraser"
+    9: "Monster Deleter"
+    description: "Reach %s top kills"
+  topWave:
+    1: "Village Bouncer"
+    2: "Village Guard"
+    3: "Village Keeper"
+    4: "Village Defender"
+    5: "Village Protector"
+    6: "Village Guardian"
+    7: "Village Champion"
+    8: "Village Hero"
+    9: "Village Angel"
+    description: "Reach %s top wave"
+  totalGems:
+    1: "Pile of Gems"
+    2: "Bucket of Gems"
+    3: "Mound of Gems"
+    4: "Pond of Gems"
+    5: "Hill of Gems"
+    6: "Lake of Gems"
+    7: "Mountain of Gems"
+    8: "Ocean of Gems"
+    9: "Planet of Gems"
+    description: "Reach %s total gems"
+  totalKills:
+    1: "Death Minion"
+    2: "Death Spirit"
+    3: "Death Machine"
+    4: "Death Knight"
+    5: "Death Lord"
+    6: "Death King"
+    7: "Death Empress"
+    8: "Death Brigade"
+    9: "Death Star"
+    description: "Reach %s total kills"
+  uhc:
+    alone: "UHC Hermit"
+    balance: "UHC Banker"
+    kills: "UHC Warrior"
+    wave: "UHC Hero"
+
 arenaStats:
   difficultyMultiplier:
     name: "Difficulty Multiplier"
@@ -58,6 +184,10 @@ challenges:
     name: "Dwarf"
     description1: "Short people unite!"
     description2: "Max health is cut in half"
+  explosive:
+    name: "Explosive"
+    description1: "Aww man"
+    description2: "Drop inventory and explode on death"
   featherweight:
     name: "Featherweight"
     description1: "WHEEEEEE"

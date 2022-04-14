@@ -362,6 +362,17 @@ public class Tasks {
 		}
 	};
 
+	// Kick players from the arena
+	public final Runnable kickPlayers = new Runnable() {
+		@Override
+		public void run() {
+			// Remove players from the arena
+			arena.getPlayers().forEach(player ->
+					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+							Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player.getPlayer()))));
+		}
+	};
+
 	// Reset the arena
 	public final Runnable reset = new Runnable() {
 		@Override
@@ -373,11 +384,6 @@ public class Tasks {
 			arena.resetVillagers();
 			arena.resetGolems();
 			arena.getTask().getTasks().clear();
-
-			// Remove players from the arena
-			arena.getPlayers().forEach(player ->
-					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
-							Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player.getPlayer()))));
 
 			// Clear the arena
 			WorldManager.clear(arena.getCorner1(), arena.getCorner2());

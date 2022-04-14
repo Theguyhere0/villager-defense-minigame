@@ -47,7 +47,7 @@ public class Main extends JavaPlugin {
 	public static final int arenaDataVersion = 6;
 	public static final int playerDataVersion = 2;
 	public static final int spawnTableVersion = 1;
-	public static final int languageFileVersion = 13;
+	public static final int languageFileVersion = 14;
 	public static final int defaultSpawnVersion = 2;
 
 	@Override
