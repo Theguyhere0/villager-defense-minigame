@@ -2,11 +2,15 @@ package me.theguyhere.villagerdefense.plugin.game.models.achievements;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidAchievementReqTypeException;
+import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Achievement {
     /** The name of the achievement.*/
@@ -31,12 +35,24 @@ public class Achievement {
         return name;
     }
 
-    public String getDescription() {
-        return description;
+    private String getName(boolean obtained) {
+        if (obtained)
+            return CommunicationManager.format("&6&l" + name);
+        else return CommunicationManager.format("&7&l" + name);
     }
 
-    public Material getButtonMaterial() {
-        return buttonMaterial;
+    private String[] getDescription() {
+        return CommunicationManager.formatDescriptionList(ChatColor.GRAY, description).toArray(new String[]{});
+    }
+
+    private Material getButtonMaterial(boolean obtained) {
+        if (obtained)
+            return buttonMaterial;
+        else return Material.GUNPOWDER;
+    }
+
+    public ItemStack getButton(boolean obtained) {
+        return ItemManager.createItem(getButtonMaterial(obtained), getName(obtained), getDescription());
     }
 
     public List<AchievementRequirement> getRequirements() {
@@ -47,6 +63,19 @@ public class Achievement {
         if (requirement.getMetric().getType() != type)
             throw new InvalidAchievementReqTypeException();
         else requirements.add(requirement);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Achievement that = (Achievement) o;
+        return Objects.equals(name, that.name) && Objects.equals(description, that.description) && buttonMaterial == that.buttonMaterial && type == that.type && Objects.equals(requirements, that.requirements);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, description, buttonMaterial, type, requirements);
     }
 
     public static Achievement allAbility() {
@@ -450,6 +479,23 @@ public class Achievement {
                     3,
                     LanguageManager.kits.warrior.name
             ));
+        } catch (InvalidAchievementReqTypeException e) {
+            CommunicationManager.debugError("This should not be happening!", 0);
+        }
+
+        return achievement;
+    }
+
+    public static Achievement alone() {
+        Achievement achievement = new Achievement(
+                LanguageManager.achievements.alone.name,
+                LanguageManager.achievements.alone.description,
+                Material.ENDER_PEARL,
+                AchievementType.INSTANCE
+        );
+
+        try {
+            achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
         } catch (InvalidAchievementReqTypeException e) {
             CommunicationManager.debugError("This should not be happening!", 0);
         }

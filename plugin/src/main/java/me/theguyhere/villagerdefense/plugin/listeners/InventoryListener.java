@@ -2979,8 +2979,27 @@ public class InventoryListener implements Listener {
 		// Stats menu for a player
 		else if (invID == InventoryID.PLAYER_STATS_MENU) {
 			Player owner = meta.getPlayer();
-			if (buttonName.contains("Kits"))
+			if (buttonName.contains(LanguageManager.messages.achievements))
+				player.openInventory(Inventories.createPlayerAchievementsMenu(owner));
+			else if (buttonName.contains(LanguageManager.messages.kits))
 				player.openInventory(Inventories.createPlayerKitsMenu(owner, player.getName()));
+		}
+
+		// Achievements menu for a player
+		else if (invID == InventoryID.PLAYER_ACHIEVEMENTS_MENU) {
+			Player owner = meta.getPlayer();
+
+			// Exit button
+			if (buttonName.contains(LanguageManager.messages.exit))
+				player.openInventory(Inventories.createPlayerStatsMenu(owner));
+
+			// Previous page
+			else if (button.equals(Buttons.previousPage()))
+				player.openInventory(Inventories.createPlayerAchievementsMenu(owner, meta.getPage() - 1));
+
+			// Next page
+			else if (button.equals(Buttons.nextPage()))
+				player.openInventory(Inventories.createPlayerAchievementsMenu(owner, meta.getPage() + 1));
 		}
 
 		// Kits menu for a player

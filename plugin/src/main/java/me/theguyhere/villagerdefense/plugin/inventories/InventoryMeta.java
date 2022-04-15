@@ -39,6 +39,10 @@ public class InventoryMeta implements InventoryHolder {
         this(inventoryID, type, player, null, 0);
     }
 
+    public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type, int page, Player player) {
+        this(inventoryID, type, player, null, 0, page);
+    }
+
     public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type, Player player, Arena arena) {
         this(inventoryID, type, player, arena, 0);
     }

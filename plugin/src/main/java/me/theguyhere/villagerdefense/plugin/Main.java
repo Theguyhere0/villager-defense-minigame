@@ -52,37 +52,6 @@ public class Main extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-		// Set up initial classes
-		saveDefaultConfig();
-		PluginManager pm = getServer().getPluginManager();
-		try {
-			LanguageManager.init(languageData.getConfig());
-		} catch (InvalidLanguageKeyException e) {
-			CommunicationManager.debugError(e.getMessage(), 0);
-		}
-		Commands commands = new Commands(this);
-		GameItems.setPlugin();
-		Inventories.setPlugin(this);
-
-		// Set up commands and tab complete
-		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist").setExecutor(commands);
-		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist")
-				.setTabCompleter(new CommandTab());
-
-		// Register event listeners
-		pm.registerEvents(new InventoryListener(this), this);
-		pm.registerEvents(new JoinListener(this), this);
-		pm.registerEvents(new ClickPortalListener(), this);
-		pm.registerEvents(new GameListener(this), this);
-		pm.registerEvents(new ArenaListener(this), this);
-		pm.registerEvents(new AbilityListener(this), this);
-		pm.registerEvents(new ChallengeListener(this), this);
-		pm.registerEvents(new WorldListener(this), this);
-
-		// Add packet listeners for online players
-		for (Player player : Bukkit.getOnlinePlayers())
-			nmsManager.injectPacketListener(player, new PacketListenerImp());
-
 		// Check config version
 		if (getConfig().getInt("version") < configVersion) {
 			urgentConsoleWarning("Your config.yml is outdated!");
@@ -139,6 +108,37 @@ public class Main extends JavaPlugin {
 					"updated.");
 			outdated = true;
 		}
+
+		// Set up commands and tab complete
+		Commands commands = new Commands(this);
+		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist").setExecutor(commands);
+		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist")
+				.setTabCompleter(new CommandTab());
+
+		// Set up initial classes
+		saveDefaultConfig();
+		PluginManager pm = getServer().getPluginManager();
+		try {
+			LanguageManager.init(languageData.getConfig());
+		} catch (InvalidLanguageKeyException e) {
+			e.printStackTrace();
+		}
+		GameItems.setPlugin();
+		Inventories.setPlugin(this);
+
+		// Register event listeners
+		pm.registerEvents(new InventoryListener(this), this);
+		pm.registerEvents(new JoinListener(this), this);
+		pm.registerEvents(new ClickPortalListener(), this);
+		pm.registerEvents(new GameListener(this), this);
+		pm.registerEvents(new ArenaListener(this), this);
+		pm.registerEvents(new AbilityListener(this), this);
+		pm.registerEvents(new ChallengeListener(this), this);
+		pm.registerEvents(new WorldListener(this), this);
+
+		// Add packet listeners for online players
+		for (Player player : Bukkit.getOnlinePlayers())
+			nmsManager.injectPacketListener(player, new PacketListenerImp());
 
 		// Set teams
 		if (Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("monsters") == null) {

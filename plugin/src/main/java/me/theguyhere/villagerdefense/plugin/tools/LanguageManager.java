@@ -51,6 +51,7 @@ public class LanguageManager {
         public final @NotNull SpecialAchievement allGift;
         public final @NotNull SpecialAchievement allKits;
         public final @NotNull SpecialAchievement allMaxedAbility;
+        public final @NotNull SpecialAchievement alone;
         public final @NotNull AchievementPortion amputee;
         public final @NotNull AchievementPortion blind;
         public final @NotNull AchievementPortion challengeDescription;
@@ -76,6 +77,7 @@ public class LanguageManager {
             allGift = new SpecialAchievement("allGift");
             allKits = new SpecialAchievement("allKits");
             allMaxedAbility = new SpecialAchievement("allMaxedAbility");
+            alone = new SpecialAchievement("alone");
             amputee = new AchievementPortion("amputee");
             blind = new AchievementPortion("blind");
             challengeDescription = new AchievementPortion("challengeDescription");
@@ -638,6 +640,7 @@ public class LanguageManager {
     public static class Messages extends Section {
         public final @NotNull String abilityKitsDescription;
         public final @NotNull String abilityLevel;
+        public final @NotNull String achievements;
         public final @NotNull String allowedKits;
         public final @NotNull String arenaInfo;
         public final @NotNull String arenaRecords;
@@ -726,6 +729,7 @@ public class LanguageManager {
 
             abilityKitsDescription = getConfigString(pathPrefix + ".abilityKitsDescription");
             abilityLevel = getConfigString(pathPrefix + ".abilityLevel");
+            achievements = getConfigString(pathPrefix + ".achievements");
             allowedKits = getConfigString(pathPrefix + ".allowedKits");
             arenaInfo = getConfigString(pathPrefix + ".arenaInfo");
             arenaRecords = getConfigString(pathPrefix + ".arenaRecords");

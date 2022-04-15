@@ -17,6 +17,9 @@ achievements:
   allMaxedAbility:
     name: "I'm A Genius"
     description: "Own and max out all ability kits."
+  alone:
+    name: "Hermit"
+    description: "Finish a game alone."
   amputee:
     alone: "Amputee Hermit"
     balance: "Amputee Banker"
@@ -42,6 +45,11 @@ achievements:
     balance: "Dwarf Banker"
     kills: "Dwarf Warrior"
     wave: "Dwarf Hero"
+  explosive:
+    alone: "Explosive Hermit"
+    balance: "Explosive Banker"
+    kills: "Explosive Warrior"
+    wave: "Explosive Hero"
   featherweight:
     alone: "Featherweight Hermit"
     balance: "Featherweight Banker"
@@ -123,7 +131,6 @@ achievements:
     balance: "UHC Banker"
     kills: "UHC Warrior"
     wave: "UHC Hero"
-
 arenaStats:
   difficultyMultiplier:
     name: "Difficulty Multiplier"
@@ -378,6 +385,7 @@ kits:
 messages:
   abilityKitsDescription: "Kits give special ability per respawn"
   abilityLevel: "Up to ability level"
+  achievements: "Achievements"
   allowedKits: "Allowed Kits"
   arenaInfo: "%s Info"
   arenaRecords: "Arena Records"

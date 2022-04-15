@@ -37,6 +37,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("deprecation")
 public class Commands implements CommandExecutor {
 	private final Main plugin;
 	private final FileConfiguration playerData;
@@ -141,6 +142,18 @@ public class Commands implements CommandExecutor {
 					}
 
 					player.openInventory(Inventories.createPlayerKitsMenu(player, player.getName()));
+					return true;
+				}
+
+				// Player checks achievements
+				if (args[0].equalsIgnoreCase("achievements")) {
+					// Check for player executing command
+					if (player == null) {
+						sender.sendMessage(LanguageManager.errors.playerOnlyCommand);
+						return true;
+					}
+
+					player.openInventory(Inventories.createPlayerAchievementsMenu(player));
 					return true;
 				}
 
