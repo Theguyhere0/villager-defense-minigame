@@ -51,6 +51,10 @@ public class Achievement {
         else return Material.GUNPOWDER;
     }
 
+    public AchievementType getType() {
+        return type;
+    }
+
     public ItemStack getButton(boolean obtained) {
         return ItemManager.createItem(getButtonMaterial(obtained), getName(obtained), getDescription());
     }
@@ -133,7 +137,7 @@ public class Achievement {
                     LanguageManager.kits.warrior.name
             ));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -186,7 +190,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 3));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -196,7 +200,7 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.allEffect.name,
                 LanguageManager.achievements.allEffect.description,
-                Material.CHORUS_FRUIT,
+                Material.BREWING_STAND,
                 AchievementType.KIT
         );
 
@@ -227,7 +231,7 @@ public class Achievement {
                     LanguageManager.kits.vampire.name
             ));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -288,7 +292,7 @@ public class Achievement {
                     LanguageManager.kits.phantom.name
             ));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -419,7 +423,7 @@ public class Achievement {
                     LanguageManager.kits.vampire.name
             ));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -480,7 +484,7 @@ public class Achievement {
                     LanguageManager.kits.warrior.name
             ));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -496,8 +500,9 @@ public class Achievement {
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
+            achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -520,8 +525,9 @@ public class Achievement {
                     LanguageManager.challenges.amputee.name
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
+            achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -544,7 +550,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -567,7 +573,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -590,7 +596,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -613,8 +619,9 @@ public class Achievement {
                     LanguageManager.challenges.blind.name
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
+            achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -637,7 +644,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -660,7 +667,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -683,7 +690,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -706,8 +713,9 @@ public class Achievement {
                     LanguageManager.challenges.clumsy.name
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
+            achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -730,7 +738,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -753,7 +761,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -776,7 +784,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -799,8 +807,9 @@ public class Achievement {
                     LanguageManager.challenges.dwarf.name
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
+            achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -823,7 +832,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -846,7 +855,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -869,7 +878,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -892,8 +901,9 @@ public class Achievement {
                     LanguageManager.challenges.explosive.name
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
+            achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -916,7 +926,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -939,7 +949,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -962,7 +972,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -985,8 +995,9 @@ public class Achievement {
                     LanguageManager.challenges.featherweight.name
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
+            achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1009,7 +1020,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1032,7 +1043,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1055,7 +1066,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1125,7 +1136,7 @@ public class Achievement {
                     false
             ));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1148,8 +1159,9 @@ public class Achievement {
                     LanguageManager.challenges.naked.name
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
+            achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1172,7 +1184,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1195,7 +1207,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1218,7 +1230,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1241,8 +1253,9 @@ public class Achievement {
                     LanguageManager.challenges.pacifist.name
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
+            achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1265,7 +1278,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1288,7 +1301,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1311,7 +1324,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1322,8 +1335,7 @@ public class Achievement {
                 LanguageManager.achievements.pacifistUhc.name,
                 String.format(
                         LanguageManager.achievements.pacifistUhc.description,
-                        LanguageManager.challenges.pacifist.name,
-                        LanguageManager.challenges.uhc.name
+                        LanguageManager.challenges.pacifist.name + " & " + LanguageManager.challenges.uhc.name
                 ),
                 Material.DAMAGED_ANVIL,
                 AchievementType.INSTANCE
@@ -1340,7 +1352,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 10));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1350,14 +1362,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.one,
                 String.format(LanguageManager.achievements.topBalance.description, "100"),
-                Material.DRAGON_HEAD,
+                Material.EMERALD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_BALANCE, 100));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1366,14 +1378,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.two,
                 String.format(LanguageManager.achievements.topBalance.description, "250"),
-                Material.DRAGON_HEAD,
+                Material.EMERALD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_BALANCE, 250));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1382,14 +1394,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.three,
                 String.format(LanguageManager.achievements.topBalance.description, "500"),
-                Material.DRAGON_HEAD,
+                Material.EMERALD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_BALANCE, 500));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1398,14 +1410,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.four,
                 String.format(LanguageManager.achievements.topBalance.description, "1000"),
-                Material.DRAGON_HEAD,
+                Material.EMERALD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_BALANCE, 1000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1414,14 +1426,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.five,
                 String.format(LanguageManager.achievements.topBalance.description, "2500"),
-                Material.DRAGON_HEAD,
+                Material.EMERALD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_BALANCE, 2500));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1430,14 +1442,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.six,
                 String.format(LanguageManager.achievements.topBalance.description, "5000"),
-                Material.DRAGON_HEAD,
+                Material.EMERALD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_BALANCE, 5000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1446,14 +1458,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.seven,
                 String.format(LanguageManager.achievements.topBalance.description, "10000"),
-                Material.DRAGON_HEAD,
+                Material.EMERALD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_BALANCE, 10000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1462,30 +1474,30 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.eight,
                 String.format(LanguageManager.achievements.topBalance.description, "25000"),
-                Material.DRAGON_HEAD,
+                Material.EMERALD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_BALANCE, 25000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
     }
     public static Achievement topBalance9() {
         Achievement achievement = new Achievement(
-                LanguageManager.achievements.topBalance.two,
+                LanguageManager.achievements.topBalance.nine,
                 String.format(LanguageManager.achievements.topBalance.description, "50000"),
-                Material.DRAGON_HEAD,
+                Material.EMERALD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_BALANCE, 50000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1495,14 +1507,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.one,
                 String.format(LanguageManager.achievements.topKills.description, "10"),
-                Material.DRAGON_HEAD,
+                Material.ZOMBIE_HEAD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_KILLS, 10));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1511,14 +1523,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.two,
                 String.format(LanguageManager.achievements.topKills.description, "20"),
-                Material.DRAGON_HEAD,
+                Material.ZOMBIE_HEAD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_KILLS, 20));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1527,14 +1539,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.three,
                 String.format(LanguageManager.achievements.topKills.description, "30"),
-                Material.DRAGON_HEAD,
+                Material.ZOMBIE_HEAD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_KILLS, 30));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1543,14 +1555,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.four,
                 String.format(LanguageManager.achievements.topKills.description, "50"),
-                Material.DRAGON_HEAD,
+                Material.ZOMBIE_HEAD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_KILLS, 50));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1559,14 +1571,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.five,
                 String.format(LanguageManager.achievements.topKills.description, "100"),
-                Material.DRAGON_HEAD,
+                Material.ZOMBIE_HEAD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_KILLS, 100));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1575,14 +1587,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.six,
                 String.format(LanguageManager.achievements.topKills.description, "200"),
-                Material.DRAGON_HEAD,
+                Material.ZOMBIE_HEAD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_KILLS, 200));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1591,14 +1603,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.seven,
                 String.format(LanguageManager.achievements.topKills.description, "300"),
-                Material.DRAGON_HEAD,
+                Material.ZOMBIE_HEAD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_KILLS, 300));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1607,30 +1619,30 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.eight,
                 String.format(LanguageManager.achievements.topKills.description, "500"),
-                Material.DRAGON_HEAD,
+                Material.ZOMBIE_HEAD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_KILLS, 500));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
     }
     public static Achievement topKills9() {
         Achievement achievement = new Achievement(
-                LanguageManager.achievements.topKills.two,
+                LanguageManager.achievements.topKills.nine,
                 String.format(LanguageManager.achievements.topKills.description, "1000"),
-                Material.DRAGON_HEAD,
+                Material.ZOMBIE_HEAD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_KILLS, 1000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1640,14 +1652,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.one,
                 String.format(LanguageManager.achievements.topWave.description, "5"),
-                Material.DRAGON_HEAD,
+                Material.GOLDEN_SWORD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_WAVE, 5));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1656,14 +1668,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.two,
                 String.format(LanguageManager.achievements.topWave.description, "10"),
-                Material.DRAGON_HEAD,
+                Material.GOLDEN_SWORD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_WAVE, 10));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1672,14 +1684,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.three,
                 String.format(LanguageManager.achievements.topWave.description, "15"),
-                Material.DRAGON_HEAD,
+                Material.GOLDEN_SWORD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_WAVE, 15));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1688,14 +1700,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.four,
                 String.format(LanguageManager.achievements.topWave.description, "20"),
-                Material.DRAGON_HEAD,
+                Material.GOLDEN_SWORD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_WAVE, 20));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1704,14 +1716,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.five,
                 String.format(LanguageManager.achievements.topWave.description, "25"),
-                Material.DRAGON_HEAD,
+                Material.GOLDEN_SWORD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_WAVE, 25));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1720,14 +1732,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.six,
                 String.format(LanguageManager.achievements.topWave.description, "30"),
-                Material.DRAGON_HEAD,
+                Material.GOLDEN_SWORD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_WAVE, 30));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1736,14 +1748,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.seven,
                 String.format(LanguageManager.achievements.topWave.description, "35"),
-                Material.DRAGON_HEAD,
+                Material.GOLDEN_SWORD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_WAVE, 35));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1752,30 +1764,30 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.eight,
                 String.format(LanguageManager.achievements.topWave.description, "40"),
-                Material.DRAGON_HEAD,
+                Material.GOLDEN_SWORD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_WAVE, 40));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
     }
     public static Achievement topWave9() {
         Achievement achievement = new Achievement(
-                LanguageManager.achievements.topWave.two,
+                LanguageManager.achievements.topWave.nine,
                 String.format(LanguageManager.achievements.topWave.description, "50"),
-                Material.DRAGON_HEAD,
+                Material.GOLDEN_SWORD,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOP_WAVE, 50));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1785,14 +1797,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.one,
                 String.format(LanguageManager.achievements.totalGems.description, "1000"),
-                Material.DRAGON_HEAD,
+                Material.EMERALD_BLOCK,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOTAL_GEMS, 1000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1801,14 +1813,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.two,
                 String.format(LanguageManager.achievements.totalGems.description, "5000"),
-                Material.DRAGON_HEAD,
+                Material.EMERALD_BLOCK,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOTAL_GEMS, 5000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1817,14 +1829,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.three,
                 String.format(LanguageManager.achievements.totalGems.description, "10000"),
-                Material.DRAGON_HEAD,
+                Material.EMERALD_BLOCK,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOTAL_GEMS, 10000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1833,14 +1845,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.four,
                 String.format(LanguageManager.achievements.totalGems.description, "25000"),
-                Material.DRAGON_HEAD,
+                Material.EMERALD_BLOCK,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOTAL_GEMS, 25000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1849,14 +1861,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.five,
                 String.format(LanguageManager.achievements.totalGems.description, "50000"),
-                Material.DRAGON_HEAD,
+                Material.EMERALD_BLOCK,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOTAL_GEMS, 50000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1865,14 +1877,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.six,
                 String.format(LanguageManager.achievements.totalGems.description, "100000"),
-                Material.DRAGON_HEAD,
+                Material.EMERALD_BLOCK,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOTAL_GEMS, 100000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1881,14 +1893,14 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.seven,
                 String.format(LanguageManager.achievements.totalGems.description, "250000"),
-                Material.DRAGON_HEAD,
+                Material.EMERALD_BLOCK,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOTAL_GEMS, 250000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1897,30 +1909,30 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.eight,
                 String.format(LanguageManager.achievements.totalGems.description, "500000"),
-                Material.DRAGON_HEAD,
+                Material.EMERALD_BLOCK,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOTAL_GEMS, 500000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
     }
     public static Achievement totalGems9() {
         Achievement achievement = new Achievement(
-                LanguageManager.achievements.totalGems.two,
+                LanguageManager.achievements.totalGems.nine,
                 String.format(LanguageManager.achievements.totalGems.description, "1000000"),
-                Material.DRAGON_HEAD,
+                Material.EMERALD_BLOCK,
                 AchievementType.HIGH_SCORE
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOTAL_GEMS, 1000000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1937,7 +1949,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOTAL_KILLS, 100));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1953,7 +1965,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOTAL_KILLS, 200));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1969,7 +1981,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOTAL_KILLS, 300));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -1985,7 +1997,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOTAL_KILLS, 500));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -2001,7 +2013,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOTAL_KILLS, 1000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -2017,7 +2029,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOTAL_KILLS, 2000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -2033,7 +2045,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOTAL_KILLS, 3000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -2049,14 +2061,14 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOTAL_KILLS, 5000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
     }
     public static Achievement totalKills9() {
         Achievement achievement = new Achievement(
-                LanguageManager.achievements.totalKills.two,
+                LanguageManager.achievements.totalKills.nine,
                 String.format(LanguageManager.achievements.totalKills.description, "10000"),
                 Material.DRAGON_HEAD,
                 AchievementType.HIGH_SCORE
@@ -2065,7 +2077,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.TOTAL_KILLS, 10000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -2088,8 +2100,9 @@ public class Achievement {
                     LanguageManager.challenges.uhc.name
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
+            achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -2112,7 +2125,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -2135,7 +2148,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;
@@ -2158,7 +2171,7 @@ public class Achievement {
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
         } catch (InvalidAchievementReqTypeException e) {
-            CommunicationManager.debugError("This should not be happening!", 0);
+            CommunicationManager.debugErrorShouldNotHappen();
         }
 
         return achievement;

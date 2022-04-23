@@ -31,12 +31,7 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.*;
 
 public class AbilityListener implements Listener {
-    private final Main plugin;
     private final Map<VDPlayer, Long> cooldowns = new HashMap<>();
-
-    public AbilityListener(Main plugin) {
-        this.plugin = plugin;
-    }
 
     // Most ability functionalities
     @EventHandler
@@ -123,7 +118,7 @@ public class AbilityListener implements Listener {
             gamer.hideArmor();
 
             // Schedule un-nerf
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
                     Bukkit.getPluginManager().callEvent(new EndNinjaNerfEvent(gamer)), duration);
 
             // Fire ability sound if turned on

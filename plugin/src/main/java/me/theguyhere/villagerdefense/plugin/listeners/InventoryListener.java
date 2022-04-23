@@ -3,11 +3,13 @@ package me.theguyhere.villagerdefense.plugin.listeners;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.SignGUIEvent;
+import me.theguyhere.villagerdefense.plugin.events.WaveEndEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidNameException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.EnchantingBook;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.models.achievements.AchievementChecker;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
@@ -36,13 +38,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class InventoryListener implements Listener {
-	private final Main plugin;
-
-	// Constants for armor types
-	public InventoryListener(Main plugin) {
-		this.plugin = plugin;
-	}
-
 	// Prevent losing items by drag clicking in custom inventory
 	@EventHandler
 	public void onDrag(InventoryDragEvent e) {
@@ -121,7 +116,7 @@ public class InventoryListener implements Listener {
 
 		Player player = (Player) e.getWhoClicked();
 		int slot = e.getSlot();
-		FileConfiguration config = plugin.getArenaData();
+		FileConfiguration config = Main.plugin.getArenaData();
 
 		// Custom shop editor for an arena
 		if (invID == InventoryID.CUSTOM_SHOP_EDITOR_MENU) {
@@ -158,7 +153,7 @@ public class InventoryListener implements Listener {
 				config.set(path + slot, copy);
 				PlayerManager.giveItem(player, cursor.clone(), LanguageManager.errors.inventoryFull);
 				player.setItemOnCursor(new ItemStack(Material.AIR));
-				plugin.saveArenaData();
+				Main.plugin.saveArenaData();
 				player.openInventory(Inventories.createCustomItemsMenu(meta.getArena(), slot));
 				return;
 			}
@@ -213,7 +208,7 @@ public class InventoryListener implements Listener {
 
 			// Create new arena with naming inventory
 			else if (buttonName.contains(CommunicationManager.format("&a&lNew "))) {
-				Arena arena = new Arena(plugin, GameManager.newArenaID());
+				Arena arena = new Arena(GameManager.newArenaID());
 
 				// Set a new arena
 				GameManager.addArena(GameManager.newArenaID(), arena);
@@ -239,7 +234,7 @@ public class InventoryListener implements Listener {
 
 			// Create lobby
 			if (buttonName.contains("Create Lobby")) {
-				DataManager.setConfigurationLocation(plugin, path, player.getLocation());
+				DataManager.setConfigurationLocation(path, player.getLocation());
 				GameManager.reloadLobby();
 				PlayerManager.notifySuccess(player, "Lobby set!");
 				player.openInventory(Inventories.createLobbyMenu());
@@ -247,14 +242,14 @@ public class InventoryListener implements Listener {
 
 			// Relocate lobby
 			else if (buttonName.contains("Relocate Lobby")) {
-				DataManager.setConfigurationLocation(plugin, path, player.getLocation());
+				DataManager.setConfigurationLocation(path, player.getLocation());
 				GameManager.reloadLobby();
 				PlayerManager.notifySuccess(player, "Lobby relocated!");
 			}
 
 			// Teleport player to lobby
 			else if (buttonName.contains("Teleport")) {
-				Location location = DataManager.getConfigLocationNoRotation(plugin, path);
+				Location location = DataManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No lobby to teleport to!");
 					return;
@@ -265,12 +260,12 @@ public class InventoryListener implements Listener {
 
 			// Center lobby
 			else if (buttonName.contains("Center")) {
-				Location location = DataManager.getConfigLocationNoRotation(plugin, path);
+				Location location = DataManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No lobby to center!");
 					return;
 				}
-				DataManager.centerConfigLocation(plugin, path);
+				DataManager.centerConfigLocation(path);
 				PlayerManager.notifySuccess(player, "Lobby centered!");
 			}
 
@@ -322,14 +317,14 @@ public class InventoryListener implements Listener {
 
 			// Relocate board
 			else if (buttonName.contains("Relocate")) {
-				DataManager.setConfigurationLocation(plugin, path, player.getLocation());
+				DataManager.setConfigurationLocation(path, player.getLocation());
 				GameManager.refreshInfoBoard(id);
 				PlayerManager.notifySuccess(player, "Info board relocated!");
 			}
 
 			// Teleport player to info board
 			else if (buttonName.contains("Teleport")) {
-				Location location = DataManager.getConfigLocationNoRotation(plugin, path);
+				Location location = DataManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No info board to teleport to!");
 					return;
@@ -340,7 +335,7 @@ public class InventoryListener implements Listener {
 
 			// Center info board
 			else if (buttonName.contains("Center")) {
-				if (DataManager.getConfigLocationNoRotation(plugin, path) == null) {
+				if (DataManager.getConfigLocationNoRotation(path) == null) {
 					PlayerManager.notifyFailure(player, "No info board to center!");
 					return;
 				}
@@ -400,7 +395,7 @@ public class InventoryListener implements Listener {
 
 			// Teleport player to leaderboard
 			else if (buttonName.contains("Teleport")) {
-				Location location = DataManager.getConfigLocationNoRotation(plugin, path);
+				Location location = DataManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to teleport to!");
 					return;
@@ -411,7 +406,7 @@ public class InventoryListener implements Listener {
 
 			// Center leaderboard
 			else if (buttonName.contains("Center")) {
-				Location location = DataManager.getConfigLocationNoRotation(plugin, path);
+				Location location = DataManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to center!");
 					return;
@@ -450,7 +445,7 @@ public class InventoryListener implements Listener {
 
 			// Teleport player to leaderboard
 			else if (buttonName.contains("Teleport")) {
-				Location location = DataManager.getConfigLocationNoRotation(plugin, path);
+				Location location = DataManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to teleport to!");
 					return;
@@ -461,7 +456,7 @@ public class InventoryListener implements Listener {
 
 			// Center leaderboard
 			else if (buttonName.contains("Center")) {
-				Location location = DataManager.getConfigLocationNoRotation(plugin, path);
+				Location location = DataManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to center!");
 					return;
@@ -500,7 +495,7 @@ public class InventoryListener implements Listener {
 
 			// Teleport player to leaderboard
 			else if (buttonName.contains("Teleport")) {
-				Location location = DataManager.getConfigLocationNoRotation(plugin, path);
+				Location location = DataManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to teleport to!");
 					return;
@@ -511,7 +506,7 @@ public class InventoryListener implements Listener {
 
 			// Center leaderboard
 			else if (buttonName.contains("Center")) {
-				Location location = DataManager.getConfigLocationNoRotation(plugin, path);
+				Location location = DataManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to center!");
 					return;
@@ -550,7 +545,7 @@ public class InventoryListener implements Listener {
 
 			// Teleport player to leaderboard
 			else if (buttonName.contains("Teleport")) {
-				Location location = DataManager.getConfigLocationNoRotation(plugin, path);
+				Location location = DataManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to teleport to!");
 					return;
@@ -561,7 +556,7 @@ public class InventoryListener implements Listener {
 
 			// Center leaderboard
 			else if (buttonName.contains("Center")) {
-				Location location = DataManager.getConfigLocationNoRotation(plugin, path);
+				Location location = DataManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to center!");
 					return;
@@ -600,7 +595,7 @@ public class InventoryListener implements Listener {
 
 			// Teleport player to leaderboard
 			else if (buttonName.contains("Teleport")) {
-				Location location = DataManager.getConfigLocationNoRotation(plugin, path);
+				Location location = DataManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to teleport to!");
 					return;
@@ -611,7 +606,7 @@ public class InventoryListener implements Listener {
 
 			// Center leaderboard
 			else if (buttonName.contains("Center")) {
-				Location location = DataManager.getConfigLocationNoRotation(plugin, path);
+				Location location = DataManager.getConfigLocationNoRotation(path);
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to center!");
 					return;
@@ -851,7 +846,7 @@ public class InventoryListener implements Listener {
 			// Remove custom item, then return to custom shop editor
 			else if (buttonName.contains("YES")) {
 				config.set(meta.getArena().getPath() + ".customShop." + meta.getId(), null);
-				plugin.saveArenaData();
+				Main.plugin.saveArenaData();
 				player.openInventory(meta.getArena().getCustomShopEditorMenu());
 			}
 		}
@@ -899,7 +894,7 @@ public class InventoryListener implements Listener {
 			// Remove the lobby, then return to previous menu
 			else if (buttonName.contains("YES")) {
 				config.set("lobby", null);
-				plugin.saveArenaData();
+				Main.plugin.saveArenaData();
 				GameManager.reloadLobby();
 				PlayerManager.notifySuccess(player, "Lobby removed!");
 				player.openInventory(Inventories.createLobbyMenu());
@@ -935,7 +930,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("YES")) {
 				// Remove leaderboard data
 				config.set(path, null);
-				plugin.saveArenaData();
+				Main.plugin.saveArenaData();
 
 				// Remove leaderboard
 				GameManager.removeLeaderboard("totalKills");
@@ -958,7 +953,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("YES")) {
 				// Remove leaderboard data
 				config.set(path, null);
-				plugin.saveArenaData();
+				Main.plugin.saveArenaData();
 
 				// Remove leaderboard
 				GameManager.removeLeaderboard("topKills");
@@ -981,7 +976,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("YES")) {
 				// Remove leaderboard data
 				config.set(path, null);
-				plugin.saveArenaData();
+				Main.plugin.saveArenaData();
 
 				// Remove leaderboard
 				GameManager.removeLeaderboard("totalGems");
@@ -1004,7 +999,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("YES")) {
 				// Remove leaderboard data
 				config.set(path, null);
-				plugin.saveArenaData();
+				Main.plugin.saveArenaData();
 
 				// Remove leaderboard
 				GameManager.removeLeaderboard("topBalance");
@@ -1027,7 +1022,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("YES")) {
 				// Remove leaderboard data
 				config.set(path, null);
-				plugin.saveArenaData();
+				Main.plugin.saveArenaData();
 
 				// Remove leaderboard
 				GameManager.removeLeaderboard("topWave");
@@ -1950,7 +1945,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Save changes and refresh GUI
-			plugin.saveArenaData();
+			Main.plugin.saveArenaData();
 			player.openInventory(Inventories.createCustomItemsMenu(meta.getArena(), meta.getId()));
 		}
 
@@ -3004,7 +2999,7 @@ public class InventoryListener implements Listener {
 
 		// Kits menu for a player
 		else if (invID == InventoryID.PLAYER_KITS_MENU) {
-			FileConfiguration playerData = plugin.getPlayerData();
+			FileConfiguration playerData = Main.plugin.getPlayerData();
 			Player owner = meta.getPlayer();
 			String name = owner.getName();
 			UUID id = owner.getUniqueId();
@@ -3034,6 +3029,7 @@ public class InventoryListener implements Listener {
 								playerData.getInt(id + ".crystalBalance") - kit.getPrice(1));
 						playerData.set(path + kit.getName(), true);
 						PlayerManager.notifySuccess(player, LanguageManager.confirms.kitBuy);
+						AchievementChecker.checkDefaultKitAchievements(player);
 					} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitBuy);
 			}
 
@@ -3048,6 +3044,7 @@ public class InventoryListener implements Listener {
 								playerData.getInt(id + ".crystalBalance") - kit.getPrice(kitLevel));
 						playerData.set(path + kit.getName(), kitLevel);
 						PlayerManager.notifySuccess(player, LanguageManager.confirms.kitBuy);
+						AchievementChecker.checkDefaultKitAchievements(player);
 					} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitBuy);
 				} else {
 					if (playerData.getInt(id + ".crystalBalance") >= kit.getPrice(++kitLevel)) {
@@ -3055,17 +3052,18 @@ public class InventoryListener implements Listener {
 								playerData.getInt(id + ".crystalBalance") - kit.getPrice(kitLevel));
 						playerData.set(path + kit.getName(), kitLevel);
 						PlayerManager.notifySuccess(player, LanguageManager.confirms.kitUpgrade);
+						AchievementChecker.checkDefaultKitAchievements(player);
 					} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitUpgrade);
 				}
 			}
 
-			plugin.savePlayerData();
+			Main.plugin.savePlayerData();
 			player.openInventory(Inventories.createPlayerKitsMenu(owner, name));
 		}
 
 		// Kit selection menu for an arena
 		else if (invID == InventoryID.SELECT_KITS_MENU) {
-			FileConfiguration playerData = plugin.getPlayerData();
+			FileConfiguration playerData = Main.plugin.getPlayerData();
 			Arena arenaInstance;
 			VDPlayer gamer;
 
@@ -3229,6 +3227,6 @@ public class InventoryListener implements Listener {
 	 * @param player Player to close inventory.
 	 */
 	private void closeInv(Player player) {
-		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, player::closeInventory, 1);
+		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, player::closeInventory, 1);
 	}
 }

@@ -43,8 +43,6 @@ import java.util.stream.Stream;
  * A class managing data about a Villager Defense arena.
  */
 public class Arena {
-    /** Instance of the plugin.*/
-    private final Main plugin;
     /** Arena id.*/
     private final int id;
     /** A variable to more quickly access the file configuration of the arena file.*/
@@ -100,12 +98,11 @@ public class Arena {
     /** Arena scoreboard object for the arena.*/
     private ArenaBoard arenaBoard;
 
-    public Arena(Main plugin, int arenaID) {
-        this.plugin = plugin;
-        config = plugin.getArenaData();
+    public Arena(int arenaID) {
+        config = Main.plugin.getArenaData();
         id = arenaID;
         path = "arena." + arenaID;
-        task = new Tasks(plugin, this);
+        task = new Tasks(this);
         currentWave = 0;
         villagers = 0;
         enemies = 0;
@@ -156,7 +153,7 @@ public class Arena {
         // Save name
         else {
             config.set(path + ".name", name);
-            plugin.saveArenaData();
+            Main.plugin.saveArenaData();
         }
 
         // Set default max players to 12 if it doesn't exist
@@ -252,7 +249,7 @@ public class Arena {
      */
     public void setDifficultyLabel(String label) {
         config.set(path + ".difficultyLabel", label);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
         refreshPortal();
     }
 
@@ -270,7 +267,7 @@ public class Arena {
      */
     public void setMaxPlayers(int maxPlayers) {
         config.set(path + ".max", maxPlayers);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     /**
@@ -287,7 +284,7 @@ public class Arena {
      */
     public void setMinPlayers(int minPlayers) {
         config.set(path + ".min", minPlayers);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     /**
@@ -304,7 +301,7 @@ public class Arena {
      */
     public void setWolfCap(int wolfCap) {
         config.set(path + ".wolf", wolfCap);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     /**
@@ -321,7 +318,7 @@ public class Arena {
      */
     public void setgolemCap(int golemCap) {
         config.set(path + ".golem", golemCap);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     /**
@@ -338,7 +335,7 @@ public class Arena {
      */
     public void setMaxWaves(int maxWaves) {
         config.set(path + ".maxWaves", maxWaves);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     /**
@@ -355,7 +352,7 @@ public class Arena {
      */
     public void setWaveTimeLimit(int timeLimit) {
         config.set(path + ".waveTimeLimit", timeLimit);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     /**
@@ -372,7 +369,7 @@ public class Arena {
      */
     public void setDifficultyMultiplier(int multiplier) {
         config.set(path + ".difficulty", multiplier);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     /**
@@ -513,7 +510,7 @@ public class Arena {
      */
     public void setWaitingSound(String sound) {
         config.set(path + ".sounds.waiting", sound);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public Portal getPortal() {
@@ -521,7 +518,7 @@ public class Arena {
     }
 
     public Location getPortalLocation() {
-        return DataManager.getConfigLocationNoPitch(plugin, path + ".portal");
+        return DataManager.getConfigLocationNoPitch(path + ".portal");
     }
 
     /**
@@ -530,7 +527,7 @@ public class Arena {
      */
     public void setPortal(Location location) {
         // Save config location
-        DataManager.setConfigurationLocation(plugin, path + ".portal", location);
+        DataManager.setConfigurationLocation(path + ".portal", location);
 
         // Recreate the portal
         refreshPortal();
@@ -547,7 +544,7 @@ public class Arena {
                 portal.remove();
 
             // Create a new portal and display it
-            portal = new Portal(Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin,
+            portal = new Portal(Objects.requireNonNull(DataManager.getConfigLocationNoPitch(
                     path + ".portal")), this);
             portal.displayForOnline();
         } catch (Exception e) {
@@ -564,7 +561,7 @@ public class Arena {
      */
     public void centerPortal() {
         // Center the location
-        DataManager.centerConfigLocation(plugin, path + ".portal");
+        DataManager.centerConfigLocation(path + ".portal");
 
         // Recreate the portal
         refreshPortal();
@@ -578,7 +575,7 @@ public class Arena {
             portal.remove();
             portal = null;
         }
-        DataManager.setConfigurationLocation(plugin, path + ".portal", null);
+        DataManager.setConfigurationLocation(path + ".portal", null);
         checkClose();
     }
 
@@ -587,7 +584,7 @@ public class Arena {
     }
 
     public Location getArenaBoardLocation() {
-        return DataManager.getConfigLocationNoPitch(plugin, path + ".arenaBoard");
+        return DataManager.getConfigLocationNoPitch(path + ".arenaBoard");
     }
     
     /**
@@ -596,7 +593,7 @@ public class Arena {
      */
     public void setArenaBoard(Location location) {
         // Save config location
-        DataManager.setConfigurationLocation(plugin, path + ".arenaBoard", location);
+        DataManager.setConfigurationLocation(path + ".arenaBoard", location);
 
         // Recreate the board
         refreshArenaBoard();
@@ -614,7 +611,7 @@ public class Arena {
 
             // Create a new board and display it
             arenaBoard = new ArenaBoard(
-                    Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin, path + ".arenaBoard")),
+                    Objects.requireNonNull(DataManager.getConfigLocationNoPitch(path + ".arenaBoard")),
                     this);
             arenaBoard.displayForOnline();
         } catch (Exception e) {
@@ -635,7 +632,7 @@ public class Arena {
      */
     public void centerArenaBoard() {
         // Center the location
-        DataManager.centerConfigLocation(plugin, path + ".arenaBoard");
+        DataManager.centerConfigLocation(path + ".arenaBoard");
 
         // Recreate the board
         refreshArenaBoard();
@@ -649,7 +646,7 @@ public class Arena {
             arenaBoard.remove();
             arenaBoard = null;
         }
-        DataManager.setConfigurationLocation(plugin, path + ".arenaBoard", null);
+        DataManager.setConfigurationLocation(path + ".arenaBoard", null);
     }
 
     /**
@@ -657,7 +654,7 @@ public class Arena {
      */
     public void refreshPlayerSpawn() {
         // Prevent refreshing player spawn when arena is open
-        if (!isClosed() && plugin.isLoaded())
+        if (!isClosed() && Main.plugin.isLoaded())
             return;
 
         // Remove particles
@@ -666,7 +663,7 @@ public class Arena {
         // Attempt to fetch new player spawn
         try {
             playerSpawn = new ArenaSpawn(
-                    Objects.requireNonNull(DataManager.getConfigLocation(plugin, path + ".spawn")),
+                    Objects.requireNonNull(DataManager.getConfigLocation(path + ".spawn")),
                     ArenaSpawnType.PLAYER,
                     0);
         } catch (InvalidLocationException | NullPointerException e) {
@@ -687,7 +684,7 @@ public class Arena {
      * @param location New player spawn location.
      */
     public void setPlayerSpawn(Location location) {
-        DataManager.setConfigurationLocation(plugin, path + ".spawn", location);
+        DataManager.setConfigurationLocation(path + ".spawn", location);
         refreshPlayerSpawn();
     }
 
@@ -695,7 +692,7 @@ public class Arena {
      * Centers the player spawn location of the arena along the x and z axis.
      */
     public void centerPlayerSpawn() {
-        DataManager.centerConfigLocation(plugin, path + ".spawn");
+        DataManager.centerConfigLocation(path + ".spawn");
         refreshPlayerSpawn();
     }
 
@@ -704,7 +701,7 @@ public class Arena {
      * @return Player spawn location.
      */
     public Location getWaitingRoom() {
-        return DataManager.getConfigLocation(plugin, path + ".waiting");
+        return DataManager.getConfigLocation(path + ".waiting");
     }
 
     /**
@@ -712,15 +709,15 @@ public class Arena {
      * @param location New player spawn location.
      */
     public void setWaitingRoom(Location location) {
-        DataManager.setConfigurationLocation(plugin, path + ".waiting", location);
-        plugin.saveArenaData();
+        DataManager.setConfigurationLocation(path + ".waiting", location);
+        Main.plugin.saveArenaData();
     }
 
     /**
      * Centers the waiting room location of the arena along the x and z axis.
      */
     public void centerWaitingRoom() {
-        DataManager.centerConfigLocation(plugin, path + ".waiting");
+        DataManager.centerConfigLocation(path + ".waiting");
     }
 
     /**
@@ -728,7 +725,7 @@ public class Arena {
      */
     public void refreshMonsterSpawns() {
         // Prevent refreshing monster spawns when arena is open
-        if (!isClosed() && plugin.isLoaded())
+        if (!isClosed() && Main.plugin.isLoaded())
             return;
 
         // Close off any particles if they are on
@@ -736,7 +733,7 @@ public class Arena {
 
         // Attempt to fetch new monster spawns
         monsterSpawns.clear();
-        DataManager.getConfigLocationMap(plugin, path + ".monster").forEach((id, location) ->
+        DataManager.getConfigLocationMap(path + ".monster").forEach((id, location) ->
         {
             try {
                 ArenaSpawnType spawnType;
@@ -779,18 +776,18 @@ public class Arena {
     }
 
     public void setMonsterSpawn(int monsterSpawnID, Location location) {
-        DataManager.setConfigurationLocation(plugin, path + ".monster." + monsterSpawnID, location);
+        DataManager.setConfigurationLocation(path + ".monster." + monsterSpawnID, location);
         refreshMonsterSpawns();
     }
 
     public void centerMonsterSpawn(int monsterSpawnID) {
-        DataManager.centerConfigLocation(plugin, path + ".monster." + monsterSpawnID);
+        DataManager.centerConfigLocation(path + ".monster." + monsterSpawnID);
         refreshMonsterSpawns();
     }
 
     public void setMonsterSpawnType(int monsterSpawnID, int type) {
         config.set(path + ".monster." + monsterSpawnID + ".type", type);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
         refreshMonsterSpawns();
     }
 
@@ -804,7 +801,7 @@ public class Arena {
      * @return New monster spawn ID
      */
     public int newMonsterSpawnID() {
-        return Utils.nextSmallestUniqueWhole(DataManager.getConfigLocationMap(plugin, path + ".monster").keySet());
+        return Utils.nextSmallestUniqueWhole(DataManager.getConfigLocationMap(path + ".monster").keySet());
     }
 
     /**
@@ -812,7 +809,7 @@ public class Arena {
      */
     public void refreshVillagerSpawns() {
         // Prevent refreshing villager spawns when arena is open
-        if (!isClosed() && plugin.isLoaded())
+        if (!isClosed() && Main.plugin.isLoaded())
             return;
 
         // Close off any particles if they are on
@@ -820,7 +817,7 @@ public class Arena {
 
         // Attempt to fetch new villager spawns
         villagerSpawns.clear();
-        DataManager.getConfigLocationMap(plugin, path + ".villager").forEach((id, location) ->
+        DataManager.getConfigLocationMap(path + ".villager").forEach((id, location) ->
         {
             try {
                 villagerSpawns.add(new ArenaSpawn(Objects.requireNonNull(location), ArenaSpawnType.VILLAGER, id));
@@ -852,12 +849,12 @@ public class Arena {
     }
 
     public void setVillagerSpawn(int villagerSpawnID, Location location) {
-        DataManager.setConfigurationLocation(plugin, path + ".villager." + villagerSpawnID, location);
+        DataManager.setConfigurationLocation(path + ".villager." + villagerSpawnID, location);
         refreshVillagerSpawns();
     }
 
     public void centerVillagerSpawn(int villagerSpawnID) {
-        DataManager.centerConfigLocation(plugin, path + ".villager." + villagerSpawnID);
+        DataManager.centerConfigLocation(path + ".villager." + villagerSpawnID);
         refreshVillagerSpawns();
     }
 
@@ -867,7 +864,7 @@ public class Arena {
      * @return New villager spawn ID
      */
     public int newVillagerSpawnID() {
-        return Utils.nextSmallestUniqueWhole(DataManager.getConfigLocationMap(plugin, path + ".villager")
+        return Utils.nextSmallestUniqueWhole(DataManager.getConfigLocationMap(path + ".villager")
                 .keySet());
     }
 
@@ -877,7 +874,7 @@ public class Arena {
 
     public void setBannedKits(List<String> bannedKits) {
         config.set(path + ".bannedKits", bannedKits);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public String getSpawnTableFile() {
@@ -891,10 +888,10 @@ public class Arena {
         if (option.equals("custom"))
             file = path + ".yml";
 
-        if (new File(plugin.getDataFolder().getPath(), "spawnTables/" + file).exists() ||
+        if (new File(Main.plugin.getDataFolder().getPath(), "spawnTables/" + file).exists() ||
                 option.equals("default")) {
             config.set(path + ".spawnTable", option);
-            plugin.saveArenaData();
+            Main.plugin.saveArenaData();
             return true;
         }
 
@@ -907,7 +904,7 @@ public class Arena {
 
     public void setSpawnParticles(boolean bool) {
         config.set(path + ".particles.spawn", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public void startSpawnParticles() {
@@ -922,7 +919,7 @@ public class Arena {
         if (playerParticlesID != 0)
             return;
 
-        playerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+        playerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.plugin, new Runnable() {
             double var = 0;
             double var2 = 0;
             Location first, second;
@@ -967,14 +964,14 @@ public class Arena {
 
     public void setMonsterParticles(boolean bool) {
         config.set(path + ".particles.monster", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public void startMonsterParticles() {
         Particle monsterParticle = Particle.valueOf(NMSVersion.getCurrent().getNmsManager().getMonsterParticleName());
         
         if (monsterParticlesID == 0 && !getMonsterSpawns().isEmpty())
-            monsterParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+            monsterParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.plugin, new Runnable() {
                 double var = 0;
                 Location first, second;
                 boolean init = false;
@@ -1022,14 +1019,14 @@ public class Arena {
 
     public void setVillagerParticles(boolean bool) {
         config.set(path + ".particles.villager", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public void startVillagerParticles() {
         Particle villagerParticle = Particle.valueOf(NMSVersion.getCurrent().getNmsManager().getVillagerParticleName());
         
         if (villagerParticlesID == 0 && !getVillagerSpawns().isEmpty())
-            villagerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+            villagerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.plugin, new Runnable() {
                 double var = 0;
                 Location first, second;
                 boolean init = false;
@@ -1077,7 +1074,7 @@ public class Arena {
 
     public void setBorderParticles(boolean bool) {
         config.set(path + ".particles.border", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public void startBorderParticles() {
@@ -1085,7 +1082,7 @@ public class Arena {
         Particle.DustOptions dust = new Particle.DustOptions(Color.RED, 2);
 
         if (cornerParticlesID == 0 && getCorner1() != null && getCorner2() != null)
-            cornerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+            cornerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.plugin, new Runnable() {
                 World world;
                 Location first, second;
 
@@ -1160,7 +1157,7 @@ public class Arena {
 
     public void setNormal(boolean normal) {
         config.set(path + ".normal", normal);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasEnchants() {
@@ -1169,7 +1166,7 @@ public class Arena {
 
     public void setEnchants(boolean enchants) {
         config.set(path + ".enchants", enchants);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasCustom() {
@@ -1178,7 +1175,7 @@ public class Arena {
 
     public void setCustom(boolean bool) {
         config.set(path + ".custom", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasCommunity() {
@@ -1187,7 +1184,7 @@ public class Arena {
 
     public void setCommunity(boolean bool) {
         config.set(path + ".community", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasGemDrop() {
@@ -1196,7 +1193,7 @@ public class Arena {
 
     public void setGemDrop(boolean bool) {
         config.set(path + ".gemDrop", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasExpDrop() {
@@ -1205,11 +1202,11 @@ public class Arena {
 
     public void setExpDrop(boolean bool) {
         config.set(path + ".expDrop", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public Location getCorner1() {
-        return DataManager.getConfigLocationNoRotation(plugin, path + ".corner1");
+        return DataManager.getConfigLocationNoRotation(path + ".corner1");
     }
 
     public void setCorner1(Location location) {
@@ -1217,7 +1214,7 @@ public class Arena {
         cancelBorderParticles();
 
         // Set location
-        DataManager.setConfigurationLocation(plugin, path + ".corner1", location);
+        DataManager.setConfigurationLocation(path + ".corner1", location);
 
         // Turn on particles if appropriate
         if (isClosed())
@@ -1225,7 +1222,7 @@ public class Arena {
     }
 
     public Location getCorner2() {
-        return DataManager.getConfigLocationNoRotation(plugin, path + ".corner2");
+        return DataManager.getConfigLocationNoRotation(path + ".corner2");
     }
 
     public void setCorner2(Location location) {
@@ -1233,7 +1230,7 @@ public class Arena {
         cancelBorderParticles();
 
         // Set location
-        DataManager.setConfigurationLocation(plugin, path + ".corner2", location);
+        DataManager.setConfigurationLocation(path + ".corner2", location);
 
         // Turn on particles if appropriate
         if (isClosed())
@@ -1251,7 +1248,7 @@ public class Arena {
 
     public void setWinSound(boolean bool) {
         config.set(path + ".sounds.win", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasLoseSound() {
@@ -1260,7 +1257,7 @@ public class Arena {
 
     public void setLoseSound(boolean bool) {
         config.set(path + ".sounds.lose", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasWaveStartSound() {
@@ -1269,7 +1266,7 @@ public class Arena {
 
     public void setWaveStartSound(boolean bool) {
         config.set(path + ".sounds.start", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasWaveFinishSound() {
@@ -1278,7 +1275,7 @@ public class Arena {
 
     public void setWaveFinishSound(boolean bool) {
         config.set(path + ".sounds.end", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasGemSound() {
@@ -1287,7 +1284,7 @@ public class Arena {
 
     public void setGemSound(boolean bool) {
         config.set(path + ".sounds.gem", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasPlayerDeathSound() {
@@ -1296,7 +1293,7 @@ public class Arena {
 
     public void setPlayerDeathSound(boolean bool) {
         config.set(path + ".sounds.death", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasAbilitySound() {
@@ -1305,7 +1302,7 @@ public class Arena {
 
     public void setAbilitySound(boolean bool) {
         config.set(path + ".sounds.ability", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasDynamicCount() {
@@ -1314,7 +1311,7 @@ public class Arena {
 
     public void setDynamicCount(boolean bool) {
         config.set(path + ".dynamicCount", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasDynamicDifficulty() {
@@ -1323,7 +1320,7 @@ public class Arena {
 
     public void setDynamicDifficulty(boolean bool) {
         config.set(path + ".dynamicDifficulty", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasDynamicPrices() {
@@ -1332,7 +1329,7 @@ public class Arena {
 
     public void setDynamicPrices(boolean bool) {
         config.set(path + ".dynamicPrices", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasDynamicLimit() {
@@ -1341,7 +1338,7 @@ public class Arena {
 
     public void setDynamicLimit(boolean bool) {
         config.set(path + ".dynamicLimit", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasLateArrival() {
@@ -1350,7 +1347,7 @@ public class Arena {
 
     public void setLateArrival(boolean bool) {
         config.set(path + ".lateArrival", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean isClosed() {
@@ -1359,7 +1356,7 @@ public class Arena {
 
     public void setClosed(boolean closed) {
         // Kick players
-        getPlayers().forEach(vdPlayer -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+        getPlayers().forEach(vdPlayer -> Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
                 Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(vdPlayer.getPlayer()))));
 
         // Clear the arena
@@ -1367,7 +1364,7 @@ public class Arena {
 
         // Set closed and handle particles/holographics
         config.set(path + ".closed", closed);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
         refreshPortal();
         checkClosedParticles();
     }
@@ -1418,7 +1415,7 @@ public class Arena {
             config.set(path + ".records." + i + ".wave", records.get(i).getWave());
             config.set(path + ".records." + i + ".players", records.get(i).getPlayers());
         }
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
         return true;
     }
 
@@ -1490,7 +1487,7 @@ public class Arena {
 
     public void decrementVillagers() {
         if (--villagers <= 0 && status == ArenaStatus.ACTIVE && !spawningVillagers)
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
                     Bukkit.getPluginManager().callEvent(new GameEndEvent(this)));
     }
 
@@ -1508,7 +1505,7 @@ public class Arena {
 
     public void decrementEnemies() {
         if (--enemies <= 0 && status == ArenaStatus.ACTIVE && !spawningMonsters)
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
                     Bukkit.getPluginManager().callEvent(new WaveEndEvent(this)));
     }
 
@@ -1911,7 +1908,7 @@ public class Arena {
      * Checks and closes an arena if the arena does not meet opening requirements. Opens arena if autoOpen is on.
      */
     public void checkClose() {
-        if (!plugin.getArenaData().contains("lobby") || getPortalLocation() == null || getPlayerSpawn() == null ||
+        if (!Main.plugin.getArenaData().contains("lobby") || getPortalLocation() == null || getPlayerSpawn() == null ||
                 getMonsterSpawns().isEmpty() || getVillagerSpawns().isEmpty() || !hasCustom() && !hasNormal() ||
                 getCorner1() == null || getCorner2() == null ||
                 !Objects.equals(getCorner1().getWorld(), getCorner2().getWorld())) {
@@ -1922,7 +1919,7 @@ public class Arena {
             );
         }
 
-        else if (plugin.getConfig().getBoolean("autoOpen")) {
+        else if (Main.plugin.getConfig().getBoolean("autoOpen")) {
             setClosed(false);
             CommunicationManager.debugInfo(
                     String.format("%s met opening requirements and was opened.", getName()),
@@ -1971,19 +1968,19 @@ public class Arena {
             return;
 
         // Update scoreboards
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(this)));
 
         // Trigger game end if all villagers are gone
         if (this.villagers <= 0 && status == ArenaStatus.ACTIVE) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
                     Bukkit.getPluginManager().callEvent(new GameEndEvent(this)));
             return;
         }
 
         // Trigger wave end if all monsters are gone
         if (enemies <= 0 && status == ArenaStatus.ACTIVE)
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
                     Bukkit.getPluginManager().callEvent(new WaveEndEvent(this)));
     }
 
@@ -2026,7 +2023,7 @@ public class Arena {
                         .getKeys(false)
                         .forEach(index -> config.set(path + ".customShop." + index,
                                 config.getItemStack(arenaToCopy.getPath() + ".customShop." + index)));
-                plugin.saveArenaData();
+                Main.plugin.saveArenaData();
             } catch (Exception e) {
                 CommunicationManager.debugError(
                         String.format("Unsuccessful attempt to copy the custom shop inventory of %s to %s.",
@@ -2045,7 +2042,7 @@ public class Arena {
     public void remove() {
         wipe();
         config.set(path, null);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
         CommunicationManager.debugInfo(String.format("Removing %s.", getName()), 1);
     }
 
@@ -2054,7 +2051,7 @@ public class Arena {
      */
     public void wipe() {
         // Kick players
-        getPlayers().forEach(vdPlayer -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+        getPlayers().forEach(vdPlayer -> Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
                 Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(vdPlayer.getPlayer()))));
 
         // Clear the arena
@@ -2062,7 +2059,7 @@ public class Arena {
 
         // Set closed
         config.set(path + ".closed", true);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
 
         // Remove holographics
         if (getArenaBoard() != null)

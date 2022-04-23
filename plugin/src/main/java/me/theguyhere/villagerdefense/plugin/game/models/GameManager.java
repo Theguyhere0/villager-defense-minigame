@@ -21,7 +21,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class GameManager {
-	private static Main plugin;
 	private static final Map<Integer, Arena> arenas = new HashMap<>();
 	private static final Map<Integer, InfoBoard> infoBoards = new HashMap<>();
 	private static final Map<String, Leaderboard> leaderboards = new HashMap<>();
@@ -29,46 +28,45 @@ public class GameManager {
 	private static final List<String> validSounds = new LinkedList<>(Arrays.asList("blocks", "cat", "chirp", "far",
 			"mall", "mellohi", "pigstep", "stal", "strad", "wait", "ward"));
 
-	public static void init(Main plugin) {
-		GameManager.plugin = plugin;
+	public static void init() {
 		ConfigurationSection section;
 		wipeArenas();
 
 		if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1))
 			validSounds.add("otherside");
 
-		section = plugin.getArenaData().getConfigurationSection("arena");
+		section = Main.plugin.getArenaData().getConfigurationSection("arena");
 		if (section != null)
 			section.getKeys(false)
-					.forEach(id -> arenas.put(Integer.parseInt(id), new Arena(plugin, Integer.parseInt(id))));
+					.forEach(id -> arenas.put(Integer.parseInt(id), new Arena(Integer.parseInt(id))));
 
-		section = plugin.getArenaData().getConfigurationSection("infoBoard");
+		section = Main.plugin.getArenaData().getConfigurationSection("infoBoard");
 		if (section != null)
 			section.getKeys(false)
 					.forEach(id -> {
 						try {
-							Location location = DataManager.getConfigLocationNoPitch(plugin, "infoBoard." + id);
+							Location location = DataManager.getConfigLocationNoPitch("infoBoard." + id);
 							if (location != null)
 								infoBoards.put(Integer.parseInt(id), new InfoBoard(location));
 						} catch (InvalidLocationException ignored) {
 						}
 					});
 
-		section = plugin.getArenaData().getConfigurationSection("leaderboard");
+		section = Main.plugin.getArenaData().getConfigurationSection("leaderboard");
 		if (section != null)
 			section.getKeys(false)
 					.forEach(id -> {
 						try {
-							Location location = DataManager.getConfigLocationNoPitch(plugin, "leaderboard." + id);
+							Location location = DataManager.getConfigLocationNoPitch("leaderboard." + id);
 							if (location != null)
-								leaderboards.put(id, new Leaderboard(id, plugin));
+								leaderboards.put(id, new Leaderboard(id));
 						} catch (InvalidLocationException ignored) {
 						}
 					});
 
-		setLobby(DataManager.getConfigLocation(plugin, "lobby"));
+		setLobby(DataManager.getConfigLocation("lobby"));
 
-		plugin.setLoaded(true);
+		Main.plugin.setLoaded(true);
 	}
 
 	public static Arena getArena(int arenaID) {
@@ -194,7 +192,7 @@ public class GameManager {
 	}
 
 	public static void reloadLobby() {
-		lobby = DataManager.getConfigLocation(plugin, "lobby");
+		lobby = DataManager.getConfigLocation("lobby");
 	}
 
 	/**
@@ -212,7 +210,7 @@ public class GameManager {
 	 */
 	public static void setInfoBoard(Location location, int infoBoardID) {
 		// Save config location
-		DataManager.setConfigurationLocation(plugin, "infoBoard." + infoBoardID, location);
+		DataManager.setConfigurationLocation("infoBoard." + infoBoardID, location);
 
 		// Recreate the info board
 		refreshInfoBoard(infoBoardID);
@@ -229,7 +227,7 @@ public class GameManager {
 		try {
 			// Create a new board and display it
 			infoBoards.put(infoBoardID, new InfoBoard(
-					Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin, "infoBoard." + infoBoardID))
+					Objects.requireNonNull(DataManager.getConfigLocationNoPitch("infoBoard." + infoBoardID))
             ));
 			infoBoards.get(infoBoardID).displayForOnline();
 		} catch (Exception e) {
@@ -245,7 +243,7 @@ public class GameManager {
 	 */
 	public static void centerInfoBoard(int infoBoardID) {
 		// Center the location
-		DataManager.centerConfigLocation(plugin, "infoBoard." + infoBoardID);
+		DataManager.centerConfigLocation("infoBoard." + infoBoardID);
 
 		// Recreate the info board
 		refreshInfoBoard(infoBoardID);
@@ -259,7 +257,7 @@ public class GameManager {
 			infoBoards.get(infoBoardID).remove();
 			infoBoards.remove(infoBoardID);
 		}
-		DataManager.setConfigurationLocation(plugin, "infoBoard." + infoBoardID, null);
+		DataManager.setConfigurationLocation("infoBoard." + infoBoardID, null);
 	}
 
 	/**
@@ -277,7 +275,7 @@ public class GameManager {
 	 */
 	public static void setLeaderboard(Location location, String type) {
 		// Save config location
-		DataManager.setConfigurationLocation(plugin, "leaderboard." + type, location);
+		DataManager.setConfigurationLocation("leaderboard." + type, location);
 
 		// Recreate the leaderboard
 		refreshLeaderboard(type);
@@ -293,7 +291,7 @@ public class GameManager {
 
 		try {
 			// Create a new board and display it
-			leaderboards.put(type, new Leaderboard(type, plugin));
+			leaderboards.put(type, new Leaderboard(type));
 			leaderboards.get(type).displayForOnline();
 		} catch (Exception e) {
 			CommunicationManager.debugError("Invalid location for leaderboard " + type, 1);
@@ -308,7 +306,7 @@ public class GameManager {
 	 */
 	public static void centerLeaderboard(String type) {
 		// Center the location
-		DataManager.centerConfigLocation(plugin, "leaderboard." + type);
+		DataManager.centerConfigLocation("leaderboard." + type);
 
 		// Recreate the leaderboard
 		refreshLeaderboard(type);
@@ -322,7 +320,7 @@ public class GameManager {
 			leaderboards.get(type).remove();
 			leaderboards.remove(type);
 		}
-		DataManager.setConfigurationLocation(plugin, "leaderboard." + type, null);
+		DataManager.setConfigurationLocation("leaderboard." + type, null);
 	}
 
 	/**

@@ -239,6 +239,7 @@ public class LanguageManager {
     }
 
     public static class Confirms extends Section {
+        public final @NotNull String achievement;
         public final @NotNull String autoUpdate;
         public final @NotNull String balanceSet;
         public final @NotNull String boots;
@@ -257,6 +258,7 @@ public class LanguageManager {
         private Confirms() throws InvalidLanguageKeyException {
             String pathPrefix = "confirms";
 
+            achievement = getConfigString(pathPrefix + ".achievement");
             autoUpdate = getConfigString(pathPrefix + ".autoUpdate");
             balanceSet = getConfigString(pathPrefix + ".balanceSet");
             boots = getConfigString(pathPrefix + ".boots");

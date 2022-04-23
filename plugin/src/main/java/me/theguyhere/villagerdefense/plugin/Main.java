@@ -8,7 +8,6 @@ import me.theguyhere.villagerdefense.plugin.commands.Commands;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLanguageKeyException;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
-import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import me.theguyhere.villagerdefense.plugin.listeners.*;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
@@ -29,11 +28,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings("unused")
 public class Main extends JavaPlugin {
+	// Singleton instance
+	public static Main plugin;
+
 	// Yaml file managers
-	private final DataManager arenaData = new DataManager(this, "arenaData.yml");
-	private final DataManager playerData = new DataManager(this, "playerData.yml");
-	private final DataManager languageData = new DataManager(this, "languages/" +
-			getConfig().getString("locale") + ".yml");
+	private DataManager arenaData;
+	private DataManager playerData;
 
 	// Global instance variables
 	private final NMSManager nmsManager = NMSVersion.getCurrent().getNmsManager();
@@ -47,11 +47,18 @@ public class Main extends JavaPlugin {
 	public static final int arenaDataVersion = 6;
 	public static final int playerDataVersion = 2;
 	public static final int spawnTableVersion = 1;
-	public static final int languageFileVersion = 14;
+	public static final int languageFileVersion = 15;
 	public static final int defaultSpawnVersion = 2;
 
 	@Override
 	public void onEnable() {
+		Main.plugin = this;
+
+		arenaData = new DataManager("arenaData.yml");
+		playerData = new DataManager("playerData.yml");
+		DataManager languageData = new DataManager("languages/" + getConfig().getString("locale") +
+				".yml");
+
 		// Check config version
 		if (getConfig().getInt("version") < configVersion) {
 			urgentConsoleWarning("Your config.yml is outdated!");
@@ -110,8 +117,7 @@ public class Main extends JavaPlugin {
 		}
 
 		// Set up commands and tab complete
-		Commands commands = new Commands(this);
-		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist").setExecutor(commands);
+		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist").setExecutor(new Commands());
 		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist")
 				.setTabCompleter(new CommandTab());
 
@@ -123,18 +129,17 @@ public class Main extends JavaPlugin {
 		} catch (InvalidLanguageKeyException e) {
 			e.printStackTrace();
 		}
-		GameItems.setPlugin();
-		Inventories.setPlugin(this);
+		GameItems.init();
 
 		// Register event listeners
-		pm.registerEvents(new InventoryListener(this), this);
-		pm.registerEvents(new JoinListener(this), this);
+		pm.registerEvents(new InventoryListener(), this);
+		pm.registerEvents(new JoinListener(), this);
 		pm.registerEvents(new ClickPortalListener(), this);
-		pm.registerEvents(new GameListener(this), this);
-		pm.registerEvents(new ArenaListener(this), this);
-		pm.registerEvents(new AbilityListener(this), this);
-		pm.registerEvents(new ChallengeListener(this), this);
-		pm.registerEvents(new WorldListener(this), this);
+		pm.registerEvents(new GameListener(), this);
+		pm.registerEvents(new ArenaListener(), this);
+		pm.registerEvents(new AbilityListener(), this);
+		pm.registerEvents(new ChallengeListener(), this);
+		pm.registerEvents(new WorldListener(), this);
 
 		// Add packet listeners for online players
 		for (Player player : Bukkit.getOnlinePlayers())
@@ -244,6 +249,16 @@ public class Main extends JavaPlugin {
 
 		// Reset "outdated" flag
 		outdated = false;
+
+		arenaData = new DataManager("arenaData.yml");
+		playerData = new DataManager("playerData.yml");
+		DataManager languageData = new DataManager("languages/" + getConfig().getString("locale") +
+				".yml");
+		try {
+			LanguageManager.init(languageData.getConfig());
+		} catch (InvalidLanguageKeyException e) {
+			e.printStackTrace();
+		}
 
 		// Check config version
 		if (getConfig().getInt("version") < configVersion) {
@@ -362,7 +377,7 @@ public class Main extends JavaPlugin {
 	}
 
 	public void resetGameManager() {
-		GameManager.init(this);
+		GameManager.init();
 
 		// Check for proper initialization with worlds
 		if (unloadedWorlds.size() > 0) {

@@ -212,6 +212,7 @@ challenges:
     description1: "A true classic"
     description2: "No natural healing"
 confirms:
+  achievement: "You've unlocked achievement %s!"
   autoUpdate: "%s has been automatically updated to version %s."
   balanceSet: "%s's crystal balance was set to %s."
   boots: "Boots equipped!"

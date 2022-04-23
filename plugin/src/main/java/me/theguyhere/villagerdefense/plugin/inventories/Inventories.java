@@ -25,13 +25,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.*;
 
 public class Inventories {
-	private static Main plugin;
-
-	// Initiate this class on plugin startup
-	public static void setPlugin(Main plugin) {
-		Inventories.plugin = plugin;
-	}
-
 	// The main admin menu for the plugin
 	public static Inventory createMainMenu() {
 		List<ItemStack> buttons = new ArrayList<>();
@@ -92,7 +85,7 @@ public class Inventories {
 		return InventoryFactory.createLocationMenu(
 				InventoryID.LOBBY_MENU,
 				CommunicationManager.format("&2&lLobby"),
-				DataManager.getConfigLocation(plugin, "lobby") != null,
+				DataManager.getConfigLocation("lobby") != null,
 				"Lobby"
 		);
 	}
@@ -113,7 +106,7 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Capture all info boards
-		DataManager.getConfigLocationMap(plugin, "infoBoard").forEach((id, location) ->
+		DataManager.getConfigLocationMap("infoBoard").forEach((id, location) ->
 				buttons.add(ItemManager.createItem(Material.BIRCH_SIGN,
 						CommunicationManager.format("&6&lInfo Board " + id))));
 
@@ -137,7 +130,7 @@ public class Inventories {
 				InventoryID.INFO_BOARD_MENU,
 				infoBoardID,
 				CommunicationManager.format("&6&lInfo Board " + infoBoardID),
-				DataManager.getConfigLocation(plugin, "infoBoard." + infoBoardID) != null,
+				DataManager.getConfigLocation("infoBoard." + infoBoardID) != null,
 				"Info Board"
 		);
 	}
@@ -189,7 +182,7 @@ public class Inventories {
 		return InventoryFactory.createLocationMenu(
 				InventoryID.TOTAL_KILLS_LEADERBOARD_MENU,
 				CommunicationManager.format("&4&lTotal Kills Leaderboard"),
-				DataManager.getConfigLocation(plugin, "leaderboard.totalKills") != null,
+				DataManager.getConfigLocation("leaderboard.totalKills") != null,
 				"Leaderboard"
 		);
 	}
@@ -199,7 +192,7 @@ public class Inventories {
 		return InventoryFactory.createLocationMenu(
 				InventoryID.TOP_KILLS_LEADERBOARD_MENU,
 				CommunicationManager.format("&c&lTop Kills Leaderboard"),
-				DataManager.getConfigLocation(plugin, "leaderboard.topKills") != null,
+				DataManager.getConfigLocation("leaderboard.topKills") != null,
 				"Leaderboard"
 		);
 	}
@@ -209,7 +202,7 @@ public class Inventories {
 		return InventoryFactory.createLocationMenu(
 				InventoryID.TOTAL_GEMS_LEADERBOARD_MENU,
 				CommunicationManager.format("&2&lTotal Gems Leaderboard"),
-				DataManager.getConfigLocation(plugin, "leaderboard.totalGems") != null,
+				DataManager.getConfigLocation("leaderboard.totalGems") != null,
 				"Leaderboard"
 		);
 	}
@@ -219,7 +212,7 @@ public class Inventories {
 		return InventoryFactory.createLocationMenu(
 				InventoryID.TOP_BALANCE_LEADERBOARD_MENU,
 				CommunicationManager.format("&a&lTop Balance Leaderboard"),
-				DataManager.getConfigLocation(plugin, "leaderboard.topBalance") != null,
+				DataManager.getConfigLocation("leaderboard.topBalance") != null,
 				"Leaderboard"
 		);
 	}
@@ -229,7 +222,7 @@ public class Inventories {
 		return InventoryFactory.createLocationMenu(
 				InventoryID.TOP_WAVE_LEADERBOARD_MENU,
 				CommunicationManager.format("&9&lTop Wave Leaderboard"),
-				DataManager.getConfigLocation(plugin, "leaderboard.topWave") != null,
+				DataManager.getConfigLocation("leaderboard.topWave") != null,
 				"Leaderboard"
 		);
 	}
@@ -524,7 +517,7 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Capture all monster spawns
-		DataManager.getConfigLocationMap(plugin, arena.getPath() + ".monster").forEach((id, location) ->
+		DataManager.getConfigLocationMap(arena.getPath() + ".monster").forEach((id, location) ->
 				buttons.add(ItemManager.createItem(Material.ZOMBIE_HEAD,
 						CommunicationManager.format("&2&lMob Spawn " + id))));
 
@@ -602,7 +595,7 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Capture all monster spawns
-		DataManager.getConfigLocationMap(plugin, arena.getPath() + ".villager").forEach((id, location) ->
+		DataManager.getConfigLocationMap(arena.getPath() + ".villager").forEach((id, location) ->
 				buttons.add(ItemManager.createItem(Material.POPPY,
 						CommunicationManager.format("&5&lVillager Spawn " + id))));
 
@@ -1327,7 +1320,7 @@ public class Inventories {
 		List<ItemStack> frozenButtons = new ArrayList<>();
 
 		// Options to choose any of the other arenas
-		Objects.requireNonNull(plugin.getArenaData().getConfigurationSection("arena")).getKeys(false)
+		Objects.requireNonNull(Main.plugin.getArenaData().getConfigurationSection("arena")).getKeys(false)
 				.forEach(id -> {
 					if (Integer.parseInt(id) != arena.getId())
 						buttons.add(
@@ -1633,7 +1626,7 @@ public class Inventories {
 
 	// Display player stats
 	public static Inventory createPlayerStatsMenu(Player player) {
-		FileConfiguration playerData = plugin.getPlayerData();
+		FileConfiguration playerData = Main.plugin.getPlayerData();
 		String name = player.getName();
 		UUID id = player.getUniqueId();
 
@@ -1699,7 +1692,7 @@ public class Inventories {
 
 	// Display kits for a player
 	public static Inventory createPlayerKitsMenu(Player owner, String requester) {
-		FileConfiguration playerData = plugin.getPlayerData();
+		FileConfiguration playerData = Main.plugin.getPlayerData();
 		String name = owner.getName();
 		UUID id = owner.getUniqueId();
 		String path = id + ".kits.";
@@ -1791,7 +1784,7 @@ public class Inventories {
 
 	// Display kits for a player to select
 	public static Inventory createSelectKitsMenu(Player player, Arena arena) {
-		FileConfiguration playerData = plugin.getPlayerData();
+		FileConfiguration playerData = Main.plugin.getPlayerData();
 		String path = player.getUniqueId() + ".kits.";
 
 		// Create inventory
@@ -1907,7 +1900,8 @@ public class Inventories {
 
 	// Display achievements for a player
 	public static Inventory createPlayerAchievementsMenu(Player owner) {
-		List<String> achievements = plugin.getPlayerData().getStringList(owner.getUniqueId() + ".achievements");
+		List<String> achievements = Main.plugin.getPlayerData()
+				.getStringList(owner.getUniqueId() + ".achievements");
 		List<ItemStack> buttons = new ArrayList<>();
 
 		buttons.add(Achievement.topBalance1().getButton(achievements.contains(Achievement.topBalance1().getName())));
@@ -2035,7 +2029,7 @@ public class Inventories {
 		);
 	}
 	public static Inventory createPlayerAchievementsMenu(Player owner, int page) {
-		List<String> achievements = plugin.getPlayerData().getStringList(owner.getUniqueId() + ".achievements");
+		List<String> achievements = Main.plugin.getPlayerData().getStringList(owner.getUniqueId() + ".achievements");
 		List<ItemStack> buttons = new ArrayList<>();
 
 		buttons.add(Achievement.topBalance1().getButton(achievements.contains(Achievement.topBalance1().getName())));

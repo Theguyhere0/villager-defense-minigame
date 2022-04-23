@@ -40,12 +40,6 @@ import java.util.Objects;
 import java.util.Random;
 
 public class GameListener implements Listener {
-	private final Main plugin;
-
-	public GameListener(Main plugin) {
-		this.plugin = plugin;
-	}
-	
 	// Keep score and drop gems, exp, and rare loot
 	@EventHandler
 	public void onMobKill(EntityDeathEvent e) {
@@ -83,8 +77,8 @@ public class GameListener implements Listener {
 
 		// Get spawn table
 		if (arena.getSpawnTableFile().equals("custom"))
-			data = new DataManager(plugin, "spawnTables/a" + arena.getId() + ".yml");
-		else data = new DataManager(plugin, "spawnTables/" + arena.getSpawnTableFile() + ".yml");
+			data = new DataManager("spawnTables/a" + arena.getId() + ".yml");
+		else data = new DataManager("spawnTables/" + arena.getSpawnTableFile() + ".yml");
 
 		// Update villager count
 		if (ent instanceof Villager)
@@ -167,7 +161,7 @@ public class GameListener implements Listener {
 		}
 
 		// Update scoreboards
-		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 				Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)));
 	}
 
@@ -210,7 +204,7 @@ public class GameListener implements Listener {
 		arena.decrementEnemies();
 
 		// Update scoreboards
-		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 				Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)));
 	}
 
@@ -430,7 +424,7 @@ public class GameListener implements Listener {
 
 		// Make player leave
 		else if (GameItems.leave().equals(item))
-			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 					Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player)));
 
 		// Ignore
@@ -552,12 +546,12 @@ public class GameListener implements Listener {
 			});
 
 			// Update scoreboards
-			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 					Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)));
 
 			// Check for game end condition
 			if (arena.getAlive() == 0 && arena.getStatus() == ArenaStatus.ACTIVE)
-				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 						Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 		}
 	}
@@ -611,14 +605,14 @@ public class GameListener implements Listener {
 		if (arena.hasGemSound())
 			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, .5f, 0);
 
-		FileConfiguration playerData = plugin.getPlayerData();
+		FileConfiguration playerData = Main.plugin.getPlayerData();
 
 		// Update player stats
 		playerData.set(player.getUniqueId() + ".totalGems",
 				playerData.getInt(player.getUniqueId() + ".totalGems") + earned);
 		if (playerData.getInt(player.getUniqueId() + ".topBalance") < gamer.getGems())
 			playerData.set(player.getUniqueId() + ".topBalance", gamer.getGems());
-		plugin.savePlayerData();
+		Main.plugin.savePlayerData();
 
 		// Update scoreboard
 		GameManager.createBoard(gamer);
@@ -681,12 +675,12 @@ public class GameListener implements Listener {
 		});
 
 		// Update scoreboards
-		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 				Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)));
 
 		// Check for game end condition
 		if (arena.getAlive() == 0 && arena.getStatus() == ArenaStatus.ACTIVE)
-			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 					Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 	}
 
@@ -751,7 +745,7 @@ public class GameListener implements Listener {
 									LanguageManager.messages.earnedGems, ChatColor.AQUA,
 									Integer.toString(earned));
 
-							FileConfiguration playerData = plugin.getPlayerData();
+							FileConfiguration playerData = Main.plugin.getPlayerData();
 
 							// Update player stats
 							playerData.set(vdPlayer.getID() + ".totalGems",
@@ -759,7 +753,7 @@ public class GameListener implements Listener {
 							if (playerData.getInt(vdPlayer.getID() + ".topBalance") <
 									vdPlayer.getGems())
 								playerData.set(vdPlayer.getID() + ".topBalance", vdPlayer.getGems());
-							plugin.savePlayerData();
+							Main.plugin.savePlayerData();
 
 							// Update scoreboard
 							GameManager.createBoard(vdPlayer);
@@ -792,14 +786,14 @@ public class GameListener implements Listener {
 				PlayerManager.notifySuccess(player, LanguageManager.messages.earnedGems,
 						ChatColor.AQUA, Integer.toString(earned));
 
-				FileConfiguration playerData = plugin.getPlayerData();
+				FileConfiguration playerData = Main.plugin.getPlayerData();
 
 				// Update player stats
 				playerData.set(player.getUniqueId() + ".totalGems",
 						playerData.getInt(player.getUniqueId() + ".totalGems") + earned);
 				if (playerData.getInt(player.getUniqueId() + ".topBalance") < gamer.getGems())
 					playerData.set(player.getUniqueId() + ".topBalance", gamer.getGems());
-				plugin.savePlayerData();
+				Main.plugin.savePlayerData();
 
 				// Update scoreboard
 				GameManager.createBoard(gamer);
@@ -892,7 +886,7 @@ public class GameListener implements Listener {
 			location.setY(location.getY() + 1);
 
 			// Spawn and tame the wolf
-			Mobs.setWolf(plugin, arena, gamer, (Wolf) player.getWorld().spawnEntity(location, EntityType.WOLF));
+			Mobs.setWolf(Main.plugin, arena, gamer, (Wolf) player.getWorld().spawnEntity(location, EntityType.WOLF));
 			return;
 		}
 
@@ -929,7 +923,7 @@ public class GameListener implements Listener {
 			location.setY(location.getY() + 1);
 
 			// Spawn iron golem
-			Mobs.setGolem(plugin, arena, (IronGolem) player.getWorld().spawnEntity(location, EntityType.IRON_GOLEM));
+			Mobs.setGolem(Main.plugin, arena, (IronGolem) player.getWorld().spawnEntity(location, EntityType.IRON_GOLEM));
 			return;
 		}
 
@@ -1239,7 +1233,7 @@ public class GameListener implements Listener {
 			return;
 
 		if (e.getItem().getType() == Material.POTION || e.getItem().getType() == Material.MILK_BUCKET) {
-			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
 				player.getInventory().remove(Material.GLASS_BOTTLE);
 				player.getInventory().remove(Material.BUCKET);
 				if (player.getInventory().getItemInOffHand().getType() == Material.GLASS_BOTTLE)

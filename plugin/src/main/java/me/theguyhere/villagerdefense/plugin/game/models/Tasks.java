@@ -37,13 +37,11 @@ import java.util.Objects;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class Tasks {
-	private final Main plugin;
 	private final Arena arena;
 	/** Maps runnables to ID of the currently running runnable.*/
 	private final Map<Runnable, Integer> tasks = new HashMap<>();
 
-	public Tasks(Main plugin, Arena arena) {
-		this.plugin = plugin;
+	public Tasks(Arena arena) {
 		this.arena = arena;
 	}
 
@@ -218,7 +216,7 @@ public class Tasks {
 			));
 
 			// Trigger WaveEndEvent
-			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 					Bukkit.getPluginManager().callEvent(new WaveEndEvent(arena)));
 
 			// Debug message to console
@@ -333,7 +331,7 @@ public class Tasks {
 				arena.setArmorShop(Inventories.createArmorShopMenu(level, arena));
 				arena.setConsumeShop(Inventories.createConsumableShopMenu(level, arena));
 				if (currentWave != 1)
-					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 							arena.getActives().forEach(player ->
 									player.getPlayer().sendTitle(CommunicationManager.format(
 											"&6" + LanguageManager.messages.shopUpgrade),
@@ -344,7 +342,7 @@ public class Tasks {
 			}
 
 			// Spawns mobs after 15 seconds
-			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 					Bukkit.getPluginManager().callEvent(new WaveStartEvent(arena)),
 					Utils.secondsToTicks(15));
 
@@ -368,7 +366,7 @@ public class Tasks {
 		public void run() {
 			// Remove players from the arena
 			arena.getPlayers().forEach(player ->
-					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 							Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player.getPlayer()))));
 		}
 	};
@@ -439,7 +437,7 @@ public class Tasks {
 				// Trigger wave end event
 				if (progress <= 0) {
 					progress = 0;
-					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 							Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 				}
 

@@ -36,8 +36,7 @@ public class GameItems {
 	public static Material[] CLICKABLE_WEAPON_MATERIALS;
 	public static Material[] CLICKABLE_CONSUME_MATERIALS;
 
-	public static void setPlugin() {
-
+	public static void init() {
 		// Initialize constant arrays
 		ABILITY_ITEMS = new ItemStack[]{mage(), ninja(), templar(), warrior(), knight(),
 				priest(), siren(), monk(), messenger()};

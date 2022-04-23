@@ -39,14 +39,12 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("deprecation")
 public class Commands implements CommandExecutor {
-	private final Main plugin;
 	private final FileConfiguration playerData;
 	private final FileConfiguration arenaData;
 
-	public Commands(Main plugin) {
-		this.plugin = plugin;
-		playerData = plugin.getPlayerData();
-		arenaData = plugin.getArenaData();
+	public Commands() {
+		playerData = Main.plugin.getPlayerData();
+		arenaData = Main.plugin.getArenaData();
 	}
 	
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label,
@@ -110,7 +108,7 @@ public class Commands implements CommandExecutor {
 						return true;
 					}
 
-					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 							Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player)));
 					return true;
 				}
@@ -125,7 +123,7 @@ public class Commands implements CommandExecutor {
 
 					if (args.length == 1)
 						player.openInventory(Inventories.createPlayerStatsMenu(player));
-					else if (plugin.getPlayerData().contains(args[1]))
+					else if (Main.plugin.getPlayerData().contains(args[1]))
 						player.openInventory(Inventories.createPlayerStatsMenu(
 								Objects.requireNonNull(Bukkit.getPlayer(args[1]))));
 					else PlayerManager.notifyFailure(player, LanguageManager.messages.noStats,
@@ -244,7 +242,7 @@ public class Commands implements CommandExecutor {
 						else CommunicationManager.debugError(LanguageManager.errors.invalidPlayer, 0);
 						return true;
 					}
-					if (!plugin.getPlayerData().contains(id.toString())) {
+					if (!Main.plugin.getPlayerData().contains(id.toString())) {
 						if (player != null)
 							PlayerManager.notifyFailure(player, LanguageManager.errors.invalidPlayer);
 						else CommunicationManager.debugError(LanguageManager.errors.invalidPlayer, 0);
@@ -258,7 +256,7 @@ public class Commands implements CommandExecutor {
 								id + ".crystalBalance",
 								Math.max(playerData.getInt(id + ".crystalBalance") + amount, 0)
 						);
-						plugin.savePlayerData();
+						Main.plugin.savePlayerData();
 						if (player != null)
 							PlayerManager.notifySuccess(player, LanguageManager.confirms.balanceSet,
 									ChatColor.AQUA, args[1],
@@ -332,9 +330,9 @@ public class Commands implements CommandExecutor {
 							task.sec10.run();
 							tasks.put(task.sec10, 0); // Dummy task id to note that quick start condition was hit
 							tasks.put(task.sec5,
-									scheduler.scheduleSyncDelayedTask(plugin, task.sec5, Utils.secondsToTicks(5)));
+									scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec5, Utils.secondsToTicks(5)));
 							tasks.put(task.start,
-									scheduler.scheduleSyncDelayedTask(plugin, task.start, Utils.secondsToTicks(10)));
+									scheduler.scheduleSyncDelayedTask(Main.plugin, task.start, Utils.secondsToTicks(10)));
 						}
 					}
 
@@ -402,9 +400,9 @@ public class Commands implements CommandExecutor {
 							task.sec10.run();
 							tasks.put(task.sec10, 0); // Dummy task id to note that quick start condition was hit
 							tasks.put(task.sec5,
-									scheduler.scheduleSyncDelayedTask(plugin, task.sec5, Utils.secondsToTicks(5)));
+									scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec5, Utils.secondsToTicks(5)));
 							tasks.put(task.start,
-									scheduler.scheduleSyncDelayedTask(plugin, task.start, Utils.secondsToTicks(10)));
+									scheduler.scheduleSyncDelayedTask(Main.plugin, task.start, Utils.secondsToTicks(10)));
 
 							// Notify console
 							CommunicationManager.debugInfo(arena.getName() + " was force started.", 1);
@@ -453,7 +451,7 @@ public class Commands implements CommandExecutor {
 						}
 
 						// Force end
-						Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+						Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 								Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 
 						// Notify console
@@ -503,7 +501,7 @@ public class Commands implements CommandExecutor {
 						}
 
 						// Force end
-						Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+						Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 								Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 
 						// Notify console
@@ -556,15 +554,15 @@ public class Commands implements CommandExecutor {
 
 						// Reschedule countdown tasks
 						task.min2.run();
-						tasks.put(task.min1, scheduler.scheduleSyncDelayedTask(plugin, task.min1,
+						tasks.put(task.min1, scheduler.scheduleSyncDelayedTask(Main.plugin, task.min1,
 								Utils.secondsToTicks(Utils.minutesToSeconds(1))));
-						tasks.put(task.sec30, scheduler.scheduleSyncDelayedTask(plugin, task.sec30,
+						tasks.put(task.sec30, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec30,
 								Utils.secondsToTicks(Utils.minutesToSeconds(2) - 30)));
-						tasks.put(task.sec10, scheduler.scheduleSyncDelayedTask(plugin, task.sec10,
+						tasks.put(task.sec10, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec10,
 								Utils.secondsToTicks(Utils.minutesToSeconds(2) - 10)));
-						tasks.put(task.sec5, scheduler.scheduleSyncDelayedTask(plugin, task.sec5,
+						tasks.put(task.sec5, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec5,
 								Utils.secondsToTicks(Utils.minutesToSeconds(2) - 5)));
-						tasks.put(task.start, scheduler.scheduleSyncDelayedTask(plugin, task.start,
+						tasks.put(task.start, scheduler.scheduleSyncDelayedTask(Main.plugin, task.start,
 								Utils.secondsToTicks(Utils.minutesToSeconds(2))));
 					}
 
@@ -617,15 +615,15 @@ public class Commands implements CommandExecutor {
 
 						// Reschedule countdown tasks
 						task.min2.run();
-						tasks.put(task.min1, scheduler.scheduleSyncDelayedTask(plugin, task.min1,
+						tasks.put(task.min1, scheduler.scheduleSyncDelayedTask(Main.plugin, task.min1,
 								Utils.secondsToTicks(Utils.minutesToSeconds(1))));
-						tasks.put(task.sec30, scheduler.scheduleSyncDelayedTask(plugin, task.sec30,
+						tasks.put(task.sec30, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec30,
 								Utils.secondsToTicks(Utils.minutesToSeconds(2) - 30)));
-						tasks.put(task.sec10, scheduler.scheduleSyncDelayedTask(plugin, task.sec10,
+						tasks.put(task.sec10, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec10,
 								Utils.secondsToTicks(Utils.minutesToSeconds(2) - 10)));
-						tasks.put(task.sec5, scheduler.scheduleSyncDelayedTask(plugin, task.sec5,
+						tasks.put(task.sec5, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec5,
 								Utils.secondsToTicks(Utils.minutesToSeconds(2) - 5)));
-						tasks.put(task.start, scheduler.scheduleSyncDelayedTask(plugin, task.start,
+						tasks.put(task.start, scheduler.scheduleSyncDelayedTask(Main.plugin, task.start,
 								Utils.secondsToTicks(Utils.minutesToSeconds(2))));
 
 						// Notify console
@@ -656,7 +654,7 @@ public class Commands implements CommandExecutor {
 					}
 
 					// Check if config.yml is outdated
-					int configVersion = plugin.getConfig().getInt("version");
+					int configVersion = Main.plugin.getConfig().getInt("version");
 					if (configVersion < Main.configVersion)
 						if (player != null)
 							PlayerManager.notifyAlert(player, 
@@ -665,15 +663,15 @@ public class Commands implements CommandExecutor {
 								"config.yml"), 0);
 
 					// Check if arenaData.yml is outdated
-					int arenaDataVersion = plugin.getConfig().getInt("arenaData");
+					int arenaDataVersion = Main.plugin.getConfig().getInt("arenaData");
 					if (arenaDataVersion < 4) {
 						try {
 							// Transfer portals
 							Objects.requireNonNull(arenaData.getConfigurationSection("portal"))
 									.getKeys(false).forEach(arenaID -> {
-										Location location = DataManager.getConfigLocation(plugin,
+										Location location = DataManager.getConfigLocation(
 												"portal." + arenaID);
-										DataManager.setConfigurationLocation(plugin, "a" + arenaID + ".portal",
+										DataManager.setConfigurationLocation("a" + arenaID + ".portal",
 												location);
 										arenaData.set("portal." + arenaID, null);
 									});
@@ -682,23 +680,23 @@ public class Commands implements CommandExecutor {
 							// Transfer arena boards
 							Objects.requireNonNull(arenaData.getConfigurationSection("arenaBoard"))
 									.getKeys(false).forEach(arenaID -> {
-										Location location = DataManager.getConfigLocation(plugin,
+										Location location = DataManager.getConfigLocation(
 												"arenaBoard." + arenaID);
-										DataManager.setConfigurationLocation(plugin, "a" + arenaID + ".arenaBoard",
+										DataManager.setConfigurationLocation("a" + arenaID + ".arenaBoard",
 												location);
 										arenaData.set("arenaBoard." + arenaID, null);
 									});
 							arenaData.set("arenaBoard", null);
 
-							plugin.saveArenaData();
+							Main.plugin.saveArenaData();
 
 							// Reload portals
 							GameManager.refreshPortals();
 
 							// Flip flag and update config.yml
 							fixed = true;
-							plugin.getConfig().set("arenaData", 4);
-							plugin.saveConfig();
+							Main.plugin.getConfig().set("arenaData", 4);
+							Main.plugin.saveConfig();
 
 							// Notify
 							if (player != null)
@@ -762,12 +760,12 @@ public class Commands implements CommandExecutor {
 											}
 										}
 									});
-							plugin.saveArenaData();
+							Main.plugin.saveArenaData();
 
 							// Flip flag and update config.yml
 							fixed = true;
-							plugin.getConfig().set("arenaData", 5);
-							plugin.saveConfig();
+							Main.plugin.getConfig().set("arenaData", 5);
+							Main.plugin.saveConfig();
 
 							// Notify
 							if (player != null)
@@ -842,8 +840,8 @@ public class Commands implements CommandExecutor {
 
 							// Flip flag and update config.yml
 							fixed = true;
-							plugin.getConfig().set("arenaData", 6);
-							plugin.saveConfig();
+							Main.plugin.getConfig().set("arenaData", 6);
+							Main.plugin.saveConfig();
 
 							// Notify
 							if (player != null)
@@ -864,7 +862,7 @@ public class Commands implements CommandExecutor {
 					}
 
 					// Check if playerData.yml is outdated
-					if (plugin.getConfig().getInt("playerData") < 2) {
+					if (Main.plugin.getConfig().getInt("playerData") < 2) {
 						try {
 							// Transfer player names to UUID
 							Objects.requireNonNull(playerData.getConfigurationSection("")).getKeys(false)
@@ -877,15 +875,15 @@ public class Commands implements CommandExecutor {
 											playerData.set(key, null);
 										}
 									});
-							plugin.savePlayerData();
+							Main.plugin.savePlayerData();
 
 							// Reload everything
 							GameManager.refreshAll();
 
 							// Flip flag and update config.yml
 							fixed = true;
-							plugin.getConfig().set("playerData", 2);
-							plugin.saveConfig();
+							Main.plugin.getConfig().set("playerData", 2);
+							Main.plugin.saveConfig();
 
 							// Notify
 							if (player != null)
@@ -906,16 +904,16 @@ public class Commands implements CommandExecutor {
 					}
 
 					// Update default spawn table
-					if (plugin.getConfig().getInt("spawnTableStructure") < Main.spawnTableVersion ||
-							plugin.getConfig().getInt("spawnTableDefault") < Main.defaultSpawnVersion) {
+					if (Main.plugin.getConfig().getInt("spawnTableStructure") < Main.spawnTableVersion ||
+							Main.plugin.getConfig().getInt("spawnTableDefault") < Main.defaultSpawnVersion) {
 						// Flip flag
 						fixed = true;
 
 						// Fix
-						plugin.saveResource("default.yml", true);
-						plugin.getConfig().set("spawnTableStructure", Main.spawnTableVersion);
-						plugin.getConfig().set("spawnTableDefault", Main.defaultSpawnVersion);
-						plugin.saveConfig();
+						Main.plugin.saveResource("default.yml", true);
+						Main.plugin.getConfig().set("spawnTableStructure", Main.spawnTableVersion);
+						Main.plugin.getConfig().set("spawnTableDefault", Main.defaultSpawnVersion);
+						Main.plugin.saveConfig();
 
 						// Notify
 						if (player != null) {
@@ -933,14 +931,14 @@ public class Commands implements CommandExecutor {
 					}
 
 					// Update default language file
-					if (plugin.getConfig().getInt("languageFile") < Main.languageFileVersion) {
+					if (Main.plugin.getConfig().getInt("languageFile") < Main.languageFileVersion) {
 						// Flip flag
 						fixed = true;
 
 						// Fix
-						plugin.saveResource("languages/en_US.yml", true);
-						plugin.getConfig().set("languageFile", Main.languageFileVersion);
-						plugin.saveConfig();
+						Main.plugin.saveResource("languages/en_US.yml", true);
+						Main.plugin.getConfig().set("languageFile", Main.languageFileVersion);
+						Main.plugin.saveConfig();
 
 						// Notify
 						if (player != null) {
@@ -1042,7 +1040,7 @@ public class Commands implements CommandExecutor {
 					}
 
 					// Create a player death and make sure it gets detected
-					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 							Bukkit.getPluginManager().callEvent(new EntityDamageEvent(player,
 									EntityDamageEvent.DamageCause.SUICIDE, 99)));
 					return true;
@@ -1061,7 +1059,7 @@ public class Commands implements CommandExecutor {
 						PlayerManager.notifyAlert(player, "Reloading plugin data");
 					else CommunicationManager.debugInfo("Reloading plugin data", 0);
 
-					plugin.reload();
+					Main.plugin.reload();
 					return true;
 				}
 
@@ -1109,7 +1107,7 @@ public class Commands implements CommandExecutor {
 					}
 
 					// No lobby
-					if (!plugin.getArenaData().contains("lobby")) {
+					if (!Main.plugin.getArenaData().contains("lobby")) {
 						if (player != null)
 							PlayerManager.notifyFailure(player, "Arena cannot open without a lobby!");
 						else CommunicationManager.debugError("Arena cannot open without a lobby!", 0);

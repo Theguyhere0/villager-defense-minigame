@@ -31,12 +31,6 @@ import java.util.Objects;
 import java.util.Random;
 
 public class ChallengeListener implements Listener {
-    private final Main plugin;
-
-    public ChallengeListener(Main plugin) {
-        this.plugin = plugin;
-    }
-
     // Prevent using certain item slots
     @EventHandler
     public void onIllegalEquip(PlayerMoveEvent e) {
@@ -233,7 +227,7 @@ public class ChallengeListener implements Listener {
             return;
 
         // Add back blindness
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
                 player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999, 0)), 2);
     }
 
