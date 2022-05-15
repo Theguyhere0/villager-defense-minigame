@@ -435,6 +435,10 @@ public class GameListener implements Listener {
 			PlayerManager.giveChoiceItems(gamer);
 		}
 
+		// Open crystal convert menu
+		else if (GameItems.crystalConverter().equals(item))
+			player.openInventory(Inventories.createCrystalConvertMenu(gamer));
+
 		// Make player leave
 		else if (GameItems.leave().equals(item))
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->

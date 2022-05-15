@@ -3,7 +3,6 @@ package me.theguyhere.villagerdefense.plugin.listeners;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.SignGUIEvent;
-import me.theguyhere.villagerdefense.plugin.events.WaveEndEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidNameException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.EnchantingBook;
@@ -3181,6 +3180,140 @@ public class InventoryListener implements Listener {
 
 			else if (buttonName.contains(LanguageManager.messages.allowedKits))
 				player.openInventory(Inventories.createAllowedKitsMenu(meta.getArena(), true));
+		}
+
+		// Menu for converting crystals
+		else if (invID == InventoryID.CRYSTAL_CONVERT_MENU) {
+			FileConfiguration playerData = Main.plugin.getPlayerData();
+			Player owner = meta.getPlayer();
+			VDPlayer gamer;
+
+			// Try to get VDPlayer
+			try {
+				gamer = GameManager.getArena(owner).getPlayer(owner);
+			} catch (Exception err) {
+				return;
+			}
+			int gemBoost = gamer.getGemBoost();
+			int crystalBal = playerData.getInt(owner.getUniqueId() + ".crystalBalance");
+
+			// Reset
+			if (buttonName.contains(LanguageManager.messages.reset)) {
+				gamer.setGemBoost(0);
+			}
+
+			// Increase by 1
+			else if (buttonName.contains("+1 ")) {
+				gemBoost++;
+
+				// Check for crystal balance
+				if (gemBoost * 5 > crystalBal) {
+					PlayerManager.notifyFailure(player, LanguageManager.errors.buyGeneral);
+					return;
+				}
+
+				// Apply boost
+				gamer.setGemBoost(gemBoost);
+			}
+
+			// Increase by 10
+			else if (buttonName.contains("+10 ")) {
+				gemBoost += 10;
+
+				// Check for crystal balance
+				if (gemBoost * 5 > crystalBal) {
+					PlayerManager.notifyFailure(player, LanguageManager.errors.buyGeneral);
+					return;
+				}
+
+				// Apply boost
+				gamer.setGemBoost(gemBoost);
+			}
+
+			// Increase by 100
+			else if (buttonName.contains("+100 ")) {
+				gemBoost += 100;
+
+				// Check for crystal balance
+				if (gemBoost * 5 > crystalBal) {
+					PlayerManager.notifyFailure(player, LanguageManager.errors.buyGeneral);
+					return;
+				}
+
+				// Apply boost
+				gamer.setGemBoost(gemBoost);
+			}
+
+			// Increase by 1000
+			else if (buttonName.contains("+1000 ")) {
+				gemBoost += 1000;
+
+				// Check for crystal balance
+				if (gemBoost * 5 > crystalBal) {
+					PlayerManager.notifyFailure(player, LanguageManager.errors.buyGeneral);
+					return;
+				}
+
+				// Apply boost
+				gamer.setGemBoost(gemBoost);
+			}
+
+			// Decrease by 1
+			else if (buttonName.contains("-1 ")) {
+				gemBoost--;
+
+				// Check for positive number
+				if (gemBoost < 0)
+					return;
+
+				// Apply boost
+				gamer.setGemBoost(gemBoost);
+			}
+
+			// Decrease by 10
+			else if (buttonName.contains("-10 ")) {
+				gemBoost -= 10;
+
+				// Check for positive number
+				if (gemBoost < 0)
+					return;
+
+				// Apply boost
+				gamer.setGemBoost(gemBoost);
+			}
+
+			// Decrease by 100
+			else if (buttonName.contains("-100 ")) {
+				gemBoost -= 100;
+
+				// Check for positive number
+				if (gemBoost < 0)
+					return;
+
+				// Apply boost
+				gamer.setGemBoost(gemBoost);
+			}
+
+			// Decrease by 1000
+			else if (buttonName.contains("-1000 ")) {
+				gemBoost -= 1000;
+
+				// Check for positive number
+				if (gemBoost < 0)
+					return;
+
+				// Apply boost
+				gamer.setGemBoost(gemBoost);
+			}
+
+			// Exit
+			else if (buttonName.contains(LanguageManager.messages.exit)) {
+				player.closeInventory();
+				return;
+			}
+
+			// Refresh GUI
+			player.openInventory(Inventories.createCrystalConvertMenu(gamer));
 		}
 	}
 

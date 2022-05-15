@@ -204,8 +204,8 @@ public class PlayerManager {
             giveItemConditional(0, choiceItems.get(0), player.getPlayer());
             giveItemConditional(2, choiceItems.get(1), player.getPlayer());
             giveItemConditional(4, choiceItems.get(2), player.getPlayer());
-            giveItemConditional(6, choiceItems.get(3), player.getPlayer());
-            giveItemConditional(7, choiceItems.get(4), player.getPlayer());
+            giveItemConditional(5, choiceItems.get(3), player.getPlayer());
+            giveItemConditional(6, choiceItems.get(4), player.getPlayer());
             giveItemConditional(8, choiceItems.get(5), player.getPlayer());
         }
     }

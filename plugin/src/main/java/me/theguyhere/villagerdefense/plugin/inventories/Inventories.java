@@ -2157,6 +2157,74 @@ public class Inventories {
 		);
 	}
 
+	// Display crystal converter
+	public static Inventory createCrystalConvertMenu(VDPlayer player) {
+		FileConfiguration playerData = Main.plugin.getPlayerData();
+
+		// Create inventory
+		Inventory inv = Bukkit.createInventory(
+				new InventoryMeta(InventoryID.CRYSTAL_CONVERT_MENU, InventoryType.MENU, player.getPlayer()),
+				27,
+				CommunicationManager.format("&9&l" + LanguageManager.names.crystalConverter)
+		);
+
+		// Display crystals to convert
+		inv.setItem(3, ItemManager.createItem(Material.DIAMOND_BLOCK,
+				CommunicationManager.format("&b&l" + LanguageManager.messages.crystalsToConvert + ": " +
+						(player.getGemBoost() * 5))));
+
+		// Display gems to receive
+		inv.setItem(5, ItemManager.createItem(Material.EMERALD_BLOCK,
+				CommunicationManager.format("&a&l" + LanguageManager.messages.gemsToReceive + ": " +
+						player.getGemBoost())));
+
+		// Crystal balance display
+		inv.setItem(8, ItemManager.createItem(Material.DIAMOND,
+				CommunicationManager.format("&b&l" + LanguageManager.messages.crystalBalance +
+						": &b" + playerData.getInt(player.getPlayer().getUniqueId() + ".crystalBalance"))));
+
+		// Option to increase by 1
+		inv.setItem(9, ItemManager.createItem(Material.LIME_CONCRETE,
+				CommunicationManager.format("&a&l+1 " + LanguageManager.messages.gems)));
+
+		// Option to increase by 10
+		inv.setItem(11, ItemManager.createItem(Material.LIME_CONCRETE,
+				CommunicationManager.format("&a&l+10 " + LanguageManager.messages.gems)));
+
+		// Option to increase by 100
+		inv.setItem(13, ItemManager.createItem(Material.LIME_CONCRETE,
+				CommunicationManager.format("&a&l+100 " + LanguageManager.messages.gems)));
+
+		// Option to increase by 1000
+		inv.setItem(15, ItemManager.createItem(Material.LIME_CONCRETE,
+				CommunicationManager.format("&a&l+1000 " + LanguageManager.messages.gems)));
+
+		// Option to reset
+		inv.setItem(17, ItemManager.createItem(Material.LIGHT_BLUE_CONCRETE,
+				CommunicationManager.format("&3&l" + LanguageManager.messages.reset)));
+
+		// Option to decrease by 1
+		inv.setItem(18, ItemManager.createItem(Material.RED_CONCRETE,
+				CommunicationManager.format("&c&l-1 " + LanguageManager.messages.gems)));
+
+		// Option to decrease by 10
+		inv.setItem(20, ItemManager.createItem(Material.RED_CONCRETE,
+				CommunicationManager.format("&c&l-10 " + LanguageManager.messages.gems)));
+
+		// Option to decrease by 100
+		inv.setItem(22, ItemManager.createItem(Material.RED_CONCRETE,
+				CommunicationManager.format("&c&l-100 " + LanguageManager.messages.gems)));
+
+		// Option to decrease by 1000
+		inv.setItem(24, ItemManager.createItem(Material.RED_CONCRETE,
+				CommunicationManager.format("&c&l-1000 " + LanguageManager.messages.gems)));
+
+		// Option to exit
+		inv.setItem(26, Buttons.exit());
+
+		return inv;
+	}
+
 	// Display challenges for a player to select
 	public static Inventory createSelectChallengesMenu(VDPlayer player, Arena arena) {
 		List<ItemStack> buttons = new ArrayList<>();

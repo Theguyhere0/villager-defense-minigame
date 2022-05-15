@@ -145,29 +145,6 @@ public class Tasks {
 			arena.newGameID();
 			WorldManager.clear(arena.getCorner1(), arena.getCorner2());
 
-			// Give second kit to players with two kit bonus
-			for (VDPlayer vdPlayer : arena.getActives()) {
-				FileConfiguration playerData = Main.plugin.getPlayerData();
-				String path = vdPlayer.getPlayer().getUniqueId() + ".achievements";
-				Kit second;
-
-				if (playerData.contains(path) && vdPlayer.isBoosted() &&
-						playerData.getStringList(path).contains(Achievement.allKits().getID()))
-					do {
-						second = Kit.randomKit();
-
-						// Single tier kits
-						if (!second.isMultiLevel())
-							second.setKitLevel(1);
-
-						// Multiple tier kits
-						else second.setKitLevel(playerData.getInt(vdPlayer.getPlayer().getUniqueId() + ".kits." +
-								second.getName()));
-
-						vdPlayer.setKit2(second);
-					} while (second.equals(vdPlayer.getKit()));
-			}
-
 			// Teleport players to arena if waiting room exists, otherwise clear inventory
 			if (arena.getWaitingRoom() != null) {
 				for (VDPlayer vdPlayer : arena.getActives())
@@ -195,17 +172,33 @@ public class Tasks {
 				arena.startBorderParticles();
 
 			arena.getActives().forEach(player -> {
+				FileConfiguration playerData = Main.plugin.getPlayerData();
+				String path = player.getPlayer().getUniqueId() + ".achievements";
+				Kit second;
+
+				// Give second kit to players with two kit bonus
+				if (playerData.contains(path) && player.isBoosted() &&
+						playerData.getStringList(path).contains(Achievement.allKits().getID()))
+					do {
+						second = Kit.randomKit();
+
+						// Single tier kits
+						if (!second.isMultiLevel())
+							second.setKitLevel(1);
+
+						// Multiple tier kits
+						else second.setKitLevel(playerData.getInt(player.getPlayer().getUniqueId() + ".kits." +
+								second.getName()));
+
+						player.setKit2(second);
+					} while (second.equals(player.getKit()));
+
 				// Give all players starting items
 				giveItems(player);
 
 				// Give admins items or events to test with
 				if (CommunicationManager.getDebugLevel() >= 3 && player.getPlayer().hasPermission("vd.admin")) {
 				}
-
-				// Give Traders their gems
-				if (Kit.trader().setKitLevel(1).equals(player.getKit()) ||
-						Kit.trader().setKitLevel(1).equals(player.getKit2()))
-					player.addGems(200);
 
 				// Set health for people with giant kits
 				if (Kit.giant().setKitLevel(1).equals(player.getKit()) ||
@@ -220,9 +213,6 @@ public class Tasks {
 									AttributeModifier.Operation.ADD_NUMBER));
 
 				// Set health for people with health boost and are boosted
-				FileConfiguration playerData = Main.plugin.getPlayerData();
-				String path = player.getPlayer().getUniqueId() + ".achievements";
-
 				if (playerData.contains(path) && player.isBoosted() &&
 						playerData.getStringList(path).contains(Achievement.topWave9().getID()))
 					Objects.requireNonNull(player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
@@ -244,6 +234,17 @@ public class Tasks {
 				if (player.getChallenges().contains(Challenge.blind()))
 					player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999,
 							0));
+
+				// Give Traders their gems
+				if (Kit.trader().setKitLevel(1).equals(player.getKit()) ||
+						Kit.trader().setKitLevel(1).equals(player.getKit2()))
+					player.addGems(200);
+
+				// Give gems from crystal conversion
+				path = player.getPlayer().getUniqueId() + ".crystalBalance";
+				player.addGems(player.getGemBoost());
+				playerData.set(path, playerData.getInt(path) - player.getGemBoost() * 5);
+				Main.plugin.savePlayerData();
 			});
 
 			// Initiate community chest

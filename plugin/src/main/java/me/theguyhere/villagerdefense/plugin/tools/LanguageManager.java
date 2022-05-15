@@ -335,6 +335,7 @@ public class LanguageManager {
         public final @NotNull String arenaNoPlayers;
         public final @NotNull String bounds;
         public final @NotNull String buy;
+        public final @NotNull String buyGeneral;
         public final @NotNull String close;
         public final @NotNull String command;
         public final @NotNull String communityChest;
@@ -382,6 +383,7 @@ public class LanguageManager {
             arenaNoPlayers = getConfigString(pathPrefix + ".arenaNoPlayers");
             bounds = getConfigString(pathPrefix + ".bounds");
             buy = getConfigString(pathPrefix + ".buy");
+            buyGeneral = getConfigString(pathPrefix + ".buyGeneral");
             close = getConfigString(pathPrefix + ".close");
             command = getConfigString(pathPrefix + ".command");
             communityChest = getConfigString(pathPrefix + ".communityChest");
@@ -662,6 +664,7 @@ public class LanguageManager {
         public final @NotNull String crystalBonus;
         public final @NotNull String crystalBalance;
         public final @NotNull String crystalsEarned;
+        public final @NotNull String crystalsToConvert;
         public final @NotNull String customShopInv;
         public final @NotNull String death;
         public final @NotNull String death1;
@@ -680,6 +683,7 @@ public class LanguageManager {
         public final @NotNull String gameOver;
         public final @NotNull String gems;
         public final @NotNull String gemsReceived;
+        public final @NotNull String gemsToReceive;
         public final @NotNull String ghosts;
         public final @NotNull String giftKitsDescription;
         public final @NotNull String infoAboutWiki;
@@ -713,6 +717,7 @@ public class LanguageManager {
         public final @NotNull String purchased;
         public final @NotNull String record;
         public final @NotNull String records;
+        public final @NotNull String reset;
         public final @NotNull String restartPlugin;
         public final @NotNull String resurrection;
         public final @NotNull String rightClick;
@@ -752,6 +757,7 @@ public class LanguageManager {
             crystalBonus = getConfigString(pathPrefix + ".crystalBonus");
             crystalBalance = getConfigString(pathPrefix + ".crystalBalance");
             crystalsEarned = getConfigString(pathPrefix + ".crystalsEarned");
+            crystalsToConvert = getConfigString(pathPrefix + ".crystalsToConvert");
             customShopInv = getConfigString(pathPrefix + ".customShopInv");
             death = getConfigString(pathPrefix + ".death");
             death1 = getConfigString(pathPrefix + ".death1");
@@ -770,6 +776,7 @@ public class LanguageManager {
             gameOver = getConfigString(pathPrefix + ".gameOver");
             gems = getConfigString(pathPrefix + ".gems");
             gemsReceived = getConfigString(pathPrefix + ".gemsReceived");
+            gemsToReceive = getConfigString(pathPrefix + ".gemsToReceive");
             ghosts = getConfigString(pathPrefix + ".ghosts");
             giftKitsDescription = getConfigString(pathPrefix + ".giftKitsDescription");
             infoAboutWiki = getConfigString(pathPrefix + ".infoAboutWiki");
@@ -803,6 +810,7 @@ public class LanguageManager {
             purchased = getConfigString(pathPrefix + ".purchased");
             record = getConfigString(pathPrefix + ".record");
             records = getConfigString(pathPrefix + ".records");
+            reset = getConfigString(pathPrefix + ".reset");
             restartPlugin = getConfigString(pathPrefix + ".restartPlugin");
             resurrection = getConfigString(pathPrefix + ".resurrection");
             rightClick = getConfigString(pathPrefix + ".rightClick");
