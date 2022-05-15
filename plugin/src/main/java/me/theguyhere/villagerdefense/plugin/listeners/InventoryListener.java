@@ -2844,16 +2844,19 @@ public class InventoryListener implements Listener {
 			buy = ItemManager.removeLastLore(buy);
 
 			// Make unbreakable for blacksmith
-			if (gamer.getKit().getName().equals(Kit.blacksmith().getName()))
+			if (Kit.blacksmith().getName().equals(gamer.getKit().getName()) ||
+					Kit.blacksmith().getName().equals(gamer.getKit2().getName()))
 				buy = ItemManager.makeUnbreakable(buy);
 
 			// Make splash potion for witch
-			if (gamer.getKit().getName().equals(Kit.witch().getName()))
+			if (Kit.witch().getName().equals(gamer.getKit().getName()) ||
+					Kit.witch().getName().equals(gamer.getKit2().getName()))
 				buy = ItemManager.makeSplash(buy);
 
 			// Subtract from balance, apply rebate, and update scoreboard
 			gamer.addGems(-cost);
-			if (gamer.getKit().getName().equals(Kit.merchant().getName()))
+			if (Kit.merchant().getName().equals(gamer.getKit().getName()) ||
+					Kit.merchant().getName().equals(gamer.getKit2().getName()))
 				gamer.addGems(cost / 10);
 			GameManager.createBoard(gamer);
 
@@ -3117,7 +3120,8 @@ public class InventoryListener implements Listener {
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.kitSelect);
 			}
 
-			// Close inventory and create scoreboard
+			// Close inventory if no second kit and create scoreboard
+
 			closeInv(player);
 			GameManager.createBoard(gamer);
 		}

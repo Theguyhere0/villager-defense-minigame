@@ -17,18 +17,31 @@ public class Achievement {
     private final String name;
     /** The main description for the achievement.*/
     private final String description;
+    /** The ID of the achievement.*/
+    private final String ID;
     /** The material used for GUI buttons relating to this achievement.*/
     private final Material buttonMaterial;
     /** The type of achievement this will be.*/
     private final AchievementType type;
     /** The requirements to get this achievement.*/
     private final List<AchievementRequirement> requirements = new ArrayList<>();
+    /** The reward for getting this achievement.*/
+    private final AchievementReward reward;
 
-    public Achievement(String name, String description, Material buttonMaterial, AchievementType type) {
+    public Achievement(
+            String name,
+            String description,
+            String ID,
+            Material buttonMaterial,
+            AchievementType type,
+            AchievementReward reward
+    ) {
         this.name = name;
         this.description = description;
+        this.ID = ID;
         this.buttonMaterial = buttonMaterial;
         this.type = type;
+        this.reward = reward;
     }
 
     public String getName() {
@@ -41,8 +54,18 @@ public class Achievement {
         else return CommunicationManager.format("&7&l" + name);
     }
 
-    private String[] getDescription() {
-        return CommunicationManager.formatDescriptionList(ChatColor.GRAY, description).toArray(new String[]{});
+    private String[] getDescription(boolean obtained) {
+        List<String> descriptions = CommunicationManager.formatDescriptionList(ChatColor.GRAY, description);
+        descriptions.add("");
+        descriptions.addAll(CommunicationManager.formatDescriptionList(obtained ? ChatColor.AQUA : ChatColor.GREEN,
+                reward.getType() == RewardType.BOOST ? reward.getDescription() :
+                        String.format(reward.getDescription(), Integer.toString(reward.getValue()))));
+
+        return descriptions.toArray(new String[]{});
+    }
+
+    public String getID() {
+        return ID;
     }
 
     private Material getButtonMaterial(boolean obtained) {
@@ -56,7 +79,13 @@ public class Achievement {
     }
 
     public ItemStack getButton(boolean obtained) {
-        return ItemManager.createItem(getButtonMaterial(obtained), getName(obtained), getDescription());
+        return ItemManager.createItem(
+                getButtonMaterial(obtained),
+                getName(obtained),
+                ItemManager.BUTTON_FLAGS,
+                null,
+                getDescription(obtained)
+        );
     }
 
     public List<AchievementRequirement> getRequirements() {
@@ -69,25 +98,33 @@ public class Achievement {
         else requirements.add(requirement);
     }
 
+    public AchievementReward getReward() {
+        return reward;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Achievement that = (Achievement) o;
-        return Objects.equals(name, that.name) && Objects.equals(description, that.description) && buttonMaterial == that.buttonMaterial && type == that.type && Objects.equals(requirements, that.requirements);
+        return Objects.equals(name, that.name) && Objects.equals(description, that.description) &&
+                buttonMaterial == that.buttonMaterial && type == that.type &&
+                Objects.equals(requirements, that.requirements) && Objects.equals(reward, that.reward);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, buttonMaterial, type, requirements);
+        return Objects.hash(name, description, buttonMaterial, type, requirements, reward);
     }
 
     public static Achievement allAbility() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.allAbility.name,
                 LanguageManager.achievements.allAbility.description,
+                "allAbility",
                 Material.CHORUS_FRUIT,
-                AchievementType.KIT
+                AchievementType.KIT,
+                new AchievementReward(RewardType.CRYSTAL, 3000)
         );
 
         try {
@@ -147,8 +184,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.allChallenges.name,
                 LanguageManager.achievements.allChallenges.description,
+                "allChallenges",
                 Material.HEART_OF_THE_SEA,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.BOOST, BoostRewardID.RESURRECTION)
         );
 
         try {
@@ -200,8 +239,11 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.allEffect.name,
                 LanguageManager.achievements.allEffect.description,
+                "allEffect",
                 Material.BREWING_STAND,
-                AchievementType.KIT
+                AchievementType.KIT,
+                new AchievementReward(RewardType.BOOST, BoostRewardID.SHARE_EFFECT)
+
         );
 
         try {
@@ -241,8 +283,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.allGift.name,
                 LanguageManager.achievements.allGift.description,
+                "allGift",
                 Material.CHEST_MINECART,
-                AchievementType.KIT
+                AchievementType.KIT,
+                new AchievementReward(RewardType.CRYSTAL, 1000)
         );
 
         try {
@@ -302,8 +346,11 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.allKits.name,
                 LanguageManager.achievements.allKits.description,
+                "allKits",
                 Material.ENDER_CHEST,
-                AchievementType.KIT
+                AchievementType.KIT,
+                new AchievementReward(RewardType.BOOST, BoostRewardID.TWO_KITS)
+
         );
 
         try {
@@ -433,8 +480,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.allMaxedAbility.name,
                 LanguageManager.achievements.allMaxedAbility.description,
+                "allMaxedAbility",
                 Material.CHORUS_FLOWER,
-                AchievementType.KIT
+                AchievementType.KIT,
+                new AchievementReward(RewardType.BOOST, BoostRewardID.COOLDOWN_REDUCTION)
         );
 
         try {
@@ -494,8 +543,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.alone.name,
                 LanguageManager.achievements.alone.description,
+                "alone",
                 Material.ENDER_PEARL,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 250)
         );
 
         try {
@@ -515,8 +566,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.alone,
                         LanguageManager.challenges.amputee.name
                 ),
+                "amputeeAlone",
                 Material.BAMBOO,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 40)
         );
 
         try {
@@ -539,8 +592,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.balance,
                         LanguageManager.challenges.amputee.name
                 ),
+                "amputeeBalance",
                 Material.BAMBOO,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 100)
         );
 
         try {
@@ -562,8 +617,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.kills,
                         LanguageManager.challenges.amputee.name
                 ),
+                "amputeeKills",
                 Material.BAMBOO,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 50)
         );
 
         try {
@@ -585,8 +642,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.wave,
                         LanguageManager.challenges.amputee.name
                 ),
+                "amputeeWave",
                 Material.BAMBOO,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 75)
         );
 
         try {
@@ -609,8 +668,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.alone,
                         LanguageManager.challenges.blind.name
                 ),
+                "blindAlone",
                 Material.INK_SAC,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 40)
         );
 
         try {
@@ -633,8 +694,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.balance,
                         LanguageManager.challenges.blind.name
                 ),
+                "blindBalance",
                 Material.INK_SAC,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 100)
         );
 
         try {
@@ -656,8 +719,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.kills,
                         LanguageManager.challenges.blind.name
                 ),
+                "blindKills",
                 Material.INK_SAC,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 50)
         );
 
         try {
@@ -679,8 +744,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.wave,
                         LanguageManager.challenges.blind.name
                 ),
+                "blindWave",
                 Material.INK_SAC,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 75)
         );
 
         try {
@@ -703,8 +770,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.alone,
                         LanguageManager.challenges.clumsy.name
                 ),
+                "clumsyAlone",
                 Material.ICE,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 40)
         );
 
         try {
@@ -727,8 +796,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.balance,
                         LanguageManager.challenges.clumsy.name
                 ),
+                "clumsyBalance",
                 Material.ICE,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 100)
         );
 
         try {
@@ -750,8 +821,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.kills,
                         LanguageManager.challenges.clumsy.name
                 ),
+                "clumsyKills",
                 Material.ICE,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 50)
         );
 
         try {
@@ -773,8 +846,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.wave,
                         LanguageManager.challenges.clumsy.name
                 ),
+                "clumsyWave",
                 Material.ICE,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 75)
         );
 
         try {
@@ -797,8 +872,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.alone,
                         LanguageManager.challenges.dwarf.name
                 ),
+                "dwarfAlone",
                 Material.DEAD_BUSH,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 40)
         );
 
         try {
@@ -821,8 +898,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.balance,
                         LanguageManager.challenges.dwarf.name
                 ),
+                "dwarfBalance",
                 Material.DEAD_BUSH,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 100)
         );
 
         try {
@@ -844,8 +923,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.kills,
                         LanguageManager.challenges.dwarf.name
                 ),
+                "dwarfKills",
                 Material.DEAD_BUSH,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 50)
         );
 
         try {
@@ -867,8 +948,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.wave,
                         LanguageManager.challenges.dwarf.name
                 ),
+                "dwarfWave",
                 Material.DEAD_BUSH,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 75)
         );
 
         try {
@@ -891,8 +974,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.alone,
                         LanguageManager.challenges.explosive.name
                 ),
+                "explosiveAlone",
                 Material.TNT,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 40)
         );
 
         try {
@@ -915,8 +1000,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.balance,
                         LanguageManager.challenges.explosive.name
                 ),
+                "explosiveBalance",
                 Material.TNT,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 100)
         );
 
         try {
@@ -938,8 +1025,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.kills,
                         LanguageManager.challenges.explosive.name
                 ),
+                "explosiveKills",
                 Material.TNT,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 50)
         );
 
         try {
@@ -961,8 +1050,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.wave,
                         LanguageManager.challenges.explosive.name
                 ),
+                "explosiveWave",
                 Material.TNT,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 75)
         );
 
         try {
@@ -985,8 +1076,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.alone,
                         LanguageManager.challenges.featherweight.name
                 ),
+                "featherweightAlone",
                 Material.FEATHER,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 40)
         );
 
         try {
@@ -1009,8 +1102,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.balance,
                         LanguageManager.challenges.featherweight.name
                 ),
+                "featherweightBalance",
                 Material.FEATHER,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 100)
         );
 
         try {
@@ -1032,8 +1127,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.kills,
                         LanguageManager.challenges.featherweight.name
                 ),
+                "featherweightKills",
                 Material.FEATHER,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 50)
         );
 
         try {
@@ -1055,8 +1152,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.wave,
                         LanguageManager.challenges.featherweight.name
                 ),
+                "featherweightWave",
                 Material.FEATHER,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 75)
         );
 
         try {
@@ -1076,8 +1175,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.maxedAbility.name,
                 LanguageManager.achievements.maxedAbility.description,
+                "maxedAbility",
                 Material.POPPED_CHORUS_FRUIT,
-                AchievementType.KIT
+                AchievementType.KIT,
+                new AchievementReward(RewardType.CRYSTAL, 2000)
         );
 
         try {
@@ -1149,8 +1250,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.alone,
                         LanguageManager.challenges.naked.name
                 ),
+                "nakedAlone",
                 Material.ARMOR_STAND,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 40)
         );
 
         try {
@@ -1173,8 +1276,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.balance,
                         LanguageManager.challenges.naked.name
                 ),
+                "nakedBalance",
                 Material.ARMOR_STAND,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 100)
         );
 
         try {
@@ -1196,8 +1301,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.kills,
                         LanguageManager.challenges.naked.name
                 ),
+                "nakedKills",
                 Material.ARMOR_STAND,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 50)
         );
 
         try {
@@ -1219,8 +1326,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.wave,
                         LanguageManager.challenges.naked.name
                 ),
+                "nakedWave",
                 Material.ARMOR_STAND,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 75)
         );
 
         try {
@@ -1243,8 +1352,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.alone,
                         LanguageManager.challenges.pacifist.name
                 ),
+                "pacifistAlone",
                 Material.TURTLE_HELMET,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 40)
         );
 
         try {
@@ -1267,8 +1378,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.balance,
                         LanguageManager.challenges.pacifist.name
                 ),
+                "pacifistBalance",
                 Material.TURTLE_HELMET,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 100)
         );
 
         try {
@@ -1290,8 +1403,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.kills,
                         LanguageManager.challenges.pacifist.name
                 ),
+                "pacifisKills",
                 Material.TURTLE_HELMET,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 50)
         );
 
         try {
@@ -1313,8 +1428,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.wave,
                         LanguageManager.challenges.pacifist.name
                 ),
+                "pacifistWave",
                 Material.TURTLE_HELMET,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 75)
         );
 
         try {
@@ -1337,8 +1454,10 @@ public class Achievement {
                         LanguageManager.achievements.pacifistUhc.description,
                         LanguageManager.challenges.pacifist.name + " & " + LanguageManager.challenges.uhc.name
                 ),
+                "pacifistUhc",
                 Material.DAMAGED_ANVIL,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 200)
         );
 
         try {
@@ -1362,8 +1481,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.one,
                 String.format(LanguageManager.achievements.topBalance.description, "100"),
+                "topBalance1",
                 Material.EMERALD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 5)
         );
 
         try {
@@ -1378,8 +1499,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.two,
                 String.format(LanguageManager.achievements.topBalance.description, "250"),
+                "topBalance2",
                 Material.EMERALD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 10)
         );
 
         try {
@@ -1394,8 +1517,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.three,
                 String.format(LanguageManager.achievements.topBalance.description, "500"),
+                "topBalance3",
                 Material.EMERALD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 20)
         );
 
         try {
@@ -1410,8 +1535,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.four,
                 String.format(LanguageManager.achievements.topBalance.description, "1000"),
+                "topBalance4",
                 Material.EMERALD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 40)
         );
 
         try {
@@ -1426,8 +1553,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.five,
                 String.format(LanguageManager.achievements.topBalance.description, "2500"),
+                "topBalance5",
                 Material.EMERALD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 80)
         );
 
         try {
@@ -1442,8 +1571,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.six,
                 String.format(LanguageManager.achievements.topBalance.description, "5000"),
+                "topBalance6",
                 Material.EMERALD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 160)
         );
 
         try {
@@ -1458,8 +1589,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.seven,
                 String.format(LanguageManager.achievements.topBalance.description, "10000"),
+                "topBalance7",
                 Material.EMERALD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 320)
         );
 
         try {
@@ -1474,8 +1607,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.eight,
                 String.format(LanguageManager.achievements.topBalance.description, "25000"),
+                "topBalance8",
                 Material.EMERALD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 640)
         );
 
         try {
@@ -1490,8 +1625,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.nine,
                 String.format(LanguageManager.achievements.topBalance.description, "50000"),
+                "topBalance9",
                 Material.EMERALD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.BOOST, BoostRewardID.GEM_INCREASE)
         );
 
         try {
@@ -1507,8 +1644,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.one,
                 String.format(LanguageManager.achievements.topKills.description, "10"),
+                "topKills1",
                 Material.ZOMBIE_HEAD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 5)
         );
 
         try {
@@ -1523,8 +1662,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.two,
                 String.format(LanguageManager.achievements.topKills.description, "20"),
+                "topKills2",
                 Material.ZOMBIE_HEAD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 10)
         );
 
         try {
@@ -1539,8 +1680,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.three,
                 String.format(LanguageManager.achievements.topKills.description, "30"),
+                "topKills3",
                 Material.ZOMBIE_HEAD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 20)
         );
 
         try {
@@ -1555,8 +1698,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.four,
                 String.format(LanguageManager.achievements.topKills.description, "50"),
+                "topKills4",
                 Material.ZOMBIE_HEAD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 40)
         );
 
         try {
@@ -1571,8 +1716,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.five,
                 String.format(LanguageManager.achievements.topKills.description, "100"),
+                "topKills5",
                 Material.ZOMBIE_HEAD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 80)
         );
 
         try {
@@ -1587,8 +1734,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.six,
                 String.format(LanguageManager.achievements.topKills.description, "200"),
+                "topKills6",
                 Material.ZOMBIE_HEAD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 160)
         );
 
         try {
@@ -1603,8 +1752,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.seven,
                 String.format(LanguageManager.achievements.topKills.description, "300"),
+                "topKills7",
                 Material.ZOMBIE_HEAD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 320)
         );
 
         try {
@@ -1619,8 +1770,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.eight,
                 String.format(LanguageManager.achievements.topKills.description, "500"),
+                "topKills8",
                 Material.ZOMBIE_HEAD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 640)
         );
 
         try {
@@ -1635,8 +1788,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.nine,
                 String.format(LanguageManager.achievements.topKills.description, "1000"),
+                "topKills9",
                 Material.ZOMBIE_HEAD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.BOOST, BoostRewardID.DAMAGE_INCREASE)
         );
 
         try {
@@ -1652,8 +1807,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.one,
                 String.format(LanguageManager.achievements.topWave.description, "5"),
+                "topWave1",
                 Material.GOLDEN_SWORD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 5)
         );
 
         try {
@@ -1668,8 +1825,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.two,
                 String.format(LanguageManager.achievements.topWave.description, "10"),
+                "topWave2",
                 Material.GOLDEN_SWORD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 10)
         );
 
         try {
@@ -1684,8 +1843,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.three,
                 String.format(LanguageManager.achievements.topWave.description, "15"),
+                "topWave3",
                 Material.GOLDEN_SWORD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 20)
         );
 
         try {
@@ -1700,8 +1861,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.four,
                 String.format(LanguageManager.achievements.topWave.description, "20"),
+                "topWave4",
                 Material.GOLDEN_SWORD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 40)
         );
 
         try {
@@ -1716,8 +1879,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.five,
                 String.format(LanguageManager.achievements.topWave.description, "25"),
+                "topWave5",
                 Material.GOLDEN_SWORD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 80)
         );
 
         try {
@@ -1732,8 +1897,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.six,
                 String.format(LanguageManager.achievements.topWave.description, "30"),
+                "topWave6",
                 Material.GOLDEN_SWORD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 160)
         );
 
         try {
@@ -1748,8 +1915,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.seven,
                 String.format(LanguageManager.achievements.topWave.description, "35"),
+                "topWave7",
                 Material.GOLDEN_SWORD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 320)
         );
 
         try {
@@ -1764,8 +1933,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.eight,
                 String.format(LanguageManager.achievements.topWave.description, "40"),
+                "topWave8",
                 Material.GOLDEN_SWORD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 640)
         );
 
         try {
@@ -1780,8 +1951,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.nine,
                 String.format(LanguageManager.achievements.topWave.description, "50"),
+                "topWave9",
                 Material.GOLDEN_SWORD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.BOOST, BoostRewardID.HEALTH_INCREASE)
         );
 
         try {
@@ -1797,8 +1970,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.one,
                 String.format(LanguageManager.achievements.totalGems.description, "1000"),
+                "totalGems1",
                 Material.EMERALD_BLOCK,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 5)
         );
 
         try {
@@ -1813,8 +1988,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.two,
                 String.format(LanguageManager.achievements.totalGems.description, "5000"),
+                "totalGems2",
                 Material.EMERALD_BLOCK,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 10)
         );
 
         try {
@@ -1829,8 +2006,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.three,
                 String.format(LanguageManager.achievements.totalGems.description, "10000"),
+                "totalGems3",
                 Material.EMERALD_BLOCK,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 20)
         );
 
         try {
@@ -1845,8 +2024,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.four,
                 String.format(LanguageManager.achievements.totalGems.description, "25000"),
+                "totalGems4",
                 Material.EMERALD_BLOCK,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 40)
         );
 
         try {
@@ -1861,8 +2042,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.five,
                 String.format(LanguageManager.achievements.totalGems.description, "50000"),
+                "totalGems5",
                 Material.EMERALD_BLOCK,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 80)
         );
 
         try {
@@ -1877,8 +2060,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.six,
                 String.format(LanguageManager.achievements.totalGems.description, "100000"),
+                "totalGems6",
                 Material.EMERALD_BLOCK,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 160)
         );
 
         try {
@@ -1893,8 +2078,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.seven,
                 String.format(LanguageManager.achievements.totalGems.description, "250000"),
+                "totalGems7",
                 Material.EMERALD_BLOCK,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 320)
         );
 
         try {
@@ -1909,8 +2096,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.eight,
                 String.format(LanguageManager.achievements.totalGems.description, "500000"),
+                "totalGems8",
                 Material.EMERALD_BLOCK,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 640)
         );
 
         try {
@@ -1925,8 +2114,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.nine,
                 String.format(LanguageManager.achievements.totalGems.description, "1000000"),
+                "totalGems9",
                 Material.EMERALD_BLOCK,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.BOOST, BoostRewardID.CRYSTAL_CONVERT)
         );
 
         try {
@@ -1942,8 +2133,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalKills.one,
                 String.format(LanguageManager.achievements.totalKills.description, "100"),
+                "totalKills1",
                 Material.DRAGON_HEAD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 5)
         );
 
         try {
@@ -1958,8 +2151,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalKills.two,
                 String.format(LanguageManager.achievements.totalKills.description, "200"),
+                "totalKills2",
                 Material.DRAGON_HEAD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 10)
         );
 
         try {
@@ -1974,8 +2169,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalKills.three,
                 String.format(LanguageManager.achievements.totalKills.description, "300"),
+                "totalKills3",
                 Material.DRAGON_HEAD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 20)
         );
 
         try {
@@ -1990,8 +2187,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalKills.four,
                 String.format(LanguageManager.achievements.totalKills.description, "500"),
+                "totalKills4",
                 Material.DRAGON_HEAD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 40)
         );
 
         try {
@@ -2006,8 +2205,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalKills.five,
                 String.format(LanguageManager.achievements.totalKills.description, "1000"),
+                "totalKills5",
                 Material.DRAGON_HEAD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 80)
         );
 
         try {
@@ -2022,8 +2223,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalKills.six,
                 String.format(LanguageManager.achievements.totalKills.description, "2000"),
+                "totalKills6",
                 Material.DRAGON_HEAD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 160)
         );
 
         try {
@@ -2038,8 +2241,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalKills.seven,
                 String.format(LanguageManager.achievements.totalKills.description, "3000"),
+                "totalKills7",
                 Material.DRAGON_HEAD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 320)
         );
 
         try {
@@ -2054,8 +2259,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalKills.eight,
                 String.format(LanguageManager.achievements.totalKills.description, "5000"),
+                "totalKills8",
                 Material.DRAGON_HEAD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.CRYSTAL, 640)
         );
 
         try {
@@ -2070,8 +2277,10 @@ public class Achievement {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalKills.nine,
                 String.format(LanguageManager.achievements.totalKills.description, "10000"),
+                "totalKills9",
                 Material.DRAGON_HEAD,
-                AchievementType.HIGH_SCORE
+                AchievementType.HIGH_SCORE,
+                new AchievementReward(RewardType.BOOST, BoostRewardID.DAMAGE_REDUCTION)
         );
 
         try {
@@ -2090,8 +2299,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.alone,
                         LanguageManager.challenges.uhc.name
                 ),
+                "uhcAlone",
                 Material.GOLDEN_APPLE,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 40)
         );
 
         try {
@@ -2114,8 +2325,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.balance,
                         LanguageManager.challenges.uhc.name
                 ),
+                "uhcBalance",
                 Material.GOLDEN_APPLE,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 100)
         );
 
         try {
@@ -2137,8 +2350,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.kills,
                         LanguageManager.challenges.uhc.name
                 ),
+                "uhcKills",
                 Material.GOLDEN_APPLE,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 50)
         );
 
         try {
@@ -2160,8 +2375,10 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.wave,
                         LanguageManager.challenges.uhc.name
                 ),
+                "uhcWave",
                 Material.GOLDEN_APPLE,
-                AchievementType.INSTANCE
+                AchievementType.INSTANCE,
+                new AchievementReward(RewardType.CRYSTAL, 75)
         );
 
         try {

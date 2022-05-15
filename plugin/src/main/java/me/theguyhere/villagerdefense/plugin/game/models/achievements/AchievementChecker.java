@@ -108,7 +108,8 @@ public class AchievementChecker {
                     } else achieved = true;
                 }
                 else if (requirement.getMetric() == AchievementMetric.KIT) {
-                    if (!player.getKit().getName().equals(requirement.getString())) {
+                    if (!requirement.getString().equals(player.getKit().getName()) &&
+                            !requirement.getString().equals(player.getKit2().getName())) {
                         if (requirement.isAnd()) {
                             achieved = false;
                             break;
@@ -221,45 +222,67 @@ public class AchievementChecker {
         player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
     }
 
+    private static void notifyReward(Achievement achievement, Player player) {
+        // Check for crystal reward
+        if (achievement.getReward().getType() == RewardType.CRYSTAL) {
+            // Add crystals
+            FileConfiguration playerData = Main.plugin.getPlayerData();
+            String path = player.getUniqueId() + ".crystalBalance";
+            playerData.set(path, playerData.getInt(path) + achievement.getReward().getValue());
+            PlayerManager.notifySuccess(player, LanguageManager.confirms.crystalAdd, ChatColor.AQUA,
+                    Integer.toString(achievement.getReward().getValue()));
+        }
+
+        else if (achievement.getReward().getType() == RewardType.BOOST)
+            // Notify of boost
+            PlayerManager.notifySuccess(player, LanguageManager.confirms.boostAdd);
+    }
+
     public static void checkHighScoreAchievement(Achievement achievement, Player player) {
         FileConfiguration playerData = Main.plugin.getPlayerData();
         String path = player.getUniqueId() + ".achievements";
         List<String> achievements = playerData.getStringList(path);
 
         // Check if player already has achievement
-        if (achievements.contains(achievement.getName()))
+        if (achievements.contains(achievement.getID()))
             return;
 
         // Give achievement if achievement is met
         if (verifyHighScoreAchievement(achievement, player)) {
             // Record achievement
-            achievements.add(achievement.getName());
+            achievements.add(achievement.getID());
             playerData.set(path, achievements);
             Main.plugin.savePlayerData();
 
-            // Notify player of achievement
+            // Notify player of achievement and rewards
             notifyAchievement(achievement, player);
+            notifyReward(achievement, player);
         }
     }
 
     public static void checkInstanceAchievement(Achievement achievement, VDPlayer player) {
+        // Protect from null players when player quits
+        if (player.getPlayer() == null)
+            return;
+
         FileConfiguration playerData = Main.plugin.getPlayerData();
         String path = player.getPlayer().getUniqueId() + ".achievements";
         List<String> achievements = playerData.getStringList(path);
 
         // Check if player already has achievement
-        if (achievements.contains(achievement.getName()))
+        if (achievements.contains(achievement.getID()))
             return;
 
         // Give achievement if achievement is met
         if (verifyInstanceAchievement(achievement, player)) {
             // Record achievement
-            achievements.add(achievement.getName());
+            achievements.add(achievement.getID());
             playerData.set(path, achievements);
             Main.plugin.savePlayerData();
 
-            // Notify player of achievement
+            // Notify player of achievement and rewards
             notifyAchievement(achievement, player.getPlayer());
+            notifyReward(achievement, player.getPlayer());
         }
     }
 
@@ -269,18 +292,19 @@ public class AchievementChecker {
         List<String> achievements = playerData.getStringList(path);
 
         // Check if player already has achievement
-        if (achievements.contains(achievement.getName()))
+        if (achievements.contains(achievement.getID()))
             return;
 
         // Give achievement if achievement is met
         if (verifyKitAchievement(achievement, player)) {
             // Record achievement
-            achievements.add(achievement.getName());
+            achievements.add(achievement.getID());
             playerData.set(path, achievements);
             Main.plugin.savePlayerData();
 
-            // Notify player of achievement
+            // Notify player of achievement and rewards
             notifyAchievement(achievement, player);
+            notifyReward(achievement, player);
         }
     }
 

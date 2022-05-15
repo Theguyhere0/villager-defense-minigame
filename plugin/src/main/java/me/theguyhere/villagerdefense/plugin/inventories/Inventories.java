@@ -1904,119 +1904,119 @@ public class Inventories {
 				.getStringList(owner.getUniqueId() + ".achievements");
 		List<ItemStack> buttons = new ArrayList<>();
 
-		buttons.add(Achievement.topBalance1().getButton(achievements.contains(Achievement.topBalance1().getName())));
-		buttons.add(Achievement.topBalance2().getButton(achievements.contains(Achievement.topBalance2().getName())));
-		buttons.add(Achievement.topBalance3().getButton(achievements.contains(Achievement.topBalance3().getName())));
-		buttons.add(Achievement.topBalance4().getButton(achievements.contains(Achievement.topBalance4().getName())));
-		buttons.add(Achievement.topBalance5().getButton(achievements.contains(Achievement.topBalance5().getName())));
-		buttons.add(Achievement.topBalance6().getButton(achievements.contains(Achievement.topBalance6().getName())));
-		buttons.add(Achievement.topBalance7().getButton(achievements.contains(Achievement.topBalance7().getName())));
-		buttons.add(Achievement.topBalance8().getButton(achievements.contains(Achievement.topBalance8().getName())));
-		buttons.add(Achievement.topBalance9().getButton(achievements.contains(Achievement.topBalance9().getName())));
+		buttons.add(Achievement.topBalance1().getButton(achievements.contains(Achievement.topBalance1().getID())));
+		buttons.add(Achievement.topBalance2().getButton(achievements.contains(Achievement.topBalance2().getID())));
+		buttons.add(Achievement.topBalance3().getButton(achievements.contains(Achievement.topBalance3().getID())));
+		buttons.add(Achievement.topBalance4().getButton(achievements.contains(Achievement.topBalance4().getID())));
+		buttons.add(Achievement.topBalance5().getButton(achievements.contains(Achievement.topBalance5().getID())));
+		buttons.add(Achievement.topBalance6().getButton(achievements.contains(Achievement.topBalance6().getID())));
+		buttons.add(Achievement.topBalance7().getButton(achievements.contains(Achievement.topBalance7().getID())));
+		buttons.add(Achievement.topBalance8().getButton(achievements.contains(Achievement.topBalance8().getID())));
+		buttons.add(Achievement.topBalance9().getButton(achievements.contains(Achievement.topBalance9().getID())));
 
-		buttons.add(Achievement.topKills1().getButton(achievements.contains(Achievement.topKills1().getName())));
-		buttons.add(Achievement.topKills2().getButton(achievements.contains(Achievement.topKills2().getName())));
-		buttons.add(Achievement.topKills3().getButton(achievements.contains(Achievement.topKills3().getName())));
-		buttons.add(Achievement.topKills4().getButton(achievements.contains(Achievement.topKills4().getName())));
-		buttons.add(Achievement.topKills5().getButton(achievements.contains(Achievement.topKills5().getName())));
-		buttons.add(Achievement.topKills6().getButton(achievements.contains(Achievement.topKills6().getName())));
-		buttons.add(Achievement.topKills7().getButton(achievements.contains(Achievement.topKills7().getName())));
-		buttons.add(Achievement.topKills8().getButton(achievements.contains(Achievement.topKills8().getName())));
-		buttons.add(Achievement.topKills9().getButton(achievements.contains(Achievement.topKills9().getName())));
+		buttons.add(Achievement.topKills1().getButton(achievements.contains(Achievement.topKills1().getID())));
+		buttons.add(Achievement.topKills2().getButton(achievements.contains(Achievement.topKills2().getID())));
+		buttons.add(Achievement.topKills3().getButton(achievements.contains(Achievement.topKills3().getID())));
+		buttons.add(Achievement.topKills4().getButton(achievements.contains(Achievement.topKills4().getID())));
+		buttons.add(Achievement.topKills5().getButton(achievements.contains(Achievement.topKills5().getID())));
+		buttons.add(Achievement.topKills6().getButton(achievements.contains(Achievement.topKills6().getID())));
+		buttons.add(Achievement.topKills7().getButton(achievements.contains(Achievement.topKills7().getID())));
+		buttons.add(Achievement.topKills8().getButton(achievements.contains(Achievement.topKills8().getID())));
+		buttons.add(Achievement.topKills9().getButton(achievements.contains(Achievement.topKills9().getID())));
 
-		buttons.add(Achievement.topWave1().getButton(achievements.contains(Achievement.topWave1().getName())));
-		buttons.add(Achievement.topWave2().getButton(achievements.contains(Achievement.topWave2().getName())));
-		buttons.add(Achievement.topWave3().getButton(achievements.contains(Achievement.topWave3().getName())));
-		buttons.add(Achievement.topWave4().getButton(achievements.contains(Achievement.topWave4().getName())));
-		buttons.add(Achievement.topWave5().getButton(achievements.contains(Achievement.topWave5().getName())));
-		buttons.add(Achievement.topWave6().getButton(achievements.contains(Achievement.topWave6().getName())));
-		buttons.add(Achievement.topWave7().getButton(achievements.contains(Achievement.topWave7().getName())));
-		buttons.add(Achievement.topWave8().getButton(achievements.contains(Achievement.topWave8().getName())));
-		buttons.add(Achievement.topWave9().getButton(achievements.contains(Achievement.topWave9().getName())));
+		buttons.add(Achievement.topWave1().getButton(achievements.contains(Achievement.topWave1().getID())));
+		buttons.add(Achievement.topWave2().getButton(achievements.contains(Achievement.topWave2().getID())));
+		buttons.add(Achievement.topWave3().getButton(achievements.contains(Achievement.topWave3().getID())));
+		buttons.add(Achievement.topWave4().getButton(achievements.contains(Achievement.topWave4().getID())));
+		buttons.add(Achievement.topWave5().getButton(achievements.contains(Achievement.topWave5().getID())));
+		buttons.add(Achievement.topWave6().getButton(achievements.contains(Achievement.topWave6().getID())));
+		buttons.add(Achievement.topWave7().getButton(achievements.contains(Achievement.topWave7().getID())));
+		buttons.add(Achievement.topWave8().getButton(achievements.contains(Achievement.topWave8().getID())));
+		buttons.add(Achievement.topWave9().getButton(achievements.contains(Achievement.topWave9().getID())));
 
-		buttons.add(Achievement.totalGems1().getButton(achievements.contains(Achievement.totalGems1().getName())));
-		buttons.add(Achievement.totalGems2().getButton(achievements.contains(Achievement.totalGems2().getName())));
-		buttons.add(Achievement.totalGems3().getButton(achievements.contains(Achievement.totalGems3().getName())));
-		buttons.add(Achievement.totalGems4().getButton(achievements.contains(Achievement.totalGems4().getName())));
-		buttons.add(Achievement.totalGems5().getButton(achievements.contains(Achievement.totalGems5().getName())));
-		buttons.add(Achievement.totalGems6().getButton(achievements.contains(Achievement.totalGems6().getName())));
-		buttons.add(Achievement.totalGems7().getButton(achievements.contains(Achievement.totalGems7().getName())));
-		buttons.add(Achievement.totalGems8().getButton(achievements.contains(Achievement.totalGems8().getName())));
-		buttons.add(Achievement.totalGems9().getButton(achievements.contains(Achievement.totalGems9().getName())));
+		buttons.add(Achievement.totalGems1().getButton(achievements.contains(Achievement.totalGems1().getID())));
+		buttons.add(Achievement.totalGems2().getButton(achievements.contains(Achievement.totalGems2().getID())));
+		buttons.add(Achievement.totalGems3().getButton(achievements.contains(Achievement.totalGems3().getID())));
+		buttons.add(Achievement.totalGems4().getButton(achievements.contains(Achievement.totalGems4().getID())));
+		buttons.add(Achievement.totalGems5().getButton(achievements.contains(Achievement.totalGems5().getID())));
+		buttons.add(Achievement.totalGems6().getButton(achievements.contains(Achievement.totalGems6().getID())));
+		buttons.add(Achievement.totalGems7().getButton(achievements.contains(Achievement.totalGems7().getID())));
+		buttons.add(Achievement.totalGems8().getButton(achievements.contains(Achievement.totalGems8().getID())));
+		buttons.add(Achievement.totalGems9().getButton(achievements.contains(Achievement.totalGems9().getID())));
 
-		buttons.add(Achievement.totalKills1().getButton(achievements.contains(Achievement.totalKills1().getName())));
-		buttons.add(Achievement.totalKills2().getButton(achievements.contains(Achievement.totalKills2().getName())));
-		buttons.add(Achievement.totalKills3().getButton(achievements.contains(Achievement.totalKills3().getName())));
-		buttons.add(Achievement.totalKills4().getButton(achievements.contains(Achievement.totalKills4().getName())));
-		buttons.add(Achievement.totalKills5().getButton(achievements.contains(Achievement.totalKills5().getName())));
-		buttons.add(Achievement.totalKills6().getButton(achievements.contains(Achievement.totalKills6().getName())));
-		buttons.add(Achievement.totalKills7().getButton(achievements.contains(Achievement.totalKills7().getName())));
-		buttons.add(Achievement.totalKills8().getButton(achievements.contains(Achievement.totalKills8().getName())));
-		buttons.add(Achievement.totalKills9().getButton(achievements.contains(Achievement.totalKills9().getName())));
+		buttons.add(Achievement.totalKills1().getButton(achievements.contains(Achievement.totalKills1().getID())));
+		buttons.add(Achievement.totalKills2().getButton(achievements.contains(Achievement.totalKills2().getID())));
+		buttons.add(Achievement.totalKills3().getButton(achievements.contains(Achievement.totalKills3().getID())));
+		buttons.add(Achievement.totalKills4().getButton(achievements.contains(Achievement.totalKills4().getID())));
+		buttons.add(Achievement.totalKills5().getButton(achievements.contains(Achievement.totalKills5().getID())));
+		buttons.add(Achievement.totalKills6().getButton(achievements.contains(Achievement.totalKills6().getID())));
+		buttons.add(Achievement.totalKills7().getButton(achievements.contains(Achievement.totalKills7().getID())));
+		buttons.add(Achievement.totalKills8().getButton(achievements.contains(Achievement.totalKills8().getID())));
+		buttons.add(Achievement.totalKills9().getButton(achievements.contains(Achievement.totalKills9().getID())));
 
-		buttons.add(Achievement.amputeeAlone().getButton(achievements.contains(Achievement.amputeeAlone().getName())));
-		buttons.add(Achievement.blindAlone().getButton(achievements.contains(Achievement.blindAlone().getName())));
-		buttons.add(Achievement.clumsyAlone().getButton(achievements.contains(Achievement.clumsyAlone().getName())));
-		buttons.add(Achievement.dwarfAlone().getButton(achievements.contains(Achievement.dwarfAlone().getName())));
+		buttons.add(Achievement.amputeeAlone().getButton(achievements.contains(Achievement.amputeeAlone().getID())));
+		buttons.add(Achievement.blindAlone().getButton(achievements.contains(Achievement.blindAlone().getID())));
+		buttons.add(Achievement.clumsyAlone().getButton(achievements.contains(Achievement.clumsyAlone().getID())));
+		buttons.add(Achievement.dwarfAlone().getButton(achievements.contains(Achievement.dwarfAlone().getID())));
 		buttons.add(Achievement.explosiveAlone().getButton(achievements.contains(
-				Achievement.explosiveAlone().getName())));
+				Achievement.explosiveAlone().getID())));
 		buttons.add(Achievement.featherweightAlone().getButton(achievements.contains(
-				Achievement.featherweightAlone().getName())));
-		buttons.add(Achievement.nakedAlone().getButton(achievements.contains(Achievement.nakedAlone().getName())));
+				Achievement.featherweightAlone().getID())));
+		buttons.add(Achievement.nakedAlone().getButton(achievements.contains(Achievement.nakedAlone().getID())));
 		buttons.add(Achievement.pacifistAlone().getButton(achievements.contains(
-				Achievement.pacifistAlone().getName())));
-		buttons.add(Achievement.uhcAlone().getButton(achievements.contains(Achievement.uhcAlone().getName())));
+				Achievement.pacifistAlone().getID())));
+		buttons.add(Achievement.uhcAlone().getButton(achievements.contains(Achievement.uhcAlone().getID())));
 
 		buttons.add(Achievement.amputeeBalance().getButton(achievements.contains(
-				Achievement.amputeeBalance().getName())));
-		buttons.add(Achievement.blindBalance().getButton(achievements.contains(Achievement.blindBalance().getName())));
+				Achievement.amputeeBalance().getID())));
+		buttons.add(Achievement.blindBalance().getButton(achievements.contains(Achievement.blindBalance().getID())));
 		buttons.add(Achievement.clumsyBalance().getButton(achievements.contains(
-				Achievement.clumsyBalance().getName())));
-		buttons.add(Achievement.dwarfBalance().getButton(achievements.contains(Achievement.dwarfBalance().getName())));
+				Achievement.clumsyBalance().getID())));
+		buttons.add(Achievement.dwarfBalance().getButton(achievements.contains(Achievement.dwarfBalance().getID())));
 		buttons.add(Achievement.explosiveBalance().getButton(achievements.contains(
-				Achievement.explosiveBalance().getName())));
+				Achievement.explosiveBalance().getID())));
 		buttons.add(Achievement.featherweightBalance().getButton(achievements.contains(
-				Achievement.featherweightBalance().getName())));
-		buttons.add(Achievement.nakedBalance().getButton(achievements.contains(Achievement.nakedBalance().getName())));
+				Achievement.featherweightBalance().getID())));
+		buttons.add(Achievement.nakedBalance().getButton(achievements.contains(Achievement.nakedBalance().getID())));
 		buttons.add(Achievement.pacifistBalance().getButton(achievements.contains(
-				Achievement.pacifistBalance().getName())));
-		buttons.add(Achievement.uhcBalance().getButton(achievements.contains(Achievement.uhcBalance().getName())));
+				Achievement.pacifistBalance().getID())));
+		buttons.add(Achievement.uhcBalance().getButton(achievements.contains(Achievement.uhcBalance().getID())));
 
-		buttons.add(Achievement.amputeeKills().getButton(achievements.contains(Achievement.amputeeKills().getName())));
-		buttons.add(Achievement.blindKills().getButton(achievements.contains(Achievement.blindKills().getName())));
-		buttons.add(Achievement.clumsyKills().getButton(achievements.contains(Achievement.clumsyKills().getName())));
-		buttons.add(Achievement.dwarfKills().getButton(achievements.contains(Achievement.dwarfKills().getName())));
+		buttons.add(Achievement.amputeeKills().getButton(achievements.contains(Achievement.amputeeKills().getID())));
+		buttons.add(Achievement.blindKills().getButton(achievements.contains(Achievement.blindKills().getID())));
+		buttons.add(Achievement.clumsyKills().getButton(achievements.contains(Achievement.clumsyKills().getID())));
+		buttons.add(Achievement.dwarfKills().getButton(achievements.contains(Achievement.dwarfKills().getID())));
 		buttons.add(Achievement.explosiveKills().getButton(achievements.contains(
-				Achievement.explosiveKills().getName())));
+				Achievement.explosiveKills().getID())));
 		buttons.add(Achievement.featherweightKills().getButton(achievements.contains(
-				Achievement.featherweightKills().getName())));
-		buttons.add(Achievement.nakedKills().getButton(achievements.contains(Achievement.nakedKills().getName())));
+				Achievement.featherweightKills().getID())));
+		buttons.add(Achievement.nakedKills().getButton(achievements.contains(Achievement.nakedKills().getID())));
 		buttons.add(Achievement.pacifistKills().getButton(achievements.contains(
-				Achievement.pacifistKills().getName())));
-		buttons.add(Achievement.uhcKills().getButton(achievements.contains(Achievement.uhcKills().getName())));
+				Achievement.pacifistKills().getID())));
+		buttons.add(Achievement.uhcKills().getButton(achievements.contains(Achievement.uhcKills().getID())));
 
-		buttons.add(Achievement.amputeeWave().getButton(achievements.contains(Achievement.amputeeWave().getName())));
-		buttons.add(Achievement.blindWave().getButton(achievements.contains(Achievement.blindWave().getName())));
-		buttons.add(Achievement.clumsyWave().getButton(achievements.contains(Achievement.clumsyWave().getName())));
-		buttons.add(Achievement.dwarfWave().getButton(achievements.contains(Achievement.dwarfWave().getName())));
+		buttons.add(Achievement.amputeeWave().getButton(achievements.contains(Achievement.amputeeWave().getID())));
+		buttons.add(Achievement.blindWave().getButton(achievements.contains(Achievement.blindWave().getID())));
+		buttons.add(Achievement.clumsyWave().getButton(achievements.contains(Achievement.clumsyWave().getID())));
+		buttons.add(Achievement.dwarfWave().getButton(achievements.contains(Achievement.dwarfWave().getID())));
 		buttons.add(Achievement.explosiveWave().getButton(achievements.contains(
-				Achievement.explosiveWave().getName())));
+				Achievement.explosiveWave().getID())));
 		buttons.add(Achievement.featherweightWave().getButton(achievements.contains(
-				Achievement.featherweightWave().getName())));
-		buttons.add(Achievement.nakedWave().getButton(achievements.contains(Achievement.nakedWave().getName())));
+				Achievement.featherweightWave().getID())));
+		buttons.add(Achievement.nakedWave().getButton(achievements.contains(Achievement.nakedWave().getID())));
 		buttons.add(Achievement.pacifistWave().getButton(achievements.contains(
-				Achievement.pacifistWave().getName())));
-		buttons.add(Achievement.uhcWave().getButton(achievements.contains(Achievement.uhcWave().getName())));
+				Achievement.pacifistWave().getID())));
+		buttons.add(Achievement.uhcWave().getButton(achievements.contains(Achievement.uhcWave().getID())));
 
-		buttons.add(Achievement.alone().getButton(achievements.contains(Achievement.alone().getName())));
-		buttons.add(Achievement.pacifistUhc().getButton(achievements.contains(Achievement.pacifistUhc().getName())));
-		buttons.add(Achievement.allChallenges().getButton(achievements.contains(Achievement.allChallenges().getName())));
-		buttons.add(Achievement.allGift().getButton(achievements.contains(Achievement.allGift().getName())));
-		buttons.add(Achievement.allAbility().getButton(achievements.contains(Achievement.allAbility().getName())));
-		buttons.add(Achievement.maxedAbility().getButton(achievements.contains(Achievement.maxedAbility().getName())));
-		buttons.add(Achievement.allMaxedAbility().getButton(achievements.contains(Achievement.allMaxedAbility().getName())));
-		buttons.add(Achievement.allEffect().getButton(achievements.contains(Achievement.allEffect().getName())));
-		buttons.add(Achievement.allKits().getButton(achievements.contains(Achievement.allKits().getName())));
+		buttons.add(Achievement.alone().getButton(achievements.contains(Achievement.alone().getID())));
+		buttons.add(Achievement.pacifistUhc().getButton(achievements.contains(Achievement.pacifistUhc().getID())));
+		buttons.add(Achievement.allChallenges().getButton(achievements.contains(Achievement.allChallenges().getID())));
+		buttons.add(Achievement.allGift().getButton(achievements.contains(Achievement.allGift().getID())));
+		buttons.add(Achievement.allAbility().getButton(achievements.contains(Achievement.allAbility().getID())));
+		buttons.add(Achievement.maxedAbility().getButton(achievements.contains(Achievement.maxedAbility().getID())));
+		buttons.add(Achievement.allMaxedAbility().getButton(achievements.contains(Achievement.allMaxedAbility().getID())));
+		buttons.add(Achievement.allEffect().getButton(achievements.contains(Achievement.allEffect().getID())));
+		buttons.add(Achievement.allKits().getButton(achievements.contains(Achievement.allKits().getID())));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
 				new InventoryMeta(InventoryID.PLAYER_ACHIEVEMENTS_MENU, InventoryType.MENU, owner),
@@ -2032,119 +2032,119 @@ public class Inventories {
 		List<String> achievements = Main.plugin.getPlayerData().getStringList(owner.getUniqueId() + ".achievements");
 		List<ItemStack> buttons = new ArrayList<>();
 
-		buttons.add(Achievement.topBalance1().getButton(achievements.contains(Achievement.topBalance1().getName())));
-		buttons.add(Achievement.topBalance2().getButton(achievements.contains(Achievement.topBalance2().getName())));
-		buttons.add(Achievement.topBalance3().getButton(achievements.contains(Achievement.topBalance3().getName())));
-		buttons.add(Achievement.topBalance4().getButton(achievements.contains(Achievement.topBalance4().getName())));
-		buttons.add(Achievement.topBalance5().getButton(achievements.contains(Achievement.topBalance5().getName())));
-		buttons.add(Achievement.topBalance6().getButton(achievements.contains(Achievement.topBalance6().getName())));
-		buttons.add(Achievement.topBalance7().getButton(achievements.contains(Achievement.topBalance7().getName())));
-		buttons.add(Achievement.topBalance8().getButton(achievements.contains(Achievement.topBalance8().getName())));
-		buttons.add(Achievement.topBalance9().getButton(achievements.contains(Achievement.topBalance9().getName())));
+		buttons.add(Achievement.topBalance1().getButton(achievements.contains(Achievement.topBalance1().getID())));
+		buttons.add(Achievement.topBalance2().getButton(achievements.contains(Achievement.topBalance2().getID())));
+		buttons.add(Achievement.topBalance3().getButton(achievements.contains(Achievement.topBalance3().getID())));
+		buttons.add(Achievement.topBalance4().getButton(achievements.contains(Achievement.topBalance4().getID())));
+		buttons.add(Achievement.topBalance5().getButton(achievements.contains(Achievement.topBalance5().getID())));
+		buttons.add(Achievement.topBalance6().getButton(achievements.contains(Achievement.topBalance6().getID())));
+		buttons.add(Achievement.topBalance7().getButton(achievements.contains(Achievement.topBalance7().getID())));
+		buttons.add(Achievement.topBalance8().getButton(achievements.contains(Achievement.topBalance8().getID())));
+		buttons.add(Achievement.topBalance9().getButton(achievements.contains(Achievement.topBalance9().getID())));
 
-		buttons.add(Achievement.topKills1().getButton(achievements.contains(Achievement.topKills1().getName())));
-		buttons.add(Achievement.topKills2().getButton(achievements.contains(Achievement.topKills2().getName())));
-		buttons.add(Achievement.topKills3().getButton(achievements.contains(Achievement.topKills3().getName())));
-		buttons.add(Achievement.topKills4().getButton(achievements.contains(Achievement.topKills4().getName())));
-		buttons.add(Achievement.topKills5().getButton(achievements.contains(Achievement.topKills5().getName())));
-		buttons.add(Achievement.topKills6().getButton(achievements.contains(Achievement.topKills6().getName())));
-		buttons.add(Achievement.topKills7().getButton(achievements.contains(Achievement.topKills7().getName())));
-		buttons.add(Achievement.topKills8().getButton(achievements.contains(Achievement.topKills8().getName())));
-		buttons.add(Achievement.topKills9().getButton(achievements.contains(Achievement.topKills9().getName())));
+		buttons.add(Achievement.topKills1().getButton(achievements.contains(Achievement.topKills1().getID())));
+		buttons.add(Achievement.topKills2().getButton(achievements.contains(Achievement.topKills2().getID())));
+		buttons.add(Achievement.topKills3().getButton(achievements.contains(Achievement.topKills3().getID())));
+		buttons.add(Achievement.topKills4().getButton(achievements.contains(Achievement.topKills4().getID())));
+		buttons.add(Achievement.topKills5().getButton(achievements.contains(Achievement.topKills5().getID())));
+		buttons.add(Achievement.topKills6().getButton(achievements.contains(Achievement.topKills6().getID())));
+		buttons.add(Achievement.topKills7().getButton(achievements.contains(Achievement.topKills7().getID())));
+		buttons.add(Achievement.topKills8().getButton(achievements.contains(Achievement.topKills8().getID())));
+		buttons.add(Achievement.topKills9().getButton(achievements.contains(Achievement.topKills9().getID())));
 
-		buttons.add(Achievement.topWave1().getButton(achievements.contains(Achievement.topWave1().getName())));
-		buttons.add(Achievement.topWave2().getButton(achievements.contains(Achievement.topWave2().getName())));
-		buttons.add(Achievement.topWave3().getButton(achievements.contains(Achievement.topWave3().getName())));
-		buttons.add(Achievement.topWave4().getButton(achievements.contains(Achievement.topWave4().getName())));
-		buttons.add(Achievement.topWave5().getButton(achievements.contains(Achievement.topWave5().getName())));
-		buttons.add(Achievement.topWave6().getButton(achievements.contains(Achievement.topWave6().getName())));
-		buttons.add(Achievement.topWave7().getButton(achievements.contains(Achievement.topWave7().getName())));
-		buttons.add(Achievement.topWave8().getButton(achievements.contains(Achievement.topWave8().getName())));
-		buttons.add(Achievement.topWave9().getButton(achievements.contains(Achievement.topWave9().getName())));
+		buttons.add(Achievement.topWave1().getButton(achievements.contains(Achievement.topWave1().getID())));
+		buttons.add(Achievement.topWave2().getButton(achievements.contains(Achievement.topWave2().getID())));
+		buttons.add(Achievement.topWave3().getButton(achievements.contains(Achievement.topWave3().getID())));
+		buttons.add(Achievement.topWave4().getButton(achievements.contains(Achievement.topWave4().getID())));
+		buttons.add(Achievement.topWave5().getButton(achievements.contains(Achievement.topWave5().getID())));
+		buttons.add(Achievement.topWave6().getButton(achievements.contains(Achievement.topWave6().getID())));
+		buttons.add(Achievement.topWave7().getButton(achievements.contains(Achievement.topWave7().getID())));
+		buttons.add(Achievement.topWave8().getButton(achievements.contains(Achievement.topWave8().getID())));
+		buttons.add(Achievement.topWave9().getButton(achievements.contains(Achievement.topWave9().getID())));
 
-		buttons.add(Achievement.totalGems1().getButton(achievements.contains(Achievement.totalGems1().getName())));
-		buttons.add(Achievement.totalGems2().getButton(achievements.contains(Achievement.totalGems2().getName())));
-		buttons.add(Achievement.totalGems3().getButton(achievements.contains(Achievement.totalGems3().getName())));
-		buttons.add(Achievement.totalGems4().getButton(achievements.contains(Achievement.totalGems4().getName())));
-		buttons.add(Achievement.totalGems5().getButton(achievements.contains(Achievement.totalGems5().getName())));
-		buttons.add(Achievement.totalGems6().getButton(achievements.contains(Achievement.totalGems6().getName())));
-		buttons.add(Achievement.totalGems7().getButton(achievements.contains(Achievement.totalGems7().getName())));
-		buttons.add(Achievement.totalGems8().getButton(achievements.contains(Achievement.totalGems8().getName())));
-		buttons.add(Achievement.totalGems9().getButton(achievements.contains(Achievement.totalGems9().getName())));
+		buttons.add(Achievement.totalGems1().getButton(achievements.contains(Achievement.totalGems1().getID())));
+		buttons.add(Achievement.totalGems2().getButton(achievements.contains(Achievement.totalGems2().getID())));
+		buttons.add(Achievement.totalGems3().getButton(achievements.contains(Achievement.totalGems3().getID())));
+		buttons.add(Achievement.totalGems4().getButton(achievements.contains(Achievement.totalGems4().getID())));
+		buttons.add(Achievement.totalGems5().getButton(achievements.contains(Achievement.totalGems5().getID())));
+		buttons.add(Achievement.totalGems6().getButton(achievements.contains(Achievement.totalGems6().getID())));
+		buttons.add(Achievement.totalGems7().getButton(achievements.contains(Achievement.totalGems7().getID())));
+		buttons.add(Achievement.totalGems8().getButton(achievements.contains(Achievement.totalGems8().getID())));
+		buttons.add(Achievement.totalGems9().getButton(achievements.contains(Achievement.totalGems9().getID())));
 
-		buttons.add(Achievement.totalKills1().getButton(achievements.contains(Achievement.totalKills1().getName())));
-		buttons.add(Achievement.totalKills2().getButton(achievements.contains(Achievement.totalKills2().getName())));
-		buttons.add(Achievement.totalKills3().getButton(achievements.contains(Achievement.totalKills3().getName())));
-		buttons.add(Achievement.totalKills4().getButton(achievements.contains(Achievement.totalKills4().getName())));
-		buttons.add(Achievement.totalKills5().getButton(achievements.contains(Achievement.totalKills5().getName())));
-		buttons.add(Achievement.totalKills6().getButton(achievements.contains(Achievement.totalKills6().getName())));
-		buttons.add(Achievement.totalKills7().getButton(achievements.contains(Achievement.totalKills7().getName())));
-		buttons.add(Achievement.totalKills8().getButton(achievements.contains(Achievement.totalKills8().getName())));
-		buttons.add(Achievement.totalKills9().getButton(achievements.contains(Achievement.totalKills9().getName())));
+		buttons.add(Achievement.totalKills1().getButton(achievements.contains(Achievement.totalKills1().getID())));
+		buttons.add(Achievement.totalKills2().getButton(achievements.contains(Achievement.totalKills2().getID())));
+		buttons.add(Achievement.totalKills3().getButton(achievements.contains(Achievement.totalKills3().getID())));
+		buttons.add(Achievement.totalKills4().getButton(achievements.contains(Achievement.totalKills4().getID())));
+		buttons.add(Achievement.totalKills5().getButton(achievements.contains(Achievement.totalKills5().getID())));
+		buttons.add(Achievement.totalKills6().getButton(achievements.contains(Achievement.totalKills6().getID())));
+		buttons.add(Achievement.totalKills7().getButton(achievements.contains(Achievement.totalKills7().getID())));
+		buttons.add(Achievement.totalKills8().getButton(achievements.contains(Achievement.totalKills8().getID())));
+		buttons.add(Achievement.totalKills9().getButton(achievements.contains(Achievement.totalKills9().getID())));
 
-		buttons.add(Achievement.amputeeAlone().getButton(achievements.contains(Achievement.amputeeAlone().getName())));
-		buttons.add(Achievement.blindAlone().getButton(achievements.contains(Achievement.blindAlone().getName())));
-		buttons.add(Achievement.clumsyAlone().getButton(achievements.contains(Achievement.clumsyAlone().getName())));
-		buttons.add(Achievement.dwarfAlone().getButton(achievements.contains(Achievement.dwarfAlone().getName())));
+		buttons.add(Achievement.amputeeAlone().getButton(achievements.contains(Achievement.amputeeAlone().getID())));
+		buttons.add(Achievement.blindAlone().getButton(achievements.contains(Achievement.blindAlone().getID())));
+		buttons.add(Achievement.clumsyAlone().getButton(achievements.contains(Achievement.clumsyAlone().getID())));
+		buttons.add(Achievement.dwarfAlone().getButton(achievements.contains(Achievement.dwarfAlone().getID())));
 		buttons.add(Achievement.explosiveAlone().getButton(achievements.contains(
-				Achievement.explosiveAlone().getName())));
+				Achievement.explosiveAlone().getID())));
 		buttons.add(Achievement.featherweightAlone().getButton(achievements.contains(
-				Achievement.featherweightAlone().getName())));
-		buttons.add(Achievement.nakedAlone().getButton(achievements.contains(Achievement.nakedAlone().getName())));
+				Achievement.featherweightAlone().getID())));
+		buttons.add(Achievement.nakedAlone().getButton(achievements.contains(Achievement.nakedAlone().getID())));
 		buttons.add(Achievement.pacifistAlone().getButton(achievements.contains(
-				Achievement.pacifistAlone().getName())));
-		buttons.add(Achievement.uhcAlone().getButton(achievements.contains(Achievement.uhcAlone().getName())));
+				Achievement.pacifistAlone().getID())));
+		buttons.add(Achievement.uhcAlone().getButton(achievements.contains(Achievement.uhcAlone().getID())));
 
 		buttons.add(Achievement.amputeeBalance().getButton(achievements.contains(
-				Achievement.amputeeBalance().getName())));
-		buttons.add(Achievement.blindBalance().getButton(achievements.contains(Achievement.blindBalance().getName())));
+				Achievement.amputeeBalance().getID())));
+		buttons.add(Achievement.blindBalance().getButton(achievements.contains(Achievement.blindBalance().getID())));
 		buttons.add(Achievement.clumsyBalance().getButton(achievements.contains(
-				Achievement.clumsyBalance().getName())));
-		buttons.add(Achievement.dwarfBalance().getButton(achievements.contains(Achievement.dwarfBalance().getName())));
+				Achievement.clumsyBalance().getID())));
+		buttons.add(Achievement.dwarfBalance().getButton(achievements.contains(Achievement.dwarfBalance().getID())));
 		buttons.add(Achievement.explosiveBalance().getButton(achievements.contains(
-				Achievement.explosiveBalance().getName())));
+				Achievement.explosiveBalance().getID())));
 		buttons.add(Achievement.featherweightBalance().getButton(achievements.contains(
-				Achievement.featherweightBalance().getName())));
-		buttons.add(Achievement.nakedBalance().getButton(achievements.contains(Achievement.nakedBalance().getName())));
+				Achievement.featherweightBalance().getID())));
+		buttons.add(Achievement.nakedBalance().getButton(achievements.contains(Achievement.nakedBalance().getID())));
 		buttons.add(Achievement.pacifistBalance().getButton(achievements.contains(
-				Achievement.pacifistBalance().getName())));
-		buttons.add(Achievement.uhcBalance().getButton(achievements.contains(Achievement.uhcBalance().getName())));
+				Achievement.pacifistBalance().getID())));
+		buttons.add(Achievement.uhcBalance().getButton(achievements.contains(Achievement.uhcBalance().getID())));
 
-		buttons.add(Achievement.amputeeKills().getButton(achievements.contains(Achievement.amputeeKills().getName())));
-		buttons.add(Achievement.blindKills().getButton(achievements.contains(Achievement.blindKills().getName())));
-		buttons.add(Achievement.clumsyKills().getButton(achievements.contains(Achievement.clumsyKills().getName())));
-		buttons.add(Achievement.dwarfKills().getButton(achievements.contains(Achievement.dwarfKills().getName())));
+		buttons.add(Achievement.amputeeKills().getButton(achievements.contains(Achievement.amputeeKills().getID())));
+		buttons.add(Achievement.blindKills().getButton(achievements.contains(Achievement.blindKills().getID())));
+		buttons.add(Achievement.clumsyKills().getButton(achievements.contains(Achievement.clumsyKills().getID())));
+		buttons.add(Achievement.dwarfKills().getButton(achievements.contains(Achievement.dwarfKills().getID())));
 		buttons.add(Achievement.explosiveKills().getButton(achievements.contains(
-				Achievement.explosiveKills().getName())));
+				Achievement.explosiveKills().getID())));
 		buttons.add(Achievement.featherweightKills().getButton(achievements.contains(
-				Achievement.featherweightKills().getName())));
-		buttons.add(Achievement.nakedKills().getButton(achievements.contains(Achievement.nakedKills().getName())));
+				Achievement.featherweightKills().getID())));
+		buttons.add(Achievement.nakedKills().getButton(achievements.contains(Achievement.nakedKills().getID())));
 		buttons.add(Achievement.pacifistKills().getButton(achievements.contains(
-				Achievement.pacifistKills().getName())));
-		buttons.add(Achievement.uhcKills().getButton(achievements.contains(Achievement.uhcKills().getName())));
+				Achievement.pacifistKills().getID())));
+		buttons.add(Achievement.uhcKills().getButton(achievements.contains(Achievement.uhcKills().getID())));
 
-		buttons.add(Achievement.amputeeWave().getButton(achievements.contains(Achievement.amputeeWave().getName())));
-		buttons.add(Achievement.blindWave().getButton(achievements.contains(Achievement.blindWave().getName())));
-		buttons.add(Achievement.clumsyWave().getButton(achievements.contains(Achievement.clumsyWave().getName())));
-		buttons.add(Achievement.dwarfWave().getButton(achievements.contains(Achievement.dwarfWave().getName())));
+		buttons.add(Achievement.amputeeWave().getButton(achievements.contains(Achievement.amputeeWave().getID())));
+		buttons.add(Achievement.blindWave().getButton(achievements.contains(Achievement.blindWave().getID())));
+		buttons.add(Achievement.clumsyWave().getButton(achievements.contains(Achievement.clumsyWave().getID())));
+		buttons.add(Achievement.dwarfWave().getButton(achievements.contains(Achievement.dwarfWave().getID())));
 		buttons.add(Achievement.explosiveWave().getButton(achievements.contains(
-				Achievement.explosiveWave().getName())));
+				Achievement.explosiveWave().getID())));
 		buttons.add(Achievement.featherweightWave().getButton(achievements.contains(
-				Achievement.featherweightWave().getName())));
-		buttons.add(Achievement.nakedWave().getButton(achievements.contains(Achievement.nakedWave().getName())));
+				Achievement.featherweightWave().getID())));
+		buttons.add(Achievement.nakedWave().getButton(achievements.contains(Achievement.nakedWave().getID())));
 		buttons.add(Achievement.pacifistWave().getButton(achievements.contains(
-				Achievement.pacifistWave().getName())));
-		buttons.add(Achievement.uhcWave().getButton(achievements.contains(Achievement.uhcWave().getName())));
+				Achievement.pacifistWave().getID())));
+		buttons.add(Achievement.uhcWave().getButton(achievements.contains(Achievement.uhcWave().getID())));
 
-		buttons.add(Achievement.alone().getButton(achievements.contains(Achievement.alone().getName())));
-		buttons.add(Achievement.pacifistUhc().getButton(achievements.contains(Achievement.pacifistUhc().getName())));
-		buttons.add(Achievement.allChallenges().getButton(achievements.contains(Achievement.allChallenges().getName())));
-		buttons.add(Achievement.allGift().getButton(achievements.contains(Achievement.allGift().getName())));
-		buttons.add(Achievement.allAbility().getButton(achievements.contains(Achievement.allAbility().getName())));
-		buttons.add(Achievement.maxedAbility().getButton(achievements.contains(Achievement.maxedAbility().getName())));
-		buttons.add(Achievement.allMaxedAbility().getButton(achievements.contains(Achievement.allMaxedAbility().getName())));
-		buttons.add(Achievement.allEffect().getButton(achievements.contains(Achievement.allEffect().getName())));
-		buttons.add(Achievement.allKits().getButton(achievements.contains(Achievement.allKits().getName())));
+		buttons.add(Achievement.alone().getButton(achievements.contains(Achievement.alone().getID())));
+		buttons.add(Achievement.pacifistUhc().getButton(achievements.contains(Achievement.pacifistUhc().getID())));
+		buttons.add(Achievement.allChallenges().getButton(achievements.contains(Achievement.allChallenges().getID())));
+		buttons.add(Achievement.allGift().getButton(achievements.contains(Achievement.allGift().getID())));
+		buttons.add(Achievement.allAbility().getButton(achievements.contains(Achievement.allAbility().getID())));
+		buttons.add(Achievement.maxedAbility().getButton(achievements.contains(Achievement.maxedAbility().getID())));
+		buttons.add(Achievement.allMaxedAbility().getButton(achievements.contains(Achievement.allMaxedAbility().getID())));
+		buttons.add(Achievement.allEffect().getButton(achievements.contains(Achievement.allEffect().getID())));
+		buttons.add(Achievement.allKits().getButton(achievements.contains(Achievement.allKits().getID())));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
 				new InventoryMeta(InventoryID.PLAYER_ACHIEVEMENTS_MENU, InventoryType.MENU, page, owner),

@@ -96,6 +96,38 @@ public class GameItems {
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
+	public static @NotNull ItemStack boostToggle(boolean boosted) {
+		HashMap<Enchantment, Integer> enchants = new HashMap<>();
+		enchants.put(Enchantment.DURABILITY, 1);
+
+		ItemStack item = ItemManager.createItem(Material.FIREWORK_ROCKET,
+				CommunicationManager.format("&b&l" + LanguageManager.names.boosts + ": " +
+						getToggleStatus(boosted)),
+				ItemManager.HIDE_ENCHANT_FLAGS, enchants);
+
+		return item == null ? new ItemStack(Material.AIR) : item;
+	}
+	public static @NotNull ItemStack shareToggle(boolean sharing) {
+		HashMap<Enchantment, Integer> enchants = new HashMap<>();
+		enchants.put(Enchantment.DURABILITY, 1);
+
+		ItemStack item = ItemManager.createItem(Material.DISPENSER,
+				CommunicationManager.format("&b&l" + LanguageManager.names.effectShare + ": " +
+						getToggleStatus(sharing)),
+				ItemManager.HIDE_ENCHANT_FLAGS, enchants);
+
+		return item == null ? new ItemStack(Material.AIR) : item;
+	}
+	public static @NotNull ItemStack crystalConverter() {
+		HashMap<Enchantment, Integer> enchants = new HashMap<>();
+		enchants.put(Enchantment.DURABILITY, 1);
+
+		ItemStack item = ItemManager.createItem(Material.DIAMOND,
+				CommunicationManager.format("&b&l" + LanguageManager.names.crystalConverter),
+				ItemManager.HIDE_ENCHANT_FLAGS, enchants);
+
+		return item == null ? new ItemStack(Material.AIR) : item;
+	}
 	public static @NotNull ItemStack leave() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
@@ -6151,5 +6183,14 @@ public class GameItems {
 					return golem();
 				else return experience();
 		}
+	}
+
+	// Easy way to get a string for a toggle status
+	private static String getToggleStatus(boolean status) {
+		String toggle;
+		if (status)
+			toggle = "&a&l" + LanguageManager.messages.onToggle;
+		else toggle = "&c&l" + LanguageManager.messages.offToggle;
+		return toggle;
 	}
 }

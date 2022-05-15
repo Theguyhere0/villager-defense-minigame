@@ -125,28 +125,45 @@ public class GameManager {
 		Objective obj = board.registerNewObjective("VillagerDefense", "dummy",
 				CommunicationManager.format("&6&l   " + arena.getName() + "  "));
 		obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-		Score score12 = obj.getScore(CommunicationManager.format("&e" + LanguageManager.messages.wave + ": " +
+
+		Score score13 = obj.getScore(CommunicationManager.format("&e" + LanguageManager.messages.wave + ": " +
 				arena.getCurrentWave()));
-		score12.setScore(12);
-		Score score11 = obj.getScore(CommunicationManager.format("&a" + LanguageManager.messages.gems + ": " +
+		score13.setScore(13);
+
+		Score score12 = obj.getScore(CommunicationManager.format("&a" + LanguageManager.messages.gems + ": " +
 				player.getGems()));
-		score11.setScore(11);
+		score12.setScore(12);
+
 		StringBuilder kit = new StringBuilder(player.getKit().getName());
+		StringBuilder kit2 = new StringBuilder("    ");
 		if (player.getKit().isMultiLevel()) {
 			kit.append(" ");
 			for (int i = 0; i < Math.max(0, player.getKit().getLevel()); i++)
 				kit.append("I");
 		}
-		Score score10 = obj.getScore(CommunicationManager.format("&b" + LanguageManager.messages.kit + ": " +
+		if (player.getKit2() != null) {
+			kit.append(" +");
+			kit2.append(player.getKit2().getName());
+			if (player.getKit2().isMultiLevel()) {
+				kit2.append(" ");
+				for (int i = 0; i < Math.max(0, player.getKit2().getLevel()); i++)
+					kit2.append("I");
+			}
+		}
+		Score score11 = obj.getScore(CommunicationManager.format("&b" + LanguageManager.messages.kit + ": " +
 				kit));
+		score11.setScore(11);
+		Score score10 = obj.getScore(CommunicationManager.format("&b" + kit2));
 		score10.setScore(10);
+
 		int bonus = 0;
 		for (Challenge challenge : player.getChallenges())
 			bonus += challenge.getBonus();
 		Score score9 = obj.getScore(CommunicationManager.format(String.format("&5" +
 				LanguageManager.messages.challenges + ": (+%d%%)", bonus)));
 		score9.setScore(9);
-		if (player.getChallenges().size() < 4)
+
+		if (player.getChallenges().size() < (player.getKit2() != null ? 3 : 4))
 			for (Challenge challenge : player.getChallenges()) {
 				Score score8 = obj.getScore(CommunicationManager.format("  &5" + challenge.getName()));
 				score8.setScore(8);
@@ -158,24 +175,32 @@ public class GameManager {
 			Score score8 = obj.getScore(CommunicationManager.format("  &5" + challenges));
 			score8.setScore(8);
 		}
+
 		Score score7 = obj.getScore("");
 		score7.setScore(7);
+
 		Score score6 = obj.getScore(CommunicationManager.format("&d" + LanguageManager.messages.players + ": " +
 				arena.getAlive()));
 		score6.setScore(6);
+
 		Score score5 = obj.getScore(LanguageManager.messages.ghosts + ": " + arena.getGhostCount());
 		score5.setScore(5);
+
 		Score score4 = obj.getScore(CommunicationManager.format("&7" + LanguageManager.messages.spectators +
 				": " + arena.getSpectatorCount()));
 		score4.setScore(4);
+
 		Score score3 = obj.getScore(" ");
 		score3.setScore(3);
+
 		Score score2 = obj.getScore(CommunicationManager.format("&2" + LanguageManager.messages.villagers + ": " +
 				arena.getVillagers()));
 		score2.setScore(2);
+
 		Score score1 = obj.getScore(CommunicationManager.format("&c" + LanguageManager.messages.enemies + ": " +
 				arena.getEnemies()));
 		score1.setScore(1);
+
 		Score score = obj.getScore(CommunicationManager.format("&4" + LanguageManager.messages.kills + ": " +
 				player.getKills()));
 		score.setScore(0);

@@ -1,15 +1,21 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
-import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.*;
-import me.theguyhere.villagerdefense.plugin.game.models.*;
+import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
+import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.models.Mobs;
+import me.theguyhere.villagerdefense.plugin.game.models.Tasks;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.AchievementChecker;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.*;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.tools.*;
+import me.theguyhere.villagerdefense.plugin.tools.DataManager;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.tools.WorldManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -115,10 +121,7 @@ public class ArenaListener implements Listener {
                     CommunicationManager.debugError(err.getMessage(), 0);
                 }
 
-            // Give player choice options
-            player.getInventory().setItem(2, GameItems.kitSelector());
-            player.getInventory().setItem(4, GameItems.challengeSelector());
-            player.getInventory().setItem(6, GameItems.leave());
+            PlayerManager.giveChoiceItems(fighter);
 
             // Debug message to console
             CommunicationManager.debugInfo(player.getName() + "joined " + arena.getName(), 2);

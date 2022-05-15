@@ -18,6 +18,7 @@ public class LanguageManager {
     public static Messages messages;
     public static Names names;
     public static PlayerStats playerStats;
+    public static Rewards rewards;
 
     public static void init(FileConfiguration config) throws InvalidLanguageKeyException {
         LanguageManager.config = config;
@@ -32,6 +33,7 @@ public class LanguageManager {
         LanguageManager.messages = new Messages();
         LanguageManager.names = new Names();
         LanguageManager.playerStats = new PlayerStats();
+        LanguageManager.rewards = new Rewards();
     }
 
     private static abstract class Section {
@@ -242,12 +244,14 @@ public class LanguageManager {
         public final @NotNull String achievement;
         public final @NotNull String autoUpdate;
         public final @NotNull String balanceSet;
+        public final @NotNull String boostAdd;
         public final @NotNull String boots;
         public final @NotNull String buy;
         public final @NotNull String carePackage;
         public final @NotNull String challengeAdd;
         public final @NotNull String challengeDelete;
         public final @NotNull String chestplate;
+        public final @NotNull String crystalAdd;
         public final @NotNull String enchant;
         public final @NotNull String helmet;
         public final @NotNull String kitBuy;
@@ -261,12 +265,14 @@ public class LanguageManager {
             achievement = getConfigString(pathPrefix + ".achievement");
             autoUpdate = getConfigString(pathPrefix + ".autoUpdate");
             balanceSet = getConfigString(pathPrefix + ".balanceSet");
+            boostAdd = getConfigString(pathPrefix + ".boostAdd");
             boots = getConfigString(pathPrefix + ".boots");
             buy = getConfigString(pathPrefix + ".buy");
             carePackage = getConfigString(pathPrefix + ".carePackage");
             challengeAdd = getConfigString(pathPrefix + ".challengeAdd");
             challengeDelete = getConfigString(pathPrefix + ".challengeDelete");
             chestplate = getConfigString(pathPrefix + ".chestplate");
+            crystalAdd = getConfigString(pathPrefix + ".crystalAdd");
             enchant = getConfigString(pathPrefix + ".enchant");
             helmet = getConfigString(pathPrefix + ".helmet");
             kitBuy = getConfigString(pathPrefix + ".kitBuy");
@@ -708,6 +714,7 @@ public class LanguageManager {
         public final @NotNull String record;
         public final @NotNull String records;
         public final @NotNull String restartPlugin;
+        public final @NotNull String resurrection;
         public final @NotNull String rightClick;
         public final @NotNull String secondsLeft;
         public final @NotNull String shopInfo;
@@ -797,6 +804,7 @@ public class LanguageManager {
             record = getConfigString(pathPrefix + ".record");
             records = getConfigString(pathPrefix + ".records");
             restartPlugin = getConfigString(pathPrefix + ".restartPlugin");
+            resurrection = getConfigString(pathPrefix + ".resurrection");
             rightClick = getConfigString(pathPrefix + ".rightClick");
             secondsLeft = getConfigString(pathPrefix + ".secondsLeft");
             shopInfo = getConfigString(pathPrefix + ".shopInfo");
@@ -820,6 +828,7 @@ public class LanguageManager {
     public static class Names extends Section {
         public final @NotNull String abilityKits;
         public final @NotNull String armorShop;
+        public final @NotNull String boosts;
         public final @NotNull String carePackageExtra;
         public final @NotNull String carePackageLarge;
         public final @NotNull String carePackageMedium;
@@ -828,11 +837,13 @@ public class LanguageManager {
         public final @NotNull String communityChest;
         public final @NotNull String consumableShop;
         public final @NotNull String contents;
+        public final @NotNull String crystalConverter;
         public final @NotNull String crystals;
         public final @NotNull String customShop;
         public final @NotNull String defaultShop;
         public final @NotNull String easy;
         public final @NotNull String effectKits;
+        public final @NotNull String effectShare;
         public final @NotNull String enchantBook;
         public final @NotNull String enchantShop;
         public final @NotNull String essence;
@@ -855,6 +866,7 @@ public class LanguageManager {
 
             abilityKits = getConfigString(pathPrefix + ".abilityKits");
             armorShop = getConfigString(pathPrefix + ".armorShop");
+            boosts = getConfigString(pathPrefix + ".boosts");
             carePackageExtra = getConfigString(pathPrefix + ".carePackageExtra");
             carePackageLarge = getConfigString(pathPrefix + ".carePackageLarge");
             carePackageMedium = getConfigString(pathPrefix + ".carePackageMedium");
@@ -863,11 +875,13 @@ public class LanguageManager {
             communityChest = getConfigString(pathPrefix + ".communityChest");
             consumableShop = getConfigString(pathPrefix + ".consumableShop");
             contents = getConfigString(pathPrefix + ".contents");
+            crystalConverter = getConfigString(pathPrefix + ".crystalConverter");
             crystals = getConfigString(pathPrefix + ".crystals");
             customShop = getConfigString(pathPrefix + ".customShop");
             defaultShop = getConfigString(pathPrefix + ".defaultShop");
             easy = getConfigString(pathPrefix + ".easy");
             effectKits = getConfigString(pathPrefix + ".effectKits");
+            effectShare = getConfigString(pathPrefix + ".effectShare");
             enchantBook = getConfigString(pathPrefix + ".enchantBook");
             enchantShop = getConfigString(pathPrefix + ".enchantShop");
             essence = getConfigString(pathPrefix + ".essence");
@@ -914,6 +928,34 @@ public class LanguageManager {
                 description = getConfigString(pathPrefix + ".description");
                 leaderboard = getConfigString(pathPrefix + ".leaderboard");
             }
+        }
+    }
+
+    public static class Rewards extends Section {
+        public final @NotNull String cooldownReduction;
+        public final @NotNull String crystalConvert;
+        public final @NotNull String crystals;
+        public final @NotNull String damageIncrease;
+        public final @NotNull String damageReduction;
+        public final @NotNull String gemIncrease;
+        public final @NotNull String healthIncrease;
+        public final @NotNull String resurrection;
+        public final @NotNull String shareEffect;
+        public final @NotNull String twoKits;
+
+        public Rewards() throws InvalidLanguageKeyException {
+            String pathPrefix = "rewards";
+
+            cooldownReduction = getConfigString(pathPrefix + ".cooldownReduction");
+            crystalConvert = getConfigString(pathPrefix + ".crystalConvert");
+            crystals = getConfigString(pathPrefix + ".crystals");
+            damageIncrease = getConfigString(pathPrefix + ".damageIncrease");
+            damageReduction = getConfigString(pathPrefix + ".damageReduction");
+            gemIncrease = getConfigString(pathPrefix + ".gemIncrease");
+            healthIncrease = getConfigString(pathPrefix + ".healthIncrease");
+            resurrection = getConfigString(pathPrefix + ".resurrection");
+            shareEffect = getConfigString(pathPrefix + ".shareEffect");
+            twoKits = getConfigString(pathPrefix + ".twoKits");
         }
     }
 }

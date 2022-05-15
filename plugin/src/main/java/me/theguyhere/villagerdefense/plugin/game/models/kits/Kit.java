@@ -680,4 +680,34 @@ public class Kit {
 
         return kit;
     }
+
+    public static Kit randomKit() {
+        Random random = new Random();
+        switch(random.nextInt(23)) {
+            case 0: return orc();
+            case 1: return farmer();
+            case 2: return soldier();
+            case 3: return tailor();
+            case 4: return alchemist();
+            case 5: return trader();
+            case 6: return summoner();
+            case 7: return reaper();
+            case 8: return phantom();
+            case 9: return mage();
+            case 10: return ninja();
+            case 11: return templar();
+            case 12: return warrior();
+            case 13: return knight();
+            case 14: return priest();
+            case 15: return siren();
+            case 16: return monk();
+            case 17: return messenger();
+            case 18: return blacksmith();
+            case 19: return witch();
+            case 20: return merchant();
+            case 21: return vampire();
+            case 22: return giant();
+            default: return none();
+        }
+    }
 }

@@ -47,7 +47,7 @@ public class Main extends JavaPlugin {
 	public static final int arenaDataVersion = 6;
 	public static final int playerDataVersion = 2;
 	public static final int spawnTableVersion = 1;
-	public static final int languageFileVersion = 15;
+	public static final int languageFileVersion = 16;
 	public static final int defaultSpawnVersion = 2;
 
 	@Override
@@ -140,6 +140,7 @@ public class Main extends JavaPlugin {
 		pm.registerEvents(new AbilityListener(), this);
 		pm.registerEvents(new ChallengeListener(), this);
 		pm.registerEvents(new WorldListener(), this);
+		pm.registerEvents(new BonusListener(), this);
 
 		// Add packet listeners for online players
 		for (Player player : Bukkit.getOnlinePlayers())

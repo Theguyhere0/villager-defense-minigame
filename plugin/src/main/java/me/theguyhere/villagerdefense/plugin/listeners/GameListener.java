@@ -2,6 +2,7 @@ package me.theguyhere.villagerdefense.plugin.listeners;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
@@ -422,6 +423,18 @@ public class GameListener implements Listener {
 		else if (GameItems.challengeSelector().equals(item))
 			player.openInventory(Inventories.createSelectChallengesMenu(gamer, arena));
 
+		// Toggle boost
+		else if (GameItems.boostToggle(true).equals(item) || GameItems.boostToggle(false).equals(item)) {
+			gamer.toggleBoost();
+			PlayerManager.giveChoiceItems(gamer);
+		}
+
+		// Toggle share
+		else if (GameItems.shareToggle(true).equals(item) || GameItems.shareToggle(false).equals(item)) {
+			gamer.toggleShare();
+			PlayerManager.giveChoiceItems(gamer);
+		}
+
 		// Make player leave
 		else if (GameItems.leave().equals(item))
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
@@ -594,6 +607,14 @@ public class GameListener implements Listener {
 			int temp = r.nextInt((int) (50 * Math.pow(wave, .15)));
 			earned += temp == 0 ? 1 : temp;
 		}
+
+		// Check if player has gem increase achievement and is boosted
+		FileConfiguration playerData = Main.plugin.getPlayerData();
+		String path = player.getUniqueId() + ".achievements";
+		if (playerData.contains(path) && gamer.isBoosted() &&
+				playerData.getStringList(path).contains(Achievement.topBalance9().getID()))
+			earned *= 1.1;
+
 		gamer.addGems(earned);
 
 		// Cancel picking up of emeralds and notify player
@@ -604,8 +625,6 @@ public class GameListener implements Listener {
 						ChatColor.AQUA, Integer.toString(earned))));
 		if (arena.hasGemSound())
 			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, .5f, 0);
-
-		FileConfiguration playerData = Main.plugin.getPlayerData();
 
 		// Update player stats
 		playerData.set(player.getUniqueId() + ".totalGems",
@@ -650,8 +669,20 @@ public class GameListener implements Listener {
 		if (player.getInventory().getItemInMainHand().getType() == Material.TOTEM_OF_UNDYING ||
 				player.getInventory().getItemInOffHand().getType() == Material.TOTEM_OF_UNDYING) return;
 
-		// Set player to fake death mode
 		e.setCancelled(true);
+
+		// Check if player has resurrection achievement and is boosted
+		FileConfiguration playerData = Main.plugin.getPlayerData();
+		String path = player.getUniqueId() + ".achievements";
+		Random random = new Random();
+
+		if (playerData.contains(path) && gamer.isBoosted() && random.nextDouble() < .1 &&
+				playerData.getStringList(path).contains(Achievement.allChallenges().getID())) {
+			PlayerManager.giveTotemEffect(player);
+			return;
+		}
+
+		// Set player to fake death mode
 		PlayerManager.fakeDeath(gamer);
 
 		// Notify player of their own death
@@ -939,7 +970,8 @@ public class GameListener implements Listener {
 			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
 
 			// Give items and notify
-			if (gamer.getKit().equals(Kit.blacksmith().setKitLevel(1))) {
+			if (Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
+					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) {
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
 						GameItems.randWeapon(1))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
@@ -965,7 +997,8 @@ public class GameListener implements Listener {
 			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
 
 			// Give items and notify
-			if (gamer.getKit().equals(Kit.blacksmith().setKitLevel(1))) {
+			if (Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
+					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) {
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
 						GameItems.randWeapon(2))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
@@ -977,7 +1010,8 @@ public class GameListener implements Listener {
 						LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(2)),
 						LanguageManager.errors.inventoryFull);
-				if (gamer.getKit().equals(Kit.witch().setKitLevel(1)))
+				if (Kit.witch().setKitLevel(1).equals(gamer.getKit()) ||
+						Kit.witch().setKitLevel(1).equals(gamer.getKit2()))
 					PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
 							GameItems.randNotCare(2))), LanguageManager.errors.inventoryFull);
 				else PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(2)),
@@ -998,7 +1032,8 @@ public class GameListener implements Listener {
 			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
 
 			// Give items and notify
-			if (gamer.getKit().equals(Kit.blacksmith().setKitLevel(1))) {
+			if (Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
+					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) {
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
 						GameItems.randWeapon(4))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
@@ -1014,7 +1049,8 @@ public class GameListener implements Listener {
 						LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(3)),
 						LanguageManager.errors.inventoryFull);
-				if (gamer.getKit().equals(Kit.witch().setKitLevel(1)))
+				if (Kit.witch().setKitLevel(1).equals(gamer.getKit()) ||
+						Kit.witch().setKitLevel(1).equals(gamer.getKit2()))
 					PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
 							GameItems.randNotCare(3))), LanguageManager.errors.inventoryFull);
 				else PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(3)),
@@ -1035,7 +1071,8 @@ public class GameListener implements Listener {
 			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
 
 			// Give items and notify
-			if (gamer.getKit().equals(Kit.blacksmith().setKitLevel(1))) {
+			if (Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
+					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) {
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
 						GameItems.randWeapon(5))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
@@ -1057,7 +1094,8 @@ public class GameListener implements Listener {
 						LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(4)),
 						LanguageManager.errors.inventoryFull);
-				if (gamer.getKit().equals(Kit.witch().setKitLevel(1))) {
+				if (Kit.witch().setKitLevel(1).equals(gamer.getKit()) ||
+						Kit.witch().setKitLevel(1).equals(gamer.getKit2())) {
 					PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
 							GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
 					PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
