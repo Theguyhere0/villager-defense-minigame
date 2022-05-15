@@ -124,7 +124,7 @@ public class ArenaListener implements Listener {
             PlayerManager.giveChoiceItems(fighter);
 
             // Debug message to console
-            CommunicationManager.debugInfo(player.getName() + "joined " + arena.getName(), 2);
+            CommunicationManager.debugInfo(player.getName() + " joined " + arena.getName(), 2);
         }
 
         // Enter arena if late arrival is allowed
@@ -149,7 +149,7 @@ public class ArenaListener implements Listener {
             arena.getTask().giveItems(fighter);
 
             // Debug message to console
-            CommunicationManager.debugInfo(player.getName() + "joined " + arena.getName(), 2);
+            CommunicationManager.debugInfo(player.getName() + " joined " + arena.getName(), 2);
 
             // Don't touch task updating
             return;
@@ -166,7 +166,7 @@ public class ArenaListener implements Listener {
             arena.refreshPortal();
 
             // Debug message to console
-            CommunicationManager.debugInfo(player.getName() + "is spectating " + arena.getName(),
+            CommunicationManager.debugInfo(player.getName() + " is spectating " + arena.getName(),
                     2);
 
             // Don't touch task updating

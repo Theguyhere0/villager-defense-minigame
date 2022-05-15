@@ -396,7 +396,7 @@ public class Tasks {
 					Utils.secondsToTicks(15));
 
 			// Debug message to console
-			CommunicationManager.debugInfo("Starting wave " + currentWave + " for Arena " + arena, 2);
+			CommunicationManager.debugInfo("Starting wave " + currentWave + " for " + arena.getName(), 2);
 		}
 	};
 
@@ -479,7 +479,7 @@ public class Tasks {
 				messageSent = false;
 
 				// Debug message to console
-				CommunicationManager.debugInfo("Adding time limit bar to Arena " + arena, 2);
+				CommunicationManager.debugInfo("Adding time limit bar to " + arena.getName(), 2);
 			}
 
 			else {

@@ -862,6 +862,20 @@ public class GameListener implements Listener {
 			e.setCancelled(true);
 	}
 
+	// Stop spawning babies
+	@EventHandler
+	public void onBabyAttempt(PlayerInteractEntityEvent e) {
+		// Check for player in game
+		if (GameManager.getArena(e.getPlayer()) == null)
+			return;
+
+		// Check for wolf
+		if (!(e.getRightClicked() instanceof Wolf))
+			return;
+
+		e.setCancelled(true);
+	}
+
 	// Manage spawning pets and care packages
 	@EventHandler
 	public void onConsume(PlayerInteractEvent e) {
