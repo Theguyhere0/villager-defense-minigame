@@ -10,6 +10,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.AchievementChecker;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
@@ -31,10 +32,7 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class InventoryListener implements Listener {
 	// Prevent losing items by drag clicking in custom inventory
@@ -2832,6 +2830,7 @@ public class InventoryListener implements Listener {
 				return;
 
 			int cost = Integer.parseInt(lore.get(lore.size() - 1).substring(10));
+			Random random = new Random();
 
 			// Check if they can afford the item
 			if (!gamer.canAfford(cost)) {
@@ -2842,21 +2841,37 @@ public class InventoryListener implements Listener {
 			// Remove cost meta
 			buy = ItemManager.removeLastLore(buy);
 
-			// Make unbreakable for blacksmith
-			if (Kit.blacksmith().getName().equals(gamer.getKit().getName()) ||
-					Kit.blacksmith().getName().equals(gamer.getKit2().getName()))
+			// Make unbreakable for blacksmith (not sharing)
+			if ((Kit.blacksmith().getName().equals(gamer.getKit().getName()) ||
+					Kit.blacksmith().getName().equals(gamer.getKit2().getName())) && !gamer.isSharing())
 				buy = ItemManager.makeUnbreakable(buy);
 
-			// Make splash potion for witch
-			if (Kit.witch().getName().equals(gamer.getKit().getName()) ||
-					Kit.witch().getName().equals(gamer.getKit2().getName()))
+			// Make unbreakable for successful blacksmith sharing
+			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.BLACKSMITH))) {
+				buy = ItemManager.makeUnbreakable(buy);
+				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+			}
+
+			// Make splash potion for witch (not sharing)
+			if ((Kit.witch().getName().equals(gamer.getKit().getName()) ||
+					Kit.witch().getName().equals(gamer.getKit2().getName())) && !gamer.isSharing())
 				buy = ItemManager.makeSplash(buy);
+
+			// Make splash potion for successful witch sharing
+			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.WITCH))) {
+				buy = ItemManager.makeSplash(buy);
+				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+			}
 
 			// Subtract from balance, apply rebate, and update scoreboard
 			gamer.addGems(-cost);
-			if (Kit.merchant().getName().equals(gamer.getKit().getName()) ||
-					Kit.merchant().getName().equals(gamer.getKit2().getName()))
+			if ((Kit.merchant().getName().equals(gamer.getKit().getName()) ||
+					Kit.merchant().getName().equals(gamer.getKit2().getName())) && !gamer.isSharing())
 				gamer.addGems(cost / 10);
+			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.MERCHANT))) {
+				gamer.addGems(cost / 10);
+				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+			}
 			GameManager.createBoard(gamer);
 
 			EntityEquipment equipment = Objects.requireNonNull(player.getPlayer()).getEquipment();

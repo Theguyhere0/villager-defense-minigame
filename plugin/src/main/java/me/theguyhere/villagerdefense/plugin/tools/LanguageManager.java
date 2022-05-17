@@ -673,6 +673,7 @@ public class LanguageManager {
         public final @NotNull String disabled;
         public final @NotNull String earnedGems;
         public final @NotNull String effectKitsDescription;
+        public final @NotNull String effectShare;
         public final @NotNull String enchantInstruction;
         public final @NotNull String end;
         public final @NotNull String ending;
@@ -766,6 +767,7 @@ public class LanguageManager {
             disabled = getConfigString(pathPrefix + ".disabled");
             earnedGems = getConfigString(pathPrefix + ".earnedGems");
             effectKitsDescription = getConfigString(pathPrefix + ".effectKitsDescription");
+            effectShare = getConfigString(pathPrefix + ".effectShare");
             enchantInstruction = getConfigString(pathPrefix + ".enchantInstruction");
             end = getConfigString(pathPrefix + ".end");
             ending = getConfigString(pathPrefix + ".ending");

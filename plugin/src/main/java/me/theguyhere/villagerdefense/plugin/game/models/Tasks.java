@@ -3,6 +3,7 @@ package me.theguyhere.villagerdefense.plugin.game.models;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
+import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryID;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryType;
 import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
@@ -32,10 +33,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class Tasks {
@@ -200,17 +198,31 @@ public class Tasks {
 				if (CommunicationManager.getDebugLevel() >= 3 && player.getPlayer().hasPermission("vd.admin")) {
 				}
 
+				Random r = new Random();
+
 				// Set health for people with giant kits
-				if (Kit.giant().setKitLevel(1).equals(player.getKit()) ||
-						Kit.giant().setKitLevel(1).equals(player.getKit2()))
+				if ((Kit.giant().setKitLevel(1).equals(player.getKit()) ||
+						Kit.giant().setKitLevel(1).equals(player.getKit2())) && !player.isSharing())
 					Objects.requireNonNull(player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
 							.addModifier(new AttributeModifier("Giant1", 2,
 									AttributeModifier.Operation.ADD_NUMBER));
-				else if (Kit.giant().setKitLevel(2).equals(player.getKit()) ||
-						Kit.giant().setKitLevel(2).equals(player.getKit2()))
+				else if ((Kit.giant().setKitLevel(2).equals(player.getKit()) ||
+						Kit.giant().setKitLevel(2).equals(player.getKit2())) && !player.isSharing())
 					Objects.requireNonNull(player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
 							.addModifier(new AttributeModifier("Giant2", 4,
 									AttributeModifier.Operation.ADD_NUMBER));
+				else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT2))) {
+					Objects.requireNonNull(player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+							.addModifier(new AttributeModifier("Giant2", 4,
+									AttributeModifier.Operation.ADD_NUMBER));
+					PlayerManager.notifySuccess(player.getPlayer(), LanguageManager.messages.effectShare);
+				}
+				else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT1))) {
+					Objects.requireNonNull(player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+							.addModifier(new AttributeModifier("Giant1", 2,
+									AttributeModifier.Operation.ADD_NUMBER));
+					PlayerManager.notifySuccess(player.getPlayer(), LanguageManager.messages.effectShare);
+				}
 
 				// Set health for people with health boost and are boosted
 				if (playerData.contains(path) && player.isBoosted() &&
@@ -297,16 +309,31 @@ public class Tasks {
 				p.setStatus(PlayerStatus.ALIVE);
 				giveItems(p);
 
+				Random r = new Random();
+
 				// Set health for people with giant kits
-				if (Kit.giant().setKitLevel(1).equals(p.getKit()) || Kit.giant().setKitLevel(1).equals(p.getKit2()))
+				if ((Kit.giant().setKitLevel(1).equals(p.getKit()) ||
+						Kit.giant().setKitLevel(1).equals(p.getKit2())) && !p.isSharing())
 					Objects.requireNonNull(p.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
 							.addModifier(new AttributeModifier("Giant1", 2,
 									AttributeModifier.Operation.ADD_NUMBER));
-				else if (Kit.giant().setKitLevel(2).equals(p.getKit()) ||
-						Kit.giant().setKitLevel(2).equals(p.getKit2()))
+				else if ((Kit.giant().setKitLevel(2).equals(p.getKit()) ||
+						Kit.giant().setKitLevel(2).equals(p.getKit2())) && !p.isSharing())
 					Objects.requireNonNull(p.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
 							.addModifier(new AttributeModifier("Giant2", 4,
 									AttributeModifier.Operation.ADD_NUMBER));
+				else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT2))) {
+					Objects.requireNonNull(p.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+							.addModifier(new AttributeModifier("Giant2", 4,
+									AttributeModifier.Operation.ADD_NUMBER));
+					PlayerManager.notifySuccess(p.getPlayer(), LanguageManager.messages.effectShare);
+				}
+				else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT1))) {
+					Objects.requireNonNull(p.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+							.addModifier(new AttributeModifier("Giant1", 2,
+									AttributeModifier.Operation.ADD_NUMBER));
+					PlayerManager.notifySuccess(p.getPlayer(), LanguageManager.messages.effectShare);
+				}
 
 				// Set health for people with health boost and are boosted
 				FileConfiguration playerData = Main.plugin.getPlayerData();

@@ -3,6 +3,7 @@ package me.theguyhere.villagerdefense.plugin.listeners;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
+import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
@@ -976,6 +977,8 @@ public class GameListener implements Listener {
 			return;
 		}
 
+		Random random = new Random();
+
 		// Small care package
 		if (item.getItemMeta().getDisplayName().contains("Small Care Package") &&
 				main.getType() != Material.POLAR_BEAR_SPAWN_EGG && 
@@ -988,13 +991,21 @@ public class GameListener implements Listener {
 			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
 
 			// Give items and notify
-			if (Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
-					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) {
+			if ((Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
+					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
 						GameItems.randWeapon(1))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
 						GameItems.randArmor(1))), LanguageManager.errors.inventoryFull);
-			} else {
+			}
+			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.BLACKSMITH))) {
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
+						GameItems.randWeapon(1))), LanguageManager.errors.inventoryFull);
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
+						GameItems.randArmor(1))), LanguageManager.errors.inventoryFull);
+				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+			}
+			else {
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(1)),
 						LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(1)),
@@ -1015,26 +1026,42 @@ public class GameListener implements Listener {
 			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
 
 			// Give items and notify
-			if (Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
-					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) {
+			if ((Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
+					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
 						GameItems.randWeapon(2))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
 						GameItems.randArmor(2))), LanguageManager.errors.inventoryFull);
+			}
+			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.BLACKSMITH))) {
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randNotCare(2))), LanguageManager.errors.inventoryFull);
-			} else {
+						GameItems.randWeapon(2))), LanguageManager.errors.inventoryFull);
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
+						GameItems.randArmor(2))), LanguageManager.errors.inventoryFull);
+				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+			}
+			else {
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(2)),
 						LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(2)),
 						LanguageManager.errors.inventoryFull);
-				if (Kit.witch().setKitLevel(1).equals(gamer.getKit()) ||
-						Kit.witch().setKitLevel(1).equals(gamer.getKit2()))
-					PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-							GameItems.randNotCare(2))), LanguageManager.errors.inventoryFull);
-				else PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(2)),
+			}
+
+			if ((Kit.witch().setKitLevel(1).equals(gamer.getKit()) ||
+					Kit.witch().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
+				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
+						GameItems.randNotCare(2))), LanguageManager.errors.inventoryFull);
+			}
+			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.WITCH))) {
+				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
+						GameItems.randNotCare(2))), LanguageManager.errors.inventoryFull);
+				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+			}
+			else {
+				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(2)),
 						LanguageManager.errors.inventoryFull);
 			}
+
 			PlayerManager.notifySuccess(player, LanguageManager.confirms.carePackage);
 		}
 
@@ -1050,30 +1077,48 @@ public class GameListener implements Listener {
 			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
 
 			// Give items and notify
-			if (Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
-					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) {
+			if ((Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
+					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
 						GameItems.randWeapon(4))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
 						GameItems.randArmor(3))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
 						GameItems.randArmor(3))), LanguageManager.errors.inventoryFull);
+			}
+			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.BLACKSMITH))) {
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randNotCare(3))), LanguageManager.errors.inventoryFull);
-			} else {
+						GameItems.randWeapon(4))), LanguageManager.errors.inventoryFull);
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
+						GameItems.randArmor(3))), LanguageManager.errors.inventoryFull);
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
+						GameItems.randArmor(3))), LanguageManager.errors.inventoryFull);
+				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+			}
+			else {
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(4)),
 						LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(3)),
 						LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(3)),
 						LanguageManager.errors.inventoryFull);
-				if (Kit.witch().setKitLevel(1).equals(gamer.getKit()) ||
-						Kit.witch().setKitLevel(1).equals(gamer.getKit2()))
-					PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-							GameItems.randNotCare(3))), LanguageManager.errors.inventoryFull);
-				else PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(3)),
+			}
+
+			if ((Kit.witch().setKitLevel(1).equals(gamer.getKit()) ||
+					Kit.witch().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
+				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
+						GameItems.randNotCare(3))), LanguageManager.errors.inventoryFull);
+			}
+			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.WITCH))) {
+				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
+						GameItems.randNotCare(3))), LanguageManager.errors.inventoryFull);
+				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+			}
+			else {
+				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(3)),
 						LanguageManager.errors.inventoryFull);
 			}
+
 			PlayerManager.notifySuccess(player, LanguageManager.confirms.carePackage);
 		}
 
@@ -1089,8 +1134,8 @@ public class GameListener implements Listener {
 			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
 
 			// Give items and notify
-			if (Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
-					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) {
+			if ((Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
+					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
 						GameItems.randWeapon(5))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
@@ -1099,11 +1144,19 @@ public class GameListener implements Listener {
 						GameItems.randArmor(5))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
 						GameItems.randArmor(4))), LanguageManager.errors.inventoryFull);
+			}
+			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.BLACKSMITH))) {
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
+						GameItems.randWeapon(5))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
-			} else {
+						GameItems.randWeapon(4))), LanguageManager.errors.inventoryFull);
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
+						GameItems.randArmor(5))), LanguageManager.errors.inventoryFull);
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
+						GameItems.randArmor(4))), LanguageManager.errors.inventoryFull);
+				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+			}
+			else {
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(5)),
 						LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(4)),
@@ -1112,19 +1165,29 @@ public class GameListener implements Listener {
 						LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(4)),
 						LanguageManager.errors.inventoryFull);
-				if (Kit.witch().setKitLevel(1).equals(gamer.getKit()) ||
-						Kit.witch().setKitLevel(1).equals(gamer.getKit2())) {
-					PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-							GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
-					PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-							GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
-				} else {
-					PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(4)),
-							LanguageManager.errors.inventoryFull);
-					PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(4)),
-							LanguageManager.errors.inventoryFull);
-				}
 			}
+
+			if ((Kit.witch().setKitLevel(1).equals(gamer.getKit()) ||
+					Kit.witch().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
+				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
+						GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
+				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
+						GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
+			}
+			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.WITCH))) {
+				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
+						GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
+				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
+						GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
+				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+			}
+			else {
+				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(4)),
+						LanguageManager.errors.inventoryFull);
+				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(4)),
+						LanguageManager.errors.inventoryFull);
+			}
+
 			PlayerManager.notifySuccess(player, LanguageManager.confirms.carePackage);
 		}
 	}

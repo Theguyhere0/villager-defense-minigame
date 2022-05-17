@@ -412,6 +412,7 @@ messages:
   disabled: "DISABLED"
   earnedGems: "You earned %s gem(s)!"
   effectKitsDescription: "Kits give players a permanent special effect"
+  effectShare: "Someone shared an effect with you!"
   enchantInstruction: "Drop onto another item to enchant"
   end: "You defeated up to wave %s! Ending in %s seconds."
   ending: "Ending"

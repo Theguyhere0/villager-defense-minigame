@@ -8,6 +8,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
@@ -893,18 +894,27 @@ public class AbilityListener implements Listener {
             return;
         }
 
-        // Check for vampire kit
-        if (!gamer.getKit().getName().equals(Kit.vampire().getName()) && (gamer.getKit2() == null ||
-                !gamer.getKit2().getName().equals(Kit.vampire().getName())))
-            return;
-
         Random r = new Random();
         double damage = e.getFinalDamage();
 
-        // Heal if probability is right
-        if (r.nextInt(100) < damage)
-            player.setHealth(Math.min(player.getHealth() + 1,
-                    Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue()));
+        // Check for vampire kit
+        if ((Kit.vampire().getName().equals(gamer.getKit().getName()) ||
+                Kit.vampire().getName().equals(gamer.getKit2().getName())) && !gamer.isSharing()) {
+            // Heal if probability is right
+            if (r.nextInt(100) < damage)
+                player.setHealth(Math.min(player.getHealth() + 1,
+                        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue()));
+        }
+
+        // Check for shared vampire effect
+        else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.VAMPIRE))) {
+            // Heal if probability is right
+            if (r.nextInt(100) < damage) {
+                player.setHealth(Math.min(player.getHealth() + 1,
+                        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue()));
+                PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+            }
+        }
     }
 
     // Ninja stealth

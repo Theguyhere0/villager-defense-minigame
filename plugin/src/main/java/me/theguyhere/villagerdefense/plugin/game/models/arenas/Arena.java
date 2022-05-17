@@ -2,6 +2,8 @@ package me.theguyhere.villagerdefense.plugin.game.models.arenas;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
+import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryID;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryType;
 import me.theguyhere.villagerdefense.plugin.inventories.Buttons;
@@ -1926,6 +1928,42 @@ public class Arena {
                     2
             );
         }
+    }
+
+    /**
+     * Check the number of players that are sharing a certain effect.
+     *
+     * @param effectType The effect type to look for.
+     * @return Number of players sharing the effect type.
+     */
+    public int effectShareCount(EffectType effectType) {
+        Kit effectKit;
+
+        switch (effectType) {
+            case BLACKSMITH:
+                effectKit = Kit.blacksmith().setKitLevel(1);
+                break;
+            case WITCH:
+                effectKit = Kit.witch().setKitLevel(1);
+                break;
+            case MERCHANT:
+                effectKit = Kit.merchant().setKitLevel(1);
+                break;
+            case VAMPIRE:
+                effectKit = Kit.vampire().setKitLevel(1);
+                break;
+            case GIANT1:
+                effectKit = Kit.giant().setKitLevel(1);
+                break;
+            case GIANT2:
+                effectKit = Kit.giant().setKitLevel(2);
+                break;
+            default:
+                effectKit = Kit.none();
+        }
+
+        return (int) getActives().stream().filter(VDPlayer::isSharing).filter(player ->
+                effectKit.equals(player.getKit()) || effectKit.equals(player.getKit2())).count();
     }
 
     /**
