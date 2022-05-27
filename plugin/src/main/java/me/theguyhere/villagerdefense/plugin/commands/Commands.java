@@ -957,11 +957,19 @@ public class Commands implements CommandExecutor {
 						CommunicationManager.debugError(LanguageManager.messages.restartPlugin, 0);
 					}
 
-					// Message to player depending on whether the command fixed anything
-					if (!fixed)
+					// Message to player depending on whether the command fixed anything, then reload if fixed
+					if (!fixed) {
 						if (player != null)
 							PlayerManager.notifyAlert(player, LanguageManager.messages.noAutoUpdate);
 						else CommunicationManager.debugInfo(LanguageManager.messages.noAutoUpdate, 0);
+					} else {
+						// Notify of reload
+						if (player != null)
+							PlayerManager.notifyAlert(player, "Reloading plugin data");
+						else CommunicationManager.debugInfo("Reloading plugin data", 0);
+
+						Main.plugin.reload();
+					}
 
 					return true;
 				}

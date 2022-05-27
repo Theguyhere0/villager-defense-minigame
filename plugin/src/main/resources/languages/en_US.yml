@@ -229,6 +229,7 @@ confirms:
   kitSelect: "Kit selected!"
   kitUpgrade: "Kit upgraded!"
   leggings: "Leggings equipped!"
+  reset: "Player stats reset!"
 enchants:
   blastProtection: "Blast Protection"
   fireAspect: "Fire Aspect"
@@ -458,6 +459,7 @@ messages:
   record: "New arena record!"
   records: "Records"
   reset: "Reset"
+  resetWarning: "WARNING: RESETS ALL PLAYER STATS"
   restartPlugin: "Please restart the plugin."
   resurrection: "You were resurrected!"
   rightClick: "Right click to use ability"

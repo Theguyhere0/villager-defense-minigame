@@ -258,6 +258,7 @@ public class LanguageManager {
         public final @NotNull String kitSelect;
         public final @NotNull String kitUpgrade;
         public final @NotNull String leggings;
+        public final @NotNull String reset;
 
         private Confirms() throws InvalidLanguageKeyException {
             String pathPrefix = "confirms";
@@ -279,6 +280,7 @@ public class LanguageManager {
             kitSelect = getConfigString(pathPrefix + ".kitSelect");
             kitUpgrade = getConfigString(pathPrefix + ".kitUpgrade");
             leggings = getConfigString(pathPrefix + ".leggings");
+            reset = getConfigString(pathPrefix + ".reset");
         }
     }
 
@@ -719,6 +721,7 @@ public class LanguageManager {
         public final @NotNull String record;
         public final @NotNull String records;
         public final @NotNull String reset;
+        public final @NotNull String resetWarning;
         public final @NotNull String restartPlugin;
         public final @NotNull String resurrection;
         public final @NotNull String rightClick;
@@ -813,6 +816,7 @@ public class LanguageManager {
             record = getConfigString(pathPrefix + ".record");
             records = getConfigString(pathPrefix + ".records");
             reset = getConfigString(pathPrefix + ".reset");
+            resetWarning = getConfigString(pathPrefix + ".resetWarning");
             restartPlugin = getConfigString(pathPrefix + ".restartPlugin");
             resurrection = getConfigString(pathPrefix + ".resurrection");
             rightClick = getConfigString(pathPrefix + ".rightClick");
