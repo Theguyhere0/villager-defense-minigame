@@ -105,6 +105,9 @@ public class ArenaListener implements Listener {
             arena.getPlayers().add(fighter);
             arena.refreshPortal();
 
+            // Add forced challenges
+            arena.getForcedChallenges().forEach(challenge -> fighter.addChallenge(Challenge.getChallenge(challenge)));
+
             // Give them a game board
             GameManager.createBoard(fighter);
 
@@ -141,6 +144,9 @@ public class ArenaListener implements Listener {
             VDPlayer fighter = new VDPlayer(player, false);
             arena.getPlayers().add(fighter);
             arena.refreshPortal();
+
+            // Add forced challenges
+            arena.getForcedChallenges().forEach(challenge -> fighter.addChallenge(Challenge.getChallenge(challenge)));
 
             // Give them a game board
             GameManager.createBoard(fighter);

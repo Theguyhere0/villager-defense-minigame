@@ -3194,7 +3194,6 @@ public class InventoryListener implements Listener {
 			}
 
 			// Close inventory if no second kit and create scoreboard
-
 			closeInv(player);
 			GameManager.createBoard(gamer);
 		}
@@ -3226,14 +3225,26 @@ public class InventoryListener implements Listener {
 
 			// Option for no challenge
 			if (Challenge.none().equals(challenge)) {
-				gamer.resetChallenges();
-				PlayerManager.notifySuccess(player, LanguageManager.confirms.challengeAdd);
+				// Arena has forced challenges
+				if (arenaInstance.getForcedChallenges().size() > 0)
+					PlayerManager.notifyFailure(player, LanguageManager.errors.hasForcedChallenges);
+
+				else {
+					gamer.resetChallenges();
+					PlayerManager.notifySuccess(player, LanguageManager.confirms.challengeAdd);
+				}
 			}
 
 			// Remove a challenge
 			else if (gamer.getChallenges().contains(challenge)) {
-				gamer.removeChallenge(challenge);
-				PlayerManager.notifySuccess(player, LanguageManager.confirms.challengeDelete);
+				// Arena forced the challenge
+				if (challenge != null && arenaInstance.getForcedChallenges().contains(challenge.getName()))
+					PlayerManager.notifyFailure(player, LanguageManager.errors.forcedChallenge);
+
+				else {
+					gamer.removeChallenge(challenge);
+					PlayerManager.notifySuccess(player, LanguageManager.confirms.challengeDelete);
+				}
 			}
 
 			// Add a challenge
