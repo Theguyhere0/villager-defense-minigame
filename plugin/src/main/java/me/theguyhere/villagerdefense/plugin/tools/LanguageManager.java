@@ -348,7 +348,9 @@ public class LanguageManager {
         public final @NotNull String enchantShop;
         public final @NotNull String endingSoon;
         public final @NotNull String fatal;
+        public final @NotNull String forcedChallenge;
         public final @NotNull String golem;
+        public final @NotNull String hasForcedChallenges;
         public final @NotNull String inGame;
         public final @NotNull String integer;
         public final @NotNull String invalidPlayer;
@@ -396,7 +398,9 @@ public class LanguageManager {
             enchantShop = getConfigString(pathPrefix + ".enchantShop");
             endingSoon = getConfigString(pathPrefix + ".endingSoon");
             fatal = getConfigString(pathPrefix + ".fatal");
+            forcedChallenge = getConfigString(pathPrefix + ".forcedChallenge");
             golem = getConfigString(pathPrefix + ".golem");
+            hasForcedChallenges = getConfigString(pathPrefix + ".hasForcedChallenges");
             inGame = getConfigString(pathPrefix + ".inGame");
             integer = getConfigString(pathPrefix + ".integer");
             invalidPlayer = getConfigString(pathPrefix + ".invalidPlayer");
@@ -682,6 +686,7 @@ public class LanguageManager {
         public final @NotNull String enemies;
         public final @NotNull String exit;
         public final @NotNull String free;
+        public final @NotNull String forcedChallenges;
         public final @NotNull String foundGems;
         public final @NotNull String gameOver;
         public final @NotNull String gems;
@@ -777,6 +782,7 @@ public class LanguageManager {
             enemies = getConfigString(pathPrefix + ".enemies");
             exit = getConfigString(pathPrefix + ".exit");
             free = getConfigString(pathPrefix + ".free");
+            forcedChallenges = getConfigString(pathPrefix + ".forcedChallenges");
             foundGems = getConfigString(pathPrefix + ".foundGems");
             gameOver = getConfigString(pathPrefix + ".gameOver");
             gems = getConfigString(pathPrefix + ".gems");

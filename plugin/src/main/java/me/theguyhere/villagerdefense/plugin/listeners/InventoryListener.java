@@ -1973,6 +1973,10 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("Allowed Kits"))
 				player.openInventory(Inventories.createAllowedKitsMenu(arenaInstance, false));
 
+			// Edit forced challenges
+			else if (buttonName.contains("Forced Challenges"))
+				player.openInventory(Inventories.createForcedChallengesMenu(arenaInstance, false));
+
 			// Edit difficulty label
 			else if (buttonName.contains("Difficulty Label"))
 				if (arenaInstance.isClosed())
@@ -2345,6 +2349,40 @@ public class InventoryListener implements Listener {
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createGameSettingsMenu(meta.getArena()));
+		}
+
+		// Forced challenges display for an arena
+		else if (invID == InventoryID.FORCED_CHALLENGES_DISPLAY_MENU) {
+			// Exit menu
+			if (buttonName.contains(LanguageManager.messages.exit)) {
+				player.openInventory(Inventories.createArenaInfoMenu(meta.getArena()));
+			}
+		}
+
+		// Forced challenges menu for an arena
+		else if (invID == InventoryID.FORCED_CHALLENGES_MENU) {
+			String challenge = buttonName.substring(4);
+			Arena arenaInstance = meta.getArena();
+			List<String> forced = arenaInstance.getForcedChallenges();
+
+			// Exit menu
+			if (buttonName.contains(LanguageManager.messages.exit))
+				player.openInventory(Inventories.createGameSettingsMenu(meta.getArena()));
+
+			// Toggle a challenge
+			else {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+					return;
+				}
+
+				if (forced.contains(challenge))
+					forced.remove(challenge);
+				else forced.add(challenge);
+				arenaInstance.setForcedChallenges(forced);
+				player.openInventory(Inventories.createForcedChallengesMenu(arenaInstance, false));
+			}
 		}
 
 		// Arena bounds menu for an arena
@@ -3156,7 +3194,6 @@ public class InventoryListener implements Listener {
 			}
 
 			// Close inventory if no second kit and create scoreboard
-
 			closeInv(player);
 			GameManager.createBoard(gamer);
 		}
@@ -3188,14 +3225,26 @@ public class InventoryListener implements Listener {
 
 			// Option for no challenge
 			if (Challenge.none().equals(challenge)) {
-				gamer.resetChallenges();
-				PlayerManager.notifySuccess(player, LanguageManager.confirms.challengeAdd);
+				// Arena has forced challenges
+				if (arenaInstance.getForcedChallenges().size() > 0)
+					PlayerManager.notifyFailure(player, LanguageManager.errors.hasForcedChallenges);
+
+				else {
+					gamer.resetChallenges();
+					PlayerManager.notifySuccess(player, LanguageManager.confirms.challengeAdd);
+				}
 			}
 
 			// Remove a challenge
 			else if (gamer.getChallenges().contains(challenge)) {
-				gamer.removeChallenge(challenge);
-				PlayerManager.notifySuccess(player, LanguageManager.confirms.challengeDelete);
+				// Arena forced the challenge
+				if (challenge != null && arenaInstance.getForcedChallenges().contains(challenge.getName()))
+					PlayerManager.notifyFailure(player, LanguageManager.errors.forcedChallenge);
+
+				else {
+					gamer.removeChallenge(challenge);
+					PlayerManager.notifySuccess(player, LanguageManager.confirms.challengeDelete);
+				}
 			}
 
 			// Add a challenge
@@ -3216,6 +3265,9 @@ public class InventoryListener implements Listener {
 
 			else if (buttonName.contains(LanguageManager.messages.allowedKits))
 				player.openInventory(Inventories.createAllowedKitsMenu(meta.getArena(), true));
+
+			else if (buttonName.contains(LanguageManager.messages.forcedChallenges))
+				player.openInventory(Inventories.createForcedChallengesMenu(meta.getArena(), true));
 		}
 
 		// Menu for converting crystals

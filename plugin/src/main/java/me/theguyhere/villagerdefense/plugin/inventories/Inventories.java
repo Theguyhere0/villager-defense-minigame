@@ -840,6 +840,10 @@ public class Inventories {
 		buttons.add(ItemManager.createItem(Material.ENDER_CHEST,
 				CommunicationManager.format("&9&lAllowed Kits")));
 
+		// Option to edit forced challenges
+		buttons.add(ItemManager.createItem(Material.NETHER_STAR,
+				CommunicationManager.format("&9&lForced Challenges")));
+
 		// Option to edit difficulty label
 		buttons.add(ItemManager.createItem(Material.NAME_TAG,
 				CommunicationManager.format("&6&lDifficulty Label")));
@@ -938,17 +942,16 @@ public class Inventories {
 	}
 
 	// Menu for allowed kits of an arena
-	public static Inventory createAllowedKitsMenu(Arena arena, boolean mock) {
+	public static Inventory createAllowedKitsMenu(Arena arena, boolean display) {
 		// Create inventory
-		Inventory inv = mock ? Bukkit.createInventory(
-				new InventoryMeta(InventoryID.ALLOWED_KITS_MENU, InventoryType.MENU, arena),
-				54,
-				CommunicationManager.format(
-						"&9&l" + LanguageManager.messages.allowedKits + ": " + arena.getName())
-		) : Bukkit.createInventory(
+		Inventory inv = display ? Bukkit.createInventory(
 				new InventoryMeta(InventoryID.ALLOWED_KITS_DISPLAY_MENU, InventoryType.MENU, arena),
 				54,
 				CommunicationManager.format("&9&l" + LanguageManager.messages.allowedKits)
+		) : Bukkit.createInventory(
+				new InventoryMeta(InventoryID.ALLOWED_KITS_MENU, InventoryType.MENU, arena),
+				54,
+				CommunicationManager.format("&9&l" + LanguageManager.messages.allowedKits + ": " + arena.getName())
 		);
 
 		// Gift kits
@@ -1048,6 +1051,44 @@ public class Inventories {
 		inv.setItem(53, Buttons.exit());
 
 		return inv;
+	}
+
+	// Menu for forced challenges of an arena
+	public static Inventory createForcedChallengesMenu(Arena arena, boolean display) {
+		List<ItemStack> buttons = new ArrayList<>();
+
+		// Set buttons
+		buttons.add(Challenge.amputee().getButton(arena.getForcedChallenges()
+				.contains(Challenge.amputee().getName())));
+		buttons.add(Challenge.clumsy().getButton(arena.getForcedChallenges()
+				.contains(Challenge.clumsy().getName())));
+		buttons.add(Challenge.featherweight().getButton(arena.getForcedChallenges()
+				.contains(Challenge.featherweight().getName())));
+		buttons.add(Challenge.pacifist().getButton(arena.getForcedChallenges()
+				.contains(Challenge.pacifist().getName())));
+		buttons.add(Challenge.dwarf().getButton(arena.getForcedChallenges()
+				.contains(Challenge.dwarf().getName())));
+		buttons.add(Challenge.uhc().getButton(arena.getForcedChallenges()
+				.contains(Challenge.uhc().getName())));
+		buttons.add(Challenge.explosive().getButton(arena.getForcedChallenges()
+				.contains(Challenge.explosive().getName())));
+		buttons.add(Challenge.naked().getButton(arena.getForcedChallenges()
+				.contains(Challenge.naked().getName())));
+		buttons.add(Challenge.blind().getButton(arena.getForcedChallenges()
+				.contains(Challenge.blind().getName())));
+
+		return display ? InventoryFactory.createDynamicSizeInventory(
+				new InventoryMeta(InventoryID.FORCED_CHALLENGES_DISPLAY_MENU, InventoryType.MENU, arena),
+				CommunicationManager.format("&9&l" + LanguageManager.messages.forcedChallenges),
+				true,
+				buttons
+		) : InventoryFactory.createDynamicSizeInventory(
+				new InventoryMeta(InventoryID.FORCED_CHALLENGES_MENU, InventoryType.MENU, arena),
+				CommunicationManager.format(
+						"&9&l" + LanguageManager.messages.forcedChallenges + ": " + arena.getName()),
+				true,
+				buttons
+		);
 	}
 
 	// Menu for changing the difficulty label of an arena
@@ -2255,6 +2296,7 @@ public class Inventories {
 		buttons.add(Challenge.pacifist().getButton(player.getChallenges().contains(Challenge.pacifist())));
 		buttons.add(Challenge.dwarf().getButton(player.getChallenges().contains(Challenge.dwarf())));
 		buttons.add(Challenge.uhc().getButton(player.getChallenges().contains(Challenge.uhc())));
+		buttons.add(Challenge.explosive().getButton(player.getChallenges().contains(Challenge.explosive())));
 		buttons.add(Challenge.naked().getButton(player.getChallenges().contains(Challenge.naked())));
 		buttons.add(Challenge.blind().getButton(player.getChallenges().contains(Challenge.blind())));
 		buttons.add(Challenge.none().getButton(player.getChallenges().isEmpty()));
@@ -2323,6 +2365,10 @@ public class Inventories {
 		// Allowed kits
 		buttons.add(ItemManager.createItem(Material.ENDER_CHEST,
 				CommunicationManager.format("&9&l" + LanguageManager.messages.allowedKits)));
+
+		// Forced challenges
+		buttons.add(ItemManager.createItem(Material.NETHER_STAR,
+				CommunicationManager.format("&9&l" + LanguageManager.messages.forcedChallenges)));
 
 		// Dynamic mob count
 		buttons.add(ItemManager.createItem(Material.SLIME_BALL,

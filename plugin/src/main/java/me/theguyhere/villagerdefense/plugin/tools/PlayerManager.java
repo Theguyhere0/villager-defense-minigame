@@ -137,7 +137,6 @@ public class PlayerManager {
     public static void fakeDeath(VDPlayer vdPlayer) {
         Player player = vdPlayer.getPlayer();
         player.setGameMode(GameMode.SPECTATOR);
-        player.getInventory().clear();
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
         player.closeInventory();
         vdPlayer.setStatus(PlayerStatus.GHOST);

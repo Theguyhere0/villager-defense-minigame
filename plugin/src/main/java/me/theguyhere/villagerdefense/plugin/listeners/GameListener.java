@@ -535,6 +535,10 @@ public class GameListener implements Listener {
 			// Set player to fake death mode
 			PlayerManager.fakeDeath(gamer);
 
+			// Check for explosive challenge
+			if (gamer.getChallenges().contains(Challenge.explosive()))
+				player.getInventory().clear();
+
 			// Notify player of their own death
 			player.sendTitle(CommunicationManager.format("&4" + LanguageManager.messages.death1),
 					CommunicationManager.format("&c" + LanguageManager.messages.death2),
@@ -689,6 +693,19 @@ public class GameListener implements Listener {
 
 		// Set player to fake death mode
 		PlayerManager.fakeDeath(gamer);
+
+		// Check for explosive challenge
+		if (gamer.getChallenges().contains(Challenge.explosive())) {
+			// Create an explosion
+			player.getWorld().createExplosion(player.getLocation(), 1.25F, false, false);
+
+			// Drop all items and clear inventory
+			player.getInventory().forEach(itemStack -> {
+				if (itemStack != null && !itemStack.equals(GameItems.shop()))
+						player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
+			});
+			player.getInventory().clear();
+		}
 
 		// Notify player of their own death
 		player.sendTitle(CommunicationManager.format("&4" + LanguageManager.messages.death1),
