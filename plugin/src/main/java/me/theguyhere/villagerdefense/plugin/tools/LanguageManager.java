@@ -682,6 +682,7 @@ public class LanguageManager {
         public final @NotNull String enemies;
         public final @NotNull String exit;
         public final @NotNull String free;
+        public final @NotNull String forcedChallenges;
         public final @NotNull String foundGems;
         public final @NotNull String gameOver;
         public final @NotNull String gems;
@@ -777,6 +778,7 @@ public class LanguageManager {
             enemies = getConfigString(pathPrefix + ".enemies");
             exit = getConfigString(pathPrefix + ".exit");
             free = getConfigString(pathPrefix + ".free");
+            forcedChallenges = getConfigString(pathPrefix + ".forcedChallenges");
             foundGems = getConfigString(pathPrefix + ".foundGems");
             gameOver = getConfigString(pathPrefix + ".gameOver");
             gems = getConfigString(pathPrefix + ".gems");

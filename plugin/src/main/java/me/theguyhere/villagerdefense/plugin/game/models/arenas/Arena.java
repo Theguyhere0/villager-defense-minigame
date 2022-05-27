@@ -879,6 +879,15 @@ public class Arena {
         Main.plugin.saveArenaData();
     }
 
+    public List<String> getForcedChallenges() {
+        return config.getStringList(path + ".forcedChallenges");
+    }
+
+    public void setForcedChallenges(List<String> forcedChallenges) {
+        config.set(path + ".forcedChallenges", forcedChallenges);
+        Main.plugin.saveArenaData();
+    }
+
     public String getSpawnTableFile() {
         if (!config.contains(path + ".spawnTable"))
             setSpawnTableFile("default");

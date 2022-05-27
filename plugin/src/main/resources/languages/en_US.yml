@@ -420,6 +420,7 @@ messages:
   enemies: "Enemies"
   exit: "EXIT"
   free: "Free!"
+  forcedChallenges: "Forced Challenges"
   foundGems: "You found %s gem(s)!"
   gameOver: "GAME OVER"
   gems: "Gems"
