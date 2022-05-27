@@ -2255,6 +2255,7 @@ public class Inventories {
 		buttons.add(Challenge.pacifist().getButton(player.getChallenges().contains(Challenge.pacifist())));
 		buttons.add(Challenge.dwarf().getButton(player.getChallenges().contains(Challenge.dwarf())));
 		buttons.add(Challenge.uhc().getButton(player.getChallenges().contains(Challenge.uhc())));
+		buttons.add(Challenge.explosive().getButton(player.getChallenges().contains(Challenge.explosive())));
 		buttons.add(Challenge.naked().getButton(player.getChallenges().contains(Challenge.naked())));
 		buttons.add(Challenge.blind().getButton(player.getChallenges().contains(Challenge.blind())));
 		buttons.add(Challenge.none().getButton(player.getChallenges().isEmpty()));

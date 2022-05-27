@@ -77,6 +77,10 @@ public class Kit {
         return level;
     }
 
+    public boolean nameCompare(Kit kit) {
+        return kit != null && name.equals(kit.getName());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

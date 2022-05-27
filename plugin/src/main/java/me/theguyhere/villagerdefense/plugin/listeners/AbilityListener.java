@@ -487,7 +487,7 @@ public class AbilityListener implements Listener {
 
         if (gamer.getKit2() != null) {
             // Mage
-            if (Kit.mage().getName().equals(gamer.getKit2().getName()) && GameItems.mage().equals(item)) {
+            if (Kit.mage().nameCompare(gamer.getKit2()) && GameItems.mage().equals(item)) {
                 // Perform checks
                 if (checkLevel(level2, player))
                     return;
@@ -513,7 +513,7 @@ public class AbilityListener implements Listener {
             }
 
             // Ninja
-            if (Kit.ninja().getName().equals(gamer.getKit2().getName()) && GameItems.ninja().equals(item)) {
+            if (Kit.ninja().nameCompare(gamer.getKit2()) && GameItems.ninja().equals(item)) {
                 // Perform checks
                 if (checkLevel(level2, player))
                     return;
@@ -548,7 +548,7 @@ public class AbilityListener implements Listener {
             }
 
             // Templar
-            if (Kit.templar().getName().equals(gamer.getKit2().getName()) && GameItems.templar().equals(item)) {
+            if (Kit.templar().nameCompare(gamer.getKit2()) && GameItems.templar().equals(item)) {
                 // Perform checks
                 if (checkLevel(level2, player))
                     return;
@@ -593,7 +593,7 @@ public class AbilityListener implements Listener {
             }
 
             // Warrior
-            if (Kit.warrior().getName().equals(gamer.getKit2().getName()) && GameItems.warrior().equals(item)) {
+            if (Kit.warrior().nameCompare(gamer.getKit2()) && GameItems.warrior().equals(item)) {
                 // Perform checks
                 if (checkLevel(level2, player))
                     return;
@@ -638,7 +638,7 @@ public class AbilityListener implements Listener {
             }
 
             // Knight
-            if (Kit.knight().getName().equals(gamer.getKit2().getName()) && GameItems.knight().equals(item)) {
+            if (Kit.knight().nameCompare(gamer.getKit2()) && GameItems.knight().equals(item)) {
                 // Perform checks
                 if (checkLevel(level2, player))
                     return;
@@ -683,7 +683,7 @@ public class AbilityListener implements Listener {
             }
 
             // Priest
-            if (Kit.priest().getName().equals(gamer.getKit2().getName()) && GameItems.priest().equals(item)) {
+            if (Kit.priest().nameCompare(gamer.getKit2()) && GameItems.priest().equals(item)) {
                 // Perform checks
                 if (checkLevel(level2, player))
                     return;
@@ -728,7 +728,7 @@ public class AbilityListener implements Listener {
             }
 
             // Siren
-            if (Kit.siren().getName().equals(gamer.getKit2().getName()) && GameItems.siren().equals(item)) {
+            if (Kit.siren().nameCompare(gamer.getKit2()) && GameItems.siren().equals(item)) {
                 // Perform checks
                 if (checkLevel(level2, player))
                     return;
@@ -776,7 +776,7 @@ public class AbilityListener implements Listener {
             }
 
             // Monk
-            if (Kit.monk().getName().equals(gamer.getKit2().getName()) && GameItems.monk().equals(item)) {
+            if (Kit.monk().nameCompare(gamer.getKit2()) && GameItems.monk().equals(item)) {
                 // Perform checks
                 if (checkLevel(level2, player))
                     return;
@@ -821,7 +821,7 @@ public class AbilityListener implements Listener {
             }
 
             // Messenger
-            if (Kit.messenger().getName().equals(gamer.getKit2().getName()) && GameItems.messenger().equals(item)) {
+            if (Kit.messenger().nameCompare(gamer.getKit2()) && GameItems.messenger().equals(item)) {
                 // Perform checks
                 if (checkLevel(level2, player))
                     return;
@@ -899,7 +899,7 @@ public class AbilityListener implements Listener {
 
         // Check for vampire kit
         if ((Kit.vampire().getName().equals(gamer.getKit().getName()) ||
-                Kit.vampire().getName().equals(gamer.getKit2().getName())) && !gamer.isSharing()) {
+                Kit.vampire().nameCompare(gamer.getKit2())) && !gamer.isSharing()) {
             // Heal if probability is right
             if (r.nextInt(100) < damage)
                 player.setHealth(Math.min(player.getHealth() + 1,
