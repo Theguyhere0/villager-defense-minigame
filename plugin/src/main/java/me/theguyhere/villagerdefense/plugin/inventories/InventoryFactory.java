@@ -5,6 +5,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -406,6 +407,7 @@ public class InventoryFactory {
 
     public static Inventory createConfirmationMenu(
             @NotNull InventoryID inventoryID,
+            Player player,
             Arena arena,
             int id,
             @NotNull String formattedName
@@ -419,7 +421,7 @@ public class InventoryFactory {
         buttons.add(Buttons.yes());
 
         return createFixedSizeInventory(
-                new InventoryMeta(inventoryID, InventoryType.MENU, arena, id),
+                new InventoryMeta(inventoryID, InventoryType.MENU, player, arena, id),
                 formattedName,
                 1,
                 false,
@@ -432,7 +434,7 @@ public class InventoryFactory {
             Arena arena,
             @NotNull String formattedName
     ) {
-        return createConfirmationMenu(inventoryID, arena, 0, formattedName);
+        return createConfirmationMenu(inventoryID, null, arena, 0, formattedName);
     }
 
     public static Inventory createConfirmationMenu(
@@ -440,12 +442,18 @@ public class InventoryFactory {
             int id,
             @NotNull String formattedName
     ) {
-        return createConfirmationMenu(inventoryID, null, id, formattedName);
+        return createConfirmationMenu(inventoryID, null, null, id, formattedName);
     }
 
-    public static Inventory createConfirmationMenu(@NotNull InventoryID inventoryID, @NotNull String formattedName)
-            {
-        return createConfirmationMenu(inventoryID, null, 0, formattedName);
+    public static Inventory createConfirmationMenu(@NotNull InventoryID inventoryID, @NotNull String formattedName) {
+        return createConfirmationMenu(inventoryID, null, null, 0, formattedName);
+    }
+
+    public static Inventory createConfirmationMenu(
+            @NotNull InventoryID inventoryID,
+            Player player,
+            @NotNull String formattedName) {
+        return createConfirmationMenu(inventoryID, player, null, 0, formattedName);
     }
 
     public static Inventory createIncrementorMenu(

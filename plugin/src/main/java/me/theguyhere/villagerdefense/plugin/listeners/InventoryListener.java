@@ -2995,6 +2995,8 @@ public class InventoryListener implements Listener {
 				player.openInventory(Inventories.createPlayerAchievementsMenu(owner));
 			else if (buttonName.contains(LanguageManager.messages.kits))
 				player.openInventory(Inventories.createPlayerKitsMenu(owner, player.getName()));
+			else if (buttonName.contains(LanguageManager.messages.reset))
+				player.openInventory(Inventories.createResetStatsConfirmMenu(player));
 		}
 
 		// Achievements menu for a player
@@ -3076,6 +3078,25 @@ public class InventoryListener implements Listener {
 
 			Main.plugin.savePlayerData();
 			player.openInventory(Inventories.createPlayerKitsMenu(owner, name));
+		}
+
+		// Reset player stats confirmation for a player
+		else if (invID == InventoryID.RESET_STATS_CONFIRM_MENU) {
+			// Return to previous menu
+			if (buttonName.contains("NO"))
+				player.openInventory(Inventories.createPlayerStatsMenu(meta.getPlayer()));
+
+			// Reset player stats
+			else if (buttonName.contains("YES")) {
+				// Remove stats
+				FileConfiguration playerData = Main.plugin.getPlayerData();
+				playerData.set(player.getUniqueId().toString(), null);
+				Main.plugin.savePlayerData();
+
+				// Confirm and return
+				PlayerManager.notifySuccess(player, LanguageManager.confirms.reset);
+				player.openInventory(Inventories.createPlayerStatsMenu(meta.getPlayer()));
+			}
 		}
 
 		// Kit selection menu for an arena

@@ -581,6 +581,7 @@ public class Inventories {
 	public static Inventory createMonsterSpawnConfirmMenu(Arena arena, int monsterSpawnID) {
 		return InventoryFactory.createConfirmationMenu(
 				InventoryID.MONSTER_SPAWN_CONFIRM_MENU,
+				null,
 				arena,
 				monsterSpawnID,
 				CommunicationManager.format("&4&lRemove Monster Spawn?")
@@ -629,6 +630,7 @@ public class Inventories {
 	public static Inventory createVillagerSpawnConfirmMenu(Arena arena, int villagerSpawnID) {
 		return InventoryFactory.createConfirmationMenu(
 				InventoryID.VILLAGER_SPAWN_CONFIRM_MENU,
+				null,
 				arena,
 				villagerSpawnID,
 				CommunicationManager.format("&4&lRemove Villager Spawn?")
@@ -804,6 +806,7 @@ public class Inventories {
 	public static Inventory createCustomItemConfirmMenu(Arena arena, int id) {
 		return InventoryFactory.createConfirmationMenu(
 				InventoryID.CUSTOM_ITEM_CONFIRM_MENU,
+				null,
 				arena,
 				id,
 				CommunicationManager.format("&4&lRemove Custom Item?")
@@ -1633,7 +1636,7 @@ public class Inventories {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(
 				new InventoryMeta(InventoryID.PLAYER_STATS_MENU, InventoryType.MENU, player),
-				9,
+				18,
 				CommunicationManager.format("&2&l" + String.format(LanguageManager.messages.playerStatistics,
 						name))
 		);
@@ -1646,7 +1649,7 @@ public class Inventories {
 						LanguageManager.playerStats.totalKills.description)));
 
 		// Top kills
-		inv.setItem(1, ItemManager.createItem(Material.ZOMBIE_HEAD,
+		inv.setItem(10, ItemManager.createItem(Material.ZOMBIE_HEAD,
 				CommunicationManager.format("&c&l" + LanguageManager.playerStats.topKills.name +
 						": &c" + playerData.getInt(id + ".topKills")),
 				CommunicationManager.format("&7" +
@@ -1660,7 +1663,7 @@ public class Inventories {
 						LanguageManager.playerStats.totalGems.description)));
 
 		// Top balance
-		inv.setItem(3, ItemManager.createItem(Material.EMERALD,
+		inv.setItem(12, ItemManager.createItem(Material.EMERALD,
 				CommunicationManager.format("&a&l" + LanguageManager.playerStats.topBalance.name +
 						": &a" + playerData.getInt(id + ".topBalance")),
 				CommunicationManager.format("&7" +
@@ -1674,13 +1677,20 @@ public class Inventories {
 						LanguageManager.playerStats.topWave.description)));
 
 		// Achievements
-		inv.setItem(5, ItemManager.createItem(Material.GOLDEN_HELMET,
+		inv.setItem(14, ItemManager.createItem(Material.GOLDEN_HELMET,
 				CommunicationManager.format("&6&l" + LanguageManager.messages.achievements),
 				ItemManager.BUTTON_FLAGS, null));
 
 		// Kits
 		inv.setItem(6, ItemManager.createItem(Material.ENDER_CHEST, CommunicationManager.format("&9&l" +
 				LanguageManager.messages.kits)));
+
+		// Reset stats
+		inv.setItem(16, ItemManager.createItem(
+				Material.LAVA_BUCKET,
+				CommunicationManager.format("&d&l" + LanguageManager.messages.reset),
+				CommunicationManager.format("&5&l" + LanguageManager.messages.resetWarning)
+		));
 
 		// Crystal balance
 		inv.setItem(8, ItemManager.createItem(Material.DIAMOND,
@@ -2154,6 +2164,15 @@ public class Inventories {
 				false,
 				"",
 				buttons
+		);
+	}
+
+	// Display player stats reset confirmation
+	public static Inventory createResetStatsConfirmMenu(Player player) {
+		return InventoryFactory.createConfirmationMenu(
+				InventoryID.RESET_STATS_CONFIRM_MENU,
+				player,
+				CommunicationManager.format("&4&l" + LanguageManager.messages.reset + "?")
 		);
 	}
 
