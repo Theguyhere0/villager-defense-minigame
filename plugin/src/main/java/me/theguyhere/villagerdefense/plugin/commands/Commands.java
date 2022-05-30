@@ -862,7 +862,7 @@ public class Commands implements CommandExecutor {
 					}
 
 					// Check if playerData.yml is outdated
-					if (Main.plugin.getConfig().getInt("playerData") < 2) {
+					if (Main.plugin.getConfig().getInt("playerData") < Main.playerDataVersion) {
 						try {
 							// Transfer player names to UUID
 							Objects.requireNonNull(playerData.getConfigurationSection("")).getKeys(false)
@@ -955,6 +955,17 @@ public class Commands implements CommandExecutor {
 								String.format(LanguageManager.messages.manualUpdateWarn,
 										"All other language files"), 0);
 						CommunicationManager.debugError(LanguageManager.messages.restartPlugin, 0);
+					}
+
+					// Check if customEffects.yml is outdated
+					if (Main.plugin.getConfig().getInt("customEffects") < Main.customEffectsVersion) {
+						if (player != null)
+							PlayerManager.notifyAlert(player,
+									LanguageManager.messages.manualUpdateWarn, ChatColor.AQUA,
+									"customEffects.yml");
+						else CommunicationManager.debugError(
+								String.format(LanguageManager.messages.manualUpdateWarn,
+										"customEffects.yml"), 0);
 					}
 
 					// Message to player depending on whether the command fixed anything, then reload if fixed

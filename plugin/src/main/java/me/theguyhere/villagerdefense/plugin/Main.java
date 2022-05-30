@@ -44,12 +44,13 @@ public class Main extends JavaPlugin {
 	// Global state variables
 	private static boolean outdated = false; // DO NOT CHANGE
 	public static final boolean releaseMode = false;
-	public static final int configVersion = 7;
+	public static final int configVersion = 8;
 	public static final int arenaDataVersion = 6;
 	public static final int playerDataVersion = 2;
 	public static final int spawnTableVersion = 1;
 	public static final int languageFileVersion = 16;
 	public static final int defaultSpawnVersion = 2;
+	public static final int customEffectsVersion = 1;
 
 	@Override
 	public void onEnable() {
@@ -114,6 +115,16 @@ public class Main extends JavaPlugin {
 			urgentConsoleWarning("Please update en_US.yml and update any other language files to version " +
 					ChatColor.BLUE + languageFileVersion + ChatColor.RED + ".");
 			urgentConsoleWarning("Please do not update your config.yml until your language files have been " +
+					"updated.");
+			outdated = true;
+		}
+
+		// Check if customEffects.yml is outdated
+		if (getConfig().getInt("customEffects") < customEffectsVersion) {
+			urgentConsoleWarning("Your customEffects.yml is no longer supported with this version!");
+			urgentConsoleWarning("Please transfer player data to version " + ChatColor.BLUE +
+					customEffectsVersion + ChatColor.BLUE + ".");
+			urgentConsoleWarning("Please do not update your config.yml until your customEffects.yml has been " +
 					"updated.");
 			outdated = true;
 		}
@@ -318,6 +329,16 @@ public class Main extends JavaPlugin {
 			urgentConsoleWarning("Please update en_US.yml and update any other language files to version " +
 					ChatColor.BLUE + languageFileVersion + ChatColor.RED + ".");
 			urgentConsoleWarning("Please do not update your config.yml until your language files have been " +
+					"updated.");
+			outdated = true;
+		}
+
+		// Check if customEffects.yml is outdated
+		if (getConfig().getInt("customEffects") < customEffectsVersion) {
+			urgentConsoleWarning("Your customEffects.yml is no longer supported with this version!");
+			urgentConsoleWarning("Please transfer player data to version " + ChatColor.BLUE +
+					customEffectsVersion + ChatColor.BLUE + ".");
+			urgentConsoleWarning("Please do not update your config.yml until your customEffects.yml has been " +
 					"updated.");
 			outdated = true;
 		}
