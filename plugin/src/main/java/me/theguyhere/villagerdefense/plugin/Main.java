@@ -34,6 +34,7 @@ public class Main extends JavaPlugin {
 	// Yaml file managers
 	private DataManager arenaData;
 	private DataManager playerData;
+	private DataManager customEffects;
 
 	// Global instance variables
 	private final NMSManager nmsManager = NMSVersion.getCurrent().getNmsManager();
@@ -43,12 +44,13 @@ public class Main extends JavaPlugin {
 	// Global state variables
 	private static boolean outdated = false; // DO NOT CHANGE
 	public static final boolean releaseMode = false;
-	public static final int configVersion = 7;
+	public static final int configVersion = 8;
 	public static final int arenaDataVersion = 6;
 	public static final int playerDataVersion = 2;
 	public static final int spawnTableVersion = 1;
 	public static final int languageFileVersion = 16;
 	public static final int defaultSpawnVersion = 2;
+	public static final int customEffectsVersion = 1;
 
 	@Override
 	public void onEnable() {
@@ -56,6 +58,7 @@ public class Main extends JavaPlugin {
 
 		arenaData = new DataManager("arenaData.yml");
 		playerData = new DataManager("playerData.yml");
+		customEffects = new DataManager("customEffects.yml");
 		DataManager languageData = new DataManager("languages/" + getConfig().getString("locale") +
 				".yml");
 
@@ -116,6 +119,16 @@ public class Main extends JavaPlugin {
 			outdated = true;
 		}
 
+		// Check if customEffects.yml is outdated
+		if (getConfig().getInt("customEffects") < customEffectsVersion) {
+			urgentConsoleWarning("Your customEffects.yml is no longer supported with this version!");
+			urgentConsoleWarning("Please transfer player data to version " + ChatColor.BLUE +
+					customEffectsVersion + ChatColor.BLUE + ".");
+			urgentConsoleWarning("Please do not update your config.yml until your customEffects.yml has been " +
+					"updated.");
+			outdated = true;
+		}
+
 		// Set up commands and tab complete
 		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist").setExecutor(new Commands());
 		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist")
@@ -141,6 +154,7 @@ public class Main extends JavaPlugin {
 		pm.registerEvents(new ChallengeListener(), this);
 		pm.registerEvents(new WorldListener(), this);
 		pm.registerEvents(new BonusListener(), this);
+		pm.registerEvents(new CustomEffectsListener(), this);
 
 		// Add packet listeners for online players
 		for (Player player : Bukkit.getOnlinePlayers())
@@ -253,6 +267,7 @@ public class Main extends JavaPlugin {
 
 		arenaData = new DataManager("arenaData.yml");
 		playerData = new DataManager("playerData.yml");
+		customEffects = new DataManager("customEffects.yml");
 		DataManager languageData = new DataManager("languages/" + getConfig().getString("locale") +
 				".yml");
 		try {
@@ -314,6 +329,16 @@ public class Main extends JavaPlugin {
 			urgentConsoleWarning("Please update en_US.yml and update any other language files to version " +
 					ChatColor.BLUE + languageFileVersion + ChatColor.RED + ".");
 			urgentConsoleWarning("Please do not update your config.yml until your language files have been " +
+					"updated.");
+			outdated = true;
+		}
+
+		// Check if customEffects.yml is outdated
+		if (getConfig().getInt("customEffects") < customEffectsVersion) {
+			urgentConsoleWarning("Your customEffects.yml is no longer supported with this version!");
+			urgentConsoleWarning("Please transfer player data to version " + ChatColor.BLUE +
+					customEffectsVersion + ChatColor.BLUE + ".");
+			urgentConsoleWarning("Please do not update your config.yml until your customEffects.yml has been " +
 					"updated.");
 			outdated = true;
 		}
@@ -405,6 +430,11 @@ public class Main extends JavaPlugin {
 	// Saves arena data changes
 	public void savePlayerData() {
 		playerData.saveConfig();
+	}
+
+	// Returns custom effects
+	public FileConfiguration getCustomEffects() {
+		return customEffects.getConfig();
 	}
 
 	public static boolean isOutdated() {
