@@ -34,6 +34,7 @@ public class Main extends JavaPlugin {
 	// Yaml file managers
 	private DataManager arenaData;
 	private DataManager playerData;
+	private DataManager customEffects;
 
 	// Global instance variables
 	private final NMSManager nmsManager = NMSVersion.getCurrent().getNmsManager();
@@ -56,6 +57,7 @@ public class Main extends JavaPlugin {
 
 		arenaData = new DataManager("arenaData.yml");
 		playerData = new DataManager("playerData.yml");
+		customEffects = new DataManager("customEffects.yml");
 		DataManager languageData = new DataManager("languages/" + getConfig().getString("locale") +
 				".yml");
 
@@ -141,6 +143,7 @@ public class Main extends JavaPlugin {
 		pm.registerEvents(new ChallengeListener(), this);
 		pm.registerEvents(new WorldListener(), this);
 		pm.registerEvents(new BonusListener(), this);
+		pm.registerEvents(new CustomEffectsListener(), this);
 
 		// Add packet listeners for online players
 		for (Player player : Bukkit.getOnlinePlayers())
@@ -253,6 +256,7 @@ public class Main extends JavaPlugin {
 
 		arenaData = new DataManager("arenaData.yml");
 		playerData = new DataManager("playerData.yml");
+		customEffects = new DataManager("customEffects.yml");
 		DataManager languageData = new DataManager("languages/" + getConfig().getString("locale") +
 				".yml");
 		try {
@@ -405,6 +409,11 @@ public class Main extends JavaPlugin {
 	// Saves arena data changes
 	public void savePlayerData() {
 		playerData.saveConfig();
+	}
+
+	// Returns custom effects
+	public FileConfiguration getCustomEffects() {
+		return customEffects.getConfig();
 	}
 
 	public static boolean isOutdated() {
