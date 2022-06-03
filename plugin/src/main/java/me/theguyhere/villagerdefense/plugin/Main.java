@@ -8,7 +8,6 @@ import me.theguyhere.villagerdefense.plugin.commands.Commands;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLanguageKeyException;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
-import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import me.theguyhere.villagerdefense.plugin.listeners.*;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
@@ -29,11 +28,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings("unused")
 public class Main extends JavaPlugin {
+	// Singleton instance
+	public static Main plugin;
+
 	// Yaml file managers
-	private final DataManager arenaData = new DataManager(this, "arenaData.yml");
-	private final DataManager playerData = new DataManager(this, "playerData.yml");
-	private final DataManager languageData = new DataManager(this, "languages/" +
-			getConfig().getString("locale") + ".yml");
+	private DataManager arenaData;
+	private DataManager playerData;
+	private DataManager customEffects;
 
 	// Global instance variables
 	private final NMSManager nmsManager = NMSVersion.getCurrent().getNmsManager();
@@ -43,45 +44,23 @@ public class Main extends JavaPlugin {
 	// Global state variables
 	private static boolean outdated = false; // DO NOT CHANGE
 	public static final boolean releaseMode = true;
-	public static final int configVersion = 7;
+	public static final int configVersion = 8;
 	public static final int arenaDataVersion = 6;
 	public static final int playerDataVersion = 2;
 	public static final int spawnTableVersion = 1;
-	public static final int languageFileVersion = 13;
+	public static final int languageFileVersion = 16;
 	public static final int defaultSpawnVersion = 2;
+	public static final int customEffectsVersion = 1;
 
 	@Override
 	public void onEnable() {
-		// Set up initial classes
-		saveDefaultConfig();
-		PluginManager pm = getServer().getPluginManager();
-		try {
-			LanguageManager.init(languageData.getConfig());
-		} catch (InvalidLanguageKeyException e) {
-			CommunicationManager.debugError(e.getMessage(), 0);
-		}
-		Commands commands = new Commands(this);
-		GameItems.setPlugin();
-		Inventories.setPlugin(this);
+		Main.plugin = this;
 
-		// Set up commands and tab complete
-		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist").setExecutor(commands);
-		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist")
-				.setTabCompleter(new CommandTab());
-
-		// Register event listeners
-		pm.registerEvents(new InventoryListener(this), this);
-		pm.registerEvents(new JoinListener(this), this);
-		pm.registerEvents(new ClickPortalListener(), this);
-		pm.registerEvents(new GameListener(this), this);
-		pm.registerEvents(new ArenaListener(this), this);
-		pm.registerEvents(new AbilityListener(this), this);
-		pm.registerEvents(new ChallengeListener(this), this);
-		pm.registerEvents(new WorldListener(this), this);
-
-		// Add packet listeners for online players
-		for (Player player : Bukkit.getOnlinePlayers())
-			nmsManager.injectPacketListener(player, new PacketListenerImp());
+		arenaData = new DataManager("arenaData.yml");
+		playerData = new DataManager("playerData.yml");
+		customEffects = new DataManager("customEffects.yml");
+		DataManager languageData = new DataManager("languages/" + getConfig().getString("locale") +
+				".yml");
 
 		// Check config version
 		if (getConfig().getInt("version") < configVersion) {
@@ -139,6 +118,47 @@ public class Main extends JavaPlugin {
 					"updated.");
 			outdated = true;
 		}
+
+		// Check if customEffects.yml is outdated
+		if (getConfig().getInt("customEffects") < customEffectsVersion) {
+			urgentConsoleWarning("Your customEffects.yml is no longer supported with this version!");
+			urgentConsoleWarning("Please transfer player data to version " + ChatColor.BLUE +
+					customEffectsVersion + ChatColor.BLUE + ".");
+			urgentConsoleWarning("Please do not update your config.yml until your customEffects.yml has been " +
+					"updated.");
+			outdated = true;
+		}
+
+		// Set up commands and tab complete
+		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist").setExecutor(new Commands());
+		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist")
+				.setTabCompleter(new CommandTab());
+
+		// Set up initial classes
+		saveDefaultConfig();
+		PluginManager pm = getServer().getPluginManager();
+		try {
+			LanguageManager.init(languageData.getConfig());
+		} catch (InvalidLanguageKeyException e) {
+			e.printStackTrace();
+		}
+		GameItems.init();
+
+		// Register event listeners
+		pm.registerEvents(new InventoryListener(), this);
+		pm.registerEvents(new JoinListener(), this);
+		pm.registerEvents(new ClickPortalListener(), this);
+		pm.registerEvents(new GameListener(), this);
+		pm.registerEvents(new ArenaListener(), this);
+		pm.registerEvents(new AbilityListener(), this);
+		pm.registerEvents(new ChallengeListener(), this);
+		pm.registerEvents(new WorldListener(), this);
+		pm.registerEvents(new BonusListener(), this);
+		pm.registerEvents(new CustomEffectsListener(), this);
+
+		// Add packet listeners for online players
+		for (Player player : Bukkit.getOnlinePlayers())
+			nmsManager.injectPacketListener(player, new PacketListenerImp());
 
 		// Set teams
 		if (Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("monsters") == null) {
@@ -245,6 +265,17 @@ public class Main extends JavaPlugin {
 		// Reset "outdated" flag
 		outdated = false;
 
+		arenaData = new DataManager("arenaData.yml");
+		playerData = new DataManager("playerData.yml");
+		customEffects = new DataManager("customEffects.yml");
+		DataManager languageData = new DataManager("languages/" + getConfig().getString("locale") +
+				".yml");
+		try {
+			LanguageManager.init(languageData.getConfig());
+		} catch (InvalidLanguageKeyException e) {
+			e.printStackTrace();
+		}
+
 		// Check config version
 		if (getConfig().getInt("version") < configVersion) {
 			urgentConsoleWarning("Your config.yml is outdated!");
@@ -298,6 +329,16 @@ public class Main extends JavaPlugin {
 			urgentConsoleWarning("Please update en_US.yml and update any other language files to version " +
 					ChatColor.BLUE + languageFileVersion + ChatColor.RED + ".");
 			urgentConsoleWarning("Please do not update your config.yml until your language files have been " +
+					"updated.");
+			outdated = true;
+		}
+
+		// Check if customEffects.yml is outdated
+		if (getConfig().getInt("customEffects") < customEffectsVersion) {
+			urgentConsoleWarning("Your customEffects.yml is no longer supported with this version!");
+			urgentConsoleWarning("Please transfer player data to version " + ChatColor.BLUE +
+					customEffectsVersion + ChatColor.BLUE + ".");
+			urgentConsoleWarning("Please do not update your config.yml until your customEffects.yml has been " +
 					"updated.");
 			outdated = true;
 		}
@@ -362,7 +403,7 @@ public class Main extends JavaPlugin {
 	}
 
 	public void resetGameManager() {
-		GameManager.init(this);
+		GameManager.init();
 
 		// Check for proper initialization with worlds
 		if (unloadedWorlds.size() > 0) {
@@ -389,6 +430,11 @@ public class Main extends JavaPlugin {
 	// Saves arena data changes
 	public void savePlayerData() {
 		playerData.saveConfig();
+	}
+
+	// Returns custom effects
+	public FileConfiguration getCustomEffects() {
+		return customEffects.getConfig();
 	}
 
 	public static boolean isOutdated() {

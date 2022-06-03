@@ -99,6 +99,10 @@ public class CommunicationManager {
         }
     }
 
+    public static void debugErrorShouldNotHappen() {
+        debugError("This should not be happening!", 0, true);
+    }
+
     public static void debugInfo(String msg, int debugLevel) {
         debugInfo(msg, debugLevel, false);
     }

@@ -2,6 +2,8 @@ package me.theguyhere.villagerdefense.plugin.game.models;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
+import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryID;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryType;
 import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
@@ -24,26 +26,22 @@ import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.boss.BarColor;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class Tasks {
-	private final Main plugin;
 	private final Arena arena;
 	/** Maps runnables to ID of the currently running runnable.*/
 	private final Map<Runnable, Integer> tasks = new HashMap<>();
 
-	public Tasks(Main plugin, Arena arena) {
-		this.plugin = plugin;
+	public Tasks(Arena arena) {
 		this.arena = arena;
 	}
 
@@ -172,6 +170,27 @@ public class Tasks {
 				arena.startBorderParticles();
 
 			arena.getActives().forEach(player -> {
+				FileConfiguration playerData = Main.plugin.getPlayerData();
+				String path = player.getPlayer().getUniqueId() + ".achievements";
+				Kit second;
+
+				// Give second kit to players with two kit bonus
+				if (playerData.contains(path) && player.isBoosted() &&
+						playerData.getStringList(path).contains(Achievement.allKits().getID()))
+					do {
+						second = Kit.randomKit();
+
+						// Single tier kits
+						if (!second.isMultiLevel())
+							second.setKitLevel(1);
+
+						// Multiple tier kits
+						else second.setKitLevel(playerData.getInt(player.getPlayer().getUniqueId() + ".kits." +
+								second.getName()));
+
+						player.setKit2(second);
+					} while (second.equals(player.getKit()));
+
 				// Give all players starting items
 				giveItems(player);
 
@@ -179,24 +198,43 @@ public class Tasks {
 				if (CommunicationManager.getDebugLevel() >= 3 && player.getPlayer().hasPermission("vd.admin")) {
 				}
 
-				// Give Traders their gems
-				if (player.getKit().equals(Kit.trader().setKitLevel(1)))
-					player.addGems(200);
+				Random r = new Random();
 
 				// Set health for people with giant kits
-				if (player.getKit().equals(Kit.giant().setKitLevel(1)))
+				if ((Kit.giant().setKitLevel(1).equals(player.getKit()) ||
+						Kit.giant().setKitLevel(1).equals(player.getKit2())) && !player.isSharing())
 					Objects.requireNonNull(player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
 							.addModifier(new AttributeModifier("Giant1", 2,
 									AttributeModifier.Operation.ADD_NUMBER));
-				else if (player.getKit().equals(Kit.giant().setKitLevel(2)))
+				else if ((Kit.giant().setKitLevel(2).equals(player.getKit()) ||
+						Kit.giant().setKitLevel(2).equals(player.getKit2())) && !player.isSharing())
 					Objects.requireNonNull(player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
-							.addModifier(new AttributeModifier("Giant1", 4,
+							.addModifier(new AttributeModifier("Giant2", 4,
+									AttributeModifier.Operation.ADD_NUMBER));
+				else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT2))) {
+					Objects.requireNonNull(player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+							.addModifier(new AttributeModifier("Giant2", 4,
+									AttributeModifier.Operation.ADD_NUMBER));
+					PlayerManager.notifySuccess(player.getPlayer(), LanguageManager.messages.effectShare);
+				}
+				else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT1))) {
+					Objects.requireNonNull(player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+							.addModifier(new AttributeModifier("Giant1", 2,
+									AttributeModifier.Operation.ADD_NUMBER));
+					PlayerManager.notifySuccess(player.getPlayer(), LanguageManager.messages.effectShare);
+				}
+
+				// Set health for people with health boost and are boosted
+				if (playerData.contains(path) && player.isBoosted() &&
+						playerData.getStringList(path).contains(Achievement.topWave9().getID()))
+					Objects.requireNonNull(player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+							.addModifier(new AttributeModifier("HealthBoost", 2,
 									AttributeModifier.Operation.ADD_NUMBER));
 
 				// Set health for people with dwarf challenge
 				if (player.getChallenges().contains(Challenge.dwarf()))
 					Objects.requireNonNull(player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
-							.addModifier(new AttributeModifier("Giant1", -.5,
+							.addModifier(new AttributeModifier("Dwarf", -.5,
 									AttributeModifier.Operation.MULTIPLY_SCALAR_1));
 
 				// Make sure new health is set up correctly
@@ -208,6 +246,17 @@ public class Tasks {
 				if (player.getChallenges().contains(Challenge.blind()))
 					player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999,
 							0));
+
+				// Give Traders their gems
+				if (Kit.trader().setKitLevel(1).equals(player.getKit()) ||
+						Kit.trader().setKitLevel(1).equals(player.getKit2()))
+					player.addGems(200);
+
+				// Give gems from crystal conversion
+				path = player.getPlayer().getUniqueId() + ".crystalBalance";
+				player.addGems(player.getGemBoost());
+				playerData.set(path, playerData.getInt(path) - player.getGemBoost() * 5);
+				Main.plugin.savePlayerData();
 			});
 
 			// Initiate community chest
@@ -218,7 +267,7 @@ public class Tasks {
 			));
 
 			// Trigger WaveEndEvent
-			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 					Bukkit.getPluginManager().callEvent(new WaveEndEvent(arena)));
 
 			// Debug message to console
@@ -260,20 +309,46 @@ public class Tasks {
 				p.setStatus(PlayerStatus.ALIVE);
 				giveItems(p);
 
+				Random r = new Random();
+
 				// Set health for people with giant kits
-				if (p.getKit().equals(Kit.giant().setKitLevel(1)))
+				if ((Kit.giant().setKitLevel(1).equals(p.getKit()) ||
+						Kit.giant().setKitLevel(1).equals(p.getKit2())) && !p.isSharing())
 					Objects.requireNonNull(p.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
 							.addModifier(new AttributeModifier("Giant1", 2,
 									AttributeModifier.Operation.ADD_NUMBER));
-				else if (p.getKit().equals(Kit.giant().setKitLevel(2)))
+				else if ((Kit.giant().setKitLevel(2).equals(p.getKit()) ||
+						Kit.giant().setKitLevel(2).equals(p.getKit2())) && !p.isSharing())
 					Objects.requireNonNull(p.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
-							.addModifier(new AttributeModifier("Giant1", 4,
+							.addModifier(new AttributeModifier("Giant2", 4,
+									AttributeModifier.Operation.ADD_NUMBER));
+				else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT2))) {
+					Objects.requireNonNull(p.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+							.addModifier(new AttributeModifier("Giant2", 4,
+									AttributeModifier.Operation.ADD_NUMBER));
+					PlayerManager.notifySuccess(p.getPlayer(), LanguageManager.messages.effectShare);
+				}
+				else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT1))) {
+					Objects.requireNonNull(p.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+							.addModifier(new AttributeModifier("Giant1", 2,
+									AttributeModifier.Operation.ADD_NUMBER));
+					PlayerManager.notifySuccess(p.getPlayer(), LanguageManager.messages.effectShare);
+				}
+
+				// Set health for people with health boost and are boosted
+				FileConfiguration playerData = Main.plugin.getPlayerData();
+				String path = p.getPlayer().getUniqueId() + ".achievements";
+
+				if (playerData.contains(path) && p.isBoosted() &&
+						playerData.getStringList(path).contains(Achievement.topWave9().getID()))
+					Objects.requireNonNull(p.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+							.addModifier(new AttributeModifier("HealthBoost", 2,
 									AttributeModifier.Operation.ADD_NUMBER));
 
 				// Set health for people with dwarf challenge
 				if (p.getChallenges().contains(Challenge.dwarf()))
 					Objects.requireNonNull(p.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
-							.addModifier(new AttributeModifier("Giant1", -.5,
+							.addModifier(new AttributeModifier("Dwarf", -.5,
 									AttributeModifier.Operation.MULTIPLY_SCALAR_1));
 
 				// Make sure new health is set up correctly
@@ -333,7 +408,7 @@ public class Tasks {
 				arena.setArmorShop(Inventories.createArmorShopMenu(level, arena));
 				arena.setConsumeShop(Inventories.createConsumableShopMenu(level, arena));
 				if (currentWave != 1)
-					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 							arena.getActives().forEach(player ->
 									player.getPlayer().sendTitle(CommunicationManager.format(
 											"&6" + LanguageManager.messages.shopUpgrade),
@@ -344,12 +419,12 @@ public class Tasks {
 			}
 
 			// Spawns mobs after 15 seconds
-			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 					Bukkit.getPluginManager().callEvent(new WaveStartEvent(arena)),
 					Utils.secondsToTicks(15));
 
 			// Debug message to console
-			CommunicationManager.debugInfo("Starting wave " + currentWave + " for Arena " + arena, 2);
+			CommunicationManager.debugInfo("Starting wave " + currentWave + " for " + arena.getName(), 2);
 		}
 	};
 
@@ -359,6 +434,17 @@ public class Tasks {
 		public void run() {
 			arena.calibrate();
 			CommunicationManager.debugInfo(arena.getName() + " performed a calibration check.", 2);
+		}
+	};
+
+	// Kick players from the arena
+	public final Runnable kickPlayers = new Runnable() {
+		@Override
+		public void run() {
+			// Remove players from the arena
+			arena.getPlayers().forEach(player ->
+					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
+							Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player.getPlayer()))));
 		}
 	};
 
@@ -373,11 +459,6 @@ public class Tasks {
 			arena.resetVillagers();
 			arena.resetGolems();
 			arena.getTask().getTasks().clear();
-
-			// Remove players from the arena
-			arena.getPlayers().forEach(player ->
-					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
-							Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player.getPlayer()))));
 
 			// Clear the arena
 			WorldManager.clear(arena.getCorner1(), arena.getCorner2());
@@ -426,14 +507,14 @@ public class Tasks {
 				messageSent = false;
 
 				// Debug message to console
-				CommunicationManager.debugInfo("Adding time limit bar to Arena " + arena, 2);
+				CommunicationManager.debugInfo("Adding time limit bar to " + arena.getName(), 2);
 			}
 
 			else {
 				// Trigger wave end event
 				if (progress <= 0) {
 					progress = 0;
-					Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 							Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 				}
 
@@ -481,6 +562,25 @@ public class Tasks {
 				equipment.setBoots(item);
 			else PlayerManager.giveItem(player.getPlayer(), item, LanguageManager.errors.inventoryFull);
 		}
+		if (player.getKit2() != null)
+			for (ItemStack item: player.getKit2().getItems()) {
+				EntityEquipment equipment = player.getPlayer().getEquipment();
+
+				// Equip armor if possible, otherwise put in inventory, otherwise drop at feet
+				if (Arrays.stream(GameItems.HELMET_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
+						Objects.requireNonNull(equipment).getHelmet() == null)
+					equipment.setHelmet(item);
+				else if (Arrays.stream(GameItems.CHESTPLATE_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
+						Objects.requireNonNull(equipment).getChestplate() == null)
+					equipment.setChestplate(item);
+				else if (Arrays.stream(GameItems.LEGGING_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
+						Objects.requireNonNull(equipment).getLeggings() == null)
+					equipment.setLeggings(item);
+				else if (Arrays.stream(GameItems.BOOTS_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
+						Objects.requireNonNull(equipment).getBoots() == null)
+					equipment.setBoots(item);
+				else PlayerManager.giveItem(player.getPlayer(), item, LanguageManager.errors.inventoryFull);
+			}
 		PlayerManager.giveItem(player.getPlayer(), GameItems.shop(), LanguageManager.errors.inventoryFull);
 	}
 }

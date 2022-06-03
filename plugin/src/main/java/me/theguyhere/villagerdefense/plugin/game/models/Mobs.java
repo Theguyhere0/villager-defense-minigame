@@ -22,7 +22,7 @@ import java.util.Objects;
 import java.util.Random;
 
 public class Mobs {
-    private static void setMinion(Main plugin, Arena arena, LivingEntity livingEntity) {
+    private static void setMinion(Arena arena, LivingEntity livingEntity) {
         Team monsters = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard()
                 .getTeam("monsters");
         assert monsters != null;
@@ -30,9 +30,9 @@ public class Mobs {
         monsters.addEntry(livingEntity.getUniqueId().toString());
         livingEntity.setCustomName(healthBar(1, 1, 5));
         livingEntity.setCustomNameVisible(true);
-        livingEntity.setMetadata("VD", new FixedMetadataValue(plugin, arena.getId()));
-        livingEntity.setMetadata("game", new FixedMetadataValue(plugin, arena.getGameID()));
-        livingEntity.setMetadata("wave", new FixedMetadataValue(plugin, arena.getCurrentWave()));
+        livingEntity.setMetadata("VD", new FixedMetadataValue(Main.plugin, arena.getId()));
+        livingEntity.setMetadata("game", new FixedMetadataValue(Main.plugin, arena.getGameID()));
+        livingEntity.setMetadata("wave", new FixedMetadataValue(Main.plugin, arena.getCurrentWave()));
         livingEntity.setRemoveWhenFarAway(false);
         livingEntity.setCanPickupItems(false);
         if (livingEntity.isInsideVehicle())
@@ -71,13 +71,13 @@ public class Mobs {
         }
     }
 
-    private static void setBoss(Main plugin, Arena arena, LivingEntity livingEntity) {
+    private static void setBoss(Arena arena, LivingEntity livingEntity) {
         Team monsters = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard()
                 .getTeam("monsters");
         assert monsters != null;
 
         monsters.addEntry(livingEntity.getUniqueId().toString());
-        livingEntity.setMetadata("VD", new FixedMetadataValue(plugin, arena.getId()));
+        livingEntity.setMetadata("VD", new FixedMetadataValue(Main.plugin, arena.getId()));
         livingEntity.setRemoveWhenFarAway(false);
         livingEntity.setCanPickupItems(false);
         arena.incrementEnemies();
@@ -114,10 +114,10 @@ public class Mobs {
         }
     }
 
-    private static void setLargeMinion(Main plugin, Arena arena, LivingEntity livingEntity) {
+    private static void setLargeMinion(Arena arena, LivingEntity livingEntity) {
         livingEntity.setCustomName(healthBar(1, 1, 10));
         livingEntity.setCustomNameVisible(true);
-        livingEntity.setMetadata("VD", new FixedMetadataValue(plugin, arena.getId()));
+        livingEntity.setMetadata("VD", new FixedMetadataValue(Main.plugin, arena.getId()));
         livingEntity.setRemoveWhenFarAway(false);
         livingEntity.setCanPickupItems(false);
         arena.incrementEnemies();
@@ -1048,7 +1048,7 @@ public class Mobs {
         }
     }
 
-    public static void setVillager(Main plugin, Arena arena, Villager villager) {
+    public static void setVillager(Arena arena, Villager villager) {
         Team villagers = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard()
                 .getTeam("villagers");
         assert villagers != null;
@@ -1056,104 +1056,104 @@ public class Mobs {
         villagers.addEntry(villager.getUniqueId().toString());
         villager.setCustomName(healthBar(1, 1, 5));
         villager.setCustomNameVisible(true);
-        villager.setMetadata("VD", new FixedMetadataValue(plugin, arena.getId()));
+        villager.setMetadata("VD", new FixedMetadataValue(Main.plugin, arena.getId()));
         arena.incrementVillagers();
         Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
     }
 
-    public static void setZombie(Main plugin, Arena arena, Zombie zombie) {
-        setMinion(plugin, arena, zombie);
+    public static void setZombie(Arena arena, Zombie zombie) {
+        setMinion(arena, zombie);
         setSword(arena, zombie);
         setArmor(arena, zombie);
         setBaby(arena, zombie);
     }
 
-    public static void setHusk(Main plugin, Arena arena, Husk husk) {
-        setMinion(plugin, arena, husk);
+    public static void setHusk(Arena arena, Husk husk) {
+        setMinion(arena, husk);
         setSword(arena, husk);
         setArmor(arena, husk);
         setBaby(arena, husk);
     }
 
-    public static void setWitherSkeleton(Main plugin, Arena arena, WitherSkeleton witherSkeleton) {
-        setMinion(plugin, arena, witherSkeleton);
+    public static void setWitherSkeleton(Arena arena, WitherSkeleton witherSkeleton) {
+        setMinion(arena, witherSkeleton);
         setSword(arena, witherSkeleton);
         setArmor(arena, witherSkeleton);
     }
 
-    public static void setBrute(Main plugin, Arena arena, PiglinBrute brute) {
-        setMinion(plugin, arena, brute);
+    public static void setBrute(Arena arena, PiglinBrute brute) {
+        setMinion(arena, brute);
         setAxe(arena, brute);
         setArmor(arena, brute);
         setBaby(arena, brute);
         brute.setImmuneToZombification(true);
     }
 
-    public static void setVindicator(Main plugin, Arena arena, Vindicator vindicator) {
-        setMinion(plugin, arena, vindicator);
+    public static void setVindicator(Arena arena, Vindicator vindicator) {
+        setMinion(arena, vindicator);
         setAxe(arena, vindicator);
         vindicator.setPatrolLeader(false);
         vindicator.setCanJoinRaid(false);
     }
 
-    public static void setSpider(Main plugin, Arena arena, Spider spider) {
-        setMinion(plugin, arena, spider);
+    public static void setSpider(Arena arena, Spider spider) {
+        setMinion(arena, spider);
     }
 
-    public static void setCaveSpider(Main plugin, Arena arena, CaveSpider caveSpider) {
-        setMinion(plugin, arena, caveSpider);
+    public static void setCaveSpider(Arena arena, CaveSpider caveSpider) {
+        setMinion(arena, caveSpider);
     }
 
-    public static void setWitch(Main plugin, Arena arena, Witch witch) {
-        setMinion(plugin, arena, witch);
+    public static void setWitch(Arena arena, Witch witch) {
+        setMinion(arena, witch);
     }
 
-    public static void setSkeleton(Main plugin, Arena arena, Skeleton skeleton) {
-        setMinion(plugin, arena, skeleton);
+    public static void setSkeleton(Arena arena, Skeleton skeleton) {
+        setMinion(arena, skeleton);
         setBow(arena, skeleton);
         setArmor(arena, skeleton);
     }
 
-    public static void setStray(Main plugin, Arena arena, Stray stray) {
-        setMinion(plugin, arena, stray);
+    public static void setStray(Arena arena, Stray stray) {
+        setMinion(arena, stray);
         setBow(arena, stray);
         setArmor(arena, stray);
     }
 
-    public static void setDrowned(Main plugin, Arena arena, Drowned drowned) {
-        setMinion(plugin, arena, drowned);
+    public static void setDrowned(Arena arena, Drowned drowned) {
+        setMinion(arena, drowned);
         setTrident(arena, drowned);
         setArmor(arena, drowned);
         setBaby(arena, drowned);
     }
 
-    public static void setBlaze(Main plugin, Arena arena, Blaze blaze) {
-        setMinion(plugin, arena, blaze);
+    public static void setBlaze(Arena arena, Blaze blaze) {
+        setMinion(arena, blaze);
     }
 
-    public static void setGhast(Main plugin, Arena arena, Ghast ghast) {
-        setMinion(plugin, arena, ghast);
+    public static void setGhast(Arena arena, Ghast ghast) {
+        setMinion(arena, ghast);
     }
 
-    public static void setPillager(Main plugin, Arena arena, Pillager pillager) {
-        setMinion(plugin, arena, pillager);
+    public static void setPillager(Arena arena, Pillager pillager) {
+        setMinion(arena, pillager);
         setCrossbow(arena, pillager);
         pillager.setPatrolLeader(false);
         pillager.setCanJoinRaid(false);
     }
 
-    public static void setSlime(Main plugin, Arena arena, Slime slime) {
-        setMinion(plugin, arena, slime);
+    public static void setSlime(Arena arena, Slime slime) {
+        setMinion(arena, slime);
         setSize(arena, slime);
     }
 
-    public static void setMagmaCube(Main plugin, Arena arena, MagmaCube magmaCube) {
-        setMinion(plugin, arena, magmaCube);
+    public static void setMagmaCube(Arena arena, MagmaCube magmaCube) {
+        setMinion(arena, magmaCube);
         setSize(arena, magmaCube);
     }
 
-    public static void setCreeper(Main plugin, Arena arena, Creeper creeper) {
-        setMinion(plugin, arena, creeper);
+    public static void setCreeper(Arena arena, Creeper creeper) {
+        setMinion(arena, creeper);
         Random r = new Random();
         double difficulty = arena.getCurrentDifficulty();
 
@@ -1177,26 +1177,26 @@ public class Mobs {
 
     }
 
-    public static void setPhantom(Main plugin, Arena arena, Phantom phantom) {
-        setMinion(plugin, arena, phantom);
+    public static void setPhantom(Arena arena, Phantom phantom) {
+        setMinion(arena, phantom);
     }
 
-    public static void setEvoker(Main plugin, Arena arena, Evoker evoker) {
-        setMinion(plugin, arena, evoker);
+    public static void setEvoker(Arena arena, Evoker evoker) {
+        setMinion(arena, evoker);
         evoker.setCanJoinRaid(false);
         evoker.setPatrolLeader(false);
     }
 
-    public static void setZoglin(Main plugin, Arena arena, Zoglin zoglin) {
-        setMinion(plugin, arena, zoglin);
+    public static void setZoglin(Arena arena, Zoglin zoglin) {
+        setMinion(arena, zoglin);
     }
 
-    public static void setRavager(Main plugin, Arena arena, Ravager ravager) {
-        setLargeMinion(plugin, arena, ravager);
+    public static void setRavager(Arena arena, Ravager ravager) {
+        setLargeMinion(arena, ravager);
     }
 
-    public static void setWither(Main plugin, Arena arena, Wither wither) {
-        setBoss(plugin, arena, wither);
+    public static void setWither(Arena arena, Wither wither) {
+        setBoss(arena, wither);
     }
 
     public static void setWolf(Main plugin, Arena arena, VDPlayer vdPlayer, Wolf wolf) {

@@ -1,6 +1,6 @@
 main: me.theguyhere.villagerdefense.plugin.Main
 name: VillagerDefense
-version: 1.2.0-pre1
+version: 1.2.0-pre2
 author: Theguyhere
 api-version: 1.16
 softdepend: [WorldGuard, WorldEdit, Multiverse-core]
@@ -65,3 +65,6 @@ commands:
       description: Attempts to close an arena
       usage: /vd close
       permission: vd.use
+    achievements:
+      description: Displays achievements of a player
+      usage: /vd achievements

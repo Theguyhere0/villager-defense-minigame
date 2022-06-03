@@ -18,9 +18,9 @@ public class Leaderboard {
 	/** The location of the Leaderboard.*/
 	private final Location location;
 
-	public Leaderboard(@NotNull String type, Main plugin) throws InvalidLocationException {
-		Location location = Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin,
-				"leaderboard." + type));
+	public Leaderboard(@NotNull String type) throws InvalidLocationException {
+		Location location = Objects.requireNonNull(DataManager.getConfigLocationNoPitch(
+                "leaderboard." + type));
 
 		// Check for null world
 		if (location.getWorld() == null)
@@ -52,10 +52,10 @@ public class Leaderboard {
 		}
 
 		// Gather relevant stats
-		for (String key : Objects.requireNonNull(plugin.getPlayerData().getConfigurationSection(""))
+		for (String key : Objects.requireNonNull(Main.plugin.getPlayerData().getConfigurationSection(""))
 				.getKeys(false)) {
-			if (!key.equals("logger") && plugin.getPlayerData().contains(key + "." + type))
-				mapping.put(key, plugin.getPlayerData().getInt(key + "." + type));
+			if (!key.equals("logger") && Main.plugin.getPlayerData().contains(key + "." + type))
+				mapping.put(key, Main.plugin.getPlayerData().getInt(key + "." + type));
 		}
 
 		// Put names and values into the leaderboard

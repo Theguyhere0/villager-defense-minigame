@@ -21,7 +21,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class GameManager {
-	private static Main plugin;
 	private static final Map<Integer, Arena> arenas = new HashMap<>();
 	private static final Map<Integer, InfoBoard> infoBoards = new HashMap<>();
 	private static final Map<String, Leaderboard> leaderboards = new HashMap<>();
@@ -29,46 +28,45 @@ public class GameManager {
 	private static final List<String> validSounds = new LinkedList<>(Arrays.asList("blocks", "cat", "chirp", "far",
 			"mall", "mellohi", "pigstep", "stal", "strad", "wait", "ward"));
 
-	public static void init(Main plugin) {
-		GameManager.plugin = plugin;
+	public static void init() {
 		ConfigurationSection section;
 		wipeArenas();
 
 		if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1))
 			validSounds.add("otherside");
 
-		section = plugin.getArenaData().getConfigurationSection("arena");
+		section = Main.plugin.getArenaData().getConfigurationSection("arena");
 		if (section != null)
 			section.getKeys(false)
-					.forEach(id -> arenas.put(Integer.parseInt(id), new Arena(plugin, Integer.parseInt(id))));
+					.forEach(id -> arenas.put(Integer.parseInt(id), new Arena(Integer.parseInt(id))));
 
-		section = plugin.getArenaData().getConfigurationSection("infoBoard");
+		section = Main.plugin.getArenaData().getConfigurationSection("infoBoard");
 		if (section != null)
 			section.getKeys(false)
 					.forEach(id -> {
 						try {
-							Location location = DataManager.getConfigLocationNoPitch(plugin, "infoBoard." + id);
+							Location location = DataManager.getConfigLocationNoPitch("infoBoard." + id);
 							if (location != null)
 								infoBoards.put(Integer.parseInt(id), new InfoBoard(location));
 						} catch (InvalidLocationException ignored) {
 						}
 					});
 
-		section = plugin.getArenaData().getConfigurationSection("leaderboard");
+		section = Main.plugin.getArenaData().getConfigurationSection("leaderboard");
 		if (section != null)
 			section.getKeys(false)
 					.forEach(id -> {
 						try {
-							Location location = DataManager.getConfigLocationNoPitch(plugin, "leaderboard." + id);
+							Location location = DataManager.getConfigLocationNoPitch("leaderboard." + id);
 							if (location != null)
-								leaderboards.put(id, new Leaderboard(id, plugin));
+								leaderboards.put(id, new Leaderboard(id));
 						} catch (InvalidLocationException ignored) {
 						}
 					});
 
-		setLobby(DataManager.getConfigLocation(plugin, "lobby"));
+		setLobby(DataManager.getConfigLocation("lobby"));
 
-		plugin.setLoaded(true);
+		Main.plugin.setLoaded(true);
 	}
 
 	public static Arena getArena(int arenaID) {
@@ -127,28 +125,45 @@ public class GameManager {
 		Objective obj = board.registerNewObjective("VillagerDefense", "dummy",
 				CommunicationManager.format("&6&l   " + arena.getName() + "  "));
 		obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-		Score score12 = obj.getScore(CommunicationManager.format("&e" + LanguageManager.messages.wave + ": " +
+
+		Score score13 = obj.getScore(CommunicationManager.format("&e" + LanguageManager.messages.wave + ": " +
 				arena.getCurrentWave()));
-		score12.setScore(12);
-		Score score11 = obj.getScore(CommunicationManager.format("&a" + LanguageManager.messages.gems + ": " +
+		score13.setScore(13);
+
+		Score score12 = obj.getScore(CommunicationManager.format("&a" + LanguageManager.messages.gems + ": " +
 				player.getGems()));
-		score11.setScore(11);
+		score12.setScore(12);
+
 		StringBuilder kit = new StringBuilder(player.getKit().getName());
+		StringBuilder kit2 = new StringBuilder("    ");
 		if (player.getKit().isMultiLevel()) {
 			kit.append(" ");
 			for (int i = 0; i < Math.max(0, player.getKit().getLevel()); i++)
 				kit.append("I");
 		}
-		Score score10 = obj.getScore(CommunicationManager.format("&b" + LanguageManager.messages.kit + ": " +
+		if (player.getKit2() != null) {
+			kit.append(" +");
+			kit2.append(player.getKit2().getName());
+			if (player.getKit2().isMultiLevel()) {
+				kit2.append(" ");
+				for (int i = 0; i < Math.max(0, player.getKit2().getLevel()); i++)
+					kit2.append("I");
+			}
+		}
+		Score score11 = obj.getScore(CommunicationManager.format("&b" + LanguageManager.messages.kit + ": " +
 				kit));
+		score11.setScore(11);
+		Score score10 = obj.getScore(CommunicationManager.format("&b" + kit2));
 		score10.setScore(10);
+
 		int bonus = 0;
 		for (Challenge challenge : player.getChallenges())
 			bonus += challenge.getBonus();
 		Score score9 = obj.getScore(CommunicationManager.format(String.format("&5" +
 				LanguageManager.messages.challenges + ": (+%d%%)", bonus)));
 		score9.setScore(9);
-		if (player.getChallenges().size() < 4)
+
+		if (player.getChallenges().size() < (player.getKit2() != null ? 3 : 4))
 			for (Challenge challenge : player.getChallenges()) {
 				Score score8 = obj.getScore(CommunicationManager.format("  &5" + challenge.getName()));
 				score8.setScore(8);
@@ -160,24 +175,32 @@ public class GameManager {
 			Score score8 = obj.getScore(CommunicationManager.format("  &5" + challenges));
 			score8.setScore(8);
 		}
+
 		Score score7 = obj.getScore("");
 		score7.setScore(7);
+
 		Score score6 = obj.getScore(CommunicationManager.format("&d" + LanguageManager.messages.players + ": " +
 				arena.getAlive()));
 		score6.setScore(6);
+
 		Score score5 = obj.getScore(LanguageManager.messages.ghosts + ": " + arena.getGhostCount());
 		score5.setScore(5);
+
 		Score score4 = obj.getScore(CommunicationManager.format("&7" + LanguageManager.messages.spectators +
 				": " + arena.getSpectatorCount()));
 		score4.setScore(4);
+
 		Score score3 = obj.getScore(" ");
 		score3.setScore(3);
+
 		Score score2 = obj.getScore(CommunicationManager.format("&2" + LanguageManager.messages.villagers + ": " +
 				arena.getVillagers()));
 		score2.setScore(2);
+
 		Score score1 = obj.getScore(CommunicationManager.format("&c" + LanguageManager.messages.enemies + ": " +
 				arena.getEnemies()));
 		score1.setScore(1);
+
 		Score score = obj.getScore(CommunicationManager.format("&4" + LanguageManager.messages.kills + ": " +
 				player.getKills()));
 		score.setScore(0);
@@ -194,7 +217,7 @@ public class GameManager {
 	}
 
 	public static void reloadLobby() {
-		lobby = DataManager.getConfigLocation(plugin, "lobby");
+		lobby = DataManager.getConfigLocation("lobby");
 	}
 
 	/**
@@ -212,7 +235,7 @@ public class GameManager {
 	 */
 	public static void setInfoBoard(Location location, int infoBoardID) {
 		// Save config location
-		DataManager.setConfigurationLocation(plugin, "infoBoard." + infoBoardID, location);
+		DataManager.setConfigurationLocation("infoBoard." + infoBoardID, location);
 
 		// Recreate the info board
 		refreshInfoBoard(infoBoardID);
@@ -229,7 +252,7 @@ public class GameManager {
 		try {
 			// Create a new board and display it
 			infoBoards.put(infoBoardID, new InfoBoard(
-					Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin, "infoBoard." + infoBoardID))
+					Objects.requireNonNull(DataManager.getConfigLocationNoPitch("infoBoard." + infoBoardID))
             ));
 			infoBoards.get(infoBoardID).displayForOnline();
 		} catch (Exception e) {
@@ -245,7 +268,7 @@ public class GameManager {
 	 */
 	public static void centerInfoBoard(int infoBoardID) {
 		// Center the location
-		DataManager.centerConfigLocation(plugin, "infoBoard." + infoBoardID);
+		DataManager.centerConfigLocation("infoBoard." + infoBoardID);
 
 		// Recreate the info board
 		refreshInfoBoard(infoBoardID);
@@ -259,7 +282,7 @@ public class GameManager {
 			infoBoards.get(infoBoardID).remove();
 			infoBoards.remove(infoBoardID);
 		}
-		DataManager.setConfigurationLocation(plugin, "infoBoard." + infoBoardID, null);
+		DataManager.setConfigurationLocation("infoBoard." + infoBoardID, null);
 	}
 
 	/**
@@ -277,7 +300,7 @@ public class GameManager {
 	 */
 	public static void setLeaderboard(Location location, String type) {
 		// Save config location
-		DataManager.setConfigurationLocation(plugin, "leaderboard." + type, location);
+		DataManager.setConfigurationLocation("leaderboard." + type, location);
 
 		// Recreate the leaderboard
 		refreshLeaderboard(type);
@@ -293,7 +316,7 @@ public class GameManager {
 
 		try {
 			// Create a new board and display it
-			leaderboards.put(type, new Leaderboard(type, plugin));
+			leaderboards.put(type, new Leaderboard(type));
 			leaderboards.get(type).displayForOnline();
 		} catch (Exception e) {
 			CommunicationManager.debugError("Invalid location for leaderboard " + type, 1);
@@ -308,7 +331,7 @@ public class GameManager {
 	 */
 	public static void centerLeaderboard(String type) {
 		// Center the location
-		DataManager.centerConfigLocation(plugin, "leaderboard." + type);
+		DataManager.centerConfigLocation("leaderboard." + type);
 
 		// Recreate the leaderboard
 		refreshLeaderboard(type);
@@ -322,7 +345,7 @@ public class GameManager {
 			leaderboards.get(type).remove();
 			leaderboards.remove(type);
 		}
-		DataManager.setConfigurationLocation(plugin, "leaderboard." + type, null);
+		DataManager.setConfigurationLocation("leaderboard." + type, null);
 	}
 
 	/**

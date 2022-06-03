@@ -21,6 +21,7 @@ import java.util.Objects;
  *     <li>Pacifist</li>
  *     <li>Dwarf</li>
  *     <li>UHC</li>
+ *     <li>Explosive</li>
  *     <li>Naked</li>
  *     <li>Blind</li>
  * </ul>
@@ -108,6 +109,8 @@ public class Challenge {
             return dwarf();
         else if (uhc().getName().equals(challengeName))
             return uhc();
+        else if (explosive().getName().equals(challengeName))
+            return explosive();
         else if (naked().getName().equals(challengeName))
             return naked();
         else if (blind().getName().equals(challengeName))
@@ -192,6 +195,19 @@ public class Challenge {
                 LanguageManager.challenges.uhc.description1));
         challenge.addMasterDescription(CommunicationManager.format("&6" +
                 LanguageManager.challenges.uhc.description2));
+        challenge.addMasterDescription(CommunicationManager.format("&a" +
+                String.format(LanguageManager.messages.crystalBonus, bonus + "%")));
+
+        return challenge;
+    }
+    public static Challenge explosive() {
+        int bonus = 60;
+
+        Challenge challenge = new Challenge(LanguageManager.challenges.explosive.name, Material.TNT, bonus);
+        challenge.addMasterDescription(CommunicationManager.format("&7" +
+                LanguageManager.challenges.explosive.description1));
+        challenge.addMasterDescription(CommunicationManager.format("&6" +
+                LanguageManager.challenges.explosive.description2));
         challenge.addMasterDescription(CommunicationManager.format("&a" +
                 String.format(LanguageManager.messages.crystalBonus, bonus + "%")));
 

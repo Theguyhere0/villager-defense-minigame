@@ -2,6 +2,8 @@ package me.theguyhere.villagerdefense.plugin.listeners;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
+import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
@@ -40,12 +42,6 @@ import java.util.Objects;
 import java.util.Random;
 
 public class GameListener implements Listener {
-	private final Main plugin;
-
-	public GameListener(Main plugin) {
-		this.plugin = plugin;
-	}
-	
 	// Keep score and drop gems, exp, and rare loot
 	@EventHandler
 	public void onMobKill(EntityDeathEvent e) {
@@ -83,8 +79,8 @@ public class GameListener implements Listener {
 
 		// Get spawn table
 		if (arena.getSpawnTableFile().equals("custom"))
-			data = new DataManager(plugin, "spawnTables/a" + arena.getId() + ".yml");
-		else data = new DataManager(plugin, "spawnTables/" + arena.getSpawnTableFile() + ".yml");
+			data = new DataManager("spawnTables/a" + arena.getId() + ".yml");
+		else data = new DataManager("spawnTables/" + arena.getSpawnTableFile() + ".yml");
 
 		// Update villager count
 		if (ent instanceof Villager)
@@ -167,7 +163,7 @@ public class GameListener implements Listener {
 		}
 
 		// Update scoreboards
-		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 				Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)));
 	}
 
@@ -210,7 +206,7 @@ public class GameListener implements Listener {
 		arena.decrementEnemies();
 
 		// Update scoreboards
-		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 				Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)));
 	}
 
@@ -428,9 +424,25 @@ public class GameListener implements Listener {
 		else if (GameItems.challengeSelector().equals(item))
 			player.openInventory(Inventories.createSelectChallengesMenu(gamer, arena));
 
+		// Toggle boost
+		else if (GameItems.boostToggle(true).equals(item) || GameItems.boostToggle(false).equals(item)) {
+			gamer.toggleBoost();
+			PlayerManager.giveChoiceItems(gamer);
+		}
+
+		// Toggle share
+		else if (GameItems.shareToggle(true).equals(item) || GameItems.shareToggle(false).equals(item)) {
+			gamer.toggleShare();
+			PlayerManager.giveChoiceItems(gamer);
+		}
+
+		// Open crystal convert menu
+		else if (GameItems.crystalConverter().equals(item))
+			player.openInventory(Inventories.createCrystalConvertMenu(gamer));
+
 		// Make player leave
 		else if (GameItems.leave().equals(item))
-			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 					Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player)));
 
 		// Ignore
@@ -523,6 +535,10 @@ public class GameListener implements Listener {
 			// Set player to fake death mode
 			PlayerManager.fakeDeath(gamer);
 
+			// Check for explosive challenge
+			if (gamer.getChallenges().contains(Challenge.explosive()))
+				player.getInventory().clear();
+
 			// Notify player of their own death
 			player.sendTitle(CommunicationManager.format("&4" + LanguageManager.messages.death1),
 					CommunicationManager.format("&c" + LanguageManager.messages.death2),
@@ -552,12 +568,12 @@ public class GameListener implements Listener {
 			});
 
 			// Update scoreboards
-			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 					Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)));
 
 			// Check for game end condition
 			if (arena.getAlive() == 0 && arena.getStatus() == ArenaStatus.ACTIVE)
-				Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 						Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 		}
 	}
@@ -600,6 +616,14 @@ public class GameListener implements Listener {
 			int temp = r.nextInt((int) (50 * Math.pow(wave, .15)));
 			earned += temp == 0 ? 1 : temp;
 		}
+
+		// Check if player has gem increase achievement and is boosted
+		FileConfiguration playerData = Main.plugin.getPlayerData();
+		String path = player.getUniqueId() + ".achievements";
+		if (playerData.contains(path) && gamer.isBoosted() &&
+				playerData.getStringList(path).contains(Achievement.topBalance9().getID()))
+			earned *= 1.1;
+
 		gamer.addGems(earned);
 
 		// Cancel picking up of emeralds and notify player
@@ -611,14 +635,12 @@ public class GameListener implements Listener {
 		if (arena.hasGemSound())
 			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, .5f, 0);
 
-		FileConfiguration playerData = plugin.getPlayerData();
-
 		// Update player stats
 		playerData.set(player.getUniqueId() + ".totalGems",
 				playerData.getInt(player.getUniqueId() + ".totalGems") + earned);
 		if (playerData.getInt(player.getUniqueId() + ".topBalance") < gamer.getGems())
 			playerData.set(player.getUniqueId() + ".topBalance", gamer.getGems());
-		plugin.savePlayerData();
+		Main.plugin.savePlayerData();
 
 		// Update scoreboard
 		GameManager.createBoard(gamer);
@@ -656,9 +678,34 @@ public class GameListener implements Listener {
 		if (player.getInventory().getItemInMainHand().getType() == Material.TOTEM_OF_UNDYING ||
 				player.getInventory().getItemInOffHand().getType() == Material.TOTEM_OF_UNDYING) return;
 
-		// Set player to fake death mode
 		e.setCancelled(true);
+
+		// Check if player has resurrection achievement and is boosted
+		FileConfiguration playerData = Main.plugin.getPlayerData();
+		String path = player.getUniqueId() + ".achievements";
+		Random random = new Random();
+
+		if (playerData.contains(path) && gamer.isBoosted() && random.nextDouble() < .1 &&
+				playerData.getStringList(path).contains(Achievement.allChallenges().getID())) {
+			PlayerManager.giveTotemEffect(player);
+			return;
+		}
+
+		// Set player to fake death mode
 		PlayerManager.fakeDeath(gamer);
+
+		// Check for explosive challenge
+		if (gamer.getChallenges().contains(Challenge.explosive())) {
+			// Create an explosion
+			player.getWorld().createExplosion(player.getLocation(), 1.25F, false, false);
+
+			// Drop all items and clear inventory
+			player.getInventory().forEach(itemStack -> {
+				if (itemStack != null && !itemStack.equals(GameItems.shop()))
+						player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
+			});
+			player.getInventory().clear();
+		}
 
 		// Notify player of their own death
 		player.sendTitle(CommunicationManager.format("&4" + LanguageManager.messages.death1),
@@ -681,12 +728,12 @@ public class GameListener implements Listener {
 		});
 
 		// Update scoreboards
-		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 				Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)));
 
 		// Check for game end condition
 		if (arena.getAlive() == 0 && arena.getStatus() == ArenaStatus.ACTIVE)
-			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 					Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
 	}
 
@@ -751,7 +798,7 @@ public class GameListener implements Listener {
 									LanguageManager.messages.earnedGems, ChatColor.AQUA,
 									Integer.toString(earned));
 
-							FileConfiguration playerData = plugin.getPlayerData();
+							FileConfiguration playerData = Main.plugin.getPlayerData();
 
 							// Update player stats
 							playerData.set(vdPlayer.getID() + ".totalGems",
@@ -759,7 +806,7 @@ public class GameListener implements Listener {
 							if (playerData.getInt(vdPlayer.getID() + ".topBalance") <
 									vdPlayer.getGems())
 								playerData.set(vdPlayer.getID() + ".topBalance", vdPlayer.getGems());
-							plugin.savePlayerData();
+							Main.plugin.savePlayerData();
 
 							// Update scoreboard
 							GameManager.createBoard(vdPlayer);
@@ -792,14 +839,14 @@ public class GameListener implements Listener {
 				PlayerManager.notifySuccess(player, LanguageManager.messages.earnedGems,
 						ChatColor.AQUA, Integer.toString(earned));
 
-				FileConfiguration playerData = plugin.getPlayerData();
+				FileConfiguration playerData = Main.plugin.getPlayerData();
 
 				// Update player stats
 				playerData.set(player.getUniqueId() + ".totalGems",
 						playerData.getInt(player.getUniqueId() + ".totalGems") + earned);
 				if (playerData.getInt(player.getUniqueId() + ".topBalance") < gamer.getGems())
 					playerData.set(player.getUniqueId() + ".topBalance", gamer.getGems());
-				plugin.savePlayerData();
+				Main.plugin.savePlayerData();
 
 				// Update scoreboard
 				GameManager.createBoard(gamer);
@@ -835,6 +882,20 @@ public class GameListener implements Listener {
 		// Check for arena mobs
 		if (ent.hasMetadata("VD"))
 			e.setCancelled(true);
+	}
+
+	// Stop spawning babies
+	@EventHandler
+	public void onBabyAttempt(PlayerInteractEntityEvent e) {
+		// Check for player in game
+		if (GameManager.getArena(e.getPlayer()) == null)
+			return;
+
+		// Check for wolf
+		if (!(e.getRightClicked() instanceof Wolf))
+			return;
+
+		e.setCancelled(true);
 	}
 
 	// Manage spawning pets and care packages
@@ -892,7 +953,7 @@ public class GameListener implements Listener {
 			location.setY(location.getY() + 1);
 
 			// Spawn and tame the wolf
-			Mobs.setWolf(plugin, arena, gamer, (Wolf) player.getWorld().spawnEntity(location, EntityType.WOLF));
+			Mobs.setWolf(Main.plugin, arena, gamer, (Wolf) player.getWorld().spawnEntity(location, EntityType.WOLF));
 			return;
 		}
 
@@ -929,9 +990,11 @@ public class GameListener implements Listener {
 			location.setY(location.getY() + 1);
 
 			// Spawn iron golem
-			Mobs.setGolem(plugin, arena, (IronGolem) player.getWorld().spawnEntity(location, EntityType.IRON_GOLEM));
+			Mobs.setGolem(Main.plugin, arena, (IronGolem) player.getWorld().spawnEntity(location, EntityType.IRON_GOLEM));
 			return;
 		}
+
+		Random random = new Random();
 
 		// Small care package
 		if (item.getItemMeta().getDisplayName().contains("Small Care Package") &&
@@ -945,12 +1008,21 @@ public class GameListener implements Listener {
 			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
 
 			// Give items and notify
-			if (gamer.getKit().equals(Kit.blacksmith().setKitLevel(1))) {
+			if ((Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
+					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
 						GameItems.randWeapon(1))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
 						GameItems.randArmor(1))), LanguageManager.errors.inventoryFull);
-			} else {
+			}
+			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.BLACKSMITH))) {
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
+						GameItems.randWeapon(1))), LanguageManager.errors.inventoryFull);
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
+						GameItems.randArmor(1))), LanguageManager.errors.inventoryFull);
+				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+			}
+			else {
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(1)),
 						LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(1)),
@@ -971,24 +1043,42 @@ public class GameListener implements Listener {
 			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
 
 			// Give items and notify
-			if (gamer.getKit().equals(Kit.blacksmith().setKitLevel(1))) {
+			if ((Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
+					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
 						GameItems.randWeapon(2))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
 						GameItems.randArmor(2))), LanguageManager.errors.inventoryFull);
+			}
+			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.BLACKSMITH))) {
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randNotCare(2))), LanguageManager.errors.inventoryFull);
-			} else {
+						GameItems.randWeapon(2))), LanguageManager.errors.inventoryFull);
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
+						GameItems.randArmor(2))), LanguageManager.errors.inventoryFull);
+				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+			}
+			else {
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(2)),
 						LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(2)),
 						LanguageManager.errors.inventoryFull);
-				if (gamer.getKit().equals(Kit.witch().setKitLevel(1)))
-					PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-							GameItems.randNotCare(2))), LanguageManager.errors.inventoryFull);
-				else PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(2)),
+			}
+
+			if ((Kit.witch().setKitLevel(1).equals(gamer.getKit()) ||
+					Kit.witch().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
+				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
+						GameItems.randNotCare(2))), LanguageManager.errors.inventoryFull);
+			}
+			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.WITCH))) {
+				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
+						GameItems.randNotCare(2))), LanguageManager.errors.inventoryFull);
+				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+			}
+			else {
+				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(2)),
 						LanguageManager.errors.inventoryFull);
 			}
+
 			PlayerManager.notifySuccess(player, LanguageManager.confirms.carePackage);
 		}
 
@@ -1004,28 +1094,48 @@ public class GameListener implements Listener {
 			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
 
 			// Give items and notify
-			if (gamer.getKit().equals(Kit.blacksmith().setKitLevel(1))) {
+			if ((Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
+					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
 						GameItems.randWeapon(4))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
 						GameItems.randArmor(3))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
 						GameItems.randArmor(3))), LanguageManager.errors.inventoryFull);
+			}
+			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.BLACKSMITH))) {
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randNotCare(3))), LanguageManager.errors.inventoryFull);
-			} else {
+						GameItems.randWeapon(4))), LanguageManager.errors.inventoryFull);
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
+						GameItems.randArmor(3))), LanguageManager.errors.inventoryFull);
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
+						GameItems.randArmor(3))), LanguageManager.errors.inventoryFull);
+				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+			}
+			else {
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(4)),
 						LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(3)),
 						LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(3)),
 						LanguageManager.errors.inventoryFull);
-				if (gamer.getKit().equals(Kit.witch().setKitLevel(1)))
-					PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-							GameItems.randNotCare(3))), LanguageManager.errors.inventoryFull);
-				else PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(3)),
+			}
+
+			if ((Kit.witch().setKitLevel(1).equals(gamer.getKit()) ||
+					Kit.witch().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
+				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
+						GameItems.randNotCare(3))), LanguageManager.errors.inventoryFull);
+			}
+			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.WITCH))) {
+				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
+						GameItems.randNotCare(3))), LanguageManager.errors.inventoryFull);
+				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+			}
+			else {
+				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(3)),
 						LanguageManager.errors.inventoryFull);
 			}
+
 			PlayerManager.notifySuccess(player, LanguageManager.confirms.carePackage);
 		}
 
@@ -1041,7 +1151,8 @@ public class GameListener implements Listener {
 			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
 
 			// Give items and notify
-			if (gamer.getKit().equals(Kit.blacksmith().setKitLevel(1))) {
+			if ((Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
+					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
 						GameItems.randWeapon(5))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
@@ -1050,11 +1161,19 @@ public class GameListener implements Listener {
 						GameItems.randArmor(5))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
 						GameItems.randArmor(4))), LanguageManager.errors.inventoryFull);
+			}
+			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.BLACKSMITH))) {
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
+						GameItems.randWeapon(5))), LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
-			} else {
+						GameItems.randWeapon(4))), LanguageManager.errors.inventoryFull);
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
+						GameItems.randArmor(5))), LanguageManager.errors.inventoryFull);
+				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
+						GameItems.randArmor(4))), LanguageManager.errors.inventoryFull);
+				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+			}
+			else {
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(5)),
 						LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(4)),
@@ -1063,18 +1182,29 @@ public class GameListener implements Listener {
 						LanguageManager.errors.inventoryFull);
 				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(4)),
 						LanguageManager.errors.inventoryFull);
-				if (gamer.getKit().equals(Kit.witch().setKitLevel(1))) {
-					PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-							GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
-					PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-							GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
-				} else {
-					PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(4)),
-							LanguageManager.errors.inventoryFull);
-					PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(4)),
-							LanguageManager.errors.inventoryFull);
-				}
 			}
+
+			if ((Kit.witch().setKitLevel(1).equals(gamer.getKit()) ||
+					Kit.witch().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
+				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
+						GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
+				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
+						GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
+			}
+			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.WITCH))) {
+				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
+						GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
+				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
+						GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
+				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+			}
+			else {
+				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(4)),
+						LanguageManager.errors.inventoryFull);
+				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(4)),
+						LanguageManager.errors.inventoryFull);
+			}
+
 			PlayerManager.notifySuccess(player, LanguageManager.confirms.carePackage);
 		}
 	}
@@ -1239,7 +1369,7 @@ public class GameListener implements Listener {
 			return;
 
 		if (e.getItem().getType() == Material.POTION || e.getItem().getType() == Material.MILK_BUCKET) {
-			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
 				player.getInventory().remove(Material.GLASS_BOTTLE);
 				player.getInventory().remove(Material.BUCKET);
 				if (player.getInventory().getItemInOffHand().getType() == Material.GLASS_BOTTLE)
