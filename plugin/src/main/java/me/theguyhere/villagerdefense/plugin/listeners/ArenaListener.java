@@ -530,8 +530,8 @@ public class ArenaListener implements Listener {
         // Set all players to invincible
         arena.getAlives().forEach(player -> player.getPlayer().setInvulnerable(true));
 
-        // Play sound if turned on
-        if (arena.hasLoseSound()) {
+        // Play sound if turned on and arena is either not winning or has unlimited waves
+        if (arena.hasLoseSound() && (arena.getCurrentWave() <= arena.getMaxWaves() || arena.getMaxWaves() < 0)) {
             for (VDPlayer vdPlayer : arena.getPlayers()) {
                 vdPlayer.getPlayer().playSound(arena.getPlayerSpawn().getLocation(),
                         Sound.ENTITY_ENDER_DRAGON_DEATH, 10, .5f);
