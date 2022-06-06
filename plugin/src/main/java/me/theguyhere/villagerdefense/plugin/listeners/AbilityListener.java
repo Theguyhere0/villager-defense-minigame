@@ -901,7 +901,7 @@ public class AbilityListener implements Listener {
         if ((Kit.vampire().getName().equals(gamer.getKit().getName()) ||
                 Kit.vampire().nameCompare(gamer.getKit2())) && !gamer.isSharing()) {
             // Heal if probability is right
-            if (r.nextInt(100) < damage)
+            if (r.nextInt(50) < damage)
                 player.setHealth(Math.min(player.getHealth() + 1,
                         Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue()));
         }
@@ -909,7 +909,7 @@ public class AbilityListener implements Listener {
         // Check for shared vampire effect
         else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.VAMPIRE))) {
             // Heal if probability is right
-            if (r.nextInt(100) < damage) {
+            if (r.nextInt(50) < damage) {
                 player.setHealth(Math.min(player.getHealth() + 1,
                         Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue()));
                 PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
