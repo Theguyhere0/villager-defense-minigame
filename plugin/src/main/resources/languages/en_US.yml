@@ -382,7 +382,7 @@ kits:
     description: "Start with 200 gems"
   vampire:
     name: "Vampire"
-    description: "Dealing x damage has an x% chance of healing half a heart"
+    description: "Dealing x damage has a (2*x)% chance of healing half a heart"
   warrior:
     name: "Warrior"
     description: "Give yourself and nearby allies strength"
