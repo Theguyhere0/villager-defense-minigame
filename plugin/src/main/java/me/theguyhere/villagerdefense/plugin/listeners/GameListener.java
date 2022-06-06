@@ -82,12 +82,7 @@ public class GameListener implements Listener {
 			data = new DataManager("spawnTables/a" + arena.getId() + ".yml");
 		else data = new DataManager("spawnTables/" + arena.getSpawnTableFile() + ".yml");
 
-		// Update villager count
-		if (ent instanceof Villager)
-			arena.decrementVillagers();
-
-		// Update wolf count
-		else if (ent instanceof Wolf) {
+		if (ent instanceof Wolf) {
 			try {
 				arena.getPlayer((Player) ((Wolf) ent).getOwner()).decrementWolves();
 			} catch (Exception err) {
@@ -96,9 +91,8 @@ public class GameListener implements Listener {
 		}
 
 		// Update iron golem count
-		else if (ent instanceof IronGolem) {
+		else if (ent instanceof IronGolem)
 			arena.decrementGolems();
-		}
 
 		// Manage drops and update enemy count, update player kill count
 		else {
@@ -137,9 +131,6 @@ public class GameListener implements Listener {
 				}
 				if (arena.hasExpDrop())
 					e.setDroppedExp((int) (arena.getCurrentDifficulty() * 2));
-
-				// Decrement enemy count
-				arena.decrementEnemies();
 			}
 
 			// Get wave
@@ -172,42 +163,6 @@ public class GameListener implements Listener {
 	public void onGameModeSwitch(PlayerGameModeChangeEvent e) {
 		if (GameManager.checkPlayer(e.getPlayer()) && e.getNewGameMode() == GameMode.SURVIVAL)
 			e.setCancelled(true);
-	}
-
-	// Handle creeper explosions
-	@EventHandler
-	public void onExplode(ExplosionPrimeEvent e) {
-
-		Entity ent = e.getEntity();
-
-		// Check for arena enemies
-		if (!ent.hasMetadata("VD"))
-			return;
-
-		Arena arena = GameManager.getArena(ent.getMetadata("VD").get(0).asInt());
-
-		// Check for right game
-		if (!ent.hasMetadata("game"))
-			return;
-		if (ent.getMetadata("game").get(0).asInt() != arena.getGameID())
-			return;
-
-		// Arena enemies not part of an active arena
-		if (arena.getStatus() != ArenaStatus.ACTIVE)
-			return;
-
-		// Check for right wave
-		if (!ent.hasMetadata("wave"))
-			return;
-		if (ent.getMetadata("wave").get(0).asInt() != arena.getCurrentWave())
-			return;
-
-		// Decrement enemy count
-		arena.decrementEnemies();
-
-		// Update scoreboards
-		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-				Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)));
 	}
 
 	// Save gems from explosions

@@ -1492,32 +1492,12 @@ public class Arena {
         return villagers;
     }
 
-    public void incrementVillagers() {
-        villagers++;
-    }
-
-    public void decrementVillagers() {
-        if (--villagers <= 0 && status == ArenaStatus.ACTIVE && !spawningVillagers)
-            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-                    Bukkit.getPluginManager().callEvent(new GameEndEvent(this)));
-    }
-
     public void resetVillagers() {
         villagers = 0;
     }
 
     public int getEnemies() {
         return enemies;
-    }
-
-    public void incrementEnemies() {
-        enemies++;
-    }
-
-    public void decrementEnemies() {
-        if (--enemies <= 0 && status == ArenaStatus.ACTIVE && !spawningMonsters)
-            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-                    Bukkit.getPluginManager().callEvent(new WaveEndEvent(this)));
     }
 
     public void resetEnemies() {

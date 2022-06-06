@@ -39,8 +39,6 @@ public class Mobs {
             Objects.requireNonNull(livingEntity.getVehicle()).remove();
         for (Entity passenger : livingEntity.getPassengers())
             passenger.remove();
-        arena.incrementEnemies();
-        Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
 
         // Set attribute modifiers
         double difficulty = arena.getCurrentDifficulty();
@@ -80,8 +78,6 @@ public class Mobs {
         livingEntity.setMetadata("VD", new FixedMetadataValue(Main.plugin, arena.getId()));
         livingEntity.setRemoveWhenFarAway(false);
         livingEntity.setCanPickupItems(false);
-        arena.incrementEnemies();
-        Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
 
         // Set attribute modifiers
         double difficulty = arena.getCurrentDifficulty();
@@ -120,8 +116,6 @@ public class Mobs {
         livingEntity.setMetadata("VD", new FixedMetadataValue(Main.plugin, arena.getId()));
         livingEntity.setRemoveWhenFarAway(false);
         livingEntity.setCanPickupItems(false);
-        arena.incrementEnemies();
-        Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
 
         // Set attribute modifiers
         double difficulty = arena.getCurrentDifficulty();
@@ -1057,8 +1051,6 @@ public class Mobs {
         villager.setCustomName(healthBar(1, 1, 5));
         villager.setCustomNameVisible(true);
         villager.setMetadata("VD", new FixedMetadataValue(Main.plugin, arena.getId()));
-        arena.incrementVillagers();
-        Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena));
     }
 
     public static void setZombie(Arena arena, Zombie zombie) {
