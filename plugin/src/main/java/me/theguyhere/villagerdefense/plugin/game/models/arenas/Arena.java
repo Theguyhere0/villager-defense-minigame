@@ -1835,7 +1835,8 @@ public class Arena {
      */
     public void startTimeLimitBar() {
         timeLimitBar = Bukkit.createBossBar(CommunicationManager.format("&e" +
-                        String.format(LanguageManager.names.timeBar, Integer.toString(getCurrentWave()))),
+                        String.format(LanguageManager.names.timeBar, Integer.toString(getCurrentWave())) + " - " +
+                        getWaveTimeLimit() + ":00"),
                 BarColor.YELLOW, BarStyle.SOLID);
     }
 
@@ -1845,6 +1846,7 @@ public class Arena {
      */
     public void updateTimeLimitBar(double progress) {
         timeLimitBar.setProgress(progress);
+        timeLimitBar.setTitle(getTimeLimitBarTitle(progress));
     }
 
     /**
@@ -1855,6 +1857,7 @@ public class Arena {
     public void updateTimeLimitBar(BarColor color, double progress) {
         timeLimitBar.setColor(color);
         timeLimitBar.setProgress(progress);
+        timeLimitBar.setTitle(getTimeLimitBarTitle(progress));
     }
 
     /**
@@ -1863,6 +1866,14 @@ public class Arena {
     public void removeTimeLimitBar() {
         players.forEach(vdPlayer -> timeLimitBar.removePlayer(vdPlayer.getPlayer()));
         timeLimitBar = null;
+    }
+
+    private String getTimeLimitBarTitle(double progress) {
+        int minutes = (int) (progress * getWaveTimeLimit());
+        int seconds = (int) ((progress * getWaveTimeLimit() - minutes) * 60 + 0.5);
+        return CommunicationManager.format("&e" +
+                String.format(LanguageManager.names.timeBar, Integer.toString(getCurrentWave())) + " - " +
+                minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
     }
 
     /**
@@ -1999,14 +2010,14 @@ public class Arena {
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(this)));
 
         // Trigger game end if all villagers are gone
-        if (this.villagers <= 0 && status == ArenaStatus.ACTIVE) {
+        if (this.villagers <= 0 && status == ArenaStatus.ACTIVE && !isSpawningVillagers()) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
                     Bukkit.getPluginManager().callEvent(new GameEndEvent(this)));
             return;
         }
 
         // Trigger wave end if all monsters are gone
-        if (enemies <= 0 && status == ArenaStatus.ACTIVE)
+        if (enemies <= 0 && status == ArenaStatus.ACTIVE && !isSpawningMonsters())
             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
                     Bukkit.getPluginManager().callEvent(new WaveEndEvent(this)));
     }
