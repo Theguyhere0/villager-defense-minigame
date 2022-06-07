@@ -326,7 +326,8 @@ public class ArenaListener implements Listener {
         // Start wave count down
         if (arena.getWaveTimeLimit() != -1)
             task.getTasks().put(task.updateBar,
-                Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.plugin, task.updateBar, 0, Utils.secondsToTicks(1)));
+                Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.plugin, task.updateBar, 0,
+                        Utils.secondsToTicks(1)));
 
         // Schedule and record calibration task
         task.getTasks().put(task.calibrate, Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.plugin, task.calibrate,
