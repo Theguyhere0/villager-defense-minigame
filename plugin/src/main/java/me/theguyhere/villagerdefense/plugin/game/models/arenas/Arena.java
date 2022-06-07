@@ -2010,14 +2010,14 @@ public class Arena {
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(this)));
 
         // Trigger game end if all villagers are gone
-        if (this.villagers <= 0 && status == ArenaStatus.ACTIVE) {
+        if (this.villagers <= 0 && status == ArenaStatus.ACTIVE && !isSpawningVillagers()) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
                     Bukkit.getPluginManager().callEvent(new GameEndEvent(this)));
             return;
         }
 
         // Trigger wave end if all monsters are gone
-        if (enemies <= 0 && status == ArenaStatus.ACTIVE)
+        if (enemies <= 0 && status == ArenaStatus.ACTIVE && !isSpawningMonsters())
             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
                     Bukkit.getPluginManager().callEvent(new WaveEndEvent(this)));
     }
