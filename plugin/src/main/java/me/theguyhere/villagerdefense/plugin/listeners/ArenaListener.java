@@ -524,7 +524,7 @@ public class ArenaListener implements Listener {
         // Notify players that the game has ended (Title)
         arena.getPlayers().forEach(player ->
                 player.getPlayer().sendTitle(CommunicationManager.format("&4&l" +
-                        LanguageManager.messages.gameOver), "", Utils.secondsToTicks(.5),
+                        LanguageManager.messages.gameOver), " ", Utils.secondsToTicks(.5),
                         Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
 
         // Notify players that the game has ended (Chat)
