@@ -22,17 +22,25 @@ public class CommandTab implements TabCompleter {
                                       @NotNull String label, String[] args) {
         // Complete as characters are added
         List<String> result = new ArrayList<>();
+
+        // Argument after "vd"
         if (args.length == 1) {
             for (String a : arguments)
                 if (a.toLowerCase().startsWith(args[0].toLowerCase()))
                     result.add(a);
-        } else if (args[0].equalsIgnoreCase("stats") || args[0].equalsIgnoreCase("crystals")
+        }
+
+        // For commands that need player names
+        else if (args[0].equalsIgnoreCase("stats") || args[0].equalsIgnoreCase("crystals")
                 && args.length == 2) {
             Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).forEach(name -> {
                 if (name.toLowerCase().startsWith(args[1].toLowerCase()))
                     result.add(name);
             });
-        } else if (args[0].equalsIgnoreCase("start") || args[0].equalsIgnoreCase("end") ||
+        }
+
+        // For commands that need arena names
+        else if (args[0].equalsIgnoreCase("start") || args[0].equalsIgnoreCase("end") ||
                 args[0].equalsIgnoreCase("delay") || args[0].equalsIgnoreCase("open") ||
                 args[0].equalsIgnoreCase("close")) {
             StringBuilder nameFrag = new StringBuilder(args[1]);
@@ -42,8 +50,16 @@ public class CommandTab implements TabCompleter {
                 if (name.toLowerCase().startsWith(nameFrag.toString()))
                     result.add(name);
             });
-        } else if (args[0].equalsIgnoreCase("debug"))
+        }
+
+        // Debug command needing numbers 0 through 3
+        else if (args[0].equalsIgnoreCase("debug"))
             for (int i = 0; i < 4; i++)
+                result.add(String.valueOf(i));
+
+        // Help command needing numbers 1 through 3
+        else if (args[0].equalsIgnoreCase("help"))
+            for (int i = 1; i < 4; i++)
                 result.add(String.valueOf(i));
 
         return result;
