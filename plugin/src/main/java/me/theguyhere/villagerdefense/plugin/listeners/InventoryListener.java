@@ -3131,6 +3131,9 @@ public class InventoryListener implements Listener {
 				playerData.set(player.getUniqueId().toString(), null);
 				Main.plugin.savePlayerData();
 
+				// Reload leaderboards
+				GameManager.refreshLeaderboards();
+
 				// Confirm and return
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.reset);
 				player.openInventory(Inventories.createPlayerStatsMenu(meta.getPlayer()));
