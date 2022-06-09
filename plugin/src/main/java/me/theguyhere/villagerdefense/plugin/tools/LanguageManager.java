@@ -694,6 +694,11 @@ public class LanguageManager {
         public final @NotNull String gemsToReceive;
         public final @NotNull String ghosts;
         public final @NotNull String giftKitsDescription;
+        public final @NotNull String help;
+        public final @NotNull String help1;
+        public final @NotNull String help2;
+        public final @NotNull String help2a;
+        public final @NotNull String help3;
         public final @NotNull String infoAboutWiki;
         public final @NotNull String info1;
         public final @NotNull String info2;
@@ -790,6 +795,11 @@ public class LanguageManager {
             gemsToReceive = getConfigString(pathPrefix + ".gemsToReceive");
             ghosts = getConfigString(pathPrefix + ".ghosts");
             giftKitsDescription = getConfigString(pathPrefix + ".giftKitsDescription");
+            help = getConfigString(pathPrefix + ".help");
+            help1 = getConfigString(pathPrefix + ".help1");
+            help2 = getConfigString(pathPrefix + ".help2");
+            help2a = getConfigString(pathPrefix + ".help2a");
+            help3 = getConfigString(pathPrefix + ".help3");
             infoAboutWiki = getConfigString(pathPrefix + ".infoAboutWiki");
             info1 = getConfigString(pathPrefix + ".info1");
             info2 = getConfigString(pathPrefix + ".info2");
