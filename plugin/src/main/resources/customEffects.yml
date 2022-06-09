@@ -1,3 +1,5 @@
+# NOTE: Use placeholder %player% to indicate applying the command to all active players in an arena
+
 # These commands are run for arenas with limited waves
 limited:
   # These commands are run when a given wave is COMPLETE (as opposed to simply reaching it)
