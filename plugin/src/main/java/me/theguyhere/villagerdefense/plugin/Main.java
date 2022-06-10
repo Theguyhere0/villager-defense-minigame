@@ -136,8 +136,10 @@ public class Main extends JavaPlugin {
 				.setTabCompleter(new CommandTab());
 
 		// Schedule to register PAPI expansion
-		Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> new VDExpansion().register(),
-				Utils.secondsToTicks(1));
+		Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
+			if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null)
+				new VDExpansion().register();
+			}, Utils.secondsToTicks(1));
 
 		// Set up initial classes
 		saveDefaultConfig();

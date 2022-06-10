@@ -524,7 +524,7 @@ public class ArenaListener implements Listener {
         // Notify players that the game has ended (Title)
         arena.getPlayers().forEach(player ->
                 player.getPlayer().sendTitle(CommunicationManager.format("&4&l" +
-                        LanguageManager.messages.gameOver), "", Utils.secondsToTicks(.5),
+                        LanguageManager.messages.gameOver), " ", Utils.secondsToTicks(.5),
                         Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
 
         // Notify players that the game has ended (Chat)
@@ -556,10 +556,10 @@ public class ArenaListener implements Listener {
             // Give persistent rewards
             arena.getActives().forEach(vdPlayer -> {
                 // Calculate reward from difficulty multiplier, wave, kills, and gem balance
-                int reward = (10 + 5 * arena.getDifficultyMultiplier()) *
+                int reward = (5 * arena.getDifficultyMultiplier()) *
                         (Math.max(arena.getCurrentWave() - vdPlayer.getJoinedWave() - 1, 0));
                 reward += vdPlayer.getKills();
-                reward += (vdPlayer.getGems() + 5) / 10;
+                reward += (vdPlayer.getGems() + 25) / 50;
 
                 // Calculate challenge bonuses
                 int bonus = 0;

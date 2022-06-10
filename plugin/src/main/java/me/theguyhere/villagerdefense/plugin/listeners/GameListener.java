@@ -639,7 +639,6 @@ public class GameListener implements Listener {
 		FileConfiguration playerData = Main.plugin.getPlayerData();
 		String path = player.getUniqueId() + ".achievements";
 		Random random = new Random();
-
 		if (playerData.contains(path) && gamer.isBoosted() && random.nextDouble() < .1 &&
 				playerData.getStringList(path).contains(Achievement.allChallenges().getID())) {
 			PlayerManager.giveTotemEffect(player);
