@@ -326,11 +326,16 @@ public class ArenaListener implements Listener {
         // Start wave count down
         if (arena.getWaveTimeLimit() != -1)
             task.getTasks().put(task.updateBar,
-                Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.plugin, task.updateBar, 0, Utils.secondsToTicks(1)));
+                Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.plugin, task.updateBar, 0,
+                        Utils.secondsToTicks(1)));
+
+        // Set arena as spawning
+        arena.setSpawningMonsters(true);
+        arena.setSpawningVillagers(true);
 
         // Schedule and record calibration task
-        task.getTasks().put(task.calibrate, Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.plugin, task.calibrate, 0,
-                Utils.secondsToTicks(10)));
+        task.getTasks().put(task.calibrate, Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.plugin, task.calibrate,
+                0, Utils.secondsToTicks(1)));
 
         // Spawn mobs
         spawnVillagers(arena);
@@ -519,7 +524,7 @@ public class ArenaListener implements Listener {
         // Notify players that the game has ended (Title)
         arena.getPlayers().forEach(player ->
                 player.getPlayer().sendTitle(CommunicationManager.format("&4&l" +
-                        LanguageManager.messages.gameOver), "", Utils.secondsToTicks(.5),
+                        LanguageManager.messages.gameOver), " ", Utils.secondsToTicks(.5),
                         Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
 
         // Notify players that the game has ended (Chat)
@@ -551,10 +556,10 @@ public class ArenaListener implements Listener {
             // Give persistent rewards
             arena.getActives().forEach(vdPlayer -> {
                 // Calculate reward from difficulty multiplier, wave, kills, and gem balance
-                int reward = (10 + 5 * arena.getDifficultyMultiplier()) *
+                int reward = (5 * arena.getDifficultyMultiplier()) *
                         (Math.max(arena.getCurrentWave() - vdPlayer.getJoinedWave() - 1, 0));
                 reward += vdPlayer.getKills();
-                reward += (vdPlayer.getGems() + 5) / 10;
+                reward += (vdPlayer.getGems() + 25) / 50;
 
                 // Calculate challenge bonuses
                 int bonus = 0;

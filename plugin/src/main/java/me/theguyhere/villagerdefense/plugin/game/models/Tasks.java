@@ -493,6 +493,7 @@ public class Tasks {
 
 		@Override
 		public void run() {
+			// Get proper multiplier
 			double multiplier = 1 + .2 * ((int) arena.getCurrentDifficulty() - 1);
 			if (!arena.hasDynamicLimit())
 				multiplier = 1;
@@ -510,34 +511,32 @@ public class Tasks {
 				CommunicationManager.debugInfo("Adding time limit bar to " + arena.getName(), 2);
 			}
 
+			// Trigger wave end event
+			else if (progress <= 0) {
+				progress = 0;
+				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
+						Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
+			}
+
+			// Decrement time limit bar
 			else {
-				// Trigger wave end event
-				if (progress <= 0) {
-					progress = 0;
-					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-							Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
-				}
+				if (progress <= time * Utils.minutesToSeconds(1)) {
+					arena.updateTimeLimitBar(BarColor.RED, progress);
+					if (!messageSent) {
+						// Send warning
+						arena.getActives().forEach(player ->
+								player.getPlayer().sendTitle(CommunicationManager.format(
+										"&c" + LanguageManager.messages.oneMinuteWarning),
+										null, Utils.secondsToTicks(.5), Utils.secondsToTicks(1.5),
+										Utils.secondsToTicks(.5)));
 
-				// Decrement time limit bar
-				else {
-					if (progress <= time * Utils.minutesToSeconds(1)) {
-						arena.updateTimeLimitBar(BarColor.RED, progress);
-						if (!messageSent) {
-							// Send warning
-							arena.getActives().forEach(player ->
-									player.getPlayer().sendTitle(CommunicationManager.format(
-											"&c" + LanguageManager.messages.oneMinuteWarning),
-											null, Utils.secondsToTicks(.5), Utils.secondsToTicks(1.5),
-											Utils.secondsToTicks(.5)));
+						// Set monsters glowing when time is low
+						arena.setMonsterGlow();
 
-							// Set monsters glowing when time is low
-							arena.setMonsterGlow();
-
-							messageSent = true;
-						}
-					} else arena.updateTimeLimitBar(progress);
-					progress -= time;
-				}
+						messageSent = true;
+					}
+				} else arena.updateTimeLimitBar(progress);
+				progress -= time;
 			}
 		}
 	};

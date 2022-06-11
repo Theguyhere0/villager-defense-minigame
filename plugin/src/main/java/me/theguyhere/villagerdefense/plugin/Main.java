@@ -2,6 +2,7 @@ package me.theguyhere.villagerdefense.plugin;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Log;
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
 import me.theguyhere.villagerdefense.plugin.commands.CommandTab;
 import me.theguyhere.villagerdefense.plugin.commands.Commands;
@@ -48,7 +49,7 @@ public class Main extends JavaPlugin {
 	public static final int arenaDataVersion = 6;
 	public static final int playerDataVersion = 2;
 	public static final int spawnTableVersion = 1;
-	public static final int languageFileVersion = 16;
+	public static final int languageFileVersion = 18;
 	public static final int defaultSpawnVersion = 2;
 	public static final int customEffectsVersion = 1;
 
@@ -133,6 +134,12 @@ public class Main extends JavaPlugin {
 		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist").setExecutor(new Commands());
 		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist")
 				.setTabCompleter(new CommandTab());
+
+		// Schedule to register PAPI expansion
+		Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
+			if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null)
+				new VDExpansion().register();
+			}, Utils.secondsToTicks(1));
 
 		// Set up initial classes
 		saveDefaultConfig();
@@ -400,6 +407,10 @@ public class Main extends JavaPlugin {
 
 		// Set GameManager
 		resetGameManager();
+
+		// Register expansion again
+		if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null)
+			new VDExpansion().register();
 	}
 
 	public void resetGameManager() {

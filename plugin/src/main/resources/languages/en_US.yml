@@ -382,7 +382,7 @@ kits:
     description: "Start with 200 gems"
   vampire:
     name: "Vampire"
-    description: "Dealing x damage has an x% chance of healing half a heart"
+    description: "Dealing x damage has a (2*x)% chance of healing half a heart"
   warrior:
     name: "Warrior"
     description: "Give yourself and nearby allies strength"
@@ -430,7 +430,16 @@ messages:
   gemsToReceive: "Gems to receive"
   ghosts: "Ghosts"
   giftKitsDescription: "Kits give one-time benefits per game or respawn"
-  infoAboutWiki: "For more information, click below to visit the wiki!"
+  help: "%s Help"
+  help1: "Villager Defense is a mini-game where the goal is to protect villagers from monsters for as many waves as you
+  can! Use monster drops to buy better items from the in-game shop. Use crystals to buy various unique and powerful\
+  kits and earn special rewards from achievements."
+  help2: "Quick Start"
+  help2a: "Each VD arena has its own villager NPC that acts as the portal. To join a game, right click the portal. Left
+  click the portal to get more information about the arena. To leave, use the command /vd leave. /vd kits will allow
+  you to buy kits and /vd stats will allow you to check all your stats."
+  help3: "Detailed Mechanics"
+  infoAboutWiki: "For more detailed information, click below to visit the wiki!"
   info1: "Left click a portal for arena info."
   info2: "Right click a portal to enter an arena."
   info3: "Use %s to check personal stats."

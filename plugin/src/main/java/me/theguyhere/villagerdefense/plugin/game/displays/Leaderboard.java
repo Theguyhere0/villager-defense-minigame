@@ -59,11 +59,13 @@ public class Leaderboard {
 		}
 
 		// Put names and values into the leaderboard
-		mapping.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).limit(10)
-				.forEachOrdered(map -> {
+		mapping.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+				.filter(set -> Bukkit.getOfflinePlayer(UUID.fromString(set.getKey())).getName() != null)
+				.filter(set -> set.getValue() > 0)
+				.limit(10).forEachOrdered(set -> {
 					try {
-						info.add(Bukkit.getOfflinePlayer(UUID.fromString(map.getKey())).getName() +
-								" - &b" + map.getValue());
+						info.add(Bukkit.getOfflinePlayer(UUID.fromString(set.getKey())).getName() +
+								" - &b" + set.getValue());
 					} catch (Exception ignored) {
 					}
 				});
