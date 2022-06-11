@@ -268,7 +268,10 @@ public class InventoryListener implements Listener {
 
 			// Remove lobby
 			else if (buttonName.contains("REMOVE"))
-				if (config.contains("lobby"))
+				if (GameManager.getArenas().values().stream().filter(Objects::nonNull)
+						.anyMatch(arena -> !arena.isClosed()))
+					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+				else if (config.contains("lobby"))
 					player.openInventory(Inventories.createLobbyConfirmMenu());
 				else PlayerManager.notifyFailure(player, "No lobby to remove!");
 
