@@ -10,12 +10,15 @@ import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class CommandTab implements TabCompleter {
     private final String[] arguments = {"admin", "help", "leave", "stats", "kits", "join", "crystals", "start",
             "end", "delay", "fix", "debug", "die", "reload", "open", "close", "achievements"};
+    private final String[] playerNameCommands = {"stats", "crystals"};
+    private final String[] arenaNameCommands = {"start", "end", "delay"};
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command,
@@ -31,8 +34,7 @@ public class CommandTab implements TabCompleter {
         }
 
         // For commands that need player names
-        else if (args[0].equalsIgnoreCase("stats") || args[0].equalsIgnoreCase("crystals")
-                && args.length == 2) {
+        else if (Arrays.stream(playerNameCommands).anyMatch(arg -> args[0].equalsIgnoreCase(arg)) && args.length == 2) {
             Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).forEach(name -> {
                 if (name.toLowerCase().startsWith(args[1].toLowerCase()))
                     result.add(name);

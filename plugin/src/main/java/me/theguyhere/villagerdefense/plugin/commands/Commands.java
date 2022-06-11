@@ -62,11 +62,7 @@ public class Commands implements CommandExecutor {
 
 			// No additional arguments
 			if (args.length == 0) {
-				if (player != null)
-					PlayerManager.notifyFailure(player, LanguageManager.errors.command, ChatColor.AQUA,
-							"/vd help");
-				else CommunicationManager.debugError(String.format(LanguageManager.errors.command, "vd help"),
-						0);
+				notifyCommandFailure(player, "/vd help", LanguageManager.errors.command);
 				return true;
 			}
 
@@ -265,11 +261,8 @@ public class Commands implements CommandExecutor {
 
 					// Check for valid command format
 					if (args.length != 3) {
-						if (player != null)
-							PlayerManager.notifyFailure(player, LanguageManager.messages.commandFormat, ChatColor.AQUA,
-									"/vd crystals [player] [change amount]");
-						else CommunicationManager.debugError(String.format(LanguageManager.messages.commandFormat,
-								"vd crystals [player] [change amount]"), 0);
+						notifyCommandFailure(player, "/vd crystals [player] [change amount]",
+								LanguageManager.messages.commandFormat);
 						return true;
 					}
 
@@ -279,15 +272,11 @@ public class Commands implements CommandExecutor {
 								.filter(oPlayer -> Objects.equals(oPlayer.getName(), args[1]))
 								.collect(Collectors.toList()).get(0).getUniqueId();
 					} catch (NullPointerException e) {
-						if (player != null)
-							PlayerManager.notifyFailure(player, LanguageManager.errors.invalidPlayer);
-						else CommunicationManager.debugError(LanguageManager.errors.invalidPlayer, 0);
+						notifyFailure(player, LanguageManager.errors.invalidPlayer);
 						return true;
 					}
 					if (!Main.plugin.getPlayerData().contains(id.toString())) {
-						if (player != null)
-							PlayerManager.notifyFailure(player, LanguageManager.errors.invalidPlayer);
-						else CommunicationManager.debugError(LanguageManager.errors.invalidPlayer, 0);
+						notifyFailure(player, LanguageManager.errors.invalidPlayer);
 						return true;
 					}
 
@@ -306,9 +295,7 @@ public class Commands implements CommandExecutor {
 						else CommunicationManager.debugInfo(String.format(LanguageManager.confirms.balanceSet, args[1],
 								String.valueOf(playerData.getInt(id + ".crystalBalance"))), 0);
 					} catch (Exception e) {
-						if (player != null)
-							PlayerManager.notifyFailure(player, LanguageManager.errors.integer);
-						else CommunicationManager.debugError(LanguageManager.errors.integer, 0);
+						notifyFailure(player, LanguageManager.errors.integer);
 					}
 					return true;
 
@@ -389,28 +376,19 @@ public class Commands implements CommandExecutor {
 						try {
 							arena = Objects.requireNonNull(GameManager.getArena(name.toString()));
 						} catch (Exception e) {
-							if (player != null)
-								PlayerManager.notifyFailure(player, LanguageManager.errors.noArena);
-							else CommunicationManager.debugError(LanguageManager.errors.noArena,
-									0);
+							notifyFailure(player, LanguageManager.errors.noArena);
 							return true;
 						}
 
 						// Check if arena already started
 						if (arena.getStatus() != ArenaStatus.WAITING) {
-							if (player != null)
-								PlayerManager.notifyFailure(player,
-										LanguageManager.errors.arenaInProgress);
-							else CommunicationManager.debugError(
-									LanguageManager.errors.arenaInProgress, 0);
+							notifyFailure(player, LanguageManager.errors.arenaInProgress);
 							return true;
 						}
 
 						// Check if there is at least 1 player
 						if (arena.getActiveCount() == 0) {
-							if (player != null)
-								PlayerManager.notifyFailure(player, LanguageManager.errors.arenaNoPlayers);
-							else CommunicationManager.debugError(LanguageManager.errors.arenaNoPlayers, 0);
+							notifyFailure(player, LanguageManager.errors.arenaNoPlayers);
 							return true;
 						}
 
@@ -435,10 +413,10 @@ public class Commands implements CommandExecutor {
 							// Schedule accelerated countdown tasks
 							task.sec10.run();
 							tasks.put(task.sec10, 0); // Dummy task id to note that quick start condition was hit
-							tasks.put(task.sec5,
-									scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec5, Utils.secondsToTicks(5)));
-							tasks.put(task.start,
-									scheduler.scheduleSyncDelayedTask(Main.plugin, task.start, Utils.secondsToTicks(10)));
+							tasks.put(task.sec5, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec5,
+									Utils.secondsToTicks(5)));
+							tasks.put(task.start, scheduler.scheduleSyncDelayedTask(Main.plugin, task.start,
+									Utils.secondsToTicks(10)));
 
 							// Notify console
 							CommunicationManager.debugInfo(arena.getName() + " was force started.", 1);
@@ -507,28 +485,19 @@ public class Commands implements CommandExecutor {
 						try {
 							arena = Objects.requireNonNull(GameManager.getArena(name.toString()));
 						} catch (Exception e) {
-							if (player != null)
-								PlayerManager.notifyFailure(player, LanguageManager.errors.noArena);
-							else CommunicationManager.debugError(LanguageManager.errors.noArena,
-									0);
+							notifyFailure(player, LanguageManager.errors.noArena);
 							return true;
 						}
 
 						// Check if arena has a game in progress
 						if (arena.getStatus() != ArenaStatus.ACTIVE && arena.getStatus() != ArenaStatus.ENDING) {
-							if (player != null)
-								PlayerManager.notifyFailure(player, LanguageManager.errors.noGameEnd);
-							else CommunicationManager.debugError(LanguageManager.errors.noGameEnd,
-									0);
+							notifyFailure(player, LanguageManager.errors.noGameEnd);
 							return true;
 						}
 
 						// Check if game is about to end
 						if (arena.getStatus() == ArenaStatus.ENDING) {
-							if (player != null)
-								PlayerManager.notifyFailure(player, LanguageManager.errors.endingSoon);
-							else CommunicationManager.debugError(LanguageManager.errors.endingSoon,
-									0);
+							notifyFailure(player, LanguageManager.errors.endingSoon);
 							return true;
 						}
 
@@ -613,25 +582,19 @@ public class Commands implements CommandExecutor {
 						try {
 							arena = Objects.requireNonNull(GameManager.getArena(name.toString()));
 						} catch (Exception e) {
-							if (player != null)
-								PlayerManager.notifyFailure(player, LanguageManager.errors.noArena);
-							else CommunicationManager.debugError(LanguageManager.errors.noArena, 0);
+							notifyFailure(player, LanguageManager.errors.noArena);
 							return true;
 						}
 
 						// Check if arena already started
 						if (arena.getStatus() != ArenaStatus.WAITING) {
-							if (player != null)
-								PlayerManager.notifyFailure(player, LanguageManager.errors.arenaInProgress);
-							else CommunicationManager.debugError(LanguageManager.errors.arenaInProgress, 0);
+							notifyFailure(player, LanguageManager.errors.arenaInProgress);
 							return true;
 						}
 
 						// Check if there is at least 1 player
 						if (arena.getActiveCount() == 0) {
-							if (player != null)
-								PlayerManager.notifyFailure(player, LanguageManager.errors.emptyArena);
-							else CommunicationManager.debugError(LanguageManager.errors.emptyArena, 0);
+							notifyFailure(player, LanguageManager.errors.emptyArena);
 							return true;
 						}
 
@@ -674,11 +637,7 @@ public class Commands implements CommandExecutor {
 
 					// Check for correct format
 					if (args.length > 1) {
-						if (player != null)
-							PlayerManager.notifyFailure(player, LanguageManager.messages.commandFormat,
-									ChatColor.AQUA, "/vd fix");
-						else CommunicationManager.debugError(String.format(LanguageManager.messages.commandFormat,
-								"vd fix"), 0);
+						notifyCommandFailure(player, "/vd fix", LanguageManager.messages.commandFormat);
 						return true;
 					}
 
@@ -729,8 +688,7 @@ public class Commands implements CommandExecutor {
 
 							// Notify
 							if (player != null)
-								PlayerManager.notifySuccess(player,
-										LanguageManager.confirms.autoUpdate, ChatColor.AQUA,
+								PlayerManager.notifySuccess(player, LanguageManager.confirms.autoUpdate, ChatColor.AQUA,
 										"arenaData.yml", "4");
 							CommunicationManager.debugInfo(String.format(LanguageManager.confirms.autoUpdate,
 									"arenaData.yml", "4"), 0);
@@ -1023,11 +981,8 @@ public class Commands implements CommandExecutor {
 
 					// Check for correct format
 					if (args.length != 2) {
-						if (player != null)
-							PlayerManager.notifyFailure(player, LanguageManager.messages.commandFormat,
-									ChatColor.AQUA, "/vd debug [debug level (0-3)]");
-						else CommunicationManager.debugError(String.format(LanguageManager.messages.commandFormat,
-								"vd debug [debug level (0-3)]"), 0);
+						notifyCommandFailure(player, "/vd debug [debug level (0-3)]",
+								LanguageManager.messages.commandFormat);
 						return true;
 					}
 
@@ -1035,11 +990,8 @@ public class Commands implements CommandExecutor {
 					try {
 						CommunicationManager.setDebugLevel(Integer.parseInt(args[1]));
 					} catch (Exception e) {
-						if (player != null)
-							PlayerManager.notifyFailure(player, LanguageManager.messages.commandFormat,
-									ChatColor.AQUA, "/vd debug [debug level (0-3)]");
-						else CommunicationManager.debugError(String.format(LanguageManager.messages.commandFormat,
-								"vd debug [debug level (0-3)]"), 0);
+						notifyCommandFailure(player, "/vd debug [debug level (0-3)]",
+								LanguageManager.messages.commandFormat);
 						return true;
 					}
 
@@ -1117,12 +1069,8 @@ public class Commands implements CommandExecutor {
 
 					// Check for valid command format
 					if (args.length < 2) {
-						if (player != null)
-							PlayerManager.notifyFailure(player, LanguageManager.messages.commandFormat,
-									ChatColor.AQUA, "/vd open [arena name]");
-						else
-							CommunicationManager.debugError(String.format(LanguageManager.messages.commandFormat,
-									"vd open [arena name]"), 0);
+						notifyCommandFailure(player, "/vd open [arena name]",
+								LanguageManager.messages.commandFormat);
 						return true;
 					}
 
@@ -1143,70 +1091,50 @@ public class Commands implements CommandExecutor {
 
 					// Check if arena is already open
 					if (!arena.isClosed()) {
-						if (player != null)
-							PlayerManager.notifyFailure(player, "Arena is already open!");
-						else CommunicationManager.debugError("Arena is already open!", 0);
+						notifyFailure(player, "Arena is already open!");
 						return true;
 					}
 
 					// No lobby
 					if (!Main.plugin.getArenaData().contains("lobby")) {
-						if (player != null)
-							PlayerManager.notifyFailure(player, "Arena cannot open without a lobby!");
-						else CommunicationManager.debugError("Arena cannot open without a lobby!", 0);
+						notifyFailure(player, "Arena cannot open without a lobby!");
 						return true;
 					}
 
 					// No arena portal
 					if (arena.getPortalLocation() == null) {
-						if (player != null)
-							PlayerManager.notifyFailure(player, "Arena cannot open without a portal!");
-						else CommunicationManager.debugError("Arena cannot open without a portal!", 0);
+						notifyFailure(player, "Arena cannot open without a portal!");
 						return true;
 					}
 
 					// No player spawn
 					if (arena.getPlayerSpawn() == null) {
-						if (player != null)
-							PlayerManager.notifyFailure(player, "Arena cannot open without a player spawn!");
-						else CommunicationManager.debugError("Arena cannot open without a player spawn!",
-								0);
+						notifyFailure(player, "Arena cannot open without a player spawn!");
 						return true;
 					}
 
 					// No monster spawn
 					if (arena.getMonsterSpawns().isEmpty()) {
-						if (player != null)
-							PlayerManager.notifyFailure(player, "Arena cannot open without a monster spawn!");
-						else CommunicationManager.debugError("Arena cannot open without a monster spawn!",
-								0);
+						notifyFailure(player, "Arena cannot open without a monster spawn!");
 						return true;
 					}
 
 					// No villager spawn
 					if (arena.getVillagerSpawns().isEmpty()) {
-						if (player != null)
-							PlayerManager.notifyFailure(player, "Arena cannot open without a villager spawn!");
-						else CommunicationManager.debugError("Arena cannot open without a villager spawn!",
-								0);
+						notifyFailure(player, "Arena cannot open without a villager spawn!");
 						return true;
 					}
 
 					// No shops
 					if (!arena.hasCustom() && !arena.hasNormal()) {
-						if (player != null)
-							PlayerManager.notifyFailure(player, "Arena cannot open without a shop!");
-						else CommunicationManager.debugError("Arena cannot open without a shop!", 0);
+						notifyFailure(player, "Arena cannot open without a shop!");
 						return true;
 					}
 
 					// Invalid arena bounds
 					if (arena.getCorner1() == null || arena.getCorner2() == null ||
 							!Objects.equals(arena.getCorner1().getWorld(), arena.getCorner2().getWorld())) {
-						if (player != null)
-							PlayerManager.notifyFailure(player, "Arena cannot open without valid arena bounds!");
-						else CommunicationManager.debugError("Arena cannot open without valid arena bounds!",
-								0);
+						notifyFailure(player, "Arena cannot open without valid arena bounds!");
 						return true;
 					}
 
@@ -1214,9 +1142,7 @@ public class Commands implements CommandExecutor {
 					arena.setClosed(false);
 
 					// Notify console and possibly player
-					if (player != null)
-						PlayerManager.notifySuccess(player, arena.getName() +  " was opened.");
-					CommunicationManager.debugInfo(arena.getName() + " was opened.", 1);
+					notifySuccess(player, arena.getName() +  " was opened.");
 
 					return true;
 
@@ -1230,12 +1156,8 @@ public class Commands implements CommandExecutor {
 
 					// Check for valid command format
 					if (args.length < 2) {
-						if (player != null)
-							PlayerManager.notifyFailure(player, LanguageManager.messages.commandFormat,
-									ChatColor.AQUA, "/vd close [arena name]");
-						else
-							CommunicationManager.debugError(String.format(LanguageManager.messages.commandFormat,
-									"vd close [arena name]"), 0);
+						notifyCommandFailure(player, "/vd close [arena name]",
+								LanguageManager.messages.commandFormat);
 						return true;
 					}
 
@@ -1247,18 +1169,13 @@ public class Commands implements CommandExecutor {
 					try {
 						arena = Objects.requireNonNull(GameManager.getArena(name.toString()));
 					} catch (Exception e) {
-						if (player != null)
-							PlayerManager.notifyFailure(player, LanguageManager.errors.noArena);
-						else CommunicationManager.debugError(LanguageManager.errors.noArena,
-								0);
+						notifyFailure(player, LanguageManager.errors.noArena);
 						return true;
 					}
 
 					// Check if arena is already closed
 					if (arena.isClosed()) {
-						if (player != null)
-							PlayerManager.notifyFailure(player, "Arena is already closed!");
-						else CommunicationManager.debugError("Arena is already closed!", 0);
+						notifyFailure(player, "Arena is already closed!");
 						return true;
 					}
 
@@ -1266,19 +1183,13 @@ public class Commands implements CommandExecutor {
 					arena.setClosed(true);
 
 					// Notify console and possibly player
-					if (player != null)
-						PlayerManager.notifySuccess(player, arena.getName() +  " was closed.");
-					CommunicationManager.debugInfo(arena.getName() + " was closed.", 1);
+					notifySuccess(player, arena.getName() +  " was closed.");
 
 					return true;
 
 				// No valid command sent
 				default:
-					if (player != null)
-						PlayerManager.notifyFailure(player, LanguageManager.errors.command, ChatColor.AQUA,
-								"/vd help");
-					else CommunicationManager.debugError(String.format(LanguageManager.errors.command, "vd help"),
-							0);
+					notifyCommandFailure(player, "/vd help", LanguageManager.errors.command);
 					return true;
 			}
 		} catch (NullPointerException e) {
@@ -1309,5 +1220,23 @@ public class Commands implements CommandExecutor {
 		if (arenaData.contains(from))
 			Objects.requireNonNull(arenaData.getConfigurationSection(from)).getKeys(false).forEach(key ->
 					arenaData.set(to + "." + key, arenaData.getItemStack(from + "." + key)));
+	}
+
+	private void notifyCommandFailure(Player player, String command, String message) {
+		if (player != null)
+			PlayerManager.notifyFailure(player, message, ChatColor.AQUA, command);
+		else CommunicationManager.debugError(String.format(message, command.substring(1)), 0);
+	}
+
+	private void notifyFailure(Player player, String message) {
+		if (player != null)
+			PlayerManager.notifyFailure(player, message);
+		else CommunicationManager.debugError(message, 0);
+	}
+
+	private void notifySuccess(Player player, String message) {
+		if (player != null)
+			PlayerManager.notifySuccess(player, message);
+		else CommunicationManager.debugInfo(message, 0);
 	}
 }

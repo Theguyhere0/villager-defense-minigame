@@ -236,7 +236,7 @@ public class Main extends JavaPlugin {
 		// Set GameManager
 		resetGameManager();
 
-		// Remind if this build is release
+		// Remind if this build is not meant for release
 		if (!releaseMode) {
 			urgentConsoleWarning("! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !");
 			urgentConsoleWarning("");
@@ -245,7 +245,7 @@ public class Main extends JavaPlugin {
 			urgentConsoleWarning("! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !");
 		}
 
-		// Check default debug level
+		// Remind if default debug level is greater than 1 in release mode
 		if (releaseMode && CommunicationManager.getDebugLevel() > 1) {
 			urgentConsoleWarning("! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !");
 			urgentConsoleWarning("");
@@ -474,7 +474,6 @@ public class Main extends JavaPlugin {
 
 		if (stackTrace || releaseMode)
 			Thread.dumpStack();
-
 	}
 
 	private static void urgentConsoleWarning(String msg) {
