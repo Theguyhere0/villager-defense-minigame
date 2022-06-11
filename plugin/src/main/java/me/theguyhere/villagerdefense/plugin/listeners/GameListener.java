@@ -627,7 +627,7 @@ public class GameListener implements Listener {
 		if (arena.getStatus() != ArenaStatus.ACTIVE) return;
 
 		// Ignore void damage
-		if (!e.getCause().equals(EntityDamageEvent.DamageCause.VOID)) return;
+		if (e.getCause().equals(EntityDamageEvent.DamageCause.VOID)) return;
 
 		// Check if player is about to die
 		if (e.getFinalDamage() < player.getHealth()) return;
