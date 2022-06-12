@@ -24,6 +24,7 @@ public class CommandTab implements TabCompleter {
     private final String[] arenaNameCommands = {"start", "end", "delay"};
     private final String[] adminFirstArgs = {"lobby", "infoBoard", "leaderboard", "arena"};
     private final String[] displayMenuArgs = {"set", "teleport", "center", "remove"};
+    private final String[] leaderboards = {"topBalance", "topKills", "topWave", "totalGems", "totalKills"};
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command,
@@ -87,6 +88,7 @@ public class CommandTab implements TabCompleter {
                     });
 
                     return result;
+
                 case "infoboard":
                     ConfigurationSection infoBoardSection = arenaData.getConfigurationSection("infoBoard");
 
@@ -109,6 +111,24 @@ public class CommandTab implements TabCompleter {
                     return result;
 
                 case "leaderboard":
+                    if (args.length == 3) {
+                        argFrag = new StringBuilder(args[2]);
+                        Arrays.stream(leaderboards).forEach(arg -> {
+                            if (arg.startsWith(argFrag.toString()))
+                                result.add(arg);
+                        });
+                    }
+
+                    else if (args.length == 4) {
+                        argFrag = new StringBuilder(args[3].toLowerCase());
+                        Arrays.stream(displayMenuArgs).forEach(arg -> {
+                            if (arg.startsWith(argFrag.toString()))
+                                result.add(arg);
+                        });
+                    }
+
+                    return result;
+
                 case "arena":
                 default:
             }

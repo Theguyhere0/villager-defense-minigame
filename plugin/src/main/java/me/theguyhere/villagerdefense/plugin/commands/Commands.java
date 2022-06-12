@@ -31,10 +31,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("deprecation")
@@ -270,18 +267,102 @@ public class Commands implements CommandExecutor {
 
 									default:
 										notifyCommandFailure(player,
-												"/vd admin lobby [set, teleport, center, remove]",
+												"/vd admin infoBoard [info board id, create] " +
+														"[set, teleport, center, remove]",
 												LanguageManager.messages.commandFormat);
 										return true;
 								}
 
 							case "leaderboard":
 								// Incorrect format
-								if (args.length == 2) {
+								if (args.length != 4) {
 									notifyCommandFailure(player,
-											"/vd admin leaderboard [leaderboard type]",
+											"/vd admin leaderboard [leaderboard type] " +
+													"[set, teleport, center, remove]",
 											LanguageManager.messages.commandFormat);
 									return true;
+								}
+
+								// Check for type validity
+								String[] types = {"topBalance", "topKills", "topWave", "totalGems", "totalKills"};
+								String type = args[2];
+								if (Arrays.stream(types).noneMatch(realType -> realType.equals(type))) {
+									notifyFailure(player, "Invalid leaderboard.");
+									return true;
+								}
+
+								// Display object menu options
+								path = "leaderboard." + type;
+								location = DataManager.getConfigLocationNoRotation(path);
+								switch (args[3].toLowerCase()) {
+									case "set":
+										// Check for player executing command
+										if (player == null) {
+											sender.sendMessage(LanguageManager.errors.playerOnlyCommand);
+											return true;
+										}
+
+										GameManager.setLeaderboard(player.getLocation(), type);
+										PlayerManager.notifySuccess(player, "Leaderboard set!");
+										return true;
+
+									case "teleport":
+										// Check for player executing command
+										if (player == null) {
+											sender.sendMessage(LanguageManager.errors.playerOnlyCommand);
+											return true;
+										}
+
+										if (location == null) {
+											PlayerManager.notifyFailure(player, "No leaderboard to teleport to!");
+											return true;
+										}
+										player.teleport(location);
+										return true;
+
+									case "center":
+										if (location == null) {
+											notifyFailure(player, "No leaderboard to center!");
+											return true;
+										}
+										GameManager.centerLeaderboard(type);
+										notifySuccess(player, "Leaderboard centered!");
+										return true;
+
+									case "remove":
+										// Check for player executing command
+										if (player == null) {
+											sender.sendMessage(LanguageManager.errors.playerOnlyCommand);
+											return true;
+										}
+
+										if (config.contains(path))
+											switch (type) {
+												case "topBalance":
+													player.openInventory(Inventories.createTopBalanceConfirmMenu());
+													break;
+												case "topKills":
+													player.openInventory(Inventories.createTopKillsConfirmMenu());
+													break;
+												case "topWave":
+													player.openInventory(Inventories.createTopWaveConfirmMenu());
+													break;
+												case "totalGems":
+													player.openInventory(Inventories.createTotalGemsConfirmMenu());
+													break;
+												case "totalKills":
+													player.openInventory(Inventories.createTotalKillsConfirmMenu());
+													break;
+											}
+										else PlayerManager.notifyFailure(player, "No leaderboard to remove!");
+										return true;
+
+									default:
+										notifyCommandFailure(player,
+												"/vd admin leaderboard [leaderboard type] " +
+														"[set, teleport, center, remove]",
+												LanguageManager.messages.commandFormat);
+										return true;
 								}
 
 							case "arena":
