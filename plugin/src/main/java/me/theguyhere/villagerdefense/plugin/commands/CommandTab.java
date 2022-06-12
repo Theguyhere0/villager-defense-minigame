@@ -19,12 +19,25 @@ import java.util.Objects;
 
 public class CommandTab implements TabCompleter {
     private final String[] arguments = {"admin", "help", "leave", "stats", "kits", "join", "crystals", "start",
-            "end", "delay", "fix", "debug", "die", "reload", "open", "close", "achievements"};
+            "end", "delay", "fix", "debug", "die", "reload", "achievements"};
     private final String[] playerNameCommands = {"stats", "crystals"};
     private final String[] arenaNameCommands = {"start", "end", "delay"};
     private final String[] adminFirstArgs = {"lobby", "infoBoard", "leaderboard", "arena"};
     private final String[] displayMenuArgs = {"set", "teleport", "center", "remove"};
     private final String[] leaderboards = {"topBalance", "topKills", "topWave", "totalGems", "totalKills"};
+    private final String[] arenaOperations = {"close", "open", "rename", "portal-set", "portal-teleport",
+            "portal-center", "portal-remove", "leaderboard-set", "leaderboard-teleport", "leaderboard-center",
+            "leaderboard-remove", "playerSpawn-set", "playerSpawn-teleport", "playerSpawn-center", "playerSpawn-remove",
+            "waitingRoom-set", "waitingRoom-teleport", "waitingRoom-center", "waitingRoom-remove", "spawnParticles-on",
+            "spawnParticles-off", "maxPlayers-", "minPlayers-", "monsterSpawnParticles-on", "monsterSpawnParticles-off",
+            "villagerSpawnParticles-on", "villagerSpawnParticles-off", "dynamicMobCount-on", "dynamicMobCount-off",
+            "defaultShop-on", "defaultShop-off", "customShop-on", "customShop-off", "enchantShop-on", "enchantShop-off",
+            "communityChest-on", "communityChest-off", "dynamicPrices-on", "dynamicPrices-off", "dynamicTimeLimit-on",
+            "dynamicTimeLimit-off", "dynamicDifficulty-on", "dynamicDifficulty-off", "lateArrival-on",
+            "lateArrival-off", "experienceDrop-on", "experienceDrop-off", "itemDrop-on", "itemDrop-off", "maxWaves-",
+            "waveTimeLimit-", "wolfCap-", "golemCap-", "difficultyLabel-easy", "difficultyLabel-medium",
+            "difficultyLabel-hard", "difficultyLabel-insane", "difficultyLabel-none", "difficultyMultiplier-",
+            "remove"};
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command,
@@ -47,11 +60,9 @@ public class CommandTab implements TabCompleter {
             });
         }
 
-        // For commands that need arena names
-        else if (args[0].equalsIgnoreCase("start") || args[0].equalsIgnoreCase("end") ||
-                args[0].equalsIgnoreCase("delay") || args[0].equalsIgnoreCase("open") ||
-                args[0].equalsIgnoreCase("close")) {
-            StringBuilder nameFrag = new StringBuilder(args[1]);
+        // For commands that need arena names only
+        else if (Arrays.stream(arenaNameCommands).anyMatch(arg -> args[0].equalsIgnoreCase(arg))) {
+            StringBuilder nameFrag = new StringBuilder(args[1].toLowerCase());
             for (int i = 0; i < args.length - 2; i++)
                 nameFrag.append(" ").append(args[i + 2]);
             GameManager.getArenas().values().stream().filter(Objects::nonNull).map(Arena::getName).forEach(name -> {
@@ -130,7 +141,29 @@ public class CommandTab implements TabCompleter {
                     return result;
 
                 case "arena":
+                    if (args.length == 3) {
+                        argFrag = new StringBuilder(args[2]);
+                        Arrays.stream(arenaOperations).forEach(arg -> {
+                            if (arg.startsWith(argFrag.toString()))
+                                result.add(arg);
+                        });
+                    }
+
+                    else {
+                        StringBuilder nameFrag = new StringBuilder(args[3].toLowerCase());
+                        for (int i = 0; i < args.length - 4; i++)
+                            nameFrag.append(" ").append(args[i + 4]);
+                        GameManager.getArenas().values().stream().filter(Objects::nonNull).map(Arena::getName)
+                                .forEach(name -> {
+                                    if (name.toLowerCase().startsWith(nameFrag.toString()))
+                                        result.add(name);
+                                });
+                    }
+
+                    return result;
+
                 default:
+                    return result;
             }
         }
 
