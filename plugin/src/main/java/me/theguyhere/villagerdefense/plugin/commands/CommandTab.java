@@ -1,11 +1,14 @@
 package me.theguyhere.villagerdefense.plugin.commands;
 
+import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,6 +22,8 @@ public class CommandTab implements TabCompleter {
             "end", "delay", "fix", "debug", "die", "reload", "open", "close", "achievements"};
     private final String[] playerNameCommands = {"stats", "crystals"};
     private final String[] arenaNameCommands = {"start", "end", "delay"};
+    private final String[] adminFirstArgs = {"lobby", "infoBoard", "leaderboard", "arena"};
+    private final String[] displayMenuArgs = {"set", "teleport", "center", "remove"};
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command,
@@ -52,6 +57,61 @@ public class CommandTab implements TabCompleter {
                 if (name.toLowerCase().startsWith(nameFrag.toString()))
                     result.add(name);
             });
+        }
+
+        // The command tree for admin commands
+        else if (args[0].equalsIgnoreCase("admin")) {
+            StringBuilder argFrag;
+            FileConfiguration arenaData = Main.plugin.getArenaData();
+
+            // First args
+            if (args.length == 2) {
+                argFrag = new StringBuilder(args[1].toLowerCase());
+                Arrays.stream(adminFirstArgs).forEach(arg -> {
+                    if (arg.toLowerCase().startsWith(argFrag.toString()))
+                        result.add(arg);
+                });
+
+                return result;
+            }
+
+            switch (args[1].toLowerCase()) {
+                case "lobby":
+                    if (args.length != 3)
+                        return result;
+
+                    argFrag = new StringBuilder(args[2].toLowerCase());
+                    Arrays.stream(displayMenuArgs).forEach(arg -> {
+                        if (arg.startsWith(argFrag.toString()))
+                            result.add(arg);
+                    });
+
+                    return result;
+                case "infoboard":
+                    ConfigurationSection infoBoardSection = arenaData.getConfigurationSection("infoBoard");
+
+                    if (args.length == 3 && infoBoardSection != null) {
+                        argFrag = new StringBuilder(args[2].toLowerCase());
+                        infoBoardSection.getKeys(false).forEach(key -> {
+                            if (key.startsWith(argFrag.toString()))
+                                result.add(key);
+                        });
+                    }
+
+                    else if (args.length == 4) {
+                        argFrag = new StringBuilder(args[3].toLowerCase());
+                        Arrays.stream(displayMenuArgs).forEach(arg -> {
+                            if (arg.startsWith(argFrag.toString()))
+                                result.add(arg);
+                        });
+                    }
+
+                    return result;
+
+                case "leaderboard":
+                case "arena":
+                default:
+            }
         }
 
         // Debug command needing numbers 0 through 3

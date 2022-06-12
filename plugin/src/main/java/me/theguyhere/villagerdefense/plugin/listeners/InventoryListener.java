@@ -270,7 +270,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("REMOVE"))
 				if (GameManager.getArenas().values().stream().filter(Objects::nonNull)
 						.anyMatch(arena -> !arena.isClosed()))
-					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+					PlayerManager.notifyFailure(player, "All arenas must be closed to modify this!");
 				else if (config.contains("lobby"))
 					player.openInventory(Inventories.createLobbyConfirmMenu());
 				else PlayerManager.notifyFailure(player, "No lobby to remove!");
@@ -317,8 +317,7 @@ public class InventoryListener implements Listener {
 
 			// Relocate board
 			else if (buttonName.contains("Relocate")) {
-				DataManager.setConfigurationLocation(path, player.getLocation());
-				GameManager.refreshInfoBoard(id);
+				GameManager.setInfoBoard(player.getLocation(), id);
 				PlayerManager.notifySuccess(player, "Info board relocated!");
 			}
 

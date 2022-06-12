@@ -71,24 +71,230 @@ public class Commands implements CommandExecutor {
 			VDPlayer gamer;
 			UUID id;
 			StringBuilder name;
+			Location location;
+			String path;
 
 			switch (args[0].toLowerCase()) {
-				// Admin panel
 				case "admin":
-					// Check for player executing command
-					if (player == null) {
-						sender.sendMessage(LanguageManager.errors.playerOnlyCommand);
+					// Admin panel
+					if (args.length == 1) {
+						// Check for player executing command
+						if (player == null) {
+							sender.sendMessage(LanguageManager.errors.playerOnlyCommand);
+							return true;
+						}
+
+						// Check for permission to use the command
+						if (!player.hasPermission("vd.use")) {
+							PlayerManager.notifyFailure(player, LanguageManager.errors.permission);
+							return true;
+						}
+
+						player.openInventory(Inventories.createMainMenu());
 						return true;
 					}
 
-					// Check for permission to use the command
-					if (!player.hasPermission("vd.use")) {
-						PlayerManager.notifyFailure(player, LanguageManager.errors.permission);
-						return true;
-					}
+					// Admin commands
+					else {
+						FileConfiguration config = Main.plugin.getArenaData();
 
-					player.openInventory(Inventories.createMainMenu());
-					return true;
+						switch (args[1].toLowerCase()) {
+							case "lobby":
+								// Incorrect format
+								if (args.length != 3) {
+									notifyCommandFailure(player,
+											"/vd admin lobby [set, teleport, center, remove]",
+											LanguageManager.messages.commandFormat);
+									return true;
+								}
+
+								path = "lobby";
+								location = DataManager.getConfigLocationNoRotation(path);
+
+								// Display object menu options
+								switch (args[2].toLowerCase()) {
+									case "set":
+										// Check for player executing command
+										if (player == null) {
+											sender.sendMessage(LanguageManager.errors.playerOnlyCommand);
+											return true;
+										}
+
+										GameManager.setLobby(player.getLocation());
+										PlayerManager.notifySuccess(player, "Lobby set!");
+										return true;
+
+									case "teleport":
+										// Check for player executing command
+										if (player == null) {
+											sender.sendMessage(LanguageManager.errors.playerOnlyCommand);
+											return true;
+										}
+
+										if (location == null) {
+											PlayerManager.notifyFailure(player, "No lobby to teleport to!");
+											return true;
+										}
+										player.teleport(location);
+										return true;
+
+									case "center":
+										if (location == null) {
+											notifyFailure(player, "No lobby to center!");
+											return true;
+										}
+										DataManager.centerConfigLocation(path);
+										notifySuccess(player, "Lobby centered!");
+										return true;
+
+									case "remove":
+										// Check for player executing command
+										if (player == null) {
+											sender.sendMessage(LanguageManager.errors.playerOnlyCommand);
+											return true;
+										}
+
+										if (GameManager.getArenas().values().stream().filter(Objects::nonNull)
+												.anyMatch(arenaInstance -> !arenaInstance.isClosed()))
+											PlayerManager.notifyFailure(player,
+													"All arenas must be closed to modify this!");
+										else if (config.contains("lobby"))
+											player.openInventory(Inventories.createLobbyConfirmMenu());
+										else PlayerManager.notifyFailure(player, "No lobby to remove!");
+										return true;
+
+									default:
+										notifyCommandFailure(player,
+												"/vd admin lobby [set, teleport, center, remove]",
+												LanguageManager.messages.commandFormat);
+										return true;
+								}
+
+							case "infoboard":
+								// Incorrect format
+								if (args.length == 2) {
+									notifyCommandFailure(player,
+											"/vd admin infoBoard [info board id, create] " +
+													"[set, teleport, center, remove]",
+											LanguageManager.messages.commandFormat);
+									return true;
+								}
+
+								// Create new info board
+								if (args[2].equalsIgnoreCase("create")) {
+									// Check for player executing command
+									if (player == null) {
+										sender.sendMessage(LanguageManager.errors.playerOnlyCommand);
+										return true;
+									}
+
+									// Create new info board at location
+									GameManager.setInfoBoard(player.getLocation(), GameManager.newInfoBoardID());
+									PlayerManager.notifySuccess(player, "Info board set!");
+
+									return true;
+								}
+
+								// Incorrect format or invalid ID
+								if (args.length != 4) {
+									notifyCommandFailure(player,
+											"/vd admin infoBoard [info board id, create] " +
+													"[set, teleport, center, remove]",
+											LanguageManager.messages.commandFormat);
+									return true;
+								}
+								int infoBoardID;
+								try {
+									infoBoardID = Integer.parseInt(args[2]);
+								} catch (Exception e) {
+									notifyCommandFailure(player,
+											"/vd admin infoBoard [info board id, create] " +
+													"[set, teleport, center, remove]",
+											LanguageManager.messages.commandFormat);
+									return true;
+								}
+								if (!arenaData.contains("infoBoard." + infoBoardID)) {
+									notifyFailure(player, "Invalid info board id.");
+									return true;
+								}
+
+								// Display object menu options
+								path = "infoBoard." + infoBoardID;
+								location = DataManager.getConfigLocationNoRotation(path);
+								switch (args[3].toLowerCase()) {
+									case "set":
+										// Check for player executing command
+										if (player == null) {
+											sender.sendMessage(LanguageManager.errors.playerOnlyCommand);
+											return true;
+										}
+
+										GameManager.setInfoBoard(player.getLocation(), infoBoardID);
+										PlayerManager.notifySuccess(player, "Info board set!");
+										return true;
+
+									case "teleport":
+										// Check for player executing command
+										if (player == null) {
+											sender.sendMessage(LanguageManager.errors.playerOnlyCommand);
+											return true;
+										}
+
+										if (location == null) {
+											PlayerManager.notifyFailure(player, "No info board to teleport to!");
+											return true;
+										}
+										player.teleport(location);
+										return true;
+
+									case "center":
+										if (location == null) {
+											notifyFailure(player, "No info board to center!");
+											return true;
+										}
+										GameManager.centerInfoBoard(infoBoardID);
+										notifySuccess(player, "Info board centered!");
+										return true;
+
+									case "remove":
+										// Check for player executing command
+										if (player == null) {
+											sender.sendMessage(LanguageManager.errors.playerOnlyCommand);
+											return true;
+										}
+
+										if (config.contains(path))
+											player.openInventory(Inventories.createInfoBoardConfirmMenu(infoBoardID));
+										else PlayerManager.notifyFailure(player, "No info board to remove!");
+										return true;
+
+									default:
+										notifyCommandFailure(player,
+												"/vd admin lobby [set, teleport, center, remove]",
+												LanguageManager.messages.commandFormat);
+										return true;
+								}
+
+							case "leaderboard":
+								// Incorrect format
+								if (args.length == 2) {
+									notifyCommandFailure(player,
+											"/vd admin leaderboard [leaderboard type]",
+											LanguageManager.messages.commandFormat);
+									return true;
+								}
+
+							case "arena":
+								// Incorrect format
+								if (args.length == 2) {
+									notifyCommandFailure(player, "/vd admin arena [arena name]",
+											LanguageManager.messages.commandFormat);
+									return true;
+								}
+
+							default:
+						}
+					}
 
 				// Chat tutorial & wiki link
 				case "help":
@@ -657,10 +863,8 @@ public class Commands implements CommandExecutor {
 							// Transfer portals
 							Objects.requireNonNull(arenaData.getConfigurationSection("portal"))
 									.getKeys(false).forEach(arenaID -> {
-										Location location = DataManager.getConfigLocation(
-												"portal." + arenaID);
 										DataManager.setConfigurationLocation("a" + arenaID + ".portal",
-												location);
+												DataManager.getConfigLocation("portal." + arenaID));
 										arenaData.set("portal." + arenaID, null);
 									});
 							arenaData.set("portal", null);
@@ -668,10 +872,8 @@ public class Commands implements CommandExecutor {
 							// Transfer arena boards
 							Objects.requireNonNull(arenaData.getConfigurationSection("arenaBoard"))
 									.getKeys(false).forEach(arenaID -> {
-										Location location = DataManager.getConfigLocation(
-												"arenaBoard." + arenaID);
 										DataManager.setConfigurationLocation("a" + arenaID + ".arenaBoard",
-												location);
+												DataManager.getConfigLocation("arenaBoard." + arenaID));
 										arenaData.set("arenaBoard." + arenaID, null);
 									});
 							arenaData.set("arenaBoard", null);
@@ -705,45 +907,45 @@ public class Commands implements CommandExecutor {
 							// Translate waiting sounds
 							Objects.requireNonNull(arenaData.getConfigurationSection("")).getKeys(false)
 									.forEach(key -> {
-										String path = key + ".sounds.waiting";
-										if (key.charAt(0) == 'a' && key.length() < 4 && arenaData.contains(path)) {
-											int oldValue = arenaData.getInt(path);
+										String soundPath = key + ".sounds.waiting";
+										if (key.charAt(0) == 'a' && key.length() < 4 && arenaData.contains(soundPath)) {
+											int oldValue = arenaData.getInt(soundPath);
 											switch (oldValue) {
 												case 0:
-													arenaData.set(path, "cat");
+													arenaData.set(soundPath, "cat");
 													break;
 												case 1:
-													arenaData.set(path, "blocks");
+													arenaData.set(soundPath, "blocks");
 													break;
 												case 2:
-													arenaData.set(path, "far");
+													arenaData.set(soundPath, "far");
 													break;
 												case 3:
-													arenaData.set(path, "strad");
+													arenaData.set(soundPath, "strad");
 													break;
 												case 4:
-													arenaData.set(path, "mellohi");
+													arenaData.set(soundPath, "mellohi");
 													break;
 												case 5:
-													arenaData.set(path, "ward");
+													arenaData.set(soundPath, "ward");
 													break;
 												case 9:
-													arenaData.set(path, "chirp");
+													arenaData.set(soundPath, "chirp");
 													break;
 												case 10:
-													arenaData.set(path, "stal");
+													arenaData.set(soundPath, "stal");
 													break;
 												case 11:
-													arenaData.set(path, "mall");
+													arenaData.set(soundPath, "mall");
 													break;
 												case 12:
-													arenaData.set(path, "wait");
+													arenaData.set(soundPath, "wait");
 													break;
 												case 13:
-													arenaData.set(path, "pigstep");
+													arenaData.set(soundPath, "pigstep");
 													break;
 												default:
-													arenaData.set(path, "none");
+													arenaData.set(soundPath, "none");
 											}
 										}
 									});
