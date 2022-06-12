@@ -268,7 +268,10 @@ public class InventoryListener implements Listener {
 
 			// Remove lobby
 			else if (buttonName.contains("REMOVE"))
-				if (config.contains("lobby"))
+				if (GameManager.getArenas().values().stream().filter(Objects::nonNull)
+						.anyMatch(arena -> !arena.isClosed()))
+					PlayerManager.notifyFailure(player, "All arenas must be closed to modify this!");
+				else if (config.contains("lobby"))
 					player.openInventory(Inventories.createLobbyConfirmMenu());
 				else PlayerManager.notifyFailure(player, "No lobby to remove!");
 
@@ -314,8 +317,7 @@ public class InventoryListener implements Listener {
 
 			// Relocate board
 			else if (buttonName.contains("Relocate")) {
-				DataManager.setConfigurationLocation(path, player.getLocation());
-				GameManager.refreshInfoBoard(id);
+				GameManager.setInfoBoard(player.getLocation(), id);
 				PlayerManager.notifySuccess(player, "Info board relocated!");
 			}
 
@@ -723,7 +725,7 @@ public class InventoryListener implements Listener {
 			// Open arena remove confirmation menu
 			else if (buttonName.contains("REMOVE"))
 				if (arenaInstance.isClosed())
-					player.openInventory(Inventories.createArenaConfirmMenu(meta.getArena()));
+					player.openInventory(Inventories.createArenaConfirmMenu(arenaInstance));
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Return to arenas menu
@@ -1316,7 +1318,7 @@ public class InventoryListener implements Listener {
 
 				// Check if max players is greater than min players
 				if (current <= arenaInstance.getMinPlayers()) {
-					PlayerManager.notifyFailure(player, "Max players cannot be less than min player!");
+					PlayerManager.notifyFailure(player, "Max players cannot be less than min players!");
 					return;
 				}
 

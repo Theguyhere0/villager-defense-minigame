@@ -9,6 +9,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("deprecation")
 public class VDExpansion extends PlaceholderExpansion {
     @Override
     public @NotNull String getIdentifier() {
