@@ -293,7 +293,8 @@ public class Tasks {
 				for (VDPlayer player : arena.getPlayers()) {
 					PlayerManager.notify(player.getPlayer(), ChatColor.WHITE,
 							"&2" + LanguageManager.names.villageCaptain + ": &f" +
-									LanguageManager.messages.villageCaptainDialogue4);
+									LanguageManager.messages.villageCaptainDialogue4, ChatColor.AQUA,
+							"/vd leave");
 				}
 			}, Utils.secondsToTicks(18));
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
