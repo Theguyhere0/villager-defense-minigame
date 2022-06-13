@@ -267,7 +267,7 @@ public class ArenaListener implements Listener {
             tasks.remove(task.calibrate);
         }
 
-        // Play wave end sound
+        // Play wave end sound if not just starting
         if (arena.hasWaveFinishSound() && arena.getCurrentWave() != 0)
                 for (VDPlayer vdPlayer : arena.getPlayers()) {
                     vdPlayer.getPlayer().playSound(arena.getPlayerSpawn().getLocation(),

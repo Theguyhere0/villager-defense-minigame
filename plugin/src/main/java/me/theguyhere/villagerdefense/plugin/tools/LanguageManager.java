@@ -746,6 +746,11 @@ public class LanguageManager {
         public final @NotNull String unavailable;
         public final @NotNull String unlimited;
         public final @NotNull String visitWiki;
+        public final @NotNull String villageCaptainDialogue1;
+        public final @NotNull String villageCaptainDialogue2;
+        public final @NotNull String villageCaptainDialogue3;
+        public final @NotNull String villageCaptainDialogue4;
+        public final @NotNull String villageCaptainDialogue5;
         public final @NotNull String villagers;
         public final @NotNull String waiting;
         public final @NotNull String waitingForPlayers;
@@ -847,6 +852,11 @@ public class LanguageManager {
             unavailable = getConfigString(pathPrefix + ".unavailable");
             unlimited = getConfigString(pathPrefix + ".unlimited");
             visitWiki = getConfigString(pathPrefix + ".visitWiki");
+            villageCaptainDialogue1 = getConfigString(pathPrefix + ".villageCaptainDialogue1");
+            villageCaptainDialogue2 = getConfigString(pathPrefix + ".villageCaptainDialogue2");
+            villageCaptainDialogue3 = getConfigString(pathPrefix + ".villageCaptainDialogue3");
+            villageCaptainDialogue4 = getConfigString(pathPrefix + ".villageCaptainDialogue4");
+            villageCaptainDialogue5 = getConfigString(pathPrefix + ".villageCaptainDialogue5");
             villagers = getConfigString(pathPrefix + ".villagers");
             waiting = getConfigString(pathPrefix + ".waiting");
             waitingForPlayers = getConfigString(pathPrefix + ".waitingForPlayers");
@@ -888,6 +898,7 @@ public class LanguageManager {
         public final @NotNull String none;
         public final @NotNull String playerSpawnParticles;
         public final @NotNull String timeBar;
+        public final @NotNull String villageCaptain;
         public final @NotNull String villagerSpawnParticles;
         public final @NotNull String weaponShop;
 
@@ -926,6 +937,7 @@ public class LanguageManager {
             none = getConfigString(pathPrefix + ".none");
             playerSpawnParticles = getConfigString(pathPrefix + ".playerSpawnParticles");
             timeBar = getConfigString(pathPrefix + ".timeBar");
+            villageCaptain = getConfigString(pathPrefix + ".villageCaptain");
             villagerSpawnParticles = getConfigString(pathPrefix + ".villagerSpawnParticles");
             weaponShop = getConfigString(pathPrefix + ".weaponShop");
         }
