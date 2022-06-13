@@ -15,6 +15,7 @@ import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AchievementChecker {
@@ -25,57 +26,45 @@ public class AchievementChecker {
 
         FileConfiguration playerData = Main.plugin.getPlayerData();
         String path = player.getUniqueId() + ".";
-        boolean achieved = false;
+        List<Boolean> targets = new ArrayList<>();
 
         // Verify each requirement
         for (AchievementRequirement requirement : achievement.getRequirements()) {
             try {
                 if (requirement.getMetric() == AchievementMetric.TOP_BALANCE) {
-                    if (playerData.getInt(path + "topBalance") < requirement.getInteger()) {
-                        if (requirement.isAnd()) {
-                            achieved = false;
-                            break;
-                        }
-                    } else achieved = true;
+                    if (playerData.getInt(path + "topBalance") < requirement.getInteger())
+                        targets.add(false);
+                    else targets.add(true);
                 }
                 else if (requirement.getMetric() == AchievementMetric.TOP_KILLS) {
-                    if (playerData.getInt(path + "topKills") < requirement.getInteger()) {
-                        if (requirement.isAnd()) {
-                            achieved = false;
-                            break;
-                        }
-                    } else achieved = true;
+                    if (playerData.getInt(path + "topKills") < requirement.getInteger())
+                        targets.add(false);
+                    else targets.add(true);
+
                 }
                 if (requirement.getMetric() == AchievementMetric.TOP_WAVE) {
-                    if (playerData.getInt(path + "topWave") < requirement.getInteger()) {
-                        if (requirement.isAnd()) {
-                            achieved = false;
-                            break;
-                        }
-                    } else achieved = true;
+                    if (playerData.getInt(path + "topWave") < requirement.getInteger())
+                        targets.add(false);
+                    else targets.add(true);
                 }
                 if (requirement.getMetric() == AchievementMetric.TOTAL_GEMS) {
-                    if (playerData.getInt(path + "totalGems") < requirement.getInteger()) {
-                        if (requirement.isAnd()) {
-                            achieved = false;
-                            break;
-                        }
-                    } else achieved = true;
+                    if (playerData.getInt(path + "totalGems") < requirement.getInteger())
+                        targets.add(false);
+                    else targets.add(true);
                 }
                 if (requirement.getMetric() == AchievementMetric.TOTAL_KILLS) {
-                    if (playerData.getInt(path + "totalKills") < requirement.getInteger()) {
-                        if (requirement.isAnd()) {
-                            achieved = false;
-                            break;
-                        }
-                    } else achieved = true;
+                    if (playerData.getInt(path + "totalKills") < requirement.getInteger())
+                        targets.add(false);
+                    else targets.add(true);
                 }
             } catch (InvalidAchievementReqValException e) {
                 CommunicationManager.debugErrorShouldNotHappen();
             }
         }
 
-        return achieved;
+        if (achievement.isAnd())
+            return !targets.contains(false);
+        else return targets.contains(true);
     }
 
     private static boolean verifyInstanceAchievement(Achievement achievement, VDPlayer player) {
@@ -84,7 +73,7 @@ public class AchievementChecker {
             return false;
 
         Arena arena = GameManager.getArena(player.getPlayer());
-        boolean achieved = false;
+        List<Boolean> targets = new ArrayList<>();
 
         // Verify each requirement
         for (AchievementRequirement requirement : achievement.getRequirements()) {
@@ -92,92 +81,64 @@ public class AchievementChecker {
                 if (requirement.getMetric() == AchievementMetric.WAVE) {
                     if (arena.getCurrentWave() < requirement.getInteger() && arena.getStatus() == ArenaStatus.ENDING ||
                             arena.getCurrentWave() <= requirement.getInteger() &&
-                                    arena.getStatus() == ArenaStatus.ACTIVE) {
-                        if (requirement.isAnd()) {
-                            achieved = false;
-                            break;
-                        }
-                    } else achieved = true;
+                                    arena.getStatus() == ArenaStatus.ACTIVE)
+                        targets.add(false);
+                    else targets.add(true);
                 }
                 else if (requirement.getMetric() == AchievementMetric.GEMS) {
-                    if (player.getGems() < requirement.getInteger()) {
-                        if (requirement.isAnd()) {
-                            achieved = false;
-                            break;
-                        }
-                    } else achieved = true;
+                    if (player.getGems() < requirement.getInteger())
+                        targets.add(false);
+                    else targets.add(true);
                 }
                 else if (requirement.getMetric() == AchievementMetric.KIT) {
                     if (!requirement.getString().equals(player.getKit().getName()) &&
-                            !requirement.getString().equals(player.getKit2().getName())) {
-                        if (requirement.isAnd()) {
-                            achieved = false;
-                            break;
-                        }
-                    } else achieved = true;
+                            !requirement.getString().equals(player.getKit2().getName()))
+                        targets.add(false);
+                    else targets.add(true);
                 }
                 else if (requirement.getMetric() == AchievementMetric.CHALLENGE) {
-                    if (!player.getChallenges().contains(Challenge.getChallenge(requirement.getString()))) {
-                        if (requirement.isAnd()) {
-                            achieved = false;
-                            break;
-                        }
-                    } else achieved = true;
+                    if (!player.getChallenges().contains(Challenge.getChallenge(requirement.getString())))
+                        targets.add(false);
+                    else targets.add(true);
                 }
                 else if (requirement.getMetric() == AchievementMetric.PLAYERS) {
-                    if (arena.getAlive() < requirement.getInteger()) {
-                        if (requirement.isAnd()) {
-                            achieved = false;
-                            break;
-                        }
-                    } else achieved = true;
+                    if (arena.getAlive() < requirement.getInteger())
+                        targets.add(false);
+                    else targets.add(true);
                 }
                 else if (requirement.getMetric() == AchievementMetric.GHOSTS) {
-                    if (arena.getGhostCount() < requirement.getInteger()) {
-                        if (requirement.isAnd()) {
-                            achieved = false;
-                            break;
-                        }
-                    } else achieved = true;
+                    if (arena.getGhostCount() < requirement.getInteger())
+                        targets.add(false);
+                    else targets.add(true);
                 }
                 else if (requirement.getMetric() == AchievementMetric.SPECTATORS) {
-                    if (arena.getSpectatorCount() < requirement.getInteger()) {
-                        if (requirement.isAnd()) {
-                            achieved = false;
-                            break;
-                        }
-                    } else achieved = true;
+                    if (arena.getSpectatorCount() < requirement.getInteger())
+                        targets.add(false);
+                    else targets.add(true);
                 }
                 else if (requirement.getMetric() == AchievementMetric.ENEMIES) {
-                    if (arena.getEnemies() < requirement.getInteger()) {
-                        if (requirement.isAnd()) {
-                            achieved = false;
-                            break;
-                        }
-                    } else achieved = true;
+                    if (arena.getEnemies() < requirement.getInteger())
+                        targets.add(false);
+                    else targets.add(true);
                 }
                 else if (requirement.getMetric() == AchievementMetric.KILLS) {
-                    if (player.getKills() < requirement.getInteger()) {
-                        if (requirement.isAnd()) {
-                            achieved = false;
-                            break;
-                        }
-                    } else achieved = true;
+                    if (player.getKills() < requirement.getInteger())
+                        targets.add(false);
+                    else targets.add(true);
                 }
                 else if (requirement.getMetric() == AchievementMetric.ACTIVE_PLAYERS) {
-                    if (arena.getActiveCount() < requirement.getInteger()) {
-                        if (requirement.isAnd()) {
-                            achieved = false;
-                            break;
-                        }
-                    } else achieved = true;
+                    if (arena.getActiveCount() < requirement.getInteger())
+                        targets.add(false);
+                    else targets.add(true);
                 }
             } catch (InvalidAchievementReqValException e) {
                 CommunicationManager.debugErrorShouldNotHappen();
             }
         }
 
-        return achieved;
+        if (achievement.isAnd())
+            return !targets.contains(false);
+        else return targets.contains(true);
     }
 
     private static boolean verifyKitAchievement(Achievement achievement, Player player) {
@@ -187,33 +148,29 @@ public class AchievementChecker {
 
         FileConfiguration playerData = Main.plugin.getPlayerData();
         String path = player.getUniqueId() + ".kits.";
-        boolean achieved = false;
+        List<Boolean> targets = new ArrayList<>();
 
         // Verify each requirement
         for (AchievementRequirement requirement : achievement.getRequirements()) {
             try {
                 if (requirement.getInteger() == 1) {
-                    if (!playerData.contains(path + requirement.getString())) {
-                        if (requirement.isAnd()) {
-                            achieved = false;
-                            break;
-                        }
-                    } else achieved = true;
+                    if (!playerData.contains(path + requirement.getString()))
+                        targets.add(false);
+                    else targets.add(true);
                 }
                 else {
-                    if (playerData.getInt(path + requirement.getString()) < requirement.getInteger()) {
-                        if (requirement.isAnd()) {
-                            achieved = false;
-                            break;
-                        }
-                    } else achieved = true;
+                    if (playerData.getInt(path + requirement.getString()) < requirement.getInteger())
+                        targets.add(false);
+                    else targets.add(true);
                 }
             } catch (InvalidAchievementReqValException e) {
                 CommunicationManager.debugErrorShouldNotHappen();
             }
         }
 
-        return achieved;
+        if (achievement.isAnd())
+            return !targets.contains(false);
+        else return targets.contains(true);
     }
 
     private static void notifyAchievement(Achievement achievement, Player player) {

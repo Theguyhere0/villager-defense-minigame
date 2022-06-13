@@ -11,7 +11,6 @@ public class AchievementRequirement {
 
     private int integer;
     private String string;
-    private boolean and = true;
 
     public AchievementRequirement(AchievementMetric metric, int integer) {
         this.metric = metric;
@@ -33,15 +32,6 @@ public class AchievementRequirement {
         this.string = string;
     }
 
-    public AchievementRequirement(AchievementMetric metric, int integer, String string, boolean and) {
-        this.metric = metric;
-        validFields.add("integer");
-        validFields.add("string");
-        this.integer = integer;
-        this.string = string;
-        this.and = and;
-    }
-
     public AchievementMetric getMetric() {
         return metric;
     }
@@ -60,9 +50,5 @@ public class AchievementRequirement {
         if (validFields.contains("string"))
             return string;
         else throw new InvalidAchievementReqValException();
-    }
-
-    public boolean isAnd() {
-        return and;
     }
 }
