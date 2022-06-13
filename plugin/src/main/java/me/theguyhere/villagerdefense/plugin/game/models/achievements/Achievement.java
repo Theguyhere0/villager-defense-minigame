@@ -27,6 +27,26 @@ public class Achievement {
     private final List<AchievementRequirement> requirements = new ArrayList<>();
     /** The reward for getting this achievement.*/
     private final AchievementReward reward;
+    /** Whether the requirements in this achievement have to all be true or only one.*/
+    private final boolean and;
+
+    public Achievement(
+            String name,
+            String description,
+            String ID,
+            Material buttonMaterial,
+            AchievementType type,
+            AchievementReward reward,
+            boolean and
+    ) {
+        this.name = name;
+        this.description = description;
+        this.ID = ID;
+        this.buttonMaterial = buttonMaterial;
+        this.type = type;
+        this.reward = reward;
+        this.and = and;
+    }
 
     public Achievement(
             String name,
@@ -35,13 +55,8 @@ public class Achievement {
             Material buttonMaterial,
             AchievementType type,
             AchievementReward reward
-    ) {
-        this.name = name;
-        this.description = description;
-        this.ID = ID;
-        this.buttonMaterial = buttonMaterial;
-        this.type = type;
-        this.reward = reward;
+            ) {
+        this(name, description, ID, buttonMaterial, type, reward, true);
     }
 
     public String getName() {
@@ -102,19 +117,23 @@ public class Achievement {
         return reward;
     }
 
+    public boolean isAnd() {
+        return and;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Achievement that = (Achievement) o;
-        return Objects.equals(name, that.name) && Objects.equals(description, that.description) &&
-                buttonMaterial == that.buttonMaterial && type == that.type &&
+        return and == that.and && Objects.equals(name, that.name) && Objects.equals(description, that.description) &&
+                Objects.equals(ID, that.ID) && buttonMaterial == that.buttonMaterial && type == that.type &&
                 Objects.equals(requirements, that.requirements) && Objects.equals(reward, that.reward);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, buttonMaterial, type, requirements, reward);
+        return Objects.hash(name, description, ID, buttonMaterial, type, requirements, reward, and);
     }
 
     public static Achievement allAbility() {
@@ -1178,63 +1197,55 @@ public class Achievement {
                 "maxedAbility",
                 Material.POPPED_CHORUS_FRUIT,
                 AchievementType.KIT,
-                new AchievementReward(RewardType.CRYSTAL, 2000)
+                new AchievementReward(RewardType.CRYSTAL, 2000),
+                false
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.mage.name,
-                    false
+                    LanguageManager.kits.mage.name
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.knight.name,
-                    false
+                    LanguageManager.kits.knight.name
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.messenger.name,
-                    false
+                    LanguageManager.kits.messenger.name
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.monk.name,
-                    false
+                    LanguageManager.kits.monk.name
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.ninja.name,
-                    false
+                    LanguageManager.kits.ninja.name
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.priest.name,
-                    false
+                    LanguageManager.kits.priest.name
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.templar.name,
-                    false
+                    LanguageManager.kits.templar.name
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.siren.name,
-                    false
+                    LanguageManager.kits.siren.name
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.warrior.name,
-                    false
+                    LanguageManager.kits.warrior.name
             ));
         } catch (InvalidAchievementReqTypeException e) {
             CommunicationManager.debugErrorShouldNotHappen();
