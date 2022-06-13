@@ -26,6 +26,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -979,10 +980,7 @@ public class AbilityListener implements Listener {
 
     // Ninja nerf
     @EventHandler
-    public void onInvisibleEquip(PlayerStatisticIncrementEvent e) {
-        if (!e.getStatistic().equals(Statistic.TIME_SINCE_REST))
-            return;
-
+    public void onInvisibleEquip(PlayerMoveEvent e) {
         Player player = e.getPlayer();
 
         // Check if player is in a game
