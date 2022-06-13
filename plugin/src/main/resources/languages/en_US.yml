@@ -491,8 +491,8 @@ messages:
   survived another wave!"
   villageCaptainDialogue3: "These weird portals opened up several days ago and monsters have been coming through ever
   since. Your job is to guard us from them while we evacuate."
-  villageCaptainDialogue4: "*whispers* Should you get tired, just let the mage of the capitol know with the spell
-  '/vd leave' and you'll be transported back. We won't blame ya."
+  villageCaptainDialogue4: "*whispers* Should you get tired, just let the mage of the capitol know with the spell %s
+  and you'll be transported back. We won't blame ya, it's vicious out here."
   villageCaptainDialogue5: "Best of luck! May the spirit of %s smile upon you!"
   villagers: "Villagers"
   waiting: "Waiting"
