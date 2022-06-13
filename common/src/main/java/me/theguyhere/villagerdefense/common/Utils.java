@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.common;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 
 public class Utils {
     private static final int SECONDS_TO_TICKS = 20;
@@ -63,7 +64,6 @@ public class Utils {
      * @param newValue New value to write to the field.
      */
     public static void setFieldValue(Object instance, String name, Object newValue) {
-
         try {
             Field field = instance.getClass().getDeclaredField(name);
             field.setAccessible(true);
@@ -74,5 +74,20 @@ public class Utils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Fetches the next smallest whole number based on some existing whole numbers.
+     *
+     * @param existingWholes Existing whole numbers
+     * @return Next smallest unique whole number
+     */
+    public static int nextSmallestUniqueWhole(Collection<Integer> existingWholes) {
+        for (int i = 0; i <= existingWholes.size(); i++) {
+            if (!existingWholes.contains(i))
+                return i;
+        }
+        // Should never reach here
+        return 0;
     }
 }

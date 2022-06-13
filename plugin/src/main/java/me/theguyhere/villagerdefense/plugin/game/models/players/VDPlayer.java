@@ -30,6 +30,8 @@ public class VDPlayer {
     private int infractions;
     /** The {@link Kit} the player will play with.*/
     private Kit kit;
+    /** A possible second {@link Kit} the player can play with.*/
+    private Kit kit2;
     /** The list of {@link Challenge}'s the player will take on.*/
     private List<Challenge> challenge = new ArrayList<>();
     /** The list of UUIDs of those that damaged the player.*/
@@ -42,6 +44,12 @@ public class VDPlayer {
     private ItemStack leggings;
     /** Boots {@link ItemStack} held for ninja ability.*/
     private ItemStack boots;
+    /** Whether permanent boosts are on or not.*/
+    private boolean boost = true;
+    /** Number of gems to be converted from crystals.*/
+    private int gemBoost = 0;
+    /** Whether effect kits are shared or not.*/
+    private boolean share = false;
 
     public VDPlayer(Player player, boolean spectating) {
         this.player = player.getUniqueId();
@@ -101,6 +109,10 @@ public class VDPlayer {
         return kit;
     }
 
+    public Kit getKit2() {
+        return kit2;
+    }
+
     public List<Challenge> getChallenges() {
         return challenge;
     }
@@ -125,6 +137,30 @@ public class VDPlayer {
     public void addEnemy(UUID toBeAdded) {
         if (!enemies.contains(toBeAdded))
             enemies.add(toBeAdded);
+    }
+
+    public boolean isBoosted() {
+        return boost;
+    }
+
+    public void toggleBoost() {
+        boost = !boost;
+    }
+
+    public int getGemBoost() {
+        return gemBoost;
+    }
+
+    public void setGemBoost(int gemBoost) {
+        this.gemBoost = gemBoost;
+    }
+
+    public boolean isSharing() {
+        return share;
+    }
+
+    public void toggleShare() {
+        share = !share;
     }
 
     public int getWolves() {
@@ -157,6 +193,10 @@ public class VDPlayer {
 
     public void setKit(Kit kit) {
         this.kit = kit;
+    }
+
+    public void setKit2(Kit kit2) {
+        this.kit2 = kit2;
     }
 
     /**

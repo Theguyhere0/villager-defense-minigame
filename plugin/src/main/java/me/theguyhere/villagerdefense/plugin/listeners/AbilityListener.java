@@ -6,15 +6,19 @@ import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.EndNinjaNerfEvent;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.tools.WorldManager;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,6 +26,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -30,12 +35,7 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.*;
 
 public class AbilityListener implements Listener {
-    private final Main plugin;
     private final Map<VDPlayer, Long> cooldowns = new HashMap<>();
-
-    public AbilityListener(Main plugin) {
-        this.plugin = plugin;
-    }
 
     // Most ability functionalities
     @EventHandler
@@ -73,27 +73,44 @@ public class AbilityListener implements Listener {
             cooldowns.put(gamer, 0L);
 
         // Get effective player level
-        int level = player.getLevel();
-        if (gamer.getKit().getLevel() == 1 && level > 10)
-            level = 10;
-        if (gamer.getKit().getLevel() == 2 && level > 20)
-            level = 20;
-        if (gamer.getKit().getLevel() == 3 && level > 30)
-            level = 30;
+        int level1 = player.getLevel();
+        if (gamer.getKit().getLevel() == 1 && level1 > 10)
+            level1 = 10;
+        else if (gamer.getKit().getLevel() == 2 && level1 > 20)
+            level1 = 20;
+        else if (gamer.getKit().getLevel() == 3 && level1 > 30)
+            level1 = 30;
+
+        int level2 = player.getLevel();
+        if (gamer.getKit2() != null) {
+            if (gamer.getKit2().getLevel() == 1 && level2 > 10)
+                level2 = 10;
+            else if (gamer.getKit2().getLevel() == 2 && level2 > 20)
+                level2 = 20;
+            else if (gamer.getKit2().getLevel() == 3 && level2 > 30)
+                level2 = 30;
+        }
 
         long dif = cooldowns.get(gamer) - System.currentTimeMillis();
 
         // Mage
-        if (gamer.getKit().getName().equals(Kit.mage().getName()) && GameItems.mage().equals(item)) {
+        if (Kit.mage().getName().equals(gamer.getKit().getName()) && GameItems.mage().equals(item)) {
             // Perform checks
-            if (checkLevel(level, player))
+            if (checkLevel(level1, player))
                 return;
             if (checkCooldown(dif, player))
                 return;
 
             // Calculate stats
-            int coolDown = Utils.secondsToMillis(13 - Math.pow(Math.E, (level - 1) / 12d));
-            float yield = 1 + level * .05f;
+            int coolDown = Utils.secondsToMillis(13 - Math.pow(Math.E, (level1 - 1) / 12d));
+            float yield = 1 + level1 * .05f;
+
+            // Check if player has cooldown decrease achievement and is boosted
+            FileConfiguration playerData = Main.plugin.getPlayerData();
+            String path = player.getUniqueId() + ".achievements";
+            if (playerData.contains(path) && gamer.isBoosted() &&
+                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                coolDown *= .9;
 
             // Activate ability
             Fireball fireball = player.getWorld().spawn(player.getEyeLocation(), Fireball.class);
@@ -103,16 +120,23 @@ public class AbilityListener implements Listener {
         }
 
         // Ninja
-        if (gamer.getKit().getName().equals(Kit.ninja().getName()) && GameItems.ninja().equals(item)) {
+        if (Kit.ninja().getName().equals(gamer.getKit().getName()) && GameItems.ninja().equals(item)) {
             // Perform checks
-            if (checkLevel(level, player))
+            if (checkLevel(level1, player))
                 return;
             if (checkCooldown(dif, player))
                 return;
 
             // Calculate stats
-            int coolDown = normalCooldown(level);
-            int duration = Utils.secondsToTicks(4 + Math.pow(Math.E, (level - 1) / 8.5));
+            int coolDown = normalCooldown(level1);
+            int duration = Utils.secondsToTicks(4 + Math.pow(Math.E, (level1 - 1) / 8.5));
+
+            // Check if player has cooldown decrease achievement and is boosted
+            FileConfiguration playerData = Main.plugin.getPlayerData();
+            String path = player.getUniqueId() + ".achievements";
+            if (playerData.contains(path) && gamer.isBoosted() &&
+                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                coolDown *= .9;
 
             // Activate ability
             player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, duration, 0));
@@ -122,7 +146,7 @@ public class AbilityListener implements Listener {
             gamer.hideArmor();
 
             // Schedule un-nerf
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
                     Bukkit.getPluginManager().callEvent(new EndNinjaNerfEvent(gamer)), duration);
 
             // Fire ability sound if turned on
@@ -131,30 +155,37 @@ public class AbilityListener implements Listener {
         }
 
         // Templar
-        if (gamer.getKit().getName().equals(Kit.templar().getName()) && GameItems.templar().equals(item)) {
+        if (Kit.templar().getName().equals(gamer.getKit().getName()) && GameItems.templar().equals(item)) {
             // Perform checks
-            if (checkLevel(level, player))
+            if (checkLevel(level1, player))
                 return;
             if (checkCooldown(dif, player))
                 return;
 
             // Calculate stats
             int duration, amplifier;
-            int coolDown = normalCooldown(level);
-            double range = 2 + level * .1d;
-            if (level > 20) {
-                duration = normalDuration20Plus(level);
+            int coolDown = normalCooldown(level1);
+            double range = 2 + level1 * .1d;
+            if (level1 > 20) {
+                duration = normalDuration20Plus(level1);
                 amplifier = 2;
             }
-            else if (level > 10) {
-                duration = normalDuration10Plus(level);
+            else if (level1 > 10) {
+                duration = normalDuration10Plus(level1);
                 amplifier = 1;
             }
             else {
-                duration = normalDuration(level);
+                duration = normalDuration(level1);
                 amplifier = 0;
             }
             int altDuration = (int) (.6 * duration);
+
+            // Check if player has cooldown decrease achievement and is boosted
+            FileConfiguration playerData = Main.plugin.getPlayerData();
+            String path = player.getUniqueId() + ".achievements";
+            if (playerData.contains(path) && gamer.isBoosted() &&
+                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                coolDown *= .9;
 
             // Activate ability
             WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
@@ -171,30 +202,37 @@ public class AbilityListener implements Listener {
         }
 
         // Warrior
-        if (gamer.getKit().getName().equals(Kit.warrior().getName()) && GameItems.warrior().equals(item)) {
+        if (Kit.warrior().getName().equals(gamer.getKit().getName()) && GameItems.warrior().equals(item)) {
             // Perform checks
-            if (checkLevel(level, player))
+            if (checkLevel(level1, player))
                 return;
             if (checkCooldown(dif, player))
                 return;
 
             // Calculate stats
             int duration, amplifier;
-            int coolDown = normalCooldown(level);
-            double range = 2 + level * .1d;
-            if (level > 20) {
-                duration = normalDuration20Plus(level);
+            int coolDown = normalCooldown(level1);
+            double range = 2 + level1 * .1d;
+            if (level1 > 20) {
+                duration = normalDuration20Plus(level1);
                 amplifier = 2;
             }
-            else if (level > 10) {
-                duration = normalDuration10Plus(level);
+            else if (level1 > 10) {
+                duration = normalDuration10Plus(level1);
                 amplifier = 1;
             }
             else {
-                duration = normalDuration(level);
+                duration = normalDuration(level1);
                 amplifier = 0;
             }
             int altDuration = (int) (.6 * duration);
+
+            // Check if player has cooldown decrease achievement and is boosted
+            FileConfiguration playerData = Main.plugin.getPlayerData();
+            String path = player.getUniqueId() + ".achievements";
+            if (playerData.contains(path) && gamer.isBoosted() &&
+                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                coolDown *= .9;
 
             // Activate ability
             WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
@@ -211,30 +249,37 @@ public class AbilityListener implements Listener {
         }
 
         // Knight
-        if (gamer.getKit().getName().equals(Kit.knight().getName()) && GameItems.knight().equals(item)) {
+        if (Kit.knight().getName().equals(gamer.getKit().getName()) && GameItems.knight().equals(item)) {
             // Perform checks
-            if (checkLevel(level, player))
+            if (checkLevel(level1, player))
                 return;
             if (checkCooldown(dif, player))
                 return;
 
             // Calculate stats
             int duration, amplifier;
-            int coolDown = normalCooldown(level);
-            double range = 2 + level * .1d;
-            if (level > 20) {
-                duration = normalDuration20Plus(level);
+            int coolDown = normalCooldown(level1);
+            double range = 2 + level1 * .1d;
+            if (level1 > 20) {
+                duration = normalDuration20Plus(level1);
                 amplifier = 2;
             }
-            else if (level > 10) {
-                duration = normalDuration10Plus(level);
+            else if (level1 > 10) {
+                duration = normalDuration10Plus(level1);
                 amplifier = 1;
             }
             else {
-                duration = normalDuration(level);
+                duration = normalDuration(level1);
                 amplifier = 0;
             }
             int altDuration = (int) (.6 * duration);
+
+            // Check if player has cooldown decrease achievement and is boosted
+            FileConfiguration playerData = Main.plugin.getPlayerData();
+            String path = player.getUniqueId() + ".achievements";
+            if (playerData.contains(path) && gamer.isBoosted() &&
+                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                coolDown *= .9;
 
             // Activate ability
             WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
@@ -251,30 +296,37 @@ public class AbilityListener implements Listener {
         }
 
         // Priest
-        if (gamer.getKit().getName().equals(Kit.priest().getName()) && GameItems.priest().equals(item)) {
+        if (Kit.priest().getName().equals(gamer.getKit().getName()) && GameItems.priest().equals(item)) {
             // Perform checks
-            if (checkLevel(level, player))
+            if (checkLevel(level1, player))
                 return;
             if (checkCooldown(dif, player))
                 return;
 
             // Calculate stats
             int duration, amplifier;
-            int coolDown = normalCooldown(level);
-            double range = 2 + level * .1d;
-            if (level > 20) {
-                duration = normalDuration20Plus(level);
+            int coolDown = normalCooldown(level1);
+            double range = 2 + level1 * .1d;
+            if (level1 > 20) {
+                duration = normalDuration20Plus(level1);
                 amplifier = 2;
             }
-            else if (level > 10) {
-                duration = normalDuration10Plus(level);
+            else if (level1 > 10) {
+                duration = normalDuration10Plus(level1);
                 amplifier = 1;
             }
             else {
-                duration = normalDuration(level);
+                duration = normalDuration(level1);
                 amplifier = 0;
             }
             int altDuration = (int) (.6 * duration);
+
+            // Check if player has cooldown decrease achievement and is boosted
+            FileConfiguration playerData = Main.plugin.getPlayerData();
+            String path = player.getUniqueId() + ".achievements";
+            if (playerData.contains(path) && gamer.isBoosted() &&
+                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                coolDown *= .9;
 
             // Activate ability
             WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
@@ -291,33 +343,40 @@ public class AbilityListener implements Listener {
         }
 
         // Siren
-        if (gamer.getKit().getName().equals(Kit.siren().getName()) && GameItems.siren().equals(item)) {
+        if (Kit.siren().getName().equals(gamer.getKit().getName()) && GameItems.siren().equals(item)) {
             // Perform checks
-            if (checkLevel(level, player))
+            if (checkLevel(level1, player))
                 return;
             if (checkCooldown(dif, player))
                 return;
 
             // Calculate stats
             int duration, amp1, amp2;
-            int coolDown = Utils.secondsToMillis(26 - Math.pow(Math.E, (level - 1) / 12d));
-            double range = 3 + level * .1d;
-            if (level > 20) {
-                duration = normalDuration20Plus(level);
+            int coolDown = Utils.secondsToMillis(26 - Math.pow(Math.E, (level1 - 1) / 12d));
+            double range = 3 + level1 * .1d;
+            if (level1 > 20) {
+                duration = normalDuration20Plus(level1);
                 amp1 = 1;
                 amp2 = 0;
             }
-            else if (level > 10) {
-                duration = normalDuration10Plus(level);
+            else if (level1 > 10) {
+                duration = normalDuration10Plus(level1);
                 amp1 = 1;
                 amp2 = -1;
             }
             else {
-                duration = normalDuration(level);
+                duration = normalDuration(level1);
                 amp1 = 0;
                 amp2 = -1;
             }
             int altDuration = (int) (.4 * duration);
+
+            // Check if player has cooldown decrease achievement and is boosted
+            FileConfiguration playerData = Main.plugin.getPlayerData();
+            String path = player.getUniqueId() + ".achievements";
+            if (playerData.contains(path) && gamer.isBoosted() &&
+                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                coolDown *= .9;
 
             // Activate ability
             WorldManager.getNearbyMonsters(player, range).forEach(ent -> ent.addPotionEffect(
@@ -334,30 +393,37 @@ public class AbilityListener implements Listener {
         }
 
         // Monk
-        if (gamer.getKit().getName().equals(Kit.monk().getName()) && GameItems.monk().equals(item)) {
+        if (Kit.monk().getName().equals(gamer.getKit().getName()) && GameItems.monk().equals(item)) {
             // Perform checks
-            if (checkLevel(level, player))
+            if (checkLevel(level1, player))
                 return;
             if (checkCooldown(dif, player))
                 return;
 
             // Calculate stats
             int duration, amplifier;
-            int coolDown = normalCooldown(level);
-            double range = 2 + level * .1d;
-            if (level > 20) {
-                duration = normalDuration20Plus(level);
+            int coolDown = normalCooldown(level1);
+            double range = 2 + level1 * .1d;
+            if (level1 > 20) {
+                duration = normalDuration20Plus(level1);
                 amplifier = 2;
             }
-            else if (level > 10) {
-                duration = normalDuration10Plus(level);
+            else if (level1 > 10) {
+                duration = normalDuration10Plus(level1);
                 amplifier = 1;
             }
             else {
-                duration = normalDuration(level);
+                duration = normalDuration(level1);
                 amplifier = 0;
             }
             int altDuration = (int) (.6 * duration);
+
+            // Check if player has cooldown decrease achievement and is boosted
+            FileConfiguration playerData = Main.plugin.getPlayerData();
+            String path = player.getUniqueId() + ".achievements";
+            if (playerData.contains(path) && gamer.isBoosted() &&
+                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                coolDown *= .9;
 
             // Activate ability
             WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
@@ -374,30 +440,37 @@ public class AbilityListener implements Listener {
         }
 
         // Messenger
-        if (gamer.getKit().getName().equals(Kit.messenger().getName()) && GameItems.messenger().equals(item)) {
+        if (Kit.messenger().getName().equals(gamer.getKit().getName()) && GameItems.messenger().equals(item)) {
             // Perform checks
-            if (checkLevel(level, player))
+            if (checkLevel(level1, player))
                 return;
             if (checkCooldown(dif, player))
                 return;
 
             // Calculate stats
             int duration, amplifier;
-            int coolDown = normalCooldown(level);
-            double range = 2 + level * .1d;
-            if (level > 20) {
-                duration = normalDuration20Plus(level);
+            int coolDown = normalCooldown(level1);
+            double range = 2 + level1 * .1d;
+            if (level1 > 20) {
+                duration = normalDuration20Plus(level1);
                 amplifier = 2;
             }
-            else if (level > 10) {
-                duration = normalDuration10Plus(level);
+            else if (level1 > 10) {
+                duration = normalDuration10Plus(level1);
                 amplifier = 1;
             }
             else {
-                duration = normalDuration(level);
+                duration = normalDuration(level1);
                 amplifier = 0;
             }
             int altDuration = (int) (.6 * duration);
+
+            // Check if player has cooldown decrease achievement and is boosted
+            FileConfiguration playerData = Main.plugin.getPlayerData();
+            String path = player.getUniqueId() + ".achievements";
+            if (playerData.contains(path) && gamer.isBoosted() &&
+                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                coolDown *= .9;
 
             // Activate ability
             WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
@@ -411,6 +484,387 @@ public class AbilityListener implements Listener {
             if (arena.hasAbilitySound())
                 arena.getActives().forEach(vdPlayer -> vdPlayer.getPlayer()
                         .playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
+        }
+
+        if (gamer.getKit2() != null) {
+            // Mage
+            if (Kit.mage().nameCompare(gamer.getKit2()) && GameItems.mage().equals(item)) {
+                // Perform checks
+                if (checkLevel(level2, player))
+                    return;
+                if (checkCooldown(dif, player))
+                    return;
+
+                // Calculate stats
+                int coolDown = Utils.secondsToMillis(13 - Math.pow(Math.E, (level2 - 1) / 12d));
+                float yield = 1 + level2 * .05f;
+
+                // Check if player has cooldown decrease achievement and is boosted
+                FileConfiguration playerData = Main.plugin.getPlayerData();
+                String path = player.getUniqueId() + ".achievements";
+                if (playerData.contains(path) && gamer.isBoosted() &&
+                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                    coolDown *= .9;
+
+                // Activate ability
+                Fireball fireball = player.getWorld().spawn(player.getEyeLocation(), Fireball.class);
+                fireball.setYield(yield);
+                fireball.setShooter(player);
+                cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
+            }
+
+            // Ninja
+            if (Kit.ninja().nameCompare(gamer.getKit2()) && GameItems.ninja().equals(item)) {
+                // Perform checks
+                if (checkLevel(level2, player))
+                    return;
+                if (checkCooldown(dif, player))
+                    return;
+
+                // Calculate stats
+                int coolDown = normalCooldown(level2);
+                int duration = Utils.secondsToTicks(4 + Math.pow(Math.E, (level2 - 1) / 8.5));
+
+                // Check if player has cooldown decrease achievement and is boosted
+                FileConfiguration playerData = Main.plugin.getPlayerData();
+                String path = player.getUniqueId() + ".achievements";
+                if (playerData.contains(path) && gamer.isBoosted() &&
+                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                    coolDown *= .9;
+
+                // Activate ability
+                player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, duration, 0));
+                WorldManager.getPets(player).forEach(wolf ->
+                        wolf.addPotionEffect((new PotionEffect(PotionEffectType.INVISIBILITY, duration, 0))));
+                cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
+                gamer.hideArmor();
+
+                // Schedule un-nerf
+                Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
+                        Bukkit.getPluginManager().callEvent(new EndNinjaNerfEvent(gamer)), duration);
+
+                // Fire ability sound if turned on
+                if (arena.hasAbilitySound())
+                    player.playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1);
+            }
+
+            // Templar
+            if (Kit.templar().nameCompare(gamer.getKit2()) && GameItems.templar().equals(item)) {
+                // Perform checks
+                if (checkLevel(level2, player))
+                    return;
+                if (checkCooldown(dif, player))
+                    return;
+
+                // Calculate stats
+                int duration, amplifier;
+                int coolDown = normalCooldown(level2);
+                double range = 2 + level2 * .1d;
+                if (level2 > 20) {
+                    duration = normalDuration20Plus(level2);
+                    amplifier = 2;
+                } else if (level2 > 10) {
+                    duration = normalDuration10Plus(level2);
+                    amplifier = 1;
+                } else {
+                    duration = normalDuration(level2);
+                    amplifier = 0;
+                }
+                int altDuration = (int) (.6 * duration);
+
+                // Check if player has cooldown decrease achievement and is boosted
+                FileConfiguration playerData = Main.plugin.getPlayerData();
+                String path = player.getUniqueId() + ".achievements";
+                if (playerData.contains(path) && gamer.isBoosted() &&
+                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                    coolDown *= .9;
+
+                // Activate ability
+                WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
+                        new PotionEffect(PotionEffectType.ABSORPTION, altDuration, amplifier)));
+                WorldManager.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+                        new PotionEffect(PotionEffectType.ABSORPTION, altDuration, amplifier)));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, duration, amplifier));
+                cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
+
+                // Fire ability sound if turned on
+                if (arena.hasAbilitySound())
+                    arena.getActives().forEach(vdPlayer -> vdPlayer.getPlayer()
+                            .playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
+            }
+
+            // Warrior
+            if (Kit.warrior().nameCompare(gamer.getKit2()) && GameItems.warrior().equals(item)) {
+                // Perform checks
+                if (checkLevel(level2, player))
+                    return;
+                if (checkCooldown(dif, player))
+                    return;
+
+                // Calculate stats
+                int duration, amplifier;
+                int coolDown = normalCooldown(level2);
+                double range = 2 + level2 * .1d;
+                if (level2 > 20) {
+                    duration = normalDuration20Plus(level2);
+                    amplifier = 2;
+                } else if (level2 > 10) {
+                    duration = normalDuration10Plus(level2);
+                    amplifier = 1;
+                } else {
+                    duration = normalDuration(level2);
+                    amplifier = 0;
+                }
+                int altDuration = (int) (.6 * duration);
+
+                // Check if player has cooldown decrease achievement and is boosted
+                FileConfiguration playerData = Main.plugin.getPlayerData();
+                String path = player.getUniqueId() + ".achievements";
+                if (playerData.contains(path) && gamer.isBoosted() &&
+                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                    coolDown *= .9;
+
+                // Activate ability
+                WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
+                        new PotionEffect(PotionEffectType.INCREASE_DAMAGE, altDuration, amplifier)));
+                WorldManager.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+                        new PotionEffect(PotionEffectType.INCREASE_DAMAGE, altDuration, amplifier)));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, duration, amplifier));
+                cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
+
+                // Fire ability sound if turned on
+                if (arena.hasAbilitySound())
+                    arena.getActives().forEach(vdPlayer -> vdPlayer.getPlayer()
+                            .playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
+            }
+
+            // Knight
+            if (Kit.knight().nameCompare(gamer.getKit2()) && GameItems.knight().equals(item)) {
+                // Perform checks
+                if (checkLevel(level2, player))
+                    return;
+                if (checkCooldown(dif, player))
+                    return;
+
+                // Calculate stats
+                int duration, amplifier;
+                int coolDown = normalCooldown(level2);
+                double range = 2 + level2 * .1d;
+                if (level2 > 20) {
+                    duration = normalDuration20Plus(level2);
+                    amplifier = 2;
+                } else if (level2 > 10) {
+                    duration = normalDuration10Plus(level2);
+                    amplifier = 1;
+                } else {
+                    duration = normalDuration(level2);
+                    amplifier = 0;
+                }
+                int altDuration = (int) (.6 * duration);
+
+                // Check if player has cooldown decrease achievement and is boosted
+                FileConfiguration playerData = Main.plugin.getPlayerData();
+                String path = player.getUniqueId() + ".achievements";
+                if (playerData.contains(path) && gamer.isBoosted() &&
+                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                    coolDown *= .9;
+
+                // Activate ability
+                WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
+                        new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, altDuration, amplifier)));
+                WorldManager.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+                        new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, altDuration, amplifier)));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, duration, amplifier));
+                cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
+
+                // Fire ability sound if turned on
+                if (arena.hasAbilitySound())
+                    arena.getActives().forEach(vdPlayer -> vdPlayer.getPlayer()
+                            .playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
+            }
+
+            // Priest
+            if (Kit.priest().nameCompare(gamer.getKit2()) && GameItems.priest().equals(item)) {
+                // Perform checks
+                if (checkLevel(level2, player))
+                    return;
+                if (checkCooldown(dif, player))
+                    return;
+
+                // Calculate stats
+                int duration, amplifier;
+                int coolDown = normalCooldown(level2);
+                double range = 2 + level2 * .1d;
+                if (level2 > 20) {
+                    duration = normalDuration20Plus(level2);
+                    amplifier = 2;
+                } else if (level2 > 10) {
+                    duration = normalDuration10Plus(level2);
+                    amplifier = 1;
+                } else {
+                    duration = normalDuration(level2);
+                    amplifier = 0;
+                }
+                int altDuration = (int) (.6 * duration);
+
+                // Check if player has cooldown decrease achievement and is boosted
+                FileConfiguration playerData = Main.plugin.getPlayerData();
+                String path = player.getUniqueId() + ".achievements";
+                if (playerData.contains(path) && gamer.isBoosted() &&
+                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                    coolDown *= .9;
+
+                // Activate ability
+                WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
+                        new PotionEffect(PotionEffectType.REGENERATION, altDuration, amplifier)));
+                WorldManager.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+                        new PotionEffect(PotionEffectType.REGENERATION, altDuration, amplifier)));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, duration, amplifier));
+                cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
+
+                // Fire ability sound if turned on
+                if (arena.hasAbilitySound())
+                    arena.getActives().forEach(vdPlayer -> vdPlayer.getPlayer()
+                            .playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
+            }
+
+            // Siren
+            if (Kit.siren().nameCompare(gamer.getKit2()) && GameItems.siren().equals(item)) {
+                // Perform checks
+                if (checkLevel(level2, player))
+                    return;
+                if (checkCooldown(dif, player))
+                    return;
+
+                // Calculate stats
+                int duration, amp1, amp2;
+                int coolDown = Utils.secondsToMillis(26 - Math.pow(Math.E, (level2 - 1) / 12d));
+                double range = 3 + level2 * .1d;
+                if (level2 > 20) {
+                    duration = normalDuration20Plus(level2);
+                    amp1 = 1;
+                    amp2 = 0;
+                } else if (level2 > 10) {
+                    duration = normalDuration10Plus(level2);
+                    amp1 = 1;
+                    amp2 = -1;
+                } else {
+                    duration = normalDuration(level2);
+                    amp1 = 0;
+                    amp2 = -1;
+                }
+                int altDuration = (int) (.4 * duration);
+
+                // Check if player has cooldown decrease achievement and is boosted
+                FileConfiguration playerData = Main.plugin.getPlayerData();
+                String path = player.getUniqueId() + ".achievements";
+                if (playerData.contains(path) && gamer.isBoosted() &&
+                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                    coolDown *= .9;
+
+                // Activate ability
+                WorldManager.getNearbyMonsters(player, range).forEach(ent -> ent.addPotionEffect(
+                        new PotionEffect(PotionEffectType.SLOW, duration, amp1)));
+                if (amp2 != -1)
+                    WorldManager.getNearbyMonsters(player, range).forEach(ent -> ent.addPotionEffect(
+                            new PotionEffect(PotionEffectType.WEAKNESS, altDuration, amp2)));
+                cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
+
+                // Fire ability sound if turned on
+                if (arena.hasAbilitySound())
+                    arena.getActives().forEach(vdPlayer -> vdPlayer.getPlayer()
+                            .playSound(player.getLocation(), Sound.AMBIENT_CAVE, 1, 1.25f));
+            }
+
+            // Monk
+            if (Kit.monk().nameCompare(gamer.getKit2()) && GameItems.monk().equals(item)) {
+                // Perform checks
+                if (checkLevel(level2, player))
+                    return;
+                if (checkCooldown(dif, player))
+                    return;
+
+                // Calculate stats
+                int duration, amplifier;
+                int coolDown = normalCooldown(level2);
+                double range = 2 + level2 * .1d;
+                if (level2 > 20) {
+                    duration = normalDuration20Plus(level2);
+                    amplifier = 2;
+                } else if (level2 > 10) {
+                    duration = normalDuration10Plus(level1);
+                    amplifier = 1;
+                } else {
+                    duration = normalDuration(level2);
+                    amplifier = 0;
+                }
+                int altDuration = (int) (.6 * duration);
+
+                // Check if player has cooldown decrease achievement and is boosted
+                FileConfiguration playerData = Main.plugin.getPlayerData();
+                String path = player.getUniqueId() + ".achievements";
+                if (playerData.contains(path) && gamer.isBoosted() &&
+                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                    coolDown *= .9;
+
+                // Activate ability
+                WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
+                        new PotionEffect(PotionEffectType.FAST_DIGGING, altDuration, amplifier)));
+                WorldManager.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+                        new PotionEffect(PotionEffectType.FAST_DIGGING, altDuration, amplifier)));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, duration, amplifier));
+                cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
+
+                // Fire ability sound if turned on
+                if (arena.hasAbilitySound())
+                    arena.getActives().forEach(vdPlayer -> vdPlayer.getPlayer()
+                            .playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
+            }
+
+            // Messenger
+            if (Kit.messenger().nameCompare(gamer.getKit2()) && GameItems.messenger().equals(item)) {
+                // Perform checks
+                if (checkLevel(level2, player))
+                    return;
+                if (checkCooldown(dif, player))
+                    return;
+
+                // Calculate stats
+                int duration, amplifier;
+                int coolDown = normalCooldown(level2);
+                double range = 2 + level2 * .1d;
+                if (level2 > 20) {
+                    duration = normalDuration20Plus(level2);
+                    amplifier = 2;
+                } else if (level2 > 10) {
+                    duration = normalDuration10Plus(level2);
+                    amplifier = 1;
+                } else {
+                    duration = normalDuration(level2);
+                    amplifier = 0;
+                }
+                int altDuration = (int) (.6 * duration);
+
+                // Check if player has cooldown decrease achievement and is boosted
+                FileConfiguration playerData = Main.plugin.getPlayerData();
+                String path = player.getUniqueId() + ".achievements";
+                if (playerData.contains(path) && gamer.isBoosted() &&
+                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                    coolDown *= .9;
+
+                // Activate ability
+                WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
+                        new PotionEffect(PotionEffectType.SPEED, altDuration, amplifier)));
+                WorldManager.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
+                        new PotionEffect(PotionEffectType.SPEED, altDuration, amplifier)));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, duration, amplifier));
+                cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
+
+                // Fire ability sound if turned on
+                if (arena.hasAbilitySound())
+                    arena.getActives().forEach(vdPlayer -> vdPlayer.getPlayer()
+                            .playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
+            }
         }
     }
 
@@ -441,17 +895,27 @@ public class AbilityListener implements Listener {
             return;
         }
 
-        // Check for vampire kit
-        if (!gamer.getKit().getName().equals(Kit.vampire().getName()))
-            return;
-
         Random r = new Random();
         double damage = e.getFinalDamage();
 
-        // Heal if probability is right
-        if (r.nextInt(100) < damage)
-            player.setHealth(Math.min(player.getHealth() + 1,
-                    Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue()));
+        // Check for vampire kit
+        if ((Kit.vampire().getName().equals(gamer.getKit().getName()) ||
+                Kit.vampire().nameCompare(gamer.getKit2())) && !gamer.isSharing()) {
+            // Heal if probability is right
+            if (r.nextInt(50) < damage)
+                player.setHealth(Math.min(player.getHealth() + 1,
+                        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue()));
+        }
+
+        // Check for shared vampire effect
+        else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.VAMPIRE))) {
+            // Heal if probability is right
+            if (r.nextInt(50) < damage) {
+                player.setHealth(Math.min(player.getHealth() + 1,
+                        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue()));
+                PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+            }
+        }
     }
 
     // Ninja stealth
@@ -516,10 +980,7 @@ public class AbilityListener implements Listener {
 
     // Ninja nerf
     @EventHandler
-    public void onInvisibleEquip(PlayerStatisticIncrementEvent e) {
-        if (!e.getStatistic().equals(Statistic.TIME_SINCE_REST))
-            return;
-
+    public void onInvisibleEquip(PlayerMoveEvent e) {
         Player player = e.getPlayer();
 
         // Check if player is in a game
@@ -543,31 +1004,31 @@ public class AbilityListener implements Listener {
 
         // Unequip armor
         if (!(helmet == null || helmet.getType() == Material.AIR)) {
-            PlayerManager.giveItem(player, helmet, plugin.getLanguageString("errors.inventoryFull"));
+            PlayerManager.giveItem(player, helmet, LanguageManager.errors.inventoryFull);
             player.getInventory().setHelmet(null);
-            PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.ninja"));
+            PlayerManager.notifyFailure(player, LanguageManager.errors.ninja);
         }
         if (!(chestplate == null || chestplate.getType() == Material.AIR)) {
-            PlayerManager.giveItem(player, chestplate, plugin.getLanguageString("errors.inventoryFull"));
+            PlayerManager.giveItem(player, chestplate, LanguageManager.errors.inventoryFull);
             player.getInventory().setChestplate(null);
-            PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.ninja"));
+            PlayerManager.notifyFailure(player, LanguageManager.errors.ninja);
         }
         if (!(leggings == null || leggings.getType() == Material.AIR)) {
-            PlayerManager.giveItem(player, leggings, plugin.getLanguageString("errors.inventoryFull"));
+            PlayerManager.giveItem(player, leggings, LanguageManager.errors.inventoryFull);
             player.getInventory().setLeggings(null);
-            PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.ninja"));
+            PlayerManager.notifyFailure(player, LanguageManager.errors.ninja);
         }
         if (!(boots == null || boots.getType() == Material.AIR)) {
-            PlayerManager.giveItem(player, boots, plugin.getLanguageString("errors.inventoryFull"));
+            PlayerManager.giveItem(player, boots, LanguageManager.errors.inventoryFull);
             player.getInventory().setBoots(null);
-            PlayerManager.notifyFailure(player, plugin.getLanguageString("errors.ninja"));
+            PlayerManager.notifyFailure(player, LanguageManager.errors.ninja);
         }
     }
 
     private boolean checkLevel(int level, Player player) {
         if (level == 0) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-                    CommunicationManager.format("&c" + plugin.getLanguageString("errors.level"))));
+                    CommunicationManager.format("&c" + LanguageManager.errors.level)));
             return true;
         }
         return false;
@@ -576,8 +1037,8 @@ public class AbilityListener implements Listener {
     private boolean checkCooldown(long dif, Player player) {
         if (dif > 0) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-                    CommunicationManager.format("&c" + plugin.getLanguageStringFormatted("errors.cooldown",
-                            "&b" + (Math.round(Utils.millisToSeconds(dif) * 10) / 10d) + "&c"))));
+                    CommunicationManager.format(ChatColor.RED, LanguageManager.errors.cooldown, ChatColor.AQUA,
+                            String.valueOf(Math.round(Utils.millisToSeconds(dif) * 10) / 10d))));
             return true;
         }
         return false;

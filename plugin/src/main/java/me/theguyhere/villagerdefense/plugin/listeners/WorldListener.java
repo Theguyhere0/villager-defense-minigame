@@ -9,23 +9,17 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 
 public class WorldListener implements Listener {
-    private final Main plugin;
-
-    public WorldListener(Main plugin) {
-        this.plugin = plugin;
-    }
-
     @EventHandler
     public void onWorldLoadEvent(WorldLoadEvent e) {
         CommunicationManager.debugInfo("Loading world: " + e.getWorld(), 2);
         String worldName = e.getWorld().getName();
 
         // Handle world loading after initialization
-        if (plugin.getUnloadedWorlds().contains(worldName)) {
-            plugin.loadWorld(worldName);
-            plugin.resetGameManager();
-            plugin.getGameManager().reloadLobby();
-            plugin.getGameManager().refreshAll();
+        if (Main.plugin.getUnloadedWorlds().contains(worldName)) {
+            Main.plugin.loadWorld(worldName);
+            Main.plugin.resetGameManager();
+            GameManager.reloadLobby();
+            GameManager.refreshAll();
         }
     }
 

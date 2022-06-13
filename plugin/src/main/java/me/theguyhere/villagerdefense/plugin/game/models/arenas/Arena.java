@@ -1,8 +1,13 @@
 package me.theguyhere.villagerdefense.plugin.game.models.arenas;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.plugin.GUI.InventoryItems;
-import me.theguyhere.villagerdefense.plugin.GUI.InventoryMeta;
+import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
+import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
+import me.theguyhere.villagerdefense.plugin.inventories.InventoryID;
+import me.theguyhere.villagerdefense.plugin.inventories.InventoryType;
+import me.theguyhere.villagerdefense.plugin.inventories.Buttons;
+import me.theguyhere.villagerdefense.plugin.inventories.InventoryMeta;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
@@ -13,16 +18,13 @@ import me.theguyhere.villagerdefense.plugin.exceptions.InvalidNameException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
+import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.Tasks;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.tools.DataManager;
-import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
-import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
-import me.theguyhere.villagerdefense.plugin.tools.WorldManager;
+import me.theguyhere.villagerdefense.plugin.tools.*;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.*;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -43,10 +45,8 @@ import java.util.stream.Stream;
  * A class managing data about a Villager Defense arena.
  */
 public class Arena {
-    /** Instance of the plugin.*/
-    private final Main plugin;
-    /** Arena number.*/
-    private final int arena;
+    /** Arena id.*/
+    private final int id;
     /** A variable to more quickly access the file configuration of the arena file.*/
     private final FileConfiguration config;
     /** Common string for all data paths in the arena file.*/
@@ -100,12 +100,11 @@ public class Arena {
     /** Arena scoreboard object for the arena.*/
     private ArenaBoard arenaBoard;
 
-    public Arena(Main plugin, int arena, Tasks task) {
-        this.plugin = plugin;
-        config = plugin.getArenaData();
-        this.arena = arena;
-        path = "a" + arena;
-        this.task = task;
+    public Arena(int arenaID) {
+        config = Main.plugin.getArenaData();
+        id = arenaID;
+        path = "arena." + arenaID;
+        task = new Tasks(this);
         currentWave = 0;
         villagers = 0;
         enemies = 0;
@@ -119,8 +118,16 @@ public class Arena {
         checkClose();
     }
 
-    public int getArena() {
-        return arena;
+    public int getId() {
+        return id;
+    }
+
+    /**
+     * Retrieves the path of the arena from the arena file.
+     * @return Arena path prefix.
+     */
+    public String getPath() {
+        return path;
     }
 
     /**
@@ -137,10 +144,18 @@ public class Arena {
      */
     public void setName(String name) throws InvalidNameException {
         // Check if name is not empty
-        if (name == null || name.length() == 0) throw new InvalidNameException();
+        if (name == null || name.length() == 0) throw new InvalidNameException("Empty");
+
+        // Check if name is the same as current
+        else if (name.equals(getName())) throw new InvalidNameException("Same");
+
+        // Check for duplicate name
+        else if (GameManager.getArena(name) != null) throw new InvalidNameException("Duplicate");
+
+        // Save name
         else {
             config.set(path + ".name", name);
-            plugin.saveArenaData();
+            Main.plugin.saveArenaData();
         }
 
         // Set default max players to 12 if it doesn't exist
@@ -184,7 +199,7 @@ public class Arena {
             setGemSound(true);
             setPlayerDeathSound(true);
             setAbilitySound(true);
-            setWaitingSound(14);
+            setWaitingSound("none");
         }
 
         // Set default shop toggle
@@ -236,7 +251,7 @@ public class Arena {
      */
     public void setDifficultyLabel(String label) {
         config.set(path + ".difficultyLabel", label);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
         refreshPortal();
     }
 
@@ -254,7 +269,7 @@ public class Arena {
      */
     public void setMaxPlayers(int maxPlayers) {
         config.set(path + ".max", maxPlayers);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     /**
@@ -271,7 +286,7 @@ public class Arena {
      */
     public void setMinPlayers(int minPlayers) {
         config.set(path + ".min", minPlayers);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     /**
@@ -288,7 +303,7 @@ public class Arena {
      */
     public void setWolfCap(int wolfCap) {
         config.set(path + ".wolf", wolfCap);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     /**
@@ -305,7 +320,7 @@ public class Arena {
      */
     public void setgolemCap(int golemCap) {
         config.set(path + ".golem", golemCap);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     /**
@@ -322,7 +337,7 @@ public class Arena {
      */
     public void setMaxWaves(int maxWaves) {
         config.set(path + ".maxWaves", maxWaves);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     /**
@@ -339,7 +354,7 @@ public class Arena {
      */
     public void setWaveTimeLimit(int timeLimit) {
         config.set(path + ".waveTimeLimit", timeLimit);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     /**
@@ -356,7 +371,7 @@ public class Arena {
      */
     public void setDifficultyMultiplier(int multiplier) {
         config.set(path + ".difficulty", multiplier);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     /**
@@ -364,18 +379,22 @@ public class Arena {
      * @return Waiting {@link Sound}.
      */
     public Sound getWaitingSound() {
-        switch (config.getInt(path + ".sounds.waiting")) {
-            case 0: return Sound.MUSIC_DISC_CAT;
-            case 1: return Sound.MUSIC_DISC_BLOCKS;
-            case 2: return Sound.MUSIC_DISC_FAR;
-            case 3: return Sound.MUSIC_DISC_STRAD;
-            case 4: return Sound.MUSIC_DISC_MELLOHI;
-            case 5: return Sound.MUSIC_DISC_WARD;
-            case 9: return Sound.MUSIC_DISC_CHIRP;
-            case 10: return Sound.MUSIC_DISC_STAL;
-            case 11: return Sound.MUSIC_DISC_MALL;
-            case 12: return Sound.MUSIC_DISC_WAIT;
-            case 13: return Sound.MUSIC_DISC_PIGSTEP;
+        switch (Objects.requireNonNull(config.getString(path + ".sounds.waiting"))) {
+            case "blocks": return Sound.MUSIC_DISC_BLOCKS;
+            case "cat": return Sound.MUSIC_DISC_CAT;
+            case "chirp": return Sound.MUSIC_DISC_CHIRP;
+            case "far": return Sound.MUSIC_DISC_FAR;
+            case "mall": return Sound.MUSIC_DISC_MALL;
+            case "mellohi": return Sound.MUSIC_DISC_MELLOHI;
+            case "otherside":
+                if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1))
+                    return Sound.valueOf("MUSIC_DISC_OTHERSIDE");
+                else return null;
+            case "pigstep": return Sound.MUSIC_DISC_PIGSTEP;
+            case "stal": return Sound.MUSIC_DISC_STAL;
+            case "strad": return Sound.MUSIC_DISC_STRAD;
+            case "wait": return Sound.MUSIC_DISC_WAIT;
+            case "ward": return Sound.MUSIC_DISC_WARD;
             default: return null;
         }
     }
@@ -384,70 +403,82 @@ public class Arena {
      * Create the button for a given waiting music of the arena from the arena file.
      * @return A button for GUIs.
      */
-    public ItemStack getWaitingSoundButton(int number) {
+    public ItemStack getWaitingSoundButton(String name) {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
         enchants.put(Enchantment.DURABILITY, 1);
-        int sound = config.getInt(path + ".sounds.waiting");
+        String sound = config.getString(path + ".sounds.waiting");
         boolean selected;
 
-        switch (number) {
-            case 0:
-                selected = sound == 0;
-                return ItemManager.createItem(Material.MUSIC_DISC_CAT,
-                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Cat"),
-                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 1:
-                selected = sound == 1;
+        switch (name) {
+            case "blocks":
+                selected = "blocks".equals(sound);
                 return ItemManager.createItem(Material.MUSIC_DISC_BLOCKS,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Blocks"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 2:
-                selected = sound == 2;
-                return ItemManager.createItem(Material.MUSIC_DISC_FAR,
-                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Far"),
+            case "cat":
+                selected = "cat".equals(sound);
+                return ItemManager.createItem(Material.MUSIC_DISC_CAT,
+                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Cat"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 3:
-                selected = sound == 3;
-                return ItemManager.createItem(Material.MUSIC_DISC_STRAD,
-                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Strad"),
-                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 4:
-                selected = sound == 4;
-                return ItemManager.createItem(Material.MUSIC_DISC_MELLOHI,
-                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Mellohi"),
-                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 5:
-                selected = sound == 5;
-                return ItemManager.createItem(Material.MUSIC_DISC_WARD,
-                        CommunicationManager.format(((selected ? "&a&l" : "&4&l") + "Ward")),
-                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 9:
-                selected = sound == 9;
+            case "chirp":
+                selected = "chirp".equals(sound);
                 return ItemManager.createItem(Material.MUSIC_DISC_CHIRP,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Chirp"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 10:
-                selected = sound == 10;
-                return ItemManager.createItem(Material.MUSIC_DISC_STAL,
-                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Stal"),
+            case "far":
+                selected = "far".equals(sound);
+                return ItemManager.createItem(Material.MUSIC_DISC_FAR,
+                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Far"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 11:
-                selected = sound == 11;
+            case "mall":
+                selected = "mall".equals(sound);
                 return ItemManager.createItem(Material.MUSIC_DISC_MALL,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Mall"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 12:
-                selected = sound == 12;
-                return ItemManager.createItem(Material.MUSIC_DISC_WAIT,
-                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Wait"),
+            case "mellohi":
+                selected = "mellohi".equals(sound);
+                return ItemManager.createItem(Material.MUSIC_DISC_MELLOHI,
+                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Mellohi"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
-            case 13:
-                selected = sound == 13;
+            case "otherside":
+                if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1)) {
+                    selected = "otherside".equals(sound);
+                    return ItemManager.createItem(Material.valueOf("MUSIC_DISC_OTHERSIDE"),
+                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Otherside"),
+                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                } else {
+                    selected = !GameManager.getValidSounds().contains(sound);
+                    return ItemManager.createItem(Material.LIGHT_GRAY_CONCRETE,
+                            CommunicationManager.format((selected ? "&a&l" : "&4&l") + "None"),
+                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                }
+            case "pigstep":
+                selected = "pigstep".equals(sound);
                 return ItemManager.createItem(Material.MUSIC_DISC_PIGSTEP,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Pigstep"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+            case "stal":
+                selected = "stal".equals(sound);
+                return ItemManager.createItem(Material.MUSIC_DISC_STAL,
+                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Stal"),
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+            case "strad":
+                selected = "strad".equals(sound);
+                return ItemManager.createItem(Material.MUSIC_DISC_STRAD,
+                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Strad"),
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+            case "wait":
+                selected = "wait".equals(sound);
+                return ItemManager.createItem(Material.MUSIC_DISC_WAIT,
+                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Wait"),
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+            case "ward":
+                selected = "ward".equals(sound);
+                return ItemManager.createItem(Material.MUSIC_DISC_WARD,
+                        CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Ward"),
+                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
             default:
-                selected = sound < 0 || sound > 5 && sound < 9 || sound > 13;
+                selected = !GameManager.getValidSounds().contains(sound);
                 return ItemManager.createItem(Material.LIGHT_GRAY_CONCRETE,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "None"),
                         ItemManager.BUTTON_FLAGS, selected ? enchants : null);
@@ -459,37 +490,29 @@ public class Arena {
      * @return Waiting music title.
      */
     public String getWaitingSoundName() {
-        switch (config.getInt(path + ".sounds.waiting")) {
-            case 0: return "Cat";
-            case 1: return "Blocks";
-            case 2: return "Far";
-            case 3: return "Strad";
-            case 4: return "Mellohi";
-            case 5: return "Ward";
-            case 9: return "Chirp";
-            case 10: return "Stal";
-            case 11: return "Mall";
-            case 12: return "Wait";
-            case 13: return "Pigstep";
-            default: return "None";
+        String sound = config.getString(path + ".sounds.waiting");
+        if (GameManager.getValidSounds().contains(sound)) {
+            assert sound != null;
+            return sound.substring(0, 1).toUpperCase() + sound.substring(1);
         }
+        else return "None";
     }
 
     /**
-     * Retrieves the waiting music numerical representation of the arena into the arena file.
-     * @return Waiting music numerical representation.
+     * Retrieves the waiting music code of the arena into the arena file.
+     * @return Waiting music code.
      */
-    public int getWaitingSoundNum() {
-        return config.getInt(path + ".sounds.waiting");
+    public String getWaitingSoundCode() {
+        return config.getString(path + ".sounds.waiting");
     }
 
     /**
      * Writes the new waiting music of the arena into the arena file.
      * @param sound Numerical representation of the new waiting music.
      */
-    public void setWaitingSound(int sound) {
+    public void setWaitingSound(String sound) {
         config.set(path + ".sounds.waiting", sound);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public Portal getPortal() {
@@ -497,7 +520,7 @@ public class Arena {
     }
 
     public Location getPortalLocation() {
-        return DataManager.getConfigLocationNoPitch(plugin, path + ".portal");
+        return DataManager.getConfigLocationNoPitch(path + ".portal");
     }
 
     /**
@@ -506,7 +529,7 @@ public class Arena {
      */
     public void setPortal(Location location) {
         // Save config location
-        DataManager.setConfigurationLocation(plugin, path + ".portal", location);
+        DataManager.setConfigurationLocation(path + ".portal", location);
 
         // Recreate the portal
         refreshPortal();
@@ -523,14 +546,15 @@ public class Arena {
                 portal.remove();
 
             // Create a new portal and display it
-            portal = new Portal(Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin,
-                    path + ".portal")), this, plugin);
+            portal = new Portal(Objects.requireNonNull(DataManager.getConfigLocationNoPitch(
+                    path + ".portal")), this);
             portal.displayForOnline();
         } catch (Exception e) {
-            CommunicationManager.debugError("Invalid location for portal " + arena, 1,
+            CommunicationManager.debugError(String.format("Invalid location for %s's portal ", getName()), 1,
                     !Main.releaseMode, e);
-            CommunicationManager.debugInfo("Portal location data may be corrupt. If data cannot be manually corrected in " +
-                    "arenaData.yml, please delete the portal location data for arena " + arena + ".", 1);
+            CommunicationManager.debugInfo("Portal location data may be corrupt. If data cannot be manually " +
+                    "corrected in arenaData.yml, please delete the portal location data for " + getName() + ".",
+                    1);
         }
     }
 
@@ -539,7 +563,7 @@ public class Arena {
      */
     public void centerPortal() {
         // Center the location
-        DataManager.centerConfigLocation(plugin, path + ".portal");
+        DataManager.centerConfigLocation(path + ".portal");
 
         // Recreate the portal
         refreshPortal();
@@ -553,7 +577,7 @@ public class Arena {
             portal.remove();
             portal = null;
         }
-        DataManager.setConfigurationLocation(plugin, path + ".portal", null);
+        DataManager.setConfigurationLocation(path + ".portal", null);
         checkClose();
     }
 
@@ -562,7 +586,7 @@ public class Arena {
     }
 
     public Location getArenaBoardLocation() {
-        return DataManager.getConfigLocationNoPitch(plugin, path + ".arenaBoard");
+        return DataManager.getConfigLocationNoPitch(path + ".arenaBoard");
     }
     
     /**
@@ -571,7 +595,7 @@ public class Arena {
      */
     public void setArenaBoard(Location location) {
         // Save config location
-        DataManager.setConfigurationLocation(plugin, path + ".arenaBoard", location);
+        DataManager.setConfigurationLocation(path + ".arenaBoard", location);
 
         // Recreate the board
         refreshArenaBoard();
@@ -589,15 +613,19 @@ public class Arena {
 
             // Create a new board and display it
             arenaBoard = new ArenaBoard(
-                    Objects.requireNonNull(DataManager.getConfigLocationNoPitch(plugin, path + ".arenaBoard")),
-                    this, plugin);
+                    Objects.requireNonNull(DataManager.getConfigLocationNoPitch(path + ".arenaBoard")),
+                    this);
             arenaBoard.displayForOnline();
         } catch (Exception e) {
-            CommunicationManager.debugError("Invalid location for arena board " + arena, 1,
-                    !Main.releaseMode, e);
-            CommunicationManager.debugInfo("Arena board location data may be corrupt. If data cannot be manually " +
-                    "corrected in arenaData.yml, please delete the arena board location data for arena " + arena + ".",
-                    1);
+            CommunicationManager.debugError(
+                    String.format("Invalid location for %s's arena board ", getName()),
+                    1,
+                    !Main.releaseMode,
+                    e
+            );
+            CommunicationManager.debugInfo("Arena board location data may be corrupt. If data cannot be " +
+                            "manually corrected in arenaData.yml, please delete the arena board location data for " +
+                            getName() + ".", 1);
         }
     }
 
@@ -606,7 +634,7 @@ public class Arena {
      */
     public void centerArenaBoard() {
         // Center the location
-        DataManager.centerConfigLocation(plugin, path + ".arenaBoard");
+        DataManager.centerConfigLocation(path + ".arenaBoard");
 
         // Recreate the board
         refreshArenaBoard();
@@ -620,7 +648,7 @@ public class Arena {
             arenaBoard.remove();
             arenaBoard = null;
         }
-        DataManager.setConfigurationLocation(plugin, path + ".arenaBoard", null);
+        DataManager.setConfigurationLocation(path + ".arenaBoard", null);
     }
 
     /**
@@ -628,7 +656,7 @@ public class Arena {
      */
     public void refreshPlayerSpawn() {
         // Prevent refreshing player spawn when arena is open
-        if (!isClosed() && plugin.isLoaded())
+        if (!isClosed() && Main.plugin.isLoaded())
             return;
 
         // Remove particles
@@ -637,7 +665,7 @@ public class Arena {
         // Attempt to fetch new player spawn
         try {
             playerSpawn = new ArenaSpawn(
-                    Objects.requireNonNull(DataManager.getConfigLocation(plugin, path + ".spawn")),
+                    Objects.requireNonNull(DataManager.getConfigLocation(path + ".spawn")),
                     ArenaSpawnType.PLAYER,
                     0);
         } catch (InvalidLocationException | NullPointerException e) {
@@ -658,7 +686,7 @@ public class Arena {
      * @param location New player spawn location.
      */
     public void setPlayerSpawn(Location location) {
-        DataManager.setConfigurationLocation(plugin, path + ".spawn", location);
+        DataManager.setConfigurationLocation(path + ".spawn", location);
         refreshPlayerSpawn();
     }
 
@@ -666,7 +694,7 @@ public class Arena {
      * Centers the player spawn location of the arena along the x and z axis.
      */
     public void centerPlayerSpawn() {
-        DataManager.centerConfigLocation(plugin, path + ".spawn");
+        DataManager.centerConfigLocation(path + ".spawn");
         refreshPlayerSpawn();
     }
 
@@ -675,7 +703,7 @@ public class Arena {
      * @return Player spawn location.
      */
     public Location getWaitingRoom() {
-        return DataManager.getConfigLocation(plugin, path + ".waiting");
+        return DataManager.getConfigLocation(path + ".waiting");
     }
 
     /**
@@ -683,15 +711,15 @@ public class Arena {
      * @param location New player spawn location.
      */
     public void setWaitingRoom(Location location) {
-        DataManager.setConfigurationLocation(plugin, path + ".waiting", location);
-        plugin.saveArenaData();
+        DataManager.setConfigurationLocation(path + ".waiting", location);
+        Main.plugin.saveArenaData();
     }
 
     /**
      * Centers the waiting room location of the arena along the x and z axis.
      */
     public void centerWaitingRoom() {
-        DataManager.centerConfigLocation(plugin, path + ".waiting");
+        DataManager.centerConfigLocation(path + ".waiting");
     }
 
     /**
@@ -699,7 +727,7 @@ public class Arena {
      */
     public void refreshMonsterSpawns() {
         // Prevent refreshing monster spawns when arena is open
-        if (!isClosed() && plugin.isLoaded())
+        if (!isClosed() && Main.plugin.isLoaded())
             return;
 
         // Close off any particles if they are on
@@ -707,10 +735,21 @@ public class Arena {
 
         // Attempt to fetch new monster spawns
         monsterSpawns.clear();
-        DataManager.getConfigLocationMap(plugin, path + ".monster").forEach((id, location) ->
+        DataManager.getConfigLocationMap(path + ".monster").forEach((id, location) ->
         {
             try {
-                monsterSpawns.add(new ArenaSpawn(Objects.requireNonNull(location), ArenaSpawnType.MONSTER, id + 1));
+                ArenaSpawnType spawnType;
+                switch (getMonsterSpawnType(id)) {
+                    case 1:
+                        spawnType = ArenaSpawnType.MONSTER_GROUND;
+                        break;
+                    case 2:
+                        spawnType = ArenaSpawnType.MONSTER_AIR;
+                        break;
+                    default:
+                        spawnType = ArenaSpawnType.MONSTER_ALL;
+                }
+                monsterSpawns.add(new ArenaSpawn(Objects.requireNonNull(location), spawnType, id));
             } catch (InvalidLocationException | NullPointerException ignored) {
             }
         });
@@ -726,11 +765,11 @@ public class Arena {
 
     /**
      * Retrieves a specific monster spawn of the arena.
-     * @param num - Monster spawn number.
+     * @param monsterSpawnID - Monster spawn ID.
      * @return Monster spawn.
      */
-    public ArenaSpawn getMonsterSpawn(int num) {
-        List<ArenaSpawn> query = monsterSpawns.stream().filter(spawn -> spawn.getId() == num + 1)
+    public ArenaSpawn getMonsterSpawn(int monsterSpawnID) {
+        List<ArenaSpawn> query = monsterSpawns.stream().filter(spawn -> spawn.getId() == monsterSpawnID)
                 .collect(Collectors.toList());
 
         if (query.size() != 1)
@@ -738,23 +777,33 @@ public class Arena {
         else return query.get(0);
     }
 
-    public void setMonsterSpawn(int num, Location location) {
-        DataManager.setConfigurationLocation(plugin, path + ".monster." + num, location);
+    public void setMonsterSpawn(int monsterSpawnID, Location location) {
+        DataManager.setConfigurationLocation(path + ".monster." + monsterSpawnID, location);
         refreshMonsterSpawns();
     }
 
-    public void centerMonsterSpawn(int num) {
-        DataManager.centerConfigLocation(plugin, path + ".monster." + num);
+    public void centerMonsterSpawn(int monsterSpawnID) {
+        DataManager.centerConfigLocation(path + ".monster." + monsterSpawnID);
         refreshMonsterSpawns();
     }
 
-    public void setMonsterSpawnType(int num, int type) {
-        config.set(path + ".monsters." + num + ".type", type);
-        plugin.saveArenaData();
+    public void setMonsterSpawnType(int monsterSpawnID, int type) {
+        config.set(path + ".monster." + monsterSpawnID + ".type", type);
+        Main.plugin.saveArenaData();
+        refreshMonsterSpawns();
     }
 
-    public int getMonsterSpawnType(int num) {
-        return config.getInt(path + ".monsters." + num + ".type");
+    public int getMonsterSpawnType(int monsterSpawnID) {
+        return config.getInt(path + ".monster." + monsterSpawnID + ".type");
+    }
+
+    /**
+     * Generates a new ID for a new monster spawn.
+     *
+     * @return New monster spawn ID
+     */
+    public int newMonsterSpawnID() {
+        return Utils.nextSmallestUniqueWhole(DataManager.getConfigLocationMap(path + ".monster").keySet());
     }
 
     /**
@@ -762,7 +811,7 @@ public class Arena {
      */
     public void refreshVillagerSpawns() {
         // Prevent refreshing villager spawns when arena is open
-        if (!isClosed() && plugin.isLoaded())
+        if (!isClosed() && Main.plugin.isLoaded())
             return;
 
         // Close off any particles if they are on
@@ -770,10 +819,10 @@ public class Arena {
 
         // Attempt to fetch new villager spawns
         villagerSpawns.clear();
-        DataManager.getConfigLocationMap(plugin, path + ".villager").forEach((id, location) ->
+        DataManager.getConfigLocationMap(path + ".villager").forEach((id, location) ->
         {
             try {
-                villagerSpawns.add(new ArenaSpawn(Objects.requireNonNull(location), ArenaSpawnType.VILLAGER, id + 1));
+                villagerSpawns.add(new ArenaSpawn(Objects.requireNonNull(location), ArenaSpawnType.VILLAGER, id));
             } catch (InvalidLocationException | NullPointerException ignored) {
             }
         });
@@ -789,11 +838,11 @@ public class Arena {
 
     /**
      * Retrieves a specific villager spawn of the arena.
-     * @param num - Villager spawn number.
+     * @param villagerSpawnID - Villager spawn ID.
      * @return Villager spawn.
      */
-    public ArenaSpawn getVillagerSpawn(int num) {
-        List<ArenaSpawn> query = villagerSpawns.stream().filter(spawn -> spawn.getId() == num + 1)
+    public ArenaSpawn getVillagerSpawn(int villagerSpawnID) {
+        List<ArenaSpawn> query = villagerSpawns.stream().filter(spawn -> spawn.getId() == villagerSpawnID)
                 .collect(Collectors.toList());
 
         if (query.size() != 1)
@@ -801,14 +850,24 @@ public class Arena {
         else return query.get(0);
     }
 
-    public void setVillagerSpawn(int num, Location location) {
-        DataManager.setConfigurationLocation(plugin, path + ".villager." + num, location);
+    public void setVillagerSpawn(int villagerSpawnID, Location location) {
+        DataManager.setConfigurationLocation(path + ".villager." + villagerSpawnID, location);
         refreshVillagerSpawns();
     }
 
-    public void centerVillagerSpawn(int num) {
-        DataManager.centerConfigLocation(plugin, path + ".villager." + num);
+    public void centerVillagerSpawn(int villagerSpawnID) {
+        DataManager.centerConfigLocation(path + ".villager." + villagerSpawnID);
         refreshVillagerSpawns();
+    }
+
+    /**
+     * Generates a new ID for a new villager spawn.
+     *
+     * @return New villager spawn ID
+     */
+    public int newVillagerSpawnID() {
+        return Utils.nextSmallestUniqueWhole(DataManager.getConfigLocationMap(path + ".villager")
+                .keySet());
     }
 
     public List<String> getBannedKits() {
@@ -817,7 +876,16 @@ public class Arena {
 
     public void setBannedKits(List<String> bannedKits) {
         config.set(path + ".bannedKits", bannedKits);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
+    }
+
+    public List<String> getForcedChallenges() {
+        return config.getStringList(path + ".forcedChallenges");
+    }
+
+    public void setForcedChallenges(List<String> forcedChallenges) {
+        config.set(path + ".forcedChallenges", forcedChallenges);
+        Main.plugin.saveArenaData();
     }
 
     public String getSpawnTableFile() {
@@ -829,12 +897,12 @@ public class Arena {
     public boolean setSpawnTableFile(String option) {
         String file = option + ".yml";
         if (option.equals("custom"))
-            file = "a" + arena + ".yml";
+            file = path + ".yml";
 
-        if (new File(plugin.getDataFolder().getPath(), "spawnTables/" + file).exists() ||
+        if (new File(Main.plugin.getDataFolder().getPath(), "spawnTables/" + file).exists() ||
                 option.equals("default")) {
             config.set(path + ".spawnTable", option);
-            plugin.saveArenaData();
+            Main.plugin.saveArenaData();
             return true;
         }
 
@@ -847,7 +915,7 @@ public class Arena {
 
     public void setSpawnParticles(boolean bool) {
         config.set(path + ".particles.spawn", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public void startSpawnParticles() {
@@ -862,7 +930,7 @@ public class Arena {
         if (playerParticlesID != 0)
             return;
 
-        playerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+        playerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.plugin, new Runnable() {
             double var = 0;
             double var2 = 0;
             Location first, second;
@@ -883,7 +951,7 @@ public class Arena {
                     getPlayerSpawn().getLocation().getWorld().spawnParticle(spawnParticle, second, 0);
                 } catch (Exception e) {
                     CommunicationManager.debugError(
-                            String.format("Player spawn particle generation error for arena %d.", arena),
+                            String.format("Player spawn particle generation error for %s.", getName()),
                             2);
                 }
             }
@@ -907,14 +975,14 @@ public class Arena {
 
     public void setMonsterParticles(boolean bool) {
         config.set(path + ".particles.monster", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public void startMonsterParticles() {
         Particle monsterParticle = Particle.valueOf(NMSVersion.getCurrent().getNmsManager().getMonsterParticleName());
         
         if (monsterParticlesID == 0 && !getMonsterSpawns().isEmpty())
-            monsterParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+            monsterParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.plugin, new Runnable() {
                 double var = 0;
                 Location first, second;
                 boolean init = false;
@@ -927,21 +995,21 @@ public class Arena {
                             spawn.turnOnIndicator();
 
                         Location location = spawn.getLocation();
-                        if (location != null) {
-                            try {
-                                // Update particle locations
-                                first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
-                                second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
-                                        Math.sin(var + Math.PI));
+                        try {
+                            // Update particle locations
+                            first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
+                            second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
+                                    Math.sin(var + Math.PI));
 
-                                // Spawn particles
-                                Objects.requireNonNull(location.getWorld())
-                                        .spawnParticle(monsterParticle, first, 0);
-                                location.getWorld().spawnParticle(monsterParticle, second, 0);
-                            } catch (Exception e) {
-                                CommunicationManager.debugError(String.format("Monster particle generation error for " +
-                                                "arena %d.", arena), 2);
-                            }
+                            // Spawn particles
+                            Objects.requireNonNull(location.getWorld())
+                                    .spawnParticle(monsterParticle, first, 0);
+                            location.getWorld().spawnParticle(monsterParticle, second, 0);
+                        } catch (Exception e) {
+                            CommunicationManager.debugError(
+                                    String.format("Monster particle generation error for %s.", getName()),
+                                    2
+                            );
                         }
                     });
                     init = true;
@@ -962,14 +1030,14 @@ public class Arena {
 
     public void setVillagerParticles(boolean bool) {
         config.set(path + ".particles.villager", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public void startVillagerParticles() {
         Particle villagerParticle = Particle.valueOf(NMSVersion.getCurrent().getNmsManager().getVillagerParticleName());
         
         if (villagerParticlesID == 0 && !getVillagerSpawns().isEmpty())
-            villagerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+            villagerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.plugin, new Runnable() {
                 double var = 0;
                 Location first, second;
                 boolean init = false;
@@ -982,21 +1050,21 @@ public class Arena {
                             spawn.turnOnIndicator();
 
                         Location location = spawn.getLocation();
-                        if (location != null) {
-                            try {
-                                // Update particle locations
-                                first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
-                                second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
-                                        Math.sin(var + Math.PI));
+                        try {
+                            // Update particle locations
+                            first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
+                            second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
+                                    Math.sin(var + Math.PI));
 
-                                // Spawn particles
-                                Objects.requireNonNull(location.getWorld())
-                                        .spawnParticle(villagerParticle, first, 0);
-                                location.getWorld().spawnParticle(villagerParticle, second, 0);
-                            } catch (Exception e) {
-                                CommunicationManager.debugError(String.format("Villager particle generation error " +
-                                                "for arena %d.", arena), 2);
-                            }
+                            // Spawn particles
+                            Objects.requireNonNull(location.getWorld())
+                                    .spawnParticle(villagerParticle, first, 0);
+                            location.getWorld().spawnParticle(villagerParticle, second, 0);
+                        } catch (Exception e) {
+                            CommunicationManager.debugError(
+                                    String.format("Villager particle generation error for %s.", getName()),
+                                    2
+                            );
                         }
                     });
                     init = true;
@@ -1017,16 +1085,15 @@ public class Arena {
 
     public void setBorderParticles(boolean bool) {
         config.set(path + ".particles.border", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public void startBorderParticles() {
         Particle borderParticle = Particle.valueOf(NMSVersion.getCurrent().getNmsManager().getBorderParticleName());
-        BlockData blockData = NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1) ?
-                Bukkit.createBlockData(Material.BARRIER) : null;
+        Particle.DustOptions dust = new Particle.DustOptions(Color.RED, 2);
 
         if (cornerParticlesID == 0 && getCorner1() != null && getCorner2() != null)
-            cornerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+            cornerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.plugin, new Runnable() {
                 World world;
                 Location first, second;
 
@@ -1046,27 +1113,30 @@ public class Arena {
 
                         for (double x = second.getX(); x <= first.getX(); x += 5)
                             for (double y = second.getY(); y <= first.getY(); y += 5)
-                                world.spawnParticle(borderParticle, x, y, first.getZ(), 0, blockData);
+                                world.spawnParticle(borderParticle, x, y, first.getZ(), 0, dust);
                         for (double x = second.getX(); x <= first.getX(); x += 5)
                             for (double y = second.getY(); y <= first.getY(); y += 5)
-                                world.spawnParticle(borderParticle, x, y, second.getZ(), 0, blockData);
-                        for (double x = second.getX(); x <= first.getX(); x += 5)
-                            for (double z = second.getZ(); z <= first.getZ(); z += 5)
-                                world.spawnParticle(borderParticle, x, first.getY(), z, 0, blockData);
+                                world.spawnParticle(borderParticle, x, y, second.getZ(), 0, dust);
                         for (double x = second.getX(); x <= first.getX(); x += 5)
                             for (double z = second.getZ(); z <= first.getZ(); z += 5)
-                                world.spawnParticle(borderParticle, x, second.getY(), z, 0, blockData);
+                                world.spawnParticle(borderParticle, x, first.getY(), z, 0, dust);
+                        for (double x = second.getX(); x <= first.getX(); x += 5)
+                            for (double z = second.getZ(); z <= first.getZ(); z += 5)
+                                world.spawnParticle(borderParticle, x, second.getY(), z, 0, dust);
                         for (double z = second.getZ(); z <= first.getZ(); z += 5)
                             for (double y = second.getY(); y <= first.getY(); y += 5)
-                                world.spawnParticle(borderParticle, first.getX(), y, z, 0, blockData);
+                                world.spawnParticle(borderParticle, first.getX(), y, z, 0, dust);
                         for (double z = second.getZ(); z <= first.getZ(); z += 5)
                             for (double y = second.getY(); y <= first.getY(); y += 5)
-                                world.spawnParticle(borderParticle, second.getX(), y, z, 0, blockData);
+                                world.spawnParticle(borderParticle, second.getX(), y, z, 0, dust);
 
                     } catch (Exception e) {
                         CommunicationManager.debugError(
-                                String.format("Border particle generation error for arena %d.", arena),
-                                1, true, e);
+                                String.format("Border particle generation error for %s.", getName()),
+                                1,
+                                true,
+                                e
+                        );
                     }
                 }
             }, 0 , 20);
@@ -1098,7 +1168,7 @@ public class Arena {
 
     public void setNormal(boolean normal) {
         config.set(path + ".normal", normal);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasEnchants() {
@@ -1107,7 +1177,7 @@ public class Arena {
 
     public void setEnchants(boolean enchants) {
         config.set(path + ".enchants", enchants);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasCustom() {
@@ -1116,7 +1186,7 @@ public class Arena {
 
     public void setCustom(boolean bool) {
         config.set(path + ".custom", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasCommunity() {
@@ -1125,7 +1195,7 @@ public class Arena {
 
     public void setCommunity(boolean bool) {
         config.set(path + ".community", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasGemDrop() {
@@ -1134,7 +1204,7 @@ public class Arena {
 
     public void setGemDrop(boolean bool) {
         config.set(path + ".gemDrop", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasExpDrop() {
@@ -1143,11 +1213,11 @@ public class Arena {
 
     public void setExpDrop(boolean bool) {
         config.set(path + ".expDrop", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public Location getCorner1() {
-        return DataManager.getConfigLocationNoRotation(plugin, path + ".corner1");
+        return DataManager.getConfigLocationNoRotation(path + ".corner1");
     }
 
     public void setCorner1(Location location) {
@@ -1155,7 +1225,7 @@ public class Arena {
         cancelBorderParticles();
 
         // Set location
-        DataManager.setConfigurationLocation(plugin, path + ".corner1", location);
+        DataManager.setConfigurationLocation(path + ".corner1", location);
 
         // Turn on particles if appropriate
         if (isClosed())
@@ -1163,7 +1233,7 @@ public class Arena {
     }
 
     public Location getCorner2() {
-        return DataManager.getConfigLocationNoRotation(plugin, path + ".corner2");
+        return DataManager.getConfigLocationNoRotation(path + ".corner2");
     }
 
     public void setCorner2(Location location) {
@@ -1171,7 +1241,7 @@ public class Arena {
         cancelBorderParticles();
 
         // Set location
-        DataManager.setConfigurationLocation(plugin, path + ".corner2", location);
+        DataManager.setConfigurationLocation(path + ".corner2", location);
 
         // Turn on particles if appropriate
         if (isClosed())
@@ -1189,7 +1259,7 @@ public class Arena {
 
     public void setWinSound(boolean bool) {
         config.set(path + ".sounds.win", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasLoseSound() {
@@ -1198,7 +1268,7 @@ public class Arena {
 
     public void setLoseSound(boolean bool) {
         config.set(path + ".sounds.lose", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasWaveStartSound() {
@@ -1207,7 +1277,7 @@ public class Arena {
 
     public void setWaveStartSound(boolean bool) {
         config.set(path + ".sounds.start", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasWaveFinishSound() {
@@ -1216,7 +1286,7 @@ public class Arena {
 
     public void setWaveFinishSound(boolean bool) {
         config.set(path + ".sounds.end", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasGemSound() {
@@ -1225,7 +1295,7 @@ public class Arena {
 
     public void setGemSound(boolean bool) {
         config.set(path + ".sounds.gem", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasPlayerDeathSound() {
@@ -1234,7 +1304,7 @@ public class Arena {
 
     public void setPlayerDeathSound(boolean bool) {
         config.set(path + ".sounds.death", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasAbilitySound() {
@@ -1243,7 +1313,7 @@ public class Arena {
 
     public void setAbilitySound(boolean bool) {
         config.set(path + ".sounds.ability", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasDynamicCount() {
@@ -1252,7 +1322,7 @@ public class Arena {
 
     public void setDynamicCount(boolean bool) {
         config.set(path + ".dynamicCount", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasDynamicDifficulty() {
@@ -1261,7 +1331,7 @@ public class Arena {
 
     public void setDynamicDifficulty(boolean bool) {
         config.set(path + ".dynamicDifficulty", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasDynamicPrices() {
@@ -1270,7 +1340,7 @@ public class Arena {
 
     public void setDynamicPrices(boolean bool) {
         config.set(path + ".dynamicPrices", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasDynamicLimit() {
@@ -1279,7 +1349,7 @@ public class Arena {
 
     public void setDynamicLimit(boolean bool) {
         config.set(path + ".dynamicLimit", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean hasLateArrival() {
@@ -1288,7 +1358,7 @@ public class Arena {
 
     public void setLateArrival(boolean bool) {
         config.set(path + ".lateArrival", bool);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
     }
 
     public boolean isClosed() {
@@ -1297,7 +1367,7 @@ public class Arena {
 
     public void setClosed(boolean closed) {
         // Kick players
-        getPlayers().forEach(vdPlayer -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+        getPlayers().forEach(vdPlayer -> Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
                 Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(vdPlayer.getPlayer()))));
 
         // Clear the arena
@@ -1305,7 +1375,7 @@ public class Arena {
 
         // Set closed and handle particles/holographics
         config.set(path + ".closed", closed);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
         refreshPortal();
         checkClosedParticles();
     }
@@ -1321,7 +1391,7 @@ public class Arena {
                         )));
             } catch (Exception e) {
                 CommunicationManager.debugError(
-                        String.format("Attempted to retrieve arena records for arena %d but found none.", arena),
+                        String.format("Attempted to retrieve arena records for %s but found none.", getName()),
                         2);
             }
 
@@ -1356,7 +1426,7 @@ public class Arena {
             config.set(path + ".records." + i + ".wave", records.get(i).getWave());
             config.set(path + ".records." + i + ".players", records.get(i).getPlayers());
         }
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
         return true;
     }
 
@@ -1422,32 +1492,12 @@ public class Arena {
         return villagers;
     }
 
-    public void incrementVillagers() {
-        villagers++;
-    }
-
-    public void decrementVillagers() {
-        if (--villagers <= 0 && status == ArenaStatus.ACTIVE && !spawningVillagers)
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
-                    Bukkit.getPluginManager().callEvent(new GameEndEvent(this)));
-    }
-
     public void resetVillagers() {
         villagers = 0;
     }
 
     public int getEnemies() {
         return enemies;
-    }
-
-    public void incrementEnemies() {
-        enemies++;
-    }
-
-    public void decrementEnemies() {
-        if (--enemies <= 0 && status == ArenaStatus.ACTIVE && !spawningMonsters)
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
-                    Bukkit.getPluginManager().callEvent(new WaveEndEvent(this)));
     }
 
     public void resetEnemies() {
@@ -1588,14 +1638,17 @@ public class Arena {
         this.communityChest = communityChest;
     }
 
-    public Inventory getCustomShopEditor() {
+    public Inventory getCustomShopEditorMenu() {
         // Create inventory
-        Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54, CommunicationManager.format("&k") +
-                CommunicationManager.format("&6&lCustom Shop Editor: " + getName()));
+        Inventory inv = Bukkit.createInventory(
+                new InventoryMeta(InventoryID.CUSTOM_SHOP_EDITOR_MENU, InventoryType.MENU, this),
+                54,
+                CommunicationManager.format("&6&lCustom Shop Editor: " + getName())
+        );
 
         // Set exit option
         for (int i = 45; i < 54; i++)
-            inv.setItem(i, InventoryItems.exit(plugin));
+            inv.setItem(i, Buttons.exit());
 
         // Check for a stored inventory
         if (!config.contains(path + ".customShop"))
@@ -1622,8 +1675,8 @@ public class Arena {
                                 lore = meta.getLore();
                             assert lore != null;
                             if (price >= 0)
-                                lore.add(CommunicationManager.format("&2" +
-                                        plugin.getLanguageString("messages.gems") + ": &a" + price));
+                                lore.add(CommunicationManager.format("&2" + LanguageManager.messages.gems +
+                                        ": &a" + price));
                             meta.setLore(lore);
                             item.setItemMeta(meta);
 
@@ -1632,14 +1685,16 @@ public class Arena {
                         } catch (Exception e) {
                             CommunicationManager.debugError(
                                     String.format(
-                                            "An error occurred retrieving an item from arena %d's custom shop.", arena),
-                                    2);
+                                            "An error occurred retrieving an item from %s's custom shop.", getName()),
+                                    2
+                            );
                         }
                     });
         } catch (Exception e) {
             CommunicationManager.debugError(
-                    String.format("Attempted to retrieve the custom shop inventory of arena %d but found none.", arena),
-                    1);
+                    String.format("Attempted to retrieve the custom shop inventory of %s but found none.", getName()),
+                    1
+            );
         }
 
         return inv;
@@ -1647,12 +1702,14 @@ public class Arena {
 
     public Inventory getCustomShop() {
         // Create inventory
-        Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54,
-                CommunicationManager.format("&k") + CommunicationManager.format("&6&l") +
-                        plugin.getLanguageString("names.customShop"));
+        Inventory inv = Bukkit.createInventory(
+                new InventoryMeta(InventoryID.CUSTOM_SHOP_MENU, InventoryType.MENU, this),
+                54,
+                CommunicationManager.format("&6&l") + LanguageManager.names.customShop
+        );
 
         // Set exit option
-        inv.setItem(49, InventoryItems.exit(plugin));
+        inv.setItem(49, Buttons.exit());
 
         // Check for a stored inventory
         if (!config.contains(path + ".customShop"))
@@ -1680,7 +1737,7 @@ public class Arena {
                             assert lore != null;
                             if (price >= 0)
                                 lore.add(CommunicationManager.format("&2" +
-                                        plugin.getLanguageString("messages.gems") + ": &a" + price));
+                                        LanguageManager.messages.gems + ": &a" + price));
                             meta.setLore(lore);
                             item.setItemMeta(meta);
 
@@ -1689,14 +1746,16 @@ public class Arena {
                         } catch (Exception e) {
                             CommunicationManager.debugError(
                                     String.format(
-                                            "An error occurred retrieving an item from arena %d's custom shop.", arena),
-                                    2);
+                                            "An error occurred retrieving an item from %s's custom shop.", getName()),
+                                    2
+                            );
                         }
                     });
         } catch (Exception e) {
             CommunicationManager.debugError(
-                    String.format("Attempted to retrieve the custom shop inventory of arena %d but found none.", arena),
-                    1);
+                    String.format("Attempted to retrieve the custom shop inventory of %s but found none.", getName()),
+                    1
+            );
         }
 
         return inv;
@@ -1708,12 +1767,14 @@ public class Arena {
      */
     public Inventory getMockCustomShop() {
         // Create inventory
-        Inventory inv = Bukkit.createInventory(new InventoryMeta(arena), 54,
-                CommunicationManager.format("&k") + CommunicationManager.format("&6&l" +
-                        plugin.getLanguageString("names.customShop") + ": " + getName()));
+        Inventory inv = Bukkit.createInventory(
+                new InventoryMeta(InventoryID.MOCK_CUSTOM_SHOP_MENU, InventoryType.MENU, this),
+                54,
+                CommunicationManager.format("&6&l" + LanguageManager.names.customShop + ": " + getName())
+        );
 
         // Set exit option
-        inv.setItem(49, InventoryItems.exit(plugin));
+        inv.setItem(49, Buttons.exit());
 
         // Check for a stored inventory
         if (!config.contains(path + ".customShop"))
@@ -1741,7 +1802,7 @@ public class Arena {
                             assert lore != null;
                             if (price >= 0)
                                 lore.add(CommunicationManager.format("&2" +
-                                        plugin.getLanguageString("messages.gems") + ": &a" + price));
+                                        LanguageManager.messages.gems + ": &a" + price));
                             meta.setLore(lore);
                             item.setItemMeta(meta);
 
@@ -1750,14 +1811,16 @@ public class Arena {
                         } catch (Exception e) {
                             CommunicationManager.debugError(
                                     String.format(
-                                            "An error occurred retrieving an item from arena %d's custom shop.", arena),
-                                    2);
+                                            "An error occurred retrieving an item from %s's custom shop.", getName()),
+                                    2
+                            );
                         }
                     });
         } catch (Exception e) {
             CommunicationManager.debugError(
-                    String.format("Attempted to retrieve the custom shop inventory of arena %d but found none.", arena),
-                    1);
+                    String.format("Attempted to retrieve the custom shop inventory of %s but found none.", getName()),
+                    1
+            );
         }
 
         return inv;
@@ -1772,7 +1835,8 @@ public class Arena {
      */
     public void startTimeLimitBar() {
         timeLimitBar = Bukkit.createBossBar(CommunicationManager.format("&e" +
-                        plugin.getLanguageStringFormatted("names.timeBar", Integer.toString(getCurrentWave()))),
+                        String.format(LanguageManager.names.timeBar, Integer.toString(getCurrentWave())) + " - " +
+                        getWaveTimeLimit() + ":00"),
                 BarColor.YELLOW, BarStyle.SOLID);
     }
 
@@ -1782,6 +1846,7 @@ public class Arena {
      */
     public void updateTimeLimitBar(double progress) {
         timeLimitBar.setProgress(progress);
+        timeLimitBar.setTitle(getTimeLimitBarTitle(progress));
     }
 
     /**
@@ -1792,6 +1857,7 @@ public class Arena {
     public void updateTimeLimitBar(BarColor color, double progress) {
         timeLimitBar.setColor(color);
         timeLimitBar.setProgress(progress);
+        timeLimitBar.setTitle(getTimeLimitBarTitle(progress));
     }
 
     /**
@@ -1800,6 +1866,14 @@ public class Arena {
     public void removeTimeLimitBar() {
         players.forEach(vdPlayer -> timeLimitBar.removePlayer(vdPlayer.getPlayer()));
         timeLimitBar = null;
+    }
+
+    private String getTimeLimitBarTitle(double progress) {
+        int minutes = (int) (progress * getWaveTimeLimit());
+        int seconds = (int) ((progress * getWaveTimeLimit() - minutes) * 60 + 0.5);
+        return CommunicationManager.format("&e" +
+                String.format(LanguageManager.names.timeBar, Integer.toString(getCurrentWave())) + " - " +
+                minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
     }
 
     /**
@@ -1836,21 +1910,60 @@ public class Arena {
      * Checks and closes an arena if the arena does not meet opening requirements. Opens arena if autoOpen is on.
      */
     public void checkClose() {
-        if (!plugin.getArenaData().contains("lobby") || getPortalLocation() == null || getPlayerSpawn() == null ||
+        if (!Main.plugin.getArenaData().contains("lobby") || getPortalLocation() == null || getPlayerSpawn() == null ||
                 getMonsterSpawns().isEmpty() || getVillagerSpawns().isEmpty() || !hasCustom() && !hasNormal() ||
                 getCorner1() == null || getCorner2() == null ||
                 !Objects.equals(getCorner1().getWorld(), getCorner2().getWorld())) {
             setClosed(true);
-            CommunicationManager.debugInfo(String.format("Arena %d did not meet opening requirements and was closed.",
-                            arena),
-                    2);
+            CommunicationManager.debugInfo(
+                    String.format("%s did not meet opening requirements and was closed.", getName()),
+                    2
+            );
         }
 
-        else if (plugin.getConfig().getBoolean("autoOpen")) {
+        else if (Main.plugin.getConfig().getBoolean("autoOpen")) {
             setClosed(false);
-            CommunicationManager.debugInfo(String.format("Arena %d met opening requirements and was opened.", arena),
-                    2);
+            CommunicationManager.debugInfo(
+                    String.format("%s met opening requirements and was opened.", getName()),
+                    2
+            );
         }
+    }
+
+    /**
+     * Check the number of players that are sharing a certain effect.
+     *
+     * @param effectType The effect type to look for.
+     * @return Number of players sharing the effect type.
+     */
+    public int effectShareCount(EffectType effectType) {
+        Kit effectKit;
+
+        switch (effectType) {
+            case BLACKSMITH:
+                effectKit = Kit.blacksmith().setKitLevel(1);
+                break;
+            case WITCH:
+                effectKit = Kit.witch().setKitLevel(1);
+                break;
+            case MERCHANT:
+                effectKit = Kit.merchant().setKitLevel(1);
+                break;
+            case VAMPIRE:
+                effectKit = Kit.vampire().setKitLevel(1);
+                break;
+            case GIANT1:
+                effectKit = Kit.giant().setKitLevel(1);
+                break;
+            case GIANT2:
+                effectKit = Kit.giant().setKitLevel(2);
+                break;
+            default:
+                effectKit = Kit.none();
+        }
+
+        return (int) getActives().stream().filter(VDPlayer::isSharing).filter(player ->
+                effectKit.equals(player.getKit()) || effectKit.equals(player.getKit2())).count();
     }
 
     /**
@@ -1893,19 +2006,19 @@ public class Arena {
             return;
 
         // Update scoreboards
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
                 Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(this)));
 
         // Trigger game end if all villagers are gone
-        if (this.villagers <= 0 && status == ArenaStatus.ACTIVE) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+        if (this.villagers <= 0 && status == ArenaStatus.ACTIVE && !isSpawningVillagers()) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
                     Bukkit.getPluginManager().callEvent(new GameEndEvent(this)));
             return;
         }
 
         // Trigger wave end if all monsters are gone
-        if (enemies <= 0 && status == ArenaStatus.ACTIVE)
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+        if (enemies <= 0 && status == ArenaStatus.ACTIVE && !isSpawningMonsters())
+            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
                     Bukkit.getPluginManager().callEvent(new WaveEndEvent(this)));
     }
 
@@ -1937,28 +2050,28 @@ public class Arena {
         setGemSound(arenaToCopy.hasGemSound());
         setPlayerDeathSound(arenaToCopy.hasPlayerDeathSound());
         setAbilitySound(arenaToCopy.hasAbilitySound());
-        setWaitingSound(arenaToCopy.getWaitingSoundNum());
+        setWaitingSound(arenaToCopy.getWaitingSoundCode());
         setSpawnParticles(arenaToCopy.hasSpawnParticles());
         setMonsterParticles(arenaToCopy.hasMonsterParticles());
         setVillagerParticles(arenaToCopy.hasVillagerParticles());
         setBorderParticles(arenaToCopy.hasBorderParticles());
-        if (config.contains("a" + arenaToCopy.getArena() + ".customShop"))
+        if (config.contains(arenaToCopy.getPath() + ".customShop"))
             try {
-                Objects.requireNonNull(config.getConfigurationSection("a" + arenaToCopy.getArena() +
-                                ".customShop"))
+                Objects.requireNonNull(config.getConfigurationSection(arenaToCopy.getPath() + ".customShop"))
                         .getKeys(false)
                         .forEach(index -> config.set(path + ".customShop." + index,
-                                config.getItemStack("a" + arenaToCopy.getArena() + ".customShop." + index)));
-                plugin.saveArenaData();
+                                config.getItemStack(arenaToCopy.getPath() + ".customShop." + index)));
+                Main.plugin.saveArenaData();
             } catch (Exception e) {
                 CommunicationManager.debugError(
-                        String.format("Attempted to retrieve the custom shop inventory of arena %d but found none.",
-                                arena), 1);
+                        String.format("Unsuccessful attempt to copy the custom shop inventory of %s to %s.",
+                                arenaToCopy.getName(), getName()), 1);
             }
 
         CommunicationManager.debugInfo(
-                String.format("Copied the characteristics of arena %d to arena %d.", arenaToCopy.getArena(), arena),
-                2);
+                String.format("Copied the characteristics of %s to %s.", arenaToCopy.getName(), getName()),
+                2
+        );
     }
 
     /**
@@ -1967,8 +2080,8 @@ public class Arena {
     public void remove() {
         wipe();
         config.set(path, null);
-        plugin.saveArenaData();
-        CommunicationManager.debugInfo(String.format("Removing arena %d.", arena), 1);
+        Main.plugin.saveArenaData();
+        CommunicationManager.debugInfo(String.format("Removing %s.", getName()), 1);
     }
 
     /**
@@ -1976,7 +2089,7 @@ public class Arena {
      */
     public void wipe() {
         // Kick players
-        getPlayers().forEach(vdPlayer -> Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
+        getPlayers().forEach(vdPlayer -> Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
                 Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(vdPlayer.getPlayer()))));
 
         // Clear the arena
@@ -1984,7 +2097,7 @@ public class Arena {
 
         // Set closed
         config.set(path + ".closed", true);
-        plugin.saveArenaData();
+        Main.plugin.saveArenaData();
 
         // Remove holographics
         if (getArenaBoard() != null)

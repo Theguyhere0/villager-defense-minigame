@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.plugin.game.models.kits;
 
 /**
  * Kit types in Villager Defense. Possible types:<ul>
- *      <li>{@link #NONE}</li>
+ *     <li>{@link #NONE}</li>
  *     <li>{@link #GIFT}</li>
  *     <li>{@link #ABILITY}</li>
  *     <li>{@link #EFFECT}</li>

@@ -74,7 +74,7 @@ public class CommunicationManager {
 
     // Formats plugin notifications
     public static String notify(String msg) {
-        return format("&2VD: &f" + msg);
+        return format("&2[VD] &f" + msg);
     }
 
     public static void debugError(String msg, int debugLevel) {
@@ -97,6 +97,10 @@ public class CommunicationManager {
             if (stackTrace)
                 e.printStackTrace();
         }
+    }
+
+    public static void debugErrorShouldNotHappen() {
+        debugError("This should not be happening!", 0, true);
     }
 
     public static void debugInfo(String msg, int debugLevel) {

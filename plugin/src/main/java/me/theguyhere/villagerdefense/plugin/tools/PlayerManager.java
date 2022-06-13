@@ -1,16 +1,26 @@
 package me.theguyhere.villagerdefense.plugin.tools;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.nms.common.PacketGroup;
+import me.theguyhere.villagerdefense.plugin.Main;
+import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
+import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class to manage player manipulations.
@@ -127,7 +137,6 @@ public class PlayerManager {
     public static void fakeDeath(VDPlayer vdPlayer) {
         Player player = vdPlayer.getPlayer();
         player.setGameMode(GameMode.SPECTATOR);
-        player.getInventory().clear();
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
         player.closeInventory();
         vdPlayer.setStatus(PlayerStatus.GHOST);
@@ -145,5 +154,79 @@ public class PlayerManager {
         for (Player player : Bukkit.getOnlinePlayers())
             if (player.getWorld().equals(world))
                 packetGroup.sendTo(player);
+    }
+
+    // Function for giving game start choice items to player
+    public static void giveChoiceItems(VDPlayer player) {
+        // Give player choice options
+        FileConfiguration playerData = Main.plugin.getPlayerData();
+        String path = player.getPlayer().getUniqueId() + ".achievements";
+        List<ItemStack> choiceItems = new ArrayList<>();
+
+        choiceItems.add(GameItems.kitSelector());
+        choiceItems.add(GameItems.challengeSelector());
+
+        if (playerData.contains(path)) {
+            if (playerData.getStringList(path).contains(Achievement.topKills9().getID()) ||
+                    playerData.getStringList(path).contains(Achievement.totalKills9().getID()) ||
+                    playerData.getStringList(path).contains(Achievement.topWave9().getID()) ||
+                    playerData.getStringList(path).contains(Achievement.topBalance9().getID()) ||
+                    playerData.getStringList(path).contains(Achievement.allChallenges().getID()) ||
+                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                choiceItems.add(GameItems.boostToggle(player.isBoosted()));
+
+            if (playerData.getStringList(path).contains(Achievement.allEffect().getID()))
+                choiceItems.add(GameItems.shareToggle(player.isSharing()));
+
+            if (playerData.getStringList(path).contains(Achievement.totalGems9().getID()))
+                choiceItems.add(GameItems.crystalConverter());
+        }
+
+        choiceItems.add(GameItems.leave());
+
+        if (choiceItems.size() == 3) {
+            giveItemConditional(2, choiceItems.get(0), player.getPlayer());
+            giveItemConditional(4, choiceItems.get(1), player.getPlayer());
+            giveItemConditional(6, choiceItems.get(2), player.getPlayer());
+        } else if (choiceItems.size() == 4) {
+            giveItemConditional(1, choiceItems.get(0), player.getPlayer());
+            giveItemConditional(3, choiceItems.get(1), player.getPlayer());
+            giveItemConditional(5, choiceItems.get(2), player.getPlayer());
+            giveItemConditional(7, choiceItems.get(3), player.getPlayer());
+        } else if (choiceItems.size() == 5) {
+            giveItemConditional(0, choiceItems.get(0), player.getPlayer());
+            giveItemConditional(2, choiceItems.get(1), player.getPlayer());
+            giveItemConditional(4, choiceItems.get(2), player.getPlayer());
+            giveItemConditional(6, choiceItems.get(3), player.getPlayer());
+            giveItemConditional(8, choiceItems.get(4), player.getPlayer());
+        } else {
+            giveItemConditional(0, choiceItems.get(0), player.getPlayer());
+            giveItemConditional(2, choiceItems.get(1), player.getPlayer());
+            giveItemConditional(4, choiceItems.get(2), player.getPlayer());
+            giveItemConditional(5, choiceItems.get(3), player.getPlayer());
+            giveItemConditional(6, choiceItems.get(4), player.getPlayer());
+            giveItemConditional(8, choiceItems.get(5), player.getPlayer());
+        }
+    }
+
+    // Give players the effect of a totem, including setting health to 1
+    public static void giveTotemEffect(Player player) {
+        player.getActivePotionEffects().forEach(potionEffect -> player.removePotionEffect(potionEffect.getType()));
+        player.setHealth(1);
+        player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, Utils.secondsToTicks(45), 1));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Utils.secondsToTicks(40), 0));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, Utils.secondsToTicks(5), 1));
+        player.playSound(player.getLocation(), Sound.ITEM_TOTEM_USE, 1, 1);
+        notifySuccess(player, LanguageManager.messages.resurrection);
+    }
+
+    // Function to give items to the proper inventory slot or change them
+    private static void giveItemConditional(int slot, ItemStack item, Player player) {
+        ItemStack oldItem = player.getInventory().getItem(slot);
+
+        if (oldItem != null && oldItem.getType() == item.getType())
+            oldItem.setItemMeta(item.getItemMeta());
+
+        else player.getInventory().setItem(slot, item);
     }
 }

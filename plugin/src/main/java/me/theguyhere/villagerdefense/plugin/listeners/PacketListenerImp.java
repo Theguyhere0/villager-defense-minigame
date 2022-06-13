@@ -1,25 +1,24 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
+import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.nms.common.PacketListener;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.LeftClickNPCEvent;
 import me.theguyhere.villagerdefense.plugin.events.RightClickNPCEvent;
 import me.theguyhere.villagerdefense.plugin.events.SignGUIEvent;
 import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
-import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 public class PacketListenerImp implements PacketListener {
     @Override
     public void onAttack(Player player, int entityID) {
-        Arrays.stream(GameManager.getArenas()).filter(Objects::nonNull).map(Arena::getPortal).filter(Objects::nonNull)
-                .map(Portal::getNpc).filter(Objects::nonNull).forEach(npc -> {
+        GameManager.getArenas().values().stream().filter(Objects::nonNull).map(Arena::getPortal)
+                .filter(Objects::nonNull).map(Portal::getNpc).filter(Objects::nonNull).forEach(npc -> {
                     int npcId = npc.getEntityID();
                     if (npcId == entityID)
                         Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
@@ -29,8 +28,8 @@ public class PacketListenerImp implements PacketListener {
 
     @Override
     public void onInteractMain(Player player, int entityID) {
-        Arrays.stream(GameManager.getArenas()).filter(Objects::nonNull).map(Arena::getPortal).filter(Objects::nonNull)
-                .map(Portal::getNpc).filter(Objects::nonNull).forEach(npc -> {
+        GameManager.getArenas().values().stream().filter(Objects::nonNull).map(Arena::getPortal)
+                .filter(Objects::nonNull).map(Portal::getNpc).filter(Objects::nonNull).forEach(npc -> {
                     int npcId = npc.getEntityID();
                     if (npcId == entityID)
                         Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
@@ -44,7 +43,7 @@ public class PacketListenerImp implements PacketListener {
         String header = signLines[0];
 
         try {
-            arena = GameManager.getArena(Integer.parseInt(header.substring(18, header.length() - 4)) - 1);
+            arena = GameManager.getArena(Integer.parseInt(header.substring(18, header.length() - 4)));
         } catch (Exception ignored) {
             return;
         }

@@ -1,9 +1,9 @@
 main: me.theguyhere.villagerdefense.plugin.Main
 name: VillagerDefense
-version: 1.1.1
+version: 1.2.0
 author: Theguyhere
 api-version: 1.16
-softdepend: [WorldGuard, WorldEdit, Multiverse-core]
+softdepend: [WorldGuard, WorldEdit, Multiverse-core, PlaceholderAPI]
 
 commands:
   vd:
@@ -57,3 +57,6 @@ commands:
       description: Reload internal plugin data
       usage: /vd reload
       permission: vd.admin
+    achievements:
+      description: Displays achievements of a player
+      usage: /vd achievements
