@@ -266,9 +266,45 @@ public class Tasks {
 					CommunicationManager.format("&d&l" + LanguageManager.names.communityChest)
 			));
 
-			// Trigger WaveEndEvent
+			// Start dialogue, then trigger WaveEndEvent
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
+				for (VDPlayer player : arena.getPlayers()) {
+					PlayerManager.notify(player.getPlayer(), ChatColor.WHITE,
+							"&2" + LanguageManager.names.villageCaptain + ": &f" +
+									LanguageManager.messages.villageCaptainDialogue1);
+				}
+			});
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
+				for (VDPlayer player : arena.getPlayers()) {
+					PlayerManager.notify(player.getPlayer(), ChatColor.WHITE,
+							"&2" + LanguageManager.names.villageCaptain + ": &f" +
+									LanguageManager.messages.villageCaptainDialogue2, ChatColor.AQUA, arena.getName(),
+							LanguageManager.names.crystals);
+				}
+			}, Utils.secondsToTicks(5));
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
+				for (VDPlayer player : arena.getPlayers()) {
+					PlayerManager.notify(player.getPlayer(), ChatColor.WHITE,
+							"&2" + LanguageManager.names.villageCaptain + ": &f" +
+									LanguageManager.messages.villageCaptainDialogue3);
+				}
+			}, Utils.secondsToTicks(11));
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
+				for (VDPlayer player : arena.getPlayers()) {
+					PlayerManager.notify(player.getPlayer(), ChatColor.WHITE,
+							"&2" + LanguageManager.names.villageCaptain + ": &f" +
+									LanguageManager.messages.villageCaptainDialogue4);
+				}
+			}, Utils.secondsToTicks(18));
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
+				for (VDPlayer player : arena.getPlayers()) {
+					PlayerManager.notify(player.getPlayer(), ChatColor.WHITE,
+							"&2" + LanguageManager.names.villageCaptain + ": &f" +
+									LanguageManager.messages.villageCaptainDialogue5, ChatColor.AQUA, arena.getName());
+				}
+			}, Utils.secondsToTicks(25));
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-					Bukkit.getPluginManager().callEvent(new WaveEndEvent(arena)));
+					Bukkit.getPluginManager().callEvent(new WaveEndEvent(arena)), Utils.secondsToTicks(30));
 
 			// Debug message to console
 			CommunicationManager.debugInfo(arena.getName() + " is starting.", 2);
@@ -364,11 +400,15 @@ public class Tasks {
 
 			arena.getActives().forEach(p -> {
 				// Notify of upcoming wave
-				p.getPlayer().sendTitle(CommunicationManager.format("&6" +
-						String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
-						CommunicationManager.format("&7" + String.format(LanguageManager.messages.starting,
-								"&b15&7")),
-						Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
+				if (currentWave != 1)
+					p.getPlayer().sendTitle(CommunicationManager.format("&6" +
+							String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
+							CommunicationManager.format("&7" + String.format(LanguageManager.messages.starting,
+									"&b15&7")),
+							Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
+				else p.getPlayer().sendTitle(CommunicationManager.format("&6" +
+								String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
+						" ", Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
 
 				// Give players gem rewards
 				int multiplier;
@@ -394,12 +434,17 @@ public class Tasks {
 			});
 
 			// Notify spectators of upcoming wave
-			arena.getSpectators().forEach(p ->
+			if (currentWave != 1)
+				arena.getSpectators().forEach(p ->
+						p.getPlayer().sendTitle(CommunicationManager.format("&6" +
+								String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
+								CommunicationManager.format("&7" +
+										String.format(LanguageManager.messages.starting, "&b15&7")),
+								Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
+			else arena.getSpectators().forEach(p ->
 					p.getPlayer().sendTitle(CommunicationManager.format("&6" +
-							String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
-							CommunicationManager.format("&7" +
-									String.format(LanguageManager.messages.starting, "15")),
-							Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
+									String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
+							" ", Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
 
 			// Regenerate shops when time and notify players of it
 			if (currentWave % 10 == 0 || currentWave == 1) {
@@ -418,10 +463,12 @@ public class Tasks {
 											Utils.secondsToTicks(1))), Utils.secondsToTicks(4));
 			}
 
-			// Spawns mobs after 15 seconds
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-					Bukkit.getPluginManager().callEvent(new WaveStartEvent(arena)),
-					Utils.secondsToTicks(15));
+			// Spawn mobs after 15 seconds if not first wave
+			if (currentWave != 1)
+				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
+						Bukkit.getPluginManager().callEvent(new WaveStartEvent(arena)), Utils.secondsToTicks(15));
+			else Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
+					Bukkit.getPluginManager().callEvent(new WaveStartEvent(arena)));
 
 			// Debug message to console
 			CommunicationManager.debugInfo("Starting wave " + currentWave + " for " + arena.getName(), 2);

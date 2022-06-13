@@ -486,6 +486,14 @@ messages:
   unavailable: "Unavailable"
   unlimited: "Unlimited"
   visitWiki: "Visit the wiki"
+  villageCaptainDialogue1: "Ah, reinforcements have arrived! Thank goodness, you're just in time."
+  villageCaptainDialogue2: "The people of %s will reward you with %s for your service. I don't think we could've
+  survived another wave!"
+  villageCaptainDialogue3: "These weird portals opened up several days ago and monsters have been coming through ever
+  since. Your job is to guard us from them while we evacuate."
+  villageCaptainDialogue4: "*whispers* Should you get tired, just let the mage of the capitol know with the spell
+  '/vd leave' and you'll be transported back. We won't blame ya."
+  villageCaptainDialogue5: "Best of luck! May the spirit of %s smile upon you!"
   villagers: "Villagers"
   waiting: "Waiting"
   waitingForPlayers: "Waiting for more players to start the game."
@@ -524,6 +532,7 @@ names:
   none: "None"
   playerSpawnParticles: "Player Spawn Particles"
   timeBar: "Wave %s Time Limit"
+  villageCaptain: "Village Captain"
   villagerSpawnParticles: "Villager Spawn Particles"
   weaponShop: "Weapon Shop"
 playerStats:
