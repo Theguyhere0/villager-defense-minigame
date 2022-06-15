@@ -41,8 +41,8 @@ public class Commands implements CommandExecutor {
 	private final FileConfiguration arenaData;
 
 	public Commands() {
-		playerData = Main.plugin.getPlayerData();
-		arenaData = Main.plugin.getArenaData();
+		playerData = Main.getPlayerData();
+		arenaData = Main.getArenaData();
 	}
 	
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label,
@@ -94,8 +94,6 @@ public class Commands implements CommandExecutor {
 
 					// Admin commands
 					else {
-						FileConfiguration config = Main.plugin.getArenaData();
-
 						switch (args[1].toLowerCase()) {
 							case "lobby":
 								// Incorrect format
@@ -156,7 +154,7 @@ public class Commands implements CommandExecutor {
 												.anyMatch(arenaInstance -> !arenaInstance.isClosed()))
 											PlayerManager.notifyFailure(player,
 													"All arenas must be closed to modify this!");
-										else if (config.contains("lobby"))
+										else if (arenaData.contains("lobby"))
 											player.openInventory(Inventories.createLobbyConfirmMenu());
 										else PlayerManager.notifyFailure(player, "No lobby to remove!");
 										return true;
@@ -261,7 +259,7 @@ public class Commands implements CommandExecutor {
 											return true;
 										}
 
-										if (config.contains(path))
+										if (arenaData.contains(path))
 											player.openInventory(Inventories.createInfoBoardConfirmMenu(infoBoardID));
 										else PlayerManager.notifyFailure(player, "No info board to remove!");
 										return true;
@@ -337,7 +335,7 @@ public class Commands implements CommandExecutor {
 											return true;
 										}
 
-										if (config.contains(path))
+										if (arenaData.contains(path))
 											switch (type) {
 												case "topBalance":
 													player.openInventory(Inventories.createTopBalanceConfirmMenu());
@@ -412,7 +410,7 @@ public class Commands implements CommandExecutor {
 									}
 
 									// No lobby
-									if (!Main.plugin.getArenaData().contains("lobby")) {
+									if (!arenaData.contains("lobby")) {
 										notifyFailure(player, "Arena cannot open without a lobby!");
 										return true;
 									}
@@ -1700,7 +1698,7 @@ public class Commands implements CommandExecutor {
 
 					if (args.length == 1)
 						player.openInventory(Inventories.createPlayerStatsMenu(player));
-					else if (Main.plugin.getPlayerData().contains(args[1]))
+					else if (playerData.contains(args[1]))
 						player.openInventory(Inventories.createPlayerStatsMenu(
 								Objects.requireNonNull(Bukkit.getPlayer(args[1]))));
 					else PlayerManager.notifyFailure(player, LanguageManager.messages.noStats,
@@ -1740,6 +1738,8 @@ public class Commands implements CommandExecutor {
 					// Attempt to get arena and player
 					try {
 						arena = GameManager.getArena(player);
+						if (arena == null)
+							return true;
 						gamer = arena.getPlayer(player);
 					} catch (Exception err) {
 						PlayerManager.notifyFailure(player, LanguageManager.errors.inGame);
@@ -1805,7 +1805,7 @@ public class Commands implements CommandExecutor {
 						notifyFailure(player, LanguageManager.errors.invalidPlayer);
 						return true;
 					}
-					if (!Main.plugin.getPlayerData().contains(id.toString())) {
+					if (!playerData.contains(id.toString())) {
 						notifyFailure(player, LanguageManager.errors.invalidPlayer);
 						return true;
 					}
@@ -1817,7 +1817,7 @@ public class Commands implements CommandExecutor {
 								id + ".crystalBalance",
 								Math.max(playerData.getInt(id + ".crystalBalance") + amount, 0)
 						);
-						Main.plugin.savePlayerData();
+						Main.savePlayerData();
 						if (player != null)
 							PlayerManager.notifySuccess(player, LanguageManager.confirms.balanceSet,
 									ChatColor.AQUA, args[1],
@@ -1848,6 +1848,8 @@ public class Commands implements CommandExecutor {
 						// Attempt to get arena and player
 						try {
 							arena = GameManager.getArena(player);
+							if (arena == null)
+								return true;
 							gamer = arena.getPlayer(player);
 						} catch (Exception e) {
 							PlayerManager.notifyFailure(player, LanguageManager.errors.inGame);
@@ -2062,6 +2064,11 @@ public class Commands implements CommandExecutor {
 						// Attempt to get arena
 						try {
 							arena = GameManager.getArena(player);
+
+							if (arena == null) {
+								PlayerManager.notifyFailure(player, LanguageManager.errors.inGame);
+								return true;
+							}
 						} catch (Exception e) {
 							PlayerManager.notifyFailure(player, LanguageManager.errors.inGame);
 							return true;
@@ -2202,7 +2209,7 @@ public class Commands implements CommandExecutor {
 									});
 							arenaData.set("arenaBoard", null);
 
-							Main.plugin.saveArenaData();
+							Main.saveArenaData();
 
 							// Reload portals
 							GameManager.refreshPortals();
@@ -2273,7 +2280,7 @@ public class Commands implements CommandExecutor {
 											}
 										}
 									});
-							Main.plugin.saveArenaData();
+							Main.saveArenaData();
 
 							// Flip flag and update config.yml
 							fixed = true;
@@ -2388,7 +2395,7 @@ public class Commands implements CommandExecutor {
 											playerData.set(key, null);
 										}
 									});
-							Main.plugin.savePlayerData();
+							Main.savePlayerData();
 
 							// Reload everything
 							GameManager.refreshAll();

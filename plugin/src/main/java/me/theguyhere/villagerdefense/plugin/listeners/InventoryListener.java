@@ -113,7 +113,7 @@ public class InventoryListener implements Listener {
 
 		Player player = (Player) e.getWhoClicked();
 		int slot = e.getSlot();
-		FileConfiguration config = Main.plugin.getArenaData();
+		FileConfiguration config = Main.getArenaData();
 
 		// Custom shop editor for an arena
 		if (invID == InventoryID.CUSTOM_SHOP_EDITOR_MENU) {
@@ -150,7 +150,7 @@ public class InventoryListener implements Listener {
 				config.set(path + slot, copy);
 				PlayerManager.giveItem(player, cursor.clone(), LanguageManager.errors.inventoryFull);
 				player.setItemOnCursor(new ItemStack(Material.AIR));
-				Main.plugin.saveArenaData();
+				Main.saveArenaData();
 				player.openInventory(Inventories.createCustomItemsMenu(meta.getArena(), slot));
 				return;
 			}
@@ -845,7 +845,7 @@ public class InventoryListener implements Listener {
 			// Remove custom item, then return to custom shop editor
 			else if (buttonName.contains("YES")) {
 				config.set(meta.getArena().getPath() + ".customShop." + meta.getId(), null);
-				Main.plugin.saveArenaData();
+				Main.saveArenaData();
 				player.openInventory(meta.getArena().getCustomShopEditorMenu());
 			}
 		}
@@ -893,7 +893,7 @@ public class InventoryListener implements Listener {
 			// Remove the lobby, then return to previous menu
 			else if (buttonName.contains("YES")) {
 				config.set("lobby", null);
-				Main.plugin.saveArenaData();
+				Main.saveArenaData();
 				GameManager.reloadLobby();
 				PlayerManager.notifySuccess(player, "Lobby removed!");
 				player.openInventory(Inventories.createLobbyMenu());
@@ -929,7 +929,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("YES")) {
 				// Remove leaderboard data
 				config.set(path, null);
-				Main.plugin.saveArenaData();
+				Main.saveArenaData();
 
 				// Remove leaderboard
 				GameManager.removeLeaderboard("totalKills");
@@ -952,7 +952,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("YES")) {
 				// Remove leaderboard data
 				config.set(path, null);
-				Main.plugin.saveArenaData();
+				Main.saveArenaData();
 
 				// Remove leaderboard
 				GameManager.removeLeaderboard("topKills");
@@ -975,7 +975,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("YES")) {
 				// Remove leaderboard data
 				config.set(path, null);
-				Main.plugin.saveArenaData();
+				Main.saveArenaData();
 
 				// Remove leaderboard
 				GameManager.removeLeaderboard("totalGems");
@@ -998,7 +998,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("YES")) {
 				// Remove leaderboard data
 				config.set(path, null);
-				Main.plugin.saveArenaData();
+				Main.saveArenaData();
 
 				// Remove leaderboard
 				GameManager.removeLeaderboard("topBalance");
@@ -1021,7 +1021,7 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("YES")) {
 				// Remove leaderboard data
 				config.set(path, null);
-				Main.plugin.saveArenaData();
+				Main.saveArenaData();
 
 				// Remove leaderboard
 				GameManager.removeLeaderboard("topWave");
@@ -1944,7 +1944,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Save changes and refresh GUI
-			Main.plugin.saveArenaData();
+			Main.saveArenaData();
 			player.openInventory(Inventories.createCustomItemsMenu(meta.getArena(), meta.getId()));
 		}
 
@@ -2789,6 +2789,8 @@ public class InventoryListener implements Listener {
 			// See if the player is in a game
 			try {
 				arenaInstance = GameManager.getArena(player);
+				if (arenaInstance == null)
+					return;
 			} catch (Exception err) {
 				return;
 			}
@@ -2846,6 +2848,8 @@ public class InventoryListener implements Listener {
 			// Attempt to get arena and player
 			try {
 				arenaInstance = GameManager.getArena(player);
+				if (arenaInstance == null)
+					return;
 				gamer = arenaInstance.getPlayer(player);
 			} catch (Exception err) {
 				return;
@@ -2944,6 +2948,8 @@ public class InventoryListener implements Listener {
 			// Attempt to get arena
 			try {
 				arenaInstance = GameManager.getArena(player);
+				if (arenaInstance == null)
+					return;
 			} catch (Exception err) {
 				return;
 			}
@@ -3058,7 +3064,7 @@ public class InventoryListener implements Listener {
 
 		// Kits menu for a player
 		else if (invID == InventoryID.PLAYER_KITS_MENU) {
-			FileConfiguration playerData = Main.plugin.getPlayerData();
+			FileConfiguration playerData = Main.getPlayerData();
 			Player owner = meta.getPlayer();
 			String name = owner.getName();
 			UUID id = owner.getUniqueId();
@@ -3116,7 +3122,7 @@ public class InventoryListener implements Listener {
 				}
 			}
 
-			Main.plugin.savePlayerData();
+			Main.savePlayerData();
 			player.openInventory(Inventories.createPlayerKitsMenu(owner, name));
 		}
 
@@ -3129,9 +3135,9 @@ public class InventoryListener implements Listener {
 			// Reset player stats
 			else if (buttonName.contains("YES")) {
 				// Remove stats
-				FileConfiguration playerData = Main.plugin.getPlayerData();
+				FileConfiguration playerData = Main.getPlayerData();
 				playerData.set(player.getUniqueId().toString(), null);
-				Main.plugin.savePlayerData();
+				Main.savePlayerData();
 
 				// Reload leaderboards
 				GameManager.refreshLeaderboards();
@@ -3144,13 +3150,15 @@ public class InventoryListener implements Listener {
 
 		// Kit selection menu for an arena
 		else if (invID == InventoryID.SELECT_KITS_MENU) {
-			FileConfiguration playerData = Main.plugin.getPlayerData();
+			FileConfiguration playerData = Main.getPlayerData();
 			Arena arenaInstance;
 			VDPlayer gamer;
 
 			// Attempt to get arena and player
 			try {
 				arenaInstance = GameManager.getArena(player);
+				if (arenaInstance == null)
+					return;
 				gamer = arenaInstance.getPlayer(player);
 			} catch (Exception err) {
 				return;
@@ -3211,6 +3219,8 @@ public class InventoryListener implements Listener {
 			// Attempt to get arena and player
 			try {
 				arenaInstance = GameManager.getArena(player);
+				if (arenaInstance == null)
+					return;
 				gamer = arenaInstance.getPlayer(player);
 			} catch (Exception err) {
 				return;
@@ -3277,13 +3287,13 @@ public class InventoryListener implements Listener {
 
 		// Menu for converting crystals
 		else if (invID == InventoryID.CRYSTAL_CONVERT_MENU) {
-			FileConfiguration playerData = Main.plugin.getPlayerData();
+			FileConfiguration playerData = Main.getPlayerData();
 			Player owner = meta.getPlayer();
 			VDPlayer gamer;
 
 			// Try to get VDPlayer
 			try {
-				gamer = GameManager.getArena(owner).getPlayer(owner);
+				gamer = Objects.requireNonNull(GameManager.getArena(owner)).getPlayer(owner);
 			} catch (Exception err) {
 				return;
 			}

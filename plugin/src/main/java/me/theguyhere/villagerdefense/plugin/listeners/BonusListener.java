@@ -13,6 +13,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 
+import java.util.Objects;
+
 public class BonusListener implements Listener {
     // Damage reduction
     @EventHandler
@@ -25,13 +27,13 @@ public class BonusListener implements Listener {
 
         // Attempt to get arena and player
         try {
-            gamer = GameManager.getArena(player).getPlayer(player);
+            gamer = Objects.requireNonNull(GameManager.getArena(player)).getPlayer(player);
         } catch (Exception err) {
             return;
         }
 
         // Check if player has damage reduction achievement and is boosted
-        FileConfiguration playerData = Main.plugin.getPlayerData();
+        FileConfiguration playerData = Main.getPlayerData();
         String path = player.getUniqueId() + ".achievements";
         if (!playerData.contains(path))
             return;
@@ -64,13 +66,13 @@ public class BonusListener implements Listener {
 
         // Attempt to get arena and player
         try {
-            gamer = GameManager.getArena(player).getPlayer(player);
+            gamer = Objects.requireNonNull(GameManager.getArena(player)).getPlayer(player);
         } catch (Exception err) {
             return;
         }
 
         // Check if player has damage increase achievement and is boosted
-        FileConfiguration playerData = Main.plugin.getPlayerData();
+        FileConfiguration playerData = Main.getPlayerData();
         String path = player.getUniqueId() + ".achievements";
         if (!playerData.contains(path))
             return;

@@ -25,9 +25,9 @@ public class CustomEffectsListener implements Listener {
             return;
 
 
-        ConfigurationSection limited = Main.plugin.getCustomEffects()
+        ConfigurationSection limited = Main.getCustomEffects()
                 .getConfigurationSection("limited.onWaveComplete");
-        ConfigurationSection unlimited = Main.plugin.getCustomEffects()
+        ConfigurationSection unlimited = Main.getCustomEffects()
                 .getConfigurationSection("unlimited.onWaveComplete");
 
         // Check custom effects for limited wave arenas
@@ -62,7 +62,7 @@ public class CustomEffectsListener implements Listener {
     @EventHandler
     public void onGameWin(GameEndEvent e) {
         Arena arena = e.getArena();
-        ConfigurationSection section = Main.plugin.getCustomEffects()
+        ConfigurationSection section = Main.getCustomEffects()
                 .getConfigurationSection("limited");
 
         // Check for limited waves
@@ -90,7 +90,7 @@ public class CustomEffectsListener implements Listener {
     @EventHandler
     public void onGameLose(GameEndEvent e) {
         Arena arena = e.getArena();
-        ConfigurationSection section = Main.plugin.getCustomEffects()
+        ConfigurationSection section = Main.getCustomEffects()
                 .getConfigurationSection("limited");
 
         // Check for limited waves
@@ -118,7 +118,7 @@ public class CustomEffectsListener implements Listener {
     @EventHandler
     public void onGameEnd(GameEndEvent e) {
         Arena arena = e.getArena();
-        ConfigurationSection section = Main.plugin.getCustomEffects()
+        ConfigurationSection section = Main.getCustomEffects()
                 .getConfigurationSection("unlimited.onGameEnd");
 
         // Check for unlimited waves

@@ -33,7 +33,7 @@ public class VDExpansion extends PlaceholderExpansion {
 
     @Override
     public String onPlaceholderRequest(Player p, @NotNull String params) {
-        FileConfiguration playerData = Main.plugin.getPlayerData();
+        FileConfiguration playerData = Main.getPlayerData();
         Arena arena = null;
         OfflinePlayer player = null;
 

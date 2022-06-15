@@ -74,7 +74,7 @@ public class CommandTab implements TabCompleter {
         // The command tree for admin commands
         else if (args[0].equalsIgnoreCase("admin")) {
             StringBuilder argFrag;
-            FileConfiguration arenaData = Main.plugin.getArenaData();
+            FileConfiguration arenaData = Main.getArenaData();
 
             // First args
             if (args.length == 2) {

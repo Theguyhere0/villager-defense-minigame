@@ -170,7 +170,7 @@ public class Tasks {
 				arena.startBorderParticles();
 
 			arena.getActives().forEach(player -> {
-				FileConfiguration playerData = Main.plugin.getPlayerData();
+				FileConfiguration playerData = Main.getPlayerData();
 				String path = player.getPlayer().getUniqueId() + ".achievements";
 				Kit second;
 
@@ -256,7 +256,7 @@ public class Tasks {
 				path = player.getPlayer().getUniqueId() + ".crystalBalance";
 				player.addGems(player.getGemBoost());
 				playerData.set(path, playerData.getInt(path) - player.getGemBoost() * 5);
-				Main.plugin.savePlayerData();
+				Main.savePlayerData();
 			});
 
 			// Initiate community chest
@@ -373,7 +373,7 @@ public class Tasks {
 				}
 
 				// Set health for people with health boost and are boosted
-				FileConfiguration playerData = Main.plugin.getPlayerData();
+				FileConfiguration playerData = Main.getPlayerData();
 				String path = p.getPlayer().getUniqueId() + ".achievements";
 
 				if (playerData.contains(path) && p.isBoosted() &&

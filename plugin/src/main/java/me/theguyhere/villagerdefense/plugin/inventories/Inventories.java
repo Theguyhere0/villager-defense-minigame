@@ -1364,7 +1364,7 @@ public class Inventories {
 		List<ItemStack> frozenButtons = new ArrayList<>();
 
 		// Options to choose any of the other arenas
-		Objects.requireNonNull(Main.plugin.getArenaData().getConfigurationSection("arena")).getKeys(false)
+		Objects.requireNonNull(Main.getArenaData().getConfigurationSection("arena")).getKeys(false)
 				.forEach(id -> {
 					if (Integer.parseInt(id) != arena.getId())
 						buttons.add(
@@ -1670,7 +1670,7 @@ public class Inventories {
 
 	// Display player stats
 	public static Inventory createPlayerStatsMenu(Player player) {
-		FileConfiguration playerData = Main.plugin.getPlayerData();
+		FileConfiguration playerData = Main.getPlayerData();
 		String name = player.getName();
 		UUID id = player.getUniqueId();
 
@@ -1743,7 +1743,7 @@ public class Inventories {
 
 	// Display kits for a player
 	public static Inventory createPlayerKitsMenu(Player owner, String requester) {
-		FileConfiguration playerData = Main.plugin.getPlayerData();
+		FileConfiguration playerData = Main.getPlayerData();
 		String name = owner.getName();
 		UUID id = owner.getUniqueId();
 		String path = id + ".kits.";
@@ -1835,7 +1835,7 @@ public class Inventories {
 
 	// Display kits for a player to select
 	public static Inventory createSelectKitsMenu(Player player, Arena arena) {
-		FileConfiguration playerData = Main.plugin.getPlayerData();
+		FileConfiguration playerData = Main.getPlayerData();
 		String path = player.getUniqueId() + ".kits.";
 
 		// Create inventory
@@ -1951,7 +1951,7 @@ public class Inventories {
 
 	// Display achievements for a player
 	public static Inventory createPlayerAchievementsMenu(Player owner) {
-		List<String> achievements = Main.plugin.getPlayerData()
+		List<String> achievements = Main.getPlayerData()
 				.getStringList(owner.getUniqueId() + ".achievements");
 		List<ItemStack> buttons = new ArrayList<>();
 
@@ -2080,7 +2080,7 @@ public class Inventories {
 		);
 	}
 	public static Inventory createPlayerAchievementsMenu(Player owner, int page) {
-		List<String> achievements = Main.plugin.getPlayerData().getStringList(owner.getUniqueId() + ".achievements");
+		List<String> achievements = Main.getPlayerData().getStringList(owner.getUniqueId() + ".achievements");
 		List<ItemStack> buttons = new ArrayList<>();
 
 		buttons.add(Achievement.topBalance1().getButton(achievements.contains(Achievement.topBalance1().getID())));
@@ -2219,7 +2219,7 @@ public class Inventories {
 
 	// Display crystal converter
 	public static Inventory createCrystalConvertMenu(VDPlayer player) {
-		FileConfiguration playerData = Main.plugin.getPlayerData();
+		FileConfiguration playerData = Main.getPlayerData();
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(

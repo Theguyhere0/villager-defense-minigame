@@ -52,10 +52,10 @@ public class Leaderboard {
 		}
 
 		// Gather relevant stats
-		for (String key : Objects.requireNonNull(Main.plugin.getPlayerData().getConfigurationSection(""))
+		for (String key : Objects.requireNonNull(Main.getPlayerData().getConfigurationSection(""))
 				.getKeys(false)) {
-			if (!key.equals("logger") && Main.plugin.getPlayerData().contains(key + "." + type))
-				mapping.put(key, Main.plugin.getPlayerData().getInt(key + "." + type));
+			if (!key.equals("logger") && Main.getPlayerData().contains(key + "." + type))
+				mapping.put(key, Main.getPlayerData().getInt(key + "." + type));
 		}
 
 		// Put names and values into the leaderboard

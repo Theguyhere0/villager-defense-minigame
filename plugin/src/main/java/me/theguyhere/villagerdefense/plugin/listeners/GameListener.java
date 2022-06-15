@@ -573,7 +573,7 @@ public class GameListener implements Listener {
 		}
 
 		// Check if player has gem increase achievement and is boosted
-		FileConfiguration playerData = Main.plugin.getPlayerData();
+		FileConfiguration playerData = Main.getPlayerData();
 		String path = player.getUniqueId() + ".achievements";
 		if (playerData.contains(path) && gamer.isBoosted() &&
 				playerData.getStringList(path).contains(Achievement.topBalance9().getID()))
@@ -595,7 +595,7 @@ public class GameListener implements Listener {
 				playerData.getInt(player.getUniqueId() + ".totalGems") + earned);
 		if (playerData.getInt(player.getUniqueId() + ".topBalance") < gamer.getGems())
 			playerData.set(player.getUniqueId() + ".topBalance", gamer.getGems());
-		Main.plugin.savePlayerData();
+		Main.savePlayerData();
 
 		// Update scoreboard
 		GameManager.createBoard(gamer);
@@ -639,7 +639,7 @@ public class GameListener implements Listener {
 		e.setCancelled(true);
 
 		// Check if player has resurrection achievement and is boosted
-		FileConfiguration playerData = Main.plugin.getPlayerData();
+		FileConfiguration playerData = Main.getPlayerData();
 		String path = player.getUniqueId() + ".achievements";
 		Random random = new Random();
 		if (playerData.contains(path) && gamer.isBoosted() && random.nextDouble() < .1 &&
@@ -755,7 +755,7 @@ public class GameListener implements Listener {
 									LanguageManager.messages.earnedGems, ChatColor.AQUA,
 									Integer.toString(earned));
 
-							FileConfiguration playerData = Main.plugin.getPlayerData();
+							FileConfiguration playerData = Main.getPlayerData();
 
 							// Update player stats
 							playerData.set(vdPlayer.getID() + ".totalGems",
@@ -763,7 +763,7 @@ public class GameListener implements Listener {
 							if (playerData.getInt(vdPlayer.getID() + ".topBalance") <
 									vdPlayer.getGems())
 								playerData.set(vdPlayer.getID() + ".topBalance", vdPlayer.getGems());
-							Main.plugin.savePlayerData();
+							Main.savePlayerData();
 
 							// Update scoreboard
 							GameManager.createBoard(vdPlayer);
@@ -796,14 +796,14 @@ public class GameListener implements Listener {
 				PlayerManager.notifySuccess(player, LanguageManager.messages.earnedGems,
 						ChatColor.AQUA, Integer.toString(earned));
 
-				FileConfiguration playerData = Main.plugin.getPlayerData();
+				FileConfiguration playerData = Main.getPlayerData();
 
 				// Update player stats
 				playerData.set(player.getUniqueId() + ".totalGems",
 						playerData.getInt(player.getUniqueId() + ".totalGems") + earned);
 				if (playerData.getInt(player.getUniqueId() + ".topBalance") < gamer.getGems())
 					playerData.set(player.getUniqueId() + ".topBalance", gamer.getGems());
-				Main.plugin.savePlayerData();
+				Main.savePlayerData();
 
 				// Update scoreboard
 				GameManager.createBoard(gamer);
@@ -867,6 +867,8 @@ public class GameListener implements Listener {
 		// Attempt to get arena and player
 		try {
 			arena = GameManager.getArena(player);
+			if (arena == null)
+				return;
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
 			return;
@@ -1211,6 +1213,8 @@ public class GameListener implements Listener {
 		// Attempt to get arena
 		try {
 			arena = GameManager.getArena(player);
+			if (arena == null)
+				return;
 		} catch (Exception err) {
 			return;
 		}
@@ -1242,6 +1246,8 @@ public class GameListener implements Listener {
 		// Attempt to get VDPlayer and arena
 		try {
 			arena = GameManager.getArena(player);
+			if (arena == null)
+				return;
 			gamer = arena.getPlayer(player);
 		} catch (Exception err) {
 			return;
@@ -1370,6 +1376,8 @@ public class GameListener implements Listener {
 		// Attempt to get arena
 		try {
 			arena = GameManager.getArena(player);
+			if (arena == null)
+				return;
 		} catch (Exception err) {
 			return;
 		}
@@ -1436,6 +1444,8 @@ public class GameListener implements Listener {
 		// Attempt to get arena
 		try {
 			arena = GameManager.getArena(player);
+			if (arena == null)
+				return;
 		} catch (Exception err) {
 			return;
 		}
