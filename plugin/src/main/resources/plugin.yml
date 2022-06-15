@@ -1,6 +1,6 @@
 main: me.theguyhere.villagerdefense.plugin.Main
 name: VillagerDefense
-version: 1.2.0
+version: 1.2.1
 author: Theguyhere
 api-version: 1.16
 softdepend: [WorldGuard, WorldEdit, Multiverse-core, PlaceholderAPI]
