@@ -83,8 +83,12 @@ public class GameManager {
 	}
 
 	public static Arena getArena(Player player) {
-		return arenas.values().stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
-				.collect(Collectors.toList()).get(0);
+		try {
+			return arenas.values().stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
+					.collect(Collectors.toList()).get(0);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	public static void addArena(int id, Arena arena) {
@@ -113,13 +117,13 @@ public class GameManager {
 	 * @param player Player to give a scoreboard.
 	 */
 	public static void createBoard(VDPlayer player) {
-		// Create scoreboard manager and check that it isn't null
 		ScoreboardManager manager = Bukkit.getScoreboardManager();
-		assert manager != null;
-
+		if (manager == null)
+			return;
 		Scoreboard board = manager.getNewScoreboard();
-		Arena arena = arenas.values().stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
-				.collect(Collectors.toList()).get(0);
+		Arena arena = getArena(player.getPlayer());
+		if (arena == null)
+			return;
 
 		// Create score board
 		Objective obj = board.registerNewObjective("VillagerDefense", "dummy",
