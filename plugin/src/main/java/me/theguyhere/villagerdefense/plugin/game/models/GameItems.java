@@ -123,8 +123,8 @@ public class GameItems {
 		enchants.put(Enchantment.DURABILITY, 1);
 
 		ItemStack item = ItemManager.createItem(Material.DIAMOND,
-				CommunicationManager.format("&b&l" + LanguageManager.names.crystalConverter),
-				ItemManager.HIDE_ENCHANT_FLAGS, enchants);
+				CommunicationManager.format("&b&l" + String.format(LanguageManager.names.crystalConverter,
+						LanguageManager.names.crystal)), ItemManager.HIDE_ENCHANT_FLAGS, enchants);
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}

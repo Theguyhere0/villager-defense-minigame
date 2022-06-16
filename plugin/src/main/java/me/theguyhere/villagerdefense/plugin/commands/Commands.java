@@ -1672,7 +1672,7 @@ public class Commands implements CommandExecutor {
 									String.format(LanguageManager.messages.help, "Villager Defense") +
 									" (1/3) ----->"));
 							player.sendMessage(CommunicationManager.format("&6 " +
-									LanguageManager.messages.help1));
+									String.format(LanguageManager.messages.help1, LanguageManager.names.crystals)));
 					}
 					return true;
 

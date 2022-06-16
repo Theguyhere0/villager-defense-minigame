@@ -214,7 +214,7 @@ challenges:
 confirms:
   achievement: "You've unlocked achievement %s!"
   autoUpdate: "%s has been automatically updated to version %s."
-  balanceSet: "%s's crystal balance was set to %s."
+  balanceSet: "%s's Crystal balance was set to %s."
   boostAdd: "You've received a permanent boost! Check your achievements for details."
   boots: "Boots equipped!"
   buy: "Item purchased!"
@@ -222,7 +222,7 @@ confirms:
   challengeAdd: "Challenge added!"
   challengeDelete: "Challenge removed!"
   chestplate: "Chestplate equipped!"
-  crystalAdd: "%s crystal(s) were added to your balance."
+  crystalAdd: "%s Crystal(s) were added to your balance."
   enchant: "Item enchanted!"
   helmet: "Helmet equipped!"
   kitBuy: "Kit purchased!"
@@ -403,10 +403,10 @@ messages:
   closed: "Closed"
   commandFormat: "Command format: %s"
   consumable: "%s level %s consumables"
-  crystalBonus: "+%s crystal bonus"
-  crystalBalance: "Crystal Balance"
-  crystalsEarned: "You earned %s crystals this game!"
-  crystalsToConvert: "Crystals to convert"
+  crystalBonus: "+%s %s bonus"
+  crystalBalance: "%s Balance"
+  crystalsEarned: "You earned %s %s this game!"
+  crystalsToConvert: "%s to convert"
   customShopInv: "Custom Shop Inventory"
   death: "%s has died and will respawn next wave."
   death1: "You died!"
@@ -432,8 +432,8 @@ messages:
   giftKitsDescription: "Kits give one-time benefits per game or respawn"
   help: "%s Help"
   help1: "Villager Defense is a mini-game where the goal is to protect villagers from monsters for as many waves as you
-  can! Use monster drops to buy better items from the in-game shop. Use crystals to buy various unique and powerful\
-  kits and earn special rewards from achievements."
+  can! Use monster drops to buy better items from the in-game shop. Use %s to buy various unique and powerful kits and
+  earn special rewards from achievements."
   help2: "Quick Start"
   help2a: "Each VD arena has its own villager NPC that acts as the portal. To join a game, right click the portal. Left
   click the portal to get more information about the arena. To leave, use the command /vd leave. /vd kits will allow
@@ -443,7 +443,7 @@ messages:
   info1: "Left click a portal for arena info."
   info2: "Right click a portal to enter an arena."
   info3: "Use %s to check personal stats."
-  info4: "Use %s to buy kits using crystals."
+  info4: "Use %s to buy kits using %s."
   info5: "Use %s to get help with Villager Defense."
   info6: "Use %s to leave an arena."
   itemShopDesc: "Resets every %s rounds"
@@ -511,7 +511,8 @@ names:
   communityChest: "Community Chest"
   consumableShop: "Consumable Shop"
   contents: "Contents"
-  crystalConverter: "Crystal Catalytic Converter"
+  crystal: "Crystal"
+  crystalConverter: "%s Catalytic Converter"
   crystals: "Crystals"
   customShop: "Custom Shop"
   defaultShop: "Default Shop"
@@ -558,8 +559,8 @@ playerStats:
     leaderboard: "Total Kills Leaderboard"
 rewards:
   cooldownReduction: "Reward: Permanent 10% reduction to ability cooldown"
-  crystalConvert: "Reward: Option to convert 5 crystals for 1 gem at start of game"
-  crystals: "Reward: %s Crystals"
+  crystalConvert: "Reward: Option to convert 5 %s for 1 gem at start of game"
+  crystals: "Reward: %s %s"
   damageIncrease: "Reward: Permanent 10% increase to damage dealt"
   damageReduction: "Reward: Permanent 10% reduction to damage taken"
   gemIncrease: "Reward: Permanent 10% increase in gems received"

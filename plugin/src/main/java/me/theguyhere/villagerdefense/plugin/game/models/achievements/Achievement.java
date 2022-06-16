@@ -73,8 +73,7 @@ public class Achievement {
         List<String> descriptions = CommunicationManager.formatDescriptionList(ChatColor.GRAY, description);
         descriptions.add("");
         descriptions.addAll(CommunicationManager.formatDescriptionList(obtained ? ChatColor.AQUA : ChatColor.GREEN,
-                reward.getType() == RewardType.BOOST ? reward.getDescription() :
-                        String.format(reward.getDescription(), Integer.toString(reward.getValue()))));
+                reward.getDescription()));
 
         return descriptions.toArray(new String[]{});
     }

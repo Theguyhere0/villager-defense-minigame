@@ -433,7 +433,7 @@ public class ArenaListener implements Listener {
                 Main.getPlayerData().set(player.getUniqueId() + ".crystalBalance",
                         Main.getPlayerData().getInt(player.getUniqueId() + ".crystalBalance") + bonus);
                 PlayerManager.notifySuccess(player, LanguageManager.messages.crystalsEarned,
-                        ChatColor.AQUA, String.format("%d (+%d)", reward, bonus));
+                        ChatColor.AQUA, String.format("%d (+%d)", reward, bonus), LanguageManager.names.crystals);
             }
 
             Tasks task = arena.getTask();
@@ -576,7 +576,7 @@ public class ArenaListener implements Listener {
                         Main.getPlayerData().getInt(vdPlayer.getID() + ".crystalBalance") + bonus);
                 PlayerManager.notifySuccess(vdPlayer.getPlayer(),
                         LanguageManager.messages.crystalsEarned,
-                        ChatColor.AQUA, String.format("%d (+%d)", reward, bonus));
+                        ChatColor.AQUA, String.format("%d (+%d)", reward, bonus), LanguageManager.names.crystals);
             });
         }
 

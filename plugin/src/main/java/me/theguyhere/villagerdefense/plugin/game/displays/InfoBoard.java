@@ -25,7 +25,7 @@ public class InfoBoard {
 				CommunicationManager.format(ChatColor.GOLD, LanguageManager.messages.info3, ChatColor.AQUA,
 						"/vd stats"),
 				CommunicationManager.format(ChatColor.GOLD, LanguageManager.messages.info4, ChatColor.AQUA,
-						"/vd kits"),
+						"/vd kits", LanguageManager.names.crystals),
 				CommunicationManager.format(ChatColor.GOLD, LanguageManager.messages.info5, ChatColor.AQUA,
 						"/vd help"),
 				CommunicationManager.format(ChatColor.GOLD, LanguageManager.messages.info6, ChatColor.AQUA,

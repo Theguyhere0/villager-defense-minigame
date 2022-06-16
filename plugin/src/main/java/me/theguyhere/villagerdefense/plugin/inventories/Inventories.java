@@ -1735,8 +1735,8 @@ public class Inventories {
 
 		// Crystal balance
 		inv.setItem(8, ItemManager.createItem(Material.DIAMOND,
-				CommunicationManager.format("&b&l" + LanguageManager.messages.crystalBalance +
-						": &b" + playerData.getInt(id + ".crystalBalance"))));
+				CommunicationManager.format("&b&l" + String.format(LanguageManager.messages.crystalBalance,
+						LanguageManager.names.crystal) + ": &b" + playerData.getInt(id + ".crystalBalance"))));
 
 		return inv;
 	}
@@ -1824,8 +1824,8 @@ public class Inventories {
 		// Crystal balance
 		if (name.equals(requester))
 			inv.setItem(52, ItemManager.createItem(Material.DIAMOND,
-					CommunicationManager.format("&b&l" + LanguageManager.messages.crystalBalance +
-							": &b" + playerData.getInt(id + ".crystalBalance"))));
+					CommunicationManager.format("&b&l" + String.format(LanguageManager.messages.crystalBalance,
+							LanguageManager.names.crystal) + ": &b" + playerData.getInt(id + ".crystalBalance"))));
 
 		// Option to exit
 		inv.setItem(53, Buttons.exit());
@@ -2225,13 +2225,14 @@ public class Inventories {
 		Inventory inv = Bukkit.createInventory(
 				new InventoryMeta(InventoryID.CRYSTAL_CONVERT_MENU, InventoryType.MENU, player.getPlayer()),
 				27,
-				CommunicationManager.format("&9&l" + LanguageManager.names.crystalConverter)
+				CommunicationManager.format("&9&l" + String.format(LanguageManager.names.crystalConverter,
+						LanguageManager.names.crystal))
 		);
 
 		// Display crystals to convert
 		inv.setItem(3, ItemManager.createItem(Material.DIAMOND_BLOCK,
-				CommunicationManager.format("&b&l" + LanguageManager.messages.crystalsToConvert + ": " +
-						(player.getGemBoost() * 5))));
+				CommunicationManager.format("&b&l" + String.format(LanguageManager.messages.crystalsToConvert,
+						LanguageManager.names.crystals) + ": " + (player.getGemBoost() * 5))));
 
 		// Display gems to receive
 		inv.setItem(5, ItemManager.createItem(Material.EMERALD_BLOCK,
@@ -2240,8 +2241,9 @@ public class Inventories {
 
 		// Crystal balance display
 		inv.setItem(8, ItemManager.createItem(Material.DIAMOND,
-				CommunicationManager.format("&b&l" + LanguageManager.messages.crystalBalance +
-						": &b" + playerData.getInt(player.getPlayer().getUniqueId() + ".crystalBalance"))));
+				CommunicationManager.format("&b&l" + String.format(LanguageManager.messages.crystalBalance,
+						LanguageManager.names.crystal) + ": &b" +
+						playerData.getInt(player.getPlayer().getUniqueId() + ".crystalBalance"))));
 
 		// Option to increase by 1
 		inv.setItem(9, ItemManager.createItem(Material.LIME_CONCRETE,

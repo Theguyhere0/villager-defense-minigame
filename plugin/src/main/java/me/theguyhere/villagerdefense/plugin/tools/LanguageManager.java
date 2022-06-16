@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.tools;
 
+import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLanguageKeyException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -877,6 +878,7 @@ public class LanguageManager {
         public final @NotNull String communityChest;
         public final @NotNull String consumableShop;
         public final @NotNull String contents;
+        public final @NotNull String crystal;
         public final @NotNull String crystalConverter;
         public final @NotNull String crystals;
         public final @NotNull String customShop;
@@ -916,8 +918,19 @@ public class LanguageManager {
             communityChest = getConfigString(pathPrefix + ".communityChest");
             consumableShop = getConfigString(pathPrefix + ".consumableShop");
             contents = getConfigString(pathPrefix + ".contents");
+
+            // Special check for economy plugin to replace currency name
+            if (Main.plugin.getConfig().getBoolean("vaultEconomy") && Main.getEconomy() != null)
+                crystal = Main.getEconomy().currencyNameSingular();
+            else crystal = getConfigString(pathPrefix + ".crystal");
+
             crystalConverter = getConfigString(pathPrefix + ".crystalConverter");
-            crystals = getConfigString(pathPrefix + ".crystals");
+
+            // Special check for economy plugin to replace currency name
+            if (Main.plugin.getConfig().getBoolean("vaultEconomy") && Main.getEconomy() != null)
+                crystals = Main.getEconomy().currencyNamePlural();
+            else crystals = getConfigString(pathPrefix + ".crystals");
+
             customShop = getConfigString(pathPrefix + ".customShop");
             defaultShop = getConfigString(pathPrefix + ".defaultShop");
             easy = getConfigString(pathPrefix + ".easy");

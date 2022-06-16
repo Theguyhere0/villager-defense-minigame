@@ -131,7 +131,7 @@ public class Challenge {
         challenge.addMasterDescription(CommunicationManager.format("&6" +
                 LanguageManager.challenges.amputee.description2));
         challenge.addMasterDescription(CommunicationManager.format("&a" +
-                String.format(LanguageManager.messages.crystalBonus, bonus + "%")));
+                String.format(LanguageManager.messages.crystalBonus, bonus + "%", LanguageManager.names.crystal)));
 
         return challenge;
     }
@@ -144,7 +144,7 @@ public class Challenge {
         challenge.addMasterDescription(CommunicationManager.format("&6" +
                 String.format(LanguageManager.challenges.clumsy.description2, "2%")));
         challenge.addMasterDescription(CommunicationManager.format("&a" +
-                String.format(LanguageManager.messages.crystalBonus, bonus + "%")));
+                String.format(LanguageManager.messages.crystalBonus, bonus + "%", LanguageManager.names.crystal)));
 
         return challenge;
     }
@@ -157,7 +157,7 @@ public class Challenge {
         challenge.addMasterDescription(CommunicationManager.format("&6" +
                 String.format(LanguageManager.challenges.featherweight.description2, "5")));
         challenge.addMasterDescription(CommunicationManager.format("&a" +
-                String.format(LanguageManager.messages.crystalBonus, bonus + "%")));
+                String.format(LanguageManager.messages.crystalBonus, bonus + "%", LanguageManager.names.crystal)));
 
         return challenge;
     }
@@ -170,7 +170,7 @@ public class Challenge {
         challenge.addMasterDescription(CommunicationManager.format("&6" +
                 LanguageManager.challenges.pacifist.description2));
         challenge.addMasterDescription(CommunicationManager.format("&a" +
-                String.format(LanguageManager.messages.crystalBonus, bonus + "%")));
+                String.format(LanguageManager.messages.crystalBonus, bonus + "%", LanguageManager.names.crystal)));
 
         return challenge;
     }
@@ -183,7 +183,7 @@ public class Challenge {
         challenge.addMasterDescription(CommunicationManager.format("&6" +
                 LanguageManager.challenges.dwarf.description2));
         challenge.addMasterDescription(CommunicationManager.format("&a" +
-                String.format(LanguageManager.messages.crystalBonus, bonus + "%")));
+                String.format(LanguageManager.messages.crystalBonus, bonus + "%", LanguageManager.names.crystal)));
 
         return challenge;
     }
@@ -196,7 +196,7 @@ public class Challenge {
         challenge.addMasterDescription(CommunicationManager.format("&6" +
                 LanguageManager.challenges.uhc.description2));
         challenge.addMasterDescription(CommunicationManager.format("&a" +
-                String.format(LanguageManager.messages.crystalBonus, bonus + "%")));
+                String.format(LanguageManager.messages.crystalBonus, bonus + "%", LanguageManager.names.crystal)));
 
         return challenge;
     }
@@ -209,7 +209,7 @@ public class Challenge {
         challenge.addMasterDescription(CommunicationManager.format("&6" +
                 LanguageManager.challenges.explosive.description2));
         challenge.addMasterDescription(CommunicationManager.format("&a" +
-                String.format(LanguageManager.messages.crystalBonus, bonus + "%")));
+                String.format(LanguageManager.messages.crystalBonus, bonus + "%", LanguageManager.names.crystal)));
 
         return challenge;
     }
@@ -222,7 +222,7 @@ public class Challenge {
         challenge.addMasterDescription(CommunicationManager.format("&6" +
                 LanguageManager.challenges.naked.description2));
         challenge.addMasterDescription(CommunicationManager.format("&a" +
-                String.format(LanguageManager.messages.crystalBonus, bonus + "%")));
+                String.format(LanguageManager.messages.crystalBonus, bonus + "%", LanguageManager.names.crystal)));
 
         return challenge;
     }
@@ -235,7 +235,7 @@ public class Challenge {
         challenge.addMasterDescription(CommunicationManager.format("&6" +
                 LanguageManager.challenges.blind.description2));
         challenge.addMasterDescription(CommunicationManager.format("&a" +
-                String.format(LanguageManager.messages.crystalBonus, bonus + "%")));
+                String.format(LanguageManager.messages.crystalBonus, bonus + "%", LanguageManager.names.crystal)));
 
         return challenge;
     }
