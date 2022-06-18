@@ -37,11 +37,17 @@ public class LanguageManager {
     }
 
     private static abstract class Section {
+        String pathPrefix;
+
+        void setPathPrefix(String pathPrefix) {
+            this.pathPrefix = pathPrefix + ".";
+        }
+
         @NotNull String getConfigString(String path) throws InvalidLanguageKeyException {
-            String result = config.getString(path);
+            String result = config.getString(pathPrefix + path);
             if (result == null)
-                throw new InvalidLanguageKeyException("The key '" + path + "' is either missing or corrupt in the " +
-                        "active language file");
+                throw new InvalidLanguageKeyException("The key '" + pathPrefix + path + "' is either missing or" +
+                        " corrupt in the active language file");
             else return result;
         }
     }
@@ -112,18 +118,18 @@ public class LanguageManager {
             public final @NotNull String description;
 
             private AchievementSection(@NotNull String key) throws InvalidLanguageKeyException {
-                String pathPrefix = "achievements." + key;
+                setPathPrefix("achievements." + key);
 
-                one = getConfigString(pathPrefix + ".1");
-                two = getConfigString(pathPrefix + ".2");
-                three = getConfigString(pathPrefix + ".3");
-                four = getConfigString(pathPrefix + ".4");
-                five = getConfigString(pathPrefix + ".5");
-                six = getConfigString(pathPrefix + ".6");
-                seven = getConfigString(pathPrefix + ".7");
-                eight = getConfigString(pathPrefix + ".8");
-                nine = getConfigString(pathPrefix + ".9");
-                description = getConfigString(pathPrefix + ".description");
+                one = getConfigString("1");
+                two = getConfigString("2");
+                three = getConfigString("3");
+                four = getConfigString("4");
+                five = getConfigString("5");
+                six = getConfigString("6");
+                seven = getConfigString("7");
+                eight = getConfigString("8");
+                nine = getConfigString("9");
+                description = getConfigString("description");
             }
         }
 
@@ -134,12 +140,12 @@ public class LanguageManager {
             public final @NotNull String wave;
 
             private AchievementPortion(@NotNull String key) throws InvalidLanguageKeyException {
-                String pathPrefix = "achievements." + key;
+                setPathPrefix("achievements." + key);
 
-                alone = getConfigString(pathPrefix + ".alone");
-                balance = getConfigString(pathPrefix + ".balance");
-                kills = getConfigString(pathPrefix + ".kills");
-                wave = getConfigString(pathPrefix + ".wave");
+                alone = getConfigString("alone");
+                balance = getConfigString("balance");
+                kills = getConfigString("kills");
+                wave = getConfigString("wave");
             }
         }
 
@@ -148,10 +154,10 @@ public class LanguageManager {
             public final @NotNull String description;
 
             private SpecialAchievement(@NotNull String key) throws InvalidLanguageKeyException {
-                String pathPrefix = "achievements." + key;
+                setPathPrefix("achievements." + key);
 
-                name = getConfigString(pathPrefix + ".name");
-                description = getConfigString(pathPrefix + ".description");
+                name = getConfigString("name");
+                description = getConfigString("description");
             }
         }
     }
@@ -194,10 +200,10 @@ public class LanguageManager {
             public final @NotNull String description;
 
             private ArenaStat(@NotNull String key) throws InvalidLanguageKeyException {
-                String pathPrefix = "arenaStats." + key;
+                setPathPrefix("arenaStats." + key);
 
-                name = getConfigString(pathPrefix + ".name");
-                description = getConfigString(pathPrefix + ".description");
+                name = getConfigString("name");
+                description = getConfigString("description");
             }
         }
     }
@@ -231,11 +237,11 @@ public class LanguageManager {
             public final @NotNull String description2;
 
             private Challenge(@NotNull String key) throws InvalidLanguageKeyException {
-                String pathPrefix = "challenges." + key;
+                setPathPrefix("challenges." + key);
 
-                name = getConfigString(pathPrefix + ".name");
-                description1 = getConfigString(pathPrefix + ".description1");
-                description2 = getConfigString(pathPrefix + ".description2");
+                name = getConfigString("name");
+                description1 = getConfigString("description1");
+                description2 = getConfigString("description2");
             }
         }
     }
@@ -261,26 +267,26 @@ public class LanguageManager {
         public final @NotNull String reset;
 
         private Confirms() throws InvalidLanguageKeyException {
-            String pathPrefix = "confirms";
+            setPathPrefix("confirms");
 
-            achievement = getConfigString(pathPrefix + ".achievement");
-            autoUpdate = getConfigString(pathPrefix + ".autoUpdate");
-            balanceSet = getConfigString(pathPrefix + ".balanceSet");
-            boostAdd = getConfigString(pathPrefix + ".boostAdd");
-            boots = getConfigString(pathPrefix + ".boots");
-            buy = getConfigString(pathPrefix + ".buy");
-            carePackage = getConfigString(pathPrefix + ".carePackage");
-            challengeAdd = getConfigString(pathPrefix + ".challengeAdd");
-            challengeDelete = getConfigString(pathPrefix + ".challengeDelete");
-            chestplate = getConfigString(pathPrefix + ".chestplate");
-            crystalAdd = getConfigString(pathPrefix + ".crystalAdd");
-            enchant = getConfigString(pathPrefix + ".enchant");
-            helmet = getConfigString(pathPrefix + ".helmet");
-            kitBuy = getConfigString(pathPrefix + ".kitBuy");
-            kitSelect = getConfigString(pathPrefix + ".kitSelect");
-            kitUpgrade = getConfigString(pathPrefix + ".kitUpgrade");
-            leggings = getConfigString(pathPrefix + ".leggings");
-            reset = getConfigString(pathPrefix + ".reset");
+            achievement = getConfigString("achievement");
+            autoUpdate = getConfigString("autoUpdate");
+            balanceSet = getConfigString("balanceSet");
+            boostAdd = getConfigString("boostAdd");
+            boots = getConfigString("boots");
+            buy = getConfigString("buy");
+            carePackage = getConfigString("carePackage");
+            challengeAdd = getConfigString("challengeAdd");
+            challengeDelete = getConfigString("challengeDelete");
+            chestplate = getConfigString("chestplate");
+            crystalAdd = getConfigString("crystalAdd");
+            enchant = getConfigString("enchant");
+            helmet = getConfigString("helmet");
+            kitBuy = getConfigString("kitBuy");
+            kitSelect = getConfigString("kitSelect");
+            kitUpgrade = getConfigString("kitUpgrade");
+            leggings = getConfigString("leggings");
+            reset = getConfigString("reset");
         }
     }
 
@@ -306,27 +312,27 @@ public class LanguageManager {
         public final @NotNull String unbreaking;
 
         private Enchants() throws InvalidLanguageKeyException {
-            String pathPrefix = "enchants";
+            setPathPrefix("enchants");
 
-            blastProtection = getConfigString(pathPrefix + ".blastProtection");
-            fireAspect = getConfigString(pathPrefix + ".fireAspect");
-            flame = getConfigString(pathPrefix + ".flame");
-            infinity = getConfigString(pathPrefix + ".infinity");
-            knockback = getConfigString(pathPrefix + ".knockback");
-            loyalty = getConfigString(pathPrefix + ".loyalty");
-            mending = getConfigString(pathPrefix + ".mending");
-            multishot = getConfigString(pathPrefix + ".multishot");
-            piercing = getConfigString(pathPrefix + ".piercing");
-            power = getConfigString(pathPrefix + ".power");
-            projectileProtection = getConfigString(pathPrefix + ".projectileProtection");
-            protection = getConfigString(pathPrefix + ".protection");
-            punch = getConfigString(pathPrefix + ".punch");
-            quickCharge = getConfigString(pathPrefix + ".quickCharge");
-            sharpness = getConfigString(pathPrefix + ".sharpness");
-            smite = getConfigString(pathPrefix + ".smite");
-            sweepingEdge = getConfigString(pathPrefix + ".sweepingEdge");
-            thorns = getConfigString(pathPrefix + ".thorns");
-            unbreaking = getConfigString(pathPrefix + ".unbreaking");
+            blastProtection = getConfigString("blastProtection");
+            fireAspect = getConfigString("fireAspect");
+            flame = getConfigString("flame");
+            infinity = getConfigString("infinity");
+            knockback = getConfigString("knockback");
+            loyalty = getConfigString("loyalty");
+            mending = getConfigString("mending");
+            multishot = getConfigString("multishot");
+            piercing = getConfigString("piercing");
+            power = getConfigString("power");
+            projectileProtection = getConfigString("projectileProtection");
+            protection = getConfigString("protection");
+            punch = getConfigString("punch");
+            quickCharge = getConfigString("quickCharge");
+            sharpness = getConfigString("sharpness");
+            smite = getConfigString("smite");
+            sweepingEdge = getConfigString("sweepingEdge");
+            thorns = getConfigString("thorns");
+            unbreaking = getConfigString("unbreaking");
         }
     }
 
@@ -379,54 +385,54 @@ public class LanguageManager {
         public final @NotNull String wolf;
 
         private Errors() throws InvalidLanguageKeyException {
-            String pathPrefix = "errors";
+            setPathPrefix("errors");
 
-            activePlayer = getConfigString(pathPrefix + ".activePlayer");
-            amputee = getConfigString(pathPrefix + ".amputee");
-            arenaInProgress = getConfigString(pathPrefix + ".arenaInProgress");
-            arenaNoPlayers = getConfigString(pathPrefix + ".arenaNoPlayers");
-            bounds = getConfigString(pathPrefix + ".bounds");
-            buy = getConfigString(pathPrefix + ".buy");
-            buyGeneral = getConfigString(pathPrefix + ".buyGeneral");
-            close = getConfigString(pathPrefix + ".close");
-            command = getConfigString(pathPrefix + ".command");
-            communityChest = getConfigString(pathPrefix + ".communityChest");
-            cooldown = getConfigString(pathPrefix + ".cooldown");
-            customShop = getConfigString(pathPrefix + ".customShop");
-            emptyArena = getConfigString(pathPrefix + ".emptyArena");
-            enchant = getConfigString(pathPrefix + ".enchant");
-            enchantShop = getConfigString(pathPrefix + ".enchantShop");
-            endingSoon = getConfigString(pathPrefix + ".endingSoon");
-            fatal = getConfigString(pathPrefix + ".fatal");
-            forcedChallenge = getConfigString(pathPrefix + ".forcedChallenge");
-            golem = getConfigString(pathPrefix + ".golem");
-            hasForcedChallenges = getConfigString(pathPrefix + ".hasForcedChallenges");
-            inGame = getConfigString(pathPrefix + ".inGame");
-            integer = getConfigString(pathPrefix + ".integer");
-            invalidPlayer = getConfigString(pathPrefix + ".invalidPlayer");
-            inventoryFull = getConfigString(pathPrefix + ".inventoryFull");
-            join = getConfigString(pathPrefix + ".join");
-            kitBuy = getConfigString(pathPrefix + ".kitBuy");
-            kitSelect = getConfigString(pathPrefix + ".kitSelect");
-            kitUpgrade = getConfigString(pathPrefix + ".kitUpgrade");
-            level = getConfigString(pathPrefix + ".level");
-            naked = getConfigString(pathPrefix + ".naked");
-            ninja = getConfigString(pathPrefix + ".ninja");
-            noArena = getConfigString(pathPrefix + ".noArena");
-            noGameEnd = getConfigString(pathPrefix + ".noGameEnd");
-            normalShop = getConfigString(pathPrefix + ".normalShop");
-            notInGame = getConfigString(pathPrefix + ".notInGame");
-            outdated = getConfigString(pathPrefix + ".outdated");
-            permission = getConfigString(pathPrefix + ".permission");
-            phantomArena = getConfigString(pathPrefix + ".phantomArena");
-            phantomOwn = getConfigString(pathPrefix + ".phantomOwn");
-            phantomPlayer = getConfigString(pathPrefix + ".phantomPlayer");
-            playerOnlyCommand = getConfigString(pathPrefix + ".playerOnlyCommand");
-            startingSoon = getConfigString(pathPrefix + ".startingSoon");
-            suicide = getConfigString(pathPrefix + ".suicide");
-            suicideActive = getConfigString(pathPrefix + ".suicideActive");
-            teleport = getConfigString(pathPrefix + ".teleport");
-            wolf = getConfigString(pathPrefix + ".wolf");
+            activePlayer = getConfigString("activePlayer");
+            amputee = getConfigString("amputee");
+            arenaInProgress = getConfigString("arenaInProgress");
+            arenaNoPlayers = getConfigString("arenaNoPlayers");
+            bounds = getConfigString("bounds");
+            buy = getConfigString("buy");
+            buyGeneral = getConfigString("buyGeneral");
+            close = getConfigString("close");
+            command = getConfigString("command");
+            communityChest = getConfigString("communityChest");
+            cooldown = getConfigString("cooldown");
+            customShop = getConfigString("customShop");
+            emptyArena = getConfigString("emptyArena");
+            enchant = getConfigString("enchant");
+            enchantShop = getConfigString("enchantShop");
+            endingSoon = getConfigString("endingSoon");
+            fatal = getConfigString("fatal");
+            forcedChallenge = getConfigString("forcedChallenge");
+            golem = getConfigString("golem");
+            hasForcedChallenges = getConfigString("hasForcedChallenges");
+            inGame = getConfigString("inGame");
+            integer = getConfigString("integer");
+            invalidPlayer = getConfigString("invalidPlayer");
+            inventoryFull = getConfigString("inventoryFull");
+            join = getConfigString("join");
+            kitBuy = getConfigString("kitBuy");
+            kitSelect = getConfigString("kitSelect");
+            kitUpgrade = getConfigString("kitUpgrade");
+            level = getConfigString("level");
+            naked = getConfigString("naked");
+            ninja = getConfigString("ninja");
+            noArena = getConfigString("noArena");
+            noGameEnd = getConfigString("noGameEnd");
+            normalShop = getConfigString("normalShop");
+            notInGame = getConfigString("notInGame");
+            outdated = getConfigString("outdated");
+            permission = getConfigString("permission");
+            phantomArena = getConfigString("phantomArena");
+            phantomOwn = getConfigString("phantomOwn");
+            phantomPlayer = getConfigString("phantomPlayer");
+            playerOnlyCommand = getConfigString("playerOnlyCommand");
+            startingSoon = getConfigString("startingSoon");
+            suicide = getConfigString("suicide");
+            suicideActive = getConfigString("suicideActive");
+            teleport = getConfigString("teleport");
+            wolf = getConfigString("wolf");
         }
     }
 
@@ -486,10 +492,10 @@ public class LanguageManager {
             public final @NotNull String description;
 
             private Kit(@NotNull String key) throws InvalidLanguageKeyException {
-                String pathPrefix = "kits." + key;
+                setPathPrefix("kits." + key);
 
-                name = getConfigString(pathPrefix + ".name");
-                description = getConfigString(pathPrefix + ".description");
+                name = getConfigString("name");
+                description = getConfigString("description");
             }
         }
 
@@ -499,10 +505,10 @@ public class LanguageManager {
             public final @NotNull Items items;
 
             private GiftKit(@NotNull String key) throws InvalidLanguageKeyException {
-                String pathPrefix = "kits." + key;
+                setPathPrefix("kits." + key);
 
-                name = getConfigString(pathPrefix + ".name");
-                description = getConfigString(pathPrefix + ".description");
+                name = getConfigString("name");
+                description = getConfigString("description");
                 items = new Items(key);
             }
         }
@@ -515,12 +521,12 @@ public class LanguageManager {
             public final @NotNull Items items;
 
             private TieredGiftKit(@NotNull String key) throws InvalidLanguageKeyException {
-                String pathPrefix = "kits." + key;
+                setPathPrefix("kits." + key);
 
-                name = getConfigString(pathPrefix + ".name");
-                description1 = getConfigString(pathPrefix + ".description1");
-                description2 = getConfigString(pathPrefix + ".description2");
-                description3 = getConfigString(pathPrefix + ".description3");
+                name = getConfigString("name");
+                description1 = getConfigString("description1");
+                description2 = getConfigString("description2");
+                description3 = getConfigString("description3");
                 items = new Items(key);
             }
         }
@@ -540,11 +546,11 @@ public class LanguageManager {
             public final String wolf;
 
             private Items(@NotNull String key) throws InvalidLanguageKeyException {
-                String pathPrefix = "kits." + key + ".items";
+                setPathPrefix("kits." + key + ".items");
 
                 String temp;
                 try {
-                    temp = getConfigString(pathPrefix + ".boots");
+                    temp = getConfigString("boots");
                 } catch (InvalidLanguageKeyException e) {
                     if (key.equals("tailor"))
                         throw e;
@@ -553,7 +559,7 @@ public class LanguageManager {
                 boots = temp;
 
                 try {
-                    temp = getConfigString(pathPrefix + ".carrot");
+                    temp = getConfigString("carrot");
                 } catch (InvalidLanguageKeyException e) {
                     if (key.equals("farmer"))
                         throw e;
@@ -562,7 +568,7 @@ public class LanguageManager {
                 carrot = temp;
 
                 try {
-                    temp = getConfigString(pathPrefix + ".chestplate");
+                    temp = getConfigString("chestplate");
                 } catch (InvalidLanguageKeyException e) {
                     if (key.equals("tailor"))
                         throw e;
@@ -571,7 +577,7 @@ public class LanguageManager {
                 chestplate = temp;
 
                 try {
-                    temp = getConfigString(pathPrefix + ".club");
+                    temp = getConfigString("club");
                 } catch (InvalidLanguageKeyException e) {
                     if (key.equals("orc"))
                         throw e;
@@ -580,7 +586,7 @@ public class LanguageManager {
                 club = temp;
 
                 try {
-                    temp = getConfigString(pathPrefix + ".golem");
+                    temp = getConfigString("golem");
                 } catch (InvalidLanguageKeyException e) {
                     if (key.equals("summoner"))
                         throw e;
@@ -589,7 +595,7 @@ public class LanguageManager {
                 golem = temp;
 
                 try {
-                    temp = getConfigString(pathPrefix + ".health");
+                    temp = getConfigString("health");
                 } catch (InvalidLanguageKeyException e) {
                     if (key.equals("alchemist"))
                         throw e;
@@ -598,7 +604,7 @@ public class LanguageManager {
                 health = temp;
 
                 try {
-                    temp = getConfigString(pathPrefix + ".helmet");
+                    temp = getConfigString("helmet");
                 } catch (InvalidLanguageKeyException e) {
                     if (key.equals("tailor"))
                         throw e;
@@ -606,7 +612,7 @@ public class LanguageManager {
                 }
                 helmet = temp;
                 try {
-                    temp = getConfigString(pathPrefix + ".leggings");
+                    temp = getConfigString("leggings");
                 } catch (InvalidLanguageKeyException e) {
                     if (key.equals("tailor"))
                         throw e;
@@ -615,7 +621,7 @@ public class LanguageManager {
                 leggings = temp;
 
                 try {
-                    temp = getConfigString(pathPrefix + ".scythe");
+                    temp = getConfigString("scythe");
                 } catch (InvalidLanguageKeyException e) {
                     if (key.equals("reaper"))
                         throw e;
@@ -624,7 +630,7 @@ public class LanguageManager {
                 scythe = temp;
 
                 try {
-                    temp = getConfigString(pathPrefix + ".speed");
+                    temp = getConfigString("speed");
                 } catch (InvalidLanguageKeyException e) {
                     if (key.equals("alchemist"))
                         throw e;
@@ -633,7 +639,7 @@ public class LanguageManager {
                 speed = temp;
 
                 try {
-                    temp = getConfigString(pathPrefix + ".sword");
+                    temp = getConfigString("sword");
                 } catch (InvalidLanguageKeyException e) {
                     if (key.equals("soldier"))
                         throw e;
@@ -642,7 +648,7 @@ public class LanguageManager {
                 sword = temp;
 
                 try {
-                    temp = getConfigString(pathPrefix + ".wolf");
+                    temp = getConfigString("wolf");
                 } catch (InvalidLanguageKeyException e) {
                     if (key.equals("summoner"))
                         throw e;
@@ -758,110 +764,110 @@ public class LanguageManager {
         public final @NotNull String wave;
 
         private Messages() throws InvalidLanguageKeyException {
-            String pathPrefix = "messages";
+            setPathPrefix("messages");
 
-            abilityKitsDescription = getConfigString(pathPrefix + ".abilityKitsDescription");
-            abilityLevel = getConfigString(pathPrefix + ".abilityLevel");
-            achievements = getConfigString(pathPrefix + ".achievements");
-            allowedKits = getConfigString(pathPrefix + ".allowedKits");
-            arenaInfo = getConfigString(pathPrefix + ".arenaInfo");
-            arenaRecords = getConfigString(pathPrefix + ".arenaRecords");
-            armor = getConfigString(pathPrefix + ".armor");
-            available = getConfigString(pathPrefix + ".available");
-            caution = getConfigString(pathPrefix + ".caution");
-            challenges = getConfigString(pathPrefix + ".challenges");
-            closed = getConfigString(pathPrefix + ".closed");
-            commandFormat = getConfigString(pathPrefix + ".commandFormat");
-            consumable = getConfigString(pathPrefix + ".consumable");
-            crystalBonus = getConfigString(pathPrefix + ".crystalBonus");
-            crystalBalance = getConfigString(pathPrefix + ".crystalBalance");
-            crystalsEarned = getConfigString(pathPrefix + ".crystalsEarned");
-            crystalsToConvert = getConfigString(pathPrefix + ".crystalsToConvert");
-            customShopInv = getConfigString(pathPrefix + ".customShopInv");
-            death = getConfigString(pathPrefix + ".death");
-            death1 = getConfigString(pathPrefix + ".death1");
-            death2 = getConfigString(pathPrefix + ".death2");
-            debugLevelSet = getConfigString(pathPrefix + ".debugLevelSet");
-            disabled = getConfigString(pathPrefix + ".disabled");
-            earnedGems = getConfigString(pathPrefix + ".earnedGems");
-            effectKitsDescription = getConfigString(pathPrefix + ".effectKitsDescription");
-            effectShare = getConfigString(pathPrefix + ".effectShare");
-            enchantInstruction = getConfigString(pathPrefix + ".enchantInstruction");
-            end = getConfigString(pathPrefix + ".end");
-            ending = getConfigString(pathPrefix + ".ending");
-            enemies = getConfigString(pathPrefix + ".enemies");
-            exit = getConfigString(pathPrefix + ".exit");
-            free = getConfigString(pathPrefix + ".free");
-            forcedChallenges = getConfigString(pathPrefix + ".forcedChallenges");
-            foundGems = getConfigString(pathPrefix + ".foundGems");
-            gameOver = getConfigString(pathPrefix + ".gameOver");
-            gems = getConfigString(pathPrefix + ".gems");
-            gemsReceived = getConfigString(pathPrefix + ".gemsReceived");
-            gemsToReceive = getConfigString(pathPrefix + ".gemsToReceive");
-            ghosts = getConfigString(pathPrefix + ".ghosts");
-            giftKitsDescription = getConfigString(pathPrefix + ".giftKitsDescription");
-            help = getConfigString(pathPrefix + ".help");
-            help1 = getConfigString(pathPrefix + ".help1");
-            help2 = getConfigString(pathPrefix + ".help2");
-            help2a = getConfigString(pathPrefix + ".help2a");
-            help3 = getConfigString(pathPrefix + ".help3");
-            infoAboutWiki = getConfigString(pathPrefix + ".infoAboutWiki");
-            info1 = getConfigString(pathPrefix + ".info1");
-            info2 = getConfigString(pathPrefix + ".info2");
-            info3 = getConfigString(pathPrefix + ".info3");
-            info4 = getConfigString(pathPrefix + ".info4");
-            info5 = getConfigString(pathPrefix + ".info5");
-            info6 = getConfigString(pathPrefix + ".info6");
-            itemShopDesc = getConfigString(pathPrefix + ".itemShopDesc");
-            join = getConfigString(pathPrefix + ".join");
-            kills = getConfigString(pathPrefix + ".kills");
-            kit = getConfigString(pathPrefix + ".kit");
-            kits = getConfigString(pathPrefix + ".kits");
-            late = getConfigString(pathPrefix + ".late");
-            leave = getConfigString(pathPrefix + ".leave");
-            leaveArena = getConfigString(pathPrefix + ".leaveArena");
-            level = getConfigString(pathPrefix + ".level");
-            manualUpdateWarn = getConfigString(pathPrefix + ".manualUpdateWarn");
-            maxCapacity = getConfigString(pathPrefix + ".maxCapacity");
-            minutesLeft = getConfigString(pathPrefix + ".minutesLeft");
-            noAutoUpdate = getConfigString(pathPrefix + ".noAutoUpdate");
-            noStats = getConfigString(pathPrefix + ".noStats");
-            offToggle = getConfigString(pathPrefix + ".offToggle");
-            onToggle = getConfigString(pathPrefix + ".onToggle");
-            oneMinuteWarning = getConfigString(pathPrefix + ".oneMinuteWarning");
-            playerKits = getConfigString(pathPrefix + ".playerKits");
-            players = getConfigString(pathPrefix + ".players");
-            playerStatistics = getConfigString(pathPrefix + ".playerStatistics");
-            purchase = getConfigString(pathPrefix + ".purchase");
-            purchased = getConfigString(pathPrefix + ".purchased");
-            record = getConfigString(pathPrefix + ".record");
-            records = getConfigString(pathPrefix + ".records");
-            reset = getConfigString(pathPrefix + ".reset");
-            resetWarning = getConfigString(pathPrefix + ".resetWarning");
-            restartPlugin = getConfigString(pathPrefix + ".restartPlugin");
-            resurrection = getConfigString(pathPrefix + ".resurrection");
-            rightClick = getConfigString(pathPrefix + ".rightClick");
-            secondsLeft = getConfigString(pathPrefix + ".secondsLeft");
-            shopInfo = getConfigString(pathPrefix + ".shopInfo");
-            shopUpgrade = getConfigString(pathPrefix + ".shopUpgrade");
-            spectators = getConfigString(pathPrefix + ".spectators");
-            starting = getConfigString(pathPrefix + ".starting");
-            upToAbilityLevel = getConfigString(pathPrefix + ".upToAbilityLevel");
-            waveNum = getConfigString(pathPrefix + ".waveNum");
-            weapon = getConfigString(pathPrefix + ".weapon");
-            unavailable = getConfigString(pathPrefix + ".unavailable");
-            unlimited = getConfigString(pathPrefix + ".unlimited");
-            visitWiki = getConfigString(pathPrefix + ".visitWiki");
-            villageCaptainDialogue1 = getConfigString(pathPrefix + ".villageCaptainDialogue1");
-            villageCaptainDialogue2 = getConfigString(pathPrefix + ".villageCaptainDialogue2");
-            villageCaptainDialogue3 = getConfigString(pathPrefix + ".villageCaptainDialogue3");
-            villageCaptainDialogue4 = getConfigString(pathPrefix + ".villageCaptainDialogue4");
-            villageCaptainDialogue5 = getConfigString(pathPrefix + ".villageCaptainDialogue5");
-            villagers = getConfigString(pathPrefix + ".villagers");
-            waiting = getConfigString(pathPrefix + ".waiting");
-            waitingForPlayers = getConfigString(pathPrefix + ".waitingForPlayers");
-            warning = getConfigString(pathPrefix + ".warning");
-            wave = getConfigString(pathPrefix + ".wave");
+            abilityKitsDescription = getConfigString("abilityKitsDescription");
+            abilityLevel = getConfigString("abilityLevel");
+            achievements = getConfigString("achievements");
+            allowedKits = getConfigString("allowedKits");
+            arenaInfo = getConfigString("arenaInfo");
+            arenaRecords = getConfigString("arenaRecords");
+            armor = getConfigString("armor");
+            available = getConfigString("available");
+            caution = getConfigString("caution");
+            challenges = getConfigString("challenges");
+            closed = getConfigString("closed");
+            commandFormat = getConfigString("commandFormat");
+            consumable = getConfigString("consumable");
+            crystalBonus = getConfigString("crystalBonus");
+            crystalBalance = getConfigString("crystalBalance");
+            crystalsEarned = getConfigString("crystalsEarned");
+            crystalsToConvert = getConfigString("crystalsToConvert");
+            customShopInv = getConfigString("customShopInv");
+            death = getConfigString("death");
+            death1 = getConfigString("death1");
+            death2 = getConfigString("death2");
+            debugLevelSet = getConfigString("debugLevelSet");
+            disabled = getConfigString("disabled");
+            earnedGems = getConfigString("earnedGems");
+            effectKitsDescription = getConfigString("effectKitsDescription");
+            effectShare = getConfigString("effectShare");
+            enchantInstruction = getConfigString("enchantInstruction");
+            end = getConfigString("end");
+            ending = getConfigString("ending");
+            enemies = getConfigString("enemies");
+            exit = getConfigString("exit");
+            free = getConfigString("free");
+            forcedChallenges = getConfigString("forcedChallenges");
+            foundGems = getConfigString("foundGems");
+            gameOver = getConfigString("gameOver");
+            gems = getConfigString("gems");
+            gemsReceived = getConfigString("gemsReceived");
+            gemsToReceive = getConfigString("gemsToReceive");
+            ghosts = getConfigString("ghosts");
+            giftKitsDescription = getConfigString("giftKitsDescription");
+            help = getConfigString("help");
+            help1 = getConfigString("help1");
+            help2 = getConfigString("help2");
+            help2a = getConfigString("help2a");
+            help3 = getConfigString("help3");
+            infoAboutWiki = getConfigString("infoAboutWiki");
+            info1 = getConfigString("info1");
+            info2 = getConfigString("info2");
+            info3 = getConfigString("info3");
+            info4 = getConfigString("info4");
+            info5 = getConfigString("info5");
+            info6 = getConfigString("info6");
+            itemShopDesc = getConfigString("itemShopDesc");
+            join = getConfigString("join");
+            kills = getConfigString("kills");
+            kit = getConfigString("kit");
+            kits = getConfigString("kits");
+            late = getConfigString("late");
+            leave = getConfigString("leave");
+            leaveArena = getConfigString("leaveArena");
+            level = getConfigString("level");
+            manualUpdateWarn = getConfigString("manualUpdateWarn");
+            maxCapacity = getConfigString("maxCapacity");
+            minutesLeft = getConfigString("minutesLeft");
+            noAutoUpdate = getConfigString("noAutoUpdate");
+            noStats = getConfigString("noStats");
+            offToggle = getConfigString("offToggle");
+            onToggle = getConfigString("onToggle");
+            oneMinuteWarning = getConfigString("oneMinuteWarning");
+            playerKits = getConfigString("playerKits");
+            players = getConfigString("players");
+            playerStatistics = getConfigString("playerStatistics");
+            purchase = getConfigString("purchase");
+            purchased = getConfigString("purchased");
+            record = getConfigString("record");
+            records = getConfigString("records");
+            reset = getConfigString("reset");
+            resetWarning = getConfigString("resetWarning");
+            restartPlugin = getConfigString("restartPlugin");
+            resurrection = getConfigString("resurrection");
+            rightClick = getConfigString("rightClick");
+            secondsLeft = getConfigString("secondsLeft");
+            shopInfo = getConfigString("shopInfo");
+            shopUpgrade = getConfigString("shopUpgrade");
+            spectators = getConfigString("spectators");
+            starting = getConfigString("starting");
+            upToAbilityLevel = getConfigString("upToAbilityLevel");
+            waveNum = getConfigString("waveNum");
+            weapon = getConfigString("weapon");
+            unavailable = getConfigString("unavailable");
+            unlimited = getConfigString("unlimited");
+            visitWiki = getConfigString("visitWiki");
+            villageCaptainDialogue1 = getConfigString("villageCaptainDialogue1");
+            villageCaptainDialogue2 = getConfigString("villageCaptainDialogue2");
+            villageCaptainDialogue3 = getConfigString("villageCaptainDialogue3");
+            villageCaptainDialogue4 = getConfigString("villageCaptainDialogue4");
+            villageCaptainDialogue5 = getConfigString("villageCaptainDialogue5");
+            villagers = getConfigString("villagers");
+            waiting = getConfigString("waiting");
+            waitingForPlayers = getConfigString("waitingForPlayers");
+            warning = getConfigString("warning");
+            wave = getConfigString("wave");
         }
     }
 
@@ -903,43 +909,43 @@ public class LanguageManager {
         public final @NotNull String weaponShop;
 
         private Names() throws InvalidLanguageKeyException {
-            String pathPrefix = "names";
+            setPathPrefix("names");
 
-            abilityKits = getConfigString(pathPrefix + ".abilityKits");
-            armorShop = getConfigString(pathPrefix + ".armorShop");
-            boosts = getConfigString(pathPrefix + ".boosts");
-            carePackageExtra = getConfigString(pathPrefix + ".carePackageExtra");
-            carePackageLarge = getConfigString(pathPrefix + ".carePackageLarge");
-            carePackageMedium = getConfigString(pathPrefix + ".carePackageMedium");
-            carePackageSmall = getConfigString(pathPrefix + ".carePackageSmall");
-            challengeSelection = getConfigString(pathPrefix + ".challengeSelection");
-            communityChest = getConfigString(pathPrefix + ".communityChest");
-            consumableShop = getConfigString(pathPrefix + ".consumableShop");
-            contents = getConfigString(pathPrefix + ".contents");
-            crystalConverter = getConfigString(pathPrefix + ".crystalConverter");
-            crystals = getConfigString(pathPrefix + ".crystals");
-            customShop = getConfigString(pathPrefix + ".customShop");
-            defaultShop = getConfigString(pathPrefix + ".defaultShop");
-            easy = getConfigString(pathPrefix + ".easy");
-            effectKits = getConfigString(pathPrefix + ".effectKits");
-            effectShare = getConfigString(pathPrefix + ".effectShare");
-            enchantBook = getConfigString(pathPrefix + ".enchantBook");
-            enchantShop = getConfigString(pathPrefix + ".enchantShop");
-            essence = getConfigString(pathPrefix + ".essence");
-            giftKits = getConfigString(pathPrefix + ".giftKits");
-            golemEgg = getConfigString(pathPrefix + ".golemEgg");
-            hard = getConfigString(pathPrefix + ".hard");
-            insane = getConfigString(pathPrefix + ".insane");
-            itemShop = getConfigString(pathPrefix + ".itemShop");
-            kitSelection = getConfigString(pathPrefix + ".kitSelection");
-            medium = getConfigString(pathPrefix + ".medium");
-            monsterSpawnParticles = getConfigString(pathPrefix + ".monsterSpawnParticles");
-            none = getConfigString(pathPrefix + ".none");
-            playerSpawnParticles = getConfigString(pathPrefix + ".playerSpawnParticles");
-            timeBar = getConfigString(pathPrefix + ".timeBar");
-            villageCaptain = getConfigString(pathPrefix + ".villageCaptain");
-            villagerSpawnParticles = getConfigString(pathPrefix + ".villagerSpawnParticles");
-            weaponShop = getConfigString(pathPrefix + ".weaponShop");
+            abilityKits = getConfigString("abilityKits");
+            armorShop = getConfigString("armorShop");
+            boosts = getConfigString("boosts");
+            carePackageExtra = getConfigString("carePackageExtra");
+            carePackageLarge = getConfigString("carePackageLarge");
+            carePackageMedium = getConfigString("carePackageMedium");
+            carePackageSmall = getConfigString("carePackageSmall");
+            challengeSelection = getConfigString("challengeSelection");
+            communityChest = getConfigString("communityChest");
+            consumableShop = getConfigString("consumableShop");
+            contents = getConfigString("contents");
+            crystalConverter = getConfigString("crystalConverter");
+            crystals = getConfigString("crystals");
+            customShop = getConfigString("customShop");
+            defaultShop = getConfigString("defaultShop");
+            easy = getConfigString("easy");
+            effectKits = getConfigString("effectKits");
+            effectShare = getConfigString("effectShare");
+            enchantBook = getConfigString("enchantBook");
+            enchantShop = getConfigString("enchantShop");
+            essence = getConfigString("essence");
+            giftKits = getConfigString("giftKits");
+            golemEgg = getConfigString("golemEgg");
+            hard = getConfigString("hard");
+            insane = getConfigString("insane");
+            itemShop = getConfigString("itemShop");
+            kitSelection = getConfigString("kitSelection");
+            medium = getConfigString("medium");
+            monsterSpawnParticles = getConfigString("monsterSpawnParticles");
+            none = getConfigString("none");
+            playerSpawnParticles = getConfigString("playerSpawnParticles");
+            timeBar = getConfigString("timeBar");
+            villageCaptain = getConfigString("villageCaptain");
+            villagerSpawnParticles = getConfigString("villagerSpawnParticles");
+            weaponShop = getConfigString("weaponShop");
         }
     }
 
@@ -964,11 +970,11 @@ public class LanguageManager {
             public final @NotNull String leaderboard;
 
             private PlayerStat(@NotNull String key) throws InvalidLanguageKeyException {
-                String pathPrefix = "playerStats." + key;
+                setPathPrefix("playerStats." + key);
 
-                name = getConfigString(pathPrefix + ".name");
-                description = getConfigString(pathPrefix + ".description");
-                leaderboard = getConfigString(pathPrefix + ".leaderboard");
+                name = getConfigString("name");
+                description = getConfigString("description");
+                leaderboard = getConfigString("leaderboard");
             }
         }
     }
@@ -986,18 +992,18 @@ public class LanguageManager {
         public final @NotNull String twoKits;
 
         public Rewards() throws InvalidLanguageKeyException {
-            String pathPrefix = "rewards";
+            setPathPrefix("rewards");
 
-            cooldownReduction = getConfigString(pathPrefix + ".cooldownReduction");
-            crystalConvert = getConfigString(pathPrefix + ".crystalConvert");
-            crystals = getConfigString(pathPrefix + ".crystals");
-            damageIncrease = getConfigString(pathPrefix + ".damageIncrease");
-            damageReduction = getConfigString(pathPrefix + ".damageReduction");
-            gemIncrease = getConfigString(pathPrefix + ".gemIncrease");
-            healthIncrease = getConfigString(pathPrefix + ".healthIncrease");
-            resurrection = getConfigString(pathPrefix + ".resurrection");
-            shareEffect = getConfigString(pathPrefix + ".shareEffect");
-            twoKits = getConfigString(pathPrefix + ".twoKits");
+            cooldownReduction = getConfigString("cooldownReduction");
+            crystalConvert = getConfigString("crystalConvert");
+            crystals = getConfigString("crystals");
+            damageIncrease = getConfigString("damageIncrease");
+            damageReduction = getConfigString("damageReduction");
+            gemIncrease = getConfigString("gemIncrease");
+            healthIncrease = getConfigString("healthIncrease");
+            resurrection = getConfigString("resurrection");
+            shareEffect = getConfigString("shareEffect");
+            twoKits = getConfigString("twoKits");
         }
     }
 }
