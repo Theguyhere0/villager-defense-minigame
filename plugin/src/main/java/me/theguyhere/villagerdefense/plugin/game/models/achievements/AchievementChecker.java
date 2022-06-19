@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.game.models.achievements;
 
+import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidAchievementReqValException;
@@ -174,8 +175,11 @@ public class AchievementChecker {
     }
 
     private static void notifyAchievement(Achievement achievement, Player player) {
-        PlayerManager.notifySuccess(player, LanguageManager.confirms.achievement, ChatColor.AQUA,
-                achievement.getName());
+        PlayerManager.notifySuccess(
+                player,
+                LanguageManager.confirms.achievement,
+                new ColoredMessage(ChatColor.AQUA, achievement.getName())
+        );
         player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
     }
 
@@ -186,8 +190,11 @@ public class AchievementChecker {
             FileConfiguration playerData = Main.plugin.getPlayerData();
             String path = player.getUniqueId() + ".crystalBalance";
             playerData.set(path, playerData.getInt(path) + achievement.getReward().getValue());
-            PlayerManager.notifySuccess(player, LanguageManager.confirms.crystalAdd, ChatColor.AQUA,
-                    Integer.toString(achievement.getReward().getValue()));
+            PlayerManager.notifySuccess(
+                    player,
+                    LanguageManager.confirms.crystalAdd,
+                    new ColoredMessage(ChatColor.AQUA, Integer.toString(achievement.getReward().getValue()))
+            );
         }
 
         else if (achievement.getReward().getType() == RewardType.BOOST)

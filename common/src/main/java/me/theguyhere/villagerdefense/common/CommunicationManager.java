@@ -1,9 +1,9 @@
 package me.theguyhere.villagerdefense.common;
 
 import org.bukkit.ChatColor;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.IllegalFormatException;
 import java.util.List;
 
 public class CommunicationManager {
@@ -21,38 +21,68 @@ public class CommunicationManager {
         return debugLevel;
     }
 
+    /**
+     * Sets the new debug level for the plugin. Values below or above the proper range will be capped at the limits.
+     *
+     * @param newDebugLevel New debug level to be set for the plugin.
+     */
     public static void setDebugLevel(int newDebugLevel) {
-        debugLevel = newDebugLevel;
+        debugLevel = Math.max(Math.min(newDebugLevel, 3), 0);
     }
 
+    /**
+     * Translates color codes that use "&" into their proper form to be displayed by Bukkit.
+     *
+     * @param msg Message to be translated.
+     * @return Properly translated message.
+     */
     public static String format(String msg) {
         return ChatColor.translateAlternateColorCodes('&', msg);
     }
 
-    public static String format(@NotNull ChatColor base, String msg) {
-        return base + msg;
+    /**
+     * Formats a long description into an array of colored lines, split according to the set character limit.
+     *
+     * @param base Base color for the description.
+     * @param description The description to be formatted.
+     * @param charLimit The character limit per line.
+     * @return Formatted description.
+     */
+    public static String[] formatDescriptionArr(ChatColor base, String description, int charLimit) {
+        return formatDescriptionList(base, description, charLimit).toArray(new String[0]);
     }
 
-    public static String[] formatDescriptionArr(@NotNull ChatColor base, String description) {
-        return formatDescriptionList(base, description).toArray(new String[0]);
-    }
+    /**
+     * Formats a long description into a list of colored lines, split according to the set character limit.
+     *
+     * @param base Base color for the description.
+     * @param description The description to be formatted.
+     * @param charLimit The character limit per line.
+     * @return Formatted description.
+     */
+    public static List<String> formatDescriptionList(ChatColor base, String description, int charLimit) {
+        // Get a proper ChatColor base to work with
+        ChatColor properBase = base == null ? ChatColor.WHITE : base;
 
-    public static List<String> formatDescriptionList(@NotNull ChatColor base, String description) {
-        int charLimit = 30 + base.toString().length();
+        // The visible character limit per line
+        int realCharLimit = charLimit + properBase.toString().length();
+
+        // Split the description into words
         String[] descArray = description.split(" ");
+
         List<String> descLines = new ArrayList<>();
-        StringBuilder line = new StringBuilder(base.toString());
+        StringBuilder line = new StringBuilder(properBase.toString());
 
         for (String s : descArray) {
             // Always add to a line if empty or line remains under character limit
-            if (line.length() == 0 || line.length() + s.length() <= charLimit)
+            if (line.length() == 0 || line.length() + s.length() <= realCharLimit)
                 line.append(s).append(" ");
 
             // Start new line if next word makes line longer than character limit
             else {
                 line.deleteCharAt(line.length() - 1);
                 descLines.add(format(line.toString()));
-                line = new StringBuilder(base.toString()).append(s).append(" ");
+                line = new StringBuilder(properBase.toString()).append(s).append(" ");
             }
         }
 
@@ -63,18 +93,73 @@ public class CommunicationManager {
         return descLines;
     }
 
-    public static String format(@NotNull ChatColor base, String msg, @NotNull ChatColor replace, String value) {
-        return base + String.format(msg, replace + value + base);
+    /**
+     * Replaces placeholders in the base colored message with colored replacements.
+     *
+     * @param base Base colored message.
+     * @param replacements Replacement colored messages.
+     * @return Properly formatted combined colored message.
+     */
+    public static String format(ColoredMessage base, ColoredMessage... replacements) {
+        try {
+            String formattedString = base.toString();
+            for (ColoredMessage replacement : replacements) {
+                formattedString = String.format(formattedString,
+                        replacement.getBase() + replacement.getMessage() + base.getBase());
+            }
+            return formattedString;
+        } catch (IllegalFormatException e) {
+            debugError("The number of replacements is likely incorrect when formatting a message!", 0,
+                    true, e);
+        } catch (Exception e) {
+            debugError("Something unexpected happened when formatting messages!", 0, true, e);
+        }
+
+        return "";
     }
 
-    public static String format(@NotNull ChatColor base, String msg, @NotNull ChatColor replace, String value1,
-                                String value2) {
-        return base + String.format(msg, replace + value1 + base, replace + value2 + base);
+    /**
+     * Replaces placeholders in the base colored message with aqua colored replacements.
+     *
+     * @param base Base colored message.
+     * @param replacements Replacement messages.
+     * @return Properly formatted combined colored message.
+     */
+    public static String format(ColoredMessage base, String... replacements) {
+        try {
+            String formattedString = base.toString();
+            for (String replacement : replacements)
+                formattedString = String.format(formattedString, ChatColor.AQUA + replacement + base.getBase());
+            return formattedString;
+        } catch (IllegalFormatException e) {
+            debugError("The number of replacements is likely incorrect when formatting a message!", 0,
+                    true, e);
+        } catch (Exception e) {
+            debugError("Something unexpected happened when formatting messages!", 0, true, e);
+        }
+
+        return "";
     }
 
-    // Formats plugin notifications
+    /**
+     * Formats plugin notifications to players.
+     *
+     * @param msg Raw message to send to player.
+     * @return Formatted message prepared to be sent to the player.
+     */
     public static String notify(String msg) {
         return format("&2[VD] &f" + msg);
+    }
+
+    /**
+     * Formats plugin notifications from entities with names.
+     *
+     * @param name Colored name of the entity.
+     * @param msg Raw message to send to player.
+     * @return Formatted message prepared to be sent to the player.
+     */
+    public static String namedNotify(ColoredMessage name, String msg) {
+        return format("&2[VD] " + name.toString() + "&f: " + msg);
     }
 
     public static void debugError(String msg, int debugLevel) {
@@ -99,6 +184,22 @@ public class CommunicationManager {
         }
     }
 
+    public static void debugError(String base, int debugLevel, String... replacements) {
+        debugError(base, debugLevel, false, replacements);
+    }
+
+    public static void debugError(String base, int debugLevel, boolean stackTrace, String... replacements) {
+        if (CommunicationManager.debugLevel >= debugLevel) {
+            String formattedMessage = base;
+            for (String replacement : replacements)
+                formattedMessage = String.format(formattedMessage, ChatColor.BLUE + replacement + ChatColor.RED);
+            Log.warning(formattedMessage);
+
+            if (stackTrace)
+                Thread.dumpStack();
+        }
+    }
+
     public static void debugErrorShouldNotHappen() {
         debugError("This should not be happening!", 0, true);
     }
@@ -114,5 +215,26 @@ public class CommunicationManager {
             if (stackTrace)
                 Thread.dumpStack();
         }
+    }
+
+    public static void debugInfo(String base, int debugLevel, String... replacements) {
+        debugInfo(base, debugLevel, false, replacements);
+    }
+
+    public static void debugInfo(String base, int debugLevel, boolean stackTrace, String... replacements) {
+        if (CommunicationManager.debugLevel >= debugLevel) {
+            String formattedMessage = base;
+            for (String replacement : replacements)
+                formattedMessage = String.format(formattedMessage, ChatColor.BLUE + replacement + ChatColor.WHITE);
+            Log.info(formattedMessage);
+
+            if (stackTrace)
+                Thread.dumpStack();
+        }
+    }
+
+    public static void debugConfirm(String msg, int debugLevel) {
+        if (CommunicationManager.debugLevel >= debugLevel)
+            Log.confirm(msg);
     }
 }
