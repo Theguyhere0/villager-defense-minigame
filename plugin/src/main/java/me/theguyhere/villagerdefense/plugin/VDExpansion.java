@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
@@ -40,7 +41,7 @@ public class VDExpansion extends PlaceholderExpansion {
         // Attempt to get either the arena or the player from the command
         try {
             arena = GameManager.getArena(params.substring(params.indexOf('_') + 1));
-        } catch (Exception ignored) {
+        } catch (ArenaNotFoundException ignored) {
         }
         try {
             id = Bukkit.getOfflinePlayer(params.substring(params.indexOf('_') + 1)).getUniqueId();

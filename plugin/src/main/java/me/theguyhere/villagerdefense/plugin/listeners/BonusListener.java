@@ -1,5 +1,8 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
+import me.theguyhere.villagerdefense.plugin.Main;
+import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
@@ -26,8 +29,8 @@ public class BonusListener implements Listener {
 
         // Attempt to get arena and player
         try {
-            gamer = Objects.requireNonNull(GameManager.getArena(player)).getPlayer(player);
-        } catch (Exception err) {
+            gamer = GameManager.getArena(player).getPlayer(player);
+        } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             return;
         }
 
@@ -61,8 +64,8 @@ public class BonusListener implements Listener {
 
         // Attempt to get arena and player
         try {
-            gamer = Objects.requireNonNull(GameManager.getArena(player)).getPlayer(player);
-        } catch (Exception err) {
+            gamer = GameManager.getArena(player).getPlayer(player);
+        } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             return;
         }
 

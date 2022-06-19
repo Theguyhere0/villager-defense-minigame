@@ -3,6 +3,11 @@ package me.theguyhere.villagerdefense.plugin.listeners;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
+import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
+import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
+import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
@@ -48,7 +53,12 @@ public class GameListener implements Listener {
 		if (!ent.hasMetadata("VD"))
 			return;
 
-		Arena arena = GameManager.getArena(ent.getMetadata("VD").get(0).asInt());
+		Arena arena;
+		try {
+			arena = GameManager.getArena(ent.getMetadata("VD").get(0).asInt());
+		} catch (ArenaNotFoundException err) {
+			return;
+		}
 
 		// Check for right game
 		if (!ent.hasMetadata("game"))
@@ -205,7 +215,7 @@ public class GameListener implements Listener {
 		if (player != null) {
 			try {
 				gamer = GameManager.getArena(player).getPlayer(player);
-			} catch (Exception err) {
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
 			}
 		} else gamer = null;
@@ -295,7 +305,7 @@ public class GameListener implements Listener {
 		try {
 			if (GameManager.getArena(player).getCurrentWave() != 0)
 				return;
-		} catch (Exception err) {
+		} catch (ArenaNotFoundException err) {
 			return;
 		}
 
@@ -344,7 +354,7 @@ public class GameListener implements Listener {
 		try {
 			arena = GameManager.getArena(player);
 			gamer = arena.getPlayer(player);
-		} catch (Exception err) {
+		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
@@ -466,7 +476,7 @@ public class GameListener implements Listener {
 		try {
 			arena = GameManager.getArena(player);
 			gamer = arena.getPlayer(player);
-		} catch (Exception err) {
+		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
@@ -547,7 +557,7 @@ public class GameListener implements Listener {
 		try {
 			arena = GameManager.getArena(player);
 			gamer = arena.getPlayer(player);
-		} catch (Exception err) {
+		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
@@ -593,7 +603,7 @@ public class GameListener implements Listener {
 		// Update scoreboard
 		GameManager.createBoard(gamer);
 	}
-	
+
 	// Handle player death
 	@EventHandler
 	public void onPlayerDeath(EntityDamageEvent e) {
@@ -612,7 +622,7 @@ public class GameListener implements Listener {
 		try {
 			arena = GameManager.getArena(player);
 			gamer = arena.getPlayer(player);
-		} catch (Exception err) {
+		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
@@ -723,7 +733,7 @@ public class GameListener implements Listener {
 		try {
 			arena = GameManager.getArena(player);
 			gamer = arena.getPlayer(player);
-		} catch (Exception err) {
+		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
@@ -807,7 +817,7 @@ public class GameListener implements Listener {
 			else player.giveExp((int) (arena.getCurrentDifficulty() * 2));
 		}
 	}
-	
+
 	// Stops slimes and magma cubes from splitting on death
 	@EventHandler
 	public void onSplit(SlimeSplitEvent e) {
@@ -835,8 +845,11 @@ public class GameListener implements Listener {
 	@EventHandler
 	public void onBabyAttempt(PlayerInteractEntityEvent e) {
 		// Check for player in game
-		if (GameManager.getArena(e.getPlayer()) == null)
+		try {
+			GameManager.getArena(e.getPlayer());
+		} catch (ArenaNotFoundException err) {
 			return;
+		}
 
 		// Check for wolf
 		if (!(e.getRightClicked() instanceof Wolf))
@@ -860,7 +873,7 @@ public class GameListener implements Listener {
 			if (arena == null)
 				return;
 			gamer = arena.getPlayer(player);
-		} catch (Exception err) {
+		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
@@ -874,7 +887,7 @@ public class GameListener implements Listener {
 			return;
 
 		// Wolf spawn
-		if (item.getType() == Material.WOLF_SPAWN_EGG && 
+		if (item.getType() == Material.WOLF_SPAWN_EGG &&
 				!(main.getType() == Material.WOLF_SPAWN_EGG && e.getHand() == EquipmentSlot.OFF_HAND) &&
 				main.getType() != Material.POLAR_BEAR_SPAWN_EGG && main.getType() != Material.COAL_BLOCK &&
 				main.getType() != Material.IRON_BLOCK && main.getType() != Material.DIAMOND_BLOCK &&
@@ -947,7 +960,7 @@ public class GameListener implements Listener {
 
 		// Small care package
 		if (item.getItemMeta().getDisplayName().contains("Small Care Package") &&
-				main.getType() != Material.POLAR_BEAR_SPAWN_EGG && 
+				main.getType() != Material.POLAR_BEAR_SPAWN_EGG &&
 				!(main.getType() == Material.COAL_BLOCK && e.getHand() == EquipmentSlot.OFF_HAND) &&
 				main.getType() != Material.WOLF_SPAWN_EGG && main.getType() != Material.IRON_BLOCK &&
 				main.getType() != Material.DIAMOND_BLOCK && main.getType() != Material.BEACON) {
@@ -1092,7 +1105,7 @@ public class GameListener implements Listener {
 		if (item.getItemMeta().getDisplayName().contains("Extra Large Care Package") &&
 				main.getType() != Material.WOLF_SPAWN_EGG && main.getType() != Material.POLAR_BEAR_SPAWN_EGG &&
 				main.getType() != Material.COAL_BLOCK && main.getType() != Material.IRON_BLOCK &&
-				main.getType() != Material.DIAMOND_BLOCK && 
+				main.getType() != Material.DIAMOND_BLOCK &&
 				!(main.getType() == Material.BEACON && e.getHand() == EquipmentSlot.OFF_HAND)) {
 			// Remove an item
 			if (item.getAmount() > 1)
@@ -1203,9 +1216,7 @@ public class GameListener implements Listener {
 		// Attempt to get arena
 		try {
 			arena = GameManager.getArena(player);
-			if (arena == null)
-				return;
-		} catch (Exception err) {
+		} catch (ArenaNotFoundException err) {
 			return;
 		}
 
@@ -1240,7 +1251,7 @@ public class GameListener implements Listener {
 			if (arena == null)
 				return;
 			gamer = arena.getPlayer(player);
-		} catch (Exception err) {
+		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
@@ -1367,9 +1378,7 @@ public class GameListener implements Listener {
 		// Attempt to get arena
 		try {
 			arena = GameManager.getArena(player);
-			if (arena == null)
-				return;
-		} catch (Exception err) {
+		} catch (ArenaNotFoundException err) {
 			return;
 		}
 
@@ -1435,9 +1444,7 @@ public class GameListener implements Listener {
 		// Attempt to get arena
 		try {
 			arena = GameManager.getArena(player);
-			if (arena == null)
-				return;
-		} catch (Exception err) {
+		} catch (ArenaNotFoundException err) {
 			return;
 		}
 

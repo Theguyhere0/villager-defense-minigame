@@ -3,6 +3,7 @@ package me.theguyhere.villagerdefense.plugin.inventories;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
+import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
@@ -1364,11 +1365,14 @@ public class Inventories {
 		Objects.requireNonNull(Main.getArenaData().getConfigurationSection("arena")).getKeys(false)
 				.forEach(id -> {
 					if (Integer.parseInt(id) != arena.getId())
-						buttons.add(
-								ItemManager.createItem(Material.GRAY_GLAZED_TERRACOTTA,
-								CommunicationManager.format("&a&lCopy " +
-										GameManager.getArena(Integer.parseInt(id)).getName()))
-						);
+						try {
+							buttons.add(
+									ItemManager.createItem(Material.GRAY_GLAZED_TERRACOTTA,
+											CommunicationManager.format("&a&lCopy " +
+													GameManager.getArena(Integer.parseInt(id)).getName()))
+							);
+						} catch (ArenaNotFoundException ignored) {
+						}
 				});
 
 		// Easy preset
