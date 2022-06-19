@@ -3,7 +3,7 @@ package me.theguyhere.villagerdefense.nms.common;
 import org.bukkit.entity.Player;
 
 /**
- * A class with implementations of me.theguyhere.villagedefense.nms.common.PacketGroup
+ * A class with implementations of PacketGroup
  *
  * Idea for this interface borrowed from filoghost.
  */

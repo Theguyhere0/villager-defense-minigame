@@ -17,7 +17,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class DataManager {
-	
 	private FileConfiguration dataConfig;
 	private File configFile;
 	private final String fileName;
@@ -165,12 +164,12 @@ public class DataManager {
 							locations.put(Integer.parseInt(num),
 									getConfigLocationNoRotation(path + "." + num));
 						} catch (Exception e) {
-							CommunicationManager.debugError("An error occurred retrieving a location from section "
-									+ path, 1);
+							CommunicationManager.debugError(
+									"An error occurred retrieving a location from section %s", 1, path);
 						}
 					});
 		} catch (Exception e) {
-			CommunicationManager.debugError("Section " + path + " is invalid.", 1);
+			CommunicationManager.debugError("Section %s is invalid.", 1, path);
 		}
 		return locations;
 	}

@@ -1,7 +1,10 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
+import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
@@ -51,7 +54,12 @@ public class GameListener implements Listener {
 		if (!ent.hasMetadata("VD"))
 			return;
 
-		Arena arena = GameManager.getArena(ent.getMetadata("VD").get(0).asInt());
+		Arena arena;
+		try {
+			arena = GameManager.getArena(ent.getMetadata("VD").get(0).asInt());
+		} catch (ArenaNotFoundException err) {
+			return;
+		}
 
 		// Check for right game
 		if (!ent.hasMetadata("game"))
@@ -208,7 +216,7 @@ public class GameListener implements Listener {
 		if (player != null) {
 			try {
 				gamer = GameManager.getArena(player).getPlayer(player);
-			} catch (Exception err) {
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
 			}
 		} else gamer = null;
@@ -298,7 +306,7 @@ public class GameListener implements Listener {
 		try {
 			if (GameManager.getArena(player).getCurrentWave() != 0)
 				return;
-		} catch (Exception err) {
+		} catch (ArenaNotFoundException err) {
 			return;
 		}
 
@@ -347,7 +355,7 @@ public class GameListener implements Listener {
 		try {
 			arena = GameManager.getArena(player);
 			gamer = arena.getPlayer(player);
-		} catch (Exception err) {
+		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
@@ -469,7 +477,7 @@ public class GameListener implements Listener {
 		try {
 			arena = GameManager.getArena(player);
 			gamer = arena.getPlayer(player);
-		} catch (Exception err) {
+		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
@@ -495,8 +503,9 @@ public class GameListener implements Listener {
 				player.getInventory().clear();
 
 			// Notify player of their own death
-			player.sendTitle(CommunicationManager.format("&4" + LanguageManager.messages.death1),
-					CommunicationManager.format("&c" + LanguageManager.messages.death2),
+			player.sendTitle(
+					new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.death1).toString(),
+					new ColoredMessage(ChatColor.RED, LanguageManager.messages.death2).toString(),
 					Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
 
 			// Teleport player back to player spawn
@@ -548,7 +557,7 @@ public class GameListener implements Listener {
 		try {
 			arena = GameManager.getArena(player);
 			gamer = arena.getPlayer(player);
-		} catch (Exception err) {
+		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
@@ -585,8 +594,8 @@ public class GameListener implements Listener {
 		e.setCancelled(true);
 		e.getItem().remove();
 		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				CommunicationManager.format(ChatColor.GREEN, LanguageManager.messages.foundGems,
-						ChatColor.AQUA, Integer.toString(earned))));
+				CommunicationManager.format(new ColoredMessage(ChatColor.GREEN, LanguageManager.messages.foundGems),
+						Integer.toString(earned))));
 		if (arena.hasGemSound())
 			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, .5f, 0);
 
@@ -619,7 +628,7 @@ public class GameListener implements Listener {
 		try {
 			arena = GameManager.getArena(player);
 			gamer = arena.getPlayer(player);
-		} catch (Exception err) {
+		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
@@ -665,8 +674,9 @@ public class GameListener implements Listener {
 		}
 
 		// Notify player of their own death
-		player.sendTitle(CommunicationManager.format("&4" + LanguageManager.messages.death1),
-				CommunicationManager.format("&c" + LanguageManager.messages.death2),
+		player.sendTitle(
+				new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.death1).toString(),
+				new ColoredMessage(ChatColor.RED, LanguageManager.messages.death2).toString(),
 				Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
 
 		// Notify everyone else of player death
@@ -731,7 +741,7 @@ public class GameListener implements Listener {
 		try {
 			arena = GameManager.getArena(player);
 			gamer = arena.getPlayer(player);
-		} catch (Exception err) {
+		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
@@ -751,9 +761,11 @@ public class GameListener implements Listener {
 							vdPlayer.addGems(earned);
 
 							// Notify player
-							PlayerManager.notifySuccess(vdPlayer.getPlayer(),
-									LanguageManager.messages.earnedGems, ChatColor.AQUA,
-									Integer.toString(earned));
+							PlayerManager.notifySuccess(
+									vdPlayer.getPlayer(),
+									LanguageManager.messages.earnedGems,
+									new ColoredMessage(ChatColor.AQUA, Integer.toString(earned))
+							);
 
 							FileConfiguration playerData = Main.plugin.getPlayerData();
 
@@ -793,8 +805,11 @@ public class GameListener implements Listener {
 							LanguageManager.errors.inventoryFull);
 
 				// Notify player
-				PlayerManager.notifySuccess(player, LanguageManager.messages.earnedGems,
-						ChatColor.AQUA, Integer.toString(earned));
+				PlayerManager.notifySuccess(
+						player,
+						LanguageManager.messages.earnedGems,
+						new ColoredMessage(ChatColor.AQUA, Integer.toString(earned))
+				);
 
 				FileConfiguration playerData = Main.plugin.getPlayerData();
 
@@ -845,8 +860,11 @@ public class GameListener implements Listener {
 	@EventHandler
 	public void onBabyAttempt(PlayerInteractEntityEvent e) {
 		// Check for player in game
-		if (GameManager.getArena(e.getPlayer()) == null)
+		try {
+			GameManager.getArena(e.getPlayer());
+		} catch (ArenaNotFoundException err) {
 			return;
+		}
 
 		// Check for wolf
 		if (!(e.getRightClicked() instanceof Wolf))
@@ -868,7 +886,7 @@ public class GameListener implements Listener {
 		try {
 			arena = GameManager.getArena(player);
 			gamer = arena.getPlayer(player);
-		} catch (Exception err) {
+		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
@@ -896,8 +914,8 @@ public class GameListener implements Listener {
 
 			// Check for wolf cap
 			if (gamer.getWolves() >= arena.getWolfCap()) {
-				PlayerManager.notifyFailure(player, LanguageManager.errors.wolf, ChatColor.AQUA,
-						Integer.toString(arena.getWolfCap()));
+				PlayerManager.notifyFailure(player, LanguageManager.errors.wolf,
+						new ColoredMessage(ChatColor.AQUA, Integer.toString(arena.getWolfCap())));
 				return;
 			}
 
@@ -933,8 +951,8 @@ public class GameListener implements Listener {
 
 			// Check for golem cap
 			if (arena.getGolems() >= arena.getGolemCap()) {
-				PlayerManager.notifyFailure(player, LanguageManager.errors.golem, ChatColor.AQUA,
-						Integer.toString(arena.getGolemCap()));
+				PlayerManager.notifyFailure(player, LanguageManager.errors.golem,
+						new ColoredMessage(ChatColor.AQUA, Integer.toString(arena.getGolemCap())));
 				return;
 			}
 
@@ -1211,7 +1229,7 @@ public class GameListener implements Listener {
 		// Attempt to get arena
 		try {
 			arena = GameManager.getArena(player);
-		} catch (Exception err) {
+		} catch (ArenaNotFoundException err) {
 			return;
 		}
 
@@ -1224,7 +1242,8 @@ public class GameListener implements Listener {
 				.contains(Objects.requireNonNull(e.getTo()).getX(), e.getTo().getY(), e.getTo().getZ())) ||
 				!Objects.equals(e.getTo().getWorld(), arena.getCorner1().getWorld())) {
 			e.setCancelled(true);
-			PlayerManager.notifyFailure(player, LanguageManager.errors.teleport, ChatColor.AQUA, "/vd leave");
+			PlayerManager.notifyFailure(player, LanguageManager.errors.teleport,
+					new ColoredMessage(ChatColor.AQUA, "/vd leave"));
 		}
 	}
 
@@ -1243,7 +1262,7 @@ public class GameListener implements Listener {
 		try {
 			arena = GameManager.getArena(player);
 			gamer = arena.getPlayer(player);
-		} catch (Exception err) {
+		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
@@ -1370,7 +1389,7 @@ public class GameListener implements Listener {
 		// Attempt to get arena
 		try {
 			arena = GameManager.getArena(player);
-		} catch (Exception err) {
+		} catch (ArenaNotFoundException err) {
 			return;
 		}
 
@@ -1436,7 +1455,7 @@ public class GameListener implements Listener {
 		// Attempt to get arena
 		try {
 			arena = GameManager.getArena(player);
-		} catch (Exception err) {
+		} catch (ArenaNotFoundException err) {
 			return;
 		}
 

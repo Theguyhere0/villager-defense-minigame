@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.game.models;
 
+import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
@@ -65,8 +66,11 @@ public class Tasks {
 		@Override
 		public void run() {
 			arena.getPlayers().forEach(player ->
-					PlayerManager.notifyAlert(player.getPlayer(),
-							LanguageManager.messages.minutesLeft, ChatColor.AQUA, "2"));
+					PlayerManager.notifyAlert(
+							player.getPlayer(),
+							LanguageManager.messages.minutesLeft,
+							new ColoredMessage(ChatColor.AQUA, "2")
+					));
 			CommunicationManager.debugInfo(arena.getName() + " is starting in 2 minutes.", 2);
 		}
 	};
@@ -76,8 +80,11 @@ public class Tasks {
 		@Override
 		public void run() {
 			arena.getPlayers().forEach(player ->
-					PlayerManager.notifyAlert(player.getPlayer(),
-							LanguageManager.messages.minutesLeft, ChatColor.AQUA, "1"));
+					PlayerManager.notifyAlert(
+							player.getPlayer(),
+							LanguageManager.messages.minutesLeft,
+							new ColoredMessage(ChatColor.AQUA, "1")
+					));
 			CommunicationManager.debugInfo(arena.getName() + " is starting in 1 minute.", 2);
 		}
 	};
@@ -87,8 +94,11 @@ public class Tasks {
 		@Override
 		public void run() {
 			arena.getPlayers().forEach(player ->
-					PlayerManager.notifyAlert(player.getPlayer(),
-							LanguageManager.messages.secondsLeft, ChatColor.AQUA, "30"));
+					PlayerManager.notifyAlert(
+							player.getPlayer(),
+							LanguageManager.messages.secondsLeft,
+							new ColoredMessage(ChatColor.AQUA, "30")
+					));
 			CommunicationManager.debugInfo(arena.getName() + " is starting in 30 seconds.", 2);
 		}
 	};
@@ -98,8 +108,11 @@ public class Tasks {
 		@Override
 		public void run() {
 			arena.getPlayers().forEach(player ->
-					PlayerManager.notifyAlert(player.getPlayer(),
-							LanguageManager.messages.secondsLeft, ChatColor.AQUA, "10"));
+					PlayerManager.notifyAlert(
+							player.getPlayer(),
+							LanguageManager.messages.secondsLeft,
+							new ColoredMessage(ChatColor.AQUA, "10")
+					));
 			CommunicationManager.debugInfo(arena.getName() + " is starting in 10 seconds.", 2);
 		}
 	};
@@ -110,8 +123,11 @@ public class Tasks {
 		public void run() {
 			arena.getPlayers().forEach(player -> {
 				PlayerManager.notifyAlert(player.getPlayer(), LanguageManager.messages.maxCapacity);
-				PlayerManager.notifyAlert(player.getPlayer(),
-						LanguageManager.messages.secondsLeft, ChatColor.AQUA, "10");
+				PlayerManager.notifyAlert(
+						player.getPlayer(),
+						LanguageManager.messages.secondsLeft,
+						new ColoredMessage(ChatColor.AQUA, "10")
+				);
 			});
 			CommunicationManager.debugInfo(arena.getName() + " is full and is starting in 10 seconds.",
 					2);
@@ -124,8 +140,11 @@ public class Tasks {
 		@Override
 		public void run() {
 			arena.getPlayers().forEach(player ->
-					PlayerManager.notifyAlert(player.getPlayer(),
-							LanguageManager.messages.secondsLeft, ChatColor.AQUA, "5"));
+					PlayerManager.notifyAlert(
+							player.getPlayer(),
+							LanguageManager.messages.secondsLeft,
+							new ColoredMessage(ChatColor.AQUA, "5")
+					));
 			CommunicationManager.debugInfo(arena.getName() + " is starting in 5 seconds.", 2);
 
 		}
@@ -269,39 +288,51 @@ public class Tasks {
 			// Start dialogue, then trigger WaveEndEvent
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
 				for (VDPlayer player : arena.getPlayers()) {
-					PlayerManager.notify(player.getPlayer(), ChatColor.WHITE,
-							"&2" + LanguageManager.names.villageCaptain + ": &f" +
-									LanguageManager.messages.villageCaptainDialogue1);
+					PlayerManager.namedNotify(
+							player.getPlayer(),
+							new ColoredMessage(ChatColor.DARK_GREEN, LanguageManager.names.villageCaptain),
+							new ColoredMessage(LanguageManager.messages.villageCaptainDialogue1)
+					);
 				}
 			});
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
 				for (VDPlayer player : arena.getPlayers()) {
-					PlayerManager.notify(player.getPlayer(), ChatColor.WHITE,
-							"&2" + LanguageManager.names.villageCaptain + ": &f" +
-									LanguageManager.messages.villageCaptainDialogue2, ChatColor.AQUA, arena.getName(),
-							LanguageManager.names.crystals);
+					PlayerManager.namedNotify(
+							player.getPlayer(),
+							new ColoredMessage(ChatColor.DARK_GREEN, LanguageManager.names.villageCaptain),
+							new ColoredMessage(LanguageManager.messages.villageCaptainDialogue2),
+							new ColoredMessage(ChatColor.AQUA, arena.getName()),
+							new ColoredMessage(ChatColor.AQUA, LanguageManager.names.crystals)
+					);
 				}
 			}, Utils.secondsToTicks(5));
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
 				for (VDPlayer player : arena.getPlayers()) {
-					PlayerManager.notify(player.getPlayer(), ChatColor.WHITE,
-							"&2" + LanguageManager.names.villageCaptain + ": &f" +
-									LanguageManager.messages.villageCaptainDialogue3);
+					PlayerManager.namedNotify(
+							player.getPlayer(),
+							new ColoredMessage(ChatColor.DARK_GREEN, LanguageManager.names.villageCaptain),
+							new ColoredMessage(LanguageManager.messages.villageCaptainDialogue3)
+					);
 				}
 			}, Utils.secondsToTicks(11));
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
 				for (VDPlayer player : arena.getPlayers()) {
-					PlayerManager.notify(player.getPlayer(), ChatColor.WHITE,
-							"&2" + LanguageManager.names.villageCaptain + ": &f" +
-									LanguageManager.messages.villageCaptainDialogue4, ChatColor.AQUA,
-							"/vd leave");
+					PlayerManager.namedNotify(
+							player.getPlayer(),
+							new ColoredMessage(ChatColor.DARK_GREEN, LanguageManager.names.villageCaptain),
+							new ColoredMessage(LanguageManager.messages.villageCaptainDialogue4),
+							new ColoredMessage(ChatColor.AQUA, "/vd leave")
+					);
 				}
 			}, Utils.secondsToTicks(18));
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
 				for (VDPlayer player : arena.getPlayers()) {
-					PlayerManager.notify(player.getPlayer(), ChatColor.WHITE,
-							"&2" + LanguageManager.names.villageCaptain + ": &f" +
-									LanguageManager.messages.villageCaptainDialogue5, ChatColor.AQUA, arena.getName());
+					PlayerManager.namedNotify(
+							player.getPlayer(),
+							new ColoredMessage(ChatColor.DARK_GREEN, LanguageManager.names.villageCaptain),
+							new ColoredMessage(LanguageManager.messages.villageCaptainDialogue5),
+							new ColoredMessage(ChatColor.AQUA, arena.getName())
+					);
 				}
 			}, Utils.secondsToTicks(25));
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
@@ -429,8 +460,11 @@ public class Tasks {
 				int reward = (currentWave - 1) * multiplier;
 				p.addGems(reward);
 				if (currentWave > 1)
-					PlayerManager.notifySuccess(p.getPlayer(), LanguageManager.messages.gemsReceived,
-							ChatColor.AQUA, Integer.toString(reward));
+					PlayerManager.notifySuccess(
+							p.getPlayer(),
+							LanguageManager.messages.gemsReceived,
+							new ColoredMessage(ChatColor.AQUA, Integer.toString(reward))
+					);
 				GameManager.createBoard(p);
 			});
 

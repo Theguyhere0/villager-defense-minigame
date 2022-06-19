@@ -1,10 +1,12 @@
 package me.theguyhere.villagerdefense.plugin.commands;
 
+import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
+import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.Tasks;
@@ -94,8 +96,6 @@ public class Commands implements CommandExecutor {
 
 					// Admin commands
 					else {
-						FileConfiguration config = Main.plugin.getArenaData();
-
 						switch (args[1].toLowerCase()) {
 							case "lobby":
 								// Incorrect format
@@ -156,7 +156,7 @@ public class Commands implements CommandExecutor {
 												.anyMatch(arenaInstance -> !arenaInstance.isClosed()))
 											PlayerManager.notifyFailure(player,
 													"All arenas must be closed to modify this!");
-										else if (config.contains("lobby"))
+										else if (arenaData.contains("lobby"))
 											player.openInventory(Inventories.createLobbyConfirmMenu());
 										else PlayerManager.notifyFailure(player, "No lobby to remove!");
 										return true;
@@ -261,7 +261,7 @@ public class Commands implements CommandExecutor {
 											return true;
 										}
 
-										if (config.contains(path))
+										if (arenaData.contains(path))
 											player.openInventory(Inventories.createInfoBoardConfirmMenu(infoBoardID));
 										else PlayerManager.notifyFailure(player, "No info board to remove!");
 										return true;
@@ -337,7 +337,7 @@ public class Commands implements CommandExecutor {
 											return true;
 										}
 
-										if (config.contains(path))
+										if (arenaData.contains(path))
 											switch (type) {
 												case "topBalance":
 													player.openInventory(Inventories.createTopBalanceConfirmMenu());
@@ -382,8 +382,8 @@ public class Commands implements CommandExecutor {
 
 								// Check if this arena exists
 								try {
-									arena = Objects.requireNonNull(GameManager.getArena(name.toString()));
-								} catch (Exception e) {
+									arena = GameManager.getArena(name.toString());
+								} catch (ArenaNotFoundException e) {
 									notifyFailure(player, LanguageManager.errors.noArena);
 									return true;
 								}
@@ -412,7 +412,7 @@ public class Commands implements CommandExecutor {
 									}
 
 									// No lobby
-									if (!Main.plugin.getArenaData().contains("lobby")) {
+									if (!arenaData.contains("lobby")) {
 										notifyFailure(player, "Arena cannot open without a lobby!");
 										return true;
 									}
@@ -1632,10 +1632,6 @@ public class Commands implements CommandExecutor {
 
 					int page;
 
-					// Set default page to 1
-					if (args.length < 2)
-						page = 1;
-
 					// Try to get page number, or set page to 1
 					try {
 						page = Integer.parseInt(args[1]);
@@ -1704,7 +1700,7 @@ public class Commands implements CommandExecutor {
 						player.openInventory(Inventories.createPlayerStatsMenu(
 								Objects.requireNonNull(Bukkit.getPlayer(args[1]))));
 					else PlayerManager.notifyFailure(player, LanguageManager.messages.noStats,
-								ChatColor.AQUA, args[1]);
+								new ColoredMessage(ChatColor.AQUA, args[1]));
 					return true;
 
 				// Player checks kits
@@ -1741,7 +1737,7 @@ public class Commands implements CommandExecutor {
 					try {
 						arena = GameManager.getArena(player);
 						gamer = arena.getPlayer(player);
-					} catch (Exception err) {
+					} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 						PlayerManager.notifyFailure(player, LanguageManager.errors.inGame);
 						return true;
 					}
@@ -1819,11 +1815,15 @@ public class Commands implements CommandExecutor {
 						);
 						Main.plugin.savePlayerData();
 						if (player != null)
-							PlayerManager.notifySuccess(player, LanguageManager.confirms.balanceSet,
-									ChatColor.AQUA, args[1],
-									String.valueOf(playerData.getInt(id + ".crystalBalance")));
-						else CommunicationManager.debugInfo(String.format(LanguageManager.confirms.balanceSet, args[1],
-								String.valueOf(playerData.getInt(id + ".crystalBalance"))), 0);
+							PlayerManager.notifySuccess(
+									player,
+									LanguageManager.confirms.balanceSet,
+									new ColoredMessage(ChatColor.AQUA, args[1]),
+									new ColoredMessage(ChatColor.AQUA,
+											Integer.toString(playerData.getInt(id + ".crystalBalance")))
+							);
+						else CommunicationManager.debugInfo(LanguageManager.confirms.balanceSet, 0, args[1],
+								Integer.toString(playerData.getInt(id + ".crystalBalance")));
 					} catch (Exception e) {
 						notifyFailure(player, LanguageManager.errors.integer);
 					}
@@ -1904,8 +1904,8 @@ public class Commands implements CommandExecutor {
 
 						// Check if this arena exists
 						try {
-							arena = Objects.requireNonNull(GameManager.getArena(name.toString()));
-						} catch (Exception e) {
+							arena = GameManager.getArena(name.toString());
+						} catch (ArenaNotFoundException e) {
 							notifyFailure(player, LanguageManager.errors.noArena);
 							return true;
 						}
@@ -1974,7 +1974,7 @@ public class Commands implements CommandExecutor {
 						// Attempt to get arena
 						try {
 							arena = GameManager.getArena(player);
-						} catch (Exception e) {
+						} catch (ArenaNotFoundException e) {
 							PlayerManager.notifyFailure(player, LanguageManager.errors.inGame);
 							return true;
 						}
@@ -2013,8 +2013,8 @@ public class Commands implements CommandExecutor {
 
 						// Check if this arena exists
 						try {
-							arena = Objects.requireNonNull(GameManager.getArena(name.toString()));
-						} catch (Exception e) {
+							arena = GameManager.getArena(name.toString());
+						} catch (ArenaNotFoundException e) {
 							notifyFailure(player, LanguageManager.errors.noArena);
 							return true;
 						}
@@ -2062,7 +2062,7 @@ public class Commands implements CommandExecutor {
 						// Attempt to get arena
 						try {
 							arena = GameManager.getArena(player);
-						} catch (Exception e) {
+						} catch (ArenaNotFoundException e) {
 							PlayerManager.notifyFailure(player, LanguageManager.errors.inGame);
 							return true;
 						}
@@ -2110,8 +2110,8 @@ public class Commands implements CommandExecutor {
 
 						// Check if this arena exists
 						try {
-							arena = Objects.requireNonNull(GameManager.getArena(name.toString()));
-						} catch (Exception e) {
+							arena = GameManager.getArena(name.toString());
+						} catch (ArenaNotFoundException e) {
 							notifyFailure(player, LanguageManager.errors.noArena);
 							return true;
 						}
@@ -2175,10 +2175,13 @@ public class Commands implements CommandExecutor {
 					int configVersion = Main.plugin.getConfig().getInt("version");
 					if (configVersion < Main.configVersion)
 						if (player != null)
-							PlayerManager.notifyAlert(player,
-									LanguageManager.messages.manualUpdateWarn, ChatColor.AQUA, "config.yml");
-						else CommunicationManager.debugError(String.format(LanguageManager.messages.manualUpdateWarn,
-								"config.yml"), 0);
+							PlayerManager.notifyAlert(
+									player,
+									LanguageManager.messages.manualUpdateWarn,
+									new ColoredMessage(ChatColor.AQUA, "config.yml")
+							);
+						else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
+								"config.yml");
 
 					// Check if arenaData.yml is outdated
 					int arenaDataVersion = Main.plugin.getConfig().getInt("arenaData");
@@ -2214,16 +2217,23 @@ public class Commands implements CommandExecutor {
 
 							// Notify
 							if (player != null)
-								PlayerManager.notifySuccess(player, LanguageManager.confirms.autoUpdate, ChatColor.AQUA,
-										"arenaData.yml", "4");
-							CommunicationManager.debugInfo(String.format(LanguageManager.confirms.autoUpdate,
-									"arenaData.yml", "4"), 0);
+								PlayerManager.notifySuccess(
+										player,
+										LanguageManager.confirms.autoUpdate,
+										new ColoredMessage(ChatColor.AQUA, "arenaData.yml"),
+										new ColoredMessage(ChatColor.AQUA, "4")
+								);
+							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
+									"arenaData.yml", "4");
 						} catch (Exception e) {
 							if (player != null)
-								PlayerManager.notifyAlert(player, LanguageManager.messages.manualUpdateWarn,
-										ChatColor.AQUA, "arenaData.yml");
-							else CommunicationManager.debugError(String.format(
-									LanguageManager.messages.manualUpdateWarn, "arenaData.yml"), 0);
+								PlayerManager.notifyAlert(
+										player,
+										LanguageManager.messages.manualUpdateWarn,
+										new ColoredMessage(ChatColor.AQUA, "arenaData.yml")
+								);
+							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
+									"arenaData.yml");
 						}
 					}
 					if (arenaDataVersion < 5) {
@@ -2282,19 +2292,23 @@ public class Commands implements CommandExecutor {
 
 							// Notify
 							if (player != null)
-								PlayerManager.notifySuccess(player,
-										LanguageManager.confirms.autoUpdate, ChatColor.AQUA, "arenaData.yml",
-										"5");
-							CommunicationManager.debugInfo(String.format(LanguageManager.confirms.autoUpdate,
-									"arenaData.yml", "5"), 0);
+								PlayerManager.notifySuccess(
+										player,
+										LanguageManager.confirms.autoUpdate,
+										new ColoredMessage(ChatColor.AQUA, "arenaData.yml"),
+										new ColoredMessage(ChatColor.AQUA, "5")
+								);
+							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
+									"arenaData.yml", "5");
 						} catch (Exception e) {
 							if (player != null)
-								PlayerManager.notifyAlert(player,
-										LanguageManager.messages.manualUpdateWarn, ChatColor.AQUA,
-										"arenaData.yml");
-							else CommunicationManager.debugError(
-									String.format(LanguageManager.messages.manualUpdateWarn,
-											"arenaData.yml"), 0);
+								PlayerManager.notifyAlert(
+										player,
+										LanguageManager.messages.manualUpdateWarn,
+										new ColoredMessage(ChatColor.AQUA, "arenaData.yml")
+								);
+							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
+									"arenaData.yml");
 						}
 					}
 					if (arenaDataVersion < 6) {
@@ -2358,19 +2372,23 @@ public class Commands implements CommandExecutor {
 
 							// Notify
 							if (player != null)
-								PlayerManager.notifySuccess(player,
-										LanguageManager.confirms.autoUpdate, ChatColor.AQUA, "arenaData.yml",
-										"6");
-							CommunicationManager.debugInfo(String.format(LanguageManager.confirms.autoUpdate,
-									"arenaData.yml", "6"), 0);
+								PlayerManager.notifySuccess(
+										player,
+										LanguageManager.confirms.autoUpdate,
+										new ColoredMessage(ChatColor.AQUA, "arenaData.yml"),
+										new ColoredMessage(ChatColor.AQUA, "6")
+								);
+							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
+									"arenaData.yml", "6");
 						} catch (Exception e) {
 							if (player != null)
-								PlayerManager.notifyAlert(player,
-										LanguageManager.messages.manualUpdateWarn, ChatColor.AQUA,
-										"arenaData.yml");
-							else CommunicationManager.debugError(
-									String.format(LanguageManager.messages.manualUpdateWarn,
-											"arenaData.yml"), 0);
+								PlayerManager.notifyAlert(
+										player,
+										LanguageManager.messages.manualUpdateWarn,
+										new ColoredMessage(ChatColor.AQUA, "arenaData.yml")
+								);
+							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
+									"arenaData.yml");
 						}
 					}
 
@@ -2400,19 +2418,23 @@ public class Commands implements CommandExecutor {
 
 							// Notify
 							if (player != null)
-								PlayerManager.notifySuccess(player,
-										LanguageManager.confirms.autoUpdate, ChatColor.AQUA,
-										"playerData.yml", "2");
-							CommunicationManager.debugInfo(String.format(LanguageManager.confirms.autoUpdate,
-									"playerData.yml", "2"), 0);
+								PlayerManager.notifySuccess(
+										player,
+										LanguageManager.confirms.autoUpdate,
+										new ColoredMessage(ChatColor.AQUA, "playerData.yml"),
+										new ColoredMessage(ChatColor.AQUA, "2")
+								);
+							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
+									"playerData.yml", "2");
 						} catch (Exception e) {
 							if (player != null)
-								PlayerManager.notifyAlert(player,
-										LanguageManager.messages.manualUpdateWarn, ChatColor.AQUA,
-										"playerData.yml");
-							else CommunicationManager.debugError(
-									String.format(LanguageManager.messages.manualUpdateWarn,
-											"playerData.yml"), 0);
+								PlayerManager.notifyAlert(
+										player,
+										LanguageManager.messages.manualUpdateWarn,
+										new ColoredMessage(ChatColor.AQUA, "playerData.yml")
+								);
+							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
+									"playerData.yml");
 						}
 					}
 
@@ -2430,17 +2452,21 @@ public class Commands implements CommandExecutor {
 
 						// Notify
 						if (player != null) {
-							PlayerManager.notifySuccess(player, LanguageManager.confirms.autoUpdate,
-									ChatColor.AQUA, "default.yml", String.valueOf(Main.defaultSpawnVersion));
-							PlayerManager.notifyAlert(player,
-									LanguageManager.messages.manualUpdateWarn, ChatColor.AQUA,
-									"All other spawn files");
+							PlayerManager.notifySuccess(
+									player,
+									LanguageManager.confirms.autoUpdate,
+									new ColoredMessage(ChatColor.AQUA, "default.yml"),
+									new ColoredMessage(ChatColor.AQUA, Integer.toString(Main.defaultSpawnVersion)));
+							PlayerManager.notifyAlert(
+									player,
+									LanguageManager.messages.manualUpdateWarn,
+									new ColoredMessage(ChatColor.AQUA, "All other spawn files")
+							);
 						}
-						CommunicationManager.debugInfo(String.format(LanguageManager.confirms.autoUpdate,
-								"default.yml", String.valueOf(Main.defaultSpawnVersion)), 0);
-						CommunicationManager.debugError(
-								String.format(LanguageManager.messages.manualUpdateWarn,
-										"All other spawn files"), 0);
+						CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
+								"default.yml", Integer.toString(Main.defaultSpawnVersion));
+						CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
+								"All other spawn files");
 					}
 
 					// Update default language file
@@ -2455,30 +2481,35 @@ public class Commands implements CommandExecutor {
 
 						// Notify
 						if (player != null) {
-							PlayerManager.notifySuccess(player, LanguageManager.confirms.autoUpdate,
-									ChatColor.AQUA, "en_US.yml", String.valueOf(Main.languageFileVersion));
-							PlayerManager.notifyAlert(player,
-									LanguageManager.messages.manualUpdateWarn, ChatColor.AQUA,
-									"All other language files");
+							PlayerManager.notifySuccess(
+									player,
+									LanguageManager.confirms.autoUpdate,
+									new ColoredMessage(ChatColor.AQUA, "en_US.yml"),
+									new ColoredMessage(ChatColor.AQUA, Integer.toString(Main.languageFileVersion)));
+							PlayerManager.notifyAlert(
+									player,
+									LanguageManager.messages.manualUpdateWarn,
+									new ColoredMessage(ChatColor.AQUA, "All other language files")
+							);
 							PlayerManager.notifyAlert(player, LanguageManager.messages.restartPlugin);
 						}
-						CommunicationManager.debugInfo(String.format(LanguageManager.confirms.autoUpdate, "en_US.yml",
-								String.valueOf(Main.languageFileVersion)), 0);
-						CommunicationManager.debugError(
-								String.format(LanguageManager.messages.manualUpdateWarn,
-										"All other language files"), 0);
+						CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
+								"en_US.yml", Integer.toString(Main.languageFileVersion));
+						CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
+								"All other language files");
 						CommunicationManager.debugError(LanguageManager.messages.restartPlugin, 0);
 					}
 
 					// Check if customEffects.yml is outdated
 					if (Main.plugin.getConfig().getInt("customEffects") < Main.customEffectsVersion) {
 						if (player != null)
-							PlayerManager.notifyAlert(player,
-									LanguageManager.messages.manualUpdateWarn, ChatColor.AQUA,
-									"customEffects.yml");
-						else CommunicationManager.debugError(
-								String.format(LanguageManager.messages.manualUpdateWarn,
-										"customEffects.yml"), 0);
+							PlayerManager.notifyAlert(
+									player,
+									LanguageManager.messages.manualUpdateWarn,
+									new ColoredMessage(ChatColor.AQUA, "customEffects.yml")
+							);
+						else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
+								"customEffects.yml");
 					}
 
 					// Message to player depending on whether the command fixed anything, then reload if fixed
@@ -2523,10 +2554,12 @@ public class Commands implements CommandExecutor {
 
 					// Notify
 					if (player != null)
-						PlayerManager.notifySuccess(player, LanguageManager.messages.debugLevelSet, ChatColor.AQUA,
-								args[1]);
-					else CommunicationManager.debugInfo(String.format(LanguageManager.messages.debugLevelSet, args[1]),
-							0);
+						PlayerManager.notifySuccess(
+								player,
+								LanguageManager.messages.debugLevelSet,
+								new ColoredMessage(ChatColor.AQUA, args[1])
+						);
+					else CommunicationManager.debugInfo(LanguageManager.messages.debugLevelSet, 0, args[1]);
 
 					return true;
 
@@ -2560,6 +2593,8 @@ public class Commands implements CommandExecutor {
 						}
 					} catch (PlayerNotFoundException err) {
 						PlayerManager.notifyFailure(player, LanguageManager.errors.suicide);
+						return true;
+					} catch (ArenaNotFoundException err) {
 						return true;
 					}
 
@@ -2622,8 +2657,8 @@ public class Commands implements CommandExecutor {
 
 	private void notifyCommandFailure(Player player, String command, String message) {
 		if (player != null)
-			PlayerManager.notifyFailure(player, message, ChatColor.AQUA, command);
-		else CommunicationManager.debugError(String.format(message, command.substring(1)), 0);
+			PlayerManager.notifyFailure(player, message, new ColoredMessage(ChatColor.AQUA, command));
+		else CommunicationManager.debugError(message, 0, command.substring(1));
 	}
 
 	private void notifyFailure(Player player, String message) {

@@ -3,7 +3,9 @@ package me.theguyhere.villagerdefense.plugin.listeners;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.SignGUIEvent;
+import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidNameException;
+import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.EnchantingBook;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
@@ -91,7 +93,7 @@ public class InventoryListener implements Listener {
 		CommunicationManager.debugInfo("Inventory Item: " + e.getCurrentItem(), 2);
 		CommunicationManager.debugInfo("Cursor Item: " + e.getCursor(), 2);
 		CommunicationManager.debugInfo("Clicked Inventory: " + e.getClickedInventory(), 2);
-		CommunicationManager.debugInfo("Inventory Name: " + title, 2);
+		CommunicationManager.debugInfo("Inventory Name: ", 2, title);
 
 		// Cancel the event if the inventory isn't the community chest or custom shop editor to prevent changing the GUI
 		if (invID != InventoryID.COMMUNITY_CHEST_INVENTORY &&
@@ -200,8 +202,10 @@ public class InventoryListener implements Listener {
 		else if (invID == InventoryID.ARENA_DASHBOARD) {
 			// Edit existing arena
 			if (buttonType == Material.EMERALD_BLOCK)
-				player.openInventory(Inventories.createArenaMenu(Objects.requireNonNull(
-						GameManager.getArena(buttonName.substring(9)))));
+				try {
+					player.openInventory(Inventories.createArenaMenu(GameManager.getArena(buttonName.substring(9))));
+				} catch (ArenaNotFoundException ignored) {
+				}
 
 			// Create new arena with naming inventory
 			else if (buttonName.contains(CommunicationManager.format("&a&lNew "))) {
@@ -2682,11 +2686,14 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				Arena arena2 = GameManager.getArena(buttonName.substring(9));
+				Arena arena2;
 
 				// Check for valid arena to copy
-				if (arena2 == null)
+				try {
+					arena2 = GameManager.getArena(buttonName.substring(9));
+				} catch (ArenaNotFoundException err) {
 					return;
+				}
 
 				// Copy settings from another arena
 				arena1.copy(arena2);
@@ -2789,7 +2796,7 @@ public class InventoryListener implements Listener {
 			// See if the player is in a game
 			try {
 				arenaInstance = GameManager.getArena(player);
-			} catch (Exception err) {
+			} catch (ArenaNotFoundException err) {
 				return;
 			}
 
@@ -2832,9 +2839,11 @@ public class InventoryListener implements Listener {
 
 		// Mock custom shop for an arena
 		else if (invID == InventoryID.MOCK_CUSTOM_SHOP_MENU) {
-			Arena arenaInstance = Objects.requireNonNull(GameManager.getArena(title.substring(19)));
 			if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Inventories.createArenaInfoMenu(arenaInstance));
+				try {
+					player.openInventory(Inventories.createArenaInfoMenu(GameManager.getArena(title.substring(19))));
+				} catch (ArenaNotFoundException ignored) {
+				}
 		}
 
 		// In-game shops
@@ -2847,7 +2856,7 @@ public class InventoryListener implements Listener {
 			try {
 				arenaInstance = GameManager.getArena(player);
 				gamer = arenaInstance.getPlayer(player);
-			} catch (Exception err) {
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
 			}
 
@@ -2944,7 +2953,7 @@ public class InventoryListener implements Listener {
 			// Attempt to get arena
 			try {
 				arenaInstance = GameManager.getArena(player);
-			} catch (Exception err) {
+			} catch (ArenaNotFoundException err) {
 				return;
 			}
 
@@ -2978,7 +2987,7 @@ public class InventoryListener implements Listener {
 
 			// Gather enchant from name
 			try {
-				enchant = Objects.requireNonNull(buy.getItemMeta()).getDisplayName().split(" ")[1];
+				enchant = buy.getItemMeta().getDisplayName().split(" ")[1];
 			} catch (Exception err) {
 				return;
 			}
@@ -3076,7 +3085,7 @@ public class InventoryListener implements Listener {
 
 			// Check if selected kit retrieval failed
 			if (kit == null) {
-				CommunicationManager.debugError("No kit of " + buttonName.substring(4) + " was found.", 1);
+				CommunicationManager.debugError("No kit of %s was found.", 1, buttonName.substring(4));
 				return;
 			}
 
@@ -3152,7 +3161,7 @@ public class InventoryListener implements Listener {
 			try {
 				arenaInstance = GameManager.getArena(player);
 				gamer = arenaInstance.getPlayer(player);
-			} catch (Exception err) {
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
 			}
 
@@ -3167,8 +3176,7 @@ public class InventoryListener implements Listener {
 
 			// Check if selected kit retrieval failed
 			if (kit == null) {
-				CommunicationManager.debugError("No kit of " + buttonName.substring(4) + " was found.",
-						1);
+				CommunicationManager.debugError("No kit of %s was found.", 1, buttonName.substring(4));
 				return;
 			}
 
@@ -3212,7 +3220,7 @@ public class InventoryListener implements Listener {
 			try {
 				arenaInstance = GameManager.getArena(player);
 				gamer = arenaInstance.getPlayer(player);
-			} catch (Exception err) {
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
 			}
 
@@ -3284,7 +3292,7 @@ public class InventoryListener implements Listener {
 			// Try to get VDPlayer
 			try {
 				gamer = GameManager.getArena(owner).getPlayer(owner);
-			} catch (Exception err) {
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
 			}
 			int gemBoost = gamer.getGemBoost();
@@ -3434,10 +3442,8 @@ public class InventoryListener implements Listener {
 		// Try updating name
 		try {
 			arena.setName(e.getLines()[2]);
-			CommunicationManager.debugInfo(
-					String.format("Name changed for arena %s!", arena.getPath().substring(1)),
-					2
-			);
+			CommunicationManager.debugInfo("Name changed for arena %s!", 2,
+					arena.getPath().substring(1));
 		} catch (InvalidNameException err) {
 			if (err.getMessage().equals("Same"))
 				player.openInventory(Inventories.createArenaMenu(arena));

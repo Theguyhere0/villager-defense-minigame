@@ -1,19 +1,23 @@
 package me.theguyhere.villagerdefense.common;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 
 /**
  * Logging class to standardize console messages from the plugin.
+ *
+ * NOT MEANT TO BE USED DIRECTLY BY OTHER CLASSES.
  */
-public class Log {
-    private static final Logger log = Logger.getLogger("Minecraft");
-
-    public static void warning(String msg) {
-        log.log(Level.WARNING,"[VillagerDefense] " + msg);
+class Log {
+    static void warning(String msg) {
+        Bukkit.getConsoleSender().sendMessage("[VillagerDefense] " + ChatColor.RED + msg);
     }
 
-    public static void info(String msg) {
-        log.info("[VillagerDefense] " + msg);
+    static void info(String msg) {
+        Bukkit.getConsoleSender().sendMessage("[VillagerDefense] " + msg);
+    }
+
+    static void confirm(String msg) {
+        Bukkit.getConsoleSender().sendMessage("[VillagerDefense] " + ChatColor.GREEN + msg);
     }
 }

@@ -8,6 +8,8 @@ public class Utils {
     private static final int MINUTES_TO_SECONDS = 60;
     private static final int SECONDS_TO_MILLIS = 1000;
 
+    public static final int LORE_CHAR_LIMIT = 30;
+
     // Convert seconds to ticks
     public static int secondsToTicks(double seconds) {
         return (int) (seconds * SECONDS_TO_TICKS);
@@ -28,7 +30,8 @@ public class Utils {
         return millis / SECONDS_TO_MILLIS;
     }
 
-    public static int angleToByte(float angle) {
+    // Convert degrees to byte
+    public static int degreesToByte(float angle) {
         return (int) (angle / 360f * 256);
     }
 
@@ -39,6 +42,7 @@ public class Utils {
      * @param name Name of field.
      * @return Field value
      */
+    @SuppressWarnings("unused")
     public static Object getFieldValue(Object instance, String name) {
         Object result = null;
 
@@ -63,6 +67,7 @@ public class Utils {
      * @param name Name of field.
      * @param newValue New value to write to the field.
      */
+    @SuppressWarnings("unused")
     public static void setFieldValue(Object instance, String name, Object newValue) {
         try {
             Field field = instance.getClass().getDeclaredField(name);

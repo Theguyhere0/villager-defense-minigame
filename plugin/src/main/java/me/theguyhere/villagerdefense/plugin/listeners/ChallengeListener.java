@@ -1,9 +1,12 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
 import me.theguyhere.villagerdefense.plugin.Main;
+import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
@@ -35,17 +38,19 @@ public class ChallengeListener implements Listener {
     @EventHandler
     public void onIllegalEquip(PlayerMoveEvent e) {
         Player player = e.getPlayer();
+        Arena arena;
         VDPlayer gamer;
 
-        // Attempt to get VDPlayer
+        // Attempt to get arena and VDPlayer
         try {
-            gamer = GameManager.getArena(player).getPlayer(player);
-        } catch (Exception err) {
+            arena = GameManager.getArena(player);
+            gamer = arena.getPlayer(player);
+        } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             return;
         }
 
         // Ignore arenas that aren't started
-        if (GameManager.getArena(player).getStatus() != ArenaStatus.ACTIVE)
+        if (arena.getStatus() != ArenaStatus.ACTIVE)
             return;
 
         // Ignore creative and spectator mode players
@@ -95,17 +100,19 @@ public class ChallengeListener implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent e) {
         Player player = e.getPlayer();
+        Arena arena;
         VDPlayer gamer;
 
-        // Attempt to get VDPlayer
+        // Attempt to get arena and VDPlayer
         try {
-            gamer = GameManager.getArena(player).getPlayer(player);
-        } catch (Exception err) {
+            arena = GameManager.getArena(player);
+            gamer = arena.getPlayer(player);
+        } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             return;
         }
 
         // Ignore arenas that aren't started
-        if (GameManager.getArena(player).getStatus() != ArenaStatus.ACTIVE)
+        if (arena.getStatus() != ArenaStatus.ACTIVE)
             return;
 
         ItemStack item = e.getItem();
@@ -144,17 +151,19 @@ public class ChallengeListener implements Listener {
         if (e.getEntity() instanceof Player) {
             Player player = (Player) e.getEntity();
             Entity enemy = e.getDamager();
+            Arena arena;
             VDPlayer gamer;
 
-            // Attempt to get VDPlayer
+            // Attempt to get arena and VDPlayer
             try {
-                gamer = GameManager.getArena(player).getPlayer(player);
-            } catch (Exception err) {
+                arena = GameManager.getArena(player);
+                gamer = arena.getPlayer(player);
+            } catch (ArenaNotFoundException | PlayerNotFoundException err) {
                 return;
             }
 
             // Ignore arenas that aren't started
-            if (GameManager.getArena(player).getStatus() != ArenaStatus.ACTIVE)
+            if (arena.getStatus() != ArenaStatus.ACTIVE)
                 return;
 
             // Make sure player is alive
@@ -189,7 +198,7 @@ public class ChallengeListener implements Listener {
             // Attempt to get VDPlayer
             try {
                 gamer = GameManager.getArena(player).getPlayer(player);
-            } catch (Exception err) {
+            } catch (ArenaNotFoundException | PlayerNotFoundException err) {
                 return;
             }
 
@@ -209,17 +218,19 @@ public class ChallengeListener implements Listener {
             return;
 
         Player player = e.getPlayer();
+        Arena arena;
         VDPlayer gamer;
 
-        // Attempt to get VDPlayer
+        // Attempt to get arena and VDPlayer
         try {
-            gamer = GameManager.getArena(player).getPlayer(player);
-        } catch (Exception err) {
+            arena = GameManager.getArena(player);
+            gamer = arena.getPlayer(player);
+        } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             return;
         }
 
         // Ignore arenas that aren't started
-        if (GameManager.getArena(player).getStatus() != ArenaStatus.ACTIVE)
+        if (arena.getStatus() != ArenaStatus.ACTIVE)
             return;
 
         // Check for blind challenge
@@ -238,17 +249,19 @@ public class ChallengeListener implements Listener {
         if (!(e.getEntity() instanceof Player)) return;
 
         Player player = (Player) e.getEntity();
+        Arena arena;
         VDPlayer gamer;
 
-        // Attempt to get VDPlayer
+        // Attempt to get arena and VDPlayer
         try {
-            gamer = GameManager.getArena(player).getPlayer(player);
-        } catch (Exception err) {
+            arena = GameManager.getArena(player);
+            gamer = arena.getPlayer(player);
+        } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             return;
         }
 
         // Ignore arenas that aren't started
-        if (GameManager.getArena(player).getStatus() != ArenaStatus.ACTIVE)
+        if (arena.getStatus() != ArenaStatus.ACTIVE)
             return;
 
         // Check for uhc challenge
