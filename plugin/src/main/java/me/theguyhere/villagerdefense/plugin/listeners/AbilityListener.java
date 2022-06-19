@@ -5,6 +5,8 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.EndNinjaNerfEvent;
+import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
@@ -52,7 +54,7 @@ public class AbilityListener implements Listener {
         try {
             arena = GameManager.getArena(player);
             gamer = arena.getPlayer(player);
-        } catch (Exception err) {
+        } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             return;
         }
 
@@ -891,7 +893,7 @@ public class AbilityListener implements Listener {
         try {
             arena = GameManager.getArena(player);
             gamer = arena.getPlayer(player);
-        } catch (Exception err) {
+        } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             return;
         }
 

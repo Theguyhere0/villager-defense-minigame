@@ -6,6 +6,7 @@ import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.LeftClickNPCEvent;
 import me.theguyhere.villagerdefense.plugin.events.RightClickNPCEvent;
 import me.theguyhere.villagerdefense.plugin.events.SignGUIEvent;
+import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
@@ -44,7 +45,7 @@ public class PacketListenerImp implements PacketListener {
 
         try {
             arena = GameManager.getArena(Integer.parseInt(header.substring(18, header.length() - 4)));
-        } catch (Exception ignored) {
+        } catch (ArenaNotFoundException ignored) {
             return;
         }
 

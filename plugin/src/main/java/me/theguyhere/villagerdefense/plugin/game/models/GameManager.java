@@ -3,6 +3,7 @@ package me.theguyhere.villagerdefense.plugin.game.models;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
+import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.game.displays.InfoBoard;
 import me.theguyhere.villagerdefense.plugin.game.displays.Leaderboard;
@@ -16,6 +17,7 @@ import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -69,25 +71,28 @@ public class GameManager {
 		Main.plugin.setLoaded(true);
 	}
 
-	public static Arena getArena(int arenaID) {
-		return arenas.get(arenaID);
+	public static @NotNull Arena getArena(int arenaID) throws ArenaNotFoundException {
+		Arena result = arenas.get(arenaID);
+		if (result == null)
+			throw new ArenaNotFoundException();
+		return result;
 	}
 
-	public static Arena getArena(String arenaName) {
+	public static @NotNull Arena getArena(String arenaName) throws ArenaNotFoundException {
 		try {
 			return arenas.values().stream().filter(Objects::nonNull).filter(a -> a.getName() != null)
 					.filter(a -> a.getName().equals(arenaName)).collect(Collectors.toList()).get(0);
 		} catch (Exception e) {
-			return null;
+			throw new ArenaNotFoundException();
 		}
 	}
 
-	public static Arena getArena(Player player) {
+	public static @NotNull Arena getArena(Player player) throws ArenaNotFoundException {
 		try {
 			return arenas.values().stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
 					.collect(Collectors.toList()).get(0);
 		} catch (Exception e) {
-			return null;
+			throw new ArenaNotFoundException();
 		}
 	}
 
@@ -121,9 +126,12 @@ public class GameManager {
 		if (manager == null)
 			return;
 		Scoreboard board = manager.getNewScoreboard();
-		Arena arena = getArena(player.getPlayer());
-		if (arena == null)
+		Arena arena;
+		try {
+				arena = getArena(player.getPlayer());
+		} catch (ArenaNotFoundException e) {
 			return;
+		}
 
 		// Create score board
 		Objective obj = board.registerNewObjective("VillagerDefense", "dummy",

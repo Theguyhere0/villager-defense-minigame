@@ -2,6 +2,7 @@ package me.theguyhere.villagerdefense.plugin.game.models.arenas;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryID;
@@ -35,6 +36,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.BoundingBox;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.*;
@@ -149,11 +151,15 @@ public class Arena {
         // Check if name is the same as current
         else if (name.equals(getName())) throw new InvalidNameException("Same");
 
-        // Check for duplicate name
-        else if (GameManager.getArena(name) != null) throw new InvalidNameException("Duplicate");
-
-        // Save name
         else {
+            // Check for duplicate name
+            try {
+                GameManager.getArena(name);
+                throw new InvalidNameException("Duplicate");
+            } catch (ArenaNotFoundException ignored) {
+            }
+
+            // Save name
             config.set(path + ".name", name);
             Main.plugin.saveArenaData();
         }
@@ -1564,7 +1570,7 @@ public class Arena {
      * @return The corresponding {@link VDPlayer}.
      * @throws PlayerNotFoundException Thrown when the arena doesn't have a corresponding {@link VDPlayer}.
      */
-    public VDPlayer getPlayer(Player player) throws PlayerNotFoundException {
+    public @NotNull VDPlayer getPlayer(Player player) throws PlayerNotFoundException {
         try {
             return players.stream().filter(Objects::nonNull).filter(p -> p.getID().equals(player.getUniqueId()))
                     .collect(Collectors.toList()).get(0);

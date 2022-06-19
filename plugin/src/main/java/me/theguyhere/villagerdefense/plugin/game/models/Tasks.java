@@ -320,7 +320,7 @@ public class Tasks {
 					PlayerManager.namedNotify(
 							player.getPlayer(),
 							new ColoredMessage(ChatColor.DARK_GREEN, LanguageManager.names.villageCaptain),
-							new ColoredMessage(LanguageManager.messages.villageCaptainDialogue2),
+							new ColoredMessage(LanguageManager.messages.villageCaptainDialogue4),
 							new ColoredMessage(ChatColor.AQUA, "/vd leave")
 					);
 				}
@@ -330,7 +330,7 @@ public class Tasks {
 					PlayerManager.namedNotify(
 							player.getPlayer(),
 							new ColoredMessage(ChatColor.DARK_GREEN, LanguageManager.names.villageCaptain),
-							new ColoredMessage(LanguageManager.messages.villageCaptainDialogue2),
+							new ColoredMessage(LanguageManager.messages.villageCaptainDialogue5),
 							new ColoredMessage(ChatColor.AQUA, arena.getName())
 					);
 				}
