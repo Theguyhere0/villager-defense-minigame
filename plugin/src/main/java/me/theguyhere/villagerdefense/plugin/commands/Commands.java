@@ -6,6 +6,7 @@ import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
+import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.Tasks;
@@ -95,8 +96,6 @@ public class Commands implements CommandExecutor {
 
 					// Admin commands
 					else {
-						FileConfiguration config = Main.plugin.getArenaData();
-
 						switch (args[1].toLowerCase()) {
 							case "lobby":
 								// Incorrect format
@@ -157,7 +156,7 @@ public class Commands implements CommandExecutor {
 												.anyMatch(arenaInstance -> !arenaInstance.isClosed()))
 											PlayerManager.notifyFailure(player,
 													"All arenas must be closed to modify this!");
-										else if (config.contains("lobby"))
+										else if (arenaData.contains("lobby"))
 											player.openInventory(Inventories.createLobbyConfirmMenu());
 										else PlayerManager.notifyFailure(player, "No lobby to remove!");
 										return true;
@@ -262,7 +261,7 @@ public class Commands implements CommandExecutor {
 											return true;
 										}
 
-										if (config.contains(path))
+										if (arenaData.contains(path))
 											player.openInventory(Inventories.createInfoBoardConfirmMenu(infoBoardID));
 										else PlayerManager.notifyFailure(player, "No info board to remove!");
 										return true;
@@ -338,7 +337,7 @@ public class Commands implements CommandExecutor {
 											return true;
 										}
 
-										if (config.contains(path))
+										if (arenaData.contains(path))
 											switch (type) {
 												case "topBalance":
 													player.openInventory(Inventories.createTopBalanceConfirmMenu());
@@ -383,8 +382,8 @@ public class Commands implements CommandExecutor {
 
 								// Check if this arena exists
 								try {
-									arena = Objects.requireNonNull(GameManager.getArena(name.toString()));
-								} catch (Exception e) {
+									arena = GameManager.getArena(name.toString());
+								} catch (ArenaNotFoundException e) {
 									notifyFailure(player, LanguageManager.errors.noArena);
 									return true;
 								}
@@ -413,7 +412,7 @@ public class Commands implements CommandExecutor {
 									}
 
 									// No lobby
-									if (!Main.plugin.getArenaData().contains("lobby")) {
+									if (!arenaData.contains("lobby")) {
 										notifyFailure(player, "Arena cannot open without a lobby!");
 										return true;
 									}
@@ -1738,7 +1737,7 @@ public class Commands implements CommandExecutor {
 					try {
 						arena = GameManager.getArena(player);
 						gamer = arena.getPlayer(player);
-					} catch (Exception err) {
+					} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 						PlayerManager.notifyFailure(player, LanguageManager.errors.inGame);
 						return true;
 					}
@@ -1905,8 +1904,8 @@ public class Commands implements CommandExecutor {
 
 						// Check if this arena exists
 						try {
-							arena = Objects.requireNonNull(GameManager.getArena(name.toString()));
-						} catch (Exception e) {
+							arena = GameManager.getArena(name.toString());
+						} catch (ArenaNotFoundException e) {
 							notifyFailure(player, LanguageManager.errors.noArena);
 							return true;
 						}
@@ -1975,7 +1974,7 @@ public class Commands implements CommandExecutor {
 						// Attempt to get arena
 						try {
 							arena = GameManager.getArena(player);
-						} catch (Exception e) {
+						} catch (ArenaNotFoundException e) {
 							PlayerManager.notifyFailure(player, LanguageManager.errors.inGame);
 							return true;
 						}
@@ -2014,8 +2013,8 @@ public class Commands implements CommandExecutor {
 
 						// Check if this arena exists
 						try {
-							arena = Objects.requireNonNull(GameManager.getArena(name.toString()));
-						} catch (Exception e) {
+							arena = GameManager.getArena(name.toString());
+						} catch (ArenaNotFoundException e) {
 							notifyFailure(player, LanguageManager.errors.noArena);
 							return true;
 						}
@@ -2063,7 +2062,7 @@ public class Commands implements CommandExecutor {
 						// Attempt to get arena
 						try {
 							arena = GameManager.getArena(player);
-						} catch (Exception e) {
+						} catch (ArenaNotFoundException e) {
 							PlayerManager.notifyFailure(player, LanguageManager.errors.inGame);
 							return true;
 						}
@@ -2111,8 +2110,8 @@ public class Commands implements CommandExecutor {
 
 						// Check if this arena exists
 						try {
-							arena = Objects.requireNonNull(GameManager.getArena(name.toString()));
-						} catch (Exception e) {
+							arena = GameManager.getArena(name.toString());
+						} catch (ArenaNotFoundException e) {
 							notifyFailure(player, LanguageManager.errors.noArena);
 							return true;
 						}
@@ -2594,6 +2593,8 @@ public class Commands implements CommandExecutor {
 						}
 					} catch (PlayerNotFoundException err) {
 						PlayerManager.notifyFailure(player, LanguageManager.errors.suicide);
+						return true;
+					} catch (ArenaNotFoundException err) {
 						return true;
 					}
 

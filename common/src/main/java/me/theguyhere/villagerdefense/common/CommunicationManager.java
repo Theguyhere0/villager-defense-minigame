@@ -104,7 +104,7 @@ public class CommunicationManager {
         try {
             String formattedString = base.toString();
             for (ColoredMessage replacement : replacements) {
-                formattedString = String.format(formattedString,
+                formattedString = formattedString.replaceFirst("%s",
                         replacement.getBase() + replacement.getMessage() + base.getBase());
             }
             return formattedString;
@@ -129,7 +129,8 @@ public class CommunicationManager {
         try {
             String formattedString = base.toString();
             for (String replacement : replacements)
-                formattedString = String.format(formattedString, ChatColor.AQUA + replacement + base.getBase());
+                formattedString = formattedString.replaceFirst("%s",
+                        ChatColor.AQUA + replacement + base.getBase());
             return formattedString;
         } catch (IllegalFormatException e) {
             debugError("The number of replacements is likely incorrect when formatting a message!", 0,
@@ -192,7 +193,8 @@ public class CommunicationManager {
         if (CommunicationManager.debugLevel >= debugLevel) {
             String formattedMessage = base;
             for (String replacement : replacements)
-                formattedMessage = String.format(formattedMessage, ChatColor.BLUE + replacement + ChatColor.RED);
+                formattedMessage = formattedMessage.replaceFirst("%s",
+                        ChatColor.BLUE + replacement + ChatColor.RED);
             Log.warning(formattedMessage);
 
             if (stackTrace)
@@ -225,7 +227,8 @@ public class CommunicationManager {
         if (CommunicationManager.debugLevel >= debugLevel) {
             String formattedMessage = base;
             for (String replacement : replacements)
-                formattedMessage = String.format(formattedMessage, ChatColor.BLUE + replacement + ChatColor.WHITE);
+                formattedMessage = formattedMessage.replaceFirst("%s",
+                        ChatColor.BLUE + replacement + ChatColor.WHITE);
             Log.info(formattedMessage);
 
             if (stackTrace)
