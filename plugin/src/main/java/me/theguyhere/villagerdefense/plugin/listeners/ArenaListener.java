@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
+import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
@@ -116,7 +117,7 @@ public class ArenaListener implements Listener {
             PlayerManager.giveChoiceItems(fighter);
 
             // Debug message to console
-            CommunicationManager.debugInfo(player.getName() + " joined " + arena.getName(), 2);
+            CommunicationManager.debugInfo("%s joined %s", 2, player.getName(), arena.getName());
         }
 
         // Enter arena if late arrival is allowed
@@ -144,7 +145,7 @@ public class ArenaListener implements Listener {
             arena.getTask().giveItems(fighter);
 
             // Debug message to console
-            CommunicationManager.debugInfo(player.getName() + " joined " + arena.getName(), 2);
+            CommunicationManager.debugInfo("%s joined %s", 2, player.getName(), arena.getName());
 
             // Don't touch task updating
             return;
@@ -161,8 +162,7 @@ public class ArenaListener implements Listener {
             arena.refreshPortal();
 
             // Debug message to console
-            CommunicationManager.debugInfo(player.getName() + " is spectating " + arena.getName(),
-                    2);
+            CommunicationManager.debugInfo("%s is spectating %s", 2, player.getName(), arena.getName());
 
             // Don't touch task updating
             return;
@@ -269,8 +269,8 @@ public class ArenaListener implements Listener {
                 PlayerManager.setTopWave(active.getID(), arena.getCurrentWave());
 
         // Debug message to console
-        CommunicationManager.debugInfo("" + arena.getName() + " completed wave " + arena.getCurrentWave(),
-                2);
+        CommunicationManager.debugInfo("%s completed wave %s", 2, arena.getName(),
+                Integer.toString(arena.getCurrentWave()));
 
         // Win condition
         if (arena.getCurrentWave() == arena.getMaxWaves()) {
@@ -329,8 +329,8 @@ public class ArenaListener implements Listener {
         spawnBosses(arena);
 
         // Debug message to console
-        CommunicationManager.debugInfo("" + arena.getName() + " started wave " + arena.getCurrentWave(),
-                2);
+        CommunicationManager.debugInfo("%s started wave %s", 2, arena.getName(),
+                Integer.toString(arena.getCurrentWave()));
     }
 
     @EventHandler
@@ -419,8 +419,12 @@ public class ArenaListener implements Listener {
 
                 // Give rewards and notify
                 PlayerManager.depositCrystalBalance(playerID, reward + bonus);
-                PlayerManager.notifySuccess(player, LanguageManager.messages.crystalsEarned,
-                        ChatColor.AQUA, String.format("%d (+%d)", reward, bonus), LanguageManager.names.crystals);
+                PlayerManager.notifySuccess(
+                        player,
+                        LanguageManager.messages.crystalsEarned,
+                        new ColoredMessage(ChatColor.AQUA, String.format("%d (+%d)", reward, bonus)),
+                        new ColoredMessage(ChatColor.AQUA, LanguageManager.names.crystals)
+                );
             }
 
             Tasks task = arena.getTask();
@@ -477,7 +481,7 @@ public class ArenaListener implements Listener {
         GameManager.displayEverything(player);
 
         // Debug message to console
-        CommunicationManager.debugInfo(player.getName() + " left " + arena.getName(), 2);
+        CommunicationManager.debugInfo("%s left %s", 2, player.getName(), arena.getName());
     }
 
     @EventHandler
@@ -495,8 +499,12 @@ public class ArenaListener implements Listener {
 
         // Notify players that the game has ended (Chat)
         arena.getPlayers().forEach(player ->
-                PlayerManager.notifyAlert(player.getPlayer(), LanguageManager.messages.end,
-                        ChatColor.AQUA, Integer.toString(arena.getCurrentWave() - 1), "10"));
+                PlayerManager.notifyAlert(
+                        player.getPlayer(),
+                        LanguageManager.messages.end,
+                        new ColoredMessage(ChatColor.AQUA, Integer.toString(arena.getCurrentWave() - 1)),
+                        new ColoredMessage(ChatColor.AQUA, "10")
+                ));
 
         // Set all players to invincible
         arena.getAlives().forEach(player -> player.getPlayer().setInvulnerable(true));
@@ -514,7 +522,7 @@ public class ArenaListener implements Listener {
             if (arena.checkNewRecord(new ArenaRecord(arena.getCurrentWave() - 1, arena.getActives().stream()
                     .map(vdPlayer -> vdPlayer.getPlayer().getName()).collect(Collectors.toList())))) {
                 arena.getPlayers().forEach(player -> player.getPlayer().sendTitle(
-                        CommunicationManager.format("&a" + LanguageManager.messages.record), null,
+                        new ColoredMessage(ChatColor.GREEN, LanguageManager.messages.record).toString(), null,
                         Utils.secondsToTicks(.5), Utils.secondsToTicks(3.5), Utils.secondsToTicks(1)));
                 arena.refreshArenaBoard();
             }
@@ -541,9 +549,12 @@ public class ArenaListener implements Listener {
 
                 // Give rewards and notify
                 PlayerManager.depositCrystalBalance(vdPlayer.getID(), reward + bonus);
-                PlayerManager.notifySuccess(vdPlayer.getPlayer(),
+                PlayerManager.notifySuccess(
+                        vdPlayer.getPlayer(),
                         LanguageManager.messages.crystalsEarned,
-                        ChatColor.AQUA, String.format("%d (+%d)", reward, bonus), LanguageManager.names.crystals);
+                        new ColoredMessage(ChatColor.AQUA, String.format("%d (+%d)", reward, bonus)),
+                        new ColoredMessage(ChatColor.AQUA, LanguageManager.names.crystals)
+                );
             });
         }
 
@@ -566,7 +577,7 @@ public class ArenaListener implements Listener {
                 Utils.secondsToTicks(12));
 
         // Debug message to console
-        CommunicationManager.debugInfo("" + arena.getName() + " is ending.", 2);
+        CommunicationManager.debugInfo("%s is ending.", 2, arena.getName());
     }
 
     @EventHandler

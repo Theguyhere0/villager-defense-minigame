@@ -91,7 +91,7 @@ public class InventoryListener implements Listener {
 		CommunicationManager.debugInfo("Inventory Item: " + e.getCurrentItem(), 2);
 		CommunicationManager.debugInfo("Cursor Item: " + e.getCursor(), 2);
 		CommunicationManager.debugInfo("Clicked Inventory: " + e.getClickedInventory(), 2);
-		CommunicationManager.debugInfo("Inventory Name: " + title, 2);
+		CommunicationManager.debugInfo("Inventory Name: ", 2, title);
 
 		// Cancel the event if the inventory isn't the community chest or custom shop editor to prevent changing the GUI
 		if (invID != InventoryID.COMMUNITY_CHEST_INVENTORY &&
@@ -3077,8 +3077,7 @@ public class InventoryListener implements Listener {
 
 			// Check if selected kit retrieval failed
 			if (kit == null) {
-				CommunicationManager.debugError("No kit of " + buttonName.substring(4) + " was found.",
-						  1);
+				CommunicationManager.debugError("No kit of %s was found.", 1, buttonName.substring(4));
 				return;
 			}
 
@@ -3166,8 +3165,7 @@ public class InventoryListener implements Listener {
 
 			// Check if selected kit retrieval failed
 			if (kit == null) {
-				CommunicationManager.debugError("No kit of " + buttonName.substring(4) + " was found.",
-						1);
+				CommunicationManager.debugError("No kit of %s was found.", 1, buttonName.substring(4));
 				return;
 			}
 
@@ -3436,10 +3434,8 @@ public class InventoryListener implements Listener {
 		// Try updating name
 		try {
 			arena.setName(e.getLines()[2]);
-			CommunicationManager.debugInfo(
-					String.format("Name changed for arena %s!", arena.getPath().substring(1)),
-					2
-			);
+			CommunicationManager.debugInfo("Name changed for arena %s!", 2,
+					arena.getPath().substring(1));
 		} catch (InvalidNameException err) {
 			if (err.getMessage().equals("Same"))
 				player.openInventory(Inventories.createArenaMenu(arena));

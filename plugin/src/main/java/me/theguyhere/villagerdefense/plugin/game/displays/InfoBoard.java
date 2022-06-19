@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.game.displays;
 
+import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
@@ -20,16 +21,16 @@ public class InfoBoard {
 			throw new InvalidLocationException("Location world cannot be null!");
 
 		// Gather info text
-		String[] text = {CommunicationManager.format(ChatColor.YELLOW, LanguageManager.messages.info1),
-				CommunicationManager.format(ChatColor.GREEN, LanguageManager.messages.info2),
-				CommunicationManager.format(ChatColor.GOLD, LanguageManager.messages.info3, ChatColor.AQUA,
-						"/vd stats"),
-				CommunicationManager.format(ChatColor.GOLD, LanguageManager.messages.info4, ChatColor.AQUA,
-						"/vd kits", LanguageManager.names.crystals),
-				CommunicationManager.format(ChatColor.GOLD, LanguageManager.messages.info5, ChatColor.AQUA,
-						"/vd help"),
-				CommunicationManager.format(ChatColor.GOLD, LanguageManager.messages.info6, ChatColor.AQUA,
-						"/vd leave")};
+		String[] text = {new ColoredMessage(ChatColor.YELLOW, LanguageManager.messages.info1).toString(),
+				new ColoredMessage(ChatColor.GREEN, LanguageManager.messages.info2).toString(),
+				CommunicationManager.format(infoMessage(LanguageManager.messages.info3),
+						replaceMessage("/vd stats")),
+				CommunicationManager.format(infoMessage(LanguageManager.messages.info4),
+						replaceMessage("/vd kits"), replaceMessage(LanguageManager.names.crystals)),
+				CommunicationManager.format(infoMessage(LanguageManager.messages.info5),
+						replaceMessage("/vd help")),
+				CommunicationManager.format(infoMessage(LanguageManager.messages.info6),
+						replaceMessage("/vd leave"))};
 
 		// Set location and hologram
 		this.location = location;
@@ -64,5 +65,12 @@ public class InfoBoard {
 	 */
 	public void remove() {
 		hologram.remove();
+	}
+
+	private static ColoredMessage infoMessage(String msg) {
+		return new ColoredMessage(ChatColor.GOLD, msg);
+	}
+	private static ColoredMessage replaceMessage(String msg) {
+		return new ColoredMessage(ChatColor.AQUA, msg);
 	}
 }

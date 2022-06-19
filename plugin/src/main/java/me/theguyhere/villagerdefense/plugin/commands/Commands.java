@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.commands;
 
+import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
@@ -44,7 +45,7 @@ public class Commands implements CommandExecutor {
 		playerData = Main.getPlayerData();
 		arenaData = Main.getArenaData();
 	}
-	
+
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label,
 							 String[] args) {
 		try {
@@ -1630,10 +1631,6 @@ public class Commands implements CommandExecutor {
 
 					int page;
 
-					// Set default page to 1
-					if (args.length < 2)
-						page = 1;
-
 					// Try to get page number, or set page to 1
 					try {
 						page = Integer.parseInt(args[1]);
@@ -1703,7 +1700,7 @@ public class Commands implements CommandExecutor {
 						player.openInventory(Inventories.createPlayerStatsMenu(
 								Bukkit.getOfflinePlayer(args[1]).getUniqueId(), player.getUniqueId()));
 					else PlayerManager.notifyFailure(player, LanguageManager.messages.noStats,
-								ChatColor.AQUA, args[1]);
+								new ColoredMessage(ChatColor.AQUA, args[1]));
 					return true;
 
 				// Player checks kits
@@ -1824,10 +1821,15 @@ public class Commands implements CommandExecutor {
 							PlayerManager.withdrawCrystalBalance(id, -amount);
 						else PlayerManager.depositCrystalBalance(id, amount);
 						if (player != null)
-							PlayerManager.notifySuccess(player, LanguageManager.confirms.balanceSet, ChatColor.AQUA,
-									args[1], String.valueOf(PlayerManager.getCrystalBalance(id)));
-						else CommunicationManager.debugInfo(String.format(LanguageManager.confirms.balanceSet, args[1],
-								String.valueOf(PlayerManager.getCrystalBalance(id))), 0);
+							PlayerManager.notifySuccess(
+									player,
+									LanguageManager.confirms.balanceSet,
+									new ColoredMessage(ChatColor.AQUA, args[1]),
+									new ColoredMessage(ChatColor.AQUA,
+											Integer.toString(PlayerManager.getCrystalBalance(id)))
+							);
+						else CommunicationManager.debugInfo(LanguageManager.confirms.balanceSet, 0, args[1],
+								Integer.toString(PlayerManager.getCrystalBalance(id)));
 					} catch (Exception e) {
 						notifyFailure(player, LanguageManager.errors.integer);
 					}
@@ -2186,10 +2188,13 @@ public class Commands implements CommandExecutor {
 					int configVersion = Main.plugin.getConfig().getInt("version");
 					if (configVersion < Main.configVersion)
 						if (player != null)
-							PlayerManager.notifyAlert(player,
-									LanguageManager.messages.manualUpdateWarn, ChatColor.AQUA, "config.yml");
-						else CommunicationManager.debugError(String.format(LanguageManager.messages.manualUpdateWarn,
-								"config.yml"), 0);
+							PlayerManager.notifyAlert(
+									player,
+									LanguageManager.messages.manualUpdateWarn,
+									new ColoredMessage(ChatColor.AQUA, "config.yml")
+							);
+						else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
+								"config.yml");
 
 					// Check if arenaData.yml is outdated
 					int arenaDataVersion = Main.plugin.getConfig().getInt("arenaData");
@@ -2225,16 +2230,23 @@ public class Commands implements CommandExecutor {
 
 							// Notify
 							if (player != null)
-								PlayerManager.notifySuccess(player, LanguageManager.confirms.autoUpdate, ChatColor.AQUA,
-										"arenaData.yml", "4");
-							CommunicationManager.debugInfo(String.format(LanguageManager.confirms.autoUpdate,
-									"arenaData.yml", "4"), 0);
+								PlayerManager.notifySuccess(
+										player,
+										LanguageManager.confirms.autoUpdate,
+										new ColoredMessage(ChatColor.AQUA, "arenaData.yml"),
+										new ColoredMessage(ChatColor.AQUA, "4")
+								);
+							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
+									"arenaData.yml", "4");
 						} catch (Exception e) {
 							if (player != null)
-								PlayerManager.notifyAlert(player, LanguageManager.messages.manualUpdateWarn,
-										ChatColor.AQUA, "arenaData.yml");
-							else CommunicationManager.debugError(String.format(
-									LanguageManager.messages.manualUpdateWarn, "arenaData.yml"), 0);
+								PlayerManager.notifyAlert(
+										player,
+										LanguageManager.messages.manualUpdateWarn,
+										new ColoredMessage(ChatColor.AQUA, "arenaData.yml")
+								);
+							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
+									"arenaData.yml");
 						}
 					}
 					if (arenaDataVersion < 5) {
@@ -2293,19 +2305,23 @@ public class Commands implements CommandExecutor {
 
 							// Notify
 							if (player != null)
-								PlayerManager.notifySuccess(player,
-										LanguageManager.confirms.autoUpdate, ChatColor.AQUA, "arenaData.yml",
-										"5");
-							CommunicationManager.debugInfo(String.format(LanguageManager.confirms.autoUpdate,
-									"arenaData.yml", "5"), 0);
+								PlayerManager.notifySuccess(
+										player,
+										LanguageManager.confirms.autoUpdate,
+										new ColoredMessage(ChatColor.AQUA, "arenaData.yml"),
+										new ColoredMessage(ChatColor.AQUA, "5")
+								);
+							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
+									"arenaData.yml", "5");
 						} catch (Exception e) {
 							if (player != null)
-								PlayerManager.notifyAlert(player,
-										LanguageManager.messages.manualUpdateWarn, ChatColor.AQUA,
-										"arenaData.yml");
-							else CommunicationManager.debugError(
-									String.format(LanguageManager.messages.manualUpdateWarn,
-											"arenaData.yml"), 0);
+								PlayerManager.notifyAlert(
+										player,
+										LanguageManager.messages.manualUpdateWarn,
+										new ColoredMessage(ChatColor.AQUA, "arenaData.yml")
+								);
+							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
+									"arenaData.yml");
 						}
 					}
 					if (arenaDataVersion < 6) {
@@ -2369,19 +2385,23 @@ public class Commands implements CommandExecutor {
 
 							// Notify
 							if (player != null)
-								PlayerManager.notifySuccess(player,
-										LanguageManager.confirms.autoUpdate, ChatColor.AQUA, "arenaData.yml",
-										"6");
-							CommunicationManager.debugInfo(String.format(LanguageManager.confirms.autoUpdate,
-									"arenaData.yml", "6"), 0);
+								PlayerManager.notifySuccess(
+										player,
+										LanguageManager.confirms.autoUpdate,
+										new ColoredMessage(ChatColor.AQUA, "arenaData.yml"),
+										new ColoredMessage(ChatColor.AQUA, "6")
+								);
+							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
+									"arenaData.yml", "6");
 						} catch (Exception e) {
 							if (player != null)
-								PlayerManager.notifyAlert(player,
-										LanguageManager.messages.manualUpdateWarn, ChatColor.AQUA,
-										"arenaData.yml");
-							else CommunicationManager.debugError(
-									String.format(LanguageManager.messages.manualUpdateWarn,
-											"arenaData.yml"), 0);
+								PlayerManager.notifyAlert(
+										player,
+										LanguageManager.messages.manualUpdateWarn,
+										new ColoredMessage(ChatColor.AQUA, "arenaData.yml")
+								);
+							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
+									"arenaData.yml");
 						}
 					}
 
@@ -2411,19 +2431,23 @@ public class Commands implements CommandExecutor {
 
 							// Notify
 							if (player != null)
-								PlayerManager.notifySuccess(player,
-										LanguageManager.confirms.autoUpdate, ChatColor.AQUA,
-										"playerData.yml", "2");
-							CommunicationManager.debugInfo(String.format(LanguageManager.confirms.autoUpdate,
-									"playerData.yml", "2"), 0);
+								PlayerManager.notifySuccess(
+										player,
+										LanguageManager.confirms.autoUpdate,
+										new ColoredMessage(ChatColor.AQUA, "playerData.yml"),
+										new ColoredMessage(ChatColor.AQUA, "2")
+								);
+							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
+									"playerData.yml", "2");
 						} catch (Exception e) {
 							if (player != null)
-								PlayerManager.notifyAlert(player,
-										LanguageManager.messages.manualUpdateWarn, ChatColor.AQUA,
-										"playerData.yml");
-							else CommunicationManager.debugError(
-									String.format(LanguageManager.messages.manualUpdateWarn,
-											"playerData.yml"), 0);
+								PlayerManager.notifyAlert(
+										player,
+										LanguageManager.messages.manualUpdateWarn,
+										new ColoredMessage(ChatColor.AQUA, "playerData.yml")
+								);
+							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
+									"playerData.yml");
 						}
 					}
 
@@ -2441,17 +2465,21 @@ public class Commands implements CommandExecutor {
 
 						// Notify
 						if (player != null) {
-							PlayerManager.notifySuccess(player, LanguageManager.confirms.autoUpdate,
-									ChatColor.AQUA, "default.yml", String.valueOf(Main.defaultSpawnVersion));
-							PlayerManager.notifyAlert(player,
-									LanguageManager.messages.manualUpdateWarn, ChatColor.AQUA,
-									"All other spawn files");
+							PlayerManager.notifySuccess(
+									player,
+									LanguageManager.confirms.autoUpdate,
+									new ColoredMessage(ChatColor.AQUA, "default.yml"),
+									new ColoredMessage(ChatColor.AQUA, Integer.toString(Main.defaultSpawnVersion)));
+							PlayerManager.notifyAlert(
+									player,
+									LanguageManager.messages.manualUpdateWarn,
+									new ColoredMessage(ChatColor.AQUA, "All other spawn files")
+							);
 						}
-						CommunicationManager.debugInfo(String.format(LanguageManager.confirms.autoUpdate,
-								"default.yml", String.valueOf(Main.defaultSpawnVersion)), 0);
-						CommunicationManager.debugError(
-								String.format(LanguageManager.messages.manualUpdateWarn,
-										"All other spawn files"), 0);
+						CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
+								"default.yml", Integer.toString(Main.defaultSpawnVersion));
+						CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
+								"All other spawn files");
 					}
 
 					// Update default language file
@@ -2466,30 +2494,35 @@ public class Commands implements CommandExecutor {
 
 						// Notify
 						if (player != null) {
-							PlayerManager.notifySuccess(player, LanguageManager.confirms.autoUpdate,
-									ChatColor.AQUA, "en_US.yml", String.valueOf(Main.languageFileVersion));
-							PlayerManager.notifyAlert(player,
-									LanguageManager.messages.manualUpdateWarn, ChatColor.AQUA,
-									"All other language files");
+							PlayerManager.notifySuccess(
+									player,
+									LanguageManager.confirms.autoUpdate,
+									new ColoredMessage(ChatColor.AQUA, "en_US.yml"),
+									new ColoredMessage(ChatColor.AQUA, Integer.toString(Main.languageFileVersion)));
+							PlayerManager.notifyAlert(
+									player,
+									LanguageManager.messages.manualUpdateWarn,
+									new ColoredMessage(ChatColor.AQUA, "All other language files")
+							);
 							PlayerManager.notifyAlert(player, LanguageManager.messages.restartPlugin);
 						}
-						CommunicationManager.debugInfo(String.format(LanguageManager.confirms.autoUpdate, "en_US.yml",
-								String.valueOf(Main.languageFileVersion)), 0);
-						CommunicationManager.debugError(
-								String.format(LanguageManager.messages.manualUpdateWarn,
-										"All other language files"), 0);
+						CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
+								"en_US.yml", Integer.toString(Main.languageFileVersion));
+						CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
+								"All other language files");
 						CommunicationManager.debugError(LanguageManager.messages.restartPlugin, 0);
 					}
 
 					// Check if customEffects.yml is outdated
 					if (Main.plugin.getConfig().getInt("customEffects") < Main.customEffectsVersion) {
 						if (player != null)
-							PlayerManager.notifyAlert(player,
-									LanguageManager.messages.manualUpdateWarn, ChatColor.AQUA,
-									"customEffects.yml");
-						else CommunicationManager.debugError(
-								String.format(LanguageManager.messages.manualUpdateWarn,
-										"customEffects.yml"), 0);
+							PlayerManager.notifyAlert(
+									player,
+									LanguageManager.messages.manualUpdateWarn,
+									new ColoredMessage(ChatColor.AQUA, "customEffects.yml")
+							);
+						else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
+								"customEffects.yml");
 					}
 
 					// Message to player depending on whether the command fixed anything, then reload if fixed
@@ -2534,10 +2567,12 @@ public class Commands implements CommandExecutor {
 
 					// Notify
 					if (player != null)
-						PlayerManager.notifySuccess(player, LanguageManager.messages.debugLevelSet, ChatColor.AQUA,
-								args[1]);
-					else CommunicationManager.debugInfo(String.format(LanguageManager.messages.debugLevelSet, args[1]),
-							0);
+						PlayerManager.notifySuccess(
+								player,
+								LanguageManager.messages.debugLevelSet,
+								new ColoredMessage(ChatColor.AQUA, args[1])
+						);
+					else CommunicationManager.debugInfo(LanguageManager.messages.debugLevelSet, 0, args[1]);
 
 					return true;
 
@@ -2633,8 +2668,8 @@ public class Commands implements CommandExecutor {
 
 	private void notifyCommandFailure(Player player, String command, String message) {
 		if (player != null)
-			PlayerManager.notifyFailure(player, message, ChatColor.AQUA, command);
-		else CommunicationManager.debugError(String.format(message, command.substring(1)), 0);
+			PlayerManager.notifyFailure(player, message, new ColoredMessage(ChatColor.AQUA, command));
+		else CommunicationManager.debugError(message, 0, command.substring(1));
 	}
 
 	private void notifyFailure(Player player, String message) {

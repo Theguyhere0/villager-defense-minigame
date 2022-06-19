@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models.achievements;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidAchievementReqTypeException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
@@ -72,10 +73,13 @@ public class Achievement {
     }
 
     private String[] getDescription(boolean obtained) {
-        List<String> descriptions = CommunicationManager.formatDescriptionList(ChatColor.GRAY, description);
+        List<String> descriptions = CommunicationManager.formatDescriptionList(ChatColor.GRAY, description,
+                Utils.LORE_CHAR_LIMIT);
         descriptions.add("");
         descriptions.addAll(CommunicationManager.formatDescriptionList(obtained ? ChatColor.AQUA : ChatColor.GREEN,
-                reward.getDescription()));
+                reward.getType() == RewardType.BOOST ? reward.getDescription() :
+                        String.format(reward.getDescription(), Integer.toString(reward.getValue())),
+                Utils.LORE_CHAR_LIMIT));
 
         return descriptions.toArray(new String[]{});
     }

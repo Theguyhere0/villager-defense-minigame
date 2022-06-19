@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
+import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
@@ -491,8 +492,9 @@ public class GameListener implements Listener {
 				player.getInventory().clear();
 
 			// Notify player of their own death
-			player.sendTitle(CommunicationManager.format("&4" + LanguageManager.messages.death1),
-					CommunicationManager.format("&c" + LanguageManager.messages.death2),
+			player.sendTitle(
+					new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.death1).toString(),
+					new ColoredMessage(ChatColor.RED, LanguageManager.messages.death2).toString(),
 					Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
 
 			// Teleport player back to player spawn
@@ -578,8 +580,8 @@ public class GameListener implements Listener {
 		e.setCancelled(true);
 		e.getItem().remove();
 		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				CommunicationManager.format(ChatColor.GREEN, LanguageManager.messages.foundGems,
-						ChatColor.AQUA, Integer.toString(earned))));
+				CommunicationManager.format(new ColoredMessage(ChatColor.GREEN, LanguageManager.messages.foundGems),
+						Integer.toString(earned))));
 		if (arena.hasGemSound())
 			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, .5f, 0);
 
@@ -654,8 +656,9 @@ public class GameListener implements Listener {
 		}
 
 		// Notify player of their own death
-		player.sendTitle(CommunicationManager.format("&4" + LanguageManager.messages.death1),
-				CommunicationManager.format("&c" + LanguageManager.messages.death2),
+		player.sendTitle(
+				new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.death1).toString(),
+				new ColoredMessage(ChatColor.RED, LanguageManager.messages.death2).toString(),
 				Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
 
 		// Notify everyone else of player death
@@ -742,9 +745,11 @@ public class GameListener implements Listener {
 							vdPlayer.addGems(earned);
 
 							// Notify player
-							PlayerManager.notifySuccess(vdPlayer.getPlayer(),
-									LanguageManager.messages.earnedGems, ChatColor.AQUA,
-									Integer.toString(earned));
+							PlayerManager.notifySuccess(
+									vdPlayer.getPlayer(),
+									LanguageManager.messages.earnedGems,
+									new ColoredMessage(ChatColor.AQUA, Integer.toString(earned))
+							);
 
 							// Update player stats
 							PlayerManager.setTotalGems(uuid, PlayerManager.getTotalGems(uuid) + earned);
@@ -779,8 +784,11 @@ public class GameListener implements Listener {
 							LanguageManager.errors.inventoryFull);
 
 				// Notify player
-				PlayerManager.notifySuccess(player, LanguageManager.messages.earnedGems,
-						ChatColor.AQUA, Integer.toString(earned));
+				PlayerManager.notifySuccess(
+						player,
+						LanguageManager.messages.earnedGems,
+						new ColoredMessage(ChatColor.AQUA, Integer.toString(earned))
+				);
 
 				// Update player stats
 				PlayerManager.setTotalGems(id, PlayerManager.getTotalGems(id) + earned);
@@ -880,8 +888,8 @@ public class GameListener implements Listener {
 
 			// Check for wolf cap
 			if (gamer.getWolves() >= arena.getWolfCap()) {
-				PlayerManager.notifyFailure(player, LanguageManager.errors.wolf, ChatColor.AQUA,
-						Integer.toString(arena.getWolfCap()));
+				PlayerManager.notifyFailure(player, LanguageManager.errors.wolf,
+						new ColoredMessage(ChatColor.AQUA, Integer.toString(arena.getWolfCap())));
 				return;
 			}
 
@@ -917,8 +925,8 @@ public class GameListener implements Listener {
 
 			// Check for golem cap
 			if (arena.getGolems() >= arena.getGolemCap()) {
-				PlayerManager.notifyFailure(player, LanguageManager.errors.golem, ChatColor.AQUA,
-						Integer.toString(arena.getGolemCap()));
+				PlayerManager.notifyFailure(player, LanguageManager.errors.golem,
+						new ColoredMessage(ChatColor.AQUA, Integer.toString(arena.getGolemCap())));
 				return;
 			}
 
@@ -1210,7 +1218,8 @@ public class GameListener implements Listener {
 				.contains(Objects.requireNonNull(e.getTo()).getX(), e.getTo().getY(), e.getTo().getZ())) ||
 				!Objects.equals(e.getTo().getWorld(), arena.getCorner1().getWorld())) {
 			e.setCancelled(true);
-			PlayerManager.notifyFailure(player, LanguageManager.errors.teleport, ChatColor.AQUA, "/vd leave");
+			PlayerManager.notifyFailure(player, LanguageManager.errors.teleport,
+					new ColoredMessage(ChatColor.AQUA, "/vd leave"));
 		}
 	}
 

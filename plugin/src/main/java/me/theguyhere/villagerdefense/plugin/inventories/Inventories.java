@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.inventories;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
@@ -955,7 +956,7 @@ public class Inventories {
 			inv.setItem(i, ItemManager.createItem(Material.LIME_STAINED_GLASS_PANE,
 					CommunicationManager.format("&a&l" + LanguageManager.names.giftKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.giftKitsDescription)));
+							LanguageManager.messages.giftKitsDescription, Utils.LORE_CHAR_LIMIT)));
 
 		if (arena.getBannedKits().contains(Kit.orc().getName()))
 			inv.setItem(9, Kit.orc().getButton(-1, false));
@@ -990,7 +991,7 @@ public class Inventories {
 			inv.setItem(i, ItemManager.createItem(Material.MAGENTA_STAINED_GLASS_PANE,
 					CommunicationManager.format("&d&l" + LanguageManager.names.abilityKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.abilityKitsDescription)));
+							LanguageManager.messages.abilityKitsDescription, Utils.LORE_CHAR_LIMIT)));
 
 		if (arena.getBannedKits().contains(Kit.mage().getName()))
 			inv.setItem(27, Kit.mage().getButton(-1, false));
@@ -1025,7 +1026,7 @@ public class Inventories {
 			inv.setItem(i, ItemManager.createItem(Material.YELLOW_STAINED_GLASS_PANE,
 					CommunicationManager.format("&e&l" + LanguageManager.names.effectKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.effectKitsDescription)));
+							LanguageManager.messages.effectKitsDescription, Utils.LORE_CHAR_LIMIT)));
 
 		if (arena.getBannedKits().contains(Kit.blacksmith().getName()))
 			inv.setItem(45, Kit.blacksmith().getButton(-1, false));
@@ -1401,7 +1402,7 @@ public class Inventories {
 	// Generate the shop menu
 	public static Inventory createShopMenu(int level, Arena arena) {
 		String disabled = " &4&l[" + LanguageManager.messages.disabled + "]";
-		
+
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(
 				new InventoryMeta(InventoryID.SHOP_MENU, InventoryType.MENU),
@@ -1745,7 +1746,7 @@ public class Inventories {
 			inv.setItem(i, ItemManager.createItem(Material.LIME_STAINED_GLASS_PANE,
 					CommunicationManager.format("&a&l" + LanguageManager.names.giftKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.giftKitsDescription)));
+							LanguageManager.messages.giftKitsDescription, Utils.LORE_CHAR_LIMIT)));
 
 		inv.setItem(9, Kit.orc().getButton(1, true));
 		inv.setItem(10, Kit.farmer().getButton(1, true));
@@ -1769,7 +1770,7 @@ public class Inventories {
 			inv.setItem(i, ItemManager.createItem(Material.MAGENTA_STAINED_GLASS_PANE,
 					CommunicationManager.format("&d&l" + LanguageManager.names.abilityKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.abilityKitsDescription)));
+							LanguageManager.messages.abilityKitsDescription, Utils.LORE_CHAR_LIMIT)));
 
 		inv.setItem(27, Kit.mage().getButton(PlayerManager.getMultiTierKitLevel(ownerID, Kit.mage().getID()),
 				true));
@@ -1795,7 +1796,7 @@ public class Inventories {
 			inv.setItem(i, ItemManager.createItem(Material.YELLOW_STAINED_GLASS_PANE,
 					CommunicationManager.format("&e&l" + LanguageManager.names.effectKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.effectKitsDescription)));
+							LanguageManager.messages.effectKitsDescription, Utils.LORE_CHAR_LIMIT)));
 
 		inv.setItem(45, Kit.blacksmith().getButton(PlayerManager.hasSingleTierKit(ownerID,
 				Kit.blacksmith().getID()) ? 1 : 0, true));
@@ -1836,7 +1837,7 @@ public class Inventories {
 			inv.setItem(i, ItemManager.createItem(Material.LIME_STAINED_GLASS_PANE,
 					CommunicationManager.format("&a&l" + LanguageManager.names.giftKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.giftKitsDescription)));
+							LanguageManager.messages.giftKitsDescription, Utils.LORE_CHAR_LIMIT)));
 
 		if (!arena.getBannedKits().contains("Orc"))
 			inv.setItem(9, Kit.orc().getButton(1, false));
@@ -1869,7 +1870,7 @@ public class Inventories {
 			inv.setItem(i, ItemManager.createItem(Material.MAGENTA_STAINED_GLASS_PANE,
 					CommunicationManager.format("&d&l" + LanguageManager.names.abilityKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.abilityKitsDescription)));
+							LanguageManager.messages.abilityKitsDescription, Utils.LORE_CHAR_LIMIT)));
 
 		if (!arena.getBannedKits().contains("Mage"))
 			inv.setItem(27, Kit.mage().getButton(PlayerManager.getMultiTierKitLevel(id, Kit.mage().getID()),
@@ -1904,7 +1905,7 @@ public class Inventories {
 			inv.setItem(i, ItemManager.createItem(Material.YELLOW_STAINED_GLASS_PANE,
 					CommunicationManager.format("&e&l" + LanguageManager.names.effectKits),
 					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.effectKitsDescription)));
+							LanguageManager.messages.effectKitsDescription, Utils.LORE_CHAR_LIMIT)));
 
 		if (!arena.getBannedKits().contains("Blacksmith"))
 			inv.setItem(45, Kit.blacksmith().getButton(PlayerManager.hasSingleTierKit(id,
@@ -2039,39 +2040,39 @@ public class Inventories {
 		buttons.add(Achievement.dwarfAlone().getButton(PlayerManager.hasAchievement(id,
 				Achievement.dwarfAlone().getID())));
 		buttons.add(Achievement.explosiveAlone().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.explosiveAlone().getID())));
 		buttons.add(Achievement.featherweightAlone().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.featherweightAlone().getID())));
 		buttons.add(Achievement.nakedAlone().getButton(PlayerManager.hasAchievement(id,
 				Achievement.nakedAlone().getID())));
 		buttons.add(Achievement.pacifistAlone().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.pacifistAlone().getID())));
 		buttons.add(Achievement.uhcAlone().getButton(PlayerManager.hasAchievement(id,
 				Achievement.uhcAlone().getID())));
 
 		buttons.add(Achievement.amputeeBalance().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.amputeeBalance().getID())));
 		buttons.add(Achievement.blindBalance().getButton(PlayerManager.hasAchievement(id,
 				Achievement.blindBalance().getID())));
 		buttons.add(Achievement.clumsyBalance().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.clumsyBalance().getID())));
 		buttons.add(Achievement.dwarfBalance().getButton(PlayerManager.hasAchievement(id,
 				Achievement.dwarfBalance().getID())));
 		buttons.add(Achievement.explosiveBalance().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.explosiveBalance().getID())));
 		buttons.add(Achievement.featherweightBalance().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.featherweightBalance().getID())));
 		buttons.add(Achievement.nakedBalance().getButton(PlayerManager.hasAchievement(id,
 				Achievement.nakedBalance().getID())));
 		buttons.add(Achievement.pacifistBalance().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.pacifistBalance().getID())));
 		buttons.add(Achievement.uhcBalance().getButton(PlayerManager.hasAchievement(id,
 				Achievement.uhcBalance().getID())));
@@ -2085,15 +2086,15 @@ public class Inventories {
 		buttons.add(Achievement.dwarfKills().getButton(PlayerManager.hasAchievement(id,
 				Achievement.dwarfKills().getID())));
 		buttons.add(Achievement.explosiveKills().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.explosiveKills().getID())));
 		buttons.add(Achievement.featherweightKills().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.featherweightKills().getID())));
 		buttons.add(Achievement.nakedKills().getButton(PlayerManager.hasAchievement(id,
 				Achievement.nakedKills().getID())));
 		buttons.add(Achievement.pacifistKills().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.pacifistKills().getID())));
 		buttons.add(Achievement.uhcKills().getButton(PlayerManager.hasAchievement(id,
 				Achievement.uhcKills().getID())));
@@ -2107,15 +2108,15 @@ public class Inventories {
 		buttons.add(Achievement.dwarfWave().getButton(PlayerManager.hasAchievement(id,
 				Achievement.dwarfWave().getID())));
 		buttons.add(Achievement.explosiveWave().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.explosiveWave().getID())));
 		buttons.add(Achievement.featherweightWave().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.featherweightWave().getID())));
 		buttons.add(Achievement.nakedWave().getButton(PlayerManager.hasAchievement(id,
 				Achievement.nakedWave().getID())));
 		buttons.add(Achievement.pacifistWave().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.pacifistWave().getID())));
 		buttons.add(Achievement.uhcWave().getButton(PlayerManager.hasAchievement(id,
 				Achievement.uhcWave().getID())));
@@ -2256,39 +2257,39 @@ public class Inventories {
 		buttons.add(Achievement.dwarfAlone().getButton(PlayerManager.hasAchievement(id,
 				Achievement.dwarfAlone().getID())));
 		buttons.add(Achievement.explosiveAlone().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.explosiveAlone().getID())));
 		buttons.add(Achievement.featherweightAlone().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.featherweightAlone().getID())));
 		buttons.add(Achievement.nakedAlone().getButton(PlayerManager.hasAchievement(id,
 				Achievement.nakedAlone().getID())));
 		buttons.add(Achievement.pacifistAlone().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.pacifistAlone().getID())));
 		buttons.add(Achievement.uhcAlone().getButton(PlayerManager.hasAchievement(id,
 				Achievement.uhcAlone().getID())));
 
 		buttons.add(Achievement.amputeeBalance().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.amputeeBalance().getID())));
 		buttons.add(Achievement.blindBalance().getButton(PlayerManager.hasAchievement(id,
 				Achievement.blindBalance().getID())));
 		buttons.add(Achievement.clumsyBalance().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.clumsyBalance().getID())));
 		buttons.add(Achievement.dwarfBalance().getButton(PlayerManager.hasAchievement(id,
 				Achievement.dwarfBalance().getID())));
 		buttons.add(Achievement.explosiveBalance().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.explosiveBalance().getID())));
 		buttons.add(Achievement.featherweightBalance().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.featherweightBalance().getID())));
 		buttons.add(Achievement.nakedBalance().getButton(PlayerManager.hasAchievement(id,
 				Achievement.nakedBalance().getID())));
 		buttons.add(Achievement.pacifistBalance().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.pacifistBalance().getID())));
 		buttons.add(Achievement.uhcBalance().getButton(PlayerManager.hasAchievement(id,
 				Achievement.uhcBalance().getID())));
@@ -2302,15 +2303,15 @@ public class Inventories {
 		buttons.add(Achievement.dwarfKills().getButton(PlayerManager.hasAchievement(id,
 				Achievement.dwarfKills().getID())));
 		buttons.add(Achievement.explosiveKills().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.explosiveKills().getID())));
 		buttons.add(Achievement.featherweightKills().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.featherweightKills().getID())));
 		buttons.add(Achievement.nakedKills().getButton(PlayerManager.hasAchievement(id,
 				Achievement.nakedKills().getID())));
 		buttons.add(Achievement.pacifistKills().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.pacifistKills().getID())));
 		buttons.add(Achievement.uhcKills().getButton(PlayerManager.hasAchievement(id,
 				Achievement.uhcKills().getID())));
@@ -2324,15 +2325,15 @@ public class Inventories {
 		buttons.add(Achievement.dwarfWave().getButton(PlayerManager.hasAchievement(id,
 				Achievement.dwarfWave().getID())));
 		buttons.add(Achievement.explosiveWave().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.explosiveWave().getID())));
 		buttons.add(Achievement.featherweightWave().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.featherweightWave().getID())));
 		buttons.add(Achievement.nakedWave().getButton(PlayerManager.hasAchievement(id,
 				Achievement.nakedWave().getID())));
 		buttons.add(Achievement.pacifistWave().getButton(PlayerManager.hasAchievement(id,
-				
+
 				Achievement.pacifistWave().getID())));
 		buttons.add(Achievement.uhcWave().getButton(PlayerManager.hasAchievement(id,
 				Achievement.uhcWave().getID())));
@@ -2480,14 +2481,14 @@ public class Inventories {
 				CommunicationManager.format("&4&l" + LanguageManager.arenaStats.maxPlayers.name +
 						": &4" + arena.getMaxPlayers()), ItemManager.BUTTON_FLAGS, null,
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.maxPlayers.description)));
+						LanguageManager.arenaStats.maxPlayers.description, Utils.LORE_CHAR_LIMIT)));
 
 		// Minimum players
 		buttons.add(ItemManager.createItem(Material.NETHERITE_BOOTS,
 				CommunicationManager.format("&2&l" + LanguageManager.arenaStats.minPlayers.name +
 						": &2" + arena.getMinPlayers()), ItemManager.BUTTON_FLAGS, null,
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.minPlayers.description)));
+						LanguageManager.arenaStats.minPlayers.description, Utils.LORE_CHAR_LIMIT)));
 
 		// Max waves
 		String waves;
@@ -2498,7 +2499,7 @@ public class Inventories {
 				CommunicationManager.format("&3&l" + LanguageManager.arenaStats.maxWaves.name +
 						": &3" + waves), ItemManager.BUTTON_FLAGS, null,
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.maxWaves.description)));
+						LanguageManager.arenaStats.maxWaves.description, Utils.LORE_CHAR_LIMIT)));
 
 		// Wave time limit
 		String limit;
@@ -2508,21 +2509,21 @@ public class Inventories {
 		buttons.add(ItemManager.createItem(Material.CLOCK,
 				CommunicationManager.format("&9&l" + LanguageManager.arenaStats.timeLimit.name +
 						": &9" + limit), CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.timeLimit.description)));
+						LanguageManager.arenaStats.timeLimit.description, Utils.LORE_CHAR_LIMIT)));
 
 		// Wolf cap
 		buttons.add(ItemManager.createItem(Material.BONE,
 				CommunicationManager.format("&6&l" + LanguageManager.arenaStats.wolfCap.name +
 						": &6" + arena.getWolfCap()),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.wolfCap.description)));
+						LanguageManager.arenaStats.wolfCap.description, Utils.LORE_CHAR_LIMIT)));
 
 		// Golem cap
 		buttons.add(ItemManager.createItem(Material.IRON_INGOT,
 				CommunicationManager.format("&e&l" + LanguageManager.arenaStats.golemCap.name +
 						": &e" + arena.getGolemCap()),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.golemCap.description)));
+						LanguageManager.arenaStats.golemCap.description, Utils.LORE_CHAR_LIMIT)));
 
 		// Allowed kits
 		buttons.add(ItemManager.createItem(Material.ENDER_CHEST,
@@ -2538,7 +2539,7 @@ public class Inventories {
 						LanguageManager.arenaStats.dynamicMobCount.name +
 						": " + getToggleStatus(arena.hasDynamicCount())),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.dynamicMobCount.description)));
+						LanguageManager.arenaStats.dynamicMobCount.description, Utils.LORE_CHAR_LIMIT)));
 
 		// Dynamic difficulty
 		buttons.add(ItemManager.createItem(Material.MAGMA_CREAM,
@@ -2546,7 +2547,7 @@ public class Inventories {
 						LanguageManager.arenaStats.dynamicDifficulty.name + ": " +
 						getToggleStatus(arena.hasDynamicDifficulty())),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.dynamicDifficulty.description)));
+						LanguageManager.arenaStats.dynamicDifficulty.description, Utils.LORE_CHAR_LIMIT)));
 
 		// Dynamic prices
 		buttons.add(ItemManager.createItem(Material.NETHER_STAR,
@@ -2554,7 +2555,7 @@ public class Inventories {
 						LanguageManager.arenaStats.dynamicPrices.name +
 						": " + getToggleStatus(arena.hasDynamicPrices())),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.dynamicPrices.description)));
+						LanguageManager.arenaStats.dynamicPrices.description, Utils.LORE_CHAR_LIMIT)));
 
 		// Dynamic time limit
 		buttons.add(ItemManager.createItem(Material.SNOWBALL,
@@ -2562,28 +2563,28 @@ public class Inventories {
 						LanguageManager.arenaStats.dynamicTimeLimit.name +
 						": " + getToggleStatus(arena.hasDynamicLimit())),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.dynamicTimeLimit.description)));
+						LanguageManager.arenaStats.dynamicTimeLimit.description, Utils.LORE_CHAR_LIMIT)));
 
 		// Late arrival
 		buttons.add( ItemManager.createItem(Material.DAYLIGHT_DETECTOR,
 				CommunicationManager.format("&e&l" + LanguageManager.arenaStats.lateArrival.name +
 						": " + getToggleStatus(arena.hasLateArrival())), ItemManager.BUTTON_FLAGS, null,
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.lateArrival.description)));
+						LanguageManager.arenaStats.lateArrival.description, Utils.LORE_CHAR_LIMIT)));
 
 		// Item dropping
 		buttons.add( ItemManager.createItem(Material.EMERALD,
 				CommunicationManager.format("&9&l" + LanguageManager.arenaStats.gemDrop.name +
 						": " + getToggleStatus(arena.hasGemDrop())),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.gemDrop.description)));
+						LanguageManager.arenaStats.gemDrop.description, Utils.LORE_CHAR_LIMIT)));
 
 		// Experience drop
 		buttons.add( ItemManager.createItem(Material.EXPERIENCE_BOTTLE,
 				CommunicationManager.format("&b&l" + LanguageManager.arenaStats.expDrop.name +
 						": " + getToggleStatus(arena.hasExpDrop())),
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.expDrop.description)));
+						LanguageManager.arenaStats.expDrop.description, Utils.LORE_CHAR_LIMIT)));
 
 		// Player spawn particles
 		buttons.add( ItemManager.createItem(Material.FIREWORK_ROCKET,
@@ -2631,7 +2632,7 @@ public class Inventories {
 						LanguageManager.arenaStats.difficultyMultiplier.name + ": &4" +
 						arena.getDifficultyMultiplier()), ItemManager.BUTTON_FLAGS, null,
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.difficultyMultiplier.description)));
+						LanguageManager.arenaStats.difficultyMultiplier.description, Utils.LORE_CHAR_LIMIT)));
 
 		// Arena records
 		List<String> records = new ArrayList<>();
