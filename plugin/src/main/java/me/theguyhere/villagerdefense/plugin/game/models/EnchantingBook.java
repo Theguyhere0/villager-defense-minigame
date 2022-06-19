@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.game.models;
 
+import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
@@ -65,155 +66,155 @@ public class EnchantingBook extends ItemStack {
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.knockback)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(), 
-                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
-                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
+                new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
+                new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
     public static ItemStack sweepingEdge() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.sweepingEdge)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
-                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
+                new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
+                new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
     public static ItemStack smite() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.smite)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
-                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
+                new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
+                new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
     public static ItemStack sharpness() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.sharpness)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
-                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
+                new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
+                new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
     public static ItemStack fireAspect() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.fireAspect)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
-                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
+                new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
+                new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
     public static ItemStack punch() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.punch)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
-                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
+                new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
+                new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
     public static ItemStack piercing() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.piercing)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
-                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
+                new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
+                new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
     public static ItemStack quickCharge() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.quickCharge)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
-                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
+                new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
+                new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
     public static ItemStack power() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.power)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
-                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
+                new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
+                new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
     public static ItemStack loyalty() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.loyalty)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
-                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
+                new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
+                new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
     public static ItemStack flame() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.flame)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
-                CommunicationManager.format(ChatColor.DARK_PURPLE, LanguageManager.messages.caution),
-                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
+                new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
+                new ColoredMessage(ChatColor.DARK_PURPLE, LanguageManager.messages.caution).toString(),
+                new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
     public static ItemStack multishot() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.multishot)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
-                CommunicationManager.format(ChatColor.DARK_PURPLE, LanguageManager.messages.caution),
-                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
+                new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
+                new ColoredMessage(ChatColor.DARK_PURPLE, LanguageManager.messages.caution).toString(),
+                new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
     public static ItemStack infinity() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.infinity)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
-                CommunicationManager.format(ChatColor.DARK_PURPLE, LanguageManager.messages.caution),
-                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
+                new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
+                new ColoredMessage(ChatColor.DARK_PURPLE, LanguageManager.messages.caution).toString(),
+                new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
     public static ItemStack blastProtection() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.blastProtection)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
-                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
+                new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
+                new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
     public static ItemStack thorns() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.thorns)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
-                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
+                new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
+                new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
     public static ItemStack projectileProtection() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.projectileProtection)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
-                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
+                new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
+                new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
     public static ItemStack protection() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.protection)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
-                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
+                new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
+                new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
     public static ItemStack unbreaking() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.unbreaking)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
-                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
+                new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
+                new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
     public static ItemStack mending() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.mending)),
                 ItemManager.BUTTON_FLAGS, ItemManager.glow(),
-                CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.enchantInstruction),
-                CommunicationManager.format(ChatColor.DARK_PURPLE, LanguageManager.messages.caution),
-                CommunicationManager.format(ChatColor.DARK_RED, LanguageManager.messages.warning));
+                new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
+                new ColoredMessage(ChatColor.DARK_PURPLE, LanguageManager.messages.caution).toString(),
+                new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
 }

@@ -18,7 +18,7 @@ public class EntityHeadRotationPacket extends VersionNMSPacket {
         packetSetter.writeVarInt(entityID.getNumericID());
 
         // Head yaw
-        packetSetter.writeByte(Utils.angleToByte(headYaw));
+        packetSetter.writeByte(Utils.degreesToByte(headYaw));
 
         rawPacket = new PacketPlayOutEntityHeadRotation(packetSetter);
     }

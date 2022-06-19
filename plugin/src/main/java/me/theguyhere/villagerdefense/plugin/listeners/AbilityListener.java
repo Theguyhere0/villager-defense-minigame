@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
+import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
@@ -27,7 +28,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -1028,7 +1028,7 @@ public class AbilityListener implements Listener {
     private boolean checkLevel(int level, Player player) {
         if (level == 0) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-                    CommunicationManager.format("&c" + LanguageManager.errors.level)));
+                    new ColoredMessage(ChatColor.RED, LanguageManager.errors.level).toString()));
             return true;
         }
         return false;
@@ -1037,7 +1037,7 @@ public class AbilityListener implements Listener {
     private boolean checkCooldown(long dif, Player player) {
         if (dif > 0) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-                    CommunicationManager.format(ChatColor.RED, LanguageManager.errors.cooldown, ChatColor.AQUA,
+                    CommunicationManager.format(new ColoredMessage(ChatColor.RED, LanguageManager.errors.cooldown),
                             String.valueOf(Math.round(Utils.millisToSeconds(dif) * 10) / 10d))));
             return true;
         }

@@ -1,6 +1,8 @@
 package me.theguyhere.villagerdefense.plugin.game.models.kits;
 
+import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
@@ -130,12 +132,11 @@ public class Kit {
      * Sets the descriptions map to a common map used for ability kits.
      */
     private void setAbilityKitDescriptions() {
-        addLevelDescriptions(1, CommunicationManager.format(ChatColor.GRAY, 
-                LanguageManager.messages.upToAbilityLevel, ChatColor.AQUA, "10"));
-        addLevelDescriptions(2, CommunicationManager.format(ChatColor.GRAY,
-                LanguageManager.messages.upToAbilityLevel, ChatColor.AQUA, "20"));
-        addLevelDescriptions(3, CommunicationManager.format(ChatColor.GRAY,
-                LanguageManager.messages.upToAbilityLevel, ChatColor.AQUA, "30"));
+        ColoredMessage coloredAbilityText = new ColoredMessage(ChatColor.GRAY,
+                LanguageManager.messages.upToAbilityLevel);
+        addLevelDescriptions(1, CommunicationManager.format(coloredAbilityText, "10"));
+        addLevelDescriptions(2, CommunicationManager.format(coloredAbilityText, "20"));
+        addLevelDescriptions(3, CommunicationManager.format(coloredAbilityText, "30"));
     }
 
     /**
@@ -143,7 +144,7 @@ public class Kit {
      * @param line Line to add to the description.
      */
     public void addMasterDescription(String line) {
-        masterDescription = CommunicationManager.formatDescriptionList(ChatColor.GRAY, line);
+        masterDescription = CommunicationManager.formatDescriptionList(ChatColor.GRAY, line, Utils.LORE_CHAR_LIMIT);
     }
 
     /**
@@ -152,7 +153,8 @@ public class Kit {
      * @param description Kit description.
      */
     public void addLevelDescriptions(int level, String description) {
-        descriptionsMap.put(level, CommunicationManager.formatDescriptionList(ChatColor.GRAY, description));
+        descriptionsMap.put(level, CommunicationManager.formatDescriptionList(ChatColor.GRAY, description,
+                Utils.LORE_CHAR_LIMIT));
     }
 
     /**
@@ -378,8 +380,8 @@ public class Kit {
         enchants.put(Enchantment.KNOCKBACK, 5);
         kit.addItems(1, new ItemStack[]{
                 new ItemStack(Material.WOODEN_SWORD),
-                ItemManager.createItem(Material.STICK, CommunicationManager.format(ChatColor.GREEN,
-                        LanguageManager.kits.orc.items.club), ItemManager.NORMAL_FLAGS, enchants)});
+                ItemManager.createItem(Material.STICK, new ColoredMessage(ChatColor.GREEN,
+                        LanguageManager.kits.orc.items.club).toString(), ItemManager.NORMAL_FLAGS, enchants)});
         return kit;
     }
     public static Kit farmer() {
@@ -388,8 +390,8 @@ public class Kit {
         kit.addPrice(1, 0);
         kit.addItems(1, new ItemStack[]{
                 new ItemStack(Material.WOODEN_SWORD),
-                ItemManager.createItems(Material.CARROT, 5, CommunicationManager.format(ChatColor.GREEN,
-                        LanguageManager.kits.farmer.items.carrot))});
+                ItemManager.createItems(Material.CARROT, 5, new ColoredMessage(ChatColor.GREEN,
+                        LanguageManager.kits.farmer.items.carrot).toString())});
         return kit;
     }
     public static Kit soldier() {
@@ -397,8 +399,8 @@ public class Kit {
         kit.addMasterDescription(LanguageManager.kits.soldier.description);
         kit.addPrice(1, 250);
         kit.addItems(1, new ItemStack[]{
-                ItemManager.createItem(Material.STONE_SWORD, CommunicationManager.format(ChatColor.GREEN,
-                        LanguageManager.kits.soldier.items.sword))});
+                ItemManager.createItem(Material.STONE_SWORD, new ColoredMessage(ChatColor.GREEN,
+                        LanguageManager.kits.soldier.items.sword).toString())});
         return kit;
     }
     public static Kit alchemist() {
@@ -408,14 +410,12 @@ public class Kit {
         kit.addItems(1, new ItemStack[]{
                 new ItemStack(Material.WOODEN_SWORD),
                 ItemManager.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.SPEED),
-                        CommunicationManager.format(ChatColor.GREEN,
-                                LanguageManager.kits.alchemist.items.speed)),
+                        new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.alchemist.items.speed).toString()),
                 ItemManager.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.INSTANT_HEAL),
-                        CommunicationManager.format(ChatColor.GREEN,
-                                LanguageManager.kits.alchemist.items.health)),
+                        new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.alchemist.items.health).toString()),
                 ItemManager.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.INSTANT_HEAL),
-                        CommunicationManager.format(ChatColor.GREEN,
-                                LanguageManager.kits.alchemist.items.health))});
+                        new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.alchemist.items.health).toString())
+        });
         return kit;
     }
     public static Kit tailor() {
@@ -425,17 +425,14 @@ public class Kit {
         kit.addItems(1, new ItemStack[]{
                 new ItemStack(Material.WOODEN_SWORD),
                 ItemManager.createItem(Material.LEATHER_HELMET,
-                        CommunicationManager.format(ChatColor.GREEN,
-                                LanguageManager.kits.tailor.items.helmet)),
+                        new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.tailor.items.helmet).toString()),
                 ItemManager.createItem(Material.LEATHER_CHESTPLATE,
-                        CommunicationManager.format(ChatColor.GREEN,
-                                LanguageManager.kits.tailor.items.chestplate)),
+                        new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.tailor.items.chestplate).toString()),
                 ItemManager.createItem(Material.LEATHER_LEGGINGS,
-                        CommunicationManager.format(ChatColor.GREEN,
-                                LanguageManager.kits.tailor.items.leggings)),
+                        new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.tailor.items.leggings).toString()),
                 ItemManager.createItem(Material.LEATHER_BOOTS,
-                        CommunicationManager.format(ChatColor.GREEN,
-                                LanguageManager.kits.tailor.items.boots))});
+                        new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.tailor.items.boots).toString())
+        });
         return kit;
     }
     public static Kit trader() {
@@ -460,19 +457,18 @@ public class Kit {
         kit.addItems(1, new ItemStack[]{
                 new ItemStack(Material.WOODEN_SWORD),
                 ItemManager.createItem(Material.WOLF_SPAWN_EGG,
-                        CommunicationManager.format(ChatColor.GREEN,
-                                LanguageManager.kits.summoner.items.wolf))});
+                        new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.summoner.items.wolf).toString())
+        });
         kit.addItems(2, new ItemStack[]{
                 new ItemStack(Material.WOODEN_SWORD),
                 ItemManager.createItems(Material.WOLF_SPAWN_EGG, 2,
-                        CommunicationManager.format(ChatColor.GREEN,
-                                LanguageManager.kits.summoner.items.wolf))
+                        new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.summoner.items.wolf).toString())
         });
         kit.addItems(3, new ItemStack[]{
                 new ItemStack(Material.WOODEN_SWORD),
                 ItemManager.createItem(Material.GHAST_SPAWN_EGG,
-                        CommunicationManager.format(ChatColor.GREEN,
-                                LanguageManager.kits.summoner.items.golem))});
+                        new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.summoner.items.golem).toString())
+        });
 
         return kit;
     }
@@ -489,24 +485,35 @@ public class Kit {
 
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
         enchants.put(Enchantment.DAMAGE_ALL, 3);
-        kit.addItems(1, new ItemStack[]{
-                ItemManager.createItem(Material.NETHERITE_HOE, CommunicationManager.format(ChatColor.GREEN, 
-                                LanguageManager.kits.reaper.items.scythe), ItemManager.NORMAL_FLAGS, enchants)});
+        kit.addItems(1, new ItemStack[]{ItemManager.createItem(
+                Material.NETHERITE_HOE,
+                new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.reaper.items.scythe).toString(),
+                ItemManager.NORMAL_FLAGS,
+                enchants
+        )});
         enchants.put(Enchantment.DAMAGE_ALL, 5);
-        kit.addItems(2, new ItemStack[]{
-                ItemManager.createItem(Material.NETHERITE_HOE, CommunicationManager.format(ChatColor.GREEN, 
-                                LanguageManager.kits.reaper.items.scythe), ItemManager.NORMAL_FLAGS, enchants)});
+        kit.addItems(2, new ItemStack[]{ItemManager.createItem(
+                Material.NETHERITE_HOE,
+                new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.reaper.items.scythe).toString(),
+                ItemManager.NORMAL_FLAGS,
+                enchants
+        )});
         enchants.put(Enchantment.DAMAGE_ALL, 8);
-        kit.addItems(3, new ItemStack[]{
-                ItemManager.createItem(Material.NETHERITE_HOE, CommunicationManager.format(ChatColor.GREEN,
-                                LanguageManager.kits.reaper.items.scythe), ItemManager.NORMAL_FLAGS, enchants)});
+        kit.addItems(3, new ItemStack[]{ItemManager.createItem(
+                Material.NETHERITE_HOE,
+                new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.reaper.items.scythe).toString(),
+                ItemManager.NORMAL_FLAGS,
+                enchants
+        )});
 
         return kit;
     }
     public static Kit phantom() {
         Kit kit = new Kit(LanguageManager.kits.phantom.name, KitType.GIFT, Material.PHANTOM_MEMBRANE);
-        kit.addMasterDescription(CommunicationManager.format(ChatColor.GRAY, LanguageManager.kits.phantom.description,
-                ChatColor.AQUA, "/vd select"));
+        kit.addMasterDescription(CommunicationManager.format(
+                new ColoredMessage(ChatColor.GRAY, LanguageManager.kits.phantom.description),
+                "/vd select")
+        );
         kit.addPrice(1, 6000);
         kit.addItems(1, new ItemStack[]{new ItemStack(Material.WOODEN_SWORD)});
         return kit;

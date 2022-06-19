@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.tools;
 
+import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.nms.common.PacketGroup;
@@ -85,53 +86,45 @@ public class PlayerManager {
         player.setGlowing(false);
     }
 
-    public static void notify(Player player, @NotNull ChatColor base, String msg) {
-        player.sendMessage(CommunicationManager.notify(base + msg));
+    public static void notify(Player player, ColoredMessage msg) {
+        player.sendMessage(CommunicationManager.notify(msg.toString()));
     }
 
-    public static void notify(Player player, @NotNull ChatColor base, String msg, @NotNull ChatColor replace,
-                              String value) {
-        player.sendMessage(CommunicationManager.notify(base + String.format(msg, replace + value + base)));
+    public static void notify(Player player, ColoredMessage base, ColoredMessage... replacements) {
+        player.sendMessage(CommunicationManager.notify(CommunicationManager.format(base, replacements)));
     }
 
-    public static void notify(Player player, @NotNull ChatColor base, String msg, @NotNull ChatColor replace,
-                              String value1, String value2) {
-        player.sendMessage(CommunicationManager.notify(base + String.format(msg, replace + value1 + base,
-                replace + value2 + base)));
+    public static void namedNotify(Player player, ColoredMessage name, ColoredMessage msg) {
+        player.sendMessage(CommunicationManager.namedNotify(name, msg.toString()));
+    }
+
+    public static void namedNotify(Player player, ColoredMessage name, ColoredMessage base,
+                                   ColoredMessage... replacements) {
+        player.sendMessage(CommunicationManager.namedNotify(name, CommunicationManager.format(base, replacements)));
     }
 
     public static void notifySuccess(Player player, String msg) {
-        notify(player, ChatColor.GREEN, msg);
+        notify(player, new ColoredMessage(ChatColor.GREEN, msg));
     }
 
-    public static void notifySuccess(Player player, String msg, @NotNull ChatColor replace, String value) {
-        notify(player, ChatColor.GREEN, msg, replace, value);
-    }
-
-    public static void notifySuccess(Player player, String msg, @NotNull ChatColor replace, String value1,
-                                     String value2) {
-        notify(player, ChatColor.GREEN, msg, replace, value1, value2);
+    public static void notifySuccess(Player player, String base, ColoredMessage... replacements) {
+        notify(player, new ColoredMessage(ChatColor.GREEN, base), replacements);
     }
 
     public static void notifyFailure(Player player, String msg) {
-        notify(player, ChatColor.RED, msg);
+        notify(player, new ColoredMessage(ChatColor.RED, msg));
     }
 
-    public static void notifyFailure(Player player, String msg, @NotNull ChatColor replace, String value) {
-        notify(player, ChatColor.RED, msg, replace, value);
+    public static void notifyFailure(Player player, String base, ColoredMessage... replacements) {
+        notify(player, new ColoredMessage(ChatColor.RED, base), replacements);
     }
 
     public static void notifyAlert(Player player, String msg) {
-        notify(player, ChatColor.GOLD, msg);
+        notify(player, new ColoredMessage(ChatColor.GOLD, msg));
     }
 
-    public static void notifyAlert(Player player, String msg, @NotNull ChatColor replace, String value) {
-        notify(player, ChatColor.GOLD, msg, replace, value);
-    }
-
-    public static void notifyAlert(Player player, String msg, @NotNull ChatColor replace, String value1,
-                                   String value2) {
-        notify(player, ChatColor.GOLD, msg, replace, value1, value2);
+    public static void notifyAlert(Player player, String base, ColoredMessage... replacements) {
+        notify(player, new ColoredMessage(ChatColor.GOLD, base), replacements);
     }
 
     public static void fakeDeath(VDPlayer vdPlayer) {

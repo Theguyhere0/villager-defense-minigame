@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.nms.v1_19_r1;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import me.theguyhere.villagerdefense.common.Log;
+import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.nms.common.NMSErrors;
 import me.theguyhere.villagerdefense.nms.common.PacketListener;
@@ -48,7 +48,7 @@ class InboundPacketHandler extends ChannelInboundHandlerAdapter {
                 packetListener.onSignUpdate(player, signLines);
             }
         } catch (Exception e) {
-            Log.warning(NMSErrors.EXCEPTION_ON_PACKET_READ);
+            CommunicationManager.debugError(NMSErrors.EXCEPTION_ON_PACKET_READ, 0);
             e.printStackTrace();
         }
         super.channelRead(context, packet);

@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
+import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
 import me.theguyhere.villagerdefense.plugin.Main;
@@ -38,7 +39,7 @@ public class JoinListener implements Listener {
 
 		// Check if player is a logger
 		if (loggers.contains(player.getUniqueId().toString())) {
-			CommunicationManager.debugInfo(player.getName() + " joined after logging mid-game.", 2);
+			CommunicationManager.debugInfo("%s joined after logging mid-game.", 2, player.getName());
 
 			// Teleport them back to lobby
 			PlayerManager.teleAdventure(player, GameManager.getLobby());
@@ -80,7 +81,8 @@ public class JoinListener implements Listener {
 
 		// If the plugin setup is outdated, send message to admins
 		if (Main.isOutdated() && player.hasPermission("vd.admin"))
-			PlayerManager.notifyFailure(player, LanguageManager.errors.outdated, ChatColor.AQUA, "/vd fix");
+			PlayerManager.notifyFailure(player, LanguageManager.errors.outdated,
+					new ColoredMessage(ChatColor.AQUA, "/vd fix"));
 
 		AchievementChecker.checkDefaultHighScoreAchievements(player);
 		AchievementChecker.checkDefaultKitAchievements(player);
@@ -106,7 +108,7 @@ public class JoinListener implements Listener {
 
 		// Add to list of loggers if in a game
 		if (GameManager.checkPlayer(player)) {
-			CommunicationManager.debugInfo(player.getName() + " logged out mid-game.", 2);
+			CommunicationManager.debugInfo("%s logged out mid-game.", 2, player.getName());
 			Main.plugin.getPlayerData().set("loggers", loggers);
 			Main.plugin.savePlayerData();
 		}
