@@ -187,7 +187,11 @@ public class AchievementChecker {
             // Add crystals
             FileConfiguration playerData = Main.getPlayerData();
             String path = player.getUniqueId() + ".crystalBalance";
-            playerData.set(path, playerData.getInt(path) + achievement.getReward().getValue());
+            if (Main.hasCustomEconomy())
+                Main.getEconomy().bankDeposit(player.getUniqueId().toString(),
+                        (int) (achievement.getReward().getValue() *
+                                Main.plugin.getConfig().getDouble("vaultEconomyMult")));
+            else playerData.set(path, playerData.getInt(path) + achievement.getReward().getValue());
             PlayerManager.notifySuccess(player, LanguageManager.confirms.crystalAdd, ChatColor.AQUA,
                     Integer.toString(achievement.getReward().getValue()));
         }

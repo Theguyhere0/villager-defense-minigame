@@ -1,5 +1,5 @@
 # This is the config version for reference.
-# DO NOT EDIT VALUE.
+# ONLY EDIT ONCE FILE HAS BEEN UPDATED.
 version: 9
 
 # This is the arenaData.yml structure version for reference.
@@ -38,5 +38,9 @@ keepInv: true
 autoOpen: true
 
 # This toggles whether to use currency from Vault Economy API to purchase kits instead of crystals. Default to crystals
-# when economy plugin doesn't exist
+# when economy plugin doesn't exist.
 vaultEconomy: false
+
+# This determines how much the normal earnings from a game are multiplied for the custom currency. Has no effect if
+# no vault economy plugin is active.
+vaultEconomyMult: 1.0

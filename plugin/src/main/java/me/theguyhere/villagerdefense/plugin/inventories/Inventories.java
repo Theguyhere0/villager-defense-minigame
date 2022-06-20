@@ -1734,9 +1734,13 @@ public class Inventories {
 		));
 
 		// Crystal balance
+		int balance;
+		if (Main.hasCustomEconomy())
+			balance = (int) Main.getEconomy().getBalance(Bukkit.getOfflinePlayer(id));
+		else balance = playerData.getInt(id + ".crystalBalance");
 		inv.setItem(8, ItemManager.createItem(Material.DIAMOND,
 				CommunicationManager.format("&b&l" + String.format(LanguageManager.messages.crystalBalance,
-						LanguageManager.names.crystal) + ": &b" + playerData.getInt(id + ".crystalBalance"))));
+						LanguageManager.names.crystal) + ": &b" + balance)));
 
 		return inv;
 	}
@@ -1822,10 +1826,16 @@ public class Inventories {
 				true));
 
 		// Crystal balance
-		if (name.equals(requester))
+		if (name.equals(requester)) {
+			int balance;
+			if (Main.hasCustomEconomy())
+				balance = (int) Main.getEconomy().getBalance(Bukkit.getOfflinePlayer(id));
+			else balance = playerData.getInt(id + ".crystalBalance");
+
 			inv.setItem(52, ItemManager.createItem(Material.DIAMOND,
 					CommunicationManager.format("&b&l" + String.format(LanguageManager.messages.crystalBalance,
-							LanguageManager.names.crystal) + ": &b" + playerData.getInt(id + ".crystalBalance"))));
+							LanguageManager.names.crystal) + ": &b" + balance)));
+		}
 
 		// Option to exit
 		inv.setItem(53, Buttons.exit());
@@ -2240,10 +2250,14 @@ public class Inventories {
 						player.getGemBoost())));
 
 		// Crystal balance display
+		int balance;
+		if (Main.hasCustomEconomy())
+			balance = (int) Main.getEconomy().getBalance(Bukkit.getOfflinePlayer(player.getPlayer().getUniqueId()));
+		else balance = playerData.getInt(player.getPlayer().getUniqueId() + ".crystalBalance");
+
 		inv.setItem(8, ItemManager.createItem(Material.DIAMOND,
 				CommunicationManager.format("&b&l" + String.format(LanguageManager.messages.crystalBalance,
-						LanguageManager.names.crystal) + ": &b" +
-						playerData.getInt(player.getPlayer().getUniqueId() + ".crystalBalance"))));
+						LanguageManager.names.crystal) + ": &b" + balance)));
 
 		// Option to increase by 1
 		inv.setItem(9, ItemManager.createItem(Material.LIME_CONCRETE,

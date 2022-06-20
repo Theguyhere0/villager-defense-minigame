@@ -344,6 +344,7 @@ public class LanguageManager {
         public final @NotNull String communityChest;
         public final @NotNull String cooldown;
         public final @NotNull String customShop;
+        public final @NotNull String economy;
         public final @NotNull String emptyArena;
         public final @NotNull String enchant;
         public final @NotNull String enchantShop;
@@ -394,6 +395,7 @@ public class LanguageManager {
             communityChest = getConfigString(pathPrefix + ".communityChest");
             cooldown = getConfigString(pathPrefix + ".cooldown");
             customShop = getConfigString(pathPrefix + ".customShop");
+            economy = getConfigString(pathPrefix + ".economy");
             emptyArena = getConfigString(pathPrefix + ".emptyArena");
             enchant = getConfigString(pathPrefix + ".enchant");
             enchantShop = getConfigString(pathPrefix + ".enchantShop");

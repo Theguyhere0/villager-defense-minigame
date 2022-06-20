@@ -3086,11 +3086,18 @@ public class InventoryListener implements Listener {
 				return;
 			}
 
+			int balance;
+			if (Main.hasCustomEconomy())
+				balance = (int) Main.getEconomy().getBalance(Bukkit.getOfflinePlayer(id));
+			else balance = playerData.getInt(id + ".crystalBalance");
+
 			// Single tier kits
 			if (!kit.isMultiLevel()) {
 				if (!playerData.getBoolean(path + kit.getName()))
-					if (playerData.getInt(id + ".crystalBalance") >= kit.getPrice(1)) {
-						playerData.set(id + ".crystalBalance",
+					if (balance >= kit.getPrice(1)) {
+						if (Main.hasCustomEconomy())
+							Main.getEconomy().bankWithdraw(id.toString(), kit.getPrice(1));
+						else playerData.set(id + ".crystalBalance",
 								playerData.getInt(id + ".crystalBalance") - kit.getPrice(1));
 						playerData.set(path + kit.getName(), true);
 						PlayerManager.notifySuccess(player, LanguageManager.confirms.kitBuy);
@@ -3104,16 +3111,20 @@ public class InventoryListener implements Listener {
 				if (kitLevel == kit.getMaxLevel())
 					return;
 				else if (kitLevel == 0) {
-					if (playerData.getInt(id + ".crystalBalance") >= kit.getPrice(++kitLevel)) {
-						playerData.set(id + ".crystalBalance",
+					if (balance >= kit.getPrice(++kitLevel)) {
+						if (Main.hasCustomEconomy())
+							Main.getEconomy().bankWithdraw(id.toString(), kit.getPrice(kitLevel));
+						else playerData.set(id + ".crystalBalance",
 								playerData.getInt(id + ".crystalBalance") - kit.getPrice(kitLevel));
 						playerData.set(path + kit.getName(), kitLevel);
 						PlayerManager.notifySuccess(player, LanguageManager.confirms.kitBuy);
 						AchievementChecker.checkDefaultKitAchievements(player);
 					} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitBuy);
 				} else {
-					if (playerData.getInt(id + ".crystalBalance") >= kit.getPrice(++kitLevel)) {
-						playerData.set(id + ".crystalBalance",
+					if (balance >= kit.getPrice(++kitLevel)) {
+						if (Main.hasCustomEconomy())
+							Main.getEconomy().bankWithdraw(id.toString(), kit.getPrice(kitLevel));
+						else playerData.set(id + ".crystalBalance",
 								playerData.getInt(id + ".crystalBalance") - kit.getPrice(kitLevel));
 						playerData.set(path + kit.getName(), kitLevel);
 						PlayerManager.notifySuccess(player, LanguageManager.confirms.kitUpgrade);
@@ -3298,7 +3309,14 @@ public class InventoryListener implements Listener {
 				return;
 			}
 			int gemBoost = gamer.getGemBoost();
-			int crystalBal = playerData.getInt(owner.getUniqueId() + ".crystalBalance");
+			int conversionRatio = 5;
+			int balance;
+			if (Main.hasCustomEconomy()) {
+				conversionRatio = Math.max((int)
+						(conversionRatio * Main.plugin.getConfig().getDouble("vaultEconomyMult")), 1);
+				balance = (int) Main.getEconomy().getBalance(Bukkit.getOfflinePlayer(owner.getUniqueId()));
+			}
+			else balance = playerData.getInt(owner.getUniqueId() + ".crystalBalance");
 
 			// Reset
 			if (buttonName.contains(LanguageManager.messages.reset)) {
@@ -3310,7 +3328,7 @@ public class InventoryListener implements Listener {
 				gemBoost++;
 
 				// Check for crystal balance
-				if (gemBoost * 5 > crystalBal) {
+				if (gemBoost * conversionRatio > balance) {
 					PlayerManager.notifyFailure(player, LanguageManager.errors.buyGeneral);
 					return;
 				}
@@ -3324,7 +3342,7 @@ public class InventoryListener implements Listener {
 				gemBoost += 10;
 
 				// Check for crystal balance
-				if (gemBoost * 5 > crystalBal) {
+				if (gemBoost * conversionRatio > balance) {
 					PlayerManager.notifyFailure(player, LanguageManager.errors.buyGeneral);
 					return;
 				}
@@ -3338,7 +3356,7 @@ public class InventoryListener implements Listener {
 				gemBoost += 100;
 
 				// Check for crystal balance
-				if (gemBoost * 5 > crystalBal) {
+				if (gemBoost * conversionRatio > balance) {
 					PlayerManager.notifyFailure(player, LanguageManager.errors.buyGeneral);
 					return;
 				}
@@ -3352,7 +3370,7 @@ public class InventoryListener implements Listener {
 				gemBoost += 1000;
 
 				// Check for crystal balance
-				if (gemBoost * 5 > crystalBal) {
+				if (gemBoost * conversionRatio > balance) {
 					PlayerManager.notifyFailure(player, LanguageManager.errors.buyGeneral);
 					return;
 				}

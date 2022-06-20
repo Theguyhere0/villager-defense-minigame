@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models.kits;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
@@ -174,12 +175,17 @@ public class Kit {
     }
 
     /**
-     * Returns the price of the kit at the specified level.
+     * Returns the price of the kit at the specified level, adjusting for custom economy multiplier.
      * @param level Kit level.
      * @return Kit price.
      */
     public int getPrice(int level) {
-        return pricesMap.get(level);
+        if (pricesMap.get(level) == 0)
+            return 0;
+        else if (Main.hasCustomEconomy())
+            return Math.max((int) (pricesMap.get(level) * Main.plugin.getConfig().getDouble("vaultEconomyMult")),
+                    1);
+        else return pricesMap.get(level);
     }
 
     /**

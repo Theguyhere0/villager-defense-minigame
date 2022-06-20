@@ -255,7 +255,11 @@ public class Tasks {
 				// Give gems from crystal conversion
 				path = player.getPlayer().getUniqueId() + ".crystalBalance";
 				player.addGems(player.getGemBoost());
-				playerData.set(path, playerData.getInt(path) - player.getGemBoost() * 5);
+				if (Main.hasCustomEconomy())
+					Main.getEconomy().bankWithdraw(player.getPlayer().getUniqueId().toString(),
+							player.getGemBoost() * Math.max((int)
+									(5 * Main.plugin.getConfig().getDouble("vaultEconomyMult")), 1));
+				else playerData.set(path, playerData.getInt(path) - player.getGemBoost() * 5);
 				Main.savePlayerData();
 			});
 

@@ -1789,6 +1789,12 @@ public class Commands implements CommandExecutor {
 						return true;
 					}
 
+					// Check if vault economy is enabled
+					if (Main.hasCustomEconomy()) {
+						PlayerManager.notifyFailure(player, LanguageManager.errors.economy);
+						return true;
+					}
+
 					// Check for valid command format
 					if (args.length != 3) {
 						notifyCommandFailure(player, "/vd crystals [player] [change amount]",

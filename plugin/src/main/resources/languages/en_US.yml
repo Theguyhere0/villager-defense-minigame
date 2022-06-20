@@ -263,6 +263,7 @@ errors:
   communityChest: "Community chest has been disabled!"
   cooldown: "You have %s seconds left on your cooldown!"
   customShop: "Custom shop has been disabled!"
+  economy: "Vault Economy is being used instead of Crystals!"
   emptyArena: "The arena has no players!"
   enchant: "Cannot enchant item!"
   enchantShop: "Enchant shop has been disabled!"

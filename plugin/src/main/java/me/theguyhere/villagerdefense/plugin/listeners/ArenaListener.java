@@ -427,11 +427,17 @@ public class ArenaListener implements Listener {
                     bonus += challenge.getBonus();
                 bonus = (int) (reward * bonus / 100d);
 
+                // Apply vault economy multiplier, if active
+                if (Main.hasCustomEconomy()) {
+                    reward = (int) (reward * Main.plugin.getConfig().getDouble("vaultEconomyMult"));
+                    bonus = (int) (bonus * Main.plugin.getConfig().getDouble("vaultEconomyMult"));
+                }
+
                 // Give rewards and notify
-                Main.getPlayerData().set(player.getUniqueId() + ".crystalBalance",
-                        Main.getPlayerData().getInt(player.getUniqueId() + ".crystalBalance") + reward);
-                Main.getPlayerData().set(player.getUniqueId() + ".crystalBalance",
-                        Main.getPlayerData().getInt(player.getUniqueId() + ".crystalBalance") + bonus);
+                if (Main.hasCustomEconomy())
+                    Main.getEconomy().bankDeposit(player.getUniqueId().toString(), reward + bonus);
+                else Main.getPlayerData().set(player.getUniqueId() + ".crystalBalance",
+                        Main.getPlayerData().getInt(player.getUniqueId() + ".crystalBalance") + reward + bonus);
                 PlayerManager.notifySuccess(player, LanguageManager.messages.crystalsEarned,
                         ChatColor.AQUA, String.format("%d (+%d)", reward, bonus), LanguageManager.names.crystals);
             }
@@ -569,11 +575,18 @@ public class ArenaListener implements Listener {
                     bonus += challenge.getBonus();
                 bonus = (int) (reward * bonus / 100d);
 
+                // Apply vault economy multiplier, if active
+                if (Main.hasCustomEconomy()) {
+                    reward = (int) (reward * Main.plugin.getConfig().getDouble("vaultEconomyMult"));
+                    bonus = (int) (bonus * Main.plugin.getConfig().getDouble("vaultEconomyMult"));
+                }
+
                 // Give rewards and notify
-                Main.getPlayerData().set(vdPlayer.getID() + ".crystalBalance",
-                        Main.getPlayerData().getInt(vdPlayer.getID() + ".crystalBalance") + reward);
-                Main.getPlayerData().set(vdPlayer.getID() + ".crystalBalance",
-                        Main.getPlayerData().getInt(vdPlayer.getID() + ".crystalBalance") + bonus);
+                if (Main.hasCustomEconomy())
+                    Main.getEconomy().bankDeposit(vdPlayer.getPlayer().getUniqueId().toString(), reward + bonus);
+                else Main.getPlayerData().set(vdPlayer.getPlayer().getUniqueId() + ".crystalBalance",
+                        Main.getPlayerData().getInt(vdPlayer.getPlayer().getUniqueId() + ".crystalBalance") +
+                                reward + bonus);
                 PlayerManager.notifySuccess(vdPlayer.getPlayer(),
                         LanguageManager.messages.crystalsEarned,
                         ChatColor.AQUA, String.format("%d (+%d)", reward, bonus), LanguageManager.names.crystals);

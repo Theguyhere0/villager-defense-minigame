@@ -473,6 +473,10 @@ public class Main extends JavaPlugin {
 		return economy;
 	}
 
+	public static boolean hasCustomEconomy() {
+		return plugin.getConfig().getBoolean("vaultEconomy") && economy != null;
+	}
+
 	// Quick way to send test messages to console but remembering to take them down before release
 	public static void testInfo(String msg, boolean stackTrace) {
 		if (releaseMode) {
