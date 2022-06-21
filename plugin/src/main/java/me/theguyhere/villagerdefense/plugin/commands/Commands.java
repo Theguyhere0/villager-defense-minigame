@@ -1737,8 +1737,6 @@ public class Commands implements CommandExecutor {
 					// Attempt to get arena and player
 					try {
 						arena = GameManager.getArena(player);
-						if (arena == null)
-							return true;
 						gamer = arena.getPlayer(player);
 					} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 						PlayerManager.notifyFailure(player, LanguageManager.errors.inGame);
@@ -1855,10 +1853,8 @@ public class Commands implements CommandExecutor {
 						// Attempt to get arena and player
 						try {
 							arena = GameManager.getArena(player);
-							if (arena == null)
-								return true;
 							gamer = arena.getPlayer(player);
-						} catch (Exception e) {
+						} catch (ArenaNotFoundException | PlayerNotFoundException e) {
 							PlayerManager.notifyFailure(player, LanguageManager.errors.inGame);
 							return true;
 						}

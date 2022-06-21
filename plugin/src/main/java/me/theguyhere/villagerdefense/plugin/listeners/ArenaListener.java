@@ -344,8 +344,6 @@ public class ArenaListener implements Listener {
         // Attempt to get arena and player
         try {
             arena = GameManager.getArena(player);
-            if (arena == null)
-                return;
             gamer = arena.getPlayer(player);
         } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             e.setCancelled(true);

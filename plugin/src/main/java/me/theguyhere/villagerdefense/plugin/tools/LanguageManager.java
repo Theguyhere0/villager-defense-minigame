@@ -928,14 +928,14 @@ public class LanguageManager {
             contents = getConfigString("contents");
 
             // Special check for economy plugin to replace currency name
-            if (Main.plugin.getConfig().getBoolean("vaultEconomy") && Main.getEconomy() != null)
+            if (Main.hasCustomEconomy())
                 crystal = Main.getEconomy().currencyNameSingular();
             else crystal = getConfigString("crystal");
 
             crystalConverter = getConfigString("crystalConverter");
 
             // Special check for economy plugin to replace currency name
-            if (Main.plugin.getConfig().getBoolean("vaultEconomy") && Main.getEconomy() != null)
+            if (Main.hasCustomEconomy())
                 crystals = Main.getEconomy().currencyNamePlural();
             else crystals = getConfigString("crystals");
 

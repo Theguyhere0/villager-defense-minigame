@@ -2854,8 +2854,6 @@ public class InventoryListener implements Listener {
 			// Attempt to get arena and player
 			try {
 				arenaInstance = GameManager.getArena(player);
-				if (arenaInstance == null)
-					return;
 				gamer = arenaInstance.getPlayer(player);
 			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
@@ -3153,8 +3151,6 @@ public class InventoryListener implements Listener {
 			// Attempt to get arena and player
 			try {
 				arenaInstance = GameManager.getArena(player);
-				if (arenaInstance == null)
-					return;
 				gamer = arenaInstance.getPlayer(player);
 			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
@@ -3214,8 +3210,6 @@ public class InventoryListener implements Listener {
 			// Attempt to get arena and player
 			try {
 				arenaInstance = GameManager.getArena(player);
-				if (arenaInstance == null)
-					return;
 				gamer = arenaInstance.getPlayer(player);
 			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;

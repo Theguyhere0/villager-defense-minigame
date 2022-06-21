@@ -53,8 +53,6 @@ public class AbilityListener implements Listener {
         // Attempt to get arena and player
         try {
             arena = GameManager.getArena(player);
-            if (arena == null)
-                return;
             gamer = arena.getPlayer(player);
         } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             return;
@@ -840,8 +838,6 @@ public class AbilityListener implements Listener {
         // Attempt to get arena and player
         try {
             arena = GameManager.getArena(player);
-            if (arena == null)
-                return;
             gamer = arena.getPlayer(player);
         } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             return;

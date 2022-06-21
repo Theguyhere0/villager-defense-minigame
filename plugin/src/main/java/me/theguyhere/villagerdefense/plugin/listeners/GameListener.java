@@ -3,15 +3,12 @@ package me.theguyhere.villagerdefense.plugin.listeners;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
-import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
-import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.plugin.events.ReloadBoardsEvent;
+import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.*;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
@@ -870,8 +867,6 @@ public class GameListener implements Listener {
 		// Attempt to get arena and player
 		try {
 			arena = GameManager.getArena(player);
-			if (arena == null)
-				return;
 			gamer = arena.getPlayer(player);
 		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
@@ -1248,8 +1243,6 @@ public class GameListener implements Listener {
 		// Attempt to get VDPlayer and arena
 		try {
 			arena = GameManager.getArena(player);
-			if (arena == null)
-				return;
 			gamer = arena.getPlayer(player);
 		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
