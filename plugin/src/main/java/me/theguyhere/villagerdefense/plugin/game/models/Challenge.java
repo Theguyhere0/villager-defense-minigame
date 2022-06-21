@@ -29,6 +29,8 @@ import java.util.Objects;
 public class Challenge {
     /** The name of the challenge.*/
     private final String name;
+    /** The ID of the challenge.*/
+    private final String ID;
     /** The main description for the challenge.*/
     private final List<String> masterDescription = new ArrayList<>();
     /** The material used for GUI buttons relating to this challenge.*/
@@ -36,14 +38,19 @@ public class Challenge {
     /** The crystal bonus for accepting this challenge, in percentage points.*/
     private final int bonus;
 
-    public Challenge(String name, Material buttonMaterial, int bonus) {
+    public Challenge(String name, String ID, Material buttonMaterial, int bonus) {
         this.name = name;
+        this.ID = ID;
         this.buttonMaterial = buttonMaterial;
         this.bonus = bonus;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getID() {
+        return ID;
     }
 
     public int getBonus() {
@@ -55,14 +62,14 @@ public class Challenge {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Challenge challenge = (Challenge) o;
-        return Double.compare(challenge.bonus, bonus) == 0 && Objects.equals(name, challenge.name) &&
+        return bonus == challenge.bonus && Objects.equals(name, challenge.name) && Objects.equals(ID, challenge.ID) &&
                 Objects.equals(masterDescription, challenge.masterDescription) &&
                 buttonMaterial == challenge.buttonMaterial;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, masterDescription, buttonMaterial, bonus);
+        return Objects.hash(name, ID, masterDescription, buttonMaterial, bonus);
     }
 
     /**
@@ -119,13 +126,14 @@ public class Challenge {
     }
 
     public static Challenge none() {
-        return new Challenge(LanguageManager.names.none, Material.LIGHT_GRAY_CONCRETE, 1);
+        return new Challenge(LanguageManager.names.none, "none", Material.LIGHT_GRAY_CONCRETE, 1);
     }
 
     public static Challenge amputee() {
         int bonus = 10;
 
-        Challenge challenge = new Challenge(LanguageManager.challenges.amputee.name, Material.BAMBOO, bonus);
+        Challenge challenge = new Challenge(LanguageManager.challenges.amputee.name, "amputee", Material.BAMBOO,
+                bonus);
         challenge.addMasterDescription(CommunicationManager.format("&7" +
                 LanguageManager.challenges.amputee.description1));
         challenge.addMasterDescription(CommunicationManager.format("&6" +
@@ -138,7 +146,7 @@ public class Challenge {
     public static Challenge clumsy() {
         int bonus = 15;
 
-        Challenge challenge = new Challenge(LanguageManager.challenges.clumsy.name, Material.ICE, bonus);
+        Challenge challenge = new Challenge(LanguageManager.challenges.clumsy.name, "clumsy", Material.ICE, bonus);
         challenge.addMasterDescription(CommunicationManager.format("&7" +
                 LanguageManager.challenges.clumsy.description1));
         challenge.addMasterDescription(CommunicationManager.format("&6" +
@@ -151,7 +159,8 @@ public class Challenge {
     public static Challenge featherweight() {
         int bonus = 20;
 
-        Challenge challenge = new Challenge(LanguageManager.challenges.featherweight.name, Material.FEATHER, bonus);
+        Challenge challenge = new Challenge(LanguageManager.challenges.featherweight.name, "featherweight",
+                Material.FEATHER, bonus);
         challenge.addMasterDescription(CommunicationManager.format("&7" +
                 LanguageManager.challenges.featherweight.description1));
         challenge.addMasterDescription(CommunicationManager.format("&6" +
@@ -164,7 +173,8 @@ public class Challenge {
     public static Challenge pacifist() {
         int bonus = 25;
 
-        Challenge challenge = new Challenge(LanguageManager.challenges.pacifist.name, Material.TURTLE_HELMET, bonus);
+        Challenge challenge = new Challenge(LanguageManager.challenges.pacifist.name, "pacifist",
+                Material.TURTLE_HELMET, bonus);
         challenge.addMasterDescription(CommunicationManager.format("&7" +
                 LanguageManager.challenges.pacifist.description1));
         challenge.addMasterDescription(CommunicationManager.format("&6" +
@@ -177,7 +187,8 @@ public class Challenge {
     public static Challenge dwarf() {
         int bonus = 40;
 
-        Challenge challenge = new Challenge(LanguageManager.challenges.dwarf.name, Material.DEAD_BUSH, bonus);
+        Challenge challenge = new Challenge(LanguageManager.challenges.dwarf.name, "dwarf", Material.DEAD_BUSH,
+                bonus);
         challenge.addMasterDescription(CommunicationManager.format("&7" +
                 LanguageManager.challenges.dwarf.description1));
         challenge.addMasterDescription(CommunicationManager.format("&6" +
@@ -190,7 +201,8 @@ public class Challenge {
     public static Challenge uhc() {
         int bonus = 50;
 
-        Challenge challenge = new Challenge(LanguageManager.challenges.uhc.name, Material.GOLDEN_APPLE, bonus);
+        Challenge challenge = new Challenge(LanguageManager.challenges.uhc.name, "uhc", Material.GOLDEN_APPLE,
+                bonus);
         challenge.addMasterDescription(CommunicationManager.format("&7" +
                 LanguageManager.challenges.uhc.description1));
         challenge.addMasterDescription(CommunicationManager.format("&6" +
@@ -203,7 +215,8 @@ public class Challenge {
     public static Challenge explosive() {
         int bonus = 60;
 
-        Challenge challenge = new Challenge(LanguageManager.challenges.explosive.name, Material.TNT, bonus);
+        Challenge challenge = new Challenge(LanguageManager.challenges.explosive.name, "explosive", Material.TNT,
+                bonus);
         challenge.addMasterDescription(CommunicationManager.format("&7" +
                 LanguageManager.challenges.explosive.description1));
         challenge.addMasterDescription(CommunicationManager.format("&6" +
@@ -216,7 +229,8 @@ public class Challenge {
     public static Challenge naked() {
         int bonus = 75;
 
-        Challenge challenge = new Challenge(LanguageManager.challenges.naked.name, Material.ARMOR_STAND, bonus);
+        Challenge challenge = new Challenge(LanguageManager.challenges.naked.name, "naked", Material.ARMOR_STAND,
+                bonus);
         challenge.addMasterDescription(CommunicationManager.format("&7" +
                 LanguageManager.challenges.naked.description1));
         challenge.addMasterDescription(CommunicationManager.format("&6" +
@@ -229,7 +243,8 @@ public class Challenge {
     public static Challenge blind() {
         int bonus = 120;
 
-        Challenge challenge = new Challenge(LanguageManager.challenges.blind.name, Material.INK_SAC, bonus);
+        Challenge challenge = new Challenge(LanguageManager.challenges.blind.name, "blind", Material.INK_SAC,
+                bonus);
         challenge.addMasterDescription(CommunicationManager.format("&7" +
                 LanguageManager.challenges.blind.description1));
         challenge.addMasterDescription(CommunicationManager.format("&6" +

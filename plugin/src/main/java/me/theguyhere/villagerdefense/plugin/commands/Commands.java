@@ -1697,10 +1697,11 @@ public class Commands implements CommandExecutor {
 					}
 
 					if (args.length == 1)
-						player.openInventory(Inventories.createPlayerStatsMenu(player));
-					else if (playerData.contains(args[1]))
+						player.openInventory(Inventories.createPlayerStatsMenu(player.getUniqueId(),
+								player.getUniqueId()));
+					else if (PlayerManager.hasPlayer(Bukkit.getOfflinePlayer(args[1]).getUniqueId()))
 						player.openInventory(Inventories.createPlayerStatsMenu(
-								Objects.requireNonNull(Bukkit.getPlayer(args[1]))));
+								Bukkit.getOfflinePlayer(args[1]).getUniqueId(), player.getUniqueId()));
 					else PlayerManager.notifyFailure(player, LanguageManager.messages.noStats,
 								ChatColor.AQUA, args[1]);
 					return true;
@@ -1713,7 +1714,7 @@ public class Commands implements CommandExecutor {
 						return true;
 					}
 
-					player.openInventory(Inventories.createPlayerKitsMenu(player, player.getName()));
+					player.openInventory(Inventories.createPlayerKitsMenu(player.getUniqueId(), player.getUniqueId()));
 					return true;
 
 				// Player checks achievements
@@ -1724,7 +1725,7 @@ public class Commands implements CommandExecutor {
 						return true;
 					}
 
-					player.openInventory(Inventories.createPlayerAchievementsMenu(player));
+					player.openInventory(Inventories.createPlayerAchievementsMenu(player.getUniqueId()));
 					return true;
 
 				// Player joins as phantom
@@ -1747,7 +1748,7 @@ public class Commands implements CommandExecutor {
 					}
 
 					// Check if player owns the phantom kit if late arrival is not on
-					if (!playerData.getBoolean(player.getUniqueId() + ".kits." + Kit.phantom().getName()) &&
+					if (!PlayerManager.hasSingleTierKit(player.getUniqueId(), Kit.phantom().getID()) &&
 							!arena.hasLateArrival()) {
 						PlayerManager.notifyFailure(player, LanguageManager.errors.phantomOwn);
 						return true;
@@ -1811,7 +1812,7 @@ public class Commands implements CommandExecutor {
 						notifyFailure(player, LanguageManager.errors.invalidPlayer);
 						return true;
 					}
-					if (!playerData.contains(id.toString())) {
+					if (!PlayerManager.hasPlayer(id)) {
 						notifyFailure(player, LanguageManager.errors.invalidPlayer);
 						return true;
 					}
@@ -1819,17 +1820,14 @@ public class Commands implements CommandExecutor {
 					// Check for valid amount
 					try {
 						int amount = Integer.parseInt(args[2]);
-						playerData.set(
-								id + ".crystalBalance",
-								Math.max(playerData.getInt(id + ".crystalBalance") + amount, 0)
-						);
-						Main.savePlayerData();
+						if (amount < 0)
+							PlayerManager.withdrawCrystalBalance(id, -amount);
+						else PlayerManager.depositCrystalBalance(id, amount);
 						if (player != null)
-							PlayerManager.notifySuccess(player, LanguageManager.confirms.balanceSet,
-									ChatColor.AQUA, args[1],
-									String.valueOf(playerData.getInt(id + ".crystalBalance")));
+							PlayerManager.notifySuccess(player, LanguageManager.confirms.balanceSet, ChatColor.AQUA,
+									args[1], String.valueOf(PlayerManager.getCrystalBalance(id)));
 						else CommunicationManager.debugInfo(String.format(LanguageManager.confirms.balanceSet, args[1],
-								String.valueOf(playerData.getInt(id + ".crystalBalance"))), 0);
+								String.valueOf(PlayerManager.getCrystalBalance(id))), 0);
 					} catch (Exception e) {
 						notifyFailure(player, LanguageManager.errors.integer);
 					}

@@ -5,7 +5,6 @@ import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 public class InventoryFactory {
     public static Inventory createFixedSizeInventory(
@@ -407,7 +407,7 @@ public class InventoryFactory {
 
     public static Inventory createConfirmationMenu(
             @NotNull InventoryID inventoryID,
-            Player player,
+            UUID playerID,
             Arena arena,
             int id,
             @NotNull String formattedName
@@ -421,7 +421,7 @@ public class InventoryFactory {
         buttons.add(Buttons.yes());
 
         return createFixedSizeInventory(
-                new InventoryMeta(inventoryID, InventoryType.MENU, player, arena, id),
+                new InventoryMeta(inventoryID, InventoryType.MENU, playerID, arena, id),
                 formattedName,
                 1,
                 false,
@@ -451,9 +451,9 @@ public class InventoryFactory {
 
     public static Inventory createConfirmationMenu(
             @NotNull InventoryID inventoryID,
-            Player player,
+            UUID playerID,
             @NotNull String formattedName) {
-        return createConfirmationMenu(inventoryID, player, null, 0, formattedName);
+        return createConfirmationMenu(inventoryID, playerID, null, 0, formattedName);
     }
 
     public static Inventory createIncrementorMenu(

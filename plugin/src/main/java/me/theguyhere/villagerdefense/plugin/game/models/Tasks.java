@@ -2,22 +2,22 @@ package me.theguyhere.villagerdefense.plugin.game.models;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
-import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
-import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
-import me.theguyhere.villagerdefense.plugin.inventories.InventoryID;
-import me.theguyhere.villagerdefense.plugin.inventories.InventoryType;
-import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
-import me.theguyhere.villagerdefense.plugin.inventories.InventoryMeta;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.plugin.events.WaveEndEvent;
 import me.theguyhere.villagerdefense.plugin.events.WaveStartEvent;
+import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
+import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
+import me.theguyhere.villagerdefense.plugin.inventories.InventoryID;
+import me.theguyhere.villagerdefense.plugin.inventories.InventoryMeta;
+import me.theguyhere.villagerdefense.plugin.inventories.InventoryType;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.tools.WorldManager;
@@ -26,7 +26,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.boss.BarColor;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
@@ -170,13 +169,10 @@ public class Tasks {
 				arena.startBorderParticles();
 
 			arena.getActives().forEach(player -> {
-				FileConfiguration playerData = Main.getPlayerData();
-				String path = player.getPlayer().getUniqueId() + ".achievements";
 				Kit second;
 
 				// Give second kit to players with two kit bonus
-				if (playerData.contains(path) && player.isBoosted() &&
-						playerData.getStringList(path).contains(Achievement.allKits().getID()))
+				if (player.isBoosted() && PlayerManager.hasAchievement(player.getID(), Achievement.allKits().getID()))
 					do {
 						second = Kit.randomKit();
 
@@ -185,8 +181,7 @@ public class Tasks {
 							second.setKitLevel(1);
 
 						// Multiple tier kits
-						else second.setKitLevel(playerData.getInt(player.getPlayer().getUniqueId() + ".kits." +
-								second.getName()));
+						else second.setKitLevel(PlayerManager.getMultiTierKitLevel(player.getID(), second.getID()));
 
 						player.setKit2(second);
 					} while (second.equals(player.getKit()));
@@ -225,8 +220,7 @@ public class Tasks {
 				}
 
 				// Set health for people with health boost and are boosted
-				if (playerData.contains(path) && player.isBoosted() &&
-						playerData.getStringList(path).contains(Achievement.topWave9().getID()))
+				if (player.isBoosted() && PlayerManager.hasAchievement(player.getID(), Achievement.topWave9().getID()))
 					Objects.requireNonNull(player.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
 							.addModifier(new AttributeModifier("HealthBoost", 2,
 									AttributeModifier.Operation.ADD_NUMBER));
@@ -253,14 +247,13 @@ public class Tasks {
 					player.addGems(200);
 
 				// Give gems from crystal conversion
-				path = player.getPlayer().getUniqueId() + ".crystalBalance";
-				player.addGems(player.getGemBoost());
+				int amount;
 				if (Main.hasCustomEconomy())
-					Main.getEconomy().bankWithdraw(player.getPlayer().getUniqueId().toString(),
-							player.getGemBoost() * Math.max((int)
-									(5 * Main.plugin.getConfig().getDouble("vaultEconomyMult")), 1));
-				else playerData.set(path, playerData.getInt(path) - player.getGemBoost() * 5);
-				Main.savePlayerData();
+					amount = player.getGemBoost() * Math.max((int)
+							(5 * Main.plugin.getConfig().getDouble("vaultEconomyMult")), 1);
+				else amount = player.getGemBoost() * 5;
+				player.addGems(player.getGemBoost());
+				PlayerManager.withdrawCrystalBalance(player.getID(), amount);
 			});
 
 			// Initiate community chest
@@ -377,11 +370,7 @@ public class Tasks {
 				}
 
 				// Set health for people with health boost and are boosted
-				FileConfiguration playerData = Main.getPlayerData();
-				String path = p.getPlayer().getUniqueId() + ".achievements";
-
-				if (playerData.contains(path) && p.isBoosted() &&
-						playerData.getStringList(path).contains(Achievement.topWave9().getID()))
+				if (p.isBoosted() && PlayerManager.hasAchievement(p.getID(), Achievement.topWave9().getID()))
 					Objects.requireNonNull(p.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
 							.addModifier(new AttributeModifier("HealthBoost", 2,
 									AttributeModifier.Operation.ADD_NUMBER));

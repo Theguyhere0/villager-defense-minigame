@@ -18,10 +18,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-import java.util.Objects;
 
 public class JoinListener implements Listener {
 	private final NMSManager nmsManager = NMSVersion.getCurrent().getNmsManager();
@@ -45,35 +43,9 @@ public class JoinListener implements Listener {
 			loggers.remove(player.getUniqueId().toString());
 			playerData.set("loggers", loggers);
 
-			if (Main.plugin.getConfig().getBoolean("keepInv")) {
-				// Return player health, food, exp, and items
-				if (playerData.contains(player.getUniqueId() + ".health"))
-					player.setHealth(playerData.getDouble(player.getUniqueId() + ".health"));
-				playerData.set(player.getUniqueId() + ".health", null);
-				if (playerData.contains(player.getUniqueId() + ".food"))
-					player.setFoodLevel(playerData.getInt(player.getUniqueId() + ".food"));
-				playerData.set(player.getUniqueId() + ".food", null);
-				if (playerData.contains(player.getUniqueId() + ".saturation"))
-					player.setSaturation((float) playerData.getDouble(player.getUniqueId() +
-							".saturation"));
-				playerData.set(player.getUniqueId() + ".saturation", null);
-				if (playerData.contains(player.getUniqueId() + ".level")) {
-					player.setLevel(playerData.getInt(player.getUniqueId() + ".level"));
-					playerData.set(player.getUniqueId() + ".level", null);
-				}
-				if (playerData.contains(player.getUniqueId() + ".exp")) {
-					player.setExp((float) playerData.getDouble(player.getUniqueId() + ".exp"));
-					playerData.set(player.getUniqueId() + ".exp", null);
-				}
-				if (playerData.contains(player.getUniqueId() + ".inventory")) {
-					Objects.requireNonNull(playerData
-									.getConfigurationSection(player.getUniqueId() + ".inventory"))
-							.getKeys(false)
-							.forEach(num -> player.getInventory().setItem(Integer.parseInt(num),
-									(ItemStack) playerData.get(player.getUniqueId() + ".inventory." + num)));
-					playerData.set(player.getUniqueId() + ".inventory", null);
-				}
-			}
+			// Return player health, food, exp, and items
+			if (Main.plugin.getConfig().getBoolean("keepInv"))
+				PlayerManager.returnSurvivalStats(player);
 
 			Main.savePlayerData();
 		}

@@ -2328,22 +2328,21 @@ public class InventoryListener implements Listener {
 
 		// Allowed kits menu for an arena
 		else if (invID == InventoryID.ALLOWED_KITS_MENU) {
-			String kit = buttonName.substring(4);
+			Kit kit = Kit.getKit(buttonName.substring(4));
 			Arena arenaInstance = meta.getArena();
 			List<String> banned = arenaInstance.getBannedKits();
 
 			// Toggle a kit
-			if (!(kit.equals(LanguageManager.names.giftKits) || kit.equals(LanguageManager.names.abilityKits) ||
-					kit.equals(LanguageManager.names.effectKits) || kit.equals(LanguageManager.messages.exit))) {
+			if (kit != null) {
 				// Check for arena closure
 				if (!arenaInstance.isClosed()) {
 					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 					return;
 				}
 
-				if (banned.contains(kit))
-					banned.remove(kit);
-				else banned.add(kit);
+				if (banned.contains(kit.getID()))
+					banned.remove(kit.getID());
+				else banned.add(kit.getID());
 				arenaInstance.setBannedKits(banned);
 				player.openInventory(Inventories.createAllowedKitsMenu(arenaInstance, false));
 			}
@@ -2363,7 +2362,7 @@ public class InventoryListener implements Listener {
 
 		// Forced challenges menu for an arena
 		else if (invID == InventoryID.FORCED_CHALLENGES_MENU) {
-			String challenge = buttonName.substring(4);
+			Challenge challenge = Challenge.getChallenge(buttonName.substring(4));
 			Arena arenaInstance = meta.getArena();
 			List<String> forced = arenaInstance.getForcedChallenges();
 
@@ -2372,16 +2371,16 @@ public class InventoryListener implements Listener {
 				player.openInventory(Inventories.createGameSettingsMenu(meta.getArena()));
 
 			// Toggle a challenge
-			else {
+			else if (challenge != null) {
 				// Check for arena closure
 				if (!arenaInstance.isClosed()) {
 					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 					return;
 				}
 
-				if (forced.contains(challenge))
-					forced.remove(challenge);
-				else forced.add(challenge);
+				if (forced.contains(challenge.getID()))
+					forced.remove(challenge.getID());
+				else forced.add(challenge.getID());
 				arenaInstance.setForcedChallenges(forced);
 				player.openInventory(Inventories.createForcedChallengesMenu(arenaInstance, false));
 			}
@@ -3036,132 +3035,114 @@ public class InventoryListener implements Listener {
 
 		// Stats menu for a player
 		else if (invID == InventoryID.PLAYER_STATS_MENU) {
-			Player owner = meta.getPlayer();
+			UUID id = meta.getPlayerID();
 			if (buttonName.contains(LanguageManager.messages.achievements))
-				player.openInventory(Inventories.createPlayerAchievementsMenu(owner));
+				player.openInventory(Inventories.createPlayerAchievementsMenu(id));
 			else if (buttonName.contains(LanguageManager.messages.kits))
-				player.openInventory(Inventories.createPlayerKitsMenu(owner, player.getName()));
-			else if (buttonName.contains(LanguageManager.messages.reset))
-				player.openInventory(Inventories.createResetStatsConfirmMenu(player));
+				player.openInventory(Inventories.createPlayerKitsMenu(id, player.getUniqueId()));
+			else if (buttonName.contains(LanguageManager.messages.reset) && id.equals(player.getUniqueId()))
+				player.openInventory(Inventories.createResetStatsConfirmMenu(id));
 		}
 
 		// Achievements menu for a player
 		else if (invID == InventoryID.PLAYER_ACHIEVEMENTS_MENU) {
-			Player owner = meta.getPlayer();
+			UUID id = meta.getPlayerID();
 
 			// Exit button
 			if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Inventories.createPlayerStatsMenu(owner));
+				player.openInventory(Inventories.createPlayerStatsMenu(id, player.getUniqueId()));
 
 			// Previous page
 			else if (button.equals(Buttons.previousPage()))
-				player.openInventory(Inventories.createPlayerAchievementsMenu(owner, meta.getPage() - 1));
+				player.openInventory(Inventories.createPlayerAchievementsMenu(id, meta.getPage() - 1));
 
 			// Next page
 			else if (button.equals(Buttons.nextPage()))
-				player.openInventory(Inventories.createPlayerAchievementsMenu(owner, meta.getPage() + 1));
+				player.openInventory(Inventories.createPlayerAchievementsMenu(id, meta.getPage() + 1));
 		}
 
 		// Kits menu for a player
 		else if (invID == InventoryID.PLAYER_KITS_MENU) {
-			FileConfiguration playerData = Main.getPlayerData();
-			Player owner = meta.getPlayer();
-			String name = owner.getName();
-			UUID id = owner.getUniqueId();
+			UUID ownerID = meta.getPlayerID();
 			Kit kit = Kit.getKit(buttonName.substring(4));
-			String path = id + ".kits.";
 
 			if (buttonName.contains(LanguageManager.messages.exit)) {
-				player.openInventory(Inventories.createPlayerStatsMenu(owner));
+				player.openInventory(Inventories.createPlayerStatsMenu(ownerID, player.getUniqueId()));
 				return;
 			}
 
 			// Check if requester is owner
-			if (!name.equals(player.getName()))
+			if (!ownerID.equals(player.getUniqueId()))
 				return;
 
 			// Check if selected kit retrieval failed
 			if (kit == null) {
-				CommunicationManager.debugError("No kit of " + buttonName.substring(4) + " was found.", 1);
+				CommunicationManager.debugError("No kit of " + buttonName.substring(4) + " was found.",
+						  1);
 				return;
 			}
 
-			int balance;
-			if (Main.hasCustomEconomy())
-				balance = (int) Main.getEconomy().getBalance(Bukkit.getOfflinePlayer(id));
-			else balance = playerData.getInt(id + ".crystalBalance");
+			int balance = PlayerManager.getCrystalBalance(ownerID);
 
 			// Single tier kits
-			if (!kit.isMultiLevel()) {
-				if (!playerData.getBoolean(path + kit.getName()))
-					if (balance >= kit.getPrice(1)) {
-						if (Main.hasCustomEconomy())
-							Main.getEconomy().bankWithdraw(id.toString(), kit.getPrice(1));
-						else playerData.set(id + ".crystalBalance",
-								playerData.getInt(id + ".crystalBalance") - kit.getPrice(1));
-						playerData.set(path + kit.getName(), true);
-						PlayerManager.notifySuccess(player, LanguageManager.confirms.kitBuy);
-						AchievementChecker.checkDefaultKitAchievements(player);
-					} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitBuy);
+			if (!kit.isMultiLevel() && PlayerManager.hasSingleTierKit(ownerID, kit.getID())) {
+				if (balance >= kit.getPrice(1)) {
+					PlayerManager.withdrawCrystalBalance(ownerID, kit.getPrice(1));
+					PlayerManager.addSingleTierKit(ownerID, kit.getID());
+					PlayerManager.notifySuccess(player, LanguageManager.confirms.kitBuy);
+					AchievementChecker.checkDefaultKitAchievements(player);
+				} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitBuy);
 			}
 
 			// Multiple tier kits
 			else {
-				int kitLevel = playerData.getInt(path + kit.getName());
+				int kitLevel = PlayerManager.getMultiTierKitLevel(ownerID, kit.getID());
 				if (kitLevel == kit.getMaxLevel())
 					return;
 				else if (kitLevel == 0) {
 					if (balance >= kit.getPrice(++kitLevel)) {
-						if (Main.hasCustomEconomy())
-							Main.getEconomy().bankWithdraw(id.toString(), kit.getPrice(kitLevel));
-						else playerData.set(id + ".crystalBalance",
-								playerData.getInt(id + ".crystalBalance") - kit.getPrice(kitLevel));
-						playerData.set(path + kit.getName(), kitLevel);
+						PlayerManager.withdrawCrystalBalance(ownerID, kit.getPrice(kitLevel));
+						PlayerManager.setMultiTierKitLevel(ownerID, kit.getID(), kitLevel);
 						PlayerManager.notifySuccess(player, LanguageManager.confirms.kitBuy);
 						AchievementChecker.checkDefaultKitAchievements(player);
 					} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitBuy);
 				} else {
 					if (balance >= kit.getPrice(++kitLevel)) {
-						if (Main.hasCustomEconomy())
-							Main.getEconomy().bankWithdraw(id.toString(), kit.getPrice(kitLevel));
-						else playerData.set(id + ".crystalBalance",
-								playerData.getInt(id + ".crystalBalance") - kit.getPrice(kitLevel));
-						playerData.set(path + kit.getName(), kitLevel);
+						PlayerManager.withdrawCrystalBalance(ownerID, kit.getPrice(kitLevel));
+						PlayerManager.setMultiTierKitLevel(ownerID, kit.getID(), kitLevel);
 						PlayerManager.notifySuccess(player, LanguageManager.confirms.kitUpgrade);
 						AchievementChecker.checkDefaultKitAchievements(player);
 					} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitUpgrade);
 				}
 			}
 
-			Main.savePlayerData();
-			player.openInventory(Inventories.createPlayerKitsMenu(owner, name));
+			player.openInventory(Inventories.createPlayerKitsMenu(ownerID, ownerID));
 		}
 
 		// Reset player stats confirmation for a player
 		else if (invID == InventoryID.RESET_STATS_CONFIRM_MENU) {
+			UUID ownerID = meta.getPlayerID();
+
 			// Return to previous menu
 			if (buttonName.contains("NO"))
-				player.openInventory(Inventories.createPlayerStatsMenu(meta.getPlayer()));
+				player.openInventory(Inventories.createPlayerStatsMenu(ownerID, player.getUniqueId()));
 
 			// Reset player stats
 			else if (buttonName.contains("YES")) {
 				// Remove stats
-				FileConfiguration playerData = Main.getPlayerData();
-				playerData.set(player.getUniqueId().toString(), null);
-				Main.savePlayerData();
+				PlayerManager.resetPlayerData(player.getUniqueId());
 
 				// Reload leaderboards
 				GameManager.refreshLeaderboards();
 
 				// Confirm and return
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.reset);
-				player.openInventory(Inventories.createPlayerStatsMenu(meta.getPlayer()));
+				player.openInventory(Inventories.createPlayerStatsMenu(ownerID, player.getUniqueId()));
 			}
 		}
 
 		// Kit selection menu for an arena
 		else if (invID == InventoryID.SELECT_KITS_MENU) {
-			FileConfiguration playerData = Main.getPlayerData();
 			Arena arenaInstance;
 			VDPlayer gamer;
 
@@ -3176,7 +3157,6 @@ public class InventoryListener implements Listener {
 			}
 
 			Kit kit = Kit.getKit(buttonName.substring(4));
-			String path = player.getUniqueId() + ".kits.";
 
 			// Leave if EXIT
 			if (buttonName.contains(LanguageManager.messages.exit)) {
@@ -3197,7 +3177,7 @@ public class InventoryListener implements Listener {
 
 			// Single tier kits
 			if (!kit.isMultiLevel()) {
-				if (playerData.getBoolean(path + kit.getName()) || kit.equals(Kit.orc()) ||
+				if (PlayerManager.hasSingleTierKit(player.getUniqueId(), kit.getID()) || kit.equals(Kit.orc()) ||
 						kit.equals(Kit.farmer()) || kit.equals(Kit.none())) {
 					gamer.setKit(kit.setKitLevel(1));
 					PlayerManager.notifySuccess(player, LanguageManager.confirms.kitSelect);
@@ -3209,11 +3189,12 @@ public class InventoryListener implements Listener {
 
 			// Multiple tier kits
 			else {
-				if (playerData.getInt(path + kit.getName()) < 1) {
+				int kitLevel = PlayerManager.getMultiTierKitLevel(player.getUniqueId(), kit.getID());
+				if (kitLevel < 1) {
 					PlayerManager.notifyFailure(player, LanguageManager.errors.kitSelect);
 					return;
 				}
-				gamer.setKit(kit.setKitLevel(playerData.getInt(path + kit.getName())));
+				gamer.setKit(kit.setKitLevel(kitLevel));
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.kitSelect);
 			}
 
@@ -3298,8 +3279,7 @@ public class InventoryListener implements Listener {
 
 		// Menu for converting crystals
 		else if (invID == InventoryID.CRYSTAL_CONVERT_MENU) {
-			FileConfiguration playerData = Main.getPlayerData();
-			Player owner = meta.getPlayer();
+			Player owner = Bukkit.getPlayer(meta.getPlayerID());
 			VDPlayer gamer;
 
 			// Try to get VDPlayer
@@ -3310,13 +3290,7 @@ public class InventoryListener implements Listener {
 			}
 			int gemBoost = gamer.getGemBoost();
 			int conversionRatio = 5;
-			int balance;
-			if (Main.hasCustomEconomy()) {
-				conversionRatio = Math.max((int)
-						(conversionRatio * Main.plugin.getConfig().getDouble("vaultEconomyMult")), 1);
-				balance = (int) Main.getEconomy().getBalance(Bukkit.getOfflinePlayer(owner.getUniqueId()));
-			}
-			else balance = playerData.getInt(owner.getUniqueId() + ".crystalBalance");
+			int balance = PlayerManager.getCrystalBalance(meta.getPlayerID());
 
 			// Reset
 			if (buttonName.contains(LanguageManager.messages.reset)) {

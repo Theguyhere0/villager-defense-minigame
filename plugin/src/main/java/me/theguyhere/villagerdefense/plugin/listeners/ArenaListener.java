@@ -20,11 +20,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.DisplaySlot;
 
@@ -77,17 +75,8 @@ public class ArenaListener implements Listener {
 
         int players = arena.getActiveCount();
 
-        if (Main.plugin.getConfig().getBoolean("keepInv")) {
-            // Save player exp and items before going into arena
-            Main.getPlayerData().set(player.getUniqueId() + ".health", player.getHealth());
-            Main.getPlayerData().set(player.getUniqueId() + ".food", player.getFoodLevel());
-            Main.getPlayerData().set(player.getUniqueId() + ".saturation", (double) player.getSaturation());
-            Main.getPlayerData().set(player.getUniqueId() + ".level", player.getLevel());
-            Main.getPlayerData().set(player.getUniqueId() + ".exp", (double) player.getExp());
-            for (int i = 0; i < player.getInventory().getContents().length; i++)
-                Main.getPlayerData().set(player.getUniqueId() + ".inventory." + i, player.getInventory().getContents()[i]);
-            Main.savePlayerData();
-        }
+        if (Main.plugin.getConfig().getBoolean("keepInv"))
+            PlayerManager.cacheSurvivalStats(player);
 
         // Prepares player to enter arena if it doesn't exceed max capacity and if the arena is still waiting
         if (players < arena.getMaxPlayers() && arena.getStatus() == ArenaStatus.WAITING) {
@@ -274,13 +263,10 @@ public class ArenaListener implements Listener {
                             Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 10, .75f);
                 }
 
-        FileConfiguration playerData = Main.getPlayerData();
-
         // Update player stats
         for (VDPlayer active : arena.getActives())
-            if (playerData.getInt(active.getID() + ".topWave") < arena.getCurrentWave())
-                playerData.set(active.getID() + ".topWave", arena.getCurrentWave());
-        Main.savePlayerData();
+            if (PlayerManager.getTopWave(active.getID()) < arena.getCurrentWave())
+                PlayerManager.setTopWave(active.getID(), arena.getCurrentWave());
 
         // Debug message to console
         CommunicationManager.debugInfo("" + arena.getName() + " completed wave " + arena.getCurrentWave(),
@@ -372,14 +358,12 @@ public class ArenaListener implements Listener {
 
         // Not spectating
         if (gamer.getStatus() != PlayerStatus.SPECTATOR) {
-            FileConfiguration playerData = Main.getPlayerData();
+            UUID playerID = player.getUniqueId();
 
             // Update player stats
-            playerData.set(player.getUniqueId() + ".totalKills",
-                    playerData.getInt(player.getUniqueId() + ".totalKills") + gamer.getKills());
-            if (playerData.getInt(player.getUniqueId() + ".topKills") < gamer.getKills())
-                playerData.set(player.getUniqueId() + ".topKills", gamer.getKills());
-            Main.savePlayerData();
+            PlayerManager.setTotalKills(playerID, PlayerManager.getTotalKills(playerID) + gamer.getKills());
+            if (PlayerManager.getTopKills(playerID) < gamer.getKills())
+                PlayerManager.setTopKills(playerID, gamer.getKills());
 
             // Check for achievements
             AchievementChecker.checkDefaultHighScoreAchievements(player);
@@ -434,10 +418,7 @@ public class ArenaListener implements Listener {
                 }
 
                 // Give rewards and notify
-                if (Main.hasCustomEconomy())
-                    Main.getEconomy().bankDeposit(player.getUniqueId().toString(), reward + bonus);
-                else Main.getPlayerData().set(player.getUniqueId() + ".crystalBalance",
-                        Main.getPlayerData().getInt(player.getUniqueId() + ".crystalBalance") + reward + bonus);
+                PlayerManager.depositCrystalBalance(playerID, reward + bonus);
                 PlayerManager.notifySuccess(player, LanguageManager.messages.crystalsEarned,
                         ChatColor.AQUA, String.format("%d (+%d)", reward, bonus), LanguageManager.names.crystals);
             }
@@ -486,31 +467,8 @@ public class ArenaListener implements Listener {
         }
 
         // Return player health, food, exp, and items
-        if (Main.plugin.getConfig().getBoolean("keepInv") && player.isOnline()) {
-            if (Main.getPlayerData().contains(player.getUniqueId() + ".health"))
-                player.setHealth(Main.getPlayerData().getDouble(player.getUniqueId() + ".health"));
-            Main.getPlayerData().set(player.getUniqueId() + ".health", null);
-            if (Main.getPlayerData().contains(player.getUniqueId() + ".food"))
-                player.setFoodLevel(Main.getPlayerData().getInt(player.getUniqueId() + ".food"));
-            Main.getPlayerData().set(player.getUniqueId() + ".food", null);
-            if (Main.getPlayerData().contains(player.getUniqueId() + ".saturation"))
-                player.setSaturation((float) Main.getPlayerData().getDouble(player.getUniqueId() + ".saturation"));
-            Main.getPlayerData().set(player.getUniqueId() + ".saturation", null);
-            if (Main.getPlayerData().contains(player.getUniqueId() + ".level"))
-                player.setLevel(Main.getPlayerData().getInt(player.getUniqueId() + ".level"));
-            Main.getPlayerData().set(player.getUniqueId() + ".level", null);
-            if (Main.getPlayerData().contains(player.getUniqueId() + ".exp"))
-                player.setExp((float) Main.getPlayerData().getDouble(player.getUniqueId() + ".exp"));
-            Main.getPlayerData().set(player.getUniqueId() + ".exp", null);
-            if (Main.getPlayerData().contains(player.getUniqueId() + ".inventory"))
-                Objects.requireNonNull(Main.getPlayerData()
-                                .getConfigurationSection(player.getUniqueId() + ".inventory"))
-                        .getKeys(false)
-                        .forEach(num -> player.getInventory().setItem(Integer.parseInt(num),
-                                (ItemStack) Main.getPlayerData().get(player.getUniqueId() + ".inventory." + num)));
-            Main.getPlayerData().set(player.getUniqueId() + ".inventory", null);
-            Main.savePlayerData();
-        }
+        if (Main.plugin.getConfig().getBoolean("keepInv") && player.isOnline())
+            PlayerManager.returnSurvivalStats(player);
 
         // Refresh the game portal
         arena.refreshPortal();
@@ -582,11 +540,7 @@ public class ArenaListener implements Listener {
                 }
 
                 // Give rewards and notify
-                if (Main.hasCustomEconomy())
-                    Main.getEconomy().bankDeposit(vdPlayer.getPlayer().getUniqueId().toString(), reward + bonus);
-                else Main.getPlayerData().set(vdPlayer.getPlayer().getUniqueId() + ".crystalBalance",
-                        Main.getPlayerData().getInt(vdPlayer.getPlayer().getUniqueId() + ".crystalBalance") +
-                                reward + bonus);
+                PlayerManager.depositCrystalBalance(vdPlayer.getID(), reward + bonus);
                 PlayerManager.notifySuccess(vdPlayer.getPlayer(),
                         LanguageManager.messages.crystalsEarned,
                         ChatColor.AQUA, String.format("%d (+%d)", reward, bonus), LanguageManager.names.crystals);
