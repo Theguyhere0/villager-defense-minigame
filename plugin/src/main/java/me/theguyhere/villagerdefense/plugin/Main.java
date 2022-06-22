@@ -47,8 +47,8 @@ public class Main extends JavaPlugin {
 	private static boolean outdated = false; // DO NOT CHANGE
 	public static final boolean releaseMode = false;
 	public static final int configVersion = 9;
-	public static final int arenaDataVersion = 6;
-	public static final int playerDataVersion = 2;
+	public static final int arenaDataVersion = 7;
+	public static final int playerDataVersion = 3;
 	public static final int spawnTableVersion = 1;
 	public static final int languageFileVersion = 20;
 	public static final int defaultSpawnVersion = 2;

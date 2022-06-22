@@ -9,7 +9,6 @@ import java.util.List;
 public class CommunicationManager {
     /**
      * The amount of debug information to display in the console.
-     *
      * 3 (Developer) - All errors and information tracked will be displayed. Certain behavior will be overridden.
      * 2 (Verbose) - All errors and information tracked will be displayed.
      * 1 (Normal) - Errors that drastically reduce performance and important information will be displayed.
@@ -23,7 +22,6 @@ public class CommunicationManager {
 
     /**
      * Sets the new debug level for the plugin. Values below or above the proper range will be capped at the limits.
-     *
      * @param newDebugLevel New debug level to be set for the plugin.
      */
     public static void setDebugLevel(int newDebugLevel) {
@@ -32,7 +30,6 @@ public class CommunicationManager {
 
     /**
      * Translates color codes that use "&" into their proper form to be displayed by Bukkit.
-     *
      * @param msg Message to be translated.
      * @return Properly translated message.
      */
@@ -42,7 +39,6 @@ public class CommunicationManager {
 
     /**
      * Formats a long description into an array of colored lines, split according to the set character limit.
-     *
      * @param base Base color for the description.
      * @param description The description to be formatted.
      * @param charLimit The character limit per line.
@@ -54,7 +50,6 @@ public class CommunicationManager {
 
     /**
      * Formats a long description into a list of colored lines, split according to the set character limit.
-     *
      * @param base Base color for the description.
      * @param description The description to be formatted.
      * @param charLimit The character limit per line.
@@ -95,7 +90,6 @@ public class CommunicationManager {
 
     /**
      * Replaces placeholders in the base colored message with colored replacements.
-     *
      * @param base Base colored message.
      * @param replacements Replacement colored messages.
      * @return Properly formatted combined colored message.
@@ -120,7 +114,6 @@ public class CommunicationManager {
 
     /**
      * Replaces placeholders in the base colored message with aqua colored replacements.
-     *
      * @param base Base colored message.
      * @param replacements Replacement messages.
      * @return Properly formatted combined colored message.
@@ -144,7 +137,6 @@ public class CommunicationManager {
 
     /**
      * Formats plugin notifications to players.
-     *
      * @param msg Raw message to send to player.
      * @return Formatted message prepared to be sent to the player.
      */
@@ -154,7 +146,6 @@ public class CommunicationManager {
 
     /**
      * Formats plugin notifications from entities with names.
-     *
      * @param name Colored name of the entity.
      * @param msg Raw message to send to player.
      * @return Formatted message prepared to be sent to the player.

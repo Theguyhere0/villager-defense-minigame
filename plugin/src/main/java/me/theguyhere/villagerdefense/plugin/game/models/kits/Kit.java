@@ -327,7 +327,7 @@ public class Kit {
      * @param kitName Name to check.
      * @return Kit or null.
      */
-    public static Kit getKit(String kitName) {
+    public static Kit getKitByName(String kitName) {
         if (none().getName().equals(kitName))
             return none();
         else if (orc().getName().equals(kitName))
@@ -375,6 +375,63 @@ public class Kit {
         else if (vampire().getName().equals(kitName))
             return vampire();
         else if (giant().getName().equals(kitName))
+            return giant();
+        else return null;
+    }
+
+    /**
+     * Attempts to return a {@link Kit} based on the kit's ID.
+     * @param kitID ID to check.
+     * @return Kit or null.
+     */
+    public static Kit getKitByID(String kitID) {
+        if (none().getID().equals(kitID))
+            return none();
+        else if (orc().getID().equals(kitID))
+            return orc();
+        else if (farmer().getID().equals(kitID))
+            return farmer();
+        else if (soldier().getID().equals(kitID))
+            return soldier();
+        else if (alchemist().getID().equals(kitID))
+            return alchemist();
+        else if (tailor().getID().equals(kitID))
+            return tailor();
+        else if (trader().getID().equals(kitID))
+            return trader();
+        else if (summoner().getID().equals(kitID))
+            return summoner();
+        else if (reaper().getID().equals(kitID))
+            return reaper();
+        else if (phantom().getID().equals(kitID))
+            return phantom();
+        else if (mage().getID().equals(kitID))
+            return mage();
+        else if (ninja().getID().equals(kitID))
+            return ninja();
+        else if (templar().getID().equals(kitID))
+            return templar();
+        else if (warrior().getID().equals(kitID))
+            return warrior();
+        else if (knight().getID().equals(kitID))
+            return knight();
+        else if (priest().getID().equals(kitID))
+            return priest();
+        else if (siren().getID().equals(kitID))
+            return siren();
+        else if (monk().getID().equals(kitID))
+            return monk();
+        else if (messenger().getID().equals(kitID))
+            return messenger();
+        else if (blacksmith().getID().equals(kitID))
+            return blacksmith();
+        else if (witch().getID().equals(kitID))
+            return witch();
+        else if (merchant().getID().equals(kitID))
+            return merchant();
+        else if (vampire().getID().equals(kitID))
+            return vampire();
+        else if (giant().getID().equals(kitID))
             return giant();
         else return null;
     }

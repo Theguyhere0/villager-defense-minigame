@@ -876,20 +876,20 @@ public class Arena {
                 .keySet());
     }
 
-    public List<String> getBannedKits() {
+    public List<String> getBannedKitIDs() {
         return config.getStringList(path + ".bannedKits");
     }
 
-    public void setBannedKits(List<String> bannedKits) {
+    public void setBannedKitIDs(List<String> bannedKits) {
         config.set(path + ".bannedKits", bannedKits);
         Main.saveArenaData();
     }
 
-    public List<String> getForcedChallenges() {
+    public List<String> getForcedChallengeIDs() {
         return config.getStringList(path + ".forcedChallenges");
     }
 
-    public void setForcedChallenges(List<String> forcedChallenges) {
+    public void setForcedChallengeIDs(List<String> forcedChallenges) {
         config.set(path + ".forcedChallenges", forcedChallenges);
         Main.saveArenaData();
     }
@@ -2044,7 +2044,7 @@ public class Arena {
         setDynamicLimit(arenaToCopy.hasDynamicLimit());
         setDynamicPrices(arenaToCopy.hasDynamicPrices());
         setDifficultyLabel(arenaToCopy.getDifficultyLabel());
-        setBannedKits(arenaToCopy.getBannedKits());
+        setBannedKitIDs(arenaToCopy.getBannedKitIDs());
         setNormal(arenaToCopy.hasNormal());
         setEnchants(arenaToCopy.hasEnchants());
         setCustom(arenaToCopy.hasCustom());

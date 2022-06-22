@@ -97,13 +97,13 @@ public class AchievementChecker {
                     else targets.add(true);
                 }
                 else if (requirement.getMetric() == AchievementMetric.KIT) {
-                    if (!requirement.getString().equals(player.getKit().getName()) &&
-                            !requirement.getString().equals(player.getKit2().getName()))
+                    if (!requirement.getString().equals(player.getKit().getID()) &&
+                            !requirement.getString().equals(player.getKit2().getID()))
                         targets.add(false);
                     else targets.add(true);
                 }
                 else if (requirement.getMetric() == AchievementMetric.CHALLENGE) {
-                    if (!player.getChallenges().contains(Challenge.getChallenge(requirement.getString())))
+                    if (!player.getChallenges().contains(Challenge.getChallengeByID(requirement.getString())))
                         targets.add(false);
                     else targets.add(true);
                 }

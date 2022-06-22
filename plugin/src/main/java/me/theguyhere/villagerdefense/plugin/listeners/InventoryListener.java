@@ -2332,9 +2332,9 @@ public class InventoryListener implements Listener {
 
 		// Allowed kits menu for an arena
 		else if (invID == InventoryID.ALLOWED_KITS_MENU) {
-			Kit kit = Kit.getKit(buttonName.substring(4));
+			Kit kit = Kit.getKitByName(buttonName.substring(4));
 			Arena arenaInstance = meta.getArena();
-			List<String> banned = arenaInstance.getBannedKits();
+			List<String> banned = arenaInstance.getBannedKitIDs();
 
 			// Toggle a kit
 			if (kit != null) {
@@ -2347,7 +2347,7 @@ public class InventoryListener implements Listener {
 				if (banned.contains(kit.getID()))
 					banned.remove(kit.getID());
 				else banned.add(kit.getID());
-				arenaInstance.setBannedKits(banned);
+				arenaInstance.setBannedKitIDs(banned);
 				player.openInventory(Inventories.createAllowedKitsMenu(arenaInstance, false));
 			}
 
@@ -2366,9 +2366,9 @@ public class InventoryListener implements Listener {
 
 		// Forced challenges menu for an arena
 		else if (invID == InventoryID.FORCED_CHALLENGES_MENU) {
-			Challenge challenge = Challenge.getChallenge(buttonName.substring(4));
+			Challenge challenge = Challenge.getChallengeByName(buttonName.substring(4));
 			Arena arenaInstance = meta.getArena();
-			List<String> forced = arenaInstance.getForcedChallenges();
+			List<String> forced = arenaInstance.getForcedChallengeIDs();
 
 			// Exit menu
 			if (buttonName.contains(LanguageManager.messages.exit))
@@ -2385,7 +2385,7 @@ public class InventoryListener implements Listener {
 				if (forced.contains(challenge.getID()))
 					forced.remove(challenge.getID());
 				else forced.add(challenge.getID());
-				arenaInstance.setForcedChallenges(forced);
+				arenaInstance.setForcedChallengeIDs(forced);
 				player.openInventory(Inventories.createForcedChallengesMenu(arenaInstance, false));
 			}
 		}
@@ -3067,7 +3067,7 @@ public class InventoryListener implements Listener {
 		// Kits menu for a player
 		else if (invID == InventoryID.PLAYER_KITS_MENU) {
 			UUID ownerID = meta.getPlayerID();
-			Kit kit = Kit.getKit(buttonName.substring(4));
+			Kit kit = Kit.getKitByName(buttonName.substring(4));
 
 			if (buttonName.contains(LanguageManager.messages.exit)) {
 				player.openInventory(Inventories.createPlayerStatsMenu(ownerID, player.getUniqueId()));
@@ -3156,7 +3156,7 @@ public class InventoryListener implements Listener {
 				return;
 			}
 
-			Kit kit = Kit.getKit(buttonName.substring(4));
+			Kit kit = Kit.getKitByName(buttonName.substring(4));
 
 			// Leave if EXIT
 			if (buttonName.contains(LanguageManager.messages.exit)) {
@@ -3215,7 +3215,7 @@ public class InventoryListener implements Listener {
 				return;
 			}
 
-			Challenge challenge = Challenge.getChallenge(buttonName.substring(4));
+			Challenge challenge = Challenge.getChallengeByName(buttonName.substring(4));
 
 			// Leave if EXIT
 			if (buttonName.contains(LanguageManager.messages.exit)) {
@@ -3230,7 +3230,7 @@ public class InventoryListener implements Listener {
 			// Option for no challenge
 			if (Challenge.none().equals(challenge)) {
 				// Arena has forced challenges
-				if (arenaInstance.getForcedChallenges().size() > 0)
+				if (arenaInstance.getForcedChallengeIDs().size() > 0)
 					PlayerManager.notifyFailure(player, LanguageManager.errors.hasForcedChallenges);
 
 				else {
@@ -3242,7 +3242,7 @@ public class InventoryListener implements Listener {
 			// Remove a challenge
 			else if (gamer.getChallenges().contains(challenge)) {
 				// Arena forced the challenge
-				if (challenge != null && arenaInstance.getForcedChallenges().contains(challenge.getName()))
+				if (challenge != null && arenaInstance.getForcedChallengeIDs().contains(challenge.getID()))
 					PlayerManager.notifyFailure(player, LanguageManager.errors.forcedChallenge);
 
 				else {

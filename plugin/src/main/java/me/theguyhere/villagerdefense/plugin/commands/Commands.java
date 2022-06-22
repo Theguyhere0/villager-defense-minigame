@@ -8,6 +8,7 @@ import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
+import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.Tasks;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
@@ -2177,19 +2178,12 @@ public class Commands implements CommandExecutor {
 					}
 
 					// Check if config.yml is outdated
-					int configVersion = Main.plugin.getConfig().getInt("version");
-					if (configVersion < Main.configVersion)
-						if (player != null)
-							PlayerManager.notifyAlert(
-									player,
-									LanguageManager.messages.manualUpdateWarn,
-									new ColoredMessage(ChatColor.AQUA, "config.yml")
-							);
-						else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
-								"config.yml");
+					if (Main.plugin.getConfig().getInt("version") < Main.configVersion)
+						notifyManualUpdate(player, "config.yml");
 
 					// Check if arenaData.yml is outdated
 					int arenaDataVersion = Main.plugin.getConfig().getInt("arenaData");
+					boolean arenaAbort = false;
 					if (arenaDataVersion < 4) {
 						try {
 							// Transfer portals
@@ -2221,27 +2215,13 @@ public class Commands implements CommandExecutor {
 							Main.plugin.saveConfig();
 
 							// Notify
-							if (player != null)
-								PlayerManager.notifySuccess(
-										player,
-										LanguageManager.confirms.autoUpdate,
-										new ColoredMessage(ChatColor.AQUA, "arenaData.yml"),
-										new ColoredMessage(ChatColor.AQUA, "4")
-								);
-							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
-									"arenaData.yml", "4");
+							notifyAutoUpdate(player, "arenaData.yml", 4);
 						} catch (Exception e) {
-							if (player != null)
-								PlayerManager.notifyAlert(
-										player,
-										LanguageManager.messages.manualUpdateWarn,
-										new ColoredMessage(ChatColor.AQUA, "arenaData.yml")
-								);
-							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
-									"arenaData.yml");
+							arenaAbort = true;
+							notifyManualUpdate(player, "arenaData.yml");
 						}
 					}
-					if (arenaDataVersion < 5) {
+					if (arenaDataVersion < 5 && !arenaAbort) {
 						try {
 							// Translate waiting sounds
 							Objects.requireNonNull(arenaData.getConfigurationSection("")).getKeys(false)
@@ -2296,27 +2276,13 @@ public class Commands implements CommandExecutor {
 							Main.plugin.saveConfig();
 
 							// Notify
-							if (player != null)
-								PlayerManager.notifySuccess(
-										player,
-										LanguageManager.confirms.autoUpdate,
-										new ColoredMessage(ChatColor.AQUA, "arenaData.yml"),
-										new ColoredMessage(ChatColor.AQUA, "5")
-								);
-							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
-									"arenaData.yml", "5");
+							notifyAutoUpdate(player, "arenaData.yml", 5);
 						} catch (Exception e) {
-							if (player != null)
-								PlayerManager.notifyAlert(
-										player,
-										LanguageManager.messages.manualUpdateWarn,
-										new ColoredMessage(ChatColor.AQUA, "arenaData.yml")
-								);
-							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
-									"arenaData.yml");
+							arenaAbort = true;
+							notifyManualUpdate(player, "arenaData.yml");
 						}
 					}
-					if (arenaDataVersion < 6) {
+					if (arenaDataVersion < 6 && !arenaAbort) {
 						try {
 							// Take old data and put into new format
 							Objects.requireNonNull(arenaData.getConfigurationSection("")).getKeys(false)
@@ -2326,45 +2292,48 @@ public class Commands implements CommandExecutor {
 										String newPath = "arena." + arenaId;
 
 										// Single key-value pairs
-										moveData(newPath + ".name", key + ".name");
-										moveData(newPath + ".max", key + ".max");
-										moveData(newPath + ".min", key + ".min");
-										moveData(newPath + ".spawnTable", key + ".spawnTable");
-										moveData(newPath + ".maxWaves", key + ".maxWaves");
-										moveData(newPath + ".waveTimeLimit", key + ".waveTimeLimit");
-										moveData(newPath + ".difficulty", key + ".difficulty");
-										moveData(newPath + ".closed", key + ".closed");
-										moveData(newPath + ".normal", key + ".normal");
-										moveData(newPath + ".dynamicCount", key + ".dynamicCount");
-										moveData(newPath + ".dynamicDifficulty", key + ".dynamicDifficulty");
-										moveData(newPath + ".dynamicPrices", key + ".dynamicPrices");
-										moveData(newPath + ".difficultyLabel", key + ".difficultyLabel");
-										moveData(newPath + ".dynamicLimit", key + ".dynamicLimit");
-										moveData(newPath + ".wolf", key + ".wolf");
-										moveData(newPath + ".golem", key + ".golem");
-										moveData(newPath + ".expDrop", key + ".expDrop");
-										moveData(newPath + ".gemDrop", key + ".gemDrop");
-										moveData(newPath + ".community", key + ".community");
-										moveData(newPath + ".lateArrival", key + ".lateArrival");
-										moveData(newPath + ".enchants", key + ".enchants");
-										moveData(newPath + ".bannedKits", key + ".bannedKits");
+										moveData(arenaData, newPath + ".name", key + ".name");
+										moveData(arenaData, newPath + ".max", key + ".max");
+										moveData(arenaData, newPath + ".min", key + ".min");
+										moveData(arenaData, newPath + ".spawnTable", key + ".spawnTable");
+										moveData(arenaData, newPath + ".maxWaves", key + ".maxWaves");
+										moveData(arenaData, newPath + ".waveTimeLimit", key + ".waveTimeLimit");
+										moveData(arenaData, newPath + ".difficulty", key + ".difficulty");
+										moveData(arenaData, newPath + ".closed", key + ".closed");
+										moveData(arenaData, newPath + ".normal", key + ".normal");
+										moveData(arenaData, newPath + ".dynamicCount", key + ".dynamicCount");
+										moveData(arenaData, newPath + ".dynamicDifficulty",
+												key + ".dynamicDifficulty");
+										moveData(arenaData, newPath + ".dynamicPrices",
+												key + ".dynamicPrices");
+										moveData(arenaData, newPath + ".difficultyLabel",
+												key + ".difficultyLabel");
+										moveData(arenaData, newPath + ".dynamicLimit", key + ".dynamicLimit");
+										moveData(arenaData, newPath + ".wolf", key + ".wolf");
+										moveData(arenaData, newPath + ".golem", key + ".golem");
+										moveData(arenaData, newPath + ".expDrop", key + ".expDrop");
+										moveData(arenaData, newPath + ".gemDrop", key + ".gemDrop");
+										moveData(arenaData, newPath + ".community", key + ".community");
+										moveData(arenaData, newPath + ".lateArrival", key + ".lateArrival");
+										moveData(arenaData, newPath + ".enchants", key + ".enchants");
+										moveData(arenaData, newPath + ".bannedKits", key + ".bannedKits");
 
 										// Config sections
-										moveSection(newPath + ".sounds", key + ".sounds");
-										moveSection(newPath + ".particles", key + ".particles");
-										moveSection(newPath + ".spawn", key + ".spawn");
-										moveSection(newPath + ".waiting", key + ".waiting");
-										moveSection(newPath + ".corner1", key + ".corner1");
-										moveSection(newPath + ".corner2", key + ".corner2");
-										moveSection(newPath + ".arenaBoard", key + ".arenaBoard");
-										moveSection(newPath + ".portal", key + ".portal");
+										moveSection(arenaData, newPath + ".sounds", key + ".sounds");
+										moveSection(arenaData, newPath + ".particles", key + ".particles");
+										moveSection(arenaData, newPath + ".spawn", key + ".spawn");
+										moveSection(arenaData, newPath + ".waiting", key + ".waiting");
+										moveSection(arenaData, newPath + ".corner1", key + ".corner1");
+										moveSection(arenaData, newPath + ".corner2", key + ".corner2");
+										moveSection(arenaData, newPath + ".arenaBoard", key + ".arenaBoard");
+										moveSection(arenaData, newPath + ".portal", key + ".portal");
 
 										// Nested sections
-										moveNested(newPath + ".monster", key + ".monster");
-										moveNested(newPath + ".monster", key + ".monsters");
-										moveNested(newPath + ".villager", key + ".villager");
-										moveNested(newPath + ".records", key + ".records");
-										moveInventory(newPath + ".customShop", key + ".customShop");
+										moveNested(arenaData, newPath + ".monster", key + ".monster");
+										moveNested(arenaData, newPath + ".monster", key + ".monsters");
+										moveNested(arenaData, newPath + ".villager", key + ".villager");
+										moveNested(arenaData, newPath + ".records", key + ".records");
+										moveInventory(arenaData, newPath + ".customShop", key + ".customShop");
 
 										// Remove old structure
 										arenaData.set(key, null);
@@ -2376,29 +2345,56 @@ public class Commands implements CommandExecutor {
 							Main.plugin.saveConfig();
 
 							// Notify
-							if (player != null)
-								PlayerManager.notifySuccess(
-										player,
-										LanguageManager.confirms.autoUpdate,
-										new ColoredMessage(ChatColor.AQUA, "arenaData.yml"),
-										new ColoredMessage(ChatColor.AQUA, "6")
-								);
-							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
-									"arenaData.yml", "6");
+							notifyAutoUpdate(player, "arenaData.yml", 6);
 						} catch (Exception e) {
-							if (player != null)
-								PlayerManager.notifyAlert(
-										player,
-										LanguageManager.messages.manualUpdateWarn,
-										new ColoredMessage(ChatColor.AQUA, "arenaData.yml")
-								);
-							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
-									"arenaData.yml");
+							arenaAbort = true;
+							notifyManualUpdate(player, "arenaData.yml");
+						}
+					}
+					if (arenaDataVersion < 7 && !arenaAbort) {
+						try {
+							// Take old data and translate to new format
+							Objects.requireNonNull(arenaData.getConfigurationSection("arena")).getKeys(false)
+									.forEach(key -> {
+										String newPath = "arena." + key;
+
+										// Translate over kits from names to IDs
+										if (arenaData.contains(newPath + ".bannedKits"))
+											arenaData.set(newPath + ".bannedKits",
+													arenaData.getStringList(newPath + ".bannedKits")
+															.stream().filter(kit -> !kit.isEmpty())
+															.map(kit -> Objects.requireNonNull(
+																	Kit.getKitByName(kit)).getID())
+															.collect(Collectors.toList()));
+
+										// Translate over challenges from names to IDs
+										if (arenaData.contains(newPath + ".forcedChallenges"))
+											arenaData.set(newPath + ".forcedChallenges",
+												arenaData.getStringList(newPath + ".forcedChallenges")
+														.stream().filter(challenge -> !challenge.isEmpty())
+														.map(challenge -> Objects.requireNonNull(
+																Challenge.getChallengeByName(challenge)).getID())
+														.collect(Collectors.toList()));
+
+										Main.saveArenaData();
+									});
+
+							// Flip flag and update config.yml
+							fixed = true;
+							Main.plugin.getConfig().set("arenaData", 7);
+							Main.plugin.saveConfig();
+
+							// Notify
+							notifyAutoUpdate(player, "arenaData.yml", 7);
+						} catch (Exception e) {
+							notifyManualUpdate(player, "arenaData.yml");
 						}
 					}
 
 					// Check if playerData.yml is outdated
-					if (Main.plugin.getConfig().getInt("playerData") < Main.playerDataVersion) {
+					int playerDataVersion = Main.plugin.getConfig().getInt("playerData");
+					boolean playerAbort = false;
+					if (playerDataVersion < 2) {
 						try {
 							// Transfer player names to UUID
 							Objects.requireNonNull(playerData.getConfigurationSection("")).getKeys(false)
@@ -2422,24 +2418,52 @@ public class Commands implements CommandExecutor {
 							Main.plugin.saveConfig();
 
 							// Notify
-							if (player != null)
-								PlayerManager.notifySuccess(
-										player,
-										LanguageManager.confirms.autoUpdate,
-										new ColoredMessage(ChatColor.AQUA, "playerData.yml"),
-										new ColoredMessage(ChatColor.AQUA, "2")
-								);
-							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
-									"playerData.yml", "2");
+							notifyAutoUpdate(player, "playerData.yml", 2);
 						} catch (Exception e) {
-							if (player != null)
-								PlayerManager.notifyAlert(
-										player,
-										LanguageManager.messages.manualUpdateWarn,
-										new ColoredMessage(ChatColor.AQUA, "playerData.yml")
-								);
-							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
-									"playerData.yml");
+							playerAbort = true;
+							notifyManualUpdate(player, "playerData.yml");
+						}
+					}
+					if (playerDataVersion < 3 && !playerAbort) {
+						try {
+							Objects.requireNonNull(playerData.getConfigurationSection("")).getKeys(false)
+									.stream().filter(key -> !key.equals("loggers")).forEach(key -> {
+										String newPath = key + ".achievements";
+										List<String> achievements = playerData.getStringList(newPath);
+
+										// Check for typo and correct
+										if (achievements.contains("pacifisKills")) {
+											achievements.remove("pacifisKills");
+											achievements.add("pacifistKills");
+											playerData.set(newPath, achievements);
+										}
+
+										// Map old kit keys to new kit keys
+										if (playerData.contains(key + ".kits")) {
+											Objects.requireNonNull(playerData.getConfigurationSection(
+															key + ".kits"))
+													.getKeys(false).stream()
+													.filter(kit -> Kit.getKitByName(kit) != null)
+													.forEach(kit -> moveData(
+															playerData,
+															key + ".kits." + Objects.requireNonNull(
+																	Kit.getKitByName(kit)).getID(),
+															key + ".kits." + kit)
+													);
+										}
+
+										Main.savePlayerData();
+									});
+
+							// Flip flag and update config.yml
+							fixed = true;
+							Main.plugin.getConfig().set("playerData", 3);
+							Main.plugin.saveConfig();
+
+							// Notify
+							notifyAutoUpdate(player, "playerData.yml", 3);
+						} catch (Exception e) {
+							notifyManualUpdate(player, "playerData.yml");
 						}
 					}
 
@@ -2506,16 +2530,8 @@ public class Commands implements CommandExecutor {
 					}
 
 					// Check if customEffects.yml is outdated
-					if (Main.plugin.getConfig().getInt("customEffects") < Main.customEffectsVersion) {
-						if (player != null)
-							PlayerManager.notifyAlert(
-									player,
-									LanguageManager.messages.manualUpdateWarn,
-									new ColoredMessage(ChatColor.AQUA, "customEffects.yml")
-							);
-						else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
-								"customEffects.yml");
-					}
+					if (Main.plugin.getConfig().getInt("customEffects") < Main.customEffectsVersion)
+						notifyManualUpdate(player, "customEffects.yml");
 
 					// Message to player depending on whether the command fixed anything, then reload if fixed
 					if (!fixed) {
@@ -2637,27 +2653,29 @@ public class Commands implements CommandExecutor {
 		return false;
 	}
 
-	private void moveData(String to, String from) {
-		if (arenaData.get(from) != null)
-			arenaData.set(to, arenaData.get(from));
+	private void moveData(FileConfiguration config, String to, String from) {
+		if (config.get(from) != null) {
+			config.set(to, config.get(from));
+			config.set(from, null);
+		}
 	}
 
-	private void moveSection(String to, String from) {
-		if (arenaData.contains(from))
-			Objects.requireNonNull(arenaData.getConfigurationSection(from)).getKeys(false).forEach(key ->
-					moveData(to + "." + key, from + "." + key));
+	private void moveSection(FileConfiguration config, String to, String from) {
+		if (config.contains(from))
+			Objects.requireNonNull(config.getConfigurationSection(from)).getKeys(false).forEach(key ->
+					moveData(config, to + "." + key, from + "." + key));
 	}
 
-	private void moveNested(String to, String from) {
-		if (arenaData.contains(from))
-			Objects.requireNonNull(arenaData.getConfigurationSection(from)).getKeys(false).forEach(key ->
-					moveSection(to + "." + key, from + "." + key));
+	private void moveNested(FileConfiguration config, String to, String from) {
+		if (config.contains(from))
+			Objects.requireNonNull(config.getConfigurationSection(from)).getKeys(false).forEach(key ->
+					moveSection(config, to + "." + key, from + "." + key));
 	}
 
-	private void moveInventory(String to, String from) {
-		if (arenaData.contains(from))
-			Objects.requireNonNull(arenaData.getConfigurationSection(from)).getKeys(false).forEach(key ->
-					arenaData.set(to + "." + key, arenaData.getItemStack(from + "." + key)));
+	private void moveInventory(FileConfiguration config, String to, String from) {
+		if (config.contains(from))
+			Objects.requireNonNull(config.getConfigurationSection(from)).getKeys(false).forEach(key ->
+					config.set(to + "." + key, config.getItemStack(from + "." + key)));
 	}
 
 	private void notifyCommandFailure(Player player, String command, String message) {
@@ -2676,5 +2694,27 @@ public class Commands implements CommandExecutor {
 		if (player != null)
 			PlayerManager.notifySuccess(player, message);
 		else CommunicationManager.debugInfo(message, 0);
+	}
+
+	private void notifyManualUpdate(Player player, String file) {
+		if (player != null)
+			PlayerManager.notifyAlert(
+					player,
+					LanguageManager.messages.manualUpdateWarn,
+					new ColoredMessage(ChatColor.AQUA, file)
+			);
+		else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0, file);
+	}
+
+	private void notifyAutoUpdate(Player player, String file, int version) {
+		if (player != null)
+			PlayerManager.notifySuccess(
+					player,
+					LanguageManager.confirms.autoUpdate,
+					new ColoredMessage(ChatColor.AQUA, file),
+					new ColoredMessage(ChatColor.AQUA, Integer.toString(version))
+			);
+		CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0, file,
+				Integer.toString(version));
 	}
 }

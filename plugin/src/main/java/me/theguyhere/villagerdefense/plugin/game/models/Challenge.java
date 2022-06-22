@@ -101,7 +101,7 @@ public class Challenge {
      * @param challengeName Name to check.
      * @return Challenge or null.
      */
-    public static Challenge getChallenge(String challengeName) {
+    public static Challenge getChallengeByName(String challengeName) {
         if (none().getName().equals(challengeName))
             return none();
         else if (amputee().getName().equals(challengeName))
@@ -121,6 +121,35 @@ public class Challenge {
         else if (naked().getName().equals(challengeName))
             return naked();
         else if (blind().getName().equals(challengeName))
+            return blind();
+        else return null;
+    }
+
+    /**
+     * Attempts to return a {@link Challenge} based on the challenge's ID.
+     * @param challengeID ID to check.
+     * @return Challenge or null.
+     */
+    public static Challenge getChallengeByID(String challengeID) {
+        if (none().getID().equals(challengeID))
+            return none();
+        else if (amputee().getID().equals(challengeID))
+            return amputee();
+        else if (clumsy().getID().equals(challengeID))
+            return clumsy();
+        else if (featherweight().getID().equals(challengeID))
+            return featherweight();
+        else if (pacifist().getID().equals(challengeID))
+            return pacifist();
+        else if (dwarf().getID().equals(challengeID))
+            return dwarf();
+        else if (uhc().getID().equals(challengeID))
+            return uhc();
+        else if (explosive().getID().equals(challengeID))
+            return explosive();
+        else if (naked().getID().equals(challengeID))
+            return naked();
+        else if (blind().getID().equals(challengeID))
             return blind();
         else return null;
     }
