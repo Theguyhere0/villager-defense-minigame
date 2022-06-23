@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.game.models.achievements;
 
+import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 
 public class AchievementReward {
@@ -10,7 +11,10 @@ public class AchievementReward {
     public AchievementReward(RewardType type, int value) {
         this.type = type;
         this.value = value;
-        description = LanguageManager.rewards.crystals;
+        description = String.format(LanguageManager.rewards.crystals,
+                Integer.toString(value == 0 ? 0 : (Main.hasCustomEconomy() ? (int) (value *
+                        Main.plugin.getConfig().getDouble("vaultEconomyMult")) : value)),
+                LanguageManager.names.crystals);
     }
 
     public AchievementReward(RewardType type, BoostRewardID id) {
@@ -30,7 +34,7 @@ public class AchievementReward {
                 description = LanguageManager.rewards.gemIncrease;
                 break;
             case CRYSTAL_CONVERT:
-                description = LanguageManager.rewards.crystalConvert;
+                description = String.format(LanguageManager.rewards.crystalConvert, LanguageManager.names.crystals);
                 break;
             case RESURRECTION:
                 description = LanguageManager.rewards.resurrection;

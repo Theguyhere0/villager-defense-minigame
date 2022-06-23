@@ -1,10 +1,11 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
-import me.theguyhere.villagerdefense.plugin.Main;
+import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import org.bukkit.configuration.file.FileConfiguration;
+import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -26,16 +27,12 @@ public class BonusListener implements Listener {
         // Attempt to get arena and player
         try {
             gamer = GameManager.getArena(player).getPlayer(player);
-        } catch (Exception err) {
+        } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             return;
         }
 
         // Check if player has damage reduction achievement and is boosted
-        FileConfiguration playerData = Main.plugin.getPlayerData();
-        String path = player.getUniqueId() + ".achievements";
-        if (!playerData.contains(path))
-            return;
-        if (gamer.isBoosted() && playerData.getStringList(path).contains(Achievement.totalKills9().getID()))
+        if (gamer.isBoosted() && PlayerManager.hasAchievement(player.getUniqueId(), Achievement.totalKills9().getID()))
             e.setDamage(e.getDamage() * .9);
     }
 
@@ -60,21 +57,16 @@ public class BonusListener implements Listener {
                 player = (Player) ((Projectile) e.getDamager()).getShooter();
             else return;
         } else player = (Player) e.getDamager();
-        assert player != null;
 
         // Attempt to get arena and player
         try {
             gamer = GameManager.getArena(player).getPlayer(player);
-        } catch (Exception err) {
+        } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             return;
         }
 
         // Check if player has damage increase achievement and is boosted
-        FileConfiguration playerData = Main.plugin.getPlayerData();
-        String path = player.getUniqueId() + ".achievements";
-        if (!playerData.contains(path))
-            return;
-        if (gamer.isBoosted() && playerData.getStringList(path).contains(Achievement.topKills9().getID()))
+        if (gamer.isBoosted() && PlayerManager.hasAchievement(player.getUniqueId(), Achievement.topKills9().getID()))
             e.setDamage(e.getDamage() * 1.1);
     }
 }

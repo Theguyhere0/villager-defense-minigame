@@ -18,9 +18,15 @@ public class Leaderboard {
 	/** The location of the Leaderboard.*/
 	private final Location location;
 
-	public Leaderboard(@NotNull String type) throws InvalidLocationException {
-		Location location = Objects.requireNonNull(DataManager.getConfigLocationNoPitch(
-                "leaderboard." + type));
+	// Leaderboard id constants
+	public static final String TOP_BALANCE = "topBalance";
+	public static final String TOP_KILLS = "topKills";
+	public static final String TOP_WAVE = "topWave";
+	public static final String TOTAL_GEMS = "totalGems";
+	public static final String TOTAL_KILLS = "totalKills";
+
+	public Leaderboard(@NotNull String id) throws InvalidLocationException {
+		Location location = Objects.requireNonNull(DataManager.getConfigLocationNoPitch("leaderboard." + id));
 
 		// Check for null world
 		if (location.getWorld() == null)
@@ -31,20 +37,20 @@ public class Leaderboard {
 		Map<String, Integer> mapping = new HashMap<>();
 
 		// Determine leaderboard title
-		switch (type) {
-			case "totalKills":
+		switch (id) {
+			case TOTAL_KILLS:
 				info.add(CommunicationManager.format("&d&l" + LanguageManager.playerStats.totalKills.leaderboard));
 				break;
-			case "topKills":
+			case TOP_KILLS:
 				info.add(CommunicationManager.format("&c&l" + LanguageManager.playerStats.topKills.leaderboard));
 				break;
-			case "totalGems":
+			case TOTAL_GEMS:
 				info.add(CommunicationManager.format("&e&l" + LanguageManager.playerStats.totalGems.leaderboard));
 				break;
-			case "topBalance":
+			case TOP_BALANCE:
 				info.add(CommunicationManager.format("&a&l" + LanguageManager.playerStats.topBalance.leaderboard));
 				break;
-			case "topWave":
+			case TOP_WAVE:
 				info.add(CommunicationManager.format("&b&l" + LanguageManager.playerStats.topWave.leaderboard));
 				break;
 			default:
@@ -52,10 +58,10 @@ public class Leaderboard {
 		}
 
 		// Gather relevant stats
-		for (String key : Objects.requireNonNull(Main.plugin.getPlayerData().getConfigurationSection(""))
+		for (String key : Objects.requireNonNull(Main.getPlayerData().getConfigurationSection(""))
 				.getKeys(false)) {
-			if (!key.equals("logger") && Main.plugin.getPlayerData().contains(key + "." + type))
-				mapping.put(key, Main.plugin.getPlayerData().getInt(key + "." + type));
+			if (!key.equals("logger") && Main.getPlayerData().contains(key + "." + id))
+				mapping.put(key, Main.getPlayerData().getInt(key + "." + id));
 		}
 
 		// Put names and values into the leaderboard

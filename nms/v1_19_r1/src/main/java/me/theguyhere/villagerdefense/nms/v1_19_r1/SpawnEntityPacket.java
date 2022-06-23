@@ -36,11 +36,11 @@ class SpawnEntityPacket extends VersionNMSPacket {
         packetSetter.writeDouble(location.getZ());
 
         // Rotation
-        packetSetter.writeByte(Utils.angleToByte(location.getPitch()));
-        packetSetter.writeByte(Utils.angleToByte(location.getYaw()));
+        packetSetter.writeByte(Utils.degreesToByte(location.getPitch()));
+        packetSetter.writeByte(Utils.degreesToByte(location.getYaw()));
 
         // Head pitch
-        packetSetter.writeByte(Utils.angleToByte(headPitch));
+        packetSetter.writeByte(Utils.degreesToByte(headPitch));
 
         // Object data
         packetSetter.writeInt(objectData);

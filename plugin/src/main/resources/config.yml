@@ -1,14 +1,14 @@
 # This is the config version for reference.
-# DO NOT EDIT VALUE.
-version: 8
+# ONLY EDIT ONCE FILE HAS BEEN UPDATED.
+version: 9
 
 # This is the arenaData.yml structure version for reference.
 # ONLY EDIT ONCE FILE HAS BEEN UPDATED.
-arenaData: 6
+arenaData: 7
 
 # This is the playerData.yml structure version for reference.
 # ONLY EDIT ONCE FILE HAS BEEN UPDATED.
-playerData: 2
+playerData: 3
 
 # This is the spawn table structure version for reference.
 # ONLY EDIT ONCE SPAWN TABLE FILES HAVE BEEN UPDATED.
@@ -20,7 +20,7 @@ spawnTableDefault: 2
 
 # This is the en_US.yml version for reference.
 # ONLY EDIT ONCE ALL LANGUAGE FILES HAVE BEEN UPDATED.
-languageFile: 18
+languageFile: 20
 
 # This is the customEffects.yml version for reference.
 # ONLY EDIT ONCE FILE HAS BEEN UPDATED.
@@ -36,3 +36,11 @@ keepInv: true
 # This toggles whether the arenas automatically open upon initialization if they meet opening requirements. Turning it
 # off may result in arenas closing on server restart due to worlds loading after the plugin.
 autoOpen: true
+
+# This toggles whether to use currency from Vault Economy API to purchase kits instead of crystals. Default to crystals
+# when economy plugin doesn't exist.
+vaultEconomy: false
+
+# This determines how much the normal earnings from a game are multiplied for the custom currency. Has no effect if
+# no vault economy plugin is active.
+vaultEconomyMult: 1.0

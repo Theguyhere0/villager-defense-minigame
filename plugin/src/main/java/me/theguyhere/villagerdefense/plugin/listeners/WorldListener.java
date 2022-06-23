@@ -11,13 +11,13 @@ import org.bukkit.event.world.WorldLoadEvent;
 public class WorldListener implements Listener {
     @EventHandler
     public void onWorldLoadEvent(WorldLoadEvent e) {
-        CommunicationManager.debugInfo("Loading world: " + e.getWorld(), 2);
         String worldName = e.getWorld().getName();
+        CommunicationManager.debugInfo("Loading world: %s", 2, worldName);
 
         // Handle world loading after initialization
-        if (Main.plugin.getUnloadedWorlds().contains(worldName)) {
-            Main.plugin.loadWorld(worldName);
-            Main.plugin.resetGameManager();
+        if (Main.getUnloadedWorlds().contains(worldName)) {
+            Main.loadWorld(worldName);
+            Main.resetGameManager();
             GameManager.reloadLobby();
             GameManager.refreshAll();
         }

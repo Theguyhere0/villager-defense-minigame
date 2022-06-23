@@ -4,7 +4,6 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelPipeline;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.common.Log;
 import me.theguyhere.villagerdefense.nms.common.*;
 import me.theguyhere.villagerdefense.nms.common.entities.TextPacketEntity;
 import me.theguyhere.villagerdefense.nms.common.entities.VillagerPacketEntity;
@@ -121,7 +120,7 @@ public class VersionNMSManager implements NMSManager {
             try {
                 pipelineModifierTask.accept(channel.pipeline());
             } catch (Exception e) {
-                Log.warning(NMSErrors.EXCEPTION_MODIFYING_CHANNEL_PIPELINE);
+                CommunicationManager.debugError(NMSErrors.EXCEPTION_MODIFYING_CHANNEL_PIPELINE, 0);
                 e.printStackTrace();
             }
         });

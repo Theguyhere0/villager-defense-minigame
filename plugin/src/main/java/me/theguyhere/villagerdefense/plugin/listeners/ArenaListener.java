@@ -1,9 +1,12 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
+import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.*;
+import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.Mobs;
@@ -20,11 +23,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.DisplaySlot;
 
@@ -77,17 +78,8 @@ public class ArenaListener implements Listener {
 
         int players = arena.getActiveCount();
 
-        if (Main.plugin.getConfig().getBoolean("keepInv")) {
-            // Save player exp and items before going into arena
-            Main.plugin.getPlayerData().set(player.getUniqueId() + ".health", player.getHealth());
-            Main.plugin.getPlayerData().set(player.getUniqueId() + ".food", player.getFoodLevel());
-            Main.plugin.getPlayerData().set(player.getUniqueId() + ".saturation", (double) player.getSaturation());
-            Main.plugin.getPlayerData().set(player.getUniqueId() + ".level", player.getLevel());
-            Main.plugin.getPlayerData().set(player.getUniqueId() + ".exp", (double) player.getExp());
-            for (int i = 0; i < player.getInventory().getContents().length; i++)
-                Main.plugin.getPlayerData().set(player.getUniqueId() + ".inventory." + i, player.getInventory().getContents()[i]);
-            Main.plugin.savePlayerData();
-        }
+        if (Main.plugin.getConfig().getBoolean("keepInv"))
+            PlayerManager.cacheSurvivalStats(player);
 
         // Prepares player to enter arena if it doesn't exceed max capacity and if the arena is still waiting
         if (players < arena.getMaxPlayers() && arena.getStatus() == ArenaStatus.WAITING) {
@@ -106,7 +98,8 @@ public class ArenaListener implements Listener {
             arena.refreshPortal();
 
             // Add forced challenges
-            arena.getForcedChallenges().forEach(challenge -> fighter.addChallenge(Challenge.getChallenge(challenge)));
+            arena.getForcedChallengeIDs().forEach(challenge ->
+                    fighter.addChallenge(Challenge.getChallengeByID(challenge)));
 
             // Give them a game board
             GameManager.createBoard(fighter);
@@ -127,7 +120,7 @@ public class ArenaListener implements Listener {
             PlayerManager.giveChoiceItems(fighter);
 
             // Debug message to console
-            CommunicationManager.debugInfo(player.getName() + " joined " + arena.getName(), 2);
+            CommunicationManager.debugInfo("%s joined %s", 2, player.getName(), arena.getName());
         }
 
         // Enter arena if late arrival is allowed
@@ -146,7 +139,8 @@ public class ArenaListener implements Listener {
             arena.refreshPortal();
 
             // Add forced challenges
-            arena.getForcedChallenges().forEach(challenge -> fighter.addChallenge(Challenge.getChallenge(challenge)));
+            arena.getForcedChallengeIDs().forEach(challenge ->
+                    fighter.addChallenge(Challenge.getChallengeByID(challenge)));
 
             // Give them a game board
             GameManager.createBoard(fighter);
@@ -155,7 +149,7 @@ public class ArenaListener implements Listener {
             arena.getTask().giveItems(fighter);
 
             // Debug message to console
-            CommunicationManager.debugInfo(player.getName() + " joined " + arena.getName(), 2);
+            CommunicationManager.debugInfo("%s joined %s", 2, player.getName(), arena.getName());
 
             // Don't touch task updating
             return;
@@ -172,8 +166,7 @@ public class ArenaListener implements Listener {
             arena.refreshPortal();
 
             // Debug message to console
-            CommunicationManager.debugInfo(player.getName() + " is spectating " + arena.getName(),
-                    2);
+            CommunicationManager.debugInfo("%s is spectating %s", 2, player.getName(), arena.getName());
 
             // Don't touch task updating
             return;
@@ -267,24 +260,21 @@ public class ArenaListener implements Listener {
             tasks.remove(task.calibrate);
         }
 
-        // Play wave end sound
+        // Play wave end sound if not just starting
         if (arena.hasWaveFinishSound() && arena.getCurrentWave() != 0)
                 for (VDPlayer vdPlayer : arena.getPlayers()) {
                     vdPlayer.getPlayer().playSound(arena.getPlayerSpawn().getLocation(),
                             Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 10, .75f);
                 }
 
-        FileConfiguration playerData = Main.plugin.getPlayerData();
-
         // Update player stats
         for (VDPlayer active : arena.getActives())
-            if (playerData.getInt(active.getID() + ".topWave") < arena.getCurrentWave())
-                playerData.set(active.getID() + ".topWave", arena.getCurrentWave());
-        Main.plugin.savePlayerData();
+            if (PlayerManager.getTopWave(active.getID()) < arena.getCurrentWave())
+                PlayerManager.setTopWave(active.getID(), arena.getCurrentWave());
 
         // Debug message to console
-        CommunicationManager.debugInfo("" + arena.getName() + " completed wave " + arena.getCurrentWave(),
-                2);
+        CommunicationManager.debugInfo("%s completed wave %s", 2, arena.getName(),
+                Integer.toString(arena.getCurrentWave()));
 
         // Win condition
         if (arena.getCurrentWave() == arena.getMaxWaves()) {
@@ -343,8 +333,8 @@ public class ArenaListener implements Listener {
         spawnBosses(arena);
 
         // Debug message to console
-        CommunicationManager.debugInfo("" + arena.getName() + " started wave " + arena.getCurrentWave(),
-                2);
+        CommunicationManager.debugInfo("%s started wave %s", 2, arena.getName(),
+                Integer.toString(arena.getCurrentWave()));
     }
 
     @EventHandler
@@ -357,7 +347,7 @@ public class ArenaListener implements Listener {
         try {
             arena = GameManager.getArena(player);
             gamer = arena.getPlayer(player);
-        } catch (Exception err) {
+        } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             e.setCancelled(true);
             PlayerManager.notifyFailure(player, LanguageManager.errors.notInGame);
             return;
@@ -370,14 +360,12 @@ public class ArenaListener implements Listener {
 
         // Not spectating
         if (gamer.getStatus() != PlayerStatus.SPECTATOR) {
-            FileConfiguration playerData = Main.plugin.getPlayerData();
+            UUID playerID = player.getUniqueId();
 
             // Update player stats
-            playerData.set(player.getUniqueId() + ".totalKills",
-                    playerData.getInt(player.getUniqueId() + ".totalKills") + gamer.getKills());
-            if (playerData.getInt(player.getUniqueId() + ".topKills") < gamer.getKills())
-                playerData.set(player.getUniqueId() + ".topKills", gamer.getKills());
-            Main.plugin.savePlayerData();
+            PlayerManager.setTotalKills(playerID, PlayerManager.getTotalKills(playerID) + gamer.getKills());
+            if (PlayerManager.getTopKills(playerID) < gamer.getKills())
+                PlayerManager.setTopKills(playerID, gamer.getKills());
 
             // Check for achievements
             AchievementChecker.checkDefaultHighScoreAchievements(player);
@@ -425,13 +413,20 @@ public class ArenaListener implements Listener {
                     bonus += challenge.getBonus();
                 bonus = (int) (reward * bonus / 100d);
 
+                // Apply vault economy multiplier, if active
+                if (Main.hasCustomEconomy()) {
+                    reward = (int) (reward * Main.plugin.getConfig().getDouble("vaultEconomyMult"));
+                    bonus = (int) (bonus * Main.plugin.getConfig().getDouble("vaultEconomyMult"));
+                }
+
                 // Give rewards and notify
-                Main.plugin.getPlayerData().set(player.getUniqueId() + ".crystalBalance",
-                        Main.plugin.getPlayerData().getInt(player.getUniqueId() + ".crystalBalance") + reward);
-                Main.plugin.getPlayerData().set(player.getUniqueId() + ".crystalBalance",
-                        Main.plugin.getPlayerData().getInt(player.getUniqueId() + ".crystalBalance") + bonus);
-                PlayerManager.notifySuccess(player, LanguageManager.messages.crystalsEarned,
-                        ChatColor.AQUA, String.format("%d (+%d)", reward, bonus));
+                PlayerManager.depositCrystalBalance(playerID, reward + bonus);
+                PlayerManager.notifySuccess(
+                        player,
+                        LanguageManager.messages.crystalsEarned,
+                        new ColoredMessage(ChatColor.AQUA, String.format("%d (+%d)", reward, bonus)),
+                        new ColoredMessage(ChatColor.AQUA, LanguageManager.names.crystals)
+                );
             }
 
             Tasks task = arena.getTask();
@@ -478,31 +473,8 @@ public class ArenaListener implements Listener {
         }
 
         // Return player health, food, exp, and items
-        if (Main.plugin.getConfig().getBoolean("keepInv") && player.isOnline()) {
-            if (Main.plugin.getPlayerData().contains(player.getUniqueId() + ".health"))
-                player.setHealth(Main.plugin.getPlayerData().getDouble(player.getUniqueId() + ".health"));
-            Main.plugin.getPlayerData().set(player.getUniqueId() + ".health", null);
-            if (Main.plugin.getPlayerData().contains(player.getUniqueId() + ".food"))
-                player.setFoodLevel(Main.plugin.getPlayerData().getInt(player.getUniqueId() + ".food"));
-            Main.plugin.getPlayerData().set(player.getUniqueId() + ".food", null);
-            if (Main.plugin.getPlayerData().contains(player.getUniqueId() + ".saturation"))
-                player.setSaturation((float) Main.plugin.getPlayerData().getDouble(player.getUniqueId() + ".saturation"));
-            Main.plugin.getPlayerData().set(player.getUniqueId() + ".saturation", null);
-            if (Main.plugin.getPlayerData().contains(player.getUniqueId() + ".level"))
-                player.setLevel(Main.plugin.getPlayerData().getInt(player.getUniqueId() + ".level"));
-            Main.plugin.getPlayerData().set(player.getUniqueId() + ".level", null);
-            if (Main.plugin.getPlayerData().contains(player.getUniqueId() + ".exp"))
-                player.setExp((float) Main.plugin.getPlayerData().getDouble(player.getUniqueId() + ".exp"));
-            Main.plugin.getPlayerData().set(player.getUniqueId() + ".exp", null);
-            if (Main.plugin.getPlayerData().contains(player.getUniqueId() + ".inventory"))
-                Objects.requireNonNull(Main.plugin.getPlayerData()
-                                .getConfigurationSection(player.getUniqueId() + ".inventory"))
-                        .getKeys(false)
-                        .forEach(num -> player.getInventory().setItem(Integer.parseInt(num),
-                                (ItemStack) Main.plugin.getPlayerData().get(player.getUniqueId() + ".inventory." + num)));
-            Main.plugin.getPlayerData().set(player.getUniqueId() + ".inventory", null);
-            Main.plugin.savePlayerData();
-        }
+        if (Main.plugin.getConfig().getBoolean("keepInv") && player.isOnline())
+            PlayerManager.returnSurvivalStats(player);
 
         // Refresh the game portal
         arena.refreshPortal();
@@ -511,7 +483,7 @@ public class ArenaListener implements Listener {
         GameManager.displayEverything(player);
 
         // Debug message to console
-        CommunicationManager.debugInfo(player.getName() + " left " + arena.getName(), 2);
+        CommunicationManager.debugInfo("%s left %s", 2, player.getName(), arena.getName());
     }
 
     @EventHandler
@@ -529,8 +501,12 @@ public class ArenaListener implements Listener {
 
         // Notify players that the game has ended (Chat)
         arena.getPlayers().forEach(player ->
-                PlayerManager.notifyAlert(player.getPlayer(), LanguageManager.messages.end,
-                        ChatColor.AQUA, Integer.toString(arena.getCurrentWave() - 1), "10"));
+                PlayerManager.notifyAlert(
+                        player.getPlayer(),
+                        LanguageManager.messages.end,
+                        new ColoredMessage(ChatColor.AQUA, Integer.toString(arena.getCurrentWave() - 1)),
+                        new ColoredMessage(ChatColor.AQUA, "10")
+                ));
 
         // Set all players to invincible
         arena.getAlives().forEach(player -> player.getPlayer().setInvulnerable(true));
@@ -548,7 +524,7 @@ public class ArenaListener implements Listener {
             if (arena.checkNewRecord(new ArenaRecord(arena.getCurrentWave() - 1, arena.getActives().stream()
                     .map(vdPlayer -> vdPlayer.getPlayer().getName()).collect(Collectors.toList())))) {
                 arena.getPlayers().forEach(player -> player.getPlayer().sendTitle(
-                        CommunicationManager.format("&a" + LanguageManager.messages.record), null,
+                        new ColoredMessage(ChatColor.GREEN, LanguageManager.messages.record).toString(), null,
                         Utils.secondsToTicks(.5), Utils.secondsToTicks(3.5), Utils.secondsToTicks(1)));
                 arena.refreshArenaBoard();
             }
@@ -567,14 +543,20 @@ public class ArenaListener implements Listener {
                     bonus += challenge.getBonus();
                 bonus = (int) (reward * bonus / 100d);
 
+                // Apply vault economy multiplier, if active
+                if (Main.hasCustomEconomy()) {
+                    reward = (int) (reward * Main.plugin.getConfig().getDouble("vaultEconomyMult"));
+                    bonus = (int) (bonus * Main.plugin.getConfig().getDouble("vaultEconomyMult"));
+                }
+
                 // Give rewards and notify
-                Main.plugin.getPlayerData().set(vdPlayer.getID() + ".crystalBalance",
-                        Main.plugin.getPlayerData().getInt(vdPlayer.getID() + ".crystalBalance") + reward);
-                Main.plugin.getPlayerData().set(vdPlayer.getID() + ".crystalBalance",
-                        Main.plugin.getPlayerData().getInt(vdPlayer.getID() + ".crystalBalance") + bonus);
-                PlayerManager.notifySuccess(vdPlayer.getPlayer(),
+                PlayerManager.depositCrystalBalance(vdPlayer.getID(), reward + bonus);
+                PlayerManager.notifySuccess(
+                        vdPlayer.getPlayer(),
                         LanguageManager.messages.crystalsEarned,
-                        ChatColor.AQUA, String.format("%d (+%d)", reward, bonus));
+                        new ColoredMessage(ChatColor.AQUA, String.format("%d (+%d)", reward, bonus)),
+                        new ColoredMessage(ChatColor.AQUA, LanguageManager.names.crystals)
+                );
             });
         }
 
@@ -597,7 +579,7 @@ public class ArenaListener implements Listener {
                 Utils.secondsToTicks(12));
 
         // Debug message to console
-        CommunicationManager.debugInfo("" + arena.getName() + " is ending.", 2);
+        CommunicationManager.debugInfo("%s is ending.", 2, arena.getName());
     }
 
     @EventHandler

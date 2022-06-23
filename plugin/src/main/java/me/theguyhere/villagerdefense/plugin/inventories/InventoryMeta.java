@@ -2,15 +2,16 @@ package me.theguyhere.villagerdefense.plugin.inventories;
 
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.UUID;
+
 public class InventoryMeta implements InventoryHolder {
     private final @NotNull InventoryID inventoryID;
     private final @NotNull InventoryType type;
-    private final Player player;
+    private final UUID playerID;
     private final Arena arena;
     private final int id;
     private final int page;
@@ -35,39 +36,39 @@ public class InventoryMeta implements InventoryHolder {
         this(inventoryID, type, null, arena, id);
     }
 
-    public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type, Player player) {
-        this(inventoryID, type, player, null, 0);
+    public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type, UUID playerID) {
+        this(inventoryID, type, playerID, null, 0);
     }
 
-    public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type, int page, Player player) {
-        this(inventoryID, type, player, null, 0, page);
+    public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type, int page, UUID playerID) {
+        this(inventoryID, type, playerID, null, 0, page);
     }
 
-    public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type, Player player, Arena arena) {
-        this(inventoryID, type, player, arena, 0);
+    public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type, UUID playerID, Arena arena) {
+        this(inventoryID, type, playerID, arena, 0);
     }
 
     public InventoryMeta(
             @NotNull InventoryID inventoryID,
             @NotNull InventoryType type,
-            Player player,
+            UUID playerID,
             Arena arena,
             int id
     ) {
-        this(inventoryID, type, player, arena, id, 1);
+        this(inventoryID, type, playerID, arena, id, 1);
     }
 
     public InventoryMeta(
             @NotNull InventoryID inventoryID,
             @NotNull InventoryType type,
-            Player player,
+            UUID playerID,
             Arena arena,
             int id,
             int page
     ) {
         this.inventoryID = inventoryID;
         this.type = type;
-        this.player = player;
+        this.playerID = playerID;
         this.arena = arena;
         this.id = id;
         this.page = page;
@@ -81,8 +82,8 @@ public class InventoryMeta implements InventoryHolder {
         return type;
     }
 
-    public Player getPlayer() {
-        return player;
+    public UUID getPlayerID() {
+        return playerID;
     }
 
     public Arena getArena() {

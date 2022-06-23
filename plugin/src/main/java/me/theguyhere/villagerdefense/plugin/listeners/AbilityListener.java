@@ -1,9 +1,12 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
+import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.EndNinjaNerfEvent;
+import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
@@ -18,7 +21,6 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,7 +28,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerStatisticIncrementEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -44,6 +46,7 @@ public class AbilityListener implements Listener {
             return;
 
         Player player = e.getPlayer();
+        UUID id = player.getUniqueId();
         Arena arena;
         VDPlayer gamer;
 
@@ -51,7 +54,7 @@ public class AbilityListener implements Listener {
         try {
             arena = GameManager.getArena(player);
             gamer = arena.getPlayer(player);
-        } catch (Exception err) {
+        } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             return;
         }
 
@@ -93,7 +96,7 @@ public class AbilityListener implements Listener {
         long dif = cooldowns.get(gamer) - System.currentTimeMillis();
 
         // Mage
-        if (Kit.mage().getName().equals(gamer.getKit().getName()) && GameItems.mage().equals(item)) {
+        if (Kit.mage().getID().equals(gamer.getKit().getID()) && GameItems.mage().equals(item)) {
             // Perform checks
             if (checkLevel(level1, player))
                 return;
@@ -105,10 +108,7 @@ public class AbilityListener implements Listener {
             float yield = 1 + level1 * .05f;
 
             // Check if player has cooldown decrease achievement and is boosted
-            FileConfiguration playerData = Main.plugin.getPlayerData();
-            String path = player.getUniqueId() + ".achievements";
-            if (playerData.contains(path) && gamer.isBoosted() &&
-                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+            if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement.allMaxedAbility().getID()))
                 coolDown *= .9;
 
             // Activate ability
@@ -119,7 +119,7 @@ public class AbilityListener implements Listener {
         }
 
         // Ninja
-        if (Kit.ninja().getName().equals(gamer.getKit().getName()) && GameItems.ninja().equals(item)) {
+        if (Kit.ninja().getID().equals(gamer.getKit().getID()) && GameItems.ninja().equals(item)) {
             // Perform checks
             if (checkLevel(level1, player))
                 return;
@@ -131,10 +131,7 @@ public class AbilityListener implements Listener {
             int duration = Utils.secondsToTicks(4 + Math.pow(Math.E, (level1 - 1) / 8.5));
 
             // Check if player has cooldown decrease achievement and is boosted
-            FileConfiguration playerData = Main.plugin.getPlayerData();
-            String path = player.getUniqueId() + ".achievements";
-            if (playerData.contains(path) && gamer.isBoosted() &&
-                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+            if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement.allMaxedAbility().getID()))
                 coolDown *= .9;
 
             // Activate ability
@@ -154,7 +151,7 @@ public class AbilityListener implements Listener {
         }
 
         // Templar
-        if (Kit.templar().getName().equals(gamer.getKit().getName()) && GameItems.templar().equals(item)) {
+        if (Kit.templar().getID().equals(gamer.getKit().getID()) && GameItems.templar().equals(item)) {
             // Perform checks
             if (checkLevel(level1, player))
                 return;
@@ -180,10 +177,7 @@ public class AbilityListener implements Listener {
             int altDuration = (int) (.6 * duration);
 
             // Check if player has cooldown decrease achievement and is boosted
-            FileConfiguration playerData = Main.plugin.getPlayerData();
-            String path = player.getUniqueId() + ".achievements";
-            if (playerData.contains(path) && gamer.isBoosted() &&
-                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+            if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement.allMaxedAbility().getID()))
                 coolDown *= .9;
 
             // Activate ability
@@ -201,7 +195,7 @@ public class AbilityListener implements Listener {
         }
 
         // Warrior
-        if (Kit.warrior().getName().equals(gamer.getKit().getName()) && GameItems.warrior().equals(item)) {
+        if (Kit.warrior().getID().equals(gamer.getKit().getID()) && GameItems.warrior().equals(item)) {
             // Perform checks
             if (checkLevel(level1, player))
                 return;
@@ -227,10 +221,7 @@ public class AbilityListener implements Listener {
             int altDuration = (int) (.6 * duration);
 
             // Check if player has cooldown decrease achievement and is boosted
-            FileConfiguration playerData = Main.plugin.getPlayerData();
-            String path = player.getUniqueId() + ".achievements";
-            if (playerData.contains(path) && gamer.isBoosted() &&
-                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+            if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement.allMaxedAbility().getID()))
                 coolDown *= .9;
 
             // Activate ability
@@ -248,7 +239,7 @@ public class AbilityListener implements Listener {
         }
 
         // Knight
-        if (Kit.knight().getName().equals(gamer.getKit().getName()) && GameItems.knight().equals(item)) {
+        if (Kit.knight().getID().equals(gamer.getKit().getID()) && GameItems.knight().equals(item)) {
             // Perform checks
             if (checkLevel(level1, player))
                 return;
@@ -274,10 +265,7 @@ public class AbilityListener implements Listener {
             int altDuration = (int) (.6 * duration);
 
             // Check if player has cooldown decrease achievement and is boosted
-            FileConfiguration playerData = Main.plugin.getPlayerData();
-            String path = player.getUniqueId() + ".achievements";
-            if (playerData.contains(path) && gamer.isBoosted() &&
-                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+            if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement.allMaxedAbility().getID()))
                 coolDown *= .9;
 
             // Activate ability
@@ -295,7 +283,7 @@ public class AbilityListener implements Listener {
         }
 
         // Priest
-        if (Kit.priest().getName().equals(gamer.getKit().getName()) && GameItems.priest().equals(item)) {
+        if (Kit.priest().getID().equals(gamer.getKit().getID()) && GameItems.priest().equals(item)) {
             // Perform checks
             if (checkLevel(level1, player))
                 return;
@@ -321,10 +309,7 @@ public class AbilityListener implements Listener {
             int altDuration = (int) (.6 * duration);
 
             // Check if player has cooldown decrease achievement and is boosted
-            FileConfiguration playerData = Main.plugin.getPlayerData();
-            String path = player.getUniqueId() + ".achievements";
-            if (playerData.contains(path) && gamer.isBoosted() &&
-                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+            if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement.allMaxedAbility().getID()))
                 coolDown *= .9;
 
             // Activate ability
@@ -342,7 +327,7 @@ public class AbilityListener implements Listener {
         }
 
         // Siren
-        if (Kit.siren().getName().equals(gamer.getKit().getName()) && GameItems.siren().equals(item)) {
+        if (Kit.siren().getID().equals(gamer.getKit().getID()) && GameItems.siren().equals(item)) {
             // Perform checks
             if (checkLevel(level1, player))
                 return;
@@ -371,10 +356,7 @@ public class AbilityListener implements Listener {
             int altDuration = (int) (.4 * duration);
 
             // Check if player has cooldown decrease achievement and is boosted
-            FileConfiguration playerData = Main.plugin.getPlayerData();
-            String path = player.getUniqueId() + ".achievements";
-            if (playerData.contains(path) && gamer.isBoosted() &&
-                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+            if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement.allMaxedAbility().getID()))
                 coolDown *= .9;
 
             // Activate ability
@@ -392,7 +374,7 @@ public class AbilityListener implements Listener {
         }
 
         // Monk
-        if (Kit.monk().getName().equals(gamer.getKit().getName()) && GameItems.monk().equals(item)) {
+        if (Kit.monk().getID().equals(gamer.getKit().getID()) && GameItems.monk().equals(item)) {
             // Perform checks
             if (checkLevel(level1, player))
                 return;
@@ -418,10 +400,7 @@ public class AbilityListener implements Listener {
             int altDuration = (int) (.6 * duration);
 
             // Check if player has cooldown decrease achievement and is boosted
-            FileConfiguration playerData = Main.plugin.getPlayerData();
-            String path = player.getUniqueId() + ".achievements";
-            if (playerData.contains(path) && gamer.isBoosted() &&
-                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+            if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement.allMaxedAbility().getID()))
                 coolDown *= .9;
 
             // Activate ability
@@ -439,7 +418,7 @@ public class AbilityListener implements Listener {
         }
 
         // Messenger
-        if (Kit.messenger().getName().equals(gamer.getKit().getName()) && GameItems.messenger().equals(item)) {
+        if (Kit.messenger().getID().equals(gamer.getKit().getID()) && GameItems.messenger().equals(item)) {
             // Perform checks
             if (checkLevel(level1, player))
                 return;
@@ -465,10 +444,7 @@ public class AbilityListener implements Listener {
             int altDuration = (int) (.6 * duration);
 
             // Check if player has cooldown decrease achievement and is boosted
-            FileConfiguration playerData = Main.plugin.getPlayerData();
-            String path = player.getUniqueId() + ".achievements";
-            if (playerData.contains(path) && gamer.isBoosted() &&
-                    playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+            if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement.allMaxedAbility().getID()))
                 coolDown *= .9;
 
             // Activate ability
@@ -499,10 +475,7 @@ public class AbilityListener implements Listener {
                 float yield = 1 + level2 * .05f;
 
                 // Check if player has cooldown decrease achievement and is boosted
-                FileConfiguration playerData = Main.plugin.getPlayerData();
-                String path = player.getUniqueId() + ".achievements";
-                if (playerData.contains(path) && gamer.isBoosted() &&
-                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement.allMaxedAbility().getID()))
                     coolDown *= .9;
 
                 // Activate ability
@@ -525,10 +498,7 @@ public class AbilityListener implements Listener {
                 int duration = Utils.secondsToTicks(4 + Math.pow(Math.E, (level2 - 1) / 8.5));
 
                 // Check if player has cooldown decrease achievement and is boosted
-                FileConfiguration playerData = Main.plugin.getPlayerData();
-                String path = player.getUniqueId() + ".achievements";
-                if (playerData.contains(path) && gamer.isBoosted() &&
-                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement.allMaxedAbility().getID()))
                     coolDown *= .9;
 
                 // Activate ability
@@ -572,10 +542,7 @@ public class AbilityListener implements Listener {
                 int altDuration = (int) (.6 * duration);
 
                 // Check if player has cooldown decrease achievement and is boosted
-                FileConfiguration playerData = Main.plugin.getPlayerData();
-                String path = player.getUniqueId() + ".achievements";
-                if (playerData.contains(path) && gamer.isBoosted() &&
-                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement.allMaxedAbility().getID()))
                     coolDown *= .9;
 
                 // Activate ability
@@ -617,10 +584,7 @@ public class AbilityListener implements Listener {
                 int altDuration = (int) (.6 * duration);
 
                 // Check if player has cooldown decrease achievement and is boosted
-                FileConfiguration playerData = Main.plugin.getPlayerData();
-                String path = player.getUniqueId() + ".achievements";
-                if (playerData.contains(path) && gamer.isBoosted() &&
-                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement.allMaxedAbility().getID()))
                     coolDown *= .9;
 
                 // Activate ability
@@ -662,10 +626,7 @@ public class AbilityListener implements Listener {
                 int altDuration = (int) (.6 * duration);
 
                 // Check if player has cooldown decrease achievement and is boosted
-                FileConfiguration playerData = Main.plugin.getPlayerData();
-                String path = player.getUniqueId() + ".achievements";
-                if (playerData.contains(path) && gamer.isBoosted() &&
-                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement.allMaxedAbility().getID()))
                     coolDown *= .9;
 
                 // Activate ability
@@ -707,10 +668,7 @@ public class AbilityListener implements Listener {
                 int altDuration = (int) (.6 * duration);
 
                 // Check if player has cooldown decrease achievement and is boosted
-                FileConfiguration playerData = Main.plugin.getPlayerData();
-                String path = player.getUniqueId() + ".achievements";
-                if (playerData.contains(path) && gamer.isBoosted() &&
-                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement.allMaxedAbility().getID()))
                     coolDown *= .9;
 
                 // Activate ability
@@ -755,10 +713,7 @@ public class AbilityListener implements Listener {
                 int altDuration = (int) (.4 * duration);
 
                 // Check if player has cooldown decrease achievement and is boosted
-                FileConfiguration playerData = Main.plugin.getPlayerData();
-                String path = player.getUniqueId() + ".achievements";
-                if (playerData.contains(path) && gamer.isBoosted() &&
-                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement.allMaxedAbility().getID()))
                     coolDown *= .9;
 
                 // Activate ability
@@ -800,10 +755,7 @@ public class AbilityListener implements Listener {
                 int altDuration = (int) (.6 * duration);
 
                 // Check if player has cooldown decrease achievement and is boosted
-                FileConfiguration playerData = Main.plugin.getPlayerData();
-                String path = player.getUniqueId() + ".achievements";
-                if (playerData.contains(path) && gamer.isBoosted() &&
-                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement.allMaxedAbility().getID()))
                     coolDown *= .9;
 
                 // Activate ability
@@ -845,10 +797,7 @@ public class AbilityListener implements Listener {
                 int altDuration = (int) (.6 * duration);
 
                 // Check if player has cooldown decrease achievement and is boosted
-                FileConfiguration playerData = Main.plugin.getPlayerData();
-                String path = player.getUniqueId() + ".achievements";
-                if (playerData.contains(path) && gamer.isBoosted() &&
-                        playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
+                if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement.allMaxedAbility().getID()))
                     coolDown *= .9;
 
                 // Activate ability
@@ -890,7 +839,7 @@ public class AbilityListener implements Listener {
         try {
             arena = GameManager.getArena(player);
             gamer = arena.getPlayer(player);
-        } catch (Exception err) {
+        } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             return;
         }
 
@@ -898,7 +847,7 @@ public class AbilityListener implements Listener {
         double damage = e.getFinalDamage();
 
         // Check for vampire kit
-        if ((Kit.vampire().getName().equals(gamer.getKit().getName()) ||
+        if ((Kit.vampire().getID().equals(gamer.getKit().getID()) ||
                 Kit.vampire().nameCompare(gamer.getKit2())) && !gamer.isSharing()) {
             // Heal if probability is right
             if (r.nextInt(50) < damage)
@@ -979,10 +928,7 @@ public class AbilityListener implements Listener {
 
     // Ninja nerf
     @EventHandler
-    public void onInvisibleEquip(PlayerStatisticIncrementEvent e) {
-        if (!e.getStatistic().equals(Statistic.TIME_SINCE_REST))
-            return;
-
+    public void onInvisibleEquip(PlayerMoveEvent e) {
         Player player = e.getPlayer();
 
         // Check if player is in a game
@@ -1030,7 +976,7 @@ public class AbilityListener implements Listener {
     private boolean checkLevel(int level, Player player) {
         if (level == 0) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-                    CommunicationManager.format("&c" + LanguageManager.errors.level)));
+                    new ColoredMessage(ChatColor.RED, LanguageManager.errors.level).toString()));
             return true;
         }
         return false;
@@ -1039,7 +985,7 @@ public class AbilityListener implements Listener {
     private boolean checkCooldown(long dif, Player player) {
         if (dif > 0) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-                    CommunicationManager.format(ChatColor.RED, LanguageManager.errors.cooldown, ChatColor.AQUA,
+                    CommunicationManager.format(new ColoredMessage(ChatColor.RED, LanguageManager.errors.cooldown),
                             String.valueOf(Math.round(Utils.millisToSeconds(dif) * 10) / 10d))));
             return true;
         }

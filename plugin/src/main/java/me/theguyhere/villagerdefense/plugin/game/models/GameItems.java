@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.game.models;
 
+import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
@@ -15,10 +16,7 @@ import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class GameItems {
@@ -123,8 +121,8 @@ public class GameItems {
 		enchants.put(Enchantment.DURABILITY, 1);
 
 		ItemStack item = ItemManager.createItem(Material.DIAMOND,
-				CommunicationManager.format("&b&l" + LanguageManager.names.crystalConverter),
-				ItemManager.HIDE_ENCHANT_FLAGS, enchants);
+				CommunicationManager.format("&b&l" + String.format(LanguageManager.names.crystalConverter,
+						LanguageManager.names.crystal)), ItemManager.HIDE_ENCHANT_FLAGS, enchants);
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -2540,12 +2538,10 @@ public class GameItems {
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack rockets() {
-		ItemStack item = ItemManager.createItems(Material.FIREWORK_ROCKET, 4, null,
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a50"));
-		assert item != null;
-		ItemMeta meta = item.getItemMeta();
+		ItemStack item = Objects.requireNonNull(ItemManager.createItems(Material.FIREWORK_ROCKET, 4,
+				null, CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a50")));
+		ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
 		FireworkMeta fireworkMeta = (FireworkMeta) meta;
-		assert fireworkMeta != null;
 
 		for (int i = 0; i < 3; i++) {
 			fireworkMeta.addEffect(FireworkEffect.builder().withColor(Color.YELLOW).with(FireworkEffect.Type.BALL_LARGE)
@@ -2559,12 +2555,11 @@ public class GameItems {
 	}
 	public static @NotNull ItemStack rocketsPlus() {
 		ItemStack item = new ItemStack(Material.FIREWORK_ROCKET, 4);
-		ItemMeta meta = item.getItemMeta();
+		ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
 		FireworkMeta fireworkMeta = (FireworkMeta) meta;
 
 		List<String> lore = new ArrayList<>();
 		lore.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a100"));
-		assert meta != null;
 		meta.setLore(lore);
 		for (int i = 0; i < 9; i++) {
 			fireworkMeta.addEffect(FireworkEffect.builder().withColor(Color.RED).with(FireworkEffect.Type.BALL_LARGE)
@@ -5303,7 +5298,7 @@ public class GameItems {
 	}
 	public static @NotNull ItemStack golem() {
 		ItemStack item = ItemManager.createItem(Material.GHAST_SPAWN_EGG,
-				CommunicationManager.format(ChatColor.WHITE, LanguageManager.names.golemEgg),
+				new ColoredMessage(ChatColor.WHITE, LanguageManager.names.golemEgg).toString(),
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a500"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
@@ -5316,60 +5311,48 @@ public class GameItems {
 	}
 	public static @NotNull ItemStack smallCare() {
 		ItemStack item = ItemManager.createItem(Material.COAL_BLOCK,
-				CommunicationManager.format(ChatColor.DARK_GREEN, 
-						LanguageManager.names.carePackageSmall),
-				CommunicationManager.format(ChatColor.WHITE, LanguageManager.names.contents + ":"),
-				CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.weapon, 
-						ChatColor.AQUA, "1", "1"),
-				CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.armor, 
-						ChatColor.AQUA, "1", "1"),
+				new ColoredMessage(ChatColor.DARK_GREEN, LanguageManager.names.carePackageSmall).toString(),
+				new ColoredMessage(LanguageManager.names.contents + ":").toString(),
+				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.weapon), "1", "1"),
+				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.armor), "1", "1"),
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a200"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack mediumCare() {
 		ItemStack item = ItemManager.createItem(Material.IRON_BLOCK,
-				CommunicationManager.format(ChatColor.DARK_AQUA, 
-						LanguageManager.names.carePackageMedium),
-				CommunicationManager.format(ChatColor.WHITE, LanguageManager.names.contents + ":"),
-				CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.weapon, 
-						ChatColor.AQUA, "1", "2"),
-				CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.armor, 
-						ChatColor.AQUA, "1", "2"),
-				CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.consumable, 
-						ChatColor.AQUA, "1", "2"),
+				new ColoredMessage(ChatColor.DARK_AQUA, LanguageManager.names.carePackageMedium).toString(),
+				new ColoredMessage(LanguageManager.names.contents + ":").toString(),
+				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.weapon), "1", "2"),
+				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.armor), "1", "2"),
+				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.consumable), "1",
+						"2"),
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a500"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack largeCare() {
 		ItemStack item = ItemManager.createItem(Material.DIAMOND_BLOCK,
-				CommunicationManager.format(ChatColor.BLUE, LanguageManager.names.carePackageLarge),
-				CommunicationManager.format(ChatColor.WHITE, LanguageManager.names.contents + ":"),
-				CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.weapon, 
-						ChatColor.AQUA, "1", "4"),
-				CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.armor, 
-						ChatColor.AQUA, "2", "3"),
-				CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.consumable, 
-						ChatColor.AQUA, "1", "3"),
+				new ColoredMessage(ChatColor.BLUE, LanguageManager.names.carePackageLarge).toString(),
+				new ColoredMessage(LanguageManager.names.contents + ":").toString(),
+				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.weapon), "1", "4"),
+				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.armor), "2", "3"),
+				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.consumable), "1",
+						"3"),
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a1200"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack extraCare() {
 		ItemStack item = ItemManager.createItem(Material.BEACON,
-				CommunicationManager.format(ChatColor.AQUA, LanguageManager.names.carePackageExtra),
-				CommunicationManager.format(ChatColor.WHITE, LanguageManager.names.contents + ":"),
-				CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.weapon, 
-						ChatColor.AQUA, "1", "5"),
-				CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.weapon, 
-						ChatColor.AQUA, "1", "4"),
-				CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.armor, 
-						ChatColor.AQUA, "1", "5"),
-				CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.armor, 
-						ChatColor.AQUA, "1", "4"),
-				CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.consumable, 
-						ChatColor.AQUA, "2", "4"),
+				new ColoredMessage(ChatColor.AQUA, LanguageManager.names.carePackageExtra).toString(),
+				new ColoredMessage(LanguageManager.names.contents + ":").toString(),
+				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.weapon), "1", "5"),
+				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.weapon), "1", "4"),
+				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.armor), "1", "5"),
+				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.armor), "1", "4"),
+				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.consumable), "2",
+						"4"),
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a3000"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
@@ -5386,10 +5369,15 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.PURPLE_DYE, CommunicationManager.format(ChatColor.LIGHT_PURPLE, 
-						LanguageManager.kits.mage.name + " " + 
-								LanguageManager.names.essence), ItemManager.HIDE_ENCHANT_FLAGS, enchants,
-				CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.rightClick));
+		ItemStack item = ItemManager.createItem(
+				Material.PURPLE_DYE,
+				new ColoredMessage(
+						ChatColor.LIGHT_PURPLE,
+						LanguageManager.kits.mage.name + " " + LanguageManager.names.essence
+				).toString(),
+				ItemManager.HIDE_ENCHANT_FLAGS,
+				enchants,
+				new ColoredMessage(LanguageManager.messages.rightClick).toString());
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5397,10 +5385,16 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.BLACK_DYE, CommunicationManager.format(ChatColor.LIGHT_PURPLE, 
-						LanguageManager.kits.ninja.name + " " + LanguageManager.names.essence),
-				ItemManager.HIDE_ENCHANT_FLAGS, enchants, CommunicationManager.format(ChatColor.WHITE, 
-						LanguageManager.messages.rightClick));
+		ItemStack item = ItemManager.createItem(
+				Material.BLACK_DYE,
+				new ColoredMessage(
+						ChatColor.LIGHT_PURPLE,
+						LanguageManager.kits.ninja.name + " " + LanguageManager.names.essence
+				).toString(),
+				ItemManager.HIDE_ENCHANT_FLAGS,
+				enchants,
+				new ColoredMessage(LanguageManager.messages.rightClick).toString()
+		);
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5408,10 +5402,16 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.YELLOW_DYE, CommunicationManager.format(ChatColor.LIGHT_PURPLE, 
-						LanguageManager.kits.templar.name + " " + LanguageManager.names.essence),
-				ItemManager.HIDE_ENCHANT_FLAGS, enchants, CommunicationManager.format(ChatColor.WHITE,
-						LanguageManager.messages.rightClick));
+		ItemStack item = ItemManager.createItem(
+				Material.YELLOW_DYE,
+				new ColoredMessage(
+						ChatColor.LIGHT_PURPLE,
+						LanguageManager.kits.templar.name + " " + LanguageManager.names.essence
+				).toString(),
+				ItemManager.HIDE_ENCHANT_FLAGS,
+				enchants,
+				new ColoredMessage(LanguageManager.messages.rightClick).toString()
+		);
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5419,10 +5419,16 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.RED_DYE, CommunicationManager.format(ChatColor.LIGHT_PURPLE, 
-						LanguageManager.kits.warrior.name + " " +
-						LanguageManager.names.essence), ItemManager.HIDE_ENCHANT_FLAGS,
-				enchants, CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.rightClick));
+		ItemStack item = ItemManager.createItem(
+				Material.RED_DYE,
+				new ColoredMessage(
+						ChatColor.LIGHT_PURPLE,
+						LanguageManager.kits.warrior.name + " " + LanguageManager.names.essence
+				).toString(),
+				ItemManager.HIDE_ENCHANT_FLAGS,
+				enchants,
+				new ColoredMessage(LanguageManager.messages.rightClick).toString()
+		);
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5430,10 +5436,16 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.BROWN_DYE, CommunicationManager.format(ChatColor.LIGHT_PURPLE, 
-						LanguageManager.kits.knight.name + " " +
-						LanguageManager.names.essence), ItemManager.HIDE_ENCHANT_FLAGS,
-				enchants, CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.rightClick));
+		ItemStack item = ItemManager.createItem(
+				Material.BROWN_DYE,
+				new ColoredMessage(
+						ChatColor.LIGHT_PURPLE,
+						LanguageManager.kits.knight.name + " " + LanguageManager.names.essence
+				).toString(),
+				ItemManager.HIDE_ENCHANT_FLAGS,
+				enchants,
+				new ColoredMessage(LanguageManager.messages.rightClick).toString()
+		);
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5441,10 +5453,16 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.WHITE_DYE, CommunicationManager.format(ChatColor.LIGHT_PURPLE, 
-						LanguageManager.kits.priest.name + " " +
-						LanguageManager.names.essence), ItemManager.HIDE_ENCHANT_FLAGS,
-				enchants, CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.rightClick));
+		ItemStack item = ItemManager.createItem(
+				Material.WHITE_DYE,
+				new ColoredMessage(
+						ChatColor.LIGHT_PURPLE,
+						LanguageManager.kits.priest.name + " " + LanguageManager.names.essence
+				).toString(),
+				ItemManager.HIDE_ENCHANT_FLAGS,
+				enchants,
+				new ColoredMessage(LanguageManager.messages.rightClick).toString()
+		);
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5452,10 +5470,16 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.PINK_DYE, CommunicationManager.format(ChatColor.LIGHT_PURPLE, 
-						LanguageManager.kits.siren.name + " " +
-						LanguageManager.names.essence), ItemManager.HIDE_ENCHANT_FLAGS,
-				enchants, CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.rightClick));
+		ItemStack item = ItemManager.createItem(
+				Material.PINK_DYE,
+				new ColoredMessage(
+						ChatColor.LIGHT_PURPLE,
+						LanguageManager.kits.siren.name + " " + LanguageManager.names.essence
+				).toString(),
+				ItemManager.HIDE_ENCHANT_FLAGS,
+				enchants,
+				new ColoredMessage(LanguageManager.messages.rightClick).toString()
+		);
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5463,10 +5487,16 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.GREEN_DYE, CommunicationManager.format(ChatColor.LIGHT_PURPLE, 
-						LanguageManager.kits.monk.name + " " +
-						LanguageManager.names.essence), ItemManager.HIDE_ENCHANT_FLAGS,
-				enchants, CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.rightClick));
+		ItemStack item = ItemManager.createItem(
+				Material.GREEN_DYE,
+				new ColoredMessage(
+						ChatColor.LIGHT_PURPLE,
+						LanguageManager.kits.monk.name + " " + LanguageManager.names.essence
+				).toString(),
+				ItemManager.HIDE_ENCHANT_FLAGS,
+				enchants,
+				new ColoredMessage(LanguageManager.messages.rightClick).toString()
+		);
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5474,10 +5504,16 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.BLUE_DYE, CommunicationManager.format(ChatColor.LIGHT_PURPLE,
-						LanguageManager.kits.messenger.name + " " +
-								LanguageManager.names.essence), ItemManager.HIDE_ENCHANT_FLAGS,
-				enchants, CommunicationManager.format(ChatColor.WHITE, LanguageManager.messages.rightClick));
+		ItemStack item = ItemManager.createItem(
+				Material.BLUE_DYE,
+				new ColoredMessage(
+						ChatColor.LIGHT_PURPLE,
+						LanguageManager.kits.messenger.name + " " + LanguageManager.names.essence
+				).toString(),
+				ItemManager.HIDE_ENCHANT_FLAGS,
+				enchants,
+				new ColoredMessage(LanguageManager.messages.rightClick).toString()
+		);
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
@@ -5696,7 +5732,6 @@ public class GameItems {
 			default:
 				return boots(level);
 		}
-
 	}
 	public static @NotNull ItemStack randConsumable(int level) {
 		Random r = new Random();

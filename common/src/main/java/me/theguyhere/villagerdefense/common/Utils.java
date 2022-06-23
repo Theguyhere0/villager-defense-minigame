@@ -8,6 +8,8 @@ public class Utils {
     private static final int MINUTES_TO_SECONDS = 60;
     private static final int SECONDS_TO_MILLIS = 1000;
 
+    public static final int LORE_CHAR_LIMIT = 30;
+
     // Convert seconds to ticks
     public static int secondsToTicks(double seconds) {
         return (int) (seconds * SECONDS_TO_TICKS);
@@ -28,17 +30,18 @@ public class Utils {
         return millis / SECONDS_TO_MILLIS;
     }
 
-    public static int angleToByte(float angle) {
+    // Convert degrees to byte
+    public static int degreesToByte(float angle) {
         return (int) (angle / 360f * 256);
     }
 
     /**
      * Read reflection.
-     *
      * @param instance Object to perform reflection on.
      * @param name Name of field.
      * @return Field value
      */
+    @SuppressWarnings("unused")
     public static Object getFieldValue(Object instance, String name) {
         Object result = null;
 
@@ -58,11 +61,11 @@ public class Utils {
 
     /**
      * Write reflection.
-     *
      * @param instance Object to perform reflection on.
      * @param name Name of field.
      * @param newValue New value to write to the field.
      */
+    @SuppressWarnings("unused")
     public static void setFieldValue(Object instance, String name, Object newValue) {
         try {
             Field field = instance.getClass().getDeclaredField(name);
@@ -78,7 +81,6 @@ public class Utils {
 
     /**
      * Fetches the next smallest whole number based on some existing whole numbers.
-     *
      * @param existingWholes Existing whole numbers
      * @return Next smallest unique whole number
      */
@@ -89,5 +91,19 @@ public class Utils {
         }
         // Should never reach here
         return 0;
+    }
+
+    /**
+     * Checks whether the string can convert successfully to an integer or not.
+     * @param s String to check.
+     * @return Whether the string can convert to an int.
+     */
+    public static boolean checkStringInt(String s) {
+        try {
+            Integer.parseInt(s);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 }

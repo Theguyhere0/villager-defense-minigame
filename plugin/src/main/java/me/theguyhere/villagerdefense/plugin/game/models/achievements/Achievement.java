@@ -1,7 +1,10 @@
 package me.theguyhere.villagerdefense.plugin.game.models.achievements;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidAchievementReqTypeException;
+import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
+import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.ChatColor;
@@ -27,6 +30,26 @@ public class Achievement {
     private final List<AchievementRequirement> requirements = new ArrayList<>();
     /** The reward for getting this achievement.*/
     private final AchievementReward reward;
+    /** Whether the requirements in this achievement have to all be true or only one.*/
+    private final boolean and;
+
+    public Achievement(
+            String name,
+            String description,
+            String ID,
+            Material buttonMaterial,
+            AchievementType type,
+            AchievementReward reward,
+            boolean and
+    ) {
+        this.name = name;
+        this.description = description;
+        this.ID = ID;
+        this.buttonMaterial = buttonMaterial;
+        this.type = type;
+        this.reward = reward;
+        this.and = and;
+    }
 
     public Achievement(
             String name,
@@ -35,13 +58,8 @@ public class Achievement {
             Material buttonMaterial,
             AchievementType type,
             AchievementReward reward
-    ) {
-        this.name = name;
-        this.description = description;
-        this.ID = ID;
-        this.buttonMaterial = buttonMaterial;
-        this.type = type;
-        this.reward = reward;
+            ) {
+        this(name, description, ID, buttonMaterial, type, reward, true);
     }
 
     public String getName() {
@@ -55,11 +73,13 @@ public class Achievement {
     }
 
     private String[] getDescription(boolean obtained) {
-        List<String> descriptions = CommunicationManager.formatDescriptionList(ChatColor.GRAY, description);
+        List<String> descriptions = CommunicationManager.formatDescriptionList(ChatColor.GRAY, description,
+                Utils.LORE_CHAR_LIMIT);
         descriptions.add("");
         descriptions.addAll(CommunicationManager.formatDescriptionList(obtained ? ChatColor.AQUA : ChatColor.GREEN,
                 reward.getType() == RewardType.BOOST ? reward.getDescription() :
-                        String.format(reward.getDescription(), Integer.toString(reward.getValue()))));
+                        String.format(reward.getDescription(), Integer.toString(reward.getValue())),
+                Utils.LORE_CHAR_LIMIT));
 
         return descriptions.toArray(new String[]{});
     }
@@ -102,19 +122,23 @@ public class Achievement {
         return reward;
     }
 
+    public boolean isAnd() {
+        return and;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Achievement that = (Achievement) o;
-        return Objects.equals(name, that.name) && Objects.equals(description, that.description) &&
-                buttonMaterial == that.buttonMaterial && type == that.type &&
+        return and == that.and && Objects.equals(name, that.name) && Objects.equals(description, that.description) &&
+                Objects.equals(ID, that.ID) && buttonMaterial == that.buttonMaterial && type == that.type &&
                 Objects.equals(requirements, that.requirements) && Objects.equals(reward, that.reward);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, buttonMaterial, type, requirements, reward);
+        return Objects.hash(name, description, ID, buttonMaterial, type, requirements, reward, and);
     }
 
     public static Achievement allAbility() {
@@ -131,47 +155,47 @@ public class Achievement {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.mage.name
+                    Kit.mage().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.knight.name
+                    Kit.knight().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.messenger.name
+                    Kit.messenger().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.monk.name
+                    Kit.monk().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.ninja.name
+                    Kit.ninja().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.priest.name
+                    Kit.priest().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.templar.name
+                    Kit.templar().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.siren.name
+                    Kit.siren().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.warrior.name
+                    Kit.warrior().getID()
             ));
         } catch (InvalidAchievementReqTypeException e) {
             CommunicationManager.debugErrorShouldNotHappen();
@@ -193,39 +217,39 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.amputee.name
+                    Challenge.amputee().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.blind.name
+                    Challenge.blind().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.clumsy.name
+                    Challenge.clumsy().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.dwarf.name
+                    Challenge.dwarf().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.explosive.name
+                    Challenge.explosive().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.featherweight.name
+                    Challenge.featherweight().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.pacifist.name
+                    Challenge.pacifist().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.naked.name
+                    Challenge.naked().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.uhc.name
+                    Challenge.uhc().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 3));
         } catch (InvalidAchievementReqTypeException e) {
@@ -250,27 +274,27 @@ public class Achievement {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.blacksmith.name
+                    Kit.blacksmith().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.giant.name
+                    Kit.giant().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.merchant.name
+                    Kit.merchant().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.witch.name
+                    Kit.witch().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.vampire.name
+                    Kit.vampire().getID()
             ));
         } catch (InvalidAchievementReqTypeException e) {
             CommunicationManager.debugErrorShouldNotHappen();
@@ -293,47 +317,37 @@ public class Achievement {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.orc.name
+                    Kit.soldier().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.farmer.name
+                    Kit.alchemist().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.soldier.name
+                    Kit.trader().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.alchemist.name
+                    Kit.tailor().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.trader.name
+                    Kit.reaper().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.tailor.name
+                    Kit.summoner().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.reaper.name
-            ));
-            achievement.addRequirement(new AchievementRequirement(
-                    AchievementMetric.KIT_OWN,
-                    1,
-                    LanguageManager.kits.summoner.name
-            ));
-            achievement.addRequirement(new AchievementRequirement(
-                    AchievementMetric.KIT_OWN,
-                    1,
-                    LanguageManager.kits.phantom.name
+                    Kit.phantom().getID()
             ));
         } catch (InvalidAchievementReqTypeException e) {
             CommunicationManager.debugErrorShouldNotHappen();
@@ -350,124 +364,113 @@ public class Achievement {
                 Material.ENDER_CHEST,
                 AchievementType.KIT,
                 new AchievementReward(RewardType.BOOST, BoostRewardID.TWO_KITS)
-
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.orc.name
+                    Kit.soldier().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.farmer.name
+                    Kit.alchemist().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.soldier.name
+                    Kit.trader().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.alchemist.name
+                    Kit.tailor().getID()
+            ));
+            achievement.addRequirement(new AchievementRequirement(
+                    AchievementMetric.KIT_OWN,
+                    3,
+                    Kit.reaper().getID()
+            ));
+            achievement.addRequirement(new AchievementRequirement(
+                    AchievementMetric.KIT_OWN,
+                    3,
+                    Kit.summoner().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.trader.name
+                    Kit.phantom().getID()
+            ));
+            achievement.addRequirement(new AchievementRequirement(
+                    AchievementMetric.KIT_OWN,
+                    3,
+                    Kit.mage().getID()
+            ));
+            achievement.addRequirement(new AchievementRequirement(
+                    AchievementMetric.KIT_OWN,
+                    3,
+                    Kit.knight().getID()
+            ));
+            achievement.addRequirement(new AchievementRequirement(
+                    AchievementMetric.KIT_OWN,
+                    3,
+                    Kit.messenger().getID()
+            ));
+            achievement.addRequirement(new AchievementRequirement(
+                    AchievementMetric.KIT_OWN,
+                    3,
+                    Kit.monk().getID()
+            ));
+            achievement.addRequirement(new AchievementRequirement(
+                    AchievementMetric.KIT_OWN,
+                    3,
+                    Kit.ninja().getID()
+            ));
+            achievement.addRequirement(new AchievementRequirement(
+                    AchievementMetric.KIT_OWN,
+                    3,
+                    Kit.priest().getID()
+            ));
+            achievement.addRequirement(new AchievementRequirement(
+                    AchievementMetric.KIT_OWN,
+                    3,
+                    Kit.templar().getID()
+            ));
+            achievement.addRequirement(new AchievementRequirement(
+                    AchievementMetric.KIT_OWN,
+                    3,
+                    Kit.siren().getID()
+            ));
+            achievement.addRequirement(new AchievementRequirement(
+                    AchievementMetric.KIT_OWN,
+                    3,
+                    Kit.warrior().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.tailor.name
-            ));
-            achievement.addRequirement(new AchievementRequirement(
-                    AchievementMetric.KIT_OWN,
-                    3,
-                    LanguageManager.kits.reaper.name
-            ));
-            achievement.addRequirement(new AchievementRequirement(
-                    AchievementMetric.KIT_OWN,
-                    3,
-                    LanguageManager.kits.summoner.name
-            ));
-            achievement.addRequirement(new AchievementRequirement(
-                    AchievementMetric.KIT_OWN,
-                    1,
-                    LanguageManager.kits.phantom.name
-            ));
-            achievement.addRequirement(new AchievementRequirement(
-                    AchievementMetric.KIT_OWN,
-                    3,
-                    LanguageManager.kits.mage.name
-            ));
-            achievement.addRequirement(new AchievementRequirement(
-                    AchievementMetric.KIT_OWN,
-                    3,
-                    LanguageManager.kits.knight.name
-            ));
-            achievement.addRequirement(new AchievementRequirement(
-                    AchievementMetric.KIT_OWN,
-                    3,
-                    LanguageManager.kits.messenger.name
-            ));
-            achievement.addRequirement(new AchievementRequirement(
-                    AchievementMetric.KIT_OWN,
-                    3,
-                    LanguageManager.kits.monk.name
-            ));
-            achievement.addRequirement(new AchievementRequirement(
-                    AchievementMetric.KIT_OWN,
-                    3,
-                    LanguageManager.kits.ninja.name
-            ));
-            achievement.addRequirement(new AchievementRequirement(
-                    AchievementMetric.KIT_OWN,
-                    3,
-                    LanguageManager.kits.priest.name
-            ));
-            achievement.addRequirement(new AchievementRequirement(
-                    AchievementMetric.KIT_OWN,
-                    3,
-                    LanguageManager.kits.templar.name
-            ));
-            achievement.addRequirement(new AchievementRequirement(
-                    AchievementMetric.KIT_OWN,
-                    3,
-                    LanguageManager.kits.siren.name
-            ));
-            achievement.addRequirement(new AchievementRequirement(
-                    AchievementMetric.KIT_OWN,
-                    3,
-                    LanguageManager.kits.warrior.name
-            ));
-            achievement.addRequirement(new AchievementRequirement(
-                    AchievementMetric.KIT_OWN,
-                    1,
-                    LanguageManager.kits.blacksmith.name
+                    Kit.blacksmith().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     2,
-                    LanguageManager.kits.giant.name
+                    Kit.giant().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.merchant.name
+                    Kit.merchant().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.witch.name
+                    Kit.witch().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
-                    LanguageManager.kits.vampire.name
+                    Kit.vampire().getID()
             ));
         } catch (InvalidAchievementReqTypeException e) {
             CommunicationManager.debugErrorShouldNotHappen();
@@ -490,47 +493,47 @@ public class Achievement {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.mage.name
+                    Kit.mage().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.knight.name
+                    Kit.knight().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.messenger.name
+                    Kit.messenger().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.monk.name
+                    Kit.monk().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.ninja.name
+                    Kit.ninja().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.priest.name
+                    Kit.priest().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.templar.name
+                    Kit.templar().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.siren.name
+                    Kit.siren().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.warrior.name
+                    Kit.warrior().getID()
             ));
         } catch (InvalidAchievementReqTypeException e) {
             CommunicationManager.debugErrorShouldNotHappen();
@@ -575,7 +578,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.amputee.name
+                    Challenge.amputee().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
@@ -601,7 +604,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.amputee.name
+                    Challenge.amputee().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
         } catch (InvalidAchievementReqTypeException e) {
@@ -626,7 +629,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.amputee.name
+                    Challenge.amputee().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
         } catch (InvalidAchievementReqTypeException e) {
@@ -651,7 +654,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.amputee.name
+                    Challenge.amputee().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
         } catch (InvalidAchievementReqTypeException e) {
@@ -677,7 +680,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.blind.name
+                    Challenge.blind().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
@@ -703,7 +706,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.blind.name
+                    Challenge.blind().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
         } catch (InvalidAchievementReqTypeException e) {
@@ -728,7 +731,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.blind.name
+                    Challenge.blind().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
         } catch (InvalidAchievementReqTypeException e) {
@@ -753,7 +756,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.blind.name
+                    Challenge.blind().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
         } catch (InvalidAchievementReqTypeException e) {
@@ -779,7 +782,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.clumsy.name
+                    Challenge.clumsy().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
@@ -805,7 +808,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.clumsy.name
+                    Challenge.clumsy().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
         } catch (InvalidAchievementReqTypeException e) {
@@ -830,7 +833,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.clumsy.name
+                    Challenge.clumsy().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
         } catch (InvalidAchievementReqTypeException e) {
@@ -855,7 +858,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.clumsy.name
+                    Challenge.clumsy().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
         } catch (InvalidAchievementReqTypeException e) {
@@ -881,7 +884,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.dwarf.name
+                    Challenge.dwarf().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
@@ -907,7 +910,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.dwarf.name
+                    Challenge.dwarf().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
         } catch (InvalidAchievementReqTypeException e) {
@@ -932,7 +935,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.dwarf.name
+                    Challenge.dwarf().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
         } catch (InvalidAchievementReqTypeException e) {
@@ -957,7 +960,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.dwarf.name
+                    Challenge.dwarf().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
         } catch (InvalidAchievementReqTypeException e) {
@@ -983,7 +986,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.explosive.name
+                    Challenge.explosive().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
@@ -1009,7 +1012,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.explosive.name
+                    Challenge.explosive().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
         } catch (InvalidAchievementReqTypeException e) {
@@ -1034,7 +1037,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.explosive.name
+                    Challenge.explosive().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
         } catch (InvalidAchievementReqTypeException e) {
@@ -1059,7 +1062,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.explosive.name
+                    Challenge.explosive().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
         } catch (InvalidAchievementReqTypeException e) {
@@ -1085,7 +1088,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.featherweight.name
+                    Challenge.featherweight().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
@@ -1111,7 +1114,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.featherweight.name
+                    Challenge.featherweight().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
         } catch (InvalidAchievementReqTypeException e) {
@@ -1136,7 +1139,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.featherweight.name
+                    Challenge.featherweight().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
         } catch (InvalidAchievementReqTypeException e) {
@@ -1161,7 +1164,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.featherweight.name
+                    Challenge.featherweight().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
         } catch (InvalidAchievementReqTypeException e) {
@@ -1178,63 +1181,55 @@ public class Achievement {
                 "maxedAbility",
                 Material.POPPED_CHORUS_FRUIT,
                 AchievementType.KIT,
-                new AchievementReward(RewardType.CRYSTAL, 2000)
+                new AchievementReward(RewardType.CRYSTAL, 2000),
+                false
         );
 
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.mage.name,
-                    false
+                    Kit.mage().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.knight.name,
-                    false
+                    Kit.knight().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.messenger.name,
-                    false
+                    Kit.messenger().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.monk.name,
-                    false
+                    Kit.monk().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.ninja.name,
-                    false
+                    Kit.ninja().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.priest.name,
-                    false
+                    Kit.priest().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.templar.name,
-                    false
+                    Kit.templar().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.siren.name,
-                    false
+                    Kit.siren().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     3,
-                    LanguageManager.kits.warrior.name,
-                    false
+                    Kit.warrior().getID()
             ));
         } catch (InvalidAchievementReqTypeException e) {
             CommunicationManager.debugErrorShouldNotHappen();
@@ -1259,7 +1254,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.naked.name
+                    Challenge.naked().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
@@ -1285,7 +1280,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.naked.name
+                    Challenge.naked().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
         } catch (InvalidAchievementReqTypeException e) {
@@ -1310,7 +1305,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.naked.name
+                    Challenge.naked().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
         } catch (InvalidAchievementReqTypeException e) {
@@ -1335,7 +1330,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.naked.name
+                    Challenge.naked().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
         } catch (InvalidAchievementReqTypeException e) {
@@ -1361,7 +1356,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.pacifist.name
+                    Challenge.pacifist().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
@@ -1387,7 +1382,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.pacifist.name
+                    Challenge.pacifist().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
         } catch (InvalidAchievementReqTypeException e) {
@@ -1403,7 +1398,7 @@ public class Achievement {
                         LanguageManager.achievements.challengeDescription.kills,
                         LanguageManager.challenges.pacifist.name
                 ),
-                "pacifisKills",
+                "pacifistKills",
                 Material.TURTLE_HELMET,
                 AchievementType.INSTANCE,
                 new AchievementReward(RewardType.CRYSTAL, 50)
@@ -1412,7 +1407,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.pacifist.name
+                    Challenge.pacifist().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
         } catch (InvalidAchievementReqTypeException e) {
@@ -1437,7 +1432,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.pacifist.name
+                    Challenge.pacifist().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
         } catch (InvalidAchievementReqTypeException e) {
@@ -1463,11 +1458,11 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.pacifist.name
+                    Challenge.pacifist().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.uhc.name
+                    Challenge.uhc().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 10));
         } catch (InvalidAchievementReqTypeException e) {
@@ -2308,7 +2303,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.uhc.name
+                    Challenge.uhc().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
@@ -2334,7 +2329,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.uhc.name
+                    Challenge.uhc().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
         } catch (InvalidAchievementReqTypeException e) {
@@ -2359,7 +2354,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.uhc.name
+                    Challenge.uhc().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
         } catch (InvalidAchievementReqTypeException e) {
@@ -2384,7 +2379,7 @@ public class Achievement {
         try {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.CHALLENGE,
-                    LanguageManager.challenges.uhc.name
+                    Challenge.uhc().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
         } catch (InvalidAchievementReqTypeException e) {

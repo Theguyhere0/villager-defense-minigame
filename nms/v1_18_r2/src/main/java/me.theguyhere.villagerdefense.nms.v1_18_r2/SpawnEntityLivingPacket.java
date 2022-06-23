@@ -32,11 +32,11 @@ class SpawnEntityLivingPacket extends VersionNMSPacket {
         packetSetter.writeDouble(location.getZ());
 
         // Rotation
-        packetSetter.writeByte(Utils.angleToByte(location.getYaw()));
-        packetSetter.writeByte(Utils.angleToByte(location.getPitch()));
+        packetSetter.writeByte(Utils.degreesToByte(location.getYaw()));
+        packetSetter.writeByte(Utils.degreesToByte(location.getPitch()));
 
         // Head pitch
-        packetSetter.writeByte(Utils.angleToByte(headPitch));
+        packetSetter.writeByte(Utils.degreesToByte(headPitch));
 
         // Velocity
         packetSetter.writeShort(0);
