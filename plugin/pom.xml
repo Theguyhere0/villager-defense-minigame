@@ -24,6 +24,11 @@
         </dependency>
 
         <dependency>
+            <groupId>com.github.MilkBowl</groupId>
+            <artifactId>VaultAPI</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>VillagerDefense-nms-common</artifactId>
         </dependency>

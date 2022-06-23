@@ -37,7 +37,6 @@ public class Utils {
 
     /**
      * Read reflection.
-     *
      * @param instance Object to perform reflection on.
      * @param name Name of field.
      * @return Field value
@@ -62,7 +61,6 @@ public class Utils {
 
     /**
      * Write reflection.
-     *
      * @param instance Object to perform reflection on.
      * @param name Name of field.
      * @param newValue New value to write to the field.
@@ -83,7 +81,6 @@ public class Utils {
 
     /**
      * Fetches the next smallest whole number based on some existing whole numbers.
-     *
      * @param existingWholes Existing whole numbers
      * @return Next smallest unique whole number
      */
@@ -94,5 +91,19 @@ public class Utils {
         }
         // Should never reach here
         return 0;
+    }
+
+    /**
+     * Checks whether the string can convert successfully to an integer or not.
+     * @param s String to check.
+     * @return Whether the string can convert to an int.
+     */
+    public static boolean checkStringInt(String s) {
+        try {
+            Integer.parseInt(s);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 }

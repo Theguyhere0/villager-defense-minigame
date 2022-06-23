@@ -22,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Class to manage player manipulations.
@@ -47,11 +49,12 @@ public class PlayerManager {
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
         player.setFireTicks(0);
         AttributeInstance maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-        assert maxHealth != null;
 
-        if (!maxHealth.getModifiers().isEmpty())
-            maxHealth.getModifiers().forEach(maxHealth::removeModifier);
-        player.setHealth(maxHealth.getValue());
+        if (maxHealth != null) {
+            if (!maxHealth.getModifiers().isEmpty())
+                maxHealth.getModifiers().forEach(maxHealth::removeModifier);
+            player.setHealth(maxHealth.getValue());
+        }
         player.setFoodLevel(20);
         player.setSaturation(20);
         player.setExp(0);
@@ -152,7 +155,7 @@ public class PlayerManager {
     // Function for giving game start choice items to player
     public static void giveChoiceItems(VDPlayer player) {
         // Give player choice options
-        FileConfiguration playerData = Main.plugin.getPlayerData();
+        FileConfiguration playerData = Main.getPlayerData();
         String path = player.getPlayer().getUniqueId() + ".achievements";
         List<ItemStack> choiceItems = new ArrayList<>();
 
@@ -211,6 +214,175 @@ public class PlayerManager {
         player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, Utils.secondsToTicks(5), 1));
         player.playSound(player.getLocation(), Sound.ITEM_TOTEM_USE, 1, 1);
         notifySuccess(player, LanguageManager.messages.resurrection);
+    }
+
+    // Get either the crystal balance or the vault economy balance of the player
+    public static int getCrystalBalance(UUID id) {
+        if (Main.hasCustomEconomy())
+            return (int) Main.getEconomy().getBalance(Bukkit.getOfflinePlayer(id));
+        else return Main.getPlayerData().getInt(id + ".crystalBalance");
+    }
+
+    // Get top balance of the player
+    public static int getTopBalance(UUID id) {
+        return Main.getPlayerData().getInt(id + ".topBalance");
+    }
+
+    // Get top kills of the player
+    public static int getTopKills(UUID id) {
+        return Main.getPlayerData().getInt(id + ".topKills");
+    }
+
+    // Get top wave of the player
+    public static int getTopWave(UUID id) {
+        return Main.getPlayerData().getInt(id + ".topWave");
+    }
+
+    // Get total gems of the player
+    public static int getTotalGems(UUID id) {
+        return Main.getPlayerData().getInt(id + ".totalGems");
+    }
+
+    // Get total kills of the player
+    public static int getTotalKills(UUID id) {
+        return Main.getPlayerData().getInt(id + ".totalKills");
+    }
+
+    // Check if player has single tier kit
+    public static boolean hasSingleTierKit(UUID id, String kitID) {
+        return Main.getPlayerData().getBoolean(id + ".kits." + kitID);
+    }
+
+    // Get level of multiple tier kit for the player
+    public static int getMultiTierKitLevel(UUID id, String kitID) {
+        return Main.getPlayerData().getInt(id + ".kits." + kitID);
+    }
+
+    // Check if player has an achievement
+    public static boolean hasAchievement(UUID id, String achievementID) {
+        return Main.getPlayerData().getStringList(id + ".achievements").contains(achievementID);
+    }
+
+    // Check if player exists in playerData
+    public static boolean hasPlayer(UUID id) {
+        return Main.getPlayerData().contains(id.toString());
+    }
+
+    // Reset all player data
+    public static void resetPlayerData(UUID id) {
+        Main.getPlayerData().set(id.toString(), null);
+        Main.savePlayerData();
+    }
+
+    // Increase either the crystal balance or the vault economy balance of the player
+    public static void depositCrystalBalance(UUID id, int amount) {
+        if (Main.hasCustomEconomy())
+            Main.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(id), amount);
+        else Main.getPlayerData().set(id + ".crystalBalance", getCrystalBalance(id) + amount);
+        Main.savePlayerData();
+    }
+
+    // Decrease either the crystal balance or the vault economy balance of the player
+    public static void withdrawCrystalBalance(UUID id, int amount) {
+        if (Main.hasCustomEconomy())
+            Main.getEconomy().withdrawPlayer(Bukkit.getOfflinePlayer(id), amount);
+        else Main.getPlayerData().set(id + ".crystalBalance", Math.max(getCrystalBalance(id) - amount, 0));
+        Main.savePlayerData();
+    }
+
+    // Add an achievement for the player
+    public static void addAchievement(UUID id, String achievementID) {
+        String path = id + ".achievements";
+        List<String> achievements = Main.getPlayerData().getStringList(path);
+        achievements.add(achievementID);
+        Main.getPlayerData().set(path, achievements);
+        Main.savePlayerData();
+    }
+
+    // Set top balance of the player
+    public static void setTopBalance(UUID id, int topBalance) {
+        Main.getPlayerData().set(id + ".topBalance", topBalance);
+        Main.savePlayerData();
+    }
+
+    // Set top kills of the player
+    public static void setTopKills(UUID id, int topKills) {
+        Main.getPlayerData().set(id + ".topKills", topKills);
+        Main.savePlayerData();
+    }
+
+    // Set top wave of the player
+    public static void setTopWave(UUID id, int topWave) {
+        Main.getPlayerData().set(id + ".topWave", topWave);
+        Main.savePlayerData();
+    }
+
+    // Set total gems of the player
+    public static void setTotalGems(UUID id, int totalGems) {
+        Main.getPlayerData().set(id + ".totalGems", totalGems);
+        Main.savePlayerData();
+    }
+
+    // Set total kills of the player
+    public static void setTotalKills(UUID id, int totalKills) {
+        Main.getPlayerData().set(id + ".totalKills", totalKills);
+        Main.savePlayerData();
+    }
+
+    // Save health, food, saturation, levels, exp, and inventory of the player
+    public static void cacheSurvivalStats(Player player) {
+        UUID id = player.getUniqueId();
+
+        Main.getPlayerData().set(id + ".health", player.getHealth());
+        Main.getPlayerData().set(id + ".food", player.getFoodLevel());
+        Main.getPlayerData().set(id + ".saturation", (double) player.getSaturation());
+        Main.getPlayerData().set(id + ".level", player.getLevel());
+        Main.getPlayerData().set(id + ".exp", (double) player.getExp());
+        for (int i = 0; i < player.getInventory().getContents().length; i++)
+            Main.getPlayerData().set(id + ".inventory." + i,
+                    player.getInventory().getContents()[i]);
+        Main.savePlayerData();
+    }
+
+    // Return health, food, saturation, levels, exp, and inventory of the player
+    public static void returnSurvivalStats(Player player) {
+        UUID id = player.getUniqueId();
+
+        if (Main.getPlayerData().contains(id + ".health"))
+            player.setHealth(Main.getPlayerData().getDouble(id + ".health"));
+        Main.getPlayerData().set(id + ".health", null);
+        if (Main.getPlayerData().contains(id + ".food"))
+            player.setFoodLevel(Main.getPlayerData().getInt(id + ".food"));
+        Main.getPlayerData().set(id + ".food", null);
+        if (Main.getPlayerData().contains(id + ".saturation"))
+            player.setSaturation((float) Main.getPlayerData().getDouble(id + ".saturation"));
+        Main.getPlayerData().set(id + ".saturation", null);
+        if (Main.getPlayerData().contains(id + ".level"))
+            player.setLevel(Main.getPlayerData().getInt(id + ".level"));
+        Main.getPlayerData().set(id + ".level", null);
+        if (Main.getPlayerData().contains(id + ".exp"))
+            player.setExp((float) Main.getPlayerData().getDouble(id + ".exp"));
+        Main.getPlayerData().set(id + ".exp", null);
+        if (Main.getPlayerData().contains(id + ".inventory"))
+            Objects.requireNonNull(Main.getPlayerData()
+                            .getConfigurationSection(id + ".inventory"))
+                    .getKeys(false)
+                    .forEach(num -> player.getInventory().setItem(Integer.parseInt(num),
+                            (ItemStack) Main.getPlayerData().get(id + ".inventory." + num)));
+        Main.getPlayerData().set(id + ".inventory", null);
+        Main.savePlayerData();
+    }
+
+    // Add a single tier kit to the player
+    public static void addSingleTierKit(UUID id, String kitID) {
+        Main.getPlayerData().set(id + ".kits." + kitID, true);
+        Main.savePlayerData();
+    }
+
+    // Set level of multiple tier kit for the player
+    public static void setMultiTierKitLevel(UUID id, String kitID, int level) {
+        Main.getPlayerData().set(id + ".kits." + kitID, level);
+        Main.savePlayerData();
     }
 
     // Function to give items to the proper inventory slot or change them

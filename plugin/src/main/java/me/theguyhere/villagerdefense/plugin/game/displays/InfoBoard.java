@@ -26,7 +26,7 @@ public class InfoBoard {
 				CommunicationManager.format(infoMessage(LanguageManager.messages.info3),
 						replaceMessage("/vd stats")),
 				CommunicationManager.format(infoMessage(LanguageManager.messages.info4),
-						replaceMessage("/vd kits")),
+						replaceMessage("/vd kits"), replaceMessage(LanguageManager.names.crystals)),
 				CommunicationManager.format(infoMessage(LanguageManager.messages.info5),
 						replaceMessage("/vd help")),
 				CommunicationManager.format(infoMessage(LanguageManager.messages.info6),

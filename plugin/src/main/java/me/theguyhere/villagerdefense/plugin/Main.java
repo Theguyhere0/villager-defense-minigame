@@ -12,12 +12,14 @@ import me.theguyhere.villagerdefense.plugin.listeners.*;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Team;
 
@@ -31,23 +33,24 @@ public class Main extends JavaPlugin {
 	public static Main plugin;
 
 	// Yaml file managers
-	private DataManager arenaData;
-	private DataManager playerData;
-	private DataManager customEffects;
+	private static DataManager arenaData;
+	private static DataManager playerData;
+	private static DataManager customEffects;
 
 	// Global instance variables
 	private final NMSManager nmsManager = NMSVersion.getCurrent().getNmsManager();
-	private boolean loaded = false;
-	private final List<String> unloadedWorlds = new ArrayList<>();
+	private static boolean loaded = false;
+	private static final List<String> unloadedWorlds = new ArrayList<>();
+	private static Economy economy;
 
 	// Global state variables
 	private static boolean outdated = false; // DO NOT CHANGE
 	public static final boolean releaseMode = false;
-	public static final int configVersion = 8;
-	public static final int arenaDataVersion = 6;
-	public static final int playerDataVersion = 2;
+	public static final int configVersion = 9;
+	public static final int arenaDataVersion = 7;
+	public static final int playerDataVersion = 3;
 	public static final int spawnTableVersion = 1;
-	public static final int languageFileVersion = 19;
+	public static final int languageFileVersion = 20;
 	public static final int defaultSpawnVersion = 2;
 	public static final int customEffectsVersion = 1;
 
@@ -73,6 +76,9 @@ public class Main extends JavaPlugin {
 			if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null)
 				new VDExpansion().register();
 			}, Utils.secondsToTicks(1));
+
+		// Try finding economy plugin
+		setupEconomy();
 
 		// Set up initial classes
 		saveDefaultConfig();
@@ -173,9 +179,12 @@ public class Main extends JavaPlugin {
 		// Register expansion again
 		if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null)
 			new VDExpansion().register();
+
+		// Try finding economy plugin again
+		setupEconomy();
 	}
 
-	public void resetGameManager() {
+	public static void resetGameManager() {
 		GameManager.init();
 
 		// Check for proper initialization with worlds
@@ -187,27 +196,27 @@ public class Main extends JavaPlugin {
 	}
 
 	// Returns arena data
-	public FileConfiguration getArenaData() {
+	public static FileConfiguration getArenaData() {
 		return arenaData.getConfig();
 	}
 
 	// Saves arena data changes
-	public void saveArenaData() {
+	public static void saveArenaData() {
 		arenaData.saveConfig();
 	}
 
 	// Returns player data
-	public FileConfiguration getPlayerData() {
+	public static FileConfiguration getPlayerData() {
 		return playerData.getConfig();
 	}
 
 	// Saves arena data changes
-	public void savePlayerData() {
+	public static void savePlayerData() {
 		playerData.saveConfig();
 	}
 
 	// Returns custom effects
-	public FileConfiguration getCustomEffects() {
+	public static FileConfiguration getCustomEffects() {
 		return customEffects.getConfig();
 	}
 
@@ -215,12 +224,20 @@ public class Main extends JavaPlugin {
 		return outdated;
 	}
 
-	public void setLoaded(boolean state) {
+	public static void setLoaded(boolean state) {
 		loaded = state;
 	}
 
-	public boolean isLoaded() {
+	public static boolean isLoaded() {
 		return loaded;
+	}
+
+	public static Economy getEconomy() {
+		return economy;
+	}
+
+	public static boolean hasCustomEconomy() {
+		return plugin.getConfig().getBoolean("vaultEconomy") && economy != null;
 	}
 
 	// Quick way to send test messages to console but remembering to take them down before release
@@ -240,15 +257,15 @@ public class Main extends JavaPlugin {
 			Thread.dumpStack();
 	}
 
-	public List<String> getUnloadedWorlds() {
+	public static List<String> getUnloadedWorlds() {
 		return unloadedWorlds;
 	}
 
-	public void loadWorld(String worldName) {
+	public static void loadWorld(String worldName) {
 		unloadedWorlds.remove(worldName);
 	}
 
-	private void checkAddUnloadedWorld(String worldName) {
+	private static void checkAddUnloadedWorld(String worldName) {
 		if (worldName == null)
 			return;
 
@@ -259,6 +276,17 @@ public class Main extends JavaPlugin {
 			return;
 
 		unloadedWorlds.add(worldName);
+	}
+
+	private void setupEconomy() {
+		// Check for Vault plugin
+		if (getServer().getPluginManager().getPlugin("Vault") == null)
+			return;
+
+		RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+		if (rsp == null)
+			return;
+		economy = rsp.getProvider();
 	}
 
 	private void checkFileVersions() {

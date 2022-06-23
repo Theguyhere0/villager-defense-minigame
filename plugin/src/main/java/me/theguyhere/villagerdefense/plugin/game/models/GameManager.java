@@ -37,12 +37,12 @@ public class GameManager {
 		if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1))
 			validSounds.add("otherside");
 
-		section = Main.plugin.getArenaData().getConfigurationSection("arena");
+		section = Main.getArenaData().getConfigurationSection("arena");
 		if (section != null)
 			section.getKeys(false)
 					.forEach(id -> arenas.put(Integer.parseInt(id), new Arena(Integer.parseInt(id))));
 
-		section = Main.plugin.getArenaData().getConfigurationSection("infoBoard");
+		section = Main.getArenaData().getConfigurationSection("infoBoard");
 		if (section != null)
 			section.getKeys(false)
 					.forEach(id -> {
@@ -54,7 +54,7 @@ public class GameManager {
 						}
 					});
 
-		section = Main.plugin.getArenaData().getConfigurationSection("leaderboard");
+		section = Main.getArenaData().getConfigurationSection("leaderboard");
 		if (section != null)
 			section.getKeys(false)
 					.forEach(id -> {
@@ -68,7 +68,7 @@ public class GameManager {
 
 		setLobby(DataManager.getConfigLocation("lobby"));
 
-		Main.plugin.setLoaded(true);
+		Main.setLoaded(true);
 	}
 
 	public static @NotNull Arena getArena(int arenaID) throws ArenaNotFoundException {
@@ -224,8 +224,22 @@ public class GameManager {
 		return lobby;
 	}
 
+	/**
+	 * Set the cached lobby in {@link GameManager}.
+	 * DOES NOT CHANGE THE STORED LOBBY FOR THE SERVER
+	 * @param lobby Lobby location.
+	 */
 	public static void setLobby(Location lobby) {
 		GameManager.lobby = lobby;
+	}
+
+	/**
+	 * Saves a new lobby for the server and changes the cached lobby.
+	 * @param lobby Lobby location.
+	 */
+	public static void saveLobby(Location lobby) {
+		DataManager.setConfigurationLocation("lobby", lobby);
+		setLobby(lobby);
 	}
 
 	public static void reloadLobby() {
@@ -239,6 +253,10 @@ public class GameManager {
 	 */
 	public static int newArenaID() {
 		return Utils.nextSmallestUniqueWhole(arenas.keySet());
+	}
+
+	public static InfoBoard getInfoBoard(int infoBoardID) {
+		return infoBoards.get(infoBoardID);
 	}
 
 	/**
@@ -306,58 +324,62 @@ public class GameManager {
 		return Utils.nextSmallestUniqueWhole(infoBoards.keySet());
 	}
 
+	public static Leaderboard getLeaderboard(String id) {
+		return leaderboards.get(id);
+	}
+
 	/**
 	 * Creates a new leaderboard at the given location and deletes the old leaderboard.
 	 * @param location - New location.
 	 */
-	public static void setLeaderboard(Location location, String type) {
+	public static void setLeaderboard(Location location, String id) {
 		// Save config location
-		DataManager.setConfigurationLocation("leaderboard." + type, location);
+		DataManager.setConfigurationLocation("leaderboard." + id, location);
 
 		// Recreate the leaderboard
-		refreshLeaderboard(type);
+		refreshLeaderboard(id);
 	}
 
 	/**
 	 * Recreates the leaderboard in game based on the location in the arena file.
 	 */
-	public static void refreshLeaderboard(String type) {
+	public static void refreshLeaderboard(String id) {
 		// Delete old board if needed
-		if (leaderboards.get(type) != null)
-			leaderboards.get(type).remove();
+		if (leaderboards.get(id) != null)
+			leaderboards.get(id).remove();
 
 		try {
 			// Create a new board and display it
-			leaderboards.put(type, new Leaderboard(type));
-			leaderboards.get(type).displayForOnline();
+			leaderboards.put(id, new Leaderboard(id));
+			leaderboards.get(id).displayForOnline();
 		} catch (Exception e) {
-			CommunicationManager.debugError("Invalid location for leaderboard " + type, 1);
+			CommunicationManager.debugError("Invalid location for leaderboard " + id, 1);
 			CommunicationManager.debugInfo("Leaderboard location data may be corrupt. " +
 					"If data cannot be manually corrected in arenaData.yml, please delete the location data for " +
-					"leaderboard " + type + ".", 1);
+					"leaderboard " + id + ".", 1);
 		}
 	}
 
 	/**
 	 * Centers the leaderboard location along the x and z axis.
 	 */
-	public static void centerLeaderboard(String type) {
+	public static void centerLeaderboard(String id) {
 		// Center the location
-		DataManager.centerConfigLocation("leaderboard." + type);
+		DataManager.centerConfigLocation("leaderboard." + id);
 
 		// Recreate the leaderboard
-		refreshLeaderboard(type);
+		refreshLeaderboard(id);
 	}
 
 	/**
 	 * Removes the leaderboard from the game and from the arena file.
 	 */
-	public static void removeLeaderboard(String type) {
-		if (leaderboards.get(type) != null) {
-			leaderboards.get(type).remove();
-			leaderboards.remove(type);
+	public static void removeLeaderboard(String id) {
+		if (leaderboards.get(id) != null) {
+			leaderboards.get(id).remove();
+			leaderboards.remove(id);
 		}
-		DataManager.setConfigurationLocation("leaderboard." + type, null);
+		DataManager.setConfigurationLocation("leaderboard." + id, null);
 	}
 
 	/**

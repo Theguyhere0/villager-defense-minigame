@@ -32,7 +32,7 @@ public class ItemManager {
             return null;
 
         // Set name
-        if (!(dispName == null))
+        if (dispName != null)
             meta.setDisplayName(dispName);
 
         // Set lore
@@ -73,13 +73,14 @@ public class ItemManager {
                                        HashMap<Enchantment, Integer> enchants,
                                        String... lores) {
         // Create ItemStack
-        ItemStack item = createItem(matID, dispName, lores);
-        assert item != null;
-        ItemMeta meta = item.getItemMeta();
-
-        // Check for null meta
-        if (meta == null)
+        ItemStack item;
+        ItemMeta meta;
+        try {
+            item = Objects.requireNonNull(createItem(matID, dispName, lores));
+            meta = Objects.requireNonNull(item.getItemMeta());
+        } catch (NullPointerException e) {
             return null;
+        }
 
         // Set enchants
         if (!(enchants == null))
@@ -103,10 +104,14 @@ public class ItemManager {
                                        List<String> lores,
                                        String... moreLores) {
         // Create ItemStack
-        ItemStack item = createItem(matID, dispName, lores, moreLores);
-        assert item != null;
-        ItemMeta meta = item.getItemMeta();
-        assert meta != null;
+        ItemStack item;
+        ItemMeta meta;
+        try {
+            item = Objects.requireNonNull(createItem(matID, dispName, lores, moreLores));
+            meta = Objects.requireNonNull(item.getItemMeta());
+        } catch (NullPointerException e) {
+            return null;
+        }
 
         // Set enchants
         if (!(enchants == null))
@@ -126,12 +131,11 @@ public class ItemManager {
     public static ItemStack makeUnbreakable(ItemStack item) {
         ItemStack newItem = item.clone();
         ItemMeta meta = newItem.getItemMeta();
-        assert meta != null;
 
         if (item.getType().getMaxDurability() == 0)
             return item;
         try {
-            meta.setUnbreakable(true);
+            Objects.requireNonNull(meta).setUnbreakable(true);
             newItem.setItemMeta(meta);
             return newItem;
         } catch (Exception e) {
@@ -233,13 +237,16 @@ public class ItemManager {
         ItemStack item = itemStack.clone();
 
         // Check for lore
-        if (!item.hasItemMeta() || !Objects.requireNonNull(item.getItemMeta()).hasLore())
+        ItemMeta meta;
+        List<String> lore;
+        try {
+            meta = Objects.requireNonNull(item.getItemMeta());
+            lore = Objects.requireNonNull(meta.getLore());
+        } catch (NullPointerException e) {
             return item;
+        }
 
         // Remove last lore and return
-        ItemMeta meta = item.getItemMeta();
-        List<String> lore = meta.getLore();
-        assert lore != null;
         lore.remove(lore.size() - 1);
         meta.setLore(lore);
         item.setItemMeta(meta);

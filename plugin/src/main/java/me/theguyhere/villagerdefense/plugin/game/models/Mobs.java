@@ -1,10 +1,9 @@
 package me.theguyhere.villagerdefense.plugin.game.models;
 
+import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.events.ReloadBoardsEvent;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -23,9 +22,8 @@ import java.util.Random;
 
 public class Mobs {
     private static void setMinion(Arena arena, LivingEntity livingEntity) {
-        Team monsters = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard()
-                .getTeam("monsters");
-        assert monsters != null;
+        Team monsters = Objects.requireNonNull(Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard()
+                .getTeam("monsters"));
 
         monsters.addEntry(livingEntity.getUniqueId().toString());
         livingEntity.setCustomName(healthBar(1, 1, 5));
@@ -70,9 +68,8 @@ public class Mobs {
     }
 
     private static void setBoss(Arena arena, LivingEntity livingEntity) {
-        Team monsters = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard()
-                .getTeam("monsters");
-        assert monsters != null;
+        Team monsters = Objects.requireNonNull(Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard()
+                .getTeam("monsters"));
 
         monsters.addEntry(livingEntity.getUniqueId().toString());
         livingEntity.setMetadata("VD", new FixedMetadataValue(Main.plugin, arena.getId()));
@@ -192,48 +189,42 @@ public class Mobs {
     }
 
     private static void setSword(Arena arena, Monster monster) {
-        EntityEquipment equipment = monster.getEquipment();
-        assert equipment != null;
+        EntityEquipment equipment = Objects.requireNonNull(monster.getEquipment());
         equipment.setItemInMainHand(getSword(arena), true);
         equipment.setItemInMainHandDropChance(0);
         equipment.setItemInOffHand(null);
     }
 
     private static void setAxe(Arena arena, Monster monster) {
-        EntityEquipment equipment = monster.getEquipment();
-        assert equipment != null;
+        EntityEquipment equipment = Objects.requireNonNull(monster.getEquipment());
         equipment.setItemInMainHand(getAxe(arena), true);
         equipment.setItemInMainHandDropChance(0);
         equipment.setItemInOffHand(null);
     }
 
     private static void setBow(Arena arena, Monster monster) {
-        EntityEquipment equipment = monster.getEquipment();
-        assert equipment != null;
+        EntityEquipment equipment = Objects.requireNonNull(monster.getEquipment());
         equipment.setItemInMainHand(getBow(arena), true);
         equipment.setItemInMainHandDropChance(0);
         equipment.setItemInOffHand(null);
     }
 
     private static void setCrossbow(Arena arena, Monster monster) {
-        EntityEquipment equipment = monster.getEquipment();
-        assert equipment != null;
+        EntityEquipment equipment = Objects.requireNonNull(monster.getEquipment());
         equipment.setItemInMainHand(getCrossbow(arena), true);
         equipment.setItemInMainHandDropChance(0);
         equipment.setItemInOffHand(null);
     }
 
     private static void setTrident(Arena arena, Monster monster) {
-        EntityEquipment equipment = monster.getEquipment();
-        assert equipment != null;
+        EntityEquipment equipment = Objects.requireNonNull(monster.getEquipment());
         equipment.setItemInMainHand(getTrident(arena), true);
         equipment.setItemInMainHandDropChance(0);
         equipment.setItemInOffHand(null);
     }
 
     private static void setArmor(Arena arena, Monster monster) {
-        EntityEquipment equipment = monster.getEquipment();
-        assert equipment != null;
+        EntityEquipment equipment = Objects.requireNonNull(monster.getEquipment());
         equipment.setHelmet(getHelmet(arena), true);
         equipment.setHelmetDropChance(0);
         equipment.setChestplate(getChestplate(arena), true);
@@ -1043,9 +1034,8 @@ public class Mobs {
     }
 
     public static void setVillager(Arena arena, Villager villager) {
-        Team villagers = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard()
-                .getTeam("villagers");
-        assert villagers != null;
+        Team villagers = Objects.requireNonNull(Objects.requireNonNull(Bukkit.getScoreboardManager())
+                .getMainScoreboard().getTeam("villagers"));
 
         villagers.addEntry(villager.getUniqueId().toString());
         villager.setCustomName(healthBar(1, 1, 5));

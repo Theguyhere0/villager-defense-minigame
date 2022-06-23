@@ -3,21 +3,21 @@ package me.theguyhere.villagerdefense.plugin.listeners;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
-import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
-import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.plugin.events.ReloadBoardsEvent;
+import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.*;
+import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
+import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
@@ -26,7 +26,6 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -39,10 +38,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BoundingBox;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 public class GameListener implements Listener {
 	// Keep score and drop gems, exp, and rare loot
@@ -550,6 +546,7 @@ public class GameListener implements Listener {
 			return;
 
 		Player player = (Player) e.getEntity();
+		UUID id = player.getUniqueId();
 		Arena arena;
 		VDPlayer gamer;
 
@@ -582,12 +579,8 @@ public class GameListener implements Listener {
 		}
 
 		// Check if player has gem increase achievement and is boosted
-		FileConfiguration playerData = Main.plugin.getPlayerData();
-		String path = player.getUniqueId() + ".achievements";
-		if (playerData.contains(path) && gamer.isBoosted() &&
-				playerData.getStringList(path).contains(Achievement.topBalance9().getID()))
+		if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement.topBalance9().getID()))
 			earned *= 1.1;
-
 		gamer.addGems(earned);
 
 		// Cancel picking up of emeralds and notify player
@@ -600,16 +593,14 @@ public class GameListener implements Listener {
 			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, .5f, 0);
 
 		// Update player stats
-		playerData.set(player.getUniqueId() + ".totalGems",
-				playerData.getInt(player.getUniqueId() + ".totalGems") + earned);
-		if (playerData.getInt(player.getUniqueId() + ".topBalance") < gamer.getGems())
-			playerData.set(player.getUniqueId() + ".topBalance", gamer.getGems());
-		Main.plugin.savePlayerData();
+		PlayerManager.setTotalGems(id, PlayerManager.getTotalGems(id) + earned);
+		if (PlayerManager.getTopBalance(id) < gamer.getGems())
+			PlayerManager.setTopBalance(id, gamer.getGems());
 
 		// Update scoreboard
 		GameManager.createBoard(gamer);
 	}
-	
+
 	// Handle player death
 	@EventHandler
 	public void onPlayerDeath(EntityDamageEvent e) {
@@ -648,11 +639,9 @@ public class GameListener implements Listener {
 		e.setCancelled(true);
 
 		// Check if player has resurrection achievement and is boosted
-		FileConfiguration playerData = Main.plugin.getPlayerData();
-		String path = player.getUniqueId() + ".achievements";
 		Random random = new Random();
-		if (playerData.contains(path) && gamer.isBoosted() && random.nextDouble() < .1 &&
-				playerData.getStringList(path).contains(Achievement.allChallenges().getID())) {
+		if (gamer.isBoosted() && random.nextDouble() < .1 &&
+				PlayerManager.hasAchievement(player.getUniqueId(), Achievement.allChallenges().getID())) {
 			PlayerManager.giveTotemEffect(player);
 			return;
 		}
@@ -735,7 +724,7 @@ public class GameListener implements Listener {
 				player = (Player) ((Projectile) e.getDamager()).getShooter();
 			else return;
 		} else player = (Player) e.getDamager();
-		assert player != null;
+		UUID id = player.getUniqueId();
 
 		// Attempt to get arena and player
 		try {
@@ -758,6 +747,8 @@ public class GameListener implements Listener {
 				int earned = r.nextInt((int) (50 * Math.pow(wave, .15) * 20) / arena.getAlive());
 				arena.getActives().stream().filter(vdPlayer -> !arena.getGhosts().contains(vdPlayer))
 						.forEach(vdPlayer -> {
+							UUID uuid = vdPlayer.getID();
+
 							vdPlayer.addGems(earned);
 
 							// Notify player
@@ -767,15 +758,10 @@ public class GameListener implements Listener {
 									new ColoredMessage(ChatColor.AQUA, Integer.toString(earned))
 							);
 
-							FileConfiguration playerData = Main.plugin.getPlayerData();
-
 							// Update player stats
-							playerData.set(vdPlayer.getID() + ".totalGems",
-									playerData.getInt(vdPlayer.getID() + ".totalGems") + earned);
-							if (playerData.getInt(vdPlayer.getID() + ".topBalance") <
-									vdPlayer.getGems())
-								playerData.set(vdPlayer.getID() + ".topBalance", vdPlayer.getGems());
-							Main.plugin.savePlayerData();
+							PlayerManager.setTotalGems(uuid, PlayerManager.getTotalGems(uuid) + earned);
+							if (PlayerManager.getTopBalance(uuid) < vdPlayer.getGems())
+								PlayerManager.setTopBalance(uuid, vdPlayer.getGems());
 
 							// Update scoreboard
 							GameManager.createBoard(vdPlayer);
@@ -811,14 +797,10 @@ public class GameListener implements Listener {
 						new ColoredMessage(ChatColor.AQUA, Integer.toString(earned))
 				);
 
-				FileConfiguration playerData = Main.plugin.getPlayerData();
-
 				// Update player stats
-				playerData.set(player.getUniqueId() + ".totalGems",
-						playerData.getInt(player.getUniqueId() + ".totalGems") + earned);
-				if (playerData.getInt(player.getUniqueId() + ".topBalance") < gamer.getGems())
-					playerData.set(player.getUniqueId() + ".topBalance", gamer.getGems());
-				Main.plugin.savePlayerData();
+				PlayerManager.setTotalGems(id, PlayerManager.getTotalGems(id) + earned);
+				if (PlayerManager.getTopBalance(id) < gamer.getGems())
+					PlayerManager.setTopBalance(id, gamer.getGems());
 
 				// Update scoreboard
 				GameManager.createBoard(gamer);
@@ -832,7 +814,7 @@ public class GameListener implements Listener {
 			else player.giveExp((int) (arena.getCurrentDifficulty() * 2));
 		}
 	}
-	
+
 	// Stops slimes and magma cubes from splitting on death
 	@EventHandler
 	public void onSplit(SlimeSplitEvent e) {
@@ -900,7 +882,7 @@ public class GameListener implements Listener {
 			return;
 
 		// Wolf spawn
-		if (item.getType() == Material.WOLF_SPAWN_EGG && 
+		if (item.getType() == Material.WOLF_SPAWN_EGG &&
 				!(main.getType() == Material.WOLF_SPAWN_EGG && e.getHand() == EquipmentSlot.OFF_HAND) &&
 				main.getType() != Material.POLAR_BEAR_SPAWN_EGG && main.getType() != Material.COAL_BLOCK &&
 				main.getType() != Material.IRON_BLOCK && main.getType() != Material.DIAMOND_BLOCK &&
@@ -973,7 +955,7 @@ public class GameListener implements Listener {
 
 		// Small care package
 		if (item.getItemMeta().getDisplayName().contains("Small Care Package") &&
-				main.getType() != Material.POLAR_BEAR_SPAWN_EGG && 
+				main.getType() != Material.POLAR_BEAR_SPAWN_EGG &&
 				!(main.getType() == Material.COAL_BLOCK && e.getHand() == EquipmentSlot.OFF_HAND) &&
 				main.getType() != Material.WOLF_SPAWN_EGG && main.getType() != Material.IRON_BLOCK &&
 				main.getType() != Material.DIAMOND_BLOCK && main.getType() != Material.BEACON) {
@@ -1118,7 +1100,7 @@ public class GameListener implements Listener {
 		if (item.getItemMeta().getDisplayName().contains("Extra Large Care Package") &&
 				main.getType() != Material.WOLF_SPAWN_EGG && main.getType() != Material.POLAR_BEAR_SPAWN_EGG &&
 				main.getType() != Material.COAL_BLOCK && main.getType() != Material.IRON_BLOCK &&
-				main.getType() != Material.DIAMOND_BLOCK && 
+				main.getType() != Material.DIAMOND_BLOCK &&
 				!(main.getType() == Material.BEACON && e.getHand() == EquipmentSlot.OFF_HAND)) {
 			// Remove an item
 			if (item.getAmount() > 1)

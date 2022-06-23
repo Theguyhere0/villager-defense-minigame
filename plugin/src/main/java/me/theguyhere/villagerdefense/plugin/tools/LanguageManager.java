@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.tools;
 
+import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLanguageKeyException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -349,6 +350,7 @@ public class LanguageManager {
         public final @NotNull String communityChest;
         public final @NotNull String cooldown;
         public final @NotNull String customShop;
+        public final @NotNull String economy;
         public final @NotNull String emptyArena;
         public final @NotNull String enchant;
         public final @NotNull String enchantShop;
@@ -399,6 +401,7 @@ public class LanguageManager {
             communityChest = getConfigString("communityChest");
             cooldown = getConfigString("cooldown");
             customShop = getConfigString("customShop");
+            economy = getConfigString("economy");
             emptyArena = getConfigString("emptyArena");
             enchant = getConfigString("enchant");
             enchantShop = getConfigString("enchantShop");
@@ -883,6 +886,7 @@ public class LanguageManager {
         public final @NotNull String communityChest;
         public final @NotNull String consumableShop;
         public final @NotNull String contents;
+        public final @NotNull String crystal;
         public final @NotNull String crystalConverter;
         public final @NotNull String crystals;
         public final @NotNull String customShop;
@@ -922,8 +926,19 @@ public class LanguageManager {
             communityChest = getConfigString("communityChest");
             consumableShop = getConfigString("consumableShop");
             contents = getConfigString("contents");
+
+            // Special check for economy plugin to replace currency name
+            if (Main.hasCustomEconomy())
+                crystal = Main.getEconomy().currencyNameSingular();
+            else crystal = getConfigString("crystal");
+
             crystalConverter = getConfigString("crystalConverter");
-            crystals = getConfigString("crystals");
+
+            // Special check for economy plugin to replace currency name
+            if (Main.hasCustomEconomy())
+                crystals = Main.getEconomy().currencyNamePlural();
+            else crystals = getConfigString("crystals");
+
             customShop = getConfigString("customShop");
             defaultShop = getConfigString("defaultShop");
             easy = getConfigString("easy");
