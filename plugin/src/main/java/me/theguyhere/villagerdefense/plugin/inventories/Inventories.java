@@ -2675,10 +2675,8 @@ public class Inventories {
 	// Modify the price of an item
 	private static ItemStack modifyPrice(ItemStack itemStack, double modifier) {
 		ItemStack item = itemStack.clone();
-		ItemMeta meta = item.getItemMeta();
-		assert meta != null;
-		List<String> lore = meta.getLore();
-		assert lore != null;
+		ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
+		List<String> lore = Objects.requireNonNull(meta.getLore());
 		int price = (int) Math.round(Integer.parseInt(lore.get(lore.size() - 1).substring(10)) * modifier / 5) * 5;
 		lore.set(lore.size() - 1, CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
 				price));
@@ -2689,8 +2687,7 @@ public class Inventories {
 
 	private static void sort(List<ItemStack> list) {
 		list.sort(Comparator.comparingInt(itemStack -> {
-			List<String> lore = Objects.requireNonNull(itemStack.getItemMeta()).getLore();
-			assert lore != null;
+			List<String> lore = Objects.requireNonNull(Objects.requireNonNull(itemStack.getItemMeta()).getLore());
 			return Integer.parseInt(lore.get(lore.size() - 1).substring(10));
 		}));
 	}

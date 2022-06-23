@@ -110,12 +110,11 @@ public class DataManager {
 	// Gets location data without pitch or yaw
 	public static Location getConfigLocationNoRotation(String path) {
 		try {
-			Location location = getConfigLocation(path);
-			assert location != null;
+			Location location = Objects.requireNonNull(getConfigLocation(path));
 			location.setPitch(0);
 			location.setYaw(0);
 			return location;
-		} catch (Exception e) {
+		} catch (NullPointerException e) {
 			CommunicationManager.debugError("Error getting location " + path + " from yaml", 2,
 					!Main.releaseMode, e);
 			return null;
@@ -125,11 +124,10 @@ public class DataManager {
 	// Gets location data without pitch
 	public static Location getConfigLocationNoPitch(String path) {
 		try {
-			Location location = getConfigLocation(path);
-			assert location != null;
+			Location location = Objects.requireNonNull(getConfigLocation(path));
 			location.setPitch(0);
 			return location;
-		} catch (Exception e) {
+		} catch (NullPointerException e) {
 			CommunicationManager.debugError("Error getting location " + path + " from yaml", 2,
 					!Main.releaseMode, e);
 			return null;
@@ -139,8 +137,7 @@ public class DataManager {
 	// Centers location data
 	public static void centerConfigLocation(String path) {
 		try {
-			Location location = getConfigLocation(path);
-			assert location != null;
+			Location location = Objects.requireNonNull(getConfigLocation(path));
 			if (location.getX() > 0)
 				location.setX(((int) location.getX()) + .5);
 			else location.setX(((int) location.getX()) - .5);
@@ -148,8 +145,7 @@ public class DataManager {
 				location.setZ(((int) location.getZ()) + .5);
 			else location.setZ(((int) location.getZ()) - .5);
 			setConfigurationLocation(path, location);
-			Main.saveArenaData();
-		} catch (Exception ignored) {
+		} catch (NullPointerException ignored) {
 			CommunicationManager.debugError("Something went wrong centering!", 1);
 		}
 	}

@@ -11,6 +11,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.util.Objects;
+
 public class CustomEffectsListener implements Listener {
     @EventHandler
     public void onWaveComplete(WaveEndEvent e) {
@@ -129,8 +131,7 @@ public class CustomEffectsListener implements Listener {
         if (section != null)
             section.getKeys(false).forEach(key -> {
                 try {
-                    String command = section.getString(key);
-                    assert command != null;
+                    String command = Objects.requireNonNull(section.getString(key));
 
                     // Check upper boundaries
                     if (key.contains("<") && arena.getCurrentWave() < Integer.parseInt(key.substring(1)))

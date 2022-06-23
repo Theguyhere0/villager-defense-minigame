@@ -119,7 +119,7 @@ public class Commands implements CommandExecutor {
 											return true;
 										}
 
-										GameManager.setLobby(player.getLocation());
+										GameManager.saveLobby(player.getLocation());
 										PlayerManager.notifySuccess(player, "Lobby set!");
 										return true;
 

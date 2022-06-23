@@ -8,7 +8,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -74,7 +73,6 @@ public class CommandTab implements TabCompleter {
         // The command tree for admin commands
         else if (args[0].equalsIgnoreCase("admin")) {
             StringBuilder argFrag;
-            FileConfiguration arenaData = Main.getArenaData();
 
             // First args
             if (args.length == 2) {
@@ -101,7 +99,8 @@ public class CommandTab implements TabCompleter {
                     return result;
 
                 case "infoboard":
-                    ConfigurationSection infoBoardSection = arenaData.getConfigurationSection("infoBoard");
+                    ConfigurationSection infoBoardSection = Main.getArenaData()
+                            .getConfigurationSection("infoBoard");
 
                     if (args.length == 3 && infoBoardSection != null) {
                         argFrag = new StringBuilder(args[2].toLowerCase());

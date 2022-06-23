@@ -16,10 +16,7 @@ import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class GameItems {
@@ -2541,12 +2538,10 @@ public class GameItems {
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack rockets() {
-		ItemStack item = ItemManager.createItems(Material.FIREWORK_ROCKET, 4, null,
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a50"));
-		assert item != null;
-		ItemMeta meta = item.getItemMeta();
+		ItemStack item = Objects.requireNonNull(ItemManager.createItems(Material.FIREWORK_ROCKET, 4,
+				null, CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a50")));
+		ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
 		FireworkMeta fireworkMeta = (FireworkMeta) meta;
-		assert fireworkMeta != null;
 
 		for (int i = 0; i < 3; i++) {
 			fireworkMeta.addEffect(FireworkEffect.builder().withColor(Color.YELLOW).with(FireworkEffect.Type.BALL_LARGE)
@@ -2560,12 +2555,11 @@ public class GameItems {
 	}
 	public static @NotNull ItemStack rocketsPlus() {
 		ItemStack item = new ItemStack(Material.FIREWORK_ROCKET, 4);
-		ItemMeta meta = item.getItemMeta();
+		ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
 		FireworkMeta fireworkMeta = (FireworkMeta) meta;
 
 		List<String> lore = new ArrayList<>();
 		lore.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a100"));
-		assert meta != null;
 		meta.setLore(lore);
 		for (int i = 0; i < 9; i++) {
 			fireworkMeta.addEffect(FireworkEffect.builder().withColor(Color.RED).with(FireworkEffect.Type.BALL_LARGE)

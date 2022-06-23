@@ -49,11 +49,12 @@ public class PlayerManager {
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
         player.setFireTicks(0);
         AttributeInstance maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-        assert maxHealth != null;
 
-        if (!maxHealth.getModifiers().isEmpty())
-            maxHealth.getModifiers().forEach(maxHealth::removeModifier);
-        player.setHealth(maxHealth.getValue());
+        if (maxHealth != null) {
+            if (!maxHealth.getModifiers().isEmpty())
+                maxHealth.getModifiers().forEach(maxHealth::removeModifier);
+            player.setHealth(maxHealth.getValue());
+        }
         player.setFoodLevel(20);
         player.setSaturation(20);
         player.setExp(0);
@@ -375,13 +376,13 @@ public class PlayerManager {
     // Add a single tier kit to the player
     public static void addSingleTierKit(UUID id, String kitID) {
         Main.getPlayerData().set(id + ".kits." + kitID, true);
-        Main.saveArenaData();
+        Main.savePlayerData();
     }
 
     // Set level of multiple tier kit for the player
     public static void setMultiTierKitLevel(UUID id, String kitID, int level) {
         Main.getPlayerData().set(id + ".kits." + kitID, level);
-        Main.saveArenaData();
+        Main.savePlayerData();
     }
 
     // Function to give items to the proper inventory slot or change them

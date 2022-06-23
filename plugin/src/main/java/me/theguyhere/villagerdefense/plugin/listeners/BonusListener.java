@@ -57,7 +57,6 @@ public class BonusListener implements Listener {
                 player = (Player) ((Projectile) e.getDamager()).getShooter();
             else return;
         } else player = (Player) e.getDamager();
-        assert player != null;
 
         // Attempt to get arena and player
         try {

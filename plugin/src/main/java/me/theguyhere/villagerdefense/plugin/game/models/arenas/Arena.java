@@ -497,8 +497,7 @@ public class Arena {
      */
     public String getWaitingSoundName() {
         String sound = config.getString(path + ".sounds.waiting");
-        if (GameManager.getValidSounds().contains(sound)) {
-            assert sound != null;
+        if (sound != null && GameManager.getValidSounds().contains(sound)) {
             return sound.substring(0, 1).toUpperCase() + sound.substring(1);
         }
         else return "None";
@@ -1108,7 +1107,6 @@ public class Arena {
                     // Spawn particles
                     try {
                         world = getCorner1().getWorld();
-                        assert world != null;
 
                         first = new Location(world, Math.max(getCorner1().getX(), getCorner2().getX()),
                                 Math.max(getCorner1().getY(), getCorner2().getY()),
@@ -1668,9 +1666,8 @@ public class Arena {
                             // Get raw item and data
                             ItemStack item = Objects.requireNonNull(
                                     config.getItemStack(path + ".customShop." + index)).clone();
-                            ItemMeta meta = item.getItemMeta();
+                            ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
                             List<String> lore = new ArrayList<>();
-                            assert meta != null;
                             String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
                             int price = NumberUtils.toInt(
                                     meta.getDisplayName().substring(meta.getDisplayName().length() - 5), -1);
@@ -1678,8 +1675,7 @@ public class Arena {
                             // Transform to proper shop item
                             meta.setDisplayName(CommunicationManager.format("&f" + name));
                             if (meta.hasLore())
-                                lore = meta.getLore();
-                            assert lore != null;
+                                lore = Objects.requireNonNull(meta.getLore());
                             if (price >= 0)
                                 lore.add(CommunicationManager.format("&2" + LanguageManager.messages.gems +
                                         ": &a" + price));
@@ -1729,9 +1725,8 @@ public class Arena {
                             // Get raw item and data
                             ItemStack item = Objects.requireNonNull(
                                     config.getItemStack(path + ".customShop." + index)).clone();
-                            ItemMeta meta = item.getItemMeta();
+                            ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
                             List<String> lore = new ArrayList<>();
-                            assert meta != null;
                             String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
                             int price = NumberUtils.toInt(
                                     meta.getDisplayName().substring(meta.getDisplayName().length() - 5), -1);
@@ -1739,8 +1734,7 @@ public class Arena {
                             // Transform to proper shop item
                             meta.setDisplayName(CommunicationManager.format("&f" + name));
                             if (meta.hasLore())
-                                lore = meta.getLore();
-                            assert lore != null;
+                                lore = Objects.requireNonNull(meta.getLore());
                             if (price >= 0)
                                 lore.add(CommunicationManager.format("&2" +
                                         LanguageManager.messages.gems + ": &a" + price));
@@ -1794,9 +1788,8 @@ public class Arena {
                             // Get raw item and data
                             ItemStack item = Objects.requireNonNull(
                                     config.getItemStack(path + ".customShop." + index)).clone();
-                            ItemMeta meta = item.getItemMeta();
+                            ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
                             List<String> lore = new ArrayList<>();
-                            assert meta != null;
                             String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
                             int price = NumberUtils.toInt(
                                     meta.getDisplayName().substring(meta.getDisplayName().length() - 5), -1);
@@ -1804,8 +1797,7 @@ public class Arena {
                             // Transform to proper shop item
                             meta.setDisplayName(CommunicationManager.format("&f" + name));
                             if (meta.hasLore())
-                                lore = meta.getLore();
-                            assert lore != null;
+                                lore = Objects.requireNonNull(meta.getLore());
                             if (price >= 0)
                                 lore.add(CommunicationManager.format("&2" +
                                         LanguageManager.messages.gems + ": &a" + price));
@@ -1830,6 +1822,22 @@ public class Arena {
         }
 
         return inv;
+    }
+
+    public void setCustomShopSlot(ItemStack itemStack, int slot) {
+        ItemStack copy = itemStack.clone();
+        copy.setItemMeta(itemStack.getItemMeta());
+        config.set(path + ".customShop." + slot, copy);
+        Main.saveArenaData();
+    }
+
+    public void eraseCustomShopSlot(int slot) {
+        config.set(path + ".customShop." + slot, null);
+        Main.saveArenaData();
+    }
+
+    public ItemStack getCustomShopSlot(int slot) {
+        return config.getItemStack(path + ".customShop." + slot);
     }
 
     public BossBar getTimeLimitBar() {
@@ -1916,7 +1924,7 @@ public class Arena {
      * Checks and closes an arena if the arena does not meet opening requirements. Opens arena if autoOpen is on.
      */
     public void checkClose() {
-        if (!Main.getArenaData().contains("lobby") || getPortalLocation() == null || getPlayerSpawn() == null ||
+        if (!config.contains("lobby") || getPortalLocation() == null || getPlayerSpawn() == null ||
                 getMonsterSpawns().isEmpty() || getVillagerSpawns().isEmpty() || !hasCustom() && !hasNormal() ||
                 getCorner1() == null || getCorner2() == null ||
                 !Objects.equals(getCorner1().getWorld(), getCorner2().getWorld())) {
