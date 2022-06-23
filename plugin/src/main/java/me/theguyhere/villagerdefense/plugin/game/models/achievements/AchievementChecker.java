@@ -201,7 +201,9 @@ public class AchievementChecker {
             PlayerManager.notifySuccess(
                     player,
                     LanguageManager.confirms.crystalAdd,
-                    new ColoredMessage(ChatColor.AQUA, Integer.toString(achievement.getReward().getValue()))
+                    new ColoredMessage(ChatColor.AQUA, Integer.toString(reward)),
+                    new ColoredMessage(ChatColor.AQUA, reward > 1 ? LanguageManager.names.crystals :
+                            LanguageManager.names.crystal)
             );
         }
 

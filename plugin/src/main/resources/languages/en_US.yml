@@ -222,7 +222,7 @@ confirms:
   challengeAdd: "Challenge added!"
   challengeDelete: "Challenge removed!"
   chestplate: "Chestplate equipped!"
-  crystalAdd: "%s Crystal(s) were added to your balance."
+  crystalAdd: "%s %s were added to your balance."
   enchant: "Item enchanted!"
   helmet: "Helmet equipped!"
   kitBuy: "Kit purchased!"
