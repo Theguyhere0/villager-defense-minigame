@@ -282,6 +282,11 @@ public class Tasks {
 					CommunicationManager.format("&d&l" + LanguageManager.names.communityChest)
 			));
 
+			// Initiate shops
+			arena.setWeaponShop(Inventories.createWeaponShopMenu(1, arena));
+			arena.setArmorShop(Inventories.createArmorShopMenu(1, arena));
+			arena.setConsumeShop(Inventories.createConsumableShopMenu(1, arena));
+
 			// Start dialogue, then trigger WaveEndEvent
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
 				for (VDPlayer player : arena.getPlayers()) {
@@ -475,20 +480,18 @@ public class Tasks {
 							" ", Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
 
 			// Regenerate shops when time and notify players of it
-			if (currentWave % 10 == 0 || currentWave == 1) {
+			if (currentWave % 10 == 0 && currentWave != 0) {
 				int level = currentWave / 10 + 1;
 				arena.setWeaponShop(Inventories.createWeaponShopMenu(level, arena));
 				arena.setArmorShop(Inventories.createArmorShopMenu(level, arena));
 				arena.setConsumeShop(Inventories.createConsumableShopMenu(level, arena));
-				if (currentWave != 1)
-					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-							arena.getActives().forEach(player ->
-									player.getPlayer().sendTitle(CommunicationManager.format(
-											"&6" + LanguageManager.messages.shopUpgrade),
-											"&7" + CommunicationManager.format(
-													String.format(LanguageManager.messages.shopInfo, "10")),
-											Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5),
-											Utils.secondsToTicks(1))), Utils.secondsToTicks(4));
+				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> arena.getActives().forEach(player ->
+						player.getPlayer().sendTitle(CommunicationManager.format(
+								"&6" + LanguageManager.messages.shopUpgrade),
+								"&7" + CommunicationManager.format(
+										String.format(LanguageManager.messages.shopInfo, "10")),
+								Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5),
+								Utils.secondsToTicks(1))), Utils.secondsToTicks(4));
 			}
 
 			// Spawn mobs after 15 seconds if not first wave
