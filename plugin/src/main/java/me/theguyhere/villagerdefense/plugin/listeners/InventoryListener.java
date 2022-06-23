@@ -3064,7 +3064,7 @@ public class InventoryListener implements Listener {
 			int balance = PlayerManager.getCrystalBalance(ownerID);
 
 			// Single tier kits
-			if (!kit.isMultiLevel() && PlayerManager.hasSingleTierKit(ownerID, kit.getID())) {
+			if (!kit.isMultiLevel() && !PlayerManager.hasSingleTierKit(ownerID, kit.getID())) {
 				if (balance >= kit.getPrice(1)) {
 					PlayerManager.withdrawCrystalBalance(ownerID, kit.getPrice(1));
 					PlayerManager.addSingleTierKit(ownerID, kit.getID());
