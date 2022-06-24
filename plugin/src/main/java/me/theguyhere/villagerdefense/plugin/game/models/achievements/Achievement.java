@@ -10,6 +10,7 @@ import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,6 +99,7 @@ public class Achievement {
         return type;
     }
 
+    @NotNull
     public ItemStack getButton(boolean obtained) {
         return ItemManager.createItem(
                 getButtonMaterial(obtained),
@@ -141,7 +143,7 @@ public class Achievement {
         return Objects.hash(name, description, ID, buttonMaterial, type, requirements, reward, and);
     }
 
-    public static Achievement allAbility() {
+    public static @NotNull Achievement allAbility() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.allAbility.name,
                 LanguageManager.achievements.allAbility.description,
@@ -204,7 +206,7 @@ public class Achievement {
         return achievement;
     }
 
-    public static Achievement allChallenges() {
+    public static @NotNull Achievement allChallenges() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.allChallenges.name,
                 LanguageManager.achievements.allChallenges.description,
@@ -259,7 +261,7 @@ public class Achievement {
         return achievement;
     }
 
-    public static Achievement allEffect() {
+    public static @NotNull Achievement allEffect() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.allEffect.name,
                 LanguageManager.achievements.allEffect.description,
@@ -303,7 +305,7 @@ public class Achievement {
         return achievement;
     }
 
-    public static Achievement allGift() {
+    public static @NotNull Achievement allGift() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.allGift.name,
                 LanguageManager.achievements.allGift.description,
@@ -356,7 +358,7 @@ public class Achievement {
         return achievement;
     }
 
-    public static Achievement allKits() {
+    public static @NotNull Achievement allKits() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.allKits.name,
                 LanguageManager.achievements.allKits.description,
@@ -479,7 +481,7 @@ public class Achievement {
         return achievement;
     }
 
-    public static Achievement allMaxedAbility() {
+    public static @NotNull Achievement allMaxedAbility() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.allMaxedAbility.name,
                 LanguageManager.achievements.allMaxedAbility.description,
@@ -542,7 +544,7 @@ public class Achievement {
         return achievement;
     }
 
-    public static Achievement alone() {
+    public static @NotNull Achievement alone() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.alone.name,
                 LanguageManager.achievements.alone.description,
@@ -562,7 +564,7 @@ public class Achievement {
         return achievement;
     }
 
-    public static Achievement amputeeAlone() {
+    public static @NotNull Achievement amputeeAlone() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.amputee.alone,
                 String.format(
@@ -588,7 +590,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement amputeeBalance() {
+    public static @NotNull Achievement amputeeBalance() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.amputee.balance,
                 String.format(
@@ -613,7 +615,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement amputeeKills() {
+    public static @NotNull Achievement amputeeKills() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.amputee.kills,
                 String.format(
@@ -638,7 +640,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement amputeeWave() {
+    public static @NotNull Achievement amputeeWave() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.amputee.wave,
                 String.format(
@@ -664,7 +666,7 @@ public class Achievement {
         return achievement;
     }
 
-    public static Achievement blindAlone() {
+    public static @NotNull Achievement blindAlone() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.blind.alone,
                 String.format(
@@ -690,7 +692,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement blindBalance() {
+    public static @NotNull Achievement blindBalance() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.blind.balance,
                 String.format(
@@ -715,7 +717,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement blindKills() {
+    public static @NotNull Achievement blindKills() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.blind.kills,
                 String.format(
@@ -740,7 +742,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement blindWave() {
+    public static @NotNull Achievement blindWave() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.blind.wave,
                 String.format(
@@ -766,7 +768,7 @@ public class Achievement {
         return achievement;
     }
 
-    public static Achievement clumsyAlone() {
+    public static @NotNull Achievement clumsyAlone() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.clumsy.alone,
                 String.format(
@@ -792,7 +794,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement clumsyBalance() {
+    public static @NotNull Achievement clumsyBalance() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.clumsy.balance,
                 String.format(
@@ -817,7 +819,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement clumsyKills() {
+    public static @NotNull Achievement clumsyKills() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.clumsy.kills,
                 String.format(
@@ -842,7 +844,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement clumsyWave() {
+    public static @NotNull Achievement clumsyWave() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.clumsy.wave,
                 String.format(
@@ -868,7 +870,7 @@ public class Achievement {
         return achievement;
     }
 
-    public static Achievement dwarfAlone() {
+    public static @NotNull Achievement dwarfAlone() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.dwarf.alone,
                 String.format(
@@ -894,7 +896,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement dwarfBalance() {
+    public static @NotNull Achievement dwarfBalance() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.dwarf.balance,
                 String.format(
@@ -919,7 +921,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement dwarfKills() {
+    public static @NotNull Achievement dwarfKills() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.dwarf.kills,
                 String.format(
@@ -944,7 +946,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement dwarfWave() {
+    public static @NotNull Achievement dwarfWave() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.dwarf.wave,
                 String.format(
@@ -970,7 +972,7 @@ public class Achievement {
         return achievement;
     }
 
-    public static Achievement explosiveAlone() {
+    public static @NotNull Achievement explosiveAlone() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.explosive.alone,
                 String.format(
@@ -996,7 +998,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement explosiveBalance() {
+    public static @NotNull Achievement explosiveBalance() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.explosive.balance,
                 String.format(
@@ -1021,7 +1023,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement explosiveKills() {
+    public static @NotNull Achievement explosiveKills() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.explosive.kills,
                 String.format(
@@ -1046,7 +1048,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement explosiveWave() {
+    public static @NotNull Achievement explosiveWave() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.explosive.wave,
                 String.format(
@@ -1072,7 +1074,7 @@ public class Achievement {
         return achievement;
     }
 
-    public static Achievement featherweightAlone() {
+    public static @NotNull Achievement featherweightAlone() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.featherweight.alone,
                 String.format(
@@ -1098,7 +1100,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement featherweightBalance() {
+    public static @NotNull Achievement featherweightBalance() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.featherweight.balance,
                 String.format(
@@ -1123,7 +1125,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement featherweightKills() {
+    public static @NotNull Achievement featherweightKills() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.featherweight.kills,
                 String.format(
@@ -1148,7 +1150,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement featherweightWave() {
+    public static @NotNull Achievement featherweightWave() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.featherweight.wave,
                 String.format(
@@ -1174,7 +1176,7 @@ public class Achievement {
         return achievement;
     }
 
-    public static Achievement maxedAbility() {
+    public static @NotNull Achievement maxedAbility() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.maxedAbility.name,
                 LanguageManager.achievements.maxedAbility.description,
@@ -1238,7 +1240,7 @@ public class Achievement {
         return achievement;
     }
 
-    public static Achievement nakedAlone() {
+    public static @NotNull Achievement nakedAlone() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.naked.alone,
                 String.format(
@@ -1264,7 +1266,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement nakedBalance() {
+    public static @NotNull Achievement nakedBalance() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.naked.balance,
                 String.format(
@@ -1289,7 +1291,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement nakedKills() {
+    public static @NotNull Achievement nakedKills() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.naked.kills,
                 String.format(
@@ -1314,7 +1316,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement nakedWave() {
+    public static @NotNull Achievement nakedWave() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.naked.wave,
                 String.format(
@@ -1340,7 +1342,7 @@ public class Achievement {
         return achievement;
     }
 
-    public static Achievement pacifistAlone() {
+    public static @NotNull Achievement pacifistAlone() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.pacifist.alone,
                 String.format(
@@ -1366,7 +1368,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement pacifistBalance() {
+    public static @NotNull Achievement pacifistBalance() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.pacifist.balance,
                 String.format(
@@ -1391,7 +1393,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement pacifistKills() {
+    public static @NotNull Achievement pacifistKills() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.pacifist.kills,
                 String.format(
@@ -1416,7 +1418,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement pacifistWave() {
+    public static @NotNull Achievement pacifistWave() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.pacifist.wave,
                 String.format(
@@ -1442,7 +1444,7 @@ public class Achievement {
         return achievement;
     }
 
-    public static Achievement pacifistUhc() {
+    public static @NotNull Achievement pacifistUhc() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.pacifistUhc.name,
                 String.format(
@@ -1472,7 +1474,7 @@ public class Achievement {
         return achievement;
     }
 
-    public static Achievement topBalance1() {
+    public static @NotNull Achievement topBalance1() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.one,
                 String.format(LanguageManager.achievements.topBalance.description, "100"),
@@ -1490,7 +1492,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement topBalance2() {
+    public static @NotNull Achievement topBalance2() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.two,
                 String.format(LanguageManager.achievements.topBalance.description, "250"),
@@ -1508,7 +1510,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement topBalance3() {
+    public static @NotNull Achievement topBalance3() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.three,
                 String.format(LanguageManager.achievements.topBalance.description, "500"),
@@ -1526,7 +1528,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement topBalance4() {
+    public static @NotNull Achievement topBalance4() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.four,
                 String.format(LanguageManager.achievements.topBalance.description, "1000"),
@@ -1544,7 +1546,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement topBalance5() {
+    public static @NotNull Achievement topBalance5() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.five,
                 String.format(LanguageManager.achievements.topBalance.description, "2500"),
@@ -1562,7 +1564,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement topBalance6() {
+    public static @NotNull Achievement topBalance6() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.six,
                 String.format(LanguageManager.achievements.topBalance.description, "5000"),
@@ -1580,7 +1582,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement topBalance7() {
+    public static @NotNull Achievement topBalance7() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.seven,
                 String.format(LanguageManager.achievements.topBalance.description, "10000"),
@@ -1598,7 +1600,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement topBalance8() {
+    public static @NotNull Achievement topBalance8() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.eight,
                 String.format(LanguageManager.achievements.topBalance.description, "25000"),
@@ -1616,7 +1618,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement topBalance9() {
+    public static @NotNull Achievement topBalance9() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topBalance.nine,
                 String.format(LanguageManager.achievements.topBalance.description, "50000"),
@@ -1635,7 +1637,7 @@ public class Achievement {
         return achievement;
     }
 
-    public static Achievement topKills1() {
+    public static @NotNull Achievement topKills1() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.one,
                 String.format(LanguageManager.achievements.topKills.description, "10"),
@@ -1653,7 +1655,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement topKills2() {
+    public static @NotNull Achievement topKills2() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.two,
                 String.format(LanguageManager.achievements.topKills.description, "20"),
@@ -1671,7 +1673,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement topKills3() {
+    public static @NotNull Achievement topKills3() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.three,
                 String.format(LanguageManager.achievements.topKills.description, "30"),
@@ -1689,7 +1691,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement topKills4() {
+    public static @NotNull Achievement topKills4() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.four,
                 String.format(LanguageManager.achievements.topKills.description, "50"),
@@ -1707,7 +1709,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement topKills5() {
+    public static @NotNull Achievement topKills5() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.five,
                 String.format(LanguageManager.achievements.topKills.description, "100"),
@@ -1725,7 +1727,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement topKills6() {
+    public static @NotNull Achievement topKills6() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.six,
                 String.format(LanguageManager.achievements.topKills.description, "200"),
@@ -1743,7 +1745,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement topKills7() {
+    public static @NotNull Achievement topKills7() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.seven,
                 String.format(LanguageManager.achievements.topKills.description, "300"),
@@ -1761,7 +1763,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement topKills8() {
+    public static @NotNull Achievement topKills8() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.eight,
                 String.format(LanguageManager.achievements.topKills.description, "500"),
@@ -1779,7 +1781,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement topKills9() {
+    public static @NotNull Achievement topKills9() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topKills.nine,
                 String.format(LanguageManager.achievements.topKills.description, "1000"),
@@ -1798,7 +1800,7 @@ public class Achievement {
         return achievement;
     }
 
-    public static Achievement topWave1() {
+    public static @NotNull Achievement topWave1() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.one,
                 String.format(LanguageManager.achievements.topWave.description, "5"),
@@ -1816,7 +1818,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement topWave2() {
+    public static @NotNull Achievement topWave2() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.two,
                 String.format(LanguageManager.achievements.topWave.description, "10"),
@@ -1834,7 +1836,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement topWave3() {
+    public static @NotNull Achievement topWave3() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.three,
                 String.format(LanguageManager.achievements.topWave.description, "15"),
@@ -1852,7 +1854,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement topWave4() {
+    public static @NotNull Achievement topWave4() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.four,
                 String.format(LanguageManager.achievements.topWave.description, "20"),
@@ -1870,7 +1872,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement topWave5() {
+    public static @NotNull Achievement topWave5() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.five,
                 String.format(LanguageManager.achievements.topWave.description, "25"),
@@ -1888,7 +1890,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement topWave6() {
+    public static @NotNull Achievement topWave6() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.six,
                 String.format(LanguageManager.achievements.topWave.description, "30"),
@@ -1906,7 +1908,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement topWave7() {
+    public static @NotNull Achievement topWave7() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.seven,
                 String.format(LanguageManager.achievements.topWave.description, "35"),
@@ -1924,7 +1926,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement topWave8() {
+    public static @NotNull Achievement topWave8() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.eight,
                 String.format(LanguageManager.achievements.topWave.description, "40"),
@@ -1942,7 +1944,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement topWave9() {
+    public static @NotNull Achievement topWave9() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.topWave.nine,
                 String.format(LanguageManager.achievements.topWave.description, "50"),
@@ -1961,7 +1963,7 @@ public class Achievement {
         return achievement;
     }
 
-    public static Achievement totalGems1() {
+    public static @NotNull Achievement totalGems1() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.one,
                 String.format(LanguageManager.achievements.totalGems.description, "1000"),
@@ -1979,7 +1981,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement totalGems2() {
+    public static @NotNull Achievement totalGems2() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.two,
                 String.format(LanguageManager.achievements.totalGems.description, "5000"),
@@ -1997,7 +1999,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement totalGems3() {
+    public static @NotNull Achievement totalGems3() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.three,
                 String.format(LanguageManager.achievements.totalGems.description, "10000"),
@@ -2015,7 +2017,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement totalGems4() {
+    public static @NotNull Achievement totalGems4() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.four,
                 String.format(LanguageManager.achievements.totalGems.description, "25000"),
@@ -2033,7 +2035,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement totalGems5() {
+    public static @NotNull Achievement totalGems5() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.five,
                 String.format(LanguageManager.achievements.totalGems.description, "50000"),
@@ -2051,7 +2053,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement totalGems6() {
+    public static @NotNull Achievement totalGems6() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.six,
                 String.format(LanguageManager.achievements.totalGems.description, "100000"),
@@ -2069,7 +2071,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement totalGems7() {
+    public static @NotNull Achievement totalGems7() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.seven,
                 String.format(LanguageManager.achievements.totalGems.description, "250000"),
@@ -2087,7 +2089,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement totalGems8() {
+    public static @NotNull Achievement totalGems8() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.eight,
                 String.format(LanguageManager.achievements.totalGems.description, "500000"),
@@ -2105,7 +2107,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement totalGems9() {
+    public static @NotNull Achievement totalGems9() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalGems.nine,
                 String.format(LanguageManager.achievements.totalGems.description, "1000000"),
@@ -2124,7 +2126,7 @@ public class Achievement {
         return achievement;
     }
 
-    public static Achievement totalKills1() {
+    public static @NotNull Achievement totalKills1() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalKills.one,
                 String.format(LanguageManager.achievements.totalKills.description, "100"),
@@ -2142,7 +2144,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement totalKills2() {
+    public static @NotNull Achievement totalKills2() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalKills.two,
                 String.format(LanguageManager.achievements.totalKills.description, "200"),
@@ -2160,7 +2162,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement totalKills3() {
+    public static @NotNull Achievement totalKills3() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalKills.three,
                 String.format(LanguageManager.achievements.totalKills.description, "300"),
@@ -2178,7 +2180,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement totalKills4() {
+    public static @NotNull Achievement totalKills4() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalKills.four,
                 String.format(LanguageManager.achievements.totalKills.description, "500"),
@@ -2196,7 +2198,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement totalKills5() {
+    public static @NotNull Achievement totalKills5() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalKills.five,
                 String.format(LanguageManager.achievements.totalKills.description, "1000"),
@@ -2214,7 +2216,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement totalKills6() {
+    public static @NotNull Achievement totalKills6() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalKills.six,
                 String.format(LanguageManager.achievements.totalKills.description, "2000"),
@@ -2232,7 +2234,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement totalKills7() {
+    public static @NotNull Achievement totalKills7() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalKills.seven,
                 String.format(LanguageManager.achievements.totalKills.description, "3000"),
@@ -2250,7 +2252,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement totalKills8() {
+    public static @NotNull Achievement totalKills8() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalKills.eight,
                 String.format(LanguageManager.achievements.totalKills.description, "5000"),
@@ -2268,7 +2270,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement totalKills9() {
+    public static @NotNull Achievement totalKills9() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.totalKills.nine,
                 String.format(LanguageManager.achievements.totalKills.description, "10000"),
@@ -2287,7 +2289,7 @@ public class Achievement {
         return achievement;
     }
 
-    public static Achievement uhcAlone() {
+    public static @NotNull Achievement uhcAlone() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.uhc.alone,
                 String.format(
@@ -2313,7 +2315,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement uhcBalance() {
+    public static @NotNull Achievement uhcBalance() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.uhc.balance,
                 String.format(
@@ -2338,7 +2340,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement uhcKills() {
+    public static @NotNull Achievement uhcKills() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.uhc.kills,
                 String.format(
@@ -2363,7 +2365,7 @@ public class Achievement {
 
         return achievement;
     }
-    public static Achievement uhcWave() {
+    public static @NotNull Achievement uhcWave() {
         Achievement achievement = new Achievement(
                 LanguageManager.achievements.uhc.wave,
                 String.format(

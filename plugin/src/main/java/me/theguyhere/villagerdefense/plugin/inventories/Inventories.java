@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -2673,11 +2674,13 @@ public class Inventories {
 	}
 
 	// Modify the price of an item
+	@NotNull
 	private static ItemStack modifyPrice(ItemStack itemStack, double modifier) {
 		ItemStack item = itemStack.clone();
 		ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
 		List<String> lore = Objects.requireNonNull(meta.getLore());
-		int price = (int) Math.round(Integer.parseInt(lore.get(lore.size() - 1).substring(10)) * modifier / 5) * 5;
+		int price = (int) Math.round(Integer.parseInt(lore.get(lore.size() - 1)
+				.substring(6 + LanguageManager.messages.gems.length())) * modifier / 5) * 5;
 		lore.set(lore.size() - 1, CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
 				price));
 		meta.setLore(lore);
@@ -2688,7 +2691,7 @@ public class Inventories {
 	private static void sort(List<ItemStack> list) {
 		list.sort(Comparator.comparingInt(itemStack -> {
 			List<String> lore = Objects.requireNonNull(Objects.requireNonNull(itemStack.getItemMeta()).getLore());
-			return Integer.parseInt(lore.get(lore.size() - 1).substring(10));
+			return Integer.parseInt(lore.get(lore.size() - 1).substring(6 + LanguageManager.messages.gems.length()));
 		}));
 	}
 }

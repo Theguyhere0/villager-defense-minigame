@@ -72,69 +72,58 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.EMERALD,
+		return ItemManager.createItem(
+				Material.EMERALD,
 				CommunicationManager.format("&2&l" + LanguageManager.names.itemShop),
 				ItemManager.HIDE_ENCHANT_FLAGS, enchants,
-				CommunicationManager.format("&7&o" + String.format(LanguageManager.messages.itemShopDesc, "10")));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
+				CommunicationManager.format("&7&o" + String.format(LanguageManager.messages.itemShopDesc, "10"))
+		);
 	}
 	public static @NotNull ItemStack kitSelector() {
-		ItemStack item = ItemManager.createItem(Material.CHEST,
+		return ItemManager.createItem(Material.CHEST,
 				CommunicationManager.format("&9&l" + LanguageManager.names.kitSelection));
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack challengeSelector() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.NETHER_STAR,
+		return ItemManager.createItem(Material.NETHER_STAR,
 				CommunicationManager.format("&9&l" + LanguageManager.names.challengeSelection),
 				ItemManager.HIDE_ENCHANT_FLAGS, enchants);
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack boostToggle(boolean boosted) {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.FIREWORK_ROCKET,
+		return ItemManager.createItem(Material.FIREWORK_ROCKET,
 				CommunicationManager.format("&b&l" + LanguageManager.names.boosts + ": " +
 						getToggleStatus(boosted)),
 				ItemManager.HIDE_ENCHANT_FLAGS, enchants);
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack shareToggle(boolean sharing) {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.DISPENSER,
+		return ItemManager.createItem(Material.DISPENSER,
 				CommunicationManager.format("&b&l" + LanguageManager.names.effectShare + ": " +
 						getToggleStatus(sharing)),
 				ItemManager.HIDE_ENCHANT_FLAGS, enchants);
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack crystalConverter() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.DIAMOND,
+		return ItemManager.createItem(Material.DIAMOND,
 				CommunicationManager.format("&b&l" + String.format(LanguageManager.names.crystalConverter,
 						LanguageManager.names.crystal)), ItemManager.HIDE_ENCHANT_FLAGS, enchants);
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack leave() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(Material.BARRIER,
+		return ItemManager.createItem(Material.BARRIER,
 				CommunicationManager.format("&c&l" + LanguageManager.messages.leave),
 				ItemManager.HIDE_ENCHANT_FLAGS, enchants);
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 
 	// Weapons
@@ -692,11 +681,9 @@ public class GameItems {
 				}
 		}
 
-		ItemStack item = ItemManager.createItem(mat, null, FLAGS, enchantments,
+		return ItemManager.createItem(mat, null, FLAGS, enchantments,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
 						price));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack axe(int level) {
 		Random r = new Random();
@@ -1157,11 +1144,9 @@ public class GameItems {
 				}
 		}
 
-		ItemStack item = ItemManager.createItem(mat, null, FLAGS, enchantments,
+		return ItemManager.createItem(mat, null, FLAGS, enchantments,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
 						price));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack bow(int level) {
 		Random r = new Random();
@@ -1529,11 +1514,9 @@ public class GameItems {
 				}
 		}
 
-		ItemStack item = ItemManager.createItem(Material.BOW, null, FLAGS, enchantments,
+		return ItemManager.createItem(Material.BOW, null, FLAGS, enchantments,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
 						price));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack crossbow(int level) {
 		Random r = new Random();
@@ -1864,11 +1847,9 @@ public class GameItems {
 				}
 		}
 
-		ItemStack item = ItemManager.createItem(Material.CROSSBOW, null, FLAGS, enchantments,
+		return ItemManager.createItem(Material.CROSSBOW, null, FLAGS, enchantments,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
 						price));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack trident(int level) {
 		Random r = new Random();
@@ -2362,11 +2343,9 @@ public class GameItems {
 				}
 		}
 
-		ItemStack item = ItemManager.createItem(Material.TRIDENT, null, FLAGS, enchantments,
+		return ItemManager.createItem(Material.TRIDENT, null, FLAGS, enchantments,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
 						price));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack shield(int level) {
 		Random r = new Random();
@@ -2467,79 +2446,59 @@ public class GameItems {
 				}
 		}
 
-		ItemStack item = ItemManager.createItem(Material.SHIELD, null, FLAGS, enchantments,
+		return ItemManager.createItem(Material.SHIELD, null, FLAGS, enchantments,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
 						price));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 
 	// Ammo
 	public static @NotNull ItemStack arrows() {
-		ItemStack item = ItemManager.createItems(Material.ARROW, 16, null,
+		return ItemManager.createItems(Material.ARROW, 16, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a45"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsS() {
-		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.SLOWNESS),
+		return ItemManager.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.SLOWNESS),
 				8, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a50"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsD() {
-		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.INSTANT_DAMAGE),
+		return ItemManager.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.INSTANT_DAMAGE),
 				8, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a70"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsW() {
-		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.WEAKNESS),
+		return ItemManager.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.WEAKNESS),
 				8, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a50"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsP() {
-		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.POISON),
+		return ItemManager.createPotionItems(Material.TIPPED_ARROW, new PotionData(PotionType.POISON),
 				16, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a60"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsSPlus() {
-		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW,
+		return ItemManager.createPotionItems(Material.TIPPED_ARROW,
 				new PotionData(PotionType.SLOWNESS, false, true), 8, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a125"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsDPlus() {
-		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW,
+		return ItemManager.createPotionItems(Material.TIPPED_ARROW,
 				new PotionData(PotionType.INSTANT_DAMAGE, false, true), 8, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a175"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsWPlus() {
-		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW,
+		return ItemManager.createPotionItems(Material.TIPPED_ARROW,
 				new PotionData(PotionType.WEAKNESS, false,true), 8, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a125"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsPPlus() {
-		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW,
+		return ItemManager.createPotionItems(Material.TIPPED_ARROW,
 				new PotionData(PotionType.POISON, false, true), 16, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a130"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack rockets() {
-		ItemStack item = Objects.requireNonNull(ItemManager.createItems(Material.FIREWORK_ROCKET, 4,
-				null, CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a50")));
+		ItemStack item = ItemManager.createItems(Material.FIREWORK_ROCKET, 4, null,
+				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a50"));
 		ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
 		FireworkMeta fireworkMeta = (FireworkMeta) meta;
 
@@ -3217,11 +3176,9 @@ public class GameItems {
 				}
 		}
 
-		ItemStack item = ItemManager.createItem(mat, null, FLAGS, enchantments,
+		return ItemManager.createItem(mat, null, FLAGS, enchantments,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
 						price));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack chestplate(int level) {
 		Random r = new Random();
@@ -3867,11 +3824,9 @@ public class GameItems {
 				}
 		}
 
-		ItemStack item = ItemManager.createItem(mat, null, FLAGS, enchantments,
+		return ItemManager.createItem(mat, null, FLAGS, enchantments,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
 						price));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack leggings(int level) {
 		Random r = new Random();
@@ -4517,11 +4472,9 @@ public class GameItems {
 				}
 		}
 
-		ItemStack item = ItemManager.createItem(mat, null, FLAGS, enchantments,
+		return ItemManager.createItem(mat, null, FLAGS, enchantments,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
 						price));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack boots(int level) {
 		Random r = new Random();
@@ -5167,160 +5120,114 @@ public class GameItems {
 				}
 		}
 
-		ItemStack item = ItemManager.createItem(mat, null, FLAGS, enchantments,
+		return ItemManager.createItem(mat, null, FLAGS, enchantments,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
 						price));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 
 	// Consumables
 	public static @NotNull ItemStack totem() {
-		ItemStack item = ItemManager.createItem(Material.TOTEM_OF_UNDYING, null,
+		return ItemManager.createItem(Material.TOTEM_OF_UNDYING, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a1000"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack gapple() {
-		ItemStack item = ItemManager.createItem(Material.GOLDEN_APPLE, null,
+		return ItemManager.createItem(Material.GOLDEN_APPLE, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a120"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack egapple() {
-		ItemStack item = ItemManager.createItem(Material.ENCHANTED_GOLDEN_APPLE, null,
+		return ItemManager.createItem(Material.ENCHANTED_GOLDEN_APPLE, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a300"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack gcarrot() {
-		ItemStack item = ItemManager.createItem(Material.GOLDEN_CARROT, null,
+		return ItemManager.createItem(Material.GOLDEN_CARROT, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a80"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack steak() {
-		ItemStack item = ItemManager.createItems(Material.COOKED_BEEF, 2, null,
+		return ItemManager.createItems(Material.COOKED_BEEF, 2, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a60"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack mutton() {
-		ItemStack item = ItemManager.createItems(Material.COOKED_MUTTON, 2, null,
+		return ItemManager.createItems(Material.COOKED_MUTTON, 2, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a40"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack bread() {
-		ItemStack item = ItemManager.createItems(Material.BREAD, 3, null,
+		return ItemManager.createItems(Material.BREAD, 3, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a40"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack carrot() {
-		ItemStack item = ItemManager.createItems(Material.CARROT, 5, null,
+		return ItemManager.createItems(Material.CARROT, 5, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a30"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack beetroot() {
-		ItemStack item = ItemManager.createItems(Material.BEETROOT, 8, null,
+		return ItemManager.createItems(Material.BEETROOT, 8, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a25"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack health() {
-		ItemStack item = ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.INSTANT_HEAL),
+		return ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.INSTANT_HEAL),
 				null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a50"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack health2() {
-		ItemStack item = ItemManager.createPotionItem(Material.POTION,
+		return ItemManager.createPotionItem(Material.POTION,
 				new PotionData(PotionType.INSTANT_HEAL, false, true), null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a120"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack health3() {
-		ItemStack item = ItemManager.createPotionItem(Material.LINGERING_POTION,
+		return ItemManager.createPotionItem(Material.LINGERING_POTION,
 				new PotionData(PotionType.INSTANT_HEAL, false, true), null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a200"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack strength() {
-		ItemStack item = ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.STRENGTH),
+		return ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.STRENGTH),
 				null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a150"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack strength2() {
-		ItemStack item = ItemManager.createPotionItem(Material.POTION,
+		return ItemManager.createPotionItem(Material.POTION,
 				new PotionData(PotionType.STRENGTH, false, true), null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a400"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack regen() {
-		ItemStack item = ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.REGEN), null,
+		return ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.REGEN), null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a175"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack regen2() {
-		ItemStack item = ItemManager.createPotionItem(Material.POTION,
+		return ItemManager.createPotionItem(Material.POTION,
 				new PotionData(PotionType.REGEN, false, true), null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a450"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack speed() {
-		ItemStack item = ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.SPEED), null,
+		return ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.SPEED), null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a125"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack speed2() {
-		ItemStack item = ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.SPEED, false,
+		return ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.SPEED, false,
 						true), null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a350"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack milk() {
-		ItemStack item = ItemManager.createItem(Material.MILK_BUCKET, null,
+		return ItemManager.createItem(Material.MILK_BUCKET, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a75"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack golem() {
-		ItemStack item = ItemManager.createItem(Material.GHAST_SPAWN_EGG,
+		return ItemManager.createItem(Material.GHAST_SPAWN_EGG,
 				new ColoredMessage(ChatColor.WHITE, LanguageManager.names.golemEgg).toString(),
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a500"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack wolf() {
-		ItemStack item = ItemManager.createItem(Material.WOLF_SPAWN_EGG, null,
+		return ItemManager.createItem(Material.WOLF_SPAWN_EGG, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a250"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack smallCare() {
-		ItemStack item = ItemManager.createItem(Material.COAL_BLOCK,
+		return ItemManager.createItem(Material.COAL_BLOCK,
 				new ColoredMessage(ChatColor.DARK_GREEN, LanguageManager.names.carePackageSmall).toString(),
 				new ColoredMessage(LanguageManager.names.contents + ":").toString(),
 				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.weapon), "1", "1"),
 				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.armor), "1", "1"),
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a200"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack mediumCare() {
-		ItemStack item = ItemManager.createItem(Material.IRON_BLOCK,
+		return ItemManager.createItem(Material.IRON_BLOCK,
 				new ColoredMessage(ChatColor.DARK_AQUA, LanguageManager.names.carePackageMedium).toString(),
 				new ColoredMessage(LanguageManager.names.contents + ":").toString(),
 				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.weapon), "1", "2"),
@@ -5328,11 +5235,9 @@ public class GameItems {
 				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.consumable), "1",
 						"2"),
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a500"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack largeCare() {
-		ItemStack item = ItemManager.createItem(Material.DIAMOND_BLOCK,
+		return ItemManager.createItem(Material.DIAMOND_BLOCK,
 				new ColoredMessage(ChatColor.BLUE, LanguageManager.names.carePackageLarge).toString(),
 				new ColoredMessage(LanguageManager.names.contents + ":").toString(),
 				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.weapon), "1", "4"),
@@ -5340,11 +5245,9 @@ public class GameItems {
 				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.consumable), "1",
 						"3"),
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a1200"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack extraCare() {
-		ItemStack item = ItemManager.createItem(Material.BEACON,
+		return ItemManager.createItem(Material.BEACON,
 				new ColoredMessage(ChatColor.AQUA, LanguageManager.names.carePackageExtra).toString(),
 				new ColoredMessage(LanguageManager.names.contents + ":").toString(),
 				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.weapon), "1", "5"),
@@ -5354,14 +5257,10 @@ public class GameItems {
 				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.consumable), "2",
 						"4"),
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a3000"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack experience() {
-		ItemStack item = ItemManager.createItem(Material.EXPERIENCE_BOTTLE, null,
+		return ItemManager.createItem(Material.EXPERIENCE_BOTTLE, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a75"));
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 
 	// Kit abilities
@@ -5369,7 +5268,7 @@ public class GameItems {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(
+		return ItemManager.createItem(
 				Material.PURPLE_DYE,
 				new ColoredMessage(
 						ChatColor.LIGHT_PURPLE,
@@ -5378,14 +5277,12 @@ public class GameItems {
 				ItemManager.HIDE_ENCHANT_FLAGS,
 				enchants,
 				new ColoredMessage(LanguageManager.messages.rightClick).toString());
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack ninja() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(
+		return ItemManager.createItem(
 				Material.BLACK_DYE,
 				new ColoredMessage(
 						ChatColor.LIGHT_PURPLE,
@@ -5395,14 +5292,12 @@ public class GameItems {
 				enchants,
 				new ColoredMessage(LanguageManager.messages.rightClick).toString()
 		);
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack templar() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(
+		return ItemManager.createItem(
 				Material.YELLOW_DYE,
 				new ColoredMessage(
 						ChatColor.LIGHT_PURPLE,
@@ -5412,14 +5307,12 @@ public class GameItems {
 				enchants,
 				new ColoredMessage(LanguageManager.messages.rightClick).toString()
 		);
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack warrior() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(
+		return ItemManager.createItem(
 				Material.RED_DYE,
 				new ColoredMessage(
 						ChatColor.LIGHT_PURPLE,
@@ -5429,14 +5322,12 @@ public class GameItems {
 				enchants,
 				new ColoredMessage(LanguageManager.messages.rightClick).toString()
 		);
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack knight() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(
+		return ItemManager.createItem(
 				Material.BROWN_DYE,
 				new ColoredMessage(
 						ChatColor.LIGHT_PURPLE,
@@ -5446,14 +5337,12 @@ public class GameItems {
 				enchants,
 				new ColoredMessage(LanguageManager.messages.rightClick).toString()
 		);
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack priest() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(
+		return ItemManager.createItem(
 				Material.WHITE_DYE,
 				new ColoredMessage(
 						ChatColor.LIGHT_PURPLE,
@@ -5463,14 +5352,12 @@ public class GameItems {
 				enchants,
 				new ColoredMessage(LanguageManager.messages.rightClick).toString()
 		);
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack siren() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(
+		return ItemManager.createItem(
 				Material.PINK_DYE,
 				new ColoredMessage(
 						ChatColor.LIGHT_PURPLE,
@@ -5480,14 +5367,12 @@ public class GameItems {
 				enchants,
 				new ColoredMessage(LanguageManager.messages.rightClick).toString()
 		);
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack monk() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(
+		return ItemManager.createItem(
 				Material.GREEN_DYE,
 				new ColoredMessage(
 						ChatColor.LIGHT_PURPLE,
@@ -5497,14 +5382,12 @@ public class GameItems {
 				enchants,
 				new ColoredMessage(LanguageManager.messages.rightClick).toString()
 		);
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack messenger() {
 		HashMap<Enchantment, Integer> enchants = new HashMap<>();
 		enchants.put(Enchantment.DURABILITY, 1);
 
-		ItemStack item = ItemManager.createItem(
+		return ItemManager.createItem(
 				Material.BLUE_DYE,
 				new ColoredMessage(
 						ChatColor.LIGHT_PURPLE,
@@ -5514,8 +5397,6 @@ public class GameItems {
 				enchants,
 				new ColoredMessage(LanguageManager.messages.rightClick).toString()
 		);
-
-		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 
 	// Random generation of items

@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.nms.common;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
@@ -18,7 +19,7 @@ public class EntityID {
         return numericID;
     }
 
-    public UUID getUUID() {
+    public @NotNull UUID getUUID() {
         if (uuid == null) {
             uuid = UUID.randomUUID();
         }

@@ -7,11 +7,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 /**
- * Class to manage ItemStack manipulations.
+ * Class to manage {@link ItemStack} manipulations.
  */
 public class ItemManager {
     /** Flags for creating normal items with enchants and/or lore.*/
@@ -22,14 +23,11 @@ public class ItemManager {
     public static final boolean[] BUTTON_FLAGS = {true, true};
 
     // Creates an ItemStack using only material, name, and lore
+    @NotNull
     public static ItemStack createItem(Material matID, String dispName, String... lores) {
         // Create ItemStack
         ItemStack item = new ItemStack(matID);
-        ItemMeta meta = item.getItemMeta();
-
-        // Check for null meta
-        if (meta == null)
-            return null;
+        ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
 
         // Set name
         if (dispName != null)
@@ -45,14 +43,16 @@ public class ItemManager {
     }
 
     // Creates an ItemStack using only material, name, and lore list
-    public static ItemStack createItem(Material matID, String dispName, List<String> lores, String... moreLores) {
+    @NotNull
+    public static ItemStack createItem(
+            Material matID,
+            String dispName,
+            List<String> lores,
+            String... moreLores
+    ) {
         // Create ItemStack
         ItemStack item = new ItemStack(matID);
-        ItemMeta meta = item.getItemMeta();
-
-        // Check for null meta
-        if (meta == null)
-            return null;
+        ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
 
         // Set name
         if (!(dispName == null))
@@ -67,51 +67,29 @@ public class ItemManager {
     }
 
     // Creates an ItemStack using material, name, enchants, flags, and lore
-    public static ItemStack createItem(Material matID,
-                                       String dispName,
-                                       boolean[] flags,
-                                       HashMap<Enchantment, Integer> enchants,
-                                       String... lores) {
-        // Create ItemStack
-        ItemStack item;
-        ItemMeta meta;
-        try {
-            item = Objects.requireNonNull(createItem(matID, dispName, lores));
-            meta = Objects.requireNonNull(item.getItemMeta());
-        } catch (NullPointerException e) {
-            return null;
-        }
-
-        // Set enchants
-        if (!(enchants == null))
-            enchants.forEach((k, v) -> meta.addEnchant(k, v, true));
-        if (flags != null && flags[0])
-            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-
-        // Set attribute flag
-        if (flags != null && flags[1])
-            meta.addItemFlags(ItemFlag.values());
-        item.setItemMeta(meta);
-
-        return item;
+    @NotNull
+    public static ItemStack createItem(
+            Material matID,
+            String dispName,
+            boolean[] flags,
+            HashMap<Enchantment, Integer> enchants,
+            String... lores
+    ) {
+        return createItem(matID, dispName, flags, enchants, Arrays.asList(lores));
     }
 
     // Creates an ItemStack using material, name, enchants, flags, and lore list
-    public static ItemStack createItem(Material matID,
-                                       String dispName,
-                                       boolean[] flags,
-                                       HashMap<Enchantment, Integer> enchants,
-                                       List<String> lores,
-                                       String... moreLores) {
+    @NotNull
+    public static ItemStack createItem(
+            Material matID,
+            String dispName,
+            boolean[] flags,
+            HashMap<Enchantment, Integer> enchants,
+            List<String> lores
+    ) {
         // Create ItemStack
-        ItemStack item;
-        ItemMeta meta;
-        try {
-            item = Objects.requireNonNull(createItem(matID, dispName, lores, moreLores));
-            meta = Objects.requireNonNull(item.getItemMeta());
-        } catch (NullPointerException e) {
-            return null;
-        }
+        ItemStack item = createItem(matID, dispName, lores);
+        ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
 
         // Set enchants
         if (!(enchants == null))
@@ -128,7 +106,8 @@ public class ItemManager {
     }
 
     // Makes an item unbreakable
-    public static ItemStack makeUnbreakable(ItemStack item) {
+    @NotNull
+    public static ItemStack makeUnbreakable(@NotNull ItemStack item) {
         ItemStack newItem = item.clone();
         ItemMeta meta = newItem.getItemMeta();
 
@@ -144,6 +123,7 @@ public class ItemManager {
     }
 
     // Make an item into a splash potion
+    @NotNull
     public static ItemStack makeSplash(ItemStack item) {
         ItemStack newItem = item.clone();
         if (newItem.getType() == Material.POTION)
@@ -152,41 +132,17 @@ public class ItemManager {
     }
 
     // Creates an ItemStack that has potion meta
+    @NotNull
     public static ItemStack createPotionItem(Material matID, PotionData potionData, String dispName, String... lores) {
-        // Create ItemStack
-        ItemStack item = new ItemStack(matID);
-        ItemMeta meta = item.getItemMeta();
-        PotionMeta pot = (PotionMeta) meta;
-
-        // Check for null meta
-        if (meta == null)
-            return null;
-
-        // Set name
-        if (!(dispName == null))
-            meta.setDisplayName(dispName);
-
-        // Set lore
-        List<String> lore = new ArrayList<>();
-        Collections.addAll(lore, lores);
-        meta.setLore(lore);
-
-        // Set potion data
-        pot.setBasePotionData(potionData);
-        item.setItemMeta(meta);
-
-        return item;
+        return createPotionItems(matID, potionData, 1, dispName, lores);
     }
 
     // Creates an ItemStack using material, amount, name, and lore
+    @NotNull
     public static ItemStack createItems(Material matID, int amount, String dispName, String... lores) {
         // Create ItemStack
         ItemStack item = new ItemStack(matID, amount);
-        ItemMeta meta = item.getItemMeta();
-
-        // Check for null meta
-        if (meta == null)
-            return null;
+        ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
 
         // Set name
         if (!(dispName == null))
@@ -202,6 +158,7 @@ public class ItemManager {
     }
 
     // Creates an ItemStack of multiple items that has potion meta
+    @NotNull
     public static ItemStack createPotionItems(Material matID,
                                               PotionData potionData,
                                               int amount,
@@ -209,12 +166,8 @@ public class ItemManager {
                                               String... lores) {
         // Create ItemStack
         ItemStack item = new ItemStack(matID, amount);
-        ItemMeta meta = item.getItemMeta();
+        ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
         PotionMeta pot = (PotionMeta) meta;
-
-        // Check for null meta
-        if (meta == null)
-            return null;
 
         // Set name
         if (!(dispName == null))
@@ -233,18 +186,13 @@ public class ItemManager {
     }
 
     // Remove last lore on the list
-    public static ItemStack removeLastLore(ItemStack itemStack) {
+    @NotNull
+    public static ItemStack removeLastLore(@NotNull ItemStack itemStack) {
         ItemStack item = itemStack.clone();
 
         // Check for lore
-        ItemMeta meta;
-        List<String> lore;
-        try {
-            meta = Objects.requireNonNull(item.getItemMeta());
-            lore = Objects.requireNonNull(meta.getLore());
-        } catch (NullPointerException e) {
-            return item;
-        }
+        ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
+        List<String> lore = Objects.requireNonNull(meta.getLore());
 
         // Remove last lore and return
         lore.remove(lore.size() - 1);
@@ -255,6 +203,7 @@ public class ItemManager {
     }
 
     // Dummy enchant for glowing buttons
+    @NotNull
     public static HashMap<Enchantment, Integer> glow() {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
         enchants.put(Enchantment.DURABILITY, 1);
