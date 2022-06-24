@@ -15,7 +15,7 @@ import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.plugin.events.ReloadBoardsEvent;
 import me.theguyhere.villagerdefense.plugin.events.WaveEndEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
-import me.theguyhere.villagerdefense.plugin.exceptions.InvalidNameException;
+import me.theguyhere.villagerdefense.plugin.exceptions.InvalidArenaNameException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
@@ -144,18 +144,18 @@ public class Arena {
      * Writes the new name of the arena into the arena file.
      * @param name New arena name.
      */
-    public void setName(String name) throws InvalidNameException {
+    public void setName(String name) throws InvalidArenaNameException {
         // Check if name is not empty
-        if (name == null || name.length() == 0) throw new InvalidNameException("Empty");
+        if (name == null || name.length() == 0) throw new InvalidArenaNameException("Empty");
 
         // Check if name is the same as current
-        else if (name.equals(getName())) throw new InvalidNameException("Same");
+        else if (name.equals(getName())) throw new InvalidArenaNameException("Same");
 
         else {
             // Check for duplicate name
             try {
                 GameManager.getArena(name);
-                throw new InvalidNameException("Duplicate");
+                throw new InvalidArenaNameException("Duplicate");
             } catch (ArenaNotFoundException ignored) {
             }
 
@@ -409,6 +409,7 @@ public class Arena {
      * Create the button for a given waiting music of the arena from the arena file.
      * @return A button for GUIs.
      */
+    @NotNull
     public ItemStack getWaitingSoundButton(String name) {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
         enchants.put(Enchantment.DURABILITY, 1);

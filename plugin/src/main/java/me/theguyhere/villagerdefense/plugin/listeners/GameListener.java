@@ -36,6 +36,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.BoundingBox;
 
 import java.util.*;
@@ -179,10 +180,10 @@ public class GameListener implements Listener {
 			return;
 
 		ItemStack item = ((Item) ent).getItemStack();
+		ItemMeta meta = item.getItemMeta();
 
 		// Check for right item
-		if (item.getType() == Material.EMERALD && item.hasItemMeta() &&
-				Objects.requireNonNull(item.getItemMeta()).hasLore())
+		if (item.getType() == Material.EMERALD && meta != null && meta.hasLore())
 			e.setCancelled(true);
 	}
 

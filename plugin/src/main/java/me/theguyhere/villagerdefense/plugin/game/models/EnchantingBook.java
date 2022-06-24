@@ -8,6 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -61,7 +62,7 @@ public class EnchantingBook extends ItemStack {
         }
     }
 
-    public static ItemStack knockback() {
+    public static @NotNull ItemStack knockback() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.knockback)),
@@ -69,7 +70,7 @@ public class EnchantingBook extends ItemStack {
                 new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
                 new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
-    public static ItemStack sweepingEdge() {
+    public static @NotNull ItemStack sweepingEdge() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.sweepingEdge)),
@@ -77,7 +78,7 @@ public class EnchantingBook extends ItemStack {
                 new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
                 new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
-    public static ItemStack smite() {
+    public static @NotNull ItemStack smite() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.smite)),
@@ -85,7 +86,7 @@ public class EnchantingBook extends ItemStack {
                 new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
                 new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
-    public static ItemStack sharpness() {
+    public static @NotNull ItemStack sharpness() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.sharpness)),
@@ -93,7 +94,7 @@ public class EnchantingBook extends ItemStack {
                 new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
                 new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
-    public static ItemStack fireAspect() {
+    public static @NotNull ItemStack fireAspect() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.fireAspect)),
@@ -101,7 +102,7 @@ public class EnchantingBook extends ItemStack {
                 new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
                 new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
-    public static ItemStack punch() {
+    public static @NotNull ItemStack punch() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.punch)),
@@ -109,7 +110,7 @@ public class EnchantingBook extends ItemStack {
                 new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
                 new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
-    public static ItemStack piercing() {
+    public static @NotNull ItemStack piercing() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.piercing)),
@@ -117,7 +118,7 @@ public class EnchantingBook extends ItemStack {
                 new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
                 new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
-    public static ItemStack quickCharge() {
+    public static @NotNull ItemStack quickCharge() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.quickCharge)),
@@ -125,7 +126,7 @@ public class EnchantingBook extends ItemStack {
                 new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
                 new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
-    public static ItemStack power() {
+    public static @NotNull ItemStack power() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.power)),
@@ -133,7 +134,7 @@ public class EnchantingBook extends ItemStack {
                 new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
                 new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
-    public static ItemStack loyalty() {
+    public static @NotNull ItemStack loyalty() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.loyalty)),
@@ -141,7 +142,7 @@ public class EnchantingBook extends ItemStack {
                 new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
                 new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
-    public static ItemStack flame() {
+    public static @NotNull ItemStack flame() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.flame)),
@@ -150,7 +151,7 @@ public class EnchantingBook extends ItemStack {
                 new ColoredMessage(ChatColor.DARK_PURPLE, LanguageManager.messages.caution).toString(),
                 new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
-    public static ItemStack multishot() {
+    public static @NotNull ItemStack multishot() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.multishot)),
@@ -159,7 +160,7 @@ public class EnchantingBook extends ItemStack {
                 new ColoredMessage(ChatColor.DARK_PURPLE, LanguageManager.messages.caution).toString(),
                 new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
-    public static ItemStack infinity() {
+    public static @NotNull ItemStack infinity() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.infinity)),
@@ -168,7 +169,7 @@ public class EnchantingBook extends ItemStack {
                 new ColoredMessage(ChatColor.DARK_PURPLE, LanguageManager.messages.caution).toString(),
                 new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
-    public static ItemStack blastProtection() {
+    public static @NotNull ItemStack blastProtection() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.blastProtection)),
@@ -176,7 +177,7 @@ public class EnchantingBook extends ItemStack {
                 new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
                 new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
-    public static ItemStack thorns() {
+    public static @NotNull ItemStack thorns() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.thorns)),
@@ -184,7 +185,7 @@ public class EnchantingBook extends ItemStack {
                 new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
                 new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
-    public static ItemStack projectileProtection() {
+    public static @NotNull ItemStack projectileProtection() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.projectileProtection)),
@@ -192,7 +193,7 @@ public class EnchantingBook extends ItemStack {
                 new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
                 new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
-    public static ItemStack protection() {
+    public static @NotNull ItemStack protection() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.protection)),
@@ -200,7 +201,7 @@ public class EnchantingBook extends ItemStack {
                 new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
                 new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
-    public static ItemStack unbreaking() {
+    public static @NotNull ItemStack unbreaking() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.unbreaking)),
@@ -208,7 +209,7 @@ public class EnchantingBook extends ItemStack {
                 new ColoredMessage(LanguageManager.messages.enchantInstruction).toString(),
                 new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.warning).toString());
     }
-    public static ItemStack mending() {
+    public static @NotNull ItemStack mending() {
         return ItemManager.createItem(Material.ENCHANTED_BOOK,
                 CommunicationManager.format("&a&l" + String.format(LanguageManager.names.enchantBook,
                         LanguageManager.enchants.mending)),
