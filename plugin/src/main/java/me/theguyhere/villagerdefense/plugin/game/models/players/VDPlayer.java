@@ -1,14 +1,23 @@
 package me.theguyhere.villagerdefense.plugin.game.models.players;
 
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
+import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
+import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
+import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import org.bukkit.Bukkit;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * A class holding data about players in a Villager Defense game.
@@ -18,6 +27,8 @@ public class VDPlayer {
     private final UUID player;
     /** Status of the this {@link VDPlayer}.*/
     private PlayerStatus status;
+    /** The arena that this {@link VDPlayer} belongs in.*/
+    private final Arena arena;
     /** Gem balance.*/
     private int gems;
     /** Kill count.*/
@@ -51,8 +62,9 @@ public class VDPlayer {
     /** Whether effect kits are shared or not.*/
     private boolean share = false;
 
-    public VDPlayer(Player player, boolean spectating) {
+    public VDPlayer(Player player, Arena arena, boolean spectating) {
         this.player = player.getUniqueId();
+        this.arena = arena;
         if (spectating)
             status = PlayerStatus.SPECTATOR;
         else status = PlayerStatus.ALIVE;
@@ -70,6 +82,10 @@ public class VDPlayer {
 
     public Player getPlayer() {
         return Bukkit.getPlayer(player);
+    }
+
+    public Arena getArena() {
+        return arena;
     }
 
     public PlayerStatus getStatus() {
@@ -221,5 +237,101 @@ public class VDPlayer {
         getPlayer().getInventory().setChestplate(chestplate);
         getPlayer().getInventory().setLeggings(leggings);
         getPlayer().getInventory().setBoots(boots);
+    }
+
+    /**
+     * Gives items on spawn or respawn based on kit selected
+     */
+    public void giveItems() {
+        for (ItemStack item: getKit().getItems()) {
+            EntityEquipment equipment = getPlayer().getEquipment();
+
+            // Equip armor if possible, otherwise put in inventory, otherwise drop at feet
+            if (Arrays.stream(GameItems.HELMET_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
+                    Objects.requireNonNull(equipment).getHelmet() == null)
+                equipment.setHelmet(item);
+            else if (Arrays.stream(GameItems.CHESTPLATE_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
+                    Objects.requireNonNull(equipment).getChestplate() == null)
+                equipment.setChestplate(item);
+            else if (Arrays.stream(GameItems.LEGGING_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
+                    Objects.requireNonNull(equipment).getLeggings() == null)
+                equipment.setLeggings(item);
+            else if (Arrays.stream(GameItems.BOOTS_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
+                    Objects.requireNonNull(equipment).getBoots() == null)
+                equipment.setBoots(item);
+            else PlayerManager.giveItem(getPlayer(), item, LanguageManager.errors.inventoryFull);
+        }
+        if (getKit2() != null)
+            for (ItemStack item: getKit2().getItems()) {
+                EntityEquipment equipment = getPlayer().getEquipment();
+
+                // Equip armor if possible, otherwise put in inventory, otherwise drop at feet
+                if (Arrays.stream(GameItems.HELMET_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
+                        Objects.requireNonNull(equipment).getHelmet() == null)
+                    equipment.setHelmet(item);
+                else if (Arrays.stream(GameItems.CHESTPLATE_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
+                        Objects.requireNonNull(equipment).getChestplate() == null)
+                    equipment.setChestplate(item);
+                else if (Arrays.stream(GameItems.LEGGING_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
+                        Objects.requireNonNull(equipment).getLeggings() == null)
+                    equipment.setLeggings(item);
+                else if (Arrays.stream(GameItems.BOOTS_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
+                        Objects.requireNonNull(equipment).getBoots() == null)
+                    equipment.setBoots(item);
+                else PlayerManager.giveItem(getPlayer(), item, LanguageManager.errors.inventoryFull);
+            }
+        PlayerManager.giveItem(getPlayer(), GameItems.shop(), LanguageManager.errors.inventoryFull);
+    }
+
+    /**
+     * Sets up attributes properly after dying or first spawning.
+     */
+    public void setupAttributes() {
+        Random r = new Random();
+
+        // Set health for people with giant kits
+        if ((Kit.giant().setKitLevel(1).equals(getKit()) ||
+                Kit.giant().setKitLevel(1).equals(getKit2())) && !isSharing())
+            Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+                    .addModifier(new AttributeModifier("Giant1", 2,
+                            AttributeModifier.Operation.ADD_NUMBER));
+        else if ((Kit.giant().setKitLevel(2).equals(getKit()) ||
+                Kit.giant().setKitLevel(2).equals(getKit2())) && !isSharing())
+            Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+                    .addModifier(new AttributeModifier("Giant2", 4,
+                            AttributeModifier.Operation.ADD_NUMBER));
+        else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT2))) {
+            Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+                    .addModifier(new AttributeModifier("Giant2", 4,
+                            AttributeModifier.Operation.ADD_NUMBER));
+            PlayerManager.notifySuccess(getPlayer(), LanguageManager.messages.effectShare);
+        }
+        else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT1))) {
+            Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+                    .addModifier(new AttributeModifier("Giant1", 2,
+                            AttributeModifier.Operation.ADD_NUMBER));
+            PlayerManager.notifySuccess(getPlayer(), LanguageManager.messages.effectShare);
+        }
+
+        // Set health for people with health boost and are boosted
+        if (isBoosted() && PlayerManager.hasAchievement(getID(), Achievement.topWave9().getID()))
+            Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+                    .addModifier(new AttributeModifier("HealthBoost", 2,
+                            AttributeModifier.Operation.ADD_NUMBER));
+
+        // Set health for people with dwarf challenge
+        if (getChallenges().contains(Challenge.dwarf()))
+            Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+                    .addModifier(new AttributeModifier("Dwarf", -.5,
+                            AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+
+        // Make sure new health is set up correctly
+        getPlayer().setHealth(
+                Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+                        .getValue());
+
+        // Give blindness to people with that challenge
+        if (getChallenges().contains(Challenge.blind()))
+            getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999, 0));
     }
 }

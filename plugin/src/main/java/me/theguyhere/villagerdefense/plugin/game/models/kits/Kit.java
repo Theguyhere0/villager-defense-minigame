@@ -97,10 +97,7 @@ public class Kit {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Kit kit = (Kit) o;
-        return level == kit.level && Objects.equals(name, kit.name) && kitType == kit.kitType &&
-                Objects.equals(ID, kit.ID) && Objects.equals(masterDescription, kit.masterDescription) &&
-                Objects.equals(descriptionsMap, kit.descriptionsMap) && buttonMaterial == kit.buttonMaterial &&
-                Objects.equals(pricesMap, kit.pricesMap) && Objects.equals(itemsMap, kit.itemsMap);
+        return level == kit.level && Objects.equals(ID, kit.ID);
     }
 
     @Override

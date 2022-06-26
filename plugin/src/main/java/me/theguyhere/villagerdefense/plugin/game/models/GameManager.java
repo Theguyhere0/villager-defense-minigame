@@ -126,12 +126,7 @@ public class GameManager {
 		if (manager == null)
 			return;
 		Scoreboard board = manager.getNewScoreboard();
-		Arena arena;
-		try {
-				arena = getArena(player.getPlayer());
-		} catch (ArenaNotFoundException e) {
-			return;
-		}
+		Arena arena = player.getArena();
 
 		// Create score board
 		Objective obj = board.registerNewObjective("VillagerDefense", "dummy",

@@ -4,9 +4,8 @@ import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
-import me.theguyhere.villagerdefense.plugin.events.ReloadBoardsEvent;
+import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.*;
@@ -159,8 +158,7 @@ public class GameListener implements Listener {
 		}
 
 		// Update scoreboards
-		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-				Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)));
+		arena.updateScoreboards();
 	}
 
 	// Stop automatic game mode switching between worlds
@@ -428,7 +426,7 @@ public class GameListener implements Listener {
 		if (!ent.hasMetadata("VD") && !(ent instanceof Player))
 			return;
 
-		// Cancel damage to villager
+		// Cancel damage to friendly mobs
 		if ((ent instanceof Villager || ent instanceof Wolf || ent instanceof IronGolem) && damager instanceof Player)
 			e.setCancelled(true);
 
@@ -529,13 +527,14 @@ public class GameListener implements Listener {
 			});
 
 			// Update scoreboards
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-					Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)));
+			arena.updateScoreboards();
 
 			// Check for game end condition
-			if (arena.getAlive() == 0 && arena.getStatus() == ArenaStatus.ACTIVE)
-				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-						Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
+			if (arena.getAlive() == 0)
+				try {
+					arena.endGame();
+				} catch (ArenaException ignored) {
+				}
 		}
 	}
 
@@ -685,13 +684,14 @@ public class GameListener implements Listener {
 		});
 
 		// Update scoreboards
-		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-				Bukkit.getPluginManager().callEvent(new ReloadBoardsEvent(arena)));
+		arena.updateScoreboards();
 
 		// Check for game end condition
-		if (arena.getAlive() == 0 && arena.getStatus() == ArenaStatus.ACTIVE)
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-					Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
+		if (arena.getAlive() == 0)
+			try {
+				arena.endGame();
+			} catch (ArenaException ignored) {
+			}
 	}
 
 	// Update player kill counter
