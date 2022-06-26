@@ -3,10 +3,8 @@ package me.theguyhere.villagerdefense.plugin.game.models.achievements;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidAchievementReqValException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
@@ -73,12 +71,7 @@ public class AchievementChecker {
         if (achievement.getType() != AchievementType.INSTANCE)
             return false;
 
-        Arena arena;
-        try {
-            arena = GameManager.getArena(player.getPlayer());
-        } catch (ArenaNotFoundException e) {
-            return false;
-        }
+        Arena arena = player.getArena();
         List<Boolean> targets = new ArrayList<>();
 
         // Verify each requirement

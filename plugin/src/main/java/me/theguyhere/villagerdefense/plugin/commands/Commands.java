@@ -2,15 +2,11 @@ package me.theguyhere.villagerdefense.plugin.commands;
 
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
+import me.theguyhere.villagerdefense.plugin.exceptions.*;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.Tasks;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
@@ -32,10 +28,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("deprecation")
@@ -1772,7 +1770,7 @@ public class Commands implements CommandExecutor {
 					// Let player join using phantom kit
 					PlayerManager.teleAdventure(player, arena.getPlayerSpawn().getLocation());
 					gamer.setStatus(PlayerStatus.ALIVE);
-					arena.getTask().giveItems(gamer);
+					gamer.giveItems();
 					GameManager.createBoard(gamer);
 					gamer.setJoinedWave(arena.getCurrentWave());
 					gamer.setKit(Kit.phantom());
@@ -1866,33 +1864,18 @@ public class Commands implements CommandExecutor {
 							return true;
 						}
 
-						// Check if arena already started
-						if (arena.getStatus() != ArenaStatus.WAITING) {
-							PlayerManager.notifyFailure(player, LanguageManager.errors.arenaInProgress);
-							return true;
-						}
-
-						Tasks task = arena.getTask();
-						Map<Runnable, Integer> tasks = task.getTasks();
-						BukkitScheduler scheduler = Bukkit.getScheduler();
-
 						// Bring game to quick start if not already
-						if (tasks.containsKey(task.full10) || tasks.containsKey(task.sec10) &&
-								!scheduler.isQueued(tasks.get(task.sec10))) {
-							PlayerManager.notifyFailure(player, LanguageManager.errors.startingSoon);
-							return true;
-						} else {
-							// Remove all tasks
-							tasks.forEach((runnable, taskId) -> scheduler.cancelTask(taskId));
-							tasks.clear();
+						try {
+							arena.expediteCountDown();
 
-							// Schedule accelerated countdown tasks
-							task.sec10.run();
-							tasks.put(task.sec10, 0); // Dummy task id to note that quick start condition was hit
-							tasks.put(task.sec5,
-									scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec5, Utils.secondsToTicks(5)));
-							tasks.put(task.start,
-									scheduler.scheduleSyncDelayedTask(Main.plugin, task.start, Utils.secondsToTicks(10)));
+							// Notify console
+							CommunicationManager.debugInfo("%s was force started.", 1, arena.getName());
+						} catch (ArenaClosedException e) {
+							PlayerManager.notifyFailure(player, LanguageManager.errors.close);
+						} catch (ArenaStatusException e) {
+							PlayerManager.notifyFailure(player, LanguageManager.errors.arenaInProgress);
+						} catch (ArenaTaskException e) {
+							PlayerManager.notifyFailure(player, LanguageManager.errors.startingSoon);
 						}
 					}
 
@@ -1916,46 +1899,20 @@ public class Commands implements CommandExecutor {
 							return true;
 						}
 
-						// Check if arena already started
-						if (arena.getStatus() != ArenaStatus.WAITING) {
-							notifyFailure(player, LanguageManager.errors.arenaInProgress);
-							return true;
-						}
-
-						// Check if there is at least 1 player
-						if (arena.getActiveCount() == 0) {
-							notifyFailure(player, LanguageManager.errors.arenaNoPlayers);
-							return true;
-						}
-
-						Tasks task = arena.getTask();
-						Map<Runnable, Integer> tasks = task.getTasks();
-						BukkitScheduler scheduler = Bukkit.getScheduler();
-
 						// Bring game to quick start if not already
-						if (tasks.containsKey(task.full10) || tasks.containsKey(task.sec10) &&
-								!scheduler.isQueued(tasks.get(task.sec10))) {
-							if (player != null)
-								PlayerManager.notifyFailure(player,
-										LanguageManager.errors.startingSoon);
-							else CommunicationManager.debugError(LanguageManager.errors.startingSoon,
-									0);
-							return true;
-						} else {
-							// Remove all tasks
-							tasks.forEach((runnable, taskId) -> scheduler.cancelTask(taskId));
-							tasks.clear();
-
-							// Schedule accelerated countdown tasks
-							task.sec10.run();
-							tasks.put(task.sec10, 0); // Dummy task id to note that quick start condition was hit
-							tasks.put(task.sec5, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec5,
-									Utils.secondsToTicks(5)));
-							tasks.put(task.start, scheduler.scheduleSyncDelayedTask(Main.plugin, task.start,
-									Utils.secondsToTicks(10)));
+						try {
+							arena.expediteCountDown();
 
 							// Notify console
-							CommunicationManager.debugInfo(arena.getName() + " was force started.", 1);
+							CommunicationManager.debugInfo("%s was force started.", 1, arena.getName());
+						} catch (ArenaClosedException e) {
+							notifyFailure(player, LanguageManager.errors.close);
+						} catch (ArenaStatusException e) {
+							notifyFailure(player, LanguageManager.errors.arenaInProgress);
+						} catch (ArenaTaskException e) {
+							if (e.getMessage().equals("Arena cannot start countdown without players"))
+								notifyFailure(player, LanguageManager.errors.arenaNoPlayers);
+							else notifyFailure(player, LanguageManager.errors.startingSoon);
 						}
 					}
 
@@ -1985,24 +1942,23 @@ public class Commands implements CommandExecutor {
 							return true;
 						}
 
-						// Check if arena has a game in progress
-						if (arena.getStatus() != ArenaStatus.ACTIVE && arena.getStatus() != ArenaStatus.ENDING) {
+						// Force end
+						try {
+							arena.endGame();
+						} catch (ArenaStatusException e) {
+							if (arena.getStatus() == ArenaStatus.ENDING) {
+								PlayerManager.notifyFailure(player, LanguageManager.errors.endingSoon);
+								return true;
+							}
 							PlayerManager.notifyFailure(player, LanguageManager.errors.noGameEnd);
 							return true;
-						}
-
-						// Check if game is about to end
-						if (arena.getStatus() == ArenaStatus.ENDING) {
-							PlayerManager.notifyFailure(player, LanguageManager.errors.endingSoon);
+						} catch (ArenaException e) {
+							PlayerManager.notifyFailure(player, LanguageManager.errors.close);
 							return true;
 						}
 
-						// Force end
-						Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-								Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
-
 						// Notify console
-						CommunicationManager.debugInfo(arena.getName() + " was force ended.", 1);
+						CommunicationManager.debugInfo("%s was force ended.", 1, arena.getName());
 					}
 
 					// End specific arena
@@ -2025,26 +1981,23 @@ public class Commands implements CommandExecutor {
 							return true;
 						}
 
-						// Check if arena has a game in progress
-						if (arena.getStatus() != ArenaStatus.ACTIVE && arena.getStatus() != ArenaStatus.ENDING) {
-							notifyFailure(player, LanguageManager.errors.noGameEnd);
-							return true;
-						}
-
-						// Check if game is about to end
-						if (arena.getStatus() == ArenaStatus.ENDING) {
-							notifyFailure(player, LanguageManager.errors.endingSoon);
-							return true;
-						}
-
 						// Force end
-						Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-								Bukkit.getPluginManager().callEvent(new GameEndEvent(arena)));
+						try {
+							arena.endGame();
+						} catch (ArenaStatusException e) {
+							if (arena.getStatus() == ArenaStatus.ENDING) {
+								PlayerManager.notifyFailure(player, LanguageManager.errors.endingSoon);
+								return true;
+							}
+							PlayerManager.notifyFailure(player, LanguageManager.errors.noGameEnd);
+							return true;
+						} catch (ArenaException e) {
+							PlayerManager.notifyFailure(player, LanguageManager.errors.close);
+							return true;
+						}
 
 						// Notify console
-						CommunicationManager.debugInfo(arena.getName() + " was force ended.", 1);
-
-						return true;
+						CommunicationManager.debugInfo("%s was force ended.", 1, arena.getName());
 					}
 
 					return true;
@@ -2073,33 +2026,19 @@ public class Commands implements CommandExecutor {
 							return true;
 						}
 
-						// Check if arena already started
-						if (arena.getStatus() != ArenaStatus.WAITING) {
-							PlayerManager.notifyFailure(player,
-									LanguageManager.errors.arenaInProgress);
-							return true;
+						// Reschedule countdown
+						try {
+							arena.restartCountDown();
+
+							// Notify console
+							CommunicationManager.debugInfo("%s was delayed.", 1, arena.getName());
+						} catch (ArenaClosedException e) {
+							PlayerManager.notifyFailure(player, LanguageManager.errors.close);
+						} catch (ArenaStatusException e) {
+							PlayerManager.notifyFailure(player, LanguageManager.errors.arenaInProgress);
+						} catch (ArenaException e) {
+							CommunicationManager.debugErrorShouldNotHappen();
 						}
-
-						Tasks task = arena.getTask();
-						Map<Runnable, Integer> tasks = task.getTasks();
-						BukkitScheduler scheduler = Bukkit.getScheduler();
-
-						// Remove all tasks
-						tasks.forEach((runnable, taskId) -> scheduler.cancelTask(taskId));
-						tasks.clear();
-
-						// Reschedule countdown tasks
-						task.min2.run();
-						tasks.put(task.min1, scheduler.scheduleSyncDelayedTask(Main.plugin, task.min1,
-								Utils.secondsToTicks(Utils.minutesToSeconds(1))));
-						tasks.put(task.sec30, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec30,
-								Utils.secondsToTicks(Utils.minutesToSeconds(2) - 30)));
-						tasks.put(task.sec10, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec10,
-								Utils.secondsToTicks(Utils.minutesToSeconds(2) - 10)));
-						tasks.put(task.sec5, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec5,
-								Utils.secondsToTicks(Utils.minutesToSeconds(2) - 5)));
-						tasks.put(task.start, scheduler.scheduleSyncDelayedTask(Main.plugin, task.start,
-								Utils.secondsToTicks(Utils.minutesToSeconds(2))));
 					}
 
 					// Delay specific arena
@@ -2122,41 +2061,19 @@ public class Commands implements CommandExecutor {
 							return true;
 						}
 
-						// Check if arena already started
-						if (arena.getStatus() != ArenaStatus.WAITING) {
+						// Reschedule countdown
+						try {
+							arena.restartCountDown();
+
+							// Notify console
+							CommunicationManager.debugInfo("%s was delayed.", 1, arena.getName());
+						} catch (ArenaClosedException e) {
+							notifyFailure(player, LanguageManager.errors.close);
+						} catch (ArenaStatusException e) {
 							notifyFailure(player, LanguageManager.errors.arenaInProgress);
-							return true;
-						}
-
-						// Check if there is at least 1 player
-						if (arena.getActiveCount() == 0) {
+						} catch (ArenaTaskException e) {
 							notifyFailure(player, LanguageManager.errors.emptyArena);
-							return true;
 						}
-
-						Tasks task = arena.getTask();
-						Map<Runnable, Integer> tasks = task.getTasks();
-						BukkitScheduler scheduler = Bukkit.getScheduler();
-
-						// Remove all tasks
-						tasks.forEach((runnable, taskId) -> scheduler.cancelTask(taskId));
-						tasks.clear();
-
-						// Reschedule countdown tasks
-						task.min2.run();
-						tasks.put(task.min1, scheduler.scheduleSyncDelayedTask(Main.plugin, task.min1,
-								Utils.secondsToTicks(Utils.minutesToSeconds(1))));
-						tasks.put(task.sec30, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec30,
-								Utils.secondsToTicks(Utils.minutesToSeconds(2) - 30)));
-						tasks.put(task.sec10, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec10,
-								Utils.secondsToTicks(Utils.minutesToSeconds(2) - 10)));
-						tasks.put(task.sec5, scheduler.scheduleSyncDelayedTask(Main.plugin, task.sec5,
-								Utils.secondsToTicks(Utils.minutesToSeconds(2) - 5)));
-						tasks.put(task.start, scheduler.scheduleSyncDelayedTask(Main.plugin, task.start,
-								Utils.secondsToTicks(Utils.minutesToSeconds(2))));
-
-						// Notify console
-						CommunicationManager.debugInfo(arena.getName() + " was delayed.", 1);
 					}
 
 					return true;
