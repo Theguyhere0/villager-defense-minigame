@@ -40,10 +40,12 @@ import java.util.stream.Collectors;
 public class Commands implements CommandExecutor {
 	private final FileConfiguration playerData;
 	private final FileConfiguration arenaData;
+	private final FileConfiguration customEffects;
 
 	public Commands() {
 		playerData = Main.getPlayerData();
 		arenaData = Main.getArenaData();
+		customEffects = Main.getCustomEffects();
 	}
 
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label,
@@ -2447,8 +2449,26 @@ public class Commands implements CommandExecutor {
 					}
 
 					// Check if customEffects.yml is outdated
-					if (Main.plugin.getConfig().getInt("customEffects") < Main.customEffectsVersion)
-						notifyManualUpdate(player, "customEffects.yml");
+					if (Main.plugin.getConfig().getInt("customEffects") < 2)
+						try {
+							path = "unlimited.onGameEnd";
+							Objects.requireNonNull(customEffects.getConfigurationSection(path))
+									.getKeys(false).stream().filter(key -> !key.contains("-") && !key.contains("<"))
+									.forEach(key -> {
+										moveData(customEffects, path + ".^" + key, path + "." + key);
+										Main.saveCustomEffects();
+									});
+
+							// Flip flag and update config.yml
+							fixed = true;
+							Main.plugin.getConfig().set("customEffects", 2);
+							Main.plugin.saveConfig();
+
+							// Notify
+							notifyAutoUpdate(player, "customEffects.yml", 2);
+						} catch (Exception e) {
+							notifyManualUpdate(player, "customEffects.yml");
+						}
 
 					// Message to player depending on whether the command fixed anything, then reload if fixed
 					if (!fixed) {
