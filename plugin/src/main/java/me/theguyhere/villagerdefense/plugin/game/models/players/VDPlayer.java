@@ -29,6 +29,11 @@ public class VDPlayer {
     private PlayerStatus status;
     /** The arena that this {@link VDPlayer} belongs in.*/
     private final Arena arena;
+
+    // Important arena stats
+    private int maxHealth;
+    private int currentHealth;
+    private int damage;
     /** Gem balance.*/
     private int gems;
     /** Kill count.*/
@@ -94,6 +99,30 @@ public class VDPlayer {
 
     public void setStatus(PlayerStatus status) {
         this.status = status;
+    }
+
+    public void setMaxHealth(int maxHealth) {
+        this.maxHealth = Math.max(maxHealth, 0);
+        getPlayer().setHealth(currentHealth *
+                Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth);
+    }
+
+    public int getCurrentHealth() {
+        return currentHealth;
+    }
+
+    public void setCurrentHealth(int currentHealth) {
+        this.currentHealth = Math.max(currentHealth, 0);
+        getPlayer().setHealth(currentHealth *
+                Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth);
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public void setDamage(int damage) {
+        this.damage = damage;
     }
 
     public int getGems() {
@@ -333,5 +362,10 @@ public class VDPlayer {
         // Give blindness to people with that challenge
         if (getChallenges().contains(Challenge.blind()))
             getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999, 0));
+
+        // Set up health and damage
+        setMaxHealth(200);
+        setCurrentHealth(200);
+        setDamage(5);
     }
 }

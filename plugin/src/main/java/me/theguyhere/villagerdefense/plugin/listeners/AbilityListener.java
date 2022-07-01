@@ -13,6 +13,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.MobMetadata;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
@@ -873,7 +874,7 @@ public class AbilityListener implements Listener {
         Entity target = e.getTarget();
 
         // Check for arena mobs
-        if (!ent.hasMetadata("VD"))
+        if (!ent.hasMetadata(MobMetadata.VD.name()))
             return;
 
         // Cancel for invisible players
@@ -902,7 +903,7 @@ public class AbilityListener implements Listener {
         Entity damager = e.getDamager();
 
         // Check for arena enemies
-        if (!ent.hasMetadata("VD"))
+        if (!ent.hasMetadata(MobMetadata.VD.name()))
             return;
 
         // Check for player or wolf dealing damage

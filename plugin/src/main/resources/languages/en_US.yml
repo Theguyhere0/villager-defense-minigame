@@ -459,6 +459,7 @@ messages:
   manualUpdateWarn: "%s must be manually updated."
   maxCapacity: "Arena has reached max player capacity."
   minutesLeft: "%s minute(s) until the game starts!"
+  mobName: "Lvl %s %s %s"
   noAutoUpdate: "There was nothing that could be updated automatically."
   noStats: "%s does not have stats."
   offToggle: "OFF"

@@ -94,6 +94,7 @@ public class ArenaListener implements Listener {
             VDPlayer fighter = new VDPlayer(player, arena, false);
             arena.getPlayers().add(fighter);
             arena.refreshPortal();
+            Main.getVillagersTeam().addEntry(player.getUniqueId().toString());
 
             // Add forced challenges
             arena.getForcedChallengeIDs().forEach(challenge ->
@@ -135,6 +136,7 @@ public class ArenaListener implements Listener {
             VDPlayer fighter = new VDPlayer(player, arena, false);
             arena.getPlayers().add(fighter);
             arena.refreshPortal();
+            Main.getVillagersTeam().addEntry(player.getUniqueId().toString());
 
             // Add forced challenges
             arena.getForcedChallengeIDs().forEach(challenge ->
@@ -218,6 +220,8 @@ public class ArenaListener implements Listener {
         // Not spectating
         if (gamer.getStatus() != PlayerStatus.SPECTATOR) {
             UUID playerID = player.getUniqueId();
+            // Remove from team
+            Main.getVillagersTeam().removeEntry(playerID.toString());
 
             // Update player stats
             PlayerManager.setTotalKills(playerID, PlayerManager.getTotalKills(playerID) + gamer.getKills());

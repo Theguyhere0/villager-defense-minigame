@@ -10,7 +10,8 @@ import me.theguyhere.villagerdefense.plugin.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.Mobs;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.MobMetadata;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.Mobs;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
@@ -1956,15 +1957,15 @@ public class Arena {
                 .stream().filter(Objects::nonNull)
                 .filter(ent -> ent instanceof Monster || ent instanceof Hoglin || ent instanceof Phantom ||
                         ent instanceof Slime)
-                .filter(ent -> (!ent.hasMetadata("game") ||
-                        ent.getMetadata("game").get(0).asInt() != getGameID()))
+                .filter(ent -> (!ent.hasMetadata(MobMetadata.GAME.name()) ||
+                        ent.getMetadata(MobMetadata.GAME.name()).get(0).asInt() != getGameID()))
                 .forEach(System.out::println);
         Objects.requireNonNull(getCorner1().getWorld()).getNearbyEntities(getBounds())
                 .stream().filter(Objects::nonNull)
                 .filter(ent -> ent instanceof Monster || ent instanceof Hoglin || ent instanceof Phantom ||
                         ent instanceof Slime)
-                .filter(ent -> (!ent.hasMetadata("wave") ||
-                        ent.getMetadata("wave").get(0).asInt() != getCurrentWave()))
+                .filter(ent -> (!ent.hasMetadata(MobMetadata.WAVE.name()) ||
+                        ent.getMetadata(MobMetadata.WAVE.name()).get(0).asInt() != getCurrentWave()))
                 .forEach(Entity::remove);
 
         // Revive dead players
@@ -2413,10 +2414,10 @@ public class Arena {
     }
 
     public double getCurrentDifficulty() {
-        double difficulty = Math.pow(Math.E, Math.pow(Math.max(currentWave - 1, 0), .55) /
-                (5 - getDifficultyMultiplier() / 2d));
+        double difficulty = Math.pow(Math.E, Math.pow(Math.max(currentWave - 1, 0), .4) /
+                (4 - getDifficultyMultiplier() / 2d));
         if (hasDynamicDifficulty())
-            difficulty *= Math.sqrt(.1 * getActiveCount() + .6);
+            difficulty *= Math.pow(.1 * getActiveCount() + .6, .2);
         return difficulty;
     }
 
@@ -2854,7 +2855,7 @@ public class Arena {
     public void setMonsterGlow() {
         Objects.requireNonNull(getPlayerSpawn().getLocation().getWorld())
                 .getNearbyEntities(getBounds()).stream().filter(Objects::nonNull)
-                .filter(entity -> entity.hasMetadata("VD"))
+                .filter(entity -> entity.hasMetadata(MobMetadata.VD.name()))
                 .filter(entity -> entity instanceof Monster || entity instanceof Slime ||
                         entity instanceof Hoglin || entity instanceof Phantom)
                 .forEach(entity -> entity.setGlowing(true));
@@ -2932,15 +2933,15 @@ public class Arena {
         monsters = (int) Objects.requireNonNull(getPlayerSpawn().getLocation().getWorld())
                 .getNearbyEntities(getBounds()).stream()
                 .filter(Objects::nonNull)
-                .filter(entity -> entity.hasMetadata("VD"))
+                .filter(entity -> entity.hasMetadata(MobMetadata.VD.name()))
                 .filter(entity -> entity instanceof Monster || entity instanceof Slime || entity instanceof Hoglin ||
                         entity instanceof Phantom).count();
         villagers = (int) getPlayerSpawn().getLocation().getWorld().getNearbyEntities(getBounds()).stream()
                 .filter(Objects::nonNull)
-                .filter(entity -> entity.hasMetadata("VD")).filter(entity -> entity instanceof Villager).count();
+                .filter(entity -> entity.hasMetadata(MobMetadata.VD.name())).filter(entity -> entity instanceof Villager).count();
         golems = (int) getPlayerSpawn().getLocation().getWorld().getNearbyEntities(getBounds()).stream()
                 .filter(Objects::nonNull)
-                .filter(entity -> entity.hasMetadata("VD")).filter(entity -> entity instanceof IronGolem).count();
+                .filter(entity -> entity.hasMetadata(MobMetadata.VD.name())).filter(entity -> entity instanceof IronGolem).count();
         boolean calibrated = false;
 
         // Update if out of cal

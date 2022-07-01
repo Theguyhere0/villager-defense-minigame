@@ -727,6 +727,7 @@ public class LanguageManager {
         public final @NotNull String manualUpdateWarn;
         public final @NotNull String maxCapacity;
         public final @NotNull String minutesLeft;
+        public final @NotNull String mobName;
         public final @NotNull String noAutoUpdate;
         public final @NotNull String noStats;
         public final @NotNull String offToggle;
@@ -833,6 +834,7 @@ public class LanguageManager {
             manualUpdateWarn = getConfigString("manualUpdateWarn");
             maxCapacity = getConfigString("maxCapacity");
             minutesLeft = getConfigString("minutesLeft");
+            mobName = getConfigString("mobName");
             noAutoUpdate = getConfigString("noAutoUpdate");
             noStats = getConfigString("noStats");
             offToggle = getConfigString("offToggle");

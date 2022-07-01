@@ -42,6 +42,8 @@ public class Main extends JavaPlugin {
 	private static boolean loaded = false;
 	private static final List<String> unloadedWorlds = new ArrayList<>();
 	private static Economy economy;
+	private static Team monsters;
+	private static Team villagers;
 
 	// Global state variables
 	private static boolean outdated = false; // DO NOT CHANGE
@@ -50,7 +52,7 @@ public class Main extends JavaPlugin {
 	public static final int arenaDataVersion = 7;
 	public static final int playerDataVersion = 3;
 	public static final int spawnTableVersion = 1;
-	public static final int languageFileVersion = 20;
+	public static final int languageFileVersion = 21;
 	public static final int defaultSpawnVersion = 2;
 	public static final int customEffectsVersion = 2;
 
@@ -106,18 +108,23 @@ public class Main extends JavaPlugin {
 			nmsManager.injectPacketListener(player, new PacketListenerImp());
 
 		// Set teams
-		if (Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("monsters") == null) {
-			Team monsters = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard()
+		monsters = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("monsters");
+		if (monsters == null)
+			monsters = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard()
 					.registerNewTeam("monsters");
-			monsters.setColor(ChatColor.RED);
-			monsters.setDisplayName(ChatColor.RED + "Monsters");
-		}
-		if (Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("villagers") == null) {
-			Team villagers = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard()
+		monsters.setColor(ChatColor.RED);
+		monsters.setDisplayName(ChatColor.RED + "Monsters");
+		monsters.setAllowFriendlyFire(false);
+		monsters.setCanSeeFriendlyInvisibles(true);
+
+		villagers = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("villagers");
+		if (villagers == null)
+			villagers = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard()
 					.registerNewTeam("villagers");
-			villagers.setColor(ChatColor.GREEN);
-			villagers.setDisplayName(ChatColor.GREEN + "Villagers");
-		}
+		villagers.setColor(ChatColor.GREEN);
+		villagers.setDisplayName(ChatColor.GREEN + "Villagers");
+		villagers.setAllowFriendlyFire(false);
+		villagers.setCanSeeFriendlyInvisibles(true);
 
 		checkArenaNameAndGatherUnloadedWorlds();
 
@@ -192,6 +199,14 @@ public class Main extends JavaPlugin {
 					"loaded yet: " + unloadedWorlds, 0);
 		} else CommunicationManager.debugConfirm("All worlds fully loaded. The plugin is properly initialized.",
 				0);
+	}
+
+	public static Team getMonstersTeam() {
+		return monsters;
+	}
+
+	public static Team getVillagersTeam() {
+		return villagers;
 	}
 
 	// Returns arena data

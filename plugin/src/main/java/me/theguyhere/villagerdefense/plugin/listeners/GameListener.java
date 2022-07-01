@@ -8,12 +8,18 @@ import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.game.models.*;
+import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
+import me.theguyhere.villagerdefense.plugin.game.models.EnchantingBook;
+import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
+import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.MobMetadata;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.Mobs;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
@@ -36,6 +42,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.BoundingBox;
 
 import java.util.*;
@@ -47,20 +54,30 @@ public class GameListener implements Listener {
 		LivingEntity ent = e.getEntity();
 
 		// Check for arena mobs
-		if (!ent.hasMetadata("VD"))
+		if (!ent.hasMetadata(MobMetadata.VD.name()))
 			return;
+
+		// Attempt to remove from teams
+		try {
+			Main.getMonstersTeam().removeEntry(ent.getUniqueId().toString());
+		} catch (Exception ignored) {
+		}
+		try {
+			Main.getVillagersTeam().removeEntry(ent.getUniqueId().toString());
+		} catch (Exception ignored) {
+		}
 
 		Arena arena;
 		try {
-			arena = GameManager.getArena(ent.getMetadata("VD").get(0).asInt());
+			arena = GameManager.getArena(ent.getMetadata(MobMetadata.VD.name()).get(0).asInt());
 		} catch (ArenaNotFoundException err) {
 			return;
 		}
 
 		// Check for right game
-		if (!ent.hasMetadata("game"))
+		if (!ent.hasMetadata(MobMetadata.GAME.name()))
 			return;
-		if (ent.getMetadata("game").get(0).asInt() != arena.getGameID())
+		if (ent.getMetadata(MobMetadata.GAME.name()).get(0).asInt() != arena.getGameID())
 			return;
 
 		// Arena enemies not part of an active arena
@@ -70,9 +87,9 @@ public class GameListener implements Listener {
 		}
 
 		// Check for right wave
-		if (!ent.hasMetadata("wave"))
+		if (!ent.hasMetadata(MobMetadata.WAVE.name()))
 			return;
-		if (ent.getMetadata("wave").get(0).asInt() != arena.getCurrentWave())
+		if (ent.getMetadata(MobMetadata.WAVE.name()).get(0).asInt() != arena.getCurrentWave())
 			return;
 
 		// Clear normal drops
@@ -185,78 +202,171 @@ public class GameListener implements Listener {
 			e.setCancelled(true);
 	}
 
-	// Update health bar when damage is dealt by entity
+	// Update health when damage is dealt by entity
 	@EventHandler
 	public void onHurt(EntityDamageByEntityEvent e) {
-		Entity ent = e.getEntity();
-
-		// Check for arena enemies
-		if (!ent.hasMetadata("VD"))
+		Entity interimVictim = e.getEntity();
+		Entity interimDamager = e.getDamager() instanceof Projectile ?
+				(Entity) ((Projectile) e.getDamager()).getShooter() : e.getDamager();
+		if (!(interimVictim instanceof LivingEntity))
 			return;
+		if (!(interimDamager instanceof LivingEntity))
+			return;
+		LivingEntity victim = (LivingEntity) interimVictim;
+		LivingEntity damager = (LivingEntity) interimDamager;
+		Player player = null;
+		VDPlayer gamer = null;
 
-		Entity damager = e.getDamager();
+		// Player getting hurt
+		if (victim instanceof Player) {
+			player = (Player) victim;
 
-		Player player;
-		VDPlayer gamer;
+			// Check that damager is VD entity
+			if (!damager.hasMetadata(MobMetadata.VD.name()))
+				return;
 
-		// Check for player damager, then get player
-		if (damager instanceof Player)
-			player = (Player) damager;
-		else if (damager instanceof Projectile &&
-				((Projectile) damager).getShooter() instanceof Player)
-			player = (Player) ((Projectile) damager).getShooter();
-		else player = null;
-
-		// Attempt to get VDplayer
-		if (player != null) {
+			// Attempt to get VDplayer
 			try {
 				gamer = GameManager.getArena(player).getPlayer(player);
 			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
 			}
-		} else gamer = null;
 
-		// Check for pacifist challenge
-		if (gamer != null)
-			if (gamer.getChallenges().contains(Challenge.pacifist()))
-				// Cancel if not an enemy of the player
-				if (!gamer.getEnemies().contains(ent.getUniqueId()))
-					return;
-
-		// Ignore wolves
-		if (ent instanceof Wolf)
-			return;
-
-		// Ignore phantom damage to villager
-		if ((ent instanceof Villager || ent instanceof IronGolem) && damager instanceof Player)
-			return;
-
-		// Ignore phantom damage to monsters
-		if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin || ent instanceof Phantom) &&
-				(damager instanceof Monster || damager instanceof Hoglin))
-			return;
-
-		// Check for phantom projectile damage
-		if (damager instanceof Projectile) {
-			if ((ent instanceof Villager || ent instanceof IronGolem) &&
-					((Projectile) damager).getShooter() instanceof Player)
+			// Avoid phantom damage effects
+			if (Main.getVillagersTeam().hasEntry(damager.getUniqueId().toString()))
 				return;
-			if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin || ent instanceof Phantom) &&
-					((Projectile) damager).getShooter() instanceof Monster)
+
+			// Cancel and capture original damage
+			int damage = (int) e.getDamage();
+			e.setDamage(0);
+
+			// Custom damage mechanics
+			if (System.currentTimeMillis() < damager.getMetadata(MobMetadata.LAST_STRIKE.name()).get(0).asLong() +
+					damager.getMetadata(MobMetadata.ATTACK_SPEED.name()).get(0).asDouble() * 1000) {
+				e.setCancelled(true);
 				return;
+			}
+			damager.setMetadata(MobMetadata.LAST_STRIKE.name(),
+					new FixedMetadataValue(Main.plugin, System.currentTimeMillis()));
+			Random r = new Random();
+			damage *= (1 + (r.nextDouble() * 2 - 1) *
+					damager.getMetadata(MobMetadata.DAMAGE_SPREAD.name()).get(0).asDouble());
+			int armor = 0; // PLACEHOLDER
+			double toughness = 0; // PLACEHOLDER
+			if (AttackType.NORMAL.name().equals(damager.getMetadata(MobMetadata.ATTACK_TYPE.name()).get(0).asString()))
+				damage -= Math.min(damage, armor);
+			else damage *= Math.max(0, 1 - toughness);
+			gamer.setCurrentHealth(gamer.getCurrentHealth() - damage);
 		}
 
-		// Ignore bosses
-		if (ent instanceof Wither)
-			return;
+		// VD entity getting hurt
+		else if (victim.hasMetadata(MobMetadata.VD.name())) {
+			// Check for player damager, then get player
+			if (damager instanceof Player)
+				player = (Player) damager;
+			else if (damager instanceof Projectile &&
+					((Projectile) damager).getShooter() instanceof Player)
+				player = (Player) ((Projectile) damager).getShooter();
 
-		LivingEntity n = (LivingEntity) ent;
-		double maxHealth = Objects.requireNonNull(n.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue();
+			// Attempt to get VDplayer
+			if (player != null) {
+				try {
+					gamer = GameManager.getArena(player).getPlayer(player);
+				} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+					return;
+				}
+			}
 
-		// Update health bar
-		if (ent instanceof IronGolem || ent instanceof Ravager)
-			ent.setCustomName(Mobs.healthBar(maxHealth, n.getHealth() - e.getFinalDamage(), 10));
-		else ent.setCustomName(Mobs.healthBar(maxHealth, n.getHealth() - e.getFinalDamage(), 5));
+			// Check that damager is VD entity or player
+			if (!damager.hasMetadata(MobMetadata.VD.name()) && gamer == null)
+				return;
+
+			// Enemy getting hurt
+			if (Main.getMonstersTeam().hasEntry(victim.getUniqueId().toString())) {
+				// Avoid phantom damage effects
+				if (Main.getMonstersTeam().hasEntry(damager.getUniqueId().toString()))
+					return;
+
+				// Check for pacifist challenge and not an enemy
+				if (gamer != null && gamer.getChallenges().contains(Challenge.pacifist()) &&
+						!gamer.getEnemies().contains(damager.getUniqueId()))
+					return;
+
+				// Cancel and capture original damage
+				int damage = (int) e.getDamage();
+				e.setDamage(0);
+
+				// Custom damage mechanics
+				Random r = new Random();
+
+				// Damage dealt by player
+				if (gamer != null) {
+					damage = gamer.getDamage();
+					int armor = (int) Objects.requireNonNull(victim.getAttribute(Attribute.GENERIC_ARMOR)).getValue();
+					double toughness = Objects.requireNonNull(victim.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS))
+							.getValue();
+//					if (AttackType.NORMAL.name().equals(damager.getMetadata(MobMetadata.ATTACK_TYPE.name()).get(0).asString()))
+						damage -= Math.min(damage, armor);
+//					else damage *= Math.max(0, 1 - toughness);
+					victim.setHealth(victim.getHealth() - damage);
+				}
+
+				// Damage not dealt by player
+				else {
+					if (System.currentTimeMillis() < damager.getMetadata(MobMetadata.LAST_STRIKE.name()).get(0).asLong() +
+							damager.getMetadata(MobMetadata.ATTACK_SPEED.name()).get(0).asDouble() * 1000) {
+						e.setCancelled(true);
+						return;
+					}
+					damager.setMetadata(MobMetadata.LAST_STRIKE.name(),
+							new FixedMetadataValue(Main.plugin, System.currentTimeMillis()));
+					damage *= (1 + (r.nextDouble() * 2 - 1) *
+							damager.getMetadata(MobMetadata.DAMAGE_SPREAD.name()).get(0).asDouble());
+					int armor = (int) Objects.requireNonNull(victim.getAttribute(Attribute.GENERIC_ARMOR)).getValue();
+					double toughness = Objects.requireNonNull(victim.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS))
+							.getValue();
+					if (AttackType.NORMAL.name().equals(
+							damager.getMetadata(MobMetadata.ATTACK_TYPE.name()).get(0).asString()))
+						damage -= Math.min(damage, armor);
+					else damage *= Math.max(0, 1 - toughness);
+					victim.setHealth(victim.getHealth() - damage);
+				}
+			}
+
+			// Friendly getting hurt
+			if (Main.getVillagersTeam().hasEntry(victim.getUniqueId().toString())) {
+				// Avoid phantom damage effects
+				if (Main.getVillagersTeam().hasEntry(damager.getUniqueId().toString()))
+					return;
+
+				// Cancel and capture original damage
+				int damage = (int) e.getDamage();
+				e.setDamage(0);
+
+				// Custom damage mechanics
+				if (System.currentTimeMillis() < damager.getMetadata(MobMetadata.LAST_STRIKE.name()).get(0).asLong() +
+						damager.getMetadata(MobMetadata.ATTACK_SPEED.name()).get(0).asDouble() * 1000) {
+					e.setCancelled(true);
+					return;
+				}
+				damager.setMetadata(MobMetadata.LAST_STRIKE.name(),
+						new FixedMetadataValue(Main.plugin, System.currentTimeMillis()));
+				Random r = new Random();
+				damage *= (1 + (r.nextDouble() * 2 - 1) *
+						damager.getMetadata(MobMetadata.DAMAGE_SPREAD.name()).get(0).asDouble());
+				int armor = (int) Objects.requireNonNull(victim.getAttribute(Attribute.GENERIC_ARMOR)).getValue();
+				double toughness = Objects.requireNonNull(victim.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS))
+						.getValue();
+				if (AttackType.NORMAL.name().equals(
+						damager.getMetadata(MobMetadata.ATTACK_TYPE.name()).get(0).asString()))
+					damage -= Math.min(damage, armor);
+				else damage *= Math.max(0, 1 - toughness);
+				victim.setHealth(victim.getHealth() - damage);
+			}
+
+			// Update health bar
+			victim.setCustomName(Mobs.formattedName(victim));
+		}
 	}
 
 	// Update health bar when damage is dealt not by another entity
@@ -265,7 +375,7 @@ public class GameListener implements Listener {
 		Entity ent = e.getEntity();
 
 		// Check for arena enemies
-		if (!ent.hasMetadata("VD"))
+		if (!ent.hasMetadata(MobMetadata.VD.name()))
 			return;
 
 		// Ignore wolves
@@ -283,13 +393,8 @@ public class GameListener implements Listener {
 		if (ent instanceof Wither)
 			return;
 
-		LivingEntity n = (LivingEntity) ent;
-		double maxHealth = Objects.requireNonNull(n.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue();
-
 		// Update health bar
-		if (ent instanceof IronGolem || ent instanceof Ravager)
-			ent.setCustomName(Mobs.healthBar(maxHealth, n.getHealth() - e.getFinalDamage(), 10));
-		else ent.setCustomName(Mobs.healthBar(maxHealth, n.getHealth() - e.getFinalDamage(), 5));
+		ent.setCustomName(Mobs.formattedName((LivingEntity) ent));
 	}
 
 	// Prevent players from going hungry while waiting for an arena to start
@@ -314,7 +419,7 @@ public class GameListener implements Listener {
 		Entity ent = e.getEntity();
 
 		// Check for arena enemies
-		if (!ent.hasMetadata("VD"))
+		if (!ent.hasMetadata(MobMetadata.VD.name()))
 			return;
 
 		// Ignore wolves and players
@@ -325,14 +430,7 @@ public class GameListener implements Listener {
 		if (ent instanceof Wither)
 			return;
 
-		LivingEntity n = (LivingEntity) ent;
-		double maxHealth = Objects.requireNonNull(n.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue();
-		double modifiedHealth = n.getHealth() + e.getAmount();
-
-		// Update health bar
-		if (ent instanceof IronGolem || ent instanceof Ravager)
-			ent.setCustomName(Mobs.healthBar(maxHealth, Math.min(modifiedHealth, maxHealth), 10));
-		else ent.setCustomName(Mobs.healthBar(maxHealth, Math.min(modifiedHealth, maxHealth), 5));
+		ent.setCustomName(Mobs.formattedName((LivingEntity) ent));
 	}
 
 	// Open shop, kit selecting menu, or leave
@@ -423,7 +521,7 @@ public class GameListener implements Listener {
 		}
 
 		// Check for special mobs
-		if (!ent.hasMetadata("VD") && !(ent instanceof Player))
+		if (!ent.hasMetadata(MobMetadata.VD.name()) && !(ent instanceof Player))
 			return;
 
 		// Cancel damage to friendly mobs
@@ -704,7 +802,7 @@ public class GameListener implements Listener {
 		if (((LivingEntity) e.getEntity()).getHealth() > e.getFinalDamage()) return;
 
 		// Check damage was done to monster
-		if (!(e.getEntity().hasMetadata("VD"))) return;
+		if (!(e.getEntity().hasMetadata(MobMetadata.VD.name()))) return;
 
 		// Prevent wither roses from being created
 		if (e.getDamager() instanceof WitherSkull || e.getDamager() instanceof Wither) {
@@ -820,7 +918,7 @@ public class GameListener implements Listener {
 	@EventHandler
 	public void onSplit(SlimeSplitEvent e) {
 		Entity ent = e.getEntity();
-		if (!ent.hasMetadata("VD"))
+		if (!ent.hasMetadata(MobMetadata.VD.name()))
 			return;
 		e.setCancelled(true);
 	}
@@ -835,7 +933,7 @@ public class GameListener implements Listener {
 			return;
 
 		// Check for arena mobs
-		if (ent.hasMetadata("VD"))
+		if (ent.hasMetadata(MobMetadata.VD.name()))
 			e.setCancelled(true);
 	}
 
@@ -911,7 +1009,9 @@ public class GameListener implements Listener {
 			location.setY(location.getY() + 1);
 
 			// Spawn and tame the wolf
-			Mobs.setWolf(Main.plugin, arena, gamer, (Wolf) player.getWorld().spawnEntity(location, EntityType.WOLF));
+			Wolf wolf = (Wolf) player.getWorld().spawnEntity(location, EntityType.WOLF);
+			Mobs.setWolf(Main.plugin, arena, gamer, wolf);
+			Main.getVillagersTeam().addEntry(wolf.getUniqueId().toString());
 			return;
 		}
 
@@ -948,7 +1048,9 @@ public class GameListener implements Listener {
 			location.setY(location.getY() + 1);
 
 			// Spawn iron golem
-			Mobs.setGolem(Main.plugin, arena, (IronGolem) player.getWorld().spawnEntity(location, EntityType.IRON_GOLEM));
+			IronGolem ironGolem = (IronGolem) player.getWorld().spawnEntity(location, EntityType.IRON_GOLEM);
+			Mobs.setGolem(Main.plugin, arena, ironGolem);
+			Main.getVillagersTeam().addEntry(ironGolem.getUniqueId().toString());
 			return;
 		}
 
@@ -1179,7 +1281,7 @@ public class GameListener implements Listener {
 			return;
 
 		// Cancel if special wolf
-		if (e.getEntity().hasMetadata("VD"))
+		if (e.getEntity().hasMetadata(MobMetadata.VD.name()))
 			e.setCancelled(true);
 	}
 
@@ -1193,7 +1295,7 @@ public class GameListener implements Listener {
 			return;
 
 		// Check for special mob
-		if (!ent.hasMetadata("VD"))
+		if (!ent.hasMetadata(MobMetadata.VD.name()))
 			return;
 
 		// Check if player is playing in an arena
@@ -1284,7 +1386,7 @@ public class GameListener implements Listener {
 		Entity ent = e.getEntity();
 
 		// Check for special mob
-		if (!ent.hasMetadata("VD"))
+		if (!ent.hasMetadata(MobMetadata.VD.name()))
 			return;
 
 		e.setCancelled(true);
@@ -1296,7 +1398,7 @@ public class GameListener implements Listener {
 		Entity ent = e.getEntity();
 
 		// Check for special mob
-		if (!ent.hasMetadata("VD"))
+		if (!ent.hasMetadata(MobMetadata.VD.name()))
 			return;
 
 		e.setCancelled(true);

@@ -4,6 +4,7 @@ import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.MobMetadata;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import org.bukkit.entity.LivingEntity;
@@ -43,7 +44,7 @@ public class BonusListener implements Listener {
         if (!(e.getEntity() instanceof LivingEntity)) return;
 
         // Check damage was done to monster
-        if (!(e.getEntity().hasMetadata("VD"))) return;
+        if (!(e.getEntity().hasMetadata(MobMetadata.VD.name()))) return;
 
         // Check that a player caused the damage
         if (!(e.getDamager() instanceof Player || e.getDamager() instanceof Projectile)) return;
