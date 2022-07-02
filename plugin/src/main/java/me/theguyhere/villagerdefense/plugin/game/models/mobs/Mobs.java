@@ -3,6 +3,7 @@ package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
+import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaSpawn;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaSpawnType;
@@ -18,9 +19,12 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -1039,23 +1043,41 @@ public class Mobs {
         villager.setMetadata(MobMetadata.VD.name(), new FixedMetadataValue(Main.plugin, arena.getId()));
     }
 
+    // Minions
     public static void spawnZombie(Arena arena, Location location) {
-        int level = getLevel(arena.getCurrentDifficulty(), 4, 0);
+        int level = getLevel(arena.getCurrentDifficulty(), 1, 0);
         Zombie ent = (Zombie) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.ZOMBIE);
+        ent.setAdult();
         setHealth(ent, 100, 10, level, 2);
         setArmor(ent, 5, 3, level, 2);
         setToughness(ent, 0, .04, level, 8);
-        setNormalAttackType(ent);
         setDamage(ent, 20, 3, level, 2, .1);
-        setLoot(ent, 25, 1.15, level, 2, .2);
-        ent.setAdult();
+        setNormalAttackType(ent);
         setModerateAttackSpeed(ent);
         setModerateKnockback(ent);
         setMediumWeight(ent);
         setSlowLandSpeed(ent);
         // TODO: Set and implement target priority
         // TODO: Set visual armor and weapons
+        setLoot(ent, 25, 1.15, level, 2, .2);
         setMinion(arena, ent, level, "Zombie");
+    }
+    public static void spawnSpider(Arena arena, Location location) {
+        int level = getLevel(arena.getCurrentDifficulty(), 1, 0);
+        Spider ent = (Spider) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.SPIDER);
+        setHealth(ent, 100, 10, level, 2);
+        setArmor(ent, 5, 2, level, 2);
+        setToughness(ent, .08, .04, level, 2);
+        setDamage(ent, 10, 3, level, 2, .1);
+        setPenetratingAttackType(ent);
+        setFastAttackSpeed(ent);
+        setNoneKnockback(ent);
+        setLightWeight(ent);
+        setFastLandSpeed(ent);
+        // TODO: Set and implement target priority
+        // TODO: Set visual armor and weapons
+        setLoot(ent, 25, 1.15, level, 2, .2);
+        setMinion(arena, ent, level, "Spider");
     }
 
     public static void setHusk(Arena arena, Husk husk) {
@@ -1084,10 +1106,6 @@ public class Mobs {
         setAxe(arena, vindicator);
         vindicator.setPatrolLeader(false);
         vindicator.setCanJoinRaid(false);
-    }
-
-    public static void setSpider(Arena arena, Spider spider) {
-        setMinion(arena, spider);
     }
 
     public static void setCaveSpider(Arena arena, CaveSpider caveSpider) {
@@ -1414,9 +1432,8 @@ public class Mobs {
                     ), delay);
                     break;
                 case "spid":
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Mobs.setSpider(arena,
-                            (Spider) Objects.requireNonNull(ground.getWorld()).spawnEntity(ground, EntityType.SPIDER)
-                    ), delay);
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Mobs.spawnSpider(arena, ground),
+                            delay);
                     break;
                 case "cspd":
                     Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Mobs.setCaveSpider(arena,
@@ -1565,7 +1582,7 @@ public class Mobs {
     }
 
     // Function for Gaussian level distribution, with restrictions
-    private static int getLevel(double difficulty, int rate, int start) {
+    private static int getLevel(double difficulty, double rate, int start) {
         Random r = new Random();
         double mult = 1 + .1 * Math.max(Math.min(r.nextGaussian(), 3), -3); // Mean 100%, SD 10%, restrict 30%
         return Math.max((int) ((difficulty * mult - start) / rate), 1);
@@ -1641,10 +1658,10 @@ public class Mobs {
         livingEntity.setMetadata(MobMetadata.ATTACK_SPEED.name(), new FixedMetadataValue(Main.plugin, .7));
     }
     private static void setFastAttackSpeed(LivingEntity livingEntity) {
-        livingEntity.setMetadata(MobMetadata.ATTACK_SPEED.name(), new FixedMetadataValue(Main.plugin, .45));
+        livingEntity.setMetadata(MobMetadata.ATTACK_SPEED.name(), new FixedMetadataValue(Main.plugin, .4));
     }
     private static void setVeryFastAttackSpeed(LivingEntity livingEntity) {
-        livingEntity.setMetadata(MobMetadata.ATTACK_SPEED.name(), new FixedMetadataValue(Main.plugin, .25));
+        livingEntity.setMetadata(MobMetadata.ATTACK_SPEED.name(), new FixedMetadataValue(Main.plugin, .2));
     }
 
 
@@ -1675,7 +1692,7 @@ public class Mobs {
         Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
                 .addModifier(new AttributeModifier(
                         MobMetadata.KNOCKBACK.name(),
-                        2.5 - initial,
+                        2 - initial,
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }
@@ -1760,7 +1777,7 @@ public class Mobs {
         Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .addModifier(new AttributeModifier(
                         MobMetadata.SPEED.name(),
-                        .12 - initial,
+                        .1 - initial,
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }

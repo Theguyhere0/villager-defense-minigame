@@ -1,5 +1,9 @@
 package me.theguyhere.villagerdefense.plugin.game.models.players;
 
+import me.theguyhere.villagerdefense.common.ColoredMessage;
+import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
@@ -9,6 +13,9 @@ import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
@@ -101,6 +108,11 @@ public class VDPlayer {
         this.status = status;
     }
 
+    public void setMaxHealthInit(int maxHealth) {
+        this.maxHealth = Math.max(maxHealth, 0);
+        currentHealth = Math.max(maxHealth, 0);
+    }
+
     public void setMaxHealth(int maxHealth) {
         this.maxHealth = Math.max(maxHealth, 0);
         getPlayer().setHealth(currentHealth *
@@ -113,6 +125,71 @@ public class VDPlayer {
 
     public void setCurrentHealth(int currentHealth) {
         this.currentHealth = Math.max(currentHealth, 0);
+
+        // Check for death
+        if (this.currentHealth == 0) {
+            // Check if player is holding a totem
+            if (getPlayer().getInventory().getItemInMainHand().getType() == Material.TOTEM_OF_UNDYING ||
+                    getPlayer().getInventory().getItemInOffHand().getType() == Material.TOTEM_OF_UNDYING) return;
+
+            // Check if player has resurrection achievement and is boosted
+            Random random = new Random();
+            if (isBoosted() && random.nextDouble() < .1 &&
+                    PlayerManager.hasAchievement(getPlayer().getUniqueId(), Achievement.allChallenges().getID())) {
+                PlayerManager.giveTotemEffect(getPlayer());
+                return;
+            }
+
+            // Set player to fake death mode
+            PlayerManager.fakeDeath(this);
+
+            // Check for explosive challenge
+            if (getChallenges().contains(Challenge.explosive())) {
+                // Create an explosion
+                getPlayer().getWorld().createExplosion(getPlayer().getLocation(), 1.25F, false, false);
+
+                // Drop all items and clear inventory
+                getPlayer().getInventory().forEach(itemStack -> {
+                    if (itemStack != null && !itemStack.equals(GameItems.shop()))
+                        getPlayer().getWorld().dropItemNaturally(getPlayer().getLocation(), itemStack);
+                });
+                getPlayer().getInventory().clear();
+            }
+
+            // Notify player of their own death
+            getPlayer().sendTitle(
+                    new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.death1).toString(),
+                    new ColoredMessage(ChatColor.RED, LanguageManager.messages.death2).toString(),
+                    Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
+
+            // Notify everyone else of player death
+            arena.getPlayers().forEach(fighter -> {
+                if (!fighter.getPlayer().getUniqueId().equals(getPlayer().getUniqueId()))
+                    PlayerManager.notifyAlert(fighter.getPlayer(),
+                            String.format(LanguageManager.messages.death, getPlayer().getName()));
+                if (arena.hasPlayerDeathSound())
+                    try {
+                        fighter.getPlayer().playSound(arena.getPlayerSpawn().getLocation(),
+                                Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10,
+                                .75f);
+                    } catch (NullPointerException err) {
+                        CommunicationManager.debugError(err.getMessage(), 0);
+                    }
+            });
+
+            // Update scoreboards
+            arena.updateScoreboards();
+
+            // Check for game end condition
+            if (arena.getAlive() == 0)
+                try {
+                    arena.endGame();
+                } catch (ArenaException ignored) {
+                }
+
+            return;
+        }
+
         getPlayer().setHealth(currentHealth *
                 Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth);
     }
@@ -364,8 +441,7 @@ public class VDPlayer {
             getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999, 0));
 
         // Set up health and damage
-        setMaxHealth(200);
-        setCurrentHealth(200);
+        setMaxHealthInit(200);
         setDamage(5);
     }
 }

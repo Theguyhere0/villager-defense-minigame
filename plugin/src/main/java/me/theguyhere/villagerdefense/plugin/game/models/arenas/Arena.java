@@ -10,16 +10,18 @@ import me.theguyhere.villagerdefense.plugin.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.MobMetadata;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.Mobs;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.MobMetadata;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.Mobs;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.inventories.*;
+import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
+import me.theguyhere.villagerdefense.plugin.inventories.InventoryID;
+import me.theguyhere.villagerdefense.plugin.inventories.InventoryMeta;
+import me.theguyhere.villagerdefense.plugin.inventories.InventoryType;
 import me.theguyhere.villagerdefense.plugin.tools.*;
-import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.*;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -30,7 +32,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
@@ -224,14 +225,6 @@ public class Arena {
             setAbilitySound(true);
             setWaitingSound("none");
         }
-
-        // Set default shop toggle
-        if (!config.contains(path + ".normal"))
-            setNormal(true);
-
-        // Set enchant shop toggle
-        if (!config.contains(path + ".enchants"))
-            setEnchants(true);
 
         // Set community chest toggle
         if (!config.contains(path + ".community"))
@@ -1182,33 +1175,6 @@ public class Arena {
             cancelVillagerParticles();
             cancelBorderParticles();
         }
-    }
-
-    public boolean hasNormal() {
-        return config.getBoolean(path + ".normal");
-    }
-
-    public void setNormal(boolean normal) {
-        config.set(path + ".normal", normal);
-        Main.saveArenaData();
-    }
-
-    public boolean hasEnchants() {
-        return config.getBoolean(path + ".enchants");
-    }
-
-    public void setEnchants(boolean enchants) {
-        config.set(path + ".enchants", enchants);
-        Main.saveArenaData();
-    }
-
-    public boolean hasCustom() {
-        return config.getBoolean(path + ".custom");
-    }
-
-    public void setCustom(boolean bool) {
-        config.set(path + ".custom", bool);
-        Main.saveArenaData();
     }
 
     public boolean hasCommunity() {
@@ -2414,8 +2380,8 @@ public class Arena {
     }
 
     public double getCurrentDifficulty() {
-        double difficulty = Math.pow(Math.E, Math.pow(Math.max(currentWave - 1, 0), .4) /
-                (4 - getDifficultyMultiplier() / 2d));
+        double difficulty = Math.pow(Math.E, Math.pow(Math.max(currentWave - 1, 0), .35) /
+                (4.5 - getDifficultyMultiplier() / 2d));
         if (hasDynamicDifficulty())
             difficulty *= Math.pow(.1 * getActiveCount() + .6, .2);
         return difficulty;
@@ -2581,204 +2547,6 @@ public class Arena {
         this.communityChest = communityChest;
     }
 
-    public Inventory getCustomShopEditorMenu() {
-        // Create inventory
-        Inventory inv = Bukkit.createInventory(
-                new InventoryMeta(InventoryID.CUSTOM_SHOP_EDITOR_MENU, InventoryType.MENU, this),
-                54,
-                CommunicationManager.format("&6&lCustom Shop Editor: " + getName())
-        );
-
-        // Set exit option
-        for (int i = 45; i < 54; i++)
-            inv.setItem(i, Buttons.exit());
-
-        // Check for a stored inventory
-        if (!config.contains(path + ".customShop"))
-            return inv;
-
-        // Get items from stored inventory
-        try {
-            Objects.requireNonNull(config.getConfigurationSection(path + ".customShop")).getKeys(false)
-                    .forEach(index -> {
-                        try {
-                            // Get raw item and data
-                            ItemStack item = Objects.requireNonNull(
-                                    config.getItemStack(path + ".customShop." + index)).clone();
-                            ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
-                            List<String> lore = new ArrayList<>();
-                            String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
-                            int price = NumberUtils.toInt(
-                                    meta.getDisplayName().substring(meta.getDisplayName().length() - 5), -1);
-
-                            // Transform to proper shop item
-                            meta.setDisplayName(CommunicationManager.format("&f" + name));
-                            if (meta.hasLore())
-                                lore = Objects.requireNonNull(meta.getLore());
-                            if (price >= 0)
-                                lore.add(CommunicationManager.format("&2" + LanguageManager.messages.gems +
-                                        ": &a" + price));
-                            meta.setLore(lore);
-                            item.setItemMeta(meta);
-
-                            // Set item into inventory
-                            inv.setItem(Integer.parseInt(index), item);
-                        } catch (Exception e) {
-                            CommunicationManager.debugError(
-                                    String.format(
-                                            "An error occurred retrieving an item from %s's custom shop.", getName()),
-                                    2
-                            );
-                        }
-                    });
-        } catch (Exception e) {
-            CommunicationManager.debugError(
-                    String.format("Attempted to retrieve the custom shop inventory of %s but found none.", getName()),
-                    1
-            );
-        }
-
-        return inv;
-    }
-
-    public Inventory getCustomShop() {
-        // Create inventory
-        Inventory inv = Bukkit.createInventory(
-                new InventoryMeta(InventoryID.CUSTOM_SHOP_MENU, InventoryType.MENU, this),
-                54,
-                CommunicationManager.format("&6&l") + LanguageManager.names.customShop
-        );
-
-        // Set exit option
-        inv.setItem(49, Buttons.exit());
-
-        // Check for a stored inventory
-        if (!config.contains(path + ".customShop"))
-            return inv;
-
-        // Get items from stored inventory
-        try {
-            Objects.requireNonNull(config.getConfigurationSection(path + ".customShop")).getKeys(false)
-                    .forEach(index -> {
-                        try {
-                            // Get raw item and data
-                            ItemStack item = Objects.requireNonNull(
-                                    config.getItemStack(path + ".customShop." + index)).clone();
-                            ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
-                            List<String> lore = new ArrayList<>();
-                            String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
-                            int price = NumberUtils.toInt(
-                                    meta.getDisplayName().substring(meta.getDisplayName().length() - 5), -1);
-
-                            // Transform to proper shop item
-                            meta.setDisplayName(CommunicationManager.format("&f" + name));
-                            if (meta.hasLore())
-                                lore = Objects.requireNonNull(meta.getLore());
-                            if (price >= 0)
-                                lore.add(CommunicationManager.format("&2" +
-                                        LanguageManager.messages.gems + ": &a" + price));
-                            meta.setLore(lore);
-                            item.setItemMeta(meta);
-
-                            // Set item into inventory
-                            inv.setItem(Integer.parseInt(index), item);
-                        } catch (Exception e) {
-                            CommunicationManager.debugError(
-                                    String.format(
-                                            "An error occurred retrieving an item from %s's custom shop.", getName()),
-                                    2
-                            );
-                        }
-                    });
-        } catch (Exception e) {
-            CommunicationManager.debugError(
-                    String.format("Attempted to retrieve the custom shop inventory of %s but found none.", getName()),
-                    1
-            );
-        }
-
-        return inv;
-    }
-
-    /**
-     * Retrieves a mockup of the custom shop for presenting arena information.
-     * @return Mock custom shop {@link Inventory}
-     */
-    public Inventory getMockCustomShop() {
-        // Create inventory
-        Inventory inv = Bukkit.createInventory(
-                new InventoryMeta(InventoryID.MOCK_CUSTOM_SHOP_MENU, InventoryType.MENU, this),
-                54,
-                CommunicationManager.format("&6&l" + LanguageManager.names.customShop + ": " + getName())
-        );
-
-        // Set exit option
-        inv.setItem(49, Buttons.exit());
-
-        // Check for a stored inventory
-        if (!config.contains(path + ".customShop"))
-            return inv;
-
-        // Get items from stored inventory
-        try {
-            Objects.requireNonNull(config.getConfigurationSection(path + ".customShop")).getKeys(false)
-                    .forEach(index -> {
-                        try {
-                            // Get raw item and data
-                            ItemStack item = Objects.requireNonNull(
-                                    config.getItemStack(path + ".customShop." + index)).clone();
-                            ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
-                            List<String> lore = new ArrayList<>();
-                            String name = meta.getDisplayName().substring(0, meta.getDisplayName().length() - 5);
-                            int price = NumberUtils.toInt(
-                                    meta.getDisplayName().substring(meta.getDisplayName().length() - 5), -1);
-
-                            // Transform to proper shop item
-                            meta.setDisplayName(CommunicationManager.format("&f" + name));
-                            if (meta.hasLore())
-                                lore = Objects.requireNonNull(meta.getLore());
-                            if (price >= 0)
-                                lore.add(CommunicationManager.format("&2" +
-                                        LanguageManager.messages.gems + ": &a" + price));
-                            meta.setLore(lore);
-                            item.setItemMeta(meta);
-
-                            // Set item into inventory
-                            inv.setItem(Integer.parseInt(index), item);
-                        } catch (Exception e) {
-                            CommunicationManager.debugError(
-                                    String.format(
-                                            "An error occurred retrieving an item from %s's custom shop.", getName()),
-                                    2
-                            );
-                        }
-                    });
-        } catch (Exception e) {
-            CommunicationManager.debugError(
-                    String.format("Attempted to retrieve the custom shop inventory of %s but found none.", getName()),
-                    1
-            );
-        }
-
-        return inv;
-    }
-
-    public void setCustomShopSlot(ItemStack itemStack, int slot) {
-        ItemStack copy = itemStack.clone();
-        copy.setItemMeta(itemStack.getItemMeta());
-        config.set(path + ".customShop." + slot, copy);
-        Main.saveArenaData();
-    }
-
-    public void eraseCustomShopSlot(int slot) {
-        config.set(path + ".customShop." + slot, null);
-        Main.saveArenaData();
-    }
-
-    public ItemStack getCustomShopSlot(int slot) {
-        return config.getItemStack(path + ".customShop." + slot);
-    }
-
     public BossBar getTimeLimitBar() {
         return timeLimitBar;
     }
@@ -2866,9 +2634,8 @@ public class Arena {
      */
     public void checkClose() {
         if (!config.contains("lobby") || getPortalLocation() == null || getPlayerSpawn() == null ||
-                getMonsterSpawns().isEmpty() || getVillagerSpawns().isEmpty() || !hasCustom() && !hasNormal() ||
-                getCorner1() == null || getCorner2() == null ||
-                !Objects.equals(getCorner1().getWorld(), getCorner2().getWorld())) {
+                getMonsterSpawns().isEmpty() || getVillagerSpawns().isEmpty() || getCorner1() == null ||
+                getCorner2() == null || !Objects.equals(getCorner1().getWorld(), getCorner2().getWorld())) {
             setClosed(true);
             CommunicationManager.debugInfo(
                     String.format("%s did not meet opening requirements and was closed.", getName()),
@@ -2997,9 +2764,6 @@ public class Arena {
         setDynamicPrices(arenaToCopy.hasDynamicPrices());
         setDifficultyLabel(arenaToCopy.getDifficultyLabel());
         setBannedKitIDs(arenaToCopy.getBannedKitIDs());
-        setNormal(arenaToCopy.hasNormal());
-        setEnchants(arenaToCopy.hasEnchants());
-        setCustom(arenaToCopy.hasCustom());
         setCommunity(arenaToCopy.hasCommunity());
         setWinSound(arenaToCopy.hasWinSound());
         setLoseSound(arenaToCopy.hasLoseSound());
@@ -3013,18 +2777,6 @@ public class Arena {
         setMonsterParticles(arenaToCopy.hasMonsterParticles());
         setVillagerParticles(arenaToCopy.hasVillagerParticles());
         setBorderParticles(arenaToCopy.hasBorderParticles());
-        if (config.contains(arenaToCopy.getPath() + ".customShop"))
-            try {
-                Objects.requireNonNull(config.getConfigurationSection(arenaToCopy.getPath() + ".customShop"))
-                        .getKeys(false)
-                        .forEach(index -> config.set(path + ".customShop." + index,
-                                config.getItemStack(arenaToCopy.getPath() + ".customShop." + index)));
-                Main.saveArenaData();
-            } catch (Exception e) {
-                CommunicationManager.debugError(
-                        String.format("Unsuccessful attempt to copy the custom shop inventory of %s to %s.",
-                                arenaToCopy.getName(), getName()), 1);
-            }
 
         CommunicationManager.debugInfo(
                 String.format("Copied the characteristics of %s to %s.", arenaToCopy.getName(), getName()),

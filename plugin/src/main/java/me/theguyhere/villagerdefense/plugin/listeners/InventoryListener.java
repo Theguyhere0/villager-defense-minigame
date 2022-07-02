@@ -8,7 +8,6 @@ import me.theguyhere.villagerdefense.plugin.exceptions.InvalidArenaNameException
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.models.EnchantingBook;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.AchievementChecker;
@@ -22,7 +21,6 @@ import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryID;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryMeta;
 import me.theguyhere.villagerdefense.plugin.tools.*;
-import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -32,7 +30,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 
@@ -95,14 +92,12 @@ public class InventoryListener implements Listener {
 		CommunicationManager.debugInfo("Clicked Inventory: " + e.getClickedInventory(), 2);
 		CommunicationManager.debugInfo("Inventory Name: ", 2, title);
 
-		// Cancel the event if the inventory isn't the community chest or custom shop editor to prevent changing the GUI
-		if (invID != InventoryID.COMMUNITY_CHEST_INVENTORY &&
-				invID != InventoryID.CUSTOM_SHOP_EDITOR_MENU)
+		// Cancel the event if the inventory isn't the community chest to prevent changing the GUI
+		if (invID != InventoryID.COMMUNITY_CHEST_INVENTORY)
 			e.setCancelled(true);
 
 		// Save community chest
-		else if (invID == InventoryID.COMMUNITY_CHEST_INVENTORY)
-			meta.getArena().setCommunityChest(e.getInventory());
+		else meta.getArena().setCommunityChest(e.getInventory());
 
 		// Ignore clicks in player inventory
 		if (e.getClickedInventory().getType() == InventoryType.PLAYER)
@@ -112,67 +107,15 @@ public class InventoryListener implements Listener {
 		ItemStack button = e.getCurrentItem();
 		Material buttonType;
 		String buttonName;
-
 		Player player = (Player) e.getWhoClicked();
-		int slot = e.getSlot();
 
-		// Custom shop editor for an arena
-		if (invID == InventoryID.CUSTOM_SHOP_EDITOR_MENU) {
-			CommunicationManager.debugInfo("Custom shop editor being used.", 2);
-			ItemStack cursor;
-			ItemMeta itemMeta;
-			Arena arenaInstance = meta.getArena();
-			try {
-				cursor = Objects.requireNonNull(e.getCursor());
-				itemMeta = Objects.requireNonNull(cursor.getItemMeta());
-			} catch (NullPointerException err) {
-				return;
-			}
-
-			// Exit menu
-			if (Buttons.exit().equals(button)) {
-				e.setCancelled(true);
-				player.openInventory(Inventories.createShopSettingsMenu(meta.getArena()));
-				return;
-			}
-
-			// Check for arena closure
-			if (!arenaInstance.isClosed()) {
-				PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-				return;
-			}
-
-			// Add item
-			if (cursor.getType() != Material.AIR) {
-				itemMeta.setDisplayName((itemMeta.getDisplayName().equals("") ?
-						Arrays.stream(cursor.getType().name().toLowerCase().split("_"))
-								.reduce("", (partial, element) -> partial + " " +
-										element.substring(0, 1).toUpperCase() + element.substring(1)).substring(1) :
-						itemMeta.getDisplayName()) + String.format("%05d", 0));
-				arenaInstance.setCustomShopSlot(cursor, slot);
-				PlayerManager.giveItem(player, cursor.clone(), LanguageManager.errors.inventoryFull);
-				player.setItemOnCursor(new ItemStack(Material.AIR));
-				player.openInventory(Inventories.createCustomItemsMenu(meta.getArena(), slot));
-				return;
-			}
-
-			// Edit item
-			else e.setCancelled(true);
-
-			// Only open inventory for valid click
-			if (Objects.requireNonNull(e.getCurrentItem()).getType() != Material.AIR)
-				player.openInventory(Inventories.createCustomItemsMenu(meta.getArena(), slot));
-
+		// Ignore null items
+		if (button == null)
 			return;
-		} else {
-			// Ignore null items
-			if (button == null)
-				return;
 
-			// Get button type and name
-			buttonType = button.getType();
-			buttonName = Objects.requireNonNull(button.getItemMeta()).getDisplayName();
-		}
+		// Get button type and name
+		buttonType = button.getType();
+		buttonName = Objects.requireNonNull(button.getItemMeta()).getDisplayName();
 
 		// Main menu
 		if (invID == InventoryID.MAIN_MENU) {
@@ -684,12 +627,6 @@ public class InventoryListener implements Listener {
 						return;
 					}
 
-					// No shops
-					if (!arenaInstance.hasCustom() && !arenaInstance.hasNormal()) {
-						PlayerManager.notifyFailure(player, "Arena cannot open without a shop!");
-						return;
-					}
-
 					// Invalid arena bounds
 					if (arenaInstance.getCorner1() == null || arenaInstance.getCorner2() == null ||
 							!Objects.equals(arenaInstance.getCorner1().getWorld(),
@@ -820,19 +757,6 @@ public class InventoryListener implements Listener {
 					arenaInstance.setClosed(true);
 				PlayerManager.notifySuccess(player, "Mob spawn removed!");
 				player.openInventory(Inventories.createVillagerSpawnDashboard(meta.getArena()));
-			}
-		}
-
-		// Confirm to remove custom item
-		else if (invID == InventoryID.CUSTOM_ITEM_CONFIRM_MENU) {
-			// Return to previous menu
-			if (buttonName.contains("NO"))
-				player.openInventory(Inventories.createCustomItemsMenu(meta.getArena(), meta.getId()));
-
-			// Remove custom item, then return to custom shop editor
-			else if (buttonName.contains("YES")) {
-				meta.getArena().eraseCustomShopSlot(meta.getId());
-				player.openInventory(meta.getArena().getCustomShopEditorMenu());
 			}
 		}
 
@@ -1699,35 +1623,8 @@ public class InventoryListener implements Listener {
 		else if (invID == InventoryID.SHOP_SETTINGS_MENU) {
 			Arena arenaInstance = meta.getArena();
 
-			// Open custom shop editor
-			if (buttonName.contains("Edit Custom Shop"))
-				if (arenaInstance.isClosed())
-					player.openInventory(arenaInstance.getCustomShopEditorMenu());
-				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-
-			// Toggle default shop
-			else if (buttonName.contains("Default Shop:"))
-				if (arenaInstance.isClosed()) {
-					arenaInstance.setNormal(!arenaInstance.hasNormal());
-					player.openInventory(Inventories.createShopSettingsMenu(meta.getArena()));
-				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-
-			// Toggle custom shop
-			else if (buttonName.contains("Custom Shop:"))
-				if (arenaInstance.isClosed()) {
-					arenaInstance.setCustom(!arenaInstance.hasCustom());
-					player.openInventory(Inventories.createShopSettingsMenu(meta.getArena()));
-				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-
-			// Toggle enchants shop
-			else if (buttonName.contains("Enchant Shop:"))
-				if (arenaInstance.isClosed()) {
-					arenaInstance.setEnchants(!arenaInstance.hasEnchants());
-					player.openInventory(Inventories.createShopSettingsMenu(meta.getArena()));
-				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-
 			// Toggle community chest
-			else if (buttonName.contains("Community Chest:"))
+			if (buttonName.contains("Community Chest:"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setCommunity(!arenaInstance.hasCommunity());
 					player.openInventory(Inventories.createShopSettingsMenu(meta.getArena()));
@@ -1743,184 +1640,6 @@ public class InventoryListener implements Listener {
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createArenaMenu(meta.getArena()));
-		}
-
-		// Menu for editing a specific custom item
-		else if (invID == InventoryID.CUSTOM_ITEMS_MENU) {
-			Arena arena = meta.getArena();
-			int id = meta.getId();
-			ItemStack item = arena.getCustomShopSlot(id);
-			ItemMeta itemMeta;
-			String name;
-			try {
-				itemMeta = Objects.requireNonNull(item.getItemMeta());
-				name = Objects.requireNonNull(itemMeta.getDisplayName());
-			} catch (NullPointerException err) {
-				return;
-			}
-			String realName = name.substring(0, name.length() - 5);
-			int price = NumberUtils.toInt(name.substring(name.length() - 5), -1);
-
-			// Set un-purchasable
-			if (buttonName.contains("Toggle Un-purchasable")) {
-				if (price < 0) {
-					price = 0;
-					itemMeta.setDisplayName(realName + String.format("%05d", price));
-				} else itemMeta.setDisplayName(realName + "-----");
-				item.setItemMeta(itemMeta);
-				arena.setCustomShopSlot(item, id);
-			}
-
-			// Increase by 1
-			else if (buttonName.contains("+1 gem")) {
-				if (price < 0) {
-					price = 0;
-				} else price++;
-
-				// Check for max price
-				if (price > 99999) {
-					PlayerManager.notifyFailure(player, "Price cannot be above 99999 gems!");
-					return;
-				}
-
-				itemMeta.setDisplayName(realName + String.format("%05d", price));
-				item.setItemMeta(itemMeta);
-				arena.setCustomShopSlot(item, id);
-			}
-
-			// Increase by 10
-			else if (buttonName.contains("+10 gems")) {
-				if (price < 0) {
-					price = 0;
-				} else price += 10;
-
-				// Check for max price
-				if (price > 99999) {
-					PlayerManager.notifyFailure(player, "Price cannot be above 99999 gems!");
-					return;
-				}
-
-				itemMeta.setDisplayName(realName + String.format("%05d", price));
-				item.setItemMeta(itemMeta);
-				arena.setCustomShopSlot(item, id);
-			}
-
-			// Increase by 100
-			else if (buttonName.contains("+100 gems")) {
-				if (price < 0) {
-					price = 0;
-				} else price += 100;
-
-				// Check for max price
-				if (price > 99999) {
-					PlayerManager.notifyFailure(player, "Price cannot be above 99999 gems!");
-					return;
-				}
-
-				itemMeta.setDisplayName(realName + String.format("%05d", price));
-				item.setItemMeta(itemMeta);
-				arena.setCustomShopSlot(item, id);
-			}
-
-			// Increase by 1000
-			else if (buttonName.contains("+1000 gems")) {
-				if (price < 0) {
-					price = 0;
-				} else price += 1000;
-
-				// Check for max price
-				if (price > 99999) {
-					PlayerManager.notifyFailure(player, "Price cannot be above 99999 gems!");
-					return;
-				}
-
-				itemMeta.setDisplayName(realName + String.format("%05d", price));
-				item.setItemMeta(itemMeta);
-				arena.setCustomShopSlot(item, id);
-			}
-
-			// Delete item
-			else if (buttonName.contains("DELETE")) {
-				player.openInventory(Inventories.createCustomItemConfirmMenu(meta.getArena(), meta.getId()));
-				return;
-			}
-
-			// Decrease by 1
-			else if (buttonName.contains("-1 gem")) {
-				if (price < 0) {
-					price = 0;
-				} else price--;
-
-				// Check for min price
-				if (price < 0) {
-					PlayerManager.notifyFailure(player, "Price cannot be negative!");
-					return;
-				}
-
-				itemMeta.setDisplayName(realName + String.format("%05d", price));
-				item.setItemMeta(itemMeta);
-				arena.setCustomShopSlot(item, id);
-			}
-
-			// Decrease by 10
-			else if (buttonName.contains("-10 gems")) {
-				if (price < 0) {
-					price = 0;
-				} else price -= 10;
-
-				// Check for min price
-				if (price < 0) {
-					PlayerManager.notifyFailure(player, "Price cannot be negative!");
-					return;
-				}
-
-				itemMeta.setDisplayName(realName + String.format("%05d", price));
-				item.setItemMeta(itemMeta);
-				arena.setCustomShopSlot(item, id);
-			}
-
-			// Decrease by 100
-			else if (buttonName.contains("-100 gems")) {
-				if (price < 0) {
-					price = 0;
-				} else price -= 100;
-
-				// Check for min price
-				if (price < 0) {
-					PlayerManager.notifyFailure(player, "Price cannot be negative!");
-					return;
-				}
-
-				itemMeta.setDisplayName(realName + String.format("%05d", price));
-				item.setItemMeta(itemMeta);
-				arena.setCustomShopSlot(item, id);
-			}
-
-			// Decrease by 1000
-			else if (buttonName.contains("-1000 gems")) {
-				if (price < 0) {
-					price = 0;
-				} else price -= 1000;
-
-				// Check for min price
-				if (price < 0) {
-					PlayerManager.notifyFailure(player, "Price cannot be negative!");
-					return;
-				}
-
-				itemMeta.setDisplayName(realName + String.format("%05d", price));
-				item.setItemMeta(itemMeta);
-				arena.setCustomShopSlot(item, id);
-			}
-
-			// Exit
-			else if (buttonName.contains(LanguageManager.messages.exit)) {
-				player.openInventory(meta.getArena().getCustomShopEditorMenu());
-				return;
-			}
-
-			// Refresh GUI
-			player.openInventory(Inventories.createCustomItemsMenu(meta.getArena(), meta.getId()));
 		}
 
 		// Game settings menu for an arena
@@ -2772,33 +2491,15 @@ public class InventoryListener implements Listener {
 
 			// Open weapon shop
 			if (buttonName.contains(LanguageManager.names.weaponShop))
-				if (arenaInstance.hasNormal())
-					player.openInventory(arenaInstance.getWeaponShop());
-				else PlayerManager.notifyFailure(player, LanguageManager.errors.normalShop);
+				player.openInventory(arenaInstance.getWeaponShop());
 
 			// Open armor shop
 			else if (buttonName.contains(LanguageManager.names.armorShop))
-				if (arenaInstance.hasNormal())
-					player.openInventory(arenaInstance.getArmorShop());
-				else PlayerManager.notifyFailure(player, LanguageManager.errors.normalShop);
+				player.openInventory(arenaInstance.getArmorShop());
 
 			// Open consumables shop
 			else if (buttonName.contains(LanguageManager.names.consumableShop))
-				if (arenaInstance.hasNormal())
-					player.openInventory(arenaInstance.getConsumeShop());
-				else PlayerManager.notifyFailure(player, LanguageManager.errors.normalShop);
-
-			// Open enchant shop
-			else if (buttonName.contains(LanguageManager.names.enchantShop))
-				if (arenaInstance.hasEnchants())
-					player.openInventory(Inventories.createEnchantShopMenu());
-				else PlayerManager.notifyFailure(player, LanguageManager.errors.enchantShop);
-
-			// Open custom shop
-			else if (buttonName.contains(LanguageManager.names.customShop))
-				if (arenaInstance.hasCustom())
-					player.openInventory(arenaInstance.getCustomShop());
-				else PlayerManager.notifyFailure(player, LanguageManager.errors.customShop);
+				player.openInventory(arenaInstance.getConsumeShop());
 
 			// Open community chest
 			else if (buttonName.contains(LanguageManager.names.communityChest))
@@ -2807,19 +2508,9 @@ public class InventoryListener implements Listener {
 				else PlayerManager.notifyFailure(player, LanguageManager.errors.communityChest);
 		}
 
-		// Mock custom shop for an arena
-		else if (invID == InventoryID.MOCK_CUSTOM_SHOP_MENU) {
-			if (buttonName.contains(LanguageManager.messages.exit))
-				try {
-					player.openInventory(Inventories.createArenaInfoMenu(GameManager.getArena(
-							title.substring(6 + LanguageManager.names.customShop.length()))));
-				} catch (ArenaNotFoundException ignored) {
-				}
-		}
-
 		// In-game shops
 		else if (invID == InventoryID.WEAPON_SHOP_MENU || invID == InventoryID.ARMOR_SHOP_MENU ||
-				invID == InventoryID.CONSUMABLE_SHOP_MENU || invID == InventoryID.CUSTOM_SHOP_MENU) {
+				invID == InventoryID.CONSUMABLE_SHOP_MENU) {
 			Arena arenaInstance;
 			VDPlayer gamer;
 
@@ -2918,99 +2609,6 @@ public class InventoryListener implements Listener {
 				PlayerManager.giveItem(player, buy, LanguageManager.errors.inventoryFull);
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.buy);
 			}
-		}
-		else if (invID == InventoryID.ENCHANT_SHOP_MENU) {
-			Arena arenaInstance;
-
-			// Attempt to get arena
-			try {
-				arenaInstance = GameManager.getArena(player);
-			} catch (ArenaNotFoundException err) {
-				return;
-			}
-
-			// Return to main shop menu
-			if (buttonName.contains(LanguageManager.messages.exit)) {
-				player.openInventory(Inventories.createShopMenu(arenaInstance.getCurrentWave() / 10 + 1, arenaInstance));
-				return;
-			}
-
-			// Ignore null items
-			if (e.getClickedInventory().getItem(e.getSlot()) == null)
-				return;
-
-			// Get necessary info
-			ItemStack buy;
-			List<String> lore;
-			try {
-				buy = Objects.requireNonNull(e.getClickedInventory().getItem(e.getSlot()));
-				lore = Objects.requireNonNull(Objects.requireNonNull(buy.getItemMeta()).getLore());
-			} catch (NullPointerException err) {
-				return;
-			}
-			int cost = Integer.parseInt(lore.get(0).split(" ")[1]);
-
-			// Check if they can afford the item, then deduct
-			if (player.getLevel() < cost) {
-				PlayerManager.notifyFailure(player, LanguageManager.errors.buy);
-				return;
-			}
-			player.setLevel(player.getLevel() - cost);
-
-			// Give book
-			String enchant;
-			ItemStack give;
-
-			// Gather enchant from name
-			try {
-				enchant = buy.getItemMeta().getDisplayName().split(" ")[1];
-			} catch (Exception err) {
-				return;
-			}
-
-			// Assign to known enchanting books
-			if (enchant.equals(LanguageManager.enchants.knockback.split(" ")[0]))
-				give = EnchantingBook.knockback();
-			else if (enchant.equals(LanguageManager.enchants.sweepingEdge.split(" ")[0]))
-				give = EnchantingBook.sweepingEdge();
-			else if (enchant.equals(LanguageManager.enchants.smite.split(" ")[0]))
-				give = EnchantingBook.smite();
-			else if (enchant.equals(LanguageManager.enchants.sharpness.split(" ")[0]))
-				give = EnchantingBook.sharpness();
-			else if (enchant.equals(LanguageManager.enchants.fireAspect.split(" ")[0]))
-				give = EnchantingBook.fireAspect();
-			else if (enchant.equals(LanguageManager.enchants.punch.split(" ")[0]))
-				give = EnchantingBook.punch();
-			else if (enchant.equals(LanguageManager.enchants.piercing.split(" ")[0]))
-				give = EnchantingBook.piercing();
-			else if (enchant.equals(LanguageManager.enchants.quickCharge.split(" ")[0]))
-				give = EnchantingBook.quickCharge();
-			else if (enchant.equals(LanguageManager.enchants.power.split(" ")[0]))
-				give = EnchantingBook.power();
-			else if (enchant.equals(LanguageManager.enchants.loyalty.split(" ")[0]))
-				give = EnchantingBook.loyalty();
-			else if (enchant.equals(LanguageManager.enchants.flame.split(" ")[0]))
-				give = EnchantingBook.flame();
-			else if (enchant.equals(LanguageManager.enchants.multishot.split(" ")[0]))
-				give = EnchantingBook.multishot();
-			else if (enchant.equals(LanguageManager.enchants.infinity.split(" ")[0]))
-				give = EnchantingBook.infinity();
-			else if (enchant.equals(LanguageManager.enchants.blastProtection.split(" ")[0]))
-				give = EnchantingBook.blastProtection();
-			else if (enchant.equals(LanguageManager.enchants.thorns.split(" ")[0]))
-				give = EnchantingBook.thorns();
-			else if (enchant.equals(LanguageManager.enchants.projectileProtection.split(" ")[0]))
-				give = EnchantingBook.projectileProtection();
-			else if (enchant.equals(LanguageManager.enchants.protection.split(" ")[0]))
-				give = EnchantingBook.protection();
-			else if (enchant.equals(LanguageManager.enchants.unbreaking.split(" ")[0]))
-				give = EnchantingBook.unbreaking();
-			else if (enchant.equals(LanguageManager.enchants.mending.split(" ")[0]))
-				give = EnchantingBook.mending();
-			else give = null;
-
-			PlayerManager.giveItem(player, give, LanguageManager.errors.inventoryFull);
-			PlayerManager.notifySuccess(player, LanguageManager.confirms.buy);
 		}
 
 		// Stats menu for a player
@@ -3241,10 +2839,7 @@ public class InventoryListener implements Listener {
 
 		// Stats menu for an arena
 		else if (invID == InventoryID.ARENA_INFO_MENU) {
-			if (buttonName.contains(LanguageManager.messages.customShopInv))
-				player.openInventory(meta.getArena().getMockCustomShop());
-
-			else if (buttonName.contains(LanguageManager.messages.allowedKits))
+			if (buttonName.contains(LanguageManager.messages.allowedKits))
 				player.openInventory(Inventories.createAllowedKitsMenu(meta.getArena(), true));
 
 			else if (buttonName.contains(LanguageManager.messages.forcedChallenges))

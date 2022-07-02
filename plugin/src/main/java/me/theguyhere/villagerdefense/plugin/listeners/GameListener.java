@@ -9,7 +9,6 @@ import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.models.EnchantingBook;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
@@ -31,7 +30,6 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -130,25 +128,6 @@ public class GameListener implements Listener {
 				if (arena.hasGemDrop()) {
 					e.getDrops().add(ItemManager.createItem(Material.EMERALD, null,
 							Integer.toString(arena.getId())));
-
-					// Get rare loot probability
-					double probability;
-					switch (arena.getDifficultyMultiplier()) {
-						case 1:
-							probability = .015;
-							break;
-						case 2:
-							probability = .01;
-							break;
-						case 3:
-							probability = .008;
-							break;
-						default:
-							probability = .006;
-					}
-
-					if (r.nextDouble() < probability)
-						e.getDrops().add(GameItems.randCare(arena.getCurrentWave() / 10 + 1));
 				}
 				if (arena.hasExpDrop())
 					e.setDroppedExp((int) (arena.getCurrentDifficulty() * 2));
@@ -240,7 +219,7 @@ public class GameListener implements Listener {
 			int damage = (int) e.getDamage();
 			e.setDamage(0);
 
-			// Custom damage mechanics
+			// Check damage cooldown
 			if (System.currentTimeMillis() < damager.getMetadata(MobMetadata.LAST_STRIKE.name()).get(0).asLong() +
 					damager.getMetadata(MobMetadata.ATTACK_SPEED.name()).get(0).asDouble() * 1000) {
 				e.setCancelled(true);
@@ -248,14 +227,44 @@ public class GameListener implements Listener {
 			}
 			damager.setMetadata(MobMetadata.LAST_STRIKE.name(),
 					new FixedMetadataValue(Main.plugin, System.currentTimeMillis()));
+
+			// Implement faster attacks
+			int finalDamage = damage;
+			Player finalPlayer = player;
+			if (damager.getMetadata(MobMetadata.ATTACK_SPEED.name()).get(0).asDouble() == .4 &&
+					e.getCause() != EntityDamageEvent.DamageCause.CUSTOM)
+				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
+						Bukkit.getPluginManager().callEvent(new EntityDamageByEntityEvent(damager, victim,
+								EntityDamageEvent.DamageCause.CUSTOM, finalDamage));
+					finalPlayer.playSound(finalPlayer.getLocation(), Sound.ENTITY_PLAYER_HURT, 1, 1);
+				}, Utils.secondsToTicks(.45));
+			else if (damager.getMetadata(MobMetadata.ATTACK_SPEED.name()).get(0).asDouble() == .2 &&
+					e.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
+				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
+					Bukkit.getPluginManager().callEvent(new EntityDamageByEntityEvent(damager, victim,
+							EntityDamageEvent.DamageCause.CUSTOM, finalDamage));
+					finalPlayer.playSound(finalPlayer.getLocation(), Sound.ENTITY_PLAYER_HURT, 1, 1);
+				}, Utils.secondsToTicks(.25));
+				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
+					Bukkit.getPluginManager().callEvent(new EntityDamageByEntityEvent(damager, victim,
+							EntityDamageEvent.DamageCause.CUSTOM, finalDamage));
+					finalPlayer.playSound(finalPlayer.getLocation(), Sound.ENTITY_PLAYER_HURT, 1, 1);
+				}, Utils.secondsToTicks(.5));
+			}
+
+			// Damage spread
 			Random r = new Random();
 			damage *= (1 + (r.nextDouble() * 2 - 1) *
 					damager.getMetadata(MobMetadata.DAMAGE_SPREAD.name()).get(0).asDouble());
+
+			// Factor in armor and toughness
 			int armor = 0; // PLACEHOLDER
 			double toughness = 0; // PLACEHOLDER
 			if (AttackType.NORMAL.name().equals(damager.getMetadata(MobMetadata.ATTACK_TYPE.name()).get(0).asString()))
 				damage -= Math.min(damage, armor);
 			else damage *= Math.max(0, 1 - toughness);
+
+			// Realize damage
 			gamer.setCurrentHealth(gamer.getCurrentHealth() - damage);
 		}
 
@@ -301,18 +310,79 @@ public class GameListener implements Listener {
 
 				// Damage dealt by player
 				if (gamer != null) {
-					damage = gamer.getDamage();
+					AttackType type = AttackType.NORMAL;
+
+					// Modify damage based on weapon
+					try {
+						ItemStack weapon = Objects.requireNonNull(player.getEquipment()).getItemInMainHand();
+						Map<String, Integer> attributes = new HashMap<>();
+
+						// Gather damage attributes
+						Objects.requireNonNull(Objects.requireNonNull(weapon.getItemMeta()).getLore()).forEach(lore -> {
+							if (lore.contains(LanguageManager.messages.attackMainDamage
+									.replace("%s", ""))) {
+								String[] split = lore.substring(2 + LanguageManager.messages.attackMainDamage.length())
+										.split("-");
+								attributes.put("mainLow", Integer.valueOf(split[0]));
+								attributes.put("mainHigh",
+										Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
+							}
+							else if (lore.contains(LanguageManager.messages.attackCritDamage
+									.replace("%s", ""))) {
+								String[] split = lore.substring(2 + LanguageManager.messages.attackCritDamage.length())
+										.split("-");
+								attributes.put("critLow", Integer.valueOf(split[0]));
+								attributes.put("critHigh",
+										Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
+							}
+							else if (lore.contains(LanguageManager.messages.attackSweepDamage
+									.replace("%s", ""))) {
+								String[] split = lore.substring(2 + LanguageManager.messages.attackSweepDamage.length())
+										.split("-");
+								attributes.put("sweepLow", Integer.valueOf(split[0]));
+								attributes.put("sweepHigh",
+										Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
+							}
+							else if (lore.contains(LanguageManager.names.penetrating.replace("%s", "")))
+								attributes.put("penetrating", 1);
+						});
+
+						// Crit damage
+						if (damage >= 3)
+							damage = gamer.getDamage() + attributes.get("critLow") +
+									r.nextInt(attributes.get("critHigh") - attributes.get("critLow"));
+
+						// Sweep damage
+						else if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)
+							damage = gamer.getDamage() + attributes.get("sweepLow") +
+									r.nextInt(attributes.get("sweepHigh") - attributes.get("sweepLow"));
+
+						// Normal damage
+						else damage *= gamer.getDamage() + attributes.get("mainLow") +
+								r.nextInt(attributes.get("mainHigh") - attributes.get("mainLow"));
+
+						// Check type
+						if (attributes.containsKey("type"))
+							type = AttackType.PENETRATING;
+					} catch (Exception ignored) {
+						damage = gamer.getDamage();
+					}
+
+					// Factor in armor and toughness
 					int armor = (int) Objects.requireNonNull(victim.getAttribute(Attribute.GENERIC_ARMOR)).getValue();
 					double toughness = Objects.requireNonNull(victim.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS))
 							.getValue();
-//					if (AttackType.NORMAL.name().equals(damager.getMetadata(MobMetadata.ATTACK_TYPE.name()).get(0).asString()))
+					if (type == AttackType.NORMAL)
 						damage -= Math.min(damage, armor);
-//					else damage *= Math.max(0, 1 - toughness);
-					victim.setHealth(victim.getHealth() - damage);
+					else damage *= Math.max(0, 1 - toughness);
+
+					// Realize daamage
+					victim.setHealth(Math.max(victim.getHealth() - damage, 0));
 				}
 
 				// Damage not dealt by player
 				else {
+					// Check cooldown
 					if (System.currentTimeMillis() < damager.getMetadata(MobMetadata.LAST_STRIKE.name()).get(0).asLong() +
 							damager.getMetadata(MobMetadata.ATTACK_SPEED.name()).get(0).asDouble() * 1000) {
 						e.setCancelled(true);
@@ -320,8 +390,12 @@ public class GameListener implements Listener {
 					}
 					damager.setMetadata(MobMetadata.LAST_STRIKE.name(),
 							new FixedMetadataValue(Main.plugin, System.currentTimeMillis()));
+
+					// Damage spread
 					damage *= (1 + (r.nextDouble() * 2 - 1) *
 							damager.getMetadata(MobMetadata.DAMAGE_SPREAD.name()).get(0).asDouble());
+
+					// Factor in armor and toughness
 					int armor = (int) Objects.requireNonNull(victim.getAttribute(Attribute.GENERIC_ARMOR)).getValue();
 					double toughness = Objects.requireNonNull(victim.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS))
 							.getValue();
@@ -329,7 +403,9 @@ public class GameListener implements Listener {
 							damager.getMetadata(MobMetadata.ATTACK_TYPE.name()).get(0).asString()))
 						damage -= Math.min(damage, armor);
 					else damage *= Math.max(0, 1 - toughness);
-					victim.setHealth(victim.getHealth() - damage);
+
+					// Realize damage
+					victim.setHealth(Math.max(victim.getHealth() - damage, 0));
 				}
 			}
 
@@ -343,7 +419,7 @@ public class GameListener implements Listener {
 				int damage = (int) e.getDamage();
 				e.setDamage(0);
 
-				// Custom damage mechanics
+				// Check for cooldown
 				if (System.currentTimeMillis() < damager.getMetadata(MobMetadata.LAST_STRIKE.name()).get(0).asLong() +
 						damager.getMetadata(MobMetadata.ATTACK_SPEED.name()).get(0).asDouble() * 1000) {
 					e.setCancelled(true);
@@ -351,9 +427,30 @@ public class GameListener implements Listener {
 				}
 				damager.setMetadata(MobMetadata.LAST_STRIKE.name(),
 						new FixedMetadataValue(Main.plugin, System.currentTimeMillis()));
+
+				// Implement faster attacks
+				int finalDamage = damage;
+				if (damager.getMetadata(MobMetadata.ATTACK_SPEED.name()).get(0).asDouble() == .4 &&
+						e.getCause() != EntityDamageEvent.DamageCause.CUSTOM)
+					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
+							.callEvent(new EntityDamageByEntityEvent(damager, victim,
+									EntityDamageEvent.DamageCause.CUSTOM, finalDamage)), Utils.secondsToTicks(.45));
+				else if (damager.getMetadata(MobMetadata.ATTACK_SPEED.name()).get(0).asDouble() == .2 &&
+						e.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
+					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
+							.callEvent(new EntityDamageByEntityEvent(damager, victim,
+									EntityDamageEvent.DamageCause.CUSTOM, finalDamage)), Utils.secondsToTicks(.25));
+					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
+							.callEvent(new EntityDamageByEntityEvent(damager, victim,
+									EntityDamageEvent.DamageCause.CUSTOM, finalDamage)), Utils.secondsToTicks(.5));
+				}
+
+				// Damage spread
 				Random r = new Random();
 				damage *= (1 + (r.nextDouble() * 2 - 1) *
 						damager.getMetadata(MobMetadata.DAMAGE_SPREAD.name()).get(0).asDouble());
+
+				// Factor in armor and toughness
 				int armor = (int) Objects.requireNonNull(victim.getAttribute(Attribute.GENERIC_ARMOR)).getValue();
 				double toughness = Objects.requireNonNull(victim.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS))
 						.getValue();
@@ -361,7 +458,9 @@ public class GameListener implements Listener {
 						damager.getMetadata(MobMetadata.ATTACK_TYPE.name()).get(0).asString()))
 					damage -= Math.min(damage, armor);
 				else damage *= Math.max(0, 1 - toughness);
-				victim.setHealth(victim.getHealth() - damage);
+
+				// Realize damage
+				victim.setHealth(Math.max(victim.getHealth() - damage, 0));
 			}
 
 			// Update health bar
@@ -699,99 +798,6 @@ public class GameListener implements Listener {
 		GameManager.createBoard(gamer);
 	}
 
-	// Handle player death
-	@EventHandler
-	public void onPlayerDeath(EntityDamageEvent e) {
-		// Ignore if cancelled
-		if (e.isCancelled())
-			return;
-
-		// Check for player
-		if (!(e.getEntity() instanceof Player)) return;
-
-		Player player = (Player) e.getEntity();
-		Arena arena;
-		VDPlayer gamer;
-
-		// Attempt to get arena and player
-		try {
-			arena = GameManager.getArena(player);
-			gamer = arena.getPlayer(player);
-		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
-			return;
-		}
-
-		// Check if arena is active
-		if (arena.getStatus() != ArenaStatus.ACTIVE) return;
-
-		// Ignore void damage
-		if (e.getCause().equals(EntityDamageEvent.DamageCause.VOID)) return;
-
-		// Check if player is about to die
-		if (e.getFinalDamage() < player.getHealth()) return;
-
-		// Check if player is holding a totem
-		if (player.getInventory().getItemInMainHand().getType() == Material.TOTEM_OF_UNDYING ||
-				player.getInventory().getItemInOffHand().getType() == Material.TOTEM_OF_UNDYING) return;
-
-		e.setCancelled(true);
-
-		// Check if player has resurrection achievement and is boosted
-		Random random = new Random();
-		if (gamer.isBoosted() && random.nextDouble() < .1 &&
-				PlayerManager.hasAchievement(player.getUniqueId(), Achievement.allChallenges().getID())) {
-			PlayerManager.giveTotemEffect(player);
-			return;
-		}
-
-		// Set player to fake death mode
-		PlayerManager.fakeDeath(gamer);
-
-		// Check for explosive challenge
-		if (gamer.getChallenges().contains(Challenge.explosive())) {
-			// Create an explosion
-			player.getWorld().createExplosion(player.getLocation(), 1.25F, false, false);
-
-			// Drop all items and clear inventory
-			player.getInventory().forEach(itemStack -> {
-				if (itemStack != null && !itemStack.equals(GameItems.shop()))
-						player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
-			});
-			player.getInventory().clear();
-		}
-
-		// Notify player of their own death
-		player.sendTitle(
-				new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.death1).toString(),
-				new ColoredMessage(ChatColor.RED, LanguageManager.messages.death2).toString(),
-				Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
-
-		// Notify everyone else of player death
-		arena.getPlayers().forEach(fighter -> {
-			if (!fighter.getPlayer().getUniqueId().equals(player.getUniqueId()))
-				PlayerManager.notifyAlert(fighter.getPlayer(),
-						String.format(LanguageManager.messages.death, player.getName()));
-			if (arena.hasPlayerDeathSound())
-				try {
-					fighter.getPlayer().playSound(arena.getPlayerSpawn().getLocation(),
-							Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10,
-							.75f);
-				} catch (NullPointerException err) {
-					CommunicationManager.debugError(err.getMessage(), 0);
-				}
-		});
-
-		// Update scoreboards
-		arena.updateScoreboards();
-
-		// Check for game end condition
-		if (arena.getAlive() == 0)
-			try {
-				arena.endGame();
-			} catch (ArenaException ignored) {
-			}
-	}
-
 	// Update player kill counter
 	@EventHandler
 	public void onMobKillByPlayer(EntityDamageByEntityEvent e) {
@@ -868,26 +874,6 @@ public class GameListener implements Listener {
 			} else {
 				int earned = r.nextInt((int) (50 * Math.pow(wave, .15)));
 				gamer.addGems(earned == 0 ? 1 : earned);
-
-				// Get rare loot probability
-				double probability;
-				switch (arena.getDifficultyMultiplier()) {
-					case 1:
-						probability = .015;
-						break;
-					case 2:
-						probability = .01;
-						break;
-					case 3:
-						probability = .008;
-						break;
-					default:
-						probability = .006;
-				}
-
-				if (r.nextDouble() < probability)
-					PlayerManager.giveItem(player, GameItems.randCare(wave / 10 + 1),
-							LanguageManager.errors.inventoryFull);
 
 				// Notify player
 				PlayerManager.notifySuccess(
@@ -1481,54 +1467,6 @@ public class GameListener implements Listener {
 		// Cancel event if arena is in waiting mode
 		if (arena.getStatus() == ArenaStatus.WAITING)
 			e.setCancelled(true);
-	}
-
-	// Apply book enchantment to items
-	@EventHandler
-	public void onEnchantingApply(InventoryClickEvent e) {
-		Player player = (Player) e.getWhoClicked();
-		ItemStack clickedOn = e.getCurrentItem();
-		ItemStack clickedWith = e.getCursor();
-		EnchantingBook enchantingBook = EnchantingBook.check(clickedWith);
-
-		// Check for player in arena
-		if (!GameManager.checkPlayer(player))
-			return;
-
-		// Ignore if not clicking on own inventory
-		if (e.getClickedInventory() == null || !player.equals(e.getClickedInventory().getHolder()))
-			return;
-
-		// Ignore clicks to nothing
-		if (clickedOn == null || clickedOn.getType() == Material.AIR)
-			return;
-
-		// Ignore clicks on shop or other books
-		if (EnchantingBook.check(clickedOn) != null || GameItems.shop().equals(clickedOn))
-			return;
-
-		// Check for enchanting book
-		if (enchantingBook == null)
-			return;
-
-		// Cancel event
-		e.setCancelled(true);
-
-		// Attempt to add enchant and remove book
-		Map<Enchantment, Integer> enchantList = Objects.requireNonNull(clickedOn.getItemMeta()).getEnchants();
-		if (enchantList.containsKey(enchantingBook.getEnchantToAdd())) {
-			if (enchantingBook.getEnchantToAdd() == Enchantment.ARROW_FIRE ||
-					enchantingBook.getEnchantToAdd() == Enchantment.MULTISHOT ||
-					enchantingBook.getEnchantToAdd() == Enchantment.ARROW_INFINITE ||
-					enchantingBook.getEnchantToAdd() == Enchantment.MENDING) {
-				PlayerManager.notifyFailure(player, LanguageManager.errors.enchant);
-				return;
-			}
-			clickedOn.addUnsafeEnchantment(enchantingBook.getEnchantToAdd(),
-					enchantList.get(enchantingBook.getEnchantToAdd()) + 1);
-		} else clickedOn.addUnsafeEnchantment(enchantingBook.getEnchantToAdd(), 1);
-		player.setItemOnCursor(new ItemStack(Material.AIR));
-		PlayerManager.notifySuccess(player, LanguageManager.confirms.enchant);
 	}
 
 	// Prevent swapping items while waiting for game to start

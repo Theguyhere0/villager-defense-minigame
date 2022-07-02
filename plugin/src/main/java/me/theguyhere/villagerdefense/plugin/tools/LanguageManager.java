@@ -13,7 +13,6 @@ public class LanguageManager {
     public static ArenaStats arenaStats;
     public static Challenges challenges;
     public static Confirms confirms;
-    public static Enchants enchants;
     public static Errors errors;
     public static Kits kits;
     public static Messages messages;
@@ -28,7 +27,6 @@ public class LanguageManager {
         LanguageManager.arenaStats = new ArenaStats();
         LanguageManager.challenges = new Challenges();
         LanguageManager.confirms = new Confirms();
-        LanguageManager.enchants = new Enchants();
         LanguageManager.errors = new Errors();
         LanguageManager.kits = new Kits();
         LanguageManager.messages = new Messages();
@@ -259,7 +257,6 @@ public class LanguageManager {
         public final @NotNull String challengeDelete;
         public final @NotNull String chestplate;
         public final @NotNull String crystalAdd;
-        public final @NotNull String enchant;
         public final @NotNull String helmet;
         public final @NotNull String kitBuy;
         public final @NotNull String kitSelect;
@@ -281,59 +278,12 @@ public class LanguageManager {
             challengeDelete = getConfigString("challengeDelete");
             chestplate = getConfigString("chestplate");
             crystalAdd = getConfigString("crystalAdd");
-            enchant = getConfigString("enchant");
             helmet = getConfigString("helmet");
             kitBuy = getConfigString("kitBuy");
             kitSelect = getConfigString("kitSelect");
             kitUpgrade = getConfigString("kitUpgrade");
             leggings = getConfigString("leggings");
             reset = getConfigString("reset");
-        }
-    }
-
-    public static class Enchants extends Section {
-        public final @NotNull String blastProtection;
-        public final @NotNull String fireAspect;
-        public final @NotNull String flame;
-        public final @NotNull String infinity;
-        public final @NotNull String knockback;
-        public final @NotNull String loyalty;
-        public final @NotNull String mending;
-        public final @NotNull String multishot;
-        public final @NotNull String piercing;
-        public final @NotNull String power;
-        public final @NotNull String projectileProtection;
-        public final @NotNull String protection;
-        public final @NotNull String punch;
-        public final @NotNull String quickCharge;
-        public final @NotNull String sharpness;
-        public final @NotNull String smite;
-        public final @NotNull String sweepingEdge;
-        public final @NotNull String thorns;
-        public final @NotNull String unbreaking;
-
-        private Enchants() throws InvalidLanguageKeyException {
-            setPathPrefix("enchants");
-
-            blastProtection = getConfigString("blastProtection");
-            fireAspect = getConfigString("fireAspect");
-            flame = getConfigString("flame");
-            infinity = getConfigString("infinity");
-            knockback = getConfigString("knockback");
-            loyalty = getConfigString("loyalty");
-            mending = getConfigString("mending");
-            multishot = getConfigString("multishot");
-            piercing = getConfigString("piercing");
-            power = getConfigString("power");
-            projectileProtection = getConfigString("projectileProtection");
-            protection = getConfigString("protection");
-            punch = getConfigString("punch");
-            quickCharge = getConfigString("quickCharge");
-            sharpness = getConfigString("sharpness");
-            smite = getConfigString("smite");
-            sweepingEdge = getConfigString("sweepingEdge");
-            thorns = getConfigString("thorns");
-            unbreaking = getConfigString("unbreaking");
         }
     }
 
@@ -349,11 +299,8 @@ public class LanguageManager {
         public final @NotNull String command;
         public final @NotNull String communityChest;
         public final @NotNull String cooldown;
-        public final @NotNull String customShop;
         public final @NotNull String economy;
         public final @NotNull String emptyArena;
-        public final @NotNull String enchant;
-        public final @NotNull String enchantShop;
         public final @NotNull String endingSoon;
         public final @NotNull String fatal;
         public final @NotNull String forcedChallenge;
@@ -372,7 +319,6 @@ public class LanguageManager {
         public final @NotNull String ninja;
         public final @NotNull String noArena;
         public final @NotNull String noGameEnd;
-        public final @NotNull String normalShop;
         public final @NotNull String notInGame;
         public final @NotNull String outdated;
         public final @NotNull String permission;
@@ -400,11 +346,8 @@ public class LanguageManager {
             command = getConfigString("command");
             communityChest = getConfigString("communityChest");
             cooldown = getConfigString("cooldown");
-            customShop = getConfigString("customShop");
             economy = getConfigString("economy");
             emptyArena = getConfigString("emptyArena");
-            enchant = getConfigString("enchant");
-            enchantShop = getConfigString("enchantShop");
             endingSoon = getConfigString("endingSoon");
             fatal = getConfigString("fatal");
             forcedChallenge = getConfigString("forcedChallenge");
@@ -423,7 +366,6 @@ public class LanguageManager {
             ninja = getConfigString("ninja");
             noArena = getConfigString("noArena");
             noGameEnd = getConfigString("noGameEnd");
-            normalShop = getConfigString("normalShop");
             notInGame = getConfigString("notInGame");
             outdated = getConfigString("outdated");
             permission = getConfigString("permission");
@@ -669,18 +611,19 @@ public class LanguageManager {
         public final @NotNull String allowedKits;
         public final @NotNull String arenaInfo;
         public final @NotNull String arenaRecords;
-        public final @NotNull String armor;
+        public final @NotNull String attackCritDamage;
+        public final @NotNull String attackMainDamage;
+        public final @NotNull String attackSpeed;
+        public final @NotNull String attackSweepDamage;
+        public final @NotNull String attackType;
         public final @NotNull String available;
-        public final @NotNull String caution;
         public final @NotNull String challenges;
         public final @NotNull String closed;
         public final @NotNull String commandFormat;
-        public final @NotNull String consumable;
         public final @NotNull String crystalBonus;
         public final @NotNull String crystalBalance;
         public final @NotNull String crystalsEarned;
         public final @NotNull String crystalsToConvert;
-        public final @NotNull String customShopInv;
         public final @NotNull String death;
         public final @NotNull String death1;
         public final @NotNull String death2;
@@ -689,7 +632,6 @@ public class LanguageManager {
         public final @NotNull String earnedGems;
         public final @NotNull String effectKitsDescription;
         public final @NotNull String effectShare;
-        public final @NotNull String enchantInstruction;
         public final @NotNull String end;
         public final @NotNull String ending;
         public final @NotNull String enemies;
@@ -750,11 +692,10 @@ public class LanguageManager {
         public final @NotNull String shopUpgrade;
         public final @NotNull String spectators;
         public final @NotNull String starting;
-        public final @NotNull String upToAbilityLevel;
-        public final @NotNull String waveNum;
-        public final @NotNull String weapon;
+        public final @NotNull String sword;
         public final @NotNull String unavailable;
         public final @NotNull String unlimited;
+        public final @NotNull String upToAbilityLevel;
         public final @NotNull String visitWiki;
         public final @NotNull String villageCaptainDialogue1;
         public final @NotNull String villageCaptainDialogue2;
@@ -764,8 +705,8 @@ public class LanguageManager {
         public final @NotNull String villagers;
         public final @NotNull String waiting;
         public final @NotNull String waitingForPlayers;
-        public final @NotNull String warning;
         public final @NotNull String wave;
+        public final @NotNull String waveNum;
 
         private Messages() throws InvalidLanguageKeyException {
             setPathPrefix("messages");
@@ -776,18 +717,19 @@ public class LanguageManager {
             allowedKits = getConfigString("allowedKits");
             arenaInfo = getConfigString("arenaInfo");
             arenaRecords = getConfigString("arenaRecords");
-            armor = getConfigString("armor");
+            attackCritDamage = getConfigString("attackCritDamage");
+            attackMainDamage = getConfigString("attackMainDamage");
+            attackSpeed = getConfigString("attackSpeed");
+            attackSweepDamage = getConfigString("attackSweepDamage");
+            attackType = getConfigString("attackType");
             available = getConfigString("available");
-            caution = getConfigString("caution");
             challenges = getConfigString("challenges");
             closed = getConfigString("closed");
             commandFormat = getConfigString("commandFormat");
-            consumable = getConfigString("consumable");
             crystalBonus = getConfigString("crystalBonus");
             crystalBalance = getConfigString("crystalBalance");
             crystalsEarned = getConfigString("crystalsEarned");
             crystalsToConvert = getConfigString("crystalsToConvert");
-            customShopInv = getConfigString("customShopInv");
             death = getConfigString("death");
             death1 = getConfigString("death1");
             death2 = getConfigString("death2");
@@ -796,7 +738,6 @@ public class LanguageManager {
             earnedGems = getConfigString("earnedGems");
             effectKitsDescription = getConfigString("effectKitsDescription");
             effectShare = getConfigString("effectShare");
-            enchantInstruction = getConfigString("enchantInstruction");
             end = getConfigString("end");
             ending = getConfigString("ending");
             enemies = getConfigString("enemies");
@@ -857,11 +798,10 @@ public class LanguageManager {
             shopUpgrade = getConfigString("shopUpgrade");
             spectators = getConfigString("spectators");
             starting = getConfigString("starting");
-            upToAbilityLevel = getConfigString("upToAbilityLevel");
-            waveNum = getConfigString("waveNum");
-            weapon = getConfigString("weapon");
+            sword = getConfigString("sword");
             unavailable = getConfigString("unavailable");
             unlimited = getConfigString("unlimited");
+            upToAbilityLevel = getConfigString("upToAbilityLevel");
             visitWiki = getConfigString("visitWiki");
             villageCaptainDialogue1 = getConfigString("villageCaptainDialogue1");
             villageCaptainDialogue2 = getConfigString("villageCaptainDialogue2");
@@ -871,8 +811,8 @@ public class LanguageManager {
             villagers = getConfigString("villagers");
             waiting = getConfigString("waiting");
             waitingForPlayers = getConfigString("waitingForPlayers");
-            warning = getConfigString("warning");
             wave = getConfigString("wave");
+            waveNum = getConfigString("waveNum");
         }
     }
 
@@ -891,13 +831,9 @@ public class LanguageManager {
         public final @NotNull String crystal;
         public final @NotNull String crystalConverter;
         public final @NotNull String crystals;
-        public final @NotNull String customShop;
-        public final @NotNull String defaultShop;
         public final @NotNull String easy;
         public final @NotNull String effectKits;
         public final @NotNull String effectShare;
-        public final @NotNull String enchantBook;
-        public final @NotNull String enchantShop;
         public final @NotNull String essence;
         public final @NotNull String giftKits;
         public final @NotNull String golemEgg;
@@ -908,6 +844,8 @@ public class LanguageManager {
         public final @NotNull String medium;
         public final @NotNull String monsterSpawnParticles;
         public final @NotNull String none;
+        public final @NotNull String normal;
+        public final @NotNull String penetrating;
         public final @NotNull String playerSpawnParticles;
         public final @NotNull String timeBar;
         public final @NotNull String villageCaptain;
@@ -941,13 +879,9 @@ public class LanguageManager {
                 crystals = Main.getEconomy().currencyNamePlural();
             else crystals = getConfigString("crystals");
 
-            customShop = getConfigString("customShop");
-            defaultShop = getConfigString("defaultShop");
             easy = getConfigString("easy");
             effectKits = getConfigString("effectKits");
             effectShare = getConfigString("effectShare");
-            enchantBook = getConfigString("enchantBook");
-            enchantShop = getConfigString("enchantShop");
             essence = getConfigString("essence");
             giftKits = getConfigString("giftKits");
             golemEgg = getConfigString("golemEgg");
@@ -958,6 +892,8 @@ public class LanguageManager {
             medium = getConfigString("medium");
             monsterSpawnParticles = getConfigString("monsterSpawnParticles");
             none = getConfigString("none");
+            normal = getConfigString("normal");
+            penetrating = getConfigString("penetrating");
             playerSpawnParticles = getConfigString("playerSpawnParticles");
             timeBar = getConfigString("timeBar");
             villageCaptain = getConfigString("villageCaptain");

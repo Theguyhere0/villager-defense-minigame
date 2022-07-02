@@ -1,5 +1,9 @@
 package me.theguyhere.villagerdefense.plugin.game.models;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.Multimaps;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
@@ -8,6 +12,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -21,6 +27,24 @@ import java.util.*;
 @SuppressWarnings("SpellCheckingInspection")
 public class GameItems {
 	private static final boolean[] FLAGS = {false, false};
+	private static final String ATTACK_SPEED = "attackSpeed";
+	private static final String DUMMY_DAMAGE = "dummyDamage";
+
+	// Item lore constants
+	public static final ColoredMessage ATTACK_TYPE = new ColoredMessage(ChatColor.BLUE,
+			LanguageManager.messages.attackType);
+	public static final ColoredMessage ATTACK_TYPE_NORMAL = new ColoredMessage(ChatColor.GREEN,
+			LanguageManager.names.normal);
+	public static final ColoredMessage ATTACK_TYPE_PENETRATING = new ColoredMessage(ChatColor.GOLD,
+			LanguageManager.names.penetrating);
+	public static final ColoredMessage MAIN_DAMAGE = new ColoredMessage(ChatColor.BLUE,
+			LanguageManager.messages.attackMainDamage);
+	public static final ColoredMessage CRIT_DAMAGE = new ColoredMessage(ChatColor.BLUE,
+			LanguageManager.messages.attackCritDamage);
+	public static final ColoredMessage SWEEP_DAMAGE = new ColoredMessage(ChatColor.BLUE,
+			LanguageManager.messages.attackSweepDamage);
+	public static final ColoredMessage SPEED = new ColoredMessage(ChatColor.BLUE,
+			LanguageManager.messages.attackSpeed);
 
 	// Categories of items
 	public static ItemStack[] ABILITY_ITEMS;
@@ -127,563 +151,71 @@ public class GameItems {
 	}
 
 	// Weapons
-	public static @NotNull ItemStack sword(int level) {
+	public static @NotNull ItemStack sword(int difficulty) {
 		Random r = new Random();
+		int level = (int) (Math.max(difficulty, 2) * (1 + .2 * Math.max(Math.min(r.nextGaussian(), 3), -3))); // Mean 100%, SD 50%, restrict 40% - 160%, min mean 3
 		Material mat;
-		HashMap<Enchantment, Integer> enchantments = new HashMap<>();
-		int price = 0;
-		double chance = r.nextDouble();
+		List<String> lores = new ArrayList<>();
+		Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
 
 		// Set material
-		switch (level) {
+		switch ((level - 1) / 8) {
+			case 0:
+				mat = Material.WOODEN_SWORD;
+				break;
 			case 1:
-				if (chance < .4) {
-					mat = Material.WOODEN_SWORD;
-					price += 50;
-				} else if (chance < .8) {
-					mat = Material.STONE_SWORD;
-					price += 120;
-				} else {
-					mat = Material.IRON_SWORD;
-					price += 250;
-				}
+				mat = Material.STONE_SWORD;
 				break;
 			case 2:
-				if (chance < .4) {
-					mat = Material.STONE_SWORD;
-					price += 120;
-				} else if (chance < .9) {
-					mat = Material.IRON_SWORD;
-					price += 250;
-				} else {
-					mat = Material.DIAMOND_SWORD;
-					price += 500;
-				}
+				mat = Material.IRON_SWORD;
 				break;
 			case 3:
-				if (chance < .5) {
-					mat = Material.IRON_SWORD;
-					price += 250;
-				} else if (chance < .85) {
-					mat = Material.DIAMOND_SWORD;
-					price += 500;
-				} else {
-					mat = Material.NETHERITE_SWORD;
-					price += 700;
-				}
-				break;
-			case 4:
-				if (chance < .1) {
-					mat = Material.IRON_SWORD;
-					price += 250;
-				} else if (chance < .75) {
-					mat = Material.DIAMOND_SWORD;
-					price += 500;
-				} else {
-					mat = Material.NETHERITE_SWORD;
-					price += 700;
-				}
-				break;
-			case 5:
-				if (chance < .3) {
-					mat = Material.DIAMOND_SWORD;
-					price += 500;
-				} else {
-					mat = Material.NETHERITE_SWORD;
-					price += 700;
-				}
+				mat = Material.DIAMOND_SWORD;
 				break;
 			default:
 				mat = Material.NETHERITE_SWORD;
-				price += 700;
-		}
-		chance = r.nextDouble();
-
-		// Set unbreaking
-		switch (level) {
-			case 1:
-				if (chance < .4) {
-					enchantments.put(Enchantment.DURABILITY, 1);
-					price += 25;
-				} else if (chance < .6) {
-					enchantments.put(Enchantment.DURABILITY, 2);
-					price += 50;
-				}
-				break;
-			case 2:
-				if (chance < .25) {
-					enchantments.put(Enchantment.DURABILITY, 1);
-					price += 25;
-				} else if (chance < .5) {
-					enchantments.put(Enchantment.DURABILITY, 2);
-					price += 50;
-				} else if (chance < .6) {
-					enchantments.put(Enchantment.DURABILITY, 3);
-					price += 75;
-				}
-				break;
-			case 3:
-				if (chance < .1) {
-					enchantments.put(Enchantment.DURABILITY, 1);
-					price += 25;
-				} else if (chance < .5) {
-					enchantments.put(Enchantment.DURABILITY, 2);
-					price += 50;
-				} else if (chance < .7) {
-					enchantments.put(Enchantment.DURABILITY, 3);
-					price += 75;
-				}
-				break;
-			case 4:
-				if (chance < .05) {
-					enchantments.put(Enchantment.DURABILITY, 1);
-					price += 25;
-				} else if (chance < .6) {
-					enchantments.put(Enchantment.DURABILITY, 2);
-					price += 50;
-				} else if (chance < .9) {
-					enchantments.put(Enchantment.DURABILITY, 3);
-					price += 75;
-				}
-				break;
-			case 5:
-				if (chance < .4) {
-					enchantments.put(Enchantment.DURABILITY, 2);
-					price += 50;
-				} else if (chance < .8) {
-					enchantments.put(Enchantment.DURABILITY, 3);
-					price += 75;
-				}
-				break;
-			default:
-				if (chance < .6) {
-					enchantments.put(Enchantment.DURABILITY, 3);
-					price += 75;
-				}
-				break;
-		}
-		chance = r.nextDouble();
-
-		// Set knockback
-		switch (level) {
-			case 1:
-				if (chance < .3) {
-					enchantments.put(Enchantment.KNOCKBACK, 1);
-					price += 30;
-				}
-				break;
-			case 2:
-				if (chance < .4) {
-					enchantments.put(Enchantment.KNOCKBACK, 1);
-					price += 30;
-				} else if (chance < .45) {
-					enchantments.put(Enchantment.KNOCKBACK, 2);
-					price += 60;
-				}
-				break;
-			case 3:
-				if (chance < .3) {
-					enchantments.put(Enchantment.KNOCKBACK, 1);
-					price += 30;
-				} else if (chance < .5) {
-					enchantments.put(Enchantment.KNOCKBACK, 2);
-					price += 60;
-				}
-				break;
-			case 4:
-				if (chance < .25) {
-					enchantments.put(Enchantment.KNOCKBACK, 1);
-					price += 30;
-				} else if (chance < .5) {
-					enchantments.put(Enchantment.KNOCKBACK, 2);
-					price += 60;
-				} else if (chance < .55) {
-					enchantments.put(Enchantment.KNOCKBACK, 3);
-					price += 90;
-				}
-				break;
-			case 5:
-				if (chance < .1) {
-					enchantments.put(Enchantment.KNOCKBACK, 1);
-					price += 30;
-				} else if (chance < .45) {
-					enchantments.put(Enchantment.KNOCKBACK, 2);
-					price += 60;
-				} else if (chance < .6) {
-					enchantments.put(Enchantment.KNOCKBACK, 3);
-					price += 90;
-				}
-				break;
-			case 6:
-				if (chance < .4) {
-					enchantments.put(Enchantment.KNOCKBACK, 2);
-					price += 60;
-				} else if (chance < .55) {
-					enchantments.put(Enchantment.KNOCKBACK, 3);
-					price += 90;
-				}
-				break;
-			default:
-				if (chance < .4) {
-					enchantments.put(Enchantment.KNOCKBACK, 2);
-					price += 60;
-				} else if (chance < .6) {
-					enchantments.put(Enchantment.KNOCKBACK, 3);
-					price += 90;
-				}
-		}
-		chance = r.nextDouble();
-
-		// Set sweeping
-		switch (level) {
-			case 1:
-				if (chance < .05) {
-					enchantments.put(Enchantment.SWEEPING_EDGE, 1);
-					price += 50;
-				}
-				break;
-			case 2:
-				if (chance < .15) {
-					enchantments.put(Enchantment.SWEEPING_EDGE, 1);
-					price += 50;
-				} else if (chance < .2) {
-					enchantments.put(Enchantment.SWEEPING_EDGE, 2);
-					price += 100;
-				}
-				break;
-			case 3:
-				if (chance < .2) {
-					enchantments.put(Enchantment.SWEEPING_EDGE, 1);
-					price += 50;
-				} else if (chance < .3) {
-					enchantments.put(Enchantment.SWEEPING_EDGE, 2);
-					price += 100;
-				}
-				break;
-			case 4:
-				if (chance < .15) {
-					enchantments.put(Enchantment.SWEEPING_EDGE, 1);
-					price += 50;
-				} else if (chance < .3) {
-					enchantments.put(Enchantment.SWEEPING_EDGE, 2);
-					price += 100;
-				} else if (chance < .4) {
-					enchantments.put(Enchantment.SWEEPING_EDGE, 3);
-					price += 150;
-				}
-				break;
-			case 5:
-				if (chance < .05) {
-					enchantments.put(Enchantment.SWEEPING_EDGE, 1);
-					price += 50;
-				} else if (chance < .25) {
-					enchantments.put(Enchantment.SWEEPING_EDGE, 2);
-					price += 100;
-				} else if (chance < .45) {
-					enchantments.put(Enchantment.SWEEPING_EDGE, 3);
-					price += 150;
-				}
-				break;
-			case 6:
-				if (chance < .1) {
-					enchantments.put(Enchantment.SWEEPING_EDGE, 2);
-					price += 100;
-				} else if (chance < .35) {
-					enchantments.put(Enchantment.SWEEPING_EDGE, 3);
-					price += 150;
-				} else if (chance < .45) {
-					enchantments.put(Enchantment.SWEEPING_EDGE, 4);
-					price += 200;
-				}
-				break;
-			default:
-				if (chance < .05) {
-					enchantments.put(Enchantment.SWEEPING_EDGE, 2);
-					price += 100;
-				} else if (chance < .35) {
-					enchantments.put(Enchantment.SWEEPING_EDGE, 3);
-					price += 150;
-				} else if (chance < .5) {
-					enchantments.put(Enchantment.SWEEPING_EDGE, 4);
-					price += 200;
-				}
-				break;
-		}
-		chance = r.nextDouble();
-
-		// Set smite
-		switch (level) {
-			case 1:
-				if (chance < .15) {
-					enchantments.put(Enchantment.DAMAGE_UNDEAD, 1);
-					price += 60;
-				} else if (chance < .25) {
-					enchantments.put(Enchantment.DAMAGE_UNDEAD, 2);
-					price += 120;
-				}
-				break;
-			case 2:
-				if (chance < .15) {
-					enchantments.put(Enchantment.DAMAGE_UNDEAD, 1);
-					price += 60;
-				} else if (chance < .3) {
-					enchantments.put(Enchantment.DAMAGE_UNDEAD, 2);
-					price += 120;
-				} else if (chance < .35) {
-					enchantments.put(Enchantment.DAMAGE_UNDEAD, 3);
-					price += 180;
-				}
-				break;
-			case 3:
-				if (chance < .05) {
-					enchantments.put(Enchantment.DAMAGE_UNDEAD, 1);
-					price += 60;
-				} else if (chance < .2) {
-					enchantments.put(Enchantment.DAMAGE_UNDEAD, 2);
-					price += 120;
-				} else if (chance < .35) {
-					enchantments.put(Enchantment.DAMAGE_UNDEAD, 3);
-					price += 180;
-				}
-				break;
-			case 4:
-				if (chance < .1) {
-					enchantments.put(Enchantment.DAMAGE_UNDEAD, 2);
-					price += 120;
-				} else if (chance < .3) {
-					enchantments.put(Enchantment.DAMAGE_UNDEAD, 3);
-					price += 180;
-				} else if (chance < .4) {
-					enchantments.put(Enchantment.DAMAGE_UNDEAD, 4);
-					price += 240;
-				}
-				break;
-			case 5:
-				if (chance < .2) {
-					enchantments.put(Enchantment.DAMAGE_UNDEAD, 3);
-					price += 180;
-				} else if (chance < .35) {
-					enchantments.put(Enchantment.DAMAGE_UNDEAD, 4);
-					price += 240;
-				} else if (chance < .45) {
-					enchantments.put(Enchantment.DAMAGE_UNDEAD, 5);
-					price += 300;
-				}
-				break;
-			case 6:
-				if (chance < .1) {
-					enchantments.put(Enchantment.DAMAGE_UNDEAD, 3);
-					price += 180;
-				} else if (chance < .3) {
-					enchantments.put(Enchantment.DAMAGE_UNDEAD, 4);
-					price += 240;
-				} else if (chance < .5) {
-					enchantments.put(Enchantment.DAMAGE_UNDEAD, 5);
-					price += 300;
-				}
-				break;
-			default:
-				if (chance < .25) {
-					enchantments.put(Enchantment.DAMAGE_UNDEAD, 4);
-					price += 240;
-				} else if (chance < .5) {
-					enchantments.put(Enchantment.DAMAGE_UNDEAD, 5);
-					price += 300;
-				}
-		}
-		chance = r.nextDouble();
-
-		// Set sharpness
-		switch (level) {
-			case 1:
-				if (chance < .1) {
-					enchantments.put(Enchantment.DAMAGE_ALL, 1);
-					price += 75;
-				} else if (chance < .2) {
-					enchantments.put(Enchantment.DAMAGE_ALL, 2);
-					price += 150;
-				}
-				break;
-			case 2:
-				if (chance < .15) {
-					enchantments.put(Enchantment.DAMAGE_ALL, 1);
-					price += 75;
-				} else if (chance < .25) {
-					enchantments.put(Enchantment.DAMAGE_ALL, 2);
-					price += 150;
-				} else if (chance < .3) {
-					enchantments.put(Enchantment.DAMAGE_ALL, 3);
-					price += 225;
-				}
-				break;
-			case 3:
-				if (chance < .05) {
-					enchantments.put(Enchantment.DAMAGE_ALL, 1);
-					price += 75;
-				} else if (chance < .2) {
-					enchantments.put(Enchantment.DAMAGE_ALL, 2);
-					price += 150;
-				} else if (chance < .35) {
-					enchantments.put(Enchantment.DAMAGE_ALL, 3);
-					price += 225;
-				}
-				break;
-			case 4:
-				if (chance < .1) {
-					enchantments.put(Enchantment.DAMAGE_ALL, 2);
-					price += 150;
-				} else if (chance < .3) {
-					enchantments.put(Enchantment.DAMAGE_ALL, 3);
-					price += 225;
-				} else if (chance < .4) {
-					enchantments.put(Enchantment.DAMAGE_ALL, 4);
-					price += 300;
-				}
-				break;
-			case 5:
-				if (chance < .2) {
-					enchantments.put(Enchantment.DAMAGE_ALL, 3);
-					price += 225;
-				} else if (chance < .35) {
-					enchantments.put(Enchantment.DAMAGE_ALL, 4);
-					price += 300;
-				} else if (chance < .45) {
-					enchantments.put(Enchantment.DAMAGE_ALL, 5);
-					price += 375;
-				}
-				break;
-			case 6:
-				if (chance < .1) {
-					enchantments.put(Enchantment.DAMAGE_ALL, 3);
-					price += 225;
-				} else if (chance < .3) {
-					enchantments.put(Enchantment.DAMAGE_ALL, 4);
-					price += 300;
-				} else if (chance < .5) {
-					enchantments.put(Enchantment.DAMAGE_ALL, 5);
-					price += 375;
-				}
-				break;
-			default:
-				if (chance < .2) {
-					enchantments.put(Enchantment.DAMAGE_ALL, 4);
-					price += 300;
-				} else if (chance < .5) {
-					enchantments.put(Enchantment.DAMAGE_ALL, 5);
-					price += 375;
-				}
-		}
-		chance = r.nextDouble();
-
-		// Set fire aspect
-		switch (level) {
-			case 1:
-				if (chance < .1) {
-					enchantments.put(Enchantment.FIRE_ASPECT, 1);
-					price += 100;
-				}
-				break;
-			case 2:
-				if (chance < .15) {
-					enchantments.put(Enchantment.FIRE_ASPECT, 1);
-					price += 100;
-				} else if (chance < .2) {
-					enchantments.put(Enchantment.FIRE_ASPECT, 2);
-					price += 200;
-				}
-				break;
-			case 3:
-				if (chance < .15) {
-					enchantments.put(Enchantment.FIRE_ASPECT, 1);
-					price += 100;
-				} else if (chance < .25) {
-					enchantments.put(Enchantment.FIRE_ASPECT, 2);
-					price += 200;
-				}
-				break;
-			case 4:
-				if (chance < .1) {
-					enchantments.put(Enchantment.FIRE_ASPECT, 1);
-					price += 100;
-				} else if (chance < .25) {
-					enchantments.put(Enchantment.FIRE_ASPECT, 2);
-					price += 200;
-				} else if (chance < .3) {
-					enchantments.put(Enchantment.FIRE_ASPECT, 3);
-					price += 300;
-				}
-				break;
-			case 5:
-				if (chance < .05) {
-					enchantments.put(Enchantment.FIRE_ASPECT, 1);
-					price += 100;
-				} else if (chance < .25) {
-					enchantments.put(Enchantment.FIRE_ASPECT, 2);
-					price += 200;
-				} else if (chance < .35) {
-					enchantments.put(Enchantment.FIRE_ASPECT, 3);
-					price += 300;
-				}
-				break;
-			case 6:
-				if (chance < .2) {
-					enchantments.put(Enchantment.FIRE_ASPECT, 2);
-					price += 200;
-				} else if (chance < .35) {
-					enchantments.put(Enchantment.FIRE_ASPECT, 3);
-					price += 300;
-				}
-				break;
-			default:
-				if (chance < .1) {
-					enchantments.put(Enchantment.FIRE_ASPECT, 2);
-					price += 200;
-				} else if (chance < .3) {
-					enchantments.put(Enchantment.FIRE_ASPECT, 3);
-					price += 300;
-				}
-		}
-		chance = r.nextDouble();
-
-		// Set mending
-		switch (level) {
-			case 1:
-			case 2:
-				break;
-			case 3:
-				if (chance < .05) {
-					enchantments.put(Enchantment.MENDING, 1);
-					price += 250;
-				}
-				break;
-			case 4:
-				if (chance < .1) {
-					enchantments.put(Enchantment.MENDING, 1);
-					price += 250;
-				}
-				break;
-			case 5:
-				if (chance < .15) {
-					enchantments.put(Enchantment.MENDING, 1);
-					price += 250;
-				}
-				break;
-			case 6:
-				if (chance < .2) {
-					enchantments.put(Enchantment.MENDING, 1);
-					price += 250;
-				}
-				break;
-			default:
-				if (chance < .25) {
-					enchantments.put(Enchantment.MENDING, 1);
-					price += 250;
-				}
 		}
 
-		return ItemManager.createItem(mat, null, FLAGS, enchantments,
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
-						price));
+		// Add space in lore from name
+		lores.add("");
+
+		// Set attack type
+		lores.add(CommunicationManager.format(ATTACK_TYPE, ATTACK_TYPE_NORMAL));
+
+		// Set main damage
+		int damageLow = 10 + 10 * ((level - 1) / 2);
+		int damageHigh = 30 + 10 * (level / 2);
+		lores.add(CommunicationManager.format(MAIN_DAMAGE, new ColoredMessage(ChatColor.RED,
+				damageLow + "-" + damageHigh)));
+
+		// Set crit damage
+		lores.add(CommunicationManager.format(CRIT_DAMAGE, new ColoredMessage(ChatColor.DARK_PURPLE,
+				(int) (damageLow * 1.5) + "-" + (int) (damageHigh * 1.5))));
+
+		// Set sweep damage
+		lores.add(CommunicationManager.format(SWEEP_DAMAGE, new ColoredMessage(ChatColor.LIGHT_PURPLE,
+				(damageLow / 2) + "-" + (damageHigh / 2))));
+
+		// Set attack speed
+		attributes.put(Attribute.GENERIC_ATTACK_SPEED,
+				new AttributeModifier(ATTACK_SPEED, -.1, AttributeModifier.Operation.ADD_NUMBER));
+		lores.add(CommunicationManager.format(SPEED, Double.toString(1.5)));
+
+		// Set dummy damage
+		attributes.put(Attribute.GENERIC_ATTACK_DAMAGE,
+				new AttributeModifier(DUMMY_DAMAGE, 0, AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+		attributes.put(Attribute.GENERIC_ATTACK_DAMAGE,
+				new AttributeModifier(DUMMY_DAMAGE, 1, AttributeModifier.Operation.ADD_NUMBER));
+
+		// Set price
+		int price = (int) (50 * level * Math.pow(Math.E, (level - 1) / 50d));
+		lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
+				price));
+
+		// Set name, make unbreakable, and return
+		return ItemManager.makeUnbreakable(ItemManager.createItem(mat, CommunicationManager.format(
+				new ColoredMessage(ChatColor.GRAY, LanguageManager.messages.sword), Integer.toString(level)),
+				ItemManager.BUTTON_FLAGS, null, lores, attributes));
 	}
 	public static @NotNull ItemStack axe(int level) {
 		Random r = new Random();
@@ -5218,46 +4750,6 @@ public class GameItems {
 		return ItemManager.createItem(Material.WOLF_SPAWN_EGG, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a250"));
 	}
-	public static @NotNull ItemStack smallCare() {
-		return ItemManager.createItem(Material.COAL_BLOCK,
-				new ColoredMessage(ChatColor.DARK_GREEN, LanguageManager.names.carePackageSmall).toString(),
-				new ColoredMessage(LanguageManager.names.contents + ":").toString(),
-				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.weapon), "1", "1"),
-				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.armor), "1", "1"),
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a200"));
-	}
-	public static @NotNull ItemStack mediumCare() {
-		return ItemManager.createItem(Material.IRON_BLOCK,
-				new ColoredMessage(ChatColor.DARK_AQUA, LanguageManager.names.carePackageMedium).toString(),
-				new ColoredMessage(LanguageManager.names.contents + ":").toString(),
-				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.weapon), "1", "2"),
-				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.armor), "1", "2"),
-				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.consumable), "1",
-						"2"),
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a500"));
-	}
-	public static @NotNull ItemStack largeCare() {
-		return ItemManager.createItem(Material.DIAMOND_BLOCK,
-				new ColoredMessage(ChatColor.BLUE, LanguageManager.names.carePackageLarge).toString(),
-				new ColoredMessage(LanguageManager.names.contents + ":").toString(),
-				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.weapon), "1", "4"),
-				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.armor), "2", "3"),
-				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.consumable), "1",
-						"3"),
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a1200"));
-	}
-	public static @NotNull ItemStack extraCare() {
-		return ItemManager.createItem(Material.BEACON,
-				new ColoredMessage(ChatColor.AQUA, LanguageManager.names.carePackageExtra).toString(),
-				new ColoredMessage(LanguageManager.names.contents + ":").toString(),
-				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.weapon), "1", "5"),
-				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.weapon), "1", "4"),
-				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.armor), "1", "5"),
-				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.armor), "1", "4"),
-				CommunicationManager.format(new ColoredMessage(LanguageManager.messages.consumable), "2",
-						"4"),
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a3000"));
-	}
 	public static @NotNull ItemStack experience() {
 		return ItemManager.createItem(Material.EXPERIENCE_BOTTLE, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a75"));
@@ -5614,182 +5106,6 @@ public class GameItems {
 				return boots(level);
 		}
 	}
-	public static @NotNull ItemStack randConsumable(int level) {
-		Random r = new Random();
-		double chance = r.nextDouble();
-		switch (level) {
-			case 1:
-				if (chance < .25)
-					return beetroot();
-				else if (chance < .5)
-					return carrot();
-				else if (chance < .65)
-					return bread();
-				else if (chance < .725)
-					return health();
-				else if (chance < .775)
-					return speed();
-				else if (chance < .85)
-					return wolf();
-				else if (chance < .9)
-					return experience();
-				else return smallCare();
-			case 2:
-				if (chance < .15)
-					return carrot();
-				else if (chance < .3)
-					return bread();
-				else if (chance < .4)
-					return mutton();
-				else if (chance < .45)
-					return steak();
-				else if (chance < .475)
-					return milk();
-				else if (chance < .55)
-					return health();
-				else if (chance < .6)
-					return speed();
-				else if (chance < .65)
-					return strength();
-				else if (chance < .7)
-					return regen();
-				else if (chance < .775)
-					return wolf();
-				else if (chance < .825)
-					return experience();
-				else if (chance < .9)
-					return smallCare();
-				else return mediumCare();
-			case 3:
-				if (chance < .1)
-					return bread();
-				else if (chance < .2)
-					return mutton();
-				else if (chance < .3)
-					return steak();
-				else if (chance < .4)
-					return gcarrot();
-				else if (chance < .425)
-					return milk();
-				else if (chance < .475)
-					return health2();
-				else if (chance < .525)
-					return speed2();
-				else if (chance < .575)
-					return strength();
-				else if (chance < .625)
-					return regen();
-				else if (chance < .725)
-					return wolf();
-				else if (chance < .775)
-					return golem();
-				else if (chance < .825)
-					return experience();
-				else if (chance < .875)
-					return smallCare();
-				else if (chance < .925)
-					return mediumCare();
-				else return largeCare();
-			case 4:
-				if (chance < .1)
-					return mutton();
-				else if (chance < .2)
-					return steak();
-				else if (chance < .3)
-					return gcarrot();
-				else if (chance < .4)
-					return gapple();
-				else if (chance < .42)
-					return milk();
-				else if (chance < .45)
-					return health2();
-				else if (chance < .475)
-					return health3();
-				else if (chance < .525)
-					return speed2();
-				else if (chance < .575)
-					return strength2();
-				else if (chance < .625)
-					return regen2();
-				else if (chance < .7)
-					return wolf();
-				else if (chance < .775)
-					return golem();
-				else if (chance < .825)
-					return experience();
-				else if (chance < .85)
-					return mediumCare();
-				else if (chance < .925)
-					return largeCare();
-				else return extraCare();
-			case 5:
-				if (chance < .05)
-					return mutton();
-				else if (chance < .15)
-					return steak();
-				else if (chance < .25)
-					return gcarrot();
-				else if (chance < .35)
-					return gapple();
-				else if (chance < .4)
-					return egapple();
-				else if (chance < .45)
-					return totem();
-				else if (chance < .47)
-					return milk();
-				else if (chance < .5)
-					return health2();
-				else if (chance < .525)
-					return health3();
-				else if (chance < .575)
-					return speed2();
-				else if (chance < .625)
-					return strength2();
-				else if (chance < .675)
-					return regen2();
-				else if (chance < .75)
-					return wolf();
-				else if (chance < .825)
-					return golem();
-				else if (chance < .875)
-					return experience();
-				else if (chance < .925)
-					return largeCare();
-				else return extraCare();
-			default:
-				if (chance < .05)
-					return steak();
-				else if (chance < .2)
-					return gcarrot();
-				else if (chance < .3)
-					return gapple();
-				else if (chance < .4)
-					return egapple();
-				else if (chance < .45)
-					return totem();
-				else if (chance < .47)
-					return milk();
-				else if (chance < .5)
-					return health2();
-				else if (chance < .525)
-					return health3();
-				else if (chance < .575)
-					return speed2();
-				else if (chance < .625)
-					return strength2();
-				else if (chance < .675)
-					return regen2();
-				else if (chance < .75)
-					return wolf();
-				else if (chance < .825)
-					return golem();
-				else if (chance < .875)
-					return experience();
-				else if (chance < .925)
-					return largeCare();
-				else return extraCare();
-		}
-	}
 	public static @NotNull ItemStack randFood(int level) {
 		Random r = new Random();
 		double chance = r.nextDouble();
@@ -5842,8 +5158,6 @@ public class GameItems {
 		switch (level) {
 			case 1:
 				if (chance < .35)
-					return smallCare();
-				else if (chance < .65)
 					return wolf();
 				else if (chance < .75)
 					return experience();
@@ -5852,10 +5166,6 @@ public class GameItems {
 				else return speed();
 			case 2:
 				if (chance < .15)
-					return smallCare();
-				else if (chance < .45)
-					return mediumCare();
-				else if (chance < .6)
 					return wolf();
 				else if (chance < .7)
 					return experience();
@@ -5870,10 +5180,6 @@ public class GameItems {
 				else return regen();
 			case 3:
 				if (chance < .15)
-					return mediumCare();
-				else if (chance < .4)
-					return largeCare();
-				else if (chance < .5)
 					return wolf();
 				else if (chance < .6)
 					return golem();
@@ -5890,10 +5196,6 @@ public class GameItems {
 				else return regen();
 			case 4:
 				if (chance < .15)
-					return largeCare();
-				else if (chance < .4)
-					return extraCare();
-				else if (chance < .5)
 					return wolf();
 				else if (chance < .6)
 					return golem();
@@ -5910,10 +5212,6 @@ public class GameItems {
 				else return regen2();
 			default:
 				if (chance < .3)
-					return extraCare();
-				else if (chance < .45)
-					return wolf();
-				else if (chance < .6)
 					return golem();
 				else if (chance < .7)
 					return experience();
@@ -5926,28 +5224,6 @@ public class GameItems {
 				else if (chance < .95)
 					return strength2();
 				else return regen2();
-		}
-	}
-	public static @NotNull ItemStack randCare(int level) {
-		Random r = new Random();
-		double chance = r.nextDouble();
-		switch (level) {
-			case 1:
-				return smallCare();
-			case 2:
-				if (chance < .35)
-					return smallCare();
-				else return mediumCare();
-			case 3:
-				if (chance < .35)
-					return mediumCare();
-				else return largeCare();
-			case 4:
-				if (chance < .35)
-					return largeCare();
-				else return extraCare();
-			default:
-				return extraCare();
 		}
 	}
 	public static @NotNull ItemStack randNotCare(int level) {

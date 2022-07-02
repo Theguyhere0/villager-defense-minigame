@@ -705,25 +705,6 @@ public class Inventories {
 	public static Inventory createShopSettingsMenu(Arena arena) {
 		List<ItemStack> buttons = new ArrayList<>();
 
-		// Option to create a custom shop
-		buttons.add(ItemManager.createItem(Material.QUARTZ,
-				CommunicationManager.format("&a&lEdit Custom Shop")));
-
-		// Option to toggle default shop
-		buttons.add(ItemManager.createItem(Material.EMERALD_BLOCK,
-				CommunicationManager.format("&6&lDefault Shop: " + getToggleStatus(arena.hasNormal())),
-				CommunicationManager.format("&7Turn default shop on and off")));
-
-		// Option to toggle custom shop
-		buttons.add(ItemManager.createItem(Material.QUARTZ_BLOCK,
-				CommunicationManager.format("&2&lCustom Shop: " + getToggleStatus(arena.hasCustom())),
-				CommunicationManager.format("&7Turn custom shop on and off")));
-
-		// Option to toggle custom shop
-		buttons.add(ItemManager.createItem(Material.BOOKSHELF,
-				CommunicationManager.format("&3&lEnchant Shop: " + getToggleStatus(arena.hasEnchants())),
-				CommunicationManager.format("&7Turn enchants shop on and off")));
-
 		// Option to toggle community chest
 		buttons.add(ItemManager.createItem(Material.CHEST,
 				CommunicationManager.format("&d&lCommunity Chest: " + getToggleStatus(arena.hasCommunity())),
@@ -740,75 +721,6 @@ public class Inventories {
 				CommunicationManager.format("&e&lShop Settings: " + arena.getName()),
 				true,
 				buttons
-		);
-	}
-
-	// Menu for adding custom items
-	public static Inventory createCustomItemsMenu(Arena arena, int id) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(
-				new InventoryMeta(InventoryID.CUSTOM_ITEMS_MENU, InventoryType.MENU, arena, id),
-				27,
-				CommunicationManager.format("&6&lEdit Item")
-		);
-
-		// Item of interest
-		inv.setItem(4, arena.getCustomShop().getItem(id));
-
-		// Option to set un-purchasable
-		inv.setItem(8, ItemManager.createItem(Material.BEDROCK,
-				CommunicationManager.format("&5&lToggle Un-purchasable")));
-
-		// Option to increase by 1
-		inv.setItem(9, ItemManager.createItem(Material.LIME_CONCRETE,
-				CommunicationManager.format("&a&l+1 gem")));
-
-		// Option to increase by 10
-		inv.setItem(11, ItemManager.createItem(Material.LIME_CONCRETE,
-				CommunicationManager.format("&a&l+10 gems")));
-
-		// Option to increase by 100
-		inv.setItem(13, ItemManager.createItem(Material.LIME_CONCRETE,
-				CommunicationManager.format("&a&l+100 gems")));
-
-		// Option to increase by 1000
-		inv.setItem(15, ItemManager.createItem(Material.LIME_CONCRETE,
-				CommunicationManager.format("&a&l+1000 gems")));
-
-		// Option to delete item
-		inv.setItem(17, ItemManager.createItem(Material.LAVA_BUCKET,
-				CommunicationManager.format("&4&lDELETE")));
-
-		// Option to decrease by 1
-		inv.setItem(18, ItemManager.createItem(Material.RED_CONCRETE,
-				CommunicationManager.format("&c&l-1 gem")));
-
-		// Option to decrease by 10
-		inv.setItem(20, ItemManager.createItem(Material.RED_CONCRETE,
-				CommunicationManager.format("&c&l-10 gems")));
-
-		// Option to decrease by 100
-		inv.setItem(22, ItemManager.createItem(Material.RED_CONCRETE,
-				CommunicationManager.format("&c&l-100 gems")));
-
-		// Option to decrease by 1000
-		inv.setItem(24, ItemManager.createItem(Material.RED_CONCRETE,
-				CommunicationManager.format("&c&l-1000 gems")));
-
-		// Option to exit
-		inv.setItem(26, Buttons.exit());
-
-		return inv;
-	}
-
-	// Confirmation menu for removing custom item
-	public static Inventory createCustomItemConfirmMenu(Arena arena, int id) {
-		return InventoryFactory.createConfirmationMenu(
-				InventoryID.CUSTOM_ITEM_CONFIRM_MENU,
-				null,
-				arena,
-				id,
-				CommunicationManager.format("&4&lRemove Custom Item?")
 		);
 	}
 
@@ -1408,33 +1320,20 @@ public class Inventories {
 				CommunicationManager.format("&2&l" + LanguageManager.messages.level +
 						" &9&l" + level + " &2&l" + LanguageManager.names.itemShop));
 
-		inv.setItem(0, ItemManager.createItem(Material.GOLDEN_SWORD,
+		inv.setItem(1, ItemManager.createItem(Material.GOLDEN_SWORD,
 				CommunicationManager.format("&4&l" + LanguageManager.messages.level +
-						" &9&l" + level + " &4&l" + LanguageManager.names.weaponShop +
-						(arena.hasNormal() ? "" : disabled)), ItemManager.BUTTON_FLAGS, arena.hasNormal() ?
-						ItemManager.glow() : null));
+						" &9&l" + level + " &4&l" + LanguageManager.names.weaponShop), ItemManager.BUTTON_FLAGS,
+						ItemManager.glow()));
 
-		inv.setItem(1, ItemManager.createItem(Material.GOLDEN_CHESTPLATE,
+		inv.setItem(3, ItemManager.createItem(Material.GOLDEN_CHESTPLATE,
 				CommunicationManager.format("&5&l" + LanguageManager.messages.level +
-						" &9&l" + level + " &5&l" + LanguageManager.names.armorShop +
-						(arena.hasNormal() ? "" : disabled)), ItemManager.BUTTON_FLAGS, arena.hasNormal() ?
-						ItemManager.glow() : null));
+						" &9&l" + level + " &5&l" + LanguageManager.names.armorShop), ItemManager.BUTTON_FLAGS,
+						ItemManager.glow()));
 
-		inv.setItem(2, ItemManager.createItem(Material.GOLDEN_APPLE,
+		inv.setItem(5, ItemManager.createItem(Material.GOLDEN_APPLE,
 				CommunicationManager.format("&3&l" + LanguageManager.messages.level +
-						" &9&l" + level + " &3&l" + LanguageManager.names.consumableShop +
-						(arena.hasNormal() ? "" : disabled)), ItemManager.BUTTON_FLAGS, arena.hasNormal() ?
-						ItemManager.glow() : null));
-
-		inv.setItem(4, ItemManager.createItem(Material.BOOKSHELF,
-				CommunicationManager.format("&a&l" + LanguageManager.names.enchantShop +
-						(arena.hasEnchants() ? "" : disabled)), ItemManager.BUTTON_FLAGS, arena.hasEnchants() ?
-						ItemManager.glow() : null));
-
-		inv.setItem(6, ItemManager.createItem(Material.QUARTZ,
-				CommunicationManager.format("&6&l" + LanguageManager.names.customShop +
-						(arena.hasCustom() ? "" : disabled)), ItemManager.BUTTON_FLAGS, arena.hasNormal() ?
-						ItemManager.glow() : null));
+						" &9&l" + level + " &3&l" + LanguageManager.names.consumableShop), ItemManager.BUTTON_FLAGS,
+						ItemManager.glow()));
 
 		inv.setItem(8, ItemManager.createItem(Material.CHEST,
 				CommunicationManager.format("&d&l" + LanguageManager.names.communityChest +
@@ -1461,7 +1360,7 @@ public class Inventories {
 		// Fill in swords
 		List<ItemStack> swords = new ArrayList<>();
 		for (int i = 0; i < 4; i++)
-			swords.add(GameItems.sword(level));
+			swords.add(GameItems.sword((int) arena.getCurrentDifficulty()));
 		sort(swords);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i, modifyPrice(swords.get(i), modifier));
@@ -1582,83 +1481,6 @@ public class Inventories {
 
 		// Return option
 		inv.setItem(13, Buttons.exit());
-
-		return inv;
-	}
-
-	// Generate the enchant shop
-	public static Inventory createEnchantShopMenu() {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(
-				new InventoryMeta(InventoryID.ENCHANT_SHOP_MENU, InventoryType.MENU),
-				54,
-				CommunicationManager.format("&a&l" + LanguageManager.names.enchantShop)
-		);
-
-		// Melee enchants
-		inv.setItem(0, ItemManager.createItem(Material.PISTON,
-				CommunicationManager.format("&a&lIncrease Knockback"),
-				CommunicationManager.format("&2Costs 4 XP Levels")));
-		inv.setItem(1, ItemManager.createItem(Material.GOLDEN_HOE,
-				CommunicationManager.format("&a&lIncrease Sweeping Edge"),
-				ItemManager.BUTTON_FLAGS, null, CommunicationManager.format("&2Costs 6 XP Levels")));
-		inv.setItem(2, ItemManager.createItem(Material.DIAMOND_SWORD,
-				CommunicationManager.format("&a&lIncrease Smite"),
-				ItemManager.BUTTON_FLAGS, null, CommunicationManager.format("&2Costs 7 XP Levels")));
-		inv.setItem(3, ItemManager.createItem(Material.NETHERITE_AXE,
-				CommunicationManager.format("&a&lIncrease Sharpness"),
-				ItemManager.BUTTON_FLAGS, null, CommunicationManager.format("&2Costs 8 XP Levels")));
-		inv.setItem(4, ItemManager.createItem(Material.FIRE,
-				CommunicationManager.format("&a&lIncrease Fire Aspect"),
-				CommunicationManager.format("&2Costs 10 XP Levels")));
-
-		// Ranged enchants
-		inv.setItem(18, ItemManager.createItem(Material.STICKY_PISTON,
-				CommunicationManager.format("&a&lIncrease Punch"),
-				CommunicationManager.format("&2Costs 4 XP Levels")));
-		inv.setItem(19, ItemManager.createItem(Material.SPECTRAL_ARROW,
-				CommunicationManager.format("&a&lIncrease Piercing"),
-				CommunicationManager.format("&2Costs 5 XP Levels")));
-		inv.setItem(20, ItemManager.createItem(Material.REDSTONE_TORCH,
-				CommunicationManager.format("&a&lIncrease Quick Charge"),
-				CommunicationManager.format("&2Costs 6 XP Levels")));
-		inv.setItem(21, ItemManager.createItem(Material.BOW, CommunicationManager.format("&a&lIncrease Power"),
-				CommunicationManager.format("&2Costs 8 XP Levels")));
-		inv.setItem(22, ItemManager.createItem(Material.TRIDENT,
-				CommunicationManager.format("&a&lIncrease Loyalty"),
-				ItemManager.BUTTON_FLAGS, null, CommunicationManager.format("&2Costs 10 XP Levels")));
-		inv.setItem(23, ItemManager.createItem(Material.MAGMA_BLOCK,
-				CommunicationManager.format("&a&lAdd Flame"),
-				CommunicationManager.format("&2Costs 10 XP Levels")));
-		inv.setItem(24, ItemManager.createItem(Material.CROSSBOW,
-				CommunicationManager.format("&a&lAdd Multishot"),
-				CommunicationManager.format("&2Costs 10 XP Levels")));
-		inv.setItem(25, ItemManager.createItem(Material.BEACON, CommunicationManager.format("&a&lAdd Infinity"),
-				CommunicationManager.format("&2Costs 15 XP Levels")));
-
-		// Armor enchants
-		inv.setItem(36, ItemManager.createItem(Material.TNT,
-				CommunicationManager.format("&a&lIncrease Blast Protection"),
-				CommunicationManager.format("&2Costs 4 XP Levels")));
-		inv.setItem(37, ItemManager.createItem(Material.VINE,
-				CommunicationManager.format("&a&lIncrease Thorns"),
-				CommunicationManager.format("&2Costs 5 XP Levels")));
-		inv.setItem(38, ItemManager.createItem(Material.ARROW,
-				CommunicationManager.format("&a&lIncrease Projectile Protection"),
-				CommunicationManager.format("&2Costs 6 XP Levels")));
-		inv.setItem(39, ItemManager.createItem(Material.SHIELD,
-				CommunicationManager.format("&a&lIncrease Protection"),
-				CommunicationManager.format("&2Costs 8 XP Levels")));
-
-		// General enchants
-		inv.setItem(43, ItemManager.createItem(Material.BEDROCK,
-				CommunicationManager.format("&a&lIncrease Unbreaking"),
-				CommunicationManager.format("&2Costs 3 XP Levels")));
-		inv.setItem(44, ItemManager.createItem(Material.ANVIL, CommunicationManager.format("&a&lAdd Mending"),
-				CommunicationManager.format("&2Costs 20 XP Levels")));
-
-		// Return option
-		inv.setItem(53, Buttons.exit());
 
 		return inv;
 	}
@@ -2601,29 +2423,10 @@ public class Inventories {
 						LanguageManager.names.villagerSpawnParticles + ": " +
 						getToggleStatus(arena.hasVillagerParticles()))));
 
-		// Default shop
-		buttons.add( ItemManager.createItem(Material.EMERALD_BLOCK,
-				CommunicationManager.format("&6&l" + LanguageManager.names.defaultShop +
-						": " + getToggleStatus(arena.hasNormal()))));
-
-		// Custom shop
-		buttons.add( ItemManager.createItem(Material.QUARTZ_BLOCK,
-				CommunicationManager.format("&2&l" + LanguageManager.names.customShop +
-						": " + getToggleStatus(arena.hasCustom()))));
-
-		// Enchants shop
-		buttons.add( ItemManager.createItem(Material.BOOKSHELF,
-				CommunicationManager.format("&3&l" + LanguageManager.names.enchantShop +
-						": " + getToggleStatus(arena.hasEnchants()))));
-
 		// Community chest
 		buttons.add( ItemManager.createItem(Material.CHEST,
 				CommunicationManager.format("&d&l" + LanguageManager.names.communityChest +
 						": " + getToggleStatus(arena.hasCommunity()))));
-
-		// Custom shop inventory
-		buttons.add( ItemManager.createItem(Material.QUARTZ,
-				CommunicationManager.format("&f&l" + LanguageManager.messages.customShopInv)));
 
 		// Difficulty multiplier
 		buttons.add( ItemManager.createItem(Material.TURTLE_HELMET,
