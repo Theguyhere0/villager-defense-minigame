@@ -8,7 +8,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.MobMetadata;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
@@ -183,7 +183,7 @@ public class ChallengeListener implements Listener {
         // Mob hurt
         else {
             // Check damage was done to monster
-            if (!(e.getEntity().hasMetadata(MobMetadata.VD.name()))) return;
+            if (!(e.getEntity().hasMetadata(VDMob.VD))) return;
 
             Player player;
             VDPlayer gamer;

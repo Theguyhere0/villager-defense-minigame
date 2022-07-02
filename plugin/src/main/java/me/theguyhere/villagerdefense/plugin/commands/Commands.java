@@ -1182,96 +1182,6 @@ public class Commands implements CommandExecutor {
 											return true;
 									}
 								}
-								else if (args[2].toLowerCase().startsWith("experiencedrop")) {
-									// Check for operation value
-									if (!args[2].contains("-")) {
-										notifyFailure(player, "Operation value required!");
-										return true;
-									}
-
-									switch (args[2].substring(args[2].indexOf("-") + 1).toLowerCase()) {
-										case "on":
-											// Check if already on
-											if (arena.hasExpDrop()) {
-												notifyFailure(player, "Experience drop is already on!");
-												return true;
-											}
-
-											// Turn on
-											arena.setExpDrop(true);
-
-											// Notify console and possibly player
-											notifySuccess(player, "Experience drop is on for " +
-													arena.getName() + ".");
-
-											return true;
-
-										case "off":
-											// Check if already off
-											if (!arena.hasExpDrop()) {
-												notifyFailure(player, "Experience drop is already off!");
-												return true;
-											}
-
-											// Turn off
-											arena.setExpDrop(false);
-
-											// Notify console and possibly player
-											notifySuccess(player, "Experience drop is off for " +
-													arena.getName() + ".");
-
-											return true;
-
-										default:
-											notifyFailure(player, "Invalid operation value.");
-											return true;
-									}
-								}
-								else if (args[2].toLowerCase().startsWith("itemdrop")) {
-									// Check for operation value
-									if (!args[2].contains("-")) {
-										notifyFailure(player, "Operation value required!");
-										return true;
-									}
-
-									switch (args[2].substring(args[2].indexOf("-") + 1).toLowerCase()) {
-										case "on":
-											// Check if already on
-											if (arena.hasGemDrop()) {
-												notifyFailure(player, "Item drop is already on!");
-												return true;
-											}
-
-											// Turn on
-											arena.setGemDrop(true);
-
-											// Notify console and possibly player
-											notifySuccess(player, "Item drop is on for " +
-													arena.getName() + ".");
-
-											return true;
-
-										case "off":
-											// Check if already off
-											if (!arena.hasGemDrop()) {
-												notifyFailure(player, "Item drop is already off!");
-												return true;
-											}
-
-											// Turn off
-											arena.setGemDrop(false);
-
-											// Notify console and possibly player
-											notifySuccess(player, "Item drop is off for " +
-													arena.getName() + ".");
-
-											return true;
-
-										default:
-											notifyFailure(player, "Invalid operation value.");
-											return true;
-									}
-								}
 								else if (args[2].toLowerCase().startsWith("maxwaves")) {
 									// Check for operation value
 									if (!args[2].contains("-")) {
@@ -1379,7 +1289,7 @@ public class Commands implements CommandExecutor {
 									}
 
 									// Set new value
-									arena.setgolemCap(num);
+									arena.setGolemCap(num);
 									notifySuccess(player, "Iron golem cap for " + arena.getName() + " set to " +
 											num + ".");
 									return true;

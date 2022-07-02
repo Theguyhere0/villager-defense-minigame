@@ -629,7 +629,6 @@ public class LanguageManager {
         public final @NotNull String death2;
         public final @NotNull String debugLevelSet;
         public final @NotNull String disabled;
-        public final @NotNull String earnedGems;
         public final @NotNull String effectKitsDescription;
         public final @NotNull String effectShare;
         public final @NotNull String end;
@@ -691,6 +690,7 @@ public class LanguageManager {
         public final @NotNull String shopInfo;
         public final @NotNull String shopUpgrade;
         public final @NotNull String spectators;
+        public final @NotNull String starterSword;
         public final @NotNull String starting;
         public final @NotNull String sword;
         public final @NotNull String unavailable;
@@ -735,7 +735,6 @@ public class LanguageManager {
             death2 = getConfigString("death2");
             debugLevelSet = getConfigString("debugLevelSet");
             disabled = getConfigString("disabled");
-            earnedGems = getConfigString("earnedGems");
             effectKitsDescription = getConfigString("effectKitsDescription");
             effectShare = getConfigString("effectShare");
             end = getConfigString("end");
@@ -797,6 +796,7 @@ public class LanguageManager {
             shopInfo = getConfigString("shopInfo");
             shopUpgrade = getConfigString("shopUpgrade");
             spectators = getConfigString("spectators");
+            starterSword = getConfigString("starterSword");
             starting = getConfigString("starting");
             sword = getConfigString("sword");
             unavailable = getConfigString("unavailable");

@@ -8,28 +8,22 @@ import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
+import me.theguyhere.villagerdefense.plugin.exceptions.VDMobNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
-import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
-import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.MobMetadata;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.Mobs;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
-import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -39,43 +33,31 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.BoundingBox;
 
 import java.util.*;
 
 public class GameListener implements Listener {
-	// Keep score and drop gems, exp, and rare loot
+	// Keep score and manage mob death
 	@EventHandler
 	public void onMobKill(EntityDeathEvent e) {
 		LivingEntity ent = e.getEntity();
 
 		// Check for arena mobs
-		if (!ent.hasMetadata(MobMetadata.VD.name()))
+		if (!ent.hasMetadata(VDMob.VD))
 			return;
 
-		// Attempt to remove from teams
-		try {
-			Main.getMonstersTeam().removeEntry(ent.getUniqueId().toString());
-		} catch (Exception ignored) {
-		}
-		try {
-			Main.getVillagersTeam().removeEntry(ent.getUniqueId().toString());
-		} catch (Exception ignored) {
-		}
-
 		Arena arena;
+		VDMob mob;
 		try {
-			arena = GameManager.getArena(ent.getMetadata(MobMetadata.VD.name()).get(0).asInt());
-		} catch (ArenaNotFoundException err) {
+			arena = GameManager.getArena(ent.getMetadata(VDMob.VD).get(0).asInt());
+			mob = arena.getMob(ent.getUniqueId());
+		} catch (ArenaNotFoundException | VDMobNotFoundException err) {
 			return;
 		}
 
 		// Check for right game
-		if (!ent.hasMetadata(MobMetadata.GAME.name()))
-			return;
-		if (ent.getMetadata(MobMetadata.GAME.name()).get(0).asInt() != arena.getGameID())
+		if (mob.getGameID() != arena.getGameID())
 			return;
 
 		// Arena enemies not part of an active arena
@@ -85,9 +67,7 @@ public class GameListener implements Listener {
 		}
 
 		// Check for right wave
-		if (!ent.hasMetadata(MobMetadata.WAVE.name()))
-			return;
-		if (ent.getMetadata(MobMetadata.WAVE.name()).get(0).asInt() != arena.getCurrentWave())
+		if (mob.getWave() != arena.getCurrentWave())
 			return;
 
 		// Clear normal drops
@@ -101,38 +81,23 @@ public class GameListener implements Listener {
 			data = new DataManager("spawnTables/a" + arena.getId() + ".yml");
 		else data = new DataManager("spawnTables/" + arena.getSpawnTableFile() + ".yml");
 
-		if (ent instanceof Wolf) {
-			try {
-				arena.getPlayer((Player) ((Wolf) ent).getOwner()).decrementWolves();
-			} catch (Exception err) {
-				return;
+		if (Main.getVillagersTeam().hasEntry(ent.getUniqueId().toString())) {
+			// Handle pet death TODO
+			if (ent instanceof Wolf) {
+				try {
+					arena.getPlayer((Player) ((Wolf) ent).getOwner()).decrementWolves();
+				} catch (Exception err) {
+					return;
+				}
 			}
+
+			// Handle golem death TODO
+			else if (ent instanceof IronGolem)
+				arena.decrementGolems();
 		}
 
-		// Update iron golem count
-		else if (ent instanceof IronGolem)
-			arena.decrementGolems();
-
-		// Manage drops and update enemy count, update player kill count
-		else {
-			Random r = new Random();
-
-			// Set drop to emerald, exp, and rare loot
-			if (ent instanceof Wither) {
-				if (arena.hasGemDrop())
-					e.getDrops().add(ItemManager.createItems(Material.EMERALD, 20, null,
-							Integer.toString(arena.getId())));
-				if (arena.hasExpDrop())
-					e.setDroppedExp((int) (arena.getCurrentDifficulty() * 40));
-			} else {
-				if (arena.hasGemDrop()) {
-					e.getDrops().add(ItemManager.createItem(Material.EMERALD, null,
-							Integer.toString(arena.getId())));
-				}
-				if (arena.hasExpDrop())
-					e.setDroppedExp((int) (arena.getCurrentDifficulty() * 2));
-			}
-
+		// Handle enemy death
+		else if (Main.getMonstersTeam().hasEntry(ent.getUniqueId().toString())) {
 			// Get wave
 			String wave = Integer.toString(arena.getCurrentWave());
 			if (!data.getConfig().contains(wave))
@@ -153,6 +118,9 @@ public class GameListener implements Listener {
 				arena.setMonsterGlow();
 		}
 
+		// Remove the mob
+		mob.remove(arena);
+
 		// Update scoreboards
 		arena.updateScoreboards();
 	}
@@ -161,23 +129,6 @@ public class GameListener implements Listener {
 	@EventHandler
 	public void onGameModeSwitch(PlayerGameModeChangeEvent e) {
 		if (GameManager.checkPlayer(e.getPlayer()) && e.getNewGameMode() == GameMode.SURVIVAL)
-			e.setCancelled(true);
-	}
-
-	// Save gems from explosions
-	@EventHandler
-	public void onGemExplode(EntityDamageEvent e) {
-		Entity ent = e.getEntity();
-
-		// Check for item
-		if (!(ent instanceof Item))
-			return;
-
-		ItemStack item = ((Item) ent).getItemStack();
-		ItemMeta meta = item.getItemMeta();
-
-		// Check for right item
-		if (item.getType() == Material.EMERALD && meta != null && meta.hasLore())
 			e.setCancelled(true);
 	}
 
@@ -193,21 +144,22 @@ public class GameListener implements Listener {
 			return;
 		LivingEntity victim = (LivingEntity) interimVictim;
 		LivingEntity damager = (LivingEntity) interimDamager;
+		Arena arena;
 		Player player = null;
 		VDPlayer gamer = null;
+		VDMob finalVictim;
+		VDMob finalDamager = null;
 
 		// Player getting hurt
 		if (victim instanceof Player) {
 			player = (Player) victim;
 
-			// Check that damager is VD entity
-			if (!damager.hasMetadata(MobMetadata.VD.name()))
-				return;
-
-			// Attempt to get VDplayer
+			// Attempt to get VDPlayer and VDMob
 			try {
-				gamer = GameManager.getArena(player).getPlayer(player);
-			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+				arena = GameManager.getArena(player);
+				gamer = arena.getPlayer(player);
+				finalDamager = arena.getMob(damager.getUniqueId());
+			} catch (ArenaNotFoundException | PlayerNotFoundException | VDMobNotFoundException err) {
 				return;
 			}
 
@@ -215,61 +167,46 @@ public class GameListener implements Listener {
 			if (Main.getVillagersTeam().hasEntry(damager.getUniqueId().toString()))
 				return;
 
-			// Cancel and capture original damage
-			int damage = (int) e.getDamage();
+			// Cancel original damage
 			e.setDamage(0);
 
 			// Check damage cooldown
-			if (System.currentTimeMillis() < damager.getMetadata(MobMetadata.LAST_STRIKE.name()).get(0).asLong() +
-					damager.getMetadata(MobMetadata.ATTACK_SPEED.name()).get(0).asDouble() * 1000) {
+			if (!finalDamager.checkCooldown()) {
 				e.setCancelled(true);
 				return;
 			}
-			damager.setMetadata(MobMetadata.LAST_STRIKE.name(),
-					new FixedMetadataValue(Main.plugin, System.currentTimeMillis()));
 
 			// Implement faster attacks
-			int finalDamage = damage;
 			Player finalPlayer = player;
-			if (damager.getMetadata(MobMetadata.ATTACK_SPEED.name()).get(0).asDouble() == .4 &&
-					e.getCause() != EntityDamageEvent.DamageCause.CUSTOM)
+			if (finalDamager.getAttackSpeed() == .4 && e.getCause() != EntityDamageEvent.DamageCause.CUSTOM)
 				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
 						Bukkit.getPluginManager().callEvent(new EntityDamageByEntityEvent(damager, victim,
-								EntityDamageEvent.DamageCause.CUSTOM, finalDamage));
+								EntityDamageEvent.DamageCause.CUSTOM, 0));
 					finalPlayer.playSound(finalPlayer.getLocation(), Sound.ENTITY_PLAYER_HURT, 1, 1);
 				}, Utils.secondsToTicks(.45));
-			else if (damager.getMetadata(MobMetadata.ATTACK_SPEED.name()).get(0).asDouble() == .2 &&
-					e.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
+			else if (finalDamager.getAttackSpeed() == .2 && e.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
 				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
 					Bukkit.getPluginManager().callEvent(new EntityDamageByEntityEvent(damager, victim,
-							EntityDamageEvent.DamageCause.CUSTOM, finalDamage));
+							EntityDamageEvent.DamageCause.CUSTOM, 0));
 					finalPlayer.playSound(finalPlayer.getLocation(), Sound.ENTITY_PLAYER_HURT, 1, 1);
 				}, Utils.secondsToTicks(.25));
 				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
 					Bukkit.getPluginManager().callEvent(new EntityDamageByEntityEvent(damager, victim,
-							EntityDamageEvent.DamageCause.CUSTOM, finalDamage));
+							EntityDamageEvent.DamageCause.CUSTOM, 0));
 					finalPlayer.playSound(finalPlayer.getLocation(), Sound.ENTITY_PLAYER_HURT, 1, 1);
 				}, Utils.secondsToTicks(.5));
 			}
 
-			// Damage spread
-			Random r = new Random();
-			damage *= (1 + (r.nextDouble() * 2 - 1) *
-					damager.getMetadata(MobMetadata.DAMAGE_SPREAD.name()).get(0).asDouble());
-
-			// Factor in armor and toughness
-			int armor = 0; // PLACEHOLDER
-			double toughness = 0; // PLACEHOLDER
-			if (AttackType.NORMAL.name().equals(damager.getMetadata(MobMetadata.ATTACK_TYPE.name()).get(0).asString()))
-				damage -= Math.min(damage, armor);
-			else damage *= Math.max(0, 1 - toughness);
+			// Calculate in armor and toughness
+			int armor = 0; // TODO: Implement
+			double toughness = 0; // TODO: Implement
 
 			// Realize damage
-			gamer.setCurrentHealth(gamer.getCurrentHealth() - damage);
+			gamer.setCurrentHealth(gamer.getCurrentHealth() - finalDamager.dealDamage(armor, toughness));
 		}
 
 		// VD entity getting hurt
-		else if (victim.hasMetadata(MobMetadata.VD.name())) {
+		else if (victim.hasMetadata(VDMob.VD)) {
 			// Check for player damager, then get player
 			if (damager instanceof Player)
 				player = (Player) damager;
@@ -277,18 +214,24 @@ public class GameListener implements Listener {
 					((Projectile) damager).getShooter() instanceof Player)
 				player = (Player) ((Projectile) damager).getShooter();
 
-			// Attempt to get VDplayer
+			// Attempt to get VDPlayer and VDMobs
 			if (player != null) {
 				try {
-					gamer = GameManager.getArena(player).getPlayer(player);
-				} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+					arena = GameManager.getArena(player);
+					gamer = arena.getPlayer(player);
+					finalVictim = arena.getMob(victim.getUniqueId());
+				} catch (ArenaNotFoundException | PlayerNotFoundException | VDMobNotFoundException err) {
+					return;
+				}
+			} else {
+				try {
+					arena = GameManager.getArena(player);
+					finalDamager = arena.getMob(damager.getUniqueId());
+					finalVictim = arena.getMob(victim.getUniqueId());
+				} catch (ArenaNotFoundException | VDMobNotFoundException err) {
 					return;
 				}
 			}
-
-			// Check that damager is VD entity or player
-			if (!damager.hasMetadata(MobMetadata.VD.name()) && gamer == null)
-				return;
 
 			// Enemy getting hurt
 			if (Main.getMonstersTeam().hasEntry(victim.getUniqueId().toString())) {
@@ -321,27 +264,42 @@ public class GameListener implements Listener {
 						Objects.requireNonNull(Objects.requireNonNull(weapon.getItemMeta()).getLore()).forEach(lore -> {
 							if (lore.contains(LanguageManager.messages.attackMainDamage
 									.replace("%s", ""))) {
-								String[] split = lore.substring(2 + LanguageManager.messages.attackMainDamage.length())
-										.split("-");
-								attributes.put("mainLow", Integer.valueOf(split[0]));
-								attributes.put("mainHigh",
-										Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
+								if (lore.contains("-")) {
+									String[] split = lore.substring(2 +
+													LanguageManager.messages.attackMainDamage.length())
+											.split("-");
+									attributes.put("mainLow", Integer.valueOf(split[0]));
+									attributes.put("mainHigh",
+											Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
+								} else attributes.put("main", Integer.valueOf(lore.substring(2 +
+										LanguageManager.messages.attackMainDamage.length())
+										.replace(ChatColor.BLUE.toString(), "")));
 							}
 							else if (lore.contains(LanguageManager.messages.attackCritDamage
 									.replace("%s", ""))) {
-								String[] split = lore.substring(2 + LanguageManager.messages.attackCritDamage.length())
-										.split("-");
-								attributes.put("critLow", Integer.valueOf(split[0]));
-								attributes.put("critHigh",
-										Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
+								if (lore.contains("-")) {
+									String[] split = lore.substring(2 +
+													LanguageManager.messages.attackCritDamage.length())
+											.split("-");
+									attributes.put("critLow", Integer.valueOf(split[0]));
+									attributes.put("critHigh",
+											Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
+								} else attributes.put("crit", Integer.valueOf(lore.substring(2 +
+												LanguageManager.messages.attackCritDamage.length())
+										.replace(ChatColor.BLUE.toString(), "")));
 							}
 							else if (lore.contains(LanguageManager.messages.attackSweepDamage
 									.replace("%s", ""))) {
-								String[] split = lore.substring(2 + LanguageManager.messages.attackSweepDamage.length())
-										.split("-");
-								attributes.put("sweepLow", Integer.valueOf(split[0]));
-								attributes.put("sweepHigh",
-										Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
+								if (lore.contains("-")) {
+									String[] split = lore.substring(2 +
+													LanguageManager.messages.attackSweepDamage.length())
+											.split("-");
+									attributes.put("sweepLow", Integer.valueOf(split[0]));
+									attributes.put("sweepHigh",
+											Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
+								} else attributes.put("sweep", Integer.valueOf(lore.substring(2 +
+												LanguageManager.messages.attackSweepDamage.length())
+										.replace(ChatColor.BLUE.toString(), "")));
 							}
 							else if (lore.contains(LanguageManager.names.penetrating.replace("%s", "")))
 								attributes.put("penetrating", 1);
@@ -349,17 +307,23 @@ public class GameListener implements Listener {
 
 						// Crit damage
 						if (damage >= 3)
-							damage = gamer.getDamage() + attributes.get("critLow") +
+							if (attributes.containsKey("crit"))
+								damage = gamer.getDamage() + attributes.get("crit");
+							else damage = gamer.getDamage() + attributes.get("critLow") +
 									r.nextInt(attributes.get("critHigh") - attributes.get("critLow"));
 
 						// Sweep damage
 						else if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)
-							damage = gamer.getDamage() + attributes.get("sweepLow") +
+							if (attributes.containsKey("sweep"))
+								damage = gamer.getDamage() + attributes.get("sweep");
+							else damage = gamer.getDamage() + attributes.get("sweepLow") +
 									r.nextInt(attributes.get("sweepHigh") - attributes.get("sweepLow"));
 
 						// Normal damage
-						else damage *= gamer.getDamage() + attributes.get("mainLow") +
-								r.nextInt(attributes.get("mainHigh") - attributes.get("mainLow"));
+						else if (attributes.containsKey("main"))
+							damage = gamer.getDamage() + attributes.get("main");
+						else damage = gamer.getDamage() + attributes.get("mainLow") +
+									r.nextInt(attributes.get("mainHigh") - attributes.get("mainLow"));
 
 						// Check type
 						if (attributes.containsKey("type"))
@@ -368,44 +332,36 @@ public class GameListener implements Listener {
 						damage = gamer.getDamage();
 					}
 
-					// Factor in armor and toughness
-					int armor = (int) Objects.requireNonNull(victim.getAttribute(Attribute.GENERIC_ARMOR)).getValue();
-					double toughness = Objects.requireNonNull(victim.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS))
-							.getValue();
-					if (type == AttackType.NORMAL)
-						damage -= Math.min(damage, armor);
-					else damage *= Math.max(0, 1 - toughness);
-
-					// Realize daamage
-					victim.setHealth(Math.max(victim.getHealth() - damage, 0));
+					// Play out damage
+					finalVictim.takeDamage(damage, type, player, arena);
 				}
 
 				// Damage not dealt by player
 				else {
-					// Check cooldown
-					if (System.currentTimeMillis() < damager.getMetadata(MobMetadata.LAST_STRIKE.name()).get(0).asLong() +
-							damager.getMetadata(MobMetadata.ATTACK_SPEED.name()).get(0).asDouble() * 1000) {
+					// Check damage cooldown
+					if (finalDamager.checkCooldown()) {
 						e.setCancelled(true);
 						return;
 					}
-					damager.setMetadata(MobMetadata.LAST_STRIKE.name(),
-							new FixedMetadataValue(Main.plugin, System.currentTimeMillis()));
 
-					// Damage spread
-					damage *= (1 + (r.nextDouble() * 2 - 1) *
-							damager.getMetadata(MobMetadata.DAMAGE_SPREAD.name()).get(0).asDouble());
+					// Implement faster attacks
+					if (finalDamager.getAttackSpeed() == .4 && e.getCause() != EntityDamageEvent.DamageCause.CUSTOM)
+						Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
+								.callEvent(new EntityDamageByEntityEvent(damager, victim,
+								EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.45));
+					else if (finalDamager.getAttackSpeed() == .2 &&
+							e.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
+						Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
+								.callEvent(new EntityDamageByEntityEvent(damager, victim,
+								EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.25));
+						Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
+								.callEvent(new EntityDamageByEntityEvent(damager, victim,
+								EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.5));
+					}
 
-					// Factor in armor and toughness
-					int armor = (int) Objects.requireNonNull(victim.getAttribute(Attribute.GENERIC_ARMOR)).getValue();
-					double toughness = Objects.requireNonNull(victim.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS))
-							.getValue();
-					if (AttackType.NORMAL.name().equals(
-							damager.getMetadata(MobMetadata.ATTACK_TYPE.name()).get(0).asString()))
-						damage -= Math.min(damage, armor);
-					else damage *= Math.max(0, 1 - toughness);
-
-					// Realize damage
-					victim.setHealth(Math.max(victim.getHealth() - damage, 0));
+					// Play out damage
+					finalVictim.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType(), null,
+							arena);
 				}
 			}
 
@@ -414,86 +370,55 @@ public class GameListener implements Listener {
 				// Avoid phantom damage effects
 				if (Main.getVillagersTeam().hasEntry(damager.getUniqueId().toString()))
 					return;
+				if (finalDamager == null)
+					return;
 
-				// Cancel and capture original damage
-				int damage = (int) e.getDamage();
+				// Cancel original damage
 				e.setDamage(0);
 
-				// Check for cooldown
-				if (System.currentTimeMillis() < damager.getMetadata(MobMetadata.LAST_STRIKE.name()).get(0).asLong() +
-						damager.getMetadata(MobMetadata.ATTACK_SPEED.name()).get(0).asDouble() * 1000) {
+				// Check damage cooldown
+				if (finalDamager.checkCooldown()) {
 					e.setCancelled(true);
 					return;
 				}
-				damager.setMetadata(MobMetadata.LAST_STRIKE.name(),
-						new FixedMetadataValue(Main.plugin, System.currentTimeMillis()));
 
 				// Implement faster attacks
-				int finalDamage = damage;
-				if (damager.getMetadata(MobMetadata.ATTACK_SPEED.name()).get(0).asDouble() == .4 &&
-						e.getCause() != EntityDamageEvent.DamageCause.CUSTOM)
+				if (finalDamager.getAttackSpeed() == .4 && e.getCause() != EntityDamageEvent.DamageCause.CUSTOM)
 					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
 							.callEvent(new EntityDamageByEntityEvent(damager, victim,
-									EntityDamageEvent.DamageCause.CUSTOM, finalDamage)), Utils.secondsToTicks(.45));
-				else if (damager.getMetadata(MobMetadata.ATTACK_SPEED.name()).get(0).asDouble() == .2 &&
+									EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.45));
+				else if (finalDamager.getAttackSpeed() == .2 &&
 						e.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
 					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
 							.callEvent(new EntityDamageByEntityEvent(damager, victim,
-									EntityDamageEvent.DamageCause.CUSTOM, finalDamage)), Utils.secondsToTicks(.25));
+									EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.25));
 					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
 							.callEvent(new EntityDamageByEntityEvent(damager, victim,
-									EntityDamageEvent.DamageCause.CUSTOM, finalDamage)), Utils.secondsToTicks(.5));
+									EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.5));
 				}
 
-				// Damage spread
-				Random r = new Random();
-				damage *= (1 + (r.nextDouble() * 2 - 1) *
-						damager.getMetadata(MobMetadata.DAMAGE_SPREAD.name()).get(0).asDouble());
-
-				// Factor in armor and toughness
-				int armor = (int) Objects.requireNonNull(victim.getAttribute(Attribute.GENERIC_ARMOR)).getValue();
-				double toughness = Objects.requireNonNull(victim.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS))
-						.getValue();
-				if (AttackType.NORMAL.name().equals(
-						damager.getMetadata(MobMetadata.ATTACK_TYPE.name()).get(0).asString()))
-					damage -= Math.min(damage, armor);
-				else damage *= Math.max(0, 1 - toughness);
-
-				// Realize damage
-				victim.setHealth(Math.max(victim.getHealth() - damage, 0));
+				// Play out damage
+				finalVictim.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType(), null,
+						arena);
 			}
-
-			// Update health bar
-			victim.setCustomName(Mobs.formattedName(victim));
 		}
 	}
 
-	// Update health bar when damage is dealt not by another entity
+	// Ignore damage not dealt by another entity
 	@EventHandler
 	public void onHurt(EntityDamageEvent e) {
 		Entity ent = e.getEntity();
 
 		// Check for arena enemies
-		if (!ent.hasMetadata(MobMetadata.VD.name()))
-			return;
-
-		// Ignore wolves
-		if (ent instanceof Wolf)
+		if (!ent.hasMetadata(VDMob.VD))
 			return;
 
 		// Don't handle entity on entity damage
-		if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK ||
-				e.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK||
-				e.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION||
-				e.getCause() == EntityDamageEvent.DamageCause.PROJECTILE)
+		if (e instanceof EntityDamageByEntityEvent)
 			return;
 
-		// Ignore bosses
-		if (ent instanceof Wither)
-			return;
-
-		// Update health bar
-		ent.setCustomName(Mobs.formattedName((LivingEntity) ent));
+		// Cancel
+		e.setCancelled(true);
 	}
 
 	// Prevent players from going hungry while waiting for an arena to start
@@ -512,24 +437,24 @@ public class GameListener implements Listener {
 		e.setCancelled(true);
 	}
 
-	// Update health bar when healed
+	// Handle healing
 	@EventHandler
 	public void onHeal(EntityRegainHealthEvent e) {
 		Entity ent = e.getEntity();
-
-		// Check for arena enemies
-		if (!ent.hasMetadata(MobMetadata.VD.name()))
-			return;
-
-		// Ignore wolves and players
-		if (ent instanceof Wolf || ent instanceof Player)
-			return;
-
-		// Ignore bosses
-		if (ent instanceof Wither)
-			return;
-
-		ent.setCustomName(Mobs.formattedName((LivingEntity) ent));
+//		TODO
+//		// Check for arena enemies
+//		if (!ent.hasMetadata(VDMob.VD))
+//			return;
+//
+//		// Ignore wolves and players
+//		if (ent instanceof Wolf || ent instanceof Player)
+//			return;
+//
+//		// Ignore bosses
+//		if (ent instanceof Wither)
+//			return;
+//
+//		ent.setCustomName(Mobs.formattedName((LivingEntity) ent));
 	}
 
 	// Open shop, kit selecting menu, or leave
@@ -560,7 +485,6 @@ public class GameListener implements Listener {
 			if (Arrays.asList(GameItems.ABILITY_ITEMS).contains(item) ||
 					Arrays.asList(GameItems.FOOD_MATERIALS).contains(item.getType()) ||
 					Arrays.asList(GameItems.ARMOR_MATERIALS).contains(item.getType()) ||
-					Arrays.asList(GameItems.CARE_MATERIALS).contains(item.getType()) ||
 					Arrays.asList(GameItems.CLICKABLE_WEAPON_MATERIALS).contains(item.getType()) ||
 					Arrays.asList(GameItems.CLICKABLE_CONSUME_MATERIALS).contains(item.getType()))
 				return;
@@ -620,7 +544,7 @@ public class GameListener implements Listener {
 		}
 
 		// Check for special mobs
-		if (!ent.hasMetadata(MobMetadata.VD.name()) && !(ent instanceof Player))
+		if (!ent.hasMetadata(VDMob.VD) && !(ent instanceof Player))
 			return;
 
 		// Cancel damage to friendly mobs
@@ -735,176 +659,11 @@ public class GameListener implements Listener {
 		}
 	}
 
-	// Give gems
-	@EventHandler
-	public void onGemPickup(EntityPickupItemEvent e) {
-		// Check for player picking up item
-		if (!(e.getEntity() instanceof Player))
-			return;
-
-		Player player = (Player) e.getEntity();
-		UUID id = player.getUniqueId();
-		Arena arena;
-		VDPlayer gamer;
-
-		// Attempt to get arena and player
-		try {
-			arena = GameManager.getArena(player);
-			gamer = arena.getPlayer(player);
-		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
-			return;
-		}
-
-		ItemStack item = e.getItem().getItemStack();
-
-		// Check for gem item
-		if (!item.getType().equals(Material.EMERALD))
-			return;
-
-		// Ignore item shop
-		if (Objects.requireNonNull(item.getItemMeta()).getDisplayName().contains(LanguageManager.names.itemShop))
-			return;
-
-		// Calculate and give player gems
-		int stack = item.getAmount();
-		Random r = new Random();
-		int wave = arena.getCurrentWave();
-		int earned = 0;
-		for (int i = 0; i < stack; i++) {
-			int temp = r.nextInt((int) (50 * Math.pow(wave, .15)));
-			earned += temp == 0 ? 1 : temp;
-		}
-
-		// Check if player has gem increase achievement and is boosted
-		if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement.topBalance9().getID()))
-			earned *= 1.1;
-		gamer.addGems(earned);
-
-		// Cancel picking up of emeralds and notify player
-		e.setCancelled(true);
-		e.getItem().remove();
-		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				CommunicationManager.format(new ColoredMessage(ChatColor.GREEN, LanguageManager.messages.foundGems),
-						Integer.toString(earned))));
-		if (arena.hasGemSound())
-			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, .5f, 0);
-
-		// Update player stats
-		PlayerManager.setTotalGems(id, PlayerManager.getTotalGems(id) + earned);
-		if (PlayerManager.getTopBalance(id) < gamer.getGems())
-			PlayerManager.setTopBalance(id, gamer.getGems());
-
-		// Update scoreboard
-		GameManager.createBoard(gamer);
-	}
-
-	// Update player kill counter
-	@EventHandler
-	public void onMobKillByPlayer(EntityDamageByEntityEvent e) {
-		// Check for living entity
-		if (!(e.getEntity() instanceof LivingEntity)) return;
-
-		// Check for fatal damage
-		if (((LivingEntity) e.getEntity()).getHealth() > e.getFinalDamage()) return;
-
-		// Check damage was done to monster
-		if (!(e.getEntity().hasMetadata(MobMetadata.VD.name()))) return;
-
-		// Prevent wither roses from being created
-		if (e.getDamager() instanceof WitherSkull || e.getDamager() instanceof Wither) {
-			e.setCancelled(true);
-			e.getEntity().remove();
-		}
-
-		// Check that a player caused the damage
-		if (!(e.getDamager() instanceof Player || e.getDamager() instanceof Projectile)) return;
-
-		Player player;
-		Arena arena;
-		VDPlayer gamer;
-
-		// Check if projectile came from player, then set player
-		if (e.getDamager() instanceof Projectile) {
-			if (((Projectile) e.getDamager()).getShooter() instanceof Player)
-				player = (Player) ((Projectile) e.getDamager()).getShooter();
-			else return;
-		} else player = (Player) e.getDamager();
-		UUID id = player.getUniqueId();
-
-		// Attempt to get arena and player
-		try {
-			arena = GameManager.getArena(player);
-			gamer = arena.getPlayer(player);
-		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
-			return;
-		}
-
-		// Increment kill count
-		gamer.incrementKills();
-
-		// Add gems, loot, and experience if needed
-		if (!arena.hasGemDrop()) {
-			// Calculate and give player gems
-			Random r = new Random();
-			int wave = arena.getCurrentWave();
-
-			if (e.getEntity() instanceof Wither) {
-				int earned = r.nextInt((int) (50 * Math.pow(wave, .15) * 20) / arena.getAlive());
-				arena.getActives().stream().filter(vdPlayer -> !arena.getGhosts().contains(vdPlayer))
-						.forEach(vdPlayer -> {
-							UUID uuid = vdPlayer.getID();
-
-							vdPlayer.addGems(earned);
-
-							// Notify player
-							PlayerManager.notifySuccess(
-									vdPlayer.getPlayer(),
-									LanguageManager.messages.earnedGems,
-									new ColoredMessage(ChatColor.AQUA, Integer.toString(earned))
-							);
-
-							// Update player stats
-							PlayerManager.setTotalGems(uuid, PlayerManager.getTotalGems(uuid) + earned);
-							if (PlayerManager.getTopBalance(uuid) < vdPlayer.getGems())
-								PlayerManager.setTopBalance(uuid, vdPlayer.getGems());
-
-							// Update scoreboard
-							GameManager.createBoard(vdPlayer);
-						});
-			} else {
-				int earned = r.nextInt((int) (50 * Math.pow(wave, .15)));
-				gamer.addGems(earned == 0 ? 1 : earned);
-
-				// Notify player
-				PlayerManager.notifySuccess(
-						player,
-						LanguageManager.messages.earnedGems,
-						new ColoredMessage(ChatColor.AQUA, Integer.toString(earned))
-				);
-
-				// Update player stats
-				PlayerManager.setTotalGems(id, PlayerManager.getTotalGems(id) + earned);
-				if (PlayerManager.getTopBalance(id) < gamer.getGems())
-					PlayerManager.setTopBalance(id, gamer.getGems());
-
-				// Update scoreboard
-				GameManager.createBoard(gamer);
-			}
-		}
-		if (!arena.hasExpDrop()) {
-			if (e.getEntity() instanceof Wither)
-				arena.getActives().stream().filter(vdPlayer -> !arena.getGhosts().contains(vdPlayer))
-						.forEach(vdPlayer -> vdPlayer.getPlayer()
-								.giveExp((int) (arena.getCurrentDifficulty() * 40) / arena.getAlive()));
-			else player.giveExp((int) (arena.getCurrentDifficulty() * 2));
-		}
-	}
-
 	// Stops slimes and magma cubes from splitting on death
 	@EventHandler
 	public void onSplit(SlimeSplitEvent e) {
 		Entity ent = e.getEntity();
-		if (!ent.hasMetadata(MobMetadata.VD.name()))
+		if (!ent.hasMetadata(VDMob.VD))
 			return;
 		e.setCancelled(true);
 	}
@@ -919,7 +678,7 @@ public class GameListener implements Listener {
 			return;
 
 		// Check for arena mobs
-		if (ent.hasMetadata(MobMetadata.VD.name()))
+		if (ent.hasMetadata(VDMob.VD))
 			e.setCancelled(true);
 	}
 
@@ -940,7 +699,7 @@ public class GameListener implements Listener {
 		e.setCancelled(true);
 	}
 
-	// Manage spawning pets and care packages
+	// Manage spawning pets
 	@EventHandler
 	public void onConsume(PlayerInteractEvent e) {
 		Player player = e.getPlayer();
@@ -969,9 +728,7 @@ public class GameListener implements Listener {
 		// Wolf spawn
 		if (item.getType() == Material.WOLF_SPAWN_EGG &&
 				!(main.getType() == Material.WOLF_SPAWN_EGG && e.getHand() == EquipmentSlot.OFF_HAND) &&
-				main.getType() != Material.POLAR_BEAR_SPAWN_EGG && main.getType() != Material.COAL_BLOCK &&
-				main.getType() != Material.IRON_BLOCK && main.getType() != Material.DIAMOND_BLOCK &&
-				main.getType() != Material.BEACON) {
+				main.getType() != Material.POLAR_BEAR_SPAWN_EGG) {
 			// Ignore if it wasn't a right click on a block
 			if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
 				return;
@@ -1008,9 +765,7 @@ public class GameListener implements Listener {
 		// Iron golem spawn
 		if (item.getItemMeta().getDisplayName().contains("Iron Golem Spawn Egg") &&
 				!(main.getType() == Material.POLAR_BEAR_SPAWN_EGG && e.getHand() == EquipmentSlot.OFF_HAND) &&
-				main.getType() != Material.WOLF_SPAWN_EGG &&
-				main.getType() != Material.COAL_BLOCK && main.getType() != Material.IRON_BLOCK &&
-				main.getType() != Material.DIAMOND_BLOCK && main.getType() != Material.BEACON) {
+				main.getType() != Material.WOLF_SPAWN_EGG) {
 			// Ignore if it wasn't a right click on a block
 			if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
 				return;
@@ -1037,238 +792,23 @@ public class GameListener implements Listener {
 			IronGolem ironGolem = (IronGolem) player.getWorld().spawnEntity(location, EntityType.IRON_GOLEM);
 			Mobs.setGolem(Main.plugin, arena, ironGolem);
 			Main.getVillagersTeam().addEntry(ironGolem.getUniqueId().toString());
-			return;
-		}
-
-		Random random = new Random();
-
-		// Small care package
-		if (item.getItemMeta().getDisplayName().contains("Small Care Package") &&
-				main.getType() != Material.POLAR_BEAR_SPAWN_EGG &&
-				!(main.getType() == Material.COAL_BLOCK && e.getHand() == EquipmentSlot.OFF_HAND) &&
-				main.getType() != Material.WOLF_SPAWN_EGG && main.getType() != Material.IRON_BLOCK &&
-				main.getType() != Material.DIAMOND_BLOCK && main.getType() != Material.BEACON) {
-			// Remove an item
-			if (item.getAmount() > 1)
-				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
-
-			// Give items and notify
-			if ((Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
-					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randWeapon(1))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(1))), LanguageManager.errors.inventoryFull);
-			}
-			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.BLACKSMITH))) {
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randWeapon(1))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(1))), LanguageManager.errors.inventoryFull);
-				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-			}
-			else {
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(1)),
-						LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(1)),
-						LanguageManager.errors.inventoryFull);
-			}
-			PlayerManager.notifySuccess(player, LanguageManager.confirms.carePackage);
-		}
-
-		// Medium care package
-		if (item.getItemMeta().getDisplayName().contains("Medium Care Package") &&
-				main.getType() != Material.POLAR_BEAR_SPAWN_EGG && main.getType() != Material.COAL_BLOCK &&
-				!(main.getType() == Material.IRON_BLOCK && e.getHand() == EquipmentSlot.OFF_HAND) &&
-				main.getType() != Material.WOLF_SPAWN_EGG &&
-				main.getType() != Material.DIAMOND_BLOCK && main.getType() != Material.BEACON) {
-			// Remove an item
-			if (item.getAmount() > 1)
-				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
-
-			// Give items and notify
-			if ((Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
-					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randWeapon(2))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(2))), LanguageManager.errors.inventoryFull);
-			}
-			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.BLACKSMITH))) {
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randWeapon(2))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(2))), LanguageManager.errors.inventoryFull);
-				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-			}
-			else {
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(2)),
-						LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(2)),
-						LanguageManager.errors.inventoryFull);
-			}
-
-			if ((Kit.witch().setKitLevel(1).equals(gamer.getKit()) ||
-					Kit.witch().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
-				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-						GameItems.randNotCare(2))), LanguageManager.errors.inventoryFull);
-			}
-			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.WITCH))) {
-				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-						GameItems.randNotCare(2))), LanguageManager.errors.inventoryFull);
-				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-			}
-			else {
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(2)),
-						LanguageManager.errors.inventoryFull);
-			}
-
-			PlayerManager.notifySuccess(player, LanguageManager.confirms.carePackage);
-		}
-
-		// Large care package
-		if (item.getItemMeta().getDisplayName().contains("Large Care Package") &&
-				main.getType() != Material.WOLF_SPAWN_EGG && main.getType() != Material.POLAR_BEAR_SPAWN_EGG &&
-				main.getType() != Material.COAL_BLOCK && main.getType() != Material.IRON_BLOCK &&
-				!(main.getType() == Material.DIAMOND_BLOCK && e.getHand() == EquipmentSlot.OFF_HAND) &&
-				main.getType() != Material.BEACON) {
-			// Remove an item
-			if (item.getAmount() > 1)
-				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
-
-			// Give items and notify
-			if ((Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
-					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randWeapon(4))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(3))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(3))), LanguageManager.errors.inventoryFull);
-			}
-			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.BLACKSMITH))) {
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randWeapon(4))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(3))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(3))), LanguageManager.errors.inventoryFull);
-				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-			}
-			else {
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(4)),
-						LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(3)),
-						LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(3)),
-						LanguageManager.errors.inventoryFull);
-			}
-
-			if ((Kit.witch().setKitLevel(1).equals(gamer.getKit()) ||
-					Kit.witch().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
-				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-						GameItems.randNotCare(3))), LanguageManager.errors.inventoryFull);
-			}
-			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.WITCH))) {
-				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-						GameItems.randNotCare(3))), LanguageManager.errors.inventoryFull);
-				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-			}
-			else {
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(3)),
-						LanguageManager.errors.inventoryFull);
-			}
-
-			PlayerManager.notifySuccess(player, LanguageManager.confirms.carePackage);
-		}
-
-		// Extra large care package
-		if (item.getItemMeta().getDisplayName().contains("Extra Large Care Package") &&
-				main.getType() != Material.WOLF_SPAWN_EGG && main.getType() != Material.POLAR_BEAR_SPAWN_EGG &&
-				main.getType() != Material.COAL_BLOCK && main.getType() != Material.IRON_BLOCK &&
-				main.getType() != Material.DIAMOND_BLOCK &&
-				!(main.getType() == Material.BEACON && e.getHand() == EquipmentSlot.OFF_HAND)) {
-			// Remove an item
-			if (item.getAmount() > 1)
-				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
-
-			// Give items and notify
-			if ((Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
-					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randWeapon(5))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randWeapon(4))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(5))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(4))), LanguageManager.errors.inventoryFull);
-			}
-			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.BLACKSMITH))) {
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randWeapon(5))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randWeapon(4))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(5))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(4))), LanguageManager.errors.inventoryFull);
-				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-			}
-			else {
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(5)),
-						LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(4)),
-						LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(5)),
-						LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(4)),
-						LanguageManager.errors.inventoryFull);
-			}
-
-			if ((Kit.witch().setKitLevel(1).equals(gamer.getKit()) ||
-					Kit.witch().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
-				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-						GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-						GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
-			}
-			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.WITCH))) {
-				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-						GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-						GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
-				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-			}
-			else {
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(4)),
-						LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(4)),
-						LanguageManager.errors.inventoryFull);
-			}
-
-			PlayerManager.notifySuccess(player, LanguageManager.confirms.carePackage);
 		}
 	}
 
 	// Prevent wolves from targeting villagers
 	@EventHandler
 	public void onTarget(EntityTargetLivingEntityEvent e) {
-		// Check for wolf
-		if (!(e.getEntity() instanceof Wolf))
-			return;
-
-		// Check for villager target
-		if (!(e.getTarget() instanceof Villager))
-			return;
-
-		// Cancel if special wolf
-		if (e.getEntity().hasMetadata(MobMetadata.VD.name()))
-			e.setCancelled(true);
+//		// Check for wolf
+//		if (!(e.getEntity() instanceof Wolf))
+//			return;
+//
+//		// Check for villager target
+//		if (!(e.getTarget() instanceof Villager))
+//			return;
+//
+//		// Cancel if special wolf
+//		if (e.getEntity().hasMetadata(VDMob.VD))
+//			e.setCancelled(true);
 	}
 
 	// Prevent wolves from teleporting
@@ -1281,7 +821,7 @@ public class GameListener implements Listener {
 			return;
 
 		// Check for special mob
-		if (!ent.hasMetadata(MobMetadata.VD.name()))
+		if (!ent.hasMetadata(VDMob.VD))
 			return;
 
 		// Check if player is playing in an arena
@@ -1372,7 +912,7 @@ public class GameListener implements Listener {
 		Entity ent = e.getEntity();
 
 		// Check for special mob
-		if (!ent.hasMetadata(MobMetadata.VD.name()))
+		if (!ent.hasMetadata(VDMob.VD))
 			return;
 
 		e.setCancelled(true);
@@ -1384,7 +924,7 @@ public class GameListener implements Listener {
 		Entity ent = e.getEntity();
 
 		// Check for special mob
-		if (!ent.hasMetadata(MobMetadata.VD.name()))
+		if (!ent.hasMetadata(VDMob.VD))
 			return;
 
 		e.setCancelled(true);
@@ -1445,7 +985,6 @@ public class GameListener implements Listener {
 		if (main.equals(GameItems.shop()) || Arrays.asList(GameItems.ABILITY_ITEMS).contains(main) ||
 				Arrays.stream(GameItems.FOOD_MATERIALS).anyMatch(m -> m == main.getType()) ||
 				Arrays.stream(GameItems.ARMOR_MATERIALS).anyMatch(m -> m == main.getType()) ||
-				Arrays.stream(GameItems.CARE_MATERIALS).anyMatch(m -> m == main.getType()) ||
 				Arrays.stream(GameItems.CLICKABLE_WEAPON_MATERIALS).anyMatch(m -> m == main.getType()) ||
 				Arrays.stream(GameItems.CLICKABLE_CONSUME_MATERIALS).anyMatch(m -> m == main.getType()))
 			e.setCancelled(true);

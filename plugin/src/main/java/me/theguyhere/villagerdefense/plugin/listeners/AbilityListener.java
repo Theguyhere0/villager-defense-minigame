@@ -13,7 +13,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.MobMetadata;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
@@ -66,7 +66,6 @@ public class AbilityListener implements Listener {
         if (GameItems.shop().equals(main) ||
                 Arrays.stream(GameItems.FOOD_MATERIALS).anyMatch(m -> m == main.getType()) ||
                 Arrays.stream(GameItems.ARMOR_MATERIALS).anyMatch(m -> m == main.getType()) ||
-                Arrays.stream(GameItems.CARE_MATERIALS).anyMatch(m -> m == main.getType()) ||
                 Arrays.stream(GameItems.CLICKABLE_WEAPON_MATERIALS).anyMatch(m -> m == main.getType()) ||
                 Arrays.stream(GameItems.CLICKABLE_CONSUME_MATERIALS).anyMatch(m -> m == main.getType()))
             return;
@@ -874,7 +873,7 @@ public class AbilityListener implements Listener {
         Entity target = e.getTarget();
 
         // Check for arena mobs
-        if (!ent.hasMetadata(MobMetadata.VD.name()))
+        if (!ent.hasMetadata(VDMob.VD))
             return;
 
         // Cancel for invisible players
@@ -903,7 +902,7 @@ public class AbilityListener implements Listener {
         Entity damager = e.getDamager();
 
         // Check for arena enemies
-        if (!ent.hasMetadata(MobMetadata.VD.name()))
+        if (!ent.hasMetadata(VDMob.VD))
             return;
 
         // Check for player or wolf dealing damage

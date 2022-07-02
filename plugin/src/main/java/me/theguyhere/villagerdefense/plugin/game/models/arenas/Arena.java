@@ -13,8 +13,8 @@ import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.MobMetadata;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.Mobs;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
@@ -54,6 +54,8 @@ public class Arena {
 
     /** Collection of active tasks currently running for this arena.*/
     private final Map<String, BukkitRunnable> activeTasks = new HashMap<>();
+    /** Collection of mobs managed under this arena.*/
+    private final List<VDMob> mobs = new ArrayList<>();
     /** Status of the arena.*/
     private ArenaStatus status;
     /** Whether the arena is in the process of spawning monsters.*/
@@ -196,7 +198,7 @@ public class Arena {
 
         // Set default iron golem cap to 2 if it doesn't exist
         if (getGolemCap() == 0)
-            setgolemCap(2);
+            setGolemCap(2);
 
         // Set default max waves to -1 if it doesn't exist
         if (getMaxWaves() == 0)
@@ -220,7 +222,6 @@ public class Arena {
             setLoseSound(true);
             setWaveStartSound(true);
             setWaveFinishSound(true);
-            setGemSound(true);
             setPlayerDeathSound(true);
             setAbilitySound(true);
             setWaitingSound("none");
@@ -229,14 +230,6 @@ public class Arena {
         // Set community chest toggle
         if (!config.contains(path + ".community"))
             setCommunity(true);
-
-        // Set default gem drop toggle
-        if (!config.contains(path + ".gemDrop"))
-            setGemDrop(true);
-
-        // Set default experience drop toggle
-        if (!config.contains(path + ".expDrop"))
-            setExpDrop(true);
 
         // Set default particle toggles
         if (!config.contains(path + ".particles.spawn"))
@@ -334,7 +327,7 @@ public class Arena {
      * Writes the new iron golem cap of the arena into the arena file.
      * @param golemCap New iron golem cap.
      */
-    public void setgolemCap(int golemCap) {
+    public void setGolemCap(int golemCap) {
         config.set(path + ".golem", golemCap);
         Main.saveArenaData();
     }
@@ -1186,24 +1179,6 @@ public class Arena {
         Main.saveArenaData();
     }
 
-    public boolean hasGemDrop() {
-        return config.getBoolean(path + ".gemDrop");
-    }
-
-    public void setGemDrop(boolean bool) {
-        config.set(path + ".gemDrop", bool);
-        Main.saveArenaData();
-    }
-
-    public boolean hasExpDrop() {
-        return config.getBoolean(path + ".expDrop");
-    }
-
-    public void setExpDrop(boolean bool) {
-        config.set(path + ".expDrop", bool);
-        Main.saveArenaData();
-    }
-
     public Location getCorner1() {
         return DataManager.getConfigLocationNoRotation(path + ".corner1");
     }
@@ -1274,15 +1249,6 @@ public class Arena {
 
     public void setWaveFinishSound(boolean bool) {
         config.set(path + ".sounds.end", bool);
-        Main.saveArenaData();
-    }
-
-    public boolean hasGemSound() {
-        return config.getBoolean(path + ".sounds.gem");
-    }
-
-    public void setGemSound(boolean bool) {
-        config.set(path + ".sounds.gem", bool);
         Main.saveArenaData();
     }
 
@@ -1919,20 +1885,10 @@ public class Arena {
         }
 
         // Remove any unwanted mobs
-        Objects.requireNonNull(getCorner1().getWorld()).getNearbyEntities(getBounds())
-                .stream().filter(Objects::nonNull)
-                .filter(ent -> ent instanceof Monster || ent instanceof Hoglin || ent instanceof Phantom ||
-                        ent instanceof Slime)
-                .filter(ent -> (!ent.hasMetadata(MobMetadata.GAME.name()) ||
-                        ent.getMetadata(MobMetadata.GAME.name()).get(0).asInt() != getGameID()))
-                .forEach(System.out::println);
-        Objects.requireNonNull(getCorner1().getWorld()).getNearbyEntities(getBounds())
-                .stream().filter(Objects::nonNull)
-                .filter(ent -> ent instanceof Monster || ent instanceof Hoglin || ent instanceof Phantom ||
-                        ent instanceof Slime)
-                .filter(ent -> (!ent.hasMetadata(MobMetadata.WAVE.name()) ||
-                        ent.getMetadata(MobMetadata.WAVE.name()).get(0).asInt() != getCurrentWave()))
-                .forEach(Entity::remove);
+        mobs.forEach(mob -> {
+            if (Main.getMonstersTeam().hasEntry(mob.getID().toString()))
+                mob.remove(this);
+        });
 
         // Revive dead players
         for (VDPlayer p : getGhosts()) {
@@ -2341,6 +2297,26 @@ public class Arena {
         // Debug message to console
         CommunicationManager.debugInfo(getName() + " is resetting.", 2);
     }
+    
+    public void addMob(VDMob mob) {
+        mobs.add(mob);
+    }
+    
+    public VDMob getMob(UUID id) throws VDMobNotFoundException {
+        try {
+            return mobs.stream().filter(Objects::nonNull).filter(mob -> mob.getID().equals(id))
+                    .collect(Collectors.toList()).get(0);
+        } catch (Exception e) {
+            throw new VDMobNotFoundException();
+        }
+    }
+    
+    public void removeMob(UUID id) {
+        try {
+            mobs.remove(getMob(id));
+        } catch (VDMobNotFoundException ignored) {
+        }
+    }
 
     public ArenaStatus getStatus() {
         return status;
@@ -2476,6 +2452,21 @@ public class Arena {
     public @NotNull VDPlayer getPlayer(Player player) throws PlayerNotFoundException {
         try {
             return players.stream().filter(Objects::nonNull).filter(p -> p.getID().equals(player.getUniqueId()))
+                    .collect(Collectors.toList()).get(0);
+        } catch (Exception e) {
+            throw new PlayerNotFoundException("Player not in this arena.");
+        }
+    }
+
+    /**
+     * A function to get the corresponding {@link VDPlayer} in the arena for a given {@link UUID}.
+     * @param id The {@link UUID} in question.
+     * @return The corresponding {@link VDPlayer}.
+     * @throws PlayerNotFoundException Thrown when the arena doesn't have a corresponding {@link VDPlayer}.
+     */
+    public @NotNull VDPlayer getPlayer(UUID id) throws PlayerNotFoundException {
+        try {
+            return players.stream().filter(Objects::nonNull).filter(p -> p.getID().equals(id))
                     .collect(Collectors.toList()).get(0);
         } catch (Exception e) {
             throw new PlayerNotFoundException("Player not in this arena.");
@@ -2623,9 +2614,8 @@ public class Arena {
     public void setMonsterGlow() {
         Objects.requireNonNull(getPlayerSpawn().getLocation().getWorld())
                 .getNearbyEntities(getBounds()).stream().filter(Objects::nonNull)
-                .filter(entity -> entity.hasMetadata(MobMetadata.VD.name()))
-                .filter(entity -> entity instanceof Monster || entity instanceof Slime ||
-                        entity instanceof Hoglin || entity instanceof Phantom)
+                .filter(entity -> entity.hasMetadata(VDMob.VD))
+                .filter(entity -> Main.getMonstersTeam().hasEntry(entity.getUniqueId().toString()))
                 .forEach(entity -> entity.setGlowing(true));
     }
 
@@ -2700,15 +2690,15 @@ public class Arena {
         monsters = (int) Objects.requireNonNull(getPlayerSpawn().getLocation().getWorld())
                 .getNearbyEntities(getBounds()).stream()
                 .filter(Objects::nonNull)
-                .filter(entity -> entity.hasMetadata(MobMetadata.VD.name()))
+                .filter(entity -> entity.hasMetadata(VDMob.VD))
                 .filter(entity -> entity instanceof Monster || entity instanceof Slime || entity instanceof Hoglin ||
                         entity instanceof Phantom).count();
         villagers = (int) getPlayerSpawn().getLocation().getWorld().getNearbyEntities(getBounds()).stream()
                 .filter(Objects::nonNull)
-                .filter(entity -> entity.hasMetadata(MobMetadata.VD.name())).filter(entity -> entity instanceof Villager).count();
+                .filter(entity -> entity.hasMetadata(VDMob.VD)).filter(entity -> entity instanceof Villager).count();
         golems = (int) getPlayerSpawn().getLocation().getWorld().getNearbyEntities(getBounds()).stream()
                 .filter(Objects::nonNull)
-                .filter(entity -> entity.hasMetadata(MobMetadata.VD.name())).filter(entity -> entity instanceof IronGolem).count();
+                .filter(entity -> entity.hasMetadata(VDMob.VD)).filter(entity -> entity instanceof IronGolem).count();
         boolean calibrated = false;
 
         // Update if out of cal
@@ -2769,7 +2759,6 @@ public class Arena {
         setLoseSound(arenaToCopy.hasLoseSound());
         setWaveStartSound(arenaToCopy.hasWaveStartSound());
         setWaveFinishSound(arenaToCopy.hasWaveFinishSound());
-        setGemSound(arenaToCopy.hasGemSound());
         setPlayerDeathSound(arenaToCopy.hasPlayerDeathSound());
         setAbilitySound(arenaToCopy.hasAbilitySound());
         setWaitingSound(arenaToCopy.getWaitingSoundCode());

@@ -1699,20 +1699,6 @@ public class InventoryListener implements Listener {
 					player.openInventory(Inventories.createGameSettingsMenu(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
-			// Toggle experience drop
-			else if (buttonName.contains("Experience Drop:"))
-				if (arenaInstance.isClosed()) {
-					arenaInstance.setExpDrop(!arenaInstance.hasExpDrop());
-					player.openInventory(Inventories.createGameSettingsMenu(meta.getArena()));
-				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-
-			// Toggle item drop
-			else if (buttonName.contains("Item Drop:"))
-				if (arenaInstance.isClosed()) {
-					arenaInstance.setGemDrop(!arenaInstance.hasGemDrop());
-					player.openInventory(Inventories.createGameSettingsMenu(meta.getArena()));
-				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-
 			// Edit arena bounds
 			else if (buttonName.contains("Arena Bounds"))
 				player.openInventory(Inventories.createBoundsMenu(meta.getArena()));
@@ -2250,7 +2236,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				arenaInstance.setgolemCap(--current);
+				arenaInstance.setGolemCap(--current);
 				player.openInventory(Inventories.createGolemCapMenu(meta.getArena()));
 			}
 
@@ -2262,7 +2248,7 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				arenaInstance.setgolemCap(++current);
+				arenaInstance.setGolemCap(++current);
 				player.openInventory(Inventories.createGolemCapMenu(meta.getArena()));
 			}
 
@@ -2312,14 +2298,6 @@ public class InventoryListener implements Listener {
 				if (arenaInstance.isClosed())
 					player.openInventory(Inventories.createWaitSoundMenu(meta.getArena()));
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-
-			// Toggle gem pickup sound
-			else if (buttonName.contains("Gem")) {
-				if (arenaInstance.isClosed()) {
-					arenaInstance.setGemSound(!arenaInstance.hasGemSound());
-					player.openInventory(Inventories.createSoundsMenu(meta.getArena()));
-				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-			}
 
 			// Toggle player death sound
 			else if (buttonName.contains("Death")) {

@@ -780,19 +780,6 @@ public class Inventories {
 				CommunicationManager.format("&7Allows players to join after"),
 				CommunicationManager.format("&7the game has started")));
 
-		// Option to toggle experience drop
-		buttons.add(ItemManager.createItem(Material.EXPERIENCE_BOTTLE,
-				CommunicationManager.format("&b&lExperience Drop: " + getToggleStatus(arena.hasExpDrop())),
-				CommunicationManager.format("&7Change whether experience drop or go"),
-				CommunicationManager.format("&7straight into the killer's experience bar")));
-
-		// Option to toggle item dropping
-		buttons.add(ItemManager.createItem(Material.EMERALD,
-				CommunicationManager.format("&9&lItem Drop: " + getToggleStatus(arena.hasGemDrop())),
-				CommunicationManager.format("&7Change whether gems and loot drop"),
-				CommunicationManager.format("&7as physical items or go straight"),
-				CommunicationManager.format("&7into the killer's balance/inventory")));
-
 		// Option to set arena bounds
 		buttons.add(ItemManager.createItem(Material.BEDROCK, CommunicationManager.format("&4&lArena Bounds"),
 				CommunicationManager.format("&7Bounds determine where players are"),
@@ -1197,14 +1184,6 @@ public class Inventories {
 				null,
 				CommunicationManager.format("&7Played while players wait"),
 				CommunicationManager.format("&7for the game to start")));
-
-		// Option to edit gem pickup sound
-		buttons.add( ItemManager.createItem(Material.MUSIC_DISC_FAR,
-				CommunicationManager.format("&b&lGem Pickup Sound: " +
-						getToggleStatus(arena.hasGemSound())),
-				ItemManager.BUTTON_FLAGS,
-				null,
-				CommunicationManager.format("&7Played when players pick up gems")));
 
 		// Option to edit player death sound
 		buttons.add( ItemManager.createItem(Material.MUSIC_DISC_CHIRP,
@@ -2392,20 +2371,6 @@ public class Inventories {
 						": " + getToggleStatus(arena.hasLateArrival())), ItemManager.BUTTON_FLAGS, null,
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
 						LanguageManager.arenaStats.lateArrival.description, Utils.LORE_CHAR_LIMIT)));
-
-		// Item dropping
-		buttons.add( ItemManager.createItem(Material.EMERALD,
-				CommunicationManager.format("&9&l" + LanguageManager.arenaStats.gemDrop.name +
-						": " + getToggleStatus(arena.hasGemDrop())),
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.gemDrop.description, Utils.LORE_CHAR_LIMIT)));
-
-		// Experience drop
-		buttons.add( ItemManager.createItem(Material.EXPERIENCE_BOTTLE,
-				CommunicationManager.format("&b&l" + LanguageManager.arenaStats.expDrop.name +
-						": " + getToggleStatus(arena.hasExpDrop())),
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.expDrop.description, Utils.LORE_CHAR_LIMIT)));
 
 		// Player spawn particles
 		buttons.add( ItemManager.createItem(Material.FIREWORK_ROCKET,

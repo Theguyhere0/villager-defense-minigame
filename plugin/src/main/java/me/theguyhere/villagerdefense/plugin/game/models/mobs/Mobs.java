@@ -1,81 +1,34 @@
 package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 
-import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaSpawn;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaSpawnType;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
-import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Mobs {
     private static void setMinion(Arena arena, LivingEntity livingEntity) {
-        Main.getMonstersTeam().addEntry(livingEntity.getUniqueId().toString());
-        livingEntity.setCustomName(healthBar(1, 1, 5));
-        livingEntity.setCustomNameVisible(true);
-        livingEntity.setMetadata(MobMetadata.VD.name(), new FixedMetadataValue(Main.plugin, arena.getId()));
-        livingEntity.setMetadata(MobMetadata.GAME.name(), new FixedMetadataValue(Main.plugin, arena.getGameID()));
-        livingEntity.setMetadata(MobMetadata.WAVE.name(), new FixedMetadataValue(Main.plugin, arena.getCurrentWave()));
-        livingEntity.setRemoveWhenFarAway(false);
-        livingEntity.setCanPickupItems(false);
-        if (livingEntity.isInsideVehicle())
-            Objects.requireNonNull(livingEntity.getVehicle()).remove();
-        for (Entity passenger : livingEntity.getPassengers())
-            passenger.remove();
-
-        // Set attribute modifiers
-        double difficulty = arena.getCurrentDifficulty();
-        for (int i = 0; i < 3; i++) {
-            double boost;
-            if (difficulty < 5)
-                boost = 0;
-            else boost = difficulty - 5;
-            switch (i) {
-                case 0:
-                    Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH))
-                            .addModifier(new AttributeModifier(
-                                "hpBoost", boost / 3, AttributeModifier.Operation.ADD_NUMBER
-                            ));
-                    break;
-                case 1:
-                    Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE))
-                            .addModifier(new AttributeModifier(
-                                "attBoost", boost / 4, AttributeModifier.Operation.ADD_NUMBER
-                            ));
-                    break;
-                case 2:
-                    Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-                            .addModifier(new AttributeModifier(
-                                "spdBoost", boost / 120, AttributeModifier.Operation.ADD_NUMBER
-                            ));
-            }
-        }
     }
 
     private static void setBoss(Arena arena, LivingEntity livingEntity) {
         Main.getMonstersTeam().addEntry(livingEntity.getUniqueId().toString());
-        livingEntity.setMetadata(MobMetadata.VD.name(), new FixedMetadataValue(Main.plugin, arena.getId()));
+        livingEntity.setMetadata(VDMob.VD, new FixedMetadataValue(Main.plugin, arena.getId()));
         livingEntity.setRemoveWhenFarAway(false);
         livingEntity.setCanPickupItems(false);
 
@@ -113,7 +66,7 @@ public class Mobs {
     private static void setLargeMinion(Arena arena, LivingEntity livingEntity) {
         livingEntity.setCustomName(healthBar(1, 1, 10));
         livingEntity.setCustomNameVisible(true);
-        livingEntity.setMetadata(MobMetadata.VD.name(), new FixedMetadataValue(Main.plugin, arena.getId()));
+        livingEntity.setMetadata(VDMob.VD, new FixedMetadataValue(Main.plugin, arena.getId()));
         livingEntity.setRemoveWhenFarAway(false);
         livingEntity.setCanPickupItems(false);
 
@@ -1040,46 +993,10 @@ public class Mobs {
         Main.getVillagersTeam().addEntry(villager.getUniqueId().toString());
         villager.setCustomName(healthBar(1, 1, 5));
         villager.setCustomNameVisible(true);
-        villager.setMetadata(MobMetadata.VD.name(), new FixedMetadataValue(Main.plugin, arena.getId()));
+        villager.setMetadata(VDMob.VD, new FixedMetadataValue(Main.plugin, arena.getId()));
     }
 
     // Minions
-    public static void spawnZombie(Arena arena, Location location) {
-        int level = getLevel(arena.getCurrentDifficulty(), 1, 0);
-        Zombie ent = (Zombie) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.ZOMBIE);
-        ent.setAdult();
-        setHealth(ent, 100, 10, level, 2);
-        setArmor(ent, 5, 3, level, 2);
-        setToughness(ent, 0, .04, level, 8);
-        setDamage(ent, 20, 3, level, 2, .1);
-        setNormalAttackType(ent);
-        setModerateAttackSpeed(ent);
-        setModerateKnockback(ent);
-        setMediumWeight(ent);
-        setSlowLandSpeed(ent);
-        // TODO: Set and implement target priority
-        // TODO: Set visual armor and weapons
-        setLoot(ent, 25, 1.15, level, 2, .2);
-        setMinion(arena, ent, level, "Zombie");
-    }
-    public static void spawnSpider(Arena arena, Location location) {
-        int level = getLevel(arena.getCurrentDifficulty(), 1, 0);
-        Spider ent = (Spider) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.SPIDER);
-        setHealth(ent, 100, 10, level, 2);
-        setArmor(ent, 5, 2, level, 2);
-        setToughness(ent, .08, .04, level, 2);
-        setDamage(ent, 10, 3, level, 2, .1);
-        setPenetratingAttackType(ent);
-        setFastAttackSpeed(ent);
-        setNoneKnockback(ent);
-        setLightWeight(ent);
-        setFastLandSpeed(ent);
-        // TODO: Set and implement target priority
-        // TODO: Set visual armor and weapons
-        setLoot(ent, 25, 1.15, level, 2, .2);
-        setMinion(arena, ent, level, "Spider");
-    }
-
     public static void setHusk(Arena arena, Husk husk) {
         setMinion(arena, husk);
         setSword(arena, husk);
@@ -1211,7 +1128,7 @@ public class Mobs {
         wolf.setAdult();
         wolf.setOwner(vdPlayer.getPlayer());
         wolf.setBreed(false);
-        wolf.setMetadata(MobMetadata.VD.name(), new FixedMetadataValue(plugin, arena.getId()));
+        wolf.setMetadata(VDMob.VD, new FixedMetadataValue(plugin, arena.getId()));
         wolf.setCustomName(vdPlayer.getPlayer().getName() + "'s Wolf");
         wolf.setCustomNameVisible(true);
         vdPlayer.incrementWolves();
@@ -1246,7 +1163,7 @@ public class Mobs {
     }
 
     public static void setGolem(Main plugin, Arena arena, IronGolem ironGolem) {
-        ironGolem.setMetadata(MobMetadata.VD.name(), new FixedMetadataValue(plugin, arena.getId()));
+        ironGolem.setMetadata(VDMob.VD, new FixedMetadataValue(plugin, arena.getId()));
         ironGolem.setCustomName(healthBar(1, 1, 10));
         ironGolem.setCustomNameVisible(true);
         arena.incrementGolems();
@@ -1405,8 +1322,8 @@ public class Mobs {
 
             switch (typeRatio.get(r.nextInt(typeRatio.size()))) {
                 case "zomb":
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Mobs.spawnZombie(arena, ground),
-                            delay);
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin,
+                            () -> arena.addMob(new VDZombie(arena, ground)), delay);
                     break;
                 case "husk":
                     Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Mobs.setHusk(arena,
@@ -1432,8 +1349,8 @@ public class Mobs {
                     ), delay);
                     break;
                 case "spid":
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Mobs.spawnSpider(arena, ground),
-                            delay);
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin,
+                            () -> arena.addMob(new VDSpider(arena, ground)), delay);
                     break;
                 case "cspd":
                     Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Mobs.setCaveSpider(arena,
@@ -1579,301 +1496,5 @@ public class Mobs {
     private static int spawnDelay(int index) {
         int result = (int) (60 * Math.pow(Math.E, - index / 60D));
         return result == 0 ? 1 : result;
-    }
-
-    // Function for Gaussian level distribution, with restrictions
-    private static int getLevel(double difficulty, double rate, int start) {
-        Random r = new Random();
-        double mult = 1 + .1 * Math.max(Math.min(r.nextGaussian(), 3), -3); // Mean 100%, SD 10%, restrict 30%
-        return Math.max((int) ((difficulty * mult - start) / rate), 1);
-    }
-
-    // Sets the proper health for the mob
-    private static void setHealth(LivingEntity livingEntity, int base, int delta, int lvl, int start) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getBaseValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH))
-                .addModifier(new AttributeModifier(
-                    MobMetadata.HEALTH.name(),
-                        (base + delta * Math.max(0, lvl - start + 1)) - initial,
-                        AttributeModifier.Operation.ADD_NUMBER
-                ));
-        livingEntity.setHealth(Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH))
-                .getValue());
-    }
-
-    // Sets the proper armor for the mob
-    private static void setArmor(LivingEntity livingEntity, int base, int delta, int lvl, int start) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ARMOR)).getBaseValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ARMOR))
-                .addModifier(new AttributeModifier(
-                        MobMetadata.ARMOR.name(),
-                        (base + delta * Math.max(0, lvl - start + 1)) - initial,
-                        AttributeModifier.Operation.ADD_NUMBER
-                ));
-    }
-
-    // Sets the proper toughness for the mob
-    private static void setToughness(LivingEntity livingEntity, double base, double delta, int lvl, int start) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS))
-                .getBaseValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS))
-                .addModifier(new AttributeModifier(
-                        MobMetadata.TOUGHNESS.name(),
-                        (base + delta * Math.max(0, lvl - start + 1)) - initial,
-                        AttributeModifier.Operation.ADD_NUMBER
-                ));
-    }
-
-    // Sets the proper damage for the mob
-    private static void setDamage(LivingEntity livingEntity, int base, int delta, int lvl, int start, double spread) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE))
-                .getBaseValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE))
-                .addModifier(new AttributeModifier(
-                        MobMetadata.DAMAGE.name(),
-                        (base + delta * Math.max(0, lvl - start + 1)) - initial,
-                        AttributeModifier.Operation.ADD_NUMBER
-                ));
-        livingEntity.setMetadata(MobMetadata.DAMAGE_SPREAD.name(), new FixedMetadataValue(Main.plugin, spread));
-    }
-
-    // Options for setting attack type
-    private static void setNormalAttackType(LivingEntity livingEntity) {
-        livingEntity.setMetadata(MobMetadata.ATTACK_TYPE.name(), new FixedMetadataValue(Main.plugin,
-                AttackType.NORMAL.name()));
-    }
-    private static void setPenetratingAttackType(LivingEntity livingEntity) {
-        livingEntity.setMetadata(MobMetadata.ATTACK_TYPE.name(), new FixedMetadataValue(Main.plugin,
-                AttackType.PENETRATING.name()));
-    }
-
-    // Set attack speed options
-    private static void setVerySlowAttackSpeed(LivingEntity livingEntity) {
-        livingEntity.setMetadata(MobMetadata.ATTACK_SPEED.name(), new FixedMetadataValue(Main.plugin, 2));
-    }
-    private static void setSlowAttackSpeed(LivingEntity livingEntity) {
-        livingEntity.setMetadata(MobMetadata.ATTACK_SPEED.name(), new FixedMetadataValue(Main.plugin, 1));
-    }
-    private static void setModerateAttackSpeed(LivingEntity livingEntity) {
-        livingEntity.setMetadata(MobMetadata.ATTACK_SPEED.name(), new FixedMetadataValue(Main.plugin, .7));
-    }
-    private static void setFastAttackSpeed(LivingEntity livingEntity) {
-        livingEntity.setMetadata(MobMetadata.ATTACK_SPEED.name(), new FixedMetadataValue(Main.plugin, .4));
-    }
-    private static void setVeryFastAttackSpeed(LivingEntity livingEntity) {
-        livingEntity.setMetadata(MobMetadata.ATTACK_SPEED.name(), new FixedMetadataValue(Main.plugin, .2));
-    }
-
-
-    // Set knockback options
-    private static void setNoneKnockback(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
-                .getBaseValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
-                .addModifier(new AttributeModifier(
-                        MobMetadata.KNOCKBACK.name(),
-                        0 - initial,
-                        AttributeModifier.Operation.ADD_NUMBER
-                ));
-    }
-    private static void setLowKnockback(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
-                .getBaseValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
-                .addModifier(new AttributeModifier(
-                        MobMetadata.KNOCKBACK.name(),
-                        1 - initial,
-                        AttributeModifier.Operation.ADD_NUMBER
-                ));
-    }
-    private static void setModerateKnockback(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
-                .getBaseValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
-                .addModifier(new AttributeModifier(
-                        MobMetadata.KNOCKBACK.name(),
-                        2 - initial,
-                        AttributeModifier.Operation.ADD_NUMBER
-                ));
-    }
-    private static void setHighKnockback(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
-                .getBaseValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
-                .addModifier(new AttributeModifier(
-                        MobMetadata.KNOCKBACK.name(),
-                        3.5 - initial,
-                        AttributeModifier.Operation.ADD_NUMBER
-                ));
-    }
-    private static void setVeryHighKnockback(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
-                .getBaseValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
-                .addModifier(new AttributeModifier(
-                        MobMetadata.KNOCKBACK.name(),
-                        5 - initial,
-                        AttributeModifier.Operation.ADD_NUMBER
-                ));
-    }
-
-    // Set weight options
-    private static void setVeryLightWeight(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
-                .getValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
-                .addModifier(new AttributeModifier(
-                        MobMetadata.WEIGHT.name(),
-                        0 - initial,
-                        AttributeModifier.Operation.ADD_NUMBER
-                ));
-    }
-    private static void setLightWeight(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
-                .getValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
-                .addModifier(new AttributeModifier(
-                        MobMetadata.WEIGHT.name(),
-                        .1 - initial,
-                        AttributeModifier.Operation.ADD_NUMBER
-                ));
-    }
-    private static void setMediumWeight(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
-                .getValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
-                .addModifier(new AttributeModifier(
-                        MobMetadata.WEIGHT.name(),
-                        .25 - initial,
-                        AttributeModifier.Operation.ADD_NUMBER
-                ));
-    }
-    private static void setHeavyWeight(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
-                .getValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
-                .addModifier(new AttributeModifier(
-                        MobMetadata.WEIGHT.name(),
-                        .4 - initial,
-                        AttributeModifier.Operation.ADD_NUMBER
-                ));
-    }
-    private static void setVeryHeavyWeight(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
-                .getValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
-                .addModifier(new AttributeModifier(
-                        MobMetadata.WEIGHT.name(),
-                        .7 - initial,
-                        AttributeModifier.Operation.ADD_NUMBER
-                ));
-    }
-
-
-    // Set speed options
-    private static void setVerySlowLandSpeed(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-                .getBaseValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-                .addModifier(new AttributeModifier(
-                        MobMetadata.SPEED.name(),
-                        .1 - initial,
-                        AttributeModifier.Operation.ADD_NUMBER
-                ));
-    }
-    private static void setSlowLandSpeed(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-                .getBaseValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-                .addModifier(new AttributeModifier(
-                        MobMetadata.SPEED.name(),
-                        .2 - initial,
-                        AttributeModifier.Operation.ADD_NUMBER
-                ));
-    }
-    private static void setMediumLandSpeed(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-                .getBaseValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-                .addModifier(new AttributeModifier(
-                        MobMetadata.SPEED.name(),
-                        .3 - initial,
-                        AttributeModifier.Operation.ADD_NUMBER
-                ));
-    }
-    private static void setFastLandSpeed(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-                .getBaseValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-                .addModifier(new AttributeModifier(
-                        MobMetadata.SPEED.name(),
-                        .4 - initial,
-                        AttributeModifier.Operation.ADD_NUMBER
-                ));
-    }
-    private static void setVeryFastLandSpeed(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-                .getBaseValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-                .addModifier(new AttributeModifier(
-                        MobMetadata.SPEED.name(),
-                        .5 - initial,
-                        AttributeModifier.Operation.ADD_NUMBER
-                ));
-    }
-
-    // Sets the proper loot for the mob
-    private static void setLoot(LivingEntity livingEntity, int base, double rate, int lvl, int start, double spread) {
-        livingEntity.setMetadata(MobMetadata.LOOT.name(), new FixedMetadataValue(Main.plugin,
-                base * Math.pow(rate, Math.max(0, lvl - start + 1))));
-        livingEntity.setMetadata(MobMetadata.LOOT_SPREAD.name(), new FixedMetadataValue(Main.plugin, spread));
-    }
-
-    private static String formattedName(int level, String name, int maxHealth, int health, int size) {
-        int healthLength = Integer.toString(health).length();
-        int trueSize = size * 4 + healthLength;
-        int bars = (int) ((double) health / maxHealth * trueSize);
-        StringBuilder healthIndicator = new StringBuilder(new String(new char[bars])
-                .replace("\0", "\u258c"))
-                .append(new String(new char[trueSize - bars]).replace("\0", " "));
-        healthIndicator.replace(size * 2, size * 2 + healthLength, "&b" + health + "&c");
-        return CommunicationManager.format(
-                new ColoredMessage(ChatColor.RED, LanguageManager.messages.mobName),
-                new ColoredMessage(ChatColor.AQUA, Integer.toString(level)),
-                new ColoredMessage(ChatColor.RED, name),
-                new ColoredMessage(ChatColor.RESET, CommunicationManager.format(
-                        String.format("&7[&c%s&7]", healthIndicator)))
-        );
-    }
-
-    public static String formattedName(LivingEntity ent) {
-        return formattedName(
-                ent.getMetadata(MobMetadata.LEVEL.name()).get(0).asInt(),
-                ent.getMetadata(MobMetadata.NAME.name()).get(0).asString(),
-                (int) Objects.requireNonNull(ent.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue(),
-                (int) ent.getHealth(),
-                ent.getMetadata(MobMetadata.HP_BAR_SIZE.name()).get(0).asInt()
-        );
-    }
-
-    // Prepares the entity as a minion
-    private static void setMinion(Arena arena, LivingEntity livingEntity, int level, String name) {
-        Main.getMonstersTeam().addEntry(livingEntity.getUniqueId().toString());
-        livingEntity.setCustomName(formattedName(level, name, (int) Objects.requireNonNull(livingEntity
-                .getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue(), (int) livingEntity.getHealth(), 2));
-        livingEntity.setCustomNameVisible(true);
-        livingEntity.setMetadata(MobMetadata.VD.name(), new FixedMetadataValue(Main.plugin, arena.getId()));
-        livingEntity.setMetadata(MobMetadata.GAME.name(), new FixedMetadataValue(Main.plugin, arena.getGameID()));
-        livingEntity.setMetadata(MobMetadata.WAVE.name(), new FixedMetadataValue(Main.plugin, arena.getCurrentWave()));
-        livingEntity.setMetadata(MobMetadata.LEVEL.name(), new FixedMetadataValue(Main.plugin, level));
-        livingEntity.setMetadata(MobMetadata.NAME.name(), new FixedMetadataValue(Main.plugin, name));
-        livingEntity.setMetadata(MobMetadata.HP_BAR_SIZE.name(), new FixedMetadataValue(Main.plugin, 2));
-        livingEntity.setMetadata(MobMetadata.LAST_STRIKE.name(), new FixedMetadataValue(Main.plugin, 0));
-        livingEntity.setRemoveWhenFarAway(false);
-        livingEntity.setCanPickupItems(false);
-        if (livingEntity.isInsideVehicle())
-            Objects.requireNonNull(livingEntity.getVehicle()).remove();
-        for (Entity passenger : livingEntity.getPassengers())
-            passenger.remove();
     }
 }
