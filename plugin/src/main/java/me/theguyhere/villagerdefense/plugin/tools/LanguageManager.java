@@ -611,13 +611,16 @@ public class LanguageManager {
         public final @NotNull String allowedKits;
         public final @NotNull String arenaInfo;
         public final @NotNull String arenaRecords;
+        public final @NotNull String armor;
         public final @NotNull String attackCritDamage;
         public final @NotNull String attackMainDamage;
         public final @NotNull String attackSpeed;
         public final @NotNull String attackSweepDamage;
         public final @NotNull String attackType;
         public final @NotNull String available;
+        public final @NotNull String boots;
         public final @NotNull String challenges;
+        public final @NotNull String chestplate;
         public final @NotNull String closed;
         public final @NotNull String commandFormat;
         public final @NotNull String crystalBonus;
@@ -644,6 +647,7 @@ public class LanguageManager {
         public final @NotNull String gemsToReceive;
         public final @NotNull String ghosts;
         public final @NotNull String giftKitsDescription;
+        public final @NotNull String helmet;
         public final @NotNull String help;
         public final @NotNull String help1;
         public final @NotNull String help2;
@@ -664,6 +668,7 @@ public class LanguageManager {
         public final @NotNull String late;
         public final @NotNull String leave;
         public final @NotNull String leaveArena;
+        public final @NotNull String leggings;
         public final @NotNull String level;
         public final @NotNull String manualUpdateWarn;
         public final @NotNull String maxCapacity;
@@ -693,6 +698,7 @@ public class LanguageManager {
         public final @NotNull String starterSword;
         public final @NotNull String starting;
         public final @NotNull String sword;
+        public final @NotNull String toughness;
         public final @NotNull String unavailable;
         public final @NotNull String unlimited;
         public final @NotNull String upToAbilityLevel;
@@ -707,6 +713,7 @@ public class LanguageManager {
         public final @NotNull String waitingForPlayers;
         public final @NotNull String wave;
         public final @NotNull String waveNum;
+        public final @NotNull String weight;
 
         private Messages() throws InvalidLanguageKeyException {
             setPathPrefix("messages");
@@ -717,13 +724,16 @@ public class LanguageManager {
             allowedKits = getConfigString("allowedKits");
             arenaInfo = getConfigString("arenaInfo");
             arenaRecords = getConfigString("arenaRecords");
+            armor = getConfigString("armor");
             attackCritDamage = getConfigString("attackCritDamage");
             attackMainDamage = getConfigString("attackMainDamage");
             attackSpeed = getConfigString("attackSpeed");
             attackSweepDamage = getConfigString("attackSweepDamage");
             attackType = getConfigString("attackType");
             available = getConfigString("available");
+            boots = getConfigString("boots");
             challenges = getConfigString("challenges");
+            chestplate = getConfigString("chestplate");
             closed = getConfigString("closed");
             commandFormat = getConfigString("commandFormat");
             crystalBonus = getConfigString("crystalBonus");
@@ -750,6 +760,7 @@ public class LanguageManager {
             gemsToReceive = getConfigString("gemsToReceive");
             ghosts = getConfigString("ghosts");
             giftKitsDescription = getConfigString("giftKitsDescription");
+            helmet = getConfigString("helmet");
             help = getConfigString("help");
             help1 = getConfigString("help1");
             help2 = getConfigString("help2");
@@ -770,6 +781,7 @@ public class LanguageManager {
             late = getConfigString("late");
             leave = getConfigString("leave");
             leaveArena = getConfigString("leaveArena");
+            leggings = getConfigString("leggings");
             level = getConfigString("level");
             manualUpdateWarn = getConfigString("manualUpdateWarn");
             maxCapacity = getConfigString("maxCapacity");
@@ -799,6 +811,7 @@ public class LanguageManager {
             starterSword = getConfigString("starterSword");
             starting = getConfigString("starting");
             sword = getConfigString("sword");
+            toughness = getConfigString("toughness");
             unavailable = getConfigString("unavailable");
             unlimited = getConfigString("unlimited");
             upToAbilityLevel = getConfigString("upToAbilityLevel");
@@ -813,6 +826,7 @@ public class LanguageManager {
             waitingForPlayers = getConfigString("waitingForPlayers");
             wave = getConfigString("wave");
             waveNum = getConfigString("waveNum");
+            weight = getConfigString("weight");
         }
     }
 

@@ -1339,7 +1339,7 @@ public class Inventories {
 		// Fill in swords
 		List<ItemStack> swords = new ArrayList<>();
 		for (int i = 0; i < 4; i++)
-			swords.add(GameItems.sword((int) arena.getCurrentDifficulty()));
+			swords.add(GameItems.sword(arena.getCurrentDifficulty()));
 		sort(swords);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i, modifyPrice(swords.get(i), modifier));
@@ -1392,7 +1392,7 @@ public class Inventories {
 		// Fill in helmets
 		List<ItemStack> helmets = new ArrayList<>();
 		for (int i = 0; i < 4; i++)
-			helmets.add(GameItems.helmet(level));
+			helmets.add(GameItems.helmet(arena.getCurrentDifficulty()));
 		sort(helmets);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i, modifyPrice(helmets.get(i), modifier));
@@ -1400,7 +1400,7 @@ public class Inventories {
 		// Fill in chestplates
 		List<ItemStack> chestplates = new ArrayList<>();
 		for (int i = 0; i < 4; i++)
-			chestplates.add(GameItems.chestplate(level));
+			chestplates.add(GameItems.chestplate(arena.getCurrentDifficulty()));
 		sort(chestplates);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 5, modifyPrice(chestplates.get(i), modifier));
@@ -1408,7 +1408,7 @@ public class Inventories {
 		// Fill in leggings
 		List<ItemStack> leggings = new ArrayList<>();
 		for (int i = 0; i < 4; i++)
-			leggings.add(GameItems.leggings(level));
+			leggings.add(GameItems.leggings(arena.getCurrentDifficulty()));
 		sort(leggings);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 9, modifyPrice(leggings.get(i), modifier));
@@ -1416,7 +1416,7 @@ public class Inventories {
 		// Fill in boots
 		List<ItemStack> boots = new ArrayList<>();
 		for (int i = 0; i < 4; i++)
-			boots.add(GameItems.boots(level));
+			boots.add(GameItems.boots(arena.getCurrentDifficulty()));
 		sort(boots);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 14, modifyPrice(boots.get(i), modifier));

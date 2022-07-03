@@ -1,8 +1,10 @@
 package me.theguyhere.villagerdefense.plugin.game.models.players;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
@@ -10,8 +12,11 @@ import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -23,6 +28,7 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -59,14 +65,6 @@ public class VDPlayer {
     private List<Challenge> challenge = new ArrayList<>();
     /** The list of UUIDs of those that damaged the player.*/
     private final List<UUID> enemies = new ArrayList<>();
-    /** Helmet {@link ItemStack} held for ninja ability.*/
-    private ItemStack helmet;
-    /** Chestplate {@link ItemStack} held for ninja ability.*/
-    private ItemStack chestplate;
-    /** Leggings {@link ItemStack} held for ninja ability.*/
-    private ItemStack leggings;
-    /** Boots {@link ItemStack} held for ninja ability.*/
-    private ItemStack boots;
     /** Whether permanent boosts are on or not.*/
     private boolean boost = true;
     /** Number of gems to be converted from crystals.*/
@@ -119,12 +117,10 @@ public class VDPlayer {
                 Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth);
     }
 
-    public int getCurrentHealth() {
-        return currentHealth;
-    }
-
     public void setCurrentHealth(int currentHealth) {
+        // Update health display
         this.currentHealth = Math.max(currentHealth, 0);
+        showStats();
 
         // Check for death
         if (this.currentHealth == 0) {
@@ -194,12 +190,271 @@ public class VDPlayer {
                 Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth);
     }
 
-    public int getDamage() {
-        return damage;
+    public void showStats() {
+        getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
+                new ColoredMessage(ChatColor.RED, "\u2764 " + currentHealth + "/" + maxHealth).toString()));
+
+        AtomicDouble weight = new AtomicDouble(1);
+
+        // Calculate weight
+        try {
+            ItemStack helmet = Objects.requireNonNull(Objects.requireNonNull(getPlayer().getEquipment()).getHelmet());
+
+            // Find weight
+            Objects.requireNonNull(Objects.requireNonNull(helmet.getItemMeta()).getLore()).forEach(lore -> {
+                if (lore.contains(LanguageManager.messages.weight.replace("%s", "")))
+                    weight.addAndGet(-Integer.parseInt(lore.substring(2 +
+                                    LanguageManager.messages.weight.length())
+                            .replace(ChatColor.BLUE.toString(), "")) * .01);
+            });
+        } catch (Exception ignored) {
+        }
+        try {
+            ItemStack chestplate = Objects.requireNonNull(Objects.requireNonNull(getPlayer().getEquipment())
+                    .getChestplate());
+
+            // Find weight
+            Objects.requireNonNull(Objects.requireNonNull(chestplate.getItemMeta()).getLore()).forEach(lore -> {
+                if (lore.contains(LanguageManager.messages.weight.replace("%s", "")))
+                    weight.addAndGet(-Integer.parseInt(lore.substring(2 +
+                                    LanguageManager.messages.weight.length())
+                            .replace(ChatColor.BLUE.toString(), "")) * .01);
+            });
+        } catch (Exception ignored) {
+        }
+        try {
+            ItemStack leggings = Objects.requireNonNull(Objects.requireNonNull(getPlayer().getEquipment())
+                    .getLeggings());
+
+            // Find weight
+            Objects.requireNonNull(Objects.requireNonNull(leggings.getItemMeta()).getLore()).forEach(lore -> {
+                if (lore.contains(LanguageManager.messages.weight.replace("%s", "")))
+                    weight.addAndGet(-Integer.parseInt(lore.substring(2 +
+                                    LanguageManager.messages.weight.length())
+                            .replace(ChatColor.BLUE.toString(), "")) * .01);
+            });
+        } catch (Exception ignored) {
+        }
+        try {
+            ItemStack boots = Objects.requireNonNull(Objects.requireNonNull(getPlayer().getEquipment()).getBoots());
+
+            // Find weight
+            Objects.requireNonNull(Objects.requireNonNull(boots.getItemMeta()).getLore()).forEach(lore -> {
+                if (lore.contains(LanguageManager.messages.weight.replace("%s", "")))
+                    weight.addAndGet(-Integer.parseInt(lore.substring(2 +
+                                    LanguageManager.messages.weight.length())
+                            .replace(ChatColor.BLUE.toString(), "")) * .01);
+            });
+        } catch (Exception ignored) {
+        }
+
+        // Set speed
+        Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+                .setBaseValue(.1 * weight.get());
+    }
+
+    public void takeDamage(int damage, @NotNull AttackType attackType) {
+        int armor = 0;
+        double toughness = 0;
+
+        // Calculate armor and toughness
+        try {
+            ItemStack helmet = Objects.requireNonNull(Objects.requireNonNull(getPlayer().getEquipment()).getHelmet());
+            Map<String, Integer> attributes = new HashMap<>();
+
+            // Gather armor attributes
+            Objects.requireNonNull(Objects.requireNonNull(helmet.getItemMeta()).getLore()).forEach(lore -> {
+                if (lore.contains(LanguageManager.messages.armor.replace("%s", ""))) {
+                    attributes.put("armor", Integer.parseInt(lore.substring(2 +
+                                    LanguageManager.messages.armor.length())
+                            .replace(ChatColor.BLUE.toString(), "")));
+                }
+                else if (lore.contains(LanguageManager.messages.toughness
+                        .replace("%s", ""))) {
+                    attributes.put("toughness", Integer.valueOf(lore.substring(2 +
+                                    LanguageManager.messages.toughness.length())
+                            .replace(ChatColor.BLUE.toString(), "")
+                            .replace("%", "")));
+                }
+            });
+
+            armor += attributes.get("armor");
+            toughness += attributes.get("toughness") * .01;
+        } catch (Exception ignored) {
+        }
+        try {
+            ItemStack chestplate = Objects.requireNonNull(Objects.requireNonNull(getPlayer().getEquipment())
+                    .getChestplate());
+            Map<String, Integer> attributes = new HashMap<>();
+
+            // Gather armor attributes
+            Objects.requireNonNull(Objects.requireNonNull(chestplate.getItemMeta()).getLore()).forEach(lore -> {
+                if (lore.contains(LanguageManager.messages.armor.replace("%s", ""))) {
+                    attributes.put("armor", Integer.parseInt(lore.substring(2 +
+                                    LanguageManager.messages.armor.length())
+                            .replace(ChatColor.BLUE.toString(), "")));
+                }
+                else if (lore.contains(LanguageManager.messages.toughness
+                        .replace("%s", ""))) {
+                    attributes.put("toughness", Integer.valueOf(lore.substring(2 +
+                                    LanguageManager.messages.toughness.length())
+                            .replace(ChatColor.BLUE.toString(), "")
+                            .replace("%", "")));
+                }
+            });
+
+            armor += attributes.get("armor");
+            toughness += attributes.get("toughness") * .01;
+        } catch (Exception ignored) {
+        }
+        try {
+            ItemStack leggings = Objects.requireNonNull(Objects.requireNonNull(getPlayer().getEquipment())
+                    .getLeggings());
+            Map<String, Integer> attributes = new HashMap<>();
+
+            // Gather armor attributes
+            Objects.requireNonNull(Objects.requireNonNull(leggings.getItemMeta()).getLore()).forEach(lore -> {
+                if (lore.contains(LanguageManager.messages.armor.replace("%s", ""))) {
+                    attributes.put("armor", Integer.parseInt(lore.substring(2 +
+                                    LanguageManager.messages.armor.length())
+                            .replace(ChatColor.BLUE.toString(), "")));
+                }
+                else if (lore.contains(LanguageManager.messages.toughness
+                        .replace("%s", ""))) {
+                    attributes.put("toughness", Integer.valueOf(lore.substring(2 +
+                                    LanguageManager.messages.toughness.length())
+                            .replace(ChatColor.BLUE.toString(), "")
+                            .replace("%", "")));
+                }
+            });
+
+            armor += attributes.get("armor");
+            toughness += attributes.get("toughness") * .01;
+        } catch (Exception ignored) {
+        }
+        try {
+            ItemStack boots = Objects.requireNonNull(Objects.requireNonNull(getPlayer().getEquipment()).getBoots());
+            Map<String, Integer> attributes = new HashMap<>();
+
+            // Gather armor attributes
+            Objects.requireNonNull(Objects.requireNonNull(boots.getItemMeta()).getLore()).forEach(lore -> {
+                if (lore.contains(LanguageManager.messages.armor.replace("%s", ""))) {
+                    attributes.put("armor", Integer.parseInt(lore.substring(2 +
+                                    LanguageManager.messages.armor.length())
+                            .replace(ChatColor.BLUE.toString(), "")));
+                }
+                else if (lore.contains(LanguageManager.messages.toughness
+                        .replace("%s", ""))) {
+                    attributes.put("toughness", Integer.valueOf(lore.substring(2 +
+                                    LanguageManager.messages.toughness.length())
+                            .replace(ChatColor.BLUE.toString(), "")
+                            .replace("%", "")));
+                }
+            });
+
+            armor += attributes.get("armor");
+            toughness += attributes.get("toughness") * .01;
+        } catch (Exception ignored) {
+        }
+
+        if (attackType == AttackType.NORMAL)
+            damage -= Math.min(damage, armor);
+        else damage *= Math.max(0, 1 - toughness);
+
+        // Realize damage
+        setCurrentHealth(currentHealth - damage);
     }
 
     public void setDamage(int damage) {
         this.damage = damage;
+    }
+
+    public int dealRawDamage(@NotNull AttackClass attackClass, double mainMult) {
+        Random r = new Random();
+
+        // Modify damage based on weapon
+        try {
+            ItemStack weapon = Objects.requireNonNull(getPlayer().getEquipment()).getItemInMainHand();
+            Map<String, Integer> attributes = new HashMap<>();
+
+            // Gather weapon attributes
+            Objects.requireNonNull(Objects.requireNonNull(weapon.getItemMeta()).getLore()).forEach(lore -> {
+                if (lore.contains(LanguageManager.messages.attackMainDamage
+                        .replace("%s", ""))) {
+                    if (lore.contains("-")) {
+                        String[] split = lore.substring(2 +
+                                        LanguageManager.messages.attackMainDamage.length())
+                                .split("-");
+                        attributes.put("mainLow", Integer.valueOf(split[0]));
+                        attributes.put("mainHigh",
+                                Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
+                    } else attributes.put("main", Integer.valueOf(lore.substring(2 +
+                                    LanguageManager.messages.attackMainDamage.length())
+                            .replace(ChatColor.BLUE.toString(), "")));
+                }
+                else if (lore.contains(LanguageManager.messages.attackCritDamage
+                        .replace("%s", ""))) {
+                    if (lore.contains("-")) {
+                        String[] split = lore.substring(2 +
+                                        LanguageManager.messages.attackCritDamage.length())
+                                .split("-");
+                        attributes.put("critLow", Integer.valueOf(split[0]));
+                        attributes.put("critHigh",
+                                Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
+                    } else attributes.put("crit", Integer.valueOf(lore.substring(2 +
+                                    LanguageManager.messages.attackCritDamage.length())
+                            .replace(ChatColor.BLUE.toString(), "")));
+                }
+                else if (lore.contains(LanguageManager.messages.attackSweepDamage
+                        .replace("%s", ""))) {
+                    if (lore.contains("-")) {
+                        String[] split = lore.substring(2 +
+                                        LanguageManager.messages.attackSweepDamage.length())
+                                .split("-");
+                        attributes.put("sweepLow", Integer.valueOf(split[0]));
+                        attributes.put("sweepHigh",
+                                Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
+                    } else attributes.put("sweep", Integer.valueOf(lore.substring(2 +
+                                    LanguageManager.messages.attackSweepDamage.length())
+                            .replace(ChatColor.BLUE.toString(), "")));
+                }
+            });
+
+            // Deal raw damage
+            switch (attackClass) {
+                case MAIN:
+                    if (attributes.containsKey("main"))
+                        return (int) ((damage + attributes.get("main")) * mainMult);
+                    else return (int) ((damage + attributes.get("mainLow") +
+                            r.nextInt(attributes.get("mainHigh") - attributes.get("mainLow"))) * mainMult);
+                case CRITICAL:
+                    if (attributes.containsKey("crit"))
+                        return damage + attributes.get("crit");
+                    else return damage + attributes.get("critLow") +
+                            r.nextInt(attributes.get("critHigh") - attributes.get("critLow"));
+                case SWEEP:
+                    if (attributes.containsKey("sweep"))
+                        return damage + attributes.get("sweep");
+                    else return damage + attributes.get("sweepLow") +
+                            r.nextInt(attributes.get("sweepHigh") - attributes.get("sweepLow"));
+                default:
+                    return 0;
+            }
+        } catch (Exception e) {
+            return damage;
+        }
+    }
+
+    public AttackType getAttackType() {
+        try {
+            ItemStack weapon = Objects.requireNonNull(getPlayer().getEquipment()).getItemInMainHand();
+            if (Objects.requireNonNull(Objects.requireNonNull(weapon.getItemMeta()).getLore()).stream()
+                    .anyMatch(lore -> lore.contains(LanguageManager.names.penetrating
+                            .replace("%s", ""))))
+                return AttackType.PENETRATING;
+        } catch (Exception ignored) {
+        }
+        return AttackType.NORMAL;
     }
 
     public int getGems() {
@@ -319,30 +574,6 @@ public class VDPlayer {
 
     public void setKit2(Kit kit2) {
         this.kit2 = kit2;
-    }
-
-    /**
-     * Removes armor from the player while they are invisible under the ninja ability.
-     */
-    public void hideArmor() {
-        helmet = getPlayer().getInventory().getHelmet();
-        getPlayer().getInventory().setHelmet(null);
-        chestplate = getPlayer().getInventory().getChestplate();
-        getPlayer().getInventory().setChestplate(null);
-        leggings = getPlayer().getInventory().getLeggings();
-        getPlayer().getInventory().setLeggings(null);
-        boots = getPlayer().getInventory().getBoots();
-        getPlayer().getInventory().setBoots(null);
-    }
-
-    /**
-     * Returns armor to the player after the ninja ability wears out.
-     */
-    public void exposeArmor() {
-        getPlayer().getInventory().setHelmet(helmet);
-        getPlayer().getInventory().setChestplate(chestplate);
-        getPlayer().getInventory().setLeggings(leggings);
-        getPlayer().getInventory().setBoots(boots);
     }
 
     /**

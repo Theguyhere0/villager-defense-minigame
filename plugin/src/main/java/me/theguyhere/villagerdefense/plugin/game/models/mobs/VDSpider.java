@@ -18,10 +18,10 @@ public class VDSpider extends VDMob {
         );
         spider = (Spider) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.SPIDER);
         id = spider.getUniqueId();
-        setHealth(100, 10, level, 2);
-        setArmor(5, 2, level, 2);
+        setHealth(80, 8, level, 2);
+        setArmor(4, 2, level, 2);
         setToughness(.08, .04, level, 2);
-        setDamage(10, 3, level, 2, .1);
+        setDamage(8, 2, level, 2, .1);
         setFastAttackSpeed();
         setNoneKnockback(spider);
         setLightWeight(spider);

@@ -77,7 +77,7 @@ public abstract class VDMob {
         if (attacker != null)
             try {
                 Popup.create(getEntity().getEyeLocation(),
-                        new ColoredMessage(ChatColor.RED, "-" + damage + "\u2665").toString(), 1,
+                        new ColoredMessage(ChatColor.RED, "-" + damage + "\u2764").toString(), 1,
                         attacker.getPlayer());
             } catch (InvalidLocationException ignored) {
             }
@@ -88,7 +88,7 @@ public abstract class VDMob {
         if (damage >= currentHealth) {
             addDamage(currentHealth, attackerID);
             Random r = new Random();
-            int finalGems = (int) (loot * (1 + (r.nextDouble() * 2 - 1) * lootSpread));
+            int finalGems = (int) (loot * 2 * (1 + (r.nextDouble() * 2 - 1) * lootSpread));
             int finalExp = (int) (loot * (1 + (r.nextDouble() * 2 - 1) * lootSpread)) / 10;
 
             // Reward for all damagers
@@ -105,7 +105,7 @@ public abstract class VDMob {
 
                     // Create popup
                     try {
-                        Popup.create(getEntity().getLocation(),
+                        Popup.create(getEntity().getLocation().add(0, 1, 0),
                                 new ColoredMessage(ChatColor.GREEN, "+" + gems + "\u2666  ") +
                                 new ColoredMessage(ChatColor.YELLOW, "+" + exp + "\u2605").toString(), 2.5,
                                 gamer.getPlayer());
@@ -151,13 +151,6 @@ public abstract class VDMob {
         if (damageMap.containsKey(id))
             damageMap.replace(id, damageMap.get(id) + damage);
         else damageMap.put(id, damage);
-    }
-    
-    public int dealDamage(int armor, double toughness) {
-        int damage = dealRawDamage();
-        if (attackType == AttackType.NORMAL)
-            return damage - Math.min(damage, armor);
-        else return (int) (damage * Math.max(0, 1 - toughness));
     }
     
     public int dealRawDamage() {
@@ -248,7 +241,7 @@ public abstract class VDMob {
         Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
                 .addModifier(new AttributeModifier(
                         KNOCKBACK,
-                        1 - initial,
+                        .25 - initial,
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }
@@ -258,7 +251,7 @@ public abstract class VDMob {
         Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
                 .addModifier(new AttributeModifier(
                         KNOCKBACK,
-                        2 - initial,
+                        .75 - initial,
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }
@@ -268,7 +261,7 @@ public abstract class VDMob {
         Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
                 .addModifier(new AttributeModifier(
                         KNOCKBACK,
-                        3.5 - initial,
+                        1.25 - initial,
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }
@@ -278,7 +271,7 @@ public abstract class VDMob {
         Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
                 .addModifier(new AttributeModifier(
                         KNOCKBACK,
-                        5 - initial,
+                        2.5 - initial,
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }
@@ -431,11 +424,10 @@ public abstract class VDMob {
         livingEntity.setCustomNameVisible(true);
     }
     
-    public void remove(Arena arena) {
+    public void remove() {
         if (Main.getVillagersTeam().hasEntry(id.toString()))
             Main.getVillagersTeam().removeEntry(id.toString());
         if (Main.getMonstersTeam().hasEntry(id.toString()))
             Main.getMonstersTeam().removeEntry(id.toString());
-        arena.removeMob(id);
     }
 }

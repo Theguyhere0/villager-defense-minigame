@@ -3,7 +3,6 @@ package me.theguyhere.villagerdefense.plugin.listeners;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.events.EndNinjaNerfEvent;
 import me.theguyhere.villagerdefense.plugin.events.JoinArenaEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
@@ -331,11 +330,5 @@ public class ArenaListener implements Listener {
 
         // Debug message to console
         CommunicationManager.debugInfo("%s left %s", 2, player.getName(), arena.getName());
-    }
-
-    @EventHandler
-    public void onEndNinjaNerfEvent(EndNinjaNerfEvent e) {
-        if (e.getGamer().getStatus() != PlayerStatus.LEFT)
-            e.getGamer().exposeArmor();
     }
 }

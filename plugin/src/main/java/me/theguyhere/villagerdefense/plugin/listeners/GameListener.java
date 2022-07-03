@@ -14,9 +14,9 @@ import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.Mobs;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
+import me.theguyhere.villagerdefense.plugin.game.models.players.AttackClass;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
@@ -35,7 +35,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BoundingBox;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class GameListener implements Listener {
 	// Keep score and manage mob death
@@ -119,7 +120,8 @@ public class GameListener implements Listener {
 		}
 
 		// Remove the mob
-		mob.remove(arena);
+		mob.remove();
+		arena.removeMob(mob.getID());
 
 		// Update scoreboards
 		arena.updateScoreboards();
@@ -197,12 +199,8 @@ public class GameListener implements Listener {
 				}, Utils.secondsToTicks(.5));
 			}
 
-			// Calculate in armor and toughness
-			int armor = 0; // TODO: Implement
-			double toughness = 0; // TODO: Implement
-
 			// Realize damage
-			gamer.setCurrentHealth(gamer.getCurrentHealth() - finalDamager.dealDamage(armor, toughness));
+			gamer.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType());
 		}
 
 		// VD entity getting hurt
@@ -245,95 +243,27 @@ public class GameListener implements Listener {
 					return;
 
 				// Cancel and capture original damage
-				int damage = (int) e.getDamage();
+				double damage = e.getDamage();
 				e.setDamage(0);
-
-				// Custom damage mechanics
-				Random r = new Random();
 
 				// Damage dealt by player
 				if (gamer != null) {
-					AttackType type = AttackType.NORMAL;
+					AttackClass attackClass;
 
-					// Modify damage based on weapon
-					try {
-						ItemStack weapon = Objects.requireNonNull(player.getEquipment()).getItemInMainHand();
-						Map<String, Integer> attributes = new HashMap<>();
+					// Crit damage
+					if (damage > 1)
+						attackClass = AttackClass.CRITICAL;
 
-						// Gather damage attributes
-						Objects.requireNonNull(Objects.requireNonNull(weapon.getItemMeta()).getLore()).forEach(lore -> {
-							if (lore.contains(LanguageManager.messages.attackMainDamage
-									.replace("%s", ""))) {
-								if (lore.contains("-")) {
-									String[] split = lore.substring(2 +
-													LanguageManager.messages.attackMainDamage.length())
-											.split("-");
-									attributes.put("mainLow", Integer.valueOf(split[0]));
-									attributes.put("mainHigh",
-											Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
-								} else attributes.put("main", Integer.valueOf(lore.substring(2 +
-										LanguageManager.messages.attackMainDamage.length())
-										.replace(ChatColor.BLUE.toString(), "")));
-							}
-							else if (lore.contains(LanguageManager.messages.attackCritDamage
-									.replace("%s", ""))) {
-								if (lore.contains("-")) {
-									String[] split = lore.substring(2 +
-													LanguageManager.messages.attackCritDamage.length())
-											.split("-");
-									attributes.put("critLow", Integer.valueOf(split[0]));
-									attributes.put("critHigh",
-											Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
-								} else attributes.put("crit", Integer.valueOf(lore.substring(2 +
-												LanguageManager.messages.attackCritDamage.length())
-										.replace(ChatColor.BLUE.toString(), "")));
-							}
-							else if (lore.contains(LanguageManager.messages.attackSweepDamage
-									.replace("%s", ""))) {
-								if (lore.contains("-")) {
-									String[] split = lore.substring(2 +
-													LanguageManager.messages.attackSweepDamage.length())
-											.split("-");
-									attributes.put("sweepLow", Integer.valueOf(split[0]));
-									attributes.put("sweepHigh",
-											Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
-								} else attributes.put("sweep", Integer.valueOf(lore.substring(2 +
-												LanguageManager.messages.attackSweepDamage.length())
-										.replace(ChatColor.BLUE.toString(), "")));
-							}
-							else if (lore.contains(LanguageManager.names.penetrating.replace("%s", "")))
-								attributes.put("penetrating", 1);
-						});
+					// Sweep damage
+					else if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)
+						attackClass = AttackClass.SWEEP;
 
-						// Crit damage
-						if (damage >= 3)
-							if (attributes.containsKey("crit"))
-								damage = gamer.getDamage() + attributes.get("crit");
-							else damage = gamer.getDamage() + attributes.get("critLow") +
-									r.nextInt(attributes.get("critHigh") - attributes.get("critLow"));
-
-						// Sweep damage
-						else if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)
-							if (attributes.containsKey("sweep"))
-								damage = gamer.getDamage() + attributes.get("sweep");
-							else damage = gamer.getDamage() + attributes.get("sweepLow") +
-									r.nextInt(attributes.get("sweepHigh") - attributes.get("sweepLow"));
-
-						// Normal damage
-						else if (attributes.containsKey("main"))
-							damage = gamer.getDamage() + attributes.get("main");
-						else damage = gamer.getDamage() + attributes.get("mainLow") +
-									r.nextInt(attributes.get("mainHigh") - attributes.get("mainLow"));
-
-						// Check type
-						if (attributes.containsKey("type"))
-							type = AttackType.PENETRATING;
-					} catch (Exception ignored) {
-						damage = gamer.getDamage();
-					}
+					// Main damage
+					else attackClass = AttackClass.MAIN;
 
 					// Play out damage
-					finalVictim.takeDamage(damage, type, player, arena);
+					finalVictim.takeDamage(gamer.dealRawDamage(attackClass, damage), gamer.getAttackType(), player,
+							arena);
 				}
 
 				// Damage not dealt by player

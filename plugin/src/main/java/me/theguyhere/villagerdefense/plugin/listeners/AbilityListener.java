@@ -3,8 +3,6 @@ package me.theguyhere.villagerdefense.plugin.listeners;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
-import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.events.EndNinjaNerfEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
@@ -20,7 +18,10 @@ import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.tools.WorldManager;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -139,11 +140,9 @@ public class AbilityListener implements Listener {
             WorldManager.getPets(player).forEach(wolf ->
                     wolf.addPotionEffect((new PotionEffect(PotionEffectType.INVISIBILITY, duration, 0))));
             cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
-            gamer.hideArmor();
+            // TODO: Nerf
 
-            // Schedule un-nerf
-            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-                    Bukkit.getPluginManager().callEvent(new EndNinjaNerfEvent(gamer)), duration);
+            // Schedule un-nerf TODO
 
             // Fire ability sound if turned on
             if (arena.hasAbilitySound())
@@ -506,11 +505,9 @@ public class AbilityListener implements Listener {
                 WorldManager.getPets(player).forEach(wolf ->
                         wolf.addPotionEffect((new PotionEffect(PotionEffectType.INVISIBILITY, duration, 0))));
                 cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
-                gamer.hideArmor();
+                // TODO: nerf
 
-                // Schedule un-nerf
-                Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-                        Bukkit.getPluginManager().callEvent(new EndNinjaNerfEvent(gamer)), duration);
+                // Schedule un-nerf TODO
 
                 // Fire ability sound if turned on
                 if (arena.hasAbilitySound())

@@ -120,6 +120,7 @@ public class Arena {
     private static final String START_WAVE = "startWave";
     private static final String UPDATE_BAR = "updateBar";
     private static final String CALIBRATE = "calibrate";
+    private static final String UPDATE_STATS = "updateStats";
     private static final String KICK = "kick";
     private static final String RESET = "restart";
 
@@ -1799,6 +1800,16 @@ public class Arena {
         });
         activeTasks.get(END_WAVE).runTaskLater(Main.plugin, Utils.secondsToTicks(30));
 
+        // Schedule and record update status
+        activeTasks.put(UPDATE_STATS, new BukkitRunnable() {
+            @Override
+            public void run() {
+                // Task
+                getActives().forEach(VDPlayer::showStats);
+            }
+        });
+        activeTasks.get(UPDATE_STATS).runTaskTimer(Main.plugin, Utils.secondsToTicks(30), Utils.secondsToTicks(2));
+
         // Debug message to console
         CommunicationManager.debugInfo("%s is starting.", 2, getName());
     }
@@ -1810,8 +1821,11 @@ public class Arena {
         if (status != ArenaStatus.ACTIVE)
             throw new ArenaStatusException(ArenaStatus.ACTIVE);
 
-        // Clear active tasks
-        activeTasks.forEach((name, task) -> task.cancel());
+        // Clear active tasks EXCEPT update status
+        activeTasks.forEach((name, task) -> {
+            if (!name.equals(UPDATE_STATS))
+                task.cancel();
+        });
         activeTasks.clear();
 
         // Stop time limit bar
@@ -1887,8 +1901,9 @@ public class Arena {
         // Remove any unwanted mobs
         mobs.forEach(mob -> {
             if (Main.getMonstersTeam().hasEntry(mob.getID().toString()))
-                mob.remove(this);
+                mob.remove();
         });
+        mobs.removeIf(mob -> Main.getMonstersTeam().hasEntry(mob.getID().toString()));
 
         // Revive dead players
         for (VDPlayer p : getGhosts()) {
@@ -1914,16 +1929,16 @@ public class Arena {
             int multiplier;
             switch (getDifficultyMultiplier()) {
                 case 1:
-                    multiplier = 10;
+                    multiplier = 20;
                     break;
                 case 2:
-                    multiplier = 8;
+                    multiplier = 15;
                     break;
                 case 3:
-                    multiplier = 6;
+                    multiplier = 12;
                     break;
                 default:
-                    multiplier = 5;
+                    multiplier = 10;
             }
             int reward = (currentWave - 1) * multiplier;
             p.addGems(reward);
@@ -1988,8 +2003,11 @@ public class Arena {
         if (status != ArenaStatus.ACTIVE)
             throw new ArenaStatusException(ArenaStatus.ACTIVE);
 
-        // Clear active tasks
-        activeTasks.forEach((name, task) -> task.cancel());
+        // Clear active tasks EXCEPT update status
+        activeTasks.forEach((name, task) -> {
+            if (!name.equals(UPDATE_STATS))
+                task.cancel();
+        });
         activeTasks.clear();
 
         // Play wave start sound
@@ -2066,7 +2084,7 @@ public class Arena {
         setSpawningMonsters(true);
         setSpawningVillagers(true);
 
-        // Schedule and record calibration task
+        // Schedule and record calibration
         activeTasks.put(CALIBRATE, new BukkitRunnable() {
             @Override
             public void run() {
