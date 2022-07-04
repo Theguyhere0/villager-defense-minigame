@@ -4,7 +4,6 @@ import com.google.common.util.concurrent.AtomicDouble;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
-import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
@@ -31,6 +30,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A class holding data about players in a Villager Defense game.
@@ -191,18 +191,26 @@ public class VDPlayer {
     }
 
     public void showStats() {
-        getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-                new ColoredMessage(ChatColor.RED, "\u2764 " + currentHealth + "/" + maxHealth).toString()));
-
+        AtomicInteger armor = new AtomicInteger();
+        AtomicInteger toughness = new AtomicInteger();
         AtomicDouble weight = new AtomicDouble(1);
 
-        // Calculate weight
+        // Calculate stats
         try {
             ItemStack helmet = Objects.requireNonNull(Objects.requireNonNull(getPlayer().getEquipment()).getHelmet());
 
-            // Find weight
             Objects.requireNonNull(Objects.requireNonNull(helmet.getItemMeta()).getLore()).forEach(lore -> {
-                if (lore.contains(LanguageManager.messages.weight.replace("%s", "")))
+                if (lore.contains(LanguageManager.messages.armor.replace("%s", "")))
+                    armor.addAndGet(Integer.parseInt(lore.substring(2 +
+                                    LanguageManager.messages.armor.length())
+                            .replace(ChatColor.BLUE.toString(), "")));
+                else if (lore.contains(LanguageManager.messages.toughness
+                        .replace("%s", "")))
+                    toughness.addAndGet(Integer.parseInt(lore.substring(2 +
+                                    LanguageManager.messages.toughness.length())
+                            .replace(ChatColor.BLUE.toString(), "")
+                            .replace("%", "")));
+                else if (lore.contains(LanguageManager.messages.weight.replace("%s", "")))
                     weight.addAndGet(-Integer.parseInt(lore.substring(2 +
                                     LanguageManager.messages.weight.length())
                             .replace(ChatColor.BLUE.toString(), "")) * .01);
@@ -213,9 +221,18 @@ public class VDPlayer {
             ItemStack chestplate = Objects.requireNonNull(Objects.requireNonNull(getPlayer().getEquipment())
                     .getChestplate());
 
-            // Find weight
             Objects.requireNonNull(Objects.requireNonNull(chestplate.getItemMeta()).getLore()).forEach(lore -> {
-                if (lore.contains(LanguageManager.messages.weight.replace("%s", "")))
+                if (lore.contains(LanguageManager.messages.armor.replace("%s", "")))
+                    armor.addAndGet(Integer.parseInt(lore.substring(2 +
+                                    LanguageManager.messages.armor.length())
+                            .replace(ChatColor.BLUE.toString(), "")));
+                else if (lore.contains(LanguageManager.messages.toughness
+                        .replace("%s", "")))
+                    toughness.addAndGet(Integer.parseInt(lore.substring(2 +
+                                    LanguageManager.messages.toughness.length())
+                            .replace(ChatColor.BLUE.toString(), "")
+                            .replace("%", "")));
+                else if (lore.contains(LanguageManager.messages.weight.replace("%s", "")))
                     weight.addAndGet(-Integer.parseInt(lore.substring(2 +
                                     LanguageManager.messages.weight.length())
                             .replace(ChatColor.BLUE.toString(), "")) * .01);
@@ -226,9 +243,18 @@ public class VDPlayer {
             ItemStack leggings = Objects.requireNonNull(Objects.requireNonNull(getPlayer().getEquipment())
                     .getLeggings());
 
-            // Find weight
             Objects.requireNonNull(Objects.requireNonNull(leggings.getItemMeta()).getLore()).forEach(lore -> {
-                if (lore.contains(LanguageManager.messages.weight.replace("%s", "")))
+                if (lore.contains(LanguageManager.messages.armor.replace("%s", "")))
+                    armor.addAndGet(Integer.parseInt(lore.substring(2 +
+                                    LanguageManager.messages.armor.length())
+                            .replace(ChatColor.BLUE.toString(), "")));
+                else if (lore.contains(LanguageManager.messages.toughness
+                        .replace("%s", "")))
+                    toughness.addAndGet(Integer.parseInt(lore.substring(2 +
+                                    LanguageManager.messages.toughness.length())
+                            .replace(ChatColor.BLUE.toString(), "")
+                            .replace("%", "")));
+                else if (lore.contains(LanguageManager.messages.weight.replace("%s", "")))
                     weight.addAndGet(-Integer.parseInt(lore.substring(2 +
                                     LanguageManager.messages.weight.length())
                             .replace(ChatColor.BLUE.toString(), "")) * .01);
@@ -238,9 +264,18 @@ public class VDPlayer {
         try {
             ItemStack boots = Objects.requireNonNull(Objects.requireNonNull(getPlayer().getEquipment()).getBoots());
 
-            // Find weight
             Objects.requireNonNull(Objects.requireNonNull(boots.getItemMeta()).getLore()).forEach(lore -> {
-                if (lore.contains(LanguageManager.messages.weight.replace("%s", "")))
+                if (lore.contains(LanguageManager.messages.armor.replace("%s", "")))
+                    armor.addAndGet(Integer.parseInt(lore.substring(2 +
+                                    LanguageManager.messages.armor.length())
+                            .replace(ChatColor.BLUE.toString(), "")));
+                else if (lore.contains(LanguageManager.messages.toughness
+                        .replace("%s", "")))
+                    toughness.addAndGet(Integer.parseInt(lore.substring(2 +
+                                    LanguageManager.messages.toughness.length())
+                            .replace(ChatColor.BLUE.toString(), "")
+                            .replace("%", "")));
+                else if (lore.contains(LanguageManager.messages.weight.replace("%s", "")))
                     weight.addAndGet(-Integer.parseInt(lore.substring(2 +
                                     LanguageManager.messages.weight.length())
                             .replace(ChatColor.BLUE.toString(), "")) * .01);
@@ -251,6 +286,12 @@ public class VDPlayer {
         // Set speed
         Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .setBaseValue(.1 * weight.get());
+
+        getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
+                new ColoredMessage(ChatColor.RED, "\u2764 " + currentHealth + "/" + maxHealth) + "    " +
+                        new ColoredMessage(ChatColor.AQUA, "\u2720 " + armor) + "    " +
+                        new ColoredMessage(ChatColor.DARK_AQUA, "\u2756 " + toughness + "%")));
+
     }
 
     public void takeDamage(int damage, @NotNull AttackType attackType) {

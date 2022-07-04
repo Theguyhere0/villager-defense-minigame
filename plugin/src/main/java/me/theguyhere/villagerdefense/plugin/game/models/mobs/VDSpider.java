@@ -8,16 +8,20 @@ import org.bukkit.entity.Spider;
 
 import java.util.Objects;
 
-public class VDSpider extends VDMob {
+public class VDSpider extends VDMinion {
     private final Spider spider;
+    public static final String KEY = "spid";
 
-    public VDSpider(Arena arena, Location location) {
+    protected VDSpider(Arena arena, Location location) {
         super(
+                arena,
+                (LivingEntity) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.SPIDER),
+                "Spider",
+                "A fast-moving, fast-attacking, armor-penetrating, wall-scaling monster.",
                 getLevel(arena.getCurrentDifficulty(), 1, 0),
                 AttackType.PENETRATING
         );
-        spider = (Spider) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.SPIDER);
-        id = spider.getUniqueId();
+        spider = (Spider) minion;
         setHealth(80, 8, level, 2);
         setArmor(4, 2, level, 2);
         setToughness(.08, .04, level, 2);
@@ -28,8 +32,8 @@ public class VDSpider extends VDMob {
         setFastLandSpeed(spider);
         // TODO: Set and implement target priority
         // TODO: Set visual armor and weapons
-        setLoot(25, 1.15, level, 2, .2);
-        setMinion(arena, spider, "Spider");
+        setLoot(25, 1.15, level, .2);
+        updateNameTag();
     }
 
     @Override

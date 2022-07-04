@@ -2162,8 +2162,7 @@ public class Commands implements CommandExecutor {
 						fixed = true;
 
 						// Fix
-						Main.plugin.saveResource("default.yml", true);
-						Main.plugin.getConfig().set("spawnTableStructure", Main.spawnTableVersion);
+						Main.plugin.saveResource("spawnTables/default.yml", true);
 						Main.plugin.getConfig().set("spawnTableDefault", Main.defaultSpawnVersion);
 						Main.plugin.saveConfig();
 

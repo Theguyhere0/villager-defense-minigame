@@ -2369,11 +2369,6 @@ public class GameItems {
 				new PotionData(PotionType.INSTANT_HEAL, false, true), null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a120"));
 	}
-	public static @NotNull ItemStack health3() {
-		return ItemManager.createPotionItem(Material.LINGERING_POTION,
-				new PotionData(PotionType.INSTANT_HEAL, false, true), null,
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a200"));
-	}
 	public static @NotNull ItemStack strength() {
 		return ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.STRENGTH),
 				null,

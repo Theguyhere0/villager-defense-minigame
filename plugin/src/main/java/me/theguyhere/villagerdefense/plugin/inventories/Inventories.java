@@ -491,7 +491,7 @@ public class Inventories {
 
 		// Option to edit spawn table
 		buttons.add(ItemManager.createItem(Material.DRAGON_HEAD,
-				CommunicationManager.format("&3&lSpawn Table")));
+				CommunicationManager.format("&3&lSpawn Table: " + arena.getSpawnTableFile())));
 
 		// Option to toggle dynamic mob count
 		buttons.add(ItemManager.createItem(Material.SLIME_BALL,
@@ -644,57 +644,54 @@ public class Inventories {
 		// Option to set spawn table to default
 		buttons.add(ItemManager.createItem(Material.OAK_WOOD,
 				CommunicationManager.format("&4&lDefault"), ItemManager.BUTTON_FLAGS,
-				chosen.equals("default") ? ItemManager.glow() : null,
+				chosen.contains("default") ? ItemManager.glow() : null,
 				CommunicationManager.format("&7Sets spawn table to default.yml")));
 
 		// Option to set spawn table to global option 1
 		buttons.add(ItemManager.createItem(Material.RED_CONCRETE,
 				CommunicationManager.format("&6&lOption 1"), ItemManager.BUTTON_FLAGS,
-				chosen.equals("option1") ? ItemManager.glow() : null,
+				chosen.contains("option1") ? ItemManager.glow() : null,
 				CommunicationManager.format("&7Sets spawn table to option1.yml")));
 
 		// Option to set spawn table to global option 2
 		buttons.add(ItemManager.createItem(Material.ORANGE_CONCRETE,
 				CommunicationManager.format("&6&lOption 2"), ItemManager.BUTTON_FLAGS,
-				chosen.equals("option2") ? ItemManager.glow() : null,
+				chosen.contains("option2") ? ItemManager.glow() : null,
 				CommunicationManager.format("&7Sets spawn table to option2.yml")));
 
 		// Option to set spawn table to global option 3
 		buttons.add(ItemManager.createItem(Material.YELLOW_CONCRETE,
 				CommunicationManager.format("&6&lOption 3"), ItemManager.BUTTON_FLAGS,
-				chosen.equals("option3") ? ItemManager.glow() : null,
+				chosen.contains("option3") ? ItemManager.glow() : null,
 				CommunicationManager.format("&7Sets spawn table to option3.yml")));
 
 		// Option to set spawn table to global option 4
 		buttons.add(ItemManager.createItem(Material.BROWN_CONCRETE,
 				CommunicationManager.format("&6&lOption 4"), ItemManager.BUTTON_FLAGS,
-				chosen.equals("option4") ? ItemManager.glow() : null,
+				chosen.contains("option4") ? ItemManager.glow() : null,
 				CommunicationManager.format("&7Sets spawn table to option4.yml")));
 
 		// Option to set spawn table to global option 5
 		buttons.add(ItemManager.createItem(Material.LIGHT_GRAY_CONCRETE,
 				CommunicationManager.format("&6&lOption 5"), ItemManager.BUTTON_FLAGS,
-				chosen.equals("option5") ? ItemManager.glow() : null,
+				chosen.contains("option5") ? ItemManager.glow() : null,
 				CommunicationManager.format("&7Sets spawn table to option5.yml")));
 
 		// Option to set spawn table to global option 6
 		buttons.add(ItemManager.createItem(Material.WHITE_CONCRETE,
 				CommunicationManager.format("&6&lOption 6"), ItemManager.BUTTON_FLAGS,
-				chosen.equals("option6") ? ItemManager.glow() : null,
+				chosen.contains("option6") ? ItemManager.glow() : null,
 				CommunicationManager.format("&7Sets spawn table to option6.yml")));
 
 		// Option to set spawn table to custom option
 		buttons.add(ItemManager.createItem(Material.BIRCH_WOOD,
 				CommunicationManager.format("&e&lCustom"), ItemManager.BUTTON_FLAGS,
-				chosen.length() < 4 ? ItemManager.glow() : null,
-				CommunicationManager.format("&7Sets spawn table to a[arena number].yml"),
-				CommunicationManager.format("&7(Check the arena number in arenaData.yml)")));
+				chosen.charAt(0) == 'a' ? ItemManager.glow() : null,
+				CommunicationManager.format("&7Sets spawn table to a" + arena.getId() + ".yml")));
 
 		return InventoryFactory.createFixedSizeInventory(
 				new InventoryMeta(InventoryID.SPAWN_TABLE_MENU, InventoryType.MENU, arena),
-				chosen.equals("custom") ?
-						CommunicationManager.format("&3&lSpawn Table: " + arena.getPath() + ".yml") :
-						CommunicationManager.format("&3&lSpawn Table: " + arena.getSpawnTableFile() + ".yml"),
+				CommunicationManager.format("&3&lSpawn Table: " + arena.getSpawnTableFile()),
 				1,
 				true,
 				buttons

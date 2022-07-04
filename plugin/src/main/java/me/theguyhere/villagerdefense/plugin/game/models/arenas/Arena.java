@@ -13,7 +13,6 @@ import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.Mobs;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
@@ -33,6 +32,7 @@ import org.bukkit.entity.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,6 +58,8 @@ public class Arena {
     private final List<VDMob> mobs = new ArrayList<>();
     /** Status of the arena.*/
     private ArenaStatus status;
+    /** A collection of spawning tasks for the arena.*/
+    private final List<BukkitTask> spawnTasks = new ArrayList<>();
     /** Whether the arena is in the process of spawning monsters.*/
     private boolean spawningMonsters;
     /** Whether the arena is in the process of spawning villagers.*/
@@ -773,6 +775,41 @@ public class Arena {
         return monsterSpawns;
     }
 
+    public List<Location> getMonsterGroundSpawnLocations() {
+        // Gather spawns
+        List<Location> grounds = new ArrayList<>();
+        for (ArenaSpawn arenaSpawn : monsterSpawns) {
+            if (arenaSpawn.getSpawnType() != ArenaSpawnType.MONSTER_AIR)
+                grounds.add(arenaSpawn.getLocation());
+        }
+
+        // Default to all if empty
+        if (grounds.isEmpty())
+            return monsterSpawns.stream().map(ArenaSpawn::getLocation).collect(Collectors.toList());
+        else return grounds;
+    }
+
+    public List<Location> getMonsterAirSpawnLocations() {
+        // Gather spawns
+        List<Location> airs = new ArrayList<>();
+        for (ArenaSpawn arenaSpawn : monsterSpawns) {
+            if (arenaSpawn.getSpawnType() != ArenaSpawnType.MONSTER_GROUND)
+                airs.add(arenaSpawn.getLocation());
+        }
+
+        // Default to all if empty
+        if (airs.isEmpty())
+            return monsterSpawns.stream().map(ArenaSpawn::getLocation).collect(Collectors.toList());
+        else return airs;
+    }
+
+    public List<Location> getVillagerSpawnLocations() {
+        List<Location> spawns = new ArrayList<>();
+        for (ArenaSpawn arenaSpawn : villagerSpawns)
+            spawns.add(arenaSpawn.getLocation());
+        return spawns;
+    }
+
     /**
      * Retrieves a specific monster spawn of the arena.
      * @param monsterSpawnID - Monster spawn ID.
@@ -901,7 +938,10 @@ public class Arena {
     public String getSpawnTableFile() {
         if (!config.contains(path + ".spawnTable"))
             setSpawnTableFile("default");
-        return config.getString(path + ".spawnTable");
+        String file = config.getString(path + ".spawnTable");
+        if ("custom".equals(file))
+            return "a" + id + ".yml";
+        else return file + ".yml";
     }
 
     public boolean setSpawnTableFile(String option) {
@@ -1929,16 +1969,16 @@ public class Arena {
             int multiplier;
             switch (getDifficultyMultiplier()) {
                 case 1:
-                    multiplier = 20;
-                    break;
-                case 2:
                     multiplier = 15;
                     break;
+                case 2:
+                    multiplier = 10;
+                    break;
                 case 3:
-                    multiplier = 12;
+                    multiplier = 8;
                     break;
                 default:
-                    multiplier = 10;
+                    multiplier = 6;
             }
             int reward = (currentWave - 1) * multiplier;
             p.addGems(reward);
@@ -2080,10 +2120,6 @@ public class Arena {
             activeTasks.get(UPDATE_BAR).runTaskTimer(Main.plugin, 0, Utils.secondsToTicks(1));
         }
 
-        // Set arena as spawning
-        setSpawningMonsters(true);
-        setSpawningVillagers(true);
-
         // Schedule and record calibration
         activeTasks.put(CALIBRATE, new BukkitRunnable() {
             @Override
@@ -2094,14 +2130,109 @@ public class Arena {
         });
         activeTasks.get(CALIBRATE).runTaskTimer(Main.plugin, 0, Utils.secondsToTicks(0.5));
 
-        // Spawn mobs
-        Mobs.spawnVillagers(this);
-        Mobs.spawnMonsters(this);
-        Mobs.spawnBosses(this);
+        // Get spawn data
+        DataManager data = new DataManager("spawnTables/" + getSpawnTableFile());
+        String wave = Integer.toString(currentWave);
+        if (!data.getConfig().contains(wave)) {
+            if (data.getConfig().contains("freePlay"))
+                wave = "freePlay";
+            else wave = "1";
+        }
+        int villagerCount = data.getConfig().getInt(wave + ".count.v");
+        int monsterCount = data.getConfig().getInt(wave + ".count.m");
+        List<String> villagerTypeRatio = getTypeRatio(data, wave + ".vtypes");
+        List<String> monsterTypeRatio = getTypeRatio(data, wave + ".mtypes");
+
+        // Calculate count multiplier
+        double countMultiplier = Math.log((getActiveCount() + 7) / 10d) + 1;
+        if (!hasDynamicCount())
+            countMultiplier = 1;
+
+        // Set mobs left to spawn
+        villagerCount = (int) ((villagerCount * countMultiplier) - getVillagers());
+        if (monsterCount != 0)
+            monsterCount = Math.max((int) (monsterCount * countMultiplier), 1);
+
+        // Prepare, schedule, and start spawning
+        Arena arena = this;
+        Random r = new Random();
+        int delay = 0;
+        spawningVillagers = true;
+        for (int i = 0; i < villagerCount; i++) {
+            delay += spawnDelayTicks(i);
+            spawnTasks.add(new BukkitRunnable() {
+                @Override
+                public void run() {
+                    // Get spawn location
+                    Location spawn = getVillagerSpawnLocations().get(r.nextInt(getVillagerSpawnLocations().size()));
+
+                    // Spawn
+                    try {
+                        addMob(VDMob.of(villagerTypeRatio.get(r.nextInt(villagerTypeRatio.size())),
+                                arena, spawn, null));
+                    } catch (InvalidVDMobKeyException e) {
+                        CommunicationManager.debugError("Invalid mob key detected in spawn file!", 1);
+                    }
+                }
+            }.runTaskLater(Main.plugin, delay));
+        }
+        spawnTasks.add(new BukkitRunnable() {
+            @Override
+            public void run() {
+                spawningVillagers = false;
+            }
+        }.runTaskLater(Main.plugin, delay));
+        delay = 0;
+        spawningMonsters = true;
+        for (int i = 0; i < monsterCount; i++) {
+            delay += spawnDelayTicks(i);
+            spawnTasks.add(new BukkitRunnable() {
+                @Override
+                public void run() {
+                    // Get spawn locations
+                    Location ground = getMonsterGroundSpawnLocations()
+                            .get(r.nextInt(getMonsterGroundSpawnLocations().size()));
+                    Location air = getMonsterAirSpawnLocations()
+                            .get(r.nextInt(getMonsterAirSpawnLocations().size()));
+
+                    // Spawn
+                    try {
+                        addMob(VDMob.of(monsterTypeRatio.get(r.nextInt(monsterTypeRatio.size())),
+                                arena, ground, air));
+                    } catch (InvalidVDMobKeyException e) {
+                        CommunicationManager.debugError("Invalid mob key detected in spawn file!", 1);
+                    } catch (Exception ignored) {
+                    }
+                }
+            }.runTaskLater(Main.plugin, delay));
+        }
+        spawnTasks.add(new BukkitRunnable() {
+            @Override
+            public void run() {
+                spawningMonsters = false;
+            }
+        }.runTaskLater(Main.plugin, delay));
+        // TODO: Spawn bosses
 
         // Debug message to console
         CommunicationManager.debugInfo("%s started wave %s", 2, getName(),
                 Integer.toString(getCurrentWave()));
+    }
+
+    private int spawnDelayTicks(int mobNum) {
+        Random r = new Random();
+        return r.nextInt((int) (60 * Math.pow(Math.E, - mobNum / 60d)));
+    }
+
+    private List<String> getTypeRatio(DataManager data, String path) {
+        List<String> typeRatio = new ArrayList<>();
+
+        Objects.requireNonNull(data.getConfig().getConfigurationSection(path)).getKeys(false)
+                .forEach(type -> {
+                    for (int i = 0; i < data.getConfig().getInt(path + "." + type); i++)
+                        typeRatio.add(type);
+                });
+        return typeRatio;
     }
 
     public void updateScoreboards() {
@@ -2115,9 +2246,15 @@ public class Arena {
         if (status != ArenaStatus.ACTIVE)
             throw new ArenaStatusException(ArenaStatus.ACTIVE);
 
-        // Clear active tasks
+        // Clear active tasks and spawning tasks
         activeTasks.forEach((name, task) -> task.cancel());
         activeTasks.clear();
+        spawnTasks.forEach(BukkitTask::cancel);
+        spawnTasks.clear();
+
+        // Set states to not spawning
+        spawningVillagers = false;
+        spawningMonsters = false;
 
         // Set the arena to ending
         setStatus(ArenaStatus.ENDING);
@@ -2349,16 +2486,8 @@ public class Arena {
         return spawningMonsters;
     }
 
-    public void setSpawningMonsters(boolean spawningMonsters) {
-        this.spawningMonsters = spawningMonsters;
-    }
-
     public boolean isSpawningVillagers() {
         return spawningVillagers;
-    }
-
-    public void setSpawningVillagers(boolean spawningVillagers) {
-        this.spawningVillagers = spawningVillagers;
     }
 
     public int getGameID() {

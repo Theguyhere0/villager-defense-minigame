@@ -1,24 +1,22 @@
 package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 
 import me.theguyhere.villagerdefense.common.ColoredMessage;
-import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
+import me.theguyhere.villagerdefense.plugin.exceptions.InvalidVDMobKeyException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.displays.Popup;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,11 +24,13 @@ import java.util.*;
 
 public abstract class VDMob {
     protected UUID id;
+    protected final String lore;
     protected final Map<UUID, Integer> damageMap = new HashMap<>();
     protected int gameID;
     protected int wave;
     protected String name;
     protected int hpBarSize;
+    protected boolean hostile;
     
     protected final int level;
     protected int maxHealth;
@@ -50,11 +50,12 @@ public abstract class VDMob {
     private static final String WEIGHT = "weight";
     private static final String SPEED = "speed";
     
-    protected VDMob(int level, AttackType attackType) {
+    protected VDMob(String lore, int level, AttackType attackType) {
+        this.lore = lore;
         this.level = level;
         this.attackType = attackType;
     }
-    
+
     public abstract LivingEntity getEntity();
 
     public UUID getID() {
@@ -336,7 +337,7 @@ public abstract class VDMob {
         Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .addModifier(new AttributeModifier(
                         SPEED,
-                        .1 - initial,
+                        .12 - initial,
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }
@@ -356,7 +357,7 @@ public abstract class VDMob {
         Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .addModifier(new AttributeModifier(
                         SPEED,
-                        .3 - initial,
+                        .275 - initial,
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }
@@ -366,7 +367,7 @@ public abstract class VDMob {
         Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .addModifier(new AttributeModifier(
                         SPEED,
-                        .4 - initial,
+                        .325 - initial,
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }
@@ -376,58 +377,49 @@ public abstract class VDMob {
         Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .addModifier(new AttributeModifier(
                         SPEED,
-                        .5 - initial,
+                        .4 - initial,
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }
 
     // Sets the proper loot for the mob
-    protected void setLoot(int base, double rate, int lvl, int start, double spread) {
-        loot = (int) (base * Math.pow(rate, Math.max(0, lvl - start + 1)));
+    protected void setLoot(int base, double rate, int lvl, double spread) {
+        loot = (int) (base * Math.pow(rate, lvl - 1));
         lootSpread = spread;
     }
 
     // Set name properly
-    protected void updateNameTag() {
-        int healthLength = Integer.toString(currentHealth).length();
-        int trueSize = hpBarSize * 4 + healthLength;
-        int bars = (int) ((double) currentHealth / maxHealth * trueSize);
-        StringBuilder healthIndicator = new StringBuilder(new String(new char[bars])
-                .replace("\0", "\u258c"))
-                .append(new String(new char[trueSize - bars]).replace("\0", " "));
-        healthIndicator.replace(hpBarSize * 2, hpBarSize * 2 + healthLength, "&b" + currentHealth + "&c");
-        getEntity().setCustomName(CommunicationManager.format(
-                new ColoredMessage(ChatColor.RED, LanguageManager.messages.mobName),
-                new ColoredMessage(ChatColor.AQUA, Integer.toString(level)),
-                new ColoredMessage(ChatColor.RED, name),
-                new ColoredMessage(ChatColor.RESET, CommunicationManager.format(
-                        String.format("&7[&c%s&7]", healthIndicator)))
-        ));
-    }
+    protected abstract void updateNameTag();
 
-    // Prepares the entity as a minion
-    protected void setMinion(Arena arena, LivingEntity livingEntity, String name) {
-        Main.getMonstersTeam().addEntry(livingEntity.getUniqueId().toString());
-        livingEntity.setMetadata(VD, new FixedMetadataValue(Main.plugin, arena.getId()));
-        gameID = arena.getGameID();
-        wave = arena.getCurrentWave();
-        this.name = name;
-        hpBarSize = 2;
-        livingEntity.setRemoveWhenFarAway(false);
-        livingEntity.setCanPickupItems(false);
-        if (livingEntity.isInsideVehicle())
-            Objects.requireNonNull(livingEntity.getVehicle()).remove();
-        for (Entity passenger : livingEntity.getPassengers())
-            passenger.remove();
-        livingEntity.setHealth(1);
-        updateNameTag();
-        livingEntity.setCustomNameVisible(true);
-    }
-    
     public void remove() {
         if (Main.getVillagersTeam().hasEntry(id.toString()))
             Main.getVillagersTeam().removeEntry(id.toString());
         if (Main.getMonstersTeam().hasEntry(id.toString()))
             Main.getMonstersTeam().removeEntry(id.toString());
+    }
+
+    public static VDMob of(String key, Arena arena, Location ground, Location air) throws InvalidVDMobKeyException {
+        switch (key) {
+            case VDMayor.KEY:
+                return new VDMayor(arena, ground);
+            case VDZombie.KEY:
+                return new VDZombie(arena, ground);
+            case VDBabyZombie.KEY:
+                return new VDBabyZombie(arena, ground);
+            case VDHusk.KEY:
+                return new VDHusk(arena, ground);
+            case VDBabyHusk.KEY:
+                return new VDBabyHusk(arena, ground);
+            case VDWitherSkeleton.KEY:
+                return new VDWitherSkeleton(arena, ground);
+            case VDPiglinSoldier.KEY:
+                return new VDPiglinSoldier(arena, ground);
+            case VDVindicator.KEY:
+                return new VDVindicator(arena, ground);
+            case VDSpider.KEY:
+                return new VDSpider(arena, ground);
+            default:
+                throw new InvalidVDMobKeyException();
+        }
     }
 }

@@ -14,7 +14,6 @@ import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.Mobs;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.game.models.players.AttackClass;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
@@ -75,12 +74,8 @@ public class GameListener implements Listener {
 		e.getDrops().clear();
 		e.setDroppedExp(0);
 
-		DataManager data;
-
-		// Get spawn table
-		if (arena.getSpawnTableFile().equals("custom"))
-			data = new DataManager("spawnTables/a" + arena.getId() + ".yml");
-		else data = new DataManager("spawnTables/" + arena.getSpawnTableFile() + ".yml");
+        // Get spawn table
+        DataManager data = new DataManager("spawnTables/" + arena.getSpawnTableFile());
 
 		if (Main.getVillagersTeam().hasEntry(ent.getUniqueId().toString())) {
 			// Handle pet death TODO
@@ -223,7 +218,7 @@ public class GameListener implements Listener {
 				}
 			} else {
 				try {
-					arena = GameManager.getArena(player);
+					arena = GameManager.getArena(victim.getMetadata(VDMob.VD).get(0).asInt());
 					finalDamager = arena.getMob(damager.getUniqueId());
 					finalVictim = arena.getMob(victim.getUniqueId());
 				} catch (ArenaNotFoundException | VDMobNotFoundException err) {
@@ -656,73 +651,73 @@ public class GameListener implements Listener {
 			return;
 
 		// Wolf spawn
-		if (item.getType() == Material.WOLF_SPAWN_EGG &&
-				!(main.getType() == Material.WOLF_SPAWN_EGG && e.getHand() == EquipmentSlot.OFF_HAND) &&
-				main.getType() != Material.POLAR_BEAR_SPAWN_EGG) {
-			// Ignore if it wasn't a right click on a block
-			if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
-				return;
-
-			// Cancel normal spawn
-			e.setCancelled(true);
-
-			// Check for wolf cap
-			if (gamer.getWolves() >= arena.getWolfCap()) {
-				PlayerManager.notifyFailure(player, LanguageManager.errors.wolf,
-						new ColoredMessage(ChatColor.AQUA, Integer.toString(arena.getWolfCap())));
-				return;
-			}
-
-			// Remove an item
-			if (item.getAmount() > 1)
-				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
-
-			Location location = Objects.requireNonNull(e.getClickedBlock()).getLocation();
-			location.setY(location.getY() + 1);
-
-			// Spawn and tame the wolf
-			Wolf wolf = (Wolf) player.getWorld().spawnEntity(location, EntityType.WOLF);
-			Mobs.setWolf(Main.plugin, arena, gamer, wolf);
-			Main.getVillagersTeam().addEntry(wolf.getUniqueId().toString());
-			return;
-		}
+//		if (item.getType() == Material.WOLF_SPAWN_EGG &&
+//				!(main.getType() == Material.WOLF_SPAWN_EGG && e.getHand() == EquipmentSlot.OFF_HAND) &&
+//				main.getType() != Material.POLAR_BEAR_SPAWN_EGG) {
+//			// Ignore if it wasn't a right click on a block
+//			if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
+//				return;
+//
+//			// Cancel normal spawn
+//			e.setCancelled(true);
+//
+//			// Check for wolf cap
+//			if (gamer.getWolves() >= arena.getWolfCap()) {
+//				PlayerManager.notifyFailure(player, LanguageManager.errors.wolf,
+//						new ColoredMessage(ChatColor.AQUA, Integer.toString(arena.getWolfCap())));
+//				return;
+//			}
+//
+//			// Remove an item
+//			if (item.getAmount() > 1)
+//				item.setAmount(item.getAmount() - 1);
+//			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
+//
+//			Location location = Objects.requireNonNull(e.getClickedBlock()).getLocation();
+//			location.setY(location.getY() + 1);
+//
+//			// Spawn and tame the wolf
+//			Wolf wolf = (Wolf) player.getWorld().spawnEntity(location, EntityType.WOLF);
+//			Mobs.setWolf(Main.plugin, arena, gamer, wolf);
+//			Main.getVillagersTeam().addEntry(wolf.getUniqueId().toString());
+//			return;
+//		}
 
 		// Ignore other vanilla items
 		if (item.getItemMeta() == null)
 			return;
 
 		// Iron golem spawn
-		if (item.getItemMeta().getDisplayName().contains("Iron Golem Spawn Egg") &&
-				!(main.getType() == Material.POLAR_BEAR_SPAWN_EGG && e.getHand() == EquipmentSlot.OFF_HAND) &&
-				main.getType() != Material.WOLF_SPAWN_EGG) {
-			// Ignore if it wasn't a right click on a block
-			if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
-				return;
-
-			// Cancel normal spawn
-			e.setCancelled(true);
-
-			// Check for golem cap
-			if (arena.getGolems() >= arena.getGolemCap()) {
-				PlayerManager.notifyFailure(player, LanguageManager.errors.golem,
-						new ColoredMessage(ChatColor.AQUA, Integer.toString(arena.getGolemCap())));
-				return;
-			}
-
-			// Remove an item
-			if (item.getAmount() > 1)
-				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
-
-			Location location = Objects.requireNonNull(e.getClickedBlock()).getLocation();
-			location.setY(location.getY() + 1);
-
-			// Spawn iron golem
-			IronGolem ironGolem = (IronGolem) player.getWorld().spawnEntity(location, EntityType.IRON_GOLEM);
-			Mobs.setGolem(Main.plugin, arena, ironGolem);
-			Main.getVillagersTeam().addEntry(ironGolem.getUniqueId().toString());
-		}
+//		if (item.getItemMeta().getDisplayName().contains("Iron Golem Spawn Egg") &&
+//				!(main.getType() == Material.POLAR_BEAR_SPAWN_EGG && e.getHand() == EquipmentSlot.OFF_HAND) &&
+//				main.getType() != Material.WOLF_SPAWN_EGG) {
+//			// Ignore if it wasn't a right click on a block
+//			if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
+//				return;
+//
+//			// Cancel normal spawn
+//			e.setCancelled(true);
+//
+//			// Check for golem cap
+//			if (arena.getGolems() >= arena.getGolemCap()) {
+//				PlayerManager.notifyFailure(player, LanguageManager.errors.golem,
+//						new ColoredMessage(ChatColor.AQUA, Integer.toString(arena.getGolemCap())));
+//				return;
+//			}
+//
+//			// Remove an item
+//			if (item.getAmount() > 1)
+//				item.setAmount(item.getAmount() - 1);
+//			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
+//
+//			Location location = Objects.requireNonNull(e.getClickedBlock()).getLocation();
+//			location.setY(location.getY() + 1);
+//
+//			// Spawn iron golem
+//			IronGolem ironGolem = (IronGolem) player.getWorld().spawnEntity(location, EntityType.IRON_GOLEM);
+//			Mobs.setGolem(Main.plugin, arena, ironGolem);
+//			Main.getVillagersTeam().addEntry(ironGolem.getUniqueId().toString());
+//		}
 	}
 
 	// Prevent wolves from targeting villagers

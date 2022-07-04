@@ -1522,7 +1522,7 @@ public class InventoryListener implements Listener {
 				}
 
 				if (!arenaInstance.setSpawnTableFile("default"))
-					PlayerManager.notifyFailure(player, "File doesn't exist!");
+					PlayerManager.notifyFailure(player, "File does not exist!");
 			}
 
 			// Option 1
@@ -1534,7 +1534,7 @@ public class InventoryListener implements Listener {
 				}
 
 				if (!arenaInstance.setSpawnTableFile("option1"))
-					PlayerManager.notifyFailure(player, "File doesn't exist!");
+					PlayerManager.notifyFailure(player, "File does not exist!");
 			}
 
 			// Option 2
@@ -1546,7 +1546,7 @@ public class InventoryListener implements Listener {
 				}
 
 				if (!arenaInstance.setSpawnTableFile("option2"))
-					PlayerManager.notifyFailure(player, "File doesn't exist!");
+					PlayerManager.notifyFailure(player, "File does not exist!");
 			}
 
 			// Option 3
@@ -1558,7 +1558,7 @@ public class InventoryListener implements Listener {
 				}
 
 				if (!arenaInstance.setSpawnTableFile("option3"))
-					PlayerManager.notifyFailure(player, "File doesn't exist!");
+					PlayerManager.notifyFailure(player, "File does not exist!");
 			}
 
 			// Option 4
@@ -1570,7 +1570,7 @@ public class InventoryListener implements Listener {
 				}
 
 				if (!arenaInstance.setSpawnTableFile("option4"))
-					PlayerManager.notifyFailure(player, "File doesn't exist!");
+					PlayerManager.notifyFailure(player, "File does not exist!");
 			}
 
 			// Option 5
@@ -1582,7 +1582,7 @@ public class InventoryListener implements Listener {
 				}
 
 				if (!arenaInstance.setSpawnTableFile("option5"))
-					PlayerManager.notifyFailure(player, "File doesn't exist!");
+					PlayerManager.notifyFailure(player, "File does not exist!");
 			}
 
 			// Option 6
@@ -1594,7 +1594,7 @@ public class InventoryListener implements Listener {
 				}
 
 				if (!arenaInstance.setSpawnTableFile("option6"))
-					PlayerManager.notifyFailure(player, "File doesn't exist!");
+					PlayerManager.notifyFailure(player, "File does not exist!");
 			}
 
 			// Custom
@@ -1606,7 +1606,7 @@ public class InventoryListener implements Listener {
 				}
 
 				if (!arenaInstance.setSpawnTableFile("custom"))
-					PlayerManager.notifyFailure(player, "File doesn't exist!");
+					PlayerManager.notifyFailure(player, "File does not exist!");
 			}
 
 			// Exit menu
