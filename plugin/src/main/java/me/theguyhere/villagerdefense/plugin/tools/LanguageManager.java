@@ -618,6 +618,7 @@ public class LanguageManager {
         public final @NotNull String attackSweepDamage;
         public final @NotNull String attackType;
         public final @NotNull String available;
+        public final @NotNull String axe;
         public final @NotNull String boots;
         public final @NotNull String challenges;
         public final @NotNull String chestplate;
@@ -632,6 +633,7 @@ public class LanguageManager {
         public final @NotNull String death2;
         public final @NotNull String debugLevelSet;
         public final @NotNull String disabled;
+        public final @NotNull String duplicatePlaceholder;
         public final @NotNull String effectKitsDescription;
         public final @NotNull String effectShare;
         public final @NotNull String end;
@@ -670,6 +672,8 @@ public class LanguageManager {
         public final @NotNull String leaveArena;
         public final @NotNull String leggings;
         public final @NotNull String level;
+        public final @NotNull String levelPlaceholder;
+        public final @NotNull String levelUp;
         public final @NotNull String manualUpdateWarn;
         public final @NotNull String maxCapacity;
         public final @NotNull String minutesLeft;
@@ -691,6 +695,7 @@ public class LanguageManager {
         public final @NotNull String restartPlugin;
         public final @NotNull String resurrection;
         public final @NotNull String rightClick;
+        public final @NotNull String scythe;
         public final @NotNull String secondsLeft;
         public final @NotNull String shopInfo;
         public final @NotNull String shopUpgrade;
@@ -731,6 +736,7 @@ public class LanguageManager {
             attackSweepDamage = getConfigString("attackSweepDamage");
             attackType = getConfigString("attackType");
             available = getConfigString("available");
+            axe = getConfigString("axe");
             boots = getConfigString("boots");
             challenges = getConfigString("challenges");
             chestplate = getConfigString("chestplate");
@@ -745,6 +751,7 @@ public class LanguageManager {
             death2 = getConfigString("death2");
             debugLevelSet = getConfigString("debugLevelSet");
             disabled = getConfigString("disabled");
+            duplicatePlaceholder = getConfigString("duplicatePlaceholder");
             effectKitsDescription = getConfigString("effectKitsDescription");
             effectShare = getConfigString("effectShare");
             end = getConfigString("end");
@@ -783,6 +790,8 @@ public class LanguageManager {
             leaveArena = getConfigString("leaveArena");
             leggings = getConfigString("leggings");
             level = getConfigString("level");
+            levelPlaceholder = getConfigString("levelPlaceholder");
+            levelUp = getConfigString("levelUp");
             manualUpdateWarn = getConfigString("manualUpdateWarn");
             maxCapacity = getConfigString("maxCapacity");
             minutesLeft = getConfigString("minutesLeft");
@@ -804,6 +813,7 @@ public class LanguageManager {
             restartPlugin = getConfigString("restartPlugin");
             resurrection = getConfigString("resurrection");
             rightClick = getConfigString("rightClick");
+            scythe = getConfigString("scythe");
             secondsLeft = getConfigString("secondsLeft");
             shopInfo = getConfigString("shopInfo");
             shopUpgrade = getConfigString("shopUpgrade");

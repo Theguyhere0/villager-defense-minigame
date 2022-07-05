@@ -13,7 +13,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.*;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
@@ -2005,16 +2005,16 @@ public class Arena {
                         " ", Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
 
         // Regenerate shops when time and notify players of it
-        if (currentWave % 10 == 0) {
-            int level = currentWave / 10 + 1;
+        if (currentWave % 5 == 0) {
+            int level = currentWave / 5 + 1;
             setWeaponShop(Inventories.createWeaponShopMenu(level, this));
             setArmorShop(Inventories.createArmorShopMenu(level, this));
             setConsumeShop(Inventories.createConsumableShopMenu(level, this));
             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> getActives().forEach(player ->
                     player.getPlayer().sendTitle(CommunicationManager.format(
                                     "&6" + LanguageManager.messages.shopUpgrade),
-                            "&7" + CommunicationManager.format(
-                                    String.format(LanguageManager.messages.shopInfo, "10")),
+                            CommunicationManager.format("&7" +
+                                    String.format(LanguageManager.messages.shopInfo, "5")),
                             Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5),
                             Utils.secondsToTicks(1))), Utils.secondsToTicks(4));
         }
@@ -2068,7 +2068,7 @@ public class Arena {
                 @Override
                 public void run() {
                     // Get proper multiplier
-                    double multiplier = 1 + .2 * ((int) getCurrentDifficulty() - 1);
+                    double multiplier = 1 + .2 * ((int) getCurrentDifficulty() - .5);
                     if (!hasDynamicLimit())
                         multiplier = 1;
 
@@ -2138,10 +2138,30 @@ public class Arena {
                 wave = "freePlay";
             else wave = "1";
         }
-        int villagerCount = data.getConfig().getInt(wave + ".count.v");
         int monsterCount = data.getConfig().getInt(wave + ".count.m");
-        List<String> villagerTypeRatio = getTypeRatio(data, wave + ".vtypes");
+        List<String> villagers = getTypeRatio(data, wave + ".vtypes");
         List<String> monsterTypeRatio = getTypeRatio(data, wave + ".mtypes");
+
+        // Account for existing villagers
+        getPlayerSpawn().getLocation().getWorld().getNearbyEntities(getBounds()).stream()
+                .filter(Objects::nonNull)
+                .filter(entity -> entity.hasMetadata(VDMob.VD)).filter(entity -> entity instanceof Villager)
+                .forEach(villager -> {
+                    if (((Villager) villager).getProfession() == Villager.Profession.CLERIC)
+                        villagers.remove(VDCleric.KEY);
+                    if (((Villager) villager).getProfession() == Villager.Profession.WEAPONSMITH)
+                        villagers.remove(VDWeaponsmith.KEY);
+                    if (((Villager) villager).getProfession() == Villager.Profession.ARMORER)
+                        villagers.remove(VDArmorer.KEY);
+                    if (((Villager) villager).getProfession() == Villager.Profession.FARMER)
+                        villagers.remove(VDFarmer.KEY);
+                    if (((Villager) villager).getProfession() == Villager.Profession.LIBRARIAN)
+                        villagers.remove(VDVaultKeeper.KEY);
+                    if (((Villager) villager).getProfession() == Villager.Profession.FLETCHER)
+                        villagers.remove(VDFletcher.KEY);
+                    if (((Villager) villager).getProfession() == Villager.Profession.NITWIT)
+                        villagers.remove(VDMayor.KEY);
+                });
 
         // Calculate count multiplier
         double countMultiplier = Math.log((getActiveCount() + 7) / 10d) + 1;
@@ -2149,7 +2169,6 @@ public class Arena {
             countMultiplier = 1;
 
         // Set mobs left to spawn
-        villagerCount = (int) ((villagerCount * countMultiplier) - getVillagers());
         if (monsterCount != 0)
             monsterCount = Math.max((int) (monsterCount * countMultiplier), 1);
 
@@ -2158,8 +2177,9 @@ public class Arena {
         Random r = new Random();
         int delay = 0;
         spawningVillagers = true;
-        for (int i = 0; i < villagerCount; i++) {
+        for (int i = 0; i < villagers.size(); i++) {
             delay += spawnDelayTicks(i);
+            int finalI = i;
             spawnTasks.add(new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -2168,8 +2188,7 @@ public class Arena {
 
                     // Spawn
                     try {
-                        addMob(VDMob.of(villagerTypeRatio.get(r.nextInt(villagerTypeRatio.size())),
-                                arena, spawn, null));
+                        addMob(VDMob.of(villagers.get(finalI), arena, spawn, null));
                     } catch (InvalidVDMobKeyException e) {
                         CommunicationManager.debugError("Invalid mob key detected in spawn file!", 1);
                     }

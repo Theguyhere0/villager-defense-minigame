@@ -30,6 +30,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -104,6 +105,10 @@ public class VDPlayer {
 
     public void setStatus(PlayerStatus status) {
         this.status = status;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
     }
 
     public void setMaxHealthInit(int maxHealth) {
@@ -194,6 +199,8 @@ public class VDPlayer {
         AtomicInteger armor = new AtomicInteger();
         AtomicInteger toughness = new AtomicInteger();
         AtomicDouble weight = new AtomicDouble(1);
+        AtomicBoolean penetrating = new AtomicBoolean(false);
+        String damage = Integer.toString(this.damage);
 
         // Calculate stats
         try {
@@ -282,6 +289,54 @@ public class VDPlayer {
             });
         } catch (Exception ignored) {
         }
+        try {
+            ItemStack weapon = Objects.requireNonNull(getPlayer().getEquipment()).getItemInMainHand();
+            List<Integer> damageValues = new ArrayList<>();
+
+            Objects.requireNonNull(Objects.requireNonNull(weapon.getItemMeta()).getLore()).forEach(lore -> {
+                if (lore.contains(LanguageManager.messages.attackMainDamage
+                        .replace("%s", ""))) {
+                    if (lore.contains("-")) {
+                        String[] split = lore.substring(2 +
+                                        LanguageManager.messages.attackMainDamage.length())
+                                .split("-");
+                        damageValues.add(Integer.valueOf(split[0]));
+                        damageValues.add(Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
+                    } else damageValues.add(Integer.valueOf(lore.substring(2 +
+                                    LanguageManager.messages.attackMainDamage.length())
+                            .replace(ChatColor.BLUE.toString(), "")));
+                } else if (lore.contains(LanguageManager.messages.attackCritDamage
+                        .replace("%s", ""))) {
+                    if (lore.contains("-")) {
+                        String[] split = lore.substring(2 +
+                                        LanguageManager.messages.attackCritDamage.length())
+                                .split("-");
+                        damageValues.add(Integer.valueOf(split[0]));
+                        damageValues.add(Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
+                    } else damageValues.add(Integer.valueOf(lore.substring(2 +
+                                    LanguageManager.messages.attackCritDamage.length())
+                            .replace(ChatColor.BLUE.toString(), "")));
+                } else if (lore.contains(LanguageManager.messages.attackSweepDamage
+                        .replace("%s", ""))) {
+                    if (lore.contains("-")) {
+                        String[] split = lore.substring(2 +
+                                        LanguageManager.messages.attackSweepDamage.length())
+                                .split("-");
+                        damageValues.add(Integer.valueOf(split[0]));
+                        damageValues.add(Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
+                    } else damageValues.add(Integer.valueOf(lore.substring(2 +
+                                    LanguageManager.messages.attackSweepDamage.length())
+                            .replace(ChatColor.BLUE.toString(), "")));
+                } else if (lore.contains(LanguageManager.names.penetrating.replace("%s", "")))
+                    penetrating.set(true);
+            });
+            damageValues.sort(Comparator.comparingInt(Integer::intValue));
+            if (damageValues.size() == 1)
+                damage = Integer.toString(damageValues.get(0) + this.damage);
+            else damage = (damageValues.get(0) + this.damage) + "-" +
+                    (damageValues.get(damageValues.size() - 1) + this.damage);
+        } catch (Exception ignored) {
+        }
 
         // Set speed
         Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
@@ -290,8 +345,9 @@ public class VDPlayer {
         getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
                 new ColoredMessage(ChatColor.RED, "\u2764 " + currentHealth + "/" + maxHealth) + "    " +
                         new ColoredMessage(ChatColor.AQUA, "\u2720 " + armor) + "    " +
-                        new ColoredMessage(ChatColor.DARK_AQUA, "\u2756 " + toughness + "%")));
-
+                        new ColoredMessage(ChatColor.DARK_AQUA, "\u2756 " + toughness + "%") + "    " +
+                        (penetrating.get() ? new ColoredMessage(ChatColor.YELLOW, "\u2736 " + damage) :
+                                new ColoredMessage(ChatColor.GREEN, "\u2694 " + damage))));
     }
 
     public void takeDamage(int damage, @NotNull AttackType attackType) {
@@ -404,6 +460,10 @@ public class VDPlayer {
 
         // Realize damage
         setCurrentHealth(currentHealth - damage);
+    }
+
+    public int getDamage() {
+        return damage;
     }
 
     public void setDamage(int damage) {

@@ -1328,45 +1328,72 @@ public class Inventories {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(
 				new InventoryMeta(InventoryID.WEAPON_SHOP_MENU, InventoryType.MENU),
-				27,
+				36,
 				CommunicationManager.format("&4&l" + LanguageManager.messages.level +
 						" &9&l" + level + " &4&l" + LanguageManager.names.weaponShop)
 		);
 
 		// Fill in swords
 		List<ItemStack> swords = new ArrayList<>();
-		for (int i = 0; i < 4; i++)
-			swords.add(GameItems.sword(arena.getCurrentDifficulty()));
+		for (int i = 0; i < 4; i++) {
+			ItemStack sword = GameItems.sword(arena.getCurrentDifficulty());
+			if (swords.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
+					.equals(Objects.requireNonNull(sword.getItemMeta()).getDisplayName())))
+				swords.add(sword);
+			else swords.add(GameItems.duplicatePlaceholder());
+		}
 		sort(swords);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i, modifyPrice(swords.get(i), modifier));
 
 		// Fill in axes
 		List<ItemStack> axes = new ArrayList<>();
-		for (int i = 0; i < 4; i++)
-			axes.add(GameItems.axe(level));
+		for (int i = 0; i < 4; i++) {
+			ItemStack axe = GameItems.axe(arena.getCurrentDifficulty());
+			if (level < 2)
+				axes.add(GameItems.levelPlaceholder(2));
+			else if (axes.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
+					.equals(Objects.requireNonNull(axe.getItemMeta()).getDisplayName())))
+				axes.add(axe);
+			else axes.add(GameItems.duplicatePlaceholder());
+		}
 		sort(axes);
 		for (int i = 0; i < 4; i++)
-			inv.setItem(i + 5, modifyPrice(axes.get(i), modifier));
+			inv.setItem(i + 9, modifyPrice(axes.get(i), modifier));
+
+		// Fill in scythes
+		List<ItemStack> scythes = new ArrayList<>();
+		for (int i = 0; i < 4; i++) {
+			ItemStack scythe = GameItems.scythe(arena.getCurrentDifficulty());
+			if (level < 4)
+				scythes.add(GameItems.levelPlaceholder(4));
+			else if (scythes.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
+					.equals(Objects.requireNonNull(scythe.getItemMeta()).getDisplayName())))
+				scythes.add(scythe);
+			else scythes.add(GameItems.duplicatePlaceholder());
+		}
+		sort(scythes);
+		for (int i = 0; i < 4; i++)
+			inv.setItem(i + 18, modifyPrice(scythes.get(i), modifier));
 
 		// Fill in range
 		List<ItemStack> ranges = new ArrayList<>();
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 4; i++)
 			ranges.add(GameItems.randRange(level));
 		sort(ranges);
-		for (int i = 0; i < 5; i++)
-			inv.setItem(i + 9, modifyPrice(ranges.get(i), modifier));
+		for (int i = 0; i < 4; i++)
+			inv.setItem(i + 5, modifyPrice(ranges.get(i), modifier));
 
 		// Fill in ammo
 		List<ItemStack> ammo = new ArrayList<>();
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 4; i++)
 			ammo.add(GameItems.randAmmo(level));
 		sort(ammo);
-		for (int i = 0; i < 3; i++)
-			inv.setItem(i + 15, modifyPrice(ammo.get(i), modifier));
+		for (int i = 0; i < 4; i++)
+			inv.setItem(i + 14, modifyPrice(ammo.get(i), modifier));
 
 		// Return option
-		inv.setItem(22, Buttons.exit());
+		inv.setItem(31, Buttons.exit());
 
 		return inv;
 	}
@@ -1388,32 +1415,52 @@ public class Inventories {
 
 		// Fill in helmets
 		List<ItemStack> helmets = new ArrayList<>();
-		for (int i = 0; i < 4; i++)
-			helmets.add(GameItems.helmet(arena.getCurrentDifficulty()));
+		for (int i = 0; i < 4; i++) {
+			ItemStack helmet = GameItems.helmet(arena.getCurrentDifficulty());
+			if (helmets.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
+					.equals(Objects.requireNonNull(helmet.getItemMeta()).getDisplayName())))
+				helmets.add(helmet);
+			else helmets.add(GameItems.duplicatePlaceholder());
+		}
 		sort(helmets);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i, modifyPrice(helmets.get(i), modifier));
 
 		// Fill in chestplates
 		List<ItemStack> chestplates = new ArrayList<>();
-		for (int i = 0; i < 4; i++)
-			chestplates.add(GameItems.chestplate(arena.getCurrentDifficulty()));
+		for (int i = 0; i < 4; i++) {
+			ItemStack chestplate = GameItems.chestplate(arena.getCurrentDifficulty());
+			if (chestplates.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
+					.equals(Objects.requireNonNull(chestplate.getItemMeta()).getDisplayName())))
+				chestplates.add(chestplate);
+			else chestplates.add(GameItems.duplicatePlaceholder());
+		}
 		sort(chestplates);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 5, modifyPrice(chestplates.get(i), modifier));
 
 		// Fill in leggings
 		List<ItemStack> leggings = new ArrayList<>();
-		for (int i = 0; i < 4; i++)
-			leggings.add(GameItems.leggings(arena.getCurrentDifficulty()));
+		for (int i = 0; i < 4; i++) {
+			ItemStack legging = GameItems.leggings(arena.getCurrentDifficulty());
+			if (leggings.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
+					.equals(Objects.requireNonNull(legging.getItemMeta()).getDisplayName())))
+				leggings.add(legging);
+			else leggings.add(GameItems.duplicatePlaceholder());
+		}
 		sort(leggings);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 9, modifyPrice(leggings.get(i), modifier));
 
 		// Fill in boots
 		List<ItemStack> boots = new ArrayList<>();
-		for (int i = 0; i < 4; i++)
-			boots.add(GameItems.boots(arena.getCurrentDifficulty()));
+		for (int i = 0; i < 4; i++) {
+			ItemStack boot = GameItems.boots(arena.getCurrentDifficulty());
+			if (boots.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
+					.equals(Objects.requireNonNull(boot.getItemMeta()).getDisplayName())))
+				boots.add(boot);
+			else boots.add(GameItems.duplicatePlaceholder());
+		}
 		sort(boots);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 14, modifyPrice(boots.get(i), modifier));
@@ -2443,20 +2490,28 @@ public class Inventories {
 	private static ItemStack modifyPrice(ItemStack itemStack, double modifier) {
 		ItemStack item = itemStack.clone();
 		ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
-		List<String> lore = Objects.requireNonNull(meta.getLore());
-		int price = (int) Math.round(Integer.parseInt(lore.get(lore.size() - 1)
-				.substring(6 + LanguageManager.messages.gems.length())) * modifier / 5) * 5;
-		lore.set(lore.size() - 1, CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
-				price));
-		meta.setLore(lore);
-		item.setItemMeta(meta);
+		try {
+			List<String> lore = Objects.requireNonNull(meta.getLore());
+			int price = (int) Math.round(Integer.parseInt(lore.get(lore.size() - 1)
+					.substring(6 + LanguageManager.messages.gems.length())) * modifier / 5) * 5;
+			lore.set(lore.size() - 1, CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
+					price));
+			meta.setLore(lore);
+			item.setItemMeta(meta);
+		} catch (NumberFormatException | NullPointerException ignored) {
+		}
 		return item;
 	}
 
 	private static void sort(List<ItemStack> list) {
 		list.sort(Comparator.comparingInt(itemStack -> {
-			List<String> lore = Objects.requireNonNull(Objects.requireNonNull(itemStack.getItemMeta()).getLore());
-			return Integer.parseInt(lore.get(lore.size() - 1).substring(6 + LanguageManager.messages.gems.length()));
+			try {
+				List<String> lore = Objects.requireNonNull(Objects.requireNonNull(itemStack.getItemMeta()).getLore());
+				return Integer.parseInt(lore.get(lore.size() - 1)
+						.substring(6 + LanguageManager.messages.gems.length()));
+			} catch (NumberFormatException | NullPointerException e) {
+				return Integer.MAX_VALUE;
+			}
 		}));
 	}
 }

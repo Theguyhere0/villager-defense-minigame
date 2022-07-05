@@ -28,6 +28,7 @@ public abstract class VDVillager extends VDMob {
         villager.setRemoveWhenFarAway(false);
         villager.setHealth(1);
         villager.setCustomNameVisible(true);
+        villager.setVillagerLevel(1);
     }
 
     @Override

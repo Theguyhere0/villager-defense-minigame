@@ -173,24 +173,30 @@ public class GameListener implements Listener {
 				return;
 			}
 
+			// Make sure fast attacks only apply when mobs are close
+			if (damager.getLocation().distance(victim.getLocation()) > 1.75) {
+				e.setCancelled(true);
+				return;
+			}
+
+			// Make hurt sound if custom
+			if (e.getCause() == EntityDamageEvent.DamageCause.CUSTOM)
+				player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_HURT, 1, 1);
+
 			// Implement faster attacks
-			Player finalPlayer = player;
 			if (finalDamager.getAttackSpeed() == .4 && e.getCause() != EntityDamageEvent.DamageCause.CUSTOM)
 				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
 						Bukkit.getPluginManager().callEvent(new EntityDamageByEntityEvent(damager, victim,
 								EntityDamageEvent.DamageCause.CUSTOM, 0));
-					finalPlayer.playSound(finalPlayer.getLocation(), Sound.ENTITY_PLAYER_HURT, 1, 1);
 				}, Utils.secondsToTicks(.45));
 			else if (finalDamager.getAttackSpeed() == .2 && e.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
 				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
 					Bukkit.getPluginManager().callEvent(new EntityDamageByEntityEvent(damager, victim,
 							EntityDamageEvent.DamageCause.CUSTOM, 0));
-					finalPlayer.playSound(finalPlayer.getLocation(), Sound.ENTITY_PLAYER_HURT, 1, 1);
 				}, Utils.secondsToTicks(.25));
 				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
 					Bukkit.getPluginManager().callEvent(new EntityDamageByEntityEvent(damager, victim,
 							EntityDamageEvent.DamageCause.CUSTOM, 0));
-					finalPlayer.playSound(finalPlayer.getLocation(), Sound.ENTITY_PLAYER_HURT, 1, 1);
 				}, Utils.secondsToTicks(.5));
 			}
 
@@ -265,6 +271,12 @@ public class GameListener implements Listener {
 				else {
 					// Check damage cooldown
 					if (finalDamager.checkCooldown()) {
+						e.setCancelled(true);
+						return;
+					}
+
+					// Make sure fast attacks only apply when mobs are close
+					if (damager.getLocation().distance(victim.getLocation()) > 1.75) {
 						e.setCancelled(true);
 						return;
 					}
@@ -344,6 +356,31 @@ public class GameListener implements Listener {
 
 		// Cancel
 		e.setCancelled(true);
+	}
+
+	// Handle player level up
+	@EventHandler
+	public void onLevelUp(PlayerLevelChangeEvent e) {
+		Player player = e.getPlayer();
+		Arena arena;
+		VDPlayer gamer;
+
+		// Attempt to get arena and player
+		try {
+			arena = GameManager.getArena(player);
+			gamer = arena.getPlayer(player);
+		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+			return;
+		}
+
+		// Increase health and possibly damage
+		gamer.setMaxHealth(gamer.getMaxHealth() + 5);
+		if (player.getLevel() % 4 == 0) {
+			gamer.setDamage(gamer.getDamage() + 1);
+			PlayerManager.notifySuccess(player, LanguageManager.messages.levelUp,
+					new ColoredMessage(ChatColor.RED, "+5\u2764  +1\u2694"));
+		} else PlayerManager.notifySuccess(player, LanguageManager.messages.levelUp,
+				new ColoredMessage(ChatColor.RED, "+5\u2764"));
 	}
 
 	// Prevent players from going hungry while waiting for an arena to start

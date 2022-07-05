@@ -92,18 +92,4 @@ public class Utils {
         // Should never reach here
         return 0;
     }
-
-    /**
-     * Checks whether the string can convert successfully to an integer or not.
-     * @param s String to check.
-     * @return Whether the string can convert to an int.
-     */
-    public static boolean checkStringInt(String s) {
-        try {
-            Integer.parseInt(s);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
 }

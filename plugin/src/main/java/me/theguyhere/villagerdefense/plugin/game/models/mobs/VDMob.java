@@ -182,7 +182,7 @@ public abstract class VDMob {
     protected static int getLevel(double difficulty, double rate, int start) {
         Random r = new Random();
         double mult = 1 + .1 * Math.max(Math.min(r.nextGaussian(), 3), -3); // Mean 100%, SD 10%, restrict 30%
-        return Math.max((int) ((difficulty * mult - start) / rate), 1);
+        return Math.max((int) ((difficulty * mult - start) / rate + .5), 1);
     }
 
     // Sets the proper health for the mob
@@ -400,6 +400,18 @@ public abstract class VDMob {
 
     public static VDMob of(String key, Arena arena, Location ground, Location air) throws InvalidVDMobKeyException {
         switch (key) {
+            case VDCleric.KEY:
+                return new VDCleric(arena, ground);
+            case VDWeaponsmith.KEY:
+                return new VDWeaponsmith(arena, ground);
+            case VDArmorer.KEY:
+                return new VDArmorer(arena, ground);
+            case VDFarmer.KEY:
+                return new VDFarmer(arena, ground);
+            case VDVaultKeeper.KEY:
+                return new VDVaultKeeper(arena, ground);
+            case VDFletcher.KEY:
+                return new VDFletcher(arena, ground);
             case VDMayor.KEY:
                 return new VDMayor(arena, ground);
             case VDZombie.KEY:

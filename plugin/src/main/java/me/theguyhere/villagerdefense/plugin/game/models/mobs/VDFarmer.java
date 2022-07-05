@@ -7,24 +7,23 @@ import org.bukkit.entity.Villager;
 
 import java.util.Objects;
 
-public class VDMayor extends VDVillager {
-    public static final String KEY = "myer";
+public class VDFarmer extends VDVillager {
+    public static final String KEY = "frmr";
 
-    protected VDMayor(Arena arena, Location location) {
+    protected VDFarmer(Arena arena, Location location) {
         super(
                 arena,
                 (Villager) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.VILLAGER),
-                "Mayor",
-                "Like all politicians, this villager is quite weak but has the power to provide you with just " +
-                        "what you need.",
-                getLevel(arena.getCurrentDifficulty(), 1, 5)
+                "Farmer",
+                "This guy literally provides you with the bread and butter.",
+                getLevel(arena.getCurrentDifficulty(), 2, 0)
         );
-        setHealth(120, 10, level, 2);
-        setArmor(0, 1, level, 2);
-        setToughness(0, .01, level, 2);
+        setHealth(150, 15, level, 2);
+        setArmor(3, 2, level, 2);
+        setToughness(.02, .01, level, 2);
         setMediumWeight(villager);
         setVeryFastLandSpeed(villager);
-        villager.setProfession(Villager.Profession.NITWIT);
+        villager.setProfession(Villager.Profession.FARMER);
         // TODO: Set biome
         updateNameTag();
     }
