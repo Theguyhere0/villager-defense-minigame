@@ -437,7 +437,7 @@ messages:
   leaveArena: "%s left the arena."
   leggings: "Lvl %s Greaves"
   level: "Level"
-  levelPlaceholder: "Locked until shop level %s."
+  levelPlaceholder: "Locked until shop level %s"
   levelUp: "Level Up!  %s"
   manualUpdateWarn: "%s must be manually updated."
   maxCapacity: "Arena has reached max player capacity."

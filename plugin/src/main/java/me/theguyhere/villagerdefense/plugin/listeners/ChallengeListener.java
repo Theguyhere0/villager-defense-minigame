@@ -22,7 +22,6 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -241,39 +240,5 @@ public class ChallengeListener implements Listener {
         // Add back blindness
         Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
                 player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999, 0)), 2);
-    }
-
-    // UHC effect
-    @EventHandler
-    public void onHeal(EntityRegainHealthEvent e) {
-        // Check for player
-        if (!(e.getEntity() instanceof Player)) return;
-
-        Player player = (Player) e.getEntity();
-        Arena arena;
-        VDPlayer gamer;
-
-        // Attempt to get arena and VDPlayer
-        try {
-            arena = GameManager.getArena(player);
-            gamer = arena.getPlayer(player);
-        } catch (ArenaNotFoundException | PlayerNotFoundException err) {
-            return;
-        }
-
-        // Ignore arenas that aren't started
-        if (arena.getStatus() != ArenaStatus.ACTIVE)
-            return;
-
-        // Check for uhc challenge
-        if (!gamer.getChallenges().contains(Challenge.uhc()))
-            return;
-
-        // Negate natural health regain and manage saturation
-        if (e.getRegainReason() == EntityRegainHealthEvent.RegainReason.SATIATED ||
-            e.getRegainReason() == EntityRegainHealthEvent.RegainReason.EATING) {
-            e.setCancelled(true);
-            player.setSaturation(player.getSaturation() + 1.5f);
-        }
     }
 }

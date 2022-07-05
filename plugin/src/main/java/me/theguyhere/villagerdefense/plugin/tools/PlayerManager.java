@@ -55,8 +55,9 @@ public class PlayerManager {
                 maxHealth.getModifiers().forEach(maxHealth::removeModifier);
             player.setHealth(maxHealth.getValue());
         }
+        player.setAbsorptionAmount(0);
         player.setFoodLevel(20);
-        player.setSaturation(20);
+        player.setSaturation(0);
         player.setExp(0);
         player.setLevel(0);
         player.setFallDistance(0);
@@ -329,11 +330,12 @@ public class PlayerManager {
         Main.savePlayerData();
     }
 
-    // Save health, food, saturation, levels, exp, and inventory of the player
+    // Save health, absorption, food, saturation, levels, exp, and inventory of the player
     public static void cacheSurvivalStats(Player player) {
         UUID id = player.getUniqueId();
 
         Main.getPlayerData().set(id + ".health", player.getHealth());
+        Main.getPlayerData().set(id + ".absorption", player.getAbsorptionAmount());
         Main.getPlayerData().set(id + ".food", player.getFoodLevel());
         Main.getPlayerData().set(id + ".saturation", (double) player.getSaturation());
         Main.getPlayerData().set(id + ".level", player.getLevel());
@@ -344,12 +346,15 @@ public class PlayerManager {
         Main.savePlayerData();
     }
 
-    // Return health, food, saturation, levels, exp, and inventory of the player
+    // Return health, absorption, food, saturation, levels, exp, and inventory of the player
     public static void returnSurvivalStats(Player player) {
         UUID id = player.getUniqueId();
 
         if (Main.getPlayerData().contains(id + ".health"))
             player.setHealth(Main.getPlayerData().getDouble(id + ".health"));
+        Main.getPlayerData().set(id + ".health", null);
+        if (Main.getPlayerData().contains(id + ".absorption"))
+            player.setAbsorptionAmount(Main.getPlayerData().getDouble(id + ".absorption"));
         Main.getPlayerData().set(id + ".health", null);
         if (Main.getPlayerData().contains(id + ".food"))
             player.setFoodLevel(Main.getPlayerData().getInt(id + ".food"));

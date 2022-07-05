@@ -2567,20 +2567,18 @@ public class InventoryListener implements Listener {
 			EntityEquipment equipment = Objects.requireNonNull(player.getPlayer()).getEquipment();
 
 			// Equip armor if possible, otherwise put in inventory, otherwise drop at feet
-			if (Arrays.stream(GameItems.HELMET_MATERIALS).anyMatch(mat -> mat == buyType) &&
-					Objects.requireNonNull(equipment).getHelmet() == null) {
+			if (buyType.toString().contains("HELMET") && Objects.requireNonNull(equipment).getHelmet() == null) {
 				equipment.setHelmet(buy);
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.helmet);
-			} else if (Arrays.stream(GameItems.CHESTPLATE_MATERIALS).anyMatch(mat -> mat == buyType) &&
+			} else if (buyType.toString().contains("CHESTPLATE") &&
 					Objects.requireNonNull(equipment).getChestplate() == null) {
 				equipment.setChestplate(buy);
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.chestplate);
-			} else if (Arrays.stream(GameItems.LEGGING_MATERIALS).anyMatch(mat -> mat == buyType) &&
+			} else if (buyType.toString().contains("LEGGINGS") &&
 					Objects.requireNonNull(equipment).getLeggings() == null) {
 				equipment.setLeggings(buy);
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.leggings);
-			} else if (Arrays.stream(GameItems.BOOTS_MATERIALS).anyMatch(mat -> mat == buyType) &&
-					Objects.requireNonNull(equipment).getBoots() == null) {
+			} else if (buyType.toString().contains("BOOTS") && Objects.requireNonNull(equipment).getBoots() == null) {
 				equipment.setBoots(buy);
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.boots);
 			} else {

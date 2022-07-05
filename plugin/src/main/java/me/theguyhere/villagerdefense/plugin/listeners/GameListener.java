@@ -35,7 +35,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BoundingBox;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GameListener implements Listener {
 	// Keep score and manage mob death
@@ -185,19 +187,16 @@ public class GameListener implements Listener {
 
 			// Implement faster attacks
 			if (finalDamager.getAttackSpeed() == .4 && e.getCause() != EntityDamageEvent.DamageCause.CUSTOM)
-				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
-						Bukkit.getPluginManager().callEvent(new EntityDamageByEntityEvent(damager, victim,
-								EntityDamageEvent.DamageCause.CUSTOM, 0));
-				}, Utils.secondsToTicks(.45));
+				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
+						.callEvent(new EntityDamageByEntityEvent(damager, victim,
+						EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.45));
 			else if (finalDamager.getAttackSpeed() == .2 && e.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
-				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
-					Bukkit.getPluginManager().callEvent(new EntityDamageByEntityEvent(damager, victim,
-							EntityDamageEvent.DamageCause.CUSTOM, 0));
-				}, Utils.secondsToTicks(.25));
-				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
-					Bukkit.getPluginManager().callEvent(new EntityDamageByEntityEvent(damager, victim,
-							EntityDamageEvent.DamageCause.CUSTOM, 0));
-				}, Utils.secondsToTicks(.5));
+				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
+						.callEvent(new EntityDamageByEntityEvent(damager, victim,
+						EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.25));
+				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
+						.callEvent(new EntityDamageByEntityEvent(damager, victim,
+						EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.5));
 			}
 
 			// Realize damage
@@ -346,8 +345,8 @@ public class GameListener implements Listener {
 	public void onHurt(EntityDamageEvent e) {
 		Entity ent = e.getEntity();
 
-		// Check for arena enemies
-		if (!ent.hasMetadata(VDMob.VD))
+		// Check for arena mobs or players
+		if (!ent.hasMetadata(VDMob.VD) && !(ent instanceof Player))
 			return;
 
 		// Don't handle entity on entity damage
@@ -373,26 +372,32 @@ public class GameListener implements Listener {
 			return;
 		}
 
+		// Ignore if arena isn't active
+		if (arena.getStatus() != ArenaStatus.ACTIVE)
+			return;
+
 		// Increase health and possibly damage
 		gamer.setMaxHealth(gamer.getMaxHealth() + 5);
 		if (player.getLevel() % 4 == 0) {
-			gamer.setDamage(gamer.getDamage() + 1);
+			gamer.setBaseDamage(gamer.getBaseDamage() + 1);
 			PlayerManager.notifySuccess(player, LanguageManager.messages.levelUp,
-					new ColoredMessage(ChatColor.RED, "+5\u2764  +1\u2694"));
+					new ColoredMessage(ChatColor.RED, "+5" + Utils.HP + "  +1" + Utils.DAMAGE));
 		} else PlayerManager.notifySuccess(player, LanguageManager.messages.levelUp,
-				new ColoredMessage(ChatColor.RED, "+5\u2764"));
+				new ColoredMessage(ChatColor.RED, "+5" + Utils.HP));
 	}
 
 	// Prevent players from going hungry while waiting for an arena to start
 	@EventHandler
 	public void onHunger(FoodLevelChangeEvent e) {
 		Player player = (Player) e.getEntity();
+		Arena arena;
+		VDPlayer gamer;
 
-		// See if player is in a game and if game is already in progress
+		// Attempt to get arena and player
 		try {
-			if (GameManager.getArena(player).getCurrentWave() != 0)
-				return;
-		} catch (ArenaNotFoundException err) {
+			arena = GameManager.getArena(player);
+			gamer = arena.getPlayer(player);
+		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
@@ -403,6 +408,32 @@ public class GameListener implements Listener {
 	@EventHandler
 	public void onHeal(EntityRegainHealthEvent e) {
 		Entity ent = e.getEntity();
+		Player player;
+		Arena arena;
+
+		// Check for player
+		if (e.getEntity() instanceof Player) {
+			player = (Player) ent;
+
+			// Check player is in an arena
+			try {
+				arena = GameManager.getArena(player);
+			} catch (ArenaNotFoundException err) {
+				return;
+			}
+
+			// Ignore arenas that aren't started
+			if (arena.getStatus() != ArenaStatus.ACTIVE)
+				return;
+
+			// Negate natural health regain and manage saturation
+			if (e.getRegainReason() == EntityRegainHealthEvent.RegainReason.SATIATED ||
+					e.getRegainReason() == EntityRegainHealthEvent.RegainReason.EATING ||
+					e.getRegainReason() == EntityRegainHealthEvent.RegainReason.REGEN)
+				e.setCancelled(true);
+		}
+
+
 //		TODO
 //		// Check for arena enemies
 //		if (!ent.hasMetadata(VDMob.VD))
@@ -661,31 +692,64 @@ public class GameListener implements Listener {
 		e.setCancelled(true);
 	}
 
-	// Manage spawning pets
+	// Manage usage of consumables
 	@EventHandler
 	public void onConsume(PlayerInteractEvent e) {
+		// Check for right click
+		if (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK)
+			return;
+
 		Player player = e.getPlayer();
 		ItemStack item = e.getItem() == null ? new ItemStack(Material.AIR) : e.getItem();
 		ItemStack main = player.getInventory().getItemInMainHand();
+		List<String> lores;
 		Arena arena;
 		VDPlayer gamer;
 
-		// Attempt to get arena and player
+		// Attempt to get arena, player, and lore
 		try {
 			arena = GameManager.getArena(player);
 			gamer = arena.getPlayer(player);
-		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+			lores = Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore());
+		} catch (ArenaNotFoundException | PlayerNotFoundException | NullPointerException err) {
+			return;
+		}
+
+		// Check for active arena, at least wave 1
+		if (arena.getStatus() != ArenaStatus.ACTIVE || arena.getCurrentWave() < 1) {
+			e.setCancelled(true);
 			return;
 		}
 
 		// Avoid false consume
-		if (main.equals(GameItems.shop()) || Arrays.asList(GameItems.ABILITY_ITEMS).contains(main) ||
-				Arrays.stream(GameItems.FOOD_MATERIALS).anyMatch(m -> m == main.getType()) ||
-				Arrays.stream(GameItems.ARMOR_MATERIALS).anyMatch(m -> m == main.getType()) ||
-				Arrays.stream(GameItems.CLICKABLE_WEAPON_MATERIALS).anyMatch(m -> m == main.getType()) ||
-				(Arrays.stream(GameItems.CLICKABLE_CONSUME_MATERIALS).anyMatch(m -> m == main.getType()) &&
-						main.getType() != GameItems.wolf().getType() && main.getType() != GameItems.golem().getType() ))
+		if (e.getHand() == EquipmentSlot.OFF_HAND &&
+				(main.equals(GameItems.shop()) || Arrays.asList(GameItems.ABILITY_ITEMS).contains(main) ||
+						Arrays.stream(GameItems.FOOD_MATERIALS).anyMatch(m -> m == main.getType()) ||
+						Arrays.stream(GameItems.ARMOR_MATERIALS).anyMatch(m -> m == main.getType()) ||
+						Arrays.stream(GameItems.CLICKABLE_WEAPON_MATERIALS).anyMatch(m -> m == main.getType()) ||
+						Arrays.stream(GameItems.CLICKABLE_CONSUME_MATERIALS).anyMatch(m -> m == main.getType())))
 			return;
+
+		// Give health
+		AtomicBoolean food = new AtomicBoolean(false);
+
+		lores.forEach(lore -> {
+			if (lore.contains(ChatColor.RED.toString()) && lore.contains(Utils.HP) && !gamer.hasMaxHealth()) {
+				gamer.changeCurrentHealth(Integer.parseInt(lore.substring(3).replace(Utils.HP, "").trim()));
+				food.set(true);
+			}
+			if (lore.contains(ChatColor.GOLD.toString()) && lore.contains(Utils.HP)) {
+				gamer.addAbsorption(Integer.parseInt(lore.substring(3).replace(Utils.HP, "").trim()));
+				food.set(true);
+			}
+		});
+
+		// Consume
+		if (food.get()) {
+			if (item.getAmount() > 1)
+				item.setAmount(item.getAmount() - 1);
+			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
+		}
 
 		// Wolf spawn
 //		if (item.getType() == Material.WOLF_SPAWN_EGG &&
@@ -719,10 +783,6 @@ public class GameListener implements Listener {
 //			Main.getVillagersTeam().addEntry(wolf.getUniqueId().toString());
 //			return;
 //		}
-
-		// Ignore other vanilla items
-		if (item.getItemMeta() == null)
-			return;
 
 		// Iron golem spawn
 //		if (item.getItemMeta().getDisplayName().contains("Iron Golem Spawn Egg") &&
@@ -917,12 +977,9 @@ public class GameListener implements Listener {
 		if (!GameManager.checkPlayer(player))
 			return;
 
-		if (e.getItem().getType() == Material.POTION || e.getItem().getType() == Material.MILK_BUCKET) {
+		if (e.getItem().getType() == Material.MILK_BUCKET) {
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
-				player.getInventory().remove(Material.GLASS_BOTTLE);
 				player.getInventory().remove(Material.BUCKET);
-				if (player.getInventory().getItemInOffHand().getType() == Material.GLASS_BOTTLE)
-					player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
 				if (player.getInventory().getItemInOffHand().getType() == Material.BUCKET)
 					player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
 			}, 3);

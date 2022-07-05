@@ -1481,17 +1481,48 @@ public class Inventories {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(
 				new InventoryMeta(InventoryID.CONSUMABLE_SHOP_MENU, InventoryType.MENU),
-				18,
+				27,
 				CommunicationManager.format("&3&l" + LanguageManager.messages.level +
 						" &9&l" + level + " &3&l" + LanguageManager.names.consumableShop)
 		);
 
 		// Fill in food
 		List<ItemStack> foods = new ArrayList<>();
-		for (int i = 0; i < 4; i++)
-			foods.add(GameItems.randFood(level));
-		sort(foods);
-		for (int i = 0; i < 4; i++)
+		if (level < 2) {
+			foods.add(GameItems.levelPlaceholder(2));
+			foods.add(GameItems.levelPlaceholder(2));
+		} else {
+			foods.add(GameItems.beetroot());
+			foods.add(GameItems.carrot());
+		}
+		if (level < 3)
+			foods.add(GameItems.levelPlaceholder(3));
+		else
+			foods.add(GameItems.bread());
+		if (level < 4) {
+			foods.add(GameItems.levelPlaceholder(4));
+			foods.add(GameItems.levelPlaceholder(4));
+		} else {
+			foods.add(GameItems.mutton());
+			foods.add(GameItems.steak());
+		}
+		if (level < 5) {
+			foods.add(GameItems.levelPlaceholder(5));
+			foods.add(GameItems.levelPlaceholder(5));
+		} else {
+			foods.add(GameItems.gcarrot());
+			foods.add(GameItems.gapple());
+		}
+		if (level < 6)
+			foods.add(GameItems.levelPlaceholder(6));
+		else
+			foods.add(GameItems.egapple());
+		if (level < 7)
+			foods.add(GameItems.levelPlaceholder(7));
+		else
+			foods.add(GameItems.totem());
+
+		for (int i = 0; i < 9; i++)
 			inv.setItem(i, modifyPrice(foods.get(i), modifier));
 
 		// Fill in other
@@ -1500,10 +1531,10 @@ public class Inventories {
 			others.add(GameItems.randOther(level));
 		sort(others);
 		for (int i = 0; i < 4; i++)
-			inv.setItem(i + 5, modifyPrice(others.get(i), modifier));
+			inv.setItem(i + 14, modifyPrice(others.get(i), modifier));
 
 		// Return option
-		inv.setItem(13, Buttons.exit());
+		inv.setItem(22, Buttons.exit());
 
 		return inv;
 	}

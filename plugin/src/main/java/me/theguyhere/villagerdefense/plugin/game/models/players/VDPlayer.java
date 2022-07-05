@@ -18,7 +18,6 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -47,7 +46,10 @@ public class VDPlayer {
     // Important arena stats
     private int maxHealth;
     private int currentHealth;
-    private int damage;
+    private int absorption = 0;
+    private int baseDamage;
+    private int armor;
+    private int toughness;
     /** Gem balance.*/
     private int gems;
     /** Kill count.*/
@@ -122,17 +124,32 @@ public class VDPlayer {
                 Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth);
     }
 
-    public void setCurrentHealth(int currentHealth) {
-        // Update health display
-        this.currentHealth = Math.max(currentHealth, 0);
-        showStats();
+    public boolean hasMaxHealth() {
+        return currentHealth == maxHealth;
+    }
+
+    public void addAbsorption(int absorption) {
+        this.absorption += absorption;
+    }
+
+    /**
+     * Takes final health difference and applies the difference, checking for absorption, death, and performing
+     * notifications.
+     * @param dif Final health difference.
+     */
+    public void changeCurrentHealth(int dif) {
+        // Handle absorption
+        int trueDif = dif;
+        if (dif < 0) {
+            trueDif = Math.min(0, absorption + dif);
+            absorption = Math.max(absorption + dif, 0);
+        }
+
+        // Update true health
+        this.currentHealth = Math.min(Math.max(currentHealth + trueDif, 0), maxHealth);
 
         // Check for death
         if (this.currentHealth == 0) {
-            // Check if player is holding a totem
-            if (getPlayer().getInventory().getItemInMainHand().getType() == Material.TOTEM_OF_UNDYING ||
-                    getPlayer().getInventory().getItemInOffHand().getType() == Material.TOTEM_OF_UNDYING) return;
-
             // Check if player has resurrection achievement and is boosted
             Random random = new Random();
             if (isBoosted() && random.nextDouble() < .1 &&
@@ -187,20 +204,84 @@ public class VDPlayer {
                     arena.endGame();
                 } catch (ArenaException ignored) {
                 }
-
-            return;
         }
-
-        getPlayer().setHealth(currentHealth *
-                Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth);
     }
 
     public void showStats() {
+        AtomicBoolean penetrating = new AtomicBoolean(false);
+        String damage = Integer.toString(this.baseDamage);
+
+        // Calculate stats
+        try {
+            ItemStack weapon = Objects.requireNonNull(getPlayer().getEquipment()).getItemInMainHand();
+            List<Integer> damageValues = new ArrayList<>();
+
+            Objects.requireNonNull(Objects.requireNonNull(weapon.getItemMeta()).getLore()).forEach(lore -> {
+                if (lore.contains(LanguageManager.messages.attackMainDamage
+                        .replace("%s", ""))) {
+                    if (lore.contains("-")) {
+                        String[] split = lore.substring(2 +
+                                        LanguageManager.messages.attackMainDamage.length())
+                                .split("-");
+                        damageValues.add(Integer.valueOf(split[0]));
+                        damageValues.add(Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
+                    } else damageValues.add(Integer.valueOf(lore.substring(2 +
+                                    LanguageManager.messages.attackMainDamage.length())
+                            .replace(ChatColor.BLUE.toString(), "")));
+                } else if (lore.contains(LanguageManager.messages.attackCritDamage
+                        .replace("%s", ""))) {
+                    if (lore.contains("-")) {
+                        String[] split = lore.substring(2 +
+                                        LanguageManager.messages.attackCritDamage.length())
+                                .split("-");
+                        damageValues.add(Integer.valueOf(split[0]));
+                        damageValues.add(Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
+                    } else damageValues.add(Integer.valueOf(lore.substring(2 +
+                                    LanguageManager.messages.attackCritDamage.length())
+                            .replace(ChatColor.BLUE.toString(), "")));
+                } else if (lore.contains(LanguageManager.messages.attackSweepDamage
+                        .replace("%s", ""))) {
+                    if (lore.contains("-")) {
+                        String[] split = lore.substring(2 +
+                                        LanguageManager.messages.attackSweepDamage.length())
+                                .split("-");
+                        damageValues.add(Integer.valueOf(split[0]));
+                        damageValues.add(Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
+                    } else damageValues.add(Integer.valueOf(lore.substring(2 +
+                                    LanguageManager.messages.attackSweepDamage.length())
+                            .replace(ChatColor.BLUE.toString(), "")));
+                } else if (lore.contains(LanguageManager.names.penetrating.replace("%s", "")))
+                    penetrating.set(true);
+            });
+            damageValues.sort(Comparator.comparingInt(Integer::intValue));
+            if (damageValues.size() == 1)
+                damage = Integer.toString(damageValues.get(0) + this.baseDamage);
+            else damage = (damageValues.get(0) + this.baseDamage) + "-" +
+                    (damageValues.get(damageValues.size() - 1) + this.baseDamage);
+        } catch (Exception ignored) {
+        }
+
+        // Update status bar
+        getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
+                new ColoredMessage(absorption > 0 ? ChatColor.GOLD : ChatColor.RED,
+                        Utils.HP + " " + (currentHealth + absorption) + "/" + maxHealth) + "    " +
+                        new ColoredMessage(ChatColor.AQUA, Utils.ARMOR + " " + armor) + "    " +
+                        new ColoredMessage(ChatColor.DARK_AQUA, Utils.TOUGH + " " + toughness + "%") + "    " +
+                        new ColoredMessage(penetrating.get() ? ChatColor.YELLOW : ChatColor.GREEN,
+                                Utils.DAMAGE + " " + damage)));
+
+        // Update normal health display
+        getPlayer().setHealth(Math.max(currentHealth *
+                Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth,
+                1));
+        getPlayer().setAbsorptionAmount(absorption *
+                Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth);
+    }
+
+    public void updateStats() {
         AtomicInteger armor = new AtomicInteger();
         AtomicInteger toughness = new AtomicInteger();
         AtomicDouble weight = new AtomicDouble(1);
-        AtomicBoolean penetrating = new AtomicBoolean(false);
-        String damage = Integer.toString(this.damage);
 
         // Calculate stats
         try {
@@ -289,65 +370,22 @@ public class VDPlayer {
             });
         } catch (Exception ignored) {
         }
-        try {
-            ItemStack weapon = Objects.requireNonNull(getPlayer().getEquipment()).getItemInMainHand();
-            List<Integer> damageValues = new ArrayList<>();
 
-            Objects.requireNonNull(Objects.requireNonNull(weapon.getItemMeta()).getLore()).forEach(lore -> {
-                if (lore.contains(LanguageManager.messages.attackMainDamage
-                        .replace("%s", ""))) {
-                    if (lore.contains("-")) {
-                        String[] split = lore.substring(2 +
-                                        LanguageManager.messages.attackMainDamage.length())
-                                .split("-");
-                        damageValues.add(Integer.valueOf(split[0]));
-                        damageValues.add(Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
-                    } else damageValues.add(Integer.valueOf(lore.substring(2 +
-                                    LanguageManager.messages.attackMainDamage.length())
-                            .replace(ChatColor.BLUE.toString(), "")));
-                } else if (lore.contains(LanguageManager.messages.attackCritDamage
-                        .replace("%s", ""))) {
-                    if (lore.contains("-")) {
-                        String[] split = lore.substring(2 +
-                                        LanguageManager.messages.attackCritDamage.length())
-                                .split("-");
-                        damageValues.add(Integer.valueOf(split[0]));
-                        damageValues.add(Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
-                    } else damageValues.add(Integer.valueOf(lore.substring(2 +
-                                    LanguageManager.messages.attackCritDamage.length())
-                            .replace(ChatColor.BLUE.toString(), "")));
-                } else if (lore.contains(LanguageManager.messages.attackSweepDamage
-                        .replace("%s", ""))) {
-                    if (lore.contains("-")) {
-                        String[] split = lore.substring(2 +
-                                        LanguageManager.messages.attackSweepDamage.length())
-                                .split("-");
-                        damageValues.add(Integer.valueOf(split[0]));
-                        damageValues.add(Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
-                    } else damageValues.add(Integer.valueOf(lore.substring(2 +
-                                    LanguageManager.messages.attackSweepDamage.length())
-                            .replace(ChatColor.BLUE.toString(), "")));
-                } else if (lore.contains(LanguageManager.names.penetrating.replace("%s", "")))
-                    penetrating.set(true);
-            });
-            damageValues.sort(Comparator.comparingInt(Integer::intValue));
-            if (damageValues.size() == 1)
-                damage = Integer.toString(damageValues.get(0) + this.damage);
-            else damage = (damageValues.get(0) + this.damage) + "-" +
-                    (damageValues.get(damageValues.size() - 1) + this.damage);
-        } catch (Exception ignored) {
-        }
+        // Update armor and toughness
+        this.armor = armor.get();
+        this.toughness = toughness.get();
 
         // Set speed
         Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .setBaseValue(.1 * weight.get());
 
-        getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-                new ColoredMessage(ChatColor.RED, "\u2764 " + currentHealth + "/" + maxHealth) + "    " +
-                        new ColoredMessage(ChatColor.AQUA, "\u2720 " + armor) + "    " +
-                        new ColoredMessage(ChatColor.DARK_AQUA, "\u2756 " + toughness + "%") + "    " +
-                        (penetrating.get() ? new ColoredMessage(ChatColor.YELLOW, "\u2736 " + damage) :
-                                new ColoredMessage(ChatColor.GREEN, "\u2694 " + damage))));
+        // Healing
+        changeCurrentHealth(1);
+
+        // Manage sprint
+        if (getPlayer().isSprinting())
+            getPlayer().setFoodLevel(getPlayer().getFoodLevel() - 1);
+        else getPlayer().setFoodLevel(Math.min(20, getPlayer().getFoodLevel() + 1));
     }
 
     public void takeDamage(int damage, @NotNull AttackType attackType) {
@@ -459,15 +497,16 @@ public class VDPlayer {
         else damage *= Math.max(0, 1 - toughness);
 
         // Realize damage
-        setCurrentHealth(currentHealth - damage);
+        changeCurrentHealth(-damage);
+        showStats();
     }
 
-    public int getDamage() {
-        return damage;
+    public int getBaseDamage() {
+        return baseDamage;
     }
 
-    public void setDamage(int damage) {
-        this.damage = damage;
+    public void setBaseDamage(int baseDamage) {
+        this.baseDamage = baseDamage;
     }
 
     public int dealRawDamage(@NotNull AttackClass attackClass, double mainMult) {
@@ -525,24 +564,24 @@ public class VDPlayer {
             switch (attackClass) {
                 case MAIN:
                     if (attributes.containsKey("main"))
-                        return (int) ((damage + attributes.get("main")) * mainMult);
-                    else return (int) ((damage + attributes.get("mainLow") +
+                        return (int) ((baseDamage + attributes.get("main")) * mainMult);
+                    else return (int) ((baseDamage + attributes.get("mainLow") +
                             r.nextInt(attributes.get("mainHigh") - attributes.get("mainLow"))) * mainMult);
                 case CRITICAL:
                     if (attributes.containsKey("crit"))
-                        return damage + attributes.get("crit");
-                    else return damage + attributes.get("critLow") +
+                        return baseDamage + attributes.get("crit");
+                    else return baseDamage + attributes.get("critLow") +
                             r.nextInt(attributes.get("critHigh") - attributes.get("critLow"));
                 case SWEEP:
                     if (attributes.containsKey("sweep"))
-                        return damage + attributes.get("sweep");
-                    else return damage + attributes.get("sweepLow") +
+                        return baseDamage + attributes.get("sweep");
+                    else return baseDamage + attributes.get("sweepLow") +
                             r.nextInt(attributes.get("sweepHigh") - attributes.get("sweepLow"));
                 default:
                     return 0;
             }
         } catch (Exception e) {
-            return damage;
+            return baseDamage;
         }
     }
 
@@ -685,16 +724,15 @@ public class VDPlayer {
             EntityEquipment equipment = getPlayer().getEquipment();
 
             // Equip armor if possible, otherwise put in inventory, otherwise drop at feet
-            if (Arrays.stream(GameItems.HELMET_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
-                    Objects.requireNonNull(equipment).getHelmet() == null)
+            if (item.getType().toString().contains("HELMET") && Objects.requireNonNull(equipment).getHelmet() == null)
                 equipment.setHelmet(item);
-            else if (Arrays.stream(GameItems.CHESTPLATE_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
+            else if (item.getType().toString().contains("CHESTPLATE") &&
                     Objects.requireNonNull(equipment).getChestplate() == null)
                 equipment.setChestplate(item);
-            else if (Arrays.stream(GameItems.LEGGING_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
+            else if (item.getType().toString().contains("LEGGINGS") &&
                     Objects.requireNonNull(equipment).getLeggings() == null)
                 equipment.setLeggings(item);
-            else if (Arrays.stream(GameItems.BOOTS_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
+            else if (item.getType().toString().contains("BOOTS") &&
                     Objects.requireNonNull(equipment).getBoots() == null)
                 equipment.setBoots(item);
             else PlayerManager.giveItem(getPlayer(), item, LanguageManager.errors.inventoryFull);
@@ -704,16 +742,16 @@ public class VDPlayer {
                 EntityEquipment equipment = getPlayer().getEquipment();
 
                 // Equip armor if possible, otherwise put in inventory, otherwise drop at feet
-                if (Arrays.stream(GameItems.HELMET_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
+                if (item.getType().toString().contains("HELMET") &&
                         Objects.requireNonNull(equipment).getHelmet() == null)
                     equipment.setHelmet(item);
-                else if (Arrays.stream(GameItems.CHESTPLATE_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
+                else if (item.getType().toString().contains("CHESTPLATE") &&
                         Objects.requireNonNull(equipment).getChestplate() == null)
                     equipment.setChestplate(item);
-                else if (Arrays.stream(GameItems.LEGGING_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
+                else if (item.getType().toString().contains("LEGGINGS") &&
                         Objects.requireNonNull(equipment).getLeggings() == null)
                     equipment.setLeggings(item);
-                else if (Arrays.stream(GameItems.BOOTS_MATERIALS).anyMatch(mat -> mat == item.getType()) &&
+                else if (item.getType().toString().contains("BOOTS") &&
                         Objects.requireNonNull(equipment).getBoots() == null)
                     equipment.setBoots(item);
                 else PlayerManager.giveItem(getPlayer(), item, LanguageManager.errors.inventoryFull);
@@ -774,6 +812,6 @@ public class VDPlayer {
 
         // Set up health and damage
         setMaxHealthInit(200);
-        setDamage(5);
+        setBaseDamage(5);
     }
 }

@@ -4,6 +4,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.ChatColor;
@@ -53,10 +54,6 @@ public class GameItems {
 	// Categories of items
 	public static ItemStack[] ABILITY_ITEMS;
 	public static Material[] FOOD_MATERIALS;
-	public static Material[] HELMET_MATERIALS;
-	public static Material[] CHESTPLATE_MATERIALS;
-	public static Material[] LEGGING_MATERIALS;
-	public static Material[] BOOTS_MATERIALS;
 	public static Material[] ARMOR_MATERIALS;
 	public static Material[] CLICKABLE_WEAPON_MATERIALS;
 	public static Material[] CLICKABLE_CONSUME_MATERIALS;
@@ -67,18 +64,7 @@ public class GameItems {
 				priest(), siren(), monk(), messenger()};
 		FOOD_MATERIALS = new Material[]{Material.BEETROOT, Material.CARROT, Material.BREAD,
 				Material.MUTTON, Material.COOKED_BEEF, Material.GOLDEN_CARROT, Material.GOLDEN_APPLE,
-				Material.ENCHANTED_GOLDEN_APPLE};
-		HELMET_MATERIALS = new Material[]{Material.LEATHER_HELMET, Material.GOLDEN_HELMET,
-				Material.CHAINMAIL_HELMET, Material.IRON_HELMET, Material.DIAMOND_HELMET, Material.NETHERITE_HELMET,
-				Material.TURTLE_HELMET};
-		CHESTPLATE_MATERIALS = new Material[]{Material.LEATHER_CHESTPLATE, Material.GOLDEN_CHESTPLATE,
-				Material.CHAINMAIL_CHESTPLATE, Material.IRON_CHESTPLATE, Material.DIAMOND_CHESTPLATE,
-				Material.NETHERITE_HELMET};
-		LEGGING_MATERIALS = new Material[]{Material.LEATHER_LEGGINGS, Material.GOLDEN_LEGGINGS,
-				Material.CHAINMAIL_LEGGINGS, Material.IRON_LEGGINGS, Material.DIAMOND_LEGGINGS,
-				Material.NETHERITE_LEGGINGS};
-		BOOTS_MATERIALS = new Material[]{Material.LEATHER_BOOTS, Material.GOLDEN_BOOTS,
-				Material.CHAINMAIL_BOOTS, Material.IRON_BOOTS, Material.DIAMOND_BOOTS, Material.NETHERITE_BOOTS};
+				Material.ENCHANTED_GOLDEN_APPLE, Material.TOTEM_OF_UNDYING};
 		ARMOR_MATERIALS = new Material[]{Material.LEATHER_HELMET, Material.LEATHER_CHESTPLATE,
 				Material.LEATHER_LEGGINGS, Material.LEATHER_BOOTS, Material.CHAINMAIL_HELMET, Material.CHAINMAIL_CHESTPLATE,
 				Material.CHAINMAIL_LEGGINGS, Material.CHAINMAIL_BOOTS, Material.IRON_HELMET, Material.IRON_CHESTPLATE,
@@ -87,9 +73,8 @@ public class GameItems {
 				Material.NETHERITE_LEGGINGS, Material.NETHERITE_BOOTS};
 		CLICKABLE_WEAPON_MATERIALS = new Material[]{Material.BOW, Material.CROSSBOW,
 				Material.TRIDENT};
-		CLICKABLE_CONSUME_MATERIALS = new Material[]{Material.GLASS_BOTTLE,
-				Material.POTION, Material.SPLASH_POTION, Material.LINGERING_POTION, Material.EXPERIENCE_BOTTLE,
-				Material.MILK_BUCKET, Material.GHAST_SPAWN_EGG, Material.WOLF_SPAWN_EGG};
+		CLICKABLE_CONSUME_MATERIALS = new Material[]{Material.MILK_BUCKET, Material.GHAST_SPAWN_EGG,
+				Material.WOLF_SPAWN_EGG};
 	}
 
 	// Standard game items
@@ -1989,81 +1974,56 @@ public class GameItems {
 				ItemManager.BUTTON_FLAGS, null, lores, attributes));
 	}
 
-	// Consumables
+	// Food
 	public static @NotNull ItemStack totem() {
 		return ItemManager.createItem(Material.TOTEM_OF_UNDYING, null,
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a1000"));
-	}
-	public static @NotNull ItemStack gapple() {
-		return ItemManager.createItem(Material.GOLDEN_APPLE, null,
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a120"));
+				new ColoredMessage(ChatColor.GOLD, "+100 " + Utils.HP).toString(),
+				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a900"));
 	}
 	public static @NotNull ItemStack egapple() {
 		return ItemManager.createItem(Material.ENCHANTED_GOLDEN_APPLE, null,
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a300"));
+				new ColoredMessage(ChatColor.RED, "+60 " + Utils.HP).toString(),
+				new ColoredMessage(ChatColor.GOLD, "+15 " + Utils.HP).toString(),
+				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a575"));
+	}
+	public static @NotNull ItemStack gapple() {
+		return ItemManager.createItem(Material.GOLDEN_APPLE, null,
+				new ColoredMessage(ChatColor.RED, "+40 " + Utils.HP).toString(),
+				new ColoredMessage(ChatColor.GOLD, "+10 " + Utils.HP).toString(),
+				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a400"));
 	}
 	public static @NotNull ItemStack gcarrot() {
 		return ItemManager.createItem(Material.GOLDEN_CARROT, null,
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a80"));
+				new ColoredMessage(ChatColor.RED, "+50 " + Utils.HP).toString(),
+				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a330"));
 	}
 	public static @NotNull ItemStack steak() {
-		return ItemManager.createItems(Material.COOKED_BEEF, 2, null,
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a60"));
+		return ItemManager.createItem(Material.COOKED_BEEF, null,
+				new ColoredMessage(ChatColor.RED, "+40 " + Utils.HP).toString(),
+				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a275"));
 	}
 	public static @NotNull ItemStack mutton() {
-		return ItemManager.createItems(Material.COOKED_MUTTON, 2, null,
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a40"));
-	}
-	public static @NotNull ItemStack bread() {
-		return ItemManager.createItems(Material.BREAD, 3, null,
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a40"));
-	}
-	public static @NotNull ItemStack carrot() {
-		return ItemManager.createItems(Material.CARROT, 5, null,
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a30"));
-	}
-	public static @NotNull ItemStack beetroot() {
-		return ItemManager.createItems(Material.BEETROOT, 8, null,
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a25"));
-	}
-	public static @NotNull ItemStack health() {
-		return ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.INSTANT_HEAL),
-				null,
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a50"));
-	}
-	public static @NotNull ItemStack health2() {
-		return ItemManager.createPotionItem(Material.POTION,
-				new PotionData(PotionType.INSTANT_HEAL, false, true), null,
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a120"));
-	}
-	public static @NotNull ItemStack strength() {
-		return ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.STRENGTH),
-				null,
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a150"));
-	}
-	public static @NotNull ItemStack strength2() {
-		return ItemManager.createPotionItem(Material.POTION,
-				new PotionData(PotionType.STRENGTH, false, true), null,
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a400"));
-	}
-	public static @NotNull ItemStack regen() {
-		return ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.REGEN), null,
+		return ItemManager.createItem(Material.COOKED_MUTTON,  null,
+				new ColoredMessage(ChatColor.RED, "+25 " + Utils.HP).toString(),
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a175"));
 	}
-	public static @NotNull ItemStack regen2() {
-		return ItemManager.createPotionItem(Material.POTION,
-				new PotionData(PotionType.REGEN, false, true), null,
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a450"));
+	public static @NotNull ItemStack bread() {
+		return ItemManager.createItem(Material.BREAD, null,
+				new ColoredMessage(ChatColor.RED, "+15 " + Utils.HP).toString(),
+				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a110"));
 	}
-	public static @NotNull ItemStack speed() {
-		return ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.SPEED), null,
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a125"));
+	public static @NotNull ItemStack carrot() {
+		return ItemManager.createItem(Material.CARROT, null,
+				new ColoredMessage(ChatColor.RED, "+10 " + Utils.HP).toString(),
+				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a75"));
 	}
-	public static @NotNull ItemStack speed2() {
-		return ItemManager.createPotionItem(Material.POTION, new PotionData(PotionType.SPEED, false,
-						true), null,
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a350"));
+	public static @NotNull ItemStack beetroot() {
+		return ItemManager.createItem(Material.BEETROOT, null,
+				new ColoredMessage(ChatColor.RED, "+5 " + Utils.HP).toString(),
+				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a40"));
 	}
+
+	// Other consumables
 	public static @NotNull ItemStack milk() {
 		return ItemManager.createItem(Material.MILK_BUCKET, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a75"));
@@ -2076,10 +2036,6 @@ public class GameItems {
 	public static @NotNull ItemStack wolf() {
 		return ItemManager.createItem(Material.WOLF_SPAWN_EGG, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a250"));
-	}
-	public static @NotNull ItemStack experience() {
-		return ItemManager.createItem(Material.EXPERIENCE_BOTTLE, null,
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a75"));
 	}
 
 	// Kit abilities
@@ -2301,124 +2257,26 @@ public class GameItems {
 				else return rocketsPlus();
 		}
 	}
-	public static @NotNull ItemStack randFood(int level) {
-		Random r = new Random();
-		double chance = r.nextDouble();
-		switch (level) {
-			case 1:
-				if (chance < .4)
-					return beetroot();
-				else if (chance < .8)
-					return carrot();
-				else return bread();
-			case 2:
-				if (chance < .325)
-					return carrot();
-				else if (chance < .65)
-					return bread();
-				else if (chance < .85)
-					return mutton();
-				else return steak();
-			case 3:
-				if (chance < .25)
-					return bread();
-				else if (chance < .5)
-					return mutton();
-				else if (chance < .75)
-					return steak();
-				else return gcarrot();
-			case 4:
-				if (chance < .25)
-					return mutton();
-				else if (chance < .5)
-					return steak();
-				else if (chance < .75)
-					return gcarrot();
-				else return gapple();
-			default:
-				if (chance < .15)
-					return mutton();
-				else if (chance < .4)
-					return steak();
-				else if (chance < .65)
-					return gcarrot();
-				else if (chance < .9)
-					return gapple();
-				else return egapple();
-		}
-	}
 	public static @NotNull ItemStack randOther(int level) {
 		Random r = new Random();
 		double chance = r.nextDouble();
 		switch (level) {
 			case 1:
-				if (chance < .35)
-					return wolf();
-				else if (chance < .75)
-					return experience();
-				else if (chance < .9)
-					return health();
-				else return speed();
+				return wolf();
 			case 2:
 				if (chance < .15)
 					return wolf();
-				else if (chance < .7)
-					return experience();
-				else if (chance < .75)
-					return milk();
-				else if (chance < .85)
-					return health();
-				else if (chance < .9)
-					return speed();
-				else if (chance < .95)
-					return strength();
-				else return regen();
+				else return milk();
 			case 3:
 				if (chance < .15)
 					return wolf();
 				else if (chance < .6)
 					return golem();
-				else if (chance < .7)
-					return experience();
-				else if (chance < .75)
-					return milk();
-				else if (chance < .85)
-					return health2();
-				else if (chance < .9)
-					return speed2();
-				else if (chance < .95)
-					return strength();
-				else return regen();
-			case 4:
-				if (chance < .15)
-					return wolf();
-				else if (chance < .6)
-					return golem();
-				else if (chance < .7)
-					return experience();
-				else if (chance < .75)
-					return milk();
-				else if (chance < .85)
-					return health2();
-				else if (chance < .9)
-					return speed2();
-				else if (chance < .95)
-					return strength2();
-				else return regen2();
+				else return milk();
 			default:
 				if (chance < .3)
 					return golem();
-				else if (chance < .7)
-					return experience();
-				else if (chance < .75)
-					return milk();
-				else if (chance < .85)
-					return health2();
-				else if (chance < .9)
-					return speed2();
-				else if (chance < .95)
-					return strength2();
-				else return regen2();
+				else return milk();
 		}
 	}
 

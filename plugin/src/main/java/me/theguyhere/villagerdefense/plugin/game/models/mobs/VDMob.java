@@ -1,6 +1,8 @@
 package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 
 import me.theguyhere.villagerdefense.common.ColoredMessage;
+import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidVDMobKeyException;
@@ -10,6 +12,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -78,7 +81,7 @@ public abstract class VDMob {
         if (attacker != null)
             try {
                 Popup.create(getEntity().getEyeLocation(),
-                        new ColoredMessage(ChatColor.RED, "-" + damage + "\u2764").toString(), 1,
+                        new ColoredMessage(ChatColor.RED, "-" + damage + Utils.HP).toString(), 1,
                         attacker.getPlayer());
             } catch (InvalidLocationException ignored) {
             }
@@ -107,8 +110,8 @@ public abstract class VDMob {
                     // Create popup
                     try {
                         Popup.create(getEntity().getLocation().add(0, 1, 0),
-                                new ColoredMessage(ChatColor.GREEN, "+" + gems + "\u2666  ") +
-                                new ColoredMessage(ChatColor.YELLOW, "+" + exp + "\u2605").toString(), 2.5,
+                                new ColoredMessage(ChatColor.GREEN, "+" + gems + Utils.GEM  + "  ") +
+                                new ColoredMessage(ChatColor.YELLOW, "+" + exp + Utils.EXP).toString(), 2.5,
                                 gamer.getPlayer());
                     } catch (InvalidLocationException ignored) {
                     }
@@ -389,6 +392,23 @@ public abstract class VDMob {
     }
 
     // Set name properly
+    protected void updateNameTag(ChatColor color) {
+        int healthLength = Integer.toString(currentHealth).length();
+        int trueSize = hpBarSize * 4 + healthLength;
+        int bars = (int) ((double) currentHealth / maxHealth * trueSize);
+        StringBuilder healthIndicator = new StringBuilder(new String(new char[bars])
+                .replace("\0", Utils.HP_BAR))
+                .append(new String(new char[trueSize - bars]).replace("\0", " "));
+        healthIndicator.replace(hpBarSize * 2, hpBarSize * 2 + healthLength, "&b" + currentHealth + color);
+        getEntity().setCustomName(CommunicationManager.format(
+                new ColoredMessage(color, LanguageManager.messages.mobName),
+                new ColoredMessage(ChatColor.AQUA, Integer.toString(level)),
+                new ColoredMessage(color, name),
+                new ColoredMessage(ChatColor.RESET, CommunicationManager.format(
+                        String.format("&7[" + color + "%s&7]", healthIndicator)))
+        ));
+    }
+
     protected abstract void updateNameTag();
 
     public void remove() {

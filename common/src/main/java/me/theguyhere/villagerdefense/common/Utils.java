@@ -9,6 +9,13 @@ public class Utils {
     private static final int SECONDS_TO_MILLIS = 1000;
 
     public static final int LORE_CHAR_LIMIT = 30;
+    public static final String HP = "\u2764";
+    public static final String ARMOR = "\u2720";
+    public static final String TOUGH = "\u2756";
+    public static final String DAMAGE = "\u2694";
+    public static final String GEM = "\u2666";
+    public static final String EXP = "\u2605";
+    public static final String HP_BAR = "\u258c";
 
     // Convert seconds to ticks
     public static int secondsToTicks(double seconds) {
