@@ -15,6 +15,10 @@ public interface PacketGroup {
      */
     void sendTo(Player player);
 
+    static PacketGroup of(PacketGroup packet) {
+        return new PacketGroupImp.SinglePacket(packet);
+    }
+
     static PacketGroup of(PacketGroup packet1, PacketGroup packet2) {
         return new PacketGroupImp.DoublePacket(packet1, packet2);
     }

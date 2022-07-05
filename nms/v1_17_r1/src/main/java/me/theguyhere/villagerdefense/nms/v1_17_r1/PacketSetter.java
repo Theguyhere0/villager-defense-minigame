@@ -18,8 +18,8 @@ class PacketSetter extends PacketDataSerializer {
     private static final PacketSetter INSTANCE = new PacketSetter();
 
     /**
-     * Get the instance of me.theguyhere.villagedefense.nms.v1_18_r1.PacketSetter for this version.
-     * @return me.theguyhere.villagedefense.nms.v1_18_r1.PacketSetter for specific version.
+     * Get the instance of {@link PacketSetter} for this version.
+     * @return {@link PacketSetter} for specific version.
      */
     static PacketSetter get() {
         INSTANCE.clear();
@@ -38,15 +38,10 @@ class PacketSetter extends PacketDataSerializer {
         super.d(i);
     }
 
-    void writeVarIntArray(int i1) {
-        writeVarInt(1);
-        writeVarInt(i1);
-    }
-
-    void writeVarIntArray(int i1, int i2) {
-        writeVarInt(2);
-        writeVarInt(i1);
-        writeVarInt(i2);
+    void writeVarIntArray(int... is) {
+        writeVarInt(is.length);
+        for (int i : is)
+            writeVarInt(i);
     }
 
     void writeUUID(UUID uuid) {

@@ -8,6 +8,19 @@ import org.bukkit.entity.Player;
  * Idea for this interface borrowed from filoghost.
  */
 class PacketGroupImp {
+    static class SinglePacket implements PacketGroup {
+        private final PacketGroup packet;
+
+        SinglePacket(PacketGroup packet) {
+            this.packet = packet;
+        }
+
+        @Override
+        public void sendTo(Player player) {
+            packet.sendTo(player);
+        }
+    }
+
     static class DoublePacket implements PacketGroup {
         private final PacketGroup packet1;
         private final PacketGroup packet2;
