@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 public interface NMSManager {
     TextPacketEntity newTextPacketEntity();
 
-    VillagerPacketEntity newVillagerPacketEntity();
+    VillagerPacketEntity newVillagerPacketEntity(String type);
 
     String getSpawnParticleName();
 

@@ -25,7 +25,6 @@ public class VDWeaponsmith extends VDVillager {
         setMediumWeight(villager);
         setVeryFastLandSpeed(villager);
         villager.setProfession(Villager.Profession.WEAPONSMITH);
-        // TODO: Set biome
         updateNameTag();
     }
 }

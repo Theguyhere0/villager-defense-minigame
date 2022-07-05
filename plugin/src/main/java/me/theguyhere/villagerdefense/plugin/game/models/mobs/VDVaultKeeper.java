@@ -24,7 +24,6 @@ public class VDVaultKeeper extends VDVillager {
         setMediumWeight(villager);
         setVeryFastLandSpeed(villager);
         villager.setProfession(Villager.Profession.LIBRARIAN);
-        // TODO: Set biome
         updateNameTag();
     }
 }

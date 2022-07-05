@@ -197,6 +197,10 @@ public class Arena {
         if (getMinPlayers() == 0)
             setMinPlayers(1);
 
+        // Set default villager type to plains if it doesn't exist
+        if (getVillagerType() == null || getVillagerType().isEmpty())
+            setVillagerType("plains");
+
         // Set default wolf cap to 5 if it doesn't exist
         if (getWolfCap() == 0)
             setWolfCap(5);
@@ -301,6 +305,16 @@ public class Arena {
     public void setMinPlayers(int minPlayers) {
         config.set(path + ".min", minPlayers);
         Main.saveArenaData();
+    }
+
+    public String getVillagerType() {
+        return config.getString(path + ".villagerType");
+    }
+
+    public void setVillagerType(String type) {
+        config.set(path + ".villagerType", type);
+        Main.saveArenaData();
+        refreshPortal();
     }
 
     /**
@@ -2926,6 +2940,7 @@ public class Arena {
     public void copy(Arena arenaToCopy) {
         setMaxPlayers(arenaToCopy.getMaxPlayers());
         setMinPlayers(arenaToCopy.getMinPlayers());
+        setVillagerType(arenaToCopy.getVillagerType());
         setMaxWaves(arenaToCopy.getMaxWaves());
         setWaveTimeLimit(arenaToCopy.getWaveTimeLimit());
         setDifficultyMultiplier(arenaToCopy.getDifficultyMultiplier());

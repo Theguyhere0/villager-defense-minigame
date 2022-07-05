@@ -23,8 +23,8 @@ public class VDFletcher extends VDVillager {
         setToughness(.01, .01, level, 2);
         setMediumWeight(villager);
         setFastLandSpeed(villager);
+        // TODO: Implement effects
         villager.setProfession(Villager.Profession.FLETCHER);
-        // TODO: Set biome
         updateNameTag();
     }
 }

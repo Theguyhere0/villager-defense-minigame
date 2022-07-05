@@ -24,7 +24,6 @@ public class VDFarmer extends VDVillager {
         setMediumWeight(villager);
         setVeryFastLandSpeed(villager);
         villager.setProfession(Villager.Profession.FARMER);
-        // TODO: Set biome
         updateNameTag();
     }
 }

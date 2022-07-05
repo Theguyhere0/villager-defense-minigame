@@ -2075,6 +2075,45 @@ public class Commands implements CommandExecutor {
 							// Notify
 							notifyAutoUpdate(player, "arenaData.yml", 7);
 						} catch (Exception e) {
+							arenaAbort = true;
+							notifyManualUpdate(player, "arenaData.yml");
+						}
+					}
+					if (arenaDataVersion < 8 && !arenaAbort) {
+						try {
+							Objects.requireNonNull(arenaData.getConfigurationSection("arena")).getKeys(false)
+									.forEach(key -> {
+										String newPath = "arena." + key;
+
+										// Remove legacy data
+										if (arenaData.contains(newPath + ".normal"))
+											arenaData.set(newPath + ".normal", null);
+										if (arenaData.contains(newPath + ".expDrop"))
+											arenaData.set(newPath + ".expDrop", null);
+										if (arenaData.contains(newPath + ".gemDrop"))
+											arenaData.set(newPath + ".gemDrop", null);
+										if (arenaData.contains(newPath + ".enchants"))
+											arenaData.set(newPath + ".enchants", null);
+										if (arenaData.contains(newPath + ".customShop"))
+											arenaData.set(newPath + ".customShop", null);
+										if (arenaData.contains(newPath + ".custom"))
+											arenaData.set(newPath + ".custom", null);
+
+										// Set default villager type
+										if (!arenaData.contains(newPath + ".villagerType"))
+											arenaData.set(newPath + ".villagerType", "plains");
+
+										Main.saveArenaData();
+									});
+
+							// Flip flag and update config.yml
+							fixed = true;
+							Main.plugin.getConfig().set("arenaData", 8);
+							Main.plugin.saveConfig();
+
+							// Notify
+							notifyAutoUpdate(player, "arenaData.yml", 8);
+						} catch (Exception e) {
 							notifyManualUpdate(player, "arenaData.yml");
 						}
 					}

@@ -349,6 +349,10 @@ public class GameListener implements Listener {
 		if (!ent.hasMetadata(VDMob.VD) && !(ent instanceof Player))
 			return;
 
+		// Check player is in a game
+		if (ent instanceof Player && !GameManager.checkPlayer((Player) ent))
+			return;
+
 		// Don't handle entity on entity damage
 		if (e instanceof EntityDamageByEntityEvent)
 			return;
@@ -966,24 +970,6 @@ public class GameListener implements Listener {
 		if (item.equals(GameItems.shop()) || item.equals(GameItems.kitSelector()) || item.equals(GameItems.leave()) ||
 				item.equals(GameItems.challengeSelector()))
 			e.setCancelled(true);
-	}
-
-	// Delete bottles and buckets after using consumables
-	@EventHandler
-	public void onFinishConsumption(PlayerItemConsumeEvent e) {
-		Player player = e.getPlayer();
-
-		// Check if player is playing in an arena
-		if (!GameManager.checkPlayer(player))
-			return;
-
-		if (e.getItem().getType() == Material.MILK_BUCKET) {
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
-				player.getInventory().remove(Material.BUCKET);
-				if (player.getInventory().getItemInOffHand().getType() == Material.BUCKET)
-					player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
-			}, 3);
-		}
 	}
 
 	// Prevent consumption from happening in the off-hand when the main hand has something interact-able

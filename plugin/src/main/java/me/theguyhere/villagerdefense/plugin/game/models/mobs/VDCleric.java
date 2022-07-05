@@ -26,7 +26,6 @@ public class VDCleric extends VDVillager {
         setFastLandSpeed(villager);
         // TODO: Implement effects
         villager.setProfession(Villager.Profession.CLERIC);
-        // TODO: Set biome
         updateNameTag();
     }
 }

@@ -25,7 +25,6 @@ public class VDMayor extends VDVillager {
         setMediumWeight(villager);
         setVeryFastLandSpeed(villager);
         villager.setProfession(Villager.Profession.NITWIT);
-        // TODO: Set biome
         updateNameTag();
     }
 }

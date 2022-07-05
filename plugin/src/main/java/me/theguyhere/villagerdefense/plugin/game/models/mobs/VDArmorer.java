@@ -24,7 +24,6 @@ public class VDArmorer extends VDVillager {
         setHeavyWeight(villager);
         setFastLandSpeed(villager);
         villager.setProfession(Villager.Profession.ARMORER);
-        // TODO: Set biome
         updateNameTag();
     }
 }

@@ -489,6 +489,12 @@ public class Inventories {
 				CommunicationManager.format("&7Particles showing where the spawns are"),
 				CommunicationManager.format("&7(Visible in-game)")));
 
+		// Option to edit villager type
+		buttons.add((ItemManager.createItem(Material.LECTERN,
+				CommunicationManager.format("&6&lVillager Type: " +
+						arena.getVillagerType().substring(0, 1).toUpperCase() +
+						arena.getVillagerType().substring(1)))));
+
 		// Option to edit spawn table
 		buttons.add(ItemManager.createItem(Material.DRAGON_HEAD,
 				CommunicationManager.format("&3&lSpawn Table: " + arena.getSpawnTableFile())));
@@ -633,6 +639,28 @@ public class Inventories {
 				arena,
 				villagerSpawnID,
 				CommunicationManager.format("&4&lRemove Villager Spawn?")
+		);
+	}
+
+	// Villager type menu for an arena
+	public static Inventory createVillagerTypeMenu(Arena arena) {
+		List<ItemStack> buttons = new ArrayList<>();
+
+		// Villager type options
+		buttons.add(ItemManager.createItem(Material.SANDSTONE, CommunicationManager.format("&6&lDesert")));
+		buttons.add(ItemManager.createItem(Material.MOSSY_COBBLESTONE, CommunicationManager.format("&2&lJungle")));
+		buttons.add(ItemManager.createItem(Material.GRASS_BLOCK, CommunicationManager.format("&a&lPlains")));
+		buttons.add(ItemManager.createItem(Material.TERRACOTTA, CommunicationManager.format("&c&lSavanna")));
+		buttons.add(ItemManager.createItem(Material.SNOW_BLOCK, CommunicationManager.format("&b&lSnow")));
+		buttons.add(ItemManager.createItem(Material.CLAY, CommunicationManager.format("&3&lSwamp")));
+		buttons.add(ItemManager.createItem(Material.PODZOL, CommunicationManager.format("&9&lTaiga")));
+
+		return InventoryFactory.createDynamicSizeInventory(
+				new InventoryMeta(InventoryID.VILLAGER_TYPE_MENU, InventoryType.MENU, arena),
+				CommunicationManager.format("&6&lVillager Type: " +
+						arena.getVillagerType().substring(0, 1).toUpperCase() + arena.getVillagerType().substring(1)),
+				true,
+				buttons
 		);
 	}
 
@@ -1211,21 +1239,21 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Sound options
-		buttons.add( arena.getWaitingSoundButton("blocks"));
-		buttons.add( arena.getWaitingSoundButton("cat"));
-		buttons.add( arena.getWaitingSoundButton("chirp"));
-		buttons.add( arena.getWaitingSoundButton("far"));
-		buttons.add( arena.getWaitingSoundButton("mall"));
-		buttons.add( arena.getWaitingSoundButton("mellohi"));
+		buttons.add(arena.getWaitingSoundButton("blocks"));
+		buttons.add(arena.getWaitingSoundButton("cat"));
+		buttons.add(arena.getWaitingSoundButton("chirp"));
+		buttons.add(arena.getWaitingSoundButton("far"));
+		buttons.add(arena.getWaitingSoundButton("mall"));
+		buttons.add(arena.getWaitingSoundButton("mellohi"));
 		if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1))
-			buttons.add( arena.getWaitingSoundButton("otherside"));
+			buttons.add(arena.getWaitingSoundButton("otherside"));
 
-		buttons.add( arena.getWaitingSoundButton("pigstep"));
-		buttons.add( arena.getWaitingSoundButton("stal"));
-		buttons.add( arena.getWaitingSoundButton("strad"));
-		buttons.add( arena.getWaitingSoundButton("wait"));
-		buttons.add( arena.getWaitingSoundButton("ward"));
-		buttons.add( arena.getWaitingSoundButton("none"));
+		buttons.add(arena.getWaitingSoundButton("pigstep"));
+		buttons.add(arena.getWaitingSoundButton("stal"));
+		buttons.add(arena.getWaitingSoundButton("strad"));
+		buttons.add(arena.getWaitingSoundButton("wait"));
+		buttons.add(arena.getWaitingSoundButton("ward"));
+		buttons.add(arena.getWaitingSoundButton("none"));
 
 		return InventoryFactory.createDynamicSizeInventory(
 				new InventoryMeta(InventoryID.WAITING_SOUND_MENU, InventoryType.MENU, arena),

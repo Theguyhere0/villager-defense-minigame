@@ -28,8 +28,8 @@ public class VersionNMSManager implements NMSManager {
     }
 
     @Override
-    public VillagerPacketEntity newVillagerPacketEntity() {
-        return new PacketEntityVillager(new EntityID());
+    public VillagerPacketEntity newVillagerPacketEntity(String type) {
+        return new PacketEntityVillager(new EntityID(), type);
     }
 
     @Override

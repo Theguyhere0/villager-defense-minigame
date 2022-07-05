@@ -2024,10 +2024,6 @@ public class GameItems {
 	}
 
 	// Other consumables
-	public static @NotNull ItemStack milk() {
-		return ItemManager.createItem(Material.MILK_BUCKET, null,
-				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a75"));
-	}
 	public static @NotNull ItemStack golem() {
 		return ItemManager.createItem(Material.GHAST_SPAWN_EGG,
 				new ColoredMessage(ChatColor.WHITE, LanguageManager.names.golemEgg).toString(),
@@ -2263,20 +2259,12 @@ public class GameItems {
 		switch (level) {
 			case 1:
 				return wolf();
-			case 2:
-				if (chance < .15)
-					return wolf();
-				else return milk();
 			case 3:
 				if (chance < .15)
 					return wolf();
-				else if (chance < .6)
-					return golem();
-				else return milk();
+				else return golem();
 			default:
-				if (chance < .3)
-					return golem();
-				else return milk();
+				return golem();
 		}
 	}
 
@@ -2292,7 +2280,7 @@ public class GameItems {
 	// Gaussian level randomization for most ordinary stuff
 	private static int getLevel(double difficulty) {
 		Random r = new Random();
-		return Math.max((int) (Math.max(difficulty, 2) * (1 + .2 * Math.max(Math.min(r.nextGaussian(), 3), -3)) + .5),
+		return Math.max((int) (Math.max(difficulty, 1.5) * (1 + .2 * Math.max(Math.min(r.nextGaussian(), 3), -3)) + .5),
 				1); // Mean 100%, SD 50%, restrict 40% - 160%, min mean 3
 	}
 }

@@ -318,7 +318,7 @@ public class ArenaListener implements Listener {
             gamer.setStatus(PlayerStatus.LEFT);
         }
 
-        // Return player health, food, exp, and items
+        // Return player survival stats
         if (Main.plugin.getConfig().getBoolean("keepInv") && player.isOnline())
             PlayerManager.returnSurvivalStats(player);
 

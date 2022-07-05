@@ -1325,6 +1325,11 @@ public class InventoryListener implements Listener {
 					player.openInventory(Inventories.createMobsMenu(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
+			else if (buttonName.contains("Villager Type:"))
+				if (arenaInstance.isClosed())
+					player.openInventory(Inventories.createVillagerTypeMenu(meta.getArena()));
+				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createArenaMenu(meta.getArena()));
@@ -1507,6 +1512,84 @@ public class InventoryListener implements Listener {
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createVillagerSpawnDashboard(meta.getArena()));
+		}
+
+		// Villager type menu for an arena
+		else if (invID == InventoryID.VILLAGER_TYPE_MENU) {
+			Arena arenaInstance = meta.getArena();
+
+			if (buttonName.contains("Desert")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+					return;
+				}
+
+				arenaInstance.setVillagerType("desert");
+			}
+			if (buttonName.contains("Jungle")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+					return;
+				}
+
+				arenaInstance.setVillagerType("jungle");
+			}
+			if (buttonName.contains("Plains")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+					return;
+				}
+
+				arenaInstance.setVillagerType("plains");
+			}
+			if (buttonName.contains("Savanna")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+					return;
+				}
+
+				arenaInstance.setVillagerType("savanna");
+			}
+			if (buttonName.contains("Snow")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+					return;
+				}
+
+				arenaInstance.setVillagerType("snow");
+			}
+			if (buttonName.contains("Swamp")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+					return;
+				}
+
+				arenaInstance.setVillagerType("swamp");
+			}
+			if (buttonName.contains("Taiga")) {
+				// Check for arena closure
+				if (!arenaInstance.isClosed()) {
+					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+					return;
+				}
+
+				arenaInstance.setVillagerType("taiga");
+			}
+
+			// Exit menu
+			else if (buttonName.contains(LanguageManager.messages.exit)) {
+				player.openInventory(Inventories.createMobsMenu(meta.getArena()));
+				return;
+			}
+
+			// Reload inventory
+			player.openInventory(Inventories.createVillagerTypeMenu(meta.getArena()));
 		}
 
 		// Spawn table menu for an arena
