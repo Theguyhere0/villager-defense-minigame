@@ -122,9 +122,7 @@ public class GameManager {
 	 * @param player Player to give a scoreboard.
 	 */
 	public static void createBoard(VDPlayer player) {
-		ScoreboardManager manager = Bukkit.getScoreboardManager();
-		if (manager == null)
-			return;
+		ScoreboardManager manager = Objects.requireNonNull(Bukkit.getScoreboardManager());
 		Scoreboard board = manager.getNewScoreboard();
 		Arena arena = player.getArena();
 
