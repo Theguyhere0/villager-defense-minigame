@@ -70,6 +70,50 @@ public class InventoryListener implements Listener {
 		else meta.getArena().setCommunityChest(e.getInventory());
 	}
 
+	// Prevent items from being removed from the game
+	@EventHandler
+	public void onDragOther(InventoryDragEvent e) {
+		// Ignore plugin inventories
+		if (e.getInventory().getHolder() instanceof InventoryMeta)
+			return;
+
+		// Ignore clicks in player inventory
+		if (e.getInventory().getType() == InventoryType.PLAYER)
+			return;
+
+		// Ignore players that aren't part of an arena
+		Player player = (Player) e.getWhoClicked();
+		try {
+			GameManager.getArena(player);
+		} catch (ArenaNotFoundException err) {
+			return;
+		}
+
+		// Cancel event
+		e.setCancelled(true);
+	}
+	@EventHandler
+	public void onClickOther(InventoryClickEvent e) {
+		// Ignore plugin inventories
+		if (e.getInventory().getHolder() instanceof InventoryMeta)
+			return;
+
+		// Ignore clicks in player inventory
+		if (e.getInventory().getType() == InventoryType.PLAYER || e.getView().getType() == InventoryType.CRAFTING)
+			return;
+
+		// Ignore players that aren't part of an arena
+		Player player = (Player) e.getWhoClicked();
+		try {
+			GameManager.getArena(player);
+		} catch (ArenaNotFoundException err) {
+			return;
+		}
+
+		// Cancel event
+		e.setCancelled(true);
+	}
+
 	// All click events in the inventories
 	@EventHandler
 	public void onClick(InventoryClickEvent e) {
