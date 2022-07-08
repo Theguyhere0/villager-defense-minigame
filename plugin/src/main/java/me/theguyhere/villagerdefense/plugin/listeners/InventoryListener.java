@@ -2841,7 +2841,8 @@ public class InventoryListener implements Listener {
 		else if (invID == InventoryID.MOCK_CUSTOM_SHOP_MENU) {
 			if (buttonName.contains(LanguageManager.messages.exit))
 				try {
-					player.openInventory(Inventories.createArenaInfoMenu(GameManager.getArena(title.substring(19))));
+					player.openInventory(Inventories.createArenaInfoMenu(GameManager.getArena(
+							title.substring(6 + LanguageManager.names.customShop.length()))));
 				} catch (ArenaNotFoundException ignored) {
 				}
 		}
@@ -2878,7 +2879,8 @@ public class InventoryListener implements Listener {
 			if (lore == null)
 				return;
 
-			int cost = Integer.parseInt(lore.get(lore.size() - 1).substring(10));
+			int cost = Integer.parseInt(lore.get(lore.size() - 1)
+					.substring(6 + LanguageManager.messages.gems.length()));
 			Random random = new Random();
 
 			// Check if they can afford the item

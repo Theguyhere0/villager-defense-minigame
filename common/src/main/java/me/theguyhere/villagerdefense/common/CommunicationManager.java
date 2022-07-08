@@ -160,7 +160,7 @@ public class CommunicationManager {
      * @return Formatted message prepared to be sent to the player.
      */
     public static String namedNotify(ColoredMessage name, String msg) {
-        return format("&2[VD] " + name.toString() + "&f: " + msg);
+        return format("&2[VD] " + name.toString() + ":&f " + msg);
     }
 
     public static void debugError(String msg, int debugLevel) {

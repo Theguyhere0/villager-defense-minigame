@@ -51,6 +51,9 @@ public class JoinListener implements Listener {
 				if (playerData.contains(player.getUniqueId() + ".health"))
 					player.setHealth(playerData.getDouble(player.getUniqueId() + ".health"));
 				playerData.set(player.getUniqueId() + ".health", null);
+				if (playerData.contains(player.getUniqueId() + ".absorption"))
+					player.setAbsorptionAmount(playerData.getDouble(player.getUniqueId() + ".absorption"));
+				playerData.set(player.getUniqueId() + ".absorption", null);
 				if (playerData.contains(player.getUniqueId() + ".food"))
 					player.setFoodLevel(playerData.getInt(player.getUniqueId() + ".food"));
 				playerData.set(player.getUniqueId() + ".food", null);
