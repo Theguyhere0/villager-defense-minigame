@@ -45,7 +45,7 @@ public class PacketListenerImp implements PacketListener {
 
         try {
             arena = GameManager.getArena(Integer.parseInt(header.substring(18, header.length() - 4)));
-        } catch (ArenaNotFoundException ignored) {
+        } catch (ArenaNotFoundException | NumberFormatException e) {
             return;
         }
 
