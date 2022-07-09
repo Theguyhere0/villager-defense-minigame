@@ -118,7 +118,7 @@ public class Commands implements CommandExecutor {
 											return true;
 										}
 
-										GameManager.setLobby(player.getLocation());
+										GameManager.saveLobby(player.getLocation());
 										PlayerManager.notifySuccess(player, "Lobby set!");
 										return true;
 
@@ -2445,8 +2445,7 @@ public class Commands implements CommandExecutor {
 						fixed = true;
 
 						// Fix
-						Main.plugin.saveResource("default.yml", true);
-						Main.plugin.getConfig().set("spawnTableStructure", Main.spawnTableVersion);
+						Main.plugin.saveResource("spawnTables/default.yml", true);
 						Main.plugin.getConfig().set("spawnTableDefault", Main.defaultSpawnVersion);
 						Main.plugin.saveConfig();
 

@@ -73,6 +73,50 @@ public class InventoryListener implements Listener {
 		else meta.getArena().setCommunityChest(e.getInventory());
 	}
 
+	// Prevent items from being removed from the game
+	@EventHandler
+	public void onDragOther(InventoryDragEvent e) {
+		// Ignore plugin inventories
+		if (e.getInventory().getHolder() instanceof InventoryMeta)
+			return;
+
+		// Ignore clicks in player inventory
+		if (e.getInventory().getType() == InventoryType.PLAYER)
+			return;
+
+		// Ignore players that aren't part of an arena
+		Player player = (Player) e.getWhoClicked();
+		try {
+			GameManager.getArena(player);
+		} catch (ArenaNotFoundException err) {
+			return;
+		}
+
+		// Cancel event
+		e.setCancelled(true);
+	}
+	@EventHandler
+	public void onClickOther(InventoryClickEvent e) {
+		// Ignore plugin inventories
+		if (e.getInventory().getHolder() instanceof InventoryMeta)
+			return;
+
+		// Ignore clicks in player inventory
+		if (e.getInventory().getType() == InventoryType.PLAYER || e.getView().getType() == InventoryType.CRAFTING)
+			return;
+
+		// Ignore players that aren't part of an arena
+		Player player = (Player) e.getWhoClicked();
+		try {
+			GameManager.getArena(player);
+		} catch (ArenaNotFoundException err) {
+			return;
+		}
+
+		// Cancel event
+		e.setCancelled(true);
+	}
+
 	// All click events in the inventories
 	@EventHandler
 	public void onClick(InventoryClickEvent e) {
@@ -2841,7 +2885,8 @@ public class InventoryListener implements Listener {
 		else if (invID == InventoryID.MOCK_CUSTOM_SHOP_MENU) {
 			if (buttonName.contains(LanguageManager.messages.exit))
 				try {
-					player.openInventory(Inventories.createArenaInfoMenu(GameManager.getArena(title.substring(19))));
+					player.openInventory(Inventories.createArenaInfoMenu(GameManager.getArena(
+							title.substring(6 + LanguageManager.names.customShop.length()))));
 				} catch (ArenaNotFoundException ignored) {
 				}
 		}
@@ -2878,7 +2923,8 @@ public class InventoryListener implements Listener {
 			if (lore == null)
 				return;
 
-			int cost = Integer.parseInt(lore.get(lore.size() - 1).substring(10));
+			int cost = Integer.parseInt(lore.get(lore.size() - 1)
+					.substring(6 + LanguageManager.messages.gems.length()));
 			Random random = new Random();
 
 			// Check if they can afford the item

@@ -83,6 +83,7 @@ public class ArenaListener implements Listener {
         if (Main.plugin.getConfig().getBoolean("keepInv")) {
             // Save player exp and items before going into arena
             Main.plugin.getPlayerData().set(player.getUniqueId() + ".health", player.getHealth());
+            Main.plugin.getPlayerData().set(player.getUniqueId() + ".absorption", player.getAbsorptionAmount());
             Main.plugin.getPlayerData().set(player.getUniqueId() + ".food", player.getFoodLevel());
             Main.plugin.getPlayerData().set(player.getUniqueId() + ".saturation", (double) player.getSaturation());
             Main.plugin.getPlayerData().set(player.getUniqueId() + ".level", player.getLevel());
@@ -487,6 +488,9 @@ public class ArenaListener implements Listener {
             if (Main.plugin.getPlayerData().contains(player.getUniqueId() + ".health"))
                 player.setHealth(Main.plugin.getPlayerData().getDouble(player.getUniqueId() + ".health"));
             Main.plugin.getPlayerData().set(player.getUniqueId() + ".health", null);
+            if (Main.plugin.getPlayerData().contains(player.getUniqueId() + ".absorption"))
+                player.setAbsorptionAmount(Main.plugin.getPlayerData().getDouble(player.getUniqueId() + ".absorption"));
+            Main.plugin.getPlayerData().set(player.getUniqueId() + ".absorption", null);
             if (Main.plugin.getPlayerData().contains(player.getUniqueId() + ".food"))
                 player.setFoodLevel(Main.plugin.getPlayerData().getInt(player.getUniqueId() + ".food"));
             Main.plugin.getPlayerData().set(player.getUniqueId() + ".food", null);

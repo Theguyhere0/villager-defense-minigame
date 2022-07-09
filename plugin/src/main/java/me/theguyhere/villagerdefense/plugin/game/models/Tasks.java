@@ -495,7 +495,7 @@ public class Tasks {
 				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> arena.getActives().forEach(player ->
 						player.getPlayer().sendTitle(CommunicationManager.format(
 								"&6" + LanguageManager.messages.shopUpgrade),
-								"&7" + CommunicationManager.format(
+								CommunicationManager.format("&7" +
 										String.format(LanguageManager.messages.shopInfo, "10")),
 								Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5),
 								Utils.secondsToTicks(1))), Utils.secondsToTicks(4));

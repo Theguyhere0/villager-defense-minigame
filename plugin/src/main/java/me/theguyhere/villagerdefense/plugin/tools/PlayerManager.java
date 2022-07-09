@@ -52,6 +52,7 @@ public class PlayerManager {
         if (!maxHealth.getModifiers().isEmpty())
             maxHealth.getModifiers().forEach(maxHealth::removeModifier);
         player.setHealth(maxHealth.getValue());
+        player.setAbsorptionAmount(0);
         player.setFoodLevel(20);
         player.setSaturation(20);
         player.setExp(0);
