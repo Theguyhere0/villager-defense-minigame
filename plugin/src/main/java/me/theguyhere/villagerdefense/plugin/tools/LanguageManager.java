@@ -320,6 +320,7 @@ public class LanguageManager {
         public final @NotNull String noArena;
         public final @NotNull String noGameEnd;
         public final @NotNull String notInGame;
+        public final @NotNull String offWeapon;
         public final @NotNull String outdated;
         public final @NotNull String permission;
         public final @NotNull String phantomArena;
@@ -367,6 +368,7 @@ public class LanguageManager {
             noArena = getConfigString("noArena");
             noGameEnd = getConfigString("noGameEnd");
             notInGame = getConfigString("notInGame");
+            offWeapon = getConfigString("offWeapon");
             outdated = getConfigString("outdated");
             permission = getConfigString("permission");
             phantomArena = getConfigString("phantomArena");
@@ -614,12 +616,14 @@ public class LanguageManager {
         public final @NotNull String armor;
         public final @NotNull String attackCritDamage;
         public final @NotNull String attackMainDamage;
+        public final @NotNull String attackRangeDamage;
         public final @NotNull String attackSpeed;
         public final @NotNull String attackSweepDamage;
         public final @NotNull String attackType;
         public final @NotNull String available;
         public final @NotNull String axe;
         public final @NotNull String boots;
+        public final @NotNull String bow;
         public final @NotNull String challenges;
         public final @NotNull String chestplate;
         public final @NotNull String closed;
@@ -683,6 +687,7 @@ public class LanguageManager {
         public final @NotNull String offToggle;
         public final @NotNull String onToggle;
         public final @NotNull String oneMinuteWarning;
+        public final @NotNull String perBlock;
         public final @NotNull String playerKits;
         public final @NotNull String players;
         public final @NotNull String playerStatistics;
@@ -732,12 +737,14 @@ public class LanguageManager {
             armor = getConfigString("armor");
             attackCritDamage = getConfigString("attackCritDamage");
             attackMainDamage = getConfigString("attackMainDamage");
+            attackRangeDamage = getConfigString("attackRangeDamage");
             attackSpeed = getConfigString("attackSpeed");
             attackSweepDamage = getConfigString("attackSweepDamage");
             attackType = getConfigString("attackType");
             available = getConfigString("available");
             axe = getConfigString("axe");
             boots = getConfigString("boots");
+            bow = getConfigString("bow");
             challenges = getConfigString("challenges");
             chestplate = getConfigString("chestplate");
             closed = getConfigString("closed");
@@ -801,6 +808,7 @@ public class LanguageManager {
             offToggle = getConfigString("offToggle");
             onToggle = getConfigString("onToggle");
             oneMinuteWarning = getConfigString("oneMinuteWarning");
+            perBlock = getConfigString("perBlock");
             playerKits = getConfigString("playerKits");
             players = getConfigString("players");
             playerStatistics = getConfigString("playerStatistics");

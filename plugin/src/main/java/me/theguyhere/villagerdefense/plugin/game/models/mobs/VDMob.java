@@ -448,6 +448,8 @@ public abstract class VDMob {
                 return new VDPiglinSoldier(arena, ground);
             case VDVindicator.KEY:
                 return new VDVindicator(arena, ground);
+            case VDSkeleton.KEY:
+                return new VDSkeleton(arena, ground);
             case VDSpider.KEY:
                 return new VDSpider(arena, ground);
             default:

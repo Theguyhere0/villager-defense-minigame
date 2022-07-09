@@ -16,6 +16,8 @@ public class Utils {
     public static final String GEM = "\u2666";
     public static final String EXP = "\u2605";
     public static final String HP_BAR = "\u258c";
+    public static final String BLOCK = "\u25a0";
+    public static final String ARROW = "\u27b6";
 
     // Convert seconds to ticks
     public static int secondsToTicks(double seconds) {

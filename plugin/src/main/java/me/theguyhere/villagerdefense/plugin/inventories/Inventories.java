@@ -5,7 +5,7 @@ import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
+import me.theguyhere.villagerdefense.plugin.game.models.items.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
@@ -1404,13 +1404,20 @@ public class Inventories {
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 18, modifyPrice(scythes.get(i), modifier));
 
-		// Fill in range
-		List<ItemStack> ranges = new ArrayList<>();
+		// Fill in bows
+		List<ItemStack> bows = new ArrayList<>();
+		for (int i = 0; i < 4; i++) {
+			ItemStack bow = GameItems.bow(arena.getCurrentDifficulty());
+			if (level < 3)
+				bows.add(GameItems.levelPlaceholder(3));
+			else if (bows.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
+					.equals(Objects.requireNonNull(bow.getItemMeta()).getDisplayName())))
+				bows.add(bow);
+			else scythes.add(GameItems.duplicatePlaceholder());
+		}
+		sort(bows);
 		for (int i = 0; i < 4; i++)
-			ranges.add(GameItems.randRange(level));
-		sort(ranges);
-		for (int i = 0; i < 4; i++)
-			inv.setItem(i + 5, modifyPrice(ranges.get(i), modifier));
+			inv.setItem(i + 5, modifyPrice(bows.get(i), modifier));
 
 		// Fill in ammo
 		List<ItemStack> ammo = new ArrayList<>();

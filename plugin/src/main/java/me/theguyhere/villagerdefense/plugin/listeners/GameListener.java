@@ -10,10 +10,12 @@ import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.VDMobNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
+import me.theguyhere.villagerdefense.plugin.game.models.items.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
+import me.theguyhere.villagerdefense.plugin.game.models.items.ProjectileMetaData;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.game.models.players.AttackClass;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
@@ -32,6 +34,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.BoundingBox;
 
 import java.util.Arrays;
@@ -131,12 +134,56 @@ public class GameListener implements Listener {
 			e.setCancelled(true);
 	}
 
+	// Manage projectiles being fired
+	@EventHandler
+	public void onProjectileLaunch(ProjectileLaunchEvent e) {
+		Projectile projectile = e.getEntity();
+		Entity source = (Entity) projectile.getShooter();
+		if (!(source instanceof LivingEntity))
+			return;
+		LivingEntity shooter = (LivingEntity) source;
+		Arena arena;
+		VDMob finalShooter;
+
+		// Player shot
+		if (shooter instanceof Player) {
+			Player player = (Player) shooter;
+			VDPlayer gamer;
+
+			// Attempt to get VDPlayer and VDMob
+			try {
+				arena = GameManager.getArena(player);
+				gamer = arena.getPlayer(player);
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+				return;
+			}
+
+			// Check for arrow
+			if (!(projectile instanceof Arrow))
+				return;
+
+			// Encode damage information
+			projectile.setMetadata(ProjectileMetaData.DAMAGE.name(),
+					new FixedMetadataValue(Main.plugin, gamer.dealRawDamage(AttackClass.RANGE, 0)));
+			projectile.setMetadata(ProjectileMetaData.PER_BLOCK.name(),
+					new FixedMetadataValue(Main.plugin, true));
+			projectile.setMetadata(ProjectileMetaData.ORIGIN_LOCATION.name(),
+					new FixedMetadataValue(Main.plugin, player.getLocation()));
+
+			// Don't allow pickup
+			((Arrow) projectile).setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
+		}
+
+		// Mob shot
+		// TODO
+	}
+
 	// Update health when damage is dealt by entity
 	@EventHandler
 	public void onHurt(EntityDamageByEntityEvent e) {
+		boolean projectile = e.getDamager() instanceof Projectile;
 		Entity interimVictim = e.getEntity();
-		Entity interimDamager = e.getDamager() instanceof Projectile ?
-				(Entity) ((Projectile) e.getDamager()).getShooter() : e.getDamager();
+		Entity interimDamager = projectile ? (Entity) ((Projectile) e.getDamager()).getShooter() : e.getDamager();
 		if (!(interimVictim instanceof LivingEntity))
 			return;
 		if (!(interimDamager instanceof LivingEntity))
@@ -175,15 +222,16 @@ public class GameListener implements Listener {
 				return;
 			}
 
-			// Make sure fast attacks only apply when mobs are close
-			if (damager.getLocation().distance(victim.getLocation()) > 1.75) {
-				e.setCancelled(true);
-				return;
-			}
+			if (e.getCause() == EntityDamageEvent.DamageCause.CUSTOM) {
+				// Make sure fast attacks only apply when mobs are close
+				if (damager.getLocation().distance(victim.getLocation()) > 1.75) {
+					e.setCancelled(true);
+					return;
+				}
 
-			// Make hurt sound if custom
-			if (e.getCause() == EntityDamageEvent.DamageCause.CUSTOM)
+				// Make hurt sound if custom
 				player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_HURT, 1, 1);
+			}
 
 			// Implement faster attacks
 			if (finalDamager.getAttackSpeed() == .4 && e.getCause() != EntityDamageEvent.DamageCause.CUSTOM)
@@ -208,9 +256,6 @@ public class GameListener implements Listener {
 			// Check for player damager, then get player
 			if (damager instanceof Player)
 				player = (Player) damager;
-			else if (damager instanceof Projectile &&
-					((Projectile) damager).getShooter() instanceof Player)
-				player = (Player) ((Projectile) damager).getShooter();
 
 			// Attempt to get VDPlayer and VDMobs
 			if (player != null) {
@@ -249,6 +294,23 @@ public class GameListener implements Listener {
 				// Damage dealt by player
 				if (gamer != null) {
 					AttackClass attackClass;
+
+					// Range damage
+					if (projectile) {
+						if (e.getDamager().getMetadata(ProjectileMetaData.PER_BLOCK.name()).get(0).asBoolean())
+							finalVictim.takeDamage(
+									(int) (e.getDamager().getMetadata(ProjectileMetaData.DAMAGE.name())
+											.get(0).asInt()
+											* victim.getLocation().distance((Location)
+											Objects.requireNonNull(e.getDamager().getMetadata(
+													ProjectileMetaData.ORIGIN_LOCATION.name()).get(0).value())))
+											+ gamer.getBaseDamage(),
+									AttackType.NORMAL,
+									player,
+									arena
+							);
+						return;
+					}
 
 					// Crit damage
 					if (damage > 1)
@@ -361,6 +423,34 @@ public class GameListener implements Listener {
 		e.setCancelled(true);
 	}
 
+	// Prevent using certain item slots
+	@EventHandler
+	public void onIllegalEquip(PlayerMoveEvent e) {
+		Player player = e.getPlayer();
+		Arena arena;
+
+		// Attempt to get arena
+		try {
+			arena = GameManager.getArena(player);
+		} catch (ArenaNotFoundException err) {
+			return;
+		}
+
+		// Ignore arenas that aren't started
+		if (arena.getStatus() != ArenaStatus.ACTIVE)
+			return;
+
+		// Get off hand
+		ItemStack off = player.getInventory().getItemInOffHand();
+
+		// Unequip weapons in off-hand
+		if (Arrays.stream(GameItems.WEAPON_MATERIALS).anyMatch(mat -> off.getType() == mat)) {
+			PlayerManager.giveItem(player, off, LanguageManager.errors.inventoryFull);
+			player.getInventory().setItemInOffHand(null);
+			PlayerManager.notifyFailure(player, LanguageManager.errors.offWeapon);
+		}
+	}
+
 	// Handle player level up
 	@EventHandler
 	public void onLevelUp(PlayerLevelChangeEvent e) {
@@ -394,14 +484,11 @@ public class GameListener implements Listener {
 	@EventHandler
 	public void onHunger(FoodLevelChangeEvent e) {
 		Player player = (Player) e.getEntity();
-		Arena arena;
-		VDPlayer gamer;
 
-		// Attempt to get arena and player
+		// Check for player in arena
 		try {
-			arena = GameManager.getArena(player);
-			gamer = arena.getPlayer(player);
-		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+			GameManager.getArena(player);
+		} catch (ArenaNotFoundException err) {
 			return;
 		}
 
@@ -529,6 +616,7 @@ public class GameListener implements Listener {
 	}
 
 	// Stops players from hurting villagers and other players, and monsters from hurting each other
+	// TODO: check if this is still needed
 	@EventHandler
 	public void onFriendlyFire(EntityDamageByEntityEvent e) {
 		Entity ent = e.getEntity();

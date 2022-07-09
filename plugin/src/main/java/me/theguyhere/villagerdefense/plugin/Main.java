@@ -6,7 +6,7 @@ import me.theguyhere.villagerdefense.nms.common.NMSManager;
 import me.theguyhere.villagerdefense.plugin.commands.CommandTab;
 import me.theguyhere.villagerdefense.plugin.commands.Commands;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLanguageKeyException;
-import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
+import me.theguyhere.villagerdefense.plugin.game.models.items.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.listeners.*;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;

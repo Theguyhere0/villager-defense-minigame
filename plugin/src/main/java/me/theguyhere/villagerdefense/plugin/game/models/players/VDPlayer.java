@@ -6,7 +6,7 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
+import me.theguyhere.villagerdefense.plugin.game.models.items.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
@@ -209,7 +209,9 @@ public class VDPlayer {
 
     public void showStats() {
         AtomicBoolean penetrating = new AtomicBoolean(false);
-        String damage = Integer.toString(this.baseDamage);
+        AtomicBoolean range = new AtomicBoolean(false);
+        AtomicBoolean perBlock = new AtomicBoolean(false);
+        String damage = Integer.toString(baseDamage);
 
         // Calculate stats
         try {
@@ -228,7 +230,8 @@ public class VDPlayer {
                     } else damageValues.add(Integer.valueOf(lore.substring(2 +
                                     LanguageManager.messages.attackMainDamage.length())
                             .replace(ChatColor.BLUE.toString(), "")));
-                } else if (lore.contains(LanguageManager.messages.attackCritDamage
+                }
+                else if (lore.contains(LanguageManager.messages.attackCritDamage
                         .replace("%s", ""))) {
                     if (lore.contains("-")) {
                         String[] split = lore.substring(2 +
@@ -239,7 +242,8 @@ public class VDPlayer {
                     } else damageValues.add(Integer.valueOf(lore.substring(2 +
                                     LanguageManager.messages.attackCritDamage.length())
                             .replace(ChatColor.BLUE.toString(), "")));
-                } else if (lore.contains(LanguageManager.messages.attackSweepDamage
+                }
+                else if (lore.contains(LanguageManager.messages.attackSweepDamage
                         .replace("%s", ""))) {
                     if (lore.contains("-")) {
                         String[] split = lore.substring(2 +
@@ -250,14 +254,31 @@ public class VDPlayer {
                     } else damageValues.add(Integer.valueOf(lore.substring(2 +
                                     LanguageManager.messages.attackSweepDamage.length())
                             .replace(ChatColor.BLUE.toString(), "")));
-                } else if (lore.contains(LanguageManager.names.penetrating.replace("%s", "")))
+                }
+                else if (lore.contains(LanguageManager.messages.attackRangeDamage
+                        .replace("%s", ""))) {
+                    range.set(true);
+                    String perBlockText = LanguageManager.messages.perBlock.replace("%s", "");
+                    if (lore.contains(perBlockText))
+                        perBlock.set(true);
+                    if (lore.contains("-")) {
+                        String[] split = lore.substring(2 + LanguageManager.messages.attackRangeDamage.length())
+                                .replace(perBlockText, "")
+                                .split("-");
+                        damageValues.add(Integer.valueOf(split[0]));
+                        damageValues.add(Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
+                    } else damageValues.add(Integer.valueOf(lore.substring(2 +
+                                    LanguageManager.messages.attackRangeDamage.length())
+                            .replace(ChatColor.BLUE.toString(), "")));
+                }
+                else if (lore.contains(LanguageManager.names.penetrating.replace("%s", "")))
                     penetrating.set(true);
             });
             damageValues.sort(Comparator.comparingInt(Integer::intValue));
             if (damageValues.size() == 1)
-                damage = Integer.toString(damageValues.get(0) + this.baseDamage);
-            else damage = (damageValues.get(0) + this.baseDamage) + "-" +
-                    (damageValues.get(damageValues.size() - 1) + this.baseDamage);
+                damage = Integer.toString(damageValues.get(0) + (perBlock.get() ? 0 : baseDamage));
+            else damage = (damageValues.get(0) + (perBlock.get() ? 0 : baseDamage)) + "-" +
+                    (damageValues.get(damageValues.size() - 1) + (perBlock.get() ? 0 : baseDamage));
         } catch (Exception ignored) {
         }
 
@@ -268,7 +289,8 @@ public class VDPlayer {
                         new ColoredMessage(ChatColor.AQUA, Utils.ARMOR + " " + armor) + "    " +
                         new ColoredMessage(ChatColor.DARK_AQUA, Utils.TOUGH + " " + toughness + "%") + "    " +
                         new ColoredMessage(penetrating.get() ? ChatColor.YELLOW : ChatColor.GREEN,
-                                Utils.DAMAGE + " " + damage)));
+                                (range.get() ? Utils.ARROW : Utils.DAMAGE) + " " + damage +
+                                        (perBlock.get() ? " /" + Utils.BLOCK + " +" + baseDamage : ""))));
 
         // Update normal health display
         getPlayer().setHealth(Math.max(currentHealth *
@@ -558,6 +580,20 @@ public class VDPlayer {
                                     LanguageManager.messages.attackSweepDamage.length())
                             .replace(ChatColor.BLUE.toString(), "")));
                 }
+                else if (lore.contains(LanguageManager.messages.attackRangeDamage
+                        .replace("%s", ""))) {
+                    String perBlockText = LanguageManager.messages.perBlock.replace("%s", "");
+                    if (lore.contains("-")) {
+                        String[] split = lore.substring(2 + LanguageManager.messages.attackRangeDamage.length())
+                                .replace(perBlockText, "")
+                                .split("-");
+                        attributes.put("rangeLow", Integer.valueOf(split[0]));
+                        attributes.put("rangeHigh", Integer.valueOf(split[1]
+                                .replace(ChatColor.BLUE.toString(), "")));
+                    } else attributes.put("range", Integer.valueOf(lore.substring(2 +
+                                    LanguageManager.messages.attackRangeDamage.length())
+                            .replace(ChatColor.BLUE.toString(), "")));
+                }
             });
 
             // Deal raw damage
@@ -577,6 +613,11 @@ public class VDPlayer {
                         return baseDamage + attributes.get("sweep");
                     else return baseDamage + attributes.get("sweepLow") +
                             r.nextInt(attributes.get("sweepHigh") - attributes.get("sweepLow"));
+                case RANGE:
+                    if (attributes.containsKey("range"))
+                        return attributes.get("range");
+                    else return attributes.get("rangeLow") +
+                            r.nextInt(attributes.get("rangeHigh") - attributes.get("rangeLow"));
                 default:
                     return 0;
             }

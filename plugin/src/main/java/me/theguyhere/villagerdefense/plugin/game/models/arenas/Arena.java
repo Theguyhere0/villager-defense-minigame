@@ -9,7 +9,7 @@ import me.theguyhere.villagerdefense.plugin.exceptions.*;
 import me.theguyhere.villagerdefense.plugin.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
+import me.theguyhere.villagerdefense.plugin.game.models.items.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
@@ -1730,6 +1730,8 @@ public class Arena {
 
             // Give all players starting items and set up attributes
             player.giveItems();
+            PlayerManager.giveItem(player.getPlayer(), GameItems.bow(1), "");
+            PlayerManager.giveItem(player.getPlayer(), GameItems.arrows(), "");
             player.setupAttributes();
 
             // Give Traders their gems
