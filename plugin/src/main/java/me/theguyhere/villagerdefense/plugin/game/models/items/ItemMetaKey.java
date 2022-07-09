@@ -1,7 +1,9 @@
 package me.theguyhere.villagerdefense.plugin.game.models.items;
 
-public enum ProjectileMetaData {
+public enum ItemMetaKey {
     DAMAGE,
     PER_BLOCK,
-    ORIGIN_LOCATION
+    ORIGIN_LOCATION,
+    ATTACK_SPEED,
+    DUMMY
 }

@@ -1,8 +1,10 @@
 package me.theguyhere.villagerdefense.plugin.inventories;
 
+import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -77,5 +79,17 @@ public class Buttons {
     @NotNull
     public static ItemStack nextPage() {
         return ItemManager.createItem(Material.FEATHER, CommunicationManager.format("&d&lNext Page"));
+    }
+
+    // Placeholders
+    public static @NotNull ItemStack levelPlaceholder(int level) {
+        return ItemManager.createItem(Material.GUNPOWDER, CommunicationManager.format(
+                new ColoredMessage(ChatColor.GRAY, LanguageManager.messages.levelPlaceholder),
+                Integer.toString(level)), ItemManager.BUTTON_FLAGS, null);
+    }
+    public static @NotNull ItemStack duplicatePlaceholder() {
+        return ItemManager.createItem(Material.GUNPOWDER,
+                new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.duplicatePlaceholder).toString(),
+                ItemManager.BUTTON_FLAGS, null);
     }
 }

@@ -5,8 +5,8 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.nms.common.PacketGroup;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.game.models.items.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
+import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.*;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import org.bukkit.*;
@@ -160,8 +160,8 @@ public class PlayerManager {
         String path = player.getPlayer().getUniqueId() + ".achievements";
         List<ItemStack> choiceItems = new ArrayList<>();
 
-        choiceItems.add(GameItems.kitSelector());
-        choiceItems.add(GameItems.challengeSelector());
+        choiceItems.add(KitSelector.create());
+        choiceItems.add(ChallengeSelector.create());
 
         if (playerData.contains(path)) {
             if (playerData.getStringList(path).contains(Achievement.topKills9().getID()) ||
@@ -170,16 +170,16 @@ public class PlayerManager {
                     playerData.getStringList(path).contains(Achievement.topBalance9().getID()) ||
                     playerData.getStringList(path).contains(Achievement.allChallenges().getID()) ||
                     playerData.getStringList(path).contains(Achievement.allMaxedAbility().getID()))
-                choiceItems.add(GameItems.boostToggle(player.isBoosted()));
+                choiceItems.add(BoostToggle.create(player.isBoosted()));
 
             if (playerData.getStringList(path).contains(Achievement.allEffect().getID()))
-                choiceItems.add(GameItems.shareToggle(player.isSharing()));
+                choiceItems.add(ShareToggle.create(player.isSharing()));
 
             if (playerData.getStringList(path).contains(Achievement.totalGems9().getID()))
-                choiceItems.add(GameItems.crystalConverter());
+                choiceItems.add(CrystalConverter.create());
         }
 
-        choiceItems.add(GameItems.leave());
+        choiceItems.add(Leave.create());
 
         if (choiceItems.size() == 3) {
             giveItemConditional(2, choiceItems.get(0), player.getPlayer());

@@ -5,10 +5,15 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.game.models.items.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.*;
+import me.theguyhere.villagerdefense.plugin.game.models.items.armor.VDArmor;
+import me.theguyhere.villagerdefense.plugin.game.models.items.eggs.VDEgg;
+import me.theguyhere.villagerdefense.plugin.game.models.items.food.VDFood;
+import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.Shop;
+import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.VDWeapon;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
@@ -64,11 +69,8 @@ public class AbilityListener implements Listener {
         ItemStack main = player.getInventory().getItemInMainHand();
 
         // Avoid accidental usage when holding food, shop, ranged weapons, potions, or care packages
-        if (GameItems.shop().equals(main) ||
-                Arrays.stream(GameItems.FOOD_MATERIALS).anyMatch(m -> m == main.getType()) ||
-                Arrays.stream(GameItems.ARMOR_MATERIALS).anyMatch(m -> m == main.getType()) ||
-                Arrays.stream(GameItems.CLICKABLE_WEAPON_MATERIALS).anyMatch(m -> m == main.getType()) ||
-                Arrays.stream(GameItems.CLICKABLE_CONSUME_MATERIALS).anyMatch(m -> m == main.getType()))
+        if (Shop.matches(main) || VDFood.matches(main) || VDArmor.matches(main) ||
+                VDWeapon.matchesClickableWeapon(main) || VDEgg.matches(main))
             return;
 
         // Ensure cooldown is initialized
@@ -97,7 +99,7 @@ public class AbilityListener implements Listener {
         long dif = cooldowns.get(gamer) - System.currentTimeMillis();
 
         // Mage
-        if (Kit.mage().getID().equals(gamer.getKit().getID()) && GameItems.mage().equals(item)) {
+        if (Kit.mage().getID().equals(gamer.getKit().getID()) && MageAbility.matches(item)) {
             // Perform checks
             if (checkLevel(level1, player))
                 return;
@@ -120,7 +122,7 @@ public class AbilityListener implements Listener {
         }
 
         // Ninja
-        if (Kit.ninja().getID().equals(gamer.getKit().getID()) && GameItems.ninja().equals(item)) {
+        if (Kit.ninja().getID().equals(gamer.getKit().getID()) && NinjaAbility.matches(item)) {
             // Perform checks
             if (checkLevel(level1, player))
                 return;
@@ -150,7 +152,7 @@ public class AbilityListener implements Listener {
         }
 
         // Templar
-        if (Kit.templar().getID().equals(gamer.getKit().getID()) && GameItems.templar().equals(item)) {
+        if (Kit.templar().getID().equals(gamer.getKit().getID()) && TemplarAbility.matches(item)) {
             // Perform checks
             if (checkLevel(level1, player))
                 return;
@@ -194,7 +196,7 @@ public class AbilityListener implements Listener {
         }
 
         // Warrior
-        if (Kit.warrior().getID().equals(gamer.getKit().getID()) && GameItems.warrior().equals(item)) {
+        if (Kit.warrior().getID().equals(gamer.getKit().getID()) && WarriorAbility.matches(item)) {
             // Perform checks
             if (checkLevel(level1, player))
                 return;
@@ -238,7 +240,7 @@ public class AbilityListener implements Listener {
         }
 
         // Knight
-        if (Kit.knight().getID().equals(gamer.getKit().getID()) && GameItems.knight().equals(item)) {
+        if (Kit.knight().getID().equals(gamer.getKit().getID()) && KnightAbility.matches(item)) {
             // Perform checks
             if (checkLevel(level1, player))
                 return;
@@ -282,7 +284,7 @@ public class AbilityListener implements Listener {
         }
 
         // Priest
-        if (Kit.priest().getID().equals(gamer.getKit().getID()) && GameItems.priest().equals(item)) {
+        if (Kit.priest().getID().equals(gamer.getKit().getID()) && PriestAbility.matches(item)) {
             // Perform checks
             if (checkLevel(level1, player))
                 return;
@@ -326,7 +328,7 @@ public class AbilityListener implements Listener {
         }
 
         // Siren
-        if (Kit.siren().getID().equals(gamer.getKit().getID()) && GameItems.siren().equals(item)) {
+        if (Kit.siren().getID().equals(gamer.getKit().getID()) && SirenAbility.matches(item)) {
             // Perform checks
             if (checkLevel(level1, player))
                 return;
@@ -373,7 +375,7 @@ public class AbilityListener implements Listener {
         }
 
         // Monk
-        if (Kit.monk().getID().equals(gamer.getKit().getID()) && GameItems.monk().equals(item)) {
+        if (Kit.monk().getID().equals(gamer.getKit().getID()) && MonkAbility.matches(item)) {
             // Perform checks
             if (checkLevel(level1, player))
                 return;
@@ -417,7 +419,7 @@ public class AbilityListener implements Listener {
         }
 
         // Messenger
-        if (Kit.messenger().getID().equals(gamer.getKit().getID()) && GameItems.messenger().equals(item)) {
+        if (Kit.messenger().getID().equals(gamer.getKit().getID()) && MessengerAbility.matches(item)) {
             // Perform checks
             if (checkLevel(level1, player))
                 return;
@@ -462,7 +464,7 @@ public class AbilityListener implements Listener {
 
         if (gamer.getKit2() != null) {
             // Mage
-            if (Kit.mage().nameCompare(gamer.getKit2()) && GameItems.mage().equals(item)) {
+            if (Kit.mage().nameCompare(gamer.getKit2()) && MageAbility.matches(item)) {
                 // Perform checks
                 if (checkLevel(level2, player))
                     return;
@@ -485,7 +487,7 @@ public class AbilityListener implements Listener {
             }
 
             // Ninja
-            if (Kit.ninja().nameCompare(gamer.getKit2()) && GameItems.ninja().equals(item)) {
+            if (Kit.ninja().nameCompare(gamer.getKit2()) && NinjaAbility.matches(item)) {
                 // Perform checks
                 if (checkLevel(level2, player))
                     return;
@@ -515,7 +517,7 @@ public class AbilityListener implements Listener {
             }
 
             // Templar
-            if (Kit.templar().nameCompare(gamer.getKit2()) && GameItems.templar().equals(item)) {
+            if (Kit.templar().nameCompare(gamer.getKit2()) && TemplarAbility.matches(item)) {
                 // Perform checks
                 if (checkLevel(level2, player))
                     return;
@@ -557,7 +559,7 @@ public class AbilityListener implements Listener {
             }
 
             // Warrior
-            if (Kit.warrior().nameCompare(gamer.getKit2()) && GameItems.warrior().equals(item)) {
+            if (Kit.warrior().nameCompare(gamer.getKit2()) && WarriorAbility.matches(item)) {
                 // Perform checks
                 if (checkLevel(level2, player))
                     return;
@@ -599,7 +601,7 @@ public class AbilityListener implements Listener {
             }
 
             // Knight
-            if (Kit.knight().nameCompare(gamer.getKit2()) && GameItems.knight().equals(item)) {
+            if (Kit.knight().nameCompare(gamer.getKit2()) && KnightAbility.matches(item)) {
                 // Perform checks
                 if (checkLevel(level2, player))
                     return;
@@ -641,7 +643,7 @@ public class AbilityListener implements Listener {
             }
 
             // Priest
-            if (Kit.priest().nameCompare(gamer.getKit2()) && GameItems.priest().equals(item)) {
+            if (Kit.priest().nameCompare(gamer.getKit2()) && PriestAbility.matches(item)) {
                 // Perform checks
                 if (checkLevel(level2, player))
                     return;
@@ -683,7 +685,7 @@ public class AbilityListener implements Listener {
             }
 
             // Siren
-            if (Kit.siren().nameCompare(gamer.getKit2()) && GameItems.siren().equals(item)) {
+            if (Kit.siren().nameCompare(gamer.getKit2()) && SirenAbility.matches(item)) {
                 // Perform checks
                 if (checkLevel(level2, player))
                     return;
@@ -728,7 +730,7 @@ public class AbilityListener implements Listener {
             }
 
             // Monk
-            if (Kit.monk().nameCompare(gamer.getKit2()) && GameItems.monk().equals(item)) {
+            if (Kit.monk().nameCompare(gamer.getKit2()) && MonkAbility.matches(item)) {
                 // Perform checks
                 if (checkLevel(level2, player))
                     return;
@@ -770,7 +772,7 @@ public class AbilityListener implements Listener {
             }
 
             // Messenger
-            if (Kit.messenger().nameCompare(gamer.getKit2()) && GameItems.messenger().equals(item)) {
+            if (Kit.messenger().nameCompare(gamer.getKit2()) && MessengerAbility.matches(item)) {
                 // Perform checks
                 if (checkLevel(level2, player))
                     return;

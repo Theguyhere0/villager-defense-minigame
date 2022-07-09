@@ -25,6 +25,12 @@ public class ItemManager {
     /** Flags for creating items with hidden enchants and attributes, mostly for buttons.*/
     public static final boolean[] BUTTON_FLAGS = {true, true};
 
+    public static HashMap<Enchantment, Integer> dummyEnchant() {
+        HashMap<Enchantment, Integer> enchants = new HashMap<>();
+        enchants.put(Enchantment.DURABILITY, 1);
+        return enchants;
+    }
+
     // Creates an ItemStack using only material, name, and lore
     @NotNull
     public static ItemStack createItem(Material matID, String dispName, String... lores) {

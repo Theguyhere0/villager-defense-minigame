@@ -10,11 +10,16 @@ import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.VDMobNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.models.items.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
-import me.theguyhere.villagerdefense.plugin.game.models.items.ProjectileMetaData;
+import me.theguyhere.villagerdefense.plugin.game.models.items.ItemMetaKey;
+import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.VDAbility;
+import me.theguyhere.villagerdefense.plugin.game.models.items.armor.VDArmor;
+import me.theguyhere.villagerdefense.plugin.game.models.items.eggs.VDEgg;
+import me.theguyhere.villagerdefense.plugin.game.models.items.food.VDFood;
+import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.*;
+import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.VDWeapon;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.game.models.players.AttackClass;
@@ -37,7 +42,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.BoundingBox;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -163,11 +167,11 @@ public class GameListener implements Listener {
 				return;
 
 			// Encode damage information
-			projectile.setMetadata(ProjectileMetaData.DAMAGE.name(),
+			projectile.setMetadata(ItemMetaKey.DAMAGE.name(),
 					new FixedMetadataValue(Main.plugin, gamer.dealRawDamage(AttackClass.RANGE, 0)));
-			projectile.setMetadata(ProjectileMetaData.PER_BLOCK.name(),
+			projectile.setMetadata(ItemMetaKey.PER_BLOCK.name(),
 					new FixedMetadataValue(Main.plugin, true));
-			projectile.setMetadata(ProjectileMetaData.ORIGIN_LOCATION.name(),
+			projectile.setMetadata(ItemMetaKey.ORIGIN_LOCATION.name(),
 					new FixedMetadataValue(Main.plugin, player.getLocation()));
 
 			// Don't allow pickup
@@ -297,13 +301,13 @@ public class GameListener implements Listener {
 
 					// Range damage
 					if (projectile) {
-						if (e.getDamager().getMetadata(ProjectileMetaData.PER_BLOCK.name()).get(0).asBoolean())
+						if (e.getDamager().getMetadata(ItemMetaKey.PER_BLOCK.name()).get(0).asBoolean())
 							finalVictim.takeDamage(
-									(int) (e.getDamager().getMetadata(ProjectileMetaData.DAMAGE.name())
+									(int) (e.getDamager().getMetadata(ItemMetaKey.DAMAGE.name())
 											.get(0).asInt()
 											* victim.getLocation().distance((Location)
 											Objects.requireNonNull(e.getDamager().getMetadata(
-													ProjectileMetaData.ORIGIN_LOCATION.name()).get(0).value())))
+													ItemMetaKey.ORIGIN_LOCATION.name()).get(0).value())))
 											+ gamer.getBaseDamage(),
 									AttackType.NORMAL,
 									player,
@@ -444,7 +448,7 @@ public class GameListener implements Listener {
 		ItemStack off = player.getInventory().getItemInOffHand();
 
 		// Unequip weapons in off-hand
-		if (Arrays.stream(GameItems.WEAPON_MATERIALS).anyMatch(mat -> off.getType() == mat)) {
+		if (VDWeapon.matchesNoAmmo(off)) {
 			PlayerManager.giveItem(player, off, LanguageManager.errors.inventoryFull);
 			player.getInventory().setItemInOffHand(null);
 			PlayerManager.notifyFailure(player, LanguageManager.errors.offWeapon);
@@ -566,45 +570,42 @@ public class GameListener implements Listener {
 			item = Objects.requireNonNull(player.getEquipment()).getItemInOffHand();
 
 			// Check for other clickables in main hand
-			if (Arrays.asList(GameItems.ABILITY_ITEMS).contains(item) ||
-					Arrays.asList(GameItems.FOOD_MATERIALS).contains(item.getType()) ||
-					Arrays.asList(GameItems.ARMOR_MATERIALS).contains(item.getType()) ||
-					Arrays.asList(GameItems.CLICKABLE_WEAPON_MATERIALS).contains(item.getType()) ||
-					Arrays.asList(GameItems.CLICKABLE_CONSUME_MATERIALS).contains(item.getType()))
+			if (VDAbility.matches(item) || VDFood.matches(item) || VDArmor.matches(item) ||
+					VDWeapon.matchesClickableWeapon(item) || VDEgg.matches(item))
 				return;
 		}
 		else item = Objects.requireNonNull(player.getEquipment()).getItemInMainHand();
 
 		// Open shop inventory
-		if (GameItems.shop().equals(item))
+		if (Shop.matches(item))
 			player.openInventory(Inventories.createShopMenu(arena.getCurrentWave() / 10 + 1, arena));
 
 		// Open kit selection menu
-		else if (GameItems.kitSelector().equals(item))
+		else if (KitSelector.matches(item))
 			player.openInventory(Inventories.createSelectKitsMenu(player, arena));
 
 		// Open challenge selection menu
-		else if (GameItems.challengeSelector().equals(item))
+		else if (ChallengeSelector.matches(item))
 			player.openInventory(Inventories.createSelectChallengesMenu(gamer, arena));
 
 		// Toggle boost
-		else if (GameItems.boostToggle(true).equals(item) || GameItems.boostToggle(false).equals(item)) {
+		else if (BoostToggle.matches(item)) {
 			gamer.toggleBoost();
 			PlayerManager.giveChoiceItems(gamer);
 		}
 
 		// Toggle share
-		else if (GameItems.shareToggle(true).equals(item) || GameItems.shareToggle(false).equals(item)) {
+		else if (ShareToggle.matches(item)) {
 			gamer.toggleShare();
 			PlayerManager.giveChoiceItems(gamer);
 		}
 
 		// Open crystal convert menu
-		else if (GameItems.crystalConverter().equals(item))
+		else if (CrystalConverter.matches(item))
 			player.openInventory(Inventories.createCrystalConvertMenu(gamer));
 
 		// Make player leave
-		else if (GameItems.leave().equals(item))
+		else if (Leave.matches(item))
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 					Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player)));
 
@@ -815,11 +816,8 @@ public class GameListener implements Listener {
 
 		// Avoid false consume
 		if (e.getHand() == EquipmentSlot.OFF_HAND &&
-				(main.equals(GameItems.shop()) || Arrays.asList(GameItems.ABILITY_ITEMS).contains(main) ||
-						Arrays.stream(GameItems.FOOD_MATERIALS).anyMatch(m -> m == main.getType()) ||
-						Arrays.stream(GameItems.ARMOR_MATERIALS).anyMatch(m -> m == main.getType()) ||
-						Arrays.stream(GameItems.CLICKABLE_WEAPON_MATERIALS).anyMatch(m -> m == main.getType()) ||
-						Arrays.stream(GameItems.CLICKABLE_CONSUME_MATERIALS).anyMatch(m -> m == main.getType())))
+				(Shop.matches(main) || VDAbility.matches(main) || VDFood.matches(main) || VDArmor.matches(main) ||
+						VDWeapon.matchesClickableWeapon(main) || VDEgg.matches(main)))
 			return;
 
 		// Give health
@@ -1048,15 +1046,13 @@ public class GameListener implements Listener {
 	@EventHandler
 	public void onItemDrop(PlayerDropItemEvent e) {
 		Player player = e.getPlayer();
-		ItemStack item = e.getItemDrop().getItemStack();
 
 		// Check if player is in an arena
 		if (!GameManager.checkPlayer(player))
 			return;
 
-		// Check for standard game items item
-		if (item.equals(GameItems.shop()) || item.equals(GameItems.kitSelector()) || item.equals(GameItems.leave()) ||
-				item.equals(GameItems.challengeSelector()))
+		// Check for menu items
+		if (VDMenuItem.matches(e.getItemDrop().getItemStack()))
 			e.setCancelled(true);
 	}
 
@@ -1075,11 +1071,8 @@ public class GameListener implements Listener {
 			return;
 
 		// Avoid false consume
-		if (main.equals(GameItems.shop()) || Arrays.asList(GameItems.ABILITY_ITEMS).contains(main) ||
-				Arrays.stream(GameItems.FOOD_MATERIALS).anyMatch(m -> m == main.getType()) ||
-				Arrays.stream(GameItems.ARMOR_MATERIALS).anyMatch(m -> m == main.getType()) ||
-				Arrays.stream(GameItems.CLICKABLE_WEAPON_MATERIALS).anyMatch(m -> m == main.getType()) ||
-				Arrays.stream(GameItems.CLICKABLE_CONSUME_MATERIALS).anyMatch(m -> m == main.getType()))
+		if (Shop.matches(main) || VDAbility.matches(main) || VDFood.matches(main) || VDArmor.matches(main) ||
+				VDWeapon.matchesClickableWeapon(main) || VDEgg.matches(main))
 			e.setCancelled(true);
 	}
 

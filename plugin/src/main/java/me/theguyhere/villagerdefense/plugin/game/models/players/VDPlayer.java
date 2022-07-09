@@ -6,9 +6,9 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.models.items.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.Shop;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
@@ -168,7 +168,7 @@ public class VDPlayer {
 
                 // Drop all items and clear inventory
                 getPlayer().getInventory().forEach(itemStack -> {
-                    if (itemStack != null && !itemStack.equals(GameItems.shop()))
+                    if (itemStack != null && !Shop.matches(itemStack))
                         getPlayer().getWorld().dropItemNaturally(getPlayer().getLocation(), itemStack);
                 });
                 getPlayer().getInventory().clear();
@@ -797,7 +797,7 @@ public class VDPlayer {
                     equipment.setBoots(item);
                 else PlayerManager.giveItem(getPlayer(), item, LanguageManager.errors.inventoryFull);
             }
-        PlayerManager.giveItem(getPlayer(), GameItems.shop(), LanguageManager.errors.inventoryFull);
+        PlayerManager.giveItem(getPlayer(), Shop.create(), LanguageManager.errors.inventoryFull);
     }
 
     /**

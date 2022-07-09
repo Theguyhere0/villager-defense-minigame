@@ -5,10 +5,18 @@ import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.models.items.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Boots;
+import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Chestplate;
+import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Helmet;
+import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Leggings;
+import me.theguyhere.villagerdefense.plugin.game.models.items.food.*;
+import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Axe;
+import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Bow;
+import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Scythe;
+import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Sword;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.*;
@@ -1364,11 +1372,11 @@ public class Inventories {
 		// Fill in swords
 		List<ItemStack> swords = new ArrayList<>();
 		for (int i = 0; i < 4; i++) {
-			ItemStack sword = GameItems.sword(arena.getCurrentDifficulty());
+			ItemStack sword = Sword.create(arena.getCurrentDifficulty());
 			if (swords.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
 					.equals(Objects.requireNonNull(sword.getItemMeta()).getDisplayName())))
 				swords.add(sword);
-			else swords.add(GameItems.duplicatePlaceholder());
+			else swords.add(Buttons.duplicatePlaceholder());
 		}
 		sort(swords);
 		for (int i = 0; i < 4; i++)
@@ -1377,13 +1385,13 @@ public class Inventories {
 		// Fill in axes
 		List<ItemStack> axes = new ArrayList<>();
 		for (int i = 0; i < 4; i++) {
-			ItemStack axe = GameItems.axe(arena.getCurrentDifficulty());
+			ItemStack axe = Axe.create(arena.getCurrentDifficulty());
 			if (level < 2)
-				axes.add(GameItems.levelPlaceholder(2));
+				axes.add(Buttons.levelPlaceholder(2));
 			else if (axes.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
 					.equals(Objects.requireNonNull(axe.getItemMeta()).getDisplayName())))
 				axes.add(axe);
-			else axes.add(GameItems.duplicatePlaceholder());
+			else axes.add(Buttons.duplicatePlaceholder());
 		}
 		sort(axes);
 		for (int i = 0; i < 4; i++)
@@ -1392,13 +1400,13 @@ public class Inventories {
 		// Fill in scythes
 		List<ItemStack> scythes = new ArrayList<>();
 		for (int i = 0; i < 4; i++) {
-			ItemStack scythe = GameItems.scythe(arena.getCurrentDifficulty());
+			ItemStack scythe = Scythe.create(arena.getCurrentDifficulty());
 			if (level < 4)
-				scythes.add(GameItems.levelPlaceholder(4));
+				scythes.add(Buttons.levelPlaceholder(4));
 			else if (scythes.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
 					.equals(Objects.requireNonNull(scythe.getItemMeta()).getDisplayName())))
 				scythes.add(scythe);
-			else scythes.add(GameItems.duplicatePlaceholder());
+			else scythes.add(Buttons.duplicatePlaceholder());
 		}
 		sort(scythes);
 		for (int i = 0; i < 4; i++)
@@ -1407,25 +1415,36 @@ public class Inventories {
 		// Fill in bows
 		List<ItemStack> bows = new ArrayList<>();
 		for (int i = 0; i < 4; i++) {
-			ItemStack bow = GameItems.bow(arena.getCurrentDifficulty());
+			ItemStack bow = Bow.create(arena.getCurrentDifficulty());
 			if (level < 3)
-				bows.add(GameItems.levelPlaceholder(3));
+				bows.add(Buttons.levelPlaceholder(3));
 			else if (bows.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
 					.equals(Objects.requireNonNull(bow.getItemMeta()).getDisplayName())))
 				bows.add(bow);
-			else scythes.add(GameItems.duplicatePlaceholder());
+			else scythes.add(Buttons.duplicatePlaceholder());
 		}
 		sort(bows);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 5, modifyPrice(bows.get(i), modifier));
 
+		// Fill in crossbows
+
+		// Fill in tridents
+
 		// Fill in ammo
-		List<ItemStack> ammo = new ArrayList<>();
-		for (int i = 0; i < 4; i++)
-			ammo.add(GameItems.randAmmo(level));
-		sort(ammo);
-		for (int i = 0; i < 4; i++)
-			inv.setItem(i + 14, modifyPrice(ammo.get(i), modifier));
+		List<ItemStack> ammos = new ArrayList<>();
+//		for (int i = 0; i < 4; i++) {
+//			ItemStack bow = Bow.create(arena.getCurrentDifficulty());
+//			if (level < 3)
+//				bows.add(Buttons.levelPlaceholder(3));
+//			else if (bows.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
+//					.equals(Objects.requireNonNull(bow.getItemMeta()).getDisplayName())))
+//				bows.add(bow);
+//			else scythes.add(Buttons.duplicatePlaceholder());
+//		}
+//		sort(bows);
+//		for (int i = 0; i < 4; i++)
+//			inv.setItem(i + 23, modifyPrice(bows.get(i), modifier));
 
 		// Return option
 		inv.setItem(31, Buttons.exit());
@@ -1451,11 +1470,11 @@ public class Inventories {
 		// Fill in helmets
 		List<ItemStack> helmets = new ArrayList<>();
 		for (int i = 0; i < 4; i++) {
-			ItemStack helmet = GameItems.helmet(arena.getCurrentDifficulty());
+			ItemStack helmet = Helmet.create(arena.getCurrentDifficulty());
 			if (helmets.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
 					.equals(Objects.requireNonNull(helmet.getItemMeta()).getDisplayName())))
 				helmets.add(helmet);
-			else helmets.add(GameItems.duplicatePlaceholder());
+			else helmets.add(Buttons.duplicatePlaceholder());
 		}
 		sort(helmets);
 		for (int i = 0; i < 4; i++)
@@ -1464,11 +1483,11 @@ public class Inventories {
 		// Fill in chestplates
 		List<ItemStack> chestplates = new ArrayList<>();
 		for (int i = 0; i < 4; i++) {
-			ItemStack chestplate = GameItems.chestplate(arena.getCurrentDifficulty());
+			ItemStack chestplate = Chestplate.create(arena.getCurrentDifficulty());
 			if (chestplates.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
 					.equals(Objects.requireNonNull(chestplate.getItemMeta()).getDisplayName())))
 				chestplates.add(chestplate);
-			else chestplates.add(GameItems.duplicatePlaceholder());
+			else chestplates.add(Buttons.duplicatePlaceholder());
 		}
 		sort(chestplates);
 		for (int i = 0; i < 4; i++)
@@ -1477,11 +1496,11 @@ public class Inventories {
 		// Fill in leggings
 		List<ItemStack> leggings = new ArrayList<>();
 		for (int i = 0; i < 4; i++) {
-			ItemStack legging = GameItems.leggings(arena.getCurrentDifficulty());
+			ItemStack legging = Leggings.create(arena.getCurrentDifficulty());
 			if (leggings.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
 					.equals(Objects.requireNonNull(legging.getItemMeta()).getDisplayName())))
 				leggings.add(legging);
-			else leggings.add(GameItems.duplicatePlaceholder());
+			else leggings.add(Buttons.duplicatePlaceholder());
 		}
 		sort(leggings);
 		for (int i = 0; i < 4; i++)
@@ -1490,11 +1509,11 @@ public class Inventories {
 		// Fill in boots
 		List<ItemStack> boots = new ArrayList<>();
 		for (int i = 0; i < 4; i++) {
-			ItemStack boot = GameItems.boots(arena.getCurrentDifficulty());
+			ItemStack boot = Boots.create(arena.getCurrentDifficulty());
 			if (boots.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
 					.equals(Objects.requireNonNull(boot.getItemMeta()).getDisplayName())))
 				boots.add(boot);
-			else boots.add(GameItems.duplicatePlaceholder());
+			else boots.add(Buttons.duplicatePlaceholder());
 		}
 		sort(boots);
 		for (int i = 0; i < 4; i++)
@@ -1524,49 +1543,43 @@ public class Inventories {
 		// Fill in food
 		List<ItemStack> foods = new ArrayList<>();
 		if (level < 2) {
-			foods.add(GameItems.levelPlaceholder(2));
-			foods.add(GameItems.levelPlaceholder(2));
+			foods.add(Buttons.levelPlaceholder(2));
+			foods.add(Buttons.levelPlaceholder(2));
 		} else {
-			foods.add(GameItems.beetroot());
-			foods.add(GameItems.carrot());
+			foods.add(Beetroot.create());
+			foods.add(Carrot.create());
 		}
 		if (level < 3)
-			foods.add(GameItems.levelPlaceholder(3));
+			foods.add(Buttons.levelPlaceholder(3));
 		else
-			foods.add(GameItems.bread());
+			foods.add(Bread.create());
 		if (level < 4) {
-			foods.add(GameItems.levelPlaceholder(4));
-			foods.add(GameItems.levelPlaceholder(4));
+			foods.add(Buttons.levelPlaceholder(4));
+			foods.add(Buttons.levelPlaceholder(4));
 		} else {
-			foods.add(GameItems.mutton());
-			foods.add(GameItems.steak());
+			foods.add(Mutton.create());
+			foods.add(Steak.create());
 		}
 		if (level < 5) {
-			foods.add(GameItems.levelPlaceholder(5));
-			foods.add(GameItems.levelPlaceholder(5));
+			foods.add(Buttons.levelPlaceholder(5));
+			foods.add(Buttons.levelPlaceholder(5));
 		} else {
-			foods.add(GameItems.gcarrot());
-			foods.add(GameItems.gapple());
+			foods.add(GoldenCarrot.create());
+			foods.add(GoldenApple.create());
 		}
 		if (level < 6)
-			foods.add(GameItems.levelPlaceholder(6));
+			foods.add(Buttons.levelPlaceholder(6));
 		else
-			foods.add(GameItems.egapple());
+			foods.add(EnchantedApple.create());
 		if (level < 7)
-			foods.add(GameItems.levelPlaceholder(7));
+			foods.add(Buttons.levelPlaceholder(7));
 		else
-			foods.add(GameItems.totem());
+			foods.add(Totem.create());
 
 		for (int i = 0; i < 9; i++)
 			inv.setItem(i, modifyPrice(foods.get(i), modifier));
 
 		// Fill in other
-		List<ItemStack> others = new ArrayList<>();
-		for (int i = 0; i < 9; i++)
-			others.add(GameItems.randOther(level));
-		sort(others);
-		for (int i = 0; i < 4; i++)
-			inv.setItem(i + 14, modifyPrice(others.get(i), modifier));
 
 		// Return option
 		inv.setItem(22, Buttons.exit());
