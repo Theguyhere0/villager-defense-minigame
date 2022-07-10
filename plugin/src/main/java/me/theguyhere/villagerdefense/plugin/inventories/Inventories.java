@@ -13,10 +13,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Chestplate;
 import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Helmet;
 import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Leggings;
 import me.theguyhere.villagerdefense.plugin.game.models.items.food.*;
-import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Axe;
-import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Bow;
-import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Scythe;
-import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Sword;
+import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.*;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.*;
@@ -1421,30 +1418,43 @@ public class Inventories {
 			else if (bows.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
 					.equals(Objects.requireNonNull(bow.getItemMeta()).getDisplayName())))
 				bows.add(bow);
-			else scythes.add(Buttons.duplicatePlaceholder());
+			else bows.add(Buttons.duplicatePlaceholder());
 		}
 		sort(bows);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 5, modifyPrice(bows.get(i), modifier));
 
 		// Fill in crossbows
+		List<ItemStack> crossbows = new ArrayList<>();
+		for (int i = 0; i < 4; i++) {
+			ItemStack crossbow = Crossbow.create(arena.getCurrentDifficulty());
+			if (level < 5)
+				crossbows.add(Buttons.levelPlaceholder(5));
+			else if (crossbows.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
+					.equals(Objects.requireNonNull(crossbow.getItemMeta()).getDisplayName())))
+				crossbows.add(crossbow);
+			else crossbows.add(Buttons.duplicatePlaceholder());
+		}
+		sort(crossbows);
+		for (int i = 0; i < 4; i++)
+			inv.setItem(i + 14, modifyPrice(crossbows.get(i), modifier));
 
 		// Fill in tridents
 
 		// Fill in ammo
 		List<ItemStack> ammos = new ArrayList<>();
-//		for (int i = 0; i < 4; i++) {
-//			ItemStack bow = Bow.create(arena.getCurrentDifficulty());
-//			if (level < 3)
-//				bows.add(Buttons.levelPlaceholder(3));
-//			else if (bows.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
-//					.equals(Objects.requireNonNull(bow.getItemMeta()).getDisplayName())))
-//				bows.add(bow);
-//			else scythes.add(Buttons.duplicatePlaceholder());
-//		}
-//		sort(bows);
-//		for (int i = 0; i < 4; i++)
-//			inv.setItem(i + 23, modifyPrice(bows.get(i), modifier));
+		for (int i = 0; i < 4; i++) {
+			ItemStack ammo = Ammo.create(arena.getCurrentDifficulty());
+			if (level < 3)
+				ammos.add(Buttons.levelPlaceholder(3));
+			else if (ammos.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
+					.equals(Objects.requireNonNull(ammo.getItemMeta()).getDisplayName())))
+				ammos.add(ammo);
+			else ammos.add(Buttons.duplicatePlaceholder());
+		}
+		sort(ammos);
+		for (int i = 0; i < 4; i++)
+			inv.setItem(i + 23, modifyPrice(ammos.get(i), modifier));
 
 		// Return option
 		inv.setItem(31, Buttons.exit());

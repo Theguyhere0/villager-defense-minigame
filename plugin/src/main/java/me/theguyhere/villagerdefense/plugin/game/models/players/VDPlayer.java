@@ -9,6 +9,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.Shop;
+import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Ammo;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
@@ -50,6 +51,7 @@ public class VDPlayer {
     private int baseDamage;
     private int armor;
     private int toughness;
+    private long cooldown;
     /** Gem balance.*/
     private int gems;
     /** Kill count.*/
@@ -211,6 +213,8 @@ public class VDPlayer {
         AtomicBoolean penetrating = new AtomicBoolean(false);
         AtomicBoolean range = new AtomicBoolean(false);
         AtomicBoolean perBlock = new AtomicBoolean(false);
+        AtomicInteger ammoCost = new AtomicInteger();
+        AtomicInteger ammoCap = new AtomicInteger();
         String damage = Integer.toString(baseDamage);
 
         // Calculate stats
@@ -273,12 +277,30 @@ public class VDPlayer {
                 }
                 else if (lore.contains(LanguageManager.names.penetrating.replace("%s", "")))
                     penetrating.set(true);
+                else if (lore.contains(LanguageManager.messages.ammoCost
+                        .replace("%s", ""))) {
+                    ammoCost.set(Integer.parseInt(lore.substring(2 + LanguageManager.messages.ammoCost.length())
+                            .replace(ChatColor.BLUE.toString(), "")));
+                }
             });
             damageValues.sort(Comparator.comparingInt(Integer::intValue));
             if (damageValues.size() == 1)
                 damage = Integer.toString(damageValues.get(0) + (perBlock.get() ? 0 : baseDamage));
             else damage = (damageValues.get(0) + (perBlock.get() ? 0 : baseDamage)) + "-" +
                     (damageValues.get(damageValues.size() - 1) + (perBlock.get() ? 0 : baseDamage));
+        } catch (Exception ignored) {
+        }
+        try {
+            ItemStack ammo = Objects.requireNonNull(getPlayer().getEquipment()).getItemInOffHand();
+            Objects.requireNonNull(Objects.requireNonNull(ammo.getItemMeta()).getLore()).forEach(lore -> {
+                if (lore.contains(LanguageManager.messages.capacity
+                        .replace("%s", ""))) {
+                    ammoCap.set(Integer.parseInt(lore.substring(2 + LanguageManager.messages.capacity.length())
+                            .replace(ChatColor.BLUE.toString(), "")
+                            .replace(ChatColor.WHITE.toString(), "")
+                            .split("/")[0]));
+                }
+            });
         } catch (Exception ignored) {
         }
 
@@ -288,7 +310,8 @@ public class VDPlayer {
                         Utils.HP + " " + (currentHealth + absorption) + "/" + maxHealth) + "    " +
                         new ColoredMessage(ChatColor.AQUA, Utils.ARMOR + " " + armor) + "    " +
                         new ColoredMessage(ChatColor.DARK_AQUA, Utils.TOUGH + " " + toughness + "%") + "    " +
-                        new ColoredMessage(penetrating.get() ? ChatColor.YELLOW : ChatColor.GREEN,
+                        new ColoredMessage(ammoCap.get() < ammoCost.get() ? ChatColor.RED :
+                                penetrating.get() ? ChatColor.YELLOW : ChatColor.GREEN,
                                 (range.get() ? Utils.ARROW : Utils.DAMAGE) + " " + damage +
                                         (perBlock.get() ? " /" + Utils.BLOCK + " +" + baseDamage : ""))));
 
@@ -300,7 +323,7 @@ public class VDPlayer {
                 Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth);
     }
 
-    public void updateStats() {
+    public void updateStatsOne() {
         AtomicInteger armor = new AtomicInteger();
         AtomicInteger toughness = new AtomicInteger();
         AtomicDouble weight = new AtomicDouble(1);
@@ -408,6 +431,11 @@ public class VDPlayer {
         if (getPlayer().isSprinting())
             getPlayer().setFoodLevel(getPlayer().getFoodLevel() - 1);
         else getPlayer().setFoodLevel(Math.min(20, getPlayer().getFoodLevel() + 1));
+    }
+
+    public void updateStatsHalf() {
+        Ammo.updateRefill(Objects.requireNonNull(getPlayer().getEquipment()).getItemInMainHand());
+        Ammo.updateRefill(Objects.requireNonNull(getPlayer().getEquipment()).getItemInOffHand());
     }
 
     public void takeDamage(int damage, @NotNull AttackType attackType) {
@@ -624,6 +652,14 @@ public class VDPlayer {
         } catch (Exception e) {
             return baseDamage;
         }
+    }
+
+    public long getCooldown() {
+        return cooldown;
+    }
+
+    public void setCooldown(long cooldown) {
+        this.cooldown = cooldown;
     }
 
     public AttackType getAttackType() {

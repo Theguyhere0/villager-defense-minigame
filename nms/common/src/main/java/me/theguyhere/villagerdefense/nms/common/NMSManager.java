@@ -24,6 +24,10 @@ public interface NMSManager {
 
     void nameArena(Player player, String arenaName, int arenaID);
 
+    void setBowCooldown(Player player, int cooldownTicks);
+
+    void setCrossbowCooldown(Player player, int cooldownTicks);
+
     void injectPacketListener(Player player, PacketListener packetListener);
 
     void uninjectPacketListener(Player player);

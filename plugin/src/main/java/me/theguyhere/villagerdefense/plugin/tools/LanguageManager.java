@@ -289,6 +289,7 @@ public class LanguageManager {
 
     public static class Errors extends Section {
         public final @NotNull String activePlayer;
+        public final @NotNull String ammoOffHand;
         public final @NotNull String amputee;
         public final @NotNull String arenaInProgress;
         public final @NotNull String arenaNoPlayers;
@@ -337,6 +338,7 @@ public class LanguageManager {
             setPathPrefix("errors");
 
             activePlayer = getConfigString("activePlayer");
+            ammoOffHand = getConfigString("ammoOffHand");
             amputee = getConfigString("amputee");
             arenaInProgress = getConfigString("arenaInProgress");
             arenaNoPlayers = getConfigString("arenaNoPlayers");
@@ -614,6 +616,8 @@ public class LanguageManager {
         public final @NotNull String arenaInfo;
         public final @NotNull String arenaRecords;
         public final @NotNull String armor;
+        public final @NotNull String ammo;
+        public final @NotNull String ammoCost;
         public final @NotNull String attackCritDamage;
         public final @NotNull String attackMainDamage;
         public final @NotNull String attackRangeDamage;
@@ -624,10 +628,12 @@ public class LanguageManager {
         public final @NotNull String axe;
         public final @NotNull String boots;
         public final @NotNull String bow;
+        public final @NotNull String capacity;
         public final @NotNull String challenges;
         public final @NotNull String chestplate;
         public final @NotNull String closed;
         public final @NotNull String commandFormat;
+        public final @NotNull String crossbow;
         public final @NotNull String crystalBonus;
         public final @NotNull String crystalBalance;
         public final @NotNull String crystalsEarned;
@@ -682,11 +688,13 @@ public class LanguageManager {
         public final @NotNull String maxCapacity;
         public final @NotNull String minutesLeft;
         public final @NotNull String mobName;
+        public final @NotNull String nextRefill;
         public final @NotNull String noAutoUpdate;
         public final @NotNull String noStats;
         public final @NotNull String offToggle;
         public final @NotNull String onToggle;
         public final @NotNull String oneMinuteWarning;
+        public final @NotNull String pierce;
         public final @NotNull String perBlock;
         public final @NotNull String playerKits;
         public final @NotNull String players;
@@ -695,12 +703,14 @@ public class LanguageManager {
         public final @NotNull String purchased;
         public final @NotNull String record;
         public final @NotNull String records;
+        public final @NotNull String refill;
         public final @NotNull String reset;
         public final @NotNull String resetWarning;
         public final @NotNull String restartPlugin;
         public final @NotNull String resurrection;
         public final @NotNull String rightClick;
         public final @NotNull String scythe;
+        public final @NotNull String seconds;
         public final @NotNull String secondsLeft;
         public final @NotNull String shopInfo;
         public final @NotNull String shopUpgrade;
@@ -735,6 +745,8 @@ public class LanguageManager {
             arenaInfo = getConfigString("arenaInfo");
             arenaRecords = getConfigString("arenaRecords");
             armor = getConfigString("armor");
+            ammo = getConfigString("ammo");
+            ammoCost = getConfigString("ammoCost");
             attackCritDamage = getConfigString("attackCritDamage");
             attackMainDamage = getConfigString("attackMainDamage");
             attackRangeDamage = getConfigString("attackRangeDamage");
@@ -745,10 +757,12 @@ public class LanguageManager {
             axe = getConfigString("axe");
             boots = getConfigString("boots");
             bow = getConfigString("bow");
+            capacity = getConfigString("capacity");
             challenges = getConfigString("challenges");
             chestplate = getConfigString("chestplate");
             closed = getConfigString("closed");
             commandFormat = getConfigString("commandFormat");
+            crossbow = getConfigString("crossbow");
             crystalBonus = getConfigString("crystalBonus");
             crystalBalance = getConfigString("crystalBalance");
             crystalsEarned = getConfigString("crystalsEarned");
@@ -803,11 +817,13 @@ public class LanguageManager {
             maxCapacity = getConfigString("maxCapacity");
             minutesLeft = getConfigString("minutesLeft");
             mobName = getConfigString("mobName");
+            nextRefill = getConfigString("nextRefill");
             noAutoUpdate = getConfigString("noAutoUpdate");
             noStats = getConfigString("noStats");
             offToggle = getConfigString("offToggle");
             onToggle = getConfigString("onToggle");
             oneMinuteWarning = getConfigString("oneMinuteWarning");
+            pierce = getConfigString("pierce");
             perBlock = getConfigString("perBlock");
             playerKits = getConfigString("playerKits");
             players = getConfigString("players");
@@ -816,12 +832,14 @@ public class LanguageManager {
             purchased = getConfigString("purchased");
             record = getConfigString("record");
             records = getConfigString("records");
+            refill = getConfigString("refill");
             reset = getConfigString("reset");
             resetWarning = getConfigString("resetWarning");
             restartPlugin = getConfigString("restartPlugin");
             resurrection = getConfigString("resurrection");
             rightClick = getConfigString("rightClick");
             scythe = getConfigString("scythe");
+            seconds = getConfigString("seconds");
             secondsLeft = getConfigString("secondsLeft");
             shopInfo = getConfigString("shopInfo");
             shopUpgrade = getConfigString("shopUpgrade");

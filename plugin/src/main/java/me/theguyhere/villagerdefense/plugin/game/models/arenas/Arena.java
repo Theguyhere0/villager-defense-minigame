@@ -11,8 +11,8 @@ import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
-import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Arrow;
-import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Bow;
+import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Ammo;
+import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Crossbow;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.*;
@@ -124,8 +124,8 @@ public class Arena {
     private static final String START_WAVE = "startWave";
     private static final String UPDATE_BAR = "updateBar";
     private static final String CALIBRATE = "calibrate";
-    private static final String SHOW_STATS = "showStats";
-    private static final String UPDATE_STATS = "updateStats";
+    private static final String HALF_UPDATE = "halfUpdate";
+    private static final String ONE_UPDATE = "oneUpdate";
     private static final String KICK = "kick";
     private static final String RESET = "restart";
 
@@ -1731,8 +1731,8 @@ public class Arena {
 
             // Give all players starting items and set up attributes
             player.giveItems();
-            PlayerManager.giveItem(player.getPlayer(), Bow.create(1), "");
-            PlayerManager.giveItem(player.getPlayer(), Arrow.create(1), "");
+            PlayerManager.giveItem(player.getPlayer(), Crossbow.create(1), "");
+            PlayerManager.giveItem(player.getPlayer(), Ammo.create(1), "");
             player.setupAttributes();
 
             // Give Traders their gems
@@ -1860,22 +1860,25 @@ public class Arena {
         activeTasks.get(END_WAVE).runTaskLater(Main.plugin, Utils.secondsToTicks(30));
 
         // Schedule and record showing and updating status
-        activeTasks.put(SHOW_STATS, new BukkitRunnable() {
+        activeTasks.put(HALF_UPDATE, new BukkitRunnable() {
             @Override
             public void run() {
                 // Task
-                getActives().forEach(VDPlayer::showStats);
+                getActives().forEach(player -> {
+                    player.showStats();
+                    player.updateStatsHalf();
+                });
             }
         });
-        activeTasks.get(SHOW_STATS).runTaskTimer(Main.plugin, Utils.secondsToTicks(30), Utils.secondsToTicks(.5));
-        activeTasks.put(UPDATE_STATS, new BukkitRunnable() {
+        activeTasks.get(HALF_UPDATE).runTaskTimer(Main.plugin, Utils.secondsToTicks(30), Utils.secondsToTicks(.5));
+        activeTasks.put(ONE_UPDATE, new BukkitRunnable() {
             @Override
             public void run() {
                 // Task
-                getActives().forEach(VDPlayer::updateStats);
+                getActives().forEach(VDPlayer::updateStatsOne);
             }
         });
-        activeTasks.get(UPDATE_STATS).runTaskTimer(Main.plugin, Utils.secondsToTicks(30), Utils.secondsToTicks(1));
+        activeTasks.get(ONE_UPDATE).runTaskTimer(Main.plugin, Utils.secondsToTicks(30), Utils.secondsToTicks(1));
 
         // Debug message to console
         CommunicationManager.debugInfo("%s is starting.", 2, getName());
@@ -1891,7 +1894,7 @@ public class Arena {
         // Clear active tasks EXCEPT update and show status
         Map<String, BukkitRunnable> cache = new HashMap<>();
         activeTasks.forEach((name, task) -> {
-            if (!name.equals(UPDATE_STATS) && !name.equals(SHOW_STATS))
+            if (!name.equals(ONE_UPDATE) && !name.equals(HALF_UPDATE))
                 task.cancel();
             else cache.put(name, task);
         });
@@ -2076,7 +2079,7 @@ public class Arena {
         // Clear active tasks EXCEPT update and show status
         Map<String, BukkitRunnable> cache = new HashMap<>();
         activeTasks.forEach((name, task) -> {
-            if (!name.equals(UPDATE_STATS) && !name.equals(SHOW_STATS))
+            if (!name.equals(ONE_UPDATE) && !name.equals(HALF_UPDATE))
                 task.cancel();
             else cache.put(name, task);
         });

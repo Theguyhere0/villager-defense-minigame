@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
@@ -19,6 +20,9 @@ import me.theguyhere.villagerdefense.plugin.game.models.items.armor.VDArmor;
 import me.theguyhere.villagerdefense.plugin.game.models.items.eggs.VDEgg;
 import me.theguyhere.villagerdefense.plugin.game.models.items.food.VDFood;
 import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.*;
+import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Ammo;
+import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Bow;
+import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Crossbow;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.VDWeapon;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
@@ -28,6 +32,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import org.bukkit.*;
 import org.bukkit.entity.*;
@@ -45,6 +50,7 @@ import org.bukkit.util.BoundingBox;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameListener implements Listener {
 	// Keep score and manage mob death
@@ -138,6 +144,84 @@ public class GameListener implements Listener {
 			e.setCancelled(true);
 	}
 
+	// Handle usage of ranged weapons
+	@EventHandler
+	public void onRange(PlayerInteractEvent e) {
+		// Check for right click
+		if (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK)
+			return;
+
+		// Check for main hand
+		if (e.getHand() != EquipmentSlot.HAND)
+			return;
+
+		Player player = e.getPlayer();
+		VDPlayer gamer;
+
+		// Attempt to get VDPlayer
+		try {
+			gamer = GameManager.getArena(player).getPlayer(player);
+		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+			return;
+		}
+
+		// Check for ammo weapon
+		ItemStack range = Objects.requireNonNull(player.getEquipment()).getItemInMainHand();
+		if (!VDWeapon.matchesAmmoWeapon(range))
+			return;
+
+		// Check for ammo
+		ItemStack ammo = Objects.requireNonNull(player.getEquipment()).getItemInOffHand();
+		if (!Ammo.matches(ammo)) {
+			e.setCancelled(true);
+			PlayerManager.notifyFailure(player, LanguageManager.errors.ammoOffHand);
+			return;
+		}
+
+		// Get data
+		AtomicInteger cost = new AtomicInteger();
+		AtomicInteger capacity = new AtomicInteger();
+		AtomicDouble cooldown = new AtomicDouble();
+		Objects.requireNonNull(Objects.requireNonNull(range.getItemMeta()).getLore()).forEach(lore -> {
+			if (lore.contains(LanguageManager.messages.ammoCost
+					.replace("%s", ""))) {
+				cost.set(Integer.parseInt(lore.substring(2 + LanguageManager.messages.ammoCost.length())
+						.replace(ChatColor.BLUE.toString(), "")));
+			}
+			if (lore.contains(LanguageManager.messages.attackSpeed
+					.replace("%s", ""))) {
+				cooldown.set(1 / Double.parseDouble(lore.substring(2 + LanguageManager.messages.attackSpeed.length())
+						.replace(ChatColor.BLUE.toString(), "")));
+			}
+		});
+		List<String > lores = Objects.requireNonNull(Objects.requireNonNull(ammo.getItemMeta()).getLore());
+		lores.forEach(lore -> {
+			if (lore.contains(LanguageManager.messages.capacity
+					.replace("%s", ""))) {
+				capacity.set(Integer.parseInt(lore.substring(2 + LanguageManager.messages.capacity.length())
+						.replace(ChatColor.BLUE.toString(), "")
+						.replace(ChatColor.WHITE.toString(), "")
+						.split("/")[0]));
+			}
+		});
+		if (capacity.get() < cost.get())
+			return;
+
+		// Check for cooldown
+		if (gamer.getCooldown() > System.currentTimeMillis())
+			return;
+
+		// Fire
+		player.launchProjectile(Arrow.class);
+
+		// Update capacity and cooldown
+		if (Bow.matches(range))
+			NMSVersion.getCurrent().getNmsManager().setBowCooldown(player, Utils.secondsToTicks(cooldown.get()));
+		else NMSVersion.getCurrent().getNmsManager().setCrossbowCooldown(player, Utils.secondsToTicks(cooldown.get()));
+		gamer.setCooldown(System.currentTimeMillis() + Utils.secondsToMillis(cooldown.get()));
+		Ammo.updateCapacity(ammo, -cost.get());
+	}
+
 	// Manage projectiles being fired
 	@EventHandler
 	public void onProjectileLaunch(ProjectileLaunchEvent e) {
@@ -167,12 +251,20 @@ public class GameListener implements Listener {
 				return;
 
 			// Encode damage information
+			ItemStack range = Objects.requireNonNull(player.getEquipment()).getItemInMainHand();
 			projectile.setMetadata(ItemMetaKey.DAMAGE.name(),
 					new FixedMetadataValue(Main.plugin, gamer.dealRawDamage(AttackClass.RANGE, 0)));
-			projectile.setMetadata(ItemMetaKey.PER_BLOCK.name(),
-					new FixedMetadataValue(Main.plugin, true));
-			projectile.setMetadata(ItemMetaKey.ORIGIN_LOCATION.name(),
-					new FixedMetadataValue(Main.plugin, player.getLocation()));
+			if (Objects.requireNonNull(Objects.requireNonNull(range.getItemMeta()).getLore()).stream().anyMatch(lore ->
+					lore.contains(LanguageManager.messages.perBlock.replace("%s", "")))) {
+				projectile.setMetadata(ItemMetaKey.PER_BLOCK.name(),
+						new FixedMetadataValue(Main.plugin, true));
+				projectile.setMetadata(ItemMetaKey.ORIGIN_LOCATION.name(),
+						new FixedMetadataValue(Main.plugin, player.getLocation()));
+			} else projectile.setMetadata(ItemMetaKey.PER_BLOCK.name(),
+					new FixedMetadataValue(Main.plugin, false));
+
+			if (Crossbow.matches(range))
+				((Arrow) projectile).setPierceLevel(Crossbow.getPierce(range) - 1);
 
 			// Don't allow pickup
 			((Arrow) projectile).setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
@@ -313,6 +405,13 @@ public class GameListener implements Listener {
 									player,
 									arena
 							);
+						else finalVictim.takeDamage(
+								e.getDamager().getMetadata(ItemMetaKey.DAMAGE.name()).get(0).asInt() +
+										gamer.getBaseDamage(),
+								AttackType.NORMAL,
+								player,
+								arena
+						);
 						return;
 					}
 
@@ -1042,7 +1141,7 @@ public class GameListener implements Listener {
 		e.setCancelled(true);
 	}
 
-	// Prevent players from dropping standard game items
+	// Prevent players from dropping menu items
 	@EventHandler
 	public void onItemDrop(PlayerDropItemEvent e) {
 		Player player = e.getPlayer();

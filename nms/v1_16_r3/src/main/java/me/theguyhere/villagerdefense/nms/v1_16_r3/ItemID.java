@@ -1,7 +1,7 @@
 package me.theguyhere.villagerdefense.nms.v1_16_r3;
 
 // Find using https://pokechu22.github.io/Burger/1.16.5.html
-class EntityTypeID {
-    static final int ARMOR_STAND = 1;
-    static final int VILLAGER = 93;
+public class ItemID {
+    static final int BOW = 574;
+    static final int CROSSBOW = 926;
 }

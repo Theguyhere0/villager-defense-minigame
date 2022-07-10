@@ -78,6 +78,16 @@ public class VersionNMSManager implements NMSManager {
     }
 
     @Override
+    public void setBowCooldown(Player player, int cooldownTicks) {
+        new SetCooldownPacket(ItemID.BOW, cooldownTicks).sendTo(player);
+    }
+
+    @Override
+    public void setCrossbowCooldown(Player player, int cooldownTicks) {
+        new SetCooldownPacket(ItemID.CROSSBOW, cooldownTicks).sendTo(player);
+    }
+
+    @Override
     public void injectPacketListener(Player player, PacketListener packetListener) {
         modifyPipeline(player, (ChannelPipeline pipeline) -> {
             ChannelHandler currentListener = pipeline.get(InboundPacketHandler.HANDLER_NAME);

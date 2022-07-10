@@ -1,28 +1,25 @@
 package me.theguyhere.villagerdefense.plugin.game.models.items.weapons;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class Crossbow extends VDWeapon {
     @NotNull
     public static ItemStack create(double difficulty) {
         int level = Math.max(getLevel(difficulty) - 2, 1);
         List<String> lores = new ArrayList<>();
-        Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
 
         // Add space in lore from name
         lores.add("");
@@ -30,24 +27,31 @@ public abstract class Crossbow extends VDWeapon {
         // Set attack type
         lores.add(CommunicationManager.format(ATTACK_TYPE, ATTACK_TYPE_NORMAL));
 
-        // Set main damage
-        int damageLow = 2 + (level - 1) / 2;
-        int damageHigh = 3 + level / 2;
+        // Set range damage
+        int damageLow = 25 + 5 * ((level - 1) / 2);
+        int damageHigh = 35 + 5 * (level / 2);
         lores.add(CommunicationManager.format(RANGE_DAMAGE, new ColoredMessage(ChatColor.DARK_AQUA,
-                String.format(LanguageManager.messages.perBlock, damageLow + "-" + damageHigh))));
+                damageLow + "-" + damageHigh)));
 
-        // Note attack speed (can't really change it)
-        lores.add(CommunicationManager.format(SPEED, Double.toString(1)));
+        // Set pierce
+        lores.add(CommunicationManager.format(PIERCE, new ColoredMessage(ChatColor.GOLD,
+                Integer.toString(3))));
+
+        // Set attack speed
+        lores.add(CommunicationManager.format(SPEED, Double.toString(0.65)));
+
+        // Set ammo cost
+        lores.add(CommunicationManager.format(AMMO_COST, new ColoredMessage(ChatColor.RED, Integer.toString(2))));
 
         // Set price
-        int price = (int) (185 + 55 * level * Math.pow(Math.E, (level - 1) / 50d));
+        int price = (int) (200 + 60 * level * Math.pow(Math.E, (level - 1) / 50d));
         lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
                 price));
 
         // Set name, make unbreakable, and return
         return ItemManager.makeUnbreakable(ItemManager.createItem(Material.CROSSBOW, CommunicationManager.format(
-                        new ColoredMessage(ChatColor.GRAY, LanguageManager.messages.bow), Integer.toString(level)),
-                ItemManager.BUTTON_FLAGS, null, lores, attributes));
+                        new ColoredMessage(ChatColor.GRAY, LanguageManager.messages.crossbow), Integer.toString(level)),
+                ItemManager.BUTTON_FLAGS, null, lores));
     }
 
     public static boolean matches(ItemStack toCheck) {
@@ -61,5 +65,15 @@ public abstract class Crossbow extends VDWeapon {
             return false;
         return toCheck.getType() == Material.CROSSBOW && lore.stream().anyMatch(line -> line.contains(
                 RANGE_DAMAGE.toString().replace("%s", "")));
+    }
+
+    public static int getPierce(ItemStack crossbow) {
+        AtomicInteger pierce = new AtomicInteger();
+        Objects.requireNonNull(Objects.requireNonNull(crossbow.getItemMeta()).getLore()).forEach(lore -> {
+            if (lore.contains(LanguageManager.messages.pierce.replace("%s", "")))
+                pierce.set(Integer.parseInt(lore.substring(2 + LanguageManager.messages.pierce.length()).
+                        replace(ChatColor.BLUE.toString(), "")));
+        });
+        return pierce.get();
     }
 }
