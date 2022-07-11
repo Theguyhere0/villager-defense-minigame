@@ -11,8 +11,6 @@ import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
-import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Ammo;
-import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Crossbow;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.*;
@@ -1731,8 +1729,6 @@ public class Arena {
 
             // Give all players starting items and set up attributes
             player.giveItems();
-            PlayerManager.giveItem(player.getPlayer(), Crossbow.create(1), "");
-            PlayerManager.giveItem(player.getPlayer(), Ammo.create(1), "");
             player.setupAttributes();
 
             // Give Traders their gems

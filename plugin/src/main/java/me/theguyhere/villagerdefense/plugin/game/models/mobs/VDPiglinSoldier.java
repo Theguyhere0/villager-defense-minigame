@@ -31,9 +31,10 @@ public class VDPiglinSoldier extends VDMinion {
         setModerateAttackSpeed();
         setHighKnockback(piglinSoldier);
         setMediumWeight(piglinSoldier);
-        setMediumLandSpeed(piglinSoldier);
+        setMediumSpeed(piglinSoldier);
         // TODO: Set and implement target priority
-        // TODO: Set visual armor and weapons
+        setArmorEquipment();
+        setSword();
         setLoot(45, 1.2, level, .25);
         updateNameTag();
     }

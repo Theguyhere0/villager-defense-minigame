@@ -51,8 +51,8 @@ public abstract class Axe extends VDWeapon {
         lores.add(CommunicationManager.format(ATTACK_TYPE, ATTACK_TYPE_NORMAL));
 
         // Set main damage
-        int damageLow = 20 + 5 * ((level - 1) / 2);
-        int damageHigh = 40 + 10 * (level / 2);
+        int damageLow = 25 + 5 * ((level - 1) / 2);
+        int damageHigh = 45 + 10 * (level / 2);
         lores.add(CommunicationManager.format(MAIN_DAMAGE, new ColoredMessage(ChatColor.RED,
                 damageLow + "-" + damageHigh)));
 

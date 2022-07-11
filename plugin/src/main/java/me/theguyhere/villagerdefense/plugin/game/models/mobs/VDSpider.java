@@ -29,9 +29,8 @@ public class VDSpider extends VDMinion {
         setFastAttackSpeed();
         setNoneKnockback(spider);
         setLightWeight(spider);
-        setFastLandSpeed(spider);
+        setFastSpeed(spider);
         // TODO: Set and implement target priority
-        // TODO: Set visual armor and weapons
         setLoot(25, 1.15, level, .2);
         updateNameTag();
     }

@@ -22,7 +22,7 @@ public class VDArmorer extends VDVillager {
         setArmor(8, 2, level, 2);
         setToughness(.02, .01, level, 2);
         setHeavyWeight(villager);
-        setFastLandSpeed(villager);
+        setFastSpeed(villager);
         villager.setProfession(Villager.Profession.ARMORER);
         updateNameTag();
     }

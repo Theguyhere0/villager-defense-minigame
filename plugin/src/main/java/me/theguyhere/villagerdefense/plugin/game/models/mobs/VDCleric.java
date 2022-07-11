@@ -23,7 +23,7 @@ public class VDCleric extends VDVillager {
         setToughness(.04, .02, level, 2);
         setVerySlowAttackSpeed();
         setMediumWeight(villager);
-        setFastLandSpeed(villager);
+        setFastSpeed(villager);
         // TODO: Implement effects
         villager.setProfession(Villager.Profession.CLERIC);
         updateNameTag();

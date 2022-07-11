@@ -30,9 +30,10 @@ public class VDZombie extends VDMinion {
         setModerateAttackSpeed();
         setModerateKnockback(zombie);
         setMediumWeight(zombie);
-        setSlowLandSpeed(zombie);
+        setSlowSpeed(zombie);
         // TODO: Set and implement target priority
-        // TODO: Set visual armor and weapons
+        setArmorEquipment();
+        setSword();
         setLoot(25, 1.15, level, .2);
         updateNameTag();
     }

@@ -30,9 +30,10 @@ public class VDWitherSkeleton extends VDMinion {
         setVeryFastAttackSpeed();
         setModerateKnockback(witherSkeleton);
         setLightWeight(witherSkeleton);
-        setMediumLandSpeed(witherSkeleton);
+        setMediumSpeed(witherSkeleton);
         // TODO: Set and implement target priority
-        // TODO: Set visual armor and weapons
+        setArmorEquipment();
+        setScythe();
         setLoot(35, 1.2, level, .2);
         updateNameTag();
     }

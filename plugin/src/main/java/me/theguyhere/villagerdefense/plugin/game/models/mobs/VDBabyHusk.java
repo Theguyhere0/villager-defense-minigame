@@ -31,9 +31,10 @@ public class VDBabyHusk extends VDMinion {
         setFastAttackSpeed();
         setLowKnockback(babyHusk);
         setLightWeight(babyHusk);
-        setFastLandSpeed(babyHusk);
+        setFastSpeed(babyHusk);
         // TODO: Set and implement target priority
-        // TODO: Set visual armor and weapons
+        setArmorEquipment();
+        setSword();
         setLoot(35, 1.2, level, .2);
         updateNameTag();
     }

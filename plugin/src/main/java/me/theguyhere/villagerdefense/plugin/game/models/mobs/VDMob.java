@@ -42,6 +42,7 @@ public abstract class VDMob {
     protected double toughness;
     protected int damage;
     protected double damageSpread;
+    protected int pierce;
     protected final AttackType attackType;
     protected double attackSpeed;
     protected int loot;
@@ -164,6 +165,10 @@ public abstract class VDMob {
 
     public AttackType getAttackType() {
         return attackType;
+    }
+
+    public int getPierce() {
+        return pierce;
     }
 
     /**
@@ -334,7 +339,7 @@ public abstract class VDMob {
 
 
     // Set speed options
-    protected void setVerySlowLandSpeed(LivingEntity livingEntity) {
+    protected void setVerySlowSpeed(LivingEntity livingEntity) {
         double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .getBaseValue();
         Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
@@ -344,7 +349,7 @@ public abstract class VDMob {
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }
-    protected void setSlowLandSpeed(LivingEntity livingEntity) {
+    protected void setSlowSpeed(LivingEntity livingEntity) {
         double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .getBaseValue();
         Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
@@ -354,7 +359,7 @@ public abstract class VDMob {
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }
-    protected void setMediumLandSpeed(LivingEntity livingEntity) {
+    protected void setMediumSpeed(LivingEntity livingEntity) {
         double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .getBaseValue();
         Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
@@ -364,7 +369,7 @@ public abstract class VDMob {
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }
-    protected void setFastLandSpeed(LivingEntity livingEntity) {
+    protected void setFastSpeed(LivingEntity livingEntity) {
         double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .getBaseValue();
         Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
@@ -374,7 +379,7 @@ public abstract class VDMob {
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }
-    protected void setVeryFastLandSpeed(LivingEntity livingEntity) {
+    protected void setVeryFastSpeed(LivingEntity livingEntity) {
         double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .getBaseValue();
         Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
@@ -446,12 +451,34 @@ public abstract class VDMob {
                 return new VDWitherSkeleton(arena, ground);
             case VDPiglinSoldier.KEY:
                 return new VDPiglinSoldier(arena, ground);
+            case VDPiglinSniper.KEY:
+                return new VDPiglinSniper(arena, ground);
+            case VDBrute.KEY:
+                return new VDBrute(arena, ground);
             case VDVindicator.KEY:
                 return new VDVindicator(arena, ground);
             case VDSkeleton.KEY:
                 return new VDSkeleton(arena, ground);
+            case VDStray.KEY:
+                return new VDStray(arena, ground);
+            case VDPillager.KEY:
+                return new VDPillager(arena, ground);
+            case VDDrowned.KEY:
+                return new VDDrowned(arena, ground);
+            case VDBabyDrowned.KEY:
+                return new VDBabyDrowned(arena, ground);
+            case VDPhantom.KEY:
+                return new VDPhantom(arena, air);
+            case VDBlaze.KEY:
+                return new VDBlaze(arena, air);
             case VDSpider.KEY:
                 return new VDSpider(arena, ground);
+            case VDCaveSpider.KEY:
+                return new VDCaveSpider(arena, ground);
+            case VDSilverfish.KEY:
+                return new VDSilverfish(arena, ground);
+            case VDVex.KEY:
+                return new VDVex(arena, air);
             default:
                 throw new InvalidVDMobKeyException();
         }

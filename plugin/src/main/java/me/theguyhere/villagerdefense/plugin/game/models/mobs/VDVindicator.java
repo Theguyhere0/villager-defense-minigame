@@ -32,9 +32,9 @@ public class VDVindicator extends VDMinion {
         setSlowAttackSpeed();
         setModerateKnockback(vindicator);
         setMediumWeight(vindicator);
-        setMediumLandSpeed(vindicator);
+        setMediumSpeed(vindicator);
         // TODO: Set and implement target priority
-        // TODO: Set visual armor and weapons
+        setAxe();
         setLoot(50, 1.2, level, .2);
         updateNameTag();
     }

@@ -23,7 +23,7 @@ public class VDMayor extends VDVillager {
         setArmor(0, 1, level, 2);
         setToughness(0, .01, level, 2);
         setMediumWeight(villager);
-        setVeryFastLandSpeed(villager);
+        setVeryFastSpeed(villager);
         villager.setProfession(Villager.Profession.NITWIT);
         updateNameTag();
     }

@@ -30,9 +30,10 @@ public class VDHusk extends VDMinion {
         setModerateAttackSpeed();
         setModerateKnockback(husk);
         setMediumWeight(husk);
-        setSlowLandSpeed(husk);
+        setSlowSpeed(husk);
         // TODO: Set and implement target priority
-        // TODO: Set visual armor and weapons
+        setArmorEquipment();
+        setSword();
         setLoot(30, 1.2, level, .2);
         updateNameTag();
     }

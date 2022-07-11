@@ -29,9 +29,10 @@ public class VDSkeleton extends VDMinion {
         setSlowAttackSpeed();
         setLowKnockback(skeleton);
         setLightWeight(skeleton);
-        setMediumLandSpeed(skeleton);
+        setMediumSpeed(skeleton);
         // TODO: Set and implement target priority
-        // TODO: Set visual armor and weapons
+        setArmorEquipment();
+        setBow();
         setLoot(25, 1.15, level, .2);
         updateNameTag();
     }

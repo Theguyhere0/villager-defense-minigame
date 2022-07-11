@@ -31,9 +31,10 @@ public class VDBabyZombie extends VDMinion {
         setFastAttackSpeed();
         setLowKnockback(babyZombie);
         setLightWeight(babyZombie);
-        setFastLandSpeed(babyZombie);
+        setFastSpeed(babyZombie);
         // TODO: Set and implement target priority
-        // TODO: Set visual armor and weapons
+        setArmorEquipment();
+        setSword();
         setLoot(30, 1.15, level, .2);
         updateNameTag();
     }

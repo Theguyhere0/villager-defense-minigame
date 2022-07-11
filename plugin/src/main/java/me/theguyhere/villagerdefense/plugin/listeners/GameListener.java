@@ -238,7 +238,7 @@ public class GameListener implements Listener {
 			Player player = (Player) shooter;
 			VDPlayer gamer;
 
-			// Attempt to get VDPlayer and VDMob
+			// Attempt to get VDPlayer
 			try {
 				arena = GameManager.getArena(player);
 				gamer = arena.getPlayer(player);
@@ -262,16 +262,27 @@ public class GameListener implements Listener {
 						new FixedMetadataValue(Main.plugin, player.getLocation()));
 			} else projectile.setMetadata(ItemMetaKey.PER_BLOCK.name(),
 					new FixedMetadataValue(Main.plugin, false));
-
 			if (Crossbow.matches(range))
-				((Arrow) projectile).setPierceLevel(Crossbow.getPierce(range) - 1);
+				((Arrow) projectile).setPierceLevel(Crossbow.getPierce(range));
 
 			// Don't allow pickup
 			((Arrow) projectile).setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
 		}
 
 		// Mob shot
-		// TODO
+		else {
+			// Attempt to get VDMob
+			try {
+				arena = GameManager.getArena(shooter.getMetadata(VDMob.VD).get(0).asInt());
+				finalShooter = arena.getMob(shooter.getUniqueId());
+			} catch (ArenaNotFoundException | VDMobNotFoundException err) {
+				return;
+			}
+
+			// Handle pierce
+			if (finalShooter.getPierce() > 0)
+				((Arrow) projectile).setPierceLevel(finalShooter.getPierce());
+		}
 	}
 
 	// Update health when damage is dealt by entity
@@ -314,6 +325,12 @@ public class GameListener implements Listener {
 
 			// Check damage cooldown
 			if (!finalDamager.checkCooldown()) {
+				e.setCancelled(true);
+				return;
+			}
+
+			// Check for no damage
+			if (finalDamager.getAttackType() == AttackType.NONE) {
 				e.setCancelled(true);
 				return;
 			}
@@ -479,6 +496,12 @@ public class GameListener implements Listener {
 
 				// Check damage cooldown
 				if (finalDamager.checkCooldown()) {
+					e.setCancelled(true);
+					return;
+				}
+
+				// Check for no damage
+				if (finalDamager.getAttackType() == AttackType.NONE) {
 					e.setCancelled(true);
 					return;
 				}

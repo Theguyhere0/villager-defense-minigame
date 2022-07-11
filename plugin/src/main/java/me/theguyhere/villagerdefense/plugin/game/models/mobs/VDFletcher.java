@@ -22,7 +22,7 @@ public class VDFletcher extends VDVillager {
         setArmor(0, 2, level, 2);
         setToughness(.01, .01, level, 2);
         setMediumWeight(villager);
-        setFastLandSpeed(villager);
+        setFastSpeed(villager);
         // TODO: Implement effects
         villager.setProfession(Villager.Profession.FLETCHER);
         updateNameTag();
