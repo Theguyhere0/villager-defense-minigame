@@ -451,15 +451,17 @@ public class GameListener implements Listener {
 				// Damage not dealt by player
 				else {
 					// Check damage cooldown
-					if (finalDamager.checkCooldown()) {
+					if (!finalDamager.checkCooldown()) {
 						e.setCancelled(true);
 						return;
 					}
 
-					// Make sure fast attacks only apply when mobs are close
-					if (damager.getLocation().distance(victim.getLocation()) > 1.75) {
-						e.setCancelled(true);
-						return;
+					if (e.getCause() == EntityDamageEvent.DamageCause.CUSTOM) {
+						// Make sure fast attacks only apply when mobs are close
+						if (damager.getLocation().distance(victim.getLocation()) > 1.75) {
+							e.setCancelled(true);
+							return;
+						}
 					}
 
 					// Implement faster attacks
@@ -495,9 +497,17 @@ public class GameListener implements Listener {
 				e.setDamage(0);
 
 				// Check damage cooldown
-				if (finalDamager.checkCooldown()) {
+				if (!finalDamager.checkCooldown()) {
 					e.setCancelled(true);
 					return;
+				}
+
+				if (e.getCause() == EntityDamageEvent.DamageCause.CUSTOM) {
+					// Make sure fast attacks only apply when mobs are close
+					if (damager.getLocation().distance(victim.getLocation()) > 1.75) {
+						e.setCancelled(true);
+						return;
+					}
 				}
 
 				// Check for no damage
@@ -1027,22 +1037,6 @@ public class GameListener implements Listener {
 //			Mobs.setGolem(Main.plugin, arena, ironGolem);
 //			Main.getVillagersTeam().addEntry(ironGolem.getUniqueId().toString());
 //		}
-	}
-
-	// Prevent wolves from targeting villagers
-	@EventHandler
-	public void onTarget(EntityTargetLivingEntityEvent e) {
-//		// Check for wolf
-//		if (!(e.getEntity() instanceof Wolf))
-//			return;
-//
-//		// Check for villager target
-//		if (!(e.getTarget() instanceof Villager))
-//			return;
-//
-//		// Cancel if special wolf
-//		if (e.getEntity().hasMetadata(VDMob.VD))
-//			e.setCancelled(true);
 	}
 
 	// Prevent wolves from teleporting

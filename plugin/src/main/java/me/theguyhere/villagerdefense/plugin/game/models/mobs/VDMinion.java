@@ -5,7 +5,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mob;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -14,11 +14,9 @@ import java.util.Objects;
 import java.util.Random;
 
 public abstract class VDMinion extends VDMob {
-    protected LivingEntity minion;
-
-    protected VDMinion(Arena arena, LivingEntity minion, String name, String lore, int level, AttackType attackType) {
+    protected VDMinion(Arena arena, Mob minion, String name, String lore, int level, AttackType attackType) {
         super(lore, level, attackType);
-        this.minion = minion;
+        mob = minion;
         id = minion.getUniqueId();
         hostile = true;
         Main.getMonstersTeam().addEntry(minion.getUniqueId().toString());
@@ -43,7 +41,7 @@ public abstract class VDMinion extends VDMob {
     }
 
     protected void setArmorEquipment() {
-        EntityEquipment equipment = Objects.requireNonNull(minion.getEquipment());
+        EntityEquipment equipment = Objects.requireNonNull(mob.getEquipment());
         Random r = new Random();
         int armorLevel = Math.max(level + r.nextInt(4) - 2, 0);
         Material mat;
@@ -109,7 +107,7 @@ public abstract class VDMinion extends VDMob {
     }
 
     protected void setSword() {
-        EntityEquipment equipment = Objects.requireNonNull(minion.getEquipment());
+        EntityEquipment equipment = Objects.requireNonNull(mob.getEquipment());
         Random r = new Random();
         int swordLevel = Math.max(level + r.nextInt(4) - 2, 0);
         Material mat;
@@ -129,7 +127,7 @@ public abstract class VDMinion extends VDMob {
     }
 
     protected void setAxe() {
-        EntityEquipment equipment = Objects.requireNonNull(minion.getEquipment());
+        EntityEquipment equipment = Objects.requireNonNull(mob.getEquipment());
         Random r = new Random();
         int axeLevel = Math.max(level + r.nextInt(4) - 2, 0);
         Material mat;
@@ -149,7 +147,7 @@ public abstract class VDMinion extends VDMob {
     }
 
     protected void setScythe() {
-        EntityEquipment equipment = Objects.requireNonNull(minion.getEquipment());
+        EntityEquipment equipment = Objects.requireNonNull(mob.getEquipment());
         Random r = new Random();
         int scytheLevel = Math.max(level + r.nextInt(4) - 2, 0);
         Material mat;
@@ -169,14 +167,14 @@ public abstract class VDMinion extends VDMob {
     }
 
     protected void setBow() {
-        Objects.requireNonNull(minion.getEquipment()).setItemInMainHand(new ItemStack(Material.BOW));
+        Objects.requireNonNull(mob.getEquipment()).setItemInMainHand(new ItemStack(Material.BOW));
     }
 
     protected void setCrossbow() {
-        Objects.requireNonNull(minion.getEquipment()).setItemInMainHand(new ItemStack(Material.CROSSBOW));
+        Objects.requireNonNull(mob.getEquipment()).setItemInMainHand(new ItemStack(Material.CROSSBOW));
     }
 
     protected void setTrident() {
-        Objects.requireNonNull(minion.getEquipment()).setItemInMainHand(new ItemStack(Material.TRIDENT));
+        Objects.requireNonNull(mob.getEquipment()).setItemInMainHand(new ItemStack(Material.TRIDENT));
     }
 }

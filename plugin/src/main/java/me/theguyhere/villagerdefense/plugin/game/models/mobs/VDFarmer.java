@@ -21,9 +21,9 @@ public class VDFarmer extends VDVillager {
         setHealth(150, 15, level, 2);
         setArmor(3, 2, level, 2);
         setToughness(.02, .01, level, 2);
-        setMediumWeight(villager);
-        setVeryFastSpeed(villager);
-        villager.setProfession(Villager.Profession.FARMER);
+        setMediumWeight();
+        setVeryFastSpeed();
+        ((Villager) mob).setProfession(Villager.Profession.FARMER);
         updateNameTag();
     }
 }

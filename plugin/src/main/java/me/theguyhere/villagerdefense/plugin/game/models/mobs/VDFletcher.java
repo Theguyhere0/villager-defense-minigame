@@ -21,10 +21,9 @@ public class VDFletcher extends VDVillager {
         setHealth(150, 15, level, 2);
         setArmor(0, 2, level, 2);
         setToughness(.01, .01, level, 2);
-        setMediumWeight(villager);
-        setFastSpeed(villager);
-        // TODO: Implement effects
-        villager.setProfession(Villager.Profession.FLETCHER);
+        setMediumWeight();
+        setFastSpeed();
+        ((Villager) mob).setProfession(Villager.Profession.FLETCHER);
         updateNameTag();
     }
 }

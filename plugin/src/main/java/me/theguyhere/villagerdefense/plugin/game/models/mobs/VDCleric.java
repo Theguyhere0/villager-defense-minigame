@@ -22,10 +22,9 @@ public class VDCleric extends VDVillager {
         setArmor(0, 1, level, 2);
         setToughness(.04, .02, level, 2);
         setVerySlowAttackSpeed();
-        setMediumWeight(villager);
-        setFastSpeed(villager);
-        // TODO: Implement effects
-        villager.setProfession(Villager.Profession.CLERIC);
+        setMediumWeight();
+        setFastSpeed();
+        ((Villager) mob).setProfession(Villager.Profession.CLERIC);
         updateNameTag();
     }
 }

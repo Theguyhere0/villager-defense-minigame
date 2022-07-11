@@ -3,16 +3,13 @@ package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Villager;
 import org.bukkit.metadata.FixedMetadataValue;
 
 public abstract class VDVillager extends VDMob {
-    protected Villager villager;
-
     protected VDVillager(Arena arena, Villager villager, String name, String lore, int level) {
         super(lore, level, null);
-        this.villager = villager;
+        mob = villager;
         id = villager.getUniqueId();
         hostile = false;
         villager.setAdult();
@@ -32,10 +29,5 @@ public abstract class VDVillager extends VDMob {
     @Override
     protected void updateNameTag() {
         super.updateNameTag(ChatColor.DARK_GREEN);
-    }
-
-    @Override
-    public LivingEntity getEntity() {
-        return villager;
     }
 }

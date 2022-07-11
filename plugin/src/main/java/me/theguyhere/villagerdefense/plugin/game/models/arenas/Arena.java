@@ -1872,6 +1872,35 @@ public class Arena {
             public void run() {
                 // Task
                 getActives().forEach(VDPlayer::updateStatsOne);
+                mobs.forEach(mob -> {
+                    Mob mobster = mob.getEntity();
+                    Location location = mobster.getLocation();
+                    int range = mob.getTargetRange();
+                    List<Entity> nearby = Objects.requireNonNull(location.getWorld())
+                            .getNearbyEntities(getBounds(), entity -> range < 0 ||
+                                    mobster.getLocation().distance(entity.getLocation()) <= range)
+                            .stream()
+                            .filter(entity -> Main.getMonstersTeam().hasEntry(mobster.getUniqueId().toString()) ^
+                                        Main.getMonstersTeam().hasEntry(entity.getUniqueId().toString()))
+                            .filter(entity -> {
+                                if (entity instanceof Player)
+                                    return ((Player) entity).getGameMode() == GameMode.ADVENTURE;
+                                else return true;
+                            })
+                            .filter(mobster::hasLineOfSight)
+                            .sorted((e1, e2) -> (int) (mobster.getLocation().distance(e1.getLocation()) -
+                                    mobster.getLocation().distance(e2.getLocation()))).collect(Collectors.toList());
+                    List<Entity> priority = nearby.stream().filter(mob.getTargetPriority().getTest())
+                            .sorted((e1, e2) -> (int) (mobster.getLocation().distance(e1.getLocation()) -
+                                    mobster.getLocation().distance(e2.getLocation())))
+                            .collect(Collectors.toList());
+                    LivingEntity oldTarget = mobster.getTarget();
+                    LivingEntity newTarget = priority.isEmpty() ?
+                            (nearby.isEmpty() ? null : (LivingEntity) nearby.get(0)) : (LivingEntity) priority.get(0);
+                    if (oldTarget == null ||
+                            newTarget != null && !oldTarget.getUniqueId().equals(newTarget.getUniqueId()))
+                        mobster.setTarget(newTarget);
+                });
             }
         });
         activeTasks.get(ONE_UPDATE).runTaskTimer(Main.plugin, Utils.secondsToTicks(30), Utils.secondsToTicks(1));

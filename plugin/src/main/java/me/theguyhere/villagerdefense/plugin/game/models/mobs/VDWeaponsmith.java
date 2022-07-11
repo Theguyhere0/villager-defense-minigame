@@ -22,9 +22,9 @@ public class VDWeaponsmith extends VDVillager {
         setHealth(150, 15, level, 2);
         setArmor(5, 2, level, 2);
         setToughness(.02, .01, level, 2);
-        setMediumWeight(villager);
-        setVeryFastSpeed(villager);
-        villager.setProfession(Villager.Profession.WEAPONSMITH);
+        setMediumWeight();
+        setVeryFastSpeed();
+        ((Villager) mob).setProfession(Villager.Profession.WEAPONSMITH);
         updateNameTag();
     }
 }

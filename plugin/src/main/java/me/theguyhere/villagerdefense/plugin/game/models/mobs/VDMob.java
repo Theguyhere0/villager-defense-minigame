@@ -18,7 +18,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public abstract class VDMob {
+    protected Mob mob;
     protected UUID id;
     protected final String lore;
     protected final Map<UUID, Integer> damageMap = new HashMap<>();
@@ -45,6 +46,8 @@ public abstract class VDMob {
     protected int pierce;
     protected final AttackType attackType;
     protected double attackSpeed;
+    protected TargetPriority targetPriority = TargetPriority.NONE;
+    protected int targetRange;
     protected int loot;
     protected double lootSpread;
     protected long lastStrike = 0;
@@ -60,7 +63,9 @@ public abstract class VDMob {
         this.attackType = attackType;
     }
 
-    public abstract LivingEntity getEntity();
+    public Mob getEntity() {
+        return mob;
+    }
 
     public UUID getID() {
         return id;
@@ -186,6 +191,14 @@ public abstract class VDMob {
         return attackSpeed;
     }
 
+    public TargetPriority getTargetPriority() {
+        return targetPriority;
+    }
+
+    public int getTargetRange() {
+        return targetRange;
+    }
+
     // Function for Gaussian level distribution, with restrictions
     protected static int getLevel(double difficulty, double rate, int start) {
         Random r = new Random();
@@ -234,50 +247,50 @@ public abstract class VDMob {
 
 
     // Set knockback options
-    protected void setNoneKnockback(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
+    protected void setNoneKnockback() {
+        double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
                 .getBaseValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
+        Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
                 .addModifier(new AttributeModifier(
                         KNOCKBACK,
                         0 - initial,
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }
-    protected void setLowKnockback(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
+    protected void setLowKnockback() {
+        double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
                 .getBaseValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
+        Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
                 .addModifier(new AttributeModifier(
                         KNOCKBACK,
                         .25 - initial,
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }
-    protected void setModerateKnockback(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
+    protected void setModerateKnockback() {
+        double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
                 .getBaseValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
+        Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
                 .addModifier(new AttributeModifier(
                         KNOCKBACK,
                         .75 - initial,
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }
-    protected void setHighKnockback(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
+    protected void setHighKnockback() {
+        double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
                 .getBaseValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
+        Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
                 .addModifier(new AttributeModifier(
                         KNOCKBACK,
                         1.25 - initial,
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }
-    protected void setVeryHighKnockback(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
+    protected void setVeryHighKnockback() {
+        double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
                 .getBaseValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
+        Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
                 .addModifier(new AttributeModifier(
                         KNOCKBACK,
                         2.5 - initial,
@@ -286,50 +299,50 @@ public abstract class VDMob {
     }
 
     // Set weight options
-    protected void setVeryLightWeight(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
+    protected void setVeryLightWeight() {
+        double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
                 .getValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
+        Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
                 .addModifier(new AttributeModifier(
                         WEIGHT,
                         0 - initial,
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }
-    protected void setLightWeight(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
+    protected void setLightWeight() {
+        double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
                 .getValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
+        Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
                 .addModifier(new AttributeModifier(
                         WEIGHT,
                         .1 - initial,
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }
-    protected void setMediumWeight(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
+    protected void setMediumWeight() {
+        double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
                 .getValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
+        Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
                 .addModifier(new AttributeModifier(
                         WEIGHT,
                         .25 - initial,
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }
-    protected void setHeavyWeight(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
+    protected void setHeavyWeight() {
+        double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
                 .getValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
+        Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
                 .addModifier(new AttributeModifier(
                         WEIGHT,
                         .4 - initial,
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }
-    protected void setVeryHeavyWeight(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
+    protected void setVeryHeavyWeight() {
+        double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
                 .getValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
+        Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
                 .addModifier(new AttributeModifier(
                         WEIGHT,
                         .7 - initial,
@@ -339,55 +352,69 @@ public abstract class VDMob {
 
 
     // Set speed options
-    protected void setVerySlowSpeed(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+    protected void setVerySlowSpeed() {
+        double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .getBaseValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+        Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .addModifier(new AttributeModifier(
                         SPEED,
                         .12 - initial,
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }
-    protected void setSlowSpeed(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+    protected void setSlowSpeed() {
+        double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .getBaseValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+        Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .addModifier(new AttributeModifier(
                         SPEED,
                         .2 - initial,
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }
-    protected void setMediumSpeed(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+    protected void setMediumSpeed() {
+        double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .getBaseValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+        Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .addModifier(new AttributeModifier(
                         SPEED,
                         .275 - initial,
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }
-    protected void setFastSpeed(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+    protected void setFastSpeed() {
+        double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .getBaseValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+        Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .addModifier(new AttributeModifier(
                         SPEED,
                         .325 - initial,
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
     }
-    protected void setVeryFastSpeed(LivingEntity livingEntity) {
-        double initial = Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+    protected void setVeryFastSpeed() {
+        double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .getBaseValue();
-        Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+        Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .addModifier(new AttributeModifier(
                         SPEED,
                         .4 - initial,
                         AttributeModifier.Operation.ADD_NUMBER
                 ));
+    }
+
+    // Set target range
+    protected void setCloseTargetRange() {
+        targetRange = 10;
+    }
+    protected void setModerateTargetRange() {
+        targetRange = 18;
+    }
+    protected void setFarTargetRange() {
+        targetRange = 30;
+    }
+    protected void setUnboundedTargetRange() {
+        targetRange = -1;
     }
 
     // Sets the proper loot for the mob

@@ -21,9 +21,9 @@ public class VDVaultKeeper extends VDVillager {
         setHealth(150, 15, level, 2);
         setArmor(0, 2, level, 2);
         setToughness(.03, .01, level, 2);
-        setMediumWeight(villager);
-        setVeryFastSpeed(villager);
-        villager.setProfession(Villager.Profession.LIBRARIAN);
+        setMediumWeight();
+        setVeryFastSpeed();
+        ((Villager) mob).setProfession(Villager.Profession.LIBRARIAN);
         updateNameTag();
     }
 }
