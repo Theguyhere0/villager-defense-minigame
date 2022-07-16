@@ -45,6 +45,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
 
 import java.util.List;
@@ -329,12 +330,6 @@ public class GameListener implements Listener {
 				return;
 			}
 
-			// Check for no damage
-			if (finalDamager.getAttackType() == AttackType.NONE) {
-				e.setCancelled(true);
-				return;
-			}
-
 			if (e.getCause() == EntityDamageEvent.DamageCause.CUSTOM) {
 				// Make sure fast attacks only apply when mobs are close
 				if (damager.getLocation().distance(victim.getLocation()) > 1.75) {
@@ -360,8 +355,12 @@ public class GameListener implements Listener {
 						EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.5));
 			}
 
-			// Realize damage
+			// Realize damage and deal effect
 			gamer.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType());
+			if (finalDamager.getEffectType().getName().equals(PotionEffectType.FIRE_RESISTANCE.getName()))
+				gamer.combust(finalDamager.getEffectDuration());
+			else if (finalDamager.getEffectType() != null)
+				gamer.getPlayer().addPotionEffect(finalDamager.dealEffect());
 		}
 
 		// VD entity getting hurt
@@ -479,9 +478,11 @@ public class GameListener implements Listener {
 								EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.5));
 					}
 
-					// Play out damage
+					// Play out damage and effect
 					finalVictim.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType(), null,
 							arena);
+					if (finalDamager.dealEffect() != null)
+						finalVictim.getEntity().addPotionEffect(finalDamager.dealEffect());
 				}
 			}
 
@@ -531,32 +532,123 @@ public class GameListener implements Listener {
 									EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.5));
 				}
 
-				// Play out damage
+				// Play out damage and effect
 				finalVictim.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType(), null,
 						arena);
+				if (finalDamager.dealEffect() != null)
+					finalVictim.getEntity().addPotionEffect(finalDamager.dealEffect());
 			}
 		}
 	}
 
-	// Ignore damage not dealt by another entity
+	// Handle other types of damage from effects and environment
 	@EventHandler
 	public void onHurt(EntityDamageEvent e) {
 		Entity ent = e.getEntity();
-
-		// Check for arena mobs or players
-		if (!ent.hasMetadata(VDMob.VD) && !(ent instanceof Player))
-			return;
-
-		// Check player is in a game
-		if (ent instanceof Player && !GameManager.checkPlayer((Player) ent))
-			return;
+		Arena arena;
+		VDMob mob;
+		VDPlayer gamer;
 
 		// Don't handle entity on entity damage
 		if (e instanceof EntityDamageByEntityEvent)
 			return;
 
-		// Cancel
-		e.setCancelled(true);
+		// Capture original damage and cause
+		double damage = e.getDamage();
+		EntityDamageEvent.DamageCause damageCause = e.getCause();
+
+		// For players
+		if (ent instanceof Player) {
+			Player player = (Player) ent;
+
+			// Attempt to get arena and VDPlayer
+			try {
+				arena = GameManager.getArena(player);
+				gamer = arena.getPlayer(player);
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+				return;
+			}
+
+			// Custom damage handling
+			switch (damageCause) {
+				// Environmental damage, not meant for customization
+				case FALL:
+				case LAVA:
+				case HOT_FLOOR:
+				case DROWNING:
+				case SUFFOCATION:
+				case FALLING_BLOCK:
+				case LIGHTNING:
+				case BLOCK_EXPLOSION:
+					gamer.takeDamage((int) (damage * 10), AttackType.PENETRATING);
+					break;
+				// Custom handling
+				case FIRE:
+				case FIRE_TICK:
+					gamer.takeDamage((int) (damage * 5), AttackType.PENETRATING);
+					break;
+				case POISON:
+					gamer.takeDamage((int) (damage * 4), AttackType.PENETRATING);
+					break;
+				case WITHER:
+					gamer.takeDamage((int) (damage * 4), AttackType.DIRECT);
+					break;
+				// Ignore
+				default:
+			}
+		}
+
+		// For mobs
+		else {
+			// Try to get arena and VDMob
+			try {
+				arena = GameManager.getArena(ent.getMetadata(VDMob.VD).get(0).asInt());
+				mob = arena.getMob(ent.getUniqueId());
+			} catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException err) {
+				return;
+			}
+
+			// Custom damage handling
+			switch (damageCause) {
+				// Environmental damage, not meant for customization
+				case FALL:
+				case LAVA:
+				case HOT_FLOOR:
+				case DROWNING:
+				case SUFFOCATION:
+				case FALLING_BLOCK:
+				case LIGHTNING:
+				case BLOCK_EXPLOSION:
+					mob.takeDamage((int) (damage * 10), AttackType.PENETRATING, null, arena);
+					break;
+				// Custom handling
+				case FIRE:
+				case FIRE_TICK:
+					mob.takeDamage((int) (damage * 5), AttackType.PENETRATING, null, arena);
+					break;
+				case POISON:
+					mob.takeDamage((int) (damage * 4), AttackType.PENETRATING, null, arena);
+					break;
+				case WITHER:
+					mob.takeDamage((int) (damage * 4), AttackType.DIRECT, null, arena);
+					break;
+				// Ignore
+				default:
+			}
+		}
+
+		// Cancel original damage
+		e.setDamage(0);
+	}
+
+	// Stop custom mobs from burning in the sun
+	@EventHandler
+	public void onCombust(EntityCombustEvent e) {
+		if (e instanceof EntityCombustByBlockEvent || e instanceof EntityCombustByEntityEvent)
+			return;
+
+		if (e.getEntity().hasMetadata(VDMob.VD))
+			e.setCancelled(true);
 	}
 
 	// Prevent using certain item slots
@@ -616,7 +708,7 @@ public class GameListener implements Listener {
 				new ColoredMessage(ChatColor.RED, "+5" + Utils.HP));
 	}
 
-	// Prevent players from going hungry while waiting for an arena to start
+	// Prevent players from going hungry while in an arena
 	@EventHandler
 	public void onHunger(FoodLevelChangeEvent e) {
 		Player player = (Player) e.getEntity();
@@ -628,6 +720,36 @@ public class GameListener implements Listener {
 			return;
 		}
 
+		e.setCancelled(true);
+	}
+
+	// Cancel natural potion effects for VDMobs or VDPlayers
+	@EventHandler
+	public void onNaturalEffect(EntityPotionEffectEvent e) {
+		Entity ent = e.getEntity();
+
+		// Check for VDPlayer
+		if (ent instanceof Player) {
+			if (!GameManager.checkPlayer((Player) ent))
+				return;
+		}
+
+		// Check for VDMob
+		else {
+			try {
+				GameManager.getArena(ent.getMetadata(VDMob.VD).get(0).asInt()).getMob(ent.getUniqueId());
+			} catch (IndexOutOfBoundsException | VDMobNotFoundException | ArenaNotFoundException err) {
+				return;
+			}
+		}
+
+		// Allow plugin, command, and expiration causes
+		if (e.getCause() == EntityPotionEffectEvent.Cause.PLUGIN ||
+				e.getCause() == EntityPotionEffectEvent.Cause.COMMAND ||
+				e.getCause() == EntityPotionEffectEvent.Cause.EXPIRATION)
+			return;
+
+		// Cancel
 		e.setCancelled(true);
 	}
 

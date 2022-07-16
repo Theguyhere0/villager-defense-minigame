@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Husk;
 import org.bukkit.entity.Mob;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Objects;
 
@@ -26,6 +27,9 @@ public class VDBabyHusk extends VDMinion {
         setArmor(6, 2, level, 2);
         setToughness(.05, .03, level, 2);
         setDamage(20, 2, level, 2, .1);
+        setEffectType(PotionEffectType.HUNGER);
+        setEffectLevel(level, true);
+        setEffectDuration(2, 1, level, true);
         setFastAttackSpeed();
         setLowKnockback();
         setLightWeight();

@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Drowned;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Objects;
 
@@ -26,6 +27,9 @@ public class VDBabyDrowned extends VDMinion {
         setArmor(4, 2, level, 2);
         setToughness(0, .02, level, 2);
         setDamage(40, 4, level, 2, .15);
+        setEffectType(PotionEffectType.WEAKNESS);
+        setEffectLevel(level, true);
+        setEffectDuration(4, 2, level, true);
         setSlowAttackSpeed();
         setModerateKnockback();
         setLightWeight();

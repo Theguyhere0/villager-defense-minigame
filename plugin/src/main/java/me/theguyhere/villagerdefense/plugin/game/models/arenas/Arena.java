@@ -1880,6 +1880,7 @@ public class Arena {
                             .getNearbyEntities(getBounds(), entity -> range < 0 ||
                                     mobster.getLocation().distance(entity.getLocation()) <= range)
                             .stream()
+                            .filter(entity -> entity instanceof LivingEntity)
                             .filter(entity -> Main.getMonstersTeam().hasEntry(mobster.getUniqueId().toString()) ^
                                         Main.getMonstersTeam().hasEntry(entity.getUniqueId().toString()))
                             .filter(entity -> {

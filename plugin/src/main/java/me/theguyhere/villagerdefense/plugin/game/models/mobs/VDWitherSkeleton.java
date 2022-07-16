@@ -4,6 +4,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Objects;
 
@@ -24,6 +25,9 @@ public class VDWitherSkeleton extends VDMinion {
         setArmor(2, 2, level, 2);
         setToughness(.1, .05, level, 2);
         setDamage(12, 2, level, 2, .1);
+        setEffectType(PotionEffectType.WITHER);
+        setEffectLevel(level, true);
+        setEffectDuration(2, 1, level, true);
         setVeryFastAttackSpeed();
         setModerateKnockback();
         setLightWeight();

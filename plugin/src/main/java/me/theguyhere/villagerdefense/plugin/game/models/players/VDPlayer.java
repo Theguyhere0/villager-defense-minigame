@@ -4,6 +4,7 @@ import com.google.common.util.concurrent.AtomicDouble;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
@@ -32,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * A class holding data about players in a Villager Defense game.
@@ -428,9 +430,17 @@ public class VDPlayer {
         changeCurrentHealth(1);
 
         // Manage sprint
+        int hunger;
+        try {
+            hunger = getPlayer().getActivePotionEffects().stream()
+                    .filter(p -> p.getType().getName().equals(PotionEffectType.HUNGER.getName()))
+                    .collect(Collectors.toList()).get(0).getAmplifier() + 1;
+        } catch (IndexOutOfBoundsException e) {
+            hunger = 0;
+        }
         if (getPlayer().isSprinting())
-            getPlayer().setFoodLevel(getPlayer().getFoodLevel() - 1);
-        else getPlayer().setFoodLevel(Math.min(20, getPlayer().getFoodLevel() + 1));
+            getPlayer().setFoodLevel(getPlayer().getFoodLevel() - 1 - hunger / 2);
+        else getPlayer().setFoodLevel(Math.min(20, getPlayer().getFoodLevel() + 1 - hunger));
     }
 
     public void updateStatsHalf() {
@@ -544,11 +554,19 @@ public class VDPlayer {
 
         if (attackType == AttackType.NORMAL)
             damage -= Math.min(damage, armor);
-        else damage *= Math.max(0, 1 - toughness);
+        else if (attackType == AttackType.PENETRATING)
+            damage *= Math.max(0, 1 - toughness);
+        else if (attackType == AttackType.NONE)
+            damage = 0;
 
         // Realize damage
         changeCurrentHealth(-damage);
         showStats();
+    }
+
+    public void combust(int ticks) {
+        if (getPlayer().getFireTicks() < ticks)
+            getPlayer().setFireTicks(ticks);
     }
 
     public int getBaseDamage() {

@@ -4,6 +4,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Objects;
 
@@ -25,6 +26,9 @@ public class VDCaveSpider extends VDMinion {
         setArmor(7, 3, level, 2);
         setToughness(.03, .03, level, 2);
         setDamage(6, 2, level, 2, .1);
+        setEffectType(PotionEffectType.POISON);
+        setEffectLevel(level, true);
+        setEffectDuration(5, 1, level, true);
         setVeryFastAttackSpeed();
         setNoneKnockback();
         setVeryLightWeight();

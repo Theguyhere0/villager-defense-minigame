@@ -4,6 +4,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Objects;
 
@@ -23,6 +24,9 @@ public class VDStray extends VDMinion {
         setArmor(4, 2, level, 2);
         setToughness(.05, .05, level, 0);
         setDamage(35, 4, level, 2, .1);
+        setEffectType(PotionEffectType.SLOW);
+        setEffectLevel(level, true);
+        setEffectDuration(4, 2, level, true);
         setSlowAttackSpeed();
         setLowKnockback();
         setLightWeight();

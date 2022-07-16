@@ -4,6 +4,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Objects;
 
@@ -23,6 +24,8 @@ public class VDBlaze extends VDMinion {
         setArmor(10, 3, level, 2);
         setToughness(.08, .04, level, 2);
         setDamage(0, 0, level, 2, 0);
+        setEffectType(PotionEffectType.FIRE_RESISTANCE);
+        setEffectDuration(6, 3, level, false);
         setSlowAttackSpeed();
         setNoneKnockback();
         setMediumWeight();

@@ -20,6 +20,8 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,6 +45,9 @@ public abstract class VDMob {
     protected double toughness;
     protected int damage;
     protected double damageSpread;
+    protected PotionEffectType effectType;
+    protected int effectLevel;
+    protected int effectDuration;
     protected int pierce;
     protected final AttackType attackType;
     protected double attackSpeed;
@@ -83,7 +88,10 @@ public abstract class VDMob {
         // Final damage calculation and display
         if (attackType == AttackType.NORMAL)
             damage -= Math.min(damage, armor);
-        else damage *= Math.max(0, 1 - toughness);
+        else if (attackType == AttackType.PENETRATING)
+            damage *= Math.max(0, 1 - toughness);
+        else if (attackType == AttackType.NONE)
+            damage = 0;
         if (attacker != null)
             try {
                 Popup.create(getEntity().getEyeLocation(),
@@ -172,6 +180,18 @@ public abstract class VDMob {
         return attackType;
     }
 
+    public PotionEffectType getEffectType() {
+        return effectType;
+    }
+
+    public int getEffectDuration() {
+        return effectDuration;
+    }
+
+    public PotionEffect dealEffect() {
+        return effectType == null ? null : new PotionEffect(effectType, effectDuration, effectLevel - 1);
+    }
+
     public int getPierce() {
         return pierce;
     }
@@ -226,6 +246,25 @@ public abstract class VDMob {
     protected void setDamage(int base, int delta, int lvl, int start, double spread) {
         damage = base + delta * Math.max(0, lvl - start + 1);
         damageSpread = spread;
+    }
+
+    // Sets the proper effect type, if there is one
+    protected void setEffectType(PotionEffectType effectType) {
+        this.effectType = effectType;
+    }
+
+    // Sets the proper effect level, if there is one
+    protected void setEffectLevel(int lvl, boolean levelChange) {
+        if (levelChange && lvl >= 10)
+            effectLevel = 2;
+        else effectLevel = 1;
+    }
+
+    // Sets the proper effect duration, if there is one
+    protected void setEffectDuration(int base, int delta, int lvl, boolean levelChange) {
+        effectDuration = Utils.secondsToTicks(base + delta * (lvl - 1));
+        if (levelChange && lvl >= 10)
+            effectDuration /= 2;
     }
 
     // Set attack speed options
