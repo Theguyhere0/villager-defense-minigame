@@ -18,9 +18,9 @@ public class VDFletcher extends VDVillager {
                 "Where’d all the feathers come from? No one knows but the Fletcher.",
                 getLevel(arena.getCurrentDifficulty(), 2, 0)
         );
-        setHealth(150, 15, level, 2);
-        setArmor(0, 2, level, 2);
-        setToughness(.01, .01, level, 2);
+        setHealth(320, 30);
+        setArmor(0, 4);
+        setToughness(.01, .01, 2);
         setMediumWeight();
         setFastSpeed();
         ((Villager) mob).setProfession(Villager.Profession.FLETCHER);

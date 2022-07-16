@@ -24,10 +24,10 @@ public class VDPiglinSniper extends VDMinion {
         Piglin piglinSniper = (Piglin) mob;
         piglinSniper.setAdult();
         piglinSniper.setImmuneToZombification(true);
-        setHealth(120, 10, level, 2);
-        setArmor(5, 2, level, 2);
-        setToughness(.1, .05, level, 2);
-        setDamage(60, 4, level, 2, .05);
+        setHealth(270, 20);
+        setArmor(10, 4);
+        setToughness(.1, .05, 2);
+        setDamage(125, 10, .05);
         pierce = 2;
         setSlowAttackSpeed();
         setModerateKnockback();
@@ -37,7 +37,7 @@ public class VDPiglinSniper extends VDMinion {
         setFarTargetRange();
         setArmorEquipment();
         setCrossbow();
-        setLoot(45, 1.2, level, .25);
+        setLoot(45, 1.2, .25);
         updateNameTag();
     }
 }

@@ -4,7 +4,6 @@ import com.google.common.util.concurrent.AtomicDouble;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
-import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
@@ -426,9 +425,6 @@ public class VDPlayer {
         Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .setBaseValue(.1 * weight.get());
 
-        // Healing
-        changeCurrentHealth(1);
-
         // Manage sprint
         int hunger;
         try {
@@ -444,8 +440,12 @@ public class VDPlayer {
     }
 
     public void updateStatsHalf() {
+        // Update ammo
         Ammo.updateRefill(Objects.requireNonNull(getPlayer().getEquipment()).getItemInMainHand());
         Ammo.updateRefill(Objects.requireNonNull(getPlayer().getEquipment()).getItemInOffHand());
+
+        // Healing
+        changeCurrentHealth(1);
     }
 
     public void takeDamage(int damage, @NotNull AttackType attackType) {
@@ -906,7 +906,7 @@ public class VDPlayer {
             getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999, 0));
 
         // Set up health and damage
-        setMaxHealthInit(200);
-        setBaseDamage(5);
+        setMaxHealthInit(500);
+        setBaseDamage(10);
     }
 }

@@ -22,10 +22,10 @@ public class VDBabyZombie extends VDMinion {
                 AttackType.NORMAL
         );
         ((Zombie) mob).setBaby();
-        setHealth(70, 5, level, 2);
-        setArmor(4, 2, level, 2);
-        setToughness(0, .03, level, 2);
-        setDamage(15, 2, level, 2, .1);
+        setHealth(160, 10);
+        setArmor(6, 3);
+        setToughness(0, .03, 2);
+        setDamage(35, 3, .1);
         setFastAttackSpeed();
         setLowKnockback();
         setLightWeight();
@@ -33,7 +33,7 @@ public class VDBabyZombie extends VDMinion {
         setModerateTargetRange();
         setArmorEquipment();
         setSword();
-        setLoot(30, 1.15, level, .2);
+        setLoot(30, 1.15, .2);
         updateNameTag();
     }
 }

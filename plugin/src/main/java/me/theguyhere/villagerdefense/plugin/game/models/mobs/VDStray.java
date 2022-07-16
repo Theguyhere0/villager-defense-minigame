@@ -20,13 +20,13 @@ public class VDStray extends VDMinion {
                 getLevel(arena.getCurrentDifficulty(), 1.5, 3),
                 AttackType.NORMAL
         );
-        setHealth(110, 10, level, 2);
-        setArmor(4, 2, level, 2);
-        setToughness(.05, .05, level, 0);
-        setDamage(35, 4, level, 2, .1);
+        setHealth(275, 25);
+        setArmor(8, 4);
+        setToughness(.05, .05, 0);
+        setDamage(85, 9, .1);
         setEffectType(PotionEffectType.SLOW);
-        setEffectLevel(level, true);
-        setEffectDuration(4, 2, level, true);
+        setEffectLevel(true);
+        setEffectDuration(4, 2, true);
         setSlowAttackSpeed();
         setLowKnockback();
         setLightWeight();
@@ -35,7 +35,7 @@ public class VDStray extends VDMinion {
         setModerateTargetRange();
         setArmorEquipment();
         setBow();
-        setLoot(35, 1.1, level, .2);
+        setLoot(35, 1.1, .2);
         updateNameTag();
     }
 }

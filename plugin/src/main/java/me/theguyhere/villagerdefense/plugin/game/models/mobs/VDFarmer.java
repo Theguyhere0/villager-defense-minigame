@@ -18,9 +18,9 @@ public class VDFarmer extends VDVillager {
                 "This guy literally provides you with the bread and butter.",
                 getLevel(arena.getCurrentDifficulty(), 2, 0)
         );
-        setHealth(150, 15, level, 2);
-        setArmor(3, 2, level, 2);
-        setToughness(.02, .01, level, 2);
+        setHealth(350, 30);
+        setArmor(5, 4);
+        setToughness(.02, .01, 2);
         setMediumWeight();
         setVeryFastSpeed();
         ((Villager) mob).setProfession(Villager.Profession.FARMER);

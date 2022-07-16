@@ -18,9 +18,9 @@ public class VDVaultKeeper extends VDVillager {
                 "If you need a safe, this villager’s got you covered.",
                 getLevel(arena.getCurrentDifficulty(), 2, 0)
         );
-        setHealth(150, 15, level, 2);
-        setArmor(0, 2, level, 2);
-        setToughness(.03, .01, level, 2);
+        setHealth(350, 30);
+        setArmor(0, 4);
+        setToughness(.03, .01, 2);
         setMediumWeight();
         setVeryFastSpeed();
         ((Villager) mob).setProfession(Villager.Profession.LIBRARIAN);

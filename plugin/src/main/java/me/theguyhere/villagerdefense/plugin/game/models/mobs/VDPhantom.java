@@ -20,17 +20,17 @@ public class VDPhantom extends VDMinion {
                 getLevel(arena.getCurrentDifficulty(), 1.25, 2),
                 AttackType.NORMAL
         );
-        setHealth(75, 10, level, 2);
-        setArmor(4, 2, level, 2);
-        setToughness(.1, .05, level, 2);
-        setDamage(45, 5, level, 2, .15);
-        setSlowAttackSpeed();
+        setHealth(180, 20);
+        setArmor(8, 2);
+        setToughness(.1, .05, 2);
+        setDamage(100, 10, .15);
+        setVerySlowAttackSpeed();
         setModerateKnockback();
         setLightWeight();
         setMediumSpeed();
         targetPriority = TargetPriority.PLAYERS;
         setFarTargetRange();
-        setLoot(30, 1.2, level, .2);
+        setLoot(30, 1.2, .2);
         updateNameTag();
     }
 }

@@ -51,8 +51,8 @@ public abstract class Sword extends VDWeapon {
         lores.add(CommunicationManager.format(ATTACK_TYPE, ATTACK_TYPE_NORMAL));
 
         // Set main damage
-        int damageLow = 15 + 5 * ((level - 1) / 2);
-        int damageHigh = 25 + 5 * (level / 2);
+        int damageLow = 35 + 5 * ((level - 1) / 2);
+        int damageHigh = 50 + 8 * (level / 2);
         lores.add(CommunicationManager.format(MAIN_DAMAGE, new ColoredMessage(ChatColor.RED,
                 damageLow + "-" + damageHigh)));
 

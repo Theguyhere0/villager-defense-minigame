@@ -227,24 +227,24 @@ public abstract class VDMob {
     }
 
     // Sets the proper health for the mob
-    protected void setHealth(int base, int delta, int lvl, int start) {
-        maxHealth = base + delta * Math.max(0, lvl - start + 1);
+    protected void setHealth(int base, int delta) {
+        maxHealth = base + delta * (level - 1);
         currentHealth = maxHealth;
     }
 
     // Sets the proper armor for the mob
-    protected void setArmor(int base, int delta, int lvl, int start) {
-        armor = base + delta * Math.max(0, lvl - start + 1);
+    protected void setArmor(int base, int delta) {
+        armor = base + delta * (level - 1);
     }
 
     // Sets the proper toughness for the mob
-    protected void setToughness(double base, double delta, int lvl, int start) {
-        toughness = base + delta * Math.max(0, lvl - start + 1);
+    protected void setToughness(double base, double delta, int start) {
+        toughness = base + delta * Math.max(0, level - start + 1);
     }
 
     // Sets the proper damage for the mob
-    protected void setDamage(int base, int delta, int lvl, int start, double spread) {
-        damage = base + delta * Math.max(0, lvl - start + 1);
+    protected void setDamage(int base, int delta, double spread) {
+        damage = base + delta * (level - 1);
         damageSpread = spread;
     }
 
@@ -254,16 +254,16 @@ public abstract class VDMob {
     }
 
     // Sets the proper effect level, if there is one
-    protected void setEffectLevel(int lvl, boolean levelChange) {
-        if (levelChange && lvl >= 10)
+    protected void setEffectLevel(boolean levelChange) {
+        if (levelChange && level >= 10)
             effectLevel = 2;
         else effectLevel = 1;
     }
 
     // Sets the proper effect duration, if there is one
-    protected void setEffectDuration(int base, int delta, int lvl, boolean levelChange) {
-        effectDuration = Utils.secondsToTicks(base + delta * (lvl - 1));
-        if (levelChange && lvl >= 10)
+    protected void setEffectDuration(int base, int delta, boolean levelChange) {
+        effectDuration = Utils.secondsToTicks(base + delta * (level - 1));
+        if (levelChange && level >= 10)
             effectDuration /= 2;
     }
 
@@ -457,8 +457,8 @@ public abstract class VDMob {
     }
 
     // Sets the proper loot for the mob
-    protected void setLoot(int base, double rate, int lvl, double spread) {
-        loot = (int) (base * Math.pow(rate, lvl - 1));
+    protected void setLoot(int base, double rate, double spread) {
+        loot = (int) (base * Math.pow(rate, level - 1));
         lootSpread = spread;
     }
 
@@ -537,6 +537,12 @@ public abstract class VDMob {
                 return new VDPhantom(arena, air);
             case VDBlaze.KEY:
                 return new VDBlaze(arena, air);
+            case VDGhast.KEY:
+                return new VDGhast(arena, air);
+            case VDCreeper.KEY:
+                return new VDCreeper(arena, ground);
+            case VDChargedCreeper.KEY:
+                return new VDChargedCreeper(arena, ground);
             case VDSpider.KEY:
                 return new VDSpider(arena, ground);
             case VDCaveSpider.KEY:

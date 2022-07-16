@@ -18,9 +18,9 @@ public class VDCleric extends VDVillager {
                 "Coming from an eastern family, this villager studied 25 hours a day to become a Cleric.",
                 getLevel(arena.getCurrentDifficulty(), 3, 0)
         );
-        setHealth(200, 20, level, 2);
-        setArmor(0, 1, level, 2);
-        setToughness(.04, .02, level, 2);
+        setHealth(500, 50);
+        setArmor(0, 3);
+        setToughness(.04, .02, 2);
         setVerySlowAttackSpeed();
         setMediumWeight();
         setFastSpeed();

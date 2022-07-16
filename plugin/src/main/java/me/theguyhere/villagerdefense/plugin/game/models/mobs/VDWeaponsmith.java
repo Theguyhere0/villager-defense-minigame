@@ -19,9 +19,9 @@ public class VDWeaponsmith extends VDVillager {
                         "you.",
                 getLevel(arena.getCurrentDifficulty(), 2, 0)
         );
-        setHealth(150, 15, level, 2);
-        setArmor(5, 2, level, 2);
-        setToughness(.02, .01, level, 2);
+        setHealth(360, 30);
+        setArmor(12, 4);
+        setToughness(.02, .01, 2);
         setMediumWeight();
         setVeryFastSpeed();
         ((Villager) mob).setProfession(Villager.Profession.WEAPONSMITH);

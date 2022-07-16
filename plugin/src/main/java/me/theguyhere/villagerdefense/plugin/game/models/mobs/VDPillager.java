@@ -24,10 +24,10 @@ public class VDPillager extends VDMinion {
         Pillager pillager = (Pillager) mob;
         pillager.setPatrolLeader(false);
         pillager.setCanJoinRaid(false);
-        setHealth(100, 10, level, 2);
-        setArmor(5, 3, level, 2);
-        setToughness(0, .04, level, 4);
-        setDamage(50, 4, level, 2, .1);
+        setHealth(240, 20);
+        setArmor(12, 4);
+        setToughness(0, .04, 4);
+        setDamage(110, 10, .1);
         pierce = 1;
         setSlowAttackSpeed();
         setNoneKnockback();
@@ -36,7 +36,7 @@ public class VDPillager extends VDMinion {
         targetPriority = TargetPriority.VILLAGERS;
         setFarTargetRange();
         setCrossbow();
-        setLoot(35, 1.3, level, .3);
+        setLoot(35, 1.3, .3);
         updateNameTag();
     }
 }

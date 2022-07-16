@@ -48,7 +48,7 @@ public abstract class Leggings extends VDArmor{
         lores.add("");
 
         // Set armor
-        int armor = 2 + level;
+        int armor = 4 + level * 3;
         lores.add(CommunicationManager.format(ARMOR, new ColoredMessage(ChatColor.AQUA, Integer.toString(armor))));
 
         // Set toughness

@@ -25,6 +25,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Bow;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Crossbow;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.VDWeapon;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDCreeper;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.game.models.players.AttackClass;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
@@ -357,10 +358,11 @@ public class GameListener implements Listener {
 
 			// Realize damage and deal effect
 			gamer.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType());
+			if (finalDamager.getEffectType() == null)
+				return;
 			if (finalDamager.getEffectType().getName().equals(PotionEffectType.FIRE_RESISTANCE.getName()))
 				gamer.combust(finalDamager.getEffectDuration());
-			else if (finalDamager.getEffectType() != null)
-				gamer.getPlayer().addPotionEffect(finalDamager.dealEffect());
+			else gamer.getPlayer().addPotionEffect(finalDamager.dealEffect());
 		}
 
 		// VD entity getting hurt
@@ -580,18 +582,18 @@ public class GameListener implements Listener {
 				case FALLING_BLOCK:
 				case LIGHTNING:
 				case BLOCK_EXPLOSION:
-					gamer.takeDamage((int) (damage * 10), AttackType.PENETRATING);
+					gamer.takeDamage((int) (damage * 20), AttackType.PENETRATING);
 					break;
 				// Custom handling
 				case FIRE:
 				case FIRE_TICK:
-					gamer.takeDamage((int) (damage * 5), AttackType.PENETRATING);
+					gamer.takeDamage((int) (damage * 15), AttackType.PENETRATING);
 					break;
 				case POISON:
-					gamer.takeDamage((int) (damage * 4), AttackType.PENETRATING);
+					gamer.takeDamage((int) (damage * 10), AttackType.PENETRATING);
 					break;
 				case WITHER:
-					gamer.takeDamage((int) (damage * 4), AttackType.DIRECT);
+					gamer.takeDamage((int) (damage * 10), AttackType.DIRECT);
 					break;
 				// Ignore
 				default:
@@ -651,6 +653,32 @@ public class GameListener implements Listener {
 			e.setCancelled(true);
 	}
 
+	// Custom creeper explosion handler
+	@EventHandler
+	public void onExplode(ExplosionPrimeEvent e) {
+		Entity ent = e.getEntity();
+		Arena arena;
+		VDMob mob;
+
+		// Try to get arena and VDMob
+		try {
+			arena = GameManager.getArena(ent.getMetadata(VDMob.VD).get(0).asInt());
+			mob = arena.getMob(ent.getUniqueId());
+		} catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException err) {
+			return;
+		}
+
+		// Check for creeper
+		if (!(mob instanceof VDCreeper))
+			return;
+
+		// Cancel and create custom explosion
+		e.setCancelled(true);
+		((Creeper) ent).setFuseTicks(0);
+		Objects.requireNonNull(ent.getLocation().getWorld()).createExplosion(ent.getLocation(), 3, false,
+				false, ent);
+	}
+
 	// Prevent using certain item slots
 	@EventHandler
 	public void onIllegalEquip(PlayerMoveEvent e) {
@@ -699,13 +727,13 @@ public class GameListener implements Listener {
 			return;
 
 		// Increase health and possibly damage
-		gamer.setMaxHealth(gamer.getMaxHealth() + 5);
+		gamer.setMaxHealth(gamer.getMaxHealth() + 10);
 		if (player.getLevel() % 4 == 0) {
-			gamer.setBaseDamage(gamer.getBaseDamage() + 1);
+			gamer.setBaseDamage(gamer.getBaseDamage() + 2);
 			PlayerManager.notifySuccess(player, LanguageManager.messages.levelUp,
-					new ColoredMessage(ChatColor.RED, "+5" + Utils.HP + "  +1" + Utils.DAMAGE));
+					new ColoredMessage(ChatColor.RED, "+10" + Utils.HP + "  +2" + Utils.DAMAGE));
 		} else PlayerManager.notifySuccess(player, LanguageManager.messages.levelUp,
-				new ColoredMessage(ChatColor.RED, "+5" + Utils.HP));
+				new ColoredMessage(ChatColor.RED, "+10" + Utils.HP));
 	}
 
 	// Prevent players from going hungry while in an arena

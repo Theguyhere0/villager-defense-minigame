@@ -22,20 +22,20 @@ public class VDCaveSpider extends VDMinion {
                 getLevel(arena.getCurrentDifficulty(), 1.25, 3),
                 AttackType.PENETRATING
         );
-        setHealth(80, 5, level, 2);
-        setArmor(7, 3, level, 2);
-        setToughness(.03, .03, level, 2);
-        setDamage(6, 2, level, 2, .1);
+        setHealth(200, 12);
+        setArmor(15, 5);
+        setToughness(.03, .03, 2);
+        setDamage(15, 3, .1);
         setEffectType(PotionEffectType.POISON);
-        setEffectLevel(level, true);
-        setEffectDuration(5, 1, level, true);
+        setEffectLevel(true);
+        setEffectDuration(5, 1, true);
         setVeryFastAttackSpeed();
         setNoneKnockback();
         setVeryLightWeight();
         setVeryFastSpeed();
         targetPriority = TargetPriority.PLAYERS;
         setModerateTargetRange();
-        setLoot(35, 1.2, level, .2);
+        setLoot(35, 1.2, .2);
         updateNameTag();
     }
 }

@@ -21,13 +21,13 @@ public class VDWitherSkeleton extends VDMinion {
                 getLevel(arena.getCurrentDifficulty(), 1.25, 4),
                 AttackType.NORMAL
         );
-        setHealth(100, 8, level, 2);
-        setArmor(2, 2, level, 2);
-        setToughness(.1, .05, level, 2);
-        setDamage(12, 2, level, 2, .1);
+        setHealth(250, 25);
+        setArmor(4, 3);
+        setToughness(.1, .05, 2);
+        setDamage(25, 3, .1);
         setEffectType(PotionEffectType.WITHER);
-        setEffectLevel(level, true);
-        setEffectDuration(2, 1, level, true);
+        setEffectLevel(true);
+        setEffectDuration(2, 1, true);
         setVeryFastAttackSpeed();
         setModerateKnockback();
         setLightWeight();
@@ -36,7 +36,7 @@ public class VDWitherSkeleton extends VDMinion {
         setModerateTargetRange();
         setArmorEquipment();
         setScythe();
-        setLoot(35, 1.2, level, .2);
+        setLoot(35, 1.2, .2);
         updateNameTag();
     }
 }

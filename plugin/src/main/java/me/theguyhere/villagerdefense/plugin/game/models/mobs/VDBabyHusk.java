@@ -23,13 +23,13 @@ public class VDBabyHusk extends VDMinion {
                 AttackType.NORMAL
         );
         ((Husk) mob).setBaby();
-        setHealth(90, 8, level, 2);
-        setArmor(6, 2, level, 2);
-        setToughness(.05, .03, level, 2);
-        setDamage(20, 2, level, 2, .1);
+        setHealth(200, 20);
+        setArmor(12, 4);
+        setToughness(.05, .03, 2);
+        setDamage(40, 4, .1);
         setEffectType(PotionEffectType.HUNGER);
-        setEffectLevel(level, true);
-        setEffectDuration(2, 1, level, true);
+        setEffectLevel(true);
+        setEffectDuration(2, 1, true);
         setFastAttackSpeed();
         setLowKnockback();
         setLightWeight();
@@ -38,7 +38,7 @@ public class VDBabyHusk extends VDMinion {
         setModerateTargetRange();
         setArmorEquipment();
         setSword();
-        setLoot(35, 1.2, level, .2);
+        setLoot(35, 1.2, .2);
         updateNameTag();
     }
 }

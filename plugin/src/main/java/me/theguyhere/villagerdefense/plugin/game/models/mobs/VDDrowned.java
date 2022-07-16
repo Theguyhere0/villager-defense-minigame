@@ -23,13 +23,13 @@ public class VDDrowned extends VDMinion {
                 AttackType.PENETRATING
         );
         ((Drowned) mob).setAdult();
-        setHealth(120, 10, level, 2);
-        setArmor(5, 3, level, 2);
-        setToughness(0, .02, level, 2);
-        setDamage(50, 5, level, 2, .15);
+        setHealth(270, 20);
+        setArmor(12, 4);
+        setToughness(0, .02, 2);
+        setDamage(110, 10, .15);
         setEffectType(PotionEffectType.SLOW);
-        setEffectLevel(level, false);
-        setEffectDuration(2, 1, level, false);
+        setEffectLevel(false);
+        setEffectDuration(2, 1, false);
         setSlowAttackSpeed();
         setLowKnockback();
         setMediumWeight();
@@ -38,7 +38,7 @@ public class VDDrowned extends VDMinion {
         setModerateTargetRange();
         setArmorEquipment();
         setTrident();
-        setLoot(35, 1.2, level, .2);
+        setLoot(35, 1.2, .2);
         updateNameTag();
     }
 }

@@ -48,7 +48,8 @@ public abstract class Boots extends VDArmor{
         lores.add("");
 
         // Set armor
-        lores.add(CommunicationManager.format(ARMOR, new ColoredMessage(ChatColor.AQUA, Integer.toString(level))));
+        int armor = 1 + level * 2;
+        lores.add(CommunicationManager.format(ARMOR, new ColoredMessage(ChatColor.AQUA, Integer.toString(armor))));
 
         // Set toughness
         int toughness = Math.max((level - 16)/ 2, 0);

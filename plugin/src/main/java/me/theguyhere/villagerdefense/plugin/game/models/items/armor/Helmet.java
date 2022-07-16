@@ -48,7 +48,7 @@ public abstract class Helmet extends VDArmor{
         lores.add("");
 
         // Set armor
-        int armor = 1 + level;
+        int armor = 4 + level * 2;
         lores.add(CommunicationManager.format(ARMOR, new ColoredMessage(ChatColor.AQUA, Integer.toString(armor))));
 
         // Set toughness

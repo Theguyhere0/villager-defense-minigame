@@ -28,8 +28,8 @@ public abstract class Crossbow extends VDWeapon {
         lores.add(CommunicationManager.format(ATTACK_TYPE, ATTACK_TYPE_NORMAL));
 
         // Set range damage
-        int damageLow = 35 + 5 * ((level - 1) / 2);
-        int damageHigh = 50 + 5 * (level / 2);
+        int damageLow = 80 + 10 * ((level - 1) / 2);
+        int damageHigh = 120 + 12 * (level / 2);
         lores.add(CommunicationManager.format(RANGE_DAMAGE, new ColoredMessage(ChatColor.DARK_AQUA,
                 damageLow + "-" + damageHigh)));
 

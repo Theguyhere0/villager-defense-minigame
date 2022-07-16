@@ -17,8 +17,8 @@ public abstract class EnchantedApple extends VDFood {
     @NotNull
     public static ItemStack create() {
         return ItemManager.createItem(Material.ENCHANTED_GOLDEN_APPLE, null,
-                new ColoredMessage(ChatColor.RED, "+60 " + Utils.HP).toString(),
-                new ColoredMessage(ChatColor.GOLD, "+15 " + Utils.HP).toString(),
+                new ColoredMessage(ChatColor.RED, "+125 " + Utils.HP).toString(),
+                new ColoredMessage(ChatColor.GOLD, "+40 " + Utils.HP).toString(),
                 CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a575"));
     }
 
@@ -32,8 +32,8 @@ public abstract class EnchantedApple extends VDFood {
         if (lore == null)
             return false;
         return toCheck.getType() == Material.ENCHANTED_GOLDEN_APPLE && lore.stream().anyMatch(line -> line.contains(
-                new ColoredMessage(ChatColor.RED, "+60 " + Utils.HP).toString()) || line.contains(
-                        new ColoredMessage(ChatColor.GOLD, "+15 " + Utils.HP).toString()
+                new ColoredMessage(ChatColor.RED, "+125 " + Utils.HP).toString()) || line.contains(
+                        new ColoredMessage(ChatColor.GOLD, "+40 " + Utils.HP).toString()
                 ));
     }
 }

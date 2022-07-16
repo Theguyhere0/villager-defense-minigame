@@ -48,7 +48,7 @@ public abstract class Chestplate extends VDArmor{
         lores.add("");
 
         // Set armor
-        int armor = 3 + level;
+        int armor = 7 + level * 3;
         lores.add(CommunicationManager.format(ARMOR, new ColoredMessage(ChatColor.AQUA, Integer.toString(armor))));
 
         // Set toughness

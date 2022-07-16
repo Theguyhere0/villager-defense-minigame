@@ -24,10 +24,10 @@ public class VDVindicator extends VDMinion {
         Vindicator vindicator = (Vindicator) mob;
         vindicator.setPatrolLeader(false);
         vindicator.setCanJoinRaid(false);
-        setHealth(240, 20, level, 2);
-        setArmor(15, 3, level, 2);
-        setToughness(.05, .04, level, 2);
-        setDamage(55, 5, level, 2, .1);
+        setHealth(550, 50);
+        setArmor(35, 7);
+        setToughness(.05, .04, 2);
+        setDamage(125, 10, .1);
         setSlowAttackSpeed();
         setModerateKnockback();
         setMediumWeight();
@@ -35,7 +35,7 @@ public class VDVindicator extends VDMinion {
         targetPriority = TargetPriority.GOLEMS;
         setModerateTargetRange();
         setAxe();
-        setLoot(50, 1.2, level, .2);
+        setLoot(50, 1.2, .2);
         updateNameTag();
     }
 }

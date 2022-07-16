@@ -19,10 +19,10 @@ public class VDVex extends VDMinion {
                 getLevel(arena.getCurrentDifficulty(), 1, 4),
                 AttackType.NORMAL
         );
-        setHealth(50, 5, level, 2);
-        setArmor(4, 2, level, 2);
-        setToughness(0, .02, level, 2);
-        setDamage(10, 2, level, 2, .1);
+        setHealth(120, 12);
+        setArmor(5, 2);
+        setToughness(0, .02, 2);
+        setDamage(25, 5, .1);
         setFastAttackSpeed();
         setNoneKnockback();
         setVeryLightWeight();
@@ -30,7 +30,7 @@ public class VDVex extends VDMinion {
         targetPriority = TargetPriority.PETS_GOLEMS_PLAYERS;
         setModerateTargetRange();
         setSword();
-        setLoot(30, 1.2, level, .1);
+        setLoot(30, 1.2, .1);
         updateNameTag();
     }
 }

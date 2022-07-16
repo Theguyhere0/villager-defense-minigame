@@ -18,9 +18,9 @@ public class VDArmorer extends VDVillager {
                 "Your body is this villager’s number one priority. With consent, of course.",
                 getLevel(arena.getCurrentDifficulty(), 2, 0)
         );
-        setHealth(150, 15, level, 2);
-        setArmor(8, 2, level, 2);
-        setToughness(.02, .01, level, 2);
+        setHealth(360, 30);
+        setArmor(20, 4);
+        setToughness(.02, .01, 2);
         setHeavyWeight();
         setFastSpeed();
         ((Villager) mob).setProfession(Villager.Profession.ARMORER);

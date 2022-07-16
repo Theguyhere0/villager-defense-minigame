@@ -19,10 +19,10 @@ public class VDSkeleton extends VDMinion {
                 getLevel(arena.getCurrentDifficulty(), 1, 0),
                 AttackType.NORMAL
         );
-        setHealth(80, 8, level, 2);
-        setArmor(2, 2, level, 2);
-        setToughness(0, .05, level, 8);
-        setDamage(30, 4, level, 2, .1);
+        setHealth(180, 15);
+        setArmor(4, 2);
+        setToughness(0, .05, 8);
+        setDamage(70, 7, .1);
         setSlowAttackSpeed();
         setLowKnockback();
         setLightWeight();
@@ -30,7 +30,7 @@ public class VDSkeleton extends VDMinion {
         setModerateTargetRange();
         setArmorEquipment();
         setBow();
-        setLoot(25, 1.15, level, .2);
+        setLoot(25, 1.15, .2);
         updateNameTag();
     }
 }

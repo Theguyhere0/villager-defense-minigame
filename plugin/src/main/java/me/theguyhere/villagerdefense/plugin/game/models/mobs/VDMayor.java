@@ -19,9 +19,9 @@ public class VDMayor extends VDVillager {
                         "what you need.",
                 getLevel(arena.getCurrentDifficulty(), 1, 5)
         );
-        setHealth(120, 10, level, 2);
-        setArmor(0, 1, level, 2);
-        setToughness(0, .01, level, 2);
+        setHealth(250, 20);
+        setArmor(0, 2);
+        setToughness(0, .01, 2);
         setMediumWeight();
         setVeryFastSpeed();
         ((Villager) mob).setProfession(Villager.Profession.NITWIT);

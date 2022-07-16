@@ -20,19 +20,19 @@ public class VDBlaze extends VDMinion {
                 getLevel(arena.getCurrentDifficulty(), 1.5, 4),
                 AttackType.NONE
         );
-        setHealth(150, 15, level, 2);
-        setArmor(10, 3, level, 2);
-        setToughness(.08, .04, level, 2);
-        setDamage(0, 0, level, 2, 0);
+        setHealth(360, 40);
+        setArmor(20, 5);
+        setToughness(.08, .04, 2);
+        setDamage(0, 0, 0);
         setEffectType(PotionEffectType.FIRE_RESISTANCE);
-        setEffectDuration(6, 3, level, false);
+        setEffectDuration(6, 3, false);
         setSlowAttackSpeed();
         setNoneKnockback();
         setMediumWeight();
         setSlowSpeed();
         targetPriority = TargetPriority.RANGED_PLAYERS;
         setModerateTargetRange();
-        setLoot(35, 1.2, level, .1);
+        setLoot(35, 1.2, .1);
         updateNameTag();
     }
 }

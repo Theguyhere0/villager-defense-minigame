@@ -31,15 +31,15 @@ public abstract class StarterSword extends VDWeapon {
 
         // Set main damage
         lores.add(CommunicationManager.format(MAIN_DAMAGE, new ColoredMessage(ChatColor.RED,
-                Integer.toString(15))));
+                Integer.toString(35))));
 
         // Set crit damage
         lores.add(CommunicationManager.format(CRIT_DAMAGE, new ColoredMessage(ChatColor.DARK_PURPLE,
-                Integer.toString(20))));
+                Integer.toString(50))));
 
         // Set sweep damage
         lores.add(CommunicationManager.format(SWEEP_DAMAGE, new ColoredMessage(ChatColor.LIGHT_PURPLE,
-                Integer.toString(5))));
+                Integer.toString(10))));
 
         // Set attack speed
         attributes.put(Attribute.GENERIC_ATTACK_SPEED,

@@ -19,16 +19,16 @@ public class VDSpider extends VDMinion {
                 getLevel(arena.getCurrentDifficulty(), 1, 0),
                 AttackType.PENETRATING
         );
-        setHealth(80, 8, level, 2);
-        setArmor(4, 2, level, 2);
-        setToughness(.08, .04, level, 2);
-        setDamage(8, 2, level, 2, .1);
+        setHealth(200, 20);
+        setArmor(10, 3);
+        setToughness(.08, .04, 2);
+        setDamage(20, 5, .1);
         setFastAttackSpeed();
         setNoneKnockback();
         setLightWeight();
         setFastSpeed();
         setModerateTargetRange();
-        setLoot(25, 1.15, level, .2);
+        setLoot(25, 1.15, .2);
         updateNameTag();
     }
 }

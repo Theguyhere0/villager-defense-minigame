@@ -26,8 +26,8 @@ public abstract class Bow extends VDWeapon {
         lores.add(CommunicationManager.format(ATTACK_TYPE, ATTACK_TYPE_NORMAL));
 
         // Set range damage
-        int damageLow = 2 + (level - 1) / 2;
-        int damageHigh = 3 + level / 2;
+        int damageLow = 4 + (level - 1) / 2;
+        int damageHigh = 6 + level / 2;
         lores.add(CommunicationManager.format(RANGE_DAMAGE, new ColoredMessage(ChatColor.DARK_AQUA,
                 String.format(LanguageManager.messages.perBlock, damageLow + "-" + damageHigh))));
 

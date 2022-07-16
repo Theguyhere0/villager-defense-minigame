@@ -17,7 +17,7 @@ public abstract class Beetroot extends VDFood {
     @NotNull
     public static ItemStack create() {
         return ItemManager.createItem(Material.BEETROOT, null,
-                new ColoredMessage(ChatColor.RED, "+5 " + Utils.HP).toString(),
+                new ColoredMessage(ChatColor.RED, "+10 " + Utils.HP).toString(),
                 CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a40"));
     }
 
@@ -31,6 +31,6 @@ public abstract class Beetroot extends VDFood {
         if (lore == null)
             return false;
         return toCheck.getType() == Material.BEETROOT && lore.stream().anyMatch(line -> line.contains(
-                new ColoredMessage(ChatColor.RED, "+5 " + Utils.HP).toString()));
+                new ColoredMessage(ChatColor.RED, "+10 " + Utils.HP).toString()));
     }
 }

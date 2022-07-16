@@ -17,7 +17,7 @@ public abstract class Steak extends VDFood {
     @NotNull
     public static ItemStack create() {
         return ItemManager.createItem(Material.COOKED_BEEF, null,
-                new ColoredMessage(ChatColor.RED, "+40 " + Utils.HP).toString(),
+                new ColoredMessage(ChatColor.RED, "+80 " + Utils.HP).toString(),
                 CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a275"));
     }
 
@@ -31,6 +31,6 @@ public abstract class Steak extends VDFood {
         if (lore == null)
             return false;
         return toCheck.getType() == Material.COOKED_BEEF && lore.stream().anyMatch(line -> line.contains(
-                new ColoredMessage(ChatColor.RED, "+40 " + Utils.HP).toString()));
+                new ColoredMessage(ChatColor.RED, "+80 " + Utils.HP).toString()));
     }
 }

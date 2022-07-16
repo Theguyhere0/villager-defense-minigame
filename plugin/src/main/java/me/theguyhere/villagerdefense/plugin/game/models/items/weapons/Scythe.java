@@ -51,8 +51,8 @@ public abstract class Scythe extends VDWeapon {
         lores.add(CommunicationManager.format(ATTACK_TYPE, ATTACK_TYPE_PENETRATING));
 
         // Set main damage
-        int damageLow = 6 + 2 * ((level - 1) / 2);
-        int damageHigh = 12 + 3 * (level / 2);
+        int damageLow = 14 + 4 * ((level - 1) / 2);
+        int damageHigh = 30 + 5 * (level / 2);
         lores.add(CommunicationManager.format(MAIN_DAMAGE, new ColoredMessage(ChatColor.RED,
                 damageLow + "-" + damageHigh)));
 

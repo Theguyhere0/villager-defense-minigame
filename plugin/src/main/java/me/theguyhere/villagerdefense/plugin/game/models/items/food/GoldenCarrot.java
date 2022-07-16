@@ -17,7 +17,7 @@ public abstract class GoldenCarrot extends VDFood {
     @NotNull
     public static ItemStack create() {
         return ItemManager.createItem(Material.GOLDEN_CARROT, null,
-                new ColoredMessage(ChatColor.RED, "+50 " + Utils.HP).toString(),
+                new ColoredMessage(ChatColor.RED, "+100 " + Utils.HP).toString(),
                 CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a330"));
     }
 
@@ -31,6 +31,6 @@ public abstract class GoldenCarrot extends VDFood {
         if (lore == null)
             return false;
         return toCheck.getType() == Material.GOLDEN_CARROT && lore.stream().anyMatch(line -> line.contains(
-                new ColoredMessage(ChatColor.RED, "+50 " + Utils.HP).toString()));
+                new ColoredMessage(ChatColor.RED, "+100 " + Utils.HP).toString()));
     }
 }

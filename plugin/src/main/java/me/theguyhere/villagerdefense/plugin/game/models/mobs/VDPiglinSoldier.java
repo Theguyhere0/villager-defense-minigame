@@ -23,10 +23,10 @@ public class VDPiglinSoldier extends VDMinion {
         Piglin piglinSoldier = (Piglin) mob;
         piglinSoldier.setAdult();
         piglinSoldier.setImmuneToZombification(true);
-        setHealth(180, 20, level, 2);
-        setArmor(10, 3, level, 2);
-        setToughness(.05, .05, level, 2);
-        setDamage(40, 3, level, 2, .2);
+        setHealth(425, 45);
+        setArmor(20, 5);
+        setToughness(.05, .05, 2);
+        setDamage(80, 6, .2);
         setModerateAttackSpeed();
         setHighKnockback();
         setMediumWeight();
@@ -35,7 +35,7 @@ public class VDPiglinSoldier extends VDMinion {
         setModerateTargetRange();
         setArmorEquipment();
         setSword();
-        setLoot(45, 1.2, level, .25);
+        setLoot(45, 1.2, .25);
         updateNameTag();
     }
 }

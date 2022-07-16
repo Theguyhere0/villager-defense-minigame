@@ -23,13 +23,13 @@ public class VDBabyDrowned extends VDMinion {
                 AttackType.PENETRATING
         );
         ((Drowned) mob).setBaby();
-        setHealth(80, 10, level, 2);
-        setArmor(4, 2, level, 2);
-        setToughness(0, .02, level, 2);
-        setDamage(40, 4, level, 2, .15);
+        setHealth(200, 20);
+        setArmor(8, 3);
+        setToughness(0, .02, 2);
+        setDamage(90, 10, .15);
         setEffectType(PotionEffectType.WEAKNESS);
-        setEffectLevel(level, true);
-        setEffectDuration(4, 2, level, true);
+        setEffectLevel(true);
+        setEffectDuration(4, 2, true);
         setSlowAttackSpeed();
         setModerateKnockback();
         setLightWeight();
@@ -38,7 +38,7 @@ public class VDBabyDrowned extends VDMinion {
         setModerateTargetRange();
         setArmorEquipment();
         setTrident();
-        setLoot(35, 1.2, level, .1);
+        setLoot(35, 1.2, .1);
         updateNameTag();
     }
 }

@@ -22,13 +22,13 @@ public class VDHusk extends VDMinion {
                 AttackType.NORMAL
         );
         ((Husk) mob).setAdult();
-        setHealth(140, 15, level, 2);
-        setArmor(10, 3, level, 2);
-        setToughness(.05, .04, level, 2);
-        setDamage(25, 3, level, 2, .1);
+        setHealth(300, 30);
+        setArmor(15, 5);
+        setToughness(.05, .04, 2);
+        setDamage(60, 6, .1);
         setEffectType(PotionEffectType.HUNGER);
-        setEffectLevel(level, true);
-        setEffectDuration(4, 2, level, true);
+        setEffectLevel(true);
+        setEffectDuration(4, 2, true);
         setModerateAttackSpeed();
         setModerateKnockback();
         setMediumWeight();
@@ -37,7 +37,7 @@ public class VDHusk extends VDMinion {
         setModerateTargetRange();
         setArmorEquipment();
         setSword();
-        setLoot(30, 1.2, level, .2);
+        setLoot(30, 1.2, .2);
         updateNameTag();
     }
 }
