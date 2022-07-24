@@ -51,6 +51,9 @@ public abstract class StarterSword extends VDWeapon {
         attributes.put(Attribute.GENERIC_ATTACK_DAMAGE,
                 new AttributeModifier(ItemMetaKey.DUMMY.name(), 0,
                         AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+        attributes.put(Attribute.GENERIC_ATTACK_DAMAGE,
+                new AttributeModifier(ItemMetaKey.DUMMY.name(), 19,
+                        AttributeModifier.Operation.ADD_NUMBER));
 
         // Set name, make unbreakable, and return
         return ItemManager.makeUnbreakable(ItemManager.createItem(Material.WOODEN_SWORD,

@@ -34,6 +34,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -615,7 +616,7 @@ public class Arena {
     public Location getArenaBoardLocation() {
         return DataManager.getConfigLocationNoPitch(path + ".arenaBoard");
     }
-    
+
     /**
      * Creates a new arena leaderboard at the given location and deletes the old arena leaderboard.
      * @param location New location
@@ -985,7 +986,7 @@ public class Arena {
 
     public void startSpawnParticles() {
         Particle spawnParticle = Particle.valueOf(NMSVersion.getCurrent().getNmsManager().getSpawnParticleName());
-        
+
         if (getPlayerSpawn() == null)
             return;
 
@@ -1045,7 +1046,7 @@ public class Arena {
 
     public void startMonsterParticles() {
         Particle monsterParticle = Particle.valueOf(NMSVersion.getCurrent().getNmsManager().getMonsterParticleName());
-        
+
         if (monsterParticlesID == 0 && !getMonsterSpawns().isEmpty())
             monsterParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.plugin, new Runnable() {
                 double var = 0;
@@ -1100,7 +1101,7 @@ public class Arena {
 
     public void startVillagerParticles() {
         Particle villagerParticle = Particle.valueOf(NMSVersion.getCurrent().getNmsManager().getVillagerParticleName());
-        
+
         if (villagerParticlesID == 0 && !getVillagerSpawns().isEmpty())
             villagerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.plugin, new Runnable() {
                 double var = 0;
@@ -1864,6 +1865,16 @@ public class Arena {
                     player.showStats();
                     player.updateStatsHalf();
                 });
+                mobs.forEach(mob -> {
+                    Mob mobster = mob.getEntity();
+                    LivingEntity target = mobster.getTarget();
+
+                    if (mob instanceof VDWitch && target != null &&
+                            target.getLocation().distance(mobster.getLocation()) <= 10) {
+                        mobster.launchProjectile(ThrownPotion.class,
+                                target.getLocation().subtract(mobster.getLocation()).toVector().normalize());
+                    }
+                });
             }
         });
         activeTasks.get(HALF_UPDATE).runTaskTimer(Main.plugin, Utils.secondsToTicks(30), Utils.secondsToTicks(.5));
@@ -2533,11 +2544,11 @@ public class Arena {
         // Debug message to console
         CommunicationManager.debugInfo(getName() + " is resetting.", 2);
     }
-    
+
     public void addMob(VDMob mob) {
         mobs.add(mob);
     }
-    
+
     public VDMob getMob(UUID id) throws VDMobNotFoundException {
         try {
             return mobs.stream().filter(Objects::nonNull).filter(mob -> mob.getID().equals(id))
@@ -2546,7 +2557,7 @@ public class Arena {
             throw new VDMobNotFoundException();
         }
     }
-    
+
     public void removeMob(UUID id) {
         try {
             mobs.remove(getMob(id));

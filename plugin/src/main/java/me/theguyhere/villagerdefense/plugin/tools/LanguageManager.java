@@ -299,6 +299,7 @@ public class LanguageManager {
         public final @NotNull String close;
         public final @NotNull String command;
         public final @NotNull String communityChest;
+        public final @NotNull String construction;
         public final @NotNull String cooldown;
         public final @NotNull String economy;
         public final @NotNull String emptyArena;
@@ -348,6 +349,7 @@ public class LanguageManager {
             close = getConfigString("close");
             command = getConfigString("command");
             communityChest = getConfigString("communityChest");
+            construction = getConfigString("construction");
             cooldown = getConfigString("cooldown");
             economy = getConfigString("economy");
             emptyArena = getConfigString("emptyArena");

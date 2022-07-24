@@ -70,6 +70,9 @@ public abstract class Axe extends VDWeapon {
         attributes.put(Attribute.GENERIC_ATTACK_DAMAGE,
                 new AttributeModifier(ItemMetaKey.DUMMY.name(), 0,
                         AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+        attributes.put(Attribute.GENERIC_ATTACK_DAMAGE,
+                new AttributeModifier(ItemMetaKey.DUMMY.name(), 19,
+                        AttributeModifier.Operation.ADD_NUMBER));
 
         // Set price
         int price = (int) (175 + 55 * level * Math.pow(Math.E, (level - 1) / 50d));

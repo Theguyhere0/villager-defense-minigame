@@ -200,7 +200,7 @@ public abstract class VDMob {
      * Check whether the cooldown for the mob is up or not. If it is, update when it last attacked.
      * @return Whether the cooldown was up or not.
      */
-    public boolean checkCooldown() {
+    public boolean attackAttempt() {
         boolean cooldownUp = System.currentTimeMillis() >= lastStrike + attackSpeed * 1000;
         if (cooldownUp)
             lastStrike = System.currentTimeMillis();
@@ -491,8 +491,8 @@ public abstract class VDMob {
 
     public static VDMob of(String key, Arena arena, Location ground, Location air) throws InvalidVDMobKeyException {
         switch (key) {
-            case VDCleric.KEY:
-                return new VDCleric(arena, ground);
+//            case VDCleric.KEY:
+//                return new VDCleric(arena, ground);
             case VDWeaponsmith.KEY:
                 return new VDWeaponsmith(arena, ground);
             case VDArmorer.KEY:
@@ -529,10 +529,10 @@ public abstract class VDMob {
                 return new VDStray(arena, ground);
             case VDPillager.KEY:
                 return new VDPillager(arena, ground);
-            case VDDrowned.KEY:
-                return new VDDrowned(arena, ground);
-            case VDBabyDrowned.KEY:
-                return new VDBabyDrowned(arena, ground);
+//            case VDDrowned.KEY:
+//                return new VDDrowned(arena, ground);
+//            case VDBabyDrowned.KEY:
+//                return new VDBabyDrowned(arena, ground);
             case VDPhantom.KEY:
                 return new VDPhantom(arena, air);
             case VDBlaze.KEY:
@@ -543,14 +543,14 @@ public abstract class VDMob {
                 return new VDCreeper(arena, ground);
             case VDChargedCreeper.KEY:
                 return new VDChargedCreeper(arena, ground);
+            case VDWitch.KEY:
+                return new VDWitch(arena, ground);
             case VDSpider.KEY:
                 return new VDSpider(arena, ground);
             case VDCaveSpider.KEY:
                 return new VDCaveSpider(arena, ground);
             case VDSilverfish.KEY:
                 return new VDSilverfish(arena, ground);
-            case VDVex.KEY:
-                return new VDVex(arena, air);
             default:
                 throw new InvalidVDMobKeyException();
         }

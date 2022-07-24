@@ -31,7 +31,7 @@ public abstract class VDMinion extends VDMob {
             Objects.requireNonNull(minion.getVehicle()).remove();
         for (Entity passenger : minion.getPassengers())
             passenger.remove();
-        minion.setHealth(1);
+        minion.setHealth(2);
         minion.setCustomNameVisible(true);
     }
 

@@ -95,9 +95,9 @@ public class ArenaListener implements Listener {
             arena.refreshPortal();
             Main.getVillagersTeam().addEntry(player.getUniqueId().toString());
 
-            // Add forced challenges
-            arena.getForcedChallengeIDs().forEach(challenge ->
-                    fighter.addChallenge(Challenge.getChallengeByID(challenge)));
+            // Add forced challenges TODO
+//            arena.getForcedChallengeIDs().forEach(challenge ->
+//                    fighter.addChallenge(Challenge.getChallengeByID(challenge)));
 
             // Give them a game board
             GameManager.createBoard(fighter);
@@ -227,9 +227,9 @@ public class ArenaListener implements Listener {
             if (PlayerManager.getTopKills(playerID) < gamer.getKills())
                 PlayerManager.setTopKills(playerID, gamer.getKills());
 
-            // Check for achievements
-            AchievementChecker.checkDefaultHighScoreAchievements(player);
-            AchievementChecker.checkDefaultInstanceAchievements(gamer);
+            // Check for achievements TODO
+//            AchievementChecker.checkDefaultHighScoreAchievements(player);
+//            AchievementChecker.checkDefaultInstanceAchievements(gamer);
 
             // Refresh leaderboards
             GameManager.refreshLeaderboards();

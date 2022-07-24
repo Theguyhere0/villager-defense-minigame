@@ -1797,11 +1797,13 @@ public class InventoryListener implements Listener {
 
 			// Edit allowed kits
 			else if (buttonName.contains("Allowed Kits"))
-				player.openInventory(Inventories.createAllowedKitsMenu(arenaInstance, false));
+//				player.openInventory(Inventories.createAllowedKitsMenu(arenaInstance, false));
+				PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
 
 			// Edit forced challenges
 			else if (buttonName.contains("Forced Challenges"))
-				player.openInventory(Inventories.createForcedChallengesMenu(arenaInstance, false));
+//				player.openInventory(Inventories.createForcedChallengesMenu(arenaInstance, false));
+				PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
 
 			// Edit difficulty label
 			else if (buttonName.contains("Difficulty Label"))
@@ -1833,17 +1835,19 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("Arena Bounds"))
 				player.openInventory(Inventories.createBoundsMenu(meta.getArena()));
 
-			// Edit wolf cap
+			// Edit wolf cap TODO
 			else if (buttonName.contains("Wolf Cap"))
-				if (arenaInstance.isClosed())
-					player.openInventory(Inventories.createWolfCapMenu(meta.getArena()));
-				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+//				if (arenaInstance.isClosed())
+//					player.openInventory(Inventories.createWolfCapMenu(meta.getArena()));
+//				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+				PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
 
-			// Edit iron golem cap
+			// Edit iron golem cap TODO
 			else if (buttonName.contains("Iron Golem Cap"))
-				if (arenaInstance.isClosed())
-					player.openInventory(Inventories.createGolemCapMenu(meta.getArena()));
-				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+//				if (arenaInstance.isClosed())
+//					player.openInventory(Inventories.createGolemCapMenu(meta.getArena()));
+//				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+				PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
 
 			// Edit sounds
 			else if (buttonName.contains("Sounds"))
@@ -2721,9 +2725,11 @@ public class InventoryListener implements Listener {
 		else if (invID == InventoryID.PLAYER_STATS_MENU) {
 			UUID id = meta.getPlayerID();
 			if (buttonName.contains(LanguageManager.messages.achievements))
-				player.openInventory(Inventories.createPlayerAchievementsMenu(id));
+//				player.openInventory(Inventories.createPlayerAchievementsMenu(id));
+				PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
 			else if (buttonName.contains(LanguageManager.messages.kits))
-				player.openInventory(Inventories.createPlayerKitsMenu(id, player.getUniqueId()));
+//				player.openInventory(Inventories.createPlayerKitsMenu(id, player.getUniqueId()));
+				PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
 			else if (buttonName.contains(LanguageManager.messages.reset) && id.equals(player.getUniqueId()))
 				player.openInventory(Inventories.createResetStatsConfirmMenu(id));
 		}
@@ -2773,7 +2779,7 @@ public class InventoryListener implements Listener {
 					PlayerManager.withdrawCrystalBalance(ownerID, kit.getPrice(1));
 					PlayerManager.addSingleTierKit(ownerID, kit.getID());
 					PlayerManager.notifySuccess(player, LanguageManager.confirms.kitBuy);
-					AchievementChecker.checkDefaultKitAchievements(player);
+//					AchievementChecker.checkDefaultKitAchievements(player);
 				} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitBuy);
 			}
 
@@ -2787,14 +2793,14 @@ public class InventoryListener implements Listener {
 						PlayerManager.withdrawCrystalBalance(ownerID, kit.getPrice(kitLevel));
 						PlayerManager.setMultiTierKitLevel(ownerID, kit.getID(), kitLevel);
 						PlayerManager.notifySuccess(player, LanguageManager.confirms.kitBuy);
-						AchievementChecker.checkDefaultKitAchievements(player);
+//						AchievementChecker.checkDefaultKitAchievements(player);
 					} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitBuy);
 				} else {
 					if (balance >= kit.getPrice(++kitLevel)) {
 						PlayerManager.withdrawCrystalBalance(ownerID, kit.getPrice(kitLevel));
 						PlayerManager.setMultiTierKitLevel(ownerID, kit.getID(), kitLevel);
 						PlayerManager.notifySuccess(player, LanguageManager.confirms.kitUpgrade);
-						AchievementChecker.checkDefaultKitAchievements(player);
+//						AchievementChecker.checkDefaultKitAchievements(player);
 					} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitUpgrade);
 				}
 			}
@@ -2946,10 +2952,12 @@ public class InventoryListener implements Listener {
 		// Stats menu for an arena
 		else if (invID == InventoryID.ARENA_INFO_MENU) {
 			if (buttonName.contains(LanguageManager.messages.allowedKits))
-				player.openInventory(Inventories.createAllowedKitsMenu(meta.getArena(), true));
+//				player.openInventory(Inventories.createAllowedKitsMenu(meta.getArena(), true));
+				PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
 
 			else if (buttonName.contains(LanguageManager.messages.forcedChallenges))
-				player.openInventory(Inventories.createForcedChallengesMenu(meta.getArena(), true));
+//				player.openInventory(Inventories.createForcedChallengesMenu(meta.getArena(), true));
+				PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
 		}
 
 		// Menu for converting crystals

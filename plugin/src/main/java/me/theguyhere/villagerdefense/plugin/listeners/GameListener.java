@@ -27,6 +27,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.VDWeapon;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDCreeper;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDWitch;
 import me.theguyhere.villagerdefense.plugin.game.models.players.AttackClass;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
@@ -277,7 +278,19 @@ public class GameListener implements Listener {
 			try {
 				arena = GameManager.getArena(shooter.getMetadata(VDMob.VD).get(0).asInt());
 				finalShooter = arena.getMob(shooter.getUniqueId());
-			} catch (ArenaNotFoundException | VDMobNotFoundException err) {
+			} catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException err) {
+				return;
+			}
+
+			// Check for witch
+			if ((finalShooter instanceof VDWitch)) {
+				if (((ThrownPotion) e.getEntity()).getEffects().size() > 0)
+					e.setCancelled(true);
+
+				// Check for cooldown
+				if (!finalShooter.attackAttempt())
+					e.setCancelled(true);
+
 				return;
 			}
 
@@ -326,7 +339,7 @@ public class GameListener implements Listener {
 			e.setDamage(0);
 
 			// Check damage cooldown
-			if (!finalDamager.checkCooldown()) {
+			if (!finalDamager.attackAttempt()) {
 				e.setCancelled(true);
 				return;
 			}
@@ -434,7 +447,7 @@ public class GameListener implements Listener {
 					}
 
 					// Crit damage
-					if (damage > 1)
+					if (damage > 20)
 						attackClass = AttackClass.CRITICAL;
 
 					// Sweep damage
@@ -445,14 +458,14 @@ public class GameListener implements Listener {
 					else attackClass = AttackClass.MAIN;
 
 					// Play out damage
-					finalVictim.takeDamage(gamer.dealRawDamage(attackClass, damage), gamer.getAttackType(), player,
-							arena);
+					finalVictim.takeDamage(gamer.dealRawDamage(attackClass, damage / 20.),
+							gamer.getAttackType(), player, arena);
 				}
 
 				// Damage not dealt by player
 				else {
 					// Check damage cooldown
-					if (!finalDamager.checkCooldown()) {
+					if (!finalDamager.attackAttempt()) {
 						e.setCancelled(true);
 						return;
 					}
@@ -500,7 +513,7 @@ public class GameListener implements Listener {
 				e.setDamage(0);
 
 				// Check damage cooldown
-				if (!finalDamager.checkCooldown()) {
+				if (!finalDamager.attackAttempt()) {
 					e.setCancelled(true);
 					return;
 				}
@@ -677,6 +690,33 @@ public class GameListener implements Listener {
 		((Creeper) ent).setFuseTicks(0);
 		Objects.requireNonNull(ent.getLocation().getWorld()).createExplosion(ent.getLocation(), 3, false,
 				false, ent);
+	}
+
+	// Create custom potion effects from witch
+	@EventHandler
+	public void onSplash(PotionSplashEvent e) {
+		ThrownPotion potion = e.getEntity();
+		Entity ent = (Entity) potion.getShooter();
+		VDWitch witch;
+
+		// Try to get arena and VDMob
+		try {
+			witch = (VDWitch) GameManager.getArena(Objects.requireNonNull(ent).getMetadata(VDMob.VD).get(0).asInt())
+					.getMob(ent.getUniqueId());
+		} catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException |
+				NullPointerException | ClassCastException err) {
+			return;
+		}
+
+		// Apply to relevant entities
+		for (LivingEntity affectedEntity : e.getAffectedEntities()) {
+			// Not monster
+			if (Main.getMonstersTeam().hasEntry(affectedEntity.getUniqueId().toString()))
+				continue;
+
+			// Apply affects
+			affectedEntity.addPotionEffect(witch.dealEffect());
+		}
 	}
 
 	// Prevent using certain item slots
@@ -864,27 +904,32 @@ public class GameListener implements Listener {
 
 		// Open kit selection menu
 		else if (KitSelector.matches(item))
-			player.openInventory(Inventories.createSelectKitsMenu(player, arena));
+//			player.openInventory(Inventories.createSelectKitsMenu(player, arena));
+			PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
 
 		// Open challenge selection menu
 		else if (ChallengeSelector.matches(item))
-			player.openInventory(Inventories.createSelectChallengesMenu(gamer, arena));
+//			player.openInventory(Inventories.createSelectChallengesMenu(gamer, arena));
+			PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
 
 		// Toggle boost
 		else if (BoostToggle.matches(item)) {
-			gamer.toggleBoost();
-			PlayerManager.giveChoiceItems(gamer);
+//			gamer.toggleBoost();
+//			PlayerManager.giveChoiceItems(gamer);
+			PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
 		}
 
 		// Toggle share
 		else if (ShareToggle.matches(item)) {
-			gamer.toggleShare();
-			PlayerManager.giveChoiceItems(gamer);
+//			gamer.toggleShare();
+//			PlayerManager.giveChoiceItems(gamer);
+			PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
 		}
 
 		// Open crystal convert menu
 		else if (CrystalConverter.matches(item))
-			player.openInventory(Inventories.createCrystalConvertMenu(gamer));
+//			player.openInventory(Inventories.createCrystalConvertMenu(gamer));
+			PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
 
 		// Make player leave
 		else if (Leave.matches(item))

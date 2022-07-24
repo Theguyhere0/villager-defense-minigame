@@ -20,7 +20,7 @@ public abstract class VDVillager extends VDMob {
         this.name = name;
         hpBarSize = 2;
         villager.setRemoveWhenFarAway(false);
-        villager.setHealth(1);
+        villager.setHealth(2);
         villager.setCustomNameVisible(true);
         villager.setVillagerExperience(1);
         villager.setVillagerType(Villager.Type.valueOf(arena.getVillagerType().toUpperCase()));

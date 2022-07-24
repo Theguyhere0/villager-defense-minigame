@@ -72,7 +72,7 @@ public class VDPlayer {
     /** The list of UUIDs of those that damaged the player.*/
     private final List<UUID> enemies = new ArrayList<>();
     /** Whether permanent boosts are on or not.*/
-    private boolean boost = true;
+    private boolean boost = false; // TODO return to true once boosts are reworked
     /** Number of gems to be converted from crystals.*/
     private int gemBoost = 0;
     /** Whether effect kits are shared or not.*/

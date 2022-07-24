@@ -1482,7 +1482,8 @@ public class Commands implements CommandExecutor {
 						return true;
 					}
 
-					player.openInventory(Inventories.createPlayerKitsMenu(player.getUniqueId(), player.getUniqueId()));
+					PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+//					player.openInventory(Inventories.createPlayerKitsMenu(player.getUniqueId(), player.getUniqueId()));
 					return true;
 
 				// Player checks achievements
@@ -1493,7 +1494,8 @@ public class Commands implements CommandExecutor {
 						return true;
 					}
 
-					player.openInventory(Inventories.createPlayerAchievementsMenu(player.getUniqueId()));
+//					player.openInventory(Inventories.createPlayerAchievementsMenu(player.getUniqueId()));
+					PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
 					return true;
 
 				// Player joins as phantom

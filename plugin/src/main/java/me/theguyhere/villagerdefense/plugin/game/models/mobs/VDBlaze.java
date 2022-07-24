@@ -23,7 +23,6 @@ public class VDBlaze extends VDMinion {
         setHealth(360, 40);
         setArmor(20, 5);
         setToughness(.08, .04, 2);
-        setDamage(0, 0, 0);
         setEffectType(PotionEffectType.FIRE_RESISTANCE);
         setEffectDuration(6, 3, false);
         setSlowAttackSpeed();

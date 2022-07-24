@@ -1320,35 +1320,38 @@ public class Inventories {
 
 	// Generate the shop menu
 	public static Inventory createShopMenu(int level, Arena arena) {
+		List<ItemStack> buttons = new ArrayList<>();
+
 		String disabled = " &4&l[" + LanguageManager.messages.disabled + "]";
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(
-				new InventoryMeta(InventoryID.SHOP_MENU, InventoryType.MENU),
-				9,
-				CommunicationManager.format("&2&l" + LanguageManager.messages.level +
-						" &9&l" + level + " &2&l" + LanguageManager.names.itemShop));
-
-		inv.setItem(1, ItemManager.createItem(Material.GOLDEN_SWORD,
+		buttons.add(ItemManager.createItem(Material.GOLDEN_SWORD,
 				CommunicationManager.format("&4&l" + LanguageManager.messages.level +
 						" &9&l" + level + " &4&l" + LanguageManager.names.weaponShop), ItemManager.BUTTON_FLAGS,
 						ItemManager.glow()));
 
-		inv.setItem(3, ItemManager.createItem(Material.GOLDEN_CHESTPLATE,
+		buttons.add(ItemManager.createItem(Material.GOLDEN_CHESTPLATE,
 				CommunicationManager.format("&5&l" + LanguageManager.messages.level +
 						" &9&l" + level + " &5&l" + LanguageManager.names.armorShop), ItemManager.BUTTON_FLAGS,
 						ItemManager.glow()));
 
-		inv.setItem(5, ItemManager.createItem(Material.GOLDEN_APPLE,
+		buttons.add(ItemManager.createItem(Material.GOLDEN_APPLE,
 				CommunicationManager.format("&3&l" + LanguageManager.messages.level +
 						" &9&l" + level + " &3&l" + LanguageManager.names.consumableShop), ItemManager.BUTTON_FLAGS,
 						ItemManager.glow()));
 
-		inv.setItem(8, ItemManager.createItem(Material.CHEST,
+		buttons.add(ItemManager.createItem(Material.CHEST,
 				CommunicationManager.format("&d&l" + LanguageManager.names.communityChest +
 						(arena.hasCommunity() ? "" : disabled))));
 
-		return inv;
+		return InventoryFactory.createFixedSizeInventory(
+				new InventoryMeta(InventoryID.SHOP_MENU, InventoryType.MENU),
+				CommunicationManager.format("&2&l" + LanguageManager.messages.level +
+						" &9&l" + level + " &2&l" + LanguageManager.names.itemShop),
+				1,
+				false,
+				buttons
+		);
 	}
 
 	// Generate the weapon shop
@@ -2444,19 +2447,19 @@ public class Inventories {
 						": &9" + limit), CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
 						LanguageManager.arenaStats.timeLimit.description, Utils.LORE_CHAR_LIMIT)));
 
-		// Wolf cap
-		buttons.add(ItemManager.createItem(Material.BONE,
-				CommunicationManager.format("&6&l" + LanguageManager.arenaStats.wolfCap.name +
-						": &6" + arena.getWolfCap()),
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.wolfCap.description, Utils.LORE_CHAR_LIMIT)));
+		// Wolf cap TODO
+//		buttons.add(ItemManager.createItem(Material.BONE,
+//				CommunicationManager.format("&6&l" + LanguageManager.arenaStats.wolfCap.name +
+//						": &6" + arena.getWolfCap()),
+//				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+//						LanguageManager.arenaStats.wolfCap.description, Utils.LORE_CHAR_LIMIT)));
 
-		// Golem cap
-		buttons.add(ItemManager.createItem(Material.IRON_INGOT,
-				CommunicationManager.format("&e&l" + LanguageManager.arenaStats.golemCap.name +
-						": &e" + arena.getGolemCap()),
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.golemCap.description, Utils.LORE_CHAR_LIMIT)));
+		// Golem cap TODO
+//		buttons.add(ItemManager.createItem(Material.IRON_INGOT,
+//				CommunicationManager.format("&e&l" + LanguageManager.arenaStats.golemCap.name +
+//						": &e" + arena.getGolemCap()),
+//				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+//						LanguageManager.arenaStats.golemCap.description, Utils.LORE_CHAR_LIMIT)));
 
 		// Allowed kits
 		buttons.add(ItemManager.createItem(Material.ENDER_CHEST,
