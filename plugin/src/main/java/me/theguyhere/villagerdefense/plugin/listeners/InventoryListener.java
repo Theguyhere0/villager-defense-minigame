@@ -1,19 +1,21 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
+import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.SignGUIEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidArenaNameException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
+import me.theguyhere.villagerdefense.plugin.exceptions.VDMobNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.achievements.AchievementChecker;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.Shop;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.*;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.inventories.Buttons;
@@ -22,9 +24,11 @@ import me.theguyhere.villagerdefense.plugin.inventories.InventoryID;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryMeta;
 import me.theguyhere.villagerdefense.plugin.tools.*;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
@@ -35,6 +39,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class InventoryListener implements Listener {
 	// Prevent losing items by drag clicking in custom inventory
@@ -679,6 +684,13 @@ public class InventoryListener implements Listener {
 							!Objects.equals(arenaInstance.getCorner1().getWorld(),
 									arenaInstance.getCorner2().getWorld())) {
 						PlayerManager.notifyFailure(player, "Arena cannot open without valid arena bounds!");
+						return;
+					}
+
+					// Outdated file configs
+					if (Main.isOutdated()) {
+						PlayerManager.notifyFailure(player,
+								"Arena cannot open when file configurations are outdated!");
 						return;
 					}
 
@@ -2212,6 +2224,16 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("Corner 2"))
 				player.openInventory(Inventories.createCorner2Menu(meta.getArena()));
 
+			// Stretch bounds
+			else if (buttonName.contains("Stretch Bounds")) {
+				if (arenaInstance.isClosed()) {
+					arenaInstance.stretchBounds();
+					PlayerManager.notifySuccess(player, "Arena bounds for " + arenaInstance.getName() +
+							" have been stretched.");
+				}
+				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+			}
+
 			// Toggle border particles
 			else if (buttonName.contains("Border Particles:"))
 				if (arenaInstance.isClosed()) {
@@ -2601,22 +2623,73 @@ public class InventoryListener implements Listener {
 				return;
 			}
 
+			// Gather nearby villagers
+			AtomicBoolean weapon = new AtomicBoolean(false);
+			AtomicBoolean armor = new AtomicBoolean(false);
+			AtomicBoolean consumable = new AtomicBoolean(false);
+			AtomicBoolean community = new AtomicBoolean(false);
+			Objects.requireNonNull(player.getWorld())
+					.getNearbyEntities(arenaInstance.getBounds(), entity ->
+							player.getLocation().distance(entity.getLocation()) <= 18)
+					.stream()
+					.filter(entity -> entity instanceof Villager)
+					.forEach(entity -> {
+						try {
+							VDMob villager = arenaInstance.getMob(entity.getUniqueId());
+							if (villager instanceof VDWeaponsmith)
+								weapon.set(true);
+							else if (villager instanceof VDArmorer)
+								armor.set(true);
+							else if (villager instanceof VDFarmer)
+								consumable.set(true);
+							else if (villager instanceof VDVaultKeeper)
+								community.set(true);
+							else if (villager instanceof VDMayor) {
+								weapon.set(true);
+								armor.set(true);
+								consumable.set(true);
+								community.set(true);
+							}
+						} catch (VDMobNotFoundException ignored) {
+						}
+					});
+
 			// Open weapon shop
-			if (buttonName.contains(LanguageManager.names.weaponShop))
-				player.openInventory(arenaInstance.getWeaponShop());
+			if (buttonName.contains(LanguageManager.names.weaponShop)) {
+				if (weapon.get())
+					player.openInventory(arenaInstance.getWeaponShop());
+				else PlayerManager.notifyFailure(player, LanguageManager.errors.shop,
+						new ColoredMessage(ChatColor.AQUA, LanguageManager.mobs.weaponsmith),
+						new ColoredMessage(ChatColor.AQUA, LanguageManager.mobs.mayor));
+			}
 
 			// Open armor shop
-			else if (buttonName.contains(LanguageManager.names.armorShop))
-				player.openInventory(arenaInstance.getArmorShop());
+			else if (buttonName.contains(LanguageManager.names.armorShop)) {
+				if (armor.get())
+					player.openInventory(arenaInstance.getArmorShop());
+				else PlayerManager.notifyFailure(player, LanguageManager.errors.shop,
+						new ColoredMessage(ChatColor.AQUA, LanguageManager.mobs.armorer),
+						new ColoredMessage(ChatColor.AQUA, LanguageManager.mobs.mayor));
+			}
 
 			// Open consumables shop
-			else if (buttonName.contains(LanguageManager.names.consumableShop))
-				player.openInventory(arenaInstance.getConsumeShop());
+			else if (buttonName.contains(LanguageManager.names.consumableShop)) {
+				if (consumable.get())
+					player.openInventory(arenaInstance.getConsumeShop());
+				else PlayerManager.notifyFailure(player, LanguageManager.errors.shop,
+						new ColoredMessage(ChatColor.AQUA, LanguageManager.mobs.farmer),
+						new ColoredMessage(ChatColor.AQUA, LanguageManager.mobs.mayor));
+			}
 
 			// Open community chest
 			else if (buttonName.contains(LanguageManager.names.communityChest))
-				if (arenaInstance.hasCommunity())
-					player.openInventory(arenaInstance.getCommunityChest());
+				if (arenaInstance.hasCommunity()) {
+					if (community.get())
+						player.openInventory(arenaInstance.getCommunityChest());
+					else PlayerManager.notifyFailure(player, LanguageManager.errors.shop,
+							new ColoredMessage(ChatColor.AQUA, LanguageManager.mobs.vaultKeeper),
+							new ColoredMessage(ChatColor.AQUA, LanguageManager.mobs.mayor));
+				}
 				else PlayerManager.notifyFailure(player, LanguageManager.errors.communityChest);
 		}
 

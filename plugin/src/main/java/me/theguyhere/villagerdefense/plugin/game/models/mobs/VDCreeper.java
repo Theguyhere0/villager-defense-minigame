@@ -2,6 +2,7 @@ package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EntityType;
@@ -16,7 +17,7 @@ public class VDCreeper extends VDMinion {
         super(
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.CREEPER),
-                "Creeper",
+                LanguageManager.mobs.creeper,
                 "A crowd control monster keeping defenders away from the front lines.",
                 getLevel(arena.getCurrentDifficulty(), 1.5, 2),
                 AttackType.NORMAL

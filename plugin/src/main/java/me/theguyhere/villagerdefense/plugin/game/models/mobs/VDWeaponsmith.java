@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
@@ -14,7 +15,7 @@ public class VDWeaponsmith extends VDVillager {
         super(
                 arena,
                 (Villager) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.VILLAGER),
-                "Weaponsmith",
+                LanguageManager.mobs.weaponsmith,
                 "While they don’t have the heart to use them, they’ll produce weapons of mass destruction for " +
                         "you.",
                 getLevel(arena.getCurrentDifficulty(), 2, 0)

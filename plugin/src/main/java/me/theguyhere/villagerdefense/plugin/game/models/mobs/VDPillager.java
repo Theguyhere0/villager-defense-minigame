@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
@@ -15,7 +16,7 @@ public class VDPillager extends VDMinion {
         super(
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.PILLAGER),
-                "Pillager",
+                LanguageManager.mobs.pillager,
                 "These corrupted Villagers wield heavy piercing crossbows and are hell-bent on hunting down " +
                         "Villagers.",
                 getLevel(arena.getCurrentDifficulty(), 1.75, 4),

@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
@@ -14,7 +15,7 @@ public class VDMayor extends VDVillager {
         super(
                 arena,
                 (Villager) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.VILLAGER),
-                "Mayor",
+                LanguageManager.mobs.mayor,
                 "Like all politicians, this villager is quite weak but has the power to provide you with just " +
                         "what you need.",
                 getLevel(arena.getCurrentDifficulty(), 1, 5)

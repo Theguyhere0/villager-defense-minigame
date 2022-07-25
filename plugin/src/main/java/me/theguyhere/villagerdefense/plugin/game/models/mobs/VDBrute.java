@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
@@ -16,7 +17,7 @@ public class VDBrute extends VDMinion {
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location,
                         EntityType.PIGLIN_BRUTE),
-                "Brute",
+                LanguageManager.mobs.brute,
                 "The uncivilized uncle of Piglin who is tougher, faster, and wields an axe. Hates players but " +
                         "specifically targets melee fighters.",
                 getLevel(arena.getCurrentDifficulty(), 1.5, 4),

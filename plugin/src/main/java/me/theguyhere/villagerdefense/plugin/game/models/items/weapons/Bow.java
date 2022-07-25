@@ -16,7 +16,7 @@ import java.util.List;
 public abstract class Bow extends VDWeapon {
     @NotNull
     public static ItemStack create(double difficulty) {
-        int level = Math.max(getLevel(difficulty) - 2, 1);
+        int level = Math.max(getLevel(difficulty) * 2 - 2, 1);
         List<String> lores = new ArrayList<>();
 
         // Add space in lore from name
@@ -26,8 +26,8 @@ public abstract class Bow extends VDWeapon {
         lores.add(CommunicationManager.format(ATTACK_TYPE, ATTACK_TYPE_NORMAL));
 
         // Set range damage
-        int damageLow = 4 + (level - 1) / 2;
-        int damageHigh = 6 + level / 2;
+        int damageLow = 6 + 2 * ((level - 1) / 2);
+        int damageHigh = 12 + 2 * (level / 2);
         lores.add(CommunicationManager.format(RANGE_DAMAGE, new ColoredMessage(ChatColor.DARK_AQUA,
                 String.format(LanguageManager.messages.perBlock, damageLow + "-" + damageHigh))));
 

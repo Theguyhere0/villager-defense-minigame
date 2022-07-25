@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
@@ -15,7 +16,7 @@ public class VDPiglinSniper extends VDMinion {
         super(
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.PIGLIN),
-                "Piglin Sniper",
+                LanguageManager.mobs.piglinSniper,
                 "A long-ranged sniper shooting heavy bolts that both penetrate armor and pierce through targets, " +
                         "aiming for players and especially ranged players.",
                 getLevel(arena.getCurrentDifficulty(), 1.5, 4),

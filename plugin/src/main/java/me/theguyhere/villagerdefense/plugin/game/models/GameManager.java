@@ -483,4 +483,8 @@ public class GameManager {
 	public static void wipeArenas() {
 		arenas.values().stream().filter(Objects::nonNull).forEach(Arena::wipe);
 	}
+
+	public static void closeArenas() {
+		arenas.values().forEach(arena -> arena.setClosed(true));
+	}
 }

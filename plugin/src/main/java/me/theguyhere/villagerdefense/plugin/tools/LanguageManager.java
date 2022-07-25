@@ -16,6 +16,7 @@ public class LanguageManager {
     public static Errors errors;
     public static Kits kits;
     public static Messages messages;
+    public static Mobs mobs;
     public static Names names;
     public static PlayerStats playerStats;
     public static Rewards rewards;
@@ -30,6 +31,7 @@ public class LanguageManager {
         LanguageManager.errors = new Errors();
         LanguageManager.kits = new Kits();
         LanguageManager.messages = new Messages();
+        LanguageManager.mobs = new Mobs();
         LanguageManager.names = new Names();
         LanguageManager.playerStats = new PlayerStats();
         LanguageManager.rewards = new Rewards();
@@ -329,6 +331,7 @@ public class LanguageManager {
         public final @NotNull String phantomOwn;
         public final @NotNull String phantomPlayer;
         public final @NotNull String playerOnlyCommand;
+        public final @NotNull String shop;
         public final @NotNull String startingSoon;
         public final @NotNull String suicide;
         public final @NotNull String suicideActive;
@@ -379,6 +382,7 @@ public class LanguageManager {
             phantomOwn = getConfigString("phantomOwn");
             phantomPlayer = getConfigString("phantomPlayer");
             playerOnlyCommand = getConfigString("playerOnlyCommand");
+            shop = getConfigString("shop");
             startingSoon = getConfigString("startingSoon");
             suicide = getConfigString("suicide");
             suicideActive = getConfigString("suicideActive");
@@ -865,6 +869,70 @@ public class LanguageManager {
             wave = getConfigString("wave");
             waveNum = getConfigString("waveNum");
             weight = getConfigString("weight");
+        }
+    }
+
+    public static class Mobs extends Section {
+        public final @NotNull String armorer;
+        public final @NotNull String babyHusk;
+        public final @NotNull String babyZombie;
+        public final @NotNull String blaze;
+        public final @NotNull String brute;
+        public final @NotNull String caveSpider;
+        public final @NotNull String chargedCreeper;
+        public final @NotNull String cleric;
+        public final @NotNull String creeper;
+        public final @NotNull String farmer;
+        public final @NotNull String fletcher;
+        public final @NotNull String ghast;
+        public final @NotNull String husk;
+        public final @NotNull String mayor;
+        public final @NotNull String phantom;
+        public final @NotNull String piglinSniper;
+        public final @NotNull String piglinSoldier;
+        public final @NotNull String pillager;
+        public final @NotNull String silverfish;
+        public final @NotNull String skeleton;
+        public final @NotNull String spider;
+        public final @NotNull String stray;
+        public final @NotNull String vaultKeeper;
+        public final @NotNull String vindicator;
+        public final @NotNull String weaponsmith;
+        public final @NotNull String witch;
+        public final @NotNull String witherSkeleton;
+        public final @NotNull String zombie;
+
+        private Mobs() throws InvalidLanguageKeyException {
+            setPathPrefix("mobs");
+
+            armorer = getConfigString("armorer");
+            babyHusk = getConfigString("babyHusk");
+            babyZombie = getConfigString("babyZombie");
+            blaze = getConfigString("blaze");
+            brute = getConfigString("brute");
+            caveSpider = getConfigString("caveSpider");
+            chargedCreeper = getConfigString("chargedCreeper");
+            cleric = getConfigString("cleric");
+            creeper = getConfigString("creeper");
+            farmer = getConfigString("farmer");
+            fletcher = getConfigString("fletcher");
+            ghast = getConfigString("ghast");
+            husk = getConfigString("husk");
+            mayor = getConfigString("mayor");
+            phantom = getConfigString("phantom");
+            piglinSniper = getConfigString("piglinSniper");
+            piglinSoldier = getConfigString("piglinSoldier");
+            pillager = getConfigString("pillager");
+            silverfish = getConfigString("silverfish");
+            skeleton = getConfigString("skeleton");
+            spider = getConfigString("spider");
+            stray = getConfigString("stray");
+            vaultKeeper = getConfigString("vaultKeeper");
+            vindicator = getConfigString("vindicator");
+            weaponsmith = getConfigString("weaponsmith");
+            witch = getConfigString("witch");
+            witherSkeleton = getConfigString("witherSkeleton");
+            zombie = getConfigString("zombie");
         }
     }
 

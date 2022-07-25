@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
@@ -14,7 +15,7 @@ public class VDFletcher extends VDVillager {
         super(
                 arena,
                 (Villager) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.VILLAGER),
-                "Fletcher",
+                LanguageManager.mobs.fletcher,
                 "Where’d all the feathers come from? No one knows but the Fletcher.",
                 getLevel(arena.getCurrentDifficulty(), 2, 0)
         );

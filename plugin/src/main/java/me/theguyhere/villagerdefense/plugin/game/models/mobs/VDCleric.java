@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
@@ -14,7 +15,7 @@ public class VDCleric extends VDVillager {
         super(
                 arena,
                 (Villager) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.VILLAGER),
-                "Cleric",
+                LanguageManager.mobs.cleric,
                 "Coming from an eastern family, this villager studied 25 hours a day to become a Cleric.",
                 getLevel(arena.getCurrentDifficulty(), 3, 0)
         );

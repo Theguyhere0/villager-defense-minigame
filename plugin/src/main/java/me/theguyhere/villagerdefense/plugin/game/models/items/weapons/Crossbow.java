@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class Crossbow extends VDWeapon {
     @NotNull
     public static ItemStack create(double difficulty) {
-        int level = Math.max(getLevel(difficulty) - 2, 1);
+        int level = Math.max(getLevel(difficulty) * 2 - 3, 1);
         List<String> lores = new ArrayList<>();
 
         // Add space in lore from name
@@ -28,8 +28,8 @@ public abstract class Crossbow extends VDWeapon {
         lores.add(CommunicationManager.format(ATTACK_TYPE, ATTACK_TYPE_NORMAL));
 
         // Set range damage
-        int damageLow = 80 + 10 * ((level - 1) / 2);
-        int damageHigh = 120 + 12 * (level / 2);
+        int damageLow = 120 + 10 * ((level - 1) / 2);
+        int damageHigh = 180 + 15 * (level / 2);
         lores.add(CommunicationManager.format(RANGE_DAMAGE, new ColoredMessage(ChatColor.DARK_AQUA,
                 damageLow + "-" + damageHigh)));
 

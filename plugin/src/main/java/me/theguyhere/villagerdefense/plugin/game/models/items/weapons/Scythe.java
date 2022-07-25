@@ -21,7 +21,7 @@ import java.util.List;
 public abstract class Scythe extends VDWeapon {
     @NotNull
     public static ItemStack create(double difficulty) {
-        int level = Math.max(getLevel(difficulty) - 3, 1);
+        int level = Math.max(getLevel(difficulty) * 2 - 4, 1);
         Material mat;
         List<String> lores = new ArrayList<>();
         Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
@@ -51,8 +51,8 @@ public abstract class Scythe extends VDWeapon {
         lores.add(CommunicationManager.format(ATTACK_TYPE, ATTACK_TYPE_PENETRATING));
 
         // Set main damage
-        int damageLow = 14 + 4 * ((level - 1) / 2);
-        int damageHigh = 30 + 5 * (level / 2);
+        int damageLow = 16 + 4 * ((level - 1) / 2);
+        int damageHigh = 30 + 6 * (level / 2);
         lores.add(CommunicationManager.format(MAIN_DAMAGE, new ColoredMessage(ChatColor.RED,
                 damageLow + "-" + damageHigh)));
 

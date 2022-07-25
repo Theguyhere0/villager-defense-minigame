@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
@@ -16,7 +17,7 @@ public class VDCaveSpider extends VDMinion {
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location,
                         EntityType.CAVE_SPIDER),
-                "Cave Spider",
+                LanguageManager.mobs.caveSpider,
                 "These little Spiders are even faster and inflict poison, despite being weaker than their " +
                         "counterpart.",
                 getLevel(arena.getCurrentDifficulty(), 1.25, 3),

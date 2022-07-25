@@ -1268,6 +1268,15 @@ public class Arena {
             startBorderParticles();
     }
 
+    public void stretchBounds() {
+        Location temp = getCorner1();
+        temp.setY(Objects.requireNonNull(getCorner1().getWorld()).getMaxHeight());
+        setCorner1(temp);
+        temp = getCorner2();
+        temp.setY(Objects.requireNonNull(getCorner2().getWorld()).getMinHeight() - 1);
+        setCorner2(temp);
+    }
+
     public BoundingBox getBounds() {
         return new BoundingBox(getCorner1().getX(), getCorner1().getY(), getCorner1().getZ(),
                 getCorner2().getX(), getCorner2().getY(), getCorner2().getZ());
@@ -1944,7 +1953,7 @@ public class Arena {
         // Play wave end sound if not just starting
         if (hasWaveFinishSound() && getCurrentWave() != 0)
             for (VDPlayer vdPlayer : getPlayers()) {
-                vdPlayer.getPlayer().playSound(getPlayerSpawn().getLocation(),
+                vdPlayer.getPlayer().playSound(getPlayerSpawn().getLocation().clone().add(0, -8, 0),
                         Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 10, .75f);
             }
 
@@ -2001,7 +2010,7 @@ public class Arena {
             endGame();
             if (hasWinSound()) {
                 for (VDPlayer vdPlayer : getPlayers()) {
-                    vdPlayer.getPlayer().playSound(getPlayerSpawn().getLocation(),
+                    vdPlayer.getPlayer().playSound(getPlayerSpawn().getLocation().clone().add(0, -8, 0),
                             Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 }
             }
@@ -2126,7 +2135,7 @@ public class Arena {
         // Play wave start sound
         if (hasWaveStartSound()) {
             for (VDPlayer vdPlayer : getPlayers()) {
-                vdPlayer.getPlayer().playSound(getPlayerSpawn().getLocation(),
+                vdPlayer.getPlayer().playSound(getPlayerSpawn().getLocation().clone().add(0, -8, 0),
                         Sound.ENTITY_ENDER_DRAGON_GROWL, 10, .25f);
             }
         }
@@ -2369,11 +2378,17 @@ public class Arena {
         // Set all players to invincible
         getAlives().forEach(player -> player.getPlayer().setInvulnerable(true));
 
+        // Remove mob AI and set them invincible
+        mobs.forEach(mob -> {
+            mob.getEntity().setAI(false);
+            mob.getEntity().setInvulnerable(true);
+        });
+
         // Play sound if turned on and arena is either not winning or has unlimited waves
         if (hasLoseSound() && (getCurrentWave() <= getMaxWaves() || getMaxWaves() < 0)) {
             for (VDPlayer vdPlayer : getPlayers()) {
-                vdPlayer.getPlayer().playSound(getPlayerSpawn().getLocation(), Sound.ENTITY_ENDER_DRAGON_DEATH,
-                        10, .5f);
+                vdPlayer.getPlayer().playSound(getPlayerSpawn().getLocation().clone().add(0, -8, 0),
+                        Sound.ENTITY_ENDER_DRAGON_DEATH, 10, .5f);
             }
         }
 
@@ -2864,7 +2879,8 @@ public class Arena {
     public void checkClose() {
         if (!config.contains("lobby") || getPortalLocation() == null || getPlayerSpawn() == null ||
                 getMonsterSpawns().isEmpty() || getVillagerSpawns().isEmpty() || getCorner1() == null ||
-                getCorner2() == null || !Objects.equals(getCorner1().getWorld(), getCorner2().getWorld())) {
+                getCorner2() == null || !Objects.equals(getCorner1().getWorld(), getCorner2().getWorld()) ||
+                Main.isOutdated()) {
             setClosed(true);
             CommunicationManager.debugInfo(
                     String.format("%s did not meet opening requirements and was closed.", getName()),

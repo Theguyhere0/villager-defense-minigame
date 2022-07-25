@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
@@ -16,7 +17,7 @@ public class VDWitherSkeleton extends VDMinion {
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld())
                         .spawnEntity(location, EntityType.WITHER_SKELETON),
-                "Wither Skeleton",
+                LanguageManager.mobs.witherSkeleton,
                 "These corrupted Skeletons have weak hits, but strike fast and wither their victims.",
                 getLevel(arena.getCurrentDifficulty(), 1.25, 4),
                 AttackType.NORMAL

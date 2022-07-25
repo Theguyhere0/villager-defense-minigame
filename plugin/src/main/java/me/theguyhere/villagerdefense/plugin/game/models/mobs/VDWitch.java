@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -20,7 +21,7 @@ public class VDWitch extends VDMinion {
         super(
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.WITCH),
-                "Witch",
+                LanguageManager.mobs.witch,
                 "This brewery master can poison, slow, or weaken its targets and will target anyone that’s not " +
                         "a monster.",
                 getLevel(arena.getCurrentDifficulty(), 2, 4),

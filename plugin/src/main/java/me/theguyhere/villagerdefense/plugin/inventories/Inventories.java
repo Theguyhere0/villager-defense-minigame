@@ -1101,6 +1101,12 @@ public class Inventories {
 				CommunicationManager.format("&9&lCorner 2: " +
 				(arena.getCorner2() == null ? "&c&lMissing" : "&a&lSet"))));
 
+		// Option to stretch the arena bounds to the top and bottom of the world
+		buttons.add(ItemManager.createItem(Material.WEEPING_VINES,
+				CommunicationManager.format("&3&lStretch Bounds"),
+				CommunicationManager.format("&7Stretches the arena bounds in the y direction from"),
+				CommunicationManager.format("&7the top to just below the bottom of the world.")));
+
 		// Option to toggle arena border particles
 		buttons.add(ItemManager.createItem(Material.FIREWORK_ROCKET,
 				CommunicationManager.format("&4&lBorder Particles: " +
@@ -1386,8 +1392,8 @@ public class Inventories {
 		List<ItemStack> axes = new ArrayList<>();
 		for (int i = 0; i < 4; i++) {
 			ItemStack axe = Axe.create(arena.getCurrentDifficulty());
-			if (level < 2)
-				axes.add(Buttons.levelPlaceholder(2));
+			if (level < 3)
+				axes.add(Buttons.levelPlaceholder(3));
 			else if (axes.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
 					.equals(Objects.requireNonNull(axe.getItemMeta()).getDisplayName())))
 				axes.add(axe);
@@ -1416,8 +1422,8 @@ public class Inventories {
 		List<ItemStack> bows = new ArrayList<>();
 		for (int i = 0; i < 4; i++) {
 			ItemStack bow = Bow.create(arena.getCurrentDifficulty());
-			if (level < 3)
-				bows.add(Buttons.levelPlaceholder(3));
+			if (level < 2)
+				bows.add(Buttons.levelPlaceholder(2));
 			else if (bows.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
 					.equals(Objects.requireNonNull(bow.getItemMeta()).getDisplayName())))
 				bows.add(bow);
@@ -1448,8 +1454,8 @@ public class Inventories {
 		List<ItemStack> ammos = new ArrayList<>();
 		for (int i = 0; i < 4; i++) {
 			ItemStack ammo = Ammo.create(arena.getCurrentDifficulty());
-			if (level < 3)
-				ammos.add(Buttons.levelPlaceholder(3));
+			if (level < 2)
+				ammos.add(Buttons.levelPlaceholder(2));
 			else if (ammos.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
 					.equals(Objects.requireNonNull(ammo.getItemMeta()).getDisplayName())))
 				ammos.add(ammo);

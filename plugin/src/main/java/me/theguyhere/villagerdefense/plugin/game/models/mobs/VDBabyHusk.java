@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Husk;
@@ -16,7 +17,7 @@ public class VDBabyHusk extends VDMinion {
         super(
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.HUSK),
-                "Baby Husk",
+                LanguageManager.mobs.babyHusk,
                 "The smaller and faster brother of the Husk, with overall higher damage capacity but lower " +
                         "health.",
                 getLevel(arena.getCurrentDifficulty(), 1, 3),

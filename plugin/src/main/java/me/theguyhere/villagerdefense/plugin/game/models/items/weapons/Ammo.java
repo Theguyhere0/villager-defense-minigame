@@ -97,7 +97,7 @@ public abstract class Ammo extends VDWeapon {
         ammo.setItemMeta(meta);
     }
 
-    public static void updateRefill(ItemStack ammo) {
+    public static void updateRefill(ItemStack ammo, boolean fletcher) {
         // Check for ammo
         if (!matches(ammo))
             return;
@@ -151,7 +151,7 @@ public abstract class Ammo extends VDWeapon {
             double updatedRefillTimer = refillTimer.get() - .5;
             // Timer finished
             if (updatedRefillTimer < .1) {
-                capacity.addAndGet(1);
+                capacity.addAndGet(maxCap.get() - 1 > capacity.get() && fletcher ? 2 : 1);
                 ChatColor color = capacity.get() >= .75 * maxCap.get() ? ChatColor.GREEN :
                         (capacity.get() <= .25 * maxCap.get() ? ChatColor.RED : ChatColor.YELLOW);
                 lores.set(capIndex.get(), CommunicationManager.format(CAPACITY,

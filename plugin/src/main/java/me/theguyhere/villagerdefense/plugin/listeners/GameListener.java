@@ -327,7 +327,10 @@ public class GameListener implements Listener {
 				arena = GameManager.getArena(player);
 				gamer = arena.getPlayer(player);
 				finalDamager = arena.getMob(damager.getUniqueId());
-			} catch (ArenaNotFoundException | PlayerNotFoundException | VDMobNotFoundException err) {
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+				return;
+			} catch (VDMobNotFoundException err) {
+				e.setCancelled(true);
 				return;
 			}
 
@@ -396,9 +399,14 @@ public class GameListener implements Listener {
 			} else {
 				try {
 					arena = GameManager.getArena(victim.getMetadata(VDMob.VD).get(0).asInt());
-					finalDamager = arena.getMob(damager.getUniqueId());
 					finalVictim = arena.getMob(victim.getUniqueId());
 				} catch (ArenaNotFoundException | VDMobNotFoundException err) {
+					return;
+				}
+				try {
+					finalDamager = arena.getMob(damager.getUniqueId());
+				} catch (VDMobNotFoundException err) {
+					e.setCancelled(true);
 					return;
 				}
 			}
@@ -1052,7 +1060,8 @@ public class GameListener implements Listener {
 							String.format(LanguageManager.messages.death, player.getName()));
 				if (arena.hasPlayerDeathSound())
 					try {
-						fighter.getPlayer().playSound(arena.getPlayerSpawn().getLocation(),
+						fighter.getPlayer().playSound(arena.getPlayerSpawn().getLocation().clone()
+										.add(0, -8, 0),
 								Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10,
 								.75f);
 					} catch (NullPointerException err) {

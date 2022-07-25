@@ -387,6 +387,10 @@ public class Main extends JavaPlugin {
 					0, "customEffects.yml");
 			outdated = true;
 		}
+
+		// Close all arenas if outdated
+		if (outdated)
+			GameManager.closeArenas();
 	}
 
 	private void checkArenaNameAndGatherUnloadedWorlds() {

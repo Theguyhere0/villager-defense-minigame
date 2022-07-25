@@ -21,7 +21,7 @@ import java.util.List;
 public abstract class Sword extends VDWeapon {
     @NotNull
     public static ItemStack create(double difficulty) {
-        int level = getLevel(difficulty);
+        int level = getLevel(difficulty * 2);
         Material mat;
         List<String> lores = new ArrayList<>();
         Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();

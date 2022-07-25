@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
@@ -15,7 +16,7 @@ public class VDPiglinSoldier extends VDMinion {
         super(
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.PIGLIN),
-                "Piglin Soldier",
+                LanguageManager.mobs.piglinSoldier,
                 "A highly mobile swordsman that strikes hard and fast, with a hatred toward players.",
                 getLevel(arena.getCurrentDifficulty(), 1.5, 4),
                 AttackType.NORMAL

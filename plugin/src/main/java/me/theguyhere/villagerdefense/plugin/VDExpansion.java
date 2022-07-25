@@ -86,7 +86,7 @@ public class VDExpansion extends PlaceholderExpansion {
         else if (params.contains("wolfCap_") && arena != null)
             return String.valueOf(arena.getWolfCap());
 
-            // Player information
+        // Player information
         else if (params.contains("crystalBalance_") && id != null)
             return Integer.toString(PlayerManager.getCrystalBalance(id));
         else if (params.contains("topBalance_") && id != null)

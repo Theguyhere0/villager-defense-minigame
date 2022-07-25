@@ -21,7 +21,7 @@ import java.util.List;
 public abstract class Axe extends VDWeapon {
     @NotNull
     public static ItemStack create(double difficulty) {
-        int level = Math.max(getLevel(difficulty) - 1, 1);
+        int level = Math.max(getLevel(difficulty) * 2 - 2, 1);
         Material mat;
         List<String> lores = new ArrayList<>();
         Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
@@ -51,8 +51,8 @@ public abstract class Axe extends VDWeapon {
         lores.add(CommunicationManager.format(ATTACK_TYPE, ATTACK_TYPE_NORMAL));
 
         // Set main damage
-        int damageLow = 60 + 5 * (level - 1);
-        int damageHigh = 120 + 10 * (level - 1);
+        int damageLow = 80 + 10 * (level - 1);
+        int damageHigh = 160 + 15 * (level - 1);
         lores.add(CommunicationManager.format(MAIN_DAMAGE, new ColoredMessage(ChatColor.RED,
                 damageLow + "-" + damageHigh)));
 

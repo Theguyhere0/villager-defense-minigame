@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Husk;
@@ -16,7 +17,7 @@ public class VDHusk extends VDMinion {
         super(
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.HUSK),
-                "Husk",
+                LanguageManager.mobs.husk,
                 "A tougher version of the Zombie that inflicts hunger and targets players.",
                 getLevel(arena.getCurrentDifficulty(), 1, 2),
                 AttackType.NORMAL

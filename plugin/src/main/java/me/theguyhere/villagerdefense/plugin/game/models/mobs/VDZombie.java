@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
@@ -15,7 +16,7 @@ public class VDZombie extends VDMinion {
         super(
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.ZOMBIE),
-                "Zombie",
+                LanguageManager.mobs.zombie,
                 "A pretty average monster that moves slowly and attacks indiscriminately.",
                 getLevel(arena.getCurrentDifficulty(), 1, 0),
                 AttackType.NORMAL

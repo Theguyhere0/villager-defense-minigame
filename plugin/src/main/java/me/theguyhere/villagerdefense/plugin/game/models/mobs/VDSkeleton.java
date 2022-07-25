@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
@@ -14,7 +15,7 @@ public class VDSkeleton extends VDMinion {
         super(
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.SKELETON),
-                "Skeleton",
+                LanguageManager.mobs.skeleton,
                 "A mediocre ranged monster that attacks indiscriminately.",
                 getLevel(arena.getCurrentDifficulty(), 1, 0),
                 AttackType.NORMAL

@@ -2,6 +2,7 @@ package me.theguyhere.villagerdefense.plugin.commands;
 
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.*;
@@ -30,10 +31,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("deprecation")
@@ -41,6 +39,10 @@ public class Commands implements CommandExecutor {
 	private final FileConfiguration playerData;
 	private final FileConfiguration arenaData;
 	private final FileConfiguration customEffects;
+
+	// Maps to keep track of commands that need to be re-triggered for safeguard
+	private final Map<UUID, Long> reload = new HashMap<>();
+	private final Map<UUID, Long> disable = new HashMap<>();
 
 	public Commands() {
 		playerData = Main.getPlayerData();
@@ -57,9 +59,14 @@ public class Commands implements CommandExecutor {
 
 			// Gather who sent command
 			Player player;
-			if (sender instanceof Player)
+			UUID uuid;
+			if (sender instanceof Player) {
 				player = (Player) sender;
-			else player = null;
+				uuid = player.getUniqueId();
+			} else {
+				player = null;
+				uuid = null;
+			}
 
 			// No additional arguments
 			if (args.length == 0) {
@@ -446,6 +453,13 @@ public class Commands implements CommandExecutor {
 									if (arena.getCorner1() == null || arena.getCorner2() == null ||
 											!Objects.equals(arena.getCorner1().getWorld(), arena.getCorner2().getWorld())) {
 										notifyFailure(player, "Arena cannot open without valid arena bounds!");
+										return true;
+									}
+
+									// Outdated file configs
+									if (Main.isOutdated()) {
+										notifyFailure(player,
+												"Arena cannot open when file configurations are outdated!");
 										return true;
 									}
 
@@ -2379,12 +2393,58 @@ public class Commands implements CommandExecutor {
 						return true;
 					}
 
+					// Safeguard
+					if (!reload.containsKey(uuid) || reload.get(uuid) < System.currentTimeMillis()) {
+						// Notify of safeguard measures
+						if (player != null)
+							PlayerManager.notifyAlert(player, "Are you sure you want to reload the plugin? " +
+									"Re-send the command within 10 seconds to confirm.");
+						else CommunicationManager.debugInfo("Are you sure you want to reload the plugin? " +
+								"Re-send the command within 10 seconds to confirm.", 0);
+
+						// Keep track of trigger
+						reload.put(uuid, System.currentTimeMillis() + Utils.secondsToMillis(10));
+
+						return true;
+					}
+
 					// Notify of reload
 					if (player != null)
 						PlayerManager.notifyAlert(player, "Reloading plugin data");
 					else CommunicationManager.debugInfo("Reloading plugin data", 0);
 
 					Main.plugin.reload();
+					return true;
+
+				// Disable the plugin
+				case "disable":
+					// Check for permission to use the command
+					if (player != null && !player.hasPermission("vd.admin")) {
+						PlayerManager.notifyFailure(player, LanguageManager.errors.permission);
+						return true;
+					}
+
+					// Safeguard
+					if (!disable.containsKey(uuid) || disable.get(uuid) < System.currentTimeMillis()) {
+						// Notify of safeguard measures
+						if (player != null)
+							PlayerManager.notifyAlert(player, "Are you sure you want to disable the plugin? " +
+									"Re-send the command within 10 seconds to confirm.");
+						else CommunicationManager.debugInfo("Are you sure you want to disable the plugin? " +
+								"Re-send the command within 10 seconds to confirm.", 0);
+
+						// Keep track of trigger
+						disable.put(uuid, System.currentTimeMillis() + Utils.secondsToMillis(10));
+
+						return true;
+					}
+
+					// Notify of disable
+					if (player != null)
+						PlayerManager.notifyAlert(player, "Disabling the plugin");
+					else CommunicationManager.debugInfo("Disabling the plugin", 0);
+
+					Bukkit.getPluginManager().disablePlugin(Main.plugin);
 					return true;
 
 				// No valid command sent
