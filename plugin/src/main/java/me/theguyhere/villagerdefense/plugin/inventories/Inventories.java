@@ -1554,7 +1554,7 @@ public class Inventories {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(
 				new InventoryMeta(InventoryID.CONSUMABLE_SHOP_MENU, InventoryType.MENU),
-				27,
+				18,
 				CommunicationManager.format("&3&l" + LanguageManager.messages.level +
 						" &9&l" + level + " &3&l" + LanguageManager.names.consumableShop)
 		);
@@ -1601,7 +1601,7 @@ public class Inventories {
 		// Fill in other
 
 		// Return option
-		inv.setItem(22, Buttons.exit());
+		inv.setItem(13, Buttons.exit());
 
 		return inv;
 	}
