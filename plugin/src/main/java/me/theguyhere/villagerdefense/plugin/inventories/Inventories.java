@@ -5,10 +5,15 @@ import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Boots;
+import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Chestplate;
+import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Helmet;
+import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Leggings;
+import me.theguyhere.villagerdefense.plugin.game.models.items.food.*;
+import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.*;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.*;
@@ -74,7 +79,7 @@ public class Inventories {
 				CommunicationManager.format("&9&lArenas"),
 				true,
 				true,
-				"Info Board",
+				"Arena",
 				buttons
 		);
 	}
@@ -489,9 +494,15 @@ public class Inventories {
 				CommunicationManager.format("&7Particles showing where the spawns are"),
 				CommunicationManager.format("&7(Visible in-game)")));
 
+		// Option to edit villager type
+		buttons.add((ItemManager.createItem(Material.LECTERN,
+				CommunicationManager.format("&6&lVillager Type: " +
+						arena.getVillagerType().substring(0, 1).toUpperCase() +
+						arena.getVillagerType().substring(1)))));
+
 		// Option to edit spawn table
 		buttons.add(ItemManager.createItem(Material.DRAGON_HEAD,
-				CommunicationManager.format("&3&lSpawn Table")));
+				CommunicationManager.format("&3&lSpawn Table: " + arena.getSpawnTableFile())));
 
 		// Option to toggle dynamic mob count
 		buttons.add(ItemManager.createItem(Material.SLIME_BALL,
@@ -636,6 +647,28 @@ public class Inventories {
 		);
 	}
 
+	// Villager type menu for an arena
+	public static Inventory createVillagerTypeMenu(Arena arena) {
+		List<ItemStack> buttons = new ArrayList<>();
+
+		// Villager type options
+		buttons.add(ItemManager.createItem(Material.SANDSTONE, CommunicationManager.format("&6&lDesert")));
+		buttons.add(ItemManager.createItem(Material.MOSSY_COBBLESTONE, CommunicationManager.format("&2&lJungle")));
+		buttons.add(ItemManager.createItem(Material.GRASS_BLOCK, CommunicationManager.format("&a&lPlains")));
+		buttons.add(ItemManager.createItem(Material.TERRACOTTA, CommunicationManager.format("&c&lSavanna")));
+		buttons.add(ItemManager.createItem(Material.SNOW_BLOCK, CommunicationManager.format("&b&lSnow")));
+		buttons.add(ItemManager.createItem(Material.CLAY, CommunicationManager.format("&3&lSwamp")));
+		buttons.add(ItemManager.createItem(Material.PODZOL, CommunicationManager.format("&9&lTaiga")));
+
+		return InventoryFactory.createDynamicSizeInventory(
+				new InventoryMeta(InventoryID.VILLAGER_TYPE_MENU, InventoryType.MENU, arena),
+				CommunicationManager.format("&6&lVillager Type: " +
+						arena.getVillagerType().substring(0, 1).toUpperCase() + arena.getVillagerType().substring(1)),
+				true,
+				buttons
+		);
+	}
+
 	// Spawn table menu for an arena
 	public static Inventory createSpawnTableMenu(Arena arena) {
 		List<ItemStack> buttons = new ArrayList<>();
@@ -644,57 +677,54 @@ public class Inventories {
 		// Option to set spawn table to default
 		buttons.add(ItemManager.createItem(Material.OAK_WOOD,
 				CommunicationManager.format("&4&lDefault"), ItemManager.BUTTON_FLAGS,
-				chosen.equals("default") ? ItemManager.glow() : null,
+				chosen.contains("default") ? ItemManager.glow() : null,
 				CommunicationManager.format("&7Sets spawn table to default.yml")));
 
 		// Option to set spawn table to global option 1
 		buttons.add(ItemManager.createItem(Material.RED_CONCRETE,
 				CommunicationManager.format("&6&lOption 1"), ItemManager.BUTTON_FLAGS,
-				chosen.equals("option1") ? ItemManager.glow() : null,
+				chosen.contains("option1") ? ItemManager.glow() : null,
 				CommunicationManager.format("&7Sets spawn table to option1.yml")));
 
 		// Option to set spawn table to global option 2
 		buttons.add(ItemManager.createItem(Material.ORANGE_CONCRETE,
 				CommunicationManager.format("&6&lOption 2"), ItemManager.BUTTON_FLAGS,
-				chosen.equals("option2") ? ItemManager.glow() : null,
+				chosen.contains("option2") ? ItemManager.glow() : null,
 				CommunicationManager.format("&7Sets spawn table to option2.yml")));
 
 		// Option to set spawn table to global option 3
 		buttons.add(ItemManager.createItem(Material.YELLOW_CONCRETE,
 				CommunicationManager.format("&6&lOption 3"), ItemManager.BUTTON_FLAGS,
-				chosen.equals("option3") ? ItemManager.glow() : null,
+				chosen.contains("option3") ? ItemManager.glow() : null,
 				CommunicationManager.format("&7Sets spawn table to option3.yml")));
 
 		// Option to set spawn table to global option 4
 		buttons.add(ItemManager.createItem(Material.BROWN_CONCRETE,
 				CommunicationManager.format("&6&lOption 4"), ItemManager.BUTTON_FLAGS,
-				chosen.equals("option4") ? ItemManager.glow() : null,
+				chosen.contains("option4") ? ItemManager.glow() : null,
 				CommunicationManager.format("&7Sets spawn table to option4.yml")));
 
 		// Option to set spawn table to global option 5
 		buttons.add(ItemManager.createItem(Material.LIGHT_GRAY_CONCRETE,
 				CommunicationManager.format("&6&lOption 5"), ItemManager.BUTTON_FLAGS,
-				chosen.equals("option5") ? ItemManager.glow() : null,
+				chosen.contains("option5") ? ItemManager.glow() : null,
 				CommunicationManager.format("&7Sets spawn table to option5.yml")));
 
 		// Option to set spawn table to global option 6
 		buttons.add(ItemManager.createItem(Material.WHITE_CONCRETE,
 				CommunicationManager.format("&6&lOption 6"), ItemManager.BUTTON_FLAGS,
-				chosen.equals("option6") ? ItemManager.glow() : null,
+				chosen.contains("option6") ? ItemManager.glow() : null,
 				CommunicationManager.format("&7Sets spawn table to option6.yml")));
 
 		// Option to set spawn table to custom option
 		buttons.add(ItemManager.createItem(Material.BIRCH_WOOD,
 				CommunicationManager.format("&e&lCustom"), ItemManager.BUTTON_FLAGS,
-				chosen.length() < 4 ? ItemManager.glow() : null,
-				CommunicationManager.format("&7Sets spawn table to a[arena number].yml"),
-				CommunicationManager.format("&7(Check the arena number in arenaData.yml)")));
+				chosen.charAt(0) == 'a' ? ItemManager.glow() : null,
+				CommunicationManager.format("&7Sets spawn table to a" + arena.getId() + ".yml")));
 
 		return InventoryFactory.createFixedSizeInventory(
 				new InventoryMeta(InventoryID.SPAWN_TABLE_MENU, InventoryType.MENU, arena),
-				chosen.equals("custom") ?
-						CommunicationManager.format("&3&lSpawn Table: " + arena.getPath() + ".yml") :
-						CommunicationManager.format("&3&lSpawn Table: " + arena.getSpawnTableFile() + ".yml"),
+				CommunicationManager.format("&3&lSpawn Table: " + arena.getSpawnTableFile()),
 				1,
 				true,
 				buttons
@@ -704,25 +734,6 @@ public class Inventories {
 	// Menu for editing the shop settings of an arena
 	public static Inventory createShopSettingsMenu(Arena arena) {
 		List<ItemStack> buttons = new ArrayList<>();
-
-		// Option to create a custom shop
-		buttons.add(ItemManager.createItem(Material.QUARTZ,
-				CommunicationManager.format("&a&lEdit Custom Shop")));
-
-		// Option to toggle default shop
-		buttons.add(ItemManager.createItem(Material.EMERALD_BLOCK,
-				CommunicationManager.format("&6&lDefault Shop: " + getToggleStatus(arena.hasNormal())),
-				CommunicationManager.format("&7Turn default shop on and off")));
-
-		// Option to toggle custom shop
-		buttons.add(ItemManager.createItem(Material.QUARTZ_BLOCK,
-				CommunicationManager.format("&2&lCustom Shop: " + getToggleStatus(arena.hasCustom())),
-				CommunicationManager.format("&7Turn custom shop on and off")));
-
-		// Option to toggle custom shop
-		buttons.add(ItemManager.createItem(Material.BOOKSHELF,
-				CommunicationManager.format("&3&lEnchant Shop: " + getToggleStatus(arena.hasEnchants())),
-				CommunicationManager.format("&7Turn enchants shop on and off")));
 
 		// Option to toggle community chest
 		buttons.add(ItemManager.createItem(Material.CHEST,
@@ -740,75 +751,6 @@ public class Inventories {
 				CommunicationManager.format("&e&lShop Settings: " + arena.getName()),
 				true,
 				buttons
-		);
-	}
-
-	// Menu for adding custom items
-	public static Inventory createCustomItemsMenu(Arena arena, int id) {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(
-				new InventoryMeta(InventoryID.CUSTOM_ITEMS_MENU, InventoryType.MENU, arena, id),
-				27,
-				CommunicationManager.format("&6&lEdit Item")
-		);
-
-		// Item of interest
-		inv.setItem(4, arena.getCustomShop().getItem(id));
-
-		// Option to set un-purchasable
-		inv.setItem(8, ItemManager.createItem(Material.BEDROCK,
-				CommunicationManager.format("&5&lToggle Un-purchasable")));
-
-		// Option to increase by 1
-		inv.setItem(9, ItemManager.createItem(Material.LIME_CONCRETE,
-				CommunicationManager.format("&a&l+1 gem")));
-
-		// Option to increase by 10
-		inv.setItem(11, ItemManager.createItem(Material.LIME_CONCRETE,
-				CommunicationManager.format("&a&l+10 gems")));
-
-		// Option to increase by 100
-		inv.setItem(13, ItemManager.createItem(Material.LIME_CONCRETE,
-				CommunicationManager.format("&a&l+100 gems")));
-
-		// Option to increase by 1000
-		inv.setItem(15, ItemManager.createItem(Material.LIME_CONCRETE,
-				CommunicationManager.format("&a&l+1000 gems")));
-
-		// Option to delete item
-		inv.setItem(17, ItemManager.createItem(Material.LAVA_BUCKET,
-				CommunicationManager.format("&4&lDELETE")));
-
-		// Option to decrease by 1
-		inv.setItem(18, ItemManager.createItem(Material.RED_CONCRETE,
-				CommunicationManager.format("&c&l-1 gem")));
-
-		// Option to decrease by 10
-		inv.setItem(20, ItemManager.createItem(Material.RED_CONCRETE,
-				CommunicationManager.format("&c&l-10 gems")));
-
-		// Option to decrease by 100
-		inv.setItem(22, ItemManager.createItem(Material.RED_CONCRETE,
-				CommunicationManager.format("&c&l-100 gems")));
-
-		// Option to decrease by 1000
-		inv.setItem(24, ItemManager.createItem(Material.RED_CONCRETE,
-				CommunicationManager.format("&c&l-1000 gems")));
-
-		// Option to exit
-		inv.setItem(26, Buttons.exit());
-
-		return inv;
-	}
-
-	// Confirmation menu for removing custom item
-	public static Inventory createCustomItemConfirmMenu(Arena arena, int id) {
-		return InventoryFactory.createConfirmationMenu(
-				InventoryID.CUSTOM_ITEM_CONFIRM_MENU,
-				null,
-				arena,
-				id,
-				CommunicationManager.format("&4&lRemove Custom Item?")
 		);
 	}
 
@@ -867,19 +809,6 @@ public class Inventories {
 						getToggleStatus(arena.hasLateArrival())),
 				CommunicationManager.format("&7Allows players to join after"),
 				CommunicationManager.format("&7the game has started")));
-
-		// Option to toggle experience drop
-		buttons.add(ItemManager.createItem(Material.EXPERIENCE_BOTTLE,
-				CommunicationManager.format("&b&lExperience Drop: " + getToggleStatus(arena.hasExpDrop())),
-				CommunicationManager.format("&7Change whether experience drop or go"),
-				CommunicationManager.format("&7straight into the killer's experience bar")));
-
-		// Option to toggle item dropping
-		buttons.add(ItemManager.createItem(Material.EMERALD,
-				CommunicationManager.format("&9&lItem Drop: " + getToggleStatus(arena.hasGemDrop())),
-				CommunicationManager.format("&7Change whether gems and loot drop"),
-				CommunicationManager.format("&7as physical items or go straight"),
-				CommunicationManager.format("&7into the killer's balance/inventory")));
 
 		// Option to set arena bounds
 		buttons.add(ItemManager.createItem(Material.BEDROCK, CommunicationManager.format("&4&lArena Bounds"),
@@ -1172,6 +1101,12 @@ public class Inventories {
 				CommunicationManager.format("&9&lCorner 2: " +
 				(arena.getCorner2() == null ? "&c&lMissing" : "&a&lSet"))));
 
+		// Option to stretch the arena bounds to the top and bottom of the world
+		buttons.add(ItemManager.createItem(Material.WEEPING_VINES,
+				CommunicationManager.format("&3&lStretch Bounds"),
+				CommunicationManager.format("&7Stretches the arena bounds in the y direction from"),
+				CommunicationManager.format("&7the top to just below the bottom of the world.")));
+
 		// Option to toggle arena border particles
 		buttons.add(ItemManager.createItem(Material.FIREWORK_ROCKET,
 				CommunicationManager.format("&4&lBorder Particles: " +
@@ -1286,14 +1221,6 @@ public class Inventories {
 				CommunicationManager.format("&7Played while players wait"),
 				CommunicationManager.format("&7for the game to start")));
 
-		// Option to edit gem pickup sound
-		buttons.add( ItemManager.createItem(Material.MUSIC_DISC_FAR,
-				CommunicationManager.format("&b&lGem Pickup Sound: " +
-						getToggleStatus(arena.hasGemSound())),
-				ItemManager.BUTTON_FLAGS,
-				null,
-				CommunicationManager.format("&7Played when players pick up gems")));
-
 		// Option to edit player death sound
 		buttons.add( ItemManager.createItem(Material.MUSIC_DISC_CHIRP,
 				CommunicationManager.format("&4&lPlayer Death Sound: " +
@@ -1323,21 +1250,21 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Sound options
-		buttons.add( arena.getWaitingSoundButton("blocks"));
-		buttons.add( arena.getWaitingSoundButton("cat"));
-		buttons.add( arena.getWaitingSoundButton("chirp"));
-		buttons.add( arena.getWaitingSoundButton("far"));
-		buttons.add( arena.getWaitingSoundButton("mall"));
-		buttons.add( arena.getWaitingSoundButton("mellohi"));
+		buttons.add(arena.getWaitingSoundButton("blocks"));
+		buttons.add(arena.getWaitingSoundButton("cat"));
+		buttons.add(arena.getWaitingSoundButton("chirp"));
+		buttons.add(arena.getWaitingSoundButton("far"));
+		buttons.add(arena.getWaitingSoundButton("mall"));
+		buttons.add(arena.getWaitingSoundButton("mellohi"));
 		if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1))
-			buttons.add( arena.getWaitingSoundButton("otherside"));
+			buttons.add(arena.getWaitingSoundButton("otherside"));
 
-		buttons.add( arena.getWaitingSoundButton("pigstep"));
-		buttons.add( arena.getWaitingSoundButton("stal"));
-		buttons.add( arena.getWaitingSoundButton("strad"));
-		buttons.add( arena.getWaitingSoundButton("wait"));
-		buttons.add( arena.getWaitingSoundButton("ward"));
-		buttons.add( arena.getWaitingSoundButton("none"));
+		buttons.add(arena.getWaitingSoundButton("pigstep"));
+		buttons.add(arena.getWaitingSoundButton("stal"));
+		buttons.add(arena.getWaitingSoundButton("strad"));
+		buttons.add(arena.getWaitingSoundButton("wait"));
+		buttons.add(arena.getWaitingSoundButton("ward"));
+		buttons.add(arena.getWaitingSoundButton("none"));
 
 		return InventoryFactory.createDynamicSizeInventory(
 				new InventoryMeta(InventoryID.WAITING_SOUND_MENU, InventoryType.MENU, arena),
@@ -1399,48 +1326,38 @@ public class Inventories {
 
 	// Generate the shop menu
 	public static Inventory createShopMenu(int level, Arena arena) {
+		List<ItemStack> buttons = new ArrayList<>();
+
 		String disabled = " &4&l[" + LanguageManager.messages.disabled + "]";
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(
-				new InventoryMeta(InventoryID.SHOP_MENU, InventoryType.MENU),
-				9,
-				CommunicationManager.format("&2&l" + LanguageManager.messages.level +
-						" &9&l" + level + " &2&l" + LanguageManager.names.itemShop));
-
-		inv.setItem(0, ItemManager.createItem(Material.GOLDEN_SWORD,
+		buttons.add(ItemManager.createItem(Material.GOLDEN_SWORD,
 				CommunicationManager.format("&4&l" + LanguageManager.messages.level +
-						" &9&l" + level + " &4&l" + LanguageManager.names.weaponShop +
-						(arena.hasNormal() ? "" : disabled)), ItemManager.BUTTON_FLAGS, arena.hasNormal() ?
-						ItemManager.glow() : null));
+						" &9&l" + level + " &4&l" + LanguageManager.names.weaponShop), ItemManager.BUTTON_FLAGS,
+						ItemManager.glow()));
 
-		inv.setItem(1, ItemManager.createItem(Material.GOLDEN_CHESTPLATE,
+		buttons.add(ItemManager.createItem(Material.GOLDEN_CHESTPLATE,
 				CommunicationManager.format("&5&l" + LanguageManager.messages.level +
-						" &9&l" + level + " &5&l" + LanguageManager.names.armorShop +
-						(arena.hasNormal() ? "" : disabled)), ItemManager.BUTTON_FLAGS, arena.hasNormal() ?
-						ItemManager.glow() : null));
+						" &9&l" + level + " &5&l" + LanguageManager.names.armorShop), ItemManager.BUTTON_FLAGS,
+						ItemManager.glow()));
 
-		inv.setItem(2, ItemManager.createItem(Material.GOLDEN_APPLE,
+		buttons.add(ItemManager.createItem(Material.GOLDEN_APPLE,
 				CommunicationManager.format("&3&l" + LanguageManager.messages.level +
-						" &9&l" + level + " &3&l" + LanguageManager.names.consumableShop +
-						(arena.hasNormal() ? "" : disabled)), ItemManager.BUTTON_FLAGS, arena.hasNormal() ?
-						ItemManager.glow() : null));
+						" &9&l" + level + " &3&l" + LanguageManager.names.consumableShop), ItemManager.BUTTON_FLAGS,
+						ItemManager.glow()));
 
-		inv.setItem(4, ItemManager.createItem(Material.BOOKSHELF,
-				CommunicationManager.format("&a&l" + LanguageManager.names.enchantShop +
-						(arena.hasEnchants() ? "" : disabled)), ItemManager.BUTTON_FLAGS, arena.hasEnchants() ?
-						ItemManager.glow() : null));
-
-		inv.setItem(6, ItemManager.createItem(Material.QUARTZ,
-				CommunicationManager.format("&6&l" + LanguageManager.names.customShop +
-						(arena.hasCustom() ? "" : disabled)), ItemManager.BUTTON_FLAGS, arena.hasNormal() ?
-						ItemManager.glow() : null));
-
-		inv.setItem(8, ItemManager.createItem(Material.CHEST,
+		buttons.add(ItemManager.createItem(Material.CHEST,
 				CommunicationManager.format("&d&l" + LanguageManager.names.communityChest +
 						(arena.hasCommunity() ? "" : disabled))));
 
-		return inv;
+		return InventoryFactory.createFixedSizeInventory(
+				new InventoryMeta(InventoryID.SHOP_MENU, InventoryType.MENU),
+				CommunicationManager.format("&2&l" + LanguageManager.messages.level +
+						" &9&l" + level + " &2&l" + LanguageManager.names.itemShop),
+				1,
+				false,
+				buttons
+		);
 	}
 
 	// Generate the weapon shop
@@ -1453,45 +1370,103 @@ public class Inventories {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(
 				new InventoryMeta(InventoryID.WEAPON_SHOP_MENU, InventoryType.MENU),
-				27,
+				36,
 				CommunicationManager.format("&4&l" + LanguageManager.messages.level +
 						" &9&l" + level + " &4&l" + LanguageManager.names.weaponShop)
 		);
 
 		// Fill in swords
 		List<ItemStack> swords = new ArrayList<>();
-		for (int i = 0; i < 4; i++)
-			swords.add(GameItems.sword(level));
+		for (int i = 0; i < 4; i++) {
+			ItemStack sword = Sword.create(arena.getCurrentDifficulty());
+			if (swords.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
+					.equals(Objects.requireNonNull(sword.getItemMeta()).getDisplayName())))
+				swords.add(sword);
+			else swords.add(Buttons.duplicatePlaceholder());
+		}
 		sort(swords);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i, modifyPrice(swords.get(i), modifier));
 
 		// Fill in axes
 		List<ItemStack> axes = new ArrayList<>();
-		for (int i = 0; i < 4; i++)
-			axes.add(GameItems.axe(level));
+		for (int i = 0; i < 4; i++) {
+			ItemStack axe = Axe.create(arena.getCurrentDifficulty());
+			if (level < 3)
+				axes.add(Buttons.levelPlaceholder(3));
+			else if (axes.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
+					.equals(Objects.requireNonNull(axe.getItemMeta()).getDisplayName())))
+				axes.add(axe);
+			else axes.add(Buttons.duplicatePlaceholder());
+		}
 		sort(axes);
 		for (int i = 0; i < 4; i++)
-			inv.setItem(i + 5, modifyPrice(axes.get(i), modifier));
+			inv.setItem(i + 9, modifyPrice(axes.get(i), modifier));
 
-		// Fill in range
-		List<ItemStack> ranges = new ArrayList<>();
-		for (int i = 0; i < 5; i++)
-			ranges.add(GameItems.randRange(level));
-		sort(ranges);
-		for (int i = 0; i < 5; i++)
-			inv.setItem(i + 9, modifyPrice(ranges.get(i), modifier));
+		// Fill in scythes
+		List<ItemStack> scythes = new ArrayList<>();
+		for (int i = 0; i < 4; i++) {
+			ItemStack scythe = Scythe.create(arena.getCurrentDifficulty());
+			if (level < 4)
+				scythes.add(Buttons.levelPlaceholder(4));
+			else if (scythes.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
+					.equals(Objects.requireNonNull(scythe.getItemMeta()).getDisplayName())))
+				scythes.add(scythe);
+			else scythes.add(Buttons.duplicatePlaceholder());
+		}
+		sort(scythes);
+		for (int i = 0; i < 4; i++)
+			inv.setItem(i + 18, modifyPrice(scythes.get(i), modifier));
+
+		// Fill in bows
+		List<ItemStack> bows = new ArrayList<>();
+		for (int i = 0; i < 4; i++) {
+			ItemStack bow = Bow.create(arena.getCurrentDifficulty());
+			if (level < 2)
+				bows.add(Buttons.levelPlaceholder(2));
+			else if (bows.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
+					.equals(Objects.requireNonNull(bow.getItemMeta()).getDisplayName())))
+				bows.add(bow);
+			else bows.add(Buttons.duplicatePlaceholder());
+		}
+		sort(bows);
+		for (int i = 0; i < 4; i++)
+			inv.setItem(i + 5, modifyPrice(bows.get(i), modifier));
+
+		// Fill in crossbows
+		List<ItemStack> crossbows = new ArrayList<>();
+		for (int i = 0; i < 4; i++) {
+			ItemStack crossbow = Crossbow.create(arena.getCurrentDifficulty());
+			if (level < 5)
+				crossbows.add(Buttons.levelPlaceholder(5));
+			else if (crossbows.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
+					.equals(Objects.requireNonNull(crossbow.getItemMeta()).getDisplayName())))
+				crossbows.add(crossbow);
+			else crossbows.add(Buttons.duplicatePlaceholder());
+		}
+		sort(crossbows);
+		for (int i = 0; i < 4; i++)
+			inv.setItem(i + 14, modifyPrice(crossbows.get(i), modifier));
+
+		// Fill in tridents
 
 		// Fill in ammo
-		List<ItemStack> ammo = new ArrayList<>();
-		for (int i = 0; i < 3; i++)
-			ammo.add(GameItems.randAmmo(level));
-		sort(ammo);
-		for (int i = 0; i < 3; i++)
-			inv.setItem(i + 15, modifyPrice(ammo.get(i), modifier));
+		List<ItemStack> ammos = new ArrayList<>();
+		for (int i = 0; i < 4; i++) {
+			ItemStack ammo = Ammo.create(arena.getCurrentDifficulty());
+			if (level < 2)
+				ammos.add(Buttons.levelPlaceholder(2));
+			else if (ammos.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
+					.equals(Objects.requireNonNull(ammo.getItemMeta()).getDisplayName())))
+				ammos.add(ammo);
+			else ammos.add(Buttons.duplicatePlaceholder());
+		}
+		sort(ammos);
+		for (int i = 0; i < 4; i++)
+			inv.setItem(i + 23, modifyPrice(ammos.get(i), modifier));
 
 		// Return option
-		inv.setItem(22, Buttons.exit());
+		inv.setItem(31, Buttons.exit());
 
 		return inv;
 	}
@@ -1513,32 +1488,52 @@ public class Inventories {
 
 		// Fill in helmets
 		List<ItemStack> helmets = new ArrayList<>();
-		for (int i = 0; i < 4; i++)
-			helmets.add(GameItems.helmet(level));
+		for (int i = 0; i < 4; i++) {
+			ItemStack helmet = Helmet.create(arena.getCurrentDifficulty());
+			if (helmets.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
+					.equals(Objects.requireNonNull(helmet.getItemMeta()).getDisplayName())))
+				helmets.add(helmet);
+			else helmets.add(Buttons.duplicatePlaceholder());
+		}
 		sort(helmets);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i, modifyPrice(helmets.get(i), modifier));
 
 		// Fill in chestplates
 		List<ItemStack> chestplates = new ArrayList<>();
-		for (int i = 0; i < 4; i++)
-			chestplates.add(GameItems.chestplate(level));
+		for (int i = 0; i < 4; i++) {
+			ItemStack chestplate = Chestplate.create(arena.getCurrentDifficulty());
+			if (chestplates.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
+					.equals(Objects.requireNonNull(chestplate.getItemMeta()).getDisplayName())))
+				chestplates.add(chestplate);
+			else chestplates.add(Buttons.duplicatePlaceholder());
+		}
 		sort(chestplates);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 5, modifyPrice(chestplates.get(i), modifier));
 
 		// Fill in leggings
 		List<ItemStack> leggings = new ArrayList<>();
-		for (int i = 0; i < 4; i++)
-			leggings.add(GameItems.leggings(level));
+		for (int i = 0; i < 4; i++) {
+			ItemStack legging = Leggings.create(arena.getCurrentDifficulty());
+			if (leggings.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
+					.equals(Objects.requireNonNull(legging.getItemMeta()).getDisplayName())))
+				leggings.add(legging);
+			else leggings.add(Buttons.duplicatePlaceholder());
+		}
 		sort(leggings);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 9, modifyPrice(leggings.get(i), modifier));
 
 		// Fill in boots
 		List<ItemStack> boots = new ArrayList<>();
-		for (int i = 0; i < 4; i++)
-			boots.add(GameItems.boots(level));
+		for (int i = 0; i < 4; i++) {
+			ItemStack boot = Boots.create(arena.getCurrentDifficulty());
+			if (boots.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
+					.equals(Objects.requireNonNull(boot.getItemMeta()).getDisplayName())))
+				boots.add(boot);
+			else boots.add(Buttons.duplicatePlaceholder());
+		}
 		sort(boots);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 14, modifyPrice(boots.get(i), modifier));
@@ -1566,99 +1561,47 @@ public class Inventories {
 
 		// Fill in food
 		List<ItemStack> foods = new ArrayList<>();
-		for (int i = 0; i < 4; i++)
-			foods.add(GameItems.randFood(level));
-		sort(foods);
-		for (int i = 0; i < 4; i++)
+		if (level < 2) {
+			foods.add(Buttons.levelPlaceholder(2));
+			foods.add(Buttons.levelPlaceholder(2));
+		} else {
+			foods.add(Beetroot.create());
+			foods.add(Carrot.create());
+		}
+		if (level < 3)
+			foods.add(Buttons.levelPlaceholder(3));
+		else
+			foods.add(Bread.create());
+		if (level < 4) {
+			foods.add(Buttons.levelPlaceholder(4));
+			foods.add(Buttons.levelPlaceholder(4));
+		} else {
+			foods.add(Mutton.create());
+			foods.add(Steak.create());
+		}
+		if (level < 5) {
+			foods.add(Buttons.levelPlaceholder(5));
+			foods.add(Buttons.levelPlaceholder(5));
+		} else {
+			foods.add(GoldenCarrot.create());
+			foods.add(GoldenApple.create());
+		}
+		if (level < 6)
+			foods.add(Buttons.levelPlaceholder(6));
+		else
+			foods.add(EnchantedApple.create());
+		if (level < 7)
+			foods.add(Buttons.levelPlaceholder(7));
+		else
+			foods.add(Totem.create());
+
+		for (int i = 0; i < 9; i++)
 			inv.setItem(i, modifyPrice(foods.get(i), modifier));
 
 		// Fill in other
-		List<ItemStack> others = new ArrayList<>();
-		for (int i = 0; i < 9; i++)
-			others.add(GameItems.randOther(level));
-		sort(others);
-		for (int i = 0; i < 4; i++)
-			inv.setItem(i + 5, modifyPrice(others.get(i), modifier));
 
 		// Return option
 		inv.setItem(13, Buttons.exit());
-
-		return inv;
-	}
-
-	// Generate the enchant shop
-	public static Inventory createEnchantShopMenu() {
-		// Create inventory
-		Inventory inv = Bukkit.createInventory(
-				new InventoryMeta(InventoryID.ENCHANT_SHOP_MENU, InventoryType.MENU),
-				54,
-				CommunicationManager.format("&a&l" + LanguageManager.names.enchantShop)
-		);
-
-		// Melee enchants
-		inv.setItem(0, ItemManager.createItem(Material.PISTON,
-				CommunicationManager.format("&a&lIncrease Knockback"),
-				CommunicationManager.format("&2Costs 4 XP Levels")));
-		inv.setItem(1, ItemManager.createItem(Material.GOLDEN_HOE,
-				CommunicationManager.format("&a&lIncrease Sweeping Edge"),
-				ItemManager.BUTTON_FLAGS, null, CommunicationManager.format("&2Costs 6 XP Levels")));
-		inv.setItem(2, ItemManager.createItem(Material.DIAMOND_SWORD,
-				CommunicationManager.format("&a&lIncrease Smite"),
-				ItemManager.BUTTON_FLAGS, null, CommunicationManager.format("&2Costs 7 XP Levels")));
-		inv.setItem(3, ItemManager.createItem(Material.NETHERITE_AXE,
-				CommunicationManager.format("&a&lIncrease Sharpness"),
-				ItemManager.BUTTON_FLAGS, null, CommunicationManager.format("&2Costs 8 XP Levels")));
-		inv.setItem(4, ItemManager.createItem(Material.FIRE,
-				CommunicationManager.format("&a&lIncrease Fire Aspect"),
-				CommunicationManager.format("&2Costs 10 XP Levels")));
-
-		// Ranged enchants
-		inv.setItem(18, ItemManager.createItem(Material.STICKY_PISTON,
-				CommunicationManager.format("&a&lIncrease Punch"),
-				CommunicationManager.format("&2Costs 4 XP Levels")));
-		inv.setItem(19, ItemManager.createItem(Material.SPECTRAL_ARROW,
-				CommunicationManager.format("&a&lIncrease Piercing"),
-				CommunicationManager.format("&2Costs 5 XP Levels")));
-		inv.setItem(20, ItemManager.createItem(Material.REDSTONE_TORCH,
-				CommunicationManager.format("&a&lIncrease Quick Charge"),
-				CommunicationManager.format("&2Costs 6 XP Levels")));
-		inv.setItem(21, ItemManager.createItem(Material.BOW, CommunicationManager.format("&a&lIncrease Power"),
-				CommunicationManager.format("&2Costs 8 XP Levels")));
-		inv.setItem(22, ItemManager.createItem(Material.TRIDENT,
-				CommunicationManager.format("&a&lIncrease Loyalty"),
-				ItemManager.BUTTON_FLAGS, null, CommunicationManager.format("&2Costs 10 XP Levels")));
-		inv.setItem(23, ItemManager.createItem(Material.MAGMA_BLOCK,
-				CommunicationManager.format("&a&lAdd Flame"),
-				CommunicationManager.format("&2Costs 10 XP Levels")));
-		inv.setItem(24, ItemManager.createItem(Material.CROSSBOW,
-				CommunicationManager.format("&a&lAdd Multishot"),
-				CommunicationManager.format("&2Costs 10 XP Levels")));
-		inv.setItem(25, ItemManager.createItem(Material.BEACON, CommunicationManager.format("&a&lAdd Infinity"),
-				CommunicationManager.format("&2Costs 15 XP Levels")));
-
-		// Armor enchants
-		inv.setItem(36, ItemManager.createItem(Material.TNT,
-				CommunicationManager.format("&a&lIncrease Blast Protection"),
-				CommunicationManager.format("&2Costs 4 XP Levels")));
-		inv.setItem(37, ItemManager.createItem(Material.VINE,
-				CommunicationManager.format("&a&lIncrease Thorns"),
-				CommunicationManager.format("&2Costs 5 XP Levels")));
-		inv.setItem(38, ItemManager.createItem(Material.ARROW,
-				CommunicationManager.format("&a&lIncrease Projectile Protection"),
-				CommunicationManager.format("&2Costs 6 XP Levels")));
-		inv.setItem(39, ItemManager.createItem(Material.SHIELD,
-				CommunicationManager.format("&a&lIncrease Protection"),
-				CommunicationManager.format("&2Costs 8 XP Levels")));
-
-		// General enchants
-		inv.setItem(43, ItemManager.createItem(Material.BEDROCK,
-				CommunicationManager.format("&a&lIncrease Unbreaking"),
-				CommunicationManager.format("&2Costs 3 XP Levels")));
-		inv.setItem(44, ItemManager.createItem(Material.ANVIL, CommunicationManager.format("&a&lAdd Mending"),
-				CommunicationManager.format("&2Costs 20 XP Levels")));
-
-		// Return option
-		inv.setItem(53, Buttons.exit());
 
 		return inv;
 	}
@@ -2510,19 +2453,19 @@ public class Inventories {
 						": &9" + limit), CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
 						LanguageManager.arenaStats.timeLimit.description, Utils.LORE_CHAR_LIMIT)));
 
-		// Wolf cap
-		buttons.add(ItemManager.createItem(Material.BONE,
-				CommunicationManager.format("&6&l" + LanguageManager.arenaStats.wolfCap.name +
-						": &6" + arena.getWolfCap()),
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.wolfCap.description, Utils.LORE_CHAR_LIMIT)));
+		// Wolf cap TODO
+//		buttons.add(ItemManager.createItem(Material.BONE,
+//				CommunicationManager.format("&6&l" + LanguageManager.arenaStats.wolfCap.name +
+//						": &6" + arena.getWolfCap()),
+//				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+//						LanguageManager.arenaStats.wolfCap.description, Utils.LORE_CHAR_LIMIT)));
 
-		// Golem cap
-		buttons.add(ItemManager.createItem(Material.IRON_INGOT,
-				CommunicationManager.format("&e&l" + LanguageManager.arenaStats.golemCap.name +
-						": &e" + arena.getGolemCap()),
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.golemCap.description, Utils.LORE_CHAR_LIMIT)));
+		// Golem cap TODO
+//		buttons.add(ItemManager.createItem(Material.IRON_INGOT,
+//				CommunicationManager.format("&e&l" + LanguageManager.arenaStats.golemCap.name +
+//						": &e" + arena.getGolemCap()),
+//				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+//						LanguageManager.arenaStats.golemCap.description, Utils.LORE_CHAR_LIMIT)));
 
 		// Allowed kits
 		buttons.add(ItemManager.createItem(Material.ENDER_CHEST,
@@ -2571,20 +2514,6 @@ public class Inventories {
 				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
 						LanguageManager.arenaStats.lateArrival.description, Utils.LORE_CHAR_LIMIT)));
 
-		// Item dropping
-		buttons.add( ItemManager.createItem(Material.EMERALD,
-				CommunicationManager.format("&9&l" + LanguageManager.arenaStats.gemDrop.name +
-						": " + getToggleStatus(arena.hasGemDrop())),
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.gemDrop.description, Utils.LORE_CHAR_LIMIT)));
-
-		// Experience drop
-		buttons.add( ItemManager.createItem(Material.EXPERIENCE_BOTTLE,
-				CommunicationManager.format("&b&l" + LanguageManager.arenaStats.expDrop.name +
-						": " + getToggleStatus(arena.hasExpDrop())),
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.expDrop.description, Utils.LORE_CHAR_LIMIT)));
-
 		// Player spawn particles
 		buttons.add( ItemManager.createItem(Material.FIREWORK_ROCKET,
 				CommunicationManager.format("&e&l" + LanguageManager.names.playerSpawnParticles +
@@ -2601,29 +2530,10 @@ public class Inventories {
 						LanguageManager.names.villagerSpawnParticles + ": " +
 						getToggleStatus(arena.hasVillagerParticles()))));
 
-		// Default shop
-		buttons.add( ItemManager.createItem(Material.EMERALD_BLOCK,
-				CommunicationManager.format("&6&l" + LanguageManager.names.defaultShop +
-						": " + getToggleStatus(arena.hasNormal()))));
-
-		// Custom shop
-		buttons.add( ItemManager.createItem(Material.QUARTZ_BLOCK,
-				CommunicationManager.format("&2&l" + LanguageManager.names.customShop +
-						": " + getToggleStatus(arena.hasCustom()))));
-
-		// Enchants shop
-		buttons.add( ItemManager.createItem(Material.BOOKSHELF,
-				CommunicationManager.format("&3&l" + LanguageManager.names.enchantShop +
-						": " + getToggleStatus(arena.hasEnchants()))));
-
 		// Community chest
 		buttons.add( ItemManager.createItem(Material.CHEST,
 				CommunicationManager.format("&d&l" + LanguageManager.names.communityChest +
 						": " + getToggleStatus(arena.hasCommunity()))));
-
-		// Custom shop inventory
-		buttons.add( ItemManager.createItem(Material.QUARTZ,
-				CommunicationManager.format("&f&l" + LanguageManager.messages.customShopInv)));
 
 		// Difficulty multiplier
 		buttons.add( ItemManager.createItem(Material.TURTLE_HELMET,
@@ -2678,20 +2588,28 @@ public class Inventories {
 	private static ItemStack modifyPrice(ItemStack itemStack, double modifier) {
 		ItemStack item = itemStack.clone();
 		ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
-		List<String> lore = Objects.requireNonNull(meta.getLore());
-		int price = (int) Math.round(Integer.parseInt(lore.get(lore.size() - 1)
-				.substring(6 + LanguageManager.messages.gems.length())) * modifier / 5) * 5;
-		lore.set(lore.size() - 1, CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
-				price));
-		meta.setLore(lore);
-		item.setItemMeta(meta);
+		try {
+			List<String> lore = Objects.requireNonNull(meta.getLore());
+			int price = (int) Math.round(Integer.parseInt(lore.get(lore.size() - 1)
+					.substring(6 + LanguageManager.messages.gems.length())) * modifier / 5) * 5;
+			lore.set(lore.size() - 1, CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
+					price));
+			meta.setLore(lore);
+			item.setItemMeta(meta);
+		} catch (NumberFormatException | NullPointerException ignored) {
+		}
 		return item;
 	}
 
 	private static void sort(List<ItemStack> list) {
 		list.sort(Comparator.comparingInt(itemStack -> {
-			List<String> lore = Objects.requireNonNull(Objects.requireNonNull(itemStack.getItemMeta()).getLore());
-			return Integer.parseInt(lore.get(lore.size() - 1).substring(6 + LanguageManager.messages.gems.length()));
+			try {
+				List<String> lore = Objects.requireNonNull(Objects.requireNonNull(itemStack.getItemMeta()).getLore());
+				return Integer.parseInt(lore.get(lore.size() - 1)
+						.substring(6 + LanguageManager.messages.gems.length()));
+			} catch (NumberFormatException | NullPointerException e) {
+				return Integer.MAX_VALUE;
+			}
 		}));
 	}
 }

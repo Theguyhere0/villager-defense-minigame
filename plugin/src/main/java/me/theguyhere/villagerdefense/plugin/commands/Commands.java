@@ -2,6 +2,7 @@ package me.theguyhere.villagerdefense.plugin.commands;
 
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.*;
@@ -30,10 +31,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("deprecation")
@@ -41,6 +39,10 @@ public class Commands implements CommandExecutor {
 	private final FileConfiguration playerData;
 	private final FileConfiguration arenaData;
 	private final FileConfiguration customEffects;
+
+	// Maps to keep track of commands that need to be re-triggered for safeguard
+	private final Map<UUID, Long> reload = new HashMap<>();
+	private final Map<UUID, Long> disable = new HashMap<>();
 
 	public Commands() {
 		playerData = Main.getPlayerData();
@@ -57,9 +59,14 @@ public class Commands implements CommandExecutor {
 
 			// Gather who sent command
 			Player player;
-			if (sender instanceof Player)
+			UUID uuid;
+			if (sender instanceof Player) {
 				player = (Player) sender;
-			else player = null;
+				uuid = player.getUniqueId();
+			} else {
+				player = null;
+				uuid = null;
+			}
 
 			// No additional arguments
 			if (args.length == 0) {
@@ -442,16 +449,17 @@ public class Commands implements CommandExecutor {
 										return true;
 									}
 
-									// No shops
-									if (!arena.hasCustom() && !arena.hasNormal()) {
-										notifyFailure(player, "Arena cannot open without a shop!");
-										return true;
-									}
-
 									// Invalid arena bounds
 									if (arena.getCorner1() == null || arena.getCorner2() == null ||
 											!Objects.equals(arena.getCorner1().getWorld(), arena.getCorner2().getWorld())) {
 										notifyFailure(player, "Arena cannot open without valid arena bounds!");
+										return true;
+									}
+
+									// Outdated file configs
+									if (Main.isOutdated()) {
+										notifyFailure(player,
+												"Arena cannot open when file configurations are outdated!");
 										return true;
 									}
 
@@ -963,141 +971,6 @@ public class Commands implements CommandExecutor {
 											return true;
 									}
 								}
-								else if (args[2].toLowerCase().startsWith("defaultshop")) {
-									// Check for operation value
-									if (!args[2].contains("-")) {
-										notifyFailure(player, "Operation value required!");
-										return true;
-									}
-
-									switch (args[2].substring(args[2].indexOf("-") + 1).toLowerCase()) {
-										case "on":
-											// Check if already on
-											if (arena.hasNormal()) {
-												notifyFailure(player, "Default shop is already on!");
-												return true;
-											}
-
-											// Turn on
-											arena.setNormal(true);
-
-											// Notify console and possibly player
-											notifySuccess(player, "Default shop is on for " +
-													arena.getName() + ".");
-
-											return true;
-
-										case "off":
-											// Check if already off
-											if (!arena.hasNormal()) {
-												notifyFailure(player, "Default shop is already off!");
-												return true;
-											}
-
-											// Turn off
-											arena.setNormal(false);
-
-											// Notify console and possibly player
-											notifySuccess(player, "Default shop is off for " +
-													arena.getName() + ".");
-
-											return true;
-
-										default:
-											notifyFailure(player, "Invalid operation value.");
-											return true;
-									}
-								}
-								else if (args[2].toLowerCase().startsWith("customshop")) {
-									// Check for operation value
-									if (!args[2].contains("-")) {
-										notifyFailure(player, "Operation value required!");
-										return true;
-									}
-
-									switch (args[2].substring(args[2].indexOf("-") + 1).toLowerCase()) {
-										case "on":
-											// Check if already on
-											if (arena.hasCustom()) {
-												notifyFailure(player, "Custom shop is already on!");
-												return true;
-											}
-
-											// Turn on
-											arena.setCustom(true);
-
-											// Notify console and possibly player
-											notifySuccess(player, "Custom shop is on for " +
-													arena.getName() + ".");
-
-											return true;
-
-										case "off":
-											// Check if already off
-											if (!arena.hasCustom()) {
-												notifyFailure(player, "Custom shop is already off!");
-												return true;
-											}
-
-											// Turn off
-											arena.setCustom(false);
-
-											// Notify console and possibly player
-											notifySuccess(player, "Custom shop is off for " +
-													arena.getName() + ".");
-
-											return true;
-
-										default:
-											notifyFailure(player, "Invalid operation value.");
-											return true;
-									}
-								}
-								else if (args[2].toLowerCase().startsWith("enchantshop")) {
-									// Check for operation value
-									if (!args[2].contains("-")) {
-										notifyFailure(player, "Operation value required!");
-										return true;
-									}
-
-									switch (args[2].substring(args[2].indexOf("-") + 1).toLowerCase()) {
-										case "on":
-											// Check if already on
-											if (arena.hasEnchants()) {
-												notifyFailure(player, "Enchant shop is already on!");
-												return true;
-											}
-
-											// Turn on
-											arena.setEnchants(true);
-
-											// Notify console and possibly player
-											notifySuccess(player, "Enchant shop is on for " +
-													arena.getName() + ".");
-
-											return true;
-
-										case "off":
-											// Check if already off
-											if (!arena.hasEnchants()) {
-												notifyFailure(player, "Enchant shop is already off!");
-												return true;
-											}
-
-											// Turn off
-											arena.setEnchants(false);
-
-											// Notify console and possibly player
-											notifySuccess(player, "Enchant shop is off for " +
-													arena.getName() + ".");
-
-											return true;
-
-										default:
-											notifyFailure(player, "Invalid operation value.");
-											return true;
-									}
-								}
 								else if (args[2].toLowerCase().startsWith("communitychest")) {
 									// Check for operation value
 									if (!args[2].contains("-")) {
@@ -1323,96 +1196,6 @@ public class Commands implements CommandExecutor {
 											return true;
 									}
 								}
-								else if (args[2].toLowerCase().startsWith("experiencedrop")) {
-									// Check for operation value
-									if (!args[2].contains("-")) {
-										notifyFailure(player, "Operation value required!");
-										return true;
-									}
-
-									switch (args[2].substring(args[2].indexOf("-") + 1).toLowerCase()) {
-										case "on":
-											// Check if already on
-											if (arena.hasExpDrop()) {
-												notifyFailure(player, "Experience drop is already on!");
-												return true;
-											}
-
-											// Turn on
-											arena.setExpDrop(true);
-
-											// Notify console and possibly player
-											notifySuccess(player, "Experience drop is on for " +
-													arena.getName() + ".");
-
-											return true;
-
-										case "off":
-											// Check if already off
-											if (!arena.hasExpDrop()) {
-												notifyFailure(player, "Experience drop is already off!");
-												return true;
-											}
-
-											// Turn off
-											arena.setExpDrop(false);
-
-											// Notify console and possibly player
-											notifySuccess(player, "Experience drop is off for " +
-													arena.getName() + ".");
-
-											return true;
-
-										default:
-											notifyFailure(player, "Invalid operation value.");
-											return true;
-									}
-								}
-								else if (args[2].toLowerCase().startsWith("itemdrop")) {
-									// Check for operation value
-									if (!args[2].contains("-")) {
-										notifyFailure(player, "Operation value required!");
-										return true;
-									}
-
-									switch (args[2].substring(args[2].indexOf("-") + 1).toLowerCase()) {
-										case "on":
-											// Check if already on
-											if (arena.hasGemDrop()) {
-												notifyFailure(player, "Item drop is already on!");
-												return true;
-											}
-
-											// Turn on
-											arena.setGemDrop(true);
-
-											// Notify console and possibly player
-											notifySuccess(player, "Item drop is on for " +
-													arena.getName() + ".");
-
-											return true;
-
-										case "off":
-											// Check if already off
-											if (!arena.hasGemDrop()) {
-												notifyFailure(player, "Item drop is already off!");
-												return true;
-											}
-
-											// Turn off
-											arena.setGemDrop(false);
-
-											// Notify console and possibly player
-											notifySuccess(player, "Item drop is off for " +
-													arena.getName() + ".");
-
-											return true;
-
-										default:
-											notifyFailure(player, "Invalid operation value.");
-											return true;
-									}
-								}
 								else if (args[2].toLowerCase().startsWith("maxwaves")) {
 									// Check for operation value
 									if (!args[2].contains("-")) {
@@ -1520,7 +1303,7 @@ public class Commands implements CommandExecutor {
 									}
 
 									// Set new value
-									arena.setgolemCap(num);
+									arena.setGolemCap(num);
 									notifySuccess(player, "Iron golem cap for " + arena.getName() + " set to " +
 											num + ".");
 									return true;
@@ -1713,7 +1496,8 @@ public class Commands implements CommandExecutor {
 						return true;
 					}
 
-					player.openInventory(Inventories.createPlayerKitsMenu(player.getUniqueId(), player.getUniqueId()));
+					PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+//					player.openInventory(Inventories.createPlayerKitsMenu(player.getUniqueId(), player.getUniqueId()));
 					return true;
 
 				// Player checks achievements
@@ -1724,7 +1508,8 @@ public class Commands implements CommandExecutor {
 						return true;
 					}
 
-					player.openInventory(Inventories.createPlayerAchievementsMenu(player.getUniqueId()));
+//					player.openInventory(Inventories.createPlayerAchievementsMenu(player.getUniqueId()));
+					PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
 					return true;
 
 				// Player joins as phantom
@@ -2306,6 +2091,45 @@ public class Commands implements CommandExecutor {
 							// Notify
 							notifyAutoUpdate(player, "arenaData.yml", 7);
 						} catch (Exception e) {
+							arenaAbort = true;
+							notifyManualUpdate(player, "arenaData.yml");
+						}
+					}
+					if (arenaDataVersion < 8 && !arenaAbort) {
+						try {
+							Objects.requireNonNull(arenaData.getConfigurationSection("arena")).getKeys(false)
+									.forEach(key -> {
+										String newPath = "arena." + key;
+
+										// Remove legacy data
+										if (arenaData.contains(newPath + ".normal"))
+											arenaData.set(newPath + ".normal", null);
+										if (arenaData.contains(newPath + ".expDrop"))
+											arenaData.set(newPath + ".expDrop", null);
+										if (arenaData.contains(newPath + ".gemDrop"))
+											arenaData.set(newPath + ".gemDrop", null);
+										if (arenaData.contains(newPath + ".enchants"))
+											arenaData.set(newPath + ".enchants", null);
+										if (arenaData.contains(newPath + ".customShop"))
+											arenaData.set(newPath + ".customShop", null);
+										if (arenaData.contains(newPath + ".custom"))
+											arenaData.set(newPath + ".custom", null);
+
+										// Set default villager type
+										if (!arenaData.contains(newPath + ".villagerType"))
+											arenaData.set(newPath + ".villagerType", "plains");
+
+										Main.saveArenaData();
+									});
+
+							// Flip flag and update config.yml
+							fixed = true;
+							Main.plugin.getConfig().set("arenaData", 8);
+							Main.plugin.saveConfig();
+
+							// Notify
+							notifyAutoUpdate(player, "arenaData.yml", 8);
+						} catch (Exception e) {
 							notifyManualUpdate(player, "arenaData.yml");
 						}
 					}
@@ -2393,8 +2217,7 @@ public class Commands implements CommandExecutor {
 						fixed = true;
 
 						// Fix
-						Main.plugin.saveResource("default.yml", true);
-						Main.plugin.getConfig().set("spawnTableStructure", Main.spawnTableVersion);
+						Main.plugin.saveResource("spawnTables/default.yml", true);
 						Main.plugin.getConfig().set("spawnTableDefault", Main.defaultSpawnVersion);
 						Main.plugin.saveConfig();
 
@@ -2570,12 +2393,58 @@ public class Commands implements CommandExecutor {
 						return true;
 					}
 
+					// Safeguard
+					if (!reload.containsKey(uuid) || reload.get(uuid) < System.currentTimeMillis()) {
+						// Notify of safeguard measures
+						if (player != null)
+							PlayerManager.notifyAlert(player, "Are you sure you want to reload the plugin? " +
+									"Re-send the command within 10 seconds to confirm.");
+						else CommunicationManager.debugInfo("Are you sure you want to reload the plugin? " +
+								"Re-send the command within 10 seconds to confirm.", 0);
+
+						// Keep track of trigger
+						reload.put(uuid, System.currentTimeMillis() + Utils.secondsToMillis(10));
+
+						return true;
+					}
+
 					// Notify of reload
 					if (player != null)
 						PlayerManager.notifyAlert(player, "Reloading plugin data");
 					else CommunicationManager.debugInfo("Reloading plugin data", 0);
 
 					Main.plugin.reload();
+					return true;
+
+				// Disable the plugin
+				case "disable":
+					// Check for permission to use the command
+					if (player != null && !player.hasPermission("vd.admin")) {
+						PlayerManager.notifyFailure(player, LanguageManager.errors.permission);
+						return true;
+					}
+
+					// Safeguard
+					if (!disable.containsKey(uuid) || disable.get(uuid) < System.currentTimeMillis()) {
+						// Notify of safeguard measures
+						if (player != null)
+							PlayerManager.notifyAlert(player, "Are you sure you want to disable the plugin? " +
+									"Re-send the command within 10 seconds to confirm.");
+						else CommunicationManager.debugInfo("Are you sure you want to disable the plugin? " +
+								"Re-send the command within 10 seconds to confirm.", 0);
+
+						// Keep track of trigger
+						disable.put(uuid, System.currentTimeMillis() + Utils.secondsToMillis(10));
+
+						return true;
+					}
+
+					// Notify of disable
+					if (player != null)
+						PlayerManager.notifyAlert(player, "Disabling the plugin");
+					else CommunicationManager.debugInfo("Disabling the plugin", 0);
+
+					Bukkit.getPluginManager().disablePlugin(Main.plugin);
 					return true;
 
 				// No valid command sent

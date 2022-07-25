@@ -18,7 +18,7 @@ import java.util.Objects;
 
 public class CommandTab implements TabCompleter {
     private final String[] arguments = {"admin", "help", "leave", "stats", "kits", "join", "crystals", "start",
-            "end", "delay", "fix", "debug", "die", "reload", "achievements"};
+            "end", "delay", "fix", "debug", "die", "reload", "achievements", "disable"};
     private final String[] playerNameCommands = {"stats", "crystals"};
     private final String[] arenaNameCommands = {"start", "end", "delay"};
     private final String[] adminFirstArgs = {"lobby", "infoBoard", "leaderboard", "arena"};

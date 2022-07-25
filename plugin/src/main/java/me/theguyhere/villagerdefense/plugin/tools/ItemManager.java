@@ -1,6 +1,9 @@
 package me.theguyhere.villagerdefense.plugin.tools;
 
+import com.google.common.collect.Multimap;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -21,6 +24,12 @@ public class ItemManager {
     public static final boolean[] HIDE_ENCHANT_FLAGS = {true, false};
     /** Flags for creating items with hidden enchants and attributes, mostly for buttons.*/
     public static final boolean[] BUTTON_FLAGS = {true, true};
+
+    public static HashMap<Enchantment, Integer> dummyEnchant() {
+        HashMap<Enchantment, Integer> enchants = new HashMap<>();
+        enchants.put(Enchantment.DURABILITY, 1);
+        return enchants;
+    }
 
     // Creates an ItemStack using only material, name, and lore
     @NotNull
@@ -87,6 +96,19 @@ public class ItemManager {
             HashMap<Enchantment, Integer> enchants,
             List<String> lores
     ) {
+        return createItem(matID, dispName, flags, enchants, lores, null);
+    }
+
+    // Creates an ItemStack using material, name, enchants, flags, lore list, and attribute mod map
+    @NotNull
+    public static ItemStack createItem(
+            Material matID,
+            String dispName,
+            boolean[] flags,
+            HashMap<Enchantment, Integer> enchants,
+            List<String> lores,
+            Multimap<Attribute, AttributeModifier> attributes
+    ) {
         // Create ItemStack
         ItemStack item = createItem(matID, dispName, lores);
         ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
@@ -100,6 +122,10 @@ public class ItemManager {
         // Set attribute flag
         if (flags != null && flags[1])
             meta.addItemFlags(ItemFlag.values());
+
+        // Set attribute mods
+        meta.setAttributeModifiers(attributes);
+
         item.setItemMeta(meta);
 
         return item;

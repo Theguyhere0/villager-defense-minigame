@@ -9,6 +9,15 @@ public class Utils {
     private static final int SECONDS_TO_MILLIS = 1000;
 
     public static final int LORE_CHAR_LIMIT = 30;
+    public static final String HP = "\u2764";
+    public static final String ARMOR = "\u2720";
+    public static final String TOUGH = "\u2756";
+    public static final String DAMAGE = "\u2694";
+    public static final String GEM = "\u2666";
+    public static final String EXP = "\u2605";
+    public static final String HP_BAR = "\u258c";
+    public static final String BLOCK = "\u25a0";
+    public static final String ARROW = "\u27b6";
 
     // Convert seconds to ticks
     public static int secondsToTicks(double seconds) {
@@ -91,19 +100,5 @@ public class Utils {
         }
         // Should never reach here
         return 0;
-    }
-
-    /**
-     * Checks whether the string can convert successfully to an integer or not.
-     * @param s String to check.
-     * @return Whether the string can convert to an int.
-     */
-    public static boolean checkStringInt(String s) {
-        try {
-            Integer.parseInt(s);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
     }
 }

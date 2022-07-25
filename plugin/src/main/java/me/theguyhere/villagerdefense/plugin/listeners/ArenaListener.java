@@ -3,7 +3,6 @@ package me.theguyhere.villagerdefense.plugin.listeners;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.events.EndNinjaNerfEvent;
 import me.theguyhere.villagerdefense.plugin.events.JoinArenaEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
@@ -94,10 +93,11 @@ public class ArenaListener implements Listener {
             VDPlayer fighter = new VDPlayer(player, arena, false);
             arena.getPlayers().add(fighter);
             arena.refreshPortal();
+            Main.getVillagersTeam().addEntry(player.getUniqueId().toString());
 
-            // Add forced challenges
-            arena.getForcedChallengeIDs().forEach(challenge ->
-                    fighter.addChallenge(Challenge.getChallengeByID(challenge)));
+            // Add forced challenges TODO
+//            arena.getForcedChallengeIDs().forEach(challenge ->
+//                    fighter.addChallenge(Challenge.getChallengeByID(challenge)));
 
             // Give them a game board
             GameManager.createBoard(fighter);
@@ -135,6 +135,7 @@ public class ArenaListener implements Listener {
             VDPlayer fighter = new VDPlayer(player, arena, false);
             arena.getPlayers().add(fighter);
             arena.refreshPortal();
+            Main.getVillagersTeam().addEntry(player.getUniqueId().toString());
 
             // Add forced challenges
             arena.getForcedChallengeIDs().forEach(challenge ->
@@ -218,15 +219,17 @@ public class ArenaListener implements Listener {
         // Not spectating
         if (gamer.getStatus() != PlayerStatus.SPECTATOR) {
             UUID playerID = player.getUniqueId();
+            // Remove from team
+            Main.getVillagersTeam().removeEntry(playerID.toString());
 
             // Update player stats
             PlayerManager.setTotalKills(playerID, PlayerManager.getTotalKills(playerID) + gamer.getKills());
             if (PlayerManager.getTopKills(playerID) < gamer.getKills())
                 PlayerManager.setTopKills(playerID, gamer.getKills());
 
-            // Check for achievements
-            AchievementChecker.checkDefaultHighScoreAchievements(player);
-            AchievementChecker.checkDefaultInstanceAchievements(gamer);
+            // Check for achievements TODO
+//            AchievementChecker.checkDefaultHighScoreAchievements(player);
+//            AchievementChecker.checkDefaultInstanceAchievements(gamer);
 
             // Refresh leaderboards
             GameManager.refreshLeaderboards();
@@ -315,7 +318,7 @@ public class ArenaListener implements Listener {
             gamer.setStatus(PlayerStatus.LEFT);
         }
 
-        // Return player health, food, exp, and items
+        // Return player survival stats
         if (Main.plugin.getConfig().getBoolean("keepInv") && player.isOnline())
             PlayerManager.returnSurvivalStats(player);
 
@@ -327,11 +330,5 @@ public class ArenaListener implements Listener {
 
         // Debug message to console
         CommunicationManager.debugInfo("%s left %s", 2, player.getName(), arena.getName());
-    }
-
-    @EventHandler
-    public void onEndNinjaNerfEvent(EndNinjaNerfEvent e) {
-        if (e.getGamer().getStatus() != PlayerStatus.LEFT)
-            e.getGamer().exposeArmor();
     }
 }

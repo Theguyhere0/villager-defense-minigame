@@ -17,14 +17,14 @@ public class NPCVillager {
     /** The villager entity used to create the NPCVillager.*/
     private final VillagerPacketEntity villagerPacketEntity;
 
-    public NPCVillager(@NotNull Location location) throws InvalidLocationException {
+    public NPCVillager(@NotNull Location location, String type) throws InvalidLocationException {
         // Check for null world
         if (location.getWorld() == null)
             throw new InvalidLocationException("Location world cannot be null!");
 
         // Set location and packet entity
         this.location = location;
-        villagerPacketEntity = NMSVersion.getCurrent().getNmsManager().newVillagerPacketEntity();
+        villagerPacketEntity = NMSVersion.getCurrent().getNmsManager().newVillagerPacketEntity(type);
     }
 
     public Location getLocation() {

@@ -60,3 +60,7 @@ commands:
     achievements:
       description: Displays achievements of a player
       usage: /vd achievements
+    disable:
+      description: Disables the plugin
+      usage: /vd shutdown
+      permission: vd.admin

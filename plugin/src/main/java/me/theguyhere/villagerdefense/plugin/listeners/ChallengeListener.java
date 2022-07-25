@@ -1,18 +1,17 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
-import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
+import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.Shop;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -21,14 +20,10 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.Objects;
 import java.util.Random;
@@ -118,7 +113,7 @@ public class ChallengeListener implements Listener {
         ItemStack item = e.getItem();
 
         // Ignore shop item
-        if (GameItems.shop().equals(item))
+        if (Shop.matches(item))
             return;
 
         // Check for clumsy challenge
@@ -182,7 +177,7 @@ public class ChallengeListener implements Listener {
         // Mob hurt
         else {
             // Check damage was done to monster
-            if (!(e.getEntity().hasMetadata("VD"))) return;
+            if (!(e.getEntity().hasMetadata(VDMob.VD))) return;
 
             Player player;
             VDPlayer gamer;
@@ -207,72 +202,6 @@ public class ChallengeListener implements Listener {
                 // Cancel if not an enemy of the player
                 if (!gamer.getEnemies().contains(e.getEntity().getUniqueId()))
                     e.setCancelled(true);
-        }
-    }
-
-    // Ensure blindness even after milk
-    @EventHandler
-    public void onMilk(PlayerItemConsumeEvent e) {
-        // Check for milk bucket
-        if (e.getItem().getType() != Material.MILK_BUCKET)
-            return;
-
-        Player player = e.getPlayer();
-        Arena arena;
-        VDPlayer gamer;
-
-        // Attempt to get arena and VDPlayer
-        try {
-            arena = GameManager.getArena(player);
-            gamer = arena.getPlayer(player);
-        } catch (ArenaNotFoundException | PlayerNotFoundException err) {
-            return;
-        }
-
-        // Ignore arenas that aren't started
-        if (arena.getStatus() != ArenaStatus.ACTIVE)
-            return;
-
-        // Check for blind challenge
-        if (!gamer.getChallenges().contains(Challenge.blind()))
-            return;
-
-        // Add back blindness
-        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-                player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999, 0)), 2);
-    }
-
-    // UHC effect
-    @EventHandler
-    public void onHeal(EntityRegainHealthEvent e) {
-        // Check for player
-        if (!(e.getEntity() instanceof Player)) return;
-
-        Player player = (Player) e.getEntity();
-        Arena arena;
-        VDPlayer gamer;
-
-        // Attempt to get arena and VDPlayer
-        try {
-            arena = GameManager.getArena(player);
-            gamer = arena.getPlayer(player);
-        } catch (ArenaNotFoundException | PlayerNotFoundException err) {
-            return;
-        }
-
-        // Ignore arenas that aren't started
-        if (arena.getStatus() != ArenaStatus.ACTIVE)
-            return;
-
-        // Check for uhc challenge
-        if (!gamer.getChallenges().contains(Challenge.uhc()))
-            return;
-
-        // Negate natural health regain and manage saturation
-        if (e.getRegainReason() == EntityRegainHealthEvent.RegainReason.SATIATED ||
-            e.getRegainReason() == EntityRegainHealthEvent.RegainReason.EATING) {
-            e.setCancelled(true);
-            player.setSaturation(player.getSaturation() + 1.5f);
         }
     }
 }

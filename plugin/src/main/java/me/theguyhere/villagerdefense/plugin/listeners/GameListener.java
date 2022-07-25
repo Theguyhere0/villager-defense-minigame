@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
@@ -8,24 +9,34 @@ import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.game.models.*;
-import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
+import me.theguyhere.villagerdefense.plugin.exceptions.VDMobNotFoundException;
+import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
+import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
-import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
-import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
+import me.theguyhere.villagerdefense.plugin.game.models.items.ItemMetaKey;
+import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.VDAbility;
+import me.theguyhere.villagerdefense.plugin.game.models.items.armor.VDArmor;
+import me.theguyhere.villagerdefense.plugin.game.models.items.eggs.VDEgg;
+import me.theguyhere.villagerdefense.plugin.game.models.items.food.VDFood;
+import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.*;
+import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Ammo;
+import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Bow;
+import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Crossbow;
+import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.VDWeapon;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDCreeper;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDWitch;
+import me.theguyhere.villagerdefense.plugin.game.models.players.AttackClass;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
-import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -35,32 +46,36 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameListener implements Listener {
-	// Keep score and drop gems, exp, and rare loot
+	// Keep score and manage mob death
 	@EventHandler
 	public void onMobKill(EntityDeathEvent e) {
 		LivingEntity ent = e.getEntity();
 
 		// Check for arena mobs
-		if (!ent.hasMetadata("VD"))
+		if (!ent.hasMetadata(VDMob.VD))
 			return;
 
 		Arena arena;
+		VDMob mob;
 		try {
-			arena = GameManager.getArena(ent.getMetadata("VD").get(0).asInt());
-		} catch (ArenaNotFoundException err) {
+			arena = GameManager.getArena(ent.getMetadata(VDMob.VD).get(0).asInt());
+			mob = arena.getMob(ent.getUniqueId());
+		} catch (ArenaNotFoundException | VDMobNotFoundException err) {
 			return;
 		}
 
 		// Check for right game
-		if (!ent.hasMetadata("game"))
-			return;
-		if (ent.getMetadata("game").get(0).asInt() != arena.getGameID())
+		if (mob.getGameID() != arena.getGameID())
 			return;
 
 		// Arena enemies not part of an active arena
@@ -70,73 +85,33 @@ public class GameListener implements Listener {
 		}
 
 		// Check for right wave
-		if (!ent.hasMetadata("wave"))
-			return;
-		if (ent.getMetadata("wave").get(0).asInt() != arena.getCurrentWave())
+		if (mob.getWave() != arena.getCurrentWave())
 			return;
 
 		// Clear normal drops
 		e.getDrops().clear();
 		e.setDroppedExp(0);
 
-		DataManager data;
+        // Get spawn table
+        DataManager data = new DataManager("spawnTables/" + arena.getSpawnTableFile());
 
-		// Get spawn table
-		if (arena.getSpawnTableFile().equals("custom"))
-			data = new DataManager("spawnTables/a" + arena.getId() + ".yml");
-		else data = new DataManager("spawnTables/" + arena.getSpawnTableFile() + ".yml");
-
-		if (ent instanceof Wolf) {
-			try {
-				arena.getPlayer((Player) ((Wolf) ent).getOwner()).decrementWolves();
-			} catch (Exception err) {
-				return;
+		if (Main.getVillagersTeam().hasEntry(ent.getUniqueId().toString())) {
+			// Handle pet death TODO
+			if (ent instanceof Wolf) {
+				try {
+					arena.getPlayer((Player) ((Wolf) ent).getOwner()).decrementWolves();
+				} catch (Exception err) {
+					return;
+				}
 			}
+
+			// Handle golem death TODO
+			else if (ent instanceof IronGolem)
+				arena.decrementGolems();
 		}
 
-		// Update iron golem count
-		else if (ent instanceof IronGolem)
-			arena.decrementGolems();
-
-		// Manage drops and update enemy count, update player kill count
-		else {
-			Random r = new Random();
-
-			// Set drop to emerald, exp, and rare loot
-			if (ent instanceof Wither) {
-				if (arena.hasGemDrop())
-					e.getDrops().add(ItemManager.createItems(Material.EMERALD, 20, null,
-							Integer.toString(arena.getId())));
-				if (arena.hasExpDrop())
-					e.setDroppedExp((int) (arena.getCurrentDifficulty() * 40));
-			} else {
-				if (arena.hasGemDrop()) {
-					e.getDrops().add(ItemManager.createItem(Material.EMERALD, null,
-							Integer.toString(arena.getId())));
-
-					// Get rare loot probability
-					double probability;
-					switch (arena.getDifficultyMultiplier()) {
-						case 1:
-							probability = .015;
-							break;
-						case 2:
-							probability = .01;
-							break;
-						case 3:
-							probability = .008;
-							break;
-						default:
-							probability = .006;
-					}
-
-					if (r.nextDouble() < probability)
-						e.getDrops().add(GameItems.randCare(arena.getCurrentWave() / 10 + 1));
-				}
-				if (arena.hasExpDrop())
-					e.setDroppedExp((int) (arena.getCurrentDifficulty() * 2));
-			}
-
+		// Handle enemy death
+		else if (Main.getMonstersTeam().hasEntry(ent.getUniqueId().toString())) {
 			// Get wave
 			String wave = Integer.toString(arena.getCurrentWave());
 			if (!data.getConfig().contains(wave))
@@ -157,6 +132,10 @@ public class GameListener implements Listener {
 				arena.setMonsterGlow();
 		}
 
+		// Remove the mob
+		mob.remove();
+		arena.removeMob(mob.getID());
+
 		// Update scoreboards
 		arena.updateScoreboards();
 	}
@@ -168,139 +147,651 @@ public class GameListener implements Listener {
 			e.setCancelled(true);
 	}
 
-	// Save gems from explosions
+	// Handle usage of ranged weapons
 	@EventHandler
-	public void onGemExplode(EntityDamageEvent e) {
-		Entity ent = e.getEntity();
-
-		// Check for item
-		if (!(ent instanceof Item))
+	public void onRange(PlayerInteractEvent e) {
+		// Check for right click
+		if (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK)
 			return;
 
-		ItemStack item = ((Item) ent).getItemStack();
-		ItemMeta meta = item.getItemMeta();
-
-		// Check for right item
-		if (item.getType() == Material.EMERALD && meta != null && meta.hasLore())
-			e.setCancelled(true);
-	}
-
-	// Update health bar when damage is dealt by entity
-	@EventHandler
-	public void onHurt(EntityDamageByEntityEvent e) {
-		Entity ent = e.getEntity();
-
-		// Check for arena enemies
-		if (!ent.hasMetadata("VD"))
+		// Check for main hand
+		if (e.getHand() != EquipmentSlot.HAND)
 			return;
 
-		Entity damager = e.getDamager();
-
-		Player player;
+		Player player = e.getPlayer();
 		VDPlayer gamer;
 
-		// Check for player damager, then get player
-		if (damager instanceof Player)
-			player = (Player) damager;
-		else if (damager instanceof Projectile &&
-				((Projectile) damager).getShooter() instanceof Player)
-			player = (Player) ((Projectile) damager).getShooter();
-		else player = null;
+		// Attempt to get VDPlayer
+		try {
+			gamer = GameManager.getArena(player).getPlayer(player);
+		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+			return;
+		}
 
-		// Attempt to get VDplayer
-		if (player != null) {
+		// Check for ammo weapon
+		ItemStack range = Objects.requireNonNull(player.getEquipment()).getItemInMainHand();
+		if (!VDWeapon.matchesAmmoWeapon(range))
+			return;
+
+		// Check for ammo
+		ItemStack ammo = Objects.requireNonNull(player.getEquipment()).getItemInOffHand();
+		if (!Ammo.matches(ammo)) {
+			e.setCancelled(true);
+			PlayerManager.notifyFailure(player, LanguageManager.errors.ammoOffHand);
+			return;
+		}
+
+		// Get data
+		AtomicInteger cost = new AtomicInteger();
+		AtomicInteger capacity = new AtomicInteger();
+		AtomicDouble cooldown = new AtomicDouble();
+		Objects.requireNonNull(Objects.requireNonNull(range.getItemMeta()).getLore()).forEach(lore -> {
+			if (lore.contains(LanguageManager.messages.ammoCost
+					.replace("%s", ""))) {
+				cost.set(Integer.parseInt(lore.substring(2 + LanguageManager.messages.ammoCost.length())
+						.replace(ChatColor.BLUE.toString(), "")));
+			}
+			if (lore.contains(LanguageManager.messages.attackSpeed
+					.replace("%s", ""))) {
+				cooldown.set(1 / Double.parseDouble(lore.substring(2 + LanguageManager.messages.attackSpeed.length())
+						.replace(ChatColor.BLUE.toString(), "")));
+			}
+		});
+		List<String > lores = Objects.requireNonNull(Objects.requireNonNull(ammo.getItemMeta()).getLore());
+		lores.forEach(lore -> {
+			if (lore.contains(LanguageManager.messages.capacity
+					.replace("%s", ""))) {
+				capacity.set(Integer.parseInt(lore.substring(2 + LanguageManager.messages.capacity.length())
+						.replace(ChatColor.BLUE.toString(), "")
+						.replace(ChatColor.WHITE.toString(), "")
+						.split("/")[0]));
+			}
+		});
+		if (capacity.get() < cost.get())
+			return;
+
+		// Check for cooldown
+		if (gamer.getCooldown() > System.currentTimeMillis())
+			return;
+
+		// Fire
+		player.launchProjectile(Arrow.class);
+
+		// Update capacity and cooldown
+		if (Bow.matches(range))
+			NMSVersion.getCurrent().getNmsManager().setBowCooldown(player, Utils.secondsToTicks(cooldown.get()));
+		else NMSVersion.getCurrent().getNmsManager().setCrossbowCooldown(player, Utils.secondsToTicks(cooldown.get()));
+		gamer.setCooldown(System.currentTimeMillis() + Utils.secondsToMillis(cooldown.get()));
+		Ammo.updateCapacity(ammo, -cost.get());
+	}
+
+	// Manage projectiles being fired
+	@EventHandler
+	public void onProjectileLaunch(ProjectileLaunchEvent e) {
+		Projectile projectile = e.getEntity();
+		Entity source = (Entity) projectile.getShooter();
+		if (!(source instanceof LivingEntity))
+			return;
+		LivingEntity shooter = (LivingEntity) source;
+		Arena arena;
+		VDMob finalShooter;
+
+		// Player shot
+		if (shooter instanceof Player) {
+			Player player = (Player) shooter;
+			VDPlayer gamer;
+
+			// Attempt to get VDPlayer
 			try {
-				gamer = GameManager.getArena(player).getPlayer(player);
+				arena = GameManager.getArena(player);
+				gamer = arena.getPlayer(player);
 			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
 			}
-		} else gamer = null;
 
-		// Check for pacifist challenge
-		if (gamer != null)
-			if (gamer.getChallenges().contains(Challenge.pacifist()))
-				// Cancel if not an enemy of the player
-				if (!gamer.getEnemies().contains(ent.getUniqueId()))
-					return;
-
-		// Ignore wolves
-		if (ent instanceof Wolf)
-			return;
-
-		// Ignore phantom damage to villager
-		if ((ent instanceof Villager || ent instanceof IronGolem) && damager instanceof Player)
-			return;
-
-		// Ignore phantom damage to monsters
-		if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin || ent instanceof Phantom) &&
-				(damager instanceof Monster || damager instanceof Hoglin))
-			return;
-
-		// Check for phantom projectile damage
-		if (damager instanceof Projectile) {
-			if ((ent instanceof Villager || ent instanceof IronGolem) &&
-					((Projectile) damager).getShooter() instanceof Player)
+			// Check for arrow
+			if (!(projectile instanceof Arrow))
 				return;
-			if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin || ent instanceof Phantom) &&
-					((Projectile) damager).getShooter() instanceof Monster)
-				return;
+
+			// Encode damage information
+			ItemStack range = Objects.requireNonNull(player.getEquipment()).getItemInMainHand();
+			projectile.setMetadata(ItemMetaKey.DAMAGE.name(),
+					new FixedMetadataValue(Main.plugin, gamer.dealRawDamage(AttackClass.RANGE, 0)));
+			if (Objects.requireNonNull(Objects.requireNonNull(range.getItemMeta()).getLore()).stream().anyMatch(lore ->
+					lore.contains(LanguageManager.messages.perBlock.replace("%s", "")))) {
+				projectile.setMetadata(ItemMetaKey.PER_BLOCK.name(),
+						new FixedMetadataValue(Main.plugin, true));
+				projectile.setMetadata(ItemMetaKey.ORIGIN_LOCATION.name(),
+						new FixedMetadataValue(Main.plugin, player.getLocation()));
+			} else projectile.setMetadata(ItemMetaKey.PER_BLOCK.name(),
+					new FixedMetadataValue(Main.plugin, false));
+			if (Crossbow.matches(range))
+				((Arrow) projectile).setPierceLevel(Crossbow.getPierce(range));
+
+			// Don't allow pickup
+			((Arrow) projectile).setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
 		}
 
-		// Ignore bosses
-		if (ent instanceof Wither)
-			return;
+		// Mob shot
+		else {
+			// Attempt to get VDMob
+			try {
+				arena = GameManager.getArena(shooter.getMetadata(VDMob.VD).get(0).asInt());
+				finalShooter = arena.getMob(shooter.getUniqueId());
+			} catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException err) {
+				return;
+			}
 
-		LivingEntity n = (LivingEntity) ent;
-		double maxHealth = Objects.requireNonNull(n.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue();
+			// Check for witch
+			if ((finalShooter instanceof VDWitch)) {
+				if (((ThrownPotion) e.getEntity()).getEffects().size() > 0)
+					e.setCancelled(true);
 
-		// Update health bar
-		if (ent instanceof IronGolem || ent instanceof Ravager)
-			ent.setCustomName(Mobs.healthBar(maxHealth, n.getHealth() - e.getFinalDamage(), 10));
-		else ent.setCustomName(Mobs.healthBar(maxHealth, n.getHealth() - e.getFinalDamage(), 5));
+				// Check for cooldown
+				if (!finalShooter.attackAttempt())
+					e.setCancelled(true);
+
+				return;
+			}
+
+			// Handle pierce
+			if (finalShooter.getPierce() > 0)
+				((Arrow) projectile).setPierceLevel(finalShooter.getPierce());
+		}
 	}
 
-	// Update health bar when damage is dealt not by another entity
+	// Update health when damage is dealt by entity
+	@EventHandler
+	public void onHurt(EntityDamageByEntityEvent e) {
+		boolean projectile = e.getDamager() instanceof Projectile;
+		Entity interimVictim = e.getEntity();
+		Entity interimDamager = projectile ? (Entity) ((Projectile) e.getDamager()).getShooter() : e.getDamager();
+		if (!(interimVictim instanceof LivingEntity))
+			return;
+		if (!(interimDamager instanceof LivingEntity))
+			return;
+		LivingEntity victim = (LivingEntity) interimVictim;
+		LivingEntity damager = (LivingEntity) interimDamager;
+		Arena arena;
+		Player player = null;
+		VDPlayer gamer = null;
+		VDMob finalVictim;
+		VDMob finalDamager = null;
+
+		// Player getting hurt
+		if (victim instanceof Player) {
+			player = (Player) victim;
+
+			// Attempt to get VDPlayer and VDMob
+			try {
+				arena = GameManager.getArena(player);
+				gamer = arena.getPlayer(player);
+				finalDamager = arena.getMob(damager.getUniqueId());
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+				return;
+			} catch (VDMobNotFoundException err) {
+				e.setCancelled(true);
+				return;
+			}
+
+			// Avoid phantom damage effects
+			if (Main.getVillagersTeam().hasEntry(damager.getUniqueId().toString()))
+				return;
+
+			// Cancel original damage
+			e.setDamage(0);
+
+			// Check damage cooldown
+			if (!finalDamager.attackAttempt()) {
+				e.setCancelled(true);
+				return;
+			}
+
+			if (e.getCause() == EntityDamageEvent.DamageCause.CUSTOM) {
+				// Make sure fast attacks only apply when mobs are close
+				if (damager.getLocation().distance(victim.getLocation()) > 1.75) {
+					e.setCancelled(true);
+					return;
+				}
+
+				// Make hurt sound if custom
+				player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_HURT, 1, 1);
+			}
+
+			// Implement faster attacks
+			if (finalDamager.getAttackSpeed() == .4 && e.getCause() != EntityDamageEvent.DamageCause.CUSTOM)
+				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
+						.callEvent(new EntityDamageByEntityEvent(damager, victim,
+						EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.45));
+			else if (finalDamager.getAttackSpeed() == .2 && e.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
+				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
+						.callEvent(new EntityDamageByEntityEvent(damager, victim,
+						EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.25));
+				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
+						.callEvent(new EntityDamageByEntityEvent(damager, victim,
+						EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.5));
+			}
+
+			// Realize damage and deal effect
+			gamer.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType());
+			if (finalDamager.getEffectType() == null)
+				return;
+			if (finalDamager.getEffectType().getName().equals(PotionEffectType.FIRE_RESISTANCE.getName()))
+				gamer.combust(finalDamager.getEffectDuration());
+			else gamer.getPlayer().addPotionEffect(finalDamager.dealEffect());
+		}
+
+		// VD entity getting hurt
+		else if (victim.hasMetadata(VDMob.VD)) {
+			// Check for player damager, then get player
+			if (damager instanceof Player)
+				player = (Player) damager;
+
+			// Attempt to get VDPlayer and VDMobs
+			if (player != null) {
+				try {
+					arena = GameManager.getArena(player);
+					gamer = arena.getPlayer(player);
+					finalVictim = arena.getMob(victim.getUniqueId());
+				} catch (ArenaNotFoundException | PlayerNotFoundException | VDMobNotFoundException err) {
+					return;
+				}
+			} else {
+				try {
+					arena = GameManager.getArena(victim.getMetadata(VDMob.VD).get(0).asInt());
+					finalVictim = arena.getMob(victim.getUniqueId());
+				} catch (ArenaNotFoundException | VDMobNotFoundException err) {
+					return;
+				}
+				try {
+					finalDamager = arena.getMob(damager.getUniqueId());
+				} catch (VDMobNotFoundException err) {
+					e.setCancelled(true);
+					return;
+				}
+			}
+
+			// Enemy getting hurt
+			if (Main.getMonstersTeam().hasEntry(victim.getUniqueId().toString())) {
+				// Avoid phantom damage effects
+				if (Main.getMonstersTeam().hasEntry(damager.getUniqueId().toString()))
+					return;
+
+				// Check for pacifist challenge and not an enemy
+				if (gamer != null && gamer.getChallenges().contains(Challenge.pacifist()) &&
+						!gamer.getEnemies().contains(damager.getUniqueId()))
+					return;
+
+				// Cancel and capture original damage
+				double damage = e.getDamage();
+				e.setDamage(0);
+
+				// Damage dealt by player
+				if (gamer != null) {
+					AttackClass attackClass;
+
+					// Range damage
+					if (projectile) {
+						if (e.getDamager().getMetadata(ItemMetaKey.PER_BLOCK.name()).get(0).asBoolean())
+							finalVictim.takeDamage(
+									(int) (e.getDamager().getMetadata(ItemMetaKey.DAMAGE.name())
+											.get(0).asInt()
+											* victim.getLocation().distance((Location)
+											Objects.requireNonNull(e.getDamager().getMetadata(
+													ItemMetaKey.ORIGIN_LOCATION.name()).get(0).value())))
+											+ gamer.getBaseDamage(),
+									AttackType.NORMAL,
+									player,
+									arena
+							);
+						else finalVictim.takeDamage(
+								e.getDamager().getMetadata(ItemMetaKey.DAMAGE.name()).get(0).asInt() +
+										gamer.getBaseDamage(),
+								AttackType.NORMAL,
+								player,
+								arena
+						);
+						return;
+					}
+
+					// Crit damage
+					if (damage > 20)
+						attackClass = AttackClass.CRITICAL;
+
+					// Sweep damage
+					else if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)
+						attackClass = AttackClass.SWEEP;
+
+					// Main damage
+					else attackClass = AttackClass.MAIN;
+
+					// Play out damage
+					finalVictim.takeDamage(gamer.dealRawDamage(attackClass, damage / 20.),
+							gamer.getAttackType(), player, arena);
+				}
+
+				// Damage not dealt by player
+				else {
+					// Check damage cooldown
+					if (!finalDamager.attackAttempt()) {
+						e.setCancelled(true);
+						return;
+					}
+
+					if (e.getCause() == EntityDamageEvent.DamageCause.CUSTOM) {
+						// Make sure fast attacks only apply when mobs are close
+						if (damager.getLocation().distance(victim.getLocation()) > 1.75) {
+							e.setCancelled(true);
+							return;
+						}
+					}
+
+					// Implement faster attacks
+					if (finalDamager.getAttackSpeed() == .4 && e.getCause() != EntityDamageEvent.DamageCause.CUSTOM)
+						Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
+								.callEvent(new EntityDamageByEntityEvent(damager, victim,
+								EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.45));
+					else if (finalDamager.getAttackSpeed() == .2 &&
+							e.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
+						Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
+								.callEvent(new EntityDamageByEntityEvent(damager, victim,
+								EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.25));
+						Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
+								.callEvent(new EntityDamageByEntityEvent(damager, victim,
+								EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.5));
+					}
+
+					// Play out damage and effect
+					finalVictim.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType(), null,
+							arena);
+					if (finalDamager.dealEffect() != null)
+						finalVictim.getEntity().addPotionEffect(finalDamager.dealEffect());
+				}
+			}
+
+			// Friendly getting hurt
+			if (Main.getVillagersTeam().hasEntry(victim.getUniqueId().toString())) {
+				// Avoid phantom damage effects
+				if (Main.getVillagersTeam().hasEntry(damager.getUniqueId().toString()))
+					return;
+				if (finalDamager == null)
+					return;
+
+				// Cancel original damage
+				e.setDamage(0);
+
+				// Check damage cooldown
+				if (!finalDamager.attackAttempt()) {
+					e.setCancelled(true);
+					return;
+				}
+
+				if (e.getCause() == EntityDamageEvent.DamageCause.CUSTOM) {
+					// Make sure fast attacks only apply when mobs are close
+					if (damager.getLocation().distance(victim.getLocation()) > 1.75) {
+						e.setCancelled(true);
+						return;
+					}
+				}
+
+				// Check for no damage
+				if (finalDamager.getAttackType() == AttackType.NONE) {
+					e.setCancelled(true);
+					return;
+				}
+
+				// Implement faster attacks
+				if (finalDamager.getAttackSpeed() == .4 && e.getCause() != EntityDamageEvent.DamageCause.CUSTOM)
+					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
+							.callEvent(new EntityDamageByEntityEvent(damager, victim,
+									EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.45));
+				else if (finalDamager.getAttackSpeed() == .2 &&
+						e.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
+					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
+							.callEvent(new EntityDamageByEntityEvent(damager, victim,
+									EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.25));
+					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
+							.callEvent(new EntityDamageByEntityEvent(damager, victim,
+									EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.5));
+				}
+
+				// Play out damage and effect
+				finalVictim.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType(), null,
+						arena);
+				if (finalDamager.dealEffect() != null)
+					finalVictim.getEntity().addPotionEffect(finalDamager.dealEffect());
+			}
+		}
+	}
+
+	// Handle other types of damage from effects and environment
 	@EventHandler
 	public void onHurt(EntityDamageEvent e) {
 		Entity ent = e.getEntity();
-
-		// Check for arena enemies
-		if (!ent.hasMetadata("VD"))
-			return;
-
-		// Ignore wolves
-		if (ent instanceof Wolf)
-			return;
+		Arena arena;
+		VDMob mob;
+		VDPlayer gamer;
 
 		// Don't handle entity on entity damage
-		if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK ||
-				e.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK||
-				e.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION||
-				e.getCause() == EntityDamageEvent.DamageCause.PROJECTILE)
+		if (e instanceof EntityDamageByEntityEvent)
 			return;
 
-		// Ignore bosses
-		if (ent instanceof Wither)
-			return;
+		// Capture original damage and cause
+		double damage = e.getDamage();
+		EntityDamageEvent.DamageCause damageCause = e.getCause();
 
-		LivingEntity n = (LivingEntity) ent;
-		double maxHealth = Objects.requireNonNull(n.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue();
+		// For players
+		if (ent instanceof Player) {
+			Player player = (Player) ent;
 
-		// Update health bar
-		if (ent instanceof IronGolem || ent instanceof Ravager)
-			ent.setCustomName(Mobs.healthBar(maxHealth, n.getHealth() - e.getFinalDamage(), 10));
-		else ent.setCustomName(Mobs.healthBar(maxHealth, n.getHealth() - e.getFinalDamage(), 5));
+			// Attempt to get arena and VDPlayer
+			try {
+				arena = GameManager.getArena(player);
+				gamer = arena.getPlayer(player);
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+				return;
+			}
+
+			// Custom damage handling
+			switch (damageCause) {
+				// Environmental damage, not meant for customization
+				case FALL:
+				case LAVA:
+				case HOT_FLOOR:
+				case DROWNING:
+				case SUFFOCATION:
+				case FALLING_BLOCK:
+				case LIGHTNING:
+				case BLOCK_EXPLOSION:
+					gamer.takeDamage((int) (damage * 20), AttackType.PENETRATING);
+					break;
+				// Custom handling
+				case FIRE:
+				case FIRE_TICK:
+					gamer.takeDamage((int) (damage * 15), AttackType.PENETRATING);
+					break;
+				case POISON:
+					gamer.takeDamage((int) (damage * 10), AttackType.PENETRATING);
+					break;
+				case WITHER:
+					gamer.takeDamage((int) (damage * 10), AttackType.DIRECT);
+					break;
+				// Ignore
+				default:
+			}
+		}
+
+		// For mobs
+		else {
+			// Try to get arena and VDMob
+			try {
+				arena = GameManager.getArena(ent.getMetadata(VDMob.VD).get(0).asInt());
+				mob = arena.getMob(ent.getUniqueId());
+			} catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException err) {
+				return;
+			}
+
+			// Custom damage handling
+			switch (damageCause) {
+				// Environmental damage, not meant for customization
+				case FALL:
+				case LAVA:
+				case HOT_FLOOR:
+				case DROWNING:
+				case SUFFOCATION:
+				case FALLING_BLOCK:
+				case LIGHTNING:
+				case BLOCK_EXPLOSION:
+					mob.takeDamage((int) (damage * 10), AttackType.PENETRATING, null, arena);
+					break;
+				// Custom handling
+				case FIRE:
+				case FIRE_TICK:
+					mob.takeDamage((int) (damage * 5), AttackType.PENETRATING, null, arena);
+					break;
+				case POISON:
+					mob.takeDamage((int) (damage * 4), AttackType.PENETRATING, null, arena);
+					break;
+				case WITHER:
+					mob.takeDamage((int) (damage * 4), AttackType.DIRECT, null, arena);
+					break;
+				// Ignore
+				default:
+			}
+		}
+
+		// Cancel original damage
+		e.setDamage(0);
 	}
 
-	// Prevent players from going hungry while waiting for an arena to start
+	// Stop custom mobs from burning in the sun
+	@EventHandler
+	public void onCombust(EntityCombustEvent e) {
+		if (e instanceof EntityCombustByBlockEvent || e instanceof EntityCombustByEntityEvent)
+			return;
+
+		if (e.getEntity().hasMetadata(VDMob.VD))
+			e.setCancelled(true);
+	}
+
+	// Custom creeper explosion handler
+	@EventHandler
+	public void onExplode(ExplosionPrimeEvent e) {
+		Entity ent = e.getEntity();
+		Arena arena;
+		VDMob mob;
+
+		// Try to get arena and VDMob
+		try {
+			arena = GameManager.getArena(ent.getMetadata(VDMob.VD).get(0).asInt());
+			mob = arena.getMob(ent.getUniqueId());
+		} catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException err) {
+			return;
+		}
+
+		// Check for creeper
+		if (!(mob instanceof VDCreeper))
+			return;
+
+		// Cancel and create custom explosion
+		e.setCancelled(true);
+		((Creeper) ent).setFuseTicks(0);
+		Objects.requireNonNull(ent.getLocation().getWorld()).createExplosion(ent.getLocation(), 3, false,
+				false, ent);
+	}
+
+	// Create custom potion effects from witch
+	@EventHandler
+	public void onSplash(PotionSplashEvent e) {
+		ThrownPotion potion = e.getEntity();
+		Entity ent = (Entity) potion.getShooter();
+		VDWitch witch;
+
+		// Try to get arena and VDMob
+		try {
+			witch = (VDWitch) GameManager.getArena(Objects.requireNonNull(ent).getMetadata(VDMob.VD).get(0).asInt())
+					.getMob(ent.getUniqueId());
+		} catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException |
+				NullPointerException | ClassCastException err) {
+			return;
+		}
+
+		// Apply to relevant entities
+		for (LivingEntity affectedEntity : e.getAffectedEntities()) {
+			// Not monster
+			if (Main.getMonstersTeam().hasEntry(affectedEntity.getUniqueId().toString()))
+				continue;
+
+			// Apply affects
+			affectedEntity.addPotionEffect(witch.dealEffect());
+		}
+	}
+
+	// Prevent using certain item slots
+	@EventHandler
+	public void onIllegalEquip(PlayerMoveEvent e) {
+		Player player = e.getPlayer();
+		Arena arena;
+
+		// Attempt to get arena
+		try {
+			arena = GameManager.getArena(player);
+		} catch (ArenaNotFoundException err) {
+			return;
+		}
+
+		// Ignore arenas that aren't started
+		if (arena.getStatus() != ArenaStatus.ACTIVE)
+			return;
+
+		// Get off hand
+		ItemStack off = player.getInventory().getItemInOffHand();
+
+		// Unequip weapons in off-hand
+		if (VDWeapon.matchesNoAmmo(off)) {
+			PlayerManager.giveItem(player, off, LanguageManager.errors.inventoryFull);
+			player.getInventory().setItemInOffHand(null);
+			PlayerManager.notifyFailure(player, LanguageManager.errors.offWeapon);
+		}
+	}
+
+	// Handle player level up
+	@EventHandler
+	public void onLevelUp(PlayerLevelChangeEvent e) {
+		Player player = e.getPlayer();
+		Arena arena;
+		VDPlayer gamer;
+
+		// Attempt to get arena and player
+		try {
+			arena = GameManager.getArena(player);
+			gamer = arena.getPlayer(player);
+		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+			return;
+		}
+
+		// Ignore if arena isn't active
+		if (arena.getStatus() != ArenaStatus.ACTIVE)
+			return;
+
+		// Increase health and possibly damage
+		gamer.setMaxHealth(gamer.getMaxHealth() + 10);
+		if (player.getLevel() % 4 == 0) {
+			gamer.setBaseDamage(gamer.getBaseDamage() + 2);
+			PlayerManager.notifySuccess(player, LanguageManager.messages.levelUp,
+					new ColoredMessage(ChatColor.RED, "+10" + Utils.HP + "  +2" + Utils.DAMAGE));
+		} else PlayerManager.notifySuccess(player, LanguageManager.messages.levelUp,
+				new ColoredMessage(ChatColor.RED, "+10" + Utils.HP));
+	}
+
+	// Prevent players from going hungry while in an arena
 	@EventHandler
 	public void onHunger(FoodLevelChangeEvent e) {
 		Player player = (Player) e.getEntity();
 
-		// See if player is in a game and if game is already in progress
+		// Check for player in arena
 		try {
-			if (GameManager.getArena(player).getCurrentWave() != 0)
-				return;
+			GameManager.getArena(player);
 		} catch (ArenaNotFoundException err) {
 			return;
 		}
@@ -308,31 +799,80 @@ public class GameListener implements Listener {
 		e.setCancelled(true);
 	}
 
-	// Update health bar when healed
+	// Cancel natural potion effects for VDMobs or VDPlayers
+	@EventHandler
+	public void onNaturalEffect(EntityPotionEffectEvent e) {
+		Entity ent = e.getEntity();
+
+		// Check for VDPlayer
+		if (ent instanceof Player) {
+			if (!GameManager.checkPlayer((Player) ent))
+				return;
+		}
+
+		// Check for VDMob
+		else {
+			try {
+				GameManager.getArena(ent.getMetadata(VDMob.VD).get(0).asInt()).getMob(ent.getUniqueId());
+			} catch (IndexOutOfBoundsException | VDMobNotFoundException | ArenaNotFoundException err) {
+				return;
+			}
+		}
+
+		// Allow plugin, command, and expiration causes
+		if (e.getCause() == EntityPotionEffectEvent.Cause.PLUGIN ||
+				e.getCause() == EntityPotionEffectEvent.Cause.COMMAND ||
+				e.getCause() == EntityPotionEffectEvent.Cause.EXPIRATION)
+			return;
+
+		// Cancel
+		e.setCancelled(true);
+	}
+
+	// Handle healing
 	@EventHandler
 	public void onHeal(EntityRegainHealthEvent e) {
 		Entity ent = e.getEntity();
+		Player player;
+		Arena arena;
 
-		// Check for arena enemies
-		if (!ent.hasMetadata("VD"))
-			return;
+		// Check for player
+		if (e.getEntity() instanceof Player) {
+			player = (Player) ent;
 
-		// Ignore wolves and players
-		if (ent instanceof Wolf || ent instanceof Player)
-			return;
+			// Check player is in an arena
+			try {
+				arena = GameManager.getArena(player);
+			} catch (ArenaNotFoundException err) {
+				return;
+			}
 
-		// Ignore bosses
-		if (ent instanceof Wither)
-			return;
+			// Ignore arenas that aren't started
+			if (arena.getStatus() != ArenaStatus.ACTIVE)
+				return;
 
-		LivingEntity n = (LivingEntity) ent;
-		double maxHealth = Objects.requireNonNull(n.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue();
-		double modifiedHealth = n.getHealth() + e.getAmount();
+			// Negate natural health regain and manage saturation
+			if (e.getRegainReason() == EntityRegainHealthEvent.RegainReason.SATIATED ||
+					e.getRegainReason() == EntityRegainHealthEvent.RegainReason.EATING ||
+					e.getRegainReason() == EntityRegainHealthEvent.RegainReason.REGEN)
+				e.setCancelled(true);
+		}
 
-		// Update health bar
-		if (ent instanceof IronGolem || ent instanceof Ravager)
-			ent.setCustomName(Mobs.healthBar(maxHealth, Math.min(modifiedHealth, maxHealth), 10));
-		else ent.setCustomName(Mobs.healthBar(maxHealth, Math.min(modifiedHealth, maxHealth), 5));
+
+//		TODO
+//		// Check for arena enemies
+//		if (!ent.hasMetadata(VDMob.VD))
+//			return;
+//
+//		// Ignore wolves and players
+//		if (ent instanceof Wolf || ent instanceof Player)
+//			return;
+//
+//		// Ignore bosses
+//		if (ent instanceof Wither)
+//			return;
+//
+//		ent.setCustomName(Mobs.formattedName((LivingEntity) ent));
 	}
 
 	// Open shop, kit selecting menu, or leave
@@ -360,46 +900,47 @@ public class GameListener implements Listener {
 			item = Objects.requireNonNull(player.getEquipment()).getItemInOffHand();
 
 			// Check for other clickables in main hand
-			if (Arrays.asList(GameItems.ABILITY_ITEMS).contains(item) ||
-					Arrays.asList(GameItems.FOOD_MATERIALS).contains(item.getType()) ||
-					Arrays.asList(GameItems.ARMOR_MATERIALS).contains(item.getType()) ||
-					Arrays.asList(GameItems.CARE_MATERIALS).contains(item.getType()) ||
-					Arrays.asList(GameItems.CLICKABLE_WEAPON_MATERIALS).contains(item.getType()) ||
-					Arrays.asList(GameItems.CLICKABLE_CONSUME_MATERIALS).contains(item.getType()))
+			if (VDAbility.matches(item) || VDFood.matches(item) || VDArmor.matches(item) ||
+					VDWeapon.matchesClickableWeapon(item) || VDEgg.matches(item))
 				return;
 		}
 		else item = Objects.requireNonNull(player.getEquipment()).getItemInMainHand();
 
 		// Open shop inventory
-		if (GameItems.shop().equals(item))
+		if (Shop.matches(item))
 			player.openInventory(Inventories.createShopMenu(arena.getCurrentWave() / 10 + 1, arena));
 
 		// Open kit selection menu
-		else if (GameItems.kitSelector().equals(item))
-			player.openInventory(Inventories.createSelectKitsMenu(player, arena));
+		else if (KitSelector.matches(item))
+//			player.openInventory(Inventories.createSelectKitsMenu(player, arena));
+			PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
 
 		// Open challenge selection menu
-		else if (GameItems.challengeSelector().equals(item))
-			player.openInventory(Inventories.createSelectChallengesMenu(gamer, arena));
+		else if (ChallengeSelector.matches(item))
+//			player.openInventory(Inventories.createSelectChallengesMenu(gamer, arena));
+			PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
 
 		// Toggle boost
-		else if (GameItems.boostToggle(true).equals(item) || GameItems.boostToggle(false).equals(item)) {
-			gamer.toggleBoost();
-			PlayerManager.giveChoiceItems(gamer);
+		else if (BoostToggle.matches(item)) {
+//			gamer.toggleBoost();
+//			PlayerManager.giveChoiceItems(gamer);
+			PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
 		}
 
 		// Toggle share
-		else if (GameItems.shareToggle(true).equals(item) || GameItems.shareToggle(false).equals(item)) {
-			gamer.toggleShare();
-			PlayerManager.giveChoiceItems(gamer);
+		else if (ShareToggle.matches(item)) {
+//			gamer.toggleShare();
+//			PlayerManager.giveChoiceItems(gamer);
+			PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
 		}
 
 		// Open crystal convert menu
-		else if (GameItems.crystalConverter().equals(item))
-			player.openInventory(Inventories.createCrystalConvertMenu(gamer));
+		else if (CrystalConverter.matches(item))
+//			player.openInventory(Inventories.createCrystalConvertMenu(gamer));
+			PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
 
 		// Make player leave
-		else if (GameItems.leave().equals(item))
+		else if (Leave.matches(item))
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
 					Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player)));
 
@@ -411,6 +952,7 @@ public class GameListener implements Listener {
 	}
 
 	// Stops players from hurting villagers and other players, and monsters from hurting each other
+	// TODO: check if this is still needed
 	@EventHandler
 	public void onFriendlyFire(EntityDamageByEntityEvent e) {
 		Entity ent = e.getEntity();
@@ -423,7 +965,7 @@ public class GameListener implements Listener {
 		}
 
 		// Check for special mobs
-		if (!ent.hasMetadata("VD") && !(ent instanceof Player))
+		if (!ent.hasMetadata(VDMob.VD) && !(ent instanceof Player))
 			return;
 
 		// Cancel damage to friendly mobs
@@ -518,7 +1060,8 @@ public class GameListener implements Listener {
 							String.format(LanguageManager.messages.death, player.getName()));
 				if (arena.hasPlayerDeathSound())
 					try {
-						fighter.getPlayer().playSound(arena.getPlayerSpawn().getLocation(),
+						fighter.getPlayer().playSound(arena.getPlayerSpawn().getLocation().clone()
+										.add(0, -8, 0),
 								Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10,
 								.75f);
 					} catch (NullPointerException err) {
@@ -538,289 +1081,11 @@ public class GameListener implements Listener {
 		}
 	}
 
-	// Give gems
-	@EventHandler
-	public void onGemPickup(EntityPickupItemEvent e) {
-		// Check for player picking up item
-		if (!(e.getEntity() instanceof Player))
-			return;
-
-		Player player = (Player) e.getEntity();
-		UUID id = player.getUniqueId();
-		Arena arena;
-		VDPlayer gamer;
-
-		// Attempt to get arena and player
-		try {
-			arena = GameManager.getArena(player);
-			gamer = arena.getPlayer(player);
-		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
-			return;
-		}
-
-		ItemStack item = e.getItem().getItemStack();
-
-		// Check for gem item
-		if (!item.getType().equals(Material.EMERALD))
-			return;
-
-		// Ignore item shop
-		if (Objects.requireNonNull(item.getItemMeta()).getDisplayName().contains(LanguageManager.names.itemShop))
-			return;
-
-		// Calculate and give player gems
-		int stack = item.getAmount();
-		Random r = new Random();
-		int wave = arena.getCurrentWave();
-		int earned = 0;
-		for (int i = 0; i < stack; i++) {
-			int temp = r.nextInt((int) (50 * Math.pow(wave, .15)));
-			earned += temp == 0 ? 1 : temp;
-		}
-
-		// Check if player has gem increase achievement and is boosted
-		if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement.topBalance9().getID()))
-			earned *= 1.1;
-		gamer.addGems(earned);
-
-		// Cancel picking up of emeralds and notify player
-		e.setCancelled(true);
-		e.getItem().remove();
-		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-				CommunicationManager.format(new ColoredMessage(ChatColor.GREEN, LanguageManager.messages.foundGems),
-						Integer.toString(earned))));
-		if (arena.hasGemSound())
-			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, .5f, 0);
-
-		// Update player stats
-		PlayerManager.setTotalGems(id, PlayerManager.getTotalGems(id) + earned);
-		if (PlayerManager.getTopBalance(id) < gamer.getGems())
-			PlayerManager.setTopBalance(id, gamer.getGems());
-
-		// Update scoreboard
-		GameManager.createBoard(gamer);
-	}
-
-	// Handle player death
-	@EventHandler
-	public void onPlayerDeath(EntityDamageEvent e) {
-		// Ignore if cancelled
-		if (e.isCancelled())
-			return;
-
-		// Check for player
-		if (!(e.getEntity() instanceof Player)) return;
-
-		Player player = (Player) e.getEntity();
-		Arena arena;
-		VDPlayer gamer;
-
-		// Attempt to get arena and player
-		try {
-			arena = GameManager.getArena(player);
-			gamer = arena.getPlayer(player);
-		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
-			return;
-		}
-
-		// Check if arena is active
-		if (arena.getStatus() != ArenaStatus.ACTIVE) return;
-
-		// Ignore void damage
-		if (e.getCause().equals(EntityDamageEvent.DamageCause.VOID)) return;
-
-		// Check if player is about to die
-		if (e.getFinalDamage() < player.getHealth()) return;
-
-		// Check if player is holding a totem
-		if (player.getInventory().getItemInMainHand().getType() == Material.TOTEM_OF_UNDYING ||
-				player.getInventory().getItemInOffHand().getType() == Material.TOTEM_OF_UNDYING) return;
-
-		e.setCancelled(true);
-
-		// Check if player has resurrection achievement and is boosted
-		Random random = new Random();
-		if (gamer.isBoosted() && random.nextDouble() < .1 &&
-				PlayerManager.hasAchievement(player.getUniqueId(), Achievement.allChallenges().getID())) {
-			PlayerManager.giveTotemEffect(player);
-			return;
-		}
-
-		// Set player to fake death mode
-		PlayerManager.fakeDeath(gamer);
-
-		// Check for explosive challenge
-		if (gamer.getChallenges().contains(Challenge.explosive())) {
-			// Create an explosion
-			player.getWorld().createExplosion(player.getLocation(), 1.25F, false, false);
-
-			// Drop all items and clear inventory
-			player.getInventory().forEach(itemStack -> {
-				if (itemStack != null && !itemStack.equals(GameItems.shop()))
-						player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
-			});
-			player.getInventory().clear();
-		}
-
-		// Notify player of their own death
-		player.sendTitle(
-				new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.death1).toString(),
-				new ColoredMessage(ChatColor.RED, LanguageManager.messages.death2).toString(),
-				Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
-
-		// Notify everyone else of player death
-		arena.getPlayers().forEach(fighter -> {
-			if (!fighter.getPlayer().getUniqueId().equals(player.getUniqueId()))
-				PlayerManager.notifyAlert(fighter.getPlayer(),
-						String.format(LanguageManager.messages.death, player.getName()));
-			if (arena.hasPlayerDeathSound())
-				try {
-					fighter.getPlayer().playSound(arena.getPlayerSpawn().getLocation(),
-							Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10,
-							.75f);
-				} catch (NullPointerException err) {
-					CommunicationManager.debugError(err.getMessage(), 0);
-				}
-		});
-
-		// Update scoreboards
-		arena.updateScoreboards();
-
-		// Check for game end condition
-		if (arena.getAlive() == 0)
-			try {
-				arena.endGame();
-			} catch (ArenaException ignored) {
-			}
-	}
-
-	// Update player kill counter
-	@EventHandler
-	public void onMobKillByPlayer(EntityDamageByEntityEvent e) {
-		// Check for living entity
-		if (!(e.getEntity() instanceof LivingEntity)) return;
-
-		// Check for fatal damage
-		if (((LivingEntity) e.getEntity()).getHealth() > e.getFinalDamage()) return;
-
-		// Check damage was done to monster
-		if (!(e.getEntity().hasMetadata("VD"))) return;
-
-		// Prevent wither roses from being created
-		if (e.getDamager() instanceof WitherSkull || e.getDamager() instanceof Wither) {
-			e.setCancelled(true);
-			e.getEntity().remove();
-		}
-
-		// Check that a player caused the damage
-		if (!(e.getDamager() instanceof Player || e.getDamager() instanceof Projectile)) return;
-
-		Player player;
-		Arena arena;
-		VDPlayer gamer;
-
-		// Check if projectile came from player, then set player
-		if (e.getDamager() instanceof Projectile) {
-			if (((Projectile) e.getDamager()).getShooter() instanceof Player)
-				player = (Player) ((Projectile) e.getDamager()).getShooter();
-			else return;
-		} else player = (Player) e.getDamager();
-		UUID id = player.getUniqueId();
-
-		// Attempt to get arena and player
-		try {
-			arena = GameManager.getArena(player);
-			gamer = arena.getPlayer(player);
-		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
-			return;
-		}
-
-		// Increment kill count
-		gamer.incrementKills();
-
-		// Add gems, loot, and experience if needed
-		if (!arena.hasGemDrop()) {
-			// Calculate and give player gems
-			Random r = new Random();
-			int wave = arena.getCurrentWave();
-
-			if (e.getEntity() instanceof Wither) {
-				int earned = r.nextInt((int) (50 * Math.pow(wave, .15) * 20) / arena.getAlive());
-				arena.getActives().stream().filter(vdPlayer -> !arena.getGhosts().contains(vdPlayer))
-						.forEach(vdPlayer -> {
-							UUID uuid = vdPlayer.getID();
-
-							vdPlayer.addGems(earned);
-
-							// Notify player
-							PlayerManager.notifySuccess(
-									vdPlayer.getPlayer(),
-									LanguageManager.messages.earnedGems,
-									new ColoredMessage(ChatColor.AQUA, Integer.toString(earned))
-							);
-
-							// Update player stats
-							PlayerManager.setTotalGems(uuid, PlayerManager.getTotalGems(uuid) + earned);
-							if (PlayerManager.getTopBalance(uuid) < vdPlayer.getGems())
-								PlayerManager.setTopBalance(uuid, vdPlayer.getGems());
-
-							// Update scoreboard
-							GameManager.createBoard(vdPlayer);
-						});
-			} else {
-				int earned = r.nextInt((int) (50 * Math.pow(wave, .15)));
-				gamer.addGems(earned == 0 ? 1 : earned);
-
-				// Get rare loot probability
-				double probability;
-				switch (arena.getDifficultyMultiplier()) {
-					case 1:
-						probability = .015;
-						break;
-					case 2:
-						probability = .01;
-						break;
-					case 3:
-						probability = .008;
-						break;
-					default:
-						probability = .006;
-				}
-
-				if (r.nextDouble() < probability)
-					PlayerManager.giveItem(player, GameItems.randCare(wave / 10 + 1),
-							LanguageManager.errors.inventoryFull);
-
-				// Notify player
-				PlayerManager.notifySuccess(
-						player,
-						LanguageManager.messages.earnedGems,
-						new ColoredMessage(ChatColor.AQUA, Integer.toString(earned))
-				);
-
-				// Update player stats
-				PlayerManager.setTotalGems(id, PlayerManager.getTotalGems(id) + earned);
-				if (PlayerManager.getTopBalance(id) < gamer.getGems())
-					PlayerManager.setTopBalance(id, gamer.getGems());
-
-				// Update scoreboard
-				GameManager.createBoard(gamer);
-			}
-		}
-		if (!arena.hasExpDrop()) {
-			if (e.getEntity() instanceof Wither)
-				arena.getActives().stream().filter(vdPlayer -> !arena.getGhosts().contains(vdPlayer))
-						.forEach(vdPlayer -> vdPlayer.getPlayer()
-								.giveExp((int) (arena.getCurrentDifficulty() * 40) / arena.getAlive()));
-			else player.giveExp((int) (arena.getCurrentDifficulty() * 2));
-		}
-	}
-
 	// Stops slimes and magma cubes from splitting on death
 	@EventHandler
 	public void onSplit(SlimeSplitEvent e) {
 		Entity ent = e.getEntity();
-		if (!ent.hasMetadata("VD"))
+		if (!ent.hasMetadata(VDMob.VD))
 			return;
 		e.setCancelled(true);
 	}
@@ -835,7 +1100,7 @@ public class GameListener implements Listener {
 			return;
 
 		// Check for arena mobs
-		if (ent.hasMetadata("VD"))
+		if (ent.hasMetadata(VDMob.VD))
 			e.setCancelled(true);
 	}
 
@@ -856,331 +1121,126 @@ public class GameListener implements Listener {
 		e.setCancelled(true);
 	}
 
-	// Manage spawning pets and care packages
+	// Manage usage of consumables
 	@EventHandler
 	public void onConsume(PlayerInteractEvent e) {
+		// Check for right click
+		if (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK)
+			return;
+
 		Player player = e.getPlayer();
 		ItemStack item = e.getItem() == null ? new ItemStack(Material.AIR) : e.getItem();
 		ItemStack main = player.getInventory().getItemInMainHand();
+		List<String> lores;
 		Arena arena;
 		VDPlayer gamer;
 
-		// Attempt to get arena and player
+		// Attempt to get arena, player, and lore
 		try {
 			arena = GameManager.getArena(player);
 			gamer = arena.getPlayer(player);
-		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+			lores = Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore());
+		} catch (ArenaNotFoundException | PlayerNotFoundException | NullPointerException err) {
+			return;
+		}
+
+		// Check for active arena, at least wave 1
+		if (arena.getStatus() != ArenaStatus.ACTIVE || arena.getCurrentWave() < 1) {
+			e.setCancelled(true);
 			return;
 		}
 
 		// Avoid false consume
-		if (main.equals(GameItems.shop()) || Arrays.asList(GameItems.ABILITY_ITEMS).contains(main) ||
-				Arrays.stream(GameItems.FOOD_MATERIALS).anyMatch(m -> m == main.getType()) ||
-				Arrays.stream(GameItems.ARMOR_MATERIALS).anyMatch(m -> m == main.getType()) ||
-				Arrays.stream(GameItems.CLICKABLE_WEAPON_MATERIALS).anyMatch(m -> m == main.getType()) ||
-				(Arrays.stream(GameItems.CLICKABLE_CONSUME_MATERIALS).anyMatch(m -> m == main.getType()) &&
-						main.getType() != GameItems.wolf().getType() && main.getType() != GameItems.golem().getType() ))
+		if (e.getHand() == EquipmentSlot.OFF_HAND &&
+				(Shop.matches(main) || VDAbility.matches(main) || VDFood.matches(main) || VDArmor.matches(main) ||
+						VDWeapon.matchesClickableWeapon(main) || VDEgg.matches(main)))
 			return;
+
+		// Give health
+		AtomicBoolean food = new AtomicBoolean(false);
+
+		lores.forEach(lore -> {
+			if (lore.contains(ChatColor.RED.toString()) && lore.contains(Utils.HP) && !gamer.hasMaxHealth()) {
+				gamer.changeCurrentHealth(Integer.parseInt(lore.substring(3).replace(Utils.HP, "").trim()));
+				food.set(true);
+			}
+			if (lore.contains(ChatColor.GOLD.toString()) && lore.contains(Utils.HP)) {
+				gamer.addAbsorption(Integer.parseInt(lore.substring(3).replace(Utils.HP, "").trim()));
+				food.set(true);
+			}
+		});
+
+		// Consume
+		if (food.get()) {
+			if (item.getAmount() > 1)
+				item.setAmount(item.getAmount() - 1);
+			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
+		}
 
 		// Wolf spawn
-		if (item.getType() == Material.WOLF_SPAWN_EGG &&
-				!(main.getType() == Material.WOLF_SPAWN_EGG && e.getHand() == EquipmentSlot.OFF_HAND) &&
-				main.getType() != Material.POLAR_BEAR_SPAWN_EGG && main.getType() != Material.COAL_BLOCK &&
-				main.getType() != Material.IRON_BLOCK && main.getType() != Material.DIAMOND_BLOCK &&
-				main.getType() != Material.BEACON) {
-			// Ignore if it wasn't a right click on a block
-			if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
-				return;
-
-			// Cancel normal spawn
-			e.setCancelled(true);
-
-			// Check for wolf cap
-			if (gamer.getWolves() >= arena.getWolfCap()) {
-				PlayerManager.notifyFailure(player, LanguageManager.errors.wolf,
-						new ColoredMessage(ChatColor.AQUA, Integer.toString(arena.getWolfCap())));
-				return;
-			}
-
-			// Remove an item
-			if (item.getAmount() > 1)
-				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
-
-			Location location = Objects.requireNonNull(e.getClickedBlock()).getLocation();
-			location.setY(location.getY() + 1);
-
-			// Spawn and tame the wolf
-			Mobs.setWolf(Main.plugin, arena, gamer, (Wolf) player.getWorld().spawnEntity(location, EntityType.WOLF));
-			return;
-		}
-
-		// Ignore other vanilla items
-		if (item.getItemMeta() == null)
-			return;
+//		if (item.getType() == Material.WOLF_SPAWN_EGG &&
+//				!(main.getType() == Material.WOLF_SPAWN_EGG && e.getHand() == EquipmentSlot.OFF_HAND) &&
+//				main.getType() != Material.POLAR_BEAR_SPAWN_EGG) {
+//			// Ignore if it wasn't a right click on a block
+//			if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
+//				return;
+//
+//			// Cancel normal spawn
+//			e.setCancelled(true);
+//
+//			// Check for wolf cap
+//			if (gamer.getWolves() >= arena.getWolfCap()) {
+//				PlayerManager.notifyFailure(player, LanguageManager.errors.wolf,
+//						new ColoredMessage(ChatColor.AQUA, Integer.toString(arena.getWolfCap())));
+//				return;
+//			}
+//
+//			// Remove an item
+//			if (item.getAmount() > 1)
+//				item.setAmount(item.getAmount() - 1);
+//			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
+//
+//			Location location = Objects.requireNonNull(e.getClickedBlock()).getLocation();
+//			location.setY(location.getY() + 1);
+//
+//			// Spawn and tame the wolf
+//			Wolf wolf = (Wolf) player.getWorld().spawnEntity(location, EntityType.WOLF);
+//			Mobs.setWolf(Main.plugin, arena, gamer, wolf);
+//			Main.getVillagersTeam().addEntry(wolf.getUniqueId().toString());
+//			return;
+//		}
 
 		// Iron golem spawn
-		if (item.getItemMeta().getDisplayName().contains("Iron Golem Spawn Egg") &&
-				!(main.getType() == Material.POLAR_BEAR_SPAWN_EGG && e.getHand() == EquipmentSlot.OFF_HAND) &&
-				main.getType() != Material.WOLF_SPAWN_EGG &&
-				main.getType() != Material.COAL_BLOCK && main.getType() != Material.IRON_BLOCK &&
-				main.getType() != Material.DIAMOND_BLOCK && main.getType() != Material.BEACON) {
-			// Ignore if it wasn't a right click on a block
-			if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
-				return;
-
-			// Cancel normal spawn
-			e.setCancelled(true);
-
-			// Check for golem cap
-			if (arena.getGolems() >= arena.getGolemCap()) {
-				PlayerManager.notifyFailure(player, LanguageManager.errors.golem,
-						new ColoredMessage(ChatColor.AQUA, Integer.toString(arena.getGolemCap())));
-				return;
-			}
-
-			// Remove an item
-			if (item.getAmount() > 1)
-				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
-
-			Location location = Objects.requireNonNull(e.getClickedBlock()).getLocation();
-			location.setY(location.getY() + 1);
-
-			// Spawn iron golem
-			Mobs.setGolem(Main.plugin, arena, (IronGolem) player.getWorld().spawnEntity(location, EntityType.IRON_GOLEM));
-			return;
-		}
-
-		Random random = new Random();
-
-		// Small care package
-		if (item.getItemMeta().getDisplayName().contains("Small Care Package") &&
-				main.getType() != Material.POLAR_BEAR_SPAWN_EGG &&
-				!(main.getType() == Material.COAL_BLOCK && e.getHand() == EquipmentSlot.OFF_HAND) &&
-				main.getType() != Material.WOLF_SPAWN_EGG && main.getType() != Material.IRON_BLOCK &&
-				main.getType() != Material.DIAMOND_BLOCK && main.getType() != Material.BEACON) {
-			// Remove an item
-			if (item.getAmount() > 1)
-				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
-
-			// Give items and notify
-			if ((Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
-					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randWeapon(1))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(1))), LanguageManager.errors.inventoryFull);
-			}
-			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.BLACKSMITH))) {
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randWeapon(1))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(1))), LanguageManager.errors.inventoryFull);
-				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-			}
-			else {
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(1)),
-						LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(1)),
-						LanguageManager.errors.inventoryFull);
-			}
-			PlayerManager.notifySuccess(player, LanguageManager.confirms.carePackage);
-		}
-
-		// Medium care package
-		if (item.getItemMeta().getDisplayName().contains("Medium Care Package") &&
-				main.getType() != Material.POLAR_BEAR_SPAWN_EGG && main.getType() != Material.COAL_BLOCK &&
-				!(main.getType() == Material.IRON_BLOCK && e.getHand() == EquipmentSlot.OFF_HAND) &&
-				main.getType() != Material.WOLF_SPAWN_EGG &&
-				main.getType() != Material.DIAMOND_BLOCK && main.getType() != Material.BEACON) {
-			// Remove an item
-			if (item.getAmount() > 1)
-				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
-
-			// Give items and notify
-			if ((Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
-					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randWeapon(2))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(2))), LanguageManager.errors.inventoryFull);
-			}
-			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.BLACKSMITH))) {
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randWeapon(2))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(2))), LanguageManager.errors.inventoryFull);
-				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-			}
-			else {
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(2)),
-						LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(2)),
-						LanguageManager.errors.inventoryFull);
-			}
-
-			if ((Kit.witch().setKitLevel(1).equals(gamer.getKit()) ||
-					Kit.witch().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
-				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-						GameItems.randNotCare(2))), LanguageManager.errors.inventoryFull);
-			}
-			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.WITCH))) {
-				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-						GameItems.randNotCare(2))), LanguageManager.errors.inventoryFull);
-				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-			}
-			else {
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(2)),
-						LanguageManager.errors.inventoryFull);
-			}
-
-			PlayerManager.notifySuccess(player, LanguageManager.confirms.carePackage);
-		}
-
-		// Large care package
-		if (item.getItemMeta().getDisplayName().contains("Large Care Package") &&
-				main.getType() != Material.WOLF_SPAWN_EGG && main.getType() != Material.POLAR_BEAR_SPAWN_EGG &&
-				main.getType() != Material.COAL_BLOCK && main.getType() != Material.IRON_BLOCK &&
-				!(main.getType() == Material.DIAMOND_BLOCK && e.getHand() == EquipmentSlot.OFF_HAND) &&
-				main.getType() != Material.BEACON) {
-			// Remove an item
-			if (item.getAmount() > 1)
-				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
-
-			// Give items and notify
-			if ((Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
-					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randWeapon(4))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(3))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(3))), LanguageManager.errors.inventoryFull);
-			}
-			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.BLACKSMITH))) {
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randWeapon(4))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(3))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(3))), LanguageManager.errors.inventoryFull);
-				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-			}
-			else {
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(4)),
-						LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(3)),
-						LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(3)),
-						LanguageManager.errors.inventoryFull);
-			}
-
-			if ((Kit.witch().setKitLevel(1).equals(gamer.getKit()) ||
-					Kit.witch().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
-				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-						GameItems.randNotCare(3))), LanguageManager.errors.inventoryFull);
-			}
-			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.WITCH))) {
-				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-						GameItems.randNotCare(3))), LanguageManager.errors.inventoryFull);
-				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-			}
-			else {
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(3)),
-						LanguageManager.errors.inventoryFull);
-			}
-
-			PlayerManager.notifySuccess(player, LanguageManager.confirms.carePackage);
-		}
-
-		// Extra large care package
-		if (item.getItemMeta().getDisplayName().contains("Extra Large Care Package") &&
-				main.getType() != Material.WOLF_SPAWN_EGG && main.getType() != Material.POLAR_BEAR_SPAWN_EGG &&
-				main.getType() != Material.COAL_BLOCK && main.getType() != Material.IRON_BLOCK &&
-				main.getType() != Material.DIAMOND_BLOCK &&
-				!(main.getType() == Material.BEACON && e.getHand() == EquipmentSlot.OFF_HAND)) {
-			// Remove an item
-			if (item.getAmount() > 1)
-				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
-
-			// Give items and notify
-			if ((Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
-					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randWeapon(5))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randWeapon(4))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(5))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(4))), LanguageManager.errors.inventoryFull);
-			}
-			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.BLACKSMITH))) {
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randWeapon(5))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randWeapon(4))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(5))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeUnbreakable(ItemManager.removeLastLore(
-						GameItems.randArmor(4))), LanguageManager.errors.inventoryFull);
-				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-			}
-			else {
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(5)),
-						LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randWeapon(4)),
-						LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(5)),
-						LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randArmor(4)),
-						LanguageManager.errors.inventoryFull);
-			}
-
-			if ((Kit.witch().setKitLevel(1).equals(gamer.getKit()) ||
-					Kit.witch().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing()) {
-				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-						GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-						GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
-			}
-			else if (random.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.WITCH))) {
-				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-						GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.makeSplash(ItemManager.removeLastLore(
-						GameItems.randNotCare(4))), LanguageManager.errors.inventoryFull);
-				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-			}
-			else {
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(4)),
-						LanguageManager.errors.inventoryFull);
-				PlayerManager.giveItem(player, ItemManager.removeLastLore(GameItems.randNotCare(4)),
-						LanguageManager.errors.inventoryFull);
-			}
-
-			PlayerManager.notifySuccess(player, LanguageManager.confirms.carePackage);
-		}
-	}
-
-	// Prevent wolves from targeting villagers
-	@EventHandler
-	public void onTarget(EntityTargetLivingEntityEvent e) {
-		// Check for wolf
-		if (!(e.getEntity() instanceof Wolf))
-			return;
-
-		// Check for villager target
-		if (!(e.getTarget() instanceof Villager))
-			return;
-
-		// Cancel if special wolf
-		if (e.getEntity().hasMetadata("VD"))
-			e.setCancelled(true);
+//		if (item.getItemMeta().getDisplayName().contains("Iron Golem Spawn Egg") &&
+//				!(main.getType() == Material.POLAR_BEAR_SPAWN_EGG && e.getHand() == EquipmentSlot.OFF_HAND) &&
+//				main.getType() != Material.WOLF_SPAWN_EGG) {
+//			// Ignore if it wasn't a right click on a block
+//			if (e.getAction() != Action.RIGHT_CLICK_BLOCK)
+//				return;
+//
+//			// Cancel normal spawn
+//			e.setCancelled(true);
+//
+//			// Check for golem cap
+//			if (arena.getGolems() >= arena.getGolemCap()) {
+//				PlayerManager.notifyFailure(player, LanguageManager.errors.golem,
+//						new ColoredMessage(ChatColor.AQUA, Integer.toString(arena.getGolemCap())));
+//				return;
+//			}
+//
+//			// Remove an item
+//			if (item.getAmount() > 1)
+//				item.setAmount(item.getAmount() - 1);
+//			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
+//
+//			Location location = Objects.requireNonNull(e.getClickedBlock()).getLocation();
+//			location.setY(location.getY() + 1);
+//
+//			// Spawn iron golem
+//			IronGolem ironGolem = (IronGolem) player.getWorld().spawnEntity(location, EntityType.IRON_GOLEM);
+//			Mobs.setGolem(Main.plugin, arena, ironGolem);
+//			Main.getVillagersTeam().addEntry(ironGolem.getUniqueId().toString());
+//		}
 	}
 
 	// Prevent wolves from teleporting
@@ -1193,7 +1253,7 @@ public class GameListener implements Listener {
 			return;
 
 		// Check for special mob
-		if (!ent.hasMetadata("VD"))
+		if (!ent.hasMetadata(VDMob.VD))
 			return;
 
 		// Check if player is playing in an arena
@@ -1284,7 +1344,7 @@ public class GameListener implements Listener {
 		Entity ent = e.getEntity();
 
 		// Check for special mob
-		if (!ent.hasMetadata("VD"))
+		if (!ent.hasMetadata(VDMob.VD))
 			return;
 
 		e.setCancelled(true);
@@ -1296,47 +1356,24 @@ public class GameListener implements Listener {
 		Entity ent = e.getEntity();
 
 		// Check for special mob
-		if (!ent.hasMetadata("VD"))
+		if (!ent.hasMetadata(VDMob.VD))
 			return;
 
 		e.setCancelled(true);
 	}
 
-	// Prevent players from dropping standard game items
+	// Prevent players from dropping menu items
 	@EventHandler
 	public void onItemDrop(PlayerDropItemEvent e) {
 		Player player = e.getPlayer();
-		ItemStack item = e.getItemDrop().getItemStack();
 
 		// Check if player is in an arena
 		if (!GameManager.checkPlayer(player))
 			return;
 
-		// Check for standard game items item
-		if (item.equals(GameItems.shop()) || item.equals(GameItems.kitSelector()) || item.equals(GameItems.leave()) ||
-				item.equals(GameItems.challengeSelector()))
+		// Check for menu items
+		if (VDMenuItem.matches(e.getItemDrop().getItemStack()))
 			e.setCancelled(true);
-	}
-
-	// Delete bottles and buckets after using consumables
-	@EventHandler
-	public void onFinishConsumption(PlayerItemConsumeEvent e) {
-		Player player = e.getPlayer();
-
-		// Check if player is playing in an arena
-		if (!GameManager.checkPlayer(player))
-			return;
-
-		if (e.getItem().getType() == Material.POTION || e.getItem().getType() == Material.MILK_BUCKET) {
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> {
-				player.getInventory().remove(Material.GLASS_BOTTLE);
-				player.getInventory().remove(Material.BUCKET);
-				if (player.getInventory().getItemInOffHand().getType() == Material.GLASS_BOTTLE)
-					player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
-				if (player.getInventory().getItemInOffHand().getType() == Material.BUCKET)
-					player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
-			}, 3);
-		}
 	}
 
 	// Prevent consumption from happening in the off-hand when the main hand has something interact-able
@@ -1354,12 +1391,8 @@ public class GameListener implements Listener {
 			return;
 
 		// Avoid false consume
-		if (main.equals(GameItems.shop()) || Arrays.asList(GameItems.ABILITY_ITEMS).contains(main) ||
-				Arrays.stream(GameItems.FOOD_MATERIALS).anyMatch(m -> m == main.getType()) ||
-				Arrays.stream(GameItems.ARMOR_MATERIALS).anyMatch(m -> m == main.getType()) ||
-				Arrays.stream(GameItems.CARE_MATERIALS).anyMatch(m -> m == main.getType()) ||
-				Arrays.stream(GameItems.CLICKABLE_WEAPON_MATERIALS).anyMatch(m -> m == main.getType()) ||
-				Arrays.stream(GameItems.CLICKABLE_CONSUME_MATERIALS).anyMatch(m -> m == main.getType()))
+		if (Shop.matches(main) || VDAbility.matches(main) || VDFood.matches(main) || VDArmor.matches(main) ||
+				VDWeapon.matchesClickableWeapon(main) || VDEgg.matches(main))
 			e.setCancelled(true);
 	}
 
@@ -1379,54 +1412,6 @@ public class GameListener implements Listener {
 		// Cancel event if arena is in waiting mode
 		if (arena.getStatus() == ArenaStatus.WAITING)
 			e.setCancelled(true);
-	}
-
-	// Apply book enchantment to items
-	@EventHandler
-	public void onEnchantingApply(InventoryClickEvent e) {
-		Player player = (Player) e.getWhoClicked();
-		ItemStack clickedOn = e.getCurrentItem();
-		ItemStack clickedWith = e.getCursor();
-		EnchantingBook enchantingBook = EnchantingBook.check(clickedWith);
-
-		// Check for player in arena
-		if (!GameManager.checkPlayer(player))
-			return;
-
-		// Ignore if not clicking on own inventory
-		if (e.getClickedInventory() == null || !player.equals(e.getClickedInventory().getHolder()))
-			return;
-
-		// Ignore clicks to nothing
-		if (clickedOn == null || clickedOn.getType() == Material.AIR)
-			return;
-
-		// Ignore clicks on shop or other books
-		if (EnchantingBook.check(clickedOn) != null || GameItems.shop().equals(clickedOn))
-			return;
-
-		// Check for enchanting book
-		if (enchantingBook == null)
-			return;
-
-		// Cancel event
-		e.setCancelled(true);
-
-		// Attempt to add enchant and remove book
-		Map<Enchantment, Integer> enchantList = Objects.requireNonNull(clickedOn.getItemMeta()).getEnchants();
-		if (enchantList.containsKey(enchantingBook.getEnchantToAdd())) {
-			if (enchantingBook.getEnchantToAdd() == Enchantment.ARROW_FIRE ||
-					enchantingBook.getEnchantToAdd() == Enchantment.MULTISHOT ||
-					enchantingBook.getEnchantToAdd() == Enchantment.ARROW_INFINITE ||
-					enchantingBook.getEnchantToAdd() == Enchantment.MENDING) {
-				PlayerManager.notifyFailure(player, LanguageManager.errors.enchant);
-				return;
-			}
-			clickedOn.addUnsafeEnchantment(enchantingBook.getEnchantToAdd(),
-					enchantList.get(enchantingBook.getEnchantToAdd()) + 1);
-		} else clickedOn.addUnsafeEnchantment(enchantingBook.getEnchantToAdd(), 1);
-		player.setItemOnCursor(new ItemStack(Material.AIR));
-		PlayerManager.notifySuccess(player, LanguageManager.confirms.enchant);
 	}
 
 	// Prevent swapping items while waiting for game to start

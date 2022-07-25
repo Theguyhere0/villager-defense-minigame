@@ -1,6 +1,8 @@
 package me.theguyhere.villagerdefense.nms.v1_16_r3;
 
 import net.minecraft.server.v1_16_R3.IChatBaseComponent;
+import net.minecraft.server.v1_16_R3.VillagerData;
+import net.minecraft.server.v1_16_R3.VillagerType;
 import org.apache.logging.log4j.util.Strings;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage;
 
@@ -25,7 +27,6 @@ abstract class DataWatcherPacketBuilder<T> {
     }
 
     DataWatcherPacketBuilder<T> setArmorStandMarker() {
-        setInvisible();
         packetSetter.writeDataWatcherEntry(
                 DataWatcherKey.ARMOR_STAND_STATUS, (byte) (0x01 | 0x02 | 0x08 | 0x10)); // Small, no gravity, no base plate, marker
         return this;
@@ -37,6 +38,11 @@ abstract class DataWatcherPacketBuilder<T> {
         return this;
     }
 
+    DataWatcherPacketBuilder<T> setVillagerType(String type) {
+        packetSetter.writeDataWatcherEntry(DataWatcherKey.VILLAGER_DATA, getVillagerDataDataWatcherValue(type));
+        return this;
+    }
+
     private Optional<IChatBaseComponent> getCustomNameDataWatcherValue(String customName) {
         if (customName.length() > 300)
             customName = customName.substring(0, 300);
@@ -45,6 +51,34 @@ abstract class DataWatcherPacketBuilder<T> {
         } else {
             return Optional.empty();
         }
+    }
+
+    private VillagerData getVillagerDataDataWatcherValue(String type) {
+        VillagerType villagerType;
+        switch (type) {
+            case "desert":
+                villagerType = VillagerType.DESERT;
+                break;
+            case "jungle":
+                villagerType = VillagerType.JUNGLE;
+                break;
+            case "savanna":
+                villagerType = VillagerType.SAVANNA;
+                break;
+            case "snow":
+                villagerType = VillagerType.SNOW;
+                break;
+            case "swamp":
+                villagerType = VillagerType.SWAMP;
+                break;
+            case "taiga":
+                villagerType = VillagerType.TAIGA;
+                break;
+            default:
+                villagerType = VillagerType.PLAINS;
+                break;
+        }
+        return new VillagerData(villagerType, null, 0);
     }
 
     T build() {
