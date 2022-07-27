@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("unused")
 public enum NMSVersion {
     v1_16_R3(new me.theguyhere.villagerdefense.nms.v1_16_r3.VersionNMSManager()),
     v1_17_R1(new me.theguyhere.villagerdefense.nms.v1_17_r1.VersionNMSManager()),

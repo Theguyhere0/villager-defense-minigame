@@ -6,6 +6,7 @@ import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,6 +87,7 @@ public class Challenge {
      * @param active Whether the kit is active or not.
      * @return GUI button.
      */
+    @NotNull
     public ItemStack getButton(boolean active) {
         HashMap<Enchantment, Integer> enchants = new HashMap<>();
         enchants.put(Enchantment.DURABILITY, 1);
@@ -154,10 +156,12 @@ public class Challenge {
         else return null;
     }
 
+    @NotNull
     public static Challenge none() {
         return new Challenge(LanguageManager.names.none, "none", Material.LIGHT_GRAY_CONCRETE, 1);
     }
 
+    @NotNull
     public static Challenge amputee() {
         int bonus = 10;
 
@@ -172,6 +176,7 @@ public class Challenge {
 
         return challenge;
     }
+    @NotNull
     public static Challenge clumsy() {
         int bonus = 15;
 
@@ -185,6 +190,7 @@ public class Challenge {
 
         return challenge;
     }
+    @NotNull
     public static Challenge featherweight() {
         int bonus = 20;
 
@@ -199,6 +205,7 @@ public class Challenge {
 
         return challenge;
     }
+    @NotNull
     public static Challenge pacifist() {
         int bonus = 25;
 
@@ -213,6 +220,7 @@ public class Challenge {
 
         return challenge;
     }
+    @NotNull
     public static Challenge dwarf() {
         int bonus = 40;
 
@@ -227,6 +235,7 @@ public class Challenge {
 
         return challenge;
     }
+    @NotNull
     public static Challenge uhc() {
         int bonus = 50;
 
@@ -241,6 +250,7 @@ public class Challenge {
 
         return challenge;
     }
+    @NotNull
     public static Challenge explosive() {
         int bonus = 60;
 
@@ -255,6 +265,7 @@ public class Challenge {
 
         return challenge;
     }
+    @NotNull
     public static Challenge naked() {
         int bonus = 75;
 
@@ -269,6 +280,7 @@ public class Challenge {
 
         return challenge;
     }
+    @NotNull
     public static Challenge blind() {
         int bonus = 120;
 

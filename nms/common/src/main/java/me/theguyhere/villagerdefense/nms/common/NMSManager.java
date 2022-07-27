@@ -10,10 +10,9 @@ import org.bukkit.entity.Player;
  * This class structure borrowed from filoghost.
  */
 public interface NMSManager {
-
     TextPacketEntity newTextPacketEntity();
 
-    VillagerPacketEntity newVillagerPacketEntity();
+    VillagerPacketEntity newVillagerPacketEntity(String type);
 
     String getSpawnParticleName();
 
@@ -24,6 +23,10 @@ public interface NMSManager {
     String getBorderParticleName();
 
     void nameArena(Player player, String arenaName, int arenaID);
+
+    void setBowCooldown(Player player, int cooldownTicks);
+
+    void setCrossbowCooldown(Player player, int cooldownTicks);
 
     void injectPacketListener(Player player, PacketListener packetListener);
 

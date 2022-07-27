@@ -1,11 +1,13 @@
 package me.theguyhere.villagerdefense.plugin.exceptions;
 
+import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+
 /**
- * An exception thrown when an {@link me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena} cannot be found.
+ * An exception thrown when an {@link Arena} cannot be found.
  */
-public class ArenaNotFoundException extends Exception {
-    public ArenaNotFoundException(String message) {
-        super(message);
+public class ArenaNotFoundException extends ArenaException {
+    public ArenaNotFoundException(String msg) {
+        super(msg);
     }
 
     public ArenaNotFoundException() {

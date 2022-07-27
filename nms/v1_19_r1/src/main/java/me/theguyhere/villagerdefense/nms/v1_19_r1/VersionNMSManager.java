@@ -30,8 +30,8 @@ public class VersionNMSManager implements NMSManager {
     }
 
     @Override
-    public VillagerPacketEntity newVillagerPacketEntity() {
-        return new PacketEntityVillager(new EntityID());
+    public VillagerPacketEntity newVillagerPacketEntity(String type) {
+        return new PacketEntityVillager(new EntityID(), type);
     }
 
     @Override
@@ -75,6 +75,16 @@ public class VersionNMSManager implements NMSManager {
                 new TileEntityDataPacket(position, IRegistry.ab.a(TileEntityTypes.h), signNBT),
                 new OpenSignEditorPacket(position),
                 new BlockChangePacket(position, original)).sendTo(player);
+    }
+
+    @Override
+    public void setBowCooldown(Player player, int cooldownTicks) {
+        new SetCooldownPacket(ItemID.BOW, cooldownTicks).sendTo(player);
+    }
+
+    @Override
+    public void setCrossbowCooldown(Player player, int cooldownTicks) {
+        new SetCooldownPacket(ItemID.CROSSBOW, cooldownTicks).sendTo(player);
     }
 
     @Override

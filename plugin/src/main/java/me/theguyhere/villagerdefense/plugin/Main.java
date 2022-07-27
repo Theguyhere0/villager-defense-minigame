@@ -6,7 +6,6 @@ import me.theguyhere.villagerdefense.nms.common.NMSManager;
 import me.theguyhere.villagerdefense.plugin.commands.CommandTab;
 import me.theguyhere.villagerdefense.plugin.commands.Commands;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLanguageKeyException;
-import me.theguyhere.villagerdefense.plugin.game.models.GameItems;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.listeners.*;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
@@ -42,17 +41,19 @@ public class Main extends JavaPlugin {
 	private static boolean loaded = false;
 	private static final List<String> unloadedWorlds = new ArrayList<>();
 	private static Economy economy;
+	private static Team monsters;
+	private static Team villagers;
 
 	// Global state variables
 	private static boolean outdated = false; // DO NOT CHANGE
 	public static final boolean releaseMode = true;
 	public static final int configVersion = 9;
-	public static final int arenaDataVersion = 7;
+	public static final int arenaDataVersion = 8;
 	public static final int playerDataVersion = 3;
-	public static final int spawnTableVersion = 1;
-	public static final int languageFileVersion = 20;
-	public static final int defaultSpawnVersion = 2;
-	public static final int customEffectsVersion = 1;
+	public static final int spawnTableVersion = 2;
+	public static final int languageFileVersion = 21;
+	public static final int defaultSpawnVersion = 3;
+	public static final int customEffectsVersion = 2;
 
 	@Override
 	public void onEnable() {
@@ -88,7 +89,6 @@ public class Main extends JavaPlugin {
 		} catch (InvalidLanguageKeyException e) {
 			e.printStackTrace();
 		}
-		GameItems.init();
 
 		// Register event listeners
 		pm.registerEvents(new InventoryListener(), this);
@@ -100,25 +100,29 @@ public class Main extends JavaPlugin {
 		pm.registerEvents(new ChallengeListener(), this);
 		pm.registerEvents(new WorldListener(), this);
 		pm.registerEvents(new BonusListener(), this);
-		pm.registerEvents(new CustomEffectsListener(), this);
 
 		// Add packet listeners for online players
 		for (Player player : Bukkit.getOnlinePlayers())
 			nmsManager.injectPacketListener(player, new PacketListenerImp());
 
 		// Set teams
-		if (Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("monsters") == null) {
-			Team monsters = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard()
+		monsters = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("monsters");
+		if (monsters == null)
+			monsters = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard()
 					.registerNewTeam("monsters");
-			monsters.setColor(ChatColor.RED);
-			monsters.setDisplayName(ChatColor.RED + "Monsters");
-		}
-		if (Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("villagers") == null) {
-			Team villagers = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard()
+		monsters.setColor(ChatColor.RED);
+		monsters.setDisplayName(ChatColor.RED + "Monsters");
+		monsters.setAllowFriendlyFire(false);
+		monsters.setCanSeeFriendlyInvisibles(true);
+
+		villagers = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("villagers");
+		if (villagers == null)
+			villagers = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard()
 					.registerNewTeam("villagers");
-			villagers.setColor(ChatColor.GREEN);
-			villagers.setDisplayName(ChatColor.GREEN + "Villagers");
-		}
+		villagers.setColor(ChatColor.GREEN);
+		villagers.setDisplayName(ChatColor.GREEN + "Villagers");
+		villagers.setAllowFriendlyFire(false);
+		villagers.setCanSeeFriendlyInvisibles(true);
 
 		checkArenaNameAndGatherUnloadedWorlds();
 
@@ -195,6 +199,14 @@ public class Main extends JavaPlugin {
 				0);
 	}
 
+	public static Team getMonstersTeam() {
+		return monsters;
+	}
+
+	public static Team getVillagersTeam() {
+		return villagers;
+	}
+
 	// Returns arena data
 	public static FileConfiguration getArenaData() {
 		return arenaData.getConfig();
@@ -218,6 +230,11 @@ public class Main extends JavaPlugin {
 	// Returns custom effects
 	public static FileConfiguration getCustomEffects() {
 		return customEffects.getConfig();
+	}
+
+	// Saves custom effects data changes
+	public static void saveCustomEffects() {
+		customEffects.saveConfig();
 	}
 
 	public static boolean isOutdated() {
@@ -370,6 +387,10 @@ public class Main extends JavaPlugin {
 					0, "customEffects.yml");
 			outdated = true;
 		}
+
+		// Close all arenas if outdated
+		if (outdated)
+			GameManager.closeArenas();
 	}
 
 	private void checkArenaNameAndGatherUnloadedWorlds() {

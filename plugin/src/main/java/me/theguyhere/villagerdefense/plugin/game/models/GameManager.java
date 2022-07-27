@@ -122,16 +122,9 @@ public class GameManager {
 	 * @param player Player to give a scoreboard.
 	 */
 	public static void createBoard(VDPlayer player) {
-		ScoreboardManager manager = Bukkit.getScoreboardManager();
-		if (manager == null)
-			return;
+		ScoreboardManager manager = Objects.requireNonNull(Bukkit.getScoreboardManager());
 		Scoreboard board = manager.getNewScoreboard();
-		Arena arena;
-		try {
-				arena = getArena(player.getPlayer());
-		} catch (ArenaNotFoundException e) {
-			return;
-		}
+		Arena arena = player.getArena();
 
 		// Create score board
 		Objective obj = board.registerNewObjective("VillagerDefense", "dummy",
@@ -489,5 +482,9 @@ public class GameManager {
 
 	public static void wipeArenas() {
 		arenas.values().stream().filter(Objects::nonNull).forEach(Arena::wipe);
+	}
+
+	public static void closeArenas() {
+		arenas.values().forEach(arena -> arena.setClosed(true));
 	}
 }
