@@ -21,13 +21,17 @@ import java.util.List;
 public abstract class Axe extends VDWeapon {
     @NotNull
     public static ItemStack create(double difficulty) {
-        int level = Math.max(getLevel(difficulty) * 2 - 2, 1);
+        return create(Math.max(getLevel(difficulty) * 2 - 2, 1));
+    }
+
+    @NotNull
+    public static ItemStack create(int level) {
         Material mat;
         List<String> lores = new ArrayList<>();
         Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
 
         // Set material
-        switch ((level - 1) / 8) {
+        switch ((level - 1) / 5) {
             case 0:
                 mat = Material.WOODEN_AXE;
                 break;

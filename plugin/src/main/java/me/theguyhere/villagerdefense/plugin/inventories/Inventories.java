@@ -1362,6 +1362,8 @@ public class Inventories {
 
 	// Generate the weapon shop
 	public static Inventory createWeaponShopMenu(int level, Arena arena) {
+		Random r = new Random();
+
 		// Set price modifier
 		double modifier = Math.pow(arena.getActiveCount() - 5, 2) / 200 + 1;
 		if (!arena.hasDynamicPrices())
@@ -1377,73 +1379,88 @@ public class Inventories {
 
 		// Fill in swords
 		List<ItemStack> swords = new ArrayList<>();
-		for (int i = 0; i < 4; i++) {
-			ItemStack sword = Sword.create(arena.getCurrentDifficulty());
-			if (swords.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
-					.equals(Objects.requireNonNull(sword.getItemMeta()).getDisplayName())))
-				swords.add(sword);
-			else swords.add(Buttons.duplicatePlaceholder());
-		}
+		swords.add(Sword.create(r.nextInt(5) + 1));
+		if (level < 3)
+			swords.add(Buttons.levelPlaceholder(3));
+		else swords.add(Sword.create(r.nextInt(5) + 6));
+		if (level < 4)
+			swords.add(Buttons.levelPlaceholder(4));
+		else swords.add(Sword.create(r.nextInt(5) + 11));
+		if (level < 5)
+			swords.add(Buttons.levelPlaceholder(5));
+		else swords.add(Sword.create(r.nextInt(5 * (level - 4)) + 16));
 		sort(swords);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i, modifyPrice(swords.get(i), modifier));
 
 		// Fill in axes
 		List<ItemStack> axes = new ArrayList<>();
-		for (int i = 0; i < 4; i++) {
-			ItemStack axe = Axe.create(arena.getCurrentDifficulty());
-			if (level < 3)
-				axes.add(Buttons.levelPlaceholder(3));
-			else if (axes.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
-					.equals(Objects.requireNonNull(axe.getItemMeta()).getDisplayName())))
-				axes.add(axe);
-			else axes.add(Buttons.duplicatePlaceholder());
-		}
+		if (level < 3)
+			axes.add(Buttons.levelPlaceholder(3));
+		else axes.add(Axe.create(r.nextInt(5) + 1));
+		if (level < 4)
+			axes.add(Buttons.levelPlaceholder(4));
+		else axes.add(Axe.create(r.nextInt(5) + 6));
+		if (level < 5)
+			axes.add(Buttons.levelPlaceholder(5));
+		else axes.add(Axe.create(r.nextInt(5) + 11));
+		if (level < 6)
+			axes.add(Buttons.levelPlaceholder(6));
+		else axes.add(Axe.create(r.nextInt(5 * (level - 5)) + 16));
 		sort(axes);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 9, modifyPrice(axes.get(i), modifier));
 
 		// Fill in scythes
 		List<ItemStack> scythes = new ArrayList<>();
-		for (int i = 0; i < 4; i++) {
-			ItemStack scythe = Scythe.create(arena.getCurrentDifficulty());
-			if (level < 4)
-				scythes.add(Buttons.levelPlaceholder(4));
-			else if (scythes.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
-					.equals(Objects.requireNonNull(scythe.getItemMeta()).getDisplayName())))
-				scythes.add(scythe);
-			else scythes.add(Buttons.duplicatePlaceholder());
-		}
+		if (level < 4)
+			scythes.add(Buttons.levelPlaceholder(4));
+		else scythes.add(Scythe.create(r.nextInt(5) + 1));
+		if (level < 5)
+			scythes.add(Buttons.levelPlaceholder(5));
+		else scythes.add(Scythe.create(r.nextInt(5) + 6));
+		if (level < 6)
+			scythes.add(Buttons.levelPlaceholder(6));
+		else scythes.add(Scythe.create(r.nextInt(5) + 11));
+		if (level < 7)
+			scythes.add(Buttons.levelPlaceholder(7));
+		else scythes.add(Scythe.create(r.nextInt(5 * (level - 6)) + 16));
 		sort(scythes);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 18, modifyPrice(scythes.get(i), modifier));
 
 		// Fill in bows
 		List<ItemStack> bows = new ArrayList<>();
-		for (int i = 0; i < 4; i++) {
-			ItemStack bow = Bow.create(arena.getCurrentDifficulty());
-			if (level < 2)
-				bows.add(Buttons.levelPlaceholder(2));
-			else if (bows.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
-					.equals(Objects.requireNonNull(bow.getItemMeta()).getDisplayName())))
-				bows.add(bow);
-			else bows.add(Buttons.duplicatePlaceholder());
-		}
+		if (level < 2)
+			bows.add(Buttons.levelPlaceholder(2));
+		else bows.add(Bow.create(r.nextInt(5) + 1));
+		if (level < 3)
+			bows.add(Buttons.levelPlaceholder(3));
+		else bows.add(Bow.create(r.nextInt(5) + 6));
+		if (level < 4)
+			bows.add(Buttons.levelPlaceholder(4));
+		else bows.add(Bow.create(r.nextInt(5) + 11));
+		if (level < 5)
+			bows.add(Buttons.levelPlaceholder(5));
+		else bows.add(Bow.create(r.nextInt(5 * (level - 4)) + 16));
 		sort(bows);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 5, modifyPrice(bows.get(i), modifier));
 
 		// Fill in crossbows
 		List<ItemStack> crossbows = new ArrayList<>();
-		for (int i = 0; i < 4; i++) {
-			ItemStack crossbow = Crossbow.create(arena.getCurrentDifficulty());
-			if (level < 5)
-				crossbows.add(Buttons.levelPlaceholder(5));
-			else if (crossbows.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
-					.equals(Objects.requireNonNull(crossbow.getItemMeta()).getDisplayName())))
-				crossbows.add(crossbow);
-			else crossbows.add(Buttons.duplicatePlaceholder());
-		}
+		if (level < 5)
+			crossbows.add(Buttons.levelPlaceholder(5));
+		else crossbows.add(Crossbow.create(r.nextInt(5) + 1));
+		if (level < 6)
+			crossbows.add(Buttons.levelPlaceholder(6));
+		else crossbows.add(Crossbow.create(r.nextInt(5) + 6));
+		if (level < 7)
+			crossbows.add(Buttons.levelPlaceholder(7));
+		else crossbows.add(Crossbow.create(r.nextInt(5) + 11));
+		if (level < 8)
+			crossbows.add(Buttons.levelPlaceholder(8));
+		else crossbows.add(Crossbow.create(r.nextInt(5 * (level - 7)) + 16));
 		sort(crossbows);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 14, modifyPrice(crossbows.get(i), modifier));
@@ -1452,15 +1469,18 @@ public class Inventories {
 
 		// Fill in ammo
 		List<ItemStack> ammos = new ArrayList<>();
-		for (int i = 0; i < 4; i++) {
-			ItemStack ammo = Ammo.create(arena.getCurrentDifficulty());
-			if (level < 2)
-				ammos.add(Buttons.levelPlaceholder(2));
-			else if (ammos.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
-					.equals(Objects.requireNonNull(ammo.getItemMeta()).getDisplayName())))
-				ammos.add(ammo);
-			else ammos.add(Buttons.duplicatePlaceholder());
-		}
+		if (level < 2)
+			ammos.add(Buttons.levelPlaceholder(2));
+		else ammos.add(Ammo.create(r.nextInt(5) + 1));
+		if (level < 3)
+			ammos.add(Buttons.levelPlaceholder(3));
+		else ammos.add(Ammo.create(r.nextInt(5) + 6));
+		if (level < 4)
+			ammos.add(Buttons.levelPlaceholder(4));
+		else ammos.add(Ammo.create(r.nextInt(5) + 11));
+		if (level < 5)
+			ammos.add(Buttons.levelPlaceholder(5));
+		else ammos.add(Ammo.create(r.nextInt(5 * (level - 4)) + 16));
 		sort(ammos);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 23, modifyPrice(ammos.get(i), modifier));
@@ -1473,6 +1493,8 @@ public class Inventories {
 
 	// Generate the armor shop
 	public static Inventory createArmorShopMenu(int level, Arena arena) {
+		Random r = new Random();
+
 		// Set price modifier
 		double modifier = Math.pow(arena.getActiveCount() - 5, 2) / 200 + 1;
 		if (!arena.hasDynamicPrices())
@@ -1488,52 +1510,64 @@ public class Inventories {
 
 		// Fill in helmets
 		List<ItemStack> helmets = new ArrayList<>();
-		for (int i = 0; i < 4; i++) {
-			ItemStack helmet = Helmet.create(arena.getCurrentDifficulty());
-			if (helmets.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
-					.equals(Objects.requireNonNull(helmet.getItemMeta()).getDisplayName())))
-				helmets.add(helmet);
-			else helmets.add(Buttons.duplicatePlaceholder());
-		}
+		helmets.add(Helmet.create(r.nextInt(5) + 1));
+		if (level < 3)
+			helmets.add(Buttons.levelPlaceholder(3));
+		else helmets.add(Helmet.create(r.nextInt(5) + 6));
+		if (level < 5)
+			helmets.add(Buttons.levelPlaceholder(5));
+		else helmets.add(Helmet.create(r.nextInt(5) + 11));
+		if (level < 6)
+			helmets.add(Buttons.levelPlaceholder(6));
+		else helmets.add(Helmet.create(r.nextInt(5 * (level - 5)) + 16));
 		sort(helmets);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i, modifyPrice(helmets.get(i), modifier));
 
 		// Fill in chestplates
 		List<ItemStack> chestplates = new ArrayList<>();
-		for (int i = 0; i < 4; i++) {
-			ItemStack chestplate = Chestplate.create(arena.getCurrentDifficulty());
-			if (chestplates.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
-					.equals(Objects.requireNonNull(chestplate.getItemMeta()).getDisplayName())))
-				chestplates.add(chestplate);
-			else chestplates.add(Buttons.duplicatePlaceholder());
-		}
+		chestplates.add(Chestplate.create(r.nextInt(5) + 1));
+		if (level < 3)
+			chestplates.add(Buttons.levelPlaceholder(3));
+		else chestplates.add(Chestplate.create(r.nextInt(5) + 6));
+		if (level < 5)
+			chestplates.add(Buttons.levelPlaceholder(5));
+		else chestplates.add(Chestplate.create(r.nextInt(5) + 11));
+		if (level < 6)
+			chestplates.add(Buttons.levelPlaceholder(6));
+		else chestplates.add(Chestplate.create(r.nextInt(5 * (level - 5)) + 16));
 		sort(chestplates);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 5, modifyPrice(chestplates.get(i), modifier));
 
 		// Fill in leggings
 		List<ItemStack> leggings = new ArrayList<>();
-		for (int i = 0; i < 4; i++) {
-			ItemStack legging = Leggings.create(arena.getCurrentDifficulty());
-			if (leggings.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
-					.equals(Objects.requireNonNull(legging.getItemMeta()).getDisplayName())))
-				leggings.add(legging);
-			else leggings.add(Buttons.duplicatePlaceholder());
-		}
+		leggings.add(Leggings.create(r.nextInt(5) + 1));
+		if (level < 3)
+			leggings.add(Buttons.levelPlaceholder(3));
+		else leggings.add(Leggings.create(r.nextInt(5) + 6));
+		if (level < 5)
+			leggings.add(Buttons.levelPlaceholder(5));
+		else leggings.add(Leggings.create(r.nextInt(5) + 11));
+		if (level < 6)
+			leggings.add(Buttons.levelPlaceholder(6));
+		else leggings.add(Leggings.create(r.nextInt(5 * (level - 5)) + 16));
 		sort(leggings);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 9, modifyPrice(leggings.get(i), modifier));
 
 		// Fill in boots
 		List<ItemStack> boots = new ArrayList<>();
-		for (int i = 0; i < 4; i++) {
-			ItemStack boot = Boots.create(arena.getCurrentDifficulty());
-			if (boots.stream().noneMatch(item -> Objects.requireNonNull(item.getItemMeta()).getDisplayName()
-					.equals(Objects.requireNonNull(boot.getItemMeta()).getDisplayName())))
-				boots.add(boot);
-			else boots.add(Buttons.duplicatePlaceholder());
-		}
+		boots.add(Boots.create(r.nextInt(5) + 1));
+		if (level < 3)
+			boots.add(Buttons.levelPlaceholder(3));
+		else boots.add(Boots.create(r.nextInt(5) + 6));
+		if (level < 5)
+			boots.add(Buttons.levelPlaceholder(5));
+		else boots.add(Boots.create(r.nextInt(5) + 11));
+		if (level < 6)
+			boots.add(Buttons.levelPlaceholder(6));
+		else boots.add(Boots.create(r.nextInt(5 * (level - 5)) + 16));
 		sort(boots);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 14, modifyPrice(boots.get(i), modifier));

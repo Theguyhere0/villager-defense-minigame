@@ -21,13 +21,17 @@ import java.util.List;
 public abstract class Sword extends VDWeapon {
     @NotNull
     public static ItemStack create(double difficulty) {
-        int level = getLevel(difficulty * 2);
+        return create(getLevel(difficulty * 2));
+    }
+
+    @NotNull
+    public static ItemStack create(int level) {
         Material mat;
         List<String> lores = new ArrayList<>();
         Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
 
         // Set material
-        switch ((level - 1) / 8) {
+        switch ((level - 1) / 5) {
             case 0:
                 mat = Material.WOODEN_SWORD;
                 break;
