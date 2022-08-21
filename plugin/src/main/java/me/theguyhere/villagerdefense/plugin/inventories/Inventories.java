@@ -1395,8 +1395,8 @@ public class Inventories {
 
 		// Fill in axes
 		List<ItemStack> axes = new ArrayList<>();
-		if (level < 3)
-			axes.add(Buttons.levelPlaceholder(3));
+		if (level < 2)
+			axes.add(Buttons.levelPlaceholder(2));
 		else axes.add(Axe.create(r.nextInt(5) + 1));
 		if (level < 4)
 			axes.add(Buttons.levelPlaceholder(4));
@@ -1433,16 +1433,16 @@ public class Inventories {
 		List<ItemStack> bows = new ArrayList<>();
 		if (level < 2)
 			bows.add(Buttons.levelPlaceholder(2));
-		else bows.add(Bow.create(r.nextInt(5) + 1));
+		else bows.add(Bow.create(r.nextInt(4) + 1));
 		if (level < 3)
 			bows.add(Buttons.levelPlaceholder(3));
-		else bows.add(Bow.create(r.nextInt(5) + 6));
+		else bows.add(Bow.create(r.nextInt(4) + 5));
 		if (level < 4)
 			bows.add(Buttons.levelPlaceholder(4));
-		else bows.add(Bow.create(r.nextInt(5) + 11));
+		else bows.add(Bow.create(r.nextInt(4) + 9));
 		if (level < 5)
 			bows.add(Buttons.levelPlaceholder(5));
-		else bows.add(Bow.create(r.nextInt(5 * (level - 4)) + 16));
+		else bows.add(Bow.create(r.nextInt(4 * (level - 4)) + 13));
 		sort(bows);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 5, modifyPrice(bows.get(i), modifier));
@@ -1451,16 +1451,16 @@ public class Inventories {
 		List<ItemStack> crossbows = new ArrayList<>();
 		if (level < 5)
 			crossbows.add(Buttons.levelPlaceholder(5));
-		else crossbows.add(Crossbow.create(r.nextInt(5) + 1));
+		else crossbows.add(Crossbow.create(r.nextInt(4) + 1));
 		if (level < 6)
 			crossbows.add(Buttons.levelPlaceholder(6));
-		else crossbows.add(Crossbow.create(r.nextInt(5) + 6));
+		else crossbows.add(Crossbow.create(r.nextInt(4) + 5));
 		if (level < 7)
 			crossbows.add(Buttons.levelPlaceholder(7));
-		else crossbows.add(Crossbow.create(r.nextInt(5) + 11));
+		else crossbows.add(Crossbow.create(r.nextInt(4) + 9));
 		if (level < 8)
 			crossbows.add(Buttons.levelPlaceholder(8));
-		else crossbows.add(Crossbow.create(r.nextInt(5 * (level - 7)) + 16));
+		else crossbows.add(Crossbow.create(r.nextInt(4 * (level - 7)) + 13));
 		sort(crossbows);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 14, modifyPrice(crossbows.get(i), modifier));
@@ -1471,16 +1471,16 @@ public class Inventories {
 		List<ItemStack> ammos = new ArrayList<>();
 		if (level < 2)
 			ammos.add(Buttons.levelPlaceholder(2));
-		else ammos.add(Ammo.create(r.nextInt(5) + 1));
+		else ammos.add(Ammo.create(r.nextInt(4) + 1));
 		if (level < 3)
 			ammos.add(Buttons.levelPlaceholder(3));
-		else ammos.add(Ammo.create(r.nextInt(5) + 6));
+		else ammos.add(Ammo.create(r.nextInt(4) + 5));
 		if (level < 4)
 			ammos.add(Buttons.levelPlaceholder(4));
-		else ammos.add(Ammo.create(r.nextInt(5) + 11));
+		else ammos.add(Ammo.create(r.nextInt(4) + 9));
 		if (level < 5)
 			ammos.add(Buttons.levelPlaceholder(5));
-		else ammos.add(Ammo.create(r.nextInt(5 * (level - 4)) + 16));
+		else ammos.add(Ammo.create(r.nextInt(4 * (level - 4)) + 13));
 		sort(ammos);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 23, modifyPrice(ammos.get(i), modifier));

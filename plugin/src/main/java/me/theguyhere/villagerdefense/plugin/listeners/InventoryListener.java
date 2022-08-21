@@ -2630,7 +2630,7 @@ public class InventoryListener implements Listener {
 			AtomicBoolean community = new AtomicBoolean(false);
 			Objects.requireNonNull(player.getWorld())
 					.getNearbyEntities(arenaInstance.getBounds(), entity ->
-							player.getLocation().distance(entity.getLocation()) <= 18)
+							player.getLocation().distance(entity.getLocation()) <= 25)
 					.stream()
 					.filter(entity -> entity instanceof Villager)
 					.forEach(entity -> {

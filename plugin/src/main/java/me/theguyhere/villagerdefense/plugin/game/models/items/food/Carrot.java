@@ -17,8 +17,8 @@ public abstract class Carrot extends VDFood {
     @NotNull
     public static ItemStack create() {
         return ItemManager.createItem(Material.CARROT, null,
-                new ColoredMessage(ChatColor.RED, "+20 " + Utils.HP).toString(),
-                CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a75"));
+                new ColoredMessage(ChatColor.RED, "+40 " + Utils.HP).toString(),
+                CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a150"));
     }
 
     public static boolean matches(ItemStack toCheck) {
@@ -31,6 +31,6 @@ public abstract class Carrot extends VDFood {
         if (lore == null)
             return false;
         return toCheck.getType() == Material.CARROT && lore.stream().anyMatch(line -> line.contains(
-                new ColoredMessage(ChatColor.RED, "+20 " + Utils.HP).toString()));
+                new ColoredMessage(ChatColor.RED, "+40 " + Utils.HP).toString()));
     }
 }

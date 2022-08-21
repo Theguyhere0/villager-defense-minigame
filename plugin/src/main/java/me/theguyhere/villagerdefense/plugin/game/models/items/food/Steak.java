@@ -17,8 +17,8 @@ public abstract class Steak extends VDFood {
     @NotNull
     public static ItemStack create() {
         return ItemManager.createItem(Material.COOKED_BEEF, null,
-                new ColoredMessage(ChatColor.RED, "+80 " + Utils.HP).toString(),
-                CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a275"));
+                new ColoredMessage(ChatColor.RED, "+160 " + Utils.HP).toString(),
+                CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a550"));
     }
 
     public static boolean matches(ItemStack toCheck) {
