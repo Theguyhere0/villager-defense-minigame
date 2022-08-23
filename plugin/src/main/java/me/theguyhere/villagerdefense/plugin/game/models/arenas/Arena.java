@@ -1456,7 +1456,7 @@ public class Arena {
             throw new ArenaTaskException("Arena is no longer waiting");
         if (activeTasks.containsKey(NOTIFY_WAITING))
             throw new ArenaTaskException("Arena already started waiting notifications");
-        if (activeTasks.containsKey(FORCE_START_ARENA))
+        if (getActiveCount() > 0 && activeTasks.containsKey(FORCE_START_ARENA))
             throw new ArenaTaskException("Arena was force started");
 
         // Clear active tasks
@@ -1686,8 +1686,7 @@ public class Arena {
         activeTasks.forEach((name, task) -> task.cancel());
         activeTasks.clear();
 
-        // Set arena to active, reset villager and enemy count, set new game ID, clear arena
-        setStatus(ArenaStatus.ACTIVE);
+        // Reset villager and enemy count, set new game ID, clear arena
         resetVillagers();
         resetEnemies();
         newGameID();
@@ -1703,6 +1702,9 @@ public class Arena {
             for (VDPlayer vdPlayer : getActives())
                 vdPlayer.getPlayer().getInventory().clear();
         }
+
+        // Set arena status to active
+        setStatus(ArenaStatus.ACTIVE);
 
         // Stop waiting sound
         if (getWaitingSound() != null)
