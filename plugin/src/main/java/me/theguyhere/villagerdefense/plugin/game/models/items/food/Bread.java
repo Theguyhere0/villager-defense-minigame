@@ -17,8 +17,8 @@ public abstract class Bread extends VDFood {
     @NotNull
     public static ItemStack create() {
         return ItemManager.createItem(Material.BREAD, null,
-                new ColoredMessage(ChatColor.RED, "+30 " + Utils.HP).toString(),
-                CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a110"));
+                new ColoredMessage(ChatColor.RED, "+60 " + Utils.HP).toString(),
+                CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a220"));
     }
 
     public static boolean matches(ItemStack toCheck) {
@@ -31,6 +31,6 @@ public abstract class Bread extends VDFood {
         if (lore == null)
             return false;
         return toCheck.getType() == Material.BREAD && lore.stream().anyMatch(line -> line.contains(
-                new ColoredMessage(ChatColor.RED, "+30 " + Utils.HP).toString()));
+                new ColoredMessage(ChatColor.RED, "+60 " + Utils.HP).toString()));
     }
 }

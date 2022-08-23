@@ -17,8 +17,8 @@ public abstract class GoldenCarrot extends VDFood {
     @NotNull
     public static ItemStack create() {
         return ItemManager.createItem(Material.GOLDEN_CARROT, null,
-                new ColoredMessage(ChatColor.RED, "+100 " + Utils.HP).toString(),
-                CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a330"));
+                new ColoredMessage(ChatColor.RED, "+200 " + Utils.HP).toString(),
+                CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a660"));
     }
 
     public static boolean matches(ItemStack toCheck) {

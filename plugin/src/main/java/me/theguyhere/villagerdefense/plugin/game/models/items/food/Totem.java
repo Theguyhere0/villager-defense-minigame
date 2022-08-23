@@ -17,8 +17,8 @@ public abstract class Totem extends VDFood {
     @NotNull
     public static ItemStack create() {
         return ItemManager.createItem(Material.TOTEM_OF_UNDYING, null,
-                new ColoredMessage(ChatColor.GOLD, "+250 " + Utils.HP).toString(),
-                CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a950"));
+                new ColoredMessage(ChatColor.GOLD, "+400 " + Utils.HP).toString(),
+                CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a1550"));
     }
 
     public static boolean matches(ItemStack toCheck) {

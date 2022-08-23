@@ -19,7 +19,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class Ammo extends VDWeapon {
     @NotNull
     public static ItemStack create(double difficulty) {
-        int level = Math.max(getLevel(difficulty) - 2, 1);
+        return create(Math.max(getLevel(difficulty) - 2, 1));
+    }
+
+    @NotNull
+    public static ItemStack create(int level) {
         List<String> lores = new ArrayList<>();
 
         // Add space in lore from name

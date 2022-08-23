@@ -20,7 +20,7 @@ public class VDGhast extends VDMinion {
                 getLevel(arena.getCurrentDifficulty(), 1.5, 4),
                 AttackType.NORMAL
         );
-        setHealth(1250, 75);
+        setHealth(800, 75);
         setDamage(200, 20, .2);
         setModerateAttackSpeed();
         setHighKnockback();
