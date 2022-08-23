@@ -16,7 +16,7 @@ public class ArenaSpawn {
     /** ID of the arena spawn.*/
     private final int id;
     /** Whether the spawn indicator is on or not.*/
-    private boolean on;
+    private boolean on = false;
 
     public ArenaSpawn(@NotNull Location location, @NotNull ArenaSpawnType spawnType, int id)
             throws InvalidLocationException {
@@ -28,7 +28,6 @@ public class ArenaSpawn {
         this.spawnType = spawnType;
         this.id = id;
         spawnIndicator = new SpawnIndicator(location, getName());
-        on = false;
     }
 
     public @NotNull Location getLocation() {

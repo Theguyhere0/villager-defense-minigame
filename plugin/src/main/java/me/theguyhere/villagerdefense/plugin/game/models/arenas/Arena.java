@@ -66,15 +66,15 @@ public class Arena {
     /** Whether the arena is in the process of spawning villagers.*/
     private boolean spawningVillagers;
     /** The ID of the game currently in progress.*/
-    private int gameID;
+    private int gameID = 0;
     /** Current wave of the active game.*/
-    private int currentWave;
+    private int currentWave = 0;
     /** Villager count.*/
-    private int villagers;
+    private int villagers = 0;
     /** Enemy count.*/
-    private int enemies;
+    private int enemies = 0;
     /** Iron golem count.*/
-    private int golems;
+    private int golems = 0;
     /** ID of task managing player spawn particles.*/
     private int playerParticlesID = 0;
     /** ID of task managing monster spawn particles.*/
@@ -132,9 +132,6 @@ public class Arena {
         config = Main.getArenaData();
         id = arenaID;
         path = "arena." + arenaID;
-        currentWave = 0;
-        villagers = 0;
-        enemies = 0;
         status = ArenaStatus.WAITING;
         refreshArenaBoard();
         refreshPlayerSpawn();

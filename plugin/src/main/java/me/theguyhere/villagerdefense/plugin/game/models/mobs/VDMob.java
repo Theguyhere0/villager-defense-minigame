@@ -39,22 +39,22 @@ public abstract class VDMob {
     protected boolean hostile;
     
     protected final int level;
-    protected int maxHealth;
-    protected int currentHealth;
-    protected int armor;
-    protected double toughness;
-    protected int damage;
-    protected double damageSpread;
+    protected int maxHealth = 0;
+    protected int currentHealth = 0;
+    protected int armor = 0;
+    protected double toughness = 0;
+    protected int damage = 0;
+    protected double damageSpread = 0;
     protected PotionEffectType effectType;
-    protected int effectLevel;
-    protected int effectDuration;
-    protected int pierce;
+    protected int effectLevel = 0;
+    protected int effectDuration = 0;
+    protected int pierce = 0;
     protected final AttackType attackType;
-    protected double attackSpeed;
+    protected double attackSpeed = 0;
     protected TargetPriority targetPriority = TargetPriority.NONE;
-    protected int targetRange;
-    protected int loot;
-    protected double lootSpread;
+    protected int targetRange = 0;
+    protected int loot = 0;
+    protected double lootSpread = 0;
     protected long lastStrike = 0;
     
     public static final String VD = "VD";

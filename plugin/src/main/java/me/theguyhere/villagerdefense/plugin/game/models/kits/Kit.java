@@ -68,7 +68,7 @@ public class Kit {
     /** A mapping between kit level and an array of {@link ItemStack} the player would receive.*/
     private final Map<Integer, ItemStack[]> itemsMap = new HashMap<>();
     /** The level of this instance of the kit.*/
-    private int level;
+    private int level = 0;
 
     public Kit(String name, KitType kitType, String ID, Material buttonMaterial) {
         this.name = name;
