@@ -3,8 +3,8 @@ package me.theguyhere.villagerdefense.plugin;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
-import me.theguyhere.villagerdefense.plugin.commands.CommandTab;
-import me.theguyhere.villagerdefense.plugin.commands.Commands;
+import me.theguyhere.villagerdefense.plugin.commands.TabCompleterImp;
+import me.theguyhere.villagerdefense.plugin.commands.CommandExecImp;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLanguageKeyException;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.listeners.*;
@@ -68,9 +68,9 @@ public class Main extends JavaPlugin {
 		checkFileVersions();
 
 		// Set up commands and tab complete
-		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist").setExecutor(new Commands());
+		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist").setExecutor(new CommandExecImp());
 		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist")
-				.setTabCompleter(new CommandTab());
+				.setTabCompleter(new TabCompleterImp());
 
 		// Schedule to register PAPI expansion
 		Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {

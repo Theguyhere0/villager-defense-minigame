@@ -34,7 +34,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -166,18 +165,18 @@ public class Arena {
      * Writes the new name of the arena into the arena file.
      * @param name New arena name.
      */
-    public void setName(String name) throws InvalidArenaNameException {
+    public void setName(String name) throws IllegalArenaNameException {
         // Check if name is not empty
-        if (name == null || name.length() == 0) throw new InvalidArenaNameException("Empty");
+        if (name == null || name.length() == 0) throw new IllegalArenaNameException("Empty");
 
         // Check if name is the same as current
-        else if (name.equals(getName())) throw new InvalidArenaNameException("Same");
+        else if (name.equals(getName())) throw new IllegalArenaNameException("Same");
 
         else {
             // Check for duplicate name
             try {
                 GameManager.getArena(name);
-                throw new InvalidArenaNameException("Duplicate");
+                throw new IllegalArenaNameException("Duplicate");
             } catch (ArenaNotFoundException ignored) {
             }
 
@@ -1917,9 +1916,9 @@ public class Arena {
                     LivingEntity oldTarget = mobster.getTarget();
                     LivingEntity newTarget = priority.isEmpty() ?
                             (nearby.isEmpty() ? null : (LivingEntity) nearby.get(0)) : (LivingEntity) priority.get(0);
-                    if (oldTarget == null ||
-                            newTarget != null && !oldTarget.getUniqueId().equals(newTarget.getUniqueId()))
+                    if (oldTarget == null || newTarget == null || !oldTarget.getUniqueId().equals(newTarget.getUniqueId())) {
                         mobster.setTarget(newTarget);
+                    }
                 });
             }
         });
