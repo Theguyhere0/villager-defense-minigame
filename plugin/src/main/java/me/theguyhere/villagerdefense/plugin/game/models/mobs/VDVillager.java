@@ -11,9 +11,8 @@ public abstract class VDVillager extends VDMob {
         super(lore, level, null);
         mob = villager;
         id = villager.getUniqueId();
-        hostile = false;
         villager.setAdult();
-        Main.getVillagersTeam().addEntry(villager.getUniqueId().toString());
+        villager.setMetadata(TEAM, Team.VILLAGER.getValue());
         villager.setMetadata(VD, new FixedMetadataValue(Main.plugin, arena.getId()));
         gameID = arena.getGameID();
         wave = arena.getCurrentWave();

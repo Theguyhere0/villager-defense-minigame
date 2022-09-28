@@ -3,8 +3,8 @@ package me.theguyhere.villagerdefense.plugin;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
-import me.theguyhere.villagerdefense.plugin.commands.TabCompleterImp;
 import me.theguyhere.villagerdefense.plugin.commands.CommandExecImp;
+import me.theguyhere.villagerdefense.plugin.commands.TabCompleterImp;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLanguageKeyException;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.listeners.*;
@@ -13,14 +13,12 @@ import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +39,6 @@ public class Main extends JavaPlugin {
 	private static boolean loaded = false;
 	private static final List<String> unloadedWorlds = new ArrayList<>();
 	private static Economy economy;
-	private static Team monsters;
-	private static Team villagers;
 
 	// Global state variables
 	private static boolean outdated = false; // DO NOT CHANGE
@@ -104,25 +100,6 @@ public class Main extends JavaPlugin {
 		// Add packet listeners for online players
 		for (Player player : Bukkit.getOnlinePlayers())
 			nmsManager.injectPacketListener(player, new PacketListenerImp());
-
-		// Set teams
-		monsters = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("monsters");
-		if (monsters == null)
-			monsters = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard()
-					.registerNewTeam("monsters");
-		monsters.setColor(ChatColor.RED);
-		monsters.setDisplayName(ChatColor.RED + "Monsters");
-		monsters.setAllowFriendlyFire(false);
-		monsters.setCanSeeFriendlyInvisibles(true);
-
-		villagers = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("villagers");
-		if (villagers == null)
-			villagers = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard()
-					.registerNewTeam("villagers");
-		villagers.setColor(ChatColor.GREEN);
-		villagers.setDisplayName(ChatColor.GREEN + "Villagers");
-		villagers.setAllowFriendlyFire(false);
-		villagers.setCanSeeFriendlyInvisibles(true);
 
 		checkArenaNameAndGatherUnloadedWorlds();
 
@@ -197,14 +174,6 @@ public class Main extends JavaPlugin {
 					"loaded yet: " + unloadedWorlds, 0);
 		} else CommunicationManager.debugConfirm("All worlds fully loaded. The plugin is properly initialized.",
 				0);
-	}
-
-	public static Team getMonstersTeam() {
-		return monsters;
-	}
-
-	public static Team getVillagersTeam() {
-		return villagers;
 	}
 
 	// Returns arena data

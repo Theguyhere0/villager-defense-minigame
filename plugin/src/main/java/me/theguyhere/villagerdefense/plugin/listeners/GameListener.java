@@ -6,10 +6,7 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.exceptions.VDMobNotFoundException;
+import me.theguyhere.villagerdefense.plugin.exceptions.*;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
@@ -24,10 +21,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Ammo;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Bow;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Crossbow;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.VDWeapon;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDCreeper;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDWitch;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.*;
 import me.theguyhere.villagerdefense.plugin.game.models.players.AttackClass;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
@@ -95,7 +89,7 @@ public class GameListener implements Listener {
         // Get spawn table
         DataManager data = new DataManager("spawnTables/" + arena.getSpawnTableFile());
 
-		if (Main.getVillagersTeam().hasEntry(ent.getUniqueId().toString())) {
+		if (ent.getMetadata(VDMob.TEAM).get(0).equals(Team.VILLAGER.getValue())) {
 			// Handle pet death TODO
 			if (ent instanceof Wolf) {
 				try {
@@ -111,7 +105,7 @@ public class GameListener implements Listener {
 		}
 
 		// Handle enemy death
-		else if (Main.getMonstersTeam().hasEntry(ent.getUniqueId().toString())) {
+		else if (ent.getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue())) {
 			// Get wave
 			String wave = Integer.toString(arena.getCurrentWave());
 			if (!data.getConfig().contains(wave))
@@ -133,7 +127,6 @@ public class GameListener implements Listener {
 		}
 
 		// Remove the mob
-		mob.remove();
 		arena.removeMob(mob.getID());
 
 		// Update scoreboards
@@ -300,17 +293,16 @@ public class GameListener implements Listener {
 		}
 	}
 
-	// Update health when damage is dealt by entity
+	// Update health when damage is dealt by entity and prevent friendly fire
 	@EventHandler
 	public void onHurt(EntityDamageByEntityEvent e) {
 		boolean projectile = e.getDamager() instanceof Projectile;
-		Entity interimVictim = e.getEntity();
 		Entity interimDamager = projectile ? (Entity) ((Projectile) e.getDamager()).getShooter() : e.getDamager();
-		if (!(interimVictim instanceof LivingEntity))
+		if (!(e.getEntity() instanceof LivingEntity))
 			return;
 		if (!(interimDamager instanceof LivingEntity))
 			return;
-		LivingEntity victim = (LivingEntity) interimVictim;
+		LivingEntity victim = (LivingEntity) e.getEntity();
 		LivingEntity damager = (LivingEntity) interimDamager;
 		Arena arena;
 		Player player = null;
@@ -334,9 +326,11 @@ public class GameListener implements Listener {
 				return;
 			}
 
-			// Avoid phantom damage effects
-			if (Main.getVillagersTeam().hasEntry(damager.getUniqueId().toString()))
+			// Avoid phantom damage effects and friendly fire
+			if (damager instanceof Player || damager.getMetadata(VDMob.TEAM).get(0).equals(Team.VILLAGER.getValue())) {
+				e.setCancelled(true);
 				return;
+			}
 
 			// Cancel original damage
 			e.setDamage(0);
@@ -412,10 +406,13 @@ public class GameListener implements Listener {
 			}
 
 			// Enemy getting hurt
-			if (Main.getMonstersTeam().hasEntry(victim.getUniqueId().toString())) {
-				// Avoid phantom damage effects
-				if (Main.getMonstersTeam().hasEntry(damager.getUniqueId().toString()))
+			if (victim.getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue())) {
+				// Avoid phantom damage effects and friendly fire
+				if (!(damager instanceof Player) &&
+						damager.getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue())) {
+					e.setCancelled(true);
 					return;
+				}
 
 				// Check for pacifist challenge and not an enemy
 				if (gamer != null && gamer.getChallenges().contains(Challenge.pacifist()) &&
@@ -510,10 +507,13 @@ public class GameListener implements Listener {
 			}
 
 			// Friendly getting hurt
-			if (Main.getVillagersTeam().hasEntry(victim.getUniqueId().toString())) {
-				// Avoid phantom damage effects
-				if (Main.getVillagersTeam().hasEntry(damager.getUniqueId().toString()))
+			if (victim.getMetadata(VDMob.TEAM).get(0).equals(Team.VILLAGER.getValue())) {
+				// Avoid phantom damage effects and friendly fire
+				if (damager instanceof Player ||
+						damager.getMetadata(VDMob.TEAM).get(0).equals(Team.VILLAGER.getValue())) {
+					e.setCancelled(true);
 					return;
+				}
 				if (finalDamager == null)
 					return;
 
@@ -664,6 +664,43 @@ public class GameListener implements Listener {
 		e.setDamage(0);
 	}
 
+	// Ensure proper override of targeting
+	@EventHandler
+	public void onTarget(EntityTargetLivingEntityEvent e) {
+		Entity entity = e.getEntity();
+		LivingEntity target = e.getTarget();
+
+		// Check for custom mobs and player
+		if (target == null || !entity.hasMetadata(VDMob.VD) ||
+				!(target instanceof Player) && !target.hasMetadata(VDMob.VD))
+			return;
+
+		Arena arena;
+		VDMob mob;
+		VDMob targeted;
+
+		// Attempt to get VDPlayer and VDMob
+		try {
+			arena = GameManager.getArena(Objects.requireNonNull(e.getEntity()).getMetadata(VDMob.VD).get(0).asInt());
+			mob = arena.getMob(e.getEntity().getUniqueId());
+			if (target instanceof Player && !arena.hasPlayer((Player) target))
+				return;
+			else targeted = arena.getMob(target.getUniqueId());
+		} catch (ArenaNotFoundException | VDMobNotFoundException err) {
+			return;
+		}
+
+		// Monsters
+		if (mob.getEntity().getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue()))
+			if (targeted != null && targeted.getEntity().getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue()))
+				e.setCancelled(true);
+
+		// Villager team
+		else if (mob.getEntity().getMetadata(VDMob.TEAM).get(0).equals(Team.VILLAGER.getValue()) && (targeted == null ||
+					targeted.getEntity().getMetadata(VDMob.TEAM).get(0).equals(Team.VILLAGER.getValue())))
+				e.setCancelled(true);
+	}
+
 	// Stop custom mobs from burning in the sun
 	@EventHandler
 	public void onCombust(EntityCombustEvent e) {
@@ -693,11 +730,20 @@ public class GameListener implements Listener {
 		if (!(mob instanceof VDCreeper))
 			return;
 
-		// Cancel and create custom explosion
+		// Cancel vanilla explosion
 		e.setCancelled(true);
-		((Creeper) ent).setFuseTicks(0);
-		Objects.requireNonNull(ent.getLocation().getWorld()).createExplosion(ent.getLocation(), 3, false,
+
+		// Create new explosion
+		Objects.requireNonNull(ent.getLocation().getWorld()).createExplosion(ent.getLocation(), 2.5f, false,
 				false, ent);
+
+		// Create replacement creeper
+		VDMob creeper = new VDCreeper((VDCreeper) mob, arena);
+		arena.addMob(creeper);
+
+		// Remove the old creeper
+		arena.removeMob(ent.getUniqueId());
+		ent.remove();
 	}
 
 	// Create custom potion effects from witch
@@ -719,7 +765,8 @@ public class GameListener implements Listener {
 		// Apply to relevant entities
 		for (LivingEntity affectedEntity : e.getAffectedEntities()) {
 			// Not monster
-			if (Main.getMonstersTeam().hasEntry(affectedEntity.getUniqueId().toString()))
+			if (!(affectedEntity instanceof Player) &&
+					affectedEntity.getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue()))
 				continue;
 
 			// Apply affects
@@ -949,52 +996,6 @@ public class GameListener implements Listener {
 
 		// Cancel interaction
 		e.setCancelled(true);
-	}
-
-	// Stops players from hurting villagers and other players, and monsters from hurting each other
-	// TODO: check if this is still needed
-	@EventHandler
-	public void onFriendlyFire(EntityDamageByEntityEvent e) {
-		Entity ent = e.getEntity();
-		Entity damager = e.getDamager();
-
-		// Cancel damage to each other if they are in a game
-		if (ent instanceof Player && damager instanceof Player) {
-			if (GameManager.checkPlayer((Player) ent))
-				e.setCancelled(true);
-		}
-
-		// Check for special mobs
-		if (!ent.hasMetadata(VDMob.VD) && !(ent instanceof Player))
-			return;
-
-		// Cancel damage to friendly mobs
-		if ((ent instanceof Villager || ent instanceof Wolf || ent instanceof IronGolem) && damager instanceof Player)
-			e.setCancelled(true);
-
-		// Cancel monster friendly fire damage
-		else if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin) &&
-				(damager instanceof Monster || damager instanceof Slime || ent instanceof Hoglin))
-			e.setCancelled(true);
-
-		// Check for projectile damage
-		else if (damager instanceof Projectile) {
-			// Player on player
-			if (ent instanceof Player && ((Projectile) damager).getShooter() instanceof Player) {
-				if (GameManager.checkPlayer((Player) ent))
-					e.setCancelled(true);
-			}
-
-			// Player on friendly
-			if ((ent instanceof Villager || ent instanceof Wolf || ent instanceof IronGolem) &&
-					((Projectile) damager).getShooter() instanceof Player)
-				e.setCancelled(true);
-
-			// Monster on monster
-			else if ((ent instanceof Monster || ent instanceof Slime) &&
-					((Projectile) damager).getShooter() instanceof Monster)
-				e.setCancelled(true);
-		}
 	}
 
 	// Handles players falling into the void

@@ -36,8 +36,7 @@ public abstract class VDMob {
     protected int wave;
     protected String name;
     protected int hpBarSize;
-    protected boolean hostile;
-    
+
     protected final int level;
     protected int maxHealth = 0;
     protected int currentHealth = 0;
@@ -58,6 +57,7 @@ public abstract class VDMob {
     protected long lastStrike = 0;
     
     public static final String VD = "VD";
+    public static final String TEAM = "VDTeam";
     private static final String KNOCKBACK = "knockback";
     private static final String WEIGHT = "weight";
     private static final String SPEED = "speed";
@@ -162,7 +162,8 @@ public abstract class VDMob {
         // Update entity name
         updateNameTag();
     }
-    private void addDamage(int damage, UUID id) {
+
+    protected void addDamage(int damage, UUID id) {
         currentHealth -= damage;
         if (id == null)
             return;
@@ -481,13 +482,6 @@ public abstract class VDMob {
     }
 
     protected abstract void updateNameTag();
-
-    public void remove() {
-        if (Main.getVillagersTeam().hasEntry(id.toString()))
-            Main.getVillagersTeam().removeEntry(id.toString());
-        if (Main.getMonstersTeam().hasEntry(id.toString()))
-            Main.getMonstersTeam().removeEntry(id.toString());
-    }
 
     public static VDMob of(String key, Arena arena, Location ground, Location air) throws InvalidVDMobKeyException {
         switch (key) {

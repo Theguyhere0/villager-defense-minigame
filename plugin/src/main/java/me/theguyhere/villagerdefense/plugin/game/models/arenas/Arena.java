@@ -122,8 +122,7 @@ public class Arena {
     private static final String START_WAVE = "startWave";
     private static final String UPDATE_BAR = "updateBar";
     private static final String CALIBRATE = "calibrate";
-    private static final String HALF_UPDATE = "halfUpdate";
-    private static final String ONE_UPDATE = "oneUpdate";
+    private static final String CUSTOM_TICK = "customTick";
     private static final String KICK = "kick";
     private static final String RESET = "restart";
 
@@ -1863,14 +1862,14 @@ public class Arena {
         });
         activeTasks.get(END_WAVE).runTaskLater(Main.plugin, Utils.secondsToTicks(30));
 
-        // Schedule and record showing and updating status
-        activeTasks.put(HALF_UPDATE, new BukkitRunnable() {
+        // Schedule and record showing and updating status, update targeting
+        activeTasks.put(CUSTOM_TICK, new BukkitRunnable() {
             @Override
             public void run() {
                 // Task
                 getActives().forEach(player -> {
                     player.showStats();
-                    player.updateStatsHalf();
+                    player.updateStats();
                 });
                 mobs.forEach(mob -> {
                     Mob mobster = mob.getEntity();
@@ -1882,14 +1881,6 @@ public class Arena {
                                 target.getLocation().subtract(mobster.getLocation()).toVector().normalize());
                     }
                 });
-            }
-        });
-        activeTasks.get(HALF_UPDATE).runTaskTimer(Main.plugin, Utils.secondsToTicks(30), Utils.secondsToTicks(.5));
-        activeTasks.put(ONE_UPDATE, new BukkitRunnable() {
-            @Override
-            public void run() {
-                // Task
-                getActives().forEach(VDPlayer::updateStatsOne);
                 mobs.forEach(mob -> {
                     Mob mobster = mob.getEntity();
                     Location location = mobster.getLocation();
@@ -1899,8 +1890,10 @@ public class Arena {
                                     mobster.getLocation().distance(entity.getLocation()) <= range)
                             .stream()
                             .filter(entity -> entity instanceof LivingEntity)
-                            .filter(entity -> Main.getMonstersTeam().hasEntry(mobster.getUniqueId().toString()) ^
-                                        Main.getMonstersTeam().hasEntry(entity.getUniqueId().toString()))
+                            .filter(entity -> !entity.isDead())
+                            .filter(entity -> mobster.getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue())
+                                    && entity instanceof Player || !(entity instanceof Player) &&
+                                    !mobster.getMetadata(VDMob.TEAM).equals(entity.getMetadata(VDMob.TEAM)))
                             .filter(entity -> {
                                 if (entity instanceof Player)
                                     return ((Player) entity).getGameMode() == GameMode.ADVENTURE;
@@ -1916,13 +1909,14 @@ public class Arena {
                     LivingEntity oldTarget = mobster.getTarget();
                     LivingEntity newTarget = priority.isEmpty() ?
                             (nearby.isEmpty() ? null : (LivingEntity) nearby.get(0)) : (LivingEntity) priority.get(0);
-                    if (oldTarget == null || newTarget == null || !oldTarget.getUniqueId().equals(newTarget.getUniqueId())) {
+                    if (!(oldTarget == null && newTarget == null) && oldTarget == null || newTarget == null ||
+                                    !oldTarget.getUniqueId().equals(newTarget.getUniqueId())) {
                         mobster.setTarget(newTarget);
                     }
                 });
             }
         });
-        activeTasks.get(ONE_UPDATE).runTaskTimer(Main.plugin, Utils.secondsToTicks(30), Utils.secondsToTicks(1));
+        activeTasks.get(CUSTOM_TICK).runTaskTimer(Main.plugin, Utils.secondsToTicks(30), Utils.secondsToTicks(.5));
 
         // Debug message to console
         CommunicationManager.debugInfo("%s is starting.", 2, getName());
@@ -1938,7 +1932,7 @@ public class Arena {
         // Clear active tasks EXCEPT update and show status
         Map<String, BukkitRunnable> cache = new HashMap<>();
         activeTasks.forEach((name, task) -> {
-            if (!name.equals(ONE_UPDATE) && !name.equals(HALF_UPDATE))
+            if (!name.equals(CUSTOM_TICK))
                 task.cancel();
             else cache.put(name, task);
         });
@@ -2015,12 +2009,7 @@ public class Arena {
             return;
         }
 
-        // Remove any unwanted mobs
-        mobs.forEach(mob -> {
-            if (Main.getMonstersTeam().hasEntry(mob.getID().toString()))
-                mob.remove();
-        });
-        mobs.removeIf(mob -> Main.getMonstersTeam().hasEntry(mob.getID().toString()));
+        mobs.removeIf(mob -> mob.getEntity().getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue()));
 
         // Revive dead players
         for (VDPlayer p : getGhosts()) {
@@ -2123,7 +2112,7 @@ public class Arena {
         // Clear active tasks EXCEPT update and show status
         Map<String, BukkitRunnable> cache = new HashMap<>();
         activeTasks.forEach((name, task) -> {
-            if (!name.equals(ONE_UPDATE) && !name.equals(HALF_UPDATE))
+            if (!name.equals(CUSTOM_TICK))
                 task.cancel();
             else cache.put(name, task);
         });
@@ -2867,7 +2856,7 @@ public class Arena {
         Objects.requireNonNull(getPlayerSpawn().getLocation().getWorld())
                 .getNearbyEntities(getBounds()).stream().filter(Objects::nonNull)
                 .filter(entity -> entity.hasMetadata(VDMob.VD))
-                .filter(entity -> Main.getMonstersTeam().hasEntry(entity.getUniqueId().toString()))
+                .filter(entity -> entity.getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue()))
                 .forEach(entity -> entity.setGlowing(true));
     }
 

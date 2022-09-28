@@ -328,7 +328,7 @@ public class VDPlayer {
                 Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth);
     }
 
-    public void updateStatsOne() {
+    public void updateStats() {
         AtomicInteger armor = new AtomicInteger();
         AtomicInteger toughness = new AtomicInteger();
         AtomicDouble weight = new AtomicDouble(1);
@@ -441,9 +441,7 @@ public class VDPlayer {
         if (getPlayer().isSprinting())
             getPlayer().setFoodLevel(getPlayer().getFoodLevel() - 1 - hunger / 2);
         else getPlayer().setFoodLevel(Math.min(20, getPlayer().getFoodLevel() + 1 - hunger));
-    }
 
-    public void updateStatsHalf() {
         AtomicBoolean fletcher = new AtomicBoolean(false);
         Objects.requireNonNull(getPlayer().getWorld())
                 .getNearbyEntities(getArena().getBounds(), entity ->

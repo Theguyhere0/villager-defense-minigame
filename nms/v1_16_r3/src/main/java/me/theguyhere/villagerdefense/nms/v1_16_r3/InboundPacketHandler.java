@@ -27,7 +27,7 @@ class InboundPacketHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext context, Object packet) throws Exception {
         try {
             if (packet instanceof PacketPlayInUseEntity) {
-                int entityID = (int) Utils.getFieldValue(packet, "a");
+                int entityID = Utils.getFieldValue(packet, "a", Integer.class);
 
                 // Left click
                 if (Utils.getFieldValue(packet, "action").toString().equalsIgnoreCase("ATTACK")) {
@@ -42,7 +42,7 @@ class InboundPacketHandler extends ChannelInboundHandlerAdapter {
             }
 
             else if (packet instanceof PacketPlayInUpdateSign) {
-                String[] signLines = ((String[]) Utils.getFieldValue(packet, "b"));
+                String[] signLines = Utils.getFieldValue(packet, "b", String[].class);
 
                 packetListener.onSignUpdate(player, signLines);
             }
