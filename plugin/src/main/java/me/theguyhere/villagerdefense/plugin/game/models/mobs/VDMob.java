@@ -202,10 +202,10 @@ public abstract class VDMob {
      * @return Whether the cooldown was up or not.
      */
     public boolean attackAttempt() {
-        boolean cooldownUp = System.currentTimeMillis() >= lastStrike + attackSpeed * 1000;
+        boolean cooldownUp = System.currentTimeMillis() >= lastStrike + Utils.secondsToMillis(attackSpeed);
         if (cooldownUp)
             lastStrike = System.currentTimeMillis();
-        return cooldownUp;
+        return cooldownUp || System.currentTimeMillis() < lastStrike + Utils.secondsToMillis(0.1);
     }
 
     public double getAttackSpeed() {
