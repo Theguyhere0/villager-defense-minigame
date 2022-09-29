@@ -1916,7 +1916,7 @@ public class Arena {
                 });
             }
         });
-        activeTasks.get(CUSTOM_TICK).runTaskTimer(Main.plugin, Utils.secondsToTicks(30), Utils.secondsToTicks(.5));
+        activeTasks.get(CUSTOM_TICK).runTaskTimer(Main.plugin, 0, Utils.secondsToTicks(.5));
 
         // Debug message to console
         CommunicationManager.debugInfo("%s is starting.", 2, getName());
