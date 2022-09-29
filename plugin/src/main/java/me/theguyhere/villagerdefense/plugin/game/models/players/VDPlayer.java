@@ -48,25 +48,25 @@ public class VDPlayer {
     private final Arena arena;
 
     // Important arena stats
-    private int maxHealth;
-    private int currentHealth;
+    private int maxHealth = 0;
+    private int currentHealth = 0;
     private int absorption = 0;
-    private int baseDamage;
-    private int armor;
-    private int toughness;
-    private long cooldown;
+    private int baseDamage = 0;
+    private int armor = 0;
+    private int toughness = 0;
+    private long cooldown = 0;
     /** Gem balance.*/
-    private int gems;
+    private int gems = 0;
     /** Kill count.*/
-    private int kills;
+    private int kills = 0;
     /** Wolf count.*/
-    private int wolves;
+    private int wolves = 0;
     /** The wave at which the player joined the game as an active player.*/
-    private int joinedWave;
+    private int joinedWave = 0;
     /** The number of times this player violated arena boundaries.*/
-    private int infractions;
+    private int infractions = 0;
     /** The {@link Kit} the player will play with.*/
-    private Kit kit;
+    private Kit kit = Kit.none();
     /** A possible second {@link Kit} the player can play with.*/
     private Kit kit2;
     /** The list of {@link Challenge}'s the player will take on.*/
@@ -86,12 +86,6 @@ public class VDPlayer {
         if (spectating)
             status = PlayerStatus.SPECTATOR;
         else status = PlayerStatus.ALIVE;
-        gems = 0;
-        kills = 0;
-        wolves = 0;
-        joinedWave = 0;
-        infractions = 0;
-        kit = Kit.none();
     }
 
     public UUID getID() {
@@ -143,6 +137,10 @@ public class VDPlayer {
      * @param dif Final health difference.
      */
     public void changeCurrentHealth(int dif) {
+        // Make sure health was initialized properly
+        if (maxHealth <= 0)
+            return;
+
         // Handle absorption
         int trueDif = dif;
         if (dif < 0) {
@@ -219,6 +217,10 @@ public class VDPlayer {
         AtomicInteger ammoCost = new AtomicInteger();
         AtomicInteger ammoCap = new AtomicInteger();
         String damage = Integer.toString(baseDamage);
+
+        // Make sure health was properly initialized
+        if (maxHealth <= 0)
+            return;
 
         // Calculate stats
         try {
@@ -326,7 +328,7 @@ public class VDPlayer {
                 Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth);
     }
 
-    public void updateStatsOne() {
+    public void updateStats() {
         AtomicInteger armor = new AtomicInteger();
         AtomicInteger toughness = new AtomicInteger();
         AtomicDouble weight = new AtomicDouble(1);
@@ -439,9 +441,7 @@ public class VDPlayer {
         if (getPlayer().isSprinting())
             getPlayer().setFoodLevel(getPlayer().getFoodLevel() - 1 - hunger / 2);
         else getPlayer().setFoodLevel(Math.min(20, getPlayer().getFoodLevel() + 1 - hunger));
-    }
 
-    public void updateStatsHalf() {
         AtomicBoolean fletcher = new AtomicBoolean(false);
         Objects.requireNonNull(getPlayer().getWorld())
                 .getNearbyEntities(getArena().getBounds(), entity ->

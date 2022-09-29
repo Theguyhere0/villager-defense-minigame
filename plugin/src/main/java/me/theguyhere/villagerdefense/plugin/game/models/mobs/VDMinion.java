@@ -18,8 +18,7 @@ public abstract class VDMinion extends VDMob {
         super(lore, level, attackType);
         mob = minion;
         id = minion.getUniqueId();
-        hostile = true;
-        Main.getMonstersTeam().addEntry(minion.getUniqueId().toString());
+        minion.setMetadata(TEAM, Team.MONSTER.getValue());
         minion.setMetadata(VD, new FixedMetadataValue(Main.plugin, arena.getId()));
         gameID = arena.getGameID();
         wave = arena.getCurrentWave();

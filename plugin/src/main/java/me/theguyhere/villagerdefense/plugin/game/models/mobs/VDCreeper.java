@@ -37,4 +37,32 @@ public class VDCreeper extends VDMinion {
         setLoot(35, 1.2, .2);
         updateNameTag();
     }
+
+    public VDCreeper(VDCreeper oldCreeper, Arena arena) {
+        super(
+                arena,
+                (Mob) Objects.requireNonNull(oldCreeper.getEntity().getLocation().getWorld())
+                        .spawnEntity(oldCreeper.getEntity().getLocation(), EntityType.CREEPER),
+                LanguageManager.mobs.creeper,
+                "A crowd control monster keeping defenders away from the front lines.",
+                oldCreeper.level,
+                AttackType.NORMAL
+        );
+        Creeper creeper = (Creeper) mob;
+        creeper.setPowered(false);
+        setHealth(240, 20);
+        addDamage(currentHealth - oldCreeper.currentHealth, null);
+        damageMap.putAll(oldCreeper.damageMap);
+        setArmor(4, 4);
+        setToughness(0, .03, 4);
+        setDamage(200, 10, .25);
+        setVerySlowAttackSpeed();
+        creeper.setMaxFuseTicks(Utils.secondsToTicks(attackSpeed));
+        setHighKnockback();
+        setLightWeight();
+        setSlowSpeed();
+        setModerateTargetRange();
+        setLoot(35, 1.2, .2);
+        updateNameTag();
+    }
 }

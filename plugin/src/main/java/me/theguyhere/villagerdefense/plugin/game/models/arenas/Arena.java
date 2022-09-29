@@ -34,7 +34,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -66,15 +65,15 @@ public class Arena {
     /** Whether the arena is in the process of spawning villagers.*/
     private boolean spawningVillagers;
     /** The ID of the game currently in progress.*/
-    private int gameID;
+    private int gameID = 0;
     /** Current wave of the active game.*/
-    private int currentWave;
+    private int currentWave = 0;
     /** Villager count.*/
-    private int villagers;
+    private int villagers = 0;
     /** Enemy count.*/
-    private int enemies;
+    private int enemies = 0;
     /** Iron golem count.*/
-    private int golems;
+    private int golems = 0;
     /** ID of task managing player spawn particles.*/
     private int playerParticlesID = 0;
     /** ID of task managing monster spawn particles.*/
@@ -123,8 +122,7 @@ public class Arena {
     private static final String START_WAVE = "startWave";
     private static final String UPDATE_BAR = "updateBar";
     private static final String CALIBRATE = "calibrate";
-    private static final String HALF_UPDATE = "halfUpdate";
-    private static final String ONE_UPDATE = "oneUpdate";
+    private static final String CUSTOM_TICK = "customTick";
     private static final String KICK = "kick";
     private static final String RESET = "restart";
 
@@ -132,9 +130,6 @@ public class Arena {
         config = Main.getArenaData();
         id = arenaID;
         path = "arena." + arenaID;
-        currentWave = 0;
-        villagers = 0;
-        enemies = 0;
         status = ArenaStatus.WAITING;
         refreshArenaBoard();
         refreshPlayerSpawn();
@@ -169,18 +164,18 @@ public class Arena {
      * Writes the new name of the arena into the arena file.
      * @param name New arena name.
      */
-    public void setName(String name) throws InvalidArenaNameException {
+    public void setName(String name) throws IllegalArenaNameException {
         // Check if name is not empty
-        if (name == null || name.length() == 0) throw new InvalidArenaNameException("Empty");
+        if (name == null || name.length() == 0) throw new IllegalArenaNameException("Empty");
 
         // Check if name is the same as current
-        else if (name.equals(getName())) throw new InvalidArenaNameException("Same");
+        else if (name.equals(getName())) throw new IllegalArenaNameException("Same");
 
         else {
             // Check for duplicate name
             try {
                 GameManager.getArena(name);
-                throw new InvalidArenaNameException("Duplicate");
+                throw new IllegalArenaNameException("Duplicate");
             } catch (ArenaNotFoundException ignored) {
             }
 
@@ -1456,7 +1451,7 @@ public class Arena {
             throw new ArenaTaskException("Arena is no longer waiting");
         if (activeTasks.containsKey(NOTIFY_WAITING))
             throw new ArenaTaskException("Arena already started waiting notifications");
-        if (activeTasks.containsKey(FORCE_START_ARENA))
+        if (getActiveCount() > 0 && activeTasks.containsKey(FORCE_START_ARENA))
             throw new ArenaTaskException("Arena was force started");
 
         // Clear active tasks
@@ -1686,8 +1681,7 @@ public class Arena {
         activeTasks.forEach((name, task) -> task.cancel());
         activeTasks.clear();
 
-        // Set arena to active, reset villager and enemy count, set new game ID, clear arena
-        setStatus(ArenaStatus.ACTIVE);
+        // Reset villager and enemy count, set new game ID, clear arena
         resetVillagers();
         resetEnemies();
         newGameID();
@@ -1703,6 +1697,9 @@ public class Arena {
             for (VDPlayer vdPlayer : getActives())
                 vdPlayer.getPlayer().getInventory().clear();
         }
+
+        // Set arena status to active
+        setStatus(ArenaStatus.ACTIVE);
 
         // Stop waiting sound
         if (getWaitingSound() != null)
@@ -1865,14 +1862,14 @@ public class Arena {
         });
         activeTasks.get(END_WAVE).runTaskLater(Main.plugin, Utils.secondsToTicks(30));
 
-        // Schedule and record showing and updating status
-        activeTasks.put(HALF_UPDATE, new BukkitRunnable() {
+        // Schedule and record showing and updating status, update targeting
+        activeTasks.put(CUSTOM_TICK, new BukkitRunnable() {
             @Override
             public void run() {
                 // Task
                 getActives().forEach(player -> {
                     player.showStats();
-                    player.updateStatsHalf();
+                    player.updateStats();
                 });
                 mobs.forEach(mob -> {
                     Mob mobster = mob.getEntity();
@@ -1884,14 +1881,6 @@ public class Arena {
                                 target.getLocation().subtract(mobster.getLocation()).toVector().normalize());
                     }
                 });
-            }
-        });
-        activeTasks.get(HALF_UPDATE).runTaskTimer(Main.plugin, Utils.secondsToTicks(30), Utils.secondsToTicks(.5));
-        activeTasks.put(ONE_UPDATE, new BukkitRunnable() {
-            @Override
-            public void run() {
-                // Task
-                getActives().forEach(VDPlayer::updateStatsOne);
                 mobs.forEach(mob -> {
                     Mob mobster = mob.getEntity();
                     Location location = mobster.getLocation();
@@ -1901,8 +1890,10 @@ public class Arena {
                                     mobster.getLocation().distance(entity.getLocation()) <= range)
                             .stream()
                             .filter(entity -> entity instanceof LivingEntity)
-                            .filter(entity -> Main.getMonstersTeam().hasEntry(mobster.getUniqueId().toString()) ^
-                                        Main.getMonstersTeam().hasEntry(entity.getUniqueId().toString()))
+                            .filter(entity -> !entity.isDead())
+                            .filter(entity -> mobster.getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue())
+                                    && entity instanceof Player || !(entity instanceof Player) &&
+                                    !mobster.getMetadata(VDMob.TEAM).equals(entity.getMetadata(VDMob.TEAM)))
                             .filter(entity -> {
                                 if (entity instanceof Player)
                                     return ((Player) entity).getGameMode() == GameMode.ADVENTURE;
@@ -1918,13 +1909,14 @@ public class Arena {
                     LivingEntity oldTarget = mobster.getTarget();
                     LivingEntity newTarget = priority.isEmpty() ?
                             (nearby.isEmpty() ? null : (LivingEntity) nearby.get(0)) : (LivingEntity) priority.get(0);
-                    if (oldTarget == null ||
-                            newTarget != null && !oldTarget.getUniqueId().equals(newTarget.getUniqueId()))
+                    if (!(oldTarget == null && newTarget == null) && oldTarget == null || newTarget == null ||
+                                    !oldTarget.getUniqueId().equals(newTarget.getUniqueId())) {
                         mobster.setTarget(newTarget);
+                    }
                 });
             }
         });
-        activeTasks.get(ONE_UPDATE).runTaskTimer(Main.plugin, Utils.secondsToTicks(30), Utils.secondsToTicks(1));
+        activeTasks.get(CUSTOM_TICK).runTaskTimer(Main.plugin, Utils.secondsToTicks(30), Utils.secondsToTicks(.5));
 
         // Debug message to console
         CommunicationManager.debugInfo("%s is starting.", 2, getName());
@@ -1940,7 +1932,7 @@ public class Arena {
         // Clear active tasks EXCEPT update and show status
         Map<String, BukkitRunnable> cache = new HashMap<>();
         activeTasks.forEach((name, task) -> {
-            if (!name.equals(ONE_UPDATE) && !name.equals(HALF_UPDATE))
+            if (!name.equals(CUSTOM_TICK))
                 task.cancel();
             else cache.put(name, task);
         });
@@ -2017,12 +2009,7 @@ public class Arena {
             return;
         }
 
-        // Remove any unwanted mobs
-        mobs.forEach(mob -> {
-            if (Main.getMonstersTeam().hasEntry(mob.getID().toString()))
-                mob.remove();
-        });
-        mobs.removeIf(mob -> Main.getMonstersTeam().hasEntry(mob.getID().toString()));
+        mobs.removeIf(mob -> mob.getEntity().getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue()));
 
         // Revive dead players
         for (VDPlayer p : getGhosts()) {
@@ -2125,7 +2112,7 @@ public class Arena {
         // Clear active tasks EXCEPT update and show status
         Map<String, BukkitRunnable> cache = new HashMap<>();
         activeTasks.forEach((name, task) -> {
-            if (!name.equals(ONE_UPDATE) && !name.equals(HALF_UPDATE))
+            if (!name.equals(CUSTOM_TICK))
                 task.cancel();
             else cache.put(name, task);
         });
@@ -2869,7 +2856,7 @@ public class Arena {
         Objects.requireNonNull(getPlayerSpawn().getLocation().getWorld())
                 .getNearbyEntities(getBounds()).stream().filter(Objects::nonNull)
                 .filter(entity -> entity.hasMetadata(VDMob.VD))
-                .filter(entity -> Main.getMonstersTeam().hasEntry(entity.getUniqueId().toString()))
+                .filter(entity -> entity.getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue()))
                 .forEach(entity -> entity.setGlowing(true));
     }
 

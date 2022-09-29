@@ -5,12 +5,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 public class SignGUIEvent extends Event implements Cancellable {
     private final Arena arena;
     private final Player player;
     private final String[] lines;
-    private boolean isCancelled;
+    private boolean isCancelled = false;
     private static final HandlerList HANDLERS = new HandlerList();
 
     public SignGUIEvent(Arena arena, Player player, String... args) {
@@ -20,7 +21,7 @@ public class SignGUIEvent extends Event implements Cancellable {
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
 

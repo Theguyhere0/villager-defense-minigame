@@ -36,28 +36,28 @@ public abstract class VDMob {
     protected int wave;
     protected String name;
     protected int hpBarSize;
-    protected boolean hostile;
-    
+
     protected final int level;
-    protected int maxHealth;
-    protected int currentHealth;
-    protected int armor;
-    protected double toughness;
-    protected int damage;
-    protected double damageSpread;
+    protected int maxHealth = 0;
+    protected int currentHealth = 0;
+    protected int armor = 0;
+    protected double toughness = 0;
+    protected int damage = 0;
+    protected double damageSpread = 0;
     protected PotionEffectType effectType;
-    protected int effectLevel;
-    protected int effectDuration;
-    protected int pierce;
+    protected int effectLevel = 0;
+    protected int effectDuration = 0;
+    protected int pierce = 0;
     protected final AttackType attackType;
-    protected double attackSpeed;
+    protected double attackSpeed = 0;
     protected TargetPriority targetPriority = TargetPriority.NONE;
-    protected int targetRange;
-    protected int loot;
-    protected double lootSpread;
+    protected int targetRange = 0;
+    protected int loot = 0;
+    protected double lootSpread = 0;
     protected long lastStrike = 0;
     
     public static final String VD = "VD";
+    public static final String TEAM = "VDTeam";
     private static final String KNOCKBACK = "knockback";
     private static final String WEIGHT = "weight";
     private static final String SPEED = "speed";
@@ -162,7 +162,8 @@ public abstract class VDMob {
         // Update entity name
         updateNameTag();
     }
-    private void addDamage(int damage, UUID id) {
+
+    protected void addDamage(int damage, UUID id) {
         currentHealth -= damage;
         if (id == null)
             return;
@@ -201,10 +202,10 @@ public abstract class VDMob {
      * @return Whether the cooldown was up or not.
      */
     public boolean attackAttempt() {
-        boolean cooldownUp = System.currentTimeMillis() >= lastStrike + attackSpeed * 1000;
+        boolean cooldownUp = System.currentTimeMillis() >= lastStrike + Utils.secondsToMillis(attackSpeed);
         if (cooldownUp)
             lastStrike = System.currentTimeMillis();
-        return cooldownUp;
+        return cooldownUp || System.currentTimeMillis() < lastStrike + Utils.secondsToMillis(0.1);
     }
 
     public double getAttackSpeed() {
@@ -481,13 +482,6 @@ public abstract class VDMob {
     }
 
     protected abstract void updateNameTag();
-
-    public void remove() {
-        if (Main.getVillagersTeam().hasEntry(id.toString()))
-            Main.getVillagersTeam().removeEntry(id.toString());
-        if (Main.getMonstersTeam().hasEntry(id.toString()))
-            Main.getMonstersTeam().removeEntry(id.toString());
-    }
 
     public static VDMob of(String key, Arena arena, Location ground, Location air) throws InvalidVDMobKeyException {
         switch (key) {

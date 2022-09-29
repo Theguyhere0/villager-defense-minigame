@@ -5,7 +5,7 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.SignGUIEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.exceptions.InvalidArenaNameException;
+import me.theguyhere.villagerdefense.plugin.exceptions.IllegalArenaNameException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.VDMobNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.displays.Leaderboard;
@@ -3194,7 +3194,7 @@ public class InventoryListener implements Listener {
 			arena.setName(e.getLines()[2]);
 			CommunicationManager.debugInfo("Name changed for arena %s!", 2,
 					arena.getPath().substring(1));
-		} catch (InvalidArenaNameException err) {
+		} catch (IllegalArenaNameException err) {
 			if (err.getMessage().equals("Same"))
 				player.openInventory(Inventories.createArenaMenu(arena));
 			else {
