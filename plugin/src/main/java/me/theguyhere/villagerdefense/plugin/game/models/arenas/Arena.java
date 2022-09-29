@@ -2021,7 +2021,13 @@ public class Arena {
 
         getActives().forEach(p -> {
             // Notify of upcoming wave
-            if (currentWave != 1)
+            if (currentWave % 5 == 0)
+                p.getPlayer().sendTitle(CommunicationManager.format("&6" +
+                                String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
+                        CommunicationManager.format("&7" +
+                                String.format(LanguageManager.messages.starting, "&b25&7")),
+                        Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
+            else if (currentWave != 1)
                 p.getPlayer().sendTitle(CommunicationManager.format("&6" +
                                 String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
                         CommunicationManager.format("&7" + String.format(LanguageManager.messages.starting,
@@ -2058,7 +2064,14 @@ public class Arena {
         });
 
         // Notify spectators of upcoming wave
-        if (currentWave != 1)
+        if (currentWave % 5 == 0)
+            getSpectators().forEach(p ->
+                    p.getPlayer().sendTitle(CommunicationManager.format("&6" +
+                                    String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
+                            CommunicationManager.format("&7" +
+                                    String.format(LanguageManager.messages.starting, "&b25&7")),
+                            Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
+        else if (currentWave != 1)
             getSpectators().forEach(p ->
                     p.getPlayer().sendTitle(CommunicationManager.format("&6" +
                                     String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
@@ -2070,7 +2083,7 @@ public class Arena {
                                 String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
                         " ", Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
 
-        // Regenerate shops when time and notify players of it
+        // Regenerate shops when time and notify players of it, then start after 25 seconds
         if (currentWave % 5 == 0) {
             int level = currentWave / 5 + 1;
             setWeaponShop(Inventories.createWeaponShopMenu(level, this));
@@ -2083,10 +2096,21 @@ public class Arena {
                                     String.format(LanguageManager.messages.shopInfo, "5")),
                             Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5),
                             Utils.secondsToTicks(1))), Utils.secondsToTicks(4));
+            activeTasks.put(START_WAVE, new BukkitRunnable() {
+                @Override
+                public void run() {
+                    // Task
+                    try {
+                        startWave();
+                    } catch (ArenaException ignored) {
+                    }
+                }
+            });
+            activeTasks.get(START_WAVE).runTaskLater(Main.plugin, Utils.secondsToTicks(25));
         }
 
         // Start wave after 15 seconds if not first wave
-        if (currentWave != 1) {
+        else if (currentWave != 1) {
             activeTasks.put(START_WAVE, new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -2099,6 +2123,8 @@ public class Arena {
             });
             activeTasks.get(START_WAVE).runTaskLater(Main.plugin, Utils.secondsToTicks(15));
         }
+
+        // Start first wave immediately
         else startWave();
     }
 
