@@ -429,18 +429,13 @@ public class VDPlayer {
         Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .setBaseValue(.1 * weight.get());
 
-        // Manage sprint
-        int hunger;
-        try {
-            hunger = getPlayer().getActivePotionEffects().stream()
-                    .filter(p -> p.getType().getName().equals(PotionEffectType.HUNGER.getName()))
-                    .collect(Collectors.toList()).get(0).getAmplifier() + 1;
-        } catch (IndexOutOfBoundsException e) {
-            hunger = 0;
-        }
-        if (getPlayer().isSprinting())
-            getPlayer().setFoodLevel(getPlayer().getFoodLevel() - 1 - hunger / 2);
-        else getPlayer().setFoodLevel(Math.min(20, getPlayer().getFoodLevel() + 1 - hunger));
+        // Manage healing
+        int hunger = getPlayer().getFoodLevel();
+        if (hunger >= 16)
+            changeCurrentHealth(3);
+        else if (hunger >= 10)
+            changeCurrentHealth(2);
+        else changeCurrentHealth(1);
 
         AtomicBoolean fletcher = new AtomicBoolean(false);
         Objects.requireNonNull(getPlayer().getWorld())
@@ -460,9 +455,6 @@ public class VDPlayer {
         // Update ammo
         Ammo.updateRefill(Objects.requireNonNull(getPlayer().getEquipment()).getItemInMainHand(), fletcher.get());
         Ammo.updateRefill(Objects.requireNonNull(getPlayer().getEquipment()).getItemInOffHand(), fletcher.get());
-
-        // Healing
-        changeCurrentHealth(1);
     }
 
     public void takeDamage(int damage, @NotNull AttackType attackType) {

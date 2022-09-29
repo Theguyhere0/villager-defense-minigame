@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.commands;
 
 import me.theguyhere.villagerdefense.plugin.exceptions.CommandException;
+import me.theguyhere.villagerdefense.plugin.game.models.items.food.Totem;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -18,6 +19,8 @@ class CommandTest {
         CommandGuard.checkDebugLevelGreaterEqual(sender, 3);
 
         // Implement test
+        player.setFoodLevel(18);
+        PlayerManager.giveItem(player, Totem.create(), "whoops");
 
         // Confirm
         PlayerManager.notifySuccess(player, "Test Complete");

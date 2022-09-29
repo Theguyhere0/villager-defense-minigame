@@ -15,6 +15,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.items.ItemMetaKey;
 import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.game.models.items.armor.VDArmor;
 import me.theguyhere.villagerdefense.plugin.game.models.items.eggs.VDEgg;
+import me.theguyhere.villagerdefense.plugin.game.models.items.food.Totem;
 import me.theguyhere.villagerdefense.plugin.game.models.items.food.VDFood;
 import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.*;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Ammo;
@@ -46,7 +47,6 @@ import org.bukkit.util.BoundingBox;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameListener implements Listener {
@@ -831,19 +831,22 @@ public class GameListener implements Listener {
 				new ColoredMessage(ChatColor.RED, "+10" + Utils.HP));
 	}
 
-	// Prevent players from going hungry while in an arena
+	// Prevent players from going hungry while waiting in an arena
 	@EventHandler
 	public void onHunger(FoodLevelChangeEvent e) {
 		Player player = (Player) e.getEntity();
+		Arena arena;
 
 		// Check for player in arena
 		try {
-			GameManager.getArena(player);
+			arena = GameManager.getArena(player);
 		} catch (ArenaNotFoundException err) {
 			return;
 		}
 
-		e.setCancelled(true);
+		// Cancel if arena is not active
+		if (arena.getStatus() != ArenaStatus.ACTIVE)
+			e.setCancelled(true);
 	}
 
 	// Cancel natural potion effects for VDMobs or VDPlayers
@@ -1105,7 +1108,7 @@ public class GameListener implements Listener {
 			e.setCancelled(true);
 	}
 
-	// Stop spawning babies
+	// Stop spawning babies using spawn eggs
 	@EventHandler
 	public void onBabyAttempt(PlayerInteractEntityEvent e) {
 		// Check for player in game
@@ -1157,25 +1160,23 @@ public class GameListener implements Listener {
 						VDWeapon.matchesClickableWeapon(main) || VDEgg.matches(main)))
 			return;
 
-		// Give health
-		AtomicBoolean food = new AtomicBoolean(false);
+		// Give health and hunger for totem
+		if (Totem.matches(item)) {
+			lores.forEach(lore -> {
+				if (lore.contains(Utils.HP)) {
+					int hp = Integer.parseInt(lore.substring(3).replace(Utils.HP, "").trim());
+					if (lore.contains(ChatColor.RED.toString()) && !gamer.hasMaxHealth())
+						gamer.changeCurrentHealth(hp);
+					else if (lore.contains(ChatColor.GOLD.toString()))
+						gamer.addAbsorption(hp);
+				} else if (lore.contains(Utils.HUNGER)) {
+					player.setFoodLevel(Math.max(20, player.getFoodLevel() +
+							Integer.parseInt(lore.substring(3).replace(Utils.HUNGER, "").trim())));
+				}
+			});
 
-		lores.forEach(lore -> {
-			if (lore.contains(ChatColor.RED.toString()) && lore.contains(Utils.HP) && !gamer.hasMaxHealth()) {
-				gamer.changeCurrentHealth(Integer.parseInt(lore.substring(3).replace(Utils.HP, "").trim()));
-				food.set(true);
-			}
-			if (lore.contains(ChatColor.GOLD.toString()) && lore.contains(Utils.HP)) {
-				gamer.addAbsorption(Integer.parseInt(lore.substring(3).replace(Utils.HP, "").trim()));
-				food.set(true);
-			}
-		});
-
-		// Consume
-		if (food.get()) {
-			if (item.getAmount() > 1)
-				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
+			// Consume
+			player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
 		}
 
 		// Wolf spawn
@@ -1242,6 +1243,49 @@ public class GameListener implements Listener {
 //			Mobs.setGolem(Main.plugin, arena, ironGolem);
 //			Main.getVillagersTeam().addEntry(ironGolem.getUniqueId().toString());
 //		}
+	}
+
+	// Manage consumption of food
+	@EventHandler
+	public void onEat(PlayerItemConsumeEvent e) {
+		Player player = e.getPlayer();
+		ItemStack item = e.getItem();
+		List<String> lores;
+		Arena arena;
+		VDPlayer gamer;
+
+		// Attempt to get arena, player, and lore
+		try {
+			arena = GameManager.getArena(player);
+			gamer = arena.getPlayer(player);
+			lores = Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore());
+		} catch (ArenaNotFoundException | PlayerNotFoundException | NullPointerException err) {
+			return;
+		}
+
+		// Check for active arena, at least wave 1
+		if (arena.getStatus() != ArenaStatus.ACTIVE || arena.getCurrentWave() < 1) {
+			e.setCancelled(true);
+			return;
+		}
+
+		// Give health and hunger
+		lores.forEach(lore -> {
+			if (lore.contains(Utils.HP)) {
+				int hp = Integer.parseInt(lore.substring(3).replace(Utils.HP, "").trim());
+				if (lore.contains(ChatColor.RED.toString()) && !gamer.hasMaxHealth())
+					gamer.changeCurrentHealth(hp);
+				else if (lore.contains(ChatColor.GOLD.toString()))
+					gamer.addAbsorption(hp);
+			}
+			else if (lore.contains(Utils.HUNGER)) {
+				player.setFoodLevel(Math.max(20, player.getFoodLevel() +
+						Integer.parseInt(lore.substring(3).replace(Utils.HUNGER, "").trim())));
+			}
+		});
+
+		// No saturation increase
+		player.setSaturation(0);
 	}
 
 	// Prevent wolves from teleporting

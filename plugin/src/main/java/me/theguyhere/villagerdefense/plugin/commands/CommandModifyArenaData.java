@@ -231,7 +231,6 @@ class CommandModifyArenaData {
         int infoBoardID;
         String path;
         Location location;
-        Main.testInfo("reached", false);
 
         if (CommandGuard.checkArg(args, 2, CommandModifyArenaData.CREATE)) {
             player = CommandGuard.checkSenderPlayer(sender);

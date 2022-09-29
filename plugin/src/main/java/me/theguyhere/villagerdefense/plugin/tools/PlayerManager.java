@@ -58,6 +58,8 @@ public class PlayerManager {
         player.setAbsorptionAmount(0);
         player.setFoodLevel(20);
         player.setSaturation(0);
+        player.setSaturatedRegenRate(Integer.MAX_VALUE);
+        player.setUnsaturatedRegenRate(Integer.MAX_VALUE);
         player.setExp(0);
         player.setLevel(0);
         player.setFallDistance(0);
@@ -330,10 +332,11 @@ public class PlayerManager {
         Main.savePlayerData();
     }
 
-    // Save health, absorption, food, saturation, levels, exp, and inventory of the player
+    // Save gamemode, health, absorption, food, saturation, levels, exp, and inventory of the player
     public static void cacheSurvivalStats(Player player) {
         UUID id = player.getUniqueId();
 
+        Main.getPlayerData().set(id + ".mode", player.getGameMode().name());
         Main.getPlayerData().set(id + ".health", player.getHealth());
         Main.getPlayerData().set(id + ".absorption", player.getAbsorptionAmount());
         Main.getPlayerData().set(id + ".food", player.getFoodLevel());
@@ -350,6 +353,13 @@ public class PlayerManager {
     public static void returnSurvivalStats(Player player) {
         UUID id = player.getUniqueId();
 
+        // Return normal regen rates
+        player.setSaturatedRegenRate(10);
+        player.setUnsaturatedRegenRate(80);
+
+        // Return cached data
+        if (Main.getPlayerData().contains(id + ".mode"))
+            player.setGameMode(GameMode.valueOf(Main.getPlayerData().getString(id + ".mode")));
         if (Main.getPlayerData().contains(id + ".health"))
             player.setHealth(Main.getPlayerData().getDouble(id + ".health"));
         Main.getPlayerData().set(id + ".health", null);

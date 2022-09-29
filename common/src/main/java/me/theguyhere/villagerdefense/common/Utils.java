@@ -10,6 +10,7 @@ public class Utils {
 
     public static final int LORE_CHAR_LIMIT = 30;
     public static final String HP = "\u2764";
+    public static final String HUNGER = "\u2615";
     public static final String ARMOR = "\u2720";
     public static final String TOUGH = "\u2756";
     public static final String DAMAGE = "\u2694";
