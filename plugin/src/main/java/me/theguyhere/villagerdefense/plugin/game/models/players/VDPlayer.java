@@ -34,7 +34,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /**
  * A class holding data about players in a Villager Defense game.
@@ -210,13 +209,17 @@ public class VDPlayer {
         }
     }
 
-    public void showStats() {
+    public void showAndUpdatStats() {
         AtomicBoolean penetrating = new AtomicBoolean(false);
         AtomicBoolean range = new AtomicBoolean(false);
         AtomicBoolean perBlock = new AtomicBoolean(false);
         AtomicInteger ammoCost = new AtomicInteger();
         AtomicInteger ammoCap = new AtomicInteger();
+        AtomicInteger armor = new AtomicInteger();
+        AtomicInteger toughness = new AtomicInteger();
+        AtomicDouble weight = new AtomicDouble(1);
         String damage = Integer.toString(baseDamage);
+
 
         // Make sure health was properly initialized
         if (maxHealth <= 0)
@@ -308,32 +311,6 @@ public class VDPlayer {
             });
         } catch (Exception ignored) {
         }
-
-        // Update status bar
-        getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-                new ColoredMessage(absorption > 0 ? ChatColor.GOLD : ChatColor.RED,
-                        Utils.HP + " " + (currentHealth + absorption) + "/" + maxHealth) + "    " +
-                        new ColoredMessage(ChatColor.AQUA, Utils.ARMOR + " " + armor) + "    " +
-                        new ColoredMessage(ChatColor.DARK_AQUA, Utils.TOUGH + " " + toughness + "%") + "    " +
-                        new ColoredMessage(ammoCap.get() < ammoCost.get() ? ChatColor.RED :
-                                penetrating.get() ? ChatColor.YELLOW : ChatColor.GREEN,
-                                (range.get() ? Utils.ARROW : Utils.DAMAGE) + " " + damage +
-                                        (perBlock.get() ? " /" + Utils.BLOCK + " +" + baseDamage : ""))));
-
-        // Update normal health display
-        getPlayer().setHealth(Math.max(currentHealth *
-                Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth,
-                1));
-        getPlayer().setAbsorptionAmount(absorption *
-                Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth);
-    }
-
-    public void updateStats() {
-        AtomicInteger armor = new AtomicInteger();
-        AtomicInteger toughness = new AtomicInteger();
-        AtomicDouble weight = new AtomicDouble(1);
-
-        // Calculate stats
         try {
             ItemStack helmet = Objects.requireNonNull(Objects.requireNonNull(getPlayer().getEquipment()).getHelmet());
 
@@ -421,6 +398,24 @@ public class VDPlayer {
         } catch (Exception ignored) {
         }
 
+        // Update status bar
+        getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
+                new ColoredMessage(absorption > 0 ? ChatColor.GOLD : ChatColor.RED,
+                        Utils.HP + " " + (currentHealth + absorption) + "/" + maxHealth) + "    " +
+                        new ColoredMessage(ChatColor.AQUA, Utils.ARMOR + " " + armor) + "    " +
+                        new ColoredMessage(ChatColor.DARK_AQUA, Utils.TOUGH + " " + toughness + "%") + "    " +
+                        new ColoredMessage(ammoCap.get() < ammoCost.get() ? ChatColor.RED :
+                                penetrating.get() ? ChatColor.YELLOW : ChatColor.GREEN,
+                                (range.get() ? Utils.ARROW : Utils.DAMAGE) + " " + damage +
+                                        (perBlock.get() ? " /" + Utils.BLOCK + " +" + baseDamage : ""))));
+
+        // Update normal health display
+        getPlayer().setHealth(Math.max(currentHealth *
+                Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth,
+                1));
+        getPlayer().setAbsorptionAmount(absorption *
+                Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth);
+
         // Update armor and toughness
         this.armor = armor.get();
         this.toughness = toughness.get();
@@ -428,15 +423,23 @@ public class VDPlayer {
         // Set speed
         Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .setBaseValue(.1 * weight.get());
+    }
 
-        // Manage healing
+    public void heal() {
         int hunger = getPlayer().getFoodLevel();
-        if (hunger >= 16)
-            changeCurrentHealth(3);
+        if (hunger >= 20)
+            changeCurrentHealth(6);
+        else if (hunger >= 16)
+            changeCurrentHealth(5);
         else if (hunger >= 10)
+            changeCurrentHealth(3);
+        else if (hunger >= 4)
             changeCurrentHealth(2);
-        else changeCurrentHealth(1);
+        else if (hunger > 0)
+            changeCurrentHealth(1);
+    }
 
+    public void refill() {
         AtomicBoolean fletcher = new AtomicBoolean(false);
         Objects.requireNonNull(getPlayer().getWorld())
                 .getNearbyEntities(getArena().getBounds(), entity ->
@@ -570,7 +573,6 @@ public class VDPlayer {
 
         // Realize damage
         changeCurrentHealth(-damage);
-        showStats();
     }
 
     public void combust(int ticks) {

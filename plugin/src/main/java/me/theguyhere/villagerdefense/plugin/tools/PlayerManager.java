@@ -57,7 +57,7 @@ public class PlayerManager {
         }
         player.setAbsorptionAmount(0);
         player.setFoodLevel(20);
-        player.setSaturation(0);
+        player.setSaturation(10);
         player.setSaturatedRegenRate(Integer.MAX_VALUE);
         player.setUnsaturatedRegenRate(Integer.MAX_VALUE);
         player.setExp(0);

@@ -616,8 +616,9 @@ public class GameListener implements Listener {
 				case WITHER:
 					gamer.takeDamage((int) (damage * 10), AttackType.DIRECT);
 					break;
-				// Ignore
+				// Silence
 				default:
+					e.setCancelled(true);
 			}
 		}
 
@@ -655,8 +656,9 @@ public class GameListener implements Listener {
 				case WITHER:
 					mob.takeDamage((int) (damage * 4), AttackType.DIRECT, null, arena);
 					break;
-				// Ignore
+				// Silence
 				default:
+					e.setCancelled(true);
 			}
 		}
 
@@ -1279,8 +1281,10 @@ public class GameListener implements Listener {
 					gamer.addAbsorption(hp);
 			}
 			else if (lore.contains(Utils.HUNGER)) {
-				player.setFoodLevel(Math.max(20, player.getFoodLevel() +
-						Integer.parseInt(lore.substring(3).replace(Utils.HUNGER, "").trim())));
+				int trueHunger = player.getFoodLevel() +
+						Integer.parseInt(lore.substring(3).replace(Utils.HUNGER, "").trim());
+				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
+						player.setFoodLevel(Math.min(20, trueHunger)));
 			}
 		});
 

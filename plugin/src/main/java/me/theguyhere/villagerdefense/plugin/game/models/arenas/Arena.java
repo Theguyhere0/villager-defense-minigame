@@ -122,7 +122,11 @@ public class Arena {
     private static final String START_WAVE = "startWave";
     private static final String UPDATE_BAR = "updateBar";
     private static final String CALIBRATE = "calibrate";
-    private static final String CUSTOM_TICK = "customTick";
+    private static final String ONE_TICK = "oneTick";
+    private static final String TEN_TICK = "tenTick";
+    private static final String TWENTY_TICK = "twentyTick";
+    private static final String FORTY_TICK = "fortyTick";
+    private static final String TICK = "Tick";
     private static final String KICK = "kick";
     private static final String RESET = "restart";
 
@@ -1862,25 +1866,14 @@ public class Arena {
         });
         activeTasks.get(END_WAVE).runTaskLater(Main.plugin, Utils.secondsToTicks(30));
 
-        // Schedule and record showing and updating status, update targeting
-        activeTasks.put(CUSTOM_TICK, new BukkitRunnable() {
+        // Schedule updates
+        activeTasks.put(ONE_TICK, new BukkitRunnable() {
             @Override
             public void run() {
-                // Task
-                getActives().forEach(player -> {
-                    player.showStats();
-                    player.updateStats();
-                });
-                mobs.forEach(mob -> {
-                    Mob mobster = mob.getEntity();
-                    LivingEntity target = mobster.getTarget();
+                // Update player stats to show
+                getActives().forEach(VDPlayer::showAndUpdatStats);
 
-                    if (mob instanceof VDWitch && target != null &&
-                            target.getLocation().distance(mobster.getLocation()) <= 10) {
-                        mobster.launchProjectile(ThrownPotion.class,
-                                target.getLocation().subtract(mobster.getLocation()).toVector().normalize());
-                    }
-                });
+                // Update mob targets
                 mobs.forEach(mob -> {
                     Mob mobster = mob.getEntity();
                     Location location = mobster.getLocation();
@@ -1910,13 +1903,46 @@ public class Arena {
                     LivingEntity newTarget = priority.isEmpty() ?
                             (nearby.isEmpty() ? null : (LivingEntity) nearby.get(0)) : (LivingEntity) priority.get(0);
                     if (!(oldTarget == null && newTarget == null) && oldTarget == null || newTarget == null ||
-                                    !oldTarget.getUniqueId().equals(newTarget.getUniqueId())) {
+                            !oldTarget.getUniqueId().equals(newTarget.getUniqueId())) {
                         mobster.setTarget(newTarget);
                     }
                 });
             }
         });
-        activeTasks.get(CUSTOM_TICK).runTaskTimer(Main.plugin, 0, Utils.secondsToTicks(.5));
+        activeTasks.get(ONE_TICK).runTaskTimer(Main.plugin, 0, 1);
+        activeTasks.put(TEN_TICK, new BukkitRunnable() {
+            @Override
+            public void run() {
+                // Refill ammo
+                getActives().forEach(VDPlayer::refill);
+            }
+        });
+        activeTasks.get(TEN_TICK).runTaskTimer(Main.plugin, 0, 10);
+        activeTasks.put(TWENTY_TICK, new BukkitRunnable() {
+            @Override
+            public void run() {
+                // Refill ammo
+                getActives().forEach(VDPlayer::heal);
+            }
+        });
+        activeTasks.get(TWENTY_TICK).runTaskTimer(Main.plugin, 0, 20);
+        activeTasks.put(FORTY_TICK, new BukkitRunnable() {
+            @Override
+            public void run() {
+                // Make witch throw potion
+                mobs.forEach(mob -> {
+                    Mob mobster = mob.getEntity();
+                    LivingEntity target = mobster.getTarget();
+
+                    if (mob instanceof VDWitch && target != null &&
+                            target.getLocation().distance(mobster.getLocation()) <= 10) {
+                        mobster.launchProjectile(ThrownPotion.class,
+                                target.getLocation().subtract(mobster.getLocation()).toVector().normalize());
+                    }
+                });
+            }
+        });
+        activeTasks.get(FORTY_TICK).runTaskTimer(Main.plugin, 0, 40);
 
         // Debug message to console
         CommunicationManager.debugInfo("%s is starting.", 2, getName());
@@ -1932,7 +1958,7 @@ public class Arena {
         // Clear active tasks EXCEPT update and show status
         Map<String, BukkitRunnable> cache = new HashMap<>();
         activeTasks.forEach((name, task) -> {
-            if (!name.equals(CUSTOM_TICK))
+            if (!name.contains(TICK))
                 task.cancel();
             else cache.put(name, task);
         });
@@ -2138,7 +2164,7 @@ public class Arena {
         // Clear active tasks EXCEPT update and show status
         Map<String, BukkitRunnable> cache = new HashMap<>();
         activeTasks.forEach((name, task) -> {
-            if (!name.equals(CUSTOM_TICK))
+            if (!name.contains(TICK))
                 task.cancel();
             else cache.put(name, task);
         });

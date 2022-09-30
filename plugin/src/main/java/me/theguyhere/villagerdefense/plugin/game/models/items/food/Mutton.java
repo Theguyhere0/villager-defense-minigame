@@ -17,7 +17,7 @@ public abstract class Mutton extends VDFood {
     @NotNull
     public static ItemStack create() {
         return ItemManager.createItem(Material.COOKED_MUTTON,  null,
-                new ColoredMessage(ChatColor.RED, "+100 " + Utils.HP).toString(),
+                new ColoredMessage(ChatColor.RED, "+75 " + Utils.HP).toString(),
                 new ColoredMessage(ChatColor.BLUE, "+5 " + Utils.HUNGER).toString(),
                 CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a350"));
     }

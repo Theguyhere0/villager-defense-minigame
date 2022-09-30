@@ -17,7 +17,7 @@ public abstract class Beetroot extends VDFood {
     @NotNull
     public static ItemStack create() {
         return ItemManager.createItem(Material.BEETROOT, null,
-                new ColoredMessage(ChatColor.RED, "+20 " + Utils.HP).toString(),
+                new ColoredMessage(ChatColor.RED, "+10 " + Utils.HP).toString(),
                 new ColoredMessage(ChatColor.BLUE, "+1 " + Utils.HUNGER).toString(),
                 CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a80"));
     }

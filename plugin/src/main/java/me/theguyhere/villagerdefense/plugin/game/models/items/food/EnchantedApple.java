@@ -17,7 +17,7 @@ public abstract class EnchantedApple extends VDFood {
     @NotNull
     public static ItemStack create() {
         return ItemManager.createItem(Material.ENCHANTED_GOLDEN_APPLE, null,
-                new ColoredMessage(ChatColor.RED, "+250 " + Utils.HP).toString(),
+                new ColoredMessage(ChatColor.RED, "+200 " + Utils.HP).toString(),
                 new ColoredMessage(ChatColor.GOLD, "+80 " + Utils.HP).toString(),
                 new ColoredMessage(ChatColor.BLUE, "+7 " + Utils.HUNGER).toString(),
                 CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a1150"));

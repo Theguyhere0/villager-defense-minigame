@@ -17,7 +17,7 @@ public abstract class GoldenApple extends VDFood {
     @NotNull
     public static ItemStack create() {
         return ItemManager.createItem(Material.GOLDEN_APPLE, null,
-                new ColoredMessage(ChatColor.RED, "+160 " + Utils.HP).toString(),
+                new ColoredMessage(ChatColor.RED, "+125 " + Utils.HP).toString(),
                 new ColoredMessage(ChatColor.GOLD, "+50 " + Utils.HP).toString(),
                 new ColoredMessage(ChatColor.BLUE, "+4 " + Utils.HUNGER).toString(),
                 CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a800"));
