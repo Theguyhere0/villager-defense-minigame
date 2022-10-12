@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
@@ -14,8 +15,8 @@ public class VDVex extends VDMinion {
         super(
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.VEX),
-                "Vex",
-                "A little air parasite summoned by Evokers to keep away pets, players, and golems alike.",
+                LanguageManager.mobs.vex,
+                LanguageManager.mobLore.vex,
                 getLevel(arena.getCurrentDifficulty(), 1, 4),
                 AttackType.NORMAL
         );

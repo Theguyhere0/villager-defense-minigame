@@ -16,7 +16,7 @@ public class VDSilverfish extends VDMinion {
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.SILVERFISH),
                 LanguageManager.mobs.silverfish,
-                "A little ground parasite that golems and pets are especially susceptible to.",
+                LanguageManager.mobLore.silverfish,
                 getLevel(arena.getCurrentDifficulty(), 1, 4),
                 AttackType.NORMAL
         );

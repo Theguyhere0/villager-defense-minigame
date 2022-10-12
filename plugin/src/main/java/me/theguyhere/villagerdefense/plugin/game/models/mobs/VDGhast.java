@@ -16,7 +16,7 @@ public class VDGhast extends VDMinion {
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.GHAST),
                 LanguageManager.mobs.ghast,
-                "The giant of the sky, with no armor but ridiculous health and explosive attacks.",
+                LanguageManager.mobLore.ghast,
                 getLevel(arena.getCurrentDifficulty(), 1.5, 4),
                 AttackType.NORMAL
         );

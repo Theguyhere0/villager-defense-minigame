@@ -22,8 +22,7 @@ public class VDWitch extends VDMinion {
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.WITCH),
                 LanguageManager.mobs.witch,
-                "This brewery master can poison, slow, or weaken its targets and will target anyone that’s not " +
-                        "a monster.",
+                LanguageManager.mobLore.witch,
                 getLevel(arena.getCurrentDifficulty(), 2, 4),
                 AttackType.NONE
         );

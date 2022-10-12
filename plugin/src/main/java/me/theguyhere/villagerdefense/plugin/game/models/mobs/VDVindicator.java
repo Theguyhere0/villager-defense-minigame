@@ -17,8 +17,7 @@ public class VDVindicator extends VDMinion {
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.VINDICATOR),
                 LanguageManager.mobs.vindicator,
-                "A Pillager with a deep disgust towards golems. opting to fight in close quarters instead of at " +
-                        "a distance.",
+                LanguageManager.mobLore.vindicator,
                 getLevel(arena.getCurrentDifficulty(), 1.5, 4),
                 AttackType.NORMAL
         );

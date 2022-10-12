@@ -16,7 +16,7 @@ public class VDFletcher extends VDVillager {
                 arena,
                 (Villager) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.VILLAGER),
                 LanguageManager.mobs.fletcher,
-                "Where’d all the feathers come from? No one knows but the Fletcher.",
+                LanguageManager.mobLore.fletcher,
                 getLevel(arena.getCurrentDifficulty(), 2, 0)
         );
         setHealth(320, 30);

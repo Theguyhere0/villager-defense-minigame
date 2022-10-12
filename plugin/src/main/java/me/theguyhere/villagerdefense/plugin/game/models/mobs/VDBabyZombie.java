@@ -17,8 +17,7 @@ public class VDBabyZombie extends VDMinion {
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.ZOMBIE),
                 LanguageManager.mobs.babyZombie,
-                "The smaller and faster brother of the Zombie, with overall higher damage capacity but lower " +
-                        "health.",
+                LanguageManager.mobLore.babyZombie,
                 getLevel(arena.getCurrentDifficulty(), 1, 3),
                 AttackType.NORMAL
         );

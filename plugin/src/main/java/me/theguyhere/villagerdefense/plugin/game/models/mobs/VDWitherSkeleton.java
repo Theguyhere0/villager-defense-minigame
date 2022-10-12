@@ -18,7 +18,7 @@ public class VDWitherSkeleton extends VDMinion {
                 (Mob) Objects.requireNonNull(location.getWorld())
                         .spawnEntity(location, EntityType.WITHER_SKELETON),
                 LanguageManager.mobs.witherSkeleton,
-                "These corrupted Skeletons have weak hits, but strike fast and wither their victims.",
+                LanguageManager.mobLore.witherSkeleton,
                 getLevel(arena.getCurrentDifficulty(), 1.25, 4),
                 AttackType.NORMAL
         );

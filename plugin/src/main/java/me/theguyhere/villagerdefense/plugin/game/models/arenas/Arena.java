@@ -2268,20 +2268,9 @@ public class Arena {
                 .filter(Objects::nonNull)
                 .filter(entity -> entity.hasMetadata(VDMob.VD)).filter(entity -> entity instanceof Villager)
                 .forEach(villager -> {
-                    if (((Villager) villager).getProfession() == Villager.Profession.CLERIC)
-                        villagers.remove(VDCleric.KEY);
-                    if (((Villager) villager).getProfession() == Villager.Profession.WEAPONSMITH)
-                        villagers.remove(VDWeaponsmith.KEY);
-                    if (((Villager) villager).getProfession() == Villager.Profession.ARMORER)
-                        villagers.remove(VDArmorer.KEY);
-                    if (((Villager) villager).getProfession() == Villager.Profession.FARMER)
-                        villagers.remove(VDFarmer.KEY);
-                    if (((Villager) villager).getProfession() == Villager.Profession.LIBRARIAN)
-                        villagers.remove(VDVaultKeeper.KEY);
                     if (((Villager) villager).getProfession() == Villager.Profession.FLETCHER)
                         villagers.remove(VDFletcher.KEY);
-                    if (((Villager) villager).getProfession() == Villager.Profession.NITWIT)
-                        villagers.remove(VDMayor.KEY);
+                    else villagers.remove(VDNormalVillager.KEY);
                 });
 
         // Calculate count multiplier

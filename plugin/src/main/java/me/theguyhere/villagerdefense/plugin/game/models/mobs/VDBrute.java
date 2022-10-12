@@ -18,8 +18,7 @@ public class VDBrute extends VDMinion {
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location,
                         EntityType.PIGLIN_BRUTE),
                 LanguageManager.mobs.brute,
-                "The uncivilized uncle of Piglin who is tougher, faster, and wields an axe. Hates players but " +
-                        "specifically targets melee fighters.",
+                LanguageManager.mobLore.brute,
                 getLevel(arena.getCurrentDifficulty(), 1.5, 4),
                 AttackType.PENETRATING
         );

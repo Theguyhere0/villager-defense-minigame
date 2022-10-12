@@ -18,8 +18,7 @@ public class VDCaveSpider extends VDMinion {
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location,
                         EntityType.CAVE_SPIDER),
                 LanguageManager.mobs.caveSpider,
-                "These little Spiders are even faster and inflict poison, despite being weaker than their " +
-                        "counterpart.",
+                LanguageManager.mobLore.caveSpider,
                 getLevel(arena.getCurrentDifficulty(), 1.25, 3),
                 AttackType.PENETRATING
         );

@@ -17,7 +17,7 @@ public class VDStray extends VDMinion {
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.STRAY),
                 LanguageManager.mobs.stray,
-                "A deep frozen cousin of the Skeleton that slows targets and seeks out players.",
+                LanguageManager.mobLore.stray,
                 getLevel(arena.getCurrentDifficulty(), 1.5, 3),
                 AttackType.NORMAL
         );

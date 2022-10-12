@@ -18,7 +18,7 @@ public class VDHusk extends VDMinion {
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.HUSK),
                 LanguageManager.mobs.husk,
-                "A tougher version of the Zombie that inflicts hunger and targets players.",
+                LanguageManager.mobLore.husk,
                 getLevel(arena.getCurrentDifficulty(), 1, 2),
                 AttackType.NORMAL
         );

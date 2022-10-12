@@ -16,7 +16,7 @@ public class VDSpider extends VDMinion {
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.SPIDER),
                 LanguageManager.mobs.spider,
-                "A fast-moving, fast-attacking, armor-penetrating, wall-scaling monster.",
+                LanguageManager.mobLore.spider,
                 getLevel(arena.getCurrentDifficulty(), 1, 0),
                 AttackType.PENETRATING
         );

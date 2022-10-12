@@ -17,7 +17,7 @@ public class VDPiglinSoldier extends VDMinion {
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.PIGLIN),
                 LanguageManager.mobs.piglinSoldier,
-                "A highly mobile swordsman that strikes hard and fast, with a hatred toward players.",
+                LanguageManager.mobLore.piglinSoldier,
                 getLevel(arena.getCurrentDifficulty(), 1.5, 4),
                 AttackType.NORMAL
         );
