@@ -12,6 +12,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.items.ItemMetaKey;
+import me.theguyhere.villagerdefense.plugin.game.models.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.game.models.items.armor.VDArmor;
 import me.theguyhere.villagerdefense.plugin.game.models.items.eggs.VDEgg;
@@ -197,7 +198,7 @@ public class GameListener implements Listener {
 				capacity.set(Integer.parseInt(lore.substring(2 + LanguageManager.messages.capacity.length())
 						.replace(ChatColor.BLUE.toString(), "")
 						.replace(ChatColor.WHITE.toString(), "")
-						.split("/")[0]));
+						.split(" / ")[0]));
 			}
 		});
 		if (capacity.get() < cost.get())
@@ -210,12 +211,13 @@ public class GameListener implements Listener {
 		// Fire
 		player.launchProjectile(Arrow.class);
 
-		// Update capacity and cooldown
+		// Update capacity, durability, and cooldown
 		if (Bow.matches(range))
 			NMSVersion.getCurrent().getNmsManager().setBowCooldown(player, Utils.secondsToTicks(cooldown.get()));
 		else NMSVersion.getCurrent().getNmsManager().setCrossbowCooldown(player, Utils.secondsToTicks(cooldown.get()));
 		gamer.setCooldown(System.currentTimeMillis() + Utils.secondsToMillis(cooldown.get()));
 		Ammo.updateCapacity(ammo, -cost.get());
+		Bukkit.getPluginManager().callEvent(new PlayerItemDamageEvent(player, range, 1));
 	}
 
 	// Manage projectiles being fired
@@ -1150,6 +1152,10 @@ public class GameListener implements Listener {
 			return;
 		}
 
+		// Ignore armor equip
+		if (VDArmor.matches(item))
+			return;
+
 		// Check for active arena, at least wave 1
 		if (arena.getStatus() != ArenaStatus.ACTIVE || arena.getCurrentWave() < 1) {
 			e.setCancelled(true);
@@ -1479,5 +1485,34 @@ public class GameListener implements Listener {
 		// Cancel event if arena is in waiting mode
 		if (arena.getStatus() == ArenaStatus.WAITING)
 			e.setCancelled(true);
+	}
+
+	// Handle custom durability
+	@EventHandler
+	public void onItemDamage(PlayerItemDamageEvent e) {
+		// Check for valid arena
+		try {
+			GameManager.getArena(e.getPlayer());
+		} catch (ArenaNotFoundException err) {
+			return;
+		}
+
+		// Cancel event, then destroy if ready
+		Player player = e.getPlayer();
+		ItemStack item = e.getItem();
+		e.setCancelled(true);
+		if (!VDItem.updateDurability(item)) {
+			if (item.equals(player.getInventory().getItemInMainHand()))
+				player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+			else if (item.equals(player.getInventory().getBoots()))
+				player.getInventory().setBoots(new ItemStack(Material.AIR));
+			else if (item.equals(player.getInventory().getChestplate()))
+				player.getInventory().setChestplate(new ItemStack(Material.AIR));
+			else if (item.equals(player.getInventory().getHelmet()))
+				player.getInventory().setHelmet(new ItemStack(Material.AIR));
+			else if (item.equals(player.getInventory().getLeggings()))
+				player.getInventory().setLeggings(new ItemStack(Material.AIR));
+			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1);
+		}
 	}
 }

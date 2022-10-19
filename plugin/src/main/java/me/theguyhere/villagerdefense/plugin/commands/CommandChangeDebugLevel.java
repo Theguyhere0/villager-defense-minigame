@@ -24,12 +24,18 @@ class CommandChangeDebugLevel {
             throw new CommandFormatException(COMMAND_FORMAT);
         CommandGuard.checkSenderPermissions(sender, Permission.ADMIN);
 
-        // Set debug level
+        // Check proper level
+        int level;
         try {
-            CommunicationManager.setDebugLevel(Integer.parseInt(args[1]));
+            level = Integer.parseInt(args[1]);
+            if (level < 0 || level > 3)
+                throw new CommandFormatException(COMMAND_FORMAT);
         } catch (Exception e) {
             throw new CommandFormatException(COMMAND_FORMAT);
         }
+
+        // Set debug level
+        CommunicationManager.setDebugLevel(level);
 
         // Notify
         if (sender instanceof Player)

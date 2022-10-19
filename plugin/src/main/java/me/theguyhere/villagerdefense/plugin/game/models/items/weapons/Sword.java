@@ -82,15 +82,20 @@ public abstract class Sword extends VDWeapon {
                 new AttributeModifier(ItemMetaKey.DUMMY.name(), 19,
                         AttributeModifier.Operation.ADD_NUMBER));
 
+        // Set durability
+        lores.add(CommunicationManager.format(DURABILITY,
+                new ColoredMessage(ChatColor.GREEN, "100").toString() +
+                        new ColoredMessage(ChatColor.WHITE, " / 100")));
+
         // Set price
         int price = (int) (150 + 50 * level * Math.pow(Math.E, (level - 1) / 50d));
         lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
                 price));
 
-        // Set name, make unbreakable, and return
-        return ItemManager.makeUnbreakable(ItemManager.createItem(mat, CommunicationManager.format(
+        // Set name and return
+        return ItemManager.createItem(mat, CommunicationManager.format(
                         new ColoredMessage(ChatColor.GRAY, LanguageManager.messages.sword), Integer.toString(level)),
-                ItemManager.BUTTON_FLAGS, null, lores, attributes));
+                ItemManager.BUTTON_FLAGS, null, lores, attributes);
     }
 
     public static boolean matches(ItemStack toCheck) {

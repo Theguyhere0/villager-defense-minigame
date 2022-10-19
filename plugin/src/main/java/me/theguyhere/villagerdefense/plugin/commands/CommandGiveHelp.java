@@ -34,9 +34,8 @@ class CommandGiveHelp {
             return;
         }
 
-        int page;
-
         // Try to get page number, or set page to 1
+        int page;
         try {
             page = Integer.parseInt(args[1]);
         } catch (Exception e) {

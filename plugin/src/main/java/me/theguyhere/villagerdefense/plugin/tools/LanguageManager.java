@@ -332,7 +332,6 @@ public class LanguageManager {
         public final @NotNull String phantomArena;
         public final @NotNull String phantomOwn;
         public final @NotNull String phantomPlayer;
-        public final @NotNull String playerOnlyCommand;
         public final @NotNull String startingSoon;
         public final @NotNull String suicide;
         public final @NotNull String suicideActive;
@@ -382,7 +381,6 @@ public class LanguageManager {
             phantomArena = getConfigString("phantomArena");
             phantomOwn = getConfigString("phantomOwn");
             phantomPlayer = getConfigString("phantomPlayer");
-            playerOnlyCommand = getConfigString("playerOnlyCommand");
             startingSoon = getConfigString("startingSoon");
             suicide = getConfigString("suicide");
             suicideActive = getConfigString("suicideActive");
@@ -650,6 +648,7 @@ public class LanguageManager {
         public final @NotNull String debugLevelSet;
         public final @NotNull String disabled;
         public final @NotNull String duplicatePlaceholder;
+        public final @NotNull String durability;
         public final @NotNull String effectKitsDescription;
         public final @NotNull String effectShare;
         public final @NotNull String end;
@@ -779,6 +778,7 @@ public class LanguageManager {
             debugLevelSet = getConfigString("debugLevelSet");
             disabled = getConfigString("disabled");
             duplicatePlaceholder = getConfigString("duplicatePlaceholder");
+            durability = getConfigString("durability");
             effectKitsDescription = getConfigString("effectKitsDescription");
             effectShare = getConfigString("effectShare");
             end = getConfigString("end");

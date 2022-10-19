@@ -33,7 +33,7 @@ public abstract class Ammo extends VDWeapon {
         int capacity = 6 + 2 * ((level - 1) / 3) + 2 * ((level + 1) / 3) + 2 * (Math.max(level - 42, 0) / 3);
         lores.add(CommunicationManager.format(CAPACITY,
                 new ColoredMessage(ChatColor.GREEN, Integer.toString(capacity)).toString() +
-                new ColoredMessage(ChatColor.WHITE, "/" + capacity)));
+                new ColoredMessage(ChatColor.WHITE, " / " + capacity)));
 
         // Set refill rate
         int refillBoost = level / 3;
@@ -82,7 +82,7 @@ public abstract class Ammo extends VDWeapon {
                 String[] cap = lore.substring(2 + LanguageManager.messages.capacity.length())
                         .replace(ChatColor.BLUE.toString(), "")
                         .replace(ChatColor.WHITE.toString(), "")
-                        .split("/");
+                        .split(" / ");
                 maxCap.set(Integer.parseInt(cap[1]));
                 capacity.set(Integer.parseInt(cap[0]));
                 capIndex.set(lores.indexOf(lore));
@@ -96,7 +96,7 @@ public abstract class Ammo extends VDWeapon {
         lores.set(capIndex.get(), CommunicationManager.format(CAPACITY,
                 new ColoredMessage(color,
                         Integer.toString(capacity.get())).toString() +
-                        new ColoredMessage(ChatColor.WHITE, "/" + maxCap.get())));
+                        new ColoredMessage(ChatColor.WHITE, " / " + maxCap.get())));
         meta.setLore(lores);
         ammo.setItemMeta(meta);
     }
@@ -122,7 +122,7 @@ public abstract class Ammo extends VDWeapon {
                 String[] cap = lore.substring(2 + LanguageManager.messages.capacity.length())
                         .replace(ChatColor.BLUE.toString(), "")
                         .replace(ChatColor.WHITE.toString(), "")
-                        .split("/");
+                        .split(" / ");
                 maxCap.set(Integer.parseInt(cap[1]));
                 capacity.set(Integer.parseInt(cap[0]));
                 capIndex.set(lores.indexOf(lore));
@@ -161,7 +161,7 @@ public abstract class Ammo extends VDWeapon {
                 lores.set(capIndex.get(), CommunicationManager.format(CAPACITY,
                         new ColoredMessage(color,
                                 Integer.toString(capacity.get())).toString() +
-                                new ColoredMessage(ChatColor.WHITE, "/" + maxCap.get())));
+                                new ColoredMessage(ChatColor.WHITE, " / " + maxCap.get())));
                 lores.remove(refillTimerIndex.get());
             }
 

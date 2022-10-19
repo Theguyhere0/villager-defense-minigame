@@ -41,15 +41,20 @@ public abstract class Bow extends VDWeapon {
         // Set ammo cost
         lores.add(CommunicationManager.format(AMMO_COST, new ColoredMessage(ChatColor.RED, Integer.toString(1))));
 
+        // Set durability
+        lores.add(CommunicationManager.format(DURABILITY,
+                new ColoredMessage(ChatColor.GREEN, "100").toString() +
+                        new ColoredMessage(ChatColor.WHITE, " / 100")));
+
         // Set price
         int price = (int) (170 + 55 * level * Math.pow(Math.E, (level - 1) / 50d));
         lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
                 price));
 
-        // Set name, make unbreakable, and return
-        return ItemManager.makeUnbreakable(ItemManager.createItem(Material.BOW, CommunicationManager.format(
+        // Set name and return
+        return ItemManager.createItem(Material.BOW, CommunicationManager.format(
                         new ColoredMessage(ChatColor.GRAY, LanguageManager.messages.bow), Integer.toString(level)),
-                ItemManager.BUTTON_FLAGS, null, lores));
+                ItemManager.BUTTON_FLAGS, null, lores);
     }
 
     public static boolean matches(ItemStack toCheck) {
