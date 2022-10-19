@@ -18,8 +18,7 @@ public class VDBabyHusk extends VDMinion {
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.HUSK),
                 LanguageManager.mobs.babyHusk,
-                "The smaller and faster brother of the Husk, with overall higher damage capacity but lower " +
-                        "health.",
+                LanguageManager.mobLore.babyHusk,
                 getLevel(arena.getCurrentDifficulty(), 1, 3),
                 AttackType.NORMAL
         );

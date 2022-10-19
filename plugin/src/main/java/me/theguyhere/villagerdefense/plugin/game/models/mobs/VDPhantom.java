@@ -16,8 +16,7 @@ public class VDPhantom extends VDMinion {
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.PHANTOM),
                 LanguageManager.mobs.phantom,
-                "A nuisance of the sky, aiming to draw attention and firepower away from other more capable " +
-                        "units.",
+                LanguageManager.mobLore.phantom,
                 getLevel(arena.getCurrentDifficulty(), 1.25, 2),
                 AttackType.NORMAL
         );

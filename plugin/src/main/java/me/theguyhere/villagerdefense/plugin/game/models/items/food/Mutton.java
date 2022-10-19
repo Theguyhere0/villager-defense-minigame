@@ -17,7 +17,8 @@ public abstract class Mutton extends VDFood {
     @NotNull
     public static ItemStack create() {
         return ItemManager.createItem(Material.COOKED_MUTTON,  null,
-                new ColoredMessage(ChatColor.RED, "+100 " + Utils.HP).toString(),
+                new ColoredMessage(ChatColor.RED, "+75 " + Utils.HP).toString(),
+                new ColoredMessage(ChatColor.BLUE, "+5 " + Utils.HUNGER).toString(),
                 CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a350"));
     }
 
@@ -31,6 +32,6 @@ public abstract class Mutton extends VDFood {
         if (lore == null)
             return false;
         return toCheck.getType() == Material.COOKED_MUTTON && lore.stream().anyMatch(line -> line.contains(
-                new ColoredMessage(ChatColor.RED, "+50 " + Utils.HP).toString()));
+                new ColoredMessage(ChatColor.RED, "+100 " + Utils.HP).toString()));
     }
 }

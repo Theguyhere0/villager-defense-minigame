@@ -2,23 +2,21 @@
   count:
     m: 6
   vtypes:
-    myer: 2
+    nrml: 2
   mtypes:
     zomb: 1
 '2':
   count:
     m: 9
   vtypes:
-    myer: 2
-    keep: 1
+    nrml: 3
   mtypes:
     zomb: 1
 '3':
   count:
     m: 15
   vtypes:
-    myer: 2
-    keep: 1
+    nrml: 3
   mtypes:
     zomb: 3
     spid: 1
@@ -26,9 +24,7 @@
   count:
     m: 16
   vtypes:
-    myer: 2
-    keep: 1
-    wepn: 1
+    nrml: 4
   mtypes:
     zomb: 3
     spid: 1
@@ -36,10 +32,7 @@
   count:
     m: 20
   vtypes:
-    myer: 2
-    keep: 1
-    wepn: 1
-    armr: 1
+    nrml: 5
   mtypes:
     zomb: 10
     spid: 4
@@ -48,11 +41,7 @@
   count:
     m: 24
   vtypes:
-    myer: 2
-    keep: 1
-    wepn: 1
-    armr: 1
-    frmr: 1
+    nrml: 6
     flch: 1
   mtypes:
     zomb: 5
@@ -62,13 +51,8 @@
   count:
     m: 25
   vtypes:
-    myer: 2
-    keep: 2
-    wepn: 1
-    armr: 1
-    frmr: 1
+    nrml: 8
     flch: 1
-    clrc: 1
   mtypes:
     zomb: 5
     spid: 3
@@ -77,13 +61,8 @@
   count:
     m: 27
   vtypes:
-    myer: 2
-    keep: 2
-    wepn: 2
-    armr: 1
-    frmr: 1
+    nrml: 9
     flch: 2
-    clrc: 1
   mtypes:
     zomb: 4
     husk: 1
@@ -93,13 +72,8 @@
   count:
     m: 28
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 2
-    armr: 1
-    frmr: 1
+    nrml: 10
     flch: 2
-    clrc: 1
   mtypes:
     zomb: 5
     husk: 2
@@ -109,13 +83,8 @@
   count:
     m: 25
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 2
-    armr: 1
-    frmr: 1
+    nrml: 10
     flch: 2
-    clrc: 1
   mtypes:
     zomb: 2
     husk: 3
@@ -126,13 +95,8 @@
   count:
     m: 28
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 2
-    armr: 2
-    frmr: 1
+    nrml: 11
     flch: 2
-    clrc: 1
   mtypes:
     zomb: 2
     husk: 3
@@ -143,13 +107,8 @@
   count:
     m: 30
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 2
-    armr: 2
-    frmr: 2
+    nrml: 12
     flch: 2
-    clrc: 1
   mtypes:
     zomb: 2
     husk: 3
@@ -161,13 +120,8 @@
   count:
     m: 32
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 2
-    armr: 2
-    frmr: 2
+    nrml: 12
     flch: 2
-    clrc: 1
   mtypes:
     zomb: 2
     husk: 3
@@ -179,13 +133,8 @@
   count:
     m: 35
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 2
-    armr: 2
-    frmr: 2
+    nrml: 13
     flch: 2
-    clrc: 2
   mtypes:
     zomb: 2
     husk: 3
@@ -197,13 +146,8 @@
   count:
     m: 35
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 2
-    armr: 2
-    frmr: 2
+    nrml: 13
     flch: 2
-    clrc: 2
   mtypes:
     zomb: 2
     husk: 3
@@ -216,13 +160,8 @@
   count:
     m: 35
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 2
-    armr: 2
-    frmr: 2
+    nrml: 13
     flch: 2
-    clrc: 2
   mtypes:
     zomb: 1
     husk: 2
@@ -235,13 +174,8 @@
   count:
     m: 36
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 2
-    armr: 3
-    frmr: 2
+    nrml: 14
     flch: 2
-    clrc: 2
   mtypes:
     zomb: 1
     husk: 2
@@ -254,13 +188,8 @@
   count:
     m: 32
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 2
-    armr: 3
-    frmr: 2
+    nrml: 14
     flch: 2
-    clrc: 2
   mtypes:
     zomb: 1
     husk: 1
@@ -274,13 +203,8 @@
   count:
     m: 35
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 2
-    armr: 3
-    frmr: 2
+    nrml: 14
     flch: 2
-    clrc: 2
   mtypes:
     zomb: 1
     husk: 1
@@ -294,13 +218,8 @@
   count:
     m: 30
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 3
-    armr: 3
-    frmr: 2
+    nrml: 15
     flch: 2
-    clrc: 2
   mtypes:
     zomb: 2
     husk: 2
@@ -317,13 +236,8 @@
   count:
     m: 32
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 3
-    armr: 3
-    frmr: 2
+    nrml: 15
     flch: 2
-    clrc: 2
   mtypes:
     zomb: 2
     husk: 2
@@ -340,13 +254,8 @@
   count:
     m: 35
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 3
-    armr: 3
-    frmr: 2
+    nrml: 15
     flch: 2
-    clrc: 2
   mtypes:
     zomb: 2
     husk: 2
@@ -363,13 +272,8 @@
   count:
     m: 35
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 3
-    armr: 3
-    frmr: 2
+    nrml: 15
     flch: 2
-    clrc: 2
   mtypes:
     zomb: 1
     husk: 1
@@ -386,13 +290,8 @@
   count:
     m: 35
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 3
-    armr: 3
-    frmr: 2
+    nrml: 16
     flch: 2
-    clrc: 3
   mtypes:
     zomb: 1
     husk: 1
@@ -410,13 +309,8 @@
   count:
     m: 35
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 3
-    armr: 3
-    frmr: 2
+    nrml: 16
     flch: 2
-    clrc: 3
   mtypes:
     zomb: 1
     husk: 1
@@ -435,13 +329,8 @@
   count:
     m: 36
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 3
-    armr: 3
-    frmr: 2
+    nrml: 16
     flch: 2
-    clrc: 3
   mtypes:
     zomb: 2
     bzmb: 1
@@ -462,13 +351,8 @@
   count:
     m: 38
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 3
-    armr: 3
-    frmr: 2
+    nrml: 16
     flch: 2
-    clrc: 3
   mtypes:
     zomb: 2
     bzmb: 1
@@ -490,13 +374,8 @@
   count:
     m: 38
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 3
-    armr: 3
-    frmr: 2
+    nrml: 16
     flch: 2
-    clrc: 3
   mtypes:
     zomb: 4
     bzmb: 2
@@ -519,13 +398,8 @@
   count:
     m: 40
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 3
-    armr: 3
-    frmr: 2
+    nrml: 16
     flch: 2
-    clrc: 3
   mtypes:
     zomb: 4
     bzmb: 2
@@ -548,13 +422,8 @@
   count:
     m: 20
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 3
-    armr: 3
-    frmr: 3
+    nrml: 17
     flch: 2
-    clrc: 3
   mtypes:
     brut: 2
     vind: 2
@@ -563,13 +432,8 @@
   count:
     m: 40
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 3
-    armr: 3
-    frmr: 3
+    nrml: 17
     flch: 2
-    clrc: 3
   mtypes:
     zomb: 4
     bzmb: 2
@@ -595,13 +459,8 @@
   count:
     m: 40
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 3
-    armr: 3
-    frmr: 3
+    nrml: 17
     flch: 2
-    clrc: 3
   mtypes:
     zomb: 4
     bzmb: 2
@@ -628,13 +487,8 @@
   count:
     m: 42
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 3
-    armr: 3
-    frmr: 3
+    nrml: 17
     flch: 3
-    clrc: 3
   mtypes:
     zomb: 4
     bzmb: 2
@@ -661,13 +515,8 @@
   count:
     m: 45
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 3
-    armr: 3
-    frmr: 3
+    nrml: 17
     flch: 3
-    clrc: 3
   mtypes:
     zomb: 4
     bzmb: 2
@@ -694,13 +543,8 @@
   count:
     m: 60
   vtypes:
-    myer: 3
-    keep: 2
-    wepn: 3
-    armr: 3
-    frmr: 3
+    nrml: 17
     flch: 3
-    clrc: 3
   mtypes:
     brut: 2
     vind: 2
@@ -716,13 +560,8 @@ freePlay:
   count:
     m: 50
   vtypes:
-    myer: 3
-    keep: 3
-    wepn: 4
-    armr: 4
-    frmr: 4
+    nrml: 22
     flch: 3
-    clrc: 4
   mtypes:
     zomb: 4
     bzmb: 2

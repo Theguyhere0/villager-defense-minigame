@@ -17,7 +17,8 @@ public abstract class Bread extends VDFood {
     @NotNull
     public static ItemStack create() {
         return ItemManager.createItem(Material.BREAD, null,
-                new ColoredMessage(ChatColor.RED, "+60 " + Utils.HP).toString(),
+                new ColoredMessage(ChatColor.RED, "+40 " + Utils.HP).toString(),
+                new ColoredMessage(ChatColor.BLUE, "+3 " + Utils.HUNGER).toString(),
                 CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a220"));
     }
 

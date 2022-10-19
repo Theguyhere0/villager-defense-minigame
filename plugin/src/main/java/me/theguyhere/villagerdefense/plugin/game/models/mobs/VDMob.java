@@ -3,7 +3,6 @@ package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
-import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidVDMobKeyException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
@@ -485,20 +484,10 @@ public abstract class VDMob {
 
     public static VDMob of(String key, Arena arena, Location ground, Location air) throws InvalidVDMobKeyException {
         switch (key) {
-//            case VDCleric.KEY:
-//                return new VDCleric(arena, ground);
-            case VDWeaponsmith.KEY:
-                return new VDWeaponsmith(arena, ground);
-            case VDArmorer.KEY:
-                return new VDArmorer(arena, ground);
-            case VDFarmer.KEY:
-                return new VDFarmer(arena, ground);
-            case VDVaultKeeper.KEY:
-                return new VDVaultKeeper(arena, ground);
+            case VDNormalVillager.KEY:
+                return new VDNormalVillager(arena, ground);
             case VDFletcher.KEY:
                 return new VDFletcher(arena, ground);
-            case VDMayor.KEY:
-                return new VDMayor(arena, ground);
             case VDZombie.KEY:
                 return new VDZombie(arena, ground);
             case VDBabyZombie.KEY:

@@ -17,7 +17,8 @@ public abstract class Carrot extends VDFood {
     @NotNull
     public static ItemStack create() {
         return ItemManager.createItem(Material.CARROT, null,
-                new ColoredMessage(ChatColor.RED, "+40 " + Utils.HP).toString(),
+                new ColoredMessage(ChatColor.RED, "+20 " + Utils.HP).toString(),
+                new ColoredMessage(ChatColor.BLUE, "+2 " + Utils.HUNGER).toString(),
                 CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a150"));
     }
 

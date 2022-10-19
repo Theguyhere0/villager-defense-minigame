@@ -18,7 +18,7 @@ public class VDCreeper extends VDMinion {
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.CREEPER),
                 LanguageManager.mobs.creeper,
-                "A crowd control monster keeping defenders away from the front lines.",
+                LanguageManager.mobLore.creeper,
                 getLevel(arena.getCurrentDifficulty(), 1.5, 2),
                 AttackType.NORMAL
         );

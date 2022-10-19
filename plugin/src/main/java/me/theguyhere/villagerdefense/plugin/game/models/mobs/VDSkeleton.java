@@ -16,7 +16,7 @@ public class VDSkeleton extends VDMinion {
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.SKELETON),
                 LanguageManager.mobs.skeleton,
-                "A mediocre ranged monster that attacks indiscriminately.",
+                LanguageManager.mobLore.skeleton,
                 getLevel(arena.getCurrentDifficulty(), 1, 0),
                 AttackType.NORMAL
         );

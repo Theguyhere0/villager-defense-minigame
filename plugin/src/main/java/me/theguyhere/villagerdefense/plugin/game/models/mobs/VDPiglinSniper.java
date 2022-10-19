@@ -17,8 +17,7 @@ public class VDPiglinSniper extends VDMinion {
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.PIGLIN),
                 LanguageManager.mobs.piglinSniper,
-                "A long-ranged sniper shooting heavy bolts that both penetrate armor and pierce through targets, " +
-                        "aiming for players and especially ranged players.",
+                LanguageManager.mobLore.piglinSniper,
                 getLevel(arena.getCurrentDifficulty(), 1.5, 4),
                 AttackType.PENETRATING
         );

@@ -17,7 +17,7 @@ public class VDZombie extends VDMinion {
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.ZOMBIE),
                 LanguageManager.mobs.zombie,
-                "A pretty average monster that moves slowly and attacks indiscriminately.",
+                LanguageManager.mobLore.zombie,
                 getLevel(arena.getCurrentDifficulty(), 1, 0),
                 AttackType.NORMAL
         );

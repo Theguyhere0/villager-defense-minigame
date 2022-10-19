@@ -42,14 +42,12 @@ class CommandGuard {
     static Player checkSenderPlayer(CommandSender sender) throws CommandPlayerException {
         if (sender instanceof Player)
             return (Player) sender;
-        CommunicationManager.debugError(LanguageManager.errors.playerOnlyCommand, 0);
         throw new CommandPlayerException("Command must be executed by a player");
     }
 
     static void checkDebugLevelLessEqual(CommandSender sender, int debugLevel) throws CommandDebugLevelException {
         if (CommunicationManager.getDebugLevel() <= debugLevel)
             return;
-        CommandExecImp.notifyFailure(sender, "The debug level should be " + debugLevel + " or lower.");
         throw new CommandDebugLevelException("Debug level of " + CommunicationManager.getDebugLevel() + " is higher " +
                 "than " + debugLevel);
     }
@@ -60,7 +58,6 @@ class CommandGuard {
     static void checkDebugLevelGreaterEqual(CommandSender sender, int debugLevel) throws CommandDebugLevelException {
         if (CommunicationManager.getDebugLevel() >= debugLevel)
             return;
-        CommandExecImp.notifyFailure(sender, "The debug level should be " + debugLevel + " or higher.");
         throw new CommandDebugLevelException("Debug level of " + CommunicationManager.getDebugLevel() + " is lower " +
                 "than " + debugLevel);
     }

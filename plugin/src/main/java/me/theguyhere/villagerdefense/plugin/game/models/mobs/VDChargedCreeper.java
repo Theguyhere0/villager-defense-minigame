@@ -18,7 +18,7 @@ public class VDChargedCreeper extends VDMinion {
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.CREEPER),
                 LanguageManager.mobs.chargedCreeper,
-                "The suicidal version of the Creeper with only one goal in mind: destroy the players.",
+                LanguageManager.mobLore.chargedCreeper,
                 getLevel(arena.getCurrentDifficulty(), 1.75, 5),
                 AttackType.NORMAL
         );

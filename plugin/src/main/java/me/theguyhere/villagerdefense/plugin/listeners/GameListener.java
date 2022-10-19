@@ -12,9 +12,11 @@ import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.items.ItemMetaKey;
+import me.theguyhere.villagerdefense.plugin.game.models.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.game.models.items.armor.VDArmor;
 import me.theguyhere.villagerdefense.plugin.game.models.items.eggs.VDEgg;
+import me.theguyhere.villagerdefense.plugin.game.models.items.food.Totem;
 import me.theguyhere.villagerdefense.plugin.game.models.items.food.VDFood;
 import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.*;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Ammo;
@@ -46,7 +48,6 @@ import org.bukkit.util.BoundingBox;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameListener implements Listener {
@@ -197,7 +198,7 @@ public class GameListener implements Listener {
 				capacity.set(Integer.parseInt(lore.substring(2 + LanguageManager.messages.capacity.length())
 						.replace(ChatColor.BLUE.toString(), "")
 						.replace(ChatColor.WHITE.toString(), "")
-						.split("/")[0]));
+						.split(" / ")[0]));
 			}
 		});
 		if (capacity.get() < cost.get())
@@ -210,12 +211,13 @@ public class GameListener implements Listener {
 		// Fire
 		player.launchProjectile(Arrow.class);
 
-		// Update capacity and cooldown
+		// Update capacity, durability, and cooldown
 		if (Bow.matches(range))
 			NMSVersion.getCurrent().getNmsManager().setBowCooldown(player, Utils.secondsToTicks(cooldown.get()));
 		else NMSVersion.getCurrent().getNmsManager().setCrossbowCooldown(player, Utils.secondsToTicks(cooldown.get()));
 		gamer.setCooldown(System.currentTimeMillis() + Utils.secondsToMillis(cooldown.get()));
 		Ammo.updateCapacity(ammo, -cost.get());
+		Bukkit.getPluginManager().callEvent(new PlayerItemDamageEvent(player, range, 1));
 	}
 
 	// Manage projectiles being fired
@@ -616,8 +618,9 @@ public class GameListener implements Listener {
 				case WITHER:
 					gamer.takeDamage((int) (damage * 10), AttackType.DIRECT);
 					break;
-				// Ignore
+				// Silence
 				default:
+					e.setCancelled(true);
 			}
 		}
 
@@ -655,8 +658,9 @@ public class GameListener implements Listener {
 				case WITHER:
 					mob.takeDamage((int) (damage * 4), AttackType.DIRECT, null, arena);
 					break;
-				// Ignore
+				// Silence
 				default:
+					e.setCancelled(true);
 			}
 		}
 
@@ -831,19 +835,22 @@ public class GameListener implements Listener {
 				new ColoredMessage(ChatColor.RED, "+10" + Utils.HP));
 	}
 
-	// Prevent players from going hungry while in an arena
+	// Prevent players from going hungry while waiting in an arena
 	@EventHandler
 	public void onHunger(FoodLevelChangeEvent e) {
 		Player player = (Player) e.getEntity();
+		Arena arena;
 
 		// Check for player in arena
 		try {
-			GameManager.getArena(player);
+			arena = GameManager.getArena(player);
 		} catch (ArenaNotFoundException err) {
 			return;
 		}
 
-		e.setCancelled(true);
+		// Cancel if arena is not active
+		if (arena.getStatus() != ArenaStatus.ACTIVE)
+			e.setCancelled(true);
 	}
 
 	// Cancel natural potion effects for VDMobs or VDPlayers
@@ -1105,7 +1112,7 @@ public class GameListener implements Listener {
 			e.setCancelled(true);
 	}
 
-	// Stop spawning babies
+	// Stop spawning babies using spawn eggs
 	@EventHandler
 	public void onBabyAttempt(PlayerInteractEntityEvent e) {
 		// Check for player in game
@@ -1145,6 +1152,10 @@ public class GameListener implements Listener {
 			return;
 		}
 
+		// Ignore armor equip
+		if (VDArmor.matches(item))
+			return;
+
 		// Check for active arena, at least wave 1
 		if (arena.getStatus() != ArenaStatus.ACTIVE || arena.getCurrentWave() < 1) {
 			e.setCancelled(true);
@@ -1157,25 +1168,23 @@ public class GameListener implements Listener {
 						VDWeapon.matchesClickableWeapon(main) || VDEgg.matches(main)))
 			return;
 
-		// Give health
-		AtomicBoolean food = new AtomicBoolean(false);
+		// Give health and hunger for totem
+		if (Totem.matches(item)) {
+			lores.forEach(lore -> {
+				if (lore.contains(Utils.HP)) {
+					int hp = Integer.parseInt(lore.substring(3).replace(Utils.HP, "").trim());
+					if (lore.contains(ChatColor.RED.toString()) && !gamer.hasMaxHealth())
+						gamer.changeCurrentHealth(hp);
+					else if (lore.contains(ChatColor.GOLD.toString()))
+						gamer.addAbsorption(hp);
+				} else if (lore.contains(Utils.HUNGER)) {
+					player.setFoodLevel(Math.max(20, player.getFoodLevel() +
+							Integer.parseInt(lore.substring(3).replace(Utils.HUNGER, "").trim())));
+				}
+			});
 
-		lores.forEach(lore -> {
-			if (lore.contains(ChatColor.RED.toString()) && lore.contains(Utils.HP) && !gamer.hasMaxHealth()) {
-				gamer.changeCurrentHealth(Integer.parseInt(lore.substring(3).replace(Utils.HP, "").trim()));
-				food.set(true);
-			}
-			if (lore.contains(ChatColor.GOLD.toString()) && lore.contains(Utils.HP)) {
-				gamer.addAbsorption(Integer.parseInt(lore.substring(3).replace(Utils.HP, "").trim()));
-				food.set(true);
-			}
-		});
-
-		// Consume
-		if (food.get()) {
-			if (item.getAmount() > 1)
-				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
+			// Consume
+			player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
 		}
 
 		// Wolf spawn
@@ -1242,6 +1251,51 @@ public class GameListener implements Listener {
 //			Mobs.setGolem(Main.plugin, arena, ironGolem);
 //			Main.getVillagersTeam().addEntry(ironGolem.getUniqueId().toString());
 //		}
+	}
+
+	// Manage consumption of food
+	@EventHandler
+	public void onEat(PlayerItemConsumeEvent e) {
+		Player player = e.getPlayer();
+		ItemStack item = e.getItem();
+		List<String> lores;
+		Arena arena;
+		VDPlayer gamer;
+
+		// Attempt to get arena, player, and lore
+		try {
+			arena = GameManager.getArena(player);
+			gamer = arena.getPlayer(player);
+			lores = Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore());
+		} catch (ArenaNotFoundException | PlayerNotFoundException | NullPointerException err) {
+			return;
+		}
+
+		// Check for active arena, at least wave 1
+		if (arena.getStatus() != ArenaStatus.ACTIVE || arena.getCurrentWave() < 1) {
+			e.setCancelled(true);
+			return;
+		}
+
+		// Give health and hunger
+		lores.forEach(lore -> {
+			if (lore.contains(Utils.HP)) {
+				int hp = Integer.parseInt(lore.substring(3).replace(Utils.HP, "").trim());
+				if (lore.contains(ChatColor.RED.toString()) && !gamer.hasMaxHealth())
+					gamer.changeCurrentHealth(hp);
+				else if (lore.contains(ChatColor.GOLD.toString()))
+					gamer.addAbsorption(hp);
+			}
+			else if (lore.contains(Utils.HUNGER)) {
+				int trueHunger = player.getFoodLevel() +
+						Integer.parseInt(lore.substring(3).replace(Utils.HUNGER, "").trim());
+				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
+						player.setFoodLevel(Math.min(20, trueHunger)));
+			}
+		});
+
+		// No saturation increase
+		player.setSaturation(0);
 	}
 
 	// Prevent wolves from teleporting
@@ -1431,5 +1485,34 @@ public class GameListener implements Listener {
 		// Cancel event if arena is in waiting mode
 		if (arena.getStatus() == ArenaStatus.WAITING)
 			e.setCancelled(true);
+	}
+
+	// Handle custom durability
+	@EventHandler
+	public void onItemDamage(PlayerItemDamageEvent e) {
+		// Check for valid arena
+		try {
+			GameManager.getArena(e.getPlayer());
+		} catch (ArenaNotFoundException err) {
+			return;
+		}
+
+		// Cancel event, then destroy if ready
+		Player player = e.getPlayer();
+		ItemStack item = e.getItem();
+		e.setCancelled(true);
+		if (!VDItem.updateDurability(item)) {
+			if (item.equals(player.getInventory().getItemInMainHand()))
+				player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+			else if (item.equals(player.getInventory().getBoots()))
+				player.getInventory().setBoots(new ItemStack(Material.AIR));
+			else if (item.equals(player.getInventory().getChestplate()))
+				player.getInventory().setChestplate(new ItemStack(Material.AIR));
+			else if (item.equals(player.getInventory().getHelmet()))
+				player.getInventory().setHelmet(new ItemStack(Material.AIR));
+			else if (item.equals(player.getInventory().getLeggings()))
+				player.getInventory().setLeggings(new ItemStack(Material.AIR));
+			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1);
+		}
 	}
 }

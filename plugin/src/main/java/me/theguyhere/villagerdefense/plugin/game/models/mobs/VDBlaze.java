@@ -17,7 +17,7 @@ public class VDBlaze extends VDMinion {
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.BLAZE),
                 LanguageManager.mobs.blaze,
-                "Flaming sorcerers of the air aiming to burn down players, especially ranged players.",
+                LanguageManager.mobLore.blaze,
                 getLevel(arena.getCurrentDifficulty(), 1.5, 4),
                 AttackType.NONE
         );
