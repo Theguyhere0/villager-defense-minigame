@@ -34,15 +34,18 @@ public abstract class VDItem {
     }
 
     public static boolean updateDurability(ItemStack item) {
+        return updateDurability(item, -1);
+    }
+
+    public static boolean updateDurability(ItemStack item, double damagePercent) {
         // Filter for weapons and armor
         if (!(VDWeapon.matches(item) || VDArmor.matches(item)))
             return false;
 
+        // Get data
         AtomicInteger maxDur = new AtomicInteger();
         AtomicInteger durability = new AtomicInteger();
         AtomicInteger durIndex = new AtomicInteger();
-
-        // Get data
         ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
         List<String > lores = Objects.requireNonNull(meta.getLore());
         lores.forEach(lore -> {
@@ -63,7 +66,9 @@ public abstract class VDItem {
             return false;
 
         // Update and check for used up item
-        durability.addAndGet(-1);
+        if (damagePercent < 0)
+            durability.addAndGet(-1);
+        else durability.addAndGet((int) Math.round(damagePercent * maxDur.get()));
         Damageable damage = (Damageable) meta;
         if (durability.get() <= 0)
             return false;
@@ -78,7 +83,7 @@ public abstract class VDItem {
         meta.setLore(lores);
 
         // Set damage indicator
-        damage.setDamage((int) (((maxDur.get() - durability.get()) * 1. / maxDur.get()) *
+        damage.setDamage((int) (((item.getType().getMaxDurability() - durability.get()) * 1. / maxDur.get()) *
                 item.getType().getMaxDurability()));
 
         item.setItemMeta(meta);

@@ -6,6 +6,7 @@ import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.nms.common.PacketGroup;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
+import me.theguyhere.villagerdefense.plugin.game.models.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.*;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
@@ -20,10 +21,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Class to manage player manipulations.
@@ -142,6 +140,12 @@ public class PlayerManager {
         player.setFallDistance(0);
         player.setGlowing(false);
         player.setVelocity(new Vector());
+
+        Random r = new Random();
+        player.getInventory().forEach(item -> {
+            if (item != null)
+                VDItem.updateDurability(item, r.nextDouble());
+        });
     }
 
     public static void sendPacketToOnline(PacketGroup packetGroup) {
