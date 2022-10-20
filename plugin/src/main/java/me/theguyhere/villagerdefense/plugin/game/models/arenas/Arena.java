@@ -2486,14 +2486,21 @@ public class Arena {
 
         ConfigurationSection limited = Main.getCustomEffects()
                 .getConfigurationSection("limited");
-        ConfigurationSection unlimited = Main.getCustomEffects()
+        ConfigurationSection unlimitedBefore = Main.getCustomEffects()
                 .getConfigurationSection("unlimited.onGameEnd");
+        ConfigurationSection unlimitedAfter = Main.getCustomEffects()
+                .getConfigurationSection("unlimited.onGameEndLobby");
 
         // Check for limited waves
         if (limited != null && getMaxWaves() > 0) {
             // Schedule commands to run after win
-            if (getCurrentWave() > getMaxWaves())
+            if (getCurrentWave() > getMaxWaves()) {
                 limited.getStringList("onGameWin").stream().filter(Objects::nonNull).forEach(command -> getActives()
+                        .forEach(player -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+                                        command.replace("%player%", player.getPlayer().getName())
+                                                .replaceFirst("/", ""))));
+                limited.getStringList("onGameWinLobby").stream().filter(Objects::nonNull)
+                        .forEach(command -> getActives()
                         .forEach(player -> Bukkit.getScheduler().scheduleSyncDelayedTask(
                                 Main.plugin,
                                 () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
@@ -2501,55 +2508,88 @@ public class Arena {
                                                 .replaceFirst("/", "")),
                                 Utils.secondsToTicks(12.5)
                         )));
+            }
 
             // Schedule commands to run after lose
-            else limited.getStringList("onGameLose").stream().filter(Objects::nonNull).forEach(command ->
-                    getActives().forEach(player -> Bukkit.getScheduler().scheduleSyncDelayedTask(
-                            Main.plugin,
-                            () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
-                                    command.replace("%player%", player.getPlayer().getName())
-                                            .replaceFirst("/", "")),
-                            Utils.secondsToTicks(12.5)
-                    )));
+            else {
+                limited.getStringList("onGameLose").stream().filter(Objects::nonNull).forEach(command ->
+                        getActives().forEach(player -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+                                        command.replace("%player%", player.getPlayer().getName())
+                                                .replaceFirst("/", ""))));
+                limited.getStringList("onGameLoseLobby").stream().filter(Objects::nonNull).forEach(command ->
+                        getActives().forEach(player -> Bukkit.getScheduler().scheduleSyncDelayedTask(
+                                Main.plugin,
+                                () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+                                        command.replace("%player%", player.getPlayer().getName())
+                                                .replaceFirst("/", "")),
+                                Utils.secondsToTicks(12.5)
+                        )));
+            }
         }
 
         // Check for unlimited waves
-        if (unlimited != null && getMaxWaves() < 0) {
-            unlimited.getKeys(false).forEach(key -> {
-                    String command = unlimited.getString(key);
+        if (unlimitedBefore != null && getMaxWaves() < 0) {
+            unlimitedBefore.getKeys(false).forEach(key -> {
+                    String command = unlimitedBefore.getString(key);
 
                     if (command != null) {
                         // Check upper boundaries
                         if (key.contains("<") && getCurrentWave() < Integer.parseInt(key.substring(1)))
-                            getActives().forEach(player -> Bukkit.getScheduler().scheduleSyncDelayedTask(
-                                    Main.plugin,
-                                    () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+                            getActives().forEach(player -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
                                             command.replace("%player%", player.getPlayer().getName())
-                                                    .replaceFirst("/", "")),
-                                    Utils.secondsToTicks(12.5)
-                            ));
+                                                    .replaceFirst("/", "")));
 
                         // Check lower boundaries
                         else if (key.contains("^") && getCurrentWave() > Integer.parseInt(key.substring(1)))
-                            getActives().forEach(player -> Bukkit.getScheduler().scheduleSyncDelayedTask(
-                                    Main.plugin,
-                                    () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+                            getActives().forEach(player -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
                                             command.replace("%player%", player.getPlayer().getName())
-                                                    .replaceFirst("/", "")),
-                                    Utils.secondsToTicks(12.5)
-                            ));
+                                                    .replaceFirst("/", "")));
 
                         // Check range
                         else if (key.contains("-") && getCurrentWave() <= Integer.parseInt(key.split("-")[1]) &&
                                 getCurrentWave() >= Integer.parseInt(key.split("-")[0]))
-                            getActives().forEach(player -> Bukkit.getScheduler().scheduleSyncDelayedTask(
-                                    Main.plugin,
-                                    () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+                            getActives().forEach(player -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
                                             command.replace("%player%", player.getPlayer().getName())
-                                                    .replaceFirst("/", "")),
-                                    Utils.secondsToTicks(12.5)
-                            ));
+                                                    .replaceFirst("/", "")));
                     }
+            });
+        }
+        if (unlimitedAfter != null && getMaxWaves() < 0) {
+            unlimitedAfter.getKeys(false).forEach(key -> {
+                String command = unlimitedAfter.getString(key);
+
+                if (command != null) {
+                    // Check upper boundaries
+                    if (key.contains("<") && getCurrentWave() < Integer.parseInt(key.substring(1)))
+                        getActives().forEach(player -> Bukkit.getScheduler().scheduleSyncDelayedTask(
+                                Main.plugin,
+                                () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+                                        command.replace("%player%", player.getPlayer().getName())
+                                                .replaceFirst("/", "")),
+                                Utils.secondsToTicks(12.5)
+                        ));
+
+                        // Check lower boundaries
+                    else if (key.contains("^") && getCurrentWave() > Integer.parseInt(key.substring(1)))
+                        getActives().forEach(player -> Bukkit.getScheduler().scheduleSyncDelayedTask(
+                                Main.plugin,
+                                () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+                                        command.replace("%player%", player.getPlayer().getName())
+                                                .replaceFirst("/", "")),
+                                Utils.secondsToTicks(12.5)
+                        ));
+
+                        // Check range
+                    else if (key.contains("-") && getCurrentWave() <= Integer.parseInt(key.split("-")[1]) &&
+                            getCurrentWave() >= Integer.parseInt(key.split("-")[0]))
+                        getActives().forEach(player -> Bukkit.getScheduler().scheduleSyncDelayedTask(
+                                Main.plugin,
+                                () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+                                        command.replace("%player%", player.getPlayer().getName())
+                                                .replaceFirst("/", "")),
+                                Utils.secondsToTicks(12.5)
+                        ));
+                }
             });
         }
     }

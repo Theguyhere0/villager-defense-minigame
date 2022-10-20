@@ -428,6 +428,7 @@ class CommandFixFiles {
         // Check if customEffects.yml is outdated
         if (Main.plugin.getConfig().getInt("customEffects") < 2)
             try {
+                // Modify threshold keys
                 String path = "unlimited.onGameEnd";
                 Objects.requireNonNull(customEffects.getConfigurationSection(path))
                         .getKeys(false).stream().filter(key -> !key.contains("-") && !key.contains("<"))
@@ -446,6 +447,25 @@ class CommandFixFiles {
             } catch (Exception e) {
                 notifyManualUpdate(sender, "customEffects.yml");
             }
+        if (Main.plugin.getConfig().getInt("customEffects") < 3) {
+            try {
+                // Move to correct sections
+                moveSection(customEffects, "unlimited.onGameEndLobby", "unlimited.onGameEnd");
+                moveData(customEffects, "limited.onGameWinLobby", "limited.onGameWin");
+                moveData(customEffects, "limited.onGameLoseLobby", "limited.onGameLose");
+                Main.saveCustomEffects();
+
+                // Flip flag and update config.yml
+                fixed = true;
+                Main.plugin.getConfig().set("customEffects", 3);
+                Main.plugin.saveConfig();
+
+                // Notify
+                notifyAutoUpdate(sender, "customEffects.yml", 3);
+            } catch (Exception e) {
+                notifyManualUpdate(sender, "customEffects.yml");
+            }
+        }
 
         // Message to player depending on whether the command fixed anything, then reload if fixed
         if (!fixed) {
@@ -470,21 +490,27 @@ class CommandFixFiles {
     }
 
     private static void moveSection(FileConfiguration config, String to, String from) {
-        if (config.contains(from))
+        if (config.contains(from)) {
             Objects.requireNonNull(config.getConfigurationSection(from)).getKeys(false).forEach(key ->
                     moveData(config, to + "." + key, from + "." + key));
+            config.set(from, null);
+        }
     }
 
     private static void moveNested(FileConfiguration config, String to, String from) {
-        if (config.contains(from))
+        if (config.contains(from)) {
             Objects.requireNonNull(config.getConfigurationSection(from)).getKeys(false).forEach(key ->
                     moveSection(config, to + "." + key, from + "." + key));
+            config.set(from, null);
+        }
     }
 
     private static void moveInventory(FileConfiguration config, String to, String from) {
-        if (config.contains(from))
+        if (config.contains(from)) {
             Objects.requireNonNull(config.getConfigurationSection(from)).getKeys(false).forEach(key ->
                     config.set(to + "." + key, config.getItemStack(from + "." + key)));
+            config.set(from, null);
+        }
     }
 
     private static void notifyManualUpdate(CommandSender sender, String file) {
