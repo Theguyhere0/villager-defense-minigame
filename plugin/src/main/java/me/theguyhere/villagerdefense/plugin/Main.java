@@ -275,11 +275,22 @@ public class Main extends JavaPlugin {
 	}
 
 	private void checkFileVersions() {
+		final String OUTDATED = "Your %s is/are no longer supported with this version!";
+		final String FUTURE = "Your %s is/ar too futuristic!";
+		final String UPDATE = "Please update to version %s to ensure compatibility.";
+		final String REVERT = "Please revert to version %s to ensure compatibility.";
+		final String CONFIG_WARNING = "Please do not update your config.yml until your %s has/have been updated.";
+
 		// Check config version
 		if (getConfig().getInt("version") < configVersion) {
-			CommunicationManager.debugError("Your config.yml is outdated!", 0);
-			CommunicationManager.debugError("Please update to the latest version (%s) to ensure compatibility.",
-					0, Integer.toString(configVersion));
+			CommunicationManager.debugError(OUTDATED, 0, "config.yml");
+			CommunicationManager.debugError(UPDATE, 0, Integer.toString(configVersion));
+			CommunicationManager.debugError("Please only update AFTER updating all other data files.",
+					0);
+			outdated = true;
+		} else if (getConfig().getInt("version") > configVersion) {
+			CommunicationManager.debugError(FUTURE, 0, "config.yml");
+			CommunicationManager.debugError(REVERT, 0, Integer.toString(configVersion));
 			CommunicationManager.debugError("Please only update AFTER updating all other data files.",
 					0);
 			outdated = true;
@@ -287,37 +298,42 @@ public class Main extends JavaPlugin {
 
 		// Check if arenaData.yml is outdated
 		if (getConfig().getInt("arenaData") < arenaDataVersion) {
-			CommunicationManager.debugError("Your %s is no longer supported with this version!", 0,
-					"arenaData.yml");
-			CommunicationManager.debugError("Please transfer to version %s.", 0 ,
-					Integer.toString(arenaDataVersion));
-			CommunicationManager.debugError("Please do not update your config.yml until your %s has been updated.",
-					0, "arenaData.yml");
+			CommunicationManager.debugError(OUTDATED, 0, "arenaData.yml");
+			CommunicationManager.debugError(UPDATE, 0 , Integer.toString(arenaDataVersion));
+			CommunicationManager.debugError(CONFIG_WARNING, 0, "arenaData.yml");
 			outdated = true;
+		} else if (getConfig().getInt("arenaData") > arenaDataVersion) {
+			CommunicationManager.debugError(FUTURE, 0, "arenaData.yml");
+			CommunicationManager.debugError(REVERT, 0, Integer.toString(arenaDataVersion));
+			CommunicationManager.debugError("Please only update AFTER updating all other data files.",
+					0);
+			outdated = true;
+
 		}
 
 		// Check if playerData.yml is outdated
 		if (getConfig().getInt("playerData") < playerDataVersion) {
-			CommunicationManager.debugError("Your %s is no longer supported with this version!", 0,
-					"playerData.yml");
-			CommunicationManager.debugError("Please transfer to version %s.", 0 ,
-					Integer.toString(playerDataVersion));
-			CommunicationManager.debugError("Please do not update your config.yml until your %s has been updated.",
-					0, "playerData.yml");
+			CommunicationManager.debugError(OUTDATED, 0, "playerData.yml");
+			CommunicationManager.debugError(UPDATE, 0 , Integer.toString(playerDataVersion));
+			CommunicationManager.debugError(CONFIG_WARNING, 0, "playerData.yml");
+			outdated = true;
+		} else if (getConfig().getInt("playerData") > playerDataVersion) {
+			CommunicationManager.debugError(FUTURE, 0, "playerData.yml");
+			CommunicationManager.debugError(REVERT, 0, Integer.toString(playerDataVersion));
+			CommunicationManager.debugError(CONFIG_WARNING, 0, "playerData.yml");
 			outdated = true;
 		}
 
 		// Check if spawn tables are outdated
 		if (getConfig().getInt("spawnTableStructure") < spawnTableVersion) {
-			CommunicationManager.debugError("Your %s are no longer supported with this version!", 0,
-					"spawn tables");
-			CommunicationManager.debugError("Please transfer to version %s.", 0 ,
-					Integer.toString(spawnTableVersion));
-			CommunicationManager.debugError(
-					"Please do not update your config.yml until your %s have been updated.",
-					0,
-					"spawn tables"
-			);
+			CommunicationManager.debugError(OUTDATED, 0, "spawn tables");
+			CommunicationManager.debugError(UPDATE, 0 , Integer.toString(spawnTableVersion));
+			CommunicationManager.debugError(CONFIG_WARNING, 0, "spawn tables");
+			outdated = true;
+		} else if (getConfig().getInt("spawnTableStructure") > spawnTableVersion) {
+			CommunicationManager.debugError(FUTURE, 0, "spawn tables");
+			CommunicationManager.debugError(REVERT, 0, Integer.toString(spawnTableVersion));
+			CommunicationManager.debugError(CONFIG_WARNING, 0, "spawn tables");
 			outdated = true;
 		}
 
@@ -327,32 +343,37 @@ public class Main extends JavaPlugin {
 					"default.yml");
 			CommunicationManager.debugInfo("Updating to version %s is optional but recommended.", 0,
 					Integer.toString(defaultSpawnVersion));
-			CommunicationManager.debugInfo("Please do not update your config.yml unless your %s has been updated.",
-					0, "default.yml");
+			CommunicationManager.debugInfo(CONFIG_WARNING, 0, "default.yml");
+		} else if (getConfig().getInt("spawnTableDefault") > defaultSpawnVersion) {
+			CommunicationManager.debugError(FUTURE, 0, "default.yml");
+			CommunicationManager.debugInfo("Reverting to version %s is optional but recommended.", 0,
+					Integer.toString(defaultSpawnVersion));
+			CommunicationManager.debugInfo(CONFIG_WARNING, 0, "default.yml");
 		}
 
 		// Check if language files are outdated
 		if (getConfig().getInt("languageFile") < languageFileVersion) {
-			CommunicationManager.debugError("Your %s are no longer supported with this version!", 0,
-					"language files");
-			CommunicationManager.debugError("Please transfer to version %s.", 0 ,
-					Integer.toString(languageFileVersion));
-			CommunicationManager.debugError(
-					"Please do not update your config.yml until your %s have been updated.",
-					0,
-					"language files"
-			);
+			CommunicationManager.debugError(OUTDATED, 0, "language files");
+			CommunicationManager.debugError(UPDATE, 0 , Integer.toString(languageFileVersion));
+			CommunicationManager.debugError(CONFIG_WARNING, 0, "language files");
+			outdated = true;
+		} else if (getConfig().getInt("languageFile") > languageFileVersion) {
+			CommunicationManager.debugError(FUTURE, 0, "language files");
+			CommunicationManager.debugError(REVERT, 0, Integer.toString(languageFileVersion));
+			CommunicationManager.debugError(CONFIG_WARNING, 0, "language files");
 			outdated = true;
 		}
 
 		// Check if customEffects.yml is outdated
 		if (getConfig().getInt("customEffects") < customEffectsVersion) {
-			CommunicationManager.debugError("Your %s is no longer supported with this version!", 0,
-					"customEffects.yml");
-			CommunicationManager.debugError("Please transfer to version %s.", 0 ,
-					Integer.toString(customEffectsVersion));
-			CommunicationManager.debugError("Please do not update your config.yml until your %s has been updated.",
-					0, "customEffects.yml");
+			CommunicationManager.debugError(OUTDATED, 0, "customEffects.yml");
+			CommunicationManager.debugError(UPDATE, 0 , Integer.toString(customEffectsVersion));
+			CommunicationManager.debugError(CONFIG_WARNING, 0, "customEffects.yml");
+			outdated = true;
+		} else if (getConfig().getInt("customEffects") > customEffectsVersion) {
+			CommunicationManager.debugError(FUTURE, 0, "customEffects.yml");
+			CommunicationManager.debugError(REVERT, 0, Integer.toString(customEffectsVersion));
+			CommunicationManager.debugError(CONFIG_WARNING, 0, "customEffects.yml");
 			outdated = true;
 		}
 

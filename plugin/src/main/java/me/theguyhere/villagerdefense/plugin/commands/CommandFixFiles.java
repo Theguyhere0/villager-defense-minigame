@@ -13,6 +13,7 @@ import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -426,16 +427,19 @@ class CommandFixFiles {
         }
 
         // Check if customEffects.yml is outdated
-        if (Main.plugin.getConfig().getInt("customEffects") < 2)
+        int customEffectsVersion = Main.plugin.getConfig().getInt("customEffects");
+        boolean customAbort = false;
+        if (customEffectsVersion < 2) {
             try {
                 // Modify threshold keys
                 String path = "unlimited.onGameEnd";
-                Objects.requireNonNull(customEffects.getConfigurationSection(path))
-                        .getKeys(false).stream().filter(key -> !key.contains("-") && !key.contains("<"))
-                        .forEach(key -> {
-                            moveData(customEffects, path + ".^" + key, path + "." + key);
-                            Main.saveCustomEffects();
-                        });
+                ConfigurationSection section = customEffects.getConfigurationSection(path);
+                if (section != null)
+                    section.getKeys(false).stream().filter(key -> !key.contains("-") && !key.contains("<"))
+                            .forEach(key -> {
+                                moveData(customEffects, path + ".^" + key, path + "." + key);
+                                Main.saveCustomEffects();
+                            });
 
                 // Flip flag and update config.yml
                 fixed = true;
@@ -445,9 +449,11 @@ class CommandFixFiles {
                 // Notify
                 notifyAutoUpdate(sender, "customEffects.yml", 2);
             } catch (Exception e) {
+                customAbort = true;
                 notifyManualUpdate(sender, "customEffects.yml");
             }
-        if (Main.plugin.getConfig().getInt("customEffects") < 3) {
+        }
+        if (customEffectsVersion < 3 && !customAbort) {
             try {
                 // Move to correct sections
                 moveSection(customEffects, "unlimited.onGameEndLobby", "unlimited.onGameEnd");
