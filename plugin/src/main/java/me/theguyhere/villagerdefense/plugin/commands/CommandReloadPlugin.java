@@ -5,7 +5,9 @@ import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.CommandException;
 import me.theguyhere.villagerdefense.plugin.exceptions.CommandPlayerException;
+import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -49,9 +51,14 @@ class CommandReloadPlugin {
 
         // Notify of reload
         if (player != null)
-            PlayerManager.notifyAlert(player, "Reloading plugin data");
-        else CommunicationManager.debugInfo("Reloading plugin data", 0);
+            PlayerManager.notifyAlert(player, "Reloading plugin data in 5 seconds");
+        else CommunicationManager.debugInfo("Reloading plugin data in 5 seconds", 0);
 
-        Main.plugin.reload();
+        // Close all arenas
+        GameManager.closeArenas();
+
+        // Reload plugin after 11 seconds
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Main.plugin.reload(),
+                Utils.secondsToTicks(5));
     }
 }

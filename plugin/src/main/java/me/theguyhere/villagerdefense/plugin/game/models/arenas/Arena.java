@@ -122,11 +122,11 @@ public class Arena {
     private static final String START_WAVE = "startWave";
     private static final String UPDATE_BAR = "updateBar";
     private static final String CALIBRATE = "calibrate";
-    private static final String ONE_TICK = "oneTick";
-    private static final String TEN_TICK = "tenTick";
-    private static final String TWENTY_TICK = "twentyTick";
-    private static final String FORTY_TICK = "fortyTick";
     private static final String TICK = "Tick";
+    private static final String ONE_TICK = "one" + TICK;
+    private static final String TEN_TICK = "ten" + TICK;
+    private static final String TWENTY_TICK = "twenty" + TICK;
+    private static final String FORTY_TICK = "forty" + TICK;
     private static final String KICK = "kick";
     private static final String RESET = "restart";
 
@@ -2249,7 +2249,7 @@ public class Arena {
                 calibrate();
             }
         });
-        activeTasks.get(CALIBRATE).runTaskTimer(Main.plugin, 0, Utils.secondsToTicks(0.5));
+        activeTasks.get(CALIBRATE).runTaskTimer(Main.plugin, 0, Utils.secondsToTicks(0.25));
 
         // Get spawn data
         DataManager data = new DataManager("spawnTables/" + getSpawnTableFile());
@@ -2399,7 +2399,7 @@ public class Arena {
                 PlayerManager.notifyAlert(
                         player.getPlayer(),
                         LanguageManager.messages.end,
-                        new ColoredMessage(ChatColor.AQUA, Integer.toString(getCurrentWave() - 1)),
+                        new ColoredMessage(ChatColor.AQUA, Integer.toString(Math.max(0, getCurrentWave() - 1))),
                         new ColoredMessage(ChatColor.AQUA, "10")
                 ));
 
@@ -2554,7 +2554,7 @@ public class Arena {
         }
     }
 
-    private void kickPlayers() {
+    public void kickPlayers() {
         getPlayers().forEach(player ->
                 Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
                         Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player.getPlayer()))));

@@ -139,6 +139,7 @@ public class Main extends JavaPlugin {
 		// Reset "outdated" flag
 		outdated = false;
 
+		// Gather and check data and managers
 		arenaData = new DataManager("arenaData.yml");
 		playerData = new DataManager("playerData.yml");
 		customEffects = new DataManager("customEffects.yml");
@@ -149,12 +150,10 @@ public class Main extends JavaPlugin {
 		} catch (InvalidLanguageKeyException e) {
 			e.printStackTrace();
 		}
-
 		checkFileVersions();
 
 		// Set as unloaded while reloading
 		setLoaded(false);
-
 		checkArenaNameAndGatherUnloadedWorlds();
 
 		// Register expansion again
@@ -395,9 +394,8 @@ public class Main extends JavaPlugin {
 					0);
 			CommunicationManager.debugError("Shutting down plugin to protect your data. Please fix and restart " +
 					"server.", 0);
-			Main plugin = this;
 			Bukkit.getScheduler().scheduleSyncDelayedTask(this,
-					() -> getServer().getPluginManager().disablePlugin(plugin), 0);
+					() -> getServer().getPluginManager().disablePlugin(this), 0);
 		}
 
 		// Relevant worlds from info boards
