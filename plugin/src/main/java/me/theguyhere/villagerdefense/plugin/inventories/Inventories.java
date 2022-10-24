@@ -1332,6 +1332,10 @@ public class Inventories {
 
 		// Create inventory
 		buttons.add(ItemManager.createItem(Material.GOLDEN_SWORD,
+				CommunicationManager.format("&2&l" + LanguageManager.names.swordShop), ItemManager.BUTTON_FLAGS,
+				ItemManager.glow()));
+
+		buttons.add(ItemManager.createItem(Material.GOLDEN_SWORD,
 				CommunicationManager.format("&4&l" + LanguageManager.messages.level +
 						" &9&l" + level + " &4&l" + LanguageManager.names.weaponShop), ItemManager.BUTTON_FLAGS,
 						ItemManager.glow()));
@@ -1360,6 +1364,52 @@ public class Inventories {
 		);
 	}
 
+	// Generate the sword shop
+	public static Inventory createSwordShopMenu(int level, Arena arena) {
+		// Set price modifier
+		double modifier = Math.pow(arena.getActiveCount() - 5, 2) / 200 + 1;
+		if (!arena.hasDynamicPrices())
+			modifier = 1;
+
+		// Create inventory
+		List<ItemStack> buttons = new ArrayList<>();
+		buttons.add(modifyPrice(Sword.create(Sword.SwordType.T1), modifier));
+		if (level < 2)
+			buttons.add(Buttons.levelPlaceholder(2));
+		else buttons.add(modifyPrice(Sword.create(Sword.SwordType.T2), modifier));
+		if (level < 3)
+			buttons.add(Buttons.levelPlaceholder(3));
+		else buttons.add(modifyPrice(Sword.create(Sword.SwordType.T3), modifier));
+		if (level < 3)
+			buttons.add(Buttons.levelPlaceholder(3));
+		else buttons.add(modifyPrice(Sword.create(Sword.SwordType.T4), modifier));
+		if (level < 5)
+			buttons.add(Buttons.levelPlaceholder(5));
+		else buttons.add(modifyPrice(Sword.create(Sword.SwordType.T5), modifier));
+		if (level < 5)
+			buttons.add(Buttons.levelPlaceholder(5));
+		else buttons.add(modifyPrice(Sword.create(Sword.SwordType.T6), modifier));
+		if (level < 6)
+			buttons.add(Buttons.levelPlaceholder(6));
+		else buttons.add(modifyPrice(Sword.create(Sword.SwordType.T7), modifier));
+		if (level < 6)
+			buttons.add(Buttons.levelPlaceholder(6));
+		else buttons.add(modifyPrice(Sword.create(Sword.SwordType.T8), modifier));
+		if (level < 7)
+			buttons.add(Buttons.levelPlaceholder(7));
+		else buttons.add(modifyPrice(Sword.create(Sword.SwordType.T9), modifier));
+		if (level < 8)
+			buttons.add(Buttons.levelPlaceholder(8));
+		else buttons.add(modifyPrice(Sword.create(Sword.SwordType.T10), modifier));
+
+		return InventoryFactory.createDynamicSizeInventory(
+				new InventoryMeta(InventoryID.SWORD_SHOP_MENU, InventoryType.MENU),
+				CommunicationManager.format("&2&l" + LanguageManager.names.swordShop),
+				true,
+				buttons
+		);
+	}
+
 	// Generate the weapon shop
 	public static Inventory createWeaponShopMenu(int level, Arena arena) {
 		Random r = new Random();
@@ -1376,22 +1426,6 @@ public class Inventories {
 				CommunicationManager.format("&4&l" + LanguageManager.messages.level +
 						" &9&l" + level + " &4&l" + LanguageManager.names.weaponShop)
 		);
-
-		// Fill in swords
-		List<ItemStack> swords = new ArrayList<>();
-		swords.add(Sword.create(r.nextInt(5) + 1));
-		if (level < 3)
-			swords.add(Buttons.levelPlaceholder(3));
-		else swords.add(Sword.create(r.nextInt(5) + 6));
-		if (level < 4)
-			swords.add(Buttons.levelPlaceholder(4));
-		else swords.add(Sword.create(r.nextInt(5) + 11));
-		if (level < 5)
-			swords.add(Buttons.levelPlaceholder(5));
-		else swords.add(Sword.create(r.nextInt(5 * (level - 4)) + 16));
-		sort(swords);
-		for (int i = 0; i < 4; i++)
-			inv.setItem(i, modifyPrice(swords.get(i), modifier));
 
 		// Fill in axes
 		List<ItemStack> axes = new ArrayList<>();
@@ -1464,8 +1498,6 @@ public class Inventories {
 		sort(crossbows);
 		for (int i = 0; i < 4; i++)
 			inv.setItem(i + 14, modifyPrice(crossbows.get(i), modifier));
-
-		// Fill in tridents
 
 		// Fill in ammo
 		List<ItemStack> ammos = new ArrayList<>();

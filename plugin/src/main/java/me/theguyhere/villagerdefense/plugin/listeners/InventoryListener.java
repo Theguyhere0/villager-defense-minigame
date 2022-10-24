@@ -6,7 +6,6 @@ import me.theguyhere.villagerdefense.plugin.events.SignGUIEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.IllegalArenaNameException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.exceptions.VDMobNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
@@ -14,7 +13,6 @@ import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.Shop;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.inventories.Buttons;
@@ -26,7 +24,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
@@ -2620,8 +2617,12 @@ public class InventoryListener implements Listener {
 				return;
 			}
 
+			// Open sword shop
+			if (buttonName.contains(LanguageManager.names.swordShop))
+				player.openInventory(arenaInstance.getSwordShop());
+
 			// Open weapon shop
-			if (buttonName.contains(LanguageManager.names.weaponShop))
+			else if (buttonName.contains(LanguageManager.names.weaponShop))
 				player.openInventory(arenaInstance.getWeaponShop());
 
 			// Open armor shop
@@ -2638,8 +2639,8 @@ public class InventoryListener implements Listener {
 		}
 
 		// In-game shops
-		else if (invID == InventoryID.WEAPON_SHOP_MENU || invID == InventoryID.ARMOR_SHOP_MENU ||
-				invID == InventoryID.CONSUMABLE_SHOP_MENU) {
+		else if (invID == InventoryID.SWORD_SHOP_MENU || invID == InventoryID.WEAPON_SHOP_MENU ||
+				invID == InventoryID.ARMOR_SHOP_MENU || invID == InventoryID.CONSUMABLE_SHOP_MENU) {
 			Arena arenaInstance;
 			VDPlayer gamer;
 

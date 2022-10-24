@@ -106,4 +106,8 @@ public abstract class Axe extends VDWeapon {
         return toCheck.getType().toString().contains("AXE") && lore.stream().anyMatch(line -> line.contains(
                 MAIN_DAMAGE.toString().replace("%s", "")));
     }
+
+    public enum AxeType{
+
+    }
 }

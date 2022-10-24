@@ -14,6 +14,7 @@ public class LanguageManager {
     public static Challenges challenges;
     public static Confirms confirms;
     public static Errors errors;
+    public static ItemLore itemLore;
     public static Kits kits;
     public static Messages messages;
     public static Mobs mobs;
@@ -30,6 +31,7 @@ public class LanguageManager {
         LanguageManager.challenges = new Challenges();
         LanguageManager.confirms = new Confirms();
         LanguageManager.errors = new Errors();
+        LanguageManager.itemLore = new ItemLore();
         LanguageManager.kits = new Kits();
         LanguageManager.messages = new Messages();
         LanguageManager.mobs = new Mobs();
@@ -389,6 +391,56 @@ public class LanguageManager {
         }
     }
 
+    public static class ItemLore {
+        public final @NotNull SwordLore swords;
+
+        private ItemLore() throws InvalidLanguageKeyException {
+            swords = new SwordLore();
+        }
+
+        public static class SwordLore {
+            public final @NotNull Lore starter;
+            public final @NotNull Lore t1;
+            public final @NotNull Lore t2;
+            public final @NotNull Lore t3;
+            public final @NotNull Lore t4;
+            public final @NotNull Lore t5;
+            public final @NotNull Lore t6;
+            public final @NotNull Lore t7;
+            public final @NotNull Lore t8;
+            public final @NotNull Lore t9;
+            public final @NotNull Lore t10;
+
+            private SwordLore() throws InvalidLanguageKeyException {
+                String pathPrefix = "itemLore.swords.";
+
+                starter = new Lore(pathPrefix + "starter");
+                t1 = new Lore(pathPrefix + "t1");
+                t2 = new Lore(pathPrefix + "t2");
+                t3 = new Lore(pathPrefix + "t3");
+                t4 = new Lore(pathPrefix + "t4");
+                t5 = new Lore(pathPrefix + "t5");
+                t6 = new Lore(pathPrefix + "t6");
+                t7 = new Lore(pathPrefix + "t7");
+                t8 = new Lore(pathPrefix + "t8");
+                t9 = new Lore(pathPrefix + "t9");
+                t10 = new Lore(pathPrefix + "t10");
+            }
+        }
+
+        public static class Lore extends Section {
+            public final @NotNull String name;
+            public final @NotNull String description;
+
+            private Lore(String pathPrefix) throws InvalidLanguageKeyException {
+                setPathPrefix(pathPrefix);
+
+                name = getConfigString("name");
+                description = getConfigString("description");
+            }
+        }
+    }
+
     public static class Kits {
         public final @NotNull GiftKit alchemist;
         public final @NotNull Kit blacksmith;
@@ -720,9 +772,7 @@ public class LanguageManager {
         public final @NotNull String shopInfo;
         public final @NotNull String shopUpgrade;
         public final @NotNull String spectators;
-        public final @NotNull String starterSword;
         public final @NotNull String starting;
-        public final @NotNull String sword;
         public final @NotNull String toughness;
         public final @NotNull String unavailable;
         public final @NotNull String unlimited;
@@ -850,9 +900,7 @@ public class LanguageManager {
             shopInfo = getConfigString("shopInfo");
             shopUpgrade = getConfigString("shopUpgrade");
             spectators = getConfigString("spectators");
-            starterSword = getConfigString("starterSword");
             starting = getConfigString("starting");
-            sword = getConfigString("sword");
             toughness = getConfigString("toughness");
             unavailable = getConfigString("unavailable");
             unlimited = getConfigString("unlimited");
@@ -1015,6 +1063,7 @@ public class LanguageManager {
         public final @NotNull String normal;
         public final @NotNull String penetrating;
         public final @NotNull String playerSpawnParticles;
+        public final @NotNull String swordShop;
         public final @NotNull String timeBar;
         public final @NotNull String villageCaptain;
         public final @NotNull String villagerSpawnParticles;
@@ -1063,6 +1112,7 @@ public class LanguageManager {
             normal = getConfigString("normal");
             penetrating = getConfigString("penetrating");
             playerSpawnParticles = getConfigString("playerSpawnParticles");
+            swordShop = getConfigString("swordShop");
             timeBar = getConfigString("timeBar");
             villageCaptain = getConfigString("villageCaptain");
             villagerSpawnParticles = getConfigString("villagerSpawnParticles");

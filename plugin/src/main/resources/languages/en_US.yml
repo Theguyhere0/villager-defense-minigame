@@ -276,6 +276,41 @@ errors:
   suicideActive: "You must be in an active game to kill yourself!"
   teleport: "You must leave the arena before you can teleport! Use %s to leave the arena."
   wolf: "You can only have up to %s wolves!"
+itemLore:
+  swords:
+    starter:
+      name: "Training Sword %s"
+      description: "A cheap, weighted stick meant for combat against immobile dummies."
+    t1:
+      name: "Sword of The Apprentice %s"
+      description: "A fine wooden sword with a fire-hardened blade."
+    t2:
+      name: "Sword of The Peasant %s"
+      description: "A slab of chipped stone hastily bound to a tough handle."
+    t3:
+      name: "Ceremonial Sword %s"
+      description: "A sleek sheet of marble seated in an oak handle."
+    t4:
+      name: "Obsidian Sword %s"
+      description: "A well-weighted, razor sharp, obsidian blade resting in a maple handle."
+    t5:
+      name: "Sword of The Front Lines %s"
+      description: "The first weapon to clash at the sound of the battle horn."
+    t6:
+      name: "Steel Sword %s"
+      description: "Forged from high-grade steel, this is the finest sword on the market."
+    t7:
+      name: "Sword of Royal Blacksmiths %s"
+      description: "A gleaming sword meticulously forged by the best blacksmiths of the kingdom."
+    t8:
+      name: "Crystal Sword %s"
+      description: "A glistening blade of crystalline beauty and double-edged terror."
+    t9:
+      name: "Sword of The Emperor %s"
+      description: "An awe-inspiring masterpiece that brought kingdoms to their knees in the name of conquest."
+    t10:
+      name: "Sword of The Hero %s"
+      description: "The Wither once fell before this mighty sword, tinting the blade soulless black."
 kits:
   alchemist:
     name: "Alchemist"
@@ -479,9 +514,7 @@ messages:
   shopInfo: "Shops upgrade every %s waves"
   shopUpgrade: "Shops upgraded!"
   spectators: "Spectators"
-  starterSword: "Starter Sword"
   starting: "Starting in %s seconds"
-  sword: "Lvl %s Sword"
   toughness: "Toughness: %s"
   unavailable: "Unavailable"
   unlimited: "Unlimited"
@@ -585,7 +618,7 @@ names:
   normal: "Normal"
   penetrating: "Penetrating"
   playerSpawnParticles: "Player Spawn Particles"
-  sword: "Sword"
+  swordShop: "Sword Shop"
   timeBar: "Wave %s Time Limit"
   villageCaptain: "Village Captain"
   villagerSpawnParticles: "Villager Spawn Particles"

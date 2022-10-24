@@ -1,7 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.commands;
 
 import me.theguyhere.villagerdefense.plugin.exceptions.CommandException;
-import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Boots;
+import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Sword;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,7 +19,16 @@ class CommandTest {
         CommandGuard.checkDebugLevelGreaterEqual(sender, 3);
 
         // Implement test
-        PlayerManager.giveItem(player, Boots.create(1), "whoops");
+        PlayerManager.giveItem(player, Sword.create(Sword.SwordType.T1), "whoops");
+        PlayerManager.giveItem(player, Sword.create(Sword.SwordType.T2), "whoops");
+        PlayerManager.giveItem(player, Sword.create(Sword.SwordType.T3), "whoops");
+        PlayerManager.giveItem(player, Sword.create(Sword.SwordType.T4), "whoops");
+        PlayerManager.giveItem(player, Sword.create(Sword.SwordType.T5), "whoops");
+        PlayerManager.giveItem(player, Sword.create(Sword.SwordType.T6), "whoops");
+        PlayerManager.giveItem(player, Sword.create(Sword.SwordType.T7), "whoops");
+        PlayerManager.giveItem(player, Sword.create(Sword.SwordType.T8), "whoops");
+        PlayerManager.giveItem(player, Sword.create(Sword.SwordType.T9), "whoops");
+        PlayerManager.giveItem(player, Sword.create(Sword.SwordType.T10), "whoops");
 
         // Confirm
         PlayerManager.notifySuccess(player, "Test Complete");

@@ -83,7 +83,7 @@ public abstract class VDItem {
         meta.setLore(lores);
 
         // Set damage indicator
-        damage.setDamage((int) (((item.getType().getMaxDurability() - durability.get()) * 1. / maxDur.get()) *
+        damage.setDamage((int) item.getType().getMaxDurability() - (int) (durability.get() * 1. / maxDur.get() *
                 item.getType().getMaxDurability()));
 
         item.setItemMeta(meta);

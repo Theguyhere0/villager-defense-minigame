@@ -84,6 +84,8 @@ public class Arena {
     private int cornerParticlesID = 0;
     /** A list of players in the arena.*/
     private final List<VDPlayer> players = new ArrayList<>();
+    /** Sword shop inventory.*/
+    private Inventory swordShop;
     /** Weapon shop inventory.*/
     private Inventory weaponShop;
     /** Armor shop inventory.*/
@@ -1766,7 +1768,8 @@ public class Arena {
         ));
 
         // Initiate shops
-        setWeaponShop(Inventories.createWeaponShopMenu(1, this));
+        swordShop = Inventories.createSwordShopMenu(1, this);
+        weaponShop = Inventories.createWeaponShopMenu(1, this);
         setArmorShop(Inventories.createArmorShopMenu(1, this));
         setConsumeShop(Inventories.createConsumableShopMenu(1, this));
 
@@ -2112,7 +2115,8 @@ public class Arena {
         // Regenerate shops when time and notify players of it, then start after 25 seconds
         if (currentWave % 5 == 0) {
             int level = currentWave / 5 + 1;
-            setWeaponShop(Inventories.createWeaponShopMenu(level, this));
+            swordShop = Inventories.createSwordShopMenu(level, this);
+            weaponShop = Inventories.createWeaponShopMenu(level, this);
             setArmorShop(Inventories.createArmorShopMenu(level, this));
             setConsumeShop(Inventories.createConsumableShopMenu(level, this));
             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> getActives().forEach(player ->
@@ -2828,12 +2832,12 @@ public class Arena {
         return getSpectators().size();
     }
 
-    public Inventory getWeaponShop() {
-        return weaponShop;
+    public Inventory getSwordShop() {
+        return swordShop;
     }
 
-    public void setWeaponShop(Inventory weaponShop) {
-        this.weaponShop = weaponShop;
+    public Inventory getWeaponShop() {
+        return weaponShop;
     }
 
     public Inventory getArmorShop() {
