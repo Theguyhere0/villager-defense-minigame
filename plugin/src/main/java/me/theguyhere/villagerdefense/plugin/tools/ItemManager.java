@@ -158,7 +158,7 @@ public class ItemManager {
         try {
             Objects.requireNonNull(meta).setUnbreakable(true);
             newItem.setItemMeta(meta);
-            return newItem;
+            return removeLastLore(newItem);
         } catch (Exception e) {
             return item;
         }

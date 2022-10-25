@@ -11,6 +11,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.Shop;
+import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Ammo;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
@@ -2641,9 +2642,21 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains(LanguageManager.names.ammoShop))
 				player.openInventory(arenaInstance.getAmmoShop());
 
-			// Open armor shop
-			else if (buttonName.contains(LanguageManager.names.armorShop))
-				player.openInventory(arenaInstance.getArmorShop());
+			// Open helmet shop
+			else if (buttonName.contains(LanguageManager.names.helmetShop))
+				player.openInventory(arenaInstance.getHelmetShop());
+
+			// Open chestplate shop
+			else if (buttonName.contains(LanguageManager.names.chestplateShop))
+				player.openInventory(arenaInstance.getChestplateShop());
+
+			// Open leggings shop
+			else if (buttonName.contains(LanguageManager.names.leggingsShop))
+				player.openInventory(arenaInstance.getLeggingsShop());
+
+			// Open boots shop
+			else if (buttonName.contains(LanguageManager.names.bootsShop))
+				player.openInventory(arenaInstance.getBootsShop());
 
 			// Open consumables shop
 			else if (buttonName.contains(LanguageManager.names.consumableShop))
@@ -2655,10 +2668,7 @@ public class InventoryListener implements Listener {
 		}
 
 		// In-game shops
-		else if (invID == InventoryID.SWORD_SHOP_MENU || invID == InventoryID.AXE_SHOP_MENU ||
-				invID == InventoryID.SCYTHE_SHOP_MENU || invID == InventoryID.BOW_SHOP_MENU ||
-				invID == InventoryID.CROSSBOW_SHOP_MENU ||invID == InventoryID.AMMO_SHOP_MENU ||
-				invID == InventoryID.ARMOR_SHOP_MENU || invID == InventoryID.CONSUMABLE_SHOP_MENU) {
+		else if (InventoryID.isInGameShop(invID)) {
 			Arena arenaInstance;
 			VDPlayer gamer;
 
@@ -2672,7 +2682,7 @@ public class InventoryListener implements Listener {
 
 			// Return to main shop menu
 			if (buttonName.contains(LanguageManager.messages.exit)) {
-				player.openInventory(Inventories.createShopMenu(arenaInstance.getCurrentWave() / 10 + 1, arenaInstance));
+				player.openInventory(Inventories.createShopMenu(arenaInstance.getCurrentWave() / 5 + 1, arenaInstance));
 				return;
 			}
 
@@ -2722,6 +2732,10 @@ public class InventoryListener implements Listener {
 				buy = ItemManager.makeSplash(buy);
 				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
 			}
+
+			// Make ammo unique
+			if (Ammo.matches(buy))
+				buy = ItemManager.makeUnique(buy);
 
 			// Subtract from balance, apply rebate, and update scoreboard
 			gamer.addGems(-cost);

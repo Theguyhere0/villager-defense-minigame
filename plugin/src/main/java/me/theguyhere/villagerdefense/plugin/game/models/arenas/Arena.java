@@ -96,8 +96,14 @@ public class Arena {
     private Inventory crossbowShop;
     /** Ammo shop inventory.*/
     private Inventory ammoShop;
-    /** Armor shop inventory.*/
-    private Inventory armorShop;
+    /** Helmet shop inventory.*/
+    private Inventory helmetShop;
+    /** Chestplate shop inventory.*/
+    private Inventory chestplateShop;
+    /** Leggings shop inventory.*/
+    private Inventory leggingsShop;
+    /** Boots shop inventory.*/
+    private Inventory bootsShop;
     /** Consumables shop inventory.*/
     private Inventory consumeShop;
     /** Community chest inventory.*/
@@ -1782,8 +1788,11 @@ public class Arena {
         bowShop = Inventories.createBowShopMenu(1, this);
         crossbowShop = Inventories.createCrossbowShopMenu(1, this);
         ammoShop = Inventories.createAmmoShopMenu(1, this);
-        setArmorShop(Inventories.createArmorShopMenu(1, this));
-        setConsumeShop(Inventories.createConsumableShopMenu(1, this));
+        helmetShop = Inventories.createHelmetShopMenu(1, this);
+        chestplateShop = Inventories.createChestplateShopMenu(1, this);
+        leggingsShop = Inventories.createLeggingsShopMenu(1, this);
+        bootsShop = Inventories.createBootsShopMenu(1, this);
+        consumeShop = Inventories.createConsumableShopMenu(1, this);
 
         // Start dialogue, then trigger WaveEndEvent
         for (VDPlayer player : getPlayers()) {
@@ -2133,8 +2142,11 @@ public class Arena {
             bowShop = Inventories.createBowShopMenu(level, this);
             crossbowShop = Inventories.createCrossbowShopMenu(level, this);
             ammoShop = Inventories.createAmmoShopMenu(level, this);
-            setArmorShop(Inventories.createArmorShopMenu(level, this));
-            setConsumeShop(Inventories.createConsumableShopMenu(level, this));
+            helmetShop = Inventories.createHelmetShopMenu(level, this);
+            chestplateShop = Inventories.createChestplateShopMenu(level, this);
+            leggingsShop = Inventories.createLeggingsShopMenu(level, this);
+            bootsShop = Inventories.createBootsShopMenu(level, this);
+            consumeShop = Inventories.createConsumableShopMenu(level, this);
             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> getActives().forEach(player ->
                     player.getPlayer().sendTitle(CommunicationManager.format(
                                     "&6" + LanguageManager.messages.shopUpgrade),
@@ -2872,20 +2884,24 @@ public class Arena {
         return ammoShop;
     }
 
-    public Inventory getArmorShop() {
-        return armorShop;
+    public Inventory getHelmetShop() {
+        return helmetShop;
     }
 
-    public void setArmorShop(Inventory armorShop) {
-        this.armorShop = armorShop;
+    public Inventory getChestplateShop() {
+        return chestplateShop;
+    }
+
+    public Inventory getLeggingsShop() {
+        return leggingsShop;
+    }
+
+    public Inventory getBootsShop() {
+        return bootsShop;
     }
 
     public Inventory getConsumeShop() {
         return consumeShop;
-    }
-
-    public void setConsumeShop(Inventory consumeShop) {
-        this.consumeShop = consumeShop;
     }
 
     public Inventory getCommunityChest() {

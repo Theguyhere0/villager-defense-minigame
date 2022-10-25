@@ -218,7 +218,6 @@ confirms:
   boostAdd: "You've received a permanent boost! Check your achievements for details."
   boots: "Boots equipped!"
   buy: "Item purchased!"
-  carePackage: "Care package delivered!"
   challengeAdd: "Challenge added!"
   challengeDelete: "Challenge removed!"
   chestplate: "Chestplate equipped!"
@@ -307,7 +306,7 @@ itemLore:
       description: "This ethereal cartridge was fabricated by the best mages of the realm."
     t10:
       name: "Void RAC %s"
-      description: "Forged in the abyss of the void, this cartridge can hold unthinkable quantities of ammunition."
+      description: "Forged in the abyss of the void, this cartridge replenishes unthinkable quantities of ammunition."
   axes:
     t1:
       name: "Meat Mallet %s"
@@ -339,6 +338,37 @@ itemLore:
     t10:
       name: "Necrotic Axe %s"
       description: "The mutilated souls that fell to this mighty axe stained its head a lifeless black."
+  boots:
+    t1:
+      name: "Hide Boots %s"
+      description: "Tough animal hide sewn into a nice pair of boots."
+    t2:
+      name: "Winter Boots %s"
+      description: "Thick leather, fur, and hide sewn together to form a hefty pair of boots."
+    t3:
+      name: "Mesh Reinforced Boots %s"
+      description: "Leather boots reinforced with an internal iron mesh."
+    t4:
+      name: "Iron Mail Boots %s"
+      description: "Boots made from interlocking rings of iron."
+    t5:
+      name: "Steel Plate Boots %s"
+      description: "Plates of tough steel bolted together into a pair of boots."
+    t6:
+      name: "Silver Plate Boots %s"
+      description: "Plates of glorious silver bolted together into a pair of boots."
+    t7:
+      name: "Platinum Plate Boots %s"
+      description: "Plates of majestic platinum bolted together into a pair of boots."
+    t8:
+      name: "Crystal Sheet Boots %s"
+      description: "Sheets of gleaming diamond crystals linked together into a pair of boots."
+    t9:
+      name: "Alloyed Crystal Boots %s"
+      description: "High-grade steel infused with crystalline dust to form an impenetrable pair of boots."
+    t10:
+      name: "Phantom Steel Boots %s"
+      description: "A diabolic pair of boots forged from phantom steel summoned in arcane rituals."
   bows:
     t1:
       name: "Toy Bow %s"
@@ -348,7 +378,7 @@ itemLore:
       description: "A perfect low-powered bow for taking down small game."
     t3:
       name: "Ceremonial Bow %s"
-      description: "A beautiful wooden piece of art that's way too stiff for serious combat."
+      description: "A beautiful wooden piece of art way too stiff for serious combat."
     t4:
       name: "Recurve Bow %s"
       description: "A light but powerful maple bow cherished by the masses."
@@ -366,10 +396,41 @@ itemLore:
       description: "An epic modern bow amplified by an advanced pulley system."
     t9:
       name: "Bow of The Ranger %s"
-      description: "The arrow that nocks on this bow never misses, it was chosen as a warning shot."
+      description: "A fabled bow capable of delivering a torrential rain of pain."
     t10:
       name: "Bow of Poignant Demise %s"
       description: "The strings of this bow sing the grisly song of death."
+  chestplates:
+    t1:
+      name: "Hide Chestplate %s"
+      description: "Tough animal hide sewn into a nice chestplate."
+    t2:
+      name: "Winter Chestplate %s"
+      description: "Thick leather, fur, and hide sewn together to form a hefty chestplate."
+    t3:
+      name: "Mesh Reinforced Chestplate %s"
+      description: "Leather chestplate reinforced with an internal iron mesh."
+    t4:
+      name: "Iron Mail Chestplate %s"
+      description: "Chestplate made from interlocking rings of iron."
+    t5:
+      name: "Steel Plate Chestplate %s"
+      description: "Plates of tough steel bolted together into a chestplate."
+    t6:
+      name: "Silver Plate Chestplate %s"
+      description: "Plates of glorious silver bolted together into a chestplate."
+    t7:
+      name: "Platinum Plate Chestplate %s"
+      description: "Plates of majestic platinum bolted together into a chestplate."
+    t8:
+      name: "Crystal Sheet Chestplate %s"
+      description: "Sheets of gleaming diamond crystals linked together into a chestplate."
+    t9:
+      name: "Alloyed Crystal Chestplate %s"
+      description: "High-grade steel infused with crystalline dust to form an impenetrable chestplate."
+    t10:
+      name: "Phantom Steel Chestplate %s"
+      description: "A diabolic chestplate forged from phantom steel summoned in arcane rituals."
   crossbows:
     t1:
       name: "Makeshift Crossbow %s"
@@ -388,26 +449,88 @@ itemLore:
       description: "A well-balanced, accurate, and economical crossbow widely used in nonviolent competitions."
     t6:
       name: "Heavy Crossbow %s"
-      description: "A beast of a crossbow with incredible power only the strongest people can lift."
+      description: "A beast of a crossbow with incredible power that only the strongest can control."
     t7:
       name: "Crossbow of Imperial Marksmen %s"
       description: "An illustrious steel crossbow trusted by the best marksmen of the empire."
     t8:
       name: "Compound Crossbow %s"
-      description: "An sleek modern crossbow amplified by an advanced pulley system."
+      description: "A sleek modern crossbow amplified by an advanced pulley system."
     t9:
       name: "Crossbow of Silent Snipers %s"
-      description: "A silent but deadly crossbow with legendary status."
+      description: "A silent but deadly crossbow with legendary prestige."
     t10:
       name: "Crossbow of Fatal Precision %s"
       description: "Even the Ender Dragon quivers at the sight of this lethal weapon."
+  helmets:
+    t1:
+      name: "Hide Helmet %s"
+      description: "Tough animal hide sewn into a nice helmet."
+    t2:
+      name: "Winter Helmet %s"
+      description: "Thick leather, fur, and hide sewn together to form a hefty helmet."
+    t3:
+      name: "Mesh Reinforced Helmet %s"
+      description: "Leather helmet reinforced with an internal iron mesh."
+    t4:
+      name: "Iron Mail Helmet %s"
+      description: "Helmet made from interlocking rings of iron."
+    t5:
+      name: "Steel Plate Helmet %s"
+      description: "Plates of tough steel bolted together into a helmet."
+    t6:
+      name: "Silver Plate Helmet %s"
+      description: "Plates of glorious silver bolted together into a helmet."
+    t7:
+      name: "Platinum Plate Helmet %s"
+      description: "Plates of majestic platinum bolted together into a helmet."
+    t8:
+      name: "Crystal Sheet Helmet %s"
+      description: "Sheets of gleaming diamond crystals linked together into a helmet."
+    t9:
+      name: "Alloyed Crystal Helmet %s"
+      description: "High-grade steel infused with crystalline dust to form an impenetrable helmet."
+    t10:
+      name: "Phantom Steel Helmet %s"
+      description: "A diabolic helmet forged from phantom steel summoned in arcane rituals."
+  leggings:
+    t1:
+      name: "Hide Leggings %s"
+      description: "Tough animal hide sewn into a nice pair of leggings."
+    t2:
+      name: "Winter Leggings %s"
+      description: "Thick leather, fur, and hide sewn together to form a hefty pair of leggings."
+    t3:
+      name: "Mesh Reinforced Leggings %s"
+      description: "Leather leggings reinforced with an internal iron mesh."
+    t4:
+      name: "Iron Mail Leggings %s"
+      description: "Leggings made from interlocking rings of iron."
+    t5:
+      name: "Steel Plate Leggings %s"
+      description: "Plates of tough steel bolted together into leggings."
+    t6:
+      name: "Silver Plate Leggings %s"
+      description: "Plates of glorious silver bolted together into leggings."
+    t7:
+      name: "Platinum Plate Leggings %s"
+      description: "Plates of majestic platinum bolted together into leggings."
+    t8:
+      name: "Crystal Sheet Leggings %s"
+      description: "Sheets of gleaming diamond crystals linked together into leggings."
+    t9:
+      name: "Alloyed Crystal Leggings %s"
+      description: "High-grade steel infused with crystalline dust to form impenetrable leggings."
+    t10:
+      name: "Phantom Steel Leggings %s"
+      description: "A diabolic pair of leggings forged from phantom steel summoned in arcane rituals."
   scythes:
     t1:
       name: "Walking Cane %s"
-      description: "A curved wooden stick the village elders carry."
+      description: "A curved wooden stick carried by the village elders."
     t2:
       name: "Farm Plough %s"
-      description: "A stone shard on a tough handle to carve at the earth."
+      description: "A stone shard on a tough handle for carving at the earth."
     t3:
       name: "Ceremonial Scythe %s"
       description: "A sleek shard of marble mounted on an oak handle."
@@ -444,10 +567,10 @@ itemLore:
       description: "A slab of chipped stone hastily bound to a tough handle."
     t3:
       name: "Ceremonial Sword %s"
-      description: "A sleek sheet of marble seated in an oak handle."
+      description: "A sleek sheet of marble seated on an oak handle."
     t4:
       name: "Obsidian Sword %s"
-      description: "A well-weighted, razor sharp, obsidian blade resting in a maple handle."
+      description: "A well-weighted, razor sharp, obsidian blade resting on a maple handle."
     t5:
       name: "Sword of The Front Lines %s"
       description: "The first weapon to clash at the sound of the battle horn."
@@ -465,7 +588,7 @@ itemLore:
       description: "An awe-inspiring masterpiece that brought kingdoms to their knees in the name of conquest."
     t10:
       name: "Sword of The Hero %s"
-      description: "The Wither once fell before this mighty sword, tinting the blade soulless black."
+      description: "The Wither once fell before this mighty sword, tinting the blade a soulless black."
 kits:
   alchemist:
     name: "Alchemist"
@@ -745,15 +868,12 @@ mobLore:
 names:
   abilityKits: "Ability Kits"
   ammoShop: "Ammo Shop"
-  armorShop: "Armor Shop"
   axeShop: "Axe Shop"
   boosts: "Boosts"
+  bootsShop: "Boots Shop"
   bowShop: "Bow Shop"
-  carePackageExtra: "Extra Large Care Package"
-  carePackageLarge: "Large Care Package"
-  carePackageMedium: "Medium Care Package"
-  carePackageSmall: "Small Care Package"
   challengeSelection: "Challenge Selection"
+  chestplateShop: "Chestplate Shop"
   communityChest: "Community Chest"
   consumableShop: "Consumable Shop"
   contents: "Contents"
@@ -768,9 +888,11 @@ names:
   giftKits: "Gift Kits"
   golemEgg: "Iron Golem Spawn Egg"
   hard: "Hard"
+  helmetShop: "Helmet Shop"
   insane: "Insane"
   itemShop: "Item Shop"
   kitSelection: "Kit Selection"
+  leggingsShop: "Leggings Shop"
   medium: "Medium"
   monsterSpawnParticles: "Monster Spawn Particles"
   none: "None"

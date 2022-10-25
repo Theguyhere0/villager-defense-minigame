@@ -238,8 +238,7 @@ public abstract class Ammo extends VDWeapon {
                     price));
 
         // Create item
-        return ItemManager.makeUnique(ItemManager.createItem(Material.NETHER_STAR, name, ItemManager.BUTTON_FLAGS,
-                null, lores));
+        return ItemManager.createItem(Material.NETHER_STAR, name, ItemManager.BUTTON_FLAGS, null, lores);
     }
 
     public static boolean matches(ItemStack toCheck) {
