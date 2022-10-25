@@ -809,13 +809,16 @@ public class LanguageManager {
             public final String carrot;
             public final String chestplate;
             public final String club;
+            public final String clubDesc;
             public final String golem;
             public final String health;
             public final String helmet;
             public final String leggings;
             public final String scythe;
+            public final String scytheDesc;
             public final String speed;
             public final String sword;
+            public final String swordDesc;
             public final String wolf;
 
             private Items(@NotNull String key) throws InvalidLanguageKeyException {
@@ -857,6 +860,15 @@ public class LanguageManager {
                     else temp = null;
                 }
                 club = temp;
+
+                try {
+                    temp = getConfigString("clubDesc");
+                } catch (InvalidLanguageKeyException e) {
+                    if (key.equals("orc"))
+                        throw e;
+                    else temp = null;
+                }
+                clubDesc = temp;
 
                 try {
                     temp = getConfigString("golem");
@@ -903,6 +915,15 @@ public class LanguageManager {
                 scythe = temp;
 
                 try {
+                    temp = getConfigString("scytheDesc");
+                } catch (InvalidLanguageKeyException e) {
+                    if (key.equals("reaper"))
+                        throw e;
+                    else temp = null;
+                }
+                scytheDesc = temp;
+
+                try {
                     temp = getConfigString("speed");
                 } catch (InvalidLanguageKeyException e) {
                     if (key.equals("alchemist"))
@@ -919,6 +940,15 @@ public class LanguageManager {
                     else temp = null;
                 }
                 sword = temp;
+
+                try {
+                    temp = getConfigString("swordDesc");
+                } catch (InvalidLanguageKeyException e) {
+                    if (key.equals("soldier"))
+                        throw e;
+                    else temp = null;
+                }
+                swordDesc = temp;
 
                 try {
                     temp = getConfigString("wolf");
@@ -940,7 +970,6 @@ public class LanguageManager {
         public final @NotNull String arenaInfo;
         public final @NotNull String arenaRecords;
         public final @NotNull String armor;
-        public final @NotNull String ammo;
         public final @NotNull String ammoCost;
         public final @NotNull String attackCritDamage;
         public final @NotNull String attackMainDamage;
@@ -949,15 +978,10 @@ public class LanguageManager {
         public final @NotNull String attackSweepDamage;
         public final @NotNull String attackType;
         public final @NotNull String available;
-        public final @NotNull String axe;
-        public final @NotNull String boots;
-        public final @NotNull String bow;
         public final @NotNull String capacity;
         public final @NotNull String challenges;
-        public final @NotNull String chestplate;
         public final @NotNull String closed;
         public final @NotNull String commandFormat;
-        public final @NotNull String crossbow;
         public final @NotNull String crystalBonus;
         public final @NotNull String crystalBalance;
         public final @NotNull String crystalsEarned;
@@ -984,7 +1008,6 @@ public class LanguageManager {
         public final @NotNull String gemsToReceive;
         public final @NotNull String ghosts;
         public final @NotNull String giftKitsDescription;
-        public final @NotNull String helmet;
         public final @NotNull String help;
         public final @NotNull String help1;
         public final @NotNull String help2;
@@ -1005,7 +1028,6 @@ public class LanguageManager {
         public final @NotNull String late;
         public final @NotNull String leave;
         public final @NotNull String leaveArena;
-        public final @NotNull String leggings;
         public final @NotNull String level;
         public final @NotNull String levelPlaceholder;
         public final @NotNull String levelUp;
@@ -1034,7 +1056,6 @@ public class LanguageManager {
         public final @NotNull String restartPlugin;
         public final @NotNull String resurrection;
         public final @NotNull String rightClick;
-        public final @NotNull String scythe;
         public final @NotNull String seconds;
         public final @NotNull String secondsLeft;
         public final @NotNull String shopInfo;
@@ -1068,7 +1089,6 @@ public class LanguageManager {
             arenaInfo = getConfigString("arenaInfo");
             arenaRecords = getConfigString("arenaRecords");
             armor = getConfigString("armor");
-            ammo = getConfigString("ammo");
             ammoCost = getConfigString("ammoCost");
             attackCritDamage = getConfigString("attackCritDamage");
             attackMainDamage = getConfigString("attackMainDamage");
@@ -1077,15 +1097,10 @@ public class LanguageManager {
             attackSweepDamage = getConfigString("attackSweepDamage");
             attackType = getConfigString("attackType");
             available = getConfigString("available");
-            axe = getConfigString("axe");
-            boots = getConfigString("boots");
-            bow = getConfigString("bow");
             capacity = getConfigString("capacity");
             challenges = getConfigString("challenges");
-            chestplate = getConfigString("chestplate");
             closed = getConfigString("closed");
             commandFormat = getConfigString("commandFormat");
-            crossbow = getConfigString("crossbow");
             crystalBonus = getConfigString("crystalBonus");
             crystalBalance = getConfigString("crystalBalance");
             crystalsEarned = getConfigString("crystalsEarned");
@@ -1112,7 +1127,6 @@ public class LanguageManager {
             gemsToReceive = getConfigString("gemsToReceive");
             ghosts = getConfigString("ghosts");
             giftKitsDescription = getConfigString("giftKitsDescription");
-            helmet = getConfigString("helmet");
             help = getConfigString("help");
             help1 = getConfigString("help1");
             help2 = getConfigString("help2");
@@ -1133,7 +1147,6 @@ public class LanguageManager {
             late = getConfigString("late");
             leave = getConfigString("leave");
             leaveArena = getConfigString("leaveArena");
-            leggings = getConfigString("leggings");
             level = getConfigString("level");
             levelPlaceholder = getConfigString("levelPlaceholder");
             levelUp = getConfigString("levelUp");
@@ -1162,7 +1175,6 @@ public class LanguageManager {
             restartPlugin = getConfigString("restartPlugin");
             resurrection = getConfigString("resurrection");
             rightClick = getConfigString("rightClick");
-            scythe = getConfigString("scythe");
             seconds = getConfigString("seconds");
             secondsLeft = getConfigString("secondsLeft");
             shopInfo = getConfigString("shopInfo");

@@ -14,7 +14,6 @@ import me.theguyhere.villagerdefense.plugin.game.models.items.eggs.VDEgg;
 import me.theguyhere.villagerdefense.plugin.game.models.items.food.VDFood;
 import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.Shop;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.VDWeapon;
-import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
@@ -27,7 +26,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -40,7 +38,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class AbilityListener implements Listener {
     private final Map<VDPlayer, Long> cooldowns = new HashMap<>();
@@ -811,56 +811,6 @@ public class AbilityListener implements Listener {
                 if (arena.hasAbilitySound())
                     arena.getActives().forEach(vdPlayer -> vdPlayer.getPlayer()
                             .playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
-            }
-        }
-    }
-
-    // Vampire healing
-    @EventHandler
-    public void onVampire(EntityDamageByEntityEvent e) {
-        // Ignore cancelled events
-        if (e.isCancelled())
-            return;
-
-        Entity ent = e.getEntity();
-        Entity damager = e.getDamager();
-
-        // Check if damage was done by player to valid monsters
-        if (!(ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin) ||
-                !(damager instanceof Player))
-            return;
-
-        Player player = (Player) damager;
-        Arena arena;
-        VDPlayer gamer;
-
-        // Attempt to get arena and player
-        try {
-            arena = GameManager.getArena(player);
-            gamer = arena.getPlayer(player);
-        } catch (ArenaNotFoundException | PlayerNotFoundException err) {
-            return;
-        }
-
-        Random r = new Random();
-        double damage = e.getFinalDamage();
-
-        // Check for vampire kit
-        if ((Kit.vampire().getID().equals(gamer.getKit().getID()) ||
-                Kit.vampire().nameCompare(gamer.getKit2())) && !gamer.isSharing()) {
-            // Heal if probability is right
-            if (r.nextInt(50) < damage)
-                player.setHealth(Math.min(player.getHealth() + 1,
-                        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue()));
-        }
-
-        // Check for shared vampire effect
-        else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.VAMPIRE))) {
-            // Heal if probability is right
-            if (r.nextInt(50) < damage) {
-                player.setHealth(Math.min(player.getHealth() + 1,
-                        Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue()));
-                PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
             }
         }
     }

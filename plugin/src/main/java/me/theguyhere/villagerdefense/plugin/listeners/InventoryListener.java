@@ -1804,8 +1804,7 @@ public class InventoryListener implements Listener {
 
 			// Edit allowed kits
 			else if (buttonName.contains("Allowed Kits"))
-//				player.openInventory(Inventories.createAllowedKitsMenu(arenaInstance, false));
-				PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+				player.openInventory(Inventories.createAllowedKitsMenu(arenaInstance, false));
 
 			// Edit forced challenges
 			else if (buttonName.contains("Forced Challenges"))
@@ -2682,7 +2681,7 @@ public class InventoryListener implements Listener {
 
 			// Return to main shop menu
 			if (buttonName.contains(LanguageManager.messages.exit)) {
-				player.openInventory(Inventories.createShopMenu(arenaInstance.getCurrentWave() / 5 + 1, arenaInstance));
+				player.openInventory(Inventories.createShopMenu(arenaInstance.getCurrentShopLevel(), arenaInstance));
 				return;
 			}
 
@@ -2778,8 +2777,7 @@ public class InventoryListener implements Listener {
 //				player.openInventory(Inventories.createPlayerAchievementsMenu(id));
 				PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
 			else if (buttonName.contains(LanguageManager.messages.kits))
-//				player.openInventory(Inventories.createPlayerKitsMenu(id, player.getUniqueId()));
-				PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+				player.openInventory(Inventories.createPlayerKitsMenu(id, player.getUniqueId()));
 			else if (buttonName.contains(LanguageManager.messages.reset) && id.equals(player.getUniqueId()))
 				player.openInventory(Inventories.createResetStatsConfirmMenu(id));
 		}
@@ -3002,8 +3000,7 @@ public class InventoryListener implements Listener {
 		// Stats menu for an arena
 		else if (invID == InventoryID.ARENA_INFO_MENU) {
 			if (buttonName.contains(LanguageManager.messages.allowedKits))
-//				player.openInventory(Inventories.createAllowedKitsMenu(meta.getArena(), true));
-				PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+				player.openInventory(Inventories.createAllowedKitsMenu(meta.getArena(), true));
 
 			else if (buttonName.contains(LanguageManager.messages.forcedChallenges))
 //				player.openInventory(Inventories.createForcedChallengesMenu(meta.getArena(), true));

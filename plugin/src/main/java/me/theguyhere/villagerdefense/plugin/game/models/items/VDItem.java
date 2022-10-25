@@ -63,7 +63,7 @@ public abstract class VDItem {
 
         // Filter items without custom durability
         if (maxDur.get() == 0)
-            return false;
+            return true;
 
         // Update and check for used up item
         if (damagePercent < 0)

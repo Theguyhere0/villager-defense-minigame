@@ -624,12 +624,13 @@ kits:
     description: "Give yourself and nearby allies haste"
   ninja:
     name: "Ninja"
-    description: "You and your becomes become invisible and stun monsters"
+    description: "You and your pets become become invisible and stun monsters"
   orc:
     name: "Orc"
-    description: "Start with a knockback V stick"
+    description: "Start with a high-knockback stick"
     items:
       club: "Orc's Club"
+      clubDesc: "An ungodly stick that excels at clobbering enemies."
   phantom:
     name: "Phantom"
     description: "Join as a player in any game using %s"
@@ -638,17 +639,19 @@ kits:
     description: "Give yourself and nearby allies regeneration"
   reaper:
     name: "Reaper"
-    description: "Start with a sharpness %s netherite hoe"
+    description: "Start with a powerful scythe"
     items:
       scythe: "Reaper's Scythe"
+      scytheDesc: "The weapon of choice for the quick striker."
   siren:
     name: "Siren"
     description: "Slow and even weaken nearby enemies"
   soldier:
     name: "Soldier"
-    description: "Start with a stone sword"
+    description: "Start with a stronger sword"
     items:
       sword: "Soldier's Sword"
+      swordDesc: "A durable wooden sword made of treated walnut."
   summoner:
     name: "Summoner"
     description1: "Start with a wolf spawn"
@@ -659,7 +662,7 @@ kits:
       wolf: "Summoner's Wolf Spawn Egg"
   tailor:
     name: "Tailor"
-    description: "Start with a full leather armor set"
+    description: "Start with a full set of T1 armor"
     items:
       boots: "Tailor's Boots"
       chestplate: "Tailor's Chestplate"
@@ -673,7 +676,7 @@ kits:
     description: "Start with 200 gems"
   vampire:
     name: "Vampire"
-    description: "Dealing x damage has a (2*x)% chance of healing half a heart"
+    description: "Each attack has a 20% chance of healing 25% the attack damage."
   warrior:
     name: "Warrior"
     description: "Give yourself and nearby allies strength"
@@ -685,7 +688,6 @@ messages:
   abilityLevel: "Up to ability level"
   achievements: "Achievements"
   allowedKits: "Allowed Kits"
-  ammo: "Lvl %s Ammo"
   ammoCost: "Ammo Cost: %s"
   arenaInfo: "%s Info"
   arenaRecords: "Arena Records"
@@ -697,15 +699,10 @@ messages:
   attackSweepDamage: "Sweep Damage: %s"
   attackType: "Type: %s"
   available: "Available"
-  axe: "Lvl %s Axe"
-  boots: "Lvl %s Boots"
-  bow: "Lvl %s Bow"
   capacity: "Capacity: %s"
   challenges: "Challenges"
-  chestplate: "Lvl %s Chestplate"
   closed: "Closed"
   commandFormat: "Command format: %s"
-  crossbow: "Lvl %s Crossbow"
   crystalBonus: "+%s %s bonus"
   crystalBalance: "%s Balance"
   crystalsEarned: "You earned %s %s this game!"
@@ -732,7 +729,6 @@ messages:
   gemsToReceive: "Gems to receive"
   ghosts: "Ghosts"
   giftKitsDescription: "Kits give one-time benefits per game or respawn"
-  helmet: "Lvl %s Helmet"
   help: "%s Help"
   help1: "Villager Defense is a mini-game where the goal is to protect villagers from monsters for as many waves as you
   can! Use monster drops to buy better items from the in-game shop. Use %s to buy various unique and powerful kits and
@@ -757,7 +753,6 @@ messages:
   late: "%s left the arena, use %s to take their place!"
   leave: "LEAVE"
   leaveArena: "%s left the arena."
-  leggings: "Lvl %s Greaves"
   level: "Level"
   levelPlaceholder: "Locked until shop level %s"
   levelUp: "Level Up!  %s"
@@ -786,7 +781,6 @@ messages:
   restartPlugin: "Please restart the plugin."
   resurrection: "You were resurrected!"
   rightClick: "Right click to use ability"
-  scythe: "Lvl %s Scythe"
   seconds: "%s s"
   secondsLeft: "%s seconds until the game starts!"
   shopInfo: "Shops upgrade every %s waves"

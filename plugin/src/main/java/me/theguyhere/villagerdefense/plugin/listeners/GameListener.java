@@ -23,6 +23,8 @@ import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Ammo;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Bow;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Crossbow;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.VDWeapon;
+import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
+import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.*;
 import me.theguyhere.villagerdefense.plugin.game.models.players.AttackClass;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
@@ -48,6 +50,7 @@ import org.bukkit.util.BoundingBox;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameListener implements Listener {
@@ -468,8 +471,27 @@ public class GameListener implements Listener {
 					else attackClass = AttackClass.MAIN;
 
 					// Play out damage
-					finalVictim.takeDamage(gamer.dealRawDamage(attackClass, damage / 20.),
+					int hurt = finalVictim.takeDamage(gamer.dealRawDamage(attackClass, damage / 20.),
 							gamer.getAttackType(), player, arena);
+
+					Random r = new Random();
+
+					// Check for vampire kit
+					if ((Kit.vampire().getID().equals(gamer.getKit().getID()) ||
+							Kit.vampire().nameCompare(gamer.getKit2())) && !gamer.isSharing()) {
+						// Heal if probability is right
+						if (r.nextDouble() < .2)
+							gamer.changeCurrentHealth((int) (hurt * .25));
+					}
+
+					// Check for shared vampire effect
+					else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.VAMPIRE))) {
+						// Heal if probability is right
+						if (r.nextDouble() < .2) {
+							gamer.changeCurrentHealth((int) (hurt * .25));
+							PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+						}
+					}
 				}
 
 				// Damage not dealt by player
@@ -965,12 +987,11 @@ public class GameListener implements Listener {
 
 		// Open shop inventory
 		if (Shop.matches(item))
-			player.openInventory(Inventories.createShopMenu(arena.getCurrentWave() / 10 + 1, arena));
+			player.openInventory(Inventories.createShopMenu(arena.getCurrentShopLevel(), arena));
 
 		// Open kit selection menu
 		else if (KitSelector.matches(item))
-//			player.openInventory(Inventories.createSelectKitsMenu(player, arena));
-			PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+			player.openInventory(Inventories.createSelectKitsMenu(player, arena));
 
 		// Open challenge selection menu
 		else if (ChallengeSelector.matches(item))

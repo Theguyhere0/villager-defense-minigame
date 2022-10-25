@@ -776,42 +776,53 @@ public class VDPlayer {
      */
     public void setupAttributes() {
         Random r = new Random();
+        int maxHealth = 500;
 
         // Set health for people with giant kits
         if ((Kit.giant().setKitLevel(1).equals(getKit()) ||
-                Kit.giant().setKitLevel(1).equals(getKit2())) && !isSharing())
+                Kit.giant().setKitLevel(1).equals(getKit2())) && !isSharing()) {
             Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
                     .addModifier(new AttributeModifier("Giant1", 2,
                             AttributeModifier.Operation.ADD_NUMBER));
+            maxHealth = 550;
+        }
         else if ((Kit.giant().setKitLevel(2).equals(getKit()) ||
-                Kit.giant().setKitLevel(2).equals(getKit2())) && !isSharing())
+                Kit.giant().setKitLevel(2).equals(getKit2())) && !isSharing()) {
             Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
                     .addModifier(new AttributeModifier("Giant2", 4,
                             AttributeModifier.Operation.ADD_NUMBER));
+            maxHealth = 600;
+        }
         else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT2))) {
             Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
                     .addModifier(new AttributeModifier("Giant2", 4,
                             AttributeModifier.Operation.ADD_NUMBER));
+            maxHealth = 550;
             PlayerManager.notifySuccess(getPlayer(), LanguageManager.messages.effectShare);
         }
         else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT1))) {
             Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
                     .addModifier(new AttributeModifier("Giant1", 2,
                             AttributeModifier.Operation.ADD_NUMBER));
+            maxHealth = 600;
             PlayerManager.notifySuccess(getPlayer(), LanguageManager.messages.effectShare);
         }
 
         // Set health for people with health boost and are boosted
-        if (isBoosted() && PlayerManager.hasAchievement(getID(), Achievement.topWave9().getID()))
+        if (isBoosted() && PlayerManager.hasAchievement(getID(), Achievement.topWave9().getID())) {
             Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
                     .addModifier(new AttributeModifier("HealthBoost", 2,
                             AttributeModifier.Operation.ADD_NUMBER));
+            maxHealth += 50;
+        }
 
         // Set health for people with dwarf challenge
-        if (getChallenges().contains(Challenge.dwarf()))
+        if (getChallenges().contains(Challenge.dwarf())) {
             Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
                     .addModifier(new AttributeModifier("Dwarf", -.5,
-                            AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+                    AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+            maxHealth /= 2;
+        }
 
         // Make sure new health is set up correctly
         getPlayer().setHealth(
@@ -823,7 +834,7 @@ public class VDPlayer {
             getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999, 0));
 
         // Set up health and damage
-        setMaxHealthInit(500);
+        setMaxHealthInit(maxHealth);
         setBaseDamage(10);
     }
 }

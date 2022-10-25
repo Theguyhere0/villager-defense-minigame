@@ -29,6 +29,7 @@ public abstract class Sword extends VDWeapon {
         Material mat;
         switch (type) {
             case STARTER:
+            case SOLDIER:
             case T1:
                 mat = Material.WOODEN_SWORD;
                 break;
@@ -56,6 +57,9 @@ public abstract class Sword extends VDWeapon {
         // Set name
         String name;
         switch (type) {
+            case SOLDIER:
+                name = new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.soldier.items.sword).toString();
+                break;
             case STARTER:
                 name = CommunicationManager.format(
                         new ColoredMessage(LanguageManager.itemLore.swords.starter.name),
@@ -129,6 +133,9 @@ public abstract class Sword extends VDWeapon {
         // Set description
         String description;
         switch (type) {
+            case SOLDIER:
+                description = LanguageManager.kits.soldier.items.swordDesc;
+                break;
             case STARTER:
                 description = LanguageManager.itemLore.swords.starter.description;
                 break;
@@ -178,6 +185,9 @@ public abstract class Sword extends VDWeapon {
         // Set main damage
         int damageLow, damageHigh;
         switch (type) {
+            case SOLDIER:
+                damageLow = damageHigh = 40;
+                break;
             case STARTER:
                 damageLow = damageHigh = 30;
                 break;
@@ -358,6 +368,7 @@ public abstract class Sword extends VDWeapon {
     }
 
     public enum SwordType{
+        SOLDIER,
         STARTER,
         T1,
         T2,

@@ -173,6 +173,26 @@ public class ItemManager {
         return newItem;
     }
 
+    // Rename an item
+    @NotNull
+    public static ItemStack rename(ItemStack item, String newName) {
+        ItemStack newItem = item.clone();
+        ItemMeta meta = newItem.getItemMeta();
+
+        if (meta != null)
+            meta.setDisplayName(newName);
+        newItem.setItemMeta(meta);
+        return newItem;
+    }
+
+    // Set the amount of an item
+    @NotNull
+    public static ItemStack setAmount(ItemStack item, int amount) {
+        ItemStack newItem = item.clone();
+        newItem.setAmount(Math.max(amount, 0));
+        return newItem;
+    }
+
     // Creates an ItemStack that has potion meta
     @NotNull
     public static ItemStack createPotionItem(Material matID, PotionData potionData, String dispName, String... lores) {

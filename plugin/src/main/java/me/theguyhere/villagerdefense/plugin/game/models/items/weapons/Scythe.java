@@ -28,14 +28,17 @@ public abstract class Scythe extends VDWeapon {
         // Set material
         Material mat;
         switch (type) {
+            case REAPER1:
             case T1:
                 mat = Material.WOODEN_HOE;
                 break;
+            case REAPER2:
             case T2:
             case T3:
             case T4:
                 mat = Material.STONE_HOE;
                 break;
+            case REAPER3:
             case T5:
             case T6:
             case T7:
@@ -55,6 +58,11 @@ public abstract class Scythe extends VDWeapon {
         // Set name
         String name;
         switch (type) {
+            case REAPER1:
+            case REAPER2:
+            case REAPER3:
+                name = new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.reaper.items.scythe).toString();
+                break;
             case T1:
                 name = CommunicationManager.format(
                         new ColoredMessage(LanguageManager.itemLore.scythes.t1.name),
@@ -122,6 +130,11 @@ public abstract class Scythe extends VDWeapon {
         // Set description
         String description;
         switch (type) {
+            case REAPER1:
+            case REAPER2:
+            case REAPER3:
+                description = LanguageManager.kits.reaper.items.scytheDesc;
+                break;
             case T1:
                 description = LanguageManager.itemLore.scythes.t1.description;
                 break;
@@ -168,6 +181,15 @@ public abstract class Scythe extends VDWeapon {
         // Set main damage
         int damageLow, damageHigh;
         switch (type) {
+            case REAPER1:
+                damageLow = damageHigh = 20;
+                break;
+            case REAPER2:
+                damageLow = damageHigh = 25;
+                break;
+            case REAPER3:
+                damageLow = damageHigh = 30;
+                break;
             case T1:
                 damageLow = 16;
                 damageHigh = 25;
@@ -338,6 +360,9 @@ public abstract class Scythe extends VDWeapon {
     }
 
     public enum ScytheType{
+        REAPER1,
+        REAPER2,
+        REAPER3,
         T1,
         T2,
         T3,

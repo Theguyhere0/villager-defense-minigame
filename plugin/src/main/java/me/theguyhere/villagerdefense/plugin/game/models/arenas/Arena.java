@@ -2709,6 +2709,10 @@ public class Arena {
         return currentWave;
     }
 
+    public int getCurrentShopLevel() {
+        return currentWave / 5 + 1;
+    }
+
     public double getCurrentDifficulty() {
         double difficulty = Math.pow(Math.E, Math.pow(Math.max(currentWave - 1, 0), .35) /
                 (4.5 - getDifficultyMultiplier() / 2d));

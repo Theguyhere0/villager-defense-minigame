@@ -83,7 +83,7 @@ public abstract class VDMob {
         return wave;
     }
 
-    public void takeDamage(int damage, @NotNull AttackType attackType, @Nullable Player attacker, Arena arena) {
+    public int takeDamage(int damage, @NotNull AttackType attackType, @Nullable Player attacker, Arena arena) {
         // Final damage calculation and display
         if (attackType == AttackType.NORMAL)
             damage -= Math.min(damage, armor);
@@ -160,6 +160,8 @@ public abstract class VDMob {
         
         // Update entity name
         updateNameTag();
+
+        return damage;
     }
 
     protected void addDamage(int damage, UUID id) {
