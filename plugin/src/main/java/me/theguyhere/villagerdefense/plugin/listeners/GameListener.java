@@ -216,7 +216,10 @@ public class GameListener implements Listener {
 			NMSVersion.getCurrent().getNmsManager().setBowCooldown(player, Utils.secondsToTicks(cooldown.get()));
 		else NMSVersion.getCurrent().getNmsManager().setCrossbowCooldown(player, Utils.secondsToTicks(cooldown.get()));
 		gamer.setCooldown(System.currentTimeMillis() + Utils.secondsToMillis(cooldown.get()));
-		Ammo.updateCapacity(ammo, -cost.get());
+		if (Ammo.updateCapacity(ammo, -cost.get())) {
+			player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
+			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1);
+		}
 		Bukkit.getPluginManager().callEvent(new PlayerItemDamageEvent(player, range, 1));
 	}
 

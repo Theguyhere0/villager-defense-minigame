@@ -1335,10 +1335,25 @@ public class Inventories {
 				CommunicationManager.format("&2&l" + LanguageManager.names.swordShop), ItemManager.BUTTON_FLAGS,
 				ItemManager.glow()));
 
-		buttons.add(ItemManager.createItem(Material.GOLDEN_SWORD,
-				CommunicationManager.format("&4&l" + LanguageManager.messages.level +
-						" &9&l" + level + " &4&l" + LanguageManager.names.weaponShop), ItemManager.BUTTON_FLAGS,
-						ItemManager.glow()));
+		buttons.add(ItemManager.createItem(Material.GOLDEN_AXE,
+				CommunicationManager.format("&2&l" + LanguageManager.names.axeShop), ItemManager.BUTTON_FLAGS,
+				ItemManager.glow()));
+
+		buttons.add(ItemManager.createItem(Material.GOLDEN_HOE,
+				CommunicationManager.format("&2&l" + LanguageManager.names.scytheShop), ItemManager.BUTTON_FLAGS,
+				ItemManager.glow()));
+
+		buttons.add(ItemManager.createItem(Material.BOW,
+				CommunicationManager.format("&2&l" + LanguageManager.names.bowShop), ItemManager.BUTTON_FLAGS,
+				ItemManager.glow()));
+
+		buttons.add(ItemManager.createItem(Material.CROSSBOW,
+				CommunicationManager.format("&2&l" + LanguageManager.names.crossbowShop), ItemManager.BUTTON_FLAGS,
+				ItemManager.glow()));
+
+		buttons.add(ItemManager.createItem(Material.NETHER_STAR,
+				CommunicationManager.format("&2&l" + LanguageManager.names.ammoShop), ItemManager.BUTTON_FLAGS,
+				ItemManager.glow()));
 
 		buttons.add(ItemManager.createItem(Material.GOLDEN_CHESTPLATE,
 				CommunicationManager.format("&5&l" + LanguageManager.messages.level +
@@ -1410,117 +1425,240 @@ public class Inventories {
 		);
 	}
 
-	// Generate the weapon shop
-	public static Inventory createWeaponShopMenu(int level, Arena arena) {
-		Random r = new Random();
-
+	// Generate the axe shop
+	public static Inventory createAxeShopMenu(int level, Arena arena) {
 		// Set price modifier
 		double modifier = Math.pow(arena.getActiveCount() - 5, 2) / 200 + 1;
 		if (!arena.hasDynamicPrices())
 			modifier = 1;
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(
-				new InventoryMeta(InventoryID.WEAPON_SHOP_MENU, InventoryType.MENU),
-				36,
-				CommunicationManager.format("&4&l" + LanguageManager.messages.level +
-						" &9&l" + level + " &4&l" + LanguageManager.names.weaponShop)
-		);
-
-		// Fill in axes
-		List<ItemStack> axes = new ArrayList<>();
+		List<ItemStack> buttons = new ArrayList<>();
+		buttons.add(modifyPrice(Axe.create(Axe.AxeType.T1), modifier));
 		if (level < 2)
-			axes.add(Buttons.levelPlaceholder(2));
-		else axes.add(Axe.create(r.nextInt(5) + 1));
-		if (level < 4)
-			axes.add(Buttons.levelPlaceholder(4));
-		else axes.add(Axe.create(r.nextInt(5) + 6));
-		if (level < 5)
-			axes.add(Buttons.levelPlaceholder(5));
-		else axes.add(Axe.create(r.nextInt(5) + 11));
-		if (level < 6)
-			axes.add(Buttons.levelPlaceholder(6));
-		else axes.add(Axe.create(r.nextInt(5 * (level - 5)) + 16));
-		sort(axes);
-		for (int i = 0; i < 4; i++)
-			inv.setItem(i + 9, modifyPrice(axes.get(i), modifier));
-
-		// Fill in scythes
-		List<ItemStack> scythes = new ArrayList<>();
-		if (level < 4)
-			scythes.add(Buttons.levelPlaceholder(4));
-		else scythes.add(Scythe.create(r.nextInt(5) + 1));
-		if (level < 5)
-			scythes.add(Buttons.levelPlaceholder(5));
-		else scythes.add(Scythe.create(r.nextInt(5) + 6));
-		if (level < 6)
-			scythes.add(Buttons.levelPlaceholder(6));
-		else scythes.add(Scythe.create(r.nextInt(5) + 11));
-		if (level < 7)
-			scythes.add(Buttons.levelPlaceholder(7));
-		else scythes.add(Scythe.create(r.nextInt(5 * (level - 6)) + 16));
-		sort(scythes);
-		for (int i = 0; i < 4; i++)
-			inv.setItem(i + 18, modifyPrice(scythes.get(i), modifier));
-
-		// Fill in bows
-		List<ItemStack> bows = new ArrayList<>();
-		if (level < 2)
-			bows.add(Buttons.levelPlaceholder(2));
-		else bows.add(Bow.create(r.nextInt(4) + 1));
+			buttons.add(Buttons.levelPlaceholder(2));
+		else buttons.add(modifyPrice(Axe.create(Axe.AxeType.T2), modifier));
 		if (level < 3)
-			bows.add(Buttons.levelPlaceholder(3));
-		else bows.add(Bow.create(r.nextInt(4) + 5));
+			buttons.add(Buttons.levelPlaceholder(3));
+		else buttons.add(modifyPrice(Axe.create(Axe.AxeType.T3), modifier));
 		if (level < 4)
-			bows.add(Buttons.levelPlaceholder(4));
-		else bows.add(Bow.create(r.nextInt(4) + 9));
+			buttons.add(Buttons.levelPlaceholder(4));
+		else buttons.add(modifyPrice(Axe.create(Axe.AxeType.T4), modifier));
 		if (level < 5)
-			bows.add(Buttons.levelPlaceholder(5));
-		else bows.add(Bow.create(r.nextInt(4 * (level - 4)) + 13));
-		sort(bows);
-		for (int i = 0; i < 4; i++)
-			inv.setItem(i + 5, modifyPrice(bows.get(i), modifier));
-
-		// Fill in crossbows
-		List<ItemStack> crossbows = new ArrayList<>();
+			buttons.add(Buttons.levelPlaceholder(5));
+		else buttons.add(modifyPrice(Axe.create(Axe.AxeType.T5), modifier));
 		if (level < 5)
-			crossbows.add(Buttons.levelPlaceholder(5));
-		else crossbows.add(Crossbow.create(r.nextInt(4) + 1));
+			buttons.add(Buttons.levelPlaceholder(5));
+		else buttons.add(modifyPrice(Axe.create(Axe.AxeType.T6), modifier));
 		if (level < 6)
-			crossbows.add(Buttons.levelPlaceholder(6));
-		else crossbows.add(Crossbow.create(r.nextInt(4) + 5));
+			buttons.add(Buttons.levelPlaceholder(6));
+		else buttons.add(modifyPrice(Axe.create(Axe.AxeType.T7), modifier));
+		if (level < 6)
+			buttons.add(Buttons.levelPlaceholder(6));
+		else buttons.add(modifyPrice(Axe.create(Axe.AxeType.T8), modifier));
 		if (level < 7)
-			crossbows.add(Buttons.levelPlaceholder(7));
-		else crossbows.add(Crossbow.create(r.nextInt(4) + 9));
+			buttons.add(Buttons.levelPlaceholder(7));
+		else buttons.add(modifyPrice(Axe.create(Axe.AxeType.T9), modifier));
 		if (level < 8)
-			crossbows.add(Buttons.levelPlaceholder(8));
-		else crossbows.add(Crossbow.create(r.nextInt(4 * (level - 7)) + 13));
-		sort(crossbows);
-		for (int i = 0; i < 4; i++)
-			inv.setItem(i + 14, modifyPrice(crossbows.get(i), modifier));
+			buttons.add(Buttons.levelPlaceholder(8));
+		else buttons.add(modifyPrice(Axe.create(Axe.AxeType.T10), modifier));
 
-		// Fill in ammo
-		List<ItemStack> ammos = new ArrayList<>();
+		return InventoryFactory.createDynamicSizeInventory(
+				new InventoryMeta(InventoryID.AXE_SHOP_MENU, InventoryType.MENU),
+				CommunicationManager.format("&2&l" + LanguageManager.names.axeShop),
+				true,
+				buttons
+		);
+	}
+
+	// Generate the scythe shop
+	public static Inventory createScytheShopMenu(int level, Arena arena) {
+		// Set price modifier
+		double modifier = Math.pow(arena.getActiveCount() - 5, 2) / 200 + 1;
+		if (!arena.hasDynamicPrices())
+			modifier = 1;
+
+		// Create inventory
+		List<ItemStack> buttons = new ArrayList<>();
+		buttons.add(modifyPrice(Scythe.create(Scythe.ScytheType.T1), modifier));
 		if (level < 2)
-			ammos.add(Buttons.levelPlaceholder(2));
-		else ammos.add(Ammo.create(r.nextInt(4) + 1));
+			buttons.add(Buttons.levelPlaceholder(2));
+		else buttons.add(modifyPrice(Scythe.create(Scythe.ScytheType.T2), modifier));
 		if (level < 3)
-			ammos.add(Buttons.levelPlaceholder(3));
-		else ammos.add(Ammo.create(r.nextInt(4) + 5));
+			buttons.add(Buttons.levelPlaceholder(3));
+		else buttons.add(modifyPrice(Scythe.create(Scythe.ScytheType.T3), modifier));
 		if (level < 4)
-			ammos.add(Buttons.levelPlaceholder(4));
-		else ammos.add(Ammo.create(r.nextInt(4) + 9));
+			buttons.add(Buttons.levelPlaceholder(4));
+		else buttons.add(modifyPrice(Scythe.create(Scythe.ScytheType.T4), modifier));
 		if (level < 5)
-			ammos.add(Buttons.levelPlaceholder(5));
-		else ammos.add(Ammo.create(r.nextInt(4 * (level - 4)) + 13));
-		sort(ammos);
-		for (int i = 0; i < 4; i++)
-			inv.setItem(i + 23, modifyPrice(ammos.get(i), modifier));
+			buttons.add(Buttons.levelPlaceholder(5));
+		else buttons.add(modifyPrice(Scythe.create(Scythe.ScytheType.T5), modifier));
+		if (level < 5)
+			buttons.add(Buttons.levelPlaceholder(5));
+		else buttons.add(modifyPrice(Scythe.create(Scythe.ScytheType.T6), modifier));
+		if (level < 6)
+			buttons.add(Buttons.levelPlaceholder(6));
+		else buttons.add(modifyPrice(Scythe.create(Scythe.ScytheType.T7), modifier));
+		if (level < 6)
+			buttons.add(Buttons.levelPlaceholder(6));
+		else buttons.add(modifyPrice(Scythe.create(Scythe.ScytheType.T8), modifier));
+		if (level < 7)
+			buttons.add(Buttons.levelPlaceholder(7));
+		else buttons.add(modifyPrice(Scythe.create(Scythe.ScytheType.T9), modifier));
+		if (level < 8)
+			buttons.add(Buttons.levelPlaceholder(8));
+		else buttons.add(modifyPrice(Scythe.create(Scythe.ScytheType.T10), modifier));
 
-		// Return option
-		inv.setItem(31, Buttons.exit());
+		return InventoryFactory.createDynamicSizeInventory(
+				new InventoryMeta(InventoryID.SCYTHE_SHOP_MENU, InventoryType.MENU),
+				CommunicationManager.format("&2&l" + LanguageManager.names.scytheShop),
+				true,
+				buttons
+		);
+	}
 
-		return inv;
+	// Generate the bow shop
+	public static Inventory createBowShopMenu(int level, Arena arena) {
+		// Set price modifier
+		double modifier = Math.pow(arena.getActiveCount() - 5, 2) / 200 + 1;
+		if (!arena.hasDynamicPrices())
+			modifier = 1;
+
+		// Create inventory
+		List<ItemStack> buttons = new ArrayList<>();
+		if (level < 2)
+			buttons.add(Buttons.levelPlaceholder(2));
+		else buttons.add(modifyPrice(Bow.create(Bow.BowType.T1), modifier));
+		if (level < 3)
+			buttons.add(Buttons.levelPlaceholder(3));
+		else buttons.add(modifyPrice(Bow.create(Bow.BowType.T2), modifier));
+		if (level < 4)
+			buttons.add(Buttons.levelPlaceholder(4));
+		else buttons.add(modifyPrice(Bow.create(Bow.BowType.T3), modifier));
+		if (level < 5)
+			buttons.add(Buttons.levelPlaceholder(5));
+		else buttons.add(modifyPrice(Bow.create(Bow.BowType.T4), modifier));
+		if (level < 5)
+			buttons.add(Buttons.levelPlaceholder(5));
+		else buttons.add(modifyPrice(Bow.create(Bow.BowType.T5), modifier));
+		if (level < 6)
+			buttons.add(Buttons.levelPlaceholder(6));
+		else buttons.add(modifyPrice(Bow.create(Bow.BowType.T6), modifier));
+		if (level < 7)
+			buttons.add(Buttons.levelPlaceholder(7));
+		else buttons.add(modifyPrice(Bow.create(Bow.BowType.T7), modifier));
+		if (level < 8)
+			buttons.add(Buttons.levelPlaceholder(8));
+		else buttons.add(modifyPrice(Bow.create(Bow.BowType.T8), modifier));
+		if (level < 9)
+			buttons.add(Buttons.levelPlaceholder(9));
+		else buttons.add(modifyPrice(Bow.create(Bow.BowType.T9), modifier));
+		if (level < 10)
+			buttons.add(Buttons.levelPlaceholder(10));
+		else buttons.add(modifyPrice(Bow.create(Bow.BowType.T10), modifier));
+
+		return InventoryFactory.createDynamicSizeInventory(
+				new InventoryMeta(InventoryID.BOW_SHOP_MENU, InventoryType.MENU),
+				CommunicationManager.format("&2&l" + LanguageManager.names.bowShop),
+				true,
+				buttons
+		);
+	}
+
+	// Generate the crossbow shop
+	public static Inventory createCrossbowShopMenu(int level, Arena arena) {
+		// Set price modifier
+		double modifier = Math.pow(arena.getActiveCount() - 5, 2) / 200 + 1;
+		if (!arena.hasDynamicPrices())
+			modifier = 1;
+
+		// Create inventory
+		List<ItemStack> buttons = new ArrayList<>();
+		if (level < 3)
+			buttons.add(Buttons.levelPlaceholder(3));
+		else buttons.add(modifyPrice(Crossbow.create(Crossbow.CrossbowType.T1), modifier));
+		if (level < 3)
+			buttons.add(Buttons.levelPlaceholder(3));
+		else buttons.add(modifyPrice(Crossbow.create(Crossbow.CrossbowType.T2), modifier));
+		if (level < 4)
+			buttons.add(Buttons.levelPlaceholder(4));
+		else buttons.add(modifyPrice(Crossbow.create(Crossbow.CrossbowType.T3), modifier));
+		if (level < 5)
+			buttons.add(Buttons.levelPlaceholder(5));
+		else buttons.add(modifyPrice(Crossbow.create(Crossbow.CrossbowType.T4), modifier));
+		if (level < 5)
+			buttons.add(Buttons.levelPlaceholder(5));
+		else buttons.add(modifyPrice(Crossbow.create(Crossbow.CrossbowType.T5), modifier));
+		if (level < 6)
+			buttons.add(Buttons.levelPlaceholder(6));
+		else buttons.add(modifyPrice(Crossbow.create(Crossbow.CrossbowType.T6), modifier));
+		if (level < 7)
+			buttons.add(Buttons.levelPlaceholder(7));
+		else buttons.add(modifyPrice(Crossbow.create(Crossbow.CrossbowType.T7), modifier));
+		if (level < 8)
+			buttons.add(Buttons.levelPlaceholder(8));
+		else buttons.add(modifyPrice(Crossbow.create(Crossbow.CrossbowType.T8), modifier));
+		if (level < 9)
+			buttons.add(Buttons.levelPlaceholder(9));
+		else buttons.add(modifyPrice(Crossbow.create(Crossbow.CrossbowType.T9), modifier));
+		if (level < 10)
+			buttons.add(Buttons.levelPlaceholder(10));
+		else buttons.add(modifyPrice(Crossbow.create(Crossbow.CrossbowType.T10), modifier));
+
+		return InventoryFactory.createDynamicSizeInventory(
+				new InventoryMeta(InventoryID.CROSSBOW_SHOP_MENU, InventoryType.MENU),
+				CommunicationManager.format("&2&l" + LanguageManager.names.crossbowShop),
+				true,
+				buttons
+		);
+	}
+
+	// Generate the ammo shop
+	public static Inventory createAmmoShopMenu(int level, Arena arena) {
+		// Set price modifier
+		double modifier = Math.pow(arena.getActiveCount() - 5, 2) / 200 + 1;
+		if (!arena.hasDynamicPrices())
+			modifier = 1;
+
+		// Create inventory
+		List<ItemStack> buttons = new ArrayList<>();
+		if (level < 2)
+			buttons.add(Buttons.levelPlaceholder(2));
+		else buttons.add(modifyPrice(Ammo.create(Ammo.AmmoType.T1), modifier));
+		if (level < 3)
+			buttons.add(Buttons.levelPlaceholder(3));
+		else buttons.add(modifyPrice(Ammo.create(Ammo.AmmoType.T2), modifier));
+		if (level < 4)
+			buttons.add(Buttons.levelPlaceholder(4));
+		else buttons.add(modifyPrice(Ammo.create(Ammo.AmmoType.T3), modifier));
+		if (level < 5)
+			buttons.add(Buttons.levelPlaceholder(5));
+		else buttons.add(modifyPrice(Ammo.create(Ammo.AmmoType.T4), modifier));
+		if (level < 5)
+			buttons.add(Buttons.levelPlaceholder(5));
+		else buttons.add(modifyPrice(Ammo.create(Ammo.AmmoType.T5), modifier));
+		if (level < 6)
+			buttons.add(Buttons.levelPlaceholder(6));
+		else buttons.add(modifyPrice(Ammo.create(Ammo.AmmoType.T6), modifier));
+		if (level < 7)
+			buttons.add(Buttons.levelPlaceholder(7));
+		else buttons.add(modifyPrice(Ammo.create(Ammo.AmmoType.T7), modifier));
+		if (level < 8)
+			buttons.add(Buttons.levelPlaceholder(8));
+		else buttons.add(modifyPrice(Ammo.create(Ammo.AmmoType.T8), modifier));
+		if (level < 9)
+			buttons.add(Buttons.levelPlaceholder(9));
+		else buttons.add(modifyPrice(Ammo.create(Ammo.AmmoType.T9), modifier));
+		if (level < 10)
+			buttons.add(Buttons.levelPlaceholder(10));
+		else buttons.add(modifyPrice(Ammo.create(Ammo.AmmoType.T10), modifier));
+
+		return InventoryFactory.createDynamicSizeInventory(
+				new InventoryMeta(InventoryID.AMMO_SHOP_MENU, InventoryType.MENU),
+				CommunicationManager.format("&2&l" + LanguageManager.names.ammoShop),
+				true,
+				buttons
+		);
 	}
 
 	// Generate the armor shop

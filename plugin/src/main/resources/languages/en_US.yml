@@ -277,6 +277,161 @@ errors:
   teleport: "You must leave the arena before you can teleport! Use %s to leave the arena."
   wolf: "You can only have up to %s wolves!"
 itemLore:
+  ammo:
+    t1:
+      name: "Roll of Ammo %s"
+      description: "A little roll of conventional ammunition for ranged weapons."
+    t2:
+      name: "Pack of Ammo %s"
+      description: "A small package of ammunition."
+    t3:
+      name: "Bundle of Ammo %s"
+      description: "A sizeable bundle of ammunition."
+    t4:
+      name: "Stack of Ammo %s"
+      description: "A large stash of ammunition for ammo-hungry weapons."
+    t5:
+      name: "Regenerating Ammo Cartridge (RAC) %s"
+      description: "Notchian mages of have found a way to replenish ammunition passively in these magical cartridges."
+    t6:
+      name: "Reinforced RAC %s"
+      description: "A cartridge reinforced with a mystical steel trim."
+    t7:
+      name: "High-density RAC %s"
+      description: "A complex compression technique was used to fit more into this cartridge."
+    t8:
+      name: "Enchanted RAC %s"
+      description: "A glimmering cartridge pulsating with magical energy."
+    t9:
+      name: "RAC of Noble Mages %s"
+      description: "This ethereal cartridge was fabricated by the best mages of the realm."
+    t10:
+      name: "Void RAC %s"
+      description: "Forged in the abyss of the void, this cartridge can hold unthinkable quantities of ammunition."
+  axes:
+    t1:
+      name: "Meat Mallet %s"
+      description: "A dull wooden axe meant for tenderizing meat."
+    t2:
+      name: "Lumbar Axe %s"
+      description: "A well-worn piece of stone bound to a tough handle."
+    t3:
+      name: "Ceremonial Axe %s"
+      description: "A sleek sheet of marble mounted on an oak handle."
+    t4:
+      name: "Obsidian Axe %s"
+      description: "A balanced, razor sharp, obsidian head resting on a maple handle."
+    t5:
+      name: "Axe of The Executioner %s"
+      description: "The tool of choice to empty out prison cells."
+    t6:
+      name: "Steel Axe %s"
+      description: "Forged from high-grade steel, this is the finest axe on the market."
+    t7:
+      name: "Axe of Royal Blacksmiths %s"
+      description: "A gleaming axe meticulously forged by the best blacksmiths of the kingdom."
+    t8:
+      name: "Crystal Axe %s"
+      description: "A glistening head of crystalline beauty and striking terror."
+    t9:
+      name: "Axe of The Warlord %s"
+      description: "A fear-invoking weapon that severed the heads of countless generals."
+    t10:
+      name: "Necrotic Axe %s"
+      description: "The mutilated souls that fell to this mighty axe stained its head a lifeless black."
+  bows:
+    t1:
+      name: "Toy Bow %s"
+      description: "A cheap bow with reduced size and power to make it safer for children."
+    t2:
+      name: "Bow of the Scavenger %s"
+      description: "A perfect low-powered bow for taking down small game."
+    t3:
+      name: "Ceremonial Bow %s"
+      description: "A beautiful wooden piece of art that's way too stiff for serious combat."
+    t4:
+      name: "Recurve Bow %s"
+      description: "A light but powerful maple bow cherished by the masses."
+    t5:
+      name: "Bow of The Hunter %s"
+      description: "When the feast calls for a wild boar, this is the bow for the job."
+    t6:
+      name: "Long Bow %s"
+      description: "A majestic bow with limbs of laminated red elm and strung with spider silk."
+    t7:
+      name: "Bow of Regal Bowyers %s"
+      description: "A brilliant steel bow crafted by the best bowyers of the kingdom."
+    t8:
+      name: "Compound Bow %s"
+      description: "An epic modern bow amplified by an advanced pulley system."
+    t9:
+      name: "Bow of The Ranger %s"
+      description: "The arrow that nocks on this bow never misses, it was chosen as a warning shot."
+    t10:
+      name: "Bow of Poignant Demise %s"
+      description: "The strings of this bow sing the grisly song of death."
+  crossbows:
+    t1:
+      name: "Makeshift Crossbow %s"
+      description: "A plain bow strapped onto a roughly made stock."
+    t2:
+      name: "Crossbow of the Bandit %s"
+      description: "The typical crossbow used to rob passing merchants."
+    t3:
+      name: "Ceremonial Crossbow %s"
+      description: "A charming crossbow that isn't quite as comfortable as it appears."
+    t4:
+      name: "Recurve Crossbow %s"
+      description: "A light but powerful crossbow with cedar limbs and stock."
+    t5:
+      name: "Crossbow of Athletes %s"
+      description: "A well-balanced, accurate, and economical crossbow widely used in nonviolent competitions."
+    t6:
+      name: "Heavy Crossbow %s"
+      description: "A beast of a crossbow with incredible power only the strongest people can lift."
+    t7:
+      name: "Crossbow of Imperial Marksmen %s"
+      description: "An illustrious steel crossbow trusted by the best marksmen of the empire."
+    t8:
+      name: "Compound Crossbow %s"
+      description: "An sleek modern crossbow amplified by an advanced pulley system."
+    t9:
+      name: "Crossbow of Silent Snipers %s"
+      description: "A silent but deadly crossbow with legendary status."
+    t10:
+      name: "Crossbow of Fatal Precision %s"
+      description: "Even the Ender Dragon quivers at the sight of this lethal weapon."
+  scythes:
+    t1:
+      name: "Walking Cane %s"
+      description: "A curved wooden stick the village elders carry."
+    t2:
+      name: "Farm Plough %s"
+      description: "A stone shard on a tough handle to carve at the earth."
+    t3:
+      name: "Ceremonial Scythe %s"
+      description: "A sleek shard of marble mounted on an oak handle."
+    t4:
+      name: "Obsidian Scythe %s"
+      description: "A jagged, razor sharp, obsidian shard resting on a maple handle."
+    t5:
+      name: "Scythe of The Gatekeeper %s"
+      description: "A simple weapon to intimidate and inspect travelers."
+    t6:
+      name: "Steel Scythe %s"
+      description: "Forged from high-grade steel, this is the finest scythe on the market."
+    t7:
+      name: "Scythe of Royal Weaponsmiths %s"
+      description: "A gleaming scythe meticulously forged by the best weaponsmiths of the kingdom."
+    t8:
+      name: "Crystal Scythe %s"
+      description: "A glistening shard of crystalline beauty and biting pain."
+    t9:
+      name: "Scythe of The Czar %s"
+      description: "A glorious scythe that cemented the ironclad rule of many leaders."
+    t10:
+      name: "Midnight Scythe %s"
+      description: "A scythe so deadly that even the shadows bleed on its arc."
   swords:
     starter:
       name: "Training Sword %s"
@@ -300,8 +455,8 @@ itemLore:
       name: "Steel Sword %s"
       description: "Forged from high-grade steel, this is the finest sword on the market."
     t7:
-      name: "Sword of Royal Blacksmiths %s"
-      description: "A gleaming sword meticulously forged by the best blacksmiths of the kingdom."
+      name: "Sword of Royal Swordsmiths %s"
+      description: "A gleaming sword meticulously forged by the best swordsmiths of the kingdom."
     t8:
       name: "Crystal Sword %s"
       description: "A glistening blade of crystalline beauty and double-edged terror."
@@ -589,8 +744,11 @@ mobLore:
   zombie: "A pretty average monster that moves slowly and attacks indiscriminately."
 names:
   abilityKits: "Ability Kits"
+  ammoShop: "Ammo Shop"
   armorShop: "Armor Shop"
+  axeShop: "Axe Shop"
   boosts: "Boosts"
+  bowShop: "Bow Shop"
   carePackageExtra: "Extra Large Care Package"
   carePackageLarge: "Large Care Package"
   carePackageMedium: "Medium Care Package"
@@ -599,6 +757,7 @@ names:
   communityChest: "Community Chest"
   consumableShop: "Consumable Shop"
   contents: "Contents"
+  crossbowShop: "Crossbow Shop"
   crystal: "Crystal"
   crystalConverter: "%s Catalytic Converter"
   crystals: "Crystals"
@@ -618,6 +777,7 @@ names:
   normal: "Normal"
   penetrating: "Penetrating"
   playerSpawnParticles: "Player Spawn Particles"
+  scytheShop: "Scythe Shop"
   swordShop: "Sword Shop"
   timeBar: "Wave %s Time Limit"
   villageCaptain: "Village Captain"

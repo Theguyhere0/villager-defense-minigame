@@ -86,8 +86,16 @@ public class Arena {
     private final List<VDPlayer> players = new ArrayList<>();
     /** Sword shop inventory.*/
     private Inventory swordShop;
-    /** Weapon shop inventory.*/
-    private Inventory weaponShop;
+    /** Axe shop inventory.*/
+    private Inventory axeShop;
+    /** Scythe shop inventory.*/
+    private Inventory scytheShop;
+    /** Bow shop inventory.*/
+    private Inventory bowShop;
+    /** Crossbow shop inventory.*/
+    private Inventory crossbowShop;
+    /** Ammo shop inventory.*/
+    private Inventory ammoShop;
     /** Armor shop inventory.*/
     private Inventory armorShop;
     /** Consumables shop inventory.*/
@@ -1769,7 +1777,11 @@ public class Arena {
 
         // Initiate shops
         swordShop = Inventories.createSwordShopMenu(1, this);
-        weaponShop = Inventories.createWeaponShopMenu(1, this);
+        axeShop = Inventories.createAxeShopMenu(1, this);
+        scytheShop = Inventories.createScytheShopMenu(1, this);
+        bowShop = Inventories.createBowShopMenu(1, this);
+        crossbowShop = Inventories.createCrossbowShopMenu(1, this);
+        ammoShop = Inventories.createAmmoShopMenu(1, this);
         setArmorShop(Inventories.createArmorShopMenu(1, this));
         setConsumeShop(Inventories.createConsumableShopMenu(1, this));
 
@@ -2116,7 +2128,11 @@ public class Arena {
         if (currentWave % 5 == 0) {
             int level = currentWave / 5 + 1;
             swordShop = Inventories.createSwordShopMenu(level, this);
-            weaponShop = Inventories.createWeaponShopMenu(level, this);
+            axeShop = Inventories.createAxeShopMenu(level, this);
+            scytheShop = Inventories.createScytheShopMenu(level, this);
+            bowShop = Inventories.createBowShopMenu(level, this);
+            crossbowShop = Inventories.createCrossbowShopMenu(level, this);
+            ammoShop = Inventories.createAmmoShopMenu(level, this);
             setArmorShop(Inventories.createArmorShopMenu(level, this));
             setConsumeShop(Inventories.createConsumableShopMenu(level, this));
             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> getActives().forEach(player ->
@@ -2836,8 +2852,24 @@ public class Arena {
         return swordShop;
     }
 
-    public Inventory getWeaponShop() {
-        return weaponShop;
+    public Inventory getAxeShop() {
+        return axeShop;
+    }
+
+    public Inventory getScytheShop() {
+        return scytheShop;
+    }
+
+    public Inventory getBowShop() {
+        return bowShop;
+    }
+
+    public Inventory getCrossbowShop() {
+        return crossbowShop;
+    }
+
+    public Inventory getAmmoShop() {
+        return ammoShop;
     }
 
     public Inventory getArmorShop() {

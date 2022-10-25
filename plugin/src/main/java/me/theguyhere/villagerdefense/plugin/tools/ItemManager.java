@@ -131,6 +131,22 @@ public class ItemManager {
         return item;
     }
 
+    // Makes an item unique so it becomes unstackable
+    @NotNull
+    public static ItemStack makeUnique(@NotNull ItemStack item) {
+        ItemStack newItem = item.clone();
+        ItemMeta meta = newItem.getItemMeta();
+
+        Random r = new Random();
+        try {
+            Objects.requireNonNull(meta).setCustomModelData(r.nextInt());
+            newItem.setItemMeta(meta);
+            return newItem;
+        } catch (Exception e) {
+            return item;
+        }
+    }
+
     // Makes an item unbreakable
     @NotNull
     public static ItemStack makeUnbreakable(@NotNull ItemStack item) {

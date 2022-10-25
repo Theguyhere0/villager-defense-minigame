@@ -392,10 +392,160 @@ public class LanguageManager {
     }
 
     public static class ItemLore {
+        public final @NotNull AmmoLore ammo;
+        public final @NotNull AxeLore axes;
+        public final @NotNull BowLore bows;
+        public final @NotNull CrossbowLore crossbows;
+        public final @NotNull ScytheLore scythes;
         public final @NotNull SwordLore swords;
 
         private ItemLore() throws InvalidLanguageKeyException {
+            ammo = new AmmoLore();
+            axes = new AxeLore();
+            bows = new BowLore();
+            crossbows = new CrossbowLore();
+            scythes = new ScytheLore();
             swords = new SwordLore();
+        }
+
+        public static class AmmoLore {
+            public final @NotNull Lore t1;
+            public final @NotNull Lore t2;
+            public final @NotNull Lore t3;
+            public final @NotNull Lore t4;
+            public final @NotNull Lore t5;
+            public final @NotNull Lore t6;
+            public final @NotNull Lore t7;
+            public final @NotNull Lore t8;
+            public final @NotNull Lore t9;
+            public final @NotNull Lore t10;
+
+            private AmmoLore() throws InvalidLanguageKeyException {
+                String pathPrefix = "itemLore.ammo.";
+
+                t1 = new Lore(pathPrefix + "t1");
+                t2 = new Lore(pathPrefix + "t2");
+                t3 = new Lore(pathPrefix + "t3");
+                t4 = new Lore(pathPrefix + "t4");
+                t5 = new Lore(pathPrefix + "t5");
+                t6 = new Lore(pathPrefix + "t6");
+                t7 = new Lore(pathPrefix + "t7");
+                t8 = new Lore(pathPrefix + "t8");
+                t9 = new Lore(pathPrefix + "t9");
+                t10 = new Lore(pathPrefix + "t10");
+            }
+        }
+
+        public static class AxeLore {
+            public final @NotNull Lore t1;
+            public final @NotNull Lore t2;
+            public final @NotNull Lore t3;
+            public final @NotNull Lore t4;
+            public final @NotNull Lore t5;
+            public final @NotNull Lore t6;
+            public final @NotNull Lore t7;
+            public final @NotNull Lore t8;
+            public final @NotNull Lore t9;
+            public final @NotNull Lore t10;
+
+            private AxeLore() throws InvalidLanguageKeyException {
+                String pathPrefix = "itemLore.axes.";
+
+                t1 = new Lore(pathPrefix + "t1");
+                t2 = new Lore(pathPrefix + "t2");
+                t3 = new Lore(pathPrefix + "t3");
+                t4 = new Lore(pathPrefix + "t4");
+                t5 = new Lore(pathPrefix + "t5");
+                t6 = new Lore(pathPrefix + "t6");
+                t7 = new Lore(pathPrefix + "t7");
+                t8 = new Lore(pathPrefix + "t8");
+                t9 = new Lore(pathPrefix + "t9");
+                t10 = new Lore(pathPrefix + "t10");
+            }
+        }
+
+        public static class BowLore {
+            public final @NotNull Lore t1;
+            public final @NotNull Lore t2;
+            public final @NotNull Lore t3;
+            public final @NotNull Lore t4;
+            public final @NotNull Lore t5;
+            public final @NotNull Lore t6;
+            public final @NotNull Lore t7;
+            public final @NotNull Lore t8;
+            public final @NotNull Lore t9;
+            public final @NotNull Lore t10;
+
+            private BowLore() throws InvalidLanguageKeyException {
+                String pathPrefix = "itemLore.bows.";
+
+                t1 = new Lore(pathPrefix + "t1");
+                t2 = new Lore(pathPrefix + "t2");
+                t3 = new Lore(pathPrefix + "t3");
+                t4 = new Lore(pathPrefix + "t4");
+                t5 = new Lore(pathPrefix + "t5");
+                t6 = new Lore(pathPrefix + "t6");
+                t7 = new Lore(pathPrefix + "t7");
+                t8 = new Lore(pathPrefix + "t8");
+                t9 = new Lore(pathPrefix + "t9");
+                t10 = new Lore(pathPrefix + "t10");
+            }
+        }
+
+        public static class CrossbowLore {
+            public final @NotNull Lore t1;
+            public final @NotNull Lore t2;
+            public final @NotNull Lore t3;
+            public final @NotNull Lore t4;
+            public final @NotNull Lore t5;
+            public final @NotNull Lore t6;
+            public final @NotNull Lore t7;
+            public final @NotNull Lore t8;
+            public final @NotNull Lore t9;
+            public final @NotNull Lore t10;
+
+            private CrossbowLore() throws InvalidLanguageKeyException {
+                String pathPrefix = "itemLore.crossbows.";
+
+                t1 = new Lore(pathPrefix + "t1");
+                t2 = new Lore(pathPrefix + "t2");
+                t3 = new Lore(pathPrefix + "t3");
+                t4 = new Lore(pathPrefix + "t4");
+                t5 = new Lore(pathPrefix + "t5");
+                t6 = new Lore(pathPrefix + "t6");
+                t7 = new Lore(pathPrefix + "t7");
+                t8 = new Lore(pathPrefix + "t8");
+                t9 = new Lore(pathPrefix + "t9");
+                t10 = new Lore(pathPrefix + "t10");
+            }
+        }
+
+        public static class ScytheLore {
+            public final @NotNull Lore t1;
+            public final @NotNull Lore t2;
+            public final @NotNull Lore t3;
+            public final @NotNull Lore t4;
+            public final @NotNull Lore t5;
+            public final @NotNull Lore t6;
+            public final @NotNull Lore t7;
+            public final @NotNull Lore t8;
+            public final @NotNull Lore t9;
+            public final @NotNull Lore t10;
+
+            private ScytheLore() throws InvalidLanguageKeyException {
+                String pathPrefix = "itemLore.scythes.";
+
+                t1 = new Lore(pathPrefix + "t1");
+                t2 = new Lore(pathPrefix + "t2");
+                t3 = new Lore(pathPrefix + "t3");
+                t4 = new Lore(pathPrefix + "t4");
+                t5 = new Lore(pathPrefix + "t5");
+                t6 = new Lore(pathPrefix + "t6");
+                t7 = new Lore(pathPrefix + "t7");
+                t8 = new Lore(pathPrefix + "t8");
+                t9 = new Lore(pathPrefix + "t9");
+                t10 = new Lore(pathPrefix + "t10");
+            }
         }
 
         public static class SwordLore {
@@ -1034,8 +1184,11 @@ public class LanguageManager {
 
     public static class Names extends Section {
         public final @NotNull String abilityKits;
+        public final @NotNull String ammoShop;
         public final @NotNull String armorShop;
+        public final @NotNull String axeShop;
         public final @NotNull String boosts;
+        public final @NotNull String bowShop;
         public final @NotNull String carePackageExtra;
         public final @NotNull String carePackageLarge;
         public final @NotNull String carePackageMedium;
@@ -1044,6 +1197,7 @@ public class LanguageManager {
         public final @NotNull String communityChest;
         public final @NotNull String consumableShop;
         public final @NotNull String contents;
+        public final @NotNull String crossbowShop;
         public final @NotNull String crystal;
         public final @NotNull String crystalConverter;
         public final @NotNull String crystals;
@@ -1063,6 +1217,7 @@ public class LanguageManager {
         public final @NotNull String normal;
         public final @NotNull String penetrating;
         public final @NotNull String playerSpawnParticles;
+        public final @NotNull String scytheShop;
         public final @NotNull String swordShop;
         public final @NotNull String timeBar;
         public final @NotNull String villageCaptain;
@@ -1073,8 +1228,11 @@ public class LanguageManager {
             setPathPrefix("names");
 
             abilityKits = getConfigString("abilityKits");
+            ammoShop = getConfigString("ammoShop");
             armorShop = getConfigString("armorShop");
+            axeShop = getConfigString("axeShop");
             boosts = getConfigString("boosts");
+            bowShop = getConfigString("bowShop");
             carePackageExtra = getConfigString("carePackageExtra");
             carePackageLarge = getConfigString("carePackageLarge");
             carePackageMedium = getConfigString("carePackageMedium");
@@ -1083,6 +1241,7 @@ public class LanguageManager {
             communityChest = getConfigString("communityChest");
             consumableShop = getConfigString("consumableShop");
             contents = getConfigString("contents");
+            crossbowShop = getConfigString("crossbowShop");
 
             // Special check for economy plugin to replace currency name
             if (Main.hasCustomEconomy())
@@ -1112,6 +1271,7 @@ public class LanguageManager {
             normal = getConfigString("normal");
             penetrating = getConfigString("penetrating");
             playerSpawnParticles = getConfigString("playerSpawnParticles");
+            scytheShop = getConfigString("scytheShop");
             swordShop = getConfigString("swordShop");
             timeBar = getConfigString("timeBar");
             villageCaptain = getConfigString("villageCaptain");

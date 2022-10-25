@@ -2621,9 +2621,25 @@ public class InventoryListener implements Listener {
 			if (buttonName.contains(LanguageManager.names.swordShop))
 				player.openInventory(arenaInstance.getSwordShop());
 
-			// Open weapon shop
-			else if (buttonName.contains(LanguageManager.names.weaponShop))
-				player.openInventory(arenaInstance.getWeaponShop());
+			// Open axe shop
+			else if (buttonName.contains(LanguageManager.names.axeShop))
+				player.openInventory(arenaInstance.getAxeShop());
+
+			// Open scythe shop
+			else if (buttonName.contains(LanguageManager.names.scytheShop))
+				player.openInventory(arenaInstance.getScytheShop());
+
+			// Open bow shop
+			else if (buttonName.contains(LanguageManager.names.bowShop))
+				player.openInventory(arenaInstance.getBowShop());
+
+			// Open crossbow shop
+			else if (buttonName.contains(LanguageManager.names.crossbowShop))
+				player.openInventory(arenaInstance.getCrossbowShop());
+
+			// Open ammo shop
+			else if (buttonName.contains(LanguageManager.names.ammoShop))
+				player.openInventory(arenaInstance.getAmmoShop());
 
 			// Open armor shop
 			else if (buttonName.contains(LanguageManager.names.armorShop))
@@ -2639,7 +2655,9 @@ public class InventoryListener implements Listener {
 		}
 
 		// In-game shops
-		else if (invID == InventoryID.SWORD_SHOP_MENU || invID == InventoryID.WEAPON_SHOP_MENU ||
+		else if (invID == InventoryID.SWORD_SHOP_MENU || invID == InventoryID.AXE_SHOP_MENU ||
+				invID == InventoryID.SCYTHE_SHOP_MENU || invID == InventoryID.BOW_SHOP_MENU ||
+				invID == InventoryID.CROSSBOW_SHOP_MENU ||invID == InventoryID.AMMO_SHOP_MENU ||
 				invID == InventoryID.ARMOR_SHOP_MENU || invID == InventoryID.CONSUMABLE_SHOP_MENU) {
 			Arena arenaInstance;
 			VDPlayer gamer;
