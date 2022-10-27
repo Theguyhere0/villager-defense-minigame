@@ -1034,8 +1034,7 @@ public class GameListener implements Listener {
 
 		// Open crystal convert menu
 		else if (CrystalConverter.matches(item))
-//			player.openInventory(Inventories.createCrystalConvertMenu(gamer));
-			PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+			player.openInventory(Inventories.createCrystalConvertMenu(gamer));
 
 		// Make player leave
 		else if (Leave.matches(item))
@@ -1461,7 +1460,7 @@ public class GameListener implements Listener {
 		e.setCancelled(true);
 	}
 
-	// Prevent players from dropping menu items
+	// Prevent players from dropping menu items or abilities
 	@EventHandler
 	public void onItemDrop(PlayerDropItemEvent e) {
 		Player player = e.getPlayer();
@@ -1471,7 +1470,8 @@ public class GameListener implements Listener {
 			return;
 
 		// Check for menu items
-		if (VDMenuItem.matches(e.getItemDrop().getItemStack()))
+		ItemStack item = e.getItemDrop().getItemStack();
+		if (VDMenuItem.matches(item) || VDAbility.matches(item))
 			e.setCancelled(true);
 	}
 

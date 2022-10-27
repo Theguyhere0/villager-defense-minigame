@@ -13,7 +13,7 @@ public abstract class BoostToggle extends VDMenuItem {
         return ItemManager.createItem(Material.FIREWORK_ROCKET,
                 CommunicationManager.format("&b&l" + LanguageManager.names.boosts + ": " +
                         getToggleStatus(boosted)),
-                ItemManager.HIDE_ENCHANT_FLAGS, ItemManager.dummyEnchant());
+                ItemManager.HIDE_ENCHANT_FLAGS, ItemManager.glow());
     }
 
     public static boolean matches(ItemStack toCheck) {

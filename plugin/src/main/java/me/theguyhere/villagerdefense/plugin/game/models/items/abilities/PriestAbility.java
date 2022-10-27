@@ -235,7 +235,7 @@ public abstract class PriestAbility extends VDAbility {
                 Material.WHITE_DYE,
                 name,
                 ItemManager.HIDE_ENCHANT_FLAGS,
-                ItemManager.dummyEnchant(),
+                ItemManager.glow(),
                 lores
         );
     }

@@ -75,6 +75,8 @@ public class VDPlayer {
     private int infractions = 0;
     /** The {@link Kit} the player will play with.*/
     private Kit kit = Kit.none();
+    /** The level of tiered essence the player has.*/
+    private int tieredEssenceLevel = 0;
     /** The list of {@link Challenge}'s the player will take on.*/
     private List<Challenge> challenge = new ArrayList<>();
     /** The list of UUIDs of those that damaged the player.*/
@@ -191,7 +193,7 @@ public class VDPlayer {
 
                 // Drop all items and clear inventory
                 getPlayer().getInventory().forEach(itemStack -> {
-                    if (itemStack != null && !Shop.matches(itemStack))
+                    if (itemStack != null && !Shop.matches(itemStack) && !VDAbility.matches(itemStack))
                         getPlayer().getWorld().dropItemNaturally(getPlayer().getLocation(), itemStack);
                 });
                 getPlayer().getInventory().clear();
@@ -702,6 +704,7 @@ public class VDPlayer {
      * @param cost Item cost.
      * @return Boolean indicating whether the item was affordable.
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean canAfford(int cost) {
         return cost <= gems;
     }
@@ -712,6 +715,14 @@ public class VDPlayer {
 
     public Kit getKit() {
         return kit;
+    }
+
+    public int getTieredEssenceLevel() {
+        return tieredEssenceLevel;
+    }
+
+    public void incrementTieredEssenceLevel() {
+        tieredEssenceLevel++;
     }
 
     public List<Challenge> getChallenges() {

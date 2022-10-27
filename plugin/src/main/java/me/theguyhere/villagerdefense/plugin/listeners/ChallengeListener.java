@@ -6,6 +6,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
+import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.Shop;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
@@ -112,8 +113,8 @@ public class ChallengeListener implements Listener {
 
         ItemStack item = e.getItem();
 
-        // Ignore shop item
-        if (Shop.matches(item))
+        // Ignore shop item or essence
+        if (Shop.matches(item) || VDAbility.matches(item))
             return;
 
         // Check for clumsy challenge

@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.inventories;
 
 public enum InventoryID {
+    ABILITY_UPGRADE_SHOP_MENU,
     ALLOWED_KITS_DISPLAY_MENU,
     ALLOWED_KITS_MENU,
     AMMO_SHOP_MENU,

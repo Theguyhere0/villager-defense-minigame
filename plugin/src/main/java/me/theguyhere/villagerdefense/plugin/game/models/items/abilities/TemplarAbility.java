@@ -207,7 +207,7 @@ public abstract class TemplarAbility extends VDAbility {
                 Material.YELLOW_DYE,
                 name,
                 ItemManager.HIDE_ENCHANT_FLAGS,
-                ItemManager.dummyEnchant(),
+                ItemManager.glow(),
                 lores
         );
     }

@@ -203,7 +203,7 @@ public abstract class NinjaAbility extends VDAbility {
                 Material.BLACK_DYE,
                 name,
                 ItemManager.HIDE_ENCHANT_FLAGS,
-                ItemManager.dummyEnchant(),
+                ItemManager.glow(),
                 lores
         );
     }

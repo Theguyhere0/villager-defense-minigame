@@ -466,7 +466,7 @@ itemLore:
       description: "Barely enough essence to practice with, but good enough."
     t1:
       name: "Minor %s Essence %s"
-      description: "A good bit of acceptable-quality essence to play with."
+      description: "A good bit of acceptable quality essence to play with."
     t2:
       name: "Common %s Essence %s"
       description: "Some typical essence used for common jobs."
@@ -701,7 +701,7 @@ kits:
     description: "Start with 200 gems"
   vampire:
     name: "Vampire"
-    description: "Each attack has a 20% chance of healing 25% the attack damage."
+    description: "Each attack has a 20% chance of healing 25% the attack damage"
   warrior:
     name: "Warrior"
     description: "Give yourself and nearby allies strength"
@@ -740,7 +740,6 @@ messages:
   death2: "You will respawn next wave."
   debugLevelSet: "Debug level set to %s."
   disabled: "DISABLED"
-  duplicatePlaceholder: "Out of stock!"
   durability: "Durability: %s"
   duration: "Duration: %s"
   effect: "Effect: %s"
@@ -793,6 +792,7 @@ messages:
   nextRefill: "Next Refill: %s"
   noAutoUpdate: "There was nothing that could be updated automatically."
   noStats: "%s does not have stats."
+  noUpgrades: "No upgrades available!"
   offToggle: "OFF"
   onToggle: "ON"
   oneMinuteWarning: "1 minute left!"
@@ -821,7 +821,6 @@ messages:
   toughness: "Toughness: %s"
   unavailable: "Unavailable"
   unlimited: "Unlimited"
-  upToAbilityLevel: "Up to ability level %s"
   visitWiki: "Visit the wiki"
   villageCaptainDialogue1: "Ah, reinforcements have arrived! Thank goodness, you're just in time."
   villageCaptainDialogue2: "The people of %s will reward you with %s for your service. I don't think we could've
@@ -892,6 +891,7 @@ mobLore:
   zombie: "A pretty average monster that moves slowly and attacks indiscriminately."
 names:
   abilityKits: "Ability Kits"
+  abilityUpgradeShop: "Ability Upgrade Shop"
   ammoShop: "Ammo Shop"
   axeShop: "Axe Shop"
   boosts: "Boosts"

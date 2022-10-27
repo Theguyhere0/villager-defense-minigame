@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.inventories;
 
+import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
@@ -8,6 +9,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Boots;
 import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Chestplate;
 import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Helmet;
@@ -1375,6 +1377,10 @@ public class Inventories {
 				CommunicationManager.format("&2&l" + LanguageManager.names.consumableShop),
 				ItemManager.BUTTON_FLAGS, ItemManager.glow()));
 
+		buttons.add(ItemManager.createItem(Material.ANVIL,
+				CommunicationManager.format("&b&l" + LanguageManager.names.abilityUpgradeShop),
+				ItemManager.BUTTON_FLAGS, ItemManager.glow()));
+
 		buttons.add(ItemManager.createItem(Material.CHEST,
 				CommunicationManager.format("&d&l" + LanguageManager.names.communityChest +
 						(arena.hasCommunity() ? "" : disabled))));
@@ -1862,58 +1868,95 @@ public class Inventories {
 			modifier = 1;
 
 		// Create inventory
-		Inventory inv = Bukkit.createInventory(
-				new InventoryMeta(InventoryID.CONSUMABLE_SHOP_MENU, InventoryType.MENU),
-				18,
-				CommunicationManager.format("&3&l" + LanguageManager.messages.level +
-						" &9&l" + level + " &3&l" + LanguageManager.names.consumableShop)
-		);
-
-		// Fill in food
-		List<ItemStack> foods = new ArrayList<>();
+		List<ItemStack> buttons = new ArrayList<>();
 		if (level < 2) {
-			foods.add(Buttons.levelPlaceholder(2));
-			foods.add(Buttons.levelPlaceholder(2));
+			buttons.add(Buttons.levelPlaceholder(2));
+			buttons.add(Buttons.levelPlaceholder(2));
 		} else {
-			foods.add(Beetroot.create());
-			foods.add(Carrot.create());
+			buttons.add(modifyPrice(Beetroot.create(), modifier));
+			buttons.add(modifyPrice(Carrot.create(), modifier));
 		}
 		if (level < 3)
-			foods.add(Buttons.levelPlaceholder(3));
+			buttons.add(Buttons.levelPlaceholder(3));
 		else
-			foods.add(Bread.create());
+			buttons.add(modifyPrice(Bread.create(), modifier));
 		if (level < 4) {
-			foods.add(Buttons.levelPlaceholder(4));
-			foods.add(Buttons.levelPlaceholder(4));
+			buttons.add(Buttons.levelPlaceholder(4));
+			buttons.add(Buttons.levelPlaceholder(4));
 		} else {
-			foods.add(Mutton.create());
-			foods.add(Steak.create());
+			buttons.add(modifyPrice(Mutton.create(), modifier));
+			buttons.add(modifyPrice(Steak.create(), modifier));
 		}
 		if (level < 5) {
-			foods.add(Buttons.levelPlaceholder(5));
-			foods.add(Buttons.levelPlaceholder(5));
+			buttons.add(Buttons.levelPlaceholder(5));
+			buttons.add(Buttons.levelPlaceholder(5));
 		} else {
-			foods.add(GoldenCarrot.create());
-			foods.add(GoldenApple.create());
+			buttons.add(modifyPrice(GoldenCarrot.create(), modifier));
+			buttons.add(modifyPrice(GoldenApple.create(), modifier));
 		}
 		if (level < 6)
-			foods.add(Buttons.levelPlaceholder(6));
+			buttons.add(Buttons.levelPlaceholder(6));
 		else
-			foods.add(EnchantedApple.create());
+			buttons.add(modifyPrice(EnchantedApple.create(), modifier));
 		if (level < 7)
-			foods.add(Buttons.levelPlaceholder(7));
+			buttons.add(Buttons.levelPlaceholder(7));
 		else
-			foods.add(Totem.create());
+			buttons.add(modifyPrice(Totem.create(), modifier));
 
-		for (int i = 0; i < 9; i++)
-			inv.setItem(i, modifyPrice(foods.get(i), modifier));
+		return InventoryFactory.createDynamicSizeInventory(
+				new InventoryMeta(InventoryID.CONSUMABLE_SHOP_MENU, InventoryType.MENU),
+				CommunicationManager.format("&2&l" + LanguageManager.names.consumableShop),
+				true,
+				buttons
+		);
+	}
 
-		// Fill in other
+	// Generate the ability upgrade shop
+	public static Inventory createAbilityUpgradeShopMenu(Arena arena, VDPlayer player) {
+		// Set price modifier
+		double modifier = Math.pow(arena.getActiveCount() - 5, 2) / 200 + 1;
+		if (!arena.hasDynamicPrices())
+			modifier = 1;
 
-		// Return option
-		inv.setItem(13, Buttons.exit());
+		// Create inventory
+		List<ItemStack> buttons = new ArrayList<>();
+		ItemStack noUpgrade = ItemManager.createItem(Material.RED_STAINED_GLASS_PANE,
+				new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.noUpgrades).toString(),
+				ItemManager.BUTTON_FLAGS, null);
+		if (Kit.checkAbilityKit(player.getKit().getID())) {
+			if (player.getTieredEssenceLevel() + 1 > player.getKit().getLevel() * 2)
+				buttons.add(noUpgrade);
+			else {
+				ItemStack ability = null;
+				switch (player.getTieredEssenceLevel() + 1) {
+					case 1:
+						ability = VDAbility.createAbility(player.getKit().getID(), "T1");
+						break;
+					case 2:
+						ability = VDAbility.createAbility(player.getKit().getID(), "T2");
+						break;
+					case 3:
+						ability = VDAbility.createAbility(player.getKit().getID(), "T3");
+						break;
+					case 4:
+						ability = VDAbility.createAbility(player.getKit().getID(), "T4");
+						break;
+					case 5:
+						ability = VDAbility.createAbility(player.getKit().getID(), "T5");
+						break;
+				}
+				if (ability == null)
+					buttons.add(noUpgrade);
+				else buttons.add(modifyPrice(ability, modifier));
+			}
+		} else buttons.add(noUpgrade);
 
-		return inv;
+		return InventoryFactory.createDynamicSizeInventory(
+				new InventoryMeta(InventoryID.ABILITY_UPGRADE_SHOP_MENU, InventoryType.MENU),
+				CommunicationManager.format("&2&l" + LanguageManager.names.abilityUpgradeShop),
+				true,
+				buttons
+		);
 	}
 
 	// Display player stats

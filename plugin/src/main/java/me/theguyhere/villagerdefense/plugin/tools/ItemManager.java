@@ -28,12 +28,6 @@ public class ItemManager {
     @SuppressWarnings("unused")
     public static final boolean[] BUTTON_FLAGS = {true, true};
 
-    public static HashMap<Enchantment, Integer> dummyEnchant() {
-        HashMap<Enchantment, Integer> enchants = new HashMap<>();
-        enchants.put(Enchantment.DURABILITY, 1);
-        return enchants;
-    }
-
     // Creates an ItemStack using only material, name, and lore
     @NotNull
     public static ItemStack createItem(Material matID, String dispName, String... lores) {
@@ -137,12 +131,18 @@ public class ItemManager {
     // Makes an item unique so it becomes unstackable
     @NotNull
     public static ItemStack makeUnique(@NotNull ItemStack item) {
+        Random r = new Random();
+        return setModelData(item, r.nextInt());
+    }
+
+    // Set custom model data
+    @NotNull
+    public static ItemStack setModelData(@NotNull ItemStack item, int modelData) {
         ItemStack newItem = item.clone();
         ItemMeta meta = newItem.getItemMeta();
 
-        Random r = new Random();
         try {
-            Objects.requireNonNull(meta).setCustomModelData(r.nextInt());
+            Objects.requireNonNull(meta).setCustomModelData(modelData);
             newItem.setItemMeta(meta);
             return newItem;
         } catch (Exception e) {
@@ -165,15 +165,6 @@ public class ItemManager {
         } catch (Exception e) {
             return item;
         }
-    }
-
-    // Make an item into a splash potion
-    @NotNull
-    public static ItemStack makeSplash(ItemStack item) {
-        ItemStack newItem = item.clone();
-        if (newItem.getType() == Material.POTION)
-            newItem.setType(Material.SPLASH_POTION);
-        return newItem;
     }
 
     // Rename an item

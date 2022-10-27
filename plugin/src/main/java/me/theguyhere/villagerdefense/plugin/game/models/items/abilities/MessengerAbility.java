@@ -235,7 +235,7 @@ public abstract class MessengerAbility extends VDAbility {
                 Material.BLUE_DYE,
                 name,
                 ItemManager.HIDE_ENCHANT_FLAGS,
-                ItemManager.dummyEnchant(),
+                ItemManager.glow(),
                 lores
         );
     }

@@ -95,10 +95,6 @@ public class Kit {
         return level;
     }
 
-    public boolean nameCompare(Kit kit) {
-        return kit != null && name.equals(kit.getName());
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -149,10 +145,10 @@ public class Kit {
      */
     private void setAbilityKitDescriptions() {
         ColoredMessage coloredAbilityText = new ColoredMessage(ChatColor.GRAY,
-                LanguageManager.messages.upToAbilityLevel);
-        addLevelDescriptions(1, CommunicationManager.format(coloredAbilityText, "10"));
-        addLevelDescriptions(2, CommunicationManager.format(coloredAbilityText, "20"));
-        addLevelDescriptions(3, CommunicationManager.format(coloredAbilityText, "30"));
+                LanguageManager.messages.abilityLevel);
+        addLevelDescriptions(1, CommunicationManager.format(coloredAbilityText, "T1"));
+        addLevelDescriptions(2, CommunicationManager.format(coloredAbilityText, "T3"));
+        addLevelDescriptions(3, CommunicationManager.format(coloredAbilityText, "T5"));
     }
 
     /**
@@ -388,61 +384,10 @@ public class Kit {
         else return null;
     }
 
-    /**
-     * Attempts to return a {@link Kit} based on the kit's ID.
-     * @param kitID ID to check.
-     * @return Kit or null.
-     */
-    public static Kit getKitByID(String kitID) {
-        if (none().getID().equals(kitID))
-            return none();
-        else if (orc().getID().equals(kitID))
-            return orc();
-        else if (farmer().getID().equals(kitID))
-            return farmer();
-        else if (soldier().getID().equals(kitID))
-            return soldier();
-        else if (alchemist().getID().equals(kitID))
-            return alchemist();
-        else if (tailor().getID().equals(kitID))
-            return tailor();
-        else if (trader().getID().equals(kitID))
-            return trader();
-        else if (summoner().getID().equals(kitID))
-            return summoner();
-        else if (reaper().getID().equals(kitID))
-            return reaper();
-        else if (phantom().getID().equals(kitID))
-            return phantom();
-        else if (mage().getID().equals(kitID))
-            return mage();
-        else if (ninja().getID().equals(kitID))
-            return ninja();
-        else if (templar().getID().equals(kitID))
-            return templar();
-        else if (warrior().getID().equals(kitID))
-            return warrior();
-        else if (knight().getID().equals(kitID))
-            return knight();
-        else if (priest().getID().equals(kitID))
-            return priest();
-        else if (siren().getID().equals(kitID))
-            return siren();
-        else if (monk().getID().equals(kitID))
-            return monk();
-        else if (messenger().getID().equals(kitID))
-            return messenger();
-        else if (blacksmith().getID().equals(kitID))
-            return blacksmith();
-        else if (witch().getID().equals(kitID))
-            return witch();
-        else if (merchant().getID().equals(kitID))
-            return merchant();
-        else if (vampire().getID().equals(kitID))
-            return vampire();
-        else if (giant().getID().equals(kitID))
-            return giant();
-        else return null;
+    public static boolean checkAbilityKit(String kitID) {
+        return mage().getID().equals(kitID) || ninja().getID().equals(kitID) || templar().getID().equals(kitID) ||
+                warrior().getID().equals(kitID) || knight().getID().equals(kitID) || priest().getID().equals(kitID) ||
+                siren().getID().equals(kitID) || monk().getID().equals(kitID) || messenger().getID().equals(kitID);
     }
 
     // Default Kit

@@ -235,7 +235,7 @@ public abstract class KnightAbility extends VDAbility {
                 Material.BROWN_DYE,
                 name,
                 ItemManager.HIDE_ENCHANT_FLAGS,
-                ItemManager.dummyEnchant(),
+                ItemManager.glow(),
                 lores
         );
     }

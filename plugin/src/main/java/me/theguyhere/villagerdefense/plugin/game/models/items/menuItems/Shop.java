@@ -13,7 +13,7 @@ public abstract class Shop extends VDMenuItem {
         return ItemManager.createItem(
                 Material.EMERALD,
                 CommunicationManager.format("&2&l" + LanguageManager.names.itemShop),
-                ItemManager.HIDE_ENCHANT_FLAGS, ItemManager.dummyEnchant(),
+                ItemManager.HIDE_ENCHANT_FLAGS, ItemManager.glow(),
                 CommunicationManager.format("&7&o" + String.format(LanguageManager.messages.itemShopDesc, "5"))
         );
     }

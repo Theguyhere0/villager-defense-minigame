@@ -1025,7 +1025,6 @@ public class LanguageManager {
         public final @NotNull String death2;
         public final @NotNull String debugLevelSet;
         public final @NotNull String disabled;
-        public final @NotNull String duplicatePlaceholder;
         public final @NotNull String durability;
         public final @NotNull String duration;
         public final @NotNull String effect;
@@ -1074,6 +1073,7 @@ public class LanguageManager {
         public final @NotNull String nextRefill;
         public final @NotNull String noAutoUpdate;
         public final @NotNull String noStats;
+        public final @NotNull String noUpgrades;
         public final @NotNull String offToggle;
         public final @NotNull String onToggle;
         public final @NotNull String oneMinuteWarning;
@@ -1102,7 +1102,6 @@ public class LanguageManager {
         public final @NotNull String toughness;
         public final @NotNull String unavailable;
         public final @NotNull String unlimited;
-        public final @NotNull String upToAbilityLevel;
         public final @NotNull String visitWiki;
         public final @NotNull String villageCaptainDialogue1;
         public final @NotNull String villageCaptainDialogue2;
@@ -1149,7 +1148,6 @@ public class LanguageManager {
             death2 = getConfigString("death2");
             debugLevelSet = getConfigString("debugLevelSet");
             disabled = getConfigString("disabled");
-            duplicatePlaceholder = getConfigString("duplicatePlaceholder");
             durability = getConfigString("durability");
             duration = getConfigString("duration");
             effect = getConfigString("effect");
@@ -1198,6 +1196,7 @@ public class LanguageManager {
             nextRefill = getConfigString("nextRefill");
             noAutoUpdate = getConfigString("noAutoUpdate");
             noStats = getConfigString("noStats");
+            noUpgrades = getConfigString("noUpgrades");
             offToggle = getConfigString("offToggle");
             onToggle = getConfigString("onToggle");
             oneMinuteWarning = getConfigString("oneMinuteWarning");
@@ -1226,7 +1225,6 @@ public class LanguageManager {
             toughness = getConfigString("toughness");
             unavailable = getConfigString("unavailable");
             unlimited = getConfigString("unlimited");
-            upToAbilityLevel = getConfigString("upToAbilityLevel");
             visitWiki = getConfigString("visitWiki");
             villageCaptainDialogue1 = getConfigString("villageCaptainDialogue1");
             villageCaptainDialogue2 = getConfigString("villageCaptainDialogue2");
@@ -1356,6 +1354,7 @@ public class LanguageManager {
 
     public static class Names extends Section {
         public final @NotNull String abilityKits;
+        public final @NotNull String abilityUpgradeShop;
         public final @NotNull String ammoShop;
         public final @NotNull String axeShop;
         public final @NotNull String boosts;
@@ -1399,6 +1398,7 @@ public class LanguageManager {
             setPathPrefix("names");
 
             abilityKits = getConfigString("abilityKits");
+            abilityUpgradeShop = getConfigString("abilityUpgradeShop");
             ammoShop = getConfigString("ammoShop");
             axeShop = getConfigString("axeShop");
             boosts = getConfigString("boosts");
