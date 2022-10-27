@@ -1,8 +1,8 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
 import me.theguyhere.villagerdefense.common.ColoredMessage;
-import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
@@ -15,23 +15,16 @@ import me.theguyhere.villagerdefense.plugin.game.models.items.food.VDFood;
 import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.Shop;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.VDWeapon;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.tools.WorldManager;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.entity.*;
+import org.bukkit.*;
+import org.bukkit.entity.Fireball;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
@@ -68,7 +61,7 @@ public class AbilityListener implements Listener {
         ItemStack item = e.getItem();
         ItemStack main = player.getInventory().getItemInMainHand();
 
-        // Avoid accidental usage when holding food, shop, ranged weapons, potions, or care packages
+        // Avoid accidental usage when holding food, shop, ranged weapons, potions, or eggs
         if (Shop.matches(main) || VDFood.matches(main) || VDArmor.matches(main) ||
                 VDWeapon.matchesClickableWeapon(main) || VDEgg.matches(main))
             return;
@@ -142,9 +135,12 @@ public class AbilityListener implements Listener {
             WorldManager.getPets(player).forEach(wolf ->
                     wolf.addPotionEffect((new PotionEffect(PotionEffectType.INVISIBILITY, duration, 0))));
             cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
-            // TODO: Nerf
 
-            // Schedule un-nerf TODO
+            // Nerf
+            gamer.hideArmor();
+
+            // Schedule un-nerf
+            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, gamer::exposeArmor, duration);
 
             // Fire ability sound if turned on
             if (arena.hasAbilitySound())
@@ -160,33 +156,28 @@ public class AbilityListener implements Listener {
                 return;
 
             // Calculate stats
-            int duration, amplifier;
+            int absorption;
             int coolDown = normalCooldown(level1);
             double range = 2 + level1 * .1d;
-            if (level1 > 20) {
-                duration = normalDuration20Plus(level1);
-                amplifier = 2;
-            }
-            else if (level1 > 10) {
-                duration = normalDuration10Plus(level1);
-                amplifier = 1;
-            }
-            else {
-                duration = normalDuration(level1);
-                amplifier = 0;
-            }
-            int altDuration = (int) (.6 * duration);
+            if (level1 > 20)
+                absorption = 300;
+            else if (level1 > 10)
+                absorption = 200;
+            else
+                absorption = 100;
 
             // Check if player has cooldown decrease achievement and is boosted
             if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement.allMaxedAbility().getID()))
                 coolDown *= .9;
 
             // Activate ability
-            WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
-                    new PotionEffect(PotionEffectType.ABSORPTION, altDuration, amplifier)));
-            WorldManager.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
-                    new PotionEffect(PotionEffectType.ABSORPTION, altDuration, amplifier)));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, duration, amplifier));
+            WorldManager.getNearbyPlayers(player, range).forEach(player1 -> {
+                try {
+                    arena.getPlayer(player1).addAbsorptionUpTo(absorption);
+                } catch (PlayerNotFoundException ignored) {
+                }
+            });
+            gamer.addAbsorptionUpTo(absorption);
             cooldowns.put(gamer, System.currentTimeMillis() + coolDown);
 
             // Fire ability sound if turned on
@@ -815,66 +806,6 @@ public class AbilityListener implements Listener {
         }
     }
 
-    // Ninja stealth
-    @EventHandler
-    public void onTarget(EntityTargetEvent e) {
-        Entity ent = e.getEntity();
-        Entity target = e.getTarget();
-
-        // Check for arena mobs
-        if (!ent.hasMetadata(VDMob.VD))
-            return;
-
-        // Cancel for invisible players
-        if (target instanceof Player) {
-            Player player = (Player) target;
-
-            if (player.getActivePotionEffects().stream()
-                    .anyMatch(potion -> potion.getType().equals(PotionEffectType.INVISIBILITY)))
-                e.setCancelled(true);
-        }
-
-        // Cancel for invisible wolves
-        if (target instanceof Wolf) {
-            Wolf wolf = (Wolf) target;
-
-            if (wolf.getActivePotionEffects().stream()
-                    .anyMatch(potion -> potion.getType().equals(PotionEffectType.INVISIBILITY)))
-                e.setCancelled(true);
-        }
-    }
-
-    // Ninja stun
-    @EventHandler
-    public void onStun(EntityDamageByEntityEvent e) {
-        Entity ent = e.getEntity();
-        Entity damager = e.getDamager();
-
-        // Check for arena enemies
-        if (!ent.hasMetadata(VDMob.VD))
-            return;
-
-        // Check for player or wolf dealing damage
-        if (!(damager instanceof Player || damager instanceof Wolf))
-            return;
-
-        // Check for mob taking damage
-        if (!(ent instanceof Mob))
-            return;
-
-        Mob mob = (Mob) ent;
-        LivingEntity stealthy = (LivingEntity) damager;
-
-        // Check for invisibility
-        if (stealthy.getActivePotionEffects().stream()
-                .noneMatch(potion -> potion.getType().equals(PotionEffectType.INVISIBILITY)))
-            return;
-
-        // Set target to null if not already
-        if (mob.getTarget() != null)
-            mob.setTarget(null);
-    }
-
     // Ninja nerf
     @EventHandler
     public void onInvisibleEquip(PlayerMoveEvent e) {
@@ -924,8 +855,7 @@ public class AbilityListener implements Listener {
 
     private boolean checkLevel(int level, Player player) {
         if (level == 0) {
-            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-                    new ColoredMessage(ChatColor.RED, LanguageManager.errors.level).toString()));
+            PlayerManager.notifyFailure(player, LanguageManager.errors.level);
             return true;
         }
         return false;
@@ -933,9 +863,8 @@ public class AbilityListener implements Listener {
 
     private boolean checkCooldown(long dif, Player player) {
         if (dif > 0) {
-            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-                    CommunicationManager.format(new ColoredMessage(ChatColor.RED, LanguageManager.errors.cooldown),
-                            String.valueOf(Math.round(Utils.millisToSeconds(dif) * 10) / 10d))));
+            PlayerManager.notifyFailure(player, LanguageManager.errors.cooldown, new ColoredMessage(ChatColor.AQUA,
+                    Double.toString(Math.round(Utils.millisToSeconds(dif) * 10) / 10d)));
             return true;
         }
         return false;

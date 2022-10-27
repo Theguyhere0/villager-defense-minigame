@@ -1,13 +1,12 @@
 package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Witch;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -37,7 +36,11 @@ public class VDWitch extends VDMinion {
         setVerySlowAttackSpeed();
         setNoneKnockback();
         setMediumWeight();
-        // Ignore speed set because constant drinking
+        setVerySlowSpeed();
+        // Stop it from drinking constantly
+        witch.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Utils.secondsToTicks(9999), 0));
+        witch.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Utils.secondsToTicks(9999),
+                0));
         setModerateTargetRange();
         setLoot(50, 1.2, .15);
         updateNameTag();

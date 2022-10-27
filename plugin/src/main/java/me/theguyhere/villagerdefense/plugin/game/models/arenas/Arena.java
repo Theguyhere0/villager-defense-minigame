@@ -31,6 +31,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
@@ -1895,7 +1896,7 @@ public class Arena {
             @Override
             public void run() {
                 // Update player stats to show
-                getActives().forEach(VDPlayer::showAndUpdatStats);
+                getActives().forEach(VDPlayer::showAndUpdateStats);
 
                 // Update mob targets
                 mobs.forEach(mob -> {
@@ -1908,6 +1909,8 @@ public class Arena {
                             .stream()
                             .filter(entity -> entity instanceof LivingEntity)
                             .filter(entity -> !entity.isDead())
+                            .filter(entity -> ((LivingEntity) entity).getActivePotionEffects().stream()
+                                    .noneMatch(potion -> potion.getType().equals(PotionEffectType.INVISIBILITY)))
                             .filter(entity -> mobster.getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue())
                                     && entity instanceof Player || !(entity instanceof Player) &&
                                     !mobster.getMetadata(VDMob.TEAM).equals(entity.getMetadata(VDMob.TEAM)))
@@ -1945,7 +1948,7 @@ public class Arena {
         activeTasks.put(TWENTY_TICK, new BukkitRunnable() {
             @Override
             public void run() {
-                // Refill ammo
+                // Heal
                 getActives().forEach(VDPlayer::heal);
             }
         });

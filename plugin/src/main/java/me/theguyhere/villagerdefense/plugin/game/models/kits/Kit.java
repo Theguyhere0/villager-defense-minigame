@@ -495,15 +495,13 @@ public class Kit {
     public static Kit alchemist() {
         Kit kit = new Kit(LanguageManager.kits.alchemist.name, KitType.GIFT, "alchemist", Material.BREWING_STAND);
         kit.addMasterDescription(LanguageManager.kits.alchemist.description);
-        kit.addPrice(1, 300);
+        kit.addPrice(1, 600);
         kit.addItems(1, new ItemStack[]{
                 Sword.create(Sword.SwordType.STARTER),
                 ItemManager.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.SPEED),
                         new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.alchemist.items.speed).toString()),
-                ItemManager.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.INSTANT_HEAL),
-                        new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.alchemist.items.health).toString()),
-                ItemManager.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.INSTANT_HEAL),
-                        new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.alchemist.items.health).toString())
+                ItemManager.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.STRENGTH),
+                        new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.alchemist.items.strength).toString())
         });
         return kit;
     }
@@ -511,7 +509,7 @@ public class Kit {
     public static Kit tailor() {
         Kit kit = new Kit(LanguageManager.kits.tailor.name, KitType.GIFT, "tailor", Material.LEATHER_CHESTPLATE);
         kit.addMasterDescription(CommunicationManager.format(LanguageManager.kits.tailor.description));
-        kit.addPrice(1, 400);
+        kit.addPrice(1, 300);
         kit.addItems(1, new ItemStack[]{
                 Sword.create(Sword.SwordType.STARTER),
                 ItemManager.removeLastLore(ItemManager.rename(Helmet.create(Helmet.HelmetType.T1),
@@ -746,7 +744,7 @@ public class Kit {
     public static Kit witch() {
         Kit kit = new Kit(LanguageManager.kits.witch.name, KitType.EFFECT, "witch", Material.CAULDRON);
         kit.addMasterDescription(LanguageManager.kits.witch.description);
-        kit.addPrice(1, 2500);
+        kit.addPrice(1, 5500);
         kit.addItems(1, new ItemStack[]{Sword.create(Sword.SwordType.STARTER)});
         return kit;
     }

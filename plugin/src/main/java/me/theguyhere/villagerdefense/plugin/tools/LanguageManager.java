@@ -811,12 +811,12 @@ public class LanguageManager {
             public final String club;
             public final String clubDesc;
             public final String golem;
-            public final String health;
             public final String helmet;
             public final String leggings;
             public final String scythe;
             public final String scytheDesc;
             public final String speed;
+            public final String strength;
             public final String sword;
             public final String swordDesc;
             public final String wolf;
@@ -880,15 +880,6 @@ public class LanguageManager {
                 golem = temp;
 
                 try {
-                    temp = getConfigString("health");
-                } catch (InvalidLanguageKeyException e) {
-                    if (key.equals("alchemist"))
-                        throw e;
-                    else temp = null;
-                }
-                health = temp;
-
-                try {
                     temp = getConfigString("helmet");
                 } catch (InvalidLanguageKeyException e) {
                     if (key.equals("tailor"))
@@ -931,6 +922,15 @@ public class LanguageManager {
                     else temp = null;
                 }
                 speed = temp;
+
+                try {
+                    temp = getConfigString("strength");
+                } catch (InvalidLanguageKeyException e) {
+                    if (key.equals("alchemist"))
+                        throw e;
+                    else temp = null;
+                }
+                strength = temp;
 
                 try {
                     temp = getConfigString("sword");

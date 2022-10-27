@@ -273,10 +273,9 @@ public abstract class Axe extends VDWeapon {
                 break;
             default: durability = 0;
         }
-        if (durability > 0)
-            lores.add(CommunicationManager.format(DURABILITY,
-                    new ColoredMessage(ChatColor.GREEN, Integer.toString(durability)).toString() +
-                            new ColoredMessage(ChatColor.WHITE, " / " + durability)));
+        lores.add(CommunicationManager.format(DURABILITY,
+                new ColoredMessage(ChatColor.GREEN, Integer.toString(durability)).toString() +
+                        new ColoredMessage(ChatColor.WHITE, " / " + durability)));
 
         // Set price
         int price;

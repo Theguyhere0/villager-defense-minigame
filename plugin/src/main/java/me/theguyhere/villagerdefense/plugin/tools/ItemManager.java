@@ -19,10 +19,13 @@ import java.util.*;
  */
 public class ItemManager {
     /** Flags for creating normal items with enchants and/or lore.*/
+    @SuppressWarnings("unused")
     public static final boolean[] NORMAL_FLAGS = {false, false};
     /** Flags for creating items with hidden enchants.*/
+    @SuppressWarnings("unused")
     public static final boolean[] HIDE_ENCHANT_FLAGS = {true, false};
     /** Flags for creating items with hidden enchants and attributes, mostly for buttons.*/
+    @SuppressWarnings("unused")
     public static final boolean[] BUTTON_FLAGS = {true, true};
 
     public static HashMap<Enchantment, Integer> dummyEnchant() {

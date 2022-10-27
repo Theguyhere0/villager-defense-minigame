@@ -75,8 +75,16 @@ public class VDPlayer {
     private List<Challenge> challenge = new ArrayList<>();
     /** The list of UUIDs of those that damaged the player.*/
     private final List<UUID> enemies = new ArrayList<>();
+    /** Helmet {@link ItemStack} held for ninja ability.*/
+    private ItemStack helmet;
+    /** Chestplate {@link ItemStack} held for ninja ability.*/
+    private ItemStack chestplate;
+    /** Leggings {@link ItemStack} held for ninja ability.*/
+    private ItemStack leggings;
+    /** Boots {@link ItemStack} held for ninja ability.*/
+    private ItemStack boots;
     /** Whether permanent boosts are on or not.*/
-    private boolean boost = false; // TODO return to true once boosts are reworked
+    private boolean boost = false; // TODO: return to true once boosts are reworked
     /** Number of gems to be converted from crystals.*/
     private int gemBoost = 0;
     /** Whether effect kits are shared or not.*/
@@ -131,6 +139,11 @@ public class VDPlayer {
 
     public void addAbsorption(int absorption) {
         this.absorption += absorption;
+    }
+
+    public void addAbsorptionUpTo(int absorption) {
+        if (this.absorption < absorption)
+            this.absorption = absorption;
     }
 
     /**
@@ -212,7 +225,7 @@ public class VDPlayer {
         }
     }
 
-    public void showAndUpdatStats() {
+    public void showAndUpdateStats() {
         AtomicBoolean penetrating = new AtomicBoolean(false);
         AtomicBoolean range = new AtomicBoolean(false);
         AtomicBoolean perBlock = new AtomicBoolean(false);
@@ -401,6 +414,14 @@ public class VDPlayer {
         } catch (Exception ignored) {
         }
 
+        // Resistance effect
+        getPlayer().getActivePotionEffects().forEach(potionEffect -> {
+            if (PotionEffectType.DAMAGE_RESISTANCE.equals(potionEffect.getType())) {
+                armor.addAndGet(10 * (1 + potionEffect.getAmplifier()));
+                toughness.addAndGet(10 * (1 + potionEffect.getAmplifier()));
+            }
+        });
+
         // Update status bar
         getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
                 new ColoredMessage(absorption > 0 ? ChatColor.GOLD : ChatColor.RED,
@@ -429,6 +450,7 @@ public class VDPlayer {
     }
 
     public void heal() {
+        // Natural heal
         int hunger = getPlayer().getFoodLevel();
         if (hunger >= 20)
             changeCurrentHealth(6);
@@ -440,6 +462,12 @@ public class VDPlayer {
             changeCurrentHealth(2);
         else if (hunger > 0)
             changeCurrentHealth(1);
+
+        // Regeneration
+        getPlayer().getActivePotionEffects().forEach(potionEffect -> {
+            if (PotionEffectType.REGENERATION.equals(potionEffect.getType()))
+                changeCurrentHealth(5 * (1 + potionEffect.getAmplifier()));
+        });
     }
 
     public void refill() {
@@ -496,8 +524,16 @@ public class VDPlayer {
 
     public int dealRawDamage(@NotNull AttackClass attackClass, double mainMult) {
         Random r = new Random();
+        AtomicInteger increase = new AtomicInteger();
+        getPlayer().getActivePotionEffects().forEach(potionEffect -> {
+            if (PotionEffectType.INCREASE_DAMAGE.equals(potionEffect.getType()))
+                increase.addAndGet(1 + potionEffect.getAmplifier());
+            else if (PotionEffectType.WEAKNESS.equals(potionEffect.getType()))
+                increase.addAndGet(- 1 - potionEffect.getAmplifier());
+        });
 
         // Modify damage based on weapon
+        double damage;
         try {
             ItemStack weapon = Objects.requireNonNull(getPlayer().getEquipment()).getItemInMainHand();
             Map<String, Integer> attributes = new HashMap<>();
@@ -563,30 +599,36 @@ public class VDPlayer {
             switch (attackClass) {
                 case MAIN:
                     if (attributes.containsKey("main"))
-                        return (int) ((baseDamage + attributes.get("main")) * mainMult);
-                    else return (int) ((baseDamage + attributes.get("mainLow") +
-                            r.nextInt(attributes.get("mainHigh") - attributes.get("mainLow"))) * mainMult);
+                        damage = (baseDamage + attributes.get("main")) * mainMult;
+                    else damage = (baseDamage + attributes.get("mainLow") +
+                            r.nextInt(attributes.get("mainHigh") - attributes.get("mainLow"))) * mainMult;
+                    break;
                 case CRITICAL:
                     if (attributes.containsKey("crit"))
-                        return baseDamage + attributes.get("crit");
-                    else return baseDamage + attributes.get("critLow") +
+                        damage = baseDamage + attributes.get("crit");
+                    else damage = baseDamage + attributes.get("critLow") +
                             r.nextInt(attributes.get("critHigh") - attributes.get("critLow"));
+                    break;
                 case SWEEP:
                     if (attributes.containsKey("sweep"))
-                        return baseDamage + attributes.get("sweep");
-                    else return baseDamage + attributes.get("sweepLow") +
+                        damage = baseDamage + attributes.get("sweep");
+                    else damage = baseDamage + attributes.get("sweepLow") +
                             r.nextInt(attributes.get("sweepHigh") - attributes.get("sweepLow"));
+                    break;
                 case RANGE:
                     if (attributes.containsKey("range"))
-                        return attributes.get("range");
-                    else return attributes.get("rangeLow") +
-                            r.nextInt(attributes.get("rangeHigh") - attributes.get("rangeLow"));
+                        damage = attributes.get("range");
+                    else damage = attributes.get("rangeLow") + r.nextInt(attributes.get("rangeHigh") -
+                            attributes.get("rangeLow"));
+                    break;
                 default:
-                    return 0;
+                    damage = 0;
             }
         } catch (Exception e) {
-            return baseDamage;
+            damage = baseDamage;
         }
+
+        return (int) (damage * (1 + .1 * increase.get()));
     }
 
     public long getCooldown() {
@@ -726,6 +768,30 @@ public class VDPlayer {
 
     public void setKit2(Kit kit2) {
         this.kit2 = kit2;
+    }
+
+    /**
+     * Removes armor from the player while they are invisible under the ninja ability.
+     */
+    public void hideArmor() {
+        helmet = getPlayer().getInventory().getHelmet();
+        getPlayer().getInventory().setHelmet(null);
+        chestplate = getPlayer().getInventory().getChestplate();
+        getPlayer().getInventory().setChestplate(null);
+        leggings = getPlayer().getInventory().getLeggings();
+        getPlayer().getInventory().setLeggings(null);
+        boots = getPlayer().getInventory().getBoots();
+        getPlayer().getInventory().setBoots(null);
+    }
+
+    /**
+     * Returns armor to the player after the ninja ability wears out.
+     */
+    public void exposeArmor() {
+        getPlayer().getInventory().setHelmet(helmet);
+        getPlayer().getInventory().setChestplate(chestplate);
+        getPlayer().getInventory().setLeggings(leggings);
+        getPlayer().getInventory().setBoots(boots);
     }
 
     /**

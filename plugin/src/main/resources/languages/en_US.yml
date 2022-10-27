@@ -592,10 +592,10 @@ itemLore:
 kits:
   alchemist:
     name: "Alchemist"
-    description: "Start with 1 speed and 2 healing splash potions"
+    description: "Start with a speed and a strength splash potions"
     items:
-      health: "Alchemist's Health Potion"
       speed: "Alchemist's Speed Potion"
+      strength: "Alchemist's Strength Potion"
   blacksmith:
     name: "Blacksmith"
     description: "All equipment purchased are unbreakable"
@@ -624,7 +624,7 @@ kits:
     description: "Give yourself and nearby allies haste"
   ninja:
     name: "Ninja"
-    description: "You and your pets become become invisible and stun monsters"
+    description: "You and your pets become become invisible"
   orc:
     name: "Orc"
     description: "Start with a high-knockback stick"
@@ -670,7 +670,7 @@ kits:
       leggings: "Tailor's Leggings"
   templar:
     name: "Templar"
-    description: "Give yourself and nearby allies absorption"
+    description: "Give yourself and nearby players absorption"
   trader:
     name: "Trader"
     description: "Start with 200 gems"
@@ -682,10 +682,10 @@ kits:
     description: "Give yourself and nearby allies strength"
   witch:
     name: "Witch"
-    description: "All potions purchased become splash potions"
+    description: "Become immune to negative potion effects"
 messages:
   abilityKitsDescription: "Kits give special ability per respawn"
-  abilityLevel: "Up to ability level"
+  abilityLevel: "Get access to %s abilities"
   achievements: "Achievements"
   allowedKits: "Allowed Kits"
   ammoCost: "Ammo Cost: %s"

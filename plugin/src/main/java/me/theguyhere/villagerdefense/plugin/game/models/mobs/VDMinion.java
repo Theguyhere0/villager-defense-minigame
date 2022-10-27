@@ -4,6 +4,8 @@ import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.inventory.EntityEquipment;
@@ -31,6 +33,13 @@ public abstract class VDMinion extends VDMob {
         for (Entity passenger : minion.getPassengers())
             passenger.remove();
         minion.setHealth(2);
+        Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MAX_HEALTH))
+                .addModifier(new AttributeModifier(
+                        "custom",
+                        2 - Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MAX_HEALTH))
+                                .getBaseValue(),
+                        AttributeModifier.Operation.ADD_NUMBER
+                ));
         minion.setCustomNameVisible(true);
     }
 

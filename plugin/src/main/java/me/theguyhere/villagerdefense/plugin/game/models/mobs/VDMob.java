@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class VDMob {
     protected Mob mob;
@@ -175,7 +176,14 @@ public abstract class VDMob {
     
     public int dealRawDamage() {
         Random r = new Random();
-        return (int) (this.damage * (1 + (r.nextDouble() * 2 - 1) * damageSpread));
+        AtomicInteger increase = new AtomicInteger();
+        mob.getActivePotionEffects().forEach(potionEffect -> {
+            if (PotionEffectType.INCREASE_DAMAGE.equals(potionEffect.getType()))
+                increase.addAndGet(1 + potionEffect.getAmplifier());
+            else if (PotionEffectType.WEAKNESS.equals(potionEffect.getType()))
+                increase.addAndGet(- 1 - potionEffect.getAmplifier());
+        });
+        return (int) (this.damage * (1 + (r.nextDouble() * 2 - 1) * damageSpread) * (1 + .1 * increase.get()));
     }
 
     public AttackType getAttackType() {

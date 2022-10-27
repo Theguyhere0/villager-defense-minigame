@@ -376,7 +376,7 @@ public class GameListener implements Listener {
 
 			// Realize damage and deal effect
 			gamer.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType());
-			if (finalDamager.getEffectType() == null)
+			if (finalDamager.getEffectType() == null || Kit.witch().getID().equals(gamer.getKit().getID()))
 				return;
 			if (finalDamager.getEffectType().getName().equals(PotionEffectType.FIRE_RESISTANCE.getName()))
 				gamer.combust(finalDamager.getEffectDuration());
@@ -435,6 +435,15 @@ public class GameListener implements Listener {
 				if (gamer != null) {
 					AttackClass attackClass;
 
+					// Calculate damage difference
+					AtomicInteger dif = new AtomicInteger();
+					player.getActivePotionEffects().forEach(potionEffect -> {
+						if (PotionEffectType.INCREASE_DAMAGE.equals(potionEffect.getType()))
+							dif.addAndGet((1 + potionEffect.getAmplifier()) * 3);
+						else if (PotionEffectType.WEAKNESS.equals(potionEffect.getType()))
+							dif.addAndGet(- (1 + potionEffect.getAmplifier()) * 4);
+					});
+
 					// Range damage
 					if (projectile) {
 						if (e.getDamager().getMetadata(ItemMetaKey.PER_BLOCK.name()).get(0).asBoolean())
@@ -460,7 +469,7 @@ public class GameListener implements Listener {
 					}
 
 					// Crit damage
-					if (damage > 20)
+					if (damage > 20 + dif.get())
 						attackClass = AttackClass.CRITICAL;
 
 					// Sweep damage
@@ -471,7 +480,8 @@ public class GameListener implements Listener {
 					else attackClass = AttackClass.MAIN;
 
 					// Play out damage
-					int hurt = finalVictim.takeDamage(gamer.dealRawDamage(attackClass, damage / 20.),
+					int hurt = finalVictim.takeDamage(
+							gamer.dealRawDamage(attackClass, damage / (double) (dif.get() + 20)),
 							gamer.getAttackType(), player, arena);
 
 					Random r = new Random();
@@ -678,10 +688,10 @@ public class GameListener implements Listener {
 					mob.takeDamage((int) (damage * 5), AttackType.PENETRATING, null, arena);
 					break;
 				case POISON:
-					mob.takeDamage((int) (damage * 4), AttackType.PENETRATING, null, arena);
+					mob.takeDamage((int) (damage * 8), AttackType.PENETRATING, null, arena);
 					break;
 				case WITHER:
-					mob.takeDamage((int) (damage * 4), AttackType.DIRECT, null, arena);
+					mob.takeDamage((int) (damage * 8), AttackType.DIRECT, null, arena);
 					break;
 				// Silence
 				default:
@@ -780,12 +790,13 @@ public class GameListener implements Listener {
 	public void onSplash(PotionSplashEvent e) {
 		ThrownPotion potion = e.getEntity();
 		Entity ent = (Entity) potion.getShooter();
+		Arena arena;
 		VDWitch witch;
 
 		// Try to get arena and VDMob
 		try {
-			witch = (VDWitch) GameManager.getArena(Objects.requireNonNull(ent).getMetadata(VDMob.VD).get(0).asInt())
-					.getMob(ent.getUniqueId());
+			arena = GameManager.getArena(Objects.requireNonNull(ent).getMetadata(VDMob.VD).get(0).asInt());
+			witch = (VDWitch) arena.getMob(ent.getUniqueId());
 		} catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException |
 				NullPointerException | ClassCastException err) {
 			return;
@@ -797,6 +808,13 @@ public class GameListener implements Listener {
 			if (!(affectedEntity instanceof Player) &&
 					affectedEntity.getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue()))
 				continue;
+
+			// Ignore players with witch kit
+			try {
+				if (Kit.witch().getID().equals(arena.getPlayer(affectedEntity.getUniqueId()).getKit().getID()))
+					continue;
+			} catch (PlayerNotFoundException ignored) {
+			}
 
 			// Apply affects
 			affectedEntity.addPotionEffect(witch.dealEffect());
@@ -901,7 +919,9 @@ public class GameListener implements Listener {
 		// Allow plugin, command, and expiration causes
 		if (e.getCause() == EntityPotionEffectEvent.Cause.PLUGIN ||
 				e.getCause() == EntityPotionEffectEvent.Cause.COMMAND ||
-				e.getCause() == EntityPotionEffectEvent.Cause.EXPIRATION)
+				e.getCause() == EntityPotionEffectEvent.Cause.EXPIRATION ||
+				e.getCause() == EntityPotionEffectEvent.Cause.POTION_DRINK ||
+				e.getCause() == EntityPotionEffectEvent.Cause.POTION_SPLASH)
 			return;
 
 		// Cancel
