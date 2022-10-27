@@ -10,7 +10,6 @@ import me.theguyhere.villagerdefense.plugin.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.*;
@@ -1738,30 +1737,12 @@ public class Arena {
             startBorderParticles();
 
         getActives().forEach(player -> {
-            Kit second;
-
-            // Give second kit to players with two kit bonus
-            if (player.isBoosted() && PlayerManager.hasAchievement(player.getID(), Achievement.allKits().getID()))
-                do {
-                    second = Kit.randomKit();
-
-                    // Single tier kits
-                    if (!second.isMultiLevel())
-                        second.setKitLevel(1);
-
-                        // Multiple tier kits
-                    else second.setKitLevel(PlayerManager.getMultiTierKitLevel(player.getID(), second.getID()));
-
-                    player.setKit2(second);
-                } while (second.equals(player.getKit()));
-
             // Give all players starting items and set up attributes
             player.giveItems();
             player.setupAttributes();
 
             // Give Traders their gems
-            if (Kit.trader().setKitLevel(1).equals(player.getKit()) ||
-                    Kit.trader().setKitLevel(1).equals(player.getKit2()))
+            if (Kit.trader().setKitLevel(1).equals(player.getKit()))
                 player.addGems(200);
 
             // Give gems from crystal conversion
@@ -2692,6 +2673,7 @@ public class Arena {
         refreshPortal();
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isSpawningMonsters() {
         return spawningMonsters;
     }
@@ -3057,7 +3039,7 @@ public class Arena {
         }
 
         return (int) getActives().stream().filter(VDPlayer::isSharing).filter(player ->
-                effectKit.equals(player.getKit()) || effectKit.equals(player.getKit2())).count();
+                effectKit.equals(player.getKit())).count();
     }
 
     /**

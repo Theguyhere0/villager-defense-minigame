@@ -13,6 +13,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.items.ItemMetaKey;
 import me.theguyhere.villagerdefense.plugin.game.models.items.VDItem;
+import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.MageAbility;
 import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.game.models.items.armor.VDArmor;
 import me.theguyhere.villagerdefense.plugin.game.models.items.eggs.VDEgg;
@@ -174,7 +175,7 @@ public class GameListener implements Listener {
 		ItemStack ammo = Objects.requireNonNull(player.getEquipment()).getItemInOffHand();
 		if (!Ammo.matches(ammo)) {
 			e.setCancelled(true);
-			PlayerManager.notifyFailure(player, LanguageManager.errors.ammoOffHand);
+			gamer.triggerAmmoWarningCooldown();
 			return;
 		}
 
@@ -208,7 +209,7 @@ public class GameListener implements Listener {
 			return;
 
 		// Check for cooldown
-		if (gamer.getCooldown() > System.currentTimeMillis())
+		if (gamer.remainingWeaponCooldown() > 0)
 			return;
 
 		// Fire
@@ -218,7 +219,7 @@ public class GameListener implements Listener {
 		if (Bow.matches(range))
 			NMSVersion.getCurrent().getNmsManager().setBowCooldown(player, Utils.secondsToTicks(cooldown.get()));
 		else NMSVersion.getCurrent().getNmsManager().setCrossbowCooldown(player, Utils.secondsToTicks(cooldown.get()));
-		gamer.setCooldown(System.currentTimeMillis() + Utils.secondsToMillis(cooldown.get()));
+		gamer.triggerWeaponCooldown(Utils.secondsToMillis(cooldown.get()));
 		if (Ammo.updateCapacity(ammo, -cost.get())) {
 			player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
 			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1);
@@ -487,8 +488,7 @@ public class GameListener implements Listener {
 					Random r = new Random();
 
 					// Check for vampire kit
-					if ((Kit.vampire().getID().equals(gamer.getKit().getID()) ||
-							Kit.vampire().nameCompare(gamer.getKit2())) && !gamer.isSharing()) {
+					if (Kit.vampire().getID().equals(gamer.getKit().getID()) && !gamer.isSharing()) {
 						// Heal if probability is right
 						if (r.nextDouble() < .2)
 							gamer.changeCurrentHealth((int) (hurt * .25));
@@ -838,11 +838,11 @@ public class GameListener implements Listener {
 		if (arena.getStatus() != ArenaStatus.ACTIVE)
 			return;
 
-		// Get off hand
+		// Get offhand
 		ItemStack off = player.getInventory().getItemInOffHand();
 
-		// Unequip weapons in off-hand
-		if (VDWeapon.matchesNoAmmo(off)) {
+		// Unequip weapons and mage abilities in offhand
+		if (VDWeapon.matchesNoAmmo(off) || MageAbility.matches(off)) {
 			PlayerManager.giveItem(player, off, LanguageManager.errors.inventoryFull);
 			player.getInventory().setItemInOffHand(null);
 			PlayerManager.notifyFailure(player, LanguageManager.errors.offWeapon);

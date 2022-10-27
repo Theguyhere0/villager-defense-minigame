@@ -304,7 +304,6 @@ public class LanguageManager {
         public final @NotNull String command;
         public final @NotNull String communityChest;
         public final @NotNull String construction;
-        public final @NotNull String cooldown;
         public final @NotNull String economy;
         public final @NotNull String emptyArena;
         public final @NotNull String endingSoon;
@@ -320,7 +319,6 @@ public class LanguageManager {
         public final @NotNull String kitBuy;
         public final @NotNull String kitSelect;
         public final @NotNull String kitUpgrade;
-        public final @NotNull String level;
         public final @NotNull String naked;
         public final @NotNull String ninja;
         public final @NotNull String noArena;
@@ -353,7 +351,6 @@ public class LanguageManager {
             command = getConfigString("command");
             communityChest = getConfigString("communityChest");
             construction = getConfigString("construction");
-            cooldown = getConfigString("cooldown");
             economy = getConfigString("economy");
             emptyArena = getConfigString("emptyArena");
             endingSoon = getConfigString("endingSoon");
@@ -369,7 +366,6 @@ public class LanguageManager {
             kitBuy = getConfigString("kitBuy");
             kitSelect = getConfigString("kitSelect");
             kitUpgrade = getConfigString("kitUpgrade");
-            level = getConfigString("level");
             naked = getConfigString("naked");
             ninja = getConfigString("ninja");
             noArena = getConfigString("noArena");
@@ -396,6 +392,7 @@ public class LanguageManager {
         public final @NotNull BowLore bows;
         public final @NotNull ChestplateLore chestplates;
         public final @NotNull CrossbowLore crossbows;
+        public final @NotNull EssenceLore essences;
         public final @NotNull HelmetLore helmets;
         public final @NotNull LeggingsLore leggings;
         public final @NotNull ScytheLore scythes;
@@ -408,6 +405,7 @@ public class LanguageManager {
             bows = new BowLore();
             chestplates = new ChestplateLore();
             crossbows = new CrossbowLore();
+            essences = new EssenceLore();
             helmets = new HelmetLore();
             leggings = new LeggingsLore();
             scythes = new ScytheLore();
@@ -582,6 +580,26 @@ public class LanguageManager {
             }
         }
 
+        public static class EssenceLore {
+            public final @NotNull Lore t0;
+            public final @NotNull Lore t1;
+            public final @NotNull Lore t2;
+            public final @NotNull Lore t3;
+            public final @NotNull Lore t4;
+            public final @NotNull Lore t5;
+
+            private EssenceLore() throws InvalidLanguageKeyException {
+                String pathPrefix = "itemLore.essences.";
+
+                t0 = new Lore(pathPrefix + "t0");
+                t1 = new Lore(pathPrefix + "t1");
+                t2 = new Lore(pathPrefix + "t2");
+                t3 = new Lore(pathPrefix + "t3");
+                t4 = new Lore(pathPrefix + "t4");
+                t5 = new Lore(pathPrefix + "t5");
+            }
+        }
+
         public static class LeggingsLore {
             public final @NotNull Lore t1;
             public final @NotNull Lore t2;
@@ -714,24 +732,24 @@ public class LanguageManager {
         public final @NotNull Kit blacksmith;
         public final @NotNull GiftKit farmer;
         public final @NotNull Kit giant;
-        public final @NotNull Kit knight;
-        public final @NotNull Kit mage;
+        public final @NotNull AbilityKit knight;
+        public final @NotNull AbilityKit mage;
         public final @NotNull Kit merchant;
-        public final @NotNull Kit messenger;
-        public final @NotNull Kit monk;
-        public final @NotNull Kit ninja;
+        public final @NotNull AbilityKit messenger;
+        public final @NotNull AbilityKit monk;
+        public final @NotNull AbilityKit ninja;
         public final @NotNull GiftKit orc;
         public final @NotNull Kit phantom;
-        public final @NotNull Kit priest;
+        public final @NotNull AbilityKit priest;
         public final @NotNull GiftKit reaper;
-        public final @NotNull Kit siren;
+        public final @NotNull AbilityKit siren;
         public final @NotNull GiftKit soldier;
         public final @NotNull TieredGiftKit summoner;
         public final @NotNull GiftKit tailor;
-        public final @NotNull Kit templar;
+        public final @NotNull AbilityKit templar;
         public final @NotNull Kit trader;
         public final @NotNull Kit vampire;
-        public final @NotNull Kit warrior;
+        public final @NotNull AbilityKit warrior;
         public final @NotNull Kit witch;
 
         public Kits() throws InvalidLanguageKeyException {
@@ -739,24 +757,24 @@ public class LanguageManager {
             blacksmith = new Kit("blacksmith");
             farmer = new GiftKit("farmer");
             giant = new Kit("giant");
-            knight = new Kit("knight");
-            mage = new Kit("mage");
+            knight = new AbilityKit("knight");
+            mage = new AbilityKit("mage");
             merchant = new Kit("merchant");
-            messenger = new Kit("messenger");
-            monk = new Kit("monk");
-            ninja = new Kit("ninja");
+            messenger = new AbilityKit("messenger");
+            monk = new AbilityKit("monk");
+            ninja = new AbilityKit("ninja");
             orc = new GiftKit("orc");
             phantom = new Kit("phantom");
-            priest = new Kit("priest");
+            priest = new AbilityKit("priest");
             reaper = new GiftKit("reaper");
-            siren = new Kit("siren");
+            siren = new AbilityKit("siren");
             soldier = new GiftKit("soldier");
             summoner = new TieredGiftKit("summoner");
             tailor = new GiftKit("tailor");
-            templar = new Kit("templar");
+            templar = new AbilityKit("templar");
             trader = new Kit("trader");
             vampire = new Kit("vampire");
-            warrior = new Kit("warrior");
+            warrior = new AbilityKit("warrior");
             witch = new Kit("witch");
         }
 
@@ -769,6 +787,20 @@ public class LanguageManager {
 
                 name = getConfigString("name");
                 description = getConfigString("description");
+            }
+        }
+
+        public static class AbilityKit extends Section {
+            public final @NotNull String name;
+            public final @NotNull String description;
+            public final @NotNull String effect;
+
+            private AbilityKit(@NotNull String key) throws InvalidLanguageKeyException {
+                setPathPrefix("kits." + key);
+
+                name = getConfigString("name");
+                description = getConfigString("description");
+                effect = getConfigString("effect");
             }
         }
 
@@ -978,10 +1010,12 @@ public class LanguageManager {
         public final @NotNull String attackSweepDamage;
         public final @NotNull String attackType;
         public final @NotNull String available;
+        public final @NotNull String blocks;
         public final @NotNull String capacity;
         public final @NotNull String challenges;
         public final @NotNull String closed;
         public final @NotNull String commandFormat;
+        public final @NotNull String cooldown;
         public final @NotNull String crystalBonus;
         public final @NotNull String crystalBalance;
         public final @NotNull String crystalsEarned;
@@ -993,6 +1027,8 @@ public class LanguageManager {
         public final @NotNull String disabled;
         public final @NotNull String duplicatePlaceholder;
         public final @NotNull String durability;
+        public final @NotNull String duration;
+        public final @NotNull String effect;
         public final @NotNull String effectKitsDescription;
         public final @NotNull String effectShare;
         public final @NotNull String end;
@@ -1048,6 +1084,7 @@ public class LanguageManager {
         public final @NotNull String playerStatistics;
         public final @NotNull String purchase;
         public final @NotNull String purchased;
+        public final @NotNull String range;
         public final @NotNull String record;
         public final @NotNull String records;
         public final @NotNull String refill;
@@ -1097,10 +1134,12 @@ public class LanguageManager {
             attackSweepDamage = getConfigString("attackSweepDamage");
             attackType = getConfigString("attackType");
             available = getConfigString("available");
+            blocks = getConfigString("blocks");
             capacity = getConfigString("capacity");
             challenges = getConfigString("challenges");
             closed = getConfigString("closed");
             commandFormat = getConfigString("commandFormat");
+            cooldown = getConfigString("cooldown");
             crystalBonus = getConfigString("crystalBonus");
             crystalBalance = getConfigString("crystalBalance");
             crystalsEarned = getConfigString("crystalsEarned");
@@ -1112,6 +1151,8 @@ public class LanguageManager {
             disabled = getConfigString("disabled");
             duplicatePlaceholder = getConfigString("duplicatePlaceholder");
             durability = getConfigString("durability");
+            duration = getConfigString("duration");
+            effect = getConfigString("effect");
             effectKitsDescription = getConfigString("effectKitsDescription");
             effectShare = getConfigString("effectShare");
             end = getConfigString("end");
@@ -1167,6 +1208,7 @@ public class LanguageManager {
             playerStatistics = getConfigString("playerStatistics");
             purchase = getConfigString("purchase");
             purchased = getConfigString("purchased");
+            range = getConfigString("range");
             record = getConfigString("record");
             records = getConfigString("records");
             refill = getConfigString("refill");

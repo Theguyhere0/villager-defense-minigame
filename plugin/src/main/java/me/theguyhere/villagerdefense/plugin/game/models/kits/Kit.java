@@ -604,7 +604,8 @@ public class Kit {
         kit.addPrice(2, 7500);
         kit.addPrice(3, 13000);
 
-        kit.addItems(1, new ItemStack[]{Sword.create(Sword.SwordType.STARTER), MageAbility.create()});
+        kit.addItems(1, new ItemStack[]{Sword.create(Sword.SwordType.STARTER),
+                MageAbility.create(MageAbility.AbilityType.T0)});
 
         return kit;
     }
@@ -619,7 +620,8 @@ public class Kit {
         kit.addPrice(2, 8000);
         kit.addPrice(3, 14000);
 
-        kit.addItems(1, new ItemStack[]{Sword.create(Sword.SwordType.STARTER), NinjaAbility.create()});
+        kit.addItems(1, new ItemStack[]{Sword.create(Sword.SwordType.STARTER),
+                NinjaAbility.create(NinjaAbility.AbilityType.T0)});
 
         return kit;
     }
@@ -634,7 +636,8 @@ public class Kit {
         kit.addPrice(2, 8000);
         kit.addPrice(3, 12500);
 
-        kit.addItems(1, new ItemStack[]{Sword.create(Sword.SwordType.STARTER), TemplarAbility.create()});
+        kit.addItems(1, new ItemStack[]{Sword.create(Sword.SwordType.STARTER),
+                TemplarAbility.create(TemplarAbility.AbilityType.T0)});
 
         return kit;
     }
@@ -650,7 +653,8 @@ public class Kit {
         kit.addPrice(2, 9000);
         kit.addPrice(3, 14000);
 
-        kit.addItems(1, new ItemStack[]{Sword.create(Sword.SwordType.STARTER), WarriorAbility.create()});
+        kit.addItems(1, new ItemStack[]{Sword.create(Sword.SwordType.STARTER),
+                WarriorAbility.create(WarriorAbility.AbilityType.T0)});
 
         return kit;
     }
@@ -665,7 +669,8 @@ public class Kit {
         kit.addPrice(2, 8500);
         kit.addPrice(3, 13000);
 
-        kit.addItems(1, new ItemStack[]{Sword.create(Sword.SwordType.STARTER), KnightAbility.create()});
+        kit.addItems(1, new ItemStack[]{Sword.create(Sword.SwordType.STARTER),
+                KnightAbility.create(KnightAbility.AbilityType.T0)});
 
         return kit;
     }
@@ -681,7 +686,8 @@ public class Kit {
         kit.addPrice(2, 9000);
         kit.addPrice(3, 15000);
 
-        kit.addItems(1, new ItemStack[]{Sword.create(Sword.SwordType.STARTER), PriestAbility.create()});
+        kit.addItems(1, new ItemStack[]{Sword.create(Sword.SwordType.STARTER),
+                PriestAbility.create(PriestAbility.AbilityType.T0)});
 
         return kit;
     }
@@ -696,7 +702,8 @@ public class Kit {
         kit.addPrice(2, 8000);
         kit.addPrice(3, 13500);
 
-        kit.addItems(1, new ItemStack[]{Sword.create(Sword.SwordType.STARTER), SirenAbility.create()});
+        kit.addItems(1, new ItemStack[]{Sword.create(Sword.SwordType.STARTER),
+                SirenAbility.create(SirenAbility.AbilityType.T0)});
 
         return kit;
     }
@@ -711,7 +718,8 @@ public class Kit {
         kit.addPrice(2, 7000);
         kit.addPrice(3, 11000);
 
-        kit.addItems(1, new ItemStack[]{Sword.create(Sword.SwordType.STARTER), MonkAbility.create()});
+        kit.addItems(1, new ItemStack[]{Sword.create(Sword.SwordType.STARTER),
+                MonkAbility.create(MonkAbility.AbilityType.T0)});
 
         return kit;
     }
@@ -726,7 +734,8 @@ public class Kit {
         kit.addPrice(2, 8000);
         kit.addPrice(3, 12000);
 
-        kit.addItems(1, new ItemStack[]{Sword.create(Sword.SwordType.STARTER), MessengerAbility.create()});
+        kit.addItems(1, new ItemStack[]{Sword.create(Sword.SwordType.STARTER),
+                MessengerAbility.create(MessengerAbility.AbilityType.T0)});
 
         return kit;
     }
@@ -777,36 +786,5 @@ public class Kit {
         kit.addItems(1, new ItemStack[]{Sword.create(Sword.SwordType.STARTER)});
 
         return kit;
-    }
-
-    @NotNull
-    public static Kit randomKit() {
-        Random random = new Random();
-        switch(random.nextInt(23)) {
-            case 0: return orc();
-            case 1: return farmer();
-            case 2: return soldier();
-            case 3: return tailor();
-            case 4: return alchemist();
-            case 5: return trader();
-            case 6: return summoner();
-            case 7: return reaper();
-            case 8: return phantom();
-            case 9: return mage();
-            case 10: return ninja();
-            case 11: return templar();
-            case 12: return warrior();
-            case 13: return knight();
-            case 14: return priest();
-            case 15: return siren();
-            case 16: return monk();
-            case 17: return messenger();
-            case 18: return blacksmith();
-            case 19: return witch();
-            case 20: return merchant();
-            case 21: return vampire();
-            case 22: return giant();
-            default: return none();
-        }
     }
 }

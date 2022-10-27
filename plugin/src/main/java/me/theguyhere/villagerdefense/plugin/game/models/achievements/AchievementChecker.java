@@ -90,8 +90,7 @@ public class AchievementChecker {
                     else targets.add(true);
                 }
                 else if (requirement.getMetric() == AchievementMetric.KIT) {
-                    if (!requirement.getString().equals(player.getKit().getID()) &&
-                            !requirement.getString().equals(player.getKit2().getID()))
+                    if (!requirement.getString().equals(player.getKit().getID()))
                         targets.add(false);
                     else targets.add(true);
                 }

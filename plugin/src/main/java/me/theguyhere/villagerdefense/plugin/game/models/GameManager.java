@@ -140,25 +140,15 @@ public class GameManager {
 		score12.setScore(12);
 
 		StringBuilder kit = new StringBuilder(player.getKit().getName());
-		StringBuilder kit2 = new StringBuilder("    ");
 		if (player.getKit().isMultiLevel()) {
 			kit.append(" ");
 			for (int i = 0; i < Math.max(0, player.getKit().getLevel()); i++)
 				kit.append("I");
 		}
-		if (player.getKit2() != null) {
-			kit.append(" +");
-			kit2.append(player.getKit2().getName());
-			if (player.getKit2().isMultiLevel()) {
-				kit2.append(" ");
-				for (int i = 0; i < Math.max(0, player.getKit2().getLevel()); i++)
-					kit2.append("I");
-			}
-		}
 		Score score11 = obj.getScore(CommunicationManager.format("&b" + LanguageManager.messages.kit + ": " +
 				kit));
 		score11.setScore(11);
-		Score score10 = obj.getScore(CommunicationManager.format("&b" + kit2));
+		Score score10 = obj.getScore(CommunicationManager.format(""));
 		score10.setScore(10);
 
 		int bonus = 0;
@@ -168,7 +158,7 @@ public class GameManager {
 				LanguageManager.messages.challenges + ": (+%d%%)", bonus)));
 		score9.setScore(9);
 
-		if (player.getChallenges().size() < (player.getKit2() != null ? 3 : 4))
+		if (player.getChallenges().size() < 4)
 			for (Challenge challenge : player.getChallenges()) {
 				Score score8 = obj.getScore(CommunicationManager.format("  &5" + challenge.getName()));
 				score8.setScore(8);

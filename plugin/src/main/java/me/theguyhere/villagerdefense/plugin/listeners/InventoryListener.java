@@ -2711,24 +2711,12 @@ public class InventoryListener implements Listener {
 			buy = ItemManager.removeLastLore(buy);
 
 			// Make unbreakable for blacksmith (not sharing)
-			if ((Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
-					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing())
+			if (Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) && !gamer.isSharing())
 				buy = ItemManager.makeUnbreakable(buy);
 
 			// Make unbreakable for successful blacksmith sharing
 			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.BLACKSMITH))) {
 				buy = ItemManager.makeUnbreakable(buy);
-				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-			}
-
-			// Make splash potion for witch (not sharing)
-			if ((Kit.witch().setKitLevel(1).equals(gamer.getKit()) ||
-					Kit.witch().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing())
-				buy = ItemManager.makeSplash(buy);
-
-			// Make splash potion for successful witch sharing
-			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.WITCH))) {
-				buy = ItemManager.makeSplash(buy);
 				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
 			}
 
@@ -2738,8 +2726,7 @@ public class InventoryListener implements Listener {
 
 			// Subtract from balance, apply rebate, and update scoreboard
 			gamer.addGems(-cost);
-			if ((Kit.merchant().setKitLevel(1).equals(gamer.getKit()) ||
-					Kit.merchant().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing())
+			if (Kit.merchant().setKitLevel(1).equals(gamer.getKit()) && !gamer.isSharing())
 				gamer.addGems(cost / 10);
 			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.MERCHANT))) {
 				gamer.addGems(cost / 10);

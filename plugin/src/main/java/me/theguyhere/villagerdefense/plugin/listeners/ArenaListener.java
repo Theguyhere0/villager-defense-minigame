@@ -52,6 +52,13 @@ public class ArenaListener implements Listener {
             return;
         }
 
+        // Don't allow to join if arena is ending
+        if (arena.getStatus() == ArenaStatus.ENDING) {
+            PlayerManager.notifyFailure(player, LanguageManager.errors.endingSoon);
+            e.setCancelled(true);
+            return;
+        }
+
         // Try to get waiting room
         try {
             waiting = arena.getWaitingRoom();

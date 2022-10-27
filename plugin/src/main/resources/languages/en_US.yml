@@ -177,8 +177,8 @@ arenaStats:
 challenges:
   amputee:
     name: "Amputee"
-    description1: "Where's my arm?"
-    description2: "No dual-wielding"
+    description1: "Can't carry my weight!"
+    description2: "No inventory"
   blind:
     name: "Blind"
     description1: "I hope you have good headphones"
@@ -230,8 +230,8 @@ confirms:
   reset: "Player stats reset!"
 errors:
   activePlayer: "You must be an active player to start a game!"
-  ammoOffHand: "You must have ammo in your off hand!"
-  amputee: "You cannot use your off hand!"
+  ammoOffHand: "No ammo on off-hand!"
+  amputee: "You cannot use your inventory!"
   arenaInProgress: "The arena already has a game in progress!"
   arenaNoPlayers: "The arena needs at least 1 player to start!"
   bounds: "You must remain within the arena bounds!"
@@ -241,7 +241,6 @@ errors:
   command: "Invalid command. Use %s for more info."
   communityChest: "Community chest has been disabled!"
   construction: "This feature is under construction!"
-  cooldown: "You have %s seconds left on your cooldown!"
   economy: "Vault Economy is being used instead of Crystals!"
   emptyArena: "The arena has no players!"
   endingSoon: "Game about to end!"
@@ -257,13 +256,12 @@ errors:
   kitBuy: "You can't afford this kit!"
   kitSelect: "You don't own this kit!"
   kitUpgrade: "You can't afford this upgrade!"
-  level: "You don't have enough experience levels!"
   naked: "You cannot equip armor and must remain naked!"
   ninja: "You cannot equip armor while invisible!"
   noArena: "No arena with this name exists!"
   noGameEnd: "No game to end!"
   notInGame: "You are not in a game!"
-  offWeapon: "Weapons are not allowed on the off hand!"
+  offWeapon: "Weapons and Mage essences are not allowed on the off-hand!"
   outdated: "Something in your plugin setup is outdated! Use %s to attempt automatic updates. Please check the console
     for detailed info."
   permission: "You do not have permission to do this!"
@@ -462,6 +460,25 @@ itemLore:
     t10:
       name: "Crossbow of Fatal Precision %s"
       description: "Even the Ender Dragon quivers at the sight of this lethal weapon."
+  essences:
+    t0:
+      name: "Feeble %s Essence %s"
+      description: "Barely enough essence to practice with, but good enough."
+    t1:
+      name: "Minor %s Essence %s"
+      description: "A good bit of acceptable-quality essence to play with."
+    t2:
+      name: "Common %s Essence %s"
+      description: "Some typical essence used for common jobs."
+    t3:
+      name: "Exemplary %s Essence %s"
+      description: "Refined essence consumed for demanding tasks."
+    t4:
+      name: "Distinguished %s Essence %s"
+      description: "Top-notch essence only masters of the practice can control."
+    t5:
+      name: "Exquisite %s Essence %s"
+      description: "Priceless essence sought after by legends and heroes."
   helmets:
     t1:
       name: "Hide Helmet %s"
@@ -610,21 +627,26 @@ kits:
   knight:
     name: "Knight"
     description: "Give yourself and nearby allies resistance"
+    effect: "%s armor and %s toughness"
   mage:
     name: "Mage"
     description: "Shoot fireballs"
+    effect: "Shoot fireballs"
   merchant:
     name: "Merchant"
     description: "Earn a %s rebate on all purchases"
   messenger:
     name: "Messenger"
     description: "Give yourself and nearby allies speed"
+    effect: "%s speed"
   monk:
     name: "Monk"
     description: "Give yourself and nearby allies haste"
+    effect: "%s haste"
   ninja:
     name: "Ninja"
     description: "You and your pets become become invisible"
+    effect: "Invisibility"
   orc:
     name: "Orc"
     description: "Start with a high-knockback stick"
@@ -637,6 +659,7 @@ kits:
   priest:
     name: "Priest"
     description: "Give yourself and nearby allies regeneration"
+    effect: "%s regeneration"
   reaper:
     name: "Reaper"
     description: "Start with a powerful scythe"
@@ -646,6 +669,7 @@ kits:
   siren:
     name: "Siren"
     description: "Slow and even weaken nearby enemies"
+    effect: "%s speed and %s damage to enemies"
   soldier:
     name: "Soldier"
     description: "Start with a stronger sword"
@@ -671,6 +695,7 @@ kits:
   templar:
     name: "Templar"
     description: "Give yourself and nearby players absorption"
+    effect: "Restore up to %s absorption"
   trader:
     name: "Trader"
     description: "Start with 200 gems"
@@ -680,6 +705,7 @@ kits:
   warrior:
     name: "Warrior"
     description: "Give yourself and nearby allies strength"
+    effect: "%s damage"
   witch:
     name: "Witch"
     description: "Become immune to negative potion effects"
@@ -699,10 +725,12 @@ messages:
   attackSweepDamage: "Sweep Damage: %s"
   attackType: "Type: %s"
   available: "Available"
+  blocks: "%s blocks"
   capacity: "Capacity: %s"
   challenges: "Challenges"
   closed: "Closed"
   commandFormat: "Command format: %s"
+  cooldown: "Cooldown: %s"
   crystalBonus: "+%s %s bonus"
   crystalBalance: "%s Balance"
   crystalsEarned: "You earned %s %s this game!"
@@ -714,6 +742,8 @@ messages:
   disabled: "DISABLED"
   duplicatePlaceholder: "Out of stock!"
   durability: "Durability: %s"
+  duration: "Duration: %s"
+  effect: "Effect: %s"
   effectKitsDescription: "Kits give players a permanent special effect"
   effectShare: "Someone shared an effect with you!"
   end: "You defeated up to wave %s! Ending in %s seconds."
@@ -773,6 +803,7 @@ messages:
   playerStatistics: "%s's Statistics"
   purchase: "Purchase"
   purchased: "Purchased!"
+  range: "Range: %s"
   record: "New arena record!"
   records: "Records"
   refill: "Refill: %s"
