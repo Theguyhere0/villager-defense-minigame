@@ -2,6 +2,7 @@ package me.theguyhere.villagerdefense.plugin.game.models.items.weapons;
 
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.ChatColor;
@@ -15,13 +16,115 @@ import java.util.List;
 
 public abstract class Bow extends VDWeapon {
     @NotNull
-    public static ItemStack create(double difficulty) {
-        return create(Math.max(getLevel(difficulty) * 2 - 2, 1));
-    }
-
-    @NotNull
-    public static ItemStack create(int level) {
+    public static ItemStack create(BowType type) {
         List<String> lores = new ArrayList<>();
+
+        // Set name
+        String name;
+        switch (type) {
+            case T1:
+                name = CommunicationManager.format(
+                        new ColoredMessage(LanguageManager.itemLore.bows.t1.name),
+                        "[T1]"
+                );
+                break;
+            case T2:
+                name = CommunicationManager.format(
+                        new ColoredMessage(LanguageManager.itemLore.bows.t2.name),
+                        "[T2]"
+                );
+                break;
+            case T3:
+                name = CommunicationManager.format(
+                        new ColoredMessage(LanguageManager.itemLore.bows.t3.name),
+                        "[T3]"
+                );
+                break;
+            case T4:
+                name = CommunicationManager.format(
+                        new ColoredMessage(LanguageManager.itemLore.bows.t4.name),
+                        "[T4]"
+                );
+                break;
+            case T5:
+                name = CommunicationManager.format(
+                        new ColoredMessage(LanguageManager.itemLore.bows.t5.name),
+                        "[T5]"
+                );
+                break;
+            case T6:
+                name = CommunicationManager.format(
+                        new ColoredMessage(LanguageManager.itemLore.bows.t6.name),
+                        "[T6]"
+                );
+                break;
+            case T7:
+                name = CommunicationManager.format(
+                        new ColoredMessage(LanguageManager.itemLore.bows.t7.name),
+                        "[T7]"
+                );
+                break;
+            case T8:
+                name = CommunicationManager.format(
+                        new ColoredMessage(LanguageManager.itemLore.bows.t8.name),
+                        "[T8]"
+                );
+                break;
+            case T9:
+                name = CommunicationManager.format(
+                        new ColoredMessage(LanguageManager.itemLore.bows.t9.name),
+                        "[T9]"
+                );
+                break;
+            case T10:
+                name = CommunicationManager.format(
+                        new ColoredMessage(LanguageManager.itemLore.bows.t10.name),
+                        "[T10]"
+                );
+                break;
+            default:
+                name = "";
+        }
+
+        // Set description
+        String description;
+        switch (type) {
+            case T1:
+                description = LanguageManager.itemLore.bows.t1.description;
+                break;
+            case T2:
+                description = LanguageManager.itemLore.bows.t2.description;
+                break;
+            case T3:
+                description = LanguageManager.itemLore.bows.t3.description;
+                break;
+            case T4:
+                description = LanguageManager.itemLore.bows.t4.description;
+                break;
+            case T5:
+                description = LanguageManager.itemLore.bows.t5.description;
+                break;
+            case T6:
+                description = LanguageManager.itemLore.bows.t6.description;
+                break;
+            case T7:
+                description = LanguageManager.itemLore.bows.t7.description;
+                break;
+            case T8:
+                description = LanguageManager.itemLore.bows.t8.description;
+                break;
+            case T9:
+                description = LanguageManager.itemLore.bows.t9.description;
+                break;
+            case T10:
+                description = LanguageManager.itemLore.bows.t10.description;
+                break;
+            default:
+                description = "";
+        }
+        if (!description.isEmpty())
+            lores.addAll(CommunicationManager.formatDescriptionList(
+                    ChatColor.GRAY, description, Utils.LORE_CHAR_LIMIT));
 
         // Add space in lore from name
         lores.add("");
@@ -30,9 +133,55 @@ public abstract class Bow extends VDWeapon {
         lores.add(CommunicationManager.format(ATTACK_TYPE, ATTACK_TYPE_NORMAL));
 
         // Set range damage
-        int damageLow = 6 + 2 * ((level - 1) / 2);
-        int damageHigh = 12 + 2 * (level / 2);
-        lores.add(CommunicationManager.format(RANGE_DAMAGE, new ColoredMessage(ChatColor.DARK_AQUA,
+        int damageLow, damageHigh;
+        switch (type) {
+            case T1:
+                damageLow = 6;
+                damageHigh = 12;
+                break;
+            case T2:
+                damageLow = 6;
+                damageHigh = 14;
+                break;
+            case T3:
+                damageLow = 8;
+                damageHigh = 15;
+                break;
+            case T4:
+                damageLow = 9;
+                damageHigh = 18;
+                break;
+            case T5:
+                damageLow = 12;
+                damageHigh = 18;
+                break;
+            case T6:
+                damageLow = 12;
+                damageHigh = 21;
+                break;
+            case T7:
+                damageLow = 14;
+                damageHigh = 23;
+                break;
+            case T8:
+                damageLow = 15;
+                damageHigh = 26;
+                break;
+            case T9:
+                damageLow = 17;
+                damageHigh = 28;
+                break;
+            case T10:
+                damageLow = 20;
+                damageHigh = 30;
+                break;
+            default:
+                damageLow = damageHigh = 0;
+        }
+        if (damageLow == damageHigh)
+            lores.add(CommunicationManager.format(RANGE_DAMAGE, new ColoredMessage(ChatColor.DARK_AQUA,
+                    String.format(LanguageManager.messages.perBlock, Integer.toString(damageLow)))));
+        else lores.add(CommunicationManager.format(RANGE_DAMAGE, new ColoredMessage(ChatColor.DARK_AQUA,
                 String.format(LanguageManager.messages.perBlock, damageLow + "-" + damageHigh))));
 
         // Set attack speed
@@ -42,19 +191,88 @@ public abstract class Bow extends VDWeapon {
         lores.add(CommunicationManager.format(AMMO_COST, new ColoredMessage(ChatColor.RED, Integer.toString(1))));
 
         // Set durability
+        int durability;
+        switch (type) {
+            case T1:
+                durability = 100;
+                break;
+            case T2:
+                durability = 140;
+                break;
+            case T3:
+                durability = 165;
+                break;
+            case T4:
+                durability = 190;
+                break;
+            case T5:
+                durability = 275;
+                break;
+            case T6:
+                durability = 320;
+                break;
+            case T7:
+                durability = 380;
+                break;
+            case T8:
+                durability = 550;
+                break;
+            case T9:
+                durability = 660;
+                break;
+            case T10:
+                durability = 850;
+                break;
+            default: durability = 0;
+        }
         lores.add(CommunicationManager.format(DURABILITY,
-                new ColoredMessage(ChatColor.GREEN, "100").toString() +
-                        new ColoredMessage(ChatColor.WHITE, " / 100")));
+                new ColoredMessage(ChatColor.GREEN, Integer.toString(durability)).toString() +
+                        new ColoredMessage(ChatColor.WHITE, " / " + durability)));
 
         // Set price
-        int price = (int) (170 + 55 * level * Math.pow(Math.E, (level - 1) / 50d));
-        lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
-                price));
+        int price;
+        switch (type) {
+            case T1:
+                price = 225;
+                break;
+            case T2:
+                price = 290;
+                break;
+            case T3:
+                price = 335;
+                break;
+            case T4:
+                price = 390;
+                break;
+            case T5:
+                price = 490;
+                break;
+            case T6:
+                price = 540;
+                break;
+            case T7:
+                price = 610;
+                break;
+            case T8:
+                price = 760;
+                break;
+            case T9:
+                price = 880;
+                break;
+            case T10:
+                price = 1160;
+                break;
+            default: price = -1;
+        }
+        if (price >= 0)
+            lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
+                    price));
 
-        // Set name and return
-        return ItemManager.createItem(Material.BOW, CommunicationManager.format(
-                        new ColoredMessage(ChatColor.GRAY, LanguageManager.messages.bow), Integer.toString(level)),
-                ItemManager.BUTTON_FLAGS, null, lores);
+        // Create item
+        ItemStack item = ItemManager.createItem(Material.BOW, name, ItemManager.BUTTON_FLAGS, null, lores);
+        if (durability == 0)
+            return ItemManager.makeUnbreakable(item);
+        else return item;
     }
 
     public static boolean matches(ItemStack toCheck) {
@@ -68,5 +286,18 @@ public abstract class Bow extends VDWeapon {
             return false;
         return toCheck.getType() == Material.BOW && lore.stream().anyMatch(line -> line.contains(
                 RANGE_DAMAGE.toString().replace("%s", "")));
+    }
+
+    public enum BowType{
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10
     }
 }

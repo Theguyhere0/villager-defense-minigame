@@ -12,7 +12,7 @@ public abstract class ChallengeSelector extends VDMenuItem {
     public static ItemStack create() {
         return ItemManager.createItem(Material.NETHER_STAR,
                 CommunicationManager.format("&9&l" + LanguageManager.names.challengeSelection),
-                ItemManager.HIDE_ENCHANT_FLAGS, ItemManager.dummyEnchant());
+                ItemManager.HIDE_ENCHANT_FLAGS, ItemManager.glow());
     }
 
     public static boolean matches(ItemStack toCheck) {

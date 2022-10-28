@@ -1,7 +1,9 @@
-package me.theguyhere.villagerdefense.plugin.game.models.mobs;
+package me.theguyhere.villagerdefense.plugin.game.models.mobs.villagers;
 
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.Team;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Villager;
 import org.bukkit.metadata.FixedMetadataValue;

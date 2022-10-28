@@ -1,6 +1,9 @@
-package me.theguyhere.villagerdefense.plugin.game.models.mobs;
+package me.theguyhere.villagerdefense.plugin.game.models.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.TargetPriority;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import org.bukkit.Location;
 import org.bukkit.entity.Drowned;
 import org.bukkit.entity.EntityType;
@@ -19,7 +22,7 @@ public class VDDrowned extends VDMinion {
                 "Drowned",
                 "This underwater undead seems to despise Villagers more than players, and slows down whoever " +
                         "they strike.",
-                getLevel(arena.getCurrentDifficulty(), 1.75, 5),
+                VDMob.getLevel(arena.getCurrentDifficulty(), 1.75, 5),
                 AttackType.PENETRATING
         );
         ((Drowned) mob).setAdult();

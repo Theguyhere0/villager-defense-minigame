@@ -82,14 +82,10 @@ public class Buttons {
     }
 
     // Placeholders
-    public static @NotNull ItemStack levelPlaceholder(int level) {
+    @NotNull
+    public static ItemStack levelPlaceholder(int level) {
         return ItemManager.createItem(Material.GUNPOWDER, CommunicationManager.format(
                 new ColoredMessage(ChatColor.GRAY, LanguageManager.messages.levelPlaceholder),
                 Integer.toString(level)), ItemManager.BUTTON_FLAGS, null);
-    }
-    public static @NotNull ItemStack duplicatePlaceholder() {
-        return ItemManager.createItem(Material.GUNPOWDER,
-                new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.duplicatePlaceholder).toString(),
-                ItemManager.BUTTON_FLAGS, null);
     }
 }

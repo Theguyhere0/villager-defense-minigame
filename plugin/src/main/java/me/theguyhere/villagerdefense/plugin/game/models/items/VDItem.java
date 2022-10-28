@@ -63,7 +63,7 @@ public abstract class VDItem {
 
         // Filter items without custom durability
         if (maxDur.get() == 0)
-            return false;
+            return true;
 
         // Update and check for used up item
         if (damagePercent < 0)
@@ -83,7 +83,7 @@ public abstract class VDItem {
         meta.setLore(lores);
 
         // Set damage indicator
-        damage.setDamage((int) (((item.getType().getMaxDurability() - durability.get()) * 1. / maxDur.get()) *
+        damage.setDamage((int) item.getType().getMaxDurability() - (int) (durability.get() * 1. / maxDur.get() *
                 item.getType().getMaxDurability()));
 
         item.setItemMeta(meta);

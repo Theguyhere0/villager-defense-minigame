@@ -10,10 +10,12 @@ import me.theguyhere.villagerdefense.plugin.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.*;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.minions.VDWitch;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.villagers.VDFletcher;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.villagers.VDNormalVillager;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
@@ -31,6 +33,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
@@ -84,10 +87,26 @@ public class Arena {
     private int cornerParticlesID = 0;
     /** A list of players in the arena.*/
     private final List<VDPlayer> players = new ArrayList<>();
-    /** Weapon shop inventory.*/
-    private Inventory weaponShop;
-    /** Armor shop inventory.*/
-    private Inventory armorShop;
+    /** Sword shop inventory.*/
+    private Inventory swordShop;
+    /** Axe shop inventory.*/
+    private Inventory axeShop;
+    /** Scythe shop inventory.*/
+    private Inventory scytheShop;
+    /** Bow shop inventory.*/
+    private Inventory bowShop;
+    /** Crossbow shop inventory.*/
+    private Inventory crossbowShop;
+    /** Ammo shop inventory.*/
+    private Inventory ammoShop;
+    /** Helmet shop inventory.*/
+    private Inventory helmetShop;
+    /** Chestplate shop inventory.*/
+    private Inventory chestplateShop;
+    /** Leggings shop inventory.*/
+    private Inventory leggingsShop;
+    /** Boots shop inventory.*/
+    private Inventory bootsShop;
     /** Consumables shop inventory.*/
     private Inventory consumeShop;
     /** Community chest inventory.*/
@@ -107,6 +126,7 @@ public class Arena {
 
     // Task names
     private static final String NOTIFY_WAITING = "notifyWaiting";
+    private static final String NOTIFY_INFO = "notifyInfo";
     private static final String ONE_MINUTE_NOTICE = "1MinuteNotice";
     private static final String THIRTY_SECOND_NOTICE = "30SecondNotice";
     private static final String TEN_SECOND_NOTICE = "10SecondNotice";
@@ -1477,6 +1497,57 @@ public class Arena {
                 Utils.secondsToTicks(Utils.minutesToSeconds(1)));
     }
 
+    public void addNotifyInfo() throws ArenaClosedException, ArenaStatusException, ArenaTaskException {
+        // Check if waiting notifications can start
+        if (isClosed())
+            throw new ArenaClosedException();
+        if (status != ArenaStatus.WAITING)
+            throw new ArenaStatusException(ArenaStatus.WAITING);
+        if (activeTasks.containsKey(NOTIFY_INFO))
+            throw new ArenaTaskException("Arena already started info notifications");
+
+        // Start repeating notification of info
+        activeTasks.put(NOTIFY_INFO, new BukkitRunnable() {
+            @Override
+            public void run() {
+                String LIST = "  - ";
+                // Task
+                getPlayers().forEach(player -> {
+                    PlayerManager.notify(player.getPlayer(), new ColoredMessage(ChatColor.DARK_AQUA,
+                            LanguageManager.messages.quickInfo), new ColoredMessage(ChatColor.DARK_GREEN, getName()));
+                    player.getPlayer().sendMessage(new ColoredMessage(ChatColor.GOLD, LIST + (getMaxWaves() < 0 ?
+                            LanguageManager.messages.noLastWave : String.format(LanguageManager.messages.finalWave,
+                            getMaxWaves()))).toString());
+                    player.getPlayer().sendMessage(new ColoredMessage(hasDynamicCount() ? ChatColor.GREEN :
+                            ChatColor.RED, String.format(LIST + LanguageManager.messages.dynamicMobCount,
+                            hasDynamicCount() ? LanguageManager.messages.will :
+                                    LanguageManager.messages.willNot)).toString());
+                    player.getPlayer().sendMessage(new ColoredMessage(hasDynamicDifficulty() ? ChatColor.GREEN :
+                            ChatColor.RED, String.format(LIST + LanguageManager.messages.dynamicDifficulty,
+                            hasDynamicDifficulty() ? LanguageManager.messages.will :
+                                    LanguageManager.messages.willNot)).toString());
+                    player.getPlayer().sendMessage(new ColoredMessage(hasDynamicPrices() ? ChatColor.GREEN :
+                            ChatColor.RED, String.format(LIST + LanguageManager.messages.dynamicPrices,
+                            hasDynamicPrices() ? LanguageManager.messages.will :
+                                    LanguageManager.messages.willNot)).toString());
+                    player.getPlayer().sendMessage(new ColoredMessage(hasDynamicLimit() ? ChatColor.GREEN :
+                            ChatColor.RED, String.format(LIST + LanguageManager.messages.dynamicTimeLimit,
+                            hasDynamicLimit() ? LanguageManager.messages.will :
+                                    LanguageManager.messages.willNot)).toString());
+                    player.getPlayer().sendMessage(new ColoredMessage(hasLateArrival() ? ChatColor.GREEN :
+                            ChatColor.RED, String.format(LIST + LanguageManager.messages.lateArrival,
+                            hasLateArrival() ? LanguageManager.messages.will : LanguageManager.messages.willNot))
+                            .toString());
+                    player.getPlayer().sendMessage(new ColoredMessage(hasCommunity() ? ChatColor.GREEN : ChatColor.RED,
+                            String.format(LIST + LanguageManager.messages.communityChest, hasCommunity() ?
+                                    LanguageManager.messages.will : LanguageManager.messages.willNot)).toString());
+                });
+            }
+        });
+        activeTasks.get(NOTIFY_INFO).runTaskTimer(Main.plugin, Utils.secondsToTicks(30),
+                Utils.secondsToTicks(Utils.minutesToSeconds(1)));
+    }
+
     public void startCountDown() throws ArenaStatusException, ArenaClosedException, ArenaTaskException {
         // Check additionally for if countdown already started
         if (activeTasks.containsKey(START_ARENA) || activeTasks.containsKey(FORCE_START_ARENA))
@@ -1494,8 +1565,11 @@ public class Arena {
         if (getActiveCount() == 0)
             throw new ArenaTaskException("Arena cannot start countdown without players");
 
-        // Clear active tasks
-        activeTasks.forEach((name, task) -> task.cancel());
+        // Clear active tasks except notify info
+        activeTasks.forEach((name, task) -> {
+                if(!name.equals(NOTIFY_INFO))
+                    task.cancel();
+        });
         activeTasks.clear();
 
         // Two-minute notice
@@ -1721,30 +1795,12 @@ public class Arena {
             startBorderParticles();
 
         getActives().forEach(player -> {
-            Kit second;
-
-            // Give second kit to players with two kit bonus
-            if (player.isBoosted() && PlayerManager.hasAchievement(player.getID(), Achievement.allKits().getID()))
-                do {
-                    second = Kit.randomKit();
-
-                    // Single tier kits
-                    if (!second.isMultiLevel())
-                        second.setKitLevel(1);
-
-                        // Multiple tier kits
-                    else second.setKitLevel(PlayerManager.getMultiTierKitLevel(player.getID(), second.getID()));
-
-                    player.setKit2(second);
-                } while (second.equals(player.getKit()));
-
             // Give all players starting items and set up attributes
             player.giveItems();
             player.setupAttributes();
 
             // Give Traders their gems
-            if (Kit.trader().setKitLevel(1).equals(player.getKit()) ||
-                    Kit.trader().setKitLevel(1).equals(player.getKit2()))
+            if (Kit.trader().setKitLevel(1).equals(player.getKit()))
                 player.addGems(200);
 
             // Give gems from crystal conversion
@@ -1766,9 +1822,17 @@ public class Arena {
         ));
 
         // Initiate shops
-        setWeaponShop(Inventories.createWeaponShopMenu(1, this));
-        setArmorShop(Inventories.createArmorShopMenu(1, this));
-        setConsumeShop(Inventories.createConsumableShopMenu(1, this));
+        swordShop = Inventories.createSwordShopMenu(1, this);
+        axeShop = Inventories.createAxeShopMenu(1, this);
+        scytheShop = Inventories.createScytheShopMenu(1, this);
+        bowShop = Inventories.createBowShopMenu(1, this);
+        crossbowShop = Inventories.createCrossbowShopMenu(1, this);
+        ammoShop = Inventories.createAmmoShopMenu(1, this);
+        helmetShop = Inventories.createHelmetShopMenu(1, this);
+        chestplateShop = Inventories.createChestplateShopMenu(1, this);
+        leggingsShop = Inventories.createLeggingsShopMenu(1, this);
+        bootsShop = Inventories.createBootsShopMenu(1, this);
+        consumeShop = Inventories.createConsumableShopMenu(1, this);
 
         // Start dialogue, then trigger WaveEndEvent
         for (VDPlayer player : getPlayers()) {
@@ -1871,7 +1935,7 @@ public class Arena {
             @Override
             public void run() {
                 // Update player stats to show
-                getActives().forEach(VDPlayer::showAndUpdatStats);
+                getActives().forEach(VDPlayer::showAndUpdateStats);
 
                 // Update mob targets
                 mobs.forEach(mob -> {
@@ -1884,6 +1948,8 @@ public class Arena {
                             .stream()
                             .filter(entity -> entity instanceof LivingEntity)
                             .filter(entity -> !entity.isDead())
+                            .filter(entity -> ((LivingEntity) entity).getActivePotionEffects().stream()
+                                    .noneMatch(potion -> potion.getType().equals(PotionEffectType.INVISIBILITY)))
                             .filter(entity -> mobster.getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue())
                                     && entity instanceof Player || !(entity instanceof Player) &&
                                     !mobster.getMetadata(VDMob.TEAM).equals(entity.getMetadata(VDMob.TEAM)))
@@ -1921,7 +1987,7 @@ public class Arena {
         activeTasks.put(TWENTY_TICK, new BukkitRunnable() {
             @Override
             public void run() {
-                // Refill ammo
+                // Heal
                 getActives().forEach(VDPlayer::heal);
             }
         });
@@ -2112,9 +2178,17 @@ public class Arena {
         // Regenerate shops when time and notify players of it, then start after 25 seconds
         if (currentWave % 5 == 0) {
             int level = currentWave / 5 + 1;
-            setWeaponShop(Inventories.createWeaponShopMenu(level, this));
-            setArmorShop(Inventories.createArmorShopMenu(level, this));
-            setConsumeShop(Inventories.createConsumableShopMenu(level, this));
+            swordShop = Inventories.createSwordShopMenu(level, this);
+            axeShop = Inventories.createAxeShopMenu(level, this);
+            scytheShop = Inventories.createScytheShopMenu(level, this);
+            bowShop = Inventories.createBowShopMenu(level, this);
+            crossbowShop = Inventories.createCrossbowShopMenu(level, this);
+            ammoShop = Inventories.createAmmoShopMenu(level, this);
+            helmetShop = Inventories.createHelmetShopMenu(level, this);
+            chestplateShop = Inventories.createChestplateShopMenu(level, this);
+            leggingsShop = Inventories.createLeggingsShopMenu(level, this);
+            bootsShop = Inventories.createBootsShopMenu(level, this);
+            consumeShop = Inventories.createConsumableShopMenu(level, this);
             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> getActives().forEach(player ->
                     player.getPlayer().sendTitle(CommunicationManager.format(
                                     "&6" + LanguageManager.messages.shopUpgrade),
@@ -2657,6 +2731,7 @@ public class Arena {
         refreshPortal();
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isSpawningMonsters() {
         return spawningMonsters;
     }
@@ -2675,6 +2750,10 @@ public class Arena {
 
     public int getCurrentWave() {
         return currentWave;
+    }
+
+    public int getCurrentShopLevel() {
+        return currentWave / 5 + 1;
     }
 
     public double getCurrentDifficulty() {
@@ -2808,10 +2887,6 @@ public class Arena {
         }
     }
 
-    public boolean hasPlayer(VDPlayer player) {
-        return players.stream().filter(Objects::nonNull).anyMatch(p -> p.equals(player));
-    }
-
     public int getActiveCount() {
         return getActives().size();
     }
@@ -2828,28 +2903,48 @@ public class Arena {
         return getSpectators().size();
     }
 
-    public Inventory getWeaponShop() {
-        return weaponShop;
+    public Inventory getSwordShop() {
+        return swordShop;
     }
 
-    public void setWeaponShop(Inventory weaponShop) {
-        this.weaponShop = weaponShop;
+    public Inventory getAxeShop() {
+        return axeShop;
     }
 
-    public Inventory getArmorShop() {
-        return armorShop;
+    public Inventory getScytheShop() {
+        return scytheShop;
     }
 
-    public void setArmorShop(Inventory armorShop) {
-        this.armorShop = armorShop;
+    public Inventory getBowShop() {
+        return bowShop;
+    }
+
+    public Inventory getCrossbowShop() {
+        return crossbowShop;
+    }
+
+    public Inventory getAmmoShop() {
+        return ammoShop;
+    }
+
+    public Inventory getHelmetShop() {
+        return helmetShop;
+    }
+
+    public Inventory getChestplateShop() {
+        return chestplateShop;
+    }
+
+    public Inventory getLeggingsShop() {
+        return leggingsShop;
+    }
+
+    public Inventory getBootsShop() {
+        return bootsShop;
     }
 
     public Inventory getConsumeShop() {
         return consumeShop;
-    }
-
-    public void setConsumeShop(Inventory consumeShop) {
-        this.consumeShop = consumeShop;
     }
 
     public Inventory getCommunityChest() {
@@ -2998,7 +3093,7 @@ public class Arena {
         }
 
         return (int) getActives().stream().filter(VDPlayer::isSharing).filter(player ->
-                effectKit.equals(player.getKit()) || effectKit.equals(player.getKit2())).count();
+                effectKit.equals(player.getKit())).count();
     }
 
     /**

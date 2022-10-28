@@ -147,12 +147,6 @@ arenaStats:
   dynamicTimeLimit:
     name: "Dynamic Time Limit"
     description: "Wave time limit adjusting based on in-game difficulty"
-  expDrop:
-    name: "Experience Drop"
-    description: "Whether experience orbs drop or go straight into the killer's experience bar"
-  gemDrop:
-    name: "Gem Drop"
-    description: "Whether gems drop as physical gems or go straight into the killer's balance"
   golemCap:
     name: "Iron Golem Cap"
     description: "Maximum iron golems an arena can have"
@@ -171,14 +165,11 @@ arenaStats:
   timeLimit:
     name: "Wave Time Limit"
     description: "The time limit for each wave before the game ends"
-  wolfCap:
-    name: "Wolf Cap"
-    description: "Maximum wolves a player can have"
 challenges:
   amputee:
     name: "Amputee"
-    description1: "Where's my arm?"
-    description2: "No dual-wielding"
+    description1: "Can't carry my weight!"
+    description2: "No inventory"
   blind:
     name: "Blind"
     description1: "I hope you have good headphones"
@@ -218,7 +209,6 @@ confirms:
   boostAdd: "You've received a permanent boost! Check your achievements for details."
   boots: "Boots equipped!"
   buy: "Item purchased!"
-  carePackage: "Care package delivered!"
   challengeAdd: "Challenge added!"
   challengeDelete: "Challenge removed!"
   chestplate: "Chestplate equipped!"
@@ -231,8 +221,8 @@ confirms:
   reset: "Player stats reset!"
 errors:
   activePlayer: "You must be an active player to start a game!"
-  ammoOffHand: "You must have ammo in your off hand!"
-  amputee: "You cannot use your off hand!"
+  ammoOffHand: "No ammo on off-hand!"
+  amputee: "You cannot use your inventory!"
   arenaInProgress: "The arena already has a game in progress!"
   arenaNoPlayers: "The arena needs at least 1 player to start!"
   bounds: "You must remain within the arena bounds!"
@@ -242,7 +232,6 @@ errors:
   command: "Invalid command. Use %s for more info."
   communityChest: "Community chest has been disabled!"
   construction: "This feature is under construction!"
-  cooldown: "You have %s seconds left on your cooldown!"
   economy: "Vault Economy is being used instead of Crystals!"
   emptyArena: "The arena has no players!"
   endingSoon: "Game about to end!"
@@ -258,13 +247,12 @@ errors:
   kitBuy: "You can't afford this kit!"
   kitSelect: "You don't own this kit!"
   kitUpgrade: "You can't afford this upgrade!"
-  level: "You don't have enough experience levels!"
   naked: "You cannot equip armor and must remain naked!"
   ninja: "You cannot equip armor while invisible!"
   noArena: "No arena with this name exists!"
   noGameEnd: "No game to end!"
   notInGame: "You are not in a game!"
-  offWeapon: "Weapons are not allowed on the off hand!"
+  offWeapon: "Weapons and Mage essences are not allowed on the off-hand!"
   outdated: "Something in your plugin setup is outdated! Use %s to attempt automatic updates. Please check the console
     for detailed info."
   permission: "You do not have permission to do this!"
@@ -275,14 +263,346 @@ errors:
   suicide: "You must be alive to kill yourself!"
   suicideActive: "You must be in an active game to kill yourself!"
   teleport: "You must leave the arena before you can teleport! Use %s to leave the arena."
-  wolf: "You can only have up to %s wolves!"
+itemLore:
+  ammo:
+    t1:
+      name: "Roll of Ammo %s"
+      description: "A little roll of conventional ammunition for ranged weapons."
+    t2:
+      name: "Pack of Ammo %s"
+      description: "A small package of ammunition."
+    t3:
+      name: "Bundle of Ammo %s"
+      description: "A sizeable bundle of ammunition."
+    t4:
+      name: "Stack of Ammo %s"
+      description: "A large stash of ammunition for ammo-hungry weapons."
+    t5:
+      name: "Regenerating Ammo Cartridge (RAC) %s"
+      description: "Notchian mages of have found a way to replenish ammunition passively in these magical cartridges."
+    t6:
+      name: "Reinforced RAC %s"
+      description: "A cartridge reinforced with a mystical steel trim."
+    t7:
+      name: "High-density RAC %s"
+      description: "A complex compression technique was used to fit more into this cartridge."
+    t8:
+      name: "Enchanted RAC %s"
+      description: "A glimmering cartridge pulsating with magical energy."
+    t9:
+      name: "RAC of Noble Mages %s"
+      description: "This ethereal cartridge was fabricated by the best mages of the realm."
+    t10:
+      name: "Void RAC %s"
+      description: "Forged in the abyss of the void, this cartridge replenishes unthinkable quantities of ammunition."
+  axes:
+    t1:
+      name: "Meat Mallet %s"
+      description: "A dull wooden axe meant for tenderizing meat."
+    t2:
+      name: "Lumbar Axe %s"
+      description: "A well-worn piece of stone bound to a tough handle."
+    t3:
+      name: "Ceremonial Axe %s"
+      description: "A sleek sheet of marble mounted on an oak handle."
+    t4:
+      name: "Obsidian Axe %s"
+      description: "A balanced, razor sharp, obsidian head resting on a maple handle."
+    t5:
+      name: "Axe of The Executioner %s"
+      description: "The tool of choice to empty out prison cells."
+    t6:
+      name: "Steel Axe %s"
+      description: "Forged from high-grade steel, this is the finest axe on the market."
+    t7:
+      name: "Axe of Royal Blacksmiths %s"
+      description: "A gleaming axe meticulously forged by the best blacksmiths of the kingdom."
+    t8:
+      name: "Crystal Axe %s"
+      description: "A glistening head of crystalline beauty and striking terror."
+    t9:
+      name: "Axe of The Warlord %s"
+      description: "A fear-invoking weapon that severed the heads of countless generals."
+    t10:
+      name: "Necrotic Axe %s"
+      description: "The mutilated souls that fell to this mighty axe stained its head a lifeless black."
+  boots:
+    t1:
+      name: "Hide Boots %s"
+      description: "Tough animal hide sewn into a nice pair of boots."
+    t2:
+      name: "Winter Boots %s"
+      description: "Thick leather, fur, and hide sewn together to form a hefty pair of boots."
+    t3:
+      name: "Mesh Reinforced Boots %s"
+      description: "Leather boots reinforced with an internal iron mesh."
+    t4:
+      name: "Iron Mail Boots %s"
+      description: "Boots made from interlocking rings of iron."
+    t5:
+      name: "Steel Plate Boots %s"
+      description: "Plates of tough steel bolted together into a pair of boots."
+    t6:
+      name: "Silver Plate Boots %s"
+      description: "Plates of glorious silver bolted together into a pair of boots."
+    t7:
+      name: "Platinum Plate Boots %s"
+      description: "Plates of majestic platinum bolted together into a pair of boots."
+    t8:
+      name: "Crystal Sheet Boots %s"
+      description: "Sheets of gleaming diamond crystals linked together into a pair of boots."
+    t9:
+      name: "Alloyed Crystal Boots %s"
+      description: "High-grade steel infused with crystalline dust to form an impenetrable pair of boots."
+    t10:
+      name: "Phantom Steel Boots %s"
+      description: "A diabolic pair of boots forged from phantom steel summoned in arcane rituals."
+  bows:
+    t1:
+      name: "Toy Bow %s"
+      description: "A cheap bow with reduced size and power to make it safer for children."
+    t2:
+      name: "Bow of the Scavenger %s"
+      description: "A perfect low-powered bow for taking down small game."
+    t3:
+      name: "Ceremonial Bow %s"
+      description: "A beautiful wooden piece of art way too stiff for serious combat."
+    t4:
+      name: "Recurve Bow %s"
+      description: "A light but powerful maple bow cherished by the masses."
+    t5:
+      name: "Bow of The Hunter %s"
+      description: "When the feast calls for a wild boar, this is the bow for the job."
+    t6:
+      name: "Long Bow %s"
+      description: "A majestic bow with limbs of laminated red elm and strung with spider silk."
+    t7:
+      name: "Bow of Regal Bowyers %s"
+      description: "A brilliant steel bow crafted by the best bowyers of the kingdom."
+    t8:
+      name: "Compound Bow %s"
+      description: "An epic modern bow amplified by an advanced pulley system."
+    t9:
+      name: "Bow of The Ranger %s"
+      description: "A fabled bow capable of delivering a torrential rain of pain."
+    t10:
+      name: "Bow of Poignant Demise %s"
+      description: "The strings of this bow sing the grisly song of death."
+  chestplates:
+    t1:
+      name: "Hide Chestplate %s"
+      description: "Tough animal hide sewn into a nice chestplate."
+    t2:
+      name: "Winter Chestplate %s"
+      description: "Thick leather, fur, and hide sewn together to form a hefty chestplate."
+    t3:
+      name: "Mesh Reinforced Chestplate %s"
+      description: "Leather chestplate reinforced with an internal iron mesh."
+    t4:
+      name: "Iron Mail Chestplate %s"
+      description: "Chestplate made from interlocking rings of iron."
+    t5:
+      name: "Steel Plate Chestplate %s"
+      description: "Plates of tough steel bolted together into a chestplate."
+    t6:
+      name: "Silver Plate Chestplate %s"
+      description: "Plates of glorious silver bolted together into a chestplate."
+    t7:
+      name: "Platinum Plate Chestplate %s"
+      description: "Plates of majestic platinum bolted together into a chestplate."
+    t8:
+      name: "Crystal Sheet Chestplate %s"
+      description: "Sheets of gleaming diamond crystals linked together into a chestplate."
+    t9:
+      name: "Alloyed Crystal Chestplate %s"
+      description: "High-grade steel infused with crystalline dust to form an impenetrable chestplate."
+    t10:
+      name: "Phantom Steel Chestplate %s"
+      description: "A diabolic chestplate forged from phantom steel summoned in arcane rituals."
+  crossbows:
+    t1:
+      name: "Makeshift Crossbow %s"
+      description: "A plain bow strapped onto a roughly made stock."
+    t2:
+      name: "Crossbow of the Bandit %s"
+      description: "The typical crossbow used to rob passing merchants."
+    t3:
+      name: "Ceremonial Crossbow %s"
+      description: "A charming crossbow that isn't quite as comfortable as it appears."
+    t4:
+      name: "Recurve Crossbow %s"
+      description: "A light but powerful crossbow with cedar limbs and stock."
+    t5:
+      name: "Crossbow of Athletes %s"
+      description: "A well-balanced, accurate, and economical crossbow widely used in nonviolent competitions."
+    t6:
+      name: "Heavy Crossbow %s"
+      description: "A beast of a crossbow with incredible power that only the strongest can control."
+    t7:
+      name: "Crossbow of Imperial Marksmen %s"
+      description: "An illustrious steel crossbow trusted by the best marksmen of the empire."
+    t8:
+      name: "Compound Crossbow %s"
+      description: "A sleek modern crossbow amplified by an advanced pulley system."
+    t9:
+      name: "Crossbow of Silent Snipers %s"
+      description: "A silent but deadly crossbow with legendary prestige."
+    t10:
+      name: "Crossbow of Fatal Precision %s"
+      description: "Even the Ender Dragon quivers at the sight of this lethal weapon."
+  essences:
+    t0:
+      name: "Feeble %s Essence %s"
+      description: "Barely enough essence to practice with, but good enough."
+    t1:
+      name: "Minor %s Essence %s"
+      description: "A good bit of acceptable quality essence to play with."
+    t2:
+      name: "Common %s Essence %s"
+      description: "Some typical essence used for common jobs."
+    t3:
+      name: "Exemplary %s Essence %s"
+      description: "Refined essence consumed for demanding tasks."
+    t4:
+      name: "Distinguished %s Essence %s"
+      description: "Top-notch essence only masters of the practice can control."
+    t5:
+      name: "Exquisite %s Essence %s"
+      description: "Priceless essence sought after by legends and heroes."
+  helmets:
+    t1:
+      name: "Hide Helmet %s"
+      description: "Tough animal hide sewn into a nice helmet."
+    t2:
+      name: "Winter Helmet %s"
+      description: "Thick leather, fur, and hide sewn together to form a hefty helmet."
+    t3:
+      name: "Mesh Reinforced Helmet %s"
+      description: "Leather helmet reinforced with an internal iron mesh."
+    t4:
+      name: "Iron Mail Helmet %s"
+      description: "Helmet made from interlocking rings of iron."
+    t5:
+      name: "Steel Plate Helmet %s"
+      description: "Plates of tough steel bolted together into a helmet."
+    t6:
+      name: "Silver Plate Helmet %s"
+      description: "Plates of glorious silver bolted together into a helmet."
+    t7:
+      name: "Platinum Plate Helmet %s"
+      description: "Plates of majestic platinum bolted together into a helmet."
+    t8:
+      name: "Crystal Sheet Helmet %s"
+      description: "Sheets of gleaming diamond crystals linked together into a helmet."
+    t9:
+      name: "Alloyed Crystal Helmet %s"
+      description: "High-grade steel infused with crystalline dust to form an impenetrable helmet."
+    t10:
+      name: "Phantom Steel Helmet %s"
+      description: "A diabolic helmet forged from phantom steel summoned in arcane rituals."
+  leggings:
+    t1:
+      name: "Hide Leggings %s"
+      description: "Tough animal hide sewn into a nice pair of leggings."
+    t2:
+      name: "Winter Leggings %s"
+      description: "Thick leather, fur, and hide sewn together to form a hefty pair of leggings."
+    t3:
+      name: "Mesh Reinforced Leggings %s"
+      description: "Leather leggings reinforced with an internal iron mesh."
+    t4:
+      name: "Iron Mail Leggings %s"
+      description: "Leggings made from interlocking rings of iron."
+    t5:
+      name: "Steel Plate Leggings %s"
+      description: "Plates of tough steel bolted together into leggings."
+    t6:
+      name: "Silver Plate Leggings %s"
+      description: "Plates of glorious silver bolted together into leggings."
+    t7:
+      name: "Platinum Plate Leggings %s"
+      description: "Plates of majestic platinum bolted together into leggings."
+    t8:
+      name: "Crystal Sheet Leggings %s"
+      description: "Sheets of gleaming diamond crystals linked together into leggings."
+    t9:
+      name: "Alloyed Crystal Leggings %s"
+      description: "High-grade steel infused with crystalline dust to form impenetrable leggings."
+    t10:
+      name: "Phantom Steel Leggings %s"
+      description: "A diabolic pair of leggings forged from phantom steel summoned in arcane rituals."
+  scythes:
+    t1:
+      name: "Walking Cane %s"
+      description: "A curved wooden stick carried by the village elders."
+    t2:
+      name: "Farm Plough %s"
+      description: "A stone shard on a tough handle for carving at the earth."
+    t3:
+      name: "Ceremonial Scythe %s"
+      description: "A sleek shard of marble mounted on an oak handle."
+    t4:
+      name: "Obsidian Scythe %s"
+      description: "A jagged, razor sharp, obsidian shard resting on a maple handle."
+    t5:
+      name: "Scythe of The Gatekeeper %s"
+      description: "A simple weapon to intimidate and inspect travelers."
+    t6:
+      name: "Steel Scythe %s"
+      description: "Forged from high-grade steel, this is the finest scythe on the market."
+    t7:
+      name: "Scythe of Royal Weaponsmiths %s"
+      description: "A gleaming scythe meticulously forged by the best weaponsmiths of the kingdom."
+    t8:
+      name: "Crystal Scythe %s"
+      description: "A glistening shard of crystalline beauty and biting pain."
+    t9:
+      name: "Scythe of The Czar %s"
+      description: "A glorious scythe that cemented the ironclad rule of many leaders."
+    t10:
+      name: "Midnight Scythe %s"
+      description: "A scythe so deadly that even the shadows bleed on its arc."
+  swords:
+    starter:
+      name: "Training Sword %s"
+      description: "A cheap, weighted stick meant for combat against immobile dummies."
+    t1:
+      name: "Sword of The Apprentice %s"
+      description: "A fine wooden sword with a fire-hardened blade."
+    t2:
+      name: "Sword of The Peasant %s"
+      description: "A slab of chipped stone hastily bound to a tough handle."
+    t3:
+      name: "Ceremonial Sword %s"
+      description: "A sleek sheet of marble seated on an oak handle."
+    t4:
+      name: "Obsidian Sword %s"
+      description: "A well-weighted, razor sharp, obsidian blade resting on a maple handle."
+    t5:
+      name: "Sword of The Front Lines %s"
+      description: "The first weapon to clash at the sound of the battle horn."
+    t6:
+      name: "Steel Sword %s"
+      description: "Forged from high-grade steel, this is the finest sword on the market."
+    t7:
+      name: "Sword of Royal Swordsmiths %s"
+      description: "A gleaming sword meticulously forged by the best swordsmiths of the kingdom."
+    t8:
+      name: "Crystal Sword %s"
+      description: "A glistening blade of crystalline beauty and double-edged terror."
+    t9:
+      name: "Sword of The Emperor %s"
+      description: "An awe-inspiring masterpiece that brought kingdoms to their knees in the name of conquest."
+    t10:
+      name: "Sword of The Hero %s"
+      description: "The Wither once fell before this mighty sword, tinting the blade a soulless black."
 kits:
   alchemist:
     name: "Alchemist"
-    description: "Start with 1 speed and 2 healing splash potions"
+    description: "Start with a speed and a strength splash potions"
     items:
-      health: "Alchemist's Health Potion"
       speed: "Alchemist's Speed Potion"
+      strength: "Alchemist's Strength Potion"
   blacksmith:
     name: "Blacksmith"
     description: "All equipment purchased are unbreakable"
@@ -297,45 +617,55 @@ kits:
   knight:
     name: "Knight"
     description: "Give yourself and nearby allies resistance"
+    effect: "%s armor and %s toughness"
   mage:
     name: "Mage"
     description: "Shoot fireballs"
+    effect: "Shoot fireballs"
   merchant:
     name: "Merchant"
     description: "Earn a %s rebate on all purchases"
   messenger:
     name: "Messenger"
     description: "Give yourself and nearby allies speed"
+    effect: "%s speed"
   monk:
     name: "Monk"
     description: "Give yourself and nearby allies haste"
+    effect: "%s haste"
   ninja:
     name: "Ninja"
-    description: "You and your becomes become invisible and stun monsters"
+    description: "You and your pets become become invisible"
+    effect: "Invisibility"
   orc:
     name: "Orc"
-    description: "Start with a knockback V stick"
+    description: "Start with a high-knockback stick"
     items:
       club: "Orc's Club"
+      clubDesc: "An ungodly stick that excels at clobbering enemies."
   phantom:
     name: "Phantom"
     description: "Join as a player in any game using %s"
   priest:
     name: "Priest"
     description: "Give yourself and nearby allies regeneration"
+    effect: "%s regeneration"
   reaper:
     name: "Reaper"
-    description: "Start with a sharpness %s netherite hoe"
+    description: "Start with a powerful scythe"
     items:
       scythe: "Reaper's Scythe"
+      scytheDesc: "The weapon of choice for the quick striker."
   siren:
     name: "Siren"
     description: "Slow and even weaken nearby enemies"
+    effect: "%s speed and %s damage to enemies"
   soldier:
     name: "Soldier"
-    description: "Start with a stone sword"
+    description: "Start with a stronger sword"
     items:
       sword: "Soldier's Sword"
+      swordDesc: "A durable wooden sword made of treated walnut."
   summoner:
     name: "Summoner"
     description1: "Start with a wolf spawn"
@@ -346,7 +676,7 @@ kits:
       wolf: "Summoner's Wolf Spawn Egg"
   tailor:
     name: "Tailor"
-    description: "Start with a full leather armor set"
+    description: "Start with a full set of T1 armor"
     items:
       boots: "Tailor's Boots"
       chestplate: "Tailor's Chestplate"
@@ -354,25 +684,26 @@ kits:
       leggings: "Tailor's Leggings"
   templar:
     name: "Templar"
-    description: "Give yourself and nearby allies absorption"
+    description: "Give yourself and nearby players absorption"
+    effect: "Restore up to %s absorption"
   trader:
     name: "Trader"
     description: "Start with 200 gems"
   vampire:
     name: "Vampire"
-    description: "Dealing x damage has a (2*x)% chance of healing half a heart"
+    description: "Each attack has a 20% chance of healing 25% the attack damage"
   warrior:
     name: "Warrior"
     description: "Give yourself and nearby allies strength"
+    effect: "%s damage"
   witch:
     name: "Witch"
-    description: "All potions purchased become splash potions"
+    description: "Become immune to negative potion effects"
 messages:
   abilityKitsDescription: "Kits give special ability per respawn"
-  abilityLevel: "Up to ability level"
+  abilityLevel: "Get access to %s abilities"
   achievements: "Achievements"
   allowedKits: "Allowed Kits"
-  ammo: "Lvl %s Ammo"
   ammoCost: "Ammo Cost: %s"
   arenaInfo: "%s Info"
   arenaRecords: "Arena Records"
@@ -384,15 +715,12 @@ messages:
   attackSweepDamage: "Sweep Damage: %s"
   attackType: "Type: %s"
   available: "Available"
-  axe: "Lvl %s Axe"
-  boots: "Lvl %s Boots"
-  bow: "Lvl %s Bow"
+  blocks: "%s blocks"
   capacity: "Capacity: %s"
   challenges: "Challenges"
-  chestplate: "Lvl %s Chestplate"
   closed: "Closed"
-  commandFormat: "Command format: %s"
-  crossbow: "Lvl %s Crossbow"
+  communityChest: "The community chest %s be available."
+  cooldown: "Cooldown: %s"
   crystalBonus: "+%s %s bonus"
   crystalBalance: "%s Balance"
   crystalsEarned: "You earned %s %s this game!"
@@ -402,24 +730,28 @@ messages:
   death2: "You will respawn next wave."
   debugLevelSet: "Debug level set to %s."
   disabled: "DISABLED"
-  duplicatePlaceholder: "Out of stock!"
   durability: "Durability: %s"
+  duration: "Duration: %s"
+  dynamicDifficulty: "Overall difficulty %s change depending on number of players."
+  dynamicMobCount: "Mob numbers %s change depending on number of players."
+  dynamicPrices: "Shop prices %s change depending on number of players."
+  dynamicTimeLimit: "Wave time limits %s change depending on difficulty."
+  effect: "Effect: %s"
   effectKitsDescription: "Kits give players a permanent special effect"
   effectShare: "Someone shared an effect with you!"
   end: "You defeated up to wave %s! Ending in %s seconds."
   ending: "Ending"
   enemies: "Enemies"
   exit: "EXIT"
+  finalWave: "The final wave is wave %s."
   free: "Free!"
   forcedChallenges: "Forced Challenges"
-  foundGems: "You found %s gem(s)!"
   gameOver: "GAME OVER"
   gems: "Gems"
   gemsReceived: "You have received %s gems!"
   gemsToReceive: "Gems to receive"
   ghosts: "Ghosts"
   giftKitsDescription: "Kits give one-time benefits per game or respawn"
-  helmet: "Lvl %s Helmet"
   help: "%s Help"
   help1: "Villager Defense is a mini-game where the goal is to protect villagers from monsters for as many waves as you
   can! Use monster drops to buy better items from the in-game shop. Use %s to buy various unique and powerful kits and
@@ -442,9 +774,9 @@ messages:
   kit: "Kit"
   kits: "Kits"
   late: "%s left the arena, use %s to take their place!"
+  lateArrival: "Late players %s be able to join the game."
   leave: "LEAVE"
   leaveArena: "%s left the arena."
-  leggings: "Lvl %s Greaves"
   level: "Level"
   levelPlaceholder: "Locked until shop level %s"
   levelUp: "Level Up!  %s"
@@ -454,7 +786,9 @@ messages:
   mobName: "Lvl %s %s %s"
   nextRefill: "Next Refill: %s"
   noAutoUpdate: "There was nothing that could be updated automatically."
+  noLastWave: "There is no final wave."
   noStats: "%s does not have stats."
+  noUpgrades: "No upgrades available!"
   offToggle: "OFF"
   onToggle: "ON"
   oneMinuteWarning: "1 minute left!"
@@ -465,6 +799,8 @@ messages:
   playerStatistics: "%s's Statistics"
   purchase: "Purchase"
   purchased: "Purchased!"
+  quickInfo: "%s Quick Info:"
+  range: "Range: %s"
   record: "New arena record!"
   records: "Records"
   refill: "Refill: %s"
@@ -473,19 +809,15 @@ messages:
   restartPlugin: "Please restart the plugin."
   resurrection: "You were resurrected!"
   rightClick: "Right click to use ability"
-  scythe: "Lvl %s Scythe"
   seconds: "%s s"
   secondsLeft: "%s seconds until the game starts!"
   shopInfo: "Shops upgrade every %s waves"
   shopUpgrade: "Shops upgraded!"
   spectators: "Spectators"
-  starterSword: "Starter Sword"
   starting: "Starting in %s seconds"
-  sword: "Lvl %s Sword"
   toughness: "Toughness: %s"
   unavailable: "Unavailable"
   unlimited: "Unlimited"
-  upToAbilityLevel: "Up to ability level %s"
   visitWiki: "Visit the wiki"
   villageCaptainDialogue1: "Ah, reinforcements have arrived! Thank goodness, you're just in time."
   villageCaptainDialogue2: "The people of %s will reward you with %s for your service. I don't think we could've
@@ -501,6 +833,8 @@ messages:
   wave: "Wave"
   waveNum: "Wave %s"
   weight: "Weight: %s"
+  will: "WILL"
+  willNot: "WILL NOT"
 mobs:
   babyHusk: "Baby Husk"
   babyZombie: "Baby Zombie"
@@ -556,40 +890,42 @@ mobLore:
   zombie: "A pretty average monster that moves slowly and attacks indiscriminately."
 names:
   abilityKits: "Ability Kits"
-  armorShop: "Armor Shop"
+  abilityUpgradeShop: "Ability Upgrade Shop"
+  ammoShop: "Ammo Shop"
+  axeShop: "Axe Shop"
   boosts: "Boosts"
-  carePackageExtra: "Extra Large Care Package"
-  carePackageLarge: "Large Care Package"
-  carePackageMedium: "Medium Care Package"
-  carePackageSmall: "Small Care Package"
+  bootsShop: "Boots Shop"
+  bowShop: "Bow Shop"
   challengeSelection: "Challenge Selection"
+  chestplateShop: "Chestplate Shop"
   communityChest: "Community Chest"
   consumableShop: "Consumable Shop"
-  contents: "Contents"
+  crossbowShop: "Crossbow Shop"
   crystal: "Crystal"
   crystalConverter: "%s Catalytic Converter"
   crystals: "Crystals"
   easy: "Easy"
   effectKits: "Effect Kits"
   effectShare: "Effect Sharing"
-  essence: "Essence"
   giftKits: "Gift Kits"
   golemEgg: "Iron Golem Spawn Egg"
   hard: "Hard"
+  helmetShop: "Helmet Shop"
   insane: "Insane"
   itemShop: "Item Shop"
   kitSelection: "Kit Selection"
+  leggingsShop: "Leggings Shop"
   medium: "Medium"
   monsterSpawnParticles: "Monster Spawn Particles"
   none: "None"
   normal: "Normal"
   penetrating: "Penetrating"
   playerSpawnParticles: "Player Spawn Particles"
-  sword: "Sword"
+  scytheShop: "Scythe Shop"
+  swordShop: "Sword Shop"
   timeBar: "Wave %s Time Limit"
   villageCaptain: "Village Captain"
   villagerSpawnParticles: "Villager Spawn Particles"
-  weaponShop: "Weapon Shop"
 playerStats:
   topBalance:
     name: "Top Balance"
@@ -612,6 +948,7 @@ playerStats:
     description: "Lifetime kill count"
     leaderboard: "Total Kills Leaderboard"
 rewards:
+  ammoDouble: "Reward: Permanent doubling to ammo regeneration"
   cooldownReduction: "Reward: Permanent 10% reduction to ability cooldown"
   crystalConvert: "Reward: Option to convert 5 %s for 1 gem at start of game"
   crystals: "Reward: %s %s"
@@ -619,6 +956,5 @@ rewards:
   damageReduction: "Reward: Permanent 10% reduction to damage taken"
   gemIncrease: "Reward: Permanent 10% increase in gems received"
   healthIncrease: "Reward: Permanent 10% increase to health"
-  resurrection: "Reward: Permanent 10% chance of resurrecting upon fatal damage"
+  resurrection: "Reward: Permanent 10% chance of resurrecting to half health upon fatal damage"
   shareEffect: "Reward: Option to apply effect to everyone 25% of the time"
-  twoKits: "Reward: Bonus random second kit"

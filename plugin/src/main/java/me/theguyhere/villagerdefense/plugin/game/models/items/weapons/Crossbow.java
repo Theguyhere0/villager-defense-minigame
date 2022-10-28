@@ -2,6 +2,7 @@ package me.theguyhere.villagerdefense.plugin.game.models.items.weapons;
 
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.ChatColor;
@@ -17,13 +18,115 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class Crossbow extends VDWeapon {
     @NotNull
-    public static ItemStack create(double difficulty) {
-        return create(Math.max(getLevel(difficulty) * 2 - 3, 1));
-    }
-
-    @NotNull
-    public static ItemStack create(int level) {
+    public static ItemStack create(CrossbowType type) {
         List<String> lores = new ArrayList<>();
+
+        // Set name
+        String name;
+        switch (type) {
+            case T1:
+                name = CommunicationManager.format(
+                        new ColoredMessage(LanguageManager.itemLore.crossbows.t1.name),
+                        "[T1]"
+                );
+                break;
+            case T2:
+                name = CommunicationManager.format(
+                        new ColoredMessage(LanguageManager.itemLore.crossbows.t2.name),
+                        "[T2]"
+                );
+                break;
+            case T3:
+                name = CommunicationManager.format(
+                        new ColoredMessage(LanguageManager.itemLore.crossbows.t3.name),
+                        "[T3]"
+                );
+                break;
+            case T4:
+                name = CommunicationManager.format(
+                        new ColoredMessage(LanguageManager.itemLore.crossbows.t4.name),
+                        "[T4]"
+                );
+                break;
+            case T5:
+                name = CommunicationManager.format(
+                        new ColoredMessage(LanguageManager.itemLore.crossbows.t5.name),
+                        "[T5]"
+                );
+                break;
+            case T6:
+                name = CommunicationManager.format(
+                        new ColoredMessage(LanguageManager.itemLore.crossbows.t6.name),
+                        "[T6]"
+                );
+                break;
+            case T7:
+                name = CommunicationManager.format(
+                        new ColoredMessage(LanguageManager.itemLore.crossbows.t7.name),
+                        "[T7]"
+                );
+                break;
+            case T8:
+                name = CommunicationManager.format(
+                        new ColoredMessage(LanguageManager.itemLore.crossbows.t8.name),
+                        "[T8]"
+                );
+                break;
+            case T9:
+                name = CommunicationManager.format(
+                        new ColoredMessage(LanguageManager.itemLore.crossbows.t9.name),
+                        "[T9]"
+                );
+                break;
+            case T10:
+                name = CommunicationManager.format(
+                        new ColoredMessage(LanguageManager.itemLore.crossbows.t10.name),
+                        "[T10]"
+                );
+                break;
+            default:
+                name = "";
+        }
+
+        // Set description
+        String description;
+        switch (type) {
+            case T1:
+                description = LanguageManager.itemLore.crossbows.t1.description;
+                break;
+            case T2:
+                description = LanguageManager.itemLore.crossbows.t2.description;
+                break;
+            case T3:
+                description = LanguageManager.itemLore.crossbows.t3.description;
+                break;
+            case T4:
+                description = LanguageManager.itemLore.crossbows.t4.description;
+                break;
+            case T5:
+                description = LanguageManager.itemLore.crossbows.t5.description;
+                break;
+            case T6:
+                description = LanguageManager.itemLore.crossbows.t6.description;
+                break;
+            case T7:
+                description = LanguageManager.itemLore.crossbows.t7.description;
+                break;
+            case T8:
+                description = LanguageManager.itemLore.crossbows.t8.description;
+                break;
+            case T9:
+                description = LanguageManager.itemLore.crossbows.t9.description;
+                break;
+            case T10:
+                description = LanguageManager.itemLore.crossbows.t10.description;
+                break;
+            default:
+                description = "";
+        }
+        if (!description.isEmpty())
+            lores.addAll(CommunicationManager.formatDescriptionList(
+                    ChatColor.GRAY, description, Utils.LORE_CHAR_LIMIT));
 
         // Add space in lore from name
         lores.add("");
@@ -32,9 +135,55 @@ public abstract class Crossbow extends VDWeapon {
         lores.add(CommunicationManager.format(ATTACK_TYPE, ATTACK_TYPE_NORMAL));
 
         // Set range damage
-        int damageLow = 120 + 10 * ((level - 1) / 2);
-        int damageHigh = 180 + 15 * (level / 2);
-        lores.add(CommunicationManager.format(RANGE_DAMAGE, new ColoredMessage(ChatColor.DARK_AQUA,
+        int damageLow, damageHigh;
+        switch (type) {
+            case T1:
+                damageLow = 75;
+                damageHigh = 120;
+                break;
+            case T2:
+                damageLow = 75;
+                damageHigh = 150;
+                break;
+            case T3:
+                damageLow = 90;
+                damageHigh = 155;
+                break;
+            case T4:
+                damageLow = 105;
+                damageHigh = 160;
+                break;
+            case T5:
+                damageLow = 110;
+                damageHigh = 200;
+                break;
+            case T6:
+                damageLow = 130;
+                damageHigh = 210;
+                break;
+            case T7:
+                damageLow = 150;
+                damageHigh = 225;
+                break;
+            case T8:
+                damageLow = 160;
+                damageHigh = 280;
+                break;
+            case T9:
+                damageLow = 180;
+                damageHigh = 290;
+                break;
+            case T10:
+                damageLow = 200;
+                damageHigh = 350;
+                break;
+            default:
+                damageLow = damageHigh = 0;
+        }
+        if (damageLow == damageHigh)
+            lores.add(CommunicationManager.format(RANGE_DAMAGE, new ColoredMessage(ChatColor.DARK_AQUA,
+                    Integer.toString(damageLow))));
+        else lores.add(CommunicationManager.format(RANGE_DAMAGE, new ColoredMessage(ChatColor.DARK_AQUA,
                 damageLow + "-" + damageHigh)));
 
         // Set pierce
@@ -42,25 +191,94 @@ public abstract class Crossbow extends VDWeapon {
                 Integer.toString(2))));
 
         // Set attack speed
-        lores.add(CommunicationManager.format(SPEED, Double.toString(0.65)));
+        lores.add(CommunicationManager.format(SPEED, Double.toString(0.5)));
 
         // Set ammo cost
         lores.add(CommunicationManager.format(AMMO_COST, new ColoredMessage(ChatColor.RED, Integer.toString(2))));
 
         // Set durability
+        int durability;
+        switch (type) {
+            case T1:
+                durability = 90;
+                break;
+            case T2:
+                durability = 125;
+                break;
+            case T3:
+                durability = 150;
+                break;
+            case T4:
+                durability = 170;
+                break;
+            case T5:
+                durability = 240;
+                break;
+            case T6:
+                durability = 280;
+                break;
+            case T7:
+                durability = 335;
+                break;
+            case T8:
+                durability = 480;
+                break;
+            case T9:
+                durability = 580;
+                break;
+            case T10:
+                durability = 750;
+                break;
+            default: durability = 0;
+        }
         lores.add(CommunicationManager.format(DURABILITY,
-                new ColoredMessage(ChatColor.GREEN, "100").toString() +
-                        new ColoredMessage(ChatColor.WHITE, " / 100")));
+                new ColoredMessage(ChatColor.GREEN, Integer.toString(durability)).toString() +
+                        new ColoredMessage(ChatColor.WHITE, " / " + durability)));
 
         // Set price
-        int price = (int) (200 + 60 * level * Math.pow(Math.E, (level - 1) / 50d));
-        lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
-                price));
+        int price;
+        switch (type) {
+            case T1:
+                price = 270;
+                break;
+            case T2:
+                price = 350;
+                break;
+            case T3:
+                price = 400;
+                break;
+            case T4:
+                price = 470;
+                break;
+            case T5:
+                price = 590;
+                break;
+            case T6:
+                price = 650;
+                break;
+            case T7:
+                price = 730;
+                break;
+            case T8:
+                price = 900;
+                break;
+            case T9:
+                price = 1050;
+                break;
+            case T10:
+                price = 1360;
+                break;
+            default: price = -1;
+        }
+        if (price >= 0)
+            lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
+                    price));
 
-        // Set name and return
-        return ItemManager.createItem(Material.CROSSBOW, CommunicationManager.format(
-                        new ColoredMessage(ChatColor.GRAY, LanguageManager.messages.crossbow), Integer.toString(level)),
-                ItemManager.BUTTON_FLAGS, null, lores);
+        // Create item
+        ItemStack item = ItemManager.createItem(Material.CROSSBOW, name, ItemManager.BUTTON_FLAGS, null, lores);
+        if (durability == 0)
+            return ItemManager.makeUnbreakable(item);
+        else return item;
     }
 
     public static boolean matches(ItemStack toCheck) {
@@ -84,5 +302,18 @@ public abstract class Crossbow extends VDWeapon {
                         replace(ChatColor.BLUE.toString(), "")));
         });
         return pierce.get();
+    }
+
+    public enum CrossbowType{
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10
     }
 }

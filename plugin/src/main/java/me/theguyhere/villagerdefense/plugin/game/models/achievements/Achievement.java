@@ -365,7 +365,7 @@ public class Achievement {
                 "allKits",
                 Material.ENDER_CHEST,
                 AchievementType.KIT,
-                new AchievementReward(RewardType.BOOST, BoostRewardID.TWO_KITS)
+                new AchievementReward(RewardType.BOOST, BoostRewardID.AMMO_DOUBLE)
         );
 
         try {

@@ -13,6 +13,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.items.ItemMetaKey;
 import me.theguyhere.villagerdefense.plugin.game.models.items.VDItem;
+import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.MageAbility;
 import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.game.models.items.armor.VDArmor;
 import me.theguyhere.villagerdefense.plugin.game.models.items.eggs.VDEgg;
@@ -23,7 +24,11 @@ import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Ammo;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Bow;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Crossbow;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.VDWeapon;
+import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
+import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.*;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.minions.VDCreeper;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.minions.VDWitch;
 import me.theguyhere.villagerdefense.plugin.game.models.players.AttackClass;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
@@ -48,6 +53,7 @@ import org.bukkit.util.BoundingBox;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameListener implements Listener {
@@ -91,18 +97,18 @@ public class GameListener implements Listener {
         DataManager data = new DataManager("spawnTables/" + arena.getSpawnTableFile());
 
 		if (ent.getMetadata(VDMob.TEAM).get(0).equals(Team.VILLAGER.getValue())) {
-			// Handle pet death TODO
-			if (ent instanceof Wolf) {
-				try {
-					arena.getPlayer((Player) ((Wolf) ent).getOwner()).decrementWolves();
-				} catch (Exception err) {
-					return;
-				}
-			}
-
-			// Handle golem death TODO
-			else if (ent instanceof IronGolem)
-				arena.decrementGolems();
+//			// Handle pet death TODO
+//			if (ent instanceof Wolf) {
+//				try {
+//					arena.getPlayer((Player) ((Wolf) ent).getOwner()).decrementWolves();
+//				} catch (Exception err) {
+//					return;
+//				}
+//			}
+//
+//			// Handle golem death TODO
+//			else if (ent instanceof IronGolem)
+//				arena.decrementGolems();
 		}
 
 		// Handle enemy death
@@ -171,7 +177,7 @@ public class GameListener implements Listener {
 		ItemStack ammo = Objects.requireNonNull(player.getEquipment()).getItemInOffHand();
 		if (!Ammo.matches(ammo)) {
 			e.setCancelled(true);
-			PlayerManager.notifyFailure(player, LanguageManager.errors.ammoOffHand);
+			gamer.triggerAmmoWarningCooldown();
 			return;
 		}
 
@@ -205,7 +211,7 @@ public class GameListener implements Listener {
 			return;
 
 		// Check for cooldown
-		if (gamer.getCooldown() > System.currentTimeMillis())
+		if (gamer.remainingWeaponCooldown() > 0)
 			return;
 
 		// Fire
@@ -215,8 +221,11 @@ public class GameListener implements Listener {
 		if (Bow.matches(range))
 			NMSVersion.getCurrent().getNmsManager().setBowCooldown(player, Utils.secondsToTicks(cooldown.get()));
 		else NMSVersion.getCurrent().getNmsManager().setCrossbowCooldown(player, Utils.secondsToTicks(cooldown.get()));
-		gamer.setCooldown(System.currentTimeMillis() + Utils.secondsToMillis(cooldown.get()));
-		Ammo.updateCapacity(ammo, -cost.get());
+		gamer.triggerWeaponCooldown(Utils.secondsToMillis(cooldown.get()));
+		if (Ammo.updateCapacity(ammo, -cost.get())) {
+			player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
+			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1);
+		}
 		Bukkit.getPluginManager().callEvent(new PlayerItemDamageEvent(player, range, 1));
 	}
 
@@ -370,8 +379,14 @@ public class GameListener implements Listener {
 
 			// Realize damage and deal effect
 			gamer.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType());
-			if (finalDamager.getEffectType() == null)
+			if (finalDamager.getEffectType() == null || (Kit.witch().getID().equals(gamer.getKit().getID())) &&
+					!gamer.isSharing())
 				return;
+			Random r = new Random();
+			if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.WITCH))) {
+				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+				return;
+			}
 			if (finalDamager.getEffectType().getName().equals(PotionEffectType.FIRE_RESISTANCE.getName()))
 				gamer.combust(finalDamager.getEffectDuration());
 			else gamer.getPlayer().addPotionEffect(finalDamager.dealEffect());
@@ -416,18 +431,27 @@ public class GameListener implements Listener {
 					return;
 				}
 
-				// Check for pacifist challenge and not an enemy
-				if (gamer != null && gamer.getChallenges().contains(Challenge.pacifist()) &&
-						!gamer.getEnemies().contains(damager.getUniqueId()))
-					return;
-
 				// Cancel and capture original damage
 				double damage = e.getDamage();
 				e.setDamage(0);
 
+				// Check for pacifist challenge and not an enemy
+				if (gamer != null && gamer.getChallenges().contains(Challenge.pacifist()) &&
+						!gamer.getEnemies().contains(victim.getUniqueId()))
+					return;
+
 				// Damage dealt by player
 				if (gamer != null) {
 					AttackClass attackClass;
+
+					// Calculate damage difference
+					AtomicInteger dif = new AtomicInteger();
+					player.getActivePotionEffects().forEach(potionEffect -> {
+						if (PotionEffectType.INCREASE_DAMAGE.equals(potionEffect.getType()))
+							dif.addAndGet((1 + potionEffect.getAmplifier()) * 3);
+						else if (PotionEffectType.WEAKNESS.equals(potionEffect.getType()))
+							dif.addAndGet(- (1 + potionEffect.getAmplifier()) * 4);
+					});
 
 					// Range damage
 					if (projectile) {
@@ -454,7 +478,7 @@ public class GameListener implements Listener {
 					}
 
 					// Crit damage
-					if (damage > 20)
+					if (damage > 20 + dif.get())
 						attackClass = AttackClass.CRITICAL;
 
 					// Sweep damage
@@ -465,8 +489,27 @@ public class GameListener implements Listener {
 					else attackClass = AttackClass.MAIN;
 
 					// Play out damage
-					finalVictim.takeDamage(gamer.dealRawDamage(attackClass, damage / 20.),
+					int hurt = finalVictim.takeDamage(
+							gamer.dealRawDamage(attackClass, damage / (double) (dif.get() + 20)),
 							gamer.getAttackType(), player, arena);
+
+					Random r = new Random();
+
+					// Check for vampire kit
+					if (Kit.vampire().getID().equals(gamer.getKit().getID()) && !gamer.isSharing()) {
+						// Heal if probability is right
+						if (r.nextDouble() < .2)
+							gamer.changeCurrentHealth((int) (hurt * .25));
+					}
+
+					// Check for shared vampire effect
+					else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.VAMPIRE))) {
+						// Heal if probability is right
+						if (r.nextDouble() < .2) {
+							gamer.changeCurrentHealth((int) (hurt * .25));
+							PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+						}
+					}
 				}
 
 				// Damage not dealt by player
@@ -653,10 +696,10 @@ public class GameListener implements Listener {
 					mob.takeDamage((int) (damage * 5), AttackType.PENETRATING, null, arena);
 					break;
 				case POISON:
-					mob.takeDamage((int) (damage * 4), AttackType.PENETRATING, null, arena);
+					mob.takeDamage((int) (damage * 8), AttackType.PENETRATING, null, arena);
 					break;
 				case WITHER:
-					mob.takeDamage((int) (damage * 4), AttackType.DIRECT, null, arena);
+					mob.takeDamage((int) (damage * 8), AttackType.DIRECT, null, arena);
 					break;
 				// Silence
 				default:
@@ -755,23 +798,37 @@ public class GameListener implements Listener {
 	public void onSplash(PotionSplashEvent e) {
 		ThrownPotion potion = e.getEntity();
 		Entity ent = (Entity) potion.getShooter();
+		Arena arena;
 		VDWitch witch;
 
 		// Try to get arena and VDMob
 		try {
-			witch = (VDWitch) GameManager.getArena(Objects.requireNonNull(ent).getMetadata(VDMob.VD).get(0).asInt())
-					.getMob(ent.getUniqueId());
+			arena = GameManager.getArena(Objects.requireNonNull(ent).getMetadata(VDMob.VD).get(0).asInt());
+			witch = (VDWitch) arena.getMob(ent.getUniqueId());
 		} catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException |
 				NullPointerException | ClassCastException err) {
 			return;
 		}
 
 		// Apply to relevant entities
+		Random r = new Random();
 		for (LivingEntity affectedEntity : e.getAffectedEntities()) {
 			// Not monster
 			if (!(affectedEntity instanceof Player) &&
 					affectedEntity.getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue()))
 				continue;
+
+			// Ignore players with witch kit
+			try {
+				VDPlayer player = arena.getPlayer(affectedEntity.getUniqueId());
+				if (Kit.witch().getID().equals(player.getKit().getID()) && !player.isSharing())
+					continue;
+				if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.WITCH))) {
+					PlayerManager.notifySuccess(player.getPlayer(), LanguageManager.messages.effectShare);
+					return;
+				}
+			} catch (PlayerNotFoundException ignored) {
+			}
 
 			// Apply affects
 			affectedEntity.addPotionEffect(witch.dealEffect());
@@ -795,11 +852,11 @@ public class GameListener implements Listener {
 		if (arena.getStatus() != ArenaStatus.ACTIVE)
 			return;
 
-		// Get off hand
+		// Get offhand
 		ItemStack off = player.getInventory().getItemInOffHand();
 
-		// Unequip weapons in off-hand
-		if (VDWeapon.matchesNoAmmo(off)) {
+		// Unequip weapons and mage abilities in offhand
+		if (VDWeapon.matchesNoAmmo(off) || MageAbility.matches(off)) {
 			PlayerManager.giveItem(player, off, LanguageManager.errors.inventoryFull);
 			player.getInventory().setItemInOffHand(null);
 			PlayerManager.notifyFailure(player, LanguageManager.errors.offWeapon);
@@ -876,7 +933,9 @@ public class GameListener implements Listener {
 		// Allow plugin, command, and expiration causes
 		if (e.getCause() == EntityPotionEffectEvent.Cause.PLUGIN ||
 				e.getCause() == EntityPotionEffectEvent.Cause.COMMAND ||
-				e.getCause() == EntityPotionEffectEvent.Cause.EXPIRATION)
+				e.getCause() == EntityPotionEffectEvent.Cause.EXPIRATION ||
+				e.getCause() == EntityPotionEffectEvent.Cause.POTION_DRINK ||
+				e.getCause() == EntityPotionEffectEvent.Cause.POTION_SPLASH)
 			return;
 
 		// Cancel
@@ -962,36 +1021,31 @@ public class GameListener implements Listener {
 
 		// Open shop inventory
 		if (Shop.matches(item))
-			player.openInventory(Inventories.createShopMenu(arena.getCurrentWave() / 10 + 1, arena));
+			player.openInventory(Inventories.createShopMenu(arena.getCurrentShopLevel(), arena));
 
 		// Open kit selection menu
 		else if (KitSelector.matches(item))
-//			player.openInventory(Inventories.createSelectKitsMenu(player, arena));
-			PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+			player.openInventory(Inventories.createSelectKitsMenu(player, arena));
 
 		// Open challenge selection menu
 		else if (ChallengeSelector.matches(item))
-//			player.openInventory(Inventories.createSelectChallengesMenu(gamer, arena));
-			PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+			player.openInventory(Inventories.createSelectChallengesMenu(gamer, arena));
 
 		// Toggle boost
 		else if (BoostToggle.matches(item)) {
-//			gamer.toggleBoost();
-//			PlayerManager.giveChoiceItems(gamer);
-			PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+			gamer.toggleBoost();
+			PlayerManager.giveChoiceItems(gamer);
 		}
 
 		// Toggle share
 		else if (ShareToggle.matches(item)) {
-//			gamer.toggleShare();
-//			PlayerManager.giveChoiceItems(gamer);
-			PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+			gamer.toggleShare();
+			PlayerManager.giveChoiceItems(gamer);
 		}
 
 		// Open crystal convert menu
 		else if (CrystalConverter.matches(item))
-//			player.openInventory(Inventories.createCrystalConvertMenu(gamer));
-			PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+			player.openInventory(Inventories.createCrystalConvertMenu(gamer));
 
 		// Make player leave
 		else if (Leave.matches(item))
@@ -1417,7 +1471,7 @@ public class GameListener implements Listener {
 		e.setCancelled(true);
 	}
 
-	// Prevent players from dropping menu items
+	// Prevent players from dropping menu items or abilities
 	@EventHandler
 	public void onItemDrop(PlayerDropItemEvent e) {
 		Player player = e.getPlayer();
@@ -1427,7 +1481,8 @@ public class GameListener implements Listener {
 			return;
 
 		// Check for menu items
-		if (VDMenuItem.matches(e.getItemDrop().getItemStack()))
+		ItemStack item = e.getItemDrop().getItemStack();
+		if (VDMenuItem.matches(item) || VDAbility.matches(item))
 			e.setCancelled(true);
 	}
 

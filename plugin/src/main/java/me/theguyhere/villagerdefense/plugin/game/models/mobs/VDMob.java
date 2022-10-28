@@ -10,6 +10,9 @@ import me.theguyhere.villagerdefense.plugin.game.displays.Popup;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.minions.*;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.villagers.VDFletcher;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.villagers.VDNormalVillager;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
@@ -25,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class VDMob {
     protected Mob mob;
@@ -83,7 +87,7 @@ public abstract class VDMob {
         return wave;
     }
 
-    public void takeDamage(int damage, @NotNull AttackType attackType, @Nullable Player attacker, Arena arena) {
+    public int takeDamage(int damage, @NotNull AttackType attackType, @Nullable Player attacker, Arena arena) {
         // Final damage calculation and display
         if (attackType == AttackType.NORMAL)
             damage -= Math.min(damage, armor);
@@ -160,6 +164,8 @@ public abstract class VDMob {
         
         // Update entity name
         updateNameTag();
+
+        return damage;
     }
 
     protected void addDamage(int damage, UUID id) {
@@ -173,7 +179,14 @@ public abstract class VDMob {
     
     public int dealRawDamage() {
         Random r = new Random();
-        return (int) (this.damage * (1 + (r.nextDouble() * 2 - 1) * damageSpread));
+        AtomicInteger increase = new AtomicInteger();
+        mob.getActivePotionEffects().forEach(potionEffect -> {
+            if (PotionEffectType.INCREASE_DAMAGE.equals(potionEffect.getType()))
+                increase.addAndGet(1 + potionEffect.getAmplifier());
+            else if (PotionEffectType.WEAKNESS.equals(potionEffect.getType()))
+                increase.addAndGet(- 1 - potionEffect.getAmplifier());
+        });
+        return (int) (this.damage * (1 + (r.nextDouble() * 2 - 1) * damageSpread) * (1 + .1 * increase.get()));
     }
 
     public AttackType getAttackType() {

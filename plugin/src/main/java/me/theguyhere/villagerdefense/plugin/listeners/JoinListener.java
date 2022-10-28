@@ -56,8 +56,9 @@ public class JoinListener implements Listener {
 			PlayerManager.notifyFailure(player, LanguageManager.errors.outdated,
 					new ColoredMessage(ChatColor.AQUA, "/vd fix"));
 
-//		AchievementChecker.checkDefaultHighScoreAchievements(player);
-//		AchievementChecker.checkDefaultKitAchievements(player);
+		// Check for achievements
+		AchievementChecker.checkDefaultHighScoreAchievements(player);
+		AchievementChecker.checkDefaultKitAchievements(player);
 	}
 
 	@EventHandler

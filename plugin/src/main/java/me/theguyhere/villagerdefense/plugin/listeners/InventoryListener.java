@@ -6,15 +6,15 @@ import me.theguyhere.villagerdefense.plugin.events.SignGUIEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.IllegalArenaNameException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.exceptions.VDMobNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.models.achievements.AchievementChecker;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.Shop;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.inventories.Buttons;
@@ -26,10 +26,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.*;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
@@ -57,7 +59,7 @@ public class InventoryListener implements Listener {
 		else meta.getArena().setCommunityChest(e.getInventory());
 	}
 
-	// Prevent losing items by shift clicking in custom inventory
+	// Prevent losing items by shift clicking or number keying in custom inventory
 	@EventHandler
 	public void onShiftClick(InventoryClickEvent e) {
 		// Ignore non-plugin inventories
@@ -66,13 +68,24 @@ public class InventoryListener implements Listener {
 		InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 
 		// Check for shift click
-		if (e.getClick() != ClickType.SHIFT_LEFT && e.getClick() != ClickType.SHIFT_RIGHT)
+		if (e.getClick() != ClickType.SHIFT_LEFT && e.getClick() != ClickType.SHIFT_RIGHT &&
+				e.getClick().isKeyboardClick())
 			return;
 
-		// Cancel the event if the inventory isn't the community chest, otherwise save the inventory
-		if (meta.getInventoryID() != InventoryID.COMMUNITY_CHEST_INVENTORY)
+		// Cancel the event if the inventory isn't the community chest
+		if (meta.getInventoryID() != InventoryID.COMMUNITY_CHEST_INVENTORY) {
 			e.setCancelled(true);
-		else meta.getArena().setCommunityChest(e.getInventory());
+			return;
+		}
+
+		// Prevent shop or abilities from moving around
+		if (Shop.matches(e.getCurrentItem()) || VDAbility.matches(e.getCurrentItem())) {
+			e.setCancelled(true);
+			return;
+		}
+
+		// Save inventory
+		meta.getArena().setCommunityChest(e.getInventory());
 	}
 
 	// Prevent items from being removed from the game
@@ -131,22 +144,29 @@ public class InventoryListener implements Listener {
 		InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 		InventoryID invID = meta.getInventoryID();
 
-		// Ignore null inventories
-		if (e.getClickedInventory() == null)
-			return;
-
 		// Debugging info
 		CommunicationManager.debugInfo("Inventory Item: " + e.getCurrentItem(), 2);
 		CommunicationManager.debugInfo("Cursor Item: " + e.getCursor(), 2);
 		CommunicationManager.debugInfo("Clicked Inventory: " + e.getClickedInventory(), 2);
 		CommunicationManager.debugInfo("Inventory Name: ", 2, title);
 
-		// Cancel the event if the inventory isn't the community chest to prevent changing the GUI
-		if (invID != InventoryID.COMMUNITY_CHEST_INVENTORY)
-			e.setCancelled(true);
+		// Community chest
+		if (invID == InventoryID.COMMUNITY_CHEST_INVENTORY) {
+			// Prevent shop or abilities from moving around
+			if (Shop.matches(e.getCurrentItem()) || VDAbility.matches(e.getCurrentItem()))
+				e.setCancelled(true);
 
-		// Save community chest
-		else meta.getArena().setCommunityChest(e.getInventory());
+			// Save community chest
+			meta.getArena().setCommunityChest(e.getInventory());
+			return;
+		}
+
+		// Ignore null inventories
+		if (e.getClickedInventory() == null)
+			return;
+
+		// Cancel the event if the inventory isn't the community chest to prevent changing the GUI
+		e.setCancelled(true);
 
 		// Ignore clicks in player inventory
 		if (e.getClickedInventory().getType() == InventoryType.PLAYER)
@@ -1806,13 +1826,11 @@ public class InventoryListener implements Listener {
 
 			// Edit allowed kits
 			else if (buttonName.contains("Allowed Kits"))
-//				player.openInventory(Inventories.createAllowedKitsMenu(arenaInstance, false));
-				PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+				player.openInventory(Inventories.createAllowedKitsMenu(arenaInstance, false));
 
 			// Edit forced challenges
 			else if (buttonName.contains("Forced Challenges"))
-//				player.openInventory(Inventories.createForcedChallengesMenu(arenaInstance, false));
-				PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+				player.openInventory(Inventories.createForcedChallengesMenu(arenaInstance, false));
 
 			// Edit difficulty label
 			else if (buttonName.contains("Difficulty Label"))
@@ -2612,34 +2630,74 @@ public class InventoryListener implements Listener {
 		// In-game item shop menu
 		else if (invID == InventoryID.SHOP_MENU) {
 			Arena arenaInstance;
+			VDPlayer gamer;
 
 			// See if the player is in a game
 			try {
 				arenaInstance = GameManager.getArena(player);
-			} catch (ArenaNotFoundException err) {
+				gamer = arenaInstance.getPlayer(player);
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
 			}
 
-			// Open weapon shop
-			if (buttonName.contains(LanguageManager.names.weaponShop))
-				player.openInventory(arenaInstance.getWeaponShop());
+			// Open sword shop
+			if (buttonName.contains(LanguageManager.names.swordShop))
+				player.openInventory(arenaInstance.getSwordShop());
 
-			// Open armor shop
-			else if (buttonName.contains(LanguageManager.names.armorShop))
-				player.openInventory(arenaInstance.getArmorShop());
+			// Open axe shop
+			else if (buttonName.contains(LanguageManager.names.axeShop))
+				player.openInventory(arenaInstance.getAxeShop());
+
+			// Open scythe shop
+			else if (buttonName.contains(LanguageManager.names.scytheShop))
+				player.openInventory(arenaInstance.getScytheShop());
+
+			// Open bow shop
+			else if (buttonName.contains(LanguageManager.names.bowShop))
+				player.openInventory(arenaInstance.getBowShop());
+
+			// Open crossbow shop
+			else if (buttonName.contains(LanguageManager.names.crossbowShop))
+				player.openInventory(arenaInstance.getCrossbowShop());
+
+			// Open ammo shop
+			else if (buttonName.contains(LanguageManager.names.ammoShop))
+				player.openInventory(arenaInstance.getAmmoShop());
+
+			// Open helmet shop
+			else if (buttonName.contains(LanguageManager.names.helmetShop))
+				player.openInventory(arenaInstance.getHelmetShop());
+
+			// Open chestplate shop
+			else if (buttonName.contains(LanguageManager.names.chestplateShop))
+				player.openInventory(arenaInstance.getChestplateShop());
+
+			// Open leggings shop
+			else if (buttonName.contains(LanguageManager.names.leggingsShop))
+				player.openInventory(arenaInstance.getLeggingsShop());
+
+			// Open boots shop
+			else if (buttonName.contains(LanguageManager.names.bootsShop))
+				player.openInventory(arenaInstance.getBootsShop());
 
 			// Open consumables shop
 			else if (buttonName.contains(LanguageManager.names.consumableShop))
 				player.openInventory(arenaInstance.getConsumeShop());
 
+			// Open ability upgrade shop
+			else if (buttonName.contains(LanguageManager.names.abilityUpgradeShop))
+				player.openInventory(Inventories.createAbilityUpgradeShopMenu(arenaInstance, gamer));
+
 			// Open community chest
-			else if (buttonName.contains(LanguageManager.names.communityChest))
-				player.openInventory(arenaInstance.getCommunityChest());
+			else if (buttonName.contains(LanguageManager.names.communityChest)) {
+				if (arenaInstance.hasCommunity())
+					player.openInventory(arenaInstance.getCommunityChest());
+				else PlayerManager.notifyFailure(player, LanguageManager.errors.communityChest);
+			}
 		}
 
 		// In-game shops
-		else if (invID == InventoryID.WEAPON_SHOP_MENU || invID == InventoryID.ARMOR_SHOP_MENU ||
-				invID == InventoryID.CONSUMABLE_SHOP_MENU) {
+		else if (InventoryID.isInGameShop(invID)) {
 			Arena arenaInstance;
 			VDPlayer gamer;
 
@@ -2653,7 +2711,7 @@ public class InventoryListener implements Listener {
 
 			// Return to main shop menu
 			if (buttonName.contains(LanguageManager.messages.exit)) {
-				player.openInventory(Inventories.createShopMenu(arenaInstance.getCurrentWave() / 10 + 1, arenaInstance));
+				player.openInventory(Inventories.createShopMenu(arenaInstance.getCurrentShopLevel(), arenaInstance));
 				return;
 			}
 
@@ -2683,8 +2741,7 @@ public class InventoryListener implements Listener {
 			buy = ItemManager.removeLastLore(buy);
 
 			// Make unbreakable for blacksmith (not sharing)
-			if ((Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) ||
-					Kit.blacksmith().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing())
+			if (Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) && !gamer.isSharing())
 				buy = ItemManager.makeUnbreakable(buy);
 
 			// Make unbreakable for successful blacksmith sharing
@@ -2693,21 +2750,9 @@ public class InventoryListener implements Listener {
 				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
 			}
 
-			// Make splash potion for witch (not sharing)
-			if ((Kit.witch().setKitLevel(1).equals(gamer.getKit()) ||
-					Kit.witch().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing())
-				buy = ItemManager.makeSplash(buy);
-
-			// Make splash potion for successful witch sharing
-			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.WITCH))) {
-				buy = ItemManager.makeSplash(buy);
-				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
-			}
-
 			// Subtract from balance, apply rebate, and update scoreboard
 			gamer.addGems(-cost);
-			if ((Kit.merchant().setKitLevel(1).equals(gamer.getKit()) ||
-					Kit.merchant().setKitLevel(1).equals(gamer.getKit2())) && !gamer.isSharing())
+			if (Kit.merchant().setKitLevel(1).equals(gamer.getKit()) && !gamer.isSharing())
 				gamer.addGems(cost / 10);
 			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.MERCHANT))) {
 				gamer.addGems(cost / 10);
@@ -2738,15 +2783,82 @@ public class InventoryListener implements Listener {
 			}
 		}
 
+		// Ability upgrade shop
+		else if (invID == InventoryID.ABILITY_UPGRADE_SHOP_MENU) {
+			Arena arenaInstance;
+			VDPlayer gamer;
+
+			// Attempt to get arena and player
+			try {
+				arenaInstance = GameManager.getArena(player);
+				gamer = arenaInstance.getPlayer(player);
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+				return;
+			}
+
+			// Return to main shop menu
+			if (buttonName.contains(LanguageManager.messages.exit)) {
+				player.openInventory(Inventories.createShopMenu(arenaInstance.getCurrentShopLevel(), arenaInstance));
+				return;
+			}
+
+			// Ignore null items
+			if (e.getClickedInventory().getItem(e.getSlot()) == null)
+				return;
+
+			ItemStack buy = Objects.requireNonNull(e.getClickedInventory().getItem(e.getSlot())).clone();
+			List<String> lore = Objects.requireNonNull(buy.getItemMeta()).getLore();
+
+			// Ignore un-purchasable items
+			if (lore == null)
+				return;
+
+			int cost = Integer.parseInt(lore.get(lore.size() - 1)
+					.substring(6 + LanguageManager.messages.gems.length()));
+			Random random = new Random();
+
+			// Check if they can afford the item
+			if (!gamer.canAfford(cost)) {
+				PlayerManager.notifyFailure(player, LanguageManager.errors.buy);
+				return;
+			}
+
+			// Remove cost meta
+			buy = ItemManager.removeLastLore(buy);
+
+			// Subtract from balance, apply rebate, and update scoreboard
+			gamer.addGems(-cost);
+			if (Kit.merchant().setKitLevel(1).equals(gamer.getKit()) && !gamer.isSharing())
+				gamer.addGems(cost / 10);
+			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.MERCHANT))) {
+				gamer.addGems(cost / 10);
+				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+			}
+			GameManager.createBoard(gamer);
+
+			// Update player stats and shop
+			gamer.incrementTieredEssenceLevel();
+			player.openInventory(Inventories.createAbilityUpgradeShopMenu(arenaInstance, gamer));
+
+			// Find and upgrade, otherwise give
+			for (int i = 1; i < 46; i++) {
+				if (VDAbility.matches(player.getInventory().getItem(i))) {
+					player.getInventory().setItem(i, buy);
+					PlayerManager.notifySuccess(player, LanguageManager.confirms.buy);
+					return;
+				}
+			}
+			PlayerManager.giveItem(player, buy, LanguageManager.errors.inventoryFull);
+			PlayerManager.notifySuccess(player, LanguageManager.confirms.buy);
+		}
+
 		// Stats menu for a player
 		else if (invID == InventoryID.PLAYER_STATS_MENU) {
 			UUID id = meta.getPlayerID();
 			if (buttonName.contains(LanguageManager.messages.achievements))
-//				player.openInventory(Inventories.createPlayerAchievementsMenu(id));
-				PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+				player.openInventory(Inventories.createPlayerAchievementsMenu(id));
 			else if (buttonName.contains(LanguageManager.messages.kits))
-//				player.openInventory(Inventories.createPlayerKitsMenu(id, player.getUniqueId()));
-				PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+				player.openInventory(Inventories.createPlayerKitsMenu(id, player.getUniqueId()));
 			else if (buttonName.contains(LanguageManager.messages.reset) && id.equals(player.getUniqueId()))
 				player.openInventory(Inventories.createResetStatsConfirmMenu(id));
 		}
@@ -2796,7 +2908,7 @@ public class InventoryListener implements Listener {
 					PlayerManager.withdrawCrystalBalance(ownerID, kit.getPrice(1));
 					PlayerManager.addSingleTierKit(ownerID, kit.getID());
 					PlayerManager.notifySuccess(player, LanguageManager.confirms.kitBuy);
-//					AchievementChecker.checkDefaultKitAchievements(player);
+					AchievementChecker.checkDefaultKitAchievements(player);
 				} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitBuy);
 			}
 
@@ -2805,19 +2917,23 @@ public class InventoryListener implements Listener {
 				int kitLevel = PlayerManager.getMultiTierKitLevel(ownerID, kit.getID());
 				if (kitLevel == kit.getMaxLevel())
 					return;
+				else if (Kit.summoner().getID().equals(kit.getID())) {
+					PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+					return;
+				}
 				else if (kitLevel == 0) {
 					if (balance >= kit.getPrice(++kitLevel)) {
 						PlayerManager.withdrawCrystalBalance(ownerID, kit.getPrice(kitLevel));
 						PlayerManager.setMultiTierKitLevel(ownerID, kit.getID(), kitLevel);
 						PlayerManager.notifySuccess(player, LanguageManager.confirms.kitBuy);
-//						AchievementChecker.checkDefaultKitAchievements(player);
+						AchievementChecker.checkDefaultKitAchievements(player);
 					} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitBuy);
 				} else {
 					if (balance >= kit.getPrice(++kitLevel)) {
 						PlayerManager.withdrawCrystalBalance(ownerID, kit.getPrice(kitLevel));
 						PlayerManager.setMultiTierKitLevel(ownerID, kit.getID(), kitLevel);
 						PlayerManager.notifySuccess(player, LanguageManager.confirms.kitUpgrade);
-//						AchievementChecker.checkDefaultKitAchievements(player);
+						AchievementChecker.checkDefaultKitAchievements(player);
 					} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitUpgrade);
 				}
 			}
@@ -2897,6 +3013,10 @@ public class InventoryListener implements Listener {
 					PlayerManager.notifyFailure(player, LanguageManager.errors.kitSelect);
 					return;
 				}
+				if (Kit.summoner().getID().equals(kit.getID())) {
+					PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+					return;
+				}
 				gamer.setKit(kit.setKitLevel(kitLevel));
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.kitSelect);
 			}
@@ -2969,12 +3089,10 @@ public class InventoryListener implements Listener {
 		// Stats menu for an arena
 		else if (invID == InventoryID.ARENA_INFO_MENU) {
 			if (buttonName.contains(LanguageManager.messages.allowedKits))
-//				player.openInventory(Inventories.createAllowedKitsMenu(meta.getArena(), true));
-				PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+				player.openInventory(Inventories.createAllowedKitsMenu(meta.getArena(), true));
 
 			else if (buttonName.contains(LanguageManager.messages.forcedChallenges))
-//				player.openInventory(Inventories.createForcedChallengesMenu(meta.getArena(), true));
-				PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+				player.openInventory(Inventories.createForcedChallengesMenu(meta.getArena(), true));
 		}
 
 		// Menu for converting crystals
@@ -3109,21 +3227,6 @@ public class InventoryListener implements Listener {
 
 			// Refresh GUI
 			player.openInventory(Inventories.createCrystalConvertMenu(gamer));
-		}
-	}
-
-	// Ensures closing inventory doesn't mess up data
-	@EventHandler
-	public void onClose(InventoryCloseEvent e) {
-		// Ignore non-plugin inventories
-		if (!(e.getInventory().getHolder() instanceof InventoryMeta))
-			return;
-		InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
-
-		// Check for community chest with shop inside it
-		if (meta.getInventoryID() == InventoryID.COMMUNITY_CHEST_INVENTORY && e.getInventory().contains(Shop.create())) {
-			e.getInventory().removeItem(Shop.create());
-			PlayerManager.giveItem((Player) e.getPlayer(), Shop.create(), LanguageManager.errors.inventoryFull);
 		}
 	}
 
