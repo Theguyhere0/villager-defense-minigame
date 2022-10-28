@@ -392,14 +392,14 @@ public class Inventories {
 
 		// Option to edit max players
 		buttons.add(ItemManager.createItem(Material.NETHERITE_HELMET,
-				CommunicationManager.format("&4&lMaximum Players"),
+				CommunicationManager.format("&4&lMaximum Players: " + arena.getMaxPlayers()),
 				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Maximum players the game will have")));
 
 		// Option to edit min players
 		buttons.add(ItemManager.createItem(Material.NETHERITE_BOOTS,
-				CommunicationManager.format("&2&lMinimum Players"),
+				CommunicationManager.format("&2&lMinimum Players: " + arena.getMinPlayers()),
 				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Minimum players needed for game to start")));
@@ -763,13 +763,15 @@ public class Inventories {
 		// Option to change max waves
 		buttons.add(
 				ItemManager.createItem(Material.NETHERITE_SWORD,
-				CommunicationManager.format("&3&lMax Waves"),
+				CommunicationManager.format("&3&lMax Waves: " + ((arena.getMaxWaves() < 0) ? "Unlimited" :
+						arena.getMaxWaves())),
 				ItemManager.BUTTON_FLAGS,
 				null)
 		);
 
 		// Option to wave time limit
-		buttons.add(ItemManager.createItem(Material.CLOCK, CommunicationManager.format("&2&lWave Time Limit")));
+		buttons.add(ItemManager.createItem(Material.CLOCK, CommunicationManager.format("&2&lWave Time Limit: " +
+				((arena.getWaveTimeLimit() < 0) ? "Unlimited" : arena.getWaveTimeLimit() + " minute(s)"))));
 
 		// Option to toggle dynamic wave time limit
 		buttons.add(
@@ -789,11 +791,11 @@ public class Inventories {
 
 		// Option to edit difficulty label
 		buttons.add(ItemManager.createItem(Material.NAME_TAG,
-				CommunicationManager.format("&6&lDifficulty Label")));
+				CommunicationManager.format("&6&lDifficulty Label: " + arena.getDifficultyLabel())));
 
 		// Option to adjust overall difficulty multiplier
 		buttons.add(ItemManager.createItem(Material.TURTLE_HELMET,
-				CommunicationManager.format("&4&lDifficulty Multiplier"),
+				CommunicationManager.format("&4&lDifficulty Multiplier: " + arena.getDifficultyMultiplier()),
 				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Determines difficulty increase rate")));
@@ -2955,17 +2957,5 @@ public class Inventories {
 		} catch (NumberFormatException | NullPointerException ignored) {
 		}
 		return item;
-	}
-
-	private static void sort(List<ItemStack> list) {
-		list.sort(Comparator.comparingInt(itemStack -> {
-			try {
-				List<String> lore = Objects.requireNonNull(Objects.requireNonNull(itemStack.getItemMeta()).getLore());
-				return Integer.parseInt(lore.get(lore.size() - 1)
-						.substring(6 + LanguageManager.messages.gems.length()));
-			} catch (NumberFormatException | NullPointerException e) {
-				return Integer.MAX_VALUE;
-			}
-		}));
 	}
 }
