@@ -126,6 +126,7 @@ public class Arena {
 
     // Task names
     private static final String NOTIFY_WAITING = "notifyWaiting";
+    private static final String NOTIFY_INFO = "notifyInfo";
     private static final String ONE_MINUTE_NOTICE = "1MinuteNotice";
     private static final String THIRTY_SECOND_NOTICE = "30SecondNotice";
     private static final String TEN_SECOND_NOTICE = "10SecondNotice";
@@ -1496,6 +1497,57 @@ public class Arena {
                 Utils.secondsToTicks(Utils.minutesToSeconds(1)));
     }
 
+    public void addNotifyInfo() throws ArenaClosedException, ArenaStatusException, ArenaTaskException {
+        // Check if waiting notifications can start
+        if (isClosed())
+            throw new ArenaClosedException();
+        if (status != ArenaStatus.WAITING)
+            throw new ArenaStatusException(ArenaStatus.WAITING);
+        if (activeTasks.containsKey(NOTIFY_INFO))
+            throw new ArenaTaskException("Arena already started info notifications");
+
+        // Start repeating notification of info
+        activeTasks.put(NOTIFY_INFO, new BukkitRunnable() {
+            @Override
+            public void run() {
+                String LIST = "  - ";
+                // Task
+                getPlayers().forEach(player -> {
+                    PlayerManager.notify(player.getPlayer(), new ColoredMessage(ChatColor.DARK_AQUA,
+                            LanguageManager.messages.quickInfo), new ColoredMessage(ChatColor.DARK_GREEN, getName()));
+                    player.getPlayer().sendMessage(new ColoredMessage(ChatColor.GOLD, LIST + (getMaxWaves() < 0 ?
+                            LanguageManager.messages.noLastWave : String.format(LanguageManager.messages.finalWave,
+                            getMaxWaves()))).toString());
+                    player.getPlayer().sendMessage(new ColoredMessage(hasDynamicCount() ? ChatColor.GREEN :
+                            ChatColor.RED, String.format(LIST + LanguageManager.messages.dynamicMobCount,
+                            hasDynamicCount() ? LanguageManager.messages.will :
+                                    LanguageManager.messages.willNot)).toString());
+                    player.getPlayer().sendMessage(new ColoredMessage(hasDynamicDifficulty() ? ChatColor.GREEN :
+                            ChatColor.RED, String.format(LIST + LanguageManager.messages.dynamicDifficulty,
+                            hasDynamicDifficulty() ? LanguageManager.messages.will :
+                                    LanguageManager.messages.willNot)).toString());
+                    player.getPlayer().sendMessage(new ColoredMessage(hasDynamicPrices() ? ChatColor.GREEN :
+                            ChatColor.RED, String.format(LIST + LanguageManager.messages.dynamicPrices,
+                            hasDynamicPrices() ? LanguageManager.messages.will :
+                                    LanguageManager.messages.willNot)).toString());
+                    player.getPlayer().sendMessage(new ColoredMessage(hasDynamicLimit() ? ChatColor.GREEN :
+                            ChatColor.RED, String.format(LIST + LanguageManager.messages.dynamicTimeLimit,
+                            hasDynamicLimit() ? LanguageManager.messages.will :
+                                    LanguageManager.messages.willNot)).toString());
+                    player.getPlayer().sendMessage(new ColoredMessage(hasLateArrival() ? ChatColor.GREEN :
+                            ChatColor.RED, String.format(LIST + LanguageManager.messages.lateArrival,
+                            hasLateArrival() ? LanguageManager.messages.will : LanguageManager.messages.willNot))
+                            .toString());
+                    player.getPlayer().sendMessage(new ColoredMessage(hasCommunity() ? ChatColor.GREEN : ChatColor.RED,
+                            String.format(LIST + LanguageManager.messages.communityChest, hasCommunity() ?
+                                    LanguageManager.messages.will : LanguageManager.messages.willNot)).toString());
+                });
+            }
+        });
+        activeTasks.get(NOTIFY_INFO).runTaskTimer(Main.plugin, Utils.secondsToTicks(30),
+                Utils.secondsToTicks(Utils.minutesToSeconds(1)));
+    }
+
     public void startCountDown() throws ArenaStatusException, ArenaClosedException, ArenaTaskException {
         // Check additionally for if countdown already started
         if (activeTasks.containsKey(START_ARENA) || activeTasks.containsKey(FORCE_START_ARENA))
@@ -1513,8 +1565,11 @@ public class Arena {
         if (getActiveCount() == 0)
             throw new ArenaTaskException("Arena cannot start countdown without players");
 
-        // Clear active tasks
-        activeTasks.forEach((name, task) -> task.cancel());
+        // Clear active tasks except notify info
+        activeTasks.forEach((name, task) -> {
+                if(!name.equals(NOTIFY_INFO))
+                    task.cancel();
+        });
         activeTasks.clear();
 
         // Two-minute notice
@@ -2830,10 +2885,6 @@ public class Arena {
         } catch (Exception e) {
             return false;
         }
-    }
-
-    public boolean hasPlayer(VDPlayer player) {
-        return players.stream().filter(Objects::nonNull).anyMatch(p -> p.equals(player));
     }
 
     public int getActiveCount() {

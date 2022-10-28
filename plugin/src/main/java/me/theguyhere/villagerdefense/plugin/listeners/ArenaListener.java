@@ -182,6 +182,12 @@ public class ArenaListener implements Listener {
         } catch (ArenaException ignored) {
         }
 
+        // Start info
+        try {
+            arena.addNotifyInfo();
+        } catch (ArenaException ignored) {
+        }
+
         // Quick start condition
         try {
             if (players == arena.getMaxPlayers())
@@ -230,9 +236,9 @@ public class ArenaListener implements Listener {
             if (PlayerManager.getTopKills(playerID) < gamer.getKills())
                 PlayerManager.setTopKills(playerID, gamer.getKills());
 
-            // Check for achievements TODO
-//            AchievementChecker.checkDefaultHighScoreAchievements(player);
-//            AchievementChecker.checkDefaultInstanceAchievements(gamer);
+            // Check for achievements
+            AchievementChecker.checkDefaultHighScoreAchievements(player);
+            AchievementChecker.checkDefaultInstanceAchievements(gamer);
 
             // Refresh leaderboards
             GameManager.refreshLeaderboards();

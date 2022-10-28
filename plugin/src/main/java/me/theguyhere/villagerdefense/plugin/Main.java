@@ -95,7 +95,6 @@ public class Main extends JavaPlugin {
 		pm.registerEvents(new AbilityListener(), this);
 		pm.registerEvents(new ChallengeListener(), this);
 		pm.registerEvents(new WorldListener(), this);
-		pm.registerEvents(new BonusListener(), this);
 
 		// Add packet listeners for online players
 		for (Player player : Bukkit.getOnlinePlayers())

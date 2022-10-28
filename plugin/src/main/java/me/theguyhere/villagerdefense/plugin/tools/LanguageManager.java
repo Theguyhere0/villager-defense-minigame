@@ -1015,6 +1015,7 @@ public class LanguageManager {
         public final @NotNull String challenges;
         public final @NotNull String closed;
         public final @NotNull String commandFormat;
+        public final @NotNull String communityChest;
         public final @NotNull String cooldown;
         public final @NotNull String crystalBonus;
         public final @NotNull String crystalBalance;
@@ -1027,6 +1028,11 @@ public class LanguageManager {
         public final @NotNull String disabled;
         public final @NotNull String durability;
         public final @NotNull String duration;
+        public final @NotNull String dynamicDifficulty;
+        public final @NotNull String dynamicMobCount;
+        public final @NotNull String dynamicPrices;
+        public final @NotNull String dynamicTimeLimit;
+
         public final @NotNull String effect;
         public final @NotNull String effectKitsDescription;
         public final @NotNull String effectShare;
@@ -1034,6 +1040,7 @@ public class LanguageManager {
         public final @NotNull String ending;
         public final @NotNull String enemies;
         public final @NotNull String exit;
+        public final @NotNull String finalWave;
         public final @NotNull String free;
         public final @NotNull String forcedChallenges;
         public final @NotNull String foundGems;
@@ -1061,6 +1068,7 @@ public class LanguageManager {
         public final @NotNull String kit;
         public final @NotNull String kits;
         public final @NotNull String late;
+        public final @NotNull String lateArrival;
         public final @NotNull String leave;
         public final @NotNull String leaveArena;
         public final @NotNull String level;
@@ -1072,6 +1080,7 @@ public class LanguageManager {
         public final @NotNull String mobName;
         public final @NotNull String nextRefill;
         public final @NotNull String noAutoUpdate;
+        public final @NotNull String noLastWave;
         public final @NotNull String noStats;
         public final @NotNull String noUpgrades;
         public final @NotNull String offToggle;
@@ -1084,6 +1093,7 @@ public class LanguageManager {
         public final @NotNull String playerStatistics;
         public final @NotNull String purchase;
         public final @NotNull String purchased;
+        public final @NotNull String quickInfo;
         public final @NotNull String range;
         public final @NotNull String record;
         public final @NotNull String records;
@@ -1114,6 +1124,8 @@ public class LanguageManager {
         public final @NotNull String wave;
         public final @NotNull String waveNum;
         public final @NotNull String weight;
+        public final @NotNull String will;
+        public final @NotNull String willNot;
 
         private Messages() throws InvalidLanguageKeyException {
             setPathPrefix("messages");
@@ -1138,6 +1150,7 @@ public class LanguageManager {
             challenges = getConfigString("challenges");
             closed = getConfigString("closed");
             commandFormat = getConfigString("commandFormat");
+            communityChest = getConfigString("communityChest");
             cooldown = getConfigString("cooldown");
             crystalBonus = getConfigString("crystalBonus");
             crystalBalance = getConfigString("crystalBalance");
@@ -1150,6 +1163,10 @@ public class LanguageManager {
             disabled = getConfigString("disabled");
             durability = getConfigString("durability");
             duration = getConfigString("duration");
+            dynamicDifficulty = getConfigString("dynamicDifficulty");
+            dynamicMobCount = getConfigString("dynamicMobCount");
+            dynamicPrices = getConfigString("dynamicPrices");
+            dynamicTimeLimit = getConfigString("dynamicTimeLimit");
             effect = getConfigString("effect");
             effectKitsDescription = getConfigString("effectKitsDescription");
             effectShare = getConfigString("effectShare");
@@ -1157,6 +1174,7 @@ public class LanguageManager {
             ending = getConfigString("ending");
             enemies = getConfigString("enemies");
             exit = getConfigString("exit");
+            finalWave = getConfigString("finalWave");
             free = getConfigString("free");
             forcedChallenges = getConfigString("forcedChallenges");
             foundGems = getConfigString("foundGems");
@@ -1184,6 +1202,7 @@ public class LanguageManager {
             kit = getConfigString("kit");
             kits = getConfigString("kits");
             late = getConfigString("late");
+            lateArrival = getConfigString("lateArrival");
             leave = getConfigString("leave");
             leaveArena = getConfigString("leaveArena");
             level = getConfigString("level");
@@ -1195,6 +1214,7 @@ public class LanguageManager {
             mobName = getConfigString("mobName");
             nextRefill = getConfigString("nextRefill");
             noAutoUpdate = getConfigString("noAutoUpdate");
+            noLastWave = getConfigString("noLastWave");
             noStats = getConfigString("noStats");
             noUpgrades = getConfigString("noUpgrades");
             offToggle = getConfigString("offToggle");
@@ -1207,6 +1227,7 @@ public class LanguageManager {
             playerStatistics = getConfigString("playerStatistics");
             purchase = getConfigString("purchase");
             purchased = getConfigString("purchased");
+            quickInfo = getConfigString("quickInfo");
             range = getConfigString("range");
             record = getConfigString("record");
             records = getConfigString("records");
@@ -1237,6 +1258,8 @@ public class LanguageManager {
             wave = getConfigString("wave");
             waveNum = getConfigString("waveNum");
             weight = getConfigString("weight");
+            will = getConfigString("will");
+            willNot = getConfigString("willNot");
         }
     }
 

@@ -9,10 +9,10 @@ import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.models.achievements.AchievementChecker;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.Shop;
-import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Ammo;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
@@ -28,7 +28,10 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.*;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
@@ -2902,7 +2905,7 @@ public class InventoryListener implements Listener {
 					PlayerManager.withdrawCrystalBalance(ownerID, kit.getPrice(1));
 					PlayerManager.addSingleTierKit(ownerID, kit.getID());
 					PlayerManager.notifySuccess(player, LanguageManager.confirms.kitBuy);
-//					AchievementChecker.checkDefaultKitAchievements(player);
+					AchievementChecker.checkDefaultKitAchievements(player);
 				} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitBuy);
 			}
 
@@ -2916,14 +2919,14 @@ public class InventoryListener implements Listener {
 						PlayerManager.withdrawCrystalBalance(ownerID, kit.getPrice(kitLevel));
 						PlayerManager.setMultiTierKitLevel(ownerID, kit.getID(), kitLevel);
 						PlayerManager.notifySuccess(player, LanguageManager.confirms.kitBuy);
-//						AchievementChecker.checkDefaultKitAchievements(player);
+						AchievementChecker.checkDefaultKitAchievements(player);
 					} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitBuy);
 				} else {
 					if (balance >= kit.getPrice(++kitLevel)) {
 						PlayerManager.withdrawCrystalBalance(ownerID, kit.getPrice(kitLevel));
 						PlayerManager.setMultiTierKitLevel(ownerID, kit.getID(), kitLevel);
 						PlayerManager.notifySuccess(player, LanguageManager.confirms.kitUpgrade);
-//						AchievementChecker.checkDefaultKitAchievements(player);
+						AchievementChecker.checkDefaultKitAchievements(player);
 					} else PlayerManager.notifyFailure(player, LanguageManager.errors.kitUpgrade);
 				}
 			}
