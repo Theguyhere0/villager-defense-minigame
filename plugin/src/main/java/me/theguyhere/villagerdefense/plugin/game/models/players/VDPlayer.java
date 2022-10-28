@@ -90,7 +90,7 @@ public class VDPlayer {
     /** Boots {@link ItemStack} held for ninja ability.*/
     private ItemStack boots;
     /** Whether permanent boosts are on or not.*/
-    private boolean boost = false; // TODO: return to true once boosts are reworked
+    private boolean boost = true;
     /** Number of gems to be converted from crystals.*/
     private int gemBoost = 0;
     /** Whether effect kits are shared or not.*/
@@ -177,9 +177,10 @@ public class VDPlayer {
         if (this.currentHealth == 0) {
             // Check if player has resurrection achievement and is boosted
             Random random = new Random();
-            if (isBoosted() && random.nextDouble() < .1 &&
+            if (boost && random.nextDouble() < .1 &&
                     PlayerManager.hasAchievement(getPlayer().getUniqueId(), Achievement.allChallenges().getID())) {
                 PlayerManager.giveTotemEffect(getPlayer());
+                currentHealth = maxHealth / 2;
                 return;
             }
 
@@ -189,7 +190,7 @@ public class VDPlayer {
             // Check for explosive challenge
             if (getChallenges().contains(Challenge.explosive())) {
                 // Create an explosion
-                getPlayer().getWorld().createExplosion(getPlayer().getLocation(), 1.25F, false, false);
+                getPlayer().getWorld().createExplosion(getPlayer().getLocation(), 1.75F, false, false);
 
                 // Drop all items and clear inventory
                 getPlayer().getInventory().forEach(itemStack -> {
@@ -197,6 +198,7 @@ public class VDPlayer {
                         getPlayer().getWorld().dropItemNaturally(getPlayer().getLocation(), itemStack);
                 });
                 getPlayer().getInventory().clear();
+                tieredEssenceLevel = 0;
             }
 
             // Notify player of their own death
@@ -471,17 +473,19 @@ public class VDPlayer {
 
     public void heal() {
         // Natural heal
-        int hunger = getPlayer().getFoodLevel();
-        if (hunger >= 20)
-            changeCurrentHealth(6);
-        else if (hunger >= 16)
-            changeCurrentHealth(5);
-        else if (hunger >= 10)
-            changeCurrentHealth(3);
-        else if (hunger >= 4)
-            changeCurrentHealth(2);
-        else if (hunger > 0)
-            changeCurrentHealth(1);
+        if (!challenge.contains(Challenge.uhc())) {
+            int hunger = getPlayer().getFoodLevel();
+            if (hunger >= 20)
+                changeCurrentHealth(6);
+            else if (hunger >= 16)
+                changeCurrentHealth(5);
+            else if (hunger >= 10)
+                changeCurrentHealth(3);
+            else if (hunger >= 4)
+                changeCurrentHealth(2);
+            else if (hunger > 0)
+                changeCurrentHealth(1);
+        }
 
         // Regeneration
         getPlayer().getActivePotionEffects().forEach(potionEffect -> {
@@ -507,8 +511,10 @@ public class VDPlayer {
                 });
 
         // Update ammo
-        Ammo.updateRefill(Objects.requireNonNull(getPlayer().getEquipment()).getItemInMainHand(), fletcher.get());
-        Ammo.updateRefill(Objects.requireNonNull(getPlayer().getEquipment()).getItemInOffHand(), fletcher.get());
+        Ammo.updateRefill(Objects.requireNonNull(getPlayer().getEquipment()).getItemInMainHand(), fletcher.get(),
+                boost && PlayerManager.hasAchievement(player, Achievement.allKits().getID()));
+        Ammo.updateRefill(Objects.requireNonNull(getPlayer().getEquipment()).getItemInOffHand(), fletcher.get(),
+                boost && PlayerManager.hasAchievement(player, Achievement.allKits().getID()));
     }
 
     public void takeDamage(int damage, @NotNull AttackType attackType) {
@@ -519,6 +525,10 @@ public class VDPlayer {
             damage *= Math.max(0, 1 - toughness);
         else if (attackType == AttackType.NONE)
             damage = 0;
+
+        // Apply boost
+        if (boost && PlayerManager.hasAchievement(player, Achievement.totalKills9().getID()))
+            damage *= .9;
 
         // Realize damage
         changeCurrentHealth(-damage);
@@ -544,13 +554,6 @@ public class VDPlayer {
 
     public int dealRawDamage(@NotNull AttackClass attackClass, double mainMult) {
         Random r = new Random();
-        AtomicInteger increase = new AtomicInteger();
-        getPlayer().getActivePotionEffects().forEach(potionEffect -> {
-            if (PotionEffectType.INCREASE_DAMAGE.equals(potionEffect.getType()))
-                increase.addAndGet(1 + potionEffect.getAmplifier());
-            else if (PotionEffectType.WEAKNESS.equals(potionEffect.getType()))
-                increase.addAndGet(- 1 - potionEffect.getAmplifier());
-        });
 
         // Modify damage based on weapon
         double damage;
@@ -647,6 +650,17 @@ public class VDPlayer {
         } catch (Exception e) {
             damage = baseDamage;
         }
+
+        // Calculate boosts or reductions
+        AtomicInteger increase = new AtomicInteger();
+        getPlayer().getActivePotionEffects().forEach(potionEffect -> {
+            if (PotionEffectType.INCREASE_DAMAGE.equals(potionEffect.getType()))
+                increase.addAndGet(1 + potionEffect.getAmplifier());
+            else if (PotionEffectType.WEAKNESS.equals(potionEffect.getType()))
+                increase.addAndGet(- 1 - potionEffect.getAmplifier());
+        });
+        if (boost && PlayerManager.hasAchievement(player, Achievement.topKills9().getID()))
+            increase.incrementAndGet();
 
         return (int) (damage * (1 + .1 * increase.get()));
     }
@@ -850,7 +864,12 @@ public class VDPlayer {
             else if (item.getType().toString().contains("BOOTS") &&
                     Objects.requireNonNull(equipment).getBoots() == null)
                 equipment.setBoots(item);
-            else PlayerManager.giveItem(getPlayer(), item, LanguageManager.errors.inventoryFull);
+            else {
+                if (boost && PlayerManager.hasAchievement(player, Achievement.allMaxedAbility().getID()))
+                    PlayerManager.giveItem(getPlayer(), VDAbility.modifyCooldown(item, .9),
+                            LanguageManager.errors.inventoryFull);
+                else PlayerManager.giveItem(getPlayer(), item, LanguageManager.errors.inventoryFull);
+            }
         }
         PlayerManager.giveItem(getPlayer(), Shop.create(), LanguageManager.errors.inventoryFull);
     }
@@ -891,7 +910,7 @@ public class VDPlayer {
         }
 
         // Set health for people with health boost and are boosted
-        if (isBoosted() && PlayerManager.hasAchievement(getID(), Achievement.topWave9().getID())) {
+        if (boost && PlayerManager.hasAchievement(player, Achievement.topWave9().getID())) {
             Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
                     .addModifier(new AttributeModifier("HealthBoost", 2,
                             AttributeModifier.Operation.ADD_NUMBER));
@@ -917,6 +936,6 @@ public class VDPlayer {
 
         // Set up health and damage
         setMaxHealthInit(maxHealth);
-        setBaseDamage(10);
+        baseDamage = 10;
     }
 }

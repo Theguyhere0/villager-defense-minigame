@@ -238,7 +238,8 @@ public abstract class Ammo extends VDWeapon {
                     price));
 
         // Create item
-        return ItemManager.createItem(Material.NETHER_STAR, name, ItemManager.BUTTON_FLAGS, null, lores);
+        return ItemManager.makeUnique(ItemManager.createItem(Material.NETHER_STAR, name, ItemManager.BUTTON_FLAGS,
+                null, lores));
     }
 
     public static boolean matches(ItemStack toCheck) {
@@ -299,7 +300,7 @@ public abstract class Ammo extends VDWeapon {
         return false;
     }
 
-    public static void updateRefill(ItemStack ammo, boolean fletcher) {
+    public static void updateRefill(ItemStack ammo, boolean fletcher, boolean boost) {
         // Check for ammo
         if (!matches(ammo))
             return;
@@ -353,7 +354,7 @@ public abstract class Ammo extends VDWeapon {
             double updatedRefillTimer = refillTimer.get() - .5;
             // Timer finished
             if (updatedRefillTimer < .1) {
-                capacity.addAndGet(maxCap.get() - 1 > capacity.get() && fletcher ? 2 : 1);
+                capacity.addAndGet(Math.min(maxCap.get(), (fletcher ? 2 : 1) * (boost ? 2 : 1)));
                 ChatColor color = capacity.get() >= .75 * maxCap.get() ? ChatColor.GREEN :
                         (capacity.get() <= .25 * maxCap.get() ? ChatColor.RED : ChatColor.YELLOW);
                 lores.set(capIndex.get(), CommunicationManager.format(CAPACITY,

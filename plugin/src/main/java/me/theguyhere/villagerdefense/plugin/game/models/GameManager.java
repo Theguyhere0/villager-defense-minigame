@@ -148,8 +148,6 @@ public class GameManager {
 		Score score11 = obj.getScore(CommunicationManager.format("&b" + LanguageManager.messages.kit + ": " +
 				kit));
 		score11.setScore(11);
-		Score score10 = obj.getScore(CommunicationManager.format(""));
-		score10.setScore(10);
 
 		int bonus = 0;
 		for (Challenge challenge : player.getChallenges())

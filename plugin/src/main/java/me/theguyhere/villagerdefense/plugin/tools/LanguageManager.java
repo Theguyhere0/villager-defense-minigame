@@ -1481,6 +1481,7 @@ public class LanguageManager {
     }
 
     public static class Rewards extends Section {
+        public final @NotNull String ammoDouble;
         public final @NotNull String cooldownReduction;
         public final @NotNull String crystalConvert;
         public final @NotNull String crystals;
@@ -1490,11 +1491,11 @@ public class LanguageManager {
         public final @NotNull String healthIncrease;
         public final @NotNull String resurrection;
         public final @NotNull String shareEffect;
-        public final @NotNull String twoKits;
 
         public Rewards() throws InvalidLanguageKeyException {
             setPathPrefix("rewards");
 
+            ammoDouble = getConfigString("ammoDouble");
             cooldownReduction = getConfigString("cooldownReduction");
             crystalConvert = getConfigString("crystalConvert");
             crystals = getConfigString("crystals");
@@ -1504,7 +1505,6 @@ public class LanguageManager {
             healthIncrease = getConfigString("healthIncrease");
             resurrection = getConfigString("resurrection");
             shareEffect = getConfigString("shareEffect");
-            twoKits = getConfigString("twoKits");
         }
     }
 }

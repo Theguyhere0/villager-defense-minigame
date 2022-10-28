@@ -95,18 +95,18 @@ public class GameListener implements Listener {
         DataManager data = new DataManager("spawnTables/" + arena.getSpawnTableFile());
 
 		if (ent.getMetadata(VDMob.TEAM).get(0).equals(Team.VILLAGER.getValue())) {
-			// Handle pet death TODO
-			if (ent instanceof Wolf) {
-				try {
-					arena.getPlayer((Player) ((Wolf) ent).getOwner()).decrementWolves();
-				} catch (Exception err) {
-					return;
-				}
-			}
-
-			// Handle golem death TODO
-			else if (ent instanceof IronGolem)
-				arena.decrementGolems();
+//			// Handle pet death TODO
+//			if (ent instanceof Wolf) {
+//				try {
+//					arena.getPlayer((Player) ((Wolf) ent).getOwner()).decrementWolves();
+//				} catch (Exception err) {
+//					return;
+//				}
+//			}
+//
+//			// Handle golem death TODO
+//			else if (ent instanceof IronGolem)
+//				arena.decrementGolems();
 		}
 
 		// Handle enemy death
@@ -377,8 +377,14 @@ public class GameListener implements Listener {
 
 			// Realize damage and deal effect
 			gamer.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType());
-			if (finalDamager.getEffectType() == null || Kit.witch().getID().equals(gamer.getKit().getID()))
+			if (finalDamager.getEffectType() == null || (Kit.witch().getID().equals(gamer.getKit().getID())) &&
+					!gamer.isSharing())
 				return;
+			Random r = new Random();
+			if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.WITCH))) {
+				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+				return;
+			}
 			if (finalDamager.getEffectType().getName().equals(PotionEffectType.FIRE_RESISTANCE.getName()))
 				gamer.combust(finalDamager.getEffectDuration());
 			else gamer.getPlayer().addPotionEffect(finalDamager.dealEffect());
@@ -423,14 +429,14 @@ public class GameListener implements Listener {
 					return;
 				}
 
-				// Check for pacifist challenge and not an enemy
-				if (gamer != null && gamer.getChallenges().contains(Challenge.pacifist()) &&
-						!gamer.getEnemies().contains(damager.getUniqueId()))
-					return;
-
 				// Cancel and capture original damage
 				double damage = e.getDamage();
 				e.setDamage(0);
+
+				// Check for pacifist challenge and not an enemy
+				if (gamer != null && gamer.getChallenges().contains(Challenge.pacifist()) &&
+						!gamer.getEnemies().contains(victim.getUniqueId()))
+					return;
 
 				// Damage dealt by player
 				if (gamer != null) {
@@ -803,6 +809,7 @@ public class GameListener implements Listener {
 		}
 
 		// Apply to relevant entities
+		Random r = new Random();
 		for (LivingEntity affectedEntity : e.getAffectedEntities()) {
 			// Not monster
 			if (!(affectedEntity instanceof Player) &&
@@ -811,8 +818,13 @@ public class GameListener implements Listener {
 
 			// Ignore players with witch kit
 			try {
-				if (Kit.witch().getID().equals(arena.getPlayer(affectedEntity.getUniqueId()).getKit().getID()))
+				VDPlayer player = arena.getPlayer(affectedEntity.getUniqueId());
+				if (Kit.witch().getID().equals(player.getKit().getID()) && !player.isSharing())
 					continue;
+				if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.WITCH))) {
+					PlayerManager.notifySuccess(player.getPlayer(), LanguageManager.messages.effectShare);
+					return;
+				}
 			} catch (PlayerNotFoundException ignored) {
 			}
 
@@ -1015,21 +1027,18 @@ public class GameListener implements Listener {
 
 		// Open challenge selection menu
 		else if (ChallengeSelector.matches(item))
-//			player.openInventory(Inventories.createSelectChallengesMenu(gamer, arena));
-			PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+			player.openInventory(Inventories.createSelectChallengesMenu(gamer, arena));
 
 		// Toggle boost
 		else if (BoostToggle.matches(item)) {
-//			gamer.toggleBoost();
-//			PlayerManager.giveChoiceItems(gamer);
-			PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+			gamer.toggleBoost();
+			PlayerManager.giveChoiceItems(gamer);
 		}
 
 		// Toggle share
 		else if (ShareToggle.matches(item)) {
-//			gamer.toggleShare();
-//			PlayerManager.giveChoiceItems(gamer);
-			PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+			gamer.toggleShare();
+			PlayerManager.giveChoiceItems(gamer);
 		}
 
 		// Open crystal convert menu

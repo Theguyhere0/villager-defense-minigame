@@ -1947,6 +1947,9 @@ public class Inventories {
 				}
 				if (ability == null)
 					buttons.add(noUpgrade);
+				else if (player.isBoosted() && PlayerManager.hasAchievement(player.getID(),
+						Achievement.allMaxedAbility().getID()))
+					buttons.add(VDAbility.modifyCooldown(modifyPrice(ability, modifier), .9));
 				else buttons.add(modifyPrice(ability, modifier));
 			}
 		} else buttons.add(noUpgrade);

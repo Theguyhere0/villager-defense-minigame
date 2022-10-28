@@ -952,6 +952,7 @@ playerStats:
     description: "Lifetime kill count"
     leaderboard: "Total Kills Leaderboard"
 rewards:
+  ammoDouble: "Reward: Permanent doubling to ammo regeneration"
   cooldownReduction: "Reward: Permanent 10% reduction to ability cooldown"
   crystalConvert: "Reward: Option to convert 5 %s for 1 gem at start of game"
   crystals: "Reward: %s %s"
@@ -959,6 +960,5 @@ rewards:
   damageReduction: "Reward: Permanent 10% reduction to damage taken"
   gemIncrease: "Reward: Permanent 10% increase in gems received"
   healthIncrease: "Reward: Permanent 10% increase to health"
-  resurrection: "Reward: Permanent 10% chance of resurrecting upon fatal damage"
+  resurrection: "Reward: Permanent 10% chance of resurrecting to half health upon fatal damage"
   shareEffect: "Reward: Option to apply effect to everyone 25% of the time"
-  twoKits: "Reward: Bonus random second kit"

@@ -21,6 +21,9 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -28,6 +31,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ChallengeListener implements Listener {
     // Prevent using certain item slots
@@ -54,41 +58,52 @@ public class ChallengeListener implements Listener {
             return;
 
         // Get armor
-        ItemStack off = player.getInventory().getItemInOffHand();
         ItemStack helmet = player.getInventory().getHelmet();
         ItemStack chestplate = player.getInventory().getChestplate();
         ItemStack leggings = player.getInventory().getLeggings();
         ItemStack boots = player.getInventory().getBoots();
 
-        // Unequip off-hand
-        if (gamer.getChallenges().contains(Challenge.amputee()) && off.getType() != Material.AIR) {
-            PlayerManager.giveItem(player, off, LanguageManager.errors.inventoryFull);
-            player.getInventory().setItemInOffHand(null);
-            PlayerManager.notifyFailure(player, LanguageManager.errors.amputee);
+        // Unequip armor
+        if (gamer.getChallenges().contains(Challenge.naked())) {
+            if (!(helmet == null || helmet.getType() == Material.AIR)) {
+                PlayerManager.giveItem(player, helmet, LanguageManager.errors.inventoryFull);
+                player.getInventory().setHelmet(null);
+                PlayerManager.notifyFailure(player, LanguageManager.errors.naked);
+            }
+            if (!(chestplate == null || chestplate.getType() == Material.AIR)) {
+                PlayerManager.giveItem(player, chestplate, LanguageManager.errors.inventoryFull);
+                player.getInventory().setChestplate(null);
+                PlayerManager.notifyFailure(player, LanguageManager.errors.naked);
+            }
+            if (!(leggings == null || leggings.getType() == Material.AIR)) {
+                PlayerManager.giveItem(player, leggings, LanguageManager.errors.inventoryFull);
+                player.getInventory().setLeggings(null);
+                PlayerManager.notifyFailure(player, LanguageManager.errors.naked);
+            }
+            if (!(boots == null || boots.getType() == Material.AIR)) {
+                PlayerManager.giveItem(player, boots, LanguageManager.errors.inventoryFull);
+                player.getInventory().setBoots(null);
+                PlayerManager.notifyFailure(player, LanguageManager.errors.naked);
+            }
         }
 
-        // Unequip armor
-        if (!gamer.getChallenges().contains(Challenge.naked()))
-            return;
-        if (!(helmet == null || helmet.getType() == Material.AIR)) {
-            PlayerManager.giveItem(player, helmet, LanguageManager.errors.inventoryFull);
-            player.getInventory().setHelmet(null);
-            PlayerManager.notifyFailure(player, LanguageManager.errors.naked);
-        }
-        if (!(chestplate == null || chestplate.getType() == Material.AIR)) {
-            PlayerManager.giveItem(player, chestplate, LanguageManager.errors.inventoryFull);
-            player.getInventory().setChestplate(null);
-            PlayerManager.notifyFailure(player, LanguageManager.errors.naked);
-        }
-        if (!(leggings == null || leggings.getType() == Material.AIR)) {
-            PlayerManager.giveItem(player, leggings, LanguageManager.errors.inventoryFull);
-            player.getInventory().setLeggings(null);
-            PlayerManager.notifyFailure(player, LanguageManager.errors.naked);
-        }
-        if (!(boots == null || boots.getType() == Material.AIR)) {
-            PlayerManager.giveItem(player, boots, LanguageManager.errors.inventoryFull);
-            player.getInventory().setBoots(null);
-            PlayerManager.notifyFailure(player, LanguageManager.errors.naked);
+        // Drop inventory items
+        if (gamer.getChallenges().contains(Challenge.amputee())) {
+            ItemStack temp;
+            boolean infraction = false;
+            for (int i = 9; i < 36; i++) {
+                temp = player.getInventory().getItem(i);
+                if (temp == null)
+                    continue;
+
+                player.getWorld().dropItemNaturally(player.getLocation(), temp);
+                player.getInventory().setItem(i, null);
+                infraction = true;
+            }
+
+            // Notify of infraction
+            if (infraction)
+                PlayerManager.notifyFailure(player, LanguageManager.errors.amputee);
         }
     }
 
@@ -204,5 +219,109 @@ public class ChallengeListener implements Listener {
                 if (!gamer.getEnemies().contains(e.getEntity().getUniqueId()))
                     e.setCancelled(true);
         }
+    }
+
+    // Handle inventory clicks
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent e) {
+        Player player = (Player) e.getWhoClicked();
+        Arena arena;
+        VDPlayer gamer;
+
+        // Try getting player and arena
+        try {
+            arena = GameManager.getArena(player);
+            gamer = arena.getPlayer(player);
+        } catch (ArenaNotFoundException | PlayerNotFoundException err) {
+            return;
+        }
+
+        // Check for amputees
+        if (!gamer.getChallenges().contains(Challenge.amputee()))
+            return;
+
+        // Disallow shift clicking
+        if (e.isShiftClick()) {
+            e.setCancelled(true);
+            PlayerManager.notifyFailure(player, LanguageManager.errors.amputee);
+            return;
+        }
+
+        // Ignore empty clicks
+        if (e.getCursor() == null || e.getCursor().getType() == Material.AIR)
+            return;
+
+        // Disallow clicking into forbidden slots
+        if (e.getSlot() >= 9 && e.getSlot() <= 35) {
+            e.setCancelled(true);
+            PlayerManager.notifyFailure(player, LanguageManager.errors.amputee);
+        }
+    }
+
+    // Handle inventory drags
+    @EventHandler
+    public void onInventoryDrag(InventoryDragEvent e) {
+        Player player = (Player) e.getWhoClicked();
+        Arena arena;
+        VDPlayer gamer;
+
+        // Try getting player and arena
+        try {
+            arena = GameManager.getArena(player);
+            gamer = arena.getPlayer(player);
+        } catch (ArenaNotFoundException | PlayerNotFoundException err) {
+            return;
+        }
+
+        // Check for amputees
+        if (!gamer.getChallenges().contains(Challenge.amputee()))
+            return;
+
+        // Disallow dragging into forbidden slots
+        AtomicBoolean forbidden = new AtomicBoolean(false);
+        e.getInventorySlots().forEach(slot -> {
+            if (slot >= 9 && slot <= 35)
+                forbidden.set(true);
+        });
+        if (forbidden.get()) {
+            e.setCancelled(true);
+            PlayerManager.notifyFailure(player, LanguageManager.errors.amputee);
+        }
+    }
+
+    // Handle picking up items
+    @EventHandler
+    public void onPickUp(EntityPickupItemEvent e) {
+        // Check for player
+        if (!(e.getEntity() instanceof Player))
+            return;
+
+        Player player = (Player) e.getEntity();
+        Arena arena;
+        VDPlayer gamer;
+
+        // Try getting player and arena
+        try {
+            arena = GameManager.getArena(player);
+            gamer = arena.getPlayer(player);
+        } catch (ArenaNotFoundException | PlayerNotFoundException err) {
+            return;
+        }
+
+        // Check for amputees
+        if (!gamer.getChallenges().contains(Challenge.amputee()))
+            return;
+
+        // Check for room to pick up item
+        boolean full = true;
+        for (int i = 0; i < 9; i++) {
+            ItemStack item = player.getInventory().getItem(i);
+            if (item == null || item.getType() == Material.AIR)
+                full = false;
+        }
+
+        // Cancel for full inventory
+        if (full)
+            e.setCancelled(true);
     }
 }

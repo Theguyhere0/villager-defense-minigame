@@ -1827,8 +1827,7 @@ public class InventoryListener implements Listener {
 
 			// Edit forced challenges
 			else if (buttonName.contains("Forced Challenges"))
-//				player.openInventory(Inventories.createForcedChallengesMenu(arenaInstance, false));
-				PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+				player.openInventory(Inventories.createForcedChallengesMenu(arenaInstance, false));
 
 			// Edit difficulty label
 			else if (buttonName.contains("Difficulty Label"))
@@ -2745,10 +2744,6 @@ public class InventoryListener implements Listener {
 				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
 			}
 
-			// Make ammo unique
-			if (Ammo.matches(buy))
-				buy = ItemManager.makeUnique(buy);
-
 			// Subtract from balance, apply rebate, and update scoreboard
 			gamer.addGems(-cost);
 			if (Kit.merchant().setKitLevel(1).equals(gamer.getKit()) && !gamer.isSharing())
@@ -2855,8 +2850,7 @@ public class InventoryListener implements Listener {
 		else if (invID == InventoryID.PLAYER_STATS_MENU) {
 			UUID id = meta.getPlayerID();
 			if (buttonName.contains(LanguageManager.messages.achievements))
-//				player.openInventory(Inventories.createPlayerAchievementsMenu(id));
-				PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+				player.openInventory(Inventories.createPlayerAchievementsMenu(id));
 			else if (buttonName.contains(LanguageManager.messages.kits))
 				player.openInventory(Inventories.createPlayerKitsMenu(id, player.getUniqueId()));
 			else if (buttonName.contains(LanguageManager.messages.reset) && id.equals(player.getUniqueId()))
@@ -3084,8 +3078,7 @@ public class InventoryListener implements Listener {
 				player.openInventory(Inventories.createAllowedKitsMenu(meta.getArena(), true));
 
 			else if (buttonName.contains(LanguageManager.messages.forcedChallenges))
-//				player.openInventory(Inventories.createForcedChallengesMenu(meta.getArena(), true));
-				PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+				player.openInventory(Inventories.createForcedChallengesMenu(meta.getArena(), true));
 		}
 
 		// Menu for converting crystals

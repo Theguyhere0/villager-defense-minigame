@@ -2,8 +2,7 @@ package me.theguyhere.villagerdefense.plugin.commands;
 
 import me.theguyhere.villagerdefense.plugin.exceptions.CommandException;
 import me.theguyhere.villagerdefense.plugin.exceptions.CommandFormatException;
-import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -22,7 +21,6 @@ class CommandCheckAchievements {
             throw new CommandFormatException(COMMAND_FORMAT);
 
         // Open achievements menu
-        PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
-//        player.openInventory(Inventories.createPlayerAchievementsMenu(player.getUniqueId()));
+        player.openInventory(Inventories.createPlayerAchievementsMenu(player.getUniqueId()));
     }
 }
