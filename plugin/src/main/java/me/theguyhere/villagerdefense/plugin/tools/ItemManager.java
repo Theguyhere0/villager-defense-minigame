@@ -19,17 +19,14 @@ import java.util.*;
  */
 public class ItemManager {
     /** Flags for creating normal items with enchants and/or lore.*/
+    @SuppressWarnings("unused")
     public static final boolean[] NORMAL_FLAGS = {false, false};
     /** Flags for creating items with hidden enchants.*/
+    @SuppressWarnings("unused")
     public static final boolean[] HIDE_ENCHANT_FLAGS = {true, false};
     /** Flags for creating items with hidden enchants and attributes, mostly for buttons.*/
+    @SuppressWarnings("unused")
     public static final boolean[] BUTTON_FLAGS = {true, true};
-
-    public static HashMap<Enchantment, Integer> dummyEnchant() {
-        HashMap<Enchantment, Integer> enchants = new HashMap<>();
-        enchants.put(Enchantment.DURABILITY, 1);
-        return enchants;
-    }
 
     // Creates an ItemStack using only material, name, and lore
     @NotNull
@@ -131,6 +128,28 @@ public class ItemManager {
         return item;
     }
 
+    // Makes an item unique so it becomes unstackable
+    @NotNull
+    public static ItemStack makeUnique(@NotNull ItemStack item) {
+        Random r = new Random();
+        return setModelData(item, r.nextInt());
+    }
+
+    // Set custom model data
+    @NotNull
+    public static ItemStack setModelData(@NotNull ItemStack item, int modelData) {
+        ItemStack newItem = item.clone();
+        ItemMeta meta = newItem.getItemMeta();
+
+        try {
+            Objects.requireNonNull(meta).setCustomModelData(modelData);
+            newItem.setItemMeta(meta);
+            return newItem;
+        } catch (Exception e) {
+            return item;
+        }
+    }
+
     // Makes an item unbreakable
     @NotNull
     public static ItemStack makeUnbreakable(@NotNull ItemStack item) {
@@ -142,18 +161,29 @@ public class ItemManager {
         try {
             Objects.requireNonNull(meta).setUnbreakable(true);
             newItem.setItemMeta(meta);
-            return newItem;
+            return removeLastLore(newItem);
         } catch (Exception e) {
             return item;
         }
     }
 
-    // Make an item into a splash potion
+    // Rename an item
     @NotNull
-    public static ItemStack makeSplash(ItemStack item) {
+    public static ItemStack rename(ItemStack item, String newName) {
         ItemStack newItem = item.clone();
-        if (newItem.getType() == Material.POTION)
-            newItem.setType(Material.SPLASH_POTION);
+        ItemMeta meta = newItem.getItemMeta();
+
+        if (meta != null)
+            meta.setDisplayName(newName);
+        newItem.setItemMeta(meta);
+        return newItem;
+    }
+
+    // Set the amount of an item
+    @NotNull
+    public static ItemStack setAmount(ItemStack item, int amount) {
+        ItemStack newItem = item.clone();
+        newItem.setAmount(Math.max(amount, 0));
         return newItem;
     }
 

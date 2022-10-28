@@ -52,6 +52,13 @@ public class ArenaListener implements Listener {
             return;
         }
 
+        // Don't allow to join if arena is ending
+        if (arena.getStatus() == ArenaStatus.ENDING) {
+            PlayerManager.notifyFailure(player, LanguageManager.errors.endingSoon);
+            e.setCancelled(true);
+            return;
+        }
+
         // Try to get waiting room
         try {
             waiting = arena.getWaitingRoom();
@@ -93,7 +100,6 @@ public class ArenaListener implements Listener {
             VDPlayer fighter = new VDPlayer(player, arena, false);
             arena.getPlayers().add(fighter);
             arena.refreshPortal();
-            Main.getVillagersTeam().addEntry(player.getUniqueId().toString());
 
             // Add forced challenges TODO
 //            arena.getForcedChallengeIDs().forEach(challenge ->
@@ -135,7 +141,6 @@ public class ArenaListener implements Listener {
             VDPlayer fighter = new VDPlayer(player, arena, false);
             arena.getPlayers().add(fighter);
             arena.refreshPortal();
-            Main.getVillagersTeam().addEntry(player.getUniqueId().toString());
 
             // Add forced challenges
             arena.getForcedChallengeIDs().forEach(challenge ->
@@ -174,6 +179,12 @@ public class ArenaListener implements Listener {
         // Waiting condition
         try {
             arena.startNotifyWaiting();
+        } catch (ArenaException ignored) {
+        }
+
+        // Start info
+        try {
+            arena.addNotifyInfo();
         } catch (ArenaException ignored) {
         }
 
@@ -219,17 +230,15 @@ public class ArenaListener implements Listener {
         // Not spectating
         if (gamer.getStatus() != PlayerStatus.SPECTATOR) {
             UUID playerID = player.getUniqueId();
-            // Remove from team
-            Main.getVillagersTeam().removeEntry(playerID.toString());
 
             // Update player stats
             PlayerManager.setTotalKills(playerID, PlayerManager.getTotalKills(playerID) + gamer.getKills());
             if (PlayerManager.getTopKills(playerID) < gamer.getKills())
                 PlayerManager.setTopKills(playerID, gamer.getKills());
 
-            // Check for achievements TODO
-//            AchievementChecker.checkDefaultHighScoreAchievements(player);
-//            AchievementChecker.checkDefaultInstanceAchievements(gamer);
+            // Check for achievements
+            AchievementChecker.checkDefaultHighScoreAchievements(player);
+            AchievementChecker.checkDefaultInstanceAchievements(gamer);
 
             // Refresh leaderboards
             GameManager.refreshLeaderboards();

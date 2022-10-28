@@ -7,14 +7,22 @@ limited:
   # Use positive integer keys to indicate which wave to run at, followed by the command to run
   # Ex. 1: "/give %player% taxes"
   onWaveComplete:
-  # These commands are run when players beat an arena, once they return to the lobby
+  # These commands are run when players beat an arena, BEFORE they return to the lobby
   # Use "-" to list the commands to run after winning a game
   # Ex. - "/give %player% taxes"
   onGameWin:
-  # These commands are run when players lose, once they return to the lobby
+  # These commands are run when players beat an arena, AFTER they return to the lobby
+  # Use "-" to list the commands to run after winning a game
+  # Ex. - "/give %player% taxes"
+  onGameWinLobby:
+  # These commands are run when players lose, BEFORE they return to the lobby
   # Use "-" to list the commands to run after losing a game
   # Ex. - "/give %player% taxes"
   onGameLose:
+  # These commands are run when players lose, AFTER they return to the lobby
+  # Use "-" to list the commands to run after losing a game
+  # Ex. - "/give %player% taxes"
+  onGameLoseLobby:
 
 # These commands are run for arenas with unlimited waves
 unlimited:
@@ -22,7 +30,7 @@ unlimited:
   # Use positive integer keys to indicate which wave to run at, followed by the command to run
   # Ex. 1: "/give %player% taxes"
   onWaveComplete:
-  # These commands are run when the game ends, once players return to the lobby
+  # These commands are run when the game ends, BEFORE players return to the lobby
   # Use "<" or "^" followed by a positive integer as the key to indicate the wave REACHED threshold to run at,
   # followed by the command to run. "<" indicates lower than and "^" indicates higher than.
   # Ex. <10: "/give %player% taxes"
@@ -30,3 +38,11 @@ unlimited:
   # Ex. 15-20: "/give %player% taxes"
   # Note: Threshold keys are exclusive, range keys are inclusive; All conditions will be checked upon game end
   onGameEnd:
+  # These commands are run when the game ends, AFTER players return to the lobby
+  # Use "<" or "^" followed by a positive integer as the key to indicate the wave REACHED threshold to run at,
+  # followed by the command to run. "<" indicates lower than and "^" indicates higher than.
+  # Ex. <10: "/give %player% taxes"
+  # Use "-" between two positive integers to indicate an inclusive wave REACHED range, followed by the command to run
+  # Ex. 15-20: "/give %player% taxes"
+  # Note: Threshold keys are exclusive, range keys are inclusive; All conditions will be checked upon game end
+  onGameEndLobby:

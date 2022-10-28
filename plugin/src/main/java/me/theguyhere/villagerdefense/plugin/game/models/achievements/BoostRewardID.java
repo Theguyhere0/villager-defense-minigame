@@ -9,7 +9,7 @@ public enum BoostRewardID {
     RESURRECTION(5),
     COOLDOWN_REDUCTION(6),
     SHARE_EFFECT(7),
-    TWO_KITS(8)
+    AMMO_DOUBLE(8)
     ;
 
     private final int ID;

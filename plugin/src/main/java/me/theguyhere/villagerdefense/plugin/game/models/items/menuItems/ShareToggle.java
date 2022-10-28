@@ -13,7 +13,7 @@ public abstract class ShareToggle extends VDMenuItem {
         return ItemManager.createItem(Material.DISPENSER,
                 CommunicationManager.format("&b&l" + LanguageManager.names.effectShare + ": " +
                         getToggleStatus(sharing)),
-                ItemManager.HIDE_ENCHANT_FLAGS, ItemManager.dummyEnchant());
+                ItemManager.HIDE_ENCHANT_FLAGS, ItemManager.glow());
     }
 
     public static boolean matches(ItemStack toCheck) {

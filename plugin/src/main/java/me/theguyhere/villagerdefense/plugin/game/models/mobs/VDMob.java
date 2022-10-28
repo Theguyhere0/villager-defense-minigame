@@ -3,7 +3,6 @@ package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
-import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidVDMobKeyException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
@@ -11,6 +10,9 @@ import me.theguyhere.villagerdefense.plugin.game.displays.Popup;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.minions.*;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.villagers.VDFletcher;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.villagers.VDNormalVillager;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
@@ -26,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class VDMob {
     protected Mob mob;
@@ -36,28 +39,28 @@ public abstract class VDMob {
     protected int wave;
     protected String name;
     protected int hpBarSize;
-    protected boolean hostile;
-    
+
     protected final int level;
-    protected int maxHealth;
-    protected int currentHealth;
-    protected int armor;
-    protected double toughness;
-    protected int damage;
-    protected double damageSpread;
+    protected int maxHealth = 0;
+    protected int currentHealth = 0;
+    protected int armor = 0;
+    protected double toughness = 0;
+    protected int damage = 0;
+    protected double damageSpread = 0;
     protected PotionEffectType effectType;
-    protected int effectLevel;
-    protected int effectDuration;
-    protected int pierce;
+    protected int effectLevel = 0;
+    protected int effectDuration = 0;
+    protected int pierce = 0;
     protected final AttackType attackType;
-    protected double attackSpeed;
+    protected double attackSpeed = 0;
     protected TargetPriority targetPriority = TargetPriority.NONE;
-    protected int targetRange;
-    protected int loot;
-    protected double lootSpread;
+    protected int targetRange = 0;
+    protected int loot = 0;
+    protected double lootSpread = 0;
     protected long lastStrike = 0;
     
     public static final String VD = "VD";
+    public static final String TEAM = "VDTeam";
     private static final String KNOCKBACK = "knockback";
     private static final String WEIGHT = "weight";
     private static final String SPEED = "speed";
@@ -84,7 +87,7 @@ public abstract class VDMob {
         return wave;
     }
 
-    public void takeDamage(int damage, @NotNull AttackType attackType, @Nullable Player attacker, Arena arena) {
+    public int takeDamage(int damage, @NotNull AttackType attackType, @Nullable Player attacker, Arena arena) {
         // Final damage calculation and display
         if (attackType == AttackType.NORMAL)
             damage -= Math.min(damage, armor);
@@ -161,8 +164,11 @@ public abstract class VDMob {
         
         // Update entity name
         updateNameTag();
+
+        return damage;
     }
-    private void addDamage(int damage, UUID id) {
+
+    protected void addDamage(int damage, UUID id) {
         currentHealth -= damage;
         if (id == null)
             return;
@@ -173,7 +179,14 @@ public abstract class VDMob {
     
     public int dealRawDamage() {
         Random r = new Random();
-        return (int) (this.damage * (1 + (r.nextDouble() * 2 - 1) * damageSpread));
+        AtomicInteger increase = new AtomicInteger();
+        mob.getActivePotionEffects().forEach(potionEffect -> {
+            if (PotionEffectType.INCREASE_DAMAGE.equals(potionEffect.getType()))
+                increase.addAndGet(1 + potionEffect.getAmplifier());
+            else if (PotionEffectType.WEAKNESS.equals(potionEffect.getType()))
+                increase.addAndGet(- 1 - potionEffect.getAmplifier());
+        });
+        return (int) (this.damage * (1 + (r.nextDouble() * 2 - 1) * damageSpread) * (1 + .1 * increase.get()));
     }
 
     public AttackType getAttackType() {
@@ -201,10 +214,10 @@ public abstract class VDMob {
      * @return Whether the cooldown was up or not.
      */
     public boolean attackAttempt() {
-        boolean cooldownUp = System.currentTimeMillis() >= lastStrike + attackSpeed * 1000;
+        boolean cooldownUp = System.currentTimeMillis() >= lastStrike + Utils.secondsToMillis(attackSpeed);
         if (cooldownUp)
             lastStrike = System.currentTimeMillis();
-        return cooldownUp;
+        return cooldownUp || System.currentTimeMillis() < lastStrike + Utils.secondsToMillis(0.1);
     }
 
     public double getAttackSpeed() {
@@ -482,29 +495,12 @@ public abstract class VDMob {
 
     protected abstract void updateNameTag();
 
-    public void remove() {
-        if (Main.getVillagersTeam().hasEntry(id.toString()))
-            Main.getVillagersTeam().removeEntry(id.toString());
-        if (Main.getMonstersTeam().hasEntry(id.toString()))
-            Main.getMonstersTeam().removeEntry(id.toString());
-    }
-
     public static VDMob of(String key, Arena arena, Location ground, Location air) throws InvalidVDMobKeyException {
         switch (key) {
-//            case VDCleric.KEY:
-//                return new VDCleric(arena, ground);
-            case VDWeaponsmith.KEY:
-                return new VDWeaponsmith(arena, ground);
-            case VDArmorer.KEY:
-                return new VDArmorer(arena, ground);
-            case VDFarmer.KEY:
-                return new VDFarmer(arena, ground);
-            case VDVaultKeeper.KEY:
-                return new VDVaultKeeper(arena, ground);
+            case VDNormalVillager.KEY:
+                return new VDNormalVillager(arena, ground);
             case VDFletcher.KEY:
                 return new VDFletcher(arena, ground);
-            case VDMayor.KEY:
-                return new VDMayor(arena, ground);
             case VDZombie.KEY:
                 return new VDZombie(arena, ground);
             case VDBabyZombie.KEY:

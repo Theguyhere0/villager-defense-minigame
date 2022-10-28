@@ -12,7 +12,7 @@ public abstract class Leave extends VDMenuItem {
     public static ItemStack create() {
         return ItemManager.createItem(Material.BARRIER,
                 CommunicationManager.format("&c&l" + LanguageManager.messages.leave),
-                ItemManager.HIDE_ENCHANT_FLAGS, ItemManager.dummyEnchant());
+                ItemManager.HIDE_ENCHANT_FLAGS, ItemManager.glow());
     }
 
     public static boolean matches(ItemStack toCheck) {

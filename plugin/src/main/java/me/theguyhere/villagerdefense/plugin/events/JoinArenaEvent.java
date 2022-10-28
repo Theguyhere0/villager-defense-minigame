@@ -5,11 +5,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 public class JoinArenaEvent extends Event implements Cancellable {
     private final Player player;
     private final Arena arena;
-    private boolean isCancelled;
+    private boolean isCancelled = false;
     private static final HandlerList HANDLERS = new HandlerList();
 
     public JoinArenaEvent(Player player, Arena arena) {
@@ -18,7 +19,7 @@ public class JoinArenaEvent extends Event implements Cancellable {
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
 

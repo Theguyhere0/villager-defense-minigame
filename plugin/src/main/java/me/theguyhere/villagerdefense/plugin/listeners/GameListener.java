@@ -6,28 +6,29 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.exceptions.VDMobNotFoundException;
+import me.theguyhere.villagerdefense.plugin.exceptions.*;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.items.ItemMetaKey;
+import me.theguyhere.villagerdefense.plugin.game.models.items.VDItem;
+import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.MageAbility;
 import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.game.models.items.armor.VDArmor;
 import me.theguyhere.villagerdefense.plugin.game.models.items.eggs.VDEgg;
+import me.theguyhere.villagerdefense.plugin.game.models.items.food.Totem;
 import me.theguyhere.villagerdefense.plugin.game.models.items.food.VDFood;
 import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.*;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Ammo;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Bow;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Crossbow;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.VDWeapon;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDCreeper;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDWitch;
+import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
+import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.*;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.minions.VDCreeper;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.minions.VDWitch;
 import me.theguyhere.villagerdefense.plugin.game.models.players.AttackClass;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
@@ -52,7 +53,7 @@ import org.bukkit.util.BoundingBox;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameListener implements Listener {
@@ -95,23 +96,23 @@ public class GameListener implements Listener {
         // Get spawn table
         DataManager data = new DataManager("spawnTables/" + arena.getSpawnTableFile());
 
-		if (Main.getVillagersTeam().hasEntry(ent.getUniqueId().toString())) {
-			// Handle pet death TODO
-			if (ent instanceof Wolf) {
-				try {
-					arena.getPlayer((Player) ((Wolf) ent).getOwner()).decrementWolves();
-				} catch (Exception err) {
-					return;
-				}
-			}
-
-			// Handle golem death TODO
-			else if (ent instanceof IronGolem)
-				arena.decrementGolems();
+		if (ent.getMetadata(VDMob.TEAM).get(0).equals(Team.VILLAGER.getValue())) {
+//			// Handle pet death TODO
+//			if (ent instanceof Wolf) {
+//				try {
+//					arena.getPlayer((Player) ((Wolf) ent).getOwner()).decrementWolves();
+//				} catch (Exception err) {
+//					return;
+//				}
+//			}
+//
+//			// Handle golem death TODO
+//			else if (ent instanceof IronGolem)
+//				arena.decrementGolems();
 		}
 
 		// Handle enemy death
-		else if (Main.getMonstersTeam().hasEntry(ent.getUniqueId().toString())) {
+		else if (ent.getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue())) {
 			// Get wave
 			String wave = Integer.toString(arena.getCurrentWave());
 			if (!data.getConfig().contains(wave))
@@ -133,7 +134,6 @@ public class GameListener implements Listener {
 		}
 
 		// Remove the mob
-		mob.remove();
 		arena.removeMob(mob.getID());
 
 		// Update scoreboards
@@ -177,7 +177,7 @@ public class GameListener implements Listener {
 		ItemStack ammo = Objects.requireNonNull(player.getEquipment()).getItemInOffHand();
 		if (!Ammo.matches(ammo)) {
 			e.setCancelled(true);
-			PlayerManager.notifyFailure(player, LanguageManager.errors.ammoOffHand);
+			gamer.triggerAmmoWarningCooldown();
 			return;
 		}
 
@@ -204,25 +204,29 @@ public class GameListener implements Listener {
 				capacity.set(Integer.parseInt(lore.substring(2 + LanguageManager.messages.capacity.length())
 						.replace(ChatColor.BLUE.toString(), "")
 						.replace(ChatColor.WHITE.toString(), "")
-						.split("/")[0]));
+						.split(" / ")[0]));
 			}
 		});
 		if (capacity.get() < cost.get())
 			return;
 
 		// Check for cooldown
-		if (gamer.getCooldown() > System.currentTimeMillis())
+		if (gamer.remainingWeaponCooldown() > 0)
 			return;
 
 		// Fire
 		player.launchProjectile(Arrow.class);
 
-		// Update capacity and cooldown
+		// Update capacity, durability, and cooldown
 		if (Bow.matches(range))
 			NMSVersion.getCurrent().getNmsManager().setBowCooldown(player, Utils.secondsToTicks(cooldown.get()));
 		else NMSVersion.getCurrent().getNmsManager().setCrossbowCooldown(player, Utils.secondsToTicks(cooldown.get()));
-		gamer.setCooldown(System.currentTimeMillis() + Utils.secondsToMillis(cooldown.get()));
-		Ammo.updateCapacity(ammo, -cost.get());
+		gamer.triggerWeaponCooldown(Utils.secondsToMillis(cooldown.get()));
+		if (Ammo.updateCapacity(ammo, -cost.get())) {
+			player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
+			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1);
+		}
+		Bukkit.getPluginManager().callEvent(new PlayerItemDamageEvent(player, range, 1));
 	}
 
 	// Manage projectiles being fired
@@ -300,17 +304,16 @@ public class GameListener implements Listener {
 		}
 	}
 
-	// Update health when damage is dealt by entity
+	// Update health when damage is dealt by entity and prevent friendly fire
 	@EventHandler
 	public void onHurt(EntityDamageByEntityEvent e) {
 		boolean projectile = e.getDamager() instanceof Projectile;
-		Entity interimVictim = e.getEntity();
 		Entity interimDamager = projectile ? (Entity) ((Projectile) e.getDamager()).getShooter() : e.getDamager();
-		if (!(interimVictim instanceof LivingEntity))
+		if (!(e.getEntity() instanceof LivingEntity))
 			return;
 		if (!(interimDamager instanceof LivingEntity))
 			return;
-		LivingEntity victim = (LivingEntity) interimVictim;
+		LivingEntity victim = (LivingEntity) e.getEntity();
 		LivingEntity damager = (LivingEntity) interimDamager;
 		Arena arena;
 		Player player = null;
@@ -334,9 +337,11 @@ public class GameListener implements Listener {
 				return;
 			}
 
-			// Avoid phantom damage effects
-			if (Main.getVillagersTeam().hasEntry(damager.getUniqueId().toString()))
+			// Avoid phantom damage effects and friendly fire
+			if (damager instanceof Player || damager.getMetadata(VDMob.TEAM).get(0).equals(Team.VILLAGER.getValue())) {
+				e.setCancelled(true);
 				return;
+			}
 
 			// Cancel original damage
 			e.setDamage(0);
@@ -374,8 +379,14 @@ public class GameListener implements Listener {
 
 			// Realize damage and deal effect
 			gamer.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType());
-			if (finalDamager.getEffectType() == null)
+			if (finalDamager.getEffectType() == null || (Kit.witch().getID().equals(gamer.getKit().getID())) &&
+					!gamer.isSharing())
 				return;
+			Random r = new Random();
+			if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.WITCH))) {
+				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+				return;
+			}
 			if (finalDamager.getEffectType().getName().equals(PotionEffectType.FIRE_RESISTANCE.getName()))
 				gamer.combust(finalDamager.getEffectDuration());
 			else gamer.getPlayer().addPotionEffect(finalDamager.dealEffect());
@@ -412,23 +423,35 @@ public class GameListener implements Listener {
 			}
 
 			// Enemy getting hurt
-			if (Main.getMonstersTeam().hasEntry(victim.getUniqueId().toString())) {
-				// Avoid phantom damage effects
-				if (Main.getMonstersTeam().hasEntry(damager.getUniqueId().toString()))
+			if (victim.getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue())) {
+				// Avoid phantom damage effects and friendly fire
+				if (!(damager instanceof Player) &&
+						damager.getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue())) {
+					e.setCancelled(true);
 					return;
-
-				// Check for pacifist challenge and not an enemy
-				if (gamer != null && gamer.getChallenges().contains(Challenge.pacifist()) &&
-						!gamer.getEnemies().contains(damager.getUniqueId()))
-					return;
+				}
 
 				// Cancel and capture original damage
 				double damage = e.getDamage();
 				e.setDamage(0);
 
+				// Check for pacifist challenge and not an enemy
+				if (gamer != null && gamer.getChallenges().contains(Challenge.pacifist()) &&
+						!gamer.getEnemies().contains(victim.getUniqueId()))
+					return;
+
 				// Damage dealt by player
 				if (gamer != null) {
 					AttackClass attackClass;
+
+					// Calculate damage difference
+					AtomicInteger dif = new AtomicInteger();
+					player.getActivePotionEffects().forEach(potionEffect -> {
+						if (PotionEffectType.INCREASE_DAMAGE.equals(potionEffect.getType()))
+							dif.addAndGet((1 + potionEffect.getAmplifier()) * 3);
+						else if (PotionEffectType.WEAKNESS.equals(potionEffect.getType()))
+							dif.addAndGet(- (1 + potionEffect.getAmplifier()) * 4);
+					});
 
 					// Range damage
 					if (projectile) {
@@ -455,7 +478,7 @@ public class GameListener implements Listener {
 					}
 
 					// Crit damage
-					if (damage > 20)
+					if (damage > 20 + dif.get())
 						attackClass = AttackClass.CRITICAL;
 
 					// Sweep damage
@@ -466,8 +489,27 @@ public class GameListener implements Listener {
 					else attackClass = AttackClass.MAIN;
 
 					// Play out damage
-					finalVictim.takeDamage(gamer.dealRawDamage(attackClass, damage / 20.),
+					int hurt = finalVictim.takeDamage(
+							gamer.dealRawDamage(attackClass, damage / (double) (dif.get() + 20)),
 							gamer.getAttackType(), player, arena);
+
+					Random r = new Random();
+
+					// Check for vampire kit
+					if (Kit.vampire().getID().equals(gamer.getKit().getID()) && !gamer.isSharing()) {
+						// Heal if probability is right
+						if (r.nextDouble() < .2)
+							gamer.changeCurrentHealth((int) (hurt * .25));
+					}
+
+					// Check for shared vampire effect
+					else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.VAMPIRE))) {
+						// Heal if probability is right
+						if (r.nextDouble() < .2) {
+							gamer.changeCurrentHealth((int) (hurt * .25));
+							PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+						}
+					}
 				}
 
 				// Damage not dealt by player
@@ -510,10 +552,13 @@ public class GameListener implements Listener {
 			}
 
 			// Friendly getting hurt
-			if (Main.getVillagersTeam().hasEntry(victim.getUniqueId().toString())) {
-				// Avoid phantom damage effects
-				if (Main.getVillagersTeam().hasEntry(damager.getUniqueId().toString()))
+			if (victim.getMetadata(VDMob.TEAM).get(0).equals(Team.VILLAGER.getValue())) {
+				// Avoid phantom damage effects and friendly fire
+				if (damager instanceof Player ||
+						damager.getMetadata(VDMob.TEAM).get(0).equals(Team.VILLAGER.getValue())) {
+					e.setCancelled(true);
 					return;
+				}
 				if (finalDamager == null)
 					return;
 
@@ -616,8 +661,9 @@ public class GameListener implements Listener {
 				case WITHER:
 					gamer.takeDamage((int) (damage * 10), AttackType.DIRECT);
 					break;
-				// Ignore
+				// Silence
 				default:
+					e.setCancelled(true);
 			}
 		}
 
@@ -650,18 +696,56 @@ public class GameListener implements Listener {
 					mob.takeDamage((int) (damage * 5), AttackType.PENETRATING, null, arena);
 					break;
 				case POISON:
-					mob.takeDamage((int) (damage * 4), AttackType.PENETRATING, null, arena);
+					mob.takeDamage((int) (damage * 8), AttackType.PENETRATING, null, arena);
 					break;
 				case WITHER:
-					mob.takeDamage((int) (damage * 4), AttackType.DIRECT, null, arena);
+					mob.takeDamage((int) (damage * 8), AttackType.DIRECT, null, arena);
 					break;
-				// Ignore
+				// Silence
 				default:
+					e.setCancelled(true);
 			}
 		}
 
 		// Cancel original damage
 		e.setDamage(0);
+	}
+
+	// Ensure proper override of targeting
+	@EventHandler
+	public void onTarget(EntityTargetLivingEntityEvent e) {
+		Entity entity = e.getEntity();
+		LivingEntity target = e.getTarget();
+
+		// Check for custom mobs and player
+		if (target == null || !entity.hasMetadata(VDMob.VD) ||
+				!(target instanceof Player) && !target.hasMetadata(VDMob.VD))
+			return;
+
+		Arena arena;
+		VDMob mob;
+		VDMob targeted;
+
+		// Attempt to get VDPlayer and VDMob
+		try {
+			arena = GameManager.getArena(Objects.requireNonNull(e.getEntity()).getMetadata(VDMob.VD).get(0).asInt());
+			mob = arena.getMob(e.getEntity().getUniqueId());
+			if (target instanceof Player && !arena.hasPlayer((Player) target))
+				return;
+			else targeted = arena.getMob(target.getUniqueId());
+		} catch (ArenaNotFoundException | VDMobNotFoundException err) {
+			return;
+		}
+
+		// Monsters
+		if (mob.getEntity().getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue()))
+			if (targeted != null && targeted.getEntity().getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue()))
+				e.setCancelled(true);
+
+		// Villager team
+		else if (mob.getEntity().getMetadata(VDMob.TEAM).get(0).equals(Team.VILLAGER.getValue()) && (targeted == null ||
+					targeted.getEntity().getMetadata(VDMob.TEAM).get(0).equals(Team.VILLAGER.getValue())))
+				e.setCancelled(true);
 	}
 
 	// Stop custom mobs from burning in the sun
@@ -693,11 +777,20 @@ public class GameListener implements Listener {
 		if (!(mob instanceof VDCreeper))
 			return;
 
-		// Cancel and create custom explosion
+		// Cancel vanilla explosion
 		e.setCancelled(true);
-		((Creeper) ent).setFuseTicks(0);
-		Objects.requireNonNull(ent.getLocation().getWorld()).createExplosion(ent.getLocation(), 3, false,
+
+		// Create new explosion
+		Objects.requireNonNull(ent.getLocation().getWorld()).createExplosion(ent.getLocation(), 2.5f, false,
 				false, ent);
+
+		// Create replacement creeper
+		VDMob creeper = new VDCreeper((VDCreeper) mob, arena);
+		arena.addMob(creeper);
+
+		// Remove the old creeper
+		arena.removeMob(ent.getUniqueId());
+		ent.remove();
 	}
 
 	// Create custom potion effects from witch
@@ -705,22 +798,37 @@ public class GameListener implements Listener {
 	public void onSplash(PotionSplashEvent e) {
 		ThrownPotion potion = e.getEntity();
 		Entity ent = (Entity) potion.getShooter();
+		Arena arena;
 		VDWitch witch;
 
 		// Try to get arena and VDMob
 		try {
-			witch = (VDWitch) GameManager.getArena(Objects.requireNonNull(ent).getMetadata(VDMob.VD).get(0).asInt())
-					.getMob(ent.getUniqueId());
+			arena = GameManager.getArena(Objects.requireNonNull(ent).getMetadata(VDMob.VD).get(0).asInt());
+			witch = (VDWitch) arena.getMob(ent.getUniqueId());
 		} catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException |
 				NullPointerException | ClassCastException err) {
 			return;
 		}
 
 		// Apply to relevant entities
+		Random r = new Random();
 		for (LivingEntity affectedEntity : e.getAffectedEntities()) {
 			// Not monster
-			if (Main.getMonstersTeam().hasEntry(affectedEntity.getUniqueId().toString()))
+			if (!(affectedEntity instanceof Player) &&
+					affectedEntity.getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue()))
 				continue;
+
+			// Ignore players with witch kit
+			try {
+				VDPlayer player = arena.getPlayer(affectedEntity.getUniqueId());
+				if (Kit.witch().getID().equals(player.getKit().getID()) && !player.isSharing())
+					continue;
+				if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.WITCH))) {
+					PlayerManager.notifySuccess(player.getPlayer(), LanguageManager.messages.effectShare);
+					return;
+				}
+			} catch (PlayerNotFoundException ignored) {
+			}
 
 			// Apply affects
 			affectedEntity.addPotionEffect(witch.dealEffect());
@@ -744,11 +852,11 @@ public class GameListener implements Listener {
 		if (arena.getStatus() != ArenaStatus.ACTIVE)
 			return;
 
-		// Get off hand
+		// Get offhand
 		ItemStack off = player.getInventory().getItemInOffHand();
 
-		// Unequip weapons in off-hand
-		if (VDWeapon.matchesNoAmmo(off)) {
+		// Unequip weapons and mage abilities in offhand
+		if (VDWeapon.matchesNoAmmo(off) || MageAbility.matches(off)) {
 			PlayerManager.giveItem(player, off, LanguageManager.errors.inventoryFull);
 			player.getInventory().setItemInOffHand(null);
 			PlayerManager.notifyFailure(player, LanguageManager.errors.offWeapon);
@@ -784,19 +892,22 @@ public class GameListener implements Listener {
 				new ColoredMessage(ChatColor.RED, "+10" + Utils.HP));
 	}
 
-	// Prevent players from going hungry while in an arena
+	// Prevent players from going hungry while waiting in an arena
 	@EventHandler
 	public void onHunger(FoodLevelChangeEvent e) {
 		Player player = (Player) e.getEntity();
+		Arena arena;
 
 		// Check for player in arena
 		try {
-			GameManager.getArena(player);
+			arena = GameManager.getArena(player);
 		} catch (ArenaNotFoundException err) {
 			return;
 		}
 
-		e.setCancelled(true);
+		// Cancel if arena is not active
+		if (arena.getStatus() != ArenaStatus.ACTIVE)
+			e.setCancelled(true);
 	}
 
 	// Cancel natural potion effects for VDMobs or VDPlayers
@@ -822,7 +933,9 @@ public class GameListener implements Listener {
 		// Allow plugin, command, and expiration causes
 		if (e.getCause() == EntityPotionEffectEvent.Cause.PLUGIN ||
 				e.getCause() == EntityPotionEffectEvent.Cause.COMMAND ||
-				e.getCause() == EntityPotionEffectEvent.Cause.EXPIRATION)
+				e.getCause() == EntityPotionEffectEvent.Cause.EXPIRATION ||
+				e.getCause() == EntityPotionEffectEvent.Cause.POTION_DRINK ||
+				e.getCause() == EntityPotionEffectEvent.Cause.POTION_SPLASH)
 			return;
 
 		// Cancel
@@ -908,36 +1021,31 @@ public class GameListener implements Listener {
 
 		// Open shop inventory
 		if (Shop.matches(item))
-			player.openInventory(Inventories.createShopMenu(arena.getCurrentWave() / 10 + 1, arena));
+			player.openInventory(Inventories.createShopMenu(arena.getCurrentShopLevel(), arena));
 
 		// Open kit selection menu
 		else if (KitSelector.matches(item))
-//			player.openInventory(Inventories.createSelectKitsMenu(player, arena));
-			PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+			player.openInventory(Inventories.createSelectKitsMenu(player, arena));
 
 		// Open challenge selection menu
 		else if (ChallengeSelector.matches(item))
-//			player.openInventory(Inventories.createSelectChallengesMenu(gamer, arena));
-			PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+			player.openInventory(Inventories.createSelectChallengesMenu(gamer, arena));
 
 		// Toggle boost
 		else if (BoostToggle.matches(item)) {
-//			gamer.toggleBoost();
-//			PlayerManager.giveChoiceItems(gamer);
-			PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+			gamer.toggleBoost();
+			PlayerManager.giveChoiceItems(gamer);
 		}
 
 		// Toggle share
 		else if (ShareToggle.matches(item)) {
-//			gamer.toggleShare();
-//			PlayerManager.giveChoiceItems(gamer);
-			PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+			gamer.toggleShare();
+			PlayerManager.giveChoiceItems(gamer);
 		}
 
 		// Open crystal convert menu
 		else if (CrystalConverter.matches(item))
-//			player.openInventory(Inventories.createCrystalConvertMenu(gamer));
-			PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+			player.openInventory(Inventories.createCrystalConvertMenu(gamer));
 
 		// Make player leave
 		else if (Leave.matches(item))
@@ -949,52 +1057,6 @@ public class GameListener implements Listener {
 
 		// Cancel interaction
 		e.setCancelled(true);
-	}
-
-	// Stops players from hurting villagers and other players, and monsters from hurting each other
-	// TODO: check if this is still needed
-	@EventHandler
-	public void onFriendlyFire(EntityDamageByEntityEvent e) {
-		Entity ent = e.getEntity();
-		Entity damager = e.getDamager();
-
-		// Cancel damage to each other if they are in a game
-		if (ent instanceof Player && damager instanceof Player) {
-			if (GameManager.checkPlayer((Player) ent))
-				e.setCancelled(true);
-		}
-
-		// Check for special mobs
-		if (!ent.hasMetadata(VDMob.VD) && !(ent instanceof Player))
-			return;
-
-		// Cancel damage to friendly mobs
-		if ((ent instanceof Villager || ent instanceof Wolf || ent instanceof IronGolem) && damager instanceof Player)
-			e.setCancelled(true);
-
-		// Cancel monster friendly fire damage
-		else if ((ent instanceof Monster || ent instanceof Slime || ent instanceof Hoglin) &&
-				(damager instanceof Monster || damager instanceof Slime || ent instanceof Hoglin))
-			e.setCancelled(true);
-
-		// Check for projectile damage
-		else if (damager instanceof Projectile) {
-			// Player on player
-			if (ent instanceof Player && ((Projectile) damager).getShooter() instanceof Player) {
-				if (GameManager.checkPlayer((Player) ent))
-					e.setCancelled(true);
-			}
-
-			// Player on friendly
-			if ((ent instanceof Villager || ent instanceof Wolf || ent instanceof IronGolem) &&
-					((Projectile) damager).getShooter() instanceof Player)
-				e.setCancelled(true);
-
-			// Monster on monster
-			else if ((ent instanceof Monster || ent instanceof Slime) &&
-					((Projectile) damager).getShooter() instanceof Monster)
-				e.setCancelled(true);
-		}
 	}
 
 	// Handles players falling into the void
@@ -1104,7 +1166,7 @@ public class GameListener implements Listener {
 			e.setCancelled(true);
 	}
 
-	// Stop spawning babies
+	// Stop spawning babies using spawn eggs
 	@EventHandler
 	public void onBabyAttempt(PlayerInteractEntityEvent e) {
 		// Check for player in game
@@ -1144,6 +1206,10 @@ public class GameListener implements Listener {
 			return;
 		}
 
+		// Ignore armor equip
+		if (VDArmor.matches(item))
+			return;
+
 		// Check for active arena, at least wave 1
 		if (arena.getStatus() != ArenaStatus.ACTIVE || arena.getCurrentWave() < 1) {
 			e.setCancelled(true);
@@ -1156,25 +1222,23 @@ public class GameListener implements Listener {
 						VDWeapon.matchesClickableWeapon(main) || VDEgg.matches(main)))
 			return;
 
-		// Give health
-		AtomicBoolean food = new AtomicBoolean(false);
+		// Give health and hunger for totem
+		if (Totem.matches(item)) {
+			lores.forEach(lore -> {
+				if (lore.contains(Utils.HP)) {
+					int hp = Integer.parseInt(lore.substring(3).replace(Utils.HP, "").trim());
+					if (lore.contains(ChatColor.RED.toString()) && !gamer.hasMaxHealth())
+						gamer.changeCurrentHealth(hp);
+					else if (lore.contains(ChatColor.GOLD.toString()))
+						gamer.addAbsorption(hp);
+				} else if (lore.contains(Utils.HUNGER)) {
+					player.setFoodLevel(Math.max(20, player.getFoodLevel() +
+							Integer.parseInt(lore.substring(3).replace(Utils.HUNGER, "").trim())));
+				}
+			});
 
-		lores.forEach(lore -> {
-			if (lore.contains(ChatColor.RED.toString()) && lore.contains(Utils.HP) && !gamer.hasMaxHealth()) {
-				gamer.changeCurrentHealth(Integer.parseInt(lore.substring(3).replace(Utils.HP, "").trim()));
-				food.set(true);
-			}
-			if (lore.contains(ChatColor.GOLD.toString()) && lore.contains(Utils.HP)) {
-				gamer.addAbsorption(Integer.parseInt(lore.substring(3).replace(Utils.HP, "").trim()));
-				food.set(true);
-			}
-		});
-
-		// Consume
-		if (food.get()) {
-			if (item.getAmount() > 1)
-				item.setAmount(item.getAmount() - 1);
-			else player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
+			// Consume
+			player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
 		}
 
 		// Wolf spawn
@@ -1241,6 +1305,51 @@ public class GameListener implements Listener {
 //			Mobs.setGolem(Main.plugin, arena, ironGolem);
 //			Main.getVillagersTeam().addEntry(ironGolem.getUniqueId().toString());
 //		}
+	}
+
+	// Manage consumption of food
+	@EventHandler
+	public void onEat(PlayerItemConsumeEvent e) {
+		Player player = e.getPlayer();
+		ItemStack item = e.getItem();
+		List<String> lores;
+		Arena arena;
+		VDPlayer gamer;
+
+		// Attempt to get arena, player, and lore
+		try {
+			arena = GameManager.getArena(player);
+			gamer = arena.getPlayer(player);
+			lores = Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore());
+		} catch (ArenaNotFoundException | PlayerNotFoundException | NullPointerException err) {
+			return;
+		}
+
+		// Check for active arena, at least wave 1
+		if (arena.getStatus() != ArenaStatus.ACTIVE || arena.getCurrentWave() < 1) {
+			e.setCancelled(true);
+			return;
+		}
+
+		// Give health and hunger
+		lores.forEach(lore -> {
+			if (lore.contains(Utils.HP)) {
+				int hp = Integer.parseInt(lore.substring(3).replace(Utils.HP, "").trim());
+				if (lore.contains(ChatColor.RED.toString()) && !gamer.hasMaxHealth())
+					gamer.changeCurrentHealth(hp);
+				else if (lore.contains(ChatColor.GOLD.toString()))
+					gamer.addAbsorption(hp);
+			}
+			else if (lore.contains(Utils.HUNGER)) {
+				int trueHunger = player.getFoodLevel() +
+						Integer.parseInt(lore.substring(3).replace(Utils.HUNGER, "").trim());
+				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
+						player.setFoodLevel(Math.min(20, trueHunger)));
+			}
+		});
+
+		// No saturation increase
+		player.setSaturation(0);
 	}
 
 	// Prevent wolves from teleporting
@@ -1362,7 +1471,7 @@ public class GameListener implements Listener {
 		e.setCancelled(true);
 	}
 
-	// Prevent players from dropping menu items
+	// Prevent players from dropping menu items or abilities
 	@EventHandler
 	public void onItemDrop(PlayerDropItemEvent e) {
 		Player player = e.getPlayer();
@@ -1372,7 +1481,8 @@ public class GameListener implements Listener {
 			return;
 
 		// Check for menu items
-		if (VDMenuItem.matches(e.getItemDrop().getItemStack()))
+		ItemStack item = e.getItemDrop().getItemStack();
+		if (VDMenuItem.matches(item) || VDAbility.matches(item))
 			e.setCancelled(true);
 	}
 
@@ -1430,5 +1540,34 @@ public class GameListener implements Listener {
 		// Cancel event if arena is in waiting mode
 		if (arena.getStatus() == ArenaStatus.WAITING)
 			e.setCancelled(true);
+	}
+
+	// Handle custom durability
+	@EventHandler
+	public void onItemDamage(PlayerItemDamageEvent e) {
+		// Check for valid arena
+		try {
+			GameManager.getArena(e.getPlayer());
+		} catch (ArenaNotFoundException err) {
+			return;
+		}
+
+		// Cancel event, then destroy if ready
+		Player player = e.getPlayer();
+		ItemStack item = e.getItem();
+		e.setCancelled(true);
+		if (!VDItem.updateDurability(item)) {
+			if (item.equals(player.getInventory().getItemInMainHand()))
+				player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+			else if (item.equals(player.getInventory().getBoots()))
+				player.getInventory().setBoots(new ItemStack(Material.AIR));
+			else if (item.equals(player.getInventory().getChestplate()))
+				player.getInventory().setChestplate(new ItemStack(Material.AIR));
+			else if (item.equals(player.getInventory().getHelmet()))
+				player.getInventory().setHelmet(new ItemStack(Material.AIR));
+			else if (item.equals(player.getInventory().getLeggings()))
+				player.getInventory().setLeggings(new ItemStack(Material.AIR));
+			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1);
+		}
 	}
 }

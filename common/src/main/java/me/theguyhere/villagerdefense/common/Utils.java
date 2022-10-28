@@ -10,6 +10,7 @@ public class Utils {
 
     public static final int LORE_CHAR_LIMIT = 30;
     public static final String HP = "\u2764";
+    public static final String HUNGER = "\u2615";
     public static final String ARMOR = "\u2720";
     public static final String TOUGH = "\u2756";
     public static final String DAMAGE = "\u2694";
@@ -50,7 +51,6 @@ public class Utils {
      * @param name Name of field.
      * @return Field value
      */
-    @SuppressWarnings("unused")
     public static Object getFieldValue(Object instance, String name) {
         Object result = null;
 
@@ -59,6 +59,30 @@ public class Utils {
             field.setAccessible(true);
 
             result = field.get(instance);
+
+            field.setAccessible(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    /**
+     * Read reflection.
+     * @param instance Object to perform reflection on.
+     * @param name Name of field.
+     * @param t Class to cast and return as.
+     * @return Field value
+     */
+    public static <T> T getFieldValue(Object instance, String name, Class<T> t) {
+        T result = null;
+
+        try {
+            Field field = instance.getClass().getDeclaredField(name);
+            field.setAccessible(true);
+
+            result = t.cast(field.get(instance));
 
             field.setAccessible(false);
         } catch (Exception e) {

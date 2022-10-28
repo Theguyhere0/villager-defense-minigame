@@ -12,7 +12,7 @@ public abstract class CrystalConverter extends VDMenuItem {
     public static ItemStack create() {
         return ItemManager.createItem(Material.DIAMOND,
                 CommunicationManager.format("&b&l" + String.format(LanguageManager.names.crystalConverter,
-                        LanguageManager.names.crystal)), ItemManager.HIDE_ENCHANT_FLAGS, ItemManager.dummyEnchant());
+                        LanguageManager.names.crystal)), ItemManager.HIDE_ENCHANT_FLAGS, ItemManager.glow());
     }
 
     public static boolean matches(ItemStack toCheck) {

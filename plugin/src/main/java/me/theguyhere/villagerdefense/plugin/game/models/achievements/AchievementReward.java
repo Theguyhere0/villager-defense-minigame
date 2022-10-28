@@ -45,8 +45,8 @@ public class AchievementReward {
             case SHARE_EFFECT:
                 description = LanguageManager.rewards.shareEffect;
                 break;
-            case TWO_KITS:
-                description = LanguageManager.rewards.twoKits;
+            case AMMO_DOUBLE:
+                description = LanguageManager.rewards.ammoDouble;
                 break;
             default:
                 description = "";

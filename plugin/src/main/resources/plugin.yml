@@ -1,6 +1,6 @@
 main: me.theguyhere.villagerdefense.plugin.Main
 name: VillagerDefense
-version: 1.3.0-pre2
+version: 1.3.0-pre3
 author: Theguyhere
 api-version: 1.16
 softdepend: [WorldGuard, WorldEdit, Multiverse-core, PlaceholderAPI, Vault]
@@ -63,4 +63,8 @@ commands:
     disable:
       description: Disables the plugin
       usage: /vd shutdown
+      permission: vd.admin
+    test:
+      description: A command to do some tests
+      usage: /vd test
       permission: vd.admin

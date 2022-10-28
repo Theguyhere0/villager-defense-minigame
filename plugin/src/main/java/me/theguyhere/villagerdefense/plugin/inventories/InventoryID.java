@@ -1,8 +1,10 @@
 package me.theguyhere.villagerdefense.plugin.inventories;
 
 public enum InventoryID {
+    ABILITY_UPGRADE_SHOP_MENU,
     ALLOWED_KITS_DISPLAY_MENU,
     ALLOWED_KITS_MENU,
+    AMMO_SHOP_MENU,
     ARENA_BOARD_CONFIRM_MENU,
     ARENA_BOARD_MENU,
     ARENA_BOUNDS_MENU,
@@ -10,7 +12,10 @@ public enum InventoryID {
     ARENA_DASHBOARD,
     ARENA_INFO_MENU,
     ARENA_MENU,
-    ARMOR_SHOP_MENU,
+    AXE_SHOP_MENU,
+    BOOTS_SHOP_MENU,
+    BOW_SHOP_MENU,
+    CHESTPLATE_SHOP_MENU,
     COMMUNITY_CHEST_INVENTORY,
     CONSUMABLE_SHOP_MENU,
     COPY_SETTINGS_MENU,
@@ -18,6 +23,7 @@ public enum InventoryID {
     CORNER_1_MENU,
     CORNER_2_CONFIRM_MENU,
     CORNER_2_MENU,
+    CROSSBOW_SHOP_MENU,
     CRYSTAL_CONVERT_MENU,
     DIFFICULTY_LABEL_MENU,
     DIFFICULTY_MULTIPLIER_MENU,
@@ -25,10 +31,12 @@ public enum InventoryID {
     FORCED_CHALLENGES_MENU,
     GAME_SETTINGS_MENU,
     GOLEM_CAP_MENU,
+    HELMET_SHOP_MENU,
     INFO_BOARD_CONFIRM_MENU,
     INFO_BOARD_DASHBOARD,
     INFO_BOARD_MENU,
     LEADERBOARD_DASHBOARD,
+    LEGGINGS_SHOP_MENU,
     LOBBY_CONFIRM_MENU,
     LOBBY_MENU,
     MAIN_MENU,
@@ -49,11 +57,13 @@ public enum InventoryID {
     RESET_STATS_CONFIRM_MENU,
     SELECT_CHALLENGES_MENU,
     SELECT_KITS_MENU,
+    SCYTHE_SHOP_MENU,
     SHOP_MENU,
     SHOP_SETTINGS_MENU,
     SPAWN_CONFIRM_MENU,
     SPAWN_TABLE_MENU,
     SOUNDS_MENU,
+    SWORD_SHOP_MENU,
     TOP_BALANCE_CONFIRM_MENU,
     TOP_BALANCE_LEADERBOARD_MENU,
     TOP_KILLS_CONFIRM_MENU,
@@ -72,6 +82,14 @@ public enum InventoryID {
     WAITING_ROOM_MENU,
     WAITING_SOUND_MENU,
     WAVE_TIME_LIMIT_MENU,
-    WEAPON_SHOP_MENU,
-    WOLF_CAP_MENU,
+    WOLF_CAP_MENU;
+
+    public static boolean isInGameShop(InventoryID id) {
+        return id == InventoryID.SWORD_SHOP_MENU || id == InventoryID.AXE_SHOP_MENU ||
+                id == InventoryID.SCYTHE_SHOP_MENU || id == InventoryID.BOW_SHOP_MENU ||
+                id == InventoryID.CROSSBOW_SHOP_MENU || id == InventoryID.AMMO_SHOP_MENU ||
+                id == InventoryID.HELMET_SHOP_MENU || id == InventoryID.CHESTPLATE_SHOP_MENU ||
+                id == InventoryID.LEGGINGS_SHOP_MENU || id == InventoryID.BOOTS_SHOP_MENU ||
+                id == InventoryID.CONSUMABLE_SHOP_MENU;
+    }
 }

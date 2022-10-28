@@ -9,11 +9,14 @@ import me.theguyhere.villagerdefense.plugin.exceptions.VDMobNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.Shop;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Ammo;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.*;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.villagers.VDFletcher;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import net.md_5.bungee.api.ChatMessageType;
@@ -25,6 +28,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
+import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -34,7 +38,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /**
  * A class holding data about players in a Villager Defense game.
@@ -48,33 +51,46 @@ public class VDPlayer {
     private final Arena arena;
 
     // Important arena stats
-    private int maxHealth;
-    private int currentHealth;
+    private int maxHealth = 0;
+    private int currentHealth = 0;
     private int absorption = 0;
-    private int baseDamage;
-    private int armor;
-    private int toughness;
-    private long cooldown;
+    private int baseDamage = 0;
+    private int armor = 0;
+    private int toughness = 0;
+    /** The time until weapon cooldown us up.*/
+    private long weaponCooldown = 0;
+    /** The time until ammo warning cooldown us up.*/
+    private long ammoWarningCooldown = 0;
+    /** The time until ability cooldown us up.*/
+    private long abilityCooldown = 0;
     /** Gem balance.*/
-    private int gems;
+    private int gems = 0;
     /** Kill count.*/
-    private int kills;
+    private int kills = 0;
     /** Wolf count.*/
-    private int wolves;
+    private int wolves = 0;
     /** The wave at which the player joined the game as an active player.*/
-    private int joinedWave;
+    private int joinedWave = 0;
     /** The number of times this player violated arena boundaries.*/
-    private int infractions;
+    private int infractions = 0;
     /** The {@link Kit} the player will play with.*/
-    private Kit kit;
-    /** A possible second {@link Kit} the player can play with.*/
-    private Kit kit2;
+    private Kit kit = Kit.none();
+    /** The level of tiered essence the player has.*/
+    private int tieredEssenceLevel = 0;
     /** The list of {@link Challenge}'s the player will take on.*/
     private List<Challenge> challenge = new ArrayList<>();
     /** The list of UUIDs of those that damaged the player.*/
     private final List<UUID> enemies = new ArrayList<>();
+    /** Helmet {@link ItemStack} held for ninja ability.*/
+    private ItemStack helmet;
+    /** Chestplate {@link ItemStack} held for ninja ability.*/
+    private ItemStack chestplate;
+    /** Leggings {@link ItemStack} held for ninja ability.*/
+    private ItemStack leggings;
+    /** Boots {@link ItemStack} held for ninja ability.*/
+    private ItemStack boots;
     /** Whether permanent boosts are on or not.*/
-    private boolean boost = false; // TODO return to true once boosts are reworked
+    private boolean boost = true;
     /** Number of gems to be converted from crystals.*/
     private int gemBoost = 0;
     /** Whether effect kits are shared or not.*/
@@ -86,12 +102,6 @@ public class VDPlayer {
         if (spectating)
             status = PlayerStatus.SPECTATOR;
         else status = PlayerStatus.ALIVE;
-        gems = 0;
-        kills = 0;
-        wolves = 0;
-        joinedWave = 0;
-        infractions = 0;
-        kit = Kit.none();
     }
 
     public UUID getID() {
@@ -129,6 +139,7 @@ public class VDPlayer {
                 Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth);
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean hasMaxHealth() {
         return currentHealth == maxHealth;
     }
@@ -137,12 +148,21 @@ public class VDPlayer {
         this.absorption += absorption;
     }
 
+    public void addAbsorptionUpTo(int absorption) {
+        if (this.absorption < absorption)
+            this.absorption = absorption;
+    }
+
     /**
      * Takes final health difference and applies the difference, checking for absorption, death, and performing
      * notifications.
      * @param dif Final health difference.
      */
     public void changeCurrentHealth(int dif) {
+        // Make sure health was initialized properly
+        if (maxHealth <= 0)
+            return;
+
         // Handle absorption
         int trueDif = dif;
         if (dif < 0) {
@@ -157,9 +177,10 @@ public class VDPlayer {
         if (this.currentHealth == 0) {
             // Check if player has resurrection achievement and is boosted
             Random random = new Random();
-            if (isBoosted() && random.nextDouble() < .1 &&
+            if (boost && random.nextDouble() < .1 &&
                     PlayerManager.hasAchievement(getPlayer().getUniqueId(), Achievement.allChallenges().getID())) {
                 PlayerManager.giveTotemEffect(getPlayer());
+                currentHealth = maxHealth / 2;
                 return;
             }
 
@@ -169,14 +190,15 @@ public class VDPlayer {
             // Check for explosive challenge
             if (getChallenges().contains(Challenge.explosive())) {
                 // Create an explosion
-                getPlayer().getWorld().createExplosion(getPlayer().getLocation(), 1.25F, false, false);
+                getPlayer().getWorld().createExplosion(getPlayer().getLocation(), 1.75F, false, false);
 
                 // Drop all items and clear inventory
                 getPlayer().getInventory().forEach(itemStack -> {
-                    if (itemStack != null && !Shop.matches(itemStack))
+                    if (itemStack != null && !Shop.matches(itemStack) && !VDAbility.matches(itemStack))
                         getPlayer().getWorld().dropItemNaturally(getPlayer().getLocation(), itemStack);
                 });
                 getPlayer().getInventory().clear();
+                tieredEssenceLevel = 0;
             }
 
             // Notify player of their own death
@@ -212,19 +234,30 @@ public class VDPlayer {
         }
     }
 
-    public void showStats() {
+    public void showAndUpdateStats() {
         AtomicBoolean penetrating = new AtomicBoolean(false);
         AtomicBoolean range = new AtomicBoolean(false);
         AtomicBoolean perBlock = new AtomicBoolean(false);
+        boolean ability = false;
         AtomicInteger ammoCost = new AtomicInteger();
         AtomicInteger ammoCap = new AtomicInteger();
+        AtomicInteger armor = new AtomicInteger();
+        AtomicInteger toughness = new AtomicInteger();
+        AtomicDouble weight = new AtomicDouble(1);
         String damage = Integer.toString(baseDamage);
+
+
+        // Make sure health was properly initialized
+        if (maxHealth <= 0)
+            return;
 
         // Calculate stats
         try {
             ItemStack weapon = Objects.requireNonNull(getPlayer().getEquipment()).getItemInMainHand();
             List<Integer> damageValues = new ArrayList<>();
 
+            if (VDAbility.matches(weapon))
+                ability = true;
             Objects.requireNonNull(Objects.requireNonNull(weapon.getItemMeta()).getLore()).forEach(lore -> {
                 if (lore.contains(LanguageManager.messages.attackMainDamage
                         .replace("%s", ""))) {
@@ -295,43 +328,20 @@ public class VDPlayer {
         }
         try {
             ItemStack ammo = Objects.requireNonNull(getPlayer().getEquipment()).getItemInOffHand();
+
+            if (VDAbility.matches(ammo))
+                ability = true;
             Objects.requireNonNull(Objects.requireNonNull(ammo.getItemMeta()).getLore()).forEach(lore -> {
                 if (lore.contains(LanguageManager.messages.capacity
                         .replace("%s", ""))) {
                     ammoCap.set(Integer.parseInt(lore.substring(2 + LanguageManager.messages.capacity.length())
                             .replace(ChatColor.BLUE.toString(), "")
                             .replace(ChatColor.WHITE.toString(), "")
-                            .split("/")[0]));
+                            .split(" / ")[0]));
                 }
             });
         } catch (Exception ignored) {
         }
-
-        // Update status bar
-        getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-                new ColoredMessage(absorption > 0 ? ChatColor.GOLD : ChatColor.RED,
-                        Utils.HP + " " + (currentHealth + absorption) + "/" + maxHealth) + "    " +
-                        new ColoredMessage(ChatColor.AQUA, Utils.ARMOR + " " + armor) + "    " +
-                        new ColoredMessage(ChatColor.DARK_AQUA, Utils.TOUGH + " " + toughness + "%") + "    " +
-                        new ColoredMessage(ammoCap.get() < ammoCost.get() ? ChatColor.RED :
-                                penetrating.get() ? ChatColor.YELLOW : ChatColor.GREEN,
-                                (range.get() ? Utils.ARROW : Utils.DAMAGE) + " " + damage +
-                                        (perBlock.get() ? " /" + Utils.BLOCK + " +" + baseDamage : ""))));
-
-        // Update normal health display
-        getPlayer().setHealth(Math.max(currentHealth *
-                Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth,
-                1));
-        getPlayer().setAbsorptionAmount(absorption *
-                Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth);
-    }
-
-    public void updateStatsOne() {
-        AtomicInteger armor = new AtomicInteger();
-        AtomicInteger toughness = new AtomicInteger();
-        AtomicDouble weight = new AtomicDouble(1);
-
-        // Calculate stats
         try {
             ItemStack helmet = Objects.requireNonNull(Objects.requireNonNull(getPlayer().getEquipment()).getHelmet());
 
@@ -419,6 +429,39 @@ public class VDPlayer {
         } catch (Exception ignored) {
         }
 
+        // Resistance effect
+        getPlayer().getActivePotionEffects().forEach(potionEffect -> {
+            if (PotionEffectType.DAMAGE_RESISTANCE.equals(potionEffect.getType())) {
+                armor.addAndGet(10 * (1 + potionEffect.getAmplifier()));
+                toughness.addAndGet(10 * (1 + potionEffect.getAmplifier()));
+            }
+        });
+
+        // Update status bar
+        String SPACE = "    ";
+        String middleText = new ColoredMessage(ChatColor.AQUA, Utils.ARMOR + " " + armor) + SPACE +
+                new ColoredMessage(ChatColor.DARK_AQUA, Utils.TOUGH + " " + toughness + "%");
+        if (remainingAmmoWarningCooldown() > 0)
+            middleText = new ColoredMessage(ChatColor.DARK_RED, LanguageManager.errors.ammoOffHand).toString();
+        else if (ability && remainingAbilityCooldown() > 0)
+            middleText = CommunicationManager.format(new ColoredMessage(ChatColor.DARK_RED,
+                    LanguageManager.messages.cooldown), new ColoredMessage(ChatColor.AQUA,
+                    Double.toString(Math.round(Utils.millisToSeconds(remainingAbilityCooldown()) * 10) / 10d)));
+        getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
+                new ColoredMessage(absorption > 0 ? ChatColor.GOLD : ChatColor.RED,
+                        Utils.HP + " " + (currentHealth + absorption) + "/" + maxHealth) + SPACE + middleText
+                         + SPACE + new ColoredMessage(ammoCap.get() < ammoCost.get() ? ChatColor.RED :
+                        penetrating.get() ? ChatColor.YELLOW : ChatColor.GREEN,
+                        (range.get() ? Utils.ARROW : Utils.DAMAGE) + " " + damage +
+                                (perBlock.get() ? " /" + Utils.BLOCK + " +" + baseDamage : ""))));
+
+        // Update normal health display
+        getPlayer().setHealth(Math.max(currentHealth *
+                Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth,
+                1));
+        getPlayer().setAbsorptionAmount(absorption *
+                Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth);
+
         // Update armor and toughness
         this.armor = armor.get();
         this.toughness = toughness.get();
@@ -426,22 +469,32 @@ public class VDPlayer {
         // Set speed
         Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
                 .setBaseValue(.1 * weight.get());
-
-        // Manage sprint
-        int hunger;
-        try {
-            hunger = getPlayer().getActivePotionEffects().stream()
-                    .filter(p -> p.getType().getName().equals(PotionEffectType.HUNGER.getName()))
-                    .collect(Collectors.toList()).get(0).getAmplifier() + 1;
-        } catch (IndexOutOfBoundsException e) {
-            hunger = 0;
-        }
-        if (getPlayer().isSprinting())
-            getPlayer().setFoodLevel(getPlayer().getFoodLevel() - 1 - hunger / 2);
-        else getPlayer().setFoodLevel(Math.min(20, getPlayer().getFoodLevel() + 1 - hunger));
     }
 
-    public void updateStatsHalf() {
+    public void heal() {
+        // Natural heal
+        if (!challenge.contains(Challenge.uhc())) {
+            int hunger = getPlayer().getFoodLevel();
+            if (hunger >= 20)
+                changeCurrentHealth(6);
+            else if (hunger >= 16)
+                changeCurrentHealth(5);
+            else if (hunger >= 10)
+                changeCurrentHealth(3);
+            else if (hunger >= 4)
+                changeCurrentHealth(2);
+            else if (hunger > 0)
+                changeCurrentHealth(1);
+        }
+
+        // Regeneration
+        getPlayer().getActivePotionEffects().forEach(potionEffect -> {
+            if (PotionEffectType.REGENERATION.equals(potionEffect.getType()))
+                changeCurrentHealth(5 * (1 + potionEffect.getAmplifier()));
+        });
+    }
+
+    public void refill() {
         AtomicBoolean fletcher = new AtomicBoolean(false);
         Objects.requireNonNull(getPlayer().getWorld())
                 .getNearbyEntities(getArena().getBounds(), entity ->
@@ -458,117 +511,14 @@ public class VDPlayer {
                 });
 
         // Update ammo
-        Ammo.updateRefill(Objects.requireNonNull(getPlayer().getEquipment()).getItemInMainHand(), fletcher.get());
-        Ammo.updateRefill(Objects.requireNonNull(getPlayer().getEquipment()).getItemInOffHand(), fletcher.get());
-
-        // Healing
-        changeCurrentHealth(1);
+        Ammo.updateRefill(Objects.requireNonNull(getPlayer().getEquipment()).getItemInMainHand(), fletcher.get(),
+                boost && PlayerManager.hasAchievement(player, Achievement.allKits().getID()));
+        Ammo.updateRefill(Objects.requireNonNull(getPlayer().getEquipment()).getItemInOffHand(), fletcher.get(),
+                boost && PlayerManager.hasAchievement(player, Achievement.allKits().getID()));
     }
 
     public void takeDamage(int damage, @NotNull AttackType attackType) {
-        int armor = 0;
-        double toughness = 0;
-
-        // Calculate armor and toughness
-        try {
-            ItemStack helmet = Objects.requireNonNull(Objects.requireNonNull(getPlayer().getEquipment()).getHelmet());
-            Map<String, Integer> attributes = new HashMap<>();
-
-            // Gather armor attributes
-            Objects.requireNonNull(Objects.requireNonNull(helmet.getItemMeta()).getLore()).forEach(lore -> {
-                if (lore.contains(LanguageManager.messages.armor.replace("%s", ""))) {
-                    attributes.put("armor", Integer.parseInt(lore.substring(2 +
-                                    LanguageManager.messages.armor.length())
-                            .replace(ChatColor.BLUE.toString(), "")));
-                }
-                else if (lore.contains(LanguageManager.messages.toughness
-                        .replace("%s", ""))) {
-                    attributes.put("toughness", Integer.valueOf(lore.substring(2 +
-                                    LanguageManager.messages.toughness.length())
-                            .replace(ChatColor.BLUE.toString(), "")
-                            .replace("%", "")));
-                }
-            });
-
-            armor += attributes.get("armor");
-            toughness += attributes.get("toughness") * .01;
-        } catch (Exception ignored) {
-        }
-        try {
-            ItemStack chestplate = Objects.requireNonNull(Objects.requireNonNull(getPlayer().getEquipment())
-                    .getChestplate());
-            Map<String, Integer> attributes = new HashMap<>();
-
-            // Gather armor attributes
-            Objects.requireNonNull(Objects.requireNonNull(chestplate.getItemMeta()).getLore()).forEach(lore -> {
-                if (lore.contains(LanguageManager.messages.armor.replace("%s", ""))) {
-                    attributes.put("armor", Integer.parseInt(lore.substring(2 +
-                                    LanguageManager.messages.armor.length())
-                            .replace(ChatColor.BLUE.toString(), "")));
-                }
-                else if (lore.contains(LanguageManager.messages.toughness
-                        .replace("%s", ""))) {
-                    attributes.put("toughness", Integer.valueOf(lore.substring(2 +
-                                    LanguageManager.messages.toughness.length())
-                            .replace(ChatColor.BLUE.toString(), "")
-                            .replace("%", "")));
-                }
-            });
-
-            armor += attributes.get("armor");
-            toughness += attributes.get("toughness") * .01;
-        } catch (Exception ignored) {
-        }
-        try {
-            ItemStack leggings = Objects.requireNonNull(Objects.requireNonNull(getPlayer().getEquipment())
-                    .getLeggings());
-            Map<String, Integer> attributes = new HashMap<>();
-
-            // Gather armor attributes
-            Objects.requireNonNull(Objects.requireNonNull(leggings.getItemMeta()).getLore()).forEach(lore -> {
-                if (lore.contains(LanguageManager.messages.armor.replace("%s", ""))) {
-                    attributes.put("armor", Integer.parseInt(lore.substring(2 +
-                                    LanguageManager.messages.armor.length())
-                            .replace(ChatColor.BLUE.toString(), "")));
-                }
-                else if (lore.contains(LanguageManager.messages.toughness
-                        .replace("%s", ""))) {
-                    attributes.put("toughness", Integer.valueOf(lore.substring(2 +
-                                    LanguageManager.messages.toughness.length())
-                            .replace(ChatColor.BLUE.toString(), "")
-                            .replace("%", "")));
-                }
-            });
-
-            armor += attributes.get("armor");
-            toughness += attributes.get("toughness") * .01;
-        } catch (Exception ignored) {
-        }
-        try {
-            ItemStack boots = Objects.requireNonNull(Objects.requireNonNull(getPlayer().getEquipment()).getBoots());
-            Map<String, Integer> attributes = new HashMap<>();
-
-            // Gather armor attributes
-            Objects.requireNonNull(Objects.requireNonNull(boots.getItemMeta()).getLore()).forEach(lore -> {
-                if (lore.contains(LanguageManager.messages.armor.replace("%s", ""))) {
-                    attributes.put("armor", Integer.parseInt(lore.substring(2 +
-                                    LanguageManager.messages.armor.length())
-                            .replace(ChatColor.BLUE.toString(), "")));
-                }
-                else if (lore.contains(LanguageManager.messages.toughness
-                        .replace("%s", ""))) {
-                    attributes.put("toughness", Integer.valueOf(lore.substring(2 +
-                                    LanguageManager.messages.toughness.length())
-                            .replace(ChatColor.BLUE.toString(), "")
-                            .replace("%", "")));
-                }
-            });
-
-            armor += attributes.get("armor");
-            toughness += attributes.get("toughness") * .01;
-        } catch (Exception ignored) {
-        }
-
+        // Scale damage by attack type
         if (attackType == AttackType.NORMAL)
             damage -= Math.min(damage, armor);
         else if (attackType == AttackType.PENETRATING)
@@ -576,9 +526,17 @@ public class VDPlayer {
         else if (attackType == AttackType.NONE)
             damage = 0;
 
+        // Apply boost
+        if (boost && PlayerManager.hasAchievement(player, Achievement.totalKills9().getID()))
+            damage *= .9;
+
         // Realize damage
         changeCurrentHealth(-damage);
-        showStats();
+
+        // Damage armor
+        if (attackType == AttackType.NORMAL || attackType == AttackType.PENETRATING)
+            Arrays.stream(getPlayer().getInventory().getArmorContents()).filter(Objects::nonNull).forEach(armor ->
+                    Bukkit.getPluginManager().callEvent(new PlayerItemDamageEvent(getPlayer(), armor, 0)));
     }
 
     public void combust(int ticks) {
@@ -598,6 +556,7 @@ public class VDPlayer {
         Random r = new Random();
 
         // Modify damage based on weapon
+        double damage;
         try {
             ItemStack weapon = Objects.requireNonNull(getPlayer().getEquipment()).getItemInMainHand();
             Map<String, Integer> attributes = new HashMap<>();
@@ -663,38 +622,71 @@ public class VDPlayer {
             switch (attackClass) {
                 case MAIN:
                     if (attributes.containsKey("main"))
-                        return (int) ((baseDamage + attributes.get("main")) * mainMult);
-                    else return (int) ((baseDamage + attributes.get("mainLow") +
-                            r.nextInt(attributes.get("mainHigh") - attributes.get("mainLow"))) * mainMult);
+                        damage = (baseDamage + attributes.get("main")) * mainMult;
+                    else damage = (baseDamage + attributes.get("mainLow") +
+                            r.nextInt(attributes.get("mainHigh") - attributes.get("mainLow"))) * mainMult;
+                    break;
                 case CRITICAL:
                     if (attributes.containsKey("crit"))
-                        return baseDamage + attributes.get("crit");
-                    else return baseDamage + attributes.get("critLow") +
+                        damage = baseDamage + attributes.get("crit");
+                    else damage = baseDamage + attributes.get("critLow") +
                             r.nextInt(attributes.get("critHigh") - attributes.get("critLow"));
+                    break;
                 case SWEEP:
                     if (attributes.containsKey("sweep"))
-                        return baseDamage + attributes.get("sweep");
-                    else return baseDamage + attributes.get("sweepLow") +
+                        damage = baseDamage + attributes.get("sweep");
+                    else damage = baseDamage + attributes.get("sweepLow") +
                             r.nextInt(attributes.get("sweepHigh") - attributes.get("sweepLow"));
+                    break;
                 case RANGE:
                     if (attributes.containsKey("range"))
-                        return attributes.get("range");
-                    else return attributes.get("rangeLow") +
-                            r.nextInt(attributes.get("rangeHigh") - attributes.get("rangeLow"));
+                        damage = attributes.get("range");
+                    else damage = attributes.get("rangeLow") + r.nextInt(attributes.get("rangeHigh") -
+                            attributes.get("rangeLow"));
+                    break;
                 default:
-                    return 0;
+                    damage = 0;
             }
         } catch (Exception e) {
-            return baseDamage;
+            damage = baseDamage;
         }
+
+        // Calculate boosts or reductions
+        AtomicInteger increase = new AtomicInteger();
+        getPlayer().getActivePotionEffects().forEach(potionEffect -> {
+            if (PotionEffectType.INCREASE_DAMAGE.equals(potionEffect.getType()))
+                increase.addAndGet(1 + potionEffect.getAmplifier());
+            else if (PotionEffectType.WEAKNESS.equals(potionEffect.getType()))
+                increase.addAndGet(- 1 - potionEffect.getAmplifier());
+        });
+        if (boost && PlayerManager.hasAchievement(player, Achievement.topKills9().getID()))
+            increase.incrementAndGet();
+
+        return (int) (damage * (1 + .1 * increase.get()));
     }
 
-    public long getCooldown() {
-        return cooldown;
+    public long remainingWeaponCooldown() {
+        return Math.max(weaponCooldown - System.currentTimeMillis(), 0);
     }
 
-    public void setCooldown(long cooldown) {
-        this.cooldown = cooldown;
+    public void triggerWeaponCooldown(int cooldown) {
+        weaponCooldown = System.currentTimeMillis() + cooldown;
+    }
+
+    public long remainingAmmoWarningCooldown() {
+        return Math.max(ammoWarningCooldown - System.currentTimeMillis(), 0);
+    }
+
+    public void triggerAmmoWarningCooldown() {
+        ammoWarningCooldown = System.currentTimeMillis() + Utils.secondsToMillis(1);
+    }
+
+    public long remainingAbilityCooldown() {
+        return Math.max(abilityCooldown - System.currentTimeMillis(), 0);
+    }
+
+    public void triggerAbilityCooldown(int cooldown) {
+        abilityCooldown = System.currentTimeMillis() + cooldown;
     }
 
     public AttackType getAttackType() {
@@ -726,6 +718,7 @@ public class VDPlayer {
      * @param cost Item cost.
      * @return Boolean indicating whether the item was affordable.
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean canAfford(int cost) {
         return cost <= gems;
     }
@@ -738,8 +731,12 @@ public class VDPlayer {
         return kit;
     }
 
-    public Kit getKit2() {
-        return kit2;
+    public int getTieredEssenceLevel() {
+        return tieredEssenceLevel;
+    }
+
+    public void incrementTieredEssenceLevel() {
+        tieredEssenceLevel++;
     }
 
     public List<Challenge> getChallenges() {
@@ -824,8 +821,28 @@ public class VDPlayer {
         this.kit = kit;
     }
 
-    public void setKit2(Kit kit2) {
-        this.kit2 = kit2;
+    /**
+     * Removes armor from the player while they are invisible under the ninja ability.
+     */
+    public void hideArmor() {
+        helmet = getPlayer().getInventory().getHelmet();
+        getPlayer().getInventory().setHelmet(null);
+        chestplate = getPlayer().getInventory().getChestplate();
+        getPlayer().getInventory().setChestplate(null);
+        leggings = getPlayer().getInventory().getLeggings();
+        getPlayer().getInventory().setLeggings(null);
+        boots = getPlayer().getInventory().getBoots();
+        getPlayer().getInventory().setBoots(null);
+    }
+
+    /**
+     * Returns armor to the player after the ninja ability wears out.
+     */
+    public void exposeArmor() {
+        getPlayer().getInventory().setHelmet(helmet);
+        getPlayer().getInventory().setChestplate(chestplate);
+        getPlayer().getInventory().setLeggings(leggings);
+        getPlayer().getInventory().setBoots(boots);
     }
 
     /**
@@ -847,27 +864,13 @@ public class VDPlayer {
             else if (item.getType().toString().contains("BOOTS") &&
                     Objects.requireNonNull(equipment).getBoots() == null)
                 equipment.setBoots(item);
-            else PlayerManager.giveItem(getPlayer(), item, LanguageManager.errors.inventoryFull);
-        }
-        if (getKit2() != null)
-            for (ItemStack item: getKit2().getItems()) {
-                EntityEquipment equipment = getPlayer().getEquipment();
-
-                // Equip armor if possible, otherwise put in inventory, otherwise drop at feet
-                if (item.getType().toString().contains("HELMET") &&
-                        Objects.requireNonNull(equipment).getHelmet() == null)
-                    equipment.setHelmet(item);
-                else if (item.getType().toString().contains("CHESTPLATE") &&
-                        Objects.requireNonNull(equipment).getChestplate() == null)
-                    equipment.setChestplate(item);
-                else if (item.getType().toString().contains("LEGGINGS") &&
-                        Objects.requireNonNull(equipment).getLeggings() == null)
-                    equipment.setLeggings(item);
-                else if (item.getType().toString().contains("BOOTS") &&
-                        Objects.requireNonNull(equipment).getBoots() == null)
-                    equipment.setBoots(item);
+            else {
+                if (boost && PlayerManager.hasAchievement(player, Achievement.allMaxedAbility().getID()))
+                    PlayerManager.giveItem(getPlayer(), VDAbility.modifyCooldown(item, .9),
+                            LanguageManager.errors.inventoryFull);
                 else PlayerManager.giveItem(getPlayer(), item, LanguageManager.errors.inventoryFull);
             }
+        }
         PlayerManager.giveItem(getPlayer(), Shop.create(), LanguageManager.errors.inventoryFull);
     }
 
@@ -876,42 +879,51 @@ public class VDPlayer {
      */
     public void setupAttributes() {
         Random r = new Random();
+        int maxHealth = 500;
 
         // Set health for people with giant kits
-        if ((Kit.giant().setKitLevel(1).equals(getKit()) ||
-                Kit.giant().setKitLevel(1).equals(getKit2())) && !isSharing())
+        if (Kit.giant().setKitLevel(1).equals(getKit()) && !isSharing()) {
             Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
                     .addModifier(new AttributeModifier("Giant1", 2,
                             AttributeModifier.Operation.ADD_NUMBER));
-        else if ((Kit.giant().setKitLevel(2).equals(getKit()) ||
-                Kit.giant().setKitLevel(2).equals(getKit2())) && !isSharing())
+            maxHealth = 550;
+        }
+        else if (Kit.giant().setKitLevel(2).equals(getKit()) && !isSharing()) {
             Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
                     .addModifier(new AttributeModifier("Giant2", 4,
                             AttributeModifier.Operation.ADD_NUMBER));
+            maxHealth = 600;
+        }
         else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT2))) {
             Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
                     .addModifier(new AttributeModifier("Giant2", 4,
                             AttributeModifier.Operation.ADD_NUMBER));
+            maxHealth = 550;
             PlayerManager.notifySuccess(getPlayer(), LanguageManager.messages.effectShare);
         }
         else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT1))) {
             Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
                     .addModifier(new AttributeModifier("Giant1", 2,
                             AttributeModifier.Operation.ADD_NUMBER));
+            maxHealth = 600;
             PlayerManager.notifySuccess(getPlayer(), LanguageManager.messages.effectShare);
         }
 
         // Set health for people with health boost and are boosted
-        if (isBoosted() && PlayerManager.hasAchievement(getID(), Achievement.topWave9().getID()))
+        if (boost && PlayerManager.hasAchievement(player, Achievement.topWave9().getID())) {
             Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
                     .addModifier(new AttributeModifier("HealthBoost", 2,
                             AttributeModifier.Operation.ADD_NUMBER));
+            maxHealth += 50;
+        }
 
         // Set health for people with dwarf challenge
-        if (getChallenges().contains(Challenge.dwarf()))
+        if (getChallenges().contains(Challenge.dwarf())) {
             Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
                     .addModifier(new AttributeModifier("Dwarf", -.5,
-                            AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+                    AttributeModifier.Operation.MULTIPLY_SCALAR_1));
+            maxHealth /= 2;
+        }
 
         // Make sure new health is set up correctly
         getPlayer().setHealth(
@@ -923,7 +935,7 @@ public class VDPlayer {
             getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 999999, 0));
 
         // Set up health and damage
-        setMaxHealthInit(500);
-        setBaseDamage(10);
+        setMaxHealthInit(maxHealth);
+        baseDamage = 10;
     }
 }
