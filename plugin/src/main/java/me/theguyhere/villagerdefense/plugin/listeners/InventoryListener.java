@@ -2917,6 +2917,10 @@ public class InventoryListener implements Listener {
 				int kitLevel = PlayerManager.getMultiTierKitLevel(ownerID, kit.getID());
 				if (kitLevel == kit.getMaxLevel())
 					return;
+				else if (Kit.summoner().getID().equals(kit.getID())) {
+					PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
+					return;
+				}
 				else if (kitLevel == 0) {
 					if (balance >= kit.getPrice(++kitLevel)) {
 						PlayerManager.withdrawCrystalBalance(ownerID, kit.getPrice(kitLevel));
@@ -3007,6 +3011,10 @@ public class InventoryListener implements Listener {
 				int kitLevel = PlayerManager.getMultiTierKitLevel(player.getUniqueId(), kit.getID());
 				if (kitLevel < 1) {
 					PlayerManager.notifyFailure(player, LanguageManager.errors.kitSelect);
+					return;
+				}
+				if (Kit.summoner().getID().equals(kit.getID())) {
+					PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
 					return;
 				}
 				gamer.setKit(kit.setKitLevel(kitLevel));
