@@ -1,6 +1,9 @@
-package me.theguyhere.villagerdefense.plugin.game.models.mobs;
+package me.theguyhere.villagerdefense.plugin.game.models.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.TargetPriority;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import org.bukkit.Location;
 import org.bukkit.entity.Drowned;
 import org.bukkit.entity.EntityType;
@@ -19,7 +22,7 @@ public class VDBabyDrowned extends VDMinion {
                 "Baby Drowned",
                 "The smaller and more nimble counterpart to the Drowned seems to dislike players more and opts " +
                         "to inflict weakness instead.",
-                getLevel(arena.getCurrentDifficulty(), 1.5, 5),
+                VDMob.getLevel(arena.getCurrentDifficulty(), 1.5, 5),
                 AttackType.PENETRATING
         );
         ((Drowned) mob).setBaby();
