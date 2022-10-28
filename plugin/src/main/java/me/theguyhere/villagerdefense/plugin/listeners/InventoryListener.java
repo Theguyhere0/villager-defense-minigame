@@ -2689,8 +2689,11 @@ public class InventoryListener implements Listener {
 				player.openInventory(Inventories.createAbilityUpgradeShopMenu(arenaInstance, gamer));
 
 			// Open community chest
-			else if (buttonName.contains(LanguageManager.names.communityChest))
-				player.openInventory(arenaInstance.getCommunityChest());
+			else if (buttonName.contains(LanguageManager.names.communityChest)) {
+				if (arenaInstance.hasCommunity())
+					player.openInventory(arenaInstance.getCommunityChest());
+				else PlayerManager.notifyFailure(player, LanguageManager.errors.communityChest);
+			}
 		}
 
 		// In-game shops

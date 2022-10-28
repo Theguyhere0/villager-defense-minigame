@@ -147,12 +147,6 @@ arenaStats:
   dynamicTimeLimit:
     name: "Dynamic Time Limit"
     description: "Wave time limit adjusting based on in-game difficulty"
-  expDrop:
-    name: "Experience Drop"
-    description: "Whether experience orbs drop or go straight into the killer's experience bar"
-  gemDrop:
-    name: "Gem Drop"
-    description: "Whether gems drop as physical gems or go straight into the killer's balance"
   golemCap:
     name: "Iron Golem Cap"
     description: "Maximum iron golems an arena can have"
@@ -171,9 +165,6 @@ arenaStats:
   timeLimit:
     name: "Wave Time Limit"
     description: "The time limit for each wave before the game ends"
-  wolfCap:
-    name: "Wolf Cap"
-    description: "Maximum wolves a player can have"
 challenges:
   amputee:
     name: "Amputee"
@@ -272,7 +263,6 @@ errors:
   suicide: "You must be alive to kill yourself!"
   suicideActive: "You must be in an active game to kill yourself!"
   teleport: "You must leave the arena before you can teleport! Use %s to leave the arena."
-  wolf: "You can only have up to %s wolves!"
 itemLore:
   ammo:
     t1:
@@ -729,7 +719,6 @@ messages:
   capacity: "Capacity: %s"
   challenges: "Challenges"
   closed: "Closed"
-  commandFormat: "Command format: %s"
   communityChest: "The community chest %s be available."
   cooldown: "Cooldown: %s"
   crystalBonus: "+%s %s bonus"
@@ -757,7 +746,6 @@ messages:
   finalWave: "The final wave is wave %s."
   free: "Free!"
   forcedChallenges: "Forced Challenges"
-  foundGems: "You found %s gem(s)!"
   gameOver: "GAME OVER"
   gems: "Gems"
   gemsReceived: "You have received %s gems!"
@@ -912,7 +900,6 @@ names:
   chestplateShop: "Chestplate Shop"
   communityChest: "Community Chest"
   consumableShop: "Consumable Shop"
-  contents: "Contents"
   crossbowShop: "Crossbow Shop"
   crystal: "Crystal"
   crystalConverter: "%s Catalytic Converter"
@@ -920,7 +907,6 @@ names:
   easy: "Easy"
   effectKits: "Effect Kits"
   effectShare: "Effect Sharing"
-  essence: "Essence"
   giftKits: "Gift Kits"
   golemEgg: "Iron Golem Spawn Egg"
   hard: "Hard"
@@ -940,7 +926,6 @@ names:
   timeBar: "Wave %s Time Limit"
   villageCaptain: "Village Captain"
   villagerSpawnParticles: "Villager Spawn Particles"
-  weaponShop: "Weapon Shop"
 playerStats:
   topBalance:
     name: "Top Balance"

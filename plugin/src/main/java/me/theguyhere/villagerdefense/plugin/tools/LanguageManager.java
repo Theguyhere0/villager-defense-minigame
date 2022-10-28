@@ -173,15 +173,12 @@ public class LanguageManager {
         public final @NotNull ArenaStat dynamicMobCount;
         public final @NotNull ArenaStat dynamicPrices;
         public final @NotNull ArenaStat dynamicTimeLimit;
-        public final @NotNull ArenaStat expDrop;
-        public final @NotNull ArenaStat gemDrop;
         public final @NotNull ArenaStat golemCap;
         public final @NotNull ArenaStat lateArrival;
         public final @NotNull ArenaStat maxPlayers;
         public final @NotNull ArenaStat maxWaves;
         public final @NotNull ArenaStat minPlayers;
         public final @NotNull ArenaStat timeLimit;
-        public final @NotNull ArenaStat wolfCap;
 
         private ArenaStats() throws InvalidLanguageKeyException {
             difficultyMultiplier = new ArenaStat("difficultyMultiplier");
@@ -189,15 +186,12 @@ public class LanguageManager {
             dynamicMobCount = new ArenaStat("dynamicMobCount");
             dynamicPrices = new ArenaStat("dynamicPrices");
             dynamicTimeLimit = new ArenaStat("dynamicTimeLimit");
-            expDrop = new ArenaStat("expDrop");
-            gemDrop = new ArenaStat("gemDrop");
             golemCap = new ArenaStat("golemCap");
             lateArrival = new ArenaStat("lateArrival");
             maxPlayers = new ArenaStat("maxPlayers");
             maxWaves = new ArenaStat("maxWaves");
             minPlayers = new ArenaStat("minPlayers");
             timeLimit = new ArenaStat("timeLimit");
-            wolfCap = new ArenaStat("wolfCap");
         }
 
         public static class ArenaStat extends Section {
@@ -334,7 +328,6 @@ public class LanguageManager {
         public final @NotNull String suicide;
         public final @NotNull String suicideActive;
         public final @NotNull String teleport;
-        public final @NotNull String wolf;
 
         private Errors() throws InvalidLanguageKeyException {
             setPathPrefix("errors");
@@ -381,7 +374,6 @@ public class LanguageManager {
             suicide = getConfigString("suicide");
             suicideActive = getConfigString("suicideActive");
             teleport = getConfigString("teleport");
-            wolf = getConfigString("wolf");
         }
     }
 
@@ -1014,7 +1006,6 @@ public class LanguageManager {
         public final @NotNull String capacity;
         public final @NotNull String challenges;
         public final @NotNull String closed;
-        public final @NotNull String commandFormat;
         public final @NotNull String communityChest;
         public final @NotNull String cooldown;
         public final @NotNull String crystalBonus;
@@ -1043,7 +1034,6 @@ public class LanguageManager {
         public final @NotNull String finalWave;
         public final @NotNull String free;
         public final @NotNull String forcedChallenges;
-        public final @NotNull String foundGems;
         public final @NotNull String gameOver;
         public final @NotNull String gems;
         public final @NotNull String gemsReceived;
@@ -1149,7 +1139,6 @@ public class LanguageManager {
             capacity = getConfigString("capacity");
             challenges = getConfigString("challenges");
             closed = getConfigString("closed");
-            commandFormat = getConfigString("commandFormat");
             communityChest = getConfigString("communityChest");
             cooldown = getConfigString("cooldown");
             crystalBonus = getConfigString("crystalBonus");
@@ -1177,7 +1166,6 @@ public class LanguageManager {
             finalWave = getConfigString("finalWave");
             free = getConfigString("free");
             forcedChallenges = getConfigString("forcedChallenges");
-            foundGems = getConfigString("foundGems");
             gameOver = getConfigString("gameOver");
             gems = getConfigString("gems");
             gemsReceived = getConfigString("gemsReceived");
@@ -1387,7 +1375,6 @@ public class LanguageManager {
         public final @NotNull String chestplateShop;
         public final @NotNull String communityChest;
         public final @NotNull String consumableShop;
-        public final @NotNull String contents;
         public final @NotNull String crossbowShop;
         public final @NotNull String crystal;
         public final @NotNull String crystalConverter;
@@ -1395,7 +1382,6 @@ public class LanguageManager {
         public final @NotNull String easy;
         public final @NotNull String effectKits;
         public final @NotNull String effectShare;
-        public final @NotNull String essence;
         public final @NotNull String giftKits;
         public final @NotNull String golemEgg;
         public final @NotNull String hard;
@@ -1415,7 +1401,6 @@ public class LanguageManager {
         public final @NotNull String timeBar;
         public final @NotNull String villageCaptain;
         public final @NotNull String villagerSpawnParticles;
-        public final @NotNull String weaponShop;
 
         private Names() throws InvalidLanguageKeyException {
             setPathPrefix("names");
@@ -1431,7 +1416,6 @@ public class LanguageManager {
             chestplateShop = getConfigString("chestplateShop");
             communityChest = getConfigString("communityChest");
             consumableShop = getConfigString("consumableShop");
-            contents = getConfigString("contents");
             crossbowShop = getConfigString("crossbowShop");
 
             // Special check for economy plugin to replace currency name
@@ -1449,7 +1433,6 @@ public class LanguageManager {
             easy = getConfigString("easy");
             effectKits = getConfigString("effectKits");
             effectShare = getConfigString("effectShare");
-            essence = getConfigString("essence");
             giftKits = getConfigString("giftKits");
             golemEgg = getConfigString("golemEgg");
             hard = getConfigString("hard");
@@ -1469,7 +1452,6 @@ public class LanguageManager {
             timeBar = getConfigString("timeBar");
             villageCaptain = getConfigString("villageCaptain");
             villagerSpawnParticles = getConfigString("villagerSpawnParticles");
-            weaponShop = getConfigString("weaponShop");
         }
     }
 
