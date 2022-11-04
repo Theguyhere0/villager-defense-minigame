@@ -16,6 +16,7 @@ class CommandTest {
         if (!CommandGuard.checkArg(args, 0, CommandExecImp.Argument.TEST.getArg()))
             return;
         Player player = CommandGuard.checkSenderPlayer(sender);
+        CommandGuard.checkNotRelease();
         CommandGuard.checkSenderPermissions(player, Permission.ADMIN);
         CommandGuard.checkDebugLevelGreaterEqual(sender, 3);
 
