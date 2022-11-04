@@ -388,6 +388,7 @@ public class LanguageManager {
         public final @NotNull HelmetLore helmets;
         public final @NotNull LeggingsLore leggings;
         public final @NotNull ScytheLore scythes;
+        public final @NotNull ShopFoodLore shopFood;
         public final @NotNull SwordLore swords;
 
         private ItemLore() throws InvalidLanguageKeyException {
@@ -398,6 +399,7 @@ public class LanguageManager {
             chestplates = new ChestplateLore();
             crossbows = new CrossbowLore();
             essences = new EssenceLore();
+            shopFood = new ShopFoodLore();
             helmets = new HelmetLore();
             leggings = new LeggingsLore();
             scythes = new ScytheLore();
@@ -673,6 +675,32 @@ public class LanguageManager {
                 t8 = new Lore(pathPrefix + "t8");
                 t9 = new Lore(pathPrefix + "t9");
                 t10 = new Lore(pathPrefix + "t10");
+            }
+        }
+
+        public static class ShopFoodLore {
+            public final @NotNull Lore capple;
+            public final @NotNull Lore gapple;
+            public final @NotNull Lore t1;
+            public final @NotNull Lore t2;
+            public final @NotNull Lore t3;
+            public final @NotNull Lore t4;
+            public final @NotNull Lore t5;
+            public final @NotNull Lore t6;
+            public final @NotNull Lore totem;
+
+            private ShopFoodLore() throws InvalidLanguageKeyException {
+                String pathPrefix = "itemLore.shopFood.";
+
+                capple = new Lore(pathPrefix + "capple");
+                gapple = new Lore(pathPrefix + "gapple");
+                t1 = new Lore(pathPrefix + "t1");
+                t2 = new Lore(pathPrefix + "t2");
+                t3 = new Lore(pathPrefix + "t3");
+                t4 = new Lore(pathPrefix + "t4");
+                t5 = new Lore(pathPrefix + "t5");
+                t6 = new Lore(pathPrefix + "t6");
+                totem = new Lore(pathPrefix + "totem");
             }
         }
 

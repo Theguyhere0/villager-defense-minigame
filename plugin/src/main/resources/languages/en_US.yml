@@ -562,6 +562,34 @@ itemLore:
     t10:
       name: "Midnight Scythe %s"
       description: "A scythe so deadly that even the shadows bleed on its arc."
+  shopFood:
+    capple:
+      name: "Caramel Apple %s"
+      description: "A magnificent delicacy with restorative ability."
+    gapple:
+      name: "Golden Apple %s"
+      description: "A royal delicacy with insane healing powers."
+    t1:
+      name: "Beetroot %s"
+      description: "A healthy morsel to keep the fight going."
+    t2:
+      name: "Carrot %s"
+      description: "A small snack to push through tough combat."
+    t3:
+      name: "Bread %s"
+      description: "A light meal to sustain the battle."
+    t4:
+      name: "Mutton %s"
+      description: "A decent meal to power the relentless fight."
+    t5:
+      name: "Steak %s"
+      description: "A hearty meal to dominate in combat."
+    t6:
+      name: "Honey Carrot %s"
+      description: "A tasty delicacy with great nutritional value."
+    totem:
+      name: "Totem of Health %s"
+      description: "An ethereal and strangely edible artifact."
   swords:
     starter:
       name: "Training Sword %s"

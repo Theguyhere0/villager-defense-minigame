@@ -1565,12 +1565,15 @@ public class Arena {
         if (getActiveCount() == 0)
             throw new ArenaTaskException("Arena cannot start countdown without players");
 
-        // Clear active tasks except notify info
+        // Clear active tasks EXCEPT notify info
+        Map<String, BukkitRunnable> cache = new HashMap<>();
         activeTasks.forEach((name, task) -> {
-                if(!name.equals(NOTIFY_INFO))
+                if (!name.equals(NOTIFY_INFO))
                     task.cancel();
+                else cache.put(name, task);
         });
         activeTasks.clear();
+        activeTasks.putAll(cache);
 
         // Two-minute notice
         getPlayers().forEach(player ->

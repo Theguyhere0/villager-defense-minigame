@@ -9,7 +9,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Boots;
 import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Chestplate;
 import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Helmet;
 import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Leggings;
-import me.theguyhere.villagerdefense.plugin.game.models.items.food.Carrot;
+import me.theguyhere.villagerdefense.plugin.game.models.items.food.ShopFood;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Scythe;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Sword;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
@@ -422,7 +422,8 @@ public class Kit {
         kit.addPrice(1, 0);
         kit.addItems(1, new ItemStack[]{
                 Sword.create(Sword.SwordType.STARTER),
-                ItemManager.removeLastLore(ItemManager.setAmount(ItemManager.rename(Carrot.create(),
+                ItemManager.removeLastLore(ItemManager.setAmount(
+                        ItemManager.rename(ShopFood.create(ShopFood.ShopFoodType.T2),
                         new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.farmer.items.carrot).toString()),
                         5))
         });
