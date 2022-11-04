@@ -1875,35 +1875,35 @@ public class Inventories {
 			buttons.add(Buttons.levelPlaceholder(2));
 			buttons.add(Buttons.levelPlaceholder(2));
 		} else {
-			buttons.add(modifyPrice(Beetroot.create(), modifier));
-			buttons.add(modifyPrice(Carrot.create(), modifier));
+			buttons.add(modifyPrice(ShopFood.create(ShopFood.ShopFoodType.T1), modifier));
+			buttons.add(modifyPrice(ShopFood.create(ShopFood.ShopFoodType.T2), modifier));
 		}
 		if (level < 3)
 			buttons.add(Buttons.levelPlaceholder(3));
 		else
-			buttons.add(modifyPrice(Bread.create(), modifier));
+			buttons.add(modifyPrice(ShopFood.create(ShopFood.ShopFoodType.T3), modifier));
 		if (level < 4) {
 			buttons.add(Buttons.levelPlaceholder(4));
 			buttons.add(Buttons.levelPlaceholder(4));
 		} else {
-			buttons.add(modifyPrice(Mutton.create(), modifier));
-			buttons.add(modifyPrice(Steak.create(), modifier));
+			buttons.add(modifyPrice(ShopFood.create(ShopFood.ShopFoodType.T4), modifier));
+			buttons.add(modifyPrice(ShopFood.create(ShopFood.ShopFoodType.T5), modifier));
 		}
 		if (level < 5) {
 			buttons.add(Buttons.levelPlaceholder(5));
 			buttons.add(Buttons.levelPlaceholder(5));
 		} else {
-			buttons.add(modifyPrice(GoldenCarrot.create(), modifier));
-			buttons.add(modifyPrice(GoldenApple.create(), modifier));
+			buttons.add(modifyPrice(ShopFood.create(ShopFood.ShopFoodType.T6), modifier));
+			buttons.add(modifyPrice(ShopFood.create(ShopFood.ShopFoodType.CAPPLE), modifier));
 		}
 		if (level < 6)
 			buttons.add(Buttons.levelPlaceholder(6));
 		else
-			buttons.add(modifyPrice(EnchantedApple.create(), modifier));
+			buttons.add(modifyPrice(ShopFood.create(ShopFood.ShopFoodType.GAPPLE), modifier));
 		if (level < 7)
 			buttons.add(Buttons.levelPlaceholder(7));
 		else
-			buttons.add(modifyPrice(Totem.create(), modifier));
+			buttons.add(modifyPrice(ShopFood.create(ShopFood.ShopFoodType.TOTEM), modifier));
 
 		return InventoryFactory.createDynamicSizeInventory(
 				new InventoryMeta(InventoryID.CONSUMABLE_SHOP_MENU, InventoryType.MENU),

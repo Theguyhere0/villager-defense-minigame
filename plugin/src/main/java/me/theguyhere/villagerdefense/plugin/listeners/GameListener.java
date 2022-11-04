@@ -6,7 +6,10 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
-import me.theguyhere.villagerdefense.plugin.exceptions.*;
+import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
+import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
+import me.theguyhere.villagerdefense.plugin.exceptions.VDMobNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
@@ -17,7 +20,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.MageAbil
 import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.game.models.items.armor.VDArmor;
 import me.theguyhere.villagerdefense.plugin.game.models.items.eggs.VDEgg;
-import me.theguyhere.villagerdefense.plugin.game.models.items.food.Totem;
+import me.theguyhere.villagerdefense.plugin.game.models.items.food.ShopFood;
 import me.theguyhere.villagerdefense.plugin.game.models.items.food.VDFood;
 import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.*;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Ammo;
@@ -26,7 +29,9 @@ import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Crossbow;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.VDWeapon;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.*;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.Team;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.minions.VDCreeper;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.minions.VDWitch;
 import me.theguyhere.villagerdefense.plugin.game.models.players.AttackClass;
@@ -1223,7 +1228,7 @@ public class GameListener implements Listener {
 			return;
 
 		// Give health and hunger for totem
-		if (Totem.matches(item)) {
+		if (ShopFood.matches(item) && item.getType() == Material.TOTEM_OF_UNDYING) {
 			lores.forEach(lore -> {
 				if (lore.contains(Utils.HP)) {
 					int hp = Integer.parseInt(lore.substring(3).replace(Utils.HP, "").trim());
