@@ -1,9 +1,11 @@
 package me.theguyhere.villagerdefense.plugin.commands;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.CommandDebugLevelException;
 import me.theguyhere.villagerdefense.plugin.exceptions.CommandPermissionException;
 import me.theguyhere.villagerdefense.plugin.exceptions.CommandPlayerException;
+import me.theguyhere.villagerdefense.plugin.exceptions.CommandPluginIsReleasedException;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import org.bukkit.command.CommandSender;
@@ -103,5 +105,11 @@ class CommandGuard {
         if (args.length <= index)
             return false;
         return args[index].toLowerCase().startsWith(argument.toLowerCase());
+    }
+
+    static void checkNotRelease() throws CommandPluginIsReleasedException {
+        if (Main.releaseMode)
+            throw new CommandPluginIsReleasedException("The command is not supposed to be run when the plugin is " +
+                    "released!");
     }
 }
