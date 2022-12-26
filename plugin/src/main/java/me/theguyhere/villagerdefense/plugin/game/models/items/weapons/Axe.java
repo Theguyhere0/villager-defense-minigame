@@ -21,13 +21,13 @@ import java.util.List;
 
 public abstract class Axe extends VDWeapon {
     @NotNull
-    public static ItemStack create(AxeType type) {
+    public static ItemStack create(Tier tier) {
         List<String> lores = new ArrayList<>();
         Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
 
         // Set material
         Material mat;
-        switch (type) {
+        switch (tier) {
             case T1:
                 mat = Material.WOODEN_AXE;
                 break;
@@ -54,66 +54,36 @@ public abstract class Axe extends VDWeapon {
 
         // Set name
         String name;
-        switch (type) {
+        switch (tier) {
             case T1:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.axes.t1.name),
-                        "[T1]"
-                );
+                name = formatName(LanguageManager.itemLore.axes.t1.name, tier);
                 break;
             case T2:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.axes.t2.name),
-                        "[T2]"
-                );
+                name = formatName(LanguageManager.itemLore.axes.t2.name, tier);
                 break;
             case T3:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.axes.t3.name),
-                        "[T3]"
-                );
+                name = formatName(LanguageManager.itemLore.axes.t3.name, tier);
                 break;
             case T4:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.axes.t4.name),
-                        "[T4]"
-                );
+                name = formatName(LanguageManager.itemLore.axes.t4.name, tier);
                 break;
             case T5:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.axes.t5.name),
-                        "[T5]"
-                );
+                name = formatName(LanguageManager.itemLore.axes.t5.name, tier);
                 break;
             case T6:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.axes.t6.name),
-                        "[T6]"
-                );
+                name = formatName(LanguageManager.itemLore.axes.t6.name, tier);
                 break;
             case T7:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.axes.t7.name),
-                        "[T7]"
-                );
+                name = formatName(LanguageManager.itemLore.axes.t7.name, tier);
                 break;
             case T8:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.axes.t8.name),
-                        "[T8]"
-                );
+                name = formatName(LanguageManager.itemLore.axes.t8.name, tier);
                 break;
             case T9:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.axes.t9.name),
-                        "[T9]"
-                );
+                name = formatName(LanguageManager.itemLore.axes.t9.name, tier);
                 break;
             case T10:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.axes.t10.name),
-                        "[T10]"
-                );
+                name = formatName(LanguageManager.itemLore.axes.t10.name, tier);
                 break;
             default:
                 name = "";
@@ -121,7 +91,7 @@ public abstract class Axe extends VDWeapon {
 
         // Set description
         String description;
-        switch (type) {
+        switch (tier) {
             case T1:
                 description = LanguageManager.itemLore.axes.t1.description;
                 break;
@@ -167,7 +137,7 @@ public abstract class Axe extends VDWeapon {
 
         // Set main damage
         int damageLow, damageHigh;
-        switch (type) {
+        switch (tier) {
             case T1:
                 damageLow = 55;
                 damageHigh = 80;
@@ -240,7 +210,7 @@ public abstract class Axe extends VDWeapon {
 
         // Set durability
         int durability;
-        switch (type) {
+        switch (tier) {
             case T1:
                 durability = 85;
                 break;
@@ -279,7 +249,7 @@ public abstract class Axe extends VDWeapon {
 
         // Set price
         int price;
-        switch (type) {
+        switch (tier) {
             case T1:
                 price = 200;
                 break;
@@ -334,18 +304,5 @@ public abstract class Axe extends VDWeapon {
             return false;
         return toCheck.getType().toString().contains("AXE") && lore.stream().anyMatch(line -> line.contains(
                 MAIN_DAMAGE.toString().replace("%s", "")));
-    }
-
-    public enum AxeType{
-        T1,
-        T2,
-        T3,
-        T4,
-        T5,
-        T6,
-        T7,
-        T8,
-        T9,
-        T10
     }
 }

@@ -21,13 +21,13 @@ import java.util.List;
 
 public abstract class Leggings extends VDArmor{
     @NotNull
-    public static ItemStack create(LeggingsType type) {
+    public static ItemStack create(Tier tier) {
         List<String> lores = new ArrayList<>();
         Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
 
         // Set material
         Material mat;
-        switch (type) {
+        switch (tier) {
             case T1:
             case T2:
                 mat = Material.LEATHER_LEGGINGS;
@@ -54,66 +54,36 @@ public abstract class Leggings extends VDArmor{
 
         // Set name
         String name;
-        switch (type) {
+        switch (tier) {
             case T1:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.leggings.t1.name),
-                        "[T1]"
-                );
+                name = formatName(LanguageManager.itemLore.leggings.t1.name, tier);
                 break;
             case T2:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.leggings.t2.name),
-                        "[T2]"
-                );
+                name = formatName(LanguageManager.itemLore.leggings.t2.name, tier);
                 break;
             case T3:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.leggings.t3.name),
-                        "[T3]"
-                );
+                name = formatName(LanguageManager.itemLore.leggings.t3.name, tier);
                 break;
             case T4:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.leggings.t4.name),
-                        "[T4]"
-                );
+                name = formatName(LanguageManager.itemLore.leggings.t4.name, tier);
                 break;
             case T5:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.leggings.t5.name),
-                        "[T5]"
-                );
+                name = formatName(LanguageManager.itemLore.leggings.t5.name, tier);
                 break;
             case T6:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.leggings.t6.name),
-                        "[T6]"
-                );
+                name = formatName(LanguageManager.itemLore.leggings.t6.name, tier);
                 break;
             case T7:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.leggings.t7.name),
-                        "[T7]"
-                );
+                name = formatName(LanguageManager.itemLore.leggings.t7.name, tier);
                 break;
             case T8:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.leggings.t8.name),
-                        "[T8]"
-                );
+                name = formatName(LanguageManager.itemLore.leggings.t8.name, tier);
                 break;
             case T9:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.leggings.t9.name),
-                        "[T9]"
-                );
+                name = formatName(LanguageManager.itemLore.leggings.t9.name, tier);
                 break;
             case T10:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.leggings.t10.name),
-                        "[T10]"
-                );
+                name = formatName(LanguageManager.itemLore.leggings.t10.name, tier);
                 break;
             default:
                 name = "";
@@ -121,7 +91,7 @@ public abstract class Leggings extends VDArmor{
 
         // Set description
         String description;
-        switch (type) {
+        switch (tier) {
             case T1:
                 description = LanguageManager.itemLore.leggings.t1.description;
                 break;
@@ -164,7 +134,7 @@ public abstract class Leggings extends VDArmor{
 
         // Set armor
         int armor;
-        switch (type) {
+        switch (tier) {
             case T1:
                 armor = 3;
                 break;
@@ -203,7 +173,7 @@ public abstract class Leggings extends VDArmor{
 
         // Set toughness
         int toughness;
-        switch (type) {
+        switch (tier) {
             case T4:
                 toughness = 2;
                 break;
@@ -232,7 +202,7 @@ public abstract class Leggings extends VDArmor{
 
         // Set weight
         int weight;
-        switch (type) {
+        switch (tier) {
             case T1:
             case T2:
                 weight = 1;
@@ -267,7 +237,7 @@ public abstract class Leggings extends VDArmor{
 
         // Set durability
         int durability;
-        switch (type) {
+        switch (tier) {
             case T1:
                 durability = 60;
                 break;
@@ -306,7 +276,7 @@ public abstract class Leggings extends VDArmor{
 
         // Set price
         int price;
-        switch (type) {
+        switch (tier) {
             case T1:
                 price = 160;
                 break;
@@ -361,18 +331,5 @@ public abstract class Leggings extends VDArmor{
             return false;
         return toCheck.getType().toString().contains("LEGGINGS") && lore.stream().anyMatch(line -> line.contains(
                 ARMOR.toString().replace("%s", "")));
-    }
-
-    public enum LeggingsType{
-        T1,
-        T2,
-        T3,
-        T4,
-        T5,
-        T6,
-        T7,
-        T8,
-        T9,
-        T10
     }
 }

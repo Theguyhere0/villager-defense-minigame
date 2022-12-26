@@ -1287,6 +1287,7 @@ public class LanguageManager {
         public final @NotNull String caveSpider;
         public final @NotNull String chargedCreeper;
         public final @NotNull String creeper;
+        public final @NotNull String dog;
         public final @NotNull String fletcher;
         public final @NotNull String ghast;
         public final @NotNull String husk;
@@ -1315,6 +1316,7 @@ public class LanguageManager {
             caveSpider = getConfigString("caveSpider");
             chargedCreeper = getConfigString("chargedCreeper");
             creeper = getConfigString("creeper");
+            dog = getConfigString("dog");
             fletcher = getConfigString("fletcher");
             ghast = getConfigString("ghast");
             husk = getConfigString("husk");
@@ -1343,6 +1345,7 @@ public class LanguageManager {
         public final @NotNull String caveSpider;
         public final @NotNull String chargedCreeper;
         public final @NotNull String creeper;
+        public final @NotNull String dog;
         public final @NotNull String fletcher;
         public final @NotNull String ghast;
         public final @NotNull String husk;
@@ -1371,6 +1374,7 @@ public class LanguageManager {
             caveSpider = getConfigString("caveSpider");
             chargedCreeper = getConfigString("chargedCreeper");
             creeper = getConfigString("creeper");
+            dog = getConfigString("dog");
             fletcher = getConfigString("fletcher");
             ghast = getConfigString("ghast");
             husk = getConfigString("husk");

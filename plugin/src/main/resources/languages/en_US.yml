@@ -682,7 +682,7 @@ kits:
     name: "Reaper"
     description: "Start with a powerful scythe"
     items:
-      scythe: "Reaper's Scythe"
+      scythe: "Reaper's Scythe %s"
       scytheDesc: "The weapon of choice for the quick striker."
   siren:
     name: "Siren"
@@ -692,7 +692,7 @@ kits:
     name: "Soldier"
     description: "Start with a stronger sword"
     items:
-      sword: "Soldier's Sword"
+      sword: "Soldier's Sword %s"
       swordDesc: "A durable wooden sword made of treated walnut."
   summoner:
     name: "Summoner"
@@ -871,6 +871,7 @@ mobs:
   caveSpider: "Cave Spider"
   chargedCreeper: "Charged Creeper"
   creeper: "Creeper"
+  dog: "Dog"
   fletcher: "Fletcher"
   ghast: "Ghast"
   husk: "Husk"
@@ -897,6 +898,7 @@ mobLore:
   caveSpider: "These little Spiders are even faster and inflict poison, despite being weaker than their counterpart."
   chargedCreeper: "The suicidal version of the Creeper with only one goal in mind: destroy the players."
   creeper: "A crowd control monster keeping defenders away from the front lines."
+  dog: "Your loyal friend fighting by your side every step of the way through the battle."
   fletcher: "Where’d all the feathers come from? No one knows but the Fletcher."
   ghast: "The giant of the sky, with no armor but ridiculous health and explosive attacks."
   husk: "A tougher version of the Zombie that inflicts hunger and targets players."

@@ -3,6 +3,7 @@ package me.theguyhere.villagerdefense.plugin.game.models.mobs.pets;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
@@ -15,9 +16,8 @@ public class VDDog extends VDPet {
         super(
                 arena,
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.WOLF),
-                "Wolf",
-                "This underwater undead seems to despise Villagers more than players, and slows down whoever " +
-                        "they strike.",
+                LanguageManager.mobs.dog,
+                LanguageManager.mobLore.dog,
                 VDMob.getLevel(arena.getCurrentDifficulty(), 1, 0),
                 AttackType.NORMAL
         );
