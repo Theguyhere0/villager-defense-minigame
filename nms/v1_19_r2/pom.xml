@@ -9,14 +9,14 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>VillagerDefense-nms-v1_17_r1</artifactId>
-    <name>VillagerDefense NMS v1_17_R1</name>
+    <artifactId>VillagerDefense-nms-v1_19_r2</artifactId>
+    <name>VillagerDefense NMS v1_19_R2</name>
 
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.17.1-R0.1-SNAPSHOT</version>
+            <version>1.19.3-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
