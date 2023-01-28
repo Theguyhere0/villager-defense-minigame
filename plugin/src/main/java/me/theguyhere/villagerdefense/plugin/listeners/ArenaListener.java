@@ -541,7 +541,7 @@ public class ArenaListener implements Listener {
                 PlayerManager.notifyAlert(
                         player.getPlayer(),
                         LanguageManager.messages.end,
-                        new ColoredMessage(ChatColor.AQUA, Integer.toString(arena.getCurrentWave() - 1)),
+                        new ColoredMessage(ChatColor.AQUA, Integer.toString(Math.max(arena.getCurrentWave() - 1, 0))),
                         new ColoredMessage(ChatColor.AQUA, "10")
                 ));
 

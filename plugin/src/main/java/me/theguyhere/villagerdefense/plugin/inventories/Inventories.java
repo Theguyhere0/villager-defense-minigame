@@ -77,7 +77,7 @@ public class Inventories {
 				CommunicationManager.format("&9&lArenas"),
 				true,
 				true,
-				"Info Board",
+				"Arena",
 				buttons
 		);
 	}
