@@ -143,7 +143,7 @@ public class CustomEffectsListener implements Listener {
                         ));
 
                     // Check lower boundaries
-                    else if (key.contains("+") && arena.getCurrentWave() > Integer.parseInt(key.substring(1)))
+                    else if (key.contains("^") && arena.getCurrentWave() > Integer.parseInt(key.substring(1)))
                         arena.getActives().forEach(player -> Bukkit.getScheduler().scheduleSyncDelayedTask(
                                 Main.plugin,
                                 () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),

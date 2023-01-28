@@ -28,6 +28,7 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -2500,15 +2501,43 @@ public class Commands implements CommandExecutor {
 					}
 
 					// Check if customEffects.yml is outdated
-					if (Main.plugin.getConfig().getInt("customEffects") < Main.customEffectsVersion) {
-						if (player != null)
-							PlayerManager.notifyAlert(
-									player,
-									LanguageManager.messages.manualUpdateWarn,
-									new ColoredMessage(ChatColor.AQUA, "customEffects.yml")
-							);
-						else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
-								"customEffects.yml");
+					if (Main.customEffectsVersion < 2) {
+						try {
+							// Modify threshold keys
+							ConfigurationSection section = Main.plugin.getCustomEffects().getConfigurationSection("unlimited.onGameEnd");
+							if (section != null)
+								section.getKeys(false).stream().filter(key -> !key.contains("-") && !key.contains("<"))
+										.forEach(key -> {
+											if (Main.plugin.getCustomEffects().get("unlimited.onGameEnd.^" + key) != null)
+												Main.plugin.getCustomEffects().set("unlimited.onGameEnd." + key, arenaData.get("unlimited.onGameEnd.^" + key));
+											Main.plugin.saveCustomEffects();
+										});
+
+							// Flip flag and update config.yml
+							fixed = true;
+							Main.plugin.getConfig().set("customEffects", 2);
+							Main.plugin.saveConfig();
+
+							// Notify
+							if (player != null)
+								PlayerManager.notifySuccess(
+										player,
+										LanguageManager.confirms.autoUpdate,
+										new ColoredMessage(ChatColor.AQUA, "customEffects.yml"),
+										new ColoredMessage(ChatColor.AQUA, "2")
+								);
+							CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
+									"customEffects.yml", "2");
+						} catch (Exception e) {
+							if (player != null)
+								PlayerManager.notifyAlert(
+										player,
+										LanguageManager.messages.manualUpdateWarn,
+										new ColoredMessage(ChatColor.AQUA, "customEffects.yml")
+								);
+							else CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
+									"customEffects.yml");
+						}
 					}
 
 					// Message to player depending on whether the command fixed anything, then reload if fixed
