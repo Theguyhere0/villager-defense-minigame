@@ -2501,7 +2501,7 @@ public class Commands implements CommandExecutor {
 					}
 
 					// Check if customEffects.yml is outdated
-					if (Main.customEffectsVersion < 2) {
+					if (Main.plugin.getConfig().getInt("customEffects") < 2) {
 						try {
 							// Modify threshold keys
 							ConfigurationSection section = Main.plugin.getCustomEffects().getConfigurationSection("unlimited.onGameEnd");
