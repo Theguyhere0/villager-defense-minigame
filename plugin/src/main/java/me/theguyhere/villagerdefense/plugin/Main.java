@@ -49,7 +49,7 @@ public class Main extends JavaPlugin {
 	public static final int spawnTableVersion = 1;
 	public static final int languageFileVersion = 19;
 	public static final int defaultSpawnVersion = 2;
-	public static final int customEffectsVersion = 1;
+	public static final int customEffectsVersion = 2;
 
 	@Override
 	public void onEnable() {
@@ -211,6 +211,10 @@ public class Main extends JavaPlugin {
 		return customEffects.getConfig();
 	}
 
+	// Saves custom effects data changes
+	public void saveCustomEffects() {
+		customEffects.saveConfig();
+	}
 	public static boolean isOutdated() {
 		return outdated;
 	}

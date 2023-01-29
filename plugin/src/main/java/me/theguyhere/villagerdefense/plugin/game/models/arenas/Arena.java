@@ -1478,7 +1478,7 @@ public class Arena {
     }
 
     public double getCurrentDifficulty() {
-        double difficulty = Math.pow(Math.E, Math.pow(currentWave - 1, .55) / (5 - getDifficultyMultiplier() / 2d));
+        double difficulty = Math.pow(Math.E, Math.pow(Math.max(currentWave - 1, 0), .55) / (5 - getDifficultyMultiplier() / 2d));
         if (hasDynamicDifficulty())
             difficulty *= Math.sqrt(.1 * getActiveCount() + .6);
         return difficulty;

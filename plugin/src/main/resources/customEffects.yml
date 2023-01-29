@@ -22,11 +22,11 @@ unlimited:
   # Use positive integer keys to indicate which wave to run at, followed by the command to run
   # Ex. 1: "/give %player% taxes"
   onWaveComplete:
-  # These commands are run when the game ends, once players return to the lobby
-  # Use "<" or "+" followed by a positive integer as the key to indicate the wave REACHED threshold to run at,
-  # followed by the command to run
+  # These commands are run when the game ends, BEFORE players return to the lobby
+  # Use "<" or "^" followed by a positive integer as the key to indicate the wave REACHED threshold to run at,
+  # followed by the command to run. "<" indicates lower than and "^" indicates higher than.
   # Ex. <10: "/give %player% taxes"
   # Use "-" between two positive integers to indicate an inclusive wave REACHED range, followed by the command to run
   # Ex. 15-20: "/give %player% taxes"
-  # Note: Keys are not exclusive; All conditions will be checked upon game end
+  # Note: Threshold keys are exclusive, range keys are inclusive; All conditions will be checked upon game end
   onGameEnd:
