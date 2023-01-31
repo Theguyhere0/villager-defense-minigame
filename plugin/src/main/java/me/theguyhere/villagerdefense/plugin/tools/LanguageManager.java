@@ -1435,6 +1435,7 @@ public class LanguageManager {
         public final @NotNull String timeBar;
         public final @NotNull String villageCaptain;
         public final @NotNull String villagerSpawnParticles;
+        public final @NotNull String waitingBar;
 
         private Names() throws InvalidLanguageKeyException {
             setPathPrefix("names");
@@ -1488,6 +1489,7 @@ public class LanguageManager {
             timeBar = getConfigString("timeBar");
             villageCaptain = getConfigString("villageCaptain");
             villagerSpawnParticles = getConfigString("villagerSpawnParticles");
+            waitingBar = getConfigString("waitingBar");
         }
     }
 

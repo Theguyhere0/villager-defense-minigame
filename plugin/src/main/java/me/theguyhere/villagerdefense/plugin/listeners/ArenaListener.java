@@ -9,7 +9,7 @@ import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.AchievementChecker;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
@@ -163,7 +163,6 @@ public class ArenaListener implements Listener {
         else {
             // Teleport to arena and give time limit bar
             PlayerManager.teleSpectator(player, spawn);
-            arena.addPlayerToTimeLimitBar(player);
 
             // Update player tracking and in-game stats
             arena.getPlayers().add(new VDPlayer(player, arena, true));
@@ -243,10 +242,8 @@ public class ArenaListener implements Listener {
             // Refresh leaderboards
             GameManager.refreshLeaderboards();
 
-            // Remove the player from the arena and time limit bar if exists
-            arena.getPlayers().remove(gamer);
-            if (arena.getTimeLimitBar() != null)
-                arena.removePlayerFromTimeLimitBar(gamer.getPlayer());
+            // Remove the player from the arena
+            arena.removePlayer(gamer);
 
             // Remove pets
             WorldManager.getPets(player).forEach(Entity::remove);
@@ -298,9 +295,6 @@ public class ArenaListener implements Listener {
                 );
             }
 
-            // Mark VDPlayer as left
-            gamer.setStatus(PlayerStatus.LEFT);
-
             // Check if arena can no longer start
             try {
                 arena.startNotifyWaiting();
@@ -318,13 +312,10 @@ public class ArenaListener implements Listener {
         // Spectating
         else {
             // Remove the player from the arena
-            arena.getPlayers().remove(gamer);
+            arena.removePlayer(gamer);
 
             // Sets them up for teleport to lobby
             PlayerManager.teleAdventure(player, GameManager.getLobby());
-
-            // Mark VDPlayer as left
-            gamer.setStatus(PlayerStatus.LEFT);
         }
 
         // Return player survival stats

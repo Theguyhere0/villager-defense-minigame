@@ -955,9 +955,10 @@ names:
   playerSpawnParticles: "Player Spawn Particles"
   scytheShop: "Scythe Shop"
   swordShop: "Sword Shop"
-  timeBar: "Wave %s Time Limit"
+  timeBar: "Wave %s Time Remaining - %s"
   villageCaptain: "Village Captain"
   villagerSpawnParticles: "Villager Spawn Particles"
+  waitingBar: "%s Until Arena Start"
 playerStats:
   topBalance:
     name: "Top Balance"
