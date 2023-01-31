@@ -12,13 +12,13 @@ import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.*;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.Team;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.minions.VDWitch;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.villagers.VDFletcher;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.villagers.VDNormalVillager;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryID;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryMeta;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryType;
@@ -33,6 +33,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -87,28 +88,6 @@ public class Arena {
     private int cornerParticlesID = 0;
     /** A list of players in the arena.*/
     private final List<VDPlayer> players = new ArrayList<>();
-    /** Sword shop inventory.*/
-    private Inventory swordShop;
-    /** Axe shop inventory.*/
-    private Inventory axeShop;
-    /** Scythe shop inventory.*/
-    private Inventory scytheShop;
-    /** Bow shop inventory.*/
-    private Inventory bowShop;
-    /** Crossbow shop inventory.*/
-    private Inventory crossbowShop;
-    /** Ammo shop inventory.*/
-    private Inventory ammoShop;
-    /** Helmet shop inventory.*/
-    private Inventory helmetShop;
-    /** Chestplate shop inventory.*/
-    private Inventory chestplateShop;
-    /** Leggings shop inventory.*/
-    private Inventory leggingsShop;
-    /** Boots shop inventory.*/
-    private Inventory bootsShop;
-    /** Consumables shop inventory.*/
-    private Inventory consumeShop;
     /** Community chest inventory.*/
     private Inventory communityChest;
     /** Time limit bar object.*/
@@ -1824,19 +1803,6 @@ public class Arena {
                 CommunicationManager.format("&d&l" + LanguageManager.names.communityChest)
         ));
 
-        // Initiate shops
-        swordShop = Inventories.createSwordShopMenu(1, this);
-        axeShop = Inventories.createAxeShopMenu(1, this);
-        scytheShop = Inventories.createScytheShopMenu(1, this);
-        bowShop = Inventories.createBowShopMenu(1, this);
-        crossbowShop = Inventories.createCrossbowShopMenu(1, this);
-        ammoShop = Inventories.createAmmoShopMenu(1, this);
-        helmetShop = Inventories.createHelmetShopMenu(1, this);
-        chestplateShop = Inventories.createChestplateShopMenu(1, this);
-        leggingsShop = Inventories.createLeggingsShopMenu(1, this);
-        bootsShop = Inventories.createBootsShopMenu(1, this);
-        consumeShop = Inventories.createConsumableShopMenu(1, this);
-
         // Start dialogue, then trigger WaveEndEvent
         for (VDPlayer player : getPlayers()) {
             PlayerManager.namedNotify(
@@ -2178,20 +2144,8 @@ public class Arena {
                                 String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
                         " ", Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
 
-        // Regenerate shops when time and notify players of it, then start after 25 seconds
+        // Notify players of new shop levels, then start after 25 seconds
         if (currentWave % 5 == 0) {
-            int level = currentWave / 5 + 1;
-            swordShop = Inventories.createSwordShopMenu(level, this);
-            axeShop = Inventories.createAxeShopMenu(level, this);
-            scytheShop = Inventories.createScytheShopMenu(level, this);
-            bowShop = Inventories.createBowShopMenu(level, this);
-            crossbowShop = Inventories.createCrossbowShopMenu(level, this);
-            ammoShop = Inventories.createAmmoShopMenu(level, this);
-            helmetShop = Inventories.createHelmetShopMenu(level, this);
-            chestplateShop = Inventories.createChestplateShopMenu(level, this);
-            leggingsShop = Inventories.createLeggingsShopMenu(level, this);
-            bootsShop = Inventories.createBootsShopMenu(level, this);
-            consumeShop = Inventories.createConsumableShopMenu(level, this);
             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> getActives().forEach(player ->
                     player.getPlayer().sendTitle(CommunicationManager.format(
                                     "&6" + LanguageManager.messages.shopUpgrade),
@@ -2809,6 +2763,29 @@ public class Arena {
         golems = 0;
     }
 
+    // Modify the price of an item
+    @NotNull
+    public ItemStack modifyPrice(ItemStack itemStack) {
+        // Set price modifier
+        double modifier = Math.pow(getActiveCount() - 5, 2) / 200 + 1;
+        if (!hasDynamicPrices())
+            modifier = 1;
+
+        ItemStack item = itemStack.clone();
+        ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
+        try {
+            List<String> lore = Objects.requireNonNull(meta.getLore());
+            int price = (int) Math.round(Integer.parseInt(lore.get(lore.size() - 1)
+                    .substring(6 + LanguageManager.messages.gems.length())) * modifier / 5) * 5;
+            lore.set(lore.size() - 1, CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
+                    price));
+            meta.setLore(lore);
+            item.setItemMeta(meta);
+        } catch (NumberFormatException | NullPointerException ignored) {
+        }
+        return item;
+    }
+
     /**
      * @return A list of all {@link VDPlayer} in this arena.
      */
@@ -2904,50 +2881,6 @@ public class Arena {
 
     public int getSpectatorCount() {
         return getSpectators().size();
-    }
-
-    public Inventory getSwordShop() {
-        return swordShop;
-    }
-
-    public Inventory getAxeShop() {
-        return axeShop;
-    }
-
-    public Inventory getScytheShop() {
-        return scytheShop;
-    }
-
-    public Inventory getBowShop() {
-        return bowShop;
-    }
-
-    public Inventory getCrossbowShop() {
-        return crossbowShop;
-    }
-
-    public Inventory getAmmoShop() {
-        return ammoShop;
-    }
-
-    public Inventory getHelmetShop() {
-        return helmetShop;
-    }
-
-    public Inventory getChestplateShop() {
-        return chestplateShop;
-    }
-
-    public Inventory getLeggingsShop() {
-        return leggingsShop;
-    }
-
-    public Inventory getBootsShop() {
-        return bootsShop;
-    }
-
-    public Inventory getConsumeShop() {
-        return consumeShop;
     }
 
     public Inventory getCommunityChest() {

@@ -1026,7 +1026,7 @@ public class GameListener implements Listener {
 
 		// Open shop inventory
 		if (Shop.matches(item))
-			player.openInventory(Inventories.createShopMenu(arena.getCurrentShopLevel(), arena));
+			player.openInventory(Inventories.createShopMenu(arena, gamer));
 
 		// Open kit selection menu
 		else if (KitSelector.matches(item))

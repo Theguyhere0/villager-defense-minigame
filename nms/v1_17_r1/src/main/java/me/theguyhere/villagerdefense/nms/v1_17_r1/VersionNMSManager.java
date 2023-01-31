@@ -3,6 +3,7 @@ package me.theguyhere.villagerdefense.nms.v1_17_r1;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelPipeline;
+import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.nms.common.*;
 import me.theguyhere.villagerdefense.nms.common.entities.TextPacketEntity;
@@ -11,6 +12,7 @@ import net.minecraft.core.BlockPosition;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.network.PlayerConnection;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
@@ -62,11 +64,11 @@ public class VersionNMSManager implements NMSManager {
         signNBT.setString("Text1", String.format("{\"text\":\"%s\"}",
                 CommunicationManager.format(String.format("&9   Rename Arena %d:   ", arenaID))));
         signNBT.setString("Text2", String.format("{\"text\":\"%s\"}",
-                CommunicationManager.format("&1===============")));
+                new ColoredMessage(ChatColor.DARK_BLUE, "===============")));
         signNBT.setString("Text3", String.format("{\"text\":\"%s\"}",
                 CommunicationManager.format(arenaName == null ? "" : arenaName)));
         signNBT.setString("Text4", String.format("{\"text\":\"%s\"}",
-                CommunicationManager.format("&1===============")));
+                new ColoredMessage(ChatColor.DARK_BLUE, "===============")));
 
         PacketGroup.of(
                 new BlockChangePacket(position, Material.OAK_SIGN),

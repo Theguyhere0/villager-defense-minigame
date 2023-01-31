@@ -15,6 +15,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Ammo;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDPet;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.villagers.VDFletcher;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
@@ -67,8 +68,10 @@ public class VDPlayer {
     private int gems = 0;
     /** Kill count.*/
     private int kills = 0;
-    /** Wolf count.*/
-    private int wolves = 0;
+    /** Pets following the player.*/
+    private final List<VDPet> pets = new ArrayList<>();
+    /** Maximum pet slots available for use.*/
+    private int petSlots = 0;
     /** The wave at which the player joined the game as an active player.*/
     private int joinedWave = 0;
     /** The number of times this player violated arena boundaries.*/
@@ -789,16 +792,41 @@ public class VDPlayer {
         share = !share;
     }
 
-    public int getWolves() {
-        return wolves;
+    public void addPet(VDPet pet) {
+        pets.add(pet);
+        arena.addMob(pet);
     }
 
-    public void incrementWolves() {
-        wolves++;
+    public void removePet(int index) {
+        pets.get(index).getEntity().remove();
+        arena.removeMob(pets.get(index).getID());
+        pets.remove(index);
     }
 
-    public void decrementWolves() {
-        wolves--;
+    public void respawnPets() {
+        for (int i = 0; i < pets.size(); i++) {
+            if (pets.get(i).getEntity().isDead()) {
+                VDPet newPet = pets.get(i).respawn(getPlayer().getLocation());
+                pets.set(i, newPet);
+                arena.addMob(newPet);
+            }
+        }
+    }
+
+    public int getPetSlots() {
+        return petSlots;
+    }
+
+    public int getRemainingPetSlots() {
+        // Calculate remaining slots
+        AtomicInteger remaining = new AtomicInteger(petSlots);
+        pets.forEach(pet -> remaining.addAndGet(-pet.getSlots()));
+
+        return remaining.get();
+    }
+
+    public void setPetSlots(int petSlots) {
+        this.petSlots = petSlots;
     }
 
     public int getJoinedWave() {
@@ -937,5 +965,8 @@ public class VDPlayer {
         // Set up health and damage
         setMaxHealthInit(maxHealth);
         baseDamage = 10;
+
+        // Set up pet slots
+        petSlots = 3;
     }
 }

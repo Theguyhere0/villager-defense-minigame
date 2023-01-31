@@ -59,7 +59,7 @@ public class Buttons {
         return ItemManager.createItem(
                 Material.TARGET,
                 CommunicationManager.format("&f&lCenter " + x),
-                CommunicationManager.format("&7Center the x and z coordinates")
+                new ColoredMessage(ChatColor.GRAY,"Center the x and z coordinates").toString()
         );
     }
 

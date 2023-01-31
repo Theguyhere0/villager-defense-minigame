@@ -15,6 +15,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.VDAbilit
 import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.Shop;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDDog;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.inventories.Buttons;
@@ -2642,47 +2643,52 @@ public class InventoryListener implements Listener {
 
 			// Open sword shop
 			if (buttonName.contains(LanguageManager.names.swordShop))
-				player.openInventory(arenaInstance.getSwordShop());
+				player.openInventory(Inventories.createSwordShopMenu(arenaInstance));
 
 			// Open axe shop
 			else if (buttonName.contains(LanguageManager.names.axeShop))
-				player.openInventory(arenaInstance.getAxeShop());
+				player.openInventory(Inventories.createAxeShopMenu(arenaInstance));
 
 			// Open scythe shop
 			else if (buttonName.contains(LanguageManager.names.scytheShop))
-				player.openInventory(arenaInstance.getScytheShop());
+				player.openInventory(Inventories.createScytheShopMenu(arenaInstance));
 
 			// Open bow shop
 			else if (buttonName.contains(LanguageManager.names.bowShop))
-				player.openInventory(arenaInstance.getBowShop());
+				player.openInventory(Inventories.createBowShopMenu(arenaInstance));
 
 			// Open crossbow shop
 			else if (buttonName.contains(LanguageManager.names.crossbowShop))
-				player.openInventory(arenaInstance.getCrossbowShop());
+				player.openInventory(Inventories.createCrossbowShopMenu(arenaInstance));
 
 			// Open ammo shop
 			else if (buttonName.contains(LanguageManager.names.ammoShop))
-				player.openInventory(arenaInstance.getAmmoShop());
+				player.openInventory(Inventories.createAmmoShopMenu(arenaInstance));
 
 			// Open helmet shop
 			else if (buttonName.contains(LanguageManager.names.helmetShop))
-				player.openInventory(arenaInstance.getHelmetShop());
+				player.openInventory(Inventories.createHelmetShopMenu(arenaInstance));
 
 			// Open chestplate shop
 			else if (buttonName.contains(LanguageManager.names.chestplateShop))
-				player.openInventory(arenaInstance.getChestplateShop());
+				player.openInventory(Inventories.createChestplateShopMenu(arenaInstance));
 
 			// Open leggings shop
 			else if (buttonName.contains(LanguageManager.names.leggingsShop))
-				player.openInventory(arenaInstance.getLeggingsShop());
+				player.openInventory(Inventories.createLeggingsShopMenu(arenaInstance));
 
 			// Open boots shop
 			else if (buttonName.contains(LanguageManager.names.bootsShop))
-				player.openInventory(arenaInstance.getBootsShop());
+				player.openInventory(Inventories.createBootsShopMenu(arenaInstance));
 
 			// Open consumables shop
 			else if (buttonName.contains(LanguageManager.names.consumableShop))
-				player.openInventory(arenaInstance.getConsumeShop());
+				player.openInventory(Inventories.createConsumableShopMenu(arenaInstance));
+
+			// Open pet shop
+			else if (buttonName.contains(String.format(LanguageManager.names.petShop,
+					Integer.toString(gamer.getRemainingPetSlots()), Integer.toString(gamer.getPetSlots()))))
+				player.openInventory(Inventories.createPetShopMenu(arenaInstance, gamer));
 
 			// Open ability upgrade shop
 			else if (buttonName.contains(LanguageManager.names.abilityUpgradeShop))
@@ -2711,7 +2717,7 @@ public class InventoryListener implements Listener {
 
 			// Return to main shop menu
 			if (buttonName.contains(LanguageManager.messages.exit)) {
-				player.openInventory(Inventories.createShopMenu(arenaInstance.getCurrentShopLevel(), arenaInstance));
+				player.openInventory(Inventories.createShopMenu(arenaInstance, gamer));
 				return;
 			}
 
@@ -2783,6 +2789,51 @@ public class InventoryListener implements Listener {
 			}
 		}
 
+		// Pet shop
+		else if (invID == InventoryID.PET_SHOP_MENU) {
+			Arena arenaInstance;
+			VDPlayer gamer;
+
+			// Attempt to get arena and player
+			try {
+				arenaInstance = GameManager.getArena(player);
+				gamer = arenaInstance.getPlayer(player);
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+				return;
+			}
+
+			// Create new
+			if (buttonName.contains(CommunicationManager.format("&a&lNew ")))
+				player.openInventory(Inventories.createNewPetMenu(arenaInstance, gamer));
+
+			// Return to main shop menu
+			else if (buttonName.contains(LanguageManager.messages.exit))
+				player.openInventory(Inventories.createShopMenu(arenaInstance, gamer));
+		}
+
+		// New pet menu
+		else if (invID == InventoryID.NEW_PET_MENU) {
+			Arena arenaInstance;
+			VDPlayer gamer;
+
+			// Attempt to get arena and player
+			try {
+				arenaInstance = GameManager.getArena(player);
+				gamer = arenaInstance.getPlayer(player);
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+				return;
+			}
+
+			// Add pet
+			if (buttonName.contains(LanguageManager.mobs.dog)) {
+				gamer.addPet(new VDDog(arenaInstance, player.getLocation(), player));
+			}
+
+			// Return to pet shop menu
+			else if (buttonName.contains(LanguageManager.messages.exit))
+				player.openInventory(Inventories.createPetShopMenu(arenaInstance, gamer));
+		}
+
 		// Ability upgrade shop
 		else if (invID == InventoryID.ABILITY_UPGRADE_SHOP_MENU) {
 			Arena arenaInstance;
@@ -2798,7 +2849,7 @@ public class InventoryListener implements Listener {
 
 			// Return to main shop menu
 			if (buttonName.contains(LanguageManager.messages.exit)) {
-				player.openInventory(Inventories.createShopMenu(arenaInstance.getCurrentShopLevel(), arenaInstance));
+				player.openInventory(Inventories.createShopMenu(arenaInstance, gamer));
 				return;
 			}
 

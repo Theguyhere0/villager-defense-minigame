@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.game.models.items.eggs;
 
+import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
@@ -32,7 +33,7 @@ public abstract class PetEgg extends VDEgg {
         String name;
         switch (type) {
             case DOG:
-                name = LanguageManager.mobs.dog;
+                name = new ColoredMessage(LanguageManager.mobs.dog).toString();
                 break;
             default:
                 name = "";

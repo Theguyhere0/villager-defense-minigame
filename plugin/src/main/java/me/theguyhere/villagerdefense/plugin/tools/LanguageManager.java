@@ -1424,9 +1424,11 @@ public class LanguageManager {
         public final @NotNull String leggingsShop;
         public final @NotNull String medium;
         public final @NotNull String monsterSpawnParticles;
+        public final @NotNull String newPet;
         public final @NotNull String none;
         public final @NotNull String normal;
         public final @NotNull String penetrating;
+        public final @NotNull String petShop;
         public final @NotNull String playerSpawnParticles;
         public final @NotNull String scytheShop;
         public final @NotNull String swordShop;
@@ -1475,9 +1477,11 @@ public class LanguageManager {
             leggingsShop = getConfigString("leggingsShop");
             medium = getConfigString("medium");
             monsterSpawnParticles = getConfigString("monsterSpawnParticles");
+            newPet = getConfigString("newPet");
             none = getConfigString("none");
             normal = getConfigString("normal");
             penetrating = getConfigString("penetrating");
+            petShop = getConfigString("petShop");
             playerSpawnParticles = getConfigString("playerSpawnParticles");
             scytheShop = getConfigString("scytheShop");
             swordShop = getConfigString("swordShop");
