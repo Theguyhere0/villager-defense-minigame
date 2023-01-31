@@ -21,13 +21,13 @@ import java.util.List;
 
 public abstract class Chestplate extends VDArmor{
     @NotNull
-    public static ItemStack create(ChestplateType type) {
+    public static ItemStack create(Tier tier) {
         List<String> lores = new ArrayList<>();
         Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
 
         // Set material
         Material mat;
-        switch (type) {
+        switch (tier) {
             case T1:
             case T2:
                 mat = Material.LEATHER_CHESTPLATE;
@@ -54,66 +54,36 @@ public abstract class Chestplate extends VDArmor{
 
         // Set name
         String name;
-        switch (type) {
+        switch (tier) {
             case T1:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.chestplates.t1.name),
-                        "[T1]"
-                );
+                name = formatName(LanguageManager.itemLore.chestplates.t1.name, tier);
                 break;
             case T2:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.chestplates.t2.name),
-                        "[T2]"
-                );
+                name = formatName(LanguageManager.itemLore.chestplates.t2.name, tier);
                 break;
             case T3:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.chestplates.t3.name),
-                        "[T3]"
-                );
+                name = formatName(LanguageManager.itemLore.chestplates.t3.name, tier);
                 break;
             case T4:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.chestplates.t4.name),
-                        "[T4]"
-                );
+                name = formatName(LanguageManager.itemLore.chestplates.t4.name, tier);
                 break;
             case T5:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.chestplates.t5.name),
-                        "[T5]"
-                );
+                name = formatName(LanguageManager.itemLore.chestplates.t5.name, tier);
                 break;
             case T6:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.chestplates.t6.name),
-                        "[T6]"
-                );
+                name = formatName(LanguageManager.itemLore.chestplates.t6.name, tier);
                 break;
             case T7:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.chestplates.t7.name),
-                        "[T7]"
-                );
+                name = formatName(LanguageManager.itemLore.chestplates.t7.name, tier);
                 break;
             case T8:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.chestplates.t8.name),
-                        "[T8]"
-                );
+                name = formatName(LanguageManager.itemLore.chestplates.t8.name, tier);
                 break;
             case T9:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.chestplates.t9.name),
-                        "[T9]"
-                );
+                name = formatName(LanguageManager.itemLore.chestplates.t9.name, tier);
                 break;
             case T10:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.chestplates.t10.name),
-                        "[T10]"
-                );
+                name = formatName(LanguageManager.itemLore.chestplates.t10.name, tier);
                 break;
             default:
                 name = "";
@@ -121,7 +91,7 @@ public abstract class Chestplate extends VDArmor{
 
         // Set description
         String description;
-        switch (type) {
+        switch (tier) {
             case T1:
                 description = LanguageManager.itemLore.chestplates.t1.description;
                 break;
@@ -164,7 +134,7 @@ public abstract class Chestplate extends VDArmor{
 
         // Set armor
         int armor;
-        switch (type) {
+        switch (tier) {
             case T1:
                 armor = 5;
                 break;
@@ -203,7 +173,7 @@ public abstract class Chestplate extends VDArmor{
 
         // Set toughness
         int toughness;
-        switch (type) {
+        switch (tier) {
             case T3:
                 toughness = 1;
                 break;
@@ -235,7 +205,7 @@ public abstract class Chestplate extends VDArmor{
 
         // Set weight
         int weight;
-        switch (type) {
+        switch (tier) {
             case T1:
             case T2:
                 weight = 1;
@@ -270,7 +240,7 @@ public abstract class Chestplate extends VDArmor{
 
         // Set durability
         int durability;
-        switch (type) {
+        switch (tier) {
             case T1:
                 durability = 80;
                 break;
@@ -309,7 +279,7 @@ public abstract class Chestplate extends VDArmor{
 
         // Set price
         int price;
-        switch (type) {
+        switch (tier) {
             case T1:
                 price = 190;
                 break;
@@ -364,18 +334,5 @@ public abstract class Chestplate extends VDArmor{
             return false;
         return toCheck.getType().toString().contains("CHESTPLATE") && lore.stream().anyMatch(line -> line.contains(
                 ARMOR.toString().replace("%s", "")));
-    }
-
-    public enum ChestplateType{
-        T1,
-        T2,
-        T3,
-        T4,
-        T5,
-        T6,
-        T7,
-        T8,
-        T9,
-        T10
     }
 }

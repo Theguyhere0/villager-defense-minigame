@@ -16,35 +16,41 @@ import java.util.List;
 
 public abstract class ShopFood extends VDFood {
     @NotNull
-    public static ItemStack create(ShopFoodType type) {
+    public static ItemStack create(Tier tier, ShopFoodType type) {
         List<String> lores = new ArrayList<>();
 
         // Set material
         Material mat;
         switch (type) {
-            case T1:
-                mat = Material.BEETROOT;
-                break;
-            case T2:
-                mat = Material.CARROT;
-                break;
-            case T3:
-                mat = Material.BREAD;
-                break;
-            case T4:
-                mat = Material.MUTTON;
-                break;
-            case T5:
-                mat = Material.COOKED_BEEF;
-                break;
-            case T6:
-                mat = Material.GOLDEN_CARROT;
-                break;
             case CAPPLE:
                 mat = Material.GOLDEN_APPLE;
                 break;
             case GAPPLE:
                 mat = Material.ENCHANTED_GOLDEN_APPLE;
+                break;
+            case TIERED:
+                switch (tier) {
+                    case T1:
+                        mat = Material.BEETROOT;
+                        break;
+                    case T2:
+                        mat = Material.CARROT;
+                        break;
+                    case T3:
+                        mat = Material.BREAD;
+                        break;
+                    case T4:
+                        mat = Material.MUTTON;
+                        break;
+                    case T5:
+                        mat = Material.COOKED_BEEF;
+                        break;
+                    case T6:
+                        mat = Material.GOLDEN_CARROT;
+                        break;
+                    default:
+                        mat = Material.GUNPOWDER;
+                }
                 break;
             case TOTEM:
                 mat = Material.TOTEM_OF_UNDYING;
@@ -56,59 +62,38 @@ public abstract class ShopFood extends VDFood {
         // Set name
         String name;
         switch (type) {
-            case T1:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.shopFood.t1.name),
-                        "[T1]"
-                );
-                break;
-            case T2:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.shopFood.t2.name),
-                        "[T2]"
-                );
-                break;
-            case T3:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.shopFood.t3.name),
-                        "[T3]"
-                );
-                break;
-            case T4:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.shopFood.t4.name),
-                        "[T4]"
-                );
-                break;
-            case T5:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.shopFood.t5.name),
-                        "[T5]"
-                );
-                break;
-            case T6:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.shopFood.t6.name),
-                        "[T6]"
-                );
-                break;
             case CAPPLE:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.shopFood.capple.name),
-                        new ColoredMessage(ChatColor.LIGHT_PURPLE, "[U]")
-                );
+                name = formatName(LanguageManager.itemLore.shopFood.capple.name, tier);
                 break;
             case GAPPLE:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.shopFood.gapple.name),
-                        new ColoredMessage(ChatColor.LIGHT_PURPLE, "[U]")
-                );
+                name = formatName(LanguageManager.itemLore.shopFood.gapple.name, tier);
+                break;
+            case TIERED:
+                switch (tier) {
+                    case T1:
+                        name = formatName(LanguageManager.itemLore.shopFood.t1.name, tier);
+                        break;
+                    case T2:
+                        name = formatName(LanguageManager.itemLore.shopFood.t2.name, tier);
+                        break;
+                    case T3:
+                        name = formatName(LanguageManager.itemLore.shopFood.t3.name, tier);
+                        break;
+                    case T4:
+                        name = formatName(LanguageManager.itemLore.shopFood.t4.name, tier);
+                        break;
+                    case T5:
+                        name = formatName(LanguageManager.itemLore.shopFood.t5.name, tier);
+                        break;
+                    case T6:
+                        name = formatName(LanguageManager.itemLore.shopFood.t6.name, tier);
+                        break;
+                    default:
+                        name = "";
+                }
                 break;
             case TOTEM:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.shopFood.totem.name),
-                        new ColoredMessage(ChatColor.LIGHT_PURPLE, "[U]")
-                );
+                name = formatName(LanguageManager.itemLore.shopFood.totem.name, tier);
                 break;
             default:
                 name = "";
@@ -117,29 +102,35 @@ public abstract class ShopFood extends VDFood {
         // Set description
         String description;
         switch (type) {
-            case T1:
-                description = LanguageManager.itemLore.shopFood.t1.description;
-                break;
-            case T2:
-                description = LanguageManager.itemLore.shopFood.t2.description;
-                break;
-            case T3:
-                description = LanguageManager.itemLore.shopFood.t3.description;
-                break;
-            case T4:
-                description = LanguageManager.itemLore.shopFood.t4.description;
-                break;
-            case T5:
-                description = LanguageManager.itemLore.shopFood.t5.description;
-                break;
-            case T6:
-                description = LanguageManager.itemLore.shopFood.t6.description;
-                break;
             case CAPPLE:
                 description = LanguageManager.itemLore.shopFood.capple.description;
                 break;
             case GAPPLE:
                 description = LanguageManager.itemLore.shopFood.gapple.description;
+                break;
+            case TIERED:
+                switch (tier) {
+                    case T1:
+                        description = LanguageManager.itemLore.shopFood.t1.description;
+                        break;
+                    case T2:
+                        description = LanguageManager.itemLore.shopFood.t2.description;
+                        break;
+                    case T3:
+                        description = LanguageManager.itemLore.shopFood.t3.description;
+                        break;
+                    case T4:
+                        description = LanguageManager.itemLore.shopFood.t4.description;
+                        break;
+                    case T5:
+                        description = LanguageManager.itemLore.shopFood.t5.description;
+                        break;
+                    case T6:
+                        description = LanguageManager.itemLore.shopFood.t6.description;
+                        break;
+                    default:
+                        description = "";
+                }
                 break;
             case TOTEM:
                 description = LanguageManager.itemLore.shopFood.totem.description;
@@ -157,29 +148,35 @@ public abstract class ShopFood extends VDFood {
         // Set health heal
         int health;
         switch (type) {
-            case T1:
-                health = 10;
-                break;
-            case T2:
-                health = 20;
-                break;
-            case T3:
-                health = 40;
-                break;
-            case T4:
-                health = 75;
-                break;
-            case T5:
-                health = 120;
-                break;
-            case T6:
-                health = 160;
-                break;
             case CAPPLE:
                 health = 125;
                 break;
             case GAPPLE:
                 health = 200;
+                break;
+            case TIERED:
+                switch (tier) {
+                    case T1:
+                        health = 10;
+                        break;
+                    case T2:
+                        health = 20;
+                        break;
+                    case T3:
+                        health = 40;
+                        break;
+                    case T4:
+                        health = 75;
+                        break;
+                    case T5:
+                        health = 120;
+                        break;
+                    case T6:
+                        health = 160;
+                        break;
+                    default:
+                        health = 0;
+                }
                 break;
             default:
                 health = 0;
@@ -208,30 +205,38 @@ public abstract class ShopFood extends VDFood {
         // Set hunger heal
         int hunger;
         switch (type) {
-            case T1:
-            case TOTEM:
-                hunger = 1;
-                break;
-            case T2:
-                hunger = 2;
-                break;
-            case T3:
-                hunger = 3;
-                break;
-            case T4:
-                hunger = 5;
-                break;
-            case T5:
-                hunger = 6;
-                break;
-            case T6:
-                hunger = 8;
-                break;
             case CAPPLE:
                 hunger = 4;
                 break;
             case GAPPLE:
                 hunger = 7;
+                break;
+            case TIERED:
+                switch (tier) {
+                    case T1:
+                        hunger = 1;
+                        break;
+                    case T2:
+                        hunger = 2;
+                        break;
+                    case T3:
+                        hunger = 3;
+                        break;
+                    case T4:
+                        hunger = 5;
+                        break;
+                    case T5:
+                        hunger = 6;
+                        break;
+                    case T6:
+                        hunger = 8;
+                        break;
+                    default:
+                        hunger = 0;
+                }
+                break;
+            case TOTEM:
+                hunger = 1;
                 break;
             default:
                 hunger = 0;
@@ -242,29 +247,34 @@ public abstract class ShopFood extends VDFood {
         // Set price
         int price;
         switch (type) {
-            case T1:
-                price = 80;
-                break;
-            case T2:
-                price = 150;
-                break;
-            case T3:
-                price = 220;
-                break;
-            case T4:
-                price = 350;
-                break;
-            case T5:
-                price = 540;
-                break;
-            case T6:
-                price = 660;
-                break;
             case CAPPLE:
                 price = 800;
                 break;
             case GAPPLE:
                 price = 1150;
+                break;
+            case TIERED:
+                switch (tier) {
+                    case T1:
+                        price = 80;
+                        break;
+                    case T2:
+                        price = 150;
+                        break;
+                    case T3:
+                        price = 220;
+                        break;
+                    case T4:
+                        price = 350;
+                        break;
+                    case T5:
+                        price = 540;
+                        break;
+                    case T6:
+                        price = 660;
+                        break;
+                    default: price = -1;
+                }
                 break;
             case TOTEM:
                 price = 1550;
@@ -293,12 +303,7 @@ public abstract class ShopFood extends VDFood {
     public enum ShopFoodType{
         CAPPLE,
         GAPPLE,
-        T1,
-        T2,
-        T3,
-        T4,
-        T5,
-        T6,
+        TIERED,
         TOTEM,
     }
 }

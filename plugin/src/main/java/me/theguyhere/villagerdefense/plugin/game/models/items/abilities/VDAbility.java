@@ -23,26 +23,34 @@ public abstract class VDAbility extends VDItem {
     protected static final ColoredMessage RANGE = new ColoredMessage(ChatColor.BLUE,
             String.format(LanguageManager.messages.range, LanguageManager.messages.blocks));
 
-    public static ItemStack createAbility(String kitID, String type) {
+    public static ItemStack createAbility(String kitID, Tier tier) {
         if (Kit.knight().getID().equals(kitID))
-            return KnightAbility.create(KnightAbility.AbilityType.valueOf(type));
+            return KnightAbility.create(tier);
         else if (Kit.mage().getID().equals(kitID))
-            return MageAbility.create(MageAbility.AbilityType.valueOf(type));
+            return MageAbility.create(tier);
         else if (Kit.messenger().getID().equals(kitID))
-            return MessengerAbility.create(MessengerAbility.AbilityType.valueOf(type));
+            return MessengerAbility.create(tier);
         else if (Kit.monk().getID().equals(kitID))
-            return MonkAbility.create(MonkAbility.AbilityType.valueOf(type));
+            return MonkAbility.create(tier);
         else if (Kit.ninja().getID().equals(kitID))
-            return NinjaAbility.create(NinjaAbility.AbilityType.valueOf(type));
+            return NinjaAbility.create(tier);
         else if (Kit.priest().getID().equals(kitID))
-            return PriestAbility.create(PriestAbility.AbilityType.valueOf(type));
+            return PriestAbility.create(tier);
         else if (Kit.siren().getID().equals(kitID))
-            return SirenAbility.create(SirenAbility.AbilityType.valueOf(type));
+            return SirenAbility.create(tier);
         else if (Kit.templar().getID().equals(kitID))
-            return TemplarAbility.create(TemplarAbility.AbilityType.valueOf(type));
+            return TemplarAbility.create(tier);
         else if (Kit.warrior().getID().equals(kitID))
-            return WarriorAbility.create(WarriorAbility.AbilityType.valueOf(type));
+            return WarriorAbility.create(tier);
         else return null;
+    }
+
+    public static String formatName(String itemName, String abilityName, Tier tier) {
+        return CommunicationManager.format(
+                new ColoredMessage(itemName),
+                new ColoredMessage(ChatColor.LIGHT_PURPLE, abilityName),
+                tier.getLabel()
+        );
     }
 
     // Modify the cooldown of an ability

@@ -16,53 +16,29 @@ import java.util.List;
 
 public abstract class MonkAbility extends VDAbility {
     @NotNull
-    public static ItemStack create(AbilityType type) {
+    public static ItemStack create(Tier tier) {
         List<String> lores = new ArrayList<>();
 
         // Set name
         String name;
-        switch (type) {
+        switch (tier) {
             case T0:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.essences.t0.name),
-                        new ColoredMessage(ChatColor.LIGHT_PURPLE, LanguageManager.kits.monk.name),
-                        new ColoredMessage(ChatColor.AQUA, "[T0]")
-                );
+                name = formatName(LanguageManager.itemLore.essences.t0.name, LanguageManager.kits.monk.name, tier);
                 break;
             case T1:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.essences.t1.name),
-                        new ColoredMessage(ChatColor.LIGHT_PURPLE, LanguageManager.kits.monk.name),
-                        new ColoredMessage(ChatColor.AQUA, "[T1]")
-                );
+                name = formatName(LanguageManager.itemLore.essences.t1.name, LanguageManager.kits.monk.name, tier);
                 break;
             case T2:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.essences.t2.name),
-                        new ColoredMessage(ChatColor.LIGHT_PURPLE, LanguageManager.kits.monk.name),
-                        new ColoredMessage(ChatColor.AQUA, "[T2]")
-                );
+                name = formatName(LanguageManager.itemLore.essences.t2.name, LanguageManager.kits.monk.name, tier);
                 break;
             case T3:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.essences.t3.name),
-                        new ColoredMessage(ChatColor.LIGHT_PURPLE, LanguageManager.kits.monk.name),
-                        new ColoredMessage(ChatColor.AQUA, "[T3]")
-                );
+                name = formatName(LanguageManager.itemLore.essences.t3.name, LanguageManager.kits.monk.name, tier);
                 break;
             case T4:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.essences.t4.name),
-                        new ColoredMessage(ChatColor.LIGHT_PURPLE, LanguageManager.kits.monk.name),
-                        new ColoredMessage(ChatColor.AQUA, "[T4]")
-                );
+                name = formatName(LanguageManager.itemLore.essences.t4.name, LanguageManager.kits.monk.name, tier);
                 break;
             case T5:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.essences.t5.name),
-                        new ColoredMessage(ChatColor.LIGHT_PURPLE, LanguageManager.kits.monk.name),
-                        new ColoredMessage(ChatColor.AQUA, "[T5]")
-                );
+                name = formatName(LanguageManager.itemLore.essences.t5.name, LanguageManager.kits.monk.name, tier);
                 break;
             default:
                 name = "";
@@ -70,7 +46,7 @@ public abstract class MonkAbility extends VDAbility {
 
         // Set description
         String description;
-        switch (type) {
+        switch (tier) {
             case T0:
                 description = LanguageManager.itemLore.essences.t0.description;
                 break;
@@ -102,7 +78,7 @@ public abstract class MonkAbility extends VDAbility {
 
         // Set effect
         String effect;
-        switch (type) {
+        switch (tier) {
             case T0:
             case T1:
                 effect = String.format(LanguageManager.kits.monk.effect, "+20%");
@@ -125,7 +101,7 @@ public abstract class MonkAbility extends VDAbility {
 
         // Set range
         double range;
-        switch (type) {
+        switch (tier) {
             case T0:
                 range = 2.5;
                 break;
@@ -153,7 +129,7 @@ public abstract class MonkAbility extends VDAbility {
 
         // Set duration
         double duration;
-        switch (type) {
+        switch (tier) {
             case T0:
                 duration = 5;
                 break;
@@ -181,7 +157,7 @@ public abstract class MonkAbility extends VDAbility {
 
         // Set cooldown
         double cooldown;
-        switch (type) {
+        switch (tier) {
             case T0:
                 cooldown = 45;
                 break;
@@ -208,7 +184,7 @@ public abstract class MonkAbility extends VDAbility {
 
         // Set price
         int price;
-        switch (type) {
+        switch (tier) {
             case T1:
                 price = 500;
                 break;
@@ -251,14 +227,5 @@ public abstract class MonkAbility extends VDAbility {
             return false;
         return toCheck.getType() == Material.GREEN_DYE && lore.stream().anyMatch(line -> line.contains(
                 EFFECT.toString().replace("%s", "")));
-    }
-
-    public enum AbilityType{
-        T0,
-        T1,
-        T2,
-        T3,
-        T4,
-        T5
     }
 }
