@@ -1545,8 +1545,8 @@ public class Arena {
             throw new ArenaClosedException();
         if (status != ArenaStatus.WAITING)
             throw new ArenaStatusException(ArenaStatus.WAITING);
-        if (getActiveCount() == 0)
-            throw new ArenaTaskException("Arena cannot start countdown without players");
+        if (getActiveCount() < getMinPlayers())
+            throw new ArenaTaskException("Arena must meet the minimum player count to start");
 
         // Clear active tasks EXCEPT notify info
         Map<String, BukkitRunnable> cache = new HashMap<>();
@@ -2005,7 +2005,7 @@ public class Arena {
         if (status != ArenaStatus.ACTIVE)
             throw new ArenaStatusException(ArenaStatus.ACTIVE);
 
-        // Clear active tasks EXCEPT update and show status
+        // Clear active tasks EXCEPT custom game ticking
         Map<String, BukkitRunnable> cache = new HashMap<>();
         activeTasks.forEach((name, task) -> {
             if (!name.contains(TICK))
@@ -2013,6 +2013,7 @@ public class Arena {
             else cache.put(name, task);
         });
         activeTasks.clear();
+        cache.keySet().forEach(key -> Main.testInfo(key, false));
         activeTasks.putAll(cache);
 
         // Stop wave time limit countdown

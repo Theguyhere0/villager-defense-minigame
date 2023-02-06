@@ -1116,9 +1116,9 @@ public class LanguageManager {
         public final @NotNull String record;
         public final @NotNull String records;
         public final @NotNull String refill;
+        public final @NotNull String reloadPlugin;
         public final @NotNull String reset;
         public final @NotNull String resetWarning;
-        public final @NotNull String restartPlugin;
         public final @NotNull String resurrection;
         public final @NotNull String rightClick;
         public final @NotNull String seconds;
@@ -1248,9 +1248,9 @@ public class LanguageManager {
             record = getConfigString("record");
             records = getConfigString("records");
             refill = getConfigString("refill");
+            reloadPlugin = getConfigString("reloadPlugin");
             reset = getConfigString("reset");
             resetWarning = getConfigString("resetWarning");
-            restartPlugin = getConfigString("restartPlugin");
             resurrection = getConfigString("resurrection");
             rightClick = getConfigString("rightClick");
             seconds = getConfigString("seconds");

@@ -411,19 +411,20 @@ class CommandFixFiles {
                         (Player) sender,
                         LanguageManager.confirms.autoUpdate,
                         new ColoredMessage(ChatColor.AQUA, "en_US.yml"),
-                        new ColoredMessage(ChatColor.AQUA, Integer.toString(Main.languageFileVersion)));
+                        new ColoredMessage(ChatColor.AQUA, Integer.toString(Main.languageFileVersion))
+                );
                 PlayerManager.notifyAlert(
                         (Player) sender,
                         LanguageManager.messages.manualUpdateWarn,
                         new ColoredMessage(ChatColor.AQUA, "All other language files")
                 );
-                PlayerManager.notifyAlert((Player) sender, LanguageManager.messages.restartPlugin);
+                PlayerManager.notifyAlert((Player) sender, LanguageManager.messages.reloadPlugin);
             }
             CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
                     "en_US.yml", Integer.toString(Main.languageFileVersion));
             CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
                     "All other language files");
-            CommunicationManager.debugError(LanguageManager.messages.restartPlugin, 0);
+            CommunicationManager.debugError(LanguageManager.messages.reloadPlugin, 0);
         }
 
         // Check if customEffects.yml is outdated
