@@ -1762,16 +1762,12 @@ public class Arena {
         newGameID();
         WorldManager.clear(getCorner1(), getCorner2());
 
-        // Teleport players to arena if waiting room exists, otherwise clear inventory
-        if (getWaitingRoom() != null) {
-            for (VDPlayer vdPlayer : getActives())
-                PlayerManager.teleAdventure(vdPlayer.getPlayer(), getPlayerSpawn().getLocation());
+        // Teleport players to arena, and spectators if there was a waiting room
+        if (getWaitingRoom() != null)
             for (VDPlayer player : getSpectators())
                 PlayerManager.teleSpectator(player.getPlayer(), getPlayerSpawn().getLocation());
-        } else {
-            for (VDPlayer vdPlayer : getActives())
-                vdPlayer.getPlayer().getInventory().clear();
-        }
+        for (VDPlayer vdPlayer : getActives())
+            PlayerManager.teleAdventure(vdPlayer.getPlayer(), getPlayerSpawn().getLocation());
 
         // Set arena status to active
         setStatus(ArenaStatus.ACTIVE);
