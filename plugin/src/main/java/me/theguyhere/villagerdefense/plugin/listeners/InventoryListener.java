@@ -2269,18 +2269,28 @@ public class InventoryListener implements Listener {
 
 			// Create spawn
 			if (buttonName.contains("Create"))
-				if (arenaInstance.isClosed()) {
+				if (!arenaInstance.isClosed())
+					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+				else if (GameManager.getArenas().values().stream().anyMatch(arena -> !arena.equals(arenaInstance) &&
+						arena.getBounds().contains(player.getLocation().toVector())))
+					PlayerManager.notifyFailure(player, "Arena bounds cannot intersect another arena!");
+				else {
 					arenaInstance.setCorner1(player.getLocation());
 					PlayerManager.notifySuccess(player, "Corner 1 set!");
 					player.openInventory(Inventories.createBoundsMenu(meta.getArena()));
-				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+				}
 
 			// Relocate spawn
 			if (buttonName.contains("Relocate"))
-				if (arenaInstance.isClosed()) {
+				if (!arenaInstance.isClosed())
+					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+				else if (GameManager.getArenas().values().stream().anyMatch(arena -> !arena.equals(arenaInstance) &&
+						arena.getBounds().contains(player.getLocation().toVector())))
+					PlayerManager.notifyFailure(player, "Arena bounds cannot intersect another arena!");
+				else {
 					arenaInstance.setCorner1(player.getLocation());
 					PlayerManager.notifySuccess(player, "Corner 1 set!");
-				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+				}
 
 			// Teleport player to spawn
 			else if (buttonName.contains("Teleport")) {
@@ -2312,20 +2322,30 @@ public class InventoryListener implements Listener {
 
 			// Create spawn
 			if (buttonName.contains("Create"))
-				if (arenaInstance.isClosed()) {
-					arenaInstance.setCorner2(player.getLocation());
+				if (!arenaInstance.isClosed())
+					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+				else if (GameManager.getArenas().values().stream().anyMatch(arena -> !arena.equals(arenaInstance) &&
+						arena.getBounds().contains(player.getLocation().toVector())))
+					PlayerManager.notifyFailure(player, "Arena bounds cannot intersect another arena!");
+				else {
+					arenaInstance.setCorner1(player.getLocation());
 					PlayerManager.notifySuccess(player, "Corner 2 set!");
 					player.openInventory(Inventories.createBoundsMenu(meta.getArena()));
-				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+				}
 
 			// Relocate spawn
 			if (buttonName.contains("Relocate"))
-				if (arenaInstance.isClosed()) {
-					arenaInstance.setCorner2(player.getLocation());
+				if (!arenaInstance.isClosed())
+					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+				else if (GameManager.getArenas().values().stream().anyMatch(arena -> !arena.equals(arenaInstance) &&
+						arena.getBounds().contains(player.getLocation().toVector())))
+					PlayerManager.notifyFailure(player, "Arena bounds cannot intersect another arena!");
+				else {
+					arenaInstance.setCorner1(player.getLocation());
 					PlayerManager.notifySuccess(player, "Corner 2 set!");
-				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+				}
 
-				// Teleport player to spawn
+			// Teleport player to spawn
 			else if (buttonName.contains("Teleport")) {
 				Location location = arenaInstance.getCorner2();
 				if (location == null) {

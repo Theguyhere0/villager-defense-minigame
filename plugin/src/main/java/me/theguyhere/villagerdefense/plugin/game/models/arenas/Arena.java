@@ -1271,6 +1271,9 @@ public class Arena {
     }
 
     public void stretchBounds() {
+        if (getCorner1() == null || getCorner2() == null)
+            return;
+
         Location temp = getCorner1();
         temp.setY(Objects.requireNonNull(getCorner1().getWorld()).getMaxHeight());
         setCorner1(temp);
@@ -1279,7 +1282,10 @@ public class Arena {
         setCorner2(temp);
     }
 
-    public BoundingBox getBounds() {
+    public @NotNull BoundingBox getBounds() {
+        if (getCorner1() == null || getCorner2() == null)
+            return new BoundingBox();
+
         return new BoundingBox(getCorner1().getX(), getCorner1().getY(), getCorner1().getZ(),
                 getCorner2().getX(), getCorner2().getY(), getCorner2().getZ());
     }
@@ -1461,9 +1467,10 @@ public class Arena {
         if (getActiveCount() > 0 && activeTasks.containsKey(FORCE_START_ARENA))
             throw new ArenaTaskException("Arena was force started");
 
-        // Clear active tasks
+        // Clear active tasks and countdowns
         activeTasks.forEach((name, task) -> task.cancel());
         activeTasks.clear();
+        CountdownManager.stopCountdown(this);
 
         // Start repeating notification of waiting
         activeTasks.put(NOTIFY_WAITING, new BukkitRunnable() {
@@ -2393,7 +2400,7 @@ public class Arena {
 
         // Remove mob AI and set them invincible
         mobs.forEach(mob -> {
-            mob.getEntity().setAI(false);
+            mob.getEntity().setAware(false);
             mob.getEntity().setInvulnerable(true);
         });
 
