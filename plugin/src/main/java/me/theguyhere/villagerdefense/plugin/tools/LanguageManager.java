@@ -1116,9 +1116,9 @@ public class LanguageManager {
         public final @NotNull String record;
         public final @NotNull String records;
         public final @NotNull String refill;
+        public final @NotNull String reloadPlugin;
         public final @NotNull String reset;
         public final @NotNull String resetWarning;
-        public final @NotNull String restartPlugin;
         public final @NotNull String resurrection;
         public final @NotNull String rightClick;
         public final @NotNull String seconds;
@@ -1248,9 +1248,9 @@ public class LanguageManager {
             record = getConfigString("record");
             records = getConfigString("records");
             refill = getConfigString("refill");
+            reloadPlugin = getConfigString("reloadPlugin");
             reset = getConfigString("reset");
             resetWarning = getConfigString("resetWarning");
-            restartPlugin = getConfigString("restartPlugin");
             resurrection = getConfigString("resurrection");
             rightClick = getConfigString("rightClick");
             seconds = getConfigString("seconds");
@@ -1435,6 +1435,7 @@ public class LanguageManager {
         public final @NotNull String timeBar;
         public final @NotNull String villageCaptain;
         public final @NotNull String villagerSpawnParticles;
+        public final @NotNull String waitingBar;
 
         private Names() throws InvalidLanguageKeyException {
             setPathPrefix("names");
@@ -1488,6 +1489,7 @@ public class LanguageManager {
             timeBar = getConfigString("timeBar");
             villageCaptain = getConfigString("villageCaptain");
             villagerSpawnParticles = getConfigString("villagerSpawnParticles");
+            waitingBar = getConfigString("waitingBar");
         }
     }
 

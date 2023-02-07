@@ -19,6 +19,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDPet;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.villagers.VDFletcher;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -174,7 +175,11 @@ public class VDPlayer {
         }
 
         // Update true health
-        this.currentHealth = Math.min(Math.max(currentHealth + trueDif, 0), maxHealth);
+        currentHealth = Math.min(Math.max(currentHealth + trueDif, 0), maxHealth);
+
+        // Set warning effect
+        NMSVersion.getCurrent().getNmsManager().createEffect(arena.getPlayerSpawn().getLocation(),
+                currentHealth / (double) maxHealth).sendTo(getPlayer());
 
         // Check for death
         if (this.currentHealth == 0) {

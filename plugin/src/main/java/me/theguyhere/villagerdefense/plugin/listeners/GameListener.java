@@ -11,7 +11,7 @@ import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.VDMobNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.items.ItemMetaKey;
@@ -1425,10 +1425,6 @@ public class GameListener implements Listener {
 
 		// Exempt if in waiting status and waiting room exists
 		if (arena.getStatus() == ArenaStatus.WAITING && arena.getWaitingRoom() != null)
-			return;
-
-		// Ignore players that have already left
-		if (gamer.getStatus() == PlayerStatus.LEFT)
 			return;
 
 		// Cancel move and notify if movement is outside arena bounds

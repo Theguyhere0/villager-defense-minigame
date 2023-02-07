@@ -832,9 +832,9 @@ messages:
   record: "New arena record!"
   records: "Records"
   refill: "Refill: %s"
+  reloadPlugin: "Please reload plugin data."
   reset: "Reset"
   resetWarning: "WARNING: RESETS ALL PLAYER STATS"
-  restartPlugin: "Please restart the plugin."
   resurrection: "You were resurrected!"
   rightClick: "Right click to use ability"
   seconds: "%s s"
@@ -955,9 +955,10 @@ names:
   playerSpawnParticles: "Player Spawn Particles"
   scytheShop: "Scythe Shop"
   swordShop: "Sword Shop"
-  timeBar: "Wave %s Time Limit"
+  timeBar: "Wave %s Time Remaining - %s"
   villageCaptain: "Village Captain"
   villagerSpawnParticles: "Villager Spawn Particles"
+  waitingBar: "%s Until Arena Start"
 playerStats:
   topBalance:
     name: "Top Balance"

@@ -6,7 +6,7 @@ import me.theguyhere.villagerdefense.nms.common.NMSManager;
 import me.theguyhere.villagerdefense.plugin.commands.CommandExecImp;
 import me.theguyhere.villagerdefense.plugin.commands.TabCompleterImp;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLanguageKeyException;
-import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
 import me.theguyhere.villagerdefense.plugin.listeners.*;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
@@ -47,7 +47,7 @@ public class Main extends JavaPlugin {
 	public static final int arenaDataVersion = 8;
 	public static final int playerDataVersion = 3;
 	public static final int spawnTableVersion = 3;
-	public static final int languageFileVersion = 26;
+	public static final int languageFileVersion = 28;
 	public static final int defaultSpawnVersion = 4;
 	public static final int customEffectsVersion = 3;
 

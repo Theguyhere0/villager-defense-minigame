@@ -5,7 +5,6 @@ package me.theguyhere.villagerdefense.plugin.game.models.players;
  *     <li>{@link #ALIVE}</li>
  *     <li>{@link #GHOST}</li>
  *     <li>{@link #SPECTATOR}</li>
- *     <li>{@link #LEFT}</li>
  * </ul>
  */
 public enum PlayerStatus {
@@ -14,7 +13,5 @@ public enum PlayerStatus {
     /** Player is dead but active in the game.*/
     GHOST,
     /** Player is spectating in the game.*/
-    SPECTATOR,
-    /** Player has left the game.*/
-    LEFT
+    SPECTATOR
 }
