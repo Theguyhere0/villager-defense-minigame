@@ -2009,7 +2009,6 @@ public class Arena {
             else cache.put(name, task);
         });
         activeTasks.clear();
-        cache.keySet().forEach(key -> Main.testInfo(key, false));
         activeTasks.putAll(cache);
 
         // Stop wave time limit countdown

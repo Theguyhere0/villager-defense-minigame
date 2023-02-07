@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.entity.TileEntityTypes;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
@@ -38,22 +39,22 @@ public class VersionNMSManager implements NMSManager {
 
     @Override
     public String getSpawnParticleName() {
-        return "FLAME";
+        return Particle.FLAME.name();
     }
 
     @Override
     public String getMonsterParticleName() {
-        return "SOUL_FIRE_FLAME";
+        return Particle.SOUL_FIRE_FLAME.name();
     }
 
     @Override
     public String getVillagerParticleName() {
-        return "COMPOSTER";
+        return Particle.COMPOSTER.name();
     }
 
     @Override
     public String getBorderParticleName() {
-        return "REDSTONE";
+        return Particle.REDSTONE.name();
     }
 
     @Override
@@ -87,6 +88,28 @@ public class VersionNMSManager implements NMSManager {
     @Override
     public void setCrossbowCooldown(Player player, int cooldownTicks) {
         new SetCooldownPacket(ItemID.CROSSBOW, cooldownTicks).sendTo(player);
+    }
+
+    @Override
+    public PacketGroup createEffect(Location location, double healthRatio) {
+        // Protect from invalid health ratios
+        if (healthRatio > 1 || healthRatio < 0)
+            return null;
+
+        return PacketGroup.of(
+                new WorldBorderCenterPacket(location),
+                new WorldBorderSizePacket(BORDER_SIZE),
+                new WorldBorderWarningDistancePacket(Math.max((int) (BORDER_SIZE * (4 - 7 * healthRatio)), 0))
+        );
+    }
+
+    @Override
+    public PacketGroup resetEffect(Location location, double size, int warningDistance) {
+        return PacketGroup.of(
+                new WorldBorderCenterPacket(location),
+                new WorldBorderSizePacket(size),
+                new WorldBorderWarningDistancePacket(warningDistance)
+        );
     }
 
     @Override
