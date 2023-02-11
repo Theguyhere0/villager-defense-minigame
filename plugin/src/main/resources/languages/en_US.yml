@@ -300,32 +300,20 @@ itemLore:
       name: "Meat Mallet %s"
       description: "A dull wooden axe meant for tenderizing meat."
     t2:
-      name: "Lumbar Axe %s"
-      description: "A well-worn piece of stone bound to a tough handle."
-    t3:
-      name: "Ceremonial Axe %s"
-      description: "A sleek sheet of marble mounted on an oak handle."
-    t4:
       name: "Obsidian Axe %s"
       description: "A balanced, razor sharp, obsidian head resting on a maple handle."
-    t5:
-      name: "Axe of The Executioner %s"
-      description: "The tool of choice to empty out prison cells."
-    t6:
+    t3:
       name: "Steel Axe %s"
       description: "Forged from high-grade steel, this is the finest axe on the market."
-    t7:
-      name: "Axe of Royal Blacksmiths %s"
-      description: "A gleaming axe meticulously forged by the best blacksmiths of the kingdom."
-    t8:
+    t4:
       name: "Crystal Axe %s"
-      description: "A glistening head of crystalline beauty and striking terror."
-    t9:
-      name: "Axe of The Warlord %s"
-      description: "A fear-invoking weapon that severed the heads of countless generals."
-    t10:
-      name: "Necrotic Axe %s"
-      description: "The mutilated souls that fell to this mighty axe stained its head a lifeless black."
+      description: "A glistening cleaver of crystalline beauty and striking terror."
+    t5:
+      name: "Axe of Nightmares %s"
+      description: "The hue of the axe head can only be described as pure nightmare."
+    t6:
+      name: "Axe of Demonic Judgement %s"
+      description: "No shield or angel will save you from its beheading bite."
   boots:
     t1:
       name: "Hide Boots %s"
@@ -536,32 +524,20 @@ itemLore:
       name: "Walking Cane %s"
       description: "A curved wooden stick carried by the village elders."
     t2:
-      name: "Farm Plough %s"
-      description: "A stone shard on a tough handle for carving at the earth."
-    t3:
-      name: "Ceremonial Scythe %s"
-      description: "A sleek shard of marble mounted on an oak handle."
-    t4:
       name: "Obsidian Scythe %s"
       description: "A jagged, razor sharp, obsidian shard resting on a maple handle."
-    t5:
-      name: "Scythe of The Gatekeeper %s"
-      description: "A simple weapon to intimidate and inspect travelers."
-    t6:
+    t3:
       name: "Steel Scythe %s"
       description: "Forged from high-grade steel, this is the finest scythe on the market."
-    t7:
-      name: "Scythe of Royal Weaponsmiths %s"
-      description: "A gleaming scythe meticulously forged by the best weaponsmiths of the kingdom."
-    t8:
+    t4:
       name: "Crystal Scythe %s"
-      description: "A glistening shard of crystalline beauty and biting pain."
-    t9:
-      name: "Scythe of The Czar %s"
-      description: "A glorious scythe that cemented the ironclad rule of many leaders."
-    t10:
-      name: "Midnight Scythe %s"
+      description: "A battle scythe of crystalline beauty and biting pain."
+    t5:
+      name: "Scythe of Midnight %s"
       description: "A scythe so deadly that even the shadows bleed on its arc."
+    t6:
+      name: "Scythe of Merciless Terror %s"
+      description: "No man, woman, or child is spared from its ghastly whirl."
   shopFood:
     capple:
       name: "Caramel Apple %s"
@@ -598,32 +574,20 @@ itemLore:
       name: "Sword of The Apprentice %s"
       description: "A fine wooden sword with a fire-hardened blade."
     t2:
-      name: "Sword of The Peasant %s"
-      description: "A slab of chipped stone hastily bound to a tough handle."
-    t3:
-      name: "Ceremonial Sword %s"
-      description: "A sleek sheet of marble seated on an oak handle."
-    t4:
       name: "Obsidian Sword %s"
       description: "A well-weighted, razor sharp, obsidian blade resting on a maple handle."
-    t5:
-      name: "Sword of The Front Lines %s"
-      description: "The first weapon to clash at the sound of the battle horn."
-    t6:
+    t3:
       name: "Steel Sword %s"
       description: "Forged from high-grade steel, this is the finest sword on the market."
-    t7:
-      name: "Sword of Royal Swordsmiths %s"
-      description: "A gleaming sword meticulously forged by the best swordsmiths of the kingdom."
-    t8:
+    t4:
       name: "Crystal Sword %s"
       description: "A glistening blade of crystalline beauty and double-edged terror."
-    t9:
-      name: "Sword of The Emperor %s"
-      description: "An awe-inspiring masterpiece that brought kingdoms to their knees in the name of conquest."
-    t10:
-      name: "Sword of The Hero %s"
-      description: "The Wither once fell before this mighty sword, tinting the blade a soulless black."
+    t5:
+      name: "Sword of Nightfall %s"
+      description: "This forsaken blade gathers a dark luster imitating the encroachment of dusk."
+    t6:
+      name: "Sword of Diabolical Fury %s"
+      description: "Possession of this saber induces a bloodthirsty rage upon its owner."
 kits:
   alchemist:
     name: "Alchemist"

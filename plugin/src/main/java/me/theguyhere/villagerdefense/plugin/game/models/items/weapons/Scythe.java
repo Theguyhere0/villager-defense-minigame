@@ -12,11 +12,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public abstract class Scythe extends VDWeapon {
@@ -24,6 +26,7 @@ public abstract class Scythe extends VDWeapon {
     public static ItemStack create(Tier tier, ScytheType type) {
         List<String> lores = new ArrayList<>();
         Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
+        HashMap<Enchantment, Integer> enchant = new HashMap<>();
 
         // Set material
         Material mat;
@@ -49,21 +52,20 @@ public abstract class Scythe extends VDWeapon {
                         mat = Material.WOODEN_HOE;
                         break;
                     case T2:
-                    case T3:
-                    case T4:
                         mat = Material.STONE_HOE;
                         break;
-                    case T5:
-                    case T6:
-                    case T7:
+                    case T3:
                         mat = Material.IRON_HOE;
                         break;
-                    case T8:
-                    case T9:
+                    case T4:
                         mat = Material.DIAMOND_HOE;
                         break;
-                    case T10:
+                    case T5:
                         mat = Material.NETHERITE_HOE;
+                        break;
+                    case T6:
+                        mat = Material.NETHERITE_HOE;
+                        enchant.put(Enchantment.DURABILITY, 3);
                         break;
                     default:
                         mat = Material.GOLDEN_HOE;
@@ -99,18 +101,6 @@ public abstract class Scythe extends VDWeapon {
                     case T6:
                         name = formatName(LanguageManager.itemLore.scythes.t6.name, tier);
                         break;
-                    case T7:
-                        name = formatName(LanguageManager.itemLore.scythes.t7.name, tier);
-                        break;
-                    case T8:
-                        name = formatName(LanguageManager.itemLore.scythes.t8.name, tier);
-                        break;
-                    case T9:
-                        name = formatName(LanguageManager.itemLore.scythes.t9.name, tier);
-                        break;
-                    case T10:
-                        name = formatName(LanguageManager.itemLore.scythes.t10.name, tier);
-                        break;
                     default:
                         name = "";
                 }
@@ -145,18 +135,6 @@ public abstract class Scythe extends VDWeapon {
                     case T6:
                         description = LanguageManager.itemLore.scythes.t6.description;
                         break;
-                    case T7:
-                        description = LanguageManager.itemLore.scythes.t7.description;
-                        break;
-                    case T8:
-                        description = LanguageManager.itemLore.scythes.t8.description;
-                        break;
-                    case T9:
-                        description = LanguageManager.itemLore.scythes.t9.description;
-                        break;
-                    case T10:
-                        description = LanguageManager.itemLore.scythes.t10.description;
-                        break;
                     default:
                         description = "";
                 }
@@ -180,13 +158,13 @@ public abstract class Scythe extends VDWeapon {
             case REAPER:
                 switch (tier) {
                     case T1:
-                        damageLow = damageHigh = 20;
-                        break;
-                    case T2:
                         damageLow = damageHigh = 25;
                         break;
-                    case T3:
+                    case T2:
                         damageLow = damageHigh = 30;
+                        break;
+                    case T3:
+                        damageLow = damageHigh = 35;
                         break;
                     default:
                         damageLow = damageHigh = 0;
@@ -199,40 +177,24 @@ public abstract class Scythe extends VDWeapon {
                         damageHigh = 25;
                         break;
                     case T2:
-                        damageLow = 19;
-                        damageHigh = 32;
-                        break;
-                    case T3:
-                        damageLow = 21;
-                        damageHigh = 33;
-                        break;
-                    case T4:
                         damageLow = 24;
                         damageHigh = 33;
                         break;
-                    case T5:
-                        damageLow = 26;
-                        damageHigh = 40;
-                        break;
-                    case T6:
-                        damageLow = 29;
-                        damageHigh = 42;
-                        break;
-                    case T7:
+                    case T3:
                         damageLow = 33;
                         damageHigh = 44;
                         break;
-                    case T8:
-                        damageLow = 35;
-                        damageHigh = 53;
-                        break;
-                    case T9:
-                        damageLow = 40;
-                        damageHigh = 56;
-                        break;
-                    case T10:
+                    case T4:
                         damageLow = 45;
-                        damageHigh = 65;
+                        damageHigh = 60;
+                        break;
+                    case T5:
+                        damageLow = 60;
+                        damageHigh = 78;
+                        break;
+                    case T6:
+                        damageLow = 80;
+                        damageHigh = 100;
                         break;
                     default:
                         damageLow = damageHigh = 0;
@@ -274,34 +236,22 @@ public abstract class Scythe extends VDWeapon {
             case TIERED:
                 switch (tier) {
                     case T1:
-                        durability = 200;
+                        durability = 300;
                         break;
                     case T2:
-                        durability = 275;
+                        durability = 560;
                         break;
                     case T3:
-                        durability = 320;
+                        durability = 825;
                         break;
                     case T4:
-                        durability = 370;
+                        durability = 1085;
                         break;
                     case T5:
-                        durability = 540;
+                        durability = 1310;
                         break;
                     case T6:
-                        durability = 620;
-                        break;
-                    case T7:
-                        durability = 740;
-                        break;
-                    case T8:
-                        durability = 1050;
-                        break;
-                    case T9:
-                        durability = 1300;
-                        break;
-                    case T10:
-                        durability = 1800;
+                        durability = 1500;
                         break;
                     default: durability = 0;
                 }
@@ -321,31 +271,19 @@ public abstract class Scythe extends VDWeapon {
                         price = 190;
                         break;
                     case T2:
-                        price = 245;
-                        break;
-                    case T3:
                         price = 380;
                         break;
-                    case T4:
-                        price = 330;
-                        break;
-                    case T5:
+                    case T3:
                         price = 415;
                         break;
+                    case T4:
+                        price = 520;
+                        break;
+                    case T5:
+                        price = 720;
+                        break;
                     case T6:
-                        price = 460;
-                        break;
-                    case T7:
-                        price = 515;
-                        break;
-                    case T8:
-                        price = 650;
-                        break;
-                    case T9:
-                        price = 750;
-                        break;
-                    case T10:
-                        price = 970;
+                        price = 1000;
                         break;
                     default: price = -1;
                 }
@@ -357,7 +295,7 @@ public abstract class Scythe extends VDWeapon {
                     price));
 
         // Create item
-        ItemStack item = ItemManager.createItem(mat, name, ItemManager.BUTTON_FLAGS, null, lores, attributes);
+        ItemStack item = ItemManager.createItem(mat, name, ItemManager.BUTTON_FLAGS, enchant, lores, attributes);
         if (durability == 0)
             return ItemManager.makeUnbreakable(item);
         else return item;
