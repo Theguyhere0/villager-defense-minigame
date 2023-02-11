@@ -16,7 +16,7 @@ public abstract class VDPet extends VDMob {
 
     protected VDPet(Arena arena, Tameable pet, String name, String lore, int level, AttackType attackType, int slots,
                     Player owner) {
-        super(lore, level, attackType);
+        super(lore, attackType);
         mob = pet;
         this.owner = owner;
         pet.setOwner(owner);

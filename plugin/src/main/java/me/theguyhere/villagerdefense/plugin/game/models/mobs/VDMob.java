@@ -40,7 +40,7 @@ public abstract class VDMob {
     protected String name;
     protected int hpBarSize;
 
-    protected final int level;
+    protected int level;
     protected int maxHealth = 0;
     protected int currentHealth = 0;
     protected int armor = 0;
@@ -65,9 +65,8 @@ public abstract class VDMob {
     private static final String WEIGHT = "weight";
     private static final String SPEED = "speed";
     
-    protected VDMob(String lore, int level, AttackType attackType) {
+    protected VDMob(String lore, AttackType attackType) {
         this.lore = lore;
-        this.level = level;
         this.attackType = attackType;
     }
 
@@ -109,7 +108,7 @@ public abstract class VDMob {
         if (damage >= currentHealth) {
             addDamage(currentHealth, attackerID);
             Random r = new Random();
-            int finalGems = (int) (loot * 2 * (1 + (r.nextDouble() * 2 - 1) * lootSpread));
+            int finalGems = (int) (loot * (1 + (r.nextDouble() * 2 - 1) * lootSpread));
             int finalExp = (int) (loot * (1 + (r.nextDouble() * 2 - 1) * lootSpread)) / 10;
 
             // Reward for all damagers
@@ -232,32 +231,21 @@ public abstract class VDMob {
         return targetRange;
     }
 
-    // Function for Gaussian level distribution, with restrictions
-    protected static int getLevel(double difficulty, double rate, int start) {
-        Random r = new Random();
-        double mult = 1 + .1 * Math.max(Math.min(r.nextGaussian(), 3), -3); // Mean 100%, SD 10%, restrict 30%
-        return Math.max((int) ((difficulty * mult - start) / rate + .5), 1);
-    }
-
-    // Sets the proper health for the mob
-    protected void setHealth(int base, int delta) {
-        maxHealth = base + delta * (level - 1);
+    /**
+     * Sets the proper health for the mob.
+     */
+    protected void setHealth(int health) {
+        maxHealth = health;
         currentHealth = maxHealth;
     }
 
-    // Sets the proper armor for the mob
-    protected void setArmor(int base, int delta) {
-        armor = base + delta * (level - 1);
-    }
-
-    // Sets the proper toughness for the mob
-    protected void setToughness(double base, double delta, int start) {
-        toughness = base + delta * Math.max(0, level - start + 1);
-    }
-
-    // Sets the proper damage for the mob
-    protected void setDamage(int base, int delta, double spread) {
-        damage = base + delta * (level - 1);
+    /**
+     * Sets the proper damage for the mob.
+     * @param base Base damage.
+     * @param spread Damage spread in terms of proportion.
+     */
+    protected void setDamage(int base, double spread) {
+        damage = base;
         damageSpread = spread;
     }
 
@@ -457,21 +445,25 @@ public abstract class VDMob {
 
     // Set target range
     protected void setCloseTargetRange() {
-        targetRange = 10;
+        targetRange = 12;
     }
     protected void setModerateTargetRange() {
-        targetRange = 18;
+        targetRange = 24;
     }
     protected void setFarTargetRange() {
-        targetRange = 30;
+        targetRange = 40;
     }
     protected void setUnboundedTargetRange() {
         targetRange = -1;
     }
 
-    // Sets the proper loot for the mob
-    protected void setLoot(int base, double rate, double spread) {
-        loot = (int) (base * Math.pow(rate, level - 1));
+    /**
+     * Sets the proper loot for the mob.
+     * @param base Amount of gems to drop.
+     * @param spread Spread in gem drop.
+     */
+    protected void setLoot(int base, double spread) {
+        loot = base;
         lootSpread = spread;
     }
 

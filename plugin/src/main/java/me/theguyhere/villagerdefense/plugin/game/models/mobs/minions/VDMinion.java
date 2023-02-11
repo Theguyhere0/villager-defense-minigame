@@ -5,22 +5,27 @@ import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.Team;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
+import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 
+import java.util.HashMap;
 import java.util.Objects;
-import java.util.Random;
 
+/**
+ * The monsters of Villager Defense.
+ */
 public abstract class VDMinion extends VDMob {
-    protected VDMinion(Arena arena, Mob minion, String name, String lore, int level, AttackType attackType) {
-        super(lore, level, attackType);
+    protected VDMinion(Arena arena, Mob minion, String name, String lore, AttackType attackType) {
+        super(lore, attackType);
         mob = minion;
         id = minion.getUniqueId();
         minion.setMetadata(TEAM, Team.MONSTER.getValue());
@@ -51,141 +56,254 @@ public abstract class VDMinion extends VDMob {
         super.updateNameTag(ChatColor.RED);
     }
 
-    protected void setArmorEquipment() {
+    protected void setArmorEquipment(boolean helmet, boolean chestplate, boolean leggings, boolean boots) {
         EntityEquipment equipment = Objects.requireNonNull(mob.getEquipment());
-        Random r = new Random();
-        int armorLevel = Math.max(level + r.nextInt(4) - 2, 0);
-        Material mat;
+        HashMap<Enchantment, Integer> enchant = new HashMap<>();
+        enchant.put(Enchantment.DURABILITY, 3);
 
         // Helmet
-        if (armorLevel < 5)
-            mat = Material.AIR;
-        else if (armorLevel < 10)
-            mat = Material.LEATHER_HELMET;
-        else if (armorLevel < 15)
-            mat = Material.CHAINMAIL_HELMET;
-        else if (armorLevel < 20)
-            mat = Material.IRON_HELMET;
-        else if (armorLevel < 30)
-            mat = Material.DIAMOND_HELMET;
-        else mat = Material.NETHERITE_HELMET;
-        equipment.setHelmet(new ItemStack(mat));
+        if (helmet) {
+            ItemStack armor;
+            switch (level) {
+                case 2:
+                    armor = new ItemStack(Material.LEATHER_HELMET);
+                    break;
+                case 3:
+                    armor = new ItemStack(Material.CHAINMAIL_HELMET);
+                    break;
+                case 4:
+                    armor = new ItemStack(Material.IRON_HELMET);
+                    break;
+                case 5:
+                    armor = new ItemStack(Material.DIAMOND_HELMET);
+                    break;
+                case 6:
+                    armor = new ItemStack(Material.NETHERITE_HELMET);
+                    break;
+                case 7:
+                    armor = ItemManager.createItem(Material.NETHERITE_HELMET, "", null, enchant);
+                    break;
+                default:
+                    armor = new ItemStack(Material.AIR);
+            }
+            equipment.setHelmet(armor);
+        }
 
         // Chestplate
-        armorLevel = Math.max(level + r.nextInt(4) - 2, 0);
-        if (armorLevel < 5)
-            mat = Material.AIR;
-        else if (armorLevel < 10)
-            mat = Material.LEATHER_CHESTPLATE;
-        else if (armorLevel < 15)
-            mat = Material.CHAINMAIL_CHESTPLATE;
-        else if (armorLevel < 20)
-            mat = Material.IRON_CHESTPLATE;
-        else if (armorLevel < 30)
-            mat = Material.DIAMOND_CHESTPLATE;
-        else mat = Material.NETHERITE_CHESTPLATE;
-        equipment.setChestplate(new ItemStack(mat));
+        if (chestplate) {
+            ItemStack armor;
+            switch (level) {
+                case 2:
+                    armor = new ItemStack(Material.LEATHER_CHESTPLATE);
+                    break;
+                case 3:
+                    armor = new ItemStack(Material.CHAINMAIL_CHESTPLATE);
+                    break;
+                case 4:
+                    armor = new ItemStack(Material.IRON_CHESTPLATE);
+                    break;
+                case 5:
+                    armor = new ItemStack(Material.DIAMOND_CHESTPLATE);
+                    break;
+                case 6:
+                    armor = new ItemStack(Material.NETHERITE_CHESTPLATE);
+                    break;
+                case 7:
+                    armor = ItemManager.createItem(Material.NETHERITE_CHESTPLATE, "", null, enchant);
+                    break;
+                default:
+                    armor = new ItemStack(Material.AIR);
+            }
+            equipment.setChestplate(armor);
+        }
 
         // Leggings
-        armorLevel = Math.max(level + r.nextInt(4) - 2, 0);
-        if (armorLevel < 5)
-            mat = Material.AIR;
-        else if (armorLevel < 10)
-            mat = Material.LEATHER_LEGGINGS;
-        else if (armorLevel < 15)
-            mat = Material.CHAINMAIL_LEGGINGS;
-        else if (armorLevel < 20)
-            mat = Material.IRON_LEGGINGS;
-        else if (armorLevel < 30)
-            mat = Material.DIAMOND_LEGGINGS;
-        else mat = Material.NETHERITE_LEGGINGS;
-        equipment.setLeggings(new ItemStack(mat));
+        if (leggings) {
+            ItemStack armor;
+            switch (level) {
+                case 2:
+                    armor = new ItemStack(Material.LEATHER_LEGGINGS);
+                    break;
+                case 3:
+                    armor = new ItemStack(Material.CHAINMAIL_LEGGINGS);
+                    break;
+                case 4:
+                    armor = new ItemStack(Material.IRON_LEGGINGS);
+                    break;
+                case 5:
+                    armor = new ItemStack(Material.DIAMOND_LEGGINGS);
+                    break;
+                case 6:
+                    armor = new ItemStack(Material.NETHERITE_LEGGINGS);
+                    break;
+                case 7:
+                    armor = ItemManager.createItem(Material.NETHERITE_LEGGINGS, "", null, enchant);
+                    break;
+                default:
+                    armor = new ItemStack(Material.AIR);
+            }
+            equipment.setLeggings(armor);
+        }
 
         // Boots
-        armorLevel = Math.max(level + r.nextInt(4) - 2, 0);
-        if (armorLevel < 5)
-            mat = Material.AIR;
-        else if (armorLevel < 10)
-            mat = Material.LEATHER_BOOTS;
-        else if (armorLevel < 15)
-            mat = Material.CHAINMAIL_BOOTS;
-        else if (armorLevel < 20)
-            mat = Material.IRON_BOOTS;
-        else if (armorLevel < 30)
-            mat = Material.DIAMOND_BOOTS;
-        else mat = Material.NETHERITE_BOOTS;
-        equipment.setBoots(new ItemStack(mat));
+        if (boots) {
+            ItemStack armor;
+            switch (level) {
+                case 2:
+                    armor = new ItemStack(Material.LEATHER_BOOTS);
+                    break;
+                case 3:
+                    armor = new ItemStack(Material.CHAINMAIL_BOOTS);
+                    break;
+                case 4:
+                    armor = new ItemStack(Material.IRON_BOOTS);
+                    break;
+                case 5:
+                    armor = new ItemStack(Material.DIAMOND_BOOTS);
+                    break;
+                case 6:
+                    armor = new ItemStack(Material.NETHERITE_BOOTS);
+                    break;
+                case 7:
+                    armor = ItemManager.createItem(Material.NETHERITE_BOOTS, "", null, enchant);
+                    break;
+                default:
+                    armor = new ItemStack(Material.AIR);
+            }
+            equipment.setBoots(armor);
+        }
     }
 
     protected void setSword() {
         EntityEquipment equipment = Objects.requireNonNull(mob.getEquipment());
-        Random r = new Random();
-        int swordLevel = Math.max(level + r.nextInt(4) - 2, 0);
-        Material mat;
+        HashMap<Enchantment, Integer> enchant = new HashMap<>();
+        enchant.put(Enchantment.DURABILITY, 3);
+        ItemStack item;
 
-        if (swordLevel < 5)
-            mat = Material.AIR;
-        else if (swordLevel < 10)
-            mat = Material.WOODEN_SWORD;
-        else if (swordLevel < 15)
-            mat = Material.STONE_SWORD;
-        else if (swordLevel < 20)
-            mat = Material.IRON_SWORD;
-        else if (swordLevel < 30)
-            mat = Material.DIAMOND_SWORD;
-        else mat = Material.NETHERITE_SWORD;
-        equipment.setItemInMainHand(new ItemStack(mat));
+        switch (level) {
+            case 2:
+                item = new ItemStack(Material.WOODEN_SWORD);
+                break;
+            case 3:
+                item = new ItemStack(Material.STONE_SWORD);
+                break;
+            case 4:
+                item = new ItemStack(Material.IRON_SWORD);
+                break;
+            case 5:
+                item = new ItemStack(Material.DIAMOND_SWORD);
+                break;
+            case 6:
+                item = new ItemStack(Material.NETHERITE_SWORD);
+                break;
+            case 7:
+                item = ItemManager.createItem(Material.NETHERITE_SWORD, "", null, enchant);
+                break;
+            default:
+                item = new ItemStack(Material.AIR);
+        }
+        equipment.setItemInMainHand(item);
     }
 
     protected void setAxe() {
         EntityEquipment equipment = Objects.requireNonNull(mob.getEquipment());
-        Random r = new Random();
-        int axeLevel = Math.max(level + r.nextInt(4) - 2, 0);
-        Material mat;
+        HashMap<Enchantment, Integer> enchant = new HashMap<>();
+        enchant.put(Enchantment.DURABILITY, 3);
+        ItemStack item;
 
-        if (axeLevel < 5)
-            mat = Material.AIR;
-        else if (axeLevel < 10)
-            mat = Material.WOODEN_AXE;
-        else if (axeLevel < 15)
-            mat = Material.STONE_AXE;
-        else if (axeLevel < 20)
-            mat = Material.IRON_AXE;
-        else if (axeLevel < 30)
-            mat = Material.DIAMOND_AXE;
-        else mat = Material.NETHERITE_AXE;
-        equipment.setItemInMainHand(new ItemStack(mat));
+        switch (level) {
+            case 2:
+                item = new ItemStack(Material.WOODEN_AXE);
+                break;
+            case 3:
+                item = new ItemStack(Material.STONE_AXE);
+                break;
+            case 4:
+                item = new ItemStack(Material.IRON_AXE);
+                break;
+            case 5:
+                item = new ItemStack(Material.DIAMOND_AXE);
+                break;
+            case 6:
+                item = new ItemStack(Material.NETHERITE_AXE);
+                break;
+            case 7:
+                item = ItemManager.createItem(Material.NETHERITE_AXE, "", null, enchant);
+                break;
+            default:
+                item = new ItemStack(Material.AIR);
+        }
+        equipment.setItemInMainHand(item);
     }
 
     protected void setScythe() {
         EntityEquipment equipment = Objects.requireNonNull(mob.getEquipment());
-        Random r = new Random();
-        int scytheLevel = Math.max(level + r.nextInt(4) - 2, 0);
-        Material mat;
+        HashMap<Enchantment, Integer> enchant = new HashMap<>();
+        enchant.put(Enchantment.DURABILITY, 3);
+        ItemStack item;
 
-        if (scytheLevel < 5)
-            mat = Material.AIR;
-        else if (scytheLevel < 10)
-            mat = Material.WOODEN_HOE;
-        else if (scytheLevel < 15)
-            mat = Material.STONE_HOE;
-        else if (scytheLevel < 20)
-            mat = Material.IRON_HOE;
-        else if (scytheLevel < 30)
-            mat = Material.DIAMOND_HOE;
-        else mat = Material.NETHERITE_HOE;
-        equipment.setItemInMainHand(new ItemStack(mat));
+        switch (level) {
+            case 2:
+                item = new ItemStack(Material.WOODEN_HOE);
+                break;
+            case 3:
+                item = new ItemStack(Material.STONE_HOE);
+                break;
+            case 4:
+                item = new ItemStack(Material.IRON_HOE);
+                break;
+            case 5:
+                item = new ItemStack(Material.DIAMOND_HOE);
+                break;
+            case 6:
+                item = new ItemStack(Material.NETHERITE_HOE);
+                break;
+            case 7:
+                item = ItemManager.createItem(Material.NETHERITE_HOE, "", null, enchant);
+                break;
+            default:
+                item = new ItemStack(Material.AIR);
+        }
+        equipment.setItemInMainHand(item);
     }
 
     protected void setBow() {
-        Objects.requireNonNull(mob.getEquipment()).setItemInMainHand(new ItemStack(Material.BOW));
+        HashMap<Enchantment, Integer> enchant = new HashMap<>();
+        enchant.put(Enchantment.DURABILITY, 3);
+
+        if (level == 7)
+            Objects.requireNonNull(mob.getEquipment()).setItemInMainHand(
+                    ItemManager.createItem(Material.BOW, "", null, enchant)
+            );
+        else Objects.requireNonNull(mob.getEquipment()).setItemInMainHand(new ItemStack(Material.BOW));
     }
 
     protected void setCrossbow() {
-        Objects.requireNonNull(mob.getEquipment()).setItemInMainHand(new ItemStack(Material.CROSSBOW));
+        HashMap<Enchantment, Integer> enchant = new HashMap<>();
+        enchant.put(Enchantment.DURABILITY, 3);
+
+        if (level == 7)
+            Objects.requireNonNull(mob.getEquipment()).setItemInMainHand(
+                    ItemManager.createItem(Material.CROSSBOW, "", null, enchant)
+            );
+        else Objects.requireNonNull(mob.getEquipment()).setItemInMainHand(new ItemStack(Material.CROSSBOW));
     }
 
     protected void setTrident() {
-        Objects.requireNonNull(mob.getEquipment()).setItemInMainHand(new ItemStack(Material.TRIDENT));
+        // TODO
+    }
+
+    /**
+     * Calculates the value a minion has given its health, armor, toughness, damage, and custom multiplier.
+     * @param health Health of minion.
+     * @param armor Armor of minion.
+     * @param toughness Toughness of minion.
+     * @param damage Base damage dealt by minion.
+     * @param customMultiplier Custom multiplier to account for unique mob characteristics.
+     * @return Value of the minion.
+     */
+    protected static int getValue(int health, int armor, double toughness, int damage, double customMultiplier) {
+        return (int) (((health + 3 * armor) / 10d / (1 - toughness * .6) + Math.pow(damage, 1.8) / 50d)
+                * customMultiplier);
     }
 }

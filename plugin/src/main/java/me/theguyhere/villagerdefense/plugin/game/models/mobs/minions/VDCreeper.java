@@ -47,7 +47,6 @@ public class VDCreeper extends VDMinion {
                         .spawnEntity(oldCreeper.getEntity().getLocation(), EntityType.CREEPER),
                 LanguageManager.mobs.creeper,
                 "A crowd control monster keeping defenders away from the front lines.",
-                oldCreeper.level,
                 AttackType.NORMAL
         );
         Creeper creeper = (Creeper) mob;

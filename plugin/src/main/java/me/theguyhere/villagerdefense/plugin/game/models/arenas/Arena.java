@@ -371,7 +371,7 @@ public class Arena {
 
     public double getAdjustedWaveTimeLimit() {
         // Get proper multiplier
-        double multiplier = 1 + .2 * ((int) getCurrentDifficulty() - .5);
+        double multiplier = 1 + .05 * ((int) getCurrentDifficulty() - .5);
         if (!hasDynamicLimit())
             multiplier = 1;
 
@@ -2675,7 +2675,7 @@ public class Arena {
     }
 
     public double getCurrentDifficulty() {
-        double difficulty = Math.pow(Math.E, Math.pow(Math.max(currentWave - 1, 0), .35) /
+        double difficulty = Math.pow(Math.E, Math.pow(Math.max(currentWave - 1, 0), .4) /
                 (4.5 - getDifficultyMultiplier() / 2d));
         if (hasDynamicDifficulty())
             difficulty *= Math.pow(.1 * getActiveCount() + .6, .2);
