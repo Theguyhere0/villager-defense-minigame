@@ -413,10 +413,6 @@ public class LanguageManager {
             public final @NotNull Lore t4;
             public final @NotNull Lore t5;
             public final @NotNull Lore t6;
-            public final @NotNull Lore t7;
-            public final @NotNull Lore t8;
-            public final @NotNull Lore t9;
-            public final @NotNull Lore t10;
 
             private AmmoLore() throws InvalidLanguageKeyException {
                 String pathPrefix = "itemLore.ammo.";
@@ -427,10 +423,6 @@ public class LanguageManager {
                 t4 = new Lore(pathPrefix + "t4");
                 t5 = new Lore(pathPrefix + "t5");
                 t6 = new Lore(pathPrefix + "t6");
-                t7 = new Lore(pathPrefix + "t7");
-                t8 = new Lore(pathPrefix + "t8");
-                t9 = new Lore(pathPrefix + "t9");
-                t10 = new Lore(pathPrefix + "t10");
             }
         }
 
@@ -461,10 +453,6 @@ public class LanguageManager {
             public final @NotNull Lore t4;
             public final @NotNull Lore t5;
             public final @NotNull Lore t6;
-            public final @NotNull Lore t7;
-            public final @NotNull Lore t8;
-            public final @NotNull Lore t9;
-            public final @NotNull Lore t10;
 
             private BootsLore() throws InvalidLanguageKeyException {
                 String pathPrefix = "itemLore.boots.";
@@ -475,10 +463,6 @@ public class LanguageManager {
                 t4 = new Lore(pathPrefix + "t4");
                 t5 = new Lore(pathPrefix + "t5");
                 t6 = new Lore(pathPrefix + "t6");
-                t7 = new Lore(pathPrefix + "t7");
-                t8 = new Lore(pathPrefix + "t8");
-                t9 = new Lore(pathPrefix + "t9");
-                t10 = new Lore(pathPrefix + "t10");
             }
         }
 
@@ -489,10 +473,6 @@ public class LanguageManager {
             public final @NotNull Lore t4;
             public final @NotNull Lore t5;
             public final @NotNull Lore t6;
-            public final @NotNull Lore t7;
-            public final @NotNull Lore t8;
-            public final @NotNull Lore t9;
-            public final @NotNull Lore t10;
 
             private BowLore() throws InvalidLanguageKeyException {
                 String pathPrefix = "itemLore.bows.";
@@ -503,10 +483,6 @@ public class LanguageManager {
                 t4 = new Lore(pathPrefix + "t4");
                 t5 = new Lore(pathPrefix + "t5");
                 t6 = new Lore(pathPrefix + "t6");
-                t7 = new Lore(pathPrefix + "t7");
-                t8 = new Lore(pathPrefix + "t8");
-                t9 = new Lore(pathPrefix + "t9");
-                t10 = new Lore(pathPrefix + "t10");
             }
         }
 
@@ -517,10 +493,6 @@ public class LanguageManager {
             public final @NotNull Lore t4;
             public final @NotNull Lore t5;
             public final @NotNull Lore t6;
-            public final @NotNull Lore t7;
-            public final @NotNull Lore t8;
-            public final @NotNull Lore t9;
-            public final @NotNull Lore t10;
 
             private ChestplateLore() throws InvalidLanguageKeyException {
                 String pathPrefix = "itemLore.chestplates.";
@@ -531,10 +503,6 @@ public class LanguageManager {
                 t4 = new Lore(pathPrefix + "t4");
                 t5 = new Lore(pathPrefix + "t5");
                 t6 = new Lore(pathPrefix + "t6");
-                t7 = new Lore(pathPrefix + "t7");
-                t8 = new Lore(pathPrefix + "t8");
-                t9 = new Lore(pathPrefix + "t9");
-                t10 = new Lore(pathPrefix + "t10");
             }
         }
 
@@ -545,10 +513,6 @@ public class LanguageManager {
             public final @NotNull Lore t4;
             public final @NotNull Lore t5;
             public final @NotNull Lore t6;
-            public final @NotNull Lore t7;
-            public final @NotNull Lore t8;
-            public final @NotNull Lore t9;
-            public final @NotNull Lore t10;
 
             private CrossbowLore() throws InvalidLanguageKeyException {
                 String pathPrefix = "itemLore.crossbows.";
@@ -559,10 +523,6 @@ public class LanguageManager {
                 t4 = new Lore(pathPrefix + "t4");
                 t5 = new Lore(pathPrefix + "t5");
                 t6 = new Lore(pathPrefix + "t6");
-                t7 = new Lore(pathPrefix + "t7");
-                t8 = new Lore(pathPrefix + "t8");
-                t9 = new Lore(pathPrefix + "t9");
-                t10 = new Lore(pathPrefix + "t10");
             }
         }
 
@@ -593,10 +553,6 @@ public class LanguageManager {
             public final @NotNull Lore t4;
             public final @NotNull Lore t5;
             public final @NotNull Lore t6;
-            public final @NotNull Lore t7;
-            public final @NotNull Lore t8;
-            public final @NotNull Lore t9;
-            public final @NotNull Lore t10;
 
             private LeggingsLore() throws InvalidLanguageKeyException {
                 String pathPrefix = "itemLore.leggings.";
@@ -607,10 +563,6 @@ public class LanguageManager {
                 t4 = new Lore(pathPrefix + "t4");
                 t5 = new Lore(pathPrefix + "t5");
                 t6 = new Lore(pathPrefix + "t6");
-                t7 = new Lore(pathPrefix + "t7");
-                t8 = new Lore(pathPrefix + "t8");
-                t9 = new Lore(pathPrefix + "t9");
-                t10 = new Lore(pathPrefix + "t10");
             }
         }
 
@@ -621,10 +573,6 @@ public class LanguageManager {
             public final @NotNull Lore t4;
             public final @NotNull Lore t5;
             public final @NotNull Lore t6;
-            public final @NotNull Lore t7;
-            public final @NotNull Lore t8;
-            public final @NotNull Lore t9;
-            public final @NotNull Lore t10;
 
             private HelmetLore() throws InvalidLanguageKeyException {
                 String pathPrefix = "itemLore.helmets.";
@@ -635,10 +583,6 @@ public class LanguageManager {
                 t4 = new Lore(pathPrefix + "t4");
                 t5 = new Lore(pathPrefix + "t5");
                 t6 = new Lore(pathPrefix + "t6");
-                t7 = new Lore(pathPrefix + "t7");
-                t8 = new Lore(pathPrefix + "t8");
-                t9 = new Lore(pathPrefix + "t9");
-                t10 = new Lore(pathPrefix + "t10");
             }
         }
 

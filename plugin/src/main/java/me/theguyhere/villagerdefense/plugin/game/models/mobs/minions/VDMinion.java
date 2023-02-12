@@ -1,12 +1,14 @@
 package me.theguyhere.villagerdefense.plugin.game.models.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.Main;
+import me.theguyhere.villagerdefense.plugin.exceptions.InvalidVDMobKeyException;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.Team;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -301,5 +303,103 @@ public abstract class VDMinion extends VDMob {
     protected static int getValue(int health, int armor, double toughness, int damage, double customMultiplier) {
         return (int) ((health + 3 * armor) / 10d / (1 - toughness * .6) * Math.pow(damage, .75) / 13d
                 * customMultiplier);
+    }
+
+    public static VDMinion of(String key, Arena arena, Location ground, Location air) throws InvalidVDMobKeyException {
+        switch (key) {
+            case VDZombie.KEY:
+                return new VDZombie(arena, ground);
+            case VDBabyZombie.KEY:
+                return new VDBabyZombie(arena, ground);
+            case VDHusk.KEY:
+                return new VDHusk(arena, ground);
+            case VDBabyHusk.KEY:
+                return new VDBabyHusk(arena, ground);
+            case VDWitherSkeleton.KEY:
+                return new VDWitherSkeleton(arena, ground);
+            case VDPiglinSoldier.KEY:
+                return new VDPiglinSoldier(arena, ground);
+            case VDPiglinSniper.KEY:
+                return new VDPiglinSniper(arena, ground);
+            case VDBrute.KEY:
+                return new VDBrute(arena, ground);
+            case VDVindicator.KEY:
+                return new VDVindicator(arena, ground);
+            case VDSkeleton.KEY:
+                return new VDSkeleton(arena, ground);
+            case VDStray.KEY:
+                return new VDStray(arena, ground);
+            case VDPillager.KEY:
+                return new VDPillager(arena, ground);
+            case VDPhantom.KEY:
+                return new VDPhantom(arena, air);
+            case VDBlaze.KEY:
+                return new VDBlaze(arena, air);
+            case VDGhast.KEY:
+                return new VDGhast(arena, air);
+            case VDCreeper.KEY:
+                return new VDCreeper(arena, ground);
+            case VDChargedCreeper.KEY:
+                return new VDChargedCreeper(arena, ground);
+            case VDWitch.KEY:
+                return new VDWitch(arena, ground);
+            case VDSpider.KEY:
+                return new VDSpider(arena, ground);
+            case VDCaveSpider.KEY:
+                return new VDCaveSpider(arena, ground);
+            case VDSilverfish.KEY:
+                return new VDSilverfish(arena, ground);
+            default:
+                throw new InvalidVDMobKeyException();
+        }
+    }
+
+    public static int getValueOf(String key, Arena arena) throws InvalidVDMobKeyException {
+        switch (key) {
+            case VDZombie.KEY:
+                return VDZombie.getValue(arena.getCurrentDifficulty());
+            case VDBabyZombie.KEY:
+                return VDBabyZombie.getValue(arena.getCurrentDifficulty());
+            case VDHusk.KEY:
+                return VDHusk.getValue(arena.getCurrentDifficulty());
+            case VDBabyHusk.KEY:
+                return VDBabyHusk.getValue(arena.getCurrentDifficulty());
+            case VDWitherSkeleton.KEY:
+                return VDWitherSkeleton.getValue(arena.getCurrentDifficulty());
+            case VDPiglinSoldier.KEY:
+                return VDPiglinSoldier.getValue(arena.getCurrentDifficulty());
+            case VDPiglinSniper.KEY:
+                return VDPiglinSniper.getValue(arena.getCurrentDifficulty());
+            case VDBrute.KEY:
+                return VDBrute.getValue(arena.getCurrentDifficulty());
+            case VDVindicator.KEY:
+                return VDVindicator.getValue(arena.getCurrentDifficulty());
+            case VDSkeleton.KEY:
+                return VDSkeleton.getValue(arena.getCurrentDifficulty());
+            case VDStray.KEY:
+                return VDStray.getValue(arena.getCurrentDifficulty());
+            case VDPillager.KEY:
+                return VDPillager.getValue(arena.getCurrentDifficulty());
+            case VDPhantom.KEY:
+                return VDPhantom.getValue(arena.getCurrentDifficulty());
+            case VDBlaze.KEY:
+                return VDBlaze.getValue(arena.getCurrentDifficulty());
+            case VDGhast.KEY:
+                return VDGhast.getValue(arena.getCurrentDifficulty());
+            case VDCreeper.KEY:
+                return VDCreeper.getValue(arena.getCurrentDifficulty());
+            case VDChargedCreeper.KEY:
+                return VDChargedCreeper.getValue(arena.getCurrentDifficulty());
+            case VDWitch.KEY:
+                return VDWitch.getValue(arena.getCurrentDifficulty());
+            case VDSpider.KEY:
+                return VDSpider.getValue(arena.getCurrentDifficulty());
+            case VDCaveSpider.KEY:
+                return VDCaveSpider.getValue(arena.getCurrentDifficulty());
+            case VDSilverfish.KEY:
+                return VDSilverfish.getValue(arena.getCurrentDifficulty());
+            default:
+                throw new InvalidVDMobKeyException();
+        }
     }
 }

@@ -4,20 +4,15 @@ import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
-import me.theguyhere.villagerdefense.plugin.exceptions.InvalidVDMobKeyException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.displays.Popup;
 import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.minions.*;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.villagers.VDFletcher;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.villagers.VDNormalVillager;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Mob;
@@ -445,11 +440,11 @@ public abstract class VDMob {
 
     /**
      * Sets the proper loot for the mob.
-     * @param base Amount of gems to drop.
+     * @param value The value of the mob.
      * @param spread Spread in gem drop.
      */
-    protected void setLoot(int base, double spread) {
-        loot = base;
+    protected void setLoot(int value, double spread) {
+        loot = (int) Math.pow(value, .9);
         lootSpread = spread;
     }
 
@@ -472,57 +467,4 @@ public abstract class VDMob {
     }
 
     protected abstract void updateNameTag();
-
-    public static VDMob of(String key, Arena arena, Location ground, Location air) throws InvalidVDMobKeyException {
-        switch (key) {
-            case VDNormalVillager.KEY:
-                return new VDNormalVillager(arena, ground);
-            case VDFletcher.KEY:
-                return new VDFletcher(arena, ground);
-            case VDZombie.KEY:
-                return new VDZombie(arena, ground);
-            case VDBabyZombie.KEY:
-                return new VDBabyZombie(arena, ground);
-            case VDHusk.KEY:
-                return new VDHusk(arena, ground);
-            case VDBabyHusk.KEY:
-                return new VDBabyHusk(arena, ground);
-            case VDWitherSkeleton.KEY:
-                return new VDWitherSkeleton(arena, ground);
-            case VDPiglinSoldier.KEY:
-                return new VDPiglinSoldier(arena, ground);
-            case VDPiglinSniper.KEY:
-                return new VDPiglinSniper(arena, ground);
-            case VDBrute.KEY:
-                return new VDBrute(arena, ground);
-            case VDVindicator.KEY:
-                return new VDVindicator(arena, ground);
-            case VDSkeleton.KEY:
-                return new VDSkeleton(arena, ground);
-            case VDStray.KEY:
-                return new VDStray(arena, ground);
-            case VDPillager.KEY:
-                return new VDPillager(arena, ground);
-            case VDPhantom.KEY:
-                return new VDPhantom(arena, air);
-            case VDBlaze.KEY:
-                return new VDBlaze(arena, air);
-            case VDGhast.KEY:
-                return new VDGhast(arena, air);
-            case VDCreeper.KEY:
-                return new VDCreeper(arena, ground);
-            case VDChargedCreeper.KEY:
-                return new VDChargedCreeper(arena, ground);
-            case VDWitch.KEY:
-                return new VDWitch(arena, ground);
-            case VDSpider.KEY:
-                return new VDSpider(arena, ground);
-            case VDCaveSpider.KEY:
-                return new VDCaveSpider(arena, ground);
-            case VDSilverfish.KEY:
-                return new VDSilverfish(arena, ground);
-            default:
-                throw new InvalidVDMobKeyException();
-        }
-    }
 }

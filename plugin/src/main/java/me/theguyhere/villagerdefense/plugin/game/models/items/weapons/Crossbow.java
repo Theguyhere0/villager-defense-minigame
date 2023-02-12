@@ -7,11 +7,13 @@ import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -20,6 +22,14 @@ public abstract class Crossbow extends VDWeapon {
     @NotNull
     public static ItemStack create(Tier tier) {
         List<String> lores = new ArrayList<>();
+        HashMap<Enchantment, Integer> enchant = new HashMap<>();
+
+        // Possibly set enchant
+        switch (tier) {
+            case T5:
+            case T6:
+                enchant.put(Enchantment.DURABILITY, 3);
+        }
 
         // Set name
         String name;
@@ -41,18 +51,6 @@ public abstract class Crossbow extends VDWeapon {
                 break;
             case T6:
                 name = formatName(LanguageManager.itemLore.crossbows.t6.name, tier);
-                break;
-            case T7:
-                name = formatName(LanguageManager.itemLore.crossbows.t7.name, tier);
-                break;
-            case T8:
-                name = formatName(LanguageManager.itemLore.crossbows.t8.name, tier);
-                break;
-            case T9:
-                name = formatName(LanguageManager.itemLore.crossbows.t9.name, tier);
-                break;
-            case T10:
-                name = formatName(LanguageManager.itemLore.crossbows.t10.name, tier);
                 break;
             default:
                 name = "";
@@ -79,18 +77,6 @@ public abstract class Crossbow extends VDWeapon {
             case T6:
                 description = LanguageManager.itemLore.crossbows.t6.description;
                 break;
-            case T7:
-                description = LanguageManager.itemLore.crossbows.t7.description;
-                break;
-            case T8:
-                description = LanguageManager.itemLore.crossbows.t8.description;
-                break;
-            case T9:
-                description = LanguageManager.itemLore.crossbows.t9.description;
-                break;
-            case T10:
-                description = LanguageManager.itemLore.crossbows.t10.description;
-                break;
             default:
                 description = "";
         }
@@ -112,38 +98,22 @@ public abstract class Crossbow extends VDWeapon {
                 damageHigh = 120;
                 break;
             case T2:
-                damageLow = 75;
-                damageHigh = 150;
-                break;
-            case T3:
                 damageLow = 90;
                 damageHigh = 155;
                 break;
-            case T4:
-                damageLow = 105;
-                damageHigh = 160;
-                break;
-            case T5:
+            case T3:
                 damageLow = 110;
                 damageHigh = 200;
                 break;
-            case T6:
-                damageLow = 130;
-                damageHigh = 210;
-                break;
-            case T7:
+            case T4:
                 damageLow = 150;
                 damageHigh = 225;
                 break;
-            case T8:
-                damageLow = 160;
-                damageHigh = 280;
-                break;
-            case T9:
+            case T5:
                 damageLow = 180;
                 damageHigh = 290;
                 break;
-            case T10:
+            case T6:
                 damageLow = 200;
                 damageHigh = 350;
                 break;
@@ -173,31 +143,19 @@ public abstract class Crossbow extends VDWeapon {
                 durability = 90;
                 break;
             case T2:
-                durability = 125;
+                durability = 135;
                 break;
             case T3:
-                durability = 150;
-                break;
-            case T4:
                 durability = 170;
                 break;
-            case T5:
+            case T4:
                 durability = 240;
                 break;
-            case T6:
-                durability = 280;
-                break;
-            case T7:
+            case T5:
                 durability = 335;
                 break;
-            case T8:
+            case T6:
                 durability = 480;
-                break;
-            case T9:
-                durability = 580;
-                break;
-            case T10:
-                durability = 750;
                 break;
             default: durability = 0;
         }
@@ -215,28 +173,16 @@ public abstract class Crossbow extends VDWeapon {
                 price = 350;
                 break;
             case T3:
-                price = 400;
-                break;
-            case T4:
                 price = 470;
                 break;
-            case T5:
+            case T4:
                 price = 590;
                 break;
-            case T6:
-                price = 650;
-                break;
-            case T7:
+            case T5:
                 price = 730;
                 break;
-            case T8:
+            case T6:
                 price = 900;
-                break;
-            case T9:
-                price = 1050;
-                break;
-            case T10:
-                price = 1360;
                 break;
             default: price = -1;
         }
@@ -245,7 +191,7 @@ public abstract class Crossbow extends VDWeapon {
                     price));
 
         // Create item
-        ItemStack item = ItemManager.createItem(Material.CROSSBOW, name, ItemManager.BUTTON_FLAGS, null, lores);
+        ItemStack item = ItemManager.createItem(Material.CROSSBOW, name, ItemManager.BUTTON_FLAGS, enchant, lores);
         if (durability == 0)
             return ItemManager.makeUnbreakable(item);
         else return item;

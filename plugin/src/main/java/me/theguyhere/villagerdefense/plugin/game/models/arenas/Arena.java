@@ -9,15 +9,14 @@ import me.theguyhere.villagerdefense.plugin.exceptions.*;
 import me.theguyhere.villagerdefense.plugin.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
 import me.theguyhere.villagerdefense.plugin.game.managers.CountdownManager;
-import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.utils.SpawningUtil;
+import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.Team;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.minions.VDWitch;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.villagers.VDFletcher;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.villagers.VDNormalVillager;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryID;
@@ -1344,6 +1343,7 @@ public class Arena {
         Main.saveArenaData();
     }
 
+    // TODO REMOVE
     public boolean hasDynamicCount() {
         return config.getBoolean(path + ".dynamicCount");
     }
@@ -2243,117 +2243,13 @@ public class Arena {
         });
         activeTasks.get(CALIBRATE).runTaskTimer(Main.plugin, 0, Utils.secondsToTicks(0.25));
 
-        // Get spawn data
-        DataManager data = new DataManager("spawnTables/" + getSpawnTableFile());
-        String wave = Integer.toString(currentWave);
-        if (!data.getConfig().contains(wave)) {
-            if (data.getConfig().contains("freePlay"))
-                wave = "freePlay";
-            else wave = "1";
-        }
-        int monsterCount = data.getConfig().getInt(wave + ".count.m");
-        List<String> villagers = getTypeRatio(data, wave + ".vtypes");
-        List<String> monsterTypeRatio = getTypeRatio(data, wave + ".mtypes");
-
-        // Account for existing villagers
-        Objects.requireNonNull(getPlayerSpawn().getLocation().getWorld()).getNearbyEntities(getBounds()).stream()
-                .filter(Objects::nonNull)
-                .filter(entity -> entity.hasMetadata(VDMob.VD)).filter(entity -> entity instanceof Villager)
-                .forEach(villager -> {
-                    if (((Villager) villager).getProfession() == Villager.Profession.FLETCHER)
-                        villagers.remove(VDFletcher.KEY);
-                    else villagers.remove(VDNormalVillager.KEY);
-                });
-
-        // Calculate count multiplier
-        double countMultiplier = Math.log((getActiveCount() + 7) / 10d) + 1;
-        if (!hasDynamicCount())
-            countMultiplier = 1;
-
-        // Set mobs left to spawn
-        if (monsterCount != 0)
-            monsterCount = Math.max((int) (monsterCount * countMultiplier), 1);
-
-        // Prepare, schedule, and start spawning
-        Arena arena = this;
-        Random r = new Random();
-        int delay = 0;
-        spawningVillagers = true;
-        for (int i = 0; i < villagers.size(); i++) {
-            delay += spawnDelayTicks(i);
-            int finalI = i;
-            spawnTasks.add(new BukkitRunnable() {
-                @Override
-                public void run() {
-                    // Get spawn location
-                    Location spawn = getVillagerSpawnLocations().get(r.nextInt(getVillagerSpawnLocations().size()));
-
-                    // Spawn
-                    try {
-                        addMob(VDMob.of(villagers.get(finalI), arena, spawn, null));
-                    } catch (InvalidVDMobKeyException e) {
-                        CommunicationManager.debugError("Invalid mob key detected in spawn file!", 1);
-                    }
-                }
-            }.runTaskLater(Main.plugin, delay));
-        }
-        spawnTasks.add(new BukkitRunnable() {
-            @Override
-            public void run() {
-                spawningVillagers = false;
-            }
-        }.runTaskLater(Main.plugin, delay));
-        delay = 0;
-        spawningMonsters = true;
-        for (int i = 0; i < monsterCount; i++) {
-            delay += spawnDelayTicks(i);
-            spawnTasks.add(new BukkitRunnable() {
-                @Override
-                public void run() {
-                    // Get spawn locations
-                    Location ground = getMonsterGroundSpawnLocations()
-                            .get(r.nextInt(getMonsterGroundSpawnLocations().size()));
-                    Location air = getMonsterAirSpawnLocations()
-                            .get(r.nextInt(getMonsterAirSpawnLocations().size()));
-
-                    // Spawn
-                    try {
-                        addMob(VDMob.of(monsterTypeRatio.get(r.nextInt(monsterTypeRatio.size())),
-                                arena, ground, air));
-                    } catch (InvalidVDMobKeyException e) {
-                        CommunicationManager.debugError("Invalid mob key detected in spawn file!", 1);
-                    } catch (Exception ignored) {
-                    }
-                }
-            }.runTaskLater(Main.plugin, delay));
-        }
-        spawnTasks.add(new BukkitRunnable() {
-            @Override
-            public void run() {
-                spawningMonsters = false;
-            }
-        }.runTaskLater(Main.plugin, delay));
-        // TODO: Spawn bosses
+        // Schedule spawning sequences
+        spawnTasks.addAll(SpawningUtil.generateVillagerSpawnSequence(this));
+        spawnTasks.addAll(SpawningUtil.generateMinionSpawnSequence(this));
 
         // Debug message to console
         CommunicationManager.debugInfo("%s started wave %s", 2, getName(),
                 Integer.toString(getCurrentWave()));
-    }
-
-    private int spawnDelayTicks(int mobNum) {
-        Random r = new Random();
-        return r.nextInt((int) (60 * Math.pow(Math.E, - mobNum / 60d)));
-    }
-
-    private List<String> getTypeRatio(DataManager data, String path) {
-        List<String> typeRatio = new ArrayList<>();
-
-        Objects.requireNonNull(data.getConfig().getConfigurationSection(path)).getKeys(false)
-                .forEach(type -> {
-                    for (int i = 0; i < data.getConfig().getInt(path + "." + type); i++)
-                        typeRatio.add(type);
-                });
-        return typeRatio;
     }
 
     public void updateScoreboards() {
@@ -2654,8 +2550,16 @@ public class Arena {
         return spawningMonsters;
     }
 
+    public void setSpawningMonsters(boolean spawningMonsters) {
+        this.spawningMonsters = spawningMonsters;
+    }
+
     public boolean isSpawningVillagers() {
         return spawningVillagers;
+    }
+
+    public void setSpawningVillagers(boolean spawningVillagers) {
+        this.spawningVillagers = spawningVillagers;
     }
 
     public int getGameID() {

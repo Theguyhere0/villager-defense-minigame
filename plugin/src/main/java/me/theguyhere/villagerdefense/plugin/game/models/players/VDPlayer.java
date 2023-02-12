@@ -5,7 +5,6 @@ import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
-import me.theguyhere.villagerdefense.plugin.exceptions.VDMobNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
@@ -16,8 +15,6 @@ import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDPet;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.villagers.VDFletcher;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
@@ -29,7 +26,6 @@ import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
@@ -503,25 +499,10 @@ public class VDPlayer {
     }
 
     public void refill() {
-        AtomicBoolean fletcher = new AtomicBoolean(false);
-        Objects.requireNonNull(getPlayer().getWorld())
-                .getNearbyEntities(getArena().getBounds(), entity ->
-                        getPlayer().getLocation().distance(entity.getLocation()) <= 16)
-                .stream()
-                .filter(entity -> entity instanceof Villager)
-                .forEach(entity -> {
-                    try {
-                        VDMob villager = getArena().getMob(entity.getUniqueId());
-                        if (villager instanceof VDFletcher)
-                            fletcher.set(true);
-                    } catch (VDMobNotFoundException ignored) {
-                    }
-                });
-
         // Update ammo
-        Ammo.updateRefill(Objects.requireNonNull(getPlayer().getEquipment()).getItemInMainHand(), fletcher.get(),
+        Ammo.updateRefill(Objects.requireNonNull(getPlayer().getEquipment()).getItemInMainHand(),
                 boost && PlayerManager.hasAchievement(player, Achievement.allKits().getID()));
-        Ammo.updateRefill(Objects.requireNonNull(getPlayer().getEquipment()).getItemInOffHand(), fletcher.get(),
+        Ammo.updateRefill(Objects.requireNonNull(getPlayer().getEquipment()).getItemInOffHand(),
                 boost && PlayerManager.hasAchievement(player, Achievement.allKits().getID()));
     }
 

@@ -44,18 +44,6 @@ public abstract class Ammo extends VDWeapon {
             case T6:
                 name = formatName(LanguageManager.itemLore.ammo.t6.name, tier);
                 break;
-            case T7:
-                name = formatName(LanguageManager.itemLore.ammo.t7.name, tier);
-                break;
-            case T8:
-                name = formatName(LanguageManager.itemLore.ammo.t8.name, tier);
-                break;
-            case T9:
-                name = formatName(LanguageManager.itemLore.ammo.t9.name, tier);
-                break;
-            case T10:
-                name = formatName(LanguageManager.itemLore.ammo.t10.name, tier);
-                break;
             default:
                 name = "";
         }
@@ -81,18 +69,6 @@ public abstract class Ammo extends VDWeapon {
             case T6:
                 description = LanguageManager.itemLore.ammo.t6.description;
                 break;
-            case T7:
-                description = LanguageManager.itemLore.ammo.t7.description;
-                break;
-            case T8:
-                description = LanguageManager.itemLore.ammo.t8.description;
-                break;
-            case T9:
-                description = LanguageManager.itemLore.ammo.t9.description;
-                break;
-            case T10:
-                description = LanguageManager.itemLore.ammo.t10.description;
-                break;
             default:
                 description = "";
         }
@@ -107,32 +83,22 @@ public abstract class Ammo extends VDWeapon {
         int capacity;
         switch (tier) {
             case T1:
-                capacity = 8;
-                break;
-            case T2:
                 capacity = 15;
                 break;
-            case T3:
+            case T2:
                 capacity = 25;
                 break;
-            case T4:
-            case T6:
+            case T3:
                 capacity = 40;
                 break;
+            case T4:
+                capacity = 55;
+                break;
             case T5:
-                capacity = 30;
-                break;
-            case T7:
-                capacity = 50;
-                break;
-            case T8:
-                capacity = 60;
-                break;
-            case T9:
                 capacity = 75;
                 break;
-            case T10:
-                capacity = 90;
+            case T6:
+                capacity = 100;
                 break;
             default:
                 capacity = 0;
@@ -144,23 +110,23 @@ public abstract class Ammo extends VDWeapon {
         // Set refill rate
         double refill;
         switch (tier) {
-            case T5:
+            case T1:
                 refill = 7.5;
                 break;
-            case T6:
+            case T2:
                 refill = 6;
                 break;
-            case T7:
-                refill = 5;
+            case T3:
+                refill = 4.5;
                 break;
-            case T8:
-                refill = 4;
+            case T4:
+                refill = 3.5;
                 break;
-            case T9:
-                refill = 3;
-                break;
-            case T10:
+            case T5:
                 refill = 2.5;
+                break;
+            case T6:
+                refill = 2;
                 break;
             default:
                 refill = 0;
@@ -188,18 +154,6 @@ public abstract class Ammo extends VDWeapon {
                 break;
             case T6:
                 price = 650;
-                break;
-            case T7:
-                price = 850;
-                break;
-            case T8:
-                price = 1100;
-                break;
-            case T9:
-                price = 1350;
-                break;
-            case T10:
-                price = 1600;
                 break;
             default: price = -1;
         }
@@ -270,7 +224,7 @@ public abstract class Ammo extends VDWeapon {
         return false;
     }
 
-    public static void updateRefill(ItemStack ammo, boolean fletcher, boolean boost) {
+    public static void updateRefill(ItemStack ammo, boolean boost) {
         // Check for ammo
         if (!matches(ammo))
             return;
@@ -324,7 +278,7 @@ public abstract class Ammo extends VDWeapon {
             double updatedRefillTimer = refillTimer.get() - .5;
             // Timer finished
             if (updatedRefillTimer < .1) {
-                capacity.addAndGet(Math.min(maxCap.get(), (fletcher ? 2 : 1) * (boost ? 2 : 1)));
+                capacity.addAndGet(Math.min(maxCap.get(), (boost ? 2 : 1)));
                 ChatColor color = capacity.get() >= .75 * maxCap.get() ? ChatColor.GREEN :
                         (capacity.get() <= .25 * maxCap.get() ? ChatColor.RED : ChatColor.YELLOW);
                 lores.set(capIndex.get(), CommunicationManager.format(CAPACITY,

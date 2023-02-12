@@ -12,11 +12,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public abstract class Chestplate extends VDArmor{
@@ -24,29 +26,29 @@ public abstract class Chestplate extends VDArmor{
     public static ItemStack create(Tier tier) {
         List<String> lores = new ArrayList<>();
         Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
+        HashMap<Enchantment, Integer> enchant = new HashMap<>();
 
         // Set material
         Material mat;
         switch (tier) {
             case T1:
-            case T2:
                 mat = Material.LEATHER_CHESTPLATE;
                 break;
-            case T3:
-            case T4:
+            case T2:
                 mat = Material.CHAINMAIL_CHESTPLATE;
                 break;
-            case T5:
-            case T6:
-            case T7:
+            case T3:
                 mat = Material.IRON_CHESTPLATE;
                 break;
-            case T8:
-            case T9:
+            case T4:
                 mat = Material.DIAMOND_CHESTPLATE;
                 break;
-            case T10:
+            case T5:
                 mat = Material.NETHERITE_CHESTPLATE;
+                break;
+            case T6:
+                mat = Material.NETHERITE_CHESTPLATE;
+                enchant.put(Enchantment.DURABILITY, 3);
                 break;
             default:
                 mat = Material.GOLDEN_CHESTPLATE;
@@ -73,18 +75,6 @@ public abstract class Chestplate extends VDArmor{
             case T6:
                 name = formatName(LanguageManager.itemLore.chestplates.t6.name, tier);
                 break;
-            case T7:
-                name = formatName(LanguageManager.itemLore.chestplates.t7.name, tier);
-                break;
-            case T8:
-                name = formatName(LanguageManager.itemLore.chestplates.t8.name, tier);
-                break;
-            case T9:
-                name = formatName(LanguageManager.itemLore.chestplates.t9.name, tier);
-                break;
-            case T10:
-                name = formatName(LanguageManager.itemLore.chestplates.t10.name, tier);
-                break;
             default:
                 name = "";
         }
@@ -110,18 +100,6 @@ public abstract class Chestplate extends VDArmor{
             case T6:
                 description = LanguageManager.itemLore.chestplates.t6.description;
                 break;
-            case T7:
-                description = LanguageManager.itemLore.chestplates.t7.description;
-                break;
-            case T8:
-                description = LanguageManager.itemLore.chestplates.t8.description;
-                break;
-            case T9:
-                description = LanguageManager.itemLore.chestplates.t9.description;
-                break;
-            case T10:
-                description = LanguageManager.itemLore.chestplates.t10.description;
-                break;
             default:
                 description = "";
         }
@@ -139,30 +117,18 @@ public abstract class Chestplate extends VDArmor{
                 armor = 5;
                 break;
             case T2:
-                armor = 6;
-                break;
-            case T3:
                 armor = 8;
                 break;
-            case T4:
-                armor = 9;
-                break;
-            case T5:
+            case T3:
                 armor = 11;
                 break;
-            case T6:
-                armor = 13;
-                break;
-            case T7:
+            case T4:
                 armor = 14;
                 break;
-            case T8:
-                armor = 17;
-                break;
-            case T9:
+            case T5:
                 armor = 19;
                 break;
-            case T10:
+            case T6:
                 armor = 23;
                 break;
             default:
@@ -174,26 +140,19 @@ public abstract class Chestplate extends VDArmor{
         // Set toughness
         int toughness;
         switch (tier) {
-            case T3:
+            case T2:
                 toughness = 1;
                 break;
-            case T4:
-                toughness = 2;
-                break;
-            case T5:
+            case T3:
                 toughness = 3;
                 break;
-            case T6:
-            case T7:
-                toughness = 5;
+            case T4:
+                toughness = 6;
                 break;
-            case T8:
-                toughness = 7;
-                break;
-            case T9:
+            case T5:
                 toughness = 8;
                 break;
-            case T10:
+            case T6:
                 toughness = 10;
                 break;
             default:
@@ -207,23 +166,19 @@ public abstract class Chestplate extends VDArmor{
         int weight;
         switch (tier) {
             case T1:
-            case T2:
                 weight = 1;
                 break;
-            case T3:
-            case T4:
+            case T2:
                 weight = 2;
+                break;
+            case T3:
+                weight = 3;
+                break;
+            case T4:
+                weight = 4;
                 break;
             case T5:
             case T6:
-            case T7:
-                weight = 3;
-                break;
-            case T8:
-            case T9:
-                weight = 4;
-                break;
-            case T10:
                 weight = 5;
                 break;
             default:
@@ -242,34 +197,22 @@ public abstract class Chestplate extends VDArmor{
         int durability;
         switch (tier) {
             case T1:
-                durability = 80;
+                durability = 65;
                 break;
             case T2:
-                durability = 105;
+                durability = 110;
                 break;
             case T3:
-                durability = 160;
+                durability = 205;
                 break;
             case T4:
-                durability = 195;
-                break;
-            case T5:
-                durability = 260;
-                break;
-            case T6:
                 durability = 310;
                 break;
-            case T7:
-                durability = 350;
+            case T5:
+                durability = 425;
                 break;
-            case T8:
-                durability = 450;
-                break;
-            case T9:
-                durability = 540;
-                break;
-            case T10:
-                durability = 720;
+            case T6:
+                durability = 475;
                 break;
             default: durability = 0;
         }
@@ -284,30 +227,18 @@ public abstract class Chestplate extends VDArmor{
                 price = 190;
                 break;
             case T2:
-                price = 240;
-                break;
-            case T3:
                 price = 310;
                 break;
-            case T4:
-                price = 360;
-                break;
-            case T5:
+            case T3:
                 price = 450;
                 break;
-            case T6:
-                price = 500;
-                break;
-            case T7:
+            case T4:
                 price = 560;
                 break;
-            case T8:
-                price = 680;
-                break;
-            case T9:
+            case T5:
                 price = 815;
                 break;
-            case T10:
+            case T6:
                 price = 1000;
                 break;
             default: price = -1;
@@ -317,7 +248,7 @@ public abstract class Chestplate extends VDArmor{
                     price));
 
         // Create item
-        ItemStack item = ItemManager.createItem(mat, name, ItemManager.BUTTON_FLAGS, null, lores, attributes);
+        ItemStack item = ItemManager.createItem(mat, name, ItemManager.BUTTON_FLAGS, enchant, lores, attributes);
         if (durability == 0)
             return ItemManager.makeUnbreakable(item);
         else return item;

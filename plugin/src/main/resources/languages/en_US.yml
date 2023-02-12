@@ -266,33 +266,21 @@ errors:
 itemLore:
   ammo:
     t1:
-      name: "Roll of Ammo %s"
-      description: "A little roll of conventional ammunition for ranged weapons."
-    t2:
-      name: "Pack of Ammo %s"
-      description: "A small package of ammunition."
-    t3:
-      name: "Bundle of Ammo %s"
-      description: "A sizeable bundle of ammunition."
-    t4:
-      name: "Stack of Ammo %s"
-      description: "A large stash of ammunition for ammo-hungry weapons."
-    t5:
       name: "Regenerating Ammo Cartridge (RAC) %s"
-      description: "Notchian mages of have found a way to replenish ammunition passively in these magical cartridges."
-    t6:
+      description: "The mages of have found a way to replenish ammunition passively in magical cartridges."
+    t2:
       name: "Reinforced RAC %s"
       description: "A cartridge reinforced with a mystical steel trim."
-    t7:
+    t3:
       name: "High-density RAC %s"
       description: "A complex compression technique was used to fit more into this cartridge."
-    t8:
+    t4:
       name: "Enchanted RAC %s"
       description: "A glimmering cartridge pulsating with magical energy."
-    t9:
+    t5:
       name: "RAC of Noble Mages %s"
       description: "This ethereal cartridge was fabricated by the best mages of the realm."
-    t10:
+    t6:
       name: "Void RAC %s"
       description: "Forged in the abyss of the void, this cartridge replenishes unthinkable quantities of ammunition."
   axes:
@@ -319,61 +307,37 @@ itemLore:
       name: "Hide Boots %s"
       description: "Tough animal hide sewn into a nice pair of boots."
     t2:
-      name: "Winter Boots %s"
-      description: "Thick leather, fur, and hide sewn together to form a hefty pair of boots."
-    t3:
-      name: "Mesh Reinforced Boots %s"
-      description: "Leather boots reinforced with an internal iron mesh."
-    t4:
       name: "Iron Mail Boots %s"
       description: "Boots made from interlocking rings of iron."
-    t5:
+    t3:
       name: "Steel Plate Boots %s"
       description: "Plates of tough steel bolted together into a pair of boots."
-    t6:
-      name: "Silver Plate Boots %s"
-      description: "Plates of glorious silver bolted together into a pair of boots."
-    t7:
-      name: "Platinum Plate Boots %s"
-      description: "Plates of majestic platinum bolted together into a pair of boots."
-    t8:
+    t4:
       name: "Crystal Sheet Boots %s"
       description: "Sheets of gleaming diamond crystals linked together into a pair of boots."
-    t9:
-      name: "Alloyed Crystal Boots %s"
-      description: "High-grade steel infused with crystalline dust to form an impenetrable pair of boots."
-    t10:
+    t5:
+      name: "Alloyed Obsidian Boots %s"
+      description: "High-grade steel infused with crystalline obsidian dust to form an impenetrable pair of boots."
+    t6:
       name: "Phantom Steel Boots %s"
       description: "A diabolic pair of boots forged from phantom steel summoned in arcane rituals."
   bows:
     t1:
-      name: "Toy Bow %s"
-      description: "A cheap bow with reduced size and power to make it safer for children."
-    t2:
       name: "Bow of the Scavenger %s"
       description: "A perfect low-powered bow for taking down small game."
-    t3:
-      name: "Ceremonial Bow %s"
-      description: "A beautiful wooden piece of art way too stiff for serious combat."
-    t4:
+    t2:
       name: "Recurve Bow %s"
       description: "A light but powerful maple bow cherished by the masses."
-    t5:
-      name: "Bow of The Hunter %s"
-      description: "When the feast calls for a wild boar, this is the bow for the job."
-    t6:
+    t3:
       name: "Long Bow %s"
       description: "A majestic bow with limbs of laminated red elm and strung with spider silk."
-    t7:
-      name: "Bow of Regal Bowyers %s"
-      description: "A brilliant steel bow crafted by the best bowyers of the kingdom."
-    t8:
+    t4:
       name: "Compound Bow %s"
       description: "An epic modern bow amplified by an advanced pulley system."
-    t9:
+    t5:
       name: "Bow of The Ranger %s"
       description: "A fabled bow capable of delivering a torrential rain of pain."
-    t10:
+    t6:
       name: "Bow of Poignant Demise %s"
       description: "The strings of this bow sing the grisly song of death."
   chestplates:
@@ -381,61 +345,37 @@ itemLore:
       name: "Hide Chestplate %s"
       description: "Tough animal hide sewn into a nice chestplate."
     t2:
-      name: "Winter Chestplate %s"
-      description: "Thick leather, fur, and hide sewn together to form a hefty chestplate."
-    t3:
-      name: "Mesh Reinforced Chestplate %s"
-      description: "Leather chestplate reinforced with an internal iron mesh."
-    t4:
       name: "Iron Mail Chestplate %s"
       description: "Chestplate made from interlocking rings of iron."
-    t5:
+    t3:
       name: "Steel Plate Chestplate %s"
       description: "Plates of tough steel bolted together into a chestplate."
-    t6:
-      name: "Silver Plate Chestplate %s"
-      description: "Plates of glorious silver bolted together into a chestplate."
-    t7:
-      name: "Platinum Plate Chestplate %s"
-      description: "Plates of majestic platinum bolted together into a chestplate."
-    t8:
+    t4:
       name: "Crystal Sheet Chestplate %s"
       description: "Sheets of gleaming diamond crystals linked together into a chestplate."
-    t9:
-      name: "Alloyed Crystal Chestplate %s"
-      description: "High-grade steel infused with crystalline dust to form an impenetrable chestplate."
-    t10:
+    t5:
+      name: "Alloyed Obsidian Chestplate %s"
+      description: "High-grade steel infused with crystalline obsidian dust to form an impenetrable chestplate."
+    t6:
       name: "Phantom Steel Chestplate %s"
       description: "A diabolic chestplate forged from phantom steel summoned in arcane rituals."
   crossbows:
     t1:
-      name: "Makeshift Crossbow %s"
-      description: "A plain bow strapped onto a roughly made stock."
-    t2:
       name: "Crossbow of the Bandit %s"
       description: "The typical crossbow used to rob passing merchants."
-    t3:
-      name: "Ceremonial Crossbow %s"
-      description: "A charming crossbow that isn't quite as comfortable as it appears."
-    t4:
+    t2:
       name: "Recurve Crossbow %s"
       description: "A light but powerful crossbow with cedar limbs and stock."
-    t5:
-      name: "Crossbow of Athletes %s"
-      description: "A well-balanced, accurate, and economical crossbow widely used in nonviolent competitions."
-    t6:
+    t3:
       name: "Heavy Crossbow %s"
       description: "A beast of a crossbow with incredible power that only the strongest can control."
-    t7:
-      name: "Crossbow of Imperial Marksmen %s"
-      description: "An illustrious steel crossbow trusted by the best marksmen of the empire."
-    t8:
+    t4:
       name: "Compound Crossbow %s"
       description: "A sleek modern crossbow amplified by an advanced pulley system."
-    t9:
+    t5:
       name: "Crossbow of Silent Snipers %s"
       description: "A silent but deadly crossbow with legendary prestige."
-    t10:
+    t6:
       name: "Crossbow of Fatal Precision %s"
       description: "Even the Ender Dragon quivers at the sight of this lethal weapon."
   essences:
@@ -462,30 +402,18 @@ itemLore:
       name: "Hide Helmet %s"
       description: "Tough animal hide sewn into a nice helmet."
     t2:
-      name: "Winter Helmet %s"
-      description: "Thick leather, fur, and hide sewn together to form a hefty helmet."
-    t3:
-      name: "Mesh Reinforced Helmet %s"
-      description: "Leather helmet reinforced with an internal iron mesh."
-    t4:
       name: "Iron Mail Helmet %s"
       description: "Helmet made from interlocking rings of iron."
-    t5:
+    t3:
       name: "Steel Plate Helmet %s"
       description: "Plates of tough steel bolted together into a helmet."
-    t6:
-      name: "Silver Plate Helmet %s"
-      description: "Plates of glorious silver bolted together into a helmet."
-    t7:
-      name: "Platinum Plate Helmet %s"
-      description: "Plates of majestic platinum bolted together into a helmet."
-    t8:
+    t4:
       name: "Crystal Sheet Helmet %s"
       description: "Sheets of gleaming diamond crystals linked together into a helmet."
-    t9:
-      name: "Alloyed Crystal Helmet %s"
-      description: "High-grade steel infused with crystalline dust to form an impenetrable helmet."
-    t10:
+    t5:
+      name: "Alloyed Obsidian Helmet %s"
+      description: "High-grade steel infused with crystalline obsidian dust to form an impenetrable helmet."
+    t6:
       name: "Phantom Steel Helmet %s"
       description: "A diabolic helmet forged from phantom steel summoned in arcane rituals."
   leggings:
@@ -493,30 +421,18 @@ itemLore:
       name: "Hide Leggings %s"
       description: "Tough animal hide sewn into a nice pair of leggings."
     t2:
-      name: "Winter Leggings %s"
-      description: "Thick leather, fur, and hide sewn together to form a hefty pair of leggings."
-    t3:
-      name: "Mesh Reinforced Leggings %s"
-      description: "Leather leggings reinforced with an internal iron mesh."
-    t4:
       name: "Iron Mail Leggings %s"
       description: "Leggings made from interlocking rings of iron."
-    t5:
+    t3:
       name: "Steel Plate Leggings %s"
       description: "Plates of tough steel bolted together into leggings."
-    t6:
-      name: "Silver Plate Leggings %s"
-      description: "Plates of glorious silver bolted together into leggings."
-    t7:
-      name: "Platinum Plate Leggings %s"
-      description: "Plates of majestic platinum bolted together into leggings."
-    t8:
+    t4:
       name: "Crystal Sheet Leggings %s"
       description: "Sheets of gleaming diamond crystals linked together into leggings."
-    t9:
-      name: "Alloyed Crystal Leggings %s"
-      description: "High-grade steel infused with crystalline dust to form impenetrable leggings."
-    t10:
+    t5:
+      name: "Alloyed Obsidian Leggings %s"
+      description: "High-grade steel infused with crystalline obsidian dust to form impenetrable leggings."
+    t6:
       name: "Phantom Steel Leggings %s"
       description: "A diabolic pair of leggings forged from phantom steel summoned in arcane rituals."
   scythes:
@@ -873,7 +789,7 @@ mobLore:
   aiming for players and especially ranged players."
   piglinSoldier: "A highly mobile swordsman that strikes hard and fast, with a hatred toward players."
   pillager: "These corrupted Villagers wield heavy piercing crossbows and are hell-bent on hunting down Villagers."
-  silverfish: "A little ground parasite that golems and pets are especially susceptible to."
+  silverfish: "A little hardened ground parasite that golems and pets are especially susceptible to."
   skeleton: "A mediocre ranged monster that attacks indiscriminately."
   spider: "A fast-moving, fast-attacking, armor-penetrating, wall-scaling monster."
   stray: "A deep frozen cousin of the Skeleton that slows targets and seeks out players."
