@@ -289,10 +289,6 @@ public abstract class VDMinion extends VDMob {
         else Objects.requireNonNull(mob.getEquipment()).setItemInMainHand(new ItemStack(Material.CROSSBOW));
     }
 
-    protected void setTrident() {
-        // TODO
-    }
-
     /**
      * Calculates the value a minion has given its health, armor, toughness, damage, and custom multiplier.
      * @param health Health of minion.
@@ -303,7 +299,7 @@ public abstract class VDMinion extends VDMob {
      * @return Value of the minion.
      */
     protected static int getValue(int health, int armor, double toughness, int damage, double customMultiplier) {
-        return (int) (((health + 3 * armor) / 10d / (1 - toughness * .6) + Math.pow(damage, 1.8) / 50d)
+        return (int) ((health + 3 * armor) / 10d / (1 - toughness * .6) * Math.pow(damage, .75) / 13d
                 * customMultiplier);
     }
 }

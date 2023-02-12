@@ -254,20 +254,6 @@ public abstract class VDMob {
         this.effectType = effectType;
     }
 
-    // Sets the proper effect level, if there is one
-    protected void setEffectLevel(boolean levelChange) {
-        if (levelChange && level >= 10)
-            effectLevel = 2;
-        else effectLevel = 1;
-    }
-
-    // Sets the proper effect duration, if there is one
-    protected void setEffectDuration(int base, int delta, boolean levelChange) {
-        effectDuration = Utils.secondsToTicks(base + delta * (level - 1));
-        if (levelChange && level >= 10)
-            effectDuration /= 2;
-    }
-
     // Set attack speed options
     protected void setVerySlowAttackSpeed() {
         attackSpeed = 2;
@@ -517,10 +503,6 @@ public abstract class VDMob {
                 return new VDStray(arena, ground);
             case VDPillager.KEY:
                 return new VDPillager(arena, ground);
-//            case VDDrowned.KEY:
-//                return new VDDrowned(arena, ground);
-//            case VDBabyDrowned.KEY:
-//                return new VDBabyDrowned(arena, ground);
             case VDPhantom.KEY:
                 return new VDPhantom(arena, air);
             case VDBlaze.KEY:

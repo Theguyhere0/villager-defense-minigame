@@ -854,8 +854,10 @@ mobs:
   witherSkeleton: "Wither Skeleton"
   zombie: "Zombie"
 mobLore:
-  babyHusk: "The smaller and faster brother of the Husk, with overall higher damage capacity but lower health."
-  babyZombie: "The smaller and faster brother of the Zombie, with overall higher damage capacity but lower health."
+  babyHusk: "The smaller and faster brother of the Husk, with overall higher damage capacity and armor but lower
+  health."
+  babyZombie: "The smaller and faster brother of the Zombie, with overall higher damage capacity and armor but lower
+  health."
   blaze: "Flaming sorcerers of the air eager to burn down players, especially ranged players."
   brute: "The uncivilized uncle of Piglin who is tougher, faster, and wields an axe. Hates players and specifically
   targets melee fighters."

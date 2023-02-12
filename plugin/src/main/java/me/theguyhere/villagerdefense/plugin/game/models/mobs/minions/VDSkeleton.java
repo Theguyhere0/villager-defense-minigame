@@ -67,17 +67,17 @@ public class VDSkeleton extends VDMinion {
             case 1:
                 return 180;
             case 2:
-                return 250;
+                return 225;
             case 3:
-                return 310;
+                return 300;
             case 4:
-                return 390;
+                return 360;
             case 5:
-                return 425;
+                return 400;
             case 6:
-                return 470;
+                return 440;
             case 7:
-                return 525;
+                return 480;
             default:
                 return 0;
         }
@@ -90,20 +90,18 @@ public class VDSkeleton extends VDMinion {
      */
     protected static int getArmor(int level) {
         switch (level) {
-            case 1:
-                return 4;
             case 2:
-                return 8;
+                return 2;
             case 3:
-                return 15;
+                return 5;
             case 4:
-                return 25;
+                return 8;
             case 5:
-                return 40;
+                return 15;
             case 6:
-                return 50;
+                return 20;
             case 7:
-                return 55;
+                return 25;
             default:
                 return 0;
         }
@@ -117,13 +115,13 @@ public class VDSkeleton extends VDMinion {
     protected static double getToughness(int level) {
         switch (level) {
             case 4:
-                return .03;
+                return .02;
             case 5:
-                return .08;
+                return .05;
             case 6:
-                return .12;
+                return .1;
             case 7:
-                return .18;
+                return .15;
             default:
                 return 0;
         }
@@ -139,17 +137,17 @@ public class VDSkeleton extends VDMinion {
             case 1:
                 return 70;
             case 2:
-                return 85;
+                return 90;
             case 3:
-                return 100;
+                return 110;
             case 4:
-                return 115;
+                return 125;
             case 5:
-                return 130;
+                return 135;
             case 6:
-                return 150;
-            case 7:
                 return 160;
+            case 7:
+                return 175;
             default:
                 return 0;
         }

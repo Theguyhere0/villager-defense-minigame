@@ -32,7 +32,7 @@ public class VDBabyZombie extends VDMinion {
         setLightWeight();
         setFastSpeed();
         setModerateTargetRange();
-        setArmorEquipment(true, true, false, false);
+        setArmorEquipment(false, true, true, false);
         setSword();
         setLoot(getValue(arena.getCurrentDifficulty()), .2);
         updateNameTag();
@@ -44,13 +44,13 @@ public class VDBabyZombie extends VDMinion {
      * @return The proper level for the mob.
      */
     protected static int getLevel(double difficulty) {
-        if (difficulty < 2)
+        if (difficulty < 3)
             return 1;
-        else if (difficulty < 4)
-            return 2;
         else if (difficulty < 6)
+            return 2;
+        else if (difficulty < 8)
             return 3;
-        else if (difficulty < 9)
+        else if (difficulty < 10)
             return 4;
         else if (difficulty < 12)
             return 5;
@@ -71,15 +71,15 @@ public class VDBabyZombie extends VDMinion {
             case 2:
                 return 200;
             case 3:
-                return 250;
+                return 240;
             case 4:
-                return 300;
+                return 275;
             case 5:
-                return 320;
+                return 300;
             case 6:
-                return 350;
+                return 335;
             case 7:
-                return 400;
+                return 370;
             default:
                 return 0;
         }
@@ -97,11 +97,11 @@ public class VDBabyZombie extends VDMinion {
             case 2:
                 return 10;
             case 3:
-                return 15;
+                return 20;
             case 4:
-                return 25;
+                return 30;
             case 5:
-                return 40;
+                return 45;
             case 6:
                 return 55;
             case 7:
@@ -118,18 +118,14 @@ public class VDBabyZombie extends VDMinion {
      */
     protected static double getToughness(int level) {
         switch (level) {
-            case 2:
-                return .02;
-            case 3:
-                return .04;
             case 4:
-                return .07;
+                return .02;
             case 5:
-                return .1;
+                return .05;
             case 6:
-                return .15;
+                return .1;
             case 7:
-                return .25;
+                return .15;
             default:
                 return 0;
         }

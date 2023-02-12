@@ -71,15 +71,15 @@ public class VDZombie extends VDMinion {
             case 2:
                 return 300;
             case 3:
-                return 375;
+                return 360;
             case 4:
-                return 450;
+                return 420;
             case 5:
-                return 500;
+                return 450;
             case 6:
-                return 550;
+                return 500;
             case 7:
-                return 650;
+                return 550;
             default:
                 return 0;
         }
@@ -97,13 +97,13 @@ public class VDZombie extends VDMinion {
             case 3:
                 return 10;
             case 4:
-                return 20;
+                return 15;
             case 5:
-                return 35;
+                return 25;
             case 6:
-                return 45;
+                return 30;
             case 7:
-                return 50;
+                return 35;
             default:
                 return 0;
         }
