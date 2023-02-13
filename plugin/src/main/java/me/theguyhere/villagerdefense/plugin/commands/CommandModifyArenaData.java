@@ -4,7 +4,7 @@ import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.CommandException;
 import me.theguyhere.villagerdefense.plugin.exceptions.CommandFormatException;
-import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
@@ -109,11 +109,9 @@ class CommandModifyArenaData {
         MIN_PLAYERS("minPlayers-"),
         MONSTER_SPAWN_PARTICLES("monsterSpawnParticles-"),
         VILLAGER_SPAWN_PARTICLES("villagerSpawnParticles-"),
-        DYNAMIC_MOB_COUNT("dynamicMobCount-"),
         COMMUNITY_CHEST("communityChest-"),
         DYNAMIC_PRICES("dynamicPrices-"),
         DYNAMIC_TIME_LIMIT("dynamicTimeLimit-"),
-        DYNAMIC_DIFFICULTY("dynamicDifficulty-"),
         LATE_ARRIVAL("lateArrival-"),
         MAX_WAVES("maxWaves-"),
         WAVE_TIME_LIMIT("waveTimeLimit-"),
@@ -754,38 +752,6 @@ class CommandModifyArenaData {
             else CommandExecImp.notifyFailure(sender, "Invalid operation value. Valid values: " +
                         Arrays.toString(Arrays.stream(ToggleArgument.values()).map(ToggleArgument::getArg).toArray()));
         }
-        else if (CommandGuard.checkArgStartWith(args, 2, ArenaOperationArgument.DYNAMIC_MOB_COUNT.arg)) {
-            String value = args[2].substring(args[2].indexOf("-") + 1);
-
-            if (ToggleArgument.ON.arg.equalsIgnoreCase(value)) {
-                // Check if already on
-                if (arena.hasDynamicCount()) {
-                    CommandExecImp.notifyFailure(sender, "Dynamic mob count is already on!");
-                    return;
-                }
-
-                // Turn on
-                arena.setDynamicCount(true);
-
-                // Notify console and possibly player
-                CommandExecImp.notifySuccess(sender, "Dynamic mob count is on for " + arena.getName() + ".");
-            }
-            else if (ToggleArgument.OFF.arg.equalsIgnoreCase(value)) {
-                // Check if already off
-                if (!arena.hasDynamicCount()) {
-                    CommandExecImp.notifyFailure(sender, "Dynamic mob count is already off!");
-                    return;
-                }
-
-                // Turn off
-                arena.setDynamicCount(false);
-
-                // Notify console and possibly player
-                CommandExecImp.notifySuccess(sender, "Dynamic mob count is off for " + arena.getName() + ".");
-            }
-            else CommandExecImp.notifyFailure(sender, "Invalid operation value. Valid values: " +
-                        Arrays.toString(Arrays.stream(ToggleArgument.values()).map(ToggleArgument::getArg).toArray()));
-        }
         else if (CommandGuard.checkArgStartWith(args, 2, ArenaOperationArgument.COMMUNITY_CHEST.arg)) {
             String value = args[2].substring(args[2].indexOf("-") + 1);
 
@@ -878,38 +844,6 @@ class CommandModifyArenaData {
 
                 // Notify console and possibly player
                 CommandExecImp.notifySuccess(sender, "Dynamic time limit is off for " + arena.getName() + ".");
-            }
-            else CommandExecImp.notifyFailure(sender, "Invalid operation value. Valid values: " +
-                        Arrays.toString(Arrays.stream(ToggleArgument.values()).map(ToggleArgument::getArg).toArray()));
-        }
-        else if (CommandGuard.checkArgStartWith(args, 2, ArenaOperationArgument.DYNAMIC_DIFFICULTY.arg)) {
-            String value = args[2].substring(args[2].indexOf("-") + 1);
-
-            if (ToggleArgument.ON.arg.equalsIgnoreCase(value)) {
-                // Check if already on
-                if (arena.hasDynamicDifficulty()) {
-                    CommandExecImp.notifyFailure(sender, "Dynamic difficulty is already on!");
-                    return;
-                }
-
-                // Turn on
-                arena.setDynamicDifficulty(true);
-
-                // Notify console and possibly player
-                CommandExecImp.notifySuccess(sender, "Dynamic difficulty is on for " + arena.getName() + ".");
-            }
-            else if (ToggleArgument.OFF.arg.equalsIgnoreCase(value)) {
-                // Check if already off
-                if (!arena.hasDynamicDifficulty()) {
-                    CommandExecImp.notifyFailure(sender, "Dynamic difficulty is already off!");
-                    return;
-                }
-
-                // Turn off
-                arena.setDynamicDifficulty(false);
-
-                // Notify console and possibly player
-                CommandExecImp.notifySuccess(sender, "Dynamic difficulty is off for " + arena.getName() + ".");
             }
             else CommandExecImp.notifyFailure(sender, "Invalid operation value. Valid values: " +
                         Arrays.toString(Arrays.stream(ToggleArgument.values()).map(ToggleArgument::getArg).toArray()));

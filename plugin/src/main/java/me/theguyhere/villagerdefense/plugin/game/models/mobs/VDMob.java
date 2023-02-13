@@ -4,20 +4,15 @@ import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
-import me.theguyhere.villagerdefense.plugin.exceptions.InvalidVDMobKeyException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.displays.Popup;
-import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.minions.*;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.villagers.VDFletcher;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.villagers.VDNormalVillager;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Mob;
@@ -40,7 +35,7 @@ public abstract class VDMob {
     protected String name;
     protected int hpBarSize;
 
-    protected final int level;
+    protected int level;
     protected int maxHealth = 0;
     protected int currentHealth = 0;
     protected int armor = 0;
@@ -65,9 +60,8 @@ public abstract class VDMob {
     private static final String WEIGHT = "weight";
     private static final String SPEED = "speed";
     
-    protected VDMob(String lore, int level, AttackType attackType) {
+    protected VDMob(String lore, AttackType attackType) {
         this.lore = lore;
-        this.level = level;
         this.attackType = attackType;
     }
 
@@ -89,11 +83,11 @@ public abstract class VDMob {
 
     public int takeDamage(int damage, @NotNull AttackType attackType, @Nullable Player attacker, Arena arena) {
         // Final damage calculation and display
-        if (attackType == AttackType.NORMAL)
+        if (attackType == AttackType.NORMAL || attackType == AttackType.CRUSHING)
             damage -= Math.min(damage, armor);
-        else if (attackType == AttackType.PENETRATING)
+        if (attackType == AttackType.NORMAL || attackType == AttackType.PENETRATING)
             damage *= Math.max(0, 1 - toughness);
-        else if (attackType == AttackType.NONE)
+        if (attackType == AttackType.NONE)
             damage = 0;
         if (attacker != null)
             try {
@@ -109,7 +103,7 @@ public abstract class VDMob {
         if (damage >= currentHealth) {
             addDamage(currentHealth, attackerID);
             Random r = new Random();
-            int finalGems = (int) (loot * 2 * (1 + (r.nextDouble() * 2 - 1) * lootSpread));
+            int finalGems = (int) (loot * (1 + (r.nextDouble() * 2 - 1) * lootSpread));
             int finalExp = (int) (loot * (1 + (r.nextDouble() * 2 - 1) * lootSpread)) / 10;
 
             // Reward for all damagers
@@ -202,7 +196,8 @@ public abstract class VDMob {
     }
 
     public PotionEffect dealEffect() {
-        return effectType == null ? null : new PotionEffect(effectType, effectDuration, effectLevel - 1);
+        return effectType == null ? null : new PotionEffect(effectType, Utils.secondsToTicks(effectDuration),
+                effectLevel - 1);
     }
 
     public int getPierce() {
@@ -232,52 +227,27 @@ public abstract class VDMob {
         return targetRange;
     }
 
-    // Function for Gaussian level distribution, with restrictions
-    protected static int getLevel(double difficulty, double rate, int start) {
-        Random r = new Random();
-        double mult = 1 + .1 * Math.max(Math.min(r.nextGaussian(), 3), -3); // Mean 100%, SD 10%, restrict 30%
-        return Math.max((int) ((difficulty * mult - start) / rate + .5), 1);
-    }
-
-    // Sets the proper health for the mob
-    protected void setHealth(int base, int delta) {
-        maxHealth = base + delta * (level - 1);
+    /**
+     * Sets the proper health for the mob.
+     */
+    protected void setHealth(int health) {
+        maxHealth = health;
         currentHealth = maxHealth;
     }
 
-    // Sets the proper armor for the mob
-    protected void setArmor(int base, int delta) {
-        armor = base + delta * (level - 1);
-    }
-
-    // Sets the proper toughness for the mob
-    protected void setToughness(double base, double delta, int start) {
-        toughness = base + delta * Math.max(0, level - start + 1);
-    }
-
-    // Sets the proper damage for the mob
-    protected void setDamage(int base, int delta, double spread) {
-        damage = base + delta * (level - 1);
+    /**
+     * Sets the proper damage for the mob.
+     * @param base Base damage.
+     * @param spread Damage spread in terms of proportion.
+     */
+    protected void setDamage(int base, double spread) {
+        damage = base;
         damageSpread = spread;
     }
 
     // Sets the proper effect type, if there is one
     protected void setEffectType(PotionEffectType effectType) {
         this.effectType = effectType;
-    }
-
-    // Sets the proper effect level, if there is one
-    protected void setEffectLevel(boolean levelChange) {
-        if (levelChange && level >= 10)
-            effectLevel = 2;
-        else effectLevel = 1;
-    }
-
-    // Sets the proper effect duration, if there is one
-    protected void setEffectDuration(int base, int delta, boolean levelChange) {
-        effectDuration = Utils.secondsToTicks(base + delta * (level - 1));
-        if (levelChange && level >= 10)
-            effectDuration /= 2;
     }
 
     // Set attack speed options
@@ -457,21 +427,25 @@ public abstract class VDMob {
 
     // Set target range
     protected void setCloseTargetRange() {
-        targetRange = 10;
+        targetRange = 12;
     }
     protected void setModerateTargetRange() {
-        targetRange = 18;
+        targetRange = 24;
     }
     protected void setFarTargetRange() {
-        targetRange = 30;
+        targetRange = 40;
     }
     protected void setUnboundedTargetRange() {
         targetRange = -1;
     }
 
-    // Sets the proper loot for the mob
-    protected void setLoot(int base, double rate, double spread) {
-        loot = (int) (base * Math.pow(rate, level - 1));
+    /**
+     * Sets the proper loot for the mob.
+     * @param value The value of the mob.
+     * @param spread Spread in gem drop.
+     */
+    protected void setLoot(int value, double spread) {
+        loot = (int) Math.pow(value, .9);
         lootSpread = spread;
     }
 
@@ -494,61 +468,4 @@ public abstract class VDMob {
     }
 
     protected abstract void updateNameTag();
-
-    public static VDMob of(String key, Arena arena, Location ground, Location air) throws InvalidVDMobKeyException {
-        switch (key) {
-            case VDNormalVillager.KEY:
-                return new VDNormalVillager(arena, ground);
-            case VDFletcher.KEY:
-                return new VDFletcher(arena, ground);
-            case VDZombie.KEY:
-                return new VDZombie(arena, ground);
-            case VDBabyZombie.KEY:
-                return new VDBabyZombie(arena, ground);
-            case VDHusk.KEY:
-                return new VDHusk(arena, ground);
-            case VDBabyHusk.KEY:
-                return new VDBabyHusk(arena, ground);
-            case VDWitherSkeleton.KEY:
-                return new VDWitherSkeleton(arena, ground);
-            case VDPiglinSoldier.KEY:
-                return new VDPiglinSoldier(arena, ground);
-            case VDPiglinSniper.KEY:
-                return new VDPiglinSniper(arena, ground);
-            case VDBrute.KEY:
-                return new VDBrute(arena, ground);
-            case VDVindicator.KEY:
-                return new VDVindicator(arena, ground);
-            case VDSkeleton.KEY:
-                return new VDSkeleton(arena, ground);
-            case VDStray.KEY:
-                return new VDStray(arena, ground);
-            case VDPillager.KEY:
-                return new VDPillager(arena, ground);
-//            case VDDrowned.KEY:
-//                return new VDDrowned(arena, ground);
-//            case VDBabyDrowned.KEY:
-//                return new VDBabyDrowned(arena, ground);
-            case VDPhantom.KEY:
-                return new VDPhantom(arena, air);
-            case VDBlaze.KEY:
-                return new VDBlaze(arena, air);
-            case VDGhast.KEY:
-                return new VDGhast(arena, air);
-            case VDCreeper.KEY:
-                return new VDCreeper(arena, ground);
-            case VDChargedCreeper.KEY:
-                return new VDChargedCreeper(arena, ground);
-            case VDWitch.KEY:
-                return new VDWitch(arena, ground);
-            case VDSpider.KEY:
-                return new VDSpider(arena, ground);
-            case VDCaveSpider.KEY:
-                return new VDCaveSpider(arena, ground);
-            case VDSilverfish.KEY:
-                return new VDSilverfish(arena, ground);
-            default:
-                throw new InvalidVDMobKeyException();
-        }
-    }
 }

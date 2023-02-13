@@ -336,13 +336,12 @@ public class PlayerManager {
         Main.savePlayerData();
     }
 
-    // Save gamemode, health, absorption, food, saturation, levels, exp, and inventory of the player
+    // Save gamemode, health, food, saturation, levels, exp, and inventory of the player
     public static void cacheSurvivalStats(Player player) {
         UUID id = player.getUniqueId();
 
         Main.getPlayerData().set(id + ".mode", player.getGameMode().name());
         Main.getPlayerData().set(id + ".health", player.getHealth());
-        Main.getPlayerData().set(id + ".absorption", player.getAbsorptionAmount());
         Main.getPlayerData().set(id + ".food", player.getFoodLevel());
         Main.getPlayerData().set(id + ".saturation", (double) player.getSaturation());
         Main.getPlayerData().set(id + ".level", player.getLevel());
@@ -353,7 +352,7 @@ public class PlayerManager {
         Main.savePlayerData();
     }
 
-    // Return health, absorption, food, saturation, levels, exp, and inventory of the player
+    // Return health, food, saturation, levels, exp, and inventory of the player
     public static void returnSurvivalStats(Player player) {
         UUID id = player.getUniqueId();
 
@@ -364,11 +363,9 @@ public class PlayerManager {
         // Return cached data
         if (Main.getPlayerData().contains(id + ".mode"))
             player.setGameMode(GameMode.valueOf(Main.getPlayerData().getString(id + ".mode")));
+        Main.getPlayerData().set(id + ".mode", null);
         if (Main.getPlayerData().contains(id + ".health"))
             player.setHealth(Main.getPlayerData().getDouble(id + ".health"));
-        Main.getPlayerData().set(id + ".health", null);
-        if (Main.getPlayerData().contains(id + ".absorption"))
-            player.setAbsorptionAmount(Main.getPlayerData().getDouble(id + ".absorption"));
         Main.getPlayerData().set(id + ".health", null);
         if (Main.getPlayerData().contains(id + ".food"))
             player.setFoodLevel(Main.getPlayerData().getInt(id + ".food"));

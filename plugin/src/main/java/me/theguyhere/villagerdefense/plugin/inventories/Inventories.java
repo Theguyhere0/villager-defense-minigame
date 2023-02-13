@@ -6,7 +6,7 @@ import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.items.VDItem;
@@ -506,13 +506,6 @@ public class Inventories {
 		buttons.add(ItemManager.createItem(Material.DRAGON_HEAD,
 				CommunicationManager.format("&3&lSpawn Table: " + arena.getSpawnTableFile())));
 
-		// Option to toggle dynamic mob count
-		buttons.add(ItemManager.createItem(Material.SLIME_BALL,
-				CommunicationManager.format("&e&lDynamic Mob Count: " +
-						getToggleStatus(arena.hasDynamicCount())),
-				CommunicationManager.format("&7Mob count adjusting based on"),
-				CommunicationManager.format("&7number of players")));
-
 		return InventoryFactory.createDynamicSizeInventory(
 				new InventoryMeta(InventoryID.MOBS_MENU, InventoryType.MENU, arena),
 				CommunicationManager.format("&2&lMob Settings: " + arena.getName()),
@@ -743,7 +736,7 @@ public class Inventories {
 				CommunicationManager.format("&7Turn community chest on and off")));
 
 		// Option to toggle dynamic prices
-		buttons.add(ItemManager.createItem(Material.NETHER_STAR,
+		buttons.add(ItemManager.createItem(Material.EMERALD,
 				CommunicationManager.format("&b&lDynamic Prices: " + getToggleStatus(arena.hasDynamicPrices())),
 				CommunicationManager.format("&7Prices adjusting based on number of"),
 				CommunicationManager.format("&7players in the game")));
@@ -799,13 +792,6 @@ public class Inventories {
 				ItemManager.BUTTON_FLAGS,
 				null,
 				CommunicationManager.format("&7Determines difficulty increase rate")));
-
-		// Option to toggle dynamic difficulty
-		buttons.add(ItemManager.createItem(Material.MAGMA_CREAM,
-				CommunicationManager.format("&6&lDynamic Difficulty: " +
-						getToggleStatus(arena.hasDynamicDifficulty())),
-				CommunicationManager.format("&7Difficulty adjusting based on"),
-				CommunicationManager.format("&7number of players")));
 
 		// Option to toggle late arrival
 		buttons.add(ItemManager.createItem(Material.DAYLIGHT_DETECTOR,
@@ -1394,8 +1380,7 @@ public class Inventories {
 
 		return InventoryFactory.createDynamicSizeInventory(
 				new InventoryMeta(InventoryID.SHOP_MENU, InventoryType.MENU),
-				CommunicationManager.format("&2&l" + LanguageManager.messages.level +
-						" &9&l" + arena.getCurrentShopLevel() + " &2&l" + LanguageManager.names.itemShop),
+				CommunicationManager.format("&2&l" + LanguageManager.names.itemShop),
 				false,
 				buttons
 		);
@@ -1406,33 +1391,11 @@ public class Inventories {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
 		buttons.add(arena.modifyPrice(Sword.create(VDItem.Tier.T1, Sword.SwordType.TIERED)));
-		if (arena.getCurrentShopLevel() < 2)
-			buttons.add(Buttons.levelPlaceholder(2));
-		else buttons.add(arena.modifyPrice(Sword.create(VDItem.Tier.T2, Sword.SwordType.TIERED)));
-		if (arena.getCurrentShopLevel() < 3)
-			buttons.add(Buttons.levelPlaceholder(3));
-		else buttons.add(arena.modifyPrice(Sword.create(VDItem.Tier.T3, Sword.SwordType.TIERED)));
-		if (arena.getCurrentShopLevel() < 3)
-			buttons.add(Buttons.levelPlaceholder(3));
-		else buttons.add(arena.modifyPrice(Sword.create(VDItem.Tier.T4, Sword.SwordType.TIERED)));
-		if (arena.getCurrentShopLevel() < 5)
-			buttons.add(Buttons.levelPlaceholder(5));
-		else buttons.add(arena.modifyPrice(Sword.create(VDItem.Tier.T5, Sword.SwordType.TIERED)));
-		if (arena.getCurrentShopLevel() < 5)
-			buttons.add(Buttons.levelPlaceholder(5));
-		else buttons.add(arena.modifyPrice(Sword.create(VDItem.Tier.T6, Sword.SwordType.TIERED)));
-		if (arena.getCurrentShopLevel() < 6)
-			buttons.add(Buttons.levelPlaceholder(6));
-		else buttons.add(arena.modifyPrice(Sword.create(VDItem.Tier.T7, Sword.SwordType.TIERED)));
-		if (arena.getCurrentShopLevel() < 6)
-			buttons.add(Buttons.levelPlaceholder(6));
-		else buttons.add(arena.modifyPrice(Sword.create(VDItem.Tier.T8, Sword.SwordType.TIERED)));
-		if (arena.getCurrentShopLevel() < 7)
-			buttons.add(Buttons.levelPlaceholder(7));
-		else buttons.add(arena.modifyPrice(Sword.create(VDItem.Tier.T9, Sword.SwordType.TIERED)));
-		if (arena.getCurrentShopLevel() < 8)
-			buttons.add(Buttons.levelPlaceholder(8));
-		else buttons.add(arena.modifyPrice(Sword.create(VDItem.Tier.T10, Sword.SwordType.TIERED)));
+		buttons.add(arena.modifyPrice(Sword.create(VDItem.Tier.T2, Sword.SwordType.TIERED)));
+		buttons.add(arena.modifyPrice(Sword.create(VDItem.Tier.T3, Sword.SwordType.TIERED)));
+		buttons.add(arena.modifyPrice(Sword.create(VDItem.Tier.T4, Sword.SwordType.TIERED)));
+		buttons.add(arena.modifyPrice(Sword.create(VDItem.Tier.T5, Sword.SwordType.TIERED)));
+		buttons.add(arena.modifyPrice(Sword.create(VDItem.Tier.T6, Sword.SwordType.TIERED)));
 
 		return InventoryFactory.createDynamicSizeInventory(
 				new InventoryMeta(InventoryID.SWORD_SHOP_MENU, InventoryType.MENU),
@@ -1447,33 +1410,11 @@ public class Inventories {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
 		buttons.add(arena.modifyPrice(Axe.create(VDItem.Tier.T1)));
-		if (arena.getCurrentShopLevel() < 2)
-			buttons.add(Buttons.levelPlaceholder(2));
-		else buttons.add(arena.modifyPrice(Axe.create(VDItem.Tier.T2)));
-		if (arena.getCurrentShopLevel() < 3)
-			buttons.add(Buttons.levelPlaceholder(3));
-		else buttons.add(arena.modifyPrice(Axe.create(VDItem.Tier.T3)));
-		if (arena.getCurrentShopLevel() < 4)
-			buttons.add(Buttons.levelPlaceholder(4));
-		else buttons.add(arena.modifyPrice(Axe.create(VDItem.Tier.T4)));
-		if (arena.getCurrentShopLevel() < 5)
-			buttons.add(Buttons.levelPlaceholder(5));
-		else buttons.add(arena.modifyPrice(Axe.create(VDItem.Tier.T5)));
-		if (arena.getCurrentShopLevel() < 5)
-			buttons.add(Buttons.levelPlaceholder(5));
-		else buttons.add(arena.modifyPrice(Axe.create(VDItem.Tier.T6)));
-		if (arena.getCurrentShopLevel() < 6)
-			buttons.add(Buttons.levelPlaceholder(6));
-		else buttons.add(arena.modifyPrice(Axe.create(VDItem.Tier.T7)));
-		if (arena.getCurrentShopLevel() < 6)
-			buttons.add(Buttons.levelPlaceholder(6));
-		else buttons.add(arena.modifyPrice(Axe.create(VDItem.Tier.T8)));
-		if (arena.getCurrentShopLevel() < 7)
-			buttons.add(Buttons.levelPlaceholder(7));
-		else buttons.add(arena.modifyPrice(Axe.create(VDItem.Tier.T9)));
-		if (arena.getCurrentShopLevel() < 8)
-			buttons.add(Buttons.levelPlaceholder(8));
-		else buttons.add(arena.modifyPrice(Axe.create(VDItem.Tier.T10)));
+		buttons.add(arena.modifyPrice(Axe.create(VDItem.Tier.T2)));
+		buttons.add(arena.modifyPrice(Axe.create(VDItem.Tier.T3)));
+		buttons.add(arena.modifyPrice(Axe.create(VDItem.Tier.T4)));
+		buttons.add(arena.modifyPrice(Axe.create(VDItem.Tier.T5)));
+		buttons.add(arena.modifyPrice(Axe.create(VDItem.Tier.T6)));
 
 		return InventoryFactory.createDynamicSizeInventory(
 				new InventoryMeta(InventoryID.AXE_SHOP_MENU, InventoryType.MENU),
@@ -1488,33 +1429,11 @@ public class Inventories {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
 		buttons.add(arena.modifyPrice(Scythe.create(VDItem.Tier.T1, Scythe.ScytheType.TIERED)));
-		if (arena.getCurrentShopLevel() < 2)
-			buttons.add(Buttons.levelPlaceholder(2));
-		else buttons.add(arena.modifyPrice(Scythe.create(VDItem.Tier.T2, Scythe.ScytheType.TIERED)));
-		if (arena.getCurrentShopLevel() < 3)
-			buttons.add(Buttons.levelPlaceholder(3));
-		else buttons.add(arena.modifyPrice(Scythe.create(VDItem.Tier.T3, Scythe.ScytheType.TIERED)));
-		if (arena.getCurrentShopLevel() < 4)
-			buttons.add(Buttons.levelPlaceholder(4));
-		else buttons.add(arena.modifyPrice(Scythe.create(VDItem.Tier.T4, Scythe.ScytheType.TIERED)));
-		if (arena.getCurrentShopLevel() < 5)
-			buttons.add(Buttons.levelPlaceholder(5));
-		else buttons.add(arena.modifyPrice(Scythe.create(VDItem.Tier.T5, Scythe.ScytheType.TIERED)));
-		if (arena.getCurrentShopLevel() < 5)
-			buttons.add(Buttons.levelPlaceholder(5));
-		else buttons.add(arena.modifyPrice(Scythe.create(VDItem.Tier.T6, Scythe.ScytheType.TIERED)));
-		if (arena.getCurrentShopLevel() < 6)
-			buttons.add(Buttons.levelPlaceholder(6));
-		else buttons.add(arena.modifyPrice(Scythe.create(VDItem.Tier.T7, Scythe.ScytheType.TIERED)));
-		if (arena.getCurrentShopLevel() < 6)
-			buttons.add(Buttons.levelPlaceholder(6));
-		else buttons.add(arena.modifyPrice(Scythe.create(VDItem.Tier.T8, Scythe.ScytheType.TIERED)));
-		if (arena.getCurrentShopLevel() < 7)
-			buttons.add(Buttons.levelPlaceholder(7));
-		else buttons.add(arena.modifyPrice(Scythe.create(VDItem.Tier.T9, Scythe.ScytheType.TIERED)));
-		if (arena.getCurrentShopLevel() < 8)
-			buttons.add(Buttons.levelPlaceholder(8));
-		else buttons.add(arena.modifyPrice(Scythe.create(VDItem.Tier.T10, Scythe.ScytheType.TIERED)));
+		buttons.add(arena.modifyPrice(Scythe.create(VDItem.Tier.T2, Scythe.ScytheType.TIERED)));
+		buttons.add(arena.modifyPrice(Scythe.create(VDItem.Tier.T3, Scythe.ScytheType.TIERED)));
+		buttons.add(arena.modifyPrice(Scythe.create(VDItem.Tier.T4, Scythe.ScytheType.TIERED)));
+		buttons.add(arena.modifyPrice(Scythe.create(VDItem.Tier.T5, Scythe.ScytheType.TIERED)));
+		buttons.add(arena.modifyPrice(Scythe.create(VDItem.Tier.T6, Scythe.ScytheType.TIERED)));
 
 		return InventoryFactory.createDynamicSizeInventory(
 				new InventoryMeta(InventoryID.SCYTHE_SHOP_MENU, InventoryType.MENU),
@@ -1528,36 +1447,12 @@ public class Inventories {
 	public static Inventory createBowShopMenu(Arena arena) {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
-		if (arena.getCurrentShopLevel() < 2)
-			buttons.add(Buttons.levelPlaceholder(2));
-		else buttons.add(arena.modifyPrice(Bow.create(VDItem.Tier.T1)));
-		if (arena.getCurrentShopLevel() < 3)
-			buttons.add(Buttons.levelPlaceholder(3));
-		else buttons.add(arena.modifyPrice(Bow.create(VDItem.Tier.T2)));
-		if (arena.getCurrentShopLevel() < 4)
-			buttons.add(Buttons.levelPlaceholder(4));
-		else buttons.add(arena.modifyPrice(Bow.create(VDItem.Tier.T3)));
-		if (arena.getCurrentShopLevel() < 5)
-			buttons.add(Buttons.levelPlaceholder(5));
-		else buttons.add(arena.modifyPrice(Bow.create(VDItem.Tier.T4)));
-		if (arena.getCurrentShopLevel() < 5)
-			buttons.add(Buttons.levelPlaceholder(5));
-		else buttons.add(arena.modifyPrice(Bow.create(VDItem.Tier.T5)));
-		if (arena.getCurrentShopLevel() < 6)
-			buttons.add(Buttons.levelPlaceholder(6));
-		else buttons.add(arena.modifyPrice(Bow.create(VDItem.Tier.T6)));
-		if (arena.getCurrentShopLevel() < 7)
-			buttons.add(Buttons.levelPlaceholder(7));
-		else buttons.add(arena.modifyPrice(Bow.create(VDItem.Tier.T7)));
-		if (arena.getCurrentShopLevel() < 8)
-			buttons.add(Buttons.levelPlaceholder(8));
-		else buttons.add(arena.modifyPrice(Bow.create(VDItem.Tier.T8)));
-		if (arena.getCurrentShopLevel() < 9)
-			buttons.add(Buttons.levelPlaceholder(9));
-		else buttons.add(arena.modifyPrice(Bow.create(VDItem.Tier.T9)));
-		if (arena.getCurrentShopLevel() < 10)
-			buttons.add(Buttons.levelPlaceholder(10));
-		else buttons.add(arena.modifyPrice(Bow.create(VDItem.Tier.T10)));
+		buttons.add(arena.modifyPrice(Bow.create(VDItem.Tier.T1)));
+		buttons.add(arena.modifyPrice(Bow.create(VDItem.Tier.T2)));
+		buttons.add(arena.modifyPrice(Bow.create(VDItem.Tier.T3)));
+		buttons.add(arena.modifyPrice(Bow.create(VDItem.Tier.T4)));
+		buttons.add(arena.modifyPrice(Bow.create(VDItem.Tier.T5)));
+		buttons.add(arena.modifyPrice(Bow.create(VDItem.Tier.T6)));
 
 		return InventoryFactory.createDynamicSizeInventory(
 				new InventoryMeta(InventoryID.BOW_SHOP_MENU, InventoryType.MENU),
@@ -1571,36 +1466,12 @@ public class Inventories {
 	public static Inventory createCrossbowShopMenu(Arena arena) {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
-		if (arena.getCurrentShopLevel() < 3)
-			buttons.add(Buttons.levelPlaceholder(3));
-		else buttons.add(arena.modifyPrice(Crossbow.create(VDItem.Tier.T1)));
-		if (arena.getCurrentShopLevel() < 3)
-			buttons.add(Buttons.levelPlaceholder(3));
-		else buttons.add(arena.modifyPrice(Crossbow.create(VDItem.Tier.T2)));
-		if (arena.getCurrentShopLevel() < 4)
-			buttons.add(Buttons.levelPlaceholder(4));
-		else buttons.add(arena.modifyPrice(Crossbow.create(VDItem.Tier.T3)));
-		if (arena.getCurrentShopLevel() < 5)
-			buttons.add(Buttons.levelPlaceholder(5));
-		else buttons.add(arena.modifyPrice(Crossbow.create(VDItem.Tier.T4)));
-		if (arena.getCurrentShopLevel() < 5)
-			buttons.add(Buttons.levelPlaceholder(5));
-		else buttons.add(arena.modifyPrice(Crossbow.create(VDItem.Tier.T5)));
-		if (arena.getCurrentShopLevel() < 6)
-			buttons.add(Buttons.levelPlaceholder(6));
-		else buttons.add(arena.modifyPrice(Crossbow.create(VDItem.Tier.T6)));
-		if (arena.getCurrentShopLevel() < 7)
-			buttons.add(Buttons.levelPlaceholder(7));
-		else buttons.add(arena.modifyPrice(Crossbow.create(VDItem.Tier.T7)));
-		if (arena.getCurrentShopLevel() < 8)
-			buttons.add(Buttons.levelPlaceholder(8));
-		else buttons.add(arena.modifyPrice(Crossbow.create(VDItem.Tier.T8)));
-		if (arena.getCurrentShopLevel() < 9)
-			buttons.add(Buttons.levelPlaceholder(9));
-		else buttons.add(arena.modifyPrice(Crossbow.create(VDItem.Tier.T9)));
-		if (arena.getCurrentShopLevel() < 10)
-			buttons.add(Buttons.levelPlaceholder(10));
-		else buttons.add(arena.modifyPrice(Crossbow.create(VDItem.Tier.T10)));
+		buttons.add(arena.modifyPrice(Crossbow.create(VDItem.Tier.T1)));
+		buttons.add(arena.modifyPrice(Crossbow.create(VDItem.Tier.T2)));
+		buttons.add(arena.modifyPrice(Crossbow.create(VDItem.Tier.T3)));
+		buttons.add(arena.modifyPrice(Crossbow.create(VDItem.Tier.T4)));
+		buttons.add(arena.modifyPrice(Crossbow.create(VDItem.Tier.T5)));
+		buttons.add(arena.modifyPrice(Crossbow.create(VDItem.Tier.T6)));
 
 		return InventoryFactory.createDynamicSizeInventory(
 				new InventoryMeta(InventoryID.CROSSBOW_SHOP_MENU, InventoryType.MENU),
@@ -1611,42 +1482,37 @@ public class Inventories {
 	}
 
 	// Generate the ammo shop
-	public static Inventory createAmmoShopMenu(Arena arena) {
+	public static Inventory createAmmoUpgradeShopMenu(Arena arena, VDPlayer player) {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
-		if (arena.getCurrentShopLevel() < 2)
-			buttons.add(Buttons.levelPlaceholder(2));
-		else buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T1)));
-		if (arena.getCurrentShopLevel() < 3)
-			buttons.add(Buttons.levelPlaceholder(3));
-		else buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T2)));
-		if (arena.getCurrentShopLevel() < 4)
-			buttons.add(Buttons.levelPlaceholder(4));
-		else buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T3)));
-		if (arena.getCurrentShopLevel() < 5)
-			buttons.add(Buttons.levelPlaceholder(5));
-		else buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T4)));
-		if (arena.getCurrentShopLevel() < 5)
-			buttons.add(Buttons.levelPlaceholder(5));
-		else buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T5)));
-		if (arena.getCurrentShopLevel() < 6)
-			buttons.add(Buttons.levelPlaceholder(6));
-		else buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T6)));
-		if (arena.getCurrentShopLevel() < 7)
-			buttons.add(Buttons.levelPlaceholder(7));
-		else buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T7)));
-		if (arena.getCurrentShopLevel() < 8)
-			buttons.add(Buttons.levelPlaceholder(8));
-		else buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T8)));
-		if (arena.getCurrentShopLevel() < 9)
-			buttons.add(Buttons.levelPlaceholder(9));
-		else buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T9)));
-		if (arena.getCurrentShopLevel() < 10)
-			buttons.add(Buttons.levelPlaceholder(10));
-		else buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T10)));
+		ItemStack noUpgrade = ItemManager.createItem(Material.RED_STAINED_GLASS_PANE,
+				new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.noUpgrades).toString(),
+				ItemManager.BUTTON_FLAGS, null);
+		switch (player.getTieredAmmoLevel() + 1) {
+			case 1:
+				buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T1)));
+				break;
+			case 2:
+				buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T2)));
+				break;
+			case 3:
+				buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T3)));
+				break;
+			case 4:
+				buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T4)));
+				break;
+			case 5:
+				buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T5)));
+				break;
+			case 6:
+				buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T6)));
+				break;
+			default:
+				buttons.add(noUpgrade);
+		}
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.AMMO_SHOP_MENU, InventoryType.MENU),
+				new InventoryMeta(InventoryID.AMMO_UPGRADE_SHOP_MENU, InventoryType.MENU),
 				CommunicationManager.format("&2&l" + LanguageManager.names.ammoShop),
 				true,
 				buttons
@@ -1658,33 +1524,11 @@ public class Inventories {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
 		buttons.add(arena.modifyPrice(Helmet.create(VDItem.Tier.T1)));
-		if (arena.getCurrentShopLevel() < 2)
-			buttons.add(Buttons.levelPlaceholder(2));
-		else buttons.add(arena.modifyPrice(Helmet.create(VDItem.Tier.T2)));
-		if (arena.getCurrentShopLevel() < 3)
-			buttons.add(Buttons.levelPlaceholder(3));
-		else buttons.add(arena.modifyPrice(Helmet.create(VDItem.Tier.T3)));
-		if (arena.getCurrentShopLevel() < 4)
-			buttons.add(Buttons.levelPlaceholder(4));
-		else buttons.add(arena.modifyPrice(Helmet.create(VDItem.Tier.T4)));
-		if (arena.getCurrentShopLevel() < 5)
-			buttons.add(Buttons.levelPlaceholder(4));
-		else buttons.add(arena.modifyPrice(Helmet.create(VDItem.Tier.T5)));
-		if (arena.getCurrentShopLevel() < 5)
-			buttons.add(Buttons.levelPlaceholder(5));
-		else buttons.add(arena.modifyPrice(Helmet.create(VDItem.Tier.T6)));
-		if (arena.getCurrentShopLevel() < 6)
-			buttons.add(Buttons.levelPlaceholder(6));
-		else buttons.add(arena.modifyPrice(Helmet.create(VDItem.Tier.T7)));
-		if (arena.getCurrentShopLevel() < 6)
-			buttons.add(Buttons.levelPlaceholder(6));
-		else buttons.add(arena.modifyPrice(Helmet.create(VDItem.Tier.T8)));
-		if (arena.getCurrentShopLevel() < 7)
-			buttons.add(Buttons.levelPlaceholder(7));
-		else buttons.add(arena.modifyPrice(Helmet.create(VDItem.Tier.T9)));
-		if (arena.getCurrentShopLevel() < 8)
-			buttons.add(Buttons.levelPlaceholder(8));
-		else buttons.add(arena.modifyPrice(Helmet.create(VDItem.Tier.T10)));
+		buttons.add(arena.modifyPrice(Helmet.create(VDItem.Tier.T2)));
+		buttons.add(arena.modifyPrice(Helmet.create(VDItem.Tier.T3)));
+		buttons.add(arena.modifyPrice(Helmet.create(VDItem.Tier.T4)));
+		buttons.add(arena.modifyPrice(Helmet.create(VDItem.Tier.T5)));
+		buttons.add(arena.modifyPrice(Helmet.create(VDItem.Tier.T6)));
 
 		return InventoryFactory.createDynamicSizeInventory(
 				new InventoryMeta(InventoryID.HELMET_SHOP_MENU, InventoryType.MENU),
@@ -1699,33 +1543,11 @@ public class Inventories {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
 		buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T1)));
-		if (arena.getCurrentShopLevel() < 2)
-			buttons.add(Buttons.levelPlaceholder(2));
-		else buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T2)));
-		if (arena.getCurrentShopLevel() < 3)
-			buttons.add(Buttons.levelPlaceholder(3));
-		else buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T3)));
-		if (arena.getCurrentShopLevel() < 4)
-			buttons.add(Buttons.levelPlaceholder(4));
-		else buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T4)));
-		if (arena.getCurrentShopLevel() < 5)
-			buttons.add(Buttons.levelPlaceholder(4));
-		else buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T5)));
-		if (arena.getCurrentShopLevel() < 5)
-			buttons.add(Buttons.levelPlaceholder(5));
-		else buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T6)));
-		if (arena.getCurrentShopLevel() < 6)
-			buttons.add(Buttons.levelPlaceholder(6));
-		else buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T7)));
-		if (arena.getCurrentShopLevel() < 6)
-			buttons.add(Buttons.levelPlaceholder(6));
-		else buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T8)));
-		if (arena.getCurrentShopLevel() < 7)
-			buttons.add(Buttons.levelPlaceholder(7));
-		else buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T9)));
-		if (arena.getCurrentShopLevel() < 8)
-			buttons.add(Buttons.levelPlaceholder(8));
-		else buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T10)));
+		buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T2)));
+		buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T3)));
+		buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T4)));
+		buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T5)));
+		buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T6)));
 
 		return InventoryFactory.createDynamicSizeInventory(
 				new InventoryMeta(InventoryID.CHESTPLATE_SHOP_MENU, InventoryType.MENU),
@@ -1740,33 +1562,11 @@ public class Inventories {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
 		buttons.add(arena.modifyPrice(Leggings.create(VDItem.Tier.T1)));
-		if (arena.getCurrentShopLevel() < 2)
-			buttons.add(Buttons.levelPlaceholder(2));
-		else buttons.add(arena.modifyPrice(Leggings.create(VDItem.Tier.T2)));
-		if (arena.getCurrentShopLevel() < 3)
-			buttons.add(Buttons.levelPlaceholder(3));
-		else buttons.add(arena.modifyPrice(Leggings.create(VDItem.Tier.T3)));
-		if (arena.getCurrentShopLevel() < 4)
-			buttons.add(Buttons.levelPlaceholder(4));
-		else buttons.add(arena.modifyPrice(Leggings.create(VDItem.Tier.T4)));
-		if (arena.getCurrentShopLevel() < 5)
-			buttons.add(Buttons.levelPlaceholder(4));
-		else buttons.add(arena.modifyPrice(Leggings.create(VDItem.Tier.T5)));
-		if (arena.getCurrentShopLevel() < 5)
-			buttons.add(Buttons.levelPlaceholder(5));
-		else buttons.add(arena.modifyPrice(Leggings.create(VDItem.Tier.T6)));
-		if (arena.getCurrentShopLevel() < 6)
-			buttons.add(Buttons.levelPlaceholder(6));
-		else buttons.add(arena.modifyPrice(Leggings.create(VDItem.Tier.T7)));
-		if (arena.getCurrentShopLevel() < 6)
-			buttons.add(Buttons.levelPlaceholder(6));
-		else buttons.add(arena.modifyPrice(Leggings.create(VDItem.Tier.T8)));
-		if (arena.getCurrentShopLevel() < 7)
-			buttons.add(Buttons.levelPlaceholder(7));
-		else buttons.add(arena.modifyPrice(Leggings.create(VDItem.Tier.T9)));
-		if (arena.getCurrentShopLevel() < 8)
-			buttons.add(Buttons.levelPlaceholder(8));
-		else buttons.add(arena.modifyPrice(Leggings.create(VDItem.Tier.T10)));
+		buttons.add(arena.modifyPrice(Leggings.create(VDItem.Tier.T2)));
+		buttons.add(arena.modifyPrice(Leggings.create(VDItem.Tier.T3)));
+		buttons.add(arena.modifyPrice(Leggings.create(VDItem.Tier.T4)));
+		buttons.add(arena.modifyPrice(Leggings.create(VDItem.Tier.T5)));
+		buttons.add(arena.modifyPrice(Leggings.create(VDItem.Tier.T6)));
 
 		return InventoryFactory.createDynamicSizeInventory(
 				new InventoryMeta(InventoryID.LEGGINGS_SHOP_MENU, InventoryType.MENU),
@@ -1781,33 +1581,11 @@ public class Inventories {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
 		buttons.add(arena.modifyPrice(Boots.create(VDItem.Tier.T1)));
-		if (arena.getCurrentShopLevel() < 2)
-			buttons.add(Buttons.levelPlaceholder(2));
-		else buttons.add(arena.modifyPrice(Boots.create(VDItem.Tier.T2)));
-		if (arena.getCurrentShopLevel() < 3)
-			buttons.add(Buttons.levelPlaceholder(3));
-		else buttons.add(arena.modifyPrice(Boots.create(VDItem.Tier.T3)));
-		if (arena.getCurrentShopLevel() < 4)
-			buttons.add(Buttons.levelPlaceholder(4));
-		else buttons.add(arena.modifyPrice(Boots.create(VDItem.Tier.T4)));
-		if (arena.getCurrentShopLevel() < 5)
-			buttons.add(Buttons.levelPlaceholder(4));
-		else buttons.add(arena.modifyPrice(Boots.create(VDItem.Tier.T5)));
-		if (arena.getCurrentShopLevel() < 5)
-			buttons.add(Buttons.levelPlaceholder(5));
-		else buttons.add(arena.modifyPrice(Boots.create(VDItem.Tier.T6)));
-		if (arena.getCurrentShopLevel() < 6)
-			buttons.add(Buttons.levelPlaceholder(6));
-		else buttons.add(arena.modifyPrice(Boots.create(VDItem.Tier.T7)));
-		if (arena.getCurrentShopLevel() < 6)
-			buttons.add(Buttons.levelPlaceholder(6));
-		else buttons.add(arena.modifyPrice(Boots.create(VDItem.Tier.T8)));
-		if (arena.getCurrentShopLevel() < 7)
-			buttons.add(Buttons.levelPlaceholder(7));
-		else buttons.add(arena.modifyPrice(Boots.create(VDItem.Tier.T9)));
-		if (arena.getCurrentShopLevel() < 8)
-			buttons.add(Buttons.levelPlaceholder(8));
-		else buttons.add(arena.modifyPrice(Boots.create(VDItem.Tier.T10)));
+		buttons.add(arena.modifyPrice(Boots.create(VDItem.Tier.T2)));
+		buttons.add(arena.modifyPrice(Boots.create(VDItem.Tier.T3)));
+		buttons.add(arena.modifyPrice(Boots.create(VDItem.Tier.T4)));
+		buttons.add(arena.modifyPrice(Boots.create(VDItem.Tier.T5)));
+		buttons.add(arena.modifyPrice(Boots.create(VDItem.Tier.T6)));
 
 		return InventoryFactory.createDynamicSizeInventory(
 				new InventoryMeta(InventoryID.BOOTS_SHOP_MENU, InventoryType.MENU),
@@ -1821,39 +1599,14 @@ public class Inventories {
 	public static Inventory createConsumableShopMenu(Arena arena) {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
-		if (arena.getCurrentShopLevel() < 2) {
-			buttons.add(Buttons.levelPlaceholder(2));
-			buttons.add(Buttons.levelPlaceholder(2));
-		} else {
-			buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.T1, ShopFood.ShopFoodType.TIERED)));
-			buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.T2, ShopFood.ShopFoodType.TIERED)));
-		}
-		if (arena.getCurrentShopLevel() < 3)
-			buttons.add(Buttons.levelPlaceholder(3));
-		else
-			buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.T3, ShopFood.ShopFoodType.TIERED)));
-		if (arena.getCurrentShopLevel() < 4) {
-			buttons.add(Buttons.levelPlaceholder(4));
-			buttons.add(Buttons.levelPlaceholder(4));
-		} else {
-			buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.T4, ShopFood.ShopFoodType.TIERED)));
-			buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.T5, ShopFood.ShopFoodType.TIERED)));
-		}
-		if (arena.getCurrentShopLevel() < 5) {
-			buttons.add(Buttons.levelPlaceholder(5));
-			buttons.add(Buttons.levelPlaceholder(5));
-		} else {
-			buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.T6, ShopFood.ShopFoodType.TIERED)));
-			buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.UNIQUE, ShopFood.ShopFoodType.CAPPLE)));
-		}
-		if (arena.getCurrentShopLevel() < 6)
-			buttons.add(Buttons.levelPlaceholder(6));
-		else
-			buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.UNIQUE, ShopFood.ShopFoodType.GAPPLE)));
-		if (arena.getCurrentShopLevel() < 7)
-			buttons.add(Buttons.levelPlaceholder(7));
-		else
-			buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.UNIQUE, ShopFood.ShopFoodType.TOTEM)));
+
+		buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.T1, ShopFood.ShopFoodType.TIERED)));
+		buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.T2, ShopFood.ShopFoodType.TIERED)));
+		buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.T3, ShopFood.ShopFoodType.TIERED)));
+		buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.T4, ShopFood.ShopFoodType.TIERED)));
+		buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.UNIQUE, ShopFood.ShopFoodType.CAPPLE)));
+		buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.UNIQUE, ShopFood.ShopFoodType.GAPPLE)));
+		buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.UNIQUE, ShopFood.ShopFoodType.TOTEM)));
 
 		return InventoryFactory.createDynamicSizeInventory(
 				new InventoryMeta(InventoryID.CONSUMABLE_SHOP_MENU, InventoryType.MENU),
@@ -2829,24 +2582,8 @@ public class Inventories {
 		buttons.add(ItemManager.createItem(Material.NETHER_STAR,
 				CommunicationManager.format("&9&l" + LanguageManager.messages.forcedChallenges)));
 
-		// Dynamic mob count
-		buttons.add(ItemManager.createItem(Material.SLIME_BALL,
-				CommunicationManager.format("&e&l" +
-						LanguageManager.arenaStats.dynamicMobCount.name +
-						": " + getToggleStatus(arena.hasDynamicCount())),
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.dynamicMobCount.description, Utils.LORE_CHAR_LIMIT)));
-
-		// Dynamic difficulty
-		buttons.add(ItemManager.createItem(Material.MAGMA_CREAM,
-				CommunicationManager.format("&6&l" +
-						LanguageManager.arenaStats.dynamicDifficulty.name + ": " +
-						getToggleStatus(arena.hasDynamicDifficulty())),
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.dynamicDifficulty.description, Utils.LORE_CHAR_LIMIT)));
-
 		// Dynamic prices
-		buttons.add(ItemManager.createItem(Material.NETHER_STAR,
+		buttons.add(ItemManager.createItem(Material.EMERALD,
 				CommunicationManager.format("&b&l" +
 						LanguageManager.arenaStats.dynamicPrices.name +
 						": " + getToggleStatus(arena.hasDynamicPrices())),

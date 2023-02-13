@@ -12,11 +12,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public abstract class Sword extends VDWeapon {
@@ -24,6 +26,7 @@ public abstract class Sword extends VDWeapon {
     public static ItemStack create(Tier tier, SwordType type) {
         List<String> lores = new ArrayList<>();
         Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
+        HashMap<Enchantment, Integer> enchant = new HashMap<>();
 
         // Set material
         Material mat;
@@ -38,21 +41,20 @@ public abstract class Sword extends VDWeapon {
                         mat = Material.WOODEN_SWORD;
                         break;
                     case T2:
-                    case T3:
-                    case T4:
                         mat = Material.STONE_SWORD;
                         break;
-                    case T5:
-                    case T6:
-                    case T7:
+                    case T3:
                         mat = Material.IRON_SWORD;
                         break;
-                    case T8:
-                    case T9:
+                    case T4:
                         mat = Material.DIAMOND_SWORD;
                         break;
-                    case T10:
+                    case T5:
                         mat = Material.NETHERITE_SWORD;
+                        break;
+                    case T6:
+                        mat = Material.NETHERITE_SWORD;
+                        enchant.put(Enchantment.DURABILITY, 3);
                         break;
                     default:
                         mat = Material.GOLDEN_SWORD;
@@ -91,18 +93,6 @@ public abstract class Sword extends VDWeapon {
                     case T6:
                         name = formatName(LanguageManager.itemLore.swords.t6.name, tier);
                         break;
-                    case T7:
-                        name = formatName(LanguageManager.itemLore.swords.t7.name, tier);
-                        break;
-                    case T8:
-                        name = formatName(LanguageManager.itemLore.swords.t8.name, tier);
-                        break;
-                    case T9:
-                        name = formatName(LanguageManager.itemLore.swords.t9.name, tier);
-                        break;
-                    case T10:
-                        name = formatName(LanguageManager.itemLore.swords.t10.name, tier);
-                        break;
                     default:
                         name = "";
                 }
@@ -140,18 +130,6 @@ public abstract class Sword extends VDWeapon {
                     case T6:
                         description = LanguageManager.itemLore.swords.t6.description;
                         break;
-                    case T7:
-                        description = LanguageManager.itemLore.swords.t7.description;
-                        break;
-                    case T8:
-                        description = LanguageManager.itemLore.swords.t8.description;
-                        break;
-                    case T9:
-                        description = LanguageManager.itemLore.swords.t9.description;
-                        break;
-                    case T10:
-                        description = LanguageManager.itemLore.swords.t10.description;
-                        break;
                     default:
                         description = "";
                 }
@@ -185,39 +163,23 @@ public abstract class Sword extends VDWeapon {
                         damageHigh = 50;
                         break;
                     case T2:
-                        damageLow = 40;
-                        damageHigh = 65;
+                        damageLow = 45;
+                        damageHigh = 70;
                         break;
                     case T3:
-                        damageLow = 45;
-                        damageHigh = 65;
+                        damageLow = 65;
+                        damageHigh = 85;
                         break;
                     case T4:
-                        damageLow = 50;
-                        damageHigh = 65;
+                        damageLow = 85;
+                        damageHigh = 100;
                         break;
                     case T5:
-                        damageLow = 55;
-                        damageHigh = 85;
-                        break;
-                    case T6:
-                        damageLow = 60;
-                        damageHigh = 85;
-                        break;
-                    case T7:
-                        damageLow = 70;
-                        damageHigh = 90;
-                        break;
-                    case T8:
-                        damageLow = 75;
-                        damageHigh = 110;
-                        break;
-                    case T9:
-                        damageLow = 85;
+                        damageLow = 95;
                         damageHigh = 120;
                         break;
-                    case T10:
-                        damageLow = 95;
+                    case T6:
+                        damageLow = 110;
                         damageHigh = 150;
                         break;
                     default:
@@ -267,34 +229,22 @@ public abstract class Sword extends VDWeapon {
             case TIERED:
                 switch (tier) {
                     case T1:
-                        durability = 100;
+                        durability = 200;
                         break;
                     case T2:
-                        durability = 140;
+                        durability = 375;
                         break;
                     case T3:
-                        durability = 165;
-                        break;
-                    case T4:
-                        durability = 190;
-                        break;
-                    case T5:
-                        durability = 275;
-                        break;
-                    case T6:
-                        durability = 320;
-                        break;
-                    case T7:
-                        durability = 380;
-                        break;
-                    case T8:
                         durability = 550;
                         break;
-                    case T9:
-                        durability = 660;
+                    case T4:
+                        durability = 725;
                         break;
-                    case T10:
-                        durability = 935;
+                    case T5:
+                        durability = 875;
+                        break;
+                    case T6:
+                        durability = 1000;
                         break;
                     default: durability = 0;
                 }
@@ -314,30 +264,18 @@ public abstract class Sword extends VDWeapon {
                         price = 175;
                         break;
                     case T2:
-                        price = 225;
-                        break;
-                    case T3:
                         price = 260;
                         break;
-                    case T4:
-                        price = 300;
-                        break;
-                    case T5:
+                    case T3:
                         price = 380;
                         break;
-                    case T6:
-                        price = 420;
-                        break;
-                    case T7:
+                    case T4:
                         price = 475;
                         break;
-                    case T8:
-                        price = 600;
+                    case T5:
+                        price = 650;
                         break;
-                    case T9:
-                        price = 700;
-                        break;
-                    case T10:
+                    case T6:
                         price = 925;
                         break;
                     default: price = -1;
@@ -350,7 +288,7 @@ public abstract class Sword extends VDWeapon {
                     price));
 
         // Create item
-        ItemStack item = ItemManager.createItem(mat, name, ItemManager.BUTTON_FLAGS, null, lores, attributes);
+        ItemStack item = ItemManager.createItem(mat, name, ItemManager.BUTTON_FLAGS, enchant, lores, attributes);
         if (durability == 0)
             return ItemManager.makeUnbreakable(item);
         else return item;

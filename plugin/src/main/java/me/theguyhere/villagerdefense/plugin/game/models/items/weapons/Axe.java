@@ -12,11 +12,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public abstract class Axe extends VDWeapon {
@@ -24,6 +26,7 @@ public abstract class Axe extends VDWeapon {
     public static ItemStack create(Tier tier) {
         List<String> lores = new ArrayList<>();
         Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
+        HashMap<Enchantment, Integer> enchant = new HashMap<>();
 
         // Set material
         Material mat;
@@ -32,21 +35,20 @@ public abstract class Axe extends VDWeapon {
                 mat = Material.WOODEN_AXE;
                 break;
             case T2:
-            case T3:
-            case T4:
                 mat = Material.STONE_AXE;
                 break;
-            case T5:
-            case T6:
-            case T7:
+            case T3:
                 mat = Material.IRON_AXE;
                 break;
-            case T8:
-            case T9:
+            case T4:
                 mat = Material.DIAMOND_AXE;
                 break;
-            case T10:
+            case T5:
                 mat = Material.NETHERITE_AXE;
+                break;
+            case T6:
+                mat = Material.NETHERITE_AXE;
+                enchant.put(Enchantment.DURABILITY, 3);
                 break;
             default:
                 mat = Material.GOLDEN_AXE;
@@ -73,18 +75,6 @@ public abstract class Axe extends VDWeapon {
             case T6:
                 name = formatName(LanguageManager.itemLore.axes.t6.name, tier);
                 break;
-            case T7:
-                name = formatName(LanguageManager.itemLore.axes.t7.name, tier);
-                break;
-            case T8:
-                name = formatName(LanguageManager.itemLore.axes.t8.name, tier);
-                break;
-            case T9:
-                name = formatName(LanguageManager.itemLore.axes.t9.name, tier);
-                break;
-            case T10:
-                name = formatName(LanguageManager.itemLore.axes.t10.name, tier);
-                break;
             default:
                 name = "";
         }
@@ -110,18 +100,6 @@ public abstract class Axe extends VDWeapon {
             case T6:
                 description = LanguageManager.itemLore.axes.t6.description;
                 break;
-            case T7:
-                description = LanguageManager.itemLore.axes.t7.description;
-                break;
-            case T8:
-                description = LanguageManager.itemLore.axes.t8.description;
-                break;
-            case T9:
-                description = LanguageManager.itemLore.axes.t9.description;
-                break;
-            case T10:
-                description = LanguageManager.itemLore.axes.t10.description;
-                break;
             default:
                 description = "";
         }
@@ -133,50 +111,34 @@ public abstract class Axe extends VDWeapon {
         lores.add("");
 
         // Set attack type
-        lores.add(CommunicationManager.format(ATTACK_TYPE, ATTACK_TYPE_NORMAL));
+        lores.add(CommunicationManager.format(ATTACK_TYPE, ATTACK_TYPE_CRUSHING));
 
         // Set main damage
         int damageLow, damageHigh;
         switch (tier) {
             case T1:
-                damageLow = 55;
-                damageHigh = 80;
+                damageLow = 50;
+                damageHigh = 90;
                 break;
             case T2:
-                damageLow = 65;
-                damageHigh = 105;
+                damageLow = 75;
+                damageHigh = 120;
                 break;
             case T3:
-                damageLow = 75;
-                damageHigh = 105;
+                damageLow = 100;
+                damageHigh = 165;
                 break;
             case T4:
-                damageLow = 85;
-                damageHigh = 110;
-                break;
-            case T5:
-                damageLow = 95;
-                damageHigh = 140;
-                break;
-            case T6:
-                damageLow = 105;
-                damageHigh = 145;
-                break;
-            case T7:
-                damageLow = 115;
-                damageHigh = 155;
-                break;
-            case T8:
                 damageLow = 130;
                 damageHigh = 200;
                 break;
-            case T9:
-                damageLow = 145;
-                damageHigh = 215;
-                break;
-            case T10:
+            case T5:
                 damageLow = 165;
-                damageHigh = 250;
+                damageHigh = 240;
+                break;
+            case T6:
+                damageLow = 200;
+                damageHigh = 300;
                 break;
             default:
                 damageLow = damageHigh = 0;
@@ -212,34 +174,22 @@ public abstract class Axe extends VDWeapon {
         int durability;
         switch (tier) {
             case T1:
-                durability = 85;
+                durability = 180;
                 break;
             case T2:
-                durability = 120;
+                durability = 335;
                 break;
             case T3:
-                durability = 145;
+                durability = 495;
                 break;
             case T4:
-                durability = 165;
+                durability = 650;
                 break;
             case T5:
-                durability = 235;
+                durability = 785;
                 break;
             case T6:
-                durability = 275;
-                break;
-            case T7:
-                durability = 325;
-                break;
-            case T8:
-                durability = 470;
-                break;
-            case T9:
-                durability = 570;
-                break;
-            case T10:
-                durability = 800;
+                durability = 900;
                 break;
             default: durability = 0;
         }
@@ -254,30 +204,18 @@ public abstract class Axe extends VDWeapon {
                 price = 200;
                 break;
             case T2:
-                price = 255;
-                break;
-            case T3:
                 price = 300;
                 break;
-            case T4:
-                price = 340;
-                break;
-            case T5:
+            case T3:
                 price = 415;
                 break;
-            case T6:
-                price = 470;
-                break;
-            case T7:
+            case T4:
                 price = 515;
                 break;
-            case T8:
-                price = 650;
+            case T5:
+                price = 700;
                 break;
-            case T9:
-                price = 750;
-                break;
-            case T10:
+            case T6:
                 price = 960;
                 break;
             default: price = -1;
@@ -287,7 +225,7 @@ public abstract class Axe extends VDWeapon {
                     price));
 
         // Create item
-        ItemStack item = ItemManager.createItem(mat, name, ItemManager.BUTTON_FLAGS, null, lores, attributes);
+        ItemStack item = ItemManager.createItem(mat, name, ItemManager.BUTTON_FLAGS, enchant, lores, attributes);
         if (durability == 0)
             return ItemManager.makeUnbreakable(item);
         else return item;

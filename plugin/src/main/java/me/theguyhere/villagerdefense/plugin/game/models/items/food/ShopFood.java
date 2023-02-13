@@ -19,44 +19,48 @@ public abstract class ShopFood extends VDFood {
     public static ItemStack create(Tier tier, ShopFoodType type) {
         List<String> lores = new ArrayList<>();
 
-        // Set material
+        // Set material and count
         Material mat;
+        int count;
         switch (type) {
             case CAPPLE:
                 mat = Material.GOLDEN_APPLE;
+                count = 1;
                 break;
             case GAPPLE:
                 mat = Material.ENCHANTED_GOLDEN_APPLE;
+                count = 1;
                 break;
             case TIERED:
                 switch (tier) {
                     case T1:
-                        mat = Material.BEETROOT;
+                        mat = Material.COOKIE;
+                        count = 8;
                         break;
                     case T2:
-                        mat = Material.CARROT;
+                        mat = Material.BREAD;
+                        count = 4;
                         break;
                     case T3:
-                        mat = Material.BREAD;
+                        mat = Material.COOKED_BEEF;
+                        count = 2;
                         break;
                     case T4:
-                        mat = Material.MUTTON;
-                        break;
-                    case T5:
-                        mat = Material.COOKED_BEEF;
-                        break;
-                    case T6:
                         mat = Material.GOLDEN_CARROT;
+                        count = 1;
                         break;
                     default:
                         mat = Material.GUNPOWDER;
+                        count = 1;
                 }
                 break;
             case TOTEM:
                 mat = Material.TOTEM_OF_UNDYING;
+                count = 1;
                 break;
             default:
                 mat = Material.GUNPOWDER;
+                count = 1;
         }
 
         // Set name
@@ -81,12 +85,6 @@ public abstract class ShopFood extends VDFood {
                         break;
                     case T4:
                         name = formatName(LanguageManager.itemLore.shopFood.t4.name, tier);
-                        break;
-                    case T5:
-                        name = formatName(LanguageManager.itemLore.shopFood.t5.name, tier);
-                        break;
-                    case T6:
-                        name = formatName(LanguageManager.itemLore.shopFood.t6.name, tier);
                         break;
                     default:
                         name = "";
@@ -122,12 +120,6 @@ public abstract class ShopFood extends VDFood {
                     case T4:
                         description = LanguageManager.itemLore.shopFood.t4.description;
                         break;
-                    case T5:
-                        description = LanguageManager.itemLore.shopFood.t5.description;
-                        break;
-                    case T6:
-                        description = LanguageManager.itemLore.shopFood.t6.description;
-                        break;
                     default:
                         description = "";
                 }
@@ -149,10 +141,10 @@ public abstract class ShopFood extends VDFood {
         int health;
         switch (type) {
             case CAPPLE:
-                health = 125;
+                health = 100;
                 break;
             case GAPPLE:
-                health = 200;
+                health = 150;
                 break;
             case TIERED:
                 switch (tier) {
@@ -160,19 +152,13 @@ public abstract class ShopFood extends VDFood {
                         health = 10;
                         break;
                     case T2:
-                        health = 20;
+                        health = 30;
                         break;
                     case T3:
-                        health = 40;
-                        break;
-                    case T4:
                         health = 75;
                         break;
-                    case T5:
-                        health = 120;
-                        break;
-                    case T6:
-                        health = 160;
+                    case T4:
+                        health = 125;
                         break;
                     default:
                         health = 0;
@@ -194,7 +180,7 @@ public abstract class ShopFood extends VDFood {
                 absorption = 80;
                 break;
             case TOTEM:
-                absorption = 400;
+                absorption = 200;
                 break;
             default:
                 absorption = 0;
@@ -214,22 +200,16 @@ public abstract class ShopFood extends VDFood {
             case TIERED:
                 switch (tier) {
                     case T1:
-                        hunger = 1;
-                        break;
-                    case T2:
                         hunger = 2;
                         break;
-                    case T3:
-                        hunger = 3;
-                        break;
-                    case T4:
+                    case T2:
                         hunger = 5;
                         break;
-                    case T5:
-                        hunger = 6;
-                        break;
-                    case T6:
+                    case T3:
                         hunger = 8;
+                        break;
+                    case T4:
+                        hunger = 10;
                         break;
                     default:
                         hunger = 0;
@@ -248,36 +228,30 @@ public abstract class ShopFood extends VDFood {
         int price;
         switch (type) {
             case CAPPLE:
-                price = 800;
+                price = 150;
                 break;
             case GAPPLE:
-                price = 1150;
+                price = 250;
                 break;
             case TIERED:
                 switch (tier) {
                     case T1:
-                        price = 80;
+                        price = 20;
                         break;
                     case T2:
-                        price = 150;
+                        price = 45;
                         break;
                     case T3:
-                        price = 220;
+                        price = 75;
                         break;
                     case T4:
-                        price = 350;
-                        break;
-                    case T5:
-                        price = 540;
-                        break;
-                    case T6:
-                        price = 660;
+                        price = 100;
                         break;
                     default: price = -1;
                 }
                 break;
             case TOTEM:
-                price = 1550;
+                price = 500;
                 break;
             default: price = -1;
         }
@@ -285,7 +259,7 @@ public abstract class ShopFood extends VDFood {
             lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
                     price));
 
-        return ItemManager.createItem(mat, name, lores);
+        return ItemManager.setAmount(ItemManager.createItem(mat, name, lores), count);
     }
 
     public static boolean matches(ItemStack toCheck) {
@@ -300,7 +274,7 @@ public abstract class ShopFood extends VDFood {
         return lore.stream().anyMatch(line -> line.contains(Utils.HP) || line.contains(Utils.HUNGER));
     }
 
-    public enum ShopFoodType{
+    public enum ShopFoodType {
         CAPPLE,
         GAPPLE,
         TIERED,

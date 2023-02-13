@@ -12,11 +12,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public abstract class Helmet extends VDArmor{
@@ -24,29 +26,29 @@ public abstract class Helmet extends VDArmor{
     public static ItemStack create(Tier tier) {
         List<String> lores = new ArrayList<>();
         Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
+        HashMap<Enchantment, Integer> enchant = new HashMap<>();
 
         // Set material
         Material mat;
         switch (tier) {
             case T1:
-            case T2:
                 mat = Material.LEATHER_HELMET;
                 break;
-            case T3:
-            case T4:
+            case T2:
                 mat = Material.CHAINMAIL_HELMET;
                 break;
-            case T5:
-            case T6:
-            case T7:
+            case T3:
                 mat = Material.IRON_HELMET;
                 break;
-            case T8:
-            case T9:
+            case T4:
                 mat = Material.DIAMOND_HELMET;
                 break;
-            case T10:
+            case T5:
                 mat = Material.NETHERITE_HELMET;
+                break;
+            case T6:
+                mat = Material.NETHERITE_HELMET;
+                enchant.put(Enchantment.DURABILITY, 3);
                 break;
             default:
                 mat = Material.GOLDEN_HELMET;
@@ -73,18 +75,6 @@ public abstract class Helmet extends VDArmor{
             case T6:
                 name = formatName(LanguageManager.itemLore.helmets.t6.name, tier);
                 break;
-            case T7:
-                name = formatName(LanguageManager.itemLore.helmets.t7.name, tier);
-                break;
-            case T8:
-                name = formatName(LanguageManager.itemLore.helmets.t8.name, tier);
-                break;
-            case T9:
-                name = formatName(LanguageManager.itemLore.helmets.t9.name, tier);
-                break;
-            case T10:
-                name = formatName(LanguageManager.itemLore.helmets.t10.name, tier);
-                break;
             default:
                 name = "";
         }
@@ -110,18 +100,6 @@ public abstract class Helmet extends VDArmor{
             case T6:
                 description = LanguageManager.itemLore.helmets.t6.description;
                 break;
-            case T7:
-                description = LanguageManager.itemLore.helmets.t7.description;
-                break;
-            case T8:
-                description = LanguageManager.itemLore.helmets.t8.description;
-                break;
-            case T9:
-                description = LanguageManager.itemLore.helmets.t9.description;
-                break;
-            case T10:
-                description = LanguageManager.itemLore.helmets.t10.description;
-                break;
             default:
                 description = "";
         }
@@ -139,30 +117,18 @@ public abstract class Helmet extends VDArmor{
                 armor = 2;
                 break;
             case T2:
-                armor = 3;
-                break;
-            case T3:
                 armor = 5;
                 break;
-            case T4:
-                armor = 6;
-                break;
-            case T5:
+            case T3:
                 armor = 8;
                 break;
-            case T6:
-                armor = 9;
-                break;
-            case T7:
+            case T4:
                 armor = 10;
                 break;
-            case T8:
-                armor = 12;
-                break;
-            case T9:
+            case T5:
                 armor = 14;
                 break;
-            case T10:
+            case T6:
                 armor = 16;
                 break;
             default:
@@ -174,26 +140,17 @@ public abstract class Helmet extends VDArmor{
         // Set toughness
         int toughness;
         switch (tier) {
-            case T4:
+            case T3:
                 toughness = 1;
                 break;
-            case T5:
-                toughness = 2;
-                break;
-            case T6:
+            case T4:
                 toughness = 3;
                 break;
-            case T7:
-                toughness = 4;
+            case T5:
+                toughness = 5;
                 break;
-            case T8:
-                toughness = 6;
-                break;
-            case T9:
-                toughness = 7;
-                break;
-            case T10:
-                toughness = 9;
+            case T6:
+                toughness = 8;
                 break;
             default:
                 toughness = 0;
@@ -206,23 +163,19 @@ public abstract class Helmet extends VDArmor{
         int weight;
         switch (tier) {
             case T1:
-            case T2:
                 weight = 1;
                 break;
-            case T3:
-            case T4:
+            case T2:
                 weight = 2;
+                break;
+            case T3:
+                weight = 3;
+                break;
+            case T4:
+                weight = 4;
                 break;
             case T5:
             case T6:
-            case T7:
-                weight = 3;
-                break;
-            case T8:
-            case T9:
-                weight = 4;
-                break;
-            case T10:
                 weight = 5;
                 break;
             default:
@@ -241,33 +194,21 @@ public abstract class Helmet extends VDArmor{
         int durability;
         switch (tier) {
             case T1:
-                durability = 50;
+                durability = 65;
                 break;
             case T2:
-                durability = 70;
-                break;
-            case T3:
                 durability = 110;
                 break;
+            case T3:
+                durability = 205;
+                break;
             case T4:
-                durability = 135;
+                durability = 310;
                 break;
             case T5:
-                durability = 180;
+                durability = 425;
                 break;
             case T6:
-                durability = 215;
-                break;
-            case T7:
-                durability = 250;
-                break;
-            case T8:
-                durability = 320;
-                break;
-            case T9:
-                durability = 360;
-                break;
-            case T10:
                 durability = 475;
                 break;
             default: durability = 0;
@@ -283,30 +224,18 @@ public abstract class Helmet extends VDArmor{
                 price = 130;
                 break;
             case T2:
-                price = 165;
-                break;
-            case T3:
                 price = 215;
                 break;
-            case T4:
-                price = 245;
-                break;
-            case T5:
+            case T3:
                 price = 310;
                 break;
-            case T6:
-                price = 345;
-                break;
-            case T7:
+            case T4:
                 price = 385;
                 break;
-            case T8:
-                price = 465;
-                break;
-            case T9:
+            case T5:
                 price = 555;
                 break;
-            case T10:
+            case T6:
                 price = 715;
                 break;
             default: price = -1;
@@ -316,7 +245,7 @@ public abstract class Helmet extends VDArmor{
                     price));
 
         // Create item
-        ItemStack item = ItemManager.createItem(mat, name, ItemManager.BUTTON_FLAGS, null, lores, attributes);
+        ItemStack item = ItemManager.createItem(mat, name, ItemManager.BUTTON_FLAGS, enchant, lores, attributes);
         if (durability == 0)
             return ItemManager.makeUnbreakable(item);
         else return item;

@@ -1,586 +1,290 @@
 '1':
-  count:
-    m: 6
-  vtypes:
-    nrml: 2
+  value: 225
   mtypes:
     zomb: 1
 '2':
-  count:
-    m: 9
-  vtypes:
-    nrml: 3
+  value: 350
   mtypes:
     zomb: 1
 '3':
-  count:
-    m: 15
-  vtypes:
-    nrml: 3
+  value: 300
   mtypes:
-    zomb: 3
     spid: 1
 '4':
-  count:
-    m: 16
-  vtypes:
-    nrml: 4
+  value: 300
   mtypes:
-    zomb: 3
-    spid: 1
+    skel: 1
 '5':
-  count:
-    m: 20
-  vtypes:
-    nrml: 5
+  value: 450
   mtypes:
-    zomb: 10
-    spid: 4
+    zomb: 1
+    spid: 1
     skel: 1
 '6':
-  count:
-    m: 24
-  vtypes:
-    nrml: 6
-    flch: 1
+  value: 350
   mtypes:
-    zomb: 5
-    spid: 3
-    skel: 1
+    zomb: 1
+    husk: 1
 '7':
-  count:
-    m: 25
-  vtypes:
-    nrml: 8
-    flch: 1
+  value: 400
   mtypes:
-    zomb: 5
     spid: 3
     skel: 1
 '8':
-  count:
-    m: 27
-  vtypes:
-    nrml: 9
-    flch: 2
+  value: 500
   mtypes:
-    zomb: 4
-    husk: 1
-    spid: 3
-    skel: 1
+    bzmb: 1
+    bhsk: 1
+    spid: 2
+    skel: 2
 '9':
-  count:
-    m: 28
-  vtypes:
-    nrml: 10
-    flch: 2
+  value: 450
   mtypes:
-    zomb: 5
-    husk: 2
-    spid: 3
-    skel: 2
-'10':
-  count:
-    m: 25
-  vtypes:
-    nrml: 10
-    flch: 2
-  mtypes:
-    zomb: 2
-    husk: 3
-    spid: 3
-    skel: 2
     crpr: 1
-'11':
-  count:
-    m: 28
-  vtypes:
-    nrml: 11
-    flch: 2
+'10':
+  value: 900
   mtypes:
-    zomb: 2
-    husk: 3
+    zomb: 1
+    bzmb: 1
+    husk: 2
+    bhsk: 1
     spid: 3
     skel: 2
+    crpr: 2
+'11':
+  value: 500
+  mtypes:
+    skel: 1
     crpr: 1
 '12':
-  count:
-    m: 30
-  vtypes:
-    nrml: 12
-    flch: 2
+  value: 600
   mtypes:
-    zomb: 2
-    husk: 3
-    spid: 2
-    cspd: 1
-    skel: 2
-    crpr: 1
-'13':
-  count:
-    m: 32
-  vtypes:
-    nrml: 12
-    flch: 2
-  mtypes:
-    zomb: 2
-    husk: 3
-    spid: 2
-    cspd: 1
-    skel: 2
-    crpr: 1
-'14':
-  count:
-    m: 35
-  vtypes:
-    nrml: 13
-    flch: 2
-  mtypes:
-    zomb: 2
-    husk: 3
     spid: 1
+    cspd: 1
+'13':
+  value: 600
+  mtypes:
+    skel: 1
+    stry: 1
+'14':
+  value: 750
+  mtypes:
+    husk: 2
     cspd: 2
-    skel: 2
+    stry: 2
     crpr: 1
 '15':
-  count:
-    m: 35
-  vtypes:
-    nrml: 13
-    flch: 2
+  value: 1250
   mtypes:
-    zomb: 2
-    husk: 3
+    bzmb: 1
+    bhsk: 2
     spid: 1
     cspd: 2
-    skel: 2
-    stry: 1
+    skel: 1
+    stry: 2
     crpr: 1
 '16':
-  count:
-    m: 35
-  vtypes:
-    nrml: 13
-    flch: 2
+  value: 700
   mtypes:
-    zomb: 1
-    husk: 2
-    spid: 1
-    cspd: 2
-    skel: 1
-    stry: 2
-    crpr: 1
+    wskl: 1
 '17':
-  count:
-    m: 36
-  vtypes:
-    nrml: 14
-    flch: 2
+  value: 800
   mtypes:
-    zomb: 1
-    husk: 2
-    spid: 1
-    cspd: 2
-    skel: 1
-    stry: 2
-    crpr: 1
+    phtm: 1
 '18':
-  count:
-    m: 32
-  vtypes:
-    nrml: 14
-    flch: 2
+  value: 1000
   mtypes:
-    zomb: 1
-    husk: 1
-    wskl: 1
-    spid: 1
-    cspd: 2
-    skel: 1
-    stry: 2
-    crpr: 1
+    pgsd: 1
+    pgsn: 1
 '19':
-  count:
-    m: 35
-  vtypes:
-    nrml: 14
-    flch: 2
+  value: 1000
+  mtypes:
+    wskl: 1
+    phtm: 1
+    pgsd: 1
+    pgsn: 1
+'20':
+  value: 1800
   mtypes:
     zomb: 1
+    bzmb: 1
     husk: 1
+    bhsk: 1
     wskl: 1
+    pgsd: 1
+    pgsn: 1
     spid: 1
     cspd: 2
     skel: 1
-    stry: 2
+    stry: 1
     crpr: 2
-'20':
-  count:
-    m: 30
-  vtypes:
-    nrml: 15
-    flch: 2
-  mtypes:
-    zomb: 2
-    husk: 2
-    wskl: 2
-    pgsd: 1
-    pgsn: 1
-    spid: 2
-    cspd: 4
-    skel: 2
-    stry: 4
-    crpr: 4
-    phtm: 1
+    phtm: 2
 '21':
-  count:
-    m: 32
-  vtypes:
-    nrml: 15
-    flch: 2
+  value: 1200
   mtypes:
-    zomb: 2
-    husk: 2
-    wskl: 2
-    pgsd: 1
-    pgsn: 1
-    spid: 2
-    cspd: 4
-    skel: 2
-    stry: 4
-    crpr: 4
-    phtm: 1
+    pill: 1
+    blze: 1
 '22':
-  count:
-    m: 35
-  vtypes:
-    nrml: 15
-    flch: 2
+  value: 1200
   mtypes:
-    zomb: 2
-    husk: 2
-    wskl: 2
-    pgsd: 1
-    pgsn: 1
-    spid: 2
-    cspd: 4
-    skel: 2
-    stry: 4
-    crpr: 4
-    phtm: 2
+    brut: 3
+    slvr: 1
 '23':
-  count:
-    m: 35
-  vtypes:
-    nrml: 15
-    flch: 2
+  value: 1400
   mtypes:
-    zomb: 1
-    husk: 1
-    wskl: 1
-    pgsd: 1
-    pgsn: 1
-    spid: 1
-    cspd: 1
-    skel: 1
-    stry: 1
-    crpr: 2
-    phtm: 2
+    vind: 3
+    wtch: 1
 '24':
-  count:
-    m: 35
-  vtypes:
-    nrml: 16
-    flch: 2
+  value: 1500
   mtypes:
-    zomb: 1
-    husk: 1
-    wskl: 1
-    pgsd: 1
-    pgsn: 1
-    spid: 1
-    cspd: 1
-    skel: 1
-    stry: 1
-    crpr: 2
-    phtm: 2
-    pill: 1
+    ccpr: 1
 '25':
-  count:
-    m: 35
-  vtypes:
-    nrml: 16
-    flch: 2
+  value: 2700
   mtypes:
-    zomb: 1
-    husk: 1
-    wskl: 1
-    pgsd: 1
-    pgsn: 1
-    spid: 1
-    cspd: 1
-    skel: 1
-    stry: 1
-    crpr: 2
-    phtm: 2
-    pill: 1
+    wskl: 2
+    pgsd: 2
+    pgsn: 2
+    slvr: 2
+    brut: 1
+    vind: 1
+    ccpr: 2
+    blze: 2
+    pill: 2
     wtch: 1
 '26':
-  count:
-    m: 36
-  vtypes:
-    nrml: 16
-    flch: 2
+  value: 1800
   mtypes:
-    zomb: 2
-    bzmb: 1
-    husk: 2
-    bhsk: 1
+    husk: 1
+    bhsk: 2
     wskl: 2
-    pgsd: 2
-    pgsn: 2
-    spid: 2
     cspd: 3
-    skel: 2
     stry: 2
-    crpr: 3
-    phtm: 2
-    pill: 2
     wtch: 2
+    blze: 3
 '27':
-  count:
-    m: 38
-  vtypes:
-    nrml: 16
-    flch: 2
+  value: 1600
   mtypes:
-    zomb: 2
-    bzmb: 1
-    husk: 2
-    bhsk: 1
-    wskl: 2
-    pgsd: 2
-    pgsn: 2
-    spid: 2
-    cspd: 3
-    skel: 2
-    stry: 2
-    crpr: 3
-    phtm: 2
-    pill: 2
-    wtch: 2
-    blze: 1
+    ghst: 1
 '28':
   count:
-    m: 38
-  vtypes:
-    nrml: 16
-    flch: 2
+  value: 2200
   mtypes:
-    zomb: 4
-    bzmb: 2
-    husk: 4
-    bhsk: 2
-    wskl: 3
-    pgsd: 3
-    pgsn: 3
-    spid: 2
-    cspd: 4
     skel: 2
-    stry: 3
-    crpr: 3
+    stry: 2
+    pgsn: 3
     phtm: 4
-    pill: 3
-    wtch: 3
+    pill: 2
+    wtch: 2
     blze: 2
-    ccpr: 1
+    ghst: 1
 '29':
-  count:
-    m: 40
-  vtypes:
-    nrml: 16
-    flch: 2
+  value: 1200
   mtypes:
-    zomb: 4
+    slvr: 1
+'30':
+  value: 3500
+  mtypes:
+    zomb: 2
     bzmb: 2
-    husk: 4
+    husk: 2
     bhsk: 2
-    wskl: 3
-    pgsd: 3
-    pgsn: 3
+    wskl: 2
+    pgsd: 2
+    pgsn: 2
     spid: 2
-    cspd: 4
+    cspd: 2
     skel: 2
-    stry: 3
+    stry: 2
     crpr: 3
     phtm: 4
     pill: 3
-    wtch: 3
+    wtch: 2
     blze: 2
     ccpr: 1
-'30':
-  count:
-    m: 20
-  vtypes:
-    nrml: 17
-    flch: 2
+    brut: 1
+    vind: 1
+    ghst: 1
+    slvr: 1
+'31':
+  value: 2000
   mtypes:
+    crpr: 3
+    ccpr: 1
     brut: 2
     vind: 2
-    ghst: 1
-'31':
-  count:
-    m: 40
-  vtypes:
-    nrml: 17
-    flch: 2
-  mtypes:
-    zomb: 4
-    bzmb: 2
-    husk: 4
-    bhsk: 2
-    wskl: 3
-    pgsd: 3
-    pgsn: 3
-    spid: 2
-    cspd: 4
-    skel: 2
-    stry: 3
-    crpr: 3
-    phtm: 4
-    pill: 3
-    wtch: 3
-    blze: 2
-    ccpr: 1
-    brut: 1
-    vind: 1
-    ghst: 1
 '32':
-  count:
-    m: 40
-  vtypes:
-    nrml: 17
-    flch: 2
+  value: 2500
   mtypes:
-    zomb: 4
-    bzmb: 2
-    husk: 4
-    bhsk: 2
-    wskl: 3
-    pgsd: 3
-    pgsn: 3
-    spid: 2
-    cspd: 4
-    skel: 2
-    stry: 3
-    crpr: 3
-    phtm: 4
-    pill: 3
-    wtch: 3
-    blze: 2
-    ccpr: 1
-    brut: 1
-    vind: 1
-    ghst: 1
-    slvr: 7
+    pill: 5
+    wtch: 2
+    vind: 2
+    slvr: 2
 '33':
-  count:
-    m: 42
-  vtypes:
-    nrml: 17
-    flch: 3
+  value: 3000
   mtypes:
-    zomb: 4
-    bzmb: 2
-    husk: 4
-    bhsk: 2
-    wskl: 3
     pgsd: 3
     pgsn: 3
-    spid: 2
-    cspd: 4
-    skel: 2
-    stry: 3
     crpr: 3
-    phtm: 4
-    pill: 3
-    wtch: 3
-    blze: 2
     ccpr: 1
-    brut: 1
-    vind: 1
-    ghst: 1
-    slvr: 7
+    brut: 2
 '34':
-  count:
-    m: 45
-  vtypes:
-    nrml: 17
-    flch: 3
+  value: 3000
   mtypes:
-    zomb: 4
     bzmb: 2
-    husk: 4
     bhsk: 2
     wskl: 3
     pgsd: 3
-    pgsn: 3
     spid: 2
     cspd: 4
-    skel: 2
-    stry: 3
-    crpr: 3
-    phtm: 4
     pill: 3
-    wtch: 3
-    blze: 2
-    ccpr: 1
     brut: 1
     vind: 1
-    ghst: 1
     slvr: 7
 '35':
-  count:
-    m: 60
-  vtypes:
-    nrml: 17
-    flch: 3
+  value: 4500
   mtypes:
-    brut: 2
-    vind: 2
-    wtch: 2
-    stry: 2
-    blze: 2
-    ghst: 2
-    pill: 4
-    crpr: 3
-    ccpr: 3
-    slvr: 11
+    zomb: 1
+    bzmb: 1
+    husk: 1
+    bhsk: 1
+    wskl: 1
+    pgsd: 1
+    pgsn: 1
+    spid: 1
+    cspd: 1
+    skel: 1
+    stry: 1
+    crpr: 1
+    phtm: 1
+    pill: 1
+    wtch: 1
+    blze: 1
+    ccpr: 2
+    brut: 3
+    vind: 1
+    ghst: 3
+    slvr: 1
 freePlay:
-  count:
-    m: 50
-  vtypes:
-    nrml: 22
-    flch: 3
+  value: 4500
   mtypes:
-    zomb: 4
-    bzmb: 2
-    husk: 4
-    bhsk: 2
-    wskl: 3
-    pgsd: 3
-    pgsn: 3
-    spid: 2
-    cspd: 4
-    skel: 2
-    stry: 3
-    crpr: 3
-    phtm: 4
-    pill: 3
-    wtch: 3
-    blze: 2
+    zomb: 1
+    bzmb: 1
+    husk: 1
+    bhsk: 1
+    wskl: 1
+    pgsd: 1
+    pgsn: 1
+    spid: 1
+    cspd: 1
+    skel: 1
+    stry: 1
+    crpr: 1
+    phtm: 1
+    pill: 1
+    wtch: 1
+    blze: 1
     ccpr: 1
     brut: 1
     vind: 1
     ghst: 1
-    slvr: 7
+    slvr: 1

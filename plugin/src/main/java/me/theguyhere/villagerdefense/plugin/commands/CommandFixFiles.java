@@ -5,7 +5,7 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.CommandException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
@@ -411,19 +411,20 @@ class CommandFixFiles {
                         (Player) sender,
                         LanguageManager.confirms.autoUpdate,
                         new ColoredMessage(ChatColor.AQUA, "en_US.yml"),
-                        new ColoredMessage(ChatColor.AQUA, Integer.toString(Main.languageFileVersion)));
+                        new ColoredMessage(ChatColor.AQUA, Integer.toString(Main.languageFileVersion))
+                );
                 PlayerManager.notifyAlert(
                         (Player) sender,
                         LanguageManager.messages.manualUpdateWarn,
                         new ColoredMessage(ChatColor.AQUA, "All other language files")
                 );
-                PlayerManager.notifyAlert((Player) sender, LanguageManager.messages.restartPlugin);
+                PlayerManager.notifyAlert((Player) sender, LanguageManager.messages.reloadPlugin);
             }
             CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
                     "en_US.yml", Integer.toString(Main.languageFileVersion));
             CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
                     "All other language files");
-            CommunicationManager.debugError(LanguageManager.messages.restartPlugin, 0);
+            CommunicationManager.debugError(LanguageManager.messages.reloadPlugin, 0);
         }
 
         // Check if customEffects.yml is outdated

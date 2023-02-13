@@ -1,10 +1,9 @@
 package me.theguyhere.villagerdefense.plugin.game.models.mobs.pets;
 
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.Location;
 import org.bukkit.entity.*;
@@ -18,17 +17,16 @@ public class VDDog extends VDPet {
                 (Tameable) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.WOLF),
                 LanguageManager.mobs.dog,
                 LanguageManager.mobLore.dog,
-                VDMob.getLevel(arena.getCurrentDifficulty(), 1, 0),
                 AttackType.NORMAL,
                 1,
                 owner
         );
         ((Wolf) mob).setAdult();
         hpBarSize = 2;
-        setHealth(360, 30);
-        setArmor(10, 5);
-        setToughness(0, .03, 2);
-        setDamage(40, 5, .10);
+//        setHealth(360, 30);
+//        setArmor(10, 5);
+//        setToughness(0, .03, 2);
+//        setDamage(40, 5, .10);
         setModerateAttackSpeed();
         setLowKnockback();
         setLightWeight();

@@ -8,15 +8,15 @@ import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.*;
 import me.theguyhere.villagerdefense.plugin.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
+import me.theguyhere.villagerdefense.plugin.game.managers.CountdownManager;
+import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.utils.SpawningUtil;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.Team;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.minions.VDWitch;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.villagers.VDFletcher;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.villagers.VDNormalVillager;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryID;
@@ -24,9 +24,6 @@ import me.theguyhere.villagerdefense.plugin.inventories.InventoryMeta;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryType;
 import me.theguyhere.villagerdefense.plugin.tools.*;
 import org.bukkit.*;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarStyle;
-import org.bukkit.boss.BossBar;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -76,6 +73,8 @@ public class Arena {
     private int villagers = 0;
     /** Enemy count.*/
     private int enemies = 0;
+    /** Maximum enemies in a wave.*/
+    private int maxEnemies = 0;
     /** Iron golem count.*/
     private int golems = 0;
     /** ID of task managing player spawn particles.*/
@@ -90,8 +89,6 @@ public class Arena {
     private final List<VDPlayer> players = new ArrayList<>();
     /** Community chest inventory.*/
     private Inventory communityChest;
-    /** Time limit bar object.*/
-    private BossBar timeLimitBar;
     /** Portal object for the arena.*/
     private Portal portal;
     /** The player spawn for the arena.*/
@@ -119,7 +116,6 @@ public class Arena {
     private static final String DIALOGUE_FIVE = "dialogue5";
     private static final String END_WAVE = "endWave";
     private static final String START_WAVE = "startWave";
-    private static final String UPDATE_BAR = "updateBar";
     private static final String CALIBRATE = "calibrate";
     private static final String TICK = "Tick";
     private static final String ONE_TICK = "one" + TICK;
@@ -372,6 +368,15 @@ public class Arena {
      */
     public int getWaveTimeLimit() {
         return config.getInt(path + ".waveTimeLimit");
+    }
+
+    public double getAdjustedWaveTimeLimit() {
+        // Get proper multiplier
+        double multiplier = 1 + .05 * ((int) getCurrentDifficulty() - .5);
+        if (!hasDynamicLimit())
+            multiplier = 1;
+
+        return getWaveTimeLimit() * multiplier;
     }
 
     /**
@@ -1267,6 +1272,9 @@ public class Arena {
     }
 
     public void stretchBounds() {
+        if (getCorner1() == null || getCorner2() == null)
+            return;
+
         Location temp = getCorner1();
         temp.setY(Objects.requireNonNull(getCorner1().getWorld()).getMaxHeight());
         setCorner1(temp);
@@ -1275,7 +1283,10 @@ public class Arena {
         setCorner2(temp);
     }
 
-    public BoundingBox getBounds() {
+    public @NotNull BoundingBox getBounds() {
+        if (getCorner1() == null || getCorner2() == null)
+            return new BoundingBox();
+
         return new BoundingBox(getCorner1().getX(), getCorner1().getY(), getCorner1().getZ(),
                 getCorner2().getX(), getCorner2().getY(), getCorner2().getZ());
     }
@@ -1331,24 +1342,6 @@ public class Arena {
 
     public void setAbilitySound(boolean bool) {
         config.set(path + ".sounds.ability", bool);
-        Main.saveArenaData();
-    }
-
-    public boolean hasDynamicCount() {
-        return config.getBoolean(path + ".dynamicCount");
-    }
-
-    public void setDynamicCount(boolean bool) {
-        config.set(path + ".dynamicCount", bool);
-        Main.saveArenaData();
-    }
-
-    public boolean hasDynamicDifficulty() {
-        return config.getBoolean(path + ".dynamicDifficulty");
-    }
-
-    public void setDynamicDifficulty(boolean bool) {
-        config.set(path + ".dynamicDifficulty", bool);
         Main.saveArenaData();
     }
 
@@ -1457,16 +1450,17 @@ public class Arena {
         if (getActiveCount() > 0 && activeTasks.containsKey(FORCE_START_ARENA))
             throw new ArenaTaskException("Arena was force started");
 
-        // Clear active tasks
+        // Clear active tasks and countdowns
         activeTasks.forEach((name, task) -> task.cancel());
         activeTasks.clear();
+        CountdownManager.stopCountdown(this);
 
         // Start repeating notification of waiting
         activeTasks.put(NOTIFY_WAITING, new BukkitRunnable() {
             @Override
             public void run() {
                 // Task
-                getPlayers().forEach(player ->
+                players.forEach(player ->
                         PlayerManager.notifyAlert(player.getPlayer(), LanguageManager.messages.waitingForPlayers));
                 CommunicationManager.debugInfo("%s is currently waiting for players to start.", 2,
                         getName());
@@ -1491,20 +1485,12 @@ public class Arena {
             public void run() {
                 String LIST = "  - ";
                 // Task
-                getPlayers().forEach(player -> {
+                players.forEach(player -> {
                     PlayerManager.notify(player.getPlayer(), new ColoredMessage(ChatColor.DARK_AQUA,
                             LanguageManager.messages.quickInfo), new ColoredMessage(ChatColor.DARK_GREEN, getName()));
                     player.getPlayer().sendMessage(new ColoredMessage(ChatColor.GOLD, LIST + (getMaxWaves() < 0 ?
                             LanguageManager.messages.noLastWave : String.format(LanguageManager.messages.finalWave,
                             getMaxWaves()))).toString());
-                    player.getPlayer().sendMessage(new ColoredMessage(hasDynamicCount() ? ChatColor.GREEN :
-                            ChatColor.RED, String.format(LIST + LanguageManager.messages.dynamicMobCount,
-                            hasDynamicCount() ? LanguageManager.messages.will :
-                                    LanguageManager.messages.willNot)).toString());
-                    player.getPlayer().sendMessage(new ColoredMessage(hasDynamicDifficulty() ? ChatColor.GREEN :
-                            ChatColor.RED, String.format(LIST + LanguageManager.messages.dynamicDifficulty,
-                            hasDynamicDifficulty() ? LanguageManager.messages.will :
-                                    LanguageManager.messages.willNot)).toString());
                     player.getPlayer().sendMessage(new ColoredMessage(hasDynamicPrices() ? ChatColor.GREEN :
                             ChatColor.RED, String.format(LIST + LanguageManager.messages.dynamicPrices,
                             hasDynamicPrices() ? LanguageManager.messages.will :
@@ -1541,8 +1527,8 @@ public class Arena {
             throw new ArenaClosedException();
         if (status != ArenaStatus.WAITING)
             throw new ArenaStatusException(ArenaStatus.WAITING);
-        if (getActiveCount() == 0)
-            throw new ArenaTaskException("Arena cannot start countdown without players");
+        if (getActiveCount() < getMinPlayers())
+            throw new ArenaTaskException("Arena must meet the minimum player count to start");
 
         // Clear active tasks EXCEPT notify info
         Map<String, BukkitRunnable> cache = new HashMap<>();
@@ -1555,7 +1541,7 @@ public class Arena {
         activeTasks.putAll(cache);
 
         // Two-minute notice
-        getPlayers().forEach(player ->
+        players.forEach(player ->
                 PlayerManager.notifyAlert(
                         player.getPlayer(),
                         LanguageManager.messages.minutesLeft,
@@ -1568,7 +1554,7 @@ public class Arena {
             @Override
             public void run() {
                 // Task
-                getPlayers().forEach(player ->
+                players.forEach(player ->
                         PlayerManager.notifyAlert(
                                 player.getPlayer(),
                                 LanguageManager.messages.minutesLeft,
@@ -1588,7 +1574,7 @@ public class Arena {
             @Override
             public void run() {
                 // Task
-                getPlayers().forEach(player ->
+                players.forEach(player ->
                         PlayerManager.notifyAlert(
                                 player.getPlayer(),
                                 LanguageManager.messages.secondsLeft,
@@ -1609,7 +1595,7 @@ public class Arena {
             @Override
             public void run() {
                 // Task
-                getPlayers().forEach(player ->
+                players.forEach(player ->
                         PlayerManager.notifyAlert(
                                 player.getPlayer(),
                                 LanguageManager.messages.secondsLeft,
@@ -1631,7 +1617,7 @@ public class Arena {
             @Override
             public void run() {
                 // Task
-                getPlayers().forEach(player ->
+                players.forEach(player ->
                         PlayerManager.notifyAlert(
                                 player.getPlayer(),
                                 LanguageManager.messages.secondsLeft,
@@ -1663,6 +1649,10 @@ public class Arena {
             }
         });
         activeTasks.get(START_ARENA).runTaskLater(Main.plugin, Utils.secondsToTicks(Utils.minutesToSeconds(2)));
+
+        // Start countdown bar
+        CountdownManager.stopCountdown(this);
+        CountdownManager.startWaitingCountdown(this);
     }
 
     public void expediteCountDown() throws ArenaClosedException, ArenaStatusException, ArenaTaskException {
@@ -1681,7 +1671,7 @@ public class Arena {
         activeTasks.clear();
 
         // Forced 10-second notice
-        getPlayers().forEach(player -> {
+        players.forEach(player -> {
                 PlayerManager.notifyAlert(player.getPlayer(), LanguageManager.messages.maxCapacity);
                 PlayerManager.notifyAlert(
                         player.getPlayer(),
@@ -1697,7 +1687,7 @@ public class Arena {
             @Override
             public void run() {
                 // Task
-                getPlayers().forEach(player ->
+                players.forEach(player ->
                         PlayerManager.notifyAlert(
                                 player.getPlayer(),
                                 LanguageManager.messages.secondsLeft,
@@ -1728,6 +1718,10 @@ public class Arena {
             }
         });
         activeTasks.get(FORCE_START_ARENA).runTaskLater(Main.plugin, Utils.secondsToTicks(10));
+
+        // Start countdown bar
+        CountdownManager.stopCountdown(this);
+        CountdownManager.startExpeditedWaitingCountdown(this);
     }
 
     private void startGame() throws ArenaClosedException, ArenaStatusException {
@@ -1741,29 +1735,28 @@ public class Arena {
         activeTasks.forEach((name, task) -> task.cancel());
         activeTasks.clear();
 
+        // Clear countdown bar
+        CountdownManager.stopCountdown(this);
+
         // Reset villager and enemy count, set new game ID, clear arena
         resetVillagers();
         resetEnemies();
         newGameID();
         WorldManager.clear(getCorner1(), getCorner2());
 
-        // Teleport players to arena if waiting room exists, otherwise clear inventory
-        if (getWaitingRoom() != null) {
-            for (VDPlayer vdPlayer : getActives())
-                PlayerManager.teleAdventure(vdPlayer.getPlayer(), getPlayerSpawn().getLocation());
+        // Teleport players to arena, and spectators if there was a waiting room
+        if (getWaitingRoom() != null)
             for (VDPlayer player : getSpectators())
                 PlayerManager.teleSpectator(player.getPlayer(), getPlayerSpawn().getLocation());
-        } else {
-            for (VDPlayer vdPlayer : getActives())
-                vdPlayer.getPlayer().getInventory().clear();
-        }
+        for (VDPlayer vdPlayer : getActives())
+            PlayerManager.teleAdventure(vdPlayer.getPlayer(), getPlayerSpawn().getLocation());
 
         // Set arena status to active
         setStatus(ArenaStatus.ACTIVE);
 
         // Stop waiting sound
         if (getWaitingSound() != null)
-            getPlayers().forEach(player ->
+            players.forEach(player ->
                     player.getPlayer().stopSound(getWaitingSound()));
 
         // Start particles if enabled
@@ -1804,7 +1797,7 @@ public class Arena {
         ));
 
         // Start dialogue, then trigger WaveEndEvent
-        for (VDPlayer player : getPlayers()) {
+        for (VDPlayer player : players) {
             PlayerManager.namedNotify(
                     player.getPlayer(),
                     new ColoredMessage(ChatColor.DARK_GREEN, LanguageManager.names.villageCaptain),
@@ -1815,7 +1808,7 @@ public class Arena {
             @Override
             public void run() {
                 // Task
-                for (VDPlayer player : getPlayers()) {
+                for (VDPlayer player : players) {
                     PlayerManager.namedNotify(
                             player.getPlayer(),
                             new ColoredMessage(ChatColor.DARK_GREEN, LanguageManager.names.villageCaptain),
@@ -1834,7 +1827,7 @@ public class Arena {
             @Override
             public void run() {
                 // Task
-                for (VDPlayer player : getPlayers()) {
+                for (VDPlayer player : players) {
                     PlayerManager.namedNotify(
                             player.getPlayer(),
                             new ColoredMessage(ChatColor.DARK_GREEN, LanguageManager.names.villageCaptain),
@@ -1851,7 +1844,7 @@ public class Arena {
             @Override
             public void run() {
                 // Task
-                for (VDPlayer player : getPlayers()) {
+                for (VDPlayer player : players) {
                     PlayerManager.namedNotify(
                             player.getPlayer(),
                             new ColoredMessage(ChatColor.DARK_GREEN, LanguageManager.names.villageCaptain),
@@ -1869,7 +1862,7 @@ public class Arena {
             @Override
             public void run() {
                 // Task
-                for (VDPlayer player : getPlayers()) {
+                for (VDPlayer player : players) {
                     PlayerManager.namedNotify(
                             player.getPlayer(),
                             new ColoredMessage(ChatColor.DARK_GREEN, LanguageManager.names.villageCaptain),
@@ -1990,7 +1983,7 @@ public class Arena {
         if (status != ArenaStatus.ACTIVE)
             throw new ArenaStatusException(ArenaStatus.ACTIVE);
 
-        // Clear active tasks EXCEPT update and show status
+        // Clear active tasks EXCEPT custom game ticking
         Map<String, BukkitRunnable> cache = new HashMap<>();
         activeTasks.forEach((name, task) -> {
             if (!name.contains(TICK))
@@ -2000,12 +1993,12 @@ public class Arena {
         activeTasks.clear();
         activeTasks.putAll(cache);
 
-        // Stop time limit bar
-        removeTimeLimitBar();
+        // Stop wave time limit countdown
+        CountdownManager.stopCountdown(this);
 
         // Play wave end sound if not just starting
         if (hasWaveFinishSound() && getCurrentWave() != 0)
-            for (VDPlayer vdPlayer : getPlayers()) {
+            for (VDPlayer vdPlayer : players) {
                 vdPlayer.getPlayer().playSound(getPlayerSpawn().getLocation().clone().add(0, -8, 0),
                         Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 10, .75f);
             }
@@ -2055,14 +2048,15 @@ public class Arena {
         // Refresh the scoreboards
         updateScoreboards();
 
-        // Increment wave
+        // Increment wave and reset max enemies
         incrementCurrentWave();
+        maxEnemies = 0;
 
         // Win condition
         if (getCurrentWave() == getMaxWaves()) {
             endGame();
             if (hasWinSound()) {
-                for (VDPlayer vdPlayer : getPlayers()) {
+                for (VDPlayer vdPlayer : players) {
                     vdPlayer.getPlayer().playSound(getPlayerSpawn().getLocation().clone().add(0, -8, 0),
                             Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 }
@@ -2144,30 +2138,8 @@ public class Arena {
                                 String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
                         " ", Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
 
-        // Notify players of new shop levels, then start after 25 seconds
-        if (currentWave % 5 == 0) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> getActives().forEach(player ->
-                    player.getPlayer().sendTitle(CommunicationManager.format(
-                                    "&6" + LanguageManager.messages.shopUpgrade),
-                            CommunicationManager.format("&7" +
-                                    String.format(LanguageManager.messages.shopInfo, "5")),
-                            Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5),
-                            Utils.secondsToTicks(1))), Utils.secondsToTicks(4));
-            activeTasks.put(START_WAVE, new BukkitRunnable() {
-                @Override
-                public void run() {
-                    // Task
-                    try {
-                        startWave();
-                    } catch (ArenaException ignored) {
-                    }
-                }
-            });
-            activeTasks.get(START_WAVE).runTaskLater(Main.plugin, Utils.secondsToTicks(25));
-        }
-
         // Start wave after 15 seconds if not first wave
-        else if (currentWave != 1) {
+        if (currentWave != 1) {
             activeTasks.put(START_WAVE, new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -2204,7 +2176,7 @@ public class Arena {
 
         // Play wave start sound
         if (hasWaveStartSound()) {
-            for (VDPlayer vdPlayer : getPlayers()) {
+            for (VDPlayer vdPlayer : players) {
                 vdPlayer.getPlayer().playSound(getPlayerSpawn().getLocation().clone().add(0, -8, 0),
                         Sound.ENTITY_ENDER_DRAGON_GROWL, 10, .25f);
             }
@@ -2212,64 +2184,7 @@ public class Arena {
 
         // Start wave count down
         if (getWaveTimeLimit() != -1) {
-            activeTasks.put(UPDATE_BAR, new BukkitRunnable() {
-                double progress = 1;
-                double time;
-                boolean messageSent;
-
-                @Override
-                public void run() {
-                    // Get proper multiplier
-                    double multiplier = 1 + .2 * ((int) getCurrentDifficulty() - .5);
-                    if (!hasDynamicLimit())
-                        multiplier = 1;
-
-                    // Add time limit bar if it doesn't exist
-                    if (getTimeLimitBar() == null) {
-                        progress = 1;
-                        startTimeLimitBar();
-                        getPlayers().forEach(vdPlayer ->
-                                addPlayerToTimeLimitBar(vdPlayer.getPlayer()));
-                        time = 1d / Utils.minutesToSeconds(getWaveTimeLimit() * multiplier);
-                        messageSent = false;
-
-                        // Debug message to console
-                        CommunicationManager.debugInfo("Adding time limit bar to %s", 2, getName());
-                    }
-
-                    // Trigger wave end event
-                    else if (progress <= 0) {
-                        progress = 0;
-                        try {
-                            endGame();
-                        } catch (ArenaException e) {
-                            resetGame();
-                        }
-                    }
-
-                    // Decrement time limit bar
-                    else {
-                        if (progress <= time * Utils.minutesToSeconds(1)) {
-                            updateTimeLimitBar(BarColor.RED, progress);
-                            if (!messageSent) {
-                                // Send warning
-                                getActives().forEach(player ->
-                                        player.getPlayer().sendTitle(CommunicationManager.format(
-                                                        "&c" + LanguageManager.messages.oneMinuteWarning),
-                                                null, Utils.secondsToTicks(.5), Utils.secondsToTicks(1.5),
-                                                Utils.secondsToTicks(.5)));
-
-                                // Set monsters glowing when time is low
-                                setMonsterGlow();
-
-                                messageSent = true;
-                            }
-                        } else updateTimeLimitBar(progress);
-                        progress -= time;
-                    }
-                }
-            });
-            activeTasks.get(UPDATE_BAR).runTaskTimer(Main.plugin, 0, Utils.secondsToTicks(1));
+            CountdownManager.startWaveTimeLimitCountdown(this);
         }
 
         // Schedule and record calibration
@@ -2282,117 +2197,13 @@ public class Arena {
         });
         activeTasks.get(CALIBRATE).runTaskTimer(Main.plugin, 0, Utils.secondsToTicks(0.25));
 
-        // Get spawn data
-        DataManager data = new DataManager("spawnTables/" + getSpawnTableFile());
-        String wave = Integer.toString(currentWave);
-        if (!data.getConfig().contains(wave)) {
-            if (data.getConfig().contains("freePlay"))
-                wave = "freePlay";
-            else wave = "1";
-        }
-        int monsterCount = data.getConfig().getInt(wave + ".count.m");
-        List<String> villagers = getTypeRatio(data, wave + ".vtypes");
-        List<String> monsterTypeRatio = getTypeRatio(data, wave + ".mtypes");
-
-        // Account for existing villagers
-        Objects.requireNonNull(getPlayerSpawn().getLocation().getWorld()).getNearbyEntities(getBounds()).stream()
-                .filter(Objects::nonNull)
-                .filter(entity -> entity.hasMetadata(VDMob.VD)).filter(entity -> entity instanceof Villager)
-                .forEach(villager -> {
-                    if (((Villager) villager).getProfession() == Villager.Profession.FLETCHER)
-                        villagers.remove(VDFletcher.KEY);
-                    else villagers.remove(VDNormalVillager.KEY);
-                });
-
-        // Calculate count multiplier
-        double countMultiplier = Math.log((getActiveCount() + 7) / 10d) + 1;
-        if (!hasDynamicCount())
-            countMultiplier = 1;
-
-        // Set mobs left to spawn
-        if (monsterCount != 0)
-            monsterCount = Math.max((int) (monsterCount * countMultiplier), 1);
-
-        // Prepare, schedule, and start spawning
-        Arena arena = this;
-        Random r = new Random();
-        int delay = 0;
-        spawningVillagers = true;
-        for (int i = 0; i < villagers.size(); i++) {
-            delay += spawnDelayTicks(i);
-            int finalI = i;
-            spawnTasks.add(new BukkitRunnable() {
-                @Override
-                public void run() {
-                    // Get spawn location
-                    Location spawn = getVillagerSpawnLocations().get(r.nextInt(getVillagerSpawnLocations().size()));
-
-                    // Spawn
-                    try {
-                        addMob(VDMob.of(villagers.get(finalI), arena, spawn, null));
-                    } catch (InvalidVDMobKeyException e) {
-                        CommunicationManager.debugError("Invalid mob key detected in spawn file!", 1);
-                    }
-                }
-            }.runTaskLater(Main.plugin, delay));
-        }
-        spawnTasks.add(new BukkitRunnable() {
-            @Override
-            public void run() {
-                spawningVillagers = false;
-            }
-        }.runTaskLater(Main.plugin, delay));
-        delay = 0;
-        spawningMonsters = true;
-        for (int i = 0; i < monsterCount; i++) {
-            delay += spawnDelayTicks(i);
-            spawnTasks.add(new BukkitRunnable() {
-                @Override
-                public void run() {
-                    // Get spawn locations
-                    Location ground = getMonsterGroundSpawnLocations()
-                            .get(r.nextInt(getMonsterGroundSpawnLocations().size()));
-                    Location air = getMonsterAirSpawnLocations()
-                            .get(r.nextInt(getMonsterAirSpawnLocations().size()));
-
-                    // Spawn
-                    try {
-                        addMob(VDMob.of(monsterTypeRatio.get(r.nextInt(monsterTypeRatio.size())),
-                                arena, ground, air));
-                    } catch (InvalidVDMobKeyException e) {
-                        CommunicationManager.debugError("Invalid mob key detected in spawn file!", 1);
-                    } catch (Exception ignored) {
-                    }
-                }
-            }.runTaskLater(Main.plugin, delay));
-        }
-        spawnTasks.add(new BukkitRunnable() {
-            @Override
-            public void run() {
-                spawningMonsters = false;
-            }
-        }.runTaskLater(Main.plugin, delay));
-        // TODO: Spawn bosses
+        // Schedule spawning sequences
+        spawnTasks.addAll(SpawningUtil.generateVillagerSpawnSequence(this));
+        spawnTasks.addAll(SpawningUtil.generateMinionSpawnSequence(this));
 
         // Debug message to console
         CommunicationManager.debugInfo("%s started wave %s", 2, getName(),
                 Integer.toString(getCurrentWave()));
-    }
-
-    private int spawnDelayTicks(int mobNum) {
-        Random r = new Random();
-        return r.nextInt((int) (60 * Math.pow(Math.E, - mobNum / 60d)));
-    }
-
-    private List<String> getTypeRatio(DataManager data, String path) {
-        List<String> typeRatio = new ArrayList<>();
-
-        Objects.requireNonNull(data.getConfig().getConfigurationSection(path)).getKeys(false)
-                .forEach(type -> {
-                    for (int i = 0; i < data.getConfig().getInt(path + "." + type); i++)
-                        typeRatio.add(type);
-                });
-        return typeRatio;
     }
 
     public void updateScoreboards() {
@@ -2420,13 +2231,13 @@ public class Arena {
         setStatus(ArenaStatus.ENDING);
 
         // Notify players that the game has ended (Title)
-        getPlayers().forEach(player ->
+        players.forEach(player ->
                 player.getPlayer().sendTitle(CommunicationManager.format("&4&l" +
                                 LanguageManager.messages.gameOver), " ", Utils.secondsToTicks(.5),
                         Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
 
         // Notify players that the game has ended (Chat)
-        getPlayers().forEach(player ->
+        players.forEach(player ->
                 PlayerManager.notifyAlert(
                         player.getPlayer(),
                         LanguageManager.messages.end,
@@ -2439,13 +2250,13 @@ public class Arena {
 
         // Remove mob AI and set them invincible
         mobs.forEach(mob -> {
-            mob.getEntity().setAI(false);
+            mob.getEntity().setAware(false);
             mob.getEntity().setInvulnerable(true);
         });
 
         // Play sound if turned on and arena is either not winning or has unlimited waves
         if (hasLoseSound() && (getCurrentWave() <= getMaxWaves() || getMaxWaves() < 0)) {
-            for (VDPlayer vdPlayer : getPlayers()) {
+            for (VDPlayer vdPlayer : players) {
                 vdPlayer.getPlayer().playSound(getPlayerSpawn().getLocation().clone().add(0, -8, 0),
                         Sound.ENTITY_ENDER_DRAGON_DEATH, 10, .5f);
             }
@@ -2456,7 +2267,7 @@ public class Arena {
             // Check for record
             if (checkNewRecord(new ArenaRecord(getCurrentWave() - 1, getActives().stream()
                     .map(vdPlayer -> vdPlayer.getPlayer().getName()).collect(Collectors.toList())))) {
-                getPlayers().forEach(player -> player.getPlayer().sendTitle(
+                players.forEach(player -> player.getPlayer().sendTitle(
                         new ColoredMessage(ChatColor.GREEN, LanguageManager.messages.record).toString(), null,
                         Utils.secondsToTicks(.5), Utils.secondsToTicks(3.5), Utils.secondsToTicks(1)));
                 refreshArenaBoard();
@@ -2494,7 +2305,7 @@ public class Arena {
         }
 
         // Reset the arena
-        removeTimeLimitBar();
+        CountdownManager.stopCountdown(this);
         activeTasks.put(KICK, new BukkitRunnable() {
             @Override
             public void run() {
@@ -2626,12 +2437,12 @@ public class Arena {
     }
 
     public void kickPlayers() {
-        getPlayers().forEach(player ->
+        players.forEach(player ->
                 Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
                         Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player.getPlayer()))));
     }
 
-    private void resetGame() {
+    public void resetGame() {
         // Clear active tasks
         activeTasks.forEach((name, task) -> task.cancel());
         activeTasks.clear();
@@ -2693,8 +2504,16 @@ public class Arena {
         return spawningMonsters;
     }
 
+    public void setSpawningMonsters(boolean spawningMonsters) {
+        this.spawningMonsters = spawningMonsters;
+    }
+
     public boolean isSpawningVillagers() {
         return spawningVillagers;
+    }
+
+    public void setSpawningVillagers(boolean spawningVillagers) {
+        this.spawningVillagers = spawningVillagers;
     }
 
     public int getGameID() {
@@ -2709,16 +2528,9 @@ public class Arena {
         return currentWave;
     }
 
-    public int getCurrentShopLevel() {
-        return currentWave / 5 + 1;
-    }
-
     public double getCurrentDifficulty() {
-        double difficulty = Math.pow(Math.E, Math.pow(Math.max(currentWave - 1, 0), .35) /
+        return Math.pow(Math.E, Math.pow(Math.max(currentWave - 1, 0), .4) /
                 (4.5 - getDifficultyMultiplier() / 2d));
-        if (hasDynamicDifficulty())
-            difficulty *= Math.pow(.1 * getActiveCount() + .6, .2);
-        return difficulty;
     }
 
     public void incrementCurrentWave() {
@@ -2745,6 +2557,14 @@ public class Arena {
 
     public void resetEnemies() {
         enemies = 0;
+    }
+
+    public int getMaxEnemies() {
+        return maxEnemies;
+    }
+
+    public void setMaxEnemies(int maxEnemies) {
+        this.maxEnemies = maxEnemies;
     }
 
     public int getGolems() {
@@ -2787,14 +2607,21 @@ public class Arena {
     }
 
     /**
-     * @return A list of all {@link VDPlayer} in this arena.
+     * @return A list of all {@link VDPlayer}s in this arena that aren't of the {@link PlayerStatus} LEFT.
      */
     public List<VDPlayer> getPlayers() {
         return players;
     }
 
     /**
-     * @return A list of {@link VDPlayer} of the {@link PlayerStatus} ALIVE.
+     * @return A list of all {@link Player}s in this arena that aren't of the {@link PlayerStatus} LEFT.
+     */
+    public List<Player> getVanillaPlayers() {
+        return players.stream().map(VDPlayer::getPlayer).collect(Collectors.toList());
+    }
+
+    /**
+     * @return A list of {@link VDPlayer}s of the {@link PlayerStatus} ALIVE.
      */
     public List<VDPlayer> getAlives() {
         return players.stream().filter(Objects::nonNull).filter(p -> p.getStatus() == PlayerStatus.ALIVE)
@@ -2802,7 +2629,7 @@ public class Arena {
     }
 
     /**
-     * @return A list of {@link VDPlayer} of the {@link PlayerStatus} GHOST.
+     * @return A list of {@link VDPlayer}s of the {@link PlayerStatus} GHOST.
      */
     public List<VDPlayer> getGhosts() {
         return players.stream().filter(Objects::nonNull).filter(p -> p.getStatus() == PlayerStatus.GHOST)
@@ -2810,7 +2637,7 @@ public class Arena {
     }
 
     /**
-     * @return A list of {@link VDPlayer} of the {@link PlayerStatus} SPECTATOR.
+     * @return A list of {@link VDPlayer}s of the {@link PlayerStatus} SPECTATOR.
      */
     public List<VDPlayer> getSpectators() {
         return players.stream().filter(Objects::nonNull).filter(p -> p.getStatus() == PlayerStatus.SPECTATOR)
@@ -2818,7 +2645,7 @@ public class Arena {
     }
 
     /**
-     * @return A list of {@link VDPlayer} of the {@link PlayerStatus} ALIVE or GHOST.
+     * @return A list of {@link VDPlayer}s of the {@link PlayerStatus} ALIVE or GHOST.
      */
     public List<VDPlayer> getActives() {
         return Stream.concat(getAlives().stream(), getGhosts().stream()).collect(Collectors.toList());
@@ -2867,6 +2694,10 @@ public class Arena {
         }
     }
 
+    public void removePlayer(VDPlayer player) {
+        players.remove(player);
+    }
+
     public int getActiveCount() {
         return getActives().size();
     }
@@ -2889,76 +2720,6 @@ public class Arena {
 
     public void setCommunityChest(Inventory communityChest) {
         this.communityChest = communityChest;
-    }
-
-    public BossBar getTimeLimitBar() {
-        return timeLimitBar;
-    }
-
-    /**
-     * Create a time limit bar to display.
-     */
-    public void startTimeLimitBar() {
-        timeLimitBar = Bukkit.createBossBar(CommunicationManager.format("&e" +
-                        String.format(LanguageManager.names.timeBar, Integer.toString(getCurrentWave())) + " - " +
-                        getWaveTimeLimit() + ":00"),
-                BarColor.YELLOW, BarStyle.SOLID);
-    }
-
-    /**
-     * Updates the time limit bar's progress.
-     * @param progress The bar's new progress.
-     */
-    public void updateTimeLimitBar(double progress) {
-        timeLimitBar.setProgress(progress);
-        timeLimitBar.setTitle(getTimeLimitBarTitle(progress));
-    }
-
-    /**
-     * Updates the time limit bar's color and progress.
-     * @param color The bar's new color.
-     * @param progress The bar's new progress.
-     */
-    public void updateTimeLimitBar(BarColor color, double progress) {
-        timeLimitBar.setColor(color);
-        timeLimitBar.setProgress(progress);
-        timeLimitBar.setTitle(getTimeLimitBarTitle(progress));
-    }
-
-    /**
-     * Removes the time limit bar from every player.
-     */
-    private void removeTimeLimitBar() {
-        if (timeLimitBar != null) {
-            players.forEach(vdPlayer -> timeLimitBar.removePlayer(vdPlayer.getPlayer()));
-            timeLimitBar = null;
-        }
-    }
-
-    private String getTimeLimitBarTitle(double progress) {
-        int minutes = (int) (progress * getWaveTimeLimit());
-        int seconds = (int) ((progress * getWaveTimeLimit() - minutes) * 60 + 0.5);
-        return CommunicationManager.format("&e" +
-                String.format(LanguageManager.names.timeBar, Integer.toString(getCurrentWave())) + " - " +
-                minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
-    }
-
-    /**
-     * Displays the time limit bar to a player.
-     * @param player {@link Player} to display the time limit bar to.
-     */
-    public void addPlayerToTimeLimitBar(Player player) {
-        if (timeLimitBar != null)
-            timeLimitBar.addPlayer(player);
-    }
-
-    /**
-     * Removes the time limit bar from a player's display.
-     * @param player {@link Player} to remove the time limit bar from.
-     */
-    public void removePlayerFromTimeLimitBar(Player player) {
-        if (timeLimitBar != null && player != null)
-            timeLimitBar.removePlayer(player);
     }
 
     /**
@@ -3102,8 +2863,6 @@ public class Arena {
         setMaxWaves(arenaToCopy.getMaxWaves());
         setWaveTimeLimit(arenaToCopy.getWaveTimeLimit());
         setDifficultyMultiplier(arenaToCopy.getDifficultyMultiplier());
-        setDynamicCount(arenaToCopy.hasDynamicCount());
-        setDynamicDifficulty(arenaToCopy.hasDynamicDifficulty());
         setLateArrival(arenaToCopy.hasLateArrival());
         setDynamicLimit(arenaToCopy.hasDynamicLimit());
         setDynamicPrices(arenaToCopy.hasDynamicPrices());
@@ -3143,7 +2902,7 @@ public class Arena {
      */
     public void wipe() {
         // Kick players
-        getPlayers().forEach(vdPlayer -> Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
+        players.forEach(vdPlayer -> Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
                 Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(vdPlayer.getPlayer()))));
 
         // Clear the arena
