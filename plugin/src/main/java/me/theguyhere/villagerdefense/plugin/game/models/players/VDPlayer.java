@@ -4,7 +4,6 @@ import com.google.common.util.concurrent.AtomicDouble;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
-import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
@@ -254,7 +253,7 @@ public class VDPlayer {
         AtomicInteger toughness = new AtomicInteger();
         AtomicDouble weight = new AtomicDouble(1);
         String damage = Integer.toString(baseDamage);
-
+        AtomicDouble increase = new AtomicDouble();
 
         // Make sure health was properly initialized
         if (maxHealth <= 0)
@@ -331,10 +330,24 @@ public class VDPlayer {
                 }
             });
             damageValues.sort(Comparator.comparingInt(Integer::intValue));
+
+            // Calculate boosts or reductions
+            getPlayer().getActivePotionEffects().forEach(potionEffect -> {
+                if (PotionEffectType.INCREASE_DAMAGE.equals(potionEffect.getType()))
+                    increase.addAndGet((1 + potionEffect.getAmplifier()) * .1);
+                else if (PotionEffectType.WEAKNESS.equals(potionEffect.getType()))
+                    increase.addAndGet(- (1 + potionEffect.getAmplifier()) * .1);
+            });
+            if (boost && PlayerManager.hasAchievement(player, Achievement.topKills9().getID()))
+                increase.addAndGet(.1);
+
+            // Apply base damage and multipliers
+            damageValues.replaceAll(original -> (int) ((original + (perBlock.get() ? 0 : baseDamage)) *
+                    (1 + increase.get())));
+
             if (damageValues.size() == 1)
-                damage = Integer.toString(damageValues.get(0) + (perBlock.get() ? 0 : baseDamage));
-            else damage = (damageValues.get(0) + (perBlock.get() ? 0 : baseDamage)) + "-" +
-                    (damageValues.get(damageValues.size() - 1) + (perBlock.get() ? 0 : baseDamage));
+                damage = Integer.toString((damageValues.get(0)));
+            else damage = damageValues.get(0) + "-" + damageValues.get(damageValues.size() - 1);
         } catch (Exception ignored) {
         }
         try {
@@ -461,10 +474,11 @@ public class VDPlayer {
         getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
                 new ColoredMessage(absorption > 0 ? ChatColor.GOLD : ChatColor.RED,
                         Utils.HP + " " + (currentHealth + absorption) + "/" + maxHealth) + SPACE + middleText
-                         + SPACE + new ColoredMessage(ammoCap.get() < ammoCost.get() ? ChatColor.RED :
+                         + SPACE + new ColoredMessage(ammoCap.get() < ammoCost.get() ? ChatColor.DARK_RED :
                         crushing.get() ? ChatColor.YELLOW : penetrating.get() ? ChatColor.RED : ChatColor.GREEN,
                         (range.get() ? Utils.ARROW : Utils.DAMAGE) + " " + damage +
-                                (perBlock.get() ? " /" + Utils.BLOCK + " +" + baseDamage : ""))));
+                                (perBlock.get() ? " /" + Utils.BLOCK + " +" + (int) (baseDamage *
+                                        (1 + increase.get())) : ""))));
 
         // Update normal health display
         getPlayer().setHealth(Math.max(currentHealth *

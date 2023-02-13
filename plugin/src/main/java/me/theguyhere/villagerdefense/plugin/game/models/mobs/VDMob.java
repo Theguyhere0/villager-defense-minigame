@@ -196,7 +196,8 @@ public abstract class VDMob {
     }
 
     public PotionEffect dealEffect() {
-        return effectType == null ? null : new PotionEffect(effectType, effectDuration, effectLevel - 1);
+        return effectType == null ? null : new PotionEffect(effectType, Utils.secondsToTicks(effectDuration),
+                effectLevel - 1);
     }
 
     public int getPierce() {

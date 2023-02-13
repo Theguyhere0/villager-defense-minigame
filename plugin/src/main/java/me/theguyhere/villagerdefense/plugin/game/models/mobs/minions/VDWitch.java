@@ -62,7 +62,7 @@ public class VDWitch extends VDMinion {
                 type = PotionEffectType.POISON;
         }
 
-        return new PotionEffect(type, effectDuration, effectLevel - 1);
+        return new PotionEffect(type, Utils.secondsToTicks(effectDuration), effectLevel - 1);
     }
 
     /**
@@ -194,6 +194,6 @@ public class VDWitch extends VDMinion {
      */
     protected static int getValue(double difficulty) {
         int level = getLevel(difficulty);
-        return getValue(getHealth(level), getArmor(level), getToughness(level), 9, 20);
+        return getValue(getHealth(level), getArmor(level), getToughness(level), 5, 20);
     }
 }

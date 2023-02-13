@@ -149,6 +149,6 @@ public class VDBlaze extends VDMinion {
      */
     protected static int getValue(double difficulty) {
         int level = getLevel(difficulty);
-        return getValue(getHealth(level), getArmor(level), getToughness(level), 8, 20);
+        return getValue(getHealth(level), getArmor(level), getToughness(level), 4, 20);
     }
 }

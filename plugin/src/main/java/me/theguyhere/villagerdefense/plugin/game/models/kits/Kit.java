@@ -10,7 +10,8 @@ import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Boots;
 import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Chestplate;
 import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Helmet;
 import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Leggings;
-import me.theguyhere.villagerdefense.plugin.game.models.items.food.ShopFood;
+import me.theguyhere.villagerdefense.plugin.game.models.items.food.FarmerCarrot;
+import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.OrcClub;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Scythe;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Sword;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
@@ -29,7 +30,7 @@ import java.util.*;
  * A class representing kits in Villager Defense. Comes with static methods for the following kits:<br/>
  * <br/><b>Gift Kits:</b><ul>
  *     <li>Orc</li>
- *     <li>Farmer</li>
+ *     <li>FarmerCarrot</li>
  *     <li>Soldier</li>
  *     <li>Tailor</li>
  *     <li>Alchemist</li>
@@ -405,15 +406,10 @@ public class Kit {
         Kit kit = new Kit(LanguageManager.kits.orc.name, KitType.GIFT, "orc", Material.STICK);
         kit.addMasterDescription(LanguageManager.kits.orc.description);
         kit.addPrice(1, 0);
-
-        HashMap<Enchantment, Integer> enchants = new HashMap<>();
-        enchants.put(Enchantment.KNOCKBACK, 5);
         kit.addItems(1, new ItemStack[]{
                 Sword.create(VDItem.Tier.T0, Sword.SwordType.TIERED),
-                ItemManager.createItem(Material.STICK, new ColoredMessage(ChatColor.GREEN,
-                        LanguageManager.kits.orc.items.club).toString(), ItemManager.HIDE_ENCHANT_FLAGS, enchants,
-                        CommunicationManager.formatDescriptionList(ChatColor.GRAY,
-                                LanguageManager.kits.orc.items.clubDesc, Utils.LORE_CHAR_LIMIT))});
+                OrcClub.create()
+        });
         return kit;
     }
     @NotNull
@@ -423,11 +419,7 @@ public class Kit {
         kit.addPrice(1, 0);
         kit.addItems(1, new ItemStack[]{
                 Sword.create(VDItem.Tier.T0, Sword.SwordType.TIERED),
-                ItemManager.removeLastLore(ItemManager.setAmount(
-                        ItemManager.rename(ShopFood.create(VDItem.Tier.T2, ShopFood.ShopFoodType.TIERED),
-                        VDItem.formatName(ChatColor.GREEN, LanguageManager.kits.farmer.items.carrot,
-                                VDItem.Tier.UNIQUE)),
-                        5))
+                FarmerCarrot.create()
         });
         return kit;
     }

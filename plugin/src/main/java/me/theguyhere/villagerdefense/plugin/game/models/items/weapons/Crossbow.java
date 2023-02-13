@@ -127,14 +127,33 @@ public abstract class Crossbow extends VDWeapon {
                 damageLow + "-" + damageHigh)));
 
         // Set pierce
+        int pierce;
+        switch (tier) {
+            case T1:
+            case T2:
+                pierce = 1;
+                break;
+            case T3:
+            case T4:
+                pierce = 2;
+                break;
+            case T5:
+                pierce = 3;
+                break;
+            case T6:
+                pierce = 4;
+                break;
+            default:
+                pierce = 0;
+        }
         lores.add(CommunicationManager.format(PIERCE, new ColoredMessage(ChatColor.GOLD,
-                Integer.toString(2))));
+                Integer.toString(pierce))));
 
         // Set attack speed
         lores.add(CommunicationManager.format(SPEED, Double.toString(0.5)));
 
         // Set ammo cost
-        lores.add(CommunicationManager.format(AMMO_COST, new ColoredMessage(ChatColor.RED, Integer.toString(2))));
+        lores.add(CommunicationManager.format(AMMO_COST, new ColoredMessage(ChatColor.RED, Integer.toString(3))));
 
         // Set durability
         int durability;

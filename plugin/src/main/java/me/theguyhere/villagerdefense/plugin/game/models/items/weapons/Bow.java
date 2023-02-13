@@ -128,7 +128,7 @@ public abstract class Bow extends VDWeapon {
         lores.add(CommunicationManager.format(SPEED, Double.toString(1)));
 
         // Set ammo cost
-        lores.add(CommunicationManager.format(AMMO_COST, new ColoredMessage(ChatColor.RED, Integer.toString(1))));
+        lores.add(CommunicationManager.format(AMMO_COST, new ColoredMessage(ChatColor.RED, Integer.toString(2))));
 
         // Set durability
         int durability;

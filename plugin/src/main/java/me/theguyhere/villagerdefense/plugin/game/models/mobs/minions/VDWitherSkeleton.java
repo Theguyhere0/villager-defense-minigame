@@ -21,7 +21,7 @@ public class VDWitherSkeleton extends VDMinion {
                         .spawnEntity(location, EntityType.WITHER_SKELETON),
                 LanguageManager.mobs.witherSkeleton,
                 LanguageManager.mobLore.witherSkeleton,
-                AttackType.NORMAL
+                AttackType.PENETRATING
         );
         level = getLevel(arena.getCurrentDifficulty());
         setHealth(getHealth(level));

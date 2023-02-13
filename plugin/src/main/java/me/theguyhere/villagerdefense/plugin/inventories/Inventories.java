@@ -1604,8 +1604,6 @@ public class Inventories {
 		buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.T2, ShopFood.ShopFoodType.TIERED)));
 		buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.T3, ShopFood.ShopFoodType.TIERED)));
 		buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.T4, ShopFood.ShopFoodType.TIERED)));
-		buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.T5, ShopFood.ShopFoodType.TIERED)));
-		buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.T6, ShopFood.ShopFoodType.TIERED)));
 		buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.UNIQUE, ShopFood.ShopFoodType.CAPPLE)));
 		buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.UNIQUE, ShopFood.ShopFoodType.GAPPLE)));
 		buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.UNIQUE, ShopFood.ShopFoodType.TOTEM)));

@@ -265,7 +265,7 @@ public abstract class Ammo extends VDWeapon {
         });
 
         // Ignore if full or doesn't refill
-        if (maxCap.get() == capacity.get() || refill.get() == 0)
+        if (capacity.get() >= maxCap.get() || refill.get() == 0)
             return;
 
         // Set new refill if first cycle is over
@@ -277,7 +277,7 @@ public abstract class Ammo extends VDWeapon {
             double updatedRefillTimer = refillTimer.get() - .5;
             // Timer finished
             if (updatedRefillTimer < .1) {
-                capacity.addAndGet(Math.min(maxCap.get(), (boost ? 2 : 1)));
+                capacity.addAndGet(Math.min(maxCap.get() - capacity.get(), (boost ? 2 : 1)));
                 ChatColor color = capacity.get() >= .75 * maxCap.get() ? ChatColor.GREEN :
                         (capacity.get() <= .25 * maxCap.get() ? ChatColor.RED : ChatColor.YELLOW);
                 lores.set(capIndex.get(), CommunicationManager.format(CAPACITY,

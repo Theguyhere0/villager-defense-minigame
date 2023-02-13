@@ -228,7 +228,7 @@ errors:
   construction: "This feature is under construction!"
   economy: "Vault Economy is being used instead of Crystals!"
   emptyArena: "The arena has no players!"
-  endingSoon: "Game about to end!"
+  endingSoon: "The game about to end!"
   fatal: "Something went wrong"
   forcedChallenge: "This challenge is forced!"
   golem: "The arena can only have up to %s iron golems!"
@@ -456,21 +456,15 @@ itemLore:
       name: "Golden Apple %s"
       description: "A royal delicacy with insane healing powers."
     t1:
-      name: "Beetroot %s"
-      description: "A healthy morsel to keep the fight going."
-    t2:
-      name: "Carrot %s"
+      name: "Cookie %s"
       description: "A small snack to push through tough combat."
-    t3:
+    t2:
       name: "Bread %s"
       description: "A light meal to sustain the battle."
-    t4:
-      name: "Mutton %s"
-      description: "A decent meal to power the relentless fight."
-    t5:
+    t3:
       name: "Steak %s"
       description: "A hearty meal to dominate in combat."
-    t6:
+    t4:
       name: "Honey Carrot %s"
       description: "A tasty delicacy with great nutritional value."
     totem:
@@ -509,10 +503,11 @@ kits:
     name: "Blacksmith"
     description: "All equipment purchased are unbreakable"
   farmer:
-    name: "Farmer"
-    description: "Start with 5 carrots"
+    name: "FarmerCarrot"
+    description: "Start with 3 carrots"
     items:
-      carrot: "Farmer's Carrots"
+      carrot: "FarmerCarrot's Carrot"
+      carrotDesc: "A healthy appetizer to keep the fight going."
   giant:
     name: "Giant"
     description: "Permanent %s health boost"

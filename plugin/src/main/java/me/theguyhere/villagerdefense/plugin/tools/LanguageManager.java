@@ -609,8 +609,6 @@ public class LanguageManager {
             public final @NotNull Lore t2;
             public final @NotNull Lore t3;
             public final @NotNull Lore t4;
-            public final @NotNull Lore t5;
-            public final @NotNull Lore t6;
             public final @NotNull Lore totem;
 
             private ShopFoodLore() throws InvalidLanguageKeyException {
@@ -622,8 +620,6 @@ public class LanguageManager {
                 t2 = new Lore(pathPrefix + "t2");
                 t3 = new Lore(pathPrefix + "t3");
                 t4 = new Lore(pathPrefix + "t4");
-                t5 = new Lore(pathPrefix + "t5");
-                t6 = new Lore(pathPrefix + "t6");
                 totem = new Lore(pathPrefix + "totem");
             }
         }
@@ -775,6 +771,7 @@ public class LanguageManager {
         public static class Items extends Section {
             public final String boots;
             public final String carrot;
+            public final String carrotDesc;
             public final String chestplate;
             public final String club;
             public final String clubDesc;
@@ -810,6 +807,15 @@ public class LanguageManager {
                     else temp = null;
                 }
                 carrot = temp;
+
+                try {
+                    temp = getConfigString("carrotDesc");
+                } catch (InvalidLanguageKeyException e) {
+                    if (key.equals("farmer"))
+                        throw e;
+                    else temp = null;
+                }
+                carrotDesc = temp;
 
                 try {
                     temp = getConfigString("chestplate");
