@@ -111,7 +111,7 @@ public abstract class Axe extends VDWeapon {
         lores.add("");
 
         // Set attack type
-        lores.add(CommunicationManager.format(ATTACK_TYPE, ATTACK_TYPE_NORMAL));
+        lores.add(CommunicationManager.format(ATTACK_TYPE, ATTACK_TYPE_CRUSHING));
 
         // Set main damage
         int damageLow, damageHigh;

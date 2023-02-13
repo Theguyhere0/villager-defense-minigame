@@ -128,13 +128,6 @@ public class ItemManager {
         return item;
     }
 
-    // Makes an item unique so it becomes unstackable
-    @NotNull
-    public static ItemStack makeUnique(@NotNull ItemStack item) {
-        Random r = new Random();
-        return setModelData(item, r.nextInt());
-    }
-
     // Set custom model data
     @NotNull
     public static ItemStack setModelData(@NotNull ItemStack item, int modelData) {

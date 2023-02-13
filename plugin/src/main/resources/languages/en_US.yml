@@ -135,12 +135,6 @@ arenaStats:
   difficultyMultiplier:
     name: "Difficulty Multiplier"
     description: "Determines difficulty increase rate"
-  dynamicDifficulty:
-    name: "Dynamic Difficulty"
-    description: "Difficulty adjusting based on number of players"
-  dynamicMobCount:
-    name: "Dynamic Mob Count"
-    description: "Mob count adjusting based on number of players"
   dynamicPrices:
     name: "Dynamic Prices"
     description: "Prices adjusting based on number of players in the game"
@@ -640,8 +634,6 @@ messages:
   disabled: "DISABLED"
   durability: "Durability: %s"
   duration: "Duration: %s"
-  dynamicDifficulty: "Overall difficulty %s change depending on number of players."
-  dynamicMobCount: "Mob numbers %s change depending on number of players."
   dynamicPrices: "Shop prices %s change depending on number of players."
   dynamicTimeLimit: "Wave time limits %s change depending on difficulty."
   effect: "Effect: %s"
@@ -686,7 +678,6 @@ messages:
   leave: "LEAVE"
   leaveArena: "%s left the arena."
   level: "Level"
-  levelPlaceholder: "Locked until shop level %s"
   levelUp: "Level Up!  %s"
   manualUpdateWarn: "%s must be manually updated."
   maxCapacity: "Arena has reached max player capacity."
@@ -719,8 +710,6 @@ messages:
   rightClick: "Right click to use ability"
   seconds: "%s s"
   secondsLeft: "%s seconds until the game starts!"
-  shopInfo: "Shops upgrade every %s waves"
-  shopUpgrade: "Shops upgraded!"
   spectators: "Spectators"
   starting: "Starting in %s seconds"
   toughness: "Toughness: %s"
@@ -813,6 +802,7 @@ names:
   communityChest: "Community Chest"
   consumableShop: "Consumable Shop"
   crossbowShop: "Crossbow Shop"
+  crushing: "Crushing"
   crystal: "Crystal"
   crystalConverter: "%s Catalytic Converter"
   crystals: "Crystals"

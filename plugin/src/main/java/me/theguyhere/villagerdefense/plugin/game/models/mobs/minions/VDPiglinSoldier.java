@@ -20,7 +20,7 @@ public class VDPiglinSoldier extends VDMinion {
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.PIGLIN),
                 LanguageManager.mobs.piglinSoldier,
                 LanguageManager.mobLore.piglinSoldier,
-                AttackType.NORMAL
+                AttackType.CRUSHING
         );
         Piglin piglinSoldier = (Piglin) mob;
         piglinSoldier.setAdult();

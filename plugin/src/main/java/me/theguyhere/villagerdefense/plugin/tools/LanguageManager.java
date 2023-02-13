@@ -169,8 +169,6 @@ public class LanguageManager {
 
     public static class ArenaStats {
         public final @NotNull ArenaStat difficultyMultiplier;
-        public final @NotNull ArenaStat dynamicDifficulty;
-        public final @NotNull ArenaStat dynamicMobCount;
         public final @NotNull ArenaStat dynamicPrices;
         public final @NotNull ArenaStat dynamicTimeLimit;
         public final @NotNull ArenaStat golemCap;
@@ -182,8 +180,6 @@ public class LanguageManager {
 
         private ArenaStats() throws InvalidLanguageKeyException {
             difficultyMultiplier = new ArenaStat("difficultyMultiplier");
-            dynamicDifficulty = new ArenaStat("dynamicDifficulty");
-            dynamicMobCount = new ArenaStat("dynamicMobCount");
             dynamicPrices = new ArenaStat("dynamicPrices");
             dynamicTimeLimit = new ArenaStat("dynamicTimeLimit");
             golemCap = new ArenaStat("golemCap");
@@ -967,8 +963,6 @@ public class LanguageManager {
         public final @NotNull String disabled;
         public final @NotNull String durability;
         public final @NotNull String duration;
-        public final @NotNull String dynamicDifficulty;
-        public final @NotNull String dynamicMobCount;
         public final @NotNull String dynamicPrices;
         public final @NotNull String dynamicTimeLimit;
 
@@ -1010,7 +1004,6 @@ public class LanguageManager {
         public final @NotNull String leave;
         public final @NotNull String leaveArena;
         public final @NotNull String level;
-        public final @NotNull String levelPlaceholder;
         public final @NotNull String levelUp;
         public final @NotNull String manualUpdateWarn;
         public final @NotNull String maxCapacity;
@@ -1043,8 +1036,6 @@ public class LanguageManager {
         public final @NotNull String rightClick;
         public final @NotNull String seconds;
         public final @NotNull String secondsLeft;
-        public final @NotNull String shopInfo;
-        public final @NotNull String shopUpgrade;
         public final @NotNull String spectators;
         public final @NotNull String starting;
         public final @NotNull String toughness;
@@ -1100,8 +1091,6 @@ public class LanguageManager {
             disabled = getConfigString("disabled");
             durability = getConfigString("durability");
             duration = getConfigString("duration");
-            dynamicDifficulty = getConfigString("dynamicDifficulty");
-            dynamicMobCount = getConfigString("dynamicMobCount");
             dynamicPrices = getConfigString("dynamicPrices");
             dynamicTimeLimit = getConfigString("dynamicTimeLimit");
             effect = getConfigString("effect");
@@ -1142,7 +1131,6 @@ public class LanguageManager {
             leave = getConfigString("leave");
             leaveArena = getConfigString("leaveArena");
             level = getConfigString("level");
-            levelPlaceholder = getConfigString("levelPlaceholder");
             levelUp = getConfigString("levelUp");
             manualUpdateWarn = getConfigString("manualUpdateWarn");
             maxCapacity = getConfigString("maxCapacity");
@@ -1175,8 +1163,6 @@ public class LanguageManager {
             rightClick = getConfigString("rightClick");
             seconds = getConfigString("seconds");
             secondsLeft = getConfigString("secondsLeft");
-            shopInfo = getConfigString("shopInfo");
-            shopUpgrade = getConfigString("shopUpgrade");
             spectators = getConfigString("spectators");
             starting = getConfigString("starting");
             toughness = getConfigString("toughness");
@@ -1328,6 +1314,7 @@ public class LanguageManager {
         public final @NotNull String communityChest;
         public final @NotNull String consumableShop;
         public final @NotNull String crossbowShop;
+        public final @NotNull String crushing;
         public final @NotNull String crystal;
         public final @NotNull String crystalConverter;
         public final @NotNull String crystals;
@@ -1372,6 +1359,7 @@ public class LanguageManager {
             communityChest = getConfigString("communityChest");
             consumableShop = getConfigString("consumableShop");
             crossbowShop = getConfigString("crossbowShop");
+            crushing = getConfigString("crushing");
 
             // Special check for economy plugin to replace currency name
             if (Main.hasCustomEconomy())

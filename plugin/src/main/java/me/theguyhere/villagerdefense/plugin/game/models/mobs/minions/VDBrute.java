@@ -21,7 +21,7 @@ public class VDBrute extends VDMinion {
                         EntityType.PIGLIN_BRUTE),
                 LanguageManager.mobs.brute,
                 LanguageManager.mobLore.brute,
-                AttackType.PENETRATING
+                AttackType.CRUSHING
         );
         ((PiglinBrute) mob).setImmuneToZombification(true);
         level = getLevel(arena.getCurrentDifficulty());

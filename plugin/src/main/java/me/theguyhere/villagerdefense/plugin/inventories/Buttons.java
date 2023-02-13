@@ -80,12 +80,4 @@ public class Buttons {
     public static ItemStack nextPage() {
         return ItemManager.createItem(Material.FEATHER, CommunicationManager.format("&d&lNext Page"));
     }
-
-    // Placeholders
-    @NotNull
-    public static ItemStack levelPlaceholder(int level) {
-        return ItemManager.createItem(Material.GUNPOWDER, CommunicationManager.format(
-                new ColoredMessage(ChatColor.GRAY, LanguageManager.messages.levelPlaceholder),
-                Integer.toString(level)), ItemManager.BUTTON_FLAGS, null);
-    }
 }

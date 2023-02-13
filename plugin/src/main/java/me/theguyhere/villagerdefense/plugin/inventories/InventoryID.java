@@ -4,7 +4,7 @@ public enum InventoryID {
     ABILITY_UPGRADE_SHOP_MENU,
     ALLOWED_KITS_DISPLAY_MENU,
     ALLOWED_KITS_MENU,
-    AMMO_SHOP_MENU,
+    AMMO_UPGRADE_SHOP_MENU,
     ARENA_BOARD_CONFIRM_MENU,
     ARENA_BOARD_MENU,
     ARENA_BOUNDS_MENU,
@@ -90,9 +90,8 @@ public enum InventoryID {
     public static boolean isInGameShop(InventoryID id) {
         return id == InventoryID.SWORD_SHOP_MENU || id == InventoryID.AXE_SHOP_MENU ||
                 id == InventoryID.SCYTHE_SHOP_MENU || id == InventoryID.BOW_SHOP_MENU ||
-                id == InventoryID.CROSSBOW_SHOP_MENU || id == InventoryID.AMMO_SHOP_MENU ||
-                id == InventoryID.HELMET_SHOP_MENU || id == InventoryID.CHESTPLATE_SHOP_MENU ||
-                id == InventoryID.LEGGINGS_SHOP_MENU || id == InventoryID.BOOTS_SHOP_MENU ||
-                id == InventoryID.CONSUMABLE_SHOP_MENU;
+                id == InventoryID.CROSSBOW_SHOP_MENU || id == InventoryID.HELMET_SHOP_MENU ||
+                id == InventoryID.CHESTPLATE_SHOP_MENU || id == InventoryID.LEGGINGS_SHOP_MENU ||
+                id == InventoryID.BOOTS_SHOP_MENU || id == InventoryID.CONSUMABLE_SHOP_MENU;
     }
 }

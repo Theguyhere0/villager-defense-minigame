@@ -73,6 +73,8 @@ public class Arena {
     private int villagers = 0;
     /** Enemy count.*/
     private int enemies = 0;
+    /** Maximum enemies in a wave.*/
+    private int maxEnemies = 0;
     /** Iron golem count.*/
     private int golems = 0;
     /** ID of task managing player spawn particles.*/
@@ -1343,25 +1345,6 @@ public class Arena {
         Main.saveArenaData();
     }
 
-    // TODO REMOVE
-    public boolean hasDynamicCount() {
-        return config.getBoolean(path + ".dynamicCount");
-    }
-
-    public void setDynamicCount(boolean bool) {
-        config.set(path + ".dynamicCount", bool);
-        Main.saveArenaData();
-    }
-
-    public boolean hasDynamicDifficulty() {
-        return config.getBoolean(path + ".dynamicDifficulty");
-    }
-
-    public void setDynamicDifficulty(boolean bool) {
-        config.set(path + ".dynamicDifficulty", bool);
-        Main.saveArenaData();
-    }
-
     public boolean hasDynamicPrices() {
         return config.getBoolean(path + ".dynamicPrices");
     }
@@ -1508,14 +1491,6 @@ public class Arena {
                     player.getPlayer().sendMessage(new ColoredMessage(ChatColor.GOLD, LIST + (getMaxWaves() < 0 ?
                             LanguageManager.messages.noLastWave : String.format(LanguageManager.messages.finalWave,
                             getMaxWaves()))).toString());
-                    player.getPlayer().sendMessage(new ColoredMessage(hasDynamicCount() ? ChatColor.GREEN :
-                            ChatColor.RED, String.format(LIST + LanguageManager.messages.dynamicMobCount,
-                            hasDynamicCount() ? LanguageManager.messages.will :
-                                    LanguageManager.messages.willNot)).toString());
-                    player.getPlayer().sendMessage(new ColoredMessage(hasDynamicDifficulty() ? ChatColor.GREEN :
-                            ChatColor.RED, String.format(LIST + LanguageManager.messages.dynamicDifficulty,
-                            hasDynamicDifficulty() ? LanguageManager.messages.will :
-                                    LanguageManager.messages.willNot)).toString());
                     player.getPlayer().sendMessage(new ColoredMessage(hasDynamicPrices() ? ChatColor.GREEN :
                             ChatColor.RED, String.format(LIST + LanguageManager.messages.dynamicPrices,
                             hasDynamicPrices() ? LanguageManager.messages.will :
@@ -2073,8 +2048,9 @@ public class Arena {
         // Refresh the scoreboards
         updateScoreboards();
 
-        // Increment wave
+        // Increment wave and reset max enemies
         incrementCurrentWave();
+        maxEnemies = 0;
 
         // Win condition
         if (getCurrentWave() == getMaxWaves()) {
@@ -2162,30 +2138,8 @@ public class Arena {
                                 String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
                         " ", Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
 
-        // Notify players of new shop levels, then start after 25 seconds
-        if (currentWave % 5 == 0) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> getActives().forEach(player ->
-                    player.getPlayer().sendTitle(CommunicationManager.format(
-                                    "&6" + LanguageManager.messages.shopUpgrade),
-                            CommunicationManager.format("&7" +
-                                    String.format(LanguageManager.messages.shopInfo, "5")),
-                            Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5),
-                            Utils.secondsToTicks(1))), Utils.secondsToTicks(4));
-            activeTasks.put(START_WAVE, new BukkitRunnable() {
-                @Override
-                public void run() {
-                    // Task
-                    try {
-                        startWave();
-                    } catch (ArenaException ignored) {
-                    }
-                }
-            });
-            activeTasks.get(START_WAVE).runTaskLater(Main.plugin, Utils.secondsToTicks(25));
-        }
-
         // Start wave after 15 seconds if not first wave
-        else if (currentWave != 1) {
+        if (currentWave != 1) {
             activeTasks.put(START_WAVE, new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -2574,16 +2528,9 @@ public class Arena {
         return currentWave;
     }
 
-    public int getCurrentShopLevel() {
-        return currentWave / 5 + 1;
-    }
-
     public double getCurrentDifficulty() {
-        double difficulty = Math.pow(Math.E, Math.pow(Math.max(currentWave - 1, 0), .4) /
+        return Math.pow(Math.E, Math.pow(Math.max(currentWave - 1, 0), .4) /
                 (4.5 - getDifficultyMultiplier() / 2d));
-        if (hasDynamicDifficulty())
-            difficulty *= Math.pow(.1 * getActiveCount() + .6, .2);
-        return difficulty;
     }
 
     public void incrementCurrentWave() {
@@ -2610,6 +2557,14 @@ public class Arena {
 
     public void resetEnemies() {
         enemies = 0;
+    }
+
+    public int getMaxEnemies() {
+        return maxEnemies;
+    }
+
+    public void setMaxEnemies(int maxEnemies) {
+        this.maxEnemies = maxEnemies;
     }
 
     public int getGolems() {
@@ -2908,8 +2863,6 @@ public class Arena {
         setMaxWaves(arenaToCopy.getMaxWaves());
         setWaveTimeLimit(arenaToCopy.getWaveTimeLimit());
         setDifficultyMultiplier(arenaToCopy.getDifficultyMultiplier());
-        setDynamicCount(arenaToCopy.hasDynamicCount());
-        setDynamicDifficulty(arenaToCopy.hasDynamicDifficulty());
         setLateArrival(arenaToCopy.hasLateArrival());
         setDynamicLimit(arenaToCopy.hasDynamicLimit());
         setDynamicPrices(arenaToCopy.hasDynamicPrices());

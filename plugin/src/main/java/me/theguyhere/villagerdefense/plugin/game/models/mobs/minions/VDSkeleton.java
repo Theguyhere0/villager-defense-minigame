@@ -160,6 +160,6 @@ public class VDSkeleton extends VDMinion {
      */
     protected static int getValue(double difficulty) {
         int level = getLevel(difficulty);
-        return getValue(getHealth(level), getArmor(level), getToughness(level), getDamage(level), 1.2);
+        return getValue(getHealth(level), getArmor(level), getToughness(level), getDamage(level), 1.5);
     }
 }

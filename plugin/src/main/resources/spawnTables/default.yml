@@ -11,27 +11,27 @@
   mtypes:
     spid: 1
 '4':
-  value: 350
+  value: 300
   mtypes:
     skel: 1
 '5':
-  value: 600
+  value: 450
   mtypes:
     zomb: 1
     spid: 1
     skel: 1
 '6':
-  value: 400
+  value: 350
   mtypes:
     zomb: 1
     husk: 1
 '7':
-  value: 500
+  value: 400
   mtypes:
     spid: 3
     skel: 1
 '8':
-  value: 650
+  value: 500
   mtypes:
     bzmb: 1
     bhsk: 1
@@ -182,7 +182,7 @@
   mtypes:
     slvr: 1
 '30':
-  value: 3000
+  value: 3500
   mtypes:
     zomb: 2
     bzmb: 2
@@ -206,21 +206,21 @@
     ghst: 1
     slvr: 1
 '31':
-  value: 1750
+  value: 2000
   mtypes:
     crpr: 3
     ccpr: 1
     brut: 2
     vind: 2
 '32':
-  value: 2000
+  value: 2500
   mtypes:
     pill: 5
     wtch: 2
     vind: 2
     slvr: 2
 '33':
-  value: 2500
+  value: 3000
   mtypes:
     pgsd: 3
     pgsn: 3
@@ -228,7 +228,7 @@
     ccpr: 1
     brut: 2
 '34':
-  value: 2800
+  value: 3000
   mtypes:
     bzmb: 2
     bhsk: 2
@@ -241,7 +241,7 @@
     vind: 1
     slvr: 7
 '35':
-  value: 4000
+  value: 4500
   mtypes:
     zomb: 1
     bzmb: 1
@@ -265,7 +265,7 @@
     ghst: 3
     slvr: 1
 freePlay:
-  value: 4000
+  value: 4500
   mtypes:
     zomb: 1
     bzmb: 1

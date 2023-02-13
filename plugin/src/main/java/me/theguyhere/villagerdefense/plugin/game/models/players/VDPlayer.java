@@ -4,6 +4,7 @@ import com.google.common.util.concurrent.AtomicDouble;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
@@ -75,6 +76,8 @@ public class VDPlayer {
     private int infractions = 0;
     /** The {@link Kit} the player will play with.*/
     private Kit kit = Kit.none();
+    /** The level of tiered ammo the player has.*/
+    private int tieredAmmoLevel = 0;
     /** The level of tiered essence the player has.*/
     private int tieredEssenceLevel = 0;
     /** The list of {@link Challenge}'s the player will take on.*/
@@ -203,6 +206,7 @@ public class VDPlayer {
                 });
                 getPlayer().getInventory().clear();
                 tieredEssenceLevel = 0;
+                tieredAmmoLevel = 0;
             }
 
             // Notify player of their own death
@@ -240,6 +244,7 @@ public class VDPlayer {
 
     public void showAndUpdateStats() {
         AtomicBoolean penetrating = new AtomicBoolean(false);
+        AtomicBoolean crushing = new AtomicBoolean(false);
         AtomicBoolean range = new AtomicBoolean(false);
         AtomicBoolean perBlock = new AtomicBoolean(false);
         boolean ability = false;
@@ -315,8 +320,10 @@ public class VDPlayer {
                                     LanguageManager.messages.attackRangeDamage.length())
                             .replace(ChatColor.BLUE.toString(), "")));
                 }
-                else if (lore.contains(LanguageManager.names.penetrating.replace("%s", "")))
+                else if (lore.contains(LanguageManager.names.penetrating))
                     penetrating.set(true);
+                else if (lore.contains(LanguageManager.names.crushing))
+                    crushing.set(true);
                 else if (lore.contains(LanguageManager.messages.ammoCost
                         .replace("%s", ""))) {
                     ammoCost.set(Integer.parseInt(lore.substring(2 + LanguageManager.messages.ammoCost.length())
@@ -455,7 +462,7 @@ public class VDPlayer {
                 new ColoredMessage(absorption > 0 ? ChatColor.GOLD : ChatColor.RED,
                         Utils.HP + " " + (currentHealth + absorption) + "/" + maxHealth) + SPACE + middleText
                          + SPACE + new ColoredMessage(ammoCap.get() < ammoCost.get() ? ChatColor.RED :
-                        penetrating.get() ? ChatColor.YELLOW : ChatColor.GREEN,
+                        crushing.get() ? ChatColor.YELLOW : penetrating.get() ? ChatColor.RED : ChatColor.GREEN,
                         (range.get() ? Utils.ARROW : Utils.DAMAGE) + " " + damage +
                                 (perBlock.get() ? " /" + Utils.BLOCK + " +" + baseDamage : ""))));
 
@@ -508,11 +515,11 @@ public class VDPlayer {
 
     public void takeDamage(int damage, @NotNull AttackType attackType) {
         // Scale damage by attack type
-        if (attackType == AttackType.NORMAL)
+        if (attackType == AttackType.NORMAL || attackType == AttackType.CRUSHING)
             damage -= Math.min(damage, armor);
-        else if (attackType == AttackType.PENETRATING)
-            damage *= Math.max(0, 1 - toughness);
-        else if (attackType == AttackType.NONE)
+        if (attackType == AttackType.NORMAL || attackType == AttackType.PENETRATING)
+            damage *= Math.max(0, 1 - toughness / 100d);
+        if (attackType == AttackType.NONE)
             damage = 0;
 
         // Apply boost
@@ -523,7 +530,8 @@ public class VDPlayer {
         changeCurrentHealth(-damage);
 
         // Damage armor
-        if (attackType == AttackType.NORMAL || attackType == AttackType.PENETRATING)
+        if (attackType == AttackType.NORMAL || attackType == AttackType.CRUSHING ||
+                attackType == AttackType.PENETRATING)
             Arrays.stream(getPlayer().getInventory().getArmorContents()).filter(Objects::nonNull).forEach(armor ->
                     Bukkit.getPluginManager().callEvent(new PlayerItemDamageEvent(getPlayer(), armor, 0)));
     }
@@ -682,9 +690,11 @@ public class VDPlayer {
         try {
             ItemStack weapon = Objects.requireNonNull(getPlayer().getEquipment()).getItemInMainHand();
             if (Objects.requireNonNull(Objects.requireNonNull(weapon.getItemMeta()).getLore()).stream()
-                    .anyMatch(lore -> lore.contains(LanguageManager.names.penetrating
-                            .replace("%s", ""))))
+                    .anyMatch(lore -> lore.contains(LanguageManager.names.penetrating)))
                 return AttackType.PENETRATING;
+            if (Objects.requireNonNull(Objects.requireNonNull(weapon.getItemMeta()).getLore()).stream()
+                    .anyMatch(lore -> lore.contains(LanguageManager.names.crushing)))
+                return AttackType.CRUSHING;
         } catch (Exception ignored) {
         }
         return AttackType.NORMAL;
@@ -718,6 +728,14 @@ public class VDPlayer {
 
     public Kit getKit() {
         return kit;
+    }
+
+    public int getTieredAmmoLevel() {
+        return tieredAmmoLevel;
+    }
+
+    public void incrementTieredAmmoLevel() {
+        tieredAmmoLevel++;
     }
 
     public int getTieredEssenceLevel() {
@@ -950,7 +968,6 @@ public class VDPlayer {
 
         // Set up health and damage
         setMaxHealthInit(maxHealth);
-        baseDamage = 10;
 
         // Set up pet slots
         petSlots = 3;

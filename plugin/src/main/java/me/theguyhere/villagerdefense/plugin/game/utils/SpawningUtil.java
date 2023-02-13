@@ -66,6 +66,9 @@ public class SpawningUtil {
             }.runTaskLater(Main.plugin, delay));
         }
 
+        // Set max enemies
+        arena.setMaxEnemies(spawningTasks.size());
+
         // Set spawning villagers to false
         spawningTasks.add(new BukkitRunnable() {
             @Override

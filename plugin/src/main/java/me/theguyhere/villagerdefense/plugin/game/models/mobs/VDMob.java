@@ -83,11 +83,11 @@ public abstract class VDMob {
 
     public int takeDamage(int damage, @NotNull AttackType attackType, @Nullable Player attacker, Arena arena) {
         // Final damage calculation and display
-        if (attackType == AttackType.NORMAL)
+        if (attackType == AttackType.NORMAL || attackType == AttackType.CRUSHING)
             damage -= Math.min(damage, armor);
-        else if (attackType == AttackType.PENETRATING)
+        if (attackType == AttackType.NORMAL || attackType == AttackType.PENETRATING)
             damage *= Math.max(0, 1 - toughness);
-        else if (attackType == AttackType.NONE)
+        if (attackType == AttackType.NONE)
             damage = 0;
         if (attacker != null)
             try {

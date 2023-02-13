@@ -9,7 +9,7 @@ import org.bukkit.entity.Villager;
 import org.bukkit.metadata.FixedMetadataValue;
 
 public abstract class VDVillager extends VDMob {
-    protected VDVillager(Arena arena, Villager villager, String name, String lore, int level) {
+    protected VDVillager(Arena arena, Villager villager, String name, String lore) {
         super(lore, null);
         mob = villager;
         id = villager.getUniqueId();

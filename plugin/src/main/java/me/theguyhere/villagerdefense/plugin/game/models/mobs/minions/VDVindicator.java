@@ -20,7 +20,7 @@ public class VDVindicator extends VDMinion {
                 (Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.VINDICATOR),
                 LanguageManager.mobs.vindicator,
                 LanguageManager.mobLore.vindicator,
-                AttackType.NORMAL
+                AttackType.CRUSHING
         );
         Vindicator vindicator = (Vindicator) mob;
         vindicator.setPatrolLeader(false);
