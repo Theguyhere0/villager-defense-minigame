@@ -135,12 +135,6 @@ arenaStats:
   difficultyMultiplier:
     name: "Difficulty Multiplier"
     description: "Determines difficulty increase rate"
-  dynamicDifficulty:
-    name: "Dynamic Difficulty"
-    description: "Difficulty adjusting based on number of players"
-  dynamicMobCount:
-    name: "Dynamic Mob Count"
-    description: "Mob count adjusting based on number of players"
   dynamicPrices:
     name: "Dynamic Prices"
     description: "Prices adjusting based on number of players in the game"
@@ -234,7 +228,7 @@ errors:
   construction: "This feature is under construction!"
   economy: "Vault Economy is being used instead of Crystals!"
   emptyArena: "The arena has no players!"
-  endingSoon: "Game about to end!"
+  endingSoon: "The game about to end!"
   fatal: "Something went wrong"
   forcedChallenge: "This challenge is forced!"
   golem: "The arena can only have up to %s iron golems!"
@@ -266,33 +260,21 @@ errors:
 itemLore:
   ammo:
     t1:
-      name: "Roll of Ammo %s"
-      description: "A little roll of conventional ammunition for ranged weapons."
-    t2:
-      name: "Pack of Ammo %s"
-      description: "A small package of ammunition."
-    t3:
-      name: "Bundle of Ammo %s"
-      description: "A sizeable bundle of ammunition."
-    t4:
-      name: "Stack of Ammo %s"
-      description: "A large stash of ammunition for ammo-hungry weapons."
-    t5:
       name: "Regenerating Ammo Cartridge (RAC) %s"
-      description: "Notchian mages of have found a way to replenish ammunition passively in these magical cartridges."
-    t6:
+      description: "The mages of have found a way to replenish ammunition passively in magical cartridges."
+    t2:
       name: "Reinforced RAC %s"
       description: "A cartridge reinforced with a mystical steel trim."
-    t7:
+    t3:
       name: "High-density RAC %s"
       description: "A complex compression technique was used to fit more into this cartridge."
-    t8:
+    t4:
       name: "Enchanted RAC %s"
       description: "A glimmering cartridge pulsating with magical energy."
-    t9:
+    t5:
       name: "RAC of Noble Mages %s"
       description: "This ethereal cartridge was fabricated by the best mages of the realm."
-    t10:
+    t6:
       name: "Void RAC %s"
       description: "Forged in the abyss of the void, this cartridge replenishes unthinkable quantities of ammunition."
   axes:
@@ -300,92 +282,56 @@ itemLore:
       name: "Meat Mallet %s"
       description: "A dull wooden axe meant for tenderizing meat."
     t2:
-      name: "Lumbar Axe %s"
-      description: "A well-worn piece of stone bound to a tough handle."
-    t3:
-      name: "Ceremonial Axe %s"
-      description: "A sleek sheet of marble mounted on an oak handle."
-    t4:
       name: "Obsidian Axe %s"
       description: "A balanced, razor sharp, obsidian head resting on a maple handle."
-    t5:
-      name: "Axe of The Executioner %s"
-      description: "The tool of choice to empty out prison cells."
-    t6:
+    t3:
       name: "Steel Axe %s"
       description: "Forged from high-grade steel, this is the finest axe on the market."
-    t7:
-      name: "Axe of Royal Blacksmiths %s"
-      description: "A gleaming axe meticulously forged by the best blacksmiths of the kingdom."
-    t8:
+    t4:
       name: "Crystal Axe %s"
-      description: "A glistening head of crystalline beauty and striking terror."
-    t9:
-      name: "Axe of The Warlord %s"
-      description: "A fear-invoking weapon that severed the heads of countless generals."
-    t10:
-      name: "Necrotic Axe %s"
-      description: "The mutilated souls that fell to this mighty axe stained its head a lifeless black."
+      description: "A glistening cleaver of crystalline beauty and striking terror."
+    t5:
+      name: "Axe of Nightmares %s"
+      description: "The hue of the axe head can only be described as pure nightmare."
+    t6:
+      name: "Axe of Demonic Judgement %s"
+      description: "No shield or angel will save you from its beheading bite."
   boots:
     t1:
       name: "Hide Boots %s"
       description: "Tough animal hide sewn into a nice pair of boots."
     t2:
-      name: "Winter Boots %s"
-      description: "Thick leather, fur, and hide sewn together to form a hefty pair of boots."
-    t3:
-      name: "Mesh Reinforced Boots %s"
-      description: "Leather boots reinforced with an internal iron mesh."
-    t4:
       name: "Iron Mail Boots %s"
       description: "Boots made from interlocking rings of iron."
-    t5:
+    t3:
       name: "Steel Plate Boots %s"
       description: "Plates of tough steel bolted together into a pair of boots."
-    t6:
-      name: "Silver Plate Boots %s"
-      description: "Plates of glorious silver bolted together into a pair of boots."
-    t7:
-      name: "Platinum Plate Boots %s"
-      description: "Plates of majestic platinum bolted together into a pair of boots."
-    t8:
+    t4:
       name: "Crystal Sheet Boots %s"
       description: "Sheets of gleaming diamond crystals linked together into a pair of boots."
-    t9:
-      name: "Alloyed Crystal Boots %s"
-      description: "High-grade steel infused with crystalline dust to form an impenetrable pair of boots."
-    t10:
+    t5:
+      name: "Alloyed Obsidian Boots %s"
+      description: "High-grade steel infused with crystalline obsidian dust to form an impenetrable pair of boots."
+    t6:
       name: "Phantom Steel Boots %s"
       description: "A diabolic pair of boots forged from phantom steel summoned in arcane rituals."
   bows:
     t1:
-      name: "Toy Bow %s"
-      description: "A cheap bow with reduced size and power to make it safer for children."
-    t2:
       name: "Bow of the Scavenger %s"
       description: "A perfect low-powered bow for taking down small game."
-    t3:
-      name: "Ceremonial Bow %s"
-      description: "A beautiful wooden piece of art way too stiff for serious combat."
-    t4:
+    t2:
       name: "Recurve Bow %s"
       description: "A light but powerful maple bow cherished by the masses."
-    t5:
-      name: "Bow of The Hunter %s"
-      description: "When the feast calls for a wild boar, this is the bow for the job."
-    t6:
+    t3:
       name: "Long Bow %s"
       description: "A majestic bow with limbs of laminated red elm and strung with spider silk."
-    t7:
-      name: "Bow of Regal Bowyers %s"
-      description: "A brilliant steel bow crafted by the best bowyers of the kingdom."
-    t8:
+    t4:
       name: "Compound Bow %s"
       description: "An epic modern bow amplified by an advanced pulley system."
-    t9:
+    t5:
       name: "Bow of The Ranger %s"
       description: "A fabled bow capable of delivering a torrential rain of pain."
-    t10:
+    t6:
       name: "Bow of Poignant Demise %s"
       description: "The strings of this bow sing the grisly song of death."
   chestplates:
@@ -393,61 +339,37 @@ itemLore:
       name: "Hide Chestplate %s"
       description: "Tough animal hide sewn into a nice chestplate."
     t2:
-      name: "Winter Chestplate %s"
-      description: "Thick leather, fur, and hide sewn together to form a hefty chestplate."
-    t3:
-      name: "Mesh Reinforced Chestplate %s"
-      description: "Leather chestplate reinforced with an internal iron mesh."
-    t4:
       name: "Iron Mail Chestplate %s"
       description: "Chestplate made from interlocking rings of iron."
-    t5:
+    t3:
       name: "Steel Plate Chestplate %s"
       description: "Plates of tough steel bolted together into a chestplate."
-    t6:
-      name: "Silver Plate Chestplate %s"
-      description: "Plates of glorious silver bolted together into a chestplate."
-    t7:
-      name: "Platinum Plate Chestplate %s"
-      description: "Plates of majestic platinum bolted together into a chestplate."
-    t8:
+    t4:
       name: "Crystal Sheet Chestplate %s"
       description: "Sheets of gleaming diamond crystals linked together into a chestplate."
-    t9:
-      name: "Alloyed Crystal Chestplate %s"
-      description: "High-grade steel infused with crystalline dust to form an impenetrable chestplate."
-    t10:
+    t5:
+      name: "Alloyed Obsidian Chestplate %s"
+      description: "High-grade steel infused with crystalline obsidian dust to form an impenetrable chestplate."
+    t6:
       name: "Phantom Steel Chestplate %s"
       description: "A diabolic chestplate forged from phantom steel summoned in arcane rituals."
   crossbows:
     t1:
-      name: "Makeshift Crossbow %s"
-      description: "A plain bow strapped onto a roughly made stock."
-    t2:
       name: "Crossbow of the Bandit %s"
       description: "The typical crossbow used to rob passing merchants."
-    t3:
-      name: "Ceremonial Crossbow %s"
-      description: "A charming crossbow that isn't quite as comfortable as it appears."
-    t4:
+    t2:
       name: "Recurve Crossbow %s"
       description: "A light but powerful crossbow with cedar limbs and stock."
-    t5:
-      name: "Crossbow of Athletes %s"
-      description: "A well-balanced, accurate, and economical crossbow widely used in nonviolent competitions."
-    t6:
+    t3:
       name: "Heavy Crossbow %s"
       description: "A beast of a crossbow with incredible power that only the strongest can control."
-    t7:
-      name: "Crossbow of Imperial Marksmen %s"
-      description: "An illustrious steel crossbow trusted by the best marksmen of the empire."
-    t8:
+    t4:
       name: "Compound Crossbow %s"
       description: "A sleek modern crossbow amplified by an advanced pulley system."
-    t9:
+    t5:
       name: "Crossbow of Silent Snipers %s"
       description: "A silent but deadly crossbow with legendary prestige."
-    t10:
+    t6:
       name: "Crossbow of Fatal Precision %s"
       description: "Even the Ender Dragon quivers at the sight of this lethal weapon."
   essences:
@@ -474,30 +396,18 @@ itemLore:
       name: "Hide Helmet %s"
       description: "Tough animal hide sewn into a nice helmet."
     t2:
-      name: "Winter Helmet %s"
-      description: "Thick leather, fur, and hide sewn together to form a hefty helmet."
-    t3:
-      name: "Mesh Reinforced Helmet %s"
-      description: "Leather helmet reinforced with an internal iron mesh."
-    t4:
       name: "Iron Mail Helmet %s"
       description: "Helmet made from interlocking rings of iron."
-    t5:
+    t3:
       name: "Steel Plate Helmet %s"
       description: "Plates of tough steel bolted together into a helmet."
-    t6:
-      name: "Silver Plate Helmet %s"
-      description: "Plates of glorious silver bolted together into a helmet."
-    t7:
-      name: "Platinum Plate Helmet %s"
-      description: "Plates of majestic platinum bolted together into a helmet."
-    t8:
+    t4:
       name: "Crystal Sheet Helmet %s"
       description: "Sheets of gleaming diamond crystals linked together into a helmet."
-    t9:
-      name: "Alloyed Crystal Helmet %s"
-      description: "High-grade steel infused with crystalline dust to form an impenetrable helmet."
-    t10:
+    t5:
+      name: "Alloyed Obsidian Helmet %s"
+      description: "High-grade steel infused with crystalline obsidian dust to form an impenetrable helmet."
+    t6:
       name: "Phantom Steel Helmet %s"
       description: "A diabolic helmet forged from phantom steel summoned in arcane rituals."
   leggings:
@@ -505,30 +415,18 @@ itemLore:
       name: "Hide Leggings %s"
       description: "Tough animal hide sewn into a nice pair of leggings."
     t2:
-      name: "Winter Leggings %s"
-      description: "Thick leather, fur, and hide sewn together to form a hefty pair of leggings."
-    t3:
-      name: "Mesh Reinforced Leggings %s"
-      description: "Leather leggings reinforced with an internal iron mesh."
-    t4:
       name: "Iron Mail Leggings %s"
       description: "Leggings made from interlocking rings of iron."
-    t5:
+    t3:
       name: "Steel Plate Leggings %s"
       description: "Plates of tough steel bolted together into leggings."
-    t6:
-      name: "Silver Plate Leggings %s"
-      description: "Plates of glorious silver bolted together into leggings."
-    t7:
-      name: "Platinum Plate Leggings %s"
-      description: "Plates of majestic platinum bolted together into leggings."
-    t8:
+    t4:
       name: "Crystal Sheet Leggings %s"
       description: "Sheets of gleaming diamond crystals linked together into leggings."
-    t9:
-      name: "Alloyed Crystal Leggings %s"
-      description: "High-grade steel infused with crystalline dust to form impenetrable leggings."
-    t10:
+    t5:
+      name: "Alloyed Obsidian Leggings %s"
+      description: "High-grade steel infused with crystalline obsidian dust to form impenetrable leggings."
+    t6:
       name: "Phantom Steel Leggings %s"
       description: "A diabolic pair of leggings forged from phantom steel summoned in arcane rituals."
   scythes:
@@ -536,32 +434,20 @@ itemLore:
       name: "Walking Cane %s"
       description: "A curved wooden stick carried by the village elders."
     t2:
-      name: "Farm Plough %s"
-      description: "A stone shard on a tough handle for carving at the earth."
-    t3:
-      name: "Ceremonial Scythe %s"
-      description: "A sleek shard of marble mounted on an oak handle."
-    t4:
       name: "Obsidian Scythe %s"
       description: "A jagged, razor sharp, obsidian shard resting on a maple handle."
-    t5:
-      name: "Scythe of The Gatekeeper %s"
-      description: "A simple weapon to intimidate and inspect travelers."
-    t6:
+    t3:
       name: "Steel Scythe %s"
       description: "Forged from high-grade steel, this is the finest scythe on the market."
-    t7:
-      name: "Scythe of Royal Weaponsmiths %s"
-      description: "A gleaming scythe meticulously forged by the best weaponsmiths of the kingdom."
-    t8:
+    t4:
       name: "Crystal Scythe %s"
-      description: "A glistening shard of crystalline beauty and biting pain."
-    t9:
-      name: "Scythe of The Czar %s"
-      description: "A glorious scythe that cemented the ironclad rule of many leaders."
-    t10:
-      name: "Midnight Scythe %s"
+      description: "A battle scythe of crystalline beauty and biting pain."
+    t5:
+      name: "Scythe of Midnight %s"
       description: "A scythe so deadly that even the shadows bleed on its arc."
+    t6:
+      name: "Scythe of Merciless Terror %s"
+      description: "No man, woman, or child is spared from its ghastly whirl."
   shopFood:
     capple:
       name: "Caramel Apple %s"
@@ -570,21 +456,15 @@ itemLore:
       name: "Golden Apple %s"
       description: "A royal delicacy with insane healing powers."
     t1:
-      name: "Beetroot %s"
-      description: "A healthy morsel to keep the fight going."
-    t2:
-      name: "Carrot %s"
+      name: "Cookie %s"
       description: "A small snack to push through tough combat."
-    t3:
+    t2:
       name: "Bread %s"
       description: "A light meal to sustain the battle."
-    t4:
-      name: "Mutton %s"
-      description: "A decent meal to power the relentless fight."
-    t5:
+    t3:
       name: "Steak %s"
       description: "A hearty meal to dominate in combat."
-    t6:
+    t4:
       name: "Honey Carrot %s"
       description: "A tasty delicacy with great nutritional value."
     totem:
@@ -598,32 +478,20 @@ itemLore:
       name: "Sword of The Apprentice %s"
       description: "A fine wooden sword with a fire-hardened blade."
     t2:
-      name: "Sword of The Peasant %s"
-      description: "A slab of chipped stone hastily bound to a tough handle."
-    t3:
-      name: "Ceremonial Sword %s"
-      description: "A sleek sheet of marble seated on an oak handle."
-    t4:
       name: "Obsidian Sword %s"
       description: "A well-weighted, razor sharp, obsidian blade resting on a maple handle."
-    t5:
-      name: "Sword of The Front Lines %s"
-      description: "The first weapon to clash at the sound of the battle horn."
-    t6:
+    t3:
       name: "Steel Sword %s"
       description: "Forged from high-grade steel, this is the finest sword on the market."
-    t7:
-      name: "Sword of Royal Swordsmiths %s"
-      description: "A gleaming sword meticulously forged by the best swordsmiths of the kingdom."
-    t8:
+    t4:
       name: "Crystal Sword %s"
       description: "A glistening blade of crystalline beauty and double-edged terror."
-    t9:
-      name: "Sword of The Emperor %s"
-      description: "An awe-inspiring masterpiece that brought kingdoms to their knees in the name of conquest."
-    t10:
-      name: "Sword of The Hero %s"
-      description: "The Wither once fell before this mighty sword, tinting the blade a soulless black."
+    t5:
+      name: "Sword of Nightfall %s"
+      description: "This forsaken blade gathers a dark luster imitating the encroachment of dusk."
+    t6:
+      name: "Sword of Diabolical Fury %s"
+      description: "Possession of this saber induces a bloodthirsty rage upon its owner."
 kits:
   alchemist:
     name: "Alchemist"
@@ -635,10 +503,11 @@ kits:
     name: "Blacksmith"
     description: "All equipment purchased are unbreakable"
   farmer:
-    name: "Farmer"
-    description: "Start with 5 carrots"
+    name: "FarmerCarrot"
+    description: "Start with 3 carrots"
     items:
-      carrot: "Farmer's Carrots"
+      carrot: "FarmerCarrot's Carrot"
+      carrotDesc: "A healthy appetizer to keep the fight going."
   giant:
     name: "Giant"
     description: "Permanent %s health boost"
@@ -760,8 +629,6 @@ messages:
   disabled: "DISABLED"
   durability: "Durability: %s"
   duration: "Duration: %s"
-  dynamicDifficulty: "Overall difficulty %s change depending on number of players."
-  dynamicMobCount: "Mob numbers %s change depending on number of players."
   dynamicPrices: "Shop prices %s change depending on number of players."
   dynamicTimeLimit: "Wave time limits %s change depending on difficulty."
   effect: "Effect: %s"
@@ -806,7 +673,6 @@ messages:
   leave: "LEAVE"
   leaveArena: "%s left the arena."
   level: "Level"
-  levelPlaceholder: "Locked until shop level %s"
   levelUp: "Level Up!  %s"
   manualUpdateWarn: "%s must be manually updated."
   maxCapacity: "Arena has reached max player capacity."
@@ -839,8 +705,6 @@ messages:
   rightClick: "Right click to use ability"
   seconds: "%s s"
   secondsLeft: "%s seconds until the game starts!"
-  shopInfo: "Shops upgrade every %s waves"
-  shopUpgrade: "Shops upgraded!"
   spectators: "Spectators"
   starting: "Starting in %s seconds"
   toughness: "Toughness: %s"
@@ -890,8 +754,10 @@ mobs:
   witherSkeleton: "Wither Skeleton"
   zombie: "Zombie"
 mobLore:
-  babyHusk: "The smaller and faster brother of the Husk, with overall higher damage capacity but lower health."
-  babyZombie: "The smaller and faster brother of the Zombie, with overall higher damage capacity but lower health."
+  babyHusk: "The smaller and faster brother of the Husk, with overall higher damage capacity and armor but lower
+  health."
+  babyZombie: "The smaller and faster brother of the Zombie, with overall higher damage capacity and armor but lower
+  health."
   blaze: "Flaming sorcerers of the air eager to burn down players, especially ranged players."
   brute: "The uncivilized uncle of Piglin who is tougher, faster, and wields an axe. Hates players and specifically
   targets melee fighters."
@@ -907,7 +773,7 @@ mobLore:
   aiming for players and especially ranged players."
   piglinSoldier: "A highly mobile swordsman that strikes hard and fast, with a hatred toward players."
   pillager: "These corrupted Villagers wield heavy piercing crossbows and are hell-bent on hunting down Villagers."
-  silverfish: "A little ground parasite that golems and pets are especially susceptible to."
+  silverfish: "A little hardened ground parasite that golems and pets are especially susceptible to."
   skeleton: "A mediocre ranged monster that attacks indiscriminately."
   spider: "A fast-moving, fast-attacking, armor-penetrating, wall-scaling monster."
   stray: "A deep frozen cousin of the Skeleton that slows targets and seeks out players."
@@ -931,6 +797,7 @@ names:
   communityChest: "Community Chest"
   consumableShop: "Consumable Shop"
   crossbowShop: "Crossbow Shop"
+  crushing: "Crushing"
   crystal: "Crystal"
   crystalConverter: "%s Catalytic Converter"
   crystals: "Crystals"

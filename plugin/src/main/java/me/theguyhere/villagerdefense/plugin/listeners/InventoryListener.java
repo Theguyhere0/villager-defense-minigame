@@ -13,6 +13,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.Shop;
+import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Ammo;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDDog;
@@ -1395,13 +1396,6 @@ public class InventoryListener implements Listener {
 					player.openInventory(Inventories.createSpawnTableMenu(meta.getArena()));
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
-			// Toggle dynamic mob count
-			else if (buttonName.contains("Dynamic Mob Count:"))
-				if (arenaInstance.isClosed()) {
-					arenaInstance.setDynamicCount(!arenaInstance.hasDynamicCount());
-					player.openInventory(Inventories.createMobsMenu(meta.getArena()));
-				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-
 			else if (buttonName.contains("Villager Type:"))
 				if (arenaInstance.isClosed())
 					player.openInventory(Inventories.createVillagerTypeMenu(meta.getArena()));
@@ -1844,13 +1838,6 @@ public class InventoryListener implements Listener {
 				if (arenaInstance.isClosed())
 					player.openInventory(Inventories.createDifficultyMultiplierMenu(meta.getArena()));
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-
-			// Toggle dynamic difficulty
-			else if (buttonName.contains("Dynamic Difficulty:"))
-				if (arenaInstance.isClosed()) {
-					arenaInstance.setDynamicDifficulty(!arenaInstance.hasDynamicDifficulty());
-					player.openInventory(Inventories.createGameSettingsMenu(meta.getArena()));
-				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Toggle dynamic difficulty
 			else if (buttonName.contains("Late Arrival:"))
@@ -2569,8 +2556,6 @@ public class InventoryListener implements Listener {
 				arena1.setMaxWaves(45);
 				arena1.setWaveTimeLimit(5);
 				arena1.setDifficultyMultiplier(1);
-				arena1.setDynamicCount(false);
-				arena1.setDynamicDifficulty(false);
 				arena1.setDynamicLimit(true);
 				arena1.setDynamicPrices(false);
 				arena1.setDifficultyLabel("Easy");
@@ -2587,8 +2572,6 @@ public class InventoryListener implements Listener {
 				arena1.setMaxWaves(50);
 				arena1.setWaveTimeLimit(4);
 				arena1.setDifficultyMultiplier(2);
-				arena1.setDynamicCount(false);
-				arena1.setDynamicDifficulty(false);
 				arena1.setDynamicLimit(true);
 				arena1.setDynamicPrices(true);
 				arena1.setDifficultyLabel("Medium");
@@ -2605,8 +2588,6 @@ public class InventoryListener implements Listener {
 				arena1.setMaxWaves(60);
 				arena1.setWaveTimeLimit(3);
 				arena1.setDifficultyMultiplier(3);
-				arena1.setDynamicCount(true);
-				arena1.setDynamicDifficulty(true);
 				arena1.setDynamicLimit(true);
 				arena1.setDynamicPrices(true);
 				arena1.setDifficultyLabel("Hard");
@@ -2623,8 +2604,6 @@ public class InventoryListener implements Listener {
 				arena1.setMaxWaves(-1);
 				arena1.setWaveTimeLimit(3);
 				arena1.setDifficultyMultiplier(4);
-				arena1.setDynamicCount(true);
-				arena1.setDynamicDifficulty(true);
 				arena1.setDynamicLimit(false);
 				arena1.setDynamicPrices(true);
 				arena1.setDifficultyLabel("Insane");
@@ -2683,7 +2662,7 @@ public class InventoryListener implements Listener {
 
 			// Open ammo shop
 			else if (buttonName.contains(LanguageManager.names.ammoShop))
-				player.openInventory(Inventories.createAmmoShopMenu(arenaInstance));
+				player.openInventory(Inventories.createAmmoUpgradeShopMenu(arenaInstance, gamer));
 
 			// Open helmet shop
 			else if (buttonName.contains(LanguageManager.names.helmetShop))
@@ -2914,6 +2893,75 @@ public class InventoryListener implements Listener {
 			// Find and upgrade, otherwise give
 			for (int i = 1; i < 46; i++) {
 				if (VDAbility.matches(player.getInventory().getItem(i))) {
+					player.getInventory().setItem(i, buy);
+					PlayerManager.notifySuccess(player, LanguageManager.confirms.buy);
+					return;
+				}
+			}
+			PlayerManager.giveItem(player, buy, LanguageManager.errors.inventoryFull);
+			PlayerManager.notifySuccess(player, LanguageManager.confirms.buy);
+		}
+
+		// Ammo upgrade shop
+		else if (invID == InventoryID.AMMO_UPGRADE_SHOP_MENU) {
+			Arena arenaInstance;
+			VDPlayer gamer;
+
+			// Attempt to get arena and player
+			try {
+				arenaInstance = GameManager.getArena(player);
+				gamer = arenaInstance.getPlayer(player);
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+				return;
+			}
+
+			// Return to main shop menu
+			if (buttonName.contains(LanguageManager.messages.exit)) {
+				player.openInventory(Inventories.createShopMenu(arenaInstance, gamer));
+				return;
+			}
+
+			// Ignore null items
+			if (e.getClickedInventory().getItem(e.getSlot()) == null)
+				return;
+
+			ItemStack buy = Objects.requireNonNull(e.getClickedInventory().getItem(e.getSlot())).clone();
+			List<String> lore = Objects.requireNonNull(buy.getItemMeta()).getLore();
+
+			// Ignore un-purchasable items
+			if (lore == null)
+				return;
+
+			int cost = Integer.parseInt(lore.get(lore.size() - 1)
+					.substring(6 + LanguageManager.messages.gems.length()));
+			Random random = new Random();
+
+			// Check if they can afford the item
+			if (!gamer.canAfford(cost)) {
+				PlayerManager.notifyFailure(player, LanguageManager.errors.buy);
+				return;
+			}
+
+			// Remove cost meta
+			buy = ItemManager.removeLastLore(buy);
+
+			// Subtract from balance, apply rebate, and update scoreboard
+			gamer.addGems(-cost);
+			if (Kit.merchant().setKitLevel(1).equals(gamer.getKit()) && !gamer.isSharing())
+				gamer.addGems(cost / 10);
+			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.MERCHANT))) {
+				gamer.addGems(cost / 10);
+				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+			}
+			GameManager.createBoard(gamer);
+
+			// Update player stats and shop
+			gamer.incrementTieredAmmoLevel();
+			player.openInventory(Inventories.createAmmoUpgradeShopMenu(arenaInstance, gamer));
+
+			// Find and upgrade, otherwise give
+			for (int i = 1; i < 46; i++) {
+				if (Ammo.matches(player.getInventory().getItem(i))) {
 					player.getInventory().setItem(i, buy);
 					PlayerManager.notifySuccess(player, LanguageManager.confirms.buy);
 					return;

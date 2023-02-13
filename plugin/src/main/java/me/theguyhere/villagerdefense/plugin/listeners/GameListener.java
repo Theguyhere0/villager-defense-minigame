@@ -10,8 +10,8 @@ import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.VDMobNotFoundException;
-import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.items.ItemMetaKey;
@@ -38,7 +38,6 @@ import me.theguyhere.villagerdefense.plugin.game.models.players.AttackClass;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
-import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
@@ -98,9 +97,6 @@ public class GameListener implements Listener {
 		e.getDrops().clear();
 		e.setDroppedExp(0);
 
-        // Get spawn table
-        DataManager data = new DataManager("spawnTables/" + arena.getSpawnTableFile());
-
 		if (ent.getMetadata(VDMob.TEAM).get(0).equals(Team.VILLAGER.getValue())) {
 //			// Handle pet death TODO
 //			if (ent instanceof Wolf) {
@@ -118,23 +114,9 @@ public class GameListener implements Listener {
 
 		// Handle enemy death
 		else if (ent.getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue())) {
-			// Get wave
-			String wave = Integer.toString(arena.getCurrentWave());
-			if (!data.getConfig().contains(wave))
-				if (data.getConfig().contains("freePlay"))
-					wave = "freePlay";
-				else wave = "1";
-
-			// Calculate count multiplier
-			double countMultiplier = Math.log((arena.getActiveCount() + 7) / 10d) + 1;
-			if (!arena.hasDynamicCount())
-				countMultiplier = 1;
-
-			// Calculate monster count
-			int count = (int) (data.getConfig().getInt(wave + ".count.m") * countMultiplier);
-
 			// Set monsters glowing when only 20% remain
-			if (arena.getEnemies() <= .2 * count && !arena.isSpawningMonsters() && arena.getEnemies() > 0)
+			if (arena.getEnemies() <= .2 * arena.getMaxEnemies() && !arena.isSpawningMonsters() &&
+					arena.getEnemies() > 0)
 				arena.setMonsterGlow();
 		}
 
@@ -653,18 +635,18 @@ public class GameListener implements Listener {
 				case FALLING_BLOCK:
 				case LIGHTNING:
 				case BLOCK_EXPLOSION:
-					gamer.takeDamage((int) (damage * 20), AttackType.PENETRATING);
+					gamer.takeDamage((int) (damage * 50), AttackType.PENETRATING);
 					break;
 				// Custom handling
 				case FIRE:
 				case FIRE_TICK:
-					gamer.takeDamage((int) (damage * 15), AttackType.PENETRATING);
+					gamer.takeDamage((int) (damage * 30), AttackType.PENETRATING);
 					break;
 				case POISON:
-					gamer.takeDamage((int) (damage * 10), AttackType.PENETRATING);
+					gamer.takeDamage((int) (damage * 25), AttackType.PENETRATING);
 					break;
 				case WITHER:
-					gamer.takeDamage((int) (damage * 10), AttackType.DIRECT);
+					gamer.takeDamage((int) (damage * 20), AttackType.DIRECT);
 					break;
 				// Silence
 				default:
@@ -693,18 +675,18 @@ public class GameListener implements Listener {
 				case FALLING_BLOCK:
 				case LIGHTNING:
 				case BLOCK_EXPLOSION:
-					mob.takeDamage((int) (damage * 10), AttackType.PENETRATING, null, arena);
+					mob.takeDamage((int) (damage * 50), AttackType.PENETRATING, null, arena);
 					break;
 				// Custom handling
 				case FIRE:
 				case FIRE_TICK:
-					mob.takeDamage((int) (damage * 5), AttackType.PENETRATING, null, arena);
+					mob.takeDamage((int) (damage * 30), AttackType.PENETRATING, null, arena);
 					break;
 				case POISON:
-					mob.takeDamage((int) (damage * 8), AttackType.PENETRATING, null, arena);
+					mob.takeDamage((int) (damage * 25), AttackType.PENETRATING, null, arena);
 					break;
 				case WITHER:
-					mob.takeDamage((int) (damage * 8), AttackType.DIRECT, null, arena);
+					mob.takeDamage((int) (damage * 20), AttackType.DIRECT, null, arena);
 					break;
 				// Silence
 				default:
@@ -889,7 +871,7 @@ public class GameListener implements Listener {
 
 		// Increase health and possibly damage
 		gamer.setMaxHealth(gamer.getMaxHealth() + 10);
-		if (player.getLevel() % 4 == 0) {
+		if (player.getLevel() % 5 == 0) {
 			gamer.setBaseDamage(gamer.getBaseDamage() + 2);
 			PlayerManager.notifySuccess(player, LanguageManager.messages.levelUp,
 					new ColoredMessage(ChatColor.RED, "+10" + Utils.HP + "  +2" + Utils.DAMAGE));

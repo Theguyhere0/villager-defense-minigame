@@ -11,7 +11,9 @@ public abstract class VDWeapon extends VDItem {
             LanguageManager.messages.attackType);
     protected static final ColoredMessage ATTACK_TYPE_NORMAL = new ColoredMessage(ChatColor.GREEN,
             LanguageManager.names.normal);
-    protected static final ColoredMessage ATTACK_TYPE_PENETRATING = new ColoredMessage(ChatColor.YELLOW,
+    protected static final ColoredMessage ATTACK_TYPE_CRUSHING = new ColoredMessage(ChatColor.YELLOW,
+            LanguageManager.names.crushing);
+    protected static final ColoredMessage ATTACK_TYPE_PENETRATING = new ColoredMessage(ChatColor.RED,
             LanguageManager.names.penetrating);
     protected static final ColoredMessage MAIN_DAMAGE = new ColoredMessage(ChatColor.BLUE,
             LanguageManager.messages.attackMainDamage);

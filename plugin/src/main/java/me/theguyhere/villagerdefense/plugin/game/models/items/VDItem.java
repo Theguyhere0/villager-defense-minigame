@@ -113,10 +113,6 @@ public abstract class VDItem {
         T4(new ColoredMessage(ChatColor.AQUA, "[T4]")),
         T5(new ColoredMessage(ChatColor.AQUA, "[T5]")),
         T6(new ColoredMessage(ChatColor.AQUA, "[T6]")),
-        T7(new ColoredMessage(ChatColor.AQUA, "[T7]")),
-        T8(new ColoredMessage(ChatColor.AQUA, "[T8]")),
-        T9(new ColoredMessage(ChatColor.AQUA, "[T9]")),
-        T10(new ColoredMessage(ChatColor.AQUA, "[T10]")),
         UNIQUE(new ColoredMessage(ChatColor.LIGHT_PURPLE, "[U]"));
 
         private final ColoredMessage label;
