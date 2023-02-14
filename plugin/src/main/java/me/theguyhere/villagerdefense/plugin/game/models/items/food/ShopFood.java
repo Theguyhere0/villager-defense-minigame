@@ -192,24 +192,24 @@ public abstract class ShopFood extends VDFood {
         int hunger;
         switch (type) {
             case CAPPLE:
-                hunger = 4;
+                hunger = 3;
                 break;
             case GAPPLE:
-                hunger = 7;
+                hunger = 6;
                 break;
             case TIERED:
                 switch (tier) {
                     case T1:
-                        hunger = 2;
+                        hunger = 1;
                         break;
                     case T2:
-                        hunger = 5;
+                        hunger = 3;
                         break;
                     case T3:
-                        hunger = 8;
+                        hunger = 5;
                         break;
                     case T4:
-                        hunger = 10;
+                        hunger = 7;
                         break;
                     default:
                         hunger = 0;

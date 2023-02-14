@@ -726,23 +726,6 @@ public class Inventories {
 		);
 	}
 
-	// Menu for editing the shop settings of an arena
-	public static Inventory createShopSettingsMenu(Arena arena) {
-		List<ItemStack> buttons = new ArrayList<>();
-
-		// Option to toggle community chest
-		buttons.add(ItemManager.createItem(Material.CHEST,
-				CommunicationManager.format("&d&lCommunity Chest: " + getToggleStatus(arena.hasCommunity())),
-				CommunicationManager.format("&7Turn community chest on and off")));
-
-		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.SHOP_SETTINGS_MENU, InventoryType.MENU, arena),
-				CommunicationManager.format("&e&lShop Settings: " + arena.getName()),
-				true,
-				buttons
-		);
-	}
-
 	// Menu for editing the game settings of an arena
 	public static Inventory createGameSettingsMenu(Arena arena) {
 		List<ItemStack> buttons = new ArrayList<>();
@@ -767,6 +750,11 @@ public class Inventories {
 				CommunicationManager.format("&7Wave time limit adjusting based on"),
 				CommunicationManager.format("&7in-game difficulty"))
 		);
+
+		// Option to toggle community chest
+		buttons.add(ItemManager.createItem(Material.CHEST,
+				CommunicationManager.format("&d&lCommunity Chest: " + getToggleStatus(arena.hasCommunity())),
+				CommunicationManager.format("&7Turn community chest on and off")));
 
 		// Option to edit allowed kits
 		buttons.add(ItemManager.createItem(Material.ENDER_CHEST,
@@ -799,10 +787,6 @@ public class Inventories {
 				CommunicationManager.format("&7Bounds determine where players are"),
 				CommunicationManager.format("&7allowed to go and where the game will"),
 				CommunicationManager.format("&7function. Avoid building past arena bounds.")));
-
-		// Option to edit wolf cap
-		buttons.add(ItemManager.createItem(Material.BONE, CommunicationManager.format("&6&lWolf Cap"),
-				CommunicationManager.format("&7Maximum wolves a player can have")));
 
 		// Option to edit golem cap
 		buttons.add(ItemManager.createItem(Material.IRON_INGOT,
@@ -959,6 +943,9 @@ public class Inventories {
 		if (bannedKitIDs.contains(Kit.giant().getID()))
 			inv.setItem(49, Kit.giant().getButton(-1, false));
 		else inv.setItem(49, Kit.giant().getButton(-1, true));
+		if (bannedKitIDs.contains(Kit.trainer().getID()))
+			inv.setItem(50, Kit.trainer().getButton(-1, false));
+		else inv.setItem(50, Kit.trainer().getButton(-1, true));
 
 		// Option to exit
 		inv.setItem(53, Buttons.exit());
@@ -1142,15 +1129,6 @@ public class Inventories {
 				InventoryID.CORNER_2_CONFIRM_MENU,
 				arena,
 				CommunicationManager.format("&4&lRemove Corner 2?")
-		);
-	}
-
-	// Menu for changing wolf cap of an arena
-	public static Inventory createWolfCapMenu(Arena arena) {
-		return InventoryFactory.createIncrementorMenu(
-				InventoryID.WOLF_CAP_MENU,
-				arena,
-				CommunicationManager.format("&6&lWolf Cap: " + arena.getWolfCap())
 		);
 	}
 
@@ -1685,8 +1663,7 @@ public class Inventories {
 
 		return InventoryFactory.createFixedSizeInventory(
 				new InventoryMeta(InventoryID.PET_MANAGER_MENU, InventoryType.MENU, arena, petIndex),
-				CommunicationManager.format(String.format("&2&l" + LanguageManager.names.petShop,
-						Integer.toString(player.getRemainingPetSlots()), Integer.toString(player.getPetSlots()))),
+				player.getPets().get(petIndex).getName(),
 				1,
 				true,
 				buttons
@@ -1893,6 +1870,8 @@ public class Inventories {
 				1 : 0, true));
 		inv.setItem(49, Kit.giant().getButton(PlayerManager.getMultiTierKitLevel(ownerID, Kit.giant().getID()),
 				true));
+		inv.setItem(50, Kit.trainer().getButton(PlayerManager.getMultiTierKitLevel(ownerID, Kit.trainer().getID()),
+				true));
 
 		// Crystal balance
 		if (ownerID.equals(requesterID))
@@ -2007,6 +1986,9 @@ public class Inventories {
 					1 : 0, false));
 		if (!bannedKitIDs.contains(Kit.giant().getID()))
 			inv.setItem(49, Kit.giant().getButton(PlayerManager.getMultiTierKitLevel(id, Kit.giant().getID()),
+					false));
+		if (!bannedKitIDs.contains(Kit.trainer().getID()))
+			inv.setItem(50, Kit.trainer().getButton(PlayerManager.getMultiTierKitLevel(id, Kit.trainer().getID()),
 					false));
 
 		// Option for no kit

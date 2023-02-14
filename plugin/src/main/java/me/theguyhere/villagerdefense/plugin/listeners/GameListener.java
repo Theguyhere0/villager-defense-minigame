@@ -617,20 +617,24 @@ public class GameListener implements Listener {
 			// Custom damage handling
 			switch (damageCause) {
 				// Environmental damage, not meant for customization
-				case FALL:
-				case LAVA:
-				case HOT_FLOOR:
 				case DROWNING:
 				case SUFFOCATION:
-				case FALLING_BLOCK:
+					gamer.takeDamage((int) (damage * 25), AttackType.DIRECT);
+					break;
+				case LAVA:
+				case HOT_FLOOR:
 				case LIGHTNING:
+					gamer.takeDamage((int) (damage * 40), AttackType.PENETRATING);
+					break;
+				case FALLING_BLOCK:
+				case FALL:
 				case BLOCK_EXPLOSION:
-					gamer.takeDamage((int) (damage * 50), AttackType.PENETRATING);
+					gamer.takeDamage((int) (damage * 25), AttackType.CRUSHING);
 					break;
 				// Custom handling
 				case FIRE:
 				case FIRE_TICK:
-					gamer.takeDamage((int) (damage * 30), AttackType.PENETRATING);
+					gamer.takeDamage((int) (damage * 50), AttackType.NORMAL);
 					break;
 				case POISON:
 					gamer.takeDamage((int) (damage * 25), AttackType.PENETRATING);

@@ -9,6 +9,7 @@ import me.theguyhere.villagerdefense.plugin.game.displays.InfoBoard;
 import me.theguyhere.villagerdefense.plugin.game.displays.Leaderboard;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
@@ -137,7 +138,7 @@ public class GameManager {
 		score13.setScore(13);
 
 		Score score12 = obj.getScore(CommunicationManager.format("&a" + LanguageManager.messages.gems + ": " +
-				player.getGems()));
+				(player.getGems() + (arena.getStatus() == ArenaStatus.WAITING ? player.getGemBoost() : 0))));
 		score12.setScore(12);
 
 		StringBuilder kit = new StringBuilder(player.getKit().getName());

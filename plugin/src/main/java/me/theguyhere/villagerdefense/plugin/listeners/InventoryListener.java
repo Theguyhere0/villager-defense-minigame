@@ -656,10 +656,6 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("Mob Settings"))
 				player.openInventory(Inventories.createMobsMenu(meta.getArena()));
 
-			// Open shop menu
-			else if (buttonName.contains("Shop Settings"))
-				player.openInventory(Inventories.createShopSettingsMenu(meta.getArena()));
-
 			// Open game settings menu
 			else if (buttonName.contains("Game Settings"))
 				player.openInventory(Inventories.createGameSettingsMenu(meta.getArena()));
@@ -1773,22 +1769,6 @@ public class InventoryListener implements Listener {
 			player.openInventory(Inventories.createSpawnTableMenu(meta.getArena()));
 		}
 
-		// Shop settings menu for an arena
-		else if (invID == InventoryID.SHOP_SETTINGS_MENU) {
-			Arena arenaInstance = meta.getArena();
-
-			// Toggle community chest
-			if (buttonName.contains("Community Chest:"))
-				if (arenaInstance.isClosed()) {
-					arenaInstance.setCommunity(!arenaInstance.hasCommunity());
-					player.openInventory(Inventories.createShopSettingsMenu(meta.getArena()));
-				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-
-			// Exit menu
-			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Inventories.createArenaMenu(meta.getArena()));
-		}
-
 		// Game settings menu for an arena
 		else if (invID == InventoryID.GAME_SETTINGS_MENU) {
 			Arena arenaInstance = meta.getArena();
@@ -1809,6 +1789,13 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("Dynamic Time Limit:"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setDynamicLimit(!arenaInstance.hasDynamicLimit());
+					player.openInventory(Inventories.createGameSettingsMenu(meta.getArena()));
+				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+
+			// Toggle community chest
+			if (buttonName.contains("Community Chest:"))
+				if (arenaInstance.isClosed()) {
+					arenaInstance.setCommunity(!arenaInstance.hasCommunity());
 					player.openInventory(Inventories.createGameSettingsMenu(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
@@ -1842,13 +1829,6 @@ public class InventoryListener implements Listener {
 			// Edit arena bounds
 			else if (buttonName.contains("Arena Bounds"))
 				player.openInventory(Inventories.createBoundsMenu(meta.getArena()));
-
-			// Edit wolf cap TODO
-			else if (buttonName.contains("Wolf Cap"))
-//				if (arenaInstance.isClosed())
-//					player.openInventory(Inventories.createWolfCapMenu(meta.getArena()));
-//				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-				PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
 
 			// Edit iron golem cap TODO
 			else if (buttonName.contains("Iron Golem Cap"))
@@ -2347,46 +2327,6 @@ public class InventoryListener implements Listener {
 				// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createBoundsMenu(meta.getArena()));
-		}
-
-		// Wolf cap menu for an arena
-		else if (invID == InventoryID.WOLF_CAP_MENU) {
-			Arena arenaInstance = meta.getArena();
-			int current = arenaInstance.getWolfCap();
-
-			// Decrease wolf cap
-			if (buttonName.contains("Decrease")) {
-				// Check for arena closure
-				if (!arenaInstance.isClosed()) {
-					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-					return;
-				}
-
-				// Check if wolf cap is greater than 1
-				if (current <= 1) {
-					PlayerManager.notifyFailure(player, "Wolf cap cannot be less than 1!");
-					return;
-				}
-
-				arenaInstance.setWolfCap(--current);
-				player.openInventory(Inventories.createWolfCapMenu(meta.getArena()));
-			}
-
-			// Increase wolf cap
-			else if (buttonName.contains("Increase")) {
-				// Check for arena closure
-				if (!arenaInstance.isClosed()) {
-					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-					return;
-				}
-
-				arenaInstance.setWolfCap(++current);
-				player.openInventory(Inventories.createWolfCapMenu(meta.getArena()));
-			}
-
-			// Exit menu
-			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Inventories.createGameSettingsMenu(meta.getArena()));
 		}
 
 		// Iron golem cap menu for an arena
@@ -3136,10 +3076,6 @@ public class InventoryListener implements Listener {
 				int kitLevel = PlayerManager.getMultiTierKitLevel(ownerID, kit.getID());
 				if (kitLevel == kit.getMaxLevel())
 					return;
-				else if (Kit.summoner().getID().equals(kit.getID())) {
-					PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
-					return;
-				}
 				else if (kitLevel == 0) {
 					if (balance >= kit.getPrice(++kitLevel)) {
 						PlayerManager.withdrawCrystalBalance(ownerID, kit.getPrice(kitLevel));
@@ -3232,10 +3168,6 @@ public class InventoryListener implements Listener {
 					PlayerManager.notifyFailure(player, LanguageManager.errors.kitSelect);
 					return;
 				}
-				if (Kit.summoner().getID().equals(kit.getID())) {
-					PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
-					return;
-				}
 				gamer.setKit(kit.setKitLevel(kitLevel));
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.kitSelect);
 			}
@@ -3326,7 +3258,10 @@ public class InventoryListener implements Listener {
 				return;
 			}
 			int gemBoost = gamer.getGemBoost();
-			int conversionRatio = 5;
+			int conversionRatio;
+			if (Main.hasCustomEconomy())
+				conversionRatio = Math.max((int) (5 * Main.plugin.getConfig().getDouble("vaultEconomyMult")), 1);
+			else conversionRatio = 5;
 			int balance = PlayerManager.getCrystalBalance(meta.getPlayerID());
 
 			// Reset

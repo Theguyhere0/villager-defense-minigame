@@ -678,10 +678,11 @@ public class LanguageManager {
         public final @NotNull GiftKit reaper;
         public final @NotNull AbilityKit siren;
         public final @NotNull GiftKit soldier;
-        public final @NotNull TieredGiftKit summoner;
+        public final @NotNull ThreeTieredKit summoner;
         public final @NotNull GiftKit tailor;
         public final @NotNull AbilityKit templar;
         public final @NotNull Kit trader;
+        public final @NotNull TwoTieredKit trainer;
         public final @NotNull Kit vampire;
         public final @NotNull AbilityKit warrior;
         public final @NotNull Kit witch;
@@ -703,10 +704,11 @@ public class LanguageManager {
             reaper = new GiftKit("reaper");
             siren = new AbilityKit("siren");
             soldier = new GiftKit("soldier");
-            summoner = new TieredGiftKit("summoner");
+            summoner = new ThreeTieredKit("summoner");
             tailor = new GiftKit("tailor");
             templar = new AbilityKit("templar");
             trader = new Kit("trader");
+            trainer = new TwoTieredKit("trainer");
             vampire = new Kit("vampire");
             warrior = new AbilityKit("warrior");
             witch = new Kit("witch");
@@ -752,21 +754,33 @@ public class LanguageManager {
             }
         }
 
-        public static class TieredGiftKit extends Section {
+        public static class TwoTieredKit extends Section {
+            public final @NotNull String name;
+            public final @NotNull String description1;
+            public final @NotNull String description2;
+
+            private TwoTieredKit(@NotNull String key) throws InvalidLanguageKeyException {
+                setPathPrefix("kits." + key);
+
+                name = getConfigString("name");
+                description1 = getConfigString("description1");
+                description2 = getConfigString("description2");
+            }
+        }
+
+        public static class ThreeTieredKit extends Section {
             public final @NotNull String name;
             public final @NotNull String description1;
             public final @NotNull String description2;
             public final @NotNull String description3;
-            public final @NotNull Items items;
 
-            private TieredGiftKit(@NotNull String key) throws InvalidLanguageKeyException {
+            private ThreeTieredKit(@NotNull String key) throws InvalidLanguageKeyException {
                 setPathPrefix("kits." + key);
 
                 name = getConfigString("name");
                 description1 = getConfigString("description1");
                 description2 = getConfigString("description2");
                 description3 = getConfigString("description3");
-                items = new Items(key);
             }
         }
 
@@ -777,7 +791,6 @@ public class LanguageManager {
             public final String chestplate;
             public final String club;
             public final String clubDesc;
-            public final String golem;
             public final String helmet;
             public final String leggings;
             public final String scythe;
@@ -786,7 +799,6 @@ public class LanguageManager {
             public final String strength;
             public final String sword;
             public final String swordDesc;
-            public final String wolf;
 
             private Items(@NotNull String key) throws InvalidLanguageKeyException {
                 setPathPrefix("kits." + key + ".items");
@@ -845,15 +857,6 @@ public class LanguageManager {
                     else temp = null;
                 }
                 clubDesc = temp;
-
-                try {
-                    temp = getConfigString("golem");
-                } catch (InvalidLanguageKeyException e) {
-                    if (key.equals("summoner"))
-                        throw e;
-                    else temp = null;
-                }
-                golem = temp;
 
                 try {
                     temp = getConfigString("helmet");
@@ -925,15 +928,6 @@ public class LanguageManager {
                     else temp = null;
                 }
                 swordDesc = temp;
-
-                try {
-                    temp = getConfigString("wolf");
-                } catch (InvalidLanguageKeyException e) {
-                    if (key.equals("summoner"))
-                        throw e;
-                    else temp = null;
-                }
-                wolf = temp;
             }
         }
     }

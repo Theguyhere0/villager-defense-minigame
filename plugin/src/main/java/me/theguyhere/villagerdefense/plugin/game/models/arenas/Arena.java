@@ -10,6 +10,7 @@ import me.theguyhere.villagerdefense.plugin.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
 import me.theguyhere.villagerdefense.plugin.game.managers.CountdownManager;
 import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDDog;
 import me.theguyhere.villagerdefense.plugin.game.utils.SpawningUtil;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
@@ -1759,11 +1760,23 @@ public class Arena {
         getActives().forEach(player -> {
             // Give all players starting items and set up attributes
             player.giveItems();
-            player.setupAttributes();
+            player.setupAttributes(true);
 
             // Give Traders their gems
             if (Kit.trader().setKitLevel(1).equals(player.getKit()))
                 player.addGems(200);
+
+            // Give Summoners their dogs
+            if (Kit.summoner().setKitLevel(1).equals(player.getKit()))
+                player.addPet(new VDDog(this, player.getPlayer().getLocation(), player.getPlayer(), 1));
+            if (Kit.summoner().setKitLevel(2).equals(player.getKit())) {
+                player.addPet(new VDDog(this, player.getPlayer().getLocation(), player.getPlayer(), 1));
+                player.addPet(new VDDog(this, player.getPlayer().getLocation(), player.getPlayer(), 1));
+            }
+            if (Kit.summoner().setKitLevel(3).equals(player.getKit())) {
+                player.addPet(new VDDog(this, player.getPlayer().getLocation(), player.getPlayer(), 1));
+                // TODO
+            }
 
             // Give gems from crystal conversion
             int amount;
@@ -2058,7 +2071,7 @@ public class Arena {
             PlayerManager.teleAdventure(p.getPlayer(), getPlayerSpawn().getLocation());
             p.setStatus(PlayerStatus.ALIVE);
             p.giveItems();
-            p.setupAttributes();
+            p.setupAttributes(false);
         }
 
         getActives().forEach(p -> {
@@ -2772,6 +2785,12 @@ public class Arena {
                 break;
             case GIANT2:
                 effectKit = Kit.giant().setKitLevel(2);
+                break;
+            case TRAINER1:
+                effectKit = Kit.trainer().setKitLevel(1);
+                break;
+            case TRAINER2:
+                effectKit = Kit.trainer().setKitLevel(2);
                 break;
             default:
                 effectKit = Kit.none();

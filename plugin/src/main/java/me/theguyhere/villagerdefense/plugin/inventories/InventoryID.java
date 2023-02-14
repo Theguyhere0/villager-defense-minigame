@@ -63,7 +63,6 @@ public enum InventoryID {
     SELECT_KITS_MENU,
     SCYTHE_SHOP_MENU,
     SHOP_MENU,
-    SHOP_SETTINGS_MENU,
     SPAWN_CONFIRM_MENU,
     SPAWN_TABLE_MENU,
     SOUNDS_MENU,
@@ -85,8 +84,7 @@ public enum InventoryID {
     WAITING_CONFIRM_MENU,
     WAITING_ROOM_MENU,
     WAITING_SOUND_MENU,
-    WAVE_TIME_LIMIT_MENU,
-    WOLF_CAP_MENU;
+    WAVE_TIME_LIMIT_MENU;
 
     public static boolean isInGameShop(InventoryID id) {
         return id == InventoryID.SWORD_SHOP_MENU || id == InventoryID.AXE_SHOP_MENU ||

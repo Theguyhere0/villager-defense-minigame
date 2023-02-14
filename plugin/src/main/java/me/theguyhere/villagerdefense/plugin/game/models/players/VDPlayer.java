@@ -5,6 +5,7 @@ import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
+import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
@@ -800,6 +801,7 @@ public class VDPlayer {
 
     public void setGemBoost(int gemBoost) {
         this.gemBoost = gemBoost;
+        GameManager.createBoard(this);
     }
 
     public boolean isSharing() {
@@ -841,10 +843,6 @@ public class VDPlayer {
         pets.forEach(pet -> remaining.addAndGet(-pet.getSlots()));
 
         return remaining.get();
-    }
-
-    public void setPetSlots(int petSlots) {
-        this.petSlots = petSlots;
     }
 
     public List<VDPet> getPets() {
@@ -927,7 +925,7 @@ public class VDPlayer {
     /**
      * Sets up attributes properly after dying or first spawning.
      */
-    public void setupAttributes() {
+    public void setupAttributes(boolean first) {
         Random r = new Random();
         int maxHealth = 500;
 
@@ -944,14 +942,14 @@ public class VDPlayer {
                             AttributeModifier.Operation.ADD_NUMBER));
             maxHealth = 600;
         }
-        else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT2))) {
+        else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT1))) {
             Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
                     .addModifier(new AttributeModifier("Giant2", 4,
                             AttributeModifier.Operation.ADD_NUMBER));
             maxHealth = 550;
             PlayerManager.notifySuccess(getPlayer(), LanguageManager.messages.effectShare);
         }
-        else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT1))) {
+        else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT2))) {
             Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
                     .addModifier(new AttributeModifier("Giant1", 2,
                             AttributeModifier.Operation.ADD_NUMBER));
@@ -987,7 +985,20 @@ public class VDPlayer {
         // Set up health and damage
         setMaxHealthInit(maxHealth);
 
-        // Set up pet slots
-        petSlots = 3;
+        // Only run the first time
+        if (first) {
+            // Set up pet slots
+            if (Kit.trainer().setKitLevel(1).equals(getKit()) && !isSharing())
+                petSlots = 4;
+            else if (Kit.trainer().setKitLevel(2).equals(getKit()) && !isSharing())
+                petSlots = 5;
+            else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.TRAINER1))) {
+                petSlots = 4;
+                PlayerManager.notifySuccess(getPlayer(), LanguageManager.messages.effectShare);
+            } else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.TRAINER2))) {
+                petSlots = 5;
+                PlayerManager.notifySuccess(getPlayer(), LanguageManager.messages.effectShare);
+            } else petSlots = 3;
+        }
     }
 }

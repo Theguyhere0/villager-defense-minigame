@@ -44,6 +44,10 @@ public abstract class VDPet extends VDMob {
         return slots;
     }
 
+    public String getName() {
+        return mob.getCustomName();
+    }
+
     public abstract void incrementLevel();
 
     public abstract VDPet respawn(Arena arena, Location location);

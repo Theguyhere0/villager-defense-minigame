@@ -566,12 +566,9 @@ kits:
       swordDesc: "A durable wooden sword made of treated walnut."
   summoner:
     name: "Summoner"
-    description1: "Start with a wolf spawn"
-    description2: "Start with 2 wolf spawns"
-    description3: "Start with an iron golem spawn"
-    items:
-      golem: "Summoner's Iron Golem Spawn Egg"
-      wolf: "Summoner's Wolf Spawn Egg"
+    description1: "Start with a level 1 dog"
+    description2: "Start with two level 1 dogs"
+    description3: "Start with a level 1 horse"
   tailor:
     name: "Tailor"
     description: "Start with a full set of T1 armor"
@@ -587,6 +584,10 @@ kits:
   trader:
     name: "Trader"
     description: "Start with 200 gems"
+  trainer:
+    name: "Trainer"
+    description1: "Get an extra pet slot"
+    description2: "Get two extra pet slots"
   vampire:
     name: "Vampire"
     description: "Each attack has a 20% chance of healing 25% the attack damage"

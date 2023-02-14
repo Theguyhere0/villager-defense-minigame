@@ -291,6 +291,11 @@ public class Achievement {
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
                     1,
+                    Kit.trainer().getID()
+            ));
+            achievement.addRequirement(new AchievementRequirement(
+                    AchievementMetric.KIT_OWN,
+                    1,
                     Kit.witch().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
@@ -463,6 +468,11 @@ public class Achievement {
                     AchievementMetric.KIT_OWN,
                     1,
                     Kit.merchant().getID()
+            ));
+            achievement.addRequirement(new AchievementRequirement(
+                    AchievementMetric.KIT_OWN,
+                    2,
+                    Kit.trainer().getID()
             ));
             achievement.addRequirement(new AchievementRequirement(
                     AchievementMetric.KIT_OWN,
