@@ -1276,10 +1276,10 @@ public class Arena {
             return;
 
         Location temp = getCorner1();
-        temp.setY(Objects.requireNonNull(getCorner1().getWorld()).getMaxHeight());
+        temp.setY(Objects.requireNonNull(getCorner1().getWorld()).getMaxHeight() + 10);
         setCorner1(temp);
         temp = getCorner2();
-        temp.setY(Objects.requireNonNull(getCorner2().getWorld()).getMinHeight() - 1);
+        temp.setY(Objects.requireNonNull(getCorner2().getWorld()).getMinHeight() - 25);
         setCorner2(temp);
     }
 
@@ -1342,15 +1342,6 @@ public class Arena {
 
     public void setAbilitySound(boolean bool) {
         config.set(path + ".sounds.ability", bool);
-        Main.saveArenaData();
-    }
-
-    public boolean hasDynamicPrices() {
-        return config.getBoolean(path + ".dynamicPrices");
-    }
-
-    public void setDynamicPrices(boolean bool) {
-        config.set(path + ".dynamicPrices", bool);
         Main.saveArenaData();
     }
 
@@ -1491,10 +1482,6 @@ public class Arena {
                     player.getPlayer().sendMessage(new ColoredMessage(ChatColor.GOLD, LIST + (getMaxWaves() < 0 ?
                             LanguageManager.messages.noLastWave : String.format(LanguageManager.messages.finalWave,
                             getMaxWaves()))).toString());
-                    player.getPlayer().sendMessage(new ColoredMessage(hasDynamicPrices() ? ChatColor.GREEN :
-                            ChatColor.RED, String.format(LIST + LanguageManager.messages.dynamicPrices,
-                            hasDynamicPrices() ? LanguageManager.messages.will :
-                                    LanguageManager.messages.willNot)).toString());
                     player.getPlayer().sendMessage(new ColoredMessage(hasDynamicLimit() ? ChatColor.GREEN :
                             ChatColor.RED, String.format(LIST + LanguageManager.messages.dynamicTimeLimit,
                             hasDynamicLimit() ? LanguageManager.messages.will :
@@ -2116,6 +2103,9 @@ public class Arena {
                         new ColoredMessage(ChatColor.AQUA, Integer.toString(reward))
                 );
             GameManager.createBoard(p);
+
+            // Revive pets
+            p.respawnPets();
         });
 
         // Notify spectators of upcoming wave
@@ -2588,8 +2578,6 @@ public class Arena {
     public ItemStack modifyPrice(ItemStack itemStack) {
         // Set price modifier
         double modifier = Math.pow(getActiveCount() - 5, 2) / 200 + 1;
-        if (!hasDynamicPrices())
-            modifier = 1;
 
         ItemStack item = itemStack.clone();
         ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
@@ -2865,7 +2853,6 @@ public class Arena {
         setDifficultyMultiplier(arenaToCopy.getDifficultyMultiplier());
         setLateArrival(arenaToCopy.hasLateArrival());
         setDynamicLimit(arenaToCopy.hasDynamicLimit());
-        setDynamicPrices(arenaToCopy.hasDynamicPrices());
         setDifficultyLabel(arenaToCopy.getDifficultyLabel());
         setBannedKitIDs(arenaToCopy.getBannedKitIDs());
         setCommunity(arenaToCopy.hasCommunity());

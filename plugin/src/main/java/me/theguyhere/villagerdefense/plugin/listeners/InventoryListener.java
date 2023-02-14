@@ -1784,13 +1784,6 @@ public class InventoryListener implements Listener {
 					player.openInventory(Inventories.createShopSettingsMenu(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
-			// Toggle dynamic prices
-			else if (buttonName.contains("Dynamic Prices:"))
-				if (arenaInstance.isClosed()) {
-					arenaInstance.setDynamicPrices(!arenaInstance.hasDynamicPrices());
-					player.openInventory(Inventories.createShopSettingsMenu(meta.getArena()));
-				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-
 			// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createArenaMenu(meta.getArena()));
@@ -2553,11 +2546,10 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				arena1.setMaxWaves(45);
+				arena1.setMaxWaves(25);
 				arena1.setWaveTimeLimit(5);
 				arena1.setDifficultyMultiplier(1);
 				arena1.setDynamicLimit(true);
-				arena1.setDynamicPrices(false);
 				arena1.setDifficultyLabel("Easy");
 			}
 
@@ -2569,11 +2561,10 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				arena1.setMaxWaves(50);
+				arena1.setMaxWaves(30);
 				arena1.setWaveTimeLimit(4);
 				arena1.setDifficultyMultiplier(2);
 				arena1.setDynamicLimit(true);
-				arena1.setDynamicPrices(true);
 				arena1.setDifficultyLabel("Medium");
 			}
 
@@ -2585,11 +2576,10 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				arena1.setMaxWaves(60);
+				arena1.setMaxWaves(35);
 				arena1.setWaveTimeLimit(3);
 				arena1.setDifficultyMultiplier(3);
 				arena1.setDynamicLimit(true);
-				arena1.setDynamicPrices(true);
 				arena1.setDifficultyLabel("Hard");
 			}
 
@@ -2605,7 +2595,6 @@ public class InventoryListener implements Listener {
 				arena1.setWaveTimeLimit(3);
 				arena1.setDifficultyMultiplier(4);
 				arena1.setDynamicLimit(false);
-				arena1.setDynamicPrices(true);
 				arena1.setDifficultyLabel("Insane");
 			}
 
@@ -2743,7 +2732,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Remove cost meta
-			buy = ItemManager.removeLastLore(buy);
+			buy = ItemManager.removeLastLore(ItemManager.removeLastLore(buy));
 
 			// Make unbreakable for blacksmith (not sharing)
 			if (Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) && !gamer.isSharing())
@@ -2801,8 +2790,13 @@ public class InventoryListener implements Listener {
 				return;
 			}
 
+			// Edit existing
+			if (buttonName.contains(LanguageManager.messages.mobName.replace("%s", "").trim()))
+				player.openInventory(Inventories.createPetManagerMenu(arenaInstance, gamer,
+						e.getSlot() - meta.getId()));
+
 			// Create new
-			if (buttonName.contains(CommunicationManager.format("&a&lNew ")))
+			else if (buttonName.contains(CommunicationManager.format("&a&lNew ")))
 				player.openInventory(Inventories.createNewPetMenu(arenaInstance, gamer));
 
 			// Return to main shop menu
@@ -2825,12 +2819,118 @@ public class InventoryListener implements Listener {
 
 			// Add pet
 			if (buttonName.contains(LanguageManager.mobs.dog)) {
-				gamer.addPet(new VDDog(arenaInstance, player.getLocation(), player));
+				ItemStack buy = Objects.requireNonNull(e.getClickedInventory().getItem(e.getSlot())).clone();
+				List<String> lore = Objects.requireNonNull(buy.getItemMeta()).getLore();
+				Random random = new Random();
+				if (lore == null)
+					return;
+				int cost = Integer.parseInt(lore.get(lore.size() - 1)
+						.substring(6 + LanguageManager.messages.gems.length()));
+
+				// Check if they can afford the item
+				if (!gamer.canAfford(cost)) {
+					PlayerManager.notifyFailure(player, LanguageManager.errors.buy);
+					return;
+				}
+
+				// Subtract from balance, apply rebate, and update scoreboard
+				gamer.addGems(-cost);
+				if (Kit.merchant().setKitLevel(1).equals(gamer.getKit()) && !gamer.isSharing())
+					gamer.addGems(cost / 10);
+				if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.MERCHANT))) {
+					gamer.addGems(cost / 10);
+					PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+				}
+				GameManager.createBoard(gamer);
+
+				// Spawn pet
+				gamer.addPet(new VDDog(arenaInstance, player.getLocation(), player, 1));
+				player.openInventory(Inventories.createPetManagerMenu(arenaInstance, gamer,
+						gamer.getPets().size() - 1));
 			}
 
 			// Return to pet shop menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createPetShopMenu(arenaInstance, gamer));
+		}
+
+		// Pet manager menu
+		else if (invID == InventoryID.PET_MANAGER_MENU) {
+			Arena arenaInstance;
+			VDPlayer gamer;
+
+			// Attempt to get arena and player
+			try {
+				arenaInstance = GameManager.getArena(player);
+				gamer = arenaInstance.getPlayer(player);
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+				return;
+			}
+
+			// Upgrade the pet
+			if (buttonName.contains(LanguageManager.messages.petName.replace("%s", "").trim())) {
+				ItemStack buy = Objects.requireNonNull(e.getClickedInventory().getItem(e.getSlot())).clone();
+				List<String> lore = Objects.requireNonNull(buy.getItemMeta()).getLore();
+				Random random = new Random();
+				if (lore == null)
+					return;
+				int cost = Integer.parseInt(lore.get(lore.size() - 1)
+						.substring(6 + LanguageManager.messages.gems.length()));
+
+				// Check if they can afford the item
+				if (!gamer.canAfford(cost)) {
+					PlayerManager.notifyFailure(player, LanguageManager.errors.buy);
+					return;
+				}
+
+				// Subtract from balance, apply rebate, and update scoreboard
+				gamer.addGems(-cost);
+				if (Kit.merchant().setKitLevel(1).equals(gamer.getKit()) && !gamer.isSharing())
+					gamer.addGems(cost / 10);
+				if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.MERCHANT))) {
+					gamer.addGems(cost / 10);
+					PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+				}
+				GameManager.createBoard(gamer);
+
+				// Upgrade pet
+				gamer.getPets().get(meta.getId()).incrementLevel();
+				player.openInventory(Inventories.createPetManagerMenu(arenaInstance, gamer, meta.getId()));
+			}
+
+			// Remove the pet
+			else if (buttonName.contains(LanguageManager.messages.removePet))
+				player.openInventory(Inventories.createPetConfirmMenu(arenaInstance, player.getUniqueId(),
+						meta.getId()));
+
+			// Return to pet shop menu
+			else if (buttonName.contains(LanguageManager.messages.exit))
+				player.openInventory(Inventories.createPetShopMenu(arenaInstance, gamer));
+		}
+
+		// Pet removal confirmation
+		else if (invID == InventoryID.PET_CONFIRM_MENU) {
+			Arena arenaInstance = meta.getArena();
+			VDPlayer gamer;
+			try {
+				gamer = arenaInstance.getPlayer(meta.getPlayerID());
+			} catch (PlayerNotFoundException err) {
+				return;
+			}
+
+			// Return to previous menu
+			if (buttonName.contains("NO"))
+				player.openInventory(Inventories.createPetManagerMenu(arenaInstance, gamer, meta.getId()));
+
+			// Remove pet, then return to previous menu
+			else if (buttonName.contains("YES")) {
+				// Remove data
+				gamer.removePet(meta.getId());
+
+				// Confirm and return
+				PlayerManager.notifySuccess(player, LanguageManager.confirms.petRemove);
+				player.openInventory(Inventories.createPetShopMenu(arenaInstance, gamer));
+			}
 		}
 
 		// Ability upgrade shop
@@ -2874,7 +2974,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Remove cost meta
-			buy = ItemManager.removeLastLore(buy);
+			buy = ItemManager.removeLastLore(ItemManager.removeLastLore(buy));
 
 			// Subtract from balance, apply rebate, and update scoreboard
 			gamer.addGems(-cost);
@@ -2943,7 +3043,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Remove cost meta
-			buy = ItemManager.removeLastLore(buy);
+			buy = ItemManager.removeLastLore(ItemManager.removeLastLore(buy));
 
 			// Subtract from balance, apply rebate, and update scoreboard
 			gamer.addGems(-cost);

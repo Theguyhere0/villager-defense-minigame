@@ -735,12 +735,6 @@ public class Inventories {
 				CommunicationManager.format("&d&lCommunity Chest: " + getToggleStatus(arena.hasCommunity())),
 				CommunicationManager.format("&7Turn community chest on and off")));
 
-		// Option to toggle dynamic prices
-		buttons.add(ItemManager.createItem(Material.EMERALD,
-				CommunicationManager.format("&b&lDynamic Prices: " + getToggleStatus(arena.hasDynamicPrices())),
-				CommunicationManager.format("&7Prices adjusting based on number of"),
-				CommunicationManager.format("&7players in the game")));
-
 		return InventoryFactory.createDynamicSizeInventory(
 				new InventoryMeta(InventoryID.SHOP_SETTINGS_MENU, InventoryType.MENU, arena),
 				CommunicationManager.format("&e&lShop Settings: " + arena.getName()),
@@ -1621,13 +1615,17 @@ public class Inventories {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
 
+		// List out existing pets
+		player.getPets().forEach(pet -> buttons.add(pet.createButton()));
+
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-				new InventoryMeta(InventoryID.PET_SHOP_MENU, InventoryType.MENU),
+				new InventoryMeta(InventoryID.PET_SHOP_MENU, InventoryType.MENU, arena,
+						(9 - player.getPets().size()) / 2),
 				CommunicationManager.format(String.format("&2&l" + LanguageManager.names.petShop,
 						Integer.toString(player.getRemainingPetSlots()), Integer.toString(player.getPetSlots()))),
 				true,
 				true,
-				"Pet",
+				LanguageManager.names.pet,
 				buttons
 		);
 	}
@@ -1637,11 +1635,9 @@ public class Inventories {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
 
-//		if (arena.getCurrentShopLevel() < 2) {
-//			buttons.add(Buttons.levelPlaceholder(2));
-//		} else {
-			buttons.add(arena.modifyPrice(PetEgg.create(PetEgg.PetEggType.DOG)));
-//		}
+		// List available pet types to purchase
+		if (player.getRemainingPetSlots() > 0)
+			buttons.add(arena.modifyPrice(PetEgg.create(1, PetEgg.PetEggType.DOG)));
 
 		return InventoryFactory.createDynamicSizeInventory(
 				new InventoryMeta(InventoryID.NEW_PET_MENU, InventoryType.MENU),
@@ -1656,14 +1652,55 @@ public class Inventories {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
 
-		return InventoryFactory.createDynamicSizeBottomNavInventory(
-				new InventoryMeta(InventoryID.PET_MANAGER_MENU, InventoryType.MENU),
+		// Upgrade
+		ItemStack noUpgrade = ItemManager.createItem(Material.RED_STAINED_GLASS_PANE,
+				new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.noUpgrades).toString(),
+				ItemManager.BUTTON_FLAGS, null);
+		switch (player.getPets().get(petIndex).getLevel()) {
+			case 1:
+				buttons.add(arena.modifyPrice(PetEgg.create(2, PetEgg.PetEggType.DOG)));
+				break;
+			case 2:
+				buttons.add(arena.modifyPrice(PetEgg.create(3, PetEgg.PetEggType.DOG)));
+				break;
+			case 3:
+				buttons.add(arena.modifyPrice(PetEgg.create(4, PetEgg.PetEggType.DOG)));
+				break;
+			case 4:
+				buttons.add(arena.modifyPrice(PetEgg.create(5, PetEgg.PetEggType.DOG)));
+				break;
+			case 5:
+				buttons.add(arena.modifyPrice(PetEgg.create(6, PetEgg.PetEggType.DOG)));
+				break;
+			case 6:
+				buttons.add(arena.modifyPrice(PetEgg.create(7, PetEgg.PetEggType.DOG)));
+				break;
+			default:
+				buttons.add(noUpgrade);
+		}
+
+		// Remove
+		buttons.add(ItemManager.createItem(Material.LAVA_BUCKET,
+				CommunicationManager.format("&4&l" + LanguageManager.messages.removePet)));
+
+		return InventoryFactory.createFixedSizeInventory(
+				new InventoryMeta(InventoryID.PET_MANAGER_MENU, InventoryType.MENU, arena, petIndex),
 				CommunicationManager.format(String.format("&2&l" + LanguageManager.names.petShop,
 						Integer.toString(player.getRemainingPetSlots()), Integer.toString(player.getPetSlots()))),
+				1,
 				true,
-				true,
-				"Pet",
 				buttons
+		);
+	}
+
+	// Display pet removal confirmation
+	public static Inventory createPetConfirmMenu(Arena arena, UUID playerID, int petIndex) {
+		return InventoryFactory.createConfirmationMenu(
+				InventoryID.PET_CONFIRM_MENU,
+				playerID,
+				arena,
+				petIndex,
+				CommunicationManager.format("&4&l" + LanguageManager.messages.removePet + "?")
 		);
 	}
 
@@ -2581,14 +2618,6 @@ public class Inventories {
 		// Forced challenges
 		buttons.add(ItemManager.createItem(Material.NETHER_STAR,
 				CommunicationManager.format("&9&l" + LanguageManager.messages.forcedChallenges)));
-
-		// Dynamic prices
-		buttons.add(ItemManager.createItem(Material.EMERALD,
-				CommunicationManager.format("&b&l" +
-						LanguageManager.arenaStats.dynamicPrices.name +
-						": " + getToggleStatus(arena.hasDynamicPrices())),
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.dynamicPrices.description, Utils.LORE_CHAR_LIMIT)));
 
 		// Dynamic time limit
 		buttons.add(ItemManager.createItem(Material.SNOWBALL,

@@ -89,42 +89,32 @@ public class GameListener implements Listener {
 			return;
 		}
 
-		// Check for right wave
-		if (mob.getWave() != arena.getCurrentWave())
-			return;
-
 		// Clear normal drops
 		e.getDrops().clear();
 		e.setDroppedExp(0);
 
+		// Remove the mob
+		arena.removeMob(mob.getID());
+
 		if (ent.getMetadata(VDMob.TEAM).get(0).equals(Team.VILLAGER.getValue())) {
-//			// Handle pet death TODO
-//			if (ent instanceof Wolf) {
-//				try {
-//					arena.getPlayer((Player) ((Wolf) ent).getOwner()).decrementWolves();
-//				} catch (Exception err) {
-//					return;
-//				}
-//			}
-//
-//			// Handle golem death TODO
-//			else if (ent instanceof IronGolem)
-//				arena.decrementGolems();
+			// Update scoreboards
+			arena.updateScoreboards();
 		}
 
 		// Handle enemy death
 		else if (ent.getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue())) {
+			// Check for right wave
+			if (mob.getWave() != arena.getCurrentWave())
+				return;
+
+			// Update scoreboards
+			arena.updateScoreboards();
+
 			// Set monsters glowing when only 20% remain
 			if (arena.getEnemies() <= .2 * arena.getMaxEnemies() && !arena.isSpawningMonsters() &&
 					arena.getEnemies() > 0)
 				arena.setMonsterGlow();
 		}
-
-		// Remove the mob
-		arena.removeMob(mob.getID());
-
-		// Update scoreboards
-		arena.updateScoreboards();
 	}
 
 	// Stop automatic game mode switching between worlds

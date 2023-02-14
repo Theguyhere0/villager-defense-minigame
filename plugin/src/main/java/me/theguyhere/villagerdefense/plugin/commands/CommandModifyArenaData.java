@@ -110,7 +110,6 @@ class CommandModifyArenaData {
         MONSTER_SPAWN_PARTICLES("monsterSpawnParticles-"),
         VILLAGER_SPAWN_PARTICLES("villagerSpawnParticles-"),
         COMMUNITY_CHEST("communityChest-"),
-        DYNAMIC_PRICES("dynamicPrices-"),
         DYNAMIC_TIME_LIMIT("dynamicTimeLimit-"),
         LATE_ARRIVAL("lateArrival-"),
         MAX_WAVES("maxWaves-"),
@@ -780,38 +779,6 @@ class CommandModifyArenaData {
 
                 // Notify console and possibly player
                 CommandExecImp.notifySuccess(sender, "Community chest is off for " + arena.getName() + ".");
-            }
-            else CommandExecImp.notifyFailure(sender, "Invalid operation value. Valid values: " +
-                        Arrays.toString(Arrays.stream(ToggleArgument.values()).map(ToggleArgument::getArg).toArray()));
-        }
-        else if (CommandGuard.checkArgStartWith(args, 2, ArenaOperationArgument.DYNAMIC_PRICES.arg)) {
-            String value = args[2].substring(args[2].indexOf("-") + 1);
-
-            if (ToggleArgument.ON.arg.equalsIgnoreCase(value)) {
-                // Check if already on
-                if (arena.hasDynamicPrices()) {
-                    CommandExecImp.notifyFailure(sender, "Dynamic prices is already on!");
-                    return;
-                }
-
-                // Turn on
-                arena.setDynamicPrices(true);
-
-                // Notify console and possibly player
-                CommandExecImp.notifySuccess(sender, "Dynamic prices is on for " + arena.getName() + ".");
-            }
-            else if (ToggleArgument.OFF.arg.equalsIgnoreCase(value)) {
-                // Check if already off
-                if (!arena.hasDynamicPrices()) {
-                    CommandExecImp.notifyFailure(sender, "Dynamic prices is already off!");
-                    return;
-                }
-
-                // Turn off
-                arena.setDynamicPrices(false);
-
-                // Notify console and possibly player
-                CommandExecImp.notifySuccess(sender, "Dynamic prices is off for " + arena.getName() + ".");
             }
             else CommandExecImp.notifyFailure(sender, "Invalid operation value. Valid values: " +
                         Arrays.toString(Arrays.stream(ToggleArgument.values()).map(ToggleArgument::getArg).toArray()));

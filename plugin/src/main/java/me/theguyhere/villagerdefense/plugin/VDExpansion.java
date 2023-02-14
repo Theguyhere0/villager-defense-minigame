@@ -73,8 +73,6 @@ public class VDExpansion extends PlaceholderExpansion {
             return String.valueOf(arena.getDifficultyMultiplier());
         else if (params.contains("enemies_") && arena != null)
             return String.valueOf(arena.getEnemies());
-        else if (params.contains("golemCap_") && arena != null)
-            return String.valueOf(arena.getGolemCap());
         else if (params.contains("golems_") && arena != null)
             return String.valueOf(arena.getGolems());
         else if (params.contains("villagers_") && arena != null)
@@ -83,8 +81,6 @@ public class VDExpansion extends PlaceholderExpansion {
             return String.valueOf(arena.getSpectatorCount());
         else if (params.contains("ghostCount_") && arena != null)
             return String.valueOf(arena.getGhostCount());
-        else if (params.contains("wolfCap_") && arena != null)
-            return String.valueOf(arena.getWolfCap());
 
         // Player information
         else if (params.contains("crystalBalance_") && id != null)

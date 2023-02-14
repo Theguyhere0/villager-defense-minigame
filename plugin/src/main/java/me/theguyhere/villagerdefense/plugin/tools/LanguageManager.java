@@ -257,6 +257,7 @@ public class LanguageManager {
         public final @NotNull String kitSelect;
         public final @NotNull String kitUpgrade;
         public final @NotNull String leggings;
+        public final @NotNull String petRemove;
         public final @NotNull String reset;
 
         private Confirms() throws InvalidLanguageKeyException {
@@ -277,6 +278,7 @@ public class LanguageManager {
             kitSelect = getConfigString("kitSelect");
             kitUpgrade = getConfigString("kitUpgrade");
             leggings = getConfigString("leggings");
+            petRemove = getConfigString("petRemove");
             reset = getConfigString("reset");
         }
     }
@@ -1025,6 +1027,8 @@ public class LanguageManager {
         public final @NotNull String oneMinuteWarning;
         public final @NotNull String pierce;
         public final @NotNull String perBlock;
+        public final @NotNull String petButton;
+        public final @NotNull String petName;
         public final @NotNull String playerKits;
         public final @NotNull String players;
         public final @NotNull String playerStatistics;
@@ -1036,6 +1040,7 @@ public class LanguageManager {
         public final @NotNull String records;
         public final @NotNull String refill;
         public final @NotNull String reloadPlugin;
+        public final @NotNull String removePet;
         public final @NotNull String reset;
         public final @NotNull String resetWarning;
         public final @NotNull String resurrection;
@@ -1152,6 +1157,8 @@ public class LanguageManager {
             oneMinuteWarning = getConfigString("oneMinuteWarning");
             pierce = getConfigString("pierce");
             perBlock = getConfigString("perBlock");
+            petButton = getConfigString("petButton");
+            petName = getConfigString("petName");
             playerKits = getConfigString("playerKits");
             players = getConfigString("players");
             playerStatistics = getConfigString("playerStatistics");
@@ -1163,6 +1170,7 @@ public class LanguageManager {
             records = getConfigString("records");
             refill = getConfigString("refill");
             reloadPlugin = getConfigString("reloadPlugin");
+            removePet = getConfigString("removePet");
             reset = getConfigString("reset");
             resetWarning = getConfigString("resetWarning");
             resurrection = getConfigString("resurrection");
@@ -1341,6 +1349,7 @@ public class LanguageManager {
         public final @NotNull String none;
         public final @NotNull String normal;
         public final @NotNull String penetrating;
+        public final @NotNull String pet;
         public final @NotNull String petShop;
         public final @NotNull String playerSpawnParticles;
         public final @NotNull String scytheShop;
@@ -1396,6 +1405,7 @@ public class LanguageManager {
             none = getConfigString("none");
             normal = getConfigString("normal");
             penetrating = getConfigString("penetrating");
+            pet = getConfigString("pet");
             petShop = getConfigString("petShop");
             playerSpawnParticles = getConfigString("playerSpawnParticles");
             scytheShop = getConfigString("scytheShop");

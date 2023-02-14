@@ -255,9 +255,11 @@ public abstract class ShopFood extends VDFood {
                 break;
             default: price = -1;
         }
-        if (price >= 0)
+        if (price >= 0) {
+            lores.add("");
             lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
                     price));
+        }
 
         return ItemManager.setAmount(ItemManager.createItem(mat, name, lores), count);
     }

@@ -157,9 +157,11 @@ public abstract class Ammo extends VDWeapon {
                 break;
             default: price = -1;
         }
-        if (price >= 0)
+        if (price >= 0) {
+            lores.add("");
             lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
                     price));
+        }
 
         // Create item
         return ItemManager.createItem(Material.NETHER_STAR, name, ItemManager.BUTTON_FLAGS, null, lores);
