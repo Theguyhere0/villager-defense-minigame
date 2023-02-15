@@ -11,6 +11,7 @@ import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
 import me.theguyhere.villagerdefense.plugin.game.managers.CountdownManager;
 import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDDog;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDPet;
 import me.theguyhere.villagerdefense.plugin.game.utils.SpawningUtil;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
@@ -1768,13 +1769,13 @@ public class Arena {
 
             // Give Summoners their dogs
             if (Kit.summoner().setKitLevel(1).equals(player.getKit()))
-                player.addPet(new VDDog(this, player.getPlayer().getLocation(), player.getPlayer(), 1));
+                player.addPet(new VDDog(this, player.getPlayer().getLocation(), player, 1));
             if (Kit.summoner().setKitLevel(2).equals(player.getKit())) {
-                player.addPet(new VDDog(this, player.getPlayer().getLocation(), player.getPlayer(), 1));
-                player.addPet(new VDDog(this, player.getPlayer().getLocation(), player.getPlayer(), 1));
+                player.addPet(new VDDog(this, player.getPlayer().getLocation(), player, 1));
+                player.addPet(new VDDog(this, player.getPlayer().getLocation(), player, 1));
             }
             if (Kit.summoner().setKitLevel(3).equals(player.getKit())) {
-                player.addPet(new VDDog(this, player.getPlayer().getLocation(), player.getPlayer(), 1));
+                player.addPet(new VDDog(this, player.getPlayer().getLocation(), player, 1));
                 // TODO
             }
 
@@ -1951,6 +1952,7 @@ public class Arena {
             public void run() {
                 // Heal
                 getActives().forEach(VDPlayer::heal);
+                getActives().forEach(player -> player.getPets().forEach(VDPet::heal));
             }
         });
         activeTasks.get(TWENTY_TICK).runTaskTimer(Main.plugin, 0, 20);

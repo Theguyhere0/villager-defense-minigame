@@ -194,6 +194,9 @@ public class VDPlayer {
             // Set player to fake death mode
             PlayerManager.fakeDeath(this);
 
+            // Kill off pets
+            pets.forEach(VDPet::kill);
+
             // Check for explosive challenge
             if (getChallenges().contains(Challenge.explosive())) {
                 // Create an explosion

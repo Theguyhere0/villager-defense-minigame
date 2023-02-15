@@ -34,6 +34,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.mobs.Team;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.minions.VDCreeper;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.minions.VDWitch;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDPet;
 import me.theguyhere.villagerdefense.plugin.game.models.players.AttackClass;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
@@ -519,6 +520,11 @@ public class GameListener implements Listener {
 								.callEvent(new EntityDamageByEntityEvent(damager, victim,
 								EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.5));
 					}
+
+					// Check for pet
+					if (finalDamager instanceof VDPet)
+						finalVictim.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType(),
+								((VDPet) finalDamager).getOwner().getPlayer(), arena);
 
 					// Play out damage and effect
 					finalVictim.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType(), null,

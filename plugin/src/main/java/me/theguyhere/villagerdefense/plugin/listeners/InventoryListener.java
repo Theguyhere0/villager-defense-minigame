@@ -2784,7 +2784,7 @@ public class InventoryListener implements Listener {
 				GameManager.createBoard(gamer);
 
 				// Spawn pet
-				gamer.addPet(new VDDog(arenaInstance, player.getLocation(), player, 1));
+				gamer.addPet(new VDDog(arenaInstance, player.getLocation(), gamer, 1));
 				player.openInventory(Inventories.createPetManagerMenu(arenaInstance, gamer,
 						gamer.getPets().size() - 1));
 			}

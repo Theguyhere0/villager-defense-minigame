@@ -2,23 +2,23 @@ package me.theguyhere.villagerdefense.plugin.game.models.mobs.pets;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
-import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
+import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.*;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Tameable;
+import org.bukkit.entity.Wolf;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
 
 public class VDDog extends VDPet {
-    public VDDog(Arena arena, Location location, Player owner, int level) {
+    public VDDog(Arena arena, Location location, VDPlayer owner, int level) {
         super(
                 arena,
                 (Tameable) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.WOLF),
@@ -73,19 +73,15 @@ public class VDDog extends VDPet {
     public static int getHealth(int level) {
         switch (level) {
             case 1:
-                return 360;
+                return 240;
             case 2:
-                return 420;
+                return 300;
             case 3:
-                return 480;
+                return 360;
             case 4:
-                return 550;
+                return 420;
             case 5:
-                return 640;
-            case 6:
-                return 740;
-            case 7:
-                return 850;
+                return 450;
             default:
                 return 0;
         }
@@ -106,10 +102,6 @@ public class VDDog extends VDPet {
                 return 8;
             case 5:
                 return 12;
-            case 6:
-                return 15;
-            case 7:
-                return 20;
             default:
                 return 0;
         }
@@ -126,10 +118,6 @@ public class VDDog extends VDPet {
                 return .02;
             case 5:
                 return .05;
-            case 6:
-                return .1;
-            case 7:
-                return .15;
             default:
                 return 0;
         }
@@ -143,19 +131,15 @@ public class VDDog extends VDPet {
     public static int getDamage(int level) {
         switch (level) {
             case 1:
-                return 50;
+                return 30;
             case 2:
-                return 65;
+                return 35;
             case 3:
-                return 75;
+                return 40;
             case 4:
-                return 90;
+                return 45;
             case 5:
-                return 100;
-            case 6:
-                return 115;
-            case 7:
-                return 125;
+                return 50;
             default:
                 return 0;
         }

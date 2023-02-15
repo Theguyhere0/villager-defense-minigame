@@ -3,16 +3,22 @@ package me.theguyhere.villagerdefense.plugin.game.models.mobs;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.displays.Popup;
 import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.VDAbility;
+import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.Shop;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Mob;
@@ -170,7 +176,21 @@ public abstract class VDMob {
             damageMap.replace(id, damageMap.get(id) + damage);
         else damageMap.put(id, damage);
     }
-    
+
+    /**
+     * Takes final health difference and applies the difference, checking for absorption, death, and performing
+     * notifications.
+     * @param dif Final health difference.
+     */
+    public void changeCurrentHealth(int dif) {
+        // Make sure health was initialized properly
+        if (maxHealth <= 0)
+            return;
+
+        // Update true health
+        currentHealth = Math.min(Math.max(currentHealth + dif, 0), maxHealth);
+    }
+
     public int dealRawDamage() {
         Random r = new Random();
         AtomicInteger increase = new AtomicInteger();

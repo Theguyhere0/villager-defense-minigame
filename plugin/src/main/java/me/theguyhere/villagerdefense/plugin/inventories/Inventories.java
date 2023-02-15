@@ -1647,12 +1647,6 @@ public class Inventories {
 			case 4:
 				buttons.add(arena.modifyPrice(PetEgg.create(5, PetEgg.PetEggType.DOG)));
 				break;
-			case 5:
-				buttons.add(arena.modifyPrice(PetEgg.create(6, PetEgg.PetEggType.DOG)));
-				break;
-			case 6:
-				buttons.add(arena.modifyPrice(PetEgg.create(7, PetEgg.PetEggType.DOG)));
-				break;
 			default:
 				buttons.add(noUpgrade);
 		}

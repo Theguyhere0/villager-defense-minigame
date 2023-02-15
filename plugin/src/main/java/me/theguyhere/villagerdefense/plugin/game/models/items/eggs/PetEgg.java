@@ -112,25 +112,19 @@ public abstract class PetEgg extends VDEgg {
             case DOG:
                 switch (level) {
                     case 1:
-                        price = 180;
+                        price = 250;
                         break;
                     case 2:
-                        price = 100;
-                        break;
-                    case 3:
-                        price = 150;
-                        break;
-                    case 4:
-                        price = 200;
-                        break;
-                    case 5:
-                        price = 275;
-                        break;
-                    case 6:
                         price = 350;
                         break;
-                    case 7:
-                        price = 450;
+                    case 3:
+                        price = 500;
+                        break;
+                    case 4:
+                        price = 750;
+                        break;
+                    case 5:
+                        price = 1000;
                         break;
                     default:
                         price = -1;
