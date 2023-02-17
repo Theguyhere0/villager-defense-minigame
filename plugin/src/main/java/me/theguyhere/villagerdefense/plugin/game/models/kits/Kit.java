@@ -484,7 +484,7 @@ public class Kit {
 
         kit.addPrice(1, 450);
         kit.addPrice(2, 1000);
-        kit.addPrice(3, 1600);
+        kit.addPrice(3, 4000);
 
         kit.addItems(1, new ItemStack[]{Sword.create(VDItem.Tier.T0, Sword.SwordType.TIERED)});
         kit.addItems(2, new ItemStack[]{Sword.create(VDItem.Tier.T0, Sword.SwordType.TIERED)});

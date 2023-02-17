@@ -1,6 +1,5 @@
 package me.theguyhere.villagerdefense.plugin.inventories;
 
-import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
@@ -296,10 +295,6 @@ public class Inventories {
 		// Option to edit mob settings
 		buttons.add(ItemManager.createItem(Material.ZOMBIE_SPAWN_EGG,
 				CommunicationManager.format("&2&lMob Settings")));
-
-		// Option to edit shop settings
-		buttons.add(ItemManager.createItem(Material.GOLD_BLOCK,
-				CommunicationManager.format("&e&lShop Settings")));
 
 		// Option to edit miscellaneous game settings
 		buttons.add(ItemManager.createItem(Material.REDSTONE,
@@ -1457,9 +1452,6 @@ public class Inventories {
 	public static Inventory createAmmoUpgradeShopMenu(Arena arena, VDPlayer player) {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
-		ItemStack noUpgrade = ItemManager.createItem(Material.RED_STAINED_GLASS_PANE,
-				new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.noUpgrades).toString(),
-				ItemManager.BUTTON_FLAGS, null);
 		switch (player.getTieredAmmoLevel() + 1) {
 			case 1:
 				buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T1)));
@@ -1480,7 +1472,7 @@ public class Inventories {
 				buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T6)));
 				break;
 			default:
-				buttons.add(noUpgrade);
+				buttons.add(Buttons.noUpgrade());
 		}
 
 		return InventoryFactory.createDynamicSizeInventory(
@@ -1594,7 +1586,7 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// List out existing pets
-		player.getPets().forEach(pet -> buttons.add(pet.createButton()));
+		player.getPets().forEach(pet -> buttons.add(pet.createDisplayButton()));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
 				new InventoryMeta(InventoryID.PET_SHOP_MENU, InventoryType.MENU, arena,
@@ -1616,6 +1608,10 @@ public class Inventories {
 		// List available pet types to purchase
 		if (player.getRemainingPetSlots() > 0)
 			buttons.add(arena.modifyPrice(PetEgg.create(1, PetEgg.PetEggType.DOG)));
+		if (player.getRemainingPetSlots() > 1)
+			buttons.add(arena.modifyPrice(PetEgg.create(1, PetEgg.PetEggType.CAT)));
+		if (player.getRemainingPetSlots() > 2)
+			buttons.add(arena.modifyPrice(PetEgg.create(1, PetEgg.PetEggType.HORSE)));
 
 		return InventoryFactory.createDynamicSizeInventory(
 				new InventoryMeta(InventoryID.NEW_PET_MENU, InventoryType.MENU),
@@ -1631,25 +1627,7 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Upgrade
-		ItemStack noUpgrade = ItemManager.createItem(Material.RED_STAINED_GLASS_PANE,
-				new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.noUpgrades).toString(),
-				ItemManager.BUTTON_FLAGS, null);
-		switch (player.getPets().get(petIndex).getLevel()) {
-			case 1:
-				buttons.add(arena.modifyPrice(PetEgg.create(2, PetEgg.PetEggType.DOG)));
-				break;
-			case 2:
-				buttons.add(arena.modifyPrice(PetEgg.create(3, PetEgg.PetEggType.DOG)));
-				break;
-			case 3:
-				buttons.add(arena.modifyPrice(PetEgg.create(4, PetEgg.PetEggType.DOG)));
-				break;
-			case 4:
-				buttons.add(arena.modifyPrice(PetEgg.create(5, PetEgg.PetEggType.DOG)));
-				break;
-			default:
-				buttons.add(noUpgrade);
-		}
+		buttons.add(arena.modifyPrice(player.getPets().get(petIndex).createUpgradeButton()));
 
 		// Remove
 		buttons.add(ItemManager.createItem(Material.LAVA_BUCKET,
@@ -1679,12 +1657,9 @@ public class Inventories {
 	public static Inventory createAbilityUpgradeShopMenu(Arena arena, VDPlayer player) {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
-		ItemStack noUpgrade = ItemManager.createItem(Material.RED_STAINED_GLASS_PANE,
-				new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.noUpgrades).toString(),
-				ItemManager.BUTTON_FLAGS, null);
 		if (Kit.checkAbilityKit(player.getKit().getID())) {
 			if (player.getTieredEssenceLevel() + 1 > player.getKit().getLevel() * 2)
-				buttons.add(noUpgrade);
+				buttons.add(Buttons.noUpgrade());
 			else {
 				ItemStack ability = null;
 				switch (player.getTieredEssenceLevel() + 1) {
@@ -1705,13 +1680,13 @@ public class Inventories {
 						break;
 				}
 				if (ability == null)
-					buttons.add(noUpgrade);
+					buttons.add(Buttons.noUpgrade());
 				else if (player.isBoosted() && PlayerManager.hasAchievement(player.getID(),
 						Achievement.allMaxedAbility().getID()))
 					buttons.add(VDAbility.modifyCooldown(arena.modifyPrice(ability), .9));
 				else buttons.add(arena.modifyPrice(ability));
 			}
-		} else buttons.add(noUpgrade);
+		} else buttons.add(Buttons.noUpgrade());
 
 		return InventoryFactory.createDynamicSizeInventory(
 				new InventoryMeta(InventoryID.ABILITY_UPGRADE_SHOP_MENU, InventoryType.MENU),

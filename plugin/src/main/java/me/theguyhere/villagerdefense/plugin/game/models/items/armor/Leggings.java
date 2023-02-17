@@ -194,13 +194,13 @@ public abstract class Leggings extends VDArmor{
         int durability;
         switch (tier) {
             case T1:
-                durability = 65;
+                durability = 85;
                 break;
             case T2:
-                durability = 110;
+                durability = 145;
                 break;
             case T3:
-                durability = 205;
+                durability = 225;
                 break;
             case T4:
                 durability = 310;

@@ -10,7 +10,9 @@ import me.theguyhere.villagerdefense.plugin.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
 import me.theguyhere.villagerdefense.plugin.game.managers.CountdownManager;
 import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDCat;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDDog;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDHorse;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDPet;
 import me.theguyhere.villagerdefense.plugin.game.utils.SpawningUtil;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
@@ -41,6 +43,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -124,6 +127,7 @@ public class Arena {
     private static final String TEN_TICK = "ten" + TICK;
     private static final String TWENTY_TICK = "twenty" + TICK;
     private static final String FORTY_TICK = "forty" + TICK;
+    private static final String TWO_HUNDRED_TICK = "twoHundred" + TICK;
     private static final String KICK = "kick";
     private static final String RESET = "restart";
 
@@ -1774,10 +1778,8 @@ public class Arena {
                 player.addPet(new VDDog(this, player.getPlayer().getLocation(), player, 1));
                 player.addPet(new VDDog(this, player.getPlayer().getLocation(), player, 1));
             }
-            if (Kit.summoner().setKitLevel(3).equals(player.getKit())) {
-                player.addPet(new VDDog(this, player.getPlayer().getLocation(), player, 1));
-                // TODO
-            }
+            if (Kit.summoner().setKitLevel(3).equals(player.getKit()))
+                player.addPet(new VDHorse(this, player.getPlayer().getLocation(), player, 1));
 
             // Give gems from crystal conversion
             int amount;
@@ -1973,6 +1975,22 @@ public class Arena {
             }
         });
         activeTasks.get(FORTY_TICK).runTaskTimer(Main.plugin, 0, 40);
+        activeTasks.put(TWO_HUNDRED_TICK, new BukkitRunnable() {
+            @Override
+            public void run() {
+                // Cat heal
+                getActives().forEach(player -> {
+                    AtomicInteger heal = new AtomicInteger();
+                    player.getPets().forEach(pet -> {
+                        if (pet instanceof VDCat)
+                            heal.addAndGet(VDCat.getHeal(pet.getLevel()));
+                    });
+                    player.changeCurrentHealth(heal.get());
+                    player.getPets().forEach(pet -> pet.heal(heal.get()));
+                });
+            }
+        });
+        activeTasks.get(TWO_HUNDRED_TICK).runTaskTimer(Main.plugin, 0, 200);
 
         // Debug message to console
         CommunicationManager.debugInfo("%s is starting.", 2, getName());

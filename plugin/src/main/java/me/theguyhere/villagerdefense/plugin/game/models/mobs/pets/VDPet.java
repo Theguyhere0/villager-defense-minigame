@@ -10,7 +10,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Tameable;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffectType;
@@ -55,7 +55,9 @@ public abstract class VDPet extends VDMob {
 
     public abstract VDPet respawn(Arena arena, Location location);
 
-    public abstract ItemStack createButton();
+    public abstract ItemStack createDisplayButton();
+
+    public abstract ItemStack createUpgradeButton();
 
     public VDPlayer getOwner() {
         return owner;
@@ -87,6 +89,16 @@ public abstract class VDPet extends VDMob {
                 changeCurrentHealth(5 * (1 + potionEffect.getAmplifier()));
         });
 
+        updateNameTag();
+    }
+
+    public void heal(int health) {
+        // Check if still alive
+        if (mob.isDead())
+            return;
+
+        // Heal and update
+        changeCurrentHealth(health);
         updateNameTag();
     }
 

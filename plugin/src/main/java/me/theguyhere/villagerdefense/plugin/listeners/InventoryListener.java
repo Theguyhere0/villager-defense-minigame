@@ -7,8 +7,8 @@ import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.IllegalArenaNameException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.displays.Leaderboard;
-import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.AchievementChecker;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.VDAbility;
@@ -16,7 +16,9 @@ import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.Shop;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Ammo;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDCat;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDDog;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDHorse;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.inventories.Buttons;
@@ -2758,7 +2760,8 @@ public class InventoryListener implements Listener {
 			}
 
 			// Add pet
-			if (buttonName.contains(LanguageManager.mobs.dog)) {
+			if (buttonName.contains(LanguageManager.mobs.dog) || buttonName.contains(LanguageManager.mobs.cat) ||
+					buttonName.contains(LanguageManager.mobs.horse)) {
 				ItemStack buy = Objects.requireNonNull(e.getClickedInventory().getItem(e.getSlot())).clone();
 				List<String> lore = Objects.requireNonNull(buy.getItemMeta()).getLore();
 				Random random = new Random();
@@ -2784,7 +2787,12 @@ public class InventoryListener implements Listener {
 				GameManager.createBoard(gamer);
 
 				// Spawn pet
-				gamer.addPet(new VDDog(arenaInstance, player.getLocation(), gamer, 1));
+				if (buttonName.contains(LanguageManager.mobs.dog))
+					gamer.addPet(new VDDog(arenaInstance, player.getLocation(), gamer, 1));
+				if (buttonName.contains(LanguageManager.mobs.cat))
+					gamer.addPet(new VDCat(arenaInstance, player.getLocation(), gamer, 1));
+				if (buttonName.contains(LanguageManager.mobs.horse))
+					gamer.addPet(new VDHorse(arenaInstance, player.getLocation(), gamer, 1));
 				player.openInventory(Inventories.createPetManagerMenu(arenaInstance, gamer,
 						gamer.getPets().size() - 1));
 			}

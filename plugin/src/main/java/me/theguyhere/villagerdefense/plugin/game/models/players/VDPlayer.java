@@ -15,6 +15,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Ammo;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDHorse;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDPet;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
@@ -37,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * A class holding data about players in a Villager Defense game.
@@ -344,6 +346,9 @@ public class VDPlayer {
             });
             if (boost && PlayerManager.hasAchievement(player, Achievement.topKills9().getID()))
                 increase.addAndGet(.1);
+            if (getPlayer().isInsideVehicle())
+                increase.addAndGet((int) (VDHorse.getDamageBoost(getPets().stream()
+                        .filter(pet -> pet instanceof VDHorse).collect(Collectors.toList()).get(0).getLevel()) * 10));
 
             // Apply base damage and multipliers
             damageValues.replaceAll(original -> (int) ((original + (perBlock.get() ? 0 : baseDamage)) *
@@ -676,6 +681,9 @@ public class VDPlayer {
         });
         if (boost && PlayerManager.hasAchievement(player, Achievement.topKills9().getID()))
             increase.incrementAndGet();
+        if (getPlayer().isInsideVehicle())
+            increase.addAndGet((int) (VDHorse.getDamageBoost(getPets().stream().filter(pet -> pet instanceof VDHorse)
+                    .collect(Collectors.toList()).get(0).getLevel()) * 10));
 
         return (int) (damage * (1 + .1 * increase.get()));
     }

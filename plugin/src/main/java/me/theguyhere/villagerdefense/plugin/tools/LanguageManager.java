@@ -316,6 +316,7 @@ public class LanguageManager {
         public final @NotNull String noArena;
         public final @NotNull String noGameEnd;
         public final @NotNull String notInGame;
+        public final @NotNull String notOwner;
         public final @NotNull String offWeapon;
         public final @NotNull String outdated;
         public final @NotNull String permission;
@@ -362,6 +363,7 @@ public class LanguageManager {
             noArena = getConfigString("noArena");
             noGameEnd = getConfigString("noGameEnd");
             notInGame = getConfigString("notInGame");
+            notOwner = getConfigString("notOwner");
             offWeapon = getConfigString("offWeapon");
             outdated = getConfigString("outdated");
             permission = getConfigString("permission");
@@ -950,6 +952,7 @@ public class LanguageManager {
         public final @NotNull String available;
         public final @NotNull String blocks;
         public final @NotNull String capacity;
+        public final @NotNull String catEffect;
         public final @NotNull String challenges;
         public final @NotNull String closed;
         public final @NotNull String communityChest;
@@ -989,6 +992,7 @@ public class LanguageManager {
         public final @NotNull String help2;
         public final @NotNull String help2a;
         public final @NotNull String help3;
+        public final @NotNull String horseEffect;
         public final @NotNull String infoAboutWiki;
         public final @NotNull String info1;
         public final @NotNull String info2;
@@ -1081,6 +1085,7 @@ public class LanguageManager {
             available = getConfigString("available");
             blocks = getConfigString("blocks");
             capacity = getConfigString("capacity");
+            catEffect = getConfigString("catEffect");
             challenges = getConfigString("challenges");
             closed = getConfigString("closed");
             communityChest = getConfigString("communityChest");
@@ -1119,6 +1124,7 @@ public class LanguageManager {
             help2 = getConfigString("help2");
             help2a = getConfigString("help2a");
             help3 = getConfigString("help3");
+            horseEffect = getConfigString("horseEffect");
             infoAboutWiki = getConfigString("infoAboutWiki");
             info1 = getConfigString("info1");
             info2 = getConfigString("info2");
@@ -1198,12 +1204,14 @@ public class LanguageManager {
         public final @NotNull String babyZombie;
         public final @NotNull String blaze;
         public final @NotNull String brute;
+        public final @NotNull String cat;
         public final @NotNull String caveSpider;
         public final @NotNull String chargedCreeper;
         public final @NotNull String creeper;
         public final @NotNull String dog;
         public final @NotNull String fletcher;
         public final @NotNull String ghast;
+        public final @NotNull String horse;
         public final @NotNull String husk;
         public final @NotNull String phantom;
         public final @NotNull String piglinSniper;
@@ -1227,12 +1235,14 @@ public class LanguageManager {
             babyZombie = getConfigString("babyZombie");
             blaze = getConfigString("blaze");
             brute = getConfigString("brute");
+            cat = getConfigString("cat");
             caveSpider = getConfigString("caveSpider");
             chargedCreeper = getConfigString("chargedCreeper");
             creeper = getConfigString("creeper");
             dog = getConfigString("dog");
             fletcher = getConfigString("fletcher");
             ghast = getConfigString("ghast");
+            horse = getConfigString("horse");
             husk = getConfigString("husk");
             phantom = getConfigString("phantom");
             piglinSniper = getConfigString("piglinSniper");
@@ -1256,12 +1266,14 @@ public class LanguageManager {
         public final @NotNull String babyZombie;
         public final @NotNull String blaze;
         public final @NotNull String brute;
+        public final @NotNull String cat;
         public final @NotNull String caveSpider;
         public final @NotNull String chargedCreeper;
         public final @NotNull String creeper;
         public final @NotNull String dog;
         public final @NotNull String fletcher;
         public final @NotNull String ghast;
+        public final @NotNull String horse;
         public final @NotNull String husk;
         public final @NotNull String phantom;
         public final @NotNull String piglinSniper;
@@ -1285,12 +1297,14 @@ public class LanguageManager {
             babyZombie = getConfigString("babyZombie");
             blaze = getConfigString("blaze");
             brute = getConfigString("brute");
+            cat = getConfigString("cat");
             caveSpider = getConfigString("caveSpider");
             chargedCreeper = getConfigString("chargedCreeper");
             creeper = getConfigString("creeper");
             dog = getConfigString("dog");
             fletcher = getConfigString("fletcher");
             ghast = getConfigString("ghast");
+            horse = getConfigString("horse");
             husk = getConfigString("husk");
             phantom = getConfigString("phantom");
             piglinSniper = getConfigString("piglinSniper");

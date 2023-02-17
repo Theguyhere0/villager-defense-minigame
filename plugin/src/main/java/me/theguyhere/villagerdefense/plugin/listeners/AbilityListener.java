@@ -10,6 +10,10 @@ import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.items.ItemMetaKey;
 import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.*;
+import me.theguyhere.villagerdefense.plugin.game.models.items.armor.VDArmor;
+import me.theguyhere.villagerdefense.plugin.game.models.items.food.VDFood;
+import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.Shop;
+import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.VDWeapon;
 import me.theguyhere.villagerdefense.plugin.game.models.players.AttackClass;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
@@ -23,6 +27,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
@@ -52,6 +57,12 @@ public class AbilityListener implements Listener {
         } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             return;
         }
+
+        // Check for other clickable items if on off-hand
+        ItemStack main = player.getInventory().getItemInMainHand();
+        if (e.getHand() == EquipmentSlot.OFF_HAND && (Shop.matches(main) || VDAbility.matches(main) ||
+                VDFood.matches(main) || VDArmor.matches(main) || VDWeapon.matchesClickableWeapon(main)))
+            return;
 
         // Wait for arena to progress to first wave
         if (arena.getCurrentWave() < 1)

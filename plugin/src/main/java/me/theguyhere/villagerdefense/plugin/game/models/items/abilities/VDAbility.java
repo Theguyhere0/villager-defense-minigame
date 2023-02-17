@@ -52,6 +52,23 @@ public abstract class VDAbility extends VDItem {
                 tier.getLabel()
         );
     }
+    
+    protected static int getPrice(Tier tier) {
+        switch (tier) {
+            case T1:
+                return 350;
+            case T2:
+                return 750;
+            case T3:
+                return 1200;
+            case T4:
+                return 1600;
+            case T5:
+                return 2000;
+            default:
+                return -1;
+        }
+    }
 
     // Modify the cooldown of an ability
     @NotNull

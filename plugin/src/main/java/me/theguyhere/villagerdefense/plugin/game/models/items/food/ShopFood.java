@@ -39,15 +39,15 @@ public abstract class ShopFood extends VDFood {
                         break;
                     case T2:
                         mat = Material.BREAD;
-                        count = 4;
+                        count = 5;
                         break;
                     case T3:
                         mat = Material.COOKED_BEEF;
-                        count = 2;
+                        count = 3;
                         break;
                     case T4:
                         mat = Material.GOLDEN_CARROT;
-                        count = 1;
+                        count = 2;
                         break;
                     default:
                         mat = Material.GUNPOWDER;

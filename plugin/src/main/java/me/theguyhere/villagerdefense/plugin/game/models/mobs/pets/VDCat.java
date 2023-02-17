@@ -12,43 +12,39 @@ import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Cat;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Tameable;
-import org.bukkit.entity.Wolf;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
 
-public class VDDog extends VDPet {
-    public VDDog(Arena arena, Location location, VDPlayer owner, int level) {
+public class VDCat extends VDPet {
+    public VDCat(Arena arena, Location location, VDPlayer owner, int level) {
         super(
                 arena,
-                (Tameable) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.WOLF),
-                LanguageManager.mobs.dog,
-                LanguageManager.mobLore.dog,
-                AttackType.NORMAL,
-                1,
-                Material.BONE,
+                (Tameable) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.CAT),
+                LanguageManager.mobs.cat,
+                LanguageManager.mobLore.cat,
+                AttackType.NONE,
+                2,
+                Material.SALMON,
                 owner
         );
-        ((Wolf) mob).setAdult();
+        ((Cat) mob).setAdult();
         hpBarSize = 2;
         this.level = level;
         setHealth(getHealth(level));
         armor = getArmor(level);
         toughness = getToughness(level);
-        setDamage(getDamage(level), .1);
-        setModerateAttackSpeed();
-        setLowKnockback();
-        setLightWeight();
+        setVeryLightWeight();
         setFastSpeed();
-        setModerateTargetRange();
         updateNameTag();
     }
 
     @Override
     public VDPet respawn(Arena arena, Location location) {
-        return new VDDog(arena, location, owner, level);
+        return new VDCat(arena, location, owner, level);
     }
 
     @Override
@@ -61,13 +57,13 @@ public class VDDog extends VDPet {
     public ItemStack createUpgradeButton() {
         switch (level) {
             case 1:
-                return PetEgg.create(2, PetEgg.PetEggType.DOG);
+                return PetEgg.create(2, PetEgg.PetEggType.CAT);
             case 2:
-                return PetEgg.create(3, PetEgg.PetEggType.DOG);
+                return PetEgg.create(3, PetEgg.PetEggType.CAT);
             case 3:
-                return PetEgg.create(4, PetEgg.PetEggType.DOG);
+                return PetEgg.create(4, PetEgg.PetEggType.CAT);
             case 4:
-                return PetEgg.create(5, PetEgg.PetEggType.DOG);
+                return PetEgg.create(5, PetEgg.PetEggType.CAT);
             default:
                 return Buttons.noUpgrade();
         }
@@ -79,7 +75,6 @@ public class VDDog extends VDPet {
         setHealth(getHealth(level));
         armor = getArmor(level);
         toughness = getToughness(level);
-        setDamage(getDamage(level), .1);
         updateNameTag();
     }
 
@@ -91,15 +86,15 @@ public class VDDog extends VDPet {
     public static int getHealth(int level) {
         switch (level) {
             case 1:
-                return 240;
+                return 160;
             case 2:
-                return 300;
+                return 200;
             case 3:
-                return 360;
+                return 240;
             case 4:
-                return 420;
+                return 275;
             case 5:
-                return 450;
+                return 300;
             default:
                 return 0;
         }
@@ -113,13 +108,13 @@ public class VDDog extends VDPet {
     public static int getArmor(int level) {
         switch (level) {
             case 2:
-                return 2;
+                return 1;
             case 3:
-                return 5;
+                return 2;
             case 4:
-                return 8;
+                return 4;
             case 5:
-                return 12;
+                return 7;
             default:
                 return 0;
         }
@@ -132,32 +127,33 @@ public class VDDog extends VDPet {
      */
     public static double getToughness(int level) {
         switch (level) {
-            case 4:
-                return .02;
-            case 5:
+            case 1:
                 return .05;
+            case 2:
+                return .1;
+            case 3:
+                return .15;
+            case 4:
+                return .2;
+            case 5:
+                return .25;
             default:
                 return 0;
         }
     }
 
-    /**
-     * Returns the proper damage for the mob.
-     * @param level The mob's level.
-     * @return The damage for the mob.
-     */
-    public static int getDamage(int level) {
+    public static int getHeal(int level) {
         switch (level) {
             case 1:
-                return 30;
+                return 5;
             case 2:
-                return 35;
+                return 7;
             case 3:
-                return 40;
+                return 10;
             case 4:
-                return 45;
+                return 15;
             case 5:
-                return 50;
+                return 20;
             default:
                 return 0;
         }

@@ -29,7 +29,7 @@ public class VDChargedCreeper extends VDMinion {
         setHealth(getHealth(level));
         armor = getArmor(level);
         toughness = getToughness(level);
-        setDamage(getDamage(level), .25);
+        setDamage(getDamage(level), .4);
         setVerySlowAttackSpeed();
         creeper.setMaxFuseTicks(Utils.secondsToTicks(attackSpeed));
         setVeryHighKnockback();

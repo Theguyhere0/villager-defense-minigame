@@ -183,25 +183,7 @@ public abstract class MessengerAbility extends VDAbility {
             lores.add(CommunicationManager.format(COOLDOWN, Double.toString(cooldown)));
 
         // Set price
-        int price;
-        switch (tier) {
-            case T1:
-                price = 500;
-                break;
-            case T2:
-                price = 1000;
-                break;
-            case T3:
-                price = 1500;
-                break;
-            case T4:
-                price = 2000;
-                break;
-            case T5:
-                price = 3000;
-                break;
-            default: price = -1;
-        }
+        int price = getPrice(tier);
         if (price >= 0) {
             lores.add("");
             lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
