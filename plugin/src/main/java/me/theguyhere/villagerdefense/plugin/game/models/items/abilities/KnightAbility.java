@@ -3,7 +3,6 @@ package me.theguyhere.villagerdefense.plugin.game.models.items.abilities;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
-import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.ChatColor;
@@ -184,28 +183,12 @@ public abstract class KnightAbility extends VDAbility {
             lores.add(CommunicationManager.format(COOLDOWN, Double.toString(cooldown)));
 
         // Set price
-        int price;
-        switch (tier) {
-            case T1:
-                price = 500;
-                break;
-            case T2:
-                price = 1000;
-                break;
-            case T3:
-                price = 1500;
-                break;
-            case T4:
-                price = 2000;
-                break;
-            case T5:
-                price = 3000;
-                break;
-            default: price = -1;
-        }
-        if (price >= 0)
+        int price = getPrice(tier);
+        if (price >= 0) {
+            lores.add("");
             lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
                     price));
+        }
 
         // Create item
         return ItemManager.createItem(

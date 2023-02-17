@@ -19,6 +19,7 @@ public class Utils {
     public static final String HP_BAR = "\u258c";
     public static final String BLOCK = "\u25a0";
     public static final String ARROW = "\u27b6";
+    public static final String UPGRADE = "\u2192";
 
     // Convert seconds to ticks
     public static int secondsToTicks(double seconds) {

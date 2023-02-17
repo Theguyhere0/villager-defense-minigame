@@ -19,7 +19,6 @@ import me.theguyhere.villagerdefense.plugin.game.models.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.MageAbility;
 import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.game.models.items.armor.VDArmor;
-import me.theguyhere.villagerdefense.plugin.game.models.items.eggs.VDEgg;
 import me.theguyhere.villagerdefense.plugin.game.models.items.food.ShopFood;
 import me.theguyhere.villagerdefense.plugin.game.models.items.food.VDFood;
 import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.*;
@@ -34,6 +33,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.mobs.Team;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.minions.VDCreeper;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.minions.VDWitch;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDPet;
 import me.theguyhere.villagerdefense.plugin.game.models.players.AttackClass;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
@@ -54,6 +54,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
+import org.spigotmc.event.entity.EntityMountEvent;
 
 import java.util.List;
 import java.util.Objects;
@@ -89,42 +90,32 @@ public class GameListener implements Listener {
 			return;
 		}
 
-		// Check for right wave
-		if (mob.getWave() != arena.getCurrentWave())
-			return;
-
 		// Clear normal drops
 		e.getDrops().clear();
 		e.setDroppedExp(0);
 
+		// Remove the mob
+		arena.removeMob(mob.getID());
+
 		if (ent.getMetadata(VDMob.TEAM).get(0).equals(Team.VILLAGER.getValue())) {
-//			// Handle pet death TODO
-//			if (ent instanceof Wolf) {
-//				try {
-//					arena.getPlayer((Player) ((Wolf) ent).getOwner()).decrementWolves();
-//				} catch (Exception err) {
-//					return;
-//				}
-//			}
-//
-//			// Handle golem death TODO
-//			else if (ent instanceof IronGolem)
-//				arena.decrementGolems();
+			// Update scoreboards
+			arena.updateScoreboards();
 		}
 
 		// Handle enemy death
 		else if (ent.getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue())) {
+			// Check for right wave
+			if (mob.getWave() != arena.getCurrentWave())
+				return;
+
+			// Update scoreboards
+			arena.updateScoreboards();
+
 			// Set monsters glowing when only 20% remain
 			if (arena.getEnemies() <= .2 * arena.getMaxEnemies() && !arena.isSpawningMonsters() &&
 					arena.getEnemies() > 0)
 				arena.setMonsterGlow();
 		}
-
-		// Remove the mob
-		arena.removeMob(mob.getID());
-
-		// Update scoreboards
-		arena.updateScoreboards();
 	}
 
 	// Stop automatic game mode switching between worlds
@@ -530,9 +521,14 @@ public class GameListener implements Listener {
 								EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.5));
 					}
 
+					// Check for pet
+					if (finalDamager instanceof VDPet)
+						finalVictim.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType(),
+								((VDPet) finalDamager).getOwner().getPlayer(), arena);
+
 					// Play out damage and effect
-					finalVictim.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType(), null,
-							arena);
+					else finalVictim.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType(),
+							null, arena);
 					if (finalDamager.dealEffect() != null)
 						finalVictim.getEntity().addPotionEffect(finalDamager.dealEffect());
 				}
@@ -627,20 +623,24 @@ public class GameListener implements Listener {
 			// Custom damage handling
 			switch (damageCause) {
 				// Environmental damage, not meant for customization
-				case FALL:
-				case LAVA:
-				case HOT_FLOOR:
 				case DROWNING:
 				case SUFFOCATION:
-				case FALLING_BLOCK:
+					gamer.takeDamage((int) (damage * 25), AttackType.DIRECT);
+					break;
+				case LAVA:
+				case HOT_FLOOR:
 				case LIGHTNING:
+					gamer.takeDamage((int) (damage * 40), AttackType.PENETRATING);
+					break;
+				case FALLING_BLOCK:
+				case FALL:
 				case BLOCK_EXPLOSION:
-					gamer.takeDamage((int) (damage * 50), AttackType.PENETRATING);
+					gamer.takeDamage((int) (damage * 25), AttackType.CRUSHING);
 					break;
 				// Custom handling
 				case FIRE:
 				case FIRE_TICK:
-					gamer.takeDamage((int) (damage * 30), AttackType.PENETRATING);
+					gamer.takeDamage((int) (damage * 50), AttackType.NORMAL);
 					break;
 				case POISON:
 					gamer.takeDamage((int) (damage * 25), AttackType.PENETRATING);
@@ -667,20 +667,24 @@ public class GameListener implements Listener {
 			// Custom damage handling
 			switch (damageCause) {
 				// Environmental damage, not meant for customization
-				case FALL:
-				case LAVA:
-				case HOT_FLOOR:
 				case DROWNING:
 				case SUFFOCATION:
-				case FALLING_BLOCK:
+					mob.takeDamage((int) (damage * 25), AttackType.DIRECT, null, arena);
+					break;
+				case LAVA:
+				case HOT_FLOOR:
 				case LIGHTNING:
+					mob.takeDamage((int) (damage * 40), AttackType.PENETRATING, null, arena);
+					break;
+				case FALLING_BLOCK:
+				case FALL:
 				case BLOCK_EXPLOSION:
-					mob.takeDamage((int) (damage * 50), AttackType.PENETRATING, null, arena);
+					mob.takeDamage((int) (damage * 25), AttackType.CRUSHING, null, arena);
 					break;
 				// Custom handling
 				case FIRE:
 				case FIRE_TICK:
-					mob.takeDamage((int) (damage * 30), AttackType.PENETRATING, null, arena);
+					mob.takeDamage((int) (damage * 50), AttackType.NORMAL, null, arena);
 					break;
 				case POISON:
 					mob.takeDamage((int) (damage * 25), AttackType.PENETRATING, null, arena);
@@ -958,21 +962,16 @@ public class GameListener implements Listener {
 				e.setCancelled(true);
 		}
 
+		// Prevent natural regen for other mobs
+		else {
+			// Check for special mob
+			if (!ent.hasMetadata(VDMob.VD))
+				return;
 
-//		TODO
-//		// Check for arena enemies
-//		if (!ent.hasMetadata(VDMob.VD))
-//			return;
-//
-//		// Ignore wolves and players
-//		if (ent instanceof Wolf || ent instanceof Player)
-//			return;
-//
-//		// Ignore bosses
-//		if (ent instanceof Wither)
-//			return;
-//
-//		ent.setCustomName(Mobs.formattedName((LivingEntity) ent));
+			// Stop regen
+			if (e.getRegainReason() == EntityRegainHealthEvent.RegainReason.REGEN)
+				e.setCancelled(true);
+		}
 	}
 
 	// Open shop, kit selecting menu, or leave
@@ -997,11 +996,11 @@ public class GameListener implements Listener {
 		// Get item in hand
 		ItemStack item;
 		if (e.getHand() == EquipmentSlot.OFF_HAND) {
-			item = Objects.requireNonNull(player.getEquipment()).getItemInOffHand();
+			item = Objects.requireNonNull(player.getEquipment()).getItemInMainHand();
 
 			// Check for other clickables in main hand
 			if (VDAbility.matches(item) || VDFood.matches(item) || VDArmor.matches(item) ||
-					VDWeapon.matchesClickableWeapon(item) || VDEgg.matches(item))
+					VDWeapon.matchesClickableWeapon(item))
 				return;
 		}
 		else item = Objects.requireNonNull(player.getEquipment()).getItemInMainHand();
@@ -1206,7 +1205,7 @@ public class GameListener implements Listener {
 		// Avoid false consume
 		if (e.getHand() == EquipmentSlot.OFF_HAND &&
 				(Shop.matches(main) || VDAbility.matches(main) || VDFood.matches(main) || VDArmor.matches(main) ||
-						VDWeapon.matchesClickableWeapon(main) || VDEgg.matches(main)))
+						VDWeapon.matchesClickableWeapon(main)))
 			return;
 
 		// Give health and hunger for totem
@@ -1485,7 +1484,7 @@ public class GameListener implements Listener {
 
 		// Avoid false consume
 		if (Shop.matches(main) || VDAbility.matches(main) || VDFood.matches(main) || VDArmor.matches(main) ||
-				VDWeapon.matchesClickableWeapon(main) || VDEgg.matches(main))
+				VDWeapon.matchesClickableWeapon(main))
 			e.setCancelled(true);
 	}
 
@@ -1552,5 +1551,67 @@ public class GameListener implements Listener {
 				player.getInventory().setLeggings(new ItemStack(Material.AIR));
 			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1);
 		}
+	}
+
+	// Implement horse damage
+	@EventHandler
+	public void onHorseJump(HorseJumpEvent e) {
+		LivingEntity ent = e.getEntity();
+		Location location = ent.getLocation();
+
+		// Check for arena mobs
+		if (!ent.hasMetadata(VDMob.VD))
+			return;
+
+		Arena arena;
+		VDMob mob;
+		try {
+			arena = GameManager.getArena(ent.getMetadata(VDMob.VD).get(0).asInt());
+			mob = arena.getMob(ent.getUniqueId());
+		} catch (ArenaNotFoundException | VDMobNotFoundException err) {
+			return;
+		}
+
+		// Check for right game
+		if (mob.getGameID() != arena.getGameID())
+			return;
+
+		// Arena enemies not part of an active arena
+		if (arena.getStatus() != ArenaStatus.ACTIVE)
+			return;
+
+		// Summon explosion if at full power
+		if (e.getPower() >= 1)
+			Objects.requireNonNull(location.getWorld()).createExplosion(location, 1.75f, false, false, ent);
+	}
+
+	// Prevent riding other player's horses
+	@EventHandler
+	public void onMount(EntityMountEvent e) {
+		// Check for player mounting
+		if (!(e.getEntity() instanceof Player))
+			return;
+
+		// Check for horse mounted
+		if (!(e.getMount() instanceof AbstractHorse))
+			return;
+
+		Player player = (Player) e.getEntity();
+		AbstractHorse horse = (AbstractHorse) e.getMount();
+
+		// Attempt to get arena and player
+		try {
+			GameManager.getArena(player);
+		} catch (ArenaNotFoundException err) {
+			return;
+		}
+
+		// Check for rightful owner
+		if (player.equals(horse.getOwner()))
+			return;
+
+		// Cancel and notify
+		e.setCancelled(true);
+		PlayerManager.notifyFailure(player, LanguageManager.errors.notOwner);
 	}
 }

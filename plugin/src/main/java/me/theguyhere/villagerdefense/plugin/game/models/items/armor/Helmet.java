@@ -194,13 +194,13 @@ public abstract class Helmet extends VDArmor{
         int durability;
         switch (tier) {
             case T1:
-                durability = 65;
+                durability = 85;
                 break;
             case T2:
-                durability = 110;
+                durability = 145;
                 break;
             case T3:
-                durability = 205;
+                durability = 225;
                 break;
             case T4:
                 durability = 310;
@@ -240,9 +240,11 @@ public abstract class Helmet extends VDArmor{
                 break;
             default: price = -1;
         }
-        if (price >= 0)
+        if (price >= 0) {
+            lores.add("");
             lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
                     price));
+        }
 
         // Create item
         ItemStack item = ItemManager.createItem(mat, name, ItemManager.BUTTON_FLAGS, enchant, lores, attributes);

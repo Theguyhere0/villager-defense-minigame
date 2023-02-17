@@ -39,15 +39,15 @@ public abstract class ShopFood extends VDFood {
                         break;
                     case T2:
                         mat = Material.BREAD;
-                        count = 4;
+                        count = 5;
                         break;
                     case T3:
                         mat = Material.COOKED_BEEF;
-                        count = 2;
+                        count = 3;
                         break;
                     case T4:
                         mat = Material.GOLDEN_CARROT;
-                        count = 1;
+                        count = 2;
                         break;
                     default:
                         mat = Material.GUNPOWDER;
@@ -192,24 +192,24 @@ public abstract class ShopFood extends VDFood {
         int hunger;
         switch (type) {
             case CAPPLE:
-                hunger = 4;
+                hunger = 3;
                 break;
             case GAPPLE:
-                hunger = 7;
+                hunger = 6;
                 break;
             case TIERED:
                 switch (tier) {
                     case T1:
-                        hunger = 2;
+                        hunger = 1;
                         break;
                     case T2:
-                        hunger = 5;
+                        hunger = 3;
                         break;
                     case T3:
-                        hunger = 8;
+                        hunger = 5;
                         break;
                     case T4:
-                        hunger = 10;
+                        hunger = 7;
                         break;
                     default:
                         hunger = 0;
@@ -255,9 +255,11 @@ public abstract class ShopFood extends VDFood {
                 break;
             default: price = -1;
         }
-        if (price >= 0)
+        if (price >= 0) {
+            lores.add("");
             lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
                     price));
+        }
 
         return ItemManager.setAmount(ItemManager.createItem(mat, name, lores), count);
     }

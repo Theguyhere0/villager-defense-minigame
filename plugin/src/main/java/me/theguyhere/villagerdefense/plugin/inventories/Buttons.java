@@ -80,4 +80,12 @@ public class Buttons {
     public static ItemStack nextPage() {
         return ItemManager.createItem(Material.FEATHER, CommunicationManager.format("&d&lNext Page"));
     }
+
+    // "No upgrade" button
+    @NotNull
+    public static ItemStack noUpgrade() {
+        return ItemManager.createItem(Material.RED_STAINED_GLASS_PANE,
+                new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.noUpgrades).toString(),
+                ItemManager.BUTTON_FLAGS, null);
+    }
 }

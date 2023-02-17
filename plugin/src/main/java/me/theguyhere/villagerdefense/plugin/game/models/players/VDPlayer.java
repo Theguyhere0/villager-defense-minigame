@@ -5,6 +5,7 @@ import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
+import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
@@ -14,6 +15,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Ammo;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDHorse;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDPet;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
@@ -36,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * A class holding data about players in a Villager Defense game.
@@ -193,6 +196,9 @@ public class VDPlayer {
             // Set player to fake death mode
             PlayerManager.fakeDeath(this);
 
+            // Kill off pets
+            pets.forEach(VDPet::kill);
+
             // Check for explosive challenge
             if (getChallenges().contains(Challenge.explosive())) {
                 // Create an explosion
@@ -340,6 +346,9 @@ public class VDPlayer {
             });
             if (boost && PlayerManager.hasAchievement(player, Achievement.topKills9().getID()))
                 increase.addAndGet(.1);
+            if (getPlayer().isInsideVehicle())
+                increase.addAndGet((int) (VDHorse.getDamageBoost(getPets().stream()
+                        .filter(pet -> pet instanceof VDHorse).collect(Collectors.toList()).get(0).getLevel()) * 10));
 
             // Apply base damage and multipliers
             damageValues.replaceAll(original -> (int) ((original + (perBlock.get() ? 0 : baseDamage)) *
@@ -672,6 +681,9 @@ public class VDPlayer {
         });
         if (boost && PlayerManager.hasAchievement(player, Achievement.topKills9().getID()))
             increase.incrementAndGet();
+        if (getPlayer().isInsideVehicle())
+            increase.addAndGet((int) (VDHorse.getDamageBoost(getPets().stream().filter(pet -> pet instanceof VDHorse)
+                    .collect(Collectors.toList()).get(0).getLevel()) * 10));
 
         return (int) (damage * (1 + .1 * increase.get()));
     }
@@ -800,6 +812,7 @@ public class VDPlayer {
 
     public void setGemBoost(int gemBoost) {
         this.gemBoost = gemBoost;
+        GameManager.createBoard(this);
     }
 
     public boolean isSharing() {
@@ -824,7 +837,7 @@ public class VDPlayer {
     public void respawnPets() {
         for (int i = 0; i < pets.size(); i++) {
             if (pets.get(i).getEntity().isDead()) {
-                VDPet newPet = pets.get(i).respawn(getPlayer().getLocation());
+                VDPet newPet = pets.get(i).respawn(arena, getPlayer().getLocation());
                 pets.set(i, newPet);
                 arena.addMob(newPet);
             }
@@ -843,8 +856,8 @@ public class VDPlayer {
         return remaining.get();
     }
 
-    public void setPetSlots(int petSlots) {
-        this.petSlots = petSlots;
+    public List<VDPet> getPets() {
+        return pets;
     }
 
     public int getJoinedWave() {
@@ -923,7 +936,7 @@ public class VDPlayer {
     /**
      * Sets up attributes properly after dying or first spawning.
      */
-    public void setupAttributes() {
+    public void setupAttributes(boolean first) {
         Random r = new Random();
         int maxHealth = 500;
 
@@ -940,14 +953,14 @@ public class VDPlayer {
                             AttributeModifier.Operation.ADD_NUMBER));
             maxHealth = 600;
         }
-        else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT2))) {
+        else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT1))) {
             Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
                     .addModifier(new AttributeModifier("Giant2", 4,
                             AttributeModifier.Operation.ADD_NUMBER));
             maxHealth = 550;
             PlayerManager.notifySuccess(getPlayer(), LanguageManager.messages.effectShare);
         }
-        else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT1))) {
+        else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT2))) {
             Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
                     .addModifier(new AttributeModifier("Giant1", 2,
                             AttributeModifier.Operation.ADD_NUMBER));
@@ -983,7 +996,20 @@ public class VDPlayer {
         // Set up health and damage
         setMaxHealthInit(maxHealth);
 
-        // Set up pet slots
-        petSlots = 3;
+        // Only run the first time
+        if (first) {
+            // Set up pet slots
+            if (Kit.trainer().setKitLevel(1).equals(getKit()) && !isSharing())
+                petSlots = 4;
+            else if (Kit.trainer().setKitLevel(2).equals(getKit()) && !isSharing())
+                petSlots = 5;
+            else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.TRAINER1))) {
+                petSlots = 4;
+                PlayerManager.notifySuccess(getPlayer(), LanguageManager.messages.effectShare);
+            } else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.TRAINER2))) {
+                petSlots = 5;
+                PlayerManager.notifySuccess(getPlayer(), LanguageManager.messages.effectShare);
+            } else petSlots = 3;
+        }
     }
 }

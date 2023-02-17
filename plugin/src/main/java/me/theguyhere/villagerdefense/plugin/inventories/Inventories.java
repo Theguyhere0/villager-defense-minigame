@@ -1,6 +1,5 @@
 package me.theguyhere.villagerdefense.plugin.inventories;
 
-import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
@@ -296,10 +295,6 @@ public class Inventories {
 		// Option to edit mob settings
 		buttons.add(ItemManager.createItem(Material.ZOMBIE_SPAWN_EGG,
 				CommunicationManager.format("&2&lMob Settings")));
-
-		// Option to edit shop settings
-		buttons.add(ItemManager.createItem(Material.GOLD_BLOCK,
-				CommunicationManager.format("&e&lShop Settings")));
 
 		// Option to edit miscellaneous game settings
 		buttons.add(ItemManager.createItem(Material.REDSTONE,
@@ -726,29 +721,6 @@ public class Inventories {
 		);
 	}
 
-	// Menu for editing the shop settings of an arena
-	public static Inventory createShopSettingsMenu(Arena arena) {
-		List<ItemStack> buttons = new ArrayList<>();
-
-		// Option to toggle community chest
-		buttons.add(ItemManager.createItem(Material.CHEST,
-				CommunicationManager.format("&d&lCommunity Chest: " + getToggleStatus(arena.hasCommunity())),
-				CommunicationManager.format("&7Turn community chest on and off")));
-
-		// Option to toggle dynamic prices
-		buttons.add(ItemManager.createItem(Material.EMERALD,
-				CommunicationManager.format("&b&lDynamic Prices: " + getToggleStatus(arena.hasDynamicPrices())),
-				CommunicationManager.format("&7Prices adjusting based on number of"),
-				CommunicationManager.format("&7players in the game")));
-
-		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.SHOP_SETTINGS_MENU, InventoryType.MENU, arena),
-				CommunicationManager.format("&e&lShop Settings: " + arena.getName()),
-				true,
-				buttons
-		);
-	}
-
 	// Menu for editing the game settings of an arena
 	public static Inventory createGameSettingsMenu(Arena arena) {
 		List<ItemStack> buttons = new ArrayList<>();
@@ -773,6 +745,11 @@ public class Inventories {
 				CommunicationManager.format("&7Wave time limit adjusting based on"),
 				CommunicationManager.format("&7in-game difficulty"))
 		);
+
+		// Option to toggle community chest
+		buttons.add(ItemManager.createItem(Material.CHEST,
+				CommunicationManager.format("&d&lCommunity Chest: " + getToggleStatus(arena.hasCommunity())),
+				CommunicationManager.format("&7Turn community chest on and off")));
 
 		// Option to edit allowed kits
 		buttons.add(ItemManager.createItem(Material.ENDER_CHEST,
@@ -805,10 +782,6 @@ public class Inventories {
 				CommunicationManager.format("&7Bounds determine where players are"),
 				CommunicationManager.format("&7allowed to go and where the game will"),
 				CommunicationManager.format("&7function. Avoid building past arena bounds.")));
-
-		// Option to edit wolf cap
-		buttons.add(ItemManager.createItem(Material.BONE, CommunicationManager.format("&6&lWolf Cap"),
-				CommunicationManager.format("&7Maximum wolves a player can have")));
 
 		// Option to edit golem cap
 		buttons.add(ItemManager.createItem(Material.IRON_INGOT,
@@ -965,6 +938,9 @@ public class Inventories {
 		if (bannedKitIDs.contains(Kit.giant().getID()))
 			inv.setItem(49, Kit.giant().getButton(-1, false));
 		else inv.setItem(49, Kit.giant().getButton(-1, true));
+		if (bannedKitIDs.contains(Kit.trainer().getID()))
+			inv.setItem(50, Kit.trainer().getButton(-1, false));
+		else inv.setItem(50, Kit.trainer().getButton(-1, true));
 
 		// Option to exit
 		inv.setItem(53, Buttons.exit());
@@ -1148,15 +1124,6 @@ public class Inventories {
 				InventoryID.CORNER_2_CONFIRM_MENU,
 				arena,
 				CommunicationManager.format("&4&lRemove Corner 2?")
-		);
-	}
-
-	// Menu for changing wolf cap of an arena
-	public static Inventory createWolfCapMenu(Arena arena) {
-		return InventoryFactory.createIncrementorMenu(
-				InventoryID.WOLF_CAP_MENU,
-				arena,
-				CommunicationManager.format("&6&lWolf Cap: " + arena.getWolfCap())
 		);
 	}
 
@@ -1485,9 +1452,6 @@ public class Inventories {
 	public static Inventory createAmmoUpgradeShopMenu(Arena arena, VDPlayer player) {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
-		ItemStack noUpgrade = ItemManager.createItem(Material.RED_STAINED_GLASS_PANE,
-				new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.noUpgrades).toString(),
-				ItemManager.BUTTON_FLAGS, null);
 		switch (player.getTieredAmmoLevel() + 1) {
 			case 1:
 				buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T1)));
@@ -1508,7 +1472,7 @@ public class Inventories {
 				buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T6)));
 				break;
 			default:
-				buttons.add(noUpgrade);
+				buttons.add(Buttons.noUpgrade());
 		}
 
 		return InventoryFactory.createDynamicSizeInventory(
@@ -1621,13 +1585,17 @@ public class Inventories {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
 
+		// List out existing pets
+		player.getPets().forEach(pet -> buttons.add(pet.createDisplayButton()));
+
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-				new InventoryMeta(InventoryID.PET_SHOP_MENU, InventoryType.MENU),
+				new InventoryMeta(InventoryID.PET_SHOP_MENU, InventoryType.MENU, arena,
+						(9 - player.getPets().size()) / 2),
 				CommunicationManager.format(String.format("&2&l" + LanguageManager.names.petShop,
 						Integer.toString(player.getRemainingPetSlots()), Integer.toString(player.getPetSlots()))),
 				true,
 				true,
-				"Pet",
+				LanguageManager.names.pet,
 				buttons
 		);
 	}
@@ -1637,11 +1605,13 @@ public class Inventories {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
 
-//		if (arena.getCurrentShopLevel() < 2) {
-//			buttons.add(Buttons.levelPlaceholder(2));
-//		} else {
-			buttons.add(arena.modifyPrice(PetEgg.create(PetEgg.PetEggType.DOG)));
-//		}
+		// List available pet types to purchase
+		if (player.getRemainingPetSlots() > 0)
+			buttons.add(arena.modifyPrice(PetEgg.create(1, PetEgg.PetEggType.DOG)));
+		if (player.getRemainingPetSlots() > 1)
+			buttons.add(arena.modifyPrice(PetEgg.create(1, PetEgg.PetEggType.CAT)));
+		if (player.getRemainingPetSlots() > 2)
+			buttons.add(arena.modifyPrice(PetEgg.create(1, PetEgg.PetEggType.HORSE)));
 
 		return InventoryFactory.createDynamicSizeInventory(
 				new InventoryMeta(InventoryID.NEW_PET_MENU, InventoryType.MENU),
@@ -1656,14 +1626,30 @@ public class Inventories {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
 
-		return InventoryFactory.createDynamicSizeBottomNavInventory(
-				new InventoryMeta(InventoryID.PET_MANAGER_MENU, InventoryType.MENU),
-				CommunicationManager.format(String.format("&2&l" + LanguageManager.names.petShop,
-						Integer.toString(player.getRemainingPetSlots()), Integer.toString(player.getPetSlots()))),
+		// Upgrade
+		buttons.add(arena.modifyPrice(player.getPets().get(petIndex).createUpgradeButton()));
+
+		// Remove
+		buttons.add(ItemManager.createItem(Material.LAVA_BUCKET,
+				CommunicationManager.format("&4&l" + LanguageManager.messages.removePet)));
+
+		return InventoryFactory.createFixedSizeInventory(
+				new InventoryMeta(InventoryID.PET_MANAGER_MENU, InventoryType.MENU, arena, petIndex),
+				player.getPets().get(petIndex).getName(),
+				1,
 				true,
-				true,
-				"Pet",
 				buttons
+		);
+	}
+
+	// Display pet removal confirmation
+	public static Inventory createPetConfirmMenu(Arena arena, UUID playerID, int petIndex) {
+		return InventoryFactory.createConfirmationMenu(
+				InventoryID.PET_CONFIRM_MENU,
+				playerID,
+				arena,
+				petIndex,
+				CommunicationManager.format("&4&l" + LanguageManager.messages.removePet + "?")
 		);
 	}
 
@@ -1671,12 +1657,9 @@ public class Inventories {
 	public static Inventory createAbilityUpgradeShopMenu(Arena arena, VDPlayer player) {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
-		ItemStack noUpgrade = ItemManager.createItem(Material.RED_STAINED_GLASS_PANE,
-				new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.noUpgrades).toString(),
-				ItemManager.BUTTON_FLAGS, null);
 		if (Kit.checkAbilityKit(player.getKit().getID())) {
 			if (player.getTieredEssenceLevel() + 1 > player.getKit().getLevel() * 2)
-				buttons.add(noUpgrade);
+				buttons.add(Buttons.noUpgrade());
 			else {
 				ItemStack ability = null;
 				switch (player.getTieredEssenceLevel() + 1) {
@@ -1697,13 +1680,13 @@ public class Inventories {
 						break;
 				}
 				if (ability == null)
-					buttons.add(noUpgrade);
+					buttons.add(Buttons.noUpgrade());
 				else if (player.isBoosted() && PlayerManager.hasAchievement(player.getID(),
 						Achievement.allMaxedAbility().getID()))
 					buttons.add(VDAbility.modifyCooldown(arena.modifyPrice(ability), .9));
 				else buttons.add(arena.modifyPrice(ability));
 			}
-		} else buttons.add(noUpgrade);
+		} else buttons.add(Buttons.noUpgrade());
 
 		return InventoryFactory.createDynamicSizeInventory(
 				new InventoryMeta(InventoryID.ABILITY_UPGRADE_SHOP_MENU, InventoryType.MENU),
@@ -1856,6 +1839,8 @@ public class Inventories {
 				1 : 0, true));
 		inv.setItem(49, Kit.giant().getButton(PlayerManager.getMultiTierKitLevel(ownerID, Kit.giant().getID()),
 				true));
+		inv.setItem(50, Kit.trainer().getButton(PlayerManager.getMultiTierKitLevel(ownerID, Kit.trainer().getID()),
+				true));
 
 		// Crystal balance
 		if (ownerID.equals(requesterID))
@@ -1970,6 +1955,9 @@ public class Inventories {
 					1 : 0, false));
 		if (!bannedKitIDs.contains(Kit.giant().getID()))
 			inv.setItem(49, Kit.giant().getButton(PlayerManager.getMultiTierKitLevel(id, Kit.giant().getID()),
+					false));
+		if (!bannedKitIDs.contains(Kit.trainer().getID()))
+			inv.setItem(50, Kit.trainer().getButton(PlayerManager.getMultiTierKitLevel(id, Kit.trainer().getID()),
 					false));
 
 		// Option for no kit
@@ -2581,14 +2569,6 @@ public class Inventories {
 		// Forced challenges
 		buttons.add(ItemManager.createItem(Material.NETHER_STAR,
 				CommunicationManager.format("&9&l" + LanguageManager.messages.forcedChallenges)));
-
-		// Dynamic prices
-		buttons.add(ItemManager.createItem(Material.EMERALD,
-				CommunicationManager.format("&b&l" +
-						LanguageManager.arenaStats.dynamicPrices.name +
-						": " + getToggleStatus(arena.hasDynamicPrices())),
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.dynamicPrices.description, Utils.LORE_CHAR_LIMIT)));
 
 		// Dynamic time limit
 		buttons.add(ItemManager.createItem(Material.SNOWBALL,

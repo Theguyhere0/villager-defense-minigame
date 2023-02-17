@@ -6,5 +6,7 @@ public enum EffectType {
     MERCHANT,
     VAMPIRE,
     GIANT1,
-    GIANT2
+    GIANT2,
+    TRAINER1,
+    TRAINER2
 }

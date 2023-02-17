@@ -383,6 +383,8 @@ public class Kit {
             return vampire();
         else if (giant().getName().equals(kitName))
             return giant();
+        else if (trainer().getName().equals(kitName))
+            return trainer();
         else return null;
     }
 
@@ -435,7 +437,7 @@ public class Kit {
     public static Kit alchemist() {
         Kit kit = new Kit(LanguageManager.kits.alchemist.name, KitType.GIFT, "alchemist", Material.BREWING_STAND);
         kit.addMasterDescription(LanguageManager.kits.alchemist.description);
-        kit.addPrice(1, 600);
+        kit.addPrice(1, 400);
         kit.addItems(1, new ItemStack[]{
                 Sword.create(VDItem.Tier.T0, Sword.SwordType.TIERED),
                 ItemManager.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.SPEED),
@@ -449,7 +451,7 @@ public class Kit {
     public static Kit tailor() {
         Kit kit = new Kit(LanguageManager.kits.tailor.name, KitType.GIFT, "tailor", Material.LEATHER_CHESTPLATE);
         kit.addMasterDescription(CommunicationManager.format(LanguageManager.kits.tailor.description));
-        kit.addPrice(1, 300);
+        kit.addPrice(1, 1000);
         kit.addItems(1, new ItemStack[]{
                 Sword.create(VDItem.Tier.T0, Sword.SwordType.TIERED),
                 ItemManager.removeLastLore(ItemManager.rename(Helmet.create(VDItem.Tier.T1),
@@ -474,31 +476,19 @@ public class Kit {
     @NotNull
     public static Kit summoner() {
         Kit kit = new Kit(LanguageManager.kits.summoner.name, KitType.GIFT, "summoner",
-                Material.POLAR_BEAR_SPAWN_EGG);
+                Material.WOLF_SPAWN_EGG);
 
         kit.addLevelDescriptions(1, LanguageManager.kits.summoner.description1);
         kit.addLevelDescriptions(2, LanguageManager.kits.summoner.description2);
         kit.addLevelDescriptions(3, LanguageManager.kits.summoner.description3);
 
-        kit.addPrice(1, 750);
-        kit.addPrice(2, 1750);
-        kit.addPrice(3, 4500);
+        kit.addPrice(1, 450);
+        kit.addPrice(2, 1000);
+        kit.addPrice(3, 4000);
 
-        kit.addItems(1, new ItemStack[]{
-                Sword.create(VDItem.Tier.T0, Sword.SwordType.TIERED),
-                ItemManager.createItem(Material.WOLF_SPAWN_EGG,
-                        new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.summoner.items.wolf).toString())
-        });
-        kit.addItems(2, new ItemStack[]{
-                Sword.create(VDItem.Tier.T0, Sword.SwordType.TIERED),
-                ItemManager.createItems(Material.WOLF_SPAWN_EGG, 2,
-                        new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.summoner.items.wolf).toString())
-        });
-        kit.addItems(3, new ItemStack[]{
-                Sword.create(VDItem.Tier.T0, Sword.SwordType.TIERED),
-                ItemManager.createItem(Material.GHAST_SPAWN_EGG,
-                        new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.summoner.items.golem).toString())
-        });
+        kit.addItems(1, new ItemStack[]{Sword.create(VDItem.Tier.T0, Sword.SwordType.TIERED)});
+        kit.addItems(2, new ItemStack[]{Sword.create(VDItem.Tier.T0, Sword.SwordType.TIERED)});
+        kit.addItems(3, new ItemStack[]{Sword.create(VDItem.Tier.T0, Sword.SwordType.TIERED)});
 
         return kit;
     }
@@ -722,6 +712,21 @@ public class Kit {
 
         kit.addPrice(1, 5000);
         kit.addPrice(2, 8000);
+
+        kit.addItems(1, new ItemStack[]{Sword.create(VDItem.Tier.T0, Sword.SwordType.TIERED)});
+
+        return kit;
+    }
+
+    @NotNull
+    public static Kit trainer() {
+        Kit kit = new Kit(LanguageManager.kits.trainer.name, KitType.EFFECT, "trainer", Material.LEAD);
+
+        kit.addLevelDescriptions(1, LanguageManager.kits.trainer.description1);
+        kit.addLevelDescriptions(2, LanguageManager.kits.trainer.description2);
+
+        kit.addPrice(1, 4000);
+        kit.addPrice(2, 9000);
 
         kit.addItems(1, new ItemStack[]{Sword.create(VDItem.Tier.T0, Sword.SwordType.TIERED)});
 

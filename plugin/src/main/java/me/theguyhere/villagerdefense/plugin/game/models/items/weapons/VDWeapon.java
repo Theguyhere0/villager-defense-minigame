@@ -42,7 +42,7 @@ public abstract class VDWeapon extends VDItem {
 
     public static boolean matchesNoAmmo(ItemStack toCheck) {
         return Sword.matches(toCheck) || Axe.matches(toCheck) || Scythe.matches(toCheck) ||
-                Bow.matches(toCheck) || Crossbow.matches(toCheck);
+                Bow.matches(toCheck) || Crossbow.matches(toCheck) || OrcClub.matches(toCheck);
     }
 
     public static boolean matchesClickableWeapon(ItemStack toCheck) {

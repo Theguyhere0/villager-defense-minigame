@@ -10,6 +10,10 @@ import me.theguyhere.villagerdefense.plugin.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
 import me.theguyhere.villagerdefense.plugin.game.managers.CountdownManager;
 import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDCat;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDDog;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDHorse;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDPet;
 import me.theguyhere.villagerdefense.plugin.game.utils.SpawningUtil;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
@@ -39,6 +43,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -122,6 +127,7 @@ public class Arena {
     private static final String TEN_TICK = "ten" + TICK;
     private static final String TWENTY_TICK = "twenty" + TICK;
     private static final String FORTY_TICK = "forty" + TICK;
+    private static final String TWO_HUNDRED_TICK = "twoHundred" + TICK;
     private static final String KICK = "kick";
     private static final String RESET = "restart";
 
@@ -1276,10 +1282,10 @@ public class Arena {
             return;
 
         Location temp = getCorner1();
-        temp.setY(Objects.requireNonNull(getCorner1().getWorld()).getMaxHeight());
+        temp.setY(Objects.requireNonNull(getCorner1().getWorld()).getMaxHeight() + 10);
         setCorner1(temp);
         temp = getCorner2();
-        temp.setY(Objects.requireNonNull(getCorner2().getWorld()).getMinHeight() - 1);
+        temp.setY(Objects.requireNonNull(getCorner2().getWorld()).getMinHeight() - 25);
         setCorner2(temp);
     }
 
@@ -1342,15 +1348,6 @@ public class Arena {
 
     public void setAbilitySound(boolean bool) {
         config.set(path + ".sounds.ability", bool);
-        Main.saveArenaData();
-    }
-
-    public boolean hasDynamicPrices() {
-        return config.getBoolean(path + ".dynamicPrices");
-    }
-
-    public void setDynamicPrices(boolean bool) {
-        config.set(path + ".dynamicPrices", bool);
         Main.saveArenaData();
     }
 
@@ -1491,10 +1488,6 @@ public class Arena {
                     player.getPlayer().sendMessage(new ColoredMessage(ChatColor.GOLD, LIST + (getMaxWaves() < 0 ?
                             LanguageManager.messages.noLastWave : String.format(LanguageManager.messages.finalWave,
                             getMaxWaves()))).toString());
-                    player.getPlayer().sendMessage(new ColoredMessage(hasDynamicPrices() ? ChatColor.GREEN :
-                            ChatColor.RED, String.format(LIST + LanguageManager.messages.dynamicPrices,
-                            hasDynamicPrices() ? LanguageManager.messages.will :
-                                    LanguageManager.messages.willNot)).toString());
                     player.getPlayer().sendMessage(new ColoredMessage(hasDynamicLimit() ? ChatColor.GREEN :
                             ChatColor.RED, String.format(LIST + LanguageManager.messages.dynamicTimeLimit,
                             hasDynamicLimit() ? LanguageManager.messages.will :
@@ -1772,11 +1765,21 @@ public class Arena {
         getActives().forEach(player -> {
             // Give all players starting items and set up attributes
             player.giveItems();
-            player.setupAttributes();
+            player.setupAttributes(true);
 
             // Give Traders their gems
             if (Kit.trader().setKitLevel(1).equals(player.getKit()))
                 player.addGems(200);
+
+            // Give Summoners their dogs
+            if (Kit.summoner().setKitLevel(1).equals(player.getKit()))
+                player.addPet(new VDDog(this, player.getPlayer().getLocation(), player, 1));
+            if (Kit.summoner().setKitLevel(2).equals(player.getKit())) {
+                player.addPet(new VDDog(this, player.getPlayer().getLocation(), player, 1));
+                player.addPet(new VDDog(this, player.getPlayer().getLocation(), player, 1));
+            }
+            if (Kit.summoner().setKitLevel(3).equals(player.getKit()))
+                player.addPet(new VDHorse(this, player.getPlayer().getLocation(), player, 1));
 
             // Give gems from crystal conversion
             int amount;
@@ -1951,6 +1954,7 @@ public class Arena {
             public void run() {
                 // Heal
                 getActives().forEach(VDPlayer::heal);
+                getActives().forEach(player -> player.getPets().forEach(VDPet::heal));
             }
         });
         activeTasks.get(TWENTY_TICK).runTaskTimer(Main.plugin, 0, 20);
@@ -1971,6 +1975,22 @@ public class Arena {
             }
         });
         activeTasks.get(FORTY_TICK).runTaskTimer(Main.plugin, 0, 40);
+        activeTasks.put(TWO_HUNDRED_TICK, new BukkitRunnable() {
+            @Override
+            public void run() {
+                // Cat heal
+                getActives().forEach(player -> {
+                    AtomicInteger heal = new AtomicInteger();
+                    player.getPets().forEach(pet -> {
+                        if (pet instanceof VDCat)
+                            heal.addAndGet(VDCat.getHeal(pet.getLevel()));
+                    });
+                    player.changeCurrentHealth(heal.get());
+                    player.getPets().forEach(pet -> pet.heal(heal.get()));
+                });
+            }
+        });
+        activeTasks.get(TWO_HUNDRED_TICK).runTaskTimer(Main.plugin, 0, 200);
 
         // Debug message to console
         CommunicationManager.debugInfo("%s is starting.", 2, getName());
@@ -2071,7 +2091,7 @@ public class Arena {
             PlayerManager.teleAdventure(p.getPlayer(), getPlayerSpawn().getLocation());
             p.setStatus(PlayerStatus.ALIVE);
             p.giveItems();
-            p.setupAttributes();
+            p.setupAttributes(false);
         }
 
         getActives().forEach(p -> {
@@ -2116,6 +2136,9 @@ public class Arena {
                         new ColoredMessage(ChatColor.AQUA, Integer.toString(reward))
                 );
             GameManager.createBoard(p);
+
+            // Revive pets
+            p.respawnPets();
         });
 
         // Notify spectators of upcoming wave
@@ -2588,8 +2611,6 @@ public class Arena {
     public ItemStack modifyPrice(ItemStack itemStack) {
         // Set price modifier
         double modifier = Math.pow(getActiveCount() - 5, 2) / 200 + 1;
-        if (!hasDynamicPrices())
-            modifier = 1;
 
         ItemStack item = itemStack.clone();
         ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
@@ -2785,6 +2806,12 @@ public class Arena {
             case GIANT2:
                 effectKit = Kit.giant().setKitLevel(2);
                 break;
+            case TRAINER1:
+                effectKit = Kit.trainer().setKitLevel(1);
+                break;
+            case TRAINER2:
+                effectKit = Kit.trainer().setKitLevel(2);
+                break;
             default:
                 effectKit = Kit.none();
         }
@@ -2865,7 +2892,6 @@ public class Arena {
         setDifficultyMultiplier(arenaToCopy.getDifficultyMultiplier());
         setLateArrival(arenaToCopy.hasLateArrival());
         setDynamicLimit(arenaToCopy.hasDynamicLimit());
-        setDynamicPrices(arenaToCopy.hasDynamicPrices());
         setDifficultyLabel(arenaToCopy.getDifficultyLabel());
         setBannedKitIDs(arenaToCopy.getBannedKitIDs());
         setCommunity(arenaToCopy.hasCommunity());

@@ -29,7 +29,7 @@ public abstract class FarmerCarrot extends VDFood {
         lores.add(new ColoredMessage(ChatColor.RED, "+" + health + " " + Utils.HP).toString());
 
         // Set hunger heal
-        int hunger = 3;
+        int hunger = 2;
         lores.add(new ColoredMessage(ChatColor.BLUE, "+" + hunger + " " + Utils.HUNGER).toString());
 
         return ItemManager.setAmount(ItemManager.createItem(Material.CARROT,

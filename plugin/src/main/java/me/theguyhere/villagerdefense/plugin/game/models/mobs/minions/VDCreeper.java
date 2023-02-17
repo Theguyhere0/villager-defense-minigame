@@ -56,7 +56,7 @@ public class VDCreeper extends VDMinion {
         damageMap.putAll(oldCreeper.damageMap);
         armor = getArmor(level);
         toughness = getToughness(level);
-        setDamage(getDamage(level), .1);
+        setDamage(getDamage(level), .25);
         setVerySlowAttackSpeed();
         creeper.setMaxFuseTicks(Utils.secondsToTicks(attackSpeed));
         setHighKnockback();
