@@ -4,8 +4,8 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.items.VDItem;
@@ -14,7 +14,7 @@ import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Boots;
 import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Chestplate;
 import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Helmet;
 import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Leggings;
-import me.theguyhere.villagerdefense.plugin.game.models.items.eggs.PetEgg;
+import me.theguyhere.villagerdefense.plugin.game.models.items.eggs.VDEgg;
 import me.theguyhere.villagerdefense.plugin.game.models.items.food.ShopFood;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.*;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
@@ -783,11 +783,6 @@ public class Inventories {
 				CommunicationManager.format("&7allowed to go and where the game will"),
 				CommunicationManager.format("&7function. Avoid building past arena bounds.")));
 
-		// Option to edit golem cap
-		buttons.add(ItemManager.createItem(Material.IRON_INGOT,
-				CommunicationManager.format("&e&lIron Golem Cap"),
-				CommunicationManager.format("&7Maximum iron golems an arena can have")));
-
 		// Option to edit sounds
 		buttons.add(
 				ItemManager.createItem(Material.MUSIC_DISC_13,
@@ -1127,15 +1122,6 @@ public class Inventories {
 		);
 	}
 
-	// Menu for changing iron golem cap of an arena
-	public static Inventory createGolemCapMenu(Arena arena) {
-		return InventoryFactory.createIncrementorMenu(
-				InventoryID.GOLEM_CAP_MENU,
-				arena,
-				CommunicationManager.format("&e&lIron Golem Cap: " + arena.getGolemCap())
-		);
-	}
-
 	// Menu for editing the sounds of an arena
 	public static Inventory createSoundsMenu(Arena arena) {
 		List<ItemStack> buttons = new ArrayList<>();
@@ -1336,6 +1322,10 @@ public class Inventories {
 				CommunicationManager.format(String.format("&2&l" + LanguageManager.names.petShop,
 						Integer.toString(player.getRemainingPetSlots()), Integer.toString(player.getPetSlots()))),
 				ItemManager.BUTTON_FLAGS, ItemManager.glow()));
+
+		buttons.add(ItemManager.createItem(Material.CARVED_PUMPKIN,
+				CommunicationManager.format("&b&l" + LanguageManager.names.golemShop), ItemManager.BUTTON_FLAGS,
+				ItemManager.glow()));
 
 		buttons.add(ItemManager.createItem(Material.ANVIL,
 				CommunicationManager.format("&b&l" + LanguageManager.names.abilityUpgradeShop),
@@ -1607,11 +1597,11 @@ public class Inventories {
 
 		// List available pet types to purchase
 		if (player.getRemainingPetSlots() > 0)
-			buttons.add(arena.modifyPrice(PetEgg.create(1, PetEgg.PetEggType.DOG)));
+			buttons.add(arena.modifyPrice(VDEgg.create(1, VDEgg.EggType.DOG)));
 		if (player.getRemainingPetSlots() > 1)
-			buttons.add(arena.modifyPrice(PetEgg.create(1, PetEgg.PetEggType.CAT)));
+			buttons.add(arena.modifyPrice(VDEgg.create(1, VDEgg.EggType.CAT)));
 		if (player.getRemainingPetSlots() > 2)
-			buttons.add(arena.modifyPrice(PetEgg.create(1, PetEgg.PetEggType.HORSE)));
+			buttons.add(arena.modifyPrice(VDEgg.create(1, VDEgg.EggType.HORSE)));
 
 		return InventoryFactory.createDynamicSizeInventory(
 				new InventoryMeta(InventoryID.NEW_PET_MENU, InventoryType.MENU),
@@ -1650,6 +1640,75 @@ public class Inventories {
 				arena,
 				petIndex,
 				CommunicationManager.format("&4&l" + LanguageManager.messages.removePet + "?")
+		);
+	}
+
+	// Generate the golem shop
+	public static Inventory createGolemShopMenu(Arena arena) {
+		// Create inventory
+		List<ItemStack> buttons = new ArrayList<>();
+
+		// List out golems
+		for (int i = 0; i < arena.getGolems().size(); i++)
+			buttons.add(arena.getGolems().get(i).createDisplayButton());
+
+		return InventoryFactory.createDynamicSizeBottomNavInventory(
+				new InventoryMeta(InventoryID.GOLEM_SHOP_MENU, InventoryType.MENU, arena,
+						(9 - arena.getGolems().size()) / 2),
+				CommunicationManager.format("&2&l" + LanguageManager.names.golemShop),
+				true,
+				true,
+				LanguageManager.names.golem,
+				buttons
+		);
+	}
+
+	// Generate the new golem menu
+	public static Inventory createNewGolemMenu(Arena arena) {
+		// Create inventory
+		List<ItemStack> buttons = new ArrayList<>();
+
+		// List available pet types to purchase
+		buttons.add(arena.modifyPrice(VDEgg.create(1, VDEgg.EggType.IRON_GOLEM)));
+		buttons.add(arena.modifyPrice(VDEgg.create(1, VDEgg.EggType.SNOW_GOLEM)));
+
+		return InventoryFactory.createDynamicSizeInventory(
+				new InventoryMeta(InventoryID.NEW_GOLEM_MENU, InventoryType.MENU, arena),
+				CommunicationManager.format("&a&l" + LanguageManager.names.newGolem),
+				true,
+				buttons
+		);
+	}
+
+	// Generate the golem manager menu
+	public static Inventory createGolemManagerMenu(Arena arena, int golemIndex) {
+		// Create inventory
+		List<ItemStack> buttons = new ArrayList<>();
+
+		// Upgrade
+		buttons.add(arena.modifyPrice(arena.getGolems().get(golemIndex).createUpgradeButton()));
+
+		// Remove
+		buttons.add(ItemManager.createItem(Material.LAVA_BUCKET,
+				CommunicationManager.format("&4&l" + LanguageManager.messages.removeGolem)));
+
+		return InventoryFactory.createFixedSizeInventory(
+				new InventoryMeta(InventoryID.GOLEM_MANAGER_MENU, InventoryType.MENU, arena, golemIndex),
+				arena.getGolems().get(golemIndex).getName(),
+				1,
+				true,
+				buttons
+		);
+	}
+
+	// Display golem removal confirmation
+	public static Inventory createGolemConfirmMenu(Arena arena, int golemIndex) {
+		return InventoryFactory.createConfirmationMenu(
+				InventoryID.GOLEM_CONFIRM_MENU,
+				null,
+				arena,
+				golemIndex,
+				CommunicationManager.format("&4&l" + LanguageManager.messages.removeGolem + "?")
 		);
 	}
 
@@ -2547,20 +2606,6 @@ public class Inventories {
 				CommunicationManager.format("&9&l" + LanguageManager.arenaStats.timeLimit.name +
 						": &9" + limit), CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
 						LanguageManager.arenaStats.timeLimit.description, Utils.LORE_CHAR_LIMIT)));
-
-		// Wolf cap TODO
-//		buttons.add(ItemManager.createItem(Material.BONE,
-//				CommunicationManager.format("&6&l" + LanguageManager.arenaStats.wolfCap.name +
-//						": &6" + arena.getWolfCap()),
-//				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-//						LanguageManager.arenaStats.wolfCap.description, Utils.LORE_CHAR_LIMIT)));
-
-		// Golem cap TODO
-//		buttons.add(ItemManager.createItem(Material.IRON_INGOT,
-//				CommunicationManager.format("&e&l" + LanguageManager.arenaStats.golemCap.name +
-//						": &e" + arena.getGolemCap()),
-//				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-//						LanguageManager.arenaStats.golemCap.description, Utils.LORE_CHAR_LIMIT)));
 
 		// Allowed kits
 		buttons.add(ItemManager.createItem(Material.ENDER_CHEST,

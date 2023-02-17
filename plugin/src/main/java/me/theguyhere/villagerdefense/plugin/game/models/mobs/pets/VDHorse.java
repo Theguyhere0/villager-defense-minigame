@@ -3,7 +3,7 @@ package me.theguyhere.villagerdefense.plugin.game.models.mobs.pets;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.game.models.items.eggs.PetEgg;
+import me.theguyhere.villagerdefense.plugin.game.models.items.eggs.VDEgg;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.inventories.Buttons;
@@ -62,11 +62,11 @@ public class VDHorse extends VDPet {
     public ItemStack createUpgradeButton() {
         switch (level) {
             case 1:
-                return PetEgg.create(2, PetEgg.PetEggType.HORSE);
+                return VDEgg.create(2, VDEgg.EggType.HORSE);
             case 2:
-                return PetEgg.create(3, PetEgg.PetEggType.HORSE);
+                return VDEgg.create(3, VDEgg.EggType.HORSE);
             case 3:
-                return PetEgg.create(4, PetEgg.PetEggType.HORSE);
+                return VDEgg.create(4, VDEgg.EggType.HORSE);
             default:
                 return Buttons.noUpgrade();
         }

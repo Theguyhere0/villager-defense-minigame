@@ -30,7 +30,6 @@ public abstract class VDPet extends VDMob {
         pet.setMetadata(TEAM, Team.VILLAGER.getValue());
         pet.setMetadata(VD, new FixedMetadataValue(Main.plugin, arena.getId()));
         gameID = arena.getGameID();
-        wave = arena.getCurrentWave();
         this.name = name;
         this.slots = slots;
         this.buttonMat = buttonMat;

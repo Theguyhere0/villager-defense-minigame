@@ -11,11 +11,15 @@ import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.AchievementChecker;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaSpawn;
 import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.Shop;
 import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Ammo;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.golems.VDGolem;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.golems.VDIronGolem;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.golems.VDSnowGolem;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDCat;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDDog;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDHorse;
@@ -39,10 +43,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 public class InventoryListener implements Listener {
 	// Prevent losing items by drag clicking in custom inventory
@@ -1832,13 +1833,6 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("Arena Bounds"))
 				player.openInventory(Inventories.createBoundsMenu(meta.getArena()));
 
-			// Edit iron golem cap TODO
-			else if (buttonName.contains("Iron Golem Cap"))
-//				if (arenaInstance.isClosed())
-//					player.openInventory(Inventories.createGolemCapMenu(meta.getArena()));
-//				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-				PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
-
 			// Edit sounds
 			else if (buttonName.contains("Sounds"))
 				player.openInventory(Inventories.createSoundsMenu(meta.getArena()));
@@ -2331,46 +2325,6 @@ public class InventoryListener implements Listener {
 				player.openInventory(Inventories.createBoundsMenu(meta.getArena()));
 		}
 
-		// Iron golem cap menu for an arena
-		else if (invID == InventoryID.GOLEM_CAP_MENU) {
-			Arena arenaInstance = meta.getArena();
-			int current = arenaInstance.getGolemCap();
-
-			// Decrease iron golem cap
-			if (buttonName.contains("Decrease")) {
-				// Check for arena closure
-				if (!arenaInstance.isClosed()) {
-					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-					return;
-				}
-
-				// Check if iron golem cap is greater than 1
-				if (current <= 1) {
-					PlayerManager.notifyFailure(player, "Iron golem cap cannot be less than 1!");
-					return;
-				}
-
-				arenaInstance.setGolemCap(--current);
-				player.openInventory(Inventories.createGolemCapMenu(meta.getArena()));
-			}
-
-			// Increase iron golem cap
-			else if (buttonName.contains("Increase")) {
-				// Check for arena closure
-				if (!arenaInstance.isClosed()) {
-					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-					return;
-				}
-
-				arenaInstance.setGolemCap(++current);
-				player.openInventory(Inventories.createGolemCapMenu(meta.getArena()));
-			}
-
-			// Exit menu
-			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Inventories.createGameSettingsMenu(meta.getArena()));
-		}
-
 		// Sound settings menu for an arena
 		else if (invID == InventoryID.SOUNDS_MENU) {
 			Arena arenaInstance = meta.getArena();
@@ -2620,6 +2574,10 @@ public class InventoryListener implements Listener {
 					Integer.toString(gamer.getRemainingPetSlots()), Integer.toString(gamer.getPetSlots()))))
 				player.openInventory(Inventories.createPetShopMenu(arenaInstance, gamer));
 
+			// Open golem shop
+			else if (buttonName.contains(LanguageManager.names.golemShop))
+				player.openInventory(Inventories.createGolemShopMenu(arenaInstance));
+
 			// Open ability upgrade shop
 			else if (buttonName.contains(LanguageManager.names.abilityUpgradeShop))
 				player.openInventory(Inventories.createAbilityUpgradeShopMenu(arenaInstance, gamer));
@@ -2816,7 +2774,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Upgrade the pet
-			if (buttonName.contains(LanguageManager.messages.petName.replace("%s", "").trim())) {
+			if (buttonName.contains(LanguageManager.messages.eggName.replace("%s", "").trim())) {
 				ItemStack buy = Objects.requireNonNull(e.getClickedInventory().getItem(e.getSlot())).clone();
 				List<String> lore = Objects.requireNonNull(buy.getItemMeta()).getLore();
 				Random random = new Random();
@@ -2878,6 +2836,163 @@ public class InventoryListener implements Listener {
 				// Confirm and return
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.petRemove);
 				player.openInventory(Inventories.createPetShopMenu(arenaInstance, gamer));
+			}
+		}
+
+		// Golem shop
+		else if (invID == InventoryID.GOLEM_SHOP_MENU) {
+			Arena arenaInstance;
+			VDPlayer gamer;
+
+			// Attempt to get arena and player
+			try {
+				arenaInstance = GameManager.getArena(player);
+				gamer = arenaInstance.getPlayer(player);
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+				return;
+			}
+
+			// Edit existing
+			if (buttonName.contains(LanguageManager.messages.mobName.replace("%s", "").trim()))
+				player.openInventory(Inventories.createGolemManagerMenu(arenaInstance,
+						e.getSlot() - meta.getId()));
+
+			// Create new
+			else if (buttonName.contains(CommunicationManager.format("&a&lNew ")))
+				player.openInventory(Inventories.createNewGolemMenu(arenaInstance));
+
+			// Return to main shop menu
+			else if (buttonName.contains(LanguageManager.messages.exit))
+				player.openInventory(Inventories.createShopMenu(arenaInstance, gamer));
+		}
+
+		// New pet menu
+		else if (invID == InventoryID.NEW_GOLEM_MENU) {
+			Arena arenaInstance;
+			VDPlayer gamer;
+
+			// Attempt to get arena and player
+			try {
+				arenaInstance = GameManager.getArena(player);
+				gamer = arenaInstance.getPlayer(player);
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+				return;
+			}
+
+			// Add golem
+			if (buttonName.contains(LanguageManager.mobs.ironGolem) ||
+					buttonName.contains(LanguageManager.mobs.snowGolem)) {
+				ItemStack buy = Objects.requireNonNull(e.getClickedInventory().getItem(e.getSlot())).clone();
+				List<String> lore = Objects.requireNonNull(buy.getItemMeta()).getLore();
+				Random random = new Random();
+				if (lore == null)
+					return;
+				int cost = Integer.parseInt(lore.get(lore.size() - 1)
+						.substring(6 + LanguageManager.messages.gems.length()));
+
+				// Check if they can afford the item
+				if (!gamer.canAfford(cost)) {
+					PlayerManager.notifyFailure(player, LanguageManager.errors.buy);
+					return;
+				}
+
+				// Subtract from balance, apply rebate, and update scoreboard
+				gamer.addGems(-cost);
+				if (Kit.merchant().setKitLevel(1).equals(gamer.getKit()) && !gamer.isSharing())
+					gamer.addGems(cost / 10);
+				if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.MERCHANT))) {
+					gamer.addGems(cost / 10);
+					PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+				}
+				GameManager.createBoard(gamer);
+
+				// Spawn golem
+				ArenaSpawn spawn = arenaInstance.getVillagerSpawns().get(arenaInstance.getGolems().size());
+				if (buttonName.contains(LanguageManager.mobs.ironGolem))
+					arenaInstance.addGolem(new VDIronGolem(arenaInstance, spawn.getLocation(), 1));
+				if (buttonName.contains(LanguageManager.mobs.snowGolem))
+					arenaInstance.addGolem(new VDSnowGolem(arenaInstance, spawn.getLocation(), 1));
+				player.openInventory(Inventories.createGolemManagerMenu(arenaInstance,
+						arenaInstance.getGolems().size() - 1));
+			}
+
+			// Return to golem shop menu
+			else if (buttonName.contains(LanguageManager.messages.exit))
+				player.openInventory(Inventories.createGolemShopMenu(arenaInstance));
+		}
+
+		// Golem manager menu
+		else if (invID == InventoryID.GOLEM_MANAGER_MENU) {
+			Arena arenaInstance;
+			VDPlayer gamer;
+
+			// Attempt to get arena and player
+			try {
+				arenaInstance = GameManager.getArena(player);
+				gamer = arenaInstance.getPlayer(player);
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+				return;
+			}
+
+			// Upgrade the golem
+			if (buttonName.contains(LanguageManager.messages.eggName.replace("%s", "").trim())) {
+				ItemStack buy = Objects.requireNonNull(e.getClickedInventory().getItem(e.getSlot())).clone();
+				List<String> lore = Objects.requireNonNull(buy.getItemMeta()).getLore();
+				Random random = new Random();
+				if (lore == null)
+					return;
+				int cost = Integer.parseInt(lore.get(lore.size() - 1)
+						.substring(6 + LanguageManager.messages.gems.length()));
+
+				// Check if they can afford the item
+				if (!gamer.canAfford(cost)) {
+					PlayerManager.notifyFailure(player, LanguageManager.errors.buy);
+					return;
+				}
+
+				// Subtract from balance, apply rebate, and update scoreboard
+				gamer.addGems(-cost);
+				if (Kit.merchant().setKitLevel(1).equals(gamer.getKit()) && !gamer.isSharing())
+					gamer.addGems(cost / 10);
+				if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.MERCHANT))) {
+					gamer.addGems(cost / 10);
+					PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+				}
+				GameManager.createBoard(gamer);
+
+				// Upgrade golem
+				arenaInstance.getGolems().get(meta.getId()).incrementLevel();
+				player.openInventory(Inventories.createGolemManagerMenu(arenaInstance, meta.getId()));
+			}
+
+			// Remove the golem
+			else if (buttonName.contains(LanguageManager.messages.removeGolem))
+				player.openInventory(Inventories.createGolemConfirmMenu(arenaInstance, meta.getId()));
+
+			// Return to golem shop menu
+			else if (buttonName.contains(LanguageManager.messages.exit))
+				player.openInventory(Inventories.createGolemShopMenu(arenaInstance));
+		}
+
+		// Golem removal confirmation
+		else if (invID == InventoryID.GOLEM_CONFIRM_MENU) {
+			Arena arenaInstance = meta.getArena();
+
+			// Return to previous menu
+			if (buttonName.contains("NO"))
+				player.openInventory(Inventories.createGolemManagerMenu(arenaInstance, meta.getId()));
+
+			// Remove golem, then return to previous menu
+			else if (buttonName.contains("YES")) {
+				// Remove data
+				VDGolem golem = arenaInstance.getGolems().get(meta.getId());
+				golem.kill();
+				arenaInstance.removeMob(golem.getID());
+				arenaInstance.getGolems().remove(meta.getId());
+
+				// Confirm and return
+				PlayerManager.notifySuccess(player, LanguageManager.confirms.golemRemove);
+				player.openInventory(Inventories.createGolemShopMenu(arenaInstance));
 			}
 		}
 

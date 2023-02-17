@@ -114,8 +114,6 @@ class CommandModifyArenaData {
         LATE_ARRIVAL("lateArrival-"),
         MAX_WAVES("maxWaves-"),
         WAVE_TIME_LIMIT("waveTimeLimit-"),
-        WOLF_CAP("wolfCap-"),
-        GOLEM_CAP("golemCap-"),
         DIFFICULTY_LABEL("difficultyLabel-"),
         DIFFICULTY_MULTIPLIER("difficultyMultiplier")
         ;
@@ -888,49 +886,6 @@ class CommandModifyArenaData {
             // Set new value
             arena.setWaveTimeLimit(num);
             CommandExecImp.notifySuccess(sender, "Wave time limit for " + arena.getName() + " set to " + num +
-                    ".");
-        }
-        else if (CommandGuard.checkArgStartWith(args, 2, ArenaOperationArgument.WOLF_CAP.arg)) {
-            // Get value
-            int num;
-            try {
-                num = Integer.parseInt(args[2].substring(args[2].indexOf("-") + 1));
-            } catch (Exception e) {
-                CommandExecImp.notifyFailure(sender, "Invalid operation value. Value must be a positive " +
-                        "integer.");
-                return;
-            }
-
-            // Check if greater than 0
-            if (num < 1) {
-                CommandExecImp.notifyFailure(sender, "Wolf cap cannot be less than 1!");
-                return;
-            }
-
-            // Set new value
-            arena.setWolfCap(num);
-            CommandExecImp.notifySuccess(sender, "Wolf cap for " + arena.getName() + " set to " + num + ".");
-        }
-        else if (CommandGuard.checkArgStartWith(args, 2, ArenaOperationArgument.GOLEM_CAP.arg)) {
-            // Get value
-            int num;
-            try {
-                num = Integer.parseInt(args[2].substring(args[2].indexOf("-") + 1));
-            } catch (Exception e) {
-                CommandExecImp.notifyFailure(sender, "Invalid operation value. Value must be a positive " +
-                        "integer.");
-                return;
-            }
-
-            // Check if greater than 0
-            if (num < 1) {
-                CommandExecImp.notifyFailure(sender, "Iron golem cap cannot be less than 1!");
-                return;
-            }
-
-            // Set new value
-            arena.setGolemCap(num);
-            CommandExecImp.notifySuccess(sender, "Iron golem cap for " + arena.getName() + " set to " + num +
                     ".");
         }
         else if (CommandGuard.checkArgStartWith(args, 2, ArenaOperationArgument.DIFFICULTY_LABEL.arg)) {
