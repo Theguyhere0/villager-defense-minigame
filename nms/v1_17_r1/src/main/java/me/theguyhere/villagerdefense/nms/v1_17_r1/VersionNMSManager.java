@@ -3,6 +3,7 @@ package me.theguyhere.villagerdefense.nms.v1_17_r1;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelPipeline;
+import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.nms.common.*;
 import me.theguyhere.villagerdefense.nms.common.entities.TextPacketEntity;
@@ -11,8 +12,10 @@ import net.minecraft.core.BlockPosition;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.network.PlayerConnection;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
@@ -34,22 +37,22 @@ public class VersionNMSManager implements NMSManager {
 
     @Override
     public String getSpawnParticleName() {
-        return "FLAME";
+        return Particle.FLAME.name();
     }
 
     @Override
     public String getMonsterParticleName() {
-        return "SOUL_FIRE_FLAME";
+        return Particle.SOUL_FIRE_FLAME.name();
     }
 
     @Override
     public String getVillagerParticleName() {
-        return "COMPOSTER";
+        return Particle.COMPOSTER.name();
     }
 
     @Override
     public String getBorderParticleName() {
-        return "REDSTONE";
+        return Particle.REDSTONE.name();
     }
 
     @Override
@@ -62,11 +65,11 @@ public class VersionNMSManager implements NMSManager {
         signNBT.setString("Text1", String.format("{\"text\":\"%s\"}",
                 CommunicationManager.format(String.format("&9   Rename Arena %d:   ", arenaID))));
         signNBT.setString("Text2", String.format("{\"text\":\"%s\"}",
-                CommunicationManager.format("&1===============")));
+                new ColoredMessage(ChatColor.DARK_BLUE, "===============")));
         signNBT.setString("Text3", String.format("{\"text\":\"%s\"}",
                 CommunicationManager.format(arenaName == null ? "" : arenaName)));
         signNBT.setString("Text4", String.format("{\"text\":\"%s\"}",
-                CommunicationManager.format("&1===============")));
+                new ColoredMessage(ChatColor.DARK_BLUE, "===============")));
 
         PacketGroup.of(
                 new BlockChangePacket(position, Material.OAK_SIGN),
@@ -83,6 +86,28 @@ public class VersionNMSManager implements NMSManager {
     @Override
     public void setCrossbowCooldown(Player player, int cooldownTicks) {
         new SetCooldownPacket(ItemID.CROSSBOW, cooldownTicks).sendTo(player);
+    }
+
+    @Override
+    public PacketGroup createEffect(Location location, double healthRatio) {
+        // Protect from invalid health ratios
+        if (healthRatio > 1 || healthRatio < 0)
+            return null;
+
+        return PacketGroup.of(
+                new WorldBorderCenterPacket(location),
+                new WorldBorderSizePacket(BORDER_SIZE),
+                new WorldBorderWarningDistancePacket(Math.max((int) (BORDER_SIZE * (4 - 7 * healthRatio)), 0))
+        );
+    }
+
+    @Override
+    public PacketGroup resetEffect(Location location, double size, int warningDistance) {
+        return PacketGroup.of(
+                new WorldBorderCenterPacket(location),
+                new WorldBorderSizePacket(size),
+                new WorldBorderWarningDistancePacket(warningDistance)
+        );
     }
 
     @Override

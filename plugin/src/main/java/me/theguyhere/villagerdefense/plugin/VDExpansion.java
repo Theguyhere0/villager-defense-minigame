@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.plugin;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import org.bukkit.Bukkit;
@@ -25,7 +25,7 @@ public class VDExpansion extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getVersion() {
-        return "1.0.0";
+        return "1.1.0";
     }
 
     @Override
@@ -73,18 +73,12 @@ public class VDExpansion extends PlaceholderExpansion {
             return String.valueOf(arena.getDifficultyMultiplier());
         else if (params.contains("enemies_") && arena != null)
             return String.valueOf(arena.getEnemies());
-        else if (params.contains("golemCap_") && arena != null)
-            return String.valueOf(arena.getGolemCap());
-        else if (params.contains("golems_") && arena != null)
-            return String.valueOf(arena.getGolems());
         else if (params.contains("villagers_") && arena != null)
             return String.valueOf(arena.getVillagers());
         else if (params.contains("spectatorCount_") && arena != null)
             return String.valueOf(arena.getSpectatorCount());
         else if (params.contains("ghostCount_") && arena != null)
             return String.valueOf(arena.getGhostCount());
-        else if (params.contains("wolfCap_") && arena != null)
-            return String.valueOf(arena.getWolfCap());
 
         // Player information
         else if (params.contains("crystalBalance_") && id != null)

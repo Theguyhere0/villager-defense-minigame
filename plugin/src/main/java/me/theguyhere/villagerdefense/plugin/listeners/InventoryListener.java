@@ -7,14 +7,22 @@ import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.IllegalArenaNameException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.displays.Leaderboard;
+import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.AchievementChecker;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaSpawn;
 import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.Shop;
+import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Ammo;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.golems.VDGolem;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.golems.VDIronGolem;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.golems.VDSnowGolem;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDCat;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDDog;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDHorse;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.inventories.Buttons;
@@ -35,10 +43,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 public class InventoryListener implements Listener {
 	// Prevent losing items by drag clicking in custom inventory
@@ -653,10 +658,6 @@ public class InventoryListener implements Listener {
 			// Open mob menu
 			else if (buttonName.contains("Mob Settings"))
 				player.openInventory(Inventories.createMobsMenu(meta.getArena()));
-
-			// Open shop menu
-			else if (buttonName.contains("Shop Settings"))
-				player.openInventory(Inventories.createShopSettingsMenu(meta.getArena()));
 
 			// Open game settings menu
 			else if (buttonName.contains("Game Settings"))
@@ -1394,13 +1395,6 @@ public class InventoryListener implements Listener {
 					player.openInventory(Inventories.createSpawnTableMenu(meta.getArena()));
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
-			// Toggle dynamic mob count
-			else if (buttonName.contains("Dynamic Mob Count:"))
-				if (arenaInstance.isClosed()) {
-					arenaInstance.setDynamicCount(!arenaInstance.hasDynamicCount());
-					player.openInventory(Inventories.createMobsMenu(meta.getArena()));
-				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-
 			else if (buttonName.contains("Villager Type:"))
 				if (arenaInstance.isClosed())
 					player.openInventory(Inventories.createVillagerTypeMenu(meta.getArena()));
@@ -1778,29 +1772,6 @@ public class InventoryListener implements Listener {
 			player.openInventory(Inventories.createSpawnTableMenu(meta.getArena()));
 		}
 
-		// Shop settings menu for an arena
-		else if (invID == InventoryID.SHOP_SETTINGS_MENU) {
-			Arena arenaInstance = meta.getArena();
-
-			// Toggle community chest
-			if (buttonName.contains("Community Chest:"))
-				if (arenaInstance.isClosed()) {
-					arenaInstance.setCommunity(!arenaInstance.hasCommunity());
-					player.openInventory(Inventories.createShopSettingsMenu(meta.getArena()));
-				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-
-			// Toggle dynamic prices
-			else if (buttonName.contains("Dynamic Prices:"))
-				if (arenaInstance.isClosed()) {
-					arenaInstance.setDynamicPrices(!arenaInstance.hasDynamicPrices());
-					player.openInventory(Inventories.createShopSettingsMenu(meta.getArena()));
-				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-
-			// Exit menu
-			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Inventories.createArenaMenu(meta.getArena()));
-		}
-
 		// Game settings menu for an arena
 		else if (invID == InventoryID.GAME_SETTINGS_MENU) {
 			Arena arenaInstance = meta.getArena();
@@ -1821,6 +1792,13 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("Dynamic Time Limit:"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setDynamicLimit(!arenaInstance.hasDynamicLimit());
+					player.openInventory(Inventories.createGameSettingsMenu(meta.getArena()));
+				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+
+			// Toggle community chest
+			if (buttonName.contains("Community Chest:"))
+				if (arenaInstance.isClosed()) {
+					arenaInstance.setCommunity(!arenaInstance.hasCommunity());
 					player.openInventory(Inventories.createGameSettingsMenu(meta.getArena()));
 				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
@@ -1845,13 +1823,6 @@ public class InventoryListener implements Listener {
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
 
 			// Toggle dynamic difficulty
-			else if (buttonName.contains("Dynamic Difficulty:"))
-				if (arenaInstance.isClosed()) {
-					arenaInstance.setDynamicDifficulty(!arenaInstance.hasDynamicDifficulty());
-					player.openInventory(Inventories.createGameSettingsMenu(meta.getArena()));
-				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-
-			// Toggle dynamic difficulty
 			else if (buttonName.contains("Late Arrival:"))
 				if (arenaInstance.isClosed()) {
 					arenaInstance.setLateArrival(!arenaInstance.hasLateArrival());
@@ -1861,20 +1832,6 @@ public class InventoryListener implements Listener {
 			// Edit arena bounds
 			else if (buttonName.contains("Arena Bounds"))
 				player.openInventory(Inventories.createBoundsMenu(meta.getArena()));
-
-			// Edit wolf cap TODO
-			else if (buttonName.contains("Wolf Cap"))
-//				if (arenaInstance.isClosed())
-//					player.openInventory(Inventories.createWolfCapMenu(meta.getArena()));
-//				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-				PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
-
-			// Edit iron golem cap TODO
-			else if (buttonName.contains("Iron Golem Cap"))
-//				if (arenaInstance.isClosed())
-//					player.openInventory(Inventories.createGolemCapMenu(meta.getArena()));
-//				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-				PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
 
 			// Edit sounds
 			else if (buttonName.contains("Sounds"))
@@ -2268,18 +2225,28 @@ public class InventoryListener implements Listener {
 
 			// Create spawn
 			if (buttonName.contains("Create"))
-				if (arenaInstance.isClosed()) {
+				if (!arenaInstance.isClosed())
+					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+				else if (GameManager.getArenas().values().stream().anyMatch(arena -> !arena.equals(arenaInstance) &&
+						arena.getBounds().contains(player.getLocation().toVector())))
+					PlayerManager.notifyFailure(player, "Arena bounds cannot intersect another arena!");
+				else {
 					arenaInstance.setCorner1(player.getLocation());
 					PlayerManager.notifySuccess(player, "Corner 1 set!");
 					player.openInventory(Inventories.createBoundsMenu(meta.getArena()));
-				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+				}
 
 			// Relocate spawn
 			if (buttonName.contains("Relocate"))
-				if (arenaInstance.isClosed()) {
+				if (!arenaInstance.isClosed())
+					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+				else if (GameManager.getArenas().values().stream().anyMatch(arena -> !arena.equals(arenaInstance) &&
+						arena.getBounds().contains(player.getLocation().toVector())))
+					PlayerManager.notifyFailure(player, "Arena bounds cannot intersect another arena!");
+				else {
 					arenaInstance.setCorner1(player.getLocation());
 					PlayerManager.notifySuccess(player, "Corner 1 set!");
-				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+				}
 
 			// Teleport player to spawn
 			else if (buttonName.contains("Teleport")) {
@@ -2311,20 +2278,30 @@ public class InventoryListener implements Listener {
 
 			// Create spawn
 			if (buttonName.contains("Create"))
-				if (arenaInstance.isClosed()) {
-					arenaInstance.setCorner2(player.getLocation());
+				if (!arenaInstance.isClosed())
+					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+				else if (GameManager.getArenas().values().stream().anyMatch(arena -> !arena.equals(arenaInstance) &&
+						arena.getBounds().contains(player.getLocation().toVector())))
+					PlayerManager.notifyFailure(player, "Arena bounds cannot intersect another arena!");
+				else {
+					arenaInstance.setCorner1(player.getLocation());
 					PlayerManager.notifySuccess(player, "Corner 2 set!");
 					player.openInventory(Inventories.createBoundsMenu(meta.getArena()));
-				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+				}
 
 			// Relocate spawn
 			if (buttonName.contains("Relocate"))
-				if (arenaInstance.isClosed()) {
-					arenaInstance.setCorner2(player.getLocation());
+				if (!arenaInstance.isClosed())
+					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+				else if (GameManager.getArenas().values().stream().anyMatch(arena -> !arena.equals(arenaInstance) &&
+						arena.getBounds().contains(player.getLocation().toVector())))
+					PlayerManager.notifyFailure(player, "Arena bounds cannot intersect another arena!");
+				else {
+					arenaInstance.setCorner1(player.getLocation());
 					PlayerManager.notifySuccess(player, "Corner 2 set!");
-				} else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+				}
 
-				// Teleport player to spawn
+			// Teleport player to spawn
 			else if (buttonName.contains("Teleport")) {
 				Location location = arenaInstance.getCorner2();
 				if (location == null) {
@@ -2346,86 +2323,6 @@ public class InventoryListener implements Listener {
 				// Exit menu
 			else if (buttonName.contains(LanguageManager.messages.exit))
 				player.openInventory(Inventories.createBoundsMenu(meta.getArena()));
-		}
-
-		// Wolf cap menu for an arena
-		else if (invID == InventoryID.WOLF_CAP_MENU) {
-			Arena arenaInstance = meta.getArena();
-			int current = arenaInstance.getWolfCap();
-
-			// Decrease wolf cap
-			if (buttonName.contains("Decrease")) {
-				// Check for arena closure
-				if (!arenaInstance.isClosed()) {
-					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-					return;
-				}
-
-				// Check if wolf cap is greater than 1
-				if (current <= 1) {
-					PlayerManager.notifyFailure(player, "Wolf cap cannot be less than 1!");
-					return;
-				}
-
-				arenaInstance.setWolfCap(--current);
-				player.openInventory(Inventories.createWolfCapMenu(meta.getArena()));
-			}
-
-			// Increase wolf cap
-			else if (buttonName.contains("Increase")) {
-				// Check for arena closure
-				if (!arenaInstance.isClosed()) {
-					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-					return;
-				}
-
-				arenaInstance.setWolfCap(++current);
-				player.openInventory(Inventories.createWolfCapMenu(meta.getArena()));
-			}
-
-			// Exit menu
-			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Inventories.createGameSettingsMenu(meta.getArena()));
-		}
-
-		// Iron golem cap menu for an arena
-		else if (invID == InventoryID.GOLEM_CAP_MENU) {
-			Arena arenaInstance = meta.getArena();
-			int current = arenaInstance.getGolemCap();
-
-			// Decrease iron golem cap
-			if (buttonName.contains("Decrease")) {
-				// Check for arena closure
-				if (!arenaInstance.isClosed()) {
-					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-					return;
-				}
-
-				// Check if iron golem cap is greater than 1
-				if (current <= 1) {
-					PlayerManager.notifyFailure(player, "Iron golem cap cannot be less than 1!");
-					return;
-				}
-
-				arenaInstance.setGolemCap(--current);
-				player.openInventory(Inventories.createGolemCapMenu(meta.getArena()));
-			}
-
-			// Increase iron golem cap
-			else if (buttonName.contains("Increase")) {
-				// Check for arena closure
-				if (!arenaInstance.isClosed()) {
-					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-					return;
-				}
-
-				arenaInstance.setGolemCap(++current);
-				player.openInventory(Inventories.createGolemCapMenu(meta.getArena()));
-			}
-
-			// Exit menu
-			else if (buttonName.contains(LanguageManager.messages.exit))
-				player.openInventory(Inventories.createGameSettingsMenu(meta.getArena()));
 		}
 
 		// Sound settings menu for an arena
@@ -2545,13 +2442,10 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				arena1.setMaxWaves(45);
+				arena1.setMaxWaves(25);
 				arena1.setWaveTimeLimit(5);
 				arena1.setDifficultyMultiplier(1);
-				arena1.setDynamicCount(false);
-				arena1.setDynamicDifficulty(false);
 				arena1.setDynamicLimit(true);
-				arena1.setDynamicPrices(false);
 				arena1.setDifficultyLabel("Easy");
 			}
 
@@ -2563,13 +2457,10 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				arena1.setMaxWaves(50);
+				arena1.setMaxWaves(30);
 				arena1.setWaveTimeLimit(4);
 				arena1.setDifficultyMultiplier(2);
-				arena1.setDynamicCount(false);
-				arena1.setDynamicDifficulty(false);
 				arena1.setDynamicLimit(true);
-				arena1.setDynamicPrices(true);
 				arena1.setDifficultyLabel("Medium");
 			}
 
@@ -2581,13 +2472,10 @@ public class InventoryListener implements Listener {
 					return;
 				}
 
-				arena1.setMaxWaves(60);
+				arena1.setMaxWaves(35);
 				arena1.setWaveTimeLimit(3);
 				arena1.setDifficultyMultiplier(3);
-				arena1.setDynamicCount(true);
-				arena1.setDynamicDifficulty(true);
 				arena1.setDynamicLimit(true);
-				arena1.setDynamicPrices(true);
 				arena1.setDifficultyLabel("Hard");
 			}
 
@@ -2602,10 +2490,7 @@ public class InventoryListener implements Listener {
 				arena1.setMaxWaves(-1);
 				arena1.setWaveTimeLimit(3);
 				arena1.setDifficultyMultiplier(4);
-				arena1.setDynamicCount(true);
-				arena1.setDynamicDifficulty(true);
 				arena1.setDynamicLimit(false);
-				arena1.setDynamicPrices(true);
 				arena1.setDifficultyLabel("Insane");
 			}
 
@@ -2642,47 +2527,56 @@ public class InventoryListener implements Listener {
 
 			// Open sword shop
 			if (buttonName.contains(LanguageManager.names.swordShop))
-				player.openInventory(arenaInstance.getSwordShop());
+				player.openInventory(Inventories.createSwordShopMenu(arenaInstance));
 
 			// Open axe shop
 			else if (buttonName.contains(LanguageManager.names.axeShop))
-				player.openInventory(arenaInstance.getAxeShop());
+				player.openInventory(Inventories.createAxeShopMenu(arenaInstance));
 
 			// Open scythe shop
 			else if (buttonName.contains(LanguageManager.names.scytheShop))
-				player.openInventory(arenaInstance.getScytheShop());
+				player.openInventory(Inventories.createScytheShopMenu(arenaInstance));
 
 			// Open bow shop
 			else if (buttonName.contains(LanguageManager.names.bowShop))
-				player.openInventory(arenaInstance.getBowShop());
+				player.openInventory(Inventories.createBowShopMenu(arenaInstance));
 
 			// Open crossbow shop
 			else if (buttonName.contains(LanguageManager.names.crossbowShop))
-				player.openInventory(arenaInstance.getCrossbowShop());
+				player.openInventory(Inventories.createCrossbowShopMenu(arenaInstance));
 
 			// Open ammo shop
 			else if (buttonName.contains(LanguageManager.names.ammoShop))
-				player.openInventory(arenaInstance.getAmmoShop());
+				player.openInventory(Inventories.createAmmoUpgradeShopMenu(arenaInstance, gamer));
 
 			// Open helmet shop
 			else if (buttonName.contains(LanguageManager.names.helmetShop))
-				player.openInventory(arenaInstance.getHelmetShop());
+				player.openInventory(Inventories.createHelmetShopMenu(arenaInstance));
 
 			// Open chestplate shop
 			else if (buttonName.contains(LanguageManager.names.chestplateShop))
-				player.openInventory(arenaInstance.getChestplateShop());
+				player.openInventory(Inventories.createChestplateShopMenu(arenaInstance));
 
 			// Open leggings shop
 			else if (buttonName.contains(LanguageManager.names.leggingsShop))
-				player.openInventory(arenaInstance.getLeggingsShop());
+				player.openInventory(Inventories.createLeggingsShopMenu(arenaInstance));
 
 			// Open boots shop
 			else if (buttonName.contains(LanguageManager.names.bootsShop))
-				player.openInventory(arenaInstance.getBootsShop());
+				player.openInventory(Inventories.createBootsShopMenu(arenaInstance));
 
 			// Open consumables shop
 			else if (buttonName.contains(LanguageManager.names.consumableShop))
-				player.openInventory(arenaInstance.getConsumeShop());
+				player.openInventory(Inventories.createConsumableShopMenu(arenaInstance));
+
+			// Open pet shop
+			else if (buttonName.contains(String.format(LanguageManager.names.petShop,
+					Integer.toString(gamer.getRemainingPetSlots()), Integer.toString(gamer.getPetSlots()))))
+				player.openInventory(Inventories.createPetShopMenu(arenaInstance, gamer));
+
+			// Open golem shop
+			else if (buttonName.contains(LanguageManager.names.golemShop))
+				player.openInventory(Inventories.createGolemShopMenu(arenaInstance));
 
 			// Open ability upgrade shop
 			else if (buttonName.contains(LanguageManager.names.abilityUpgradeShop))
@@ -2711,7 +2605,7 @@ public class InventoryListener implements Listener {
 
 			// Return to main shop menu
 			if (buttonName.contains(LanguageManager.messages.exit)) {
-				player.openInventory(Inventories.createShopMenu(arenaInstance.getCurrentShopLevel(), arenaInstance));
+				player.openInventory(Inventories.createShopMenu(arenaInstance, gamer));
 				return;
 			}
 
@@ -2738,7 +2632,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Remove cost meta
-			buy = ItemManager.removeLastLore(buy);
+			buy = ItemManager.removeLastLore(ItemManager.removeLastLore(buy));
 
 			// Make unbreakable for blacksmith (not sharing)
 			if (Kit.blacksmith().setKitLevel(1).equals(gamer.getKit()) && !gamer.isSharing())
@@ -2783,6 +2677,325 @@ public class InventoryListener implements Listener {
 			}
 		}
 
+		// Pet shop
+		else if (invID == InventoryID.PET_SHOP_MENU) {
+			Arena arenaInstance;
+			VDPlayer gamer;
+
+			// Attempt to get arena and player
+			try {
+				arenaInstance = GameManager.getArena(player);
+				gamer = arenaInstance.getPlayer(player);
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+				return;
+			}
+
+			// Edit existing
+			if (buttonName.contains(LanguageManager.messages.mobName.replace("%s", "").trim()))
+				player.openInventory(Inventories.createPetManagerMenu(arenaInstance, gamer,
+						e.getSlot() - meta.getId()));
+
+			// Create new
+			else if (buttonName.contains(CommunicationManager.format("&a&lNew ")))
+				player.openInventory(Inventories.createNewPetMenu(arenaInstance, gamer));
+
+			// Return to main shop menu
+			else if (buttonName.contains(LanguageManager.messages.exit))
+				player.openInventory(Inventories.createShopMenu(arenaInstance, gamer));
+		}
+
+		// New pet menu
+		else if (invID == InventoryID.NEW_PET_MENU) {
+			Arena arenaInstance;
+			VDPlayer gamer;
+
+			// Attempt to get arena and player
+			try {
+				arenaInstance = GameManager.getArena(player);
+				gamer = arenaInstance.getPlayer(player);
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+				return;
+			}
+
+			// Add pet
+			if (buttonName.contains(LanguageManager.mobs.dog) || buttonName.contains(LanguageManager.mobs.cat) ||
+					buttonName.contains(LanguageManager.mobs.horse)) {
+				ItemStack buy = Objects.requireNonNull(e.getClickedInventory().getItem(e.getSlot())).clone();
+				List<String> lore = Objects.requireNonNull(buy.getItemMeta()).getLore();
+				Random random = new Random();
+				if (lore == null)
+					return;
+				int cost = Integer.parseInt(lore.get(lore.size() - 1)
+						.substring(6 + LanguageManager.messages.gems.length()));
+
+				// Check if they can afford the item
+				if (!gamer.canAfford(cost)) {
+					PlayerManager.notifyFailure(player, LanguageManager.errors.buy);
+					return;
+				}
+
+				// Subtract from balance, apply rebate, and update scoreboard
+				gamer.addGems(-cost);
+				if (Kit.merchant().setKitLevel(1).equals(gamer.getKit()) && !gamer.isSharing())
+					gamer.addGems(cost / 10);
+				if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.MERCHANT))) {
+					gamer.addGems(cost / 10);
+					PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+				}
+				GameManager.createBoard(gamer);
+
+				// Spawn pet
+				if (buttonName.contains(LanguageManager.mobs.dog))
+					gamer.addPet(new VDDog(arenaInstance, player.getLocation(), gamer, 1));
+				if (buttonName.contains(LanguageManager.mobs.cat))
+					gamer.addPet(new VDCat(arenaInstance, player.getLocation(), gamer, 1));
+				if (buttonName.contains(LanguageManager.mobs.horse))
+					gamer.addPet(new VDHorse(arenaInstance, player.getLocation(), gamer, 1));
+				player.openInventory(Inventories.createPetManagerMenu(arenaInstance, gamer,
+						gamer.getPets().size() - 1));
+			}
+
+			// Return to pet shop menu
+			else if (buttonName.contains(LanguageManager.messages.exit))
+				player.openInventory(Inventories.createPetShopMenu(arenaInstance, gamer));
+		}
+
+		// Pet manager menu
+		else if (invID == InventoryID.PET_MANAGER_MENU) {
+			Arena arenaInstance;
+			VDPlayer gamer;
+
+			// Attempt to get arena and player
+			try {
+				arenaInstance = GameManager.getArena(player);
+				gamer = arenaInstance.getPlayer(player);
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+				return;
+			}
+
+			// Upgrade the pet
+			if (buttonName.contains(LanguageManager.messages.eggName.replace("%s", "").trim())) {
+				ItemStack buy = Objects.requireNonNull(e.getClickedInventory().getItem(e.getSlot())).clone();
+				List<String> lore = Objects.requireNonNull(buy.getItemMeta()).getLore();
+				Random random = new Random();
+				if (lore == null)
+					return;
+				int cost = Integer.parseInt(lore.get(lore.size() - 1)
+						.substring(6 + LanguageManager.messages.gems.length()));
+
+				// Check if they can afford the item
+				if (!gamer.canAfford(cost)) {
+					PlayerManager.notifyFailure(player, LanguageManager.errors.buy);
+					return;
+				}
+
+				// Subtract from balance, apply rebate, and update scoreboard
+				gamer.addGems(-cost);
+				if (Kit.merchant().setKitLevel(1).equals(gamer.getKit()) && !gamer.isSharing())
+					gamer.addGems(cost / 10);
+				if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.MERCHANT))) {
+					gamer.addGems(cost / 10);
+					PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+				}
+				GameManager.createBoard(gamer);
+
+				// Upgrade pet
+				gamer.getPets().get(meta.getId()).incrementLevel();
+				player.openInventory(Inventories.createPetManagerMenu(arenaInstance, gamer, meta.getId()));
+			}
+
+			// Remove the pet
+			else if (buttonName.contains(LanguageManager.messages.removePet))
+				player.openInventory(Inventories.createPetConfirmMenu(arenaInstance, player.getUniqueId(),
+						meta.getId()));
+
+			// Return to pet shop menu
+			else if (buttonName.contains(LanguageManager.messages.exit))
+				player.openInventory(Inventories.createPetShopMenu(arenaInstance, gamer));
+		}
+
+		// Pet removal confirmation
+		else if (invID == InventoryID.PET_CONFIRM_MENU) {
+			Arena arenaInstance = meta.getArena();
+			VDPlayer gamer;
+			try {
+				gamer = arenaInstance.getPlayer(meta.getPlayerID());
+			} catch (PlayerNotFoundException err) {
+				return;
+			}
+
+			// Return to previous menu
+			if (buttonName.contains("NO"))
+				player.openInventory(Inventories.createPetManagerMenu(arenaInstance, gamer, meta.getId()));
+
+			// Remove pet, then return to previous menu
+			else if (buttonName.contains("YES")) {
+				// Remove data
+				gamer.removePet(meta.getId());
+
+				// Confirm and return
+				PlayerManager.notifySuccess(player, LanguageManager.confirms.petRemove);
+				player.openInventory(Inventories.createPetShopMenu(arenaInstance, gamer));
+			}
+		}
+
+		// Golem shop
+		else if (invID == InventoryID.GOLEM_SHOP_MENU) {
+			Arena arenaInstance;
+			VDPlayer gamer;
+
+			// Attempt to get arena and player
+			try {
+				arenaInstance = GameManager.getArena(player);
+				gamer = arenaInstance.getPlayer(player);
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+				return;
+			}
+
+			// Edit existing
+			if (buttonName.contains(LanguageManager.messages.mobName.replace("%s", "").trim()))
+				player.openInventory(Inventories.createGolemManagerMenu(arenaInstance,
+						e.getSlot() - meta.getId()));
+
+			// Create new
+			else if (buttonName.contains(CommunicationManager.format("&a&lNew ")))
+				player.openInventory(Inventories.createNewGolemMenu(arenaInstance));
+
+			// Return to main shop menu
+			else if (buttonName.contains(LanguageManager.messages.exit))
+				player.openInventory(Inventories.createShopMenu(arenaInstance, gamer));
+		}
+
+		// New pet menu
+		else if (invID == InventoryID.NEW_GOLEM_MENU) {
+			Arena arenaInstance;
+			VDPlayer gamer;
+
+			// Attempt to get arena and player
+			try {
+				arenaInstance = GameManager.getArena(player);
+				gamer = arenaInstance.getPlayer(player);
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+				return;
+			}
+
+			// Add golem
+			if (buttonName.contains(LanguageManager.mobs.ironGolem) ||
+					buttonName.contains(LanguageManager.mobs.snowGolem)) {
+				ItemStack buy = Objects.requireNonNull(e.getClickedInventory().getItem(e.getSlot())).clone();
+				List<String> lore = Objects.requireNonNull(buy.getItemMeta()).getLore();
+				Random random = new Random();
+				if (lore == null)
+					return;
+				int cost = Integer.parseInt(lore.get(lore.size() - 1)
+						.substring(6 + LanguageManager.messages.gems.length()));
+
+				// Check if they can afford the item
+				if (!gamer.canAfford(cost)) {
+					PlayerManager.notifyFailure(player, LanguageManager.errors.buy);
+					return;
+				}
+
+				// Subtract from balance, apply rebate, and update scoreboard
+				gamer.addGems(-cost);
+				if (Kit.merchant().setKitLevel(1).equals(gamer.getKit()) && !gamer.isSharing())
+					gamer.addGems(cost / 10);
+				if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.MERCHANT))) {
+					gamer.addGems(cost / 10);
+					PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+				}
+				GameManager.createBoard(gamer);
+
+				// Spawn golem
+				ArenaSpawn spawn = arenaInstance.getVillagerSpawns().get(arenaInstance.getGolems().size());
+				if (buttonName.contains(LanguageManager.mobs.ironGolem))
+					arenaInstance.addGolem(new VDIronGolem(arenaInstance, spawn.getLocation(), 1));
+				if (buttonName.contains(LanguageManager.mobs.snowGolem))
+					arenaInstance.addGolem(new VDSnowGolem(arenaInstance, spawn.getLocation(), 1));
+				player.openInventory(Inventories.createGolemManagerMenu(arenaInstance,
+						arenaInstance.getGolems().size() - 1));
+			}
+
+			// Return to golem shop menu
+			else if (buttonName.contains(LanguageManager.messages.exit))
+				player.openInventory(Inventories.createGolemShopMenu(arenaInstance));
+		}
+
+		// Golem manager menu
+		else if (invID == InventoryID.GOLEM_MANAGER_MENU) {
+			Arena arenaInstance;
+			VDPlayer gamer;
+
+			// Attempt to get arena and player
+			try {
+				arenaInstance = GameManager.getArena(player);
+				gamer = arenaInstance.getPlayer(player);
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+				return;
+			}
+
+			// Upgrade the golem
+			if (buttonName.contains(LanguageManager.messages.eggName.replace("%s", "").trim())) {
+				ItemStack buy = Objects.requireNonNull(e.getClickedInventory().getItem(e.getSlot())).clone();
+				List<String> lore = Objects.requireNonNull(buy.getItemMeta()).getLore();
+				Random random = new Random();
+				if (lore == null)
+					return;
+				int cost = Integer.parseInt(lore.get(lore.size() - 1)
+						.substring(6 + LanguageManager.messages.gems.length()));
+
+				// Check if they can afford the item
+				if (!gamer.canAfford(cost)) {
+					PlayerManager.notifyFailure(player, LanguageManager.errors.buy);
+					return;
+				}
+
+				// Subtract from balance, apply rebate, and update scoreboard
+				gamer.addGems(-cost);
+				if (Kit.merchant().setKitLevel(1).equals(gamer.getKit()) && !gamer.isSharing())
+					gamer.addGems(cost / 10);
+				if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.MERCHANT))) {
+					gamer.addGems(cost / 10);
+					PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+				}
+				GameManager.createBoard(gamer);
+
+				// Upgrade golem
+				arenaInstance.getGolems().get(meta.getId()).incrementLevel();
+				player.openInventory(Inventories.createGolemManagerMenu(arenaInstance, meta.getId()));
+			}
+
+			// Remove the golem
+			else if (buttonName.contains(LanguageManager.messages.removeGolem))
+				player.openInventory(Inventories.createGolemConfirmMenu(arenaInstance, meta.getId()));
+
+			// Return to golem shop menu
+			else if (buttonName.contains(LanguageManager.messages.exit))
+				player.openInventory(Inventories.createGolemShopMenu(arenaInstance));
+		}
+
+		// Golem removal confirmation
+		else if (invID == InventoryID.GOLEM_CONFIRM_MENU) {
+			Arena arenaInstance = meta.getArena();
+
+			// Return to previous menu
+			if (buttonName.contains("NO"))
+				player.openInventory(Inventories.createGolemManagerMenu(arenaInstance, meta.getId()));
+
+			// Remove golem, then return to previous menu
+			else if (buttonName.contains("YES")) {
+				// Remove data
+				VDGolem golem = arenaInstance.getGolems().get(meta.getId());
+				golem.kill();
+				arenaInstance.removeMob(golem.getID());
+				arenaInstance.getGolems().remove(meta.getId());
+
+				// Confirm and return
+				PlayerManager.notifySuccess(player, LanguageManager.confirms.golemRemove);
+				player.openInventory(Inventories.createGolemShopMenu(arenaInstance));
+			}
+		}
+
 		// Ability upgrade shop
 		else if (invID == InventoryID.ABILITY_UPGRADE_SHOP_MENU) {
 			Arena arenaInstance;
@@ -2798,7 +3011,7 @@ public class InventoryListener implements Listener {
 
 			// Return to main shop menu
 			if (buttonName.contains(LanguageManager.messages.exit)) {
-				player.openInventory(Inventories.createShopMenu(arenaInstance.getCurrentShopLevel(), arenaInstance));
+				player.openInventory(Inventories.createShopMenu(arenaInstance, gamer));
 				return;
 			}
 
@@ -2824,7 +3037,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Remove cost meta
-			buy = ItemManager.removeLastLore(buy);
+			buy = ItemManager.removeLastLore(ItemManager.removeLastLore(buy));
 
 			// Subtract from balance, apply rebate, and update scoreboard
 			gamer.addGems(-cost);
@@ -2843,6 +3056,75 @@ public class InventoryListener implements Listener {
 			// Find and upgrade, otherwise give
 			for (int i = 1; i < 46; i++) {
 				if (VDAbility.matches(player.getInventory().getItem(i))) {
+					player.getInventory().setItem(i, buy);
+					PlayerManager.notifySuccess(player, LanguageManager.confirms.buy);
+					return;
+				}
+			}
+			PlayerManager.giveItem(player, buy, LanguageManager.errors.inventoryFull);
+			PlayerManager.notifySuccess(player, LanguageManager.confirms.buy);
+		}
+
+		// Ammo upgrade shop
+		else if (invID == InventoryID.AMMO_UPGRADE_SHOP_MENU) {
+			Arena arenaInstance;
+			VDPlayer gamer;
+
+			// Attempt to get arena and player
+			try {
+				arenaInstance = GameManager.getArena(player);
+				gamer = arenaInstance.getPlayer(player);
+			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+				return;
+			}
+
+			// Return to main shop menu
+			if (buttonName.contains(LanguageManager.messages.exit)) {
+				player.openInventory(Inventories.createShopMenu(arenaInstance, gamer));
+				return;
+			}
+
+			// Ignore null items
+			if (e.getClickedInventory().getItem(e.getSlot()) == null)
+				return;
+
+			ItemStack buy = Objects.requireNonNull(e.getClickedInventory().getItem(e.getSlot())).clone();
+			List<String> lore = Objects.requireNonNull(buy.getItemMeta()).getLore();
+
+			// Ignore un-purchasable items
+			if (lore == null)
+				return;
+
+			int cost = Integer.parseInt(lore.get(lore.size() - 1)
+					.substring(6 + LanguageManager.messages.gems.length()));
+			Random random = new Random();
+
+			// Check if they can afford the item
+			if (!gamer.canAfford(cost)) {
+				PlayerManager.notifyFailure(player, LanguageManager.errors.buy);
+				return;
+			}
+
+			// Remove cost meta
+			buy = ItemManager.removeLastLore(ItemManager.removeLastLore(buy));
+
+			// Subtract from balance, apply rebate, and update scoreboard
+			gamer.addGems(-cost);
+			if (Kit.merchant().setKitLevel(1).equals(gamer.getKit()) && !gamer.isSharing())
+				gamer.addGems(cost / 10);
+			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.MERCHANT))) {
+				gamer.addGems(cost / 10);
+				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
+			}
+			GameManager.createBoard(gamer);
+
+			// Update player stats and shop
+			gamer.incrementTieredAmmoLevel();
+			player.openInventory(Inventories.createAmmoUpgradeShopMenu(arenaInstance, gamer));
+
+			// Find and upgrade, otherwise give
+			for (int i = 1; i < 46; i++) {
+				if (Ammo.matches(player.getInventory().getItem(i))) {
 					player.getInventory().setItem(i, buy);
 					PlayerManager.notifySuccess(player, LanguageManager.confirms.buy);
 					return;
@@ -2917,10 +3199,6 @@ public class InventoryListener implements Listener {
 				int kitLevel = PlayerManager.getMultiTierKitLevel(ownerID, kit.getID());
 				if (kitLevel == kit.getMaxLevel())
 					return;
-				else if (Kit.summoner().getID().equals(kit.getID())) {
-					PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
-					return;
-				}
 				else if (kitLevel == 0) {
 					if (balance >= kit.getPrice(++kitLevel)) {
 						PlayerManager.withdrawCrystalBalance(ownerID, kit.getPrice(kitLevel));
@@ -3013,10 +3291,6 @@ public class InventoryListener implements Listener {
 					PlayerManager.notifyFailure(player, LanguageManager.errors.kitSelect);
 					return;
 				}
-				if (Kit.summoner().getID().equals(kit.getID())) {
-					PlayerManager.notifyFailure(player, LanguageManager.errors.construction);
-					return;
-				}
 				gamer.setKit(kit.setKitLevel(kitLevel));
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.kitSelect);
 			}
@@ -3107,7 +3381,10 @@ public class InventoryListener implements Listener {
 				return;
 			}
 			int gemBoost = gamer.getGemBoost();
-			int conversionRatio = 5;
+			int conversionRatio;
+			if (Main.hasCustomEconomy())
+				conversionRatio = Math.max((int) (5 * Main.plugin.getConfig().getDouble("vaultEconomyMult")), 1);
+			else conversionRatio = 5;
 			int balance = PlayerManager.getCrystalBalance(meta.getPlayerID());
 
 			// Reset

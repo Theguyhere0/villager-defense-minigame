@@ -23,53 +23,29 @@ public abstract class MageAbility extends VDAbility {
             LanguageManager.messages.attackRangeDamage);
 
     @NotNull
-    public static ItemStack create(AbilityType type) {
+    public static ItemStack create(Tier tier) {
         List<String> lores = new ArrayList<>();
 
         // Set name
         String name;
-        switch (type) {
+        switch (tier) {
             case T0:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.essences.t0.name),
-                        new ColoredMessage(ChatColor.LIGHT_PURPLE, LanguageManager.kits.mage.name),
-                        new ColoredMessage(ChatColor.AQUA, "[T0]")
-                );
+                name = formatName(LanguageManager.itemLore.essences.t0.name, LanguageManager.kits.mage.name, tier);
                 break;
             case T1:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.essences.t1.name),
-                        new ColoredMessage(ChatColor.LIGHT_PURPLE, LanguageManager.kits.mage.name),
-                        new ColoredMessage(ChatColor.AQUA, "[T1]")
-                );
+                name = formatName(LanguageManager.itemLore.essences.t1.name, LanguageManager.kits.mage.name, tier);
                 break;
             case T2:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.essences.t2.name),
-                        new ColoredMessage(ChatColor.LIGHT_PURPLE, LanguageManager.kits.mage.name),
-                        new ColoredMessage(ChatColor.AQUA, "[T2]")
-                );
+                name = formatName(LanguageManager.itemLore.essences.t2.name, LanguageManager.kits.mage.name, tier);
                 break;
             case T3:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.essences.t3.name),
-                        new ColoredMessage(ChatColor.LIGHT_PURPLE, LanguageManager.kits.mage.name),
-                        new ColoredMessage(ChatColor.AQUA, "[T3]")
-                );
+                name = formatName(LanguageManager.itemLore.essences.t3.name, LanguageManager.kits.mage.name, tier);
                 break;
             case T4:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.essences.t4.name),
-                        new ColoredMessage(ChatColor.LIGHT_PURPLE, LanguageManager.kits.mage.name),
-                        new ColoredMessage(ChatColor.AQUA, "[T4]")
-                );
+                name = formatName(LanguageManager.itemLore.essences.t4.name, LanguageManager.kits.mage.name, tier);
                 break;
             case T5:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.essences.t5.name),
-                        new ColoredMessage(ChatColor.LIGHT_PURPLE, LanguageManager.kits.mage.name),
-                        new ColoredMessage(ChatColor.AQUA, "[T5]")
-                );
+                name = formatName(LanguageManager.itemLore.essences.t5.name, LanguageManager.kits.mage.name, tier);
                 break;
             default:
                 name = "";
@@ -77,7 +53,7 @@ public abstract class MageAbility extends VDAbility {
 
         // Set description
         String description;
-        switch (type) {
+        switch (tier) {
             case T0:
                 description = LanguageManager.itemLore.essences.t0.description;
                 break;
@@ -109,7 +85,7 @@ public abstract class MageAbility extends VDAbility {
 
         // Set effect
         String effect;
-        switch (type) {
+        switch (tier) {
             case T0:
             case T1:
             case T2:
@@ -131,7 +107,7 @@ public abstract class MageAbility extends VDAbility {
 
         // Set damage
         int damageLow, damageHigh;
-        switch (type) {
+        switch (tier) {
             case T0:
                 damageLow = 30;
                 damageHigh = 50;
@@ -167,7 +143,7 @@ public abstract class MageAbility extends VDAbility {
 
         // Set cooldown
         double cooldown;
-        switch (type) {
+        switch (tier) {
             case T0:
                 cooldown = 12;
                 break;
@@ -193,28 +169,12 @@ public abstract class MageAbility extends VDAbility {
             lores.add(CommunicationManager.format(COOLDOWN, Double.toString(cooldown)));
 
         // Set price
-        int price;
-        switch (type) {
-            case T1:
-                price = 500;
-                break;
-            case T2:
-                price = 1000;
-                break;
-            case T3:
-                price = 1500;
-                break;
-            case T4:
-                price = 2000;
-                break;
-            case T5:
-                price = 3000;
-                break;
-            default: price = -1;
-        }
-        if (price >= 0)
+        int price = getPrice(tier);
+        if (price >= 0) {
+            lores.add("");
             lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
                     price));
+        }
 
         // Create item
         return ItemManager.createItem(
@@ -237,14 +197,5 @@ public abstract class MageAbility extends VDAbility {
             return false;
         return toCheck.getType() == Material.PURPLE_DYE && lore.stream().anyMatch(line -> line.contains(
                 EFFECT.toString().replace("%s", "")));
-    }
-
-    public enum AbilityType{
-        T0,
-        T1,
-        T2,
-        T3,
-        T4,
-        T5
     }
 }

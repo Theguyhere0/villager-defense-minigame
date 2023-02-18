@@ -12,41 +12,43 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public abstract class Boots extends VDArmor{
     @NotNull
-    public static ItemStack create(BootsType type) {
+    public static ItemStack create(Tier tier) {
         List<String> lores = new ArrayList<>();
         Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
+        HashMap<Enchantment, Integer> enchant = new HashMap<>();
 
         // Set material
         Material mat;
-        switch (type) {
+        switch (tier) {
             case T1:
-            case T2:
                 mat = Material.LEATHER_BOOTS;
                 break;
-            case T3:
-            case T4:
+            case T2:
                 mat = Material.CHAINMAIL_BOOTS;
                 break;
-            case T5:
-            case T6:
-            case T7:
+            case T3:
                 mat = Material.IRON_BOOTS;
                 break;
-            case T8:
-            case T9:
+            case T4:
                 mat = Material.DIAMOND_BOOTS;
                 break;
-            case T10:
+            case T5:
                 mat = Material.NETHERITE_BOOTS;
+                break;
+            case T6:
+                mat = Material.NETHERITE_BOOTS;
+                enchant.put(Enchantment.DURABILITY, 3);
                 break;
             default:
                 mat = Material.GOLDEN_BOOTS;
@@ -54,66 +56,24 @@ public abstract class Boots extends VDArmor{
 
         // Set name
         String name;
-        switch (type) {
+        switch (tier) {
             case T1:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.boots.t1.name),
-                        "[T1]"
-                );
+                name = formatName(LanguageManager.itemLore.boots.t1.name, tier);
                 break;
             case T2:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.boots.t2.name),
-                        "[T2]"
-                );
+                name = formatName(LanguageManager.itemLore.boots.t2.name, tier);
                 break;
             case T3:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.boots.t3.name),
-                        "[T3]"
-                );
+                name = formatName(LanguageManager.itemLore.boots.t3.name, tier);
                 break;
             case T4:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.boots.t4.name),
-                        "[T4]"
-                );
+                name = formatName(LanguageManager.itemLore.boots.t4.name, tier);
                 break;
             case T5:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.boots.t5.name),
-                        "[T5]"
-                );
+                name = formatName(LanguageManager.itemLore.boots.t5.name, tier);
                 break;
             case T6:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.boots.t6.name),
-                        "[T6]"
-                );
-                break;
-            case T7:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.boots.t7.name),
-                        "[T7]"
-                );
-                break;
-            case T8:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.boots.t8.name),
-                        "[T8]"
-                );
-                break;
-            case T9:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.boots.t9.name),
-                        "[T9]"
-                );
-                break;
-            case T10:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.boots.t10.name),
-                        "[T10]"
-                );
+                name = formatName(LanguageManager.itemLore.boots.t6.name, tier);
                 break;
             default:
                 name = "";
@@ -121,7 +81,7 @@ public abstract class Boots extends VDArmor{
 
         // Set description
         String description;
-        switch (type) {
+        switch (tier) {
             case T1:
                 description = LanguageManager.itemLore.boots.t1.description;
                 break;
@@ -140,18 +100,6 @@ public abstract class Boots extends VDArmor{
             case T6:
                 description = LanguageManager.itemLore.boots.t6.description;
                 break;
-            case T7:
-                description = LanguageManager.itemLore.boots.t7.description;
-                break;
-            case T8:
-                description = LanguageManager.itemLore.boots.t8.description;
-                break;
-            case T9:
-                description = LanguageManager.itemLore.boots.t9.description;
-                break;
-            case T10:
-                description = LanguageManager.itemLore.boots.t10.description;
-                break;
             default:
                 description = "";
         }
@@ -164,35 +112,23 @@ public abstract class Boots extends VDArmor{
 
         // Set armor
         int armor;
-        switch (type) {
+        switch (tier) {
             case T1:
                 armor = 1;
                 break;
             case T2:
-                armor = 2;
-                break;
-            case T3:
                 armor = 3;
                 break;
-            case T4:
-                armor = 4;
-                break;
-            case T5:
+            case T3:
                 armor = 6;
                 break;
-            case T6:
-                armor = 7;
-                break;
-            case T7:
+            case T4:
                 armor = 8;
                 break;
-            case T8:
-                armor = 10;
-                break;
-            case T9:
+            case T5:
                 armor = 12;
                 break;
-            case T10:
+            case T6:
                 armor = 14;
                 break;
             default:
@@ -203,23 +139,17 @@ public abstract class Boots extends VDArmor{
 
         // Set toughness
         int toughness;
-        switch (type) {
-            case T5:
+        switch (tier) {
+            case T3:
                 toughness = 1;
                 break;
-            case T6:
+            case T4:
                 toughness = 2;
                 break;
-            case T7:
-                toughness = 3;
-                break;
-            case T8:
+            case T5:
                 toughness = 4;
                 break;
-            case T9:
-                toughness = 5;
-                break;
-            case T10:
+            case T6:
                 toughness = 7;
                 break;
             default:
@@ -231,25 +161,21 @@ public abstract class Boots extends VDArmor{
 
         // Set weight
         int weight;
-        switch (type) {
+        switch (tier) {
             case T1:
-            case T2:
                 weight = 1;
                 break;
-            case T3:
-            case T4:
+            case T2:
                 weight = 2;
+                break;
+            case T3:
+                weight = 3;
+                break;
+            case T4:
+                weight = 4;
                 break;
             case T5:
             case T6:
-            case T7:
-                weight = 3;
-                break;
-            case T8:
-            case T9:
-                weight = 4;
-                break;
-            case T10:
                 weight = 5;
                 break;
             default:
@@ -266,36 +192,24 @@ public abstract class Boots extends VDArmor{
 
         // Set durability
         int durability;
-        switch (type) {
+        switch (tier) {
             case T1:
-                durability = 45;
+                durability = 85;
                 break;
             case T2:
-                durability = 65;
+                durability = 145;
                 break;
             case T3:
-                durability = 105;
+                durability = 225;
                 break;
             case T4:
-                durability = 130;
+                durability = 310;
                 break;
             case T5:
-                durability = 170;
+                durability = 425;
                 break;
             case T6:
-                durability = 205;
-                break;
-            case T7:
-                durability = 240;
-                break;
-            case T8:
-                durability = 305;
-                break;
-            case T9:
-                durability = 340;
-                break;
-            case T10:
-                durability = 450;
+                durability = 475;
                 break;
             default: durability = 0;
         }
@@ -305,45 +219,35 @@ public abstract class Boots extends VDArmor{
 
         // Set price
         int price;
-        switch (type) {
+        switch (tier) {
             case T1:
                 price = 110;
                 break;
             case T2:
-                price = 140;
-                break;
-            case T3:
                 price = 185;
                 break;
-            case T4:
-                price = 210;
-                break;
-            case T5:
+            case T3:
                 price = 265;
                 break;
-            case T6:
-                price = 295;
-                break;
-            case T7:
+            case T4:
                 price = 330;
                 break;
-            case T8:
-                price = 400;
-                break;
-            case T9:
+            case T5:
                 price = 475;
                 break;
-            case T10:
+            case T6:
                 price = 610;
                 break;
             default: price = -1;
         }
-        if (price >= 0)
+        if (price >= 0) {
+            lores.add("");
             lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
                     price));
+        }
 
         // Create item
-        ItemStack item = ItemManager.createItem(mat, name, ItemManager.BUTTON_FLAGS, null, lores, attributes);
+        ItemStack item = ItemManager.createItem(mat, name, ItemManager.BUTTON_FLAGS, enchant, lores, attributes);
         if (durability == 0)
             return ItemManager.makeUnbreakable(item);
         else return item;
@@ -360,18 +264,5 @@ public abstract class Boots extends VDArmor{
             return false;
         return toCheck.getType().toString().contains("BOOTS") && lore.stream().anyMatch(line -> line.contains(
                 ARMOR.toString().replace("%s", "")));
-    }
-
-    public enum BootsType{
-        T1,
-        T2,
-        T3,
-        T4,
-        T5,
-        T6,
-        T7,
-        T8,
-        T9,
-        T10
     }
 }

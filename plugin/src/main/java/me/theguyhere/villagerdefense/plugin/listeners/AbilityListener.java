@@ -5,12 +5,15 @@ import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.items.ItemMetaKey;
 import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.*;
-import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
+import me.theguyhere.villagerdefense.plugin.game.models.items.armor.VDArmor;
+import me.theguyhere.villagerdefense.plugin.game.models.items.food.VDFood;
+import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.Shop;
+import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.VDWeapon;
 import me.theguyhere.villagerdefense.plugin.game.models.players.AttackClass;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
@@ -24,6 +27,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
@@ -53,6 +57,12 @@ public class AbilityListener implements Listener {
         } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             return;
         }
+
+        // Check for other clickable items if on off-hand
+        ItemStack main = player.getInventory().getItemInMainHand();
+        if (e.getHand() == EquipmentSlot.OFF_HAND && (Shop.matches(main) || VDAbility.matches(main) ||
+                VDFood.matches(main) || VDArmor.matches(main) || VDWeapon.matchesClickableWeapon(main)))
+            return;
 
         // Wait for arena to progress to first wave
         if (arena.getCurrentWave() < 1)
@@ -103,7 +113,7 @@ public class AbilityListener implements Listener {
             cooldown.getAndSet(cooldown.get() * .9);
 
         // Mage
-        if (Kit.mage().getID().equals(gamer.getKit().getID()) && MageAbility.matches(item)) {
+        if (MageAbility.matches(item)) {
             float yield = 1.5f;
 
             // Activate ability
@@ -117,7 +127,7 @@ public class AbilityListener implements Listener {
         }
 
         // Ninja
-        else if (Kit.ninja().getID().equals(gamer.getKit().getID()) && NinjaAbility.matches(item)) {
+        else if (NinjaAbility.matches(item)) {
             // Activate ability
             player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY,
                     Utils.secondsToTicks(duration.get()), 0));
@@ -139,7 +149,7 @@ public class AbilityListener implements Listener {
         }
 
         // Templar
-        else if (Kit.templar().getID().equals(gamer.getKit().getID()) && TemplarAbility.matches(item)) {
+        else if (TemplarAbility.matches(item)) {
             // Calculate effect
             int absorption = 0;
             if (effect.get().contains("100"))
@@ -167,7 +177,7 @@ public class AbilityListener implements Listener {
         }
 
         // Warrior
-        else if (Kit.warrior().getID().equals(gamer.getKit().getID()) && WarriorAbility.matches(item)) {
+        else if (WarriorAbility.matches(item)) {
             // Calculate effect
             int amplifier;
             if (effect.get().contains("10"))
@@ -194,7 +204,7 @@ public class AbilityListener implements Listener {
         }
 
         // Knight
-        else if (Kit.knight().getID().equals(gamer.getKit().getID()) && KnightAbility.matches(item)) {
+        else if (KnightAbility.matches(item)) {
             // Calculate effect
             int amplifier;
             if (effect.get().contains("10"))
@@ -223,7 +233,7 @@ public class AbilityListener implements Listener {
         }
 
         // Priest
-        else if (Kit.priest().getID().equals(gamer.getKit().getID()) && PriestAbility.matches(item)) {
+        else if (PriestAbility.matches(item)) {
             // Calculate effect
             int amplifier;
             if (effect.get().contains("+5"))
@@ -252,7 +262,7 @@ public class AbilityListener implements Listener {
         }
 
         // Siren
-        else if (Kit.siren().getID().equals(gamer.getKit().getID()) && SirenAbility.matches(item)) {
+        else if (SirenAbility.matches(item)) {
             // Calculate effect
             int amp1 = -1;
             int amp2 = -1;
@@ -283,7 +293,7 @@ public class AbilityListener implements Listener {
         }
 
         // Monk
-        else if (Kit.monk().getID().equals(gamer.getKit().getID()) && MonkAbility.matches(item)) {
+        else if (MonkAbility.matches(item)) {
             // Calculate effect
             int amplifier;
             if (effect.get().contains("20"))
@@ -310,7 +320,7 @@ public class AbilityListener implements Listener {
         }
 
         // Messenger
-        else if (Kit.messenger().getID().equals(gamer.getKit().getID()) && MessengerAbility.matches(item)) {
+        else if (MessengerAbility.matches(item)) {
             // Calculate effect
             int amplifier;
             if (effect.get().contains("20"))

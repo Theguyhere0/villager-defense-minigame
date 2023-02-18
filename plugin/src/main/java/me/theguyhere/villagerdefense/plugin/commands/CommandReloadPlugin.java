@@ -5,7 +5,7 @@ import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.CommandException;
 import me.theguyhere.villagerdefense.plugin.exceptions.CommandPlayerException;
-import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;

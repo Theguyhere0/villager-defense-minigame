@@ -141,7 +141,7 @@ public class CommunicationManager {
      * @return Formatted message prepared to be sent to the player.
      */
     public static String notify(String msg) {
-        return format("&2[VD] &f" + msg);
+        return format(new ColoredMessage(ChatColor.DARK_GREEN, "[VD] %s"), new ColoredMessage(msg));
     }
 
     /**
@@ -151,7 +151,7 @@ public class CommunicationManager {
      * @return Formatted message prepared to be sent to the player.
      */
     public static String namedNotify(ColoredMessage name, String msg) {
-        return format("&2[VD] " + name.toString() + ":&f " + msg);
+        return format(new ColoredMessage(ChatColor.DARK_GREEN, "[VD] %s: %s"), name, new ColoredMessage(msg));
     }
 
     public static void debugError(String msg, int debugLevel) {

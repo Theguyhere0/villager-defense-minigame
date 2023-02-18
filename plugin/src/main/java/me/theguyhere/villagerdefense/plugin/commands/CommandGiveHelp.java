@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.commands;
 
+import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.exceptions.CommandException;
 import me.theguyhere.villagerdefense.plugin.exceptions.CommandFormatException;
@@ -7,6 +8,7 @@ import me.theguyhere.villagerdefense.plugin.exceptions.CommandPlayerException;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -47,21 +49,18 @@ class CommandGiveHelp {
                 player.sendMessage(CommunicationManager.format("&a<----- " +
                         String.format(LanguageManager.messages.help, "Villager Defense") +
                         " (2/3) ----->"));
-                player.sendMessage(CommunicationManager.format("&l " +
-                        LanguageManager.messages.help2));
+                player.sendMessage(new ColoredMessage(ChatColor.BOLD, LanguageManager.messages.help2).toString());
                 player.sendMessage("");
-                player.sendMessage(CommunicationManager.format("&6 " +
-                        LanguageManager.messages.help2a));
+                player.sendMessage(new ColoredMessage(ChatColor.GOLD, LanguageManager.messages.help2a).toString());
                 break;
             case 3:
                 player.sendMessage(CommunicationManager.format("&a<----- " +
                         String.format(LanguageManager.messages.help, "Villager Defense") +
                         " (3/3) ----->"));
-                player.sendMessage(CommunicationManager.format("&l " +
-                        LanguageManager.messages.help3));
+                player.sendMessage(new ColoredMessage(ChatColor.BOLD, LanguageManager.messages.help3).toString());
                 player.sendMessage("");
-                player.sendMessage(CommunicationManager.format("&6 " +
-                        LanguageManager.messages.infoAboutWiki));
+                player.sendMessage(new ColoredMessage(ChatColor.GOLD, LanguageManager.messages.infoAboutWiki)
+                        .toString());
                 TextComponent message = new TextComponent(" " + LanguageManager.messages.visitWiki + "!");
                 message.setBold(true);
                 message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,

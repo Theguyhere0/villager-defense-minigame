@@ -1,8 +1,10 @@
 package me.theguyhere.villagerdefense.plugin.game.models;
 
+import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -167,10 +169,10 @@ public class Challenge {
 
         Challenge challenge = new Challenge(LanguageManager.challenges.amputee.name, "amputee", Material.BAMBOO,
                 bonus);
-        challenge.addMasterDescription(CommunicationManager.format("&7" +
-                LanguageManager.challenges.amputee.description1));
-        challenge.addMasterDescription(CommunicationManager.format("&6" +
-                LanguageManager.challenges.amputee.description2));
+        challenge.addMasterDescription(new ColoredMessage(ChatColor.GRAY,
+                LanguageManager.challenges.amputee.description1).toString());
+        challenge.addMasterDescription(new ColoredMessage(ChatColor.GOLD,
+                LanguageManager.challenges.amputee.description2).toString());
         challenge.addMasterDescription(CommunicationManager.format("&a" +
                 String.format(LanguageManager.messages.crystalBonus, bonus + "%", LanguageManager.names.crystal)));
 
@@ -181,8 +183,8 @@ public class Challenge {
         int bonus = 15;
 
         Challenge challenge = new Challenge(LanguageManager.challenges.clumsy.name, "clumsy", Material.ICE, bonus);
-        challenge.addMasterDescription(CommunicationManager.format("&7" +
-                LanguageManager.challenges.clumsy.description1));
+        challenge.addMasterDescription(new ColoredMessage(ChatColor.GRAY,
+                LanguageManager.challenges.clumsy.description1).toString());
         challenge.addMasterDescription(CommunicationManager.format("&6" +
                 String.format(LanguageManager.challenges.clumsy.description2, "2%")));
         challenge.addMasterDescription(CommunicationManager.format("&a" +
@@ -196,8 +198,8 @@ public class Challenge {
 
         Challenge challenge = new Challenge(LanguageManager.challenges.featherweight.name, "featherweight",
                 Material.FEATHER, bonus);
-        challenge.addMasterDescription(CommunicationManager.format("&7" +
-                LanguageManager.challenges.featherweight.description1));
+        challenge.addMasterDescription(new ColoredMessage(ChatColor.GRAY,
+                LanguageManager.challenges.featherweight.description1).toString());
         challenge.addMasterDescription(CommunicationManager.format("&6" +
                 String.format(LanguageManager.challenges.featherweight.description2, "5")));
         challenge.addMasterDescription(CommunicationManager.format("&a" +
@@ -211,8 +213,8 @@ public class Challenge {
 
         Challenge challenge = new Challenge(LanguageManager.challenges.pacifist.name, "pacifist",
                 Material.TURTLE_HELMET, bonus);
-        challenge.addMasterDescription(CommunicationManager.format("&7" +
-                LanguageManager.challenges.pacifist.description1));
+        challenge.addMasterDescription(new ColoredMessage(ChatColor.GRAY,
+                LanguageManager.challenges.pacifist.description1).toString());
         challenge.addMasterDescription(CommunicationManager.format("&6" +
                 LanguageManager.challenges.pacifist.description2));
         challenge.addMasterDescription(CommunicationManager.format("&a" +
@@ -226,8 +228,8 @@ public class Challenge {
 
         Challenge challenge = new Challenge(LanguageManager.challenges.dwarf.name, "dwarf", Material.DEAD_BUSH,
                 bonus);
-        challenge.addMasterDescription(CommunicationManager.format("&7" +
-                LanguageManager.challenges.dwarf.description1));
+        challenge.addMasterDescription(new ColoredMessage(ChatColor.GRAY,
+                LanguageManager.challenges.dwarf.description1).toString());
         challenge.addMasterDescription(CommunicationManager.format("&6" +
                 LanguageManager.challenges.dwarf.description2));
         challenge.addMasterDescription(CommunicationManager.format("&a" +
@@ -241,8 +243,8 @@ public class Challenge {
 
         Challenge challenge = new Challenge(LanguageManager.challenges.uhc.name, "uhc", Material.GOLDEN_APPLE,
                 bonus);
-        challenge.addMasterDescription(CommunicationManager.format("&7" +
-                LanguageManager.challenges.uhc.description1));
+        challenge.addMasterDescription(new ColoredMessage(ChatColor.GRAY,
+                LanguageManager.challenges.uhc.description1).toString());
         challenge.addMasterDescription(CommunicationManager.format("&6" +
                 LanguageManager.challenges.uhc.description2));
         challenge.addMasterDescription(CommunicationManager.format("&a" +
@@ -256,8 +258,8 @@ public class Challenge {
 
         Challenge challenge = new Challenge(LanguageManager.challenges.explosive.name, "explosive", Material.TNT,
                 bonus);
-        challenge.addMasterDescription(CommunicationManager.format("&7" +
-                LanguageManager.challenges.explosive.description1));
+        challenge.addMasterDescription(new ColoredMessage(ChatColor.GRAY,
+                LanguageManager.challenges.explosive.description1).toString());
         challenge.addMasterDescription(CommunicationManager.format("&6" +
                 LanguageManager.challenges.explosive.description2));
         challenge.addMasterDescription(CommunicationManager.format("&a" +
@@ -271,8 +273,8 @@ public class Challenge {
 
         Challenge challenge = new Challenge(LanguageManager.challenges.naked.name, "naked", Material.ARMOR_STAND,
                 bonus);
-        challenge.addMasterDescription(CommunicationManager.format("&7" +
-                LanguageManager.challenges.naked.description1));
+        challenge.addMasterDescription(new ColoredMessage(ChatColor.GRAY,
+                LanguageManager.challenges.naked.description1).toString());
         challenge.addMasterDescription(CommunicationManager.format("&6" +
                 LanguageManager.challenges.naked.description2));
         challenge.addMasterDescription(CommunicationManager.format("&a" +
@@ -286,8 +288,8 @@ public class Challenge {
 
         Challenge challenge = new Challenge(LanguageManager.challenges.blind.name, "blind", Material.INK_SAC,
                 bonus);
-        challenge.addMasterDescription(CommunicationManager.format("&7" +
-                LanguageManager.challenges.blind.description1));
+        challenge.addMasterDescription(new ColoredMessage(ChatColor.GRAY,
+                LanguageManager.challenges.blind.description1).toString());
         challenge.addMasterDescription(CommunicationManager.format("&6" +
                 LanguageManager.challenges.blind.description2));
         challenge.addMasterDescription(CommunicationManager.format("&a" +

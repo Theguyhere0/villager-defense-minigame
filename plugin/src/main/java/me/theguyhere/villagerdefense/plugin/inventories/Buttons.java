@@ -59,7 +59,7 @@ public class Buttons {
         return ItemManager.createItem(
                 Material.TARGET,
                 CommunicationManager.format("&f&lCenter " + x),
-                CommunicationManager.format("&7Center the x and z coordinates")
+                new ColoredMessage(ChatColor.GRAY,"Center the x and z coordinates").toString()
         );
     }
 
@@ -81,11 +81,11 @@ public class Buttons {
         return ItemManager.createItem(Material.FEATHER, CommunicationManager.format("&d&lNext Page"));
     }
 
-    // Placeholders
+    // "No upgrade" button
     @NotNull
-    public static ItemStack levelPlaceholder(int level) {
-        return ItemManager.createItem(Material.GUNPOWDER, CommunicationManager.format(
-                new ColoredMessage(ChatColor.GRAY, LanguageManager.messages.levelPlaceholder),
-                Integer.toString(level)), ItemManager.BUTTON_FLAGS, null);
+    public static ItemStack noUpgrade() {
+        return ItemManager.createItem(Material.RED_STAINED_GLASS_PANE,
+                new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.noUpgrades).toString(),
+                ItemManager.BUTTON_FLAGS, null);
     }
 }

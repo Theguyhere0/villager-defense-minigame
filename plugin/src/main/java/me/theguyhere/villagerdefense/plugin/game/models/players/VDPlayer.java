@@ -5,7 +5,7 @@ import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
-import me.theguyhere.villagerdefense.plugin.exceptions.VDMobNotFoundException;
+import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
@@ -15,9 +15,10 @@ import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Ammo;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.villagers.VDFletcher;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDHorse;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDPet;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -27,7 +28,6 @@ import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
@@ -38,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * A class holding data about players in a Villager Defense game.
@@ -67,14 +68,18 @@ public class VDPlayer {
     private int gems = 0;
     /** Kill count.*/
     private int kills = 0;
-    /** Wolf count.*/
-    private int wolves = 0;
+    /** Pets following the player.*/
+    private final List<VDPet> pets = new ArrayList<>();
+    /** Maximum pet slots available for use.*/
+    private int petSlots = 0;
     /** The wave at which the player joined the game as an active player.*/
     private int joinedWave = 0;
     /** The number of times this player violated arena boundaries.*/
     private int infractions = 0;
     /** The {@link Kit} the player will play with.*/
     private Kit kit = Kit.none();
+    /** The level of tiered ammo the player has.*/
+    private int tieredAmmoLevel = 0;
     /** The level of tiered essence the player has.*/
     private int tieredEssenceLevel = 0;
     /** The list of {@link Challenge}'s the player will take on.*/
@@ -171,7 +176,11 @@ public class VDPlayer {
         }
 
         // Update true health
-        this.currentHealth = Math.min(Math.max(currentHealth + trueDif, 0), maxHealth);
+        currentHealth = Math.min(Math.max(currentHealth + trueDif, 0), maxHealth);
+
+        // Set warning effect
+        NMSVersion.getCurrent().getNmsManager().createEffect(arena.getPlayerSpawn().getLocation(),
+                currentHealth / (double) maxHealth).sendTo(getPlayer());
 
         // Check for death
         if (this.currentHealth == 0) {
@@ -187,6 +196,9 @@ public class VDPlayer {
             // Set player to fake death mode
             PlayerManager.fakeDeath(this);
 
+            // Kill off pets
+            pets.forEach(VDPet::kill);
+
             // Check for explosive challenge
             if (getChallenges().contains(Challenge.explosive())) {
                 // Create an explosion
@@ -199,6 +211,7 @@ public class VDPlayer {
                 });
                 getPlayer().getInventory().clear();
                 tieredEssenceLevel = 0;
+                tieredAmmoLevel = 0;
             }
 
             // Notify player of their own death
@@ -236,6 +249,7 @@ public class VDPlayer {
 
     public void showAndUpdateStats() {
         AtomicBoolean penetrating = new AtomicBoolean(false);
+        AtomicBoolean crushing = new AtomicBoolean(false);
         AtomicBoolean range = new AtomicBoolean(false);
         AtomicBoolean perBlock = new AtomicBoolean(false);
         boolean ability = false;
@@ -245,7 +259,7 @@ public class VDPlayer {
         AtomicInteger toughness = new AtomicInteger();
         AtomicDouble weight = new AtomicDouble(1);
         String damage = Integer.toString(baseDamage);
-
+        AtomicDouble increase = new AtomicDouble();
 
         // Make sure health was properly initialized
         if (maxHealth <= 0)
@@ -311,8 +325,10 @@ public class VDPlayer {
                                     LanguageManager.messages.attackRangeDamage.length())
                             .replace(ChatColor.BLUE.toString(), "")));
                 }
-                else if (lore.contains(LanguageManager.names.penetrating.replace("%s", "")))
+                else if (lore.contains(LanguageManager.names.penetrating))
                     penetrating.set(true);
+                else if (lore.contains(LanguageManager.names.crushing))
+                    crushing.set(true);
                 else if (lore.contains(LanguageManager.messages.ammoCost
                         .replace("%s", ""))) {
                     ammoCost.set(Integer.parseInt(lore.substring(2 + LanguageManager.messages.ammoCost.length())
@@ -320,10 +336,27 @@ public class VDPlayer {
                 }
             });
             damageValues.sort(Comparator.comparingInt(Integer::intValue));
+
+            // Calculate boosts or reductions
+            getPlayer().getActivePotionEffects().forEach(potionEffect -> {
+                if (PotionEffectType.INCREASE_DAMAGE.equals(potionEffect.getType()))
+                    increase.addAndGet((1 + potionEffect.getAmplifier()) * .1);
+                else if (PotionEffectType.WEAKNESS.equals(potionEffect.getType()))
+                    increase.addAndGet(- (1 + potionEffect.getAmplifier()) * .1);
+            });
+            if (boost && PlayerManager.hasAchievement(player, Achievement.topKills9().getID()))
+                increase.addAndGet(.1);
+            if (getPlayer().isInsideVehicle())
+                increase.addAndGet((int) (VDHorse.getDamageBoost(getPets().stream()
+                        .filter(pet -> pet instanceof VDHorse).collect(Collectors.toList()).get(0).getLevel()) * 10));
+
+            // Apply base damage and multipliers
+            damageValues.replaceAll(original -> (int) ((original + (perBlock.get() ? 0 : baseDamage)) *
+                    (1 + increase.get())));
+
             if (damageValues.size() == 1)
-                damage = Integer.toString(damageValues.get(0) + (perBlock.get() ? 0 : baseDamage));
-            else damage = (damageValues.get(0) + (perBlock.get() ? 0 : baseDamage)) + "-" +
-                    (damageValues.get(damageValues.size() - 1) + (perBlock.get() ? 0 : baseDamage));
+                damage = Integer.toString((damageValues.get(0)));
+            else damage = damageValues.get(0) + "-" + damageValues.get(damageValues.size() - 1);
         } catch (Exception ignored) {
         }
         try {
@@ -450,10 +483,11 @@ public class VDPlayer {
         getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
                 new ColoredMessage(absorption > 0 ? ChatColor.GOLD : ChatColor.RED,
                         Utils.HP + " " + (currentHealth + absorption) + "/" + maxHealth) + SPACE + middleText
-                         + SPACE + new ColoredMessage(ammoCap.get() < ammoCost.get() ? ChatColor.RED :
-                        penetrating.get() ? ChatColor.YELLOW : ChatColor.GREEN,
+                         + SPACE + new ColoredMessage(ammoCap.get() < ammoCost.get() ? ChatColor.DARK_RED :
+                        crushing.get() ? ChatColor.YELLOW : penetrating.get() ? ChatColor.RED : ChatColor.GREEN,
                         (range.get() ? Utils.ARROW : Utils.DAMAGE) + " " + damage +
-                                (perBlock.get() ? " /" + Utils.BLOCK + " +" + baseDamage : ""))));
+                                (perBlock.get() ? " /" + Utils.BLOCK + " +" + (int) (baseDamage *
+                                        (1 + increase.get())) : ""))));
 
         // Update normal health display
         getPlayer().setHealth(Math.max(currentHealth *
@@ -495,35 +529,20 @@ public class VDPlayer {
     }
 
     public void refill() {
-        AtomicBoolean fletcher = new AtomicBoolean(false);
-        Objects.requireNonNull(getPlayer().getWorld())
-                .getNearbyEntities(getArena().getBounds(), entity ->
-                        getPlayer().getLocation().distance(entity.getLocation()) <= 16)
-                .stream()
-                .filter(entity -> entity instanceof Villager)
-                .forEach(entity -> {
-                    try {
-                        VDMob villager = getArena().getMob(entity.getUniqueId());
-                        if (villager instanceof VDFletcher)
-                            fletcher.set(true);
-                    } catch (VDMobNotFoundException ignored) {
-                    }
-                });
-
         // Update ammo
-        Ammo.updateRefill(Objects.requireNonNull(getPlayer().getEquipment()).getItemInMainHand(), fletcher.get(),
+        Ammo.updateRefill(Objects.requireNonNull(getPlayer().getEquipment()).getItemInMainHand(),
                 boost && PlayerManager.hasAchievement(player, Achievement.allKits().getID()));
-        Ammo.updateRefill(Objects.requireNonNull(getPlayer().getEquipment()).getItemInOffHand(), fletcher.get(),
+        Ammo.updateRefill(Objects.requireNonNull(getPlayer().getEquipment()).getItemInOffHand(),
                 boost && PlayerManager.hasAchievement(player, Achievement.allKits().getID()));
     }
 
     public void takeDamage(int damage, @NotNull AttackType attackType) {
         // Scale damage by attack type
-        if (attackType == AttackType.NORMAL)
+        if (attackType == AttackType.NORMAL || attackType == AttackType.CRUSHING)
             damage -= Math.min(damage, armor);
-        else if (attackType == AttackType.PENETRATING)
-            damage *= Math.max(0, 1 - toughness);
-        else if (attackType == AttackType.NONE)
+        if (attackType == AttackType.NORMAL || attackType == AttackType.PENETRATING)
+            damage *= Math.max(0, 1 - toughness / 100d);
+        if (attackType == AttackType.NONE)
             damage = 0;
 
         // Apply boost
@@ -534,7 +553,8 @@ public class VDPlayer {
         changeCurrentHealth(-damage);
 
         // Damage armor
-        if (attackType == AttackType.NORMAL || attackType == AttackType.PENETRATING)
+        if (attackType == AttackType.NORMAL || attackType == AttackType.CRUSHING ||
+                attackType == AttackType.PENETRATING)
             Arrays.stream(getPlayer().getInventory().getArmorContents()).filter(Objects::nonNull).forEach(armor ->
                     Bukkit.getPluginManager().callEvent(new PlayerItemDamageEvent(getPlayer(), armor, 0)));
     }
@@ -661,6 +681,9 @@ public class VDPlayer {
         });
         if (boost && PlayerManager.hasAchievement(player, Achievement.topKills9().getID()))
             increase.incrementAndGet();
+        if (getPlayer().isInsideVehicle())
+            increase.addAndGet((int) (VDHorse.getDamageBoost(getPets().stream().filter(pet -> pet instanceof VDHorse)
+                    .collect(Collectors.toList()).get(0).getLevel()) * 10));
 
         return (int) (damage * (1 + .1 * increase.get()));
     }
@@ -693,9 +716,11 @@ public class VDPlayer {
         try {
             ItemStack weapon = Objects.requireNonNull(getPlayer().getEquipment()).getItemInMainHand();
             if (Objects.requireNonNull(Objects.requireNonNull(weapon.getItemMeta()).getLore()).stream()
-                    .anyMatch(lore -> lore.contains(LanguageManager.names.penetrating
-                            .replace("%s", ""))))
+                    .anyMatch(lore -> lore.contains(LanguageManager.names.penetrating)))
                 return AttackType.PENETRATING;
+            if (Objects.requireNonNull(Objects.requireNonNull(weapon.getItemMeta()).getLore()).stream()
+                    .anyMatch(lore -> lore.contains(LanguageManager.names.crushing)))
+                return AttackType.CRUSHING;
         } catch (Exception ignored) {
         }
         return AttackType.NORMAL;
@@ -729,6 +754,14 @@ public class VDPlayer {
 
     public Kit getKit() {
         return kit;
+    }
+
+    public int getTieredAmmoLevel() {
+        return tieredAmmoLevel;
+    }
+
+    public void incrementTieredAmmoLevel() {
+        tieredAmmoLevel++;
     }
 
     public int getTieredEssenceLevel() {
@@ -779,6 +812,7 @@ public class VDPlayer {
 
     public void setGemBoost(int gemBoost) {
         this.gemBoost = gemBoost;
+        GameManager.createBoard(this);
     }
 
     public boolean isSharing() {
@@ -789,16 +823,41 @@ public class VDPlayer {
         share = !share;
     }
 
-    public int getWolves() {
-        return wolves;
+    public void addPet(VDPet pet) {
+        pets.add(pet);
+        arena.addMob(pet);
     }
 
-    public void incrementWolves() {
-        wolves++;
+    public void removePet(int index) {
+        pets.get(index).getEntity().remove();
+        arena.removeMob(pets.get(index).getID());
+        pets.remove(index);
     }
 
-    public void decrementWolves() {
-        wolves--;
+    public void respawnPets() {
+        for (int i = 0; i < pets.size(); i++) {
+            if (pets.get(i).getEntity().isDead()) {
+                VDPet newPet = pets.get(i).respawn(arena, getPlayer().getLocation());
+                pets.set(i, newPet);
+                arena.addMob(newPet);
+            }
+        }
+    }
+
+    public int getPetSlots() {
+        return petSlots;
+    }
+
+    public int getRemainingPetSlots() {
+        // Calculate remaining slots
+        AtomicInteger remaining = new AtomicInteger(petSlots);
+        pets.forEach(pet -> remaining.addAndGet(-pet.getSlots()));
+
+        return remaining.get();
+    }
+
+    public List<VDPet> getPets() {
+        return pets;
     }
 
     public int getJoinedWave() {
@@ -877,7 +936,7 @@ public class VDPlayer {
     /**
      * Sets up attributes properly after dying or first spawning.
      */
-    public void setupAttributes() {
+    public void setupAttributes(boolean first) {
         Random r = new Random();
         int maxHealth = 500;
 
@@ -894,14 +953,14 @@ public class VDPlayer {
                             AttributeModifier.Operation.ADD_NUMBER));
             maxHealth = 600;
         }
-        else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT2))) {
+        else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT1))) {
             Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
                     .addModifier(new AttributeModifier("Giant2", 4,
                             AttributeModifier.Operation.ADD_NUMBER));
             maxHealth = 550;
             PlayerManager.notifySuccess(getPlayer(), LanguageManager.messages.effectShare);
         }
-        else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT1))) {
+        else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.GIANT2))) {
             Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
                     .addModifier(new AttributeModifier("Giant1", 2,
                             AttributeModifier.Operation.ADD_NUMBER));
@@ -936,6 +995,21 @@ public class VDPlayer {
 
         // Set up health and damage
         setMaxHealthInit(maxHealth);
-        baseDamage = 10;
+
+        // Only run the first time
+        if (first) {
+            // Set up pet slots
+            if (Kit.trainer().setKitLevel(1).equals(getKit()) && !isSharing())
+                petSlots = 4;
+            else if (Kit.trainer().setKitLevel(2).equals(getKit()) && !isSharing())
+                petSlots = 5;
+            else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.TRAINER1))) {
+                petSlots = 4;
+                PlayerManager.notifySuccess(getPlayer(), LanguageManager.messages.effectShare);
+            } else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.TRAINER2))) {
+                petSlots = 5;
+                PlayerManager.notifySuccess(getPlayer(), LanguageManager.messages.effectShare);
+            } else petSlots = 3;
+        }
     }
 }

@@ -169,8 +169,6 @@ public class LanguageManager {
 
     public static class ArenaStats {
         public final @NotNull ArenaStat difficultyMultiplier;
-        public final @NotNull ArenaStat dynamicDifficulty;
-        public final @NotNull ArenaStat dynamicMobCount;
         public final @NotNull ArenaStat dynamicPrices;
         public final @NotNull ArenaStat dynamicTimeLimit;
         public final @NotNull ArenaStat golemCap;
@@ -182,8 +180,6 @@ public class LanguageManager {
 
         private ArenaStats() throws InvalidLanguageKeyException {
             difficultyMultiplier = new ArenaStat("difficultyMultiplier");
-            dynamicDifficulty = new ArenaStat("dynamicDifficulty");
-            dynamicMobCount = new ArenaStat("dynamicMobCount");
             dynamicPrices = new ArenaStat("dynamicPrices");
             dynamicTimeLimit = new ArenaStat("dynamicTimeLimit");
             golemCap = new ArenaStat("golemCap");
@@ -256,11 +252,13 @@ public class LanguageManager {
         public final @NotNull String challengeDelete;
         public final @NotNull String chestplate;
         public final @NotNull String crystalAdd;
+        public final @NotNull String golemRemove;
         public final @NotNull String helmet;
         public final @NotNull String kitBuy;
         public final @NotNull String kitSelect;
         public final @NotNull String kitUpgrade;
         public final @NotNull String leggings;
+        public final @NotNull String petRemove;
         public final @NotNull String reset;
 
         private Confirms() throws InvalidLanguageKeyException {
@@ -276,11 +274,13 @@ public class LanguageManager {
             challengeDelete = getConfigString("challengeDelete");
             chestplate = getConfigString("chestplate");
             crystalAdd = getConfigString("crystalAdd");
+            golemRemove = getConfigString("golemRemove");
             helmet = getConfigString("helmet");
             kitBuy = getConfigString("kitBuy");
             kitSelect = getConfigString("kitSelect");
             kitUpgrade = getConfigString("kitUpgrade");
             leggings = getConfigString("leggings");
+            petRemove = getConfigString("petRemove");
             reset = getConfigString("reset");
         }
     }
@@ -318,6 +318,7 @@ public class LanguageManager {
         public final @NotNull String noArena;
         public final @NotNull String noGameEnd;
         public final @NotNull String notInGame;
+        public final @NotNull String notOwner;
         public final @NotNull String offWeapon;
         public final @NotNull String outdated;
         public final @NotNull String permission;
@@ -364,6 +365,7 @@ public class LanguageManager {
             noArena = getConfigString("noArena");
             noGameEnd = getConfigString("noGameEnd");
             notInGame = getConfigString("notInGame");
+            notOwner = getConfigString("notOwner");
             offWeapon = getConfigString("offWeapon");
             outdated = getConfigString("outdated");
             permission = getConfigString("permission");
@@ -388,6 +390,7 @@ public class LanguageManager {
         public final @NotNull HelmetLore helmets;
         public final @NotNull LeggingsLore leggings;
         public final @NotNull ScytheLore scythes;
+        public final @NotNull ShopFoodLore shopFood;
         public final @NotNull SwordLore swords;
 
         private ItemLore() throws InvalidLanguageKeyException {
@@ -398,6 +401,7 @@ public class LanguageManager {
             chestplates = new ChestplateLore();
             crossbows = new CrossbowLore();
             essences = new EssenceLore();
+            shopFood = new ShopFoodLore();
             helmets = new HelmetLore();
             leggings = new LeggingsLore();
             scythes = new ScytheLore();
@@ -411,10 +415,6 @@ public class LanguageManager {
             public final @NotNull Lore t4;
             public final @NotNull Lore t5;
             public final @NotNull Lore t6;
-            public final @NotNull Lore t7;
-            public final @NotNull Lore t8;
-            public final @NotNull Lore t9;
-            public final @NotNull Lore t10;
 
             private AmmoLore() throws InvalidLanguageKeyException {
                 String pathPrefix = "itemLore.ammo.";
@@ -425,10 +425,6 @@ public class LanguageManager {
                 t4 = new Lore(pathPrefix + "t4");
                 t5 = new Lore(pathPrefix + "t5");
                 t6 = new Lore(pathPrefix + "t6");
-                t7 = new Lore(pathPrefix + "t7");
-                t8 = new Lore(pathPrefix + "t8");
-                t9 = new Lore(pathPrefix + "t9");
-                t10 = new Lore(pathPrefix + "t10");
             }
         }
 
@@ -439,10 +435,6 @@ public class LanguageManager {
             public final @NotNull Lore t4;
             public final @NotNull Lore t5;
             public final @NotNull Lore t6;
-            public final @NotNull Lore t7;
-            public final @NotNull Lore t8;
-            public final @NotNull Lore t9;
-            public final @NotNull Lore t10;
 
             private AxeLore() throws InvalidLanguageKeyException {
                 String pathPrefix = "itemLore.axes.";
@@ -453,10 +445,6 @@ public class LanguageManager {
                 t4 = new Lore(pathPrefix + "t4");
                 t5 = new Lore(pathPrefix + "t5");
                 t6 = new Lore(pathPrefix + "t6");
-                t7 = new Lore(pathPrefix + "t7");
-                t8 = new Lore(pathPrefix + "t8");
-                t9 = new Lore(pathPrefix + "t9");
-                t10 = new Lore(pathPrefix + "t10");
             }
         }
 
@@ -467,10 +455,6 @@ public class LanguageManager {
             public final @NotNull Lore t4;
             public final @NotNull Lore t5;
             public final @NotNull Lore t6;
-            public final @NotNull Lore t7;
-            public final @NotNull Lore t8;
-            public final @NotNull Lore t9;
-            public final @NotNull Lore t10;
 
             private BootsLore() throws InvalidLanguageKeyException {
                 String pathPrefix = "itemLore.boots.";
@@ -481,10 +465,6 @@ public class LanguageManager {
                 t4 = new Lore(pathPrefix + "t4");
                 t5 = new Lore(pathPrefix + "t5");
                 t6 = new Lore(pathPrefix + "t6");
-                t7 = new Lore(pathPrefix + "t7");
-                t8 = new Lore(pathPrefix + "t8");
-                t9 = new Lore(pathPrefix + "t9");
-                t10 = new Lore(pathPrefix + "t10");
             }
         }
 
@@ -495,10 +475,6 @@ public class LanguageManager {
             public final @NotNull Lore t4;
             public final @NotNull Lore t5;
             public final @NotNull Lore t6;
-            public final @NotNull Lore t7;
-            public final @NotNull Lore t8;
-            public final @NotNull Lore t9;
-            public final @NotNull Lore t10;
 
             private BowLore() throws InvalidLanguageKeyException {
                 String pathPrefix = "itemLore.bows.";
@@ -509,10 +485,6 @@ public class LanguageManager {
                 t4 = new Lore(pathPrefix + "t4");
                 t5 = new Lore(pathPrefix + "t5");
                 t6 = new Lore(pathPrefix + "t6");
-                t7 = new Lore(pathPrefix + "t7");
-                t8 = new Lore(pathPrefix + "t8");
-                t9 = new Lore(pathPrefix + "t9");
-                t10 = new Lore(pathPrefix + "t10");
             }
         }
 
@@ -523,10 +495,6 @@ public class LanguageManager {
             public final @NotNull Lore t4;
             public final @NotNull Lore t5;
             public final @NotNull Lore t6;
-            public final @NotNull Lore t7;
-            public final @NotNull Lore t8;
-            public final @NotNull Lore t9;
-            public final @NotNull Lore t10;
 
             private ChestplateLore() throws InvalidLanguageKeyException {
                 String pathPrefix = "itemLore.chestplates.";
@@ -537,10 +505,6 @@ public class LanguageManager {
                 t4 = new Lore(pathPrefix + "t4");
                 t5 = new Lore(pathPrefix + "t5");
                 t6 = new Lore(pathPrefix + "t6");
-                t7 = new Lore(pathPrefix + "t7");
-                t8 = new Lore(pathPrefix + "t8");
-                t9 = new Lore(pathPrefix + "t9");
-                t10 = new Lore(pathPrefix + "t10");
             }
         }
 
@@ -551,10 +515,6 @@ public class LanguageManager {
             public final @NotNull Lore t4;
             public final @NotNull Lore t5;
             public final @NotNull Lore t6;
-            public final @NotNull Lore t7;
-            public final @NotNull Lore t8;
-            public final @NotNull Lore t9;
-            public final @NotNull Lore t10;
 
             private CrossbowLore() throws InvalidLanguageKeyException {
                 String pathPrefix = "itemLore.crossbows.";
@@ -565,10 +525,6 @@ public class LanguageManager {
                 t4 = new Lore(pathPrefix + "t4");
                 t5 = new Lore(pathPrefix + "t5");
                 t6 = new Lore(pathPrefix + "t6");
-                t7 = new Lore(pathPrefix + "t7");
-                t8 = new Lore(pathPrefix + "t8");
-                t9 = new Lore(pathPrefix + "t9");
-                t10 = new Lore(pathPrefix + "t10");
             }
         }
 
@@ -599,10 +555,6 @@ public class LanguageManager {
             public final @NotNull Lore t4;
             public final @NotNull Lore t5;
             public final @NotNull Lore t6;
-            public final @NotNull Lore t7;
-            public final @NotNull Lore t8;
-            public final @NotNull Lore t9;
-            public final @NotNull Lore t10;
 
             private LeggingsLore() throws InvalidLanguageKeyException {
                 String pathPrefix = "itemLore.leggings.";
@@ -613,10 +565,6 @@ public class LanguageManager {
                 t4 = new Lore(pathPrefix + "t4");
                 t5 = new Lore(pathPrefix + "t5");
                 t6 = new Lore(pathPrefix + "t6");
-                t7 = new Lore(pathPrefix + "t7");
-                t8 = new Lore(pathPrefix + "t8");
-                t9 = new Lore(pathPrefix + "t9");
-                t10 = new Lore(pathPrefix + "t10");
             }
         }
 
@@ -627,10 +575,6 @@ public class LanguageManager {
             public final @NotNull Lore t4;
             public final @NotNull Lore t5;
             public final @NotNull Lore t6;
-            public final @NotNull Lore t7;
-            public final @NotNull Lore t8;
-            public final @NotNull Lore t9;
-            public final @NotNull Lore t10;
 
             private HelmetLore() throws InvalidLanguageKeyException {
                 String pathPrefix = "itemLore.helmets.";
@@ -641,10 +585,6 @@ public class LanguageManager {
                 t4 = new Lore(pathPrefix + "t4");
                 t5 = new Lore(pathPrefix + "t5");
                 t6 = new Lore(pathPrefix + "t6");
-                t7 = new Lore(pathPrefix + "t7");
-                t8 = new Lore(pathPrefix + "t8");
-                t9 = new Lore(pathPrefix + "t9");
-                t10 = new Lore(pathPrefix + "t10");
             }
         }
 
@@ -655,10 +595,6 @@ public class LanguageManager {
             public final @NotNull Lore t4;
             public final @NotNull Lore t5;
             public final @NotNull Lore t6;
-            public final @NotNull Lore t7;
-            public final @NotNull Lore t8;
-            public final @NotNull Lore t9;
-            public final @NotNull Lore t10;
 
             private ScytheLore() throws InvalidLanguageKeyException {
                 String pathPrefix = "itemLore.scythes.";
@@ -669,10 +605,28 @@ public class LanguageManager {
                 t4 = new Lore(pathPrefix + "t4");
                 t5 = new Lore(pathPrefix + "t5");
                 t6 = new Lore(pathPrefix + "t6");
-                t7 = new Lore(pathPrefix + "t7");
-                t8 = new Lore(pathPrefix + "t8");
-                t9 = new Lore(pathPrefix + "t9");
-                t10 = new Lore(pathPrefix + "t10");
+            }
+        }
+
+        public static class ShopFoodLore {
+            public final @NotNull Lore capple;
+            public final @NotNull Lore gapple;
+            public final @NotNull Lore t1;
+            public final @NotNull Lore t2;
+            public final @NotNull Lore t3;
+            public final @NotNull Lore t4;
+            public final @NotNull Lore totem;
+
+            private ShopFoodLore() throws InvalidLanguageKeyException {
+                String pathPrefix = "itemLore.shopFood.";
+
+                capple = new Lore(pathPrefix + "capple");
+                gapple = new Lore(pathPrefix + "gapple");
+                t1 = new Lore(pathPrefix + "t1");
+                t2 = new Lore(pathPrefix + "t2");
+                t3 = new Lore(pathPrefix + "t3");
+                t4 = new Lore(pathPrefix + "t4");
+                totem = new Lore(pathPrefix + "totem");
             }
         }
 
@@ -684,10 +638,6 @@ public class LanguageManager {
             public final @NotNull Lore t4;
             public final @NotNull Lore t5;
             public final @NotNull Lore t6;
-            public final @NotNull Lore t7;
-            public final @NotNull Lore t8;
-            public final @NotNull Lore t9;
-            public final @NotNull Lore t10;
 
             private SwordLore() throws InvalidLanguageKeyException {
                 String pathPrefix = "itemLore.swords.";
@@ -699,10 +649,6 @@ public class LanguageManager {
                 t4 = new Lore(pathPrefix + "t4");
                 t5 = new Lore(pathPrefix + "t5");
                 t6 = new Lore(pathPrefix + "t6");
-                t7 = new Lore(pathPrefix + "t7");
-                t8 = new Lore(pathPrefix + "t8");
-                t9 = new Lore(pathPrefix + "t9");
-                t10 = new Lore(pathPrefix + "t10");
             }
         }
 
@@ -736,10 +682,11 @@ public class LanguageManager {
         public final @NotNull GiftKit reaper;
         public final @NotNull AbilityKit siren;
         public final @NotNull GiftKit soldier;
-        public final @NotNull TieredGiftKit summoner;
+        public final @NotNull ThreeTieredKit summoner;
         public final @NotNull GiftKit tailor;
         public final @NotNull AbilityKit templar;
         public final @NotNull Kit trader;
+        public final @NotNull TwoTieredKit trainer;
         public final @NotNull Kit vampire;
         public final @NotNull AbilityKit warrior;
         public final @NotNull Kit witch;
@@ -761,10 +708,11 @@ public class LanguageManager {
             reaper = new GiftKit("reaper");
             siren = new AbilityKit("siren");
             soldier = new GiftKit("soldier");
-            summoner = new TieredGiftKit("summoner");
+            summoner = new ThreeTieredKit("summoner");
             tailor = new GiftKit("tailor");
             templar = new AbilityKit("templar");
             trader = new Kit("trader");
+            trainer = new TwoTieredKit("trainer");
             vampire = new Kit("vampire");
             warrior = new AbilityKit("warrior");
             witch = new Kit("witch");
@@ -810,31 +758,43 @@ public class LanguageManager {
             }
         }
 
-        public static class TieredGiftKit extends Section {
+        public static class TwoTieredKit extends Section {
+            public final @NotNull String name;
+            public final @NotNull String description1;
+            public final @NotNull String description2;
+
+            private TwoTieredKit(@NotNull String key) throws InvalidLanguageKeyException {
+                setPathPrefix("kits." + key);
+
+                name = getConfigString("name");
+                description1 = getConfigString("description1");
+                description2 = getConfigString("description2");
+            }
+        }
+
+        public static class ThreeTieredKit extends Section {
             public final @NotNull String name;
             public final @NotNull String description1;
             public final @NotNull String description2;
             public final @NotNull String description3;
-            public final @NotNull Items items;
 
-            private TieredGiftKit(@NotNull String key) throws InvalidLanguageKeyException {
+            private ThreeTieredKit(@NotNull String key) throws InvalidLanguageKeyException {
                 setPathPrefix("kits." + key);
 
                 name = getConfigString("name");
                 description1 = getConfigString("description1");
                 description2 = getConfigString("description2");
                 description3 = getConfigString("description3");
-                items = new Items(key);
             }
         }
 
         public static class Items extends Section {
             public final String boots;
             public final String carrot;
+            public final String carrotDesc;
             public final String chestplate;
             public final String club;
             public final String clubDesc;
-            public final String golem;
             public final String helmet;
             public final String leggings;
             public final String scythe;
@@ -843,7 +803,6 @@ public class LanguageManager {
             public final String strength;
             public final String sword;
             public final String swordDesc;
-            public final String wolf;
 
             private Items(@NotNull String key) throws InvalidLanguageKeyException {
                 setPathPrefix("kits." + key + ".items");
@@ -866,6 +825,15 @@ public class LanguageManager {
                     else temp = null;
                 }
                 carrot = temp;
+
+                try {
+                    temp = getConfigString("carrotDesc");
+                } catch (InvalidLanguageKeyException e) {
+                    if (key.equals("farmer"))
+                        throw e;
+                    else temp = null;
+                }
+                carrotDesc = temp;
 
                 try {
                     temp = getConfigString("chestplate");
@@ -893,15 +861,6 @@ public class LanguageManager {
                     else temp = null;
                 }
                 clubDesc = temp;
-
-                try {
-                    temp = getConfigString("golem");
-                } catch (InvalidLanguageKeyException e) {
-                    if (key.equals("summoner"))
-                        throw e;
-                    else temp = null;
-                }
-                golem = temp;
 
                 try {
                     temp = getConfigString("helmet");
@@ -973,15 +932,6 @@ public class LanguageManager {
                     else temp = null;
                 }
                 swordDesc = temp;
-
-                try {
-                    temp = getConfigString("wolf");
-                } catch (InvalidLanguageKeyException e) {
-                    if (key.equals("summoner"))
-                        throw e;
-                    else temp = null;
-                }
-                wolf = temp;
             }
         }
     }
@@ -1004,6 +954,7 @@ public class LanguageManager {
         public final @NotNull String available;
         public final @NotNull String blocks;
         public final @NotNull String capacity;
+        public final @NotNull String catEffect;
         public final @NotNull String challenges;
         public final @NotNull String closed;
         public final @NotNull String communityChest;
@@ -1019,14 +970,13 @@ public class LanguageManager {
         public final @NotNull String disabled;
         public final @NotNull String durability;
         public final @NotNull String duration;
-        public final @NotNull String dynamicDifficulty;
-        public final @NotNull String dynamicMobCount;
         public final @NotNull String dynamicPrices;
         public final @NotNull String dynamicTimeLimit;
 
         public final @NotNull String effect;
         public final @NotNull String effectKitsDescription;
         public final @NotNull String effectShare;
+        public final @NotNull String eggName;
         public final @NotNull String end;
         public final @NotNull String ending;
         public final @NotNull String enemies;
@@ -1040,11 +990,13 @@ public class LanguageManager {
         public final @NotNull String gemsToReceive;
         public final @NotNull String ghosts;
         public final @NotNull String giftKitsDescription;
+        public final @NotNull String golemButton;
         public final @NotNull String help;
         public final @NotNull String help1;
         public final @NotNull String help2;
         public final @NotNull String help2a;
         public final @NotNull String help3;
+        public final @NotNull String horseEffect;
         public final @NotNull String infoAboutWiki;
         public final @NotNull String info1;
         public final @NotNull String info2;
@@ -1062,7 +1014,6 @@ public class LanguageManager {
         public final @NotNull String leave;
         public final @NotNull String leaveArena;
         public final @NotNull String level;
-        public final @NotNull String levelPlaceholder;
         public final @NotNull String levelUp;
         public final @NotNull String manualUpdateWarn;
         public final @NotNull String maxCapacity;
@@ -1078,6 +1029,7 @@ public class LanguageManager {
         public final @NotNull String oneMinuteWarning;
         public final @NotNull String pierce;
         public final @NotNull String perBlock;
+        public final @NotNull String petButton;
         public final @NotNull String playerKits;
         public final @NotNull String players;
         public final @NotNull String playerStatistics;
@@ -1088,15 +1040,15 @@ public class LanguageManager {
         public final @NotNull String record;
         public final @NotNull String records;
         public final @NotNull String refill;
+        public final @NotNull String reloadPlugin;
+        public final @NotNull String removeGolem;
+        public final @NotNull String removePet;
         public final @NotNull String reset;
         public final @NotNull String resetWarning;
-        public final @NotNull String restartPlugin;
         public final @NotNull String resurrection;
         public final @NotNull String rightClick;
         public final @NotNull String seconds;
         public final @NotNull String secondsLeft;
-        public final @NotNull String shopInfo;
-        public final @NotNull String shopUpgrade;
         public final @NotNull String spectators;
         public final @NotNull String starting;
         public final @NotNull String toughness;
@@ -1137,6 +1089,7 @@ public class LanguageManager {
             available = getConfigString("available");
             blocks = getConfigString("blocks");
             capacity = getConfigString("capacity");
+            catEffect = getConfigString("catEffect");
             challenges = getConfigString("challenges");
             closed = getConfigString("closed");
             communityChest = getConfigString("communityChest");
@@ -1152,13 +1105,12 @@ public class LanguageManager {
             disabled = getConfigString("disabled");
             durability = getConfigString("durability");
             duration = getConfigString("duration");
-            dynamicDifficulty = getConfigString("dynamicDifficulty");
-            dynamicMobCount = getConfigString("dynamicMobCount");
             dynamicPrices = getConfigString("dynamicPrices");
             dynamicTimeLimit = getConfigString("dynamicTimeLimit");
             effect = getConfigString("effect");
             effectKitsDescription = getConfigString("effectKitsDescription");
             effectShare = getConfigString("effectShare");
+            eggName = getConfigString("eggName");
             end = getConfigString("end");
             ending = getConfigString("ending");
             enemies = getConfigString("enemies");
@@ -1172,11 +1124,13 @@ public class LanguageManager {
             gemsToReceive = getConfigString("gemsToReceive");
             ghosts = getConfigString("ghosts");
             giftKitsDescription = getConfigString("giftKitsDescription");
+            golemButton = getConfigString("golemButton");
             help = getConfigString("help");
             help1 = getConfigString("help1");
             help2 = getConfigString("help2");
             help2a = getConfigString("help2a");
             help3 = getConfigString("help3");
+            horseEffect = getConfigString("horseEffect");
             infoAboutWiki = getConfigString("infoAboutWiki");
             info1 = getConfigString("info1");
             info2 = getConfigString("info2");
@@ -1194,7 +1148,6 @@ public class LanguageManager {
             leave = getConfigString("leave");
             leaveArena = getConfigString("leaveArena");
             level = getConfigString("level");
-            levelPlaceholder = getConfigString("levelPlaceholder");
             levelUp = getConfigString("levelUp");
             manualUpdateWarn = getConfigString("manualUpdateWarn");
             maxCapacity = getConfigString("maxCapacity");
@@ -1210,6 +1163,7 @@ public class LanguageManager {
             oneMinuteWarning = getConfigString("oneMinuteWarning");
             pierce = getConfigString("pierce");
             perBlock = getConfigString("perBlock");
+            petButton = getConfigString("petButton");
             playerKits = getConfigString("playerKits");
             players = getConfigString("players");
             playerStatistics = getConfigString("playerStatistics");
@@ -1220,15 +1174,15 @@ public class LanguageManager {
             record = getConfigString("record");
             records = getConfigString("records");
             refill = getConfigString("refill");
+            reloadPlugin = getConfigString("reloadPlugin");
+            removeGolem = getConfigString("removeGolem");
+            removePet = getConfigString("removePet");
             reset = getConfigString("reset");
             resetWarning = getConfigString("resetWarning");
-            restartPlugin = getConfigString("restartPlugin");
             resurrection = getConfigString("resurrection");
             rightClick = getConfigString("rightClick");
             seconds = getConfigString("seconds");
             secondsLeft = getConfigString("secondsLeft");
-            shopInfo = getConfigString("shopInfo");
-            shopUpgrade = getConfigString("shopUpgrade");
             spectators = getConfigString("spectators");
             starting = getConfigString("starting");
             toughness = getConfigString("toughness");
@@ -1256,18 +1210,23 @@ public class LanguageManager {
         public final @NotNull String babyZombie;
         public final @NotNull String blaze;
         public final @NotNull String brute;
+        public final @NotNull String cat;
         public final @NotNull String caveSpider;
         public final @NotNull String chargedCreeper;
         public final @NotNull String creeper;
+        public final @NotNull String dog;
         public final @NotNull String fletcher;
         public final @NotNull String ghast;
+        public final @NotNull String horse;
         public final @NotNull String husk;
+        public final @NotNull String ironGolem;
         public final @NotNull String phantom;
         public final @NotNull String piglinSniper;
         public final @NotNull String piglinSoldier;
         public final @NotNull String pillager;
         public final @NotNull String silverfish;
         public final @NotNull String skeleton;
+        public final @NotNull String snowGolem;
         public final @NotNull String spider;
         public final @NotNull String stray;
         public final @NotNull String vex;
@@ -1284,18 +1243,23 @@ public class LanguageManager {
             babyZombie = getConfigString("babyZombie");
             blaze = getConfigString("blaze");
             brute = getConfigString("brute");
+            cat = getConfigString("cat");
             caveSpider = getConfigString("caveSpider");
             chargedCreeper = getConfigString("chargedCreeper");
             creeper = getConfigString("creeper");
+            dog = getConfigString("dog");
             fletcher = getConfigString("fletcher");
             ghast = getConfigString("ghast");
+            horse = getConfigString("horse");
             husk = getConfigString("husk");
+            ironGolem = getConfigString("ironGolem");
             phantom = getConfigString("phantom");
             piglinSniper = getConfigString("piglinSniper");
             piglinSoldier = getConfigString("piglinSoldier");
             pillager = getConfigString("pillager");
             silverfish = getConfigString("silverfish");
             skeleton = getConfigString("skeleton");
+            snowGolem = getConfigString("snowGolem");
             spider = getConfigString("spider");
             stray = getConfigString("stray");
             vex = getConfigString("vex");
@@ -1312,18 +1276,23 @@ public class LanguageManager {
         public final @NotNull String babyZombie;
         public final @NotNull String blaze;
         public final @NotNull String brute;
+        public final @NotNull String cat;
         public final @NotNull String caveSpider;
         public final @NotNull String chargedCreeper;
         public final @NotNull String creeper;
+        public final @NotNull String dog;
         public final @NotNull String fletcher;
         public final @NotNull String ghast;
+        public final @NotNull String horse;
         public final @NotNull String husk;
+        public final @NotNull String ironGolem;
         public final @NotNull String phantom;
         public final @NotNull String piglinSniper;
         public final @NotNull String piglinSoldier;
         public final @NotNull String pillager;
         public final @NotNull String silverfish;
         public final @NotNull String skeleton;
+        public final @NotNull String snowGolem;
         public final @NotNull String spider;
         public final @NotNull String stray;
         public final @NotNull String vex;
@@ -1340,18 +1309,23 @@ public class LanguageManager {
             babyZombie = getConfigString("babyZombie");
             blaze = getConfigString("blaze");
             brute = getConfigString("brute");
+            cat = getConfigString("cat");
             caveSpider = getConfigString("caveSpider");
             chargedCreeper = getConfigString("chargedCreeper");
             creeper = getConfigString("creeper");
+            dog = getConfigString("dog");
             fletcher = getConfigString("fletcher");
             ghast = getConfigString("ghast");
+            horse = getConfigString("horse");
             husk = getConfigString("husk");
+            ironGolem = getConfigString("ironGolem");
             phantom = getConfigString("phantom");
             piglinSniper = getConfigString("piglinSniper");
             piglinSoldier = getConfigString("piglinSoldier");
             pillager = getConfigString("pillager");
             silverfish = getConfigString("silverfish");
             skeleton = getConfigString("skeleton");
+            snowGolem = getConfigString("snowGolem");
             spider = getConfigString("spider");
             stray = getConfigString("stray");
             vex = getConfigString("vex");
@@ -1376,6 +1350,7 @@ public class LanguageManager {
         public final @NotNull String communityChest;
         public final @NotNull String consumableShop;
         public final @NotNull String crossbowShop;
+        public final @NotNull String crushing;
         public final @NotNull String crystal;
         public final @NotNull String crystalConverter;
         public final @NotNull String crystals;
@@ -1383,7 +1358,8 @@ public class LanguageManager {
         public final @NotNull String effectKits;
         public final @NotNull String effectShare;
         public final @NotNull String giftKits;
-        public final @NotNull String golemEgg;
+        public final @NotNull String golem;
+        public final @NotNull String golemShop;
         public final @NotNull String hard;
         public final @NotNull String helmetShop;
         public final @NotNull String insane;
@@ -1392,15 +1368,20 @@ public class LanguageManager {
         public final @NotNull String leggingsShop;
         public final @NotNull String medium;
         public final @NotNull String monsterSpawnParticles;
+        public final @NotNull String newGolem;
+        public final @NotNull String newPet;
         public final @NotNull String none;
         public final @NotNull String normal;
         public final @NotNull String penetrating;
+        public final @NotNull String pet;
+        public final @NotNull String petShop;
         public final @NotNull String playerSpawnParticles;
         public final @NotNull String scytheShop;
         public final @NotNull String swordShop;
         public final @NotNull String timeBar;
         public final @NotNull String villageCaptain;
         public final @NotNull String villagerSpawnParticles;
+        public final @NotNull String waitingBar;
 
         private Names() throws InvalidLanguageKeyException {
             setPathPrefix("names");
@@ -1417,6 +1398,7 @@ public class LanguageManager {
             communityChest = getConfigString("communityChest");
             consumableShop = getConfigString("consumableShop");
             crossbowShop = getConfigString("crossbowShop");
+            crushing = getConfigString("crushing");
 
             // Special check for economy plugin to replace currency name
             if (Main.hasCustomEconomy())
@@ -1434,7 +1416,8 @@ public class LanguageManager {
             effectKits = getConfigString("effectKits");
             effectShare = getConfigString("effectShare");
             giftKits = getConfigString("giftKits");
-            golemEgg = getConfigString("golemEgg");
+            golem = getConfigString("golem");
+            golemShop = getConfigString("golemShop");
             hard = getConfigString("hard");
             helmetShop = getConfigString("helmetShop");
             insane = getConfigString("insane");
@@ -1443,15 +1426,20 @@ public class LanguageManager {
             leggingsShop = getConfigString("leggingsShop");
             medium = getConfigString("medium");
             monsterSpawnParticles = getConfigString("monsterSpawnParticles");
+            newGolem = getConfigString("newGolem");
+            newPet = getConfigString("newPet");
             none = getConfigString("none");
             normal = getConfigString("normal");
             penetrating = getConfigString("penetrating");
+            pet = getConfigString("pet");
+            petShop = getConfigString("petShop");
             playerSpawnParticles = getConfigString("playerSpawnParticles");
             scytheShop = getConfigString("scytheShop");
             swordShop = getConfigString("swordShop");
             timeBar = getConfigString("timeBar");
             villageCaptain = getConfigString("villageCaptain");
             villagerSpawnParticles = getConfigString("villagerSpawnParticles");
+            waitingBar = getConfigString("waitingBar");
         }
     }
 

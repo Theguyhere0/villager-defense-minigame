@@ -20,71 +20,29 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class Ammo extends VDWeapon {
     @NotNull
-    public static ItemStack create(AmmoType type) {
+    public static ItemStack create(Tier tier) {
         List<String> lores = new ArrayList<>();
 
         // Set name
         String name;
-        switch (type) {
+        switch (tier) {
             case T1:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.ammo.t1.name),
-                        "[T1]"
-                );
+                name = formatName(LanguageManager.itemLore.ammo.t1.name, tier);
                 break;
             case T2:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.ammo.t2.name),
-                        "[T2]"
-                );
+                name = formatName(LanguageManager.itemLore.ammo.t2.name, tier);
                 break;
             case T3:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.ammo.t3.name),
-                        "[T3]"
-                );
+                name = formatName(LanguageManager.itemLore.ammo.t3.name, tier);
                 break;
             case T4:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.ammo.t4.name),
-                        "[T4]"
-                );
+                name = formatName(LanguageManager.itemLore.ammo.t4.name, tier);
                 break;
             case T5:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.ammo.t5.name),
-                        "[T5]"
-                );
+                name = formatName(LanguageManager.itemLore.ammo.t5.name, tier);
                 break;
             case T6:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.ammo.t6.name),
-                        "[T6]"
-                );
-                break;
-            case T7:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.ammo.t7.name),
-                        "[T7]"
-                );
-                break;
-            case T8:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.ammo.t8.name),
-                        "[T8]"
-                );
-                break;
-            case T9:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.ammo.t9.name),
-                        "[T9]"
-                );
-                break;
-            case T10:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.ammo.t10.name),
-                        "[T10]"
-                );
+                name = formatName(LanguageManager.itemLore.ammo.t6.name, tier);
                 break;
             default:
                 name = "";
@@ -92,7 +50,7 @@ public abstract class Ammo extends VDWeapon {
 
         // Set description
         String description;
-        switch (type) {
+        switch (tier) {
             case T1:
                 description = LanguageManager.itemLore.ammo.t1.description;
                 break;
@@ -111,18 +69,6 @@ public abstract class Ammo extends VDWeapon {
             case T6:
                 description = LanguageManager.itemLore.ammo.t6.description;
                 break;
-            case T7:
-                description = LanguageManager.itemLore.ammo.t7.description;
-                break;
-            case T8:
-                description = LanguageManager.itemLore.ammo.t8.description;
-                break;
-            case T9:
-                description = LanguageManager.itemLore.ammo.t9.description;
-                break;
-            case T10:
-                description = LanguageManager.itemLore.ammo.t10.description;
-                break;
             default:
                 description = "";
         }
@@ -135,34 +81,24 @@ public abstract class Ammo extends VDWeapon {
 
         // Set capacity
         int capacity;
-        switch (type) {
+        switch (tier) {
             case T1:
-                capacity = 8;
-                break;
-            case T2:
                 capacity = 15;
                 break;
-            case T3:
+            case T2:
                 capacity = 25;
                 break;
-            case T4:
-            case T6:
+            case T3:
                 capacity = 40;
                 break;
+            case T4:
+                capacity = 55;
+                break;
             case T5:
-                capacity = 30;
-                break;
-            case T7:
-                capacity = 50;
-                break;
-            case T8:
-                capacity = 60;
-                break;
-            case T9:
                 capacity = 75;
                 break;
-            case T10:
-                capacity = 90;
+            case T6:
+                capacity = 100;
                 break;
             default:
                 capacity = 0;
@@ -173,24 +109,24 @@ public abstract class Ammo extends VDWeapon {
 
         // Set refill rate
         double refill;
-        switch (type) {
-            case T5:
+        switch (tier) {
+            case T1:
                 refill = 7.5;
                 break;
-            case T6:
+            case T2:
                 refill = 6;
                 break;
-            case T7:
-                refill = 5;
+            case T3:
+                refill = 4.5;
                 break;
-            case T8:
-                refill = 4;
+            case T4:
+                refill = 3.5;
                 break;
-            case T9:
-                refill = 3;
-                break;
-            case T10:
+            case T5:
                 refill = 2.5;
+                break;
+            case T6:
+                refill = 2;
                 break;
             default:
                 refill = 0;
@@ -200,7 +136,7 @@ public abstract class Ammo extends VDWeapon {
 
         // Set price
         int price;
-        switch (type) {
+        switch (tier) {
             case T1:
                 price = 75;
                 break;
@@ -219,27 +155,16 @@ public abstract class Ammo extends VDWeapon {
             case T6:
                 price = 650;
                 break;
-            case T7:
-                price = 850;
-                break;
-            case T8:
-                price = 1100;
-                break;
-            case T9:
-                price = 1350;
-                break;
-            case T10:
-                price = 1600;
-                break;
             default: price = -1;
         }
-        if (price >= 0)
+        if (price >= 0) {
+            lores.add("");
             lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
                     price));
+        }
 
         // Create item
-        return ItemManager.makeUnique(ItemManager.createItem(Material.NETHER_STAR, name, ItemManager.BUTTON_FLAGS,
-                null, lores));
+        return ItemManager.createItem(Material.NETHER_STAR, name, ItemManager.BUTTON_FLAGS, null, lores);
     }
 
     public static boolean matches(ItemStack toCheck) {
@@ -300,7 +225,7 @@ public abstract class Ammo extends VDWeapon {
         return false;
     }
 
-    public static void updateRefill(ItemStack ammo, boolean fletcher, boolean boost) {
+    public static void updateRefill(ItemStack ammo, boolean boost) {
         // Check for ammo
         if (!matches(ammo))
             return;
@@ -342,7 +267,7 @@ public abstract class Ammo extends VDWeapon {
         });
 
         // Ignore if full or doesn't refill
-        if (maxCap.get() == capacity.get() || refill.get() == 0)
+        if (capacity.get() >= maxCap.get() || refill.get() == 0)
             return;
 
         // Set new refill if first cycle is over
@@ -354,7 +279,7 @@ public abstract class Ammo extends VDWeapon {
             double updatedRefillTimer = refillTimer.get() - .5;
             // Timer finished
             if (updatedRefillTimer < .1) {
-                capacity.addAndGet(Math.min(maxCap.get(), (fletcher ? 2 : 1) * (boost ? 2 : 1)));
+                capacity.addAndGet(Math.min(maxCap.get() - capacity.get(), (boost ? 2 : 1)));
                 ChatColor color = capacity.get() >= .75 * maxCap.get() ? ChatColor.GREEN :
                         (capacity.get() <= .25 * maxCap.get() ? ChatColor.RED : ChatColor.YELLOW);
                 lores.set(capIndex.get(), CommunicationManager.format(CAPACITY,
@@ -372,18 +297,5 @@ public abstract class Ammo extends VDWeapon {
         // Perform updates
         meta.setLore(lores);
         ammo.setItemMeta(meta);
-    }
-
-    public enum AmmoType{
-        T1,
-        T2,
-        T3,
-        T4,
-        T5,
-        T6,
-        T7,
-        T8,
-        T9,
-        T10
     }
 }

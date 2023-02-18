@@ -4,7 +4,7 @@ import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.JoinArenaEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeftClickNPCEvent;
 import me.theguyhere.villagerdefense.plugin.events.RightClickNPCEvent;
-import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
+import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import org.bukkit.Bukkit;

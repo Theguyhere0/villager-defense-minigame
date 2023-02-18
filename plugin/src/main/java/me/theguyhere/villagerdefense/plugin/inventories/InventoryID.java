@@ -4,7 +4,7 @@ public enum InventoryID {
     ABILITY_UPGRADE_SHOP_MENU,
     ALLOWED_KITS_DISPLAY_MENU,
     ALLOWED_KITS_MENU,
-    AMMO_SHOP_MENU,
+    AMMO_UPGRADE_SHOP_MENU,
     ARENA_BOARD_CONFIRM_MENU,
     ARENA_BOARD_MENU,
     ARENA_BOUNDS_MENU,
@@ -30,7 +30,9 @@ public enum InventoryID {
     FORCED_CHALLENGES_DISPLAY_MENU,
     FORCED_CHALLENGES_MENU,
     GAME_SETTINGS_MENU,
-    GOLEM_CAP_MENU,
+    GOLEM_CONFIRM_MENU,
+    GOLEM_MANAGER_MENU,
+    GOLEM_SHOP_MENU,
     HELMET_SHOP_MENU,
     INFO_BOARD_CONFIRM_MENU,
     INFO_BOARD_DASHBOARD,
@@ -47,6 +49,11 @@ public enum InventoryID {
     MONSTER_SPAWN_CONFIRM_MENU,
     MONSTER_SPAWN_DASHBOARD,
     MONSTER_SPAWN_MENU,
+    NEW_GOLEM_MENU,
+    NEW_PET_MENU,
+    PET_CONFIRM_MENU,
+    PET_MANAGER_MENU,
+    PET_SHOP_MENU,
     PLAYER_ACHIEVEMENTS_MENU,
     PLAYER_KITS_MENU,
     PLAYERS_MENU,
@@ -59,7 +66,6 @@ public enum InventoryID {
     SELECT_KITS_MENU,
     SCYTHE_SHOP_MENU,
     SHOP_MENU,
-    SHOP_SETTINGS_MENU,
     SPAWN_CONFIRM_MENU,
     SPAWN_TABLE_MENU,
     SOUNDS_MENU,
@@ -81,15 +87,13 @@ public enum InventoryID {
     WAITING_CONFIRM_MENU,
     WAITING_ROOM_MENU,
     WAITING_SOUND_MENU,
-    WAVE_TIME_LIMIT_MENU,
-    WOLF_CAP_MENU;
+    WAVE_TIME_LIMIT_MENU;
 
     public static boolean isInGameShop(InventoryID id) {
         return id == InventoryID.SWORD_SHOP_MENU || id == InventoryID.AXE_SHOP_MENU ||
                 id == InventoryID.SCYTHE_SHOP_MENU || id == InventoryID.BOW_SHOP_MENU ||
-                id == InventoryID.CROSSBOW_SHOP_MENU || id == InventoryID.AMMO_SHOP_MENU ||
-                id == InventoryID.HELMET_SHOP_MENU || id == InventoryID.CHESTPLATE_SHOP_MENU ||
-                id == InventoryID.LEGGINGS_SHOP_MENU || id == InventoryID.BOOTS_SHOP_MENU ||
-                id == InventoryID.CONSUMABLE_SHOP_MENU;
+                id == InventoryID.CROSSBOW_SHOP_MENU || id == InventoryID.HELMET_SHOP_MENU ||
+                id == InventoryID.CHESTPLATE_SHOP_MENU || id == InventoryID.LEGGINGS_SHOP_MENU ||
+                id == InventoryID.BOOTS_SHOP_MENU || id == InventoryID.CONSUMABLE_SHOP_MENU;
     }
 }

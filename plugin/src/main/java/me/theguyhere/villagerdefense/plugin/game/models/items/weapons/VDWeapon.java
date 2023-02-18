@@ -11,7 +11,9 @@ public abstract class VDWeapon extends VDItem {
             LanguageManager.messages.attackType);
     protected static final ColoredMessage ATTACK_TYPE_NORMAL = new ColoredMessage(ChatColor.GREEN,
             LanguageManager.names.normal);
-    protected static final ColoredMessage ATTACK_TYPE_PENETRATING = new ColoredMessage(ChatColor.YELLOW,
+    protected static final ColoredMessage ATTACK_TYPE_CRUSHING = new ColoredMessage(ChatColor.YELLOW,
+            LanguageManager.names.crushing);
+    protected static final ColoredMessage ATTACK_TYPE_PENETRATING = new ColoredMessage(ChatColor.RED,
             LanguageManager.names.penetrating);
     protected static final ColoredMessage MAIN_DAMAGE = new ColoredMessage(ChatColor.BLUE,
             LanguageManager.messages.attackMainDamage);
@@ -40,7 +42,7 @@ public abstract class VDWeapon extends VDItem {
 
     public static boolean matchesNoAmmo(ItemStack toCheck) {
         return Sword.matches(toCheck) || Axe.matches(toCheck) || Scythe.matches(toCheck) ||
-                Bow.matches(toCheck) || Crossbow.matches(toCheck);
+                Bow.matches(toCheck) || Crossbow.matches(toCheck) || OrcClub.matches(toCheck);
     }
 
     public static boolean matchesClickableWeapon(ItemStack toCheck) {

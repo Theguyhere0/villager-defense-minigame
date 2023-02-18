@@ -7,82 +7,50 @@ import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class Crossbow extends VDWeapon {
     @NotNull
-    public static ItemStack create(CrossbowType type) {
+    public static ItemStack create(Tier tier) {
         List<String> lores = new ArrayList<>();
+        HashMap<Enchantment, Integer> enchant = new HashMap<>();
+
+        // Possibly set enchant
+        switch (tier) {
+            case T5:
+            case T6:
+                enchant.put(Enchantment.DURABILITY, 3);
+        }
 
         // Set name
         String name;
-        switch (type) {
+        switch (tier) {
             case T1:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.crossbows.t1.name),
-                        "[T1]"
-                );
+                name = formatName(LanguageManager.itemLore.crossbows.t1.name, tier);
                 break;
             case T2:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.crossbows.t2.name),
-                        "[T2]"
-                );
+                name = formatName(LanguageManager.itemLore.crossbows.t2.name, tier);
                 break;
             case T3:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.crossbows.t3.name),
-                        "[T3]"
-                );
+                name = formatName(LanguageManager.itemLore.crossbows.t3.name, tier);
                 break;
             case T4:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.crossbows.t4.name),
-                        "[T4]"
-                );
+                name = formatName(LanguageManager.itemLore.crossbows.t4.name, tier);
                 break;
             case T5:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.crossbows.t5.name),
-                        "[T5]"
-                );
+                name = formatName(LanguageManager.itemLore.crossbows.t5.name, tier);
                 break;
             case T6:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.crossbows.t6.name),
-                        "[T6]"
-                );
-                break;
-            case T7:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.crossbows.t7.name),
-                        "[T7]"
-                );
-                break;
-            case T8:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.crossbows.t8.name),
-                        "[T8]"
-                );
-                break;
-            case T9:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.crossbows.t9.name),
-                        "[T9]"
-                );
-                break;
-            case T10:
-                name = CommunicationManager.format(
-                        new ColoredMessage(LanguageManager.itemLore.crossbows.t10.name),
-                        "[T10]"
-                );
+                name = formatName(LanguageManager.itemLore.crossbows.t6.name, tier);
                 break;
             default:
                 name = "";
@@ -90,7 +58,7 @@ public abstract class Crossbow extends VDWeapon {
 
         // Set description
         String description;
-        switch (type) {
+        switch (tier) {
             case T1:
                 description = LanguageManager.itemLore.crossbows.t1.description;
                 break;
@@ -109,18 +77,6 @@ public abstract class Crossbow extends VDWeapon {
             case T6:
                 description = LanguageManager.itemLore.crossbows.t6.description;
                 break;
-            case T7:
-                description = LanguageManager.itemLore.crossbows.t7.description;
-                break;
-            case T8:
-                description = LanguageManager.itemLore.crossbows.t8.description;
-                break;
-            case T9:
-                description = LanguageManager.itemLore.crossbows.t9.description;
-                break;
-            case T10:
-                description = LanguageManager.itemLore.crossbows.t10.description;
-                break;
             default:
                 description = "";
         }
@@ -136,44 +92,28 @@ public abstract class Crossbow extends VDWeapon {
 
         // Set range damage
         int damageLow, damageHigh;
-        switch (type) {
+        switch (tier) {
             case T1:
                 damageLow = 75;
                 damageHigh = 120;
                 break;
             case T2:
-                damageLow = 75;
-                damageHigh = 150;
-                break;
-            case T3:
                 damageLow = 90;
                 damageHigh = 155;
                 break;
-            case T4:
-                damageLow = 105;
-                damageHigh = 160;
-                break;
-            case T5:
+            case T3:
                 damageLow = 110;
                 damageHigh = 200;
                 break;
-            case T6:
-                damageLow = 130;
-                damageHigh = 210;
-                break;
-            case T7:
+            case T4:
                 damageLow = 150;
                 damageHigh = 225;
                 break;
-            case T8:
-                damageLow = 160;
-                damageHigh = 280;
-                break;
-            case T9:
+            case T5:
                 damageLow = 180;
                 damageHigh = 290;
                 break;
-            case T10:
+            case T6:
                 damageLow = 200;
                 damageHigh = 350;
                 break;
@@ -187,47 +127,54 @@ public abstract class Crossbow extends VDWeapon {
                 damageLow + "-" + damageHigh)));
 
         // Set pierce
+        int pierce;
+        switch (tier) {
+            case T1:
+            case T2:
+                pierce = 1;
+                break;
+            case T3:
+            case T4:
+                pierce = 2;
+                break;
+            case T5:
+                pierce = 3;
+                break;
+            case T6:
+                pierce = 4;
+                break;
+            default:
+                pierce = 0;
+        }
         lores.add(CommunicationManager.format(PIERCE, new ColoredMessage(ChatColor.GOLD,
-                Integer.toString(2))));
+                Integer.toString(pierce))));
 
         // Set attack speed
         lores.add(CommunicationManager.format(SPEED, Double.toString(0.5)));
 
         // Set ammo cost
-        lores.add(CommunicationManager.format(AMMO_COST, new ColoredMessage(ChatColor.RED, Integer.toString(2))));
+        lores.add(CommunicationManager.format(AMMO_COST, new ColoredMessage(ChatColor.RED, Integer.toString(3))));
 
         // Set durability
         int durability;
-        switch (type) {
+        switch (tier) {
             case T1:
                 durability = 90;
                 break;
             case T2:
-                durability = 125;
+                durability = 135;
                 break;
             case T3:
-                durability = 150;
-                break;
-            case T4:
                 durability = 170;
                 break;
-            case T5:
+            case T4:
                 durability = 240;
                 break;
-            case T6:
-                durability = 280;
-                break;
-            case T7:
+            case T5:
                 durability = 335;
                 break;
-            case T8:
+            case T6:
                 durability = 480;
-                break;
-            case T9:
-                durability = 580;
-                break;
-            case T10:
-                durability = 750;
                 break;
             default: durability = 0;
         }
@@ -237,7 +184,7 @@ public abstract class Crossbow extends VDWeapon {
 
         // Set price
         int price;
-        switch (type) {
+        switch (tier) {
             case T1:
                 price = 270;
                 break;
@@ -245,37 +192,27 @@ public abstract class Crossbow extends VDWeapon {
                 price = 350;
                 break;
             case T3:
-                price = 400;
-                break;
-            case T4:
                 price = 470;
                 break;
-            case T5:
+            case T4:
                 price = 590;
                 break;
-            case T6:
-                price = 650;
-                break;
-            case T7:
+            case T5:
                 price = 730;
                 break;
-            case T8:
+            case T6:
                 price = 900;
-                break;
-            case T9:
-                price = 1050;
-                break;
-            case T10:
-                price = 1360;
                 break;
             default: price = -1;
         }
-        if (price >= 0)
+        if (price >= 0) {
+            lores.add("");
             lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
                     price));
+        }
 
         // Create item
-        ItemStack item = ItemManager.createItem(Material.CROSSBOW, name, ItemManager.BUTTON_FLAGS, null, lores);
+        ItemStack item = ItemManager.createItem(Material.CROSSBOW, name, ItemManager.BUTTON_FLAGS, enchant, lores);
         if (durability == 0)
             return ItemManager.makeUnbreakable(item);
         else return item;
@@ -302,18 +239,5 @@ public abstract class Crossbow extends VDWeapon {
                         replace(ChatColor.BLUE.toString(), "")));
         });
         return pierce.get();
-    }
-
-    public enum CrossbowType{
-        T1,
-        T2,
-        T3,
-        T4,
-        T5,
-        T6,
-        T7,
-        T8,
-        T9,
-        T10
     }
 }

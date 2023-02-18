@@ -8,31 +8,34 @@ import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.*;
 import me.theguyhere.villagerdefense.plugin.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
+import me.theguyhere.villagerdefense.plugin.game.managers.CountdownManager;
+import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.*;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.Team;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.golems.VDGolem;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.minions.VDWitch;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.villagers.VDFletcher;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.villagers.VDNormalVillager;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDCat;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDDog;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDHorse;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDPet;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
+import me.theguyhere.villagerdefense.plugin.game.utils.SpawningUtil;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryID;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryMeta;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryType;
 import me.theguyhere.villagerdefense.plugin.tools.*;
 import org.bukkit.*;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarStyle;
-import org.bukkit.boss.BossBar;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -41,6 +44,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -75,9 +79,9 @@ public class Arena {
     private int villagers = 0;
     /** Enemy count.*/
     private int enemies = 0;
+    /** Maximum enemies in a wave.*/
+    private int maxEnemies = 0;
     /** Iron golem count.*/
-    private int golems = 0;
-    /** ID of task managing player spawn particles.*/
     private int playerParticlesID = 0;
     /** ID of task managing monster spawn particles.*/
     private int monsterParticlesID = 0;
@@ -87,32 +91,8 @@ public class Arena {
     private int cornerParticlesID = 0;
     /** A list of players in the arena.*/
     private final List<VDPlayer> players = new ArrayList<>();
-    /** Sword shop inventory.*/
-    private Inventory swordShop;
-    /** Axe shop inventory.*/
-    private Inventory axeShop;
-    /** Scythe shop inventory.*/
-    private Inventory scytheShop;
-    /** Bow shop inventory.*/
-    private Inventory bowShop;
-    /** Crossbow shop inventory.*/
-    private Inventory crossbowShop;
-    /** Ammo shop inventory.*/
-    private Inventory ammoShop;
-    /** Helmet shop inventory.*/
-    private Inventory helmetShop;
-    /** Chestplate shop inventory.*/
-    private Inventory chestplateShop;
-    /** Leggings shop inventory.*/
-    private Inventory leggingsShop;
-    /** Boots shop inventory.*/
-    private Inventory bootsShop;
-    /** Consumables shop inventory.*/
-    private Inventory consumeShop;
     /** Community chest inventory.*/
     private Inventory communityChest;
-    /** Time limit bar object.*/
-    private BossBar timeLimitBar;
     /** Portal object for the arena.*/
     private Portal portal;
     /** The player spawn for the arena.*/
@@ -121,6 +101,8 @@ public class Arena {
     private final List<ArenaSpawn> monsterSpawns = new ArrayList<>();
     /** The villager spawns for the arena.*/
     private final List<ArenaSpawn> villagerSpawns = new ArrayList<>();
+    /** The golems associated with each villager spawn for the arena.*/
+    private final List<VDGolem> golems = new ArrayList<>();
     /** Arena scoreboard object for the arena.*/
     private ArenaBoard arenaBoard;
 
@@ -140,13 +122,13 @@ public class Arena {
     private static final String DIALOGUE_FIVE = "dialogue5";
     private static final String END_WAVE = "endWave";
     private static final String START_WAVE = "startWave";
-    private static final String UPDATE_BAR = "updateBar";
     private static final String CALIBRATE = "calibrate";
     private static final String TICK = "Tick";
     private static final String ONE_TICK = "one" + TICK;
     private static final String TEN_TICK = "ten" + TICK;
     private static final String TWENTY_TICK = "twenty" + TICK;
     private static final String FORTY_TICK = "forty" + TICK;
+    private static final String TWO_HUNDRED_TICK = "twoHundred" + TICK;
     private static final String KICK = "kick";
     private static final String RESET = "restart";
 
@@ -219,14 +201,6 @@ public class Arena {
         // Set default villager type to plains if it doesn't exist
         if (getVillagerType() == null || getVillagerType().isEmpty())
             setVillagerType("plains");
-
-        // Set default wolf cap to 5 if it doesn't exist
-        if (getWolfCap() == 0)
-            setWolfCap(5);
-
-        // Set default iron golem cap to 2 if it doesn't exist
-        if (getGolemCap() == 0)
-            setGolemCap(2);
 
         // Set default max waves to -1 if it doesn't exist
         if (getMaxWaves() == 0)
@@ -337,40 +311,6 @@ public class Arena {
     }
 
     /**
-     * Retrieves the wolf cap per player of the arena from the arena file.
-     * @return Wolf cap per player.
-     */
-    public int getWolfCap() {
-        return config.getInt(path + ".wolf");
-    }
-
-    /**
-     * Writes the new wolf cap per player of the arena into the arena file.
-     * @param wolfCap New wolf cap per player.
-     */
-    public void setWolfCap(int wolfCap) {
-        config.set(path + ".wolf", wolfCap);
-        Main.saveArenaData();
-    }
-
-    /**
-     * Retrieves the iron golem cap of the arena from the arena file.
-     * @return Iron golem cap.
-     */
-    public int getGolemCap() {
-        return config.getInt(path + ".golem");
-    }
-
-    /**
-     * Writes the new iron golem cap of the arena into the arena file.
-     * @param golemCap New iron golem cap.
-     */
-    public void setGolemCap(int golemCap) {
-        config.set(path + ".golem", golemCap);
-        Main.saveArenaData();
-    }
-
-    /**
      * Retrieves the maximum waves of the arena from the arena file.
      * @return Maximum waves.
      */
@@ -393,6 +333,15 @@ public class Arena {
      */
     public int getWaveTimeLimit() {
         return config.getInt(path + ".waveTimeLimit");
+    }
+
+    public double getAdjustedWaveTimeLimit() {
+        // Get proper multiplier
+        double multiplier = 1 + .05 * ((int) getCurrentDifficulty() - .5);
+        if (!hasDynamicLimit())
+            multiplier = 1;
+
+        return getWaveTimeLimit() * multiplier;
     }
 
     /**
@@ -840,8 +789,7 @@ public class Arena {
 
     public List<Location> getVillagerSpawnLocations() {
         List<Location> spawns = new ArrayList<>();
-        for (ArenaSpawn arenaSpawn : villagerSpawns)
-            spawns.add(arenaSpawn.getLocation());
+        villagerSpawns.forEach(spawn -> spawns.add(spawn.getLocation()));
         return spawns;
     }
 
@@ -916,6 +864,10 @@ public class Arena {
 
     public List<ArenaSpawn> getVillagerSpawns() {
         return villagerSpawns;
+    }
+
+    public List<VDGolem> getGolems() {
+        return golems;
     }
 
     /**
@@ -1288,15 +1240,21 @@ public class Arena {
     }
 
     public void stretchBounds() {
+        if (getCorner1() == null || getCorner2() == null)
+            return;
+
         Location temp = getCorner1();
-        temp.setY(Objects.requireNonNull(getCorner1().getWorld()).getMaxHeight());
+        temp.setY(Objects.requireNonNull(getCorner1().getWorld()).getMaxHeight() + 10);
         setCorner1(temp);
         temp = getCorner2();
-        temp.setY(Objects.requireNonNull(getCorner2().getWorld()).getMinHeight() - 1);
+        temp.setY(Objects.requireNonNull(getCorner2().getWorld()).getMinHeight() - 25);
         setCorner2(temp);
     }
 
-    public BoundingBox getBounds() {
+    public @NotNull BoundingBox getBounds() {
+        if (getCorner1() == null || getCorner2() == null)
+            return new BoundingBox();
+
         return new BoundingBox(getCorner1().getX(), getCorner1().getY(), getCorner1().getZ(),
                 getCorner2().getX(), getCorner2().getY(), getCorner2().getZ());
     }
@@ -1352,33 +1310,6 @@ public class Arena {
 
     public void setAbilitySound(boolean bool) {
         config.set(path + ".sounds.ability", bool);
-        Main.saveArenaData();
-    }
-
-    public boolean hasDynamicCount() {
-        return config.getBoolean(path + ".dynamicCount");
-    }
-
-    public void setDynamicCount(boolean bool) {
-        config.set(path + ".dynamicCount", bool);
-        Main.saveArenaData();
-    }
-
-    public boolean hasDynamicDifficulty() {
-        return config.getBoolean(path + ".dynamicDifficulty");
-    }
-
-    public void setDynamicDifficulty(boolean bool) {
-        config.set(path + ".dynamicDifficulty", bool);
-        Main.saveArenaData();
-    }
-
-    public boolean hasDynamicPrices() {
-        return config.getBoolean(path + ".dynamicPrices");
-    }
-
-    public void setDynamicPrices(boolean bool) {
-        config.set(path + ".dynamicPrices", bool);
         Main.saveArenaData();
     }
 
@@ -1478,16 +1409,17 @@ public class Arena {
         if (getActiveCount() > 0 && activeTasks.containsKey(FORCE_START_ARENA))
             throw new ArenaTaskException("Arena was force started");
 
-        // Clear active tasks
+        // Clear active tasks and countdowns
         activeTasks.forEach((name, task) -> task.cancel());
         activeTasks.clear();
+        CountdownManager.stopCountdown(this);
 
         // Start repeating notification of waiting
         activeTasks.put(NOTIFY_WAITING, new BukkitRunnable() {
             @Override
             public void run() {
                 // Task
-                getPlayers().forEach(player ->
+                players.forEach(player ->
                         PlayerManager.notifyAlert(player.getPlayer(), LanguageManager.messages.waitingForPlayers));
                 CommunicationManager.debugInfo("%s is currently waiting for players to start.", 2,
                         getName());
@@ -1512,24 +1444,12 @@ public class Arena {
             public void run() {
                 String LIST = "  - ";
                 // Task
-                getPlayers().forEach(player -> {
+                players.forEach(player -> {
                     PlayerManager.notify(player.getPlayer(), new ColoredMessage(ChatColor.DARK_AQUA,
                             LanguageManager.messages.quickInfo), new ColoredMessage(ChatColor.DARK_GREEN, getName()));
                     player.getPlayer().sendMessage(new ColoredMessage(ChatColor.GOLD, LIST + (getMaxWaves() < 0 ?
                             LanguageManager.messages.noLastWave : String.format(LanguageManager.messages.finalWave,
                             getMaxWaves()))).toString());
-                    player.getPlayer().sendMessage(new ColoredMessage(hasDynamicCount() ? ChatColor.GREEN :
-                            ChatColor.RED, String.format(LIST + LanguageManager.messages.dynamicMobCount,
-                            hasDynamicCount() ? LanguageManager.messages.will :
-                                    LanguageManager.messages.willNot)).toString());
-                    player.getPlayer().sendMessage(new ColoredMessage(hasDynamicDifficulty() ? ChatColor.GREEN :
-                            ChatColor.RED, String.format(LIST + LanguageManager.messages.dynamicDifficulty,
-                            hasDynamicDifficulty() ? LanguageManager.messages.will :
-                                    LanguageManager.messages.willNot)).toString());
-                    player.getPlayer().sendMessage(new ColoredMessage(hasDynamicPrices() ? ChatColor.GREEN :
-                            ChatColor.RED, String.format(LIST + LanguageManager.messages.dynamicPrices,
-                            hasDynamicPrices() ? LanguageManager.messages.will :
-                                    LanguageManager.messages.willNot)).toString());
                     player.getPlayer().sendMessage(new ColoredMessage(hasDynamicLimit() ? ChatColor.GREEN :
                             ChatColor.RED, String.format(LIST + LanguageManager.messages.dynamicTimeLimit,
                             hasDynamicLimit() ? LanguageManager.messages.will :
@@ -1562,18 +1482,21 @@ public class Arena {
             throw new ArenaClosedException();
         if (status != ArenaStatus.WAITING)
             throw new ArenaStatusException(ArenaStatus.WAITING);
-        if (getActiveCount() == 0)
-            throw new ArenaTaskException("Arena cannot start countdown without players");
+        if (getActiveCount() < getMinPlayers())
+            throw new ArenaTaskException("Arena must meet the minimum player count to start");
 
-        // Clear active tasks except notify info
+        // Clear active tasks EXCEPT notify info
+        Map<String, BukkitRunnable> cache = new HashMap<>();
         activeTasks.forEach((name, task) -> {
-                if(!name.equals(NOTIFY_INFO))
+                if (!name.equals(NOTIFY_INFO))
                     task.cancel();
+                else cache.put(name, task);
         });
         activeTasks.clear();
+        activeTasks.putAll(cache);
 
         // Two-minute notice
-        getPlayers().forEach(player ->
+        players.forEach(player ->
                 PlayerManager.notifyAlert(
                         player.getPlayer(),
                         LanguageManager.messages.minutesLeft,
@@ -1586,7 +1509,7 @@ public class Arena {
             @Override
             public void run() {
                 // Task
-                getPlayers().forEach(player ->
+                players.forEach(player ->
                         PlayerManager.notifyAlert(
                                 player.getPlayer(),
                                 LanguageManager.messages.minutesLeft,
@@ -1606,7 +1529,7 @@ public class Arena {
             @Override
             public void run() {
                 // Task
-                getPlayers().forEach(player ->
+                players.forEach(player ->
                         PlayerManager.notifyAlert(
                                 player.getPlayer(),
                                 LanguageManager.messages.secondsLeft,
@@ -1627,7 +1550,7 @@ public class Arena {
             @Override
             public void run() {
                 // Task
-                getPlayers().forEach(player ->
+                players.forEach(player ->
                         PlayerManager.notifyAlert(
                                 player.getPlayer(),
                                 LanguageManager.messages.secondsLeft,
@@ -1649,7 +1572,7 @@ public class Arena {
             @Override
             public void run() {
                 // Task
-                getPlayers().forEach(player ->
+                players.forEach(player ->
                         PlayerManager.notifyAlert(
                                 player.getPlayer(),
                                 LanguageManager.messages.secondsLeft,
@@ -1681,6 +1604,10 @@ public class Arena {
             }
         });
         activeTasks.get(START_ARENA).runTaskLater(Main.plugin, Utils.secondsToTicks(Utils.minutesToSeconds(2)));
+
+        // Start countdown bar
+        CountdownManager.stopCountdown(this);
+        CountdownManager.startWaitingCountdown(this);
     }
 
     public void expediteCountDown() throws ArenaClosedException, ArenaStatusException, ArenaTaskException {
@@ -1699,7 +1626,7 @@ public class Arena {
         activeTasks.clear();
 
         // Forced 10-second notice
-        getPlayers().forEach(player -> {
+        players.forEach(player -> {
                 PlayerManager.notifyAlert(player.getPlayer(), LanguageManager.messages.maxCapacity);
                 PlayerManager.notifyAlert(
                         player.getPlayer(),
@@ -1715,7 +1642,7 @@ public class Arena {
             @Override
             public void run() {
                 // Task
-                getPlayers().forEach(player ->
+                players.forEach(player ->
                         PlayerManager.notifyAlert(
                                 player.getPlayer(),
                                 LanguageManager.messages.secondsLeft,
@@ -1746,6 +1673,10 @@ public class Arena {
             }
         });
         activeTasks.get(FORCE_START_ARENA).runTaskLater(Main.plugin, Utils.secondsToTicks(10));
+
+        // Start countdown bar
+        CountdownManager.stopCountdown(this);
+        CountdownManager.startExpeditedWaitingCountdown(this);
     }
 
     private void startGame() throws ArenaClosedException, ArenaStatusException {
@@ -1759,29 +1690,28 @@ public class Arena {
         activeTasks.forEach((name, task) -> task.cancel());
         activeTasks.clear();
 
+        // Clear countdown bar
+        CountdownManager.stopCountdown(this);
+
         // Reset villager and enemy count, set new game ID, clear arena
         resetVillagers();
         resetEnemies();
         newGameID();
         WorldManager.clear(getCorner1(), getCorner2());
 
-        // Teleport players to arena if waiting room exists, otherwise clear inventory
-        if (getWaitingRoom() != null) {
-            for (VDPlayer vdPlayer : getActives())
-                PlayerManager.teleAdventure(vdPlayer.getPlayer(), getPlayerSpawn().getLocation());
+        // Teleport players to arena, and spectators if there was a waiting room
+        if (getWaitingRoom() != null)
             for (VDPlayer player : getSpectators())
                 PlayerManager.teleSpectator(player.getPlayer(), getPlayerSpawn().getLocation());
-        } else {
-            for (VDPlayer vdPlayer : getActives())
-                vdPlayer.getPlayer().getInventory().clear();
-        }
+        for (VDPlayer vdPlayer : getActives())
+            PlayerManager.teleAdventure(vdPlayer.getPlayer(), getPlayerSpawn().getLocation());
 
         // Set arena status to active
         setStatus(ArenaStatus.ACTIVE);
 
         // Stop waiting sound
         if (getWaitingSound() != null)
-            getPlayers().forEach(player ->
+            players.forEach(player ->
                     player.getPlayer().stopSound(getWaitingSound()));
 
         // Start particles if enabled
@@ -1797,11 +1727,21 @@ public class Arena {
         getActives().forEach(player -> {
             // Give all players starting items and set up attributes
             player.giveItems();
-            player.setupAttributes();
+            player.setupAttributes(true);
 
             // Give Traders their gems
             if (Kit.trader().setKitLevel(1).equals(player.getKit()))
                 player.addGems(200);
+
+            // Give Summoners their dogs
+            if (Kit.summoner().setKitLevel(1).equals(player.getKit()))
+                player.addPet(new VDDog(this, player.getPlayer().getLocation(), player, 1));
+            if (Kit.summoner().setKitLevel(2).equals(player.getKit())) {
+                player.addPet(new VDDog(this, player.getPlayer().getLocation(), player, 1));
+                player.addPet(new VDDog(this, player.getPlayer().getLocation(), player, 1));
+            }
+            if (Kit.summoner().setKitLevel(3).equals(player.getKit()))
+                player.addPet(new VDHorse(this, player.getPlayer().getLocation(), player, 1));
 
             // Give gems from crystal conversion
             int amount;
@@ -1821,21 +1761,8 @@ public class Arena {
                 CommunicationManager.format("&d&l" + LanguageManager.names.communityChest)
         ));
 
-        // Initiate shops
-        swordShop = Inventories.createSwordShopMenu(1, this);
-        axeShop = Inventories.createAxeShopMenu(1, this);
-        scytheShop = Inventories.createScytheShopMenu(1, this);
-        bowShop = Inventories.createBowShopMenu(1, this);
-        crossbowShop = Inventories.createCrossbowShopMenu(1, this);
-        ammoShop = Inventories.createAmmoShopMenu(1, this);
-        helmetShop = Inventories.createHelmetShopMenu(1, this);
-        chestplateShop = Inventories.createChestplateShopMenu(1, this);
-        leggingsShop = Inventories.createLeggingsShopMenu(1, this);
-        bootsShop = Inventories.createBootsShopMenu(1, this);
-        consumeShop = Inventories.createConsumableShopMenu(1, this);
-
         // Start dialogue, then trigger WaveEndEvent
-        for (VDPlayer player : getPlayers()) {
+        for (VDPlayer player : players) {
             PlayerManager.namedNotify(
                     player.getPlayer(),
                     new ColoredMessage(ChatColor.DARK_GREEN, LanguageManager.names.villageCaptain),
@@ -1846,7 +1773,7 @@ public class Arena {
             @Override
             public void run() {
                 // Task
-                for (VDPlayer player : getPlayers()) {
+                for (VDPlayer player : players) {
                     PlayerManager.namedNotify(
                             player.getPlayer(),
                             new ColoredMessage(ChatColor.DARK_GREEN, LanguageManager.names.villageCaptain),
@@ -1865,7 +1792,7 @@ public class Arena {
             @Override
             public void run() {
                 // Task
-                for (VDPlayer player : getPlayers()) {
+                for (VDPlayer player : players) {
                     PlayerManager.namedNotify(
                             player.getPlayer(),
                             new ColoredMessage(ChatColor.DARK_GREEN, LanguageManager.names.villageCaptain),
@@ -1882,7 +1809,7 @@ public class Arena {
             @Override
             public void run() {
                 // Task
-                for (VDPlayer player : getPlayers()) {
+                for (VDPlayer player : players) {
                     PlayerManager.namedNotify(
                             player.getPlayer(),
                             new ColoredMessage(ChatColor.DARK_GREEN, LanguageManager.names.villageCaptain),
@@ -1900,7 +1827,7 @@ public class Arena {
             @Override
             public void run() {
                 // Task
-                for (VDPlayer player : getPlayers()) {
+                for (VDPlayer player : players) {
                     PlayerManager.namedNotify(
                             player.getPlayer(),
                             new ColoredMessage(ChatColor.DARK_GREEN, LanguageManager.names.villageCaptain),
@@ -1989,6 +1916,8 @@ public class Arena {
             public void run() {
                 // Heal
                 getActives().forEach(VDPlayer::heal);
+                getActives().forEach(player -> player.getPets().forEach(VDPet::heal));
+                golems.forEach(VDGolem::heal);
             }
         });
         activeTasks.get(TWENTY_TICK).runTaskTimer(Main.plugin, 0, 20);
@@ -2009,6 +1938,22 @@ public class Arena {
             }
         });
         activeTasks.get(FORTY_TICK).runTaskTimer(Main.plugin, 0, 40);
+        activeTasks.put(TWO_HUNDRED_TICK, new BukkitRunnable() {
+            @Override
+            public void run() {
+                // Cat heal
+                getActives().forEach(player -> {
+                    AtomicInteger heal = new AtomicInteger();
+                    player.getPets().forEach(pet -> {
+                        if (pet instanceof VDCat)
+                            heal.addAndGet(VDCat.getHeal(pet.getLevel()));
+                    });
+                    player.changeCurrentHealth(heal.get());
+                    player.getPets().forEach(pet -> pet.heal(heal.get()));
+                });
+            }
+        });
+        activeTasks.get(TWO_HUNDRED_TICK).runTaskTimer(Main.plugin, 0, 200);
 
         // Debug message to console
         CommunicationManager.debugInfo("%s is starting.", 2, getName());
@@ -2021,7 +1966,7 @@ public class Arena {
         if (status != ArenaStatus.ACTIVE)
             throw new ArenaStatusException(ArenaStatus.ACTIVE);
 
-        // Clear active tasks EXCEPT update and show status
+        // Clear active tasks EXCEPT custom game ticking
         Map<String, BukkitRunnable> cache = new HashMap<>();
         activeTasks.forEach((name, task) -> {
             if (!name.contains(TICK))
@@ -2031,12 +1976,12 @@ public class Arena {
         activeTasks.clear();
         activeTasks.putAll(cache);
 
-        // Stop time limit bar
-        removeTimeLimitBar();
+        // Stop wave time limit countdown
+        CountdownManager.stopCountdown(this);
 
         // Play wave end sound if not just starting
         if (hasWaveFinishSound() && getCurrentWave() != 0)
-            for (VDPlayer vdPlayer : getPlayers()) {
+            for (VDPlayer vdPlayer : players) {
                 vdPlayer.getPlayer().playSound(getPlayerSpawn().getLocation().clone().add(0, -8, 0),
                         Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 10, .75f);
             }
@@ -2086,14 +2031,15 @@ public class Arena {
         // Refresh the scoreboards
         updateScoreboards();
 
-        // Increment wave
+        // Increment wave and reset max enemies
         incrementCurrentWave();
+        maxEnemies = 0;
 
         // Win condition
         if (getCurrentWave() == getMaxWaves()) {
             endGame();
             if (hasWinSound()) {
-                for (VDPlayer vdPlayer : getPlayers()) {
+                for (VDPlayer vdPlayer : players) {
                     vdPlayer.getPlayer().playSound(getPlayerSpawn().getLocation().clone().add(0, -8, 0),
                             Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
                 }
@@ -2108,7 +2054,14 @@ public class Arena {
             PlayerManager.teleAdventure(p.getPlayer(), getPlayerSpawn().getLocation());
             p.setStatus(PlayerStatus.ALIVE);
             p.giveItems();
-            p.setupAttributes();
+            p.setupAttributes(false);
+        }
+
+        // Revive dead golems
+        for (int i = 0; i < golems.size(); i++) {
+            if (golems.get(i).getEntity().isDead()) {
+                addMob(golems.get(i).respawn(this, getVillagerSpawns().get(i).getLocation()));
+            }
         }
 
         getActives().forEach(p -> {
@@ -2153,6 +2106,9 @@ public class Arena {
                         new ColoredMessage(ChatColor.AQUA, Integer.toString(reward))
                 );
             GameManager.createBoard(p);
+
+            // Revive pets
+            p.respawnPets();
         });
 
         // Notify spectators of upcoming wave
@@ -2175,42 +2131,8 @@ public class Arena {
                                 String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
                         " ", Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
 
-        // Regenerate shops when time and notify players of it, then start after 25 seconds
-        if (currentWave % 5 == 0) {
-            int level = currentWave / 5 + 1;
-            swordShop = Inventories.createSwordShopMenu(level, this);
-            axeShop = Inventories.createAxeShopMenu(level, this);
-            scytheShop = Inventories.createScytheShopMenu(level, this);
-            bowShop = Inventories.createBowShopMenu(level, this);
-            crossbowShop = Inventories.createCrossbowShopMenu(level, this);
-            ammoShop = Inventories.createAmmoShopMenu(level, this);
-            helmetShop = Inventories.createHelmetShopMenu(level, this);
-            chestplateShop = Inventories.createChestplateShopMenu(level, this);
-            leggingsShop = Inventories.createLeggingsShopMenu(level, this);
-            bootsShop = Inventories.createBootsShopMenu(level, this);
-            consumeShop = Inventories.createConsumableShopMenu(level, this);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> getActives().forEach(player ->
-                    player.getPlayer().sendTitle(CommunicationManager.format(
-                                    "&6" + LanguageManager.messages.shopUpgrade),
-                            CommunicationManager.format("&7" +
-                                    String.format(LanguageManager.messages.shopInfo, "5")),
-                            Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5),
-                            Utils.secondsToTicks(1))), Utils.secondsToTicks(4));
-            activeTasks.put(START_WAVE, new BukkitRunnable() {
-                @Override
-                public void run() {
-                    // Task
-                    try {
-                        startWave();
-                    } catch (ArenaException ignored) {
-                    }
-                }
-            });
-            activeTasks.get(START_WAVE).runTaskLater(Main.plugin, Utils.secondsToTicks(25));
-        }
-
         // Start wave after 15 seconds if not first wave
-        else if (currentWave != 1) {
+        if (currentWave != 1) {
             activeTasks.put(START_WAVE, new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -2247,7 +2169,7 @@ public class Arena {
 
         // Play wave start sound
         if (hasWaveStartSound()) {
-            for (VDPlayer vdPlayer : getPlayers()) {
+            for (VDPlayer vdPlayer : players) {
                 vdPlayer.getPlayer().playSound(getPlayerSpawn().getLocation().clone().add(0, -8, 0),
                         Sound.ENTITY_ENDER_DRAGON_GROWL, 10, .25f);
             }
@@ -2255,64 +2177,7 @@ public class Arena {
 
         // Start wave count down
         if (getWaveTimeLimit() != -1) {
-            activeTasks.put(UPDATE_BAR, new BukkitRunnable() {
-                double progress = 1;
-                double time;
-                boolean messageSent;
-
-                @Override
-                public void run() {
-                    // Get proper multiplier
-                    double multiplier = 1 + .2 * ((int) getCurrentDifficulty() - .5);
-                    if (!hasDynamicLimit())
-                        multiplier = 1;
-
-                    // Add time limit bar if it doesn't exist
-                    if (getTimeLimitBar() == null) {
-                        progress = 1;
-                        startTimeLimitBar();
-                        getPlayers().forEach(vdPlayer ->
-                                addPlayerToTimeLimitBar(vdPlayer.getPlayer()));
-                        time = 1d / Utils.minutesToSeconds(getWaveTimeLimit() * multiplier);
-                        messageSent = false;
-
-                        // Debug message to console
-                        CommunicationManager.debugInfo("Adding time limit bar to %s", 2, getName());
-                    }
-
-                    // Trigger wave end event
-                    else if (progress <= 0) {
-                        progress = 0;
-                        try {
-                            endGame();
-                        } catch (ArenaException e) {
-                            resetGame();
-                        }
-                    }
-
-                    // Decrement time limit bar
-                    else {
-                        if (progress <= time * Utils.minutesToSeconds(1)) {
-                            updateTimeLimitBar(BarColor.RED, progress);
-                            if (!messageSent) {
-                                // Send warning
-                                getActives().forEach(player ->
-                                        player.getPlayer().sendTitle(CommunicationManager.format(
-                                                        "&c" + LanguageManager.messages.oneMinuteWarning),
-                                                null, Utils.secondsToTicks(.5), Utils.secondsToTicks(1.5),
-                                                Utils.secondsToTicks(.5)));
-
-                                // Set monsters glowing when time is low
-                                setMonsterGlow();
-
-                                messageSent = true;
-                            }
-                        } else updateTimeLimitBar(progress);
-                        progress -= time;
-                    }
-                }
-            });
-            activeTasks.get(UPDATE_BAR).runTaskTimer(Main.plugin, 0, Utils.secondsToTicks(1));
+            CountdownManager.startWaveTimeLimitCountdown(this);
         }
 
         // Schedule and record calibration
@@ -2325,117 +2190,13 @@ public class Arena {
         });
         activeTasks.get(CALIBRATE).runTaskTimer(Main.plugin, 0, Utils.secondsToTicks(0.25));
 
-        // Get spawn data
-        DataManager data = new DataManager("spawnTables/" + getSpawnTableFile());
-        String wave = Integer.toString(currentWave);
-        if (!data.getConfig().contains(wave)) {
-            if (data.getConfig().contains("freePlay"))
-                wave = "freePlay";
-            else wave = "1";
-        }
-        int monsterCount = data.getConfig().getInt(wave + ".count.m");
-        List<String> villagers = getTypeRatio(data, wave + ".vtypes");
-        List<String> monsterTypeRatio = getTypeRatio(data, wave + ".mtypes");
-
-        // Account for existing villagers
-        Objects.requireNonNull(getPlayerSpawn().getLocation().getWorld()).getNearbyEntities(getBounds()).stream()
-                .filter(Objects::nonNull)
-                .filter(entity -> entity.hasMetadata(VDMob.VD)).filter(entity -> entity instanceof Villager)
-                .forEach(villager -> {
-                    if (((Villager) villager).getProfession() == Villager.Profession.FLETCHER)
-                        villagers.remove(VDFletcher.KEY);
-                    else villagers.remove(VDNormalVillager.KEY);
-                });
-
-        // Calculate count multiplier
-        double countMultiplier = Math.log((getActiveCount() + 7) / 10d) + 1;
-        if (!hasDynamicCount())
-            countMultiplier = 1;
-
-        // Set mobs left to spawn
-        if (monsterCount != 0)
-            monsterCount = Math.max((int) (monsterCount * countMultiplier), 1);
-
-        // Prepare, schedule, and start spawning
-        Arena arena = this;
-        Random r = new Random();
-        int delay = 0;
-        spawningVillagers = true;
-        for (int i = 0; i < villagers.size(); i++) {
-            delay += spawnDelayTicks(i);
-            int finalI = i;
-            spawnTasks.add(new BukkitRunnable() {
-                @Override
-                public void run() {
-                    // Get spawn location
-                    Location spawn = getVillagerSpawnLocations().get(r.nextInt(getVillagerSpawnLocations().size()));
-
-                    // Spawn
-                    try {
-                        addMob(VDMob.of(villagers.get(finalI), arena, spawn, null));
-                    } catch (InvalidVDMobKeyException e) {
-                        CommunicationManager.debugError("Invalid mob key detected in spawn file!", 1);
-                    }
-                }
-            }.runTaskLater(Main.plugin, delay));
-        }
-        spawnTasks.add(new BukkitRunnable() {
-            @Override
-            public void run() {
-                spawningVillagers = false;
-            }
-        }.runTaskLater(Main.plugin, delay));
-        delay = 0;
-        spawningMonsters = true;
-        for (int i = 0; i < monsterCount; i++) {
-            delay += spawnDelayTicks(i);
-            spawnTasks.add(new BukkitRunnable() {
-                @Override
-                public void run() {
-                    // Get spawn locations
-                    Location ground = getMonsterGroundSpawnLocations()
-                            .get(r.nextInt(getMonsterGroundSpawnLocations().size()));
-                    Location air = getMonsterAirSpawnLocations()
-                            .get(r.nextInt(getMonsterAirSpawnLocations().size()));
-
-                    // Spawn
-                    try {
-                        addMob(VDMob.of(monsterTypeRatio.get(r.nextInt(monsterTypeRatio.size())),
-                                arena, ground, air));
-                    } catch (InvalidVDMobKeyException e) {
-                        CommunicationManager.debugError("Invalid mob key detected in spawn file!", 1);
-                    } catch (Exception ignored) {
-                    }
-                }
-            }.runTaskLater(Main.plugin, delay));
-        }
-        spawnTasks.add(new BukkitRunnable() {
-            @Override
-            public void run() {
-                spawningMonsters = false;
-            }
-        }.runTaskLater(Main.plugin, delay));
-        // TODO: Spawn bosses
+        // Schedule spawning sequences
+        spawnTasks.addAll(SpawningUtil.generateVillagerSpawnSequence(this));
+        spawnTasks.addAll(SpawningUtil.generateMinionSpawnSequence(this));
 
         // Debug message to console
         CommunicationManager.debugInfo("%s started wave %s", 2, getName(),
                 Integer.toString(getCurrentWave()));
-    }
-
-    private int spawnDelayTicks(int mobNum) {
-        Random r = new Random();
-        return r.nextInt((int) (60 * Math.pow(Math.E, - mobNum / 60d)));
-    }
-
-    private List<String> getTypeRatio(DataManager data, String path) {
-        List<String> typeRatio = new ArrayList<>();
-
-        Objects.requireNonNull(data.getConfig().getConfigurationSection(path)).getKeys(false)
-                .forEach(type -> {
-                    for (int i = 0; i < data.getConfig().getInt(path + "." + type); i++)
-                        typeRatio.add(type);
-                });
-        return typeRatio;
     }
 
     public void updateScoreboards() {
@@ -2463,13 +2224,13 @@ public class Arena {
         setStatus(ArenaStatus.ENDING);
 
         // Notify players that the game has ended (Title)
-        getPlayers().forEach(player ->
+        players.forEach(player ->
                 player.getPlayer().sendTitle(CommunicationManager.format("&4&l" +
                                 LanguageManager.messages.gameOver), " ", Utils.secondsToTicks(.5),
                         Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
 
         // Notify players that the game has ended (Chat)
-        getPlayers().forEach(player ->
+        players.forEach(player ->
                 PlayerManager.notifyAlert(
                         player.getPlayer(),
                         LanguageManager.messages.end,
@@ -2482,13 +2243,13 @@ public class Arena {
 
         // Remove mob AI and set them invincible
         mobs.forEach(mob -> {
-            mob.getEntity().setAI(false);
+            mob.getEntity().setAware(false);
             mob.getEntity().setInvulnerable(true);
         });
 
         // Play sound if turned on and arena is either not winning or has unlimited waves
         if (hasLoseSound() && (getCurrentWave() <= getMaxWaves() || getMaxWaves() < 0)) {
-            for (VDPlayer vdPlayer : getPlayers()) {
+            for (VDPlayer vdPlayer : players) {
                 vdPlayer.getPlayer().playSound(getPlayerSpawn().getLocation().clone().add(0, -8, 0),
                         Sound.ENTITY_ENDER_DRAGON_DEATH, 10, .5f);
             }
@@ -2499,7 +2260,7 @@ public class Arena {
             // Check for record
             if (checkNewRecord(new ArenaRecord(getCurrentWave() - 1, getActives().stream()
                     .map(vdPlayer -> vdPlayer.getPlayer().getName()).collect(Collectors.toList())))) {
-                getPlayers().forEach(player -> player.getPlayer().sendTitle(
+                players.forEach(player -> player.getPlayer().sendTitle(
                         new ColoredMessage(ChatColor.GREEN, LanguageManager.messages.record).toString(), null,
                         Utils.secondsToTicks(.5), Utils.secondsToTicks(3.5), Utils.secondsToTicks(1)));
                 refreshArenaBoard();
@@ -2537,7 +2298,7 @@ public class Arena {
         }
 
         // Reset the arena
-        removeTimeLimitBar();
+        CountdownManager.stopCountdown(this);
         activeTasks.put(KICK, new BukkitRunnable() {
             @Override
             public void run() {
@@ -2669,12 +2430,12 @@ public class Arena {
     }
 
     public void kickPlayers() {
-        getPlayers().forEach(player ->
+        players.forEach(player ->
                 Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
                         Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player.getPlayer()))));
     }
 
-    private void resetGame() {
+    public void resetGame() {
         // Clear active tasks
         activeTasks.forEach((name, task) -> task.cancel());
         activeTasks.clear();
@@ -2684,7 +2445,6 @@ public class Arena {
         resetCurrentWave();
         resetEnemies();
         resetVillagers();
-        resetGolems();
 
         // Clear the arena
         WorldManager.clear(getCorner1(), getCorner2());
@@ -2704,6 +2464,11 @@ public class Arena {
 
     public void addMob(VDMob mob) {
         mobs.add(mob);
+    }
+
+    public void addGolem(VDGolem golem) {
+        golems.add(golem);
+        addMob(golem);
     }
 
     public VDMob getMob(UUID id) throws VDMobNotFoundException {
@@ -2736,8 +2501,16 @@ public class Arena {
         return spawningMonsters;
     }
 
+    public void setSpawningMonsters(boolean spawningMonsters) {
+        this.spawningMonsters = spawningMonsters;
+    }
+
     public boolean isSpawningVillagers() {
         return spawningVillagers;
+    }
+
+    public void setSpawningVillagers(boolean spawningVillagers) {
+        this.spawningVillagers = spawningVillagers;
     }
 
     public int getGameID() {
@@ -2752,16 +2525,9 @@ public class Arena {
         return currentWave;
     }
 
-    public int getCurrentShopLevel() {
-        return currentWave / 5 + 1;
-    }
-
     public double getCurrentDifficulty() {
-        double difficulty = Math.pow(Math.E, Math.pow(Math.max(currentWave - 1, 0), .35) /
+        return Math.pow(Math.E, Math.pow(Math.max(currentWave - 1, 0), .4) /
                 (4.5 - getDifficultyMultiplier() / 2d));
-        if (hasDynamicDifficulty())
-            difficulty *= Math.pow(.1 * getActiveCount() + .6, .2);
-        return difficulty;
     }
 
     public void incrementCurrentWave() {
@@ -2790,31 +2556,51 @@ public class Arena {
         enemies = 0;
     }
 
-    public int getGolems() {
-        return golems;
+    public int getMaxEnemies() {
+        return maxEnemies;
     }
 
-    public void incrementGolems() {
-        golems++;
+    public void setMaxEnemies(int maxEnemies) {
+        this.maxEnemies = maxEnemies;
     }
 
-    public void decrementGolems() {
-        golems--;
-    }
+    // Modify the price of an item
+    @NotNull
+    public ItemStack modifyPrice(ItemStack itemStack) {
+        // Set price modifier
+        double modifier = Math.pow(getActiveCount() - 5, 2) / 200 + 1;
 
-    public void resetGolems() {
-        golems = 0;
+        ItemStack item = itemStack.clone();
+        ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
+        try {
+            List<String> lore = Objects.requireNonNull(meta.getLore());
+            int price = (int) Math.round(Integer.parseInt(lore.get(lore.size() - 1)
+                    .substring(6 + LanguageManager.messages.gems.length())) * modifier / 5) * 5;
+            lore.set(lore.size() - 1, CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
+                    price));
+            meta.setLore(lore);
+            item.setItemMeta(meta);
+        } catch (NumberFormatException | NullPointerException ignored) {
+        }
+        return item;
     }
 
     /**
-     * @return A list of all {@link VDPlayer} in this arena.
+     * @return A list of all {@link VDPlayer}s in this arena that aren't of the {@link PlayerStatus} LEFT.
      */
     public List<VDPlayer> getPlayers() {
         return players;
     }
 
     /**
-     * @return A list of {@link VDPlayer} of the {@link PlayerStatus} ALIVE.
+     * @return A list of all {@link Player}s in this arena that aren't of the {@link PlayerStatus} LEFT.
+     */
+    public List<Player> getVanillaPlayers() {
+        return players.stream().map(VDPlayer::getPlayer).collect(Collectors.toList());
+    }
+
+    /**
+     * @return A list of {@link VDPlayer}s of the {@link PlayerStatus} ALIVE.
      */
     public List<VDPlayer> getAlives() {
         return players.stream().filter(Objects::nonNull).filter(p -> p.getStatus() == PlayerStatus.ALIVE)
@@ -2822,7 +2608,7 @@ public class Arena {
     }
 
     /**
-     * @return A list of {@link VDPlayer} of the {@link PlayerStatus} GHOST.
+     * @return A list of {@link VDPlayer}s of the {@link PlayerStatus} GHOST.
      */
     public List<VDPlayer> getGhosts() {
         return players.stream().filter(Objects::nonNull).filter(p -> p.getStatus() == PlayerStatus.GHOST)
@@ -2830,7 +2616,7 @@ public class Arena {
     }
 
     /**
-     * @return A list of {@link VDPlayer} of the {@link PlayerStatus} SPECTATOR.
+     * @return A list of {@link VDPlayer}s of the {@link PlayerStatus} SPECTATOR.
      */
     public List<VDPlayer> getSpectators() {
         return players.stream().filter(Objects::nonNull).filter(p -> p.getStatus() == PlayerStatus.SPECTATOR)
@@ -2838,7 +2624,7 @@ public class Arena {
     }
 
     /**
-     * @return A list of {@link VDPlayer} of the {@link PlayerStatus} ALIVE or GHOST.
+     * @return A list of {@link VDPlayer}s of the {@link PlayerStatus} ALIVE or GHOST.
      */
     public List<VDPlayer> getActives() {
         return Stream.concat(getAlives().stream(), getGhosts().stream()).collect(Collectors.toList());
@@ -2887,6 +2673,10 @@ public class Arena {
         }
     }
 
+    public void removePlayer(VDPlayer player) {
+        players.remove(player);
+    }
+
     public int getActiveCount() {
         return getActives().size();
     }
@@ -2903,126 +2693,12 @@ public class Arena {
         return getSpectators().size();
     }
 
-    public Inventory getSwordShop() {
-        return swordShop;
-    }
-
-    public Inventory getAxeShop() {
-        return axeShop;
-    }
-
-    public Inventory getScytheShop() {
-        return scytheShop;
-    }
-
-    public Inventory getBowShop() {
-        return bowShop;
-    }
-
-    public Inventory getCrossbowShop() {
-        return crossbowShop;
-    }
-
-    public Inventory getAmmoShop() {
-        return ammoShop;
-    }
-
-    public Inventory getHelmetShop() {
-        return helmetShop;
-    }
-
-    public Inventory getChestplateShop() {
-        return chestplateShop;
-    }
-
-    public Inventory getLeggingsShop() {
-        return leggingsShop;
-    }
-
-    public Inventory getBootsShop() {
-        return bootsShop;
-    }
-
-    public Inventory getConsumeShop() {
-        return consumeShop;
-    }
-
     public Inventory getCommunityChest() {
         return communityChest;
     }
 
     public void setCommunityChest(Inventory communityChest) {
         this.communityChest = communityChest;
-    }
-
-    public BossBar getTimeLimitBar() {
-        return timeLimitBar;
-    }
-
-    /**
-     * Create a time limit bar to display.
-     */
-    public void startTimeLimitBar() {
-        timeLimitBar = Bukkit.createBossBar(CommunicationManager.format("&e" +
-                        String.format(LanguageManager.names.timeBar, Integer.toString(getCurrentWave())) + " - " +
-                        getWaveTimeLimit() + ":00"),
-                BarColor.YELLOW, BarStyle.SOLID);
-    }
-
-    /**
-     * Updates the time limit bar's progress.
-     * @param progress The bar's new progress.
-     */
-    public void updateTimeLimitBar(double progress) {
-        timeLimitBar.setProgress(progress);
-        timeLimitBar.setTitle(getTimeLimitBarTitle(progress));
-    }
-
-    /**
-     * Updates the time limit bar's color and progress.
-     * @param color The bar's new color.
-     * @param progress The bar's new progress.
-     */
-    public void updateTimeLimitBar(BarColor color, double progress) {
-        timeLimitBar.setColor(color);
-        timeLimitBar.setProgress(progress);
-        timeLimitBar.setTitle(getTimeLimitBarTitle(progress));
-    }
-
-    /**
-     * Removes the time limit bar from every player.
-     */
-    private void removeTimeLimitBar() {
-        if (timeLimitBar != null) {
-            players.forEach(vdPlayer -> timeLimitBar.removePlayer(vdPlayer.getPlayer()));
-            timeLimitBar = null;
-        }
-    }
-
-    private String getTimeLimitBarTitle(double progress) {
-        int minutes = (int) (progress * getWaveTimeLimit());
-        int seconds = (int) ((progress * getWaveTimeLimit() - minutes) * 60 + 0.5);
-        return CommunicationManager.format("&e" +
-                String.format(LanguageManager.names.timeBar, Integer.toString(getCurrentWave())) + " - " +
-                minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
-    }
-
-    /**
-     * Displays the time limit bar to a player.
-     * @param player {@link Player} to display the time limit bar to.
-     */
-    public void addPlayerToTimeLimitBar(Player player) {
-        if (timeLimitBar != null)
-            timeLimitBar.addPlayer(player);
-    }
-
-    /**
-     * Removes the time limit bar from a player's display.
-     * @param player {@link Player} to remove the time limit bar from.
-     */
-    public void removePlayerFromTimeLimitBar(Player player) {
-        if (timeLimitBar != null && player != null)
-            timeLimitBar.removePlayer(player);
     }
 
     /**
@@ -3088,6 +2764,12 @@ public class Arena {
             case GIANT2:
                 effectKit = Kit.giant().setKitLevel(2);
                 break;
+            case TRAINER1:
+                effectKit = Kit.trainer().setKitLevel(1);
+                break;
+            case TRAINER2:
+                effectKit = Kit.trainer().setKitLevel(2);
+                break;
             default:
                 effectKit = Kit.none();
         }
@@ -3102,7 +2784,6 @@ public class Arena {
     public void calibrate() {
         int monsters;
         int villagers;
-        int golems;
 
         // Get accurate numbers
         monsters = (int) Objects.requireNonNull(getPlayerSpawn().getLocation().getWorld())
@@ -3114,9 +2795,6 @@ public class Arena {
         villagers = (int) getPlayerSpawn().getLocation().getWorld().getNearbyEntities(getBounds()).stream()
                 .filter(Objects::nonNull)
                 .filter(entity -> entity.hasMetadata(VDMob.VD)).filter(entity -> entity instanceof Villager).count();
-        golems = (int) getPlayerSpawn().getLocation().getWorld().getNearbyEntities(getBounds()).stream()
-                .filter(Objects::nonNull)
-                .filter(entity -> entity.hasMetadata(VDMob.VD)).filter(entity -> entity instanceof IronGolem).count();
         boolean calibrated = false;
 
         // Update if out of cal
@@ -3128,8 +2806,6 @@ public class Arena {
             this.villagers = villagers;
             calibrated = true;
         }
-        if (golems != this.golems)
-            this.golems = golems;
 
         // Skip if no visible calibration was performed
         if (!calibrated)
@@ -3166,11 +2842,8 @@ public class Arena {
         setMaxWaves(arenaToCopy.getMaxWaves());
         setWaveTimeLimit(arenaToCopy.getWaveTimeLimit());
         setDifficultyMultiplier(arenaToCopy.getDifficultyMultiplier());
-        setDynamicCount(arenaToCopy.hasDynamicCount());
-        setDynamicDifficulty(arenaToCopy.hasDynamicDifficulty());
         setLateArrival(arenaToCopy.hasLateArrival());
         setDynamicLimit(arenaToCopy.hasDynamicLimit());
-        setDynamicPrices(arenaToCopy.hasDynamicPrices());
         setDifficultyLabel(arenaToCopy.getDifficultyLabel());
         setBannedKitIDs(arenaToCopy.getBannedKitIDs());
         setCommunity(arenaToCopy.hasCommunity());
@@ -3207,7 +2880,7 @@ public class Arena {
      */
     public void wipe() {
         // Kick players
-        getPlayers().forEach(vdPlayer -> Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
+        players.forEach(vdPlayer -> Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
                 Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(vdPlayer.getPlayer()))));
 
         // Clear the arena

@@ -89,4 +89,40 @@ public abstract class VDItem {
         item.setItemMeta(meta);
         return true;
     }
+
+    public static String formatName(ChatColor color, String name, Tier tier) {
+        return CommunicationManager.format(
+                new ColoredMessage(color, name),
+                tier.getLabel()
+        );
+    }
+
+    public static String formatName(String name, Tier tier) {
+        return CommunicationManager.format(
+                new ColoredMessage(name),
+                tier.getLabel()
+        );
+    }
+
+    public enum Tier {
+        SET(new ColoredMessage(ChatColor.YELLOW, "[S]")),
+        T0(new ColoredMessage(ChatColor.AQUA, "[T0]")),
+        T1(new ColoredMessage(ChatColor.AQUA, "[T1]")),
+        T2(new ColoredMessage(ChatColor.AQUA, "[T2]")),
+        T3(new ColoredMessage(ChatColor.AQUA, "[T3]")),
+        T4(new ColoredMessage(ChatColor.AQUA, "[T4]")),
+        T5(new ColoredMessage(ChatColor.AQUA, "[T5]")),
+        T6(new ColoredMessage(ChatColor.AQUA, "[T6]")),
+        UNIQUE(new ColoredMessage(ChatColor.LIGHT_PURPLE, "[U]"));
+
+        private final ColoredMessage label;
+
+        Tier(ColoredMessage label) {
+            this.label = label;
+        }
+
+        public ColoredMessage getLabel() {
+            return label;
+        }
+    }
 }
