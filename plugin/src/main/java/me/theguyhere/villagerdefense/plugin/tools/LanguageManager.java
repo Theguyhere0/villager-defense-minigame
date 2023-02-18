@@ -252,6 +252,7 @@ public class LanguageManager {
         public final @NotNull String challengeDelete;
         public final @NotNull String chestplate;
         public final @NotNull String crystalAdd;
+        public final @NotNull String golemRemove;
         public final @NotNull String helmet;
         public final @NotNull String kitBuy;
         public final @NotNull String kitSelect;
@@ -273,6 +274,7 @@ public class LanguageManager {
             challengeDelete = getConfigString("challengeDelete");
             chestplate = getConfigString("chestplate");
             crystalAdd = getConfigString("crystalAdd");
+            golemRemove = getConfigString("golemRemove");
             helmet = getConfigString("helmet");
             kitBuy = getConfigString("kitBuy");
             kitSelect = getConfigString("kitSelect");
@@ -974,6 +976,7 @@ public class LanguageManager {
         public final @NotNull String effect;
         public final @NotNull String effectKitsDescription;
         public final @NotNull String effectShare;
+        public final @NotNull String eggName;
         public final @NotNull String end;
         public final @NotNull String ending;
         public final @NotNull String enemies;
@@ -987,6 +990,7 @@ public class LanguageManager {
         public final @NotNull String gemsToReceive;
         public final @NotNull String ghosts;
         public final @NotNull String giftKitsDescription;
+        public final @NotNull String golemButton;
         public final @NotNull String help;
         public final @NotNull String help1;
         public final @NotNull String help2;
@@ -1026,7 +1030,6 @@ public class LanguageManager {
         public final @NotNull String pierce;
         public final @NotNull String perBlock;
         public final @NotNull String petButton;
-        public final @NotNull String petName;
         public final @NotNull String playerKits;
         public final @NotNull String players;
         public final @NotNull String playerStatistics;
@@ -1038,6 +1041,7 @@ public class LanguageManager {
         public final @NotNull String records;
         public final @NotNull String refill;
         public final @NotNull String reloadPlugin;
+        public final @NotNull String removeGolem;
         public final @NotNull String removePet;
         public final @NotNull String reset;
         public final @NotNull String resetWarning;
@@ -1106,6 +1110,7 @@ public class LanguageManager {
             effect = getConfigString("effect");
             effectKitsDescription = getConfigString("effectKitsDescription");
             effectShare = getConfigString("effectShare");
+            eggName = getConfigString("eggName");
             end = getConfigString("end");
             ending = getConfigString("ending");
             enemies = getConfigString("enemies");
@@ -1119,6 +1124,7 @@ public class LanguageManager {
             gemsToReceive = getConfigString("gemsToReceive");
             ghosts = getConfigString("ghosts");
             giftKitsDescription = getConfigString("giftKitsDescription");
+            golemButton = getConfigString("golemButton");
             help = getConfigString("help");
             help1 = getConfigString("help1");
             help2 = getConfigString("help2");
@@ -1158,7 +1164,6 @@ public class LanguageManager {
             pierce = getConfigString("pierce");
             perBlock = getConfigString("perBlock");
             petButton = getConfigString("petButton");
-            petName = getConfigString("petName");
             playerKits = getConfigString("playerKits");
             players = getConfigString("players");
             playerStatistics = getConfigString("playerStatistics");
@@ -1170,6 +1175,7 @@ public class LanguageManager {
             records = getConfigString("records");
             refill = getConfigString("refill");
             reloadPlugin = getConfigString("reloadPlugin");
+            removeGolem = getConfigString("removeGolem");
             removePet = getConfigString("removePet");
             reset = getConfigString("reset");
             resetWarning = getConfigString("resetWarning");
@@ -1213,12 +1219,14 @@ public class LanguageManager {
         public final @NotNull String ghast;
         public final @NotNull String horse;
         public final @NotNull String husk;
+        public final @NotNull String ironGolem;
         public final @NotNull String phantom;
         public final @NotNull String piglinSniper;
         public final @NotNull String piglinSoldier;
         public final @NotNull String pillager;
         public final @NotNull String silverfish;
         public final @NotNull String skeleton;
+        public final @NotNull String snowGolem;
         public final @NotNull String spider;
         public final @NotNull String stray;
         public final @NotNull String vex;
@@ -1244,12 +1252,14 @@ public class LanguageManager {
             ghast = getConfigString("ghast");
             horse = getConfigString("horse");
             husk = getConfigString("husk");
+            ironGolem = getConfigString("ironGolem");
             phantom = getConfigString("phantom");
             piglinSniper = getConfigString("piglinSniper");
             piglinSoldier = getConfigString("piglinSoldier");
             pillager = getConfigString("pillager");
             silverfish = getConfigString("silverfish");
             skeleton = getConfigString("skeleton");
+            snowGolem = getConfigString("snowGolem");
             spider = getConfigString("spider");
             stray = getConfigString("stray");
             vex = getConfigString("vex");
@@ -1275,12 +1285,14 @@ public class LanguageManager {
         public final @NotNull String ghast;
         public final @NotNull String horse;
         public final @NotNull String husk;
+        public final @NotNull String ironGolem;
         public final @NotNull String phantom;
         public final @NotNull String piglinSniper;
         public final @NotNull String piglinSoldier;
         public final @NotNull String pillager;
         public final @NotNull String silverfish;
         public final @NotNull String skeleton;
+        public final @NotNull String snowGolem;
         public final @NotNull String spider;
         public final @NotNull String stray;
         public final @NotNull String vex;
@@ -1306,12 +1318,14 @@ public class LanguageManager {
             ghast = getConfigString("ghast");
             horse = getConfigString("horse");
             husk = getConfigString("husk");
+            ironGolem = getConfigString("ironGolem");
             phantom = getConfigString("phantom");
             piglinSniper = getConfigString("piglinSniper");
             piglinSoldier = getConfigString("piglinSoldier");
             pillager = getConfigString("pillager");
             silverfish = getConfigString("silverfish");
             skeleton = getConfigString("skeleton");
+            snowGolem = getConfigString("snowGolem");
             spider = getConfigString("spider");
             stray = getConfigString("stray");
             vex = getConfigString("vex");
@@ -1344,7 +1358,8 @@ public class LanguageManager {
         public final @NotNull String effectKits;
         public final @NotNull String effectShare;
         public final @NotNull String giftKits;
-        public final @NotNull String golemEgg;
+        public final @NotNull String golem;
+        public final @NotNull String golemShop;
         public final @NotNull String hard;
         public final @NotNull String helmetShop;
         public final @NotNull String insane;
@@ -1353,6 +1368,7 @@ public class LanguageManager {
         public final @NotNull String leggingsShop;
         public final @NotNull String medium;
         public final @NotNull String monsterSpawnParticles;
+        public final @NotNull String newGolem;
         public final @NotNull String newPet;
         public final @NotNull String none;
         public final @NotNull String normal;
@@ -1400,7 +1416,8 @@ public class LanguageManager {
             effectKits = getConfigString("effectKits");
             effectShare = getConfigString("effectShare");
             giftKits = getConfigString("giftKits");
-            golemEgg = getConfigString("golemEgg");
+            golem = getConfigString("golem");
+            golemShop = getConfigString("golemShop");
             hard = getConfigString("hard");
             helmetShop = getConfigString("helmetShop");
             insane = getConfigString("insane");
@@ -1409,6 +1426,7 @@ public class LanguageManager {
             leggingsShop = getConfigString("leggingsShop");
             medium = getConfigString("medium");
             monsterSpawnParticles = getConfigString("monsterSpawnParticles");
+            newGolem = getConfigString("newGolem");
             newPet = getConfigString("newPet");
             none = getConfigString("none");
             normal = getConfigString("normal");

@@ -73,8 +73,6 @@ public class VDExpansion extends PlaceholderExpansion {
             return String.valueOf(arena.getDifficultyMultiplier());
         else if (params.contains("enemies_") && arena != null)
             return String.valueOf(arena.getEnemies());
-        else if (params.contains("golems_") && arena != null)
-            return String.valueOf(arena.getGolems());
         else if (params.contains("villagers_") && arena != null)
             return String.valueOf(arena.getVillagers());
         else if (params.contains("spectatorCount_") && arena != null)

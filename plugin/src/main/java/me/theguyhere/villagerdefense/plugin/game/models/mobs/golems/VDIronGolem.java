@@ -1,69 +1,66 @@
-package me.theguyhere.villagerdefense.plugin.game.models.mobs.pets;
+package me.theguyhere.villagerdefense.plugin.game.models.mobs.golems;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.items.eggs.VDEgg;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
-import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.inventories.Buttons;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Cat;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Tameable;
+import org.bukkit.entity.Golem;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
 
-public class VDCat extends VDPet {
-    public VDCat(Arena arena, Location location, VDPlayer owner, int level) {
+public class VDIronGolem extends VDGolem {
+    public VDIronGolem(Arena arena, Location location, int level) {
         super(
                 arena,
-                (Tameable) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.CAT),
-                LanguageManager.mobs.cat,
-                LanguageManager.mobLore.cat,
-                AttackType.NONE,
-                2,
-                Material.SALMON,
-                owner
+                (Golem) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.IRON_GOLEM),
+                LanguageManager.mobs.ironGolem,
+                LanguageManager.mobLore.ironGolem,
+                AttackType.NORMAL,
+                Material.IRON_INGOT
         );
-        ((Cat) mob).setAdult();
-        hpBarSize = 2;
+        hpBarSize = 3;
         this.level = level;
         setHealth(getHealth(level));
         armor = getArmor(level);
-        toughness = getToughness(level);
-        setVeryLightWeight();
-        setFastSpeed();
+        toughness = 0;
+        setDamage(getDamage(level), .15);
+        setSlowAttackSpeed();
+        setVeryHighKnockback();
+        setVeryHeavyWeight();
+        setSlowSpeed();
+        setModerateTargetRange();
         updateNameTag();
     }
 
     @Override
-    public VDPet respawn(Arena arena, Location location) {
-        return new VDCat(arena, location, owner, level);
+    public VDGolem respawn(Arena arena, Location location) {
+        return new VDIronGolem(arena, location, level);
     }
 
     @Override
     public ItemStack createDisplayButton() {
         return ItemManager.createItem(buttonMat, mob.getCustomName(), CommunicationManager.formatDescriptionList(
-                ChatColor.GRAY, LanguageManager.messages.petButton, Utils.LORE_CHAR_LIMIT));
+                ChatColor.GRAY, LanguageManager.messages.golemButton, Utils.LORE_CHAR_LIMIT));
     }
 
     @Override
     public ItemStack createUpgradeButton() {
         switch (level) {
             case 1:
-                return VDEgg.create(2, VDEgg.EggType.CAT);
+                return VDEgg.create(2, VDEgg.EggType.IRON_GOLEM);
             case 2:
-                return VDEgg.create(3, VDEgg.EggType.CAT);
+                return VDEgg.create(3, VDEgg.EggType.IRON_GOLEM);
             case 3:
-                return VDEgg.create(4, VDEgg.EggType.CAT);
-            case 4:
-                return VDEgg.create(5, VDEgg.EggType.CAT);
+                return VDEgg.create(4, VDEgg.EggType.IRON_GOLEM);
             default:
                 return Buttons.noUpgrade();
         }
@@ -74,7 +71,7 @@ public class VDCat extends VDPet {
         level++;
         setHealth(getHealth(level));
         armor = getArmor(level);
-        toughness = getToughness(level);
+        setDamage(getDamage(level), .15);
         updateNameTag();
     }
 
@@ -86,15 +83,13 @@ public class VDCat extends VDPet {
     public static int getHealth(int level) {
         switch (level) {
             case 1:
-                return 160;
+                return 1200;
             case 2:
-                return 200;
+                return 1500;
             case 3:
-                return 240;
+                return 1800;
             case 4:
-                return 275;
-            case 5:
-                return 300;
+                return 2000;
             default:
                 return 0;
         }
@@ -107,53 +102,34 @@ public class VDCat extends VDPet {
      */
     public static int getArmor(int level) {
         switch (level) {
+            case 1:
+                return 10;
             case 2:
-                return 1;
+                return 20;
             case 3:
-                return 2;
+                return 25;
             case 4:
-                return 4;
-            case 5:
-                return 7;
+                return 30;
             default:
                 return 0;
         }
     }
 
     /**
-     * Returns the proper toughness for the mob.
+     * Returns the proper damage for the mob.
      * @param level The mob's level.
-     * @return The toughness for the mob.
+     * @return The damage for the mob.
      */
-    public static double getToughness(int level) {
+    public static int getDamage(int level) {
         switch (level) {
             case 1:
-                return .05;
+                return 180;
             case 2:
-                return .1;
+                return 200;
             case 3:
-                return .15;
+                return 225;
             case 4:
-                return .2;
-            case 5:
-                return .25;
-            default:
-                return 0;
-        }
-    }
-
-    public static int getHeal(int level) {
-        switch (level) {
-            case 1:
-                return 5;
-            case 2:
-                return 7;
-            case 3:
-                return 10;
-            case 4:
-                return 15;
-            case 5:
-                return 20;
+                return 250;
             default:
                 return 0;
         }

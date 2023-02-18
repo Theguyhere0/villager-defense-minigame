@@ -10,19 +10,20 @@ import me.theguyhere.villagerdefense.plugin.game.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
 import me.theguyhere.villagerdefense.plugin.game.managers.CountdownManager;
 import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDCat;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDDog;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDHorse;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDPet;
-import me.theguyhere.villagerdefense.plugin.game.utils.SpawningUtil;
 import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
 import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.Team;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.golems.VDGolem;
 import me.theguyhere.villagerdefense.plugin.game.models.mobs.minions.VDWitch;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDCat;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDDog;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDHorse;
+import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDPet;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.game.utils.SpawningUtil;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryID;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryMeta;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryType;
@@ -81,8 +82,6 @@ public class Arena {
     /** Maximum enemies in a wave.*/
     private int maxEnemies = 0;
     /** Iron golem count.*/
-    private int golems = 0;
-    /** ID of task managing player spawn particles.*/
     private int playerParticlesID = 0;
     /** ID of task managing monster spawn particles.*/
     private int monsterParticlesID = 0;
@@ -102,6 +101,8 @@ public class Arena {
     private final List<ArenaSpawn> monsterSpawns = new ArrayList<>();
     /** The villager spawns for the arena.*/
     private final List<ArenaSpawn> villagerSpawns = new ArrayList<>();
+    /** The golems associated with each villager spawn for the arena.*/
+    private final List<VDGolem> golems = new ArrayList<>();
     /** Arena scoreboard object for the arena.*/
     private ArenaBoard arenaBoard;
 
@@ -200,14 +201,6 @@ public class Arena {
         // Set default villager type to plains if it doesn't exist
         if (getVillagerType() == null || getVillagerType().isEmpty())
             setVillagerType("plains");
-
-        // Set default wolf cap to 5 if it doesn't exist
-        if (getWolfCap() == 0)
-            setWolfCap(5);
-
-        // Set default iron golem cap to 2 if it doesn't exist
-        if (getGolemCap() == 0)
-            setGolemCap(2);
 
         // Set default max waves to -1 if it doesn't exist
         if (getMaxWaves() == 0)
@@ -315,40 +308,6 @@ public class Arena {
         config.set(path + ".villagerType", type);
         Main.saveArenaData();
         refreshPortal();
-    }
-
-    /**
-     * Retrieves the wolf cap per player of the arena from the arena file.
-     * @return Wolf cap per player.
-     */
-    public int getWolfCap() {
-        return config.getInt(path + ".wolf");
-    }
-
-    /**
-     * Writes the new wolf cap per player of the arena into the arena file.
-     * @param wolfCap New wolf cap per player.
-     */
-    public void setWolfCap(int wolfCap) {
-        config.set(path + ".wolf", wolfCap);
-        Main.saveArenaData();
-    }
-
-    /**
-     * Retrieves the iron golem cap of the arena from the arena file.
-     * @return Iron golem cap.
-     */
-    public int getGolemCap() {
-        return config.getInt(path + ".golem");
-    }
-
-    /**
-     * Writes the new iron golem cap of the arena into the arena file.
-     * @param golemCap New iron golem cap.
-     */
-    public void setGolemCap(int golemCap) {
-        config.set(path + ".golem", golemCap);
-        Main.saveArenaData();
     }
 
     /**
@@ -830,8 +789,7 @@ public class Arena {
 
     public List<Location> getVillagerSpawnLocations() {
         List<Location> spawns = new ArrayList<>();
-        for (ArenaSpawn arenaSpawn : villagerSpawns)
-            spawns.add(arenaSpawn.getLocation());
+        villagerSpawns.forEach(spawn -> spawns.add(spawn.getLocation()));
         return spawns;
     }
 
@@ -906,6 +864,10 @@ public class Arena {
 
     public List<ArenaSpawn> getVillagerSpawns() {
         return villagerSpawns;
+    }
+
+    public List<VDGolem> getGolems() {
+        return golems;
     }
 
     /**
@@ -1955,6 +1917,7 @@ public class Arena {
                 // Heal
                 getActives().forEach(VDPlayer::heal);
                 getActives().forEach(player -> player.getPets().forEach(VDPet::heal));
+                golems.forEach(VDGolem::heal);
             }
         });
         activeTasks.get(TWENTY_TICK).runTaskTimer(Main.plugin, 0, 20);
@@ -2092,6 +2055,13 @@ public class Arena {
             p.setStatus(PlayerStatus.ALIVE);
             p.giveItems();
             p.setupAttributes(false);
+        }
+
+        // Revive dead golems
+        for (int i = 0; i < golems.size(); i++) {
+            if (golems.get(i).getEntity().isDead()) {
+                addMob(golems.get(i).respawn(this, getVillagerSpawns().get(i).getLocation()));
+            }
         }
 
         getActives().forEach(p -> {
@@ -2475,7 +2445,6 @@ public class Arena {
         resetCurrentWave();
         resetEnemies();
         resetVillagers();
-        resetGolems();
 
         // Clear the arena
         WorldManager.clear(getCorner1(), getCorner2());
@@ -2495,6 +2464,11 @@ public class Arena {
 
     public void addMob(VDMob mob) {
         mobs.add(mob);
+    }
+
+    public void addGolem(VDGolem golem) {
+        golems.add(golem);
+        addMob(golem);
     }
 
     public VDMob getMob(UUID id) throws VDMobNotFoundException {
@@ -2588,22 +2562,6 @@ public class Arena {
 
     public void setMaxEnemies(int maxEnemies) {
         this.maxEnemies = maxEnemies;
-    }
-
-    public int getGolems() {
-        return golems;
-    }
-
-    public void incrementGolems() {
-        golems++;
-    }
-
-    public void decrementGolems() {
-        golems--;
-    }
-
-    public void resetGolems() {
-        golems = 0;
     }
 
     // Modify the price of an item
@@ -2826,7 +2784,6 @@ public class Arena {
     public void calibrate() {
         int monsters;
         int villagers;
-        int golems;
 
         // Get accurate numbers
         monsters = (int) Objects.requireNonNull(getPlayerSpawn().getLocation().getWorld())
@@ -2838,9 +2795,6 @@ public class Arena {
         villagers = (int) getPlayerSpawn().getLocation().getWorld().getNearbyEntities(getBounds()).stream()
                 .filter(Objects::nonNull)
                 .filter(entity -> entity.hasMetadata(VDMob.VD)).filter(entity -> entity instanceof Villager).count();
-        golems = (int) getPlayerSpawn().getLocation().getWorld().getNearbyEntities(getBounds()).stream()
-                .filter(Objects::nonNull)
-                .filter(entity -> entity.hasMetadata(VDMob.VD)).filter(entity -> entity instanceof IronGolem).count();
         boolean calibrated = false;
 
         // Update if out of cal
@@ -2852,8 +2806,6 @@ public class Arena {
             this.villagers = villagers;
             calibrated = true;
         }
-        if (golems != this.golems)
-            this.golems = golems;
 
         // Skip if no visible calibration was performed
         if (!calibrated)

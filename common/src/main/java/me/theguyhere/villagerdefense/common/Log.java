@@ -5,7 +5,7 @@ import org.bukkit.ChatColor;
 
 /**
  * Logging class to standardize console messages from the plugin.
- *
+ * <p>
  * NOT MEANT TO BE USED DIRECTLY BY OTHER CLASSES.
  */
 class Log {
