@@ -16,6 +16,9 @@ public class CommunicationManager {
      */
     private static int debugLevel = 0;
 
+    /** Whether the plugin tag should be displayed or not. Default is true.*/
+    private static boolean displayPluginTag = true;
+
     public static int getDebugLevel() {
         return debugLevel;
     }
@@ -26,6 +29,14 @@ public class CommunicationManager {
      */
     public static void setDebugLevel(int newDebugLevel) {
         debugLevel = Math.max(Math.min(newDebugLevel, 3), 0);
+    }
+
+    /**
+     * Sets the flag for whether the plugin tag should be displayed or not.
+     * @param displayPluginTag Whether the plugin tag should be displayed or not.
+     */
+    public static void setDisplayPluginTag(boolean displayPluginTag) {
+        CommunicationManager.displayPluginTag = displayPluginTag;
     }
 
     /**
@@ -141,7 +152,9 @@ public class CommunicationManager {
      * @return Formatted message prepared to be sent to the player.
      */
     public static String notify(String msg) {
-        return format(new ColoredMessage(ChatColor.DARK_GREEN, "[VD] %s"), new ColoredMessage(msg));
+        if (displayPluginTag)
+            return format(new ColoredMessage(ChatColor.DARK_GREEN, "[VD] %s"), new ColoredMessage(msg));
+        else return new ColoredMessage(msg).toString();
     }
 
     /**
@@ -151,7 +164,10 @@ public class CommunicationManager {
      * @return Formatted message prepared to be sent to the player.
      */
     public static String namedNotify(ColoredMessage name, String msg) {
-        return format(new ColoredMessage(ChatColor.DARK_GREEN, "[VD] %s: %s"), name, new ColoredMessage(msg));
+        if (displayPluginTag)
+            return format(new ColoredMessage(ChatColor.DARK_GREEN, "[VD] %s: %s"), name,
+                    new ColoredMessage(msg));
+        else return format(new ColoredMessage(ChatColor.DARK_GREEN, "%s: %s"), name, new ColoredMessage(msg));
     }
 
     public static void debugError(String msg, int debugLevel) {
