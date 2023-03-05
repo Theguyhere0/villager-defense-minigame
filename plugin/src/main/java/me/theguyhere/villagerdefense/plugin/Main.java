@@ -150,6 +150,7 @@ public class Main extends JavaPlugin {
 		} catch (InvalidLanguageKeyException e) {
 			e.printStackTrace();
 		}
+		CommunicationManager.setDisplayPluginTag(getConfig().getBoolean("displayPluginTag"));
 		checkFileVersions();
 
 		// Set as unloaded while reloading
