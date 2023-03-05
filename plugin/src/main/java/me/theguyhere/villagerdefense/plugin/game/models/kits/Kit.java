@@ -56,6 +56,7 @@ import java.util.*;
  *     <li>Merchant</li>
  *     <li>Vampire</li>
  *     <li>Giant</li>
+ *     <li>Trainer</li>
  * </ul>
  */
 public class Kit {
