@@ -43,7 +43,7 @@ public class Main extends JavaPlugin {
 	// Global state variables
 	private static boolean outdated = false; // DO NOT CHANGE
 	public static final boolean releaseMode = false;
-	public static final int configVersion = 9;
+	public static final int configVersion = 10;
 	public static final int arenaDataVersion = 8;
 	public static final int playerDataVersion = 3;
 	public static final int spawnTableVersion = 4;
@@ -85,6 +85,7 @@ public class Main extends JavaPlugin {
 		} catch (InvalidLanguageKeyException e) {
 			e.printStackTrace();
 		}
+		CommunicationManager.setDisplayPluginTag(getConfig().getBoolean("displayPluginTag"));
 
 		// Register event listeners
 		pm.registerEvents(new InventoryListener(), this);
@@ -149,6 +150,7 @@ public class Main extends JavaPlugin {
 		} catch (InvalidLanguageKeyException e) {
 			e.printStackTrace();
 		}
+		CommunicationManager.setDisplayPluginTag(getConfig().getBoolean("displayPluginTag"));
 		checkFileVersions();
 
 		// Set as unloaded while reloading

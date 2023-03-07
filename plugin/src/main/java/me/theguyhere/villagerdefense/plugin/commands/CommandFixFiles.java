@@ -17,9 +17,14 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Executes command to attempt fixing and updating files.
@@ -393,6 +398,32 @@ class CommandFixFiles {
                     "default.yml", Integer.toString(Main.defaultSpawnVersion));
             CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn, 0,
                     "All other spawn files");
+        }
+
+        // Check if spawn table structure can be considered updated
+        boolean noCustomSpawnTables = false;
+        try (Stream<Path> stream = Files.list(Paths.get(Main.plugin.getDataFolder().getPath() + "/spawnTables"))) {
+            noCustomSpawnTables = stream.count() < 2;
+        } catch (IOException ignored) {
+        }
+        if (noCustomSpawnTables && Main.plugin.getConfig().getInt("spawnTableStructure") < Main.spawnTableVersion) {
+            // Flip flag
+            fixed = true;
+
+            // Fix
+            Main.plugin.getConfig().set("spawnTableStructure", Main.spawnTableVersion);
+            Main.plugin.saveConfig();
+
+            // Notify
+            if (sender instanceof Player) {
+                PlayerManager.notifySuccess(
+                        (Player) sender,
+                        LanguageManager.confirms.autoUpdate,
+                        new ColoredMessage(ChatColor.AQUA, "Spawn tables"),
+                        new ColoredMessage(ChatColor.AQUA, Integer.toString(Main.spawnTableVersion)));
+            }
+            CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, 0,
+                    "Spawn tables", Integer.toString(Main.spawnTableVersion));
         }
 
         // Update default language file
