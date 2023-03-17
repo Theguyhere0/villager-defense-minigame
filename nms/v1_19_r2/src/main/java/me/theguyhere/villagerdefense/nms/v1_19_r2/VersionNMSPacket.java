@@ -19,7 +19,7 @@ abstract class VersionNMSPacket implements PacketGroup {
      */
     @Override
     public void sendTo(Player player) {
-        ((CraftPlayer) player).getHandle().b.a(getRawPacket());
+        ((CraftPlayer) player).getHandle().connection.send(getRawPacket());
     }
 
     abstract Packet<?> getRawPacket();

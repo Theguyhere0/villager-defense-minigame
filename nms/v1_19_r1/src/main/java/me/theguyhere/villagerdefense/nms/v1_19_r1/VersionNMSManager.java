@@ -8,12 +8,10 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.nms.common.*;
 import me.theguyhere.villagerdefense.nms.common.entities.TextPacketEntity;
 import me.theguyhere.villagerdefense.nms.common.entities.VillagerPacketEntity;
-import net.minecraft.core.BlockPosition;
-import net.minecraft.core.IRegistry;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.server.network.PlayerConnection;
-import net.minecraft.world.level.block.entity.TileEntityTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -62,20 +60,20 @@ public class VersionNMSManager implements NMSManager {
         Location location = player.getLocation();
         location.setY(location.getY() + 1);
         Material original = location.getBlock().getType();
-        BlockPosition position = new BlockPosition(location.getX(), location.getY(), location.getZ());
-        NBTTagCompound signNBT = new NBTTagCompound();
-        signNBT.a("Text1", String.format("{\"text\":\"%s\"}",
+        BlockPos position = new BlockPos(location.getX(), location.getY(), location.getZ());
+        CompoundTag signNBT = new CompoundTag();
+        signNBT.putString("Text1", String.format("{\"text\":\"%s\"}",
                 CommunicationManager.format(String.format("&9   Rename Arena %d:   ", arenaID))));
-        signNBT.a("Text2", String.format("{\"text\":\"%s\"}",
+        signNBT.putString("Text2", String.format("{\"text\":\"%s\"}",
                 new ColoredMessage(ChatColor.DARK_BLUE, "===============")));
-        signNBT.a("Text3", String.format("{\"text\":\"%s\"}",
+        signNBT.putString("Text3", String.format("{\"text\":\"%s\"}",
                 CommunicationManager.format(arenaName == null ? "" : arenaName)));
-        signNBT.a("Text4", String.format("{\"text\":\"%s\"}",
+        signNBT.putString("Text4", String.format("{\"text\":\"%s\"}",
                 new ColoredMessage(ChatColor.DARK_BLUE, "===============")));
 
         PacketGroup.of(
                 new BlockChangePacket(position, Material.OAK_SIGN),
-                new TileEntityDataPacket(position, IRegistry.ab.a(TileEntityTypes.h), signNBT),
+                new TileEntityDataPacket(position, Registry.BLOCK_ENTITY_TYPE.getId(BlockEntityType.SIGN), signNBT),
                 new OpenSignEditorPacket(position),
                 new BlockChangePacket(position, original)).sendTo(player);
     }
@@ -147,9 +145,7 @@ public class VersionNMSManager implements NMSManager {
      * @param pipelineModifierTask Consumer function for modifying pipeline.
      */
     private void modifyPipeline(Player player, Consumer<ChannelPipeline> pipelineModifierTask) {
-        PlayerConnection playerConnection = ((CraftPlayer) player).getHandle().b;
-        NetworkManager networkManager = playerConnection.a();
-        Channel channel = networkManager.m;
+        Channel channel = ((CraftPlayer) player).getHandle().connection.connection.channel;
 
         channel.eventLoop().execute(() -> {
             try {

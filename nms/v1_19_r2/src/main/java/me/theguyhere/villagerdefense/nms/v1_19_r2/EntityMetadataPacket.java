@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.nms.v1_19_r2;
 
 import me.theguyhere.villagerdefense.nms.common.EntityID;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 
 /**
  * A class for sending entity metadata packets.
@@ -13,7 +13,7 @@ class EntityMetadataPacket extends VersionNMSPacket {
     private final Packet<?> rawPacket;
 
     private EntityMetadataPacket(PacketSetter packetSetter) {
-        rawPacket = new PacketPlayOutEntityMetadata(packetSetter);
+        rawPacket = new ClientboundSetEntityDataPacket(packetSetter);
     }
 
     @Override

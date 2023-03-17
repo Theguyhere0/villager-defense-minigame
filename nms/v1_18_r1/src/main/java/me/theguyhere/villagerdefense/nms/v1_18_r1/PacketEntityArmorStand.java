@@ -7,7 +7,7 @@ import org.bukkit.Location;
 
 /**
  * An armor stand entity constructed out of packets.
- *
+ * <p>
  * Class structure borrowed from filoghost.
  */
 class PacketEntityArmorStand implements TextPacketEntity {
