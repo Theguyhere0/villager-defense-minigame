@@ -11,6 +11,7 @@ import me.theguyhere.villagerdefense.nms.common.entities.VillagerPacketEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -80,12 +81,12 @@ public class VersionNMSManager implements NMSManager {
 
     @Override
     public void setBowCooldown(Player player, int cooldownTicks) {
-        new SetCooldownPacket(ItemID.BOW, cooldownTicks).sendTo(player);
+        new SetCooldownPacket(Registry.ITEM.getId(Items.BOW), cooldownTicks).sendTo(player);
     }
 
     @Override
     public void setCrossbowCooldown(Player player, int cooldownTicks) {
-        new SetCooldownPacket(ItemID.CROSSBOW, cooldownTicks).sendTo(player);
+        new SetCooldownPacket(Registry.ITEM.getId(Items.CROSSBOW), cooldownTicks).sendTo(player);
     }
 
     @Override

@@ -1,23 +1,25 @@
-package me.theguyhere.villagerdefense.nms.v1_18_r1;
+package me.theguyhere.villagerdefense.nms.v1_19_r3;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelPipeline;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.nms.common.*;
 import me.theguyhere.villagerdefense.nms.common.entities.TextPacketEntity;
 import me.theguyhere.villagerdefense.nms.common.entities.VillagerPacketEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.util.function.Consumer;
@@ -61,7 +63,7 @@ public class VersionNMSManager implements NMSManager {
         Location location = player.getLocation();
         location.setY(location.getY() + 1);
         Material original = location.getBlock().getType();
-        BlockPos position = new BlockPos(location.getX(), location.getY(), location.getZ());
+        BlockPos position = new BlockPos((int) location.getX(), (int) location.getY(), (int) location.getZ());
         CompoundTag signNBT = new CompoundTag();
         signNBT.putString("Text1", String.format("{\"text\":\"%s\"}",
                 CommunicationManager.format(String.format("&9   Rename Arena %d:   ", arenaID))));
@@ -74,19 +76,20 @@ public class VersionNMSManager implements NMSManager {
 
         PacketGroup.of(
                 new BlockChangePacket(position, Material.OAK_SIGN),
-                new TileEntityDataPacket(position, Registry.BLOCK_ENTITY_TYPE.getId(BlockEntityType.SIGN), signNBT),
+                new TileEntityDataPacket(position, BuiltInRegistries.BLOCK_ENTITY_TYPE.getId(BlockEntityType.SIGN),
+                        signNBT),
                 new OpenSignEditorPacket(position),
                 new BlockChangePacket(position, original)).sendTo(player);
     }
 
     @Override
     public void setBowCooldown(Player player, int cooldownTicks) {
-        new SetCooldownPacket(Registry.ITEM.getId(Items.BOW), cooldownTicks).sendTo(player);
+        new SetCooldownPacket(BuiltInRegistries.ITEM.getId(Items.BOW), cooldownTicks).sendTo(player);
     }
 
     @Override
     public void setCrossbowCooldown(Player player, int cooldownTicks) {
-        new SetCooldownPacket(Registry.ITEM.getId(Items.CROSSBOW), cooldownTicks).sendTo(player);
+        new SetCooldownPacket(BuiltInRegistries.ITEM.getId(Items.CROSSBOW), cooldownTicks).sendTo(player);
     }
 
     @Override
@@ -146,7 +149,9 @@ public class VersionNMSManager implements NMSManager {
      * @param pipelineModifierTask Consumer function for modifying pipeline.
      */
     private void modifyPipeline(Player player, Consumer<ChannelPipeline> pipelineModifierTask) {
-        Channel channel = ((CraftPlayer) player).getHandle().connection.connection.channel;
+        Connection connection = (Connection) Utils.getFieldValue(((CraftPlayer) player).getHandle().connection,
+                "connection");
+        Channel channel = connection.channel;
 
         channel.eventLoop().execute(() -> {
             try {
