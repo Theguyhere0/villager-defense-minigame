@@ -3,23 +3,23 @@ package me.theguyhere.villagerdefense.plugin.inventories;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.game.models.items.VDItem;
-import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.VDAbility;
-import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Boots;
-import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Chestplate;
-import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Helmet;
-import me.theguyhere.villagerdefense.plugin.game.models.items.armor.Leggings;
-import me.theguyhere.villagerdefense.plugin.game.models.items.eggs.VDEgg;
-import me.theguyhere.villagerdefense.plugin.game.models.items.food.ShopFood;
-import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.*;
-import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
-import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.tools.*;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.GameController;
+import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
+import me.theguyhere.villagerdefense.plugin.achievements.Achievement;
+import me.theguyhere.villagerdefense.plugin.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.items.VDItem;
+import me.theguyhere.villagerdefense.plugin.items.abilities.VDAbility;
+import me.theguyhere.villagerdefense.plugin.items.armor.Boots;
+import me.theguyhere.villagerdefense.plugin.items.armor.Chestplate;
+import me.theguyhere.villagerdefense.plugin.items.armor.Helmet;
+import me.theguyhere.villagerdefense.plugin.items.armor.Leggings;
+import me.theguyhere.villagerdefense.plugin.items.eggs.VDEgg;
+import me.theguyhere.villagerdefense.plugin.items.food.ShopFood;
+import me.theguyhere.villagerdefense.plugin.items.weapons.*;
+import me.theguyhere.villagerdefense.plugin.kits.Kit;
+import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.managers.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -34,15 +34,15 @@ public class Inventories {
 	public static Inventory createMainMenu() {
 		List<ItemStack> buttons = new ArrayList<>();
 
-		// Option to set lobby location
+		// Option to set manage lobby
 		buttons.add(ItemManager.createItem(Material.BELL, CommunicationManager.format("&2&lLobby"),
 				CommunicationManager.format("&7Manage minigame lobby")));
 
-		// Option to set info boards
+		// Option to manage info boards
 		buttons.add(ItemManager.createItem(Material.OAK_SIGN, CommunicationManager.format("&6&lInfo Boards"),
 				CommunicationManager.format("&7Manage info boards")));
 
-		// Option to set leaderboards
+		// Option to manage leaderboards
 		buttons.add(ItemManager.createItem(Material.GOLDEN_HELMET,
 				CommunicationManager.format("&e&lLeaderboards"), ItemManager.BUTTON_FLAGS, null,
 				CommunicationManager.format("&7Manage leaderboards")));
@@ -70,9 +70,9 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Gather all arenas in order
-		GameManager.getArenas().keySet().stream().sorted().forEach(id -> buttons.add(ItemManager.createItem(
+		GameController.getArenas().keySet().stream().sorted().forEach(id -> buttons.add(ItemManager.createItem(
 				Material.EMERALD_BLOCK,
-				CommunicationManager.format("&a&lEdit " + GameManager.getArenas().get(id).getName())
+				CommunicationManager.format("&a&lEdit " + GameController.getArenas().get(id).getName())
 		)));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
@@ -306,7 +306,7 @@ public class Inventories {
 				CommunicationManager.format("&9&lClose Arena: " + closed)));
 
 		// Option to remove arena
-		buttons.add(Buttons.remove("ARENA"));
+		buttons.add(InventoryButtons.remove("ARENA"));
 
 		return InventoryFactory.createDynamicSizeInventory(
 				new InventoryMeta(InventoryID.ARENA_MENU, InventoryType.MENU, arena),
@@ -541,17 +541,17 @@ public class Inventories {
 
 		// Option to create or relocate monster spawn
 		if (arena.getMonsterSpawn(monsterSpawnID) != null)
-			buttons.add(Buttons.relocate("Spawn"));
-		else buttons.add(Buttons.create("Spawn"));
+			buttons.add(InventoryButtons.relocate("Spawn"));
+		else buttons.add(InventoryButtons.create("Spawn"));
 
 		// Option to teleport to monster spawn
-		buttons.add(Buttons.teleport("Spawn"));
+		buttons.add(InventoryButtons.teleport("Spawn"));
 
 		// Option to center the monster spawn
-		buttons.add(Buttons.center("Spawn"));
+		buttons.add(InventoryButtons.center("Spawn"));
 
 		// Option to remove monster spawn
-		buttons.add(Buttons.remove("SPAWN"));
+		buttons.add(InventoryButtons.remove("SPAWN"));
 
 		// Toggle to set monster spawn type
 		switch (arena.getMonsterSpawnType(monsterSpawnID)) {
@@ -938,7 +938,7 @@ public class Inventories {
 		else inv.setItem(50, Kit.trainer().getButton(-1, true));
 
 		// Option to exit
-		inv.setItem(53, Buttons.exit());
+		inv.setItem(53, InventoryButtons.exit());
 
 		return inv;
 	}
@@ -1233,7 +1233,7 @@ public class Inventories {
 							buttons.add(
 									ItemManager.createItem(Material.GRAY_GLAZED_TERRACOTTA,
 											CommunicationManager.format("&a&lCopy " +
-													GameManager.getArena(Integer.parseInt(id)).getName()))
+													GameController.getArena(Integer.parseInt(id)).getName()))
 							);
 						} catch (ArenaNotFoundException ignored) {
 						}
@@ -1462,7 +1462,7 @@ public class Inventories {
 				buttons.add(arena.modifyPrice(Ammo.create(VDItem.Tier.T6)));
 				break;
 			default:
-				buttons.add(Buttons.noUpgrade());
+				buttons.add(InventoryButtons.noUpgrade());
 		}
 
 		return InventoryFactory.createDynamicSizeInventory(
@@ -1718,7 +1718,7 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 		if (Kit.checkAbilityKit(player.getKit().getID())) {
 			if (player.getTieredEssenceLevel() + 1 > player.getKit().getLevel() * 2)
-				buttons.add(Buttons.noUpgrade());
+				buttons.add(InventoryButtons.noUpgrade());
 			else {
 				ItemStack ability = null;
 				switch (player.getTieredEssenceLevel() + 1) {
@@ -1739,13 +1739,13 @@ public class Inventories {
 						break;
 				}
 				if (ability == null)
-					buttons.add(Buttons.noUpgrade());
+					buttons.add(InventoryButtons.noUpgrade());
 				else if (player.isBoosted() && PlayerManager.hasAchievement(player.getID(),
 						Achievement.allMaxedAbility().getID()))
 					buttons.add(VDAbility.modifyCooldown(arena.modifyPrice(ability), .9));
 				else buttons.add(arena.modifyPrice(ability));
 			}
-		} else buttons.add(Buttons.noUpgrade());
+		} else buttons.add(InventoryButtons.noUpgrade());
 
 		return InventoryFactory.createDynamicSizeInventory(
 				new InventoryMeta(InventoryID.ABILITY_UPGRADE_SHOP_MENU, InventoryType.MENU),
@@ -1908,7 +1908,7 @@ public class Inventories {
 							LanguageManager.names.crystal) + ": &b" + PlayerManager.getCrystalBalance(ownerID))));
 
 		// Option to exit
-		inv.setItem(53, Buttons.exit());
+		inv.setItem(53, InventoryButtons.exit());
 
 		return inv;
 	}
@@ -2023,7 +2023,7 @@ public class Inventories {
 		inv.setItem(52, Kit.none().getButton(0, true));
 
 		// Option to exit
-		inv.setItem(53, Buttons.exit());
+		inv.setItem(53, InventoryButtons.exit());
 
 		return inv;
 	}
@@ -2538,7 +2538,7 @@ public class Inventories {
 				CommunicationManager.format("&c&l-1000 " + LanguageManager.messages.gems)));
 
 		// Option to exit
-		inv.setItem(26, Buttons.exit());
+		inv.setItem(26, InventoryButtons.exit());
 
 		return inv;
 	}

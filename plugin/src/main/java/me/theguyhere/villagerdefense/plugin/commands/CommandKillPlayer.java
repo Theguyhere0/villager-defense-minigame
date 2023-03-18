@@ -1,14 +1,13 @@
 package me.theguyhere.villagerdefense.plugin.commands;
 
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.exceptions.CommandException;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
-import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
-import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.GameController;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaStatus;
+import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerStatus;
+import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.managers.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -27,13 +26,13 @@ class CommandKillPlayer {
         Player player = CommandGuard.checkSenderPlayer(sender);
 
         // Check for player in a game
-        if (!GameManager.checkPlayer(player)) {
+        if (!GameController.checkPlayer(player)) {
             PlayerManager.notifyFailure(player, LanguageManager.errors.notInGame);
             return;
         }
 
         // Check for player in an active game
-        if (GameManager.getArenas().values().stream().filter(Objects::nonNull)
+        if (GameController.getArenas().values().stream().filter(Objects::nonNull)
                 .filter(arena1 -> arena1.getStatus() == ArenaStatus.ACTIVE)
                 .noneMatch(arena1 -> arena1.hasPlayer(player))) {
             PlayerManager.notifyFailure(player, LanguageManager.errors.suicideActive);
@@ -42,7 +41,7 @@ class CommandKillPlayer {
 
         // Check for alive player
         try {
-            if (GameManager.getArena(player).getPlayer(player).getStatus() != PlayerStatus.ALIVE) {
+            if (GameController.getArena(player).getPlayer(player).getStatus() != PlayerStatus.ALIVE) {
                 PlayerManager.notifyFailure(player, LanguageManager.errors.suicide);
                 return;
             }

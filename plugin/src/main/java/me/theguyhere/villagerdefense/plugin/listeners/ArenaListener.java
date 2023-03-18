@@ -5,20 +5,20 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.JoinArenaEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaException;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.achievements.AchievementChecker;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
-import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
-import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
-import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
-import me.theguyhere.villagerdefense.plugin.tools.WorldManager;
+import me.theguyhere.villagerdefense.plugin.GameController;
+import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
+import me.theguyhere.villagerdefense.plugin.achievements.AchievementChecker;
+import me.theguyhere.villagerdefense.plugin.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaStatus;
+import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerStatus;
+import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.managers.NMSVersion;
+import me.theguyhere.villagerdefense.plugin.managers.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.managers.WorldManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -38,7 +38,7 @@ public class ArenaListener implements Listener {
         Player player = e.getPlayer();
 
         // Ignore if player is already in a game somehow
-        if (GameManager.checkPlayer(player)) {
+        if (GameController.checkPlayer(player)) {
             e.setCancelled(true);
             PlayerManager.notifyFailure(player, LanguageManager.errors.join);
             return;
@@ -109,7 +109,7 @@ public class ArenaListener implements Listener {
                     fighter.addChallenge(Challenge.getChallengeByID(challenge)));
 
             // Give them a game board
-            GameManager.createBoard(fighter);
+            GameController.createBoard(fighter);
 
             // Clear arena
             WorldManager.clear(arena.getCorner1(), arena.getCorner2());
@@ -150,7 +150,7 @@ public class ArenaListener implements Listener {
                     fighter.addChallenge(Challenge.getChallengeByID(challenge)));
 
             // Give them a game board
-            GameManager.createBoard(fighter);
+            GameController.createBoard(fighter);
 
             // Give them starting items
             fighter.giveItems();
@@ -216,7 +216,7 @@ public class ArenaListener implements Listener {
 
         // Attempt to get arena and player
         try {
-            arena = GameManager.getArena(player);
+            arena = GameController.getArena(player);
             gamer = arena.getPlayer(player);
         } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             e.setCancelled(true);
@@ -243,7 +243,7 @@ public class ArenaListener implements Listener {
             AchievementChecker.checkDefaultInstanceAchievements(gamer);
 
             // Refresh leaderboards
-            GameManager.refreshLeaderboards();
+            GameController.refreshLeaderboards();
 
             // Remove the player from the arena
             arena.removePlayer(gamer);
@@ -266,7 +266,7 @@ public class ArenaListener implements Listener {
 
             // Sets them up for teleport to lobby
             player.getScoreboard().clearSlot(DisplaySlot.SIDEBAR);
-            PlayerManager.teleAdventure(player, GameManager.getLobby());
+            PlayerManager.teleAdventure(player, GameController.getLobby());
 
             // Give persistent rewards if it applies
             if (arena.getCurrentWave() != 0 && arena.getStatus() == ArenaStatus.ACTIVE) {
@@ -318,7 +318,7 @@ public class ArenaListener implements Listener {
             arena.removePlayer(gamer);
 
             // Sets them up for teleport to lobby
-            PlayerManager.teleAdventure(player, GameManager.getLobby());
+            PlayerManager.teleAdventure(player, GameController.getLobby());
         }
 
         // Return player survival stats
@@ -326,7 +326,7 @@ public class ArenaListener implements Listener {
             PlayerManager.returnSurvivalStats(player);
 
         // Reset world border effect
-        WorldBorder worldBorder = Objects.requireNonNull(GameManager.getLobby().getWorld()).getWorldBorder();
+        WorldBorder worldBorder = Objects.requireNonNull(GameController.getLobby().getWorld()).getWorldBorder();
         NMSVersion.getCurrent().getNmsManager().resetEffect(worldBorder.getCenter(), worldBorder.getSize(),
                 worldBorder.getWarningDistance()).sendTo(player);
 
@@ -334,7 +334,7 @@ public class ArenaListener implements Listener {
         arena.refreshPortal();
 
         // Refresh all displays for the player
-        GameManager.displayEverything(player);
+        GameController.displayEverything(player);
 
         // Debug message to console
         CommunicationManager.debugInfo("%s left %s", 2, player.getName(), arena.getName());

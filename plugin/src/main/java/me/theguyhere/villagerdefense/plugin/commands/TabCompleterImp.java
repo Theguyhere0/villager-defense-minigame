@@ -1,8 +1,8 @@
 package me.theguyhere.villagerdefense.plugin.commands;
 
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.GameController;
+import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -48,7 +48,7 @@ public class TabCompleterImp implements TabCompleter {
             StringBuilder nameFrag = new StringBuilder(args[1].toLowerCase());
             for (int i = 0; i < args.length - 2; i++)
                 nameFrag.append(" ").append(args[i + 2]);
-            GameManager.getArenas().values().stream().filter(Objects::nonNull).map(Arena::getName).forEach(name -> {
+            GameController.getArenas().values().stream().filter(Objects::nonNull).map(Arena::getName).forEach(name -> {
                 if (name.toLowerCase().startsWith(nameFrag.toString()))
                     result.add(name);
             });
@@ -134,7 +134,7 @@ public class TabCompleterImp implements TabCompleter {
                     argFrag = new StringBuilder(args[3].toLowerCase());
                     for (int i = 0; i < args.length - 4; i++)
                         argFrag.append(" ").append(args[i + 4]);
-                    GameManager.getArenas().values().stream().filter(Objects::nonNull).map(Arena::getName)
+                    GameController.getArenas().values().stream().filter(Objects::nonNull).map(Arena::getName)
                             .forEach(name -> {
                                 if (name.toLowerCase().startsWith(argFrag.toString()))
                                     result.add(name);

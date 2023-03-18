@@ -2,12 +2,8 @@ package me.theguyhere.villagerdefense.plugin.commands;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.exceptions.CommandDebugLevelException;
-import me.theguyhere.villagerdefense.plugin.exceptions.CommandPermissionException;
-import me.theguyhere.villagerdefense.plugin.exceptions.CommandPlayerException;
-import me.theguyhere.villagerdefense.plugin.exceptions.CommandPluginIsReleasedException;
-import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.managers.PlayerManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -20,22 +16,22 @@ class CommandGuard {
     /**
      * Precedence of 2.
      */
-    static void checkSenderPermissions(Player sender, Permission permission) throws CommandPermissionException {
-        if (sender.hasPermission(permission.getPermission()))
+    static void checkSenderPermissions(Player sender, CommandPermission commandPermission) throws CommandPermissionException {
+        if (sender.hasPermission(commandPermission.getPermission()))
             return;
         PlayerManager.notifyFailure(sender, LanguageManager.errors.permission);
-        throw new CommandPermissionException(sender.getDisplayName() + " does not have the permission " + permission);
+        throw new CommandPermissionException(sender.getDisplayName() + " does not have the commandPermission " + commandPermission);
     }
 
     /**
      * Precedence of 1.
      */
-    static void checkSenderPermissions(CommandSender sender, Permission permission) throws CommandPermissionException {
-        if (!(sender instanceof Player) || sender.hasPermission(permission.getPermission()))
+    static void checkSenderPermissions(CommandSender sender, CommandPermission commandPermission) throws CommandPermissionException {
+        if (!(sender instanceof Player) || sender.hasPermission(commandPermission.getPermission()))
             return;
         Player player = (Player) sender;
         PlayerManager.notifyFailure(player, LanguageManager.errors.permission);
-        throw new CommandPermissionException(player.getDisplayName() + " does not have the permission " + permission);
+        throw new CommandPermissionException(player.getDisplayName() + " does not have the commandPermission " + commandPermission);
     }
 
     /**

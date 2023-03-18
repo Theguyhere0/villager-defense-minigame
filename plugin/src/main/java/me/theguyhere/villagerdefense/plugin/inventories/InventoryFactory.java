@@ -1,8 +1,8 @@
 package me.theguyhere.villagerdefense.plugin.inventories;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
+import me.theguyhere.villagerdefense.plugin.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.managers.ItemManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -109,7 +109,7 @@ public class InventoryFactory {
 
         // Set exit button
         if (exitButton)
-            inv.setItem(invSize - 1, Buttons.exit());
+            inv.setItem(invSize - 1, InventoryButtons.exit());
 
         return inv;
     }
@@ -142,9 +142,9 @@ public class InventoryFactory {
         // Set exit button
         if (exitButton) {
             if (hangingButtons == 0)
-                inv.setItem(invSize - 5, Buttons.exit());
+                inv.setItem(invSize - 5, InventoryButtons.exit());
             else
-                inv.setItem(invSize - 1, Buttons.exit());
+                inv.setItem(invSize - 1, InventoryButtons.exit());
         }
 
         return inv;
@@ -183,21 +183,21 @@ public class InventoryFactory {
         // Set exit button
         if (exitButton) {
             if (newButton)
-                inv.setItem(invSize - 1, Buttons.exit());
+                inv.setItem(invSize - 1, InventoryButtons.exit());
             else
-                inv.setItem(invSize - 5, Buttons.exit());
+                inv.setItem(invSize - 5, InventoryButtons.exit());
         }
 
         // Set new button
         if (newButton)
-            inv.setItem(invSize - 5, Buttons.newAdd(dataStructureName));
+            inv.setItem(invSize - 5, InventoryButtons.newAdd(dataStructureName));
 
         // Set page navigation buttons
         if (page > 1)
-            inv.setItem(invSize - 7, Buttons.previousPage());
+            inv.setItem(invSize - 7, InventoryButtons.previousPage());
 
         if (page < pages)
-            inv.setItem(invSize - 3, Buttons.nextPage());
+            inv.setItem(invSize - 3, InventoryButtons.nextPage());
 
         return inv;
     }
@@ -286,21 +286,21 @@ public class InventoryFactory {
         // Set exit button
         if (exitButton) {
             if (newButton)
-                inv.setItem(invSize - 1, Buttons.exit());
+                inv.setItem(invSize - 1, InventoryButtons.exit());
             else
-                inv.setItem(invSize - 5, Buttons.exit());
+                inv.setItem(invSize - 5, InventoryButtons.exit());
         }
 
         // Set new button
         if (newButton)
-            inv.setItem(invSize - 5, Buttons.newAdd(dataStructureName));
+            inv.setItem(invSize - 5, InventoryButtons.newAdd(dataStructureName));
 
         // Set page navigation buttons
         if (page > 1)
-            inv.setItem(invSize - 7, Buttons.previousPage());
+            inv.setItem(invSize - 7, InventoryButtons.previousPage());
 
         if (page < pages)
-            inv.setItem(invSize - 3, Buttons.nextPage());
+            inv.setItem(invSize - 3, InventoryButtons.nextPage());
 
         return inv;
     }
@@ -317,17 +317,17 @@ public class InventoryFactory {
 
         // Option to create or relocate the location
         if (!locationExists)
-            buttons.add(Buttons.create(locationName));
-        else buttons.add(Buttons.relocate(locationName));
+            buttons.add(InventoryButtons.create(locationName));
+        else buttons.add(InventoryButtons.relocate(locationName));
 
         // Option to teleport to the location
-        buttons.add(Buttons.teleport(locationName));
+        buttons.add(InventoryButtons.teleport(locationName));
 
         // Option to center the location
-        buttons.add(Buttons.center(locationName));
+        buttons.add(InventoryButtons.center(locationName));
 
         // Option to remove the location
-        buttons.add(Buttons.remove(locationName.toUpperCase()));
+        buttons.add(InventoryButtons.remove(locationName.toUpperCase()));
 
         return createFixedSizeInventory(
                 new InventoryMeta(inventoryID, InventoryType.MENU, arena, id),
@@ -388,14 +388,14 @@ public class InventoryFactory {
 
         // Option to create or relocate the location
         if (!locationExists)
-            buttons.add(Buttons.create(locationName));
-        else buttons.add(Buttons.relocate(locationName));
+            buttons.add(InventoryButtons.create(locationName));
+        else buttons.add(InventoryButtons.relocate(locationName));
 
         // Option to teleport to the location
-        buttons.add(Buttons.teleport(locationName));
+        buttons.add(InventoryButtons.teleport(locationName));
 
         // Option to remove the location
-        buttons.add(Buttons.remove(locationName.toUpperCase()));
+        buttons.add(InventoryButtons.remove(locationName.toUpperCase()));
 
         return createFixedSizeInventory(
                 new InventoryMeta(inventoryID, InventoryType.MENU, arena, id),
@@ -415,10 +415,10 @@ public class InventoryFactory {
         List<ItemStack> buttons = new ArrayList<>();
 
         // "No" option
-        buttons.add(Buttons.no());
+        buttons.add(InventoryButtons.no());
 
         // "Yes" option
-        buttons.add(Buttons.yes());
+        buttons.add(InventoryButtons.yes());
 
         return createFixedSizeInventory(
                 new InventoryMeta(inventoryID, InventoryType.MENU, playerID, arena, id),

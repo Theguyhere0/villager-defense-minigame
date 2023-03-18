@@ -150,7 +150,7 @@ public class VersionNMSManager implements NMSManager {
      */
     private void modifyPipeline(Player player, Consumer<ChannelPipeline> pipelineModifierTask) {
         Connection connection = (Connection) Utils.getFieldValue(((CraftPlayer) player).getHandle().connection,
-                "connection");
+                "h");
         Channel channel = connection.channel;
 
         channel.eventLoop().execute(() -> {

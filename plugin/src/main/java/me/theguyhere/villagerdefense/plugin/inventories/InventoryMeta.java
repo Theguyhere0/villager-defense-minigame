@@ -1,6 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.inventories;
 
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;

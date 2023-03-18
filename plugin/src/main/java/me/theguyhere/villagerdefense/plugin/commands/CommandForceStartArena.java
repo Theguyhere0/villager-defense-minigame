@@ -1,12 +1,12 @@
 package me.theguyhere.villagerdefense.plugin.commands;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.plugin.arenas.*;
 import me.theguyhere.villagerdefense.plugin.exceptions.*;
-import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.GameController;
+import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.managers.PlayerManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -25,11 +25,11 @@ class CommandForceStartArena {
         VDPlayer gamer;
         if (CommandGuard.checkArgsLengthMatch(args, 1)) {
             player = CommandGuard.checkSenderPlayer(sender);
-            CommandGuard.checkSenderPermissions(player, Permission.START);
+            CommandGuard.checkSenderPermissions(player, CommandPermission.START);
 
             // Attempt to get arena and player
             try {
-                arena = GameManager.getArena(player);
+                arena = GameController.getArena(player);
                 gamer = arena.getPlayer(player);
             } catch (ArenaNotFoundException | PlayerNotFoundException e) {
                 PlayerManager.notifyFailure(player, LanguageManager.errors.inGame);
@@ -59,7 +59,7 @@ class CommandForceStartArena {
 
         // Start specific arena
         else {
-            CommandGuard.checkSenderPermissions(sender, Permission.ADMIN);
+            CommandGuard.checkSenderPermissions(sender, CommandPermission.ADMIN);
 
             StringBuilder name = new StringBuilder(args[1]);
             for (int i = 0; i < args.length - 2; i++)
@@ -67,7 +67,7 @@ class CommandForceStartArena {
 
             // Check if this arena exists
             try {
-                arena = GameManager.getArena(name.toString());
+                arena = GameController.getArena(name.toString());
             } catch (ArenaNotFoundException e) {
                 CommandExecImp.notifyFailure(sender, LanguageManager.errors.noArena);
                 return;

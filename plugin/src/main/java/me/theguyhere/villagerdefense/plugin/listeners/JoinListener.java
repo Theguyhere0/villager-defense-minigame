@@ -5,11 +5,11 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
-import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.achievements.AchievementChecker;
-import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
-import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.GameController;
+import me.theguyhere.villagerdefense.plugin.achievements.AchievementChecker;
+import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.managers.NMSVersion;
+import me.theguyhere.villagerdefense.plugin.managers.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -28,7 +28,7 @@ public class JoinListener implements Listener {
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
-		GameManager.displayEverything(player);
+		GameController.displayEverything(player);
 		nmsManager.injectPacketListener(player, new PacketListenerImp());
 		FileConfiguration playerData = Main.getPlayerData();
 
@@ -40,7 +40,7 @@ public class JoinListener implements Listener {
 			CommunicationManager.debugInfo("%s joined after logging mid-game.", 2, player.getName());
 
 			// Teleport them back to lobby
-			PlayerManager.teleAdventure(player, GameManager.getLobby());
+			PlayerManager.teleAdventure(player, GameController.getLobby());
 			loggers.remove(player.getUniqueId().toString());
 			playerData.set("loggers", loggers);
 
@@ -63,7 +63,7 @@ public class JoinListener implements Listener {
 
 	@EventHandler
 	public void onPortal(PlayerChangedWorldEvent e) {
-		GameManager.displayAllPortals(e.getPlayer());
+		GameController.displayAllPortals(e.getPlayer());
 	}
 
 	@EventHandler
@@ -80,7 +80,7 @@ public class JoinListener implements Listener {
 		loggers.add(player.getUniqueId().toString());
 
 		// Add to list of loggers if in a game
-		if (GameManager.checkPlayer(player)) {
+		if (GameController.checkPlayer(player)) {
 			CommunicationManager.debugInfo("%s logged out mid-game.", 2, player.getName());
 			Main.getPlayerData().set("loggers", loggers);
 			Main.savePlayerData();

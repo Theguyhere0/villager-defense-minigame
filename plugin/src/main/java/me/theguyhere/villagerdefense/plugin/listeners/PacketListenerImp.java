@@ -6,10 +6,10 @@ import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.LeftClickNPCEvent;
 import me.theguyhere.villagerdefense.plugin.events.RightClickNPCEvent;
 import me.theguyhere.villagerdefense.plugin.events.SignGUIEvent;
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
-import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.displays.Portal;
+import me.theguyhere.villagerdefense.plugin.GameController;
+import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -18,7 +18,7 @@ import java.util.Objects;
 public class PacketListenerImp implements PacketListener {
     @Override
     public void onAttack(Player player, int entityID) {
-        GameManager.getArenas().values().stream().filter(Objects::nonNull).map(Arena::getPortal)
+        GameController.getArenas().values().stream().filter(Objects::nonNull).map(Arena::getPortal)
                 .filter(Objects::nonNull).map(Portal::getNpc).filter(Objects::nonNull).forEach(npc -> {
                     int npcId = npc.getEntityID();
                     if (npcId == entityID)
@@ -29,7 +29,7 @@ public class PacketListenerImp implements PacketListener {
 
     @Override
     public void onInteractMain(Player player, int entityID) {
-        GameManager.getArenas().values().stream().filter(Objects::nonNull).map(Arena::getPortal)
+        GameController.getArenas().values().stream().filter(Objects::nonNull).map(Arena::getPortal)
                 .filter(Objects::nonNull).map(Portal::getNpc).filter(Objects::nonNull).forEach(npc -> {
                     int npcId = npc.getEntityID();
                     if (npcId == entityID)
@@ -44,7 +44,7 @@ public class PacketListenerImp implements PacketListener {
         String header = signLines[0];
 
         try {
-            arena = GameManager.getArena(Integer.parseInt(header.substring(18, header.length() - 4)));
+            arena = GameController.getArena(Integer.parseInt(header.substring(18, header.length() - 4)));
         } catch (ArenaNotFoundException | NumberFormatException | IndexOutOfBoundsException e) {
             return;
         }

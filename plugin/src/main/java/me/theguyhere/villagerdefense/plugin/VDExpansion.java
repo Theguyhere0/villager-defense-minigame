@@ -1,10 +1,9 @@
 package me.theguyhere.villagerdefense.plugin;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.managers.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +39,7 @@ public class VDExpansion extends PlaceholderExpansion {
 
         // Attempt to get either the arena or the player from the command
         try {
-            arena = GameManager.getArena(params.substring(params.indexOf('_') + 1));
+            arena = GameController.getArena(params.substring(params.indexOf('_') + 1));
         } catch (ArenaNotFoundException ignored) {
         }
         try {

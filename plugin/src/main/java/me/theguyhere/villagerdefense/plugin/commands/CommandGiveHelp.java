@@ -2,10 +2,7 @@ package me.theguyhere.villagerdefense.plugin.commands;
 
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.plugin.exceptions.CommandException;
-import me.theguyhere.villagerdefense.plugin.exceptions.CommandFormatException;
-import me.theguyhere.villagerdefense.plugin.exceptions.CommandPlayerException;
-import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;

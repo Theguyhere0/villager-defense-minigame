@@ -1,18 +1,18 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
-import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.VDAbility;
-import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.Shop;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
-import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
-import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.GameController;
+import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
+import me.theguyhere.villagerdefense.plugin.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaStatus;
+import me.theguyhere.villagerdefense.plugin.items.abilities.VDAbility;
+import me.theguyhere.villagerdefense.plugin.items.menuItems.Shop;
+import me.theguyhere.villagerdefense.plugin.individuals.mobs.VDMob;
+import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerStatus;
+import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.managers.PlayerManager;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -43,7 +43,7 @@ public class ChallengeListener implements Listener {
 
         // Attempt to get arena and VDPlayer
         try {
-            arena = GameManager.getArena(player);
+            arena = GameController.getArena(player);
             gamer = arena.getPlayer(player);
         } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             return;
@@ -116,7 +116,7 @@ public class ChallengeListener implements Listener {
 
         // Attempt to get arena and VDPlayer
         try {
-            arena = GameManager.getArena(player);
+            arena = GameController.getArena(player);
             gamer = arena.getPlayer(player);
         } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             return;
@@ -167,7 +167,7 @@ public class ChallengeListener implements Listener {
 
             // Attempt to get arena and VDPlayer
             try {
-                arena = GameManager.getArena(player);
+                arena = GameController.getArena(player);
                 gamer = arena.getPlayer(player);
             } catch (ArenaNotFoundException | PlayerNotFoundException err) {
                 return;
@@ -208,7 +208,7 @@ public class ChallengeListener implements Listener {
 
             // Attempt to get VDPlayer
             try {
-                gamer = GameManager.getArena(player).getPlayer(player);
+                gamer = GameController.getArena(player).getPlayer(player);
             } catch (ArenaNotFoundException | PlayerNotFoundException err) {
                 return;
             }
@@ -230,7 +230,7 @@ public class ChallengeListener implements Listener {
 
         // Try getting player and arena
         try {
-            arena = GameManager.getArena(player);
+            arena = GameController.getArena(player);
             gamer = arena.getPlayer(player);
         } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             return;
@@ -267,7 +267,7 @@ public class ChallengeListener implements Listener {
 
         // Try getting player and arena
         try {
-            arena = GameManager.getArena(player);
+            arena = GameController.getArena(player);
             gamer = arena.getPlayer(player);
         } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             return;
@@ -302,7 +302,7 @@ public class ChallengeListener implements Listener {
 
         // Try getting player and arena
         try {
-            arena = GameManager.getArena(player);
+            arena = GameController.getArena(player);
             gamer = arena.getPlayer(player);
         } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             return;

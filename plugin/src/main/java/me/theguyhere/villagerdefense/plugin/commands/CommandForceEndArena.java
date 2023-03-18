@@ -1,15 +1,14 @@
 package me.theguyhere.villagerdefense.plugin.commands;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaStatusException;
-import me.theguyhere.villagerdefense.plugin.exceptions.CommandException;
-import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
-import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaException;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaStatusException;
+import me.theguyhere.villagerdefense.plugin.GameController;
+import me.theguyhere.villagerdefense.plugin.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaStatus;
+import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.managers.PlayerManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -21,7 +20,7 @@ class CommandForceEndArena {
         // Guard clauses
         if (!CommandGuard.checkArg(args, 0, CommandExecImp.Argument.END.getArg()))
             return;
-        CommandGuard.checkSenderPermissions(sender, Permission.ADMIN);
+        CommandGuard.checkSenderPermissions(sender, CommandPermission.ADMIN);
 
         // End current arena
         Player player;
@@ -31,7 +30,7 @@ class CommandForceEndArena {
 
             // Attempt to get arena
             try {
-                arena = GameManager.getArena(player);
+                arena = GameController.getArena(player);
             } catch (ArenaNotFoundException e) {
                 PlayerManager.notifyFailure(player, LanguageManager.errors.inGame);
                 return;
@@ -64,7 +63,7 @@ class CommandForceEndArena {
 
             // Check if this arena exists
             try {
-                arena = GameManager.getArena(name.toString());
+                arena = GameController.getArena(name.toString());
             } catch (ArenaNotFoundException e) {
                 CommandExecImp.notifyFailure(sender, LanguageManager.errors.noArena);
                 return;

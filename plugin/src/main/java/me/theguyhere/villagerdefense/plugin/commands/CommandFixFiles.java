@@ -3,13 +3,12 @@ package me.theguyhere.villagerdefense.plugin.commands;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.exceptions.CommandException;
-import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
-import me.theguyhere.villagerdefense.plugin.tools.DataManager;
-import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.GameController;
+import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
+import me.theguyhere.villagerdefense.plugin.kits.Kit;
+import me.theguyhere.villagerdefense.plugin.managers.DataManager;
+import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.managers.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -71,7 +70,7 @@ class CommandFixFiles {
                 Main.saveArenaData();
 
                 // Reload portals
-                GameManager.refreshPortals();
+                GameController.refreshPortals();
 
                 // Flip flag and update config.yml
                 fixed = true;
@@ -313,7 +312,7 @@ class CommandFixFiles {
                 Main.savePlayerData();
 
                 // Reload everything
-                GameManager.refreshAll();
+                GameController.refreshAll();
 
                 // Flip flag and update config.yml
                 fixed = true;

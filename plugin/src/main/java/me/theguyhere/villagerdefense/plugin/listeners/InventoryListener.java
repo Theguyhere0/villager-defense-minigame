@@ -3,33 +3,33 @@ package me.theguyhere.villagerdefense.plugin.listeners;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.SignGUIEvent;
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.exceptions.IllegalArenaNameException;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.arenas.IllegalArenaNameException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.game.displays.Leaderboard;
-import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.models.achievements.AchievementChecker;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaSpawn;
-import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.VDAbility;
-import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.Shop;
-import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Ammo;
-import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
-import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.golems.VDGolem;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.golems.VDIronGolem;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.golems.VDSnowGolem;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDCat;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDDog;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDHorse;
-import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
-import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.inventories.Buttons;
+import me.theguyhere.villagerdefense.plugin.displays.Leaderboard;
+import me.theguyhere.villagerdefense.plugin.GameController;
+import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
+import me.theguyhere.villagerdefense.plugin.achievements.AchievementChecker;
+import me.theguyhere.villagerdefense.plugin.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaSpawn;
+import me.theguyhere.villagerdefense.plugin.items.abilities.VDAbility;
+import me.theguyhere.villagerdefense.plugin.items.menuItems.Shop;
+import me.theguyhere.villagerdefense.plugin.items.weapons.Ammo;
+import me.theguyhere.villagerdefense.plugin.kits.KitEffectType;
+import me.theguyhere.villagerdefense.plugin.kits.Kit;
+import me.theguyhere.villagerdefense.plugin.individuals.mobs.golems.VDGolem;
+import me.theguyhere.villagerdefense.plugin.individuals.mobs.golems.VDIronGolem;
+import me.theguyhere.villagerdefense.plugin.individuals.mobs.golems.VDSnowGolem;
+import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDCat;
+import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDDog;
+import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDHorse;
+import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerStatus;
+import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.inventories.InventoryButtons;
 import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryID;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryMeta;
-import me.theguyhere.villagerdefense.plugin.tools.*;
+import me.theguyhere.villagerdefense.plugin.managers.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -107,7 +107,7 @@ public class InventoryListener implements Listener {
 		// Ignore players that aren't part of an arena
 		Player player = (Player) e.getWhoClicked();
 		try {
-			GameManager.getArena(player);
+			GameController.getArena(player);
 		} catch (ArenaNotFoundException err) {
 			return;
 		}
@@ -128,7 +128,7 @@ public class InventoryListener implements Listener {
 		// Ignore players that aren't part of an arena
 		Player player = (Player) e.getWhoClicked();
 		try {
-			GameManager.getArena(player);
+			GameController.getArena(player);
 		} catch (ArenaNotFoundException err) {
 			return;
 		}
@@ -219,16 +219,16 @@ public class InventoryListener implements Listener {
 			// Edit existing arena
 			if (buttonType == Material.EMERALD_BLOCK)
 				try {
-					player.openInventory(Inventories.createArenaMenu(GameManager.getArena(buttonName.substring(9))));
+					player.openInventory(Inventories.createArenaMenu(GameController.getArena(buttonName.substring(9))));
 				} catch (ArenaNotFoundException ignored) {
 				}
 
 			// Create new arena with naming inventory
 			else if (buttonName.contains(CommunicationManager.format("&a&lNew "))) {
-				Arena arena = new Arena(GameManager.newArenaID());
+				Arena arena = new Arena(GameController.newArenaID());
 
 				// Set a new arena
-				GameManager.addArena(GameManager.newArenaID(), arena);
+				GameController.addArena(GameController.newArenaID(), arena);
 				NMSVersion.getCurrent().getNmsManager().nameArena(player, arena.getName(), arena.getId());
 			}
 
@@ -237,11 +237,11 @@ public class InventoryListener implements Listener {
 				player.openInventory(Inventories.createMainMenu());
 
 			// Previous page
-			else if (button.equals(Buttons.previousPage()))
+			else if (button.equals(InventoryButtons.previousPage()))
 				player.openInventory(Inventories.createArenasDashboard(meta.getPage() - 1));
 
 			// Next page
-			else if (button.equals(Buttons.nextPage()))
+			else if (button.equals(InventoryButtons.nextPage()))
 				player.openInventory(Inventories.createArenasDashboard(meta.getPage() + 1));
 		}
 
@@ -252,7 +252,7 @@ public class InventoryListener implements Listener {
 			// Create lobby
 			if (buttonName.contains("Create Lobby")) {
 				DataManager.setConfigurationLocation(path, player.getLocation());
-				GameManager.reloadLobby();
+				GameController.reloadLobby();
 				PlayerManager.notifySuccess(player, "Lobby set!");
 				player.openInventory(Inventories.createLobbyMenu());
 			}
@@ -260,7 +260,7 @@ public class InventoryListener implements Listener {
 			// Relocate lobby
 			else if (buttonName.contains("Relocate Lobby")) {
 				DataManager.setConfigurationLocation(path, player.getLocation());
-				GameManager.reloadLobby();
+				GameController.reloadLobby();
 				PlayerManager.notifySuccess(player, "Lobby relocated!");
 			}
 
@@ -288,10 +288,10 @@ public class InventoryListener implements Listener {
 
 			// Remove lobby
 			else if (buttonName.contains("REMOVE"))
-				if (GameManager.getArenas().values().stream().filter(Objects::nonNull)
+				if (GameController.getArenas().values().stream().filter(Objects::nonNull)
 						.anyMatch(arena -> !arena.isClosed()))
 					PlayerManager.notifyFailure(player, "All arenas must be closed to modify this!");
-				else if (GameManager.getLobby() != null)
+				else if (GameController.getLobby() != null)
 					player.openInventory(Inventories.createLobbyConfirmMenu());
 				else PlayerManager.notifyFailure(player, "No lobby to remove!");
 
@@ -308,14 +308,14 @@ public class InventoryListener implements Listener {
 
 			// Create new
 			else if (buttonName.contains(CommunicationManager.format("&a&lNew ")))
-				player.openInventory(Inventories.createInfoBoardMenu(GameManager.newInfoBoardID()));
+				player.openInventory(Inventories.createInfoBoardMenu(GameController.newInfoBoardID()));
 
 			// Previous page
-			else if (button.equals(Buttons.previousPage()))
+			else if (button.equals(InventoryButtons.previousPage()))
 				player.openInventory(Inventories.createInfoBoardDashboard(meta.getPage() - 1));
 
 			// Next page
-			else if (button.equals(Buttons.nextPage()))
+			else if (button.equals(InventoryButtons.nextPage()))
 				player.openInventory(Inventories.createInfoBoardDashboard(meta.getPage() + 1));
 
 			// Exit menu
@@ -329,20 +329,20 @@ public class InventoryListener implements Listener {
 
 			// Create board
 			if (buttonName.contains("Create")) {
-				GameManager.setInfoBoard(player.getLocation(), id);
+				GameController.setInfoBoard(player.getLocation(), id);
 				PlayerManager.notifySuccess(player, "Info board set!");
 				player.openInventory(Inventories.createInfoBoardMenu(id));
 			}
 
 			// Relocate board
 			else if (buttonName.contains("Relocate")) {
-				GameManager.setInfoBoard(player.getLocation(), id);
+				GameController.setInfoBoard(player.getLocation(), id);
 				PlayerManager.notifySuccess(player, "Info board relocated!");
 			}
 
 			// Teleport player to info board
 			else if (buttonName.contains("Teleport")) {
-				Location location = GameManager.getInfoBoard(id).getLocation();
+				Location location = GameController.getInfoBoard(id).getLocation();
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No info board to teleport to!");
 					return;
@@ -353,17 +353,17 @@ public class InventoryListener implements Listener {
 
 			// Center info board
 			else if (buttonName.contains("Center")) {
-				if (GameManager.getInfoBoard(id).getLocation() == null) {
+				if (GameController.getInfoBoard(id).getLocation() == null) {
 					PlayerManager.notifyFailure(player, "No info board to center!");
 					return;
 				}
-				GameManager.centerInfoBoard(id);
+				GameController.centerInfoBoard(id);
 				PlayerManager.notifySuccess(player, "Info board centered!");
 			}
 
 			// Remove info board
 			else if (buttonName.contains("REMOVE"))
-				if (GameManager.getInfoBoard(id).getLocation() != null)
+				if (GameController.getInfoBoard(id).getLocation() != null)
 					player.openInventory(Inventories.createInfoBoardConfirmMenu(id));
 				else PlayerManager.notifyFailure(player, "No info board to remove!");
 
@@ -398,20 +398,20 @@ public class InventoryListener implements Listener {
 		else if (invID == InventoryID.TOTAL_KILLS_LEADERBOARD_MENU) {
 			// Create leaderboard
 			if (buttonName.contains("Create")) {
-				GameManager.setLeaderboard(player.getLocation(), Leaderboard.TOTAL_KILLS);
+				GameController.setLeaderboard(player.getLocation(), Leaderboard.TOTAL_KILLS);
 				PlayerManager.notifySuccess(player, "Leaderboard set!");
 				player.openInventory(Inventories.createTotalKillsLeaderboardMenu());
 			}
 
 			// Relocate leaderboard
 			else if (buttonName.contains("Relocate")) {
-				GameManager.setLeaderboard(player.getLocation(), Leaderboard.TOTAL_KILLS);
+				GameController.setLeaderboard(player.getLocation(), Leaderboard.TOTAL_KILLS);
 				PlayerManager.notifySuccess(player, "Leaderboard relocated!");
 			}
 
 			// Teleport player to leaderboard
 			else if (buttonName.contains("Teleport")) {
-				Location location = GameManager.getLeaderboard(Leaderboard.TOTAL_KILLS).getLocation();
+				Location location = GameController.getLeaderboard(Leaderboard.TOTAL_KILLS).getLocation();
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to teleport to!");
 					return;
@@ -422,17 +422,17 @@ public class InventoryListener implements Listener {
 
 			// Center leaderboard
 			else if (buttonName.contains("Center")) {
-				if (GameManager.getLeaderboard(Leaderboard.TOTAL_KILLS).getLocation() == null) {
+				if (GameController.getLeaderboard(Leaderboard.TOTAL_KILLS).getLocation() == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to center!");
 					return;
 				}
-				GameManager.centerLeaderboard(Leaderboard.TOTAL_KILLS);
+				GameController.centerLeaderboard(Leaderboard.TOTAL_KILLS);
 				PlayerManager.notifySuccess(player, "Leaderboard centered!");
 			}
 
 			// Remove leaderboard
 			else if (buttonName.contains("REMOVE"))
-				if (GameManager.getLeaderboard(Leaderboard.TOTAL_KILLS) != null)
+				if (GameController.getLeaderboard(Leaderboard.TOTAL_KILLS) != null)
 					player.openInventory(Inventories.createTotalKillsConfirmMenu());
 				else PlayerManager.notifyFailure(player, "No leaderboard to remove!");
 
@@ -445,20 +445,20 @@ public class InventoryListener implements Listener {
 		else if (invID == InventoryID.TOP_KILLS_LEADERBOARD_MENU) {
 			// Create leaderboard
 			if (buttonName.contains("Create")) {
-				GameManager.setLeaderboard(player.getLocation(), Leaderboard.TOP_KILLS);
+				GameController.setLeaderboard(player.getLocation(), Leaderboard.TOP_KILLS);
 				PlayerManager.notifySuccess(player, "Leaderboard set!");
 				player.openInventory(Inventories.createTopKillsLeaderboardMenu());
 			}
 
 			// Relocate leaderboard
 			else if (buttonName.contains("Relocate")) {
-				GameManager.setLeaderboard(player.getLocation(), Leaderboard.TOP_KILLS);
+				GameController.setLeaderboard(player.getLocation(), Leaderboard.TOP_KILLS);
 				PlayerManager.notifySuccess(player, "Leaderboard relocated!");
 			}
 
 			// Teleport player to leaderboard
 			else if (buttonName.contains("Teleport")) {
-				Location location = GameManager.getLeaderboard(Leaderboard.TOP_KILLS).getLocation();
+				Location location = GameController.getLeaderboard(Leaderboard.TOP_KILLS).getLocation();
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to teleport to!");
 					return;
@@ -469,17 +469,17 @@ public class InventoryListener implements Listener {
 
 			// Center leaderboard
 			else if (buttonName.contains("Center")) {
-				if (GameManager.getLeaderboard(Leaderboard.TOP_KILLS).getLocation() == null) {
+				if (GameController.getLeaderboard(Leaderboard.TOP_KILLS).getLocation() == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to center!");
 					return;
 				}
-				GameManager.centerLeaderboard(Leaderboard.TOP_KILLS);
+				GameController.centerLeaderboard(Leaderboard.TOP_KILLS);
 				PlayerManager.notifySuccess(player, "Leaderboard centered!");
 			}
 
 			// Remove leaderboard
 			else if (buttonName.contains("REMOVE"))
-				if (GameManager.getLeaderboard(Leaderboard.TOP_KILLS)  != null)
+				if (GameController.getLeaderboard(Leaderboard.TOP_KILLS)  != null)
 					player.openInventory(Inventories.createTopKillsConfirmMenu());
 				else PlayerManager.notifyFailure(player, "No leaderboard to remove!");
 
@@ -492,20 +492,20 @@ public class InventoryListener implements Listener {
 		else if (invID == InventoryID.TOTAL_GEMS_LEADERBOARD_MENU) {
 			// Create leaderboard
 			if (buttonName.contains("Create")) {
-				GameManager.setLeaderboard(player.getLocation(), Leaderboard.TOTAL_GEMS);
+				GameController.setLeaderboard(player.getLocation(), Leaderboard.TOTAL_GEMS);
 				PlayerManager.notifySuccess(player, "Leaderboard set!");
 				player.openInventory(Inventories.createTotalGemsLeaderboardMenu());
 			}
 
 			// Relocate leaderboard
 			else if (buttonName.contains("Relocate")) {
-				GameManager.setLeaderboard(player.getLocation(), Leaderboard.TOTAL_GEMS);
+				GameController.setLeaderboard(player.getLocation(), Leaderboard.TOTAL_GEMS);
 				PlayerManager.notifySuccess(player, "Leaderboard relocated!");
 			}
 
 			// Teleport player to leaderboard
 			else if (buttonName.contains("Teleport")) {
-				Location location = GameManager.getLeaderboard(Leaderboard.TOTAL_GEMS).getLocation();
+				Location location = GameController.getLeaderboard(Leaderboard.TOTAL_GEMS).getLocation();
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to teleport to!");
 					return;
@@ -516,17 +516,17 @@ public class InventoryListener implements Listener {
 
 			// Center leaderboard
 			else if (buttonName.contains("Center")) {
-				if (GameManager.getLeaderboard(Leaderboard.TOTAL_GEMS).getLocation() == null) {
+				if (GameController.getLeaderboard(Leaderboard.TOTAL_GEMS).getLocation() == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to center!");
 					return;
 				}
-				GameManager.centerLeaderboard(Leaderboard.TOTAL_GEMS);
+				GameController.centerLeaderboard(Leaderboard.TOTAL_GEMS);
 				PlayerManager.notifySuccess(player, "Leaderboard centered!");
 			}
 
 			// Remove leaderboard
 			else if (buttonName.contains("REMOVE"))
-				if (GameManager.getLeaderboard(Leaderboard.TOTAL_GEMS) != null)
+				if (GameController.getLeaderboard(Leaderboard.TOTAL_GEMS) != null)
 					player.openInventory(Inventories.createTotalGemsConfirmMenu());
 				else PlayerManager.notifyFailure(player, "No leaderboard to remove!");
 
@@ -539,20 +539,20 @@ public class InventoryListener implements Listener {
 		else if (invID == InventoryID.TOP_BALANCE_LEADERBOARD_MENU) {
 			// Create leaderboard
 			if (buttonName.contains("Create")) {
-				GameManager.setLeaderboard(player.getLocation(), Leaderboard.TOP_BALANCE);
+				GameController.setLeaderboard(player.getLocation(), Leaderboard.TOP_BALANCE);
 				PlayerManager.notifySuccess(player, "Leaderboard set!");
 				player.openInventory(Inventories.createTopBalanceLeaderboardMenu());
 			}
 
 			// Relocate leaderboard
 			else if (buttonName.contains("Relocate")) {
-				GameManager.setLeaderboard(player.getLocation(), Leaderboard.TOP_BALANCE);
+				GameController.setLeaderboard(player.getLocation(), Leaderboard.TOP_BALANCE);
 				PlayerManager.notifySuccess(player, "Leaderboard relocated!");
 			}
 
 			// Teleport player to leaderboard
 			else if (buttonName.contains("Teleport")) {
-				Location location = GameManager.getLeaderboard(Leaderboard.TOP_BALANCE).getLocation();
+				Location location = GameController.getLeaderboard(Leaderboard.TOP_BALANCE).getLocation();
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to teleport to!");
 					return;
@@ -563,17 +563,17 @@ public class InventoryListener implements Listener {
 
 			// Center leaderboard
 			else if (buttonName.contains("Center")) {
-				if (GameManager.getLeaderboard(Leaderboard.TOP_BALANCE).getLocation() == null) {
+				if (GameController.getLeaderboard(Leaderboard.TOP_BALANCE).getLocation() == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to center!");
 					return;
 				}
-				GameManager.centerLeaderboard(Leaderboard.TOP_BALANCE);
+				GameController.centerLeaderboard(Leaderboard.TOP_BALANCE);
 				PlayerManager.notifySuccess(player, "Leaderboard centered!");
 			}
 
 			// Remove leaderboard
 			else if (buttonName.contains("REMOVE"))
-				if (GameManager.getLeaderboard(Leaderboard.TOP_BALANCE) != null)
+				if (GameController.getLeaderboard(Leaderboard.TOP_BALANCE) != null)
 					player.openInventory(Inventories.createTopBalanceConfirmMenu());
 				else PlayerManager.notifyFailure(player, "No leaderboard to remove!");
 
@@ -586,20 +586,20 @@ public class InventoryListener implements Listener {
 		else if (invID == InventoryID.TOP_WAVE_LEADERBOARD_MENU) {
 			// Create leaderboard
 			if (buttonName.contains("Create")) {
-				GameManager.setLeaderboard(player.getLocation(), Leaderboard.TOP_WAVE);
+				GameController.setLeaderboard(player.getLocation(), Leaderboard.TOP_WAVE);
 				PlayerManager.notifySuccess(player, "Leaderboard set!");
 				player.openInventory(Inventories.createTopWaveLeaderboardMenu());
 			}
 
 			// Relocate leaderboard
 			else if (buttonName.contains("Relocate")) {
-				GameManager.setLeaderboard(player.getLocation(), Leaderboard.TOP_WAVE);
+				GameController.setLeaderboard(player.getLocation(), Leaderboard.TOP_WAVE);
 				PlayerManager.notifySuccess(player, "Leaderboard relocated!");
 			}
 
 			// Teleport player to leaderboard
 			else if (buttonName.contains("Teleport")) {
-				Location location = GameManager.getLeaderboard(Leaderboard.TOP_WAVE).getLocation();
+				Location location = GameController.getLeaderboard(Leaderboard.TOP_WAVE).getLocation();
 				if (location == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to teleport to!");
 					return;
@@ -610,17 +610,17 @@ public class InventoryListener implements Listener {
 
 			// Center leaderboard
 			else if (buttonName.contains("Center")) {
-				if (GameManager.getLeaderboard(Leaderboard.TOP_WAVE).getLocation() == null) {
+				if (GameController.getLeaderboard(Leaderboard.TOP_WAVE).getLocation() == null) {
 					PlayerManager.notifyFailure(player, "No leaderboard to center!");
 					return;
 				}
-				GameManager.centerLeaderboard(Leaderboard.TOP_WAVE);
+				GameController.centerLeaderboard(Leaderboard.TOP_WAVE);
 				PlayerManager.notifySuccess(player, "Leaderboard centered!");
 			}
 
 			// Remove leaderboard
 			else if (buttonName.contains("REMOVE"))
-				if (GameManager.getLeaderboard(Leaderboard.TOP_WAVE) != null)
+				if (GameController.getLeaderboard(Leaderboard.TOP_WAVE) != null)
 					player.openInventory(Inventories.createTopWaveConfirmMenu());
 				else PlayerManager.notifyFailure(player, "No leaderboard to remove!");
 
@@ -668,7 +668,7 @@ public class InventoryListener implements Listener {
 				// Arena currently closed
 				if (arenaInstance.isClosed()) {
 					// No lobby
-					if (GameManager.getLobby() == null) {
+					if (GameController.getLobby() == null) {
 						PlayerManager.notifyFailure(player, "Arena cannot open without a lobby!");
 						return;
 					}
@@ -879,8 +879,8 @@ public class InventoryListener implements Listener {
 
 			// Remove the lobby, then return to previous menu
 			else if (buttonName.contains("YES")) {
-				GameManager.saveLobby(null);
-				GameManager.reloadLobby();
+				GameController.saveLobby(null);
+				GameController.reloadLobby();
 				PlayerManager.notifySuccess(player, "Lobby removed!");
 				player.openInventory(Inventories.createLobbyMenu());
 			}
@@ -895,7 +895,7 @@ public class InventoryListener implements Listener {
 			// Remove the info board, then return to dashboard
 			else if (buttonName.contains("YES")) {
 				// Remove info board
-				GameManager.removeInfoBoard(meta.getId());
+				GameController.removeInfoBoard(meta.getId());
 
 				// Confirm and return
 				PlayerManager.notifySuccess(player, "Info board removed!");
@@ -913,10 +913,10 @@ public class InventoryListener implements Listener {
 			// Remove the leaderboard, then return to previous menu
 			else if (buttonName.contains("YES")) {
 				// Remove leaderboard data
-				GameManager.removeLeaderboard(Leaderboard.TOTAL_KILLS);
+				GameController.removeLeaderboard(Leaderboard.TOTAL_KILLS);
 
 				// Remove leaderboard
-				GameManager.removeLeaderboard("totalKills");
+				GameController.removeLeaderboard("totalKills");
 
 				// Confirm and return
 				PlayerManager.notifySuccess(player, "Leaderboard removed!");
@@ -933,10 +933,10 @@ public class InventoryListener implements Listener {
 			// Remove the leaderboard, then return to previous menu
 			else if (buttonName.contains("YES")) {
 				// Remove leaderboard data
-				GameManager.removeLeaderboard(Leaderboard.TOP_KILLS);
+				GameController.removeLeaderboard(Leaderboard.TOP_KILLS);
 
 				// Remove leaderboard
-				GameManager.removeLeaderboard("topKills");
+				GameController.removeLeaderboard("topKills");
 
 				// Confirm and return
 				PlayerManager.notifySuccess(player, "Leaderboard removed!");
@@ -953,10 +953,10 @@ public class InventoryListener implements Listener {
 			// Remove the leaderboard, then return to previous menu
 			else if (buttonName.contains("YES")) {
 				// Remove leaderboard data
-				GameManager.removeLeaderboard(Leaderboard.TOTAL_GEMS);
+				GameController.removeLeaderboard(Leaderboard.TOTAL_GEMS);
 
 				// Remove leaderboard
-				GameManager.removeLeaderboard("totalGems");
+				GameController.removeLeaderboard("totalGems");
 
 				// Confirm and return
 				PlayerManager.notifySuccess(player, "Leaderboard removed!");
@@ -973,10 +973,10 @@ public class InventoryListener implements Listener {
 			// Remove the leaderboard, then return to previous menu
 			else if (buttonName.contains("YES")) {
 				// Remove leaderboard data
-				GameManager.removeLeaderboard(Leaderboard.TOP_BALANCE);
+				GameController.removeLeaderboard(Leaderboard.TOP_BALANCE);
 
 				// Remove leaderboard
-				GameManager.removeLeaderboard("topBalance");
+				GameController.removeLeaderboard("topBalance");
 
 				// Confirm and return
 				PlayerManager.notifySuccess(player, "Leaderboard removed!");
@@ -993,10 +993,10 @@ public class InventoryListener implements Listener {
 			// Remove the leaderboard, then return to previous menu
 			else if (buttonName.contains("YES")) {
 				// Remove leaderboard data
-				GameManager.removeLeaderboard(Leaderboard.TOP_WAVE);
+				GameController.removeLeaderboard(Leaderboard.TOP_WAVE);
 
 				// Remove leaderboard
-				GameManager.removeLeaderboard("topWave");
+				GameController.removeLeaderboard("topWave");
 
 				// Confirm and return
 				PlayerManager.notifySuccess(player, "Leaderboard removed!");
@@ -1013,7 +1013,7 @@ public class InventoryListener implements Listener {
 			// Remove arena data, then return to previous menu
 			else if (buttonName.contains("YES")) {
 				// Remove data
-				GameManager.removeArena(meta.getArena().getId());
+				GameController.removeArena(meta.getArena().getId());
 
 				// Confirm and return
 				PlayerManager.notifySuccess(player, "Arena removed!");
@@ -1422,11 +1422,11 @@ public class InventoryListener implements Listener {
 				);
 
 			// Previous page
-			else if (button.equals(Buttons.previousPage()))
+			else if (button.equals(InventoryButtons.previousPage()))
 				player.openInventory(Inventories.createMonsterSpawnDashboard(meta.getArena(), meta.getPage() - 1));
 
 			// Next page
-			else if (button.equals(Buttons.nextPage()))
+			else if (button.equals(InventoryButtons.nextPage()))
 				player.openInventory(Inventories.createMonsterSpawnDashboard(meta.getArena(), meta.getPage() + 1));
 
 			// Exit menu
@@ -1514,14 +1514,14 @@ public class InventoryListener implements Listener {
 				);
 
 			// Previous page
-			else if (button.equals(Buttons.previousPage()))
+			else if (button.equals(InventoryButtons.previousPage()))
 				player.openInventory(Inventories.createVillagerSpawnDashboard(
 						meta.getArena(),
 						meta.getPage() - 1
 				));
 
 			// Next page
-			else if (button.equals(Buttons.nextPage()))
+			else if (button.equals(InventoryButtons.nextPage()))
 				player.openInventory(Inventories.createVillagerSpawnDashboard(
 						meta.getArena(),
 						meta.getPage() + 1
@@ -2227,7 +2227,7 @@ public class InventoryListener implements Listener {
 			if (buttonName.contains("Create"))
 				if (!arenaInstance.isClosed())
 					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-				else if (GameManager.getArenas().values().stream().anyMatch(arena -> !arena.equals(arenaInstance) &&
+				else if (GameController.getArenas().values().stream().anyMatch(arena -> !arena.equals(arenaInstance) &&
 						arena.getBounds().contains(player.getLocation().toVector())))
 					PlayerManager.notifyFailure(player, "Arena bounds cannot intersect another arena!");
 				else {
@@ -2240,7 +2240,7 @@ public class InventoryListener implements Listener {
 			if (buttonName.contains("Relocate"))
 				if (!arenaInstance.isClosed())
 					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-				else if (GameManager.getArenas().values().stream().anyMatch(arena -> !arena.equals(arenaInstance) &&
+				else if (GameController.getArenas().values().stream().anyMatch(arena -> !arena.equals(arenaInstance) &&
 						arena.getBounds().contains(player.getLocation().toVector())))
 					PlayerManager.notifyFailure(player, "Arena bounds cannot intersect another arena!");
 				else {
@@ -2280,7 +2280,7 @@ public class InventoryListener implements Listener {
 			if (buttonName.contains("Create"))
 				if (!arenaInstance.isClosed())
 					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-				else if (GameManager.getArenas().values().stream().anyMatch(arena -> !arena.equals(arenaInstance) &&
+				else if (GameController.getArenas().values().stream().anyMatch(arena -> !arena.equals(arenaInstance) &&
 						arena.getBounds().contains(player.getLocation().toVector())))
 					PlayerManager.notifyFailure(player, "Arena bounds cannot intersect another arena!");
 				else {
@@ -2293,7 +2293,7 @@ public class InventoryListener implements Listener {
 			if (buttonName.contains("Relocate"))
 				if (!arenaInstance.isClosed())
 					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-				else if (GameManager.getArenas().values().stream().anyMatch(arena -> !arena.equals(arenaInstance) &&
+				else if (GameController.getArenas().values().stream().anyMatch(arena -> !arena.equals(arenaInstance) &&
 						arena.getBounds().contains(player.getLocation().toVector())))
 					PlayerManager.notifyFailure(player, "Arena bounds cannot intersect another arena!");
 				else {
@@ -2425,7 +2425,7 @@ public class InventoryListener implements Listener {
 
 				// Check for valid arena to copy
 				try {
-					arena2 = GameManager.getArena(buttonName.substring(9));
+					arena2 = GameController.getArena(buttonName.substring(9));
 				} catch (ArenaNotFoundException err) {
 					return;
 				}
@@ -2495,11 +2495,11 @@ public class InventoryListener implements Listener {
 			}
 
 			// Previous page
-			else if (button.equals(Buttons.previousPage()))
+			else if (button.equals(InventoryButtons.previousPage()))
 				player.openInventory(Inventories.createCopySettingsMenu(meta.getArena(), meta.getPage() - 1));
 
 			// Next page
-			else if (button.equals(Buttons.nextPage()))
+			else if (button.equals(InventoryButtons.nextPage()))
 				player.openInventory(Inventories.createCopySettingsMenu(meta.getArena(), meta.getPage() + 1));
 
 			// Exit menu
@@ -2519,7 +2519,7 @@ public class InventoryListener implements Listener {
 
 			// See if the player is in a game
 			try {
-				arenaInstance = GameManager.getArena(player);
+				arenaInstance = GameController.getArena(player);
 				gamer = arenaInstance.getPlayer(player);
 			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
@@ -2597,7 +2597,7 @@ public class InventoryListener implements Listener {
 
 			// Attempt to get arena and player
 			try {
-				arenaInstance = GameManager.getArena(player);
+				arenaInstance = GameController.getArena(player);
 				gamer = arenaInstance.getPlayer(player);
 			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
@@ -2639,7 +2639,7 @@ public class InventoryListener implements Listener {
 				buy = ItemManager.makeUnbreakable(buy);
 
 			// Make unbreakable for successful blacksmith sharing
-			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.BLACKSMITH))) {
+			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(KitEffectType.BLACKSMITH))) {
 				buy = ItemManager.makeUnbreakable(buy);
 				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
 			}
@@ -2648,11 +2648,11 @@ public class InventoryListener implements Listener {
 			gamer.addGems(-cost);
 			if (Kit.merchant().setKitLevel(1).equals(gamer.getKit()) && !gamer.isSharing())
 				gamer.addGems(cost / 10);
-			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.MERCHANT))) {
+			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(KitEffectType.MERCHANT))) {
 				gamer.addGems(cost / 10);
 				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
 			}
-			GameManager.createBoard(gamer);
+			GameController.createBoard(gamer);
 
 			EntityEquipment equipment = Objects.requireNonNull(player.getPlayer()).getEquipment();
 
@@ -2684,7 +2684,7 @@ public class InventoryListener implements Listener {
 
 			// Attempt to get arena and player
 			try {
-				arenaInstance = GameManager.getArena(player);
+				arenaInstance = GameController.getArena(player);
 				gamer = arenaInstance.getPlayer(player);
 			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
@@ -2711,7 +2711,7 @@ public class InventoryListener implements Listener {
 
 			// Attempt to get arena and player
 			try {
-				arenaInstance = GameManager.getArena(player);
+				arenaInstance = GameController.getArena(player);
 				gamer = arenaInstance.getPlayer(player);
 			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
@@ -2738,11 +2738,11 @@ public class InventoryListener implements Listener {
 				gamer.addGems(-cost);
 				if (Kit.merchant().setKitLevel(1).equals(gamer.getKit()) && !gamer.isSharing())
 					gamer.addGems(cost / 10);
-				if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.MERCHANT))) {
+				if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(KitEffectType.MERCHANT))) {
 					gamer.addGems(cost / 10);
 					PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
 				}
-				GameManager.createBoard(gamer);
+				GameController.createBoard(gamer);
 
 				// Spawn pet
 				if (buttonName.contains(LanguageManager.mobs.dog))
@@ -2767,7 +2767,7 @@ public class InventoryListener implements Listener {
 
 			// Attempt to get arena and player
 			try {
-				arenaInstance = GameManager.getArena(player);
+				arenaInstance = GameController.getArena(player);
 				gamer = arenaInstance.getPlayer(player);
 			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
@@ -2793,11 +2793,11 @@ public class InventoryListener implements Listener {
 				gamer.addGems(-cost);
 				if (Kit.merchant().setKitLevel(1).equals(gamer.getKit()) && !gamer.isSharing())
 					gamer.addGems(cost / 10);
-				if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.MERCHANT))) {
+				if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(KitEffectType.MERCHANT))) {
 					gamer.addGems(cost / 10);
 					PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
 				}
-				GameManager.createBoard(gamer);
+				GameController.createBoard(gamer);
 
 				// Upgrade pet
 				gamer.getPets().get(meta.getId()).incrementLevel();
@@ -2846,7 +2846,7 @@ public class InventoryListener implements Listener {
 
 			// Attempt to get arena and player
 			try {
-				arenaInstance = GameManager.getArena(player);
+				arenaInstance = GameController.getArena(player);
 				gamer = arenaInstance.getPlayer(player);
 			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
@@ -2873,7 +2873,7 @@ public class InventoryListener implements Listener {
 
 			// Attempt to get arena and player
 			try {
-				arenaInstance = GameManager.getArena(player);
+				arenaInstance = GameController.getArena(player);
 				gamer = arenaInstance.getPlayer(player);
 			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
@@ -2900,11 +2900,11 @@ public class InventoryListener implements Listener {
 				gamer.addGems(-cost);
 				if (Kit.merchant().setKitLevel(1).equals(gamer.getKit()) && !gamer.isSharing())
 					gamer.addGems(cost / 10);
-				if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.MERCHANT))) {
+				if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(KitEffectType.MERCHANT))) {
 					gamer.addGems(cost / 10);
 					PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
 				}
-				GameManager.createBoard(gamer);
+				GameController.createBoard(gamer);
 
 				// Spawn golem
 				ArenaSpawn spawn = arenaInstance.getVillagerSpawns().get(arenaInstance.getGolems().size());
@@ -2928,7 +2928,7 @@ public class InventoryListener implements Listener {
 
 			// Attempt to get arena and player
 			try {
-				arenaInstance = GameManager.getArena(player);
+				arenaInstance = GameController.getArena(player);
 				gamer = arenaInstance.getPlayer(player);
 			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
@@ -2954,11 +2954,11 @@ public class InventoryListener implements Listener {
 				gamer.addGems(-cost);
 				if (Kit.merchant().setKitLevel(1).equals(gamer.getKit()) && !gamer.isSharing())
 					gamer.addGems(cost / 10);
-				if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.MERCHANT))) {
+				if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(KitEffectType.MERCHANT))) {
 					gamer.addGems(cost / 10);
 					PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
 				}
-				GameManager.createBoard(gamer);
+				GameController.createBoard(gamer);
 
 				// Upgrade golem
 				arenaInstance.getGolems().get(meta.getId()).incrementLevel();
@@ -3003,7 +3003,7 @@ public class InventoryListener implements Listener {
 
 			// Attempt to get arena and player
 			try {
-				arenaInstance = GameManager.getArena(player);
+				arenaInstance = GameController.getArena(player);
 				gamer = arenaInstance.getPlayer(player);
 			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
@@ -3043,11 +3043,11 @@ public class InventoryListener implements Listener {
 			gamer.addGems(-cost);
 			if (Kit.merchant().setKitLevel(1).equals(gamer.getKit()) && !gamer.isSharing())
 				gamer.addGems(cost / 10);
-			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.MERCHANT))) {
+			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(KitEffectType.MERCHANT))) {
 				gamer.addGems(cost / 10);
 				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
 			}
-			GameManager.createBoard(gamer);
+			GameController.createBoard(gamer);
 
 			// Update player stats and shop
 			gamer.incrementTieredEssenceLevel();
@@ -3072,7 +3072,7 @@ public class InventoryListener implements Listener {
 
 			// Attempt to get arena and player
 			try {
-				arenaInstance = GameManager.getArena(player);
+				arenaInstance = GameController.getArena(player);
 				gamer = arenaInstance.getPlayer(player);
 			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
@@ -3112,11 +3112,11 @@ public class InventoryListener implements Listener {
 			gamer.addGems(-cost);
 			if (Kit.merchant().setKitLevel(1).equals(gamer.getKit()) && !gamer.isSharing())
 				gamer.addGems(cost / 10);
-			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(EffectType.MERCHANT))) {
+			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(KitEffectType.MERCHANT))) {
 				gamer.addGems(cost / 10);
 				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
 			}
-			GameManager.createBoard(gamer);
+			GameController.createBoard(gamer);
 
 			// Update player stats and shop
 			gamer.incrementTieredAmmoLevel();
@@ -3154,11 +3154,11 @@ public class InventoryListener implements Listener {
 				player.openInventory(Inventories.createPlayerStatsMenu(id, player.getUniqueId()));
 
 			// Previous page
-			else if (button.equals(Buttons.previousPage()))
+			else if (button.equals(InventoryButtons.previousPage()))
 				player.openInventory(Inventories.createPlayerAchievementsMenu(id, meta.getPage() - 1));
 
 			// Next page
-			else if (button.equals(Buttons.nextPage()))
+			else if (button.equals(InventoryButtons.nextPage()))
 				player.openInventory(Inventories.createPlayerAchievementsMenu(id, meta.getPage() + 1));
 		}
 
@@ -3233,7 +3233,7 @@ public class InventoryListener implements Listener {
 				PlayerManager.resetPlayerData(player.getUniqueId());
 
 				// Reload leaderboards
-				GameManager.refreshLeaderboards();
+				GameController.refreshLeaderboards();
 
 				// Confirm and return
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.reset);
@@ -3248,7 +3248,7 @@ public class InventoryListener implements Listener {
 
 			// Attempt to get arena and player
 			try {
-				arenaInstance = GameManager.getArena(player);
+				arenaInstance = GameController.getArena(player);
 				gamer = arenaInstance.getPlayer(player);
 			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
@@ -3297,7 +3297,7 @@ public class InventoryListener implements Listener {
 
 			// Close inventory if no second kit and create scoreboard
 			closeInv(player);
-			GameManager.createBoard(gamer);
+			GameController.createBoard(gamer);
 		}
 
 		// Challenge selection menu for an arena
@@ -3307,7 +3307,7 @@ public class InventoryListener implements Listener {
 
 			// Attempt to get arena and player
 			try {
-				arenaInstance = GameManager.getArena(player);
+				arenaInstance = GameController.getArena(player);
 				gamer = arenaInstance.getPlayer(player);
 			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
@@ -3356,7 +3356,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Create scoreboard and update inventory
-			GameManager.createBoard(gamer);
+			GameController.createBoard(gamer);
 			player.openInventory(Inventories.createSelectChallengesMenu(gamer, arenaInstance));
 		}
 
@@ -3376,7 +3376,7 @@ public class InventoryListener implements Listener {
 
 			// Try to get VDPlayer
 			try {
-				gamer = GameManager.getArena(owner).getPlayer(owner);
+				gamer = GameController.getArena(owner).getPlayer(owner);
 			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
 			}
@@ -3523,7 +3523,7 @@ public class InventoryListener implements Listener {
 				player.openInventory(Inventories.createArenaMenu(arena));
 			else {
 				if (arena.getName() == null)
-					GameManager.removeArena(arena.getId());
+					GameController.removeArena(arena.getId());
 				PlayerManager.notifyFailure(player, "Invalid arena name!");
 			}
 			return;

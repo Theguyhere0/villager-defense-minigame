@@ -3,14 +3,14 @@ package me.theguyhere.villagerdefense.plugin;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
+import me.theguyhere.villagerdefense.plugin.achievements.AchievementListener;
 import me.theguyhere.villagerdefense.plugin.commands.CommandExecImp;
 import me.theguyhere.villagerdefense.plugin.commands.TabCompleterImp;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLanguageKeyException;
-import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
 import me.theguyhere.villagerdefense.plugin.listeners.*;
-import me.theguyhere.villagerdefense.plugin.tools.DataManager;
-import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
+import me.theguyhere.villagerdefense.plugin.managers.DataManager;
+import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.managers.NMSVersion;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -88,6 +88,7 @@ public class Main extends JavaPlugin {
 		CommunicationManager.setDisplayPluginTag(getConfig().getBoolean("displayPluginTag"));
 
 		// Register event listeners
+		pm.registerEvents(new AchievementListener(), this);
 		pm.registerEvents(new InventoryListener(), this);
 		pm.registerEvents(new JoinListener(), this);
 		pm.registerEvents(new ClickPortalListener(), this);
@@ -129,7 +130,7 @@ public class Main extends JavaPlugin {
 			nmsManager.uninjectPacketListener(player);
 
 		// Wipe every valid arena
-		GameManager.wipeArenas();
+		GameController.wipeArenas();
 	}
 
 	public void reload() {
@@ -166,7 +167,7 @@ public class Main extends JavaPlugin {
 	}
 
 	public static void resetGameManager() {
-		GameManager.init();
+		GameController.init();
 
 		// Check for proper initialization with worlds
 		if (unloadedWorlds.size() > 0) {
@@ -380,7 +381,7 @@ public class Main extends JavaPlugin {
 
 		// Close all arenas if outdated
 		if (outdated)
-			GameManager.closeArenas();
+			GameController.closeArenas();
 	}
 
 	private void checkArenaNameAndGatherUnloadedWorlds() {
@@ -437,7 +438,7 @@ public class Main extends JavaPlugin {
 		// Lobby world
 		checkAddUnloadedWorld(getArenaData().getString("lobby.world"));
 
-		// Set GameManager
+		// Set GameController
 		resetGameManager();
 	}
 }

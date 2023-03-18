@@ -30,10 +30,6 @@ public class RightClickNPCEvent extends Event implements Cancellable {
 		return HANDLERS;
 	}
 
-	public static HandlerList getHandlerList() {
-		return HANDLERS;
-	}
-
 	@Override
 	public boolean isCancelled() {
 		return isCancelled;

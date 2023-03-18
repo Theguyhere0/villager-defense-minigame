@@ -20,10 +20,6 @@ public class LeaveArenaEvent extends Event implements Cancellable {
         return HANDLERS;
     }
 
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
-    }
-
     public Player getPlayer() {
         return player;
     }

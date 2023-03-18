@@ -1,16 +1,14 @@
 package me.theguyhere.villagerdefense.plugin.commands;
 
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.exceptions.CommandException;
-import me.theguyhere.villagerdefense.plugin.exceptions.CommandFormatException;
-import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.GameController;
+import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
-import me.theguyhere.villagerdefense.plugin.tools.DataManager;
-import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
-import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.managers.DataManager;
+import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.managers.NMSVersion;
+import me.theguyhere.villagerdefense.plugin.managers.PlayerManager;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -30,7 +28,7 @@ class CommandModifyArenaData {
         if (!CommandGuard.checkArg(args, 0, CommandExecImp.Argument.ADMIN.getArg()) ||
                 CommandGuard.checkArgsLengthLess(args, 2))
             return;
-        CommandGuard.checkSenderPermissions(sender, Permission.ADMIN);
+        CommandGuard.checkSenderPermissions(sender, CommandPermission.ADMIN);
 
         // Execute sub commands
         modifyLobby(args, sender);
@@ -177,7 +175,7 @@ class CommandModifyArenaData {
         if (CommandGuard.checkArg(args, 2, LocationOptionArgument.SET.arg)) {
             player = CommandGuard.checkSenderPlayer(sender);
 
-            GameManager.saveLobby(player.getLocation());
+            GameController.saveLobby(player.getLocation());
             PlayerManager.notifySuccess(player, "Lobby set!");
         }
         else if (CommandGuard.checkArg(args, 2, LocationOptionArgument.TELEPORT.arg)) {
@@ -201,7 +199,7 @@ class CommandModifyArenaData {
         else if (CommandGuard.checkArg(args, 2, LocationOptionArgument.REMOVE.arg)) {
             player = CommandGuard.checkSenderPlayer(sender);
 
-            if (GameManager.getArenas().values().stream().filter(Objects::nonNull)
+            if (GameController.getArenas().values().stream().filter(Objects::nonNull)
                     .anyMatch(arenaInstance -> !arenaInstance.isClosed()))
                 PlayerManager.notifyFailure(player,
                         "All arenas must be closed to modify this!");
@@ -230,7 +228,7 @@ class CommandModifyArenaData {
         if (CommandGuard.checkArg(args, 2, CommandModifyArenaData.CREATE)) {
             player = CommandGuard.checkSenderPlayer(sender);
 
-            GameManager.setInfoBoard(player.getLocation(), GameManager.newInfoBoardID());
+            GameController.setInfoBoard(player.getLocation(), GameController.newInfoBoardID());
             PlayerManager.notifySuccess(player, "Info board set!");
             return;
         }
@@ -253,7 +251,7 @@ class CommandModifyArenaData {
         if (CommandGuard.checkArg(args, 3, LocationOptionArgument.SET.arg)) {
             player = CommandGuard.checkSenderPlayer(sender);
 
-            GameManager.setInfoBoard(player.getLocation(), infoBoardID);
+            GameController.setInfoBoard(player.getLocation(), infoBoardID);
             PlayerManager.notifySuccess(player, "Info board set!");
         }
         else if (CommandGuard.checkArg(args, 3, LocationOptionArgument.TELEPORT.arg)) {
@@ -308,7 +306,7 @@ class CommandModifyArenaData {
         if (CommandGuard.checkArg(args, 3, LocationOptionArgument.SET.arg)) {
             player = CommandGuard.checkSenderPlayer(sender);
 
-            GameManager.setLeaderboard(player.getLocation(), type);
+            GameController.setLeaderboard(player.getLocation(), type);
             PlayerManager.notifySuccess(player, "Leaderboard set!");
         }
         else if (CommandGuard.checkArg(args, 3, LocationOptionArgument.TELEPORT.arg)) {
@@ -367,7 +365,7 @@ class CommandModifyArenaData {
         // Check if this arena exists
         Arena arena;
         try {
-            arena = GameManager.getArena(name.toString());
+            arena = GameController.getArena(name.toString());
         } catch (ArenaNotFoundException e) {
             CommandExecImp.notifyFailure(sender, LanguageManager.errors.noArena);
             return;

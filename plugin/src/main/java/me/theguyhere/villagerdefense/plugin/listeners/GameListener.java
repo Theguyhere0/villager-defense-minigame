@@ -6,41 +6,41 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaException;
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaException;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.VDMobNotFoundException;
-import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.Challenge;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
-import me.theguyhere.villagerdefense.plugin.game.models.items.ItemMetaKey;
-import me.theguyhere.villagerdefense.plugin.game.models.items.VDItem;
-import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.MageAbility;
-import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.VDAbility;
-import me.theguyhere.villagerdefense.plugin.game.models.items.armor.VDArmor;
-import me.theguyhere.villagerdefense.plugin.game.models.items.food.ShopFood;
-import me.theguyhere.villagerdefense.plugin.game.models.items.food.VDFood;
-import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.*;
-import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Ammo;
-import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Bow;
-import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.Crossbow;
-import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.VDWeapon;
-import me.theguyhere.villagerdefense.plugin.game.models.kits.EffectType;
-import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.AttackType;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.Team;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.minions.VDCreeper;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.minions.VDWitch;
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.pets.VDPet;
-import me.theguyhere.villagerdefense.plugin.game.models.players.AttackClass;
-import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
-import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.GameController;
+import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
+import me.theguyhere.villagerdefense.plugin.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaStatus;
+import me.theguyhere.villagerdefense.plugin.items.ItemMetaKey;
+import me.theguyhere.villagerdefense.plugin.items.VDItem;
+import me.theguyhere.villagerdefense.plugin.items.abilities.MageAbility;
+import me.theguyhere.villagerdefense.plugin.items.abilities.VDAbility;
+import me.theguyhere.villagerdefense.plugin.items.armor.VDArmor;
+import me.theguyhere.villagerdefense.plugin.items.food.ShopFood;
+import me.theguyhere.villagerdefense.plugin.items.food.VDFood;
+import me.theguyhere.villagerdefense.plugin.items.menuItems.*;
+import me.theguyhere.villagerdefense.plugin.items.weapons.Ammo;
+import me.theguyhere.villagerdefense.plugin.items.weapons.Bow;
+import me.theguyhere.villagerdefense.plugin.items.weapons.Crossbow;
+import me.theguyhere.villagerdefense.plugin.items.weapons.VDWeapon;
+import me.theguyhere.villagerdefense.plugin.kits.KitEffectType;
+import me.theguyhere.villagerdefense.plugin.kits.Kit;
+import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
+import me.theguyhere.villagerdefense.plugin.individuals.IndividualTeam;
+import me.theguyhere.villagerdefense.plugin.individuals.mobs.VDMob;
+import me.theguyhere.villagerdefense.plugin.individuals.mobs.minions.VDCreeper;
+import me.theguyhere.villagerdefense.plugin.individuals.mobs.minions.VDWitch;
+import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDPet;
+import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerAttackClass;
+import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerStatus;
+import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
-import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
-import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.managers.NMSVersion;
+import me.theguyhere.villagerdefense.plugin.managers.PlayerManager;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -74,7 +74,7 @@ public class GameListener implements Listener {
 		Arena arena;
 		VDMob mob;
 		try {
-			arena = GameManager.getArena(ent.getMetadata(VDMob.VD).get(0).asInt());
+			arena = GameController.getArena(ent.getMetadata(VDMob.VD).get(0).asInt());
 			mob = arena.getMob(ent.getUniqueId());
 		} catch (ArenaNotFoundException | VDMobNotFoundException err) {
 			return;
@@ -97,13 +97,13 @@ public class GameListener implements Listener {
 		// Remove the mob
 		arena.removeMob(mob.getID());
 
-		if (ent.getMetadata(VDMob.TEAM).get(0).equals(Team.VILLAGER.getValue())) {
+		if (ent.getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.VILLAGER.getValue())) {
 			// Update scoreboards
 			arena.updateScoreboards();
 		}
 
 		// Handle enemy death
-		else if (ent.getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue())) {
+		else if (ent.getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.MONSTER.getValue())) {
 			// Check for right wave
 			if (mob.getWave() != arena.getCurrentWave())
 				return;
@@ -121,7 +121,7 @@ public class GameListener implements Listener {
 	// Stop automatic game mode switching between worlds
 	@EventHandler
 	public void onGameModeSwitch(PlayerGameModeChangeEvent e) {
-		if (GameManager.checkPlayer(e.getPlayer()) && e.getNewGameMode() == GameMode.SURVIVAL)
+		if (GameController.checkPlayer(e.getPlayer()) && e.getNewGameMode() == GameMode.SURVIVAL)
 			e.setCancelled(true);
 	}
 
@@ -141,7 +141,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get VDPlayer
 		try {
-			gamer = GameManager.getArena(player).getPlayer(player);
+			gamer = GameController.getArena(player).getPlayer(player);
 		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
@@ -225,7 +225,7 @@ public class GameListener implements Listener {
 
 			// Attempt to get VDPlayer
 			try {
-				arena = GameManager.getArena(player);
+				arena = GameController.getArena(player);
 				gamer = arena.getPlayer(player);
 			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
@@ -238,7 +238,7 @@ public class GameListener implements Listener {
 			// Encode damage information
 			ItemStack range = Objects.requireNonNull(player.getEquipment()).getItemInMainHand();
 			projectile.setMetadata(ItemMetaKey.DAMAGE.name(),
-					new FixedMetadataValue(Main.plugin, gamer.dealRawDamage(AttackClass.RANGE, 0)));
+					new FixedMetadataValue(Main.plugin, gamer.dealRawDamage(PlayerAttackClass.RANGE, 0)));
 			if (Objects.requireNonNull(Objects.requireNonNull(range.getItemMeta()).getLore()).stream().anyMatch(lore ->
 					lore.contains(LanguageManager.messages.perBlock.replace("%s", "")))) {
 				projectile.setMetadata(ItemMetaKey.PER_BLOCK.name(),
@@ -258,7 +258,7 @@ public class GameListener implements Listener {
 		else {
 			// Attempt to get VDMob
 			try {
-				arena = GameManager.getArena(shooter.getMetadata(VDMob.VD).get(0).asInt());
+				arena = GameController.getArena(shooter.getMetadata(VDMob.VD).get(0).asInt());
 				finalShooter = arena.getMob(shooter.getUniqueId());
 			} catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException err) {
 				return;
@@ -305,7 +305,7 @@ public class GameListener implements Listener {
 
 			// Attempt to get VDPlayer and VDMob
 			try {
-				arena = GameManager.getArena(player);
+				arena = GameController.getArena(player);
 				gamer = arena.getPlayer(player);
 				finalDamager = arena.getMob(damager.getUniqueId());
 			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
@@ -316,7 +316,7 @@ public class GameListener implements Listener {
 			}
 
 			// Avoid phantom damage effects and friendly fire
-			if (damager instanceof Player || damager.getMetadata(VDMob.TEAM).get(0).equals(Team.VILLAGER.getValue())) {
+			if (damager instanceof Player || damager.getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.VILLAGER.getValue())) {
 				e.setCancelled(true);
 				return;
 			}
@@ -361,7 +361,7 @@ public class GameListener implements Listener {
 					!gamer.isSharing())
 				return;
 			Random r = new Random();
-			if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.WITCH))) {
+			if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(KitEffectType.WITCH))) {
 				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
 				return;
 			}
@@ -379,7 +379,7 @@ public class GameListener implements Listener {
 			// Attempt to get VDPlayer and VDMobs
 			if (player != null) {
 				try {
-					arena = GameManager.getArena(player);
+					arena = GameController.getArena(player);
 					gamer = arena.getPlayer(player);
 					finalVictim = arena.getMob(victim.getUniqueId());
 				} catch (ArenaNotFoundException | PlayerNotFoundException | VDMobNotFoundException err) {
@@ -387,7 +387,7 @@ public class GameListener implements Listener {
 				}
 			} else {
 				try {
-					arena = GameManager.getArena(victim.getMetadata(VDMob.VD).get(0).asInt());
+					arena = GameController.getArena(victim.getMetadata(VDMob.VD).get(0).asInt());
 					finalVictim = arena.getMob(victim.getUniqueId());
 				} catch (ArenaNotFoundException | VDMobNotFoundException err) {
 					return;
@@ -401,10 +401,10 @@ public class GameListener implements Listener {
 			}
 
 			// Enemy getting hurt
-			if (victim.getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue())) {
+			if (victim.getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.MONSTER.getValue())) {
 				// Avoid phantom damage effects and friendly fire
 				if (!(damager instanceof Player) &&
-						damager.getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue())) {
+						damager.getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.MONSTER.getValue())) {
 					e.setCancelled(true);
 					return;
 				}
@@ -420,7 +420,7 @@ public class GameListener implements Listener {
 
 				// Damage dealt by player
 				if (gamer != null) {
-					AttackClass attackClass;
+					PlayerAttackClass playerAttackClass;
 
 					// Calculate damage difference
 					AtomicInteger dif = new AtomicInteger();
@@ -441,14 +441,14 @@ public class GameListener implements Listener {
 											Objects.requireNonNull(e.getDamager().getMetadata(
 													ItemMetaKey.ORIGIN_LOCATION.name()).get(0).value())))
 											+ gamer.getBaseDamage(),
-									AttackType.NORMAL,
+									IndividualAttackType.NORMAL,
 									player,
 									arena
 							);
 						else finalVictim.takeDamage(
 								e.getDamager().getMetadata(ItemMetaKey.DAMAGE.name()).get(0).asInt() +
 										gamer.getBaseDamage(),
-								AttackType.NORMAL,
+								IndividualAttackType.NORMAL,
 								player,
 								arena
 						);
@@ -457,18 +457,18 @@ public class GameListener implements Listener {
 
 					// Crit damage
 					if (damage > 20 + dif.get())
-						attackClass = AttackClass.CRITICAL;
+						playerAttackClass = PlayerAttackClass.CRITICAL;
 
 					// Sweep damage
 					else if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)
-						attackClass = AttackClass.SWEEP;
+						playerAttackClass = PlayerAttackClass.SWEEP;
 
 					// Main damage
-					else attackClass = AttackClass.MAIN;
+					else playerAttackClass = PlayerAttackClass.MAIN;
 
 					// Play out damage
 					int hurt = finalVictim.takeDamage(
-							gamer.dealRawDamage(attackClass, damage / (double) (dif.get() + 20)),
+							gamer.dealRawDamage(playerAttackClass, damage / (double) (dif.get() + 20)),
 							gamer.getAttackType(), player, arena);
 
 					Random r = new Random();
@@ -481,7 +481,7 @@ public class GameListener implements Listener {
 					}
 
 					// Check for shared vampire effect
-					else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.VAMPIRE))) {
+					else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(KitEffectType.VAMPIRE))) {
 						// Heal if probability is right
 						if (r.nextDouble() < .2) {
 							gamer.changeCurrentHealth((int) (hurt * .25));
@@ -535,10 +535,10 @@ public class GameListener implements Listener {
 			}
 
 			// Friendly getting hurt
-			if (victim.getMetadata(VDMob.TEAM).get(0).equals(Team.VILLAGER.getValue())) {
+			if (victim.getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.VILLAGER.getValue())) {
 				// Avoid phantom damage effects and friendly fire
 				if (damager instanceof Player ||
-						damager.getMetadata(VDMob.TEAM).get(0).equals(Team.VILLAGER.getValue())) {
+						damager.getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.VILLAGER.getValue())) {
 					e.setCancelled(true);
 					return;
 				}
@@ -563,7 +563,7 @@ public class GameListener implements Listener {
 				}
 
 				// Check for no damage
-				if (finalDamager.getAttackType() == AttackType.NONE) {
+				if (finalDamager.getAttackType() == IndividualAttackType.NONE) {
 					e.setCancelled(true);
 					return;
 				}
@@ -614,7 +614,7 @@ public class GameListener implements Listener {
 
 			// Attempt to get arena and VDPlayer
 			try {
-				arena = GameManager.getArena(player);
+				arena = GameController.getArena(player);
 				gamer = arena.getPlayer(player);
 			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
@@ -625,28 +625,28 @@ public class GameListener implements Listener {
 				// Environmental damage, not meant for customization
 				case DROWNING:
 				case SUFFOCATION:
-					gamer.takeDamage((int) (damage * 25), AttackType.DIRECT);
+					gamer.takeDamage((int) (damage * 25), IndividualAttackType.DIRECT);
 					break;
 				case LAVA:
 				case HOT_FLOOR:
 				case LIGHTNING:
-					gamer.takeDamage((int) (damage * 40), AttackType.PENETRATING);
+					gamer.takeDamage((int) (damage * 40), IndividualAttackType.PENETRATING);
 					break;
 				case FALLING_BLOCK:
 				case FALL:
 				case BLOCK_EXPLOSION:
-					gamer.takeDamage((int) (damage * 25), AttackType.CRUSHING);
+					gamer.takeDamage((int) (damage * 25), IndividualAttackType.CRUSHING);
 					break;
 				// Custom handling
 				case FIRE:
 				case FIRE_TICK:
-					gamer.takeDamage((int) (damage * 50), AttackType.NORMAL);
+					gamer.takeDamage((int) (damage * 50), IndividualAttackType.NORMAL);
 					break;
 				case POISON:
-					gamer.takeDamage((int) (damage * 25), AttackType.PENETRATING);
+					gamer.takeDamage((int) (damage * 25), IndividualAttackType.PENETRATING);
 					break;
 				case WITHER:
-					gamer.takeDamage((int) (damage * 20), AttackType.DIRECT);
+					gamer.takeDamage((int) (damage * 20), IndividualAttackType.DIRECT);
 					break;
 				// Silence
 				default:
@@ -658,7 +658,7 @@ public class GameListener implements Listener {
 		else {
 			// Try to get arena and VDMob
 			try {
-				arena = GameManager.getArena(ent.getMetadata(VDMob.VD).get(0).asInt());
+				arena = GameController.getArena(ent.getMetadata(VDMob.VD).get(0).asInt());
 				mob = arena.getMob(ent.getUniqueId());
 			} catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException err) {
 				return;
@@ -669,28 +669,28 @@ public class GameListener implements Listener {
 				// Environmental damage, not meant for customization
 				case DROWNING:
 				case SUFFOCATION:
-					mob.takeDamage((int) (damage * 25), AttackType.DIRECT, null, arena);
+					mob.takeDamage((int) (damage * 25), IndividualAttackType.DIRECT, null, arena);
 					break;
 				case LAVA:
 				case HOT_FLOOR:
 				case LIGHTNING:
-					mob.takeDamage((int) (damage * 40), AttackType.PENETRATING, null, arena);
+					mob.takeDamage((int) (damage * 40), IndividualAttackType.PENETRATING, null, arena);
 					break;
 				case FALLING_BLOCK:
 				case FALL:
 				case BLOCK_EXPLOSION:
-					mob.takeDamage((int) (damage * 25), AttackType.CRUSHING, null, arena);
+					mob.takeDamage((int) (damage * 25), IndividualAttackType.CRUSHING, null, arena);
 					break;
 				// Custom handling
 				case FIRE:
 				case FIRE_TICK:
-					mob.takeDamage((int) (damage * 50), AttackType.NORMAL, null, arena);
+					mob.takeDamage((int) (damage * 50), IndividualAttackType.NORMAL, null, arena);
 					break;
 				case POISON:
-					mob.takeDamage((int) (damage * 25), AttackType.PENETRATING, null, arena);
+					mob.takeDamage((int) (damage * 25), IndividualAttackType.PENETRATING, null, arena);
 					break;
 				case WITHER:
-					mob.takeDamage((int) (damage * 20), AttackType.DIRECT, null, arena);
+					mob.takeDamage((int) (damage * 20), IndividualAttackType.DIRECT, null, arena);
 					break;
 				// Silence
 				default:
@@ -719,7 +719,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get VDPlayer and VDMob
 		try {
-			arena = GameManager.getArena(Objects.requireNonNull(e.getEntity()).getMetadata(VDMob.VD).get(0).asInt());
+			arena = GameController.getArena(Objects.requireNonNull(e.getEntity()).getMetadata(VDMob.VD).get(0).asInt());
 			mob = arena.getMob(e.getEntity().getUniqueId());
 			if (target instanceof Player && !arena.hasPlayer((Player) target))
 				return;
@@ -729,13 +729,13 @@ public class GameListener implements Listener {
 		}
 
 		// Monsters
-		if (mob.getEntity().getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue()))
-			if (targeted != null && targeted.getEntity().getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue()))
+		if (mob.getEntity().getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.MONSTER.getValue()))
+			if (targeted != null && targeted.getEntity().getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.MONSTER.getValue()))
 				e.setCancelled(true);
 
 		// Villager team
-		else if (mob.getEntity().getMetadata(VDMob.TEAM).get(0).equals(Team.VILLAGER.getValue()) && (targeted == null ||
-					targeted.getEntity().getMetadata(VDMob.TEAM).get(0).equals(Team.VILLAGER.getValue())))
+		else if (mob.getEntity().getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.VILLAGER.getValue()) && (targeted == null ||
+					targeted.getEntity().getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.VILLAGER.getValue())))
 				e.setCancelled(true);
 	}
 
@@ -758,7 +758,7 @@ public class GameListener implements Listener {
 
 		// Try to get arena and VDMob
 		try {
-			arena = GameManager.getArena(ent.getMetadata(VDMob.VD).get(0).asInt());
+			arena = GameController.getArena(ent.getMetadata(VDMob.VD).get(0).asInt());
 			mob = arena.getMob(ent.getUniqueId());
 		} catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException err) {
 			return;
@@ -794,7 +794,7 @@ public class GameListener implements Listener {
 
 		// Try to get arena and VDMob
 		try {
-			arena = GameManager.getArena(Objects.requireNonNull(ent).getMetadata(VDMob.VD).get(0).asInt());
+			arena = GameController.getArena(Objects.requireNonNull(ent).getMetadata(VDMob.VD).get(0).asInt());
 			witch = (VDWitch) arena.getMob(ent.getUniqueId());
 		} catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException |
 				NullPointerException | ClassCastException err) {
@@ -806,7 +806,7 @@ public class GameListener implements Listener {
 		for (LivingEntity affectedEntity : e.getAffectedEntities()) {
 			// Not monster
 			if (!(affectedEntity instanceof Player) &&
-					affectedEntity.getMetadata(VDMob.TEAM).get(0).equals(Team.MONSTER.getValue()))
+					affectedEntity.getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.MONSTER.getValue()))
 				continue;
 
 			// Ignore players with witch kit
@@ -814,7 +814,7 @@ public class GameListener implements Listener {
 				VDPlayer player = arena.getPlayer(affectedEntity.getUniqueId());
 				if (Kit.witch().getID().equals(player.getKit().getID()) && !player.isSharing())
 					continue;
-				if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(EffectType.WITCH))) {
+				if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(KitEffectType.WITCH))) {
 					PlayerManager.notifySuccess(player.getPlayer(), LanguageManager.messages.effectShare);
 					return;
 				}
@@ -834,7 +834,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena
 		try {
-			arena = GameManager.getArena(player);
+			arena = GameController.getArena(player);
 		} catch (ArenaNotFoundException err) {
 			return;
 		}
@@ -863,7 +863,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = GameManager.getArena(player);
+			arena = GameController.getArena(player);
 			gamer = arena.getPlayer(player);
 		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
@@ -891,7 +891,7 @@ public class GameListener implements Listener {
 
 		// Check for player in arena
 		try {
-			arena = GameManager.getArena(player);
+			arena = GameController.getArena(player);
 		} catch (ArenaNotFoundException err) {
 			return;
 		}
@@ -908,14 +908,14 @@ public class GameListener implements Listener {
 
 		// Check for VDPlayer
 		if (ent instanceof Player) {
-			if (!GameManager.checkPlayer((Player) ent))
+			if (!GameController.checkPlayer((Player) ent))
 				return;
 		}
 
 		// Check for VDMob
 		else {
 			try {
-				GameManager.getArena(ent.getMetadata(VDMob.VD).get(0).asInt()).getMob(ent.getUniqueId());
+				GameController.getArena(ent.getMetadata(VDMob.VD).get(0).asInt()).getMob(ent.getUniqueId());
 			} catch (IndexOutOfBoundsException | VDMobNotFoundException | ArenaNotFoundException err) {
 				return;
 			}
@@ -946,7 +946,7 @@ public class GameListener implements Listener {
 
 			// Check player is in an arena
 			try {
-				arena = GameManager.getArena(player);
+				arena = GameController.getArena(player);
 			} catch (ArenaNotFoundException err) {
 				return;
 			}
@@ -987,7 +987,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = GameManager.getArena(player);
+			arena = GameController.getArena(player);
 			gamer = arena.getPlayer(player);
 		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
@@ -1061,7 +1061,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			arena = GameManager.getArena(player);
+			arena = GameController.getArena(player);
 			gamer = arena.getPlayer(player);
 		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
@@ -1158,7 +1158,7 @@ public class GameListener implements Listener {
 	public void onBabyAttempt(PlayerInteractEntityEvent e) {
 		// Check for player in game
 		try {
-			GameManager.getArena(e.getPlayer());
+			GameController.getArena(e.getPlayer());
 		} catch (ArenaNotFoundException err) {
 			return;
 		}
@@ -1186,7 +1186,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena, player, and lore
 		try {
-			arena = GameManager.getArena(player);
+			arena = GameController.getArena(player);
 			gamer = arena.getPlayer(player);
 			lores = Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore());
 		} catch (ArenaNotFoundException | PlayerNotFoundException | NullPointerException err) {
@@ -1240,7 +1240,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena, player, and lore
 		try {
-			arena = GameManager.getArena(player);
+			arena = GameController.getArena(player);
 			gamer = arena.getPlayer(player);
 			lores = Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore());
 		} catch (ArenaNotFoundException | PlayerNotFoundException | NullPointerException err) {
@@ -1288,7 +1288,7 @@ public class GameListener implements Listener {
 			return;
 
 		// Check if player is playing in an arena
-		if (GameManager.checkPlayer((Player) ((Wolf) ent).getOwner()))
+		if (GameController.checkPlayer((Player) ((Wolf) ent).getOwner()))
 			return;
 
 		e.setCancelled(true);
@@ -1302,7 +1302,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena
 		try {
-			arena = GameManager.getArena(player);
+			arena = GameController.getArena(player);
 		} catch (ArenaNotFoundException err) {
 			return;
 		}
@@ -1334,7 +1334,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get VDPlayer and arena
 		try {
-			arena = GameManager.getArena(player);
+			arena = GameController.getArena(player);
 			gamer = arena.getPlayer(player);
 		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
@@ -1395,7 +1395,7 @@ public class GameListener implements Listener {
 		Player player = e.getPlayer();
 
 		// Check if player is in an arena
-		if (!GameManager.checkPlayer(player))
+		if (!GameController.checkPlayer(player))
 			return;
 
 		// Check for menu items
@@ -1411,7 +1411,7 @@ public class GameListener implements Listener {
 		ItemStack main = player.getInventory().getItemInMainHand();
 
 		// Check for player in arena
-		if (!GameManager.checkPlayer(player))
+		if (!GameController.checkPlayer(player))
 			return;
 
 		// Filter off-hand interactions
@@ -1432,7 +1432,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena
 		try {
-			arena = GameManager.getArena(player);
+			arena = GameController.getArena(player);
 		} catch (ArenaNotFoundException err) {
 			return;
 		}
@@ -1450,7 +1450,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena
 		try {
-			arena = GameManager.getArena(player);
+			arena = GameController.getArena(player);
 		} catch (ArenaNotFoundException err) {
 			return;
 		}
@@ -1465,7 +1465,7 @@ public class GameListener implements Listener {
 	public void onItemDamage(PlayerItemDamageEvent e) {
 		// Check for valid arena
 		try {
-			GameManager.getArena(e.getPlayer());
+			GameController.getArena(e.getPlayer());
 		} catch (ArenaNotFoundException err) {
 			return;
 		}
@@ -1502,7 +1502,7 @@ public class GameListener implements Listener {
 		Arena arena;
 		VDMob mob;
 		try {
-			arena = GameManager.getArena(ent.getMetadata(VDMob.VD).get(0).asInt());
+			arena = GameController.getArena(ent.getMetadata(VDMob.VD).get(0).asInt());
 			mob = arena.getMob(ent.getUniqueId());
 		} catch (ArenaNotFoundException | VDMobNotFoundException err) {
 			return;
@@ -1537,7 +1537,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get arena and player
 		try {
-			GameManager.getArena(player);
+			GameController.getArena(player);
 		} catch (ArenaNotFoundException err) {
 			return;
 		}

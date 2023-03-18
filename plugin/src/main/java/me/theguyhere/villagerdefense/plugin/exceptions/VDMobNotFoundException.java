@@ -1,6 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.exceptions;
 
-import me.theguyhere.villagerdefense.plugin.game.models.mobs.VDMob;
+import me.theguyhere.villagerdefense.plugin.individuals.mobs.VDMob;
 
 /**
  * An exception thrown when a {@link VDMob} cannot be found.

@@ -3,9 +3,7 @@ package me.theguyhere.villagerdefense.plugin.commands;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.exceptions.CommandException;
-import me.theguyhere.villagerdefense.plugin.exceptions.CommandPlayerException;
-import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.managers.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -20,7 +18,7 @@ class CommandDisablePlugin {
         // Guard clauses
         if (!CommandGuard.checkArg(args, 0, CommandExecImp.Argument.DISABLE.getArg()))
             return;
-        CommandGuard.checkSenderPermissions(sender, Permission.ADMIN);
+        CommandGuard.checkSenderPermissions(sender, CommandPermission.ADMIN);
 
         // Try to get a UUID
         Player player;

@@ -39,6 +39,14 @@ public class CommunicationManager {
         CommunicationManager.displayPluginTag = displayPluginTag;
     }
 
+    public static String format(String base, String... replacements) {
+        String result = base;
+        for (String replacement : replacements) {
+            result = result.replaceFirst("%s", replacement);
+        }
+        return result;
+    }
+
     /**
      * Translates color codes that use "&" into their proper form to be displayed by Bukkit.
      * @param msg Message to be translated.
@@ -176,7 +184,7 @@ public class CommunicationManager {
 
     public static void debugError(String msg, int debugLevel, boolean stackTrace) {
         if (CommunicationManager.debugLevel >= debugLevel) {
-            Log.warning(msg);
+            ConsoleManager.warning(msg);
 
             if (stackTrace)
                 Thread.dumpStack();
@@ -185,7 +193,7 @@ public class CommunicationManager {
 
     public static void debugError(String msg, int debugLevel, boolean stackTrace, Exception e) {
         if (CommunicationManager.debugLevel >= debugLevel) {
-            Log.warning(msg);
+            ConsoleManager.warning(msg);
 
             if (stackTrace)
                 e.printStackTrace();
@@ -202,7 +210,7 @@ public class CommunicationManager {
             for (String replacement : replacements)
                 formattedMessage = formattedMessage.replaceFirst("%s",
                         ChatColor.BLUE + replacement + ChatColor.RED);
-            Log.warning(formattedMessage);
+            ConsoleManager.warning(formattedMessage);
 
             if (stackTrace)
                 Thread.dumpStack();
@@ -219,7 +227,7 @@ public class CommunicationManager {
 
     public static void debugInfo(String msg, int debugLevel, boolean stackTrace) {
         if (CommunicationManager.debugLevel >= debugLevel) {
-            Log.info(msg);
+            ConsoleManager.info(msg);
 
             if (stackTrace)
                 Thread.dumpStack();
@@ -236,7 +244,7 @@ public class CommunicationManager {
             for (String replacement : replacements)
                 formattedMessage = formattedMessage.replaceFirst("%s",
                         ChatColor.BLUE + replacement + ChatColor.WHITE);
-            Log.info(formattedMessage);
+            ConsoleManager.info(formattedMessage);
 
             if (stackTrace)
                 Thread.dumpStack();
@@ -245,6 +253,6 @@ public class CommunicationManager {
 
     public static void debugConfirm(String msg, int debugLevel) {
         if (CommunicationManager.debugLevel >= debugLevel)
-            Log.confirm(msg);
+            ConsoleManager.confirm(msg);
     }
 }

@@ -3,22 +3,22 @@ package me.theguyhere.villagerdefense.plugin.listeners;
 import com.google.common.util.concurrent.AtomicDouble;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.achievements.Achievement;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.game.models.items.ItemMetaKey;
-import me.theguyhere.villagerdefense.plugin.game.models.items.abilities.*;
-import me.theguyhere.villagerdefense.plugin.game.models.items.armor.VDArmor;
-import me.theguyhere.villagerdefense.plugin.game.models.items.food.VDFood;
-import me.theguyhere.villagerdefense.plugin.game.models.items.menuItems.Shop;
-import me.theguyhere.villagerdefense.plugin.game.models.items.weapons.VDWeapon;
-import me.theguyhere.villagerdefense.plugin.game.models.players.AttackClass;
-import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
-import me.theguyhere.villagerdefense.plugin.tools.WorldManager;
+import me.theguyhere.villagerdefense.plugin.GameController;
+import me.theguyhere.villagerdefense.plugin.achievements.Achievement;
+import me.theguyhere.villagerdefense.plugin.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.items.ItemMetaKey;
+import me.theguyhere.villagerdefense.plugin.items.abilities.*;
+import me.theguyhere.villagerdefense.plugin.items.armor.VDArmor;
+import me.theguyhere.villagerdefense.plugin.items.food.VDFood;
+import me.theguyhere.villagerdefense.plugin.items.menuItems.Shop;
+import me.theguyhere.villagerdefense.plugin.items.weapons.VDWeapon;
+import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerAttackClass;
+import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.managers.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.managers.WorldManager;
 import org.bukkit.*;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
@@ -52,7 +52,7 @@ public class AbilityListener implements Listener {
 
         // Attempt to get arena and player
         try {
-            arena = GameManager.getArena(player);
+            arena = GameController.getArena(player);
             gamer = arena.getPlayer(player);
         } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             return;
@@ -121,7 +121,7 @@ public class AbilityListener implements Listener {
             fireball.setYield(yield);
             fireball.setShooter(player);
             fireball.setMetadata(ItemMetaKey.DAMAGE.name(),
-                    new FixedMetadataValue(Main.plugin, gamer.dealRawDamage(AttackClass.RANGE, 0)));
+                    new FixedMetadataValue(Main.plugin, gamer.dealRawDamage(PlayerAttackClass.RANGE, 0)));
             fireball.setMetadata(ItemMetaKey.PER_BLOCK.name(), new FixedMetadataValue(Main.plugin, false));
             gamer.triggerAbilityCooldown(Utils.secondsToMillis(cooldown.get()));
         }
@@ -353,7 +353,7 @@ public class AbilityListener implements Listener {
         Player player = e.getPlayer();
 
         // Check if player is in a game
-        if (!GameManager.checkPlayer(player))
+        if (!GameController.checkPlayer(player))
             return;
 
         // Ignore creative and spectator mode players
