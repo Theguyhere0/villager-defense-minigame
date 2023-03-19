@@ -3,7 +3,7 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
-import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EntityType;

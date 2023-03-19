@@ -3,7 +3,7 @@ package me.theguyhere.villagerdefense.plugin.commands;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.managers.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

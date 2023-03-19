@@ -5,9 +5,9 @@ import com.google.common.collect.Multimap;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
-import me.theguyhere.villagerdefense.plugin.items.ItemMetaKey;
-import me.theguyhere.villagerdefense.plugin.managers.ItemManager;
-import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.items.VDItem;
+import me.theguyhere.villagerdefense.plugin.game.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -158,16 +158,16 @@ public abstract class Axe extends VDWeapon {
 
         // Set attack speed
         attributes.put(Attribute.GENERIC_ATTACK_SPEED,
-                new AttributeModifier(ItemMetaKey.ATTACK_SPEED.name(), -3.2,
+                new AttributeModifier(VDItem.MetaKey.ATTACK_SPEED.name(), -3.2,
                         AttributeModifier.Operation.ADD_NUMBER));
         lores.add(CommunicationManager.format(SPEED, Double.toString(0.8)));
 
         // Set dummy damage
         attributes.put(Attribute.GENERIC_ATTACK_DAMAGE,
-                new AttributeModifier(ItemMetaKey.DUMMY.name(), 0,
+                new AttributeModifier(VDItem.MetaKey.DUMMY.name(), 0,
                         AttributeModifier.Operation.MULTIPLY_SCALAR_1));
         attributes.put(Attribute.GENERIC_ATTACK_DAMAGE,
-                new AttributeModifier(ItemMetaKey.DUMMY.name(), 19,
+                new AttributeModifier(VDItem.MetaKey.DUMMY.name(), 19,
                         AttributeModifier.Operation.ADD_NUMBER));
 
         // Set durability
@@ -227,9 +227,9 @@ public abstract class Axe extends VDWeapon {
         }
 
         // Create item
-        ItemStack item = ItemManager.createItem(mat, name, ItemManager.BUTTON_FLAGS, enchant, lores, attributes);
+        ItemStack item = ItemFactory.createItem(mat, name, ItemFactory.BUTTON_FLAGS, enchant, lores, attributes);
         if (durability == 0)
-            return ItemManager.makeUnbreakable(item);
+            return ItemFactory.makeUnbreakable(item);
         else return item;
     }
 

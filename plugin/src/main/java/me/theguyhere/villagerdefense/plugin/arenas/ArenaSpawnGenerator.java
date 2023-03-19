@@ -5,7 +5,7 @@ import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidVDMobKeyException;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.minions.VDMinion;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.villagers.VDNormalVillager;
-import me.theguyhere.villagerdefense.plugin.managers.DataManager;
+import me.theguyhere.villagerdefense.plugin.background.DataManager;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;

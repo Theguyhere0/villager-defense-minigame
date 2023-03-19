@@ -5,9 +5,9 @@ import com.google.common.collect.Multimap;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
-import me.theguyhere.villagerdefense.plugin.items.ItemMetaKey;
-import me.theguyhere.villagerdefense.plugin.managers.ItemManager;
-import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.items.VDItem;
+import me.theguyhere.villagerdefense.plugin.game.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -184,10 +184,10 @@ public abstract class Boots extends VDArmor{
         lores.add(CommunicationManager.format(WEIGHT, new ColoredMessage(ChatColor.DARK_PURPLE,
                 Integer.toString(weight))));
         attributes.put(Attribute.GENERIC_KNOCKBACK_RESISTANCE,
-                new AttributeModifier(ItemMetaKey.DUMMY.name(), 0,
+                new AttributeModifier(VDItem.MetaKey.DUMMY.name(), 0,
                         AttributeModifier.Operation.MULTIPLY_SCALAR_1));
         attributes.put(Attribute.GENERIC_KNOCKBACK_RESISTANCE,
-                new AttributeModifier(ItemMetaKey.DUMMY.name(), weight * .01,
+                new AttributeModifier(VDItem.MetaKey.DUMMY.name(), weight * .01,
                         AttributeModifier.Operation.ADD_NUMBER));
 
         // Set durability
@@ -247,9 +247,9 @@ public abstract class Boots extends VDArmor{
         }
 
         // Create item
-        ItemStack item = ItemManager.createItem(mat, name, ItemManager.BUTTON_FLAGS, enchant, lores, attributes);
+        ItemStack item = ItemFactory.createItem(mat, name, ItemFactory.BUTTON_FLAGS, enchant, lores, attributes);
         if (durability == 0)
-            return ItemManager.makeUnbreakable(item);
+            return ItemFactory.makeUnbreakable(item);
         else return item;
     }
 

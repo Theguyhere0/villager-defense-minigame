@@ -9,8 +9,8 @@ import me.theguyhere.villagerdefense.plugin.individuals.mobs.golems.VDSnowGolem;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDCat;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDDog;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDHorse;
-import me.theguyhere.villagerdefense.plugin.managers.ItemManager;
-import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.game.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -377,7 +377,7 @@ public abstract class VDEgg extends VDItem {
                     price));
         }
 
-        return ItemManager.createItem(mat, name, lores);
+        return ItemFactory.createItem(mat, name, lores);
     }
 
     public static boolean matches(ItemStack toCheck) {

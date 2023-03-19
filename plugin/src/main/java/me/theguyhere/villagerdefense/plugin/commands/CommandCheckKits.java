@@ -1,6 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.commands;
 
-import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
+import me.theguyhere.villagerdefense.plugin.guis.Inventories;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

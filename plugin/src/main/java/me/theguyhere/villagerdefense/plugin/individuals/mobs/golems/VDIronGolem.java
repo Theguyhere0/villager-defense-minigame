@@ -5,9 +5,9 @@ import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.items.eggs.VDEgg;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
-import me.theguyhere.villagerdefense.plugin.inventories.InventoryButtons;
-import me.theguyhere.villagerdefense.plugin.managers.ItemManager;
-import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.guis.InventoryButtons;
+import me.theguyhere.villagerdefense.plugin.game.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -48,7 +48,7 @@ public class VDIronGolem extends VDGolem {
 
     @Override
     public ItemStack createDisplayButton() {
-        return ItemManager.createItem(buttonMat, mob.getCustomName(), CommunicationManager.formatDescriptionList(
+        return ItemFactory.createItem(buttonMat, mob.getCustomName(), CommunicationManager.formatDescriptionList(
                 ChatColor.GRAY, LanguageManager.messages.golemButton, Utils.LORE_CHAR_LIMIT));
     }
 

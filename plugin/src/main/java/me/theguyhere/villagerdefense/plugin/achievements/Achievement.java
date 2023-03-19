@@ -4,8 +4,8 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.kits.Kit;
-import me.theguyhere.villagerdefense.plugin.managers.ItemManager;
-import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.game.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -100,10 +100,10 @@ public class Achievement {
 
     @NotNull
     public ItemStack getButton(boolean obtained) {
-        return ItemManager.createItem(
+        return ItemFactory.createItem(
                 getButtonMaterial(obtained),
                 getName(obtained),
-                ItemManager.BUTTON_FLAGS,
+                ItemFactory.BUTTON_FLAGS,
                 null,
                 getDescription(obtained)
         );

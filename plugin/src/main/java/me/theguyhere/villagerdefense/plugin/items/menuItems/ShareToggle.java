@@ -1,8 +1,8 @@
 package me.theguyhere.villagerdefense.plugin.items.menuItems;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.plugin.managers.ItemManager;
-import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.game.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -10,10 +10,10 @@ import org.jetbrains.annotations.NotNull;
 public abstract class ShareToggle extends VDMenuItem {
     @NotNull
     public static ItemStack create(boolean sharing) {
-        return ItemManager.createItem(Material.DISPENSER,
+        return ItemFactory.createItem(Material.DISPENSER,
                 CommunicationManager.format("&b&l" + LanguageManager.names.effectShare + ": " +
                         getToggleStatus(sharing)),
-                ItemManager.HIDE_ENCHANT_FLAGS, ItemManager.glow());
+                ItemFactory.HIDE_ENCHANT_FLAGS, ItemFactory.glow());
     }
 
     public static boolean matches(ItemStack toCheck) {

@@ -5,7 +5,7 @@ import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.managers.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

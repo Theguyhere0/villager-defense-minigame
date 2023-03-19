@@ -4,13 +4,17 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
 import me.theguyhere.villagerdefense.plugin.achievements.AchievementListener;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaListener;
+import me.theguyhere.villagerdefense.plugin.background.*;
+import me.theguyhere.villagerdefense.plugin.game.GameController;
+import me.theguyhere.villagerdefense.plugin.game.GameListener;
+import me.theguyhere.villagerdefense.plugin.challenges.ChallengeListener;
 import me.theguyhere.villagerdefense.plugin.commands.CommandExecImp;
 import me.theguyhere.villagerdefense.plugin.commands.TabCompleterImp;
+import me.theguyhere.villagerdefense.plugin.displays.ClickPortalListener;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLanguageKeyException;
-import me.theguyhere.villagerdefense.plugin.listeners.*;
-import me.theguyhere.villagerdefense.plugin.managers.DataManager;
-import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.managers.NMSVersion;
+import me.theguyhere.villagerdefense.plugin.guis.InventoryListener;
+import me.theguyhere.villagerdefense.plugin.kits.KitAbilityListener;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -90,17 +94,16 @@ public class Main extends JavaPlugin {
 		// Register event listeners
 		pm.registerEvents(new AchievementListener(), this);
 		pm.registerEvents(new InventoryListener(), this);
-		pm.registerEvents(new JoinListener(), this);
+		pm.registerEvents(new BackgroundListener(), this);
 		pm.registerEvents(new ClickPortalListener(), this);
 		pm.registerEvents(new GameListener(), this);
 		pm.registerEvents(new ArenaListener(), this);
-		pm.registerEvents(new AbilityListener(), this);
+		pm.registerEvents(new KitAbilityListener(), this);
 		pm.registerEvents(new ChallengeListener(), this);
-		pm.registerEvents(new WorldListener(), this);
 
 		// Add packet listeners for online players
 		for (Player player : Bukkit.getOnlinePlayers())
-			nmsManager.injectPacketListener(player, new PacketListenerImp());
+			nmsManager.injectPacketListener(player, new BackgroundListener());
 
 		checkArenaNameAndGatherUnloadedWorlds();
 

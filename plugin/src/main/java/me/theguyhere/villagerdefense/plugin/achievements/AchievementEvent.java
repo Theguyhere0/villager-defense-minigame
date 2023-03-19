@@ -6,6 +6,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("unused")
 public class AchievementEvent extends Event implements Cancellable {
     private final Player player;
     private final Achievement achievement;
@@ -19,6 +20,10 @@ public class AchievementEvent extends Event implements Cancellable {
 
     @Override
     public @NotNull HandlerList getHandlers() {
+        return HANDLERS;
+    }
+
+    public static HandlerList getHandlerList() {
         return HANDLERS;
     }
 

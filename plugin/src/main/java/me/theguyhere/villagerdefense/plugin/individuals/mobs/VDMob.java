@@ -4,18 +4,20 @@ import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
-import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
+import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.displays.Popup;
-import me.theguyhere.villagerdefense.plugin.GameController;
 import me.theguyhere.villagerdefense.plugin.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.huds.SidebarManager;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.managers.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -25,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 
 public abstract class VDMob {
     protected Mob mob;
@@ -49,7 +52,7 @@ public abstract class VDMob {
     protected int pierce = 0;
     protected final IndividualAttackType attackType;
     protected double attackSpeed = 0;
-    protected MobTargetPriority mobTargetPriority = MobTargetPriority.NONE;
+    protected TargetPriority targetPriority = TargetPriority.NONE;
     protected int targetRange = 0;
     protected int loot = 0;
     protected double lootSpread = 0;
@@ -134,7 +137,7 @@ public abstract class VDMob {
                         PlayerManager.setTopBalance(id, gamer.getGems());
 
                     // Update scoreboard
-                    GameController.createBoard(gamer);
+                    SidebarManager.updateActivePlayerSidebar(gamer);
 
                     // Give exp
                     gamer.getPlayer().giveExp(exp);
@@ -234,8 +237,8 @@ public abstract class VDMob {
         return attackSpeed;
     }
 
-    public MobTargetPriority getTargetPriority() {
-        return mobTargetPriority;
+    public TargetPriority getTargetPriority() {
+        return targetPriority;
     }
 
     public int getTargetRange() {
@@ -483,4 +486,30 @@ public abstract class VDMob {
     }
 
     protected abstract void updateNameTag();
+
+    public enum TargetPriority {
+        NONE((e) -> true),
+        PLAYERS((e) -> e.getType().equals(EntityType.PLAYER)),
+        MELEE_PLAYERS((e) -> e.getType().equals(EntityType.PLAYER)),
+        RANGED_PLAYERS((e) -> e.getType().equals(EntityType.PLAYER)),
+        GOLEMS((e) -> e.getType().equals(EntityType.IRON_GOLEM) || e.getType().equals(EntityType.SNOWMAN)),
+        VILLAGERS((e) -> e.getType().equals(EntityType.VILLAGER)),
+        PETS((e) -> {
+            EntityType type = e.getType();
+            return type.equals(EntityType.WOLF) || type.equals(EntityType.HORSE) || type.equals(EntityType.BEE) ||
+                    type.equals(EntityType.CAT);
+        }),
+        PETS_GOLEMS(PETS.test.and(GOLEMS.test)),
+        PETS_GOLEMS_PLAYERS(PETS_GOLEMS.test.and(PLAYERS.test));
+
+        private final Predicate<Entity> test;
+
+        TargetPriority(Predicate<Entity> test) {
+            this.test = test;
+        }
+
+        public Predicate<Entity> getTest() {
+            return test;
+        }
+    }
 }

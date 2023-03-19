@@ -1,15 +1,15 @@
 package me.theguyhere.villagerdefense.plugin.commands;
 
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.GameController;
+import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerNotFoundException;
+import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaStatus;
+import me.theguyhere.villagerdefense.plugin.huds.SidebarManager;
 import me.theguyhere.villagerdefense.plugin.kits.Kit;
-import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.managers.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -48,7 +48,7 @@ class CommandJoinAsPhantom {
         }
 
         // Check for useful phantom use
-        if (gamer.getStatus() != PlayerStatus.SPECTATOR) {
+        if (gamer.getStatus() != VDPlayer.Status.SPECTATOR) {
             PlayerManager.notifyFailure(player, LanguageManager.errors.phantomPlayer);
             return;
         }
@@ -61,9 +61,9 @@ class CommandJoinAsPhantom {
 
         // Let player join using phantom kit
         PlayerManager.teleAdventure(player, arena.getPlayerSpawn().getLocation());
-        gamer.setStatus(PlayerStatus.ALIVE);
+        gamer.setStatus(VDPlayer.Status.ALIVE);
         gamer.giveItems();
-        GameController.createBoard(gamer);
+        SidebarManager.updateActivePlayerSidebar(gamer);
         gamer.setJoinedWave(arena.getCurrentWave());
         gamer.setKit(Kit.phantom());
         player.closeInventory();

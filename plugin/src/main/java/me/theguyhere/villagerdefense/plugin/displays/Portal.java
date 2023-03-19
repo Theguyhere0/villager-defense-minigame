@@ -4,7 +4,7 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaStatus;
-import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

@@ -1,13 +1,13 @@
 package me.theguyhere.villagerdefense.plugin.commands;
 
+import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.GameController;
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaStatus;
-import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerStatus;
-import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.managers.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerNotFoundException;
+import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -41,7 +41,7 @@ class CommandKillPlayer {
 
         // Check for alive player
         try {
-            if (GameController.getArena(player).getPlayer(player).getStatus() != PlayerStatus.ALIVE) {
+            if (GameController.getArena(player).getPlayer(player).getStatus() != VDPlayer.Status.ALIVE) {
                 PlayerManager.notifyFailure(player, LanguageManager.errors.suicide);
                 return;
             }

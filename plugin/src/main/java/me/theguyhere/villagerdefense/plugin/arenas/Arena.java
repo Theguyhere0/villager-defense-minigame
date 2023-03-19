@@ -3,30 +3,33 @@ package me.theguyhere.villagerdefense.plugin.arenas;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
-import me.theguyhere.villagerdefense.plugin.exceptions.*;
+import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.plugin.displays.Portal;
-import me.theguyhere.villagerdefense.plugin.hud.CountdownController;
-import me.theguyhere.villagerdefense.plugin.GameController;
-import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
-import me.theguyhere.villagerdefense.plugin.kits.KitEffectType;
-import me.theguyhere.villagerdefense.plugin.kits.Kit;
+import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
+import me.theguyhere.villagerdefense.plugin.game.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.game.WorldManager;
+import me.theguyhere.villagerdefense.plugin.guis.InventoryID;
+import me.theguyhere.villagerdefense.plugin.guis.InventoryMeta;
+import me.theguyhere.villagerdefense.plugin.guis.InventoryType;
+import me.theguyhere.villagerdefense.plugin.huds.CountdownController;
+import me.theguyhere.villagerdefense.plugin.huds.SidebarManager;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualTeam;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.VDMob;
+import me.theguyhere.villagerdefense.plugin.individuals.mobs.VDMobNotFoundException;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.golems.VDGolem;
+import me.theguyhere.villagerdefense.plugin.individuals.mobs.minions.VDWitch;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDCat;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDDog;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDHorse;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDPet;
-import me.theguyhere.villagerdefense.plugin.individuals.mobs.minions.VDWitch;
-import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerStatus;
+import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.inventories.InventoryID;
-import me.theguyhere.villagerdefense.plugin.inventories.InventoryMeta;
-import me.theguyhere.villagerdefense.plugin.inventories.InventoryType;
-import me.theguyhere.villagerdefense.plugin.managers.*;
+import me.theguyhere.villagerdefense.plugin.kits.Kit;
+import me.theguyhere.villagerdefense.plugin.background.*;
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -48,7 +51,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * A class managing data about a Villager Defense arena.
+ * A class representing a Villager Defense arena.
  */
 public class Arena {
     /** Arena id.*/
@@ -408,76 +411,76 @@ public class Arena {
         switch (name) {
             case "blocks":
                 selected = "blocks".equals(sound);
-                return ItemManager.createItem(Material.MUSIC_DISC_BLOCKS,
+                return ItemFactory.createItem(Material.MUSIC_DISC_BLOCKS,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Blocks"),
-                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                        ItemFactory.BUTTON_FLAGS, selected ? enchants : null);
             case "cat":
                 selected = "cat".equals(sound);
-                return ItemManager.createItem(Material.MUSIC_DISC_CAT,
+                return ItemFactory.createItem(Material.MUSIC_DISC_CAT,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Cat"),
-                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                        ItemFactory.BUTTON_FLAGS, selected ? enchants : null);
             case "chirp":
                 selected = "chirp".equals(sound);
-                return ItemManager.createItem(Material.MUSIC_DISC_CHIRP,
+                return ItemFactory.createItem(Material.MUSIC_DISC_CHIRP,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Chirp"),
-                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                        ItemFactory.BUTTON_FLAGS, selected ? enchants : null);
             case "far":
                 selected = "far".equals(sound);
-                return ItemManager.createItem(Material.MUSIC_DISC_FAR,
+                return ItemFactory.createItem(Material.MUSIC_DISC_FAR,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Far"),
-                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                        ItemFactory.BUTTON_FLAGS, selected ? enchants : null);
             case "mall":
                 selected = "mall".equals(sound);
-                return ItemManager.createItem(Material.MUSIC_DISC_MALL,
+                return ItemFactory.createItem(Material.MUSIC_DISC_MALL,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Mall"),
-                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                        ItemFactory.BUTTON_FLAGS, selected ? enchants : null);
             case "mellohi":
                 selected = "mellohi".equals(sound);
-                return ItemManager.createItem(Material.MUSIC_DISC_MELLOHI,
+                return ItemFactory.createItem(Material.MUSIC_DISC_MELLOHI,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Mellohi"),
-                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                        ItemFactory.BUTTON_FLAGS, selected ? enchants : null);
             case "otherside":
                 if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1)) {
                     selected = "otherside".equals(sound);
-                    return ItemManager.createItem(Material.valueOf("MUSIC_DISC_OTHERSIDE"),
+                    return ItemFactory.createItem(Material.valueOf("MUSIC_DISC_OTHERSIDE"),
                             CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Otherside"),
-                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                            ItemFactory.BUTTON_FLAGS, selected ? enchants : null);
                 } else {
                     selected = !GameController.getValidSounds().contains(sound);
-                    return ItemManager.createItem(Material.LIGHT_GRAY_CONCRETE,
+                    return ItemFactory.createItem(Material.LIGHT_GRAY_CONCRETE,
                             CommunicationManager.format((selected ? "&a&l" : "&4&l") + "None"),
-                            ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                            ItemFactory.BUTTON_FLAGS, selected ? enchants : null);
                 }
             case "pigstep":
                 selected = "pigstep".equals(sound);
-                return ItemManager.createItem(Material.MUSIC_DISC_PIGSTEP,
+                return ItemFactory.createItem(Material.MUSIC_DISC_PIGSTEP,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Pigstep"),
-                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                        ItemFactory.BUTTON_FLAGS, selected ? enchants : null);
             case "stal":
                 selected = "stal".equals(sound);
-                return ItemManager.createItem(Material.MUSIC_DISC_STAL,
+                return ItemFactory.createItem(Material.MUSIC_DISC_STAL,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Stal"),
-                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                        ItemFactory.BUTTON_FLAGS, selected ? enchants : null);
             case "strad":
                 selected = "strad".equals(sound);
-                return ItemManager.createItem(Material.MUSIC_DISC_STRAD,
+                return ItemFactory.createItem(Material.MUSIC_DISC_STRAD,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Strad"),
-                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                        ItemFactory.BUTTON_FLAGS, selected ? enchants : null);
             case "wait":
                 selected = "wait".equals(sound);
-                return ItemManager.createItem(Material.MUSIC_DISC_WAIT,
+                return ItemFactory.createItem(Material.MUSIC_DISC_WAIT,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Wait"),
-                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                        ItemFactory.BUTTON_FLAGS, selected ? enchants : null);
             case "ward":
                 selected = "ward".equals(sound);
-                return ItemManager.createItem(Material.MUSIC_DISC_WARD,
+                return ItemFactory.createItem(Material.MUSIC_DISC_WARD,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Ward"),
-                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                        ItemFactory.BUTTON_FLAGS, selected ? enchants : null);
             default:
                 selected = !GameController.getValidSounds().contains(sound);
-                return ItemManager.createItem(Material.LIGHT_GRAY_CONCRETE,
+                return ItemFactory.createItem(Material.LIGHT_GRAY_CONCRETE,
                         CommunicationManager.format((selected ? "&a&l" : "&4&l") + "None"),
-                        ItemManager.BUTTON_FLAGS, selected ? enchants : null);
+                        ItemFactory.BUTTON_FLAGS, selected ? enchants : null);
         }
     }
 
@@ -1860,9 +1863,6 @@ public class Arena {
         activeTasks.put(ONE_TICK, new BukkitRunnable() {
             @Override
             public void run() {
-                // Update player stats to show
-                getActives().forEach(VDPlayer::showAndUpdateStats);
-
                 // Update mob targets
                 mobs.forEach(mob -> {
                     Mob mobster = mob.getEntity();
@@ -2051,7 +2051,7 @@ public class Arena {
         // Revive dead players
         for (VDPlayer p : getGhosts()) {
             PlayerManager.teleAdventure(p.getPlayer(), getPlayerSpawn().getLocation());
-            p.setStatus(PlayerStatus.ALIVE);
+            p.setStatus(VDPlayer.Status.ALIVE);
             p.giveItems();
             p.setupAttributes(false);
         }
@@ -2066,19 +2066,19 @@ public class Arena {
         getActives().forEach(p -> {
             // Notify of upcoming wave
             if (currentWave % 5 == 0)
-                p.getPlayer().sendTitle(CommunicationManager.format("&6" +
-                                String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
-                        CommunicationManager.format("&7" +
-                                String.format(LanguageManager.messages.starting, "&b25&7")),
+                p.getPlayer().sendTitle(CommunicationManager.format("&6" + LanguageManager.messages.waveNum,
+                                Integer.toString(currentWave)),
+                        CommunicationManager.format("&7" + LanguageManager.messages.starting,
+                                "&b25&7"),
                         Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
             else if (currentWave != 1)
-                p.getPlayer().sendTitle(CommunicationManager.format("&6" +
-                                String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
-                        CommunicationManager.format("&7" + String.format(LanguageManager.messages.starting,
-                                "&b15&7")),
+                p.getPlayer().sendTitle(CommunicationManager.format("&6" + LanguageManager.messages.waveNum,
+                                Integer.toString(currentWave)),
+                        CommunicationManager.format("&7" + LanguageManager.messages.starting,
+                                "&b15&7"),
                         Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
-            else p.getPlayer().sendTitle(CommunicationManager.format("&6" +
-                            String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
+            else p.getPlayer().sendTitle(CommunicationManager.format("&6" + LanguageManager.messages.waveNum,
+                                Integer.toString(currentWave)),
                     " ", Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
 
             // Give players gem rewards
@@ -2104,7 +2104,7 @@ public class Arena {
                         LanguageManager.messages.gemsReceived,
                         new ColoredMessage(ChatColor.AQUA, Integer.toString(reward))
                 );
-            GameController.createBoard(p);
+            SidebarManager.updateActivePlayerSidebar(p);
 
             // Revive pets
             p.respawnPets();
@@ -2113,21 +2113,21 @@ public class Arena {
         // Notify spectators of upcoming wave
         if (currentWave % 5 == 0)
             getSpectators().forEach(p ->
-                    p.getPlayer().sendTitle(CommunicationManager.format("&6" +
-                                    String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
-                            CommunicationManager.format("&7" +
-                                    String.format(LanguageManager.messages.starting, "&b25&7")),
+                    p.getPlayer().sendTitle(CommunicationManager.format("&6" + LanguageManager.messages.waveNum,
+                                    Integer.toString(currentWave)),
+                            CommunicationManager.format("&7" + LanguageManager.messages.starting,
+                                    "&b25&7"),
                             Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
         else if (currentWave != 1)
             getSpectators().forEach(p ->
-                    p.getPlayer().sendTitle(CommunicationManager.format("&6" +
-                                    String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
-                            CommunicationManager.format("&7" +
-                                    String.format(LanguageManager.messages.starting, "&b15&7")),
+                    p.getPlayer().sendTitle(CommunicationManager.format("&6" + LanguageManager.messages.waveNum,
+                                    Integer.toString(currentWave)),
+                            CommunicationManager.format("&7" + LanguageManager.messages.starting,
+                                    "&b15&7"),
                             Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
         else getSpectators().forEach(p ->
-                p.getPlayer().sendTitle(CommunicationManager.format("&6" +
-                                String.format(LanguageManager.messages.waveNum, Integer.toString(currentWave))),
+                p.getPlayer().sendTitle(CommunicationManager.format("&6" + LanguageManager.messages.waveNum,
+                                Integer.toString(currentWave)),
                         " ", Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1)));
 
         // Start wave after 15 seconds if not first wave
@@ -2199,7 +2199,7 @@ public class Arena {
     }
 
     public void updateScoreboards() {
-        getActives().forEach(GameController::createBoard);
+        getActives().forEach(SidebarManager::updateActivePlayerSidebar);
     }
 
     public void endGame() throws ArenaClosedException, ArenaStatusException {
@@ -2585,45 +2585,45 @@ public class Arena {
     }
 
     /**
-     * @return A list of all {@link VDPlayer}s in this arena that aren't of the {@link PlayerStatus} LEFT.
+     * @return A list of all {@link VDPlayer}s in this arena that aren't of the {@link VDPlayer.Status} LEFT.
      */
     public List<VDPlayer> getPlayers() {
         return players;
     }
 
     /**
-     * @return A list of all {@link Player}s in this arena that aren't of the {@link PlayerStatus} LEFT.
+     * @return A list of all {@link Player}s in this arena that aren't of the {@link VDPlayer.Status} LEFT.
      */
     public List<Player> getVanillaPlayers() {
         return players.stream().map(VDPlayer::getPlayer).collect(Collectors.toList());
     }
 
     /**
-     * @return A list of {@link VDPlayer}s of the {@link PlayerStatus} ALIVE.
+     * @return A list of {@link VDPlayer}s of the {@link VDPlayer.Status} ALIVE.
      */
     public List<VDPlayer> getAlives() {
-        return players.stream().filter(Objects::nonNull).filter(p -> p.getStatus() == PlayerStatus.ALIVE)
+        return players.stream().filter(Objects::nonNull).filter(p -> p.getStatus() == VDPlayer.Status.ALIVE)
                 .collect(Collectors.toList());
     }
 
     /**
-     * @return A list of {@link VDPlayer}s of the {@link PlayerStatus} GHOST.
+     * @return A list of {@link VDPlayer}s of the {@link VDPlayer.Status} GHOST.
      */
     public List<VDPlayer> getGhosts() {
-        return players.stream().filter(Objects::nonNull).filter(p -> p.getStatus() == PlayerStatus.GHOST)
+        return players.stream().filter(Objects::nonNull).filter(p -> p.getStatus() == VDPlayer.Status.GHOST)
                 .collect(Collectors.toList());
     }
 
     /**
-     * @return A list of {@link VDPlayer}s of the {@link PlayerStatus} SPECTATOR.
+     * @return A list of {@link VDPlayer}s of the {@link VDPlayer.Status} SPECTATOR.
      */
     public List<VDPlayer> getSpectators() {
-        return players.stream().filter(Objects::nonNull).filter(p -> p.getStatus() == PlayerStatus.SPECTATOR)
+        return players.stream().filter(Objects::nonNull).filter(p -> p.getStatus() == VDPlayer.Status.SPECTATOR)
                 .collect(Collectors.toList());
     }
 
     /**
-     * @return A list of {@link VDPlayer}s of the {@link PlayerStatus} ALIVE or GHOST.
+     * @return A list of {@link VDPlayer}s of the {@link VDPlayer.Status} ALIVE or GHOST.
      */
     public List<VDPlayer> getActives() {
         return Stream.concat(getAlives().stream(), getGhosts().stream()).collect(Collectors.toList());
@@ -2738,13 +2738,13 @@ public class Arena {
     /**
      * Check the number of players that are sharing a certain effect.
      *
-     * @param kitEffectType The effect type to look for.
+     * @param effectType The effect type to look for.
      * @return Number of players sharing the effect type.
      */
-    public int effectShareCount(KitEffectType kitEffectType) {
+    public int effectShareCount(Kit.EffectType effectType) {
         Kit effectKit;
 
-        switch (kitEffectType) {
+        switch (effectType) {
             case BLACKSMITH:
                 effectKit = Kit.blacksmith().setKitLevel(1);
                 break;

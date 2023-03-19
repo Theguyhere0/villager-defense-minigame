@@ -3,8 +3,8 @@ package me.theguyhere.villagerdefense.plugin.items.weapons;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
-import me.theguyhere.villagerdefense.plugin.managers.ItemManager;
-import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.game.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -212,9 +212,9 @@ public abstract class Crossbow extends VDWeapon {
         }
 
         // Create item
-        ItemStack item = ItemManager.createItem(Material.CROSSBOW, name, ItemManager.BUTTON_FLAGS, enchant, lores);
+        ItemStack item = ItemFactory.createItem(Material.CROSSBOW, name, ItemFactory.BUTTON_FLAGS, enchant, lores);
         if (durability == 0)
-            return ItemManager.makeUnbreakable(item);
+            return ItemFactory.makeUnbreakable(item);
         else return item;
     }
 

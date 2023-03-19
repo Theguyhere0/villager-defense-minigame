@@ -4,11 +4,11 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaException;
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaStatusException;
-import me.theguyhere.villagerdefense.plugin.GameController;
+import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaStatus;
-import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.managers.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

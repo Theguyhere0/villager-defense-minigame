@@ -2,8 +2,7 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
-import me.theguyhere.villagerdefense.plugin.individuals.mobs.MobTargetPriority;
-import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
@@ -35,7 +34,7 @@ public class VDPiglinSniper extends VDMinion {
         setModerateKnockback();
         setMediumWeight();
         setSlowSpeed();
-        mobTargetPriority = MobTargetPriority.RANGED_PLAYERS;
+        targetPriority = TargetPriority.RANGED_PLAYERS;
         setFarTargetRange();
         setArmorEquipment(true, false, false, false);
         setCrossbow();

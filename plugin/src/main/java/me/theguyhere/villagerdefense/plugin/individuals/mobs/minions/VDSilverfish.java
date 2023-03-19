@@ -2,8 +2,7 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
-import me.theguyhere.villagerdefense.plugin.individuals.mobs.MobTargetPriority;
-import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
@@ -30,7 +29,7 @@ public class VDSilverfish extends VDMinion {
         setLowKnockback();
         setVeryLightWeight();
         setMediumSpeed();
-        mobTargetPriority = MobTargetPriority.PETS_GOLEMS;
+        targetPriority = TargetPriority.PETS_GOLEMS;
         setModerateTargetRange();
         setLoot(getValue(arena.getCurrentDifficulty()), .1);
         updateNameTag();

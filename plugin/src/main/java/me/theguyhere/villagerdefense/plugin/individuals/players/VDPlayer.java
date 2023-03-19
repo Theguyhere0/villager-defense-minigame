@@ -7,26 +7,24 @@ import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaException;
-import me.theguyhere.villagerdefense.plugin.GameController;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
+import me.theguyhere.villagerdefense.plugin.huds.BottomBarController;
+import me.theguyhere.villagerdefense.plugin.huds.SidebarManager;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDHorse;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDPet;
+import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.items.menuItems.Shop;
 import me.theguyhere.villagerdefense.plugin.items.weapons.Ammo;
-import me.theguyhere.villagerdefense.plugin.kits.KitEffectType;
 import me.theguyhere.villagerdefense.plugin.kits.Kit;
-import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.managers.NMSVersion;
-import me.theguyhere.villagerdefense.plugin.managers.PlayerManager;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
+import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.EntityEquipment;
@@ -38,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
@@ -47,7 +46,7 @@ public class VDPlayer {
     /** UUID of corresponding {@link Player}.*/
     private final UUID player;
     /** Status of the this {@link VDPlayer}.*/
-    private PlayerStatus status;
+    private Status status;
     /** The arena that this {@link VDPlayer} belongs in.*/
     private final Arena arena;
 
@@ -56,8 +55,17 @@ public class VDPlayer {
     private int currentHealth = 0;
     private int absorption = 0;
     private int baseDamage = 0;
-    private int armor = 0;
-    private int toughness = 0;
+    private final Map<String, Integer> damageValues = new HashMap<>();
+    private final AtomicDouble damageMultiplier = new AtomicDouble(1);
+    private final AtomicInteger armor = new AtomicInteger();
+    private final AtomicInteger toughness = new AtomicInteger();
+    private final AtomicDouble weight = new AtomicDouble(1);
+    private boolean ability = false;
+    private final AtomicBoolean range = new AtomicBoolean(false);
+    private final AtomicBoolean perBlock = new AtomicBoolean(false);
+    private final AtomicInteger ammoCost = new AtomicInteger();
+    private final AtomicInteger ammoCap = new AtomicInteger();
+    private final AtomicReference<IndividualAttackType> attackType = new AtomicReference<>(IndividualAttackType.NORMAL);
     /** The time until weapon cooldown us up.*/
     private long weaponCooldown = 0;
     /** The time until ammo warning cooldown us up.*/
@@ -105,8 +113,8 @@ public class VDPlayer {
         this.player = player.getUniqueId();
         this.arena = arena;
         if (spectating)
-            status = PlayerStatus.SPECTATOR;
-        else status = PlayerStatus.ALIVE;
+            status = Status.SPECTATOR;
+        else status = Status.ALIVE;
     }
 
     public UUID getID() {
@@ -121,11 +129,11 @@ public class VDPlayer {
         return arena;
     }
 
-    public PlayerStatus getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(PlayerStatus status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -247,134 +255,137 @@ public class VDPlayer {
         }
     }
 
-    public void showAndUpdateStats() {
-        AtomicBoolean penetrating = new AtomicBoolean(false);
-        AtomicBoolean crushing = new AtomicBoolean(false);
-        AtomicBoolean range = new AtomicBoolean(false);
-        AtomicBoolean perBlock = new AtomicBoolean(false);
-        boolean ability = false;
-        AtomicInteger ammoCost = new AtomicInteger();
-        AtomicInteger ammoCap = new AtomicInteger();
-        AtomicInteger armor = new AtomicInteger();
-        AtomicInteger toughness = new AtomicInteger();
-        AtomicDouble weight = new AtomicDouble(1);
-        String damage = Integer.toString(baseDamage);
-        AtomicDouble increase = new AtomicDouble();
+    public void updateDamageMultiplier() {
+        // Reset
+        damageMultiplier.set(1);
 
-        // Make sure health was properly initialized
-        if (maxHealth <= 0)
+        // Calculate boosts or reductions
+        getPlayer().getActivePotionEffects().forEach(potionEffect -> {
+            if (PotionEffectType.INCREASE_DAMAGE.equals(potionEffect.getType()))
+                damageMultiplier.addAndGet(.1 * (potionEffect.getAmplifier() + 1));
+            else if (PotionEffectType.WEAKNESS.equals(potionEffect.getType()))
+                damageMultiplier.addAndGet(-.1 * (potionEffect.getAmplifier() + 1));
+        });
+        if (boost && PlayerManager.hasAchievement(player, Achievement.topKills9().getID()))
+           damageMultiplier.addAndGet(.1);
+        if (getPlayer().isInsideVehicle())
+            damageMultiplier.addAndGet(VDHorse.getDamageBoost(getPets().stream().filter(pet -> pet instanceof VDHorse)
+                    .collect(Collectors.toList()).get(0).getLevel()));
+    }
+
+    public void updateMainHand(ItemStack main) {
+        // Reset values
+        damageValues.clear();
+        ability = false;
+        range.set(false);
+        perBlock.set(false);
+        ammoCost.set(0);
+
+        if (!VDItem.matches(main))
             return;
 
-        // Calculate stats
-        try {
-            ItemStack weapon = Objects.requireNonNull(getPlayer().getEquipment()).getItemInMainHand();
-            List<Integer> damageValues = new ArrayList<>();
+        if (VDAbility.matches(main) || VDAbility.matches(getPlayer().getInventory().getItemInOffHand()))
+            ability = true;
 
-            if (VDAbility.matches(weapon))
-                ability = true;
-            Objects.requireNonNull(Objects.requireNonNull(weapon.getItemMeta()).getLore()).forEach(lore -> {
-                if (lore.contains(LanguageManager.messages.attackMainDamage
-                        .replace("%s", ""))) {
-                    if (lore.contains("-")) {
-                        String[] split = lore.substring(2 +
-                                        LanguageManager.messages.attackMainDamage.length())
-                                .split("-");
-                        damageValues.add(Integer.valueOf(split[0]));
-                        damageValues.add(Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
-                    } else damageValues.add(Integer.valueOf(lore.substring(2 +
+        Objects.requireNonNull(Objects.requireNonNull(main.getItemMeta()).getLore()).forEach(lore -> {
+            if (lore.contains(LanguageManager.messages.attackMainDamage
+                    .replace("%s", ""))) {
+                if (lore.contains("-")) {
+                    String[] split = lore.substring(2 +
                                     LanguageManager.messages.attackMainDamage.length())
-                            .replace(ChatColor.BLUE.toString(), "")));
-                }
-                else if (lore.contains(LanguageManager.messages.attackCritDamage
-                        .replace("%s", ""))) {
-                    if (lore.contains("-")) {
-                        String[] split = lore.substring(2 +
-                                        LanguageManager.messages.attackCritDamage.length())
-                                .split("-");
-                        damageValues.add(Integer.valueOf(split[0]));
-                        damageValues.add(Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
-                    } else damageValues.add(Integer.valueOf(lore.substring(2 +
+                            .split("-");
+                    damageValues.put("mainLow", Integer.valueOf(split[0]));
+                    damageValues.put("mainHigh",
+                            Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
+                } else damageValues.put("main", Integer.valueOf(lore.substring(2 +
+                                LanguageManager.messages.attackMainDamage.length())
+                        .replace(ChatColor.BLUE.toString(), "")));
+            }
+            else if (lore.contains(LanguageManager.messages.attackCritDamage
+                    .replace("%s", ""))) {
+                if (lore.contains("-")) {
+                    String[] split = lore.substring(2 +
                                     LanguageManager.messages.attackCritDamage.length())
-                            .replace(ChatColor.BLUE.toString(), "")));
-                }
-                else if (lore.contains(LanguageManager.messages.attackSweepDamage
-                        .replace("%s", ""))) {
-                    if (lore.contains("-")) {
-                        String[] split = lore.substring(2 +
-                                        LanguageManager.messages.attackSweepDamage.length())
-                                .split("-");
-                        damageValues.add(Integer.valueOf(split[0]));
-                        damageValues.add(Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
-                    } else damageValues.add(Integer.valueOf(lore.substring(2 +
+                            .split("-");
+                    damageValues.put("critLow", Integer.valueOf(split[0]));
+                    damageValues.put("critHigh",
+                            Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
+                } else damageValues.put("crit", Integer.valueOf(lore.substring(2 +
+                                LanguageManager.messages.attackCritDamage.length())
+                        .replace(ChatColor.BLUE.toString(), "")));
+            }
+            else if (lore.contains(LanguageManager.messages.attackSweepDamage
+                    .replace("%s", ""))) {
+                if (lore.contains("-")) {
+                    String[] split = lore.substring(2 +
                                     LanguageManager.messages.attackSweepDamage.length())
+                            .split("-");
+                    damageValues.put("sweepLow", Integer.valueOf(split[0]));
+                    damageValues.put("sweepHigh",
+                            Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
+                } else damageValues.put("sweep", Integer.valueOf(lore.substring(2 +
+                                LanguageManager.messages.attackSweepDamage.length())
+                        .replace(ChatColor.BLUE.toString(), "")));
+            }
+            else if (lore.contains(LanguageManager.messages.attackRangeDamage
+                    .replace("%s", ""))) {
+                range.set(true);
+                String perBlockText = LanguageManager.messages.perBlock.replace("%s", "");
+                if (lore.contains(perBlockText))
+                    perBlock.set(true);
+                if (lore.contains("-")) {
+                    String[] split = lore.substring(2 + LanguageManager.messages.attackRangeDamage.length())
+                            .replace(perBlockText, "")
+                            .split("-");
+                    damageValues.put("rangeLow", Integer.valueOf(split[0]));
+                    damageValues.put("rangeHigh", Integer.valueOf(split[1]
                             .replace(ChatColor.BLUE.toString(), "")));
-                }
-                else if (lore.contains(LanguageManager.messages.attackRangeDamage
-                        .replace("%s", ""))) {
-                    range.set(true);
-                    String perBlockText = LanguageManager.messages.perBlock.replace("%s", "");
-                    if (lore.contains(perBlockText))
-                        perBlock.set(true);
-                    if (lore.contains("-")) {
-                        String[] split = lore.substring(2 + LanguageManager.messages.attackRangeDamage.length())
-                                .replace(perBlockText, "")
-                                .split("-");
-                        damageValues.add(Integer.valueOf(split[0]));
-                        damageValues.add(Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
-                    } else damageValues.add(Integer.valueOf(lore.substring(2 +
-                                    LanguageManager.messages.attackRangeDamage.length())
-                            .replace(ChatColor.BLUE.toString(), "")));
-                }
-                else if (lore.contains(LanguageManager.names.penetrating))
-                    penetrating.set(true);
-                else if (lore.contains(LanguageManager.names.crushing))
-                    crushing.set(true);
-                else if (lore.contains(LanguageManager.messages.ammoCost
-                        .replace("%s", ""))) {
-                    ammoCost.set(Integer.parseInt(lore.substring(2 + LanguageManager.messages.ammoCost.length())
-                            .replace(ChatColor.BLUE.toString(), "")));
-                }
-            });
-            damageValues.sort(Comparator.comparingInt(Integer::intValue));
+                } else damageValues.put("range", Integer.valueOf(lore.substring(2 +
+                                LanguageManager.messages.attackRangeDamage.length())
+                        .replace(ChatColor.BLUE.toString(), "")));
+            }
+            else if (lore.contains(LanguageManager.names.penetrating))
+                attackType.set(IndividualAttackType.PENETRATING);
+            else if (lore.contains(LanguageManager.names.crushing))
+                attackType.set(IndividualAttackType.CRUSHING);
+            else if (lore.contains(LanguageManager.messages.ammoCost
+                    .replace("%s", ""))) {
+                ammoCost.set(Integer.parseInt(lore.substring(2 + LanguageManager.messages.ammoCost.length())
+                        .replace(ChatColor.BLUE.toString(), "")));
+            }
+        });
+    }
 
-            // Calculate boosts or reductions
-            getPlayer().getActivePotionEffects().forEach(potionEffect -> {
-                if (PotionEffectType.INCREASE_DAMAGE.equals(potionEffect.getType()))
-                    increase.addAndGet((1 + potionEffect.getAmplifier()) * .1);
-                else if (PotionEffectType.WEAKNESS.equals(potionEffect.getType()))
-                    increase.addAndGet(- (1 + potionEffect.getAmplifier()) * .1);
-            });
-            if (boost && PlayerManager.hasAchievement(player, Achievement.topKills9().getID()))
-                increase.addAndGet(.1);
-            if (getPlayer().isInsideVehicle())
-                increase.addAndGet((int) (VDHorse.getDamageBoost(getPets().stream()
-                        .filter(pet -> pet instanceof VDHorse).collect(Collectors.toList()).get(0).getLevel()) * 10));
+    public void updateMainHand() {
+        updateMainHand(getPlayer().getInventory().getItemInMainHand());
+    }
 
-            // Apply base damage and multipliers
-            damageValues.replaceAll(original -> (int) ((original + (perBlock.get() ? 0 : baseDamage)) *
-                    (1 + increase.get())));
+    public void updateOffHand(ItemStack off) {
+        // Reset values
+        ability = false;
+        ammoCap.set(0);
 
-            if (damageValues.size() == 1)
-                damage = Integer.toString((damageValues.get(0)));
-            else damage = damageValues.get(0) + "-" + damageValues.get(damageValues.size() - 1);
-        } catch (Exception ignored) {
-        }
-        try {
-            ItemStack ammo = Objects.requireNonNull(getPlayer().getEquipment()).getItemInOffHand();
+        if (!VDItem.matches(off))
+            return;
 
-            if (VDAbility.matches(ammo))
-                ability = true;
-            Objects.requireNonNull(Objects.requireNonNull(ammo.getItemMeta()).getLore()).forEach(lore -> {
-                if (lore.contains(LanguageManager.messages.capacity
-                        .replace("%s", ""))) {
-                    ammoCap.set(Integer.parseInt(lore.substring(2 + LanguageManager.messages.capacity.length())
-                            .replace(ChatColor.BLUE.toString(), "")
-                            .replace(ChatColor.WHITE.toString(), "")
-                            .split(" / ")[0]));
-                }
-            });
-        } catch (Exception ignored) {
-        }
+        if (VDAbility.matches(off) || VDAbility.matches(getPlayer().getInventory().getItemInMainHand()))
+            ability = true;
+        Objects.requireNonNull(Objects.requireNonNull(off.getItemMeta()).getLore()).forEach(lore -> {
+            if (lore.contains(LanguageManager.messages.capacity
+                    .replace("%s", ""))) {
+                ammoCap.set(Integer.parseInt(lore.substring(2 + LanguageManager.messages.capacity.length())
+                        .replace(ChatColor.BLUE.toString(), "")
+                        .replace(ChatColor.WHITE.toString(), "")
+                        .split(" / ")[0]));
+            }
+        });
+    }
+
+    public void updateArmor() {
+        armor.set(0);
+        toughness.set(0);
+        weight.set(1);
+
         try {
             ItemStack helmet = Objects.requireNonNull(Objects.requireNonNull(getPlayer().getEquipment()).getHelmet());
 
@@ -470,7 +481,30 @@ public class VDPlayer {
             }
         });
 
-        // Update status bar
+        // Set speed
+        Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+                .setBaseValue(.1 * weight.get());
+    }
+
+    public String getStatusBar() {
+        // Make sure health was properly initialized
+        if (maxHealth <= 0)
+            return "";
+
+        // Calculate damage
+        String damage;
+        List<Integer> values = new ArrayList<>(damageValues.values());
+        values.sort(Comparator.comparingInt(Integer::intValue));
+        values.replaceAll(original -> (int) ((original + (perBlock.get() ? 0 : baseDamage)) *
+                damageMultiplier.get()));
+        if (values.size() == 0)
+            damage = Integer.toString(((int) (baseDamage * damageMultiplier.get())));
+        else if (values.size() == 1)
+            damage = Integer.toString((values.get(0)));
+        else damage = values.get(0) + "-" + values.get(values.size() - 1);
+
+
+        // Construct status bar
         String SPACE = "    ";
         String middleText = new ColoredMessage(ChatColor.AQUA, Utils.ARMOR + " " + armor) + SPACE +
                 new ColoredMessage(ChatColor.DARK_AQUA, Utils.TOUGH + " " + toughness + "%");
@@ -480,29 +514,23 @@ public class VDPlayer {
             middleText = CommunicationManager.format(new ColoredMessage(ChatColor.DARK_RED,
                     LanguageManager.messages.cooldown), new ColoredMessage(ChatColor.AQUA,
                     Double.toString(Math.round(Utils.millisToSeconds(remainingAbilityCooldown()) * 10) / 10d)));
-        getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
-                new ColoredMessage(absorption > 0 ? ChatColor.GOLD : ChatColor.RED,
-                        Utils.HP + " " + (currentHealth + absorption) + "/" + maxHealth) + SPACE + middleText
-                         + SPACE + new ColoredMessage(ammoCap.get() < ammoCost.get() ? ChatColor.DARK_RED :
-                        crushing.get() ? ChatColor.YELLOW : penetrating.get() ? ChatColor.RED : ChatColor.GREEN,
-                        (range.get() ? Utils.ARROW : Utils.DAMAGE) + " " + damage +
-                                (perBlock.get() ? " /" + Utils.BLOCK + " +" + (int) (baseDamage *
-                                        (1 + increase.get())) : ""))));
+        ChatColor endTextColor;
+        if (ammoCap.get() < ammoCost.get())
+            endTextColor = ChatColor.DARK_RED;
+        else if (attackType.get() == IndividualAttackType.CRUSHING)
+            endTextColor = ChatColor.YELLOW;
+        else if (attackType.get() == IndividualAttackType.PENETRATING)
+            endTextColor = ChatColor.RED;
+        else endTextColor = ChatColor.GREEN;
 
-        // Update normal health display
-        getPlayer().setHealth(Math.max(currentHealth *
-                Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth,
-                1));
-        getPlayer().setAbsorptionAmount(absorption *
-                Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth);
-
-        // Update armor and toughness
-        this.armor = armor.get();
-        this.toughness = toughness.get();
-
-        // Set speed
-        Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-                .setBaseValue(.1 * weight.get());
+        return new ColoredMessage(absorption > 0 ? ChatColor.GOLD :
+                ChatColor.RED, Utils.HP + " " + (currentHealth + absorption) + "/" + maxHealth) +
+                SPACE +
+                middleText +
+                SPACE +
+                new ColoredMessage(endTextColor, (range.get() ? Utils.ARROW : Utils.DAMAGE) + " " + damage +
+                        (perBlock.get() ? " /" + Utils.BLOCK + " +" + (int) (baseDamage * damageMultiplier.get()) :
+                                ""));
     }
 
     public void heal() {
@@ -526,6 +554,13 @@ public class VDPlayer {
             if (PotionEffectType.REGENERATION.equals(potionEffect.getType()))
                 changeCurrentHealth(5 * (1 + potionEffect.getAmplifier()));
         });
+
+        // Update normal health display
+        getPlayer().setHealth(Math.max(currentHealth *
+                        Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth,
+                1));
+        getPlayer().setAbsorptionAmount(absorption *
+                Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth);
     }
 
     public void refill() {
@@ -539,9 +574,9 @@ public class VDPlayer {
     public void takeDamage(int damage, @NotNull IndividualAttackType attackType) {
         // Scale damage by attack type
         if (attackType == IndividualAttackType.NORMAL || attackType == IndividualAttackType.CRUSHING)
-            damage -= Math.min(damage, armor);
+            damage -= Math.min(damage, armor.get());
         if (attackType == IndividualAttackType.NORMAL || attackType == IndividualAttackType.PENETRATING)
-            damage *= Math.max(0, 1 - toughness / 100d);
+            damage *= Math.max(0, 1 - toughness.get() / 100d);
         if (attackType == IndividualAttackType.NONE)
             damage = 0;
 
@@ -557,6 +592,13 @@ public class VDPlayer {
                 attackType == IndividualAttackType.PENETRATING)
             Arrays.stream(getPlayer().getInventory().getArmorContents()).filter(Objects::nonNull).forEach(armor ->
                     Bukkit.getPluginManager().callEvent(new PlayerItemDamageEvent(getPlayer(), armor, 0)));
+
+        // Update normal health display
+        getPlayer().setHealth(Math.max(currentHealth *
+                        Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth,
+                1));
+        getPlayer().setAbsorptionAmount(absorption *
+                Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth);
     }
 
     public void combust(int ticks) {
@@ -572,120 +614,46 @@ public class VDPlayer {
         this.baseDamage = baseDamage;
     }
 
-    public int dealRawDamage(@NotNull PlayerAttackClass playerAttackClass, double mainMult) {
+    public int dealRawDamage(@NotNull AttackClass playerAttackClass, double mainMult) {
         Random r = new Random();
-
-        // Modify damage based on weapon
         double damage;
-        try {
-            ItemStack weapon = Objects.requireNonNull(getPlayer().getEquipment()).getItemInMainHand();
-            Map<String, Integer> attributes = new HashMap<>();
 
-            // Gather weapon attributes
-            Objects.requireNonNull(Objects.requireNonNull(weapon.getItemMeta()).getLore()).forEach(lore -> {
-                if (lore.contains(LanguageManager.messages.attackMainDamage
-                        .replace("%s", ""))) {
-                    if (lore.contains("-")) {
-                        String[] split = lore.substring(2 +
-                                        LanguageManager.messages.attackMainDamage.length())
-                                .split("-");
-                        attributes.put("mainLow", Integer.valueOf(split[0]));
-                        attributes.put("mainHigh",
-                                Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
-                    } else attributes.put("main", Integer.valueOf(lore.substring(2 +
-                                    LanguageManager.messages.attackMainDamage.length())
-                            .replace(ChatColor.BLUE.toString(), "")));
-                }
-                else if (lore.contains(LanguageManager.messages.attackCritDamage
-                        .replace("%s", ""))) {
-                    if (lore.contains("-")) {
-                        String[] split = lore.substring(2 +
-                                        LanguageManager.messages.attackCritDamage.length())
-                                .split("-");
-                        attributes.put("critLow", Integer.valueOf(split[0]));
-                        attributes.put("critHigh",
-                                Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
-                    } else attributes.put("crit", Integer.valueOf(lore.substring(2 +
-                                    LanguageManager.messages.attackCritDamage.length())
-                            .replace(ChatColor.BLUE.toString(), "")));
-                }
-                else if (lore.contains(LanguageManager.messages.attackSweepDamage
-                        .replace("%s", ""))) {
-                    if (lore.contains("-")) {
-                        String[] split = lore.substring(2 +
-                                        LanguageManager.messages.attackSweepDamage.length())
-                                .split("-");
-                        attributes.put("sweepLow", Integer.valueOf(split[0]));
-                        attributes.put("sweepHigh",
-                                Integer.valueOf(split[1].replace(ChatColor.BLUE.toString(), "")));
-                    } else attributes.put("sweep", Integer.valueOf(lore.substring(2 +
-                                    LanguageManager.messages.attackSweepDamage.length())
-                            .replace(ChatColor.BLUE.toString(), "")));
-                }
-                else if (lore.contains(LanguageManager.messages.attackRangeDamage
-                        .replace("%s", ""))) {
-                    String perBlockText = LanguageManager.messages.perBlock.replace("%s", "");
-                    if (lore.contains("-")) {
-                        String[] split = lore.substring(2 + LanguageManager.messages.attackRangeDamage.length())
-                                .replace(perBlockText, "")
-                                .split("-");
-                        attributes.put("rangeLow", Integer.valueOf(split[0]));
-                        attributes.put("rangeHigh", Integer.valueOf(split[1]
-                                .replace(ChatColor.BLUE.toString(), "")));
-                    } else attributes.put("range", Integer.valueOf(lore.substring(2 +
-                                    LanguageManager.messages.attackRangeDamage.length())
-                            .replace(ChatColor.BLUE.toString(), "")));
-                }
-            });
-
-            // Deal raw damage
-            switch (playerAttackClass) {
-                case MAIN:
-                    if (attributes.containsKey("main"))
-                        damage = (baseDamage + attributes.get("main")) * mainMult;
-                    else damage = (baseDamage + attributes.get("mainLow") +
-                            r.nextInt(attributes.get("mainHigh") - attributes.get("mainLow"))) * mainMult;
-                    break;
-                case CRITICAL:
-                    if (attributes.containsKey("crit"))
-                        damage = baseDamage + attributes.get("crit");
-                    else damage = baseDamage + attributes.get("critLow") +
-                            r.nextInt(attributes.get("critHigh") - attributes.get("critLow"));
-                    break;
-                case SWEEP:
-                    if (attributes.containsKey("sweep"))
-                        damage = baseDamage + attributes.get("sweep");
-                    else damage = baseDamage + attributes.get("sweepLow") +
-                            r.nextInt(attributes.get("sweepHigh") - attributes.get("sweepLow"));
-                    break;
-                case RANGE:
-                    if (attributes.containsKey("range"))
-                        damage = attributes.get("range");
-                    else damage = attributes.get("rangeLow") + r.nextInt(attributes.get("rangeHigh") -
-                            attributes.get("rangeLow"));
-                    break;
-                default:
-                    damage = 0;
-            }
-        } catch (Exception e) {
-            damage = baseDamage;
+        switch (playerAttackClass) {
+            case MAIN:
+                if (damageValues.size() == 0)
+                    damage = baseDamage;
+                else if (damageValues.containsKey(AttackClass.MAIN.straightID))
+                    damage = (baseDamage + damageValues.get(AttackClass.MAIN.straightID)) * mainMult;
+                else damage = (baseDamage + damageValues.get(AttackClass.MAIN.lowID) +
+                        r.nextInt(damageValues.get(AttackClass.MAIN.highID) -
+                                damageValues.get(AttackClass.MAIN.lowID))) * mainMult;
+                break;
+            case CRITICAL:
+                if (damageValues.containsKey(AttackClass.CRITICAL.straightID))
+                    damage = baseDamage + damageValues.get(AttackClass.CRITICAL.straightID);
+                else damage = baseDamage + damageValues.get(AttackClass.CRITICAL.lowID) +
+                        r.nextInt(damageValues.get(AttackClass.CRITICAL.highID) -
+                                damageValues.get(AttackClass.CRITICAL.lowID));
+                break;
+            case SWEEP:
+                if (damageValues.containsKey(AttackClass.SWEEP.straightID))
+                    damage = baseDamage + damageValues.get(AttackClass.SWEEP.straightID);
+                else damage = baseDamage + damageValues.get(AttackClass.SWEEP.lowID) +
+                        r.nextInt(damageValues.get(AttackClass.SWEEP.highID) -
+                                damageValues.get(AttackClass.SWEEP.lowID));
+                break;
+            case RANGE:
+                if (damageValues.containsKey(AttackClass.RANGE.straightID))
+                    damage = damageValues.get(AttackClass.RANGE.straightID);
+                else damage = damageValues.get(AttackClass.RANGE.lowID) +
+                        r.nextInt(damageValues.get(AttackClass.RANGE.highID) -
+                                damageValues.get(AttackClass.RANGE.lowID));
+                break;
+            default:
+                damage = 0;
         }
 
-        // Calculate boosts or reductions
-        AtomicInteger increase = new AtomicInteger();
-        getPlayer().getActivePotionEffects().forEach(potionEffect -> {
-            if (PotionEffectType.INCREASE_DAMAGE.equals(potionEffect.getType()))
-                increase.addAndGet(1 + potionEffect.getAmplifier());
-            else if (PotionEffectType.WEAKNESS.equals(potionEffect.getType()))
-                increase.addAndGet(- 1 - potionEffect.getAmplifier());
-        });
-        if (boost && PlayerManager.hasAchievement(player, Achievement.topKills9().getID()))
-            increase.incrementAndGet();
-        if (getPlayer().isInsideVehicle())
-            increase.addAndGet((int) (VDHorse.getDamageBoost(getPets().stream().filter(pet -> pet instanceof VDHorse)
-                    .collect(Collectors.toList()).get(0).getLevel()) * 10));
-
-        return (int) (damage * (1 + .1 * increase.get()));
+        return (int) (damage * damageMultiplier.get());
     }
 
     public long remainingWeaponCooldown() {
@@ -713,17 +681,7 @@ public class VDPlayer {
     }
 
     public IndividualAttackType getAttackType() {
-        try {
-            ItemStack weapon = Objects.requireNonNull(getPlayer().getEquipment()).getItemInMainHand();
-            if (Objects.requireNonNull(Objects.requireNonNull(weapon.getItemMeta()).getLore()).stream()
-                    .anyMatch(lore -> lore.contains(LanguageManager.names.penetrating)))
-                return IndividualAttackType.PENETRATING;
-            if (Objects.requireNonNull(Objects.requireNonNull(weapon.getItemMeta()).getLore()).stream()
-                    .anyMatch(lore -> lore.contains(LanguageManager.names.crushing)))
-                return IndividualAttackType.CRUSHING;
-        } catch (Exception ignored) {
-        }
-        return IndividualAttackType.NORMAL;
+        return attackType.get();
     }
 
     public int getGems() {
@@ -812,7 +770,7 @@ public class VDPlayer {
 
     public void setGemBoost(int gemBoost) {
         this.gemBoost = gemBoost;
-        GameController.createBoard(this);
+        SidebarManager.updateActivePlayerSidebar(this);
     }
 
     public boolean isSharing() {
@@ -892,6 +850,7 @@ public class VDPlayer {
         getPlayer().getInventory().setLeggings(null);
         boots = getPlayer().getInventory().getBoots();
         getPlayer().getInventory().setBoots(null);
+        updateArmor();
     }
 
     /**
@@ -902,6 +861,7 @@ public class VDPlayer {
         getPlayer().getInventory().setChestplate(chestplate);
         getPlayer().getInventory().setLeggings(leggings);
         getPlayer().getInventory().setBoots(boots);
+        updateArmor();
     }
 
     /**
@@ -931,6 +891,10 @@ public class VDPlayer {
             }
         }
         PlayerManager.giveItem(getPlayer(), Shop.create(), LanguageManager.errors.inventoryFull);
+
+        updateArmor();
+        updateOffHand(null);
+        updateMainHand();
     }
 
     /**
@@ -942,52 +906,29 @@ public class VDPlayer {
 
         // Set health for people with giant kits
         if (Kit.giant().setKitLevel(1).equals(getKit()) && !isSharing()) {
-            Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
-                    .addModifier(new AttributeModifier("Giant1", 2,
-                            AttributeModifier.Operation.ADD_NUMBER));
             maxHealth = 550;
         }
         else if (Kit.giant().setKitLevel(2).equals(getKit()) && !isSharing()) {
-            Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
-                    .addModifier(new AttributeModifier("Giant2", 4,
-                            AttributeModifier.Operation.ADD_NUMBER));
             maxHealth = 600;
         }
-        else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(KitEffectType.GIANT1))) {
-            Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
-                    .addModifier(new AttributeModifier("Giant2", 4,
-                            AttributeModifier.Operation.ADD_NUMBER));
+        else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(Kit.EffectType.GIANT1))) {
             maxHealth = 550;
             PlayerManager.notifySuccess(getPlayer(), LanguageManager.messages.effectShare);
         }
-        else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(KitEffectType.GIANT2))) {
-            Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
-                    .addModifier(new AttributeModifier("Giant1", 2,
-                            AttributeModifier.Operation.ADD_NUMBER));
+        else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(Kit.EffectType.GIANT2))) {
             maxHealth = 600;
             PlayerManager.notifySuccess(getPlayer(), LanguageManager.messages.effectShare);
         }
 
         // Set health for people with health boost and are boosted
         if (boost && PlayerManager.hasAchievement(player, Achievement.topWave9().getID())) {
-            Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
-                    .addModifier(new AttributeModifier("HealthBoost", 2,
-                            AttributeModifier.Operation.ADD_NUMBER));
             maxHealth += 50;
         }
 
         // Set health for people with dwarf challenge
         if (getChallenges().contains(Challenge.dwarf())) {
-            Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
-                    .addModifier(new AttributeModifier("Dwarf", -.5,
-                    AttributeModifier.Operation.MULTIPLY_SCALAR_1));
             maxHealth /= 2;
         }
-
-        // Make sure new health is set up correctly
-        getPlayer().setHealth(
-                Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
-                        .getValue());
 
         // Give blindness to people with that challenge
         if (getChallenges().contains(Challenge.blind()))
@@ -996,6 +937,10 @@ public class VDPlayer {
         // Set up health and damage
         setMaxHealthInit(maxHealth);
 
+        // Set up status bar
+        updateDamageMultiplier();
+        BottomBarController.startStatusBar(this);
+
         // Only run the first time
         if (first) {
             // Set up pet slots
@@ -1003,13 +948,46 @@ public class VDPlayer {
                 petSlots = 4;
             else if (Kit.trainer().setKitLevel(2).equals(getKit()) && !isSharing())
                 petSlots = 5;
-            else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(KitEffectType.TRAINER1))) {
+            else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(Kit.EffectType.TRAINER1))) {
                 petSlots = 4;
                 PlayerManager.notifySuccess(getPlayer(), LanguageManager.messages.effectShare);
-            } else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(KitEffectType.TRAINER2))) {
+            } else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(Kit.EffectType.TRAINER2))) {
                 petSlots = 5;
                 PlayerManager.notifySuccess(getPlayer(), LanguageManager.messages.effectShare);
             } else petSlots = 3;
+        }
+    }
+
+    /**
+     * Status of players in Villager Defense. Possible status:<ul>
+     *     <li>{@link #ALIVE}</li>
+     *     <li>{@link #GHOST}</li>
+     *     <li>{@link #SPECTATOR}</li>
+     * </ul>
+     */
+    public enum Status {
+        /** Player is alive and active in the game.*/
+        ALIVE,
+        /** Player is dead but active in the game.*/
+        GHOST,
+        /** Player is spectating in the game.*/
+        SPECTATOR
+    }
+
+    public enum AttackClass {
+        MAIN("mainLow", "mainHigh", "main"),
+        CRITICAL("critLow", "critHigh", "crit"),
+        SWEEP("sweepLow", "sweepHigh", "sweep"),
+        RANGE("rangeLow", "rangeHigh", "range");
+
+        private final String lowID;
+        private final String highID;
+        private final String straightID;
+
+        private AttackClass(String lowID, String highID, String straightID) {
+            this.lowID = lowID;
+            this.highID = highID;
+            this.straightID = straightID;
         }
     }
 }

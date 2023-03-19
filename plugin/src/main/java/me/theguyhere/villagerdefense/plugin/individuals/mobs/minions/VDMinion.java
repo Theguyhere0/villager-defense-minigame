@@ -6,7 +6,7 @@ import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualTeam;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.VDMob;
-import me.theguyhere.villagerdefense.plugin.managers.ItemManager;
+import me.theguyhere.villagerdefense.plugin.game.ItemFactory;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -83,7 +83,7 @@ public abstract class VDMinion extends VDMob {
                     armor = new ItemStack(Material.NETHERITE_HELMET);
                     break;
                 case 7:
-                    armor = ItemManager.createItem(Material.NETHERITE_HELMET, "", null, enchant);
+                    armor = ItemFactory.createItem(Material.NETHERITE_HELMET, "", null, enchant);
                     break;
                 default:
                     armor = new ItemStack(Material.AIR);
@@ -111,7 +111,7 @@ public abstract class VDMinion extends VDMob {
                     armor = new ItemStack(Material.NETHERITE_CHESTPLATE);
                     break;
                 case 7:
-                    armor = ItemManager.createItem(Material.NETHERITE_CHESTPLATE, "", null, enchant);
+                    armor = ItemFactory.createItem(Material.NETHERITE_CHESTPLATE, "", null, enchant);
                     break;
                 default:
                     armor = new ItemStack(Material.AIR);
@@ -139,7 +139,7 @@ public abstract class VDMinion extends VDMob {
                     armor = new ItemStack(Material.NETHERITE_LEGGINGS);
                     break;
                 case 7:
-                    armor = ItemManager.createItem(Material.NETHERITE_LEGGINGS, "", null, enchant);
+                    armor = ItemFactory.createItem(Material.NETHERITE_LEGGINGS, "", null, enchant);
                     break;
                 default:
                     armor = new ItemStack(Material.AIR);
@@ -167,7 +167,7 @@ public abstract class VDMinion extends VDMob {
                     armor = new ItemStack(Material.NETHERITE_BOOTS);
                     break;
                 case 7:
-                    armor = ItemManager.createItem(Material.NETHERITE_BOOTS, "", null, enchant);
+                    armor = ItemFactory.createItem(Material.NETHERITE_BOOTS, "", null, enchant);
                     break;
                 default:
                     armor = new ItemStack(Material.AIR);
@@ -199,7 +199,7 @@ public abstract class VDMinion extends VDMob {
                 item = new ItemStack(Material.NETHERITE_SWORD);
                 break;
             case 7:
-                item = ItemManager.createItem(Material.NETHERITE_SWORD, "", null, enchant);
+                item = ItemFactory.createItem(Material.NETHERITE_SWORD, "", null, enchant);
                 break;
             default:
                 item = new ItemStack(Material.AIR);
@@ -230,7 +230,7 @@ public abstract class VDMinion extends VDMob {
                 item = new ItemStack(Material.NETHERITE_AXE);
                 break;
             case 7:
-                item = ItemManager.createItem(Material.NETHERITE_AXE, "", null, enchant);
+                item = ItemFactory.createItem(Material.NETHERITE_AXE, "", null, enchant);
                 break;
             default:
                 item = new ItemStack(Material.AIR);
@@ -261,7 +261,7 @@ public abstract class VDMinion extends VDMob {
                 item = new ItemStack(Material.NETHERITE_HOE);
                 break;
             case 7:
-                item = ItemManager.createItem(Material.NETHERITE_HOE, "", null, enchant);
+                item = ItemFactory.createItem(Material.NETHERITE_HOE, "", null, enchant);
                 break;
             default:
                 item = new ItemStack(Material.AIR);
@@ -275,7 +275,7 @@ public abstract class VDMinion extends VDMob {
 
         if (level == 7)
             Objects.requireNonNull(mob.getEquipment()).setItemInMainHand(
-                    ItemManager.createItem(Material.BOW, "", null, enchant)
+                    ItemFactory.createItem(Material.BOW, "", null, enchant)
             );
         else Objects.requireNonNull(mob.getEquipment()).setItemInMainHand(new ItemStack(Material.BOW));
     }
@@ -286,7 +286,7 @@ public abstract class VDMinion extends VDMob {
 
         if (level == 7)
             Objects.requireNonNull(mob.getEquipment()).setItemInMainHand(
-                    ItemManager.createItem(Material.CROSSBOW, "", null, enchant)
+                    ItemFactory.createItem(Material.CROSSBOW, "", null, enchant)
             );
         else Objects.requireNonNull(mob.getEquipment()).setItemInMainHand(new ItemStack(Material.CROSSBOW));
     }

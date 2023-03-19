@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.plugin.achievements;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 
 class AchievementReward {
     private final Type type;

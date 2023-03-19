@@ -2,8 +2,8 @@ package me.theguyhere.villagerdefense.plugin.challenges;
 
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.plugin.managers.ItemManager;
-import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.game.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -95,8 +95,8 @@ public class Challenge {
         enchants.put(Enchantment.DURABILITY, 1);
         List<String> lores = new ArrayList<>(masterDescription);
 
-        return ItemManager.createItem(buttonMaterial,
-                CommunicationManager.format((active ? "&d&l" : "&5&l") + name), ItemManager.BUTTON_FLAGS,
+        return ItemFactory.createItem(buttonMaterial,
+                CommunicationManager.format((active ? "&d&l" : "&5&l") + name), ItemFactory.BUTTON_FLAGS,
                 active ? enchants : null, lores);
     }
 

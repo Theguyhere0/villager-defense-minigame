@@ -3,8 +3,8 @@ package me.theguyhere.villagerdefense.plugin.items.abilities;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
-import me.theguyhere.villagerdefense.plugin.managers.ItemManager;
-import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.game.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -17,8 +17,6 @@ import java.util.List;
 public abstract class PriestAbility extends VDAbility {
     @NotNull
     public static ItemStack create(Tier tier) {
-        List<String> lores = new ArrayList<>();
-
         // Set name
         String name;
         switch (tier) {
@@ -45,32 +43,7 @@ public abstract class PriestAbility extends VDAbility {
         }
 
         // Set description
-        String description;
-        switch (tier) {
-            case T0:
-                description = LanguageManager.itemLore.essences.t0.description;
-                break;
-            case T1:
-                description = LanguageManager.itemLore.essences.t1.description;
-                break;
-            case T2:
-                description = LanguageManager.itemLore.essences.t2.description;
-                break;
-            case T3:
-                description = LanguageManager.itemLore.essences.t3.description;
-                break;
-            case T4:
-                description = LanguageManager.itemLore.essences.t4.description;
-                break;
-            case T5:
-                description = LanguageManager.itemLore.essences.t5.description;
-                break;
-            default:
-                description = "";
-        }
-        if (!description.isEmpty())
-            lores.addAll(CommunicationManager.formatDescriptionList(
-                    ChatColor.GRAY, description, Utils.LORE_CHAR_LIMIT));
+        List<String> lores = new ArrayList<>(getDescription(tier));
 
         // Add space in lore from name, followed by instructions for usage
         lores.add("");
@@ -191,11 +164,11 @@ public abstract class PriestAbility extends VDAbility {
         }
 
         // Create item
-        return ItemManager.createItem(
+        return ItemFactory.createItem(
                 Material.WHITE_DYE,
                 name,
-                ItemManager.HIDE_ENCHANT_FLAGS,
-                ItemManager.glow(),
+                ItemFactory.HIDE_ENCHANT_FLAGS,
+                ItemFactory.glow(),
                 lores
         );
     }

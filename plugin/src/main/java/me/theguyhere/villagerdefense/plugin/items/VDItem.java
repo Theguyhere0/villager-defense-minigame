@@ -6,7 +6,7 @@ import me.theguyhere.villagerdefense.plugin.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.items.armor.VDArmor;
 import me.theguyhere.villagerdefense.plugin.items.food.VDFood;
 import me.theguyhere.villagerdefense.plugin.items.weapons.VDWeapon;
-import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -124,5 +124,13 @@ public abstract class VDItem {
         public ColoredMessage getLabel() {
             return label;
         }
+    }
+
+    public enum MetaKey {
+        DAMAGE,
+        PER_BLOCK,
+        ORIGIN_LOCATION,
+        ATTACK_SPEED,
+        DUMMY
     }
 }

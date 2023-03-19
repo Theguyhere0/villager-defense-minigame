@@ -2,14 +2,16 @@ package me.theguyhere.villagerdefense.plugin.items.abilities;
 
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
-import me.theguyhere.villagerdefense.plugin.managers.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -68,6 +70,36 @@ public abstract class VDAbility extends VDItem {
             default:
                 return -1;
         }
+    }
+
+    protected static List<String> getDescription(Tier tier) {
+        String description;
+        switch (tier) {
+            case T0:
+                description = LanguageManager.itemLore.essences.t0.description;
+                break;
+            case T1:
+                description = LanguageManager.itemLore.essences.t1.description;
+                break;
+            case T2:
+                description = LanguageManager.itemLore.essences.t2.description;
+                break;
+            case T3:
+                description = LanguageManager.itemLore.essences.t3.description;
+                break;
+            case T4:
+                description = LanguageManager.itemLore.essences.t4.description;
+                break;
+            case T5:
+                description = LanguageManager.itemLore.essences.t5.description;
+                break;
+            default:
+                description = "";
+        }
+        if (!description.isEmpty())
+            return CommunicationManager.formatDescriptionList(
+                    ChatColor.GRAY, description, Utils.LORE_CHAR_LIMIT);
+        else return new ArrayList<>();
     }
 
     // Modify the cooldown of an ability
