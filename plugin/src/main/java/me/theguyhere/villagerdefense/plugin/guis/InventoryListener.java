@@ -2283,7 +2283,7 @@ public class InventoryListener implements Listener {
 						arena.getBounds().contains(player.getLocation().toVector())))
 					PlayerManager.notifyFailure(player, "Arena bounds cannot intersect another arena!");
 				else {
-					arenaInstance.setCorner1(player.getLocation());
+					arenaInstance.setCorner2(player.getLocation());
 					PlayerManager.notifySuccess(player, "Corner 2 set!");
 					player.openInventory(Inventories.createBoundsMenu(meta.getArena()));
 				}
@@ -2296,7 +2296,7 @@ public class InventoryListener implements Listener {
 						arena.getBounds().contains(player.getLocation().toVector())))
 					PlayerManager.notifyFailure(player, "Arena bounds cannot intersect another arena!");
 				else {
-					arenaInstance.setCorner1(player.getLocation());
+					arenaInstance.setCorner2(player.getLocation());
 					PlayerManager.notifySuccess(player, "Corner 2 set!");
 				}
 
