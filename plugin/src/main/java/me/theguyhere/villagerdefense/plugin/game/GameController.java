@@ -7,7 +7,7 @@ import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.displays.InfoBoard;
 import me.theguyhere.villagerdefense.plugin.displays.Leaderboard;
-import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
+import me.theguyhere.villagerdefense.plugin.background.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.background.DataManager;
 import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import org.bukkit.Location;

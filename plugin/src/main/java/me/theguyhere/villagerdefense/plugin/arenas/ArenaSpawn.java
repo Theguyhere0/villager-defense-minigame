@@ -1,6 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.arenas;
 
-import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
+import me.theguyhere.villagerdefense.plugin.background.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.displays.SpawnIndicator;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import org.bukkit.Location;

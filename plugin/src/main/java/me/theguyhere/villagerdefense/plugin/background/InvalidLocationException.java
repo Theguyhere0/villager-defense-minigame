@@ -1,4 +1,4 @@
-package me.theguyhere.villagerdefense.plugin.exceptions;
+package me.theguyhere.villagerdefense.plugin.background;
 
 import org.bukkit.Location;
 

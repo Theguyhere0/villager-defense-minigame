@@ -1,4 +1,4 @@
-package me.theguyhere.villagerdefense.plugin.exceptions;
+package me.theguyhere.villagerdefense.plugin.background;
 
 /**
  * An exception thrown whenever the language file key doesn't exist in the current language file.

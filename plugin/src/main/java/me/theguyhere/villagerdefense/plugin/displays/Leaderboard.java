@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.plugin.displays;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
+import me.theguyhere.villagerdefense.plugin.background.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.background.DataManager;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import org.bukkit.Bukkit;

@@ -8,7 +8,7 @@ import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.plugin.displays.Portal;
-import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
+import me.theguyhere.villagerdefense.plugin.background.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.game.ItemFactory;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.game.WorldManager;

@@ -1321,8 +1321,8 @@ public class Inventories {
 				ItemFactory.BUTTON_FLAGS, ItemFactory.glow()));
 
 		buttons.add(ItemFactory.createItem(Material.LEAD,
-				CommunicationManager.format(String.format("&2&l" + LanguageManager.names.petShop,
-						Integer.toString(player.getRemainingPetSlots()), Integer.toString(player.getPetSlots()))),
+				CommunicationManager.format("&2&l" + LanguageManager.names.petShop,
+						Integer.toString(player.getRemainingPetSlots()), Integer.toString(player.getPetSlots())),
 				ItemFactory.BUTTON_FLAGS, ItemFactory.glow()));
 
 		buttons.add(ItemFactory.createItem(Material.CARVED_PUMPKIN,
@@ -1583,8 +1583,8 @@ public class Inventories {
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
 				new InventoryMeta(InventoryID.PET_SHOP_MENU, InventoryType.MENU, arena,
 						(9 - player.getPets().size()) / 2),
-				CommunicationManager.format(String.format("&2&l" + LanguageManager.names.petShop,
-						Integer.toString(player.getRemainingPetSlots()), Integer.toString(player.getPetSlots()))),
+				CommunicationManager.format("&2&l" + LanguageManager.names.petShop,
+						Integer.toString(player.getRemainingPetSlots()), Integer.toString(player.getPetSlots())),
 				true,
 				true,
 				LanguageManager.names.pet,

@@ -1,7 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.displays;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
+import me.theguyhere.villagerdefense.plugin.background.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import org.bukkit.Location;
@@ -32,13 +32,13 @@ public class ArenaBoard {
 			arena.getSortedDescendingRecords().forEach(record -> {
 				StringBuilder line = new StringBuilder(LanguageManager.messages.wave + " &b" + record.getWave() +
 						" &f- ");
-				for (int i = 0; i < record.getPlayers().size() / 4 + 1; i++) {
-					if (i * 4 + 4 < record.getPlayers().size()) {
-						for (int j = i * 4; j < i * 4 + 4; j++)
+				for (int i = 0; i < record.getPlayers().size() / 3 + 1; i++) {
+					if (i * 3 + 3 < record.getPlayers().size()) {
+						for (int j = i * 3; j < i * 3 + 3; j++)
 							line.append(record.getPlayers().get(j)).append(", ");
 						info.add(CommunicationManager.format(line.substring(0, line.length() - 1)));
 					} else {
-						for (int j = i * 4; j < record.getPlayers().size(); j++)
+						for (int j = i * 3; j < record.getPlayers().size(); j++)
 							line.append(record.getPlayers().get(j)).append(", ");
 						info.add(CommunicationManager.format(line.substring(0, line.length() - 2)));
 					}

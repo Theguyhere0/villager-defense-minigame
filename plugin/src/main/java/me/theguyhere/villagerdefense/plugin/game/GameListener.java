@@ -1262,13 +1262,13 @@ public class GameListener implements Listener {
 		player.setSaturation(0);
 	}
 
-	// Prevent wolves from teleporting
+	// Prevent pets from teleporting
 	@EventHandler
 	public void onTeleport(EntityTeleportEvent e) {
 		Entity ent = e.getEntity();
 
 		// Check for wolf
-		if (!(ent instanceof Wolf))
+		if (!(ent instanceof Wolf) && !(ent instanceof Cat))
 			return;
 
 		// Check for special mob
@@ -1276,7 +1276,7 @@ public class GameListener implements Listener {
 			return;
 
 		// Check if player is playing in an arena
-		if (GameController.checkPlayer((Player) ((Wolf) ent).getOwner()))
+		if (GameController.checkPlayer((Player) ((Tameable) ent).getOwner()))
 			return;
 
 		e.setCancelled(true);

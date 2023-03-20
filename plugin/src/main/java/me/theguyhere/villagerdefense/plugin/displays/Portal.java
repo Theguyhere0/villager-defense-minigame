@@ -1,7 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.displays;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
+import me.theguyhere.villagerdefense.plugin.background.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaStatus;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;

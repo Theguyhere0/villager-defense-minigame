@@ -1,7 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.displays;
 
 import me.theguyhere.villagerdefense.nms.common.entities.VillagerPacketEntity;
-import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLocationException;
+import me.theguyhere.villagerdefense.plugin.background.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import org.bukkit.Location;

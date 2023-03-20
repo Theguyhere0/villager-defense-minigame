@@ -12,7 +12,7 @@ import me.theguyhere.villagerdefense.plugin.challenges.ChallengeListener;
 import me.theguyhere.villagerdefense.plugin.commands.CommandExecImp;
 import me.theguyhere.villagerdefense.plugin.commands.TabCompleterImp;
 import me.theguyhere.villagerdefense.plugin.displays.ClickPortalListener;
-import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLanguageKeyException;
+import me.theguyhere.villagerdefense.plugin.background.InvalidLanguageKeyException;
 import me.theguyhere.villagerdefense.plugin.guis.InventoryListener;
 import me.theguyhere.villagerdefense.plugin.kits.KitAbilityListener;
 import net.milkbowl.vault.economy.Economy;

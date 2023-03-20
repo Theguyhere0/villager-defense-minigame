@@ -1,7 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.background;
 
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.exceptions.InvalidLanguageKeyException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
