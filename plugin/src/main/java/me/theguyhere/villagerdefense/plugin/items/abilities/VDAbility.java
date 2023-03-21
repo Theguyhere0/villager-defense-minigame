@@ -3,10 +3,12 @@ package me.theguyhere.villagerdefense.plugin.items.abilities;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import org.bukkit.ChatColor;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
@@ -18,12 +20,15 @@ import java.util.Objects;
 public abstract class VDAbility extends VDItem {
     protected static final ColoredMessage COOLDOWN = new ColoredMessage(ChatColor.BLUE,
             String.format(LanguageManager.messages.cooldown, LanguageManager.messages.seconds));
+    public static final NamespacedKey COOLDOWN_KEY = new NamespacedKey(Main.plugin, "cooldown");
     protected static final ColoredMessage DURATION = new ColoredMessage(ChatColor.BLUE,
             String.format(LanguageManager.messages.duration, LanguageManager.messages.seconds));
+    public static final NamespacedKey DURATION_KEY = new NamespacedKey(Main.plugin, "duration");
     protected static final ColoredMessage EFFECT = new ColoredMessage(ChatColor.BLUE,
             LanguageManager.messages.effect);
     protected static final ColoredMessage RANGE = new ColoredMessage(ChatColor.BLUE,
             String.format(LanguageManager.messages.range, LanguageManager.messages.blocks));
+    public static final NamespacedKey RANGE_KEY = new NamespacedKey(Main.plugin, "range");
 
     public static ItemStack createAbility(String kitID, Tier tier) {
         if (Kit.knight().getID().equals(kitID))

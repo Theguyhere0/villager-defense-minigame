@@ -44,7 +44,7 @@ public class CommunicationManager {
         for (String replacement : replacements) {
             result = result.replaceFirst("%s", replacement);
         }
-        return result;
+        return format(result);
     }
 
     /**

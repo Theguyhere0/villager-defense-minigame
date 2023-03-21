@@ -1,12 +1,14 @@
 package me.theguyhere.villagerdefense.plugin.kits;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import me.theguyhere.villagerdefense.common.Utils;
-import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.game.GameController;
+import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.game.WorldManager;
 import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
@@ -15,10 +17,10 @@ import me.theguyhere.villagerdefense.plugin.items.armor.VDArmor;
 import me.theguyhere.villagerdefense.plugin.items.food.VDFood;
 import me.theguyhere.villagerdefense.plugin.items.menuItems.Shop;
 import me.theguyhere.villagerdefense.plugin.items.weapons.VDWeapon;
-import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
-import me.theguyhere.villagerdefense.plugin.game.WorldManager;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,6 +31,8 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -77,39 +81,28 @@ public class KitAbilityListener implements Listener {
             return;
 
         // Gather stats
-        AtomicDouble cooldown = new AtomicDouble();
-        AtomicDouble range = new AtomicDouble();
-        AtomicDouble duration = new AtomicDouble();
+        PersistentDataContainer dataContainer = Objects.requireNonNull(item.getItemMeta()).getPersistentDataContainer();
+        Double cooldown = dataContainer.get(VDAbility.COOLDOWN_KEY, PersistentDataType.DOUBLE);
+        Double range = dataContainer.get(VDAbility.RANGE_KEY, PersistentDataType.DOUBLE);
+        Double duration = dataContainer.get(VDAbility.DURATION_KEY, PersistentDataType.DOUBLE);
         AtomicReference<String> effect = new AtomicReference<>();
         Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore()).forEach(lore -> {
-            if (lore.contains(LanguageManager.messages.cooldown
-                    .replace("%s", ""))) {
-                cooldown.set(Double.parseDouble(lore.substring(2 + LanguageManager.messages.cooldown.length())
-                        .replace(ChatColor.BLUE.toString(), "")
-                        .replace(LanguageManager.messages.seconds.substring(3), "")));
-            }
-            else if (lore.contains(LanguageManager.messages.range
-                    .replace("%s", ""))) {
-                range.set(Double.parseDouble(lore.substring(2 + LanguageManager.messages.range.length())
-                        .replace(ChatColor.BLUE.toString(), "")
-                        .replace(LanguageManager.messages.blocks.substring(3), "")));
-            }
-            else if (lore.contains(LanguageManager.messages.duration
-                    .replace("%s", ""))) {
-                duration.set(Double.parseDouble(lore.substring(2 + LanguageManager.messages.duration.length())
-                        .replace(ChatColor.BLUE.toString(), "")
-                        .replace(LanguageManager.messages.seconds.substring(3), "")));
-            }
-            else if (lore.contains(LanguageManager.messages.effect
+            if (lore.contains(LanguageManager.messages.effect
                     .replace("%s", ""))) {
                 effect.set(lore);
             }
         });
-        double altDuration = duration.get() * .6;
+        if (cooldown == null)
+            return;
+        if (range == null)
+            range = 0d;
+        if (duration == null)
+            duration = 0d;
+        double altDuration = duration * 0.6;
 
         // Check if player has cooldown decrease achievement and is boosted
         if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement.allMaxedAbility().getID()))
-            cooldown.getAndSet(cooldown.get() * .9);
+            cooldown = cooldown * .9;
 
         // Mage
         if (MageAbility.matches(item)) {
@@ -122,25 +115,26 @@ public class KitAbilityListener implements Listener {
             fireball.setMetadata(VDItem.MetaKey.DAMAGE.name(),
                     new FixedMetadataValue(Main.plugin, gamer.dealRawDamage(VDPlayer.AttackClass.RANGE, 0)));
             fireball.setMetadata(VDItem.MetaKey.PER_BLOCK.name(), new FixedMetadataValue(Main.plugin, false));
-            gamer.triggerAbilityCooldown(Utils.secondsToMillis(cooldown.get()));
+            gamer.triggerAbilityCooldown(Utils.secondsToMillis(cooldown));
         }
 
         // Ninja
         else if (NinjaAbility.matches(item)) {
             // Activate ability
             player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY,
-                    Utils.secondsToTicks(duration.get()), 0));
+                    Utils.secondsToTicks(duration), 0));
+            Double finalDuration2 = duration;
             WorldManager.getPets(player).forEach(wolf ->
                     wolf.addPotionEffect((new PotionEffect(PotionEffectType.INVISIBILITY,
-                            Utils.secondsToTicks(duration.get()), 0))));
-            gamer.triggerAbilityCooldown(Utils.secondsToMillis(cooldown.get()));
+                            Utils.secondsToTicks(finalDuration2), 0))));
+            gamer.triggerAbilityCooldown(Utils.secondsToMillis(cooldown));
 
             // Nerf
             gamer.hideArmor();
 
             // Schedule un-nerf
             Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, gamer::exposeArmor,
-                    Utils.secondsToTicks(duration.get()));
+                    Utils.secondsToTicks(duration));
 
             // Fire ability sound if turned on
             if (arena.hasAbilitySound())
@@ -160,14 +154,14 @@ public class KitAbilityListener implements Listener {
 
             // Activate ability
             int finalAbsorption = absorption;
-            WorldManager.getNearbyPlayers(player, range.get()).forEach(player1 -> {
+            WorldManager.getNearbyPlayers(player, range).forEach(player1 -> {
                 try {
                     arena.getPlayer(player1).addAbsorptionUpTo(finalAbsorption);
                 } catch (PlayerNotFoundException ignored) {
                 }
             });
             gamer.addAbsorptionUpTo(absorption);
-            gamer.triggerAbilityCooldown(Utils.secondsToMillis(cooldown.get()));
+            gamer.triggerAbilityCooldown(Utils.secondsToMillis(cooldown));
 
             // Fire ability sound if turned on
             if (arena.hasAbilitySound())
@@ -188,13 +182,13 @@ public class KitAbilityListener implements Listener {
             else return;
 
             // Activate ability
-            WorldManager.getNearbyPlayers(player, range.get()).forEach(player1 -> player1.addPotionEffect(
+            WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
                     new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Utils.secondsToTicks(altDuration), amplifier)));
-            WorldManager.getNearbyAllies(player, range.get()).forEach(ally -> ally.addPotionEffect(
+            WorldManager.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
                     new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Utils.secondsToTicks(altDuration), amplifier)));
             player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE,
-                    Utils.secondsToTicks(duration.get()), amplifier));
-            gamer.triggerAbilityCooldown(Utils.secondsToMillis(cooldown.get()));
+                    Utils.secondsToTicks(duration), amplifier));
+            gamer.triggerAbilityCooldown(Utils.secondsToMillis(cooldown));
 
             // Fire ability sound if turned on
             if (arena.hasAbilitySound())
@@ -215,15 +209,15 @@ public class KitAbilityListener implements Listener {
             else return;
 
             // Activate ability
-            WorldManager.getNearbyPlayers(player, range.get()).forEach(player1 -> player1.addPotionEffect(
+            WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
                     new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Utils.secondsToTicks(altDuration),
                             amplifier)));
-            WorldManager.getNearbyAllies(player, range.get()).forEach(ally -> ally.addPotionEffect(
+            WorldManager.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
                     new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Utils.secondsToTicks(altDuration),
                             amplifier)));
             player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE,
-                    Utils.secondsToTicks(duration.get()), amplifier));
-            gamer.triggerAbilityCooldown(Utils.secondsToMillis(cooldown.get()));
+                    Utils.secondsToTicks(duration), amplifier));
+            gamer.triggerAbilityCooldown(Utils.secondsToMillis(cooldown));
 
             // Fire ability sound if turned on
             if (arena.hasAbilitySound())
@@ -244,15 +238,15 @@ public class KitAbilityListener implements Listener {
             else return;
 
             // Activate ability
-            WorldManager.getNearbyPlayers(player, range.get()).forEach(player1 -> player1.addPotionEffect(
+            WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
                     new PotionEffect(PotionEffectType.REGENERATION, Utils.secondsToTicks(altDuration),
                             amplifier)));
-            WorldManager.getNearbyAllies(player, range.get()).forEach(ally -> ally.addPotionEffect(
+            WorldManager.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
                     new PotionEffect(PotionEffectType.REGENERATION, Utils.secondsToTicks(altDuration),
                             amplifier)));
             player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION,
-                    Utils.secondsToTicks(duration.get()), amplifier));
-            gamer.triggerAbilityCooldown(Utils.secondsToMillis(cooldown.get()));
+                    Utils.secondsToTicks(duration), amplifier));
+            gamer.triggerAbilityCooldown(Utils.secondsToMillis(cooldown));
 
             // Fire ability sound if turned on
             if (arena.hasAbilitySound())
@@ -275,15 +269,17 @@ public class KitAbilityListener implements Listener {
             // Activate ability
             if (amp1 != -1) {
                 int finalAmp = amp1;
-                WorldManager.getNearbyMonsters(player, range.get()).forEach(ent -> ent.addPotionEffect(
-                    new PotionEffect(PotionEffectType.SLOW, Utils.secondsToTicks(duration.get()), finalAmp)));
+                Double finalDuration = duration;
+                WorldManager.getNearbyMonsters(player, range).forEach(ent -> ent.addPotionEffect(
+                    new PotionEffect(PotionEffectType.SLOW, Utils.secondsToTicks(finalDuration), finalAmp)));
             }
             if (amp2 != -1) {
                 int finalAmp1 = amp2;
-                WorldManager.getNearbyMonsters(player, range.get()).forEach(ent -> ent.addPotionEffect(
-                        new PotionEffect(PotionEffectType.WEAKNESS, Utils.secondsToTicks(duration.get()), finalAmp1)));
+                Double finalDuration1 = duration;
+                WorldManager.getNearbyMonsters(player, range).forEach(ent -> ent.addPotionEffect(
+                        new PotionEffect(PotionEffectType.WEAKNESS, Utils.secondsToTicks(finalDuration1), finalAmp1)));
             }
-            gamer.triggerAbilityCooldown(Utils.secondsToMillis(cooldown.get()));
+            gamer.triggerAbilityCooldown(Utils.secondsToMillis(cooldown));
 
             // Fire ability sound if turned on
             if (arena.hasAbilitySound())
@@ -304,13 +300,13 @@ public class KitAbilityListener implements Listener {
             else return;
 
             // Activate ability
-            WorldManager.getNearbyPlayers(player, range.get()).forEach(player1 -> player1.addPotionEffect(
+            WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
                     new PotionEffect(PotionEffectType.FAST_DIGGING, Utils.secondsToTicks(altDuration), amplifier)));
-            WorldManager.getNearbyAllies(player, range.get()).forEach(ally -> ally.addPotionEffect(
+            WorldManager.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
                     new PotionEffect(PotionEffectType.FAST_DIGGING, Utils.secondsToTicks(altDuration), amplifier)));
             player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING,
-                    Utils.secondsToTicks(duration.get()), amplifier));
-            gamer.triggerAbilityCooldown(Utils.secondsToMillis(cooldown.get()));
+                    Utils.secondsToTicks(duration), amplifier));
+            gamer.triggerAbilityCooldown(Utils.secondsToMillis(cooldown));
 
             // Fire ability sound if turned on
             if (arena.hasAbilitySound())
@@ -331,13 +327,13 @@ public class KitAbilityListener implements Listener {
             else return;
 
             // Activate ability
-            WorldManager.getNearbyPlayers(player, range.get()).forEach(player1 -> player1.addPotionEffect(
+            WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
                     new PotionEffect(PotionEffectType.SPEED, Utils.secondsToTicks(altDuration), amplifier)));
-            WorldManager.getNearbyAllies(player, range.get()).forEach(ally -> ally.addPotionEffect(
+            WorldManager.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
                     new PotionEffect(PotionEffectType.SPEED, Utils.secondsToTicks(altDuration), amplifier)));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Utils.secondsToTicks(duration.get()),
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Utils.secondsToTicks(duration),
                     amplifier));
-            gamer.triggerAbilityCooldown(Utils.secondsToMillis(cooldown.get()));
+            gamer.triggerAbilityCooldown(Utils.secondsToMillis(cooldown));
 
             // Fire ability sound if turned on
             if (arena.hasAbilitySound())

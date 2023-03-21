@@ -1018,7 +1018,6 @@ public class LanguageManager {
         public final @NotNull String maxCapacity;
         public final @NotNull String minutesLeft;
         public final @NotNull String mobName;
-        public final @NotNull String nextRefill;
         public final @NotNull String noAutoUpdate;
         public final @NotNull String noLastWave;
         public final @NotNull String noStats;
@@ -1152,7 +1151,6 @@ public class LanguageManager {
             maxCapacity = getConfigString("maxCapacity");
             minutesLeft = getConfigString("minutesLeft");
             mobName = getConfigString("mobName");
-            nextRefill = getConfigString("nextRefill");
             noAutoUpdate = getConfigString("noAutoUpdate");
             noLastWave = getConfigString("noLastWave");
             noStats = getConfigString("noStats");

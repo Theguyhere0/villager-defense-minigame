@@ -3,7 +3,9 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.background.InvalidLocationException;
+import me.theguyhere.villagerdefense.plugin.individuals.IndividualTeam;
 import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.displays.Popup;
 import me.theguyhere.villagerdefense.plugin.achievements.Achievement;
@@ -14,12 +16,14 @@ import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import org.bukkit.ChatColor;
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +38,6 @@ public abstract class VDMob {
     protected UUID id;
     protected final String lore;
     protected final Map<UUID, Integer> damageMap = new HashMap<>();
-    protected int gameID;
     protected int wave;
     protected String name;
     protected int hpBarSize;
@@ -58,8 +61,8 @@ public abstract class VDMob {
     protected double lootSpread = 0;
     protected long lastStrike = 0;
     
-    public static final String VD = "VD";
-    public static final String TEAM = "VDTeam";
+    public static final NamespacedKey ARENA_ID = new NamespacedKey(Main.plugin, "VDArenaID");
+    public static final NamespacedKey TEAM = new NamespacedKey(Main.plugin, "VDTeam");
     private static final String KNOCKBACK = "knockback";
     private static final String WEIGHT = "weight";
     private static final String SPEED = "speed";
@@ -75,10 +78,6 @@ public abstract class VDMob {
 
     public UUID getID() {
         return id;
-    }
-
-    public int getGameID() {
-        return gameID;
     }
 
     public int getWave() {
@@ -486,6 +485,26 @@ public abstract class VDMob {
     }
 
     protected abstract void updateNameTag();
+
+    public static boolean isTeam(Entity entity, IndividualTeam team) {
+        return team.getValue().equals(entity.getPersistentDataContainer().get(TEAM, PersistentDataType.STRING));
+    }
+
+    public static boolean areSameTeam(Entity e1, Entity e2) {
+        return Objects.equals(e1.getPersistentDataContainer().get(TEAM, PersistentDataType.STRING),
+                e2.getPersistentDataContainer().get(TEAM, PersistentDataType.STRING));
+    }
+
+    public static boolean isVDMob(Entity entity) {
+        return entity.getPersistentDataContainer().has(ARENA_ID, PersistentDataType.INTEGER);
+    }
+
+    public static int getArenaID(Entity entity) {
+        Integer result = entity.getPersistentDataContainer().get(ARENA_ID, PersistentDataType.INTEGER);
+        if (result == null)
+            return -1;
+        else return result;
+    }
 
     public enum TargetPriority {
         NONE((e) -> true),

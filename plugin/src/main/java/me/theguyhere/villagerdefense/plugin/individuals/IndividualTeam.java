@@ -1,21 +1,19 @@
 package me.theguyhere.villagerdefense.plugin.individuals;
 
-import me.theguyhere.villagerdefense.plugin.Main;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
+import org.jetbrains.annotations.NotNull;
 
 public enum IndividualTeam {
     VILLAGER("villager"),
     MONSTER("monster")
     ;
 
-    private final MetadataValue value;
+    private final String value;
 
-    IndividualTeam(String s) {
-        value = new FixedMetadataValue(Main.plugin, s);
+    IndividualTeam(@NotNull String value) {
+        this.value = value;
     }
 
-    public MetadataValue getValue() {
+    public @NotNull String getValue() {
         return value;
     }
 }

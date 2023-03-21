@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.challenges;
 
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.individuals.IndividualTeam;
 import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
@@ -191,7 +192,8 @@ public class ChallengeListener implements Listener {
         // Mob hurt
         else {
             // Check damage was done to monster
-            if (!(e.getEntity().hasMetadata(VDMob.VD))) return;
+            if (!VDMob.isTeam(e.getEntity(), IndividualTeam.MONSTER))
+                return;
 
             Player player;
             VDPlayer gamer;

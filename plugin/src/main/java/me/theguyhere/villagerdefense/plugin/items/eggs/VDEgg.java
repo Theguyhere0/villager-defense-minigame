@@ -13,17 +13,25 @@ import me.theguyhere.villagerdefense.plugin.game.ItemFactory;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public abstract class VDEgg extends VDItem {
+    private static final String EGG = "egg";
+
     @NotNull
     public static ItemStack create(int level, EggType type) {
         List<String> lores = new ArrayList<>();
+        HashMap<NamespacedKey, Integer> persistentData = new HashMap<>();
+        HashMap<NamespacedKey, String> persistentTags = new HashMap<>();
+        persistentTags.put(ITEM_TYPE_KEY, EGG);
 
         // Set material
         Material mat;
@@ -371,13 +379,15 @@ public abstract class VDEgg extends VDItem {
                 break;
             default: price = -1;
         }
+        persistentData.put(PRICE_KEY, price);
         if (price >= 0) {
             lores.add("");
             lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
                     price));
         }
 
-        return ItemFactory.createItem(mat, name, lores);
+        return ItemFactory.createItem(mat, name, ItemFactory.BUTTON_FLAGS, null, lores, null,
+                persistentData, null, persistentTags);
     }
 
     public static boolean matches(ItemStack toCheck) {
@@ -386,11 +396,10 @@ public abstract class VDEgg extends VDItem {
         ItemMeta meta = toCheck.getItemMeta();
         if (meta == null)
             return false;
-        List<String> lore = meta.getLore();
-        if (lore == null)
+        String value = meta.getPersistentDataContainer().get(ITEM_TYPE_KEY, PersistentDataType.STRING);
+        if (value == null)
             return false;
-        return lore.stream().anyMatch(line -> line.contains(LanguageManager.messages.eggName
-                .replace("%s", "").trim()));
+        return EGG.equals(value);
     }
 
     public enum EggType {

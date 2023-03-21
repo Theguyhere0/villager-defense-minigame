@@ -2,6 +2,7 @@ package me.theguyhere.villagerdefense.plugin.game;
 
 import com.google.common.collect.Multimap;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
@@ -9,6 +10,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionData;
 import org.jetbrains.annotations.NotNull;
 
@@ -106,9 +108,37 @@ public class ItemFactory {
             List<String> lores,
             Multimap<Attribute, AttributeModifier> attributes
     ) {
+        return createItem(matID, dispName, flags, enchants, lores, attributes, null, null,
+                null);
+    }
+
+    // Creates an ItemStack using material, name, enchants, flags, lore list, and attribute mod map
+    @NotNull
+    public static ItemStack createItem(
+            Material matID,
+            String dispName,
+            boolean[] flags,
+            HashMap<Enchantment, Integer> enchants,
+            List<String> lores,
+            Multimap<Attribute, AttributeModifier> attributes,
+            HashMap<NamespacedKey, Integer> persistentData,
+            HashMap<NamespacedKey, Double> persistentData2,
+            HashMap<NamespacedKey, String> persistentTags
+    ) {
         // Create ItemStack
         ItemStack item = createItem(matID, dispName, lores);
         ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
+
+        // Set persistent data and tags
+        if (persistentData != null)
+            persistentData.forEach((namespacedKey, integer) ->
+                    meta.getPersistentDataContainer().set(namespacedKey, PersistentDataType.INTEGER, integer));
+        if (persistentData2 != null)
+            persistentData2.forEach((namespacedKey, doubleVal) ->
+                meta.getPersistentDataContainer().set(namespacedKey, PersistentDataType.DOUBLE, doubleVal));
+        if (persistentTags != null)
+            persistentTags.forEach((namespacedKey, string) ->
+                meta.getPersistentDataContainer().set(namespacedKey, PersistentDataType.STRING, string));
 
         // Set enchants
         if (!(enchants == null))
@@ -123,24 +153,9 @@ public class ItemFactory {
         // Set attribute mods
         meta.setAttributeModifiers(attributes);
 
+        // Build
         item.setItemMeta(meta);
-
         return item;
-    }
-
-    // Set custom model data
-    @NotNull
-    public static ItemStack setModelData(@NotNull ItemStack item, int modelData) {
-        ItemStack newItem = item.clone();
-        ItemMeta meta = newItem.getItemMeta();
-
-        try {
-            Objects.requireNonNull(meta).setCustomModelData(modelData);
-            newItem.setItemMeta(meta);
-            return newItem;
-        } catch (Exception e) {
-            return item;
-        }
     }
 
     // Makes an item unbreakable

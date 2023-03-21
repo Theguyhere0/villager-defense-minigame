@@ -21,7 +21,12 @@ import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDDog;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDHorse;
 import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.items.abilities.VDAbility;
+import me.theguyhere.villagerdefense.plugin.items.armor.Boots;
+import me.theguyhere.villagerdefense.plugin.items.armor.Chestplate;
+import me.theguyhere.villagerdefense.plugin.items.armor.Helmet;
+import me.theguyhere.villagerdefense.plugin.items.armor.Leggings;
 import me.theguyhere.villagerdefense.plugin.items.menuItems.Shop;
 import me.theguyhere.villagerdefense.plugin.items.weapons.Ammo;
 import me.theguyhere.villagerdefense.plugin.kits.Kit;
@@ -38,6 +43,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
 import java.util.Objects;
@@ -2569,7 +2575,7 @@ public class InventoryListener implements Listener {
 				player.openInventory(Inventories.createConsumableShopMenu(arenaInstance));
 
 			// Open pet shop
-			else if (buttonName.contains(String.format(LanguageManager.names.petShop,
+			else if (buttonName.contains(CommunicationManager.format(LanguageManager.names.petShop,
 					Integer.toString(gamer.getRemainingPetSlots()), Integer.toString(gamer.getPetSlots()))))
 				player.openInventory(Inventories.createPetShopMenu(arenaInstance, gamer));
 
@@ -2613,16 +2619,12 @@ public class InventoryListener implements Listener {
 				return;
 
 			ItemStack buy = Objects.requireNonNull(e.getClickedInventory().getItem(e.getSlot())).clone();
-			Material buyType = buy.getType();
-			List<String> lore = Objects.requireNonNull(buy.getItemMeta()).getLore();
+			Integer cost = Objects.requireNonNull(buy.getItemMeta()).getPersistentDataContainer()
+					.get(VDItem.PRICE_KEY, PersistentDataType.INTEGER);
 
 			// Ignore un-purchasable items
-			if (lore == null)
+			if (cost == null)
 				return;
-
-			int cost = Integer.parseInt(lore.get(lore.size() - 1)
-					.substring(6 + LanguageManager.messages.gems.length()));
-			Random random = new Random();
 
 			// Check if they can afford the item
 			if (!gamer.canAfford(cost)) {
@@ -2638,6 +2640,7 @@ public class InventoryListener implements Listener {
 				buy = ItemFactory.makeUnbreakable(buy);
 
 			// Make unbreakable for successful blacksmith sharing
+			Random random = new Random();
 			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(Kit.EffectType.BLACKSMITH))) {
 				buy = ItemFactory.makeUnbreakable(buy);
 				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
@@ -2656,18 +2659,16 @@ public class InventoryListener implements Listener {
 			EntityEquipment equipment = Objects.requireNonNull(player.getPlayer()).getEquipment();
 
 			// Equip armor if possible, otherwise put in inventory, otherwise drop at feet
-			if (buyType.toString().contains("HELMET") && Objects.requireNonNull(equipment).getHelmet() == null) {
+			if (Helmet.matches(buy) && Objects.requireNonNull(equipment).getHelmet() == null) {
 				equipment.setHelmet(buy);
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.helmet);
-			} else if (buyType.toString().contains("CHESTPLATE") &&
-					Objects.requireNonNull(equipment).getChestplate() == null) {
+			} else if (Chestplate.matches(buy) && Objects.requireNonNull(equipment).getChestplate() == null) {
 				equipment.setChestplate(buy);
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.chestplate);
-			} else if (buyType.toString().contains("LEGGINGS") &&
-					Objects.requireNonNull(equipment).getLeggings() == null) {
+			} else if (Leggings.matches(buy) && Objects.requireNonNull(equipment).getLeggings() == null) {
 				equipment.setLeggings(buy);
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.leggings);
-			} else if (buyType.toString().contains("BOOTS") && Objects.requireNonNull(equipment).getBoots() == null) {
+			} else if (Boots.matches(buy) && Objects.requireNonNull(equipment).getBoots() == null) {
 				equipment.setBoots(buy);
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.boots);
 			} else {
@@ -2720,12 +2721,11 @@ public class InventoryListener implements Listener {
 			if (buttonName.contains(LanguageManager.mobs.dog) || buttonName.contains(LanguageManager.mobs.cat) ||
 					buttonName.contains(LanguageManager.mobs.horse)) {
 				ItemStack buy = Objects.requireNonNull(e.getClickedInventory().getItem(e.getSlot())).clone();
-				List<String> lore = Objects.requireNonNull(buy.getItemMeta()).getLore();
+				Integer cost = Objects.requireNonNull(buy.getItemMeta()).getPersistentDataContainer()
+						.get(VDItem.PRICE_KEY, PersistentDataType.INTEGER);
 				Random random = new Random();
-				if (lore == null)
+				if (cost == null)
 					return;
-				int cost = Integer.parseInt(lore.get(lore.size() - 1)
-						.substring(6 + LanguageManager.messages.gems.length()));
 
 				// Check if they can afford the item
 				if (!gamer.canAfford(cost)) {
@@ -2775,12 +2775,11 @@ public class InventoryListener implements Listener {
 			// Upgrade the pet
 			if (buttonName.contains(LanguageManager.messages.eggName.replace("%s", "").trim())) {
 				ItemStack buy = Objects.requireNonNull(e.getClickedInventory().getItem(e.getSlot())).clone();
-				List<String> lore = Objects.requireNonNull(buy.getItemMeta()).getLore();
+				Integer cost = Objects.requireNonNull(buy.getItemMeta()).getPersistentDataContainer()
+						.get(VDItem.PRICE_KEY, PersistentDataType.INTEGER);
 				Random random = new Random();
-				if (lore == null)
+				if (cost == null)
 					return;
-				int cost = Integer.parseInt(lore.get(lore.size() - 1)
-						.substring(6 + LanguageManager.messages.gems.length()));
 
 				// Check if they can afford the item
 				if (!gamer.canAfford(cost)) {
@@ -2882,12 +2881,11 @@ public class InventoryListener implements Listener {
 			if (buttonName.contains(LanguageManager.mobs.ironGolem) ||
 					buttonName.contains(LanguageManager.mobs.snowGolem)) {
 				ItemStack buy = Objects.requireNonNull(e.getClickedInventory().getItem(e.getSlot())).clone();
-				List<String> lore = Objects.requireNonNull(buy.getItemMeta()).getLore();
+				Integer cost = Objects.requireNonNull(buy.getItemMeta()).getPersistentDataContainer()
+						.get(VDItem.PRICE_KEY, PersistentDataType.INTEGER);
 				Random random = new Random();
-				if (lore == null)
+				if (cost == null)
 					return;
-				int cost = Integer.parseInt(lore.get(lore.size() - 1)
-						.substring(6 + LanguageManager.messages.gems.length()));
 
 				// Check if they can afford the item
 				if (!gamer.canAfford(cost)) {
@@ -2936,12 +2934,11 @@ public class InventoryListener implements Listener {
 			// Upgrade the golem
 			if (buttonName.contains(LanguageManager.messages.eggName.replace("%s", "").trim())) {
 				ItemStack buy = Objects.requireNonNull(e.getClickedInventory().getItem(e.getSlot())).clone();
-				List<String> lore = Objects.requireNonNull(buy.getItemMeta()).getLore();
+				Integer cost = Objects.requireNonNull(buy.getItemMeta()).getPersistentDataContainer()
+						.get(VDItem.PRICE_KEY, PersistentDataType.INTEGER);
 				Random random = new Random();
-				if (lore == null)
+				if (cost == null)
 					return;
-				int cost = Integer.parseInt(lore.get(lore.size() - 1)
-						.substring(6 + LanguageManager.messages.gems.length()));
 
 				// Check if they can afford the item
 				if (!gamer.canAfford(cost)) {
@@ -3019,14 +3016,13 @@ public class InventoryListener implements Listener {
 				return;
 
 			ItemStack buy = Objects.requireNonNull(e.getClickedInventory().getItem(e.getSlot())).clone();
-			List<String> lore = Objects.requireNonNull(buy.getItemMeta()).getLore();
+			Integer cost = Objects.requireNonNull(buy.getItemMeta()).getPersistentDataContainer()
+					.get(VDItem.PRICE_KEY, PersistentDataType.INTEGER);
 
 			// Ignore un-purchasable items
-			if (lore == null)
+			if (cost == null)
 				return;
 
-			int cost = Integer.parseInt(lore.get(lore.size() - 1)
-					.substring(6 + LanguageManager.messages.gems.length()));
 			Random random = new Random();
 
 			// Check if they can afford the item
@@ -3088,14 +3084,13 @@ public class InventoryListener implements Listener {
 				return;
 
 			ItemStack buy = Objects.requireNonNull(e.getClickedInventory().getItem(e.getSlot())).clone();
-			List<String> lore = Objects.requireNonNull(buy.getItemMeta()).getLore();
+			Integer cost = Objects.requireNonNull(buy.getItemMeta()).getPersistentDataContainer()
+					.get(VDItem.PRICE_KEY, PersistentDataType.INTEGER);
 
 			// Ignore un-purchasable items
-			if (lore == null)
+			if (cost == null)
 				return;
 
-			int cost = Integer.parseInt(lore.get(lore.size() - 1)
-					.substring(6 + LanguageManager.messages.gems.length()));
 			Random random = new Random();
 
 			// Check if they can afford the item

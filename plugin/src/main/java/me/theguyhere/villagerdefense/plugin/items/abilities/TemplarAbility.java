@@ -7,16 +7,26 @@ import me.theguyhere.villagerdefense.plugin.game.ItemFactory;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public abstract class TemplarAbility extends VDAbility {
+    private static final String TEMPLAR_ABILITY = "templar-ability";
+
     @NotNull
     public static ItemStack create(Tier tier) {
+        HashMap<NamespacedKey, Integer> persistentData = new HashMap<>();
+        HashMap<NamespacedKey, Double> persistentData2 = new HashMap<>();
+        HashMap<NamespacedKey, String> persistentTags = new HashMap<>();
+        persistentTags.put(ITEM_TYPE_KEY, TEMPLAR_ABILITY);
+
         // Set name
         String name;
         switch (tier) {
@@ -96,6 +106,7 @@ public abstract class TemplarAbility extends VDAbility {
             default:
                 range = 0;
         }
+        persistentData2.put(RANGE_KEY, range);
         if (range > 0)
             lores.add(CommunicationManager.format(RANGE, new ColoredMessage(ChatColor.DARK_PURPLE,
                     Double.toString(range))));
@@ -124,11 +135,13 @@ public abstract class TemplarAbility extends VDAbility {
             default:
                 cooldown = 0;
         }
+        persistentData2.put(COOLDOWN_KEY, cooldown);
         if (cooldown > 0)
             lores.add(CommunicationManager.format(COOLDOWN, Double.toString(cooldown)));
 
         // Set price
         int price = getPrice(tier);
+        persistentData.put(PRICE_KEY, price);
         if (price >= 0) {
             lores.add("");
             lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
@@ -141,7 +154,11 @@ public abstract class TemplarAbility extends VDAbility {
                 name,
                 ItemFactory.HIDE_ENCHANT_FLAGS,
                 ItemFactory.glow(),
-                lores
+                lores,
+                null,
+                persistentData,
+                persistentData2,
+                persistentTags
         );
     }
 
@@ -151,10 +168,9 @@ public abstract class TemplarAbility extends VDAbility {
         ItemMeta meta = toCheck.getItemMeta();
         if (meta == null)
             return false;
-        List<String> lore = meta.getLore();
-        if (lore == null)
+        String value = meta.getPersistentDataContainer().get(ITEM_TYPE_KEY, PersistentDataType.STRING);
+        if (value == null)
             return false;
-        return toCheck.getType() == Material.YELLOW_DYE && lore.stream().anyMatch(line -> line.contains(
-                EFFECT.toString().replace("%s", "")));
+        return TEMPLAR_ABILITY.equals(value);
     }
 }

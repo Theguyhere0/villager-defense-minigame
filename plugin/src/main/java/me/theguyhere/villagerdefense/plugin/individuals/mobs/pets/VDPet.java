@@ -1,8 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.individuals.mobs.pets;
 
-import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualTeam;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.VDMob;
@@ -12,7 +11,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Tameable;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffectType;
 
 public abstract class VDPet extends VDMob {
@@ -27,9 +27,9 @@ public abstract class VDPet extends VDMob {
         this.owner = owner;
         pet.setOwner(owner.getPlayer());
         id = pet.getUniqueId();
-        pet.setMetadata(TEAM, IndividualTeam.VILLAGER.getValue());
-        pet.setMetadata(VD, new FixedMetadataValue(Main.plugin, arena.getId()));
-        gameID = arena.getGameID();
+        PersistentDataContainer dataContainer = pet.getPersistentDataContainer();
+        dataContainer.set(ARENA_ID, PersistentDataType.INTEGER, arena.getId());
+        dataContainer.set(TEAM, PersistentDataType.STRING, IndividualTeam.VILLAGER.getValue());
         this.name = name;
         this.slots = slots;
         this.buttonMat = buttonMat;

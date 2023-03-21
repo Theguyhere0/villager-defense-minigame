@@ -686,7 +686,6 @@ messages:
   maxCapacity: "Arena has reached max player capacity."
   minutesLeft: "%s minute(s) until the game starts!"
   mobName: "Lvl %s %s %s"
-  nextRefill: "Next Refill: %s"
   noAutoUpdate: "There was nothing that could be updated automatically."
   noLastWave: "There is no final wave."
   noStats: "%s does not have stats."

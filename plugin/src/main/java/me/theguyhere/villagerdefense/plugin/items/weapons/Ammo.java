@@ -1,27 +1,34 @@
 package me.theguyhere.villagerdefense.plugin.items.weapons;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
-import me.theguyhere.villagerdefense.plugin.game.ItemFactory;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.game.ItemFactory;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class Ammo extends VDWeapon {
+    private static final String AMMO = "ammo";
+
     @NotNull
     public static ItemStack create(Tier tier) {
         List<String> lores = new ArrayList<>();
+        HashMap<NamespacedKey, Integer> persistentData = new HashMap<>();
+        HashMap<NamespacedKey, Double> persistentData2 = new HashMap<>();
+        HashMap<NamespacedKey, String> persistentTags = new HashMap<>();
+        persistentTags.put(ITEM_TYPE_KEY, AMMO);
 
         // Set name
         String name;
@@ -103,6 +110,8 @@ public abstract class Ammo extends VDWeapon {
             default:
                 capacity = 0;
         }
+        persistentData.put(MAX_CAPACITY_KEY, capacity);
+        persistentData.put(CAPACITY_KEY, capacity);
         lores.add(CommunicationManager.format(CAPACITY,
                 new ColoredMessage(ChatColor.GREEN, Integer.toString(capacity)).toString() +
                 new ColoredMessage(ChatColor.WHITE, " / " + capacity)));
@@ -131,6 +140,7 @@ public abstract class Ammo extends VDWeapon {
             default:
                 refill = 0;
         }
+        persistentData2.put(REFILL_KEY, refill);
         if (refill > 0)
             lores.add(CommunicationManager.format(REFILL, Double.toString(refill)));
 
@@ -157,6 +167,7 @@ public abstract class Ammo extends VDWeapon {
                 break;
             default: price = -1;
         }
+        persistentData.put(PRICE_KEY, price);
         if (price >= 0) {
             lores.add("");
             lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
@@ -164,7 +175,8 @@ public abstract class Ammo extends VDWeapon {
         }
 
         // Create item
-        return ItemFactory.createItem(Material.NETHER_STAR, name, ItemFactory.BUTTON_FLAGS, null, lores);
+        return ItemFactory.createItem(Material.NETHER_STAR, name, ItemFactory.BUTTON_FLAGS, null, lores,
+                null, persistentData, persistentData2, persistentTags);
     }
 
     public static boolean matches(ItemStack toCheck) {
@@ -173,129 +185,87 @@ public abstract class Ammo extends VDWeapon {
         ItemMeta meta = toCheck.getItemMeta();
         if (meta == null)
             return false;
-        List<String> lore = meta.getLore();
-        if (lore == null)
+        String value = meta.getPersistentDataContainer().get(ITEM_TYPE_KEY, PersistentDataType.STRING);
+        if (value == null)
             return false;
-        return toCheck.getType() == Material.NETHER_STAR && lore.stream().anyMatch(line -> line.contains(
-                CAPACITY.toString().replace("%s", "")));
+        return AMMO.equals(value);
     }
 
+    /**
+     * Updates the capacity of an ammo item by the delta.
+     * @param ammo The item to update capacity for.
+     * @param delta Amount to update ammo capacity by.
+     * @return Whether the item remains or not.
+     */
     public static boolean updateCapacity(ItemStack ammo, int delta) {
         // Check for ammo
         if (!matches(ammo))
             return false;
 
-        AtomicInteger maxCap = new AtomicInteger();
-        AtomicInteger capacity = new AtomicInteger();
-        AtomicInteger capIndex = new AtomicInteger();
-        AtomicBoolean refill = new AtomicBoolean();
-
         // Get data
         ItemMeta meta = Objects.requireNonNull(ammo.getItemMeta());
+        Integer maxCap = meta.getPersistentDataContainer().get(MAX_CAPACITY_KEY, PersistentDataType.INTEGER);
+        Integer capacity = meta.getPersistentDataContainer().get(CAPACITY_KEY, PersistentDataType.INTEGER);
+        Double refill = meta.getPersistentDataContainer().get(REFILL_KEY, PersistentDataType.DOUBLE);
+        AtomicInteger capIndex = new AtomicInteger();
         List<String > lores = Objects.requireNonNull(meta.getLore());
         lores.forEach(lore -> {
             if (lore.contains(LanguageManager.messages.capacity
-                    .replace("%s", ""))) {
-                String[] cap = lore.substring(2 + LanguageManager.messages.capacity.length())
-                        .replace(ChatColor.BLUE.toString(), "")
-                        .replace(ChatColor.WHITE.toString(), "")
-                        .split(" / ");
-                maxCap.set(Integer.parseInt(cap[1]));
-                capacity.set(Integer.parseInt(cap[0]));
+                    .replace("%s", "")))
                 capIndex.set(lores.indexOf(lore));
-            }
-            else if (lore.contains(LanguageManager.messages.refill.replace("%s", "")))
-                refill.set(true);
         });
 
-        // Check if item needs to be removed
-        capacity.addAndGet(delta);
-        if (capacity.get() <= 0 && !refill.get())
+        // Destroy malformed items
+        if (maxCap == null || capacity == null)
             return true;
 
+        // Check if item needs to be removed
+        capacity += delta;
+        if (capacity <= 0 && refill == null)
+            return true;
+
+        // Update capacity data
+        meta.getPersistentDataContainer().set(CAPACITY_KEY, PersistentDataType.INTEGER, capacity);
+
         // Set new lore
-        ChatColor color = capacity.get() >= .75 * maxCap.get() ? ChatColor.GREEN :
-                (capacity.get() <= .25 * maxCap.get() ? ChatColor.RED : ChatColor.YELLOW);
-        lores.set(capIndex.get(), CommunicationManager.format(CAPACITY,
-                new ColoredMessage(color,
-                        Integer.toString(capacity.get())).toString() +
-                        new ColoredMessage(ChatColor.WHITE, " / " + maxCap.get())));
+        ChatColor color = capacity >= .75 * maxCap ? ChatColor.GREEN :
+                (capacity <= .25 * maxCap ? ChatColor.RED : ChatColor.YELLOW);
+        lores.set(capIndex.get(), CommunicationManager.format(CAPACITY, new ColoredMessage(color,
+                Integer.toString(capacity)).toString() + new ColoredMessage( " / " + maxCap)));
         meta.setLore(lores);
         ammo.setItemMeta(meta);
         return false;
     }
 
+    /**
+     * Attempts to trigger a refill of an ammo item.
+     * @param ammo The item to update capacity for.
+     * @param boost Whether the player was boosted for double capacity regen.
+     */
     public static void updateRefill(ItemStack ammo, boolean boost) {
         // Check for ammo
         if (!matches(ammo))
             return;
 
-        AtomicInteger maxCap = new AtomicInteger();
-        AtomicInteger capacity = new AtomicInteger();
-        AtomicInteger capIndex = new AtomicInteger();
-        AtomicDouble refill = new AtomicDouble();
-        AtomicDouble refillTimer = new AtomicDouble();
-        AtomicInteger refillTimerIndex = new AtomicInteger();
-
         // Get data
         ItemMeta meta = Objects.requireNonNull(ammo.getItemMeta());
-        List<String > lores = Objects.requireNonNull(meta.getLore());
-        lores.forEach(lore -> {
-            if (lore.contains(LanguageManager.messages.capacity
-                    .replace("%s", ""))) {
-                String[] cap = lore.substring(2 + LanguageManager.messages.capacity.length())
-                        .replace(ChatColor.BLUE.toString(), "")
-                        .replace(ChatColor.WHITE.toString(), "")
-                        .split(" / ");
-                maxCap.set(Integer.parseInt(cap[1]));
-                capacity.set(Integer.parseInt(cap[0]));
-                capIndex.set(lores.indexOf(lore));
-            }
-            else if (lore.contains(LanguageManager.messages.nextRefill
-                    .replace("%s", ""))) {
-                refillTimer.set(Double.parseDouble(lore.substring(2 + LanguageManager.messages.nextRefill.length())
-                        .replace(ChatColor.BLUE.toString(), "")
-                        .replace(LanguageManager.messages.seconds.replace("%s", ""), "")));
-                refillTimerIndex.set(lores.indexOf(lore));
-            }
-            else if (lore.contains(LanguageManager.messages.refill
-                    .replace("%s", ""))) {
-                refill.set(Double.parseDouble(lore.substring(2 + LanguageManager.messages.refill.length())
-                        .replace(ChatColor.BLUE.toString(), "")
-                        .replace(LanguageManager.messages.seconds.replace("%s", ""), "")));
-            }
-        });
+        Integer maxCap = meta.getPersistentDataContainer().get(MAX_CAPACITY_KEY, PersistentDataType.INTEGER);
+        Integer capacity = meta.getPersistentDataContainer().get(CAPACITY_KEY, PersistentDataType.INTEGER);
+        Double refill = meta.getPersistentDataContainer().get(REFILL_KEY, PersistentDataType.DOUBLE);
+        Long nextRefill = meta.getPersistentDataContainer().get(NEXT_REFILL_KEY, PersistentDataType.LONG);
 
-        // Ignore if full or doesn't refill
-        if (capacity.get() >= maxCap.get() || refill.get() == 0)
+        // Ignore if malformed, full, or doesn't refill
+        if (maxCap == null || capacity == null || refill == null || capacity >= maxCap || refill == 0)
             return;
 
-        // Set new refill if first cycle is over
-        if (refillTimer.get() == 0)
-            lores.add(CommunicationManager.format(NEXT_REFILL, Double.toString(refill.get() - .5)));
-
-        // Update refill timer otherwise
-        else {
-            double updatedRefillTimer = refillTimer.get() - .5;
-            // Timer finished
-            if (updatedRefillTimer < .1) {
-                capacity.addAndGet(Math.min(maxCap.get() - capacity.get(), (boost ? 2 : 1)));
-                ChatColor color = capacity.get() >= .75 * maxCap.get() ? ChatColor.GREEN :
-                        (capacity.get() <= .25 * maxCap.get() ? ChatColor.RED : ChatColor.YELLOW);
-                lores.set(capIndex.get(), CommunicationManager.format(CAPACITY,
-                        new ColoredMessage(color,
-                                Integer.toString(capacity.get())).toString() +
-                                new ColoredMessage(ChatColor.WHITE, " / " + maxCap.get())));
-                lores.remove(refillTimerIndex.get());
-            }
-
-            // Timer still going
-            else lores.set(refillTimerIndex.get(),
-                    CommunicationManager.format(NEXT_REFILL, Double.toString(refillTimer.get() - .5)));
+        // Refill if past next refill time
+        if (nextRefill == null || nextRefill < System.currentTimeMillis()) {
+            meta.getPersistentDataContainer().set(NEXT_REFILL_KEY, PersistentDataType.LONG,
+                    System.currentTimeMillis() + Utils.secondsToMillis(refill));
+            updateCapacity(ammo, boost ? 2 : 1);
         }
 
         // Perform updates
-        meta.setLore(lores);
         ammo.setItemMeta(meta);
     }
 }

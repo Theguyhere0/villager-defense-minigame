@@ -1,6 +1,5 @@
 package me.theguyhere.villagerdefense.plugin.individuals.mobs.golems;
 
-import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualTeam;
@@ -10,7 +9,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Golem;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffectType;
 
 public abstract class VDGolem extends VDMob {
@@ -20,9 +20,9 @@ public abstract class VDGolem extends VDMob {
         super(lore, attackType);
         mob = golem;
         id = golem.getUniqueId();
-        golem.setMetadata(TEAM, IndividualTeam.VILLAGER.getValue());
-        golem.setMetadata(VD, new FixedMetadataValue(Main.plugin, arena.getId()));
-        gameID = arena.getGameID();
+        PersistentDataContainer dataContainer = golem.getPersistentDataContainer();
+        dataContainer.set(ARENA_ID, PersistentDataType.INTEGER, arena.getId());
+        dataContainer.set(TEAM, PersistentDataType.STRING, IndividualTeam.VILLAGER.getValue());
         this.name = name;
         this.buttonMat = buttonMat;
         golem.setRemoveWhenFarAway(false);

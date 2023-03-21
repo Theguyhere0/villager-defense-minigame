@@ -2,88 +2,99 @@ package me.theguyhere.villagerdefense.plugin.items;
 
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.plugin.Main;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.items.armor.VDArmor;
 import me.theguyhere.villagerdefense.plugin.items.food.VDFood;
+import me.theguyhere.villagerdefense.plugin.items.menuItems.VDMenuItem;
 import me.theguyhere.villagerdefense.plugin.items.weapons.VDWeapon;
-import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import org.bukkit.ChatColor;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class VDItem {
     protected static final ColoredMessage DURABILITY = new ColoredMessage(ChatColor.BLUE,
             LanguageManager.messages.durability);
-
-    // Gaussian level randomization for most ordinary stuff
-    protected static int getLevel(double difficulty) {
-        Random r = new Random();
-        return Math.max((int) (Math.max(difficulty, 1.5) * (1 + .2 * Math.max(Math.min(r.nextGaussian(), 3), -3)) + .5),
-                1); // Mean 100%, SD 50%, restrict 40% - 160%, min mean 3
-    }
+    public static final NamespacedKey PRICE_KEY = new NamespacedKey(Main.plugin, "price");
+    public static final NamespacedKey MAX_DURABILITY_KEY = new NamespacedKey(Main.plugin, "max-durability");
+    public static final NamespacedKey DURABILITY_KEY = new NamespacedKey(Main.plugin, "durability");
+    protected static final NamespacedKey ITEM_TYPE_KEY = new NamespacedKey(Main.plugin, "item-type");
 
     public static boolean matches(ItemStack toCheck) {
         return VDAbility.matches(toCheck) || VDArmor.matches(toCheck) || VDFood.matches(toCheck) ||
-                VDWeapon.matches(toCheck);
+                VDWeapon.matches(toCheck) || VDMenuItem.matches(toCheck);
     }
 
+    /**
+     * Wears down an item's durability incrementally.
+     * @param item The item to wear down.
+     * @return Whether the item remains or not.
+     */
     public static boolean updateDurability(ItemStack item) {
         return updateDurability(item, -1);
     }
 
+    /**
+     * Wears down an item's durability by a certain percentage of its max durability. A negative value wears down the
+     * item incrementally.
+     * @param item The item to wear down.
+     * @param damagePercent The percent of the item's max durability to wear down.
+     * @return Whether the item remains or not.
+     */
     public static boolean updateDurability(ItemStack item, double damagePercent) {
-        // Filter for weapons and armor
+        // Ignore non-relevant items
         if (!(VDWeapon.matches(item) || VDArmor.matches(item)))
-            return false;
+            return true;
 
         // Get data
-        AtomicInteger maxDur = new AtomicInteger();
-        AtomicInteger durability = new AtomicInteger();
-        AtomicInteger durIndex = new AtomicInteger();
         ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
+        Integer maxDur = meta.getPersistentDataContainer().get(MAX_DURABILITY_KEY, PersistentDataType.INTEGER);
+        Integer durability = meta.getPersistentDataContainer().get(DURABILITY_KEY, PersistentDataType.INTEGER);
+        AtomicInteger durIndex = new AtomicInteger();
         List<String > lores = Objects.requireNonNull(meta.getLore());
         lores.forEach(lore -> {
             if (lore.contains(LanguageManager.messages.durability
-                    .replace("%s", ""))) {
-                String[] dur = lore.substring(2 + LanguageManager.messages.durability.length())
-                        .replace(ChatColor.BLUE.toString(), "")
-                        .replace(ChatColor.WHITE.toString(), "")
-                        .split(" / ");
-                maxDur.set(Integer.parseInt(dur[1]));
-                durability.set(Integer.parseInt(dur[0]));
+                    .replace("%s", "")))
                 durIndex.set(lores.indexOf(lore));
-            }
         });
 
-        // Filter items without custom durability
-        if (maxDur.get() == 0)
+        // Destroy malformed items
+        if (maxDur == null || durability == null)
+            return false;
+
+        // Ignore unbreakable items
+        if (maxDur == 0)
             return true;
 
         // Update and check for used up item
         if (damagePercent < 0)
-            durability.addAndGet(-1);
-        else durability.addAndGet((int) Math.round(damagePercent * maxDur.get()));
+            durability--;
+        else durability += (int) Math.round(damagePercent * maxDur);
         Damageable damage = (Damageable) meta;
-        if (durability.get() <= 0)
+        if (durability <= 0)
             return false;
 
+        // Update durability data
+        meta.getPersistentDataContainer().set(DURABILITY_KEY, PersistentDataType.INTEGER, durability);
+
         // Set new lore
-        ChatColor color = durability.get() >= .75 * maxDur.get() ? ChatColor.GREEN :
-                (durability.get() <= .25 * maxDur.get() ? ChatColor.RED : ChatColor.YELLOW);
+        ChatColor color = durability >= .75 * maxDur ? ChatColor.GREEN :
+                (durability <= .25 * maxDur ? ChatColor.RED : ChatColor.YELLOW);
         lores.set(durIndex.get(), CommunicationManager.format(DURABILITY,
-                new ColoredMessage(color,
-                        Integer.toString(durability.get())).toString() +
-                        new ColoredMessage(ChatColor.WHITE, " / " + maxDur.get())));
+                new ColoredMessage(color, Integer.toString(durability)).toString() +
+                        new ColoredMessage(" / " + maxDur)));
         meta.setLore(lores);
 
         // Set damage indicator
-        damage.setDamage((int) item.getType().getMaxDurability() - (int) (durability.get() * 1. / maxDur.get() *
+        damage.setDamage((int) item.getType().getMaxDurability() - (int) (durability * 1. / maxDur *
                 item.getType().getMaxDurability()));
 
         item.setItemMeta(meta);

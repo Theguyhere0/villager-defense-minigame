@@ -5,16 +5,20 @@ import com.google.common.collect.Multimap;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
+import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.game.ItemFactory;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -22,11 +26,17 @@ import java.util.HashMap;
 import java.util.List;
 
 public abstract class Axe extends VDWeapon {
+    private static final String AXE = "axe";
+
     @NotNull
     public static ItemStack create(Tier tier) {
         List<String> lores = new ArrayList<>();
         Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
         HashMap<Enchantment, Integer> enchant = new HashMap<>();
+        HashMap<NamespacedKey, Integer> persistentData = new HashMap<>();
+        HashMap<NamespacedKey, Double> persistentData2 = new HashMap<>();
+        HashMap<NamespacedKey, String> persistentTags = new HashMap<>();
+        persistentTags.put(ITEM_TYPE_KEY, AXE);
 
         // Set material
         Material mat;
@@ -111,6 +121,7 @@ public abstract class Axe extends VDWeapon {
         lores.add("");
 
         // Set attack type
+        persistentTags.put(ATTACK_TYPE_KEY, IndividualAttackType.CRUSHING.toString());
         lores.add(CommunicationManager.format(ATTACK_TYPE, ATTACK_TYPE_CRUSHING));
 
         // Set main damage
@@ -143,23 +154,36 @@ public abstract class Axe extends VDWeapon {
             default:
                 damageLow = damageHigh = 0;
         }
-        if (damageLow == damageHigh)
+        if (damageLow == damageHigh) {
+            persistentData.put(VDPlayer.AttackClass.MAIN.straight(), damageLow);
             lores.add(CommunicationManager.format(MAIN_DAMAGE, new ColoredMessage(ChatColor.RED,
                     Integer.toString(damageLow))));
-        else lores.add(CommunicationManager.format(MAIN_DAMAGE, new ColoredMessage(ChatColor.RED,
-                damageLow + "-" + damageHigh)));
+        }
+        else {
+            persistentData.put(VDPlayer.AttackClass.MAIN.low(), damageLow);
+            persistentData.put(VDPlayer.AttackClass.MAIN.high(), damageHigh);
+            lores.add(CommunicationManager.format(MAIN_DAMAGE, new ColoredMessage(ChatColor.RED,
+                    damageLow + "-" + damageHigh)));
+        }
 
         // Set crit damage
-        if (damageLow == damageHigh)
+        if (damageLow == damageHigh) {
+            persistentData.put(VDPlayer.AttackClass.CRITICAL.straight(), (int) (damageLow * 1.5));
             lores.add(CommunicationManager.format(CRIT_DAMAGE, new ColoredMessage(ChatColor.DARK_PURPLE,
                     Integer.toString((int) (damageLow * 1.5)))));
-        else lores.add(CommunicationManager.format(CRIT_DAMAGE, new ColoredMessage(ChatColor.DARK_PURPLE,
-                (int) (damageLow * 1.25) + "-" + (int) (damageHigh * 1.5))));
+        }
+        else {
+            persistentData.put(VDPlayer.AttackClass.CRITICAL.low(), (int) (damageLow * 1.25));
+            persistentData.put(VDPlayer.AttackClass.CRITICAL.high(), (int) (damageHigh * 1.5));
+            lores.add(CommunicationManager.format(CRIT_DAMAGE, new ColoredMessage(ChatColor.DARK_PURPLE,
+                    (int) (damageLow * 1.25) + "-" + (int) (damageHigh * 1.5))));
+        }
 
         // Set attack speed
         attributes.put(Attribute.GENERIC_ATTACK_SPEED,
                 new AttributeModifier(VDItem.MetaKey.ATTACK_SPEED.name(), -3.2,
                         AttributeModifier.Operation.ADD_NUMBER));
+        persistentData2.put(ATTACK_SPEED_KEY, 0.8);
         lores.add(CommunicationManager.format(SPEED, Double.toString(0.8)));
 
         // Set dummy damage
@@ -193,6 +217,8 @@ public abstract class Axe extends VDWeapon {
                 break;
             default: durability = 0;
         }
+        persistentData.put(MAX_DURABILITY_KEY, durability);
+        persistentData.put(DURABILITY_KEY, durability);
         lores.add(CommunicationManager.format(DURABILITY,
                 new ColoredMessage(ChatColor.GREEN, Integer.toString(durability)).toString() +
                         new ColoredMessage(ChatColor.WHITE, " / " + durability)));
@@ -220,6 +246,7 @@ public abstract class Axe extends VDWeapon {
                 break;
             default: price = -1;
         }
+        persistentData.put(PRICE_KEY, price);
         if (price >= 0) {
             lores.add("");
             lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
@@ -227,7 +254,8 @@ public abstract class Axe extends VDWeapon {
         }
 
         // Create item
-        ItemStack item = ItemFactory.createItem(mat, name, ItemFactory.BUTTON_FLAGS, enchant, lores, attributes);
+        ItemStack item = ItemFactory.createItem(mat, name, ItemFactory.BUTTON_FLAGS, enchant, lores, attributes,
+                persistentData, persistentData2, persistentTags);
         if (durability == 0)
             return ItemFactory.makeUnbreakable(item);
         else return item;
@@ -239,10 +267,9 @@ public abstract class Axe extends VDWeapon {
         ItemMeta meta = toCheck.getItemMeta();
         if (meta == null)
             return false;
-        List<String> lore = meta.getLore();
-        if (lore == null)
+        String value = meta.getPersistentDataContainer().get(ITEM_TYPE_KEY, PersistentDataType.STRING);
+        if (value == null)
             return false;
-        return toCheck.getType().toString().contains("AXE") && lore.stream().anyMatch(line -> line.contains(
-                MAIN_DAMAGE.toString().replace("%s", "")));
+        return AXE.equals(value);
     }
 }

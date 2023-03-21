@@ -3,12 +3,15 @@ package me.theguyhere.villagerdefense.plugin.arenas;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
-import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.Main;
+import me.theguyhere.villagerdefense.plugin.background.DataManager;
+import me.theguyhere.villagerdefense.plugin.background.InvalidLocationException;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.plugin.displays.Portal;
-import me.theguyhere.villagerdefense.plugin.background.InvalidLocationException;
+import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.game.ItemFactory;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.game.WorldManager;
@@ -28,8 +31,8 @@ import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDHorse;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDPet;
 import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.kits.Kit;
-import me.theguyhere.villagerdefense.plugin.background.*;
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -38,6 +41,7 @@ import org.bukkit.entity.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -73,8 +77,6 @@ public class Arena {
     private boolean spawningMonsters;
     /** Whether the arena is in the process of spawning villagers.*/
     private boolean spawningVillagers;
-    /** The ID of the game currently in progress.*/
-    private int gameID = 0;
     /** Current wave of the active game.*/
     private int currentWave = 0;
     /** Villager count.*/
@@ -127,7 +129,6 @@ public class Arena {
     private static final String CALIBRATE = "calibrate";
     private static final String TICK = "Tick";
     private static final String ONE_TICK = "one" + TICK;
-    private static final String TEN_TICK = "ten" + TICK;
     private static final String TWENTY_TICK = "twenty" + TICK;
     private static final String FORTY_TICK = "forty" + TICK;
     private static final String TWO_HUNDRED_TICK = "twoHundred" + TICK;
@@ -1695,10 +1696,9 @@ public class Arena {
         // Clear countdown bar
         CountdownController.stopCountdown(this);
 
-        // Reset villager and enemy count, set new game ID, clear arena
+        // Reset villager and enemy count, clear arena
         resetVillagers();
         resetEnemies();
-        newGameID();
         WorldManager.clear(getCorner1(), getCorner2());
 
         // Teleport players to arena, and spectators if there was a waiting room
@@ -1876,9 +1876,9 @@ public class Arena {
                             .filter(entity -> !entity.isDead())
                             .filter(entity -> ((LivingEntity) entity).getActivePotionEffects().stream()
                                     .noneMatch(potion -> potion.getType().equals(PotionEffectType.INVISIBILITY)))
-                            .filter(entity -> mobster.getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.MONSTER.getValue())
+                            .filter(entity -> VDMob.isTeam(mobster, IndividualTeam.MONSTER)
                                     && entity instanceof Player || !(entity instanceof Player) &&
-                                    !mobster.getMetadata(VDMob.TEAM).equals(entity.getMetadata(VDMob.TEAM)))
+                                    !VDMob.areSameTeam(mobster, entity))
                             .filter(entity -> {
                                 if (entity instanceof Player)
                                     return ((Player) entity).getGameMode() == GameMode.ADVENTURE;
@@ -1899,17 +1899,12 @@ public class Arena {
                         mobster.setTarget(newTarget);
                     }
                 });
-            }
-        });
-        activeTasks.get(ONE_TICK).runTaskTimer(Main.plugin, 0, 1);
-        activeTasks.put(TEN_TICK, new BukkitRunnable() {
-            @Override
-            public void run() {
+
                 // Refill ammo
                 getActives().forEach(VDPlayer::refill);
             }
         });
-        activeTasks.get(TEN_TICK).runTaskTimer(Main.plugin, 0, 10);
+        activeTasks.get(ONE_TICK).runTaskTimer(Main.plugin, 0, 1);
         activeTasks.put(TWENTY_TICK, new BukkitRunnable() {
             @Override
             public void run() {
@@ -2046,7 +2041,7 @@ public class Arena {
             return;
         }
 
-        mobs.removeIf(mob -> mob.getEntity().getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.MONSTER.getValue()));
+        mobs.removeIf(mob -> VDMob.isTeam(mob.getEntity(), IndividualTeam.MONSTER));
 
         // Revive dead players
         for (VDPlayer p : getGhosts()) {
@@ -2512,14 +2507,6 @@ public class Arena {
         this.spawningVillagers = spawningVillagers;
     }
 
-    public int getGameID() {
-        return gameID;
-    }
-
-    public void newGameID() {
-        gameID = (int) (100 * Math.random());
-    }
-
     public int getCurrentWave() {
         return currentWave;
     }
@@ -2569,18 +2556,24 @@ public class Arena {
         // Set price modifier
         double modifier = Math.pow(getActiveCount() - 5, 2) / 200 + 1;
 
+        // Get current price
         ItemStack item = itemStack.clone();
         ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
-        try {
-            List<String> lore = Objects.requireNonNull(meta.getLore());
-            int price = (int) Math.round(Integer.parseInt(lore.get(lore.size() - 1)
-                    .substring(6 + LanguageManager.messages.gems.length())) * modifier / 5) * 5;
-            lore.set(lore.size() - 1, CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
-                    price));
-            meta.setLore(lore);
-            item.setItemMeta(meta);
-        } catch (NumberFormatException | NullPointerException ignored) {
-        }
+        List<String> lore = Objects.requireNonNull(meta.getLore());
+        Integer price = meta.getPersistentDataContainer().get(VDItem.PRICE_KEY, PersistentDataType.INTEGER);
+
+        // Check for price
+        if (price == null)
+            return itemStack;
+
+        // Modify
+        price = (int) (price * modifier / 5) * 5;
+        meta.getPersistentDataContainer().set(VDItem.PRICE_KEY, PersistentDataType.INTEGER, price);
+        lore.set(lore.size() - 1, CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
+                price));
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+
         return item;
     }
 
@@ -2706,8 +2699,8 @@ public class Arena {
     public void setMonsterGlow() {
         Objects.requireNonNull(getPlayerSpawn().getLocation().getWorld())
                 .getNearbyEntities(getBounds()).stream().filter(Objects::nonNull)
-                .filter(entity -> entity.hasMetadata(VDMob.VD))
-                .filter(entity -> entity.getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.MONSTER.getValue()))
+                .filter(VDMob::isVDMob)
+                .filter(entity -> VDMob.isTeam(entity, IndividualTeam.MONSTER))
                 .forEach(entity -> entity.setGlowing(true));
     }
 
@@ -2788,12 +2781,14 @@ public class Arena {
         monsters = (int) Objects.requireNonNull(getPlayerSpawn().getLocation().getWorld())
                 .getNearbyEntities(getBounds()).stream()
                 .filter(Objects::nonNull)
-                .filter(entity -> entity.hasMetadata(VDMob.VD))
-                .filter(entity -> entity instanceof Monster || entity instanceof Slime || entity instanceof Hoglin ||
-                        entity instanceof Phantom).count();
+                .filter(VDMob::isVDMob)
+                .filter(entity -> VDMob.isTeam(entity, IndividualTeam.MONSTER))
+                .count();
         villagers = (int) getPlayerSpawn().getLocation().getWorld().getNearbyEntities(getBounds()).stream()
                 .filter(Objects::nonNull)
-                .filter(entity -> entity.hasMetadata(VDMob.VD)).filter(entity -> entity instanceof Villager).count();
+                .filter(VDMob::isVDMob)
+                .filter(entity -> entity instanceof Villager)
+                .count();
         boolean calibrated = false;
 
         // Update if out of cal

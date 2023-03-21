@@ -1,11 +1,12 @@
 package me.theguyhere.villagerdefense.plugin.game;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.arenas.*;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.guis.Inventories;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
@@ -29,8 +30,6 @@ import me.theguyhere.villagerdefense.plugin.items.weapons.Bow;
 import me.theguyhere.villagerdefense.plugin.items.weapons.Crossbow;
 import me.theguyhere.villagerdefense.plugin.items.weapons.VDWeapon;
 import me.theguyhere.villagerdefense.plugin.kits.Kit;
-import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -38,15 +37,17 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
 import org.spigotmc.event.entity.EntityMountEvent;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -61,21 +62,17 @@ public class GameListener implements Listener {
 		LivingEntity ent = e.getEntity();
 
 		// Check for arena mobs
-		if (!ent.hasMetadata(VDMob.VD))
+		if (!VDMob.isVDMob(ent))
 			return;
 
 		Arena arena;
 		VDMob mob;
 		try {
-			arena = GameController.getArena(ent.getMetadata(VDMob.VD).get(0).asInt());
+			arena = GameController.getArena(VDMob.getArenaID(ent));
 			mob = arena.getMob(ent.getUniqueId());
 		} catch (ArenaNotFoundException | VDMobNotFoundException err) {
 			return;
 		}
-
-		// Check for right game
-		if (mob.getGameID() != arena.getGameID())
-			return;
 
 		// Arena enemies not part of an active arena
 		if (arena.getStatus() != ArenaStatus.ACTIVE) {
@@ -90,13 +87,13 @@ public class GameListener implements Listener {
 		// Remove the mob
 		arena.removeMob(mob.getID());
 
-		if (ent.getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.VILLAGER.getValue())) {
+		if (VDMob.isTeam(ent, IndividualTeam.VILLAGER)) {
 			// Update scoreboards
 			arena.updateScoreboards();
 		}
 
 		// Handle enemy death
-		else if (ent.getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.MONSTER.getValue())) {
+		else if (VDMob.isTeam(ent, IndividualTeam.MONSTER)) {
 			// Check for right wave
 			if (mob.getWave() != arena.getCurrentWave())
 				return;
@@ -153,32 +150,13 @@ public class GameListener implements Listener {
 		}
 
 		// Get data
-		AtomicInteger cost = new AtomicInteger();
-		AtomicInteger capacity = new AtomicInteger();
-		AtomicDouble cooldown = new AtomicDouble();
-		Objects.requireNonNull(Objects.requireNonNull(range.getItemMeta()).getLore()).forEach(lore -> {
-			if (lore.contains(LanguageManager.messages.ammoCost
-					.replace("%s", ""))) {
-				cost.set(Integer.parseInt(lore.substring(2 + LanguageManager.messages.ammoCost.length())
-						.replace(ChatColor.BLUE.toString(), "")));
-			}
-			if (lore.contains(LanguageManager.messages.attackSpeed
-					.replace("%s", ""))) {
-				cooldown.set(1 / Double.parseDouble(lore.substring(2 + LanguageManager.messages.attackSpeed.length())
-						.replace(ChatColor.BLUE.toString(), "")));
-			}
-		});
-		List<String > lores = Objects.requireNonNull(Objects.requireNonNull(ammo.getItemMeta()).getLore());
-		lores.forEach(lore -> {
-			if (lore.contains(LanguageManager.messages.capacity
-					.replace("%s", ""))) {
-				capacity.set(Integer.parseInt(lore.substring(2 + LanguageManager.messages.capacity.length())
-						.replace(ChatColor.BLUE.toString(), "")
-						.replace(ChatColor.WHITE.toString(), "")
-						.split(" / ")[0]));
-			}
-		});
-		if (capacity.get() < cost.get())
+		int cost = gamer.getAmmoCost();
+		int capacity = gamer.getAmmoCap();
+		Double cooldown = Objects.requireNonNull(range.getItemMeta()).getPersistentDataContainer()
+				.get(VDWeapon.ATTACK_SPEED_KEY, PersistentDataType.DOUBLE);
+
+		// Ignore if not enough capacity or has bad cooldown data
+		if (capacity < cost || cooldown == null)
 			return;
 
 		// Check for cooldown
@@ -190,10 +168,10 @@ public class GameListener implements Listener {
 
 		// Update capacity, durability, and cooldown
 		if (Bow.matches(range))
-			NMSVersion.getCurrent().getNmsManager().setBowCooldown(player, Utils.secondsToTicks(cooldown.get()));
-		else NMSVersion.getCurrent().getNmsManager().setCrossbowCooldown(player, Utils.secondsToTicks(cooldown.get()));
-		gamer.triggerWeaponCooldown(Utils.secondsToMillis(cooldown.get()));
-		if (Ammo.updateCapacity(ammo, -cost.get())) {
+			NMSVersion.getCurrent().getNmsManager().setBowCooldown(player, Utils.secondsToTicks(1 / cooldown));
+		else NMSVersion.getCurrent().getNmsManager().setCrossbowCooldown(player, Utils.secondsToTicks(1 / cooldown));
+		gamer.triggerWeaponCooldown(Utils.secondsToMillis(1 / cooldown));
+		if (Ammo.updateCapacity(ammo, -cost)) {
 			player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
 			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1);
 		}
@@ -232,16 +210,19 @@ public class GameListener implements Listener {
 			ItemStack range = Objects.requireNonNull(player.getEquipment()).getItemInMainHand();
 			projectile.setMetadata(VDItem.MetaKey.DAMAGE.name(),
 					new FixedMetadataValue(Main.plugin, gamer.dealRawDamage(VDPlayer.AttackClass.RANGE, 0)));
-			if (Objects.requireNonNull(Objects.requireNonNull(range.getItemMeta()).getLore()).stream().anyMatch(lore ->
-					lore.contains(LanguageManager.messages.perBlock.replace("%s", "")))) {
+			if (gamer.isPerBlock()) {
 				projectile.setMetadata(VDItem.MetaKey.PER_BLOCK.name(),
 						new FixedMetadataValue(Main.plugin, true));
 				projectile.setMetadata(VDItem.MetaKey.ORIGIN_LOCATION.name(),
 						new FixedMetadataValue(Main.plugin, player.getLocation()));
 			} else projectile.setMetadata(VDItem.MetaKey.PER_BLOCK.name(),
 					new FixedMetadataValue(Main.plugin, false));
-			if (Crossbow.matches(range))
-				((Arrow) projectile).setPierceLevel(Crossbow.getPierce(range));
+			if (Crossbow.matches(range)) {
+				Integer pierce = Objects.requireNonNull(range.getItemMeta()).getPersistentDataContainer()
+						.get(VDWeapon.PIERCE_KEY, PersistentDataType.INTEGER);
+				if (pierce != null)
+					((Arrow) projectile).setPierceLevel(pierce);
+			}
 
 			// Don't allow pickup
 			((Arrow) projectile).setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
@@ -251,7 +232,7 @@ public class GameListener implements Listener {
 		else {
 			// Attempt to get VDMob
 			try {
-				arena = GameController.getArena(shooter.getMetadata(VDMob.VD).get(0).asInt());
+				arena = GameController.getArena(VDMob.getArenaID(shooter));
 				finalShooter = arena.getMob(shooter.getUniqueId());
 			} catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException err) {
 				return;
@@ -309,7 +290,7 @@ public class GameListener implements Listener {
 			}
 
 			// Avoid phantom damage effects and friendly fire
-			if (damager instanceof Player || damager.getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.VILLAGER.getValue())) {
+			if (damager instanceof Player || VDMob.isTeam(damager, IndividualTeam.VILLAGER)) {
 				e.setCancelled(true);
 				return;
 			}
@@ -364,7 +345,7 @@ public class GameListener implements Listener {
 		}
 
 		// VD entity getting hurt
-		else if (victim.hasMetadata(VDMob.VD)) {
+		else if (VDMob.isVDMob(victim)) {
 			// Check for player damager, then get player
 			if (damager instanceof Player)
 				player = (Player) damager;
@@ -380,7 +361,7 @@ public class GameListener implements Listener {
 				}
 			} else {
 				try {
-					arena = GameController.getArena(victim.getMetadata(VDMob.VD).get(0).asInt());
+					arena = GameController.getArena(VDMob.getArenaID(victim));
 					finalVictim = arena.getMob(victim.getUniqueId());
 				} catch (ArenaNotFoundException | VDMobNotFoundException err) {
 					return;
@@ -394,10 +375,10 @@ public class GameListener implements Listener {
 			}
 
 			// Enemy getting hurt
-			if (victim.getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.MONSTER.getValue())) {
+			if (VDMob.isTeam(victim, IndividualTeam.MONSTER)) {
 				// Avoid phantom damage effects and friendly fire
 				if (!(damager instanceof Player) &&
-						damager.getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.MONSTER.getValue())) {
+						VDMob.isTeam(damager, IndividualTeam.MONSTER)) {
 					e.setCancelled(true);
 					return;
 				}
@@ -528,10 +509,10 @@ public class GameListener implements Listener {
 			}
 
 			// Friendly getting hurt
-			if (victim.getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.VILLAGER.getValue())) {
+			if (VDMob.isTeam(victim, IndividualTeam.VILLAGER)) {
 				// Avoid phantom damage effects and friendly fire
 				if (damager instanceof Player ||
-						damager.getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.VILLAGER.getValue())) {
+						VDMob.isTeam(damager, IndividualTeam.VILLAGER)) {
 					e.setCancelled(true);
 					return;
 				}
@@ -651,7 +632,7 @@ public class GameListener implements Listener {
 		else {
 			// Try to get arena and VDMob
 			try {
-				arena = GameController.getArena(ent.getMetadata(VDMob.VD).get(0).asInt());
+				arena = GameController.getArena(VDMob.getArenaID(ent));
 				mob = arena.getMob(ent.getUniqueId());
 			} catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException err) {
 				return;
@@ -702,8 +683,7 @@ public class GameListener implements Listener {
 		LivingEntity target = e.getTarget();
 
 		// Check for custom mobs and player
-		if (target == null || !entity.hasMetadata(VDMob.VD) ||
-				!(target instanceof Player) && !target.hasMetadata(VDMob.VD))
+		if (target == null || !VDMob.isVDMob(entity) || !(target instanceof Player) && !VDMob.isVDMob(target))
 			return;
 
 		Arena arena;
@@ -712,7 +692,7 @@ public class GameListener implements Listener {
 
 		// Attempt to get VDPlayer and VDMob
 		try {
-			arena = GameController.getArena(Objects.requireNonNull(e.getEntity()).getMetadata(VDMob.VD).get(0).asInt());
+			arena = GameController.getArena(VDMob.getArenaID(e.getEntity()));
 			mob = arena.getMob(e.getEntity().getUniqueId());
 			if (target instanceof Player && !arena.hasPlayer((Player) target))
 				return;
@@ -722,13 +702,13 @@ public class GameListener implements Listener {
 		}
 
 		// Monsters
-		if (mob.getEntity().getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.MONSTER.getValue()))
-			if (targeted != null && targeted.getEntity().getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.MONSTER.getValue()))
+		if (VDMob.isTeam(mob.getEntity(), IndividualTeam.MONSTER))
+			if (targeted != null && VDMob.isTeam(targeted.getEntity(), IndividualTeam.MONSTER))
 				e.setCancelled(true);
 
 		// Villager team
-		else if (mob.getEntity().getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.VILLAGER.getValue()) && (targeted == null ||
-					targeted.getEntity().getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.VILLAGER.getValue())))
+		else if (VDMob.isTeam(mob.getEntity(), IndividualTeam.VILLAGER) && (targeted == null ||
+					VDMob.isTeam(mob.getEntity(), IndividualTeam.VILLAGER)))
 				e.setCancelled(true);
 	}
 
@@ -738,7 +718,7 @@ public class GameListener implements Listener {
 		if (e instanceof EntityCombustByBlockEvent || e instanceof EntityCombustByEntityEvent)
 			return;
 
-		if (e.getEntity().hasMetadata(VDMob.VD))
+		if (VDMob.isVDMob(e.getEntity()))
 			e.setCancelled(true);
 	}
 
@@ -751,7 +731,7 @@ public class GameListener implements Listener {
 
 		// Try to get arena and VDMob
 		try {
-			arena = GameController.getArena(ent.getMetadata(VDMob.VD).get(0).asInt());
+			arena = GameController.getArena(VDMob.getArenaID(ent));
 			mob = arena.getMob(ent.getUniqueId());
 		} catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException err) {
 			return;
@@ -787,7 +767,7 @@ public class GameListener implements Listener {
 
 		// Try to get arena and VDMob
 		try {
-			arena = GameController.getArena(Objects.requireNonNull(ent).getMetadata(VDMob.VD).get(0).asInt());
+			arena = GameController.getArena(VDMob.getArenaID(Objects.requireNonNull(ent)));
 			witch = (VDWitch) arena.getMob(ent.getUniqueId());
 		} catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException |
 				NullPointerException | ClassCastException err) {
@@ -798,8 +778,7 @@ public class GameListener implements Listener {
 		Random r = new Random();
 		for (LivingEntity affectedEntity : e.getAffectedEntities()) {
 			// Not monster
-			if (!(affectedEntity instanceof Player) &&
-					affectedEntity.getMetadata(VDMob.TEAM).get(0).equals(IndividualTeam.MONSTER.getValue()))
+			if (!(affectedEntity instanceof Player) && VDMob.isTeam(affectedEntity, IndividualTeam.MONSTER))
 				continue;
 
 			// Ignore players with witch kit
@@ -915,7 +894,7 @@ public class GameListener implements Listener {
 		// Check for VDMob
 		else {
 			try {
-				GameController.getArena(ent.getMetadata(VDMob.VD).get(0).asInt()).getMob(ent.getUniqueId());
+				GameController.getArena(VDMob.getArenaID(ent)).getMob(ent.getUniqueId());
 			} catch (IndexOutOfBoundsException | VDMobNotFoundException | ArenaNotFoundException err) {
 				return;
 			}
@@ -968,7 +947,7 @@ public class GameListener implements Listener {
 		// Prevent natural regen for other mobs
 		else {
 			// Check for special mob
-			if (!ent.hasMetadata(VDMob.VD))
+			if (!VDMob.isVDMob(ent))
 				return;
 
 			// Stop regen
@@ -1137,7 +1116,7 @@ public class GameListener implements Listener {
 	@EventHandler
 	public void onSplit(SlimeSplitEvent e) {
 		Entity ent = e.getEntity();
-		if (!ent.hasMetadata(VDMob.VD))
+		if (!VDMob.isVDMob(ent))
 			return;
 		e.setCancelled(true);
 	}
@@ -1152,7 +1131,7 @@ public class GameListener implements Listener {
 			return;
 
 		// Check for arena mobs
-		if (ent.hasMetadata(VDMob.VD))
+		if (VDMob.isVDMob(ent))
 			e.setCancelled(true);
 	}
 
@@ -1166,15 +1145,13 @@ public class GameListener implements Listener {
 		Player player = e.getPlayer();
 		ItemStack item = e.getItem() == null ? new ItemStack(Material.AIR) : e.getItem();
 		ItemStack main = player.getInventory().getItemInMainHand();
-		List<String> lores;
 		Arena arena;
 		VDPlayer gamer;
 
-		// Attempt to get arena, player, and lore
+		// Attempt to get arena and player
 		try {
 			arena = GameController.getArena(player);
 			gamer = arena.getPlayer(player);
-			lores = Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore());
 		} catch (ArenaNotFoundException | PlayerNotFoundException | NullPointerException err) {
 			return;
 		}
@@ -1199,18 +1176,18 @@ public class GameListener implements Listener {
 
 		// Give health and hunger for totem
 		if (ShopFood.matches(item) && item.getType() == Material.TOTEM_OF_UNDYING) {
-			lores.forEach(lore -> {
-				if (lore.contains(Utils.HP)) {
-					int hp = Integer.parseInt(lore.substring(3).replace(Utils.HP, "").trim());
-					if (lore.contains(ChatColor.RED.toString()) && !gamer.hasMaxHealth())
-						gamer.changeCurrentHealth(hp);
-					else if (lore.contains(ChatColor.GOLD.toString()))
-						gamer.addAbsorption(hp);
-				} else if (lore.contains(Utils.HUNGER)) {
-					player.setFoodLevel(Math.max(20, player.getFoodLevel() +
-							Integer.parseInt(lore.substring(3).replace(Utils.HUNGER, "").trim())));
-				}
-			});
+			PersistentDataContainer dataContainer = Objects.requireNonNull(item.getItemMeta())
+					.getPersistentDataContainer();
+
+			Integer integer = dataContainer.get(VDFood.HEALTH_KEY, PersistentDataType.INTEGER);
+			if (integer != null)
+				gamer.changeCurrentHealth(integer);
+			integer = dataContainer.get(VDFood.ABSORPTION_KEY, PersistentDataType.INTEGER);
+			if (integer != null)
+				gamer.addAbsorption(integer);
+			integer = dataContainer.get(VDFood.HUNGER_KEY, PersistentDataType.INTEGER);
+			if (integer != null)
+				player.setFoodLevel(Math.max(20, player.getFoodLevel() + integer));
 
 			// Consume
 			player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
@@ -1222,15 +1199,13 @@ public class GameListener implements Listener {
 	public void onEat(PlayerItemConsumeEvent e) {
 		Player player = e.getPlayer();
 		ItemStack item = e.getItem();
-		List<String> lores;
 		Arena arena;
 		VDPlayer gamer;
 
-		// Attempt to get arena, player, and lore
+		// Attempt to get arena and player
 		try {
 			arena = GameController.getArena(player);
 			gamer = arena.getPlayer(player);
-			lores = Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore());
 		} catch (ArenaNotFoundException | PlayerNotFoundException | NullPointerException err) {
 			return;
 		}
@@ -1242,21 +1217,18 @@ public class GameListener implements Listener {
 		}
 
 		// Give health and hunger
-		lores.forEach(lore -> {
-			if (lore.contains(Utils.HP)) {
-				int hp = Integer.parseInt(lore.substring(3).replace(Utils.HP, "").trim());
-				if (lore.contains(ChatColor.RED.toString()) && !gamer.hasMaxHealth())
-					gamer.changeCurrentHealth(hp);
-				else if (lore.contains(ChatColor.GOLD.toString()))
-					gamer.addAbsorption(hp);
-			}
-			else if (lore.contains(Utils.HUNGER)) {
-				int trueHunger = player.getFoodLevel() +
-						Integer.parseInt(lore.substring(3).replace(Utils.HUNGER, "").trim());
-				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-						player.setFoodLevel(Math.min(20, trueHunger)));
-			}
-		});
+		PersistentDataContainer dataContainer = Objects.requireNonNull(item.getItemMeta())
+				.getPersistentDataContainer();
+
+		Integer integer = dataContainer.get(VDFood.HEALTH_KEY, PersistentDataType.INTEGER);
+		if (integer != null)
+			gamer.changeCurrentHealth(integer);
+		integer = dataContainer.get(VDFood.ABSORPTION_KEY, PersistentDataType.INTEGER);
+		if (integer != null)
+			gamer.addAbsorption(integer);
+		integer = dataContainer.get(VDFood.HUNGER_KEY, PersistentDataType.INTEGER);
+		if (integer != null)
+			player.setFoodLevel(Math.max(20, player.getFoodLevel() + integer));
 
 		// No saturation increase
 		player.setSaturation(0);
@@ -1272,7 +1244,7 @@ public class GameListener implements Listener {
 			return;
 
 		// Check for special mob
-		if (!ent.hasMetadata(VDMob.VD))
+		if (!VDMob.isVDMob(ent))
 			return;
 
 		// Check if player is playing in an arena
@@ -1359,7 +1331,7 @@ public class GameListener implements Listener {
 		Entity ent = e.getEntity();
 
 		// Check for special mob
-		if (!ent.hasMetadata(VDMob.VD))
+		if (!VDMob.isVDMob(ent))
 			return;
 
 		e.setCancelled(true);
@@ -1371,7 +1343,7 @@ public class GameListener implements Listener {
 		Entity ent = e.getEntity();
 
 		// Check for special mob
-		if (!ent.hasMetadata(VDMob.VD))
+		if (!VDMob.isVDMob(ent))
 			return;
 
 		e.setCancelled(true);
@@ -1465,6 +1437,10 @@ public class GameListener implements Listener {
 			e.setCancelled(true);
 			return;
 		}
+
+		// Ignore if not clicking in own inventory
+		if (Objects.requireNonNull(e.getClickedInventory()).getType() != InventoryType.PLAYER)
+			return;
 
 		// Update main hand if that slot changes
 		if (e.getSlot() == player.getInventory().getHeldItemSlot())
@@ -1575,21 +1551,15 @@ public class GameListener implements Listener {
 		Location location = ent.getLocation();
 
 		// Check for arena mobs
-		if (!ent.hasMetadata(VDMob.VD))
+		if (!VDMob.isVDMob(ent))
 			return;
 
 		Arena arena;
-		VDMob mob;
 		try {
-			arena = GameController.getArena(ent.getMetadata(VDMob.VD).get(0).asInt());
-			mob = arena.getMob(ent.getUniqueId());
-		} catch (ArenaNotFoundException | VDMobNotFoundException err) {
+			arena = GameController.getArena(VDMob.getArenaID(ent));
+		} catch (ArenaNotFoundException err) {
 			return;
 		}
-
-		// Check for right game
-		if (mob.getGameID() != arena.getGameID())
-			return;
 
 		// Arena enemies not part of an active arena
 		if (arena.getStatus() != ArenaStatus.ACTIVE)

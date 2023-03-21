@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.displays;
 
+import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.arenas.JoinArenaEvent;
 import me.theguyhere.villagerdefense.plugin.game.GameController;
@@ -24,7 +25,7 @@ public class ClickPortalListener implements Listener {
 					.filter(arena1 -> arena1.getPortal().getNpc().getEntityID() == e.getNpcId())
 					.collect(Collectors.toList()).get(0);
 		} catch (Exception err) {
-			err.printStackTrace();
+			CommunicationManager.debugErrorShouldNotHappen();
 			return;
 		}
 
@@ -44,7 +45,7 @@ public class ClickPortalListener implements Listener {
 					.filter(arena1 -> arena1.getPortal().getNpc().getEntityID() == e.getNpcId())
 					.collect(Collectors.toList()).get(0);
 		} catch (Exception err) {
-			err.printStackTrace();
+			CommunicationManager.debugErrorShouldNotHappen();
 			return;
 		}
 

@@ -1,12 +1,11 @@
 package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
-import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.individuals.mobs.InvalidVDMobKeyException;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.game.ItemFactory;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualTeam;
+import me.theguyhere.villagerdefense.plugin.individuals.mobs.InvalidVDMobKeyException;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.VDMob;
-import me.theguyhere.villagerdefense.plugin.game.ItemFactory;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,7 +16,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -30,9 +30,9 @@ public abstract class VDMinion extends VDMob {
         super(lore, attackType);
         mob = minion;
         id = minion.getUniqueId();
-        minion.setMetadata(TEAM, IndividualTeam.MONSTER.getValue());
-        minion.setMetadata(VD, new FixedMetadataValue(Main.plugin, arena.getId()));
-        gameID = arena.getGameID();
+        PersistentDataContainer dataContainer = minion.getPersistentDataContainer();
+        dataContainer.set(ARENA_ID, PersistentDataType.INTEGER, arena.getId());
+        dataContainer.set(TEAM, PersistentDataType.STRING, IndividualTeam.MONSTER.getValue());
         wave = arena.getCurrentWave();
         this.name = name;
         hpBarSize = 2;

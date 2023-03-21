@@ -1,12 +1,12 @@
 package me.theguyhere.villagerdefense.plugin.individuals.mobs.villagers;
 
-import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualTeam;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.VDMob;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Villager;
-import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 public abstract class VDVillager extends VDMob {
     protected VDVillager(Arena arena, Villager villager, String name, String lore) {
@@ -14,9 +14,9 @@ public abstract class VDVillager extends VDMob {
         mob = villager;
         id = villager.getUniqueId();
         villager.setAdult();
-        villager.setMetadata(TEAM, IndividualTeam.VILLAGER.getValue());
-        villager.setMetadata(VD, new FixedMetadataValue(Main.plugin, arena.getId()));
-        gameID = arena.getGameID();
+        PersistentDataContainer dataContainer = villager.getPersistentDataContainer();
+        dataContainer.set(ARENA_ID, PersistentDataType.INTEGER, arena.getId());
+        dataContainer.set(TEAM, PersistentDataType.STRING, IndividualTeam.VILLAGER.getValue());
         wave = arena.getCurrentWave();
         this.name = name;
         hpBarSize = 2;
