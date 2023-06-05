@@ -3,10 +3,8 @@ package me.theguyhere.villagerdefense.plugin.commands;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.exceptions.CommandException;
-import me.theguyhere.villagerdefense.plugin.exceptions.CommandPlayerException;
-import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
-import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.game.GameController;
+import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -21,7 +19,7 @@ class CommandReloadPlugin {
         // Guard clauses
         if (!CommandGuard.checkArg(args, 0, CommandExecImp.Argument.RELOAD.getArg()))
             return;
-        CommandGuard.checkSenderPermissions(sender, Permission.ADMIN);
+        CommandGuard.checkSenderPermissions(sender, CommandPermission.ADMIN);
 
         // Try to get a UUID
         Player player;
@@ -55,7 +53,7 @@ class CommandReloadPlugin {
         else CommunicationManager.debugInfo("Reloading plugin data in 5 seconds", 0);
 
         // Close all arenas
-        GameManager.closeArenas();
+        GameController.closeArenas();
 
         // Reload plugin after 11 seconds
         Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Main.plugin.reload(),

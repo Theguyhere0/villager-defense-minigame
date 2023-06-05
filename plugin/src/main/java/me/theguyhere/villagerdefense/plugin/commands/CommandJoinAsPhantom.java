@@ -1,16 +1,15 @@
 package me.theguyhere.villagerdefense.plugin.commands;
 
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.exceptions.CommandException;
-import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.ArenaStatus;
-import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
-import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
-import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerNotFoundException;
+import me.theguyhere.villagerdefense.plugin.game.GameController;
+import me.theguyhere.villagerdefense.plugin.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaStatus;
+import me.theguyhere.villagerdefense.plugin.huds.SidebarManager;
+import me.theguyhere.villagerdefense.plugin.kits.Kit;
+import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -28,7 +27,7 @@ class CommandJoinAsPhantom {
         Arena arena;
         VDPlayer gamer;
         try {
-            arena = GameManager.getArena(player);
+            arena = GameController.getArena(player);
             gamer = arena.getPlayer(player);
         } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             PlayerManager.notifyFailure(player, LanguageManager.errors.inGame);
@@ -49,7 +48,7 @@ class CommandJoinAsPhantom {
         }
 
         // Check for useful phantom use
-        if (gamer.getStatus() != PlayerStatus.SPECTATOR) {
+        if (gamer.getStatus() != VDPlayer.Status.SPECTATOR) {
             PlayerManager.notifyFailure(player, LanguageManager.errors.phantomPlayer);
             return;
         }
@@ -62,9 +61,9 @@ class CommandJoinAsPhantom {
 
         // Let player join using phantom kit
         PlayerManager.teleAdventure(player, arena.getPlayerSpawn().getLocation());
-        gamer.setStatus(PlayerStatus.ALIVE);
+        gamer.setStatus(VDPlayer.Status.ALIVE);
         gamer.giveItems();
-        GameManager.createBoard(gamer);
+        SidebarManager.updateActivePlayerSidebar(gamer);
         gamer.setJoinedWave(arena.getCurrentWave());
         gamer.setKit(Kit.phantom());
         player.closeInventory();

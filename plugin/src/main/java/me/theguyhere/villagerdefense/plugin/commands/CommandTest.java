@@ -1,13 +1,12 @@
 package me.theguyhere.villagerdefense.plugin.commands;
 
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.exceptions.CommandException;
-import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.game.managers.GameManager;
-import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerNotFoundException;
+import me.theguyhere.villagerdefense.plugin.game.GameController;
+import me.theguyhere.villagerdefense.plugin.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -21,14 +20,14 @@ class CommandTest {
             return;
         Player player = CommandGuard.checkSenderPlayer(sender);
         CommandGuard.checkNotRelease();
-        CommandGuard.checkSenderPermissions(player, Permission.ADMIN);
+        CommandGuard.checkSenderPermissions(player, CommandPermission.ADMIN);
         CommandGuard.checkDebugLevelGreaterEqual(sender, 3);
 
         // Implement test
         Arena arena;
         VDPlayer gamer;
         try {
-            arena = GameManager.getArena(player);
+            arena = GameController.getArena(player);
             gamer = arena.getPlayer(player);
         } catch (ArenaNotFoundException | PlayerNotFoundException err) {
             PlayerManager.notifyFailure(player, LanguageManager.errors.inGame);

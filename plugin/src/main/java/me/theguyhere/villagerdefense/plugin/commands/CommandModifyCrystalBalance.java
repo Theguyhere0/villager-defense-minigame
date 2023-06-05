@@ -3,10 +3,8 @@ package me.theguyhere.villagerdefense.plugin.commands;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.exceptions.CommandException;
-import me.theguyhere.villagerdefense.plugin.exceptions.CommandFormatException;
-import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -30,7 +28,7 @@ class CommandModifyCrystalBalance {
             return;
         if (!CommandGuard.checkArgsLengthMatch(args, 3))
             throw new CommandFormatException(COMMAND_FORMAT);
-        CommandGuard.checkSenderPermissions(sender, Permission.ADMIN);
+        CommandGuard.checkSenderPermissions(sender, CommandPermission.ADMIN);
 
         // Check if vault economy is enabled
         if (Main.hasCustomEconomy()) {

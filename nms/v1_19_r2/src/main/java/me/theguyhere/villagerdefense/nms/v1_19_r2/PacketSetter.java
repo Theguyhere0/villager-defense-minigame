@@ -1,20 +1,16 @@
 package me.theguyhere.villagerdefense.nms.v1_19_r2;
 
 import io.netty.buffer.Unpooled;
-import net.minecraft.core.BlockPosition;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketDataSerializer;
-
-import java.util.UUID;
+import net.minecraft.network.FriendlyByteBuf;
 
 /**
  * A class to help with setting up a packet for a specific version.
  * <p>
  * This class was borrowed from filoghost to learn about Packets.
  */
-class PacketSetter extends PacketDataSerializer {
+class PacketSetter extends FriendlyByteBuf {
 
-    /** Keeps an instance so new ones don't need to be instantiated (don't know why but filoghost did it).*/
+    // Make this class a singleton
     private static final PacketSetter INSTANCE = new PacketSetter();
 
     /**
@@ -26,40 +22,19 @@ class PacketSetter extends PacketDataSerializer {
         return INSTANCE;
     }
 
-    /**
-     * Create instance once on class load.
-     */
+    // Create instance once on class load
     private PacketSetter() {
         super(Unpooled.buffer());
     }
 
-
-    void writeVarInt(int i) {
-        super.d(i);
-    }
-
-    void writeVarIntArray(int... is) {
-        writeVarInt(is.length);
-        for (int i : is)
-            writeVarInt(i);
-    }
-
-    void writeUUID(UUID uuid) {
-        super.a(uuid);
-    }
-
-    void writePosition(BlockPosition position) {
-        super.a(position);
-    }
-
-    void writeNBTTagCompound(NBTTagCompound nbtTagCompound) {
-        super.a(nbtTagCompound);
+    public FriendlyByteBuf writeVarIntArray(int... is) {
+        return super.writeVarIntArray(is);
     }
 
     <T> void writeDataWatcherEntry(DataWatcherKey<T> key, T value) {
         writeByte(key.getIndex());
         writeVarInt(key.getSerializerTypeID());
-        key.getSerializer().a(this, value);
+        key.getSerializer().write(this, value);
     }
 
     void writeDataWatcherEntriesEnd() {

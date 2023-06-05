@@ -1,6 +1,6 @@
 package me.theguyhere.villagerdefense.nms.v1_18_r2;
 
-import net.minecraft.network.chat.IChatBaseComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.npc.VillagerType;
 import org.apache.logging.log4j.util.Strings;
@@ -10,7 +10,7 @@ import java.util.Optional;
 
 /**
  * Class to help build DataWatchers.
- *
+ * <p>
  * This class was borrowed from filoghost.
  * @param <T> Packet type.
  */
@@ -28,7 +28,7 @@ abstract class DataWatcherPacketBuilder<T> {
 
     DataWatcherPacketBuilder<T> setArmorStandMarker() {
         packetSetter.writeDataWatcherEntry(
-                DataWatcherKey.ARMOR_STAND_STATUS, (byte) (0x01 | 0x02 | 0x08 | 0x10)); // Small, no gravity, no base plate, marker
+                DataWatcherKey.ARMOR_STAND_STATUS, (byte) (0x01 | 0x02 | 0x08 | 0x10)); // Small, no gravity, no baseplate, marker
         return this;
     }
 
@@ -43,7 +43,7 @@ abstract class DataWatcherPacketBuilder<T> {
         return this;
     }
 
-    private Optional<IChatBaseComponent> getCustomNameDataWatcherValue(String customName) {
+    private Optional<Component> getCustomNameDataWatcherValue(String customName) {
         if (customName.length() > 300)
             customName = customName.substring(0, 300);
         if (!Strings.isEmpty(customName)) {
@@ -57,25 +57,25 @@ abstract class DataWatcherPacketBuilder<T> {
         VillagerType villagerType;
         switch (type) {
             case "desert":
-                villagerType = VillagerType.a;
+                villagerType = VillagerType.DESERT;
                 break;
             case "jungle":
-                villagerType = VillagerType.b;
+                villagerType = VillagerType.JUNGLE;
                 break;
             case "savanna":
-                villagerType = VillagerType.d;
+                villagerType = VillagerType.SAVANNA;
                 break;
             case "snow":
-                villagerType = VillagerType.e;
+                villagerType = VillagerType.SNOW;
                 break;
             case "swamp":
-                villagerType = VillagerType.f;
+                villagerType = VillagerType.SWAMP;
                 break;
             case "taiga":
-                villagerType = VillagerType.g;
+                villagerType = VillagerType.TAIGA;
                 break;
             default:
-                villagerType = VillagerType.c;
+                villagerType = VillagerType.PLAINS;
                 break;
         }
         return new VillagerData(villagerType, null, 0);

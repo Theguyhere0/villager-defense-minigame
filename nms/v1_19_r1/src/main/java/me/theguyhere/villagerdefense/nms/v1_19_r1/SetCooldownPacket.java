@@ -1,7 +1,7 @@
 package me.theguyhere.villagerdefense.nms.v1_19_r1;
 
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.PacketPlayOutSetCooldown;
+import net.minecraft.network.protocol.game.ClientboundCooldownPacket;
 
 public class SetCooldownPacket extends VersionNMSPacket{
     private final Packet<?> rawPacket;
@@ -13,7 +13,7 @@ public class SetCooldownPacket extends VersionNMSPacket{
         packetSetter.writeVarInt(itemID);
         packetSetter.writeVarInt(cooldownTicks);
 
-        rawPacket = new PacketPlayOutSetCooldown(packetSetter);
+        rawPacket = new ClientboundCooldownPacket(packetSetter);
     }
 
     @Override

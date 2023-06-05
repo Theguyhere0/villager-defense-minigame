@@ -6,12 +6,12 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.nms.common.NMSErrors;
 import me.theguyhere.villagerdefense.nms.common.PacketListener;
-import net.minecraft.network.protocol.game.PacketPlayInUpdateSign;
-import net.minecraft.network.protocol.game.PacketPlayInUseEntity;
+import net.minecraft.network.protocol.game.ServerboundInteractPacket;
+import net.minecraft.network.protocol.game.ServerboundSignUpdatePacket;
 import org.bukkit.entity.Player;
 
 /**
- * Class borrowed from filoghost.
+ * A class to handle server bound packets.
  */
 class InboundPacketHandler extends ChannelInboundHandlerAdapter {
     public static final String HANDLER_NAME = "villager_defense_listener";
@@ -26,7 +26,7 @@ class InboundPacketHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext context, Object packet) throws Exception {
         try {
-            if (packet instanceof PacketPlayInUseEntity) {
+            if (packet instanceof ServerboundInteractPacket) {
                 int entityID = Utils.getFieldValue(packet, "a", Integer.class);
 
                 // Left click
@@ -42,10 +42,8 @@ class InboundPacketHandler extends ChannelInboundHandlerAdapter {
                 }
             }
 
-            else if (packet instanceof PacketPlayInUpdateSign) {
-                String[] signLines = Utils.getFieldValue(packet, "c", String[].class);
-
-                packetListener.onSignUpdate(player, signLines);
+            else if (packet instanceof ServerboundSignUpdatePacket) {
+                packetListener.onSignUpdate(player, ((ServerboundSignUpdatePacket) packet).getLines());
             }
         } catch (Exception e) {
             CommunicationManager.debugError(NMSErrors.EXCEPTION_ON_PACKET_READ, 0);

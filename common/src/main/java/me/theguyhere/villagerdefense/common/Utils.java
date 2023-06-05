@@ -3,6 +3,9 @@ package me.theguyhere.villagerdefense.common;
 import java.lang.reflect.Field;
 import java.util.Collection;
 
+/**
+ * A class that holds common constants, conversions, and reflections.
+ */
 public class Utils {
     private static final int SECONDS_TO_TICKS = 20;
     private static final int MINUTES_TO_SECONDS = 60;

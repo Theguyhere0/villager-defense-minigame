@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 
 /**
  * Abstract packet class for specific NMS version.
- *
+ * <p>
  * This abstract class was borrowed from filoghost.
  */
 abstract class VersionNMSPacket implements PacketGroup {
@@ -19,7 +19,7 @@ abstract class VersionNMSPacket implements PacketGroup {
      */
     @Override
     public void sendTo(Player player) {
-        ((CraftPlayer) player).getHandle().b.sendPacket(getRawPacket());
+        ((CraftPlayer) player).getHandle().connection.send(getRawPacket());
     }
 
     abstract Packet<?> getRawPacket();

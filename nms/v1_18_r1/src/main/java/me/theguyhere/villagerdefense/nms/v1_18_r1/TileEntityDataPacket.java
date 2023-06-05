@@ -1,22 +1,22 @@
 package me.theguyhere.villagerdefense.nms.v1_18_r1;
 
-import net.minecraft.core.BlockPosition;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.PacketPlayOutTileEntityData;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 
 public class TileEntityDataPacket extends VersionNMSPacket {
     private final Packet<?> rawPacket;
 
-    TileEntityDataPacket(BlockPosition position, int type, NBTTagCompound nbtTagCompound) {
+    TileEntityDataPacket(BlockPos position, int type, CompoundTag nbtTagCompound) {
         PacketSetter packetSetter = PacketSetter.get();
 
         // Block entity data
-        packetSetter.writePosition(position);
+        packetSetter.writeBlockPos(position);
         packetSetter.writeVarInt(type);
-        packetSetter.writeNBTTagCompound(nbtTagCompound);
+        packetSetter.writeNbt(nbtTagCompound);
 
-        rawPacket = new PacketPlayOutTileEntityData(packetSetter);
+        rawPacket = new ClientboundBlockEntityDataPacket(packetSetter);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.commands;
 
-import me.theguyhere.villagerdefense.plugin.exceptions.CommandException;
-import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
+import me.theguyhere.villagerdefense.plugin.guis.Inventories;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -15,7 +14,7 @@ class CommandOpenAdminPanel {
                 !CommandGuard.checkArgsLengthMatch(args, 1))
             return;
         Player player = CommandGuard.checkSenderPlayer(sender);
-        CommandGuard.checkSenderPermissions(player, Permission.USE);
+        CommandGuard.checkSenderPermissions(player, CommandPermission.USE);
 
         // Open admin panel
         player.openInventory(Inventories.createMainMenu());

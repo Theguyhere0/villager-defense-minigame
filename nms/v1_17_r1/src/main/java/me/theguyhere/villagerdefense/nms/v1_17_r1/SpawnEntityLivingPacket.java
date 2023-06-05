@@ -3,12 +3,12 @@ package me.theguyhere.villagerdefense.nms.v1_17_r1;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.nms.common.EntityID;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.PacketPlayOutSpawnEntityLiving;
+import net.minecraft.network.protocol.game.ClientboundAddMobPacket;
 import org.bukkit.Location;
 
 /**
  * Packet class for spawning living entities.
- *
+ * <p>
  * This class format was borrowed from filoghost.
  */
 class SpawnEntityLivingPacket extends VersionNMSPacket {
@@ -43,7 +43,7 @@ class SpawnEntityLivingPacket extends VersionNMSPacket {
         packetSetter.writeShort(0);
         packetSetter.writeShort(0);
 
-        rawPacket = new PacketPlayOutSpawnEntityLiving(packetSetter);
+        rawPacket = new ClientboundAddMobPacket(packetSetter);
     }
 
 
