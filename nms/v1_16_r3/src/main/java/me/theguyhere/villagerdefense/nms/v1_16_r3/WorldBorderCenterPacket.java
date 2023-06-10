@@ -10,24 +10,24 @@ import org.bukkit.Location;
  * This class format was borrowed from filoghost.
  */
 class WorldBorderCenterPacket extends VersionNMSPacket {
-    private final Packet<?> rawPacket;
+	private final Packet<?> rawPacket;
 
-    WorldBorderCenterPacket(Location location) {
-        PacketSetter packetSetter = PacketSetter.get();
+	WorldBorderCenterPacket(Location location) {
+		PacketSetter packetSetter = PacketSetter.get();
 
-        // Write in action type as setting center
-        packetSetter.writeVarInt(2);
+		// Write in action type as setting center
+		packetSetter.writeVarInt(2);
 
-        // Write in x and z coordinates
-        packetSetter.writeDouble(location.getX());
-        packetSetter.writeDouble(location.getZ());
+		// Write in x and z coordinates
+		packetSetter.writeDouble(location.getX());
+		packetSetter.writeDouble(location.getZ());
 
-        // Send out packet
-        rawPacket = writeData(new PacketPlayOutWorldBorder(), packetSetter);
-    }
+		// Send out packet
+		rawPacket = writeData(new PacketPlayOutWorldBorder(), packetSetter);
+	}
 
-    @Override
-    Packet<?> getRawPacket() {
-        return rawPacket;
-    }
+	@Override
+	Packet<?> getRawPacket() {
+		return rawPacket;
+	}
 }

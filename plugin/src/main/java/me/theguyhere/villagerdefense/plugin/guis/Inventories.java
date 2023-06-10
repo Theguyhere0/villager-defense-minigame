@@ -1,15 +1,19 @@
 package me.theguyhere.villagerdefense.plugin.guis;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.game.GameController;
-import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
+import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.background.DataManager;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
+import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
+import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.game.ItemFactory;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
+import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.items.armor.Boots;
@@ -20,8 +24,6 @@ import me.theguyhere.villagerdefense.plugin.items.eggs.VDEgg;
 import me.theguyhere.villagerdefense.plugin.items.food.ShopFood;
 import me.theguyhere.villagerdefense.plugin.items.weapons.*;
 import me.theguyhere.villagerdefense.plugin.kits.Kit;
-import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.background.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -38,28 +40,32 @@ public class Inventories {
 
 		// Option to set manage lobby
 		buttons.add(ItemFactory.createItem(Material.BELL, CommunicationManager.format("&2&lLobby"),
-				CommunicationManager.format("&7Manage minigame lobby")));
+			CommunicationManager.format("&7Manage minigame lobby")
+		));
 
 		// Option to manage info boards
 		buttons.add(ItemFactory.createItem(Material.OAK_SIGN, CommunicationManager.format("&6&lInfo Boards"),
-				CommunicationManager.format("&7Manage info boards")));
+			CommunicationManager.format("&7Manage info boards")
+		));
 
 		// Option to manage leaderboards
 		buttons.add(ItemFactory.createItem(Material.GOLDEN_HELMET,
-				CommunicationManager.format("&e&lLeaderboards"), ItemFactory.BUTTON_FLAGS, null,
-				CommunicationManager.format("&7Manage leaderboards")));
+			CommunicationManager.format("&e&lLeaderboards"), ItemFactory.BUTTON_FLAGS, null,
+			CommunicationManager.format("&7Manage leaderboards")
+		));
 
 		// Option to edit arenas
 		buttons.add(ItemFactory.createItem(Material.NETHERITE_AXE,
-				CommunicationManager.format("&9&lArenas"), ItemFactory.BUTTON_FLAGS, null,
-				CommunicationManager.format("&7Manage leaderboards")));
+			CommunicationManager.format("&9&lArenas"), ItemFactory.BUTTON_FLAGS, null,
+			CommunicationManager.format("&7Manage leaderboards")
+		));
 
 		return InventoryFactory.createFixedSizeInventory(
-				new InventoryMeta(InventoryID.MAIN_MENU, InventoryType.MENU),
-				CommunicationManager.format("&2&lVillager Defense"),
-				1,
-				true,
-				buttons
+			new InventoryMeta(InventoryID.MAIN_MENU, InventoryType.MENU),
+			CommunicationManager.format("&2&lVillager Defense"),
+			1,
+			true,
+			buttons
 		);
 
 	}
@@ -68,40 +74,41 @@ public class Inventories {
 	public static Inventory createArenasDashboard() {
 		return createArenasDashboard(1);
 	}
+
 	public static Inventory createArenasDashboard(int page) {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Gather all arenas in order
 		GameController.getArenas().keySet().stream().sorted().forEach(id -> buttons.add(ItemFactory.createItem(
-				Material.EMERALD_BLOCK,
-				CommunicationManager.format("&a&lEdit " + GameController.getArenas().get(id).getName())
+			Material.EMERALD_BLOCK,
+			CommunicationManager.format("&a&lEdit " + GameController.getArenas().get(id).getName())
 		)));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-				new InventoryMeta(InventoryID.ARENA_DASHBOARD, InventoryType.MENU, page),
-				CommunicationManager.format("&9&lArenas"),
-				true,
-				true,
-				"Arena",
-				buttons
+			new InventoryMeta(InventoryID.ARENA_DASHBOARD, InventoryType.MENU, page),
+			CommunicationManager.format("&9&lArenas"),
+			true,
+			true,
+			"Arena",
+			buttons
 		);
 	}
 
 	// Menu for lobby
 	public static Inventory createLobbyMenu() {
 		return InventoryFactory.createLocationMenu(
-				InventoryID.LOBBY_MENU,
-				CommunicationManager.format("&2&lLobby"),
-				DataManager.getConfigLocation("lobby") != null,
-				"Lobby"
+			InventoryID.LOBBY_MENU,
+			CommunicationManager.format("&2&lLobby"),
+			DataManager.getConfigLocation("lobby") != null,
+			"Lobby"
 		);
 	}
 
 	// Confirmation menu for removing lobby
 	public static Inventory createLobbyConfirmMenu() {
 		return InventoryFactory.createConfirmationMenu(
-				InventoryID.LOBBY_CONFIRM_MENU,
-				CommunicationManager.format("&4&lRemove Lobby?")
+			InventoryID.LOBBY_CONFIRM_MENU,
+			CommunicationManager.format("&4&lRemove Lobby?")
 		);
 	}
 
@@ -109,45 +116,48 @@ public class Inventories {
 	public static Inventory createInfoBoardDashboard() {
 		return createInfoBoardDashboard(1);
 	}
+
 	public static Inventory createInfoBoardDashboard(int page) {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Capture all info boards
 		DataManager.getConfigLocationMap("infoBoard").forEach((id, location) ->
-				buttons.add(ItemFactory.createItem(Material.BIRCH_SIGN,
-						CommunicationManager.format("&6&lInfo Board " + id))));
+			buttons.add(ItemFactory.createItem(
+				Material.BIRCH_SIGN,
+				CommunicationManager.format("&6&lInfo Board " + id)
+			)));
 
 		// Sort buttons
 		buttons.sort(Comparator.comparing(button ->
-				Integer.parseInt(Objects.requireNonNull(button.getItemMeta()).getDisplayName().split(" ")[2])));
+			Integer.parseInt(Objects.requireNonNull(button.getItemMeta()).getDisplayName().split(" ")[2])));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-				new InventoryMeta(InventoryID.INFO_BOARD_DASHBOARD, InventoryType.MENU, page),
-				CommunicationManager.format("&6&lInfo Boards"),
-				true,
-				true,
-				"Info Board",
-				buttons
+			new InventoryMeta(InventoryID.INFO_BOARD_DASHBOARD, InventoryType.MENU, page),
+			CommunicationManager.format("&6&lInfo Boards"),
+			true,
+			true,
+			"Info Board",
+			buttons
 		);
 	}
 
 	// Menu for editing a specific info board
 	public static Inventory createInfoBoardMenu(int infoBoardID) {
 		return InventoryFactory.createLocationMenu(
-				InventoryID.INFO_BOARD_MENU,
-				infoBoardID,
-				CommunicationManager.format("&6&lInfo Board " + infoBoardID),
-				DataManager.getConfigLocation("infoBoard." + infoBoardID) != null,
-				"Info Board"
+			InventoryID.INFO_BOARD_MENU,
+			infoBoardID,
+			CommunicationManager.format("&6&lInfo Board " + infoBoardID),
+			DataManager.getConfigLocation("infoBoard." + infoBoardID) != null,
+			"Info Board"
 		);
 	}
 
 	// Confirmation menu for removing a specific info board
 	public static Inventory createInfoBoardConfirmMenu(int infoBoardID) {
 		return InventoryFactory.createConfirmationMenu(
-				InventoryID.INFO_BOARD_CONFIRM_MENU,
-				infoBoardID,
-				CommunicationManager.format("&4&lRemove Info Board?")
+			InventoryID.INFO_BOARD_CONFIRM_MENU,
+			infoBoardID,
+			CommunicationManager.format("&4&lRemove Info Board?")
 		);
 	}
 
@@ -156,121 +166,130 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Option to modify total kills leaderboard
-		buttons.add(ItemFactory.createItem(Material.DRAGON_HEAD,
-				CommunicationManager.format("&4&lTotal Kills Leaderboard")));
+		buttons.add(ItemFactory.createItem(
+			Material.DRAGON_HEAD,
+			CommunicationManager.format("&4&lTotal Kills Leaderboard")
+		));
 
 		// Option to modify top kills leaderboard
-		buttons.add(ItemFactory.createItem(Material.ZOMBIE_HEAD,
-				CommunicationManager.format("&c&lTop Kills Leaderboard")));
+		buttons.add(ItemFactory.createItem(
+			Material.ZOMBIE_HEAD,
+			CommunicationManager.format("&c&lTop Kills Leaderboard")
+		));
 
 		// Option to modify total gems leaderboard
-		buttons.add(ItemFactory.createItem(Material.EMERALD_BLOCK,
-				CommunicationManager.format("&2&lTotal Gems Leaderboard")));
+		buttons.add(ItemFactory.createItem(
+			Material.EMERALD_BLOCK,
+			CommunicationManager.format("&2&lTotal Gems Leaderboard")
+		));
 
 		// Option to modify top balance leaderboard
-		buttons.add(ItemFactory.createItem(Material.EMERALD,
-				CommunicationManager.format("&a&lTop Balance Leaderboard")));
+		buttons.add(ItemFactory.createItem(
+			Material.EMERALD,
+			CommunicationManager.format("&a&lTop Balance Leaderboard")
+		));
 
 		// Option to modify top wave leaderboard
 		buttons.add(ItemFactory.createItem(Material.GOLDEN_SWORD,
-				CommunicationManager.format("&9&lTop Wave Leaderboard"), ItemFactory.BUTTON_FLAGS, null));
+			CommunicationManager.format("&9&lTop Wave Leaderboard"), ItemFactory.BUTTON_FLAGS, null
+		));
 
 		return InventoryFactory.createFixedSizeInventory(
-				new InventoryMeta(InventoryID.LEADERBOARD_DASHBOARD, InventoryType.MENU),
-				CommunicationManager.format("&e&lLeaderboards"),
-				1,
-				true,
-				buttons
+			new InventoryMeta(InventoryID.LEADERBOARD_DASHBOARD, InventoryType.MENU),
+			CommunicationManager.format("&e&lLeaderboards"),
+			1,
+			true,
+			buttons
 		);
 	}
 
 	// Menu for editing the total kills leaderboard
 	public static Inventory createTotalKillsLeaderboardMenu() {
 		return InventoryFactory.createLocationMenu(
-				InventoryID.TOTAL_KILLS_LEADERBOARD_MENU,
-				CommunicationManager.format("&4&lTotal Kills Leaderboard"),
-				DataManager.getConfigLocation("leaderboard.totalKills") != null,
-				"Leaderboard"
+			InventoryID.TOTAL_KILLS_LEADERBOARD_MENU,
+			CommunicationManager.format("&4&lTotal Kills Leaderboard"),
+			DataManager.getConfigLocation("leaderboard.totalKills") != null,
+			"Leaderboard"
 		);
 	}
 
 	// Menu for editing the top kills leaderboard
 	public static Inventory createTopKillsLeaderboardMenu() {
 		return InventoryFactory.createLocationMenu(
-				InventoryID.TOP_KILLS_LEADERBOARD_MENU,
-				CommunicationManager.format("&c&lTop Kills Leaderboard"),
-				DataManager.getConfigLocation("leaderboard.topKills") != null,
-				"Leaderboard"
+			InventoryID.TOP_KILLS_LEADERBOARD_MENU,
+			CommunicationManager.format("&c&lTop Kills Leaderboard"),
+			DataManager.getConfigLocation("leaderboard.topKills") != null,
+			"Leaderboard"
 		);
 	}
 
 	// Menu for editing the total gems leaderboard
 	public static Inventory createTotalGemsLeaderboardMenu() {
 		return InventoryFactory.createLocationMenu(
-				InventoryID.TOTAL_GEMS_LEADERBOARD_MENU,
-				CommunicationManager.format("&2&lTotal Gems Leaderboard"),
-				DataManager.getConfigLocation("leaderboard.totalGems") != null,
-				"Leaderboard"
+			InventoryID.TOTAL_GEMS_LEADERBOARD_MENU,
+			CommunicationManager.format("&2&lTotal Gems Leaderboard"),
+			DataManager.getConfigLocation("leaderboard.totalGems") != null,
+			"Leaderboard"
 		);
 	}
 
 	// Menu for editing the top balance leaderboard
 	public static Inventory createTopBalanceLeaderboardMenu() {
 		return InventoryFactory.createLocationMenu(
-				InventoryID.TOP_BALANCE_LEADERBOARD_MENU,
-				CommunicationManager.format("&a&lTop Balance Leaderboard"),
-				DataManager.getConfigLocation("leaderboard.topBalance") != null,
-				"Leaderboard"
+			InventoryID.TOP_BALANCE_LEADERBOARD_MENU,
+			CommunicationManager.format("&a&lTop Balance Leaderboard"),
+			DataManager.getConfigLocation("leaderboard.topBalance") != null,
+			"Leaderboard"
 		);
 	}
 
 	// Menu for editing the top wave leaderboard
 	public static Inventory createTopWaveLeaderboardMenu() {
 		return InventoryFactory.createLocationMenu(
-				InventoryID.TOP_WAVE_LEADERBOARD_MENU,
-				CommunicationManager.format("&9&lTop Wave Leaderboard"),
-				DataManager.getConfigLocation("leaderboard.topWave") != null,
-				"Leaderboard"
+			InventoryID.TOP_WAVE_LEADERBOARD_MENU,
+			CommunicationManager.format("&9&lTop Wave Leaderboard"),
+			DataManager.getConfigLocation("leaderboard.topWave") != null,
+			"Leaderboard"
 		);
 	}
 
 	// Confirmation menu for total kills leaderboard
 	public static Inventory createTotalKillsConfirmMenu() {
 		return InventoryFactory.createConfirmationMenu(
-				InventoryID.TOTAL_KILLS_CONFIRM_MENU,
-				CommunicationManager.format("&4&lRemove Total Kills Leaderboard?")
+			InventoryID.TOTAL_KILLS_CONFIRM_MENU,
+			CommunicationManager.format("&4&lRemove Total Kills Leaderboard?")
 		);
 	}
 
 	// Confirmation menu for top kills leaderboard
 	public static Inventory createTopKillsConfirmMenu() {
 		return InventoryFactory.createConfirmationMenu(
-				InventoryID.TOP_KILLS_CONFIRM_MENU,
-				CommunicationManager.format("&4&lRemove Top Kills Leaderboard?")
+			InventoryID.TOP_KILLS_CONFIRM_MENU,
+			CommunicationManager.format("&4&lRemove Top Kills Leaderboard?")
 		);
 	}
 
 	// Confirmation menu for total gems leaderboard
 	public static Inventory createTotalGemsConfirmMenu() {
 		return InventoryFactory.createConfirmationMenu(
-				InventoryID.TOTAL_GEMS_CONFIRM_MENU,
-				CommunicationManager.format("&4&lRemove Total Gems Leaderboard?")
+			InventoryID.TOTAL_GEMS_CONFIRM_MENU,
+			CommunicationManager.format("&4&lRemove Total Gems Leaderboard?")
 		);
 	}
 
 	// Confirmation menu for top balance leaderboard
 	public static Inventory createTopBalanceConfirmMenu() {
 		return InventoryFactory.createConfirmationMenu(
-				InventoryID.TOP_BALANCE_CONFIRM_MENU,
-				CommunicationManager.format("&4&lRemove Top Balance Leaderboard?")
+			InventoryID.TOP_BALANCE_CONFIRM_MENU,
+			CommunicationManager.format("&4&lRemove Top Balance Leaderboard?")
 		);
 	}
 
 	// Confirmation menu for top wave leaderboard
 	public static Inventory createTopWaveConfirmMenu() {
 		return InventoryFactory.createConfirmationMenu(
-				InventoryID.TOP_WAVE_CONFIRM_MENU,
-				CommunicationManager.format("&4&lRemove Top Wave Leaderboard?")
+			InventoryID.TOP_WAVE_CONFIRM_MENU,
+			CommunicationManager.format("&4&lRemove Top Wave Leaderboard?")
 		);
 	}
 
@@ -279,91 +298,105 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Option to edit name
-		buttons.add(ItemFactory.createItem(Material.NAME_TAG,
-				CommunicationManager.format("&6&lEdit Name")));
+		buttons.add(ItemFactory.createItem(
+			Material.NAME_TAG,
+			CommunicationManager.format("&6&lEdit Name")
+		));
 
 		// Option to edit game portal
-		buttons.add(ItemFactory.createItem(Material.END_PORTAL_FRAME,
-				CommunicationManager.format("&5&lArena Portal")));
+		buttons.add(ItemFactory.createItem(
+			Material.END_PORTAL_FRAME,
+			CommunicationManager.format("&5&lArena Portal")
+		));
 
 		// Option to edit leaderboard
-		buttons.add(ItemFactory.createItem(Material.TOTEM_OF_UNDYING,
-				CommunicationManager.format("&a&lArena Leaderboard")));
+		buttons.add(ItemFactory.createItem(
+			Material.TOTEM_OF_UNDYING,
+			CommunicationManager.format("&a&lArena Leaderboard")
+		));
 
 		// Option to edit player settings
-		buttons.add(ItemFactory.createItem(Material.PLAYER_HEAD,
-				CommunicationManager.format("&d&lPlayer Settings")));
+		buttons.add(ItemFactory.createItem(
+			Material.PLAYER_HEAD,
+			CommunicationManager.format("&d&lPlayer Settings")
+		));
 
 		// Option to edit mob settings
-		buttons.add(ItemFactory.createItem(Material.ZOMBIE_SPAWN_EGG,
-				CommunicationManager.format("&2&lMob Settings")));
+		buttons.add(ItemFactory.createItem(
+			Material.ZOMBIE_SPAWN_EGG,
+			CommunicationManager.format("&2&lMob Settings")
+		));
 
 		// Option to edit miscellaneous game settings
-		buttons.add(ItemFactory.createItem(Material.REDSTONE,
-				CommunicationManager.format("&7&lGame Settings")));
+		buttons.add(ItemFactory.createItem(
+			Material.REDSTONE,
+			CommunicationManager.format("&7&lGame Settings")
+		));
 
 		// Option to close the arena
 		String closed = arena.isClosed() ? "&c&lCLOSED" : "&a&lOPEN";
-		buttons.add(ItemFactory.createItem(Material.NETHER_BRICK_FENCE,
-				CommunicationManager.format("&9&lClose Arena: " + closed)));
+		buttons.add(ItemFactory.createItem(
+			Material.NETHER_BRICK_FENCE,
+			CommunicationManager.format("&9&lClose Arena: " + closed)
+		));
 
 		// Option to remove arena
 		buttons.add(InventoryButtons.remove("ARENA"));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.ARENA_MENU, InventoryType.MENU, arena),
-				CommunicationManager.format("&2&lEdit " + arena.getName()),
-				true,
-				buttons
+			new InventoryMeta(InventoryID.ARENA_MENU, InventoryType.MENU, arena),
+			CommunicationManager.format("&2&lEdit " + arena.getName()),
+			true,
+			buttons
 		);
 	}
 
 	// Confirmation menu for removing an arena
 	public static Inventory createArenaConfirmMenu(Arena arena) {
 		return InventoryFactory.createConfirmationMenu(
-				InventoryID.ARENA_CONFIRM_MENU,
-				arena,
-				CommunicationManager.format("&4&lRemove " + arena.getName() + '?')
+			InventoryID.ARENA_CONFIRM_MENU,
+			arena,
+			CommunicationManager.format("&4&lRemove " + arena.getName() + '?')
 		);
 	}
 
 	// Menu for editing the portal of an arena
 	public static Inventory createPortalMenu(Arena arena) {
 		return InventoryFactory.createLocationMenu(
-				InventoryID.PORTAL_MENU,
-				arena,
-				CommunicationManager.format("&5&lPortal: " + arena.getName()),
-				arena.getPortal()  != null,
-				"Portal"
+			InventoryID.PORTAL_MENU,
+			arena,
+			CommunicationManager.format("&5&lPortal: " + arena.getName()),
+			arena.getPortal() != null,
+			"Portal"
 		);
 	}
 
 	// Menu for editing the leaderboard of an arena
 	public static Inventory createArenaBoardMenu(Arena arena) {
 		return InventoryFactory.createLocationMenu(
-				InventoryID.ARENA_BOARD_MENU,
-				arena,
-				CommunicationManager.format("&a&lLeaderboard: " + arena.getName()),
-				arena.getArenaBoard() != null,
-				"Leaderboard"
+			InventoryID.ARENA_BOARD_MENU,
+			arena,
+			CommunicationManager.format("&a&lLeaderboard: " + arena.getName()),
+			arena.getArenaBoard() != null,
+			"Leaderboard"
 		);
 	}
 
 	// Confirmation menu for removing the arena portal
 	public static Inventory createPortalConfirmMenu(Arena arena) {
 		return InventoryFactory.createConfirmationMenu(
-				InventoryID.PORTAL_CONFIRM_MENU,
-				arena,
-				CommunicationManager.format("&4&lRemove Portal?")
+			InventoryID.PORTAL_CONFIRM_MENU,
+			arena,
+			CommunicationManager.format("&4&lRemove Portal?")
 		);
 	}
 
 	// Confirmation menu for removing the arena leaderboard
 	public static Inventory createArenaBoardConfirmMenu(Arena arena) {
 		return InventoryFactory.createConfirmationMenu(
-				InventoryID.ARENA_BOARD_CONFIRM_MENU,
-				arena,
-				CommunicationManager.format("&4&lRemove Leaderboard?")
+			InventoryID.ARENA_BOARD_CONFIRM_MENU,
+			arena,
+			CommunicationManager.format("&4&lRemove Leaderboard?")
 		);
 	}
 
@@ -372,98 +405,107 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Option to edit player spawn
-		buttons.add(ItemFactory.createItem(Material.END_PORTAL_FRAME,
-				CommunicationManager.format("&5&lPlayer Spawn")));
+		buttons.add(ItemFactory.createItem(
+			Material.END_PORTAL_FRAME,
+			CommunicationManager.format("&5&lPlayer Spawn")
+		));
 
 		// Option to toggle player spawn particles
-		buttons.add(ItemFactory.createItem(Material.FIREWORK_ROCKET,
-				CommunicationManager.format("&d&lSpawn Particles: " +
-						getToggleStatus(arena.hasSpawnParticles())),
-				CommunicationManager.format("&7Particles showing where the spawn is"),
-				CommunicationManager.format("&7(Visible in-game)")));
+		buttons.add(ItemFactory.createItem(
+			Material.FIREWORK_ROCKET,
+			CommunicationManager.format("&d&lSpawn Particles: " +
+				getToggleStatus(arena.hasSpawnParticles())),
+			CommunicationManager.format("&7Particles showing where the spawn is"),
+			CommunicationManager.format("&7(Visible in-game)")
+		));
 
 		// Option to edit waiting room
 		buttons.add(ItemFactory.createItem(Material.CLOCK, CommunicationManager.format("&b&lWaiting Room"),
-				CommunicationManager.format("&7An optional room to wait in before"),
-				CommunicationManager.format("&7the game starts")));
+			CommunicationManager.format("&7An optional room to wait in before"),
+			CommunicationManager.format("&7the game starts")
+		));
 
 		// Option to edit max players
-		buttons.add(ItemFactory.createItem(Material.NETHERITE_HELMET,
-				CommunicationManager.format("&4&lMaximum Players: " + arena.getMaxPlayers()),
-				ItemFactory.BUTTON_FLAGS,
-				null,
-				CommunicationManager.format("&7Maximum players the game will have")));
+		buttons.add(ItemFactory.createItem(
+			Material.NETHERITE_HELMET,
+			CommunicationManager.format("&4&lMaximum Players: " + arena.getMaxPlayers()),
+			ItemFactory.BUTTON_FLAGS,
+			null,
+			CommunicationManager.format("&7Maximum players the game will have")
+		));
 
 		// Option to edit min players
-		buttons.add(ItemFactory.createItem(Material.NETHERITE_BOOTS,
-				CommunicationManager.format("&2&lMinimum Players: " + arena.getMinPlayers()),
-				ItemFactory.BUTTON_FLAGS,
-				null,
-				CommunicationManager.format("&7Minimum players needed for game to start")));
+		buttons.add(ItemFactory.createItem(
+			Material.NETHERITE_BOOTS,
+			CommunicationManager.format("&2&lMinimum Players: " + arena.getMinPlayers()),
+			ItemFactory.BUTTON_FLAGS,
+			null,
+			CommunicationManager.format("&7Minimum players needed for game to start")
+		));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.PLAYERS_MENU, InventoryType.MENU, arena),
-				CommunicationManager.format("&d&lPlayer Settings: " + arena.getName()),
-				true,
-				buttons
+			new InventoryMeta(InventoryID.PLAYERS_MENU, InventoryType.MENU, arena),
+			CommunicationManager.format("&d&lPlayer Settings: " + arena.getName()),
+			true,
+			buttons
 		);
 	}
 
 	// Menu for editing the player spawn of an arena
 	public static Inventory createPlayerSpawnMenu(Arena arena) {
 		return InventoryFactory.createLocationMenu(
-				InventoryID.PLAYER_SPAWN_MENU,
-				arena,
-				CommunicationManager.format("&d&lPlayer Spawn: " + arena.getName()),
-				arena.getPlayerSpawn() != null,
-				"Spawn"
+			InventoryID.PLAYER_SPAWN_MENU,
+			arena,
+			CommunicationManager.format("&d&lPlayer Spawn: " + arena.getName()),
+			arena.getPlayerSpawn() != null,
+			"Spawn"
 		);
 	}
 
 	// Confirmation menu for removing player spawn
 	public static Inventory createSpawnConfirmMenu(Arena arena) {
 		return InventoryFactory.createConfirmationMenu(
-				InventoryID.SPAWN_CONFIRM_MENU,
-				arena,
-				CommunicationManager.format("&4&lRemove Spawn?")
+			InventoryID.SPAWN_CONFIRM_MENU,
+			arena,
+			CommunicationManager.format("&4&lRemove Spawn?")
 		);
 	}
 
 	// Menu for editing the waiting room of an arena
 	public static Inventory createWaitingRoomMenu(Arena arena) {
 		return InventoryFactory.createLocationMenu(
-				InventoryID.WAITING_ROOM_MENU,
-				arena,
-				CommunicationManager.format("&b&lWaiting Room: " + arena.getName()),
-				arena.getWaitingRoom() != null,
-				"Waiting Room"
+			InventoryID.WAITING_ROOM_MENU,
+			arena,
+			CommunicationManager.format("&b&lWaiting Room: " + arena.getName()),
+			arena.getWaitingRoom() != null,
+			"Waiting Room"
 		);
 	}
 
 	// Confirmation menu for removing waiting room
 	public static Inventory createWaitingConfirmMenu(Arena arena) {
 		return InventoryFactory.createConfirmationMenu(
-				InventoryID.WAITING_CONFIRM_MENU,
-				arena,
-				CommunicationManager.format("&4&lRemove Waiting Room?")
+			InventoryID.WAITING_CONFIRM_MENU,
+			arena,
+			CommunicationManager.format("&4&lRemove Waiting Room?")
 		);
 	}
 
 	// Menu for changing max players in an arena
 	public static Inventory createMaxPlayerMenu(Arena arena) {
 		return InventoryFactory.createIncrementorMenu(
-				InventoryID.MAX_PLAYER_MENU,
-				arena,
-				CommunicationManager.format("&4&lMaximum Players: " + arena.getMaxPlayers())
+			InventoryID.MAX_PLAYER_MENU,
+			arena,
+			CommunicationManager.format("&4&lMaximum Players: " + arena.getMaxPlayers())
 		);
 	}
 
 	// Menu for changing min players in an arena
 	public static Inventory createMinPlayerMenu(Arena arena) {
 		return InventoryFactory.createIncrementorMenu(
-				InventoryID.MIN_PLAYER_MENU,
-				arena,
-				CommunicationManager.format("&2&lMinimum Players: " + arena.getMinPlayers())
+			InventoryID.MIN_PLAYER_MENU,
+			arena,
+			CommunicationManager.format("&2&lMinimum Players: " + arena.getMinPlayers())
 		);
 	}
 
@@ -472,42 +514,54 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Option to edit monster spawns
-		buttons.add(ItemFactory.createItem(Material.END_PORTAL_FRAME,
-				CommunicationManager.format("&2&lMonster Spawns")));
+		buttons.add(ItemFactory.createItem(
+			Material.END_PORTAL_FRAME,
+			CommunicationManager.format("&2&lMonster Spawns")
+		));
 
 		// Option to toggle monster spawn particles
-		buttons.add(ItemFactory.createItem(Material.FIREWORK_ROCKET,
-				CommunicationManager.format("&a&lMonster Spawn Particles: " +
-						getToggleStatus(arena.hasMonsterParticles())),
-				CommunicationManager.format("&7Particles showing where the spawns are"),
-				CommunicationManager.format("&7(Visible in-game)")));
+		buttons.add(ItemFactory.createItem(
+			Material.FIREWORK_ROCKET,
+			CommunicationManager.format("&a&lMonster Spawn Particles: " +
+				getToggleStatus(arena.hasMonsterParticles())),
+			CommunicationManager.format("&7Particles showing where the spawns are"),
+			CommunicationManager.format("&7(Visible in-game)")
+		));
 
 		// Option to edit villager spawns
-		buttons.add(ItemFactory.createItem(Material.END_PORTAL_FRAME,
-				CommunicationManager.format("&5&lVillager Spawns")));
+		buttons.add(ItemFactory.createItem(
+			Material.END_PORTAL_FRAME,
+			CommunicationManager.format("&5&lVillager Spawns")
+		));
 
 		// Option to toggle villager spawn particles
-		buttons.add(ItemFactory.createItem(Material.FIREWORK_ROCKET,
-				CommunicationManager.format("&d&lVillager Spawn Particles: " +
-						getToggleStatus(arena.hasVillagerParticles())),
-				CommunicationManager.format("&7Particles showing where the spawns are"),
-				CommunicationManager.format("&7(Visible in-game)")));
+		buttons.add(ItemFactory.createItem(
+			Material.FIREWORK_ROCKET,
+			CommunicationManager.format("&d&lVillager Spawn Particles: " +
+				getToggleStatus(arena.hasVillagerParticles())),
+			CommunicationManager.format("&7Particles showing where the spawns are"),
+			CommunicationManager.format("&7(Visible in-game)")
+		));
 
 		// Option to edit villager type
-		buttons.add((ItemFactory.createItem(Material.LECTERN,
-				CommunicationManager.format("&6&lVillager Type: " +
-						arena.getVillagerType().substring(0, 1).toUpperCase() +
-						arena.getVillagerType().substring(1)))));
+		buttons.add((ItemFactory.createItem(
+			Material.LECTERN,
+			CommunicationManager.format("&6&lVillager Type: " +
+				arena.getVillagerType().substring(0, 1).toUpperCase() +
+				arena.getVillagerType().substring(1))
+		)));
 
 		// Option to edit spawn table
-		buttons.add(ItemFactory.createItem(Material.DRAGON_HEAD,
-				CommunicationManager.format("&3&lSpawn Table: " + arena.getSpawnTableFile())));
+		buttons.add(ItemFactory.createItem(
+			Material.DRAGON_HEAD,
+			CommunicationManager.format("&3&lSpawn Table: " + arena.getSpawnTableFile())
+		));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.MOBS_MENU, InventoryType.MENU, arena),
-				CommunicationManager.format("&2&lMob Settings: " + arena.getName()),
-				true,
-				buttons
+			new InventoryMeta(InventoryID.MOBS_MENU, InventoryType.MENU, arena),
+			CommunicationManager.format("&2&lMob Settings: " + arena.getName()),
+			true,
+			buttons
 		);
 	}
 
@@ -515,25 +569,28 @@ public class Inventories {
 	public static Inventory createMonsterSpawnDashboard(Arena arena) {
 		return createMonsterSpawnDashboard(arena, 1);
 	}
+
 	public static Inventory createMonsterSpawnDashboard(Arena arena, int page) {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Capture all monster spawns
 		DataManager.getConfigLocationMap(arena.getPath() + ".monster").forEach((id, location) ->
-				buttons.add(ItemFactory.createItem(Material.ZOMBIE_HEAD,
-						CommunicationManager.format("&2&lMob Spawn " + id))));
+			buttons.add(ItemFactory.createItem(
+				Material.ZOMBIE_HEAD,
+				CommunicationManager.format("&2&lMob Spawn " + id)
+			)));
 
 		// Sort buttons
 		buttons.sort(Comparator.comparing(button ->
-				Integer.parseInt(Objects.requireNonNull(button.getItemMeta()).getDisplayName().split(" ")[2])));
+			Integer.parseInt(Objects.requireNonNull(button.getItemMeta()).getDisplayName().split(" ")[2])));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-				new InventoryMeta(InventoryID.MONSTER_SPAWN_DASHBOARD, InventoryType.MENU, page, arena),
-				CommunicationManager.format("&2&lMonster Spawns: " + arena.getName()),
-				true,
-				true,
-				"Mob Spawn",
-				buttons
+			new InventoryMeta(InventoryID.MONSTER_SPAWN_DASHBOARD, InventoryType.MENU, page, arena),
+			CommunicationManager.format("&2&lMonster Spawns: " + arena.getName()),
+			true,
+			true,
+			"Mob Spawn",
+			buttons
 		);
 	}
 
@@ -558,35 +615,41 @@ public class Inventories {
 		// Toggle to set monster spawn type
 		switch (arena.getMonsterSpawnType(monsterSpawnID)) {
 			case 1:
-				buttons.add(ItemFactory.createItem(Material.GUNPOWDER,
-						CommunicationManager.format("&5&lType: Ground")));
+				buttons.add(ItemFactory.createItem(
+					Material.GUNPOWDER,
+					CommunicationManager.format("&5&lType: Ground")
+				));
 				break;
 			case 2:
-				buttons.add(ItemFactory.createItem(Material.FEATHER,
-					CommunicationManager.format("&5&lType: Flying")));
+				buttons.add(ItemFactory.createItem(
+					Material.FEATHER,
+					CommunicationManager.format("&5&lType: Flying")
+				));
 				break;
 			default:
-				buttons.add(ItemFactory.createItem(Material.BONE,
-					CommunicationManager.format("&5&lType: All")));
+				buttons.add(ItemFactory.createItem(
+					Material.BONE,
+					CommunicationManager.format("&5&lType: All")
+				));
 		}
 
 		return InventoryFactory.createFixedSizeInventory(
-				new InventoryMeta(InventoryID.MONSTER_SPAWN_MENU, InventoryType.MENU, arena, monsterSpawnID),
-				CommunicationManager.format("&2&lMonster Spawn " + monsterSpawnID + ": " + arena.getName()),
-				1,
-				true,
-				buttons
+			new InventoryMeta(InventoryID.MONSTER_SPAWN_MENU, InventoryType.MENU, arena, monsterSpawnID),
+			CommunicationManager.format("&2&lMonster Spawn " + monsterSpawnID + ": " + arena.getName()),
+			1,
+			true,
+			buttons
 		);
 	}
 
 	// Confirmation menu for removing monster spawns
 	public static Inventory createMonsterSpawnConfirmMenu(Arena arena, int monsterSpawnID) {
 		return InventoryFactory.createConfirmationMenu(
-				InventoryID.MONSTER_SPAWN_CONFIRM_MENU,
-				null,
-				arena,
-				monsterSpawnID,
-				CommunicationManager.format("&4&lRemove Monster Spawn?")
+			InventoryID.MONSTER_SPAWN_CONFIRM_MENU,
+			null,
+			arena,
+			monsterSpawnID,
+			CommunicationManager.format("&4&lRemove Monster Spawn?")
 		);
 	}
 
@@ -594,48 +657,51 @@ public class Inventories {
 	public static Inventory createVillagerSpawnDashboard(Arena arena) {
 		return createVillagerSpawnDashboard(arena, 1);
 	}
+
 	public static Inventory createVillagerSpawnDashboard(Arena arena, int page) {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Capture all monster spawns
 		DataManager.getConfigLocationMap(arena.getPath() + ".villager").forEach((id, location) ->
-				buttons.add(ItemFactory.createItem(Material.POPPY,
-						CommunicationManager.format("&5&lVillager Spawn " + id))));
+			buttons.add(ItemFactory.createItem(
+				Material.POPPY,
+				CommunicationManager.format("&5&lVillager Spawn " + id)
+			)));
 
 		// Sort buttons
 		buttons.sort(Comparator.comparing(button ->
-				Integer.parseInt(Objects.requireNonNull(button.getItemMeta()).getDisplayName().split(" ")[2])));
+			Integer.parseInt(Objects.requireNonNull(button.getItemMeta()).getDisplayName().split(" ")[2])));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-				new InventoryMeta(InventoryID.VILLAGER_SPAWN_DASHBOARD, InventoryType.MENU, page, arena),
-				CommunicationManager.format("&5&lVillager Spawns: " + arena.getName()),
-				true,
-				true,
-				"Villager Spawn",
-				buttons
+			new InventoryMeta(InventoryID.VILLAGER_SPAWN_DASHBOARD, InventoryType.MENU, page, arena),
+			CommunicationManager.format("&5&lVillager Spawns: " + arena.getName()),
+			true,
+			true,
+			"Villager Spawn",
+			buttons
 		);
 	}
 
 	// Menu for editing a specific villager spawn of an arena
 	public static Inventory createVillagerSpawnMenu(Arena arena, int villagerSpawnID) {
 		return InventoryFactory.createLocationMenu(
-				InventoryID.VILLAGER_SPAWN_MENU,
-				arena,
-				villagerSpawnID,
-				CommunicationManager.format("&5&lVillager Spawn " + villagerSpawnID + ": " + arena.getName()),
-				arena.getVillagerSpawn(villagerSpawnID) != null,
-				"Spawn"
+			InventoryID.VILLAGER_SPAWN_MENU,
+			arena,
+			villagerSpawnID,
+			CommunicationManager.format("&5&lVillager Spawn " + villagerSpawnID + ": " + arena.getName()),
+			arena.getVillagerSpawn(villagerSpawnID) != null,
+			"Spawn"
 		);
 	}
 
 	// Confirmation menu for removing mob spawns
 	public static Inventory createVillagerSpawnConfirmMenu(Arena arena, int villagerSpawnID) {
 		return InventoryFactory.createConfirmationMenu(
-				InventoryID.VILLAGER_SPAWN_CONFIRM_MENU,
-				null,
-				arena,
-				villagerSpawnID,
-				CommunicationManager.format("&4&lRemove Villager Spawn?")
+			InventoryID.VILLAGER_SPAWN_CONFIRM_MENU,
+			null,
+			arena,
+			villagerSpawnID,
+			CommunicationManager.format("&4&lRemove Villager Spawn?")
 		);
 	}
 
@@ -653,11 +719,11 @@ public class Inventories {
 		buttons.add(ItemFactory.createItem(Material.PODZOL, CommunicationManager.format("&9&lTaiga")));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.VILLAGER_TYPE_MENU, InventoryType.MENU, arena),
-				CommunicationManager.format("&6&lVillager Type: " +
-						arena.getVillagerType().substring(0, 1).toUpperCase() + arena.getVillagerType().substring(1)),
-				true,
-				buttons
+			new InventoryMeta(InventoryID.VILLAGER_TYPE_MENU, InventoryType.MENU, arena),
+			CommunicationManager.format("&6&lVillager Type: " +
+				arena.getVillagerType().substring(0, 1).toUpperCase() + arena.getVillagerType().substring(1)),
+			true,
+			buttons
 		);
 	}
 
@@ -668,58 +734,66 @@ public class Inventories {
 
 		// Option to set spawn table to default
 		buttons.add(ItemFactory.createItem(Material.OAK_WOOD,
-				CommunicationManager.format("&4&lDefault"), ItemFactory.BUTTON_FLAGS,
-				chosen.contains("default") ? ItemFactory.glow() : null,
-				CommunicationManager.format("&7Sets spawn table to default.yml")));
+			CommunicationManager.format("&4&lDefault"), ItemFactory.BUTTON_FLAGS,
+			chosen.contains("default") ? ItemFactory.glow() : null,
+			CommunicationManager.format("&7Sets spawn table to default.yml")
+		));
 
 		// Option to set spawn table to global option 1
 		buttons.add(ItemFactory.createItem(Material.RED_CONCRETE,
-				CommunicationManager.format("&6&lOption 1"), ItemFactory.BUTTON_FLAGS,
-				chosen.contains("option1") ? ItemFactory.glow() : null,
-				CommunicationManager.format("&7Sets spawn table to option1.yml")));
+			CommunicationManager.format("&6&lOption 1"), ItemFactory.BUTTON_FLAGS,
+			chosen.contains("option1") ? ItemFactory.glow() : null,
+			CommunicationManager.format("&7Sets spawn table to option1.yml")
+		));
 
 		// Option to set spawn table to global option 2
 		buttons.add(ItemFactory.createItem(Material.ORANGE_CONCRETE,
-				CommunicationManager.format("&6&lOption 2"), ItemFactory.BUTTON_FLAGS,
-				chosen.contains("option2") ? ItemFactory.glow() : null,
-				CommunicationManager.format("&7Sets spawn table to option2.yml")));
+			CommunicationManager.format("&6&lOption 2"), ItemFactory.BUTTON_FLAGS,
+			chosen.contains("option2") ? ItemFactory.glow() : null,
+			CommunicationManager.format("&7Sets spawn table to option2.yml")
+		));
 
 		// Option to set spawn table to global option 3
 		buttons.add(ItemFactory.createItem(Material.YELLOW_CONCRETE,
-				CommunicationManager.format("&6&lOption 3"), ItemFactory.BUTTON_FLAGS,
-				chosen.contains("option3") ? ItemFactory.glow() : null,
-				CommunicationManager.format("&7Sets spawn table to option3.yml")));
+			CommunicationManager.format("&6&lOption 3"), ItemFactory.BUTTON_FLAGS,
+			chosen.contains("option3") ? ItemFactory.glow() : null,
+			CommunicationManager.format("&7Sets spawn table to option3.yml")
+		));
 
 		// Option to set spawn table to global option 4
 		buttons.add(ItemFactory.createItem(Material.BROWN_CONCRETE,
-				CommunicationManager.format("&6&lOption 4"), ItemFactory.BUTTON_FLAGS,
-				chosen.contains("option4") ? ItemFactory.glow() : null,
-				CommunicationManager.format("&7Sets spawn table to option4.yml")));
+			CommunicationManager.format("&6&lOption 4"), ItemFactory.BUTTON_FLAGS,
+			chosen.contains("option4") ? ItemFactory.glow() : null,
+			CommunicationManager.format("&7Sets spawn table to option4.yml")
+		));
 
 		// Option to set spawn table to global option 5
 		buttons.add(ItemFactory.createItem(Material.LIGHT_GRAY_CONCRETE,
-				CommunicationManager.format("&6&lOption 5"), ItemFactory.BUTTON_FLAGS,
-				chosen.contains("option5") ? ItemFactory.glow() : null,
-				CommunicationManager.format("&7Sets spawn table to option5.yml")));
+			CommunicationManager.format("&6&lOption 5"), ItemFactory.BUTTON_FLAGS,
+			chosen.contains("option5") ? ItemFactory.glow() : null,
+			CommunicationManager.format("&7Sets spawn table to option5.yml")
+		));
 
 		// Option to set spawn table to global option 6
 		buttons.add(ItemFactory.createItem(Material.WHITE_CONCRETE,
-				CommunicationManager.format("&6&lOption 6"), ItemFactory.BUTTON_FLAGS,
-				chosen.contains("option6") ? ItemFactory.glow() : null,
-				CommunicationManager.format("&7Sets spawn table to option6.yml")));
+			CommunicationManager.format("&6&lOption 6"), ItemFactory.BUTTON_FLAGS,
+			chosen.contains("option6") ? ItemFactory.glow() : null,
+			CommunicationManager.format("&7Sets spawn table to option6.yml")
+		));
 
 		// Option to set spawn table to custom option
 		buttons.add(ItemFactory.createItem(Material.BIRCH_WOOD,
-				CommunicationManager.format("&e&lCustom"), ItemFactory.BUTTON_FLAGS,
-				chosen.charAt(0) == 'a' ? ItemFactory.glow() : null,
-				CommunicationManager.format("&7Sets spawn table to a" + arena.getId() + ".yml")));
+			CommunicationManager.format("&e&lCustom"), ItemFactory.BUTTON_FLAGS,
+			chosen.charAt(0) == 'a' ? ItemFactory.glow() : null,
+			CommunicationManager.format("&7Sets spawn table to a" + arena.getId() + ".yml")
+		));
 
 		return InventoryFactory.createFixedSizeInventory(
-				new InventoryMeta(InventoryID.SPAWN_TABLE_MENU, InventoryType.MENU, arena),
-				CommunicationManager.format("&3&lSpawn Table: " + arena.getSpawnTableFile()),
-				1,
-				true,
-				buttons
+			new InventoryMeta(InventoryID.SPAWN_TABLE_MENU, InventoryType.MENU, arena),
+			CommunicationManager.format("&3&lSpawn Table: " + arena.getSpawnTableFile()),
+			1,
+			true,
+			buttons
 		);
 	}
 
@@ -729,103 +803,124 @@ public class Inventories {
 
 		// Option to change max waves
 		buttons.add(
-				ItemFactory.createItem(Material.NETHERITE_SWORD,
+			ItemFactory.createItem(
+				Material.NETHERITE_SWORD,
 				CommunicationManager.format("&3&lMax Waves: " + ((arena.getMaxWaves() < 0) ? "Unlimited" :
-						arena.getMaxWaves())),
+					arena.getMaxWaves())),
 				ItemFactory.BUTTON_FLAGS,
-				null)
+				null
+			)
 		);
 
 		// Option to wave time limit
 		buttons.add(ItemFactory.createItem(Material.CLOCK, CommunicationManager.format("&2&lWave Time Limit: " +
-				((arena.getWaveTimeLimit() < 0) ? "Unlimited" : arena.getWaveTimeLimit() + " minute(s)"))));
+			((arena.getWaveTimeLimit() < 0) ? "Unlimited" : arena.getWaveTimeLimit() + " minute(s)"))));
 
 		// Option to toggle dynamic wave time limit
 		buttons.add(
-				ItemFactory.createItem(Material.SNOWBALL,
+			ItemFactory.createItem(
+				Material.SNOWBALL,
 				CommunicationManager.format("&a&lDynamic Time Limit: " + getToggleStatus(arena.hasDynamicLimit())),
 				CommunicationManager.format("&7Wave time limit adjusting based on"),
-				CommunicationManager.format("&7in-game difficulty"))
+				CommunicationManager.format("&7in-game difficulty")
+			)
 		);
 
 		// Option to toggle community chest
-		buttons.add(ItemFactory.createItem(Material.CHEST,
-				CommunicationManager.format("&d&lCommunity Chest: " + getToggleStatus(arena.hasCommunity())),
-				CommunicationManager.format("&7Turn community chest on and off")));
+		buttons.add(ItemFactory.createItem(
+			Material.CHEST,
+			CommunicationManager.format("&d&lCommunity Chest: " + getToggleStatus(arena.hasCommunity())),
+			CommunicationManager.format("&7Turn community chest on and off")
+		));
 
 		// Option to edit allowed kits
-		buttons.add(ItemFactory.createItem(Material.ENDER_CHEST,
-				CommunicationManager.format("&9&lAllowed Kits")));
+		buttons.add(ItemFactory.createItem(
+			Material.ENDER_CHEST,
+			CommunicationManager.format("&9&lAllowed Kits")
+		));
 
 		// Option to edit forced challenges
-		buttons.add(ItemFactory.createItem(Material.NETHER_STAR,
-				CommunicationManager.format("&9&lForced Challenges")));
+		buttons.add(ItemFactory.createItem(
+			Material.NETHER_STAR,
+			CommunicationManager.format("&9&lForced Challenges")
+		));
 
 		// Option to edit difficulty label
-		buttons.add(ItemFactory.createItem(Material.NAME_TAG,
-				CommunicationManager.format("&6&lDifficulty Label: " + arena.getDifficultyLabel())));
+		buttons.add(ItemFactory.createItem(
+			Material.NAME_TAG,
+			CommunicationManager.format("&6&lDifficulty Label: " + arena.getDifficultyLabel())
+		));
 
 		// Option to adjust overall difficulty multiplier
-		buttons.add(ItemFactory.createItem(Material.TURTLE_HELMET,
-				CommunicationManager.format("&4&lDifficulty Multiplier: " + arena.getDifficultyMultiplier()),
-				ItemFactory.BUTTON_FLAGS,
-				null,
-				CommunicationManager.format("&7Determines difficulty increase rate")));
+		buttons.add(ItemFactory.createItem(
+			Material.TURTLE_HELMET,
+			CommunicationManager.format("&4&lDifficulty Multiplier: " + arena.getDifficultyMultiplier()),
+			ItemFactory.BUTTON_FLAGS,
+			null,
+			CommunicationManager.format("&7Determines difficulty increase rate")
+		));
 
 		// Option to toggle late arrival
-		buttons.add(ItemFactory.createItem(Material.DAYLIGHT_DETECTOR,
-				CommunicationManager.format("&e&lLate Arrival: " +
-						getToggleStatus(arena.hasLateArrival())),
-				CommunicationManager.format("&7Allows players to join after"),
-				CommunicationManager.format("&7the game has started")));
+		buttons.add(ItemFactory.createItem(
+			Material.DAYLIGHT_DETECTOR,
+			CommunicationManager.format("&e&lLate Arrival: " +
+				getToggleStatus(arena.hasLateArrival())),
+			CommunicationManager.format("&7Allows players to join after"),
+			CommunicationManager.format("&7the game has started")
+		));
 
 		// Option to set arena bounds
 		buttons.add(ItemFactory.createItem(Material.BEDROCK, CommunicationManager.format("&4&lArena Bounds"),
-				CommunicationManager.format("&7Bounds determine where players are"),
-				CommunicationManager.format("&7allowed to go and where the game will"),
-				CommunicationManager.format("&7function. Avoid building past arena bounds.")));
+			CommunicationManager.format("&7Bounds determine where players are"),
+			CommunicationManager.format("&7allowed to go and where the game will"),
+			CommunicationManager.format("&7function. Avoid building past arena bounds.")
+		));
 
 		// Option to edit sounds
 		buttons.add(
-				ItemFactory.createItem(Material.MUSIC_DISC_13,
+			ItemFactory.createItem(
+				Material.MUSIC_DISC_13,
 				CommunicationManager.format("&d&lSounds"),
 				ItemFactory.BUTTON_FLAGS,
-				null)
+				null
+			)
 		);
 
 		// Option to copy game settings from another arena or a preset
-		buttons.add(ItemFactory.createItem(Material.WRITABLE_BOOK,
-				CommunicationManager.format("&f&lCopy Game Settings"),
-				CommunicationManager.format("&7Copy settings of another arena or"),
-				CommunicationManager.format("&7choose from a menu of presets")));
+		buttons.add(ItemFactory.createItem(
+			Material.WRITABLE_BOOK,
+			CommunicationManager.format("&f&lCopy Game Settings"),
+			CommunicationManager.format("&7Copy settings of another arena or"),
+			CommunicationManager.format("&7choose from a menu of presets")
+		));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.GAME_SETTINGS_MENU, InventoryType.MENU, arena),
-				CommunicationManager.format("&8&lGame Settings: " + arena.getName()),
-				true,
-				buttons
+			new InventoryMeta(InventoryID.GAME_SETTINGS_MENU, InventoryType.MENU, arena),
+			CommunicationManager.format("&8&lGame Settings: " + arena.getName()),
+			true,
+			buttons
 		);
 	}
 
 	// Menu for changing max waves of an arena
 	public static Inventory createMaxWaveMenu(Arena arena) {
 		return InventoryFactory.createAdvancedIncrementorMenu(
-				InventoryID.MAX_WAVE_MENU,
-				arena,
-				(arena.getMaxWaves() < 0) ?
-						CommunicationManager.format("&3&lMaximum Waves: Unlimited") :
-						CommunicationManager.format("&3&lMaximum Waves: " + arena.getMaxWaves())
+			InventoryID.MAX_WAVE_MENU,
+			arena,
+			(arena.getMaxWaves() < 0) ?
+				CommunicationManager.format("&3&lMaximum Waves: Unlimited") :
+				CommunicationManager.format("&3&lMaximum Waves: " + arena.getMaxWaves())
 		);
 	}
 
 	// Menu for changing wave time limit of an arena
 	public static Inventory createWaveTimeLimitMenu(Arena arena) {
 		return InventoryFactory.createAdvancedIncrementorMenu(
-				InventoryID.WAVE_TIME_LIMIT_MENU,
-				arena,
-				(arena.getWaveTimeLimit() < 0) ?
-						CommunicationManager.format("&2&lWave Time Limit: Unlimited") :
-						CommunicationManager.format("&2&lWave Time Limit: " + arena.getWaveTimeLimit())
+			InventoryID.WAVE_TIME_LIMIT_MENU,
+			arena,
+			(arena.getWaveTimeLimit() < 0) ?
+				CommunicationManager.format("&2&lWave Time Limit: Unlimited") :
+				CommunicationManager.format("&2&lWave Time Limit: " + arena.getWaveTimeLimit())
 		);
 	}
 
@@ -833,21 +928,24 @@ public class Inventories {
 	public static Inventory createAllowedKitsMenu(Arena arena, boolean display) {
 		// Create inventory
 		Inventory inv = display ? Bukkit.createInventory(
-				new InventoryMeta(InventoryID.ALLOWED_KITS_DISPLAY_MENU, InventoryType.MENU, arena),
-				54,
-				CommunicationManager.format("&9&l" + LanguageManager.messages.allowedKits)
+			new InventoryMeta(InventoryID.ALLOWED_KITS_DISPLAY_MENU, InventoryType.MENU, arena),
+			54,
+			CommunicationManager.format("&9&l" + LanguageManager.messages.allowedKits)
 		) : Bukkit.createInventory(
-				new InventoryMeta(InventoryID.ALLOWED_KITS_MENU, InventoryType.MENU, arena),
-				54,
-				CommunicationManager.format("&9&l" + LanguageManager.messages.allowedKits + ": " + arena.getName())
+			new InventoryMeta(InventoryID.ALLOWED_KITS_MENU, InventoryType.MENU, arena),
+			54,
+			CommunicationManager.format("&9&l" + LanguageManager.messages.allowedKits + ": " + arena.getName())
 		);
 
 		// Gift kits
 		for (int i = 0; i < 9; i++)
-			inv.setItem(i, ItemFactory.createItem(Material.LIME_STAINED_GLASS_PANE,
-					CommunicationManager.format("&a&l" + LanguageManager.names.giftKits),
-					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.giftKitsDescription, Utils.LORE_CHAR_LIMIT)));
+			inv.setItem(i, ItemFactory.createItem(
+				Material.LIME_STAINED_GLASS_PANE,
+				CommunicationManager.format("&a&l" + LanguageManager.names.giftKits),
+				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+					LanguageManager.messages.giftKitsDescription, Constants.LORE_CHAR_LIMIT
+				)
+			));
 
 		List<String> bannedKitIDs = arena.getBannedKitIDs();
 		if (bannedKitIDs.contains(Kit.orc().getID()))
@@ -880,10 +978,13 @@ public class Inventories {
 
 		// Ability kits
 		for (int i = 18; i < 27; i++)
-			inv.setItem(i, ItemFactory.createItem(Material.MAGENTA_STAINED_GLASS_PANE,
-					CommunicationManager.format("&d&l" + LanguageManager.names.abilityKits),
-					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.abilityKitsDescription, Utils.LORE_CHAR_LIMIT)));
+			inv.setItem(i, ItemFactory.createItem(
+				Material.MAGENTA_STAINED_GLASS_PANE,
+				CommunicationManager.format("&d&l" + LanguageManager.names.abilityKits),
+				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+					LanguageManager.messages.abilityKitsDescription, Constants.LORE_CHAR_LIMIT
+				)
+			));
 
 		if (bannedKitIDs.contains(Kit.mage().getID()))
 			inv.setItem(27, Kit.mage().getButton(-1, false));
@@ -915,10 +1016,13 @@ public class Inventories {
 
 		// Effect kits
 		for (int i = 36; i < 45; i++)
-			inv.setItem(i, ItemFactory.createItem(Material.YELLOW_STAINED_GLASS_PANE,
-					CommunicationManager.format("&e&l" + LanguageManager.names.effectKits),
-					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.effectKitsDescription, Utils.LORE_CHAR_LIMIT)));
+			inv.setItem(i, ItemFactory.createItem(
+				Material.YELLOW_STAINED_GLASS_PANE,
+				CommunicationManager.format("&e&l" + LanguageManager.names.effectKits),
+				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+					LanguageManager.messages.effectKitsDescription, Constants.LORE_CHAR_LIMIT
+				)
+			));
 
 		if (bannedKitIDs.contains(Kit.blacksmith().getID()))
 			inv.setItem(45, Kit.blacksmith().getButton(-1, false));
@@ -962,16 +1066,16 @@ public class Inventories {
 		buttons.add(Challenge.blind().getButton(forced.contains(Challenge.blind().getID())));
 
 		return display ? InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.FORCED_CHALLENGES_DISPLAY_MENU, InventoryType.MENU, arena),
-				CommunicationManager.format("&9&l" + LanguageManager.messages.forcedChallenges),
-				true,
-				buttons
+			new InventoryMeta(InventoryID.FORCED_CHALLENGES_DISPLAY_MENU, InventoryType.MENU, arena),
+			CommunicationManager.format("&9&l" + LanguageManager.messages.forcedChallenges),
+			true,
+			buttons
 		) : InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.FORCED_CHALLENGES_MENU, InventoryType.MENU, arena),
-				CommunicationManager.format(
-						"&9&l" + LanguageManager.messages.forcedChallenges + ": " + arena.getName()),
-				true,
-				buttons
+			new InventoryMeta(InventoryID.FORCED_CHALLENGES_MENU, InventoryType.MENU, arena),
+			CommunicationManager.format(
+				"&9&l" + LanguageManager.messages.forcedChallenges + ": " + arena.getName()),
+			true,
+			buttons
 		);
 	}
 
@@ -998,30 +1102,40 @@ public class Inventories {
 		}
 
 		// "Easy" option
-		buttons.add(ItemFactory.createItem(Material.LIME_CONCRETE,
-				CommunicationManager.format("&a&l" + LanguageManager.names.easy)));
+		buttons.add(ItemFactory.createItem(
+			Material.LIME_CONCRETE,
+			CommunicationManager.format("&a&l" + LanguageManager.names.easy)
+		));
 
 		// "Medium" option
-		buttons.add(ItemFactory.createItem(Material.YELLOW_CONCRETE,
-				CommunicationManager.format("&e&l" + LanguageManager.names.medium)));
+		buttons.add(ItemFactory.createItem(
+			Material.YELLOW_CONCRETE,
+			CommunicationManager.format("&e&l" + LanguageManager.names.medium)
+		));
 
 		// "Hard" option
-		buttons.add(ItemFactory.createItem(Material.RED_CONCRETE,
-				CommunicationManager.format("&c&l" + LanguageManager.names.hard)));
+		buttons.add(ItemFactory.createItem(
+			Material.RED_CONCRETE,
+			CommunicationManager.format("&c&l" + LanguageManager.names.hard)
+		));
 
 		// "Insane" option
-		buttons.add(ItemFactory.createItem(Material.MAGENTA_CONCRETE,
-				CommunicationManager.format("&d&l" + LanguageManager.names.insane)));
+		buttons.add(ItemFactory.createItem(
+			Material.MAGENTA_CONCRETE,
+			CommunicationManager.format("&d&l" + LanguageManager.names.insane)
+		));
 
 		// "None" option
-		buttons.add(ItemFactory.createItem(Material.LIGHT_GRAY_CONCRETE,
-				CommunicationManager.format("&7&l" + LanguageManager.names.none)));
+		buttons.add(ItemFactory.createItem(
+			Material.LIGHT_GRAY_CONCRETE,
+			CommunicationManager.format("&7&l" + LanguageManager.names.none)
+		));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.DIFFICULTY_LABEL_MENU, InventoryType.MENU, arena),
-				CommunicationManager.format("&6&lDifficulty Label: " + label),
-				true,
-				buttons
+			new InventoryMeta(InventoryID.DIFFICULTY_LABEL_MENU, InventoryType.MENU, arena),
+			CommunicationManager.format("&6&lDifficulty Label: " + label),
+			true,
+			buttons
 		);
 	}
 
@@ -1030,8 +1144,10 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// "1" option
-		buttons.add(ItemFactory.createItem(Material.LIGHT_BLUE_CONCRETE,
-				CommunicationManager.format("&b&l1")));
+		buttons.add(ItemFactory.createItem(
+			Material.LIGHT_BLUE_CONCRETE,
+			CommunicationManager.format("&b&l1")
+		));
 
 		// "2" option
 		buttons.add(ItemFactory.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&a&l2")));
@@ -1043,11 +1159,11 @@ public class Inventories {
 		buttons.add(ItemFactory.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&l4")));
 
 		return InventoryFactory.createFixedSizeInventory(
-				new InventoryMeta(InventoryID.DIFFICULTY_MULTIPLIER_MENU, InventoryType.MENU, arena),
-				CommunicationManager.format("&4&lDifficulty Multiplier: " + arena.getDifficultyMultiplier()),
-				1,
-				true,
-				buttons
+			new InventoryMeta(InventoryID.DIFFICULTY_MULTIPLIER_MENU, InventoryType.MENU, arena),
+			CommunicationManager.format("&4&lDifficulty Multiplier: " + arena.getDifficultyMultiplier()),
+			1,
+			true,
+			buttons
 		);
 	}
 
@@ -1057,70 +1173,76 @@ public class Inventories {
 
 		// Option to interact with corner 1
 		buttons.add(ItemFactory.createItem(Material.TORCH, CommunicationManager.format("&b&lCorner 1: " +
-				(arena.getCorner1() == null ? "&c&lMissing" : "&a&lSet"))));
+			(arena.getCorner1() == null ? "&c&lMissing" : "&a&lSet"))));
 
 		// Option to interact with corner 2
-		buttons.add(ItemFactory.createItem(Material.SOUL_TORCH,
-				CommunicationManager.format("&9&lCorner 2: " +
-				(arena.getCorner2() == null ? "&c&lMissing" : "&a&lSet"))));
+		buttons.add(ItemFactory.createItem(
+			Material.SOUL_TORCH,
+			CommunicationManager.format("&9&lCorner 2: " +
+				(arena.getCorner2() == null ? "&c&lMissing" : "&a&lSet"))
+		));
 
 		// Option to stretch the arena bounds to the top and bottom of the world
-		buttons.add(ItemFactory.createItem(Material.WEEPING_VINES,
-				CommunicationManager.format("&3&lStretch Bounds"),
-				CommunicationManager.format("&7Stretches the arena bounds in the y direction from"),
-				CommunicationManager.format("&7the top to just below the bottom of the world.")));
+		buttons.add(ItemFactory.createItem(
+			Material.WEEPING_VINES,
+			CommunicationManager.format("&3&lStretch Bounds"),
+			CommunicationManager.format("&7Stretches the arena bounds in the y direction from"),
+			CommunicationManager.format("&7the top to just below the bottom of the world.")
+		));
 
 		// Option to toggle arena border particles
-		buttons.add(ItemFactory.createItem(Material.FIREWORK_ROCKET,
-				CommunicationManager.format("&4&lBorder Particles: " +
-				getToggleStatus(arena.hasBorderParticles()))));
+		buttons.add(ItemFactory.createItem(
+			Material.FIREWORK_ROCKET,
+			CommunicationManager.format("&4&lBorder Particles: " +
+				getToggleStatus(arena.hasBorderParticles()))
+		));
 
 		return InventoryFactory.createFixedSizeInventory(
-				new InventoryMeta(InventoryID.ARENA_BOUNDS_MENU, InventoryType.MENU, arena),
-				CommunicationManager.format("&4&lArena Bounds: " + arena.getName()),
-				1,
-				true,
-				buttons
+			new InventoryMeta(InventoryID.ARENA_BOUNDS_MENU, InventoryType.MENU, arena),
+			CommunicationManager.format("&4&lArena Bounds: " + arena.getName()),
+			1,
+			true,
+			buttons
 		);
 	}
 
 	// Menu for editing corner 1 of an arena
 	public static Inventory createCorner1Menu(Arena arena) {
 		return InventoryFactory.createSimpleLocationMenu(
-				InventoryID.CORNER_1_MENU,
-				arena,
-				CommunicationManager.format("&b&lCorner 1: " + arena.getName()),
-				arena.getCorner1() != null,
-				"Corner 1"
+			InventoryID.CORNER_1_MENU,
+			arena,
+			CommunicationManager.format("&b&lCorner 1: " + arena.getName()),
+			arena.getCorner1() != null,
+			"Corner 1"
 		);
 	}
 
 	// Confirmation menu for removing corner 1
 	public static Inventory createCorner1ConfirmMenu(Arena arena) {
 		return InventoryFactory.createConfirmationMenu(
-				InventoryID.CORNER_1_CONFIRM_MENU,
-				arena,
-				CommunicationManager.format("&4&lRemove Corner 1?")
+			InventoryID.CORNER_1_CONFIRM_MENU,
+			arena,
+			CommunicationManager.format("&4&lRemove Corner 1?")
 		);
 	}
 
 	// Menu for editing corner 2 of an arena
 	public static Inventory createCorner2Menu(Arena arena) {
 		return InventoryFactory.createSimpleLocationMenu(
-				InventoryID.CORNER_2_MENU,
-				arena,
-				CommunicationManager.format("&9&lCorner 2: " + arena.getName()),
-				arena.getCorner2() != null,
-				"Corner 2"
+			InventoryID.CORNER_2_MENU,
+			arena,
+			CommunicationManager.format("&9&lCorner 2: " + arena.getName()),
+			arena.getCorner2() != null,
+			"Corner 2"
 		);
 	}
 
 	// Confirmation menu for removing corner 2
 	public static Inventory createCorner2ConfirmMenu(Arena arena) {
 		return InventoryFactory.createConfirmationMenu(
-				InventoryID.CORNER_2_CONFIRM_MENU,
-				arena,
-				CommunicationManager.format("&4&lRemove Corner 2?")
+			InventoryID.CORNER_2_CONFIRM_MENU,
+			arena,
+			CommunicationManager.format("&4&lRemove Corner 2?")
 		);
 	}
 
@@ -1129,64 +1251,78 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Option to edit win sound
-		buttons.add( ItemFactory.createItem(Material.MUSIC_DISC_PIGSTEP,
-				CommunicationManager.format("&a&lWin Sound: " + getToggleStatus(arena.hasWinSound())),
-				ItemFactory.BUTTON_FLAGS,
-				null,
-				CommunicationManager.format("&7Played when game ends and players win")));
+		buttons.add(ItemFactory.createItem(
+			Material.MUSIC_DISC_PIGSTEP,
+			CommunicationManager.format("&a&lWin Sound: " + getToggleStatus(arena.hasWinSound())),
+			ItemFactory.BUTTON_FLAGS,
+			null,
+			CommunicationManager.format("&7Played when game ends and players win")
+		));
 
 		// Option to edit lose sound
-		buttons.add( ItemFactory.createItem(Material.MUSIC_DISC_11,
-				CommunicationManager.format("&e&lLose Sound: " + getToggleStatus(arena.hasLoseSound())),
-				ItemFactory.BUTTON_FLAGS,
-				null,
-				CommunicationManager.format("&7Played when game ends and players lose")));
+		buttons.add(ItemFactory.createItem(
+			Material.MUSIC_DISC_11,
+			CommunicationManager.format("&e&lLose Sound: " + getToggleStatus(arena.hasLoseSound())),
+			ItemFactory.BUTTON_FLAGS,
+			null,
+			CommunicationManager.format("&7Played when game ends and players lose")
+		));
 
 		// Option to edit wave start sound
-		buttons.add( ItemFactory.createItem(Material.MUSIC_DISC_CAT,
-				CommunicationManager.format("&2&lWave Start Sound: " +
-						getToggleStatus(arena.hasWaveStartSound())),
-				ItemFactory.BUTTON_FLAGS,
-				null,
-				CommunicationManager.format("&7Played when a wave starts")));
+		buttons.add(ItemFactory.createItem(
+			Material.MUSIC_DISC_CAT,
+			CommunicationManager.format("&2&lWave Start Sound: " +
+				getToggleStatus(arena.hasWaveStartSound())),
+			ItemFactory.BUTTON_FLAGS,
+			null,
+			CommunicationManager.format("&7Played when a wave starts")
+		));
 
 		// Option to edit wave finish sound
-		buttons.add( ItemFactory.createItem(Material.MUSIC_DISC_BLOCKS,
-				CommunicationManager.format("&9&lWave Finish Sound: " +
-						getToggleStatus(arena.hasWaveFinishSound())),
-				ItemFactory.BUTTON_FLAGS,
-				null,
-				CommunicationManager.format("&7Played when a wave ends")));
+		buttons.add(ItemFactory.createItem(
+			Material.MUSIC_DISC_BLOCKS,
+			CommunicationManager.format("&9&lWave Finish Sound: " +
+				getToggleStatus(arena.hasWaveFinishSound())),
+			ItemFactory.BUTTON_FLAGS,
+			null,
+			CommunicationManager.format("&7Played when a wave ends")
+		));
 
 		// Option to edit waiting music
-		buttons.add( ItemFactory.createItem(Material.MUSIC_DISC_MELLOHI,
-				CommunicationManager.format("&6&lWaiting Sound: &b&l" + arena.getWaitingSoundName()),
-				ItemFactory.BUTTON_FLAGS,
-				null,
-				CommunicationManager.format("&7Played while players wait"),
-				CommunicationManager.format("&7for the game to start")));
+		buttons.add(ItemFactory.createItem(
+			Material.MUSIC_DISC_MELLOHI,
+			CommunicationManager.format("&6&lWaiting Sound: &b&l" + arena.getWaitingSoundName()),
+			ItemFactory.BUTTON_FLAGS,
+			null,
+			CommunicationManager.format("&7Played while players wait"),
+			CommunicationManager.format("&7for the game to start")
+		));
 
 		// Option to edit player death sound
-		buttons.add( ItemFactory.createItem(Material.MUSIC_DISC_CHIRP,
-				CommunicationManager.format("&4&lPlayer Death Sound: " +
-						getToggleStatus(arena.hasPlayerDeathSound())),
-				ItemFactory.BUTTON_FLAGS,
-				null,
-				CommunicationManager.format("&7Played when a player dies")));
+		buttons.add(ItemFactory.createItem(
+			Material.MUSIC_DISC_CHIRP,
+			CommunicationManager.format("&4&lPlayer Death Sound: " +
+				getToggleStatus(arena.hasPlayerDeathSound())),
+			ItemFactory.BUTTON_FLAGS,
+			null,
+			CommunicationManager.format("&7Played when a player dies")
+		));
 
 		// Option to edit ability sound
-		buttons.add( ItemFactory.createItem(Material.MUSIC_DISC_MALL,
-				CommunicationManager.format("&d&lAbility Sound: " +
-						getToggleStatus(arena.hasAbilitySound())),
-				ItemFactory.BUTTON_FLAGS,
-				null,
-				CommunicationManager.format("&7Played when a player uses their ability")));
+		buttons.add(ItemFactory.createItem(
+			Material.MUSIC_DISC_MALL,
+			CommunicationManager.format("&d&lAbility Sound: " +
+				getToggleStatus(arena.hasAbilitySound())),
+			ItemFactory.BUTTON_FLAGS,
+			null,
+			CommunicationManager.format("&7Played when a player uses their ability")
+		));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.SOUNDS_MENU, InventoryType.MENU, arena),
-				CommunicationManager.format("&d&lSounds: " + arena.getName()),
-				true,
-				buttons
+			new InventoryMeta(InventoryID.SOUNDS_MENU, InventoryType.MENU, arena),
+			CommunicationManager.format("&d&lSounds: " + arena.getName()),
+			true,
+			buttons
 		);
 	}
 
@@ -1212,10 +1348,10 @@ public class Inventories {
 		buttons.add(arena.getWaitingSoundButton("none"));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.WAITING_SOUND_MENU, InventoryType.MENU, arena),
-				CommunicationManager.format("&6&lWaiting Sound: " + arena.getWaitingSoundName()),
-				true,
-				buttons
+			new InventoryMeta(InventoryID.WAITING_SOUND_MENU, InventoryType.MENU, arena),
+			CommunicationManager.format("&6&lWaiting Sound: " + arena.getWaitingSoundName()),
+			true,
+			buttons
 		);
 	}
 
@@ -1223,49 +1359,61 @@ public class Inventories {
 	public static Inventory createCopySettingsMenu(Arena arena) {
 		return createCopySettingsMenu(arena, 1);
 	}
+
 	public static Inventory createCopySettingsMenu(Arena arena, int page) {
 		List<ItemStack> buttons = new ArrayList<>();
 		List<ItemStack> frozenButtons = new ArrayList<>();
 
 		// Options to choose any of the other arenas
 		Objects.requireNonNull(Main.getArenaData().getConfigurationSection("arena")).getKeys(false)
-				.forEach(id -> {
-					if (Integer.parseInt(id) != arena.getId())
-						try {
-							buttons.add(
-									ItemFactory.createItem(Material.GRAY_GLAZED_TERRACOTTA,
-											CommunicationManager.format("&a&lCopy " +
-													GameController.getArena(Integer.parseInt(id)).getName()))
-							);
-						} catch (ArenaNotFoundException ignored) {
-						}
-				});
+			.forEach(id -> {
+				if (Integer.parseInt(id) != arena.getId())
+					try {
+						buttons.add(
+							ItemFactory.createItem(
+								Material.GRAY_GLAZED_TERRACOTTA,
+								CommunicationManager.format("&a&lCopy " +
+									GameController.getArena(Integer.parseInt(id)).getName())
+							)
+						);
+					}
+					catch (ArenaNotFoundException ignored) {
+					}
+			});
 
 		// Easy preset
-		frozenButtons.add(ItemFactory.createItem(Material.LIME_CONCRETE,
-				CommunicationManager.format("&a&lEasy Preset")));
+		frozenButtons.add(ItemFactory.createItem(
+			Material.LIME_CONCRETE,
+			CommunicationManager.format("&a&lEasy Preset")
+		));
 
 		// Medium preset
-		frozenButtons.add(ItemFactory.createItem(Material.YELLOW_CONCRETE,
-				CommunicationManager.format("&e&lMedium Preset")));
+		frozenButtons.add(ItemFactory.createItem(
+			Material.YELLOW_CONCRETE,
+			CommunicationManager.format("&e&lMedium Preset")
+		));
 
 		// Hard preset
-		frozenButtons.add(ItemFactory.createItem(Material.RED_CONCRETE,
-				CommunicationManager.format("&c&lHard Preset")));
+		frozenButtons.add(ItemFactory.createItem(
+			Material.RED_CONCRETE,
+			CommunicationManager.format("&c&lHard Preset")
+		));
 
 		// Insane preset
-		frozenButtons.add(ItemFactory.createItem(Material.MAGENTA_CONCRETE,
-				CommunicationManager.format("&d&lInsane Preset")));
+		frozenButtons.add(ItemFactory.createItem(
+			Material.MAGENTA_CONCRETE,
+			CommunicationManager.format("&d&lInsane Preset")
+		));
 
 		return InventoryFactory.createDynamicSizeBottomNavFreezeRowInventory(
-				new InventoryMeta(InventoryID.COPY_SETTINGS_MENU, InventoryType.MENU, page, arena),
-				CommunicationManager.format("&8&lCopy Game Settings"),
-				true,
-				false,
-				"",
-				buttons,
-				1,
-				frozenButtons
+			new InventoryMeta(InventoryID.COPY_SETTINGS_MENU, InventoryType.MENU, page, arena),
+			CommunicationManager.format("&8&lCopy Game Settings"),
+			true,
+			false,
+			"",
+			buttons,
+			1,
+			frozenButtons
 		);
 	}
 
@@ -1277,71 +1425,88 @@ public class Inventories {
 
 		// Create inventory
 		buttons.add(ItemFactory.createItem(Material.GOLDEN_SWORD,
-				CommunicationManager.format("&2&l" + LanguageManager.names.swordShop), ItemFactory.BUTTON_FLAGS,
-				ItemFactory.glow()));
+			CommunicationManager.format("&2&l" + LanguageManager.names.swordShop), ItemFactory.BUTTON_FLAGS,
+			ItemFactory.glow()
+		));
 
 		buttons.add(ItemFactory.createItem(Material.GOLDEN_AXE,
-				CommunicationManager.format("&2&l" + LanguageManager.names.axeShop), ItemFactory.BUTTON_FLAGS,
-				ItemFactory.glow()));
+			CommunicationManager.format("&2&l" + LanguageManager.names.axeShop), ItemFactory.BUTTON_FLAGS,
+			ItemFactory.glow()
+		));
 
 		buttons.add(ItemFactory.createItem(Material.GOLDEN_HOE,
-				CommunicationManager.format("&2&l" + LanguageManager.names.scytheShop), ItemFactory.BUTTON_FLAGS,
-				ItemFactory.glow()));
+			CommunicationManager.format("&2&l" + LanguageManager.names.scytheShop), ItemFactory.BUTTON_FLAGS,
+			ItemFactory.glow()
+		));
 
 		buttons.add(ItemFactory.createItem(Material.BOW,
-				CommunicationManager.format("&2&l" + LanguageManager.names.bowShop), ItemFactory.BUTTON_FLAGS,
-				ItemFactory.glow()));
+			CommunicationManager.format("&2&l" + LanguageManager.names.bowShop), ItemFactory.BUTTON_FLAGS,
+			ItemFactory.glow()
+		));
 
 		buttons.add(ItemFactory.createItem(Material.CROSSBOW,
-				CommunicationManager.format("&2&l" + LanguageManager.names.crossbowShop), ItemFactory.BUTTON_FLAGS,
-				ItemFactory.glow()));
+			CommunicationManager.format("&2&l" + LanguageManager.names.crossbowShop), ItemFactory.BUTTON_FLAGS,
+			ItemFactory.glow()
+		));
 
 		buttons.add(ItemFactory.createItem(Material.NETHER_STAR,
-				CommunicationManager.format("&2&l" + LanguageManager.names.ammoShop), ItemFactory.BUTTON_FLAGS,
-				ItemFactory.glow()));
+			CommunicationManager.format("&2&l" + LanguageManager.names.ammoShop), ItemFactory.BUTTON_FLAGS,
+			ItemFactory.glow()
+		));
 
 		buttons.add(ItemFactory.createItem(Material.GOLDEN_HELMET,
-				CommunicationManager.format("&2&l" + LanguageManager.names.helmetShop), ItemFactory.BUTTON_FLAGS,
-				ItemFactory.glow()));
+			CommunicationManager.format("&2&l" + LanguageManager.names.helmetShop), ItemFactory.BUTTON_FLAGS,
+			ItemFactory.glow()
+		));
 
 		buttons.add(ItemFactory.createItem(Material.GOLDEN_CHESTPLATE,
-				CommunicationManager.format("&2&l" + LanguageManager.names.chestplateShop),
-				ItemFactory.BUTTON_FLAGS, ItemFactory.glow()));
+			CommunicationManager.format("&2&l" + LanguageManager.names.chestplateShop),
+			ItemFactory.BUTTON_FLAGS, ItemFactory.glow()
+		));
 
 		buttons.add(ItemFactory.createItem(Material.GOLDEN_LEGGINGS,
-				CommunicationManager.format("&2&l" + LanguageManager.names.leggingsShop), ItemFactory.BUTTON_FLAGS,
-				ItemFactory.glow()));
+			CommunicationManager.format("&2&l" + LanguageManager.names.leggingsShop), ItemFactory.BUTTON_FLAGS,
+			ItemFactory.glow()
+		));
 
 		buttons.add(ItemFactory.createItem(Material.GOLDEN_BOOTS,
-				CommunicationManager.format("&2&l" + LanguageManager.names.bootsShop), ItemFactory.BUTTON_FLAGS,
-				ItemFactory.glow()));
+			CommunicationManager.format("&2&l" + LanguageManager.names.bootsShop), ItemFactory.BUTTON_FLAGS,
+			ItemFactory.glow()
+		));
 
 		buttons.add(ItemFactory.createItem(Material.GOLDEN_APPLE,
-				CommunicationManager.format("&2&l" + LanguageManager.names.consumableShop),
-				ItemFactory.BUTTON_FLAGS, ItemFactory.glow()));
+			CommunicationManager.format("&2&l" + LanguageManager.names.consumableShop),
+			ItemFactory.BUTTON_FLAGS, ItemFactory.glow()
+		));
 
 		buttons.add(ItemFactory.createItem(Material.LEAD,
-				CommunicationManager.format("&2&l" + LanguageManager.names.petShop,
-						Integer.toString(player.getRemainingPetSlots()), Integer.toString(player.getPetSlots())),
-				ItemFactory.BUTTON_FLAGS, ItemFactory.glow()));
+			CommunicationManager.format("&2&l" + LanguageManager.names.petShop,
+				Integer.toString(player.getRemainingPetSlots()), Integer.toString(player.getPetSlots())
+			),
+			ItemFactory.BUTTON_FLAGS, ItemFactory.glow()
+		));
 
 		buttons.add(ItemFactory.createItem(Material.CARVED_PUMPKIN,
-				CommunicationManager.format("&b&l" + LanguageManager.names.golemShop), ItemFactory.BUTTON_FLAGS,
-				ItemFactory.glow()));
+			CommunicationManager.format("&b&l" + LanguageManager.names.golemShop), ItemFactory.BUTTON_FLAGS,
+			ItemFactory.glow()
+		));
 
 		buttons.add(ItemFactory.createItem(Material.ANVIL,
-				CommunicationManager.format("&b&l" + LanguageManager.names.abilityUpgradeShop),
-				ItemFactory.BUTTON_FLAGS, ItemFactory.glow()));
+			CommunicationManager.format("&b&l" + LanguageManager.names.abilityUpgradeShop),
+			ItemFactory.BUTTON_FLAGS, ItemFactory.glow()
+		));
 
-		buttons.add(ItemFactory.createItem(Material.CHEST,
-				CommunicationManager.format("&d&l" + LanguageManager.names.communityChest +
-						(arena.hasCommunity() ? "" : disabled))));
+		buttons.add(ItemFactory.createItem(
+			Material.CHEST,
+			CommunicationManager.format("&d&l" + LanguageManager.names.communityChest +
+				(arena.hasCommunity() ? "" : disabled))
+		));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.SHOP_MENU, InventoryType.MENU),
-				CommunicationManager.format("&2&l" + LanguageManager.names.itemShop),
-				false,
-				buttons
+			new InventoryMeta(InventoryID.SHOP_MENU, InventoryType.MENU),
+			CommunicationManager.format("&2&l" + LanguageManager.names.itemShop),
+			false,
+			buttons
 		);
 	}
 
@@ -1357,10 +1522,10 @@ public class Inventories {
 		buttons.add(arena.modifyPrice(Sword.create(VDItem.Tier.T6, Sword.SwordType.TIERED)));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.SWORD_SHOP_MENU, InventoryType.MENU),
-				CommunicationManager.format("&2&l" + LanguageManager.names.swordShop),
-				true,
-				buttons
+			new InventoryMeta(InventoryID.SWORD_SHOP_MENU, InventoryType.MENU),
+			CommunicationManager.format("&2&l" + LanguageManager.names.swordShop),
+			true,
+			buttons
 		);
 	}
 
@@ -1376,10 +1541,10 @@ public class Inventories {
 		buttons.add(arena.modifyPrice(Axe.create(VDItem.Tier.T6)));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.AXE_SHOP_MENU, InventoryType.MENU),
-				CommunicationManager.format("&2&l" + LanguageManager.names.axeShop),
-				true,
-				buttons
+			new InventoryMeta(InventoryID.AXE_SHOP_MENU, InventoryType.MENU),
+			CommunicationManager.format("&2&l" + LanguageManager.names.axeShop),
+			true,
+			buttons
 		);
 	}
 
@@ -1395,10 +1560,10 @@ public class Inventories {
 		buttons.add(arena.modifyPrice(Scythe.create(VDItem.Tier.T6, Scythe.ScytheType.TIERED)));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.SCYTHE_SHOP_MENU, InventoryType.MENU),
-				CommunicationManager.format("&2&l" + LanguageManager.names.scytheShop),
-				true,
-				buttons
+			new InventoryMeta(InventoryID.SCYTHE_SHOP_MENU, InventoryType.MENU),
+			CommunicationManager.format("&2&l" + LanguageManager.names.scytheShop),
+			true,
+			buttons
 		);
 	}
 
@@ -1414,10 +1579,10 @@ public class Inventories {
 		buttons.add(arena.modifyPrice(Bow.create(VDItem.Tier.T6)));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.BOW_SHOP_MENU, InventoryType.MENU),
-				CommunicationManager.format("&2&l" + LanguageManager.names.bowShop),
-				true,
-				buttons
+			new InventoryMeta(InventoryID.BOW_SHOP_MENU, InventoryType.MENU),
+			CommunicationManager.format("&2&l" + LanguageManager.names.bowShop),
+			true,
+			buttons
 		);
 	}
 
@@ -1433,10 +1598,10 @@ public class Inventories {
 		buttons.add(arena.modifyPrice(Crossbow.create(VDItem.Tier.T6)));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.CROSSBOW_SHOP_MENU, InventoryType.MENU),
-				CommunicationManager.format("&2&l" + LanguageManager.names.crossbowShop),
-				true,
-				buttons
+			new InventoryMeta(InventoryID.CROSSBOW_SHOP_MENU, InventoryType.MENU),
+			CommunicationManager.format("&2&l" + LanguageManager.names.crossbowShop),
+			true,
+			buttons
 		);
 	}
 
@@ -1468,10 +1633,10 @@ public class Inventories {
 		}
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.AMMO_UPGRADE_SHOP_MENU, InventoryType.MENU),
-				CommunicationManager.format("&2&l" + LanguageManager.names.ammoShop),
-				true,
-				buttons
+			new InventoryMeta(InventoryID.AMMO_UPGRADE_SHOP_MENU, InventoryType.MENU),
+			CommunicationManager.format("&2&l" + LanguageManager.names.ammoShop),
+			true,
+			buttons
 		);
 	}
 
@@ -1487,10 +1652,10 @@ public class Inventories {
 		buttons.add(arena.modifyPrice(Helmet.create(VDItem.Tier.T6)));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.HELMET_SHOP_MENU, InventoryType.MENU),
-				CommunicationManager.format("&2&l" + LanguageManager.names.helmetShop),
-				true,
-				buttons
+			new InventoryMeta(InventoryID.HELMET_SHOP_MENU, InventoryType.MENU),
+			CommunicationManager.format("&2&l" + LanguageManager.names.helmetShop),
+			true,
+			buttons
 		);
 	}
 
@@ -1506,10 +1671,10 @@ public class Inventories {
 		buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T6)));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.CHESTPLATE_SHOP_MENU, InventoryType.MENU),
-				CommunicationManager.format("&2&l" + LanguageManager.names.chestplateShop),
-				true,
-				buttons
+			new InventoryMeta(InventoryID.CHESTPLATE_SHOP_MENU, InventoryType.MENU),
+			CommunicationManager.format("&2&l" + LanguageManager.names.chestplateShop),
+			true,
+			buttons
 		);
 	}
 
@@ -1525,10 +1690,10 @@ public class Inventories {
 		buttons.add(arena.modifyPrice(Leggings.create(VDItem.Tier.T6)));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.LEGGINGS_SHOP_MENU, InventoryType.MENU),
-				CommunicationManager.format("&2&l" + LanguageManager.names.leggingsShop),
-				true,
-				buttons
+			new InventoryMeta(InventoryID.LEGGINGS_SHOP_MENU, InventoryType.MENU),
+			CommunicationManager.format("&2&l" + LanguageManager.names.leggingsShop),
+			true,
+			buttons
 		);
 	}
 
@@ -1544,10 +1709,10 @@ public class Inventories {
 		buttons.add(arena.modifyPrice(Boots.create(VDItem.Tier.T6)));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.BOOTS_SHOP_MENU, InventoryType.MENU),
-				CommunicationManager.format("&2&l" + LanguageManager.names.bootsShop),
-				true,
-				buttons
+			new InventoryMeta(InventoryID.BOOTS_SHOP_MENU, InventoryType.MENU),
+			CommunicationManager.format("&2&l" + LanguageManager.names.bootsShop),
+			true,
+			buttons
 		);
 	}
 
@@ -1565,10 +1730,10 @@ public class Inventories {
 		buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.UNIQUE, ShopFood.ShopFoodType.TOTEM)));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.CONSUMABLE_SHOP_MENU, InventoryType.MENU),
-				CommunicationManager.format("&2&l" + LanguageManager.names.consumableShop),
-				true,
-				buttons
+			new InventoryMeta(InventoryID.CONSUMABLE_SHOP_MENU, InventoryType.MENU),
+			CommunicationManager.format("&2&l" + LanguageManager.names.consumableShop),
+			true,
+			buttons
 		);
 	}
 
@@ -1581,14 +1746,16 @@ public class Inventories {
 		player.getPets().forEach(pet -> buttons.add(pet.createDisplayButton()));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-				new InventoryMeta(InventoryID.PET_SHOP_MENU, InventoryType.MENU, arena,
-						(9 - player.getPets().size()) / 2),
-				CommunicationManager.format("&2&l" + LanguageManager.names.petShop,
-						Integer.toString(player.getRemainingPetSlots()), Integer.toString(player.getPetSlots())),
-				true,
-				true,
-				LanguageManager.names.pet,
-				buttons
+			new InventoryMeta(InventoryID.PET_SHOP_MENU, InventoryType.MENU, arena,
+				(9 - player.getPets().size()) / 2
+			),
+			CommunicationManager.format("&2&l" + LanguageManager.names.petShop,
+				Integer.toString(player.getRemainingPetSlots()), Integer.toString(player.getPetSlots())
+			),
+			true,
+			true,
+			LanguageManager.names.pet,
+			buttons
 		);
 	}
 
@@ -1606,10 +1773,10 @@ public class Inventories {
 			buttons.add(arena.modifyPrice(VDEgg.create(1, VDEgg.EggType.HORSE)));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.NEW_PET_MENU, InventoryType.MENU),
-				CommunicationManager.format("&a&l" + LanguageManager.names.newPet),
-				true,
-				buttons
+			new InventoryMeta(InventoryID.NEW_PET_MENU, InventoryType.MENU),
+			CommunicationManager.format("&a&l" + LanguageManager.names.newPet),
+			true,
+			buttons
 		);
 	}
 
@@ -1622,26 +1789,28 @@ public class Inventories {
 		buttons.add(arena.modifyPrice(player.getPets().get(petIndex).createUpgradeButton()));
 
 		// Remove
-		buttons.add(ItemFactory.createItem(Material.LAVA_BUCKET,
-				CommunicationManager.format("&4&l" + LanguageManager.messages.removePet)));
+		buttons.add(ItemFactory.createItem(
+			Material.LAVA_BUCKET,
+			CommunicationManager.format("&4&l" + LanguageManager.messages.removePet)
+		));
 
 		return InventoryFactory.createFixedSizeInventory(
-				new InventoryMeta(InventoryID.PET_MANAGER_MENU, InventoryType.MENU, arena, petIndex),
-				player.getPets().get(petIndex).getName(),
-				1,
-				true,
-				buttons
+			new InventoryMeta(InventoryID.PET_MANAGER_MENU, InventoryType.MENU, arena, petIndex),
+			player.getPets().get(petIndex).getName(),
+			1,
+			true,
+			buttons
 		);
 	}
 
 	// Display pet removal confirmation
 	public static Inventory createPetConfirmMenu(Arena arena, UUID playerID, int petIndex) {
 		return InventoryFactory.createConfirmationMenu(
-				InventoryID.PET_CONFIRM_MENU,
-				playerID,
-				arena,
-				petIndex,
-				CommunicationManager.format("&4&l" + LanguageManager.messages.removePet + "?")
+			InventoryID.PET_CONFIRM_MENU,
+			playerID,
+			arena,
+			petIndex,
+			CommunicationManager.format("&4&l" + LanguageManager.messages.removePet + "?")
 		);
 	}
 
@@ -1655,13 +1824,14 @@ public class Inventories {
 			buttons.add(arena.getGolems().get(i).createDisplayButton());
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-				new InventoryMeta(InventoryID.GOLEM_SHOP_MENU, InventoryType.MENU, arena,
-						(9 - arena.getGolems().size()) / 2),
-				CommunicationManager.format("&2&l" + LanguageManager.names.golemShop),
-				true,
-				true,
-				LanguageManager.names.golem,
-				buttons
+			new InventoryMeta(InventoryID.GOLEM_SHOP_MENU, InventoryType.MENU, arena,
+				(9 - arena.getGolems().size()) / 2
+			),
+			CommunicationManager.format("&2&l" + LanguageManager.names.golemShop),
+			true,
+			true,
+			LanguageManager.names.golem,
+			buttons
 		);
 	}
 
@@ -1675,10 +1845,10 @@ public class Inventories {
 		buttons.add(arena.modifyPrice(VDEgg.create(1, VDEgg.EggType.SNOW_GOLEM)));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.NEW_GOLEM_MENU, InventoryType.MENU, arena),
-				CommunicationManager.format("&a&l" + LanguageManager.names.newGolem),
-				true,
-				buttons
+			new InventoryMeta(InventoryID.NEW_GOLEM_MENU, InventoryType.MENU, arena),
+			CommunicationManager.format("&a&l" + LanguageManager.names.newGolem),
+			true,
+			buttons
 		);
 	}
 
@@ -1691,26 +1861,28 @@ public class Inventories {
 		buttons.add(arena.modifyPrice(arena.getGolems().get(golemIndex).createUpgradeButton()));
 
 		// Remove
-		buttons.add(ItemFactory.createItem(Material.LAVA_BUCKET,
-				CommunicationManager.format("&4&l" + LanguageManager.messages.removeGolem)));
+		buttons.add(ItemFactory.createItem(
+			Material.LAVA_BUCKET,
+			CommunicationManager.format("&4&l" + LanguageManager.messages.removeGolem)
+		));
 
 		return InventoryFactory.createFixedSizeInventory(
-				new InventoryMeta(InventoryID.GOLEM_MANAGER_MENU, InventoryType.MENU, arena, golemIndex),
-				arena.getGolems().get(golemIndex).getName(),
-				1,
-				true,
-				buttons
+			new InventoryMeta(InventoryID.GOLEM_MANAGER_MENU, InventoryType.MENU, arena, golemIndex),
+			arena.getGolems().get(golemIndex).getName(),
+			1,
+			true,
+			buttons
 		);
 	}
 
 	// Display golem removal confirmation
 	public static Inventory createGolemConfirmMenu(Arena arena, int golemIndex) {
 		return InventoryFactory.createConfirmationMenu(
-				InventoryID.GOLEM_CONFIRM_MENU,
-				null,
-				arena,
-				golemIndex,
-				CommunicationManager.format("&4&l" + LanguageManager.messages.removeGolem + "?")
+			InventoryID.GOLEM_CONFIRM_MENU,
+			null,
+			arena,
+			golemIndex,
+			CommunicationManager.format("&4&l" + LanguageManager.messages.removeGolem + "?")
 		);
 	}
 
@@ -1742,18 +1914,21 @@ public class Inventories {
 				}
 				if (ability == null)
 					buttons.add(InventoryButtons.noUpgrade());
-				else if (player.isBoosted() && PlayerManager.hasAchievement(player.getID(),
-						Achievement.allMaxedAbility().getID()))
+				else if (player.isBoosted() && PlayerManager.hasAchievement(
+					player.getID(),
+					Achievement.allMaxedAbility().getID()
+				))
 					buttons.add(VDAbility.modifyCooldown(arena.modifyPrice(ability), .9));
 				else buttons.add(arena.modifyPrice(ability));
 			}
-		} else buttons.add(InventoryButtons.noUpgrade());
+		}
+		else buttons.add(InventoryButtons.noUpgrade());
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.ABILITY_UPGRADE_SHOP_MENU, InventoryType.MENU),
-				CommunicationManager.format("&2&l" + LanguageManager.names.abilityUpgradeShop),
-				true,
-				buttons
+			new InventoryMeta(InventoryID.ABILITY_UPGRADE_SHOP_MENU, InventoryType.MENU),
+			CommunicationManager.format("&2&l" + LanguageManager.names.abilityUpgradeShop),
+			true,
+			buttons
 		);
 	}
 
@@ -1761,64 +1936,80 @@ public class Inventories {
 	public static Inventory createPlayerStatsMenu(UUID ownerID, UUID requesterID) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(
-				new InventoryMeta(InventoryID.PLAYER_STATS_MENU, InventoryType.MENU, ownerID),
-				18,
-				CommunicationManager.format("&2&l" + String.format(LanguageManager.messages.playerStatistics,
-						Bukkit.getOfflinePlayer(ownerID).getName()))
+			new InventoryMeta(InventoryID.PLAYER_STATS_MENU, InventoryType.MENU, ownerID),
+			18,
+			CommunicationManager.format("&2&l" + String.format(
+				LanguageManager.messages.playerStatistics,
+				Bukkit.getOfflinePlayer(ownerID).getName()
+			))
 		);
 
 		// Total kills
-		inv.setItem(0, ItemFactory.createItem(Material.DRAGON_HEAD,
-				CommunicationManager.format("&4&l" + LanguageManager.playerStats.totalKills.name +
-						": &4" + PlayerManager.getTotalKills(ownerID)),
-				CommunicationManager.format("&7" + LanguageManager.playerStats.totalKills.description)));
+		inv.setItem(0, ItemFactory.createItem(
+			Material.DRAGON_HEAD,
+			CommunicationManager.format("&4&l" + LanguageManager.playerStats.totalKills.name +
+				": &4" + PlayerManager.getTotalKills(ownerID)),
+			CommunicationManager.format("&7" + LanguageManager.playerStats.totalKills.description)
+		));
 
 		// Top kills
-		inv.setItem(10, ItemFactory.createItem(Material.ZOMBIE_HEAD,
-				CommunicationManager.format("&c&l" + LanguageManager.playerStats.topKills.name +
-						": &c" + PlayerManager.getTopKills(ownerID)),
-				CommunicationManager.format("&7" + LanguageManager.playerStats.topKills.description)));
+		inv.setItem(10, ItemFactory.createItem(
+			Material.ZOMBIE_HEAD,
+			CommunicationManager.format("&c&l" + LanguageManager.playerStats.topKills.name +
+				": &c" + PlayerManager.getTopKills(ownerID)),
+			CommunicationManager.format("&7" + LanguageManager.playerStats.topKills.description)
+		));
 
 		// Total gems
-		inv.setItem(2, ItemFactory.createItem(Material.EMERALD_BLOCK,
-				CommunicationManager.format("&2&l" + LanguageManager.playerStats.totalGems.name +
-						": &2" + PlayerManager.getTotalGems(ownerID)),
-				CommunicationManager.format("&7" + LanguageManager.playerStats.totalGems.description)));
+		inv.setItem(2, ItemFactory.createItem(
+			Material.EMERALD_BLOCK,
+			CommunicationManager.format("&2&l" + LanguageManager.playerStats.totalGems.name +
+				": &2" + PlayerManager.getTotalGems(ownerID)),
+			CommunicationManager.format("&7" + LanguageManager.playerStats.totalGems.description)
+		));
 
 		// Top balance
-		inv.setItem(12, ItemFactory.createItem(Material.EMERALD,
-				CommunicationManager.format("&a&l" + LanguageManager.playerStats.topBalance.name +
-						": &a" + PlayerManager.getTopBalance(ownerID)),
-				CommunicationManager.format("&7" + LanguageManager.playerStats.topBalance.description)));
+		inv.setItem(12, ItemFactory.createItem(
+			Material.EMERALD,
+			CommunicationManager.format("&a&l" + LanguageManager.playerStats.topBalance.name +
+				": &a" + PlayerManager.getTopBalance(ownerID)),
+			CommunicationManager.format("&7" + LanguageManager.playerStats.topBalance.description)
+		));
 
 		// Top wave
 		inv.setItem(4, ItemFactory.createItem(Material.GOLDEN_SWORD,
-				CommunicationManager.format("&3&l" + LanguageManager.playerStats.topWave.name +
-						": &3" + PlayerManager.getTopWave(ownerID)),
-				ItemFactory.BUTTON_FLAGS, null, CommunicationManager.format("&7" +
-						LanguageManager.playerStats.topWave.description)));
+			CommunicationManager.format("&3&l" + LanguageManager.playerStats.topWave.name +
+				": &3" + PlayerManager.getTopWave(ownerID)),
+			ItemFactory.BUTTON_FLAGS, null, CommunicationManager.format("&7" +
+				LanguageManager.playerStats.topWave.description)
+		));
 
 		// Achievements
 		inv.setItem(14, ItemFactory.createItem(Material.GOLDEN_HELMET,
-				CommunicationManager.format("&6&l" + LanguageManager.messages.achievements),
-				ItemFactory.BUTTON_FLAGS, null));
+			CommunicationManager.format("&6&l" + LanguageManager.messages.achievements),
+			ItemFactory.BUTTON_FLAGS, null
+		));
 
 		// Kits
 		inv.setItem(6, ItemFactory.createItem(Material.ENDER_CHEST, CommunicationManager.format("&9&l" +
-				LanguageManager.messages.kits)));
+			LanguageManager.messages.kits)));
 
 		// Reset stats
 		if (ownerID.equals(requesterID))
 			inv.setItem(16, ItemFactory.createItem(
-					Material.LAVA_BUCKET,
-					CommunicationManager.format("&d&l" + LanguageManager.messages.reset),
-					CommunicationManager.format("&5&l" + LanguageManager.messages.resetWarning)
+				Material.LAVA_BUCKET,
+				CommunicationManager.format("&d&l" + LanguageManager.messages.reset),
+				CommunicationManager.format("&5&l" + LanguageManager.messages.resetWarning)
 			));
 
 		// Crystal balance
-		inv.setItem(8, ItemFactory.createItem(Material.DIAMOND,
-				CommunicationManager.format("&b&l" + String.format(LanguageManager.messages.crystalBalance,
-						LanguageManager.names.crystal) + ": &b" + PlayerManager.getCrystalBalance(ownerID))));
+		inv.setItem(8, ItemFactory.createItem(
+			Material.DIAMOND,
+			CommunicationManager.format("&b&l" + String.format(
+				LanguageManager.messages.crystalBalance,
+				LanguageManager.names.crystal
+			) + ": &b" + PlayerManager.getCrystalBalance(ownerID))
+		));
 
 		return inv;
 	}
@@ -1827,87 +2018,136 @@ public class Inventories {
 	public static Inventory createPlayerKitsMenu(UUID ownerID, UUID requesterID) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(
-				new InventoryMeta(InventoryID.PLAYER_KITS_MENU, InventoryType.MENU, ownerID),
-				54,
-				CommunicationManager.format("&9&l" + String.format(LanguageManager.messages.playerKits,
-						Bukkit.getOfflinePlayer(ownerID).getName()))
+			new InventoryMeta(InventoryID.PLAYER_KITS_MENU, InventoryType.MENU, ownerID),
+			54,
+			CommunicationManager.format("&9&l" + String.format(
+				LanguageManager.messages.playerKits,
+				Bukkit.getOfflinePlayer(ownerID).getName()
+			))
 		);
 
 		// Gift kits
 		for (int i = 0; i < 9; i++)
-			inv.setItem(i, ItemFactory.createItem(Material.LIME_STAINED_GLASS_PANE,
-					CommunicationManager.format("&a&l" + LanguageManager.names.giftKits),
-					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.giftKitsDescription, Utils.LORE_CHAR_LIMIT)));
+			inv.setItem(i, ItemFactory.createItem(
+				Material.LIME_STAINED_GLASS_PANE,
+				CommunicationManager.format("&a&l" + LanguageManager.names.giftKits),
+				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+					LanguageManager.messages.giftKitsDescription, Constants.LORE_CHAR_LIMIT
+				)
+			));
 
 		inv.setItem(9, Kit.orc().getButton(1, true));
 		inv.setItem(10, Kit.farmer().getButton(1, true));
 		inv.setItem(11, Kit.soldier().getButton(PlayerManager.hasSingleTierKit(ownerID, Kit.soldier().getID()) ?
-				1 : 0, true));
+			1 : 0, true));
 		inv.setItem(12, Kit.alchemist().getButton(PlayerManager.hasSingleTierKit(ownerID, Kit.alchemist().getID()) ?
-				1 : 0, true));
-		inv.setItem(13, Kit.tailor().getButton(PlayerManager.hasSingleTierKit(ownerID, Kit.tailor().getID()) ? 1 : 0,
-				true));
-		inv.setItem(14, Kit.trader().getButton(PlayerManager.hasSingleTierKit(ownerID, Kit.trader().getID()) ? 1 : 0,
-				true));
-		inv.setItem(15, Kit.summoner().getButton(PlayerManager.getMultiTierKitLevel(ownerID, Kit.summoner().getID()),
-				true));
-		inv.setItem(16, Kit.reaper().getButton(PlayerManager.getMultiTierKitLevel(ownerID, Kit.reaper().getID()),
-				true));
+			1 : 0, true));
+		inv.setItem(13, Kit.tailor().getButton(
+			PlayerManager.hasSingleTierKit(ownerID, Kit.tailor().getID()) ? 1 : 0,
+			true
+		));
+		inv.setItem(14, Kit.trader().getButton(
+			PlayerManager.hasSingleTierKit(ownerID, Kit.trader().getID()) ? 1 : 0,
+			true
+		));
+		inv.setItem(15, Kit.summoner().getButton(
+			PlayerManager.getMultiTierKitLevel(ownerID, Kit.summoner().getID()),
+			true
+		));
+		inv.setItem(16, Kit.reaper().getButton(
+			PlayerManager.getMultiTierKitLevel(ownerID, Kit.reaper().getID()),
+			true
+		));
 		inv.setItem(17, Kit.phantom().getButton(PlayerManager.hasSingleTierKit(ownerID, Kit.phantom().getID()) ?
-				1 : 0, true));
+			1 : 0, true));
 
 		// Ability kits
 		for (int i = 18; i < 27; i++)
-			inv.setItem(i, ItemFactory.createItem(Material.MAGENTA_STAINED_GLASS_PANE,
-					CommunicationManager.format("&d&l" + LanguageManager.names.abilityKits),
-					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.abilityKitsDescription, Utils.LORE_CHAR_LIMIT)));
+			inv.setItem(i, ItemFactory.createItem(
+				Material.MAGENTA_STAINED_GLASS_PANE,
+				CommunicationManager.format("&d&l" + LanguageManager.names.abilityKits),
+				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+					LanguageManager.messages.abilityKitsDescription, Constants.LORE_CHAR_LIMIT
+				)
+			));
 
-		inv.setItem(27, Kit.mage().getButton(PlayerManager.getMultiTierKitLevel(ownerID, Kit.mage().getID()),
-				true));
-		inv.setItem(28, Kit.ninja().getButton(PlayerManager.getMultiTierKitLevel(ownerID, Kit.ninja().getID()),
-				true));
-		inv.setItem(29, Kit.templar().getButton(PlayerManager.getMultiTierKitLevel(ownerID, Kit.templar().getID()),
-				true));
-		inv.setItem(30, Kit.warrior().getButton(PlayerManager.getMultiTierKitLevel(ownerID, Kit.warrior().getID()),
-				true));
-		inv.setItem(31, Kit.knight().getButton(PlayerManager.getMultiTierKitLevel(ownerID, Kit.knight().getID()),
-				true));
-		inv.setItem(32, Kit.priest().getButton(PlayerManager.getMultiTierKitLevel(ownerID, Kit.priest().getID()),
-				true));
-		inv.setItem(33, Kit.siren().getButton(PlayerManager.getMultiTierKitLevel(ownerID, Kit.siren().getID()),
-				true));
-		inv.setItem(34, Kit.monk().getButton(PlayerManager.getMultiTierKitLevel(ownerID, Kit.monk().getID()),
-				true));
-		inv.setItem(35, Kit.messenger().getButton(PlayerManager.getMultiTierKitLevel(ownerID,
-				Kit.messenger().getID()), true));
+		inv.setItem(27, Kit.mage().getButton(
+			PlayerManager.getMultiTierKitLevel(ownerID, Kit.mage().getID()),
+			true
+		));
+		inv.setItem(28, Kit.ninja().getButton(
+			PlayerManager.getMultiTierKitLevel(ownerID, Kit.ninja().getID()),
+			true
+		));
+		inv.setItem(29, Kit.templar().getButton(
+			PlayerManager.getMultiTierKitLevel(ownerID, Kit.templar().getID()),
+			true
+		));
+		inv.setItem(30, Kit.warrior().getButton(
+			PlayerManager.getMultiTierKitLevel(ownerID, Kit.warrior().getID()),
+			true
+		));
+		inv.setItem(31, Kit.knight().getButton(
+			PlayerManager.getMultiTierKitLevel(ownerID, Kit.knight().getID()),
+			true
+		));
+		inv.setItem(32, Kit.priest().getButton(
+			PlayerManager.getMultiTierKitLevel(ownerID, Kit.priest().getID()),
+			true
+		));
+		inv.setItem(33, Kit.siren().getButton(
+			PlayerManager.getMultiTierKitLevel(ownerID, Kit.siren().getID()),
+			true
+		));
+		inv.setItem(34, Kit.monk().getButton(
+			PlayerManager.getMultiTierKitLevel(ownerID, Kit.monk().getID()),
+			true
+		));
+		inv.setItem(35, Kit.messenger().getButton(PlayerManager.getMultiTierKitLevel(
+			ownerID,
+			Kit.messenger().getID()
+		), true));
 
 		// Effect kits
 		for (int i = 36; i < 45; i++)
-			inv.setItem(i, ItemFactory.createItem(Material.YELLOW_STAINED_GLASS_PANE,
-					CommunicationManager.format("&e&l" + LanguageManager.names.effectKits),
-					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.effectKitsDescription, Utils.LORE_CHAR_LIMIT)));
+			inv.setItem(i, ItemFactory.createItem(
+				Material.YELLOW_STAINED_GLASS_PANE,
+				CommunicationManager.format("&e&l" + LanguageManager.names.effectKits),
+				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+					LanguageManager.messages.effectKitsDescription, Constants.LORE_CHAR_LIMIT
+				)
+			));
 
-		inv.setItem(45, Kit.blacksmith().getButton(PlayerManager.hasSingleTierKit(ownerID,
-				Kit.blacksmith().getID()) ? 1 : 0, true));
-		inv.setItem(46, Kit.witch().getButton(PlayerManager.hasSingleTierKit(ownerID, Kit.witch().getID()) ? 1 : 0,
-				true));
+		inv.setItem(45, Kit.blacksmith().getButton(PlayerManager.hasSingleTierKit(
+			ownerID,
+			Kit.blacksmith().getID()
+		) ? 1 : 0, true));
+		inv.setItem(46, Kit.witch().getButton(
+			PlayerManager.hasSingleTierKit(ownerID, Kit.witch().getID()) ? 1 : 0,
+			true
+		));
 		inv.setItem(47, Kit.merchant().getButton(PlayerManager.hasSingleTierKit(ownerID, Kit.merchant().getID()) ?
-				1 : 0, true));
+			1 : 0, true));
 		inv.setItem(48, Kit.vampire().getButton(PlayerManager.hasSingleTierKit(ownerID, Kit.vampire().getID()) ?
-				1 : 0, true));
-		inv.setItem(49, Kit.giant().getButton(PlayerManager.getMultiTierKitLevel(ownerID, Kit.giant().getID()),
-				true));
-		inv.setItem(50, Kit.trainer().getButton(PlayerManager.getMultiTierKitLevel(ownerID, Kit.trainer().getID()),
-				true));
+			1 : 0, true));
+		inv.setItem(49, Kit.giant().getButton(
+			PlayerManager.getMultiTierKitLevel(ownerID, Kit.giant().getID()),
+			true
+		));
+		inv.setItem(50, Kit.trainer().getButton(
+			PlayerManager.getMultiTierKitLevel(ownerID, Kit.trainer().getID()),
+			true
+		));
 
 		// Crystal balance
 		if (ownerID.equals(requesterID))
-			inv.setItem(52, ItemFactory.createItem(Material.DIAMOND,
-					CommunicationManager.format("&b&l" + String.format(LanguageManager.messages.crystalBalance,
-							LanguageManager.names.crystal) + ": &b" + PlayerManager.getCrystalBalance(ownerID))));
+			inv.setItem(52, ItemFactory.createItem(
+				Material.DIAMOND,
+				CommunicationManager.format("&b&l" + String.format(
+					LanguageManager.messages.crystalBalance,
+					LanguageManager.names.crystal
+				) + ": &b" + PlayerManager.getCrystalBalance(ownerID))
+			));
 
 		// Option to exit
 		inv.setItem(53, InventoryButtons.exit());
@@ -1921,17 +2161,20 @@ public class Inventories {
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(
-				new InventoryMeta(InventoryID.SELECT_KITS_MENU, InventoryType.MENU, id, arena),
-				54,
-				CommunicationManager.format("&9&l" + arena.getName() + " " + LanguageManager.messages.kits)
+			new InventoryMeta(InventoryID.SELECT_KITS_MENU, InventoryType.MENU, id, arena),
+			54,
+			CommunicationManager.format("&9&l" + arena.getName() + " " + LanguageManager.messages.kits)
 		);
 
 		// Gift kits
 		for (int i = 0; i < 9; i++)
-			inv.setItem(i, ItemFactory.createItem(Material.LIME_STAINED_GLASS_PANE,
-					CommunicationManager.format("&a&l" + LanguageManager.names.giftKits),
-					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.giftKitsDescription, Utils.LORE_CHAR_LIMIT)));
+			inv.setItem(i, ItemFactory.createItem(
+				Material.LIME_STAINED_GLASS_PANE,
+				CommunicationManager.format("&a&l" + LanguageManager.names.giftKits),
+				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+					LanguageManager.messages.giftKitsDescription, Constants.LORE_CHAR_LIMIT
+				)
+			));
 
 		List<String> bannedKitIDs = arena.getBannedKitIDs();
 		if (!bannedKitIDs.contains(Kit.orc().getID()))
@@ -1940,86 +2183,126 @@ public class Inventories {
 			inv.setItem(10, Kit.farmer().getButton(1, false));
 		if (!bannedKitIDs.contains(Kit.soldier().getID()))
 			inv.setItem(11, Kit.soldier().getButton(PlayerManager.hasSingleTierKit(id, Kit.soldier().getID()) ?
-					1 : 0, false));
+				1 : 0, false));
 		if (!bannedKitIDs.contains(Kit.alchemist().getID()))
 			inv.setItem(12, Kit.alchemist().getButton(PlayerManager.hasSingleTierKit(id, Kit.alchemist().getID()) ?
-					1 : 0, false));
+				1 : 0, false));
 		if (!bannedKitIDs.contains(Kit.tailor().getID()))
-			inv.setItem(13, Kit.tailor().getButton(PlayerManager.hasSingleTierKit(id, Kit.tailor().getID()) ? 1 : 0,
-					false));
+			inv.setItem(13, Kit.tailor().getButton(
+				PlayerManager.hasSingleTierKit(id, Kit.tailor().getID()) ? 1 : 0,
+				false
+			));
 		if (!bannedKitIDs.contains(Kit.trader().getID()))
-			inv.setItem(14, Kit.trader().getButton(PlayerManager.hasSingleTierKit(id, Kit.trader().getID()) ? 1 : 0,
-					false));
+			inv.setItem(14, Kit.trader().getButton(
+				PlayerManager.hasSingleTierKit(id, Kit.trader().getID()) ? 1 : 0,
+				false
+			));
 		if (!bannedKitIDs.contains(Kit.summoner().getID()))
-			inv.setItem(15, Kit.summoner().getButton(PlayerManager.getMultiTierKitLevel(id, Kit.summoner().getID()),
-					false));
+			inv.setItem(15, Kit.summoner().getButton(
+				PlayerManager.getMultiTierKitLevel(id, Kit.summoner().getID()),
+				false
+			));
 		if (!bannedKitIDs.contains(Kit.reaper().getID()))
-			inv.setItem(16, Kit.reaper().getButton(PlayerManager.getMultiTierKitLevel(id, Kit.reaper().getID()),
-					false));
+			inv.setItem(16, Kit.reaper().getButton(
+				PlayerManager.getMultiTierKitLevel(id, Kit.reaper().getID()),
+				false
+			));
 		if (!bannedKitIDs.contains(Kit.phantom().getID()))
 			inv.setItem(17, Kit.phantom().getButton(PlayerManager.hasSingleTierKit(id, Kit.phantom().getID()) ?
-					1 : 0, false));
+				1 : 0, false));
 
 		// Ability kits
 		for (int i = 18; i < 27; i++)
-			inv.setItem(i, ItemFactory.createItem(Material.MAGENTA_STAINED_GLASS_PANE,
-					CommunicationManager.format("&d&l" + LanguageManager.names.abilityKits),
-					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.abilityKitsDescription, Utils.LORE_CHAR_LIMIT)));
+			inv.setItem(i, ItemFactory.createItem(
+				Material.MAGENTA_STAINED_GLASS_PANE,
+				CommunicationManager.format("&d&l" + LanguageManager.names.abilityKits),
+				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+					LanguageManager.messages.abilityKitsDescription, Constants.LORE_CHAR_LIMIT
+				)
+			));
 
 		if (!bannedKitIDs.contains(Kit.mage().getID()))
-			inv.setItem(27, Kit.mage().getButton(PlayerManager.getMultiTierKitLevel(id, Kit.mage().getID()),
-					false));
+			inv.setItem(27, Kit.mage().getButton(
+				PlayerManager.getMultiTierKitLevel(id, Kit.mage().getID()),
+				false
+			));
 		if (!bannedKitIDs.contains(Kit.ninja().getID()))
-			inv.setItem(28, Kit.ninja().getButton(PlayerManager.getMultiTierKitLevel(id, Kit.ninja().getID()),
-					false));
+			inv.setItem(28, Kit.ninja().getButton(
+				PlayerManager.getMultiTierKitLevel(id, Kit.ninja().getID()),
+				false
+			));
 		if (!bannedKitIDs.contains(Kit.templar().getID()))
-			inv.setItem(29, Kit.templar().getButton(PlayerManager.getMultiTierKitLevel(id, Kit.templar().getID()),
-					false));
+			inv.setItem(29, Kit.templar().getButton(
+				PlayerManager.getMultiTierKitLevel(id, Kit.templar().getID()),
+				false
+			));
 		if (!bannedKitIDs.contains(Kit.warrior().getID()))
-			inv.setItem(30, Kit.warrior().getButton(PlayerManager.getMultiTierKitLevel(id, Kit.warrior().getID()),
-					false));
+			inv.setItem(30, Kit.warrior().getButton(
+				PlayerManager.getMultiTierKitLevel(id, Kit.warrior().getID()),
+				false
+			));
 		if (!bannedKitIDs.contains(Kit.knight().getID()))
-			inv.setItem(31, Kit.knight().getButton(PlayerManager.getMultiTierKitLevel(id, Kit.knight().getID()),
-					false));
+			inv.setItem(31, Kit.knight().getButton(
+				PlayerManager.getMultiTierKitLevel(id, Kit.knight().getID()),
+				false
+			));
 		if (!bannedKitIDs.contains(Kit.priest().getID()))
-			inv.setItem(32, Kit.priest().getButton(PlayerManager.getMultiTierKitLevel(id, Kit.priest().getID()),
-					false));
+			inv.setItem(32, Kit.priest().getButton(
+				PlayerManager.getMultiTierKitLevel(id, Kit.priest().getID()),
+				false
+			));
 		if (!bannedKitIDs.contains(Kit.siren().getID()))
-			inv.setItem(33, Kit.siren().getButton(PlayerManager.getMultiTierKitLevel(id, Kit.siren().getID()),
-					false));
+			inv.setItem(33, Kit.siren().getButton(
+				PlayerManager.getMultiTierKitLevel(id, Kit.siren().getID()),
+				false
+			));
 		if (!bannedKitIDs.contains(Kit.monk().getID()))
-			inv.setItem(34, Kit.monk().getButton(PlayerManager.getMultiTierKitLevel(id, Kit.monk().getID()),
-					false));
+			inv.setItem(34, Kit.monk().getButton(
+				PlayerManager.getMultiTierKitLevel(id, Kit.monk().getID()),
+				false
+			));
 		if (!bannedKitIDs.contains(Kit.messenger().getID()))
-			inv.setItem(35, Kit.messenger().getButton(PlayerManager.getMultiTierKitLevel(id,
-					Kit.messenger().getID()), false));
+			inv.setItem(35, Kit.messenger().getButton(PlayerManager.getMultiTierKitLevel(
+				id,
+				Kit.messenger().getID()
+			), false));
 
 		// Effect kits
 		for (int i = 36; i < 45; i++)
-			inv.setItem(i, ItemFactory.createItem(Material.YELLOW_STAINED_GLASS_PANE,
-					CommunicationManager.format("&e&l" + LanguageManager.names.effectKits),
-					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-							LanguageManager.messages.effectKitsDescription, Utils.LORE_CHAR_LIMIT)));
+			inv.setItem(i, ItemFactory.createItem(
+				Material.YELLOW_STAINED_GLASS_PANE,
+				CommunicationManager.format("&e&l" + LanguageManager.names.effectKits),
+				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+					LanguageManager.messages.effectKitsDescription, Constants.LORE_CHAR_LIMIT
+				)
+			));
 
 		if (!bannedKitIDs.contains(Kit.blacksmith().getID()))
-			inv.setItem(45, Kit.blacksmith().getButton(PlayerManager.hasSingleTierKit(id,
-					Kit.blacksmith().getID()) ? 1 : 0, false));
+			inv.setItem(45, Kit.blacksmith().getButton(PlayerManager.hasSingleTierKit(
+				id,
+				Kit.blacksmith().getID()
+			) ? 1 : 0, false));
 		if (!bannedKitIDs.contains(Kit.witch().getID()))
-			inv.setItem(46, Kit.witch().getButton(PlayerManager.hasSingleTierKit(id, Kit.witch().getID()) ? 1 : 0,
-					false));
+			inv.setItem(46, Kit.witch().getButton(
+				PlayerManager.hasSingleTierKit(id, Kit.witch().getID()) ? 1 : 0,
+				false
+			));
 		if (!bannedKitIDs.contains(Kit.merchant().getID()))
 			inv.setItem(47, Kit.merchant().getButton(PlayerManager.hasSingleTierKit(id, Kit.merchant().getID()) ?
-					1 : 0, false));
+				1 : 0, false));
 		if (!bannedKitIDs.contains(Kit.vampire().getID()))
 			inv.setItem(48, Kit.vampire().getButton(PlayerManager.hasSingleTierKit(id, Kit.vampire().getID()) ?
-					1 : 0, false));
+				1 : 0, false));
 		if (!bannedKitIDs.contains(Kit.giant().getID()))
-			inv.setItem(49, Kit.giant().getButton(PlayerManager.getMultiTierKitLevel(id, Kit.giant().getID()),
-					false));
+			inv.setItem(49, Kit.giant().getButton(
+				PlayerManager.getMultiTierKitLevel(id, Kit.giant().getID()),
+				false
+			));
 		if (!bannedKitIDs.contains(Kit.trainer().getID()))
-			inv.setItem(50, Kit.trainer().getButton(PlayerManager.getMultiTierKitLevel(id, Kit.trainer().getID()),
-					false));
+			inv.setItem(50, Kit.trainer().getButton(
+				PlayerManager.getMultiTierKitLevel(id, Kit.trainer().getID()),
+				false
+			));
 
 		// Option for no kit
 		inv.setItem(52, Kit.none().getButton(0, true));
@@ -2034,444 +2317,805 @@ public class Inventories {
 	public static Inventory createPlayerAchievementsMenu(UUID id) {
 		List<ItemStack> buttons = new ArrayList<>();
 
-		buttons.add(Achievement.topBalance1().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topBalance1().getID())));
-		buttons.add(Achievement.topBalance2().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topBalance2().getID())));
-		buttons.add(Achievement.topBalance3().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topBalance3().getID())));
-		buttons.add(Achievement.topBalance4().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topBalance4().getID())));
-		buttons.add(Achievement.topBalance5().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topBalance5().getID())));
-		buttons.add(Achievement.topBalance6().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topBalance6().getID())));
-		buttons.add(Achievement.topBalance7().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topBalance7().getID())));
-		buttons.add(Achievement.topBalance8().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topBalance8().getID())));
-		buttons.add(Achievement.topBalance9().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topBalance9().getID())));
+		buttons.add(Achievement.topBalance1().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topBalance1().getID()
+		)));
+		buttons.add(Achievement.topBalance2().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topBalance2().getID()
+		)));
+		buttons.add(Achievement.topBalance3().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topBalance3().getID()
+		)));
+		buttons.add(Achievement.topBalance4().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topBalance4().getID()
+		)));
+		buttons.add(Achievement.topBalance5().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topBalance5().getID()
+		)));
+		buttons.add(Achievement.topBalance6().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topBalance6().getID()
+		)));
+		buttons.add(Achievement.topBalance7().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topBalance7().getID()
+		)));
+		buttons.add(Achievement.topBalance8().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topBalance8().getID()
+		)));
+		buttons.add(Achievement.topBalance9().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topBalance9().getID()
+		)));
 
-		buttons.add(Achievement.topKills1().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topKills1().getID())));
-		buttons.add(Achievement.topKills2().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topKills2().getID())));
-		buttons.add(Achievement.topKills3().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topKills3().getID())));
-		buttons.add(Achievement.topKills4().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topKills4().getID())));
-		buttons.add(Achievement.topKills5().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topKills5().getID())));
-		buttons.add(Achievement.topKills6().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topKills6().getID())));
-		buttons.add(Achievement.topKills7().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topKills7().getID())));
-		buttons.add(Achievement.topKills8().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topKills8().getID())));
-		buttons.add(Achievement.topKills9().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topKills9().getID())));
+		buttons.add(Achievement.topKills1().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topKills1().getID()
+		)));
+		buttons.add(Achievement.topKills2().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topKills2().getID()
+		)));
+		buttons.add(Achievement.topKills3().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topKills3().getID()
+		)));
+		buttons.add(Achievement.topKills4().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topKills4().getID()
+		)));
+		buttons.add(Achievement.topKills5().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topKills5().getID()
+		)));
+		buttons.add(Achievement.topKills6().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topKills6().getID()
+		)));
+		buttons.add(Achievement.topKills7().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topKills7().getID()
+		)));
+		buttons.add(Achievement.topKills8().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topKills8().getID()
+		)));
+		buttons.add(Achievement.topKills9().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topKills9().getID()
+		)));
 
-		buttons.add(Achievement.topWave1().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topWave1().getID())));
-		buttons.add(Achievement.topWave2().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topWave2().getID())));
-		buttons.add(Achievement.topWave3().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topWave3().getID())));
-		buttons.add(Achievement.topWave4().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topWave4().getID())));
-		buttons.add(Achievement.topWave5().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topWave5().getID())));
-		buttons.add(Achievement.topWave6().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topWave6().getID())));
-		buttons.add(Achievement.topWave7().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topWave7().getID())));
-		buttons.add(Achievement.topWave8().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topWave8().getID())));
-		buttons.add(Achievement.topWave9().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topWave9().getID())));
+		buttons.add(Achievement.topWave1().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topWave1().getID()
+		)));
+		buttons.add(Achievement.topWave2().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topWave2().getID()
+		)));
+		buttons.add(Achievement.topWave3().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topWave3().getID()
+		)));
+		buttons.add(Achievement.topWave4().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topWave4().getID()
+		)));
+		buttons.add(Achievement.topWave5().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topWave5().getID()
+		)));
+		buttons.add(Achievement.topWave6().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topWave6().getID()
+		)));
+		buttons.add(Achievement.topWave7().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topWave7().getID()
+		)));
+		buttons.add(Achievement.topWave8().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topWave8().getID()
+		)));
+		buttons.add(Achievement.topWave9().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topWave9().getID()
+		)));
 
-		buttons.add(Achievement.totalGems1().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalGems1().getID())));
-		buttons.add(Achievement.totalGems2().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalGems2().getID())));
-		buttons.add(Achievement.totalGems3().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalGems3().getID())));
-		buttons.add(Achievement.totalGems4().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalGems4().getID())));
-		buttons.add(Achievement.totalGems5().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalGems5().getID())));
-		buttons.add(Achievement.totalGems6().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalGems6().getID())));
-		buttons.add(Achievement.totalGems7().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalGems7().getID())));
-		buttons.add(Achievement.totalGems8().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalGems8().getID())));
-		buttons.add(Achievement.totalGems9().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalGems9().getID())));
+		buttons.add(Achievement.totalGems1().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalGems1().getID()
+		)));
+		buttons.add(Achievement.totalGems2().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalGems2().getID()
+		)));
+		buttons.add(Achievement.totalGems3().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalGems3().getID()
+		)));
+		buttons.add(Achievement.totalGems4().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalGems4().getID()
+		)));
+		buttons.add(Achievement.totalGems5().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalGems5().getID()
+		)));
+		buttons.add(Achievement.totalGems6().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalGems6().getID()
+		)));
+		buttons.add(Achievement.totalGems7().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalGems7().getID()
+		)));
+		buttons.add(Achievement.totalGems8().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalGems8().getID()
+		)));
+		buttons.add(Achievement.totalGems9().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalGems9().getID()
+		)));
 
-		buttons.add(Achievement.totalKills1().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalKills1().getID())));
-		buttons.add(Achievement.totalKills2().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalKills2().getID())));
-		buttons.add(Achievement.totalKills3().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalKills3().getID())));
-		buttons.add(Achievement.totalKills4().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalKills4().getID())));
-		buttons.add(Achievement.totalKills5().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalKills5().getID())));
-		buttons.add(Achievement.totalKills6().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalKills6().getID())));
-		buttons.add(Achievement.totalKills7().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalKills7().getID())));
-		buttons.add(Achievement.totalKills8().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalKills8().getID())));
-		buttons.add(Achievement.totalKills9().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalKills9().getID())));
+		buttons.add(Achievement.totalKills1().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalKills1().getID()
+		)));
+		buttons.add(Achievement.totalKills2().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalKills2().getID()
+		)));
+		buttons.add(Achievement.totalKills3().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalKills3().getID()
+		)));
+		buttons.add(Achievement.totalKills4().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalKills4().getID()
+		)));
+		buttons.add(Achievement.totalKills5().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalKills5().getID()
+		)));
+		buttons.add(Achievement.totalKills6().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalKills6().getID()
+		)));
+		buttons.add(Achievement.totalKills7().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalKills7().getID()
+		)));
+		buttons.add(Achievement.totalKills8().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalKills8().getID()
+		)));
+		buttons.add(Achievement.totalKills9().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalKills9().getID()
+		)));
 
-		buttons.add(Achievement.amputeeAlone().getButton(PlayerManager.hasAchievement(id,
-				Achievement.amputeeAlone().getID())));
-		buttons.add(Achievement.blindAlone().getButton(PlayerManager.hasAchievement(id,
-				Achievement.blindAlone().getID())));
-		buttons.add(Achievement.clumsyAlone().getButton(PlayerManager.hasAchievement(id,
-				Achievement.clumsyAlone().getID())));
-		buttons.add(Achievement.dwarfAlone().getButton(PlayerManager.hasAchievement(id,
-				Achievement.dwarfAlone().getID())));
-		buttons.add(Achievement.explosiveAlone().getButton(PlayerManager.hasAchievement(id,
+		buttons.add(Achievement.amputeeAlone().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.amputeeAlone().getID()
+		)));
+		buttons.add(Achievement.blindAlone().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.blindAlone().getID()
+		)));
+		buttons.add(Achievement.clumsyAlone().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.clumsyAlone().getID()
+		)));
+		buttons.add(Achievement.dwarfAlone().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.dwarfAlone().getID()
+		)));
+		buttons.add(Achievement.explosiveAlone().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.explosiveAlone().getID())));
-		buttons.add(Achievement.featherweightAlone().getButton(PlayerManager.hasAchievement(id,
+			Achievement.explosiveAlone().getID()
+		)));
+		buttons.add(Achievement.featherweightAlone().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.featherweightAlone().getID())));
-		buttons.add(Achievement.nakedAlone().getButton(PlayerManager.hasAchievement(id,
-				Achievement.nakedAlone().getID())));
-		buttons.add(Achievement.pacifistAlone().getButton(PlayerManager.hasAchievement(id,
+			Achievement.featherweightAlone().getID()
+		)));
+		buttons.add(Achievement.nakedAlone().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.nakedAlone().getID()
+		)));
+		buttons.add(Achievement.pacifistAlone().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.pacifistAlone().getID())));
-		buttons.add(Achievement.uhcAlone().getButton(PlayerManager.hasAchievement(id,
-				Achievement.uhcAlone().getID())));
+			Achievement.pacifistAlone().getID()
+		)));
+		buttons.add(Achievement.uhcAlone().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.uhcAlone().getID()
+		)));
 
-		buttons.add(Achievement.amputeeBalance().getButton(PlayerManager.hasAchievement(id,
+		buttons.add(Achievement.amputeeBalance().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.amputeeBalance().getID())));
-		buttons.add(Achievement.blindBalance().getButton(PlayerManager.hasAchievement(id,
-				Achievement.blindBalance().getID())));
-		buttons.add(Achievement.clumsyBalance().getButton(PlayerManager.hasAchievement(id,
+			Achievement.amputeeBalance().getID()
+		)));
+		buttons.add(Achievement.blindBalance().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.blindBalance().getID()
+		)));
+		buttons.add(Achievement.clumsyBalance().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.clumsyBalance().getID())));
-		buttons.add(Achievement.dwarfBalance().getButton(PlayerManager.hasAchievement(id,
-				Achievement.dwarfBalance().getID())));
-		buttons.add(Achievement.explosiveBalance().getButton(PlayerManager.hasAchievement(id,
+			Achievement.clumsyBalance().getID()
+		)));
+		buttons.add(Achievement.dwarfBalance().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.dwarfBalance().getID()
+		)));
+		buttons.add(Achievement.explosiveBalance().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.explosiveBalance().getID())));
-		buttons.add(Achievement.featherweightBalance().getButton(PlayerManager.hasAchievement(id,
+			Achievement.explosiveBalance().getID()
+		)));
+		buttons.add(Achievement.featherweightBalance().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.featherweightBalance().getID())));
-		buttons.add(Achievement.nakedBalance().getButton(PlayerManager.hasAchievement(id,
-				Achievement.nakedBalance().getID())));
-		buttons.add(Achievement.pacifistBalance().getButton(PlayerManager.hasAchievement(id,
+			Achievement.featherweightBalance().getID()
+		)));
+		buttons.add(Achievement.nakedBalance().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.nakedBalance().getID()
+		)));
+		buttons.add(Achievement.pacifistBalance().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.pacifistBalance().getID())));
-		buttons.add(Achievement.uhcBalance().getButton(PlayerManager.hasAchievement(id,
-				Achievement.uhcBalance().getID())));
+			Achievement.pacifistBalance().getID()
+		)));
+		buttons.add(Achievement.uhcBalance().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.uhcBalance().getID()
+		)));
 
-		buttons.add(Achievement.amputeeKills().getButton(PlayerManager.hasAchievement(id,
-				Achievement.amputeeKills().getID())));
-		buttons.add(Achievement.blindKills().getButton(PlayerManager.hasAchievement(id,
-				Achievement.blindKills().getID())));
-		buttons.add(Achievement.clumsyKills().getButton(PlayerManager.hasAchievement(id,
-				Achievement.clumsyKills().getID())));
-		buttons.add(Achievement.dwarfKills().getButton(PlayerManager.hasAchievement(id,
-				Achievement.dwarfKills().getID())));
-		buttons.add(Achievement.explosiveKills().getButton(PlayerManager.hasAchievement(id,
+		buttons.add(Achievement.amputeeKills().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.amputeeKills().getID()
+		)));
+		buttons.add(Achievement.blindKills().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.blindKills().getID()
+		)));
+		buttons.add(Achievement.clumsyKills().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.clumsyKills().getID()
+		)));
+		buttons.add(Achievement.dwarfKills().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.dwarfKills().getID()
+		)));
+		buttons.add(Achievement.explosiveKills().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.explosiveKills().getID())));
-		buttons.add(Achievement.featherweightKills().getButton(PlayerManager.hasAchievement(id,
+			Achievement.explosiveKills().getID()
+		)));
+		buttons.add(Achievement.featherweightKills().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.featherweightKills().getID())));
-		buttons.add(Achievement.nakedKills().getButton(PlayerManager.hasAchievement(id,
-				Achievement.nakedKills().getID())));
-		buttons.add(Achievement.pacifistKills().getButton(PlayerManager.hasAchievement(id,
+			Achievement.featherweightKills().getID()
+		)));
+		buttons.add(Achievement.nakedKills().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.nakedKills().getID()
+		)));
+		buttons.add(Achievement.pacifistKills().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.pacifistKills().getID())));
-		buttons.add(Achievement.uhcKills().getButton(PlayerManager.hasAchievement(id,
-				Achievement.uhcKills().getID())));
+			Achievement.pacifistKills().getID()
+		)));
+		buttons.add(Achievement.uhcKills().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.uhcKills().getID()
+		)));
 
-		buttons.add(Achievement.amputeeWave().getButton(PlayerManager.hasAchievement(id,
-				Achievement.amputeeWave().getID())));
-		buttons.add(Achievement.blindWave().getButton(PlayerManager.hasAchievement(id,
-				Achievement.blindWave().getID())));
-		buttons.add(Achievement.clumsyWave().getButton(PlayerManager.hasAchievement(id,
-				Achievement.clumsyWave().getID())));
-		buttons.add(Achievement.dwarfWave().getButton(PlayerManager.hasAchievement(id,
-				Achievement.dwarfWave().getID())));
-		buttons.add(Achievement.explosiveWave().getButton(PlayerManager.hasAchievement(id,
+		buttons.add(Achievement.amputeeWave().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.amputeeWave().getID()
+		)));
+		buttons.add(Achievement.blindWave().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.blindWave().getID()
+		)));
+		buttons.add(Achievement.clumsyWave().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.clumsyWave().getID()
+		)));
+		buttons.add(Achievement.dwarfWave().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.dwarfWave().getID()
+		)));
+		buttons.add(Achievement.explosiveWave().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.explosiveWave().getID())));
-		buttons.add(Achievement.featherweightWave().getButton(PlayerManager.hasAchievement(id,
+			Achievement.explosiveWave().getID()
+		)));
+		buttons.add(Achievement.featherweightWave().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.featherweightWave().getID())));
-		buttons.add(Achievement.nakedWave().getButton(PlayerManager.hasAchievement(id,
-				Achievement.nakedWave().getID())));
-		buttons.add(Achievement.pacifistWave().getButton(PlayerManager.hasAchievement(id,
+			Achievement.featherweightWave().getID()
+		)));
+		buttons.add(Achievement.nakedWave().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.nakedWave().getID()
+		)));
+		buttons.add(Achievement.pacifistWave().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.pacifistWave().getID())));
-		buttons.add(Achievement.uhcWave().getButton(PlayerManager.hasAchievement(id,
-				Achievement.uhcWave().getID())));
+			Achievement.pacifistWave().getID()
+		)));
+		buttons.add(Achievement.uhcWave().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.uhcWave().getID()
+		)));
 
-		buttons.add(Achievement.alone().getButton(PlayerManager.hasAchievement(id,
-				Achievement.alone().getID())));
-		buttons.add(Achievement.pacifistUhc().getButton(PlayerManager.hasAchievement(id,
-				Achievement.pacifistUhc().getID())));
-		buttons.add(Achievement.allChallenges().getButton(PlayerManager.hasAchievement(id,
-				Achievement.allChallenges().getID())));
-		buttons.add(Achievement.allGift().getButton(PlayerManager.hasAchievement(id,
-				Achievement.allGift().getID())));
-		buttons.add(Achievement.allAbility().getButton(PlayerManager.hasAchievement(id,
-				Achievement.allAbility().getID())));
-		buttons.add(Achievement.maxedAbility().getButton(PlayerManager.hasAchievement(id,
-				Achievement.maxedAbility().getID())));
-		buttons.add(Achievement.allMaxedAbility().getButton(PlayerManager.hasAchievement(id,
-				Achievement.allMaxedAbility().getID())));
-		buttons.add(Achievement.allEffect().getButton(PlayerManager.hasAchievement(id,
-				Achievement.allEffect().getID())));
-		buttons.add(Achievement.allKits().getButton(PlayerManager.hasAchievement(id,
-				Achievement.allKits().getID())));
+		buttons.add(Achievement.alone().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.alone().getID()
+		)));
+		buttons.add(Achievement.pacifistUhc().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.pacifistUhc().getID()
+		)));
+		buttons.add(Achievement.allChallenges().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.allChallenges().getID()
+		)));
+		buttons.add(Achievement.allGift().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.allGift().getID()
+		)));
+		buttons.add(Achievement.allAbility().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.allAbility().getID()
+		)));
+		buttons.add(Achievement.maxedAbility().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.maxedAbility().getID()
+		)));
+		buttons.add(Achievement.allMaxedAbility().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.allMaxedAbility().getID()
+		)));
+		buttons.add(Achievement.allEffect().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.allEffect().getID()
+		)));
+		buttons.add(Achievement.allKits().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.allKits().getID()
+		)));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-				new InventoryMeta(InventoryID.PLAYER_ACHIEVEMENTS_MENU, InventoryType.MENU, id),
-				CommunicationManager.format("&6&l" + Bukkit.getOfflinePlayer(id).getName() + " " +
-						LanguageManager.messages.achievements),
-				true,
-				false,
-				"",
-				buttons
+			new InventoryMeta(InventoryID.PLAYER_ACHIEVEMENTS_MENU, InventoryType.MENU, id),
+			CommunicationManager.format("&6&l" + Bukkit.getOfflinePlayer(id).getName() + " " +
+				LanguageManager.messages.achievements),
+			true,
+			false,
+			"",
+			buttons
 		);
 	}
+
 	public static Inventory createPlayerAchievementsMenu(UUID id, int page) {
 		List<ItemStack> buttons = new ArrayList<>();
 
-		buttons.add(Achievement.topBalance1().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topBalance1().getID())));
-		buttons.add(Achievement.topBalance2().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topBalance2().getID())));
-		buttons.add(Achievement.topBalance3().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topBalance3().getID())));
-		buttons.add(Achievement.topBalance4().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topBalance4().getID())));
-		buttons.add(Achievement.topBalance5().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topBalance5().getID())));
-		buttons.add(Achievement.topBalance6().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topBalance6().getID())));
-		buttons.add(Achievement.topBalance7().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topBalance7().getID())));
-		buttons.add(Achievement.topBalance8().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topBalance8().getID())));
-		buttons.add(Achievement.topBalance9().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topBalance9().getID())));
+		buttons.add(Achievement.topBalance1().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topBalance1().getID()
+		)));
+		buttons.add(Achievement.topBalance2().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topBalance2().getID()
+		)));
+		buttons.add(Achievement.topBalance3().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topBalance3().getID()
+		)));
+		buttons.add(Achievement.topBalance4().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topBalance4().getID()
+		)));
+		buttons.add(Achievement.topBalance5().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topBalance5().getID()
+		)));
+		buttons.add(Achievement.topBalance6().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topBalance6().getID()
+		)));
+		buttons.add(Achievement.topBalance7().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topBalance7().getID()
+		)));
+		buttons.add(Achievement.topBalance8().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topBalance8().getID()
+		)));
+		buttons.add(Achievement.topBalance9().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topBalance9().getID()
+		)));
 
-		buttons.add(Achievement.topKills1().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topKills1().getID())));
-		buttons.add(Achievement.topKills2().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topKills2().getID())));
-		buttons.add(Achievement.topKills3().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topKills3().getID())));
-		buttons.add(Achievement.topKills4().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topKills4().getID())));
-		buttons.add(Achievement.topKills5().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topKills5().getID())));
-		buttons.add(Achievement.topKills6().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topKills6().getID())));
-		buttons.add(Achievement.topKills7().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topKills7().getID())));
-		buttons.add(Achievement.topKills8().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topKills8().getID())));
-		buttons.add(Achievement.topKills9().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topKills9().getID())));
+		buttons.add(Achievement.topKills1().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topKills1().getID()
+		)));
+		buttons.add(Achievement.topKills2().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topKills2().getID()
+		)));
+		buttons.add(Achievement.topKills3().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topKills3().getID()
+		)));
+		buttons.add(Achievement.topKills4().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topKills4().getID()
+		)));
+		buttons.add(Achievement.topKills5().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topKills5().getID()
+		)));
+		buttons.add(Achievement.topKills6().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topKills6().getID()
+		)));
+		buttons.add(Achievement.topKills7().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topKills7().getID()
+		)));
+		buttons.add(Achievement.topKills8().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topKills8().getID()
+		)));
+		buttons.add(Achievement.topKills9().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topKills9().getID()
+		)));
 
-		buttons.add(Achievement.topWave1().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topWave1().getID())));
-		buttons.add(Achievement.topWave2().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topWave2().getID())));
-		buttons.add(Achievement.topWave3().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topWave3().getID())));
-		buttons.add(Achievement.topWave4().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topWave4().getID())));
-		buttons.add(Achievement.topWave5().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topWave5().getID())));
-		buttons.add(Achievement.topWave6().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topWave6().getID())));
-		buttons.add(Achievement.topWave7().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topWave7().getID())));
-		buttons.add(Achievement.topWave8().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topWave8().getID())));
-		buttons.add(Achievement.topWave9().getButton(PlayerManager.hasAchievement(id,
-				Achievement.topWave9().getID())));
+		buttons.add(Achievement.topWave1().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topWave1().getID()
+		)));
+		buttons.add(Achievement.topWave2().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topWave2().getID()
+		)));
+		buttons.add(Achievement.topWave3().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topWave3().getID()
+		)));
+		buttons.add(Achievement.topWave4().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topWave4().getID()
+		)));
+		buttons.add(Achievement.topWave5().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topWave5().getID()
+		)));
+		buttons.add(Achievement.topWave6().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topWave6().getID()
+		)));
+		buttons.add(Achievement.topWave7().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topWave7().getID()
+		)));
+		buttons.add(Achievement.topWave8().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topWave8().getID()
+		)));
+		buttons.add(Achievement.topWave9().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.topWave9().getID()
+		)));
 
-		buttons.add(Achievement.totalGems1().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalGems1().getID())));
-		buttons.add(Achievement.totalGems2().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalGems2().getID())));
-		buttons.add(Achievement.totalGems3().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalGems3().getID())));
-		buttons.add(Achievement.totalGems4().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalGems4().getID())));
-		buttons.add(Achievement.totalGems5().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalGems5().getID())));
-		buttons.add(Achievement.totalGems6().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalGems6().getID())));
-		buttons.add(Achievement.totalGems7().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalGems7().getID())));
-		buttons.add(Achievement.totalGems8().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalGems8().getID())));
-		buttons.add(Achievement.totalGems9().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalGems9().getID())));
+		buttons.add(Achievement.totalGems1().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalGems1().getID()
+		)));
+		buttons.add(Achievement.totalGems2().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalGems2().getID()
+		)));
+		buttons.add(Achievement.totalGems3().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalGems3().getID()
+		)));
+		buttons.add(Achievement.totalGems4().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalGems4().getID()
+		)));
+		buttons.add(Achievement.totalGems5().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalGems5().getID()
+		)));
+		buttons.add(Achievement.totalGems6().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalGems6().getID()
+		)));
+		buttons.add(Achievement.totalGems7().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalGems7().getID()
+		)));
+		buttons.add(Achievement.totalGems8().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalGems8().getID()
+		)));
+		buttons.add(Achievement.totalGems9().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalGems9().getID()
+		)));
 
-		buttons.add(Achievement.totalKills1().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalKills1().getID())));
-		buttons.add(Achievement.totalKills2().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalKills2().getID())));
-		buttons.add(Achievement.totalKills3().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalKills3().getID())));
-		buttons.add(Achievement.totalKills4().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalKills4().getID())));
-		buttons.add(Achievement.totalKills5().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalKills5().getID())));
-		buttons.add(Achievement.totalKills6().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalKills6().getID())));
-		buttons.add(Achievement.totalKills7().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalKills7().getID())));
-		buttons.add(Achievement.totalKills8().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalKills8().getID())));
-		buttons.add(Achievement.totalKills9().getButton(PlayerManager.hasAchievement(id,
-				Achievement.totalKills9().getID())));
+		buttons.add(Achievement.totalKills1().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalKills1().getID()
+		)));
+		buttons.add(Achievement.totalKills2().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalKills2().getID()
+		)));
+		buttons.add(Achievement.totalKills3().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalKills3().getID()
+		)));
+		buttons.add(Achievement.totalKills4().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalKills4().getID()
+		)));
+		buttons.add(Achievement.totalKills5().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalKills5().getID()
+		)));
+		buttons.add(Achievement.totalKills6().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalKills6().getID()
+		)));
+		buttons.add(Achievement.totalKills7().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalKills7().getID()
+		)));
+		buttons.add(Achievement.totalKills8().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalKills8().getID()
+		)));
+		buttons.add(Achievement.totalKills9().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.totalKills9().getID()
+		)));
 
-		buttons.add(Achievement.amputeeAlone().getButton(PlayerManager.hasAchievement(id,
-				Achievement.amputeeAlone().getID())));
-		buttons.add(Achievement.blindAlone().getButton(PlayerManager.hasAchievement(id,
-				Achievement.blindAlone().getID())));
-		buttons.add(Achievement.clumsyAlone().getButton(PlayerManager.hasAchievement(id,
-				Achievement.clumsyAlone().getID())));
-		buttons.add(Achievement.dwarfAlone().getButton(PlayerManager.hasAchievement(id,
-				Achievement.dwarfAlone().getID())));
-		buttons.add(Achievement.explosiveAlone().getButton(PlayerManager.hasAchievement(id,
+		buttons.add(Achievement.amputeeAlone().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.amputeeAlone().getID()
+		)));
+		buttons.add(Achievement.blindAlone().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.blindAlone().getID()
+		)));
+		buttons.add(Achievement.clumsyAlone().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.clumsyAlone().getID()
+		)));
+		buttons.add(Achievement.dwarfAlone().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.dwarfAlone().getID()
+		)));
+		buttons.add(Achievement.explosiveAlone().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.explosiveAlone().getID())));
-		buttons.add(Achievement.featherweightAlone().getButton(PlayerManager.hasAchievement(id,
+			Achievement.explosiveAlone().getID()
+		)));
+		buttons.add(Achievement.featherweightAlone().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.featherweightAlone().getID())));
-		buttons.add(Achievement.nakedAlone().getButton(PlayerManager.hasAchievement(id,
-				Achievement.nakedAlone().getID())));
-		buttons.add(Achievement.pacifistAlone().getButton(PlayerManager.hasAchievement(id,
+			Achievement.featherweightAlone().getID()
+		)));
+		buttons.add(Achievement.nakedAlone().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.nakedAlone().getID()
+		)));
+		buttons.add(Achievement.pacifistAlone().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.pacifistAlone().getID())));
-		buttons.add(Achievement.uhcAlone().getButton(PlayerManager.hasAchievement(id,
-				Achievement.uhcAlone().getID())));
+			Achievement.pacifistAlone().getID()
+		)));
+		buttons.add(Achievement.uhcAlone().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.uhcAlone().getID()
+		)));
 
-		buttons.add(Achievement.amputeeBalance().getButton(PlayerManager.hasAchievement(id,
+		buttons.add(Achievement.amputeeBalance().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.amputeeBalance().getID())));
-		buttons.add(Achievement.blindBalance().getButton(PlayerManager.hasAchievement(id,
-				Achievement.blindBalance().getID())));
-		buttons.add(Achievement.clumsyBalance().getButton(PlayerManager.hasAchievement(id,
+			Achievement.amputeeBalance().getID()
+		)));
+		buttons.add(Achievement.blindBalance().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.blindBalance().getID()
+		)));
+		buttons.add(Achievement.clumsyBalance().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.clumsyBalance().getID())));
-		buttons.add(Achievement.dwarfBalance().getButton(PlayerManager.hasAchievement(id,
-				Achievement.dwarfBalance().getID())));
-		buttons.add(Achievement.explosiveBalance().getButton(PlayerManager.hasAchievement(id,
+			Achievement.clumsyBalance().getID()
+		)));
+		buttons.add(Achievement.dwarfBalance().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.dwarfBalance().getID()
+		)));
+		buttons.add(Achievement.explosiveBalance().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.explosiveBalance().getID())));
-		buttons.add(Achievement.featherweightBalance().getButton(PlayerManager.hasAchievement(id,
+			Achievement.explosiveBalance().getID()
+		)));
+		buttons.add(Achievement.featherweightBalance().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.featherweightBalance().getID())));
-		buttons.add(Achievement.nakedBalance().getButton(PlayerManager.hasAchievement(id,
-				Achievement.nakedBalance().getID())));
-		buttons.add(Achievement.pacifistBalance().getButton(PlayerManager.hasAchievement(id,
+			Achievement.featherweightBalance().getID()
+		)));
+		buttons.add(Achievement.nakedBalance().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.nakedBalance().getID()
+		)));
+		buttons.add(Achievement.pacifistBalance().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.pacifistBalance().getID())));
-		buttons.add(Achievement.uhcBalance().getButton(PlayerManager.hasAchievement(id,
-				Achievement.uhcBalance().getID())));
+			Achievement.pacifistBalance().getID()
+		)));
+		buttons.add(Achievement.uhcBalance().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.uhcBalance().getID()
+		)));
 
-		buttons.add(Achievement.amputeeKills().getButton(PlayerManager.hasAchievement(id,
-				Achievement.amputeeKills().getID())));
-		buttons.add(Achievement.blindKills().getButton(PlayerManager.hasAchievement(id,
-				Achievement.blindKills().getID())));
-		buttons.add(Achievement.clumsyKills().getButton(PlayerManager.hasAchievement(id,
-				Achievement.clumsyKills().getID())));
-		buttons.add(Achievement.dwarfKills().getButton(PlayerManager.hasAchievement(id,
-				Achievement.dwarfKills().getID())));
-		buttons.add(Achievement.explosiveKills().getButton(PlayerManager.hasAchievement(id,
+		buttons.add(Achievement.amputeeKills().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.amputeeKills().getID()
+		)));
+		buttons.add(Achievement.blindKills().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.blindKills().getID()
+		)));
+		buttons.add(Achievement.clumsyKills().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.clumsyKills().getID()
+		)));
+		buttons.add(Achievement.dwarfKills().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.dwarfKills().getID()
+		)));
+		buttons.add(Achievement.explosiveKills().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.explosiveKills().getID())));
-		buttons.add(Achievement.featherweightKills().getButton(PlayerManager.hasAchievement(id,
+			Achievement.explosiveKills().getID()
+		)));
+		buttons.add(Achievement.featherweightKills().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.featherweightKills().getID())));
-		buttons.add(Achievement.nakedKills().getButton(PlayerManager.hasAchievement(id,
-				Achievement.nakedKills().getID())));
-		buttons.add(Achievement.pacifistKills().getButton(PlayerManager.hasAchievement(id,
+			Achievement.featherweightKills().getID()
+		)));
+		buttons.add(Achievement.nakedKills().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.nakedKills().getID()
+		)));
+		buttons.add(Achievement.pacifistKills().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.pacifistKills().getID())));
-		buttons.add(Achievement.uhcKills().getButton(PlayerManager.hasAchievement(id,
-				Achievement.uhcKills().getID())));
+			Achievement.pacifistKills().getID()
+		)));
+		buttons.add(Achievement.uhcKills().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.uhcKills().getID()
+		)));
 
-		buttons.add(Achievement.amputeeWave().getButton(PlayerManager.hasAchievement(id,
-				Achievement.amputeeWave().getID())));
-		buttons.add(Achievement.blindWave().getButton(PlayerManager.hasAchievement(id,
-				Achievement.blindWave().getID())));
-		buttons.add(Achievement.clumsyWave().getButton(PlayerManager.hasAchievement(id,
-				Achievement.clumsyWave().getID())));
-		buttons.add(Achievement.dwarfWave().getButton(PlayerManager.hasAchievement(id,
-				Achievement.dwarfWave().getID())));
-		buttons.add(Achievement.explosiveWave().getButton(PlayerManager.hasAchievement(id,
+		buttons.add(Achievement.amputeeWave().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.amputeeWave().getID()
+		)));
+		buttons.add(Achievement.blindWave().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.blindWave().getID()
+		)));
+		buttons.add(Achievement.clumsyWave().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.clumsyWave().getID()
+		)));
+		buttons.add(Achievement.dwarfWave().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.dwarfWave().getID()
+		)));
+		buttons.add(Achievement.explosiveWave().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.explosiveWave().getID())));
-		buttons.add(Achievement.featherweightWave().getButton(PlayerManager.hasAchievement(id,
+			Achievement.explosiveWave().getID()
+		)));
+		buttons.add(Achievement.featherweightWave().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.featherweightWave().getID())));
-		buttons.add(Achievement.nakedWave().getButton(PlayerManager.hasAchievement(id,
-				Achievement.nakedWave().getID())));
-		buttons.add(Achievement.pacifistWave().getButton(PlayerManager.hasAchievement(id,
+			Achievement.featherweightWave().getID()
+		)));
+		buttons.add(Achievement.nakedWave().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.nakedWave().getID()
+		)));
+		buttons.add(Achievement.pacifistWave().getButton(PlayerManager.hasAchievement(
+			id,
 
-				Achievement.pacifistWave().getID())));
-		buttons.add(Achievement.uhcWave().getButton(PlayerManager.hasAchievement(id,
-				Achievement.uhcWave().getID())));
+			Achievement.pacifistWave().getID()
+		)));
+		buttons.add(Achievement.uhcWave().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.uhcWave().getID()
+		)));
 
-		buttons.add(Achievement.alone().getButton(PlayerManager.hasAchievement(id,
-				Achievement.alone().getID())));
-		buttons.add(Achievement.pacifistUhc().getButton(PlayerManager.hasAchievement(id,
-				Achievement.pacifistUhc().getID())));
-		buttons.add(Achievement.allChallenges().getButton(PlayerManager.hasAchievement(id,
-				Achievement.allChallenges().getID())));
-		buttons.add(Achievement.allGift().getButton(PlayerManager.hasAchievement(id,
-				Achievement.allGift().getID())));
-		buttons.add(Achievement.allAbility().getButton(PlayerManager.hasAchievement(id,
-				Achievement.allAbility().getID())));
-		buttons.add(Achievement.maxedAbility().getButton(PlayerManager.hasAchievement(id,
-				Achievement.maxedAbility().getID())));
-		buttons.add(Achievement.allMaxedAbility().getButton(PlayerManager.hasAchievement(id,
-				Achievement.allMaxedAbility().getID())));
-		buttons.add(Achievement.allEffect().getButton(PlayerManager.hasAchievement(id,
-				Achievement.allEffect().getID())));
-		buttons.add(Achievement.allKits().getButton(PlayerManager.hasAchievement(id,
-				Achievement.allKits().getID())));
+		buttons.add(Achievement.alone().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.alone().getID()
+		)));
+		buttons.add(Achievement.pacifistUhc().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.pacifistUhc().getID()
+		)));
+		buttons.add(Achievement.allChallenges().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.allChallenges().getID()
+		)));
+		buttons.add(Achievement.allGift().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.allGift().getID()
+		)));
+		buttons.add(Achievement.allAbility().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.allAbility().getID()
+		)));
+		buttons.add(Achievement.maxedAbility().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.maxedAbility().getID()
+		)));
+		buttons.add(Achievement.allMaxedAbility().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.allMaxedAbility().getID()
+		)));
+		buttons.add(Achievement.allEffect().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.allEffect().getID()
+		)));
+		buttons.add(Achievement.allKits().getButton(PlayerManager.hasAchievement(
+			id,
+			Achievement.allKits().getID()
+		)));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-				new InventoryMeta(InventoryID.PLAYER_ACHIEVEMENTS_MENU, InventoryType.MENU, page, id),
-				CommunicationManager.format("&6&l" + Bukkit.getOfflinePlayer(id).getName() + " " +
-						LanguageManager.messages.achievements),
-				true,
-				false,
-				"",
-				buttons
+			new InventoryMeta(InventoryID.PLAYER_ACHIEVEMENTS_MENU, InventoryType.MENU, page, id),
+			CommunicationManager.format("&6&l" + Bukkit.getOfflinePlayer(id).getName() + " " +
+				LanguageManager.messages.achievements),
+			true,
+			false,
+			"",
+			buttons
 		);
 	}
 
 	// Display player stats reset confirmation
 	public static Inventory createResetStatsConfirmMenu(UUID playerID) {
 		return InventoryFactory.createConfirmationMenu(
-				InventoryID.RESET_STATS_CONFIRM_MENU,
-				playerID,
-				CommunicationManager.format("&4&l" + LanguageManager.messages.reset + "?")
+			InventoryID.RESET_STATS_CONFIRM_MENU,
+			playerID,
+			CommunicationManager.format("&4&l" + LanguageManager.messages.reset + "?")
 		);
 	}
 
@@ -2479,65 +3123,96 @@ public class Inventories {
 	public static Inventory createCrystalConvertMenu(VDPlayer player) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(
-				new InventoryMeta(InventoryID.CRYSTAL_CONVERT_MENU, InventoryType.MENU,
-						player.getPlayer().getUniqueId()),
-				27,
-				CommunicationManager.format("&9&l" + String.format(LanguageManager.names.crystalConverter,
-						LanguageManager.names.crystal))
+			new InventoryMeta(InventoryID.CRYSTAL_CONVERT_MENU, InventoryType.MENU,
+				player.getPlayer().getUniqueId()
+			),
+			27,
+			CommunicationManager.format("&9&l" + String.format(
+				LanguageManager.names.crystalConverter,
+				LanguageManager.names.crystal
+			))
 		);
 
 		// Display crystals to convert
-		inv.setItem(3, ItemFactory.createItem(Material.DIAMOND_BLOCK,
-				CommunicationManager.format("&b&l" + String.format(LanguageManager.messages.crystalsToConvert,
-						LanguageManager.names.crystals) + ": " + (player.getGemBoost() * 5))));
+		inv.setItem(3, ItemFactory.createItem(
+			Material.DIAMOND_BLOCK,
+			CommunicationManager.format("&b&l" + String.format(
+				LanguageManager.messages.crystalsToConvert,
+				LanguageManager.names.crystals
+			) + ": " + (player.getGemBoost() * 5))
+		));
 
 		// Display gems to receive
-		inv.setItem(5, ItemFactory.createItem(Material.EMERALD_BLOCK,
-				CommunicationManager.format("&a&l" + LanguageManager.messages.gemsToReceive + ": " +
-						player.getGemBoost())));
+		inv.setItem(5, ItemFactory.createItem(
+			Material.EMERALD_BLOCK,
+			CommunicationManager.format("&a&l" + LanguageManager.messages.gemsToReceive + ": " +
+				player.getGemBoost())
+		));
 
 		// Crystal balance display
 		int balance = PlayerManager.getCrystalBalance(player.getID());
 
-		inv.setItem(8, ItemFactory.createItem(Material.DIAMOND,
-				CommunicationManager.format("&b&l" + String.format(LanguageManager.messages.crystalBalance,
-						LanguageManager.names.crystal) + ": &b" + balance)));
+		inv.setItem(8, ItemFactory.createItem(
+			Material.DIAMOND,
+			CommunicationManager.format("&b&l" + String.format(
+				LanguageManager.messages.crystalBalance,
+				LanguageManager.names.crystal
+			) + ": &b" + balance)
+		));
 
 		// Option to increase by 1
-		inv.setItem(9, ItemFactory.createItem(Material.LIME_CONCRETE,
-				CommunicationManager.format("&a&l+1 " + LanguageManager.messages.gems)));
+		inv.setItem(9, ItemFactory.createItem(
+			Material.LIME_CONCRETE,
+			CommunicationManager.format("&a&l+1 " + LanguageManager.messages.gems)
+		));
 
 		// Option to increase by 10
-		inv.setItem(11, ItemFactory.createItem(Material.LIME_CONCRETE,
-				CommunicationManager.format("&a&l+10 " + LanguageManager.messages.gems)));
+		inv.setItem(11, ItemFactory.createItem(
+			Material.LIME_CONCRETE,
+			CommunicationManager.format("&a&l+10 " + LanguageManager.messages.gems)
+		));
 
 		// Option to increase by 100
-		inv.setItem(13, ItemFactory.createItem(Material.LIME_CONCRETE,
-				CommunicationManager.format("&a&l+100 " + LanguageManager.messages.gems)));
+		inv.setItem(13, ItemFactory.createItem(
+			Material.LIME_CONCRETE,
+			CommunicationManager.format("&a&l+100 " + LanguageManager.messages.gems)
+		));
 
 		// Option to increase by 1000
-		inv.setItem(15, ItemFactory.createItem(Material.LIME_CONCRETE,
-				CommunicationManager.format("&a&l+1000 " + LanguageManager.messages.gems)));
+		inv.setItem(15, ItemFactory.createItem(
+			Material.LIME_CONCRETE,
+			CommunicationManager.format("&a&l+1000 " + LanguageManager.messages.gems)
+		));
 
 		// Option to reset
-		inv.setItem(17, ItemFactory.createItem(Material.LIGHT_BLUE_CONCRETE,
-				CommunicationManager.format("&3&l" + LanguageManager.messages.reset)));
+		inv.setItem(17, ItemFactory.createItem(
+			Material.LIGHT_BLUE_CONCRETE,
+			CommunicationManager.format("&3&l" + LanguageManager.messages.reset)
+		));
 
 		// Option to decrease by 1
-		inv.setItem(18, ItemFactory.createItem(Material.RED_CONCRETE,
-				CommunicationManager.format("&c&l-1 " + LanguageManager.messages.gems)));
+		inv.setItem(18, ItemFactory.createItem(
+			Material.RED_CONCRETE,
+			CommunicationManager.format("&c&l-1 " + LanguageManager.messages.gems)
+		));
 
 		// Option to decrease by 10
-		inv.setItem(20, ItemFactory.createItem(Material.RED_CONCRETE,
-				CommunicationManager.format("&c&l-10 " + LanguageManager.messages.gems)));
+		inv.setItem(20, ItemFactory.createItem(
+			Material.RED_CONCRETE,
+			CommunicationManager.format("&c&l-10 " + LanguageManager.messages.gems)
+		));
 
 		// Option to decrease by 100
-		inv.setItem(22, ItemFactory.createItem(Material.RED_CONCRETE,
-				CommunicationManager.format("&c&l-100 " + LanguageManager.messages.gems)));
+		inv.setItem(22, ItemFactory.createItem(
+			Material.RED_CONCRETE,
+			CommunicationManager.format("&c&l-100 " + LanguageManager.messages.gems)
+		));
 
 		// Option to decrease by 1000
-		inv.setItem(24, ItemFactory.createItem(Material.RED_CONCRETE,
-				CommunicationManager.format("&c&l-1000 " + LanguageManager.messages.gems)));
+		inv.setItem(24, ItemFactory.createItem(
+			Material.RED_CONCRETE,
+			CommunicationManager.format("&c&l-1000 " + LanguageManager.messages.gems)
+		));
 
 		// Option to exit
 		inv.setItem(26, InventoryButtons.exit());
@@ -2562,11 +3237,12 @@ public class Inventories {
 		buttons.add(Challenge.none().getButton(player.getChallenges().isEmpty()));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.SELECT_CHALLENGES_MENU, InventoryType.MENU,
-						player.getPlayer().getUniqueId(), arena),
-				CommunicationManager.format("&5&l" + arena.getName() + " " + LanguageManager.messages.challenges),
-				true,
-				buttons
+			new InventoryMeta(InventoryID.SELECT_CHALLENGES_MENU, InventoryType.MENU,
+				player.getPlayer().getUniqueId(), arena
+			),
+			CommunicationManager.format("&5&l" + arena.getName() + " " + LanguageManager.messages.challenges),
+			true,
+			buttons
 		);
 	}
 
@@ -2576,17 +3252,21 @@ public class Inventories {
 
 		// Maximum players
 		buttons.add(ItemFactory.createItem(Material.NETHERITE_HELMET,
-				CommunicationManager.format("&4&l" + LanguageManager.arenaStats.maxPlayers.name +
-						": &4" + arena.getMaxPlayers()), ItemFactory.BUTTON_FLAGS, null,
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.maxPlayers.description, Utils.LORE_CHAR_LIMIT)));
+			CommunicationManager.format("&4&l" + LanguageManager.arenaStats.maxPlayers.name +
+				": &4" + arena.getMaxPlayers()), ItemFactory.BUTTON_FLAGS, null,
+			CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+				LanguageManager.arenaStats.maxPlayers.description, Constants.LORE_CHAR_LIMIT
+			)
+		));
 
 		// Minimum players
 		buttons.add(ItemFactory.createItem(Material.NETHERITE_BOOTS,
-				CommunicationManager.format("&2&l" + LanguageManager.arenaStats.minPlayers.name +
-						": &2" + arena.getMinPlayers()), ItemFactory.BUTTON_FLAGS, null,
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.minPlayers.description, Utils.LORE_CHAR_LIMIT)));
+			CommunicationManager.format("&2&l" + LanguageManager.arenaStats.minPlayers.name +
+				": &2" + arena.getMinPlayers()), ItemFactory.BUTTON_FLAGS, null,
+			CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+				LanguageManager.arenaStats.minPlayers.description, Constants.LORE_CHAR_LIMIT
+			)
+		));
 
 		// Max waves
 		String waves;
@@ -2594,10 +3274,12 @@ public class Inventories {
 			waves = LanguageManager.messages.unlimited;
 		else waves = Integer.toString(arena.getMaxWaves());
 		buttons.add(ItemFactory.createItem(Material.GOLDEN_SWORD,
-				CommunicationManager.format("&3&l" + LanguageManager.arenaStats.maxWaves.name +
-						": &3" + waves), ItemFactory.BUTTON_FLAGS, null,
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.maxWaves.description, Utils.LORE_CHAR_LIMIT)));
+			CommunicationManager.format("&3&l" + LanguageManager.arenaStats.maxWaves.name +
+				": &3" + waves), ItemFactory.BUTTON_FLAGS, null,
+			CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+				LanguageManager.arenaStats.maxWaves.description, Constants.LORE_CHAR_LIMIT
+			)
+		));
 
 		// Wave time limit
 		String limit;
@@ -2605,90 +3287,113 @@ public class Inventories {
 			limit = LanguageManager.messages.unlimited;
 		else limit = arena.getWaveTimeLimit() + " minute(s)";
 		buttons.add(ItemFactory.createItem(Material.CLOCK,
-				CommunicationManager.format("&9&l" + LanguageManager.arenaStats.timeLimit.name +
-						": &9" + limit), CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.timeLimit.description, Utils.LORE_CHAR_LIMIT)));
+			CommunicationManager.format("&9&l" + LanguageManager.arenaStats.timeLimit.name +
+				": &9" + limit), CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+				LanguageManager.arenaStats.timeLimit.description, Constants.LORE_CHAR_LIMIT
+			)
+		));
 
 		// Allowed kits
-		buttons.add(ItemFactory.createItem(Material.ENDER_CHEST,
-				CommunicationManager.format("&9&l" + LanguageManager.messages.allowedKits)));
+		buttons.add(ItemFactory.createItem(
+			Material.ENDER_CHEST,
+			CommunicationManager.format("&9&l" + LanguageManager.messages.allowedKits)
+		));
 
 		// Forced challenges
-		buttons.add(ItemFactory.createItem(Material.NETHER_STAR,
-				CommunicationManager.format("&9&l" + LanguageManager.messages.forcedChallenges)));
+		buttons.add(ItemFactory.createItem(
+			Material.NETHER_STAR,
+			CommunicationManager.format("&9&l" + LanguageManager.messages.forcedChallenges)
+		));
 
 		// Dynamic time limit
-		buttons.add(ItemFactory.createItem(Material.SNOWBALL,
-				CommunicationManager.format("&a&l" +
-						LanguageManager.arenaStats.dynamicTimeLimit.name +
-						": " + getToggleStatus(arena.hasDynamicLimit())),
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.dynamicTimeLimit.description, Utils.LORE_CHAR_LIMIT)));
+		buttons.add(ItemFactory.createItem(
+			Material.SNOWBALL,
+			CommunicationManager.format("&a&l" +
+				LanguageManager.arenaStats.dynamicTimeLimit.name +
+				": " + getToggleStatus(arena.hasDynamicLimit())),
+			CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+				LanguageManager.arenaStats.dynamicTimeLimit.description, Constants.LORE_CHAR_LIMIT
+			)
+		));
 
 		// Late arrival
-		buttons.add( ItemFactory.createItem(Material.DAYLIGHT_DETECTOR,
-				CommunicationManager.format("&e&l" + LanguageManager.arenaStats.lateArrival.name +
-						": " + getToggleStatus(arena.hasLateArrival())), ItemFactory.BUTTON_FLAGS, null,
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.lateArrival.description, Utils.LORE_CHAR_LIMIT)));
+		buttons.add(ItemFactory.createItem(Material.DAYLIGHT_DETECTOR,
+			CommunicationManager.format("&e&l" + LanguageManager.arenaStats.lateArrival.name +
+				": " + getToggleStatus(arena.hasLateArrival())), ItemFactory.BUTTON_FLAGS, null,
+			CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+				LanguageManager.arenaStats.lateArrival.description, Constants.LORE_CHAR_LIMIT
+			)
+		));
 
 		// Player spawn particles
-		buttons.add( ItemFactory.createItem(Material.FIREWORK_ROCKET,
-				CommunicationManager.format("&e&l" + LanguageManager.names.playerSpawnParticles +
-						": " + getToggleStatus(arena.hasSpawnParticles()))));
+		buttons.add(ItemFactory.createItem(
+			Material.FIREWORK_ROCKET,
+			CommunicationManager.format("&e&l" + LanguageManager.names.playerSpawnParticles +
+				": " + getToggleStatus(arena.hasSpawnParticles()))
+		));
 
 		// Monster spawn particles
-		buttons.add( ItemFactory.createItem(Material.FIREWORK_ROCKET,
-				CommunicationManager.format("&d&l" + LanguageManager.names.monsterSpawnParticles +
-						": " + getToggleStatus(arena.hasMonsterParticles()))));
+		buttons.add(ItemFactory.createItem(
+			Material.FIREWORK_ROCKET,
+			CommunicationManager.format("&d&l" + LanguageManager.names.monsterSpawnParticles +
+				": " + getToggleStatus(arena.hasMonsterParticles()))
+		));
 
 		// Villager spawn particles
-		buttons.add( ItemFactory.createItem(Material.FIREWORK_ROCKET,
-				CommunicationManager.format("&a&l" +
-						LanguageManager.names.villagerSpawnParticles + ": " +
-						getToggleStatus(arena.hasVillagerParticles()))));
+		buttons.add(ItemFactory.createItem(
+			Material.FIREWORK_ROCKET,
+			CommunicationManager.format("&a&l" +
+				LanguageManager.names.villagerSpawnParticles + ": " +
+				getToggleStatus(arena.hasVillagerParticles()))
+		));
 
 		// Community chest
-		buttons.add( ItemFactory.createItem(Material.CHEST,
-				CommunicationManager.format("&d&l" + LanguageManager.names.communityChest +
-						": " + getToggleStatus(arena.hasCommunity()))));
+		buttons.add(ItemFactory.createItem(
+			Material.CHEST,
+			CommunicationManager.format("&d&l" + LanguageManager.names.communityChest +
+				": " + getToggleStatus(arena.hasCommunity()))
+		));
 
 		// Difficulty multiplier
-		buttons.add( ItemFactory.createItem(Material.TURTLE_HELMET,
-				CommunicationManager.format("&4&l" +
-						LanguageManager.arenaStats.difficultyMultiplier.name + ": &4" +
-						arena.getDifficultyMultiplier()), ItemFactory.BUTTON_FLAGS, null,
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-						LanguageManager.arenaStats.difficultyMultiplier.description, Utils.LORE_CHAR_LIMIT)));
+		buttons.add(ItemFactory.createItem(Material.TURTLE_HELMET,
+			CommunicationManager.format("&4&l" +
+				LanguageManager.arenaStats.difficultyMultiplier.name + ": &4" +
+				arena.getDifficultyMultiplier()), ItemFactory.BUTTON_FLAGS, null,
+			CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+				LanguageManager.arenaStats.difficultyMultiplier.description, Constants.LORE_CHAR_LIMIT
+			)
+		));
 
 		// Arena records
 		List<String> records = new ArrayList<>();
 		arena.getSortedDescendingRecords().forEach(arenaRecord -> {
 			records.add(CommunicationManager.format("&f" + LanguageManager.messages.wave + " " +
-					arenaRecord.getWave()));
+				arenaRecord.getWave()));
 			for (int i = 0; i < arenaRecord.getPlayers().size() / 4 + 1; i++) {
 				StringBuilder players = new StringBuilder(CommunicationManager.format("&7"));
 				if (i * 4 + 4 < arenaRecord.getPlayers().size()) {
 					for (int j = i * 4; j < i * 4 + 4; j++)
 						players.append(arenaRecord.getPlayers().get(j)).append(", ");
 					records.add(CommunicationManager.format(players.substring(0, players.length() - 1)));
-				} else {
+				}
+				else {
 					for (int j = i * 4; j < arenaRecord.getPlayers().size(); j++)
 						players.append(arenaRecord.getPlayers().get(j)).append(", ");
 					records.add(CommunicationManager.format(players.substring(0, players.length() - 2)));
 				}
 			}
 		});
-		buttons.add( ItemFactory.createItem(Material.GOLDEN_HELMET,
-				CommunicationManager.format("&e&l" + LanguageManager.messages.arenaRecords),
-				ItemFactory.BUTTON_FLAGS, null, records));
+		buttons.add(ItemFactory.createItem(Material.GOLDEN_HELMET,
+			CommunicationManager.format("&e&l" + LanguageManager.messages.arenaRecords),
+			ItemFactory.BUTTON_FLAGS, null, records
+		));
 
 		return InventoryFactory.createDynamicSizeInventory(
-				new InventoryMeta(InventoryID.ARENA_INFO_MENU, InventoryType.MENU, arena),
-				CommunicationManager.format("&6&l" +
-						String.format(LanguageManager.messages.arenaInfo, arena.getName())),
-				false,
-				buttons
+			new InventoryMeta(InventoryID.ARENA_INFO_MENU, InventoryType.MENU, arena),
+			CommunicationManager.format("&6&l" +
+				String.format(LanguageManager.messages.arenaInfo, arena.getName())),
+			false,
+			buttons
 		);
 	}
 

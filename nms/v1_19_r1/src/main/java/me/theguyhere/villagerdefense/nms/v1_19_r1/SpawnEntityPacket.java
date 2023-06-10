@@ -1,6 +1,6 @@
 package me.theguyhere.villagerdefense.nms.v1_19_r1;
 
-import me.theguyhere.villagerdefense.common.Utils;
+import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.nms.common.EntityID;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
@@ -12,50 +12,50 @@ import org.bukkit.Location;
  * This class format was borrowed from filoghost.
  */
 class SpawnEntityPacket extends VersionNMSPacket {
-    private final Packet<?> rawPacket;
+	private final Packet<?> rawPacket;
 
-    SpawnEntityPacket(EntityID entityID, int entityTypeID, Location location) {
-        this(entityID, entityTypeID, location, 0, 0);
-    }
+	SpawnEntityPacket(EntityID entityID, int entityTypeID, Location location) {
+		this(entityID, entityTypeID, location, 0, 0);
+	}
 
-    SpawnEntityPacket(EntityID entityID, int entityTypeID, Location location, float headPitch) {
-        this(entityID, entityTypeID, location, headPitch, 0);
-    }
+	SpawnEntityPacket(EntityID entityID, int entityTypeID, Location location, float headPitch) {
+		this(entityID, entityTypeID, location, headPitch, 0);
+	}
 
-    SpawnEntityPacket(EntityID entityID, int entityTypeID, Location location, float headPitch, int objectData) {
-        PacketSetter packetSetter = PacketSetter.get();
+	SpawnEntityPacket(EntityID entityID, int entityTypeID, Location location, float headPitch, int objectData) {
+		PacketSetter packetSetter = PacketSetter.get();
 
-        // Entity info
-        packetSetter.writeVarInt(entityID.getNumericID());
-        packetSetter.writeUUID(entityID.getUUID());
-        packetSetter.writeVarInt(entityTypeID);
+		// Entity info
+		packetSetter.writeVarInt(entityID.getNumericID());
+		packetSetter.writeUUID(entityID.getUUID());
+		packetSetter.writeVarInt(entityTypeID);
 
-        // Position
-        packetSetter.writeDouble(location.getX());
-        packetSetter.writeDouble(location.getY());
-        packetSetter.writeDouble(location.getZ());
+		// Position
+		packetSetter.writeDouble(location.getX());
+		packetSetter.writeDouble(location.getY());
+		packetSetter.writeDouble(location.getZ());
 
-        // Rotation
-        packetSetter.writeByte(Utils.degreesToByte(location.getPitch()));
-        packetSetter.writeByte(Utils.degreesToByte(location.getYaw()));
+		// Rotation
+		packetSetter.writeByte(Calculator.degreesToByte(location.getPitch()));
+		packetSetter.writeByte(Calculator.degreesToByte(location.getYaw()));
 
-        // Head pitch
-        packetSetter.writeByte(Utils.degreesToByte(headPitch));
+		// Head pitch
+		packetSetter.writeByte(Calculator.degreesToByte(headPitch));
 
-        // Object data
-        packetSetter.writeInt(objectData);
+		// Object data
+		packetSetter.writeInt(objectData);
 
-        // Velocity
-        packetSetter.writeShort(0);
-        packetSetter.writeShort(0);
-        packetSetter.writeShort(0);
+		// Velocity
+		packetSetter.writeShort(0);
+		packetSetter.writeShort(0);
+		packetSetter.writeShort(0);
 
-        rawPacket = new ClientboundAddEntityPacket(packetSetter);
-    }
+		rawPacket = new ClientboundAddEntityPacket(packetSetter);
+	}
 
 
-    @Override
-    Packet<?> getRawPacket() {
-        return rawPacket;
-    }
+	@Override
+	Packet<?> getRawPacket() {
+		return rawPacket;
+	}
 }

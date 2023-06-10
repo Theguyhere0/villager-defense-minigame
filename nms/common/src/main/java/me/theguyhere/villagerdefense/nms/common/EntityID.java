@@ -8,25 +8,25 @@ import java.util.UUID;
 
 public class EntityID {
 
-    // Lazy initialization
-    private @Nullable Integer numericID;
-    private @Nullable UUID uuid;
+	// Lazy initialization
+	private @Nullable Integer numericID;
+	private @Nullable UUID uuid;
 
-    public int getNumericID() {
-        if (numericID == null) {
-            numericID = new Random().nextInt();
-        }
-        return numericID;
-    }
+	public int getNumericID() {
+		if (numericID == null) {
+			numericID = new Random().nextInt();
+		}
+		return numericID;
+	}
 
-    public @NotNull UUID getUUID() {
-        if (uuid == null) {
-            uuid = UUID.randomUUID();
-        }
-        return uuid;
-    }
+	public @NotNull UUID getUUID() {
+		if (uuid == null) {
+			uuid = UUID.randomUUID();
+		}
+		return uuid;
+	}
 
-    public boolean hasInitializedNumericID() {
-        return numericID != null;
-    }
+	public boolean hasInitializedNumericID() {
+		return numericID != null;
+	}
 }

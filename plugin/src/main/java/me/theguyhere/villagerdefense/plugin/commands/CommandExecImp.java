@@ -21,8 +21,10 @@ public class CommandExecImp implements CommandExecutor {
 	static final Map<UUID, Long> reload = new HashMap<>();
 	static final Map<UUID, Long> disable = new HashMap<>();
 
-	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label,
-							 String[] args) {
+	public boolean onCommand(
+		@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label,
+		String[] args
+	) {
 		try {
 			// Check for "vd" as first argument
 			if (!label.equalsIgnoreCase("vd"))
@@ -32,7 +34,8 @@ public class CommandExecImp implements CommandExecutor {
 			Player player;
 			if (sender instanceof Player) {
 				player = (Player) sender;
-			} else {
+			}
+			else {
 				player = null;
 			}
 
@@ -95,8 +98,7 @@ public class CommandExecImp implements CommandExecutor {
 		DEBUG("debug"),
 		DIE("die"),
 		RELOAD("reload"),
-		DISABLE("disable")
-		;
+		DISABLE("disable");
 
 		private final String arg;
 
@@ -112,20 +114,22 @@ public class CommandExecImp implements CommandExecutor {
 	private void notifyCommandFailure(CommandSender sender) {
 		if (sender instanceof Player)
 			PlayerManager.notifyFailure((Player) sender, LanguageManager.errors.command,
-					new ColoredMessage(ChatColor.AQUA, CommandGiveHelp.COMMAND_FORMAT));
-		else CommunicationManager.debugError(LanguageManager.errors.command, 0,
-				CommandGiveHelp.COMMAND_FORMAT.substring(1));
+				new ColoredMessage(ChatColor.AQUA, CommandGiveHelp.COMMAND_FORMAT)
+			);
+		else CommunicationManager.debugError(LanguageManager.errors.command, CommunicationManager.DebugLevel.QUIET,
+			CommandGiveHelp.COMMAND_FORMAT.substring(1)
+		);
 	}
 
 	static void notifyFailure(CommandSender sender, String message) {
 		if (sender instanceof Player)
 			PlayerManager.notifyFailure((Player) sender, message);
-		else CommunicationManager.debugError(message, 0);
+		else CommunicationManager.debugError(message, CommunicationManager.DebugLevel.QUIET);
 	}
 
 	static void notifySuccess(CommandSender sender, String message) {
 		if (sender instanceof Player)
 			PlayerManager.notifySuccess((Player) sender, message);
-		else CommunicationManager.debugInfo(message, 0);
+		else CommunicationManager.debugInfo(message, CommunicationManager.DebugLevel.QUIET);
 	}
 }

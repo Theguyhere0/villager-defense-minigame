@@ -9,23 +9,23 @@ import net.minecraft.server.v1_16_R3.PacketPlayOutWorldBorder;
  * This class format was borrowed from filoghost.
  */
 class WorldBorderWarningDistancePacket extends VersionNMSPacket {
-    private final Packet<?> rawPacket;
+	private final Packet<?> rawPacket;
 
-    WorldBorderWarningDistancePacket(int distance) {
-        PacketSetter packetSetter = PacketSetter.get();
+	WorldBorderWarningDistancePacket(int distance) {
+		PacketSetter packetSetter = PacketSetter.get();
 
-        // Write in action type as setting warning distance
-        packetSetter.writeVarInt(0);
+		// Write in action type as setting warning distance
+		packetSetter.writeVarInt(0);
 
-        // Write in warning distance
-        packetSetter.writeVarInt(distance);
+		// Write in warning distance
+		packetSetter.writeVarInt(distance);
 
-        // Send out packet
-        rawPacket = writeData(new PacketPlayOutWorldBorder(), packetSetter);
-    }
+		// Send out packet
+		rawPacket = writeData(new PacketPlayOutWorldBorder(), packetSetter);
+	}
 
-    @Override
-    Packet<?> getRawPacket() {
-        return rawPacket;
-    }
+	@Override
+	Packet<?> getRawPacket() {
+		return rawPacket;
+	}
 }

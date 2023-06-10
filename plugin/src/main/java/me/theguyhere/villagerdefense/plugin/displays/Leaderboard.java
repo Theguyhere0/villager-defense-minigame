@@ -2,8 +2,8 @@ package me.theguyhere.villagerdefense.plugin.displays;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.background.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.background.DataManager;
+import me.theguyhere.villagerdefense.plugin.background.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -13,9 +13,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class Leaderboard {
-	/** The information for the Leaderboard.*/
+	/**
+	 * The information for the Leaderboard.
+	 */
 	private final Hologram hologram;
-	/** The location of the Leaderboard.*/
+	/**
+	 * The location of the Leaderboard.
+	 */
 	private final Location location;
 
 	// Leaderboard id constants
@@ -59,22 +63,23 @@ public class Leaderboard {
 
 		// Gather relevant stats
 		for (String key : Objects.requireNonNull(Main.getPlayerData().getConfigurationSection(""))
-				.getKeys(false)) {
+			.getKeys(false)) {
 			if (!key.equals("logger") && Main.getPlayerData().contains(key + "." + id))
 				mapping.put(key, Main.getPlayerData().getInt(key + "." + id));
 		}
 
 		// Put names and values into the leaderboard
 		mapping.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-				.filter(set -> Bukkit.getOfflinePlayer(UUID.fromString(set.getKey())).getName() != null)
-				.filter(set -> set.getValue() > 0)
-				.limit(10).forEachOrdered(set -> {
-					try {
-						info.add(Bukkit.getOfflinePlayer(UUID.fromString(set.getKey())).getName() +
-								" - &b" + set.getValue());
-					} catch (Exception ignored) {
-					}
-				});
+			.filter(set -> Bukkit.getOfflinePlayer(UUID.fromString(set.getKey())).getName() != null)
+			.filter(set -> set.getValue() > 0)
+			.limit(10).forEachOrdered(set -> {
+				try {
+					info.add(Bukkit.getOfflinePlayer(UUID.fromString(set.getKey())).getName() +
+						" - &b" + set.getValue());
+				}
+				catch (Exception ignored) {
+				}
+			});
 
 		for (int i = 1; i < info.size(); i++)
 			info.set(i, CommunicationManager.format("&6" + i + ") &f" + info.get(i)));
@@ -82,7 +87,8 @@ public class Leaderboard {
 		// Set location and hologram
 		this.location = location;
 		this.hologram = info.get(0).isEmpty() ? null : new Hologram(location.clone().add(0, 2.5, 0),
-				false, info.toArray(new String[]{}));
+			false, info.toArray(new String[]{})
+		);
 	}
 
 	public Location getLocation() {
@@ -102,6 +108,7 @@ public class Leaderboard {
 
 	/**
 	 * Spawn in the Leaderboard for a specific player.
+	 *
 	 * @param player - The player to display the Leaderboard for.
 	 */
 	public void displayForPlayer(Player player) {

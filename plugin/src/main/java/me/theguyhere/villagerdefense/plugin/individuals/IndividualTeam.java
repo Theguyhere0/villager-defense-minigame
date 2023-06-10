@@ -3,17 +3,16 @@ package me.theguyhere.villagerdefense.plugin.individuals;
 import org.jetbrains.annotations.NotNull;
 
 public enum IndividualTeam {
-    VILLAGER("villager"),
-    MONSTER("monster")
-    ;
+	VILLAGER("villager"),
+	MONSTER("monster");
 
-    private final String value;
+	private final String value;
 
-    IndividualTeam(@NotNull String value) {
-        this.value = value;
-    }
+	IndividualTeam(@NotNull String value) {
+		this.value = value;
+	}
 
-    public @NotNull String getValue() {
-        return value;
-    }
+	public @NotNull String getValue() {
+		return value;
+	}
 }

@@ -17,7 +17,7 @@ public class NPCLeftClickEvent extends Event implements Cancellable {
 		this.player = player;
 		this.npcId = npcId;
 	}
-	
+
 	public Player getPlayer() {
 		return player;
 	}
@@ -25,7 +25,7 @@ public class NPCLeftClickEvent extends Event implements Cancellable {
 	public int getNpcId() {
 		return npcId;
 	}
-	
+
 	@Override
 	public @NotNull HandlerList getHandlers() {
 		return HANDLERS;

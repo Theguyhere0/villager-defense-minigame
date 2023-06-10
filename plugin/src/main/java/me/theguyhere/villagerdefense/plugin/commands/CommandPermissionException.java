@@ -5,11 +5,11 @@ package me.theguyhere.villagerdefense.plugin.commands;
  */
 @SuppressWarnings("unused")
 public class CommandPermissionException extends CommandException {
-    public CommandPermissionException(String msg) {
-        super(msg);
-    }
+	public CommandPermissionException(String msg) {
+		super(msg);
+	}
 
-    public CommandPermissionException() {
-        super();
-    }
+	public CommandPermissionException() {
+		super();
+	}
 }

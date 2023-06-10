@@ -1,15 +1,15 @@
 package me.theguyhere.villagerdefense.plugin.game;
 
+import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.background.DataManager;
+import me.theguyhere.villagerdefense.plugin.background.InvalidLocationException;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.displays.InfoBoard;
 import me.theguyhere.villagerdefense.plugin.displays.Leaderboard;
-import me.theguyhere.villagerdefense.plugin.background.InvalidLocationException;
-import me.theguyhere.villagerdefense.plugin.background.DataManager;
-import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -27,7 +27,8 @@ public class GameController {
 	private static final Map<String, Leaderboard> leaderboards = new HashMap<>();
 	private static Location lobby;
 	private static final List<String> validSounds = new LinkedList<>(Arrays.asList("blocks", "cat", "chirp", "far",
-			"mall", "mellohi", "pigstep", "stal", "strad", "wait", "ward"));
+		"mall", "mellohi", "pigstep", "stal", "strad", "wait", "ward"
+	));
 
 	public static void init() {
 		ConfigurationSection section;
@@ -39,31 +40,33 @@ public class GameController {
 		section = Main.getArenaData().getConfigurationSection("arena");
 		if (section != null)
 			section.getKeys(false)
-					.forEach(id -> arenas.put(Integer.parseInt(id), new Arena(Integer.parseInt(id))));
+				.forEach(id -> arenas.put(Integer.parseInt(id), new Arena(Integer.parseInt(id))));
 
 		section = Main.getArenaData().getConfigurationSection("infoBoard");
 		if (section != null)
 			section.getKeys(false)
-					.forEach(id -> {
-						try {
-							Location location = DataManager.getConfigLocationNoPitch("infoBoard." + id);
-							if (location != null)
-								infoBoards.put(Integer.parseInt(id), new InfoBoard(location));
-						} catch (InvalidLocationException ignored) {
-						}
-					});
+				.forEach(id -> {
+					try {
+						Location location = DataManager.getConfigLocationNoPitch("infoBoard." + id);
+						if (location != null)
+							infoBoards.put(Integer.parseInt(id), new InfoBoard(location));
+					}
+					catch (InvalidLocationException ignored) {
+					}
+				});
 
 		section = Main.getArenaData().getConfigurationSection("leaderboard");
 		if (section != null)
 			section.getKeys(false)
-					.forEach(id -> {
-						try {
-							Location location = DataManager.getConfigLocationNoPitch("leaderboard." + id);
-							if (location != null)
-								leaderboards.put(id, new Leaderboard(id));
-						} catch (InvalidLocationException ignored) {
-						}
-					});
+				.forEach(id -> {
+					try {
+						Location location = DataManager.getConfigLocationNoPitch("leaderboard." + id);
+						if (location != null)
+							leaderboards.put(id, new Leaderboard(id));
+					}
+					catch (InvalidLocationException ignored) {
+					}
+				});
 
 		setLobby(DataManager.getConfigLocation("lobby"));
 
@@ -80,8 +83,9 @@ public class GameController {
 	public static @NotNull Arena getArena(String arenaName) throws ArenaNotFoundException {
 		try {
 			return arenas.values().stream().filter(Objects::nonNull).filter(a -> a.getName() != null)
-					.filter(a -> a.getName().equals(arenaName)).collect(Collectors.toList()).get(0);
-		} catch (Exception e) {
+				.filter(a -> a.getName().equals(arenaName)).collect(Collectors.toList()).get(0);
+		}
+		catch (Exception e) {
 			throw new ArenaNotFoundException();
 		}
 	}
@@ -89,8 +93,9 @@ public class GameController {
 	public static @NotNull Arena getArena(Player player) throws ArenaNotFoundException {
 		try {
 			return arenas.values().stream().filter(Objects::nonNull).filter(a -> a.hasPlayer(player))
-					.collect(Collectors.toList()).get(0);
-		} catch (Exception e) {
+				.collect(Collectors.toList()).get(0);
+		}
+		catch (Exception e) {
 			throw new ArenaNotFoundException();
 		}
 	}
@@ -123,6 +128,7 @@ public class GameController {
 	/**
 	 * Set the cached lobby in {@link GameController}.
 	 * DOES NOT CHANGE THE STORED LOBBY FOR THE SERVER
+	 *
 	 * @param lobby Lobby location.
 	 */
 	public static void setLobby(Location lobby) {
@@ -131,6 +137,7 @@ public class GameController {
 
 	/**
 	 * Saves a new lobby for the server and changes the cached lobby.
+	 *
 	 * @param lobby Lobby location.
 	 */
 	public static void saveLobby(Location lobby) {
@@ -148,7 +155,7 @@ public class GameController {
 	 * @return New info board ID
 	 */
 	public static int newArenaID() {
-		return Utils.nextSmallestUniqueWhole(arenas.keySet());
+		return Calculator.nextSmallestUniqueWhole(arenas.keySet());
 	}
 
 	public static InfoBoard getInfoBoard(int infoBoardID) {
@@ -157,6 +164,7 @@ public class GameController {
 
 	/**
 	 * Creates a new info board at the given location and deletes the old info board.
+	 *
 	 * @param location - New location.
 	 */
 	public static void setInfoBoard(Location location, int infoBoardID) {
@@ -178,14 +186,18 @@ public class GameController {
 		try {
 			// Create a new board and display it
 			infoBoards.put(infoBoardID, new InfoBoard(
-					Objects.requireNonNull(DataManager.getConfigLocationNoPitch("infoBoard." + infoBoardID))
-            ));
+				Objects.requireNonNull(DataManager.getConfigLocationNoPitch("infoBoard." + infoBoardID))
+			));
 			infoBoards.get(infoBoardID).displayForOnline();
-		} catch (Exception e) {
-			CommunicationManager.debugError("Invalid location for info board " + infoBoardID, 1);
-			CommunicationManager.debugInfo("Info board location data may be corrupt. If data cannot be manually " +
-					"corrected in arenaData.yml, please delete the location data for info board " + infoBoardID + ".",
-					1);
+		}
+		catch (Exception e) {
+			CommunicationManager.debugError("Invalid location for info board " + infoBoardID,
+				CommunicationManager.DebugLevel.NORMAL);
+			CommunicationManager.debugInfo(
+				"Info board location data may be corrupt. If data cannot be manually corrected in arenaData.yml, " +
+					"please delete the location data for info board " + infoBoardID + ".",
+				CommunicationManager.DebugLevel.NORMAL
+			);
 		}
 	}
 
@@ -217,7 +229,7 @@ public class GameController {
 	 * @return New info board ID
 	 */
 	public static int newInfoBoardID() {
-		return Utils.nextSmallestUniqueWhole(infoBoards.keySet());
+		return Calculator.nextSmallestUniqueWhole(infoBoards.keySet());
 	}
 
 	public static Leaderboard getLeaderboard(String id) {
@@ -226,6 +238,7 @@ public class GameController {
 
 	/**
 	 * Creates a new leaderboard at the given location and deletes the old leaderboard.
+	 *
 	 * @param location - New location.
 	 */
 	public static void setLeaderboard(Location location, String id) {
@@ -248,11 +261,13 @@ public class GameController {
 			// Create a new board and display it
 			leaderboards.put(id, new Leaderboard(id));
 			leaderboards.get(id).displayForOnline();
-		} catch (Exception e) {
-			CommunicationManager.debugError("Invalid location for leaderboard " + id, 1);
-			CommunicationManager.debugInfo("Leaderboard location data may be corrupt. " +
-					"If data cannot be manually corrected in arenaData.yml, please delete the location data for " +
-					"leaderboard " + id + ".", 1);
+		}
+		catch (Exception e) {
+			CommunicationManager.debugError("Invalid location for leaderboard " + id,
+				CommunicationManager.DebugLevel.NORMAL);
+			CommunicationManager.debugInfo("Leaderboard location data may be corrupt. If data cannot be manually " +
+				"corrected in arenaData.yml, please delete the location data for leaderboard " + id + ".",
+				CommunicationManager.DebugLevel.NORMAL);
 		}
 	}
 
@@ -280,24 +295,27 @@ public class GameController {
 
 	/**
 	 * Display all portals to a player.
+	 *
 	 * @param player - The player to display all portals to.
 	 */
 	public static void displayAllPortals(Player player) {
 		arenas.values().stream().filter(Objects::nonNull).map(Arena::getPortal)
-				.filter(Objects::nonNull).forEach(portal -> portal.displayForPlayer(player));
+			.filter(Objects::nonNull).forEach(portal -> portal.displayForPlayer(player));
 	}
 
 	/**
 	 * Display all arena boards to a player.
+	 *
 	 * @param player - The player to display all arena boards to.
 	 */
 	public static void displayAllArenaBoards(Player player) {
 		arenas.values().stream().filter(Objects::nonNull).map(Arena::getArenaBoard)
-				.filter(Objects::nonNull).forEach(arenaBoard -> arenaBoard.displayForPlayer(player));
+			.filter(Objects::nonNull).forEach(arenaBoard -> arenaBoard.displayForPlayer(player));
 	}
 
 	/**
 	 * Display all info boards to a player.
+	 *
 	 * @param player - The player to display all info boards to.
 	 */
 	public static void displayAllInfoBoards(Player player) {
@@ -306,6 +324,7 @@ public class GameController {
 
 	/**
 	 * Display all leaderboards to a player.
+	 *
 	 * @param player - The player to display all leaderboards to.
 	 */
 	public static void displayAllLeaderboards(Player player) {
@@ -319,19 +338,20 @@ public class GameController {
 				arena.getPlayerSpawn().getSpawnIndicator().displayForPlayer(player);
 		});
 		arenas.values().stream().filter(Objects::nonNull).forEach(arena ->
-				arena.getMonsterSpawns().forEach(spawn -> {
-					if (spawn.isOn())
-						spawn.getSpawnIndicator().displayForPlayer(player);
-				}));
+			arena.getMonsterSpawns().forEach(spawn -> {
+				if (spawn.isOn())
+					spawn.getSpawnIndicator().displayForPlayer(player);
+			}));
 		arenas.values().stream().filter(Objects::nonNull).forEach(arena ->
-				arena.getVillagerSpawns().forEach(spawn -> {
-					if (spawn.isOn())
-						spawn.getSpawnIndicator().displayForPlayer(player);
-				}));
+			arena.getVillagerSpawns().forEach(spawn -> {
+				if (spawn.isOn())
+					spawn.getSpawnIndicator().displayForPlayer(player);
+			}));
 	}
 
 	/**
 	 * Display everything displayable to a player.
+	 *
 	 * @param player - The player to display everything to.
 	 */
 	public static void displayEverything(Player player) {

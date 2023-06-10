@@ -1,8 +1,8 @@
 package me.theguyhere.villagerdefense.plugin.game;
 
+import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.arenas.*;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
@@ -70,7 +70,8 @@ public class GameListener implements Listener {
 		try {
 			arena = GameController.getArena(VDMob.getArenaID(ent));
 			mob = arena.getMob(ent.getUniqueId());
-		} catch (ArenaNotFoundException | VDMobNotFoundException err) {
+		}
+		catch (ArenaNotFoundException | VDMobNotFoundException err) {
 			return;
 		}
 
@@ -103,7 +104,7 @@ public class GameListener implements Listener {
 
 			// Set monsters glowing when only 20% remain
 			if (arena.getEnemies() <= .2 * arena.getMaxEnemies() && !arena.isSpawningMonsters() &&
-					arena.getEnemies() > 0)
+				arena.getEnemies() > 0)
 				arena.setMonsterGlow();
 		}
 	}
@@ -132,7 +133,8 @@ public class GameListener implements Listener {
 		// Attempt to get VDPlayer
 		try {
 			gamer = GameController.getArena(player).getPlayer(player);
-		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+		}
+		catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
@@ -153,7 +155,7 @@ public class GameListener implements Listener {
 		int cost = gamer.getAmmoCost();
 		int capacity = gamer.getAmmoCap();
 		Double cooldown = Objects.requireNonNull(range.getItemMeta()).getPersistentDataContainer()
-				.get(VDWeapon.ATTACK_SPEED_KEY, PersistentDataType.DOUBLE);
+			.get(VDWeapon.ATTACK_SPEED_KEY, PersistentDataType.DOUBLE);
 
 		// Ignore if not enough capacity or has bad cooldown data
 		if (capacity < cost || cooldown == null)
@@ -168,9 +170,13 @@ public class GameListener implements Listener {
 
 		// Update capacity, durability, and cooldown
 		if (Bow.matches(range))
-			NMSVersion.getCurrent().getNmsManager().setBowCooldown(player, Utils.secondsToTicks(1 / cooldown));
-		else NMSVersion.getCurrent().getNmsManager().setCrossbowCooldown(player, Utils.secondsToTicks(1 / cooldown));
-		gamer.triggerWeaponCooldown(Utils.secondsToMillis(1 / cooldown));
+			NMSVersion.getCurrent().getNmsManager().setBowCooldown(player, Calculator.secondsToTicks(1 / cooldown));
+		else
+			NMSVersion.getCurrent().getNmsManager().setCrossbowCooldown(
+				player,
+				Calculator.secondsToTicks(1 / cooldown)
+			);
+		gamer.triggerWeaponCooldown(Calculator.secondsToMillis(1 / cooldown));
 		if (Ammo.updateCapacity(ammo, -cost)) {
 			player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
 			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1);
@@ -198,7 +204,8 @@ public class GameListener implements Listener {
 			try {
 				arena = GameController.getArena(player);
 				gamer = arena.getPlayer(player);
-			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+			}
+			catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
 			}
 
@@ -208,18 +215,27 @@ public class GameListener implements Listener {
 
 			// Encode damage information
 			ItemStack range = Objects.requireNonNull(player.getEquipment()).getItemInMainHand();
-			projectile.setMetadata(VDItem.MetaKey.DAMAGE.name(),
-					new FixedMetadataValue(Main.plugin, gamer.dealRawDamage(VDPlayer.AttackClass.RANGE, 0)));
+			projectile.setMetadata(
+				VDItem.MetaKey.DAMAGE.name(),
+				new FixedMetadataValue(Main.plugin, gamer.dealRawDamage(VDPlayer.AttackClass.RANGE, 0))
+			);
 			if (gamer.isPerBlock()) {
-				projectile.setMetadata(VDItem.MetaKey.PER_BLOCK.name(),
-						new FixedMetadataValue(Main.plugin, true));
-				projectile.setMetadata(VDItem.MetaKey.ORIGIN_LOCATION.name(),
-						new FixedMetadataValue(Main.plugin, player.getLocation()));
-			} else projectile.setMetadata(VDItem.MetaKey.PER_BLOCK.name(),
-					new FixedMetadataValue(Main.plugin, false));
+				projectile.setMetadata(
+					VDItem.MetaKey.PER_BLOCK.name(),
+					new FixedMetadataValue(Main.plugin, true)
+				);
+				projectile.setMetadata(
+					VDItem.MetaKey.ORIGIN_LOCATION.name(),
+					new FixedMetadataValue(Main.plugin, player.getLocation())
+				);
+			}
+			else projectile.setMetadata(
+				VDItem.MetaKey.PER_BLOCK.name(),
+				new FixedMetadataValue(Main.plugin, false)
+			);
 			if (Crossbow.matches(range)) {
 				Integer pierce = Objects.requireNonNull(range.getItemMeta()).getPersistentDataContainer()
-						.get(VDWeapon.PIERCE_KEY, PersistentDataType.INTEGER);
+					.get(VDWeapon.PIERCE_KEY, PersistentDataType.INTEGER);
 				if (pierce != null)
 					((Arrow) projectile).setPierceLevel(pierce);
 			}
@@ -234,7 +250,8 @@ public class GameListener implements Listener {
 			try {
 				arena = GameController.getArena(VDMob.getArenaID(shooter));
 				finalShooter = arena.getMob(shooter.getUniqueId());
-			} catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException err) {
+			}
+			catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException err) {
 				return;
 			}
 
@@ -282,9 +299,11 @@ public class GameListener implements Listener {
 				arena = GameController.getArena(player);
 				gamer = arena.getPlayer(player);
 				finalDamager = arena.getMob(damager.getUniqueId());
-			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+			}
+			catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
-			} catch (VDMobNotFoundException err) {
+			}
+			catch (VDMobNotFoundException err) {
 				e.setCancelled(true);
 				return;
 			}
@@ -318,21 +337,24 @@ public class GameListener implements Listener {
 			// Implement faster attacks
 			if (finalDamager.getAttackSpeed() == .4 && e.getCause() != EntityDamageEvent.DamageCause.CUSTOM)
 				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
-						.callEvent(new EntityDamageByEntityEvent(damager, victim,
-						EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.45));
+					.callEvent(new EntityDamageByEntityEvent(damager, victim,
+						EntityDamageEvent.DamageCause.CUSTOM, 0
+					)), Calculator.secondsToTicks(.45));
 			else if (finalDamager.getAttackSpeed() == .2 && e.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
 				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
-						.callEvent(new EntityDamageByEntityEvent(damager, victim,
-						EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.25));
+					.callEvent(new EntityDamageByEntityEvent(damager, victim,
+						EntityDamageEvent.DamageCause.CUSTOM, 0
+					)), Calculator.secondsToTicks(.25));
 				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
-						.callEvent(new EntityDamageByEntityEvent(damager, victim,
-						EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.5));
+					.callEvent(new EntityDamageByEntityEvent(damager, victim,
+						EntityDamageEvent.DamageCause.CUSTOM, 0
+					)), Calculator.secondsToTicks(.5));
 			}
 
 			// Realize damage and deal effect
 			gamer.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType());
 			if (finalDamager.getEffectType() == null || (Kit.witch().getID().equals(gamer.getKit().getID())) &&
-					!gamer.isSharing())
+				!gamer.isSharing())
 				return;
 			Random r = new Random();
 			if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(Kit.EffectType.WITCH))) {
@@ -356,19 +378,23 @@ public class GameListener implements Listener {
 					arena = GameController.getArena(player);
 					gamer = arena.getPlayer(player);
 					finalVictim = arena.getMob(victim.getUniqueId());
-				} catch (ArenaNotFoundException | PlayerNotFoundException | VDMobNotFoundException err) {
+				}
+				catch (ArenaNotFoundException | PlayerNotFoundException | VDMobNotFoundException err) {
 					return;
 				}
-			} else {
+			}
+			else {
 				try {
 					arena = GameController.getArena(VDMob.getArenaID(victim));
 					finalVictim = arena.getMob(victim.getUniqueId());
-				} catch (ArenaNotFoundException | VDMobNotFoundException err) {
+				}
+				catch (ArenaNotFoundException | VDMobNotFoundException err) {
 					return;
 				}
 				try {
 					finalDamager = arena.getMob(damager.getUniqueId());
-				} catch (VDMobNotFoundException err) {
+				}
+				catch (VDMobNotFoundException err) {
 					e.setCancelled(true);
 					return;
 				}
@@ -378,7 +404,7 @@ public class GameListener implements Listener {
 			if (VDMob.isTeam(victim, IndividualTeam.MONSTER)) {
 				// Avoid phantom damage effects and friendly fire
 				if (!(damager instanceof Player) &&
-						VDMob.isTeam(damager, IndividualTeam.MONSTER)) {
+					VDMob.isTeam(damager, IndividualTeam.MONSTER)) {
 					e.setCancelled(true);
 					return;
 				}
@@ -389,7 +415,7 @@ public class GameListener implements Listener {
 
 				// Check for pacifist challenge and not an enemy
 				if (gamer != null && gamer.getChallenges().contains(Challenge.pacifist()) &&
-						!gamer.getEnemies().contains(victim.getUniqueId()))
+					!gamer.getEnemies().contains(victim.getUniqueId()))
 					return;
 
 				// Damage dealt by player
@@ -402,29 +428,29 @@ public class GameListener implements Listener {
 						if (PotionEffectType.INCREASE_DAMAGE.equals(potionEffect.getType()))
 							dif.addAndGet((1 + potionEffect.getAmplifier()) * 3);
 						else if (PotionEffectType.WEAKNESS.equals(potionEffect.getType()))
-							dif.addAndGet(- (1 + potionEffect.getAmplifier()) * 4);
+							dif.addAndGet(-(1 + potionEffect.getAmplifier()) * 4);
 					});
 
 					// Range damage
 					if (projectile) {
 						if (e.getDamager().getMetadata(VDItem.MetaKey.PER_BLOCK.name()).get(0).asBoolean())
 							finalVictim.takeDamage(
-									(int) (e.getDamager().getMetadata(VDItem.MetaKey.DAMAGE.name())
-											.get(0).asInt()
-											* victim.getLocation().distance((Location)
-											Objects.requireNonNull(e.getDamager().getMetadata(
-													VDItem.MetaKey.ORIGIN_LOCATION.name()).get(0).value())))
-											+ gamer.getBaseDamage(),
-									IndividualAttackType.NORMAL,
-									player,
-									arena
-							);
-						else finalVictim.takeDamage(
-								e.getDamager().getMetadata(VDItem.MetaKey.DAMAGE.name()).get(0).asInt() +
-										gamer.getBaseDamage(),
+								(int) (e.getDamager().getMetadata(VDItem.MetaKey.DAMAGE.name())
+									.get(0).asInt()
+									* victim.getLocation().distance((Location)
+									Objects.requireNonNull(e.getDamager().getMetadata(
+										VDItem.MetaKey.ORIGIN_LOCATION.name()).get(0).value())))
+									+ gamer.getBaseDamage(),
 								IndividualAttackType.NORMAL,
 								player,
 								arena
+							);
+						else finalVictim.takeDamage(
+							e.getDamager().getMetadata(VDItem.MetaKey.DAMAGE.name()).get(0).asInt() +
+								gamer.getBaseDamage(),
+							IndividualAttackType.NORMAL,
+							player,
+							arena
 						);
 						return;
 					}
@@ -433,17 +459,18 @@ public class GameListener implements Listener {
 					if (damage > 20 + dif.get())
 						playerAttackClass = VDPlayer.AttackClass.CRITICAL;
 
-					// Sweep damage
+						// Sweep damage
 					else if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)
 						playerAttackClass = VDPlayer.AttackClass.SWEEP;
 
-					// Main damage
+						// Main damage
 					else playerAttackClass = VDPlayer.AttackClass.MAIN;
 
 					// Play out damage
 					int hurt = finalVictim.takeDamage(
-							gamer.dealRawDamage(playerAttackClass, damage / (double) (dif.get() + 20)),
-							gamer.getAttackType(), player, arena);
+						gamer.dealRawDamage(playerAttackClass, damage / (double) (dif.get() + 20)),
+						gamer.getAttackType(), player, arena
+					);
 
 					Random r = new Random();
 
@@ -483,26 +510,31 @@ public class GameListener implements Listener {
 					// Implement faster attacks
 					if (finalDamager.getAttackSpeed() == .4 && e.getCause() != EntityDamageEvent.DamageCause.CUSTOM)
 						Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
-								.callEvent(new EntityDamageByEntityEvent(damager, victim,
-								EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.45));
+							.callEvent(new EntityDamageByEntityEvent(damager, victim,
+								EntityDamageEvent.DamageCause.CUSTOM, 0
+							)), Calculator.secondsToTicks(.45));
 					else if (finalDamager.getAttackSpeed() == .2 &&
-							e.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
+						e.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
 						Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
-								.callEvent(new EntityDamageByEntityEvent(damager, victim,
-								EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.25));
+							.callEvent(new EntityDamageByEntityEvent(damager, victim,
+								EntityDamageEvent.DamageCause.CUSTOM, 0
+							)), Calculator.secondsToTicks(.25));
 						Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
-								.callEvent(new EntityDamageByEntityEvent(damager, victim,
-								EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.5));
+							.callEvent(new EntityDamageByEntityEvent(damager, victim,
+								EntityDamageEvent.DamageCause.CUSTOM, 0
+							)), Calculator.secondsToTicks(.5));
 					}
 
 					// Check for pet
 					if (finalDamager instanceof VDPet)
 						finalVictim.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType(),
-								((VDPet) finalDamager).getOwner().getPlayer(), arena);
+							((VDPet) finalDamager).getOwner().getPlayer(), arena
+						);
 
-					// Play out damage and effect
+						// Play out damage and effect
 					else finalVictim.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType(),
-							null, arena);
+						null, arena
+					);
 					if (finalDamager.dealEffect() != null)
 						finalVictim.getEntity().addPotionEffect(finalDamager.dealEffect());
 				}
@@ -512,7 +544,7 @@ public class GameListener implements Listener {
 			if (VDMob.isTeam(victim, IndividualTeam.VILLAGER)) {
 				// Avoid phantom damage effects and friendly fire
 				if (damager instanceof Player ||
-						VDMob.isTeam(damager, IndividualTeam.VILLAGER)) {
+					VDMob.isTeam(damager, IndividualTeam.VILLAGER)) {
 					e.setCancelled(true);
 					return;
 				}
@@ -545,21 +577,25 @@ public class GameListener implements Listener {
 				// Implement faster attacks
 				if (finalDamager.getAttackSpeed() == .4 && e.getCause() != EntityDamageEvent.DamageCause.CUSTOM)
 					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
-							.callEvent(new EntityDamageByEntityEvent(damager, victim,
-									EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.45));
+						.callEvent(new EntityDamageByEntityEvent(damager, victim,
+							EntityDamageEvent.DamageCause.CUSTOM, 0
+						)), Calculator.secondsToTicks(.45));
 				else if (finalDamager.getAttackSpeed() == .2 &&
-						e.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
+					e.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
 					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
-							.callEvent(new EntityDamageByEntityEvent(damager, victim,
-									EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.25));
+						.callEvent(new EntityDamageByEntityEvent(damager, victim,
+							EntityDamageEvent.DamageCause.CUSTOM, 0
+						)), Calculator.secondsToTicks(.25));
 					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
-							.callEvent(new EntityDamageByEntityEvent(damager, victim,
-									EntityDamageEvent.DamageCause.CUSTOM, 0)), Utils.secondsToTicks(.5));
+						.callEvent(new EntityDamageByEntityEvent(damager, victim,
+							EntityDamageEvent.DamageCause.CUSTOM, 0
+						)), Calculator.secondsToTicks(.5));
 				}
 
 				// Play out damage and effect
 				finalVictim.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType(), null,
-						arena);
+					arena
+				);
 				if (finalDamager.dealEffect() != null)
 					finalVictim.getEntity().addPotionEffect(finalDamager.dealEffect());
 			}
@@ -590,7 +626,8 @@ public class GameListener implements Listener {
 			try {
 				arena = GameController.getArena(player);
 				gamer = arena.getPlayer(player);
-			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+			}
+			catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
 			}
 
@@ -634,7 +671,8 @@ public class GameListener implements Listener {
 			try {
 				arena = GameController.getArena(VDMob.getArenaID(ent));
 				mob = arena.getMob(ent.getUniqueId());
-			} catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException err) {
+			}
+			catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException err) {
 				return;
 			}
 
@@ -697,7 +735,8 @@ public class GameListener implements Listener {
 			if (target instanceof Player && !arena.hasPlayer((Player) target))
 				return;
 			else targeted = arena.getMob(target.getUniqueId());
-		} catch (ArenaNotFoundException | VDMobNotFoundException err) {
+		}
+		catch (ArenaNotFoundException | VDMobNotFoundException err) {
 			return;
 		}
 
@@ -706,9 +745,9 @@ public class GameListener implements Listener {
 			if (targeted != null && VDMob.isTeam(targeted.getEntity(), IndividualTeam.MONSTER))
 				e.setCancelled(true);
 
-		// Villager team
-		else if (VDMob.isTeam(mob.getEntity(), IndividualTeam.VILLAGER) && (targeted == null ||
-					VDMob.isTeam(mob.getEntity(), IndividualTeam.VILLAGER)))
+				// Villager team
+			else if (VDMob.isTeam(mob.getEntity(), IndividualTeam.VILLAGER) && (targeted == null ||
+				VDMob.isTeam(mob.getEntity(), IndividualTeam.VILLAGER)))
 				e.setCancelled(true);
 	}
 
@@ -733,7 +772,8 @@ public class GameListener implements Listener {
 		try {
 			arena = GameController.getArena(VDMob.getArenaID(ent));
 			mob = arena.getMob(ent.getUniqueId());
-		} catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException err) {
+		}
+		catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException err) {
 			return;
 		}
 
@@ -746,7 +786,8 @@ public class GameListener implements Listener {
 
 		// Create new explosion
 		Objects.requireNonNull(ent.getLocation().getWorld()).createExplosion(ent.getLocation(), 2.5f, false,
-				false, ent);
+			false, ent
+		);
 
 		// Create replacement creeper
 		VDMob creeper = new VDCreeper((VDCreeper) mob, arena);
@@ -769,8 +810,9 @@ public class GameListener implements Listener {
 		try {
 			arena = GameController.getArena(VDMob.getArenaID(Objects.requireNonNull(ent)));
 			witch = (VDWitch) arena.getMob(ent.getUniqueId());
-		} catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException |
-				NullPointerException | ClassCastException err) {
+		}
+		catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException |
+			   NullPointerException | ClassCastException err) {
 			return;
 		}
 
@@ -790,7 +832,8 @@ public class GameListener implements Listener {
 					PlayerManager.notifySuccess(player.getPlayer(), LanguageManager.messages.effectShare);
 					return;
 				}
-			} catch (PlayerNotFoundException ignored) {
+			}
+			catch (PlayerNotFoundException ignored) {
 			}
 
 			// Apply affects
@@ -807,7 +850,8 @@ public class GameListener implements Listener {
 		// Attempt to get arena
 		try {
 			arena = GameController.getArena(player);
-		} catch (ArenaNotFoundException err) {
+		}
+		catch (ArenaNotFoundException err) {
 			return;
 		}
 
@@ -826,35 +870,6 @@ public class GameListener implements Listener {
 		}
 	}
 
-	// Handle player level up
-	@EventHandler
-	public void onLevelUp(PlayerLevelChangeEvent e) {
-		Player player = e.getPlayer();
-		Arena arena;
-		VDPlayer gamer;
-
-		// Attempt to get arena and player
-		try {
-			arena = GameController.getArena(player);
-			gamer = arena.getPlayer(player);
-		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
-			return;
-		}
-
-		// Ignore if arena isn't active
-		if (arena.getStatus() != ArenaStatus.ACTIVE)
-			return;
-
-		// Increase health and possibly damage
-		gamer.setMaxHealth(gamer.getMaxHealth() + 10);
-		if (player.getLevel() % 5 == 0) {
-			gamer.setBaseDamage(gamer.getBaseDamage() + 2);
-			PlayerManager.notifySuccess(player, LanguageManager.messages.levelUp,
-					new ColoredMessage(ChatColor.RED, "+10" + Utils.HP + "  +2" + Utils.DAMAGE));
-		} else PlayerManager.notifySuccess(player, LanguageManager.messages.levelUp,
-				new ColoredMessage(ChatColor.RED, "+10" + Utils.HP));
-	}
-
 	// Prevent players from going hungry while waiting in an arena
 	@EventHandler
 	public void onHunger(FoodLevelChangeEvent e) {
@@ -864,7 +879,8 @@ public class GameListener implements Listener {
 		// Check for player in arena
 		try {
 			arena = GameController.getArena(player);
-		} catch (ArenaNotFoundException err) {
+		}
+		catch (ArenaNotFoundException err) {
 			return;
 		}
 
@@ -886,7 +902,8 @@ public class GameListener implements Listener {
 			// Attempt to get VDPlayer
 			try {
 				gamer = GameController.getArena(player).getPlayer(player);
-			} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+			}
+			catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
 			}
 		}
@@ -895,17 +912,18 @@ public class GameListener implements Listener {
 		else {
 			try {
 				GameController.getArena(VDMob.getArenaID(ent)).getMob(ent.getUniqueId());
-			} catch (IndexOutOfBoundsException | VDMobNotFoundException | ArenaNotFoundException err) {
+			}
+			catch (IndexOutOfBoundsException | VDMobNotFoundException | ArenaNotFoundException err) {
 				return;
 			}
 		}
 
 		// Allow plugin, command, and expiration causes, and update player stats if appropriate
 		if (e.getCause() == EntityPotionEffectEvent.Cause.PLUGIN ||
-				e.getCause() == EntityPotionEffectEvent.Cause.COMMAND ||
-				e.getCause() == EntityPotionEffectEvent.Cause.EXPIRATION ||
-				e.getCause() == EntityPotionEffectEvent.Cause.POTION_DRINK ||
-				e.getCause() == EntityPotionEffectEvent.Cause.POTION_SPLASH) {
+			e.getCause() == EntityPotionEffectEvent.Cause.COMMAND ||
+			e.getCause() == EntityPotionEffectEvent.Cause.EXPIRATION ||
+			e.getCause() == EntityPotionEffectEvent.Cause.POTION_DRINK ||
+			e.getCause() == EntityPotionEffectEvent.Cause.POTION_SPLASH) {
 			if (gamer != null)
 				gamer.updateDamageMultiplier();
 			return;
@@ -929,7 +947,8 @@ public class GameListener implements Listener {
 			// Check player is in an arena
 			try {
 				arena = GameController.getArena(player);
-			} catch (ArenaNotFoundException err) {
+			}
+			catch (ArenaNotFoundException err) {
 				return;
 			}
 
@@ -939,8 +958,8 @@ public class GameListener implements Listener {
 
 			// Negate natural health regain and manage saturation
 			if (e.getRegainReason() == EntityRegainHealthEvent.RegainReason.SATIATED ||
-					e.getRegainReason() == EntityRegainHealthEvent.RegainReason.EATING ||
-					e.getRegainReason() == EntityRegainHealthEvent.RegainReason.REGEN)
+				e.getRegainReason() == EntityRegainHealthEvent.RegainReason.EATING ||
+				e.getRegainReason() == EntityRegainHealthEvent.RegainReason.REGEN)
 				e.setCancelled(true);
 		}
 
@@ -971,7 +990,8 @@ public class GameListener implements Listener {
 		try {
 			arena = GameController.getArena(player);
 			gamer = arena.getPlayer(player);
-		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+		}
+		catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
@@ -983,7 +1003,7 @@ public class GameListener implements Listener {
 
 			// Check for other clickables in main hand
 			if (VDAbility.matches(main) || VDFood.matches(main) || VDArmor.matches(main) ||
-					VDWeapon.matchesClickableWeapon(main))
+				VDWeapon.matchesClickableWeapon(main))
 				return;
 		}
 		else item = Objects.requireNonNull(player.getEquipment()).getItemInMainHand();
@@ -992,15 +1012,15 @@ public class GameListener implements Listener {
 		if (Shop.matches(item))
 			player.openInventory(Inventories.createShopMenu(arena, gamer));
 
-		// Open kit selection menu
+			// Open kit selection menu
 		else if (KitSelector.matches(item))
 			player.openInventory(Inventories.createSelectKitsMenu(player, arena));
 
-		// Open challenge selection menu
+			// Open challenge selection menu
 		else if (ChallengeSelector.matches(item))
 			player.openInventory(Inventories.createSelectChallengesMenu(gamer, arena));
 
-		// Toggle boost
+			// Toggle boost
 		else if (BoostToggle.matches(item)) {
 			gamer.toggleBoost();
 			PlayerManager.giveChoiceItems(gamer);
@@ -1016,12 +1036,12 @@ public class GameListener implements Listener {
 		else if (CrystalConverter.matches(item))
 			player.openInventory(Inventories.createCrystalConvertMenu(gamer));
 
-		// Make player leave
+			// Make player leave
 		else if (Leave.matches(item))
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-					Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player)));
+				Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player)));
 
-		// Ignore
+			// Ignore
 		else return;
 
 		// Cancel interaction
@@ -1045,7 +1065,8 @@ public class GameListener implements Listener {
 		try {
 			arena = GameController.getArena(player);
 			gamer = arena.getPlayer(player);
-		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+		}
+		catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
@@ -1058,11 +1079,13 @@ public class GameListener implements Listener {
 			if (arena.getWaitingRoom() == null)
 				try {
 					player.teleport(arena.getPlayerSpawn().getLocation());
-				} catch (NullPointerException err) {
-					CommunicationManager.debugError(err.getMessage(), 0);
+				}
+				catch (NullPointerException err) {
+					CommunicationManager.debugError(err.getMessage(), CommunicationManager.DebugLevel.QUIET);
 				}
 			else player.teleport(arena.getWaitingRoom());
-		} else {
+		}
+		else {
 			// Set player to fake death mode
 			PlayerManager.fakeDeath(gamer);
 
@@ -1072,31 +1095,37 @@ public class GameListener implements Listener {
 
 			// Notify player of their own death
 			player.sendTitle(
-					new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.death1).toString(),
-					new ColoredMessage(ChatColor.RED, LanguageManager.messages.death2).toString(),
-					Utils.secondsToTicks(.5), Utils.secondsToTicks(2.5), Utils.secondsToTicks(1));
+				new ColoredMessage(ChatColor.DARK_RED, LanguageManager.messages.death1).toString(),
+				new ColoredMessage(ChatColor.RED, LanguageManager.messages.death2).toString(),
+				Calculator.secondsToTicks(.5), Calculator.secondsToTicks(2.5), Calculator.secondsToTicks(1)
+			);
 
 			// Teleport player back to player spawn
 			try {
 				player.teleport(arena.getPlayerSpawn().getLocation());
-			} catch (NullPointerException err) {
-				CommunicationManager.debugError(err.getMessage(), 0);
+			}
+			catch (NullPointerException err) {
+				CommunicationManager.debugError(err.getMessage(), CommunicationManager.DebugLevel.QUIET);
 			}
 			player.closeInventory();
 
 			// Notify everyone else of player death
 			arena.getPlayers().forEach(fighter -> {
 				if (!fighter.getPlayer().getUniqueId().equals(player.getUniqueId()))
-					PlayerManager.notifyAlert(fighter.getPlayer(),
-							String.format(LanguageManager.messages.death, player.getName()));
+					PlayerManager.notifyAlert(
+						fighter.getPlayer(),
+						String.format(LanguageManager.messages.death, player.getName())
+					);
 				if (arena.hasPlayerDeathSound())
 					try {
 						fighter.getPlayer().playSound(arena.getPlayerSpawn().getLocation().clone()
-										.add(0, -8, 0),
-								Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10,
-								.75f);
-					} catch (NullPointerException err) {
-						CommunicationManager.debugError(err.getMessage(), 0);
+								.add(0, -8, 0),
+							Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10,
+							.75f
+						);
+					}
+					catch (NullPointerException err) {
+						CommunicationManager.debugError(err.getMessage(), CommunicationManager.DebugLevel.QUIET);
 					}
 			});
 
@@ -1107,7 +1136,8 @@ public class GameListener implements Listener {
 			if (arena.getAlive() == 0)
 				try {
 					arena.endGame();
-				} catch (ArenaException ignored) {
+				}
+				catch (ArenaException ignored) {
 				}
 		}
 	}
@@ -1152,7 +1182,8 @@ public class GameListener implements Listener {
 		try {
 			arena = GameController.getArena(player);
 			gamer = arena.getPlayer(player);
-		} catch (ArenaNotFoundException | PlayerNotFoundException | NullPointerException err) {
+		}
+		catch (ArenaNotFoundException | PlayerNotFoundException | NullPointerException err) {
 			return;
 		}
 
@@ -1170,14 +1201,14 @@ public class GameListener implements Listener {
 
 		// Avoid false consume
 		if (e.getHand() == EquipmentSlot.OFF_HAND &&
-				(Shop.matches(main) || VDAbility.matches(main) || VDFood.matches(main) || VDArmor.matches(main) ||
-						VDWeapon.matchesClickableWeapon(main)))
+			(Shop.matches(main) || VDAbility.matches(main) || VDFood.matches(main) || VDArmor.matches(main) ||
+				VDWeapon.matchesClickableWeapon(main)))
 			return;
 
 		// Give health and hunger for totem
 		if (ShopFood.matches(item) && item.getType() == Material.TOTEM_OF_UNDYING) {
 			PersistentDataContainer dataContainer = Objects.requireNonNull(item.getItemMeta())
-					.getPersistentDataContainer();
+				.getPersistentDataContainer();
 
 			Integer integer = dataContainer.get(VDFood.HEALTH_KEY, PersistentDataType.INTEGER);
 			if (integer != null)
@@ -1206,7 +1237,8 @@ public class GameListener implements Listener {
 		try {
 			arena = GameController.getArena(player);
 			gamer = arena.getPlayer(player);
-		} catch (ArenaNotFoundException | PlayerNotFoundException | NullPointerException err) {
+		}
+		catch (ArenaNotFoundException | PlayerNotFoundException | NullPointerException err) {
 			return;
 		}
 
@@ -1218,7 +1250,7 @@ public class GameListener implements Listener {
 
 		// Give health and hunger
 		PersistentDataContainer dataContainer = Objects.requireNonNull(item.getItemMeta())
-				.getPersistentDataContainer();
+			.getPersistentDataContainer();
 
 		Integer integer = dataContainer.get(VDFood.HEALTH_KEY, PersistentDataType.INTEGER);
 		if (integer != null)
@@ -1263,7 +1295,8 @@ public class GameListener implements Listener {
 		// Attempt to get arena
 		try {
 			arena = GameController.getArena(player);
-		} catch (ArenaNotFoundException err) {
+		}
+		catch (ArenaNotFoundException err) {
 			return;
 		}
 
@@ -1273,11 +1306,12 @@ public class GameListener implements Listener {
 
 		// Cancel teleport and notify if teleport is outside arena bounds
 		if (!(BoundingBox.of(arena.getCorner1(), arena.getCorner2())
-				.contains(Objects.requireNonNull(e.getTo()).getX(), e.getTo().getY(), e.getTo().getZ())) ||
-				!Objects.equals(e.getTo().getWorld(), arena.getCorner1().getWorld())) {
+			.contains(Objects.requireNonNull(e.getTo()).getX(), e.getTo().getY(), e.getTo().getZ())) ||
+			!Objects.equals(e.getTo().getWorld(), arena.getCorner1().getWorld())) {
 			e.setCancelled(true);
 			PlayerManager.notifyFailure(player, LanguageManager.errors.teleport,
-					new ColoredMessage(ChatColor.AQUA, "/vd leave"));
+				new ColoredMessage(ChatColor.AQUA, "/vd leave")
+			);
 		}
 	}
 
@@ -1289,14 +1323,15 @@ public class GameListener implements Listener {
 		VDPlayer gamer;
 
 		// Exempt admins for testing purposes
-		if (CommunicationManager.getDebugLevel() >= 3 && player.hasPermission("vd.admin"))
+		if (CommunicationManager.getDebugLevel().atLeast(CommunicationManager.DebugLevel.DEVELOPER) && player.hasPermission("vd.admin"))
 			return;
 
 		// Attempt to get VDPlayer and arena
 		try {
 			arena = GameController.getArena(player);
 			gamer = arena.getPlayer(player);
-		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+		}
+		catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
@@ -1306,8 +1341,8 @@ public class GameListener implements Listener {
 
 		// Cancel move and notify if movement is outside arena bounds
 		if (!(BoundingBox.of(arena.getCorner1(), arena.getCorner2())
-				.contains(Objects.requireNonNull(e.getTo()).getX(), e.getTo().getY(), e.getTo().getZ())) ||
-				!Objects.equals(e.getTo().getWorld(), arena.getCorner1().getWorld())) {
+			.contains(Objects.requireNonNull(e.getTo()).getX(), e.getTo().getY(), e.getTo().getZ())) ||
+			!Objects.equals(e.getTo().getWorld(), arena.getCorner1().getWorld())) {
 
 			// Teleport player back into arena after several infractions
 			if (gamer.incrementInfractions() > 5) {
@@ -1316,10 +1351,12 @@ public class GameListener implements Listener {
 					if (gamer.getStatus() == VDPlayer.Status.ALIVE)
 						player.teleport(arena.getPlayerSpawn().getLocation());
 					else PlayerManager.teleSpectator(player, arena.getPlayerSpawn().getLocation());
-				} catch (NullPointerException err) {
-					CommunicationManager.debugError(err.getMessage(), 0);
 				}
-			} else e.setCancelled(true);
+				catch (NullPointerException err) {
+					CommunicationManager.debugError(err.getMessage(), CommunicationManager.DebugLevel.QUIET);
+				}
+			}
+			else e.setCancelled(true);
 
 			PlayerManager.notifyFailure(player, LanguageManager.errors.bounds);
 		}
@@ -1358,7 +1395,8 @@ public class GameListener implements Listener {
 		// Attempt to get VDPlayer
 		try {
 			gamer = GameController.getArena(player).getPlayer(player);
-		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+		}
+		catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
@@ -1388,13 +1426,15 @@ public class GameListener implements Listener {
 		// Attempt to get VDPlayer
 		try {
 			gamer = GameController.getArena(player).getPlayer(player);
-		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+		}
+		catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
 		// Update main hand after one tick
 		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin,
-				() -> gamer.updateMainHand(player.getInventory().getItemInMainHand()), 1);
+			() -> gamer.updateMainHand(player.getInventory().getItemInMainHand()), 1
+		);
 	}
 
 	// Prevent consumption from happening in the off-hand when the main hand has something interact-able
@@ -1413,7 +1453,7 @@ public class GameListener implements Listener {
 
 		// Avoid false consume
 		if (Shop.matches(main) || VDAbility.matches(main) || VDFood.matches(main) || VDArmor.matches(main) ||
-				VDWeapon.matchesClickableWeapon(main))
+			VDWeapon.matchesClickableWeapon(main))
 			e.setCancelled(true);
 	}
 
@@ -1428,7 +1468,8 @@ public class GameListener implements Listener {
 		try {
 			arena = GameController.getArena(player);
 			gamer = arena.getPlayer(player);
-		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+		}
+		catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
@@ -1446,20 +1487,20 @@ public class GameListener implements Listener {
 		if (e.getSlot() == player.getInventory().getHeldItemSlot())
 			gamer.updateMainHand(e.getCursor());
 
-		// Update offhand if that slot changes
+			// Update offhand if that slot changes
 		else if (e.getSlot() == 45)
 			gamer.updateOffHand(e.getCursor());
 
-		// Update armor if those slots change
+			// Update armor if those slots change
 		else if (e.getSlot() >= 36 && e.getSlot() <= 39)
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, gamer::updateArmor, 1);
 
-		// Update weapon on shift click
+			// Update weapon on shift click
 		else if (e.isShiftClick() && VDWeapon.matches(e.getCurrentItem()) &&
-				player.getInventory().firstEmpty() == player.getInventory().getHeldItemSlot())
+			player.getInventory().firstEmpty() == player.getInventory().getHeldItemSlot())
 			gamer.updateMainHand(e.getCurrentItem());
 
-		// Update armor on shift click
+			// Update armor on shift click
 		else if (e.isShiftClick() && VDArmor.matches(e.getCurrentItem()))
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, gamer::updateArmor, 1);
 	}
@@ -1475,7 +1516,8 @@ public class GameListener implements Listener {
 		try {
 			arena = GameController.getArena(player);
 			gamer = arena.getPlayer(player);
-		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+		}
+		catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
@@ -1501,7 +1543,8 @@ public class GameListener implements Listener {
 		try {
 			arena = GameController.getArena(player);
 			gamer = arena.getPlayer(player);
-		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+		}
+		catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
@@ -1519,7 +1562,8 @@ public class GameListener implements Listener {
 		// Attempt to get VDPlayer
 		try {
 			gamer = GameController.getArena(player).getPlayer(player);
-		} catch (ArenaNotFoundException | PlayerNotFoundException err) {
+		}
+		catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
@@ -1557,7 +1601,8 @@ public class GameListener implements Listener {
 		Arena arena;
 		try {
 			arena = GameController.getArena(VDMob.getArenaID(ent));
-		} catch (ArenaNotFoundException err) {
+		}
+		catch (ArenaNotFoundException err) {
 			return;
 		}
 
@@ -1587,7 +1632,8 @@ public class GameListener implements Listener {
 		// Attempt to get arena and player
 		try {
 			GameController.getArena(player);
-		} catch (ArenaNotFoundException err) {
+		}
+		catch (ArenaNotFoundException err) {
 			return;
 		}
 

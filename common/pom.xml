@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>me.theguyhere</groupId>
-        <artifactId>VillagerDefense-parent</artifactId>
-        <version>dev</version>
-    </parent>
+	<parent>
+		<groupId>me.theguyhere</groupId>
+		<artifactId>VillagerDefense-parent</artifactId>
+		<version>dev</version>
+	</parent>
 
-    <artifactId>VillagerDefense-common</artifactId>
+	<artifactId>VillagerDefense-common</artifactId>
 
-    <name>VillagerDefense Common</name>
+	<name>VillagerDefense Common</name>
 
-    <properties>
-        <spigot-api.version>1.16.5-R0.1-SNAPSHOT</spigot-api.version>
-    </properties>
+	<properties>
+		<spigot-api.version>1.16.5-R0.1-SNAPSHOT</spigot-api.version>
+	</properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>${spigot-api.version}</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>org.spigotmc</groupId>
+			<artifactId>spigot</artifactId>
+			<version>${spigot-api.version}</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
 </project>

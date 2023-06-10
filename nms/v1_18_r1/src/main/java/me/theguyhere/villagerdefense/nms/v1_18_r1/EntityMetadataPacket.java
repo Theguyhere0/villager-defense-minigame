@@ -10,31 +10,31 @@ import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
  * This class format was borrowed from filoghost.
  */
 class EntityMetadataPacket extends VersionNMSPacket {
-    private final Packet<?> rawPacket;
+	private final Packet<?> rawPacket;
 
-    private EntityMetadataPacket(PacketSetter packetSetter) {
-        rawPacket = new ClientboundSetEntityDataPacket(packetSetter);
-    }
+	private EntityMetadataPacket(PacketSetter packetSetter) {
+		rawPacket = new ClientboundSetEntityDataPacket(packetSetter);
+	}
 
-    @Override
-    Packet<?> getRawPacket() {
-        return rawPacket;
-    }
+	@Override
+	Packet<?> getRawPacket() {
+		return rawPacket;
+	}
 
-    public static DataWatcherPacketBuilder<EntityMetadataPacket> builder(EntityID entityID) {
-        PacketSetter packetSetter = PacketSetter.get();
-        packetSetter.writeVarInt(entityID.getNumericID());
-        return new Builder(packetSetter);
-    }
+	public static DataWatcherPacketBuilder<EntityMetadataPacket> builder(EntityID entityID) {
+		PacketSetter packetSetter = PacketSetter.get();
+		packetSetter.writeVarInt(entityID.getNumericID());
+		return new Builder(packetSetter);
+	}
 
-    private static class Builder extends DataWatcherPacketBuilder<EntityMetadataPacket> {
-        private Builder(PacketSetter packetSetter) {
-            super(packetSetter);
-        }
+	private static class Builder extends DataWatcherPacketBuilder<EntityMetadataPacket> {
+		private Builder(PacketSetter packetSetter) {
+			super(packetSetter);
+		}
 
-        @Override
-        EntityMetadataPacket createPacket(PacketSetter packetSetter) {
-            return new EntityMetadataPacket(packetSetter);
-        }
-    }
+		@Override
+		EntityMetadataPacket createPacket(PacketSetter packetSetter) {
+			return new EntityMetadataPacket(packetSetter);
+		}
+	}
 }

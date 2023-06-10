@@ -9,30 +9,30 @@ import org.bukkit.Location;
 
 /**
  * An armor stand entity constructed out of packets.
- *
+ * <p>
  * Class structure borrowed from filoghost.
  */
 class PacketEntityArmorStand implements TextPacketEntity {
-    private final EntityID armorStandID;
+	private final EntityID armorStandID;
 
-    PacketEntityArmorStand(EntityID armorStandID) {
-        this.armorStandID = armorStandID;
-    }
+	PacketEntityArmorStand(EntityID armorStandID) {
+		this.armorStandID = armorStandID;
+	}
 
-    @Override
-    public PacketGroup newDestroyPackets() {
-        return new EntityDestroyPacket(armorStandID);
-    }
+	@Override
+	public PacketGroup newDestroyPackets() {
+		return new EntityDestroyPacket(armorStandID);
+	}
 
-    @Override
-    public PacketGroup newSpawnPackets(Location location, String text) {
-        return PacketGroup.of(
-                new SpawnEntityPacket(armorStandID, Registry.ENTITY_TYPE.getId(EntityType.ARMOR_STAND), location),
-                EntityMetadataPacket.builder(armorStandID)
-                        .setInvisible()
-                        .setArmorStandMarker()
-                        .setCustomName(text)
-                        .build()
-        );
-    }
+	@Override
+	public PacketGroup newSpawnPackets(Location location, String text) {
+		return PacketGroup.of(
+			new SpawnEntityPacket(armorStandID, Registry.ENTITY_TYPE.getId(EntityType.ARMOR_STAND), location),
+			EntityMetadataPacket.builder(armorStandID)
+				.setInvisible()
+				.setArmorStandMarker()
+				.setCustomName(text)
+				.build()
+		);
+	}
 }

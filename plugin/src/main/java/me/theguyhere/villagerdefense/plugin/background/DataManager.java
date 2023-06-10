@@ -1,5 +1,12 @@
 package me.theguyhere.villagerdefense.plugin.background;
 
+import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.plugin.Main;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,13 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
-
-import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.plugin.Main;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 public class DataManager {
 	private FileConfiguration dataConfig;
@@ -39,18 +39,19 @@ public class DataManager {
 		// Write data into default file
 		InputStream defaultStream = Main.plugin.getResource(fileName);
 		if (defaultStream != null) {
-			YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defaultStream));
+			YamlConfiguration defaultConfig =
+				YamlConfiguration.loadConfiguration(new InputStreamReader(defaultStream));
 			dataConfig.setDefaults(defaultConfig);
 		}
 	}
-	
+
 	public FileConfiguration getConfig() {
 		// Get current config, otherwise set default and return that
 		if (dataConfig == null)
 			reloadConfig();
 		return dataConfig;
 	}
-	
+
 	public void saveConfig() {
 		// Ignore null files
 		if (dataConfig == null || configFile == null)
@@ -59,11 +60,12 @@ public class DataManager {
 		// Try saving
 		try {
 			getConfig().save(configFile);
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			Main.plugin.getLogger().log(Level.SEVERE, "Could not save config to " + configFile, e);
 		}
 	}
-	
+
 	private void saveDefaultConfig() {
 		// Create config file object
 		if (configFile == null)
@@ -93,16 +95,18 @@ public class DataManager {
 	public static Location getConfigLocation(String path) {
 		try {
 			return new Location(
-					Bukkit.getWorld(Objects.requireNonNull(Main.getArenaData().getString(path + ".world"))),
-					Main.getArenaData().getDouble(path + ".x"),
-					Main.getArenaData().getDouble(path + ".y"),
-					Main.getArenaData().getDouble(path + ".z"),
-					Float.parseFloat(Objects.requireNonNull(Main.getArenaData().get(path + ".yaw")).toString()),
-					Float.parseFloat(Objects.requireNonNull(Main.getArenaData().get(path + ".pitch")).toString())
+				Bukkit.getWorld(Objects.requireNonNull(Main.getArenaData().getString(path + ".world"))),
+				Main.getArenaData().getDouble(path + ".x"),
+				Main.getArenaData().getDouble(path + ".y"),
+				Main.getArenaData().getDouble(path + ".z"),
+				Float.parseFloat(Objects.requireNonNull(Main.getArenaData().get(path + ".yaw")).toString()),
+				Float.parseFloat(Objects.requireNonNull(Main.getArenaData().get(path + ".pitch")).toString())
 			);
-		} catch (Exception e) {
-			CommunicationManager.debugError("Error getting location " + path + " from yaml", 2,
-					!Main.releaseMode, e);
+		}
+		catch (Exception e) {
+			CommunicationManager.debugError("Error getting location " + path + " from yaml",
+				CommunicationManager.DebugLevel.VERBOSE, !Main.releaseMode, e
+			);
 			return null;
 		}
 	}
@@ -114,9 +118,11 @@ public class DataManager {
 			location.setPitch(0);
 			location.setYaw(0);
 			return location;
-		} catch (NullPointerException e) {
-			CommunicationManager.debugError("Error getting location " + path + " from yaml", 2,
-					!Main.releaseMode, e);
+		}
+		catch (NullPointerException e) {
+			CommunicationManager.debugError("Error getting location " + path + " from yaml",
+				CommunicationManager.DebugLevel.VERBOSE, !Main.releaseMode, e
+			);
 			return null;
 		}
 	}
@@ -127,9 +133,11 @@ public class DataManager {
 			Location location = Objects.requireNonNull(getConfigLocation(path));
 			location.setPitch(0);
 			return location;
-		} catch (NullPointerException e) {
-			CommunicationManager.debugError("Error getting location " + path + " from yaml", 2,
-					!Main.releaseMode, e);
+		}
+		catch (NullPointerException e) {
+			CommunicationManager.debugError("Error getting location " + path + " from yaml",
+				CommunicationManager.DebugLevel.VERBOSE, !Main.releaseMode, e
+			);
 			return null;
 		}
 	}
@@ -145,8 +153,9 @@ public class DataManager {
 				location.setZ(((int) location.getZ()) + .5);
 			else location.setZ(((int) location.getZ()) - .5);
 			setConfigurationLocation(path, location);
-		} catch (NullPointerException ignored) {
-			CommunicationManager.debugError("Something went wrong centering!", 1);
+		}
+		catch (NullPointerException ignored) {
+			CommunicationManager.debugError("Something went wrong centering!", CommunicationManager.DebugLevel.NORMAL);
 		}
 	}
 
@@ -155,17 +164,23 @@ public class DataManager {
 		Map<Integer, Location> locations = new HashMap<>();
 		try {
 			Objects.requireNonNull(Main.getArenaData().getConfigurationSection(path)).getKeys(false)
-					.forEach(num -> {
-						try {
-							locations.put(Integer.parseInt(num),
-									getConfigLocationNoRotation(path + "." + num));
-						} catch (Exception e) {
-							CommunicationManager.debugError(
-									"An error occurred retrieving a location from section %s", 1, path);
-						}
-					});
-		} catch (Exception e) {
-			CommunicationManager.debugError("Section %s is invalid.", 1, path);
+				.forEach(num -> {
+					try {
+						locations.put(
+							Integer.parseInt(num),
+							getConfigLocationNoRotation(path + "." + num)
+						);
+					}
+					catch (Exception e) {
+						CommunicationManager.debugError(
+							"An error occurred retrieving a location from section %s",
+							CommunicationManager.DebugLevel.NORMAL, path
+						);
+					}
+				});
+		}
+		catch (Exception e) {
+			CommunicationManager.debugError("Section %s is invalid.", CommunicationManager.DebugLevel.NORMAL, path);
 		}
 		return locations;
 	}

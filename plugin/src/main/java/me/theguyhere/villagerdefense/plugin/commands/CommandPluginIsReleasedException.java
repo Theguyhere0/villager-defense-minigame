@@ -5,11 +5,11 @@ package me.theguyhere.villagerdefense.plugin.commands;
  */
 @SuppressWarnings("unused")
 public class CommandPluginIsReleasedException extends CommandException {
-    public CommandPluginIsReleasedException(String msg) {
-        super(msg);
-    }
+	public CommandPluginIsReleasedException(String msg) {
+		super(msg);
+	}
 
-    public CommandPluginIsReleasedException() {
-        super();
-    }
+	public CommandPluginIsReleasedException() {
+		super();
+	}
 }

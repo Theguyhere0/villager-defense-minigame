@@ -7,7 +7,7 @@ import org.bukkit.Location;
  * Basic interface for all Villager entities constructed from packets.
  */
 public interface VillagerPacketEntity extends PacketEntity {
-    PacketGroup newSpawnPackets(Location location);
+	PacketGroup newSpawnPackets(Location location);
 
-    int getEntityID();
+	int getEntityID();
 }

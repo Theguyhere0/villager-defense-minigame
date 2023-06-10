@@ -10,19 +10,19 @@ import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
  * This class format was borrowed from filoghost.
  */
 class EntityDestroyPacket extends VersionNMSPacket {
-    private final Packet<?> rawPacket;
+	private final Packet<?> rawPacket;
 
-    EntityDestroyPacket(EntityID entityID) {
-        PacketSetter packetSetter = PacketSetter.get();
+	EntityDestroyPacket(EntityID entityID) {
+		PacketSetter packetSetter = PacketSetter.get();
 
-        // Write ID of entity to destroy
-        packetSetter.writeVarIntArray(entityID.getNumericID());
+		// Write ID of entity to destroy
+		packetSetter.writeVarIntArray(entityID.getNumericID());
 
-        rawPacket = new ClientboundRemoveEntitiesPacket(packetSetter);
-    }
+		rawPacket = new ClientboundRemoveEntitiesPacket(packetSetter);
+	}
 
-    @Override
-    Packet<?> getRawPacket() {
-        return rawPacket;
-    }
+	@Override
+	Packet<?> getRawPacket() {
+		return rawPacket;
+	}
 }

@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>me.theguyhere</groupId>
-        <artifactId>VillagerDefense-nms</artifactId>
-        <version>dev</version>
-    </parent>
+	<parent>
+		<groupId>me.theguyhere</groupId>
+		<artifactId>VillagerDefense-nms</artifactId>
+		<version>dev</version>
+	</parent>
 
-    <artifactId>VillagerDefense-nms-v1_16_r3</artifactId>
+	<artifactId>VillagerDefense-nms-v1_16_r3</artifactId>
 
-    <name>VillagerDefense NMS v1_16_R3</name>
+	<name>VillagerDefense NMS v1_16_R3</name>
 
-    <properties>
-        <spigot-api.version>1.16.5-R0.1-SNAPSHOT</spigot-api.version>
-    </properties>
+	<properties>
+		<spigot-api.version>1.16.5-R0.1-SNAPSHOT</spigot-api.version>
+	</properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>${spigot-api.version}</version>
-            <scope>provided</scope>
-        </dependency>
+	<dependencies>
+		<dependency>
+			<groupId>org.spigotmc</groupId>
+			<artifactId>spigot-api</artifactId>
+			<version>${spigot-api.version}</version>
+			<scope>provided</scope>
+		</dependency>
 
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>${spigot-api.version}</version>
-            <scope>provided</scope>
-        </dependency>
+		<dependency>
+			<groupId>org.spigotmc</groupId>
+			<artifactId>spigot</artifactId>
+			<version>${spigot-api.version}</version>
+			<scope>provided</scope>
+		</dependency>
 
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>VillagerDefense-nms-common</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-    </dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>VillagerDefense-nms-common</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
 </project>

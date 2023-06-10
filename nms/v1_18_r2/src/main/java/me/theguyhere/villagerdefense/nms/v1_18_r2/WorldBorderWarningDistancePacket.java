@@ -9,20 +9,20 @@ import net.minecraft.network.protocol.game.ClientboundSetBorderWarningDistancePa
  * This class format was borrowed from filoghost.
  */
 class WorldBorderWarningDistancePacket extends VersionNMSPacket {
-    private final Packet<?> rawPacket;
+	private final Packet<?> rawPacket;
 
-    WorldBorderWarningDistancePacket(int distance) {
-        PacketSetter packetSetter = PacketSetter.get();
+	WorldBorderWarningDistancePacket(int distance) {
+		PacketSetter packetSetter = PacketSetter.get();
 
-        // Write in warning distance
-        packetSetter.writeVarInt(distance);
+		// Write in warning distance
+		packetSetter.writeVarInt(distance);
 
-        // Send out packet
-        rawPacket = new ClientboundSetBorderWarningDistancePacket(packetSetter);
-    }
+		// Send out packet
+		rawPacket = new ClientboundSetBorderWarningDistancePacket(packetSetter);
+	}
 
-    @Override
-    Packet<?> getRawPacket() {
-        return rawPacket;
-    }
+	@Override
+	Packet<?> getRawPacket() {
+		return rawPacket;
+	}
 }

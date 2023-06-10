@@ -671,7 +671,7 @@ messages:
   info4: "Use %s to buy kits using %s."
   info5: "Use %s to get help with Villager Defense."
   info6: "Use %s to leave an arena."
-  itemShopDesc: "Resets every %s rounds"
+  itemShopDesc: "Right click to open the item shop."
   join: "%s joined the arena."
   kills: "Kills"
   kit: "Kit"
