@@ -1480,7 +1480,9 @@ public class GameListener implements Listener {
 		}
 
 		// Ignore if not clicking in own inventory
-		if (Objects.requireNonNull(e.getClickedInventory()).getType() != InventoryType.PLAYER)
+		if (e.getClickedInventory() == null || Objects
+			.requireNonNull(e.getClickedInventory())
+			.getType() != InventoryType.PLAYER)
 			return;
 
 		// Update main hand if that slot changes

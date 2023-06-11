@@ -53,27 +53,26 @@ import java.util.Random;
 import java.util.UUID;
 
 public class InventoryListener implements Listener {
-	// Prevent losing items by drag clicking in custom inventory
+	// Manage drag click events in custom inventories
 	@EventHandler
-	public void onDrag(InventoryDragEvent e) {
+	public void onDragCustom(InventoryDragEvent e) {
 		// Ignore non-plugin inventories
 		if (!(e.getInventory().getHolder() instanceof InventoryMeta))
 			return;
 		InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 
-		// Ignore clicks in player inventory
-		if (e.getInventory().getType() == InventoryType.PLAYER)
-			return;
-
-		// Cancel the event if the inventory isn't the community chest, otherwise save the inventory
-		if (meta.getInventoryID() != InventoryID.COMMUNITY_CHEST_INVENTORY)
+		// Cancel the event if drag isn't enabled
+		if (!meta.isDragEnabled())
 			e.setCancelled(true);
-		else meta.getArena().setCommunityChest(e.getInventory());
+
+		// Save community chest
+		if (meta.getInventoryID() == InventoryID.COMMUNITY_CHEST_INVENTORY)
+			meta.getArena().setCommunityChest(e.getInventory());
 	}
 
 	// Prevent losing items by shift clicking or number keying in custom inventory
 	@EventHandler
-	public void onShiftClick(InventoryClickEvent e) {
+	public void onCustomShiftClick(InventoryClickEvent e) {
 		// Ignore non-plugin inventories
 		if (!(e.getInventory().getHolder() instanceof InventoryMeta))
 			return;
@@ -81,23 +80,26 @@ public class InventoryListener implements Listener {
 
 		// Check for shift click
 		if (e.getClick() != ClickType.SHIFT_LEFT && e.getClick() != ClickType.SHIFT_RIGHT &&
-			e.getClick().isKeyboardClick())
+			!e.getClick().isKeyboardClick())
 			return;
 
-		// Cancel the event if the inventory isn't the community chest
-		if (meta.getInventoryID() != InventoryID.COMMUNITY_CHEST_INVENTORY) {
+		// Cancel the event if drag isn't enabled
+		if (!meta.isDragEnabled()) {
 			e.setCancelled(true);
 			return;
 		}
 
-		// Prevent shop or abilities from moving around
-		if (Shop.matches(e.getCurrentItem()) || VDAbility.matches(e.getCurrentItem())) {
-			e.setCancelled(true);
-			return;
-		}
+		// For community chest
+		if (meta.getInventoryID() == InventoryID.COMMUNITY_CHEST_INVENTORY) {
+			// Prevent shop or abilities from moving around
+			if (Shop.matches(e.getCurrentItem()) || VDAbility.matches(e.getCurrentItem())) {
+				e.setCancelled(true);
+				return;
+			}
 
-		// Save inventory
-		meta.getArena().setCommunityChest(e.getInventory());
+			// Save inventory
+			meta.getArena().setCommunityChest(e.getInventory());
+		}
 	}
 
 	// Prevent items from being removed from the game
@@ -108,7 +110,7 @@ public class InventoryListener implements Listener {
 			return;
 
 		// Ignore clicks in player inventory
-		if (e.getInventory().getType() == InventoryType.PLAYER)
+		if (e.getInventory().getType() == InventoryType.CRAFTING)
 			return;
 
 		// Ignore players that aren't part of an arena
@@ -149,27 +151,16 @@ public class InventoryListener implements Listener {
 
 	// All click events in the inventories
 	@EventHandler
-	public void onClick(InventoryClickEvent e) {
-		// Get inventory title
-		String title = e.getView().getTitle();
-
+	public void onCustomClick(InventoryClickEvent e) {
 		// Ignore non-plugin inventories
 		if (!(e.getInventory().getHolder() instanceof InventoryMeta))
 			return;
 		InventoryMeta meta = (InventoryMeta) e.getInventory().getHolder();
 		InventoryID invID = meta.getInventoryID();
 
-		// Debugging info
-		CommunicationManager.debugInfo(
-			"Inventory Item: " + e.getCurrentItem(),
-			CommunicationManager.DebugLevel.VERBOSE
-		);
-		CommunicationManager.debugInfo("Cursor Item: " + e.getCursor(), CommunicationManager.DebugLevel.VERBOSE);
-		CommunicationManager.debugInfo(
-			"Clicked Inventory: " + e.getClickedInventory(),
-			CommunicationManager.DebugLevel.VERBOSE
-		);
-		CommunicationManager.debugInfo("Inventory Name: ", CommunicationManager.DebugLevel.VERBOSE, title);
+		// Cancel the event if click isn't enabled
+		if (!meta.isClickEnabled())
+			e.setCancelled(true);
 
 		// Community chest
 		if (invID == InventoryID.COMMUNITY_CHEST_INVENTORY) {
@@ -185,9 +176,6 @@ public class InventoryListener implements Listener {
 		// Ignore null inventories
 		if (e.getClickedInventory() == null)
 			return;
-
-		// Cancel the event if the inventory isn't the community chest to prevent changing the GUI
-		e.setCancelled(true);
 
 		// Ignore clicks in player inventory
 		if (e.getClickedInventory().getType() == InventoryType.PLAYER)

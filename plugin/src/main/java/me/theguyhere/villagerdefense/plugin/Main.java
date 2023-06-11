@@ -126,15 +126,15 @@ public class Main extends JavaPlugin {
 			);
 		}
 
-		// Remind if default debug level is greater than 1 in release mode
-		if (releaseMode && CommunicationManager.getDebugLevel().atLeast(CommunicationManager.DebugLevel.VERBOSE)) {
+		// Remind if default debug level is not normal in release mode
+		if (releaseMode && CommunicationManager.getDebugLevel() != CommunicationManager.DebugLevel.NORMAL) {
 			CommunicationManager.debugError(
 				"! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !",
 				CommunicationManager.DebugLevel.QUIET
 			);
 			CommunicationManager.debugError("", CommunicationManager.DebugLevel.QUIET);
 			CommunicationManager.debugError(
-				"Default debug level should be set to 0 or 1!",
+				"Default debug level should be set to normal!",
 				CommunicationManager.DebugLevel.QUIET
 			);
 			CommunicationManager.debugError("", CommunicationManager.DebugLevel.QUIET);
@@ -421,28 +421,28 @@ public class Main extends JavaPlugin {
 		if (getConfig().getInt("spawnTableDefault") < defaultSpawnVersion) {
 			CommunicationManager.debugInfo(
 				"The %s spawn table has been updated!",
-				CommunicationManager.DebugLevel.QUIET,
+				CommunicationManager.DebugLevel.NORMAL,
 				"default.yml"
 			);
 			CommunicationManager.debugInfo(
 				"Updating to version %s is optional but recommended.",
-				CommunicationManager.DebugLevel.QUIET,
+				CommunicationManager.DebugLevel.NORMAL,
 				Integer.toString(defaultSpawnVersion)
 			);
-			CommunicationManager.debugInfo(CONFIG_WARNING, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugInfo(CONFIG_WARNING, CommunicationManager.DebugLevel.NORMAL,
 				"default.yml"
 			);
 		}
 		else if (getConfig().getInt("spawnTableDefault") > defaultSpawnVersion) {
-			CommunicationManager.debugError(FUTURE, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugError(FUTURE, CommunicationManager.DebugLevel.NORMAL,
 				"default.yml"
 			);
 			CommunicationManager.debugInfo(
 				"Reverting to version %s is optional but recommended.",
-				CommunicationManager.DebugLevel.QUIET,
+				CommunicationManager.DebugLevel.NORMAL,
 				Integer.toString(defaultSpawnVersion)
 			);
-			CommunicationManager.debugInfo(CONFIG_WARNING, CommunicationManager.DebugLevel.QUIET,
+			CommunicationManager.debugInfo(CONFIG_WARNING, CommunicationManager.DebugLevel.NORMAL,
 				"default.yml"
 			);
 		}

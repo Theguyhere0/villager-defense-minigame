@@ -1929,7 +1929,11 @@ public class Arena {
 
 		// Initiate community chest
 		setCommunityChest(Bukkit.createInventory(
-			new InventoryMeta(InventoryID.COMMUNITY_CHEST_INVENTORY, InventoryType.CONTROLLED, this),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.COMMUNITY_CHEST_INVENTORY, InventoryType.CONTROLLED)
+				.setArena(this)
+				.setClickEnabled()
+				.setDragEnabled()
+				.build(),
 			54,
 			CommunicationManager.format("&d&l" + LanguageManager.names.communityChest)
 		));

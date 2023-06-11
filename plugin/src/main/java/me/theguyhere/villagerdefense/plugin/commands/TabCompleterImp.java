@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.commands;
 
+import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.GameController;
@@ -147,12 +148,15 @@ public class TabCompleterImp implements TabCompleter {
 			return result;
 		}
 
-		// Debug command needing numbers 0 through 3
-		else if (args[0].equalsIgnoreCase(CommandExecImp.Argument.DEBUG.getArg()))
-			for (int i = 0; i < 4; i++)
-				result.add(String.valueOf(i));
+		// Debug level change command
+		else if (args[0].equalsIgnoreCase(CommandExecImp.Argument.DEBUG.getArg())) {
+			for (CommunicationManager.DebugLevel level : CommunicationManager.DebugLevel.values()) {
+				if (level.name().toLowerCase().startsWith(args[1].toLowerCase()))
+					result.add(level.name().toLowerCase());
+			}
+		}
 
-			// Help command needing numbers 1 through 3
+		// Help command needing numbers 1 through 3
 		else if (CommandGuard.checkArg(args, 0, CommandExecImp.Argument.HELP.getArg()))
 			for (int i = 1; i < 4; i++)
 				result.add(String.valueOf(i));

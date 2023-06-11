@@ -61,7 +61,7 @@ public class Inventories {
 		));
 
 		return InventoryFactory.createFixedSizeInventory(
-			new InventoryMeta(InventoryID.MAIN_MENU, InventoryType.MENU),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.MAIN_MENU, InventoryType.MENU).build(),
 			CommunicationManager.format("&2&lVillager Defense"),
 			1,
 			true,
@@ -85,7 +85,7 @@ public class Inventories {
 		)));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-			new InventoryMeta(InventoryID.ARENA_DASHBOARD, InventoryType.MENU, page),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.ARENA_DASHBOARD, InventoryType.MENU).setPage(page).build(),
 			CommunicationManager.format("&9&lArenas"),
 			true,
 			true,
@@ -132,7 +132,7 @@ public class Inventories {
 			Integer.parseInt(Objects.requireNonNull(button.getItemMeta()).getDisplayName().split(" ")[2])));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-			new InventoryMeta(InventoryID.INFO_BOARD_DASHBOARD, InventoryType.MENU, page),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.INFO_BOARD_DASHBOARD, InventoryType.MENU).setPage(page).build(),
 			CommunicationManager.format("&6&lInfo Boards"),
 			true,
 			true,
@@ -195,7 +195,7 @@ public class Inventories {
 		));
 
 		return InventoryFactory.createFixedSizeInventory(
-			new InventoryMeta(InventoryID.LEADERBOARD_DASHBOARD, InventoryType.MENU),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.LEADERBOARD_DASHBOARD, InventoryType.MENU).build(),
 			CommunicationManager.format("&e&lLeaderboards"),
 			1,
 			true,
@@ -344,7 +344,7 @@ public class Inventories {
 		buttons.add(InventoryButtons.remove("ARENA"));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.ARENA_MENU, InventoryType.MENU, arena),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.ARENA_MENU, InventoryType.MENU).setArena(arena).build(),
 			CommunicationManager.format("&2&lEdit " + arena.getName()),
 			true,
 			buttons
@@ -444,7 +444,7 @@ public class Inventories {
 		));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.PLAYERS_MENU, InventoryType.MENU, arena),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.PLAYERS_MENU, InventoryType.MENU).setArena(arena).build(),
 			CommunicationManager.format("&d&lPlayer Settings: " + arena.getName()),
 			true,
 			buttons
@@ -558,7 +558,7 @@ public class Inventories {
 		));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.MOBS_MENU, InventoryType.MENU, arena),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.MOBS_MENU, InventoryType.MENU).setArena(arena).build(),
 			CommunicationManager.format("&2&lMob Settings: " + arena.getName()),
 			true,
 			buttons
@@ -585,7 +585,10 @@ public class Inventories {
 			Integer.parseInt(Objects.requireNonNull(button.getItemMeta()).getDisplayName().split(" ")[2])));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-			new InventoryMeta(InventoryID.MONSTER_SPAWN_DASHBOARD, InventoryType.MENU, page, arena),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.MONSTER_SPAWN_DASHBOARD, InventoryType.MENU)
+				.setArena(arena)
+				.setPage(page)
+				.build(),
 			CommunicationManager.format("&2&lMonster Spawns: " + arena.getName()),
 			true,
 			true,
@@ -634,7 +637,10 @@ public class Inventories {
 		}
 
 		return InventoryFactory.createFixedSizeInventory(
-			new InventoryMeta(InventoryID.MONSTER_SPAWN_MENU, InventoryType.MENU, arena, monsterSpawnID),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.MONSTER_SPAWN_MENU, InventoryType.MENU)
+				.setArena(arena)
+				.setID(monsterSpawnID)
+				.build(),
 			CommunicationManager.format("&2&lMonster Spawn " + monsterSpawnID + ": " + arena.getName()),
 			1,
 			true,
@@ -673,7 +679,10 @@ public class Inventories {
 			Integer.parseInt(Objects.requireNonNull(button.getItemMeta()).getDisplayName().split(" ")[2])));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-			new InventoryMeta(InventoryID.VILLAGER_SPAWN_DASHBOARD, InventoryType.MENU, page, arena),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.VILLAGER_SPAWN_DASHBOARD, InventoryType.MENU)
+				.setPage(page)
+				.setArena(arena)
+				.build(),
 			CommunicationManager.format("&5&lVillager Spawns: " + arena.getName()),
 			true,
 			true,
@@ -719,7 +728,9 @@ public class Inventories {
 		buttons.add(ItemFactory.createItem(Material.PODZOL, CommunicationManager.format("&9&lTaiga")));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.VILLAGER_TYPE_MENU, InventoryType.MENU, arena),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.VILLAGER_TYPE_MENU, InventoryType.MENU)
+				.setArena(arena)
+				.build(),
 			CommunicationManager.format("&6&lVillager Type: " +
 				arena.getVillagerType().substring(0, 1).toUpperCase() + arena.getVillagerType().substring(1)),
 			true,
@@ -789,7 +800,9 @@ public class Inventories {
 		));
 
 		return InventoryFactory.createFixedSizeInventory(
-			new InventoryMeta(InventoryID.SPAWN_TABLE_MENU, InventoryType.MENU, arena),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.SPAWN_TABLE_MENU, InventoryType.MENU)
+				.setArena(arena)
+				.build(),
 			CommunicationManager.format("&3&lSpawn Table: " + arena.getSpawnTableFile()),
 			1,
 			true,
@@ -895,7 +908,9 @@ public class Inventories {
 		));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.GAME_SETTINGS_MENU, InventoryType.MENU, arena),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.GAME_SETTINGS_MENU, InventoryType.MENU)
+				.setArena(arena)
+				.build(),
 			CommunicationManager.format("&8&lGame Settings: " + arena.getName()),
 			true,
 			buttons
@@ -928,11 +943,15 @@ public class Inventories {
 	public static Inventory createAllowedKitsMenu(Arena arena, boolean display) {
 		// Create inventory
 		Inventory inv = display ? Bukkit.createInventory(
-			new InventoryMeta(InventoryID.ALLOWED_KITS_DISPLAY_MENU, InventoryType.MENU, arena),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.ALLOWED_KITS_DISPLAY_MENU, InventoryType.MENU)
+				.setArena(arena)
+				.build(),
 			54,
 			CommunicationManager.format("&9&l" + LanguageManager.messages.allowedKits)
 		) : Bukkit.createInventory(
-			new InventoryMeta(InventoryID.ALLOWED_KITS_MENU, InventoryType.MENU, arena),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.ALLOWED_KITS_MENU, InventoryType.MENU)
+				.setArena(arena)
+				.build(),
 			54,
 			CommunicationManager.format("&9&l" + LanguageManager.messages.allowedKits + ": " + arena.getName())
 		);
@@ -1066,12 +1085,16 @@ public class Inventories {
 		buttons.add(Challenge.blind().getButton(forced.contains(Challenge.blind().getID())));
 
 		return display ? InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.FORCED_CHALLENGES_DISPLAY_MENU, InventoryType.MENU, arena),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.FORCED_CHALLENGES_DISPLAY_MENU, InventoryType.MENU)
+				.setArena(arena)
+				.build(),
 			CommunicationManager.format("&9&l" + LanguageManager.messages.forcedChallenges),
 			true,
 			buttons
 		) : InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.FORCED_CHALLENGES_MENU, InventoryType.MENU, arena),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.FORCED_CHALLENGES_MENU, InventoryType.MENU)
+				.setArena(arena)
+				.build(),
 			CommunicationManager.format(
 				"&9&l" + LanguageManager.messages.forcedChallenges + ": " + arena.getName()),
 			true,
@@ -1132,7 +1155,9 @@ public class Inventories {
 		));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.DIFFICULTY_LABEL_MENU, InventoryType.MENU, arena),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.DIFFICULTY_LABEL_MENU, InventoryType.MENU)
+				.setArena(arena)
+				.build(),
 			CommunicationManager.format("&6&lDifficulty Label: " + label),
 			true,
 			buttons
@@ -1159,7 +1184,9 @@ public class Inventories {
 		buttons.add(ItemFactory.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&l4")));
 
 		return InventoryFactory.createFixedSizeInventory(
-			new InventoryMeta(InventoryID.DIFFICULTY_MULTIPLIER_MENU, InventoryType.MENU, arena),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.DIFFICULTY_MULTIPLIER_MENU, InventoryType.MENU)
+				.setArena(arena)
+				.build(),
 			CommunicationManager.format("&4&lDifficulty Multiplier: " + arena.getDifficultyMultiplier()),
 			1,
 			true,
@@ -1198,7 +1225,9 @@ public class Inventories {
 		));
 
 		return InventoryFactory.createFixedSizeInventory(
-			new InventoryMeta(InventoryID.ARENA_BOUNDS_MENU, InventoryType.MENU, arena),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.ARENA_BOUNDS_MENU, InventoryType.MENU)
+				.setArena(arena)
+				.build(),
 			CommunicationManager.format("&4&lArena Bounds: " + arena.getName()),
 			1,
 			true,
@@ -1319,7 +1348,9 @@ public class Inventories {
 		));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.SOUNDS_MENU, InventoryType.MENU, arena),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.SOUNDS_MENU, InventoryType.MENU)
+				.setArena(arena)
+				.build(),
 			CommunicationManager.format("&d&lSounds: " + arena.getName()),
 			true,
 			buttons
@@ -1348,7 +1379,9 @@ public class Inventories {
 		buttons.add(arena.getWaitingSoundButton("none"));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.WAITING_SOUND_MENU, InventoryType.MENU, arena),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.WAITING_SOUND_MENU, InventoryType.MENU)
+				.setArena(arena)
+				.build(),
 			CommunicationManager.format("&6&lWaiting Sound: " + arena.getWaitingSoundName()),
 			true,
 			buttons
@@ -1406,7 +1439,10 @@ public class Inventories {
 		));
 
 		return InventoryFactory.createDynamicSizeBottomNavFreezeRowInventory(
-			new InventoryMeta(InventoryID.COPY_SETTINGS_MENU, InventoryType.MENU, page, arena),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.COPY_SETTINGS_MENU, InventoryType.MENU)
+				.setArena(arena)
+				.setPage(page)
+				.build(),
 			CommunicationManager.format("&8&lCopy Game Settings"),
 			true,
 			false,
@@ -1503,7 +1539,8 @@ public class Inventories {
 		));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.SHOP_MENU, InventoryType.MENU),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.SHOP_MENU, InventoryType.MENU)
+				.build(),
 			CommunicationManager.format("&2&l" + LanguageManager.names.itemShop),
 			false,
 			buttons
@@ -1522,7 +1559,8 @@ public class Inventories {
 		buttons.add(arena.modifyPrice(Sword.create(VDItem.Tier.T6, Sword.SwordType.TIERED)));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.SWORD_SHOP_MENU, InventoryType.MENU),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.SWORD_SHOP_MENU, InventoryType.MENU)
+				.build(),
 			CommunicationManager.format("&2&l" + LanguageManager.names.swordShop),
 			true,
 			buttons
@@ -1541,7 +1579,8 @@ public class Inventories {
 		buttons.add(arena.modifyPrice(Axe.create(VDItem.Tier.T6)));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.AXE_SHOP_MENU, InventoryType.MENU),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.AXE_SHOP_MENU, InventoryType.MENU)
+				.build(),
 			CommunicationManager.format("&2&l" + LanguageManager.names.axeShop),
 			true,
 			buttons
@@ -1560,7 +1599,8 @@ public class Inventories {
 		buttons.add(arena.modifyPrice(Scythe.create(VDItem.Tier.T6, Scythe.ScytheType.TIERED)));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.SCYTHE_SHOP_MENU, InventoryType.MENU),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.SCYTHE_SHOP_MENU, InventoryType.MENU)
+				.build(),
 			CommunicationManager.format("&2&l" + LanguageManager.names.scytheShop),
 			true,
 			buttons
@@ -1579,7 +1619,8 @@ public class Inventories {
 		buttons.add(arena.modifyPrice(Bow.create(VDItem.Tier.T6)));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.BOW_SHOP_MENU, InventoryType.MENU),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.BOW_SHOP_MENU, InventoryType.MENU)
+				.build(),
 			CommunicationManager.format("&2&l" + LanguageManager.names.bowShop),
 			true,
 			buttons
@@ -1598,7 +1639,8 @@ public class Inventories {
 		buttons.add(arena.modifyPrice(Crossbow.create(VDItem.Tier.T6)));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.CROSSBOW_SHOP_MENU, InventoryType.MENU),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.CROSSBOW_SHOP_MENU, InventoryType.MENU)
+				.build(),
 			CommunicationManager.format("&2&l" + LanguageManager.names.crossbowShop),
 			true,
 			buttons
@@ -1633,7 +1675,8 @@ public class Inventories {
 		}
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.AMMO_UPGRADE_SHOP_MENU, InventoryType.MENU),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.AMMO_UPGRADE_SHOP_MENU, InventoryType.MENU)
+				.build(),
 			CommunicationManager.format("&2&l" + LanguageManager.names.ammoShop),
 			true,
 			buttons
@@ -1652,7 +1695,8 @@ public class Inventories {
 		buttons.add(arena.modifyPrice(Helmet.create(VDItem.Tier.T6)));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.HELMET_SHOP_MENU, InventoryType.MENU),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.HELMET_SHOP_MENU, InventoryType.MENU)
+				.build(),
 			CommunicationManager.format("&2&l" + LanguageManager.names.helmetShop),
 			true,
 			buttons
@@ -1671,7 +1715,8 @@ public class Inventories {
 		buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T6)));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.CHESTPLATE_SHOP_MENU, InventoryType.MENU),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.CHESTPLATE_SHOP_MENU, InventoryType.MENU)
+				.build(),
 			CommunicationManager.format("&2&l" + LanguageManager.names.chestplateShop),
 			true,
 			buttons
@@ -1690,7 +1735,8 @@ public class Inventories {
 		buttons.add(arena.modifyPrice(Leggings.create(VDItem.Tier.T6)));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.LEGGINGS_SHOP_MENU, InventoryType.MENU),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.LEGGINGS_SHOP_MENU, InventoryType.MENU)
+				.build(),
 			CommunicationManager.format("&2&l" + LanguageManager.names.leggingsShop),
 			true,
 			buttons
@@ -1709,7 +1755,8 @@ public class Inventories {
 		buttons.add(arena.modifyPrice(Boots.create(VDItem.Tier.T6)));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.BOOTS_SHOP_MENU, InventoryType.MENU),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.BOOTS_SHOP_MENU, InventoryType.MENU)
+				.build(),
 			CommunicationManager.format("&2&l" + LanguageManager.names.bootsShop),
 			true,
 			buttons
@@ -1730,7 +1777,8 @@ public class Inventories {
 		buttons.add(arena.modifyPrice(ShopFood.create(VDItem.Tier.UNIQUE, ShopFood.ShopFoodType.TOTEM)));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.CONSUMABLE_SHOP_MENU, InventoryType.MENU),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.CONSUMABLE_SHOP_MENU, InventoryType.MENU)
+				.build(),
 			CommunicationManager.format("&2&l" + LanguageManager.names.consumableShop),
 			true,
 			buttons
@@ -1746,9 +1794,10 @@ public class Inventories {
 		player.getPets().forEach(pet -> buttons.add(pet.createDisplayButton()));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-			new InventoryMeta(InventoryID.PET_SHOP_MENU, InventoryType.MENU, arena,
-				(9 - player.getPets().size()) / 2
-			),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.PET_SHOP_MENU, InventoryType.MENU)
+				.setArena(arena)
+				.setID((9 - player.getPets().size()) / 2)
+				.build(),
 			CommunicationManager.format("&2&l" + LanguageManager.names.petShop,
 				Integer.toString(player.getRemainingPetSlots()), Integer.toString(player.getPetSlots())
 			),
@@ -1773,7 +1822,8 @@ public class Inventories {
 			buttons.add(arena.modifyPrice(VDEgg.create(1, VDEgg.EggType.HORSE)));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.NEW_PET_MENU, InventoryType.MENU),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.NEW_PET_MENU, InventoryType.MENU)
+				.build(),
 			CommunicationManager.format("&a&l" + LanguageManager.names.newPet),
 			true,
 			buttons
@@ -1795,7 +1845,10 @@ public class Inventories {
 		));
 
 		return InventoryFactory.createFixedSizeInventory(
-			new InventoryMeta(InventoryID.PET_MANAGER_MENU, InventoryType.MENU, arena, petIndex),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.PET_MANAGER_MENU, InventoryType.MENU)
+				.setArena(arena)
+				.setID(petIndex)
+				.build(),
 			player.getPets().get(petIndex).getName(),
 			1,
 			true,
@@ -1824,9 +1877,10 @@ public class Inventories {
 			buttons.add(arena.getGolems().get(i).createDisplayButton());
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-			new InventoryMeta(InventoryID.GOLEM_SHOP_MENU, InventoryType.MENU, arena,
-				(9 - arena.getGolems().size()) / 2
-			),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.GOLEM_SHOP_MENU, InventoryType.MENU)
+				.setArena(arena)
+				.setID((9 - arena.getGolems().size()) / 2)
+				.build(),
 			CommunicationManager.format("&2&l" + LanguageManager.names.golemShop),
 			true,
 			true,
@@ -1845,7 +1899,9 @@ public class Inventories {
 		buttons.add(arena.modifyPrice(VDEgg.create(1, VDEgg.EggType.SNOW_GOLEM)));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.NEW_GOLEM_MENU, InventoryType.MENU, arena),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.NEW_GOLEM_MENU, InventoryType.MENU)
+				.setArena(arena)
+				.build(),
 			CommunicationManager.format("&a&l" + LanguageManager.names.newGolem),
 			true,
 			buttons
@@ -1867,7 +1923,10 @@ public class Inventories {
 		));
 
 		return InventoryFactory.createFixedSizeInventory(
-			new InventoryMeta(InventoryID.GOLEM_MANAGER_MENU, InventoryType.MENU, arena, golemIndex),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.GOLEM_MANAGER_MENU, InventoryType.MENU)
+				.setArena(arena)
+				.setID(golemIndex)
+				.build(),
 			arena.getGolems().get(golemIndex).getName(),
 			1,
 			true,
@@ -1925,7 +1984,8 @@ public class Inventories {
 		else buttons.add(InventoryButtons.noUpgrade());
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.ABILITY_UPGRADE_SHOP_MENU, InventoryType.MENU),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.ABILITY_UPGRADE_SHOP_MENU, InventoryType.MENU)
+				.build(),
 			CommunicationManager.format("&2&l" + LanguageManager.names.abilityUpgradeShop),
 			true,
 			buttons
@@ -1936,7 +1996,9 @@ public class Inventories {
 	public static Inventory createPlayerStatsMenu(UUID ownerID, UUID requesterID) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(
-			new InventoryMeta(InventoryID.PLAYER_STATS_MENU, InventoryType.MENU, ownerID),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.PLAYER_STATS_MENU, InventoryType.MENU)
+				.setPlayerID(ownerID)
+				.build(),
 			18,
 			CommunicationManager.format("&2&l" + String.format(
 				LanguageManager.messages.playerStatistics,
@@ -2018,7 +2080,9 @@ public class Inventories {
 	public static Inventory createPlayerKitsMenu(UUID ownerID, UUID requesterID) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(
-			new InventoryMeta(InventoryID.PLAYER_KITS_MENU, InventoryType.MENU, ownerID),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.PLAYER_KITS_MENU, InventoryType.MENU)
+				.setPlayerID(ownerID)
+				.build(),
 			54,
 			CommunicationManager.format("&9&l" + String.format(
 				LanguageManager.messages.playerKits,
@@ -2161,7 +2225,10 @@ public class Inventories {
 
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(
-			new InventoryMeta(InventoryID.SELECT_KITS_MENU, InventoryType.MENU, id, arena),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.SELECT_KITS_MENU, InventoryType.MENU)
+				.setPlayerID(id)
+				.setArena(arena)
+				.build(),
 			54,
 			CommunicationManager.format("&9&l" + arena.getName() + " " + LanguageManager.messages.kits)
 		);
@@ -2702,7 +2769,9 @@ public class Inventories {
 		)));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-			new InventoryMeta(InventoryID.PLAYER_ACHIEVEMENTS_MENU, InventoryType.MENU, id),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.PLAYER_ACHIEVEMENTS_MENU, InventoryType.MENU)
+				.setPlayerID(id)
+				.build(),
 			CommunicationManager.format("&6&l" + Bukkit.getOfflinePlayer(id).getName() + " " +
 				LanguageManager.messages.achievements),
 			true,
@@ -3100,7 +3169,10 @@ public class Inventories {
 		)));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-			new InventoryMeta(InventoryID.PLAYER_ACHIEVEMENTS_MENU, InventoryType.MENU, page, id),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.PLAYER_ACHIEVEMENTS_MENU, InventoryType.MENU)
+				.setPlayerID(id)
+				.setPage(page)
+				.build(),
 			CommunicationManager.format("&6&l" + Bukkit.getOfflinePlayer(id).getName() + " " +
 				LanguageManager.messages.achievements),
 			true,
@@ -3123,9 +3195,9 @@ public class Inventories {
 	public static Inventory createCrystalConvertMenu(VDPlayer player) {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(
-			new InventoryMeta(InventoryID.CRYSTAL_CONVERT_MENU, InventoryType.MENU,
-				player.getPlayer().getUniqueId()
-			),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.CRYSTAL_CONVERT_MENU, InventoryType.MENU)
+				.setPlayerID(player.getPlayer().getUniqueId())
+				.build(),
 			27,
 			CommunicationManager.format("&9&l" + String.format(
 				LanguageManager.names.crystalConverter,
@@ -3237,9 +3309,10 @@ public class Inventories {
 		buttons.add(Challenge.none().getButton(player.getChallenges().isEmpty()));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.SELECT_CHALLENGES_MENU, InventoryType.MENU,
-				player.getPlayer().getUniqueId(), arena
-			),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.SELECT_CHALLENGES_MENU, InventoryType.MENU)
+				.setPlayerID(player.getPlayer().getUniqueId())
+				.setArena(arena)
+				.build(),
 			CommunicationManager.format("&5&l" + arena.getName() + " " + LanguageManager.messages.challenges),
 			true,
 			buttons
@@ -3389,7 +3462,9 @@ public class Inventories {
 		));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta(InventoryID.ARENA_INFO_MENU, InventoryType.MENU, arena),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.ARENA_INFO_MENU, InventoryType.MENU)
+				.setArena(arena)
+				.build(),
 			CommunicationManager.format("&6&l" +
 				String.format(LanguageManager.messages.arenaInfo, arena.getName())),
 			false,

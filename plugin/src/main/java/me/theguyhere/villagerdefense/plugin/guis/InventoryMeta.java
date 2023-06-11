@@ -15,63 +15,18 @@ public class InventoryMeta implements InventoryHolder {
 	private final Arena arena;
 	private final int id;
 	private final int page;
+	private final boolean clickEnabled;
+	private final boolean dragEnabled;
 
-	public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type) {
-		this(inventoryID, type, null, 0);
-	}
-
-	public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type, int page) {
-		this(inventoryID, type, null, null, 0, page);
-	}
-
-	public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type, Arena arena) {
-		this(inventoryID, type, arena, 0);
-	}
-
-	public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type, int page, Arena arena) {
-		this(inventoryID, type, null, arena, 0, page);
-	}
-
-	public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type, Arena arena, int id) {
-		this(inventoryID, type, null, arena, id);
-	}
-
-	public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type, UUID playerID) {
-		this(inventoryID, type, playerID, null, 0);
-	}
-
-	public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type, int page, UUID playerID) {
-		this(inventoryID, type, playerID, null, 0, page);
-	}
-
-	public InventoryMeta(@NotNull InventoryID inventoryID, @NotNull InventoryType type, UUID playerID, Arena arena) {
-		this(inventoryID, type, playerID, arena, 0);
-	}
-
-	public InventoryMeta(
-		@NotNull InventoryID inventoryID,
-		@NotNull InventoryType type,
-		UUID playerID,
-		Arena arena,
-		int id
-	) {
-		this(inventoryID, type, playerID, arena, id, 1);
-	}
-
-	public InventoryMeta(
-		@NotNull InventoryID inventoryID,
-		@NotNull InventoryType type,
-		UUID playerID,
-		Arena arena,
-		int id,
-		int page
-	) {
-		this.inventoryID = inventoryID;
-		this.type = type;
-		this.playerID = playerID;
-		this.arena = arena;
-		this.id = id;
-		this.page = page;
+	private InventoryMeta(InventoryMetaBuilder builder) {
+		this.inventoryID = builder.inventoryID;
+		this.type = builder.type;
+		this.playerID = builder.playerID;
+		this.arena = builder.arena;
+		this.id = builder.id;
+		this.page = builder.page;
+		this.clickEnabled = builder.clickEnabled;
+		this.dragEnabled = builder.dragEnabled;
 	}
 
 	public @NotNull InventoryID getInventoryID() {
@@ -96,6 +51,64 @@ public class InventoryMeta implements InventoryHolder {
 
 	public int getPage() {
 		return page;
+	}
+
+	public boolean isClickEnabled() {
+		return clickEnabled;
+	}
+
+	public boolean isDragEnabled() {
+		return dragEnabled;
+	}
+
+	public static class InventoryMetaBuilder {
+		private final @NotNull InventoryID inventoryID;
+		private final @NotNull InventoryType type;
+		private UUID playerID = null;
+		private Arena arena = null;
+		private int id = 0;
+		private int page = 1;
+		private boolean clickEnabled = false;
+		private boolean dragEnabled = false;
+
+		public InventoryMetaBuilder(@NotNull InventoryID inventoryID, @NotNull InventoryType type) {
+			this.inventoryID = inventoryID;
+			this.type = type;
+		}
+
+		public InventoryMetaBuilder setPlayerID(UUID playerID) {
+			this.playerID = playerID;
+			return this;
+		}
+
+		public InventoryMetaBuilder setArena(Arena arena) {
+			this.arena = arena;
+			return this;
+		}
+
+		public InventoryMetaBuilder setID(int id) {
+			this.id = id;
+			return this;
+		}
+
+		public InventoryMetaBuilder setPage(int page) {
+			this.page = page;
+			return this;
+		}
+
+		public InventoryMetaBuilder setClickEnabled() {
+			this.clickEnabled = true;
+			return this;
+		}
+
+		public InventoryMetaBuilder setDragEnabled() {
+			this.dragEnabled = true;
+			return this;
+		}
+
+		public InventoryMeta build() {
+			return new InventoryMeta(this);
+		}
 	}
 
 	@Override
