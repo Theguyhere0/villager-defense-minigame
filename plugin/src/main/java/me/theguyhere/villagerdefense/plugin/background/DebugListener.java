@@ -44,6 +44,14 @@ public class DebugListener implements Listener {
 			CommunicationManager.DebugLevel.VERBOSE
 		);
 		CommunicationManager.debugInfo(
+			"InventoryClickEvent old cursor item: " + e.getOldCursor(),
+			CommunicationManager.DebugLevel.VERBOSE
+		);
+		CommunicationManager.debugInfo(
+			"InventoryClickEvent cursor item: " + e.getCursor(),
+			CommunicationManager.DebugLevel.VERBOSE
+		);
+		CommunicationManager.debugInfo(
 			"InventoryDragEvent inventory slots: " + e.getInventorySlots(),
 			CommunicationManager.DebugLevel.VERBOSE
 		);
@@ -71,6 +79,14 @@ public class DebugListener implements Listener {
 		);
 		CommunicationManager.debugInfo(
 			"InventoryClickEvent cursor item: " + e.getCursor(),
+			CommunicationManager.DebugLevel.VERBOSE
+		);
+		CommunicationManager.debugInfo(
+			"InventoryClickEvent slot number: " + e.getSlot(),
+			CommunicationManager.DebugLevel.VERBOSE
+		);
+		CommunicationManager.debugInfo(
+			"InventoryClickEvent raw slot number: " + e.getRawSlot(),
 			CommunicationManager.DebugLevel.VERBOSE
 		);
 		CommunicationManager.debugInfo(

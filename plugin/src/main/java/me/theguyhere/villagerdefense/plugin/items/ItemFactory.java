@@ -1,4 +1,4 @@
-package me.theguyhere.villagerdefense.plugin.game;
+package me.theguyhere.villagerdefense.plugin.items;
 
 import com.google.common.collect.Multimap;
 import org.bukkit.Material;
@@ -267,6 +267,11 @@ public class ItemFactory {
 		item.setItemMeta(meta);
 
 		return item;
+	}
+
+	@NotNull
+	public static ItemStack createNothing() {
+		return new ItemStack(Material.AIR);
 	}
 
 	// Remove last lore on the list

@@ -168,7 +168,7 @@ public abstract class VDAbility extends VDItem {
 			return item;
 
 		cooldown *= modifier;
-		lore.set(index, CommunicationManager.format(COOLDOWN, Double.toString(cooldown)));
+		lore.set(index, CommunicationManager.format(COOLDOWN, String.format("%.2f", cooldown)));
 		meta.setLore(lore);
 		item.setItemMeta(meta);
 		return item;

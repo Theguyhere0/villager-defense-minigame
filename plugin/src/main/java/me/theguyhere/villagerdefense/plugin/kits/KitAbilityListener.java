@@ -118,7 +118,7 @@ public class KitAbilityListener implements Listener {
 
 		// Mage
 		if (MageAbility.matches(item)) {
-			float yield = 1.5f;
+			float yield = 1.75f;
 
 			// Activate ability
 			Fireball fireball = player

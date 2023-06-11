@@ -4,7 +4,7 @@ import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.game.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.items.ItemFactory;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.golems.VDIronGolem;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.golems.VDSnowGolem;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDCat;

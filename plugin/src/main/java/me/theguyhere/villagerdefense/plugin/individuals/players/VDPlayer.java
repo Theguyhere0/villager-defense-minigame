@@ -381,15 +381,15 @@ public class VDPlayer {
 		ammoCost = 0;
 		attackType = IndividualAttackType.NORMAL;
 
-		// Ignore non-plugin items
-		if (!VDItem.matches(main))
-			return;
-
 		// Check for an ability
 		if (VDAbility.matches(main) || VDAbility.matches(getPlayer()
 			.getInventory()
 			.getItemInOffHand()))
 			ability = true;
+
+		// Ignore non-plugin items
+		if (!VDItem.matches(main))
+			return;
 
 		PersistentDataContainer dataContainer =
 			Objects
@@ -469,13 +469,13 @@ public class VDPlayer {
 		ability = false;
 		ammoCap = 0;
 
-		if (!VDItem.matches(off))
-			return;
-
 		if (VDAbility.matches(off) || VDAbility.matches(getPlayer()
 			.getInventory()
 			.getItemInMainHand()))
 			ability = true;
+
+		if (!VDItem.matches(off))
+			return;
 
 		Integer cap = Objects
 			.requireNonNull(off.getItemMeta())
@@ -627,7 +627,9 @@ public class VDPlayer {
 		updateOffHand(getPlayer()
 			.getEquipment()
 			.getItemInOffHand());
-		;
+		updateMainHand(getPlayer()
+			.getEquipment()
+			.getItemInMainHand());
 	}
 
 	public void takeDamage(int damage, @NotNull IndividualAttackType attackType) {

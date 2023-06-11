@@ -18,6 +18,7 @@ import me.theguyhere.villagerdefense.plugin.individuals.mobs.minions.VDWitch;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDPet;
 import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.items.ItemFactory;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.items.abilities.MageAbility;
 import me.theguyhere.villagerdefense.plugin.items.abilities.VDAbility;
@@ -36,7 +37,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
@@ -48,6 +51,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
 import org.spigotmc.event.entity.EntityMountEvent;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -960,39 +964,6 @@ public class GameListener implements Listener {
 		}
 	}
 
-	// Prevent using certain item slots
-	@EventHandler
-	public void onIllegalEquip(PlayerMoveEvent e) {
-		Player player = e.getPlayer();
-		Arena arena;
-
-		// Attempt to get arena
-		try {
-			arena = GameController.getArena(player);
-		}
-		catch (ArenaNotFoundException err) {
-			return;
-		}
-
-		// Ignore arenas that aren't started
-		if (arena.getStatus() != ArenaStatus.ACTIVE)
-			return;
-
-		// Get offhand
-		ItemStack off = player
-			.getInventory()
-			.getItemInOffHand();
-
-		// Unequip weapons and mage abilities in offhand
-		if (VDWeapon.matchesNoAmmo(off) || MageAbility.matches(off)) {
-			PlayerManager.giveItem(player, off, LanguageManager.errors.inventoryFull);
-			player
-				.getInventory()
-				.setItemInOffHand(null);
-			PlayerManager.notifyFailure(player, LanguageManager.errors.offWeapon);
-		}
-	}
-
 	// Prevent players from going hungry while waiting in an arena
 	@EventHandler
 	public void onHunger(FoodLevelChangeEvent e) {
@@ -1380,7 +1351,7 @@ public class GameListener implements Listener {
 				gamer.addAbsorption(integer);
 			integer = dataContainer.get(VDFood.HUNGER_KEY, PersistentDataType.INTEGER);
 			if (integer != null)
-				player.setFoodLevel(Math.max(20, player.getFoodLevel() + integer));
+				player.setFoodLevel(Math.min(20, player.getFoodLevel() + integer));
 
 			// Consume
 			player
@@ -1426,7 +1397,7 @@ public class GameListener implements Listener {
 			gamer.addAbsorption(integer);
 		integer = dataContainer.get(VDFood.HUNGER_KEY, PersistentDataType.INTEGER);
 		if (integer != null)
-			player.setFoodLevel(Math.max(20, player.getFoodLevel() + integer));
+			player.setFoodLevel(Math.min(20, player.getFoodLevel() + integer));
 
 		// No saturation increase
 		player.setSaturation(0);
@@ -1703,7 +1674,9 @@ public class GameListener implements Listener {
 		// Ignore if not clicking in own inventory
 		if (e.getClickedInventory() == null || Objects
 			.requireNonNull(e.getClickedInventory())
-			.getType() != InventoryType.PLAYER)
+			.getType() != InventoryType.PLAYER && Objects
+			.requireNonNull(e.getClickedInventory())
+			.getType() != InventoryType.CRAFTING)
 			return;
 
 		// Update main hand if that slot changes
@@ -1712,11 +1685,32 @@ public class GameListener implements Listener {
 			.getHeldItemSlot())
 			gamer.updateMainHand(e.getCursor());
 
-			// Update offhand if that slot changes
-		else if (e.getSlot() == 45)
-			gamer.updateOffHand(e.getCursor());
+		// Check offhand for illegal stuff, then update offhand if that slot changes
+		else if (e.getSlot() == 40) {
+			ItemStack buff;
+			if (e.getClick() == ClickType.NUMBER_KEY)
+				buff = player.getInventory().getItem(e.getHotbarButton());
+			else buff = e.getCursor();
 
-			// Update armor if those slots change
+			// Unequip weapons and mage abilities in offhand
+			if (VDWeapon.matchesNoAmmo(buff) || MageAbility.matches(buff)) {
+				e.setCancelled(true);
+				PlayerManager.notifyFailure(player, LanguageManager.errors.offWeapon);
+			}
+
+			else gamer.updateOffHand(buff);
+		}
+		else if (e.getClick() == ClickType.SWAP_OFFHAND) {
+			// Unequip weapons and mage abilities in offhand
+			if (VDWeapon.matchesNoAmmo(e.getCurrentItem()) || MageAbility.matches(e.getCurrentItem())) {
+				e.setCancelled(true);
+				PlayerManager.notifyFailure(player, LanguageManager.errors.offWeapon);
+			}
+
+			else gamer.updateOffHand(e.getCurrentItem());
+		}
+
+		// Update armor if those slots change
 		else if (e.getSlot() >= 36 && e.getSlot() <= 39)
 			Bukkit
 				.getScheduler()
@@ -1733,6 +1727,60 @@ public class GameListener implements Listener {
 
 			// Update armor on shift click
 		else if (e.isShiftClick() && VDArmor.matches(e.getCurrentItem()))
+			Bukkit
+				.getScheduler()
+				.scheduleSyncDelayedTask(Main.plugin, gamer::updateArmor, 1);
+	}
+
+	// Prevent dragging items around while waiting for game to start, otherwise update player stats
+	@EventHandler
+	public void onInventoryDrag(InventoryDragEvent e) {
+		Player player = (Player) e.getWhoClicked();
+		Arena arena;
+		VDPlayer gamer;
+
+		// Attempt to get VDPlayer and arena
+		try {
+			arena = GameController.getArena(player);
+			gamer = arena.getPlayer(player);
+		}
+		catch (ArenaNotFoundException | PlayerNotFoundException err) {
+			return;
+		}
+
+		// Cancel event if arena is in waiting mode
+		if (arena.getStatus() == ArenaStatus.WAITING) {
+			e.setCancelled(true);
+			return;
+		}
+
+		// Ignore if not clicking in own inventory
+		if (e
+			.getInventory()
+			.getType() != InventoryType.PLAYER && e
+			.getInventory()
+			.getType() != InventoryType.CRAFTING)
+			return;
+
+		// Update main hand if that slot changes
+		if (e.getInventorySlots().contains(player
+			.getInventory()
+			.getHeldItemSlot()))
+			gamer.updateMainHand(e.getCursor());
+
+		// Check offhand for illegal stuff, then update offhand if that slot changes
+		else if (e.getInventorySlots().contains(40)) {
+			// Unequip weapons and mage abilities in offhand
+			if (VDWeapon.matchesNoAmmo(e.getOldCursor()) || MageAbility.matches(e.getOldCursor())) {
+				e.setCancelled(true);
+				PlayerManager.notifyFailure(player, LanguageManager.errors.offWeapon);
+			}
+
+			else gamer.updateOffHand(e.getOldCursor());
+		}
+
+		// Update armor if those slots change
+		else if (e.getInventorySlots().containsAll(Arrays.asList(36, 37, 38, 39)))
 			Bukkit
 				.getScheduler()
 				.scheduleSyncDelayedTask(Main.plugin, gamer::updateArmor, 1);
@@ -1758,6 +1806,12 @@ public class GameListener implements Listener {
 		if (arena.getStatus() == ArenaStatus.WAITING) {
 			e.setCancelled(true);
 			return;
+		}
+
+		// Unequip weapons and mage abilities in offhand
+		if (VDWeapon.matchesNoAmmo(e.getOffHandItem()) || MageAbility.matches(e.getOffHandItem())) {
+			e.setCancelled(true);
+			PlayerManager.notifyFailure(player, LanguageManager.errors.offWeapon);
 		}
 
 		// Trigger check for main and off hands
@@ -1806,41 +1860,40 @@ public class GameListener implements Listener {
 
 		// Cancel event, then destroy if ready
 		e.setCancelled(true);
-		ItemStack nothing = new ItemStack(Material.AIR);
 		if (!VDItem.updateDurability(item)) {
 			if (item.equals(player
 				.getInventory()
 				.getItemInMainHand())) {
 				player
 					.getInventory()
-					.setItemInMainHand(nothing);
-				gamer.updateMainHand(nothing);
+					.setItemInMainHand(ItemFactory.createNothing());
+				gamer.updateMainHand(ItemFactory.createNothing());
 			}
 			else if (item.equals(player
 				.getInventory()
 				.getBoots())) {
 				player
 					.getInventory()
-					.setBoots(nothing);
+					.setBoots(ItemFactory.createNothing());
 			}
 			else if (item.equals(player
 				.getInventory()
 				.getChestplate()))
 				player
 					.getInventory()
-					.setChestplate(nothing);
+					.setChestplate(ItemFactory.createNothing());
 			else if (item.equals(player
 				.getInventory()
 				.getHelmet()))
 				player
 					.getInventory()
-					.setHelmet(nothing);
+					.setHelmet(ItemFactory.createNothing());
 			else if (item.equals(player
 				.getInventory()
 				.getLeggings()))
 				player
 					.getInventory()
-					.setLeggings(nothing);
+					.setLeggings(ItemFactory.createNothing());
 			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1);
 		}
 	}

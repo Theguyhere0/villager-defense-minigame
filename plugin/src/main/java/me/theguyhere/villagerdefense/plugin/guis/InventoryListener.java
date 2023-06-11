@@ -13,7 +13,7 @@ import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.displays.Leaderboard;
 import me.theguyhere.villagerdefense.plugin.game.GameController;
-import me.theguyhere.villagerdefense.plugin.game.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.items.ItemFactory;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.huds.SidebarManager;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.golems.VDGolem;
@@ -2866,24 +2866,28 @@ public class InventoryListener implements Listener {
 				.requireNonNull(equipment)
 				.getHelmet() == null) {
 				equipment.setHelmet(buy);
+				gamer.updateArmor();
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.helmet);
 			}
 			else if (Chestplate.matches(buy) && Objects
 				.requireNonNull(equipment)
 				.getChestplate() == null) {
 				equipment.setChestplate(buy);
+				gamer.updateArmor();
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.chestplate);
 			}
 			else if (Leggings.matches(buy) && Objects
 				.requireNonNull(equipment)
 				.getLeggings() == null) {
 				equipment.setLeggings(buy);
+				gamer.updateArmor();
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.leggings);
 			}
 			else if (Boots.matches(buy) && Objects
 				.requireNonNull(equipment)
 				.getBoots() == null) {
 				equipment.setBoots(buy);
+				gamer.updateArmor();
 				PlayerManager.notifySuccess(player, LanguageManager.confirms.boots);
 			}
 			else {
