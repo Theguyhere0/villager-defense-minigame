@@ -28,14 +28,22 @@ public class AchievementListener implements Listener {
 		player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1);
 
 		// Check for crystal reward
-		if (achievement.getReward().getType() == AchievementReward.Type.CRYSTAL) {
+		if (achievement
+			.getReward()
+			.getType() == AchievementReward.Type.CRYSTAL) {
 			int reward;
 
 			// Add crystals
 			if (Main.hasCustomEconomy())
-				reward = (int) (achievement.getReward().getValue() *
-					Main.plugin.getConfig().getDouble("vaultEconomyMult"));
-			else reward = achievement.getReward().getValue();
+				reward = (int) (achievement
+					.getReward()
+					.getValue() *
+					Main.plugin
+						.getConfig()
+						.getDouble("vaultEconomyMult"));
+			else reward = achievement
+				.getReward()
+				.getValue();
 			PlayerManager.depositCrystalBalance(player.getUniqueId(), reward);
 			PlayerManager.notifySuccess(
 				player,
@@ -46,7 +54,9 @@ public class AchievementListener implements Listener {
 			);
 		}
 
-		else if (achievement.getReward().getType() == AchievementReward.Type.BOOST)
+		else if (achievement
+			.getReward()
+			.getType() == AchievementReward.Type.BOOST)
 			// Notify of boost
 			PlayerManager.notifySuccess(player, LanguageManager.confirms.boostAdd);
 	}

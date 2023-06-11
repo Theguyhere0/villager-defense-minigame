@@ -16,7 +16,9 @@ public class VDStray extends VDMinion {
 	public VDStray(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.STRAY),
+			(Mob) Objects
+				.requireNonNull(location.getWorld())
+				.spawnEntity(location, EntityType.STRAY),
 			LanguageManager.mobs.stray,
 			LanguageManager.mobLore.stray,
 			IndividualAttackType.NORMAL

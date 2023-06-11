@@ -16,7 +16,9 @@ public class VDZombie extends VDMinion {
 	public VDZombie(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.ZOMBIE),
+			(Mob) Objects
+				.requireNonNull(location.getWorld())
+				.spawnEntity(location, EntityType.ZOMBIE),
 			LanguageManager.mobs.zombie,
 			LanguageManager.mobLore.zombie,
 			IndividualAttackType.NORMAL

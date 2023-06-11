@@ -79,7 +79,9 @@ public class CommunicationManager {
 		ChatColor properBase = base == null ? ChatColor.WHITE : base;
 
 		// The visible character limit per line
-		int realCharLimit = charLimit + properBase.toString().length();
+		int realCharLimit = charLimit + properBase
+			.toString()
+			.length();
 
 		// Split the description into words
 		String[] descArray = description.split(" ");
@@ -90,13 +92,17 @@ public class CommunicationManager {
 		for (String s : descArray) {
 			// Always add to a line if empty or line remains under character limit
 			if (line.length() == 0 || line.length() + s.length() <= realCharLimit)
-				line.append(s).append(" ");
+				line
+					.append(s)
+					.append(" ");
 
 				// Start new line if next word makes line longer than character limit
 			else {
 				line.deleteCharAt(line.length() - 1);
 				descLines.add(format(line.toString()));
-				line = new StringBuilder(properBase.toString()).append(s).append(" ");
+				line = new StringBuilder(properBase.toString())
+					.append(s)
+					.append(" ");
 			}
 		}
 

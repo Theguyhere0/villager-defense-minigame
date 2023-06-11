@@ -79,13 +79,23 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Gather all arenas in order
-		GameController.getArenas().keySet().stream().sorted().forEach(id -> buttons.add(ItemFactory.createItem(
-			Material.EMERALD_BLOCK,
-			CommunicationManager.format("&a&lEdit " + GameController.getArenas().get(id).getName())
-		)));
+		GameController
+			.getArenas()
+			.keySet()
+			.stream()
+			.sorted()
+			.forEach(id -> buttons.add(ItemFactory.createItem(
+				Material.EMERALD_BLOCK,
+				CommunicationManager.format("&a&lEdit " + GameController
+					.getArenas()
+					.get(id)
+					.getName())
+			)));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-			new InventoryMeta.InventoryMetaBuilder(InventoryID.ARENA_DASHBOARD, InventoryType.MENU).setPage(page).build(),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.ARENA_DASHBOARD, InventoryType.MENU)
+				.setPage(page)
+				.build(),
 			CommunicationManager.format("&9&lArenas"),
 			true,
 			true,
@@ -121,18 +131,25 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Capture all info boards
-		DataManager.getConfigLocationMap("infoBoard").forEach((id, location) ->
-			buttons.add(ItemFactory.createItem(
-				Material.BIRCH_SIGN,
-				CommunicationManager.format("&6&lInfo Board " + id)
-			)));
+		DataManager
+			.getConfigLocationMap("infoBoard")
+			.forEach((id, location) ->
+				buttons.add(ItemFactory.createItem(
+					Material.BIRCH_SIGN,
+					CommunicationManager.format("&6&lInfo Board " + id)
+				)));
 
 		// Sort buttons
 		buttons.sort(Comparator.comparing(button ->
-			Integer.parseInt(Objects.requireNonNull(button.getItemMeta()).getDisplayName().split(" ")[2])));
+			Integer.parseInt(Objects
+				.requireNonNull(button.getItemMeta())
+				.getDisplayName()
+				.split(" ")[2])));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
-			new InventoryMeta.InventoryMetaBuilder(InventoryID.INFO_BOARD_DASHBOARD, InventoryType.MENU).setPage(page).build(),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.INFO_BOARD_DASHBOARD, InventoryType.MENU)
+				.setPage(page)
+				.build(),
 			CommunicationManager.format("&6&lInfo Boards"),
 			true,
 			true,
@@ -344,7 +361,9 @@ public class Inventories {
 		buttons.add(InventoryButtons.remove("ARENA"));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta.InventoryMetaBuilder(InventoryID.ARENA_MENU, InventoryType.MENU).setArena(arena).build(),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.ARENA_MENU, InventoryType.MENU)
+				.setArena(arena)
+				.build(),
 			CommunicationManager.format("&2&lEdit " + arena.getName()),
 			true,
 			buttons
@@ -444,7 +463,9 @@ public class Inventories {
 		));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta.InventoryMetaBuilder(InventoryID.PLAYERS_MENU, InventoryType.MENU).setArena(arena).build(),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.PLAYERS_MENU, InventoryType.MENU)
+				.setArena(arena)
+				.build(),
 			CommunicationManager.format("&d&lPlayer Settings: " + arena.getName()),
 			true,
 			buttons
@@ -547,8 +568,13 @@ public class Inventories {
 		buttons.add((ItemFactory.createItem(
 			Material.LECTERN,
 			CommunicationManager.format("&6&lVillager Type: " +
-				arena.getVillagerType().substring(0, 1).toUpperCase() +
-				arena.getVillagerType().substring(1))
+				arena
+					.getVillagerType()
+					.substring(0, 1)
+					.toUpperCase() +
+				arena
+					.getVillagerType()
+					.substring(1))
 		)));
 
 		// Option to edit spawn table
@@ -558,7 +584,9 @@ public class Inventories {
 		));
 
 		return InventoryFactory.createDynamicSizeInventory(
-			new InventoryMeta.InventoryMetaBuilder(InventoryID.MOBS_MENU, InventoryType.MENU).setArena(arena).build(),
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.MOBS_MENU, InventoryType.MENU)
+				.setArena(arena)
+				.build(),
 			CommunicationManager.format("&2&lMob Settings: " + arena.getName()),
 			true,
 			buttons
@@ -574,15 +602,20 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Capture all monster spawns
-		DataManager.getConfigLocationMap(arena.getPath() + ".monster").forEach((id, location) ->
-			buttons.add(ItemFactory.createItem(
-				Material.ZOMBIE_HEAD,
-				CommunicationManager.format("&2&lMob Spawn " + id)
-			)));
+		DataManager
+			.getConfigLocationMap(arena.getPath() + ".monster")
+			.forEach((id, location) ->
+				buttons.add(ItemFactory.createItem(
+					Material.ZOMBIE_HEAD,
+					CommunicationManager.format("&2&lMob Spawn " + id)
+				)));
 
 		// Sort buttons
 		buttons.sort(Comparator.comparing(button ->
-			Integer.parseInt(Objects.requireNonNull(button.getItemMeta()).getDisplayName().split(" ")[2])));
+			Integer.parseInt(Objects
+				.requireNonNull(button.getItemMeta())
+				.getDisplayName()
+				.split(" ")[2])));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.MONSTER_SPAWN_DASHBOARD, InventoryType.MENU)
@@ -668,15 +701,20 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Capture all monster spawns
-		DataManager.getConfigLocationMap(arena.getPath() + ".villager").forEach((id, location) ->
-			buttons.add(ItemFactory.createItem(
-				Material.POPPY,
-				CommunicationManager.format("&5&lVillager Spawn " + id)
-			)));
+		DataManager
+			.getConfigLocationMap(arena.getPath() + ".villager")
+			.forEach((id, location) ->
+				buttons.add(ItemFactory.createItem(
+					Material.POPPY,
+					CommunicationManager.format("&5&lVillager Spawn " + id)
+				)));
 
 		// Sort buttons
 		buttons.sort(Comparator.comparing(button ->
-			Integer.parseInt(Objects.requireNonNull(button.getItemMeta()).getDisplayName().split(" ")[2])));
+			Integer.parseInt(Objects
+				.requireNonNull(button.getItemMeta())
+				.getDisplayName()
+				.split(" ")[2])));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.VILLAGER_SPAWN_DASHBOARD, InventoryType.MENU)
@@ -732,7 +770,12 @@ public class Inventories {
 				.setArena(arena)
 				.build(),
 			CommunicationManager.format("&6&lVillager Type: " +
-				arena.getVillagerType().substring(0, 1).toUpperCase() + arena.getVillagerType().substring(1)),
+				arena
+					.getVillagerType()
+					.substring(0, 1)
+					.toUpperCase() + arena
+				.getVillagerType()
+				.substring(1)),
 			true,
 			buttons
 		);
@@ -967,33 +1010,87 @@ public class Inventories {
 			));
 
 		List<String> bannedKitIDs = arena.getBannedKitIDs();
-		if (bannedKitIDs.contains(Kit.orc().getID()))
-			inv.setItem(9, Kit.orc().getButton(-1, false));
-		else inv.setItem(9, Kit.orc().getButton(-1, true));
-		if (bannedKitIDs.contains(Kit.farmer().getID()))
-			inv.setItem(10, Kit.farmer().getButton(-1, false));
-		else inv.setItem(10, Kit.farmer().getButton(-1, true));
-		if (bannedKitIDs.contains(Kit.soldier().getID()))
-			inv.setItem(11, Kit.soldier().getButton(-1, false));
-		else inv.setItem(11, Kit.soldier().getButton(-1, true));
-		if (bannedKitIDs.contains(Kit.alchemist().getID()))
-			inv.setItem(12, Kit.alchemist().getButton(-1, false));
-		else inv.setItem(12, Kit.alchemist().getButton(-1, true));
-		if (bannedKitIDs.contains(Kit.tailor().getID()))
-			inv.setItem(13, Kit.tailor().getButton(-1, false));
-		else inv.setItem(13, Kit.tailor().getButton(-1, true));
-		if (bannedKitIDs.contains(Kit.trader().getID()))
-			inv.setItem(14, Kit.trader().getButton(-1, false));
-		else inv.setItem(14, Kit.trader().getButton(-1, true));
-		if (bannedKitIDs.contains(Kit.summoner().getID()))
-			inv.setItem(15, Kit.summoner().getButton(-1, false));
-		else inv.setItem(15, Kit.summoner().getButton(-1, true));
-		if (bannedKitIDs.contains(Kit.reaper().getID()))
-			inv.setItem(16, Kit.reaper().getButton(-1, false));
-		else inv.setItem(16, Kit.reaper().getButton(-1, true));
-		if (bannedKitIDs.contains(Kit.phantom().getID()))
-			inv.setItem(17, Kit.phantom().getButton(-1, false));
-		else inv.setItem(17, Kit.phantom().getButton(-1, true));
+		if (bannedKitIDs.contains(Kit
+			.orc()
+			.getID()))
+			inv.setItem(9, Kit
+				.orc()
+				.getButton(-1, false));
+		else inv.setItem(9, Kit
+			.orc()
+			.getButton(-1, true));
+		if (bannedKitIDs.contains(Kit
+			.farmer()
+			.getID()))
+			inv.setItem(10, Kit
+				.farmer()
+				.getButton(-1, false));
+		else inv.setItem(10, Kit
+			.farmer()
+			.getButton(-1, true));
+		if (bannedKitIDs.contains(Kit
+			.soldier()
+			.getID()))
+			inv.setItem(11, Kit
+				.soldier()
+				.getButton(-1, false));
+		else inv.setItem(11, Kit
+			.soldier()
+			.getButton(-1, true));
+		if (bannedKitIDs.contains(Kit
+			.alchemist()
+			.getID()))
+			inv.setItem(12, Kit
+				.alchemist()
+				.getButton(-1, false));
+		else inv.setItem(12, Kit
+			.alchemist()
+			.getButton(-1, true));
+		if (bannedKitIDs.contains(Kit
+			.tailor()
+			.getID()))
+			inv.setItem(13, Kit
+				.tailor()
+				.getButton(-1, false));
+		else inv.setItem(13, Kit
+			.tailor()
+			.getButton(-1, true));
+		if (bannedKitIDs.contains(Kit
+			.trader()
+			.getID()))
+			inv.setItem(14, Kit
+				.trader()
+				.getButton(-1, false));
+		else inv.setItem(14, Kit
+			.trader()
+			.getButton(-1, true));
+		if (bannedKitIDs.contains(Kit
+			.summoner()
+			.getID()))
+			inv.setItem(15, Kit
+				.summoner()
+				.getButton(-1, false));
+		else inv.setItem(15, Kit
+			.summoner()
+			.getButton(-1, true));
+		if (bannedKitIDs.contains(Kit
+			.reaper()
+			.getID()))
+			inv.setItem(16, Kit
+				.reaper()
+				.getButton(-1, false));
+		else inv.setItem(16, Kit
+			.reaper()
+			.getButton(-1, true));
+		if (bannedKitIDs.contains(Kit
+			.phantom()
+			.getID()))
+			inv.setItem(17, Kit
+				.phantom()
+				.getButton(-1, false));
+		else inv.setItem(17, Kit
+			.phantom()
+			.getButton(-1, true));
 
 		// Ability kits
 		for (int i = 18; i < 27; i++)
@@ -1005,33 +1102,87 @@ public class Inventories {
 				)
 			));
 
-		if (bannedKitIDs.contains(Kit.mage().getID()))
-			inv.setItem(27, Kit.mage().getButton(-1, false));
-		else inv.setItem(27, Kit.mage().getButton(-1, true));
-		if (bannedKitIDs.contains(Kit.ninja().getID()))
-			inv.setItem(28, Kit.ninja().getButton(-1, false));
-		else inv.setItem(28, Kit.ninja().getButton(-1, true));
-		if (bannedKitIDs.contains(Kit.templar().getID()))
-			inv.setItem(29, Kit.templar().getButton(-1, false));
-		else inv.setItem(29, Kit.templar().getButton(-1, true));
-		if (bannedKitIDs.contains(Kit.warrior().getID()))
-			inv.setItem(30, Kit.warrior().getButton(-1, false));
-		else inv.setItem(30, Kit.warrior().getButton(-1, true));
-		if (bannedKitIDs.contains(Kit.knight().getID()))
-			inv.setItem(31, Kit.knight().getButton(-1, false));
-		else inv.setItem(31, Kit.knight().getButton(-1, true));
-		if (bannedKitIDs.contains(Kit.priest().getID()))
-			inv.setItem(32, Kit.priest().getButton(-1, false));
-		else inv.setItem(32, Kit.priest().getButton(-1, true));
-		if (bannedKitIDs.contains(Kit.siren().getID()))
-			inv.setItem(33, Kit.siren().getButton(-1, false));
-		else inv.setItem(33, Kit.siren().getButton(-1, true));
-		if (bannedKitIDs.contains(Kit.monk().getID()))
-			inv.setItem(34, Kit.monk().getButton(-1, false));
-		else inv.setItem(34, Kit.monk().getButton(-1, true));
-		if (bannedKitIDs.contains(Kit.messenger().getID()))
-			inv.setItem(35, Kit.messenger().getButton(-1, false));
-		else inv.setItem(35, Kit.messenger().getButton(-1, true));
+		if (bannedKitIDs.contains(Kit
+			.mage()
+			.getID()))
+			inv.setItem(27, Kit
+				.mage()
+				.getButton(-1, false));
+		else inv.setItem(27, Kit
+			.mage()
+			.getButton(-1, true));
+		if (bannedKitIDs.contains(Kit
+			.ninja()
+			.getID()))
+			inv.setItem(28, Kit
+				.ninja()
+				.getButton(-1, false));
+		else inv.setItem(28, Kit
+			.ninja()
+			.getButton(-1, true));
+		if (bannedKitIDs.contains(Kit
+			.templar()
+			.getID()))
+			inv.setItem(29, Kit
+				.templar()
+				.getButton(-1, false));
+		else inv.setItem(29, Kit
+			.templar()
+			.getButton(-1, true));
+		if (bannedKitIDs.contains(Kit
+			.warrior()
+			.getID()))
+			inv.setItem(30, Kit
+				.warrior()
+				.getButton(-1, false));
+		else inv.setItem(30, Kit
+			.warrior()
+			.getButton(-1, true));
+		if (bannedKitIDs.contains(Kit
+			.knight()
+			.getID()))
+			inv.setItem(31, Kit
+				.knight()
+				.getButton(-1, false));
+		else inv.setItem(31, Kit
+			.knight()
+			.getButton(-1, true));
+		if (bannedKitIDs.contains(Kit
+			.priest()
+			.getID()))
+			inv.setItem(32, Kit
+				.priest()
+				.getButton(-1, false));
+		else inv.setItem(32, Kit
+			.priest()
+			.getButton(-1, true));
+		if (bannedKitIDs.contains(Kit
+			.siren()
+			.getID()))
+			inv.setItem(33, Kit
+				.siren()
+				.getButton(-1, false));
+		else inv.setItem(33, Kit
+			.siren()
+			.getButton(-1, true));
+		if (bannedKitIDs.contains(Kit
+			.monk()
+			.getID()))
+			inv.setItem(34, Kit
+				.monk()
+				.getButton(-1, false));
+		else inv.setItem(34, Kit
+			.monk()
+			.getButton(-1, true));
+		if (bannedKitIDs.contains(Kit
+			.messenger()
+			.getID()))
+			inv.setItem(35, Kit
+				.messenger()
+				.getButton(-1, false));
+		else inv.setItem(35, Kit
+			.messenger()
+			.getButton(-1, true));
 
 		// Effect kits
 		for (int i = 36; i < 45; i++)
@@ -1043,24 +1194,60 @@ public class Inventories {
 				)
 			));
 
-		if (bannedKitIDs.contains(Kit.blacksmith().getID()))
-			inv.setItem(45, Kit.blacksmith().getButton(-1, false));
-		else inv.setItem(45, Kit.blacksmith().getButton(-1, true));
-		if (bannedKitIDs.contains(Kit.witch().getID()))
-			inv.setItem(46, Kit.witch().getButton(-1, false));
-		else inv.setItem(46, Kit.witch().getButton(-1, true));
-		if (bannedKitIDs.contains(Kit.merchant().getID()))
-			inv.setItem(47, Kit.merchant().getButton(-1, false));
-		else inv.setItem(47, Kit.merchant().getButton(-1, true));
-		if (bannedKitIDs.contains(Kit.vampire().getID()))
-			inv.setItem(48, Kit.vampire().getButton(-1, false));
-		else inv.setItem(48, Kit.vampire().getButton(-1, true));
-		if (bannedKitIDs.contains(Kit.giant().getID()))
-			inv.setItem(49, Kit.giant().getButton(-1, false));
-		else inv.setItem(49, Kit.giant().getButton(-1, true));
-		if (bannedKitIDs.contains(Kit.trainer().getID()))
-			inv.setItem(50, Kit.trainer().getButton(-1, false));
-		else inv.setItem(50, Kit.trainer().getButton(-1, true));
+		if (bannedKitIDs.contains(Kit
+			.blacksmith()
+			.getID()))
+			inv.setItem(45, Kit
+				.blacksmith()
+				.getButton(-1, false));
+		else inv.setItem(45, Kit
+			.blacksmith()
+			.getButton(-1, true));
+		if (bannedKitIDs.contains(Kit
+			.witch()
+			.getID()))
+			inv.setItem(46, Kit
+				.witch()
+				.getButton(-1, false));
+		else inv.setItem(46, Kit
+			.witch()
+			.getButton(-1, true));
+		if (bannedKitIDs.contains(Kit
+			.merchant()
+			.getID()))
+			inv.setItem(47, Kit
+				.merchant()
+				.getButton(-1, false));
+		else inv.setItem(47, Kit
+			.merchant()
+			.getButton(-1, true));
+		if (bannedKitIDs.contains(Kit
+			.vampire()
+			.getID()))
+			inv.setItem(48, Kit
+				.vampire()
+				.getButton(-1, false));
+		else inv.setItem(48, Kit
+			.vampire()
+			.getButton(-1, true));
+		if (bannedKitIDs.contains(Kit
+			.giant()
+			.getID()))
+			inv.setItem(49, Kit
+				.giant()
+				.getButton(-1, false));
+		else inv.setItem(49, Kit
+			.giant()
+			.getButton(-1, true));
+		if (bannedKitIDs.contains(Kit
+			.trainer()
+			.getID()))
+			inv.setItem(50, Kit
+				.trainer()
+				.getButton(-1, false));
+		else inv.setItem(50, Kit
+			.trainer()
+			.getButton(-1, true));
 
 		// Option to exit
 		inv.setItem(53, InventoryButtons.exit());
@@ -1074,15 +1261,51 @@ public class Inventories {
 		List<String> forced = arena.getForcedChallengeIDs();
 
 		// Set buttons
-		buttons.add(Challenge.amputee().getButton(forced.contains(Challenge.amputee().getID())));
-		buttons.add(Challenge.clumsy().getButton(forced.contains(Challenge.clumsy().getID())));
-		buttons.add(Challenge.featherweight().getButton(forced.contains(Challenge.featherweight().getID())));
-		buttons.add(Challenge.pacifist().getButton(forced.contains(Challenge.pacifist().getID())));
-		buttons.add(Challenge.dwarf().getButton(forced.contains(Challenge.dwarf().getID())));
-		buttons.add(Challenge.uhc().getButton(forced.contains(Challenge.uhc().getID())));
-		buttons.add(Challenge.explosive().getButton(forced.contains(Challenge.explosive().getID())));
-		buttons.add(Challenge.naked().getButton(forced.contains(Challenge.naked().getID())));
-		buttons.add(Challenge.blind().getButton(forced.contains(Challenge.blind().getID())));
+		buttons.add(Challenge
+			.amputee()
+			.getButton(forced.contains(Challenge
+				.amputee()
+				.getID())));
+		buttons.add(Challenge
+			.clumsy()
+			.getButton(forced.contains(Challenge
+				.clumsy()
+				.getID())));
+		buttons.add(Challenge
+			.featherweight()
+			.getButton(forced.contains(Challenge
+				.featherweight()
+				.getID())));
+		buttons.add(Challenge
+			.pacifist()
+			.getButton(forced.contains(Challenge
+				.pacifist()
+				.getID())));
+		buttons.add(Challenge
+			.dwarf()
+			.getButton(forced.contains(Challenge
+				.dwarf()
+				.getID())));
+		buttons.add(Challenge
+			.uhc()
+			.getButton(forced.contains(Challenge
+				.uhc()
+				.getID())));
+		buttons.add(Challenge
+			.explosive()
+			.getButton(forced.contains(Challenge
+				.explosive()
+				.getID())));
+		buttons.add(Challenge
+			.naked()
+			.getButton(forced.contains(Challenge
+				.naked()
+				.getID())));
+		buttons.add(Challenge
+			.blind()
+			.getButton(forced.contains(Challenge
+				.blind()
+				.getID())));
 
 		return display ? InventoryFactory.createDynamicSizeInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.FORCED_CHALLENGES_DISPLAY_MENU, InventoryType.MENU)
@@ -1398,7 +1621,11 @@ public class Inventories {
 		List<ItemStack> frozenButtons = new ArrayList<>();
 
 		// Options to choose any of the other arenas
-		Objects.requireNonNull(Main.getArenaData().getConfigurationSection("arena")).getKeys(false)
+		Objects
+			.requireNonNull(Main
+				.getArenaData()
+				.getConfigurationSection("arena"))
+			.getKeys(false)
 			.forEach(id -> {
 				if (Integer.parseInt(id) != arena.getId())
 					try {
@@ -1406,7 +1633,9 @@ public class Inventories {
 							ItemFactory.createItem(
 								Material.GRAY_GLAZED_TERRACOTTA,
 								CommunicationManager.format("&a&lCopy " +
-									GameController.getArena(Integer.parseInt(id)).getName())
+									GameController
+										.getArena(Integer.parseInt(id))
+										.getName())
 							)
 						);
 					}
@@ -1791,12 +2020,16 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// List out existing pets
-		player.getPets().forEach(pet -> buttons.add(pet.createDisplayButton()));
+		player
+			.getPets()
+			.forEach(pet -> buttons.add(pet.createDisplayButton()));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.PET_SHOP_MENU, InventoryType.MENU)
 				.setArena(arena)
-				.setID((9 - player.getPets().size()) / 2)
+				.setID((9 - player
+					.getPets()
+					.size()) / 2)
 				.build(),
 			CommunicationManager.format("&2&l" + LanguageManager.names.petShop,
 				Integer.toString(player.getRemainingPetSlots()), Integer.toString(player.getPetSlots())
@@ -1836,7 +2069,10 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Upgrade
-		buttons.add(arena.modifyPrice(player.getPets().get(petIndex).createUpgradeButton()));
+		buttons.add(arena.modifyPrice(player
+			.getPets()
+			.get(petIndex)
+			.createUpgradeButton()));
 
 		// Remove
 		buttons.add(ItemFactory.createItem(
@@ -1849,7 +2085,10 @@ public class Inventories {
 				.setArena(arena)
 				.setID(petIndex)
 				.build(),
-			player.getPets().get(petIndex).getName(),
+			player
+				.getPets()
+				.get(petIndex)
+				.getName(),
 			1,
 			true,
 			buttons
@@ -1873,13 +2112,20 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// List out golems
-		for (int i = 0; i < arena.getGolems().size(); i++)
-			buttons.add(arena.getGolems().get(i).createDisplayButton());
+		for (int i = 0; i < arena
+			.getGolems()
+			.size(); i++)
+			buttons.add(arena
+				.getGolems()
+				.get(i)
+				.createDisplayButton());
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.GOLEM_SHOP_MENU, InventoryType.MENU)
 				.setArena(arena)
-				.setID((9 - arena.getGolems().size()) / 2)
+				.setID((9 - arena
+					.getGolems()
+					.size()) / 2)
 				.build(),
 			CommunicationManager.format("&2&l" + LanguageManager.names.golemShop),
 			true,
@@ -1914,7 +2160,10 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Upgrade
-		buttons.add(arena.modifyPrice(arena.getGolems().get(golemIndex).createUpgradeButton()));
+		buttons.add(arena.modifyPrice(arena
+			.getGolems()
+			.get(golemIndex)
+			.createUpgradeButton()));
 
 		// Remove
 		buttons.add(ItemFactory.createItem(
@@ -1927,7 +2176,10 @@ public class Inventories {
 				.setArena(arena)
 				.setID(golemIndex)
 				.build(),
-			arena.getGolems().get(golemIndex).getName(),
+			arena
+				.getGolems()
+				.get(golemIndex)
+				.getName(),
 			1,
 			true,
 			buttons
@@ -1949,33 +2201,49 @@ public class Inventories {
 	public static Inventory createAbilityUpgradeShopMenu(Arena arena, VDPlayer player) {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
-		if (Kit.checkAbilityKit(player.getKit().getID())) {
-			if (player.getTieredEssenceLevel() + 1 > player.getKit().getLevel() * 2)
+		if (Kit.checkAbilityKit(player
+			.getKit()
+			.getID())) {
+			if (player.getTieredEssenceLevel() + 1 > player
+				.getKit()
+				.getLevel() * 2)
 				buttons.add(InventoryButtons.noUpgrade());
 			else {
 				ItemStack ability = null;
 				switch (player.getTieredEssenceLevel() + 1) {
 					case 1:
-						ability = VDAbility.createAbility(player.getKit().getID(), VDItem.Tier.T1);
+						ability = VDAbility.createAbility(player
+							.getKit()
+							.getID(), VDItem.Tier.T1);
 						break;
 					case 2:
-						ability = VDAbility.createAbility(player.getKit().getID(), VDItem.Tier.T2);
+						ability = VDAbility.createAbility(player
+							.getKit()
+							.getID(), VDItem.Tier.T2);
 						break;
 					case 3:
-						ability = VDAbility.createAbility(player.getKit().getID(), VDItem.Tier.T3);
+						ability = VDAbility.createAbility(player
+							.getKit()
+							.getID(), VDItem.Tier.T3);
 						break;
 					case 4:
-						ability = VDAbility.createAbility(player.getKit().getID(), VDItem.Tier.T4);
+						ability = VDAbility.createAbility(player
+							.getKit()
+							.getID(), VDItem.Tier.T4);
 						break;
 					case 5:
-						ability = VDAbility.createAbility(player.getKit().getID(), VDItem.Tier.T5);
+						ability = VDAbility.createAbility(player
+							.getKit()
+							.getID(), VDItem.Tier.T5);
 						break;
 				}
 				if (ability == null)
 					buttons.add(InventoryButtons.noUpgrade());
 				else if (player.isBoosted() && PlayerManager.hasAchievement(
 					player.getID(),
-					Achievement.allMaxedAbility().getID()
+					Achievement
+						.allMaxedAbility()
+						.getID()
 				))
 					buttons.add(VDAbility.modifyCooldown(arena.modifyPrice(ability), .9));
 				else buttons.add(arena.modifyPrice(ability));
@@ -2002,7 +2270,9 @@ public class Inventories {
 			18,
 			CommunicationManager.format("&2&l" + String.format(
 				LanguageManager.messages.playerStatistics,
-				Bukkit.getOfflinePlayer(ownerID).getName()
+				Bukkit
+					.getOfflinePlayer(ownerID)
+					.getName()
 			))
 		);
 
@@ -2086,7 +2356,9 @@ public class Inventories {
 			54,
 			CommunicationManager.format("&9&l" + String.format(
 				LanguageManager.messages.playerKits,
-				Bukkit.getOfflinePlayer(ownerID).getName()
+				Bukkit
+					.getOfflinePlayer(ownerID)
+					.getName()
 			))
 		);
 
@@ -2100,30 +2372,62 @@ public class Inventories {
 				)
 			));
 
-		inv.setItem(9, Kit.orc().getButton(1, true));
-		inv.setItem(10, Kit.farmer().getButton(1, true));
-		inv.setItem(11, Kit.soldier().getButton(PlayerManager.hasSingleTierKit(ownerID, Kit.soldier().getID()) ?
-			1 : 0, true));
-		inv.setItem(12, Kit.alchemist().getButton(PlayerManager.hasSingleTierKit(ownerID, Kit.alchemist().getID()) ?
-			1 : 0, true));
-		inv.setItem(13, Kit.tailor().getButton(
-			PlayerManager.hasSingleTierKit(ownerID, Kit.tailor().getID()) ? 1 : 0,
-			true
-		));
-		inv.setItem(14, Kit.trader().getButton(
-			PlayerManager.hasSingleTierKit(ownerID, Kit.trader().getID()) ? 1 : 0,
-			true
-		));
-		inv.setItem(15, Kit.summoner().getButton(
-			PlayerManager.getMultiTierKitLevel(ownerID, Kit.summoner().getID()),
-			true
-		));
-		inv.setItem(16, Kit.reaper().getButton(
-			PlayerManager.getMultiTierKitLevel(ownerID, Kit.reaper().getID()),
-			true
-		));
-		inv.setItem(17, Kit.phantom().getButton(PlayerManager.hasSingleTierKit(ownerID, Kit.phantom().getID()) ?
-			1 : 0, true));
+		inv.setItem(9, Kit
+			.orc()
+			.getButton(1, true));
+		inv.setItem(10, Kit
+			.farmer()
+			.getButton(1, true));
+		inv.setItem(11, Kit
+			.soldier()
+			.getButton(PlayerManager.hasSingleTierKit(ownerID, Kit
+				.soldier()
+				.getID()) ?
+				1 : 0, true));
+		inv.setItem(12, Kit
+			.alchemist()
+			.getButton(PlayerManager.hasSingleTierKit(ownerID, Kit
+				.alchemist()
+				.getID()) ?
+				1 : 0, true));
+		inv.setItem(13, Kit
+			.tailor()
+			.getButton(
+				PlayerManager.hasSingleTierKit(ownerID, Kit
+					.tailor()
+					.getID()) ? 1 : 0,
+				true
+			));
+		inv.setItem(14, Kit
+			.trader()
+			.getButton(
+				PlayerManager.hasSingleTierKit(ownerID, Kit
+					.trader()
+					.getID()) ? 1 : 0,
+				true
+			));
+		inv.setItem(15, Kit
+			.summoner()
+			.getButton(
+				PlayerManager.getMultiTierKitLevel(ownerID, Kit
+					.summoner()
+					.getID()),
+				true
+			));
+		inv.setItem(16, Kit
+			.reaper()
+			.getButton(
+				PlayerManager.getMultiTierKitLevel(ownerID, Kit
+					.reaper()
+					.getID()),
+				true
+			));
+		inv.setItem(17, Kit
+			.phantom()
+			.getButton(PlayerManager.hasSingleTierKit(ownerID, Kit
+				.phantom()
+				.getID()) ?
+				1 : 0, true));
 
 		// Ability kits
 		for (int i = 18; i < 27; i++)
@@ -2135,42 +2439,78 @@ public class Inventories {
 				)
 			));
 
-		inv.setItem(27, Kit.mage().getButton(
-			PlayerManager.getMultiTierKitLevel(ownerID, Kit.mage().getID()),
-			true
-		));
-		inv.setItem(28, Kit.ninja().getButton(
-			PlayerManager.getMultiTierKitLevel(ownerID, Kit.ninja().getID()),
-			true
-		));
-		inv.setItem(29, Kit.templar().getButton(
-			PlayerManager.getMultiTierKitLevel(ownerID, Kit.templar().getID()),
-			true
-		));
-		inv.setItem(30, Kit.warrior().getButton(
-			PlayerManager.getMultiTierKitLevel(ownerID, Kit.warrior().getID()),
-			true
-		));
-		inv.setItem(31, Kit.knight().getButton(
-			PlayerManager.getMultiTierKitLevel(ownerID, Kit.knight().getID()),
-			true
-		));
-		inv.setItem(32, Kit.priest().getButton(
-			PlayerManager.getMultiTierKitLevel(ownerID, Kit.priest().getID()),
-			true
-		));
-		inv.setItem(33, Kit.siren().getButton(
-			PlayerManager.getMultiTierKitLevel(ownerID, Kit.siren().getID()),
-			true
-		));
-		inv.setItem(34, Kit.monk().getButton(
-			PlayerManager.getMultiTierKitLevel(ownerID, Kit.monk().getID()),
-			true
-		));
-		inv.setItem(35, Kit.messenger().getButton(PlayerManager.getMultiTierKitLevel(
-			ownerID,
-			Kit.messenger().getID()
-		), true));
+		inv.setItem(27, Kit
+			.mage()
+			.getButton(
+				PlayerManager.getMultiTierKitLevel(ownerID, Kit
+					.mage()
+					.getID()),
+				true
+			));
+		inv.setItem(28, Kit
+			.ninja()
+			.getButton(
+				PlayerManager.getMultiTierKitLevel(ownerID, Kit
+					.ninja()
+					.getID()),
+				true
+			));
+		inv.setItem(29, Kit
+			.templar()
+			.getButton(
+				PlayerManager.getMultiTierKitLevel(ownerID, Kit
+					.templar()
+					.getID()),
+				true
+			));
+		inv.setItem(30, Kit
+			.warrior()
+			.getButton(
+				PlayerManager.getMultiTierKitLevel(ownerID, Kit
+					.warrior()
+					.getID()),
+				true
+			));
+		inv.setItem(31, Kit
+			.knight()
+			.getButton(
+				PlayerManager.getMultiTierKitLevel(ownerID, Kit
+					.knight()
+					.getID()),
+				true
+			));
+		inv.setItem(32, Kit
+			.priest()
+			.getButton(
+				PlayerManager.getMultiTierKitLevel(ownerID, Kit
+					.priest()
+					.getID()),
+				true
+			));
+		inv.setItem(33, Kit
+			.siren()
+			.getButton(
+				PlayerManager.getMultiTierKitLevel(ownerID, Kit
+					.siren()
+					.getID()),
+				true
+			));
+		inv.setItem(34, Kit
+			.monk()
+			.getButton(
+				PlayerManager.getMultiTierKitLevel(ownerID, Kit
+					.monk()
+					.getID()),
+				true
+			));
+		inv.setItem(35, Kit
+			.messenger()
+			.getButton(PlayerManager.getMultiTierKitLevel(
+				ownerID,
+				Kit
+					.messenger()
+					.getID()
+			), true));
 
 		// Effect kits
 		for (int i = 36; i < 45; i++)
@@ -2182,26 +2522,50 @@ public class Inventories {
 				)
 			));
 
-		inv.setItem(45, Kit.blacksmith().getButton(PlayerManager.hasSingleTierKit(
-			ownerID,
-			Kit.blacksmith().getID()
-		) ? 1 : 0, true));
-		inv.setItem(46, Kit.witch().getButton(
-			PlayerManager.hasSingleTierKit(ownerID, Kit.witch().getID()) ? 1 : 0,
-			true
-		));
-		inv.setItem(47, Kit.merchant().getButton(PlayerManager.hasSingleTierKit(ownerID, Kit.merchant().getID()) ?
-			1 : 0, true));
-		inv.setItem(48, Kit.vampire().getButton(PlayerManager.hasSingleTierKit(ownerID, Kit.vampire().getID()) ?
-			1 : 0, true));
-		inv.setItem(49, Kit.giant().getButton(
-			PlayerManager.getMultiTierKitLevel(ownerID, Kit.giant().getID()),
-			true
-		));
-		inv.setItem(50, Kit.trainer().getButton(
-			PlayerManager.getMultiTierKitLevel(ownerID, Kit.trainer().getID()),
-			true
-		));
+		inv.setItem(45, Kit
+			.blacksmith()
+			.getButton(PlayerManager.hasSingleTierKit(
+				ownerID,
+				Kit
+					.blacksmith()
+					.getID()
+			) ? 1 : 0, true));
+		inv.setItem(46, Kit
+			.witch()
+			.getButton(
+				PlayerManager.hasSingleTierKit(ownerID, Kit
+					.witch()
+					.getID()) ? 1 : 0,
+				true
+			));
+		inv.setItem(47, Kit
+			.merchant()
+			.getButton(PlayerManager.hasSingleTierKit(ownerID, Kit
+				.merchant()
+				.getID()) ?
+				1 : 0, true));
+		inv.setItem(48, Kit
+			.vampire()
+			.getButton(PlayerManager.hasSingleTierKit(ownerID, Kit
+				.vampire()
+				.getID()) ?
+				1 : 0, true));
+		inv.setItem(49, Kit
+			.giant()
+			.getButton(
+				PlayerManager.getMultiTierKitLevel(ownerID, Kit
+					.giant()
+					.getID()),
+				true
+			));
+		inv.setItem(50, Kit
+			.trainer()
+			.getButton(
+				PlayerManager.getMultiTierKitLevel(ownerID, Kit
+					.trainer()
+					.getID()),
+				true
+			));
 
 		// Crystal balance
 		if (ownerID.equals(requesterID))
@@ -2244,39 +2608,89 @@ public class Inventories {
 			));
 
 		List<String> bannedKitIDs = arena.getBannedKitIDs();
-		if (!bannedKitIDs.contains(Kit.orc().getID()))
-			inv.setItem(9, Kit.orc().getButton(1, false));
-		if (!bannedKitIDs.contains(Kit.farmer().getID()))
-			inv.setItem(10, Kit.farmer().getButton(1, false));
-		if (!bannedKitIDs.contains(Kit.soldier().getID()))
-			inv.setItem(11, Kit.soldier().getButton(PlayerManager.hasSingleTierKit(id, Kit.soldier().getID()) ?
-				1 : 0, false));
-		if (!bannedKitIDs.contains(Kit.alchemist().getID()))
-			inv.setItem(12, Kit.alchemist().getButton(PlayerManager.hasSingleTierKit(id, Kit.alchemist().getID()) ?
-				1 : 0, false));
-		if (!bannedKitIDs.contains(Kit.tailor().getID()))
-			inv.setItem(13, Kit.tailor().getButton(
-				PlayerManager.hasSingleTierKit(id, Kit.tailor().getID()) ? 1 : 0,
-				false
-			));
-		if (!bannedKitIDs.contains(Kit.trader().getID()))
-			inv.setItem(14, Kit.trader().getButton(
-				PlayerManager.hasSingleTierKit(id, Kit.trader().getID()) ? 1 : 0,
-				false
-			));
-		if (!bannedKitIDs.contains(Kit.summoner().getID()))
-			inv.setItem(15, Kit.summoner().getButton(
-				PlayerManager.getMultiTierKitLevel(id, Kit.summoner().getID()),
-				false
-			));
-		if (!bannedKitIDs.contains(Kit.reaper().getID()))
-			inv.setItem(16, Kit.reaper().getButton(
-				PlayerManager.getMultiTierKitLevel(id, Kit.reaper().getID()),
-				false
-			));
-		if (!bannedKitIDs.contains(Kit.phantom().getID()))
-			inv.setItem(17, Kit.phantom().getButton(PlayerManager.hasSingleTierKit(id, Kit.phantom().getID()) ?
-				1 : 0, false));
+		if (!bannedKitIDs.contains(Kit
+			.orc()
+			.getID()))
+			inv.setItem(9, Kit
+				.orc()
+				.getButton(1, false));
+		if (!bannedKitIDs.contains(Kit
+			.farmer()
+			.getID()))
+			inv.setItem(10, Kit
+				.farmer()
+				.getButton(1, false));
+		if (!bannedKitIDs.contains(Kit
+			.soldier()
+			.getID()))
+			inv.setItem(11, Kit
+				.soldier()
+				.getButton(PlayerManager.hasSingleTierKit(id, Kit
+					.soldier()
+					.getID()) ?
+					1 : 0, false));
+		if (!bannedKitIDs.contains(Kit
+			.alchemist()
+			.getID()))
+			inv.setItem(12, Kit
+				.alchemist()
+				.getButton(PlayerManager.hasSingleTierKit(id, Kit
+					.alchemist()
+					.getID()) ?
+					1 : 0, false));
+		if (!bannedKitIDs.contains(Kit
+			.tailor()
+			.getID()))
+			inv.setItem(13, Kit
+				.tailor()
+				.getButton(
+					PlayerManager.hasSingleTierKit(id, Kit
+						.tailor()
+						.getID()) ? 1 : 0,
+					false
+				));
+		if (!bannedKitIDs.contains(Kit
+			.trader()
+			.getID()))
+			inv.setItem(14, Kit
+				.trader()
+				.getButton(
+					PlayerManager.hasSingleTierKit(id, Kit
+						.trader()
+						.getID()) ? 1 : 0,
+					false
+				));
+		if (!bannedKitIDs.contains(Kit
+			.summoner()
+			.getID()))
+			inv.setItem(15, Kit
+				.summoner()
+				.getButton(
+					PlayerManager.getMultiTierKitLevel(id, Kit
+						.summoner()
+						.getID()),
+					false
+				));
+		if (!bannedKitIDs.contains(Kit
+			.reaper()
+			.getID()))
+			inv.setItem(16, Kit
+				.reaper()
+				.getButton(
+					PlayerManager.getMultiTierKitLevel(id, Kit
+						.reaper()
+						.getID()),
+					false
+				));
+		if (!bannedKitIDs.contains(Kit
+			.phantom()
+			.getID()))
+			inv.setItem(17, Kit
+				.phantom()
+				.getButton(PlayerManager.hasSingleTierKit(id, Kit
+					.phantom()
+					.getID()) ?
+					1 : 0, false));
 
 		// Ability kits
 		for (int i = 18; i < 27; i++)
@@ -2288,51 +2702,105 @@ public class Inventories {
 				)
 			));
 
-		if (!bannedKitIDs.contains(Kit.mage().getID()))
-			inv.setItem(27, Kit.mage().getButton(
-				PlayerManager.getMultiTierKitLevel(id, Kit.mage().getID()),
-				false
-			));
-		if (!bannedKitIDs.contains(Kit.ninja().getID()))
-			inv.setItem(28, Kit.ninja().getButton(
-				PlayerManager.getMultiTierKitLevel(id, Kit.ninja().getID()),
-				false
-			));
-		if (!bannedKitIDs.contains(Kit.templar().getID()))
-			inv.setItem(29, Kit.templar().getButton(
-				PlayerManager.getMultiTierKitLevel(id, Kit.templar().getID()),
-				false
-			));
-		if (!bannedKitIDs.contains(Kit.warrior().getID()))
-			inv.setItem(30, Kit.warrior().getButton(
-				PlayerManager.getMultiTierKitLevel(id, Kit.warrior().getID()),
-				false
-			));
-		if (!bannedKitIDs.contains(Kit.knight().getID()))
-			inv.setItem(31, Kit.knight().getButton(
-				PlayerManager.getMultiTierKitLevel(id, Kit.knight().getID()),
-				false
-			));
-		if (!bannedKitIDs.contains(Kit.priest().getID()))
-			inv.setItem(32, Kit.priest().getButton(
-				PlayerManager.getMultiTierKitLevel(id, Kit.priest().getID()),
-				false
-			));
-		if (!bannedKitIDs.contains(Kit.siren().getID()))
-			inv.setItem(33, Kit.siren().getButton(
-				PlayerManager.getMultiTierKitLevel(id, Kit.siren().getID()),
-				false
-			));
-		if (!bannedKitIDs.contains(Kit.monk().getID()))
-			inv.setItem(34, Kit.monk().getButton(
-				PlayerManager.getMultiTierKitLevel(id, Kit.monk().getID()),
-				false
-			));
-		if (!bannedKitIDs.contains(Kit.messenger().getID()))
-			inv.setItem(35, Kit.messenger().getButton(PlayerManager.getMultiTierKitLevel(
-				id,
-				Kit.messenger().getID()
-			), false));
+		if (!bannedKitIDs.contains(Kit
+			.mage()
+			.getID()))
+			inv.setItem(27, Kit
+				.mage()
+				.getButton(
+					PlayerManager.getMultiTierKitLevel(id, Kit
+						.mage()
+						.getID()),
+					false
+				));
+		if (!bannedKitIDs.contains(Kit
+			.ninja()
+			.getID()))
+			inv.setItem(28, Kit
+				.ninja()
+				.getButton(
+					PlayerManager.getMultiTierKitLevel(id, Kit
+						.ninja()
+						.getID()),
+					false
+				));
+		if (!bannedKitIDs.contains(Kit
+			.templar()
+			.getID()))
+			inv.setItem(29, Kit
+				.templar()
+				.getButton(
+					PlayerManager.getMultiTierKitLevel(id, Kit
+						.templar()
+						.getID()),
+					false
+				));
+		if (!bannedKitIDs.contains(Kit
+			.warrior()
+			.getID()))
+			inv.setItem(30, Kit
+				.warrior()
+				.getButton(
+					PlayerManager.getMultiTierKitLevel(id, Kit
+						.warrior()
+						.getID()),
+					false
+				));
+		if (!bannedKitIDs.contains(Kit
+			.knight()
+			.getID()))
+			inv.setItem(31, Kit
+				.knight()
+				.getButton(
+					PlayerManager.getMultiTierKitLevel(id, Kit
+						.knight()
+						.getID()),
+					false
+				));
+		if (!bannedKitIDs.contains(Kit
+			.priest()
+			.getID()))
+			inv.setItem(32, Kit
+				.priest()
+				.getButton(
+					PlayerManager.getMultiTierKitLevel(id, Kit
+						.priest()
+						.getID()),
+					false
+				));
+		if (!bannedKitIDs.contains(Kit
+			.siren()
+			.getID()))
+			inv.setItem(33, Kit
+				.siren()
+				.getButton(
+					PlayerManager.getMultiTierKitLevel(id, Kit
+						.siren()
+						.getID()),
+					false
+				));
+		if (!bannedKitIDs.contains(Kit
+			.monk()
+			.getID()))
+			inv.setItem(34, Kit
+				.monk()
+				.getButton(
+					PlayerManager.getMultiTierKitLevel(id, Kit
+						.monk()
+						.getID()),
+					false
+				));
+		if (!bannedKitIDs.contains(Kit
+			.messenger()
+			.getID()))
+			inv.setItem(35, Kit
+				.messenger()
+				.getButton(PlayerManager.getMultiTierKitLevel(
+					id,
+					Kit
+						.messenger()
+						.getID()
+				), false));
 
 		// Effect kits
 		for (int i = 36; i < 45; i++)
@@ -2344,35 +2812,73 @@ public class Inventories {
 				)
 			));
 
-		if (!bannedKitIDs.contains(Kit.blacksmith().getID()))
-			inv.setItem(45, Kit.blacksmith().getButton(PlayerManager.hasSingleTierKit(
-				id,
-				Kit.blacksmith().getID()
-			) ? 1 : 0, false));
-		if (!bannedKitIDs.contains(Kit.witch().getID()))
-			inv.setItem(46, Kit.witch().getButton(
-				PlayerManager.hasSingleTierKit(id, Kit.witch().getID()) ? 1 : 0,
-				false
-			));
-		if (!bannedKitIDs.contains(Kit.merchant().getID()))
-			inv.setItem(47, Kit.merchant().getButton(PlayerManager.hasSingleTierKit(id, Kit.merchant().getID()) ?
-				1 : 0, false));
-		if (!bannedKitIDs.contains(Kit.vampire().getID()))
-			inv.setItem(48, Kit.vampire().getButton(PlayerManager.hasSingleTierKit(id, Kit.vampire().getID()) ?
-				1 : 0, false));
-		if (!bannedKitIDs.contains(Kit.giant().getID()))
-			inv.setItem(49, Kit.giant().getButton(
-				PlayerManager.getMultiTierKitLevel(id, Kit.giant().getID()),
-				false
-			));
-		if (!bannedKitIDs.contains(Kit.trainer().getID()))
-			inv.setItem(50, Kit.trainer().getButton(
-				PlayerManager.getMultiTierKitLevel(id, Kit.trainer().getID()),
-				false
-			));
+		if (!bannedKitIDs.contains(Kit
+			.blacksmith()
+			.getID()))
+			inv.setItem(45, Kit
+				.blacksmith()
+				.getButton(PlayerManager.hasSingleTierKit(
+					id,
+					Kit
+						.blacksmith()
+						.getID()
+				) ? 1 : 0, false));
+		if (!bannedKitIDs.contains(Kit
+			.witch()
+			.getID()))
+			inv.setItem(46, Kit
+				.witch()
+				.getButton(
+					PlayerManager.hasSingleTierKit(id, Kit
+						.witch()
+						.getID()) ? 1 : 0,
+					false
+				));
+		if (!bannedKitIDs.contains(Kit
+			.merchant()
+			.getID()))
+			inv.setItem(47, Kit
+				.merchant()
+				.getButton(PlayerManager.hasSingleTierKit(id, Kit
+					.merchant()
+					.getID()) ?
+					1 : 0, false));
+		if (!bannedKitIDs.contains(Kit
+			.vampire()
+			.getID()))
+			inv.setItem(48, Kit
+				.vampire()
+				.getButton(PlayerManager.hasSingleTierKit(id, Kit
+					.vampire()
+					.getID()) ?
+					1 : 0, false));
+		if (!bannedKitIDs.contains(Kit
+			.giant()
+			.getID()))
+			inv.setItem(49, Kit
+				.giant()
+				.getButton(
+					PlayerManager.getMultiTierKitLevel(id, Kit
+						.giant()
+						.getID()),
+					false
+				));
+		if (!bannedKitIDs.contains(Kit
+			.trainer()
+			.getID()))
+			inv.setItem(50, Kit
+				.trainer()
+				.getButton(
+					PlayerManager.getMultiTierKitLevel(id, Kit
+						.trainer()
+						.getID()),
+					false
+				));
 
 		// Option for no kit
-		inv.setItem(52, Kit.none().getButton(0, true));
+		inv.setItem(52, Kit
+			.none()
+			.getButton(0, true));
 
 		// Option to exit
 		inv.setItem(53, InventoryButtons.exit());
@@ -2384,395 +2890,757 @@ public class Inventories {
 	public static Inventory createPlayerAchievementsMenu(UUID id) {
 		List<ItemStack> buttons = new ArrayList<>();
 
-		buttons.add(Achievement.topBalance1().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topBalance1().getID()
-		)));
-		buttons.add(Achievement.topBalance2().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topBalance2().getID()
-		)));
-		buttons.add(Achievement.topBalance3().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topBalance3().getID()
-		)));
-		buttons.add(Achievement.topBalance4().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topBalance4().getID()
-		)));
-		buttons.add(Achievement.topBalance5().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topBalance5().getID()
-		)));
-		buttons.add(Achievement.topBalance6().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topBalance6().getID()
-		)));
-		buttons.add(Achievement.topBalance7().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topBalance7().getID()
-		)));
-		buttons.add(Achievement.topBalance8().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topBalance8().getID()
-		)));
-		buttons.add(Achievement.topBalance9().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topBalance9().getID()
-		)));
+		buttons.add(Achievement
+			.topBalance1()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topBalance1()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topBalance2()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topBalance2()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topBalance3()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topBalance3()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topBalance4()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topBalance4()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topBalance5()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topBalance5()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topBalance6()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topBalance6()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topBalance7()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topBalance7()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topBalance8()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topBalance8()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topBalance9()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topBalance9()
+					.getID()
+			)));
 
-		buttons.add(Achievement.topKills1().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topKills1().getID()
-		)));
-		buttons.add(Achievement.topKills2().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topKills2().getID()
-		)));
-		buttons.add(Achievement.topKills3().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topKills3().getID()
-		)));
-		buttons.add(Achievement.topKills4().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topKills4().getID()
-		)));
-		buttons.add(Achievement.topKills5().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topKills5().getID()
-		)));
-		buttons.add(Achievement.topKills6().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topKills6().getID()
-		)));
-		buttons.add(Achievement.topKills7().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topKills7().getID()
-		)));
-		buttons.add(Achievement.topKills8().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topKills8().getID()
-		)));
-		buttons.add(Achievement.topKills9().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topKills9().getID()
-		)));
+		buttons.add(Achievement
+			.topKills1()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topKills1()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topKills2()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topKills2()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topKills3()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topKills3()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topKills4()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topKills4()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topKills5()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topKills5()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topKills6()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topKills6()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topKills7()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topKills7()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topKills8()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topKills8()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topKills9()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topKills9()
+					.getID()
+			)));
 
-		buttons.add(Achievement.topWave1().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topWave1().getID()
-		)));
-		buttons.add(Achievement.topWave2().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topWave2().getID()
-		)));
-		buttons.add(Achievement.topWave3().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topWave3().getID()
-		)));
-		buttons.add(Achievement.topWave4().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topWave4().getID()
-		)));
-		buttons.add(Achievement.topWave5().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topWave5().getID()
-		)));
-		buttons.add(Achievement.topWave6().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topWave6().getID()
-		)));
-		buttons.add(Achievement.topWave7().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topWave7().getID()
-		)));
-		buttons.add(Achievement.topWave8().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topWave8().getID()
-		)));
-		buttons.add(Achievement.topWave9().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topWave9().getID()
-		)));
+		buttons.add(Achievement
+			.topWave1()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topWave1()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topWave2()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topWave2()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topWave3()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topWave3()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topWave4()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topWave4()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topWave5()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topWave5()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topWave6()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topWave6()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topWave7()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topWave7()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topWave8()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topWave8()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topWave9()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topWave9()
+					.getID()
+			)));
 
-		buttons.add(Achievement.totalGems1().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalGems1().getID()
-		)));
-		buttons.add(Achievement.totalGems2().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalGems2().getID()
-		)));
-		buttons.add(Achievement.totalGems3().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalGems3().getID()
-		)));
-		buttons.add(Achievement.totalGems4().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalGems4().getID()
-		)));
-		buttons.add(Achievement.totalGems5().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalGems5().getID()
-		)));
-		buttons.add(Achievement.totalGems6().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalGems6().getID()
-		)));
-		buttons.add(Achievement.totalGems7().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalGems7().getID()
-		)));
-		buttons.add(Achievement.totalGems8().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalGems8().getID()
-		)));
-		buttons.add(Achievement.totalGems9().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalGems9().getID()
-		)));
+		buttons.add(Achievement
+			.totalGems1()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalGems1()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalGems2()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalGems2()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalGems3()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalGems3()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalGems4()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalGems4()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalGems5()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalGems5()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalGems6()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalGems6()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalGems7()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalGems7()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalGems8()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalGems8()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalGems9()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalGems9()
+					.getID()
+			)));
 
-		buttons.add(Achievement.totalKills1().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalKills1().getID()
-		)));
-		buttons.add(Achievement.totalKills2().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalKills2().getID()
-		)));
-		buttons.add(Achievement.totalKills3().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalKills3().getID()
-		)));
-		buttons.add(Achievement.totalKills4().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalKills4().getID()
-		)));
-		buttons.add(Achievement.totalKills5().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalKills5().getID()
-		)));
-		buttons.add(Achievement.totalKills6().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalKills6().getID()
-		)));
-		buttons.add(Achievement.totalKills7().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalKills7().getID()
-		)));
-		buttons.add(Achievement.totalKills8().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalKills8().getID()
-		)));
-		buttons.add(Achievement.totalKills9().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalKills9().getID()
-		)));
+		buttons.add(Achievement
+			.totalKills1()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalKills1()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalKills2()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalKills2()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalKills3()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalKills3()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalKills4()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalKills4()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalKills5()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalKills5()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalKills6()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalKills6()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalKills7()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalKills7()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalKills8()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalKills8()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalKills9()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalKills9()
+					.getID()
+			)));
 
-		buttons.add(Achievement.amputeeAlone().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.amputeeAlone().getID()
-		)));
-		buttons.add(Achievement.blindAlone().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.blindAlone().getID()
-		)));
-		buttons.add(Achievement.clumsyAlone().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.clumsyAlone().getID()
-		)));
-		buttons.add(Achievement.dwarfAlone().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.dwarfAlone().getID()
-		)));
-		buttons.add(Achievement.explosiveAlone().getButton(PlayerManager.hasAchievement(
-			id,
+		buttons.add(Achievement
+			.amputeeAlone()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.amputeeAlone()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.blindAlone()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.blindAlone()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.clumsyAlone()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.clumsyAlone()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.dwarfAlone()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.dwarfAlone()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.explosiveAlone()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.explosiveAlone().getID()
-		)));
-		buttons.add(Achievement.featherweightAlone().getButton(PlayerManager.hasAchievement(
-			id,
+				Achievement
+					.explosiveAlone()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.featherweightAlone()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.featherweightAlone().getID()
-		)));
-		buttons.add(Achievement.nakedAlone().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.nakedAlone().getID()
-		)));
-		buttons.add(Achievement.pacifistAlone().getButton(PlayerManager.hasAchievement(
-			id,
+				Achievement
+					.featherweightAlone()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.nakedAlone()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.nakedAlone()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.pacifistAlone()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.pacifistAlone().getID()
-		)));
-		buttons.add(Achievement.uhcAlone().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.uhcAlone().getID()
-		)));
+				Achievement
+					.pacifistAlone()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.uhcAlone()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.uhcAlone()
+					.getID()
+			)));
 
-		buttons.add(Achievement.amputeeBalance().getButton(PlayerManager.hasAchievement(
-			id,
+		buttons.add(Achievement
+			.amputeeBalance()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.amputeeBalance().getID()
-		)));
-		buttons.add(Achievement.blindBalance().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.blindBalance().getID()
-		)));
-		buttons.add(Achievement.clumsyBalance().getButton(PlayerManager.hasAchievement(
-			id,
+				Achievement
+					.amputeeBalance()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.blindBalance()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.blindBalance()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.clumsyBalance()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.clumsyBalance().getID()
-		)));
-		buttons.add(Achievement.dwarfBalance().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.dwarfBalance().getID()
-		)));
-		buttons.add(Achievement.explosiveBalance().getButton(PlayerManager.hasAchievement(
-			id,
+				Achievement
+					.clumsyBalance()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.dwarfBalance()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.dwarfBalance()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.explosiveBalance()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.explosiveBalance().getID()
-		)));
-		buttons.add(Achievement.featherweightBalance().getButton(PlayerManager.hasAchievement(
-			id,
+				Achievement
+					.explosiveBalance()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.featherweightBalance()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.featherweightBalance().getID()
-		)));
-		buttons.add(Achievement.nakedBalance().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.nakedBalance().getID()
-		)));
-		buttons.add(Achievement.pacifistBalance().getButton(PlayerManager.hasAchievement(
-			id,
+				Achievement
+					.featherweightBalance()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.nakedBalance()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.nakedBalance()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.pacifistBalance()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.pacifistBalance().getID()
-		)));
-		buttons.add(Achievement.uhcBalance().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.uhcBalance().getID()
-		)));
+				Achievement
+					.pacifistBalance()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.uhcBalance()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.uhcBalance()
+					.getID()
+			)));
 
-		buttons.add(Achievement.amputeeKills().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.amputeeKills().getID()
-		)));
-		buttons.add(Achievement.blindKills().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.blindKills().getID()
-		)));
-		buttons.add(Achievement.clumsyKills().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.clumsyKills().getID()
-		)));
-		buttons.add(Achievement.dwarfKills().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.dwarfKills().getID()
-		)));
-		buttons.add(Achievement.explosiveKills().getButton(PlayerManager.hasAchievement(
-			id,
+		buttons.add(Achievement
+			.amputeeKills()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.amputeeKills()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.blindKills()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.blindKills()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.clumsyKills()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.clumsyKills()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.dwarfKills()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.dwarfKills()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.explosiveKills()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.explosiveKills().getID()
-		)));
-		buttons.add(Achievement.featherweightKills().getButton(PlayerManager.hasAchievement(
-			id,
+				Achievement
+					.explosiveKills()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.featherweightKills()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.featherweightKills().getID()
-		)));
-		buttons.add(Achievement.nakedKills().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.nakedKills().getID()
-		)));
-		buttons.add(Achievement.pacifistKills().getButton(PlayerManager.hasAchievement(
-			id,
+				Achievement
+					.featherweightKills()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.nakedKills()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.nakedKills()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.pacifistKills()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.pacifistKills().getID()
-		)));
-		buttons.add(Achievement.uhcKills().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.uhcKills().getID()
-		)));
+				Achievement
+					.pacifistKills()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.uhcKills()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.uhcKills()
+					.getID()
+			)));
 
-		buttons.add(Achievement.amputeeWave().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.amputeeWave().getID()
-		)));
-		buttons.add(Achievement.blindWave().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.blindWave().getID()
-		)));
-		buttons.add(Achievement.clumsyWave().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.clumsyWave().getID()
-		)));
-		buttons.add(Achievement.dwarfWave().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.dwarfWave().getID()
-		)));
-		buttons.add(Achievement.explosiveWave().getButton(PlayerManager.hasAchievement(
-			id,
+		buttons.add(Achievement
+			.amputeeWave()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.amputeeWave()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.blindWave()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.blindWave()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.clumsyWave()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.clumsyWave()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.dwarfWave()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.dwarfWave()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.explosiveWave()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.explosiveWave().getID()
-		)));
-		buttons.add(Achievement.featherweightWave().getButton(PlayerManager.hasAchievement(
-			id,
+				Achievement
+					.explosiveWave()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.featherweightWave()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.featherweightWave().getID()
-		)));
-		buttons.add(Achievement.nakedWave().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.nakedWave().getID()
-		)));
-		buttons.add(Achievement.pacifistWave().getButton(PlayerManager.hasAchievement(
-			id,
+				Achievement
+					.featherweightWave()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.nakedWave()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.nakedWave()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.pacifistWave()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.pacifistWave().getID()
-		)));
-		buttons.add(Achievement.uhcWave().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.uhcWave().getID()
-		)));
+				Achievement
+					.pacifistWave()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.uhcWave()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.uhcWave()
+					.getID()
+			)));
 
-		buttons.add(Achievement.alone().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.alone().getID()
-		)));
-		buttons.add(Achievement.pacifistUhc().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.pacifistUhc().getID()
-		)));
-		buttons.add(Achievement.allChallenges().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.allChallenges().getID()
-		)));
-		buttons.add(Achievement.allGift().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.allGift().getID()
-		)));
-		buttons.add(Achievement.allAbility().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.allAbility().getID()
-		)));
-		buttons.add(Achievement.maxedAbility().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.maxedAbility().getID()
-		)));
-		buttons.add(Achievement.allMaxedAbility().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.allMaxedAbility().getID()
-		)));
-		buttons.add(Achievement.allEffect().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.allEffect().getID()
-		)));
-		buttons.add(Achievement.allKits().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.allKits().getID()
-		)));
+		buttons.add(Achievement
+			.alone()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.alone()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.pacifistUhc()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.pacifistUhc()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.allChallenges()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.allChallenges()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.allGift()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.allGift()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.allAbility()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.allAbility()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.maxedAbility()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.maxedAbility()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.allMaxedAbility()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.allMaxedAbility()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.allEffect()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.allEffect()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.allKits()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.allKits()
+					.getID()
+			)));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.PLAYER_ACHIEVEMENTS_MENU, InventoryType.MENU)
 				.setPlayerID(id)
 				.build(),
-			CommunicationManager.format("&6&l" + Bukkit.getOfflinePlayer(id).getName() + " " +
+			CommunicationManager.format("&6&l" + Bukkit
+				.getOfflinePlayer(id)
+				.getName() + " " +
 				LanguageManager.messages.achievements),
 			true,
 			false,
@@ -2784,396 +3652,758 @@ public class Inventories {
 	public static Inventory createPlayerAchievementsMenu(UUID id, int page) {
 		List<ItemStack> buttons = new ArrayList<>();
 
-		buttons.add(Achievement.topBalance1().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topBalance1().getID()
-		)));
-		buttons.add(Achievement.topBalance2().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topBalance2().getID()
-		)));
-		buttons.add(Achievement.topBalance3().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topBalance3().getID()
-		)));
-		buttons.add(Achievement.topBalance4().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topBalance4().getID()
-		)));
-		buttons.add(Achievement.topBalance5().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topBalance5().getID()
-		)));
-		buttons.add(Achievement.topBalance6().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topBalance6().getID()
-		)));
-		buttons.add(Achievement.topBalance7().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topBalance7().getID()
-		)));
-		buttons.add(Achievement.topBalance8().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topBalance8().getID()
-		)));
-		buttons.add(Achievement.topBalance9().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topBalance9().getID()
-		)));
+		buttons.add(Achievement
+			.topBalance1()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topBalance1()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topBalance2()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topBalance2()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topBalance3()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topBalance3()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topBalance4()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topBalance4()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topBalance5()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topBalance5()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topBalance6()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topBalance6()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topBalance7()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topBalance7()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topBalance8()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topBalance8()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topBalance9()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topBalance9()
+					.getID()
+			)));
 
-		buttons.add(Achievement.topKills1().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topKills1().getID()
-		)));
-		buttons.add(Achievement.topKills2().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topKills2().getID()
-		)));
-		buttons.add(Achievement.topKills3().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topKills3().getID()
-		)));
-		buttons.add(Achievement.topKills4().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topKills4().getID()
-		)));
-		buttons.add(Achievement.topKills5().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topKills5().getID()
-		)));
-		buttons.add(Achievement.topKills6().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topKills6().getID()
-		)));
-		buttons.add(Achievement.topKills7().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topKills7().getID()
-		)));
-		buttons.add(Achievement.topKills8().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topKills8().getID()
-		)));
-		buttons.add(Achievement.topKills9().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topKills9().getID()
-		)));
+		buttons.add(Achievement
+			.topKills1()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topKills1()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topKills2()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topKills2()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topKills3()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topKills3()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topKills4()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topKills4()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topKills5()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topKills5()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topKills6()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topKills6()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topKills7()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topKills7()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topKills8()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topKills8()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topKills9()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topKills9()
+					.getID()
+			)));
 
-		buttons.add(Achievement.topWave1().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topWave1().getID()
-		)));
-		buttons.add(Achievement.topWave2().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topWave2().getID()
-		)));
-		buttons.add(Achievement.topWave3().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topWave3().getID()
-		)));
-		buttons.add(Achievement.topWave4().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topWave4().getID()
-		)));
-		buttons.add(Achievement.topWave5().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topWave5().getID()
-		)));
-		buttons.add(Achievement.topWave6().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topWave6().getID()
-		)));
-		buttons.add(Achievement.topWave7().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topWave7().getID()
-		)));
-		buttons.add(Achievement.topWave8().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topWave8().getID()
-		)));
-		buttons.add(Achievement.topWave9().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.topWave9().getID()
-		)));
+		buttons.add(Achievement
+			.topWave1()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topWave1()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topWave2()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topWave2()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topWave3()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topWave3()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topWave4()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topWave4()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topWave5()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topWave5()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topWave6()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topWave6()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topWave7()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topWave7()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topWave8()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topWave8()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.topWave9()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.topWave9()
+					.getID()
+			)));
 
-		buttons.add(Achievement.totalGems1().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalGems1().getID()
-		)));
-		buttons.add(Achievement.totalGems2().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalGems2().getID()
-		)));
-		buttons.add(Achievement.totalGems3().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalGems3().getID()
-		)));
-		buttons.add(Achievement.totalGems4().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalGems4().getID()
-		)));
-		buttons.add(Achievement.totalGems5().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalGems5().getID()
-		)));
-		buttons.add(Achievement.totalGems6().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalGems6().getID()
-		)));
-		buttons.add(Achievement.totalGems7().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalGems7().getID()
-		)));
-		buttons.add(Achievement.totalGems8().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalGems8().getID()
-		)));
-		buttons.add(Achievement.totalGems9().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalGems9().getID()
-		)));
+		buttons.add(Achievement
+			.totalGems1()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalGems1()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalGems2()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalGems2()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalGems3()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalGems3()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalGems4()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalGems4()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalGems5()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalGems5()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalGems6()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalGems6()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalGems7()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalGems7()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalGems8()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalGems8()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalGems9()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalGems9()
+					.getID()
+			)));
 
-		buttons.add(Achievement.totalKills1().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalKills1().getID()
-		)));
-		buttons.add(Achievement.totalKills2().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalKills2().getID()
-		)));
-		buttons.add(Achievement.totalKills3().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalKills3().getID()
-		)));
-		buttons.add(Achievement.totalKills4().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalKills4().getID()
-		)));
-		buttons.add(Achievement.totalKills5().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalKills5().getID()
-		)));
-		buttons.add(Achievement.totalKills6().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalKills6().getID()
-		)));
-		buttons.add(Achievement.totalKills7().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalKills7().getID()
-		)));
-		buttons.add(Achievement.totalKills8().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalKills8().getID()
-		)));
-		buttons.add(Achievement.totalKills9().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.totalKills9().getID()
-		)));
+		buttons.add(Achievement
+			.totalKills1()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalKills1()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalKills2()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalKills2()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalKills3()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalKills3()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalKills4()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalKills4()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalKills5()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalKills5()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalKills6()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalKills6()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalKills7()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalKills7()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalKills8()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalKills8()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.totalKills9()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.totalKills9()
+					.getID()
+			)));
 
-		buttons.add(Achievement.amputeeAlone().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.amputeeAlone().getID()
-		)));
-		buttons.add(Achievement.blindAlone().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.blindAlone().getID()
-		)));
-		buttons.add(Achievement.clumsyAlone().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.clumsyAlone().getID()
-		)));
-		buttons.add(Achievement.dwarfAlone().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.dwarfAlone().getID()
-		)));
-		buttons.add(Achievement.explosiveAlone().getButton(PlayerManager.hasAchievement(
-			id,
+		buttons.add(Achievement
+			.amputeeAlone()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.amputeeAlone()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.blindAlone()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.blindAlone()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.clumsyAlone()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.clumsyAlone()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.dwarfAlone()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.dwarfAlone()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.explosiveAlone()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.explosiveAlone().getID()
-		)));
-		buttons.add(Achievement.featherweightAlone().getButton(PlayerManager.hasAchievement(
-			id,
+				Achievement
+					.explosiveAlone()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.featherweightAlone()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.featherweightAlone().getID()
-		)));
-		buttons.add(Achievement.nakedAlone().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.nakedAlone().getID()
-		)));
-		buttons.add(Achievement.pacifistAlone().getButton(PlayerManager.hasAchievement(
-			id,
+				Achievement
+					.featherweightAlone()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.nakedAlone()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.nakedAlone()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.pacifistAlone()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.pacifistAlone().getID()
-		)));
-		buttons.add(Achievement.uhcAlone().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.uhcAlone().getID()
-		)));
+				Achievement
+					.pacifistAlone()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.uhcAlone()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.uhcAlone()
+					.getID()
+			)));
 
-		buttons.add(Achievement.amputeeBalance().getButton(PlayerManager.hasAchievement(
-			id,
+		buttons.add(Achievement
+			.amputeeBalance()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.amputeeBalance().getID()
-		)));
-		buttons.add(Achievement.blindBalance().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.blindBalance().getID()
-		)));
-		buttons.add(Achievement.clumsyBalance().getButton(PlayerManager.hasAchievement(
-			id,
+				Achievement
+					.amputeeBalance()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.blindBalance()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.blindBalance()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.clumsyBalance()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.clumsyBalance().getID()
-		)));
-		buttons.add(Achievement.dwarfBalance().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.dwarfBalance().getID()
-		)));
-		buttons.add(Achievement.explosiveBalance().getButton(PlayerManager.hasAchievement(
-			id,
+				Achievement
+					.clumsyBalance()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.dwarfBalance()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.dwarfBalance()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.explosiveBalance()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.explosiveBalance().getID()
-		)));
-		buttons.add(Achievement.featherweightBalance().getButton(PlayerManager.hasAchievement(
-			id,
+				Achievement
+					.explosiveBalance()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.featherweightBalance()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.featherweightBalance().getID()
-		)));
-		buttons.add(Achievement.nakedBalance().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.nakedBalance().getID()
-		)));
-		buttons.add(Achievement.pacifistBalance().getButton(PlayerManager.hasAchievement(
-			id,
+				Achievement
+					.featherweightBalance()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.nakedBalance()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.nakedBalance()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.pacifistBalance()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.pacifistBalance().getID()
-		)));
-		buttons.add(Achievement.uhcBalance().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.uhcBalance().getID()
-		)));
+				Achievement
+					.pacifistBalance()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.uhcBalance()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.uhcBalance()
+					.getID()
+			)));
 
-		buttons.add(Achievement.amputeeKills().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.amputeeKills().getID()
-		)));
-		buttons.add(Achievement.blindKills().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.blindKills().getID()
-		)));
-		buttons.add(Achievement.clumsyKills().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.clumsyKills().getID()
-		)));
-		buttons.add(Achievement.dwarfKills().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.dwarfKills().getID()
-		)));
-		buttons.add(Achievement.explosiveKills().getButton(PlayerManager.hasAchievement(
-			id,
+		buttons.add(Achievement
+			.amputeeKills()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.amputeeKills()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.blindKills()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.blindKills()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.clumsyKills()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.clumsyKills()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.dwarfKills()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.dwarfKills()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.explosiveKills()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.explosiveKills().getID()
-		)));
-		buttons.add(Achievement.featherweightKills().getButton(PlayerManager.hasAchievement(
-			id,
+				Achievement
+					.explosiveKills()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.featherweightKills()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.featherweightKills().getID()
-		)));
-		buttons.add(Achievement.nakedKills().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.nakedKills().getID()
-		)));
-		buttons.add(Achievement.pacifistKills().getButton(PlayerManager.hasAchievement(
-			id,
+				Achievement
+					.featherweightKills()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.nakedKills()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.nakedKills()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.pacifistKills()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.pacifistKills().getID()
-		)));
-		buttons.add(Achievement.uhcKills().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.uhcKills().getID()
-		)));
+				Achievement
+					.pacifistKills()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.uhcKills()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.uhcKills()
+					.getID()
+			)));
 
-		buttons.add(Achievement.amputeeWave().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.amputeeWave().getID()
-		)));
-		buttons.add(Achievement.blindWave().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.blindWave().getID()
-		)));
-		buttons.add(Achievement.clumsyWave().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.clumsyWave().getID()
-		)));
-		buttons.add(Achievement.dwarfWave().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.dwarfWave().getID()
-		)));
-		buttons.add(Achievement.explosiveWave().getButton(PlayerManager.hasAchievement(
-			id,
+		buttons.add(Achievement
+			.amputeeWave()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.amputeeWave()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.blindWave()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.blindWave()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.clumsyWave()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.clumsyWave()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.dwarfWave()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.dwarfWave()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.explosiveWave()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.explosiveWave().getID()
-		)));
-		buttons.add(Achievement.featherweightWave().getButton(PlayerManager.hasAchievement(
-			id,
+				Achievement
+					.explosiveWave()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.featherweightWave()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.featherweightWave().getID()
-		)));
-		buttons.add(Achievement.nakedWave().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.nakedWave().getID()
-		)));
-		buttons.add(Achievement.pacifistWave().getButton(PlayerManager.hasAchievement(
-			id,
+				Achievement
+					.featherweightWave()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.nakedWave()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.nakedWave()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.pacifistWave()
+			.getButton(PlayerManager.hasAchievement(
+				id,
 
-			Achievement.pacifistWave().getID()
-		)));
-		buttons.add(Achievement.uhcWave().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.uhcWave().getID()
-		)));
+				Achievement
+					.pacifistWave()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.uhcWave()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.uhcWave()
+					.getID()
+			)));
 
-		buttons.add(Achievement.alone().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.alone().getID()
-		)));
-		buttons.add(Achievement.pacifistUhc().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.pacifistUhc().getID()
-		)));
-		buttons.add(Achievement.allChallenges().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.allChallenges().getID()
-		)));
-		buttons.add(Achievement.allGift().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.allGift().getID()
-		)));
-		buttons.add(Achievement.allAbility().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.allAbility().getID()
-		)));
-		buttons.add(Achievement.maxedAbility().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.maxedAbility().getID()
-		)));
-		buttons.add(Achievement.allMaxedAbility().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.allMaxedAbility().getID()
-		)));
-		buttons.add(Achievement.allEffect().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.allEffect().getID()
-		)));
-		buttons.add(Achievement.allKits().getButton(PlayerManager.hasAchievement(
-			id,
-			Achievement.allKits().getID()
-		)));
+		buttons.add(Achievement
+			.alone()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.alone()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.pacifistUhc()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.pacifistUhc()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.allChallenges()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.allChallenges()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.allGift()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.allGift()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.allAbility()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.allAbility()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.maxedAbility()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.maxedAbility()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.allMaxedAbility()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.allMaxedAbility()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.allEffect()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.allEffect()
+					.getID()
+			)));
+		buttons.add(Achievement
+			.allKits()
+			.getButton(PlayerManager.hasAchievement(
+				id,
+				Achievement
+					.allKits()
+					.getID()
+			)));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.PLAYER_ACHIEVEMENTS_MENU, InventoryType.MENU)
 				.setPlayerID(id)
 				.setPage(page)
 				.build(),
-			CommunicationManager.format("&6&l" + Bukkit.getOfflinePlayer(id).getName() + " " +
+			CommunicationManager.format("&6&l" + Bukkit
+				.getOfflinePlayer(id)
+				.getName() + " " +
 				LanguageManager.messages.achievements),
 			true,
 			false,
@@ -3196,7 +4426,9 @@ public class Inventories {
 		// Create inventory
 		Inventory inv = Bukkit.createInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.CRYSTAL_CONVERT_MENU, InventoryType.MENU)
-				.setPlayerID(player.getPlayer().getUniqueId())
+				.setPlayerID(player
+					.getPlayer()
+					.getUniqueId())
 				.build(),
 			27,
 			CommunicationManager.format("&9&l" + String.format(
@@ -3297,20 +4529,62 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Set buttons
-		buttons.add(Challenge.amputee().getButton(player.getChallenges().contains(Challenge.amputee())));
-		buttons.add(Challenge.clumsy().getButton(player.getChallenges().contains(Challenge.clumsy())));
-		buttons.add(Challenge.featherweight().getButton(player.getChallenges().contains(Challenge.featherweight())));
-		buttons.add(Challenge.pacifist().getButton(player.getChallenges().contains(Challenge.pacifist())));
-		buttons.add(Challenge.dwarf().getButton(player.getChallenges().contains(Challenge.dwarf())));
-		buttons.add(Challenge.uhc().getButton(player.getChallenges().contains(Challenge.uhc())));
-		buttons.add(Challenge.explosive().getButton(player.getChallenges().contains(Challenge.explosive())));
-		buttons.add(Challenge.naked().getButton(player.getChallenges().contains(Challenge.naked())));
-		buttons.add(Challenge.blind().getButton(player.getChallenges().contains(Challenge.blind())));
-		buttons.add(Challenge.none().getButton(player.getChallenges().isEmpty()));
+		buttons.add(Challenge
+			.amputee()
+			.getButton(player
+				.getChallenges()
+				.contains(Challenge.amputee())));
+		buttons.add(Challenge
+			.clumsy()
+			.getButton(player
+				.getChallenges()
+				.contains(Challenge.clumsy())));
+		buttons.add(Challenge
+			.featherweight()
+			.getButton(player
+				.getChallenges()
+				.contains(Challenge.featherweight())));
+		buttons.add(Challenge
+			.pacifist()
+			.getButton(player
+				.getChallenges()
+				.contains(Challenge.pacifist())));
+		buttons.add(Challenge
+			.dwarf()
+			.getButton(player
+				.getChallenges()
+				.contains(Challenge.dwarf())));
+		buttons.add(Challenge
+			.uhc()
+			.getButton(player
+				.getChallenges()
+				.contains(Challenge.uhc())));
+		buttons.add(Challenge
+			.explosive()
+			.getButton(player
+				.getChallenges()
+				.contains(Challenge.explosive())));
+		buttons.add(Challenge
+			.naked()
+			.getButton(player
+				.getChallenges()
+				.contains(Challenge.naked())));
+		buttons.add(Challenge
+			.blind()
+			.getButton(player
+				.getChallenges()
+				.contains(Challenge.blind())));
+		buttons.add(Challenge
+			.none()
+			.getButton(player
+				.getChallenges()
+				.isEmpty()));
 
 		return InventoryFactory.createDynamicSizeInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.SELECT_CHALLENGES_MENU, InventoryType.MENU)
-				.setPlayerID(player.getPlayer().getUniqueId())
+				.setPlayerID(player
+					.getPlayer()
+					.getUniqueId())
 				.setArena(arena)
 				.build(),
 			CommunicationManager.format("&5&l" + arena.getName() + " " + LanguageManager.messages.challenges),
@@ -3439,23 +4713,39 @@ public class Inventories {
 
 		// Arena records
 		List<String> records = new ArrayList<>();
-		arena.getSortedDescendingRecords().forEach(arenaRecord -> {
-			records.add(CommunicationManager.format("&f" + LanguageManager.messages.wave + " " +
-				arenaRecord.getWave()));
-			for (int i = 0; i < arenaRecord.getPlayers().size() / 4 + 1; i++) {
-				StringBuilder players = new StringBuilder(CommunicationManager.format("&7"));
-				if (i * 4 + 4 < arenaRecord.getPlayers().size()) {
-					for (int j = i * 4; j < i * 4 + 4; j++)
-						players.append(arenaRecord.getPlayers().get(j)).append(", ");
-					records.add(CommunicationManager.format(players.substring(0, players.length() - 1)));
+		arena
+			.getSortedDescendingRecords()
+			.forEach(arenaRecord -> {
+				records.add(CommunicationManager.format("&f" + LanguageManager.messages.wave + " " +
+					arenaRecord.getWave()));
+				for (int i = 0; i < arenaRecord
+					.getPlayers()
+					.size() / 4 + 1; i++) {
+					StringBuilder players = new StringBuilder(CommunicationManager.format("&7"));
+					if (i * 4 + 4 < arenaRecord
+						.getPlayers()
+						.size()) {
+						for (int j = i * 4; j < i * 4 + 4; j++)
+							players
+								.append(arenaRecord
+									.getPlayers()
+									.get(j))
+								.append(", ");
+						records.add(CommunicationManager.format(players.substring(0, players.length() - 1)));
+					}
+					else {
+						for (int j = i * 4; j < arenaRecord
+							.getPlayers()
+							.size(); j++)
+							players
+								.append(arenaRecord
+									.getPlayers()
+									.get(j))
+								.append(", ");
+						records.add(CommunicationManager.format(players.substring(0, players.length() - 2)));
+					}
 				}
-				else {
-					for (int j = i * 4; j < arenaRecord.getPlayers().size(); j++)
-						players.append(arenaRecord.getPlayers().get(j)).append(", ");
-					records.add(CommunicationManager.format(players.substring(0, players.length() - 2)));
-				}
-			}
-		});
+			});
 		buttons.add(ItemFactory.createItem(Material.GOLDEN_HELMET,
 			CommunicationManager.format("&e&l" + LanguageManager.messages.arenaRecords),
 			ItemFactory.BUTTON_FLAGS, null, records

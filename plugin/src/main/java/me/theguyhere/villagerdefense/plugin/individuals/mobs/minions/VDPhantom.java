@@ -15,7 +15,9 @@ public class VDPhantom extends VDMinion {
 	public VDPhantom(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.PHANTOM),
+			(Mob) Objects
+				.requireNonNull(location.getWorld())
+				.spawnEntity(location, EntityType.PHANTOM),
 			LanguageManager.mobs.phantom,
 			LanguageManager.mobLore.phantom,
 			IndividualAttackType.NORMAL

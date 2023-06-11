@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.items.weapons;
 
+import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
@@ -160,22 +161,22 @@ public abstract class Bow extends VDWeapon {
 		int durability;
 		switch (tier) {
 			case T1:
-				durability = 120;
+				durability = 90;
 				break;
 			case T2:
-				durability = 175;
+				durability = 130;
 				break;
 			case T3:
-				durability = 250;
+				durability = 190;
 				break;
 			case T4:
-				durability = 320;
+				durability = 240;
 				break;
 			case T5:
-				durability = 460;
+				durability = 300;
 				break;
 			case T6:
-				durability = 660;
+				durability = 350;
 				break;
 			default:
 				durability = 0;
@@ -192,22 +193,13 @@ public abstract class Bow extends VDWeapon {
 		int price;
 		switch (tier) {
 			case T1:
-				price = 225;
-				break;
 			case T2:
-				price = 335;
-				break;
 			case T3:
-				price = 490;
-				break;
 			case T4:
-				price = 610;
-				break;
 			case T5:
-				price = 880;
-				break;
 			case T6:
-				price = 1160;
+				price =
+					Calculator.roundToNearest(Math.pow(durability, 0.9) * (damageHigh + damageLow) / 2 / 2.4, 5);
 				break;
 			default:
 				price = -1;
@@ -234,7 +226,9 @@ public abstract class Bow extends VDWeapon {
 		ItemMeta meta = toCheck.getItemMeta();
 		if (meta == null)
 			return false;
-		String value = meta.getPersistentDataContainer().get(ITEM_TYPE_KEY, PersistentDataType.STRING);
+		String value = meta
+			.getPersistentDataContainer()
+			.get(ITEM_TYPE_KEY, PersistentDataType.STRING);
 		if (value == null)
 			return false;
 		return BOW.equals(value);

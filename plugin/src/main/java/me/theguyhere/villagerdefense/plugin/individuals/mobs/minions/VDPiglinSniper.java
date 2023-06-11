@@ -16,7 +16,9 @@ public class VDPiglinSniper extends VDMinion {
 	public VDPiglinSniper(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.PIGLIN),
+			(Mob) Objects
+				.requireNonNull(location.getWorld())
+				.spawnEntity(location, EntityType.PIGLIN),
 			LanguageManager.mobs.piglinSniper,
 			LanguageManager.mobLore.piglinSniper,
 			IndividualAttackType.PENETRATING

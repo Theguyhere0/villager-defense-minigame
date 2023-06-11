@@ -123,13 +123,17 @@ public abstract class VDMob {
 					VDPlayer gamer = arena.getPlayer(id);
 
 					// Check if player has gem increase achievement and is boosted
-					if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement.topBalance9().getID()))
+					if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement
+						.topBalance9()
+						.getID()))
 						gems *= 1.1;
 					gamer.addGems(gems);
 
 					// Create popup
 					try {
-						Popup.create(getEntity().getLocation().add(0, 1, 0),
+						Popup.create(getEntity()
+								.getLocation()
+								.add(0, 1, 0),
 							new ColoredMessage(ChatColor.GREEN, "+" + gems + Constants.GEM + "  ") +
 								new ColoredMessage(ChatColor.YELLOW, "+" + exp + Constants.EXP).toString(), 2.5,
 							gamer.getPlayer()
@@ -147,7 +151,9 @@ public abstract class VDMob {
 					SidebarManager.updateActivePlayerSidebar(gamer);
 
 					// Give exp
-					gamer.getPlayer().giveExp(exp);
+					gamer
+						.getPlayer()
+						.giveExp(exp);
 				}
 				catch (PlayerNotFoundException ignored) {
 				}
@@ -155,7 +161,9 @@ public abstract class VDMob {
 
 			// Reward kill to dealer of final blow
 			try {
-				arena.getPlayer(attacker).incrementKills();
+				arena
+					.getPlayer(attacker)
+					.incrementKills();
 			}
 			catch (PlayerNotFoundException ignored) {
 			}
@@ -202,12 +210,14 @@ public abstract class VDMob {
 	public int dealRawDamage() {
 		Random r = new Random();
 		AtomicInteger increase = new AtomicInteger();
-		mob.getActivePotionEffects().forEach(potionEffect -> {
-			if (PotionEffectType.INCREASE_DAMAGE.equals(potionEffect.getType()))
-				increase.addAndGet(1 + potionEffect.getAmplifier());
-			else if (PotionEffectType.WEAKNESS.equals(potionEffect.getType()))
-				increase.addAndGet(-1 - potionEffect.getAmplifier());
-		});
+		mob
+			.getActivePotionEffects()
+			.forEach(potionEffect -> {
+				if (PotionEffectType.INCREASE_DAMAGE.equals(potionEffect.getType()))
+					increase.addAndGet(1 + potionEffect.getAmplifier());
+				else if (PotionEffectType.WEAKNESS.equals(potionEffect.getType()))
+					increase.addAndGet(-1 - potionEffect.getAmplifier());
+			});
 		return (int) (this.damage * (1 + (r.nextDouble() * 2 - 1) * damageSpread) * (1 + .1 * increase.get()));
 	}
 
@@ -305,9 +315,11 @@ public abstract class VDMob {
 
 	// Set knockback options
 	protected void setNoneKnockback() {
-		double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
+		double initial = Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
 			.getBaseValue();
-		Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
+		Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
 			.addModifier(new AttributeModifier(
 				KNOCKBACK,
 				0 - initial,
@@ -316,9 +328,11 @@ public abstract class VDMob {
 	}
 
 	protected void setLowKnockback() {
-		double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
+		double initial = Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
 			.getBaseValue();
-		Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
+		Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
 			.addModifier(new AttributeModifier(
 				KNOCKBACK,
 				.25 - initial,
@@ -327,9 +341,11 @@ public abstract class VDMob {
 	}
 
 	protected void setModerateKnockback() {
-		double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
+		double initial = Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
 			.getBaseValue();
-		Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
+		Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
 			.addModifier(new AttributeModifier(
 				KNOCKBACK,
 				.75 - initial,
@@ -338,9 +354,11 @@ public abstract class VDMob {
 	}
 
 	protected void setHighKnockback() {
-		double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
+		double initial = Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
 			.getBaseValue();
-		Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
+		Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
 			.addModifier(new AttributeModifier(
 				KNOCKBACK,
 				1.25 - initial,
@@ -349,9 +367,11 @@ public abstract class VDMob {
 	}
 
 	protected void setVeryHighKnockback() {
-		double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
+		double initial = Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
 			.getBaseValue();
-		Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
+		Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
 			.addModifier(new AttributeModifier(
 				KNOCKBACK,
 				2.5 - initial,
@@ -361,9 +381,11 @@ public abstract class VDMob {
 
 	// Set weight options
 	protected void setVeryLightWeight() {
-		double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
+		double initial = Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
 			.getValue();
-		Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
+		Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
 			.addModifier(new AttributeModifier(
 				WEIGHT,
 				0 - initial,
@@ -372,9 +394,11 @@ public abstract class VDMob {
 	}
 
 	protected void setLightWeight() {
-		double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
+		double initial = Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
 			.getValue();
-		Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
+		Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
 			.addModifier(new AttributeModifier(
 				WEIGHT,
 				.1 - initial,
@@ -383,9 +407,11 @@ public abstract class VDMob {
 	}
 
 	protected void setMediumWeight() {
-		double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
+		double initial = Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
 			.getValue();
-		Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
+		Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
 			.addModifier(new AttributeModifier(
 				WEIGHT,
 				.25 - initial,
@@ -394,9 +420,11 @@ public abstract class VDMob {
 	}
 
 	protected void setHeavyWeight() {
-		double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
+		double initial = Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
 			.getValue();
-		Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
+		Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
 			.addModifier(new AttributeModifier(
 				WEIGHT,
 				.4 - initial,
@@ -405,9 +433,11 @@ public abstract class VDMob {
 	}
 
 	protected void setVeryHeavyWeight() {
-		double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
+		double initial = Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
 			.getValue();
-		Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
+		Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
 			.addModifier(new AttributeModifier(
 				WEIGHT,
 				.7 - initial,
@@ -418,9 +448,11 @@ public abstract class VDMob {
 
 	// Set speed options
 	protected void setVerySlowSpeed() {
-		double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+		double initial = Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
 			.getBaseValue();
-		Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+		Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
 			.addModifier(new AttributeModifier(
 				SPEED,
 				.12 - initial,
@@ -429,9 +461,11 @@ public abstract class VDMob {
 	}
 
 	protected void setSlowSpeed() {
-		double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+		double initial = Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
 			.getBaseValue();
-		Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+		Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
 			.addModifier(new AttributeModifier(
 				SPEED,
 				.2 - initial,
@@ -440,9 +474,11 @@ public abstract class VDMob {
 	}
 
 	protected void setMediumSpeed() {
-		double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+		double initial = Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
 			.getBaseValue();
-		Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+		Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
 			.addModifier(new AttributeModifier(
 				SPEED,
 				.275 - initial,
@@ -451,9 +487,11 @@ public abstract class VDMob {
 	}
 
 	protected void setFastSpeed() {
-		double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+		double initial = Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
 			.getBaseValue();
-		Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+		Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
 			.addModifier(new AttributeModifier(
 				SPEED,
 				.325 - initial,
@@ -462,9 +500,11 @@ public abstract class VDMob {
 	}
 
 	protected void setVeryFastSpeed() {
-		double initial = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+		double initial = Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
 			.getBaseValue();
-		Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+		Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
 			.addModifier(new AttributeModifier(
 				SPEED,
 				.4 - initial,
@@ -502,7 +542,9 @@ public abstract class VDMob {
 
 	// Set name properly
 	protected void updateNameTag(ChatColor color) {
-		int healthLength = Integer.toString(currentHealth).length();
+		int healthLength = Integer
+			.toString(currentHealth)
+			.length();
 		int trueSize = hpBarSize * 4 + healthLength;
 		int bars = (int) ((double) currentHealth / maxHealth * trueSize);
 		StringBuilder healthIndicator = new StringBuilder(new String(new char[bars])
@@ -521,22 +563,34 @@ public abstract class VDMob {
 	protected abstract void updateNameTag();
 
 	public static boolean isTeam(Entity entity, IndividualTeam team) {
-		return team.getValue().equals(entity.getPersistentDataContainer().get(TEAM, PersistentDataType.STRING));
+		return team
+			.getValue()
+			.equals(entity
+				.getPersistentDataContainer()
+				.get(TEAM, PersistentDataType.STRING));
 	}
 
 	public static boolean areSameTeam(Entity e1, Entity e2) {
 		return Objects.equals(
-			e1.getPersistentDataContainer().get(TEAM, PersistentDataType.STRING),
-			e2.getPersistentDataContainer().get(TEAM, PersistentDataType.STRING)
+			e1
+				.getPersistentDataContainer()
+				.get(TEAM, PersistentDataType.STRING),
+			e2
+				.getPersistentDataContainer()
+				.get(TEAM, PersistentDataType.STRING)
 		);
 	}
 
 	public static boolean isVDMob(Entity entity) {
-		return entity.getPersistentDataContainer().has(ARENA_ID, PersistentDataType.INTEGER);
+		return entity
+			.getPersistentDataContainer()
+			.has(ARENA_ID, PersistentDataType.INTEGER);
 	}
 
 	public static int getArenaID(Entity entity) {
-		Integer result = entity.getPersistentDataContainer().get(ARENA_ID, PersistentDataType.INTEGER);
+		Integer result = entity
+			.getPersistentDataContainer()
+			.get(ARENA_ID, PersistentDataType.INTEGER);
 		if (result == null)
 			return -1;
 		else return result;
@@ -544,11 +598,23 @@ public abstract class VDMob {
 
 	public enum TargetPriority {
 		NONE((e) -> true),
-		PLAYERS((e) -> e.getType().equals(EntityType.PLAYER)),
-		MELEE_PLAYERS((e) -> e.getType().equals(EntityType.PLAYER)),
-		RANGED_PLAYERS((e) -> e.getType().equals(EntityType.PLAYER)),
-		GOLEMS((e) -> e.getType().equals(EntityType.IRON_GOLEM) || e.getType().equals(EntityType.SNOWMAN)),
-		VILLAGERS((e) -> e.getType().equals(EntityType.VILLAGER)),
+		PLAYERS((e) -> e
+			.getType()
+			.equals(EntityType.PLAYER)),
+		MELEE_PLAYERS((e) -> e
+			.getType()
+			.equals(EntityType.PLAYER)),
+		RANGED_PLAYERS((e) -> e
+			.getType()
+			.equals(EntityType.PLAYER)),
+		GOLEMS((e) -> e
+			.getType()
+			.equals(EntityType.IRON_GOLEM) || e
+			.getType()
+			.equals(EntityType.SNOWMAN)),
+		VILLAGERS((e) -> e
+			.getType()
+			.equals(EntityType.VILLAGER)),
 		PETS((e) -> {
 			EntityType type = e.getType();
 			return type.equals(EntityType.WOLF) || type.equals(EntityType.HORSE) || type.equals(EntityType.BEE) ||

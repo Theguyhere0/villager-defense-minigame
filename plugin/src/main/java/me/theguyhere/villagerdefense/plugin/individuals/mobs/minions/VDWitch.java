@@ -20,7 +20,9 @@ public class VDWitch extends VDMinion {
 	public VDWitch(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.WITCH),
+			(Mob) Objects
+				.requireNonNull(location.getWorld())
+				.spawnEntity(location, EntityType.WITCH),
 			LanguageManager.mobs.witch,
 			LanguageManager.mobLore.witch,
 			IndividualAttackType.NONE

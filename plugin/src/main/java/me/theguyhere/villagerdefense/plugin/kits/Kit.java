@@ -236,7 +236,9 @@ public class Kit {
 			return 0;
 		else if (Main.hasCustomEconomy())
 			return Math.max(
-				(int) (pricesMap.get(level) * Main.plugin.getConfig().getDouble("vaultEconomyMult")),
+				(int) (pricesMap.get(level) * Main.plugin
+					.getConfig()
+					.getDouble("vaultEconomyMult")),
 				1
 			);
 		else return pricesMap.get(level);
@@ -387,63 +389,131 @@ public class Kit {
 	 * @return Kit or null.
 	 */
 	public static Kit getKitByName(String kitName) {
-		if (none().getName().equals(kitName))
+		if (none()
+			.getName()
+			.equals(kitName))
 			return none();
-		else if (orc().getName().equals(kitName))
+		else if (orc()
+			.getName()
+			.equals(kitName))
 			return orc();
-		else if (farmer().getName().equals(kitName))
+		else if (farmer()
+			.getName()
+			.equals(kitName))
 			return farmer();
-		else if (soldier().getName().equals(kitName))
+		else if (soldier()
+			.getName()
+			.equals(kitName))
 			return soldier();
-		else if (alchemist().getName().equals(kitName))
+		else if (alchemist()
+			.getName()
+			.equals(kitName))
 			return alchemist();
-		else if (tailor().getName().equals(kitName))
+		else if (tailor()
+			.getName()
+			.equals(kitName))
 			return tailor();
-		else if (trader().getName().equals(kitName))
+		else if (trader()
+			.getName()
+			.equals(kitName))
 			return trader();
-		else if (summoner().getName().equals(kitName))
+		else if (summoner()
+			.getName()
+			.equals(kitName))
 			return summoner();
-		else if (reaper().getName().equals(kitName))
+		else if (reaper()
+			.getName()
+			.equals(kitName))
 			return reaper();
-		else if (phantom().getName().equals(kitName))
+		else if (phantom()
+			.getName()
+			.equals(kitName))
 			return phantom();
-		else if (mage().getName().equals(kitName))
+		else if (mage()
+			.getName()
+			.equals(kitName))
 			return mage();
-		else if (ninja().getName().equals(kitName))
+		else if (ninja()
+			.getName()
+			.equals(kitName))
 			return ninja();
-		else if (templar().getName().equals(kitName))
+		else if (templar()
+			.getName()
+			.equals(kitName))
 			return templar();
-		else if (warrior().getName().equals(kitName))
+		else if (warrior()
+			.getName()
+			.equals(kitName))
 			return warrior();
-		else if (knight().getName().equals(kitName))
+		else if (knight()
+			.getName()
+			.equals(kitName))
 			return knight();
-		else if (priest().getName().equals(kitName))
+		else if (priest()
+			.getName()
+			.equals(kitName))
 			return priest();
-		else if (siren().getName().equals(kitName))
+		else if (siren()
+			.getName()
+			.equals(kitName))
 			return siren();
-		else if (monk().getName().equals(kitName))
+		else if (monk()
+			.getName()
+			.equals(kitName))
 			return monk();
-		else if (messenger().getName().equals(kitName))
+		else if (messenger()
+			.getName()
+			.equals(kitName))
 			return messenger();
-		else if (blacksmith().getName().equals(kitName))
+		else if (blacksmith()
+			.getName()
+			.equals(kitName))
 			return blacksmith();
-		else if (witch().getName().equals(kitName))
+		else if (witch()
+			.getName()
+			.equals(kitName))
 			return witch();
-		else if (merchant().getName().equals(kitName))
+		else if (merchant()
+			.getName()
+			.equals(kitName))
 			return merchant();
-		else if (vampire().getName().equals(kitName))
+		else if (vampire()
+			.getName()
+			.equals(kitName))
 			return vampire();
-		else if (giant().getName().equals(kitName))
+		else if (giant()
+			.getName()
+			.equals(kitName))
 			return giant();
-		else if (trainer().getName().equals(kitName))
+		else if (trainer()
+			.getName()
+			.equals(kitName))
 			return trainer();
 		else return null;
 	}
 
 	public static boolean checkAbilityKit(String kitID) {
-		return mage().getID().equals(kitID) || ninja().getID().equals(kitID) || templar().getID().equals(kitID) ||
-			warrior().getID().equals(kitID) || knight().getID().equals(kitID) || priest().getID().equals(kitID) ||
-			siren().getID().equals(kitID) || monk().getID().equals(kitID) || messenger().getID().equals(kitID);
+		return mage()
+			.getID()
+			.equals(kitID) || ninja()
+			.getID()
+			.equals(kitID) || templar()
+			.getID()
+			.equals(kitID) ||
+			warrior()
+				.getID()
+				.equals(kitID) || knight()
+			.getID()
+			.equals(kitID) || priest()
+			.getID()
+			.equals(kitID) ||
+			siren()
+				.getID()
+				.equals(kitID) || monk()
+			.getID()
+			.equals(kitID) || messenger()
+			.getID()
+			.equals(kitID);
 	}
 
 	// Default Kit

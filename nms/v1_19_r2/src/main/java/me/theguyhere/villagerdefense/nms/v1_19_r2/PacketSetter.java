@@ -35,7 +35,9 @@ class PacketSetter extends FriendlyByteBuf {
 	<T> void writeDataWatcherEntry(DataWatcherKey<T> key, T value) {
 		writeByte(key.getIndex());
 		writeVarInt(key.getSerializerTypeID());
-		key.getSerializer().write(this, value);
+		key
+			.getSerializer()
+			.write(this, value);
 	}
 
 	void writeDataWatcherEntriesEnd() {

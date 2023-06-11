@@ -16,7 +16,9 @@ public class VDPillager extends VDMinion {
 	public VDPillager(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.PILLAGER),
+			(Mob) Objects
+				.requireNonNull(location.getWorld())
+				.spawnEntity(location, EntityType.PILLAGER),
 			LanguageManager.mobs.pillager,
 			LanguageManager.mobLore.pillager,
 			IndividualAttackType.NORMAL

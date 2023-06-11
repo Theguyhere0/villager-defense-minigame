@@ -20,7 +20,9 @@ public class VDNormalVillager extends VDVillager {
 	public VDNormalVillager(Arena arena, Location location) {
 		super(
 			arena,
-			(Villager) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.VILLAGER),
+			(Villager) Objects
+				.requireNonNull(location.getWorld())
+				.spawnEntity(location, EntityType.VILLAGER),
 			LanguageManager.mobs.villager,
 			LanguageManager.mobLore.villager
 		);

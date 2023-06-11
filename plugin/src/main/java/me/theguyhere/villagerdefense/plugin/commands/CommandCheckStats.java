@@ -31,9 +31,13 @@ class CommandCheckStats {
 				player.getUniqueId(),
 				player.getUniqueId()
 			));
-		else if (PlayerManager.hasPlayer(Bukkit.getOfflinePlayer(args[1]).getUniqueId()))
+		else if (PlayerManager.hasPlayer(Bukkit
+			.getOfflinePlayer(args[1])
+			.getUniqueId()))
 			player.openInventory(Inventories.createPlayerStatsMenu(
-				Bukkit.getOfflinePlayer(args[1]).getUniqueId(), player.getUniqueId()));
+				Bukkit
+					.getOfflinePlayer(args[1])
+					.getUniqueId(), player.getUniqueId()));
 		else PlayerManager.notifyFailure(player, LanguageManager.messages.noStats,
 				new ColoredMessage(ChatColor.AQUA, args[1])
 			);

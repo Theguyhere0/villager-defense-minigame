@@ -41,17 +41,23 @@ class CommandFixFiles {
 		FileConfiguration customEffects = Main.getCustomEffects();
 
 		// Check if config.yml is outdated
-		if (Main.plugin.getConfig().getInt("version") < Main.configVersion)
+		if (Main.plugin
+			.getConfig()
+			.getInt("version") < Main.configVersion)
 			notifyManualUpdate(sender, "config.yml");
 
 		// Check if arenaData.yml is outdated
-		int arenaDataVersion = Main.plugin.getConfig().getInt("arenaData");
+		int arenaDataVersion = Main.plugin
+			.getConfig()
+			.getInt("arenaData");
 		boolean arenaAbort = false;
 		if (arenaDataVersion < 4) {
 			try {
 				// Transfer portals
-				Objects.requireNonNull(arenaData.getConfigurationSection("portal"))
-					.getKeys(false).forEach(arenaID -> {
+				Objects
+					.requireNonNull(arenaData.getConfigurationSection("portal"))
+					.getKeys(false)
+					.forEach(arenaID -> {
 						DataManager.setConfigurationLocation(
 							"a" + arenaID + ".portal",
 							DataManager.getConfigLocation("portal." + arenaID)
@@ -61,8 +67,10 @@ class CommandFixFiles {
 				arenaData.set("portal", null);
 
 				// Transfer arena boards
-				Objects.requireNonNull(arenaData.getConfigurationSection("arenaBoard"))
-					.getKeys(false).forEach(arenaID -> {
+				Objects
+					.requireNonNull(arenaData.getConfigurationSection("arenaBoard"))
+					.getKeys(false)
+					.forEach(arenaID -> {
 						DataManager.setConfigurationLocation(
 							"a" + arenaID + ".arenaBoard",
 							DataManager.getConfigLocation("arenaBoard." + arenaID)
@@ -78,7 +86,9 @@ class CommandFixFiles {
 
 				// Flip flag and update config.yml
 				fixed = true;
-				Main.plugin.getConfig().set("arenaData", 4);
+				Main.plugin
+					.getConfig()
+					.set("arenaData", 4);
 				Main.plugin.saveConfig();
 
 				// Notify
@@ -92,7 +102,9 @@ class CommandFixFiles {
 		if (arenaDataVersion < 5 && !arenaAbort) {
 			try {
 				// Translate waiting sounds
-				Objects.requireNonNull(arenaData.getConfigurationSection("")).getKeys(false)
+				Objects
+					.requireNonNull(arenaData.getConfigurationSection(""))
+					.getKeys(false)
 					.forEach(key -> {
 						String soundPath = key + ".sounds.waiting";
 						if (key.charAt(0) == 'a' && key.length() < 4 && arenaData.contains(soundPath)) {
@@ -140,7 +152,9 @@ class CommandFixFiles {
 
 				// Flip flag and update config.yml
 				fixed = true;
-				Main.plugin.getConfig().set("arenaData", 5);
+				Main.plugin
+					.getConfig()
+					.set("arenaData", 5);
 				Main.plugin.saveConfig();
 
 				// Notify
@@ -154,8 +168,11 @@ class CommandFixFiles {
 		if (arenaDataVersion < 6 && !arenaAbort) {
 			try {
 				// Take old data and put into new format
-				Objects.requireNonNull(arenaData.getConfigurationSection("")).getKeys(false)
-					.stream().filter(key -> key.contains("a") && key.length() < 4)
+				Objects
+					.requireNonNull(arenaData.getConfigurationSection(""))
+					.getKeys(false)
+					.stream()
+					.filter(key -> key.contains("a") && key.length() < 4)
 					.forEach(key -> {
 						int arenaId = Integer.parseInt(key.substring(1));
 						String newPath = "arena." + arenaId;
@@ -213,7 +230,9 @@ class CommandFixFiles {
 
 				// Flip flag and update config.yml
 				fixed = true;
-				Main.plugin.getConfig().set("arenaData", 6);
+				Main.plugin
+					.getConfig()
+					.set("arenaData", 6);
 				Main.plugin.saveConfig();
 
 				// Notify
@@ -227,7 +246,9 @@ class CommandFixFiles {
 		if (arenaDataVersion < 7 && !arenaAbort) {
 			try {
 				// Take old data and translate to new format
-				Objects.requireNonNull(arenaData.getConfigurationSection("arena")).getKeys(false)
+				Objects
+					.requireNonNull(arenaData.getConfigurationSection("arena"))
+					.getKeys(false)
 					.forEach(key -> {
 						String newPath = "arena." + key;
 
@@ -235,10 +256,14 @@ class CommandFixFiles {
 						if (arenaData.contains(newPath + ".bannedKits"))
 							arenaData.set(
 								newPath + ".bannedKits",
-								arenaData.getStringList(newPath + ".bannedKits")
-									.stream().filter(kit -> !kit.isEmpty())
-									.map(kit -> Objects.requireNonNull(
-										Kit.getKitByName(kit)).getID())
+								arenaData
+									.getStringList(newPath + ".bannedKits")
+									.stream()
+									.filter(kit -> !kit.isEmpty())
+									.map(kit -> Objects
+										.requireNonNull(
+											Kit.getKitByName(kit))
+										.getID())
 									.collect(Collectors.toList())
 							);
 
@@ -246,10 +271,14 @@ class CommandFixFiles {
 						if (arenaData.contains(newPath + ".forcedChallenges"))
 							arenaData.set(
 								newPath + ".forcedChallenges",
-								arenaData.getStringList(newPath + ".forcedChallenges")
-									.stream().filter(challenge -> !challenge.isEmpty())
-									.map(challenge -> Objects.requireNonNull(
-										Challenge.getChallengeByName(challenge)).getID())
+								arenaData
+									.getStringList(newPath + ".forcedChallenges")
+									.stream()
+									.filter(challenge -> !challenge.isEmpty())
+									.map(challenge -> Objects
+										.requireNonNull(
+											Challenge.getChallengeByName(challenge))
+										.getID())
 									.collect(Collectors.toList())
 							);
 
@@ -258,7 +287,9 @@ class CommandFixFiles {
 
 				// Flip flag and update config.yml
 				fixed = true;
-				Main.plugin.getConfig().set("arenaData", 7);
+				Main.plugin
+					.getConfig()
+					.set("arenaData", 7);
 				Main.plugin.saveConfig();
 
 				// Notify
@@ -271,7 +302,9 @@ class CommandFixFiles {
 		}
 		if (arenaDataVersion < 8 && !arenaAbort) {
 			try {
-				Objects.requireNonNull(arenaData.getConfigurationSection("arena")).getKeys(false)
+				Objects
+					.requireNonNull(arenaData.getConfigurationSection("arena"))
+					.getKeys(false)
 					.forEach(key -> {
 						String newPath = "arena." + key;
 
@@ -298,7 +331,9 @@ class CommandFixFiles {
 
 				// Flip flag and update config.yml
 				fixed = true;
-				Main.plugin.getConfig().set("arenaData", 8);
+				Main.plugin
+					.getConfig()
+					.set("arenaData", 8);
 				Main.plugin.saveConfig();
 
 				// Notify
@@ -310,16 +345,23 @@ class CommandFixFiles {
 		}
 
 		// Check if playerData.yml is outdated
-		int playerDataVersion = Main.plugin.getConfig().getInt("playerData");
+		int playerDataVersion = Main.plugin
+			.getConfig()
+			.getInt("playerData");
 		boolean playerAbort = false;
 		if (playerDataVersion < 2) {
 			try {
 				// Transfer player names to UUID
-				Objects.requireNonNull(playerData.getConfigurationSection("")).getKeys(false)
+				Objects
+					.requireNonNull(playerData.getConfigurationSection(""))
+					.getKeys(false)
 					.forEach(key -> {
 						if (!key.equals("loggers")) {
 							playerData.set(
-								Bukkit.getOfflinePlayer(key).getUniqueId().toString(),
+								Bukkit
+									.getOfflinePlayer(key)
+									.getUniqueId()
+									.toString(),
 								playerData.get(key)
 							);
 							playerData.set(key, null);
@@ -332,7 +374,9 @@ class CommandFixFiles {
 
 				// Flip flag and update config.yml
 				fixed = true;
-				Main.plugin.getConfig().set("playerData", 2);
+				Main.plugin
+					.getConfig()
+					.set("playerData", 2);
 				Main.plugin.saveConfig();
 
 				// Notify
@@ -345,8 +389,12 @@ class CommandFixFiles {
 		}
 		if (playerDataVersion < 3 && !playerAbort) {
 			try {
-				Objects.requireNonNull(playerData.getConfigurationSection("")).getKeys(false)
-					.stream().filter(key -> !key.equals("loggers")).forEach(key -> {
+				Objects
+					.requireNonNull(playerData.getConfigurationSection(""))
+					.getKeys(false)
+					.stream()
+					.filter(key -> !key.equals("loggers"))
+					.forEach(key -> {
 						String newPath = key + ".achievements";
 						List<String> achievements = playerData.getStringList(newPath);
 
@@ -359,14 +407,18 @@ class CommandFixFiles {
 
 						// Map old kit keys to new kit keys
 						if (playerData.contains(key + ".kits")) {
-							Objects.requireNonNull(playerData.getConfigurationSection(
+							Objects
+								.requireNonNull(playerData.getConfigurationSection(
 									key + ".kits"))
-								.getKeys(false).stream()
+								.getKeys(false)
+								.stream()
 								.filter(kit -> Kit.getKitByName(kit) != null)
 								.forEach(kit -> moveData(
 										playerData,
-										key + ".kits." + Objects.requireNonNull(
-											Kit.getKitByName(kit)).getID(),
+										key + ".kits." + Objects
+											.requireNonNull(
+												Kit.getKitByName(kit))
+											.getID(),
 										key + ".kits." + kit
 									)
 								);
@@ -377,7 +429,9 @@ class CommandFixFiles {
 
 				// Flip flag and update config.yml
 				fixed = true;
-				Main.plugin.getConfig().set("playerData", 3);
+				Main.plugin
+					.getConfig()
+					.set("playerData", 3);
 				Main.plugin.saveConfig();
 
 				// Notify
@@ -389,14 +443,20 @@ class CommandFixFiles {
 		}
 
 		// Update default spawn table
-		if (Main.plugin.getConfig().getInt("spawnTableStructure") < Main.spawnTableVersion ||
-			Main.plugin.getConfig().getInt("spawnTableDefault") < Main.defaultSpawnVersion) {
+		if (Main.plugin
+			.getConfig()
+			.getInt("spawnTableStructure") < Main.spawnTableVersion ||
+			Main.plugin
+				.getConfig()
+				.getInt("spawnTableDefault") < Main.defaultSpawnVersion) {
 			// Flip flag
 			fixed = true;
 
 			// Fix
 			Main.plugin.saveResource("spawnTables/default.yml", true);
-			Main.plugin.getConfig().set("spawnTableDefault", Main.defaultSpawnVersion);
+			Main.plugin
+				.getConfig()
+				.set("spawnTableDefault", Main.defaultSpawnVersion);
 			Main.plugin.saveConfig();
 
 			// Notify
@@ -416,7 +476,8 @@ class CommandFixFiles {
 			CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, CommunicationManager.DebugLevel.QUIET,
 				"default.yml", Integer.toString(Main.defaultSpawnVersion)
 			);
-			CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn,
+			CommunicationManager.debugError(
+				LanguageManager.messages.manualUpdateWarn,
 				CommunicationManager.DebugLevel.QUIET,
 				"All other spawn files"
 			);
@@ -424,17 +485,23 @@ class CommandFixFiles {
 
 		// Check if spawn table structure can be considered updated
 		boolean noCustomSpawnTables = false;
-		try (Stream<Path> stream = Files.list(Paths.get(Main.plugin.getDataFolder().getPath() + "/spawnTables"))) {
+		try (Stream<Path> stream = Files.list(Paths.get(Main.plugin
+			.getDataFolder()
+			.getPath() + "/spawnTables"))) {
 			noCustomSpawnTables = stream.count() < 2;
 		}
 		catch (IOException ignored) {
 		}
-		if (noCustomSpawnTables && Main.plugin.getConfig().getInt("spawnTableStructure") < Main.spawnTableVersion) {
+		if (noCustomSpawnTables && Main.plugin
+			.getConfig()
+			.getInt("spawnTableStructure") < Main.spawnTableVersion) {
 			// Flip flag
 			fixed = true;
 
 			// Fix
-			Main.plugin.getConfig().set("spawnTableStructure", Main.spawnTableVersion);
+			Main.plugin
+				.getConfig()
+				.set("spawnTableStructure", Main.spawnTableVersion);
 			Main.plugin.saveConfig();
 
 			// Notify
@@ -452,13 +519,17 @@ class CommandFixFiles {
 		}
 
 		// Update default language file
-		if (Main.plugin.getConfig().getInt("languageFile") < Main.languageFileVersion) {
+		if (Main.plugin
+			.getConfig()
+			.getInt("languageFile") < Main.languageFileVersion) {
 			// Flip flag
 			fixed = true;
 
 			// Fix
 			Main.plugin.saveResource("languages/en_US.yml", true);
-			Main.plugin.getConfig().set("languageFile", Main.languageFileVersion);
+			Main.plugin
+				.getConfig()
+				.set("languageFile", Main.languageFileVersion);
 			Main.plugin.saveConfig();
 
 			// Notify
@@ -479,16 +550,21 @@ class CommandFixFiles {
 			CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, CommunicationManager.DebugLevel.QUIET,
 				"en_US.yml", Integer.toString(Main.languageFileVersion)
 			);
-			CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn,
+			CommunicationManager.debugError(
+				LanguageManager.messages.manualUpdateWarn,
 				CommunicationManager.DebugLevel.QUIET,
 				"All other language files"
 			);
-			CommunicationManager.debugError(LanguageManager.messages.reloadPlugin,
-				CommunicationManager.DebugLevel.QUIET);
+			CommunicationManager.debugError(
+				LanguageManager.messages.reloadPlugin,
+				CommunicationManager.DebugLevel.QUIET
+			);
 		}
 
 		// Check if customEffects.yml is outdated
-		int customEffectsVersion = Main.plugin.getConfig().getInt("customEffects");
+		int customEffectsVersion = Main.plugin
+			.getConfig()
+			.getInt("customEffects");
 		boolean customAbort = false;
 		if (customEffectsVersion < 2) {
 			try {
@@ -496,7 +572,10 @@ class CommandFixFiles {
 				String path = "unlimited.onGameEnd";
 				ConfigurationSection section = customEffects.getConfigurationSection(path);
 				if (section != null)
-					section.getKeys(false).stream().filter(key -> !key.contains("-") && !key.contains("<"))
+					section
+						.getKeys(false)
+						.stream()
+						.filter(key -> !key.contains("-") && !key.contains("<"))
 						.forEach(key -> {
 							moveData(customEffects, path + ".^" + key, path + "." + key);
 							Main.saveCustomEffects();
@@ -504,7 +583,9 @@ class CommandFixFiles {
 
 				// Flip flag and update config.yml
 				fixed = true;
-				Main.plugin.getConfig().set("customEffects", 2);
+				Main.plugin
+					.getConfig()
+					.set("customEffects", 2);
 				Main.plugin.saveConfig();
 
 				// Notify
@@ -525,7 +606,9 @@ class CommandFixFiles {
 
 				// Flip flag and update config.yml
 				fixed = true;
-				Main.plugin.getConfig().set("customEffects", 3);
+				Main.plugin
+					.getConfig()
+					.set("customEffects", 3);
 				Main.plugin.saveConfig();
 
 				// Notify
@@ -541,8 +624,10 @@ class CommandFixFiles {
 			if (sender instanceof Player)
 				PlayerManager.notifyAlert((Player) sender, LanguageManager.messages.noAutoUpdate);
 			else
-				CommunicationManager.debugInfo(LanguageManager.messages.noAutoUpdate,
-					CommunicationManager.DebugLevel.QUIET);
+				CommunicationManager.debugInfo(
+					LanguageManager.messages.noAutoUpdate,
+					CommunicationManager.DebugLevel.QUIET
+				);
 		}
 		else {
 			// Notify of reload
@@ -563,24 +648,33 @@ class CommandFixFiles {
 
 	private static void moveSection(FileConfiguration config, String to, String from) {
 		if (config.contains(from)) {
-			Objects.requireNonNull(config.getConfigurationSection(from)).getKeys(false).forEach(key ->
-				moveData(config, to + "." + key, from + "." + key));
+			Objects
+				.requireNonNull(config.getConfigurationSection(from))
+				.getKeys(false)
+				.forEach(key ->
+					moveData(config, to + "." + key, from + "." + key));
 			config.set(from, null);
 		}
 	}
 
 	private static void moveNested(FileConfiguration config, String to, String from) {
 		if (config.contains(from)) {
-			Objects.requireNonNull(config.getConfigurationSection(from)).getKeys(false).forEach(key ->
-				moveSection(config, to + "." + key, from + "." + key));
+			Objects
+				.requireNonNull(config.getConfigurationSection(from))
+				.getKeys(false)
+				.forEach(key ->
+					moveSection(config, to + "." + key, from + "." + key));
 			config.set(from, null);
 		}
 	}
 
 	private static void moveInventory(FileConfiguration config, String to, String from) {
 		if (config.contains(from)) {
-			Objects.requireNonNull(config.getConfigurationSection(from)).getKeys(false).forEach(key ->
-				config.set(to + "." + key, config.getItemStack(from + "." + key)));
+			Objects
+				.requireNonNull(config.getConfigurationSection(from))
+				.getKeys(false)
+				.forEach(key ->
+					config.set(to + "." + key, config.getItemStack(from + "." + key)));
 			config.set(from, null);
 		}
 	}
@@ -594,7 +688,8 @@ class CommandFixFiles {
 			);
 		else
 			CommunicationManager.debugError(LanguageManager.messages.manualUpdateWarn,
-				CommunicationManager.DebugLevel.QUIET, file);
+				CommunicationManager.DebugLevel.QUIET, file
+			);
 	}
 
 	private static void notifyAutoUpdate(CommandSender sender, String file, int version) {

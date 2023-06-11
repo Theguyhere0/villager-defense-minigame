@@ -334,7 +334,10 @@ public class InventoryFactory {
 		buttons.add(InventoryButtons.remove(locationName.toUpperCase()));
 
 		return createFixedSizeInventory(
-			new InventoryMeta.InventoryMetaBuilder(inventoryID, InventoryType.MENU).setArena(arena).setID(id).build(),
+			new InventoryMeta.InventoryMetaBuilder(inventoryID, InventoryType.MENU)
+				.setArena(arena)
+				.setID(id)
+				.build(),
 			formattedName,
 			1,
 			true,
@@ -403,7 +406,10 @@ public class InventoryFactory {
 		buttons.add(InventoryButtons.remove(locationName.toUpperCase()));
 
 		return createFixedSizeInventory(
-			new InventoryMeta.InventoryMetaBuilder(inventoryID, InventoryType.MENU).setArena(arena).setID(id).build(),
+			new InventoryMeta.InventoryMetaBuilder(inventoryID, InventoryType.MENU)
+				.setArena(arena)
+				.setID(id)
+				.build(),
 			formattedName,
 			1,
 			true,
@@ -427,8 +433,11 @@ public class InventoryFactory {
 		buttons.add(InventoryButtons.yes());
 
 		return createFixedSizeInventory(
-			new InventoryMeta.InventoryMetaBuilder(inventoryID, InventoryType.MENU).setPlayerID(playerID)
-				.setArena(arena).setID(id).build(),
+			new InventoryMeta.InventoryMetaBuilder(inventoryID, InventoryType.MENU)
+				.setPlayerID(playerID)
+				.setArena(arena)
+				.setID(id)
+				.build(),
 			formattedName,
 			1,
 			false,
@@ -479,7 +488,10 @@ public class InventoryFactory {
 		buttons.add(ItemFactory.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&2&lIncrease")));
 
 		return createFixedSizeInventory(
-			new InventoryMeta.InventoryMetaBuilder(inventoryID, InventoryType.MENU).setArena(arena).setID(id).build(),
+			new InventoryMeta.InventoryMetaBuilder(inventoryID, InventoryType.MENU)
+				.setArena(arena)
+				.setID(id)
+				.build(),
 			formattedName,
 			1,
 			true,
@@ -526,7 +538,10 @@ public class InventoryFactory {
 		buttons.add(ItemFactory.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&2&lIncrease")));
 
 		return createFixedSizeInventory(
-			new InventoryMeta.InventoryMetaBuilder(inventoryID, InventoryType.MENU).setArena(arena).setID(id).build(),
+			new InventoryMeta.InventoryMetaBuilder(inventoryID, InventoryType.MENU)
+				.setArena(arena)
+				.setID(id)
+				.build(),
 			formattedName,
 			1,
 			true,

@@ -39,7 +39,8 @@ class CommandForceDelayArena {
 
 				// Notify console
 				CommunicationManager.debugInfo("%s was delayed.", CommunicationManager.DebugLevel.NORMAL,
-					arena.getName());
+					arena.getName()
+				);
 			}
 			catch (ArenaClosedException e) {
 				PlayerManager.notifyFailure(player, LanguageManager.errors.close);
@@ -58,7 +59,9 @@ class CommandForceDelayArena {
 
 			StringBuilder name = new StringBuilder(args[1]);
 			for (int i = 0; i < args.length - 2; i++)
-				name.append(" ").append(args[i + 2]);
+				name
+					.append(" ")
+					.append(args[i + 2]);
 
 			// Check if this arena exists
 			try {
@@ -75,7 +78,8 @@ class CommandForceDelayArena {
 
 				// Notify console
 				CommunicationManager.debugInfo("%s was delayed.", CommunicationManager.DebugLevel.NORMAL,
-					arena.getName());
+					arena.getName()
+				);
 			}
 			catch (ArenaClosedException e) {
 				CommandExecImp.notifyFailure(sender, LanguageManager.errors.close);

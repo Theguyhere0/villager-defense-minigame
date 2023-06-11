@@ -16,7 +16,9 @@ public class VDPiglinSoldier extends VDMinion {
 	public VDPiglinSoldier(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.PIGLIN),
+			(Mob) Objects
+				.requireNonNull(location.getWorld())
+				.spawnEntity(location, EntityType.PIGLIN),
 			LanguageManager.mobs.piglinSoldier,
 			LanguageManager.mobLore.piglinSoldier,
 			IndividualAttackType.CRUSHING

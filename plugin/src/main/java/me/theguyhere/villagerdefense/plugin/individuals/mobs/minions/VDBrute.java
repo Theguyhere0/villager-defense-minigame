@@ -16,10 +16,12 @@ public class VDBrute extends VDMinion {
 	public VDBrute(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(
-				location,
-				EntityType.PIGLIN_BRUTE
-			),
+			(Mob) Objects
+				.requireNonNull(location.getWorld())
+				.spawnEntity(
+					location,
+					EntityType.PIGLIN_BRUTE
+				),
 			LanguageManager.mobs.brute,
 			LanguageManager.mobLore.brute,
 			IndividualAttackType.CRUSHING

@@ -15,7 +15,9 @@ class AchievementReward {
 		description = CommunicationManager.format(
 			LanguageManager.rewards.crystals,
 			Integer.toString(value == 0 ? 0 : (Main.hasCustomEconomy() ? (int) (value *
-				Main.plugin.getConfig().getDouble("vaultEconomyMult")) : value)),
+				Main.plugin
+					.getConfig()
+					.getDouble("vaultEconomyMult")) : value)),
 			LanguageManager.names.crystals
 		);
 	}

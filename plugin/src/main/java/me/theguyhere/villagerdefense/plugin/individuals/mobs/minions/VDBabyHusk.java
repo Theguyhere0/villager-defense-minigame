@@ -17,7 +17,9 @@ public class VDBabyHusk extends VDMinion {
 	public VDBabyHusk(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.HUSK),
+			(Mob) Objects
+				.requireNonNull(location.getWorld())
+				.spawnEntity(location, EntityType.HUSK),
 			LanguageManager.mobs.babyHusk,
 			LanguageManager.mobLore.babyHusk,
 			IndividualAttackType.NORMAL

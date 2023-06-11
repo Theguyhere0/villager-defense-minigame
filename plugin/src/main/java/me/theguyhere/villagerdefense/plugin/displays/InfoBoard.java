@@ -45,7 +45,9 @@ public class InfoBoard {
 
 		// Set location and hologram
 		this.location = location;
-		this.hologram = new Hologram(location.clone().add(0, .5, 0), text);
+		this.hologram = new Hologram(location
+			.clone()
+			.add(0, .5, 0), text);
 	}
 
 	public Location getLocation() {

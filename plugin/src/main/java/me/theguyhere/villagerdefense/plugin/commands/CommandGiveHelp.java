@@ -68,7 +68,9 @@ class CommandGiveHelp {
 					ClickEvent.Action.OPEN_URL,
 					"https://github.com/Theguyhere0/villager-defense-minigame/wiki"
 				));
-				player.spigot().sendMessage(message);
+				player
+					.spigot()
+					.sendMessage(message);
 				break;
 			default:
 				player.sendMessage(CommunicationManager.format("&a<----- " +

@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.items.weapons;
 
+import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
@@ -183,22 +184,22 @@ public abstract class Crossbow extends VDWeapon {
 		int durability;
 		switch (tier) {
 			case T1:
-				durability = 90;
+				durability = 70;
 				break;
 			case T2:
-				durability = 135;
+				durability = 105;
 				break;
 			case T3:
-				durability = 170;
+				durability = 155;
 				break;
 			case T4:
-				durability = 240;
+				durability = 190;
 				break;
 			case T5:
-				durability = 335;
+				durability = 240;
 				break;
 			case T6:
-				durability = 480;
+				durability = 280;
 				break;
 			default:
 				durability = 0;
@@ -215,22 +216,14 @@ public abstract class Crossbow extends VDWeapon {
 		int price;
 		switch (tier) {
 			case T1:
-				price = 270;
-				break;
 			case T2:
-				price = 350;
-				break;
 			case T3:
-				price = 470;
-				break;
 			case T4:
-				price = 590;
-				break;
 			case T5:
-				price = 730;
-				break;
 			case T6:
-				price = 900;
+				price =
+					Calculator.roundToNearest(
+						Math.pow(durability, 0.5) * Math.log(pierce * 10) * (damageHigh + damageLow) / 2 / 7.5, 5);
 				break;
 			default:
 				price = -1;
@@ -257,7 +250,9 @@ public abstract class Crossbow extends VDWeapon {
 		ItemMeta meta = toCheck.getItemMeta();
 		if (meta == null)
 			return false;
-		String value = meta.getPersistentDataContainer().get(ITEM_TYPE_KEY, PersistentDataType.STRING);
+		String value = meta
+			.getPersistentDataContainer()
+			.get(ITEM_TYPE_KEY, PersistentDataType.STRING);
 		if (value == null)
 			return false;
 		return CROSSBOW.equals(value);

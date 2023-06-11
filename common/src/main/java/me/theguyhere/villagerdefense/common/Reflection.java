@@ -17,7 +17,9 @@ public class Reflection {
 		Object result = null;
 
 		try {
-			Field field = instance.getClass().getDeclaredField(name);
+			Field field = instance
+				.getClass()
+				.getDeclaredField(name);
 			field.setAccessible(true);
 
 			result = field.get(instance);
@@ -43,7 +45,9 @@ public class Reflection {
 		T result = null;
 
 		try {
-			Field field = instance.getClass().getDeclaredField(name);
+			Field field = instance
+				.getClass()
+				.getDeclaredField(name);
 			field.setAccessible(true);
 
 			result = t.cast(field.get(instance));
@@ -67,7 +71,9 @@ public class Reflection {
 	@SuppressWarnings("unused")
 	public static void setFieldValue(Object instance, String name, Object newValue) {
 		try {
-			Field field = instance.getClass().getDeclaredField(name);
+			Field field = instance
+				.getClass()
+				.getDeclaredField(name);
 			field.setAccessible(true);
 
 			field.set(instance, newValue);

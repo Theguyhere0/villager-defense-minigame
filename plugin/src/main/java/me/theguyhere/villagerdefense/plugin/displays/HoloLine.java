@@ -34,7 +34,10 @@ public class HoloLine {
 
 		// Set location and packet entity
 		this.location = location;
-		this.textPacketEntity = NMSVersion.getCurrent().getNmsManager().newTextPacketEntity();
+		this.textPacketEntity = NMSVersion
+			.getCurrent()
+			.getNmsManager()
+			.newTextPacketEntity();
 	}
 
 	public String getText() {
@@ -62,8 +65,12 @@ public class HoloLine {
 	 */
 	public void displayForPlayer(Player player) {
 		// Only display if player is in the same world
-		if (player.getWorld().equals(location.getWorld()))
-			textPacketEntity.newSpawnPackets(location, text).sendTo(player);
+		if (player
+			.getWorld()
+			.equals(location.getWorld()))
+			textPacketEntity
+				.newSpawnPackets(location, text)
+				.sendTo(player);
 	}
 
 	/**

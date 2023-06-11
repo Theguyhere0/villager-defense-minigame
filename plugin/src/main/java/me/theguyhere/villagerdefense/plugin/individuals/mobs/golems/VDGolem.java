@@ -55,10 +55,12 @@ public abstract class VDGolem extends VDMob {
 			return;
 
 		// Regeneration
-		mob.getActivePotionEffects().forEach(potionEffect -> {
-			if (PotionEffectType.REGENERATION.equals(potionEffect.getType()))
-				changeCurrentHealth(5 * (1 + potionEffect.getAmplifier()));
-		});
+		mob
+			.getActivePotionEffects()
+			.forEach(potionEffect -> {
+				if (PotionEffectType.REGENERATION.equals(potionEffect.getType()))
+					changeCurrentHealth(5 * (1 + potionEffect.getAmplifier()));
+			});
 
 		updateNameTag();
 	}

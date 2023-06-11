@@ -64,7 +64,9 @@ public class AchievementChecker {
 
 		if (achievement.isConjunctive() && !targets.contains(false) ||
 			!achievement.isConjunctive() && targets.contains(true))
-			Bukkit.getPluginManager().callEvent(new AchievementEvent(player, achievement));
+			Bukkit
+				.getPluginManager()
+				.callEvent(new AchievementEvent(player, achievement));
 	}
 
 	private static void checkInstanceAchievement(Achievement achievement, VDPlayer player) {
@@ -101,12 +103,18 @@ public class AchievementChecker {
 					else targets.add(true);
 				}
 				else if (requirement.getMetric() == AchievementMetric.KIT) {
-					if (!requirement.getString().equals(player.getKit().getID()))
+					if (!requirement
+						.getString()
+						.equals(player
+							.getKit()
+							.getID()))
 						targets.add(false);
 					else targets.add(true);
 				}
 				else if (requirement.getMetric() == AchievementMetric.CHALLENGE) {
-					if (!player.getChallenges().contains(Challenge.getChallengeByID(requirement.getString())))
+					if (!player
+						.getChallenges()
+						.contains(Challenge.getChallengeByID(requirement.getString())))
 						targets.add(false);
 					else targets.add(true);
 				}
@@ -148,7 +156,9 @@ public class AchievementChecker {
 
 		if (achievement.isConjunctive() && !targets.contains(false) ||
 			!achievement.isConjunctive() && targets.contains(true))
-			Bukkit.getPluginManager().callEvent(new AchievementEvent(player.getPlayer(), achievement));
+			Bukkit
+				.getPluginManager()
+				.callEvent(new AchievementEvent(player.getPlayer(), achievement));
 	}
 
 	private static void checkKitAchievement(Achievement achievement, Player player) {
@@ -185,7 +195,9 @@ public class AchievementChecker {
 
 		if (achievement.isConjunctive() && !targets.contains(false) ||
 			!achievement.isConjunctive() && targets.contains(true))
-			Bukkit.getPluginManager().callEvent(new AchievementEvent(player, achievement));
+			Bukkit
+				.getPluginManager()
+				.callEvent(new AchievementEvent(player, achievement));
 	}
 
 	public static void checkDefaultHighScoreAchievements(Player player) {

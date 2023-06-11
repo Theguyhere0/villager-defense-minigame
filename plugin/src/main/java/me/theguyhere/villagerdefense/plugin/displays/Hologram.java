@@ -33,7 +33,9 @@ public class Hologram {
 		this.location = location;
 		this.lines = new HoloLine[lines.length];
 		for (int i = 0; i < lines.length; i++)
-			this.lines[i] = new HoloLine(lines[i], location.clone().add(0, (lines.length - i - 1) * .25, 0));
+			this.lines[i] = new HoloLine(lines[i], location
+				.clone()
+				.add(0, (lines.length - i - 1) * .25, 0));
 		bottomAligned = true;
 	}
 
@@ -48,10 +50,14 @@ public class Hologram {
 		this.lines = new HoloLine[lines.length];
 		if (bottomAligned)
 			for (int i = 0; i < lines.length; i++)
-				this.lines[i] = new HoloLine(lines[i], location.clone().add(0, (lines.length - i - 1) * .25, 0));
+				this.lines[i] = new HoloLine(lines[i], location
+					.clone()
+					.add(0, (lines.length - i - 1) * .25, 0));
 		else
 			for (int i = 0; i < lines.length; i++)
-				this.lines[i] = new HoloLine(lines[i], location.clone().subtract(0, i * .25, 0));
+				this.lines[i] = new HoloLine(lines[i], location
+					.clone()
+					.subtract(0, i * .25, 0));
 	}
 
 	public Location getLocation() {
@@ -70,7 +76,9 @@ public class Hologram {
 	 * Spawn in the Hologram for every online player.
 	 */
 	public void displayForOnline() {
-		Arrays.stream(lines).forEach(HoloLine::displayForOnline);
+		Arrays
+			.stream(lines)
+			.forEach(HoloLine::displayForOnline);
 	}
 
 	/**
@@ -79,13 +87,17 @@ public class Hologram {
 	 * @param player - The player to display the Hologram for.
 	 */
 	public void displayForPlayer(Player player) {
-		Arrays.stream(lines).forEach(holoLine -> holoLine.displayForPlayer(player));
+		Arrays
+			.stream(lines)
+			.forEach(holoLine -> holoLine.displayForPlayer(player));
 	}
 
 	/**
 	 * Stop displaying the Hologram for every online player.
 	 */
 	public void remove() {
-		Arrays.stream(lines).forEach(HoloLine::remove);
+		Arrays
+			.stream(lines)
+			.forEach(HoloLine::remove);
 	}
 }

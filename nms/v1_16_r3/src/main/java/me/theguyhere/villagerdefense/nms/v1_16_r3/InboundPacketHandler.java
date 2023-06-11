@@ -30,13 +30,22 @@ class InboundPacketHandler extends ChannelInboundHandlerAdapter {
 				int entityID = Reflection.getFieldValue(packet, "a", Integer.class);
 
 				// Left click
-				if (Reflection.getFieldValue(packet, "action").toString().equalsIgnoreCase("ATTACK")) {
+				if (Reflection
+					.getFieldValue(packet, "action")
+					.toString()
+					.equalsIgnoreCase("ATTACK")) {
 					packetListener.onAttack(player, entityID);
 				}
 
 				// Main hand right click
-				else if (Reflection.getFieldValue(packet, "action").toString().equalsIgnoreCase("INTERACT")
-					&& Reflection.getFieldValue(packet, "d").toString().equalsIgnoreCase("MAIN_HAND")) {
+				else if (Reflection
+					.getFieldValue(packet, "action")
+					.toString()
+					.equalsIgnoreCase("INTERACT")
+					&& Reflection
+					.getFieldValue(packet, "d")
+					.toString()
+					.equalsIgnoreCase("MAIN_HAND")) {
 					packetListener.onInteractMain(player, entityID);
 				}
 			}

@@ -1413,14 +1413,18 @@ public class LanguageManager {
 
 			// Special check for economy plugin to replace currency name
 			if (Main.hasCustomEconomy())
-				crystal = Main.getEconomy().currencyNameSingular();
+				crystal = Main
+					.getEconomy()
+					.currencyNameSingular();
 			else crystal = getConfigString("crystal");
 
 			crystalConverter = getConfigString("crystalConverter");
 
 			// Special check for economy plugin to replace currency name
 			if (Main.hasCustomEconomy())
-				crystals = Main.getEconomy().currencyNamePlural();
+				crystals = Main
+					.getEconomy()
+					.currencyNamePlural();
 			else crystals = getConfigString("crystals");
 
 			easy = getConfigString("easy");

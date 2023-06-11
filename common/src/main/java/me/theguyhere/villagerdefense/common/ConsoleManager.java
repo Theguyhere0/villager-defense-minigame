@@ -10,14 +10,20 @@ import org.bukkit.ChatColor;
  */
 class ConsoleManager {
 	static void warning(String msg) {
-		Bukkit.getConsoleSender().sendMessage("[VillagerDefense] " + ChatColor.RED + msg);
+		Bukkit
+			.getConsoleSender()
+			.sendMessage("[VillagerDefense] " + ChatColor.RED + msg);
 	}
 
 	static void info(String msg) {
-		Bukkit.getConsoleSender().sendMessage("[VillagerDefense] " + msg);
+		Bukkit
+			.getConsoleSender()
+			.sendMessage("[VillagerDefense] " + msg);
 	}
 
 	static void confirm(String msg) {
-		Bukkit.getConsoleSender().sendMessage("[VillagerDefense] " + ChatColor.GREEN + msg);
+		Bukkit
+			.getConsoleSender()
+			.sendMessage("[VillagerDefense] " + ChatColor.GREEN + msg);
 	}
 }

@@ -32,28 +32,48 @@ public class ArenaBoard {
 		// Gather relevant stats
 		List<String> info = new ArrayList<>();
 		info.add(CommunicationManager.format("&6&l" + arena.getName() + " " + LanguageManager.messages.records));
-		if (!arena.getSortedDescendingRecords().isEmpty())
-			arena.getSortedDescendingRecords().forEach(record -> {
-				StringBuilder line = new StringBuilder(LanguageManager.messages.wave + " &b" + record.getWave() +
-					" &f- ");
-				for (int i = 0; i < record.getPlayers().size() / 3 + 1; i++) {
-					if (i * 3 + 3 < record.getPlayers().size()) {
-						for (int j = i * 3; j < i * 3 + 3; j++)
-							line.append(record.getPlayers().get(j)).append(", ");
-						info.add(CommunicationManager.format(line.substring(0, line.length() - 1)));
+		if (!arena
+			.getSortedDescendingRecords()
+			.isEmpty())
+			arena
+				.getSortedDescendingRecords()
+				.forEach(record -> {
+					StringBuilder line = new StringBuilder(LanguageManager.messages.wave + " &b" + record.getWave() +
+						" &f- ");
+					for (int i = 0; i < record
+						.getPlayers()
+						.size() / 3 + 1; i++) {
+						if (i * 3 + 3 < record
+							.getPlayers()
+							.size()) {
+							for (int j = i * 3; j < i * 3 + 3; j++)
+								line
+									.append(record
+										.getPlayers()
+										.get(j))
+									.append(", ");
+							info.add(CommunicationManager.format(line.substring(0, line.length() - 1)));
+						}
+						else {
+							for (int j = i * 3; j < record
+								.getPlayers()
+								.size(); j++)
+								line
+									.append(record
+										.getPlayers()
+										.get(j))
+									.append(", ");
+							info.add(CommunicationManager.format(line.substring(0, line.length() - 2)));
+						}
+						line = new StringBuilder();
 					}
-					else {
-						for (int j = i * 3; j < record.getPlayers().size(); j++)
-							line.append(record.getPlayers().get(j)).append(", ");
-						info.add(CommunicationManager.format(line.substring(0, line.length() - 2)));
-					}
-					line = new StringBuilder();
-				}
-			});
+				});
 
 		// Set location and hologram
 		this.location = location;
-		this.hologram = new Hologram(location.clone().add(0, 2.5, 0), false,
+		this.hologram = new Hologram(location
+			.clone()
+			.add(0, 2.5, 0), false,
 			info.toArray(new String[]{})
 		);
 	}

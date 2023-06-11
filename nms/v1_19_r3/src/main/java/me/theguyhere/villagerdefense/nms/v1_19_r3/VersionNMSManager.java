@@ -62,7 +62,9 @@ public class VersionNMSManager implements NMSManager {
 	public void nameArena(Player player, String arenaName, int arenaID) {
 		Location location = player.getLocation();
 		location.setY(location.getY() + 1);
-		Material original = location.getBlock().getType();
+		Material original = location
+			.getBlock()
+			.getType();
 		BlockPos position = new BlockPos((int) location.getX(), (int) location.getY(), (int) location.getZ());
 		CompoundTag signNBT = new CompoundTag();
 		signNBT.putString("Text1", String.format(
@@ -82,14 +84,16 @@ public class VersionNMSManager implements NMSManager {
 			new ColoredMessage(ChatColor.DARK_BLUE, "===============")
 		));
 
-		PacketGroup.of(
-			new BlockChangePacket(position, Material.OAK_SIGN),
-			new TileEntityDataPacket(position, BuiltInRegistries.BLOCK_ENTITY_TYPE.getId(BlockEntityType.SIGN),
-				signNBT
-			),
-			new OpenSignEditorPacket(position),
-			new BlockChangePacket(position, original)
-		).sendTo(player);
+		PacketGroup
+			.of(
+				new BlockChangePacket(position, Material.OAK_SIGN),
+				new TileEntityDataPacket(position, BuiltInRegistries.BLOCK_ENTITY_TYPE.getId(BlockEntityType.SIGN),
+					signNBT
+				),
+				new OpenSignEditorPacket(position),
+				new BlockChangePacket(position, original)
+			)
+			.sendTo(player);
 	}
 
 	@Override
@@ -167,15 +171,19 @@ public class VersionNMSManager implements NMSManager {
 		);
 		Channel channel = connection.channel;
 
-		channel.eventLoop().execute(() -> {
-			try {
-				pipelineModifierTask.accept(channel.pipeline());
-			}
-			catch (Exception e) {
-				CommunicationManager.debugError(NMSErrors.EXCEPTION_MODIFYING_CHANNEL_PIPELINE,
-					CommunicationManager.DebugLevel.QUIET);
-				e.printStackTrace();
-			}
-		});
+		channel
+			.eventLoop()
+			.execute(() -> {
+				try {
+					pipelineModifierTask.accept(channel.pipeline());
+				}
+				catch (Exception e) {
+					CommunicationManager.debugError(
+						NMSErrors.EXCEPTION_MODIFYING_CHANNEL_PIPELINE,
+						CommunicationManager.DebugLevel.QUIET
+					);
+					e.printStackTrace();
+				}
+			});
 	}
 }

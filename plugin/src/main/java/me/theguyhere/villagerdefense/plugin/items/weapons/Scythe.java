@@ -2,6 +2,7 @@ package me.theguyhere.villagerdefense.plugin.items.weapons;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
@@ -169,13 +170,13 @@ public abstract class Scythe extends VDWeapon {
 			case REAPER:
 				switch (tier) {
 					case T1:
-						damageLow = damageHigh = 25;
+						damageLow = damageHigh = 20;
 						break;
 					case T2:
-						damageLow = damageHigh = 30;
+						damageLow = damageHigh = 24;
 						break;
 					case T3:
-						damageLow = damageHigh = 35;
+						damageLow = damageHigh = 28;
 						break;
 					default:
 						damageLow = damageHigh = 0;
@@ -250,12 +251,21 @@ public abstract class Scythe extends VDWeapon {
 		// Set attack speed
 		attributes.put(
 			Attribute.GENERIC_ATTACK_SPEED,
-			new AttributeModifier(VDItem.MetaKey.ATTACK_SPEED.name(), -.5,
+			new AttributeModifier(VDItem.MetaKey.ATTACK_SPEED.name(), 0.5,
 				AttributeModifier.Operation.ADD_NUMBER
 			)
 		);
-		persistentData2.put(ATTACK_SPEED_KEY, 3.5);
-		lores.add(CommunicationManager.format(SPEED, Double.toString(3.5)));
+		persistentData2.put(ATTACK_SPEED_KEY, 4.5);
+		lores.add(CommunicationManager.format(SPEED, Double.toString(4.5)));
+
+		// Set knockback
+		attributes.put(
+			Attribute.GENERIC_ATTACK_KNOCKBACK,
+			new AttributeModifier(
+				MetaKey.KNOCKBACK.name(), -2,
+				AttributeModifier.Operation.ADD_NUMBER
+			)
+		);
 
 		// Set dummy damage
 		attributes.put(
@@ -315,22 +325,16 @@ public abstract class Scythe extends VDWeapon {
 			case TIERED:
 				switch (tier) {
 					case T1:
-						price = 190;
-						break;
 					case T2:
-						price = 380;
-						break;
 					case T3:
-						price = 415;
-						break;
 					case T4:
-						price = 520;
-						break;
 					case T5:
-						price = 720;
-						break;
 					case T6:
-						price = 1000;
+						price =
+							Calculator.roundToNearest(
+								Math.pow(durability, 0.6) * (damageHigh + damageLow) / 2 / 3.5,
+								5
+							);
 						break;
 					default:
 						price = -1;
@@ -361,7 +365,9 @@ public abstract class Scythe extends VDWeapon {
 		ItemMeta meta = toCheck.getItemMeta();
 		if (meta == null)
 			return false;
-		String value = meta.getPersistentDataContainer().get(ITEM_TYPE_KEY, PersistentDataType.STRING);
+		String value = meta
+			.getPersistentDataContainer()
+			.get(ITEM_TYPE_KEY, PersistentDataType.STRING);
 		if (value == null)
 			return false;
 		return SCYTHE.equals(value);

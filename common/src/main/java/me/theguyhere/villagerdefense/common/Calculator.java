@@ -45,4 +45,17 @@ public class Calculator {
 		// Should never reach here
 		return 0;
 	}
+
+	/**
+	 * Rounds a number to the nearest arbitrary positive integer. If rounding to nearest 0, just performs normal round.
+	 *
+	 * @param toRound   The number to round
+	 * @param toNearest The number to round to
+	 * @return The rounded number
+	 */
+	public static int roundToNearest(double toRound, int toNearest) {
+		if (toNearest != 0)
+			return (int) (Math.round(toRound / toNearest) * toNearest);
+		else return (int) Math.round(toRound);
+	}
 }

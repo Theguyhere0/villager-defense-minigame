@@ -133,7 +133,9 @@ public class Achievement {
 	}
 
 	private void addRequirement(AchievementRequirement requirement) throws InvalidAchievementReqTypeException {
-		if (requirement.getMetric().getType() != type)
+		if (requirement
+			.getMetric()
+			.getType() != type)
 			throw new InvalidAchievementReqTypeException();
 		else requirements.add(requirement);
 	}
@@ -178,47 +180,65 @@ public class Achievement {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.mage().getID()
+				Kit
+					.mage()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.knight().getID()
+				Kit
+					.knight()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.messenger().getID()
+				Kit
+					.messenger()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.monk().getID()
+				Kit
+					.monk()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.ninja().getID()
+				Kit
+					.ninja()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.priest().getID()
+				Kit
+					.priest()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.templar().getID()
+				Kit
+					.templar()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.siren().getID()
+				Kit
+					.siren()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.warrior().getID()
+				Kit
+					.warrior()
+					.getID()
 			));
 		}
 		catch (InvalidAchievementReqTypeException e) {
@@ -241,39 +261,57 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.amputee().getID()
+				Challenge
+					.amputee()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.blind().getID()
+				Challenge
+					.blind()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.clumsy().getID()
+				Challenge
+					.clumsy()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.dwarf().getID()
+				Challenge
+					.dwarf()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.explosive().getID()
+				Challenge
+					.explosive()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.featherweight().getID()
+				Challenge
+					.featherweight()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.pacifist().getID()
+				Challenge
+					.pacifist()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.naked().getID()
+				Challenge
+					.naked()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.uhc().getID()
+				Challenge
+					.uhc()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 3));
 		}
@@ -298,32 +336,44 @@ public class Achievement {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.blacksmith().getID()
+				Kit
+					.blacksmith()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.giant().getID()
+				Kit
+					.giant()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.merchant().getID()
+				Kit
+					.merchant()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.trainer().getID()
+				Kit
+					.trainer()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.witch().getID()
+				Kit
+					.witch()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.vampire().getID()
+				Kit
+					.vampire()
+					.getID()
 			));
 		}
 		catch (InvalidAchievementReqTypeException e) {
@@ -347,37 +397,51 @@ public class Achievement {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.soldier().getID()
+				Kit
+					.soldier()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.alchemist().getID()
+				Kit
+					.alchemist()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.trader().getID()
+				Kit
+					.trader()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.tailor().getID()
+				Kit
+					.tailor()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.reaper().getID()
+				Kit
+					.reaper()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.summoner().getID()
+				Kit
+					.summoner()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.phantom().getID()
+				Kit
+					.phantom()
+					.getID()
 			));
 		}
 		catch (InvalidAchievementReqTypeException e) {
@@ -401,112 +465,156 @@ public class Achievement {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.soldier().getID()
+				Kit
+					.soldier()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.alchemist().getID()
+				Kit
+					.alchemist()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.trader().getID()
+				Kit
+					.trader()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.tailor().getID()
+				Kit
+					.tailor()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.reaper().getID()
+				Kit
+					.reaper()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.summoner().getID()
+				Kit
+					.summoner()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.phantom().getID()
+				Kit
+					.phantom()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.mage().getID()
+				Kit
+					.mage()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.knight().getID()
+				Kit
+					.knight()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.messenger().getID()
+				Kit
+					.messenger()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.monk().getID()
+				Kit
+					.monk()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.ninja().getID()
+				Kit
+					.ninja()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.priest().getID()
+				Kit
+					.priest()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.templar().getID()
+				Kit
+					.templar()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.siren().getID()
+				Kit
+					.siren()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.warrior().getID()
+				Kit
+					.warrior()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.blacksmith().getID()
+				Kit
+					.blacksmith()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				2,
-				Kit.giant().getID()
+				Kit
+					.giant()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.merchant().getID()
+				Kit
+					.merchant()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				2,
-				Kit.trainer().getID()
+				Kit
+					.trainer()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.witch().getID()
+				Kit
+					.witch()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				1,
-				Kit.vampire().getID()
+				Kit
+					.vampire()
+					.getID()
 			));
 		}
 		catch (InvalidAchievementReqTypeException e) {
@@ -530,47 +638,65 @@ public class Achievement {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.mage().getID()
+				Kit
+					.mage()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.knight().getID()
+				Kit
+					.knight()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.messenger().getID()
+				Kit
+					.messenger()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.monk().getID()
+				Kit
+					.monk()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.ninja().getID()
+				Kit
+					.ninja()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.priest().getID()
+				Kit
+					.priest()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.templar().getID()
+				Kit
+					.templar()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.siren().getID()
+				Kit
+					.siren()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.warrior().getID()
+				Kit
+					.warrior()
+					.getID()
 			));
 		}
 		catch (InvalidAchievementReqTypeException e) {
@@ -617,7 +743,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.amputee().getID()
+				Challenge
+					.amputee()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
@@ -645,7 +773,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.amputee().getID()
+				Challenge
+					.amputee()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
 		}
@@ -672,7 +802,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.amputee().getID()
+				Challenge
+					.amputee()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
 		}
@@ -699,7 +831,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.amputee().getID()
+				Challenge
+					.amputee()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
 		}
@@ -726,7 +860,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.blind().getID()
+				Challenge
+					.blind()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
@@ -754,7 +890,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.blind().getID()
+				Challenge
+					.blind()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
 		}
@@ -781,7 +919,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.blind().getID()
+				Challenge
+					.blind()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
 		}
@@ -808,7 +948,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.blind().getID()
+				Challenge
+					.blind()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
 		}
@@ -835,7 +977,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.clumsy().getID()
+				Challenge
+					.clumsy()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
@@ -863,7 +1007,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.clumsy().getID()
+				Challenge
+					.clumsy()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
 		}
@@ -890,7 +1036,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.clumsy().getID()
+				Challenge
+					.clumsy()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
 		}
@@ -917,7 +1065,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.clumsy().getID()
+				Challenge
+					.clumsy()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
 		}
@@ -944,7 +1094,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.dwarf().getID()
+				Challenge
+					.dwarf()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
@@ -972,7 +1124,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.dwarf().getID()
+				Challenge
+					.dwarf()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
 		}
@@ -999,7 +1153,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.dwarf().getID()
+				Challenge
+					.dwarf()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
 		}
@@ -1026,7 +1182,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.dwarf().getID()
+				Challenge
+					.dwarf()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
 		}
@@ -1053,7 +1211,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.explosive().getID()
+				Challenge
+					.explosive()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
@@ -1081,7 +1241,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.explosive().getID()
+				Challenge
+					.explosive()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
 		}
@@ -1108,7 +1270,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.explosive().getID()
+				Challenge
+					.explosive()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
 		}
@@ -1135,7 +1299,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.explosive().getID()
+				Challenge
+					.explosive()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
 		}
@@ -1162,7 +1328,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.featherweight().getID()
+				Challenge
+					.featherweight()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
@@ -1190,7 +1358,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.featherweight().getID()
+				Challenge
+					.featherweight()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
 		}
@@ -1217,7 +1387,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.featherweight().getID()
+				Challenge
+					.featherweight()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
 		}
@@ -1244,7 +1416,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.featherweight().getID()
+				Challenge
+					.featherweight()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
 		}
@@ -1270,47 +1444,65 @@ public class Achievement {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.mage().getID()
+				Kit
+					.mage()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.knight().getID()
+				Kit
+					.knight()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.messenger().getID()
+				Kit
+					.messenger()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.monk().getID()
+				Kit
+					.monk()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.ninja().getID()
+				Kit
+					.ninja()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.priest().getID()
+				Kit
+					.priest()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.templar().getID()
+				Kit
+					.templar()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.siren().getID()
+				Kit
+					.siren()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.KIT_OWN,
 				3,
-				Kit.warrior().getID()
+				Kit
+					.warrior()
+					.getID()
 			));
 		}
 		catch (InvalidAchievementReqTypeException e) {
@@ -1336,7 +1528,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.naked().getID()
+				Challenge
+					.naked()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
@@ -1364,7 +1558,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.naked().getID()
+				Challenge
+					.naked()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
 		}
@@ -1391,7 +1587,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.naked().getID()
+				Challenge
+					.naked()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
 		}
@@ -1418,7 +1616,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.naked().getID()
+				Challenge
+					.naked()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
 		}
@@ -1445,7 +1645,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.pacifist().getID()
+				Challenge
+					.pacifist()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
@@ -1473,7 +1675,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.pacifist().getID()
+				Challenge
+					.pacifist()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
 		}
@@ -1500,7 +1704,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.pacifist().getID()
+				Challenge
+					.pacifist()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
 		}
@@ -1527,7 +1733,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.pacifist().getID()
+				Challenge
+					.pacifist()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
 		}
@@ -1554,11 +1762,15 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.pacifist().getID()
+				Challenge
+					.pacifist()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.uhc().getID()
+				Challenge
+					.uhc()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 10));
 		}
@@ -2485,7 +2697,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.uhc().getID()
+				Challenge
+					.uhc()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.ACTIVE_PLAYERS, 1));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 2));
@@ -2513,7 +2727,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.uhc().getID()
+				Challenge
+					.uhc()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.GEMS, 8000));
 		}
@@ -2540,7 +2756,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.uhc().getID()
+				Challenge
+					.uhc()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.KILLS, 150));
 		}
@@ -2567,7 +2785,9 @@ public class Achievement {
 		try {
 			achievement.addRequirement(new AchievementRequirement(
 				AchievementMetric.CHALLENGE,
-				Challenge.uhc().getID()
+				Challenge
+					.uhc()
+					.getID()
 			));
 			achievement.addRequirement(new AchievementRequirement(AchievementMetric.WAVE, 20));
 		}

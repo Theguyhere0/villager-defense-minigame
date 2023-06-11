@@ -66,7 +66,9 @@ public class CommandExecImp implements CommandExecutor {
 			CommandTest.execute(args, sender);
 
 			// No valid commend sent
-			if (Arrays.stream(Argument.values()).noneMatch(arg -> CommandGuard.checkArg(args, 0, arg.getArg())))
+			if (Arrays
+				.stream(Argument.values())
+				.noneMatch(arg -> CommandGuard.checkArg(args, 0, arg.getArg())))
 				notifyCommandFailure(sender);
 		}
 		catch (NullPointerException e) {

@@ -204,7 +204,9 @@ public abstract class SirenAbility extends VDAbility {
 		ItemMeta meta = toCheck.getItemMeta();
 		if (meta == null)
 			return false;
-		String value = meta.getPersistentDataContainer().get(ITEM_TYPE_KEY, PersistentDataType.STRING);
+		String value = meta
+			.getPersistentDataContainer()
+			.get(ITEM_TYPE_KEY, PersistentDataType.STRING);
 		if (value == null)
 			return false;
 		return SIREN_ABILITY.equals(value);

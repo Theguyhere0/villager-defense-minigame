@@ -36,12 +36,18 @@ public class ArenaSpawnGenerator {
 		// Gather wave information
 		DataManager data = new DataManager("spawnTables/" + arena.getSpawnTableFile());
 		String wave = Integer.toString(arena.getCurrentWave());
-		if (!data.getConfig().contains(wave)) {
-			if (data.getConfig().contains("freePlay"))
+		if (!data
+			.getConfig()
+			.contains(wave)) {
+			if (data
+				.getConfig()
+				.contains("freePlay"))
 				wave = "freePlay";
 			else wave = "1";
 		}
-		int waveValue = calculateWaveValue(data.getConfig().getInt(wave + ".value"), arena);
+		int waveValue = calculateWaveValue(data
+			.getConfig()
+			.getInt(wave + ".value"), arena);
 		int toSpawn = waveValue / 125 - arena.getVillagers();
 
 		// Generate spawn sequence
@@ -55,7 +61,11 @@ public class ArenaSpawnGenerator {
 
 			// Get spawn locations
 			Location spawn =
-				arena.getVillagerSpawnLocations().get(r.nextInt(arena.getVillagerSpawnLocations().size()));
+				arena
+					.getVillagerSpawnLocations()
+					.get(r.nextInt(arena
+						.getVillagerSpawnLocations()
+						.size()));
 
 			// Create task for spawning
 			spawningTasks.add(new BukkitRunnable() {
@@ -97,8 +107,12 @@ public class ArenaSpawnGenerator {
 		// Gather wave information
 		DataManager data = new DataManager("spawnTables/" + arena.getSpawnTableFile());
 		String wave = Integer.toString(arena.getCurrentWave());
-		if (!data.getConfig().contains(wave)) {
-			if (data.getConfig().contains("freePlay"))
+		if (!data
+			.getConfig()
+			.contains(wave)) {
+			if (data
+				.getConfig()
+				.contains("freePlay"))
 				wave = "freePlay";
 			else wave = "1";
 		}
@@ -106,16 +120,20 @@ public class ArenaSpawnGenerator {
 		HashMap<String, Double> minionRatio = new HashMap<>();
 		HashMap<String, Integer> minionValue = new HashMap<>();
 		HashMap<String, Integer> minionValueSpawned = new HashMap<>();
-		targetMinionRatio.keySet().forEach(type -> {
-			minionRatio.put(type, 0d);
-			try {
-				minionValue.put(type, VDMinion.getValueOf(type, arena));
-			}
-			catch (InvalidVDMobKeyException ignored) {
-			}
-			minionValueSpawned.put(type, 0);
-		});
-		int waveValue = calculateWaveValue(data.getConfig().getInt(wave + ".value"), arena);
+		targetMinionRatio
+			.keySet()
+			.forEach(type -> {
+				minionRatio.put(type, 0d);
+				try {
+					minionValue.put(type, VDMinion.getValueOf(type, arena));
+				}
+				catch (InvalidVDMobKeyException ignored) {
+				}
+				minionValueSpawned.put(type, 0);
+			});
+		int waveValue = calculateWaveValue(data
+			.getConfig()
+			.getInt(wave + ".value"), arena);
 		final int[] valueSpawned = {0};
 
 		// Generate spawn sequence
@@ -129,10 +147,16 @@ public class ArenaSpawnGenerator {
 			minionRatio.replaceAll((type, ratio) -> minionValueSpawned.get(type) / (double) valueSpawned[0]);
 
 			// Get spawn locations and type
-			Location ground = arena.getMonsterGroundSpawnLocations()
-				.get(r.nextInt(arena.getMonsterGroundSpawnLocations().size()));
-			Location air = arena.getMonsterAirSpawnLocations()
-				.get(r.nextInt(arena.getMonsterAirSpawnLocations().size()));
+			Location ground = arena
+				.getMonsterGroundSpawnLocations()
+				.get(r.nextInt(arena
+					.getMonsterGroundSpawnLocations()
+					.size()));
+			Location air = arena
+				.getMonsterAirSpawnLocations()
+				.get(r.nextInt(arena
+					.getMonsterAirSpawnLocations()
+					.size()));
 			String type = findNextType(waveValue - valueSpawned[0], targetMinionRatio, minionRatio,
 				minionValue
 			);
@@ -148,8 +172,10 @@ public class ArenaSpawnGenerator {
 							arena.addMob(VDMinion.of(type, arena, ground, air));
 						}
 						catch (InvalidVDMobKeyException e) {
-							CommunicationManager.debugError("Invalid mob key detected in spawn file!",
-								CommunicationManager.DebugLevel.NORMAL);
+							CommunicationManager.debugError(
+								"Invalid mob key detected in spawn file!",
+								CommunicationManager.DebugLevel.NORMAL
+							);
 						}
 						catch (Exception ignored) {
 						}
@@ -184,9 +210,15 @@ public class ArenaSpawnGenerator {
 		HashMap<String, Double> targetRatio = new HashMap<>();
 		AtomicInteger total = new AtomicInteger();
 
-		Objects.requireNonNull(data.getConfig().getConfigurationSection(path)).getKeys(false)
+		Objects
+			.requireNonNull(data
+				.getConfig()
+				.getConfigurationSection(path))
+			.getKeys(false)
 			.forEach(type -> {
-				int amount = data.getConfig().getInt(path + "." + type);
+				int amount = data
+					.getConfig()
+					.getInt(path + "." + type);
 				targetRatio.put(type, (double) amount);
 				total.addAndGet(amount);
 			});
@@ -199,16 +231,25 @@ public class ArenaSpawnGenerator {
 		HashMap<String, Double> currentRatio, HashMap<String, Integer> values
 	) {
 		// Check if anything can spawn at all
-		if (values.values().stream().noneMatch(value -> value <= valueLeftToSpawn))
+		if (values
+			.values()
+			.stream()
+			.noneMatch(value -> value <= valueLeftToSpawn))
 			return null;
 
 		// Get ratio differences
 		HashMap<String, Double> ratioDifference = new HashMap<>();
-		currentRatio.keySet().forEach(key -> ratioDifference.put(key, currentRatio.get(key) - targetRatio.get(key)));
+		currentRatio
+			.keySet()
+			.forEach(key -> ratioDifference.put(key, currentRatio.get(key) - targetRatio.get(key)));
 
 		// Return lowest ratio difference that is below value left to spawn
-		return ratioDifference.keySet().stream().filter(key -> values.get(key) <= valueLeftToSpawn)
+		return ratioDifference
+			.keySet()
+			.stream()
+			.filter(key -> values.get(key) <= valueLeftToSpawn)
 			.sorted(Comparator.comparingDouble(ratioDifference::get))
-			.collect(Collectors.toList()).get(0);
+			.collect(Collectors.toList())
+			.get(0);
 	}
 }

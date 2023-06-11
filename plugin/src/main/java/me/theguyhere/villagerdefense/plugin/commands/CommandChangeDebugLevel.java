@@ -16,8 +16,12 @@ import java.util.Arrays;
 class CommandChangeDebugLevel {
 	static final String COMMAND_FORMAT =
 		"/vd " + CommandExecImp.Argument.DEBUG.getArg() + " " +
-			Arrays.toString(Arrays.stream(CommunicationManager.DebugLevel.values())
-				.map(debugLevel -> debugLevel.name().toLowerCase()).toArray());
+			Arrays.toString(Arrays
+				.stream(CommunicationManager.DebugLevel.values())
+				.map(debugLevel -> debugLevel
+					.name()
+					.toLowerCase())
+				.toArray());
 
 	static void execute(String[] args, CommandSender sender) throws CommandException {
 		// Guard clauses

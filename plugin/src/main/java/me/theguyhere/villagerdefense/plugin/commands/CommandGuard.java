@@ -20,7 +20,8 @@ class CommandGuard {
 		if (sender.hasPermission(commandPermission.getPermission()))
 			return;
 		PlayerManager.notifyFailure(sender, LanguageManager.errors.permission);
-		throw new CommandPermissionException(sender.getDisplayName() + " does not have the commandPermission " + commandPermission);
+		throw new CommandPermissionException(
+			sender.getDisplayName() + " does not have the commandPermission " + commandPermission);
 	}
 
 	/**
@@ -31,7 +32,8 @@ class CommandGuard {
 			return;
 		Player player = (Player) sender;
 		PlayerManager.notifyFailure(player, LanguageManager.errors.permission);
-		throw new CommandPermissionException(player.getDisplayName() + " does not have the commandPermission " + commandPermission);
+		throw new CommandPermissionException(
+			player.getDisplayName() + " does not have the commandPermission " + commandPermission);
 	}
 
 	/**
@@ -44,7 +46,9 @@ class CommandGuard {
 	}
 
 	static void checkDebugLevelLessEqual(CommandSender sender, CommunicationManager.DebugLevel debugLevel) throws CommandDebugLevelException {
-		if (CommunicationManager.getDebugLevel().atLeast(debugLevel))
+		if (CommunicationManager
+			.getDebugLevel()
+			.atLeast(debugLevel))
 			return;
 		throw new CommandDebugLevelException("Debug level of " + CommunicationManager.getDebugLevel() + " is higher " +
 			"than " + debugLevel);
@@ -54,7 +58,9 @@ class CommandGuard {
 	 * Precedence of 3.
 	 */
 	static void checkDebugLevelGreaterEqual(CommandSender sender, CommunicationManager.DebugLevel debugLevel) throws CommandDebugLevelException {
-		if (CommunicationManager.getDebugLevel().atLeast(debugLevel))
+		if (CommunicationManager
+			.getDebugLevel()
+			.atLeast(debugLevel))
 			return;
 		throw new CommandDebugLevelException("Debug level of " + CommunicationManager.getDebugLevel() + " is lower " +
 			"than " + debugLevel);
@@ -102,7 +108,9 @@ class CommandGuard {
 	static boolean checkArgStartWith(String[] args, int index, @NotNull String argument) {
 		if (args.length <= index)
 			return false;
-		return args[index].toLowerCase().startsWith(argument.toLowerCase());
+		return args[index]
+			.toLowerCase()
+			.startsWith(argument.toLowerCase());
 	}
 
 	static void checkNotRelease() throws CommandPluginIsReleasedException {

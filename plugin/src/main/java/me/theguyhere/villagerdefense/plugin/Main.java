@@ -38,7 +38,9 @@ public class Main extends JavaPlugin {
 	private static DataManager customEffects;
 
 	// Global instance variables
-	private final NMSManager nmsManager = NMSVersion.getCurrent().getNmsManager();
+	private final NMSManager nmsManager = NMSVersion
+		.getCurrent()
+		.getNmsManager();
 	private static boolean loaded = false;
 	private static final List<String> unloadedWorlds = new ArrayList<>();
 	private static Economy economy;
@@ -67,15 +69,22 @@ public class Main extends JavaPlugin {
 		checkFileVersions();
 
 		// Set up commands and tab complete
-		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist").setExecutor(new CommandExecImp());
-		Objects.requireNonNull(getCommand("vd"), "'vd' command should exist")
+		Objects
+			.requireNonNull(getCommand("vd"), "'vd' command should exist")
+			.setExecutor(new CommandExecImp());
+		Objects
+			.requireNonNull(getCommand("vd"), "'vd' command should exist")
 			.setTabCompleter(new TabCompleterImp());
 
 		// Schedule to register PAPI expansion
-		Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
-			if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null)
-				new VDExpansion().register();
-		}, Calculator.secondsToTicks(1));
+		Bukkit
+			.getScheduler()
+			.scheduleSyncDelayedTask(this, () -> {
+				if (Bukkit
+					.getPluginManager()
+					.getPlugin("PlaceholderAPI") != null)
+					new VDExpansion().register();
+			}, Calculator.secondsToTicks(1));
 
 		// Try finding economy plugin
 		setupEconomy();
@@ -182,7 +191,9 @@ public class Main extends JavaPlugin {
 		checkArenaNameAndGatherUnloadedWorlds();
 
 		// Register expansion again
-		if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null)
+		if (Bukkit
+			.getPluginManager()
+			.getPlugin("PlaceholderAPI") != null)
 			new VDExpansion().register();
 
 		// Try finding economy plugin again
@@ -250,7 +261,9 @@ public class Main extends JavaPlugin {
 	}
 
 	public static boolean hasCustomEconomy() {
-		return plugin.getConfig().getBoolean("vaultEconomy") && economy != null;
+		return plugin
+			.getConfig()
+			.getBoolean("vaultEconomy") && economy != null;
 	}
 
 	// Quick way to send test messages to console but remembering to take them down before release
@@ -299,10 +312,14 @@ public class Main extends JavaPlugin {
 
 	private void setupEconomy() {
 		// Check for Vault plugin
-		if (getServer().getPluginManager().getPlugin("Vault") == null)
+		if (getServer()
+			.getPluginManager()
+			.getPlugin("Vault") == null)
 			return;
 
-		RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+		RegisteredServiceProvider<Economy> rsp = getServer()
+			.getServicesManager()
+			.getRegistration(Economy.class);
 		if (rsp == null)
 			return;
 		economy = rsp.getProvider();
@@ -499,7 +516,8 @@ public class Main extends JavaPlugin {
 		List<String> arenaNames = new ArrayList<>();
 		section = getArenaData().getConfigurationSection("arena");
 		if (section != null)
-			section.getKeys(false)
+			section
+				.getKeys(false)
 				.forEach(id -> {
 					String path = "arena." + id;
 
@@ -525,22 +543,28 @@ public class Main extends JavaPlugin {
 			);
 			CommunicationManager.debugError("Shutting down plugin to protect your data. Please fix and restart " +
 				"server.", CommunicationManager.DebugLevel.QUIET);
-			Bukkit.getScheduler().scheduleSyncDelayedTask(this,
-				() -> getServer().getPluginManager().disablePlugin(this), 0
-			);
+			Bukkit
+				.getScheduler()
+				.scheduleSyncDelayedTask(this,
+					() -> getServer()
+						.getPluginManager()
+						.disablePlugin(this), 0
+				);
 		}
 
 		// Relevant worlds from info boards
 		section = getArenaData().getConfigurationSection("infoBoard");
 		if (section != null)
-			section.getKeys(false)
+			section
+				.getKeys(false)
 				.forEach(id ->
 					checkAddUnloadedWorld(getArenaData().getString("infoBoard." + id + ".world")));
 
 		// Relevant worlds from leaderboards
 		section = getArenaData().getConfigurationSection("leaderboard");
 		if (section != null)
-			section.getKeys(false)
+			section
+				.getKeys(false)
 				.forEach(id ->
 					checkAddUnloadedWorld(getArenaData().getString("leaderboard." + id + ".world")));
 

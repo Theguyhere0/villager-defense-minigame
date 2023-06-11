@@ -246,22 +246,12 @@ public abstract class Boots extends VDArmor {
 		int price;
 		switch (tier) {
 			case T1:
-				price = 110;
-				break;
 			case T2:
-				price = 185;
-				break;
 			case T3:
-				price = 265;
-				break;
 			case T4:
-				price = 330;
-				break;
 			case T5:
-				price = 475;
-				break;
 			case T6:
-				price = 610;
+				price = calculateTieredPrice(durability, armor, toughness);
 				break;
 			default:
 				price = -1;
@@ -288,7 +278,9 @@ public abstract class Boots extends VDArmor {
 		ItemMeta meta = toCheck.getItemMeta();
 		if (meta == null)
 			return false;
-		String value = meta.getPersistentDataContainer().get(ITEM_TYPE_KEY, PersistentDataType.STRING);
+		String value = meta
+			.getPersistentDataContainer()
+			.get(ITEM_TYPE_KEY, PersistentDataType.STRING);
 		if (value == null)
 			return false;
 		return BOOTS.equals(value);

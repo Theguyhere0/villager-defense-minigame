@@ -52,15 +52,19 @@ class CommandReloadPlugin {
 		if (player != null)
 			PlayerManager.notifyAlert(player, "Reloading plugin data in 5 seconds");
 		else
-			CommunicationManager.debugInfo("Reloading plugin data in 5 seconds",
-				CommunicationManager.DebugLevel.QUIET);
+			CommunicationManager.debugInfo(
+				"Reloading plugin data in 5 seconds",
+				CommunicationManager.DebugLevel.QUIET
+			);
 
 		// Close all arenas
 		GameController.closeArenas();
 
 		// Reload plugin after 11 seconds
-		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Main.plugin.reload(),
-			Calculator.secondsToTicks(5)
-		);
+		Bukkit
+			.getScheduler()
+			.scheduleSyncDelayedTask(Main.plugin, () -> Main.plugin.reload(),
+				Calculator.secondsToTicks(5)
+			);
 	}
 }

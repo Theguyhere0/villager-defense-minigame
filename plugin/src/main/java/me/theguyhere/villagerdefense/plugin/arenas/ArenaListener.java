@@ -66,7 +66,9 @@ public class ArenaListener implements Listener {
 
 		// Try to get player spawn
 		try {
-			spawn = arena.getPlayerSpawn().getLocation();
+			spawn = arena
+				.getPlayerSpawn()
+				.getLocation();
 		}
 		catch (Exception err) {
 			err.printStackTrace();
@@ -81,7 +83,9 @@ public class ArenaListener implements Listener {
 		int players = arena.getActiveCount();
 
 		// Store survival stats if turned on
-		if (Main.plugin.getConfig().getBoolean("keepInv"))
+		if (Main.plugin
+			.getConfig()
+			.getBoolean("keepInv"))
 			PlayerManager.cacheSurvivalStats(player);
 
 		// Prepares player to enter arena if it doesn't exceed max capacity and if the arena is still waiting
@@ -91,20 +95,26 @@ public class ArenaListener implements Listener {
 			player.setInvulnerable(true);
 
 			// Notify everyone in the arena
-			arena.getPlayers().forEach(gamer ->
-				PlayerManager.notifyAlert(gamer.getPlayer(), String.format(
-					LanguageManager.messages.join,
-					player.getName()
-				)));
+			arena
+				.getPlayers()
+				.forEach(gamer ->
+					PlayerManager.notifyAlert(gamer.getPlayer(), String.format(
+						LanguageManager.messages.join,
+						player.getName()
+					)));
 
 			// Update player tracking and in-game stats
 			VDPlayer fighter = new VDPlayer(player, arena, false);
-			arena.getPlayers().add(fighter);
+			arena
+				.getPlayers()
+				.add(fighter);
 			arena.refreshPortal();
 
 			// Add forced challenges
-			arena.getForcedChallengeIDs().forEach(challenge ->
-				fighter.addChallenge(Challenge.getChallengeByID(challenge)));
+			arena
+				.getForcedChallengeIDs()
+				.forEach(challenge ->
+					fighter.addChallenge(Challenge.getChallengeByID(challenge)));
 
 			// Give them a game board
 			SidebarManager.updateActivePlayerSidebar(fighter);
@@ -117,7 +127,9 @@ public class ArenaListener implements Listener {
 				try {
 					if (arena.getWaitingRoom() != null)
 						player.playSound(arena.getWaitingRoom(), arena.getWaitingSound(), 4, 1);
-					else player.playSound(arena.getPlayerSpawn().getLocation(), arena.getWaitingSound(), 4, 1);
+					else player.playSound(arena
+						.getPlayerSpawn()
+						.getLocation(), arena.getWaitingSound(), 4, 1);
 				}
 				catch (Exception err) {
 					CommunicationManager.debugError(err.getMessage(), CommunicationManager.DebugLevel.QUIET);
@@ -127,7 +139,8 @@ public class ArenaListener implements Listener {
 
 			// Debug message to console
 			CommunicationManager.debugInfo("%s joined %s", CommunicationManager.DebugLevel.VERBOSE, player.getName(),
-				arena.getName());
+				arena.getName()
+			);
 		}
 
 		// Enter arena if late arrival is allowed
@@ -136,20 +149,26 @@ public class ArenaListener implements Listener {
 			PlayerManager.teleAdventure(player, spawn);
 
 			// Notify everyone in the arena
-			arena.getPlayers().forEach(gamer ->
-				PlayerManager.notifyAlert(gamer.getPlayer(), String.format(
-					LanguageManager.messages.join,
-					player.getName()
-				)));
+			arena
+				.getPlayers()
+				.forEach(gamer ->
+					PlayerManager.notifyAlert(gamer.getPlayer(), String.format(
+						LanguageManager.messages.join,
+						player.getName()
+					)));
 
 			// Update player tracking and in-game stats
 			VDPlayer fighter = new VDPlayer(player, arena, false);
-			arena.getPlayers().add(fighter);
+			arena
+				.getPlayers()
+				.add(fighter);
 			arena.refreshPortal();
 
 			// Add forced challenges
-			arena.getForcedChallengeIDs().forEach(challenge ->
-				fighter.addChallenge(Challenge.getChallengeByID(challenge)));
+			arena
+				.getForcedChallengeIDs()
+				.forEach(challenge ->
+					fighter.addChallenge(Challenge.getChallengeByID(challenge)));
 
 			// Give them a game board
 			SidebarManager.updateActivePlayerSidebar(fighter);
@@ -159,7 +178,8 @@ public class ArenaListener implements Listener {
 
 			// Debug message to console
 			CommunicationManager.debugInfo("%s joined %s", CommunicationManager.DebugLevel.VERBOSE, player.getName(),
-				arena.getName());
+				arena.getName()
+			);
 
 			// Don't touch task updating
 			return;
@@ -171,12 +191,15 @@ public class ArenaListener implements Listener {
 			PlayerManager.teleSpectator(player, spawn);
 
 			// Update player tracking and in-game stats
-			arena.getPlayers().add(new VDPlayer(player, arena, true));
+			arena
+				.getPlayers()
+				.add(new VDPlayer(player, arena, true));
 			arena.refreshPortal();
 
 			// Debug message to console
 			CommunicationManager.debugInfo("%s is spectating %s", CommunicationManager.DebugLevel.VERBOSE,
-				player.getName(), arena.getName());
+				player.getName(), arena.getName()
+			);
 
 			// Don't touch task updating
 			return;
@@ -211,7 +234,8 @@ public class ArenaListener implements Listener {
 
 			// Notify console
 			CommunicationManager.debugInfo("%s has started countdown.", CommunicationManager.DebugLevel.VERBOSE,
-				arena.getName());
+				arena.getName()
+			);
 		}
 		catch (ArenaException ignored) {
 		}
@@ -259,24 +283,30 @@ public class ArenaListener implements Listener {
 			arena.removePlayer(gamer);
 
 			// Remove pets
-			WorldManager.getPets(player).forEach(Entity::remove);
+			WorldManager
+				.getPets(player)
+				.forEach(Entity::remove);
 
 			// Notify people in arena player left
-			arena.getPlayers().forEach(fighter ->
-				PlayerManager.notifyAlert(
-					fighter.getPlayer(),
-					String.format(LanguageManager.messages.leaveArena, player.getName())
-				));
+			arena
+				.getPlayers()
+				.forEach(fighter ->
+					PlayerManager.notifyAlert(
+						fighter.getPlayer(),
+						String.format(LanguageManager.messages.leaveArena, player.getName())
+					));
 
 			int actives = arena.getActiveCount();
 
 			// Notify spectators of open spot if late arrival is on and there is a spot open
 			if (arena.hasLateArrival() && actives < arena.getMaxPlayers())
-				arena.getSpectators().forEach(spectator ->
-					PlayerManager.notifyAlert(
-						spectator.getPlayer(),
-						String.format(LanguageManager.messages.late, player.getName())
-					));
+				arena
+					.getSpectators()
+					.forEach(spectator ->
+						PlayerManager.notifyAlert(
+							spectator.getPlayer(),
+							String.format(LanguageManager.messages.late, player.getName())
+						));
 
 			// Sets them up for teleport to lobby
 			SidebarManager.removeSidebar(player);
@@ -299,8 +329,12 @@ public class ArenaListener implements Listener {
 
 				// Apply vault economy multiplier, if active
 				if (Main.hasCustomEconomy()) {
-					reward = (int) (reward * Main.plugin.getConfig().getDouble("vaultEconomyMult"));
-					bonus = (int) (bonus * Main.plugin.getConfig().getDouble("vaultEconomyMult"));
+					reward = (int) (reward * Main.plugin
+						.getConfig()
+						.getDouble("vaultEconomyMult"));
+					bonus = (int) (bonus * Main.plugin
+						.getConfig()
+						.getDouble("vaultEconomyMult"));
 				}
 
 				// Give rewards and notify
@@ -339,14 +373,24 @@ public class ArenaListener implements Listener {
 		}
 
 		// Return player survival stats
-		if (Main.plugin.getConfig().getBoolean("keepInv") && player.isOnline())
+		if (Main.plugin
+			.getConfig()
+			.getBoolean("keepInv") && player.isOnline())
 			PlayerManager.returnSurvivalStats(player);
 
 		// Reset world border effect
-		WorldBorder worldBorder = Objects.requireNonNull(GameController.getLobby().getWorld()).getWorldBorder();
-		NMSVersion.getCurrent().getNmsManager().resetEffect(worldBorder.getCenter(), worldBorder.getSize(),
-			worldBorder.getWarningDistance()
-		).sendTo(player);
+		WorldBorder worldBorder = Objects
+			.requireNonNull(GameController
+				.getLobby()
+				.getWorld())
+			.getWorldBorder();
+		NMSVersion
+			.getCurrent()
+			.getNmsManager()
+			.resetEffect(worldBorder.getCenter(), worldBorder.getSize(),
+				worldBorder.getWarningDistance()
+			)
+			.sendTo(player);
 
 		// Refresh the game portal
 		arena.refreshPortal();
@@ -356,6 +400,7 @@ public class ArenaListener implements Listener {
 
 		// Debug message to console
 		CommunicationManager.debugInfo("%s left %s", CommunicationManager.DebugLevel.VERBOSE, player.getName(),
-			arena.getName());
+			arena.getName()
+		);
 	}
 }

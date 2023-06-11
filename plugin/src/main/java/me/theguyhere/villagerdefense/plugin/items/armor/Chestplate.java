@@ -249,22 +249,12 @@ public abstract class Chestplate extends VDArmor {
 		int price;
 		switch (tier) {
 			case T1:
-				price = 190;
-				break;
 			case T2:
-				price = 310;
-				break;
 			case T3:
-				price = 450;
-				break;
 			case T4:
-				price = 560;
-				break;
 			case T5:
-				price = 815;
-				break;
 			case T6:
-				price = 1000;
+				price = calculateTieredPrice(durability, armor, toughness);
 				break;
 			default:
 				price = -1;
@@ -291,7 +281,9 @@ public abstract class Chestplate extends VDArmor {
 		ItemMeta meta = toCheck.getItemMeta();
 		if (meta == null)
 			return false;
-		String value = meta.getPersistentDataContainer().get(ITEM_TYPE_KEY, PersistentDataType.STRING);
+		String value = meta
+			.getPersistentDataContainer()
+			.get(ITEM_TYPE_KEY, PersistentDataType.STRING);
 		if (value == null)
 			return false;
 		return CHESTPLATE.equals(value);

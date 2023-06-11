@@ -17,7 +17,11 @@ class CommandLeaveArena {
 		Player player = CommandGuard.checkSenderPlayer(sender);
 
 		// Schedule attempt to leave for the player
-		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-			Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player)));
+		Bukkit
+			.getScheduler()
+			.scheduleSyncDelayedTask(Main.plugin, () ->
+				Bukkit
+					.getPluginManager()
+					.callEvent(new LeaveArenaEvent(player)));
 	}
 }

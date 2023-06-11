@@ -23,7 +23,9 @@ public class VDHorse extends VDPet {
 	public VDHorse(Arena arena, Location location, VDPlayer owner, int level) {
 		super(
 			arena,
-			(Tameable) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.HORSE),
+			(Tameable) Objects
+				.requireNonNull(location.getWorld())
+				.spawnEntity(location, EntityType.HORSE),
 			LanguageManager.mobs.horse,
 			LanguageManager.mobLore.horse,
 			IndividualAttackType.NORMAL,
@@ -32,12 +34,16 @@ public class VDHorse extends VDPet {
 			owner
 		);
 		((Horse) mob).setAdult();
-		((Horse) mob).getInventory().setSaddle(new ItemStack(Material.SADDLE));
+		((Horse) mob)
+			.getInventory()
+			.setSaddle(new ItemStack(Material.SADDLE));
 		hpBarSize = 2;
 		this.level = level;
 		setHealth(getHealth(level));
 		armor = getArmor(level);
-		((Horse) mob).getInventory().setArmor(getDisplayArmor(level));
+		((Horse) mob)
+			.getInventory()
+			.setArmor(getDisplayArmor(level));
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .2);
 		setModerateAttackSpeed();
@@ -79,7 +85,9 @@ public class VDHorse extends VDPet {
 		armor = getArmor(level);
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .2);
-		((Horse) mob).getInventory().setArmor(getDisplayArmor(level));
+		((Horse) mob)
+			.getInventory()
+			.setArmor(getDisplayArmor(level));
 		updateNameTag();
 	}
 

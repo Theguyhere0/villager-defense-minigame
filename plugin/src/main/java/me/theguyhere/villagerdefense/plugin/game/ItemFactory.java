@@ -139,13 +139,19 @@ public class ItemFactory {
 		// Set persistent data and tags
 		if (persistentData != null)
 			persistentData.forEach((namespacedKey, integer) ->
-				meta.getPersistentDataContainer().set(namespacedKey, PersistentDataType.INTEGER, integer));
+				meta
+					.getPersistentDataContainer()
+					.set(namespacedKey, PersistentDataType.INTEGER, integer));
 		if (persistentData2 != null)
 			persistentData2.forEach((namespacedKey, doubleVal) ->
-				meta.getPersistentDataContainer().set(namespacedKey, PersistentDataType.DOUBLE, doubleVal));
+				meta
+					.getPersistentDataContainer()
+					.set(namespacedKey, PersistentDataType.DOUBLE, doubleVal));
 		if (persistentTags != null)
 			persistentTags.forEach((namespacedKey, string) ->
-				meta.getPersistentDataContainer().set(namespacedKey, PersistentDataType.STRING, string));
+				meta
+					.getPersistentDataContainer()
+					.set(namespacedKey, PersistentDataType.STRING, string));
 
 		// Set enchants
 		if (!(enchants == null))
@@ -171,10 +177,14 @@ public class ItemFactory {
 		ItemStack newItem = item.clone();
 		ItemMeta meta = newItem.getItemMeta();
 
-		if (item.getType().getMaxDurability() == 0)
+		if (item
+			.getType()
+			.getMaxDurability() == 0)
 			return item;
 		try {
-			Objects.requireNonNull(meta).setUnbreakable(true);
+			Objects
+				.requireNonNull(meta)
+				.setUnbreakable(true);
 			newItem.setItemMeta(meta);
 			return removeLastLore(newItem);
 		}

@@ -25,6 +25,8 @@ public class Popup {
 		}
 
 		// Schedule end of life
-		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, display::remove, Calculator.secondsToTicks(life));
+		Bukkit
+			.getScheduler()
+			.scheduleSyncDelayedTask(Main.plugin, display::remove, Calculator.secondsToTicks(life));
 	}
 }

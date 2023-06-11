@@ -21,7 +21,9 @@ public class VDIronGolem extends VDGolem {
 	public VDIronGolem(Arena arena, Location location, int level) {
 		super(
 			arena,
-			(Golem) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.IRON_GOLEM),
+			(Golem) Objects
+				.requireNonNull(location.getWorld())
+				.spawnEntity(location, EntityType.IRON_GOLEM),
 			LanguageManager.mobs.ironGolem,
 			LanguageManager.mobLore.ironGolem,
 			IndividualAttackType.NORMAL,

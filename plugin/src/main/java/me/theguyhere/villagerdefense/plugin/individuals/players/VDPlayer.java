@@ -203,7 +203,9 @@ public class VDPlayer {
 	public void setMaxHealth(int maxHealth) {
 		this.maxHealth = Math.max(maxHealth, 0);
 		getPlayer().setHealth(currentHealth *
-			Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth);
+			Objects
+				.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+				.getValue() / maxHealth);
 	}
 
 	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
@@ -242,17 +244,25 @@ public class VDPlayer {
 		currentHealth = Math.min(Math.max(currentHealth + trueDif, 0), maxHealth);
 
 		// Set warning effect
-		NMSVersion.getCurrent().getNmsManager().createEffect(
-			arena.getPlayerSpawn().getLocation(),
-			currentHealth / (double) maxHealth
-		).sendTo(getPlayer());
+		NMSVersion
+			.getCurrent()
+			.getNmsManager()
+			.createEffect(
+				arena
+					.getPlayerSpawn()
+					.getLocation(),
+				currentHealth / (double) maxHealth
+			)
+			.sendTo(getPlayer());
 
 		// Check for death
 		if (this.currentHealth == 0) {
 			// Check if player has resurrection achievement and is boosted
 			Random random = new Random();
 			if (boost && random.nextDouble() < .1 &&
-				PlayerManager.hasAchievement(getPlayer().getUniqueId(), Achievement.allChallenges().getID())) {
+				PlayerManager.hasAchievement(getPlayer().getUniqueId(), Achievement
+					.allChallenges()
+					.getID())) {
 				PlayerManager.giveTotemEffect(getPlayer());
 				currentHealth = maxHealth / 2;
 				return;
@@ -267,14 +277,22 @@ public class VDPlayer {
 			// Check for explosive challenge
 			if (getChallenges().contains(Challenge.explosive())) {
 				// Create an explosion
-				getPlayer().getWorld().createExplosion(getPlayer().getLocation(), 1.75F, false, false);
+				getPlayer()
+					.getWorld()
+					.createExplosion(getPlayer().getLocation(), 1.75F, false, false);
 
 				// Drop all items and clear inventory
-				getPlayer().getInventory().forEach(itemStack -> {
-					if (itemStack != null && !Shop.matches(itemStack) && !VDAbility.matches(itemStack))
-						getPlayer().getWorld().dropItemNaturally(getPlayer().getLocation(), itemStack);
-				});
-				getPlayer().getInventory().clear();
+				getPlayer()
+					.getInventory()
+					.forEach(itemStack -> {
+						if (itemStack != null && !Shop.matches(itemStack) && !VDAbility.matches(itemStack))
+							getPlayer()
+								.getWorld()
+								.dropItemNaturally(getPlayer().getLocation(), itemStack);
+					});
+				getPlayer()
+					.getInventory()
+					.clear();
 				tieredEssenceLevel = 0;
 				tieredAmmoLevel = 0;
 			}
@@ -287,23 +305,33 @@ public class VDPlayer {
 			);
 
 			// Notify everyone else of player death
-			arena.getPlayers().forEach(fighter -> {
-				if (!fighter.getPlayer().getUniqueId().equals(getPlayer().getUniqueId()))
-					PlayerManager.notifyAlert(
-						fighter.getPlayer(),
-						String.format(LanguageManager.messages.death, getPlayer().getName())
-					);
-				if (arena.hasPlayerDeathSound())
-					try {
-						fighter.getPlayer().playSound(arena.getPlayerSpawn().getLocation().add(0, 5, 0),
-							Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10,
-							.75f
+			arena
+				.getPlayers()
+				.forEach(fighter -> {
+					if (!fighter
+						.getPlayer()
+						.getUniqueId()
+						.equals(getPlayer().getUniqueId()))
+						PlayerManager.notifyAlert(
+							fighter.getPlayer(),
+							String.format(LanguageManager.messages.death, getPlayer().getName())
 						);
-					}
-					catch (NullPointerException err) {
-						CommunicationManager.debugError(err.getMessage(), CommunicationManager.DebugLevel.QUIET);
-					}
-			});
+					if (arena.hasPlayerDeathSound())
+						try {
+							fighter
+								.getPlayer()
+								.playSound(arena
+										.getPlayerSpawn()
+										.getLocation()
+										.add(0, 5, 0),
+									Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10,
+									.75f
+								);
+						}
+						catch (NullPointerException err) {
+							CommunicationManager.debugError(err.getMessage(), CommunicationManager.DebugLevel.QUIET);
+						}
+				});
 
 			// Update scoreboards
 			arena.updateScoreboards();
@@ -323,17 +351,25 @@ public class VDPlayer {
 		damageMultiplier.set(1);
 
 		// Calculate boosts or reductions
-		getPlayer().getActivePotionEffects().forEach(potionEffect -> {
-			if (PotionEffectType.INCREASE_DAMAGE.equals(potionEffect.getType()))
-				damageMultiplier.addAndGet(.1 * (potionEffect.getAmplifier() + 1));
-			else if (PotionEffectType.WEAKNESS.equals(potionEffect.getType()))
-				damageMultiplier.addAndGet(-.1 * (potionEffect.getAmplifier() + 1));
-		});
-		if (boost && PlayerManager.hasAchievement(player, Achievement.topKills9().getID()))
+		getPlayer()
+			.getActivePotionEffects()
+			.forEach(potionEffect -> {
+				if (PotionEffectType.INCREASE_DAMAGE.equals(potionEffect.getType()))
+					damageMultiplier.addAndGet(.1 * (potionEffect.getAmplifier() + 1));
+				else if (PotionEffectType.WEAKNESS.equals(potionEffect.getType()))
+					damageMultiplier.addAndGet(-.1 * (potionEffect.getAmplifier() + 1));
+			});
+		if (boost && PlayerManager.hasAchievement(player, Achievement
+			.topKills9()
+			.getID()))
 			damageMultiplier.addAndGet(.1);
 		if (getPlayer().isInsideVehicle())
-			damageMultiplier.addAndGet(VDHorse.getDamageBoost(getPets().stream().filter(pet -> pet instanceof VDHorse)
-				.collect(Collectors.toList()).get(0).getLevel()));
+			damageMultiplier.addAndGet(VDHorse.getDamageBoost(getPets()
+				.stream()
+				.filter(pet -> pet instanceof VDHorse)
+				.collect(Collectors.toList())
+				.get(0)
+				.getLevel()));
 	}
 
 	public void updateMainHand(ItemStack main) {
@@ -350,11 +386,15 @@ public class VDPlayer {
 			return;
 
 		// Check for an ability
-		if (VDAbility.matches(main) || VDAbility.matches(getPlayer().getInventory().getItemInOffHand()))
+		if (VDAbility.matches(main) || VDAbility.matches(getPlayer()
+			.getInventory()
+			.getItemInOffHand()))
 			ability = true;
 
 		PersistentDataContainer dataContainer =
-			Objects.requireNonNull(main.getItemMeta()).getPersistentDataContainer();
+			Objects
+				.requireNonNull(main.getItemMeta())
+				.getPersistentDataContainer();
 
 		Integer integer = dataContainer.get(AttackClass.MAIN.straight(), PersistentDataType.INTEGER);
 		if (integer != null)
@@ -404,9 +444,13 @@ public class VDPlayer {
 			ammoCost = integer;
 
 		String s = dataContainer.get(VDWeapon.ATTACK_TYPE_KEY, PersistentDataType.STRING);
-		if (IndividualAttackType.PENETRATING.toString().equals(s))
+		if (IndividualAttackType.PENETRATING
+			.toString()
+			.equals(s))
 			attackType = IndividualAttackType.PENETRATING;
-		else if (IndividualAttackType.CRUSHING.toString().equals(s))
+		else if (IndividualAttackType.CRUSHING
+			.toString()
+			.equals(s))
 			attackType = IndividualAttackType.CRUSHING;
 
 		s = dataContainer.get(VDWeapon.PER_BLOCK_KEY, PersistentDataType.STRING);
@@ -415,7 +459,9 @@ public class VDPlayer {
 	}
 
 	public void updateMainHand() {
-		updateMainHand(getPlayer().getInventory().getItemInMainHand());
+		updateMainHand(getPlayer()
+			.getInventory()
+			.getItemInMainHand());
 	}
 
 	public void updateOffHand(ItemStack off) {
@@ -426,13 +472,17 @@ public class VDPlayer {
 		if (!VDItem.matches(off))
 			return;
 
-		if (VDAbility.matches(off) || VDAbility.matches(getPlayer().getInventory().getItemInMainHand()))
+		if (VDAbility.matches(off) || VDAbility.matches(getPlayer()
+			.getInventory()
+			.getItemInMainHand()))
 			ability = true;
 
-		Integer cap = Objects.requireNonNull(off.getItemMeta()).getPersistentDataContainer()
+		Integer cap = Objects
+			.requireNonNull(off.getItemMeta())
+			.getPersistentDataContainer()
 			.get(VDWeapon.CAPACITY_KEY, PersistentDataType.INTEGER);
 		if (cap != null)
-			ammoCost = cap;
+			ammoCap = cap;
 	}
 
 	public void updateArmor() {
@@ -440,21 +490,33 @@ public class VDPlayer {
 		toughness = 0;
 		weight = 1;
 
-		readArmorLore(Objects.requireNonNull(getPlayer().getEquipment()).getHelmet());
-		readArmorLore(Objects.requireNonNull(getPlayer().getEquipment()).getChestplate());
-		readArmorLore(Objects.requireNonNull(getPlayer().getEquipment()).getLeggings());
-		readArmorLore(Objects.requireNonNull(getPlayer().getEquipment()).getBoots());
+		readArmorLore(Objects
+			.requireNonNull(getPlayer().getEquipment())
+			.getHelmet());
+		readArmorLore(Objects
+			.requireNonNull(getPlayer().getEquipment())
+			.getChestplate());
+		readArmorLore(Objects
+			.requireNonNull(getPlayer().getEquipment())
+			.getLeggings());
+		readArmorLore(Objects
+			.requireNonNull(getPlayer().getEquipment())
+			.getBoots());
 
 		// Resistance effect
-		getPlayer().getActivePotionEffects().forEach(potionEffect -> {
-			if (PotionEffectType.DAMAGE_RESISTANCE.equals(potionEffect.getType())) {
-				armor += 10 * (1 + potionEffect.getAmplifier());
-				toughness += 10 * (1 + potionEffect.getAmplifier());
-			}
-		});
+		getPlayer()
+			.getActivePotionEffects()
+			.forEach(potionEffect -> {
+				if (PotionEffectType.DAMAGE_RESISTANCE.equals(potionEffect.getType())) {
+					armor += 10 * (1 + potionEffect.getAmplifier());
+					toughness += 10 * (1 + potionEffect.getAmplifier());
+				}
+			});
 
 		// Set speed
-		Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED)).setBaseValue(.1 * weight);
+		Objects
+			.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+			.setBaseValue(.1 * weight);
 	}
 
 	public String getStatusBar() {
@@ -523,31 +585,49 @@ public class VDPlayer {
 		}
 
 		// Regeneration
-		getPlayer().getActivePotionEffects().forEach(potionEffect -> {
-			if (PotionEffectType.REGENERATION.equals(potionEffect.getType()))
-				changeCurrentHealth(5 * (1 + potionEffect.getAmplifier()));
-		});
+		getPlayer()
+			.getActivePotionEffects()
+			.forEach(potionEffect -> {
+				if (PotionEffectType.REGENERATION.equals(potionEffect.getType()))
+					changeCurrentHealth(5 * (1 + potionEffect.getAmplifier()));
+			});
 
 		// Update normal health display
 		getPlayer().setHealth(Math.max(
 			currentHealth *
-				Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth,
+				Objects
+					.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+					.getValue() / maxHealth,
 			1
 		));
 		getPlayer().setAbsorptionAmount(absorption *
-			Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth);
+			Objects
+				.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+				.getValue() / maxHealth);
 	}
 
 	public void refill() {
 		// Attempt to refill both hands
 		Ammo.updateRefill(
-			Objects.requireNonNull(getPlayer().getEquipment()).getItemInMainHand(),
-			boost && PlayerManager.hasAchievement(player, Achievement.allKits().getID())
+			Objects
+				.requireNonNull(getPlayer().getEquipment())
+				.getItemInMainHand(),
+			boost && PlayerManager.hasAchievement(player, Achievement
+				.allKits()
+				.getID())
 		);
 		Ammo.updateRefill(
-			Objects.requireNonNull(getPlayer().getEquipment()).getItemInOffHand(),
-			boost && PlayerManager.hasAchievement(player, Achievement.allKits().getID())
+			Objects
+				.requireNonNull(getPlayer().getEquipment())
+				.getItemInOffHand(),
+			boost && PlayerManager.hasAchievement(player, Achievement
+				.allKits()
+				.getID())
 		);
+		updateOffHand(getPlayer()
+			.getEquipment()
+			.getItemInOffHand());
+		;
 	}
 
 	public void takeDamage(int damage, @NotNull IndividualAttackType attackType) {
@@ -560,7 +640,9 @@ public class VDPlayer {
 			damage = 0;
 
 		// Apply boost
-		if (boost && PlayerManager.hasAchievement(player, Achievement.totalKills9().getID()))
+		if (boost && PlayerManager.hasAchievement(player, Achievement
+			.totalKills9()
+			.getID()))
 			damage *= .9;
 
 		// Realize damage
@@ -569,17 +651,28 @@ public class VDPlayer {
 		// Damage armor
 		if (attackType == IndividualAttackType.NORMAL || attackType == IndividualAttackType.CRUSHING ||
 			attackType == IndividualAttackType.PENETRATING)
-			Arrays.stream(getPlayer().getInventory().getArmorContents()).filter(Objects::nonNull).forEach(armor ->
-				Bukkit.getPluginManager().callEvent(new PlayerItemDamageEvent(getPlayer(), armor, 0)));
+			Arrays
+				.stream(getPlayer()
+					.getInventory()
+					.getArmorContents())
+				.filter(Objects::nonNull)
+				.forEach(armor ->
+					Bukkit
+						.getPluginManager()
+						.callEvent(new PlayerItemDamageEvent(getPlayer(), armor, 0)));
 
 		// Update normal health display
 		getPlayer().setHealth(Math.max(
 			currentHealth *
-				Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth,
+				Objects
+					.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+					.getValue() / maxHealth,
 			1
 		));
 		getPlayer().setAbsorptionAmount(absorption *
-			Objects.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() / maxHealth);
+			Objects
+				.requireNonNull(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH))
+				.getValue() / maxHealth);
 	}
 
 	public void combust(int ticks) {
@@ -781,15 +874,25 @@ public class VDPlayer {
 	}
 
 	public void removePet(int index) {
-		pets.get(index).getEntity().remove();
-		arena.removeMob(pets.get(index).getID());
+		pets
+			.get(index)
+			.getEntity()
+			.remove();
+		arena.removeMob(pets
+			.get(index)
+			.getID());
 		pets.remove(index);
 	}
 
 	public void respawnPets() {
 		for (int i = 0; i < pets.size(); i++) {
-			if (pets.get(i).getEntity().isDead()) {
-				VDPet newPet = pets.get(i).respawn(arena, getPlayer().getLocation());
+			if (pets
+				.get(i)
+				.getEntity()
+				.isDead()) {
+				VDPet newPet = pets
+					.get(i)
+					.respawn(arena, getPlayer().getLocation());
 				pets.set(i, newPet);
 				arena.addMob(newPet);
 			}
@@ -836,14 +939,30 @@ public class VDPlayer {
 	 * Removes armor from the player while they are invisible under the ninja ability.
 	 */
 	public void hideArmor() {
-		helmet = getPlayer().getInventory().getHelmet();
-		getPlayer().getInventory().setHelmet(null);
-		chestplate = getPlayer().getInventory().getChestplate();
-		getPlayer().getInventory().setChestplate(null);
-		leggings = getPlayer().getInventory().getLeggings();
-		getPlayer().getInventory().setLeggings(null);
-		boots = getPlayer().getInventory().getBoots();
-		getPlayer().getInventory().setBoots(null);
+		helmet = getPlayer()
+			.getInventory()
+			.getHelmet();
+		getPlayer()
+			.getInventory()
+			.setHelmet(null);
+		chestplate = getPlayer()
+			.getInventory()
+			.getChestplate();
+		getPlayer()
+			.getInventory()
+			.setChestplate(null);
+		leggings = getPlayer()
+			.getInventory()
+			.getLeggings();
+		getPlayer()
+			.getInventory()
+			.setLeggings(null);
+		boots = getPlayer()
+			.getInventory()
+			.getBoots();
+		getPlayer()
+			.getInventory()
+			.setBoots(null);
 		updateArmor();
 	}
 
@@ -851,10 +970,18 @@ public class VDPlayer {
 	 * Returns armor to the player after the ninja ability wears out.
 	 */
 	public void exposeArmor() {
-		getPlayer().getInventory().setHelmet(helmet);
-		getPlayer().getInventory().setChestplate(chestplate);
-		getPlayer().getInventory().setLeggings(leggings);
-		getPlayer().getInventory().setBoots(boots);
+		getPlayer()
+			.getInventory()
+			.setHelmet(helmet);
+		getPlayer()
+			.getInventory()
+			.setChestplate(chestplate);
+		getPlayer()
+			.getInventory()
+			.setLeggings(leggings);
+		getPlayer()
+			.getInventory()
+			.setBoots(boots);
 		updateArmor();
 	}
 
@@ -866,19 +993,41 @@ public class VDPlayer {
 			EntityEquipment equipment = getPlayer().getEquipment();
 
 			// Equip armor if possible, otherwise put in inventory, otherwise drop at feet
-			if (item.getType().toString().contains("HELMET") && Objects.requireNonNull(equipment).getHelmet() == null)
+			if (item
+				.getType()
+				.toString()
+				.contains("HELMET") && Objects
+				.requireNonNull(equipment)
+				.getHelmet() == null)
 				equipment.setHelmet(item);
-			else if (item.getType().toString().contains("CHESTPLATE") &&
-				Objects.requireNonNull(equipment).getChestplate() == null)
+			else if (item
+				.getType()
+				.toString()
+				.contains("CHESTPLATE") &&
+				Objects
+					.requireNonNull(equipment)
+					.getChestplate() == null)
 				equipment.setChestplate(item);
-			else if (item.getType().toString().contains("LEGGINGS") &&
-				Objects.requireNonNull(equipment).getLeggings() == null)
+			else if (item
+				.getType()
+				.toString()
+				.contains("LEGGINGS") &&
+				Objects
+					.requireNonNull(equipment)
+					.getLeggings() == null)
 				equipment.setLeggings(item);
-			else if (item.getType().toString().contains("BOOTS") &&
-				Objects.requireNonNull(equipment).getBoots() == null)
+			else if (item
+				.getType()
+				.toString()
+				.contains("BOOTS") &&
+				Objects
+					.requireNonNull(equipment)
+					.getBoots() == null)
 				equipment.setBoots(item);
 			else {
-				if (boost && PlayerManager.hasAchievement(player, Achievement.allMaxedAbility().getID()))
+				if (boost && PlayerManager.hasAchievement(player, Achievement
+					.allMaxedAbility()
+					.getID()))
 					PlayerManager.giveItem(getPlayer(), VDAbility.modifyCooldown(item, .9),
 						LanguageManager.errors.inventoryFull
 					);
@@ -900,10 +1049,16 @@ public class VDPlayer {
 		int maxHealth = 500;
 
 		// Set health for people with giant kits
-		if (Kit.giant().setKitLevel(1).equals(getKit()) && !isSharing()) {
+		if (Kit
+			.giant()
+			.setKitLevel(1)
+			.equals(getKit()) && !isSharing()) {
 			maxHealth = 550;
 		}
-		else if (Kit.giant().setKitLevel(2).equals(getKit()) && !isSharing()) {
+		else if (Kit
+			.giant()
+			.setKitLevel(2)
+			.equals(getKit()) && !isSharing()) {
 			maxHealth = 600;
 		}
 		else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(Kit.EffectType.GIANT1))) {
@@ -916,7 +1071,9 @@ public class VDPlayer {
 		}
 
 		// Set health for people with health boost and are boosted
-		if (boost && PlayerManager.hasAchievement(player, Achievement.topWave9().getID())) {
+		if (boost && PlayerManager.hasAchievement(player, Achievement
+			.topWave9()
+			.getID())) {
 			maxHealth += 50;
 		}
 
@@ -939,9 +1096,15 @@ public class VDPlayer {
 		// Only run the first time
 		if (first) {
 			// Set up pet slots
-			if (Kit.trainer().setKitLevel(1).equals(getKit()) && !isSharing())
+			if (Kit
+				.trainer()
+				.setKitLevel(1)
+				.equals(getKit()) && !isSharing())
 				petSlots = 4;
-			else if (Kit.trainer().setKitLevel(2).equals(getKit()) && !isSharing())
+			else if (Kit
+				.trainer()
+				.setKitLevel(2)
+				.equals(getKit()) && !isSharing())
 				petSlots = 5;
 			else if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(Kit.EffectType.TRAINER1))) {
 				petSlots = 4;
@@ -964,15 +1127,21 @@ public class VDPlayer {
 		if (meta == null)
 			return;
 
-		Integer integer = meta.getPersistentDataContainer().get(VDArmor.ARMOR_KEY, PersistentDataType.INTEGER);
+		Integer integer = meta
+			.getPersistentDataContainer()
+			.get(VDArmor.ARMOR_KEY, PersistentDataType.INTEGER);
 		if (integer != null)
 			this.armor += integer;
 
-		integer = meta.getPersistentDataContainer().get(VDArmor.TOUGHNESS_KEY, PersistentDataType.INTEGER);
+		integer = meta
+			.getPersistentDataContainer()
+			.get(VDArmor.TOUGHNESS_KEY, PersistentDataType.INTEGER);
 		if (integer != null)
 			this.toughness += integer;
 
-		integer = meta.getPersistentDataContainer().get(VDArmor.WEIGHT_KEY, PersistentDataType.INTEGER);
+		integer = meta
+			.getPersistentDataContainer()
+			.get(VDArmor.WEIGHT_KEY, PersistentDataType.INTEGER);
 		if (integer != null)
 			this.weight += integer * .01;
 	}

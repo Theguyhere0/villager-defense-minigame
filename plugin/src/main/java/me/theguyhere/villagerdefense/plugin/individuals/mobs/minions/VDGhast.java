@@ -15,7 +15,9 @@ public class VDGhast extends VDMinion {
 	public VDGhast(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.GHAST),
+			(Mob) Objects
+				.requireNonNull(location.getWorld())
+				.spawnEntity(location, EntityType.GHAST),
 			LanguageManager.mobs.ghast,
 			LanguageManager.mobLore.ghast,
 			IndividualAttackType.NORMAL

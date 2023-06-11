@@ -37,7 +37,9 @@ class CommandModifyArenaData {
 		modifyArena(args, sender);
 
 		// No valid commend sent
-		if (Arrays.stream(Argument.values()).noneMatch(arg -> CommandGuard.checkArg(args, 1, arg.getArg())))
+		if (Arrays
+			.stream(Argument.values())
+			.noneMatch(arg -> CommandGuard.checkArg(args, 1, arg.getArg())))
 			CommandExecImp.notifyFailure(sender, COMMAND_FORMAT);
 	}
 
@@ -193,13 +195,19 @@ class CommandModifyArenaData {
 		else if (CommandGuard.checkArg(args, 2, LocationOptionArgument.REMOVE.arg)) {
 			player = CommandGuard.checkSenderPlayer(sender);
 
-			if (GameController.getArenas().values().stream().filter(Objects::nonNull)
+			if (GameController
+				.getArenas()
+				.values()
+				.stream()
+				.filter(Objects::nonNull)
 				.anyMatch(arenaInstance -> !arenaInstance.isClosed()))
 				PlayerManager.notifyFailure(
 					player,
 					"All arenas must be closed to modify this!"
 				);
-			else if (Main.getArenaData().contains("lobby"))
+			else if (Main
+				.getArenaData()
+				.contains("lobby"))
 				player.openInventory(Inventories.createLobbyConfirmMenu());
 			else PlayerManager.notifyFailure(player, "No lobby to remove!");
 		}
@@ -238,7 +246,9 @@ class CommandModifyArenaData {
 		}
 
 		// Check for valid info board ID, then set path and location
-		if (!Main.getArenaData().contains("infoBoard." + infoBoardID)) {
+		if (!Main
+			.getArenaData()
+			.contains("infoBoard." + infoBoardID)) {
 			CommandExecImp.notifyFailure(sender, "Invalid info board id.");
 			return;
 		}
@@ -272,7 +282,9 @@ class CommandModifyArenaData {
 		else if (CommandGuard.checkArg(args, 3, LocationOptionArgument.REMOVE.arg)) {
 			player = CommandGuard.checkSenderPlayer(sender);
 
-			if (Main.getArenaData().contains(path))
+			if (Main
+				.getArenaData()
+				.contains(path))
 				player.openInventory(Inventories.createInfoBoardConfirmMenu(infoBoardID));
 			else PlayerManager.notifyFailure(player, "No info board to remove!");
 		}
@@ -289,7 +301,8 @@ class CommandModifyArenaData {
 			throw new CommandFormatException(COMMAND_FORMAT);
 
 		// Check for type validity
-		if (Arrays.stream(LeaderboardTypeArgument.values())
+		if (Arrays
+			.stream(LeaderboardTypeArgument.values())
 			.noneMatch(type -> CommandGuard.checkArg(args, 2, type.arg))) {
 			CommandExecImp.notifyFailure(sender, "Invalid leaderboard.");
 			return;
@@ -328,7 +341,9 @@ class CommandModifyArenaData {
 			player = CommandGuard.checkSenderPlayer(sender);
 
 
-			if (Main.getArenaData().contains(path)) {
+			if (Main
+				.getArenaData()
+				.contains(path)) {
 				if (CommandGuard.checkArg(args, 2, LeaderboardTypeArgument.TOP_BALANCE.arg))
 					player.openInventory(Inventories.createTopBalanceConfirmMenu());
 				else if (CommandGuard.checkArg(args, 2, LeaderboardTypeArgument.TOP_KILLS.arg))
@@ -357,7 +372,9 @@ class CommandModifyArenaData {
 		// Get arena name
 		StringBuilder name = new StringBuilder(args[3]);
 		for (int i = 0; i < args.length - 4; i++)
-			name.append(" ").append(args[i + 4]);
+			name
+				.append(" ")
+				.append(args[i + 4]);
 
 		// Check if this arena exists
 		Arena arena;
@@ -394,7 +411,9 @@ class CommandModifyArenaData {
 			}
 
 			// No lobby
-			if (!Main.getArenaData().contains("lobby")) {
+			if (!Main
+				.getArenaData()
+				.contains("lobby")) {
 				CommandExecImp.notifyFailure(sender, "Arena cannot open without a lobby!");
 				return;
 			}
@@ -412,20 +431,28 @@ class CommandModifyArenaData {
 			}
 
 			// No monster spawn
-			if (arena.getMonsterSpawns().isEmpty()) {
+			if (arena
+				.getMonsterSpawns()
+				.isEmpty()) {
 				CommandExecImp.notifyFailure(sender, "Arena cannot open without a monster spawn!");
 				return;
 			}
 
 			// No villager spawn
-			if (arena.getVillagerSpawns().isEmpty()) {
+			if (arena
+				.getVillagerSpawns()
+				.isEmpty()) {
 				CommandExecImp.notifyFailure(sender, "Arena cannot open without a villager spawn!");
 				return;
 			}
 
 			// Invalid arena bounds
 			if (arena.getCorner1() == null || arena.getCorner2() == null ||
-				!Objects.equals(arena.getCorner1().getWorld(), arena.getCorner2().getWorld())) {
+				!Objects.equals(arena
+					.getCorner1()
+					.getWorld(), arena
+					.getCorner2()
+					.getWorld())) {
 				CommandExecImp.notifyFailure(sender, "Arena cannot open without valid arena bounds!");
 				return;
 			}
@@ -452,7 +479,9 @@ class CommandModifyArenaData {
 		else if (CommandGuard.checkArg(args, 2, ArenaOperationArgument.RENAME.arg)) {
 			player = CommandGuard.checkSenderPlayer(sender);
 
-			NMSVersion.getCurrent().getNmsManager()
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
 				.nameArena(player, arena.getName(), arena.getId());
 		}
 		else if (CommandGuard.checkArgStartWith(args, 2, ArenaOperationArgument.PORTAL.arg)) {
@@ -490,8 +519,10 @@ class CommandModifyArenaData {
 				else PlayerManager.notifyFailure(player, "No portal to remove!");
 			}
 			else CommandExecImp.notifyFailure(sender, "Invalid operation value. Valid values: " +
-					Arrays.toString(Arrays.stream(LocationOptionArgument.values())
-						.map(LocationOptionArgument::getArg).toArray()));
+					Arrays.toString(Arrays
+						.stream(LocationOptionArgument.values())
+						.map(LocationOptionArgument::getArg)
+						.toArray()));
 		}
 		else if (CommandGuard.checkArgStartWith(args, 2, ArenaOperationArgument.LEADERBOARD.arg)) {
 			location = arena.getArenaBoardLocation();
@@ -528,8 +559,10 @@ class CommandModifyArenaData {
 				else PlayerManager.notifyFailure(player, "No leaderboard to remove!");
 			}
 			else CommandExecImp.notifyFailure(sender, "Invalid operation value. Valid values: " +
-					Arrays.toString(Arrays.stream(LocationOptionArgument.values())
-						.map(LocationOptionArgument::getArg).toArray()));
+					Arrays.toString(Arrays
+						.stream(LocationOptionArgument.values())
+						.map(LocationOptionArgument::getArg)
+						.toArray()));
 		}
 		else if (CommandGuard.checkArgStartWith(args, 2, ArenaOperationArgument.PLAYER_SPAWN.arg)) {
 			String value = args[2].substring(args[2].indexOf("-") + 1);
@@ -543,7 +576,9 @@ class CommandModifyArenaData {
 			else if (LocationOptionArgument.TELEPORT.arg.equalsIgnoreCase(value)) {
 				player = CommandGuard.checkSenderPlayer(sender);
 				try {
-					player.teleport(arena.getPlayerSpawn().getLocation());
+					player.teleport(arena
+						.getPlayerSpawn()
+						.getLocation());
 				}
 				catch (Exception e) {
 					PlayerManager.notifyFailure(player, "No spawn to teleport to!");
@@ -566,8 +601,10 @@ class CommandModifyArenaData {
 				else PlayerManager.notifyFailure(player, "No spawn to remove!");
 			}
 			else CommandExecImp.notifyFailure(sender, "Invalid operation value. Valid values: " +
-					Arrays.toString(Arrays.stream(LocationOptionArgument.values())
-						.map(LocationOptionArgument::getArg).toArray()));
+					Arrays.toString(Arrays
+						.stream(LocationOptionArgument.values())
+						.map(LocationOptionArgument::getArg)
+						.toArray()));
 		}
 		else if (CommandGuard.checkArgStartWith(args, 2, ArenaOperationArgument.WAITING_ROOM.arg)) {
 			location = arena.getWaitingRoom();
@@ -605,8 +642,10 @@ class CommandModifyArenaData {
 				else PlayerManager.notifyFailure(player, "No waiting room to remove!");
 			}
 			else CommandExecImp.notifyFailure(sender, "Invalid operation value. Valid values: " +
-					Arrays.toString(Arrays.stream(LocationOptionArgument.values())
-						.map(LocationOptionArgument::getArg).toArray()));
+					Arrays.toString(Arrays
+						.stream(LocationOptionArgument.values())
+						.map(LocationOptionArgument::getArg)
+						.toArray()));
 		}
 		else if (CommandGuard.checkArgStartWith(args, 2, ArenaOperationArgument.SPAWN_PARTICLES.arg)) {
 			String value = args[2].substring(args[2].indexOf("-") + 1);
@@ -638,7 +677,10 @@ class CommandModifyArenaData {
 				CommandExecImp.notifySuccess(sender, "Spawn particles are off for " + arena.getName() + ".");
 			}
 			else CommandExecImp.notifyFailure(sender, "Invalid operation value. Valid values: " +
-					Arrays.toString(Arrays.stream(ToggleArgument.values()).map(ToggleArgument::getArg).toArray()));
+					Arrays.toString(Arrays
+						.stream(ToggleArgument.values())
+						.map(ToggleArgument::getArg)
+						.toArray()));
 		}
 		else if (CommandGuard.checkArgStartWith(args, 2, ArenaOperationArgument.MAX_PLAYERS.arg)) {
 			// Get value
@@ -716,7 +758,10 @@ class CommandModifyArenaData {
 					".");
 			}
 			else CommandExecImp.notifyFailure(sender, "Invalid operation value. Valid values: " +
-					Arrays.toString(Arrays.stream(ToggleArgument.values()).map(ToggleArgument::getArg).toArray()));
+					Arrays.toString(Arrays
+						.stream(ToggleArgument.values())
+						.map(ToggleArgument::getArg)
+						.toArray()));
 		}
 		else if (CommandGuard.checkArgStartWith(args, 2, ArenaOperationArgument.VILLAGER_SPAWN_PARTICLES.arg)) {
 			String value = args[2].substring(args[2].indexOf("-") + 1);
@@ -750,7 +795,10 @@ class CommandModifyArenaData {
 					".");
 			}
 			else CommandExecImp.notifyFailure(sender, "Invalid operation value. Valid values: " +
-					Arrays.toString(Arrays.stream(ToggleArgument.values()).map(ToggleArgument::getArg).toArray()));
+					Arrays.toString(Arrays
+						.stream(ToggleArgument.values())
+						.map(ToggleArgument::getArg)
+						.toArray()));
 		}
 		else if (CommandGuard.checkArgStartWith(args, 2, ArenaOperationArgument.COMMUNITY_CHEST.arg)) {
 			String value = args[2].substring(args[2].indexOf("-") + 1);
@@ -782,7 +830,10 @@ class CommandModifyArenaData {
 				CommandExecImp.notifySuccess(sender, "Community chest is off for " + arena.getName() + ".");
 			}
 			else CommandExecImp.notifyFailure(sender, "Invalid operation value. Valid values: " +
-					Arrays.toString(Arrays.stream(ToggleArgument.values()).map(ToggleArgument::getArg).toArray()));
+					Arrays.toString(Arrays
+						.stream(ToggleArgument.values())
+						.map(ToggleArgument::getArg)
+						.toArray()));
 		}
 		else if (CommandGuard.checkArgStartWith(args, 2, ArenaOperationArgument.DYNAMIC_TIME_LIMIT.arg)) {
 			String value = args[2].substring(args[2].indexOf("-") + 1);
@@ -814,7 +865,10 @@ class CommandModifyArenaData {
 				CommandExecImp.notifySuccess(sender, "Dynamic time limit is off for " + arena.getName() + ".");
 			}
 			else CommandExecImp.notifyFailure(sender, "Invalid operation value. Valid values: " +
-					Arrays.toString(Arrays.stream(ToggleArgument.values()).map(ToggleArgument::getArg).toArray()));
+					Arrays.toString(Arrays
+						.stream(ToggleArgument.values())
+						.map(ToggleArgument::getArg)
+						.toArray()));
 		}
 		else if (CommandGuard.checkArgStartWith(args, 2, ArenaOperationArgument.LATE_ARRIVAL.arg)) {
 			String value = args[2].substring(args[2].indexOf("-") + 1);
@@ -846,7 +900,10 @@ class CommandModifyArenaData {
 				CommandExecImp.notifySuccess(sender, "Late arrival is off for " + arena.getName() + ".");
 			}
 			else CommandExecImp.notifyFailure(sender, "Invalid operation value. Valid values: " +
-					Arrays.toString(Arrays.stream(ToggleArgument.values()).map(ToggleArgument::getArg).toArray()));
+					Arrays.toString(Arrays
+						.stream(ToggleArgument.values())
+						.map(ToggleArgument::getArg)
+						.toArray()));
 		}
 		else if (CommandGuard.checkArgStartWith(args, 2, ArenaOperationArgument.MAX_WAVES.arg)) {
 			// Get value
@@ -917,8 +974,10 @@ class CommandModifyArenaData {
 				CommandExecImp.notifySuccess(sender, arena.getName() + " is set to None.");
 			}
 			else CommandExecImp.notifyFailure(sender, "Invalid operation value. Valid values: " +
-					Arrays.toString(Arrays.stream(DifficultyLabelArgument.values())
-						.map(DifficultyLabelArgument::getArg).toArray()));
+					Arrays.toString(Arrays
+						.stream(DifficultyLabelArgument.values())
+						.map(DifficultyLabelArgument::getArg)
+						.toArray()));
 		}
 		else if (CommandGuard.checkArgStartWith(args, 2, ArenaOperationArgument.DIFFICULTY_MULTIPLIER.arg)) {
 			// Get value

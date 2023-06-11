@@ -74,7 +74,9 @@ public class Portal {
 		// Set location, hologram, and npc
 		this.location = location;
 		this.npc = new NPCVillager(location, arena.getVillagerType());
-		this.hologram = new Hologram(location.clone().add(0, 2.5, 0), false,
+		this.hologram = new Hologram(location
+			.clone()
+			.add(0, 2.5, 0), false,
 			CommunicationManager.format("&6&l" + arena.getName() + difficulty),
 			CommunicationManager.format(status),
 			arena.isClosed() ? "" : CommunicationManager.format("&b" + LanguageManager.messages.players +

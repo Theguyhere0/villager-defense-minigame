@@ -15,7 +15,9 @@ public class VDSilverfish extends VDMinion {
 	public VDSilverfish(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.SILVERFISH),
+			(Mob) Objects
+				.requireNonNull(location.getWorld())
+				.spawnEntity(location, EntityType.SILVERFISH),
 			LanguageManager.mobs.silverfish,
 			LanguageManager.mobLore.silverfish,
 			IndividualAttackType.NORMAL

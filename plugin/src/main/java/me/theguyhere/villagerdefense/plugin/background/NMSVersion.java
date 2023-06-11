@@ -71,7 +71,13 @@ public enum NMSVersion {
 	 */
 	private static String extractNMSVersion() {
 		Matcher matcher =
-			Pattern.compile("v\\d+_\\d+_R\\d+").matcher(Bukkit.getServer().getClass().getPackage().getName());
+			Pattern
+				.compile("v\\d+_\\d+_R\\d+")
+				.matcher(Bukkit
+					.getServer()
+					.getClass()
+					.getPackage()
+					.getName());
 		if (matcher.find()) {
 			return matcher.group();
 		}

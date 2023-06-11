@@ -16,7 +16,8 @@ public class VDWitherSkeleton extends VDMinion {
 	public VDWitherSkeleton(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects.requireNonNull(location.getWorld())
+			(Mob) Objects
+				.requireNonNull(location.getWorld())
 				.spawnEntity(location, EntityType.WITHER_SKELETON),
 			LanguageManager.mobs.witherSkeleton,
 			LanguageManager.mobLore.witherSkeleton,

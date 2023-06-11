@@ -16,7 +16,9 @@ public class SidebarManager {
 	private static final String ACTIVE_PLAYER = "VDActivePlayerSidebar";
 
 	public static void updateActivePlayerSidebar(VDPlayer player) {
-		Scoreboard board = player.getPlayer().getScoreboard();
+		Scoreboard board = player
+			.getPlayer()
+			.getScoreboard();
 		Arena arena = player.getArena();
 
 		// Recreate sidebar
@@ -34,10 +36,16 @@ public class SidebarManager {
 			(player.getGems() + (arena.getStatus() == ArenaStatus.WAITING ? player.getGemBoost() : 0))));
 		score12.setScore(12);
 
-		StringBuilder kit = new StringBuilder(player.getKit().getName());
-		if (player.getKit().isMultiLevel()) {
+		StringBuilder kit = new StringBuilder(player
+			.getKit()
+			.getName());
+		if (player
+			.getKit()
+			.isMultiLevel()) {
 			kit.append(" ");
-			for (int i = 0; i < Math.max(0, player.getKit().getLevel()); i++)
+			for (int i = 0; i < Math.max(0, player
+				.getKit()
+				.getLevel()); i++)
 				kit.append("I");
 		}
 		Score score11 = obj.getScore(CommunicationManager.format("&b" + LanguageManager.messages.kit + ": " +
@@ -51,7 +59,9 @@ public class SidebarManager {
 			LanguageManager.messages.challenges + ": (+%d%%)", bonus)));
 		score9.setScore(9);
 
-		if (player.getChallenges().size() < 4)
+		if (player
+			.getChallenges()
+			.size() < 4)
 			for (Challenge challenge : player.getChallenges()) {
 				Score score8 = obj.getScore(CommunicationManager.format("  &5" + challenge.getName()));
 				score8.setScore(8);
@@ -59,7 +69,9 @@ public class SidebarManager {
 		else {
 			StringBuilder challenges = new StringBuilder();
 			for (Challenge challenge : player.getChallenges())
-				challenges.append(challenge.getName().toCharArray()[0]);
+				challenges.append(challenge
+					.getName()
+					.toCharArray()[0]);
 			Score score8 = obj.getScore(CommunicationManager.format("  &5" + challenges));
 			score8.setScore(8);
 		}

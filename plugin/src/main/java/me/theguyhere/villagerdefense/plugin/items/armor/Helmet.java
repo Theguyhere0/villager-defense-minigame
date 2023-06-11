@@ -246,22 +246,12 @@ public abstract class Helmet extends VDArmor {
 		int price;
 		switch (tier) {
 			case T1:
-				price = 130;
-				break;
 			case T2:
-				price = 215;
-				break;
 			case T3:
-				price = 310;
-				break;
 			case T4:
-				price = 385;
-				break;
 			case T5:
-				price = 555;
-				break;
 			case T6:
-				price = 715;
+				price = calculateTieredPrice(durability, armor, toughness);
 				break;
 			default:
 				price = -1;
@@ -288,7 +278,9 @@ public abstract class Helmet extends VDArmor {
 		ItemMeta meta = toCheck.getItemMeta();
 		if (meta == null)
 			return false;
-		String value = meta.getPersistentDataContainer().get(ITEM_TYPE_KEY, PersistentDataType.STRING);
+		String value = meta
+			.getPersistentDataContainer()
+			.get(ITEM_TYPE_KEY, PersistentDataType.STRING);
 		if (value == null)
 			return false;
 		return HELMET.equals(value);

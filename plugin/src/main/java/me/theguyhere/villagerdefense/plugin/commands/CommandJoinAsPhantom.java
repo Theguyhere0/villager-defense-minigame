@@ -36,7 +36,9 @@ class CommandJoinAsPhantom {
 		}
 
 		// Check if player owns the phantom kit if late arrival is not on
-		if (!PlayerManager.hasSingleTierKit(player.getUniqueId(), Kit.phantom().getID()) &&
+		if (!PlayerManager.hasSingleTierKit(player.getUniqueId(), Kit
+			.phantom()
+			.getID()) &&
 			!arena.hasLateArrival()) {
 			PlayerManager.notifyFailure(player, LanguageManager.errors.phantomOwn);
 			return;
@@ -61,7 +63,9 @@ class CommandJoinAsPhantom {
 		}
 
 		// Let player join using phantom kit
-		PlayerManager.teleAdventure(player, arena.getPlayerSpawn().getLocation());
+		PlayerManager.teleAdventure(player, arena
+			.getPlayerSpawn()
+			.getLocation());
 		gamer.setStatus(VDPlayer.Status.ALIVE);
 		gamer.giveItems();
 		SidebarManager.updateActivePlayerSidebar(gamer);

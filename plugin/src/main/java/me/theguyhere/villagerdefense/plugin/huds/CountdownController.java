@@ -44,10 +44,13 @@ public class CountdownController {
 			public void run() {
 				// Start countdown if new
 				if (progress == 1) {
-					arena.getPlayers().forEach(vdPlayer -> countdownBar.addPlayer(vdPlayer.getPlayer()));
+					arena
+						.getPlayers()
+						.forEach(vdPlayer -> countdownBar.addPlayer(vdPlayer.getPlayer()));
 
 					// Debug message to console
-					CommunicationManager.debugInfo("Starting wave time limit countdown for %s",
+					CommunicationManager.debugInfo(
+						"Starting wave time limit countdown for %s",
 						CommunicationManager.DebugLevel.VERBOSE,
 						arena.getName()
 					);
@@ -67,10 +70,20 @@ public class CountdownController {
 				// Update countdown bar
 				else {
 					// Update players to serve countdown
-					countdownBar.getPlayers().stream().filter(player -> !arena.getVanillaPlayers().contains(player))
+					countdownBar
+						.getPlayers()
+						.stream()
+						.filter(player -> !arena
+							.getVanillaPlayers()
+							.contains(player))
 						.forEach(countdownBar::removePlayer);
-					arena.getPlayers().stream().filter(player ->
-							!countdownBar.getPlayers().contains(player.getPlayer()))
+					arena
+						.getPlayers()
+						.stream()
+						.filter(player ->
+							!countdownBar
+								.getPlayers()
+								.contains(player.getPlayer()))
 						.forEach(vdPlayer -> countdownBar.addPlayer(vdPlayer.getPlayer()));
 
 					// Trigger one-minute warning
@@ -78,14 +91,18 @@ public class CountdownController {
 						countdownBar.setColor(BarColor.RED);
 						if (!warning) {
 							// Send warning
-							arena.getActives().forEach(player ->
-								player.getPlayer().sendTitle(new ColoredMessage(
-										ChatColor.RED,
-										LanguageManager.messages.oneMinuteWarning
-									).toString(),
-									null, Calculator.secondsToTicks(.5), Calculator.secondsToTicks(1.5),
-									Calculator.secondsToTicks(.5)
-								));
+							arena
+								.getActives()
+								.forEach(player ->
+									player
+										.getPlayer()
+										.sendTitle(new ColoredMessage(
+												ChatColor.RED,
+												LanguageManager.messages.oneMinuteWarning
+											).toString(),
+											null, Calculator.secondsToTicks(.5), Calculator.secondsToTicks(1.5),
+											Calculator.secondsToTicks(.5)
+										));
 
 							// Set monsters glowing when time is low
 							arena.setMonsterGlow();
@@ -114,7 +131,9 @@ public class CountdownController {
 				countdownBar.removeAll();
 			}
 		});
-		countdowns.get(arena).runTaskTimer(Main.plugin, 0, Calculator.secondsToTicks(1));
+		countdowns
+			.get(arena)
+			.runTaskTimer(Main.plugin, 0, Calculator.secondsToTicks(1));
 	}
 
 	public static void startWaitingCountdown(Arena arena) {
@@ -133,10 +152,13 @@ public class CountdownController {
 			public void run() {
 				// Start countdown if new
 				if (progress == 1) {
-					arena.getPlayers().forEach(vdPlayer -> countdownBar.addPlayer(vdPlayer.getPlayer()));
+					arena
+						.getPlayers()
+						.forEach(vdPlayer -> countdownBar.addPlayer(vdPlayer.getPlayer()));
 
 					// Debug message to console
-					CommunicationManager.debugInfo("Starting waiting countdown for %s",
+					CommunicationManager.debugInfo(
+						"Starting waiting countdown for %s",
 						CommunicationManager.DebugLevel.VERBOSE,
 						arena.getName()
 					);
@@ -145,10 +167,20 @@ public class CountdownController {
 				// Update countdown bar
 				else {
 					// Update players to serve countdown
-					countdownBar.getPlayers().stream().filter(player -> !arena.getVanillaPlayers().contains(player))
+					countdownBar
+						.getPlayers()
+						.stream()
+						.filter(player -> !arena
+							.getVanillaPlayers()
+							.contains(player))
 						.forEach(countdownBar::removePlayer);
-					arena.getPlayers().stream().filter(player ->
-							!countdownBar.getPlayers().contains(player.getPlayer()))
+					arena
+						.getPlayers()
+						.stream()
+						.filter(player ->
+							!countdownBar
+								.getPlayers()
+								.contains(player.getPlayer()))
 						.forEach(vdPlayer -> countdownBar.addPlayer(vdPlayer.getPlayer()));
 
 					// Update visuals
@@ -169,7 +201,9 @@ public class CountdownController {
 				countdownBar.removeAll();
 			}
 		});
-		countdowns.get(arena).runTaskTimer(Main.plugin, 0, Calculator.secondsToTicks(1));
+		countdowns
+			.get(arena)
+			.runTaskTimer(Main.plugin, 0, Calculator.secondsToTicks(1));
 	}
 
 	public static void startExpeditedWaitingCountdown(Arena arena) {
@@ -188,10 +222,13 @@ public class CountdownController {
 			public void run() {
 				// Start countdown if new
 				if (progress == 1) {
-					arena.getPlayers().forEach(vdPlayer -> countdownBar.addPlayer(vdPlayer.getPlayer()));
+					arena
+						.getPlayers()
+						.forEach(vdPlayer -> countdownBar.addPlayer(vdPlayer.getPlayer()));
 
 					// Debug message to console
-					CommunicationManager.debugInfo("Starting expedited waiting countdown for %s",
+					CommunicationManager.debugInfo(
+						"Starting expedited waiting countdown for %s",
 						CommunicationManager.DebugLevel.VERBOSE,
 						arena.getName()
 					);
@@ -200,10 +237,20 @@ public class CountdownController {
 				// Update countdown bar
 				else {
 					// Update players to serve countdown
-					countdownBar.getPlayers().stream().filter(player -> !arena.getVanillaPlayers().contains(player))
+					countdownBar
+						.getPlayers()
+						.stream()
+						.filter(player -> !arena
+							.getVanillaPlayers()
+							.contains(player))
 						.forEach(countdownBar::removePlayer);
-					arena.getPlayers().stream().filter(player ->
-							!countdownBar.getPlayers().contains(player.getPlayer()))
+					arena
+						.getPlayers()
+						.stream()
+						.filter(player ->
+							!countdownBar
+								.getPlayers()
+								.contains(player.getPlayer()))
 						.forEach(vdPlayer -> countdownBar.addPlayer(vdPlayer.getPlayer()));
 
 					// Update visuals
@@ -224,12 +271,16 @@ public class CountdownController {
 				countdownBar.removeAll();
 			}
 		});
-		countdowns.get(arena).runTaskTimer(Main.plugin, 0, Calculator.secondsToTicks(1));
+		countdowns
+			.get(arena)
+			.runTaskTimer(Main.plugin, 0, Calculator.secondsToTicks(1));
 	}
 
 	public static void stopCountdown(Arena arena) {
 		if (countdowns.containsKey(arena)) {
-			countdowns.get(arena).cancel();
+			countdowns
+				.get(arena)
+				.cancel();
 			countdowns.remove(arena);
 		}
 	}

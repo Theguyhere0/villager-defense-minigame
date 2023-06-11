@@ -59,7 +59,9 @@ public class VersionNMSManager implements NMSManager {
 	public void nameArena(Player player, String arenaName, int arenaID) {
 		Location location = player.getLocation();
 		location.setY(location.getY() + 1);
-		Material original = location.getBlock().getType();
+		Material original = location
+			.getBlock()
+			.getType();
 		BlockPosition position = new BlockPosition(location.getX(), location.getY(), location.getZ());
 		NBTTagCompound signNBT = new NBTTagCompound();
 		signNBT.setString("Text1", String.format(
@@ -79,12 +81,14 @@ public class VersionNMSManager implements NMSManager {
 			new ColoredMessage(ChatColor.DARK_BLUE, "===============")
 		));
 
-		PacketGroup.of(
-			new BlockChangePacket(position, Material.OAK_SIGN),
-			new TileEntityDataPacket(position, 9, signNBT),
-			new OpenSignEditorPacket(position),
-			new BlockChangePacket(position, original)
-		).sendTo(player);
+		PacketGroup
+			.of(
+				new BlockChangePacket(position, Material.OAK_SIGN),
+				new TileEntityDataPacket(position, 9, signNBT),
+				new OpenSignEditorPacket(position),
+				new BlockChangePacket(position, original)
+			)
+			.sendTo(player);
 	}
 
 	@Override
@@ -160,15 +164,19 @@ public class VersionNMSManager implements NMSManager {
 		NetworkManager networkManager = playerConnection.a();
 		Channel channel = networkManager.channel;
 
-		channel.eventLoop().execute(() -> {
-			try {
-				pipelineModifierTask.accept(channel.pipeline());
-			}
-			catch (Exception e) {
-				CommunicationManager.debugError(NMSErrors.EXCEPTION_MODIFYING_CHANNEL_PIPELINE,
-					CommunicationManager.DebugLevel.QUIET);
-				e.printStackTrace();
-			}
-		});
+		channel
+			.eventLoop()
+			.execute(() -> {
+				try {
+					pipelineModifierTask.accept(channel.pipeline());
+				}
+				catch (Exception e) {
+					CommunicationManager.debugError(
+						NMSErrors.EXCEPTION_MODIFYING_CHANNEL_PIPELINE,
+						CommunicationManager.DebugLevel.QUIET
+					);
+					e.printStackTrace();
+				}
+			});
 	}
 }

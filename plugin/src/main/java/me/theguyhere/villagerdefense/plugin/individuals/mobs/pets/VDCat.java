@@ -23,7 +23,9 @@ public class VDCat extends VDPet {
 	public VDCat(Arena arena, Location location, VDPlayer owner, int level) {
 		super(
 			arena,
-			(Tameable) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.CAT),
+			(Tameable) Objects
+				.requireNonNull(location.getWorld())
+				.spawnEntity(location, EntityType.CAT),
 			LanguageManager.mobs.cat,
 			LanguageManager.mobLore.cat,
 			IndividualAttackType.NONE,

@@ -17,7 +17,9 @@ public class VDCreeper extends VDMinion {
 	public VDCreeper(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.CREEPER),
+			(Mob) Objects
+				.requireNonNull(location.getWorld())
+				.spawnEntity(location, EntityType.CREEPER),
 			LanguageManager.mobs.creeper,
 			LanguageManager.mobLore.creeper,
 			IndividualAttackType.NORMAL
@@ -42,8 +44,14 @@ public class VDCreeper extends VDMinion {
 	public VDCreeper(VDCreeper oldCreeper, Arena arena) {
 		super(
 			arena,
-			(Mob) Objects.requireNonNull(oldCreeper.getEntity().getLocation().getWorld())
-				.spawnEntity(oldCreeper.getEntity().getLocation(), EntityType.CREEPER),
+			(Mob) Objects
+				.requireNonNull(oldCreeper
+					.getEntity()
+					.getLocation()
+					.getWorld())
+				.spawnEntity(oldCreeper
+					.getEntity()
+					.getLocation(), EntityType.CREEPER),
 			LanguageManager.mobs.creeper,
 			"A crowd control monster keeping defenders away from the front lines.",
 			IndividualAttackType.NORMAL

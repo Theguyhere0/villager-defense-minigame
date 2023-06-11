@@ -70,8 +70,12 @@ public abstract class VDPet extends VDMob {
 			return;
 
 		// Natural heal
-		if (!owner.getChallenges().contains(Challenge.uhc())) {
-			int hunger = owner.getPlayer().getFoodLevel();
+		if (!owner
+			.getChallenges()
+			.contains(Challenge.uhc())) {
+			int hunger = owner
+				.getPlayer()
+				.getFoodLevel();
 			if (hunger >= 20)
 				changeCurrentHealth(6);
 			else if (hunger >= 16)
@@ -85,10 +89,12 @@ public abstract class VDPet extends VDMob {
 		}
 
 		// Regeneration
-		mob.getActivePotionEffects().forEach(potionEffect -> {
-			if (PotionEffectType.REGENERATION.equals(potionEffect.getType()))
-				changeCurrentHealth(5 * (1 + potionEffect.getAmplifier()));
-		});
+		mob
+			.getActivePotionEffects()
+			.forEach(potionEffect -> {
+				if (PotionEffectType.REGENERATION.equals(potionEffect.getType()))
+					changeCurrentHealth(5 * (1 + potionEffect.getAmplifier()));
+			});
 
 		updateNameTag();
 	}

@@ -15,7 +15,9 @@ public class VDSkeleton extends VDMinion {
 	public VDSkeleton(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.SKELETON),
+			(Mob) Objects
+				.requireNonNull(location.getWorld())
+				.spawnEntity(location, EntityType.SKELETON),
 			LanguageManager.mobs.skeleton,
 			LanguageManager.mobLore.skeleton,
 			IndividualAttackType.NORMAL

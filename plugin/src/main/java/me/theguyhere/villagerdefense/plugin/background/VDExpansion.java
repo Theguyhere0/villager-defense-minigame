@@ -45,7 +45,9 @@ public class VDExpansion extends PlaceholderExpansion {
 		catch (ArenaNotFoundException ignored) {
 		}
 		try {
-			id = Bukkit.getOfflinePlayer(params.substring(params.indexOf('_') + 1)).getUniqueId();
+			id = Bukkit
+				.getOfflinePlayer(params.substring(params.indexOf('_') + 1))
+				.getUniqueId();
 		}
 		catch (Exception ignored) {
 		}

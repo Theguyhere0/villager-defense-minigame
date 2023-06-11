@@ -21,7 +21,9 @@ public class VDSnowGolem extends VDGolem {
 	public VDSnowGolem(Arena arena, Location location, int level) {
 		super(
 			arena,
-			(Golem) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.SNOWMAN),
+			(Golem) Objects
+				.requireNonNull(location.getWorld())
+				.spawnEntity(location, EntityType.SNOWMAN),
 			LanguageManager.mobs.snowGolem,
 			LanguageManager.mobLore.snowGolem,
 			IndividualAttackType.NORMAL,

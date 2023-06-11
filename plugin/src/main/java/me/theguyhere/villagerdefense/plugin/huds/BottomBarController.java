@@ -27,14 +27,18 @@ public class BottomBarController {
 			runnables.put(player, new BukkitRunnable() {
 				@Override
 				public void run() {
-					player.spigot().sendMessage(
-						ChatMessageType.ACTION_BAR,
-						TextComponent.fromLegacyText(texts.get(player))
-					);
+					player
+						.spigot()
+						.sendMessage(
+							ChatMessageType.ACTION_BAR,
+							TextComponent.fromLegacyText(texts.get(player))
+						);
 				}
 			});
 		}
-		runnables.get(player).runTaskTimer(Main.plugin, 0, 1);
+		runnables
+			.get(player)
+			.runTaskTimer(Main.plugin, 0, 1);
 	}
 
 	public static void updateBottomBar(Player player, String text) {
@@ -44,7 +48,9 @@ public class BottomBarController {
 	public static void stopBottomBar(Player player) {
 		// Only stop if it existed in the first place
 		if (runnables.containsKey(player)) {
-			runnables.get(player).cancel();
+			runnables
+				.get(player)
+				.cancel();
 			runnables.remove(player);
 			texts.remove(player);
 		}
@@ -56,13 +62,18 @@ public class BottomBarController {
 			runnables.put(player.getPlayer(), new BukkitRunnable() {
 				@Override
 				public void run() {
-					player.getPlayer().spigot().sendMessage(
-						ChatMessageType.ACTION_BAR,
-						TextComponent.fromLegacyText(player.getStatusBar())
-					);
+					player
+						.getPlayer()
+						.spigot()
+						.sendMessage(
+							ChatMessageType.ACTION_BAR,
+							TextComponent.fromLegacyText(player.getStatusBar())
+						);
 				}
 			});
 		}
-		runnables.get(player.getPlayer()).runTaskTimer(Main.plugin, 0, 1);
+		runnables
+			.get(player.getPlayer())
+			.runTaskTimer(Main.plugin, 0, 1);
 	}
 }

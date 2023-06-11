@@ -2,6 +2,7 @@ package me.theguyhere.villagerdefense.plugin.items.weapons;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
@@ -247,22 +248,13 @@ public abstract class Axe extends VDWeapon {
 		int price;
 		switch (tier) {
 			case T1:
-				price = 200;
-				break;
 			case T2:
-				price = 300;
-				break;
 			case T3:
-				price = 415;
-				break;
 			case T4:
-				price = 515;
-				break;
 			case T5:
-				price = 700;
-				break;
 			case T6:
-				price = 960;
+				price =
+					Calculator.roundToNearest(Math.pow(durability, 0.75) * (damageHigh + damageLow) / 2 / 17, 5);
 				break;
 			default:
 				price = -1;
@@ -289,7 +281,9 @@ public abstract class Axe extends VDWeapon {
 		ItemMeta meta = toCheck.getItemMeta();
 		if (meta == null)
 			return false;
-		String value = meta.getPersistentDataContainer().get(ITEM_TYPE_KEY, PersistentDataType.STRING);
+		String value = meta
+			.getPersistentDataContainer()
+			.get(ITEM_TYPE_KEY, PersistentDataType.STRING);
 		if (value == null)
 			return false;
 		return AXE.equals(value);

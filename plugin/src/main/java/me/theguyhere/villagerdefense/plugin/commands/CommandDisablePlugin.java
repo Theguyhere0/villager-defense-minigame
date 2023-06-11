@@ -53,6 +53,8 @@ class CommandDisablePlugin {
 			PlayerManager.notifyAlert(player, "Disabling the plugin");
 		else CommunicationManager.debugInfo("Disabling the plugin", CommunicationManager.DebugLevel.QUIET);
 
-		Bukkit.getPluginManager().disablePlugin(Main.plugin);
+		Bukkit
+			.getPluginManager()
+			.disablePlugin(Main.plugin);
 	}
 }

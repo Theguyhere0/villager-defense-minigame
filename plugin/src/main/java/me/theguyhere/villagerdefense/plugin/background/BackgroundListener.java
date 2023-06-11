@@ -33,27 +33,53 @@ import java.util.Objects;
  * The listener that handles background events.
  */
 public class BackgroundListener implements PacketListener, Listener {
-	private final NMSManager nmsManager = NMSVersion.getCurrent().getNmsManager();
+	private final NMSManager nmsManager = NMSVersion
+		.getCurrent()
+		.getNmsManager();
 
 	@Override
 	public void onAttack(Player player, int entityID) {
-		GameController.getArenas().values().stream().filter(Objects::nonNull).map(Arena::getPortal)
-			.filter(Objects::nonNull).map(Portal::getNpc).filter(Objects::nonNull).forEach(npc -> {
+		GameController
+			.getArenas()
+			.values()
+			.stream()
+			.filter(Objects::nonNull)
+			.map(Arena::getPortal)
+			.filter(Objects::nonNull)
+			.map(Portal::getNpc)
+			.filter(Objects::nonNull)
+			.forEach(npc -> {
 				int npcId = npc.getEntityID();
 				if (npcId == entityID)
-					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
-						Bukkit.getPluginManager().callEvent(new NPCLeftClickEvent(player, npcId)));
+					Bukkit
+						.getScheduler()
+						.scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
+							Bukkit
+								.getPluginManager()
+								.callEvent(new NPCLeftClickEvent(player, npcId)));
 			});
 	}
 
 	@Override
 	public void onInteractMain(Player player, int entityID) {
-		GameController.getArenas().values().stream().filter(Objects::nonNull).map(Arena::getPortal)
-			.filter(Objects::nonNull).map(Portal::getNpc).filter(Objects::nonNull).forEach(npc -> {
+		GameController
+			.getArenas()
+			.values()
+			.stream()
+			.filter(Objects::nonNull)
+			.map(Arena::getPortal)
+			.filter(Objects::nonNull)
+			.map(Portal::getNpc)
+			.filter(Objects::nonNull)
+			.forEach(npc -> {
 				int npcId = npc.getEntityID();
 				if (npcId == entityID)
-					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
-						Bukkit.getPluginManager().callEvent(new NPCRightClickEvent(player, npcId)));
+					Bukkit
+						.getScheduler()
+						.scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
+							Bukkit
+								.getPluginManager()
+								.callEvent(new NPCRightClickEvent(player, npcId)));
 			});
 	}
 
@@ -74,8 +100,12 @@ public class BackgroundListener implements PacketListener, Listener {
 			signLines[3].contains(CommunicationManager.format("&1==============="))))
 			return;
 
-		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
-			Bukkit.getPluginManager().callEvent(new SignGUIEvent(arena, player, signLines)));
+		Bukkit
+			.getScheduler()
+			.scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
+				Bukkit
+					.getPluginManager()
+					.callEvent(new SignGUIEvent(arena, player, signLines)));
 	}
 
 	@EventHandler
@@ -89,18 +119,24 @@ public class BackgroundListener implements PacketListener, Listener {
 		List<String> loggers = playerData.getStringList("loggers");
 
 		// Check if player is a logger
-		if (loggers.contains(player.getUniqueId().toString())) {
+		if (loggers.contains(player
+			.getUniqueId()
+			.toString())) {
 			CommunicationManager.debugInfo("%s joined after disconnecting mid-game.",
 				CommunicationManager.DebugLevel.VERBOSE, player.getName()
 			);
 
 			// Teleport them back to lobby
 			PlayerManager.teleAdventure(player, GameController.getLobby());
-			loggers.remove(player.getUniqueId().toString());
+			loggers.remove(player
+				.getUniqueId()
+				.toString());
 			playerData.set("loggers", loggers);
 
 			// Return player health, food, exp, and items
-			if (Main.plugin.getConfig().getBoolean("keepInv"))
+			if (Main.plugin
+				.getConfig()
+				.getBoolean("keepInv"))
 				PlayerManager.returnSurvivalStats(player);
 
 			Main.savePlayerData();
@@ -128,29 +164,43 @@ public class BackgroundListener implements PacketListener, Listener {
 
 		// Uninject player and make them leave from arena
 		nmsManager.uninjectPacketListener(player);
-		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-			Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player)));
+		Bukkit
+			.getScheduler()
+			.scheduleSyncDelayedTask(Main.plugin, () ->
+				Bukkit
+					.getPluginManager()
+					.callEvent(new LeaveArenaEvent(player)));
 
 		// Get list of loggers from data file and add player to it
-		List<String> loggers = Main.getPlayerData().getStringList("loggers");
-		loggers.add(player.getUniqueId().toString());
+		List<String> loggers = Main
+			.getPlayerData()
+			.getStringList("loggers");
+		loggers.add(player
+			.getUniqueId()
+			.toString());
 
 		// Add to list of loggers if in a game
 		if (GameController.checkPlayer(player)) {
 			CommunicationManager.debugInfo("%s disconnected mid-game.", CommunicationManager.DebugLevel.VERBOSE,
 				player.getName()
 			);
-			Main.getPlayerData().set("loggers", loggers);
+			Main
+				.getPlayerData()
+				.set("loggers", loggers);
 			Main.savePlayerData();
 		}
 	}
 
 	@EventHandler
 	public void onWorldLoadEvent(WorldLoadEvent e) {
-		String worldName = e.getWorld().getName();
+		String worldName = e
+			.getWorld()
+			.getName();
 
 		// Handle world loading after initialization
-		if (Main.getUnloadedWorlds().contains(worldName)) {
+		if (Main
+			.getUnloadedWorlds()
+			.contains(worldName)) {
 			Main.loadWorld(worldName);
 			Main.resetGameManager();
 			GameController.reloadLobby();

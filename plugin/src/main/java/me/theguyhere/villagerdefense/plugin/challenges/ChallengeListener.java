@@ -58,46 +58,72 @@ public class ChallengeListener implements Listener {
 			return;
 
 		// Get armor
-		ItemStack helmet = player.getInventory().getHelmet();
-		ItemStack chestplate = player.getInventory().getChestplate();
-		ItemStack leggings = player.getInventory().getLeggings();
-		ItemStack boots = player.getInventory().getBoots();
+		ItemStack helmet = player
+			.getInventory()
+			.getHelmet();
+		ItemStack chestplate = player
+			.getInventory()
+			.getChestplate();
+		ItemStack leggings = player
+			.getInventory()
+			.getLeggings();
+		ItemStack boots = player
+			.getInventory()
+			.getBoots();
 
 		// Unequip armor
-		if (gamer.getChallenges().contains(Challenge.naked())) {
+		if (gamer
+			.getChallenges()
+			.contains(Challenge.naked())) {
 			if (!(helmet == null || helmet.getType() == Material.AIR)) {
 				PlayerManager.giveItem(player, helmet, LanguageManager.errors.inventoryFull);
-				player.getInventory().setHelmet(null);
+				player
+					.getInventory()
+					.setHelmet(null);
 				PlayerManager.notifyFailure(player, LanguageManager.errors.naked);
 			}
 			if (!(chestplate == null || chestplate.getType() == Material.AIR)) {
 				PlayerManager.giveItem(player, chestplate, LanguageManager.errors.inventoryFull);
-				player.getInventory().setChestplate(null);
+				player
+					.getInventory()
+					.setChestplate(null);
 				PlayerManager.notifyFailure(player, LanguageManager.errors.naked);
 			}
 			if (!(leggings == null || leggings.getType() == Material.AIR)) {
 				PlayerManager.giveItem(player, leggings, LanguageManager.errors.inventoryFull);
-				player.getInventory().setLeggings(null);
+				player
+					.getInventory()
+					.setLeggings(null);
 				PlayerManager.notifyFailure(player, LanguageManager.errors.naked);
 			}
 			if (!(boots == null || boots.getType() == Material.AIR)) {
 				PlayerManager.giveItem(player, boots, LanguageManager.errors.inventoryFull);
-				player.getInventory().setBoots(null);
+				player
+					.getInventory()
+					.setBoots(null);
 				PlayerManager.notifyFailure(player, LanguageManager.errors.naked);
 			}
 		}
 
 		// Drop inventory items
-		if (gamer.getChallenges().contains(Challenge.amputee())) {
+		if (gamer
+			.getChallenges()
+			.contains(Challenge.amputee())) {
 			ItemStack temp;
 			boolean infraction = false;
 			for (int i = 9; i < 36; i++) {
-				temp = player.getInventory().getItem(i);
+				temp = player
+					.getInventory()
+					.getItem(i);
 				if (temp == null)
 					continue;
 
-				player.getWorld().dropItemNaturally(player.getLocation(), temp);
-				player.getInventory().setItem(i, null);
+				player
+					.getWorld()
+					.dropItemNaturally(player.getLocation(), temp);
+				player
+					.getInventory()
+					.setItem(i, null);
 				infraction = true;
 			}
 
@@ -134,7 +160,9 @@ public class ChallengeListener implements Listener {
 			return;
 
 		// Check for clumsy challenge
-		if (!gamer.getChallenges().contains(Challenge.clumsy()))
+		if (!gamer
+			.getChallenges()
+			.contains(Challenge.clumsy()))
 			return;
 
 		double dropChance = .02;
@@ -145,13 +173,19 @@ public class ChallengeListener implements Listener {
 			if (item == null)
 				return;
 
-			player.getWorld().dropItem(player.getLocation(), item);
+			player
+				.getWorld()
+				.dropItem(player.getLocation(), item);
 
 			if (e.getHand() == EquipmentSlot.HAND) {
-				Objects.requireNonNull(player.getEquipment()).setItemInMainHand(null);
+				Objects
+					.requireNonNull(player.getEquipment())
+					.setItemInMainHand(null);
 			}
 			else {
-				Objects.requireNonNull(player.getEquipment()).setItemInOffHand(null);
+				Objects
+					.requireNonNull(player.getEquipment())
+					.setItemInOffHand(null);
 			}
 		}
 	}
@@ -184,11 +218,20 @@ public class ChallengeListener implements Listener {
 				return;
 
 			// Check for featherweight challenge
-			if (gamer.getChallenges().contains(Challenge.featherweight()))
-				player.setVelocity(enemy.getLocation().getDirection().setY(0).normalize().multiply(5));
+			if (gamer
+				.getChallenges()
+				.contains(Challenge.featherweight()))
+				player.setVelocity(enemy
+					.getLocation()
+					.getDirection()
+					.setY(0)
+					.normalize()
+					.multiply(5));
 
 			// Check for pacifist challenge
-			if (gamer.getChallenges().contains(Challenge.pacifist()))
+			if (gamer
+				.getChallenges()
+				.contains(Challenge.pacifist()))
 				gamer.addEnemy(enemy.getUniqueId());
 		}
 
@@ -211,16 +254,24 @@ public class ChallengeListener implements Listener {
 
 			// Attempt to get VDPlayer
 			try {
-				gamer = GameController.getArena(player).getPlayer(player);
+				gamer = GameController
+					.getArena(player)
+					.getPlayer(player);
 			}
 			catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
 			}
 
 			// Check for pacifist challenge
-			if (gamer.getChallenges().contains(Challenge.pacifist()))
+			if (gamer
+				.getChallenges()
+				.contains(Challenge.pacifist()))
 				// Cancel if not an enemy of the player
-				if (!gamer.getEnemies().contains(e.getEntity().getUniqueId()))
+				if (!gamer
+					.getEnemies()
+					.contains(e
+						.getEntity()
+						.getUniqueId()))
 					e.setCancelled(true);
 		}
 	}
@@ -242,7 +293,9 @@ public class ChallengeListener implements Listener {
 		}
 
 		// Check for amputees
-		if (!gamer.getChallenges().contains(Challenge.amputee()))
+		if (!gamer
+			.getChallenges()
+			.contains(Challenge.amputee()))
 			return;
 
 		// Disallow shift clicking
@@ -253,7 +306,9 @@ public class ChallengeListener implements Listener {
 		}
 
 		// Ignore empty clicks
-		if (e.getCursor() == null || e.getCursor().getType() == Material.AIR)
+		if (e.getCursor() == null || e
+			.getCursor()
+			.getType() == Material.AIR)
 			return;
 
 		// Disallow clicking into forbidden slots
@@ -280,15 +335,19 @@ public class ChallengeListener implements Listener {
 		}
 
 		// Check for amputees
-		if (!gamer.getChallenges().contains(Challenge.amputee()))
+		if (!gamer
+			.getChallenges()
+			.contains(Challenge.amputee()))
 			return;
 
 		// Disallow dragging into forbidden slots
 		AtomicBoolean forbidden = new AtomicBoolean(false);
-		e.getInventorySlots().forEach(slot -> {
-			if (slot >= 9 && slot <= 35)
-				forbidden.set(true);
-		});
+		e
+			.getInventorySlots()
+			.forEach(slot -> {
+				if (slot >= 9 && slot <= 35)
+					forbidden.set(true);
+			});
 		if (forbidden.get()) {
 			e.setCancelled(true);
 			PlayerManager.notifyFailure(player, LanguageManager.errors.amputee);
@@ -316,13 +375,17 @@ public class ChallengeListener implements Listener {
 		}
 
 		// Check for amputees
-		if (!gamer.getChallenges().contains(Challenge.amputee()))
+		if (!gamer
+			.getChallenges()
+			.contains(Challenge.amputee()))
 			return;
 
 		// Check for room to pick up item
 		boolean full = true;
 		for (int i = 0; i < 9; i++) {
-			ItemStack item = player.getInventory().getItem(i);
+			ItemStack item = player
+				.getInventory()
+				.getItem(i);
 			if (item == null || item.getType() == Material.AIR)
 				full = false;
 		}

@@ -120,25 +120,45 @@ public class Challenge {
 	 * @return Challenge or null.
 	 */
 	public static Challenge getChallengeByName(String challengeName) {
-		if (none().getName().equals(challengeName))
+		if (none()
+			.getName()
+			.equals(challengeName))
 			return none();
-		else if (amputee().getName().equals(challengeName))
+		else if (amputee()
+			.getName()
+			.equals(challengeName))
 			return amputee();
-		else if (clumsy().getName().equals(challengeName))
+		else if (clumsy()
+			.getName()
+			.equals(challengeName))
 			return clumsy();
-		else if (featherweight().getName().equals(challengeName))
+		else if (featherweight()
+			.getName()
+			.equals(challengeName))
 			return featherweight();
-		else if (pacifist().getName().equals(challengeName))
+		else if (pacifist()
+			.getName()
+			.equals(challengeName))
 			return pacifist();
-		else if (dwarf().getName().equals(challengeName))
+		else if (dwarf()
+			.getName()
+			.equals(challengeName))
 			return dwarf();
-		else if (uhc().getName().equals(challengeName))
+		else if (uhc()
+			.getName()
+			.equals(challengeName))
 			return uhc();
-		else if (explosive().getName().equals(challengeName))
+		else if (explosive()
+			.getName()
+			.equals(challengeName))
 			return explosive();
-		else if (naked().getName().equals(challengeName))
+		else if (naked()
+			.getName()
+			.equals(challengeName))
 			return naked();
-		else if (blind().getName().equals(challengeName))
+		else if (blind()
+			.getName()
+			.equals(challengeName))
 			return blind();
 		else return null;
 	}
@@ -150,25 +170,45 @@ public class Challenge {
 	 * @return Challenge or null.
 	 */
 	public static Challenge getChallengeByID(String challengeID) {
-		if (none().getID().equals(challengeID))
+		if (none()
+			.getID()
+			.equals(challengeID))
 			return none();
-		else if (amputee().getID().equals(challengeID))
+		else if (amputee()
+			.getID()
+			.equals(challengeID))
 			return amputee();
-		else if (clumsy().getID().equals(challengeID))
+		else if (clumsy()
+			.getID()
+			.equals(challengeID))
 			return clumsy();
-		else if (featherweight().getID().equals(challengeID))
+		else if (featherweight()
+			.getID()
+			.equals(challengeID))
 			return featherweight();
-		else if (pacifist().getID().equals(challengeID))
+		else if (pacifist()
+			.getID()
+			.equals(challengeID))
 			return pacifist();
-		else if (dwarf().getID().equals(challengeID))
+		else if (dwarf()
+			.getID()
+			.equals(challengeID))
 			return dwarf();
-		else if (uhc().getID().equals(challengeID))
+		else if (uhc()
+			.getID()
+			.equals(challengeID))
 			return uhc();
-		else if (explosive().getID().equals(challengeID))
+		else if (explosive()
+			.getID()
+			.equals(challengeID))
 			return explosive();
-		else if (naked().getID().equals(challengeID))
+		else if (naked()
+			.getID()
+			.equals(challengeID))
 			return naked();
-		else if (blind().getID().equals(challengeID))
+		else if (blind()
+			.getID()
+			.equals(challengeID))
 			return blind();
 		else return null;
 	}

@@ -63,7 +63,9 @@ public class KitAbilityListener implements Listener {
 		}
 
 		// Check for other clickable items if on off-hand
-		ItemStack main = player.getInventory().getItemInMainHand();
+		ItemStack main = player
+			.getInventory()
+			.getItemInMainHand();
 		if (e.getHand() == EquipmentSlot.OFF_HAND && (Shop.matches(main) || VDAbility.matches(main) ||
 			VDFood.matches(main) || VDArmor.matches(main) || VDWeapon.matchesClickableWeapon(main)))
 			return;
@@ -83,17 +85,23 @@ public class KitAbilityListener implements Listener {
 
 		// Gather stats
 		PersistentDataContainer dataContainer =
-			Objects.requireNonNull(item.getItemMeta()).getPersistentDataContainer();
+			Objects
+				.requireNonNull(item.getItemMeta())
+				.getPersistentDataContainer();
 		Double cooldown = dataContainer.get(VDAbility.COOLDOWN_KEY, PersistentDataType.DOUBLE);
 		Double range = dataContainer.get(VDAbility.RANGE_KEY, PersistentDataType.DOUBLE);
 		Double duration = dataContainer.get(VDAbility.DURATION_KEY, PersistentDataType.DOUBLE);
 		AtomicReference<String> effect = new AtomicReference<>();
-		Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore()).forEach(lore -> {
-			if (lore.contains(LanguageManager.messages.effect
-				.replace("%s", ""))) {
-				effect.set(lore);
-			}
-		});
+		Objects
+			.requireNonNull(Objects
+				.requireNonNull(item.getItemMeta())
+				.getLore())
+			.forEach(lore -> {
+				if (lore.contains(LanguageManager.messages.effect
+					.replace("%s", ""))) {
+					effect.set(lore);
+				}
+			});
 		if (cooldown == null)
 			return;
 		if (range == null)
@@ -103,7 +111,9 @@ public class KitAbilityListener implements Listener {
 		double altDuration = duration * 0.6;
 
 		// Check if player has cooldown decrease achievement and is boosted
-		if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement.allMaxedAbility().getID()))
+		if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement
+			.allMaxedAbility()
+			.getID()))
 			cooldown = cooldown * .9;
 
 		// Mage
@@ -111,7 +121,9 @@ public class KitAbilityListener implements Listener {
 			float yield = 1.5f;
 
 			// Activate ability
-			Fireball fireball = player.getWorld().spawn(player.getEyeLocation(), Fireball.class);
+			Fireball fireball = player
+				.getWorld()
+				.spawn(player.getEyeLocation(), Fireball.class);
 			fireball.setYield(yield);
 			fireball.setShooter(player);
 			fireball.setMetadata(
@@ -129,19 +141,23 @@ public class KitAbilityListener implements Listener {
 				Calculator.secondsToTicks(duration), 0
 			));
 			Double finalDuration2 = duration;
-			WorldManager.getPets(player).forEach(wolf ->
-				wolf.addPotionEffect((new PotionEffect(PotionEffectType.INVISIBILITY,
-					Calculator.secondsToTicks(finalDuration2), 0
-				))));
+			WorldManager
+				.getPets(player)
+				.forEach(wolf ->
+					wolf.addPotionEffect((new PotionEffect(PotionEffectType.INVISIBILITY,
+						Calculator.secondsToTicks(finalDuration2), 0
+					))));
 			gamer.triggerAbilityCooldown(Calculator.secondsToMillis(cooldown));
 
 			// Nerf
 			gamer.hideArmor();
 
 			// Schedule un-nerf
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, gamer::exposeArmor,
-				Calculator.secondsToTicks(duration)
-			);
+			Bukkit
+				.getScheduler()
+				.scheduleSyncDelayedTask(Main.plugin, gamer::exposeArmor,
+					Calculator.secondsToTicks(duration)
+				);
 
 			// Fire ability sound if turned on
 			if (arena.hasAbilitySound())
@@ -152,52 +168,75 @@ public class KitAbilityListener implements Listener {
 		else if (TemplarAbility.matches(item)) {
 			// Calculate effect
 			int absorption = 0;
-			if (effect.get().contains("100"))
+			if (effect
+				.get()
+				.contains("100"))
 				absorption = 100;
-			else if (effect.get().contains("200"))
+			else if (effect
+				.get()
+				.contains("200"))
 				absorption = 200;
-			else if (effect.get().contains("300"))
+			else if (effect
+				.get()
+				.contains("300"))
 				absorption = 300;
 
 			// Activate ability
 			int finalAbsorption = absorption;
-			WorldManager.getNearbyPlayers(player, range).forEach(player1 -> {
-				try {
-					arena.getPlayer(player1).addAbsorptionUpTo(finalAbsorption);
-				}
-				catch (PlayerNotFoundException ignored) {
-				}
-			});
+			WorldManager
+				.getNearbyPlayers(player, range)
+				.forEach(player1 -> {
+					try {
+						arena
+							.getPlayer(player1)
+							.addAbsorptionUpTo(finalAbsorption);
+					}
+					catch (PlayerNotFoundException ignored) {
+					}
+				});
 			gamer.addAbsorptionUpTo(absorption);
 			gamer.triggerAbilityCooldown(Calculator.secondsToMillis(cooldown));
 
 			// Fire ability sound if turned on
 			if (arena.hasAbilitySound())
-				arena.getActives().forEach(vdPlayer -> vdPlayer.getPlayer()
-					.playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
+				arena
+					.getActives()
+					.forEach(vdPlayer -> vdPlayer
+						.getPlayer()
+						.playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
 		}
 
 		// Warrior
 		else if (WarriorAbility.matches(item)) {
 			// Calculate effect
 			int amplifier;
-			if (effect.get().contains("10"))
+			if (effect
+				.get()
+				.contains("10"))
 				amplifier = 0;
-			else if (effect.get().contains("20"))
+			else if (effect
+				.get()
+				.contains("20"))
 				amplifier = 1;
-			else if (effect.get().contains("30"))
+			else if (effect
+				.get()
+				.contains("30"))
 				amplifier = 2;
 			else return;
 
 			// Activate ability
-			WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
-				new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Calculator.secondsToTicks(altDuration),
-					amplifier
-				)));
-			WorldManager.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
-				new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Calculator.secondsToTicks(altDuration),
-					amplifier
-				)));
+			WorldManager
+				.getNearbyPlayers(player, range)
+				.forEach(player1 -> player1.addPotionEffect(
+					new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Calculator.secondsToTicks(altDuration),
+						amplifier
+					)));
+			WorldManager
+				.getNearbyAllies(player, range)
+				.forEach(ally -> ally.addPotionEffect(
+					new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Calculator.secondsToTicks(altDuration),
+						amplifier
+					)));
 			player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE,
 				Calculator.secondsToTicks(duration), amplifier
 			));
@@ -205,31 +244,44 @@ public class KitAbilityListener implements Listener {
 
 			// Fire ability sound if turned on
 			if (arena.hasAbilitySound())
-				arena.getActives().forEach(vdPlayer -> vdPlayer.getPlayer()
-					.playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
+				arena
+					.getActives()
+					.forEach(vdPlayer -> vdPlayer
+						.getPlayer()
+						.playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
 		}
 
 		// Knight
 		else if (KnightAbility.matches(item)) {
 			// Calculate effect
 			int amplifier;
-			if (effect.get().contains("10"))
+			if (effect
+				.get()
+				.contains("10"))
 				amplifier = 0;
-			else if (effect.get().contains("20"))
+			else if (effect
+				.get()
+				.contains("20"))
 				amplifier = 1;
-			else if (effect.get().contains("30"))
+			else if (effect
+				.get()
+				.contains("30"))
 				amplifier = 2;
 			else return;
 
 			// Activate ability
-			WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
-				new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Calculator.secondsToTicks(altDuration),
-					amplifier
-				)));
-			WorldManager.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
-				new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Calculator.secondsToTicks(altDuration),
-					amplifier
-				)));
+			WorldManager
+				.getNearbyPlayers(player, range)
+				.forEach(player1 -> player1.addPotionEffect(
+					new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Calculator.secondsToTicks(altDuration),
+						amplifier
+					)));
+			WorldManager
+				.getNearbyAllies(player, range)
+				.forEach(ally -> ally.addPotionEffect(
+					new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Calculator.secondsToTicks(altDuration),
+						amplifier
+					)));
 			player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE,
 				Calculator.secondsToTicks(duration), amplifier
 			));
@@ -237,31 +289,44 @@ public class KitAbilityListener implements Listener {
 
 			// Fire ability sound if turned on
 			if (arena.hasAbilitySound())
-				arena.getActives().forEach(vdPlayer -> vdPlayer.getPlayer()
-					.playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
+				arena
+					.getActives()
+					.forEach(vdPlayer -> vdPlayer
+						.getPlayer()
+						.playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
 		}
 
 		// Priest
 		else if (PriestAbility.matches(item)) {
 			// Calculate effect
 			int amplifier;
-			if (effect.get().contains("+5"))
+			if (effect
+				.get()
+				.contains("+5"))
 				amplifier = 0;
-			else if (effect.get().contains("+10"))
+			else if (effect
+				.get()
+				.contains("+10"))
 				amplifier = 1;
-			else if (effect.get().contains("+15"))
+			else if (effect
+				.get()
+				.contains("+15"))
 				amplifier = 2;
 			else return;
 
 			// Activate ability
-			WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
-				new PotionEffect(PotionEffectType.REGENERATION, Calculator.secondsToTicks(altDuration),
-					amplifier
-				)));
-			WorldManager.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
-				new PotionEffect(PotionEffectType.REGENERATION, Calculator.secondsToTicks(altDuration),
-					amplifier
-				)));
+			WorldManager
+				.getNearbyPlayers(player, range)
+				.forEach(player1 -> player1.addPotionEffect(
+					new PotionEffect(PotionEffectType.REGENERATION, Calculator.secondsToTicks(altDuration),
+						amplifier
+					)));
+			WorldManager
+				.getNearbyAllies(player, range)
+				.forEach(ally -> ally.addPotionEffect(
+					new PotionEffect(PotionEffectType.REGENERATION, Calculator.secondsToTicks(altDuration),
+						amplifier
+					)));
 			player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION,
 				Calculator.secondsToTicks(duration), amplifier
 			));
@@ -269,8 +334,11 @@ public class KitAbilityListener implements Listener {
 
 			// Fire ability sound if turned on
 			if (arena.hasAbilitySound())
-				arena.getActives().forEach(vdPlayer -> vdPlayer.getPlayer()
-					.playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
+				arena
+					.getActives()
+					.forEach(vdPlayer -> vdPlayer
+						.getPlayer()
+						.playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
 		}
 
 		// Siren
@@ -278,53 +346,78 @@ public class KitAbilityListener implements Listener {
 			// Calculate effect
 			int amp1 = -1;
 			int amp2 = -1;
-			if (effect.get().contains("15"))
+			if (effect
+				.get()
+				.contains("15"))
 				amp1 = 0;
-			else if (effect.get().contains("30"))
+			else if (effect
+				.get()
+				.contains("30"))
 				amp1 = 1;
-			if (effect.get().contains("10"))
+			if (effect
+				.get()
+				.contains("10"))
 				amp2 = 0;
 
 			// Activate ability
 			if (amp1 != -1) {
 				int finalAmp = amp1;
 				Double finalDuration = duration;
-				WorldManager.getNearbyMonsters(player, range).forEach(ent -> ent.addPotionEffect(
-					new PotionEffect(PotionEffectType.SLOW, Calculator.secondsToTicks(finalDuration), finalAmp)));
+				WorldManager
+					.getNearbyMonsters(player, range)
+					.forEach(ent -> ent.addPotionEffect(
+						new PotionEffect(PotionEffectType.SLOW, Calculator.secondsToTicks(finalDuration), finalAmp)));
 			}
 			if (amp2 != -1) {
 				int finalAmp1 = amp2;
 				Double finalDuration1 = duration;
-				WorldManager.getNearbyMonsters(player, range).forEach(ent -> ent.addPotionEffect(
-					new PotionEffect(PotionEffectType.WEAKNESS, Calculator.secondsToTicks(finalDuration1),
-						finalAmp1
-					)));
+				WorldManager
+					.getNearbyMonsters(player, range)
+					.forEach(ent -> ent.addPotionEffect(
+						new PotionEffect(PotionEffectType.WEAKNESS, Calculator.secondsToTicks(finalDuration1),
+							finalAmp1
+						)));
 			}
 			gamer.triggerAbilityCooldown(Calculator.secondsToMillis(cooldown));
 
 			// Fire ability sound if turned on
 			if (arena.hasAbilitySound())
-				arena.getActives().forEach(vdPlayer -> vdPlayer.getPlayer()
-					.playSound(player.getLocation(), Sound.AMBIENT_CAVE, 1, 1.25f));
+				arena
+					.getActives()
+					.forEach(vdPlayer -> vdPlayer
+						.getPlayer()
+						.playSound(player.getLocation(), Sound.AMBIENT_CAVE, 1, 1.25f));
 		}
 
 		// Monk
 		else if (MonkAbility.matches(item)) {
 			// Calculate effect
 			int amplifier;
-			if (effect.get().contains("20"))
+			if (effect
+				.get()
+				.contains("20"))
 				amplifier = 0;
-			else if (effect.get().contains("40"))
+			else if (effect
+				.get()
+				.contains("40"))
 				amplifier = 1;
-			else if (effect.get().contains("60"))
+			else if (effect
+				.get()
+				.contains("60"))
 				amplifier = 2;
 			else return;
 
 			// Activate ability
-			WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
-				new PotionEffect(PotionEffectType.FAST_DIGGING, Calculator.secondsToTicks(altDuration), amplifier)));
-			WorldManager.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
-				new PotionEffect(PotionEffectType.FAST_DIGGING, Calculator.secondsToTicks(altDuration), amplifier)));
+			WorldManager
+				.getNearbyPlayers(player, range)
+				.forEach(player1 -> player1.addPotionEffect(
+					new PotionEffect(PotionEffectType.FAST_DIGGING, Calculator.secondsToTicks(altDuration),
+						amplifier)));
+			WorldManager
+				.getNearbyAllies(player, range)
+				.forEach(ally -> ally.addPotionEffect(
+					new PotionEffect(PotionEffectType.FAST_DIGGING, Calculator.secondsToTicks(altDuration),
+						amplifier)));
 			player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING,
 				Calculator.secondsToTicks(duration), amplifier
 			));
@@ -332,27 +425,40 @@ public class KitAbilityListener implements Listener {
 
 			// Fire ability sound if turned on
 			if (arena.hasAbilitySound())
-				arena.getActives().forEach(vdPlayer -> vdPlayer.getPlayer()
-					.playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
+				arena
+					.getActives()
+					.forEach(vdPlayer -> vdPlayer
+						.getPlayer()
+						.playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
 		}
 
 		// Messenger
 		else if (MessengerAbility.matches(item)) {
 			// Calculate effect
 			int amplifier;
-			if (effect.get().contains("20"))
+			if (effect
+				.get()
+				.contains("20"))
 				amplifier = 0;
-			else if (effect.get().contains("40"))
+			else if (effect
+				.get()
+				.contains("40"))
 				amplifier = 1;
-			else if (effect.get().contains("60"))
+			else if (effect
+				.get()
+				.contains("60"))
 				amplifier = 2;
 			else return;
 
 			// Activate ability
-			WorldManager.getNearbyPlayers(player, range).forEach(player1 -> player1.addPotionEffect(
-				new PotionEffect(PotionEffectType.SPEED, Calculator.secondsToTicks(altDuration), amplifier)));
-			WorldManager.getNearbyAllies(player, range).forEach(ally -> ally.addPotionEffect(
-				new PotionEffect(PotionEffectType.SPEED, Calculator.secondsToTicks(altDuration), amplifier)));
+			WorldManager
+				.getNearbyPlayers(player, range)
+				.forEach(player1 -> player1.addPotionEffect(
+					new PotionEffect(PotionEffectType.SPEED, Calculator.secondsToTicks(altDuration), amplifier)));
+			WorldManager
+				.getNearbyAllies(player, range)
+				.forEach(ally -> ally.addPotionEffect(
+					new PotionEffect(PotionEffectType.SPEED, Calculator.secondsToTicks(altDuration), amplifier)));
 			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Calculator.secondsToTicks(duration),
 				amplifier
 			));
@@ -360,8 +466,11 @@ public class KitAbilityListener implements Listener {
 
 			// Fire ability sound if turned on
 			if (arena.hasAbilitySound())
-				arena.getActives().forEach(vdPlayer -> vdPlayer.getPlayer()
-					.playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
+				arena
+					.getActives()
+					.forEach(vdPlayer -> vdPlayer
+						.getPlayer()
+						.playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
 		}
 	}
 
@@ -379,35 +488,55 @@ public class KitAbilityListener implements Listener {
 			return;
 
 		// Ignore if not invisible
-		if (player.getActivePotionEffects().stream()
-			.noneMatch(potion -> potion.getType().equals(PotionEffectType.INVISIBILITY)))
+		if (player
+			.getActivePotionEffects()
+			.stream()
+			.noneMatch(potion -> potion
+				.getType()
+				.equals(PotionEffectType.INVISIBILITY)))
 			return;
 
 		// Get armor
-		ItemStack helmet = player.getInventory().getHelmet();
-		ItemStack chestplate = player.getInventory().getChestplate();
-		ItemStack leggings = player.getInventory().getLeggings();
-		ItemStack boots = player.getInventory().getBoots();
+		ItemStack helmet = player
+			.getInventory()
+			.getHelmet();
+		ItemStack chestplate = player
+			.getInventory()
+			.getChestplate();
+		ItemStack leggings = player
+			.getInventory()
+			.getLeggings();
+		ItemStack boots = player
+			.getInventory()
+			.getBoots();
 
 		// Unequip armor
 		if (!(helmet == null || helmet.getType() == Material.AIR)) {
 			PlayerManager.giveItem(player, helmet, LanguageManager.errors.inventoryFull);
-			player.getInventory().setHelmet(null);
+			player
+				.getInventory()
+				.setHelmet(null);
 			PlayerManager.notifyFailure(player, LanguageManager.errors.ninja);
 		}
 		if (!(chestplate == null || chestplate.getType() == Material.AIR)) {
 			PlayerManager.giveItem(player, chestplate, LanguageManager.errors.inventoryFull);
-			player.getInventory().setChestplate(null);
+			player
+				.getInventory()
+				.setChestplate(null);
 			PlayerManager.notifyFailure(player, LanguageManager.errors.ninja);
 		}
 		if (!(leggings == null || leggings.getType() == Material.AIR)) {
 			PlayerManager.giveItem(player, leggings, LanguageManager.errors.inventoryFull);
-			player.getInventory().setLeggings(null);
+			player
+				.getInventory()
+				.setLeggings(null);
 			PlayerManager.notifyFailure(player, LanguageManager.errors.ninja);
 		}
 		if (!(boots == null || boots.getType() == Material.AIR)) {
 			PlayerManager.giveItem(player, boots, LanguageManager.errors.inventoryFull);
-			player.getInventory().setBoots(null);
+			player
+				.getInventory()
+				.setBoots(null);
 			PlayerManager.notifyFailure(player, LanguageManager.errors.ninja);
 		}
 	}

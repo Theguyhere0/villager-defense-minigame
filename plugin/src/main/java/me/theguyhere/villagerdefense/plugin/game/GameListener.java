@@ -77,12 +77,16 @@ public class GameListener implements Listener {
 
 		// Arena enemies not part of an active arena
 		if (arena.getStatus() != ArenaStatus.ACTIVE) {
-			e.getDrops().clear();
+			e
+				.getDrops()
+				.clear();
 			return;
 		}
 
 		// Clear normal drops
-		e.getDrops().clear();
+		e
+			.getDrops()
+			.clear();
 		e.setDroppedExp(0);
 
 		// Remove the mob
@@ -132,19 +136,25 @@ public class GameListener implements Listener {
 
 		// Attempt to get VDPlayer
 		try {
-			gamer = GameController.getArena(player).getPlayer(player);
+			gamer = GameController
+				.getArena(player)
+				.getPlayer(player);
 		}
 		catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
 		// Check for ammo weapon
-		ItemStack range = Objects.requireNonNull(player.getEquipment()).getItemInMainHand();
+		ItemStack range = Objects
+			.requireNonNull(player.getEquipment())
+			.getItemInMainHand();
 		if (!VDWeapon.matchesAmmoWeapon(range))
 			return;
 
 		// Check for ammo
-		ItemStack ammo = Objects.requireNonNull(player.getEquipment()).getItemInOffHand();
+		ItemStack ammo = Objects
+			.requireNonNull(player.getEquipment())
+			.getItemInOffHand();
 		if (!Ammo.matches(ammo)) {
 			e.setCancelled(true);
 			gamer.triggerAmmoWarningCooldown();
@@ -154,7 +164,9 @@ public class GameListener implements Listener {
 		// Get data
 		int cost = gamer.getAmmoCost();
 		int capacity = gamer.getAmmoCap();
-		Double cooldown = Objects.requireNonNull(range.getItemMeta()).getPersistentDataContainer()
+		Double cooldown = Objects
+			.requireNonNull(range.getItemMeta())
+			.getPersistentDataContainer()
 			.get(VDWeapon.ATTACK_SPEED_KEY, PersistentDataType.DOUBLE);
 
 		// Ignore if not enough capacity or has bad cooldown data
@@ -170,18 +182,31 @@ public class GameListener implements Listener {
 
 		// Update capacity, durability, and cooldown
 		if (Bow.matches(range))
-			NMSVersion.getCurrent().getNmsManager().setBowCooldown(player, Calculator.secondsToTicks(1 / cooldown));
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.setBowCooldown(player, Calculator.secondsToTicks(1 / cooldown));
 		else
-			NMSVersion.getCurrent().getNmsManager().setCrossbowCooldown(
-				player,
-				Calculator.secondsToTicks(1 / cooldown)
-			);
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.setCrossbowCooldown(
+					player,
+					Calculator.secondsToTicks(1 / cooldown)
+				);
 		gamer.triggerWeaponCooldown(Calculator.secondsToMillis(1 / cooldown));
 		if (Ammo.updateCapacity(ammo, -cost)) {
-			player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
+			player
+				.getInventory()
+				.setItemInOffHand(new ItemStack(Material.AIR));
 			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1);
 		}
-		Bukkit.getPluginManager().callEvent(new PlayerItemDamageEvent(player, range, 1));
+		gamer.updateOffHand(player
+			.getInventory()
+			.getItemInOffHand());
+		Bukkit
+			.getPluginManager()
+			.callEvent(new PlayerItemDamageEvent(player, range, 1));
 	}
 
 	// Manage projectiles being fired
@@ -214,7 +239,9 @@ public class GameListener implements Listener {
 				return;
 
 			// Encode damage information
-			ItemStack range = Objects.requireNonNull(player.getEquipment()).getItemInMainHand();
+			ItemStack range = Objects
+				.requireNonNull(player.getEquipment())
+				.getItemInMainHand();
 			projectile.setMetadata(
 				VDItem.MetaKey.DAMAGE.name(),
 				new FixedMetadataValue(Main.plugin, gamer.dealRawDamage(VDPlayer.AttackClass.RANGE, 0))
@@ -234,7 +261,9 @@ public class GameListener implements Listener {
 				new FixedMetadataValue(Main.plugin, false)
 			);
 			if (Crossbow.matches(range)) {
-				Integer pierce = Objects.requireNonNull(range.getItemMeta()).getPersistentDataContainer()
+				Integer pierce = Objects
+					.requireNonNull(range.getItemMeta())
+					.getPersistentDataContainer()
 					.get(VDWeapon.PIERCE_KEY, PersistentDataType.INTEGER);
 				if (pierce != null)
 					((Arrow) projectile).setPierceLevel(pierce);
@@ -257,7 +286,9 @@ public class GameListener implements Listener {
 
 			// Check for witch
 			if ((finalShooter instanceof VDWitch)) {
-				if (((ThrownPotion) e.getEntity()).getEffects().size() > 0)
+				if (((ThrownPotion) e.getEntity())
+					.getEffects()
+					.size() > 0)
 					e.setCancelled(true);
 
 				// Check for cooldown
@@ -325,7 +356,9 @@ public class GameListener implements Listener {
 
 			if (e.getCause() == EntityDamageEvent.DamageCause.CUSTOM) {
 				// Make sure fast attacks only apply when mobs are close
-				if (damager.getLocation().distance(victim.getLocation()) > 1.75) {
+				if (damager
+					.getLocation()
+					.distance(victim.getLocation()) > 1.75) {
 					e.setCancelled(true);
 					return;
 				}
@@ -336,24 +369,38 @@ public class GameListener implements Listener {
 
 			// Implement faster attacks
 			if (finalDamager.getAttackSpeed() == .4 && e.getCause() != EntityDamageEvent.DamageCause.CUSTOM)
-				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
-					.callEvent(new EntityDamageByEntityEvent(damager, victim,
-						EntityDamageEvent.DamageCause.CUSTOM, 0
-					)), Calculator.secondsToTicks(.45));
+				Bukkit
+					.getScheduler()
+					.scheduleSyncDelayedTask(Main.plugin, () -> Bukkit
+						.getPluginManager()
+						.callEvent(new EntityDamageByEntityEvent(damager, victim,
+							EntityDamageEvent.DamageCause.CUSTOM, 0
+						)), Calculator.secondsToTicks(.45));
 			else if (finalDamager.getAttackSpeed() == .2 && e.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
-				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
-					.callEvent(new EntityDamageByEntityEvent(damager, victim,
-						EntityDamageEvent.DamageCause.CUSTOM, 0
-					)), Calculator.secondsToTicks(.25));
-				Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
-					.callEvent(new EntityDamageByEntityEvent(damager, victim,
-						EntityDamageEvent.DamageCause.CUSTOM, 0
-					)), Calculator.secondsToTicks(.5));
+				Bukkit
+					.getScheduler()
+					.scheduleSyncDelayedTask(Main.plugin, () -> Bukkit
+						.getPluginManager()
+						.callEvent(new EntityDamageByEntityEvent(damager, victim,
+							EntityDamageEvent.DamageCause.CUSTOM, 0
+						)), Calculator.secondsToTicks(.25));
+				Bukkit
+					.getScheduler()
+					.scheduleSyncDelayedTask(Main.plugin, () -> Bukkit
+						.getPluginManager()
+						.callEvent(new EntityDamageByEntityEvent(damager, victim,
+							EntityDamageEvent.DamageCause.CUSTOM, 0
+						)), Calculator.secondsToTicks(.5));
 			}
 
 			// Realize damage and deal effect
 			gamer.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType());
-			if (finalDamager.getEffectType() == null || (Kit.witch().getID().equals(gamer.getKit().getID())) &&
+			if (finalDamager.getEffectType() == null || (Kit
+				.witch()
+				.getID()
+				.equals(gamer
+					.getKit()
+					.getID())) &&
 				!gamer.isSharing())
 				return;
 			Random r = new Random();
@@ -361,9 +408,14 @@ public class GameListener implements Listener {
 				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
 				return;
 			}
-			if (finalDamager.getEffectType().getName().equals(PotionEffectType.FIRE_RESISTANCE.getName()))
+			if (finalDamager
+				.getEffectType()
+				.getName()
+				.equals(PotionEffectType.FIRE_RESISTANCE.getName()))
 				gamer.combust(finalDamager.getEffectDuration());
-			else gamer.getPlayer().addPotionEffect(finalDamager.dealEffect());
+			else gamer
+				.getPlayer()
+				.addPotionEffect(finalDamager.dealEffect());
 		}
 
 		// VD entity getting hurt
@@ -414,8 +466,12 @@ public class GameListener implements Listener {
 				e.setDamage(0);
 
 				// Check for pacifist challenge and not an enemy
-				if (gamer != null && gamer.getChallenges().contains(Challenge.pacifist()) &&
-					!gamer.getEnemies().contains(victim.getUniqueId()))
+				if (gamer != null && gamer
+					.getChallenges()
+					.contains(Challenge.pacifist()) &&
+					!gamer
+						.getEnemies()
+						.contains(victim.getUniqueId()))
 					return;
 
 				// Damage dealt by player
@@ -424,29 +480,48 @@ public class GameListener implements Listener {
 
 					// Calculate damage difference
 					AtomicInteger dif = new AtomicInteger();
-					player.getActivePotionEffects().forEach(potionEffect -> {
-						if (PotionEffectType.INCREASE_DAMAGE.equals(potionEffect.getType()))
-							dif.addAndGet((1 + potionEffect.getAmplifier()) * 3);
-						else if (PotionEffectType.WEAKNESS.equals(potionEffect.getType()))
-							dif.addAndGet(-(1 + potionEffect.getAmplifier()) * 4);
-					});
+					player
+						.getActivePotionEffects()
+						.forEach(potionEffect -> {
+							if (PotionEffectType.INCREASE_DAMAGE.equals(potionEffect.getType()))
+								dif.addAndGet((1 + potionEffect.getAmplifier()) * 3);
+							else if (PotionEffectType.WEAKNESS.equals(potionEffect.getType()))
+								dif.addAndGet(-(1 + potionEffect.getAmplifier()) * 4);
+						});
 
 					// Range damage
 					if (projectile) {
-						if (e.getDamager().getMetadata(VDItem.MetaKey.PER_BLOCK.name()).get(0).asBoolean())
+						if (e
+							.getDamager()
+							.getMetadata(VDItem.MetaKey.PER_BLOCK.name())
+							.get(0)
+							.asBoolean())
 							finalVictim.takeDamage(
-								(int) (e.getDamager().getMetadata(VDItem.MetaKey.DAMAGE.name())
-									.get(0).asInt()
-									* victim.getLocation().distance((Location)
-									Objects.requireNonNull(e.getDamager().getMetadata(
-										VDItem.MetaKey.ORIGIN_LOCATION.name()).get(0).value())))
+								(int) (e
+									.getDamager()
+									.getMetadata(VDItem.MetaKey.DAMAGE.name())
+									.get(0)
+									.asInt()
+									* victim
+									.getLocation()
+									.distance((Location)
+										Objects.requireNonNull(e
+											.getDamager()
+											.getMetadata(
+												VDItem.MetaKey.ORIGIN_LOCATION.name())
+											.get(0)
+											.value())))
 									+ gamer.getBaseDamage(),
 								IndividualAttackType.NORMAL,
 								player,
 								arena
 							);
 						else finalVictim.takeDamage(
-							e.getDamager().getMetadata(VDItem.MetaKey.DAMAGE.name()).get(0).asInt() +
+							e
+								.getDamager()
+								.getMetadata(VDItem.MetaKey.DAMAGE.name())
+								.get(0)
+								.asInt() +
 								gamer.getBaseDamage(),
 							IndividualAttackType.NORMAL,
 							player,
@@ -475,7 +550,12 @@ public class GameListener implements Listener {
 					Random r = new Random();
 
 					// Check for vampire kit
-					if (Kit.vampire().getID().equals(gamer.getKit().getID()) && !gamer.isSharing()) {
+					if (Kit
+						.vampire()
+						.getID()
+						.equals(gamer
+							.getKit()
+							.getID()) && !gamer.isSharing()) {
 						// Heal if probability is right
 						if (r.nextDouble() < .2)
 							gamer.changeCurrentHealth((int) (hurt * .25));
@@ -501,7 +581,9 @@ public class GameListener implements Listener {
 
 					if (e.getCause() == EntityDamageEvent.DamageCause.CUSTOM) {
 						// Make sure fast attacks only apply when mobs are close
-						if (damager.getLocation().distance(victim.getLocation()) > 1.75) {
+						if (damager
+							.getLocation()
+							.distance(victim.getLocation()) > 1.75) {
 							e.setCancelled(true);
 							return;
 						}
@@ -509,26 +591,37 @@ public class GameListener implements Listener {
 
 					// Implement faster attacks
 					if (finalDamager.getAttackSpeed() == .4 && e.getCause() != EntityDamageEvent.DamageCause.CUSTOM)
-						Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
-							.callEvent(new EntityDamageByEntityEvent(damager, victim,
-								EntityDamageEvent.DamageCause.CUSTOM, 0
-							)), Calculator.secondsToTicks(.45));
+						Bukkit
+							.getScheduler()
+							.scheduleSyncDelayedTask(Main.plugin, () -> Bukkit
+								.getPluginManager()
+								.callEvent(new EntityDamageByEntityEvent(damager, victim,
+									EntityDamageEvent.DamageCause.CUSTOM, 0
+								)), Calculator.secondsToTicks(.45));
 					else if (finalDamager.getAttackSpeed() == .2 &&
 						e.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
-						Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
-							.callEvent(new EntityDamageByEntityEvent(damager, victim,
-								EntityDamageEvent.DamageCause.CUSTOM, 0
-							)), Calculator.secondsToTicks(.25));
-						Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
-							.callEvent(new EntityDamageByEntityEvent(damager, victim,
-								EntityDamageEvent.DamageCause.CUSTOM, 0
-							)), Calculator.secondsToTicks(.5));
+						Bukkit
+							.getScheduler()
+							.scheduleSyncDelayedTask(Main.plugin, () -> Bukkit
+								.getPluginManager()
+								.callEvent(new EntityDamageByEntityEvent(damager, victim,
+									EntityDamageEvent.DamageCause.CUSTOM, 0
+								)), Calculator.secondsToTicks(.25));
+						Bukkit
+							.getScheduler()
+							.scheduleSyncDelayedTask(Main.plugin, () -> Bukkit
+								.getPluginManager()
+								.callEvent(new EntityDamageByEntityEvent(damager, victim,
+									EntityDamageEvent.DamageCause.CUSTOM, 0
+								)), Calculator.secondsToTicks(.5));
 					}
 
 					// Check for pet
 					if (finalDamager instanceof VDPet)
 						finalVictim.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType(),
-							((VDPet) finalDamager).getOwner().getPlayer(), arena
+							((VDPet) finalDamager)
+								.getOwner()
+								.getPlayer(), arena
 						);
 
 						// Play out damage and effect
@@ -536,7 +629,9 @@ public class GameListener implements Listener {
 						null, arena
 					);
 					if (finalDamager.dealEffect() != null)
-						finalVictim.getEntity().addPotionEffect(finalDamager.dealEffect());
+						finalVictim
+							.getEntity()
+							.addPotionEffect(finalDamager.dealEffect());
 				}
 			}
 
@@ -562,7 +657,9 @@ public class GameListener implements Listener {
 
 				if (e.getCause() == EntityDamageEvent.DamageCause.CUSTOM) {
 					// Make sure fast attacks only apply when mobs are close
-					if (damager.getLocation().distance(victim.getLocation()) > 1.75) {
+					if (damager
+						.getLocation()
+						.distance(victim.getLocation()) > 1.75) {
 						e.setCancelled(true);
 						return;
 					}
@@ -576,20 +673,29 @@ public class GameListener implements Listener {
 
 				// Implement faster attacks
 				if (finalDamager.getAttackSpeed() == .4 && e.getCause() != EntityDamageEvent.DamageCause.CUSTOM)
-					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
-						.callEvent(new EntityDamageByEntityEvent(damager, victim,
-							EntityDamageEvent.DamageCause.CUSTOM, 0
-						)), Calculator.secondsToTicks(.45));
+					Bukkit
+						.getScheduler()
+						.scheduleSyncDelayedTask(Main.plugin, () -> Bukkit
+							.getPluginManager()
+							.callEvent(new EntityDamageByEntityEvent(damager, victim,
+								EntityDamageEvent.DamageCause.CUSTOM, 0
+							)), Calculator.secondsToTicks(.45));
 				else if (finalDamager.getAttackSpeed() == .2 &&
 					e.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
-					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
-						.callEvent(new EntityDamageByEntityEvent(damager, victim,
-							EntityDamageEvent.DamageCause.CUSTOM, 0
-						)), Calculator.secondsToTicks(.25));
-					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () -> Bukkit.getPluginManager()
-						.callEvent(new EntityDamageByEntityEvent(damager, victim,
-							EntityDamageEvent.DamageCause.CUSTOM, 0
-						)), Calculator.secondsToTicks(.5));
+					Bukkit
+						.getScheduler()
+						.scheduleSyncDelayedTask(Main.plugin, () -> Bukkit
+							.getPluginManager()
+							.callEvent(new EntityDamageByEntityEvent(damager, victim,
+								EntityDamageEvent.DamageCause.CUSTOM, 0
+							)), Calculator.secondsToTicks(.25));
+					Bukkit
+						.getScheduler()
+						.scheduleSyncDelayedTask(Main.plugin, () -> Bukkit
+							.getPluginManager()
+							.callEvent(new EntityDamageByEntityEvent(damager, victim,
+								EntityDamageEvent.DamageCause.CUSTOM, 0
+							)), Calculator.secondsToTicks(.5));
 				}
 
 				// Play out damage and effect
@@ -597,7 +703,9 @@ public class GameListener implements Listener {
 					arena
 				);
 				if (finalDamager.dealEffect() != null)
-					finalVictim.getEntity().addPotionEffect(finalDamager.dealEffect());
+					finalVictim
+						.getEntity()
+						.addPotionEffect(finalDamager.dealEffect());
 			}
 		}
 	}
@@ -731,7 +839,9 @@ public class GameListener implements Listener {
 		// Attempt to get VDPlayer and VDMob
 		try {
 			arena = GameController.getArena(VDMob.getArenaID(e.getEntity()));
-			mob = arena.getMob(e.getEntity().getUniqueId());
+			mob = arena.getMob(e
+				.getEntity()
+				.getUniqueId());
 			if (target instanceof Player && !arena.hasPlayer((Player) target))
 				return;
 			else targeted = arena.getMob(target.getUniqueId());
@@ -785,9 +895,13 @@ public class GameListener implements Listener {
 		e.setCancelled(true);
 
 		// Create new explosion
-		Objects.requireNonNull(ent.getLocation().getWorld()).createExplosion(ent.getLocation(), 2.5f, false,
-			false, ent
-		);
+		Objects
+			.requireNonNull(ent
+				.getLocation()
+				.getWorld())
+			.createExplosion(ent.getLocation(), 2.5f, false,
+				false, ent
+			);
 
 		// Create replacement creeper
 		VDMob creeper = new VDCreeper((VDCreeper) mob, arena);
@@ -826,7 +940,12 @@ public class GameListener implements Listener {
 			// Ignore players with witch kit
 			try {
 				VDPlayer player = arena.getPlayer(affectedEntity.getUniqueId());
-				if (Kit.witch().getID().equals(player.getKit().getID()) && !player.isSharing())
+				if (Kit
+					.witch()
+					.getID()
+					.equals(player
+						.getKit()
+						.getID()) && !player.isSharing())
 					continue;
 				if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(Kit.EffectType.WITCH))) {
 					PlayerManager.notifySuccess(player.getPlayer(), LanguageManager.messages.effectShare);
@@ -860,12 +979,16 @@ public class GameListener implements Listener {
 			return;
 
 		// Get offhand
-		ItemStack off = player.getInventory().getItemInOffHand();
+		ItemStack off = player
+			.getInventory()
+			.getItemInOffHand();
 
 		// Unequip weapons and mage abilities in offhand
 		if (VDWeapon.matchesNoAmmo(off) || MageAbility.matches(off)) {
 			PlayerManager.giveItem(player, off, LanguageManager.errors.inventoryFull);
-			player.getInventory().setItemInOffHand(null);
+			player
+				.getInventory()
+				.setItemInOffHand(null);
 			PlayerManager.notifyFailure(player, LanguageManager.errors.offWeapon);
 		}
 	}
@@ -901,7 +1024,9 @@ public class GameListener implements Listener {
 
 			// Attempt to get VDPlayer
 			try {
-				gamer = GameController.getArena(player).getPlayer(player);
+				gamer = GameController
+					.getArena(player)
+					.getPlayer(player);
 			}
 			catch (ArenaNotFoundException | PlayerNotFoundException err) {
 				return;
@@ -911,7 +1036,9 @@ public class GameListener implements Listener {
 		// Check for VDMob
 		else {
 			try {
-				GameController.getArena(VDMob.getArenaID(ent)).getMob(ent.getUniqueId());
+				GameController
+					.getArena(VDMob.getArenaID(ent))
+					.getMob(ent.getUniqueId());
 			}
 			catch (IndexOutOfBoundsException | VDMobNotFoundException | ArenaNotFoundException err) {
 				return;
@@ -998,15 +1125,21 @@ public class GameListener implements Listener {
 		// Get item in hand
 		ItemStack item;
 		if (e.getHand() == EquipmentSlot.OFF_HAND) {
-			item = Objects.requireNonNull(player.getEquipment()).getItemInOffHand();
-			ItemStack main = Objects.requireNonNull(player.getEquipment()).getItemInMainHand();
+			item = Objects
+				.requireNonNull(player.getEquipment())
+				.getItemInOffHand();
+			ItemStack main = Objects
+				.requireNonNull(player.getEquipment())
+				.getItemInMainHand();
 
 			// Check for other clickables in main hand
 			if (VDAbility.matches(main) || VDFood.matches(main) || VDArmor.matches(main) ||
 				VDWeapon.matchesClickableWeapon(main))
 				return;
 		}
-		else item = Objects.requireNonNull(player.getEquipment()).getItemInMainHand();
+		else item = Objects
+			.requireNonNull(player.getEquipment())
+			.getItemInMainHand();
 
 		// Open shop inventory
 		if (Shop.matches(item))
@@ -1038,8 +1171,12 @@ public class GameListener implements Listener {
 
 			// Make player leave
 		else if (Leave.matches(item))
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-				Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player)));
+			Bukkit
+				.getScheduler()
+				.scheduleSyncDelayedTask(Main.plugin, () ->
+					Bukkit
+						.getPluginManager()
+						.callEvent(new LeaveArenaEvent(player)));
 
 			// Ignore
 		else return;
@@ -1059,7 +1196,9 @@ public class GameListener implements Listener {
 		VDPlayer gamer;
 
 		// Check for void damage
-		if (!e.getCause().equals(EntityDamageEvent.DamageCause.VOID)) return;
+		if (!e
+			.getCause()
+			.equals(EntityDamageEvent.DamageCause.VOID)) return;
 
 		// Attempt to get arena and player
 		try {
@@ -1078,7 +1217,9 @@ public class GameListener implements Listener {
 			// Teleport player back to player spawn or waiting room
 			if (arena.getWaitingRoom() == null)
 				try {
-					player.teleport(arena.getPlayerSpawn().getLocation());
+					player.teleport(arena
+						.getPlayerSpawn()
+						.getLocation());
 				}
 				catch (NullPointerException err) {
 					CommunicationManager.debugError(err.getMessage(), CommunicationManager.DebugLevel.QUIET);
@@ -1090,8 +1231,12 @@ public class GameListener implements Listener {
 			PlayerManager.fakeDeath(gamer);
 
 			// Check for explosive challenge
-			if (gamer.getChallenges().contains(Challenge.explosive()))
-				player.getInventory().clear();
+			if (gamer
+				.getChallenges()
+				.contains(Challenge.explosive()))
+				player
+					.getInventory()
+					.clear();
 
 			// Notify player of their own death
 			player.sendTitle(
@@ -1102,7 +1247,9 @@ public class GameListener implements Listener {
 
 			// Teleport player back to player spawn
 			try {
-				player.teleport(arena.getPlayerSpawn().getLocation());
+				player.teleport(arena
+					.getPlayerSpawn()
+					.getLocation());
 			}
 			catch (NullPointerException err) {
 				CommunicationManager.debugError(err.getMessage(), CommunicationManager.DebugLevel.QUIET);
@@ -1110,24 +1257,34 @@ public class GameListener implements Listener {
 			player.closeInventory();
 
 			// Notify everyone else of player death
-			arena.getPlayers().forEach(fighter -> {
-				if (!fighter.getPlayer().getUniqueId().equals(player.getUniqueId()))
-					PlayerManager.notifyAlert(
-						fighter.getPlayer(),
-						String.format(LanguageManager.messages.death, player.getName())
-					);
-				if (arena.hasPlayerDeathSound())
-					try {
-						fighter.getPlayer().playSound(arena.getPlayerSpawn().getLocation().clone()
-								.add(0, -8, 0),
-							Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10,
-							.75f
+			arena
+				.getPlayers()
+				.forEach(fighter -> {
+					if (!fighter
+						.getPlayer()
+						.getUniqueId()
+						.equals(player.getUniqueId()))
+						PlayerManager.notifyAlert(
+							fighter.getPlayer(),
+							String.format(LanguageManager.messages.death, player.getName())
 						);
-					}
-					catch (NullPointerException err) {
-						CommunicationManager.debugError(err.getMessage(), CommunicationManager.DebugLevel.QUIET);
-					}
-			});
+					if (arena.hasPlayerDeathSound())
+						try {
+							fighter
+								.getPlayer()
+								.playSound(arena
+										.getPlayerSpawn()
+										.getLocation()
+										.clone()
+										.add(0, -8, 0),
+									Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10,
+									.75f
+								);
+						}
+						catch (NullPointerException err) {
+							CommunicationManager.debugError(err.getMessage(), CommunicationManager.DebugLevel.QUIET);
+						}
+				});
 
 			// Update scoreboards
 			arena.updateScoreboards();
@@ -1174,7 +1331,9 @@ public class GameListener implements Listener {
 
 		Player player = e.getPlayer();
 		ItemStack item = e.getItem() == null ? new ItemStack(Material.AIR) : e.getItem();
-		ItemStack main = player.getInventory().getItemInMainHand();
+		ItemStack main = player
+			.getInventory()
+			.getItemInMainHand();
 		Arena arena;
 		VDPlayer gamer;
 
@@ -1189,7 +1348,9 @@ public class GameListener implements Listener {
 
 		// Check armor after equip
 		if (VDArmor.matches(item)) {
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, gamer::updateArmor, 1);
+			Bukkit
+				.getScheduler()
+				.scheduleSyncDelayedTask(Main.plugin, gamer::updateArmor, 1);
 			return;
 		}
 
@@ -1207,7 +1368,8 @@ public class GameListener implements Listener {
 
 		// Give health and hunger for totem
 		if (ShopFood.matches(item) && item.getType() == Material.TOTEM_OF_UNDYING) {
-			PersistentDataContainer dataContainer = Objects.requireNonNull(item.getItemMeta())
+			PersistentDataContainer dataContainer = Objects
+				.requireNonNull(item.getItemMeta())
 				.getPersistentDataContainer();
 
 			Integer integer = dataContainer.get(VDFood.HEALTH_KEY, PersistentDataType.INTEGER);
@@ -1221,7 +1383,9 @@ public class GameListener implements Listener {
 				player.setFoodLevel(Math.max(20, player.getFoodLevel() + integer));
 
 			// Consume
-			player.getInventory().setItem(Objects.requireNonNull(e.getHand()), null);
+			player
+				.getInventory()
+				.setItem(Objects.requireNonNull(e.getHand()), null);
 		}
 	}
 
@@ -1242,14 +1406,16 @@ public class GameListener implements Listener {
 			return;
 		}
 
-		// Check for active arena, at least wave 1
-		if (arena.getStatus() != ArenaStatus.ACTIVE || arena.getCurrentWave() < 1) {
-			e.setCancelled(true);
+		// Stop vanilla consumption
+		e.setCancelled(true);
+
+		// Check for active arena, at least wave 1, otherwise ignore
+		if (arena.getStatus() != ArenaStatus.ACTIVE || arena.getCurrentWave() < 1)
 			return;
-		}
 
 		// Give health and hunger
-		PersistentDataContainer dataContainer = Objects.requireNonNull(item.getItemMeta())
+		PersistentDataContainer dataContainer = Objects
+			.requireNonNull(item.getItemMeta())
 			.getPersistentDataContainer();
 
 		Integer integer = dataContainer.get(VDFood.HEALTH_KEY, PersistentDataType.INTEGER);
@@ -1264,6 +1430,17 @@ public class GameListener implements Listener {
 
 		// No saturation increase
 		player.setSaturation(0);
+
+		// Manually consume
+		item.setAmount(item.getAmount() - 1);
+		if (e.getHand() == EquipmentSlot.HAND)
+			player
+				.getInventory()
+				.setItemInMainHand(item);
+		else if (e.getHand() == EquipmentSlot.OFF_HAND)
+			player
+				.getInventory()
+				.setItemInOffHand(item);
 	}
 
 	// Prevent pets from teleporting
@@ -1305,9 +1482,20 @@ public class GameListener implements Listener {
 			return;
 
 		// Cancel teleport and notify if teleport is outside arena bounds
-		if (!(BoundingBox.of(arena.getCorner1(), arena.getCorner2())
-			.contains(Objects.requireNonNull(e.getTo()).getX(), e.getTo().getY(), e.getTo().getZ())) ||
-			!Objects.equals(e.getTo().getWorld(), arena.getCorner1().getWorld())) {
+		if (!(BoundingBox
+			.of(arena.getCorner1(), arena.getCorner2())
+			.contains(Objects
+				.requireNonNull(e.getTo())
+				.getX(), e
+				.getTo()
+				.getY(), e
+				.getTo()
+				.getZ())) ||
+			!Objects.equals(e
+				.getTo()
+				.getWorld(), arena
+				.getCorner1()
+				.getWorld())) {
 			e.setCancelled(true);
 			PlayerManager.notifyFailure(player, LanguageManager.errors.teleport,
 				new ColoredMessage(ChatColor.AQUA, "/vd leave")
@@ -1323,7 +1511,9 @@ public class GameListener implements Listener {
 		VDPlayer gamer;
 
 		// Exempt admins for testing purposes
-		if (CommunicationManager.getDebugLevel().atLeast(CommunicationManager.DebugLevel.DEVELOPER) && player.hasPermission("vd.admin"))
+		if (CommunicationManager
+			.getDebugLevel()
+			.atLeast(CommunicationManager.DebugLevel.DEVELOPER) && player.hasPermission("vd.admin"))
 			return;
 
 		// Attempt to get VDPlayer and arena
@@ -1340,17 +1530,32 @@ public class GameListener implements Listener {
 			return;
 
 		// Cancel move and notify if movement is outside arena bounds
-		if (!(BoundingBox.of(arena.getCorner1(), arena.getCorner2())
-			.contains(Objects.requireNonNull(e.getTo()).getX(), e.getTo().getY(), e.getTo().getZ())) ||
-			!Objects.equals(e.getTo().getWorld(), arena.getCorner1().getWorld())) {
+		if (!(BoundingBox
+			.of(arena.getCorner1(), arena.getCorner2())
+			.contains(Objects
+				.requireNonNull(e.getTo())
+				.getX(), e
+				.getTo()
+				.getY(), e
+				.getTo()
+				.getZ())) ||
+			!Objects.equals(e
+				.getTo()
+				.getWorld(), arena
+				.getCorner1()
+				.getWorld())) {
 
 			// Teleport player back into arena after several infractions
 			if (gamer.incrementInfractions() > 5) {
 				gamer.resetInfractions();
 				try {
 					if (gamer.getStatus() == VDPlayer.Status.ALIVE)
-						player.teleport(arena.getPlayerSpawn().getLocation());
-					else PlayerManager.teleSpectator(player, arena.getPlayerSpawn().getLocation());
+						player.teleport(arena
+							.getPlayerSpawn()
+							.getLocation());
+					else PlayerManager.teleSpectator(player, arena
+						.getPlayerSpawn()
+						.getLocation());
 				}
 				catch (NullPointerException err) {
 					CommunicationManager.debugError(err.getMessage(), CommunicationManager.DebugLevel.QUIET);
@@ -1394,22 +1599,30 @@ public class GameListener implements Listener {
 
 		// Attempt to get VDPlayer
 		try {
-			gamer = GameController.getArena(player).getPlayer(player);
+			gamer = GameController
+				.getArena(player)
+				.getPlayer(player);
 		}
 		catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
 		// Check for menu items
-		ItemStack item = e.getItemDrop().getItemStack();
+		ItemStack item = e
+			.getItemDrop()
+			.getItemStack();
 		if (VDMenuItem.matches(item) || VDAbility.matches(item)) {
 			e.setCancelled(true);
 			return;
 		}
 
 		// Update everything
-		gamer.updateMainHand(player.getInventory().getItemInMainHand());
-		gamer.updateOffHand(player.getInventory().getItemInOffHand());
+		gamer.updateMainHand(player
+			.getInventory()
+			.getItemInMainHand());
+		gamer.updateOffHand(player
+			.getInventory()
+			.getItemInOffHand());
 		gamer.updateArmor();
 	}
 
@@ -1425,23 +1638,31 @@ public class GameListener implements Listener {
 
 		// Attempt to get VDPlayer
 		try {
-			gamer = GameController.getArena(player).getPlayer(player);
+			gamer = GameController
+				.getArena(player)
+				.getPlayer(player);
 		}
 		catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
 		// Update main hand after one tick
-		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin,
-			() -> gamer.updateMainHand(player.getInventory().getItemInMainHand()), 1
-		);
+		Bukkit
+			.getScheduler()
+			.scheduleSyncDelayedTask(Main.plugin,
+				() -> gamer.updateMainHand(player
+					.getInventory()
+					.getItemInMainHand()), 1
+			);
 	}
 
 	// Prevent consumption from happening in the off-hand when the main hand has something interact-able
 	@EventHandler
 	public void onFalseConsume(PlayerInteractEvent e) {
 		Player player = e.getPlayer();
-		ItemStack main = player.getInventory().getItemInMainHand();
+		ItemStack main = player
+			.getInventory()
+			.getItemInMainHand();
 
 		// Check for player in arena
 		if (!GameController.checkPlayer(player))
@@ -1486,7 +1707,9 @@ public class GameListener implements Listener {
 			return;
 
 		// Update main hand if that slot changes
-		if (e.getSlot() == player.getInventory().getHeldItemSlot())
+		if (e.getSlot() == player
+			.getInventory()
+			.getHeldItemSlot())
 			gamer.updateMainHand(e.getCursor());
 
 			// Update offhand if that slot changes
@@ -1495,16 +1718,24 @@ public class GameListener implements Listener {
 
 			// Update armor if those slots change
 		else if (e.getSlot() >= 36 && e.getSlot() <= 39)
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, gamer::updateArmor, 1);
+			Bukkit
+				.getScheduler()
+				.scheduleSyncDelayedTask(Main.plugin, gamer::updateArmor, 1);
 
 			// Update weapon on shift click
 		else if (e.isShiftClick() && VDWeapon.matches(e.getCurrentItem()) &&
-			player.getInventory().firstEmpty() == player.getInventory().getHeldItemSlot())
+			player
+				.getInventory()
+				.firstEmpty() == player
+				.getInventory()
+				.getHeldItemSlot())
 			gamer.updateMainHand(e.getCurrentItem());
 
 			// Update armor on shift click
 		else if (e.isShiftClick() && VDArmor.matches(e.getCurrentItem()))
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, gamer::updateArmor, 1);
+			Bukkit
+				.getScheduler()
+				.scheduleSyncDelayedTask(Main.plugin, gamer::updateArmor, 1);
 	}
 
 	// Prevent swapping items while waiting for game to start, otherwise update player stats
@@ -1551,7 +1782,9 @@ public class GameListener implements Listener {
 		}
 
 		// Trigger check for main hand
-		gamer.updateMainHand(player.getInventory().getItem(e.getNewSlot()));
+		gamer.updateMainHand(player
+			.getInventory()
+			.getItem(e.getNewSlot()));
 	}
 
 	// Handle custom durability
@@ -1563,7 +1796,9 @@ public class GameListener implements Listener {
 
 		// Attempt to get VDPlayer
 		try {
-			gamer = GameController.getArena(player).getPlayer(player);
+			gamer = GameController
+				.getArena(player)
+				.getPlayer(player);
 		}
 		catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
@@ -1573,19 +1808,39 @@ public class GameListener implements Listener {
 		e.setCancelled(true);
 		ItemStack nothing = new ItemStack(Material.AIR);
 		if (!VDItem.updateDurability(item)) {
-			if (item.equals(player.getInventory().getItemInMainHand())) {
-				player.getInventory().setItemInMainHand(nothing);
+			if (item.equals(player
+				.getInventory()
+				.getItemInMainHand())) {
+				player
+					.getInventory()
+					.setItemInMainHand(nothing);
 				gamer.updateMainHand(nothing);
 			}
-			else if (item.equals(player.getInventory().getBoots())) {
-				player.getInventory().setBoots(nothing);
+			else if (item.equals(player
+				.getInventory()
+				.getBoots())) {
+				player
+					.getInventory()
+					.setBoots(nothing);
 			}
-			else if (item.equals(player.getInventory().getChestplate()))
-				player.getInventory().setChestplate(nothing);
-			else if (item.equals(player.getInventory().getHelmet()))
-				player.getInventory().setHelmet(nothing);
-			else if (item.equals(player.getInventory().getLeggings()))
-				player.getInventory().setLeggings(nothing);
+			else if (item.equals(player
+				.getInventory()
+				.getChestplate()))
+				player
+					.getInventory()
+					.setChestplate(nothing);
+			else if (item.equals(player
+				.getInventory()
+				.getHelmet()))
+				player
+					.getInventory()
+					.setHelmet(nothing);
+			else if (item.equals(player
+				.getInventory()
+				.getLeggings()))
+				player
+					.getInventory()
+					.setLeggings(nothing);
 			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1);
 		}
 	}
@@ -1614,7 +1869,9 @@ public class GameListener implements Listener {
 
 		// Summon explosion if at full power
 		if (e.getPower() >= 1)
-			Objects.requireNonNull(location.getWorld()).createExplosion(location, 1.75f, false, false, ent);
+			Objects
+				.requireNonNull(location.getWorld())
+				.createExplosion(location, 1.75f, false, false, ent);
 	}
 
 	// Prevent riding other player's horses

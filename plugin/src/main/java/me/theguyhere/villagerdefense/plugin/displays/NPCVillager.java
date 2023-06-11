@@ -28,7 +28,10 @@ public class NPCVillager {
 
 		// Set location and packet entity
 		this.location = location;
-		villagerPacketEntity = NMSVersion.getCurrent().getNmsManager().newVillagerPacketEntity(type);
+		villagerPacketEntity = NMSVersion
+			.getCurrent()
+			.getNmsManager()
+			.newVillagerPacketEntity(type);
 	}
 
 	public Location getLocation() {
@@ -53,8 +56,12 @@ public class NPCVillager {
 	 */
 	public void displayForPlayer(Player player) {
 		// Only display if player is in the same world
-		if (player.getWorld().equals(location.getWorld()))
-			villagerPacketEntity.newSpawnPackets(location).sendTo(player);
+		if (player
+			.getWorld()
+			.equals(location.getWorld()))
+			villagerPacketEntity
+				.newSpawnPackets(location)
+				.sendTo(player);
 	}
 
 	/**

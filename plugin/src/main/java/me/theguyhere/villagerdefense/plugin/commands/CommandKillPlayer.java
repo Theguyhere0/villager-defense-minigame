@@ -32,7 +32,11 @@ class CommandKillPlayer {
 		}
 
 		// Check for player in an active game
-		if (GameController.getArenas().values().stream().filter(Objects::nonNull)
+		if (GameController
+			.getArenas()
+			.values()
+			.stream()
+			.filter(Objects::nonNull)
 			.filter(arena1 -> arena1.getStatus() == ArenaStatus.ACTIVE)
 			.noneMatch(arena1 -> arena1.hasPlayer(player))) {
 			PlayerManager.notifyFailure(player, LanguageManager.errors.suicideActive);
@@ -41,7 +45,10 @@ class CommandKillPlayer {
 
 		// Check for alive player
 		try {
-			if (GameController.getArena(player).getPlayer(player).getStatus() != VDPlayer.Status.ALIVE) {
+			if (GameController
+				.getArena(player)
+				.getPlayer(player)
+				.getStatus() != VDPlayer.Status.ALIVE) {
 				PlayerManager.notifyFailure(player, LanguageManager.errors.suicide);
 				return;
 			}
@@ -55,9 +62,13 @@ class CommandKillPlayer {
 		}
 
 		// Create a player death and make sure it gets detected
-		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-			Bukkit.getPluginManager().callEvent(new EntityDamageEvent(player,
-				EntityDamageEvent.DamageCause.SUICIDE, 99
-			)));
+		Bukkit
+			.getScheduler()
+			.scheduleSyncDelayedTask(Main.plugin, () ->
+				Bukkit
+					.getPluginManager()
+					.callEvent(new EntityDamageEvent(player,
+						EntityDamageEvent.DamageCause.SUICIDE, 99
+					)));
 	}
 }

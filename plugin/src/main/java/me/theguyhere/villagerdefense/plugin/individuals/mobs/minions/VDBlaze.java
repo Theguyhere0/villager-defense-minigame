@@ -16,7 +16,9 @@ public class VDBlaze extends VDMinion {
 	public VDBlaze(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.BLAZE),
+			(Mob) Objects
+				.requireNonNull(location.getWorld())
+				.spawnEntity(location, EntityType.BLAZE),
 			LanguageManager.mobs.blaze,
 			LanguageManager.mobLore.blaze,
 			IndividualAttackType.NONE

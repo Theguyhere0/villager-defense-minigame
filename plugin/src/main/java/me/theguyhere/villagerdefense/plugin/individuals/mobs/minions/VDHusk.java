@@ -17,7 +17,9 @@ public class VDHusk extends VDMinion {
 	public VDHusk(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.HUSK),
+			(Mob) Objects
+				.requireNonNull(location.getWorld())
+				.spawnEntity(location, EntityType.HUSK),
 			LanguageManager.mobs.husk,
 			LanguageManager.mobLore.husk,
 			IndividualAttackType.NORMAL

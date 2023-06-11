@@ -39,14 +39,18 @@ public abstract class VDMinion extends VDMob {
 		minion.setRemoveWhenFarAway(false);
 		minion.setCanPickupItems(false);
 		if (minion.isInsideVehicle())
-			Objects.requireNonNull(minion.getVehicle()).remove();
+			Objects
+				.requireNonNull(minion.getVehicle())
+				.remove();
 		for (Entity passenger : minion.getPassengers())
 			passenger.remove();
 		minion.setHealth(2);
-		Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MAX_HEALTH))
+		Objects
+			.requireNonNull(mob.getAttribute(Attribute.GENERIC_MAX_HEALTH))
 			.addModifier(new AttributeModifier(
 				"custom",
-				2 - Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MAX_HEALTH))
+				2 - Objects
+					.requireNonNull(mob.getAttribute(Attribute.GENERIC_MAX_HEALTH))
 					.getBaseValue(),
 				AttributeModifier.Operation.ADD_NUMBER
 			));
@@ -274,10 +278,14 @@ public abstract class VDMinion extends VDMob {
 		enchant.put(Enchantment.DURABILITY, 3);
 
 		if (level == 7)
-			Objects.requireNonNull(mob.getEquipment()).setItemInMainHand(
-				ItemFactory.createItem(Material.BOW, "", null, enchant)
-			);
-		else Objects.requireNonNull(mob.getEquipment()).setItemInMainHand(new ItemStack(Material.BOW));
+			Objects
+				.requireNonNull(mob.getEquipment())
+				.setItemInMainHand(
+					ItemFactory.createItem(Material.BOW, "", null, enchant)
+				);
+		else Objects
+			.requireNonNull(mob.getEquipment())
+			.setItemInMainHand(new ItemStack(Material.BOW));
 	}
 
 	protected void setCrossbow() {
@@ -285,10 +293,14 @@ public abstract class VDMinion extends VDMob {
 		enchant.put(Enchantment.DURABILITY, 3);
 
 		if (level == 7)
-			Objects.requireNonNull(mob.getEquipment()).setItemInMainHand(
-				ItemFactory.createItem(Material.CROSSBOW, "", null, enchant)
-			);
-		else Objects.requireNonNull(mob.getEquipment()).setItemInMainHand(new ItemStack(Material.CROSSBOW));
+			Objects
+				.requireNonNull(mob.getEquipment())
+				.setItemInMainHand(
+					ItemFactory.createItem(Material.CROSSBOW, "", null, enchant)
+				);
+		else Objects
+			.requireNonNull(mob.getEquipment())
+			.setItemInMainHand(new ItemStack(Material.CROSSBOW));
 	}
 
 	/**

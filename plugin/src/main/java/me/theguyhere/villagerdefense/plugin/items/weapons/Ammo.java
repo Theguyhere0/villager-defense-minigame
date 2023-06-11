@@ -106,7 +106,7 @@ public abstract class Ammo extends VDWeapon {
 				capacity = 75;
 				break;
 			case T6:
-				capacity = 100;
+				capacity = 90;
 				break;
 			default:
 				capacity = 0;
@@ -151,22 +151,13 @@ public abstract class Ammo extends VDWeapon {
 		int price;
 		switch (tier) {
 			case T1:
-				price = 75;
-				break;
 			case T2:
-				price = 150;
-				break;
 			case T3:
-				price = 275;
-				break;
 			case T4:
-				price = 450;
-				break;
 			case T5:
-				price = 500;
-				break;
 			case T6:
-				price = 650;
+				price =
+					Calculator.roundToNearest(Math.pow(capacity, 0.5) / refill * 150, 5);
 				break;
 			default:
 				price = -1;
@@ -190,7 +181,9 @@ public abstract class Ammo extends VDWeapon {
 		ItemMeta meta = toCheck.getItemMeta();
 		if (meta == null)
 			return false;
-		String value = meta.getPersistentDataContainer().get(ITEM_TYPE_KEY, PersistentDataType.STRING);
+		String value = meta
+			.getPersistentDataContainer()
+			.get(ITEM_TYPE_KEY, PersistentDataType.STRING);
 		if (value == null)
 			return false;
 		return AMMO.equals(value);
@@ -210,9 +203,18 @@ public abstract class Ammo extends VDWeapon {
 
 		// Get data
 		ItemMeta meta = Objects.requireNonNull(ammo.getItemMeta());
-		Integer maxCap = meta.getPersistentDataContainer().get(MAX_CAPACITY_KEY, PersistentDataType.INTEGER);
-		Integer capacity = meta.getPersistentDataContainer().get(CAPACITY_KEY, PersistentDataType.INTEGER);
-		Double refill = meta.getPersistentDataContainer().get(REFILL_KEY, PersistentDataType.DOUBLE);
+		Integer maxCap = meta
+			.getPersistentDataContainer()
+			.get(MAX_CAPACITY_KEY, PersistentDataType.INTEGER);
+		Integer capacity = meta
+			.getPersistentDataContainer()
+			.get(CAPACITY_KEY, PersistentDataType.INTEGER);
+		Double refill = meta
+			.getPersistentDataContainer()
+			.get(REFILL_KEY, PersistentDataType.DOUBLE);
+		Long nextRefill = meta
+			.getPersistentDataContainer()
+			.get(NEXT_REFILL_KEY, PersistentDataType.LONG);
 		AtomicInteger capIndex = new AtomicInteger();
 		List<String> lores = Objects.requireNonNull(meta.getLore());
 		lores.forEach(lore -> {
@@ -231,7 +233,23 @@ public abstract class Ammo extends VDWeapon {
 			return true;
 
 		// Update capacity data
-		meta.getPersistentDataContainer().set(CAPACITY_KEY, PersistentDataType.INTEGER, capacity);
+		meta
+			.getPersistentDataContainer()
+			.set(CAPACITY_KEY, PersistentDataType.INTEGER, Math.min(capacity, maxCap));
+
+		// Update refill data
+		if (refill != null && (nextRefill == null && delta < 0 || capacity < maxCap && delta > 0)) {
+			meta
+				.getPersistentDataContainer()
+				.set(NEXT_REFILL_KEY, PersistentDataType.LONG,
+					System.currentTimeMillis() + Calculator.secondsToMillis(refill)
+				);
+		}
+		else if (capacity >= maxCap)
+			meta
+				.getPersistentDataContainer()
+				.remove(NEXT_REFILL_KEY);
+
 
 		// Set new lore
 		ChatColor color = capacity >= .75 * maxCap ? ChatColor.GREEN :
@@ -258,24 +276,25 @@ public abstract class Ammo extends VDWeapon {
 
 		// Get data
 		ItemMeta meta = Objects.requireNonNull(ammo.getItemMeta());
-		Integer maxCap = meta.getPersistentDataContainer().get(MAX_CAPACITY_KEY, PersistentDataType.INTEGER);
-		Integer capacity = meta.getPersistentDataContainer().get(CAPACITY_KEY, PersistentDataType.INTEGER);
-		Double refill = meta.getPersistentDataContainer().get(REFILL_KEY, PersistentDataType.DOUBLE);
-		Long nextRefill = meta.getPersistentDataContainer().get(NEXT_REFILL_KEY, PersistentDataType.LONG);
+		Integer maxCap = meta
+			.getPersistentDataContainer()
+			.get(MAX_CAPACITY_KEY, PersistentDataType.INTEGER);
+		Integer capacity = meta
+			.getPersistentDataContainer()
+			.get(CAPACITY_KEY, PersistentDataType.INTEGER);
+		Double refill = meta
+			.getPersistentDataContainer()
+			.get(REFILL_KEY, PersistentDataType.DOUBLE);
+		Long nextRefill = meta
+			.getPersistentDataContainer()
+			.get(NEXT_REFILL_KEY, PersistentDataType.LONG);
 
 		// Ignore if malformed, full, or doesn't refill
 		if (maxCap == null || capacity == null || refill == null || capacity >= maxCap || refill == 0)
 			return;
 
 		// Refill if past next refill time
-		if (nextRefill == null || nextRefill < System.currentTimeMillis()) {
-			meta.getPersistentDataContainer().set(NEXT_REFILL_KEY, PersistentDataType.LONG,
-				System.currentTimeMillis() + Calculator.secondsToMillis(refill)
-			);
+		if (nextRefill == null || nextRefill < System.currentTimeMillis())
 			updateCapacity(ammo, boost ? 2 : 1);
-		}
-
-		// Perform updates
-		ammo.setItemMeta(meta);
 	}
 }

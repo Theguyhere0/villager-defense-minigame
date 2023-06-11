@@ -535,7 +535,9 @@ public class Arena {
 					);
 				}
 				else {
-					selected = !GameController.getValidSounds().contains(sound);
+					selected = !GameController
+						.getValidSounds()
+						.contains(sound);
 					return ItemFactory.createItem(Material.LIGHT_GRAY_CONCRETE,
 						CommunicationManager.format((selected ? "&a&l" : "&4&l") + "None"),
 						ItemFactory.BUTTON_FLAGS, selected ? enchants : null
@@ -572,7 +574,9 @@ public class Arena {
 					ItemFactory.BUTTON_FLAGS, selected ? enchants : null
 				);
 			default:
-				selected = !GameController.getValidSounds().contains(sound);
+				selected = !GameController
+					.getValidSounds()
+					.contains(sound);
 				return ItemFactory.createItem(Material.LIGHT_GRAY_CONCRETE,
 					CommunicationManager.format((selected ? "&a&l" : "&4&l") + "None"),
 					ItemFactory.BUTTON_FLAGS, selected ? enchants : null
@@ -587,8 +591,12 @@ public class Arena {
 	 */
 	public String getWaitingSoundName() {
 		String sound = config.getString(path + ".sounds.waiting");
-		if (sound != null && GameController.getValidSounds().contains(sound)) {
-			return sound.substring(0, 1).toUpperCase() + sound.substring(1);
+		if (sound != null && GameController
+			.getValidSounds()
+			.contains(sound)) {
+			return sound
+				.substring(0, 1)
+				.toUpperCase() + sound.substring(1);
 		}
 		else return "None";
 	}
@@ -843,25 +851,27 @@ public class Arena {
 
 		// Attempt to fetch new monster spawns
 		monsterSpawns.clear();
-		DataManager.getConfigLocationMap(path + ".monster").forEach((id, location) ->
-		{
-			try {
-				ArenaSpawnType spawnType;
-				switch (getMonsterSpawnType(id)) {
-					case 1:
-						spawnType = ArenaSpawnType.MONSTER_GROUND;
-						break;
-					case 2:
-						spawnType = ArenaSpawnType.MONSTER_AIR;
-						break;
-					default:
-						spawnType = ArenaSpawnType.MONSTER_ALL;
+		DataManager
+			.getConfigLocationMap(path + ".monster")
+			.forEach((id, location) ->
+			{
+				try {
+					ArenaSpawnType spawnType;
+					switch (getMonsterSpawnType(id)) {
+						case 1:
+							spawnType = ArenaSpawnType.MONSTER_GROUND;
+							break;
+						case 2:
+							spawnType = ArenaSpawnType.MONSTER_AIR;
+							break;
+						default:
+							spawnType = ArenaSpawnType.MONSTER_ALL;
+					}
+					monsterSpawns.add(new ArenaSpawn(Objects.requireNonNull(location), spawnType, id));
 				}
-				monsterSpawns.add(new ArenaSpawn(Objects.requireNonNull(location), spawnType, id));
-			}
-			catch (InvalidLocationException | NullPointerException ignored) {
-			}
-		});
+				catch (InvalidLocationException | NullPointerException ignored) {
+				}
+			});
 
 		// Turn on particles if appropriate
 		if (isClosed())
@@ -882,7 +892,10 @@ public class Arena {
 
 		// Default to all if empty
 		if (grounds.isEmpty())
-			return monsterSpawns.stream().map(ArenaSpawn::getLocation).collect(Collectors.toList());
+			return monsterSpawns
+				.stream()
+				.map(ArenaSpawn::getLocation)
+				.collect(Collectors.toList());
 		else return grounds;
 	}
 
@@ -896,7 +909,10 @@ public class Arena {
 
 		// Default to all if empty
 		if (airs.isEmpty())
-			return monsterSpawns.stream().map(ArenaSpawn::getLocation).collect(Collectors.toList());
+			return monsterSpawns
+				.stream()
+				.map(ArenaSpawn::getLocation)
+				.collect(Collectors.toList());
 		else return airs;
 	}
 
@@ -913,7 +929,9 @@ public class Arena {
 	 * @return Monster spawn.
 	 */
 	public ArenaSpawn getMonsterSpawn(int monsterSpawnID) {
-		List<ArenaSpawn> query = monsterSpawns.stream().filter(spawn -> spawn.getId() == monsterSpawnID)
+		List<ArenaSpawn> query = monsterSpawns
+			.stream()
+			.filter(spawn -> spawn.getId() == monsterSpawnID)
 			.collect(Collectors.toList());
 
 		if (query.size() != 1)
@@ -947,7 +965,9 @@ public class Arena {
 	 * @return New monster spawn ID
 	 */
 	public int newMonsterSpawnID() {
-		return Calculator.nextSmallestUniqueWhole(DataManager.getConfigLocationMap(path + ".monster").keySet());
+		return Calculator.nextSmallestUniqueWhole(DataManager
+			.getConfigLocationMap(path + ".monster")
+			.keySet());
 	}
 
 	/**
@@ -963,14 +983,16 @@ public class Arena {
 
 		// Attempt to fetch new villager spawns
 		villagerSpawns.clear();
-		DataManager.getConfigLocationMap(path + ".villager").forEach((id, location) ->
-		{
-			try {
-				villagerSpawns.add(new ArenaSpawn(Objects.requireNonNull(location), ArenaSpawnType.VILLAGER, id));
-			}
-			catch (InvalidLocationException | NullPointerException ignored) {
-			}
-		});
+		DataManager
+			.getConfigLocationMap(path + ".villager")
+			.forEach((id, location) ->
+			{
+				try {
+					villagerSpawns.add(new ArenaSpawn(Objects.requireNonNull(location), ArenaSpawnType.VILLAGER, id));
+				}
+				catch (InvalidLocationException | NullPointerException ignored) {
+				}
+			});
 
 		// Turn on particles if appropriate
 		if (isClosed())
@@ -992,7 +1014,9 @@ public class Arena {
 	 * @return Villager spawn.
 	 */
 	public ArenaSpawn getVillagerSpawn(int villagerSpawnID) {
-		List<ArenaSpawn> query = villagerSpawns.stream().filter(spawn -> spawn.getId() == villagerSpawnID)
+		List<ArenaSpawn> query = villagerSpawns
+			.stream()
+			.filter(spawn -> spawn.getId() == villagerSpawnID)
 			.collect(Collectors.toList());
 
 		if (query.size() != 1)
@@ -1016,7 +1040,8 @@ public class Arena {
 	 * @return New villager spawn ID
 	 */
 	public int newVillagerSpawnID() {
-		return Calculator.nextSmallestUniqueWhole(DataManager.getConfigLocationMap(path + ".villager")
+		return Calculator.nextSmallestUniqueWhole(DataManager
+			.getConfigLocationMap(path + ".villager")
 			.keySet());
 	}
 
@@ -1052,7 +1077,9 @@ public class Arena {
 		if (option.equals("custom"))
 			file = path + ".yml";
 
-		if (new File(Main.plugin.getDataFolder().getPath(), "spawnTables/" + file).exists() ||
+		if (new File(Main.plugin
+			.getDataFolder()
+			.getPath(), "spawnTables/" + file).exists() ||
 			option.equals("default")) {
 			config.set(path + ".spawnTable", option);
 			Main.saveArenaData();
@@ -1072,7 +1099,10 @@ public class Arena {
 	}
 
 	public void startSpawnParticles() {
-		Particle spawnParticle = Particle.valueOf(NMSVersion.getCurrent().getNmsManager().getSpawnParticleName());
+		Particle spawnParticle = Particle.valueOf(NMSVersion
+			.getCurrent()
+			.getNmsManager()
+			.getSpawnParticleName());
 
 		if (getPlayerSpawn() == null)
 			return;
@@ -1083,37 +1113,51 @@ public class Arena {
 		if (playerParticlesID != 0)
 			return;
 
-		playerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.plugin, new Runnable() {
-			double var = 0;
-			double var2 = 0;
-			Location first, second;
+		playerParticlesID = Bukkit
+			.getScheduler()
+			.scheduleSyncRepeatingTask(Main.plugin, new Runnable() {
+				double var = 0;
+				double var2 = 0;
+				Location first, second;
 
-			@Override
-			public void run() {
-				try {
-					// Update particle locations
-					var += Math.PI / 12;
-					var2 -= Math.PI / 12;
-					first = getPlayerSpawn().getLocation().clone().add(Math.cos(var), Math.sin(var) + 1,
-						Math.sin(var)
-					);
-					second = getPlayerSpawn().getLocation().clone().add(Math.cos(var2 + Math.PI), Math.sin(var2) + 1,
-						Math.sin(var2 + Math.PI)
-					);
+				@Override
+				public void run() {
+					try {
+						// Update particle locations
+						var += Math.PI / 12;
+						var2 -= Math.PI / 12;
+						first = getPlayerSpawn()
+							.getLocation()
+							.clone()
+							.add(Math.cos(var), Math.sin(var) + 1,
+								Math.sin(var)
+							);
+						second = getPlayerSpawn()
+							.getLocation()
+							.clone()
+							.add(Math.cos(var2 + Math.PI), Math.sin(var2) + 1,
+								Math.sin(var2 + Math.PI)
+							);
 
-					// Spawn particles
-					Objects.requireNonNull(getPlayerSpawn().getLocation().getWorld())
-						.spawnParticle(spawnParticle, first, 0);
-					getPlayerSpawn().getLocation().getWorld().spawnParticle(spawnParticle, second, 0);
+						// Spawn particles
+						Objects
+							.requireNonNull(getPlayerSpawn()
+								.getLocation()
+								.getWorld())
+							.spawnParticle(spawnParticle, first, 0);
+						getPlayerSpawn()
+							.getLocation()
+							.getWorld()
+							.spawnParticle(spawnParticle, second, 0);
+					}
+					catch (Exception e) {
+						CommunicationManager.debugError(
+							String.format("Player spawn particle generation error for %s.", getName()),
+							CommunicationManager.DebugLevel.VERBOSE
+						);
+					}
 				}
-				catch (Exception e) {
-					CommunicationManager.debugError(
-						String.format("Player spawn particle generation error for %s.", getName()),
-						CommunicationManager.DebugLevel.VERBOSE
-					);
-				}
-			}
-		}, 0, 2);
+			}, 0, 2);
 	}
 
 	public void cancelSpawnParticles() {
@@ -1123,7 +1167,9 @@ public class Arena {
 		getPlayerSpawn().turnOffIndicator();
 
 		if (playerParticlesID != 0)
-			Bukkit.getScheduler().cancelTask(playerParticlesID);
+			Bukkit
+				.getScheduler()
+				.cancelTask(playerParticlesID);
 		playerParticlesID = 0;
 	}
 
@@ -1137,50 +1183,64 @@ public class Arena {
 	}
 
 	public void startMonsterParticles() {
-		Particle monsterParticle = Particle.valueOf(NMSVersion.getCurrent().getNmsManager().getMonsterParticleName());
+		Particle monsterParticle = Particle.valueOf(NMSVersion
+			.getCurrent()
+			.getNmsManager()
+			.getMonsterParticleName());
 
 		if (monsterParticlesID == 0 && !getMonsterSpawns().isEmpty())
-			monsterParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.plugin, new Runnable() {
-				double var = 0;
-				Location first, second;
-				boolean init = false;
+			monsterParticlesID = Bukkit
+				.getScheduler()
+				.scheduleSyncRepeatingTask(Main.plugin, new Runnable() {
+					double var = 0;
+					Location first, second;
+					boolean init = false;
 
-				@Override
-				public void run() {
-					var -= Math.PI / 12;
-					getMonsterSpawns().forEach(spawn -> {
-						if (isClosed() && !init)
-							spawn.turnOnIndicator();
+					@Override
+					public void run() {
+						var -= Math.PI / 12;
+						getMonsterSpawns().forEach(spawn -> {
+							if (isClosed() && !init)
+								spawn.turnOnIndicator();
 
-						Location location = spawn.getLocation();
-						try {
-							// Update particle locations
-							first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
-							second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
-								Math.sin(var + Math.PI)
-							);
+							Location location = spawn.getLocation();
+							try {
+								// Update particle locations
+								first = location
+									.clone()
+									.add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
+								second = location
+									.clone()
+									.add(Math.cos(var + Math.PI), Math.sin(var) + 1,
+										Math.sin(var + Math.PI)
+									);
 
-							// Spawn particles
-							Objects.requireNonNull(location.getWorld())
-								.spawnParticle(monsterParticle, first, 0);
-							location.getWorld().spawnParticle(monsterParticle, second, 0);
-						}
-						catch (Exception e) {
-							CommunicationManager.debugError(
-								String.format("Monster particle generation error for %s.", getName()),
-								CommunicationManager.DebugLevel.VERBOSE
-							);
-						}
-					});
-					init = true;
-				}
-			}, 0, 2);
+								// Spawn particles
+								Objects
+									.requireNonNull(location.getWorld())
+									.spawnParticle(monsterParticle, first, 0);
+								location
+									.getWorld()
+									.spawnParticle(monsterParticle, second, 0);
+							}
+							catch (Exception e) {
+								CommunicationManager.debugError(
+									String.format("Monster particle generation error for %s.", getName()),
+									CommunicationManager.DebugLevel.VERBOSE
+								);
+							}
+						});
+						init = true;
+					}
+				}, 0, 2);
 	}
 
 	public void cancelMonsterParticles() {
 		getMonsterSpawns().forEach(ArenaSpawn::turnOffIndicator);
 		if (monsterParticlesID != 0)
-			Bukkit.getScheduler().cancelTask(monsterParticlesID);
+			Bukkit
+				.getScheduler()
+				.cancelTask(monsterParticlesID);
 		monsterParticlesID = 0;
 	}
 
@@ -1195,50 +1255,64 @@ public class Arena {
 
 	public void startVillagerParticles() {
 		Particle villagerParticle =
-			Particle.valueOf(NMSVersion.getCurrent().getNmsManager().getVillagerParticleName());
+			Particle.valueOf(NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.getVillagerParticleName());
 
 		if (villagerParticlesID == 0 && !getVillagerSpawns().isEmpty())
-			villagerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.plugin, new Runnable() {
-				double var = 0;
-				Location first, second;
-				boolean init = false;
+			villagerParticlesID = Bukkit
+				.getScheduler()
+				.scheduleSyncRepeatingTask(Main.plugin, new Runnable() {
+					double var = 0;
+					Location first, second;
+					boolean init = false;
 
-				@Override
-				public void run() {
-					var += Math.PI / 12;
-					getVillagerSpawns().forEach(spawn -> {
-						if (isClosed() && !init)
-							spawn.turnOnIndicator();
+					@Override
+					public void run() {
+						var += Math.PI / 12;
+						getVillagerSpawns().forEach(spawn -> {
+							if (isClosed() && !init)
+								spawn.turnOnIndicator();
 
-						Location location = spawn.getLocation();
-						try {
-							// Update particle locations
-							first = location.clone().add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
-							second = location.clone().add(Math.cos(var + Math.PI), Math.sin(var) + 1,
-								Math.sin(var + Math.PI)
-							);
+							Location location = spawn.getLocation();
+							try {
+								// Update particle locations
+								first = location
+									.clone()
+									.add(Math.cos(var), Math.sin(var) + 1, Math.sin(var));
+								second = location
+									.clone()
+									.add(Math.cos(var + Math.PI), Math.sin(var) + 1,
+										Math.sin(var + Math.PI)
+									);
 
-							// Spawn particles
-							Objects.requireNonNull(location.getWorld())
-								.spawnParticle(villagerParticle, first, 0);
-							location.getWorld().spawnParticle(villagerParticle, second, 0);
-						}
-						catch (Exception e) {
-							CommunicationManager.debugError(
-								String.format("Villager particle generation error for %s.", getName()),
-								CommunicationManager.DebugLevel.VERBOSE
-							);
-						}
-					});
-					init = true;
-				}
-			}, 0, 2);
+								// Spawn particles
+								Objects
+									.requireNonNull(location.getWorld())
+									.spawnParticle(villagerParticle, first, 0);
+								location
+									.getWorld()
+									.spawnParticle(villagerParticle, second, 0);
+							}
+							catch (Exception e) {
+								CommunicationManager.debugError(
+									String.format("Villager particle generation error for %s.", getName()),
+									CommunicationManager.DebugLevel.VERBOSE
+								);
+							}
+						});
+						init = true;
+					}
+				}, 0, 2);
 	}
 
 	public void cancelVillagerParticles() {
 		getVillagerSpawns().forEach(ArenaSpawn::turnOffIndicator);
 		if (villagerParticlesID != 0)
-			Bukkit.getScheduler().cancelTask(villagerParticlesID);
+			Bukkit
+				.getScheduler()
+				.cancelTask(villagerParticlesID);
 		villagerParticlesID = 0;
 	}
 
@@ -1252,64 +1326,71 @@ public class Arena {
 	}
 
 	public void startBorderParticles() {
-		Particle borderParticle = Particle.valueOf(NMSVersion.getCurrent().getNmsManager().getBorderParticleName());
+		Particle borderParticle = Particle.valueOf(NMSVersion
+			.getCurrent()
+			.getNmsManager()
+			.getBorderParticleName());
 		Particle.DustOptions dust = new Particle.DustOptions(Color.RED, 2);
 
 		if (cornerParticlesID == 0 && getCorner1() != null && getCorner2() != null)
-			cornerParticlesID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.plugin, new Runnable() {
-				World world;
-				Location first, second;
+			cornerParticlesID = Bukkit
+				.getScheduler()
+				.scheduleSyncRepeatingTask(Main.plugin, new Runnable() {
+					World world;
+					Location first, second;
 
-				@Override
-				public void run() {
-					// Spawn particles
-					try {
-						world = getCorner1().getWorld();
+					@Override
+					public void run() {
+						// Spawn particles
+						try {
+							world = getCorner1().getWorld();
 
-						first = new Location(world, Math.max(getCorner1().getX(), getCorner2().getX()),
-							Math.max(getCorner1().getY(), getCorner2().getY()),
-							Math.max(getCorner1().getZ(), getCorner2().getZ())
-						);
-						second = new Location(world, Math.min(getCorner1().getX(), getCorner2().getX()),
-							Math.min(getCorner1().getY(), getCorner2().getY()),
-							Math.min(getCorner1().getZ(), getCorner2().getZ())
-						);
+							first = new Location(world, Math.max(getCorner1().getX(), getCorner2().getX()),
+								Math.max(getCorner1().getY(), getCorner2().getY()),
+								Math.max(getCorner1().getZ(), getCorner2().getZ())
+							);
+							second = new Location(world, Math.min(getCorner1().getX(), getCorner2().getX()),
+								Math.min(getCorner1().getY(), getCorner2().getY()),
+								Math.min(getCorner1().getZ(), getCorner2().getZ())
+							);
 
-						for (double x = second.getX(); x <= first.getX(); x += 5)
-							for (double y = second.getY(); y <= first.getY(); y += 5)
-								world.spawnParticle(borderParticle, x, y, first.getZ(), 0, dust);
-						for (double x = second.getX(); x <= first.getX(); x += 5)
-							for (double y = second.getY(); y <= first.getY(); y += 5)
-								world.spawnParticle(borderParticle, x, y, second.getZ(), 0, dust);
-						for (double x = second.getX(); x <= first.getX(); x += 5)
+							for (double x = second.getX(); x <= first.getX(); x += 5)
+								for (double y = second.getY(); y <= first.getY(); y += 5)
+									world.spawnParticle(borderParticle, x, y, first.getZ(), 0, dust);
+							for (double x = second.getX(); x <= first.getX(); x += 5)
+								for (double y = second.getY(); y <= first.getY(); y += 5)
+									world.spawnParticle(borderParticle, x, y, second.getZ(), 0, dust);
+							for (double x = second.getX(); x <= first.getX(); x += 5)
+								for (double z = second.getZ(); z <= first.getZ(); z += 5)
+									world.spawnParticle(borderParticle, x, first.getY(), z, 0, dust);
+							for (double x = second.getX(); x <= first.getX(); x += 5)
+								for (double z = second.getZ(); z <= first.getZ(); z += 5)
+									world.spawnParticle(borderParticle, x, second.getY(), z, 0, dust);
 							for (double z = second.getZ(); z <= first.getZ(); z += 5)
-								world.spawnParticle(borderParticle, x, first.getY(), z, 0, dust);
-						for (double x = second.getX(); x <= first.getX(); x += 5)
+								for (double y = second.getY(); y <= first.getY(); y += 5)
+									world.spawnParticle(borderParticle, first.getX(), y, z, 0, dust);
 							for (double z = second.getZ(); z <= first.getZ(); z += 5)
-								world.spawnParticle(borderParticle, x, second.getY(), z, 0, dust);
-						for (double z = second.getZ(); z <= first.getZ(); z += 5)
-							for (double y = second.getY(); y <= first.getY(); y += 5)
-								world.spawnParticle(borderParticle, first.getX(), y, z, 0, dust);
-						for (double z = second.getZ(); z <= first.getZ(); z += 5)
-							for (double y = second.getY(); y <= first.getY(); y += 5)
-								world.spawnParticle(borderParticle, second.getX(), y, z, 0, dust);
+								for (double y = second.getY(); y <= first.getY(); y += 5)
+									world.spawnParticle(borderParticle, second.getX(), y, z, 0, dust);
 
+						}
+						catch (Exception e) {
+							CommunicationManager.debugError(
+								String.format("Border particle generation error for %s.", getName()),
+								CommunicationManager.DebugLevel.NORMAL,
+								true,
+								e
+							);
+						}
 					}
-					catch (Exception e) {
-						CommunicationManager.debugError(
-							String.format("Border particle generation error for %s.", getName()),
-							CommunicationManager.DebugLevel.NORMAL,
-							true,
-							e
-						);
-					}
-				}
-			}, 0, 20);
+				}, 0, 20);
 	}
 
 	public void cancelBorderParticles() {
 		if (cornerParticlesID != 0)
-			Bukkit.getScheduler().cancelTask(cornerParticlesID);
+			Bukkit
+				.getScheduler()
+				.cancelTask(cornerParticlesID);
 		cornerParticlesID = 0;
 	}
 
@@ -1374,10 +1455,14 @@ public class Arena {
 			return;
 
 		Location temp = getCorner1();
-		temp.setY(Objects.requireNonNull(getCorner1().getWorld()).getMaxHeight() + 10);
+		temp.setY(Objects
+			.requireNonNull(getCorner1().getWorld())
+			.getMaxHeight() + 10);
 		setCorner1(temp);
 		temp = getCorner2();
-		temp.setY(Objects.requireNonNull(getCorner2().getWorld()).getMinHeight() - 25);
+		temp.setY(Objects
+			.requireNonNull(getCorner2().getWorld())
+			.getMinHeight() - 25);
 		setCorner2(temp);
 	}
 
@@ -1481,7 +1566,9 @@ public class Arena {
 		List<ArenaRecord> arenaRecords = new ArrayList<>();
 		if (config.contains(path + ".records"))
 			try {
-				Objects.requireNonNull(config.getConfigurationSection(path + ".records")).getKeys(false)
+				Objects
+					.requireNonNull(config.getConfigurationSection(path + ".records"))
+					.getKeys(false)
 					.forEach(index -> arenaRecords.add(new ArenaRecord(
 						config.getInt(path + ".records." + index + ".wave"),
 						config.getStringList(path + ".records." + index + ".players")
@@ -1498,8 +1585,12 @@ public class Arena {
 	}
 
 	public List<ArenaRecord> getSortedDescendingRecords() {
-		return getArenaRecords().stream().filter(Objects::nonNull)
-			.sorted(Comparator.comparingInt(ArenaRecord::getWave).reversed())
+		return getArenaRecords()
+			.stream()
+			.filter(Objects::nonNull)
+			.sorted(Comparator
+				.comparingInt(ArenaRecord::getWave)
+				.reversed())
 			.collect(Collectors.toList());
 	}
 
@@ -1511,7 +1602,9 @@ public class Arena {
 			records.add(record);
 
 			// New record
-		else if (records.stream().filter(Objects::nonNull)
+		else if (records
+			.stream()
+			.filter(Objects::nonNull)
 			.anyMatch(arenaRecord -> arenaRecord.getWave() < record.getWave())) {
 			records.sort(Comparator.comparingInt(ArenaRecord::getWave));
 			records.set(0, record);
@@ -1522,8 +1615,12 @@ public class Arena {
 
 		// Save data
 		for (int i = 0; i < records.size(); i++) {
-			config.set(path + ".records." + i + ".wave", records.get(i).getWave());
-			config.set(path + ".records." + i + ".players", records.get(i).getPlayers());
+			config.set(path + ".records." + i + ".wave", records
+				.get(i)
+				.getWave());
+			config.set(path + ".records." + i + ".players", records
+				.get(i)
+				.getPlayers());
 		}
 		Main.saveArenaData();
 		return true;
@@ -1561,9 +1658,11 @@ public class Arena {
 				);
 			}
 		});
-		activeTasks.get(NOTIFY_WAITING).runTaskTimer(Main.plugin, 0,
-			Calculator.secondsToTicks(Calculator.minutesToSeconds(1))
-		);
+		activeTasks
+			.get(NOTIFY_WAITING)
+			.runTaskTimer(Main.plugin, 0,
+				Calculator.secondsToTicks(Calculator.minutesToSeconds(1))
+			);
 	}
 
 	public void addNotifyInfo() throws ArenaClosedException, ArenaStatusException, ArenaTaskException {
@@ -1586,34 +1685,44 @@ public class Arena {
 						ChatColor.DARK_AQUA,
 						LanguageManager.messages.quickInfo
 					), new ColoredMessage(ChatColor.DARK_GREEN, getName()));
-					player.getPlayer().sendMessage(new ColoredMessage(ChatColor.GOLD, LIST + (getMaxWaves() < 0 ?
-						LanguageManager.messages.noLastWave : String.format(
-						LanguageManager.messages.finalWave,
-						getMaxWaves()
-					))).toString());
-					player.getPlayer().sendMessage(new ColoredMessage(hasDynamicLimit() ? ChatColor.GREEN :
-						ChatColor.RED, String.format(
-						LIST + LanguageManager.messages.dynamicTimeLimit,
-						hasDynamicLimit() ? LanguageManager.messages.will :
-							LanguageManager.messages.willNot
-					)).toString());
-					player.getPlayer().sendMessage(new ColoredMessage(hasLateArrival() ? ChatColor.GREEN :
-						ChatColor.RED, String.format(
-						LIST + LanguageManager.messages.lateArrival,
-						hasLateArrival() ? LanguageManager.messages.will : LanguageManager.messages.willNot
-					))
-						.toString());
-					player.getPlayer().sendMessage(new ColoredMessage(
-						hasCommunity() ? ChatColor.GREEN : ChatColor.RED,
-						String.format(LIST + LanguageManager.messages.communityChest, hasCommunity() ?
-							LanguageManager.messages.will : LanguageManager.messages.willNot)
-					).toString());
+					player
+						.getPlayer()
+						.sendMessage(new ColoredMessage(ChatColor.GOLD, LIST + (getMaxWaves() < 0 ?
+							LanguageManager.messages.noLastWave : String.format(
+							LanguageManager.messages.finalWave,
+							getMaxWaves()
+						))).toString());
+					player
+						.getPlayer()
+						.sendMessage(new ColoredMessage(hasDynamicLimit() ? ChatColor.GREEN :
+							ChatColor.RED, String.format(
+							LIST + LanguageManager.messages.dynamicTimeLimit,
+							hasDynamicLimit() ? LanguageManager.messages.will :
+								LanguageManager.messages.willNot
+						)).toString());
+					player
+						.getPlayer()
+						.sendMessage(new ColoredMessage(hasLateArrival() ? ChatColor.GREEN :
+							ChatColor.RED, String.format(
+							LIST + LanguageManager.messages.lateArrival,
+							hasLateArrival() ? LanguageManager.messages.will : LanguageManager.messages.willNot
+						))
+							.toString());
+					player
+						.getPlayer()
+						.sendMessage(new ColoredMessage(
+							hasCommunity() ? ChatColor.GREEN : ChatColor.RED,
+							String.format(LIST + LanguageManager.messages.communityChest, hasCommunity() ?
+								LanguageManager.messages.will : LanguageManager.messages.willNot)
+						).toString());
 				});
 			}
 		});
-		activeTasks.get(NOTIFY_INFO).runTaskTimer(Main.plugin, Calculator.secondsToTicks(30),
-			Calculator.secondsToTicks(Calculator.minutesToSeconds(1))
-		);
+		activeTasks
+			.get(NOTIFY_INFO)
+			.runTaskTimer(Main.plugin, Calculator.secondsToTicks(30),
+				Calculator.secondsToTicks(Calculator.minutesToSeconds(1))
+			);
 	}
 
 	public void startCountDown() throws ArenaStatusException, ArenaClosedException, ArenaTaskException {
@@ -1673,10 +1782,12 @@ public class Arena {
 				activeTasks.remove(ONE_MINUTE_NOTICE);
 			}
 		});
-		activeTasks.get(ONE_MINUTE_NOTICE).runTaskLater(
-			Main.plugin,
-			Calculator.secondsToTicks(Calculator.minutesToSeconds(1))
-		);
+		activeTasks
+			.get(ONE_MINUTE_NOTICE)
+			.runTaskLater(
+				Main.plugin,
+				Calculator.secondsToTicks(Calculator.minutesToSeconds(1))
+			);
 
 		// Schedule 30-second notice
 		activeTasks.put(THIRTY_SECOND_NOTICE, new BukkitRunnable() {
@@ -1698,10 +1809,12 @@ public class Arena {
 				activeTasks.remove(THIRTY_SECOND_NOTICE);
 			}
 		});
-		activeTasks.get(THIRTY_SECOND_NOTICE).runTaskLater(
-			Main.plugin,
-			Calculator.secondsToTicks(Calculator.minutesToSeconds(2) - 30)
-		);
+		activeTasks
+			.get(THIRTY_SECOND_NOTICE)
+			.runTaskLater(
+				Main.plugin,
+				Calculator.secondsToTicks(Calculator.minutesToSeconds(2) - 30)
+			);
 
 		// Schedule 10-second notice
 		activeTasks.put(TEN_SECOND_NOTICE, new BukkitRunnable() {
@@ -1723,10 +1836,12 @@ public class Arena {
 				activeTasks.remove(TEN_SECOND_NOTICE);
 			}
 		});
-		activeTasks.get(TEN_SECOND_NOTICE).runTaskLater(
-			Main.plugin,
-			Calculator.secondsToTicks(Calculator.minutesToSeconds(2) - 10)
-		);
+		activeTasks
+			.get(TEN_SECOND_NOTICE)
+			.runTaskLater(
+				Main.plugin,
+				Calculator.secondsToTicks(Calculator.minutesToSeconds(2) - 10)
+			);
 
 
 		// Schedule 5-second notice
@@ -1749,10 +1864,12 @@ public class Arena {
 				activeTasks.remove(FIVE_SECOND_NOTICE);
 			}
 		});
-		activeTasks.get(FIVE_SECOND_NOTICE).runTaskLater(
-			Main.plugin,
-			Calculator.secondsToTicks(Calculator.minutesToSeconds(2) - 5)
-		);
+		activeTasks
+			.get(FIVE_SECOND_NOTICE)
+			.runTaskLater(
+				Main.plugin,
+				Calculator.secondsToTicks(Calculator.minutesToSeconds(2) - 5)
+			);
 
 		// Schedule start of arena
 		activeTasks.put(START_ARENA, new BukkitRunnable() {
@@ -1770,10 +1887,12 @@ public class Arena {
 				activeTasks.remove(START_ARENA);
 			}
 		});
-		activeTasks.get(START_ARENA).runTaskLater(
-			Main.plugin,
-			Calculator.secondsToTicks(Calculator.minutesToSeconds(2))
-		);
+		activeTasks
+			.get(START_ARENA)
+			.runTaskLater(
+				Main.plugin,
+				Calculator.secondsToTicks(Calculator.minutesToSeconds(2))
+			);
 
 		// Start countdown bar
 		CountdownController.stopCountdown(this);
@@ -1828,7 +1947,9 @@ public class Arena {
 				activeTasks.remove(FORCE_FIVE_SECOND_NOTICE);
 			}
 		});
-		activeTasks.get(FORCE_FIVE_SECOND_NOTICE).runTaskLater(Main.plugin, Calculator.secondsToTicks(5));
+		activeTasks
+			.get(FORCE_FIVE_SECOND_NOTICE)
+			.runTaskLater(Main.plugin, Calculator.secondsToTicks(5));
 
 		// Schedule forced start of arena
 		activeTasks.put(FORCE_START_ARENA, new BukkitRunnable() {
@@ -1846,7 +1967,9 @@ public class Arena {
 				activeTasks.remove(FORCE_START_ARENA);
 			}
 		});
-		activeTasks.get(FORCE_START_ARENA).runTaskLater(Main.plugin, Calculator.secondsToTicks(10));
+		activeTasks
+			.get(FORCE_START_ARENA)
+			.runTaskLater(Main.plugin, Calculator.secondsToTicks(10));
 
 		// Start countdown bar
 		CountdownController.stopCountdown(this);
@@ -1885,7 +2008,9 @@ public class Arena {
 		// Stop waiting sound
 		if (getWaitingSound() != null)
 			players.forEach(player ->
-				player.getPlayer().stopSound(getWaitingSound()));
+				player
+					.getPlayer()
+					.stopSound(getWaitingSound()));
 
 		// Start particles if enabled
 		if (hasSpawnParticles())
@@ -1903,24 +2028,46 @@ public class Arena {
 			player.setupAttributes(true);
 
 			// Give Traders their gems
-			if (Kit.trader().setKitLevel(1).equals(player.getKit()))
+			if (Kit
+				.trader()
+				.setKitLevel(1)
+				.equals(player.getKit()))
 				player.addGems(200);
 
 			// Give Summoners their dogs
-			if (Kit.summoner().setKitLevel(1).equals(player.getKit()))
-				player.addPet(new VDDog(this, player.getPlayer().getLocation(), player, 1));
-			if (Kit.summoner().setKitLevel(2).equals(player.getKit())) {
-				player.addPet(new VDDog(this, player.getPlayer().getLocation(), player, 1));
-				player.addPet(new VDDog(this, player.getPlayer().getLocation(), player, 1));
+			if (Kit
+				.summoner()
+				.setKitLevel(1)
+				.equals(player.getKit()))
+				player.addPet(new VDDog(this, player
+					.getPlayer()
+					.getLocation(), player, 1));
+			if (Kit
+				.summoner()
+				.setKitLevel(2)
+				.equals(player.getKit())) {
+				player.addPet(new VDDog(this, player
+					.getPlayer()
+					.getLocation(), player, 1));
+				player.addPet(new VDDog(this, player
+					.getPlayer()
+					.getLocation(), player, 1));
 			}
-			if (Kit.summoner().setKitLevel(3).equals(player.getKit()))
-				player.addPet(new VDHorse(this, player.getPlayer().getLocation(), player, 1));
+			if (Kit
+				.summoner()
+				.setKitLevel(3)
+				.equals(player.getKit()))
+				player.addPet(new VDHorse(this, player
+					.getPlayer()
+					.getLocation(), player, 1));
 
 			// Give gems from crystal conversion
 			int amount;
 			if (Main.hasCustomEconomy())
 				amount = player.getGemBoost() * Math.max((int)
-					(5 * Main.plugin.getConfig().getDouble("vaultEconomyMult")), 1);
+					(5 * Main.plugin
+						.getConfig()
+						.getDouble("vaultEconomyMult")), 1);
 			else amount = player.getGemBoost() * 5;
 			player.addGems(player.getGemBoost());
 			PlayerManager.withdrawCrystalBalance(player.getID(), amount);
@@ -1964,7 +2111,9 @@ public class Arena {
 				activeTasks.remove(DIALOGUE_TWO);
 			}
 		});
-		activeTasks.get(DIALOGUE_TWO).runTaskLater(Main.plugin, Calculator.secondsToTicks(5));
+		activeTasks
+			.get(DIALOGUE_TWO)
+			.runTaskLater(Main.plugin, Calculator.secondsToTicks(5));
 		activeTasks.put(DIALOGUE_THREE, new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -1981,7 +2130,9 @@ public class Arena {
 				activeTasks.remove(DIALOGUE_THREE);
 			}
 		});
-		activeTasks.get(DIALOGUE_THREE).runTaskLater(Main.plugin, Calculator.secondsToTicks(11));
+		activeTasks
+			.get(DIALOGUE_THREE)
+			.runTaskLater(Main.plugin, Calculator.secondsToTicks(11));
 		activeTasks.put(DIALOGUE_FOUR, new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -1999,7 +2150,9 @@ public class Arena {
 				activeTasks.remove(DIALOGUE_FOUR);
 			}
 		});
-		activeTasks.get(DIALOGUE_FOUR).runTaskLater(Main.plugin, Calculator.secondsToTicks(18));
+		activeTasks
+			.get(DIALOGUE_FOUR)
+			.runTaskLater(Main.plugin, Calculator.secondsToTicks(18));
 		activeTasks.put(DIALOGUE_FIVE, new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -2017,7 +2170,9 @@ public class Arena {
 				activeTasks.remove(DIALOGUE_FIVE);
 			}
 		});
-		activeTasks.get(DIALOGUE_FIVE).runTaskLater(Main.plugin, Calculator.secondsToTicks(25));
+		activeTasks
+			.get(DIALOGUE_FIVE)
+			.runTaskLater(Main.plugin, Calculator.secondsToTicks(25));
 		activeTasks.put(END_WAVE, new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -2033,7 +2188,9 @@ public class Arena {
 				activeTasks.remove(END_WAVE);
 			}
 		});
-		activeTasks.get(END_WAVE).runTaskLater(Main.plugin, Calculator.secondsToTicks(30));
+		activeTasks
+			.get(END_WAVE)
+			.runTaskLater(Main.plugin, Calculator.secondsToTicks(30));
 
 		// Schedule updates
 		activeTasks.put(ONE_TICK, new BukkitRunnable() {
@@ -2044,14 +2201,21 @@ public class Arena {
 					Mob mobster = mob.getEntity();
 					Location location = mobster.getLocation();
 					int range = mob.getTargetRange();
-					List<Entity> nearby = Objects.requireNonNull(location.getWorld())
+					List<Entity> nearby = Objects
+						.requireNonNull(location.getWorld())
 						.getNearbyEntities(getBounds(), entity -> range < 0 ||
-							mobster.getLocation().distance(entity.getLocation()) <= range)
+							mobster
+								.getLocation()
+								.distance(entity.getLocation()) <= range)
 						.stream()
 						.filter(entity -> entity instanceof LivingEntity)
 						.filter(entity -> !entity.isDead())
-						.filter(entity -> ((LivingEntity) entity).getActivePotionEffects().stream()
-							.noneMatch(potion -> potion.getType().equals(PotionEffectType.INVISIBILITY)))
+						.filter(entity -> ((LivingEntity) entity)
+							.getActivePotionEffects()
+							.stream()
+							.noneMatch(potion -> potion
+								.getType()
+								.equals(PotionEffectType.INVISIBILITY)))
 						.filter(entity -> VDMob.isTeam(mobster, IndividualTeam.MONSTER)
 							&& entity instanceof Player || !(entity instanceof Player) &&
 							!VDMob.areSameTeam(mobster, entity))
@@ -2061,17 +2225,32 @@ public class Arena {
 							else return true;
 						})
 						.filter(mobster::hasLineOfSight)
-						.sorted((e1, e2) -> (int) (mobster.getLocation().distance(e1.getLocation()) -
-							mobster.getLocation().distance(e2.getLocation()))).collect(Collectors.toList());
-					List<Entity> priority = nearby.stream().filter(mob.getTargetPriority().getTest())
-						.sorted((e1, e2) -> (int) (mobster.getLocation().distance(e1.getLocation()) -
-							mobster.getLocation().distance(e2.getLocation())))
+						.sorted((e1, e2) -> (int) (mobster
+							.getLocation()
+							.distance(e1.getLocation()) -
+							mobster
+								.getLocation()
+								.distance(e2.getLocation())))
+						.collect(Collectors.toList());
+					List<Entity> priority = nearby
+						.stream()
+						.filter(mob
+							.getTargetPriority()
+							.getTest())
+						.sorted((e1, e2) -> (int) (mobster
+							.getLocation()
+							.distance(e1.getLocation()) -
+							mobster
+								.getLocation()
+								.distance(e2.getLocation())))
 						.collect(Collectors.toList());
 					LivingEntity oldTarget = mobster.getTarget();
 					LivingEntity newTarget = priority.isEmpty() ?
 						(nearby.isEmpty() ? null : (LivingEntity) nearby.get(0)) : (LivingEntity) priority.get(0);
 					if (!(oldTarget == null && newTarget == null) && oldTarget == null || newTarget == null ||
-						!oldTarget.getUniqueId().equals(newTarget.getUniqueId())) {
+						!oldTarget
+							.getUniqueId()
+							.equals(newTarget.getUniqueId())) {
 						mobster.setTarget(newTarget);
 					}
 				});
@@ -2080,17 +2259,23 @@ public class Arena {
 				getActives().forEach(VDPlayer::refill);
 			}
 		});
-		activeTasks.get(ONE_TICK).runTaskTimer(Main.plugin, 0, 1);
+		activeTasks
+			.get(ONE_TICK)
+			.runTaskTimer(Main.plugin, 0, 1);
 		activeTasks.put(TWENTY_TICK, new BukkitRunnable() {
 			@Override
 			public void run() {
 				// Heal
 				getActives().forEach(VDPlayer::heal);
-				getActives().forEach(player -> player.getPets().forEach(VDPet::heal));
+				getActives().forEach(player -> player
+					.getPets()
+					.forEach(VDPet::heal));
 				golems.forEach(VDGolem::heal);
 			}
 		});
-		activeTasks.get(TWENTY_TICK).runTaskTimer(Main.plugin, 0, 20);
+		activeTasks
+			.get(TWENTY_TICK)
+			.runTaskTimer(Main.plugin, 0, 20);
 		activeTasks.put(FORTY_TICK, new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -2100,32 +2285,46 @@ public class Arena {
 					LivingEntity target = mobster.getTarget();
 
 					if (mob instanceof VDWitch && target != null &&
-						target.getLocation().distance(mobster.getLocation()) <= 10) {
+						target
+							.getLocation()
+							.distance(mobster.getLocation()) <= 10) {
 						mobster.launchProjectile(
 							ThrownPotion.class,
-							target.getLocation().subtract(mobster.getLocation()).toVector().normalize()
+							target
+								.getLocation()
+								.subtract(mobster.getLocation())
+								.toVector()
+								.normalize()
 						);
 					}
 				});
 			}
 		});
-		activeTasks.get(FORTY_TICK).runTaskTimer(Main.plugin, 0, 40);
+		activeTasks
+			.get(FORTY_TICK)
+			.runTaskTimer(Main.plugin, 0, 40);
 		activeTasks.put(TWO_HUNDRED_TICK, new BukkitRunnable() {
 			@Override
 			public void run() {
 				// Cat heal
 				getActives().forEach(player -> {
 					AtomicInteger heal = new AtomicInteger();
-					player.getPets().forEach(pet -> {
-						if (pet instanceof VDCat)
-							heal.addAndGet(VDCat.getHeal(pet.getLevel()));
-					});
+					player
+						.getPets()
+						.forEach(pet -> {
+							if (pet instanceof VDCat)
+								heal.addAndGet(VDCat.getHeal(pet.getLevel()));
+						});
 					player.changeCurrentHealth(heal.get());
-					player.getPets().forEach(pet -> pet.heal(heal.get()));
+					player
+						.getPets()
+						.forEach(pet -> pet.heal(heal.get()));
 				});
 			}
 		});
-		activeTasks.get(TWO_HUNDRED_TICK).runTaskTimer(Main.plugin, 0, 200);
+		activeTasks
+			.get(TWO_HUNDRED_TICK)
+			.runTaskTimer(Main.plugin, 0, 200);
 
 		// Debug message to console
 		CommunicationManager.debugInfo("%s is starting.", CommunicationManager.DebugLevel.VERBOSE, getName());
@@ -2154,9 +2353,14 @@ public class Arena {
 		// Play wave end sound if not just starting
 		if (hasWaveFinishSound() && getCurrentWave() != 0)
 			for (VDPlayer vdPlayer : players) {
-				vdPlayer.getPlayer().playSound(getPlayerSpawn().getLocation().clone().add(0, -8, 0),
-					Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 10, .75f
-				);
+				vdPlayer
+					.getPlayer()
+					.playSound(getPlayerSpawn()
+							.getLocation()
+							.clone()
+							.add(0, -8, 0),
+						Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 10, .75f
+					);
 			}
 
 		// Update player stats
@@ -2164,44 +2368,56 @@ public class Arena {
 			if (PlayerManager.getTopWave(active.getID()) < getCurrentWave())
 				PlayerManager.setTopWave(active.getID(), getCurrentWave());
 
-		ConfigurationSection limited = Main.getCustomEffects()
+		ConfigurationSection limited = Main
+			.getCustomEffects()
 			.getConfigurationSection("limited.onWaveComplete");
-		ConfigurationSection unlimited = Main.getCustomEffects()
+		ConfigurationSection unlimited = Main
+			.getCustomEffects()
 			.getConfigurationSection("unlimited.onWaveComplete");
 
 		// Check custom effects for limited wave arenas
 		if (getMaxWaves() > 0 && limited != null)
-			limited.getKeys(false).forEach(key -> {
-				try {
-					String command = limited.getString(key);
-					if (getCurrentWave() == Integer.parseInt(key) && command != null)
-						getActives().forEach(player ->
-							Bukkit.dispatchCommand(
-								Bukkit.getConsoleSender(),
-								command.replace("%player%", player.getPlayer().getName())
-									.replaceFirst("/", "")
-							));
-				}
-				catch (Exception ignored) {
-				}
-			});
+			limited
+				.getKeys(false)
+				.forEach(key -> {
+					try {
+						String command = limited.getString(key);
+						if (getCurrentWave() == Integer.parseInt(key) && command != null)
+							getActives().forEach(player ->
+								Bukkit.dispatchCommand(
+									Bukkit.getConsoleSender(),
+									command
+										.replace("%player%", player
+											.getPlayer()
+											.getName())
+										.replaceFirst("/", "")
+								));
+					}
+					catch (Exception ignored) {
+					}
+				});
 
 		// Check custom effects for unlimited wave arenas
 		if (getMaxWaves() < 0 && unlimited != null)
-			unlimited.getKeys(false).forEach(key -> {
-				try {
-					String command = unlimited.getString(key);
-					if (getCurrentWave() == Integer.parseInt(key) && command != null)
-						getActives().forEach(player ->
-							Bukkit.dispatchCommand(
-								Bukkit.getConsoleSender(),
-								command.replace("%player%", player.getPlayer().getName())
-									.replaceFirst("/", "")
-							));
-				}
-				catch (Exception ignored) {
-				}
-			});
+			unlimited
+				.getKeys(false)
+				.forEach(key -> {
+					try {
+						String command = unlimited.getString(key);
+						if (getCurrentWave() == Integer.parseInt(key) && command != null)
+							getActives().forEach(player ->
+								Bukkit.dispatchCommand(
+									Bukkit.getConsoleSender(),
+									command
+										.replace("%player%", player
+											.getPlayer()
+											.getName())
+										.replaceFirst("/", "")
+								));
+					}
+					catch (Exception ignored) {
+					}
+				});
 
 		// Debug message to console
 		CommunicationManager.debugInfo("%s completed wave %s", CommunicationManager.DebugLevel.VERBOSE, getName(),
@@ -2220,9 +2436,14 @@ public class Arena {
 			endGame();
 			if (hasWinSound()) {
 				for (VDPlayer vdPlayer : players) {
-					vdPlayer.getPlayer().playSound(getPlayerSpawn().getLocation().clone().add(0, -8, 0),
-						Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1
-					);
+					vdPlayer
+						.getPlayer()
+						.playSound(getPlayerSpawn()
+								.getLocation()
+								.clone()
+								.add(0, -8, 0),
+							Sound.UI_TOAST_CHALLENGE_COMPLETE, 10, 1
+						);
 				}
 			}
 			return;
@@ -2240,36 +2461,36 @@ public class Arena {
 
 		// Revive dead golems
 		for (int i = 0; i < golems.size(); i++) {
-			if (golems.get(i).getEntity().isDead()) {
-				addMob(golems.get(i).respawn(this, getVillagerSpawns().get(i).getLocation()));
+			if (golems
+				.get(i)
+				.getEntity()
+				.isDead()) {
+				addMob(golems
+					.get(i)
+					.respawn(this, getVillagerSpawns()
+						.get(i)
+						.getLocation()));
 			}
 		}
 
 		getActives().forEach(p -> {
 			// Notify of upcoming wave
-			if (currentWave % 5 == 0)
-				p.getPlayer().sendTitle(CommunicationManager.format(
-						"&6" + LanguageManager.messages.waveNum,
-						Integer.toString(currentWave)
-					),
-					CommunicationManager.format(
-						"&7" + LanguageManager.messages.starting,
-						"&b25&7"
-					),
-					Calculator.secondsToTicks(.5), Calculator.secondsToTicks(2.5), Calculator.secondsToTicks(1)
-				);
-			else if (currentWave != 1)
-				p.getPlayer().sendTitle(CommunicationManager.format(
-						"&6" + LanguageManager.messages.waveNum,
-						Integer.toString(currentWave)
-					),
-					CommunicationManager.format(
-						"&7" + LanguageManager.messages.starting,
-						"&b15&7"
-					),
-					Calculator.secondsToTicks(.5), Calculator.secondsToTicks(2.5), Calculator.secondsToTicks(1)
-				);
-			else p.getPlayer().sendTitle(CommunicationManager.format(
+			if (currentWave != 1)
+				p
+					.getPlayer()
+					.sendTitle(CommunicationManager.format(
+							"&6" + LanguageManager.messages.waveNum,
+							Integer.toString(currentWave)
+						),
+						CommunicationManager.format(
+							"&7" + LanguageManager.messages.starting,
+							"&b15&7"
+						),
+						Calculator.secondsToTicks(.5), Calculator.secondsToTicks(2.5), Calculator.secondsToTicks(1)
+					);
+			else p
+				.getPlayer()
+				.sendTitle(CommunicationManager.format(
 						"&6" + LanguageManager.messages.waveNum,
 						Integer.toString(currentWave)
 					),
@@ -2306,32 +2527,24 @@ public class Arena {
 		});
 
 		// Notify spectators of upcoming wave
-		if (currentWave % 5 == 0)
+		if (currentWave != 1)
 			getSpectators().forEach(p ->
-				p.getPlayer().sendTitle(CommunicationManager.format(
-						"&6" + LanguageManager.messages.waveNum,
-						Integer.toString(currentWave)
-					),
-					CommunicationManager.format(
-						"&7" + LanguageManager.messages.starting,
-						"&b25&7"
-					),
-					Calculator.secondsToTicks(.5), Calculator.secondsToTicks(2.5), Calculator.secondsToTicks(1)
-				));
-		else if (currentWave != 1)
-			getSpectators().forEach(p ->
-				p.getPlayer().sendTitle(CommunicationManager.format(
-						"&6" + LanguageManager.messages.waveNum,
-						Integer.toString(currentWave)
-					),
-					CommunicationManager.format(
-						"&7" + LanguageManager.messages.starting,
-						"&b15&7"
-					),
-					Calculator.secondsToTicks(.5), Calculator.secondsToTicks(2.5), Calculator.secondsToTicks(1)
-				));
+				p
+					.getPlayer()
+					.sendTitle(CommunicationManager.format(
+							"&6" + LanguageManager.messages.waveNum,
+							Integer.toString(currentWave)
+						),
+						CommunicationManager.format(
+							"&7" + LanguageManager.messages.starting,
+							"&b15&7"
+						),
+						Calculator.secondsToTicks(.5), Calculator.secondsToTicks(2.5), Calculator.secondsToTicks(1)
+					));
 		else getSpectators().forEach(p ->
-				p.getPlayer().sendTitle(CommunicationManager.format(
+			p
+				.getPlayer()
+				.sendTitle(CommunicationManager.format(
 						"&6" + LanguageManager.messages.waveNum,
 						Integer.toString(currentWave)
 					),
@@ -2351,7 +2564,9 @@ public class Arena {
 					}
 				}
 			});
-			activeTasks.get(START_WAVE).runTaskLater(Main.plugin, Calculator.secondsToTicks(15));
+			activeTasks
+				.get(START_WAVE)
+				.runTaskLater(Main.plugin, Calculator.secondsToTicks(15));
 		}
 
 		// Start first wave immediately
@@ -2378,9 +2593,14 @@ public class Arena {
 		// Play wave start sound
 		if (hasWaveStartSound()) {
 			for (VDPlayer vdPlayer : players) {
-				vdPlayer.getPlayer().playSound(getPlayerSpawn().getLocation().clone().add(0, -8, 0),
-					Sound.ENTITY_ENDER_DRAGON_GROWL, 10, .25f
-				);
+				vdPlayer
+					.getPlayer()
+					.playSound(getPlayerSpawn()
+							.getLocation()
+							.clone()
+							.add(0, -8, 0),
+						Sound.ENTITY_ENDER_DRAGON_GROWL, 10, .25f
+					);
 			}
 		}
 
@@ -2397,7 +2617,9 @@ public class Arena {
 				calibrate();
 			}
 		});
-		activeTasks.get(CALIBRATE).runTaskTimer(Main.plugin, 0, Calculator.secondsToTicks(0.25));
+		activeTasks
+			.get(CALIBRATE)
+			.runTaskTimer(Main.plugin, 0, Calculator.secondsToTicks(0.25));
 
 		// Schedule spawning sequences
 		spawnTasks.addAll(ArenaSpawnGenerator.generateVillagerSpawnSequence(this));
@@ -2435,10 +2657,12 @@ public class Arena {
 
 		// Notify players that the game has ended (Title)
 		players.forEach(player ->
-			player.getPlayer().sendTitle(CommunicationManager.format("&4&l" +
-					LanguageManager.messages.gameOver), " ", Calculator.secondsToTicks(.5),
-				Calculator.secondsToTicks(2.5), Calculator.secondsToTicks(1)
-			));
+			player
+				.getPlayer()
+				.sendTitle(CommunicationManager.format("&4&l" +
+						LanguageManager.messages.gameOver), " ", Calculator.secondsToTicks(.5),
+					Calculator.secondsToTicks(2.5), Calculator.secondsToTicks(1)
+				));
 
 		// Notify players that the game has ended (Chat)
 		players.forEach(player ->
@@ -2450,32 +2674,49 @@ public class Arena {
 			));
 
 		// Set all players to invincible
-		getAlives().forEach(player -> player.getPlayer().setInvulnerable(true));
+		getAlives().forEach(player -> player
+			.getPlayer()
+			.setInvulnerable(true));
 
 		// Remove mob AI and set them invincible
 		mobs.forEach(mob -> {
-			mob.getEntity().setAware(false);
-			mob.getEntity().setInvulnerable(true);
+			mob
+				.getEntity()
+				.setAware(false);
+			mob
+				.getEntity()
+				.setInvulnerable(true);
 		});
 
 		// Play sound if turned on and arena is either not winning or has unlimited waves
 		if (hasLoseSound() && (getCurrentWave() <= getMaxWaves() || getMaxWaves() < 0)) {
 			for (VDPlayer vdPlayer : players) {
-				vdPlayer.getPlayer().playSound(getPlayerSpawn().getLocation().clone().add(0, -8, 0),
-					Sound.ENTITY_ENDER_DRAGON_DEATH, 10, .5f
-				);
+				vdPlayer
+					.getPlayer()
+					.playSound(getPlayerSpawn()
+							.getLocation()
+							.clone()
+							.add(0, -8, 0),
+						Sound.ENTITY_ENDER_DRAGON_DEATH, 10, .5f
+					);
 			}
 		}
 
 		// If there are players left
 		if (getActiveCount() > 0) {
 			// Check for record
-			if (checkNewRecord(new ArenaRecord(getCurrentWave() - 1, getActives().stream()
-				.map(vdPlayer -> vdPlayer.getPlayer().getName()).collect(Collectors.toList())))) {
-				players.forEach(player -> player.getPlayer().sendTitle(
-					new ColoredMessage(ChatColor.GREEN, LanguageManager.messages.record).toString(), null,
-					Calculator.secondsToTicks(.5), Calculator.secondsToTicks(3.5), Calculator.secondsToTicks(1)
-				));
+			if (checkNewRecord(new ArenaRecord(getCurrentWave() - 1, getActives()
+				.stream()
+				.map(vdPlayer -> vdPlayer
+					.getPlayer()
+					.getName())
+				.collect(Collectors.toList())))) {
+				players.forEach(player -> player
+					.getPlayer()
+					.sendTitle(
+						new ColoredMessage(ChatColor.GREEN, LanguageManager.messages.record).toString(), null,
+						Calculator.secondsToTicks(.5), Calculator.secondsToTicks(3.5), Calculator.secondsToTicks(1)
+					));
 				refreshArenaBoard();
 			}
 
@@ -2495,8 +2736,12 @@ public class Arena {
 
 				// Apply vault economy multiplier, if active
 				if (Main.hasCustomEconomy()) {
-					reward = (int) (reward * Main.plugin.getConfig().getDouble("vaultEconomyMult"));
-					bonus = (int) (bonus * Main.plugin.getConfig().getDouble("vaultEconomyMult"));
+					reward = (int) (reward * Main.plugin
+						.getConfig()
+						.getDouble("vaultEconomyMult"));
+					bonus = (int) (bonus * Main.plugin
+						.getConfig()
+						.getDouble("vaultEconomyMult"));
 				}
 
 				// Give rewards and notify
@@ -2519,7 +2764,9 @@ public class Arena {
 				kickPlayers();
 			}
 		});
-		activeTasks.get(KICK).runTaskLater(Main.plugin, Calculator.secondsToTicks(10));
+		activeTasks
+			.get(KICK)
+			.runTaskLater(Main.plugin, Calculator.secondsToTicks(10));
 		activeTasks.put(RESET, new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -2527,145 +2774,213 @@ public class Arena {
 				resetGame();
 			}
 		});
-		activeTasks.get(RESET).runTaskLater(Main.plugin, Calculator.secondsToTicks(12));
+		activeTasks
+			.get(RESET)
+			.runTaskLater(Main.plugin, Calculator.secondsToTicks(12));
 
 		// Debug message to console
 		CommunicationManager.debugInfo("%s is ending.", CommunicationManager.DebugLevel.VERBOSE, getName());
 
-		ConfigurationSection limited = Main.getCustomEffects()
+		ConfigurationSection limited = Main
+			.getCustomEffects()
 			.getConfigurationSection("limited");
-		ConfigurationSection unlimitedBefore = Main.getCustomEffects()
+		ConfigurationSection unlimitedBefore = Main
+			.getCustomEffects()
 			.getConfigurationSection("unlimited.onGameEnd");
-		ConfigurationSection unlimitedAfter = Main.getCustomEffects()
+		ConfigurationSection unlimitedAfter = Main
+			.getCustomEffects()
 			.getConfigurationSection("unlimited.onGameEndLobby");
 
 		// Check for limited waves
 		if (limited != null && getMaxWaves() > 0) {
 			// Schedule commands to run after win
 			if (getCurrentWave() > getMaxWaves()) {
-				limited.getStringList("onGameWin").stream().filter(Objects::nonNull).forEach(command -> getActives()
-					.forEach(player -> Bukkit.dispatchCommand(
-						Bukkit.getConsoleSender(),
-						command.replace("%player%", player.getPlayer().getName())
-							.replaceFirst("/", "")
-					)));
-				limited.getStringList("onGameWinLobby").stream().filter(Objects::nonNull)
+				limited
+					.getStringList("onGameWin")
+					.stream()
+					.filter(Objects::nonNull)
 					.forEach(command -> getActives()
-						.forEach(player -> Bukkit.getScheduler().scheduleSyncDelayedTask(
-							Main.plugin,
-							() -> Bukkit.dispatchCommand(
-								Bukkit.getConsoleSender(),
-								command.replace("%player%", player.getPlayer().getName())
-									.replaceFirst("/", "")
-							),
-							Calculator.secondsToTicks(12.5)
+						.forEach(player -> Bukkit.dispatchCommand(
+							Bukkit.getConsoleSender(),
+							command
+								.replace("%player%", player
+									.getPlayer()
+									.getName())
+								.replaceFirst("/", "")
 						)));
+				limited
+					.getStringList("onGameWinLobby")
+					.stream()
+					.filter(Objects::nonNull)
+					.forEach(command -> getActives()
+						.forEach(player -> Bukkit
+							.getScheduler()
+							.scheduleSyncDelayedTask(
+								Main.plugin,
+								() -> Bukkit.dispatchCommand(
+									Bukkit.getConsoleSender(),
+									command
+										.replace("%player%", player
+											.getPlayer()
+											.getName())
+										.replaceFirst("/", "")
+								),
+								Calculator.secondsToTicks(12.5)
+							)));
 			}
 
 			// Schedule commands to run after lose
 			else {
-				limited.getStringList("onGameLose").stream().filter(Objects::nonNull).forEach(command ->
-					getActives().forEach(player -> Bukkit.dispatchCommand(
-						Bukkit.getConsoleSender(),
-						command.replace("%player%", player.getPlayer().getName())
-							.replaceFirst("/", "")
-					)));
-				limited.getStringList("onGameLoseLobby").stream().filter(Objects::nonNull).forEach(command ->
-					getActives().forEach(player -> Bukkit.getScheduler().scheduleSyncDelayedTask(
-						Main.plugin,
-						() -> Bukkit.dispatchCommand(
+				limited
+					.getStringList("onGameLose")
+					.stream()
+					.filter(Objects::nonNull)
+					.forEach(command ->
+						getActives().forEach(player -> Bukkit.dispatchCommand(
 							Bukkit.getConsoleSender(),
-							command.replace("%player%", player.getPlayer().getName())
+							command
+								.replace("%player%", player
+									.getPlayer()
+									.getName())
 								.replaceFirst("/", "")
-						),
-						Calculator.secondsToTicks(12.5)
-					)));
+						)));
+				limited
+					.getStringList("onGameLoseLobby")
+					.stream()
+					.filter(Objects::nonNull)
+					.forEach(command ->
+						getActives().forEach(player -> Bukkit
+							.getScheduler()
+							.scheduleSyncDelayedTask(
+								Main.plugin,
+								() -> Bukkit.dispatchCommand(
+									Bukkit.getConsoleSender(),
+									command
+										.replace("%player%", player
+											.getPlayer()
+											.getName())
+										.replaceFirst("/", "")
+								),
+								Calculator.secondsToTicks(12.5)
+							)));
 			}
 		}
 
 		// Check for unlimited waves
 		if (unlimitedBefore != null && getMaxWaves() < 0) {
-			unlimitedBefore.getKeys(false).forEach(key -> {
-				String command = unlimitedBefore.getString(key);
+			unlimitedBefore
+				.getKeys(false)
+				.forEach(key -> {
+					String command = unlimitedBefore.getString(key);
 
-				if (command != null) {
-					// Check upper boundaries
-					if (key.contains("<") && getCurrentWave() < Integer.parseInt(key.substring(1)))
-						getActives().forEach(player -> Bukkit.dispatchCommand(
-							Bukkit.getConsoleSender(),
-							command.replace("%player%", player.getPlayer().getName())
-								.replaceFirst("/", "")
-						));
+					if (command != null) {
+						// Check upper boundaries
+						if (key.contains("<") && getCurrentWave() < Integer.parseInt(key.substring(1)))
+							getActives().forEach(player -> Bukkit.dispatchCommand(
+								Bukkit.getConsoleSender(),
+								command
+									.replace("%player%", player
+										.getPlayer()
+										.getName())
+									.replaceFirst("/", "")
+							));
 
-						// Check lower boundaries
-					else if (key.contains("^") && getCurrentWave() > Integer.parseInt(key.substring(1)))
-						getActives().forEach(player -> Bukkit.dispatchCommand(
-							Bukkit.getConsoleSender(),
-							command.replace("%player%", player.getPlayer().getName())
-								.replaceFirst("/", "")
-						));
+							// Check lower boundaries
+						else if (key.contains("^") && getCurrentWave() > Integer.parseInt(key.substring(1)))
+							getActives().forEach(player -> Bukkit.dispatchCommand(
+								Bukkit.getConsoleSender(),
+								command
+									.replace("%player%", player
+										.getPlayer()
+										.getName())
+									.replaceFirst("/", "")
+							));
 
-						// Check range
-					else if (key.contains("-") && getCurrentWave() <= Integer.parseInt(key.split("-")[1]) &&
-						getCurrentWave() >= Integer.parseInt(key.split("-")[0]))
-						getActives().forEach(player -> Bukkit.dispatchCommand(
-							Bukkit.getConsoleSender(),
-							command.replace("%player%", player.getPlayer().getName())
-								.replaceFirst("/", "")
-						));
-				}
-			});
+							// Check range
+						else if (key.contains("-") && getCurrentWave() <= Integer.parseInt(key.split("-")[1]) &&
+							getCurrentWave() >= Integer.parseInt(key.split("-")[0]))
+							getActives().forEach(player -> Bukkit.dispatchCommand(
+								Bukkit.getConsoleSender(),
+								command
+									.replace("%player%", player
+										.getPlayer()
+										.getName())
+									.replaceFirst("/", "")
+							));
+					}
+				});
 		}
 		if (unlimitedAfter != null && getMaxWaves() < 0) {
-			unlimitedAfter.getKeys(false).forEach(key -> {
-				String command = unlimitedAfter.getString(key);
+			unlimitedAfter
+				.getKeys(false)
+				.forEach(key -> {
+					String command = unlimitedAfter.getString(key);
 
-				if (command != null) {
-					// Check upper boundaries
-					if (key.contains("<") && getCurrentWave() < Integer.parseInt(key.substring(1)))
-						getActives().forEach(player -> Bukkit.getScheduler().scheduleSyncDelayedTask(
-							Main.plugin,
-							() -> Bukkit.dispatchCommand(
-								Bukkit.getConsoleSender(),
-								command.replace("%player%", player.getPlayer().getName())
-									.replaceFirst("/", "")
-							),
-							Calculator.secondsToTicks(12.5)
-						));
+					if (command != null) {
+						// Check upper boundaries
+						if (key.contains("<") && getCurrentWave() < Integer.parseInt(key.substring(1)))
+							getActives().forEach(player -> Bukkit
+								.getScheduler()
+								.scheduleSyncDelayedTask(
+									Main.plugin,
+									() -> Bukkit.dispatchCommand(
+										Bukkit.getConsoleSender(),
+										command
+											.replace("%player%", player
+												.getPlayer()
+												.getName())
+											.replaceFirst("/", "")
+									),
+									Calculator.secondsToTicks(12.5)
+								));
 
-						// Check lower boundaries
-					else if (key.contains("^") && getCurrentWave() > Integer.parseInt(key.substring(1)))
-						getActives().forEach(player -> Bukkit.getScheduler().scheduleSyncDelayedTask(
-							Main.plugin,
-							() -> Bukkit.dispatchCommand(
-								Bukkit.getConsoleSender(),
-								command.replace("%player%", player.getPlayer().getName())
-									.replaceFirst("/", "")
-							),
-							Calculator.secondsToTicks(12.5)
-						));
+							// Check lower boundaries
+						else if (key.contains("^") && getCurrentWave() > Integer.parseInt(key.substring(1)))
+							getActives().forEach(player -> Bukkit
+								.getScheduler()
+								.scheduleSyncDelayedTask(
+									Main.plugin,
+									() -> Bukkit.dispatchCommand(
+										Bukkit.getConsoleSender(),
+										command
+											.replace("%player%", player
+												.getPlayer()
+												.getName())
+											.replaceFirst("/", "")
+									),
+									Calculator.secondsToTicks(12.5)
+								));
 
-						// Check range
-					else if (key.contains("-") && getCurrentWave() <= Integer.parseInt(key.split("-")[1]) &&
-						getCurrentWave() >= Integer.parseInt(key.split("-")[0]))
-						getActives().forEach(player -> Bukkit.getScheduler().scheduleSyncDelayedTask(
-							Main.plugin,
-							() -> Bukkit.dispatchCommand(
-								Bukkit.getConsoleSender(),
-								command.replace("%player%", player.getPlayer().getName())
-									.replaceFirst("/", "")
-							),
-							Calculator.secondsToTicks(12.5)
-						));
-				}
-			});
+							// Check range
+						else if (key.contains("-") && getCurrentWave() <= Integer.parseInt(key.split("-")[1]) &&
+							getCurrentWave() >= Integer.parseInt(key.split("-")[0]))
+							getActives().forEach(player -> Bukkit
+								.getScheduler()
+								.scheduleSyncDelayedTask(
+									Main.plugin,
+									() -> Bukkit.dispatchCommand(
+										Bukkit.getConsoleSender(),
+										command
+											.replace("%player%", player
+												.getPlayer()
+												.getName())
+											.replaceFirst("/", "")
+									),
+									Calculator.secondsToTicks(12.5)
+								));
+					}
+				});
 		}
 	}
 
 	public void kickPlayers() {
 		players.forEach(player ->
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-				Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(player.getPlayer()))));
+			Bukkit
+				.getScheduler()
+				.scheduleSyncDelayedTask(Main.plugin, () ->
+					Bukkit
+						.getPluginManager()
+						.callEvent(new LeaveArenaEvent(player.getPlayer()))));
 	}
 
 	public void resetGame() {
@@ -2706,8 +3021,14 @@ public class Arena {
 
 	public VDMob getMob(UUID id) throws VDMobNotFoundException {
 		try {
-			return mobs.stream().filter(Objects::nonNull).filter(mob -> mob.getID().equals(id))
-				.collect(Collectors.toList()).get(0);
+			return mobs
+				.stream()
+				.filter(Objects::nonNull)
+				.filter(mob -> mob
+					.getID()
+					.equals(id))
+				.collect(Collectors.toList())
+				.get(0);
 		}
 		catch (Exception e) {
 			throw new VDMobNotFoundException();
@@ -2801,15 +3122,19 @@ public class Arena {
 		ItemStack item = itemStack.clone();
 		ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
 		List<String> lore = Objects.requireNonNull(meta.getLore());
-		Integer price = meta.getPersistentDataContainer().get(VDItem.PRICE_KEY, PersistentDataType.INTEGER);
+		Integer price = meta
+			.getPersistentDataContainer()
+			.get(VDItem.PRICE_KEY, PersistentDataType.INTEGER);
 
 		// Check for price
 		if (price == null)
 			return itemStack;
 
 		// Modify
-		price = (int) (price * modifier / 5) * 5;
-		meta.getPersistentDataContainer().set(VDItem.PRICE_KEY, PersistentDataType.INTEGER, price);
+		price = Calculator.roundToNearest(price * modifier, 5);
+		meta
+			.getPersistentDataContainer()
+			.set(VDItem.PRICE_KEY, PersistentDataType.INTEGER, price);
 		lore.set(lore.size() - 1, CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
 			price));
 		meta.setLore(lore);
@@ -2829,14 +3154,20 @@ public class Arena {
 	 * @return A list of all {@link Player}s in this arena that aren't of the {@link VDPlayer.Status} LEFT.
 	 */
 	public List<Player> getVanillaPlayers() {
-		return players.stream().map(VDPlayer::getPlayer).collect(Collectors.toList());
+		return players
+			.stream()
+			.map(VDPlayer::getPlayer)
+			.collect(Collectors.toList());
 	}
 
 	/**
 	 * @return A list of {@link VDPlayer}s of the {@link VDPlayer.Status} ALIVE.
 	 */
 	public List<VDPlayer> getAlives() {
-		return players.stream().filter(Objects::nonNull).filter(p -> p.getStatus() == VDPlayer.Status.ALIVE)
+		return players
+			.stream()
+			.filter(Objects::nonNull)
+			.filter(p -> p.getStatus() == VDPlayer.Status.ALIVE)
 			.collect(Collectors.toList());
 	}
 
@@ -2844,7 +3175,10 @@ public class Arena {
 	 * @return A list of {@link VDPlayer}s of the {@link VDPlayer.Status} GHOST.
 	 */
 	public List<VDPlayer> getGhosts() {
-		return players.stream().filter(Objects::nonNull).filter(p -> p.getStatus() == VDPlayer.Status.GHOST)
+		return players
+			.stream()
+			.filter(Objects::nonNull)
+			.filter(p -> p.getStatus() == VDPlayer.Status.GHOST)
 			.collect(Collectors.toList());
 	}
 
@@ -2852,7 +3186,10 @@ public class Arena {
 	 * @return A list of {@link VDPlayer}s of the {@link VDPlayer.Status} SPECTATOR.
 	 */
 	public List<VDPlayer> getSpectators() {
-		return players.stream().filter(Objects::nonNull).filter(p -> p.getStatus() == VDPlayer.Status.SPECTATOR)
+		return players
+			.stream()
+			.filter(Objects::nonNull)
+			.filter(p -> p.getStatus() == VDPlayer.Status.SPECTATOR)
 			.collect(Collectors.toList());
 	}
 
@@ -2860,7 +3197,9 @@ public class Arena {
 	 * @return A list of {@link VDPlayer}s of the {@link VDPlayer.Status} ALIVE or GHOST.
 	 */
 	public List<VDPlayer> getActives() {
-		return Stream.concat(getAlives().stream(), getGhosts().stream()).collect(Collectors.toList());
+		return Stream
+			.concat(getAlives().stream(), getGhosts().stream())
+			.collect(Collectors.toList());
 	}
 
 	/**
@@ -2872,8 +3211,14 @@ public class Arena {
 	 */
 	public @NotNull VDPlayer getPlayer(Player player) throws PlayerNotFoundException {
 		try {
-			return players.stream().filter(Objects::nonNull).filter(p -> p.getID().equals(player.getUniqueId()))
-				.collect(Collectors.toList()).get(0);
+			return players
+				.stream()
+				.filter(Objects::nonNull)
+				.filter(p -> p
+					.getID()
+					.equals(player.getUniqueId()))
+				.collect(Collectors.toList())
+				.get(0);
 		}
 		catch (Exception e) {
 			throw new PlayerNotFoundException("Player not in this arena.");
@@ -2889,8 +3234,14 @@ public class Arena {
 	 */
 	public @NotNull VDPlayer getPlayer(UUID id) throws PlayerNotFoundException {
 		try {
-			return players.stream().filter(Objects::nonNull).filter(p -> p.getID().equals(id))
-				.collect(Collectors.toList()).get(0);
+			return players
+				.stream()
+				.filter(Objects::nonNull)
+				.filter(p -> p
+					.getID()
+					.equals(id))
+				.collect(Collectors.toList())
+				.get(0);
 		}
 		catch (Exception e) {
 			throw new PlayerNotFoundException("Player not in this arena.");
@@ -2905,7 +3256,12 @@ public class Arena {
 	 */
 	public boolean hasPlayer(Player player) {
 		try {
-			return players.stream().filter(Objects::nonNull).anyMatch(p -> p.getID().equals(player.getUniqueId()));
+			return players
+				.stream()
+				.filter(Objects::nonNull)
+				.anyMatch(p -> p
+					.getID()
+					.equals(player.getUniqueId()));
 		}
 		catch (Exception e) {
 			return false;
@@ -2944,8 +3300,13 @@ public class Arena {
 	 * Sets remaining monsters glowing.
 	 */
 	public void setMonsterGlow() {
-		Objects.requireNonNull(getPlayerSpawn().getLocation().getWorld())
-			.getNearbyEntities(getBounds()).stream().filter(Objects::nonNull)
+		Objects
+			.requireNonNull(getPlayerSpawn()
+				.getLocation()
+				.getWorld())
+			.getNearbyEntities(getBounds())
+			.stream()
+			.filter(Objects::nonNull)
 			.filter(VDMob::isVDMob)
 			.filter(entity -> VDMob.isTeam(entity, IndividualTeam.MONSTER))
 			.forEach(entity -> entity.setGlowing(true));
@@ -2966,7 +3327,9 @@ public class Arena {
 			);
 		}
 
-		else if (Main.plugin.getConfig().getBoolean("autoOpen")) {
+		else if (Main.plugin
+			.getConfig()
+			.getBoolean("autoOpen")) {
 			setClosed(false);
 			CommunicationManager.debugInfo(
 				String.format("%s met opening requirements and was opened.", getName()),
@@ -2986,35 +3349,55 @@ public class Arena {
 
 		switch (effectType) {
 			case BLACKSMITH:
-				effectKit = Kit.blacksmith().setKitLevel(1);
+				effectKit = Kit
+					.blacksmith()
+					.setKitLevel(1);
 				break;
 			case WITCH:
-				effectKit = Kit.witch().setKitLevel(1);
+				effectKit = Kit
+					.witch()
+					.setKitLevel(1);
 				break;
 			case MERCHANT:
-				effectKit = Kit.merchant().setKitLevel(1);
+				effectKit = Kit
+					.merchant()
+					.setKitLevel(1);
 				break;
 			case VAMPIRE:
-				effectKit = Kit.vampire().setKitLevel(1);
+				effectKit = Kit
+					.vampire()
+					.setKitLevel(1);
 				break;
 			case GIANT1:
-				effectKit = Kit.giant().setKitLevel(1);
+				effectKit = Kit
+					.giant()
+					.setKitLevel(1);
 				break;
 			case GIANT2:
-				effectKit = Kit.giant().setKitLevel(2);
+				effectKit = Kit
+					.giant()
+					.setKitLevel(2);
 				break;
 			case TRAINER1:
-				effectKit = Kit.trainer().setKitLevel(1);
+				effectKit = Kit
+					.trainer()
+					.setKitLevel(1);
 				break;
 			case TRAINER2:
-				effectKit = Kit.trainer().setKitLevel(2);
+				effectKit = Kit
+					.trainer()
+					.setKitLevel(2);
 				break;
 			default:
 				effectKit = Kit.none();
 		}
 
-		return (int) getActives().stream().filter(VDPlayer::isSharing).filter(player ->
-			effectKit.equals(player.getKit())).count();
+		return (int) getActives()
+			.stream()
+			.filter(VDPlayer::isSharing)
+			.filter(player ->
+				effectKit.equals(player.getKit()))
+			.count();
 	}
 
 	/**
@@ -3025,13 +3408,21 @@ public class Arena {
 		int villagers;
 
 		// Get accurate numbers
-		monsters = (int) Objects.requireNonNull(getPlayerSpawn().getLocation().getWorld())
-			.getNearbyEntities(getBounds()).stream()
+		monsters = (int) Objects
+			.requireNonNull(getPlayerSpawn()
+				.getLocation()
+				.getWorld())
+			.getNearbyEntities(getBounds())
+			.stream()
 			.filter(Objects::nonNull)
 			.filter(VDMob::isVDMob)
 			.filter(entity -> VDMob.isTeam(entity, IndividualTeam.MONSTER))
 			.count();
-		villagers = (int) getPlayerSpawn().getLocation().getWorld().getNearbyEntities(getBounds()).stream()
+		villagers = (int) getPlayerSpawn()
+			.getLocation()
+			.getWorld()
+			.getNearbyEntities(getBounds())
+			.stream()
 			.filter(Objects::nonNull)
 			.filter(VDMob::isVDMob)
 			.filter(entity -> entity instanceof Villager)
@@ -3127,8 +3518,12 @@ public class Arena {
 	 */
 	public void wipe() {
 		// Kick players
-		players.forEach(vdPlayer -> Bukkit.getScheduler().scheduleSyncDelayedTask(Main.plugin, () ->
-			Bukkit.getPluginManager().callEvent(new LeaveArenaEvent(vdPlayer.getPlayer()))));
+		players.forEach(vdPlayer -> Bukkit
+			.getScheduler()
+			.scheduleSyncDelayedTask(Main.plugin, () ->
+				Bukkit
+					.getPluginManager()
+					.callEvent(new LeaveArenaEvent(vdPlayer.getPlayer()))));
 
 		// Clear the arena
 		WorldManager.clear(getCorner1(), getCorner2());

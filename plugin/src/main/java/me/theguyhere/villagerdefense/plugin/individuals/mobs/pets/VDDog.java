@@ -23,7 +23,9 @@ public class VDDog extends VDPet {
 	public VDDog(Arena arena, Location location, VDPlayer owner, int level) {
 		super(
 			arena,
-			(Tameable) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.WOLF),
+			(Tameable) Objects
+				.requireNonNull(location.getWorld())
+				.spawnEntity(location, EntityType.WOLF),
 			LanguageManager.mobs.dog,
 			LanguageManager.mobLore.dog,
 			IndividualAttackType.NORMAL,

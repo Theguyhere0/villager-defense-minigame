@@ -16,10 +16,12 @@ public class VDCaveSpider extends VDMinion {
 	public VDCaveSpider(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(
-				location,
-				EntityType.CAVE_SPIDER
-			),
+			(Mob) Objects
+				.requireNonNull(location.getWorld())
+				.spawnEntity(
+					location,
+					EntityType.CAVE_SPIDER
+				),
 			LanguageManager.mobs.caveSpider,
 			LanguageManager.mobLore.caveSpider,
 			IndividualAttackType.PENETRATING

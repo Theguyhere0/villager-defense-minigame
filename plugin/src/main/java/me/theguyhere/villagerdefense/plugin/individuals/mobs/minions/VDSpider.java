@@ -15,7 +15,9 @@ public class VDSpider extends VDMinion {
 	public VDSpider(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.SPIDER),
+			(Mob) Objects
+				.requireNonNull(location.getWorld())
+				.spawnEntity(location, EntityType.SPIDER),
 			LanguageManager.mobs.spider,
 			LanguageManager.mobLore.spider,
 			IndividualAttackType.PENETRATING

@@ -28,7 +28,8 @@ class PacketEntityArmorStand implements TextPacketEntity {
 	public PacketGroup newSpawnPackets(Location location, String text) {
 		return PacketGroup.of(
 			new SpawnEntityPacket(armorStandID, Registry.ENTITY_TYPE.getId(EntityType.ARMOR_STAND), location),
-			EntityMetadataPacket.builder(armorStandID)
+			EntityMetadataPacket
+				.builder(armorStandID)
 				.setInvisible()
 				.setArmorStandMarker()
 				.setCustomName(text)

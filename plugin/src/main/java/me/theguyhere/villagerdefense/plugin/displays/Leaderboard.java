@@ -62,19 +62,34 @@ public class Leaderboard {
 		}
 
 		// Gather relevant stats
-		for (String key : Objects.requireNonNull(Main.getPlayerData().getConfigurationSection(""))
+		for (String key : Objects
+			.requireNonNull(Main
+				.getPlayerData()
+				.getConfigurationSection(""))
 			.getKeys(false)) {
-			if (!key.equals("logger") && Main.getPlayerData().contains(key + "." + id))
-				mapping.put(key, Main.getPlayerData().getInt(key + "." + id));
+			if (!key.equals("logger") && Main
+				.getPlayerData()
+				.contains(key + "." + id))
+				mapping.put(key, Main
+					.getPlayerData()
+					.getInt(key + "." + id));
 		}
 
 		// Put names and values into the leaderboard
-		mapping.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-			.filter(set -> Bukkit.getOfflinePlayer(UUID.fromString(set.getKey())).getName() != null)
+		mapping
+			.entrySet()
+			.stream()
+			.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+			.filter(set -> Bukkit
+				.getOfflinePlayer(UUID.fromString(set.getKey()))
+				.getName() != null)
 			.filter(set -> set.getValue() > 0)
-			.limit(10).forEachOrdered(set -> {
+			.limit(10)
+			.forEachOrdered(set -> {
 				try {
-					info.add(Bukkit.getOfflinePlayer(UUID.fromString(set.getKey())).getName() +
+					info.add(Bukkit
+						.getOfflinePlayer(UUID.fromString(set.getKey()))
+						.getName() +
 						" - &b" + set.getValue());
 				}
 				catch (Exception ignored) {
@@ -86,7 +101,11 @@ public class Leaderboard {
 
 		// Set location and hologram
 		this.location = location;
-		this.hologram = info.get(0).isEmpty() ? null : new Hologram(location.clone().add(0, 2.5, 0),
+		this.hologram = info
+			.get(0)
+			.isEmpty() ? null : new Hologram(location
+			.clone()
+			.add(0, 2.5, 0),
 			false, info.toArray(new String[]{})
 		);
 	}

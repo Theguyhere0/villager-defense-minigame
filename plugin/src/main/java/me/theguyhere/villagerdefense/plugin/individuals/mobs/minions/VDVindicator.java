@@ -16,7 +16,9 @@ public class VDVindicator extends VDMinion {
 	public VDVindicator(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.VINDICATOR),
+			(Mob) Objects
+				.requireNonNull(location.getWorld())
+				.spawnEntity(location, EntityType.VINDICATOR),
 			LanguageManager.mobs.vindicator,
 			LanguageManager.mobLore.vindicator,
 			IndividualAttackType.CRUSHING

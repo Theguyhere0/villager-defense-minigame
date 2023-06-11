@@ -39,9 +39,12 @@ class CommandModifyCrystalBalance {
 		// Check for valid player
 		UUID id;
 		try {
-			id = Arrays.stream(Bukkit.getOfflinePlayers())
+			id = Arrays
+				.stream(Bukkit.getOfflinePlayers())
 				.filter(oPlayer -> Objects.equals(oPlayer.getName(), args[1]))
-				.collect(Collectors.toList()).get(0).getUniqueId();
+				.collect(Collectors.toList())
+				.get(0)
+				.getUniqueId();
 		}
 		catch (NullPointerException e) {
 			CommandExecImp.notifyFailure(sender, LanguageManager.errors.invalidPlayer);

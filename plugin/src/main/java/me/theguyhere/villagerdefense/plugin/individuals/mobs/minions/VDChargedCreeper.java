@@ -17,7 +17,9 @@ public class VDChargedCreeper extends VDMinion {
 	public VDChargedCreeper(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.CREEPER),
+			(Mob) Objects
+				.requireNonNull(location.getWorld())
+				.spawnEntity(location, EntityType.CREEPER),
 			LanguageManager.mobs.chargedCreeper,
 			LanguageManager.mobLore.chargedCreeper,
 			IndividualAttackType.NORMAL

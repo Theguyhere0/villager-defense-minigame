@@ -36,26 +36,53 @@ public abstract class VDAbility extends VDItem {
 		ChatColor.BLUE,
 		String.format(LanguageManager.messages.range, LanguageManager.messages.blocks)
 	);
-	public static final NamespacedKey RANGE_KEY = new NamespacedKey(Main.plugin, "range");
+	public static final NamespacedKey RANGE_KEY = new NamespacedKey(Main.plugin, "abilityRange");
 
 	public static ItemStack createAbility(String kitID, Tier tier) {
-		if (Kit.knight().getID().equals(kitID))
+		if (Kit
+			.knight()
+			.getID()
+			.equals(kitID))
 			return KnightAbility.create(tier);
-		else if (Kit.mage().getID().equals(kitID))
+		else if (Kit
+			.mage()
+			.getID()
+			.equals(kitID))
 			return MageAbility.create(tier);
-		else if (Kit.messenger().getID().equals(kitID))
+		else if (Kit
+			.messenger()
+			.getID()
+			.equals(kitID))
 			return MessengerAbility.create(tier);
-		else if (Kit.monk().getID().equals(kitID))
+		else if (Kit
+			.monk()
+			.getID()
+			.equals(kitID))
 			return MonkAbility.create(tier);
-		else if (Kit.ninja().getID().equals(kitID))
+		else if (Kit
+			.ninja()
+			.getID()
+			.equals(kitID))
 			return NinjaAbility.create(tier);
-		else if (Kit.priest().getID().equals(kitID))
+		else if (Kit
+			.priest()
+			.getID()
+			.equals(kitID))
 			return PriestAbility.create(tier);
-		else if (Kit.siren().getID().equals(kitID))
+		else if (Kit
+			.siren()
+			.getID()
+			.equals(kitID))
 			return SirenAbility.create(tier);
-		else if (Kit.templar().getID().equals(kitID))
+		else if (Kit
+			.templar()
+			.getID()
+			.equals(kitID))
 			return TemplarAbility.create(tier);
-		else if (Kit.warrior().getID().equals(kitID))
+		else if (Kit
+			.warrior()
+			.getID()
+			.equals(kitID))
 			return WarriorAbility.create(tier);
 		else return null;
 	}
@@ -124,9 +151,12 @@ public abstract class VDAbility extends VDItem {
 		double cooldown = 0;
 		int index = 0;
 		for (int i = 0; i < lore.size(); i++) {
-			if (lore.get(i).contains(LanguageManager.messages.cooldown
-				.replace("%s", ""))) {
-				cooldown = Double.parseDouble(lore.get(i)
+			if (lore
+				.get(i)
+				.contains(LanguageManager.messages.cooldown
+					.replace("%s", ""))) {
+				cooldown = Double.parseDouble(lore
+					.get(i)
 					.substring(2 + LanguageManager.messages.cooldown.length())
 					.replace(ChatColor.BLUE.toString(), "")
 					.replace(LanguageManager.messages.seconds.substring(3), ""));

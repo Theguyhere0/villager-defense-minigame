@@ -31,7 +31,9 @@ public class DataManager {
 	public void reloadConfig() {
 		// Create config file object
 		if (configFile == null)
-			configFile = new File(Main.plugin.getDataFolder().getPath(), fileName);
+			configFile = new File(Main.plugin
+				.getDataFolder()
+				.getPath(), fileName);
 
 		// Refresh file configuration object
 		dataConfig = YamlConfiguration.loadConfiguration(configFile);
@@ -62,14 +64,18 @@ public class DataManager {
 			getConfig().save(configFile);
 		}
 		catch (IOException e) {
-			Main.plugin.getLogger().log(Level.SEVERE, "Could not save config to " + configFile, e);
+			Main.plugin
+				.getLogger()
+				.log(Level.SEVERE, "Could not save config to " + configFile, e);
 		}
 	}
 
 	private void saveDefaultConfig() {
 		// Create config file object
 		if (configFile == null)
-			configFile = new File(Main.plugin.getDataFolder().getPath(), fileName);
+			configFile = new File(Main.plugin
+				.getDataFolder()
+				.getPath(), fileName);
 
 		// Save default if file doesn't exist
 		if (!configFile.exists())
@@ -79,14 +85,30 @@ public class DataManager {
 	// Sets the location data to a configuration path
 	public static void setConfigurationLocation(String path, Location location) {
 		if (location == null)
-			Main.getArenaData().set(path, null);
+			Main
+				.getArenaData()
+				.set(path, null);
 		else {
-			Main.getArenaData().set(path + ".world", Objects.requireNonNull(location.getWorld()).getName());
-			Main.getArenaData().set(path + ".x", location.getX());
-			Main.getArenaData().set(path + ".y", location.getY());
-			Main.getArenaData().set(path + ".z", location.getZ());
-			Main.getArenaData().set(path + ".pitch", location.getPitch());
-			Main.getArenaData().set(path + ".yaw", location.getYaw());
+			Main
+				.getArenaData()
+				.set(path + ".world", Objects
+					.requireNonNull(location.getWorld())
+					.getName());
+			Main
+				.getArenaData()
+				.set(path + ".x", location.getX());
+			Main
+				.getArenaData()
+				.set(path + ".y", location.getY());
+			Main
+				.getArenaData()
+				.set(path + ".z", location.getZ());
+			Main
+				.getArenaData()
+				.set(path + ".pitch", location.getPitch());
+			Main
+				.getArenaData()
+				.set(path + ".yaw", location.getYaw());
 		}
 		Main.saveArenaData();
 	}
@@ -95,12 +117,28 @@ public class DataManager {
 	public static Location getConfigLocation(String path) {
 		try {
 			return new Location(
-				Bukkit.getWorld(Objects.requireNonNull(Main.getArenaData().getString(path + ".world"))),
-				Main.getArenaData().getDouble(path + ".x"),
-				Main.getArenaData().getDouble(path + ".y"),
-				Main.getArenaData().getDouble(path + ".z"),
-				Float.parseFloat(Objects.requireNonNull(Main.getArenaData().get(path + ".yaw")).toString()),
-				Float.parseFloat(Objects.requireNonNull(Main.getArenaData().get(path + ".pitch")).toString())
+				Bukkit.getWorld(Objects.requireNonNull(Main
+					.getArenaData()
+					.getString(path + ".world"))),
+				Main
+					.getArenaData()
+					.getDouble(path + ".x"),
+				Main
+					.getArenaData()
+					.getDouble(path + ".y"),
+				Main
+					.getArenaData()
+					.getDouble(path + ".z"),
+				Float.parseFloat(Objects
+					.requireNonNull(Main
+						.getArenaData()
+						.get(path + ".yaw"))
+					.toString()),
+				Float.parseFloat(Objects
+					.requireNonNull(Main
+						.getArenaData()
+						.get(path + ".pitch"))
+					.toString())
 			);
 		}
 		catch (Exception e) {
@@ -163,7 +201,11 @@ public class DataManager {
 	public static Map<Integer, Location> getConfigLocationMap(String path) {
 		Map<Integer, Location> locations = new HashMap<>();
 		try {
-			Objects.requireNonNull(Main.getArenaData().getConfigurationSection(path)).getKeys(false)
+			Objects
+				.requireNonNull(Main
+					.getArenaData()
+					.getConfigurationSection(path))
+				.getKeys(false)
 				.forEach(num -> {
 					try {
 						locations.put(

@@ -60,8 +60,12 @@ public abstract class VDItem {
 
 		// Get data
 		ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
-		Integer maxDur = meta.getPersistentDataContainer().get(MAX_DURABILITY_KEY, PersistentDataType.INTEGER);
-		Integer durability = meta.getPersistentDataContainer().get(DURABILITY_KEY, PersistentDataType.INTEGER);
+		Integer maxDur = meta
+			.getPersistentDataContainer()
+			.get(MAX_DURABILITY_KEY, PersistentDataType.INTEGER);
+		Integer durability = meta
+			.getPersistentDataContainer()
+			.get(DURABILITY_KEY, PersistentDataType.INTEGER);
 		AtomicInteger durIndex = new AtomicInteger();
 		List<String> lores = Objects.requireNonNull(meta.getLore());
 		lores.forEach(lore -> {
@@ -87,7 +91,9 @@ public abstract class VDItem {
 			return false;
 
 		// Update durability data
-		meta.getPersistentDataContainer().set(DURABILITY_KEY, PersistentDataType.INTEGER, durability);
+		meta
+			.getPersistentDataContainer()
+			.set(DURABILITY_KEY, PersistentDataType.INTEGER, durability);
 
 		// Set new lore
 		ChatColor color = durability >= .75 * maxDur ? ChatColor.GREEN :
@@ -100,8 +106,12 @@ public abstract class VDItem {
 		meta.setLore(lores);
 
 		// Set damage indicator
-		damage.setDamage((int) item.getType().getMaxDurability() - (int) (durability * 1. / maxDur *
-			item.getType().getMaxDurability()));
+		damage.setDamage((int) item
+			.getType()
+			.getMaxDurability() - (int) (durability * 1. / maxDur *
+			item
+				.getType()
+				.getMaxDurability()));
 
 		item.setItemMeta(meta);
 		return true;
@@ -145,6 +155,7 @@ public abstract class VDItem {
 
 	public enum MetaKey {
 		DAMAGE,
+		KNOCKBACK,
 		PER_BLOCK,
 		ORIGIN_LOCATION,
 		ATTACK_SPEED,

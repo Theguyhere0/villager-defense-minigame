@@ -62,7 +62,9 @@ class PacketSetter extends PacketDataSerializer {
 	<T> void writeDataWatcherEntry(DataWatcherKey<T> key, T value) {
 		writeByte(key.getIndex());
 		writeVarInt(key.getSerializerTypeID());
-		key.getSerializer().a(this, value);
+		key
+			.getSerializer()
+			.a(this, value);
 	}
 
 	void writeDataWatcherEntriesEnd() {

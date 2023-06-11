@@ -31,7 +31,8 @@ class PacketEntityVillager implements VillagerPacketEntity {
 				location.getPitch()
 			),
 			new EntityHeadRotationPacket(villagerID, location.getYaw()),
-			EntityMetadataPacket.builder(villagerID)
+			EntityMetadataPacket
+				.builder(villagerID)
 				.setVillagerType(type)
 				.build()
 		);
