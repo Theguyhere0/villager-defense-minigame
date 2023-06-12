@@ -22,6 +22,8 @@ import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.items.armor.VDArmor;
 import me.theguyhere.villagerdefense.plugin.items.menuItems.Shop;
+import me.theguyhere.villagerdefense.plugin.items.menuItems.SlotGuard;
+import me.theguyhere.villagerdefense.plugin.items.menuItems.VDMenuItem;
 import me.theguyhere.villagerdefense.plugin.items.weapons.Ammo;
 import me.theguyhere.villagerdefense.plugin.items.weapons.VDWeapon;
 import me.theguyhere.villagerdefense.plugin.kits.Kit;
@@ -285,7 +287,7 @@ public class VDPlayer {
 				getPlayer()
 					.getInventory()
 					.forEach(itemStack -> {
-						if (itemStack != null && !Shop.matches(itemStack) && !VDAbility.matches(itemStack))
+						if (itemStack != null && !VDMenuItem.matches(itemStack) && !VDAbility.matches(itemStack))
 							getPlayer()
 								.getWorld()
 								.dropItemNaturally(getPlayer().getLocation(), itemStack);
@@ -946,25 +948,25 @@ public class VDPlayer {
 			.getHelmet();
 		getPlayer()
 			.getInventory()
-			.setHelmet(null);
+			.setHelmet(SlotGuard.create());
 		chestplate = getPlayer()
 			.getInventory()
 			.getChestplate();
 		getPlayer()
 			.getInventory()
-			.setChestplate(null);
+			.setChestplate(SlotGuard.create());
 		leggings = getPlayer()
 			.getInventory()
 			.getLeggings();
 		getPlayer()
 			.getInventory()
-			.setLeggings(null);
+			.setLeggings(SlotGuard.create());
 		boots = getPlayer()
 			.getInventory()
 			.getBoots();
 		getPlayer()
 			.getInventory()
-			.setBoots(null);
+			.setBoots(SlotGuard.create());
 		updateArmor();
 	}
 
@@ -991,6 +993,18 @@ public class VDPlayer {
 	 * Gives items on spawn or respawn based on kit selected
 	 */
 	public void giveItems() {
+		// Set slot guards
+		if (getChallenges().contains(Challenge.amputee())) {
+			for (int i = 9; i < 36; i++) {
+				getPlayer().getInventory().setItem(i, SlotGuard.create());
+			}
+		}
+		if (getChallenges().contains(Challenge.naked())) {
+			for (int i = 36; i < 40; i++) {
+				getPlayer().getInventory().setItem(i, SlotGuard.create());
+			}
+		}
+
 		for (ItemStack item : getKit().getItems()) {
 			EntityEquipment equipment = getPlayer().getEquipment();
 
@@ -1036,7 +1050,9 @@ public class VDPlayer {
 				else PlayerManager.giveItem(getPlayer(), item, LanguageManager.errors.inventoryFull);
 			}
 		}
-		PlayerManager.giveItem(getPlayer(), Shop.create(), LanguageManager.errors.inventoryFull);
+
+		// Set shop
+		getPlayer().getInventory().setItem(8, Shop.create());
 
 		updateArmor();
 		updateOffHand(null);

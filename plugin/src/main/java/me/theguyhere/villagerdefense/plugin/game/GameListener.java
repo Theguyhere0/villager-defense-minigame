@@ -1578,7 +1578,7 @@ public class GameListener implements Listener {
 			return;
 		}
 
-		// Check for menu items
+		// Check for menu items and abilities
 		ItemStack item = e
 			.getItemDrop()
 			.getItemStack();
@@ -1649,7 +1649,7 @@ public class GameListener implements Listener {
 			e.setCancelled(true);
 	}
 
-	// Prevent moving items around while waiting for game to start, otherwise update player stats
+	// Restrict item movement and update player stats
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent e) {
 		Player player = (Player) e.getWhoClicked();
@@ -1665,8 +1665,11 @@ public class GameListener implements Listener {
 			return;
 		}
 
-		// Cancel event if arena is in waiting mode
-		if (arena.getStatus() == ArenaStatus.WAITING) {
+		// Cancel event if a menu item is being involved
+		if (VDMenuItem.matches(e.getCurrentItem()) || VDMenuItem.matches(e.getCursor()) ||
+			e.getClick() == ClickType.NUMBER_KEY && VDMenuItem.matches(player
+				.getInventory()
+				.getItem(e.getHotbarButton()))) {
 			e.setCancelled(true);
 			return;
 		}
@@ -1678,6 +1681,17 @@ public class GameListener implements Listener {
 			.requireNonNull(e.getClickedInventory())
 			.getType() != InventoryType.CRAFTING)
 			return;
+
+		// Check for illegal offhand swap, then update offhand if slots changes
+		if (e.getClick() == ClickType.SWAP_OFFHAND) {
+			// Unequip weapons and mage abilities in offhand
+			if (VDWeapon.matchesNoAmmo(e.getCurrentItem()) || MageAbility.matches(e.getCurrentItem())) {
+				e.setCancelled(true);
+				PlayerManager.notifyFailure(player, LanguageManager.errors.offWeapon);
+			}
+
+			else gamer.updateOffHand(e.getCurrentItem());
+		}
 
 		// Update main hand if that slot changes
 		if (e.getSlot() == player
@@ -1699,15 +1713,6 @@ public class GameListener implements Listener {
 			}
 
 			else gamer.updateOffHand(buff);
-		}
-		else if (e.getClick() == ClickType.SWAP_OFFHAND) {
-			// Unequip weapons and mage abilities in offhand
-			if (VDWeapon.matchesNoAmmo(e.getCurrentItem()) || MageAbility.matches(e.getCurrentItem())) {
-				e.setCancelled(true);
-				PlayerManager.notifyFailure(player, LanguageManager.errors.offWeapon);
-			}
-
-			else gamer.updateOffHand(e.getCurrentItem());
 		}
 
 		// Update armor if those slots change

@@ -18,8 +18,6 @@ import me.theguyhere.villagerdefense.plugin.items.food.VDFood;
 import me.theguyhere.villagerdefense.plugin.items.menuItems.Shop;
 import me.theguyhere.villagerdefense.plugin.items.weapons.VDWeapon;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
@@ -27,7 +25,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -471,73 +468,6 @@ public class KitAbilityListener implements Listener {
 					.forEach(vdPlayer -> vdPlayer
 						.getPlayer()
 						.playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1, 1));
-		}
-	}
-
-	// Ninja nerf
-	@EventHandler
-	public void onInvisibleEquip(PlayerMoveEvent e) {
-		Player player = e.getPlayer();
-
-		// Check if player is in a game
-		if (!GameController.checkPlayer(player))
-			return;
-
-		// Ignore creative and spectator mode players
-		if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR)
-			return;
-
-		// Ignore if not invisible
-		if (player
-			.getActivePotionEffects()
-			.stream()
-			.noneMatch(potion -> potion
-				.getType()
-				.equals(PotionEffectType.INVISIBILITY)))
-			return;
-
-		// Get armor
-		ItemStack helmet = player
-			.getInventory()
-			.getHelmet();
-		ItemStack chestplate = player
-			.getInventory()
-			.getChestplate();
-		ItemStack leggings = player
-			.getInventory()
-			.getLeggings();
-		ItemStack boots = player
-			.getInventory()
-			.getBoots();
-
-		// Unequip armor
-		if (!(helmet == null || helmet.getType() == Material.AIR)) {
-			PlayerManager.giveItem(player, helmet, LanguageManager.errors.inventoryFull);
-			player
-				.getInventory()
-				.setHelmet(null);
-			PlayerManager.notifyFailure(player, LanguageManager.errors.ninja);
-		}
-		if (!(chestplate == null || chestplate.getType() == Material.AIR)) {
-			PlayerManager.giveItem(player, chestplate, LanguageManager.errors.inventoryFull);
-			player
-				.getInventory()
-				.setChestplate(null);
-			PlayerManager.notifyFailure(player, LanguageManager.errors.ninja);
-		}
-		if (!(leggings == null || leggings.getType() == Material.AIR)) {
-			PlayerManager.giveItem(player, leggings, LanguageManager.errors.inventoryFull);
-			player
-				.getInventory()
-				.setLeggings(null);
-			PlayerManager.notifyFailure(player, LanguageManager.errors.ninja);
-		}
-		if (!(boots == null || boots.getType() == Material.AIR)) {
-			PlayerManager.giveItem(player, boots, LanguageManager.errors.inventoryFull);
-			player
-				.getInventory()
-				.setBoots(null);
-			PlayerManager.notifyFailure(player, LanguageManager.errors.ninja);
 		}
 	}
 }

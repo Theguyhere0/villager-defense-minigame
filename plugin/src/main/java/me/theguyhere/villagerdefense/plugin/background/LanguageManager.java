@@ -312,8 +312,6 @@ public class LanguageManager {
 		public final @NotNull String kitBuy;
 		public final @NotNull String kitSelect;
 		public final @NotNull String kitUpgrade;
-		public final @NotNull String naked;
-		public final @NotNull String ninja;
 		public final @NotNull String noArena;
 		public final @NotNull String noGameEnd;
 		public final @NotNull String notInGame;
@@ -359,8 +357,6 @@ public class LanguageManager {
 			kitBuy = getConfigString("kitBuy");
 			kitSelect = getConfigString("kitSelect");
 			kitUpgrade = getConfigString("kitUpgrade");
-			naked = getConfigString("naked");
-			ninja = getConfigString("ninja");
 			noArena = getConfigString("noArena");
 			noGameEnd = getConfigString("noGameEnd");
 			notInGame = getConfigString("notInGame");
@@ -1057,6 +1053,7 @@ public class LanguageManager {
 		public final @NotNull String removePet;
 		public final @NotNull String reset;
 		public final @NotNull String resetWarning;
+		public final @NotNull String restricted;
 		public final @NotNull String resurrection;
 		public final @NotNull String rightClick;
 		public final @NotNull String seconds;
@@ -1190,6 +1187,7 @@ public class LanguageManager {
 			removePet = getConfigString("removePet");
 			reset = getConfigString("reset");
 			resetWarning = getConfigString("resetWarning");
+			restricted = getConfigString("restricted");
 			resurrection = getConfigString("resurrection");
 			rightClick = getConfigString("rightClick");
 			seconds = getConfigString("seconds");
