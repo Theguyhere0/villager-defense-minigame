@@ -13,7 +13,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -94,38 +93,6 @@ public class VersionNMSManager implements NMSManager {
 				new BlockChangePacket(position, original)
 			)
 			.sendTo(player);
-	}
-
-	@Override
-	public void setBowCooldown(Player player, int cooldownTicks) {
-		new SetCooldownPacket(BuiltInRegistries.ITEM.getId(Items.BOW), cooldownTicks).sendTo(player);
-	}
-
-	@Override
-	public void setCrossbowCooldown(Player player, int cooldownTicks) {
-		new SetCooldownPacket(BuiltInRegistries.ITEM.getId(Items.CROSSBOW), cooldownTicks).sendTo(player);
-	}
-
-	@Override
-	public PacketGroup createEffect(Location location, double healthRatio) {
-		// Protect from invalid health ratios
-		if (healthRatio > 1 || healthRatio < 0)
-			return null;
-
-		return PacketGroup.of(
-			new WorldBorderCenterPacket(location),
-			new WorldBorderSizePacket(BORDER_SIZE),
-			new WorldBorderWarningDistancePacket(Math.max((int) (BORDER_SIZE * (4 - 7 * healthRatio)), 0))
-		);
-	}
-
-	@Override
-	public PacketGroup resetEffect(Location location, double size, int warningDistance) {
-		return PacketGroup.of(
-			new WorldBorderCenterPacket(location),
-			new WorldBorderSizePacket(size),
-			new WorldBorderWarningDistancePacket(warningDistance)
-		);
 	}
 
 	@Override

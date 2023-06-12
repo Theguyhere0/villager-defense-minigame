@@ -6,7 +6,6 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.arenas.*;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.guis.Inventories;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
@@ -186,18 +185,9 @@ public class GameListener implements Listener {
 
 		// Update capacity, durability, and cooldown
 		if (Bow.matches(range))
-			NMSVersion
-				.getCurrent()
-				.getNmsManager()
-				.setBowCooldown(player, Calculator.secondsToTicks(1 / cooldown));
-		else
-			NMSVersion
-				.getCurrent()
-				.getNmsManager()
-				.setCrossbowCooldown(
-					player,
-					Calculator.secondsToTicks(1 / cooldown)
-				);
+			player.setCooldown(Material.BOW, Calculator.secondsToTicks(1 / cooldown));
+		else if (Crossbow.matches(range))
+			player.setCooldown(Material.CROSSBOW, Calculator.secondsToTicks(1 / cooldown));
 		gamer.triggerWeaponCooldown(Calculator.secondsToMillis(1 / cooldown));
 		if (Ammo.updateCapacity(ammo, -cost)) {
 			player

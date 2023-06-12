@@ -92,38 +92,6 @@ public class VersionNMSManager implements NMSManager {
 	}
 
 	@Override
-	public void setBowCooldown(Player player, int cooldownTicks) {
-		new SetCooldownPacket(ItemID.BOW, cooldownTicks).sendTo(player);
-	}
-
-	@Override
-	public void setCrossbowCooldown(Player player, int cooldownTicks) {
-		new SetCooldownPacket(ItemID.CROSSBOW, cooldownTicks).sendTo(player);
-	}
-
-	@Override
-	public PacketGroup createEffect(Location location, double healthRatio) {
-		// Protect from invalid health ratios
-		if (healthRatio > 1 || healthRatio < 0)
-			return null;
-
-		return PacketGroup.of(
-			new WorldBorderCenterPacket(location),
-			new WorldBorderSizePacket(BORDER_SIZE),
-			new WorldBorderWarningDistancePacket(Math.max((int) (BORDER_SIZE * (4 - 7 * healthRatio)), 0))
-		);
-	}
-
-	@Override
-	public PacketGroup resetEffect(Location location, double size, int warningDistance) {
-		return PacketGroup.of(
-			new WorldBorderCenterPacket(location),
-			new WorldBorderSizePacket(size),
-			new WorldBorderWarningDistancePacket(warningDistance)
-		);
-	}
-
-	@Override
 	public void injectPacketListener(Player player, PacketListener packetListener) {
 		modifyPipeline(player, (ChannelPipeline pipeline) -> {
 			ChannelHandler currentListener = pipeline.get(InboundPacketHandler.HANDLER_NAME);

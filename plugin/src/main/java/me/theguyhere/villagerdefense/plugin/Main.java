@@ -1,5 +1,7 @@
 package me.theguyhere.villagerdefense.plugin;
 
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.nms.common.NMSManager;
@@ -44,6 +46,8 @@ public class Main extends JavaPlugin {
 	private static boolean loaded = false;
 	private static final List<String> unloadedWorlds = new ArrayList<>();
 	private static Economy economy;
+	private static VDExpansion expansion;
+	private static ProtocolManager protocolManager;
 
 	// Global state variables
 	private static boolean outdated = false; // DO NOT CHANGE
@@ -77,17 +81,21 @@ public class Main extends JavaPlugin {
 			.setTabCompleter(new TabCompleterImp());
 
 		// Schedule to register PAPI expansion
+		expansion = new VDExpansion();
 		Bukkit
 			.getScheduler()
 			.scheduleSyncDelayedTask(this, () -> {
 				if (Bukkit
 					.getPluginManager()
 					.getPlugin("PlaceholderAPI") != null)
-					new VDExpansion().register();
+					expansion.register();
 			}, Calculator.secondsToTicks(1));
 
 		// Try finding economy plugin
 		setupEconomy();
+
+		// Set up ProtocolManager
+		protocolManager = ProtocolLibrary.getProtocolManager();
 
 		// Set up initial classes
 		saveDefaultConfig();
@@ -190,11 +198,13 @@ public class Main extends JavaPlugin {
 		setLoaded(false);
 		checkArenaNameAndGatherUnloadedWorlds();
 
-		// Register expansion again
+		// Re-register expansion
 		if (Bukkit
 			.getPluginManager()
-			.getPlugin("PlaceholderAPI") != null)
-			new VDExpansion().register();
+			.getPlugin("PlaceholderAPI") != null) {
+			expansion.unregister();
+			expansion.register();
+		}
 
 		// Try finding economy plugin again
 		setupEconomy();
@@ -258,6 +268,10 @@ public class Main extends JavaPlugin {
 
 	public static Economy getEconomy() {
 		return economy;
+	}
+
+	public static ProtocolManager getProtocolManager() {
+		return protocolManager;
 	}
 
 	public static boolean hasCustomEconomy() {

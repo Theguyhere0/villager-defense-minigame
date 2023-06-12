@@ -5,7 +5,7 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.achievements.AchievementChecker;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
+import me.theguyhere.villagerdefense.plugin.background.PacketManager;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
@@ -17,7 +17,6 @@ import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.WorldBorder;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -379,18 +378,11 @@ public class ArenaListener implements Listener {
 			PlayerManager.returnSurvivalStats(player);
 
 		// Reset world border effect
-		WorldBorder worldBorder = Objects
+		PacketManager.resetBorderEffect(player, Objects
 			.requireNonNull(GameController
 				.getLobby()
 				.getWorld())
-			.getWorldBorder();
-		NMSVersion
-			.getCurrent()
-			.getNmsManager()
-			.resetEffect(worldBorder.getCenter(), worldBorder.getSize(),
-				worldBorder.getWarningDistance()
-			)
-			.sendTo(player);
+			.getWorldBorder());
 
 		// Refresh the game portal
 		arena.refreshPortal();

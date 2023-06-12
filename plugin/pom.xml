@@ -72,6 +72,11 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>VillagerDefense-common</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>com.comphenix.protocol</groupId>
+			<artifactId>ProtocolLib</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
