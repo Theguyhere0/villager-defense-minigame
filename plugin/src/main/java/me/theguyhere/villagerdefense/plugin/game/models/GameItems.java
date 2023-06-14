@@ -2514,7 +2514,7 @@ public class GameItems {
 	}
 	public static @NotNull ItemStack arrowsSPlus() {
 		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW,
-				new PotionData(PotionType.SLOWNESS, false, true), 8, null,
+				new PotionData(PotionType.SLOWNESS, true, false), 8, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a125"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
@@ -2528,14 +2528,14 @@ public class GameItems {
 	}
 	public static @NotNull ItemStack arrowsWPlus() {
 		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW,
-				new PotionData(PotionType.WEAKNESS, false,true), 8, null,
+				new PotionData(PotionType.WEAKNESS, true,false), 8, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a125"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
 	}
 	public static @NotNull ItemStack arrowsPPlus() {
 		ItemStack item = ItemManager.createPotionItems(Material.TIPPED_ARROW,
-				new PotionData(PotionType.POISON, false, true), 16, null,
+				new PotionData(PotionType.POISON, true, false), 16, null,
 				CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a130"));
 
 		return item == null ? new ItemStack(Material.AIR) : item;
