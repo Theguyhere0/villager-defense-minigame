@@ -5,7 +5,7 @@
     <parent>
         <artifactId>VillagerDefense-parent</artifactId>
         <groupId>me.theguyhere</groupId>
-        <version>1.2.7</version>
+        <version>1.2.8</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -21,6 +21,7 @@
         <module>v1_19_r1</module>
         <module>v1_19_r2</module>
         <module>v1_19_r3</module>
+        <module>v1_20_r1</module>
         <module>common</module>
     </modules>
 </project>

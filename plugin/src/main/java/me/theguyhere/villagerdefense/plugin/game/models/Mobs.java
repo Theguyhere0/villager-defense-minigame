@@ -1,10 +1,9 @@
 package me.theguyhere.villagerdefense.plugin.game.models;
 
+import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.events.ReloadBoardsEvent;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
-import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -49,19 +48,22 @@ public class Mobs {
             else boost = difficulty - 5;
             switch (i) {
                 case 0:
-                    Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH))
-                            .addModifier(new AttributeModifier(
-                                "hpBoost", boost / 3, AttributeModifier.Operation.ADD_NUMBER
-                            ));
+                    if (livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH) != null)
+                        livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH)
+                                .addModifier(new AttributeModifier(
+                                    "hpBoost", boost / 3, AttributeModifier.Operation.ADD_NUMBER
+                                ));
                     break;
                 case 1:
-                    Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE))
+                    if (livingEntity.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE) != null)
+                        livingEntity.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE)
                             .addModifier(new AttributeModifier(
                                 "attBoost", boost / 4, AttributeModifier.Operation.ADD_NUMBER
                             ));
                     break;
                 case 2:
-                    Objects.requireNonNull(livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
+                    if (livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED) != null)
+                        livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED)
                             .addModifier(new AttributeModifier(
                                 "spdBoost", boost / 120, AttributeModifier.Operation.ADD_NUMBER
                             ));
@@ -1278,7 +1280,7 @@ public class Mobs {
         else toFormat = "&c";
 
         return CommunicationManager.format(toFormat +
-                new String(new char[healthBars]).replace("\0", "\u2592") +
+                new String(new char[healthBars]).replace("\0", "▒") +
                 new String(new char[size - healthBars]).replace("\0", "  "));
     }
 }
