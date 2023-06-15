@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.items;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -19,26 +20,102 @@ import java.util.*;
 /**
  * Class to manage {@link ItemStack} manipulations.
  */
-public class ItemFactory {
+public class ItemStackBuilder {
 	/**
 	 * Flags for creating normal items with enchants and/or lore.
 	 */
-	@SuppressWarnings("unused")
 	public static final boolean[] NORMAL_FLAGS = {false, false};
 	/**
 	 * Flags for creating items with hidden enchants.
 	 */
-	@SuppressWarnings("unused")
 	public static final boolean[] HIDE_ENCHANT_FLAGS = {true, false};
 	/**
 	 * Flags for creating items with hidden enchants and attributes, mostly for buttons.
 	 */
-	@SuppressWarnings("unused")
 	public static final boolean[] BUTTON_FLAGS = {true, true};
 
-	// Creates an ItemStack using only material, name, and lore
-	@NotNull
-	public static ItemStack createItem(Material matID, String dispName, String... lores) {
+	private final Material matID;
+	private final String dispName;
+	private boolean[] flags = {};
+	private HashMap<Enchantment, Integer> enchants = new HashMap<>();
+	private final List<String> lores = new ArrayList<>();
+	private Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
+	private HashMap<NamespacedKey, Integer> persistentData = new HashMap<>();
+	private HashMap<NamespacedKey, Double> persistentData2 = new HashMap<>();
+	private HashMap<NamespacedKey, String> persistentTags = new HashMap<>();
+	private HashMap<NamespacedKey, Boolean> persistentFlags = new HashMap<>();
+
+	public ItemStackBuilder(@NotNull Material matID, String dispName) {
+		this.matID = matID;
+		this.dispName = dispName;
+	}
+
+	public ItemStackBuilder setFlags(boolean @NotNull [] flags) {
+		this.flags = flags;
+		return this;
+	}
+
+	/**
+	 * Flags for creating items with hidden enchants and attributes, mostly for buttons.
+	 */
+	public ItemStackBuilder setButtonFlags() {
+		this.flags = new boolean[]{true, true};
+		return this;
+	}
+
+	/**
+	 * Flags for creating items with hidden enchants.
+	 */
+	public ItemStackBuilder setHideEnchantFlags() {
+		this.flags = new boolean[]{true, false};
+		return this;
+	}
+
+	public ItemStackBuilder setEnchants(@NotNull HashMap<Enchantment, Integer> enchants) {
+		this.enchants = enchants;
+		return this;
+	}
+
+	public ItemStackBuilder setGlowingIfTrue(boolean condition) {
+		HashMap<Enchantment, Integer> enchants = new HashMap<>();
+		enchants.put(Enchantment.DURABILITY, 1);
+
+		if (condition)
+			this.enchants = enchants;
+		return this;
+	}
+
+	public ItemStackBuilder setLores(String... lores) {
+		Collections.addAll(this.lores, lores);
+		return this;
+	}
+
+	public ItemStackBuilder setAttributes(@NotNull Multimap<Attribute, AttributeModifier> attributes) {
+		this.attributes = attributes;
+		return this;
+	}
+
+	public ItemStackBuilder setPersistentData(@NotNull HashMap<NamespacedKey, Integer> persistentData) {
+		this.persistentData = persistentData;
+		return this;
+	}
+
+	public ItemStackBuilder setPersistentData2(@NotNull HashMap<NamespacedKey, Double> persistentData2) {
+		this.persistentData2 = persistentData2;
+		return this;
+	}
+
+	public ItemStackBuilder setPersistentTags(@NotNull HashMap<NamespacedKey, String> persistentTags) {
+		this.persistentTags = persistentTags;
+		return this;
+	}
+
+	public ItemStackBuilder setPersistentFlags(@NotNull HashMap<NamespacedKey, Boolean> persistentFlags) {
+		this.persistentFlags = persistentFlags;
+		return this;
+	}
+
+	public ItemStack build() {
 		// Create ItemStack
 		ItemStack item = new ItemStack(matID);
 		ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
@@ -48,12 +125,55 @@ public class ItemFactory {
 			meta.setDisplayName(dispName);
 
 		// Set lore
-		List<String> lore = new ArrayList<>();
-		Collections.addAll(lore, lores);
-		meta.setLore(lore);
+		meta.setLore(lores);
 		item.setItemMeta(meta);
 
+		// Set persistent data and tags
+		if (persistentData != null)
+			persistentData.forEach((namespacedKey, integer) ->
+				meta
+					.getPersistentDataContainer()
+					.set(namespacedKey, PersistentDataType.INTEGER, integer));
+		if (persistentData2 != null)
+			persistentData2.forEach((namespacedKey, doubleVal) ->
+				meta
+					.getPersistentDataContainer()
+					.set(namespacedKey, PersistentDataType.DOUBLE, doubleVal));
+		if (persistentTags != null)
+			persistentTags.forEach((namespacedKey, string) ->
+				meta
+					.getPersistentDataContainer()
+					.set(namespacedKey, PersistentDataType.STRING, string));
+		if (persistentFlags != null)
+			persistentFlags.forEach((namespacedKey, bool) ->
+				meta
+					.getPersistentDataContainer()
+					.set(namespacedKey, PersistentDataType.BOOLEAN, bool));
+
+		// Set enchants
+		if (!(enchants == null))
+			enchants.forEach((k, v) -> meta.addEnchant(k, v, true));
+		if (flags != null && flags[0])
+			meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+
+		// Set attribute flag
+		if (flags != null && flags[1])
+			meta.addItemFlags(ItemFlag.values());
+
+		// Set attribute mods
+		meta.setAttributeModifiers(attributes);
+
+		// Build
+		item.setItemMeta(meta);
 		return item;
+	}
+
+	// Dummy enchant for glowing buttons
+	@NotNull
+	public static HashMap<Enchantment, Integer> glow() {
+		HashMap<Enchantment, Integer> enchants = new HashMap<>();
+		enchants.put(Enchantment.DURABILITY, 1);
+		return enchants;
 	}
 
 	// Creates an ItemStack using only material, name, and lore list
@@ -73,7 +193,8 @@ public class ItemFactory {
 			meta.setDisplayName(dispName);
 
 		// Set lore
-		lores.addAll(Arrays.asList(moreLores));
+		if (lores != null)
+			lores.addAll(Arrays.asList(moreLores));
 		meta.setLore(lores);
 		item.setItemMeta(meta);
 
@@ -132,6 +253,23 @@ public class ItemFactory {
 		HashMap<NamespacedKey, Double> persistentData2,
 		HashMap<NamespacedKey, String> persistentTags
 	) {
+		return createItem(matID, dispName, flags, enchants, lores, attributes, persistentData, persistentData2,
+			persistentTags, null);
+	}
+	// Creates an ItemStack using material, name, enchants, flags, lore list, and attribute mod map
+	@NotNull
+	public static ItemStack createItem(
+		Material matID,
+		String dispName,
+		boolean[] flags,
+		HashMap<Enchantment, Integer> enchants,
+		List<String> lores,
+		Multimap<Attribute, AttributeModifier> attributes,
+		HashMap<NamespacedKey, Integer> persistentData,
+		HashMap<NamespacedKey, Double> persistentData2,
+		HashMap<NamespacedKey, String> persistentTags,
+		HashMap<NamespacedKey, Boolean> persistentFlags
+	) {
 		// Create ItemStack
 		ItemStack item = createItem(matID, dispName, lores);
 		ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
@@ -152,6 +290,11 @@ public class ItemFactory {
 				meta
 					.getPersistentDataContainer()
 					.set(namespacedKey, PersistentDataType.STRING, string));
+		if (persistentFlags != null)
+			persistentFlags.forEach((namespacedKey, bool) ->
+				meta
+					.getPersistentDataContainer()
+					.set(namespacedKey, PersistentDataType.BOOLEAN, bool));
 
 		// Set enchants
 		if (!(enchants == null))
@@ -270,7 +413,7 @@ public class ItemFactory {
 	}
 
 	@NotNull
-	public static ItemStack createNothing() {
+	public static ItemStack buildNothing() {
 		return new ItemStack(Material.AIR);
 	}
 
@@ -289,13 +432,5 @@ public class ItemFactory {
 		item.setItemMeta(meta);
 
 		return item;
-	}
-
-	// Dummy enchant for glowing buttons
-	@NotNull
-	public static HashMap<Enchantment, Integer> glow() {
-		HashMap<Enchantment, Integer> enchants = new HashMap<>();
-		enchants.put(Enchantment.DURABILITY, 1);
-		return enchants;
 	}
 }

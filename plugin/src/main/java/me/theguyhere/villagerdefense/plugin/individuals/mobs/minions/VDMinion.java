@@ -1,17 +1,16 @@
 package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.items.ItemFactory;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualTeam;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.InvalidVDMobKeyException;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.VDMob;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.inventory.EntityEquipment;
@@ -19,7 +18,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -64,8 +62,6 @@ public abstract class VDMinion extends VDMob {
 
 	protected void setArmorEquipment(boolean helmet, boolean chestplate, boolean leggings, boolean boots) {
 		EntityEquipment equipment = Objects.requireNonNull(mob.getEquipment());
-		HashMap<Enchantment, Integer> enchant = new HashMap<>();
-		enchant.put(Enchantment.DURABILITY, 3);
 
 		// Helmet
 		if (helmet) {
@@ -87,7 +83,9 @@ public abstract class VDMinion extends VDMob {
 					armor = new ItemStack(Material.NETHERITE_HELMET);
 					break;
 				case 7:
-					armor = ItemFactory.createItem(Material.NETHERITE_HELMET, "", null, enchant);
+					armor = new ItemStackBuilder(Material.NETHERITE_HELMET, "")
+						.setGlowingIfTrue(true)
+						.build();
 					break;
 				default:
 					armor = new ItemStack(Material.AIR);
@@ -115,7 +113,9 @@ public abstract class VDMinion extends VDMob {
 					armor = new ItemStack(Material.NETHERITE_CHESTPLATE);
 					break;
 				case 7:
-					armor = ItemFactory.createItem(Material.NETHERITE_CHESTPLATE, "", null, enchant);
+					armor = new ItemStackBuilder(Material.NETHERITE_CHESTPLATE, "")
+						.setGlowingIfTrue(true)
+						.build();
 					break;
 				default:
 					armor = new ItemStack(Material.AIR);
@@ -143,7 +143,9 @@ public abstract class VDMinion extends VDMob {
 					armor = new ItemStack(Material.NETHERITE_LEGGINGS);
 					break;
 				case 7:
-					armor = ItemFactory.createItem(Material.NETHERITE_LEGGINGS, "", null, enchant);
+					armor = new ItemStackBuilder(Material.NETHERITE_LEGGINGS, "")
+						.setGlowingIfTrue(true)
+						.build();
 					break;
 				default:
 					armor = new ItemStack(Material.AIR);
@@ -171,7 +173,9 @@ public abstract class VDMinion extends VDMob {
 					armor = new ItemStack(Material.NETHERITE_BOOTS);
 					break;
 				case 7:
-					armor = ItemFactory.createItem(Material.NETHERITE_BOOTS, "", null, enchant);
+					armor = new ItemStackBuilder(Material.NETHERITE_BOOTS, "")
+						.setGlowingIfTrue(true)
+						.build();
 					break;
 				default:
 					armor = new ItemStack(Material.AIR);
@@ -182,8 +186,6 @@ public abstract class VDMinion extends VDMob {
 
 	protected void setSword() {
 		EntityEquipment equipment = Objects.requireNonNull(mob.getEquipment());
-		HashMap<Enchantment, Integer> enchant = new HashMap<>();
-		enchant.put(Enchantment.DURABILITY, 3);
 		ItemStack item;
 
 		switch (level) {
@@ -203,7 +205,9 @@ public abstract class VDMinion extends VDMob {
 				item = new ItemStack(Material.NETHERITE_SWORD);
 				break;
 			case 7:
-				item = ItemFactory.createItem(Material.NETHERITE_SWORD, "", null, enchant);
+				item = new ItemStackBuilder(Material.NETHERITE_SWORD, "")
+					.setGlowingIfTrue(true)
+					.build();
 				break;
 			default:
 				item = new ItemStack(Material.AIR);
@@ -213,8 +217,6 @@ public abstract class VDMinion extends VDMob {
 
 	protected void setAxe() {
 		EntityEquipment equipment = Objects.requireNonNull(mob.getEquipment());
-		HashMap<Enchantment, Integer> enchant = new HashMap<>();
-		enchant.put(Enchantment.DURABILITY, 3);
 		ItemStack item;
 
 		switch (level) {
@@ -234,7 +236,9 @@ public abstract class VDMinion extends VDMob {
 				item = new ItemStack(Material.NETHERITE_AXE);
 				break;
 			case 7:
-				item = ItemFactory.createItem(Material.NETHERITE_AXE, "", null, enchant);
+				item = new ItemStackBuilder(Material.NETHERITE_AXE, "")
+					.setGlowingIfTrue(true)
+					.build();
 				break;
 			default:
 				item = new ItemStack(Material.AIR);
@@ -244,8 +248,6 @@ public abstract class VDMinion extends VDMob {
 
 	protected void setScythe() {
 		EntityEquipment equipment = Objects.requireNonNull(mob.getEquipment());
-		HashMap<Enchantment, Integer> enchant = new HashMap<>();
-		enchant.put(Enchantment.DURABILITY, 3);
 		ItemStack item;
 
 		switch (level) {
@@ -265,7 +267,9 @@ public abstract class VDMinion extends VDMob {
 				item = new ItemStack(Material.NETHERITE_HOE);
 				break;
 			case 7:
-				item = ItemFactory.createItem(Material.NETHERITE_HOE, "", null, enchant);
+				item = new ItemStackBuilder(Material.NETHERITE_HOE, "")
+					.setGlowingIfTrue(true)
+					.build();
 				break;
 			default:
 				item = new ItemStack(Material.AIR);
@@ -274,14 +278,13 @@ public abstract class VDMinion extends VDMob {
 	}
 
 	protected void setBow() {
-		HashMap<Enchantment, Integer> enchant = new HashMap<>();
-		enchant.put(Enchantment.DURABILITY, 3);
-
 		if (level == 7)
 			Objects
 				.requireNonNull(mob.getEquipment())
 				.setItemInMainHand(
-					ItemFactory.createItem(Material.BOW, "", null, enchant)
+					new ItemStackBuilder(Material.BOW, "")
+						.setGlowingIfTrue(true)
+						.build()
 				);
 		else Objects
 			.requireNonNull(mob.getEquipment())
@@ -289,14 +292,13 @@ public abstract class VDMinion extends VDMob {
 	}
 
 	protected void setCrossbow() {
-		HashMap<Enchantment, Integer> enchant = new HashMap<>();
-		enchant.put(Enchantment.DURABILITY, 3);
-
 		if (level == 7)
 			Objects
 				.requireNonNull(mob.getEquipment())
 				.setItemInMainHand(
-					ItemFactory.createItem(Material.CROSSBOW, "", null, enchant)
+					new ItemStackBuilder(Material.CROSSBOW, "")
+						.setGlowingIfTrue(true)
+						.build()
 				);
 		else Objects
 			.requireNonNull(mob.getEquipment())

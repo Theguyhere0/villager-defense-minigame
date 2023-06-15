@@ -29,6 +29,7 @@ public abstract class VDItem {
 	public static final NamespacedKey MAX_DURABILITY_KEY = new NamespacedKey(Main.plugin, "max-durability");
 	public static final NamespacedKey DURABILITY_KEY = new NamespacedKey(Main.plugin, "durability");
 	protected static final NamespacedKey ITEM_TYPE_KEY = new NamespacedKey(Main.plugin, "item-type");
+	public static final NamespacedKey INVISIBLE = new NamespacedKey(Main.plugin, "invisible");
 
 	public static boolean matches(ItemStack toCheck) {
 		return VDAbility.matches(toCheck) || VDArmor.matches(toCheck) || VDFood.matches(toCheck) ||

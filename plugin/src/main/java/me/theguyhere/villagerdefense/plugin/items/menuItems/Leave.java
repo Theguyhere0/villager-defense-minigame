@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.plugin.items.menuItems;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.items.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -10,9 +10,9 @@ import org.jetbrains.annotations.NotNull;
 public abstract class Leave extends VDMenuItem {
 	@NotNull
 	public static ItemStack create() {
-		return ItemFactory.createItem(Material.BARRIER,
+		return ItemStackBuilder.createItem(Material.BARRIER,
 			CommunicationManager.format("&c&l" + LanguageManager.messages.leave),
-			ItemFactory.HIDE_ENCHANT_FLAGS, ItemFactory.glow()
+			ItemStackBuilder.HIDE_ENCHANT_FLAGS, ItemStackBuilder.glow()
 		);
 	}
 

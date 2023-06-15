@@ -5,7 +5,7 @@ import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.items.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -170,7 +170,7 @@ public abstract class Ammo extends VDWeapon {
 		}
 
 		// Create item
-		return ItemFactory.createItem(Material.NETHER_STAR, name, ItemFactory.BUTTON_FLAGS, null, lores,
+		return ItemStackBuilder.createItem(Material.NETHER_STAR, name, ItemStackBuilder.BUTTON_FLAGS, null, lores,
 			null, persistentData, persistentData2, persistentTags
 		);
 	}

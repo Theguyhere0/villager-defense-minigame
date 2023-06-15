@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelPipeline;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.nms.common.*;
 import me.theguyhere.villagerdefense.nms.common.entities.TextPacketEntity;
 import me.theguyhere.villagerdefense.nms.common.entities.VillagerPacketEntity;

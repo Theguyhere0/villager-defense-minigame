@@ -3,7 +3,7 @@ package me.theguyhere.villagerdefense.plugin.items.weapons;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.items.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -32,9 +32,9 @@ public abstract class OrcClub extends VDWeapon {
 			ChatColor.GRAY, LanguageManager.kits.orc.items.clubDesc, Constants.LORE_CHAR_LIMIT));
 
 		// Create item
-		return ItemFactory.createItem(Material.STICK,
+		return ItemStackBuilder.createItem(Material.STICK,
 			formatName(ChatColor.GREEN, LanguageManager.kits.orc.items.club, Tier.UNIQUE),
-			ItemFactory.BUTTON_FLAGS, enchant, lores, null, null, null,
+			ItemStackBuilder.BUTTON_FLAGS, enchant, lores, null, null, null,
 			persistentTags
 		);
 	}

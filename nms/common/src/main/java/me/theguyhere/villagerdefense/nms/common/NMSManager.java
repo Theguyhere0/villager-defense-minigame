@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
  * This class structure borrowed from filoghost.
  */
 public interface NMSManager {
-
 	TextPacketEntity newTextPacketEntity();
 
 	VillagerPacketEntity newVillagerPacketEntity(String type);

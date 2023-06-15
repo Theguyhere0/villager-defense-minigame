@@ -13,7 +13,7 @@ import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.displays.Leaderboard;
 import me.theguyhere.villagerdefense.plugin.game.GameController;
-import me.theguyhere.villagerdefense.plugin.items.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.huds.SidebarManager;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.golems.VDGolem;
@@ -2828,19 +2828,19 @@ public class InventoryListener implements Listener {
 			}
 
 			// Remove cost meta
-			buy = ItemFactory.removeLastLore(ItemFactory.removeLastLore(buy));
+			buy = ItemStackBuilder.removeLastLore(ItemStackBuilder.removeLastLore(buy));
 
 			// Make unbreakable for blacksmith (not sharing)
 			if (Kit
 				.blacksmith()
 				.setKitLevel(1)
 				.equals(gamer.getKit()) && !gamer.isSharing())
-				buy = ItemFactory.makeUnbreakable(buy);
+				buy = ItemStackBuilder.makeUnbreakable(buy);
 
 			// Make unbreakable for successful blacksmith sharing
 			Random random = new Random();
 			if (random.nextDouble() > Math.pow(.75, arenaInstance.effectShareCount(Kit.EffectType.BLACKSMITH))) {
-				buy = ItemFactory.makeUnbreakable(buy);
+				buy = ItemStackBuilder.makeUnbreakable(buy);
 				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
 			}
 
@@ -3336,7 +3336,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Remove cost meta
-			buy = ItemFactory.removeLastLore(ItemFactory.removeLastLore(buy));
+			buy = ItemStackBuilder.removeLastLore(ItemStackBuilder.removeLastLore(buy));
 
 			// Subtract from balance, apply rebate, and update scoreboard
 			gamer.addGems(-cost);
@@ -3420,7 +3420,7 @@ public class InventoryListener implements Listener {
 			}
 
 			// Remove cost meta
-			buy = ItemFactory.removeLastLore(ItemFactory.removeLastLore(buy));
+			buy = ItemStackBuilder.removeLastLore(ItemStackBuilder.removeLastLore(buy));
 
 			// Subtract from balance, apply rebate, and update scoreboard
 			gamer.addGems(-cost);

@@ -4,7 +4,7 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
-import me.theguyhere.villagerdefense.plugin.items.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.kits.Kit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -119,13 +119,13 @@ public class Achievement {
 
 	@NotNull
 	public ItemStack getButton(boolean obtained) {
-		return ItemFactory.createItem(
+		return new ItemStackBuilder(
 			getButtonMaterial(obtained),
-			getName(obtained),
-			ItemFactory.BUTTON_FLAGS,
-			null,
-			getDescription(obtained)
-		);
+			getName(obtained)
+		)
+			.setLores(getDescription(obtained))
+			.setButtonFlags()
+			.build();
 	}
 
 	List<AchievementRequirement> getRequirements() {

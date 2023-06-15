@@ -4,7 +4,7 @@ import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.items.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -44,9 +44,9 @@ public abstract class FarmerCarrot extends VDFood {
 		persistentData.put(HUNGER_KEY, health);
 		lores.add(new ColoredMessage(ChatColor.BLUE, "+" + hunger + " " + Constants.HUNGER).toString());
 
-		return ItemFactory.setAmount(ItemFactory.createItem(Material.CARROT,
+		return ItemStackBuilder.setAmount(ItemStackBuilder.createItem(Material.CARROT,
 			VDItem.formatName(ChatColor.GREEN, LanguageManager.kits.farmer.items.carrot, VDItem.Tier.UNIQUE),
-			ItemFactory.BUTTON_FLAGS, null, lores, null, persistentData, null,
+			ItemStackBuilder.BUTTON_FLAGS, null, lores, null, persistentData, null,
 			persistentTags
 		), 3);
 	}

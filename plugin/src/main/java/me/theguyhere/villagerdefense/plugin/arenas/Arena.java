@@ -12,7 +12,6 @@ import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.plugin.displays.Portal;
 import me.theguyhere.villagerdefense.plugin.game.GameController;
-import me.theguyhere.villagerdefense.plugin.items.ItemFactory;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.game.WorldManager;
 import me.theguyhere.villagerdefense.plugin.guis.InventoryID;
@@ -31,12 +30,12 @@ import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDHorse;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDPet;
 import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.kits.Kit;
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -484,103 +483,143 @@ public class Arena {
 	 */
 	@NotNull
 	public ItemStack getWaitingSoundButton(String name) {
-		HashMap<Enchantment, Integer> enchants = new HashMap<>();
-		enchants.put(Enchantment.DURABILITY, 1);
 		String sound = config.getString(path + ".sounds.waiting");
 		boolean selected;
 
 		switch (name) {
 			case "blocks":
 				selected = "blocks".equals(sound);
-				return ItemFactory.createItem(Material.MUSIC_DISC_BLOCKS,
-					CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Blocks"),
-					ItemFactory.BUTTON_FLAGS, selected ? enchants : null
-				);
+				return new ItemStackBuilder(
+					Material.MUSIC_DISC_BLOCKS,
+					CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Blocks")
+				)
+					.setButtonFlags()
+					.setGlowingIfTrue(selected)
+					.build();
 			case "cat":
 				selected = "cat".equals(sound);
-				return ItemFactory.createItem(Material.MUSIC_DISC_CAT,
-					CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Cat"),
-					ItemFactory.BUTTON_FLAGS, selected ? enchants : null
-				);
+				return new ItemStackBuilder(
+					Material.MUSIC_DISC_CAT,
+					CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Cat")
+				)
+					.setButtonFlags()
+					.setGlowingIfTrue(selected)
+					.build();
 			case "chirp":
 				selected = "chirp".equals(sound);
-				return ItemFactory.createItem(Material.MUSIC_DISC_CHIRP,
-					CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Chirp"),
-					ItemFactory.BUTTON_FLAGS, selected ? enchants : null
-				);
+				return new ItemStackBuilder(
+					Material.MUSIC_DISC_CHIRP,
+					CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Chirp")
+				)
+					.setButtonFlags()
+					.setGlowingIfTrue(selected)
+					.build();
 			case "far":
 				selected = "far".equals(sound);
-				return ItemFactory.createItem(Material.MUSIC_DISC_FAR,
-					CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Far"),
-					ItemFactory.BUTTON_FLAGS, selected ? enchants : null
-				);
+				return new ItemStackBuilder(
+					Material.MUSIC_DISC_FAR,
+					CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Far")
+				)
+					.setButtonFlags()
+					.setGlowingIfTrue(selected)
+					.build();
 			case "mall":
 				selected = "mall".equals(sound);
-				return ItemFactory.createItem(Material.MUSIC_DISC_MALL,
-					CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Mall"),
-					ItemFactory.BUTTON_FLAGS, selected ? enchants : null
-				);
+				return new ItemStackBuilder(
+					Material.MUSIC_DISC_MALL,
+					CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Mall")
+				)
+					.setButtonFlags()
+					.setGlowingIfTrue(selected)
+					.build();
 			case "mellohi":
 				selected = "mellohi".equals(sound);
-				return ItemFactory.createItem(Material.MUSIC_DISC_MELLOHI,
-					CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Mellohi"),
-					ItemFactory.BUTTON_FLAGS, selected ? enchants : null
-				);
+				return new ItemStackBuilder(
+					Material.MUSIC_DISC_MELLOHI,
+					CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Mellohi")
+				)
+					.setButtonFlags()
+					.setGlowingIfTrue(selected)
+					.build();
 			case "otherside":
 				if (NMSVersion.isGreaterEqualThan(NMSVersion.v1_18_R1)) {
 					selected = "otherside".equals(sound);
-					return ItemFactory.createItem(Material.valueOf("MUSIC_DISC_OTHERSIDE"),
-						CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Otherside"),
-						ItemFactory.BUTTON_FLAGS, selected ? enchants : null
-					);
+					return new ItemStackBuilder(
+						Material.valueOf("MUSIC_DISC_OTHERSIDE"),
+						CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Otherside")
+					)
+						.setButtonFlags()
+						.setGlowingIfTrue(selected)
+						.build();
 				}
 				else {
 					selected = !GameController
 						.getValidSounds()
 						.contains(sound);
-					return ItemFactory.createItem(Material.LIGHT_GRAY_CONCRETE,
-						CommunicationManager.format((selected ? "&a&l" : "&4&l") + "None"),
-						ItemFactory.BUTTON_FLAGS, selected ? enchants : null
-					);
+					return new ItemStackBuilder(
+						Material.LIGHT_GRAY_CONCRETE,
+						CommunicationManager.format((selected ? "&a&l" : "&4&l") + "None")
+					)
+						.setButtonFlags()
+						.setGlowingIfTrue(selected)
+						.build();
 				}
 			case "pigstep":
 				selected = "pigstep".equals(sound);
-				return ItemFactory.createItem(Material.MUSIC_DISC_PIGSTEP,
-					CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Pigstep"),
-					ItemFactory.BUTTON_FLAGS, selected ? enchants : null
-				);
+				return new ItemStackBuilder(
+					Material.MUSIC_DISC_PIGSTEP,
+					CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Pigstep")
+				)
+					.setButtonFlags()
+					.setGlowingIfTrue(selected)
+					.build();
 			case "stal":
 				selected = "stal".equals(sound);
-				return ItemFactory.createItem(Material.MUSIC_DISC_STAL,
-					CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Stal"),
-					ItemFactory.BUTTON_FLAGS, selected ? enchants : null
-				);
+				return new ItemStackBuilder(
+					Material.MUSIC_DISC_STAL,
+					CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Stal")
+				)
+					.setButtonFlags()
+					.setGlowingIfTrue(selected)
+					.build();
 			case "strad":
 				selected = "strad".equals(sound);
-				return ItemFactory.createItem(Material.MUSIC_DISC_STRAD,
-					CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Strad"),
-					ItemFactory.BUTTON_FLAGS, selected ? enchants : null
-				);
+				return new ItemStackBuilder(
+					Material.MUSIC_DISC_STRAD,
+					CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Strad")
+				)
+					.setButtonFlags()
+					.setGlowingIfTrue(selected)
+					.build();
 			case "wait":
 				selected = "wait".equals(sound);
-				return ItemFactory.createItem(Material.MUSIC_DISC_WAIT,
-					CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Wait"),
-					ItemFactory.BUTTON_FLAGS, selected ? enchants : null
-				);
+				return new ItemStackBuilder(
+					Material.MUSIC_DISC_WAIT,
+					CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Wait")
+				)
+					.setButtonFlags()
+					.setGlowingIfTrue(selected)
+					.build();
 			case "ward":
 				selected = "ward".equals(sound);
-				return ItemFactory.createItem(Material.MUSIC_DISC_WARD,
-					CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Ward"),
-					ItemFactory.BUTTON_FLAGS, selected ? enchants : null
-				);
+				return new ItemStackBuilder(
+					Material.MUSIC_DISC_WARD,
+					CommunicationManager.format((selected ? "&a&l" : "&4&l") + "Ward")
+				)
+					.setButtonFlags()
+					.setGlowingIfTrue(selected)
+					.build();
 			default:
 				selected = !GameController
 					.getValidSounds()
 					.contains(sound);
-				return ItemFactory.createItem(Material.LIGHT_GRAY_CONCRETE,
-					CommunicationManager.format((selected ? "&a&l" : "&4&l") + "None"),
-					ItemFactory.BUTTON_FLAGS, selected ? enchants : null
-				);
+				return new ItemStackBuilder(
+					Material.LIGHT_GRAY_CONCRETE,
+					CommunicationManager.format((selected ? "&a&l" : "&4&l") + "None")
+				)
+					.setButtonFlags()
+					.setGlowingIfTrue(selected)
+					.build();
 		}
 	}
 
