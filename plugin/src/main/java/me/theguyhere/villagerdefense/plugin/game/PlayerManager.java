@@ -96,6 +96,7 @@ public class PlayerManager {
 		player.teleport(location);
 		player.setGameMode(GameMode.ADVENTURE);
 		player.setGlowing(false);
+		player.setArrowsInBody(0);
 	}
 
 	// Prepares and teleports a player into spectator mode
@@ -125,6 +126,7 @@ public class PlayerManager {
 		player.closeInventory();
 		player.teleport(location);
 		player.setGlowing(false);
+		player.setArrowsInBody(0);
 	}
 
 	public static void notify(Player player, ColoredMessage msg) {
