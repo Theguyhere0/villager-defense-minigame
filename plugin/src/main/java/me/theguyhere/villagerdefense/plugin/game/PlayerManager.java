@@ -29,6 +29,10 @@ import java.util.*;
 public class PlayerManager {
 	// Gives item to player if possible, otherwise drops at feet
 	public static void giveItem(Player player, ItemStack item, String message) {
+		// Ignore for null items
+		if (item == null)
+			return;
+
 		// Inventory is full
 		if (player
 			.getInventory()

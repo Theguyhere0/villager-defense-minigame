@@ -147,7 +147,12 @@ public abstract class VDAbility extends VDItem {
 	public static ItemStack modifyCooldown(ItemStack itemStack, double modifier) {
 		ItemStack item = itemStack.clone();
 		ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
-		List<String> lore = Objects.requireNonNull(meta.getLore());
+		List<String> lore = meta.getLore();
+
+		// Ignore if no lore
+		if (lore == null)
+			return itemStack;
+
 		double cooldown = 0;
 		int index = 0;
 		for (int i = 0; i < lore.size(); i++) {
