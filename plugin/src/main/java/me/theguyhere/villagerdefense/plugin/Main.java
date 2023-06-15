@@ -4,10 +4,12 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.nms.common.NMSManager;
 import me.theguyhere.villagerdefense.plugin.achievements.AchievementListener;
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaListener;
 import me.theguyhere.villagerdefense.plugin.background.*;
+import me.theguyhere.villagerdefense.plugin.background.packets.ClientboundSetEquipmentPacketListener;
+import me.theguyhere.villagerdefense.plugin.background.packets.ServerboundInteractPacketListener;
+import me.theguyhere.villagerdefense.plugin.background.packets.ServerboundSignUpdatePacketListener;
 import me.theguyhere.villagerdefense.plugin.challenges.ChallengeListener;
 import me.theguyhere.villagerdefense.plugin.commands.CommandExecImp;
 import me.theguyhere.villagerdefense.plugin.commands.TabCompleterImp;
@@ -20,7 +22,6 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -40,9 +41,6 @@ public class Main extends JavaPlugin {
 	private static DataManager customEffects;
 
 	// Global instance variables
-	private final NMSManager nmsManager = NMSVersion
-		.getCurrent()
-		.getNmsManager();
 	private static boolean loaded = false;
 	private static final List<String> unloadedWorlds = new ArrayList<>();
 	private static Economy economy;
@@ -96,6 +94,9 @@ public class Main extends JavaPlugin {
 
 		// Set up ProtocolManager
 		protocolManager = ProtocolLibrary.getProtocolManager();
+		protocolManager.addPacketListener(new ServerboundInteractPacketListener());
+		protocolManager.addPacketListener(new ServerboundSignUpdatePacketListener());
+		protocolManager.addPacketListener(new ClientboundSetEquipmentPacketListener());
 
 		// Set up initial classes
 		saveDefaultConfig();
@@ -118,10 +119,6 @@ public class Main extends JavaPlugin {
 		pm.registerEvents(new ArenaListener(), this);
 		pm.registerEvents(new KitAbilityListener(), this);
 		pm.registerEvents(new ChallengeListener(), this);
-
-		// Add packet listeners for online players
-		for (Player player : Bukkit.getOnlinePlayers())
-			nmsManager.injectPacketListener(player, new BackgroundListener());
 
 		checkArenaNameAndGatherUnloadedWorlds();
 
@@ -164,10 +161,6 @@ public class Main extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		// Clear packet listeners
-		for (Player player : Bukkit.getOnlinePlayers())
-			nmsManager.uninjectPacketListener(player);
-
 		// Wipe every valid arena
 		GameController.wipeArenas();
 	}

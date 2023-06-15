@@ -5,7 +5,7 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.achievements.AchievementChecker;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.background.PacketManager;
+import me.theguyhere.villagerdefense.plugin.background.packets.PacketManager;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;

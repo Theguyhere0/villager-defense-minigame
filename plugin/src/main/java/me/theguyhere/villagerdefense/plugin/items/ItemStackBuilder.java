@@ -7,10 +7,12 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionData;
 import org.jetbrains.annotations.NotNull;
@@ -215,6 +217,21 @@ public class ItemStackBuilder {
 		meta.setLore(lore);
 		item.setItemMeta(meta);
 
+		return item;
+	}
+
+	// Set player a head belongs to
+	@NotNull
+	public static ItemStack setHeadOwner(@NotNull ItemStack itemStack, Player player) {
+		if (itemStack.getType() != Material.PLAYER_HEAD)
+			return itemStack;
+
+		ItemStack item = itemStack.clone();
+		SkullMeta meta = Objects.requireNonNull((SkullMeta) item.getItemMeta());
+		if (player == null)
+			meta.setOwnerProfile(null);
+		else meta.setOwnerProfile(player.getPlayerProfile());
+		item.setItemMeta(meta);
 		return item;
 	}
 }
