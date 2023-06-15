@@ -44,11 +44,16 @@ public abstract class FarmerCarrot extends VDFood {
 		persistentData.put(HUNGER_KEY, health);
 		lores.add(new ColoredMessage(ChatColor.BLUE, "+" + hunger + " " + Constants.HUNGER).toString());
 
-		return ItemStackBuilder.setAmount(ItemStackBuilder.createItem(Material.CARROT,
-			VDItem.formatName(ChatColor.GREEN, LanguageManager.kits.farmer.items.carrot, VDItem.Tier.UNIQUE),
-			ItemStackBuilder.BUTTON_FLAGS, null, lores, null, persistentData, null,
-			persistentTags
-		), 3);
+		return new ItemStackBuilder(
+			Material.CARROT,
+			VDItem.formatName(ChatColor.GREEN, LanguageManager.kits.farmer.items.carrot, VDItem.Tier.UNIQUE)
+		)
+			.setAmount(3)
+			.setLores(lores.toArray(new String[0]))
+			.setButtonFlags()
+			.setPersistentData(persistentData)
+			.setPersistentTags(persistentTags)
+			.build();
 	}
 
 	public static boolean matches(ItemStack toCheck) {

@@ -10,11 +10,14 @@ import org.jetbrains.annotations.NotNull;
 public abstract class ShareToggle extends VDMenuItem {
 	@NotNull
 	public static ItemStack create(boolean sharing) {
-		return ItemStackBuilder.createItem(Material.DISPENSER,
+		return new ItemStackBuilder(
+			Material.DISPENSER,
 			CommunicationManager.format("&b&l" + LanguageManager.names.effectShare + ": " +
-				getToggleStatus(sharing)),
-			ItemStackBuilder.HIDE_ENCHANT_FLAGS, ItemStackBuilder.glow()
-		);
+				getToggleStatus(sharing))
+		)
+			.setHideEnchantFlags()
+			.setGlowingIfTrue(true)
+			.build();
 	}
 
 	public static boolean matches(ItemStack toCheck) {

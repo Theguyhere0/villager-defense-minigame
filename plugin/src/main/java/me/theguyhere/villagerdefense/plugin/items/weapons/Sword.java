@@ -7,16 +7,15 @@ import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -33,11 +32,11 @@ public abstract class Sword extends VDWeapon {
 	public static ItemStack create(Tier tier, SwordType type) {
 		List<String> lores = new ArrayList<>();
 		Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
-		HashMap<Enchantment, Integer> enchant = new HashMap<>();
 		HashMap<NamespacedKey, Integer> persistentData = new HashMap<>();
 		HashMap<NamespacedKey, Double> persistentData2 = new HashMap<>();
 		HashMap<NamespacedKey, String> persistentTags = new HashMap<>();
 		persistentTags.put(ITEM_TYPE_KEY, SWORD);
+		boolean enchant = false;
 
 		// Set material
 		Material mat;
@@ -65,7 +64,7 @@ public abstract class Sword extends VDWeapon {
 						break;
 					case T6:
 						mat = Material.NETHERITE_SWORD;
-						enchant.put(Enchantment.DURABILITY, 3);
+						enchant = true;
 						break;
 					default:
 						mat = Material.GOLDEN_SWORD;
@@ -343,9 +342,15 @@ public abstract class Sword extends VDWeapon {
 		}
 
 		// Create item
-		ItemStack item = ItemStackBuilder.createItem(mat, name, ItemStackBuilder.BUTTON_FLAGS, enchant, lores, attributes,
-			persistentData, persistentData2, persistentTags
-		);
+		ItemStack item = new ItemStackBuilder(mat, name)
+			.setLores(lores.toArray(new String[0]))
+			.setButtonFlags()
+			.setGlowingIfTrue(enchant)
+			.setAttributes(attributes)
+			.setPersistentData(persistentData)
+			.setPersistentData2(persistentData2)
+			.setPersistentTags(persistentTags)
+			.build();
 		if (durability == 0)
 			return ItemStackBuilder.makeUnbreakable(item);
 		else return item;

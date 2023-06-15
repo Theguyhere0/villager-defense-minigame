@@ -10,12 +10,16 @@ import org.jetbrains.annotations.NotNull;
 public abstract class CrystalConverter extends VDMenuItem {
 	@NotNull
 	public static ItemStack create() {
-		return ItemStackBuilder.createItem(Material.DIAMOND,
+		return new ItemStackBuilder(
+			Material.DIAMOND,
 			CommunicationManager.format("&b&l" + String.format(
 				LanguageManager.names.crystalConverter,
 				LanguageManager.names.crystal
-			)), ItemStackBuilder.HIDE_ENCHANT_FLAGS, ItemStackBuilder.glow()
-		);
+			))
+		)
+			.setHideEnchantFlags()
+			.setGlowingIfTrue(true)
+			.build();
 	}
 
 	public static boolean matches(ItemStack toCheck) {

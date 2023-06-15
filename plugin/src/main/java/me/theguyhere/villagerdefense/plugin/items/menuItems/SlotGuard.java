@@ -16,11 +16,12 @@ public abstract class SlotGuard extends VDMenuItem {
 		HashMap<NamespacedKey, Boolean> persistentFlags = new HashMap<>();
 		persistentFlags.put(INVISIBLE, true);
 
-		return ItemStackBuilder.createItem(
+		return new ItemStackBuilder(
 			Material.LIGHT_GRAY_STAINED_GLASS_PANE,
-			CommunicationManager.format("&7&l" + LanguageManager.messages.restricted), null, null, null, null, null,
-			null, null, persistentFlags
-		);
+			CommunicationManager.format("&7&l" + LanguageManager.messages.restricted)
+		)
+			.setPersistentFlags(persistentFlags)
+			.build();
 	}
 
 	public static boolean matches(ItemStack toCheck) {

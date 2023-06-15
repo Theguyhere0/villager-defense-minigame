@@ -5,13 +5,12 @@ import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -27,17 +26,17 @@ public abstract class Crossbow extends VDWeapon {
 	@NotNull
 	public static ItemStack create(Tier tier) {
 		List<String> lores = new ArrayList<>();
-		HashMap<Enchantment, Integer> enchant = new HashMap<>();
 		HashMap<NamespacedKey, Integer> persistentData = new HashMap<>();
 		HashMap<NamespacedKey, Double> persistentData2 = new HashMap<>();
 		HashMap<NamespacedKey, String> persistentTags = new HashMap<>();
 		persistentTags.put(ITEM_TYPE_KEY, CROSSBOW);
+		boolean enchant = false;
 
 		// Possibly set enchant
 		switch (tier) {
 			case T5:
 			case T6:
-				enchant.put(Enchantment.DURABILITY, 3);
+				enchant = true;
 		}
 
 		// Set name
@@ -236,9 +235,14 @@ public abstract class Crossbow extends VDWeapon {
 		}
 
 		// Create item
-		ItemStack item = ItemStackBuilder.createItem(Material.CROSSBOW, name, ItemStackBuilder.BUTTON_FLAGS, enchant, lores,
-			null, persistentData, persistentData2, persistentTags
-		);
+		ItemStack item = new ItemStackBuilder(Material.CROSSBOW, name)
+			.setLores(lores.toArray(new String[0]))
+			.setButtonFlags()
+			.setGlowingIfTrue(enchant)
+			.setPersistentData(persistentData)
+			.setPersistentData2(persistentData2)
+			.setPersistentTags(persistentTags)
+			.build();
 		if (durability == 0)
 			return ItemStackBuilder.makeUnbreakable(item);
 		else return item;

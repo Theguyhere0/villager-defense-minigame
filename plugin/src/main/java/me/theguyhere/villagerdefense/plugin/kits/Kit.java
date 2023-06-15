@@ -18,7 +18,6 @@ import me.theguyhere.villagerdefense.plugin.items.weapons.Scythe;
 import me.theguyhere.villagerdefense.plugin.items.weapons.Sword;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
@@ -276,14 +275,13 @@ public class Kit {
 	 */
 	@NotNull
 	public ItemStack getButton(int purchasedLevel, boolean purchaseMode) {
-		HashMap<Enchantment, Integer> enchants = new HashMap<>();
-		enchants.put(Enchantment.DURABILITY, 1);
-
 		if (kitType == Type.NONE) {
-			return ItemStackBuilder.createItem(buttonMaterial,
-				CommunicationManager.format(getKitColor(kitType) + name), ItemStackBuilder.BUTTON_FLAGS,
-				null
-			);
+			return new ItemStackBuilder(
+				buttonMaterial,
+				CommunicationManager.format(getKitColor(kitType) + name)
+			)
+				.setButtonFlags()
+				.build();
 		}
 		else if (isMultiLevel()) {
 			List<String> lores = new ArrayList<>();
@@ -311,10 +309,14 @@ public class Kit {
 					lores.add(CommunicationManager.format("&f" + LanguageManager.messages.level + " " + level));
 					lores.addAll(description);
 				});
-				return ItemStackBuilder.createItem(buttonMaterial,
-					CommunicationManager.format((purchaseMode ? getKitColor(kitType) : "&4&l") + name),
-					ItemStackBuilder.BUTTON_FLAGS, purchaseMode ? enchants : null, lores
-				);
+				return new ItemStackBuilder(
+					buttonMaterial,
+					CommunicationManager.format((purchaseMode ? getKitColor(kitType) : "&4&l") + name)
+				)
+					.setLores(lores.toArray(new String[0]))
+					.setButtonFlags()
+					.setGlowingIfTrue(purchaseMode)
+					.build();
 			}
 			else {
 				lores.addAll(masterDescription);
@@ -333,25 +335,35 @@ public class Kit {
 					LanguageManager.messages.available));
 			}
 
-			return ItemStackBuilder.createItem(buttonMaterial,
-				CommunicationManager.format(getKitColor(kitType) + name), ItemStackBuilder.BUTTON_FLAGS,
-				null, lores
-			);
+			return new ItemStackBuilder(
+				buttonMaterial,
+				CommunicationManager.format(getKitColor(kitType) + name)
+			)
+				.setLores(lores.toArray(new String[0]))
+				.setButtonFlags()
+				.build();
 		}
 		else {
 			if (purchasedLevel == -1)
-				return ItemStackBuilder.createItem(buttonMaterial,
-					CommunicationManager.format((purchaseMode ? getKitColor(kitType) : "&4&l") + name),
-					ItemStackBuilder.BUTTON_FLAGS, purchaseMode ? enchants : null, masterDescription
-				);
+				return new ItemStackBuilder(
+					buttonMaterial,
+					CommunicationManager.format((purchaseMode ? getKitColor(kitType) : "&4&l") + name)
+				)
+					.setLores(masterDescription.toArray(new String[0]))
+					.setButtonFlags()
+					.setGlowingIfTrue(purchaseMode)
+					.build();
 			else if (pricesMap.get(1) == 0) {
 				masterDescription.add(purchaseMode ?
 					CommunicationManager.format(ChatColor.GREEN + LanguageManager.messages.free) :
 					CommunicationManager.format(ChatColor.GREEN + LanguageManager.messages.available));
-				return ItemStackBuilder.createItem(buttonMaterial,
-					CommunicationManager.format(getKitColor(kitType) + name), ItemStackBuilder.BUTTON_FLAGS,
-					null, masterDescription
-				);
+				return new ItemStackBuilder(
+					buttonMaterial,
+					CommunicationManager.format(getKitColor(kitType) + name)
+				)
+					.setLores(masterDescription.toArray(new String[0]))
+					.setButtonFlags()
+					.build();
 			}
 			else {
 				masterDescription.add(purchasedLevel == 1 ?
@@ -363,10 +375,13 @@ public class Kit {
 						": &b" + getPrice(1) + " " + LanguageManager.names.crystals) :
 						CommunicationManager.format(ChatColor.RED +
 							LanguageManager.messages.unavailable)));
-				return ItemStackBuilder.createItem(buttonMaterial,
-					CommunicationManager.format(getKitColor(kitType) + name), ItemStackBuilder.BUTTON_FLAGS,
-					null, masterDescription
-				);
+				return new ItemStackBuilder(
+					buttonMaterial,
+					CommunicationManager.format(getKitColor(kitType) + name)
+				)
+					.setLores(masterDescription.toArray(new String[0]))
+					.setButtonFlags()
+					.build();
 			}
 		}
 	}
@@ -565,12 +580,14 @@ public class Kit {
 		kit.addPrice(1, 400);
 		kit.addItems(1, new ItemStack[]{
 			Sword.create(VDItem.Tier.T0, Sword.SwordType.TIERED),
-			ItemStackBuilder.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.SPEED),
+			new ItemStackBuilder(
+				Material.SPLASH_POTION,
 				new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.alchemist.items.speed).toString()
-			),
-			ItemStackBuilder.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.STRENGTH),
+			).setPotionData(new PotionData(PotionType.SPEED)).build(),
+			new ItemStackBuilder(
+				Material.SPLASH_POTION,
 				new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.alchemist.items.strength).toString()
-			)
+			).setPotionData(new PotionData(PotionType.STRENGTH)).build()
 		});
 		return kit;
 	}

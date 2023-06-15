@@ -170,9 +170,13 @@ public abstract class Ammo extends VDWeapon {
 		}
 
 		// Create item
-		return ItemStackBuilder.createItem(Material.NETHER_STAR, name, ItemStackBuilder.BUTTON_FLAGS, null, lores,
-			null, persistentData, persistentData2, persistentTags
-		);
+		return new ItemStackBuilder(Material.NETHER_STAR, name)
+			.setLores(lores.toArray(new String[0]))
+			.setButtonFlags()
+			.setPersistentData(persistentData)
+			.setPersistentData2(persistentData2)
+			.setPersistentTags(persistentTags)
+			.build();
 	}
 
 	public static boolean matches(ItemStack toCheck) {

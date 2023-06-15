@@ -32,11 +32,15 @@ public abstract class OrcClub extends VDWeapon {
 			ChatColor.GRAY, LanguageManager.kits.orc.items.clubDesc, Constants.LORE_CHAR_LIMIT));
 
 		// Create item
-		return ItemStackBuilder.createItem(Material.STICK,
-			formatName(ChatColor.GREEN, LanguageManager.kits.orc.items.club, Tier.UNIQUE),
-			ItemStackBuilder.BUTTON_FLAGS, enchant, lores, null, null, null,
-			persistentTags
-		);
+		return new ItemStackBuilder(
+			Material.STICK,
+			formatName(ChatColor.GREEN, LanguageManager.kits.orc.items.club, Tier.UNIQUE)
+		)
+			.setLores(lores.toArray(new String[0]))
+			.setButtonFlags()
+			.setEnchants(enchant)
+			.setPersistentTags(persistentTags)
+			.build();
 	}
 
 	public static boolean matches(ItemStack toCheck) {
