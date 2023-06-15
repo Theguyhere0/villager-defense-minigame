@@ -77,7 +77,7 @@ public class GameController {
 					}
 				});
 
-		setLobby(DataManager.getConfigLocation("lobby"));
+		reloadLobby();
 
 		Main.setLoaded(true);
 	}
@@ -154,27 +154,17 @@ public class GameController {
 	}
 
 	/**
-	 * Set the cached lobby in {@link GameController}.
-	 * DOES NOT CHANGE THE STORED LOBBY FOR THE SERVER
-	 *
-	 * @param lobby Lobby location.
-	 */
-	public static void setLobby(Location lobby) {
-		GameController.lobby = lobby;
-	}
-
-	/**
 	 * Saves a new lobby for the server and changes the cached lobby.
 	 *
 	 * @param lobby Lobby location.
 	 */
 	public static void saveLobby(Location lobby) {
 		DataManager.setConfigurationLocation("lobby", lobby);
-		setLobby(lobby);
+		reloadLobby();
 	}
 
 	public static void reloadLobby() {
-		lobby = DataManager.getConfigLocation("lobby");
+		lobby = DataManager.getConfigLocationNoPitch("lobby");
 	}
 
 	/**

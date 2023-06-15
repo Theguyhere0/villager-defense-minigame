@@ -119,11 +119,14 @@ public class ChallengeListener implements Listener {
 					.normalize()
 					.multiply(5));
 
-			// Check for pacifist challenge
+			// Get proper enemy and check for pacifist challenge
 			if (gamer
 				.getChallenges()
-				.contains(Challenge.pacifist()))
-				gamer.addEnemy(enemy.getUniqueId());
+				.contains(Challenge.pacifist())) {
+				if (enemy instanceof Projectile)
+					gamer.addEnemy(((Entity) Objects.requireNonNull(((Projectile) enemy).getShooter())).getUniqueId());
+				else gamer.addEnemy(enemy.getUniqueId());
+			}
 		}
 
 		// Mob hurt

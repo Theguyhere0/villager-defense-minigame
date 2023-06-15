@@ -815,7 +815,7 @@ public class Arena {
 		// Attempt to fetch new player spawn
 		try {
 			playerSpawn = new ArenaSpawn(
-				Objects.requireNonNull(DataManager.getConfigLocation(path + ".spawn")),
+				Objects.requireNonNull(DataManager.getConfigLocationNoPitch(path + ".spawn")),
 				ArenaSpawnType.PLAYER,
 				0
 			);
@@ -857,7 +857,7 @@ public class Arena {
 	 * @return Player spawn location.
 	 */
 	public Location getWaitingRoom() {
-		return DataManager.getConfigLocation(path + ".waiting");
+		return DataManager.getConfigLocationNoPitch(path + ".waiting");
 	}
 
 	/**
