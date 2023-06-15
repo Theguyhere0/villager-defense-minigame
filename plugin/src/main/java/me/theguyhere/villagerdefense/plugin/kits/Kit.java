@@ -5,7 +5,7 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.items.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.items.abilities.*;
 import me.theguyhere.villagerdefense.plugin.items.armor.Boots;
@@ -280,8 +280,8 @@ public class Kit {
 		enchants.put(Enchantment.DURABILITY, 1);
 
 		if (kitType == Type.NONE) {
-			return ItemFactory.createItem(buttonMaterial,
-				CommunicationManager.format(getKitColor(kitType) + name), ItemFactory.BUTTON_FLAGS,
+			return ItemStackBuilder.createItem(buttonMaterial,
+				CommunicationManager.format(getKitColor(kitType) + name), ItemStackBuilder.BUTTON_FLAGS,
 				null
 			);
 		}
@@ -311,9 +311,9 @@ public class Kit {
 					lores.add(CommunicationManager.format("&f" + LanguageManager.messages.level + " " + level));
 					lores.addAll(description);
 				});
-				return ItemFactory.createItem(buttonMaterial,
+				return ItemStackBuilder.createItem(buttonMaterial,
 					CommunicationManager.format((purchaseMode ? getKitColor(kitType) : "&4&l") + name),
-					ItemFactory.BUTTON_FLAGS, purchaseMode ? enchants : null, lores
+					ItemStackBuilder.BUTTON_FLAGS, purchaseMode ? enchants : null, lores
 				);
 			}
 			else {
@@ -333,23 +333,23 @@ public class Kit {
 					LanguageManager.messages.available));
 			}
 
-			return ItemFactory.createItem(buttonMaterial,
-				CommunicationManager.format(getKitColor(kitType) + name), ItemFactory.BUTTON_FLAGS,
+			return ItemStackBuilder.createItem(buttonMaterial,
+				CommunicationManager.format(getKitColor(kitType) + name), ItemStackBuilder.BUTTON_FLAGS,
 				null, lores
 			);
 		}
 		else {
 			if (purchasedLevel == -1)
-				return ItemFactory.createItem(buttonMaterial,
+				return ItemStackBuilder.createItem(buttonMaterial,
 					CommunicationManager.format((purchaseMode ? getKitColor(kitType) : "&4&l") + name),
-					ItemFactory.BUTTON_FLAGS, purchaseMode ? enchants : null, masterDescription
+					ItemStackBuilder.BUTTON_FLAGS, purchaseMode ? enchants : null, masterDescription
 				);
 			else if (pricesMap.get(1) == 0) {
 				masterDescription.add(purchaseMode ?
 					CommunicationManager.format(ChatColor.GREEN + LanguageManager.messages.free) :
 					CommunicationManager.format(ChatColor.GREEN + LanguageManager.messages.available));
-				return ItemFactory.createItem(buttonMaterial,
-					CommunicationManager.format(getKitColor(kitType) + name), ItemFactory.BUTTON_FLAGS,
+				return ItemStackBuilder.createItem(buttonMaterial,
+					CommunicationManager.format(getKitColor(kitType) + name), ItemStackBuilder.BUTTON_FLAGS,
 					null, masterDescription
 				);
 			}
@@ -363,8 +363,8 @@ public class Kit {
 						": &b" + getPrice(1) + " " + LanguageManager.names.crystals) :
 						CommunicationManager.format(ChatColor.RED +
 							LanguageManager.messages.unavailable)));
-				return ItemFactory.createItem(buttonMaterial,
-					CommunicationManager.format(getKitColor(kitType) + name), ItemFactory.BUTTON_FLAGS,
+				return ItemStackBuilder.createItem(buttonMaterial,
+					CommunicationManager.format(getKitColor(kitType) + name), ItemStackBuilder.BUTTON_FLAGS,
 					null, masterDescription
 				);
 			}
@@ -565,10 +565,10 @@ public class Kit {
 		kit.addPrice(1, 400);
 		kit.addItems(1, new ItemStack[]{
 			Sword.create(VDItem.Tier.T0, Sword.SwordType.TIERED),
-			ItemFactory.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.SPEED),
+			ItemStackBuilder.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.SPEED),
 				new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.alchemist.items.speed).toString()
 			),
-			ItemFactory.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.STRENGTH),
+			ItemStackBuilder.createPotionItem(Material.SPLASH_POTION, new PotionData(PotionType.STRENGTH),
 				new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.alchemist.items.strength).toString()
 			)
 		});
@@ -582,19 +582,19 @@ public class Kit {
 		kit.addPrice(1, 1000);
 		kit.addItems(1, new ItemStack[]{
 			Sword.create(VDItem.Tier.T0, Sword.SwordType.TIERED),
-			ItemFactory.removeLastLore(ItemFactory.rename(
+			ItemStackBuilder.removeLastLore(ItemStackBuilder.rename(
 				Helmet.create(VDItem.Tier.T1),
 				new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.tailor.items.helmet).toString()
 			)),
-			ItemFactory.removeLastLore(ItemFactory.rename(
+			ItemStackBuilder.removeLastLore(ItemStackBuilder.rename(
 				Chestplate.create(VDItem.Tier.T1),
 				new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.tailor.items.chestplate).toString()
 			)),
-			ItemFactory.removeLastLore(ItemFactory.rename(
+			ItemStackBuilder.removeLastLore(ItemStackBuilder.rename(
 				Leggings.create(VDItem.Tier.T1),
 				new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.tailor.items.leggings).toString()
 			)),
-			ItemFactory.removeLastLore(ItemFactory.rename(
+			ItemStackBuilder.removeLastLore(ItemStackBuilder.rename(
 				Boots.create(VDItem.Tier.T1),
 				new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.tailor.items.boots).toString()
 			)),

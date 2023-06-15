@@ -2,7 +2,7 @@ package me.theguyhere.villagerdefense.plugin.guis;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.items.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -482,10 +482,10 @@ public class InventoryFactory {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Decrement button
-		buttons.add(ItemFactory.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&lDecrease")));
+		buttons.add(new ItemStackBuilder(Material.RED_CONCRETE, CommunicationManager.format("&4&lDecrease")).build());
 
 		// Increment button
-		buttons.add(ItemFactory.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&2&lIncrease")));
+		buttons.add(new ItemStackBuilder(Material.LIME_CONCRETE, CommunicationManager.format("&2&lIncrease")).build());
 
 		return createFixedSizeInventory(
 			new InventoryMeta.InventoryMetaBuilder(inventoryID, InventoryType.MENU)
@@ -516,26 +516,26 @@ public class InventoryFactory {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Decrement button
-		buttons.add(ItemFactory.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&lDecrease")));
+		buttons.add(new ItemStackBuilder(Material.RED_CONCRETE, CommunicationManager.format("&4&lDecrease")).build());
 
 		// Unlimited button
 		buttons.add(
-			ItemFactory.createItem(
+			new ItemStackBuilder(
 				Material.ORANGE_CONCRETE,
 				CommunicationManager.format("&6&lUnlimited")
-			)
+			).build()
 		);
 
 		// Reset button
 		buttons.add(
-			ItemFactory.createItem(
+			new ItemStackBuilder(
 				Material.LIGHT_BLUE_CONCRETE,
 				CommunicationManager.format("&3&lReset to 1")
-			)
+			).build()
 		);
 
 		// Increment button
-		buttons.add(ItemFactory.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&2&lIncrease")));
+		buttons.add(new ItemStackBuilder(Material.LIME_CONCRETE, CommunicationManager.format("&2&lIncrease")).build());
 
 		return createFixedSizeInventory(
 			new InventoryMeta.InventoryMetaBuilder(inventoryID, InventoryType.MENU)

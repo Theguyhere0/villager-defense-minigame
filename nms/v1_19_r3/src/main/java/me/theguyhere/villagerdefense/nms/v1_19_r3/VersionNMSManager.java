@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelPipeline;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.common.Reflection;
 import me.theguyhere.villagerdefense.nms.common.*;
 import me.theguyhere.villagerdefense.nms.common.entities.TextPacketEntity;
@@ -13,7 +14,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -97,16 +97,6 @@ public class VersionNMSManager implements NMSManager {
 	}
 
 	@Override
-	public void setBowCooldown(Player player, int cooldownTicks) {
-		new SetCooldownPacket(BuiltInRegistries.ITEM.getId(Items.BOW), cooldownTicks).sendTo(player);
-	}
-
-	@Override
-	public void setCrossbowCooldown(Player player, int cooldownTicks) {
-		new SetCooldownPacket(BuiltInRegistries.ITEM.getId(Items.CROSSBOW), cooldownTicks).sendTo(player);
-	}
-
-	@Override
 	public PacketGroup createEffect(Location location, double healthRatio) {
 		// Protect from invalid health ratios
 		if (healthRatio > 1 || healthRatio < 0)
@@ -114,8 +104,8 @@ public class VersionNMSManager implements NMSManager {
 
 		return PacketGroup.of(
 			new WorldBorderCenterPacket(location),
-			new WorldBorderSizePacket(BORDER_SIZE),
-			new WorldBorderWarningDistancePacket(Math.max((int) (BORDER_SIZE * (4 - 7 * healthRatio)), 0))
+			new WorldBorderSizePacket(Constants.BORDER_SIZE),
+			new WorldBorderWarningDistancePacket(Math.max((int) (Constants.BORDER_SIZE * (4 - 7 * healthRatio)), 0))
 		);
 	}
 

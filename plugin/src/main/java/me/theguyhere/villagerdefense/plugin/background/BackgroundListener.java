@@ -15,6 +15,7 @@ import me.theguyhere.villagerdefense.plugin.displays.Portal;
 import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.guis.SignGUIEvent;
+import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -25,6 +26,9 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.WorldLoadEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
 import java.util.Objects;
@@ -106,6 +110,17 @@ public class BackgroundListener implements PacketListener, Listener {
 				Bukkit
 					.getPluginManager()
 					.callEvent(new SignGUIEvent(arena, player, signLines)));
+	}
+
+	@Override
+	public boolean checkInvisible(ItemStack itemStack) {
+		PersistentDataContainer dataContainer = Objects
+			.requireNonNull(itemStack.getItemMeta())
+			.getPersistentDataContainer();
+		Boolean invisible = dataContainer.get(VDItem.INVISIBLE, PersistentDataType.BOOLEAN);
+		if (invisible == null)
+			return false;
+		else return invisible;
 	}
 
 	@EventHandler

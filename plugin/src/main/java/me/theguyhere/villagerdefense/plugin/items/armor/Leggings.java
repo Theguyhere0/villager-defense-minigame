@@ -6,7 +6,7 @@ import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.items.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -264,11 +264,11 @@ public abstract class Leggings extends VDArmor {
 		}
 
 		// Create item
-		ItemStack item = ItemFactory.createItem(mat, name, ItemFactory.BUTTON_FLAGS, enchant, lores, attributes,
+		ItemStack item = ItemStackBuilder.createItem(mat, name, ItemStackBuilder.BUTTON_FLAGS, enchant, lores, attributes,
 			persistentData, null, persistentTags
 		);
 		if (durability == 0)
-			return ItemFactory.makeUnbreakable(item);
+			return ItemStackBuilder.makeUnbreakable(item);
 		else return item;
 	}
 

@@ -11,6 +11,7 @@ public class Constants {
 
 	// Public constants
 	public static final int LORE_CHAR_LIMIT = 30;
+	public static final int BORDER_SIZE = 1000000;
 	public static final String HP = "❤";
 	public static final String HUNGER = "☕";
 	public static final String ARMOR = "✠";

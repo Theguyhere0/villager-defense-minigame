@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelPipeline;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
+import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.nms.common.*;
 import me.theguyhere.villagerdefense.nms.common.entities.TextPacketEntity;
 import me.theguyhere.villagerdefense.nms.common.entities.VillagerPacketEntity;
@@ -92,16 +93,6 @@ public class VersionNMSManager implements NMSManager {
 	}
 
 	@Override
-	public void setBowCooldown(Player player, int cooldownTicks) {
-		new SetCooldownPacket(ItemID.BOW, cooldownTicks).sendTo(player);
-	}
-
-	@Override
-	public void setCrossbowCooldown(Player player, int cooldownTicks) {
-		new SetCooldownPacket(ItemID.CROSSBOW, cooldownTicks).sendTo(player);
-	}
-
-	@Override
 	public PacketGroup createEffect(Location location, double healthRatio) {
 		// Protect from invalid health ratios
 		if (healthRatio > 1 || healthRatio < 0)
@@ -109,8 +100,8 @@ public class VersionNMSManager implements NMSManager {
 
 		return PacketGroup.of(
 			new WorldBorderCenterPacket(location),
-			new WorldBorderSizePacket(BORDER_SIZE),
-			new WorldBorderWarningDistancePacket(Math.max((int) (BORDER_SIZE * (4 - 7 * healthRatio)), 0))
+			new WorldBorderSizePacket(Constants.BORDER_SIZE),
+			new WorldBorderWarningDistancePacket(Math.max((int) (Constants.BORDER_SIZE * (4 - 7 * healthRatio)), 0))
 		);
 	}
 

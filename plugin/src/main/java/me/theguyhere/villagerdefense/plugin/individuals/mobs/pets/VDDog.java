@@ -4,7 +4,7 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.items.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.guis.InventoryButtons;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
@@ -55,8 +55,10 @@ public class VDDog extends VDPet {
 
 	@Override
 	public ItemStack createDisplayButton() {
-		return ItemFactory.createItem(buttonMat, mob.getCustomName(), CommunicationManager.formatDescriptionList(
-			ChatColor.GRAY, LanguageManager.messages.petButton, Constants.LORE_CHAR_LIMIT));
+		return new ItemStackBuilder(buttonMat, mob.getCustomName())
+			.setLores(CommunicationManager.formatDescriptionArr(
+				ChatColor.GRAY, LanguageManager.messages.petButton, Constants.LORE_CHAR_LIMIT))
+			.build();
 	}
 
 	@Override

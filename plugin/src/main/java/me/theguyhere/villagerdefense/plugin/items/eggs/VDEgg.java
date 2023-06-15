@@ -4,7 +4,7 @@ import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.items.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.golems.VDIronGolem;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.golems.VDSnowGolem;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDCat;
@@ -401,7 +401,7 @@ public abstract class VDEgg extends VDItem {
 				price));
 		}
 
-		return ItemFactory.createItem(mat, name, ItemFactory.BUTTON_FLAGS, null, lores, null,
+		return ItemStackBuilder.createItem(mat, name, ItemStackBuilder.BUTTON_FLAGS, null, lores, null,
 			persistentData, null, persistentTags
 		);
 	}

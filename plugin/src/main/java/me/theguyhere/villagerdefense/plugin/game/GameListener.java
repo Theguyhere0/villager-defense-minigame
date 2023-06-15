@@ -6,7 +6,6 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.arenas.*;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.guis.Inventories;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
@@ -18,7 +17,7 @@ import me.theguyhere.villagerdefense.plugin.individuals.mobs.minions.VDWitch;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDPet;
 import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
-import me.theguyhere.villagerdefense.plugin.items.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.items.abilities.MageAbility;
 import me.theguyhere.villagerdefense.plugin.items.abilities.VDAbility;
@@ -186,18 +185,9 @@ public class GameListener implements Listener {
 
 		// Update capacity, durability, and cooldown
 		if (Bow.matches(range))
-			NMSVersion
-				.getCurrent()
-				.getNmsManager()
-				.setBowCooldown(player, Calculator.secondsToTicks(1 / cooldown));
-		else
-			NMSVersion
-				.getCurrent()
-				.getNmsManager()
-				.setCrossbowCooldown(
-					player,
-					Calculator.secondsToTicks(1 / cooldown)
-				);
+			player.setCooldown(Material.BOW, Calculator.secondsToTicks(1 / cooldown));
+		else if (Crossbow.matches(range))
+			player.setCooldown(Material.CROSSBOW, Calculator.secondsToTicks(1 / cooldown));
 		gamer.triggerWeaponCooldown(Calculator.secondsToMillis(1 / cooldown));
 		if (Ammo.updateCapacity(ammo, -cost)) {
 			player
@@ -1871,34 +1861,34 @@ public class GameListener implements Listener {
 				.getItemInMainHand())) {
 				player
 					.getInventory()
-					.setItemInMainHand(ItemFactory.createNothing());
-				gamer.updateMainHand(ItemFactory.createNothing());
+					.setItemInMainHand(ItemStackBuilder.buildNothing());
+				gamer.updateMainHand(ItemStackBuilder.buildNothing());
 			}
 			else if (item.equals(player
 				.getInventory()
 				.getBoots())) {
 				player
 					.getInventory()
-					.setBoots(ItemFactory.createNothing());
+					.setBoots(ItemStackBuilder.buildNothing());
 			}
 			else if (item.equals(player
 				.getInventory()
 				.getChestplate()))
 				player
 					.getInventory()
-					.setChestplate(ItemFactory.createNothing());
+					.setChestplate(ItemStackBuilder.buildNothing());
 			else if (item.equals(player
 				.getInventory()
 				.getHelmet()))
 				player
 					.getInventory()
-					.setHelmet(ItemFactory.createNothing());
+					.setHelmet(ItemStackBuilder.buildNothing());
 			else if (item.equals(player
 				.getInventory()
 				.getLeggings()))
 				player
 					.getInventory()
-					.setLeggings(ItemFactory.createNothing());
+					.setLeggings(ItemStackBuilder.buildNothing());
 			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1);
 		}
 	}

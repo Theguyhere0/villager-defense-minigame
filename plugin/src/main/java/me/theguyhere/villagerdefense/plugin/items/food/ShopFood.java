@@ -4,7 +4,7 @@ import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.items.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -275,7 +275,7 @@ public abstract class ShopFood extends VDFood {
 				price));
 		}
 
-		return ItemFactory.setAmount(ItemFactory.createItem(mat, name, ItemFactory.BUTTON_FLAGS, null, lores,
+		return ItemStackBuilder.setAmount(ItemStackBuilder.createItem(mat, name, ItemStackBuilder.BUTTON_FLAGS, null, lores,
 			null, persistentData, null, persistentTags
 		), count);
 	}

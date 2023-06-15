@@ -4,7 +4,7 @@ import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.items.ItemFactory;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.weapons.VDWeapon;
@@ -184,11 +184,11 @@ public abstract class MageAbility extends VDAbility {
 		}
 
 		// Create item
-		return ItemFactory.createItem(
+		return ItemStackBuilder.createItem(
 			Material.PURPLE_DYE,
 			name,
-			ItemFactory.HIDE_ENCHANT_FLAGS,
-			ItemFactory.glow(),
+			ItemStackBuilder.HIDE_ENCHANT_FLAGS,
+			ItemStackBuilder.glow(),
 			lores,
 			null,
 			persistentData,

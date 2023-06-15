@@ -11,9 +11,9 @@ import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.GameController;
-import me.theguyhere.villagerdefense.plugin.items.ItemFactory;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.items.armor.Boots;
@@ -39,26 +39,30 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Option to set manage lobby
-		buttons.add(ItemFactory.createItem(Material.BELL, CommunicationManager.format("&2&lLobby"),
-			CommunicationManager.format("&7Manage minigame lobby")
-		));
+		buttons.add(new ItemStackBuilder(Material.BELL, CommunicationManager.format("&2&lLobby"))
+			.setLores(CommunicationManager.format("&7Manage minigame lobby"))
+			.build()
+		);
 
 		// Option to manage info boards
-		buttons.add(ItemFactory.createItem(Material.OAK_SIGN, CommunicationManager.format("&6&lInfo Boards"),
-			CommunicationManager.format("&7Manage info boards")
-		));
+		buttons.add(new ItemStackBuilder(Material.OAK_SIGN, CommunicationManager.format("&6&lInfo Boards"))
+			.setLores(CommunicationManager.format("&7Manage info boards"))
+			.build()
+		);
 
 		// Option to manage leaderboards
-		buttons.add(ItemFactory.createItem(Material.GOLDEN_HELMET,
-			CommunicationManager.format("&e&lLeaderboards"), ItemFactory.BUTTON_FLAGS, null,
-			CommunicationManager.format("&7Manage leaderboards")
-		));
+		buttons.add(new ItemStackBuilder(Material.GOLDEN_HELMET, CommunicationManager.format("&e&lLeaderboards"))
+			.setLores(CommunicationManager.format("&7Manage leaderboards"))
+			.setButtonFlags()
+			.build()
+		);
 
 		// Option to edit arenas
-		buttons.add(ItemFactory.createItem(Material.NETHERITE_AXE,
-			CommunicationManager.format("&9&lArenas"), ItemFactory.BUTTON_FLAGS, null,
-			CommunicationManager.format("&7Manage leaderboards")
-		));
+		buttons.add(new ItemStackBuilder(Material.NETHERITE_AXE, CommunicationManager.format("&9&lArenas"))
+			.setLores(CommunicationManager.format("&7Manage arenas"))
+			.setButtonFlags()
+			.build()
+		);
 
 		return InventoryFactory.createFixedSizeInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.MAIN_MENU, InventoryType.MENU).build(),
@@ -84,13 +88,13 @@ public class Inventories {
 			.keySet()
 			.stream()
 			.sorted()
-			.forEach(id -> buttons.add(ItemFactory.createItem(
+			.forEach(id -> buttons.add(new ItemStackBuilder(
 				Material.EMERALD_BLOCK,
 				CommunicationManager.format("&a&lEdit " + GameController
 					.getArenas()
 					.get(id)
 					.getName())
-			)));
+			).build()));
 
 		return InventoryFactory.createDynamicSizeBottomNavInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.ARENA_DASHBOARD, InventoryType.MENU)
@@ -134,10 +138,10 @@ public class Inventories {
 		DataManager
 			.getConfigLocationMap("infoBoard")
 			.forEach((id, location) ->
-				buttons.add(ItemFactory.createItem(
+				buttons.add(new ItemStackBuilder(
 					Material.BIRCH_SIGN,
 					CommunicationManager.format("&6&lInfo Board " + id)
-				)));
+				).build()));
 
 		// Sort buttons
 		buttons.sort(Comparator.comparing(button ->
@@ -183,33 +187,34 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Option to modify total kills leaderboard
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.DRAGON_HEAD,
 			CommunicationManager.format("&4&lTotal Kills Leaderboard")
-		));
+		).build());
 
 		// Option to modify top kills leaderboard
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.ZOMBIE_HEAD,
 			CommunicationManager.format("&c&lTop Kills Leaderboard")
-		));
+		).build());
 
 		// Option to modify total gems leaderboard
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.EMERALD_BLOCK,
 			CommunicationManager.format("&2&lTotal Gems Leaderboard")
-		));
+		).build());
 
 		// Option to modify top balance leaderboard
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.EMERALD,
 			CommunicationManager.format("&a&lTop Balance Leaderboard")
-		));
+		).build());
 
 		// Option to modify top wave leaderboard
-		buttons.add(ItemFactory.createItem(Material.GOLDEN_SWORD,
-			CommunicationManager.format("&9&lTop Wave Leaderboard"), ItemFactory.BUTTON_FLAGS, null
-		));
+		buttons.add(new ItemStackBuilder(Material.GOLDEN_SWORD, CommunicationManager.format("&9&lTop Wave " +
+			"Leaderboard"))
+			.setButtonFlags()
+			.build());
 
 		return InventoryFactory.createFixedSizeInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.LEADERBOARD_DASHBOARD, InventoryType.MENU).build(),
@@ -315,47 +320,47 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Option to edit name
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.NAME_TAG,
 			CommunicationManager.format("&6&lEdit Name")
-		));
+		).build());
 
 		// Option to edit game portal
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.END_PORTAL_FRAME,
 			CommunicationManager.format("&5&lArena Portal")
-		));
+		).build());
 
 		// Option to edit leaderboard
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.TOTEM_OF_UNDYING,
 			CommunicationManager.format("&a&lArena Leaderboard")
-		));
+		).build());
 
 		// Option to edit player settings
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.PLAYER_HEAD,
 			CommunicationManager.format("&d&lPlayer Settings")
-		));
+		).build());
 
 		// Option to edit mob settings
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.ZOMBIE_SPAWN_EGG,
 			CommunicationManager.format("&2&lMob Settings")
-		));
+		).build());
 
 		// Option to edit miscellaneous game settings
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.REDSTONE,
 			CommunicationManager.format("&7&lGame Settings")
-		));
+		).build());
 
 		// Option to close the arena
 		String closed = arena.isClosed() ? "&c&lCLOSED" : "&a&lOPEN";
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.NETHER_BRICK_FENCE,
 			CommunicationManager.format("&9&lClose Arena: " + closed)
-		));
+		).build());
 
 		// Option to remove arena
 		buttons.add(InventoryButtons.remove("ARENA"));
@@ -424,43 +429,53 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Option to edit player spawn
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.END_PORTAL_FRAME,
 			CommunicationManager.format("&5&lPlayer Spawn")
-		));
+		).build());
 
 		// Option to toggle player spawn particles
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.FIREWORK_ROCKET,
 			CommunicationManager.format("&d&lSpawn Particles: " +
-				getToggleStatus(arena.hasSpawnParticles())),
-			CommunicationManager.format("&7Particles showing where the spawn is"),
-			CommunicationManager.format("&7(Visible in-game)")
-		));
+				getToggleStatus(arena.hasSpawnParticles()))
+
+		)
+			.setLores(
+				CommunicationManager.format("&7Particles showing where the spawn is"),
+				CommunicationManager.format("&7(Visible in-game)")
+			)
+			.build());
 
 		// Option to edit waiting room
-		buttons.add(ItemFactory.createItem(Material.CLOCK, CommunicationManager.format("&b&lWaiting Room"),
-			CommunicationManager.format("&7An optional room to wait in before"),
-			CommunicationManager.format("&7the game starts")
-		));
+		buttons.add(new ItemStackBuilder(Material.CLOCK, CommunicationManager.format("&b&lWaiting Room")
+
+		)
+			.setLores(
+				CommunicationManager.format("&7An optional room to wait in before"),
+				CommunicationManager.format("&7the game starts")
+			)
+			.build());
 
 		// Option to edit max players
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.NETHERITE_HELMET,
-			CommunicationManager.format("&4&lMaximum Players: " + arena.getMaxPlayers()),
-			ItemFactory.BUTTON_FLAGS,
-			null,
-			CommunicationManager.format("&7Maximum players the game will have")
-		));
+			CommunicationManager.format("&4&lMaximum Players: " + arena.getMaxPlayers())
+
+		)
+			.setLores(CommunicationManager.format("&7Maximum players the game will have"))
+			.setButtonFlags()
+			.build());
 
 		// Option to edit min players
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.NETHERITE_BOOTS,
-			CommunicationManager.format("&2&lMinimum Players: " + arena.getMinPlayers()),
-			ItemFactory.BUTTON_FLAGS,
-			null,
-			CommunicationManager.format("&7Minimum players needed for game to start")
-		));
+			CommunicationManager.format("&2&lMinimum Players: " + arena.getMinPlayers())
+
+		)
+			.setLores(CommunicationManager.format("&7Minimum players needed for game to start"))
+			.setButtonFlags()
+			.build());
 
 		return InventoryFactory.createDynamicSizeInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.PLAYERS_MENU, InventoryType.MENU)
@@ -535,37 +550,45 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Option to edit monster spawns
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.END_PORTAL_FRAME,
 			CommunicationManager.format("&2&lMonster Spawns")
-		));
+		).build());
 
 		// Option to toggle monster spawn particles
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.FIREWORK_ROCKET,
 			CommunicationManager.format("&a&lMonster Spawn Particles: " +
-				getToggleStatus(arena.hasMonsterParticles())),
-			CommunicationManager.format("&7Particles showing where the spawns are"),
-			CommunicationManager.format("&7(Visible in-game)")
-		));
+				getToggleStatus(arena.hasMonsterParticles()))
+
+		)
+			.setLores(
+				CommunicationManager.format("&7Particles showing where the spawns are"),
+				CommunicationManager.format("&7(Visible in-game)")
+			)
+			.build());
 
 		// Option to edit villager spawns
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.END_PORTAL_FRAME,
 			CommunicationManager.format("&5&lVillager Spawns")
-		));
+		).build());
 
 		// Option to toggle villager spawn particles
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.FIREWORK_ROCKET,
 			CommunicationManager.format("&d&lVillager Spawn Particles: " +
-				getToggleStatus(arena.hasVillagerParticles())),
-			CommunicationManager.format("&7Particles showing where the spawns are"),
-			CommunicationManager.format("&7(Visible in-game)")
-		));
+				getToggleStatus(arena.hasVillagerParticles()))
+
+		)
+			.setLores(
+				CommunicationManager.format("&7Particles showing where the spawns are"),
+				CommunicationManager.format("&7(Visible in-game)")
+			)
+			.build());
 
 		// Option to edit villager type
-		buttons.add((ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.LECTERN,
 			CommunicationManager.format("&6&lVillager Type: " +
 				arena
@@ -575,13 +598,13 @@ public class Inventories {
 				arena
 					.getVillagerType()
 					.substring(1))
-		)));
+		).build());
 
 		// Option to edit spawn table
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.DRAGON_HEAD,
 			CommunicationManager.format("&3&lSpawn Table: " + arena.getSpawnTableFile())
-		));
+		).build());
 
 		return InventoryFactory.createDynamicSizeInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.MOBS_MENU, InventoryType.MENU)
@@ -605,10 +628,10 @@ public class Inventories {
 		DataManager
 			.getConfigLocationMap(arena.getPath() + ".monster")
 			.forEach((id, location) ->
-				buttons.add(ItemFactory.createItem(
+				buttons.add(new ItemStackBuilder(
 					Material.ZOMBIE_HEAD,
 					CommunicationManager.format("&2&lMob Spawn " + id)
-				)));
+				).build()));
 
 		// Sort buttons
 		buttons.sort(Comparator.comparing(button ->
@@ -651,22 +674,22 @@ public class Inventories {
 		// Toggle to set monster spawn type
 		switch (arena.getMonsterSpawnType(monsterSpawnID)) {
 			case 1:
-				buttons.add(ItemFactory.createItem(
+				buttons.add(new ItemStackBuilder(
 					Material.GUNPOWDER,
 					CommunicationManager.format("&5&lType: Ground")
-				));
+				).build());
 				break;
 			case 2:
-				buttons.add(ItemFactory.createItem(
+				buttons.add(new ItemStackBuilder(
 					Material.FEATHER,
 					CommunicationManager.format("&5&lType: Flying")
-				));
+				).build());
 				break;
 			default:
-				buttons.add(ItemFactory.createItem(
+				buttons.add(new ItemStackBuilder(
 					Material.BONE,
 					CommunicationManager.format("&5&lType: All")
-				));
+				).build());
 		}
 
 		return InventoryFactory.createFixedSizeInventory(
@@ -704,10 +727,10 @@ public class Inventories {
 		DataManager
 			.getConfigLocationMap(arena.getPath() + ".villager")
 			.forEach((id, location) ->
-				buttons.add(ItemFactory.createItem(
+				buttons.add(new ItemStackBuilder(
 					Material.POPPY,
 					CommunicationManager.format("&5&lVillager Spawn " + id)
-				)));
+				).build()));
 
 		// Sort buttons
 		buttons.sort(Comparator.comparing(button ->
@@ -757,13 +780,13 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Villager type options
-		buttons.add(ItemFactory.createItem(Material.SANDSTONE, CommunicationManager.format("&6&lDesert")));
-		buttons.add(ItemFactory.createItem(Material.MOSSY_COBBLESTONE, CommunicationManager.format("&2&lJungle")));
-		buttons.add(ItemFactory.createItem(Material.GRASS_BLOCK, CommunicationManager.format("&a&lPlains")));
-		buttons.add(ItemFactory.createItem(Material.TERRACOTTA, CommunicationManager.format("&c&lSavanna")));
-		buttons.add(ItemFactory.createItem(Material.SNOW_BLOCK, CommunicationManager.format("&b&lSnow")));
-		buttons.add(ItemFactory.createItem(Material.CLAY, CommunicationManager.format("&3&lSwamp")));
-		buttons.add(ItemFactory.createItem(Material.PODZOL, CommunicationManager.format("&9&lTaiga")));
+		buttons.add(new ItemStackBuilder(Material.SANDSTONE, CommunicationManager.format("&6&lDesert")).build());
+		buttons.add(new ItemStackBuilder(Material.MOSSY_COBBLESTONE, CommunicationManager.format("&2&lJungle")).build());
+		buttons.add(new ItemStackBuilder(Material.GRASS_BLOCK, CommunicationManager.format("&a&lPlains")).build());
+		buttons.add(new ItemStackBuilder(Material.TERRACOTTA, CommunicationManager.format("&c&lSavanna")).build());
+		buttons.add(new ItemStackBuilder(Material.SNOW_BLOCK, CommunicationManager.format("&b&lSnow")).build());
+		buttons.add(new ItemStackBuilder(Material.CLAY, CommunicationManager.format("&3&lSwamp")).build());
+		buttons.add(new ItemStackBuilder(Material.PODZOL, CommunicationManager.format("&9&lTaiga")).build());
 
 		return InventoryFactory.createDynamicSizeInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.VILLAGER_TYPE_MENU, InventoryType.MENU)
@@ -787,60 +810,84 @@ public class Inventories {
 		String chosen = arena.getSpawnTableFile();
 
 		// Option to set spawn table to default
-		buttons.add(ItemFactory.createItem(Material.OAK_WOOD,
-			CommunicationManager.format("&4&lDefault"), ItemFactory.BUTTON_FLAGS,
-			chosen.contains("default") ? ItemFactory.glow() : null,
-			CommunicationManager.format("&7Sets spawn table to default.yml")
-		));
+		buttons.add(new ItemStackBuilder(
+			Material.OAK_WOOD,
+			CommunicationManager.format("&4&lDefault")
+		)
+			.setLores(CommunicationManager.format("&7Sets spawn table to default.yml"))
+			.setButtonFlags()
+			.setGlowingIfTrue(chosen.contains("default"))
+			.build());
 
 		// Option to set spawn table to global option 1
-		buttons.add(ItemFactory.createItem(Material.RED_CONCRETE,
-			CommunicationManager.format("&6&lOption 1"), ItemFactory.BUTTON_FLAGS,
-			chosen.contains("option1") ? ItemFactory.glow() : null,
-			CommunicationManager.format("&7Sets spawn table to option1.yml")
-		));
+		buttons.add(new ItemStackBuilder(
+			Material.RED_CONCRETE,
+			CommunicationManager.format("&6&lOption 1")
+		)
+			.setLores(CommunicationManager.format("&7Sets spawn table to option1.yml"))
+			.setButtonFlags()
+			.setGlowingIfTrue(chosen.contains("option1"))
+			.build());
 
 		// Option to set spawn table to global option 2
-		buttons.add(ItemFactory.createItem(Material.ORANGE_CONCRETE,
-			CommunicationManager.format("&6&lOption 2"), ItemFactory.BUTTON_FLAGS,
-			chosen.contains("option2") ? ItemFactory.glow() : null,
-			CommunicationManager.format("&7Sets spawn table to option2.yml")
-		));
+		buttons.add(new ItemStackBuilder(
+			Material.ORANGE_CONCRETE,
+			CommunicationManager.format("&6&lOption 2")
+		)
+			.setLores(CommunicationManager.format("&7Sets spawn table to option2.yml"))
+			.setButtonFlags()
+			.setGlowingIfTrue(chosen.contains("option2"))
+			.build());
 
 		// Option to set spawn table to global option 3
-		buttons.add(ItemFactory.createItem(Material.YELLOW_CONCRETE,
-			CommunicationManager.format("&6&lOption 3"), ItemFactory.BUTTON_FLAGS,
-			chosen.contains("option3") ? ItemFactory.glow() : null,
-			CommunicationManager.format("&7Sets spawn table to option3.yml")
-		));
+		buttons.add(new ItemStackBuilder(
+			Material.YELLOW_CONCRETE,
+			CommunicationManager.format("&6&lOption 3")
+		)
+			.setLores(CommunicationManager.format("&7Sets spawn table to option3.yml"))
+			.setButtonFlags()
+			.setGlowingIfTrue(chosen.contains("option3"))
+			.build());
 
 		// Option to set spawn table to global option 4
-		buttons.add(ItemFactory.createItem(Material.BROWN_CONCRETE,
-			CommunicationManager.format("&6&lOption 4"), ItemFactory.BUTTON_FLAGS,
-			chosen.contains("option4") ? ItemFactory.glow() : null,
-			CommunicationManager.format("&7Sets spawn table to option4.yml")
-		));
+		buttons.add(new ItemStackBuilder(
+			Material.BROWN_CONCRETE,
+			CommunicationManager.format("&6&lOption 4")
+		)
+			.setLores(CommunicationManager.format("&7Sets spawn table to option4.yml"))
+			.setButtonFlags()
+			.setGlowingIfTrue(chosen.contains("option4"))
+			.build());
 
 		// Option to set spawn table to global option 5
-		buttons.add(ItemFactory.createItem(Material.LIGHT_GRAY_CONCRETE,
-			CommunicationManager.format("&6&lOption 5"), ItemFactory.BUTTON_FLAGS,
-			chosen.contains("option5") ? ItemFactory.glow() : null,
-			CommunicationManager.format("&7Sets spawn table to option5.yml")
-		));
+		buttons.add(new ItemStackBuilder(
+			Material.LIGHT_GRAY_CONCRETE,
+			CommunicationManager.format("&6&lOption 5")
+		)
+			.setLores(CommunicationManager.format("&7Sets spawn table to option5.yml"))
+			.setButtonFlags()
+			.setGlowingIfTrue(chosen.contains("option5"))
+			.build());
 
 		// Option to set spawn table to global option 6
-		buttons.add(ItemFactory.createItem(Material.WHITE_CONCRETE,
-			CommunicationManager.format("&6&lOption 6"), ItemFactory.BUTTON_FLAGS,
-			chosen.contains("option6") ? ItemFactory.glow() : null,
-			CommunicationManager.format("&7Sets spawn table to option6.yml")
-		));
+		buttons.add(new ItemStackBuilder(
+			Material.WHITE_CONCRETE,
+			CommunicationManager.format("&6&lOption 6")
+		)
+			.setLores(CommunicationManager.format("&7Sets spawn table to option6.yml"))
+			.setButtonFlags()
+			.setGlowingIfTrue(chosen.contains("option6"))
+			.build());
 
 		// Option to set spawn table to custom option
-		buttons.add(ItemFactory.createItem(Material.BIRCH_WOOD,
-			CommunicationManager.format("&e&lCustom"), ItemFactory.BUTTON_FLAGS,
-			chosen.charAt(0) == 'a' ? ItemFactory.glow() : null,
-			CommunicationManager.format("&7Sets spawn table to a" + arena.getId() + ".yml")
-		));
+		buttons.add(new ItemStackBuilder(
+			Material.BIRCH_WOOD,
+			CommunicationManager.format("&e&lCustom")
+		)
+			.setLores(CommunicationManager.format("&7Sets spawn table to a" + arena.getId() + ".yml"))
+			.setButtonFlags()
+			.setGlowingIfTrue(chosen.charAt(0) == 'a')
+			.build());
 
 		return InventoryFactory.createFixedSizeInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.SPAWN_TABLE_MENU, InventoryType.MENU)
@@ -859,96 +906,112 @@ public class Inventories {
 
 		// Option to change max waves
 		buttons.add(
-			ItemFactory.createItem(
+			new ItemStackBuilder(
 				Material.NETHERITE_SWORD,
 				CommunicationManager.format("&3&lMax Waves: " + ((arena.getMaxWaves() < 0) ? "Unlimited" :
-					arena.getMaxWaves())),
-				ItemFactory.BUTTON_FLAGS,
-				null
+					arena.getMaxWaves()))
 			)
+				.setButtonFlags()
+				.build()
 		);
 
 		// Option to wave time limit
-		buttons.add(ItemFactory.createItem(Material.CLOCK, CommunicationManager.format("&2&lWave Time Limit: " +
-			((arena.getWaveTimeLimit() < 0) ? "Unlimited" : arena.getWaveTimeLimit() + " minute(s)"))));
+		buttons.add(new ItemStackBuilder(Material.CLOCK, CommunicationManager.format("&2&lWave Time Limit: " +
+			((arena.getWaveTimeLimit() < 0) ? "Unlimited" : arena.getWaveTimeLimit() + " minute(s)"))).build());
 
 		// Option to toggle dynamic wave time limit
 		buttons.add(
-			ItemFactory.createItem(
+			new ItemStackBuilder(
 				Material.SNOWBALL,
-				CommunicationManager.format("&a&lDynamic Time Limit: " + getToggleStatus(arena.hasDynamicLimit())),
-				CommunicationManager.format("&7Wave time limit adjusting based on"),
-				CommunicationManager.format("&7in-game difficulty")
+				CommunicationManager.format("&a&lDynamic Time Limit: " + getToggleStatus(arena.hasDynamicLimit()))
 			)
+				.setLores(
+					CommunicationManager.format("&7Wave time limit adjusting based on"),
+					CommunicationManager.format("&7in-game difficulty")
+				)
+				.build()
+
 		);
 
 		// Option to toggle community chest
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.CHEST,
-			CommunicationManager.format("&d&lCommunity Chest: " + getToggleStatus(arena.hasCommunity())),
-			CommunicationManager.format("&7Turn community chest on and off")
-		));
+			CommunicationManager.format("&d&lCommunity Chest: " + getToggleStatus(arena.hasCommunity()))
+		)
+			.setLores(
+				CommunicationManager.format("&7Turn community chest on and off")
+			)
+			.build());
 
 		// Option to edit allowed kits
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.ENDER_CHEST,
 			CommunicationManager.format("&9&lAllowed Kits")
-		));
+		).build());
 
 		// Option to edit forced challenges
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.NETHER_STAR,
 			CommunicationManager.format("&9&lForced Challenges")
-		));
+		).build());
 
 		// Option to edit difficulty label
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.NAME_TAG,
 			CommunicationManager.format("&6&lDifficulty Label: " + arena.getDifficultyLabel())
-		));
+		).build());
 
 		// Option to adjust overall difficulty multiplier
-		buttons.add(ItemFactory.createItem(
-			Material.TURTLE_HELMET,
-			CommunicationManager.format("&4&lDifficulty Multiplier: " + arena.getDifficultyMultiplier()),
-			ItemFactory.BUTTON_FLAGS,
-			null,
-			CommunicationManager.format("&7Determines difficulty increase rate")
-		));
+		buttons.add(new ItemStackBuilder(
+				Material.TURTLE_HELMET,
+				CommunicationManager.format("&4&lDifficulty Multiplier: " + arena.getDifficultyMultiplier())
+			)
+				.setLores(CommunicationManager.format("&7Determines difficulty increase rate"))
+				.setButtonFlags()
+				.build()
+		);
 
 		// Option to toggle late arrival
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.DAYLIGHT_DETECTOR,
 			CommunicationManager.format("&e&lLate Arrival: " +
-				getToggleStatus(arena.hasLateArrival())),
-			CommunicationManager.format("&7Allows players to join after"),
-			CommunicationManager.format("&7the game has started")
-		));
+				getToggleStatus(arena.hasLateArrival()))
+		)
+			.setLores(
+				CommunicationManager.format("&7Allows players to join after"),
+				CommunicationManager.format("&7the game has started")
+			)
+			.build());
 
 		// Option to set arena bounds
-		buttons.add(ItemFactory.createItem(Material.BEDROCK, CommunicationManager.format("&4&lArena Bounds"),
-			CommunicationManager.format("&7Bounds determine where players are"),
-			CommunicationManager.format("&7allowed to go and where the game will"),
-			CommunicationManager.format("&7function. Avoid building past arena bounds.")
-		));
+		buttons.add(new ItemStackBuilder(Material.BEDROCK, CommunicationManager.format("&4&lArena Bounds"))
+			.setLores(
+				CommunicationManager.format("&7Bounds determine where players are"),
+				CommunicationManager.format("&7allowed to go and where the game will"),
+				CommunicationManager.format("&7function. Avoid building past arena bounds.")
+			)
+			.build());
 
 		// Option to edit sounds
 		buttons.add(
-			ItemFactory.createItem(
+			new ItemStackBuilder(
 				Material.MUSIC_DISC_13,
-				CommunicationManager.format("&d&lSounds"),
-				ItemFactory.BUTTON_FLAGS,
-				null
+				CommunicationManager.format("&d&lSounds")
 			)
+				.setButtonFlags()
+				.build()
 		);
 
 		// Option to copy game settings from another arena or a preset
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.WRITABLE_BOOK,
-			CommunicationManager.format("&f&lCopy Game Settings"),
-			CommunicationManager.format("&7Copy settings of another arena or"),
-			CommunicationManager.format("&7choose from a menu of presets")
-		));
+			CommunicationManager.format("&f&lCopy Game Settings")
+		)
+			.setLores(
+				CommunicationManager.format("&7Copy settings of another arena or"),
+				CommunicationManager.format("&7choose from a menu of presets")
+			)
+			.build());
 
 		return InventoryFactory.createDynamicSizeInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.GAME_SETTINGS_MENU, InventoryType.MENU)
@@ -1001,13 +1064,16 @@ public class Inventories {
 
 		// Gift kits
 		for (int i = 0; i < 9; i++)
-			inv.setItem(i, ItemFactory.createItem(
+			inv.setItem(i, new ItemStackBuilder(
 				Material.LIME_STAINED_GLASS_PANE,
-				CommunicationManager.format("&a&l" + LanguageManager.names.giftKits),
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-					LanguageManager.messages.giftKitsDescription, Constants.LORE_CHAR_LIMIT
+				CommunicationManager.format("&a&l" + LanguageManager.names.giftKits)
+			)
+				.setLores(
+					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+						LanguageManager.messages.giftKitsDescription, Constants.LORE_CHAR_LIMIT
+					)
 				)
-			));
+				.build());
 
 		List<String> bannedKitIDs = arena.getBannedKitIDs();
 		if (bannedKitIDs.contains(Kit
@@ -1094,13 +1160,16 @@ public class Inventories {
 
 		// Ability kits
 		for (int i = 18; i < 27; i++)
-			inv.setItem(i, ItemFactory.createItem(
+			inv.setItem(i, new ItemStackBuilder(
 				Material.MAGENTA_STAINED_GLASS_PANE,
-				CommunicationManager.format("&d&l" + LanguageManager.names.abilityKits),
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-					LanguageManager.messages.abilityKitsDescription, Constants.LORE_CHAR_LIMIT
+				CommunicationManager.format("&d&l" + LanguageManager.names.abilityKits)
+			)
+				.setLores(
+					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+						LanguageManager.messages.abilityKitsDescription, Constants.LORE_CHAR_LIMIT
+					)
 				)
-			));
+				.build());
 
 		if (bannedKitIDs.contains(Kit
 			.mage()
@@ -1186,13 +1255,16 @@ public class Inventories {
 
 		// Effect kits
 		for (int i = 36; i < 45; i++)
-			inv.setItem(i, ItemFactory.createItem(
+			inv.setItem(i, new ItemStackBuilder(
 				Material.YELLOW_STAINED_GLASS_PANE,
-				CommunicationManager.format("&e&l" + LanguageManager.names.effectKits),
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-					LanguageManager.messages.effectKitsDescription, Constants.LORE_CHAR_LIMIT
+				CommunicationManager.format("&e&l" + LanguageManager.names.effectKits)
+			)
+				.setLores(
+					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+						LanguageManager.messages.effectKitsDescription, Constants.LORE_CHAR_LIMIT
+					)
 				)
-			));
+				.build());
 
 		if (bannedKitIDs.contains(Kit
 			.blacksmith()
@@ -1348,34 +1420,34 @@ public class Inventories {
 		}
 
 		// "Easy" option
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.LIME_CONCRETE,
 			CommunicationManager.format("&a&l" + LanguageManager.names.easy)
-		));
+		).build());
 
 		// "Medium" option
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.YELLOW_CONCRETE,
 			CommunicationManager.format("&e&l" + LanguageManager.names.medium)
-		));
+		).build());
 
 		// "Hard" option
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.RED_CONCRETE,
 			CommunicationManager.format("&c&l" + LanguageManager.names.hard)
-		));
+		).build());
 
 		// "Insane" option
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.MAGENTA_CONCRETE,
 			CommunicationManager.format("&d&l" + LanguageManager.names.insane)
-		));
+		).build());
 
 		// "None" option
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.LIGHT_GRAY_CONCRETE,
 			CommunicationManager.format("&7&l" + LanguageManager.names.none)
-		));
+		).build());
 
 		return InventoryFactory.createDynamicSizeInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.DIFFICULTY_LABEL_MENU, InventoryType.MENU)
@@ -1392,19 +1464,19 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// "1" option
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.LIGHT_BLUE_CONCRETE,
 			CommunicationManager.format("&b&l1")
-		));
+		).build());
 
 		// "2" option
-		buttons.add(ItemFactory.createItem(Material.LIME_CONCRETE, CommunicationManager.format("&a&l2")));
+		buttons.add(new ItemStackBuilder(Material.LIME_CONCRETE, CommunicationManager.format("&a&l2")).build());
 
 		// "3" option
-		buttons.add(ItemFactory.createItem(Material.YELLOW_CONCRETE, CommunicationManager.format("&6&l3")));
+		buttons.add(new ItemStackBuilder(Material.YELLOW_CONCRETE, CommunicationManager.format("&6&l3")).build());
 
 		// "4" option
-		buttons.add(ItemFactory.createItem(Material.RED_CONCRETE, CommunicationManager.format("&4&l4")));
+		buttons.add(new ItemStackBuilder(Material.RED_CONCRETE, CommunicationManager.format("&4&l4")).build());
 
 		return InventoryFactory.createFixedSizeInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.DIFFICULTY_MULTIPLIER_MENU, InventoryType.MENU)
@@ -1422,30 +1494,33 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Option to interact with corner 1
-		buttons.add(ItemFactory.createItem(Material.TORCH, CommunicationManager.format("&b&lCorner 1: " +
-			(arena.getCorner1() == null ? "&c&lMissing" : "&a&lSet"))));
+		buttons.add(new ItemStackBuilder(Material.TORCH, CommunicationManager.format("&b&lCorner 1: " +
+			(arena.getCorner1() == null ? "&c&lMissing" : "&a&lSet"))).build());
 
 		// Option to interact with corner 2
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.SOUL_TORCH,
 			CommunicationManager.format("&9&lCorner 2: " +
 				(arena.getCorner2() == null ? "&c&lMissing" : "&a&lSet"))
-		));
+		).build());
 
 		// Option to stretch the arena bounds to the top and bottom of the world
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.WEEPING_VINES,
-			CommunicationManager.format("&3&lStretch Bounds"),
-			CommunicationManager.format("&7Stretches the arena bounds in the y direction from"),
-			CommunicationManager.format("&7the top to just below the bottom of the world.")
-		));
+			CommunicationManager.format("&3&lStretch Bounds")
+		)
+			.setLores(
+				CommunicationManager.format("&7Stretches the arena bounds in the y direction from"),
+				CommunicationManager.format("&7the top to just below the bottom of the world.")
+			)
+			.build());
 
 		// Option to toggle arena border particles
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.FIREWORK_ROCKET,
 			CommunicationManager.format("&4&lBorder Particles: " +
 				getToggleStatus(arena.hasBorderParticles()))
-		));
+		).build());
 
 		return InventoryFactory.createFixedSizeInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.ARENA_BOUNDS_MENU, InventoryType.MENU)
@@ -1503,72 +1578,74 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Option to edit win sound
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.MUSIC_DISC_PIGSTEP,
-			CommunicationManager.format("&a&lWin Sound: " + getToggleStatus(arena.hasWinSound())),
-			ItemFactory.BUTTON_FLAGS,
-			null,
-			CommunicationManager.format("&7Played when game ends and players win")
-		));
+			CommunicationManager.format("&a&lWin Sound: " + getToggleStatus(arena.hasWinSound()))
+		)
+			.setLores(CommunicationManager.format("&7Played when game ends and players win"))
+			.setButtonFlags()
+			.build());
 
 		// Option to edit lose sound
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.MUSIC_DISC_11,
-			CommunicationManager.format("&e&lLose Sound: " + getToggleStatus(arena.hasLoseSound())),
-			ItemFactory.BUTTON_FLAGS,
-			null,
-			CommunicationManager.format("&7Played when game ends and players lose")
-		));
+			CommunicationManager.format("&e&lLose Sound: " + getToggleStatus(arena.hasLoseSound()))
+		)
+			.setLores(CommunicationManager.format("&7Played when game ends and players lose"))
+			.setButtonFlags()
+			.build());
 
 		// Option to edit wave start sound
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.MUSIC_DISC_CAT,
 			CommunicationManager.format("&2&lWave Start Sound: " +
-				getToggleStatus(arena.hasWaveStartSound())),
-			ItemFactory.BUTTON_FLAGS,
-			null,
-			CommunicationManager.format("&7Played when a wave starts")
-		));
+				getToggleStatus(arena.hasWaveStartSound()))
+		)
+			.setLores(CommunicationManager.format("&7Played when a wave starts"))
+			.setButtonFlags()
+			.build());
 
 		// Option to edit wave finish sound
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.MUSIC_DISC_BLOCKS,
 			CommunicationManager.format("&9&lWave Finish Sound: " +
-				getToggleStatus(arena.hasWaveFinishSound())),
-			ItemFactory.BUTTON_FLAGS,
-			null,
-			CommunicationManager.format("&7Played when a wave ends")
-		));
+				getToggleStatus(arena.hasWaveFinishSound()))
+		)
+			.setLores(CommunicationManager.format("&7Played when a wave ends"))
+			.setButtonFlags()
+			.build());
 
 		// Option to edit waiting music
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.MUSIC_DISC_MELLOHI,
-			CommunicationManager.format("&6&lWaiting Sound: &b&l" + arena.getWaitingSoundName()),
-			ItemFactory.BUTTON_FLAGS,
-			null,
-			CommunicationManager.format("&7Played while players wait"),
-			CommunicationManager.format("&7for the game to start")
-		));
+			CommunicationManager.format("&6&lWaiting Sound: &b&l" + arena.getWaitingSoundName())
+		)
+			.setLores(
+				CommunicationManager.format("&7Played while players wait"),
+				CommunicationManager.format("&7for the game to start")
+			)
+			.setButtonFlags()
+			.build());
 
 		// Option to edit player death sound
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.MUSIC_DISC_CHIRP,
 			CommunicationManager.format("&4&lPlayer Death Sound: " +
-				getToggleStatus(arena.hasPlayerDeathSound())),
-			ItemFactory.BUTTON_FLAGS,
-			null,
-			CommunicationManager.format("&7Played when a player dies")
-		));
+				getToggleStatus(arena.hasPlayerDeathSound()))
+		)
+			.setLores(CommunicationManager.format("&7Played when a player dies"))
+			.setButtonFlags()
+			.build());
 
 		// Option to edit ability sound
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.MUSIC_DISC_MALL,
 			CommunicationManager.format("&d&lAbility Sound: " +
-				getToggleStatus(arena.hasAbilitySound())),
-			ItemFactory.BUTTON_FLAGS,
-			null,
-			CommunicationManager.format("&7Played when a player uses their ability")
-		));
+				getToggleStatus(arena.hasAbilitySound()))
+		)
+			.setLores(CommunicationManager.format("&7Played when a player uses their ability"))
+			.setButtonFlags()
+			.build());
 
 		return InventoryFactory.createDynamicSizeInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.SOUNDS_MENU, InventoryType.MENU)
@@ -1630,13 +1707,13 @@ public class Inventories {
 				if (Integer.parseInt(id) != arena.getId())
 					try {
 						buttons.add(
-							ItemFactory.createItem(
+							new ItemStackBuilder(
 								Material.GRAY_GLAZED_TERRACOTTA,
 								CommunicationManager.format("&a&lCopy " +
 									GameController
 										.getArena(Integer.parseInt(id))
 										.getName())
-							)
+							).build()
 						);
 					}
 					catch (ArenaNotFoundException ignored) {
@@ -1644,28 +1721,28 @@ public class Inventories {
 			});
 
 		// Easy preset
-		frozenButtons.add(ItemFactory.createItem(
+		frozenButtons.add(new ItemStackBuilder(
 			Material.LIME_CONCRETE,
 			CommunicationManager.format("&a&lEasy Preset")
-		));
+		).build());
 
 		// Medium preset
-		frozenButtons.add(ItemFactory.createItem(
+		frozenButtons.add(new ItemStackBuilder(
 			Material.YELLOW_CONCRETE,
 			CommunicationManager.format("&e&lMedium Preset")
-		));
+		).build());
 
 		// Hard preset
-		frozenButtons.add(ItemFactory.createItem(
+		frozenButtons.add(new ItemStackBuilder(
 			Material.RED_CONCRETE,
 			CommunicationManager.format("&c&lHard Preset")
-		));
+		).build());
 
 		// Insane preset
-		frozenButtons.add(ItemFactory.createItem(
+		frozenButtons.add(new ItemStackBuilder(
 			Material.MAGENTA_CONCRETE,
 			CommunicationManager.format("&d&lInsane Preset")
-		));
+		).build());
 
 		return InventoryFactory.createDynamicSizeBottomNavFreezeRowInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.COPY_SETTINGS_MENU, InventoryType.MENU)
@@ -1689,83 +1766,125 @@ public class Inventories {
 		String disabled = " &4&l[" + LanguageManager.messages.disabled + "]";
 
 		// Create inventory
-		buttons.add(ItemFactory.createItem(Material.GOLDEN_SWORD,
-			CommunicationManager.format("&2&l" + LanguageManager.names.swordShop), ItemFactory.BUTTON_FLAGS,
-			ItemFactory.glow()
-		));
+		buttons.add(new ItemStackBuilder(
+			Material.GOLDEN_SWORD,
+			CommunicationManager.format("&2&l" + LanguageManager.names.swordShop)
+		)
+			.setButtonFlags()
+			.setGlowingIfTrue(true)
+			.build());
 
-		buttons.add(ItemFactory.createItem(Material.GOLDEN_AXE,
-			CommunicationManager.format("&2&l" + LanguageManager.names.axeShop), ItemFactory.BUTTON_FLAGS,
-			ItemFactory.glow()
-		));
+		buttons.add(new ItemStackBuilder(
+			Material.GOLDEN_AXE,
+			CommunicationManager.format("&2&l" + LanguageManager.names.axeShop)
+		)
+			.setButtonFlags()
+			.setGlowingIfTrue(true)
+			.build());
 
-		buttons.add(ItemFactory.createItem(Material.GOLDEN_HOE,
-			CommunicationManager.format("&2&l" + LanguageManager.names.scytheShop), ItemFactory.BUTTON_FLAGS,
-			ItemFactory.glow()
-		));
+		buttons.add(new ItemStackBuilder(
+			Material.GOLDEN_HOE,
+			CommunicationManager.format("&2&l" + LanguageManager.names.scytheShop)
+		)
+			.setButtonFlags()
+			.setGlowingIfTrue(true)
+			.build());
 
-		buttons.add(ItemFactory.createItem(Material.BOW,
-			CommunicationManager.format("&2&l" + LanguageManager.names.bowShop), ItemFactory.BUTTON_FLAGS,
-			ItemFactory.glow()
-		));
+		buttons.add(new ItemStackBuilder(
+			Material.BOW,
+			CommunicationManager.format("&2&l" + LanguageManager.names.bowShop)
+		)
+			.setButtonFlags()
+			.setGlowingIfTrue(true)
+			.build());
 
-		buttons.add(ItemFactory.createItem(Material.CROSSBOW,
-			CommunicationManager.format("&2&l" + LanguageManager.names.crossbowShop), ItemFactory.BUTTON_FLAGS,
-			ItemFactory.glow()
-		));
+		buttons.add(new ItemStackBuilder(
+			Material.CROSSBOW,
+			CommunicationManager.format("&2&l" + LanguageManager.names.crossbowShop)
+		)
+			.setButtonFlags()
+			.setGlowingIfTrue(true)
+			.build());
 
-		buttons.add(ItemFactory.createItem(Material.NETHER_STAR,
-			CommunicationManager.format("&2&l" + LanguageManager.names.ammoShop), ItemFactory.BUTTON_FLAGS,
-			ItemFactory.glow()
-		));
+		buttons.add(new ItemStackBuilder(
+			Material.NETHER_STAR,
+			CommunicationManager.format("&2&l" + LanguageManager.names.ammoShop)
+		)
+			.setButtonFlags()
+			.setGlowingIfTrue(true)
+			.build());
 
-		buttons.add(ItemFactory.createItem(Material.GOLDEN_HELMET,
-			CommunicationManager.format("&2&l" + LanguageManager.names.helmetShop), ItemFactory.BUTTON_FLAGS,
-			ItemFactory.glow()
-		));
+		buttons.add(new ItemStackBuilder(
+			Material.GOLDEN_HELMET,
+			CommunicationManager.format("&2&l" + LanguageManager.names.helmetShop)
+		)
+			.setButtonFlags()
+			.setGlowingIfTrue(true)
+			.build());
 
-		buttons.add(ItemFactory.createItem(Material.GOLDEN_CHESTPLATE,
-			CommunicationManager.format("&2&l" + LanguageManager.names.chestplateShop),
-			ItemFactory.BUTTON_FLAGS, ItemFactory.glow()
-		));
+		buttons.add(new ItemStackBuilder(
+			Material.GOLDEN_CHESTPLATE,
+			CommunicationManager.format("&2&l" + LanguageManager.names.chestplateShop)
+		)
+			.setButtonFlags()
+			.setGlowingIfTrue(true)
+			.build());
 
-		buttons.add(ItemFactory.createItem(Material.GOLDEN_LEGGINGS,
-			CommunicationManager.format("&2&l" + LanguageManager.names.leggingsShop), ItemFactory.BUTTON_FLAGS,
-			ItemFactory.glow()
-		));
+		buttons.add(new ItemStackBuilder(
+			Material.GOLDEN_LEGGINGS,
+			CommunicationManager.format("&2&l" + LanguageManager.names.leggingsShop)
+		)
+			.setButtonFlags()
+			.setGlowingIfTrue(true)
+			.build());
 
-		buttons.add(ItemFactory.createItem(Material.GOLDEN_BOOTS,
-			CommunicationManager.format("&2&l" + LanguageManager.names.bootsShop), ItemFactory.BUTTON_FLAGS,
-			ItemFactory.glow()
-		));
+		buttons.add(new ItemStackBuilder(
+			Material.GOLDEN_BOOTS,
+			CommunicationManager.format("&2&l" + LanguageManager.names.bootsShop)
+		)
+			.setButtonFlags()
+			.setGlowingIfTrue(true)
+			.build());
 
-		buttons.add(ItemFactory.createItem(Material.GOLDEN_APPLE,
-			CommunicationManager.format("&2&l" + LanguageManager.names.consumableShop),
-			ItemFactory.BUTTON_FLAGS, ItemFactory.glow()
-		));
+		buttons.add(new ItemStackBuilder(
+			Material.GOLDEN_APPLE,
+			CommunicationManager.format("&2&l" + LanguageManager.names.consumableShop)
+		)
+			.setButtonFlags()
+			.setGlowingIfTrue(true)
+			.build());
 
-		buttons.add(ItemFactory.createItem(Material.LEAD,
+		buttons.add(new ItemStackBuilder(
+			Material.LEAD,
 			CommunicationManager.format("&2&l" + LanguageManager.names.petShop,
 				Integer.toString(player.getRemainingPetSlots()), Integer.toString(player.getPetSlots())
-			),
-			ItemFactory.BUTTON_FLAGS, ItemFactory.glow()
-		));
+			)
+		)
+			.setButtonFlags()
+			.setGlowingIfTrue(true)
+			.build());
 
-		buttons.add(ItemFactory.createItem(Material.CARVED_PUMPKIN,
-			CommunicationManager.format("&b&l" + LanguageManager.names.golemShop), ItemFactory.BUTTON_FLAGS,
-			ItemFactory.glow()
-		));
+		buttons.add(new ItemStackBuilder(
+			Material.CARVED_PUMPKIN,
+			CommunicationManager.format("&b&l" + LanguageManager.names.golemShop)
+		)
+			.setButtonFlags()
+			.setGlowingIfTrue(true)
+			.build());
 
-		buttons.add(ItemFactory.createItem(Material.ANVIL,
-			CommunicationManager.format("&b&l" + LanguageManager.names.abilityUpgradeShop),
-			ItemFactory.BUTTON_FLAGS, ItemFactory.glow()
-		));
+		buttons.add(new ItemStackBuilder(
+			Material.ANVIL,
+			CommunicationManager.format("&b&l" + LanguageManager.names.abilityUpgradeShop)
+		)
+			.setButtonFlags()
+			.setGlowingIfTrue(true)
+			.build());
 
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.CHEST,
 			CommunicationManager.format("&d&l" + LanguageManager.names.communityChest +
 				(arena.hasCommunity() ? "" : disabled))
-		));
+		).build());
 
 		return InventoryFactory.createDynamicSizeInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.SHOP_MENU, InventoryType.MENU)
@@ -2075,10 +2194,10 @@ public class Inventories {
 			.createUpgradeButton()));
 
 		// Remove
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.LAVA_BUCKET,
 			CommunicationManager.format("&4&l" + LanguageManager.messages.removePet)
-		));
+		).build());
 
 		return InventoryFactory.createFixedSizeInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.PET_MANAGER_MENU, InventoryType.MENU)
@@ -2166,10 +2285,10 @@ public class Inventories {
 			.createUpgradeButton()));
 
 		// Remove
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.LAVA_BUCKET,
 			CommunicationManager.format("&4&l" + LanguageManager.messages.removeGolem)
-		));
+		).build());
 
 		return InventoryFactory.createFixedSizeInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.GOLEM_MANAGER_MENU, InventoryType.MENU)
@@ -2277,71 +2396,90 @@ public class Inventories {
 		);
 
 		// Total kills
-		inv.setItem(0, ItemFactory.createItem(
+		inv.setItem(0, new ItemStackBuilder(
 			Material.DRAGON_HEAD,
 			CommunicationManager.format("&4&l" + LanguageManager.playerStats.totalKills.name +
-				": &4" + PlayerManager.getTotalKills(ownerID)),
-			CommunicationManager.format("&7" + LanguageManager.playerStats.totalKills.description)
-		));
+				": &4" + PlayerManager.getTotalKills(ownerID))
+		)
+			.setLores(
+				CommunicationManager.format("&7" + LanguageManager.playerStats.totalKills.description)
+			)
+			.build());
 
 		// Top kills
-		inv.setItem(10, ItemFactory.createItem(
+		inv.setItem(10, new ItemStackBuilder(
 			Material.ZOMBIE_HEAD,
 			CommunicationManager.format("&c&l" + LanguageManager.playerStats.topKills.name +
-				": &c" + PlayerManager.getTopKills(ownerID)),
-			CommunicationManager.format("&7" + LanguageManager.playerStats.topKills.description)
-		));
+				": &c" + PlayerManager.getTopKills(ownerID))
+		)
+			.setLores(
+				CommunicationManager.format("&7" + LanguageManager.playerStats.topKills.description)
+			)
+			.build());
 
 		// Total gems
-		inv.setItem(2, ItemFactory.createItem(
+		inv.setItem(2, new ItemStackBuilder(
 			Material.EMERALD_BLOCK,
 			CommunicationManager.format("&2&l" + LanguageManager.playerStats.totalGems.name +
-				": &2" + PlayerManager.getTotalGems(ownerID)),
-			CommunicationManager.format("&7" + LanguageManager.playerStats.totalGems.description)
-		));
+				": &2" + PlayerManager.getTotalGems(ownerID))
+		)
+			.setLores(
+				CommunicationManager.format("&7" + LanguageManager.playerStats.totalGems.description)
+			)
+			.build());
 
 		// Top balance
-		inv.setItem(12, ItemFactory.createItem(
+		inv.setItem(12, new ItemStackBuilder(
 			Material.EMERALD,
 			CommunicationManager.format("&a&l" + LanguageManager.playerStats.topBalance.name +
-				": &a" + PlayerManager.getTopBalance(ownerID)),
-			CommunicationManager.format("&7" + LanguageManager.playerStats.topBalance.description)
-		));
+				": &a" + PlayerManager.getTopBalance(ownerID))
+		)
+			.setLores(
+				CommunicationManager.format("&7" + LanguageManager.playerStats.topBalance.description)
+			)
+			.build());
 
 		// Top wave
-		inv.setItem(4, ItemFactory.createItem(Material.GOLDEN_SWORD,
+		inv.setItem(4, new ItemStackBuilder(
+			Material.GOLDEN_SWORD,
 			CommunicationManager.format("&3&l" + LanguageManager.playerStats.topWave.name +
-				": &3" + PlayerManager.getTopWave(ownerID)),
-			ItemFactory.BUTTON_FLAGS, null, CommunicationManager.format("&7" +
-				LanguageManager.playerStats.topWave.description)
-		));
+				": &3" + PlayerManager.getTopWave(ownerID))
+		)
+			.setLores(CommunicationManager.format("&7" + LanguageManager.playerStats.topWave.description))
+			.setButtonFlags()
+			.build());
 
 		// Achievements
-		inv.setItem(14, ItemFactory.createItem(Material.GOLDEN_HELMET,
-			CommunicationManager.format("&6&l" + LanguageManager.messages.achievements),
-			ItemFactory.BUTTON_FLAGS, null
-		));
+		inv.setItem(14, new ItemStackBuilder(
+			Material.GOLDEN_HELMET,
+			CommunicationManager.format("&6&l" + LanguageManager.messages.achievements)
+		)
+			.setButtonFlags()
+			.build());
 
 		// Kits
-		inv.setItem(6, ItemFactory.createItem(Material.ENDER_CHEST, CommunicationManager.format("&9&l" +
-			LanguageManager.messages.kits)));
+		inv.setItem(6, new ItemStackBuilder(Material.ENDER_CHEST, CommunicationManager.format("&9&l" +
+			LanguageManager.messages.kits)).build());
 
 		// Reset stats
 		if (ownerID.equals(requesterID))
-			inv.setItem(16, ItemFactory.createItem(
+			inv.setItem(16, new ItemStackBuilder(
 				Material.LAVA_BUCKET,
-				CommunicationManager.format("&d&l" + LanguageManager.messages.reset),
-				CommunicationManager.format("&5&l" + LanguageManager.messages.resetWarning)
-			));
+				CommunicationManager.format("&d&l" + LanguageManager.messages.reset)
+			)
+				.setLores(
+					CommunicationManager.format("&5&l" + LanguageManager.messages.resetWarning)
+				)
+				.build());
 
 		// Crystal balance
-		inv.setItem(8, ItemFactory.createItem(
+		inv.setItem(8, new ItemStackBuilder(
 			Material.DIAMOND,
 			CommunicationManager.format("&b&l" + String.format(
 				LanguageManager.messages.crystalBalance,
 				LanguageManager.names.crystal
 			) + ": &b" + PlayerManager.getCrystalBalance(ownerID))
-		));
+		).build());
 
 		return inv;
 	}
@@ -2364,13 +2502,16 @@ public class Inventories {
 
 		// Gift kits
 		for (int i = 0; i < 9; i++)
-			inv.setItem(i, ItemFactory.createItem(
+			inv.setItem(i, new ItemStackBuilder(
 				Material.LIME_STAINED_GLASS_PANE,
-				CommunicationManager.format("&a&l" + LanguageManager.names.giftKits),
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-					LanguageManager.messages.giftKitsDescription, Constants.LORE_CHAR_LIMIT
+				CommunicationManager.format("&a&l" + LanguageManager.names.giftKits)
+			)
+				.setLores(
+					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+						LanguageManager.messages.giftKitsDescription, Constants.LORE_CHAR_LIMIT
+					)
 				)
-			));
+				.build());
 
 		inv.setItem(9, Kit
 			.orc()
@@ -2431,13 +2572,16 @@ public class Inventories {
 
 		// Ability kits
 		for (int i = 18; i < 27; i++)
-			inv.setItem(i, ItemFactory.createItem(
+			inv.setItem(i, new ItemStackBuilder(
 				Material.MAGENTA_STAINED_GLASS_PANE,
-				CommunicationManager.format("&d&l" + LanguageManager.names.abilityKits),
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-					LanguageManager.messages.abilityKitsDescription, Constants.LORE_CHAR_LIMIT
+				CommunicationManager.format("&d&l" + LanguageManager.names.abilityKits)
+			)
+				.setLores(
+					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+						LanguageManager.messages.abilityKitsDescription, Constants.LORE_CHAR_LIMIT
+					)
 				)
-			));
+				.build());
 
 		inv.setItem(27, Kit
 			.mage()
@@ -2514,13 +2658,16 @@ public class Inventories {
 
 		// Effect kits
 		for (int i = 36; i < 45; i++)
-			inv.setItem(i, ItemFactory.createItem(
+			inv.setItem(i, new ItemStackBuilder(
 				Material.YELLOW_STAINED_GLASS_PANE,
-				CommunicationManager.format("&e&l" + LanguageManager.names.effectKits),
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-					LanguageManager.messages.effectKitsDescription, Constants.LORE_CHAR_LIMIT
+				CommunicationManager.format("&e&l" + LanguageManager.names.effectKits)
+			)
+				.setLores(
+					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+						LanguageManager.messages.effectKitsDescription, Constants.LORE_CHAR_LIMIT
+					)
 				)
-			));
+				.build());
 
 		inv.setItem(45, Kit
 			.blacksmith()
@@ -2569,13 +2716,13 @@ public class Inventories {
 
 		// Crystal balance
 		if (ownerID.equals(requesterID))
-			inv.setItem(52, ItemFactory.createItem(
+			inv.setItem(52, new ItemStackBuilder(
 				Material.DIAMOND,
 				CommunicationManager.format("&b&l" + String.format(
 					LanguageManager.messages.crystalBalance,
 					LanguageManager.names.crystal
 				) + ": &b" + PlayerManager.getCrystalBalance(ownerID))
-			));
+			).build());
 
 		// Option to exit
 		inv.setItem(53, InventoryButtons.exit());
@@ -2599,13 +2746,16 @@ public class Inventories {
 
 		// Gift kits
 		for (int i = 0; i < 9; i++)
-			inv.setItem(i, ItemFactory.createItem(
+			inv.setItem(i, new ItemStackBuilder(
 				Material.LIME_STAINED_GLASS_PANE,
-				CommunicationManager.format("&a&l" + LanguageManager.names.giftKits),
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-					LanguageManager.messages.giftKitsDescription, Constants.LORE_CHAR_LIMIT
+				CommunicationManager.format("&a&l" + LanguageManager.names.giftKits)
+			)
+				.setLores(
+					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+						LanguageManager.messages.giftKitsDescription, Constants.LORE_CHAR_LIMIT
+					)
 				)
-			));
+				.build());
 
 		List<String> bannedKitIDs = arena.getBannedKitIDs();
 		if (!bannedKitIDs.contains(Kit
@@ -2694,13 +2844,16 @@ public class Inventories {
 
 		// Ability kits
 		for (int i = 18; i < 27; i++)
-			inv.setItem(i, ItemFactory.createItem(
+			inv.setItem(i, new ItemStackBuilder(
 				Material.MAGENTA_STAINED_GLASS_PANE,
-				CommunicationManager.format("&d&l" + LanguageManager.names.abilityKits),
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-					LanguageManager.messages.abilityKitsDescription, Constants.LORE_CHAR_LIMIT
+				CommunicationManager.format("&d&l" + LanguageManager.names.abilityKits)
+			)
+				.setLores(
+					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+						LanguageManager.messages.abilityKitsDescription, Constants.LORE_CHAR_LIMIT
+					)
 				)
-			));
+				.build());
 
 		if (!bannedKitIDs.contains(Kit
 			.mage()
@@ -2804,13 +2957,16 @@ public class Inventories {
 
 		// Effect kits
 		for (int i = 36; i < 45; i++)
-			inv.setItem(i, ItemFactory.createItem(
+			inv.setItem(i, new ItemStackBuilder(
 				Material.YELLOW_STAINED_GLASS_PANE,
-				CommunicationManager.format("&e&l" + LanguageManager.names.effectKits),
-				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-					LanguageManager.messages.effectKitsDescription, Constants.LORE_CHAR_LIMIT
+				CommunicationManager.format("&e&l" + LanguageManager.names.effectKits)
+			)
+				.setLores(
+					CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+						LanguageManager.messages.effectKitsDescription, Constants.LORE_CHAR_LIMIT
+					)
 				)
-			));
+				.build());
 
 		if (!bannedKitIDs.contains(Kit
 			.blacksmith()
@@ -4438,85 +4594,85 @@ public class Inventories {
 		);
 
 		// Display crystals to convert
-		inv.setItem(3, ItemFactory.createItem(
+		inv.setItem(3, new ItemStackBuilder(
 			Material.DIAMOND_BLOCK,
 			CommunicationManager.format("&b&l" + String.format(
 				LanguageManager.messages.crystalsToConvert,
 				LanguageManager.names.crystals
 			) + ": " + (player.getGemBoost() * 5))
-		));
+		).build());
 
 		// Display gems to receive
-		inv.setItem(5, ItemFactory.createItem(
+		inv.setItem(5, new ItemStackBuilder(
 			Material.EMERALD_BLOCK,
 			CommunicationManager.format("&a&l" + LanguageManager.messages.gemsToReceive + ": " +
 				player.getGemBoost())
-		));
+		).build());
 
 		// Crystal balance display
 		int balance = PlayerManager.getCrystalBalance(player.getID());
 
-		inv.setItem(8, ItemFactory.createItem(
+		inv.setItem(8, new ItemStackBuilder(
 			Material.DIAMOND,
 			CommunicationManager.format("&b&l" + String.format(
 				LanguageManager.messages.crystalBalance,
 				LanguageManager.names.crystal
 			) + ": &b" + balance)
-		));
+		).build());
 
 		// Option to increase by 1
-		inv.setItem(9, ItemFactory.createItem(
+		inv.setItem(9, new ItemStackBuilder(
 			Material.LIME_CONCRETE,
 			CommunicationManager.format("&a&l+1 " + LanguageManager.messages.gems)
-		));
+		).build());
 
 		// Option to increase by 10
-		inv.setItem(11, ItemFactory.createItem(
+		inv.setItem(11, new ItemStackBuilder(
 			Material.LIME_CONCRETE,
 			CommunicationManager.format("&a&l+10 " + LanguageManager.messages.gems)
-		));
+		).build());
 
 		// Option to increase by 100
-		inv.setItem(13, ItemFactory.createItem(
+		inv.setItem(13, new ItemStackBuilder(
 			Material.LIME_CONCRETE,
 			CommunicationManager.format("&a&l+100 " + LanguageManager.messages.gems)
-		));
+		).build());
 
 		// Option to increase by 1000
-		inv.setItem(15, ItemFactory.createItem(
+		inv.setItem(15, new ItemStackBuilder(
 			Material.LIME_CONCRETE,
 			CommunicationManager.format("&a&l+1000 " + LanguageManager.messages.gems)
-		));
+		).build());
 
 		// Option to reset
-		inv.setItem(17, ItemFactory.createItem(
+		inv.setItem(17, new ItemStackBuilder(
 			Material.LIGHT_BLUE_CONCRETE,
 			CommunicationManager.format("&3&l" + LanguageManager.messages.reset)
-		));
+		).build());
 
 		// Option to decrease by 1
-		inv.setItem(18, ItemFactory.createItem(
+		inv.setItem(18, new ItemStackBuilder(
 			Material.RED_CONCRETE,
 			CommunicationManager.format("&c&l-1 " + LanguageManager.messages.gems)
-		));
+		).build());
 
 		// Option to decrease by 10
-		inv.setItem(20, ItemFactory.createItem(
+		inv.setItem(20, new ItemStackBuilder(
 			Material.RED_CONCRETE,
 			CommunicationManager.format("&c&l-10 " + LanguageManager.messages.gems)
-		));
+		).build());
 
 		// Option to decrease by 100
-		inv.setItem(22, ItemFactory.createItem(
+		inv.setItem(22, new ItemStackBuilder(
 			Material.RED_CONCRETE,
 			CommunicationManager.format("&c&l-100 " + LanguageManager.messages.gems)
-		));
+		).build());
 
 		// Option to decrease by 1000
-		inv.setItem(24, ItemFactory.createItem(
+		inv.setItem(24, new ItemStackBuilder(
 			Material.RED_CONCRETE,
 			CommunicationManager.format("&c&l-1000 " + LanguageManager.messages.gems)
-		));
+		).build());
 
 		// Option to exit
 		inv.setItem(26, InventoryButtons.exit());
@@ -4598,118 +4754,140 @@ public class Inventories {
 		List<ItemStack> buttons = new ArrayList<>();
 
 		// Maximum players
-		buttons.add(ItemFactory.createItem(Material.NETHERITE_HELMET,
+		buttons.add(new ItemStackBuilder(
+			Material.NETHERITE_HELMET,
 			CommunicationManager.format("&4&l" + LanguageManager.arenaStats.maxPlayers.name +
-				": &4" + arena.getMaxPlayers()), ItemFactory.BUTTON_FLAGS, null,
-			CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+				": &4" + arena.getMaxPlayers())
+		)
+			.setLores(CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
 				LanguageManager.arenaStats.maxPlayers.description, Constants.LORE_CHAR_LIMIT
-			)
-		));
+			))
+			.setButtonFlags()
+			.build());
 
 		// Minimum players
-		buttons.add(ItemFactory.createItem(Material.NETHERITE_BOOTS,
+		buttons.add(new ItemStackBuilder(
+			Material.NETHERITE_BOOTS,
 			CommunicationManager.format("&2&l" + LanguageManager.arenaStats.minPlayers.name +
-				": &2" + arena.getMinPlayers()), ItemFactory.BUTTON_FLAGS, null,
-			CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+				": &2" + arena.getMinPlayers())
+		)
+			.setLores(CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
 				LanguageManager.arenaStats.minPlayers.description, Constants.LORE_CHAR_LIMIT
-			)
-		));
+			))
+			.setButtonFlags()
+			.build());
 
 		// Max waves
 		String waves;
 		if (arena.getMaxWaves() < 0)
 			waves = LanguageManager.messages.unlimited;
 		else waves = Integer.toString(arena.getMaxWaves());
-		buttons.add(ItemFactory.createItem(Material.GOLDEN_SWORD,
+		buttons.add(new ItemStackBuilder(
+			Material.GOLDEN_SWORD,
 			CommunicationManager.format("&3&l" + LanguageManager.arenaStats.maxWaves.name +
-				": &3" + waves), ItemFactory.BUTTON_FLAGS, null,
-			CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+				": &3" + waves)
+		)
+			.setLores(CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
 				LanguageManager.arenaStats.maxWaves.description, Constants.LORE_CHAR_LIMIT
-			)
-		));
+			))
+			.setButtonFlags()
+			.build());
 
 		// Wave time limit
 		String limit;
 		if (arena.getWaveTimeLimit() < 0)
 			limit = LanguageManager.messages.unlimited;
 		else limit = arena.getWaveTimeLimit() + " minute(s)";
-		buttons.add(ItemFactory.createItem(Material.CLOCK,
+		buttons.add(new ItemStackBuilder(
+			Material.CLOCK,
 			CommunicationManager.format("&9&l" + LanguageManager.arenaStats.timeLimit.name +
-				": &9" + limit), CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-				LanguageManager.arenaStats.timeLimit.description, Constants.LORE_CHAR_LIMIT
+				": &9" + limit)
+		)
+			.setLores(CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+					LanguageManager.arenaStats.timeLimit.description, Constants.LORE_CHAR_LIMIT
+				)
 			)
-		));
+			.build());
 
 		// Allowed kits
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.ENDER_CHEST,
 			CommunicationManager.format("&9&l" + LanguageManager.messages.allowedKits)
-		));
+		).build());
 
 		// Forced challenges
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.NETHER_STAR,
 			CommunicationManager.format("&9&l" + LanguageManager.messages.forcedChallenges)
-		));
+		).build());
 
 		// Dynamic time limit
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.SNOWBALL,
 			CommunicationManager.format("&a&l" +
 				LanguageManager.arenaStats.dynamicTimeLimit.name +
-				": " + getToggleStatus(arena.hasDynamicLimit())),
-			CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
-				LanguageManager.arenaStats.dynamicTimeLimit.description, Constants.LORE_CHAR_LIMIT
+				": " + getToggleStatus(arena.hasDynamicLimit()))
+		)
+			.setLores(
+				CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+					LanguageManager.arenaStats.dynamicTimeLimit.description, Constants.LORE_CHAR_LIMIT
+				)
 			)
-		));
+			.build());
 
 		// Late arrival
-		buttons.add(ItemFactory.createItem(Material.DAYLIGHT_DETECTOR,
+		buttons.add(new ItemStackBuilder(
+			Material.DAYLIGHT_DETECTOR,
 			CommunicationManager.format("&e&l" + LanguageManager.arenaStats.lateArrival.name +
-				": " + getToggleStatus(arena.hasLateArrival())), ItemFactory.BUTTON_FLAGS, null,
-			CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+				": " + getToggleStatus(arena.hasLateArrival()))
+		)
+			.setLores(CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
 				LanguageManager.arenaStats.lateArrival.description, Constants.LORE_CHAR_LIMIT
-			)
-		));
+			))
+			.setButtonFlags()
+			.build());
 
 		// Player spawn particles
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.FIREWORK_ROCKET,
 			CommunicationManager.format("&e&l" + LanguageManager.names.playerSpawnParticles +
 				": " + getToggleStatus(arena.hasSpawnParticles()))
-		));
+		).build());
 
 		// Monster spawn particles
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.FIREWORK_ROCKET,
 			CommunicationManager.format("&d&l" + LanguageManager.names.monsterSpawnParticles +
 				": " + getToggleStatus(arena.hasMonsterParticles()))
-		));
+		).build());
 
 		// Villager spawn particles
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.FIREWORK_ROCKET,
 			CommunicationManager.format("&a&l" +
 				LanguageManager.names.villagerSpawnParticles + ": " +
 				getToggleStatus(arena.hasVillagerParticles()))
-		));
+		).build());
 
 		// Community chest
-		buttons.add(ItemFactory.createItem(
+		buttons.add(new ItemStackBuilder(
 			Material.CHEST,
 			CommunicationManager.format("&d&l" + LanguageManager.names.communityChest +
 				": " + getToggleStatus(arena.hasCommunity()))
-		));
+		).build());
 
 		// Difficulty multiplier
-		buttons.add(ItemFactory.createItem(Material.TURTLE_HELMET,
+		buttons.add(new ItemStackBuilder(
+			Material.TURTLE_HELMET,
 			CommunicationManager.format("&4&l" +
 				LanguageManager.arenaStats.difficultyMultiplier.name + ": &4" +
-				arena.getDifficultyMultiplier()), ItemFactory.BUTTON_FLAGS, null,
-			CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
+				arena.getDifficultyMultiplier())
+		)
+			.setLores(CommunicationManager.formatDescriptionArr(ChatColor.GRAY,
 				LanguageManager.arenaStats.difficultyMultiplier.description, Constants.LORE_CHAR_LIMIT
-			)
-		));
+			))
+			.setButtonFlags()
+			.build());
 
 		// Arena records
 		List<String> records = new ArrayList<>();
@@ -4746,10 +4924,14 @@ public class Inventories {
 					}
 				}
 			});
-		buttons.add(ItemFactory.createItem(Material.GOLDEN_HELMET,
-			CommunicationManager.format("&e&l" + LanguageManager.messages.arenaRecords),
-			ItemFactory.BUTTON_FLAGS, null, records
-		));
+		String[] recordsArray = new String[records.size()];
+		buttons.add(new ItemStackBuilder(
+			Material.GOLDEN_HELMET,
+			CommunicationManager.format("&e&l" + LanguageManager.messages.arenaRecords)
+		)
+			.setLores(records.toArray(recordsArray))
+			.setButtonFlags()
+			.build());
 
 		return InventoryFactory.createDynamicSizeInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.ARENA_INFO_MENU, InventoryType.MENU)

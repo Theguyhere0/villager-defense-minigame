@@ -44,6 +44,7 @@ public class Main extends JavaPlugin {
 	private static boolean loaded = false;
 	private static final List<String> unloadedWorlds = new ArrayList<>();
 	private static Economy economy;
+	private static VDExpansion expansion;
 
 	// Global state variables
 	private static boolean outdated = false; // DO NOT CHANGE
@@ -77,13 +78,14 @@ public class Main extends JavaPlugin {
 			.setTabCompleter(new TabCompleterImp());
 
 		// Schedule to register PAPI expansion
+		expansion = new VDExpansion();
 		Bukkit
 			.getScheduler()
 			.scheduleSyncDelayedTask(this, () -> {
 				if (Bukkit
 					.getPluginManager()
 					.getPlugin("PlaceholderAPI") != null)
-					new VDExpansion().register();
+					expansion.register();
 			}, Calculator.secondsToTicks(1));
 
 		// Try finding economy plugin
@@ -190,11 +192,13 @@ public class Main extends JavaPlugin {
 		setLoaded(false);
 		checkArenaNameAndGatherUnloadedWorlds();
 
-		// Register expansion again
+		// Re-register expansion
 		if (Bukkit
 			.getPluginManager()
-			.getPlugin("PlaceholderAPI") != null)
-			new VDExpansion().register();
+			.getPlugin("PlaceholderAPI") != null) {
+			expansion.unregister();
+			expansion.register();
+		}
 
 		// Try finding economy plugin again
 		setupEconomy();
