@@ -17,9 +17,6 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.WorldLoadEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
 
@@ -27,18 +24,6 @@ import java.util.List;
  * The listener that handles background events.
  */
 public class BackgroundListener implements Listener {
-
-	@Override
-	public boolean checkInvisible(ItemStack itemStack) {
-		PersistentDataContainer dataContainer = Objects
-			.requireNonNull(itemStack.getItemMeta())
-			.getPersistentDataContainer();
-		Boolean invisible = dataContainer.get(VDItem.INVISIBLE, PersistentDataType.BOOLEAN);
-		if (invisible == null)
-			return false;
-		else return invisible;
-	}
-
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
