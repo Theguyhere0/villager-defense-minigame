@@ -10,7 +10,7 @@ import me.theguyhere.villagerdefense.plugin.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaException;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
+import me.theguyhere.villagerdefense.plugin.background.packets.PacketManager;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.huds.BottomBarController;
@@ -246,16 +246,9 @@ public class VDPlayer {
 		currentHealth = Math.min(Math.max(currentHealth + trueDif, 0), maxHealth);
 
 		// Set warning effect
-		NMSVersion
-			.getCurrent()
-			.getNmsManager()
-			.createEffect(
-				arena
-					.getPlayerSpawn()
-					.getLocation(),
-				currentHealth / (double) maxHealth
-			)
-			.sendTo(getPlayer());
+		PacketManager.createBorderEffect(getPlayer(), arena
+			.getPlayerSpawn()
+			.getLocation(), currentHealth / (double) maxHealth);
 
 		// Check for death
 		if (this.currentHealth == 0) {
@@ -948,7 +941,7 @@ public class VDPlayer {
 			.getHelmet();
 		getPlayer()
 			.getInventory()
-			.setHelmet(SlotGuard.create());
+			.setHelmet(SlotGuard.createForHelmet(getPlayer()));
 		chestplate = getPlayer()
 			.getInventory()
 			.getChestplate();
@@ -1000,7 +993,8 @@ public class VDPlayer {
 			}
 		}
 		if (getChallenges().contains(Challenge.naked())) {
-			for (int i = 36; i < 40; i++) {
+			getPlayer().getInventory().setHelmet(SlotGuard.createForHelmet(getPlayer()));
+			for (int i = 36; i < 39; i++) {
 				getPlayer().getInventory().setItem(i, SlotGuard.create());
 			}
 		}
