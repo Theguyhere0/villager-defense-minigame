@@ -1781,7 +1781,7 @@ public class GameListener implements Listener {
 				.scheduleSyncDelayedTask(Main.plugin, gamer::updateArmor, 1);
 	}
 
-	// Prevent swapping items while waiting for game to start, otherwise update player stats
+	// Prevent swapping items while waiting for game to start or for menu items, otherwise update player stats
 	@EventHandler
 	public void onSwap(PlayerSwapHandItemsEvent e) {
 		Player player = e.getPlayer();
@@ -1799,6 +1799,12 @@ public class GameListener implements Listener {
 
 		// Cancel event if arena is in waiting mode
 		if (arena.getStatus() == ArenaStatus.WAITING) {
+			e.setCancelled(true);
+			return;
+		}
+
+		// Cancel for menu items
+		if (VDMenuItem.matches(e.getMainHandItem()) || VDMenuItem.matches(e.getOffHandItem())) {
 			e.setCancelled(true);
 			return;
 		}
