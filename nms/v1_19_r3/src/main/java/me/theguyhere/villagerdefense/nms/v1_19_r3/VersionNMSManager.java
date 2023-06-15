@@ -121,16 +121,21 @@ public class VersionNMSManager implements NMSManager {
 	@Override
 	public void injectPacketListener(Player player, PacketListener packetListener) {
 		modifyPipeline(player, (ChannelPipeline pipeline) -> {
-			ChannelHandler currentListener = pipeline.get(InboundPacketHandler.HANDLER_NAME);
+			ChannelHandler inboundListener = pipeline.get(InboundPacketHandler.HANDLER_NAME);
+			ChannelHandler outboundListener = pipeline.get(OutboundPacketHandler.HANDLER_NAME);
 
 			// Remove old listener
-			if (currentListener != null) {
+			if (inboundListener != null)
 				pipeline.remove(InboundPacketHandler.HANDLER_NAME);
-			}
+			if (outboundListener != null)
+				pipeline.remove(OutboundPacketHandler.HANDLER_NAME);
 
 			// Inject new listener
 			pipeline.addBefore("packet_handler", InboundPacketHandler.HANDLER_NAME,
 				new InboundPacketHandler(player, packetListener)
+			);
+			pipeline.addBefore("packet_handler", OutboundPacketHandler.HANDLER_NAME,
+				new OutboundPacketHandler(packetListener)
 			);
 		});
 	}
@@ -138,12 +143,14 @@ public class VersionNMSManager implements NMSManager {
 	@Override
 	public void uninjectPacketListener(Player player) {
 		modifyPipeline(player, (ChannelPipeline pipeline) -> {
-			ChannelHandler currentListener = pipeline.get(InboundPacketHandler.HANDLER_NAME);
+			ChannelHandler inboundListener = pipeline.get(InboundPacketHandler.HANDLER_NAME);
+			ChannelHandler outboundListener = pipeline.get(OutboundPacketHandler.HANDLER_NAME);
 
 			// Remove old listener
-			if (currentListener != null) {
+			if (inboundListener != null)
 				pipeline.remove(InboundPacketHandler.HANDLER_NAME);
-			}
+			if (outboundListener != null)
+				pipeline.remove(OutboundPacketHandler.HANDLER_NAME);
 		});
 	}
 
