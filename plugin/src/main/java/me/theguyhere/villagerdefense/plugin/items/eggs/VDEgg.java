@@ -401,9 +401,12 @@ public abstract class VDEgg extends VDItem {
 				price));
 		}
 
-		return ItemStackBuilder.createItem(mat, name, ItemStackBuilder.BUTTON_FLAGS, null, lores, null,
-			persistentData, null, persistentTags
-		);
+		return new ItemStackBuilder(mat, name)
+			.setLores(lores.toArray(new String[0]))
+			.setButtonFlags()
+			.setPersistentData(persistentData)
+			.setPersistentTags(persistentTags)
+			.build();
 	}
 
 	public static boolean matches(ItemStack toCheck) {

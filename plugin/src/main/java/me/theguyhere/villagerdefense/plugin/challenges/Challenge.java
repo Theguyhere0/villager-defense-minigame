@@ -6,12 +6,10 @@ import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -103,14 +101,14 @@ public class Challenge {
 	 */
 	@NotNull
 	public ItemStack getButton(boolean active) {
-		HashMap<Enchantment, Integer> enchants = new HashMap<>();
-		enchants.put(Enchantment.DURABILITY, 1);
-		List<String> lores = new ArrayList<>(masterDescription);
-
-		return ItemStackBuilder.createItem(buttonMaterial,
-			CommunicationManager.format((active ? "&d&l" : "&5&l") + name), ItemStackBuilder.BUTTON_FLAGS,
-			active ? enchants : null, lores
-		);
+		return new ItemStackBuilder(
+			buttonMaterial,
+			CommunicationManager.format((active ? "&d&l" : "&5&l") + name)
+		)
+			.setLores(masterDescription.toArray(new String[0]))
+			.setButtonFlags()
+			.setGlowingIfTrue(active)
+			.build();
 	}
 
 	/**

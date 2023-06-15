@@ -10,10 +10,13 @@ import org.jetbrains.annotations.NotNull;
 public abstract class ChallengeSelector extends VDMenuItem {
 	@NotNull
 	public static ItemStack create() {
-		return ItemStackBuilder.createItem(Material.NETHER_STAR,
-			CommunicationManager.format("&9&l" + LanguageManager.names.challengeSelection),
-			ItemStackBuilder.HIDE_ENCHANT_FLAGS, ItemStackBuilder.glow()
-		);
+		return new ItemStackBuilder(
+			Material.NETHER_STAR,
+			CommunicationManager.format("&9&l" + LanguageManager.names.challengeSelection)
+		)
+			.setHideEnchantFlags()
+			.setGlowingIfTrue(true)
+			.build();
 	}
 
 	public static boolean matches(ItemStack toCheck) {

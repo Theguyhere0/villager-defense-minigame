@@ -10,12 +10,14 @@ import org.jetbrains.annotations.NotNull;
 public abstract class Shop extends VDMenuItem {
 	@NotNull
 	public static ItemStack create() {
-		return ItemStackBuilder.createItem(
+		return new ItemStackBuilder(
 			Material.EMERALD,
-			CommunicationManager.format("&2&l" + LanguageManager.names.itemShop),
-			ItemStackBuilder.HIDE_ENCHANT_FLAGS, ItemStackBuilder.glow(),
-			CommunicationManager.format("&7&o" + LanguageManager.messages.itemShopDesc)
-		);
+			CommunicationManager.format("&2&l" + LanguageManager.names.itemShop)
+		)
+			.setLores(CommunicationManager.format("&7&o" + LanguageManager.messages.itemShopDesc))
+			.setHideEnchantFlags()
+			.setGlowingIfTrue(true)
+			.build();
 	}
 
 	public static boolean matches(ItemStack toCheck) {

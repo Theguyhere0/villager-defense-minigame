@@ -4924,12 +4924,11 @@ public class Inventories {
 					}
 				}
 			});
-		String[] recordsArray = new String[records.size()];
 		buttons.add(new ItemStackBuilder(
 			Material.GOLDEN_HELMET,
 			CommunicationManager.format("&e&l" + LanguageManager.messages.arenaRecords)
 		)
-			.setLores(records.toArray(recordsArray))
+			.setLores(records.toArray(new String[0]))
 			.setButtonFlags()
 			.build());
 

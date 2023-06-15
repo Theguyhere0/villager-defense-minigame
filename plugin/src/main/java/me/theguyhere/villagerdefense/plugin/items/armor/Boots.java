@@ -13,7 +13,6 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -30,10 +29,10 @@ public abstract class Boots extends VDArmor {
 	public static ItemStack create(Tier tier) {
 		List<String> lores = new ArrayList<>();
 		Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
-		HashMap<Enchantment, Integer> enchant = new HashMap<>();
 		HashMap<NamespacedKey, Integer> persistentData = new HashMap<>();
 		HashMap<NamespacedKey, String> persistentTags = new HashMap<>();
 		persistentTags.put(ITEM_TYPE_KEY, BOOTS);
+		boolean enchant = false;
 
 		// Set material
 		Material mat;
@@ -55,7 +54,7 @@ public abstract class Boots extends VDArmor {
 				break;
 			case T6:
 				mat = Material.NETHERITE_BOOTS;
-				enchant.put(Enchantment.DURABILITY, 3);
+				enchant = true;
 				break;
 			default:
 				mat = Material.GOLDEN_BOOTS;
@@ -264,9 +263,14 @@ public abstract class Boots extends VDArmor {
 		}
 
 		// Create item
-		ItemStack item = ItemStackBuilder.createItem(mat, name, ItemStackBuilder.BUTTON_FLAGS, enchant, lores, attributes,
-			persistentData, null, persistentTags
-		);
+		ItemStack item = new ItemStackBuilder(mat, name)
+			.setLores(lores.toArray(new String[0]))
+			.setButtonFlags()
+			.setGlowingIfTrue(enchant)
+			.setAttributes(attributes)
+			.setPersistentData(persistentData)
+			.setPersistentTags(persistentTags)
+			.build();
 		if (durability == 0)
 			return ItemStackBuilder.makeUnbreakable(item);
 		else return item;

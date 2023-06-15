@@ -275,9 +275,13 @@ public abstract class ShopFood extends VDFood {
 				price));
 		}
 
-		return ItemStackBuilder.setAmount(ItemStackBuilder.createItem(mat, name, ItemStackBuilder.BUTTON_FLAGS, null, lores,
-			null, persistentData, null, persistentTags
-		), count);
+		return new ItemStackBuilder(mat, name)
+			.setAmount(count)
+			.setLores(lores.toArray(new String[0]))
+			.setButtonFlags()
+			.setPersistentData(persistentData)
+			.setPersistentTags(persistentTags)
+			.build();
 	}
 
 	public static boolean matches(ItemStack toCheck) {

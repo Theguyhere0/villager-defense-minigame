@@ -154,17 +154,17 @@ public abstract class TemplarAbility extends VDAbility {
 		}
 
 		// Create item
-		return ItemStackBuilder.createItem(
+		return new ItemStackBuilder(
 			Material.YELLOW_DYE,
-			name,
-			ItemStackBuilder.HIDE_ENCHANT_FLAGS,
-			ItemStackBuilder.glow(),
-			lores,
-			null,
-			persistentData,
-			persistentData2,
-			persistentTags
-		);
+			name
+		)
+			.setLores(lores.toArray(new String[0]))
+			.setHideEnchantFlags()
+			.setGlowingIfTrue(true)
+			.setPersistentData(persistentData)
+			.setPersistentData2(persistentData2)
+			.setPersistentTags(persistentTags)
+			.build();
 	}
 
 	public static boolean matches(ItemStack toCheck) {

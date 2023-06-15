@@ -10,10 +10,13 @@ import org.jetbrains.annotations.NotNull;
 public abstract class Leave extends VDMenuItem {
 	@NotNull
 	public static ItemStack create() {
-		return ItemStackBuilder.createItem(Material.BARRIER,
-			CommunicationManager.format("&c&l" + LanguageManager.messages.leave),
-			ItemStackBuilder.HIDE_ENCHANT_FLAGS, ItemStackBuilder.glow()
-		);
+		return new ItemStackBuilder(
+			Material.BARRIER,
+			CommunicationManager.format("&c&l" + LanguageManager.messages.leave)
+		)
+			.setHideEnchantFlags()
+			.setGlowingIfTrue(true)
+			.build();
 	}
 
 	public static boolean matches(ItemStack toCheck) {
