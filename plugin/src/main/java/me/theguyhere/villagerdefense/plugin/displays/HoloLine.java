@@ -40,10 +40,6 @@ public class HoloLine {
 			.newTextPacketEntity();
 	}
 
-	public String getText() {
-		return text;
-	}
-
 	public Location getLocation() {
 		return location;
 	}

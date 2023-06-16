@@ -2,6 +2,7 @@ package me.theguyhere.villagerdefense.nms.common;
 
 import me.theguyhere.villagerdefense.nms.common.entities.TextPacketEntity;
 import me.theguyhere.villagerdefense.nms.common.entities.VillagerPacketEntity;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 /**
@@ -23,4 +24,12 @@ public interface NMSManager {
 	String getBorderParticleName();
 
 	void nameArena(Player player, String arenaName, int arenaID);
+
+	PacketGroup createBorderWarning(Location location, double healthRatio);
+
+	PacketGroup resetBorderWarning(Location location, double size, int warningDistance);
+
+	void injectPacketListener(Player player, PacketListener packetListener);
+
+	void uninjectPacketListener(Player player);
 }

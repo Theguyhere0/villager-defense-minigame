@@ -14,7 +14,7 @@ public class Constants {
 	public static final int BORDER_SIZE = 1000000;
 	public static final String HP = "❤";
 	public static final String HUNGER = "☕";
-	public static final String ARMOR = "✠";
+	public static final String ARMOR = "⛨";
 	public static final String TOUGH = "❖";
 	public static final String DAMAGE = "⚔";
 	public static final String GEM = "♦";

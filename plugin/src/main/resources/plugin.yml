@@ -4,7 +4,6 @@ version: dev
 author: Theguyhere
 api-version: 1.16
 softdepend: [ WorldGuard, WorldEdit, Multiverse-core, PlaceholderAPI, Vault ]
-depend: [ ProtocolLib ]
 
 commands:
   vd:

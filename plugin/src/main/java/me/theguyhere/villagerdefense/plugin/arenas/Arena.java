@@ -8,7 +8,6 @@ import me.theguyhere.villagerdefense.plugin.background.DataManager;
 import me.theguyhere.villagerdefense.plugin.background.InvalidLocationException;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
-import me.theguyhere.villagerdefense.plugin.background.packets.PacketManager;
 import me.theguyhere.villagerdefense.plugin.challenges.Challenge;
 import me.theguyhere.villagerdefense.plugin.displays.ArenaBoard;
 import me.theguyhere.villagerdefense.plugin.displays.Portal;
@@ -2111,9 +2110,6 @@ public class Arena {
 			else amount = player.getGemBoost() * 5;
 			player.addGems(player.getGemBoost());
 			PlayerManager.withdrawCrystalBalance(player.getID(), amount);
-
-			// Refresh equipment
-			PacketManager.refreshPlayerEquipmentForOnline(player.getPlayer());
 		});
 		updateScoreboards();
 
