@@ -113,12 +113,10 @@ public abstract class VDMob {
 			addDamage(currentHealth, attackerID);
 			Random r = new Random();
 			int finalGems = (int) (loot * (1 + (r.nextDouble() * 2 - 1) * lootSpread));
-			int finalExp = (int) (loot * (1 + (r.nextDouble() * 2 - 1) * lootSpread)) / 10;
 
 			// Reward for all damagers
 			damageMap.forEach((id, contribution) -> {
 				int gems = (int) (finalGems * (double) contribution / maxHealth);
-				int exp = (int) (finalExp * (double) contribution / maxHealth);
 				try {
 					VDPlayer gamer = arena.getPlayer(id);
 
@@ -134,8 +132,7 @@ public abstract class VDMob {
 						Popup.create(getEntity()
 								.getLocation()
 								.add(0, 1, 0),
-							new ColoredMessage(ChatColor.GREEN, "+" + gems + Constants.GEM + "  ") +
-								new ColoredMessage(ChatColor.YELLOW, "+" + exp + Constants.EXP).toString(), 2.5,
+							new ColoredMessage(ChatColor.GREEN, "+" + gems + Constants.GEM).toString(), 2.5,
 							gamer.getPlayer()
 						);
 					}
@@ -149,11 +146,6 @@ public abstract class VDMob {
 
 					// Update scoreboard
 					SidebarManager.updateActivePlayerSidebar(gamer);
-
-					// Give exp
-					gamer
-						.getPlayer()
-						.giveExp(exp);
 				}
 				catch (PlayerNotFoundException ignored) {
 				}

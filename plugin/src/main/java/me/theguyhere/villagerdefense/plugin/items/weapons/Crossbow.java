@@ -183,22 +183,22 @@ public abstract class Crossbow extends VDWeapon {
 		int durability;
 		switch (tier) {
 			case T1:
-				durability = 70;
+				durability = 60;
 				break;
 			case T2:
-				durability = 105;
+				durability = 100;
 				break;
 			case T3:
-				durability = 155;
+				durability = 125;
 				break;
 			case T4:
-				durability = 190;
+				durability = 175;
 				break;
 			case T5:
-				durability = 240;
+				durability = 200;
 				break;
 			case T6:
-				durability = 280;
+				durability = 225;
 				break;
 			default:
 				durability = 0;
@@ -222,7 +222,7 @@ public abstract class Crossbow extends VDWeapon {
 			case T6:
 				price =
 					Calculator.roundToNearest(
-						Math.pow(durability, 0.5) * Math.log(pierce * 10) * (damageHigh + damageLow) / 2 / 7.5, 5);
+						Math.pow(durability, 0.6) * Math.log(pierce * 10) * (damageHigh + damageLow) / 2 / 11, 5);
 				break;
 			default:
 				price = -1;

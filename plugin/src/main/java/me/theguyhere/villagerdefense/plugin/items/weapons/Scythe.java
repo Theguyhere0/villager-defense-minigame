@@ -169,13 +169,13 @@ public abstract class Scythe extends VDWeapon {
 			case REAPER:
 				switch (tier) {
 					case T1:
-						damageLow = damageHigh = 20;
+						damageLow = damageHigh = 28;
 						break;
 					case T2:
-						damageLow = damageHigh = 24;
+						damageLow = damageHigh = 33;
 						break;
 					case T3:
-						damageLow = damageHigh = 28;
+						damageLow = damageHigh = 38;
 						break;
 					default:
 						damageLow = damageHigh = 0;
@@ -184,27 +184,27 @@ public abstract class Scythe extends VDWeapon {
 			case TIERED:
 				switch (tier) {
 					case T1:
-						damageLow = 16;
-						damageHigh = 25;
+						damageLow = 35;
+						damageHigh = 38;
 						break;
 					case T2:
-						damageLow = 24;
-						damageHigh = 33;
+						damageLow = 40;
+						damageHigh = 46;
 						break;
 					case T3:
-						damageLow = 33;
-						damageHigh = 44;
+						damageLow = 47;
+						damageHigh = 56;
 						break;
 					case T4:
-						damageLow = 45;
-						damageHigh = 60;
+						damageLow = 57;
+						damageHigh = 68;
 						break;
 					case T5:
-						damageLow = 60;
-						damageHigh = 78;
+						damageLow = 70;
+						damageHigh = 82;
 						break;
 					case T6:
-						damageLow = 80;
+						damageLow = 85;
 						damageHigh = 100;
 						break;
 					default:
@@ -331,7 +331,7 @@ public abstract class Scythe extends VDWeapon {
 					case T6:
 						price =
 							Calculator.roundToNearest(
-								Math.pow(durability, 0.6) * (damageHigh + damageLow) / 2 / 3.5,
+								Math.pow(durability, 0.75) * (damageHigh + damageLow) / 2 / 12,
 								5
 							);
 						break;

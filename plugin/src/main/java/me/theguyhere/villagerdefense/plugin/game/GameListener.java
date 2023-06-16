@@ -48,6 +48,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
+import org.spigotmc.event.entity.EntityDismountEvent;
 import org.spigotmc.event.entity.EntityMountEvent;
 
 import java.util.Arrays;
@@ -1012,8 +1013,15 @@ public class GameListener implements Listener {
 			e.getCause() == EntityPotionEffectEvent.Cause.EXPIRATION ||
 			e.getCause() == EntityPotionEffectEvent.Cause.POTION_DRINK ||
 			e.getCause() == EntityPotionEffectEvent.Cause.POTION_SPLASH) {
-			if (gamer != null)
-				gamer.updateDamageMultiplier();
+			if (gamer != null) {
+				VDPlayer finalGamer = gamer;
+				Bukkit
+					.getScheduler()
+					.scheduleSyncDelayedTask(Main.plugin, () -> {
+						finalGamer.updateDamageMultiplier();
+						finalGamer.updateArmor();
+					}, 1);
+			}
 			return;
 		}
 
@@ -1711,7 +1719,7 @@ public class GameListener implements Listener {
 				.getScheduler()
 				.scheduleSyncDelayedTask(Main.plugin, gamer::updateArmor, 1);
 
-			// Update weapon on shift click
+		// Update weapon on shift click
 		else if (e.isShiftClick() && VDWeapon.matches(e.getCurrentItem()) &&
 			player
 				.getInventory()
@@ -1720,7 +1728,7 @@ public class GameListener implements Listener {
 				.getHeldItemSlot())
 			gamer.updateMainHand(e.getCurrentItem());
 
-			// Update armor on shift click
+		// Update armor on shift click
 		else if (e.isShiftClick() && VDArmor.matches(e.getCurrentItem()))
 			Bukkit
 				.getScheduler()
@@ -1928,7 +1936,7 @@ public class GameListener implements Listener {
 				.createExplosion(location, 1.75f, false, false, ent);
 	}
 
-	// Prevent riding other player's horses
+	// Prevent riding other player's horses and update stats
 	@EventHandler
 	public void onMount(EntityMountEvent e) {
 		// Check for player mounting
@@ -1940,22 +1948,51 @@ public class GameListener implements Listener {
 			return;
 
 		Player player = (Player) e.getEntity();
+		VDPlayer gamer;
 		AbstractHorse horse = (AbstractHorse) e.getMount();
 
 		// Attempt to get arena and player
 		try {
-			GameController.getArena(player);
+			gamer = GameController.getArena(player).getPlayer(player);
 		}
-		catch (ArenaNotFoundException err) {
+		catch (ArenaNotFoundException | PlayerNotFoundException err) {
 			return;
 		}
 
-		// Check for rightful owner
-		if (player.equals(horse.getOwner()))
+		// Check for rightful owner, then update stats if true
+		if (player.equals(horse.getOwner())) {
+			gamer.updateDamageMultiplier();
 			return;
+		}
 
 		// Cancel and notify
 		e.setCancelled(true);
 		PlayerManager.notifyFailure(player, LanguageManager.errors.notOwner);
+	}
+
+	@EventHandler
+	public void onDismount(EntityDismountEvent e) {
+		// Check for player dismounting
+		if (!(e.getEntity() instanceof Player))
+			return;
+
+		// Check for horse dismounted
+		if (!(e.getDismounted() instanceof AbstractHorse))
+			return;
+
+		Player player = (Player) e.getEntity();
+		VDPlayer gamer;
+
+		// Attempt to get arena and player
+		try {
+			gamer = GameController.getArena(player).getPlayer(player);
+		}
+		catch (ArenaNotFoundException | PlayerNotFoundException err) {
+			return;
+		}
+
+		// Update stats
+		gamer.updateDamageMultiplier();
+
 	}
 }

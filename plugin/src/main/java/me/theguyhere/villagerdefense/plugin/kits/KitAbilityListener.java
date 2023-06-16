@@ -392,16 +392,16 @@ public class KitAbilityListener implements Listener {
 			int amplifier;
 			if (effect
 				.get()
-				.contains("20"))
-				amplifier = 0;
-			else if (effect
-				.get()
 				.contains("40"))
 				amplifier = 1;
 			else if (effect
 				.get()
-				.contains("60"))
-				amplifier = 2;
+				.contains("80"))
+				amplifier = 3;
+			else if (effect
+				.get()
+				.contains("100"))
+				amplifier = 4;
 			else return;
 
 			// Activate ability

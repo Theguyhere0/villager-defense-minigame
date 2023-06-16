@@ -64,15 +64,15 @@ public abstract class MonkAbility extends VDAbility {
 		switch (tier) {
 			case T0:
 			case T1:
-				effect = String.format(LanguageManager.kits.monk.effect, "+20%");
+				effect = String.format(LanguageManager.kits.monk.effect, "+40%");
 				break;
 			case T2:
 			case T3:
-				effect = String.format(LanguageManager.kits.monk.effect, "+40%");
+				effect = String.format(LanguageManager.kits.monk.effect, "+80%");
 				break;
 			case T4:
 			case T5:
-				effect = String.format(LanguageManager.kits.monk.effect, "+60%");
+				effect = String.format(LanguageManager.kits.monk.effect, "+100%");
 				break;
 			default:
 				effect = null;

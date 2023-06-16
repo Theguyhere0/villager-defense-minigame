@@ -812,9 +812,9 @@ public class Kit {
 		kit.addMasterDescription(LanguageManager.kits.monk.description);
 		kit.setAbilityKitDescriptions();
 
-		kit.addPrice(1, 3000);
-		kit.addPrice(2, 7000);
-		kit.addPrice(3, 11000);
+		kit.addPrice(1, 2500);
+		kit.addPrice(2, 6500);
+		kit.addPrice(3, 12000);
 
 		kit.addItems(1, new ItemStack[]{Sword.create(VDItem.Tier.T0, Sword.SwordType.TIERED),
 			MonkAbility.create(VDItem.Tier.T0)});

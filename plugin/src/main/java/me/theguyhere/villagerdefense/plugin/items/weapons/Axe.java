@@ -215,22 +215,22 @@ public abstract class Axe extends VDWeapon {
 		int durability;
 		switch (tier) {
 			case T1:
-				durability = 180;
+				durability = 160;
 				break;
 			case T2:
-				durability = 335;
+				durability = 275;
 				break;
 			case T3:
-				durability = 495;
+				durability = 400;
 				break;
 			case T4:
-				durability = 650;
+				durability = 530;
 				break;
 			case T5:
-				durability = 785;
+				durability = 650;
 				break;
 			case T6:
-				durability = 900;
+				durability = 720;
 				break;
 			default:
 				durability = 0;
@@ -253,7 +253,7 @@ public abstract class Axe extends VDWeapon {
 			case T5:
 			case T6:
 				price =
-					Calculator.roundToNearest(Math.pow(durability, 0.75) * (damageHigh + damageLow) / 2 / 17, 5);
+					Calculator.roundToNearest(Math.pow(durability, 0.75) * (damageHigh + damageLow) / 2 / 15, 5);
 				break;
 			default:
 				price = -1;

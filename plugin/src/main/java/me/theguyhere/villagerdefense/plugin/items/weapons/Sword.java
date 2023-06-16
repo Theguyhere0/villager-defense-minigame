@@ -280,22 +280,22 @@ public abstract class Sword extends VDWeapon {
 			case TIERED:
 				switch (tier) {
 					case T1:
-						durability = 200;
+						durability = 180;
 						break;
 					case T2:
-						durability = 375;
+						durability = 335;
 						break;
 					case T3:
-						durability = 550;
+						durability = 495;
 						break;
 					case T4:
-						durability = 725;
+						durability = 650;
 						break;
 					case T5:
-						durability = 875;
+						durability = 780;
 						break;
 					case T6:
-						durability = 1000;
+						durability = 900;
 						break;
 					default:
 						durability = 0;
@@ -325,7 +325,7 @@ public abstract class Sword extends VDWeapon {
 					case T6:
 						price =
 							Calculator.roundToNearest(
-								Math.pow(durability, 0.75) * (damageHigh + damageLow) / 2 / 13, 5);
+								Math.pow(durability, 0.75) * (damageHigh + damageLow) / 2 / 10, 5);
 						break;
 					default:
 						price = -1;

@@ -160,22 +160,22 @@ public abstract class Bow extends VDWeapon {
 		int durability;
 		switch (tier) {
 			case T1:
-				durability = 90;
+				durability = 70;
 				break;
 			case T2:
-				durability = 130;
+				durability = 100;
 				break;
 			case T3:
-				durability = 190;
+				durability = 140;
 				break;
 			case T4:
-				durability = 240;
+				durability = 180;
 				break;
 			case T5:
-				durability = 300;
+				durability = 230;
 				break;
 			case T6:
-				durability = 350;
+				durability = 275;
 				break;
 			default:
 				durability = 0;
@@ -198,7 +198,7 @@ public abstract class Bow extends VDWeapon {
 			case T5:
 			case T6:
 				price =
-					Calculator.roundToNearest(Math.pow(durability, 0.9) * (damageHigh + damageLow) / 2 / 2.4, 5);
+					Calculator.roundToNearest(Math.pow(durability, 0.9) * (damageHigh + damageLow) / 2 / 2.1, 5);
 				break;
 			default:
 				price = -1;
