@@ -2721,7 +2721,7 @@ public class Arena {
 		mobs.forEach(mob -> {
 			mob
 				.getEntity()
-				.setAware(false);
+				.setAI(false);
 			mob
 				.getEntity()
 				.setInvulnerable(true);
@@ -3156,6 +3156,17 @@ public class Arena {
 	public ItemStack modifyPrice(ItemStack itemStack) {
 		// Set price modifier
 		double modifier = Math.pow(getActiveCount() - 1, 2) / 250 + 1;
+		switch (getDifficultyMultiplier()) {
+			case 2:
+				modifier *= 1.05;
+				break;
+			case 3:
+				modifier *= 1.1;
+				break;
+			case 4:
+				modifier *= 1.2;
+				break;
+		}
 
 		// Get current price
 		ItemStack item = itemStack.clone();

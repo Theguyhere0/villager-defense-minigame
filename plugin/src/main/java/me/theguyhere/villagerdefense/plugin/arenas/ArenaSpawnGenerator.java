@@ -203,7 +203,17 @@ public class ArenaSpawnGenerator {
 	}
 
 	private static int calculateWaveValue(int original, Arena arena) {
-		return (int) (original * (Math.pow(arena.getActiveCount() - 1, .8) + 1));
+		double normalizedValue = original * (Math.pow(arena.getActiveCount() - 1, .8) + 1);
+		switch (arena.getDifficultyMultiplier()) {
+			case 2:
+				return (int) (normalizedValue * 1.1);
+			case 3:
+				return (int) (normalizedValue * 1.20);
+			case 4:
+				return (int) (normalizedValue * 1.40);
+			default:
+				return (int) normalizedValue;
+		}
 	}
 
 	private static HashMap<String, Double> getTargetRatio(DataManager data, String path) {

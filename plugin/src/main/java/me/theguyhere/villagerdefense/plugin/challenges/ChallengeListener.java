@@ -111,7 +111,7 @@ public class ChallengeListener implements Listener {
 			// Check for featherweight challenge
 			if (gamer
 				.getChallenges()
-				.contains(Challenge.featherweight()))
+				.contains(Challenge.featherweight()) && !e.isCancelled())
 				player.setVelocity(enemy
 					.getLocation()
 					.getDirection()
