@@ -2827,7 +2827,7 @@ public class InventoryListener implements Listener {
 				return;
 			}
 
-			// Remove cost meta
+			// Remove cost lore
 			buy = ItemStackBuilder.removeLastLore(ItemStackBuilder.removeLastLore(buy));
 
 			// Make unbreakable for blacksmith (not sharing)
@@ -3335,8 +3335,9 @@ public class InventoryListener implements Listener {
 				return;
 			}
 
-			// Remove cost meta
-			buy = ItemStackBuilder.removeLastLore(ItemStackBuilder.removeLastLore(buy));
+			// Remove cost lore and upgrade info
+			buy =
+				ItemStackBuilder.removeUpgradeInfo(ItemStackBuilder.removeLastLore(ItemStackBuilder.removeLastLore(buy)));
 
 			// Subtract from balance, apply rebate, and update scoreboard
 			gamer.addGems(-cost);
@@ -3419,8 +3420,9 @@ public class InventoryListener implements Listener {
 				return;
 			}
 
-			// Remove cost meta
-			buy = ItemStackBuilder.removeLastLore(ItemStackBuilder.removeLastLore(buy));
+			// Remove cost lore and upgrade info
+			buy =
+				ItemStackBuilder.removeUpgradeInfo(ItemStackBuilder.removeLastLore(ItemStackBuilder.removeLastLore(buy)));
 
 			// Subtract from balance, apply rebate, and update scoreboard
 			gamer.addGems(-cost);

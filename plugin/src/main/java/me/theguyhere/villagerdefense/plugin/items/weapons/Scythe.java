@@ -3,13 +3,11 @@ package me.theguyhere.villagerdefense.plugin.items.weapons;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import me.theguyhere.villagerdefense.common.Calculator;
-import me.theguyhere.villagerdefense.common.ColoredMessage;
-import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
+import me.theguyhere.villagerdefense.plugin.items.LoreBuilder;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -21,16 +19,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public abstract class Scythe extends VDWeapon {
 	private static final String SCYTHE = "scythe";
 
 	@NotNull
 	public static ItemStack create(Tier tier, ScytheType type) {
-		List<String> lores = new ArrayList<>();
+		LoreBuilder loreBuilder = new LoreBuilder();
 		Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
 		HashMap<NamespacedKey, Integer> persistentData = new HashMap<>();
 		HashMap<NamespacedKey, Double> persistentData2 = new HashMap<>();
@@ -152,16 +148,13 @@ public abstract class Scythe extends VDWeapon {
 			default:
 				description = "";
 		}
-		if (!description.isEmpty())
-			lores.addAll(CommunicationManager.formatDescriptionList(
-				ChatColor.GRAY, description, Constants.LORE_CHAR_LIMIT));
-
-		// Add space in lore from name
-		lores.add("");
+		loreBuilder
+			.addDescription(description)
+			.addSpace();
 
 		// Set attack type
 		persistentTags.put(ATTACK_TYPE_KEY, IndividualAttackType.PENETRATING.toString());
-		lores.add(CommunicationManager.format(ATTACK_TYPE, ATTACK_TYPE_PENETRATING));
+		loreBuilder.addPenetratingAttackType();
 
 		// Set main damage
 		int damageLow, damageHigh;
@@ -216,35 +209,25 @@ public abstract class Scythe extends VDWeapon {
 		}
 		if (damageLow == damageHigh) {
 			persistentData.put(VDPlayer.AttackClass.MAIN.straight(), damageLow);
-			lores.add(CommunicationManager.format(MAIN_DAMAGE, new ColoredMessage(
-				ChatColor.RED,
-				Integer.toString(damageLow)
-			)));
+			loreBuilder.addMainDamage(Integer.toString(damageLow), Integer.toString(damageLow));
 		}
 		else {
 			persistentData.put(VDPlayer.AttackClass.MAIN.low(), damageLow);
 			persistentData.put(VDPlayer.AttackClass.MAIN.high(), damageHigh);
-			lores.add(CommunicationManager.format(MAIN_DAMAGE, new ColoredMessage(
-				ChatColor.RED,
-				damageLow + "-" + damageHigh
-			)));
+			loreBuilder.addMainDamage(damageLow + "-" + damageHigh, damageLow + "-" + damageHigh);
 		}
 
 		// Set crit damage
 		if (damageLow == damageHigh) {
 			persistentData.put(VDPlayer.AttackClass.CRITICAL.straight(), (int) (damageLow * 1.4));
-			lores.add(CommunicationManager.format(CRIT_DAMAGE, new ColoredMessage(
-				ChatColor.DARK_PURPLE,
-				Integer.toString((int) (damageLow * 1.4))
-			)));
+			loreBuilder.addCriticalDamage(Integer.toString((int) (damageLow * 1.4)),
+				Integer.toString((int) (damageLow * 1.4)));
 		}
 		else {
 			persistentData.put(VDPlayer.AttackClass.CRITICAL.low(), (int) (damageLow * 1.4));
 			persistentData.put(VDPlayer.AttackClass.CRITICAL.high(), (int) (damageHigh * 1.4));
-			lores.add(CommunicationManager.format(CRIT_DAMAGE, new ColoredMessage(
-				ChatColor.DARK_PURPLE,
-				(int) (damageLow * 1.4) + "-" + (int) (damageHigh * 1.4)
-			)));
+			loreBuilder.addCriticalDamage((int) (damageLow * 1.4) + "-" + (int) (damageHigh * 1.4),
+				(int) (damageLow * 1.4) + "-" + (int) (damageHigh * 1.4));
 		}
 
 		// Set attack speed
@@ -255,7 +238,7 @@ public abstract class Scythe extends VDWeapon {
 			)
 		);
 		persistentData2.put(ATTACK_SPEED_KEY, 4.5);
-		lores.add(CommunicationManager.format(SPEED, Double.toString(4.5)));
+		loreBuilder.addAttackSpeed(4.5);
 
 		// Set knockback
 		attributes.put(
@@ -312,11 +295,7 @@ public abstract class Scythe extends VDWeapon {
 		}
 		persistentData.put(MAX_DURABILITY_KEY, durability);
 		persistentData.put(DURABILITY_KEY, durability);
-		lores.add(CommunicationManager.format(
-			DURABILITY,
-			new ColoredMessage(ChatColor.GREEN, Integer.toString(durability)).toString() +
-				new ColoredMessage(ChatColor.WHITE, " / " + durability)
-		));
+		loreBuilder.addDurability(durability);
 
 		// Set price
 		int price;
@@ -343,15 +322,14 @@ public abstract class Scythe extends VDWeapon {
 				price = -1;
 		}
 		persistentData.put(PRICE_KEY, price);
-		if (price >= 0) {
-			lores.add("");
-			lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
-				price));
-		}
+		if (price >= 0)
+			loreBuilder
+				.addSpace()
+				.addPrice(price);
 
 		// Create item
 		ItemStack item = new ItemStackBuilder(mat, name)
-			.setLores(lores.toArray(new String[0]))
+			.setLores(loreBuilder)
 			.setButtonFlags()
 			.setGlowingIfTrue(enchant)
 			.setAttributes(attributes)

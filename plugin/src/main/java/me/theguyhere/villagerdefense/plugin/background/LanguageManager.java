@@ -674,7 +674,7 @@ public class LanguageManager {
 		public final @NotNull GiftKit orc;
 		public final @NotNull Kit phantom;
 		public final @NotNull AbilityKit priest;
-		public final @NotNull GiftKit reaper;
+		public final @NotNull ThreeTieredGiftKit reaper;
 		public final @NotNull AbilityKit siren;
 		public final @NotNull GiftKit soldier;
 		public final @NotNull ThreeTieredKit summoner;
@@ -700,7 +700,7 @@ public class LanguageManager {
 			orc = new GiftKit("orc");
 			phantom = new Kit("phantom");
 			priest = new AbilityKit("priest");
-			reaper = new GiftKit("reaper");
+			reaper = new ThreeTieredGiftKit("reaper");
 			siren = new AbilityKit("siren");
 			soldier = new GiftKit("soldier");
 			summoner = new ThreeTieredKit("summoner");
@@ -780,6 +780,24 @@ public class LanguageManager {
 				description1 = getConfigString("description1");
 				description2 = getConfigString("description2");
 				description3 = getConfigString("description3");
+			}
+		}
+
+		public static class ThreeTieredGiftKit extends Section {
+			public final @NotNull String name;
+			public final @NotNull String description1;
+			public final @NotNull String description2;
+			public final @NotNull String description3;
+			public final @NotNull Items items;
+
+			private ThreeTieredGiftKit(@NotNull String key) throws InvalidLanguageKeyException {
+				setPathPrefix("kits." + key);
+
+				name = getConfigString("name");
+				description1 = getConfigString("description1");
+				description2 = getConfigString("description2");
+				description3 = getConfigString("description3");
+				items = new Items(key);
 			}
 		}
 

@@ -1,14 +1,11 @@
 package me.theguyhere.villagerdefense.plugin.items.weapons;
 
 import me.theguyhere.villagerdefense.common.Calculator;
-import me.theguyhere.villagerdefense.common.ColoredMessage;
-import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
-import org.bukkit.ChatColor;
+import me.theguyhere.villagerdefense.plugin.items.LoreBuilder;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -16,16 +13,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public abstract class Crossbow extends VDWeapon {
 	private static final String CROSSBOW = "crossbow";
 
 	@NotNull
 	public static ItemStack create(Tier tier) {
-		List<String> lores = new ArrayList<>();
+		LoreBuilder loreBuilder = new LoreBuilder();
 		HashMap<NamespacedKey, Integer> persistentData = new HashMap<>();
 		HashMap<NamespacedKey, Double> persistentData2 = new HashMap<>();
 		HashMap<NamespacedKey, String> persistentTags = new HashMap<>();
@@ -89,15 +84,13 @@ public abstract class Crossbow extends VDWeapon {
 				description = "";
 		}
 		if (!description.isEmpty())
-			lores.addAll(CommunicationManager.formatDescriptionList(
-				ChatColor.GRAY, description, Constants.LORE_CHAR_LIMIT));
-
-		// Add space in lore from name
-		lores.add("");
+			loreBuilder
+				.addDescription(description)
+				.addSpace();
 
 		// Set attack type
 		persistentTags.put(ATTACK_TYPE_KEY, IndividualAttackType.NORMAL.toString());
-		lores.add(CommunicationManager.format(ATTACK_TYPE, ATTACK_TYPE_NORMAL));
+		loreBuilder.addNormalAttackType();
 
 		// Set range damage
 		int damageLow, damageHigh;
@@ -131,18 +124,12 @@ public abstract class Crossbow extends VDWeapon {
 		}
 		if (damageLow == damageHigh) {
 			persistentData.put(VDPlayer.AttackClass.RANGE.straight(), damageLow);
-			lores.add(CommunicationManager.format(RANGE_DAMAGE, new ColoredMessage(
-				ChatColor.DARK_AQUA,
-				Integer.toString(damageLow)
-			)));
+			loreBuilder.addRangeDamage(Integer.toString(damageLow), Integer.toString(damageLow), true);
 		}
 		else {
 			persistentData.put(VDPlayer.AttackClass.RANGE.low(), damageLow);
 			persistentData.put(VDPlayer.AttackClass.RANGE.high(), damageHigh);
-			lores.add(CommunicationManager.format(RANGE_DAMAGE, new ColoredMessage(
-				ChatColor.DARK_AQUA,
-				damageLow + "-" + damageHigh
-			)));
+			loreBuilder.addRangeDamage(damageLow + "-" + damageHigh, damageLow + "-" + damageHigh, true);
 		}
 
 		// Set pierce
@@ -166,18 +153,15 @@ public abstract class Crossbow extends VDWeapon {
 				pierce = 0;
 		}
 		persistentData.put(PIERCE_KEY, pierce);
-		lores.add(CommunicationManager.format(PIERCE, new ColoredMessage(
-			ChatColor.GOLD,
-			Integer.toString(pierce)
-		)));
+		loreBuilder.addPierce(pierce);
 
 		// Set attack speed
 		persistentData2.put(ATTACK_SPEED_KEY, 0.5);
-		lores.add(CommunicationManager.format(SPEED, Double.toString(0.5)));
+		loreBuilder.addAttackSpeed(0.5);
 
 		// Set ammo cost
 		persistentData.put(AMMO_COST_KEY, 3);
-		lores.add(CommunicationManager.format(AMMO_COST, new ColoredMessage(ChatColor.RED, Integer.toString(3))));
+		loreBuilder.addAmmoCost(3);
 
 		// Set durability
 		int durability;
@@ -205,11 +189,7 @@ public abstract class Crossbow extends VDWeapon {
 		}
 		persistentData.put(MAX_DURABILITY_KEY, durability);
 		persistentData.put(DURABILITY_KEY, durability);
-		lores.add(CommunicationManager.format(
-			DURABILITY,
-			new ColoredMessage(ChatColor.GREEN, Integer.toString(durability)).toString() +
-				new ColoredMessage(ChatColor.WHITE, " / " + durability)
-		));
+		loreBuilder.addDurability(durability);
 
 		// Set price
 		int price;
@@ -228,15 +208,14 @@ public abstract class Crossbow extends VDWeapon {
 				price = -1;
 		}
 		persistentData.put(PRICE_KEY, price);
-		if (price >= 0) {
-			lores.add("");
-			lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
-				price));
-		}
+		if (price >= 0)
+			loreBuilder
+				.addSpace()
+				.addPrice(price);
 
 		// Create item
 		ItemStack item = new ItemStackBuilder(Material.CROSSBOW, name)
-			.setLores(lores.toArray(new String[0]))
+			.setLores(loreBuilder)
 			.setButtonFlags()
 			.setGlowingIfTrue(enchant)
 			.setPersistentData(persistentData)

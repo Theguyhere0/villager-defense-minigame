@@ -653,9 +653,9 @@ public class Kit {
 	public static Kit reaper() {
 		Kit kit = new Kit(LanguageManager.kits.reaper.name, Type.GIFT, "reaper", Material.NETHERITE_HOE);
 
-		kit.addLevelDescriptions(1, LanguageManager.kits.reaper.description);
-		kit.addLevelDescriptions(2, LanguageManager.kits.reaper.description);
-		kit.addLevelDescriptions(3, LanguageManager.kits.reaper.description);
+		kit.addLevelDescriptions(1, LanguageManager.kits.reaper.description1);
+		kit.addLevelDescriptions(2, LanguageManager.kits.reaper.description2);
+		kit.addLevelDescriptions(3, LanguageManager.kits.reaper.description3);
 
 		kit.addPrice(1, 750);
 		kit.addPrice(2, 2000);

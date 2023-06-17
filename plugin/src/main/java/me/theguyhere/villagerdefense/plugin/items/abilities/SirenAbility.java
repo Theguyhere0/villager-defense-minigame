@@ -1,11 +1,10 @@
 package me.theguyhere.villagerdefense.plugin.items.abilities;
 
 import me.theguyhere.villagerdefense.common.ColoredMessage;
-import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
-import org.bukkit.ChatColor;
+import me.theguyhere.villagerdefense.plugin.items.LoreBuilder;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -13,15 +12,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public abstract class SirenAbility extends VDAbility {
 	private static final String SIREN_ABILITY = "siren-ability";
 
 	@NotNull
 	public static ItemStack create(Tier tier) {
+		LoreBuilder loreBuilder = new LoreBuilder();
 		HashMap<NamespacedKey, Integer> persistentData = new HashMap<>();
 		HashMap<NamespacedKey, Double> persistentData2 = new HashMap<>();
 		HashMap<NamespacedKey, String> persistentTags = new HashMap<>();
@@ -53,11 +51,12 @@ public abstract class SirenAbility extends VDAbility {
 		}
 
 		// Set description
-		List<String> lores = new ArrayList<>(getDescription(tier));
+		loreBuilder.addDescription(getDescription(tier));
 
 		// Add space in lore from name, followed by instructions for usage
-		lores.add("");
-		lores.add(new ColoredMessage(LanguageManager.messages.rightClick).toString());
+		loreBuilder
+			.addSpace()
+			.addDescription(new ColoredMessage(LanguageManager.messages.rightClick).toString());
 
 		// Set effect
 		String effect;
@@ -67,129 +66,132 @@ public abstract class SirenAbility extends VDAbility {
 				effect = String.format(LanguageManager.kits.siren.effect, "-15%", "-0%");
 				break;
 			case T2:
+				effect = String.format(LanguageManager.kits.siren.effect, "-15%", "-0%" + Constants.UPGRADE + "-10%");
+				break;
 			case T3:
 				effect = String.format(LanguageManager.kits.siren.effect, "-15%", "-10%");
 				break;
 			case T4:
+				effect = String.format(LanguageManager.kits.siren.effect, "-15%" + Constants.UPGRADE + "-30%", "-10%");
+				break;
 			case T5:
 				effect = String.format(LanguageManager.kits.siren.effect, "-30%", "-10%");
 				break;
 			default:
 				effect = null;
 		}
-		if (effect != null)
-			lores.addAll(CommunicationManager.formatDescriptionList(ChatColor.LIGHT_PURPLE,
-				CommunicationManager.format(EFFECT, new ColoredMessage(
-					ChatColor.LIGHT_PURPLE,
-					effect
-				)), Constants.LORE_CHAR_LIMIT
-			));
+		loreBuilder.addEffect(effect);
 
 		// Set range
-		double range;
+		double prevRange, currRange;
 		switch (tier) {
 			case T0:
-				range = 3.5;
+				prevRange = currRange = 3.5;
 				break;
 			case T1:
-				range = 4;
+				prevRange = 3.5;
+				currRange = 4;
 				break;
 			case T2:
-				range = 4.5;
+				prevRange = 4;
+				currRange = 4.5;
 				break;
 			case T3:
-				range = 5;
+				prevRange = 4.5;
+				currRange = 5;
 				break;
 			case T4:
-				range = 5.5;
+				prevRange = 5;
+				currRange = 5.5;
 				break;
 			case T5:
-				range = 6;
+				prevRange = 5.5;
+				currRange = 6;
 				break;
 			default:
-				range = 0;
+				prevRange = currRange = 0;
 		}
-		persistentData2.put(RANGE_KEY, range);
-		if (range > 0)
-			lores.add(CommunicationManager.format(RANGE, new ColoredMessage(
-				ChatColor.DARK_PURPLE,
-				Double.toString(range)
-			)));
+		persistentData2.put(RANGE_KEY, currRange);
+		loreBuilder.addRange(prevRange, currRange);
 
 		// Set duration
-		double duration;
+		double prevDuration, currDuration;
 		switch (tier) {
 			case T0:
-				duration = 5;
+				prevDuration = currDuration = 5;
 				break;
 			case T1:
-				duration = 9.8;
+				prevDuration = 5;
+				currDuration = 9.8;
 				break;
 			case T2:
-				duration = 12.8;
+				prevDuration = 9.8;
+				currDuration = 12.8;
 				break;
 			case T3:
-				duration = 17.7;
+				prevDuration = 12.8;
+				currDuration = 17.7;
 				break;
 			case T4:
-				duration = 21.3;
+				prevDuration = 17.7;
+				currDuration = 21.3;
 				break;
 			case T5:
-				duration = 28;
+				prevDuration = 21.3;
+				currDuration = 28;
 				break;
 			default:
-				duration = 0;
+				prevDuration = currDuration = 0;
 		}
-		persistentData2.put(DURATION_KEY, duration);
-		if (duration > 0)
-			lores.add(CommunicationManager.format(DURATION, new ColoredMessage(
-				ChatColor.DARK_AQUA,
-				Double.toString(duration)
-			)));
+		persistentData2.put(DURATION_KEY, currDuration);
+		loreBuilder.addDuration(prevDuration, currDuration);
 
 		// Set cooldown
-		double cooldown;
+		double prevCooldown, currCooldown;
 		switch (tier) {
 			case T0:
-				cooldown = 30;
+				prevCooldown = currCooldown = 30;
 				break;
 			case T1:
-				cooldown = 29.2;
+				prevCooldown = 30;
+				currCooldown = 29.2;
 				break;
 			case T2:
-				cooldown = 28.5;
+				prevCooldown = 29.2;
+				currCooldown = 28.5;
 				break;
 			case T3:
-				cooldown = 26.4;
+				prevCooldown = 28.5;
+				currCooldown = 26.4;
 				break;
 			case T4:
-				cooldown = 25.3;
+				prevCooldown = 26.4;
+				currCooldown = 25.3;
 				break;
 			case T5:
-				cooldown = 20;
+				prevCooldown = 25.3;
+				currCooldown = 20;
 				break;
 			default:
-				cooldown = 0;
+				prevCooldown = currCooldown = 0;
 		}
-		persistentData2.put(COOLDOWN_KEY, cooldown);
-		if (cooldown > 0)
-			lores.add(CommunicationManager.format(COOLDOWN, Double.toString(cooldown)));
+		persistentData2.put(COOLDOWN_KEY, currCooldown);
+		loreBuilder.addCooldown(prevCooldown, currCooldown);
 
 		// Set price
 		int price = getPrice(tier);
 		persistentData.put(PRICE_KEY, price);
-		if (price >= 0) {
-			lores.add("");
-			lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
-				price));
-		}
+		if (price >= 0)
+			loreBuilder
+				.addSpace()
+				.addPrice(price);
 
 		// Create item
 		return new ItemStackBuilder(
 			Material.PINK_DYE,
 			name
 		)
-			.setLores(lores.toArray(new String[0]))
+			.setLores(loreBuilder)
 			.setHideEnchantFlags()
 			.setGlowingIfTrue(true)
 			.setPersistentData(persistentData)

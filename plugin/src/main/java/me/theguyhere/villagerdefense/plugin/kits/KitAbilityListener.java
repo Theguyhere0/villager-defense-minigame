@@ -5,7 +5,6 @@ import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.achievements.Achievement;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.game.WorldManager;
@@ -35,7 +34,6 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class KitAbilityListener implements Listener {
 	// Most ability functionalities
@@ -88,17 +86,7 @@ public class KitAbilityListener implements Listener {
 		Double cooldown = dataContainer.get(VDAbility.COOLDOWN_KEY, PersistentDataType.DOUBLE);
 		Double range = dataContainer.get(VDAbility.RANGE_KEY, PersistentDataType.DOUBLE);
 		Double duration = dataContainer.get(VDAbility.DURATION_KEY, PersistentDataType.DOUBLE);
-		AtomicReference<String> effect = new AtomicReference<>();
-		Objects
-			.requireNonNull(Objects
-				.requireNonNull(item.getItemMeta())
-				.getLore())
-			.forEach(lore -> {
-				if (lore.contains(LanguageManager.messages.effect
-					.replace("%s", ""))) {
-					effect.set(lore);
-				}
-			});
+		VDItem.Tier tier = null;
 		if (cooldown == null)
 			return;
 		if (range == null)
@@ -106,6 +94,18 @@ public class KitAbilityListener implements Listener {
 		if (duration == null)
 			duration = 0d;
 		double altDuration = duration * 0.6;
+		if (item.getItemMeta().getDisplayName().contains(VDItem.Tier.T0.name()))
+			tier = VDItem.Tier.T0;
+		else if (item.getItemMeta().getDisplayName().contains(VDItem.Tier.T1.name()))
+			tier = VDItem.Tier.T1;
+		else if (item.getItemMeta().getDisplayName().contains(VDItem.Tier.T2.name()))
+			tier = VDItem.Tier.T2;
+		else if (item.getItemMeta().getDisplayName().contains(VDItem.Tier.T3.name()))
+			tier = VDItem.Tier.T3;
+		else if (item.getItemMeta().getDisplayName().contains(VDItem.Tier.T4.name()))
+			tier = VDItem.Tier.T4;
+		else if (item.getItemMeta().getDisplayName().contains(VDItem.Tier.T5.name()))
+			tier = VDItem.Tier.T5;
 
 		// Check if player has cooldown decrease achievement and is boosted
 		if (gamer.isBoosted() && PlayerManager.hasAchievement(id, Achievement
@@ -165,17 +165,11 @@ public class KitAbilityListener implements Listener {
 		else if (TemplarAbility.matches(item)) {
 			// Calculate effect
 			int absorption = 0;
-			if (effect
-				.get()
-				.contains("100"))
+			if (tier == VDItem.Tier.T0 || tier == VDItem.Tier.T1)
 				absorption = 100;
-			else if (effect
-				.get()
-				.contains("200"))
+			else if (tier == VDItem.Tier.T2 || tier == VDItem.Tier.T3)
 				absorption = 200;
-			else if (effect
-				.get()
-				.contains("300"))
+			else if (tier == VDItem.Tier.T4 || tier == VDItem.Tier.T5)
 				absorption = 300;
 
 			// Activate ability
@@ -207,17 +201,11 @@ public class KitAbilityListener implements Listener {
 		else if (WarriorAbility.matches(item)) {
 			// Calculate effect
 			int amplifier;
-			if (effect
-				.get()
-				.contains("10"))
+			if (tier == VDItem.Tier.T0 || tier == VDItem.Tier.T1)
 				amplifier = 0;
-			else if (effect
-				.get()
-				.contains("20"))
+			else if (tier == VDItem.Tier.T2 || tier == VDItem.Tier.T3)
 				amplifier = 1;
-			else if (effect
-				.get()
-				.contains("30"))
+			else if (tier == VDItem.Tier.T4 || tier == VDItem.Tier.T5)
 				amplifier = 2;
 			else return;
 
@@ -252,17 +240,11 @@ public class KitAbilityListener implements Listener {
 		else if (KnightAbility.matches(item)) {
 			// Calculate effect
 			int amplifier;
-			if (effect
-				.get()
-				.contains("10"))
+			if (tier == VDItem.Tier.T0 || tier == VDItem.Tier.T1)
 				amplifier = 0;
-			else if (effect
-				.get()
-				.contains("20"))
+			else if (tier == VDItem.Tier.T2 || tier == VDItem.Tier.T3)
 				amplifier = 1;
-			else if (effect
-				.get()
-				.contains("30"))
+			else if (tier == VDItem.Tier.T4 || tier == VDItem.Tier.T5)
 				amplifier = 2;
 			else return;
 
@@ -297,17 +279,11 @@ public class KitAbilityListener implements Listener {
 		else if (PriestAbility.matches(item)) {
 			// Calculate effect
 			int amplifier;
-			if (effect
-				.get()
-				.contains("+5"))
+			if (tier == VDItem.Tier.T0 || tier == VDItem.Tier.T1)
 				amplifier = 0;
-			else if (effect
-				.get()
-				.contains("+10"))
+			else if (tier == VDItem.Tier.T2 || tier == VDItem.Tier.T3)
 				amplifier = 1;
-			else if (effect
-				.get()
-				.contains("+15"))
+			else if (tier == VDItem.Tier.T4 || tier == VDItem.Tier.T5)
 				amplifier = 2;
 			else return;
 
@@ -343,18 +319,16 @@ public class KitAbilityListener implements Listener {
 			// Calculate effect
 			int amp1 = -1;
 			int amp2 = -1;
-			if (effect
-				.get()
-				.contains("15"))
+			if (tier == VDItem.Tier.T0 || tier == VDItem.Tier.T1)
 				amp1 = 0;
-			else if (effect
-				.get()
-				.contains("30"))
-				amp1 = 1;
-			if (effect
-				.get()
-				.contains("10"))
+			else if (tier == VDItem.Tier.T2 || tier == VDItem.Tier.T3) {
+				amp1 = 0;
 				amp2 = 0;
+			}
+			else if (tier == VDItem.Tier.T4 || tier == VDItem.Tier.T5) {
+				amp1 = 1;
+				amp2 = 0;
+			}
 
 			// Activate ability
 			if (amp1 != -1) {
@@ -390,17 +364,11 @@ public class KitAbilityListener implements Listener {
 		else if (MonkAbility.matches(item)) {
 			// Calculate effect
 			int amplifier;
-			if (effect
-				.get()
-				.contains("40"))
+			if (tier == VDItem.Tier.T0 || tier == VDItem.Tier.T1)
 				amplifier = 1;
-			else if (effect
-				.get()
-				.contains("80"))
+			else if (tier == VDItem.Tier.T2 || tier == VDItem.Tier.T3)
 				amplifier = 3;
-			else if (effect
-				.get()
-				.contains("100"))
+			else if (tier == VDItem.Tier.T4 || tier == VDItem.Tier.T5)
 				amplifier = 4;
 			else return;
 
@@ -433,17 +401,11 @@ public class KitAbilityListener implements Listener {
 		else if (MessengerAbility.matches(item)) {
 			// Calculate effect
 			int amplifier;
-			if (effect
-				.get()
-				.contains("20"))
+			if (tier == VDItem.Tier.T0 || tier == VDItem.Tier.T1)
 				amplifier = 0;
-			else if (effect
-				.get()
-				.contains("40"))
+			else if (tier == VDItem.Tier.T2 || tier == VDItem.Tier.T3)
 				amplifier = 1;
-			else if (effect
-				.get()
-				.contains("60"))
+			else if (tier == VDItem.Tier.T4 || tier == VDItem.Tier.T5)
 				amplifier = 2;
 			else return;
 

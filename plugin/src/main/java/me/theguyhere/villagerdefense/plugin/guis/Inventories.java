@@ -2364,7 +2364,7 @@ public class Inventories {
 						.allMaxedAbility()
 						.getID()
 				))
-					buttons.add(VDAbility.modifyCooldown(arena.modifyPrice(ability), .9));
+					buttons.add(ItemStackBuilder.modifyCooldown(arena.modifyPrice(ability), .9));
 				else buttons.add(arena.modifyPrice(ability));
 			}
 		}

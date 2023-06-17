@@ -2,13 +2,10 @@ package me.theguyhere.villagerdefense.plugin.items.armor;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import me.theguyhere.villagerdefense.common.ColoredMessage;
-import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
+import me.theguyhere.villagerdefense.plugin.items.LoreBuilder;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
@@ -18,16 +15,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public abstract class Chestplate extends VDArmor {
 	private static final String CHESTPLATE = "chestplate";
 
 	@NotNull
 	public static ItemStack create(Tier tier) {
-		List<String> lores = new ArrayList<>();
+		LoreBuilder loreBuilder = new LoreBuilder();
 		Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
 		HashMap<NamespacedKey, Integer> persistentData = new HashMap<>();
 		HashMap<NamespacedKey, String> persistentTags = new HashMap<>();
@@ -110,11 +105,10 @@ public abstract class Chestplate extends VDArmor {
 				description = "";
 		}
 		if (!description.isEmpty())
-			lores.addAll(CommunicationManager.formatDescriptionList(
-				ChatColor.GRAY, description, Constants.LORE_CHAR_LIMIT));
+			loreBuilder.addDescription(description);
 
 		// Add space in lore from name
-		lores.add("");
+		loreBuilder.addSpace();
 
 		// Set armor
 		int armor;
@@ -141,8 +135,7 @@ public abstract class Chestplate extends VDArmor {
 				armor = 0;
 		}
 		persistentData.put(ARMOR_KEY, armor);
-		if (armor > 0)
-			lores.add(CommunicationManager.format(ARMOR, new ColoredMessage(ChatColor.AQUA, Integer.toString(armor))));
+		loreBuilder.addArmor(armor);
 
 		// Set toughness
 		int toughness;
@@ -166,11 +159,7 @@ public abstract class Chestplate extends VDArmor {
 				toughness = 0;
 		}
 		persistentData.put(TOUGHNESS_KEY, toughness);
-		if (toughness > 0)
-			lores.add(CommunicationManager.format(TOUGHNESS, new ColoredMessage(
-				ChatColor.DARK_AQUA,
-				toughness + "%"
-			)));
+		loreBuilder.addToughness(toughness);
 
 		// Set weight
 		int weight;
@@ -195,10 +184,7 @@ public abstract class Chestplate extends VDArmor {
 				weight = 0;
 		}
 		persistentData.put(WEIGHT_KEY, weight);
-		lores.add(CommunicationManager.format(WEIGHT, new ColoredMessage(
-			ChatColor.DARK_PURPLE,
-			Integer.toString(weight)
-		)));
+		loreBuilder.addWeight(weight);
 		attributes.put(
 			Attribute.GENERIC_KNOCKBACK_RESISTANCE,
 			new AttributeModifier(VDItem.MetaKey.DUMMY.name(), 0,
@@ -238,11 +224,7 @@ public abstract class Chestplate extends VDArmor {
 		}
 		persistentData.put(MAX_DURABILITY_KEY, durability);
 		persistentData.put(DURABILITY_KEY, durability);
-		lores.add(CommunicationManager.format(
-			DURABILITY,
-			new ColoredMessage(ChatColor.GREEN, Integer.toString(durability)).toString() +
-				new ColoredMessage(ChatColor.WHITE, " / " + durability)
-		));
+		loreBuilder.addDurability(durability);
 
 		// Set price
 		int price;
@@ -259,15 +241,14 @@ public abstract class Chestplate extends VDArmor {
 				price = -1;
 		}
 		persistentData.put(PRICE_KEY, price);
-		if (price >= 0) {
-			lores.add("");
-			lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
-				price));
-		}
+		if (price >= 0)
+			loreBuilder
+				.addSpace()
+				.addPrice(price);
 
 		// Create item
 		ItemStack item = new ItemStackBuilder(mat, name)
-			.setLores(lores.toArray(new String[0]))
+			.setLores(loreBuilder)
 			.setButtonFlags()
 			.setGlowingIfTrue(enchant)
 			.setAttributes(attributes)

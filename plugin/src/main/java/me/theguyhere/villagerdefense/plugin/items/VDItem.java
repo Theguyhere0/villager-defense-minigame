@@ -21,7 +21,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class VDItem {
-	protected static final ColoredMessage DURABILITY = new ColoredMessage(
+	static final ColoredMessage DURABILITY = new ColoredMessage(
 		ChatColor.BLUE,
 		LanguageManager.messages.durability
 	);

@@ -2,6 +2,9 @@ package me.theguyhere.villagerdefense.plugin.items;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import me.theguyhere.villagerdefense.common.Constants;
+import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
@@ -18,6 +21,7 @@ import org.bukkit.potion.PotionData;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Class to manage {@link ItemStack} manipulations.
@@ -29,7 +33,7 @@ public class ItemStackBuilder {
 	private int amount = 1;
 	private boolean[] flags = {};
 	private HashMap<Enchantment, Integer> enchants = new HashMap<>();
-	private final List<String> lores = new ArrayList<>();
+	private List<String> lores = new ArrayList<>();
 	private Multimap<Attribute, AttributeModifier> attributes = ArrayListMultimap.create();
 	private HashMap<NamespacedKey, Integer> persistentData = new HashMap<>();
 	private HashMap<NamespacedKey, Double> persistentData2 = new HashMap<>();
@@ -84,6 +88,11 @@ public class ItemStackBuilder {
 
 	public ItemStackBuilder setLores(String... lores) {
 		Collections.addAll(this.lores, lores);
+		return this;
+	}
+
+	public ItemStackBuilder setLores(LoreBuilder constructor) {
+		lores = constructor.build();
 		return this;
 	}
 
@@ -210,7 +219,9 @@ public class ItemStackBuilder {
 
 		// Check for lore
 		ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
-		List<String> lore = Objects.requireNonNull(meta.getLore());
+		List<String> lore = meta.getLore();
+		if (lore == null)
+			return itemStack;
 
 		// Remove last lore and return
 		lore.remove(lore.size() - 1);
@@ -231,6 +242,83 @@ public class ItemStackBuilder {
 		if (player == null)
 			meta.setOwnerProfile(null);
 		else meta.setOwnerProfile(player.getPlayerProfile());
+		item.setItemMeta(meta);
+		return item;
+	}
+
+	// Removes information about stats before an upgrade
+	@NotNull
+	public static ItemStack removeUpgradeInfo(@NotNull ItemStack itemStack) {
+		ItemStack item = itemStack.clone();
+
+		// Check for lore
+		ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
+		List<String> lore = meta.getLore();
+		List<String> newLore = new ArrayList<>();
+		if (lore == null)
+			return itemStack;
+
+		// Run through lore to remove upgrade info
+		lore.forEach(s -> {
+			String formatted = s;
+			while (formatted.contains(Constants.UPGRADE)) {
+				String before = formatted.substring(0, formatted.indexOf(Constants.UPGRADE));
+				before = before.substring(0, Math.max(before.lastIndexOf(" ") + 1,
+					before.lastIndexOf(ChatColor.COLOR_CHAR) + 2));
+				formatted = before + formatted.substring(
+					formatted.indexOf(Constants.UPGRADE) + Constants.UPGRADE.length());
+			}
+			newLore.add(formatted);
+		});
+		meta.setLore(newLore);
+		item.setItemMeta(meta);
+
+		return item;
+	}
+
+	// Modify the cooldown of an item
+	@NotNull
+	public static ItemStack modifyCooldown(ItemStack itemStack, double modifier) {
+		ItemStack item = itemStack.clone();
+		ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
+		List<String> lore = meta.getLore();
+
+		// Ignore if no lore
+		if (lore == null)
+			return itemStack;
+
+		List<Double> cooldowns = new ArrayList<>();
+		int index = 0;
+		for (int i = 0; i < lore.size(); i++) {
+			if (lore
+				.get(i)
+				.contains(LanguageManager.messages.cooldown
+					.replace("%s", ""))) {
+				cooldowns = Arrays
+					.stream(lore
+						.get(i)
+						.substring(2 + LanguageManager.messages.cooldown.length())
+						.replace(ChatColor.BLUE.toString(), "")
+						.replace(LanguageManager.messages.seconds.substring(3), "")
+						.split(Constants.UPGRADE))
+					.map(Double::parseDouble).collect(Collectors.toList());
+				index = i;
+			}
+		}
+
+		if (index == 0 || cooldowns.size() == 0)
+			return itemStack;
+
+		if (cooldowns.size() == 1)
+			lore.set(index, lore
+				.get(index)
+				.replace(Double.toString(cooldowns.get(0)), String.format("%.2f", cooldowns.get(0) * modifier)));
+		else if (cooldowns.size() == 2)
+			lore.set(index, lore
+				.get(index)
+				.replace(Double.toString(cooldowns.get(0)), String.format("%.2f", cooldowns.get(0) * modifier))
+				.replace(Double.toString(cooldowns.get(1)), String.format("%.2f", cooldowns.get(1) * modifier)));
+		meta.setLore(lore);
 		item.setItemMeta(meta);
 		return item;
 	}

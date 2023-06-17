@@ -10,6 +10,7 @@ import me.theguyhere.villagerdefense.plugin.individuals.mobs.golems.VDSnowGolem;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDCat;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDDog;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDHorse;
+import me.theguyhere.villagerdefense.plugin.items.LoreBuilder;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -19,16 +20,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public abstract class VDEgg extends VDItem {
 	private static final String EGG = "egg";
 
 	@NotNull
 	public static ItemStack create(int level, EggType type) {
-		List<String> lores = new ArrayList<>();
+		LoreBuilder loreBuilder = new LoreBuilder();
 		HashMap<NamespacedKey, Integer> persistentData = new HashMap<>();
 		HashMap<NamespacedKey, String> persistentTags = new HashMap<>();
 		persistentTags.put(ITEM_TYPE_KEY, EGG);
@@ -119,178 +118,140 @@ public abstract class VDEgg extends VDItem {
 				description = "";
 		}
 		if (!description.isEmpty())
-			lores.addAll(CommunicationManager.formatDescriptionList(
-				ChatColor.GRAY, description, Constants.LORE_CHAR_LIMIT));
+			loreBuilder.addDescription(description);
 
 		// Add space in lore from name
-		lores.add("");
+		loreBuilder.addSpace();
 
 		// Set health
-		int[] health = new int[2];
+		int prevHealth, currHealth;
 		switch (type) {
 			case CAT:
-				health[0] = VDCat.getHealth(level - 1);
-				health[1] = VDCat.getHealth(level);
+				prevHealth = VDCat.getHealth(level - 1);
+				currHealth = VDCat.getHealth(level);
 				break;
 			case DOG:
-				health[0] = VDDog.getHealth(level - 1);
-				health[1] = VDDog.getHealth(level);
+				prevHealth = VDDog.getHealth(level - 1);
+				currHealth = VDDog.getHealth(level);
 				break;
 			case HORSE:
-				health[0] = VDHorse.getHealth(level - 1);
-				health[1] = VDHorse.getHealth(level);
+				prevHealth = VDHorse.getHealth(level - 1);
+				currHealth = VDHorse.getHealth(level);
 				break;
 			case IRON_GOLEM:
-				health[0] = VDIronGolem.getHealth(level - 1);
-				health[1] = VDIronGolem.getHealth(level);
+				prevHealth = VDIronGolem.getHealth(level - 1);
+				currHealth = VDIronGolem.getHealth(level);
 				break;
 			case SNOW_GOLEM:
-				health[0] = VDSnowGolem.getHealth(level - 1);
-				health[1] = VDSnowGolem.getHealth(level);
-				break;
-		}
-		if (health[1] > 0) {
-			if (level > 1)
-				lores.add(new ColoredMessage(ChatColor.RED, Constants.HP + " " + health[0] + Constants.UPGRADE +
-					health[1]).toString());
-			else lores.add(new ColoredMessage(ChatColor.RED, Constants.HP + " " + health[1]).toString());
-		}
-
-		// Set armor
-		int[] armor = new int[2];
-		switch (type) {
-			case CAT:
-				armor[0] = VDCat.getArmor(level - 1);
-				armor[1] = VDCat.getArmor(level);
-				break;
-			case DOG:
-				armor[0] = VDDog.getArmor(level - 1);
-				armor[1] = VDDog.getArmor(level);
-				break;
-			case HORSE:
-				armor[0] = VDHorse.getArmor(level - 1);
-				armor[1] = VDHorse.getArmor(level);
-				break;
-			case IRON_GOLEM:
-				armor[0] = VDIronGolem.getArmor(level - 1);
-				armor[1] = VDIronGolem.getArmor(level);
-				break;
-		}
-		if (armor[1] > 0) {
-			if (level > 1)
-				lores.add(new ColoredMessage(ChatColor.AQUA, Constants.ARMOR + " " + armor[0] + Constants.UPGRADE +
-					armor[1]).toString());
-			else lores.add(new ColoredMessage(ChatColor.AQUA, Constants.ARMOR + " " + armor[1]).toString());
-		}
-
-		// Set toughness
-		int[] toughness = new int[2];
-		switch (type) {
-			case CAT:
-				toughness[0] = (int) (VDCat.getToughness(level - 1) * 100);
-				toughness[1] = (int) (VDCat.getToughness(level) * 100);
-				break;
-			case DOG:
-				toughness[0] = (int) (VDDog.getToughness(level - 1) * 100);
-				toughness[1] = (int) (VDDog.getToughness(level) * 100);
-				break;
-			case HORSE:
-				toughness[0] = (int) (VDHorse.getToughness(level - 1) * 100);
-				toughness[1] = (int) (VDHorse.getToughness(level) * 100);
-				break;
-			case SNOW_GOLEM:
-				toughness[0] = (int) (VDSnowGolem.getToughness(level - 1) * 100);
-				toughness[1] = (int) (VDSnowGolem.getToughness(level) * 100);
-				break;
-		}
-		if (toughness[1] > 0) {
-			if (level > 1)
-				lores.add(new ColoredMessage(ChatColor.DARK_AQUA, Constants.TOUGH + " " + toughness[0] + "%" +
-					Constants.UPGRADE + armor[1] + "%").toString());
-			else lores.add(new ColoredMessage(ChatColor.DARK_AQUA, Constants.TOUGH + " " + toughness[1] + "%")
-				.toString());
-		}
-
-		// Set attack
-		int[] attack = new int[4];
-		switch (type) {
-			case DOG:
-				attack[0] = (int) (VDDog.getDamage(level - 1) * .9);
-				attack[1] = (int) (VDDog.getDamage(level - 1) * 1.1);
-				attack[2] = (int) (VDDog.getDamage(level) * .9);
-				attack[3] = (int) (VDDog.getDamage(level) * 1.1);
-				break;
-			case HORSE:
-				attack[0] = (int) (VDHorse.getDamage(level - 1) * .8);
-				attack[1] = (int) (VDHorse.getDamage(level - 1) * 1.2);
-				attack[2] = (int) (VDHorse.getDamage(level) * .8);
-				attack[3] = (int) (VDHorse.getDamage(level) * 1.2);
-				break;
-			case IRON_GOLEM:
-				attack[0] = (int) (VDIronGolem.getDamage(level - 1) * .8);
-				attack[1] = (int) (VDIronGolem.getDamage(level - 1) * 1.2);
-				attack[2] = (int) (VDIronGolem.getDamage(level) * .8);
-				attack[3] = (int) (VDIronGolem.getDamage(level) * 1.2);
-				break;
-			case SNOW_GOLEM:
-				attack[0] = (int) (VDSnowGolem.getDamage(level - 1) * .8);
-				attack[1] = (int) (VDSnowGolem.getDamage(level - 1) * 1.2);
-				attack[2] = (int) (VDSnowGolem.getDamage(level) * .8);
-				attack[3] = (int) (VDSnowGolem.getDamage(level) * 1.2);
-				break;
-		}
-		if (attack[2] > 0) {
-			if (level > 1)
-				lores.add(new ColoredMessage(ChatColor.GREEN, Constants.DAMAGE + " " + attack[0] + "-" + attack[1] +
-					Constants.UPGRADE + attack[2] + "-" + attack[3])
-					.toString());
-			else lores.add(new ColoredMessage(ChatColor.GREEN, Constants.DAMAGE + " " + attack[2] + "-" + attack[3])
-				.toString());
-		}
-
-
-		// Set effect
-		String effect;
-		int[] effectValue = new int[2];
-		switch (type) {
-			case CAT:
-				effect = new ColoredMessage(ChatColor.BLUE, LanguageManager.messages.effect).toString();
-				effectValue[0] = VDCat.getHeal(level - 1);
-				effectValue[1] = VDCat.getHeal(level);
-				if (level > 1)
-					effect = String.format(effect, CommunicationManager.format(
-						new ColoredMessage(ChatColor.GREEN, LanguageManager.messages.catEffect),
-						new ColoredMessage(ChatColor.RED, "+" + effectValue[0] + Constants.HP + Constants.UPGRADE +
-							"+" + effectValue[1] + Constants.HP),
-						new ColoredMessage(ChatColor.AQUA, "10")
-					));
-				else effect = String.format(effect, CommunicationManager.format(
-					new ColoredMessage(ChatColor.GREEN, LanguageManager.messages.catEffect),
-					new ColoredMessage(ChatColor.RED, "+" + effectValue[1] + Constants.HP),
-					new ColoredMessage(ChatColor.AQUA, "10")
-				));
-				break;
-			case HORSE:
-				effect = new ColoredMessage(ChatColor.BLUE, LanguageManager.messages.effect).toString();
-				effectValue[0] = (int) (VDHorse.getDamageBoost(level - 1) * 100);
-				effectValue[1] = (int) (VDHorse.getDamageBoost(level) * 100);
-				if (level > 1)
-					effect = String.format(effect, CommunicationManager.format(
-						new ColoredMessage(ChatColor.GREEN, LanguageManager.messages.horseEffect),
-						new ColoredMessage(ChatColor.RED, "+" + effectValue[0] + "%" + Constants.UPGRADE +
-							"+" + effectValue[1] + "%")
-					));
-				else effect = String.format(effect, CommunicationManager.format(
-					new ColoredMessage(ChatColor.GREEN, LanguageManager.messages.horseEffect),
-					new ColoredMessage(ChatColor.RED, "+" + effectValue[1] + "%")
-				));
-
+				prevHealth = VDSnowGolem.getHealth(level - 1);
+				currHealth = VDSnowGolem.getHealth(level);
 				break;
 			default:
-				effect = "";
+				prevHealth = currHealth = 0;
 		}
-		if (effectValue[1] > 0)
-			lores.add(effect);
+		loreBuilder.addHealthIndicator(prevHealth, currHealth);
+
+		// Set armor
+		int prevArmor, currArmor;
+		switch (type) {
+			case CAT:
+				prevArmor = VDCat.getArmor(level - 1);
+				currArmor = VDCat.getArmor(level);
+				break;
+			case DOG:
+				prevArmor = VDDog.getArmor(level - 1);
+				currArmor = VDDog.getArmor(level);
+				break;
+			case HORSE:
+				prevArmor = VDHorse.getArmor(level - 1);
+				currArmor = VDHorse.getArmor(level);
+				break;
+			case IRON_GOLEM:
+				prevArmor = VDIronGolem.getArmor(level - 1);
+				currArmor = VDIronGolem.getArmor(level);
+				break;
+			default:
+				prevArmor = currArmor = 0;
+		}
+		loreBuilder.addArmorIndicator(prevArmor, currArmor);
+
+		// Set toughness
+		int prevToughness, currToughness;
+		switch (type) {
+			case CAT:
+				prevToughness = (int) (VDCat.getToughness(level - 1) * 100);
+				currToughness = (int) (VDCat.getToughness(level) * 100);
+				break;
+			case DOG:
+				prevToughness = (int) (VDDog.getToughness(level - 1) * 100);
+				currToughness = (int) (VDDog.getToughness(level) * 100);
+				break;
+			case HORSE:
+				prevToughness = (int) (VDHorse.getToughness(level - 1) * 100);
+				currToughness = (int) (VDHorse.getToughness(level) * 100);
+				break;
+			case SNOW_GOLEM:
+				prevToughness = (int) (VDSnowGolem.getToughness(level - 1) * 100);
+				currToughness = (int) (VDSnowGolem.getToughness(level) * 100);
+				break;
+			default:
+				prevToughness = currToughness = 0;
+		}
+		loreBuilder.addToughnessIndicator(prevToughness, currToughness);
+
+		// Set attack
+		int prevAttackLow, prevAttackHigh, currAttackLow, currAttackHigh;
+		switch (type) {
+			case DOG:
+				prevAttackLow = (int) (VDDog.getDamage(level - 1) * .9);
+				prevAttackHigh = (int) (VDDog.getDamage(level - 1) * 1.1);
+				currAttackLow = (int) (VDDog.getDamage(level) * .9);
+				currAttackHigh = (int) (VDDog.getDamage(level) * 1.1);
+				break;
+			case HORSE:
+				prevAttackLow = (int) (VDHorse.getDamage(level - 1) * .8);
+				prevAttackHigh = (int) (VDHorse.getDamage(level - 1) * 1.2);
+				currAttackLow = (int) (VDHorse.getDamage(level) * .8);
+				currAttackHigh = (int) (VDHorse.getDamage(level) * 1.2);
+				break;
+			case IRON_GOLEM:
+				prevAttackLow = (int) (VDIronGolem.getDamage(level - 1) * .8);
+				prevAttackHigh = (int) (VDIronGolem.getDamage(level - 1) * 1.2);
+				currAttackLow = (int) (VDIronGolem.getDamage(level) * .8);
+				currAttackHigh = (int) (VDIronGolem.getDamage(level) * 1.2);
+				break;
+			case SNOW_GOLEM:
+				prevAttackLow = (int) (VDSnowGolem.getDamage(level - 1) * .8);
+				prevAttackHigh = (int) (VDSnowGolem.getDamage(level - 1) * 1.2);
+				currAttackLow = (int) (VDSnowGolem.getDamage(level) * .8);
+				currAttackHigh = (int) (VDSnowGolem.getDamage(level) * 1.2);
+				break;
+			default:
+				prevAttackLow = prevAttackHigh = currAttackLow = currAttackHigh = 0;
+		}
+		loreBuilder.addAttackIndicator(prevAttackLow, prevAttackHigh, currAttackLow, currAttackHigh);
+
+		// Set effect
+		switch (type) {
+			case CAT:
+				String heal;
+				int prevHeal = VDCat.getHeal(level - 1);
+				int currHeal = VDCat.getHeal(level);
+				if (level > 1)
+					heal = "+" + prevHeal + Constants.HP + Constants.UPGRADE + "+" + currHeal + Constants.HP;
+				else heal = "+" + currHeal + Constants.HP;
+				loreBuilder.addEffect(LanguageManager.messages.catEffect, heal, "10");
+				break;
+			case HORSE:
+				String damageBoost;
+				int prevDamageBoost = (int) (VDHorse.getDamageBoost(level - 1) * 100);
+				int currDamageBoost = (int) (VDHorse.getDamageBoost(level) * 100);
+				if (level > 1)
+					damageBoost = "+" + prevDamageBoost + "%" + Constants.UPGRADE + "+" + currDamageBoost + "%";
+				else damageBoost = "+" + currDamageBoost + "%";
+				loreBuilder.addEffect(LanguageManager.messages.horseEffect, damageBoost);
+				break;
+		}
 
 		// Set price
 		int price;
@@ -395,14 +356,13 @@ public abstract class VDEgg extends VDItem {
 				price = -1;
 		}
 		persistentData.put(PRICE_KEY, price);
-		if (price >= 0) {
-			lores.add("");
-			lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
-				price));
-		}
+		if (price >= 0)
+			loreBuilder
+				.addSpace()
+				.addPrice(price);
 
 		return new ItemStackBuilder(mat, name)
-			.setLores(lores.toArray(new String[0]))
+			.setLores(loreBuilder)
 			.setButtonFlags()
 			.setPersistentData(persistentData)
 			.setPersistentTags(persistentTags)

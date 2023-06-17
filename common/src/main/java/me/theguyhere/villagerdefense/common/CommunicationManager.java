@@ -78,11 +78,6 @@ public class CommunicationManager {
 		// Get a proper ChatColor base to work with
 		ChatColor properBase = base == null ? ChatColor.WHITE : base;
 
-		// The visible character limit per line
-		int realCharLimit = charLimit + properBase
-			.toString()
-			.length();
-
 		// Split the description into words
 		String[] descArray = description.split(" ");
 
@@ -90,8 +85,10 @@ public class CommunicationManager {
 		StringBuilder line = new StringBuilder(properBase.toString());
 
 		for (String s : descArray) {
-			// Always add to a line if empty or line remains under character limit
-			if (line.length() == 0 || line.length() + s.length() <= realCharLimit)
+			// Always add to a line if line remains under character limit, ignoring color codes
+			if (line.length() + s.length() <= charLimit + ((line + s).length() - (line + s)
+				.replace(ChatColor.COLOR_CHAR + "", "")
+				.length()) * 2)
 				line
 					.append(s)
 					.append(" ");

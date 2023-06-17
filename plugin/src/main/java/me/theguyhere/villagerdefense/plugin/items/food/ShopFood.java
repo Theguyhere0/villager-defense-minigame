@@ -1,11 +1,8 @@
 package me.theguyhere.villagerdefense.plugin.items.food;
 
-import me.theguyhere.villagerdefense.common.ColoredMessage;
-import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
-import org.bukkit.ChatColor;
+import me.theguyhere.villagerdefense.plugin.items.LoreBuilder;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -13,16 +10,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public abstract class ShopFood extends VDFood {
 	private static final String SHOP_FOOD = "shop-food";
 
 	@NotNull
 	public static ItemStack create(Tier tier, ShopFoodType type) {
-		List<String> lores = new ArrayList<>();
+		LoreBuilder loreBuilder = new LoreBuilder();
 		HashMap<NamespacedKey, Integer> persistentData = new HashMap<>();
 		HashMap<NamespacedKey, String> persistentTags = new HashMap<>();
 		persistentTags.put(ITEM_TYPE_KEY, SHOP_FOOD);
@@ -139,11 +134,9 @@ public abstract class ShopFood extends VDFood {
 				description = "";
 		}
 		if (!description.isEmpty())
-			lores.addAll(CommunicationManager.formatDescriptionList(
-				ChatColor.GRAY, description, Constants.LORE_CHAR_LIMIT));
-
-		// Add space in lore from name
-		lores.add("");
+			loreBuilder
+				.addDescription(description)
+				.addSpace();
 
 		// Set health heal
 		int health;
@@ -176,8 +169,7 @@ public abstract class ShopFood extends VDFood {
 				health = 0;
 		}
 		persistentData.put(HEALTH_KEY, health);
-		if (health > 0)
-			lores.add(new ColoredMessage(ChatColor.RED, "+" + health + " " + Constants.HP).toString());
+		loreBuilder.addHealthGain(health);
 
 		// Set absorption heal
 		int absorption;
@@ -195,8 +187,7 @@ public abstract class ShopFood extends VDFood {
 				absorption = 0;
 		}
 		persistentData.put(ABSORPTION_KEY, absorption);
-		if (absorption > 0)
-			lores.add(new ColoredMessage(ChatColor.GOLD, "+" + absorption + " " + Constants.HP).toString());
+		loreBuilder.addAbsorptionGain(absorption);
 
 		// Set hunger heal
 		int hunger;
@@ -232,8 +223,7 @@ public abstract class ShopFood extends VDFood {
 				hunger = 0;
 		}
 		persistentData.put(HUNGER_KEY, hunger);
-		if (hunger > 0)
-			lores.add(new ColoredMessage(ChatColor.BLUE, "+" + hunger + " " + Constants.HUNGER).toString());
+		loreBuilder.addHungerGain(hunger);
 
 		// Set price
 		int price;
@@ -269,15 +259,14 @@ public abstract class ShopFood extends VDFood {
 				price = -1;
 		}
 		persistentData.put(PRICE_KEY, price);
-		if (price >= 0) {
-			lores.add("");
-			lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
-				price));
-		}
+		if (price >= 0)
+			loreBuilder
+				.addSpace()
+				.addPrice(price);
 
 		return new ItemStackBuilder(mat, name)
 			.setAmount(count)
-			.setLores(lores.toArray(new String[0]))
+			.setLores(loreBuilder)
 			.setButtonFlags()
 			.setPersistentData(persistentData)
 			.setPersistentTags(persistentTags)

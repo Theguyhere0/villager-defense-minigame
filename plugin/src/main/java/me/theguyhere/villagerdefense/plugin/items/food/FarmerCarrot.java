@@ -1,10 +1,8 @@
 package me.theguyhere.villagerdefense.plugin.items.food;
 
-import me.theguyhere.villagerdefense.common.ColoredMessage;
-import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
+import me.theguyhere.villagerdefense.plugin.items.LoreBuilder;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -14,42 +12,39 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public abstract class FarmerCarrot extends VDFood {
 	private static final String FARMER_CARROT = "farmer-carrot";
 
 	@NotNull
 	public static ItemStack create() {
+		LoreBuilder loreBuilder = new LoreBuilder();
 		HashMap<NamespacedKey, Integer> persistentData = new HashMap<>();
 		HashMap<NamespacedKey, String> persistentTags = new HashMap<>();
 		persistentTags.put(ITEM_TYPE_KEY, FARMER_CARROT);
 
 		// Set description
-		List<String> lores = new ArrayList<>(CommunicationManager.formatDescriptionList(
-			ChatColor.GRAY, LanguageManager.kits.farmer.items.carrotDesc, Constants.LORE_CHAR_LIMIT));
-
-		// Add space in lore from name
-		lores.add("");
+		loreBuilder
+			.addDescription(LanguageManager.kits.farmer.items.carrotDesc)
+			.addSpace();
 
 		// Set health heal
 		int health = 15;
 		persistentData.put(HEALTH_KEY, health);
-		lores.add(new ColoredMessage(ChatColor.RED, "+" + health + " " + Constants.HP).toString());
+		loreBuilder.addHealthGain(health);
 
 		// Set hunger heal
 		int hunger = 2;
 		persistentData.put(HUNGER_KEY, health);
-		lores.add(new ColoredMessage(ChatColor.BLUE, "+" + hunger + " " + Constants.HUNGER).toString());
+		loreBuilder.addHungerGain(hunger);
 
 		return new ItemStackBuilder(
 			Material.CARROT,
 			VDItem.formatName(ChatColor.GREEN, LanguageManager.kits.farmer.items.carrot, VDItem.Tier.UNIQUE)
 		)
 			.setAmount(3)
-			.setLores(lores.toArray(new String[0]))
+			.setLores(loreBuilder)
 			.setButtonFlags()
 			.setPersistentData(persistentData)
 			.setPersistentTags(persistentTags)

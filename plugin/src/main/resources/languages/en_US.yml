@@ -550,7 +550,9 @@ kits:
     effect: "%s regeneration"
   reaper:
     name: "Reaper"
-    description: "Start with a powerful scythe"
+    description1: "Start with an unbreakable scythe"
+    description2: "Start with a good scythe"
+    description3: "Start with a powerful scythe"
     items:
       scythe: "Reaper's Scythe %s"
       scytheDesc: "The weapon of choice for the quick striker."

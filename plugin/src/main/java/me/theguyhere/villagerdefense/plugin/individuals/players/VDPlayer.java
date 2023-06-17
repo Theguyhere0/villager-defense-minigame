@@ -18,6 +18,7 @@ import me.theguyhere.villagerdefense.plugin.huds.SidebarManager;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDHorse;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDPet;
+import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.items.armor.VDArmor;
@@ -1045,7 +1046,7 @@ public class VDPlayer {
 				if (boost && PlayerManager.hasAchievement(player, Achievement
 					.allMaxedAbility()
 					.getID()))
-					PlayerManager.giveItem(getPlayer(), VDAbility.modifyCooldown(item, .9),
+					PlayerManager.giveItem(getPlayer(), ItemStackBuilder.modifyCooldown(item, .9),
 						LanguageManager.errors.inventoryFull
 					);
 				else PlayerManager.giveItem(getPlayer(), item, LanguageManager.errors.inventoryFull);

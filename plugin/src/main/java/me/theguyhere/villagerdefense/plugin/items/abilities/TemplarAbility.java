@@ -1,11 +1,10 @@
 package me.theguyhere.villagerdefense.plugin.items.abilities;
 
 import me.theguyhere.villagerdefense.common.ColoredMessage;
-import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
-import org.bukkit.ChatColor;
+import me.theguyhere.villagerdefense.plugin.items.LoreBuilder;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -13,15 +12,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public abstract class TemplarAbility extends VDAbility {
 	private static final String TEMPLAR_ABILITY = "templar-ability";
 
 	@NotNull
 	public static ItemStack create(Tier tier) {
+		LoreBuilder loreBuilder = new LoreBuilder();
 		HashMap<NamespacedKey, Integer> persistentData = new HashMap<>();
 		HashMap<NamespacedKey, Double> persistentData2 = new HashMap<>();
 		HashMap<NamespacedKey, String> persistentTags = new HashMap<>();
@@ -53,11 +51,12 @@ public abstract class TemplarAbility extends VDAbility {
 		}
 
 		// Set description
-		List<String> lores = new ArrayList<>(getDescription(tier));
+		loreBuilder.addDescription(getDescription(tier));
 
 		// Add space in lore from name, followed by instructions for usage
-		lores.add("");
-		lores.add(new ColoredMessage(LanguageManager.messages.rightClick).toString());
+		loreBuilder
+			.addSpace()
+			.addDescription(new ColoredMessage(LanguageManager.messages.rightClick).toString());
 
 		// Set effect
 		String effect;
@@ -67,98 +66,100 @@ public abstract class TemplarAbility extends VDAbility {
 				effect = String.format(LanguageManager.kits.templar.effect, "100");
 				break;
 			case T2:
+				effect = String.format(LanguageManager.kits.templar.effect, "100" + Constants.UPGRADE + "200");
+				break;
 			case T3:
 				effect = String.format(LanguageManager.kits.templar.effect, "200");
 				break;
 			case T4:
+				effect = String.format(LanguageManager.kits.templar.effect, "200" + Constants.UPGRADE + "300");
+				break;
 			case T5:
 				effect = String.format(LanguageManager.kits.templar.effect, "300");
 				break;
 			default:
 				effect = null;
 		}
-		if (effect != null)
-			lores.addAll(CommunicationManager.formatDescriptionList(ChatColor.LIGHT_PURPLE,
-				CommunicationManager.format(EFFECT, new ColoredMessage(
-					ChatColor.LIGHT_PURPLE,
-					effect
-				)), Constants.LORE_CHAR_LIMIT
-			));
+		loreBuilder.addEffect(effect);
 
 		// Set range
-		double range;
+		double prevRange, currRange;
 		switch (tier) {
 			case T0:
-				range = 2.5;
+				prevRange = currRange = 2.5;
 				break;
 			case T1:
-				range = 3;
+				prevRange = 2.5;
+				currRange = 3;
 				break;
 			case T2:
-				range = 3.5;
+				prevRange = 3;
+				currRange = 3.5;
 				break;
 			case T3:
-				range = 4;
+				prevRange = 3.5;
+				currRange = 4;
 				break;
 			case T4:
-				range = 4.5;
+				prevRange = 4;
+				currRange = 4.5;
 				break;
 			case T5:
-				range = 5;
+				prevRange = 4.5;
+				currRange = 5;
 				break;
 			default:
-				range = 0;
+				prevRange = currRange = 0;
 		}
-		persistentData2.put(RANGE_KEY, range);
-		if (range > 0)
-			lores.add(CommunicationManager.format(RANGE, new ColoredMessage(
-				ChatColor.DARK_PURPLE,
-				Double.toString(range)
-			)));
+		persistentData2.put(RANGE_KEY, currRange);
+		loreBuilder.addRange(prevRange, currRange);
 
 		// Set cooldown
-		double cooldown;
+		double prevCooldown, currCooldown;
 		switch (tier) {
 			case T0:
-				cooldown = 35;
+				prevCooldown = currCooldown = 45;
 				break;
 			case T1:
-				cooldown = 34.2;
+				prevCooldown = 45;
+				currCooldown = 44.2;
 				break;
 			case T2:
-				cooldown = 33.5;
+				prevCooldown = 44.2;
+				currCooldown = 43.5;
 				break;
 			case T3:
-				cooldown = 31.4;
+				prevCooldown = 43.5;
+				currCooldown = 41.4;
 				break;
 			case T4:
-				cooldown = 30.3;
+				prevCooldown = 41.4;
+				currCooldown = 40.3;
 				break;
 			case T5:
-				cooldown = 25;
+				prevCooldown = 40.3;
+				currCooldown = 35;
 				break;
 			default:
-				cooldown = 0;
+				prevCooldown = currCooldown = 0;
 		}
-		persistentData2.put(COOLDOWN_KEY, cooldown);
-		if (cooldown > 0)
-			lores.add(CommunicationManager.format(COOLDOWN, Double.toString(cooldown)));
+		persistentData2.put(COOLDOWN_KEY, currCooldown);
+		loreBuilder.addCooldown(prevCooldown, currCooldown);
 
 		// Set price
 		int price = getPrice(tier);
 		persistentData.put(PRICE_KEY, price);
-		if (price >= 0) {
-			lores.add("");
-			lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
-				price));
-		}
+		if (price >= 0)
+			loreBuilder
+				.addSpace()
+				.addPrice(price);
 
 		// Create item
 		return new ItemStackBuilder(
 			Material.YELLOW_DYE,
 			name
 		)
-			.setLores(lores.toArray(new String[0]))
+			.setLores(loreBuilder)
 			.setHideEnchantFlags()
 			.setGlowingIfTrue(true)
 			.setPersistentData(persistentData)

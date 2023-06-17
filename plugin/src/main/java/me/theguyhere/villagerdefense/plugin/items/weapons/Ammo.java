@@ -3,9 +3,9 @@ package me.theguyhere.villagerdefense.plugin.items.weapons;
 import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
+import me.theguyhere.villagerdefense.plugin.items.LoreBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -14,7 +14,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -25,7 +24,7 @@ public abstract class Ammo extends VDWeapon {
 
 	@NotNull
 	public static ItemStack create(Tier tier) {
-		List<String> lores = new ArrayList<>();
+		LoreBuilder loreBuilder = new LoreBuilder();
 		HashMap<NamespacedKey, Integer> persistentData = new HashMap<>();
 		HashMap<NamespacedKey, Double> persistentData2 = new HashMap<>();
 		HashMap<NamespacedKey, String> persistentTags = new HashMap<>();
@@ -81,71 +80,74 @@ public abstract class Ammo extends VDWeapon {
 				description = "";
 		}
 		if (!description.isEmpty())
-			lores.addAll(CommunicationManager.formatDescriptionList(
-				ChatColor.GRAY, description, Constants.LORE_CHAR_LIMIT));
-
-		// Add space in lore from name
-		lores.add("");
+			loreBuilder
+				.addDescription(description)
+				.addSpace();
 
 		// Set capacity
-		int capacity;
+		int prevCapacity, currCapacity;
 		switch (tier) {
 			case T1:
-				capacity = 15;
+				prevCapacity = currCapacity = 15;
 				break;
 			case T2:
-				capacity = 25;
+				prevCapacity = 15;
+				currCapacity = 25;
 				break;
 			case T3:
-				capacity = 40;
+				prevCapacity = 25;
+				currCapacity = 40;
 				break;
 			case T4:
-				capacity = 55;
+				prevCapacity = 40;
+				currCapacity = 55;
 				break;
 			case T5:
-				capacity = 75;
+				prevCapacity = 55;
+				currCapacity = 75;
 				break;
 			case T6:
-				capacity = 90;
+				prevCapacity = 75;
+				currCapacity = 90;
 				break;
 			default:
-				capacity = 0;
+				prevCapacity = currCapacity = 0;
 		}
-		persistentData.put(MAX_CAPACITY_KEY, capacity);
-		persistentData.put(CAPACITY_KEY, capacity);
-		lores.add(CommunicationManager.format(
-			CAPACITY,
-			new ColoredMessage(ChatColor.GREEN, Integer.toString(capacity)).toString() +
-				new ColoredMessage(ChatColor.WHITE, " / " + capacity)
-		));
+		persistentData.put(MAX_CAPACITY_KEY, currCapacity);
+		persistentData.put(CAPACITY_KEY, currCapacity);
+		loreBuilder.addCapacity(prevCapacity, currCapacity);
 
 		// Set refill rate
-		double refill;
+		double prevRefill, currRefill;
 		switch (tier) {
 			case T1:
-				refill = 7.5;
+				prevRefill = currRefill = 7.5;
 				break;
 			case T2:
-				refill = 6;
+				prevRefill = 7.5;
+				currRefill = 6;
 				break;
 			case T3:
-				refill = 4.5;
+				prevRefill = 6;
+				currRefill = 4.5;
 				break;
 			case T4:
-				refill = 3.5;
+				prevRefill = 4.5;
+				currRefill = 3.5;
 				break;
 			case T5:
-				refill = 2.5;
+				prevRefill = 3.5;
+				currRefill = 2.5;
 				break;
 			case T6:
-				refill = 2;
+				prevRefill = 2.5;
+				currRefill = 2;
 				break;
 			default:
-				refill = 0;
+				prevRefill = currRefill = 0;
 		}
-		persistentData2.put(REFILL_KEY, refill);
-		if (refill > 0)
-			lores.add(CommunicationManager.format(REFILL, Double.toString(refill)));
+		persistentData2.put(REFILL_KEY, currRefill);
+		loreBuilder.addRefillRate(prevRefill, currRefill);
 
 		// Set price
 		int price;
@@ -157,21 +159,20 @@ public abstract class Ammo extends VDWeapon {
 			case T5:
 			case T6:
 				price =
-					Calculator.roundToNearest(Math.pow(capacity, 0.5) / refill * 150, 5);
+					Calculator.roundToNearest(Math.pow(currCapacity, 0.5) / currRefill * 150, 5);
 				break;
 			default:
 				price = -1;
 		}
 		persistentData.put(PRICE_KEY, price);
-		if (price >= 0) {
-			lores.add("");
-			lores.add(CommunicationManager.format("&2" + LanguageManager.messages.gems + ": &a" +
-				price));
-		}
+		if (price >= 0)
+			loreBuilder
+				.addSpace()
+				.addPrice(price);
 
 		// Create item
 		return new ItemStackBuilder(Material.NETHER_STAR, name)
-			.setLores(lores.toArray(new String[0]))
+			.setLores(loreBuilder)
 			.setButtonFlags()
 			.setPersistentData(persistentData)
 			.setPersistentData2(persistentData2)
