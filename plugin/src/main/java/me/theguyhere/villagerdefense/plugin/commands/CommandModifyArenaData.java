@@ -112,7 +112,8 @@ class CommandModifyArenaData {
 		MAX_WAVES("maxWaves-"),
 		WAVE_TIME_LIMIT("waveTimeLimit-"),
 		DIFFICULTY_LABEL("difficultyLabel-"),
-		DIFFICULTY_MULTIPLIER("difficultyMultiplier");
+		DIFFICULTY_MULTIPLIER("difficultyMultiplier"),
+		GAME_MODE("gameMode-");
 		private final String arg;
 
 		ArenaOperationArgument(String arg) {
@@ -147,6 +148,21 @@ class CommandModifyArenaData {
 		private final String arg;
 
 		DifficultyLabelArgument(String arg) {
+			this.arg = arg;
+		}
+
+		private String getArg() {
+			return arg;
+		}
+	}
+
+	private enum GameModeArgument {
+		LEGACY("legacy"),
+		FREEPLAY("freeplay"),
+		CAMPAIGN("campaign");
+		private final String arg;
+
+		GameModeArgument(String arg) {
 			this.arg = arg;
 		}
 
@@ -1001,6 +1017,27 @@ class CommandModifyArenaData {
 			arena.setDifficultyMultiplier(num);
 			CommandExecImp.notifySuccess(sender, "Difficulty multiplier for " + arena.getName() + " set to " +
 				num + ".");
+		}
+		else if (CommandGuard.checkArgStartWith(args, 2, ArenaOperationArgument.GAME_MODE.arg)) {
+			String value = args[2].substring(args[2].indexOf("-") + 1);
+
+			if (GameModeArgument.LEGACY.arg.equalsIgnoreCase(value)) {
+//				arena.setGameMode("Legacy");
+				CommandExecImp.notifyFailure(sender, LanguageManager.errors.construction);
+			}
+			else if (GameModeArgument.FREEPLAY.arg.equalsIgnoreCase(value)) {
+				arena.setGameMode("Freeplay");
+				CommandExecImp.notifySuccess(sender, arena.getName() + " is set to Freeplay.");
+			}
+			else if (GameModeArgument.CAMPAIGN.arg.equalsIgnoreCase(value)) {
+//				arena.setGameMode("Campaign");
+				CommandExecImp.notifyFailure(sender, LanguageManager.errors.construction);
+			}
+			else CommandExecImp.notifyFailure(sender, "Invalid operation value. Valid values: " +
+					Arrays.toString(Arrays
+						.stream(GameModeArgument.values())
+						.map(GameModeArgument::getArg)
+						.toArray()));
 		}
 		else if (CommandGuard.checkArg(args, 2, ArenaOperationArgument.REMOVE.arg)) {
 			player = CommandGuard.checkSenderPlayer(sender);

@@ -319,6 +319,28 @@ public class Arena {
 	}
 
 	/**
+	 * Retrieves the game mode of the arena from the arena file.
+	 *
+	 * @return Arena game mode.
+	 */
+	public String getGameMode() {
+		if (config.contains(path + ".gameMode"))
+			return config.getString(path + ".gameMode");
+		else return "";
+	}
+
+	/**
+	 * Writes the new game mode of the arena into the arena file.
+	 *
+	 * @param mode New game mode.
+	 */
+	public void setGameMode(String mode) {
+		config.set(path + ".GameMode", mode);
+		Main.saveArenaData();
+		refreshPortal();
+	}
+
+	/**
 	 * Retrieves the difficulty label of the arena from the arena file.
 	 *
 	 * @return Arena difficulty label.
@@ -3663,6 +3685,7 @@ public class Arena {
 		setDifficultyMultiplier(arenaToCopy.getDifficultyMultiplier());
 		setLateArrival(arenaToCopy.hasLateArrival());
 		setDynamicLimit(arenaToCopy.hasDynamicLimit());
+		setGameMode(arenaToCopy.getGameMode());
 		setDifficultyLabel(arenaToCopy.getDifficultyLabel());
 		setBannedKitIDs(arenaToCopy.getBannedKitIDs());
 		setCommunity(arenaToCopy.hasCommunity());

@@ -35,6 +35,12 @@ public class LoreBuilder {
 		return this;
 	}
 
+	@SuppressWarnings("unused")
+	public LoreBuilder addConstructionNote() {
+		lores.add(new ColoredMessage(ChatColor.RED, "UNDER CONSTRUCTION").toString());
+		return this;
+	}
+
 	public LoreBuilder addEffect(String effect, String... replacements) {
 		ColoredMessage[] newReplacements =
 			Arrays

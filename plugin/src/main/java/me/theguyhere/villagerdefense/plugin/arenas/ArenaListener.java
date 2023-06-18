@@ -388,7 +388,7 @@ public class ArenaListener implements Listener {
 			}
 
 			// Checks if the game has ended because no players are left
-			if (arena.getAlive() == 0)
+			if (arena.getAlive() == 0 && arena.getStatus() == ArenaStatus.ACTIVE)
 				try {
 					arena.endGame();
 				}

@@ -1379,6 +1379,7 @@ public class LanguageManager {
 		public final @NotNull String boosts;
 		public final @NotNull String bootsShop;
 		public final @NotNull String bowShop;
+		public final @NotNull String campaign;
 		public final @NotNull String challengeSelection;
 		public final @NotNull String chestplateShop;
 		public final @NotNull String communityChest;
@@ -1391,6 +1392,7 @@ public class LanguageManager {
 		public final @NotNull String easy;
 		public final @NotNull String effectKits;
 		public final @NotNull String effectShare;
+		public final @NotNull String freeplay;
 		public final @NotNull String giftKits;
 		public final @NotNull String golem;
 		public final @NotNull String golemShop;
@@ -1399,6 +1401,7 @@ public class LanguageManager {
 		public final @NotNull String insane;
 		public final @NotNull String itemShop;
 		public final @NotNull String kitSelection;
+		public final @NotNull String legacy;
 		public final @NotNull String leggingsShop;
 		public final @NotNull String medium;
 		public final @NotNull String monsterSpawnParticles;
@@ -1427,6 +1430,7 @@ public class LanguageManager {
 			boosts = getConfigString("boosts");
 			bootsShop = getConfigString("bootsShop");
 			bowShop = getConfigString("bowShop");
+			campaign = getConfigString("campaign");
 			challengeSelection = getConfigString("challengeSelection");
 			chestplateShop = getConfigString("chestplateShop");
 			communityChest = getConfigString("communityChest");
@@ -1453,6 +1457,7 @@ public class LanguageManager {
 			easy = getConfigString("easy");
 			effectKits = getConfigString("effectKits");
 			effectShare = getConfigString("effectShare");
+			freeplay = getConfigString("freeplay");
 			giftKits = getConfigString("giftKits");
 			golem = getConfigString("golem");
 			golemShop = getConfigString("golemShop");
@@ -1461,6 +1466,7 @@ public class LanguageManager {
 			insane = getConfigString("insane");
 			itemShop = getConfigString("itemShop");
 			kitSelection = getConfigString("kitSelection");
+			legacy = getConfigString("legacy");
 			leggingsShop = getConfigString("leggingsShop");
 			medium = getConfigString("medium");
 			monsterSpawnParticles = getConfigString("monsterSpawnParticles");

@@ -31,6 +31,21 @@ public class Portal {
 		if (location.getWorld() == null)
 			throw new InvalidLocationException("Location world cannot be null!");
 
+		// Get game mode
+		String gameMode = arena.getGameMode();
+		if (gameMode != null)
+			switch (gameMode) {
+				case "Legacy":
+					gameMode = "&7&l[" + LanguageManager.names.legacy + "]";
+					break;
+				case "Campaign":
+					gameMode = "&b&l[" + LanguageManager.names.campaign + "]";
+					break;
+				default:
+					gameMode = "&3&l[" + LanguageManager.names.freeplay + "]";
+			}
+		else gameMode = " &3&l[" + LanguageManager.names.freeplay + "]";
+
 		// Get difficulty
 		String difficulty = arena.getDifficultyLabel();
 		if (difficulty != null)
@@ -55,12 +70,12 @@ public class Portal {
 		// Get status
 		String status;
 		if (arena.isClosed())
-			status = "&4&l" + LanguageManager.messages.closed;
+			status = " &4&l[" + LanguageManager.messages.closed + "]";
 		else if (arena.getStatus() == ArenaStatus.ENDING)
-			status = "&c&l" + LanguageManager.messages.ending;
+			status = " &c&l[" + LanguageManager.messages.ending + "]";
 		else if (arena.getStatus() == ArenaStatus.WAITING)
-			status = "&5&l" + LanguageManager.messages.waiting;
-		else status = "&a&l" + LanguageManager.messages.wave + ": " + arena.getCurrentWave();
+			status = " &5&l[" + LanguageManager.messages.waiting + "]";
+		else status = " &a&l[" + LanguageManager.messages.wave + ": " + arena.getCurrentWave() + "]";
 
 		// Get player count color
 		String countColor;
@@ -77,8 +92,8 @@ public class Portal {
 		this.hologram = new Hologram(location
 			.clone()
 			.add(0, 2.5, 0), false,
-			CommunicationManager.format("&6&l" + arena.getName() + difficulty),
-			CommunicationManager.format(status),
+			CommunicationManager.format("&6&l" + arena.getName() + status),
+			CommunicationManager.format(gameMode + difficulty),
 			arena.isClosed() ? "" : CommunicationManager.format("&b" + LanguageManager.messages.players +
 				": " + countColor + arena.getActiveCount() + "&b / " + arena.getMaxPlayers()),
 			arena.isClosed() ? "" : CommunicationManager.format(LanguageManager.messages.spectators + ": " +
@@ -88,10 +103,6 @@ public class Portal {
 
 	public Location getLocation() {
 		return location;
-	}
-
-	public Hologram getHologram() {
-		return hologram;
 	}
 
 	public NPCVillager getNpc() {

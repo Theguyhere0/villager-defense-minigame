@@ -14,6 +14,7 @@ import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
+import me.theguyhere.villagerdefense.plugin.items.LoreBuilder;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.items.abilities.VDAbility;
 import me.theguyhere.villagerdefense.plugin.items.armor.Boots;
@@ -904,6 +905,17 @@ public class Inventories {
 	public static Inventory createGameSettingsMenu(Arena arena) {
 		List<ItemStack> buttons = new ArrayList<>();
 
+		// Option to change game mode
+		buttons.add(
+			new ItemStackBuilder(
+				Material.BEACON,
+				CommunicationManager.format("&5&lGame Mode: " + (arena.getGameMode().isEmpty() ? "Freeplay" :
+					arena.getGameMode()))
+			)
+				.setButtonFlags()
+				.build()
+		);
+
 		// Option to change max waves
 		buttons.add(
 			new ItemStackBuilder(
@@ -1018,6 +1030,63 @@ public class Inventories {
 				.setArena(arena)
 				.build(),
 			CommunicationManager.format("&8&lGame Settings: " + arena.getName()),
+			true,
+			buttons
+		);
+	}
+
+	// Menu for changing the game mode of an arena
+	public static Inventory createGameModeMenu(Arena arena) {
+		List<ItemStack> buttons = new ArrayList<>();
+
+		String label = arena.getGameMode();
+		switch (label) {
+			case "Legacy":
+				label = "&7&l" + LanguageManager.names.legacy;
+				break;
+			case "Campaign":
+				label = "&b&l" + LanguageManager.names.campaign;
+				break;
+			default:
+				label = "&3&l" + LanguageManager.names.freeplay;
+		}
+
+		// "Legacy" option
+		buttons.add(new ItemStackBuilder(
+			Material.CRAFTING_TABLE,
+			CommunicationManager.format("&7&l" + LanguageManager.names.legacy)
+		)
+			.setLores(new LoreBuilder()
+				.addDescription("Survival-styled on vanilla game mechanics.")
+				.addSpace()
+				.addConstructionNote())
+			.build());
+
+		// "Freeplay" option
+		buttons.add(new ItemStackBuilder(
+			Material.SMITHING_TABLE,
+			CommunicationManager.format("&3&l" + LanguageManager.names.freeplay)
+		)
+			.setLores(new LoreBuilder().addDescription("Survival-styled on new game mechanics."))
+			.build());
+
+		// "Campaign" option
+		buttons.add(new ItemStackBuilder(
+			Material.END_PORTAL_FRAME,
+			CommunicationManager.format("&b&l" + LanguageManager.names.campaign)
+		)
+			.setLores(new LoreBuilder()
+				.addDescription("RPG-styled with a plotline on new game mechanics.")
+				.addSpace()
+				.addConstructionNote())
+			.build());
+
+		return InventoryFactory.createFixedSizeInventory(
+			new InventoryMeta.InventoryMetaBuilder(InventoryID.GAME_MODE_MENU, InventoryType.MENU)
+				.setArena(arena)
+				.build(),
+			CommunicationManager.format("&6&lGame Mode: " + label),
+			1,
 			true,
 			buttons
 		);
@@ -1449,11 +1518,12 @@ public class Inventories {
 			CommunicationManager.format("&7&l" + LanguageManager.names.none)
 		).build());
 
-		return InventoryFactory.createDynamicSizeInventory(
+		return InventoryFactory.createFixedSizeInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.DIFFICULTY_LABEL_MENU, InventoryType.MENU)
 				.setArena(arena)
 				.build(),
 			CommunicationManager.format("&6&lDifficulty Label: " + label),
+			1,
 			true,
 			buttons
 		);
