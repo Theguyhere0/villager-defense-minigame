@@ -91,8 +91,8 @@ public class ItemStackBuilder {
 		return this;
 	}
 
-	public ItemStackBuilder setLores(LoreBuilder constructor) {
-		lores = constructor.build();
+	public ItemStackBuilder setLores(LoreBuilder loreBuilder) {
+		lores = loreBuilder.build();
 		return this;
 	}
 
@@ -193,7 +193,11 @@ public class ItemStackBuilder {
 				.requireNonNull(meta)
 				.setUnbreakable(true);
 			newItem.setItemMeta(meta);
-			return removeLastLore(newItem);
+			if (Objects
+				.requireNonNull(meta.getLore())
+				.get(meta.getLore().size() - 1).contains(String.format(LanguageManager.messages.durability, "")))
+				return removeLastLore(newItem);
+			else return newItem;
 		}
 		catch (Exception e) {
 			return item;

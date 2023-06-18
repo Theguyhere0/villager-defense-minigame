@@ -61,9 +61,10 @@ class CommandReloadPlugin {
 		GameController.closeArenas();
 
 		// Reload plugin after 11 seconds
+		Player finalPlayer = player;
 		Bukkit
 			.getScheduler()
-			.scheduleSyncDelayedTask(Main.plugin, () -> Main.plugin.reload(),
+			.scheduleSyncDelayedTask(Main.plugin, () -> Main.plugin.reload(finalPlayer),
 				Calculator.secondsToTicks(5)
 			);
 	}

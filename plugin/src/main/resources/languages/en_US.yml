@@ -504,10 +504,10 @@ kits:
     name: "Blacksmith"
     description: "All equipment purchased are unbreakable"
   farmer:
-    name: "FarmerCarrot"
+    name: "Farmer"
     description: "Start with 3 carrots"
     items:
-      carrot: "FarmerCarrot's Carrot"
+      carrot: "Farmer's Carrot"
       carrotDesc: "A healthy appetizer to keep the fight going."
   giant:
     name: "Giant"
@@ -573,12 +573,10 @@ kits:
     description3: "Start with a level 1 horse"
   tailor:
     name: "Tailor"
-    description: "Start with a full set of T1 armor"
+    description: "Start with a nice leather jacket"
     items:
-      boots: "Tailor's Boots"
-      chestplate: "Tailor's Chestplate"
-      helmet: "Tailor's Helmet"
-      leggings: "Tailor's Leggings"
+      chestplate: "Tailor's Jacket %s"
+      chestplateDesc: "A fine jacket sewn by a brilliant tailor."
   templar:
     name: "Templar"
     description: "Give yourself and nearby players absorption"
@@ -682,6 +680,9 @@ messages:
   leaveArena: "%s left the arena."
   level: "Level"
   levelUp: "Level Up!  %s"
+  lowEnemyWarning: "<20% Enemies Left!"
+  lowPlayerWarning: "<20% Players Left!"
+  lowVillagerWarning: "<20% Villagers Left!"
   manualUpdateWarn: "%s must be manually updated."
   maxCapacity: "Arena has reached max player capacity."
   minutesLeft: "%s minute(s) until the game starts!"

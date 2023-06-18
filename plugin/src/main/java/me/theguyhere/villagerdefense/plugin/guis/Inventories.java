@@ -2055,12 +2055,12 @@ public class Inventories {
 	public static Inventory createChestplateShopMenu(Arena arena) {
 		// Create inventory
 		List<ItemStack> buttons = new ArrayList<>();
-		buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T1)));
-		buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T2)));
-		buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T3)));
-		buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T4)));
-		buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T5)));
-		buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T6)));
+		buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T1, Chestplate.ChestplateType.TIERED)));
+		buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T2, Chestplate.ChestplateType.TIERED)));
+		buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T3, Chestplate.ChestplateType.TIERED)));
+		buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T4, Chestplate.ChestplateType.TIERED)));
+		buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T5, Chestplate.ChestplateType.TIERED)));
+		buttons.add(arena.modifyPrice(Chestplate.create(VDItem.Tier.T6, Chestplate.ChestplateType.TIERED)));
 
 		return InventoryFactory.createDynamicSizeInventory(
 			new InventoryMeta.InventoryMetaBuilder(InventoryID.CHESTPLATE_SHOP_MENU, InventoryType.MENU)

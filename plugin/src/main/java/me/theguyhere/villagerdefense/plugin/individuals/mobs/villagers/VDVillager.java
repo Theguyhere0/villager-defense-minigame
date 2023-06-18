@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.individuals.mobs.villagers;
 
+import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualTeam;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.VDMob;
@@ -13,6 +14,7 @@ public abstract class VDVillager extends VDMob {
 		super(lore, null);
 		mob = villager;
 		id = villager.getUniqueId();
+		Main.getVillagersTeam().addEntry(id.toString());
 		villager.setAdult();
 		PersistentDataContainer dataContainer = villager.getPersistentDataContainer();
 		dataContainer.set(ARENA_ID, PersistentDataType.INTEGER, arena.getId());

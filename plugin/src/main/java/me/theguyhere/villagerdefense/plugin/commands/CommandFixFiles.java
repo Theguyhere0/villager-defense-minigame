@@ -39,12 +39,13 @@ class CommandFixFiles {
 		FileConfiguration playerData = Main.getPlayerData();
 		FileConfiguration arenaData = Main.getArenaData();
 		FileConfiguration customEffects = Main.getCustomEffects();
+		Player player = sender instanceof Player ? (Player) sender : null;
 
 		// Check if config.yml is outdated
 		if (Main.plugin
 			.getConfig()
 			.getInt("version") < Main.configVersion)
-			notifyManualUpdate(sender, "config.yml");
+			notifyManualUpdate(player, "config.yml");
 
 		// Check if arenaData.yml is outdated
 		int arenaDataVersion = Main.plugin
@@ -92,11 +93,11 @@ class CommandFixFiles {
 				Main.plugin.saveConfig();
 
 				// Notify
-				notifyAutoUpdate(sender, "arenaData.yml", 4);
+				notifyAutoUpdate(player, "arenaData.yml", 4);
 			}
 			catch (Exception e) {
 				arenaAbort = true;
-				notifyManualUpdate(sender, "arenaData.yml");
+				notifyManualUpdate(player, "arenaData.yml");
 			}
 		}
 		if (arenaDataVersion < 5 && !arenaAbort) {
@@ -158,11 +159,11 @@ class CommandFixFiles {
 				Main.plugin.saveConfig();
 
 				// Notify
-				notifyAutoUpdate(sender, "arenaData.yml", 5);
+				notifyAutoUpdate(player, "arenaData.yml", 5);
 			}
 			catch (Exception e) {
 				arenaAbort = true;
-				notifyManualUpdate(sender, "arenaData.yml");
+				notifyManualUpdate(player, "arenaData.yml");
 			}
 		}
 		if (arenaDataVersion < 6 && !arenaAbort) {
@@ -236,11 +237,11 @@ class CommandFixFiles {
 				Main.plugin.saveConfig();
 
 				// Notify
-				notifyAutoUpdate(sender, "arenaData.yml", 6);
+				notifyAutoUpdate(player, "arenaData.yml", 6);
 			}
 			catch (Exception e) {
 				arenaAbort = true;
-				notifyManualUpdate(sender, "arenaData.yml");
+				notifyManualUpdate(player, "arenaData.yml");
 			}
 		}
 		if (arenaDataVersion < 7 && !arenaAbort) {
@@ -293,11 +294,11 @@ class CommandFixFiles {
 				Main.plugin.saveConfig();
 
 				// Notify
-				notifyAutoUpdate(sender, "arenaData.yml", 7);
+				notifyAutoUpdate(player, "arenaData.yml", 7);
 			}
 			catch (Exception e) {
 				arenaAbort = true;
-				notifyManualUpdate(sender, "arenaData.yml");
+				notifyManualUpdate(player, "arenaData.yml");
 			}
 		}
 		if (arenaDataVersion < 8 && !arenaAbort) {
@@ -337,10 +338,10 @@ class CommandFixFiles {
 				Main.plugin.saveConfig();
 
 				// Notify
-				notifyAutoUpdate(sender, "arenaData.yml", 8);
+				notifyAutoUpdate(player, "arenaData.yml", 8);
 			}
 			catch (Exception e) {
-				notifyManualUpdate(sender, "arenaData.yml");
+				notifyManualUpdate(player, "arenaData.yml");
 			}
 		}
 
@@ -380,11 +381,11 @@ class CommandFixFiles {
 				Main.plugin.saveConfig();
 
 				// Notify
-				notifyAutoUpdate(sender, "playerData.yml", 2);
+				notifyAutoUpdate(player, "playerData.yml", 2);
 			}
 			catch (Exception e) {
 				playerAbort = true;
-				notifyManualUpdate(sender, "playerData.yml");
+				notifyManualUpdate(player, "playerData.yml");
 			}
 		}
 		if (playerDataVersion < 3 && !playerAbort) {
@@ -435,10 +436,10 @@ class CommandFixFiles {
 				Main.plugin.saveConfig();
 
 				// Notify
-				notifyAutoUpdate(sender, "playerData.yml", 3);
+				notifyAutoUpdate(player, "playerData.yml", 3);
 			}
 			catch (Exception e) {
-				notifyManualUpdate(sender, "playerData.yml");
+				notifyManualUpdate(player, "playerData.yml");
 			}
 		}
 
@@ -460,15 +461,15 @@ class CommandFixFiles {
 			Main.plugin.saveConfig();
 
 			// Notify
-			if (sender instanceof Player) {
+			if (player != null) {
 				PlayerManager.notifySuccess(
-					(Player) sender,
+					player,
 					LanguageManager.confirms.autoUpdate,
 					new ColoredMessage(ChatColor.AQUA, "default.yml"),
 					new ColoredMessage(ChatColor.AQUA, Integer.toString(Main.defaultSpawnVersion))
 				);
 				PlayerManager.notifyAlert(
-					(Player) sender,
+					player,
 					LanguageManager.messages.manualUpdateWarn,
 					new ColoredMessage(ChatColor.AQUA, "All other spawn files")
 				);
@@ -505,9 +506,9 @@ class CommandFixFiles {
 			Main.plugin.saveConfig();
 
 			// Notify
-			if (sender instanceof Player) {
+			if (player != null) {
 				PlayerManager.notifySuccess(
-					(Player) sender,
+					player,
 					LanguageManager.confirms.autoUpdate,
 					new ColoredMessage(ChatColor.AQUA, "Spawn tables"),
 					new ColoredMessage(ChatColor.AQUA, Integer.toString(Main.spawnTableVersion))
@@ -533,19 +534,19 @@ class CommandFixFiles {
 			Main.plugin.saveConfig();
 
 			// Notify
-			if (sender instanceof Player) {
+			if (player != null) {
 				PlayerManager.notifySuccess(
-					(Player) sender,
+					player,
 					LanguageManager.confirms.autoUpdate,
 					new ColoredMessage(ChatColor.AQUA, "en_US.yml"),
 					new ColoredMessage(ChatColor.AQUA, Integer.toString(Main.languageFileVersion))
 				);
 				PlayerManager.notifyAlert(
-					(Player) sender,
+					player,
 					LanguageManager.messages.manualUpdateWarn,
 					new ColoredMessage(ChatColor.AQUA, "All other language files")
 				);
-				PlayerManager.notifyAlert((Player) sender, LanguageManager.messages.reloadPlugin);
+				PlayerManager.notifyAlert(player, LanguageManager.messages.reloadPlugin);
 			}
 			CommunicationManager.debugInfo(LanguageManager.confirms.autoUpdate, CommunicationManager.DebugLevel.QUIET,
 				"en_US.yml", Integer.toString(Main.languageFileVersion)
@@ -589,11 +590,11 @@ class CommandFixFiles {
 				Main.plugin.saveConfig();
 
 				// Notify
-				notifyAutoUpdate(sender, "customEffects.yml", 2);
+				notifyAutoUpdate(player, "customEffects.yml", 2);
 			}
 			catch (Exception e) {
 				customAbort = true;
-				notifyManualUpdate(sender, "customEffects.yml");
+				notifyManualUpdate(player, "customEffects.yml");
 			}
 		}
 		if (customEffectsVersion < 3 && !customAbort) {
@@ -612,17 +613,17 @@ class CommandFixFiles {
 				Main.plugin.saveConfig();
 
 				// Notify
-				notifyAutoUpdate(sender, "customEffects.yml", 3);
+				notifyAutoUpdate(player, "customEffects.yml", 3);
 			}
 			catch (Exception e) {
-				notifyManualUpdate(sender, "customEffects.yml");
+				notifyManualUpdate(player, "customEffects.yml");
 			}
 		}
 
 		// Message to player depending on whether the command fixed anything, then reload if fixed
 		if (!fixed) {
-			if (sender instanceof Player)
-				PlayerManager.notifyAlert((Player) sender, LanguageManager.messages.noAutoUpdate);
+			if (player != null)
+				PlayerManager.notifyAlert(player, LanguageManager.messages.noAutoUpdate);
 			else
 				CommunicationManager.debugInfo(
 					LanguageManager.messages.noAutoUpdate,
@@ -631,11 +632,11 @@ class CommandFixFiles {
 		}
 		else {
 			// Notify of reload
-			if (sender instanceof Player)
-				PlayerManager.notifyAlert((Player) sender, "Reloading plugin data");
+			if (player != null)
+				PlayerManager.notifyAlert(player, "Reloading plugin data");
 			else CommunicationManager.debugInfo("Reloading plugin data", CommunicationManager.DebugLevel.QUIET);
 
-			Main.plugin.reload();
+			Main.plugin.reload(player);
 		}
 	}
 
@@ -679,10 +680,10 @@ class CommandFixFiles {
 		}
 	}
 
-	private static void notifyManualUpdate(CommandSender sender, String file) {
-		if (sender instanceof Player)
+	private static void notifyManualUpdate(Player player, String file) {
+		if (player != null)
 			PlayerManager.notifyAlert(
-				(Player) sender,
+				player,
 				LanguageManager.messages.manualUpdateWarn,
 				new ColoredMessage(ChatColor.AQUA, file)
 			);
@@ -692,10 +693,10 @@ class CommandFixFiles {
 			);
 	}
 
-	private static void notifyAutoUpdate(CommandSender sender, String file, int version) {
-		if (sender instanceof Player)
+	private static void notifyAutoUpdate(Player player, String file, int version) {
+		if (player != null)
 			PlayerManager.notifySuccess(
-				(Player) sender,
+				player,
 				LanguageManager.confirms.autoUpdate,
 				new ColoredMessage(ChatColor.AQUA, file),
 				new ColoredMessage(ChatColor.AQUA, Integer.toString(version))

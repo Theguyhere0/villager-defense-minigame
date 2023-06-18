@@ -802,14 +802,12 @@ public class LanguageManager {
 		}
 
 		public static class Items extends Section {
-			public final String boots;
 			public final String carrot;
 			public final String carrotDesc;
 			public final String chestplate;
+			public final String chestplateDesc;
 			public final String club;
 			public final String clubDesc;
-			public final String helmet;
-			public final String leggings;
 			public final String scythe;
 			public final String scytheDesc;
 			public final String speed;
@@ -821,16 +819,6 @@ public class LanguageManager {
 				setPathPrefix("kits." + key + ".items");
 
 				String temp;
-				try {
-					temp = getConfigString("boots");
-				}
-				catch (InvalidLanguageKeyException e) {
-					if (key.equals("tailor"))
-						throw e;
-					else temp = null;
-				}
-				boots = temp;
-
 				try {
 					temp = getConfigString("carrot");
 				}
@@ -862,6 +850,16 @@ public class LanguageManager {
 				chestplate = temp;
 
 				try {
+					temp = getConfigString("chestplateDesc");
+				}
+				catch (InvalidLanguageKeyException e) {
+					if (key.equals("tailor"))
+						throw e;
+					else temp = null;
+				}
+				chestplateDesc = temp;
+
+				try {
 					temp = getConfigString("club");
 				}
 				catch (InvalidLanguageKeyException e) {
@@ -880,25 +878,6 @@ public class LanguageManager {
 					else temp = null;
 				}
 				clubDesc = temp;
-
-				try {
-					temp = getConfigString("helmet");
-				}
-				catch (InvalidLanguageKeyException e) {
-					if (key.equals("tailor"))
-						throw e;
-					else temp = null;
-				}
-				helmet = temp;
-				try {
-					temp = getConfigString("leggings");
-				}
-				catch (InvalidLanguageKeyException e) {
-					if (key.equals("tailor"))
-						throw e;
-					else temp = null;
-				}
-				leggings = temp;
 
 				try {
 					temp = getConfigString("scythe");
@@ -1042,6 +1021,9 @@ public class LanguageManager {
 		public final @NotNull String leaveArena;
 		public final @NotNull String level;
 		public final @NotNull String levelUp;
+		public final @NotNull String lowEnemyWarning;
+		public final @NotNull String lowPlayerWarning;
+		public final @NotNull String lowVillagerWarning;
 		public final @NotNull String manualUpdateWarn;
 		public final @NotNull String maxCapacity;
 		public final @NotNull String minutesLeft;
@@ -1176,6 +1158,9 @@ public class LanguageManager {
 			leaveArena = getConfigString("leaveArena");
 			level = getConfigString("level");
 			levelUp = getConfigString("levelUp");
+			lowEnemyWarning = getConfigString("lowEnemyWarning");
+			lowPlayerWarning = getConfigString("lowPlayerWarning");
+			lowVillagerWarning = getConfigString("lowVillagerWarning");
 			manualUpdateWarn = getConfigString("manualUpdateWarn");
 			maxCapacity = getConfigString("maxCapacity");
 			minutesLeft = getConfigString("minutesLeft");

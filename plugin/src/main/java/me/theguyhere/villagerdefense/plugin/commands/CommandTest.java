@@ -1,13 +1,7 @@
 package me.theguyhere.villagerdefense.plugin.commands;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.plugin.arenas.Arena;
-import me.theguyhere.villagerdefense.plugin.arenas.ArenaNotFoundException;
-import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
-import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerNotFoundException;
-import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -25,17 +19,6 @@ class CommandTest {
 		CommandGuard.checkDebugLevelGreaterEqual(sender, CommunicationManager.DebugLevel.DEVELOPER);
 
 		// Implement test
-		Arena arena;
-		VDPlayer gamer;
-		try {
-			arena = GameController.getArena(player);
-			gamer = arena.getPlayer(player);
-		}
-		catch (ArenaNotFoundException | PlayerNotFoundException err) {
-			PlayerManager.notifyFailure(player, LanguageManager.errors.inGame);
-			return;
-		}
-		gamer.addGems(999999);
 
 		// Confirm
 		PlayerManager.notifySuccess(player, "Test Complete");

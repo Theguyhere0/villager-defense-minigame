@@ -12,16 +12,20 @@ import me.theguyhere.villagerdefense.plugin.commands.TabCompleterImp;
 import me.theguyhere.villagerdefense.plugin.displays.ClickPortalListener;
 import me.theguyhere.villagerdefense.plugin.game.GameController;
 import me.theguyhere.villagerdefense.plugin.game.GameListener;
+import me.theguyhere.villagerdefense.plugin.game.PlayerManager;
 import me.theguyhere.villagerdefense.plugin.guis.InventoryListener;
 import me.theguyhere.villagerdefense.plugin.kits.KitAbilityListener;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +49,7 @@ public class Main extends JavaPlugin {
 	private static final List<String> unloadedWorlds = new ArrayList<>();
 	private static Economy economy;
 	private static VDExpansion expansion;
+	private static Scoreboard vdBoard;
 
 	// Global state variables
 	private static boolean outdated = false; // DO NOT CHANGE
@@ -101,6 +106,11 @@ public class Main extends JavaPlugin {
 			e.printStackTrace();
 		}
 		CommunicationManager.setDisplayPluginTag(getConfig().getBoolean("displayPluginTag"));
+		vdBoard = Objects
+			.requireNonNull(Bukkit.getScoreboardManager())
+			.getNewScoreboard();
+		vdBoard.registerNewTeam("monsters").setColor(ChatColor.RED);
+		vdBoard.registerNewTeam("villagers").setColor(ChatColor.GREEN);
 
 		// Register event listeners
 		pm.registerEvents(new AchievementListener(), this);
@@ -162,7 +172,7 @@ public class Main extends JavaPlugin {
 		GameController.wipeArenas();
 	}
 
-	public void reload() {
+	public void reload(Player player) {
 		// Once again check for config
 		saveDefaultConfig();
 
@@ -198,6 +208,15 @@ public class Main extends JavaPlugin {
 
 		// Try finding economy plugin again
 		setupEconomy();
+
+		// Notify of successful reload
+		if (player != null)
+			PlayerManager.notifySuccess(player, "Plugin data reloaded successfully!");
+		else
+			CommunicationManager.debugConfirm(
+				"Plugin data reloaded successfully!",
+				CommunicationManager.DebugLevel.QUIET
+			);
 	}
 
 	public static void resetGameManager() {
@@ -264,6 +283,18 @@ public class Main extends JavaPlugin {
 		return plugin
 			.getConfig()
 			.getBoolean("vaultEconomy") && economy != null;
+	}
+
+	public static Scoreboard getVdBoard() {
+		return vdBoard;
+	}
+
+	public static Team getMonstersTeam() {
+		return vdBoard.getTeam("monsters");
+	}
+
+	public static Team getVillagersTeam() {
+		return vdBoard.getTeam("villagers");
 	}
 
 	// Quick way to send test messages to console but remembering to take them down before release

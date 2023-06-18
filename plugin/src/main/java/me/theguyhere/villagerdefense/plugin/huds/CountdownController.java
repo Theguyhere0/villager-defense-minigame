@@ -92,7 +92,7 @@ public class CountdownController {
 						if (!warning) {
 							// Send warning
 							arena
-								.getActives()
+								.getPlayers()
 								.forEach(player ->
 									player
 										.getPlayer()
@@ -104,8 +104,10 @@ public class CountdownController {
 											Calculator.secondsToTicks(.5)
 										));
 
-							// Set monsters glowing when time is low
+							// Set monsters, villagers, and alive players glowing when time is low
 							arena.setMonsterGlow();
+							arena.setVillagerGlow();
+							arena.setPlayerGlow();
 
 							warning = true;
 						}

@@ -103,6 +103,14 @@ public class Arena {
 	 */
 	private int villagers = 0;
 	/**
+	 * Maximum villagers in a wave.
+	 */
+	private int maxVillagers = 0;
+	/**
+	 * Whether the low villager warning was triggered for the wave or not.
+	 */
+	private boolean lowVillagerTriggered = false;
+	/**
 	 * Enemy count.
 	 */
 	private int enemies = 0;
@@ -110,6 +118,14 @@ public class Arena {
 	 * Maximum enemies in a wave.
 	 */
 	private int maxEnemies = 0;
+	/**
+	 * Whether the low enemy warning was triggered for the wave or not.
+	 */
+	private boolean lowEnemyTriggered = false;
+	/**
+	 * Whether the low player warning was triggered for the wave or not.
+	 */
+	private boolean lowPlayerTriggered = false;
 	/**
 	 * Iron golem count.
 	 */
@@ -2466,9 +2482,13 @@ public class Arena {
 		// Refresh the scoreboards
 		updateScoreboards();
 
-		// Increment wave and reset max enemies
+		// Increment wave and reset max villagers/enemies and triggers
 		incrementCurrentWave();
+		maxVillagers = 0;
 		maxEnemies = 0;
+		lowVillagerTriggered = false;
+		lowEnemyTriggered = false;
+		lowPlayerTriggered = false;
 
 		// Win condition
 		if (getCurrentWave() == getMaxWaves()) {
@@ -2658,7 +2678,7 @@ public class Arena {
 		});
 		activeTasks
 			.get(CALIBRATE)
-			.runTaskTimer(Main.plugin, 0, Calculator.secondsToTicks(0.25));
+			.runTaskTimer(Main.plugin, 0, Calculator.secondsToTicks(5));
 
 		// Schedule spawning sequences
 		spawnTasks.addAll(ArenaSpawnGenerator.generateVillagerSpawnSequence(this));
@@ -2726,6 +2746,9 @@ public class Arena {
 				.getEntity()
 				.setInvulnerable(true);
 		});
+
+		// Stop glowing
+		stopGlow();
 
 		// Play sound if turned on and arena is either not winning or has unlimited waves
 		if (hasLoseSound() && (getCurrentWave() <= getMaxWaves() || getMaxWaves() < 0)) {
@@ -3100,6 +3123,7 @@ public class Arena {
 		this.spawningMonsters = spawningMonsters;
 	}
 
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	public boolean isSpawningVillagers() {
 		return spawningVillagers;
 	}
@@ -3131,12 +3155,36 @@ public class Arena {
 		return villagers;
 	}
 
+	public void decrementVillagers() {
+		villagers--;
+	}
+
 	public void resetVillagers() {
 		villagers = 0;
 	}
 
+	public int getMaxVillagers() {
+		return maxVillagers;
+	}
+
+	public void setMaxVillagers(int maxVillagers) {
+		this.maxVillagers = maxVillagers;
+	}
+
+	public boolean hasLowVillagerTriggered() {
+		return lowVillagerTriggered;
+	}
+
+	public void setLowVillagerTriggered(boolean lowVillagerTriggered) {
+		this.lowVillagerTriggered = lowVillagerTriggered;
+	}
+
 	public int getEnemies() {
 		return enemies;
+	}
+
+	public void decrementEnemies() {
+		enemies--;
 	}
 
 	public void resetEnemies() {
@@ -3149,6 +3197,22 @@ public class Arena {
 
 	public void setMaxEnemies(int maxEnemies) {
 		this.maxEnemies = maxEnemies;
+	}
+
+	public boolean hasLowEnemyTriggered() {
+		return lowEnemyTriggered;
+	}
+
+	public void setLowEnemyTriggered(boolean lowEnemyTriggered) {
+		this.lowEnemyTriggered = lowEnemyTriggered;
+	}
+
+	public boolean hasLowPlayerTriggered() {
+		return lowPlayerTriggered;
+	}
+
+	public void setLowPlayerTriggered(boolean lowPlayerTriggered) {
+		this.lowPlayerTriggered = lowPlayerTriggered;
 	}
 
 	// Modify the price of an item
@@ -3360,6 +3424,50 @@ public class Arena {
 			.filter(VDMob::isVDMob)
 			.filter(entity -> VDMob.isTeam(entity, IndividualTeam.MONSTER))
 			.forEach(entity -> entity.setGlowing(true));
+	}
+
+	/**
+	 * Sets remaining villagers glowing.
+	 */
+	public void setVillagerGlow() {
+		Objects
+			.requireNonNull(getPlayerSpawn()
+				.getLocation()
+				.getWorld())
+			.getNearbyEntities(getBounds())
+			.stream()
+			.filter(Objects::nonNull)
+			.filter(VDMob::isVDMob)
+			.filter(entity -> VDMob.isTeam(entity, IndividualTeam.VILLAGER))
+			.filter(entity -> entity instanceof Villager)
+			.forEach(entity -> entity.setGlowing(true));
+	}
+
+	/**
+	 * Sets remaining players glowing.
+	 */
+	public void setPlayerGlow() {
+		getAlives().forEach(gamer -> gamer
+			.getPlayer()
+			.setGlowing(true));
+	}
+
+	/**
+	 * Remove glowing for all entities in the arena.
+	 */
+	public void stopGlow() {
+		Objects
+			.requireNonNull(getPlayerSpawn()
+				.getLocation()
+				.getWorld())
+			.getNearbyEntities(getBounds())
+			.stream()
+			.filter(Objects::nonNull)
+			.filter(VDMob::isVDMob)
+			.forEach(entity -> entity.setGlowing(false));
+		getActives().forEach(gamer -> gamer
+			.getPlayer()
+			.setGlowing(false));
 	}
 
 	/**

@@ -14,10 +14,7 @@ import me.theguyhere.villagerdefense.plugin.huds.BottomBarController;
 import me.theguyhere.villagerdefense.plugin.huds.SidebarManager;
 import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Sound;
-import org.bukkit.WorldBorder;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -391,6 +388,11 @@ public class ArenaListener implements Listener {
 				worldBorder.getWarningDistance()
 			)
 			.sendTo(player);
+
+		// Reset scoreboard
+		player.setScoreboard(Objects
+			.requireNonNull(Bukkit.getScoreboardManager())
+			.getMainScoreboard());
 
 		// Refresh the game portal
 		arena.refreshPortal();

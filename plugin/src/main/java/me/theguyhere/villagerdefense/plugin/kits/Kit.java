@@ -8,10 +8,7 @@ import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.items.ItemStackBuilder;
 import me.theguyhere.villagerdefense.plugin.items.VDItem;
 import me.theguyhere.villagerdefense.plugin.items.abilities.*;
-import me.theguyhere.villagerdefense.plugin.items.armor.Boots;
 import me.theguyhere.villagerdefense.plugin.items.armor.Chestplate;
-import me.theguyhere.villagerdefense.plugin.items.armor.Helmet;
-import me.theguyhere.villagerdefense.plugin.items.armor.Leggings;
 import me.theguyhere.villagerdefense.plugin.items.food.FarmerCarrot;
 import me.theguyhere.villagerdefense.plugin.items.weapons.OrcClub;
 import me.theguyhere.villagerdefense.plugin.items.weapons.Scythe;
@@ -568,7 +565,7 @@ public class Kit {
 	public static Kit soldier() {
 		Kit kit = new Kit(LanguageManager.kits.soldier.name, Type.GIFT, "soldier", Material.STONE_SWORD);
 		kit.addMasterDescription(LanguageManager.kits.soldier.description);
-		kit.addPrice(1, 250);
+		kit.addPrice(1, 450);
 		kit.addItems(1, new ItemStack[]{Sword.create(VDItem.Tier.UNIQUE, Sword.SwordType.SOLDIER)});
 		return kit;
 	}
@@ -577,7 +574,7 @@ public class Kit {
 	public static Kit alchemist() {
 		Kit kit = new Kit(LanguageManager.kits.alchemist.name, Type.GIFT, "alchemist", Material.BREWING_STAND);
 		kit.addMasterDescription(LanguageManager.kits.alchemist.description);
-		kit.addPrice(1, 400);
+		kit.addPrice(1, 200);
 		kit.addItems(1, new ItemStack[]{
 			Sword.create(VDItem.Tier.T0, Sword.SwordType.TIERED),
 			new ItemStackBuilder(
@@ -596,25 +593,10 @@ public class Kit {
 	public static Kit tailor() {
 		Kit kit = new Kit(LanguageManager.kits.tailor.name, Type.GIFT, "tailor", Material.LEATHER_CHESTPLATE);
 		kit.addMasterDescription(CommunicationManager.format(LanguageManager.kits.tailor.description));
-		kit.addPrice(1, 1000);
+		kit.addPrice(1, 400);
 		kit.addItems(1, new ItemStack[]{
 			Sword.create(VDItem.Tier.T0, Sword.SwordType.TIERED),
-			ItemStackBuilder.removeLastLore(ItemStackBuilder.rename(
-				Helmet.create(VDItem.Tier.T1),
-				new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.tailor.items.helmet).toString()
-			)),
-			ItemStackBuilder.removeLastLore(ItemStackBuilder.rename(
-				Chestplate.create(VDItem.Tier.T1),
-				new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.tailor.items.chestplate).toString()
-			)),
-			ItemStackBuilder.removeLastLore(ItemStackBuilder.rename(
-				Leggings.create(VDItem.Tier.T1),
-				new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.tailor.items.leggings).toString()
-			)),
-			ItemStackBuilder.removeLastLore(ItemStackBuilder.rename(
-				Boots.create(VDItem.Tier.T1),
-				new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.tailor.items.boots).toString()
-			)),
+			Chestplate.create(VDItem.Tier.UNIQUE, Chestplate.ChestplateType.TAILOR)
 		});
 		return kit;
 	}
@@ -638,8 +620,8 @@ public class Kit {
 		kit.addLevelDescriptions(2, LanguageManager.kits.summoner.description2);
 		kit.addLevelDescriptions(3, LanguageManager.kits.summoner.description3);
 
-		kit.addPrice(1, 450);
-		kit.addPrice(2, 1000);
+		kit.addPrice(1, 600);
+		kit.addPrice(2, 1300);
 		kit.addPrice(3, 4000);
 
 		kit.addItems(1, new ItemStack[]{Sword.create(VDItem.Tier.T0, Sword.SwordType.TIERED)});

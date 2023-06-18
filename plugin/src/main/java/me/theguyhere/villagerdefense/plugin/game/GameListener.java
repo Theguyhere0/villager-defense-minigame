@@ -97,8 +97,23 @@ public class GameListener implements Listener {
 		arena.removeMob(mob.getID());
 
 		if (VDMob.isTeam(ent, IndividualTeam.VILLAGER)) {
-			// Update scoreboards
+			// Update arena stats and scoreboards
+			arena.decrementVillagers();
 			arena.updateScoreboards();
+
+			// Set villagers glowing when only 20% remain
+			if (arena.getVillagers() <= .2 * arena.getMaxVillagers() && !arena.isSpawningVillagers() &&
+				arena.getVillagers() > 0 && !arena.hasLowVillagerTriggered()) {
+				arena.setVillagerGlow();
+				arena.getPlayers().forEach(vdPlayer ->
+					vdPlayer
+						.getPlayer()
+						.sendTitle(new ColoredMessage(ChatColor.RED, LanguageManager.messages.lowVillagerWarning).toString(), " ",
+							Calculator.secondsToTicks(.5),
+							Calculator.secondsToTicks(2.5), Calculator.secondsToTicks(1)
+						));
+				arena.setLowVillagerTriggered(true);
+			}
 		}
 
 		// Handle enemy death
@@ -107,13 +122,23 @@ public class GameListener implements Listener {
 			if (mob.getWave() != arena.getCurrentWave())
 				return;
 
-			// Update scoreboards
+			// Update arena stats and scoreboards
+			arena.decrementEnemies();
 			arena.updateScoreboards();
 
 			// Set monsters glowing when only 20% remain
 			if (arena.getEnemies() <= .2 * arena.getMaxEnemies() && !arena.isSpawningMonsters() &&
-				arena.getEnemies() > 0)
+				arena.getEnemies() > 0 && !arena.hasLowEnemyTriggered()) {
 				arena.setMonsterGlow();
+				arena.getPlayers().forEach(vdPlayer ->
+					vdPlayer
+						.getPlayer()
+						.sendTitle(new ColoredMessage(ChatColor.GREEN, LanguageManager.messages.lowEnemyWarning).toString(), " ",
+							Calculator.secondsToTicks(.5),
+							Calculator.secondsToTicks(2.5), Calculator.secondsToTicks(1)
+						));
+				arena.setLowEnemyTriggered(true);
+			}
 		}
 	}
 
@@ -1257,6 +1282,20 @@ public class GameListener implements Listener {
 
 			// Update scoreboards
 			arena.updateScoreboards();
+
+			// Set players glowing when only 20% remain and notify
+			if (arena.getAlive() <= .2 * arena.getActiveCount() && arena.getAlive() > 0 &&
+				!arena.hasLowPlayerTriggered()) {
+				arena.setPlayerGlow();
+				arena.getPlayers().forEach(vdPlayer ->
+					vdPlayer
+						.getPlayer()
+						.sendTitle(new ColoredMessage(ChatColor.RED, LanguageManager.messages.lowPlayerWarning).toString(), " ",
+							Calculator.secondsToTicks(.5),
+							Calculator.secondsToTicks(2.5), Calculator.secondsToTicks(1)
+						));
+				arena.setLowPlayerTriggered(true);
+			}
 
 			// Check for game end condition
 			if (arena.getAlive() == 0)

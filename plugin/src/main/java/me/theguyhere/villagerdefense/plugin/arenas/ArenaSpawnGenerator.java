@@ -76,8 +76,8 @@ public class ArenaSpawnGenerator {
 			}.runTaskLater(Main.plugin, delay));
 		}
 
-		// Set max enemies
-		arena.setMaxEnemies(spawningTasks.size());
+		// Set max villagers
+		arena.setMaxVillagers(waveValue / 125);
 
 		// Set spawning villagers to false
 		spawningTasks.add(new BukkitRunnable() {
@@ -185,6 +185,9 @@ public class ArenaSpawnGenerator {
 				valueSpawned[0] += minionValue.get(type);
 			}
 		}
+
+		// Set max enemies
+		arena.setMaxEnemies(spawningTasks.size());
 
 		// Set spawning monsters to false
 		spawningTasks.add(new BukkitRunnable() {

@@ -172,6 +172,7 @@ public class VDPlayer {
 		if (spectating)
 			status = Status.SPECTATOR;
 		else status = Status.ALIVE;
+		player.setScoreboard(Main.getVdBoard());
 	}
 
 	public UUID getID() {

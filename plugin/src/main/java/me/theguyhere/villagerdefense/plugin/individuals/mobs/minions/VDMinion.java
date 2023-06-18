@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
+import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualTeam;
@@ -28,6 +29,7 @@ public abstract class VDMinion extends VDMob {
 		super(lore, attackType);
 		mob = minion;
 		id = minion.getUniqueId();
+		Main.getMonstersTeam().addEntry(id.toString());
 		PersistentDataContainer dataContainer = minion.getPersistentDataContainer();
 		dataContainer.set(ARENA_ID, PersistentDataType.INTEGER, arena.getId());
 		dataContainer.set(TEAM, PersistentDataType.STRING, IndividualTeam.MONSTER.getValue());
