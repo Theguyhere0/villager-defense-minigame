@@ -202,26 +202,50 @@ public class ArenaListener implements Listener {
 			return;
 		}
 
-		// Waiting condition
-		try {
-			arena.startNotifyWaiting();
-		}
-		catch (ArenaException ignored) {
-		}
-
 		// Start info
 		try {
 			arena.addNotifyInfo();
 		}
-		catch (ArenaException ignored) {
+		catch (ArenaClosedException | ArenaStatusException err) {
+			CommunicationManager.debugError("%s: %s", CommunicationManager.DebugLevel.NORMAL, arena.getName(),
+				err.getMessage());
+			return;
+		}
+		catch (ArenaException err) {
+			CommunicationManager.debugInfo("%s: %s", CommunicationManager.DebugLevel.VERBOSE, arena.getName(),
+				err.getMessage());
+		}
+
+		// Waiting condition
+		try {
+			arena.startNotifyWaiting();
+			return;
+		}
+		catch (ArenaClosedException | ArenaStatusException err) {
+			CommunicationManager.debugError("%s: %s", CommunicationManager.DebugLevel.NORMAL, arena.getName(),
+				err.getMessage());
+			return;
+		}
+		catch (ArenaException err) {
+			CommunicationManager.debugInfo("%s: %s", CommunicationManager.DebugLevel.VERBOSE, arena.getName(),
+				err.getMessage());
 		}
 
 		// Quick start condition
 		try {
-			if (players == arena.getMaxPlayers())
+			if (players == arena.getMaxPlayers()) {
 				arena.expediteCountDown();
+				return;
+			}
+		}
+		catch (ArenaClosedException | ArenaStatusException err) {
+			CommunicationManager.debugError("%s: %s", CommunicationManager.DebugLevel.NORMAL, arena.getName(),
+				err.getMessage());
+			return;
 		}
 		catch (ArenaException err) {
+			CommunicationManager.debugInfo("%s: %s", CommunicationManager.DebugLevel.VERBOSE, arena.getName(),
+				err.getMessage());
 			return;
 		}
 
@@ -234,7 +258,13 @@ public class ArenaListener implements Listener {
 				arena.getName()
 			);
 		}
-		catch (ArenaException ignored) {
+		catch (ArenaClosedException | ArenaStatusException err) {
+			CommunicationManager.debugError("%s: %s", CommunicationManager.DebugLevel.NORMAL, arena.getName(),
+				err.getMessage());
+		}
+		catch (ArenaException err) {
+			CommunicationManager.debugInfo("%s: %s", CommunicationManager.DebugLevel.VERBOSE, arena.getName(),
+				err.getMessage());
 		}
 	}
 
@@ -348,7 +378,13 @@ public class ArenaListener implements Listener {
 			try {
 				arena.startNotifyWaiting();
 			}
-			catch (ArenaException ignored) {
+			catch (ArenaClosedException err) {
+				CommunicationManager.debugError("%s: %s", CommunicationManager.DebugLevel.NORMAL, arena.getName(),
+					err.getMessage());
+			}
+			catch (ArenaException err) {
+				CommunicationManager.debugInfo("%s: %s", CommunicationManager.DebugLevel.VERBOSE, arena.getName(),
+					err.getMessage());
 			}
 
 			// Checks if the game has ended because no players are left
@@ -356,7 +392,9 @@ public class ArenaListener implements Listener {
 				try {
 					arena.endGame();
 				}
-				catch (ArenaException ignored) {
+				catch (ArenaException err) {
+					CommunicationManager.debugError("%s: %s", CommunicationManager.DebugLevel.QUIET, arena.getName(),
+						err.getMessage());
 				}
 		}
 

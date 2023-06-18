@@ -3,7 +3,6 @@ package me.theguyhere.villagerdefense.plugin.items;
 import me.theguyhere.villagerdefense.common.ColoredMessage;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Constants;
-import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.items.weapons.VDWeapon;
 import org.bukkit.ChatColor;

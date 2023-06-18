@@ -56,7 +56,7 @@ public class CountdownController {
 					);
 				}
 
-				// Trigger wave end event
+				// Trigger game end event
 				else if (progress <= 0) {
 					progress = 0;
 					try {

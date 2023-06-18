@@ -25,10 +25,7 @@ import me.theguyhere.villagerdefense.plugin.items.armor.VDArmor;
 import me.theguyhere.villagerdefense.plugin.items.food.ShopFood;
 import me.theguyhere.villagerdefense.plugin.items.food.VDFood;
 import me.theguyhere.villagerdefense.plugin.items.menuItems.*;
-import me.theguyhere.villagerdefense.plugin.items.weapons.Ammo;
-import me.theguyhere.villagerdefense.plugin.items.weapons.Bow;
-import me.theguyhere.villagerdefense.plugin.items.weapons.Crossbow;
-import me.theguyhere.villagerdefense.plugin.items.weapons.VDWeapon;
+import me.theguyhere.villagerdefense.plugin.items.weapons.*;
 import me.theguyhere.villagerdefense.plugin.kits.Kit;
 import org.bukkit.*;
 import org.bukkit.entity.*;
@@ -43,9 +40,11 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
 import org.spigotmc.event.entity.EntityDismountEvent;
@@ -432,7 +431,7 @@ public class GameListener implements Listener {
 				.getEffectType()
 				.getName()
 				.equals(PotionEffectType.FIRE_RESISTANCE.getName()))
-				gamer.combust(finalDamager.getEffectDuration());
+				gamer.combust(Calculator.secondsToTicks(finalDamager.getEffectDuration()));
 			else gamer
 				.getPlayer()
 				.addPotionEffect(finalDamager.dealEffect());
@@ -938,45 +937,74 @@ public class GameListener implements Listener {
 		ThrownPotion potion = e.getEntity();
 		Entity ent = (Entity) potion.getShooter();
 		Arena arena;
-		VDWitch witch;
 
-		// Try to get arena and VDMob
-		try {
-			arena = GameController.getArena(VDMob.getArenaID(Objects.requireNonNull(ent)));
-			witch = (VDWitch) arena.getMob(ent.getUniqueId());
-		}
-		catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException |
-			   NullPointerException | ClassCastException err) {
-			return;
-		}
-
-		// Apply to relevant entities
-		Random r = new Random();
-		for (LivingEntity affectedEntity : e.getAffectedEntities()) {
-			// Not monster
-			if (!(affectedEntity instanceof Player) && VDMob.isTeam(affectedEntity, IndividualTeam.MONSTER))
-				continue;
-
-			// Ignore players with witch kit
+		if (ent instanceof Player) {
+			// Try to get arena
 			try {
-				VDPlayer player = arena.getPlayer(affectedEntity.getUniqueId());
-				if (Kit
-					.witch()
-					.getID()
-					.equals(player
-						.getKit()
-						.getID()) && !player.isSharing())
-					continue;
-				if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(Kit.EffectType.WITCH))) {
-					PlayerManager.notifySuccess(player.getPlayer(), LanguageManager.messages.effectShare);
-					return;
-				}
+				GameController.getArena((Player) ent);
 			}
-			catch (PlayerNotFoundException ignored) {
+			catch (ArenaNotFoundException err) {
+				return;
 			}
 
-			// Apply affects
-			affectedEntity.addPotionEffect(witch.dealEffect());
+			// Apply to relevant entities
+			for (LivingEntity affectedEntity : e.getAffectedEntities()) {
+				// Not monster
+				if (!(affectedEntity instanceof Player) && VDMob.isTeam(affectedEntity, IndividualTeam.MONSTER))
+					continue;
+
+				// Apply affects
+				affectedEntity.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION,
+					Calculator.secondsToTicks(30), 0));
+			}
+
+			// Cancel vanilla event
+			e.setCancelled(true);
+		}
+		else {
+			VDWitch witch;
+
+			// Try to get arena and VDMob
+			try {
+				arena = GameController.getArena(VDMob.getArenaID(Objects.requireNonNull(ent)));
+				witch = (VDWitch) arena.getMob(ent.getUniqueId());
+			}
+			catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException |
+				   NullPointerException | ClassCastException err) {
+				return;
+			}
+
+			// Apply to relevant entities
+			Random r = new Random();
+			for (LivingEntity affectedEntity : e.getAffectedEntities()) {
+				// Not monster
+				if (!(affectedEntity instanceof Player) && VDMob.isTeam(affectedEntity, IndividualTeam.MONSTER))
+					continue;
+
+				// Ignore players with witch kit
+				try {
+					VDPlayer player = arena.getPlayer(affectedEntity.getUniqueId());
+					if (Kit
+						.witch()
+						.getID()
+						.equals(player
+							.getKit()
+							.getID()) && !player.isSharing())
+						continue;
+					if (r.nextDouble() > Math.pow(.75, arena.effectShareCount(Kit.EffectType.WITCH))) {
+						PlayerManager.notifySuccess(player.getPlayer(), LanguageManager.messages.effectShare);
+						return;
+					}
+				}
+				catch (PlayerNotFoundException ignored) {
+				}
+
+				// Apply affects
+				affectedEntity.addPotionEffect(witch.dealEffect());
+			}
+
+			// Cancel vanilla event
+			e.setCancelled(true);
 		}
 	}
 
@@ -1302,7 +1330,9 @@ public class GameListener implements Listener {
 				try {
 					arena.endGame();
 				}
-				catch (ArenaException ignored) {
+				catch (ArenaException err) {
+					CommunicationManager.debugError("%s: %s", CommunicationManager.DebugLevel.QUIET, arena.getName(),
+						err.getMessage());
 				}
 		}
 	}
@@ -1389,6 +1419,34 @@ public class GameListener implements Listener {
 			integer = dataContainer.get(VDFood.HUNGER_KEY, PersistentDataType.INTEGER);
 			if (integer != null)
 				player.setFoodLevel(Math.min(20, player.getFoodLevel() + integer));
+
+			// Consume
+			player
+				.getInventory()
+				.setItem(Objects.requireNonNull(e.getHand()), null);
+		}
+
+		// Give proper effect for potions
+		if (Potion.matches(item) && item.getType() != Material.SPLASH_POTION) {
+			PotionMeta meta = (PotionMeta) item.getItemMeta();
+			if (meta == null) {
+				CommunicationManager.debugErrorShouldNotHappen();
+				return;
+			}
+			PotionEffectType type = meta
+					.getBasePotionData()
+					.getType()
+					.getEffectType();
+			if (type == null) {
+				CommunicationManager.debugErrorShouldNotHappen();
+				return;
+			}
+			PersistentDataContainer dataContainer = Objects
+				.requireNonNull(item.getItemMeta())
+				.getPersistentDataContainer();
+			Double duration = dataContainer.get(VDItem.DURATION_KEY, PersistentDataType.DOUBLE);
+			if (duration != null)
+				player.addPotionEffect(new PotionEffect(type, Calculator.secondsToTicks(duration.intValue()), 0));
 
 			// Consume
 			player

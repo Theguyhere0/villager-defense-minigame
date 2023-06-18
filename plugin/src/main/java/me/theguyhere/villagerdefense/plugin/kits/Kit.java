@@ -11,13 +11,12 @@ import me.theguyhere.villagerdefense.plugin.items.abilities.*;
 import me.theguyhere.villagerdefense.plugin.items.armor.Chestplate;
 import me.theguyhere.villagerdefense.plugin.items.food.FarmerCarrot;
 import me.theguyhere.villagerdefense.plugin.items.weapons.OrcClub;
+import me.theguyhere.villagerdefense.plugin.items.weapons.Potion;
 import me.theguyhere.villagerdefense.plugin.items.weapons.Scythe;
 import me.theguyhere.villagerdefense.plugin.items.weapons.Sword;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionData;
-import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -574,17 +573,12 @@ public class Kit {
 	public static Kit alchemist() {
 		Kit kit = new Kit(LanguageManager.kits.alchemist.name, Type.GIFT, "alchemist", Material.BREWING_STAND);
 		kit.addMasterDescription(LanguageManager.kits.alchemist.description);
-		kit.addPrice(1, 200);
+		kit.addPrice(1, 300);
 		kit.addItems(1, new ItemStack[]{
 			Sword.create(VDItem.Tier.T0, Sword.SwordType.TIERED),
-			new ItemStackBuilder(
-				Material.SPLASH_POTION,
-				new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.alchemist.items.speed).toString()
-			).setPotionData(new PotionData(PotionType.SPEED)).build(),
-			new ItemStackBuilder(
-				Material.SPLASH_POTION,
-				new ColoredMessage(ChatColor.GREEN, LanguageManager.kits.alchemist.items.strength).toString()
-			).setPotionData(new PotionData(PotionType.STRENGTH)).build()
+			Potion.create(Potion.PotionType.ALCHEMIST_REGEN),
+			Potion.create(Potion.PotionType.ALCHEMIST_SPEED),
+			Potion.create(Potion.PotionType.ALCHEMIST_STRENGTH)
 		});
 		return kit;
 	}

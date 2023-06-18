@@ -85,7 +85,7 @@ public class KitAbilityListener implements Listener {
 				.getPersistentDataContainer();
 		Double cooldown = dataContainer.get(VDAbility.COOLDOWN_KEY, PersistentDataType.DOUBLE);
 		Double range = dataContainer.get(VDAbility.RANGE_KEY, PersistentDataType.DOUBLE);
-		Double duration = dataContainer.get(VDAbility.DURATION_KEY, PersistentDataType.DOUBLE);
+		Double duration = dataContainer.get(VDItem.DURATION_KEY, PersistentDataType.DOUBLE);
 		VDItem.Tier tier = null;
 		if (cooldown == null)
 			return;

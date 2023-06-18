@@ -229,7 +229,7 @@ errors:
   communityChest: "Community chest has been disabled!"
   construction: "This feature is under construction!"
   economy: "Vault Economy is being used instead of Crystals!"
-  emptyArena: "The arena has no players!"
+  emptyArena: "The arena has insufficient players!"
   endingSoon: "The game about to end!"
   fatal: "Something went wrong"
   forcedChallenge: "This challenge is forced!"
@@ -496,10 +496,12 @@ itemLore:
 kits:
   alchemist:
     name: "Alchemist"
-    description: "Start with a speed and a strength splash potions"
+    description: "Start with a regen, a speed, and a strength potion"
     items:
-      speed: "Alchemist's Speed Potion"
-      strength: "Alchemist's Strength Potion"
+      regen: "Alchemist's Regeneration Potion %s"
+      speed: "Alchemist's Speed Potion %s"
+      strength: "Alchemist's Strength Potion %s"
+      potionDesc: "A unique potion brewed by a knowledgeable alchemist."
   blacksmith:
     name: "Blacksmith"
     description: "All equipment purchased are unbreakable"

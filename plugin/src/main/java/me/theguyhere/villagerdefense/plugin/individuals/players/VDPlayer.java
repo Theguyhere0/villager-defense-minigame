@@ -345,7 +345,9 @@ public class VDPlayer {
 				try {
 					arena.endGame();
 				}
-				catch (ArenaException ignored) {
+				catch (ArenaException e) {
+					CommunicationManager.debugError("%s: %s", CommunicationManager.DebugLevel.QUIET, arena.getName(),
+						e.getMessage());
 				}
 		}
 	}

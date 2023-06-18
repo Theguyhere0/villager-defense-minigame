@@ -808,6 +808,8 @@ public class LanguageManager {
 			public final String chestplateDesc;
 			public final String club;
 			public final String clubDesc;
+			public final String potionDesc;
+			public final String regen;
 			public final String scythe;
 			public final String scytheDesc;
 			public final String speed;
@@ -878,6 +880,26 @@ public class LanguageManager {
 					else temp = null;
 				}
 				clubDesc = temp;
+
+				try {
+					temp = getConfigString("potionDesc");
+				}
+				catch (InvalidLanguageKeyException e) {
+					if (key.equals("alchemist"))
+						throw e;
+					else temp = null;
+				}
+				potionDesc = temp;
+
+				try {
+					temp = getConfigString("regen");
+				}
+				catch (InvalidLanguageKeyException e) {
+					if (key.equals("alchemist"))
+						throw e;
+					else temp = null;
+				}
+				regen = temp;
 
 				try {
 					temp = getConfigString("scythe");

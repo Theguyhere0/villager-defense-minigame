@@ -1684,7 +1684,7 @@ public class Arena {
 	public void startNotifyWaiting() throws ArenaClosedException, ArenaStatusException, ArenaTaskException {
 		// Check if waiting notifications can start
 		if (isClosed())
-			throw new ArenaClosedException();
+			throw new ArenaClosedException("Arena attempted to notify of waiting when closed");
 		if (status != ArenaStatus.WAITING)
 			throw new ArenaStatusException(ArenaStatus.WAITING);
 		if (getActiveCount() >= getMinPlayers())
@@ -1723,7 +1723,7 @@ public class Arena {
 	public void addNotifyInfo() throws ArenaClosedException, ArenaStatusException, ArenaTaskException {
 		// Check if waiting notifications can start
 		if (isClosed())
-			throw new ArenaClosedException();
+			throw new ArenaClosedException("Arena attempted notifying arena info when closed");
 		if (status != ArenaStatus.WAITING)
 			throw new ArenaStatusException(ArenaStatus.WAITING);
 		if (activeTasks.containsKey(NOTIFY_INFO))
@@ -1791,7 +1791,7 @@ public class Arena {
 	public void restartCountDown() throws ArenaStatusException, ArenaClosedException, ArenaTaskException {
 		// Check if countdown can start
 		if (isClosed())
-			throw new ArenaClosedException();
+			throw new ArenaClosedException("Arena attempted to restart countdown while closed");
 		if (status != ArenaStatus.WAITING)
 			throw new ArenaStatusException(ArenaStatus.WAITING);
 		if (getActiveCount() < getMinPlayers())
@@ -1935,7 +1935,8 @@ public class Arena {
 					startGame();
 				}
 				catch (ArenaException e) {
-					CommunicationManager.debugErrorShouldNotHappen();
+					CommunicationManager.debugError("%s: %s", CommunicationManager.DebugLevel.QUIET, getName(),
+						e.getMessage());
 				}
 
 				// Cleanup
@@ -2015,7 +2016,8 @@ public class Arena {
 					startGame();
 				}
 				catch (ArenaException e) {
-					CommunicationManager.debugErrorShouldNotHappen();
+					CommunicationManager.debugError("%s: %s", CommunicationManager.DebugLevel.QUIET, getName(),
+						e.getMessage());
 				}
 
 				// Cleanup
@@ -2236,7 +2238,8 @@ public class Arena {
 					endWave();
 				}
 				catch (ArenaException e) {
-					CommunicationManager.debugErrorShouldNotHappen();
+					CommunicationManager.debugError("%s: %s", CommunicationManager.DebugLevel.QUIET, getName(),
+						e.getMessage());
 				}
 
 				// Cleanup
@@ -2619,7 +2622,9 @@ public class Arena {
 					try {
 						startWave();
 					}
-					catch (ArenaException ignored) {
+					catch (ArenaException e) {
+						CommunicationManager.debugError("%s: %s", CommunicationManager.DebugLevel.QUIET, getName(),
+							e.getMessage());
 					}
 				}
 			});
@@ -3157,6 +3162,15 @@ public class Arena {
 
 	public void decrementVillagers() {
 		villagers--;
+		if (this.villagers <= 0 && status == ArenaStatus.ACTIVE && !isSpawningVillagers()) {
+			try {
+				endGame();
+			}
+			catch (ArenaException e) {
+				CommunicationManager.debugError("%s: %s", CommunicationManager.DebugLevel.QUIET, getName(),
+					e.getMessage());
+			}
+		}
 	}
 
 	public void resetVillagers() {
@@ -3185,6 +3199,14 @@ public class Arena {
 
 	public void decrementEnemies() {
 		enemies--;
+		if (enemies <= 0 && !isSpawningMonsters())
+			try {
+				endWave();
+			}
+			catch (ArenaException e) {
+				CommunicationManager.debugError("%s: %s", CommunicationManager.DebugLevel.QUIET, getName(),
+					e.getMessage());
+			}
 	}
 
 	public void resetEnemies() {
@@ -3610,7 +3632,9 @@ public class Arena {
 				endGame();
 				return;
 			}
-			catch (ArenaException ignored) {
+			catch (ArenaException e) {
+				CommunicationManager.debugError("%s: %s", CommunicationManager.DebugLevel.QUIET, getName(),
+					e.getMessage());
 			}
 		}
 
@@ -3619,7 +3643,9 @@ public class Arena {
 			try {
 				endWave();
 			}
-			catch (ArenaException ignored) {
+			catch (ArenaException e) {
+				CommunicationManager.debugError("%s: %s", CommunicationManager.DebugLevel.QUIET, getName(),
+					e.getMessage());
 			}
 	}
 

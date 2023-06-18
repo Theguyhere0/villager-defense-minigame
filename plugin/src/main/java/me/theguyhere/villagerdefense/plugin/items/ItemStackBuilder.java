@@ -204,18 +204,6 @@ public class ItemStackBuilder {
 		}
 	}
 
-	// Rename an item
-	@NotNull
-	public static ItemStack rename(ItemStack item, String newName) {
-		ItemStack newItem = item.clone();
-		ItemMeta meta = newItem.getItemMeta();
-
-		if (meta != null)
-			meta.setDisplayName(newName);
-		newItem.setItemMeta(meta);
-		return newItem;
-	}
-
 	// Remove last lore on the list
 	@NotNull
 	public static ItemStack removeLastLore(@NotNull ItemStack itemStack) {

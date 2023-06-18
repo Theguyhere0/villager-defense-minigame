@@ -48,8 +48,9 @@ class CommandForceDelayArena {
 			catch (ArenaStatusException e) {
 				PlayerManager.notifyFailure(player, LanguageManager.errors.arenaInProgress);
 			}
-			catch (ArenaException e) {
-				CommunicationManager.debugErrorShouldNotHappen();
+			catch (ArenaTaskException e) {
+				CommunicationManager.debugInfo("%s: Manual restart attempted when not eligible",
+					CommunicationManager.DebugLevel.VERBOSE, arena.getName());
 			}
 		}
 

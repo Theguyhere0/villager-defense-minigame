@@ -12,7 +12,6 @@ import org.bukkit.inventory.ItemStack;
 
 public abstract class VDAbility extends VDItem {
 	public static final NamespacedKey COOLDOWN_KEY = new NamespacedKey(Main.plugin, "cooldown");
-	public static final NamespacedKey DURATION_KEY = new NamespacedKey(Main.plugin, "duration");
 	public static final NamespacedKey RANGE_KEY = new NamespacedKey(Main.plugin, "abilityRange");
 
 	public static ItemStack createAbility(String kitID, Tier tier) {
