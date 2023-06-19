@@ -6,24 +6,24 @@ import net.minecraft.server.v1_16_R3.PacketPlayOutEntityDestroy;
 
 /**
  * Packet class for destroying entities.
- *
+ * <p>
  * This class format was borrowed from filoghost.
  */
 class EntityDestroyPacket extends VersionNMSPacket {
-    private final Packet<?> rawPacket;
+	private final Packet<?> rawPacket;
 
-    EntityDestroyPacket(EntityID entityID) {
-        PacketSetter packetSetter = PacketSetter.get();
+	EntityDestroyPacket(EntityID entityID) {
+		PacketSetter packetSetter = PacketSetter.get();
 
-        // Write ID of entity to destroy
-        packetSetter.writeVarIntArray(entityID.getNumericID());
+		// Write ID of entity to destroy
+		packetSetter.writeVarIntArray(entityID.getNumericID());
 
-        // Send out packet
-        rawPacket = writeData(new PacketPlayOutEntityDestroy(), packetSetter);
-    }
+		// Send out packet
+		rawPacket = writeData(new PacketPlayOutEntityDestroy(), packetSetter);
+	}
 
-    @Override
-    Packet<?> getRawPacket() {
-        return rawPacket;
-    }
+	@Override
+	Packet<?> getRawPacket() {
+		return rawPacket;
+	}
 }

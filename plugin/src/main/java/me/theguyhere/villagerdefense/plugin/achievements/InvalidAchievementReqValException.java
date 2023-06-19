@@ -6,11 +6,11 @@ package me.theguyhere.villagerdefense.plugin.achievements;
  */
 @SuppressWarnings("unused")
 class InvalidAchievementReqValException extends AchievementException {
-    InvalidAchievementReqValException(String msg) {
-        super(msg);
-    }
+	InvalidAchievementReqValException(String msg) {
+		super(msg);
+	}
 
-    InvalidAchievementReqValException() {
-        super();
-    }
+	InvalidAchievementReqValException() {
+		super();
+	}
 }

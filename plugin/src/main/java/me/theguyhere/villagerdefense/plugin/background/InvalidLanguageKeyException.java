@@ -5,11 +5,11 @@ package me.theguyhere.villagerdefense.plugin.background;
  */
 @SuppressWarnings("unused")
 public class InvalidLanguageKeyException extends Exception {
-    public InvalidLanguageKeyException(String msg) {
-        super(msg);
-    }
+	public InvalidLanguageKeyException(String msg) {
+		super(msg);
+	}
 
-    public InvalidLanguageKeyException() {
-        super();
-    }
+	public InvalidLanguageKeyException() {
+		super();
+	}
 }

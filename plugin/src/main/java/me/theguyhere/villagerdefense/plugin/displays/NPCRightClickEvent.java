@@ -12,20 +12,20 @@ public class NPCRightClickEvent extends Event implements Cancellable {
 	private final int npcId;
 	private boolean isCancelled = false;
 	private static final HandlerList HANDLERS = new HandlerList();
-	
+
 	public NPCRightClickEvent(Player player, int npcId) {
 		this.player = player;
 		this.npcId = npcId;
 	}
-	
+
 	public Player getPlayer() {
 		return player;
 	}
-	
+
 	public int getNpcId() {
 		return npcId;
 	}
-	
+
 	@Override
 	public @NotNull HandlerList getHandlers() {
 		return HANDLERS;

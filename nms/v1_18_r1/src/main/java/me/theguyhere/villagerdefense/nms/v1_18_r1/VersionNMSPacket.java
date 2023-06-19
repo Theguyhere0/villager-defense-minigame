@@ -12,15 +12,15 @@ import org.bukkit.entity.Player;
  */
 abstract class VersionNMSPacket implements PacketGroup {
 
-    /**
-     * Send packet group to player.
-     *
-     * @param player Recipient.
-     */
-    @Override
-    public void sendTo(Player player) {
-        ((CraftPlayer) player).getHandle().connection.send(getRawPacket());
-    }
+	/**
+	 * Send packet group to player.
+	 *
+	 * @param player Recipient.
+	 */
+	@Override
+	public void sendTo(Player player) {
+		((CraftPlayer) player).getHandle().connection.send(getRawPacket());
+	}
 
-    abstract Packet<?> getRawPacket();
+	abstract Packet<?> getRawPacket();
 }

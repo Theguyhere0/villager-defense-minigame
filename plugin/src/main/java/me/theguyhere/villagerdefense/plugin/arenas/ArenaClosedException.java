@@ -5,11 +5,11 @@ package me.theguyhere.villagerdefense.plugin.arenas;
  */
 @SuppressWarnings("unused")
 public class ArenaClosedException extends ArenaException {
-    public ArenaClosedException(String msg) {
-        super(msg);
-    }
+	public ArenaClosedException(String msg) {
+		super(msg);
+	}
 
-    public ArenaClosedException() {
-        super();
-    }
+	public ArenaClosedException() {
+		super();
+	}
 }

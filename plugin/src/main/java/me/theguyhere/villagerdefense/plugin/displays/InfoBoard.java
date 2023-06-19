@@ -10,9 +10,13 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class InfoBoard {
-	/** The information for the InfoBoard.*/
+	/**
+	 * The information for the InfoBoard.
+	 */
 	private final Hologram hologram;
-	/** The location of the InfoBoard.*/
+	/**
+	 * The location of the InfoBoard.
+	 */
 	private final Location location;
 
 	public InfoBoard(@NotNull Location location) throws InvalidLocationException {
@@ -22,19 +26,28 @@ public class InfoBoard {
 
 		// Gather info text
 		String[] text = {new ColoredMessage(ChatColor.YELLOW, LanguageManager.messages.info1).toString(),
-				new ColoredMessage(ChatColor.GREEN, LanguageManager.messages.info2).toString(),
-				CommunicationManager.format(infoMessage(LanguageManager.messages.info3),
-						replaceMessage("/vd stats")),
-				CommunicationManager.format(infoMessage(LanguageManager.messages.info4),
-						replaceMessage("/vd kits"), replaceMessage(LanguageManager.names.crystals)),
-				CommunicationManager.format(infoMessage(LanguageManager.messages.info5),
-						replaceMessage("/vd help")),
-				CommunicationManager.format(infoMessage(LanguageManager.messages.info6),
-						replaceMessage("/vd leave"))};
+			new ColoredMessage(ChatColor.GREEN, LanguageManager.messages.info2).toString(),
+			CommunicationManager.format(
+				infoMessage(LanguageManager.messages.info3),
+				replaceMessage("/vd stats")
+			),
+			CommunicationManager.format(infoMessage(LanguageManager.messages.info4),
+				replaceMessage("/vd kits"), replaceMessage(LanguageManager.names.crystals)
+			),
+			CommunicationManager.format(
+				infoMessage(LanguageManager.messages.info5),
+				replaceMessage("/vd help")
+			),
+			CommunicationManager.format(
+				infoMessage(LanguageManager.messages.info6),
+				replaceMessage("/vd leave")
+			)};
 
 		// Set location and hologram
 		this.location = location;
-		this.hologram = new Hologram(location.clone().add(0, .5, 0), text);
+		this.hologram = new Hologram(location
+			.clone()
+			.add(0, .5, 0), text);
 	}
 
 	public Location getLocation() {
@@ -54,6 +67,7 @@ public class InfoBoard {
 
 	/**
 	 * Spawn in the InfoBoard for a specific player.
+	 *
 	 * @param player - The player to display the InfoBoard for.
 	 */
 	public void displayForPlayer(Player player) {
@@ -70,6 +84,7 @@ public class InfoBoard {
 	private static ColoredMessage infoMessage(String msg) {
 		return new ColoredMessage(ChatColor.GOLD, msg);
 	}
+
 	private static ColoredMessage replaceMessage(String msg) {
 		return new ColoredMessage(ChatColor.AQUA, msg);
 	}

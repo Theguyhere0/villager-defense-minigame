@@ -9,15 +9,21 @@ import org.bukkit.ChatColor;
  * NOT MEANT TO BE USED DIRECTLY BY OTHER CLASSES.
  */
 class ConsoleManager {
-    static void warning(String msg) {
-        Bukkit.getConsoleSender().sendMessage("[VillagerDefense] " + ChatColor.RED + msg);
-    }
+	static void warning(String msg) {
+		Bukkit
+			.getConsoleSender()
+			.sendMessage("[VillagerDefense] " + ChatColor.RED + msg);
+	}
 
-    static void info(String msg) {
-        Bukkit.getConsoleSender().sendMessage("[VillagerDefense] " + msg);
-    }
+	static void info(String msg) {
+		Bukkit
+			.getConsoleSender()
+			.sendMessage("[VillagerDefense] " + msg);
+	}
 
-    static void confirm(String msg) {
-        Bukkit.getConsoleSender().sendMessage("[VillagerDefense] " + ChatColor.GREEN + msg);
-    }
+	static void confirm(String msg) {
+		Bukkit
+			.getConsoleSender()
+			.sendMessage("[VillagerDefense] " + ChatColor.GREEN + msg);
+	}
 }

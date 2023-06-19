@@ -11,31 +11,25 @@ import org.bukkit.entity.Player;
  * This class structure borrowed from filoghost.
  */
 public interface NMSManager {
-    int BORDER_SIZE = 1000000;
+	TextPacketEntity newTextPacketEntity();
 
-    TextPacketEntity newTextPacketEntity();
+	VillagerPacketEntity newVillagerPacketEntity(String type);
 
-    VillagerPacketEntity newVillagerPacketEntity(String type);
+	String getSpawnParticleName();
 
-    String getSpawnParticleName();
+	String getMonsterParticleName();
 
-    String getMonsterParticleName();
+	String getVillagerParticleName();
 
-    String getVillagerParticleName();
+	String getBorderParticleName();
 
-    String getBorderParticleName();
+	void nameArena(Player player, String arenaName, int arenaID);
 
-    void nameArena(Player player, String arenaName, int arenaID);
+	PacketGroup createBorderWarning(Location location, double healthRatio);
 
-    void setBowCooldown(Player player, int cooldownTicks);
+	PacketGroup resetBorderWarning(Location location, double size, int warningDistance);
 
-    void setCrossbowCooldown(Player player, int cooldownTicks);
+	void injectPacketListener(Player player, PacketListener packetListener);
 
-    PacketGroup createEffect(Location location, double healthRatio);
-
-    PacketGroup resetEffect(Location location, double size, int warningDistance);
-
-    void injectPacketListener(Player player, PacketListener packetListener);
-
-    void uninjectPacketListener(Player player);
+	void uninjectPacketListener(Player player);
 }

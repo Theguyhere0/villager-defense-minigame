@@ -8,22 +8,22 @@ import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
  * Class for sending entity head rotation packets.
  */
 public class EntityHeadRotationPacket extends VersionNMSPacket {
-    private final Packet<?> rawPacket;
+	private final Packet<?> rawPacket;
 
-    EntityHeadRotationPacket(EntityID entityID, float headYaw) {
-        PacketSetter packetSetter = PacketSetter.get();
+	EntityHeadRotationPacket(EntityID entityID, float headYaw) {
+		PacketSetter packetSetter = PacketSetter.get();
 
-        // Entity info
-        packetSetter.writeVarInt(entityID.getNumericID());
+		// Entity info
+		packetSetter.writeVarInt(entityID.getNumericID());
 
-        // Head yaw
-        packetSetter.writeByte((int) headYaw);
+		// Head yaw
+		packetSetter.writeByte((int) headYaw);
 
-        rawPacket = new ClientboundRotateHeadPacket(packetSetter);
-    }
+		rawPacket = new ClientboundRotateHeadPacket(packetSetter);
+	}
 
-    @Override
-    Packet<?> getRawPacket() {
-        return rawPacket;
-    }
+	@Override
+	Packet<?> getRawPacket() {
+		return rawPacket;
+	}
 }

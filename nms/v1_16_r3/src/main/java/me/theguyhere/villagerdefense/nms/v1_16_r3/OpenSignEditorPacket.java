@@ -5,19 +5,19 @@ import net.minecraft.server.v1_16_R3.Packet;
 import net.minecraft.server.v1_16_R3.PacketPlayOutOpenSignEditor;
 
 public class OpenSignEditorPacket extends VersionNMSPacket {
-    private final Packet<?> rawPacket;
+	private final Packet<?> rawPacket;
 
-    OpenSignEditorPacket(BlockPosition position) {
-        PacketSetter packetSetter = PacketSetter.get();
+	OpenSignEditorPacket(BlockPosition position) {
+		PacketSetter packetSetter = PacketSetter.get();
 
-        // Sign location
-        packetSetter.writePosition(position);
+		// Sign location
+		packetSetter.writePosition(position);
 
-        rawPacket = writeData(new PacketPlayOutOpenSignEditor(), packetSetter);
-    }
+		rawPacket = writeData(new PacketPlayOutOpenSignEditor(), packetSetter);
+	}
 
-    @Override
-    public Packet<?> getRawPacket() {
-        return rawPacket;
-    }
+	@Override
+	public Packet<?> getRawPacket() {
+		return rawPacket;
+	}
 }

@@ -5,11 +5,11 @@ package me.theguyhere.villagerdefense.plugin.achievements;
  */
 @SuppressWarnings("unused")
 abstract class AchievementException extends Exception {
-    AchievementException(String msg) {
-        super(msg);
-    }
+	AchievementException(String msg) {
+		super(msg);
+	}
 
-    AchievementException() {
-        super();
-    }
+	AchievementException() {
+		super();
+	}
 }

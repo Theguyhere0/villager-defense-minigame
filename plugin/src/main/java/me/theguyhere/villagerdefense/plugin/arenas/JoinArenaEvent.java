@@ -8,40 +8,40 @@ import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 public class JoinArenaEvent extends Event implements Cancellable {
-    private final Player player;
-    private final Arena arena;
-    private boolean isCancelled = false;
-    private static final HandlerList HANDLERS = new HandlerList();
+	private final Player player;
+	private final Arena arena;
+	private boolean isCancelled = false;
+	private static final HandlerList HANDLERS = new HandlerList();
 
-    public JoinArenaEvent(Player player, Arena arena) {
-        this.player = player;
-        this.arena = arena;
-    }
+	public JoinArenaEvent(Player player, Arena arena) {
+		this.player = player;
+		this.arena = arena;
+	}
 
-    @Override
-    public @NotNull HandlerList getHandlers() {
-        return HANDLERS;
-    }
+	@Override
+	public @NotNull HandlerList getHandlers() {
+		return HANDLERS;
+	}
 
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
-    }
+	public static HandlerList getHandlerList() {
+		return HANDLERS;
+	}
 
-    public Player getPlayer() {
-        return player;
-    }
+	public Player getPlayer() {
+		return player;
+	}
 
-    public Arena getArena() {
-        return arena;
-    }
+	public Arena getArena() {
+		return arena;
+	}
 
-    @Override
-    public boolean isCancelled() {
-        return isCancelled;
-    }
+	@Override
+	public boolean isCancelled() {
+		return isCancelled;
+	}
 
-    @Override
-    public void setCancelled(boolean b) {
-        isCancelled = b;
-    }
+	@Override
+	public void setCancelled(boolean b) {
+		isCancelled = b;
+	}
 }

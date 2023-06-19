@@ -10,34 +10,37 @@ import net.minecraft.network.FriendlyByteBuf;
  */
 class PacketSetter extends FriendlyByteBuf {
 
-    // Make this class a singleton
-    private static final PacketSetter INSTANCE = new PacketSetter();
+	// Make this class a singleton
+	private static final PacketSetter INSTANCE = new PacketSetter();
 
-    /**
-     * Get the instance of {@link PacketSetter} for this version.
-     * @return {@link PacketSetter} for specific version.
-     */
-    static PacketSetter get() {
-        INSTANCE.clear();
-        return INSTANCE;
-    }
+	/**
+	 * Get the instance of {@link PacketSetter} for this version.
+	 *
+	 * @return {@link PacketSetter} for specific version.
+	 */
+	static PacketSetter get() {
+		INSTANCE.clear();
+		return INSTANCE;
+	}
 
-    // Create instance once on class load
-    private PacketSetter() {
-        super(Unpooled.buffer());
-    }
+	// Create instance once on class load
+	private PacketSetter() {
+		super(Unpooled.buffer());
+	}
 
-    public FriendlyByteBuf writeVarIntArray(int... is) {
-        return super.writeVarIntArray(is);
-    }
+	public FriendlyByteBuf writeVarIntArray(int... is) {
+		return super.writeVarIntArray(is);
+	}
 
-    <T> void writeDataWatcherEntry(DataWatcherKey<T> key, T value) {
-        writeByte(key.getIndex());
-        writeVarInt(key.getSerializerTypeID());
-        key.getSerializer().write(this, value);
-    }
+	<T> void writeDataWatcherEntry(DataWatcherKey<T> key, T value) {
+		writeByte(key.getIndex());
+		writeVarInt(key.getSerializerTypeID());
+		key
+			.getSerializer()
+			.write(this, value);
+	}
 
-    void writeDataWatcherEntriesEnd() {
-        writeByte(0xFF);
-    }
+	void writeDataWatcherEntriesEnd() {
+		writeByte(0xFF);
+	}
 }

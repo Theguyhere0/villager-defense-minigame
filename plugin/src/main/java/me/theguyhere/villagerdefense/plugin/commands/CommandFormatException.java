@@ -5,11 +5,11 @@ package me.theguyhere.villagerdefense.plugin.commands;
  */
 @SuppressWarnings("unused")
 public class CommandFormatException extends CommandException {
-    public CommandFormatException(String msg) {
-        super(msg);
-    }
+	public CommandFormatException(String msg) {
+		super(msg);
+	}
 
-    public CommandFormatException() {
-        super();
-    }
+	public CommandFormatException() {
+		super();
+	}
 }

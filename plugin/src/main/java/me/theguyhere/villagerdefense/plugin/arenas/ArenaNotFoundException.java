@@ -5,11 +5,11 @@ package me.theguyhere.villagerdefense.plugin.arenas;
  */
 @SuppressWarnings("unused")
 public class ArenaNotFoundException extends ArenaException {
-    public ArenaNotFoundException(String msg) {
-        super(msg);
-    }
+	public ArenaNotFoundException(String msg) {
+		super(msg);
+	}
 
-    public ArenaNotFoundException() {
-        super();
-    }
+	public ArenaNotFoundException() {
+		super();
+	}
 }

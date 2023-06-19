@@ -9,46 +9,46 @@ import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 public class SignGUIEvent extends Event implements Cancellable {
-    private final Arena arena;
-    private final Player player;
-    private final String[] lines;
-    private boolean isCancelled = false;
-    private static final HandlerList HANDLERS = new HandlerList();
+	private final Arena arena;
+	private final Player player;
+	private final String[] lines;
+	private boolean isCancelled = false;
+	private static final HandlerList HANDLERS = new HandlerList();
 
-    public SignGUIEvent(Arena arena, Player player, String... args) {
-        this.arena = arena;
-        this.player = player;
-        this.lines = args;
-    }
+	public SignGUIEvent(Arena arena, Player player, String... args) {
+		this.arena = arena;
+		this.player = player;
+		this.lines = args;
+	}
 
-    @Override
-    public @NotNull HandlerList getHandlers() {
-        return HANDLERS;
-    }
+	@Override
+	public @NotNull HandlerList getHandlers() {
+		return HANDLERS;
+	}
 
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
-    }
+	public static HandlerList getHandlerList() {
+		return HANDLERS;
+	}
 
-    public Arena getArena() {
-        return arena;
-    }
+	public Arena getArena() {
+		return arena;
+	}
 
-    public Player getPlayer() {
-        return player;
-    }
+	public Player getPlayer() {
+		return player;
+	}
 
-    public String[] getLines() {
-        return lines;
-    }
+	public String[] getLines() {
+		return lines;
+	}
 
-    @Override
-    public boolean isCancelled() {
-        return isCancelled;
-    }
+	@Override
+	public boolean isCancelled() {
+		return isCancelled;
+	}
 
-    @Override
-    public void setCancelled(boolean b) {
-        isCancelled = b;
-    }
+	@Override
+	public void setCancelled(boolean b) {
+		isCancelled = b;
+	}
 }

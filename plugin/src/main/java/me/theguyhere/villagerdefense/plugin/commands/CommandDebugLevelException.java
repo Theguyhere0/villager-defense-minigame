@@ -5,11 +5,11 @@ package me.theguyhere.villagerdefense.plugin.commands;
  */
 @SuppressWarnings("unused")
 public class CommandDebugLevelException extends CommandException {
-    public CommandDebugLevelException(String msg) {
-        super(msg);
-    }
+	public CommandDebugLevelException(String msg) {
+		super(msg);
+	}
 
-    public CommandDebugLevelException() {
-        super();
-    }
+	public CommandDebugLevelException() {
+		super();
+	}
 }

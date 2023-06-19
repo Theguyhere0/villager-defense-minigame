@@ -9,20 +9,20 @@ import net.minecraft.network.protocol.game.ClientboundSetBorderSizePacket;
  * This class format was borrowed from filoghost.
  */
 class WorldBorderSizePacket extends VersionNMSPacket {
-    private final Packet<?> rawPacket;
+	private final Packet<?> rawPacket;
 
-    WorldBorderSizePacket(double size) {
-        PacketSetter packetSetter = PacketSetter.get();
+	WorldBorderSizePacket(double size) {
+		PacketSetter packetSetter = PacketSetter.get();
 
-        // Write in size
-        packetSetter.writeDouble(size);
+		// Write in size
+		packetSetter.writeDouble(size);
 
-        // Send out packet
-        rawPacket = new ClientboundSetBorderSizePacket(packetSetter);
-    }
+		// Send out packet
+		rawPacket = new ClientboundSetBorderSizePacket(packetSetter);
+	}
 
-    @Override
-    Packet<?> getRawPacket() {
-        return rawPacket;
-    }
+	@Override
+	Packet<?> getRawPacket() {
+		return rawPacket;
+	}
 }

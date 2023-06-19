@@ -11,33 +11,35 @@ import org.bukkit.Location;
  * A villager entity constructed out of packets.
  */
 class PacketEntityVillager implements VillagerPacketEntity {
-    private final EntityID villagerID;
-    private final String type;
+	private final EntityID villagerID;
+	private final String type;
 
-    PacketEntityVillager(EntityID villagerID, String type) {
-        this.villagerID = villagerID;
-        this.type = type;
-    }
+	PacketEntityVillager(EntityID villagerID, String type) {
+		this.villagerID = villagerID;
+		this.type = type;
+	}
 
-    @Override
-    public PacketGroup newDestroyPackets() {
-        return new EntityDestroyPacket(villagerID);
-    }
+	@Override
+	public PacketGroup newDestroyPackets() {
+		return new EntityDestroyPacket(villagerID);
+	}
 
-    @Override
-    public PacketGroup newSpawnPackets(Location location) {
-        return PacketGroup.of(
-                new SpawnEntityLivingPacket(villagerID, IRegistry.ENTITY_TYPE.a(EntityTypes.VILLAGER), location,
-                        location.getPitch()),
-                new EntityHeadRotationPacket(villagerID, location.getYaw()),
-                EntityMetadataPacket.builder(villagerID)
-                        .setVillagerType(type)
-                        .build()
-        );
-    }
+	@Override
+	public PacketGroup newSpawnPackets(Location location) {
+		return PacketGroup.of(
+			new SpawnEntityLivingPacket(villagerID, IRegistry.ENTITY_TYPE.a(EntityTypes.VILLAGER), location,
+				location.getPitch()
+			),
+			new EntityHeadRotationPacket(villagerID, location.getYaw()),
+			EntityMetadataPacket
+				.builder(villagerID)
+				.setVillagerType(type)
+				.build()
+		);
+	}
 
-    @Override
-    public int getEntityID() {
-        return villagerID.getNumericID();
-    }
+	@Override
+	public int getEntityID() {
+		return villagerID.getNumericID();
+	}
 }

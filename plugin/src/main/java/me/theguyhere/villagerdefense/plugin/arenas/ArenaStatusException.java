@@ -5,15 +5,15 @@ package me.theguyhere.villagerdefense.plugin.arenas;
  */
 @SuppressWarnings("unused")
 public class ArenaStatusException extends ArenaException {
-    public ArenaStatusException(ArenaStatus status) {
-        super("Arena must have a status of " + status);
-    }
+	public ArenaStatusException(ArenaStatus status) {
+		super("Arena must have a status of " + status);
+	}
 
-    public ArenaStatusException(String msg) {
-        super(msg);
-    }
+	public ArenaStatusException(String msg) {
+		super(msg);
+	}
 
-    public ArenaStatusException() {
-        super();
-    }
+	public ArenaStatusException() {
+		super();
+	}
 }

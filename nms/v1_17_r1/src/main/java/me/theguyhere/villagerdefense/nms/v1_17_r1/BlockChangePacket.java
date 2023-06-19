@@ -9,20 +9,20 @@ import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_17_R1.block.data.CraftBlockData;
 
 public class BlockChangePacket extends VersionNMSPacket {
-    private final Packet<?> rawPacket;
+	private final Packet<?> rawPacket;
 
-    BlockChangePacket(BlockPos position, Material material) {
-        PacketSetter packetSetter = PacketSetter.get();
+	BlockChangePacket(BlockPos position, Material material) {
+		PacketSetter packetSetter = PacketSetter.get();
 
-        // Block information
-        packetSetter.writeBlockPos(position);
-        packetSetter.writeVarInt(Block.getId(((CraftBlockData) Bukkit.createBlockData(material)).getState()));
+		// Block information
+		packetSetter.writeBlockPos(position);
+		packetSetter.writeVarInt(Block.getId(((CraftBlockData) Bukkit.createBlockData(material)).getState()));
 
-        rawPacket = new ClientboundBlockUpdatePacket(packetSetter);
-    }
+		rawPacket = new ClientboundBlockUpdatePacket(packetSetter);
+	}
 
-    @Override
-    Packet<?> getRawPacket() {
-        return rawPacket;
-    }
+	@Override
+	Packet<?> getRawPacket() {
+		return rawPacket;
+	}
 }

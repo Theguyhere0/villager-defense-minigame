@@ -5,11 +5,11 @@ package me.theguyhere.villagerdefense.plugin.commands;
  */
 @SuppressWarnings("unused")
 public class CommandPlayerException extends CommandException {
-    public CommandPlayerException(String msg) {
-        super(msg);
-    }
+	public CommandPlayerException(String msg) {
+		super(msg);
+	}
 
-    public CommandPlayerException() {
-        super();
-    }
+	public CommandPlayerException() {
+		super();
+	}
 }

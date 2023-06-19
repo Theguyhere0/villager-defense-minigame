@@ -7,11 +7,11 @@ import org.bukkit.Location;
  */
 @SuppressWarnings("unused")
 public class InvalidLocationException extends Exception {
-    public InvalidLocationException(String msg) {
-        super(msg);
-    }
+	public InvalidLocationException(String msg) {
+		super(msg);
+	}
 
-    public InvalidLocationException() {
-        super();
-    }
+	public InvalidLocationException() {
+		super();
+	}
 }

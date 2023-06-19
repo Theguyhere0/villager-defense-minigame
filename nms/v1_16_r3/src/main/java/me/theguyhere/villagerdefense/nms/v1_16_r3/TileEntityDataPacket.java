@@ -6,21 +6,21 @@ import net.minecraft.server.v1_16_R3.Packet;
 import net.minecraft.server.v1_16_R3.PacketPlayOutTileEntityData;
 
 public class TileEntityDataPacket extends VersionNMSPacket {
-    private final Packet<?> rawPacket;
+	private final Packet<?> rawPacket;
 
-    TileEntityDataPacket(BlockPosition position, int type, NBTTagCompound nbtTagCompound) {
-        PacketSetter packetSetter = PacketSetter.get();
+	TileEntityDataPacket(BlockPosition position, int type, NBTTagCompound nbtTagCompound) {
+		PacketSetter packetSetter = PacketSetter.get();
 
-        // Block entity data
-        packetSetter.writePosition(position);
-        packetSetter.writeVarInt(type);
-        packetSetter.writeNBTTagCompound(nbtTagCompound);
+		// Block entity data
+		packetSetter.writePosition(position);
+		packetSetter.writeVarInt(type);
+		packetSetter.writeNBTTagCompound(nbtTagCompound);
 
-        rawPacket = writeData(new PacketPlayOutTileEntityData(), packetSetter);
-    }
+		rawPacket = writeData(new PacketPlayOutTileEntityData(), packetSetter);
+	}
 
-    @Override
-    public Packet<?> getRawPacket() {
-        return rawPacket;
-    }
+	@Override
+	public Packet<?> getRawPacket() {
+		return rawPacket;
+	}
 }
