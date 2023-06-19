@@ -3,6 +3,7 @@ package me.theguyhere.villagerdefense.nms.common;
 import me.theguyhere.villagerdefense.nms.common.entities.TextPacketEntity;
 import me.theguyhere.villagerdefense.nms.common.entities.VillagerPacketEntity;
 import org.bukkit.Location;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 
 /**
@@ -28,6 +29,8 @@ public interface NMSManager {
 	PacketGroup createBorderWarning(Location location, double healthRatio);
 
 	PacketGroup resetBorderWarning(Location location, double size, int warningDistance);
+
+	Mob spawnVDMob(Location location, String key);
 
 	void injectPacketListener(Player player, PacketListener packetListener);
 

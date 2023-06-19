@@ -34,10 +34,6 @@ public class SpawnIndicator {
 		return location;
 	}
 
-	public Hologram getHologram() {
-		return hologram;
-	}
-
 	/**
 	 * Spawn in the indicator for every online player.
 	 */

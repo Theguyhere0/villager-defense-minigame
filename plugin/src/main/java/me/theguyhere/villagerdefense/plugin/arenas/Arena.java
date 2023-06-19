@@ -2268,65 +2268,6 @@ public class Arena {
 		activeTasks.put(ONE_TICK, new BukkitRunnable() {
 			@Override
 			public void run() {
-				// Update mob targets
-				mobs.forEach(mob -> {
-					Mob mobster = mob.getEntity();
-					Location location = mobster.getLocation();
-					int range = mob.getTargetRange();
-					List<Entity> nearby = Objects
-						.requireNonNull(location.getWorld())
-						.getNearbyEntities(getBounds(), entity -> range < 0 ||
-							mobster
-								.getLocation()
-								.distance(entity.getLocation()) <= range)
-						.stream()
-						.filter(entity -> entity instanceof LivingEntity)
-						.filter(entity -> !entity.isDead())
-						.filter(entity -> ((LivingEntity) entity)
-							.getActivePotionEffects()
-							.stream()
-							.noneMatch(potion -> potion
-								.getType()
-								.equals(PotionEffectType.INVISIBILITY)))
-						.filter(entity -> VDMob.isTeam(mobster, IndividualTeam.MONSTER)
-							&& entity instanceof Player || !(entity instanceof Player) &&
-							!VDMob.areSameTeam(mobster, entity))
-						.filter(entity -> {
-							if (entity instanceof Player)
-								return ((Player) entity).getGameMode() == GameMode.ADVENTURE;
-							else return true;
-						})
-						.filter(mobster::hasLineOfSight)
-						.sorted((e1, e2) -> (int) (mobster
-							.getLocation()
-							.distance(e1.getLocation()) -
-							mobster
-								.getLocation()
-								.distance(e2.getLocation())))
-						.collect(Collectors.toList());
-					List<Entity> priority = nearby
-						.stream()
-						.filter(mob
-							.getTargetPriority()
-							.getTest())
-						.sorted((e1, e2) -> (int) (mobster
-							.getLocation()
-							.distance(e1.getLocation()) -
-							mobster
-								.getLocation()
-								.distance(e2.getLocation())))
-						.collect(Collectors.toList());
-					LivingEntity oldTarget = mobster.getTarget();
-					LivingEntity newTarget = priority.isEmpty() ?
-						(nearby.isEmpty() ? null : (LivingEntity) nearby.get(0)) : (LivingEntity) priority.get(0);
-					if (!(oldTarget == null && newTarget == null) && oldTarget == null || newTarget == null ||
-						!oldTarget
-							.getUniqueId()
-							.equals(newTarget.getUniqueId())) {
-						mobster.setTarget(newTarget);
-					}
-				});
-
 				// Refill ammo
 				getActives().forEach(VDPlayer::refill);
 			}

@@ -10,6 +10,7 @@ import me.theguyhere.villagerdefense.common.Reflection;
 import me.theguyhere.villagerdefense.nms.common.*;
 import me.theguyhere.villagerdefense.nms.common.entities.TextPacketEntity;
 import me.theguyhere.villagerdefense.nms.common.entities.VillagerPacketEntity;
+import me.theguyhere.villagerdefense.nms.v1_19_r3.mobs.VDZombie;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -20,6 +21,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 
 import java.util.function.Consumer;
@@ -36,6 +38,11 @@ public class VersionNMSManager implements NMSManager {
 	@Override
 	public VillagerPacketEntity newVillagerPacketEntity(String type) {
 		return new PacketEntityVillager(new EntityID(), type);
+	}
+
+	@Override
+	public Mob spawnVDMob(Location location, String key) {
+		return (Mob) new VDZombie(location).getBukkitEntity();
 	}
 
 	@Override

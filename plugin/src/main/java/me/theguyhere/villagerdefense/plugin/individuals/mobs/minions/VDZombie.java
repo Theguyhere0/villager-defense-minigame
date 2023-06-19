@@ -2,13 +2,10 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
 import org.bukkit.entity.Zombie;
-
-import java.util.Objects;
 
 public class VDZombie extends VDMinion {
 	public static final String KEY = "zomb";
@@ -16,9 +13,8 @@ public class VDZombie extends VDMinion {
 	public VDZombie(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.ZOMBIE),
+			NMSVersion.getCurrent().getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.zombie,
 			LanguageManager.mobLore.zombie,
 			IndividualAttackType.NORMAL
@@ -29,7 +25,6 @@ public class VDZombie extends VDMinion {
 		armor = getArmor(level);
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .1);
-		setModerateAttackSpeed();
 		setModerateKnockback();
 		setMediumWeight();
 		setSlowSpeed();

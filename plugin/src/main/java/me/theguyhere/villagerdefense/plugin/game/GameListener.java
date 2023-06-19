@@ -2097,7 +2097,7 @@ public class GameListener implements Listener {
 	@EventHandler
 	public void onCreatureSpawn(CreatureSpawnEvent e) {
 		// Ignore for custom mobs
-		if (VDMob.isVDMob(e.getEntity()))
+		if (e.getSpawnReason() == CreatureSpawnEvent.SpawnReason.CUSTOM)
 			return;
 
 		// Check all arena bounds and cancel if inside

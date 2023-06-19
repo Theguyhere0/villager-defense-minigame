@@ -68,10 +68,6 @@ public class Hologram {
 		return bottomAligned;
 	}
 
-	public HoloLine[] getLines() {
-		return lines;
-	}
-
 	/**
 	 * Spawn in the Hologram for every online player.
 	 */

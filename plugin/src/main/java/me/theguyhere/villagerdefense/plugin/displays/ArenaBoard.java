@@ -82,10 +82,6 @@ public class ArenaBoard {
 		return location;
 	}
 
-	public Hologram getHologram() {
-		return hologram;
-	}
-
 	/**
 	 * Spawn in the ArenaBoard for every online player.
 	 */

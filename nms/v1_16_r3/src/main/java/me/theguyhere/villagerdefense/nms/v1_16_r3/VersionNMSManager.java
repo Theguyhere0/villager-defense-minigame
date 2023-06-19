@@ -18,6 +18,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 
 import java.util.function.Consumer;
@@ -112,6 +113,11 @@ public class VersionNMSManager implements NMSManager {
 			new WorldBorderSizePacket(size),
 			new WorldBorderWarningDistancePacket(warningDistance)
 		);
+	}
+
+	@Override
+	public Mob spawnVDMob(Location location, String key) {
+		return null;
 	}
 
 	@Override
