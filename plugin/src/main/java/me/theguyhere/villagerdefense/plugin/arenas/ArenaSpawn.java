@@ -44,7 +44,7 @@ public class ArenaSpawn {
 	}
 
 	public @NotNull Location getLocation() {
-		return location;
+		return location.clone();
 	}
 
 	public @NotNull ArenaSpawnType getSpawnType() {

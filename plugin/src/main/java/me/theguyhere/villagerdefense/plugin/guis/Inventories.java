@@ -1574,17 +1574,6 @@ public class Inventories {
 				(arena.getCorner2() == null ? "&c&lMissing" : "&a&lSet"))
 		).build());
 
-		// Option to stretch the arena bounds to the top and bottom of the world
-		buttons.add(new ItemStackBuilder(
-			Material.WEEPING_VINES,
-			CommunicationManager.format("&3&lStretch Bounds")
-		)
-			.setLores(
-				CommunicationManager.format("&7Stretches the arena bounds in the y direction from"),
-				CommunicationManager.format("&7the top to just below the bottom of the world.")
-			)
-			.build());
-
 		// Option to toggle arena border particles
 		buttons.add(new ItemStackBuilder(
 			Material.FIREWORK_ROCKET,

@@ -938,7 +938,7 @@ public class InventoryListener implements Listener {
 			if (buttonName.contains("NO"))
 				player.openInventory(Inventories.createCorner1Menu(meta.getArena()));
 
-				// Remove corner 1, then return to previous menu
+			// Remove corner 1, then return to previous menu
 			else if (buttonName.contains("YES")) {
 				Arena arenaInstance = meta.getArena();
 
@@ -2406,16 +2406,6 @@ public class InventoryListener implements Listener {
 			else if (buttonName.contains("Corner 2"))
 				player.openInventory(Inventories.createCorner2Menu(arenaInstance));
 
-				// Stretch bounds
-			else if (buttonName.contains("Stretch Bounds")) {
-				if (arenaInstance.isClosed()) {
-					arenaInstance.stretchBounds();
-					PlayerManager.notifySuccess(player, "Arena bounds for " + arenaInstance.getName() +
-						" have been stretched.");
-				}
-				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
-			}
-
 			// Toggle border particles
 			else if (buttonName.contains("Border Particles:"))
 				if (arenaInstance.isClosed()) {
@@ -2433,7 +2423,7 @@ public class InventoryListener implements Listener {
 		else if (invID == InventoryID.CORNER_1_MENU) {
 			Arena arenaInstance = meta.getArena();
 
-			// Create spawn
+			// Create corner
 			if (buttonName.contains("Create"))
 				if (!arenaInstance.isClosed())
 					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
@@ -2502,7 +2492,7 @@ public class InventoryListener implements Listener {
 		else if (invID == InventoryID.CORNER_2_MENU) {
 			Arena arenaInstance = meta.getArena();
 
-			// Create spawn
+			// Create corner
 			if (buttonName.contains("Create"))
 				if (!arenaInstance.isClosed())
 					PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");

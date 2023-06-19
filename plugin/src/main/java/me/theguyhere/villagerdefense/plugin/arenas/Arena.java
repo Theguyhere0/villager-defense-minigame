@@ -1504,6 +1504,10 @@ public class Arena {
 		cancelBorderParticles();
 
 		// Set location
+		if (location != null)
+			location.setY(Objects
+				.requireNonNull(location.getWorld())
+				.getMaxHeight() + 10);
 		DataManager.setConfigurationLocation(path + ".corner1", location);
 
 		// Turn on particles if appropriate
@@ -1520,27 +1524,15 @@ public class Arena {
 		cancelBorderParticles();
 
 		// Set location
+		if (location != null)
+			location.setY(Objects
+				.requireNonNull(location.getWorld())
+				.getMinHeight() - 25);
 		DataManager.setConfigurationLocation(path + ".corner2", location);
 
 		// Turn on particles if appropriate
 		if (isClosed())
 			startBorderParticles();
-	}
-
-	public void stretchBounds() {
-		if (getCorner1() == null || getCorner2() == null)
-			return;
-
-		Location temp = getCorner1();
-		temp.setY(Objects
-			.requireNonNull(getCorner1().getWorld())
-			.getMaxHeight() + 10);
-		setCorner1(temp);
-		temp = getCorner2();
-		temp.setY(Objects
-			.requireNonNull(getCorner2().getWorld())
-			.getMinHeight() - 25);
-		setCorner2(temp);
 	}
 
 	public @NotNull BoundingBox getBounds() {

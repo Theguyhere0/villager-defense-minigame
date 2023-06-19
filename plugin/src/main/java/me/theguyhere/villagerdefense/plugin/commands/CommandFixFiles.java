@@ -344,6 +344,28 @@ class CommandFixFiles {
 				notifyManualUpdate(player, "arenaData.yml");
 			}
 		}
+		if (arenaDataVersion < 9 && !arenaAbort) {
+			try {
+				// Stretch out all bounds
+				GameController.getArenas().forEach((id, arena) -> {
+					arena.setCorner1(arena.getCorner1());
+					arena.setCorner2(arena.getCorner2());
+				});
+
+				// Flip flag and update config.yml
+				fixed = true;
+				Main.plugin
+					.getConfig()
+					.set("arenaData", 9);
+				Main.plugin.saveConfig();
+
+				// Notify
+				notifyAutoUpdate(player, "arenaData.yml", 9);
+			}
+			catch (Exception e) {
+				notifyManualUpdate(player, "arenaData.yml");
+			}
+		}
 
 		// Check if playerData.yml is outdated
 		int playerDataVersion = Main.plugin

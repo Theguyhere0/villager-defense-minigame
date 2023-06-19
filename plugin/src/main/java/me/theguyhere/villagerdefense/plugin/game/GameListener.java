@@ -2067,6 +2067,7 @@ public class GameListener implements Listener {
 		PlayerManager.notifyFailure(player, LanguageManager.errors.notOwner);
 	}
 
+	// Make sure stats are updated properly on horse dismount
 	@EventHandler
 	public void onDismount(EntityDismountEvent e) {
 		// Check for player dismounting
@@ -2090,6 +2091,21 @@ public class GameListener implements Listener {
 
 		// Update stats
 		gamer.updateDamageMultiplier();
+	}
 
+	// Prevent vanilla spawning in arenas
+	@EventHandler
+	public void onCreatureSpawn(CreatureSpawnEvent e) {
+		// Ignore for custom mobs
+		if (VDMob.isVDMob(e.getEntity()))
+			return;
+
+		// Check all arena bounds and cancel if inside
+		GameController.getArenas().forEach((id, arena) -> {
+			if (arena.getBounds().contains(e.getLocation().toVector())) {
+				e.setCancelled(true);
+				CommunicationManager.debugInfo("Prevent a mob from spawning", CommunicationManager.DebugLevel.VERBOSE);
+			}
+		});
 	}
 }
