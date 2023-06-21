@@ -159,7 +159,7 @@ public abstract class Ammo extends VDWeapon {
 			case T5:
 			case T6:
 				price =
-					Calculator.roundToNearest(Math.pow(currCapacity, 0.5) / currRefill * 150, 5);
+					Calculator.roundToNearest(currCapacity / currRefill * 50, 5);
 				break;
 			default:
 				price = -1;

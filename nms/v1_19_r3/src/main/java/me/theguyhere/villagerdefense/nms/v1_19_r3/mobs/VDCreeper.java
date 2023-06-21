@@ -100,6 +100,7 @@ public class VDCreeper extends Creeper {
 				}
 			}
 			swell = 0;
+			setSwellDir(-1);
 		}
 	}
 

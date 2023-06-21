@@ -16,9 +16,21 @@ public class VDSwellGoal extends SwellGoal {
 	@Override
 	public boolean canUse() {
 		LivingEntity target = creeper.getTarget();
-		return super.canUse() && target != null && target
+		return super.canUse() && target != null && target.isAlive() && target
 			.getActiveEffects()
 			.stream()
 			.noneMatch(effect -> effect.getEffect() == MobEffects.INVISIBILITY);
+	}
+
+	@Override
+	public void tick() {
+		LivingEntity target = creeper.getTarget();
+		if (!canUse())
+			creeper.setSwellDir(-1);
+		else if (creeper.distanceToSqr(target) > 25)
+			creeper.setSwellDir(-1);
+		else if (!creeper.getSensing().hasLineOfSight(target))
+			creeper.setSwellDir(-1);
+		else creeper.setSwellDir(1);
 	}
 }

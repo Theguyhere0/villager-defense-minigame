@@ -136,8 +136,8 @@ public abstract class Bow extends VDWeapon {
 		persistentTags.put(PER_BLOCK_KEY, "");
 
 		// Set attack speed
-		persistentData2.put(ATTACK_SPEED_KEY, 1d);
-		loreBuilder.addAttackSpeed(1);
+		persistentData2.put(ATTACK_SPEED_KEY, 0.65);
+		loreBuilder.addAttackSpeed(0.65);
 
 		// Set ammo cost
 		persistentData.put(AMMO_COST_KEY, 2);
@@ -147,22 +147,22 @@ public abstract class Bow extends VDWeapon {
 		int durability;
 		switch (tier) {
 			case T1:
-				durability = 70;
+				durability = 60;
 				break;
 			case T2:
-				durability = 100;
+				durability = 90;
 				break;
 			case T3:
-				durability = 140;
+				durability = 125;
 				break;
 			case T4:
-				durability = 180;
+				durability = 160;
 				break;
 			case T5:
-				durability = 230;
+				durability = 200;
 				break;
 			case T6:
-				durability = 275;
+				durability = 225;
 				break;
 			default:
 				durability = 0;
@@ -180,8 +180,8 @@ public abstract class Bow extends VDWeapon {
 			case T4:
 			case T5:
 			case T6:
-				price =
-					Calculator.roundToNearest(Math.pow(durability, 0.9) * (damageHigh + damageLow) / 2 / 2.1, 5);
+				price = Calculator.roundToNearest(
+					Math.pow(durability, 0.9) * Math.pow((damageHigh + damageLow) / 2d, 1.25) / 3, 5);
 				break;
 			default:
 				price = -1;

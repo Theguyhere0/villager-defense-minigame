@@ -156,8 +156,8 @@ public abstract class Crossbow extends VDWeapon {
 		loreBuilder.addPierce(pierce);
 
 		// Set attack speed
-		persistentData2.put(ATTACK_SPEED_KEY, 0.5);
-		loreBuilder.addAttackSpeed(0.5);
+		persistentData2.put(ATTACK_SPEED_KEY, 0.85);
+		loreBuilder.addAttackSpeed(0.85);
 
 		// Set ammo cost
 		persistentData.put(AMMO_COST_KEY, 3);

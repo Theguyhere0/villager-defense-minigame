@@ -12,7 +12,6 @@ import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualTeam;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.VDMobNotFoundException;
-import me.theguyhere.villagerdefense.plugin.individuals.mobs.minions.VDCreeper;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.minions.VDWitch;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDPet;
 import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerNotFoundException;
@@ -205,14 +204,15 @@ public class GameListener implements Listener {
 		if (gamer.remainingWeaponCooldown() > 0)
 			return;
 
-		// Fire
-		player.launchProjectile(Arrow.class);
-
-		// Update capacity, durability, and cooldown
-		if (Bow.matches(range))
+		// Fire and update capacity, durability, and cooldown
+		if (Bow.matches(range)) {
+			player.launchProjectile(Arrow.class);
 			player.setCooldown(Material.BOW, Calculator.secondsToTicks(1 / cooldown));
-		else if (Crossbow.matches(range))
+		}
+		else if (Crossbow.matches(range)) {
+			player.launchProjectile(Arrow.class, player.getEyeLocation().getDirection().multiply(1.5));
 			player.setCooldown(Material.CROSSBOW, Calculator.secondsToTicks(1 / cooldown));
+		}
 		gamer.triggerWeaponCooldown(Calculator.secondsToMillis(1 / cooldown));
 		if (Ammo.updateCapacity(ammo, -cost)) {
 			player
@@ -363,18 +363,9 @@ public class GameListener implements Listener {
 			// Cancel original damage
 			e.setDamage(0);
 
-			if (e.getCause() == EntityDamageEvent.DamageCause.CUSTOM) {
-				// Make sure fast attacks only apply when mobs are close
-				if (damager
-					.getLocation()
-					.distance(victim.getLocation()) > 1.75) {
-					e.setCancelled(true);
-					return;
-				}
-
-				// Make hurt sound if custom
+			// Make hurt sound if custom
+			if (e.getCause() == EntityDamageEvent.DamageCause.CUSTOM)
 				player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_HURT, 1, 1);
-			}
 
 			// Realize damage and deal effect
 			gamer.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType());
@@ -478,27 +469,29 @@ public class GameListener implements Listener {
 							.getDamager()
 							.getMetadata(VDItem.MetaKey.PER_BLOCK.name())
 							.get(0)
-							.asBoolean())
+							.asBoolean()) {
+							double distance = victim
+								.getLocation()
+								.distance((Location)
+									Objects.requireNonNull(e
+										.getDamager()
+										.getMetadata(
+											VDItem.MetaKey.ORIGIN_LOCATION.name())
+										.get(0)
+										.value()));
 							finalVictim.takeDamage(
 								(int) (e
 									.getDamager()
 									.getMetadata(VDItem.MetaKey.DAMAGE.name())
 									.get(0)
 									.asInt()
-									* victim
-									.getLocation()
-									.distance((Location)
-										Objects.requireNonNull(e
-											.getDamager()
-											.getMetadata(
-												VDItem.MetaKey.ORIGIN_LOCATION.name())
-											.get(0)
-											.value())))
+									* (Math.log(distance) * 2 + distance / 3.5))
 									+ gamer.getBaseDamage(),
 								IndividualAttackType.NORMAL,
 								player,
 								arena
 							);
+						}
 						else finalVictim.takeDamage(
 							e
 								.getDamager()
@@ -556,16 +549,6 @@ public class GameListener implements Listener {
 
 				// Damage not dealt by player
 				else {
-					if (e.getCause() == EntityDamageEvent.DamageCause.CUSTOM) {
-						// Make sure fast attacks only apply when mobs are close
-						if (damager
-							.getLocation()
-							.distance(victim.getLocation()) > 1.75) {
-							e.setCancelled(true);
-							return;
-						}
-					}
-
 					// Check for pet
 					if (finalDamager instanceof VDPet)
 						finalVictim.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType(),
@@ -598,16 +581,6 @@ public class GameListener implements Listener {
 
 				// Cancel original damage
 				e.setDamage(0);
-
-				if (e.getCause() == EntityDamageEvent.DamageCause.CUSTOM) {
-					// Make sure fast attacks only apply when mobs are close
-					if (damager
-						.getLocation()
-						.distance(victim.getLocation()) > 1.75) {
-						e.setCancelled(true);
-						return;
-					}
-				}
 
 				// Check for no damage
 				if (finalDamager.getAttackType() == IndividualAttackType.NONE) {
@@ -787,47 +760,6 @@ public class GameListener implements Listener {
 		if (VDMob.isVDMob(e.getEntity()))
 			e.setCancelled(true);
 	}
-
-	// Custom creeper explosion handler
-//	@EventHandler
-//	public void onExplode(ExplosionPrimeEvent e) {
-//		Entity ent = e.getEntity();
-//		Arena arena;
-//		VDMob mob;
-//
-//		// Try to get arena and VDMob
-//		try {
-//			arena = GameController.getArena(VDMob.getArenaID(ent));
-//			mob = arena.getMob(ent.getUniqueId());
-//		}
-//		catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException err) {
-//			return;
-//		}
-//
-//		// Check for creeper
-//		if (!(mob instanceof VDCreeper))
-//			return;
-//
-//		// Cancel vanilla explosion
-//		e.setCancelled(true);
-//
-//		// Create new explosion
-//		Objects
-//			.requireNonNull(ent
-//				.getLocation()
-//				.getWorld())
-//			.createExplosion(ent.getLocation(), 2.5f, false,
-//				false, ent
-//			);
-//
-//		// Create replacement creeper
-//		VDMob creeper = new VDCreeper((VDCreeper) mob, arena);
-//		arena.addMob(creeper);
-//
-//		// Remove the old creeper
-//		arena.removeMob(ent.getUniqueId());
-//		ent.remove();
-//	}
 
 	// Create custom potion effects from witch
 	@EventHandler
