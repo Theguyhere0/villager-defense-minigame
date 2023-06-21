@@ -18,10 +18,7 @@ import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerNotFoundEx
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
@@ -32,7 +29,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
 
 public abstract class VDMob {
 	protected Mob mob;
@@ -55,18 +51,11 @@ public abstract class VDMob {
 	protected int effectDuration = 0;
 	protected int pierce = 0;
 	protected final IndividualAttackType attackType;
-	protected double attackSpeed = 0;
-	protected TargetPriority targetPriority = TargetPriority.NONE;
-	protected int targetRange = 0;
 	protected int loot = 0;
 	protected double lootSpread = 0;
-	protected long lastStrike = 0;
 
 	public static final NamespacedKey ARENA_ID = new NamespacedKey(Main.plugin, "VDArenaID");
 	public static final NamespacedKey TEAM = new NamespacedKey(Main.plugin, "VDTeam");
-	private static final String KNOCKBACK = "knockback";
-	private static final String WEIGHT = "weight";
-	private static final String SPEED = "speed";
 
 	protected VDMob(String lore, IndividualAttackType attackType) {
 		this.lore = lore;
@@ -236,30 +225,6 @@ public abstract class VDMob {
 	}
 
 	/**
-	 * Check whether the cooldown for the mob is up or not. If it is, update when it last attacked.
-	 *
-	 * @return Whether the cooldown was up or not.
-	 */
-	public boolean attackAttempt() {
-		boolean cooldownUp = System.currentTimeMillis() >= lastStrike + Calculator.secondsToMillis(attackSpeed);
-		if (cooldownUp)
-			lastStrike = System.currentTimeMillis();
-		return cooldownUp || System.currentTimeMillis() < lastStrike + Calculator.secondsToMillis(0.1);
-	}
-
-	public double getAttackSpeed() {
-		return attackSpeed;
-	}
-
-	public TargetPriority getTargetPriority() {
-		return targetPriority;
-	}
-
-	public int getTargetRange() {
-		return targetRange;
-	}
-
-	/**
 	 * Sets the proper health for the mob.
 	 */
 	protected void setHealth(int health) {
@@ -281,244 +246,6 @@ public abstract class VDMob {
 	// Sets the proper effect type, if there is one
 	protected void setEffectType(PotionEffectType effectType) {
 		this.effectType = effectType;
-	}
-
-	// Set attack speed options
-	protected void setVerySlowAttackSpeed() {
-		attackSpeed = 2;
-	}
-
-	protected void setSlowAttackSpeed() {
-		attackSpeed = 1;
-	}
-
-	protected void setModerateAttackSpeed() {
-		attackSpeed = .7;
-	}
-
-	protected void setFastAttackSpeed() {
-		attackSpeed = .4;
-	}
-
-	protected void setVeryFastAttackSpeed() {
-		attackSpeed = .2;
-	}
-
-
-	// Set knockback options
-	protected void setNoneKnockback() {
-		double initial = Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
-			.getBaseValue();
-		Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
-			.addModifier(new AttributeModifier(
-				KNOCKBACK,
-				0 - initial,
-				AttributeModifier.Operation.ADD_NUMBER
-			));
-	}
-
-	protected void setLowKnockback() {
-		double initial = Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
-			.getBaseValue();
-		Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
-			.addModifier(new AttributeModifier(
-				KNOCKBACK,
-				.25 - initial,
-				AttributeModifier.Operation.ADD_NUMBER
-			));
-	}
-
-	protected void setModerateKnockback() {
-		double initial = Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
-			.getBaseValue();
-		Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
-			.addModifier(new AttributeModifier(
-				KNOCKBACK,
-				.75 - initial,
-				AttributeModifier.Operation.ADD_NUMBER
-			));
-	}
-
-	protected void setHighKnockback() {
-		double initial = Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
-			.getBaseValue();
-		Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
-			.addModifier(new AttributeModifier(
-				KNOCKBACK,
-				1.25 - initial,
-				AttributeModifier.Operation.ADD_NUMBER
-			));
-	}
-
-	protected void setVeryHighKnockback() {
-		double initial = Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
-			.getBaseValue();
-		Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK))
-			.addModifier(new AttributeModifier(
-				KNOCKBACK,
-				2.5 - initial,
-				AttributeModifier.Operation.ADD_NUMBER
-			));
-	}
-
-	// Set weight options
-	protected void setVeryLightWeight() {
-		double initial = Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
-			.getValue();
-		Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
-			.addModifier(new AttributeModifier(
-				WEIGHT,
-				0 - initial,
-				AttributeModifier.Operation.ADD_NUMBER
-			));
-	}
-
-	protected void setLightWeight() {
-		double initial = Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
-			.getValue();
-		Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
-			.addModifier(new AttributeModifier(
-				WEIGHT,
-				.1 - initial,
-				AttributeModifier.Operation.ADD_NUMBER
-			));
-	}
-
-	protected void setMediumWeight() {
-		double initial = Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
-			.getValue();
-		Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
-			.addModifier(new AttributeModifier(
-				WEIGHT,
-				.25 - initial,
-				AttributeModifier.Operation.ADD_NUMBER
-			));
-	}
-
-	protected void setHeavyWeight() {
-		double initial = Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
-			.getValue();
-		Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
-			.addModifier(new AttributeModifier(
-				WEIGHT,
-				.4 - initial,
-				AttributeModifier.Operation.ADD_NUMBER
-			));
-	}
-
-	protected void setVeryHeavyWeight() {
-		double initial = Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
-			.getValue();
-		Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE))
-			.addModifier(new AttributeModifier(
-				WEIGHT,
-				.7 - initial,
-				AttributeModifier.Operation.ADD_NUMBER
-			));
-	}
-
-
-	// Set speed options
-	protected void setVerySlowSpeed() {
-		double initial = Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-			.getBaseValue();
-		Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-			.addModifier(new AttributeModifier(
-				SPEED,
-				.12 - initial,
-				AttributeModifier.Operation.ADD_NUMBER
-			));
-	}
-
-	protected void setSlowSpeed() {
-		double initial = Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-			.getBaseValue();
-		Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-			.addModifier(new AttributeModifier(
-				SPEED,
-				.2 - initial,
-				AttributeModifier.Operation.ADD_NUMBER
-			));
-	}
-
-	protected void setMediumSpeed() {
-		double initial = Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-			.getBaseValue();
-		Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-			.addModifier(new AttributeModifier(
-				SPEED,
-				.275 - initial,
-				AttributeModifier.Operation.ADD_NUMBER
-			));
-	}
-
-	protected void setFastSpeed() {
-		double initial = Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-			.getBaseValue();
-		Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-			.addModifier(new AttributeModifier(
-				SPEED,
-				.325 - initial,
-				AttributeModifier.Operation.ADD_NUMBER
-			));
-	}
-
-	protected void setVeryFastSpeed() {
-		double initial = Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-			.getBaseValue();
-		Objects
-			.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED))
-			.addModifier(new AttributeModifier(
-				SPEED,
-				.4 - initial,
-				AttributeModifier.Operation.ADD_NUMBER
-			));
-	}
-
-	// Set target range
-	protected void setCloseTargetRange() {
-		targetRange = 12;
-	}
-
-	protected void setModerateTargetRange() {
-		targetRange = 24;
-	}
-
-	protected void setFarTargetRange() {
-		targetRange = 40;
-	}
-
-	protected void setUnboundedTargetRange() {
-		targetRange = -1;
 	}
 
 	/**
@@ -586,43 +313,5 @@ public abstract class VDMob {
 		if (result == null)
 			return -1;
 		else return result;
-	}
-
-	public enum TargetPriority {
-		NONE((e) -> true),
-		PLAYERS((e) -> e
-			.getType()
-			.equals(EntityType.PLAYER)),
-		MELEE_PLAYERS((e) -> e
-			.getType()
-			.equals(EntityType.PLAYER)),
-		RANGED_PLAYERS((e) -> e
-			.getType()
-			.equals(EntityType.PLAYER)),
-		GOLEMS((e) -> e
-			.getType()
-			.equals(EntityType.IRON_GOLEM) || e
-			.getType()
-			.equals(EntityType.SNOWMAN)),
-		VILLAGERS((e) -> e
-			.getType()
-			.equals(EntityType.VILLAGER)),
-		PETS((e) -> {
-			EntityType type = e.getType();
-			return type.equals(EntityType.WOLF) || type.equals(EntityType.HORSE) || type.equals(EntityType.BEE) ||
-				type.equals(EntityType.CAT);
-		}),
-		PETS_GOLEMS(PETS.test.and(GOLEMS.test)),
-		PETS_GOLEMS_PLAYERS(PETS_GOLEMS.test.and(PLAYERS.test));
-
-		private final Predicate<Entity> test;
-
-		TargetPriority(Predicate<Entity> test) {
-			this.test = test;
-		}
-
-		public Predicate<Entity> getTest() {
-			return test;
-		}
 	}
 }

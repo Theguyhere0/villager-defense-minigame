@@ -32,12 +32,12 @@ public class VDPiglinSniper extends VDMinion {
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .05);
 		pierce = 2;
-		setSlowAttackSpeed();
-		setModerateKnockback();
-		setMediumWeight();
-		setSlowSpeed();
-		targetPriority = TargetPriority.RANGED_PLAYERS;
-		setFarTargetRange();
+//		setSlowAttackSpeed();
+//		setModerateKnockback();
+//		setMediumWeight();
+//		setSlowSpeed();
+//		targetPriority = TargetPriority.RANGED_PLAYERS;
+//		setFarTargetRange();
 		setArmorEquipment(true, false, false, false);
 		setCrossbow();
 		setLoot(getValue(arena.getCurrentDifficulty()), .25);

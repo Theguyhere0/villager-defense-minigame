@@ -32,12 +32,12 @@ public class VDPillager extends VDMinion {
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .1);
 		pierce = 1;
-		setSlowAttackSpeed();
-		setNoneKnockback();
-		setMediumWeight();
-		setMediumSpeed();
-		targetPriority = TargetPriority.VILLAGERS;
-		setFarTargetRange();
+//		setSlowAttackSpeed();
+//		setNoneKnockback();
+//		setMediumWeight();
+//		setMediumSpeed();
+//		targetPriority = TargetPriority.VILLAGERS;
+//		setFarTargetRange();
 		setCrossbow();
 		setLoot(getValue(arena.getCurrentDifficulty()), .3);
 		updateNameTag();

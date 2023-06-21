@@ -310,10 +310,6 @@ public class GameListener implements Listener {
 					.size() > 0)
 					e.setCancelled(true);
 
-				// Check for cooldown
-				if (!finalShooter.attackAttempt())
-					e.setCancelled(true);
-
 				return;
 			}
 
@@ -367,12 +363,6 @@ public class GameListener implements Listener {
 			// Cancel original damage
 			e.setDamage(0);
 
-			// Check damage cooldown
-			if (!finalDamager.attackAttempt()) {
-				e.setCancelled(true);
-				return;
-			}
-
 			if (e.getCause() == EntityDamageEvent.DamageCause.CUSTOM) {
 				// Make sure fast attacks only apply when mobs are close
 				if (damager
@@ -384,32 +374,6 @@ public class GameListener implements Listener {
 
 				// Make hurt sound if custom
 				player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_HURT, 1, 1);
-			}
-
-			// Implement faster attacks
-			if (finalDamager.getAttackSpeed() == .4 && e.getCause() != EntityDamageEvent.DamageCause.CUSTOM)
-				Bukkit
-					.getScheduler()
-					.scheduleSyncDelayedTask(Main.plugin, () -> Bukkit
-						.getPluginManager()
-						.callEvent(new EntityDamageByEntityEvent(damager, victim,
-							EntityDamageEvent.DamageCause.CUSTOM, 0
-						)), Calculator.secondsToTicks(.45));
-			else if (finalDamager.getAttackSpeed() == .2 && e.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
-				Bukkit
-					.getScheduler()
-					.scheduleSyncDelayedTask(Main.plugin, () -> Bukkit
-						.getPluginManager()
-						.callEvent(new EntityDamageByEntityEvent(damager, victim,
-							EntityDamageEvent.DamageCause.CUSTOM, 0
-						)), Calculator.secondsToTicks(.25));
-				Bukkit
-					.getScheduler()
-					.scheduleSyncDelayedTask(Main.plugin, () -> Bukkit
-						.getPluginManager()
-						.callEvent(new EntityDamageByEntityEvent(damager, victim,
-							EntityDamageEvent.DamageCause.CUSTOM, 0
-						)), Calculator.secondsToTicks(.5));
 			}
 
 			// Realize damage and deal effect
@@ -592,12 +556,6 @@ public class GameListener implements Listener {
 
 				// Damage not dealt by player
 				else {
-					// Check damage cooldown
-					if (!finalDamager.attackAttempt()) {
-						e.setCancelled(true);
-						return;
-					}
-
 					if (e.getCause() == EntityDamageEvent.DamageCause.CUSTOM) {
 						// Make sure fast attacks only apply when mobs are close
 						if (damager
@@ -606,33 +564,6 @@ public class GameListener implements Listener {
 							e.setCancelled(true);
 							return;
 						}
-					}
-
-					// Implement faster attacks
-					if (finalDamager.getAttackSpeed() == .4 && e.getCause() != EntityDamageEvent.DamageCause.CUSTOM)
-						Bukkit
-							.getScheduler()
-							.scheduleSyncDelayedTask(Main.plugin, () -> Bukkit
-								.getPluginManager()
-								.callEvent(new EntityDamageByEntityEvent(damager, victim,
-									EntityDamageEvent.DamageCause.CUSTOM, 0
-								)), Calculator.secondsToTicks(.45));
-					else if (finalDamager.getAttackSpeed() == .2 &&
-						e.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
-						Bukkit
-							.getScheduler()
-							.scheduleSyncDelayedTask(Main.plugin, () -> Bukkit
-								.getPluginManager()
-								.callEvent(new EntityDamageByEntityEvent(damager, victim,
-									EntityDamageEvent.DamageCause.CUSTOM, 0
-								)), Calculator.secondsToTicks(.25));
-						Bukkit
-							.getScheduler()
-							.scheduleSyncDelayedTask(Main.plugin, () -> Bukkit
-								.getPluginManager()
-								.callEvent(new EntityDamageByEntityEvent(damager, victim,
-									EntityDamageEvent.DamageCause.CUSTOM, 0
-								)), Calculator.secondsToTicks(.5));
 					}
 
 					// Check for pet
@@ -668,12 +599,6 @@ public class GameListener implements Listener {
 				// Cancel original damage
 				e.setDamage(0);
 
-				// Check damage cooldown
-				if (!finalDamager.attackAttempt()) {
-					e.setCancelled(true);
-					return;
-				}
-
 				if (e.getCause() == EntityDamageEvent.DamageCause.CUSTOM) {
 					// Make sure fast attacks only apply when mobs are close
 					if (damager
@@ -688,33 +613,6 @@ public class GameListener implements Listener {
 				if (finalDamager.getAttackType() == IndividualAttackType.NONE) {
 					e.setCancelled(true);
 					return;
-				}
-
-				// Implement faster attacks
-				if (finalDamager.getAttackSpeed() == .4 && e.getCause() != EntityDamageEvent.DamageCause.CUSTOM)
-					Bukkit
-						.getScheduler()
-						.scheduleSyncDelayedTask(Main.plugin, () -> Bukkit
-							.getPluginManager()
-							.callEvent(new EntityDamageByEntityEvent(damager, victim,
-								EntityDamageEvent.DamageCause.CUSTOM, 0
-							)), Calculator.secondsToTicks(.45));
-				else if (finalDamager.getAttackSpeed() == .2 &&
-					e.getCause() != EntityDamageEvent.DamageCause.CUSTOM) {
-					Bukkit
-						.getScheduler()
-						.scheduleSyncDelayedTask(Main.plugin, () -> Bukkit
-							.getPluginManager()
-							.callEvent(new EntityDamageByEntityEvent(damager, victim,
-								EntityDamageEvent.DamageCause.CUSTOM, 0
-							)), Calculator.secondsToTicks(.25));
-					Bukkit
-						.getScheduler()
-						.scheduleSyncDelayedTask(Main.plugin, () -> Bukkit
-							.getPluginManager()
-							.callEvent(new EntityDamageByEntityEvent(damager, victim,
-								EntityDamageEvent.DamageCause.CUSTOM, 0
-							)), Calculator.secondsToTicks(.5));
 				}
 
 				// Play out damage and effect
@@ -891,45 +789,45 @@ public class GameListener implements Listener {
 	}
 
 	// Custom creeper explosion handler
-	@EventHandler
-	public void onExplode(ExplosionPrimeEvent e) {
-		Entity ent = e.getEntity();
-		Arena arena;
-		VDMob mob;
-
-		// Try to get arena and VDMob
-		try {
-			arena = GameController.getArena(VDMob.getArenaID(ent));
-			mob = arena.getMob(ent.getUniqueId());
-		}
-		catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException err) {
-			return;
-		}
-
-		// Check for creeper
-		if (!(mob instanceof VDCreeper))
-			return;
-
-		// Cancel vanilla explosion
-		e.setCancelled(true);
-
-		// Create new explosion
-		Objects
-			.requireNonNull(ent
-				.getLocation()
-				.getWorld())
-			.createExplosion(ent.getLocation(), 2.5f, false,
-				false, ent
-			);
-
-		// Create replacement creeper
-		VDMob creeper = new VDCreeper((VDCreeper) mob, arena);
-		arena.addMob(creeper);
-
-		// Remove the old creeper
-		arena.removeMob(ent.getUniqueId());
-		ent.remove();
-	}
+//	@EventHandler
+//	public void onExplode(ExplosionPrimeEvent e) {
+//		Entity ent = e.getEntity();
+//		Arena arena;
+//		VDMob mob;
+//
+//		// Try to get arena and VDMob
+//		try {
+//			arena = GameController.getArena(VDMob.getArenaID(ent));
+//			mob = arena.getMob(ent.getUniqueId());
+//		}
+//		catch (ArenaNotFoundException | VDMobNotFoundException | IndexOutOfBoundsException err) {
+//			return;
+//		}
+//
+//		// Check for creeper
+//		if (!(mob instanceof VDCreeper))
+//			return;
+//
+//		// Cancel vanilla explosion
+//		e.setCancelled(true);
+//
+//		// Create new explosion
+//		Objects
+//			.requireNonNull(ent
+//				.getLocation()
+//				.getWorld())
+//			.createExplosion(ent.getLocation(), 2.5f, false,
+//				false, ent
+//			);
+//
+//		// Create replacement creeper
+//		VDMob creeper = new VDCreeper((VDCreeper) mob, arena);
+//		arena.addMob(creeper);
+//
+//		// Remove the old creeper
+//		arena.removeMob(ent.getUniqueId());
+//		ent.remove();
+//	}
 
 	// Create custom potion effects from witch
 	@EventHandler
@@ -1636,18 +1534,6 @@ public class GameListener implements Listener {
 	// Prevents arena mobs from turning into different entities
 	@EventHandler
 	public void onTransform(EntityTransformEvent e) {
-		Entity ent = e.getEntity();
-
-		// Check for special mob
-		if (!VDMob.isVDMob(ent))
-			return;
-
-		e.setCancelled(true);
-	}
-
-	// Prevent zombies from breaking doors
-	@EventHandler
-	public void onBreakDoor(EntityBreakDoorEvent e) {
 		Entity ent = e.getEntity();
 
 		// Check for special mob

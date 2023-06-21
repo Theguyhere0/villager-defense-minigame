@@ -2,13 +2,10 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
 import org.bukkit.potion.PotionEffectType;
-
-import java.util.Objects;
 
 public class VDCaveSpider extends VDMinion {
 	public static final String KEY = "cspd";
@@ -16,12 +13,10 @@ public class VDCaveSpider extends VDMinion {
 	public VDCaveSpider(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(
-					location,
-					EntityType.CAVE_SPIDER
-				),
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.caveSpider,
 			LanguageManager.mobLore.caveSpider,
 			IndividualAttackType.PENETRATING
@@ -34,12 +29,6 @@ public class VDCaveSpider extends VDMinion {
 		setEffectType(PotionEffectType.POISON);
 		effectLevel = getEffectLevel(level);
 		effectDuration = getEffectDuration(level);
-		setVeryFastAttackSpeed();
-		setNoneKnockback();
-		setVeryLightWeight();
-		setVeryFastSpeed();
-		targetPriority = TargetPriority.PLAYERS;
-		setModerateTargetRange();
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);
 		updateNameTag();
 	}

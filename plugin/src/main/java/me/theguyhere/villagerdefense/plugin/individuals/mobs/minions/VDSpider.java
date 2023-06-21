@@ -2,12 +2,9 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
-
-import java.util.Objects;
 
 public class VDSpider extends VDMinion {
 	public static final String KEY = "spid";
@@ -15,9 +12,9 @@ public class VDSpider extends VDMinion {
 	public VDSpider(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.SPIDER),
+			NMSVersion
+				.getCurrent().getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.spider,
 			LanguageManager.mobLore.spider,
 			IndividualAttackType.PENETRATING
@@ -27,11 +24,6 @@ public class VDSpider extends VDMinion {
 		armor = getArmor(level);
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .1);
-		setFastAttackSpeed();
-		setNoneKnockback();
-		setLightWeight();
-		setFastSpeed();
-		setModerateTargetRange();
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);
 		updateNameTag();
 	}

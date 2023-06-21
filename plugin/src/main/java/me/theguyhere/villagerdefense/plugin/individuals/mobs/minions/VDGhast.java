@@ -27,11 +27,11 @@ public class VDGhast extends VDMinion {
 		armor = 0;
 		toughness = 0;
 		setDamage(getDamage(level), .2);
-		setModerateAttackSpeed();
-		setHighKnockback();
-		setHeavyWeight();
-		setMediumSpeed();
-		setFarTargetRange();
+//		setModerateAttackSpeed();
+//		setHighKnockback();
+//		setHeavyWeight();
+//		setMediumSpeed();
+//		setFarTargetRange();
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);
 		updateNameTag();
 	}

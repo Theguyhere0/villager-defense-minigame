@@ -5,7 +5,6 @@ import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.Zombie;
 
 public class VDZombie extends VDMinion {
 	public static final String KEY = "zomb";
@@ -19,16 +18,11 @@ public class VDZombie extends VDMinion {
 			LanguageManager.mobLore.zombie,
 			IndividualAttackType.NORMAL
 		);
-		((Zombie) mob).setAdult();
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));
 		armor = getArmor(level);
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .1);
-		setModerateKnockback();
-		setMediumWeight();
-		setSlowSpeed();
-		setModerateTargetRange();
 		setArmorEquipment(true, true, false, false);
 		setSword();
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);

@@ -31,12 +31,12 @@ public class VDVindicator extends VDMinion {
 		armor = 0;
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .1);
-		setSlowAttackSpeed();
-		setModerateKnockback();
-		setMediumWeight();
-		setMediumSpeed();
-		targetPriority = TargetPriority.GOLEMS;
-		setModerateTargetRange();
+//		setSlowAttackSpeed();
+//		setModerateKnockback();
+//		setMediumWeight();
+//		setMediumSpeed();
+//		targetPriority = TargetPriority.GOLEMS;
+//		setModerateTargetRange();
 		setAxe();
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);
 		updateNameTag();

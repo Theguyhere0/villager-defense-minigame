@@ -2,13 +2,10 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
 import org.bukkit.potion.PotionEffectType;
-
-import java.util.Objects;
 
 public class VDBlaze extends VDMinion {
 	public static final String KEY = "blze";
@@ -16,9 +13,10 @@ public class VDBlaze extends VDMinion {
 	public VDBlaze(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.BLAZE),
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.blaze,
 			LanguageManager.mobLore.blaze,
 			IndividualAttackType.NONE
@@ -30,12 +28,6 @@ public class VDBlaze extends VDMinion {
 		setEffectType(PotionEffectType.FIRE_RESISTANCE);
 		effectLevel = 1;
 		effectDuration = getEffectDuration(level);
-		setSlowAttackSpeed();
-		setNoneKnockback();
-		setMediumWeight();
-		setSlowSpeed();
-		targetPriority = TargetPriority.RANGED_PLAYERS;
-		setModerateTargetRange();
 		setLoot(getValue(arena.getCurrentDifficulty()), .1);
 		updateNameTag();
 	}

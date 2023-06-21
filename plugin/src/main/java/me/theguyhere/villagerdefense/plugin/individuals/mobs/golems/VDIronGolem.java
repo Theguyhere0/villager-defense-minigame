@@ -35,11 +35,11 @@ public class VDIronGolem extends VDGolem {
 		armor = getArmor(level);
 		toughness = 0;
 		setDamage(getDamage(level), .15);
-		setSlowAttackSpeed();
-		setVeryHighKnockback();
-		setVeryHeavyWeight();
-		setSlowSpeed();
-		setModerateTargetRange();
+//		setSlowAttackSpeed();
+//		setVeryHighKnockback();
+//		setVeryHeavyWeight();
+//		setSlowSpeed();
+//		setModerateTargetRange();
 		updateNameTag();
 	}
 

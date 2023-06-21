@@ -10,7 +10,7 @@ import me.theguyhere.villagerdefense.common.Reflection;
 import me.theguyhere.villagerdefense.nms.common.*;
 import me.theguyhere.villagerdefense.nms.common.entities.TextPacketEntity;
 import me.theguyhere.villagerdefense.nms.common.entities.VillagerPacketEntity;
-import me.theguyhere.villagerdefense.nms.v1_19_r3.mobs.VDZombie;
+import me.theguyhere.villagerdefense.nms.v1_19_r3.mobs.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -38,11 +38,6 @@ public class VersionNMSManager implements NMSManager {
 	@Override
 	public VillagerPacketEntity newVillagerPacketEntity(String type) {
 		return new PacketEntityVillager(new EntityID(), type);
-	}
-
-	@Override
-	public Mob spawnVDMob(Location location, String key) {
-		return (Mob) new VDZombie(location).getBukkitEntity();
 	}
 
 	@Override
@@ -123,6 +118,32 @@ public class VersionNMSManager implements NMSManager {
 			new WorldBorderSizePacket(size),
 			new WorldBorderWarningDistancePacket(warningDistance)
 		);
+	}
+
+	@Override
+	public Mob spawnVDMob(Location location, String key) {
+		switch (key) {
+			case "bhsk":
+				return (Mob) new VDBabyHusk(location).getBukkitEntity();
+			case "bzmb":
+				return (Mob) new VDBabyZombie(location).getBukkitEntity();
+			case "blze":
+				return (Mob) new VDBlaze(location).getBukkitEntity();
+			case "cspd":
+				return (Mob) new VDCaveSpider(location).getBukkitEntity();
+			case "crpr":
+				return (Mob) new VDCreeper(location).getBukkitEntity();
+			case "husk":
+				return (Mob) new VDHusk(location).getBukkitEntity();
+			case "skel":
+				return (Mob) new VDSkeleton(location).getBukkitEntity();
+			case "spid":
+				return (Mob) new VDSpider(location).getBukkitEntity();
+			case "zomb":
+				return (Mob) new VDZombie(location).getBukkitEntity();
+			default:
+				return null;
+		}
 	}
 
 	@Override

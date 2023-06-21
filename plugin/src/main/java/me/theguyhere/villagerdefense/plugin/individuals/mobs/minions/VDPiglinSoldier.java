@@ -31,12 +31,12 @@ public class VDPiglinSoldier extends VDMinion {
 		armor = getArmor(level);
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .2);
-		setModerateAttackSpeed();
-		setHighKnockback();
-		setMediumWeight();
-		setMediumSpeed();
-		targetPriority = TargetPriority.PLAYERS;
-		setModerateTargetRange();
+//		setModerateAttackSpeed();
+//		setHighKnockback();
+//		setMediumWeight();
+//		setMediumSpeed();
+//		targetPriority = TargetPriority.PLAYERS;
+//		setModerateTargetRange();
 		setArmorEquipment(false, false, true, false);
 		setSword();
 		setLoot(getValue(arena.getCurrentDifficulty()), .25);

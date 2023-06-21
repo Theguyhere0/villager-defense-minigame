@@ -36,16 +36,16 @@ public class VDWitch extends VDMinion {
 		toughness = getToughness(level);
 		effectLevel = getEffectLevel(level);
 		effectDuration = getEffectDuration(level);
-		setVerySlowAttackSpeed();
-		setNoneKnockback();
-		setMediumWeight();
-		setVerySlowSpeed();
+//		setVerySlowAttackSpeed();
+//		setNoneKnockback();
+//		setMediumWeight();
+//		setVerySlowSpeed();
 		// Stop it from drinking constantly
 		witch.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Calculator.secondsToTicks(9999), 0));
 		witch.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Calculator.secondsToTicks(9999),
 			0
 		));
-		setModerateTargetRange();
+//		setModerateTargetRange();
 		setLoot(getValue(arena.getCurrentDifficulty()), .15);
 		updateNameTag();
 	}

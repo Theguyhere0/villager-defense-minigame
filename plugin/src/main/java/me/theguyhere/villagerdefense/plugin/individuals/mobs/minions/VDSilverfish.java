@@ -27,12 +27,12 @@ public class VDSilverfish extends VDMinion {
 		armor = getArmor(level);
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .1);
-		setVeryFastAttackSpeed();
-		setLowKnockback();
-		setVeryLightWeight();
-		setMediumSpeed();
-		targetPriority = TargetPriority.PETS_GOLEMS;
-		setModerateTargetRange();
+//		setVeryFastAttackSpeed();
+//		setLowKnockback();
+//		setVeryLightWeight();
+//		setMediumSpeed();
+//		targetPriority = TargetPriority.PETS_GOLEMS;
+//		setModerateTargetRange();
 		setLoot(getValue(arena.getCurrentDifficulty()), .1);
 		updateNameTag();
 	}

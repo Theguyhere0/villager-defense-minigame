@@ -31,13 +31,13 @@ public class VDChargedCreeper extends VDMinion {
 		armor = getArmor(level);
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .4);
-		setVerySlowAttackSpeed();
-		creeper.setMaxFuseTicks(Calculator.secondsToTicks(attackSpeed));
-		setVeryHighKnockback();
-		setLightWeight();
-		setSlowSpeed();
-		targetPriority = TargetPriority.PLAYERS;
-		setUnboundedTargetRange();
+//		setVerySlowAttackSpeed();
+//		creeper.setMaxFuseTicks(Calculator.secondsToTicks(attackSpeed));
+//		setVeryHighKnockback();
+//		setLightWeight();
+//		setSlowSpeed();
+//		targetPriority = TargetPriority.PLAYERS;
+//		setUnboundedTargetRange();
 		setLoot(getValue(arena.getCurrentDifficulty()), .25);
 		updateNameTag();
 	}

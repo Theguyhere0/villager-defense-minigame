@@ -13,7 +13,6 @@ import java.util.EnumSet;
 
 public class VDMeleeAttackGoal extends Goal {
 	protected final PathfinderMob mob;
-	private final double speedModifier;
 	private final boolean followingTargetEvenIfNotSeen;
 	private Path path;
 	private double pathedTargetX;
@@ -25,10 +24,9 @@ public class VDMeleeAttackGoal extends Goal {
 	private final double attackReach;
 	private long lastCanUseCheck;
 
-	public VDMeleeAttackGoal(PathfinderMob mob, double speedModifier, boolean followingTargetEvenIfNotSeen,
-		int attackInterval, double attackReach) {
+	public VDMeleeAttackGoal(PathfinderMob mob, boolean followingTargetEvenIfNotSeen, int attackInterval,
+		double attackReach) {
 		this.mob = mob;
-		this.speedModifier = speedModifier;
 		this.followingTargetEvenIfNotSeen = followingTargetEvenIfNotSeen;
 		this.attackInterval = attackInterval;
 		this.attackReach = attackReach;
@@ -47,11 +45,20 @@ public class VDMeleeAttackGoal extends Goal {
 				return false;
 			} else if (!target.isAlive()) {
 				return false;
-			} else {
-				path = mob.getNavigation().createPath(target, 0);
+			}
+			else if (target
+				.getActiveEffects()
+				.stream()
+				.anyMatch(effect -> effect.getEffect() == MobEffects.INVISIBILITY))
+				return false;
+			else {
+				path = mob
+					.getNavigation()
+					.createPath(target, 0);
 				if (path != null) {
 					return true;
-				} else {
+				}
+				else {
 					return getAttackReachSqr(target) >= mob.distanceToSqr(target.getX(), target.getY(), target.getZ());
 				}
 			}
@@ -63,13 +70,20 @@ public class VDMeleeAttackGoal extends Goal {
 		LivingEntity target = mob.getTarget();
 		if (target == null) {
 			return false;
-		} else if (!target.isAlive()) {
+		}
+		else if (!target.isAlive()) {
 			return false;
-		} else if (!followingTargetEvenIfNotSeen) {
+		}
+		else if (target
+			.getActiveEffects()
+			.stream()
+			.anyMatch(effect -> effect.getEffect() == MobEffects.INVISIBILITY)) {
+			return false;
+		}
+		else if (!followingTargetEvenIfNotSeen) {
 			return !mob.getNavigation().isDone();
-		} else if (!mob.isWithinRestriction(target.blockPosition())) {
-			return false;
-		} else if (mob.getActiveEffects().stream().anyMatch(effect -> effect.getEffect() == MobEffects.INVISIBILITY)) {
+		}
+		else if (!mob.isWithinRestriction(target.blockPosition())) {
 			return false;
 		}
 		else {
@@ -79,7 +93,7 @@ public class VDMeleeAttackGoal extends Goal {
 
 	@Override
 	public void start() {
-		mob.getNavigation().moveTo(path, speedModifier);
+		mob.getNavigation().moveTo(path, 1);
 		mob.setAggressive(true);
 		ticksUntilNextPathRecalculation = 0;
 		ticksUntilNextAttack = 0;
@@ -104,11 +118,17 @@ public class VDMeleeAttackGoal extends Goal {
 	@Override
 	public void tick() {
 		LivingEntity target = mob.getTarget();
-		if (target != null) {
+		if (target != null && canContinueToUse()) {
 			mob.getLookControl().setLookAt(target, 30.0F, 30.0F);
 			double targetDistance = mob.distanceToSqr(target.getX(), target.getY(), target.getZ());
 			ticksUntilNextPathRecalculation = Math.max(ticksUntilNextPathRecalculation - 1, 0);
-			if ((followingTargetEvenIfNotSeen || mob.getSensing().hasLineOfSight(target)) && ticksUntilNextPathRecalculation <= 0 && (pathedTargetX == 0.0 && pathedTargetY == 0.0 && pathedTargetZ == 0.0 || target.distanceToSqr(pathedTargetX, pathedTargetY, pathedTargetZ) >= 1.0 || mob.getRandom().nextFloat() < 0.05F)) {
+			if ((followingTargetEvenIfNotSeen || mob
+				.getSensing()
+				.hasLineOfSight(target)) && ticksUntilNextPathRecalculation <= 0 &&
+				(pathedTargetX == 0.0 && pathedTargetY == 0.0 && pathedTargetZ == 0.0 ||
+					target.distanceToSqr(pathedTargetX, pathedTargetY, pathedTargetZ) >= 1.0 || mob
+					.getRandom()
+					.nextFloat() < 0.05F)) {
 				pathedTargetX = target.getX();
 				pathedTargetY = target.getY();
 				pathedTargetZ = target.getZ();
@@ -118,8 +138,7 @@ public class VDMeleeAttackGoal extends Goal {
 				} else if (targetDistance > 256.0) {
 					ticksUntilNextPathRecalculation += 5;
 				}
-
-				if (!mob.getNavigation().moveTo(target, speedModifier)) {
+				if (!mob.getNavigation().moveTo(target, 1)) {
 					ticksUntilNextPathRecalculation += 15;
 				}
 
@@ -142,10 +161,6 @@ public class VDMeleeAttackGoal extends Goal {
 
 	protected void resetAttackCooldown() {
 		ticksUntilNextAttack = getAttackInterval();
-	}
-
-	protected boolean isTimeToAttack() {
-		return ticksUntilNextAttack <= 0;
 	}
 
 	protected int getTicksUntilNextAttack() {

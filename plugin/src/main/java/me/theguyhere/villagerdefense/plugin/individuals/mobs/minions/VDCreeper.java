@@ -1,15 +1,10 @@
 package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
-import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
-
-import java.util.Objects;
 
 public class VDCreeper extends VDMinion {
 	public static final String KEY = "crpr";
@@ -17,60 +12,19 @@ public class VDCreeper extends VDMinion {
 	public VDCreeper(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.CREEPER),
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.creeper,
 			LanguageManager.mobLore.creeper,
 			IndividualAttackType.NORMAL
 		);
-		Creeper creeper = (Creeper) mob;
-		creeper.setPowered(false);
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));
 		armor = getArmor(level);
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .25);
-		setVerySlowAttackSpeed();
-		creeper.setMaxFuseTicks(Calculator.secondsToTicks(attackSpeed));
-		setHighKnockback();
-		setLightWeight();
-		setSlowSpeed();
-		setModerateTargetRange();
-		setLoot(getValue(arena.getCurrentDifficulty()), .2);
-		updateNameTag();
-	}
-
-	public VDCreeper(VDCreeper oldCreeper, Arena arena) {
-		super(
-			arena,
-			(Mob) Objects
-				.requireNonNull(oldCreeper
-					.getEntity()
-					.getLocation()
-					.getWorld())
-				.spawnEntity(oldCreeper
-					.getEntity()
-					.getLocation(), EntityType.CREEPER),
-			LanguageManager.mobs.creeper,
-			"A crowd control monster keeping defenders away from the front lines.",
-			IndividualAttackType.NORMAL
-		);
-		Creeper creeper = (Creeper) mob;
-		creeper.setPowered(false);
-		level = getLevel(arena.getCurrentDifficulty());
-		setHealth(getHealth(level));
-		addDamage(currentHealth - oldCreeper.currentHealth, null);
-		damageMap.putAll(oldCreeper.damageMap);
-		armor = getArmor(level);
-		toughness = getToughness(level);
-		setDamage(getDamage(level), .25);
-		setVerySlowAttackSpeed();
-		creeper.setMaxFuseTicks(Calculator.secondsToTicks(attackSpeed));
-		setHighKnockback();
-		setLightWeight();
-		setSlowSpeed();
-		setModerateTargetRange();
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);
 		updateNameTag();
 	}

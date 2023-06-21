@@ -32,12 +32,12 @@ public class VDBrute extends VDMinion {
 		armor = 0;
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .15);
-		setSlowAttackSpeed();
-		setLowKnockback();
-		setHeavyWeight();
-		setFastSpeed();
-		targetPriority = TargetPriority.MELEE_PLAYERS;
-		setCloseTargetRange();
+//		setSlowAttackSpeed();
+//		setLowKnockback();
+//		setHeavyWeight();
+//		setFastSpeed();
+//		targetPriority = TargetPriority.MELEE_PLAYERS;
+//		setCloseTargetRange();
 		setArmorEquipment(false, true, false, false);
 		setAxe();
 		setLoot(getValue(arena.getCurrentDifficulty()), .15);

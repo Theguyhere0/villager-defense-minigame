@@ -40,11 +40,11 @@ public class VDDog extends VDPet {
 		armor = getArmor(level);
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .1);
-		setModerateAttackSpeed();
-		setLowKnockback();
-		setLightWeight();
-		setFastSpeed();
-		setModerateTargetRange();
+//		setModerateAttackSpeed();
+//		setLowKnockback();
+//		setLightWeight();
+//		setFastSpeed();
+//		setModerateTargetRange();
 		updateNameTag();
 	}
 

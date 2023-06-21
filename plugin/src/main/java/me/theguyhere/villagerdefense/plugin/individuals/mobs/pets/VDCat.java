@@ -39,8 +39,8 @@ public class VDCat extends VDPet {
 		setHealth(getHealth(level));
 		armor = getArmor(level);
 		toughness = getToughness(level);
-		setVeryLightWeight();
-		setFastSpeed();
+//		setVeryLightWeight();
+//		setFastSpeed();
 		updateNameTag();
 	}
 

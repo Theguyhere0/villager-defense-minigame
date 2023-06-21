@@ -31,12 +31,12 @@ public class VDWitherSkeleton extends VDMinion {
 		setEffectType(PotionEffectType.WITHER);
 		effectLevel = getEffectLevel(level);
 		effectDuration = getEffectDuration(level);
-		setVeryFastAttackSpeed();
-		setModerateKnockback();
-		setLightWeight();
-		setMediumSpeed();
-		targetPriority = TargetPriority.PLAYERS;
-		setModerateTargetRange();
+//		setVeryFastAttackSpeed();
+//		setModerateKnockback();
+//		setLightWeight();
+//		setMediumSpeed();
+//		targetPriority = TargetPriority.PLAYERS;
+//		setModerateTargetRange();
 		setArmorEquipment(true, false, false, true);
 		setScythe();
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);

@@ -35,11 +35,11 @@ public class VDSnowGolem extends VDGolem {
 		armor = 0;
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .1);
-		setSlowAttackSpeed();
-		setLowKnockback();
-		setHeavyWeight();
-		setSlowSpeed();
-		setModerateTargetRange();
+//		setSlowAttackSpeed();
+//		setLowKnockback();
+//		setHeavyWeight();
+//		setSlowSpeed();
+//		setModerateTargetRange();
 		updateNameTag();
 	}
 

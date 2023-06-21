@@ -30,8 +30,8 @@ public class VDNormalVillager extends VDVillager {
 		setHealth(getHealth(level));
 		armor = getArmor(level);
 		toughness = getToughness(level);
-		setMediumWeight();
-		setVeryFastSpeed();
+//		setMediumWeight();
+//		setVeryFastSpeed();
 		((Villager) mob).setProfession(NORMALS[(new Random()).nextInt(NORMALS.length)]);
 		updateNameTag();
 	}

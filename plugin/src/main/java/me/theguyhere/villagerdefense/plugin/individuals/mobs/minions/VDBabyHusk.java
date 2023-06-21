@@ -2,14 +2,10 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Husk;
-import org.bukkit.entity.Mob;
 import org.bukkit.potion.PotionEffectType;
-
-import java.util.Objects;
 
 public class VDBabyHusk extends VDMinion {
 	public static final String KEY = "bhsk";
@@ -17,14 +13,14 @@ public class VDBabyHusk extends VDMinion {
 	public VDBabyHusk(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.HUSK),
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.babyHusk,
 			LanguageManager.mobLore.babyHusk,
 			IndividualAttackType.NORMAL
 		);
-		((Husk) mob).setBaby();
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));
 		armor = getArmor(level);
@@ -33,12 +29,6 @@ public class VDBabyHusk extends VDMinion {
 		setEffectType(PotionEffectType.HUNGER);
 		effectLevel = getEffectLevel(level);
 		effectDuration = getEffectDuration(level);
-		setFastAttackSpeed();
-		setLowKnockback();
-		setLightWeight();
-		setFastSpeed();
-		targetPriority = TargetPriority.PLAYERS;
-		setModerateTargetRange();
 		setArmorEquipment(false, true, true, false);
 		setSword();
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);

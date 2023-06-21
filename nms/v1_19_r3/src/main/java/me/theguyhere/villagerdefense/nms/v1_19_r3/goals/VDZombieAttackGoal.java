@@ -6,8 +6,8 @@ public class VDZombieAttackGoal extends VDMeleeAttackGoal {
 	private final Zombie zombie;
 	private int raiseArmTicks;
 
-	public VDZombieAttackGoal(Zombie zombie, double speedModifier, int attackInterval, double attackReach) {
-		super(zombie, speedModifier, false, attackInterval, attackReach);
+	public VDZombieAttackGoal(Zombie zombie, int attackInterval, double attackReach) {
+		super(zombie, false, attackInterval, attackReach);
 		this.zombie = zombie;
 	}
 

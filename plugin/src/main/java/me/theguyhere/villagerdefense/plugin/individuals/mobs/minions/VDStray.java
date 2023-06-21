@@ -31,12 +31,12 @@ public class VDStray extends VDMinion {
 		setEffectType(PotionEffectType.SLOW);
 		effectLevel = getEffectLevel(level);
 		effectDuration = getEffectDuration(level);
-		setSlowAttackSpeed();
-		setLowKnockback();
-		setLightWeight();
-		setMediumSpeed();
-		targetPriority = TargetPriority.PLAYERS;
-		setModerateTargetRange();
+//		setSlowAttackSpeed();
+//		setLowKnockback();
+//		setLightWeight();
+//		setMediumSpeed();
+//		targetPriority = TargetPriority.PLAYERS;
+//		setModerateTargetRange();
 		setArmorEquipment(true, false, false, true);
 		setBow();
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);

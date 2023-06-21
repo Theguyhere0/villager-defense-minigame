@@ -46,10 +46,10 @@ public class VDHorse extends VDPet {
 			.setArmor(getDisplayArmor(level));
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .2);
-		setModerateAttackSpeed();
-		setHighKnockback();
-		setHeavyWeight();
-		setMediumSpeed();
+//		setModerateAttackSpeed();
+//		setHighKnockback();
+//		setHeavyWeight();
+//		setMediumSpeed();
 		updateNameTag();
 	}
 
