@@ -224,8 +224,11 @@ public class GameListener implements Listener {
 		// Check for pacifist challenge
 		if (gamer != null)
 			if (gamer.getChallenges().contains(Challenge.pacifist()))
-				// Cancel if not an enemy of the player
-				if (!gamer.getEnemies().contains(ent.getUniqueId()))
+				// Ignore if not an enemy of the player and is not a baby slime
+				if (!gamer
+					.getEnemies()
+					.contains(ent.getUniqueId()) &&
+					!(ent instanceof Slime && !(ent instanceof MagmaCube) && ((Slime) ent).getSize() < 2))
 					return;
 
 		// Ignore wolves
@@ -575,7 +578,7 @@ public class GameListener implements Listener {
 		int stack = item.getAmount();
 		Random r = new Random();
 		int wave = arena.getCurrentWave();
-		int earned = 0;
+		double earned = 0;
 		for (int i = 0; i < stack; i++) {
 			int temp = r.nextInt((int) (50 * Math.pow(wave, .15)));
 			earned += temp == 0 ? 1 : temp;
@@ -588,14 +591,14 @@ public class GameListener implements Listener {
 				playerData.getStringList(path).contains(Achievement.topBalance9().getID()))
 			earned *= 1.1;
 
-		gamer.addGems(earned);
+		gamer.addGems((int) earned);
 
 		// Cancel picking up of emeralds and notify player
 		e.setCancelled(true);
 		e.getItem().remove();
 		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(
 				CommunicationManager.format(new ColoredMessage(ChatColor.GREEN, LanguageManager.messages.foundGems),
-						Integer.toString(earned))));
+						Integer.toString((int) earned))));
 		if (arena.hasGemSound())
 			player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, .5f, 0);
 
@@ -714,7 +717,8 @@ public class GameListener implements Listener {
 		if (((LivingEntity) e.getEntity()).getHealth() > e.getFinalDamage()) return;
 
 		// Check damage was done to monster
-		if (!(e.getEntity().hasMetadata("VD"))) return;
+		if (!(e.getEntity().hasMetadata("VD")) || e.getEntity() instanceof Villager || e.getEntity() instanceof Golem
+			|| e.getEntity() instanceof Wolf) return;
 
 		// Prevent wither roses from being created
 		if (e.getDamager() instanceof WitherSkull || e.getDamager() instanceof Wither) {

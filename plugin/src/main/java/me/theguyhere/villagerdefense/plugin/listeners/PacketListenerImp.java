@@ -1,12 +1,9 @@
 package me.theguyhere.villagerdefense.plugin.listeners;
 
-import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.nms.common.PacketListener;
 import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.LeftClickNPCEvent;
 import me.theguyhere.villagerdefense.plugin.events.RightClickNPCEvent;
-import me.theguyhere.villagerdefense.plugin.events.SignGUIEvent;
-import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.displays.Portal;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.arenas.Arena;
@@ -36,25 +33,5 @@ public class PacketListenerImp implements PacketListener {
                         Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
                                 Bukkit.getPluginManager().callEvent(new RightClickNPCEvent(player, npcId)));
                 });
-    }
-
-    @Override
-    public void onSignUpdate(Player player, String[] signLines) {
-        Arena arena;
-        String header = signLines[0];
-
-        try {
-            arena = GameManager.getArena(Integer.parseInt(header.substring(18, header.length() - 4)));
-        } catch (ArenaNotFoundException | NumberFormatException | IndexOutOfBoundsException e) {
-            return;
-        }
-
-        // Check for right sign GUI
-        if (!(signLines[1].contains(CommunicationManager.format("&1===============")) &&
-                signLines[3].contains(CommunicationManager.format("&1==============="))))
-            return;
-
-        Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(Main.class), () ->
-                Bukkit.getPluginManager().callEvent(new SignGUIEvent(arena, player, signLines)));
     }
 }

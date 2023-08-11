@@ -95,6 +95,7 @@ public class Main extends JavaPlugin {
 		pm.registerEvents(new WorldListener(), this);
 		pm.registerEvents(new BonusListener(), this);
 		pm.registerEvents(new CustomEffectsListener(), this);
+		pm.registerEvents(new ChatListener(), this);
 
 		// Add packet listeners for online players
 		for (Player player : Bukkit.getOnlinePlayers())
@@ -168,7 +169,11 @@ public class Main extends JavaPlugin {
 		// Set as unloaded while reloading
 		setLoaded(false);
 
+		// Check worlds again
 		checkArenaNameAndGatherUnloadedWorlds();
+
+		// Remove active chat tasks
+		ChatListener.wipeTasks();
 
 		// Register expansion again
 		if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null)
@@ -179,7 +184,7 @@ public class Main extends JavaPlugin {
 		GameManager.init();
 
 		// Check for proper initialization with worlds
-		if (unloadedWorlds.size() > 0) {
+		if (!unloadedWorlds.isEmpty()) {
 			CommunicationManager.debugError("Plugin not properly initialized! The following worlds are not " +
 					"loaded yet: " + unloadedWorlds, 0);
 		} else CommunicationManager.debugConfirm("All worlds fully loaded. The plugin is properly initialized.",

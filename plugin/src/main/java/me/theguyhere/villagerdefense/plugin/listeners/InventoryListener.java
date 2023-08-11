@@ -2,7 +2,6 @@ package me.theguyhere.villagerdefense.plugin.listeners;
 
 import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.plugin.Main;
-import me.theguyhere.villagerdefense.plugin.events.SignGUIEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
 import me.theguyhere.villagerdefense.plugin.exceptions.InvalidNameException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
@@ -20,7 +19,10 @@ import me.theguyhere.villagerdefense.plugin.inventories.Buttons;
 import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryID;
 import me.theguyhere.villagerdefense.plugin.inventories.InventoryMeta;
-import me.theguyhere.villagerdefense.plugin.tools.*;
+import me.theguyhere.villagerdefense.plugin.tools.DataManager;
+import me.theguyhere.villagerdefense.plugin.tools.ItemManager;
+import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -251,13 +253,43 @@ public class InventoryListener implements Listener {
 				} catch (ArenaNotFoundException ignored) {
 				}
 
-			// Create new arena with naming inventory
+			// Create new arena after getting name
 			else if (buttonName.contains(CommunicationManager.format("&a&lNew "))) {
-				Arena arena = new Arena(GameManager.newArenaID());
+				// Close current inventory
+				closeInv(player);
 
-				// Set a new arena
-				GameManager.addArena(GameManager.newArenaID(), arena);
-				NMSVersion.getCurrent().getNmsManager().nameArena(player, arena.getName(), arena.getId());
+				// Prompt for name
+				ChatListener.ChatTask task = (msg) -> {
+					// Check for cancelling
+					if (msg.equalsIgnoreCase("cancel")) {
+						Bukkit
+							.getScheduler()
+							.scheduleSyncDelayedTask(Main.plugin,
+								() -> player.openInventory(Inventories.createArenasDashboard()));
+						return;
+					}
+
+					// Create new arena
+					Arena arena = new Arena(GameManager.newArenaID());
+					GameManager.addArena(GameManager.newArenaID(), arena);
+
+					// Try updating name
+					try {
+						arena.setName(msg.trim());
+						CommunicationManager.debugInfo("Name changed for arena %s!", 2,
+							arena.getPath().substring(1));
+						Bukkit
+							.getScheduler()
+							.scheduleSyncDelayedTask(Main.plugin,
+								() -> player.openInventory(Inventories.createArenaMenu(arena)));
+					} catch (InvalidNameException err) {
+						if (arena.getName() == null)
+							GameManager.removeArena(arena.getId());
+						PlayerManager.notifyFailure(player, "Invalid arena name!");
+					}
+				};
+				ChatListener.addTask(player, task, "Enter the new unique name for the arena chat, or type CANCEL to " +
+					"quit:");
 			}
 
 			// Return to main menu
@@ -677,15 +709,47 @@ public class InventoryListener implements Listener {
 		else if (invID == InventoryID.ARENA_MENU) {
 			Arena arenaInstance = meta.getArena();
 
-			// Open name editor
-			if (buttonName.contains("Edit Name"))
-				if (arenaInstance.isClosed())
-					NMSVersion.getCurrent().getNmsManager().nameArena(
-							player,
-							arenaInstance.getName(),
-							arenaInstance.getId()
-					);
+			// Prompt for new name
+			if (buttonName.contains("Edit Name")) {
+				if (arenaInstance.isClosed()) {
+					// Close current inventory
+					closeInv(player);
+
+					ChatListener.ChatTask task = (msg) -> {
+						// Check for cancelling
+						if (msg.equalsIgnoreCase("cancel")) {
+							Bukkit
+								.getScheduler()
+								.scheduleSyncDelayedTask(Main.plugin,
+									() -> player.openInventory(Inventories.createArenaMenu(arenaInstance)));
+							return;
+						}
+
+						// Try updating name
+						try {
+							arenaInstance.setName(msg.trim());
+							CommunicationManager.debugInfo("Name changed for arena %s!", 2,
+								arenaInstance
+									.getPath()
+									.substring(1)
+							);
+							Bukkit
+								.getScheduler()
+								.scheduleSyncDelayedTask(Main.plugin,
+									() -> player.openInventory(Inventories.createArenaMenu(arenaInstance)));
+						}
+						catch (InvalidNameException err) {
+							if (arenaInstance.getName() == null)
+								GameManager.removeArena(arenaInstance.getId());
+							PlayerManager.notifyFailure(player, "Invalid arena name!");
+						}
+					};
+					ChatListener.addTask(
+						player, task, "Enter the new unique name for the arena chat, or type CANCEL to " +
+							"quit:");
+				}
 				else PlayerManager.notifyFailure(player, "Arena must be closed to modify this!");
+			}
 
 			// Open portal menu
 			else if (buttonName.contains("Arena Portal"))
@@ -3477,31 +3541,6 @@ public class InventoryListener implements Listener {
 			e.getInventory().removeItem(GameItems.shop());
 			PlayerManager.giveItem((Player) e.getPlayer(), GameItems.shop(), LanguageManager.errors.inventoryFull);
 		}
-	}
-
-	// Handles arena naming
-	@EventHandler
-	public void onRename(SignGUIEvent e) {
-		Arena arena = e.getArena();
-		Player player = e.getPlayer();
-
-		// Try updating name
-		try {
-			arena.setName(e.getLines()[2]);
-			CommunicationManager.debugInfo("Name changed for arena %s!", 2,
-					arena.getPath().substring(1));
-		} catch (InvalidNameException err) {
-			if (err.getMessage().equals("Same"))
-				player.openInventory(Inventories.createArenaMenu(arena));
-			else {
-				if (arena.getName() == null)
-					GameManager.removeArena(arena.getId());
-				PlayerManager.notifyFailure(player, "Invalid arena name!");
-			}
-			return;
-		}
-
-		player.openInventory(Inventories.createArenaMenu(arena));
 	}
 
 	/**

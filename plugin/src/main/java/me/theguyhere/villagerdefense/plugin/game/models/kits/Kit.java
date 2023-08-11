@@ -512,7 +512,7 @@ public class Kit {
         Kit kit = new Kit(LanguageManager.kits.phantom.name, KitType.GIFT, Material.PHANTOM_MEMBRANE);
         kit.addMasterDescription(CommunicationManager.format(
                 new ColoredMessage(ChatColor.GRAY, LanguageManager.kits.phantom.description),
-                "/vd select")
+                "/vd join")
         );
         kit.addPrice(1, 6000);
         kit.addItems(1, new ItemStack[]{new ItemStack(Material.WOODEN_SWORD)});
