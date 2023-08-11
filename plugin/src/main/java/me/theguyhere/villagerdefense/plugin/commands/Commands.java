@@ -7,6 +7,7 @@ import me.theguyhere.villagerdefense.plugin.Main;
 import me.theguyhere.villagerdefense.plugin.events.GameEndEvent;
 import me.theguyhere.villagerdefense.plugin.events.LeaveArenaEvent;
 import me.theguyhere.villagerdefense.plugin.exceptions.ArenaNotFoundException;
+import me.theguyhere.villagerdefense.plugin.exceptions.InvalidNameException;
 import me.theguyhere.villagerdefense.plugin.exceptions.PlayerNotFoundException;
 import me.theguyhere.villagerdefense.plugin.game.models.GameManager;
 import me.theguyhere.villagerdefense.plugin.game.models.Tasks;
@@ -16,9 +17,9 @@ import me.theguyhere.villagerdefense.plugin.game.models.kits.Kit;
 import me.theguyhere.villagerdefense.plugin.game.models.players.PlayerStatus;
 import me.theguyhere.villagerdefense.plugin.game.models.players.VDPlayer;
 import me.theguyhere.villagerdefense.plugin.inventories.Inventories;
+import me.theguyhere.villagerdefense.plugin.listeners.ChatListener;
 import me.theguyhere.villagerdefense.plugin.tools.DataManager;
 import me.theguyhere.villagerdefense.plugin.tools.LanguageManager;
-import me.theguyhere.villagerdefense.plugin.tools.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -35,7 +36,10 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("deprecation")
@@ -476,8 +480,32 @@ public class Commands implements CommandExecutor {
 										return true;
 									}
 
-									NMSVersion.getCurrent().getNmsManager()
-											.nameArena(player, arena.getName(), arena.getId());
+									// Prompt for new name
+									ChatListener.ChatTask task = (msg) -> {
+										// Check for cancelling
+										if (msg.equalsIgnoreCase("cancel")) {
+											PlayerManager.notifyAlert(player, "Arena naming cancelled.");
+											return;
+										}
+
+										// Try updating name
+										try {
+											arena.setName(msg.trim());
+											CommunicationManager.debugInfo("Name changed for arena %s!", 2,
+												arena
+													.getPath()
+													.substring(1)
+											);
+										}
+										catch (InvalidNameException err) {
+											if (arena.getName() == null)
+												GameManager.removeArena(arena.getId());
+											PlayerManager.notifyFailure(player, "Invalid arena name!");
+										}
+									};
+									ChatListener.addTask(
+										player, task, "Enter the new unique name for the arena chat, or type CANCEL to " +
+											"quit:");
 
 									return true;
 								}

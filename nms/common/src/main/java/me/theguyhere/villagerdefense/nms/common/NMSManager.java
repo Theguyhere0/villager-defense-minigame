@@ -23,8 +23,6 @@ public interface NMSManager {
 
     String getBorderParticleName();
 
-    void nameArena(Player player, String arenaName, int arenaID);
-
     void injectPacketListener(Player player, PacketListener packetListener);
 
     void uninjectPacketListener(Player player);

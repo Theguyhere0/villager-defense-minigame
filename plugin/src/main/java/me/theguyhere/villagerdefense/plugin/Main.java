@@ -95,6 +95,7 @@ public class Main extends JavaPlugin {
 		pm.registerEvents(new WorldListener(), this);
 		pm.registerEvents(new BonusListener(), this);
 		pm.registerEvents(new CustomEffectsListener(), this);
+		pm.registerEvents(new ChatListener(), this);
 
 		// Add packet listeners for online players
 		for (Player player : Bukkit.getOnlinePlayers())
@@ -168,7 +169,11 @@ public class Main extends JavaPlugin {
 		// Set as unloaded while reloading
 		setLoaded(false);
 
+		// Check worlds again
 		checkArenaNameAndGatherUnloadedWorlds();
+
+		// Remove active chat tasks
+		ChatListener.wipeTasks();
 
 		// Register expansion again
 		if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null)

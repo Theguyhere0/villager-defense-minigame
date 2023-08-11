@@ -4,15 +4,14 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelPipeline;
 import me.theguyhere.villagerdefense.common.CommunicationManager;
-import me.theguyhere.villagerdefense.nms.common.*;
+import me.theguyhere.villagerdefense.nms.common.EntityID;
+import me.theguyhere.villagerdefense.nms.common.NMSErrors;
+import me.theguyhere.villagerdefense.nms.common.NMSManager;
+import me.theguyhere.villagerdefense.nms.common.PacketListener;
 import me.theguyhere.villagerdefense.nms.common.entities.TextPacketEntity;
 import me.theguyhere.villagerdefense.nms.common.entities.VillagerPacketEntity;
-import net.minecraft.server.v1_16_R3.BlockPosition;
-import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import net.minecraft.server.v1_16_R3.NetworkManager;
 import net.minecraft.server.v1_16_R3.PlayerConnection;
-import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
@@ -50,29 +49,6 @@ public class VersionNMSManager implements NMSManager {
     @Override
     public String getBorderParticleName() {
         return "REDSTONE";
-    }
-
-    @Override
-    public void nameArena(Player player, String arenaName, int arenaID) {
-        Location location = player.getLocation();
-        location.setY(location.getY() + 1);
-        Material original = location.getBlock().getType();
-        BlockPosition position = new BlockPosition(location.getX(), location.getY(), location.getZ());
-        NBTTagCompound signNBT = new NBTTagCompound();
-        signNBT.setString("Text1", String.format("{\"text\":\"%s\"}",
-                CommunicationManager.format(String.format("&9   Rename Arena %d:   ", arenaID))));
-        signNBT.setString("Text2", String.format("{\"text\":\"%s\"}",
-                CommunicationManager.format("&1===============")));
-        signNBT.setString("Text3", String.format("{\"text\":\"%s\"}",
-                CommunicationManager.format(arenaName == null ? "" : arenaName)));
-        signNBT.setString("Text4", String.format("{\"text\":\"%s\"}",
-                CommunicationManager.format("&1===============")));
-
-        PacketGroup.of(
-                new BlockChangePacket(position, Material.OAK_SIGN),
-                new TileEntityDataPacket(position, 9, signNBT),
-                new OpenSignEditorPacket(position),
-                new BlockChangePacket(position, original)).sendTo(player);
     }
 
     @Override
