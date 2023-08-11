@@ -6,7 +6,6 @@ import me.theguyhere.villagerdefense.common.CommunicationManager;
 import me.theguyhere.villagerdefense.common.Utils;
 import me.theguyhere.villagerdefense.nms.common.NMSErrors;
 import me.theguyhere.villagerdefense.nms.common.PacketListener;
-import net.minecraft.server.v1_16_R3.PacketPlayInUpdateSign;
 import net.minecraft.server.v1_16_R3.PacketPlayInUseEntity;
 import org.bukkit.entity.Player;
 
@@ -39,12 +38,6 @@ class InboundPacketHandler extends ChannelInboundHandlerAdapter {
                         && Utils.getFieldValue(packet, "d").toString().equalsIgnoreCase("MAIN_HAND")) {
                     packetListener.onInteractMain(player, entityID);
                 }
-            }
-
-            else if (packet instanceof PacketPlayInUpdateSign) {
-                String[] signLines = ((String[]) Utils.getFieldValue(packet, "b"));
-
-                packetListener.onSignUpdate(player, signLines);
             }
         } catch (Exception e) {
             CommunicationManager.debugError(NMSErrors.EXCEPTION_ON_PACKET_READ, 0);

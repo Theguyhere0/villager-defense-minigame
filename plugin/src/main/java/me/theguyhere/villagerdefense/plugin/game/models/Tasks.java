@@ -169,8 +169,13 @@ public class Tasks {
 				for (VDPlayer player : arena.getSpectators())
 					PlayerManager.teleSpectator(player.getPlayer(), arena.getPlayerSpawn().getLocation());
 			} else {
-				for (VDPlayer vdPlayer : arena.getActives())
-					vdPlayer.getPlayer().getInventory().clear();
+				for (VDPlayer vdPlayer : arena.getActives()) {
+					vdPlayer
+						.getPlayer()
+						.getInventory()
+						.clear();
+					vdPlayer.getPlayer().setInvulnerable(false);
+				}
 			}
 
 			// Stop waiting sound
