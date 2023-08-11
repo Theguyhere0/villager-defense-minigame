@@ -184,7 +184,7 @@ public class Main extends JavaPlugin {
 		GameManager.init();
 
 		// Check for proper initialization with worlds
-		if (unloadedWorlds.size() > 0) {
+		if (!unloadedWorlds.isEmpty()) {
 			CommunicationManager.debugError("Plugin not properly initialized! The following worlds are not " +
 					"loaded yet: " + unloadedWorlds, 0);
 		} else CommunicationManager.debugConfirm("All worlds fully loaded. The plugin is properly initialized.",
