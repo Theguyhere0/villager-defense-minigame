@@ -15,9 +15,7 @@ import me.theguyhere.villagerdefense.plugin.tools.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -162,6 +160,11 @@ public class ChallengeListener implements Listener {
                 return;
             }
 
+            // Make sure enemy is not the projectile
+            if (enemy instanceof Projectile) {
+                enemy = (Entity) ((Projectile) enemy).getShooter();
+            }
+
             // Ignore arenas that aren't started
             if (arena.getStatus() != ArenaStatus.ACTIVE)
                 return;
@@ -204,8 +207,14 @@ public class ChallengeListener implements Listener {
 
             // Check for pacifist challenge
             if (gamer.getChallenges().contains(Challenge.pacifist()))
-                // Cancel if not an enemy of the player
-                if (!gamer.getEnemies().contains(e.getEntity().getUniqueId()))
+                // Cancel if not an enemy of the player and is not a baby slime
+                if (!gamer
+                    .getEnemies()
+                    .contains(e
+                        .getEntity()
+                        .getUniqueId()) &&
+                    !(e.getEntity() instanceof Slime && !(e.getEntity() instanceof MagmaCube) &&
+                        ((Slime) e.getEntity()).getSize() < 2))
                     e.setCancelled(true);
         }
     }
