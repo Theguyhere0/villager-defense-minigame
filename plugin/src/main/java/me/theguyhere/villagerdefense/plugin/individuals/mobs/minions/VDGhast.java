@@ -2,12 +2,9 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
-
-import java.util.Objects;
 
 public class VDGhast extends VDMinion {
 	public static final String KEY = "ghst";
@@ -15,9 +12,10 @@ public class VDGhast extends VDMinion {
 	public VDGhast(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.GHAST),
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.ghast,
 			LanguageManager.mobLore.ghast,
 			IndividualAttackType.NORMAL
@@ -27,11 +25,6 @@ public class VDGhast extends VDMinion {
 		armor = 0;
 		toughness = 0;
 		setDamage(getDamage(level), .2);
-//		setModerateAttackSpeed();
-//		setHighKnockback();
-//		setHeavyWeight();
-//		setMediumSpeed();
-//		setFarTargetRange();
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);
 		updateNameTag();
 	}

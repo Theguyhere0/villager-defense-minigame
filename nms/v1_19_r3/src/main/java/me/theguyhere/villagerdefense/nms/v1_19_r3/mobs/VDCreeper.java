@@ -83,7 +83,7 @@ public class VDCreeper extends Creeper {
 	// Customize explosion mechanics
 	public void explodeCreeper() {
 		if (!level.isClientSide) {
-			float f = isPowered() ? 2.0F : 1.0F;
+			float f = isPowered() ? 5 : 1;
 			ExplosionPrimeEvent event = new ExplosionPrimeEvent(getBukkitEntity(), (float) explosionRadius * f, false);
 			level
 				.getCraftServer()
@@ -107,9 +107,10 @@ public class VDCreeper extends Creeper {
 	private void spawnLingeringCloud() {
 		Collection<MobEffectInstance> collection = getActiveEffects();
 		if (!collection.isEmpty()) {
+			float f = isPowered() ? 5 : 1;
 			AreaEffectCloud entityareaeffectcloud = new AreaEffectCloud(level, getX(), getY(), getZ());
 			entityareaeffectcloud.setOwner(this);
-			entityareaeffectcloud.setRadius(2.5F);
+			entityareaeffectcloud.setRadius(explosionRadius * f);
 			entityareaeffectcloud.setRadiusOnUse(-0.5F);
 			entityareaeffectcloud.setWaitTime(10);
 			entityareaeffectcloud.setDuration(entityareaeffectcloud.getDuration() / 2);

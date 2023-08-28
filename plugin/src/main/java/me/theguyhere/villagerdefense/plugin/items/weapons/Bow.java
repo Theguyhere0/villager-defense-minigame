@@ -1,6 +1,5 @@
 package me.theguyhere.villagerdefense.plugin.items.weapons;
 
-import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
@@ -175,13 +174,22 @@ public abstract class Bow extends VDWeapon {
 		int price;
 		switch (tier) {
 			case T1:
+				price = 215;
+				break;
 			case T2:
+				price = 420;
+				break;
 			case T3:
+				price = 785;
+				break;
 			case T4:
+				price = 1275;
+				break;
 			case T5:
+				price = 1990;
+				break;
 			case T6:
-				price = Calculator.roundToNearest(
-					Math.pow(durability, 0.9) * Math.pow((damageHigh + damageLow) / 2d, 1.25) / 3, 5);
+				price = 2650;
 				break;
 			default:
 				price = -1;

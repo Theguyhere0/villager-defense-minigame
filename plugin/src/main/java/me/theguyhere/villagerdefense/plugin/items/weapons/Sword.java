@@ -2,7 +2,6 @@ package me.theguyhere.villagerdefense.plugin.items.weapons;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
@@ -293,14 +292,22 @@ public abstract class Sword extends VDWeapon {
 			case TIERED:
 				switch (tier) {
 					case T1:
+						price = 210;
+						break;
 					case T2:
+						price = 450;
+						break;
 					case T3:
+						price = 790;
+						break;
 					case T4:
+						price = 1190;
+						break;
 					case T5:
+						price = 1590;
+						break;
 					case T6:
-						price =
-							Calculator.roundToNearest(
-								Math.pow(durability, 0.75) * (damageHigh + damageLow) / 2 / 10, 5);
+						price = 2135;
 						break;
 					default:
 						price = -1;

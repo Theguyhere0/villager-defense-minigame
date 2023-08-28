@@ -152,13 +152,30 @@ public class VDZombie extends VDMinion {
 	}
 
 	/**
-	 * Calculates the value this minion has given arena and wave parameters.
+	 * Returns the value this minion has given arena and wave parameters.
 	 *
 	 * @param difficulty Current arena difficulty.
 	 * @return Value of this minion.
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), getArmor(level), getToughness(level), getDamage(level), 1);
+		switch (level) {
+			case 1:
+				return 35;
+			case 2:
+				return 55;
+			case 3:
+				return 75;
+			case 4:
+				return 105;
+			case 5:
+				return 130;
+			case 6:
+				return 170;
+			case 7:
+				return 205;
+			default:
+				return 0;
+		}
 	}
 }

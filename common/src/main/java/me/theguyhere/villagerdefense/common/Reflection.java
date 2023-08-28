@@ -93,11 +93,11 @@ public class Reflection {
 	 * @param args     Any arguments to pass into the method.
 	 */
 	@SuppressWarnings("unused")
-	public static void invokeMethod(Object instance, String name, Object... args) {
+	public static void invokeMethod(Object instance, String name, Class<?>[] parameterTypes, Object... args) {
 		try {
 			Method method = instance
 				.getClass()
-				.getMethod(name);
+				.getDeclaredMethod(name, parameterTypes);
 			method.setAccessible(true);
 
 			method.invoke(instance, args);

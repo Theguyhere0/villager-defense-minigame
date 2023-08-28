@@ -2,7 +2,6 @@ package me.theguyhere.villagerdefense.plugin.items.weapons;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
@@ -225,13 +224,22 @@ public abstract class Axe extends VDWeapon {
 		int price;
 		switch (tier) {
 			case T1:
+				price = 210;
+				break;
 			case T2:
+				price = 440;
+				break;
 			case T3:
+				price = 790;
+				break;
 			case T4:
+				price = 1215;
+				break;
 			case T5:
+				price = 1740;
+				break;
 			case T6:
-				price =
-					Calculator.roundToNearest(Math.pow(durability, 0.75) * (damageHigh + damageLow) / 2 / 15, 5);
+				price = 2320;
 				break;
 			default:
 				price = -1;

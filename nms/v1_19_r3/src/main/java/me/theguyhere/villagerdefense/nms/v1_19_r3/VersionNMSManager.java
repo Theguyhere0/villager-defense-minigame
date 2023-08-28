@@ -133,6 +133,10 @@ public class VersionNMSManager implements NMSManager {
 				return (Mob) new VDCaveSpider(location).getBukkitEntity();
 			case "crpr":
 				return (Mob) new VDCreeper(location).getBukkitEntity();
+			case "ccpr":
+				return (Mob) new VDChargedCreeper(location).getBukkitEntity();
+			case "ghst":
+				return (Mob) new VDGhast(location).getBukkitEntity();
 			case "husk":
 				return (Mob) new VDHusk(location).getBukkitEntity();
 			case "skel":

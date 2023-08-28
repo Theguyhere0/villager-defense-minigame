@@ -118,7 +118,7 @@ public class VDMeleeAttackGoal extends Goal {
 	@Override
 	public void tick() {
 		LivingEntity target = mob.getTarget();
-		if (target != null && canContinueToUse()) {
+		if (canContinueToUse()) {
 			mob.getLookControl().setLookAt(target, 30.0F, 30.0F);
 			double targetDistance = mob.distanceToSqr(target.getX(), target.getY(), target.getZ());
 			ticksUntilNextPathRecalculation = Math.max(ticksUntilNextPathRecalculation - 1, 0);

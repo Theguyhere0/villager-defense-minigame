@@ -153,13 +153,22 @@ public abstract class Ammo extends VDWeapon {
 		int price;
 		switch (tier) {
 			case T1:
+				price = 100;
+				break;
 			case T2:
+				price = 210;
+				break;
 			case T3:
+				price = 445;
+				break;
 			case T4:
+				price = 785;
+				break;
 			case T5:
+				price = 1500;
+				break;
 			case T6:
-				price =
-					Calculator.roundToNearest(currCapacity / currRefill * 50, 5);
+				price = 2250;
 				break;
 			default:
 				price = -1;

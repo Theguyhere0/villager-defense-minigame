@@ -1,6 +1,5 @@
 package me.theguyhere.villagerdefense.plugin.items.weapons;
 
-import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.players.VDPlayer;
@@ -195,14 +194,22 @@ public abstract class Crossbow extends VDWeapon {
 		int price;
 		switch (tier) {
 			case T1:
+				price = 240;
+				break;
 			case T2:
+				price = 405;
+				break;
 			case T3:
+				price = 765;
+				break;
 			case T4:
+				price = 1130;
+				break;
 			case T5:
+				price = 1745;
+				break;
 			case T6:
-				price =
-					Calculator.roundToNearest(
-						Math.pow(durability, 0.6) * Math.log(pierce * 10) * (damageHigh + damageLow) / 2 / 11, 5);
+				price = 2380;
 				break;
 			default:
 				price = -1;

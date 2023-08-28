@@ -1,15 +1,10 @@
 package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
-import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
-
-import java.util.Objects;
 
 public class VDChargedCreeper extends VDMinion {
 	public static final String KEY = "ccpr";
@@ -17,27 +12,19 @@ public class VDChargedCreeper extends VDMinion {
 	public VDChargedCreeper(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.CREEPER),
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.chargedCreeper,
 			LanguageManager.mobLore.chargedCreeper,
 			IndividualAttackType.NORMAL
 		);
-		Creeper creeper = (Creeper) mob;
-		creeper.setPowered(true);
 		level = getLevel(arena.getCurrentDifficulty());
 		setHealth(getHealth(level));
 		armor = getArmor(level);
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .4);
-//		setVerySlowAttackSpeed();
-//		creeper.setMaxFuseTicks(Calculator.secondsToTicks(attackSpeed));
-//		setVeryHighKnockback();
-//		setLightWeight();
-//		setSlowSpeed();
-//		targetPriority = TargetPriority.PLAYERS;
-//		setUnboundedTargetRange();
 		setLoot(getValue(arena.getCurrentDifficulty()), .25);
 		updateNameTag();
 	}
@@ -69,13 +56,13 @@ public class VDChargedCreeper extends VDMinion {
 	protected static int getHealth(int level) {
 		switch (level) {
 			case 1:
-				return 400;
+				return 600;
 			case 2:
-				return 475;
+				return 725;
 			case 3:
-				return 550;
+				return 850;
 			case 4:
-				return 650;
+				return 1000;
 			default:
 				return 0;
 		}
@@ -128,13 +115,13 @@ public class VDChargedCreeper extends VDMinion {
 	protected static int getDamage(int level) {
 		switch (level) {
 			case 1:
-				return 400;
+				return 500;
 			case 2:
-				return 475;
+				return 575;
 			case 3:
-				return 550;
-			case 4:
 				return 650;
+			case 4:
+				return 750;
 			default:
 				return 0;
 		}
