@@ -48,11 +48,10 @@ public class VDCreeper extends Creeper {
 	protected void registerGoals() {
 		// Behavior
 		goalSelector.addGoal(1, new FloatGoal(this));
-		goalSelector.addGoal(2, new VDSwellGoal(this));
+		goalSelector.addGoal(2, new VDSwellGoal(this, 5));
 		goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Ocelot.class, 6, 1, 1));
 		goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Cat.class, 6, 1, 1));
-		goalSelector.addGoal(4, new VDMeleeAttackGoal(this, false,
-			Calculator.secondsToTicks(Constants.ATTACK_SPEED_SLOW), 4));
+		goalSelector.addGoal(4, new VDMeleeAttackGoal(this, false, Constants.ATTACK_SPEED_SLOW, 4));
 		goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1));
 		goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 
@@ -83,7 +82,7 @@ public class VDCreeper extends Creeper {
 	// Customize explosion mechanics
 	public void explodeCreeper() {
 		if (!level.isClientSide) {
-			float f = isPowered() ? 5 : 1;
+			float f = isPowered() ? 2.5f : 1;
 			ExplosionPrimeEvent event = new ExplosionPrimeEvent(getBukkitEntity(), (float) explosionRadius * f, false);
 			level
 				.getCraftServer()

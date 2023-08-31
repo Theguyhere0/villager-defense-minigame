@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.nms.v1_19_r3.goals;
 
+import me.theguyhere.villagerdefense.common.Calculator;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -14,17 +15,17 @@ import java.util.EnumSet;
 
 public class VDRangedBowAttackGoal<T extends Monster & RangedAttackMob> extends Goal {
 	private final T mob;
-	private final int attackIntervalMin;
+	private final double attackIntervalSeconds;
 	private final float attackRadiusSqr;
-	private int attackTime = -1;
-	private int seeTime;
+	private long nextAttackTimeMillis = System.currentTimeMillis();
+	private int seeTimeTicks;
 	private boolean strafingClockwise;
 	private boolean strafingBackwards;
-	private int strafingTime = -1;
+	private int strafingTimeTicks = -1;
 
-	public VDRangedBowAttackGoal(T mob, int attackIntervalMin, float attackRadius) {
+	public VDRangedBowAttackGoal(T mob, double attackIntervalSeconds, float attackRadius) {
 		this.mob = mob;
-		this.attackIntervalMin = attackIntervalMin;
+		this.attackIntervalSeconds = attackIntervalSeconds;
 		attackRadiusSqr = attackRadius * attackRadius;
 		setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
 	}
@@ -79,8 +80,7 @@ public class VDRangedBowAttackGoal<T extends Monster & RangedAttackMob> extends 
 	public void stop() {
 		super.stop();
 		mob.setAggressive(false);
-		seeTime = 0;
-		attackTime = -1;
+		seeTimeTicks = 0;
 		mob.stopUsingItem();
 	}
 
@@ -97,31 +97,34 @@ public class VDRangedBowAttackGoal<T extends Monster & RangedAttackMob> extends 
 			boolean hasLineOfSight = mob
 				.getSensing()
 				.hasLineOfSight(target);
-			if (hasLineOfSight != seeTime > 0) {
-				seeTime = 0;
+
+			// Increase see time if target is visible, otherwise decrease, and make sure
+			if (hasLineOfSight != seeTimeTicks > 0) {
+				seeTimeTicks = 0;
 			}
 
 			if (hasLineOfSight) {
-				++seeTime;
+				++seeTimeTicks;
 			}
 			else {
-				--seeTime;
+				--seeTimeTicks;
 			}
 
-			if (!(targetDistance > (double) attackRadiusSqr) && seeTime >= 20) {
+			if (targetDistance <= (double) attackRadiusSqr && seeTimeTicks >= 20) {
 				mob
 					.getNavigation()
 					.stop();
-				++strafingTime;
+				++strafingTimeTicks;
 			}
 			else {
 				mob
 					.getNavigation()
 					.moveTo(target, 1);
-				strafingTime = -1;
+				strafingTimeTicks = -1;
 			}
 
-			if (strafingTime >= 20) {
+			// Possibly change strafe direction every 20 ticks
+			if (strafingTimeTicks >= 20) {
 				if ((double) mob
 					.getRandom()
 					.nextFloat() < 0.3) {
@@ -134,10 +137,11 @@ public class VDRangedBowAttackGoal<T extends Monster & RangedAttackMob> extends 
 					strafingBackwards = !strafingBackwards;
 				}
 
-				strafingTime = 0;
+				strafingTimeTicks = 0;
 			}
 
-			if (strafingTime > -1) {
+			// Strafe to keep between 75% and 25% of attack radius sqr
+			if (strafingTimeTicks > -1) {
 				if (targetDistance > (double) (attackRadiusSqr * 0.75F)) {
 					strafingBackwards = false;
 				}
@@ -156,23 +160,24 @@ public class VDRangedBowAttackGoal<T extends Monster & RangedAttackMob> extends 
 					.setLookAt(target, 30.0F, 30.0F);
 			}
 
+			// Make mob spend half the time using the item before attacking
 			if (mob.isUsingItem()) {
-				if (!hasLineOfSight && seeTime < -60) {
+				if (!hasLineOfSight && seeTimeTicks < -Calculator.secondsToTicks(attackIntervalSeconds)) {
 					mob.stopUsingItem();
 				}
 				else if (hasLineOfSight) {
 					int ticksUsingItem = mob.getTicksUsingItem();
-					if (ticksUsingItem >= 20) {
+					if (ticksUsingItem >= Calculator.secondsToTicks(attackIntervalSeconds) / 2) {
 						mob.stopUsingItem();
 						mob.performRangedAttack(target, BowItem.getPowerForTime(ticksUsingItem));
-						attackTime = attackIntervalMin;
+						nextAttackTimeMillis += Calculator.secondsToMillis(attackIntervalSeconds);
 					}
 				}
 			}
-			else if (--attackTime <= 0 && seeTime >= -60) {
+			else if (nextAttackTimeMillis - Calculator.secondsToMillis(attackIntervalSeconds) / 2 <=
+				System.currentTimeMillis() && seeTimeTicks >= -60) {
 				mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(mob, Items.BOW));
 			}
-
 		}
 	}
 }

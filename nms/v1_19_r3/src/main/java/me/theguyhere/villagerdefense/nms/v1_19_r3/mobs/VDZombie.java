@@ -1,6 +1,5 @@
 package me.theguyhere.villagerdefense.nms.v1_19_r3.mobs;
 
-import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.nms.v1_19_r3.goals.VDZombieAttackGoal;
 import net.minecraft.world.entity.EntityType;
@@ -46,8 +45,7 @@ public class VDZombie extends Zombie {
 	protected void registerGoals() {
 		// Behavior
 		goalSelector.addGoal(1, new FloatGoal(this));
-		goalSelector.addGoal(2, new VDZombieAttackGoal(this,
-			Calculator.secondsToTicks(Constants.ATTACK_SPEED_MODERATE), 1));
+		goalSelector.addGoal(2, new VDZombieAttackGoal(this, Constants.ATTACK_SPEED_MODERATE, 1));
 		goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1));
 		goalSelector.addGoal(4, new RandomLookAroundGoal(this));
 

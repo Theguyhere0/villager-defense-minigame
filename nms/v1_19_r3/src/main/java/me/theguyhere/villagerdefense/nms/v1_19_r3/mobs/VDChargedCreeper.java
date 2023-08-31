@@ -36,11 +36,10 @@ public class VDChargedCreeper extends VDCreeper {
 	protected void registerGoals() {
 		// Behavior
 		goalSelector.addGoal(1, new FloatGoal(this));
-		goalSelector.addGoal(2, new VDSwellGoal(this));
+		goalSelector.addGoal(2, new VDSwellGoal(this, 8));
 		goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Ocelot.class, 6, 1, 1));
 		goalSelector.addGoal(3, new AvoidEntityGoal<>(this, Cat.class, 6, 1, 1));
-		goalSelector.addGoal(4, new VDMeleeAttackGoal(this, true,
-			Calculator.secondsToTicks(Constants.ATTACK_SPEED_VERY_SLOW), 8));
+		goalSelector.addGoal(4, new VDMeleeAttackGoal(this, true, Constants.ATTACK_SPEED_VERY_SLOW, 6));
 		goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1));
 		goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 

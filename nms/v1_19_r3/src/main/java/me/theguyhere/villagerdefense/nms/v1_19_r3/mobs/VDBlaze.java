@@ -37,8 +37,7 @@ public class VDBlaze extends Blaze {
 		// Behavior
 		goalSelector.addGoal(1, new FloatGoal(this));
 		goalSelector.addGoal(2, new VDBlazeAttackGoal(this, Calculator.secondsToTicks(Constants.ATTACK_SPEED_SLOW)));
-		goalSelector.addGoal(3, new VDMeleeAttackGoal(this, false,
-			Calculator.secondsToTicks(Constants.ATTACK_SPEED_SLOW), 8));
+		goalSelector.addGoal(3, new VDMeleeAttackGoal(this, false, Constants.ATTACK_SPEED_SLOW, 8));
 		goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1));
 		goalSelector.addGoal(5, new RandomLookAroundGoal(this));
 

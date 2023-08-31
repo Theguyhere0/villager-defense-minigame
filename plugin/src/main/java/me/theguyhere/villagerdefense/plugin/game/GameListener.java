@@ -12,6 +12,8 @@ import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualTeam;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.VDMob;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.VDMobNotFoundException;
+import me.theguyhere.villagerdefense.plugin.individuals.mobs.minions.VDChargedCreeper;
+import me.theguyhere.villagerdefense.plugin.individuals.mobs.minions.VDCreeper;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.minions.VDWitch;
 import me.theguyhere.villagerdefense.plugin.individuals.mobs.pets.VDPet;
 import me.theguyhere.villagerdefense.plugin.individuals.players.PlayerNotFoundException;
@@ -46,6 +48,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
 import org.spigotmc.event.entity.EntityDismountEvent;
 import org.spigotmc.event.entity.EntityMountEvent;
 
@@ -305,9 +308,9 @@ public class GameListener implements Listener {
 
 			// Check for witch
 			if ((finalShooter instanceof VDWitch)) {
-				if (((ThrownPotion) e.getEntity())
+				if (!((ThrownPotion) e.getEntity())
 					.getEffects()
-					.size() > 0)
+					.isEmpty())
 					e.setCancelled(true);
 
 				return;
@@ -369,7 +372,36 @@ public class GameListener implements Listener {
 
 			// Realize damage and deal effect
 			gamer.takeDamage(finalDamager.dealRawDamage(), finalDamager.getAttackType());
-			if (finalDamager.getEffectType() == null || (Kit
+
+			// Give creeper explosion more knockback
+			Vector fromCreeperVector =
+				gamer
+					.getPlayer()
+					.getLocation()
+					.toVector()
+					.subtract(finalDamager
+						.getEntity()
+						.getLocation()
+						.toVector())
+					.normalize();
+			if (finalDamager instanceof VDCreeper)
+				gamer.getPlayer().setVelocity(gamer.getPlayer().getVelocity().add(fromCreeperVector.multiply(0.5)));
+			else if (finalDamager instanceof VDChargedCreeper)
+				gamer.getPlayer().setVelocity(gamer.getPlayer().getVelocity().add(fromCreeperVector.multiply(1.25)));
+
+			// Start of dealing effects
+			if (finalDamager.getEffectType() == null)
+				return;
+
+			// Deal fire
+			if (finalDamager
+				.getEffectType()
+				.getName()
+				.equals(PotionEffectType.FIRE_RESISTANCE.getName()))
+				gamer.combust(Calculator.secondsToTicks(finalDamager.getEffectDuration()));
+
+			// Deal other effects
+			if ((Kit
 				.witch()
 				.getID()
 				.equals(gamer
@@ -382,11 +414,6 @@ public class GameListener implements Listener {
 				PlayerManager.notifySuccess(player, LanguageManager.messages.effectShare);
 				return;
 			}
-			if (finalDamager
-				.getEffectType()
-				.getName()
-				.equals(PotionEffectType.FIRE_RESISTANCE.getName()))
-				gamer.combust(Calculator.secondsToTicks(finalDamager.getEffectDuration()));
 			else gamer
 				.getPlayer()
 				.addPotionEffect(finalDamager.dealEffect());

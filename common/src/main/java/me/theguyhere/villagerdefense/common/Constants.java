@@ -19,6 +19,7 @@ public class Constants {
 	public static final double ATTACK_SPEED_MODERATE = 1;
 	public static final double ATTACK_SPEED_FAST = 0.6;
 	public static final double ATTACK_SPEED_VERY_FAST = 0.3;
+	public static final double ATTACK_SPEED_RANGED_MULTIPLIER = 1.5;
 
 	public static final int TARGET_RANGE_CLOSE = 16;
 	public static final int TARGET_RANGE_MODERATE = 24;

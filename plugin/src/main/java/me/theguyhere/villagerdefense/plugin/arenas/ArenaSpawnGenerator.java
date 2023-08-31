@@ -48,7 +48,7 @@ public class ArenaSpawnGenerator {
 		int waveValue = calculateWaveValue(data
 			.getConfig()
 			.getInt(wave + ".value"), arena);
-		int toSpawn = waveValue / 125 - arena.getVillagers();
+		int toSpawn = Math.max(waveValue / 125, 1) - arena.getVillagers();
 
 		// Generate spawn sequence
 		Random r = new Random();
@@ -77,7 +77,7 @@ public class ArenaSpawnGenerator {
 		}
 
 		// Set max villagers
-		arena.setMaxVillagers(waveValue / 125);
+		arena.setMaxVillagers(Math.max(waveValue / 125, 1));
 
 		// Set spawning villagers to false
 		spawningTasks.add(new BukkitRunnable() {

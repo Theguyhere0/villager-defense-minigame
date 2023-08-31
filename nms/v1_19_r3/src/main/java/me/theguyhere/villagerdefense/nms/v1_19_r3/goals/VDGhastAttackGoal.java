@@ -102,8 +102,6 @@ public class VDGhastAttackGoal extends Goal {
 					else if (targetDistance > 256.0) {
 						ticksUntilNextDestinationRecalculation += 5;
 					}
-
-					ticksUntilNextDestinationRecalculation = adjustedTickDelay(ticksUntilNextDestinationRecalculation);
 				}
 			}
 			else if (chargeTime > 0) {

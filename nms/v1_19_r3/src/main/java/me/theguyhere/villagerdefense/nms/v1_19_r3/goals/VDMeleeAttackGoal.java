@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.nms.v1_19_r3.goals;
 
+import me.theguyhere.villagerdefense.common.Calculator;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySelector;
@@ -19,17 +20,18 @@ public class VDMeleeAttackGoal extends Goal {
 	private double pathedTargetY;
 	private double pathedTargetZ;
 	private int ticksUntilNextPathRecalculation;
-	private int ticksUntilNextAttack;
-	private final int attackInterval;
-	private final double attackReach;
+	private long nextAttackTimeMillis = System.currentTimeMillis();
+	private final int attackIntervalMillis;
+	private final double attackReachBlocks;
 	private long lastCanUseCheck;
 
-	public VDMeleeAttackGoal(PathfinderMob mob, boolean followingTargetEvenIfNotSeen, int attackInterval,
-		double attackReach) {
+	public VDMeleeAttackGoal(PathfinderMob mob, boolean followingTargetEvenIfNotSeen, double attackIntervalSeconds,
+		double attackReachBlocks
+	) {
 		this.mob = mob;
 		this.followingTargetEvenIfNotSeen = followingTargetEvenIfNotSeen;
-		this.attackInterval = attackInterval;
-		this.attackReach = attackReach;
+		this.attackIntervalMillis = Calculator.secondsToMillis(attackIntervalSeconds);
+		this.attackReachBlocks = attackReachBlocks;
 		setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
 	}
 
@@ -96,7 +98,6 @@ public class VDMeleeAttackGoal extends Goal {
 		mob.getNavigation().moveTo(path, 1);
 		mob.setAggressive(true);
 		ticksUntilNextPathRecalculation = 0;
-		ticksUntilNextAttack = 0;
 	}
 
 	@Override
@@ -141,18 +142,15 @@ public class VDMeleeAttackGoal extends Goal {
 				if (!mob.getNavigation().moveTo(target, 1)) {
 					ticksUntilNextPathRecalculation += 15;
 				}
-
-				ticksUntilNextPathRecalculation = adjustedTickDelay(ticksUntilNextPathRecalculation);
 			}
 
-			ticksUntilNextAttack = Math.max(ticksUntilNextAttack - 1, 0);
 			checkAndPerformAttack(target, targetDistance);
 		}
 	}
 
 	protected void checkAndPerformAttack(LivingEntity target, double targetDistance) {
 		double attackDistance = getAttackReachSqr(target);
-		if (targetDistance <= attackDistance && ticksUntilNextAttack <= 0) {
+		if (targetDistance <= attackDistance && nextAttackTimeMillis <= System.currentTimeMillis()) {
 			resetAttackCooldown();
 			mob.swing(InteractionHand.MAIN_HAND);
 			mob.doHurtTarget(target);
@@ -160,18 +158,18 @@ public class VDMeleeAttackGoal extends Goal {
 	}
 
 	protected void resetAttackCooldown() {
-		ticksUntilNextAttack = getAttackInterval();
+		nextAttackTimeMillis += attackIntervalMillis;
 	}
 
-	protected int getTicksUntilNextAttack() {
-		return ticksUntilNextAttack;
+	protected int getMillisUntilNextAttack() {
+		return (int) Math.max(System.currentTimeMillis() - nextAttackTimeMillis, 0);
 	}
 
-	protected int getAttackInterval() {
-		return adjustedTickDelay(attackInterval);
+	protected int getAttackIntervalMillis() {
+		return attackIntervalMillis;
 	}
 
 	protected double getAttackReachSqr(LivingEntity target) {
-		return attackReach * attackReach + target.getBbWidth();
+		return attackReachBlocks * attackReachBlocks + target.getBbWidth();
 	}
 }

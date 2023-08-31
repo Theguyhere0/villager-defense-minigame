@@ -6,8 +6,8 @@ public class VDZombieAttackGoal extends VDMeleeAttackGoal {
 	private final Zombie zombie;
 	private int raiseArmTicks;
 
-	public VDZombieAttackGoal(Zombie zombie, int attackInterval, double attackReach) {
-		super(zombie, false, attackInterval, attackReach);
+	public VDZombieAttackGoal(Zombie zombie, double attackIntervalSeconds, double attackReachBlocks) {
+		super(zombie, false, attackIntervalSeconds, attackReachBlocks);
 		this.zombie = zombie;
 	}
 
@@ -27,6 +27,6 @@ public class VDZombieAttackGoal extends VDMeleeAttackGoal {
 	public void tick() {
 		super.tick();
 		++raiseArmTicks;
-		zombie.setAggressive(raiseArmTicks >= 5 && getTicksUntilNextAttack() < getAttackInterval() / 2);
+		zombie.setAggressive(raiseArmTicks >= 5 && getMillisUntilNextAttack() < getAttackIntervalMillis() / 2);
 	}
 }

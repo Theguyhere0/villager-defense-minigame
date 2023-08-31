@@ -1,6 +1,5 @@
 package me.theguyhere.villagerdefense.nms.v1_19_r3.mobs;
 
-import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.nms.v1_19_r3.goals.VDMeleeAttackGoal;
 import net.minecraft.world.entity.EntityType;
@@ -36,8 +35,7 @@ public class VDCaveSpider extends CaveSpider {
 	protected void registerGoals() {
 		// Behavior
 		goalSelector.addGoal(1, new FloatGoal(this));
-		goalSelector.addGoal(2, new VDMeleeAttackGoal(this, true,
-			Calculator.secondsToTicks(Constants.ATTACK_SPEED_VERY_FAST), 1));
+		goalSelector.addGoal(2, new VDMeleeAttackGoal(this, true, Constants.ATTACK_SPEED_VERY_FAST, 0.9));
 		goalSelector.addGoal(3, new LeapAtTargetGoal(this, 0.4F));
 		goalSelector.addGoal(4, new FloatGoal(this));
 		goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1));

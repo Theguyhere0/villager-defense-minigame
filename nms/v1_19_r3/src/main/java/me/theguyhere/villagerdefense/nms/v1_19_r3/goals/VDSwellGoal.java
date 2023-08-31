@@ -7,10 +7,12 @@ import net.minecraft.world.entity.monster.Creeper;
 
 public class VDSwellGoal extends SwellGoal {
 	private final Creeper creeper;
+	private final double attackReachSqr;
 
-	public VDSwellGoal(Creeper creeper) {
+	public VDSwellGoal(Creeper creeper, double attackReachBlocks) {
 		super(creeper);
 		this.creeper = creeper;
+		attackReachSqr = attackReachBlocks * attackReachBlocks;
 	}
 
 	@Override
@@ -27,7 +29,7 @@ public class VDSwellGoal extends SwellGoal {
 		LivingEntity target = creeper.getTarget();
 		if (!canUse())
 			creeper.setSwellDir(-1);
-		else if (creeper.distanceToSqr(target) > 25)
+		else if (creeper.distanceToSqr(target) > attackReachSqr)
 			creeper.setSwellDir(-1);
 		else if (!creeper.getSensing().hasLineOfSight(target))
 			creeper.setSwellDir(-1);
