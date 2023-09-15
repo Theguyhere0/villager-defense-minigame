@@ -2,12 +2,9 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
-
-import java.util.Objects;
 
 public class VDPhantom extends VDMinion {
 	public static final String KEY = "phtm";
@@ -15,9 +12,10 @@ public class VDPhantom extends VDMinion {
 	public VDPhantom(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.PHANTOM),
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.phantom,
 			LanguageManager.mobLore.phantom,
 			IndividualAttackType.NORMAL
@@ -27,12 +25,6 @@ public class VDPhantom extends VDMinion {
 		armor = getArmor(level);
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .15);
-//		setVerySlowAttackSpeed();
-//		setModerateKnockback();
-//		setLightWeight();
-//		setMediumSpeed();
-//		targetPriority = TargetPriority.PLAYERS;
-//		setFarTargetRange();
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);
 		updateNameTag();
 	}
@@ -141,19 +133,19 @@ public class VDPhantom extends VDMinion {
 	protected static int getDamage(int level) {
 		switch (level) {
 			case 1:
-				return 100;
+				return 75;
 			case 2:
-				return 130;
+				return 85;
 			case 3:
-				return 170;
+				return 100;
 			case 4:
-				return 220;
+				return 115;
 			case 5:
-				return 275;
+				return 125;
 			case 6:
-				return 325;
+				return 135;
 			case 7:
-				return 400;
+				return 145;
 			default:
 				return 0;
 		}
@@ -167,6 +159,23 @@ public class VDPhantom extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), getArmor(level), getToughness(level), getDamage(level), .8);
+		switch (level) {
+			case 1:
+				return 85;
+			case 2:
+				return 120;
+			case 3:
+				return 185;
+			case 4:
+				return 250;
+			case 5:
+				return 320;
+			case 6:
+				return 390;
+			case 7:
+				return 470;
+			default:
+				return 0;
+		}
 	}
 }

@@ -139,10 +139,16 @@ public class VersionNMSManager implements NMSManager {
 				return (Mob) new VDGhast(location).getBukkitEntity();
 			case "husk":
 				return (Mob) new VDHusk(location).getBukkitEntity();
+			case "phtm":
+				return (Mob) new VDPhantom(location).getBukkitEntity();
 			case "skel":
 				return (Mob) new VDSkeleton(location).getBukkitEntity();
 			case "spid":
 				return (Mob) new VDSpider(location).getBukkitEntity();
+			case "stry":
+				return (Mob) new VDStray(location).getBukkitEntity();
+			case "wskl":
+				return (Mob) new VDWitherSkeleton(location).getBukkitEntity();
 			case "zomb":
 				return (Mob) new VDZombie(location).getBukkitEntity();
 			default:

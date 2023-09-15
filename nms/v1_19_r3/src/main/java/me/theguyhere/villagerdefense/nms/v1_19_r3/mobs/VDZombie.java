@@ -27,7 +27,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import java.util.UUID;
 
 public class VDZombie extends Zombie {
-	public VDZombie(EntityType<? extends Zombie> type, Location location) {
+	public VDZombie(Location location, EntityType<? extends Zombie> type) {
 		super(type, ((CraftWorld) location.getWorld()).getHandle());
 		getCommandSenderWorld().addFreshEntity(this, CreatureSpawnEvent.SpawnReason.CUSTOM);
 		setPos(location.getX(), location.getY(), location.getZ());

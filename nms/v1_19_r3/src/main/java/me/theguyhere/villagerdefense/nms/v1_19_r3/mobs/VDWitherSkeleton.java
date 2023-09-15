@@ -1,13 +1,11 @@
 package me.theguyhere.villagerdefense.nms.v1_19_r3.mobs;
 
 import me.theguyhere.villagerdefense.common.Constants;
-import me.theguyhere.villagerdefense.nms.v1_19_r3.goals.VDZombieAttackGoal;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.damagesource.DamageSource;
+import me.theguyhere.villagerdefense.nms.v1_19_r3.goals.VDMeleeAttackGoal;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
@@ -18,13 +16,18 @@ import net.minecraft.world.entity.animal.Cat;
 import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.WitherSkeleton;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 
-public class VDHusk extends VDZombie {
-	public VDHusk(Location location) {
-		super(location, EntityType.HUSK);
+public class VDWitherSkeleton extends WitherSkeleton {
+	public VDWitherSkeleton(Location location) {
+		super(EntityType.WITHER_SKELETON, ((CraftWorld) location.getWorld()).getHandle());
+		getCommandSenderWorld().addFreshEntity(this, CreatureSpawnEvent.SpawnReason.CUSTOM);
+		setPos(location.getX(), location.getY(), location.getZ());
 	}
 
 	// Customize goals
@@ -32,9 +35,10 @@ public class VDHusk extends VDZombie {
 	protected void registerGoals() {
 		// Behavior
 		goalSelector.addGoal(1, new FloatGoal(this));
-		goalSelector.addGoal(2, new VDZombieAttackGoal(this, Constants.ATTACK_SPEED_MODERATE, 1));
-		goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1));
-		goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+		goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Wolf.class, 6, 1, 1));
+		goalSelector.addGoal(3, new VDMeleeAttackGoal(this, false, Constants.ATTACK_SPEED_VERY_FAST, 1));
+		goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1));
+		goalSelector.addGoal(5, new RandomLookAroundGoal(this));
 
 		// Target priorities
 		targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true,
@@ -56,30 +60,20 @@ public class VDHusk extends VDZombie {
 		return new AttributeMap(Monster
 			.createMonsterAttributes()
 			.add(Attributes.FOLLOW_RANGE, Constants.TARGET_RANGE_MODERATE)
-			.add(Attributes.MOVEMENT_SPEED, Constants.SPEED_SLOW)
-			.add(Attributes.ATTACK_KNOCKBACK, Constants.KNOCKBACK_MODERATE)
-			.add(Attributes.KNOCKBACK_RESISTANCE, Constants.WEIGHT_MEDIUM)
+			.add(Attributes.MOVEMENT_SPEED, Constants.SPEED_MEDIUM)
+			.add(Attributes.ATTACK_KNOCKBACK, Constants.KNOCKBACK_NONE)
+			.add(Attributes.KNOCKBACK_RESISTANCE, Constants.WEIGHT_LIGHT)
 			.build());
 	}
 
-	// Set up normal husk stuff
+	// Prevent any goal switching
 	@Override
-	protected SoundEvent getAmbientSound() {
-		return SoundEvents.HUSK_AMBIENT;
+	public void reassessWeaponGoal() {
 	}
 
+	// Prevent picking up items
 	@Override
-	protected SoundEvent getHurtSound(DamageSource damagesource) {
-		return SoundEvents.HUSK_HURT;
-	}
-
-	@Override
-	protected SoundEvent getDeathSound() {
-		return SoundEvents.HUSK_DEATH;
-	}
-
-	@Override
-	protected SoundEvent getStepSound() {
-		return SoundEvents.HUSK_STEP;
+	public boolean canPickUpLoot() {
+		return false;
 	}
 }

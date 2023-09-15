@@ -163,6 +163,23 @@ public class VDBabyZombie extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), getArmor(level), getToughness(level), getDamage(level), 2.5);
+		switch (level) {
+			case 1:
+				return 50;
+			case 2:
+				return 75;
+			case 3:
+				return 110;
+			case 4:
+				return 150;
+			case 5:
+				return 210;
+			case 6:
+				return 285;
+			case 7:
+				return 350;
+			default:
+				return 0;
+		}
 	}
 }

@@ -2,13 +2,10 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
 import org.bukkit.potion.PotionEffectType;
-
-import java.util.Objects;
 
 public class VDWitherSkeleton extends VDMinion {
 	public static final String KEY = "wskl";
@@ -16,9 +13,10 @@ public class VDWitherSkeleton extends VDMinion {
 	public VDWitherSkeleton(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.WITHER_SKELETON),
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.witherSkeleton,
 			LanguageManager.mobLore.witherSkeleton,
 			IndividualAttackType.PENETRATING
@@ -31,12 +29,6 @@ public class VDWitherSkeleton extends VDMinion {
 		setEffectType(PotionEffectType.WITHER);
 		effectLevel = getEffectLevel(level);
 		effectDuration = getEffectDuration(level);
-//		setVeryFastAttackSpeed();
-//		setModerateKnockback();
-//		setLightWeight();
-//		setMediumSpeed();
-//		targetPriority = TargetPriority.PLAYERS;
-//		setModerateTargetRange();
 		setArmorEquipment(true, false, false, true);
 		setScythe();
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);
@@ -220,6 +212,23 @@ public class VDWitherSkeleton extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), getArmor(level), getToughness(level), getDamage(level), 1.75);
+		switch (level) {
+			case 1:
+				return 60;
+			case 2:
+				return 90;
+			case 3:
+				return 125;
+			case 4:
+				return 170;
+			case 5:
+				return 215;
+			case 6:
+				return 280;
+			case 7:
+				return 335;
+			default:
+				return 0;
+		}
 	}
 }

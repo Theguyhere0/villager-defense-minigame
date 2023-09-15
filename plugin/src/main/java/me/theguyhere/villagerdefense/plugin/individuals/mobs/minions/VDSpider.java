@@ -158,6 +158,23 @@ public class VDSpider extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), getArmor(level), getToughness(level), getDamage(level), 3);
+		switch (level) {
+			case 1:
+				return 50;
+			case 2:
+				return 70;
+			case 3:
+				return 95;
+			case 4:
+				return 120;
+			case 5:
+				return 160;
+			case 6:
+				return 200;
+			case 7:
+				return 245;
+			default:
+				return 0;
+		}
 	}
 }

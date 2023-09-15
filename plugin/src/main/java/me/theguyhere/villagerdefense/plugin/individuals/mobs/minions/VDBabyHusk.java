@@ -214,6 +214,23 @@ public class VDBabyHusk extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), getArmor(level), getToughness(level), getDamage(level), 2.6);
+		switch (level) {
+			case 1:
+				return 70;
+			case 2:
+				return 105;
+			case 3:
+				return 145;
+			case 4:
+				return 195;
+			case 5:
+				return 260;
+			case 6:
+				return 345;
+			case 7:
+				return 445;
+			default:
+				return 0;
+		}
 	}
 }

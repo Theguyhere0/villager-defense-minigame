@@ -85,7 +85,6 @@ public class VDSkeleton extends Skeleton {
 	}
 
 	// Prevent transforming
-
 	@Override
 	protected void doFreezeConversion() {
 	}

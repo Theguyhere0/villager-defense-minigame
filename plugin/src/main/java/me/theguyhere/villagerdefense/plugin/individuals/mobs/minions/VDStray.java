@@ -2,13 +2,10 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
 import org.bukkit.potion.PotionEffectType;
-
-import java.util.Objects;
 
 public class VDStray extends VDMinion {
 	public static final String KEY = "stry";
@@ -16,9 +13,10 @@ public class VDStray extends VDMinion {
 	public VDStray(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.STRAY),
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.stray,
 			LanguageManager.mobLore.stray,
 			IndividualAttackType.NORMAL
@@ -31,12 +29,6 @@ public class VDStray extends VDMinion {
 		setEffectType(PotionEffectType.SLOW);
 		effectLevel = getEffectLevel(level);
 		effectDuration = getEffectDuration(level);
-//		setSlowAttackSpeed();
-//		setLowKnockback();
-//		setLightWeight();
-//		setMediumSpeed();
-//		targetPriority = TargetPriority.PLAYERS;
-//		setModerateTargetRange();
 		setArmorEquipment(true, false, false, true);
 		setBow();
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);
@@ -220,6 +212,23 @@ public class VDStray extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), getArmor(level), getToughness(level), getDamage(level), 1.5);
+		switch (level) {
+			case 1:
+				return 85;
+			case 2:
+				return 125;
+			case 3:
+				return 180;
+			case 4:
+				return 230;
+			case 5:
+				return 285;
+			case 6:
+				return 350;
+			case 7:
+				return 440;
+			default:
+				return 0;
+		}
 	}
 }

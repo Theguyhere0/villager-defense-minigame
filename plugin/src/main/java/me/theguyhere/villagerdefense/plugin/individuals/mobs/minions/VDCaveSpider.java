@@ -212,6 +212,23 @@ public class VDCaveSpider extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), getArmor(level), getToughness(level), getDamage(level), 3.75);
+		switch (level) {
+			case 1:
+				return 45;
+			case 2:
+				return 65;
+			case 3:
+				return 90;
+			case 4:
+				return 125;
+			case 5:
+				return 175;
+			case 6:
+				return 230;
+			case 7:
+				return 290;
+			default:
+				return 0;
+		}
 	}
 }

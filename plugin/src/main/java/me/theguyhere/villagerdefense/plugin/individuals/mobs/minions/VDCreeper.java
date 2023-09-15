@@ -143,6 +143,19 @@ public class VDCreeper extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), getArmor(level), getToughness(level), getDamage(level), 1.25);
+		switch (level) {
+			case 1:
+				return 120;
+			case 2:
+				return 185;
+			case 3:
+				return 270;
+			case 4:
+				return 375;
+			case 5:
+				return 500;
+			default:
+				return 0;
+		}
 	}
 }

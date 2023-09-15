@@ -101,6 +101,19 @@ public class VDGhast extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), 0, 0, getDamage(level), 1.15);
+		switch (level) {
+			case 1:
+				return 280;
+			case 2:
+				return 375;
+			case 3:
+				return 480;
+			case 4:
+				return 620;
+			case 5:
+				return 820;
+			default:
+				return 0;
+		}
 	}
 }

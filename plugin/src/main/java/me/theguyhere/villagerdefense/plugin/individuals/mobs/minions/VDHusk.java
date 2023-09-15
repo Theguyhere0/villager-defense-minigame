@@ -214,6 +214,23 @@ public class VDHusk extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), getArmor(level), getToughness(level), getDamage(level), 1.1);
+		switch (level) {
+			case 1:
+				return 55;
+			case 2:
+				return 90;
+			case 3:
+				return 120;
+			case 4:
+				return 170;
+			case 5:
+				return 220;
+			case 6:
+				return 270;
+			case 7:
+				return 330;
+			default:
+				return 0;
+		}
 	}
 }

@@ -135,6 +135,17 @@ public class VDChargedCreeper extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), getArmor(level), getToughness(level), getDamage(level), 1.3);
+		switch (level) {
+			case 1:
+				return 360;
+			case 2:
+				return 515;
+			case 3:
+				return 700;
+			case 4:
+				return 980;
+			default:
+				return 0;
+		}
 	}
 }

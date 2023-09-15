@@ -19,12 +19,13 @@ import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 
 public class VDGhast extends Ghast {
 	public VDGhast(Location location) {
 		super(EntityType.GHAST, ((CraftWorld) location.getWorld()).getHandle());
-
-
+		getCommandSenderWorld().addFreshEntity(this, CreatureSpawnEvent.SpawnReason.CUSTOM);
+		setPos(location.getX(), location.getY(), location.getZ());
 	}
 
 	// Customize goals
