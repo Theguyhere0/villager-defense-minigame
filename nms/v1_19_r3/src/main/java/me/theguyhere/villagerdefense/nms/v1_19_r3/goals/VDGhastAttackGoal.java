@@ -1,5 +1,6 @@
 package me.theguyhere.villagerdefense.nms.v1_19_r3.goals;
 
+import me.theguyhere.villagerdefense.common.Calculator;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -14,14 +15,14 @@ import java.util.EnumSet;
 public class VDGhastAttackGoal extends Goal {
 	private final Ghast ghast;
 	private final int targetRange;
-	private final int attackSpeed;
+	private final int attackSpeedTicks;
 	private int chargeTime;
 	private int ticksUntilNextDestinationRecalculation;
 
-	public VDGhastAttackGoal(Ghast ghast, int targetRange, int attackSpeed) {
+	public VDGhastAttackGoal(Ghast ghast, int targetRange, double attackSpeedSeconds) {
 		this.ghast = ghast;
 		this.targetRange = targetRange;
-		this.attackSpeed = attackSpeed;
+		attackSpeedTicks = Calculator.secondsToTicks(attackSpeedSeconds * 1.5);
 		setFlags(EnumSet.of(Flag.MOVE));
 	}
 
@@ -58,11 +59,14 @@ public class VDGhastAttackGoal extends Goal {
 			if (ghast.distanceToSqr(target) < targetRange * targetRange && ghast.hasLineOfSight(target)) {
 				Level world = ghast.level;
 				++chargeTime;
-				if (chargeTime == attackSpeed / 2 && !ghast.isSilent()) {
+
+				// Scream 1 second before shooting
+				if (chargeTime == attackSpeedTicks - Calculator.secondsToTicks(1) && !ghast.isSilent()) {
 					world.levelEvent(null, 1015, ghast.blockPosition(), 0);
 				}
 
-				if (chargeTime == attackSpeed) {
+				// Shoot
+				if (chargeTime == attackSpeedTicks) {
 					Vec3 vec3d = ghast.getViewVector(1.0F);
 					double deltaX = target.getX() - (ghast.getX() + vec3d.x * 4.0);
 					double deltaY = target.getY(0.5) - (0.5 + ghast.getY(0.5));
@@ -84,10 +88,11 @@ public class VDGhastAttackGoal extends Goal {
 				}
 
 				if (ticksUntilNextDestinationRecalculation <= 0) {
+					// Recalculate destination
 					RandomSource randomsource = ghast.getRandom();
-					double destinationX = target.getX() + (double) ((randomsource.nextFloat() * 2 - 1) * 8);
-					double destinationY = target.getY() + (double) ((randomsource.nextFloat() * 2 - 1) * 6);
-					double destinationZ = target.getZ() + (double) ((randomsource.nextFloat() * 2 - 1) * 8);
+					double destinationX = target.getX() + (double) ((randomsource.nextFloat() * 2 - 1) * 12);
+					double destinationY = target.getY() + (double) (randomsource.nextFloat() * 5 + 1);
+					double destinationZ = target.getZ() + (double) ((randomsource.nextFloat() * 2 - 1) * 12);
 					ghast
 						.getMoveControl()
 						.setWantedPosition(destinationX, destinationY, destinationZ, 1.0);

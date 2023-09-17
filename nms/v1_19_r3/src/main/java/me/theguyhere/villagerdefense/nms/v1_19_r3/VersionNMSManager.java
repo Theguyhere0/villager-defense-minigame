@@ -143,6 +143,8 @@ public class VersionNMSManager implements NMSManager {
 				return (Mob) new VDPhantom(location).getBukkitEntity();
 			case "skel":
 				return (Mob) new VDSkeleton(location).getBukkitEntity();
+			case "slvr":
+				return (Mob) new VDSilverfish(location).getBukkitEntity();
 			case "spid":
 				return (Mob) new VDSpider(location).getBukkitEntity();
 			case "stry":

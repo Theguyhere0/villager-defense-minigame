@@ -1,6 +1,5 @@
 package me.theguyhere.villagerdefense.nms.v1_19_r3.mobs;
 
-import me.theguyhere.villagerdefense.common.Calculator;
 import me.theguyhere.villagerdefense.common.Constants;
 import me.theguyhere.villagerdefense.nms.v1_19_r3.goals.VDGhastAttackGoal;
 import me.theguyhere.villagerdefense.nms.v1_19_r3.goals.VDGhastLookGoal;
@@ -33,7 +32,7 @@ public class VDGhast extends Ghast {
 	protected void registerGoals() {
 		// Behavior
 		goalSelector.addGoal(1, new VDGhastAttackGoal(this, Constants.TARGET_RANGE_FAR,
-			Calculator.secondsToTicks(Constants.ATTACK_SPEED_SLOW)
+			Constants.ATTACK_SPEED_VERY_SLOW
 		));
 		goalSelector.addGoal(2, new VDRandomFloatAroundGoal(this));
 		goalSelector.addGoal(2, new VDGhastLookGoal(this, Constants.TARGET_RANGE_FAR));

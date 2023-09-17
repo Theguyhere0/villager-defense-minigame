@@ -2,12 +2,9 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
-
-import java.util.Objects;
 
 public class VDSilverfish extends VDMinion {
 	public static final String KEY = "slvr";
@@ -15,9 +12,10 @@ public class VDSilverfish extends VDMinion {
 	public VDSilverfish(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.SILVERFISH),
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.silverfish,
 			LanguageManager.mobLore.silverfish,
 			IndividualAttackType.NORMAL
@@ -27,12 +25,6 @@ public class VDSilverfish extends VDMinion {
 		armor = getArmor(level);
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .1);
-//		setVeryFastAttackSpeed();
-//		setLowKnockback();
-//		setVeryLightWeight();
-//		setMediumSpeed();
-//		targetPriority = TargetPriority.PETS_GOLEMS;
-//		setModerateTargetRange();
 		setLoot(getValue(arena.getCurrentDifficulty()), .1);
 		updateNameTag();
 	}
@@ -169,6 +161,23 @@ public class VDSilverfish extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), getArmor(level), getToughness(level), getDamage(level), 3);
+		switch (level) {
+			case 1:
+				return 25;
+			case 2:
+				return 35;
+			case 3:
+				return 55;
+			case 4:
+				return 80;
+			case 5:
+				return 110;
+			case 6:
+				return 140;
+			case 7:
+				return 185;
+			default:
+				return 0;
+		}
 	}
 }
