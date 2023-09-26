@@ -55,6 +55,7 @@ public class VDBabyHusk extends VDHusk {
 			.add(Attributes.FOLLOW_RANGE, Constants.TARGET_RANGE_MODERATE)
 			.add(Attributes.MOVEMENT_SPEED, Constants.SPEED_FAST)
 			.add(Attributes.ATTACK_KNOCKBACK, Constants.KNOCKBACK_LOW)
+			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_SPEED_FAST)
 			.add(Attributes.KNOCKBACK_RESISTANCE, Constants.WEIGHT_LIGHT)
 			.build());
 	}

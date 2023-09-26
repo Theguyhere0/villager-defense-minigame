@@ -27,6 +27,6 @@ public class VDZombieAttackGoal extends VDMeleeAttackGoal {
 	public void tick() {
 		super.tick();
 		++raiseArmTicks;
-		zombie.setAggressive(raiseArmTicks >= 5 && getMillisUntilNextAttack() < getAttackIntervalMillis() / 2);
+		zombie.setAggressive(raiseArmTicks >= 5 && getUntilNextAttackMillis() < getAttackIntervalMillis() / 2);
 	}
 }

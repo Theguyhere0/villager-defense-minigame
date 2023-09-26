@@ -170,7 +170,8 @@ public class VDRangedBowAttackGoal<T extends Monster & RangedAttackMob> extends 
 					if (ticksUsingItem >= Calculator.secondsToTicks(attackIntervalSeconds) / 2) {
 						mob.stopUsingItem();
 						mob.performRangedAttack(target, BowItem.getPowerForTime(ticksUsingItem));
-						nextAttackTimeMillis += Calculator.secondsToMillis(attackIntervalSeconds);
+						nextAttackTimeMillis =
+							System.currentTimeMillis() + Calculator.secondsToMillis(attackIntervalSeconds);
 					}
 				}
 			}

@@ -68,6 +68,7 @@ public class VDPhantom extends Phantom {
 			.add(Attributes.FOLLOW_RANGE, Constants.TARGET_RANGE_FAR)
 			.add(Attributes.MOVEMENT_SPEED, Constants.SPEED_MEDIUM)
 			.add(Attributes.ATTACK_KNOCKBACK, Constants.KNOCKBACK_MODERATE)
+			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_SPEED_VERY_SLOW)
 			.add(Attributes.KNOCKBACK_RESISTANCE, Constants.WEIGHT_LIGHT)
 			.build());
 	}

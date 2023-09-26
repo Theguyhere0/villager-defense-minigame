@@ -32,7 +32,7 @@ public class VDGhast extends Ghast {
 	protected void registerGoals() {
 		// Behavior
 		goalSelector.addGoal(1, new VDGhastAttackGoal(this, Constants.TARGET_RANGE_FAR,
-			Constants.ATTACK_SPEED_VERY_SLOW
+			Constants.ATTACK_SPEED_VERY_SLOW * Constants.ATTACK_SPEED_RANGED_MULTIPLIER
 		));
 		goalSelector.addGoal(2, new VDRandomFloatAroundGoal(this));
 		goalSelector.addGoal(2, new VDGhastLookGoal(this, Constants.TARGET_RANGE_FAR));
@@ -62,6 +62,7 @@ public class VDGhast extends Ghast {
 			.add(Attributes.FOLLOW_RANGE, Constants.TARGET_RANGE_FAR)
 			.add(Attributes.MOVEMENT_SPEED, Constants.SPEED_MEDIUM)
 			.add(Attributes.ATTACK_KNOCKBACK, Constants.KNOCKBACK_HIGH)
+			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_SPEED_VERY_SLOW * Constants.ATTACK_SPEED_RANGED_MULTIPLIER)
 			.add(Attributes.KNOCKBACK_RESISTANCE, Constants.WEIGHT_HEAVY)
 			.build());
 	}

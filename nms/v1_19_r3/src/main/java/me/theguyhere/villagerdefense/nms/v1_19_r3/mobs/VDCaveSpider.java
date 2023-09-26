@@ -63,6 +63,7 @@ public class VDCaveSpider extends CaveSpider {
 			.add(Attributes.FOLLOW_RANGE, Constants.TARGET_RANGE_MODERATE)
 			.add(Attributes.MOVEMENT_SPEED, Constants.SPEED_VERY_FAST)
 			.add(Attributes.ATTACK_KNOCKBACK, Constants.KNOCKBACK_NONE)
+			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_SPEED_VERY_FAST)
 			.add(Attributes.KNOCKBACK_RESISTANCE, Constants.WEIGHT_VERY_LIGHT)
 			.build());
 	}

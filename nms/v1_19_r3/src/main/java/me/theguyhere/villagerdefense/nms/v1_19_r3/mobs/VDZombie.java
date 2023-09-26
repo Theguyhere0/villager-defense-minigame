@@ -72,6 +72,7 @@ public class VDZombie extends Zombie {
 			.add(Attributes.MOVEMENT_SPEED, Constants.SPEED_SLOW)
 			.add(Attributes.ATTACK_KNOCKBACK, Constants.KNOCKBACK_MODERATE)
 			.add(Attributes.KNOCKBACK_RESISTANCE, Constants.WEIGHT_MEDIUM)
+			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_SPEED_MODERATE)
 			.build());
 	}
 

@@ -2,13 +2,10 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
 import org.bukkit.entity.PiglinBrute;
-
-import java.util.Objects;
 
 public class VDBrute extends VDMinion {
 	public static final String KEY = "brut";
@@ -16,12 +13,10 @@ public class VDBrute extends VDMinion {
 	public VDBrute(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(
-					location,
-					EntityType.PIGLIN_BRUTE
-				),
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.brute,
 			LanguageManager.mobLore.brute,
 			IndividualAttackType.CRUSHING
@@ -32,12 +27,6 @@ public class VDBrute extends VDMinion {
 		armor = 0;
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .15);
-//		setSlowAttackSpeed();
-//		setLowKnockback();
-//		setHeavyWeight();
-//		setFastSpeed();
-//		targetPriority = TargetPriority.MELEE_PLAYERS;
-//		setCloseTargetRange();
 		setArmorEquipment(false, true, false, false);
 		setAxe();
 		setLoot(getValue(arena.getCurrentDifficulty()), .15);
@@ -139,6 +128,19 @@ public class VDBrute extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), 0, getToughness(level), getDamage(level), 1);
+		switch (level) {
+			case 1:
+				return 250;
+			case 2:
+				return 375;
+			case 3:
+				return 570;
+			case 4:
+				return 870;
+			case 5:
+				return 1235;
+			default:
+				return 0;
+		}
 	}
 }

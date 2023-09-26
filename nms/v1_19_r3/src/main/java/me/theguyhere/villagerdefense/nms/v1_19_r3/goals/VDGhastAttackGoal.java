@@ -22,7 +22,7 @@ public class VDGhastAttackGoal extends Goal {
 	public VDGhastAttackGoal(Ghast ghast, int targetRange, double attackSpeedSeconds) {
 		this.ghast = ghast;
 		this.targetRange = targetRange;
-		attackSpeedTicks = Calculator.secondsToTicks(attackSpeedSeconds * 1.5);
+		attackSpeedTicks = Calculator.secondsToTicks(attackSpeedSeconds);
 		setFlags(EnumSet.of(Flag.MOVE));
 	}
 

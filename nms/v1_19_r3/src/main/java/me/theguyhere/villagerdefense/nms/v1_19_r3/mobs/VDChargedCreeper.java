@@ -63,6 +63,7 @@ public class VDChargedCreeper extends VDCreeper {
 			.add(Attributes.FOLLOW_RANGE, Constants.TARGET_RANGE_UNBOUNDED)
 			.add(Attributes.MOVEMENT_SPEED, Constants.SPEED_SLOW)
 			.add(Attributes.ATTACK_KNOCKBACK, Constants.KNOCKBACK_VERY_HIGH)
+			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_SPEED_VERY_SLOW)
 			.add(Attributes.KNOCKBACK_RESISTANCE, Constants.WEIGHT_MEDIUM)
 			.build());
 	}

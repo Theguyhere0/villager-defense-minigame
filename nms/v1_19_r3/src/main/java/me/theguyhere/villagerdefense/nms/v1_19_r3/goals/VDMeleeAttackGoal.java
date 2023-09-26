@@ -19,7 +19,7 @@ public class VDMeleeAttackGoal extends Goal {
 	private double pathedTargetX;
 	private double pathedTargetY;
 	private double pathedTargetZ;
-	private int ticksUntilNextPathRecalculation;
+	private int untilNextPathRecalculationTicks;
 	private long nextAttackTimeMillis = System.currentTimeMillis();
 	private final int attackIntervalMillis;
 	private final double attackReachBlocks;
@@ -97,7 +97,7 @@ public class VDMeleeAttackGoal extends Goal {
 	public void start() {
 		mob.getNavigation().moveTo(path, 1);
 		mob.setAggressive(true);
-		ticksUntilNextPathRecalculation = 0;
+		untilNextPathRecalculationTicks = 0;
 	}
 
 	@Override
@@ -122,10 +122,10 @@ public class VDMeleeAttackGoal extends Goal {
 		if (canContinueToUse()) {
 			mob.getLookControl().setLookAt(target, 30.0F, 30.0F);
 			double targetDistance = mob.distanceToSqr(target.getX(), target.getY(), target.getZ());
-			ticksUntilNextPathRecalculation = Math.max(ticksUntilNextPathRecalculation - 1, 0);
+			untilNextPathRecalculationTicks = Math.max(untilNextPathRecalculationTicks - 1, 0);
 			if ((followingTargetEvenIfNotSeen || mob
 				.getSensing()
-				.hasLineOfSight(target)) && ticksUntilNextPathRecalculation <= 0 &&
+				.hasLineOfSight(target)) && untilNextPathRecalculationTicks <= 0 &&
 				(pathedTargetX == 0.0 && pathedTargetY == 0.0 && pathedTargetZ == 0.0 ||
 					target.distanceToSqr(pathedTargetX, pathedTargetY, pathedTargetZ) >= 1.0 || mob
 					.getRandom()
@@ -133,14 +133,14 @@ public class VDMeleeAttackGoal extends Goal {
 				pathedTargetX = target.getX();
 				pathedTargetY = target.getY();
 				pathedTargetZ = target.getZ();
-				ticksUntilNextPathRecalculation = 4 + mob.getRandom().nextInt(7);
+				untilNextPathRecalculationTicks = 4 + mob.getRandom().nextInt(7);
 				if (targetDistance > 1024.0) {
-					ticksUntilNextPathRecalculation += 10;
+					untilNextPathRecalculationTicks += 10;
 				} else if (targetDistance > 256.0) {
-					ticksUntilNextPathRecalculation += 5;
+					untilNextPathRecalculationTicks += 5;
 				}
 				if (!mob.getNavigation().moveTo(target, 1)) {
-					ticksUntilNextPathRecalculation += 15;
+					untilNextPathRecalculationTicks += 15;
 				}
 			}
 
@@ -158,11 +158,11 @@ public class VDMeleeAttackGoal extends Goal {
 	}
 
 	protected void resetAttackCooldown() {
-		nextAttackTimeMillis += attackIntervalMillis;
+		nextAttackTimeMillis = System.currentTimeMillis() + attackIntervalMillis;
 	}
 
-	protected int getMillisUntilNextAttack() {
-		return (int) Math.max(System.currentTimeMillis() - nextAttackTimeMillis, 0);
+	protected int getUntilNextAttackMillis() {
+		return (int) Math.max(nextAttackTimeMillis - System.currentTimeMillis(), 0);
 	}
 
 	protected int getAttackIntervalMillis() {

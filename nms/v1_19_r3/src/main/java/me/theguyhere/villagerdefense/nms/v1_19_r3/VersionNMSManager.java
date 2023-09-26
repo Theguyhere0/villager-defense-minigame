@@ -125,6 +125,8 @@ public class VersionNMSManager implements NMSManager {
 		switch (key) {
 			case "bhsk":
 				return (Mob) new VDBabyHusk(location).getBukkitEntity();
+			case "brut":
+				return (Mob) new VDBrute(location).getBukkitEntity();
 			case "bzmb":
 				return (Mob) new VDBabyZombie(location).getBukkitEntity();
 			case "blze":

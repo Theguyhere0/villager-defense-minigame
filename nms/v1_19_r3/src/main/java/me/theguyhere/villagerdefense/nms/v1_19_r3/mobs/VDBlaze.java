@@ -66,6 +66,7 @@ public class VDBlaze extends Blaze {
 			.add(Attributes.FOLLOW_RANGE, Constants.TARGET_RANGE_MODERATE)
 			.add(Attributes.MOVEMENT_SPEED, Constants.SPEED_SLOW)
 			.add(Attributes.ATTACK_KNOCKBACK, Constants.KNOCKBACK_NONE)
+			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_SPEED_SLOW)
 			.add(Attributes.KNOCKBACK_RESISTANCE, Constants.WEIGHT_MEDIUM)
 			.build());
 	}

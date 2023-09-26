@@ -65,6 +65,7 @@ public class VDStray extends Stray {
 			.add(Attributes.FOLLOW_RANGE, Constants.TARGET_RANGE_MODERATE)
 			.add(Attributes.MOVEMENT_SPEED, Constants.SPEED_MEDIUM)
 			.add(Attributes.ATTACK_KNOCKBACK, Constants.KNOCKBACK_LOW)
+			.add(Attributes.ATTACK_SPEED, Constants.ATTACK_SPEED_SLOW * Constants.ATTACK_SPEED_RANGED_MULTIPLIER)
 			.add(Attributes.KNOCKBACK_RESISTANCE, Constants.WEIGHT_LIGHT)
 			.build());
 	}
