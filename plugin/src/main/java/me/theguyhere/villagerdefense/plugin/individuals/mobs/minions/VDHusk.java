@@ -230,7 +230,7 @@ public class VDHusk extends VDMinion {
 			case 7:
 				return 330;
 			default:
-				return 0;
+				return Integer.MAX_VALUE;
 		}
 	}
 }

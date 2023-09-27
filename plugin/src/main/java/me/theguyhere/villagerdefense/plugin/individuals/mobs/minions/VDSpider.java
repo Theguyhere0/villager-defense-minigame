@@ -174,7 +174,7 @@ public class VDSpider extends VDMinion {
 			case 7:
 				return 245;
 			default:
-				return 0;
+				return Integer.MAX_VALUE;
 		}
 	}
 }

@@ -230,7 +230,7 @@ public class VDBabyHusk extends VDMinion {
 			case 7:
 				return 445;
 			default:
-				return 0;
+				return Integer.MAX_VALUE;
 		}
 	}
 }

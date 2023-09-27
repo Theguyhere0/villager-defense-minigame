@@ -177,7 +177,7 @@ public class VDSilverfish extends VDMinion {
 			case 7:
 				return 185;
 			default:
-				return 0;
+				return Integer.MAX_VALUE;
 		}
 	}
 }

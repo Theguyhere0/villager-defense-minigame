@@ -140,7 +140,7 @@ public class VDBrute extends VDMinion {
 			case 5:
 				return 1235;
 			default:
-				return 0;
+				return Integer.MAX_VALUE;
 		}
 	}
 }

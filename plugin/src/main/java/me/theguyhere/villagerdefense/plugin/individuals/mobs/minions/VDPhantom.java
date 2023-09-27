@@ -175,7 +175,7 @@ public class VDPhantom extends VDMinion {
 			case 7:
 				return 470;
 			default:
-				return 0;
+				return Integer.MAX_VALUE;
 		}
 	}
 }

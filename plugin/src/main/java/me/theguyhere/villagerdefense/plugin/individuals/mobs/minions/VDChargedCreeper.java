@@ -145,7 +145,7 @@ public class VDChargedCreeper extends VDMinion {
 			case 4:
 				return 980;
 			default:
-				return 0;
+				return Integer.MAX_VALUE;
 		}
 	}
 }

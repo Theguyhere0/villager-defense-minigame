@@ -160,7 +160,7 @@ public class VDBlaze extends VDMinion {
 			case 5:
 				return 450;
 			default:
-				return 0;
+				return Integer.MAX_VALUE;
 		}
 	}
 }

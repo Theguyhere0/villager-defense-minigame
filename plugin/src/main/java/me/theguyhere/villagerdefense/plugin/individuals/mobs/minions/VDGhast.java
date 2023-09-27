@@ -113,7 +113,7 @@ public class VDGhast extends VDMinion {
 			case 5:
 				return 820;
 			default:
-				return 0;
+				return Integer.MAX_VALUE;
 		}
 	}
 }

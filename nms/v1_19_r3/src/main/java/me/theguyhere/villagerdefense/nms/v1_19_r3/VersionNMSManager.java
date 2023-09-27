@@ -143,6 +143,8 @@ public class VersionNMSManager implements NMSManager {
 				return (Mob) new VDHusk(location).getBukkitEntity();
 			case "phtm":
 				return (Mob) new VDPhantom(location).getBukkitEntity();
+			case "pill":
+				return (Mob) new VDPillager(location).getBukkitEntity();
 			case "skel":
 				return (Mob) new VDSkeleton(location).getBukkitEntity();
 			case "slvr":
@@ -151,6 +153,8 @@ public class VersionNMSManager implements NMSManager {
 				return (Mob) new VDSpider(location).getBukkitEntity();
 			case "stry":
 				return (Mob) new VDStray(location).getBukkitEntity();
+			case "vind":
+				return (Mob) new VDVindicator(location).getBukkitEntity();
 			case "wskl":
 				return (Mob) new VDWitherSkeleton(location).getBukkitEntity();
 			case "zomb":

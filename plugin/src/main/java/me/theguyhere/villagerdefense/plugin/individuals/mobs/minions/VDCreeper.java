@@ -155,7 +155,7 @@ public class VDCreeper extends VDMinion {
 			case 5:
 				return 500;
 			default:
-				return 0;
+				return Integer.MAX_VALUE;
 		}
 	}
 }

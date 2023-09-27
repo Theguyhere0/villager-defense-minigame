@@ -1,6 +1,7 @@
 package me.theguyhere.villagerdefense.nms.v1_19_r3.goals;
 
 import me.theguyhere.villagerdefense.common.Calculator;
+import me.theguyhere.villagerdefense.common.Constants;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -26,7 +27,8 @@ public class VDRangedBowAttackGoal<T extends Monster & RangedAttackMob> extends 
 	public VDRangedBowAttackGoal(T mob, double attackIntervalSeconds, float attackRadius) {
 		this.mob = mob;
 		this.attackIntervalSeconds = attackIntervalSeconds;
-		attackRadiusSqr = attackRadius * attackRadius;
+		attackRadiusSqr = (float) (attackRadius * attackRadius * Constants.BOW_ATTACK_RANGE_MULTIPLIER *
+			Constants.BOW_ATTACK_RANGE_MULTIPLIER);
 		setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
 	}
 
@@ -98,7 +100,7 @@ public class VDRangedBowAttackGoal<T extends Monster & RangedAttackMob> extends 
 				.getSensing()
 				.hasLineOfSight(target);
 
-			// Increase see time if target is visible, otherwise decrease, and make sure
+			// Increase see time if target is visible, otherwise decrease, and make sure see time starts at 0 every time
 			if (hasLineOfSight != seeTimeTicks > 0) {
 				seeTimeTicks = 0;
 			}
@@ -110,6 +112,7 @@ public class VDRangedBowAttackGoal<T extends Monster & RangedAttackMob> extends 
 				--seeTimeTicks;
 			}
 
+			// If within range and seen for a while, start strafing, otherwise navigate to the target
 			if (targetDistance <= (double) attackRadiusSqr && seeTimeTicks >= 20) {
 				mob
 					.getNavigation()

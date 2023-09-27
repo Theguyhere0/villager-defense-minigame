@@ -25,6 +25,8 @@ public class Constants {
 	public static final int TARGET_RANGE_MODERATE = 24;
 	public static final int TARGET_RANGE_FAR = 40;
 	public static final int TARGET_RANGE_UNBOUNDED = 100;
+	public static final double BOW_ATTACK_RANGE_MULTIPLIER = 0.75;
+	public static final double CROSSBOW_ATTACK_RANGE_MULTIPLIER = 0.5;
 
 	public static final double SPEED_VERY_SLOW = 0.15;
 	public static final double SPEED_SLOW = 0.2;

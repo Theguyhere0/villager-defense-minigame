@@ -177,7 +177,7 @@ public class VDSkeleton extends VDMinion {
 			case 7:
 				return 340;
 			default:
-				return 0;
+				return Integer.MAX_VALUE;
 		}
 	}
 }

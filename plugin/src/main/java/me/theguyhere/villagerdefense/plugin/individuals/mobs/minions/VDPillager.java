@@ -2,13 +2,10 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
 import org.bukkit.entity.Pillager;
-
-import java.util.Objects;
 
 public class VDPillager extends VDMinion {
 	public static final String KEY = "pill";
@@ -16,9 +13,10 @@ public class VDPillager extends VDMinion {
 	public VDPillager(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.PILLAGER),
+			NMSVersion
+				.getCurrent()
+				.getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.pillager,
 			LanguageManager.mobLore.pillager,
 			IndividualAttackType.NORMAL
@@ -32,12 +30,6 @@ public class VDPillager extends VDMinion {
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .1);
 		pierce = 1;
-//		setSlowAttackSpeed();
-//		setNoneKnockback();
-//		setMediumWeight();
-//		setMediumSpeed();
-//		targetPriority = TargetPriority.VILLAGERS;
-//		setFarTargetRange();
 		setCrossbow();
 		setLoot(getValue(arena.getCurrentDifficulty()), .3);
 		updateNameTag();
@@ -173,6 +165,23 @@ public class VDPillager extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), getArmor(level), getToughness(level), getDamage(level), 2.4);
+		switch (level) {
+			case 1:
+				return 150;
+			case 2:
+				return 220;
+			case 3:
+				return 300;
+			case 4:
+				return 400;
+			case 5:
+				return 500;
+			case 6:
+				return 640;
+			case 7:
+				return 800;
+			default:
+				return Integer.MAX_VALUE;
+		}
 	}
 }

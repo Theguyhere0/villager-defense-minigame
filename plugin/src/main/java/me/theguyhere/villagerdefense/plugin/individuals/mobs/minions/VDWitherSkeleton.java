@@ -228,7 +228,7 @@ public class VDWitherSkeleton extends VDMinion {
 			case 7:
 				return 335;
 			default:
-				return 0;
+				return Integer.MAX_VALUE;
 		}
 	}
 }

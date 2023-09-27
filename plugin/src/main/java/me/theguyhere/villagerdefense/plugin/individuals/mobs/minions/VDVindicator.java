@@ -2,13 +2,10 @@ package me.theguyhere.villagerdefense.plugin.individuals.mobs.minions;
 
 import me.theguyhere.villagerdefense.plugin.arenas.Arena;
 import me.theguyhere.villagerdefense.plugin.background.LanguageManager;
+import me.theguyhere.villagerdefense.plugin.background.NMSVersion;
 import me.theguyhere.villagerdefense.plugin.individuals.IndividualAttackType;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Mob;
 import org.bukkit.entity.Vindicator;
-
-import java.util.Objects;
 
 public class VDVindicator extends VDMinion {
 	public static final String KEY = "vind";
@@ -16,9 +13,9 @@ public class VDVindicator extends VDMinion {
 	public VDVindicator(Arena arena, Location location) {
 		super(
 			arena,
-			(Mob) Objects
-				.requireNonNull(location.getWorld())
-				.spawnEntity(location, EntityType.VINDICATOR),
+			NMSVersion
+				.getCurrent().getNmsManager()
+				.spawnVDMob(location, KEY),
 			LanguageManager.mobs.vindicator,
 			LanguageManager.mobLore.vindicator,
 			IndividualAttackType.CRUSHING
@@ -31,12 +28,6 @@ public class VDVindicator extends VDMinion {
 		armor = 0;
 		toughness = getToughness(level);
 		setDamage(getDamage(level), .1);
-//		setSlowAttackSpeed();
-//		setModerateKnockback();
-//		setMediumWeight();
-//		setMediumSpeed();
-//		targetPriority = TargetPriority.GOLEMS;
-//		setModerateTargetRange();
 		setAxe();
 		setLoot(getValue(arena.getCurrentDifficulty()), .2);
 		updateNameTag();
@@ -137,6 +128,19 @@ public class VDVindicator extends VDMinion {
 	 */
 	protected static int getValue(double difficulty) {
 		int level = getLevel(difficulty);
-		return getValue(getHealth(level), 0, getToughness(level), getDamage(level), .9);
+		switch (level) {
+			case 1:
+				return 145;
+			case 2:
+				return 220;
+			case 3:
+				return 315;
+			case 4:
+				return 435;
+			case 5:
+				return 580;
+			default:
+				return Integer.MAX_VALUE;
+		}
 	}
 }

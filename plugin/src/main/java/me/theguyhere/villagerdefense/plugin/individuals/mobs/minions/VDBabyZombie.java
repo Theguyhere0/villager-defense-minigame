@@ -179,7 +179,7 @@ public class VDBabyZombie extends VDMinion {
 			case 7:
 				return 350;
 			default:
-				return 0;
+				return Integer.MAX_VALUE;
 		}
 	}
 }
